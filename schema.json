@@ -12,14 +12,19 @@
                 "testing"
             ]
         },
-        "audio": {
+        "audio_config": {
             "description": "Audio server to be installed",
-            "type": "string",
-            "enum": [
-                "pipewire",
-                "pulseaudio",
-                "none"
-            ]
+            "type": "object",
+            "properties": {
+                "audio": {
+                    "description": "Audio server to be installed",
+                    "type": "string",
+                    "enum": [
+                        "pipewire",
+                        "pulseaudio"
+                    ]
+                }
+            },
         },
         "bootloader": {
             "description": "Bootloader  to be installed",
@@ -36,17 +41,6 @@
             "items": {
                 "type": "string"
             }
-        },
-        "gfx_driver": {
-            "description": "Graphics Drivers to install if a desktop profile is used, ignored otherwise.",
-            "type": "string",
-            "enum": [
-                "VMware / VirtualBox (open-source)",
-                "Nvidia",
-                "Intel (open-source)",
-                "AMD / ATI (open-source)",
-                "All open-source (default)"
-            ]
         },
         "harddrives": {
             "description": "Path of device to be used",
@@ -80,21 +74,26 @@
             "description": "By default, it will autodetect the best region. Enter a region or a dictionary of regions and mirrors to use specific ones",
             "type": "object"
         },
-        "nic": {
+        "network_config": {
             "description": "Choose between NetworkManager, manual configuration, use systemd-networkd from the ISO or no configuration",
             "type": "object",
             "properties": {
                 "type": "string",
-                "iface": "string",
-                "dhcp": "boolean",
-                "ip": "string",
-                "gateway": "string",
-                "dns": {
-                    "description": "List of DNS servers",
+                "nics": [
                     "type": "array",
                     "items": {
-                        "type": "string"
-                    }
+                        "iface": "string",
+                        "dhcp": "boolean",
+                        "ip": "string",
+                        "gateway": "string",
+                        "dns": {
+                            "description": "List of DNS servers",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 }
             }
         },
@@ -110,29 +109,83 @@
             }
         },
         "profile": {
-            "description": "Profiles are present in profiles/, use the name of a profile to install it",
-            "type": "string",
-            "enum": [
-                "awesome",
-                "bspwm",
-                "budgie",
-                "cinnamon",
-                "cutefish",
-                "deepin",
-                "desktop",
-                "enlightenment",
-                "gnome",
-                "i3",
-                "kde",
-                "lxqt",
-                "mate",
-                "minimal",
-                "server",
-                "sway",
-                "xfce4",
-                "xorg",
-                "qtile"
-            ]
+            "path": {
+                "description": "Local path or Url that points to a python file containing profile definitions",
+                "type": "string"
+            },
+            "main":  {
+                "description": "Main top level profile selection",
+                "type": "string",
+                "enum": [
+                    "desktop",
+                    "minimal",
+                    "server",
+                    "xorg",
+                    "custom"
+                ]
+            },
+            "details": {
+                "description": "Specific profile to be installed based on the 'main' selection; these profiles are present in profiles_v2/, use the name of a profile to install it (case insensitive)",
+                "type": "string",
+                "enum": [
+                    "awesome",
+                    "bspwm",
+                    "budgie",
+                    "cinnamon",
+                    "cutefish",
+                    "deepin",
+                    "desktop",
+                    "enlightenment",
+                    "gnome",
+                    "i3-wm",
+                    "i3-gasp",
+                    "kde",
+                    "lxqt",
+                    "mate",
+                    "sway",
+                    "xfce4",
+                    "qtile",
+                    "cockpit",
+                    "docker",
+                    "httpd",
+                    "lighttpd",
+                    "mariadb",
+                    "nginx",
+                    "postgresql",
+                    "sshd",
+                    "tomcat"
+                ]
+            },
+            "custom": {
+                "description": "Specific profile definitions for custom setup profiles)",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "packages": "string",
+                        "services": "string",
+                        "enabled": "boolean"
+                    }
+                }
+            },
+            "gfx_driver": {
+                "description": "Graphics Drivers to install if a desktop profile is used, ignored otherwise.",
+                "type": "string",
+                "enum": [
+                    "VMware / VirtualBox (open-source)",
+                    "Intel (open-source)",
+                    "AMD / ATI (open-source)",
+                    "All open-source (default)",
+                    "Nvidia (open kernel module for newer GPUs, Turing+)",
+                    "Nvidia (open-source nouveau driver)",
+                    "Nvidia (proprietary)"
+                ]
+            },
+            "greeter_type": {
+                "description": "Greeter type to install if a desktop profile is used, ignored otherwise.",
+                "type": "string",
+                "enum": ["lightdm", "sddm", "gdm"]
+            }
         },
         "services": {
             "description": "Services to enable post-installation",

@@ -1,0 +1,1183 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: archinstall\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
+"Language-Team: Georgian <(nothing)>\n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2.2\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] ჟურნალის ფაილი შეიქმნა აქ: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    ეს პრობლემა და ფაილი გადმოგვიგზავნეთ ბმულზე https://github.com/archlinux/archinstall/issues"
+
+msgid "Do you really want to abort?"
+msgstr "გნებავთ, გააუქმოთ?"
+
+msgid "And one more time for verification: "
+msgstr "და კიდევ ერთხელ, გადასამოწმებლად: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "გნებავთ სვოპის ZRAM-ზე გამოყენება?"
+
+msgid "Desired hostname for the installation: "
+msgstr "ჰოსტის სასურველი სახელი, დაყენებისთვის: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Sudo პრივილეგიების მქონე ზემომხმარებლის მომხმარებლის სახელი: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "დამატებითი მომხმარებლები დასაყენებლად (მომხმარებლების გარეშე გასაგრძელებლად ცარიელი დატოვეთ): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "უნდა იყოს ეს მომხმარებელი ზემომხმარებელი (sudoer)?"
+
+msgid "Select a timezone"
+msgstr "აირჩიეთ დროის სარტყელი"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "გნებავთ ჩამტვირთავად system-boot-ის მაგიერ GRUB-ი გამოიყენოთ?"
+
+msgid "Choose a bootloader"
+msgstr "აირჩიეთ ჩამტვირთავი"
+
+msgid "Choose an audio server"
+msgstr "აირჩიეთ აუდიოსერვერი"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "მოხდება მხოლოდ ისეთი პაკეტების დაყენება, როგორებიცაა base, base-devel, linux, linux-firmware, efibootmgr და არასავალდებულო პროფილის პაკეტი."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "თუ გნებავთ ბრაუზერის, როგორებიცაა firefox ან chromium, ქონა, შემდეგი რამ უნდა მიუთითოთ."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "დამატებითი პაკეტები დასაყენებლად (გამოტოვებით გამოყოფილი, გამოსატოვებლად ცარიელი დატოვეთ): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "ISO-ის ქსელის კონფიგურაციის კოპირება დაყენების დროს"
+
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "NetworkManager-ის გამოყენება (აუცილებელია ინტერნეტის GNOME/KDE-დან მოსარგებად)"
+
+msgid "Select one network interface to configure"
+msgstr "მოსარგებად ერთ-ერთი ქსელის ინტერფეისი აირჩიეთ"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "აირჩიეთ მოსარგები რეჟიმი \"{}\"-სთვის ან გამოტოვეთ ნაგულისხმები რეჟიმის \"{}\" გამოსაყენებლად"
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "შეიყვანეთ IP მისამართი და ქვექსელი {}-სთვის (მაგ: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "აირჩიეთ ნაგულისხმები რაუტერის IP მისამართი, ან ცარიელი დატოვეთ: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "შეიყვანეთ თქვენი DNS სერვერების მისამართები (გამოყოფილი ცარიელი ადგილით. ცარიელი, თუ არ გნებავთ, გამოიყენოთ): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "რომელ ფაილურ სისტემას გამოიყენებს თქვენი მთავარი დანაყოფი"
+
+msgid "Current partition layout"
+msgstr "მიმდინარე დანაყოფების განლაგება"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"აირჩიეთ, რა მოუვა\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "შეიყვანეთ დანაყოფის სასურველი ფაილური სისტემის ტიპი"
+
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} რიგში ჩაყენებულ დანაყოფებს შეიცავს. ეს წაშლის მათ. დარწმუნებული ბრძანდებით?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"წასაშლელი დანაყოფების ინდექსით არჩევა"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"ინდექსით არჩევა, რომელი დანაყოფი სად იქნება მიმაგრებული"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * დანაყოფის მიმაგრების წერტილები შედარებითია დაყენების შიგნით. ჩატვირთვა, მაგალითად, /boot შეიძლება, იყოს."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "აირჩიეთ, სად გნებავთ მიამაგროთ დანაყოფი (მიმაგრების წერტილის წასაშლელად დატოვეთ ის ცარიელი): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"აირჩიეთ, რომელი დანაყოფი იქნება მონიშნული ფორმატირებისთვის"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"აირჩიეთ, რომელი დანაყოფი მოინიშნება, როგორც დაშიფრული"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"აირჩიეთ, რომელი დანაყოფი მოინიშნება, როგორც ჩატვირთვადი"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"აირჩიეთ, ფაილური სისტემა რომელ დანაყოფზე დავაყენო"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "შეიყვანეთ დანაყოფის სასურველი ფაილური სისტემის ტიპი: "
+
+msgid "Archinstall language"
+msgstr "Archinstall-ის ენა"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "მონიშნულ დისკებზე ყველაფრის წაშლა და დანაყოფების განლაგების საუკეთესო განლაგების გამოყენება"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "აირჩიეთ, რა ვუყო ინდივიდუალურ დისკს (დანაყოფების გამოყენების შემდეგ)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "აირჩიეთ, მონიშნულ ბლოკურ მოწყობილობებს რა გნებავთ, უქნათ"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "ეს წინასწარ მითითებული პროფილების სიაა. მათი დახმარებით ისეთი რამების, როგორიცაა სამუშაო მაგიდის გარემოები, დაყენება უფრო ადვილია"
+
+msgid "Select keyboard layout"
+msgstr "აირჩიეთ კლავიატურის განლაგება"
+
+msgid "Select one of the regions to download packages from"
+msgstr "აირჩიეთ რეგიონი პაკეტების გადმოსაწერად"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "თქვენს AMD-ის აპარატურასთან საუკეთესო თავსებადობისთვის შეგიძლიათ როგორც სრულად ღია კოდის მქონე, ისე AMD/ATI-ის ვარიანტები გამოიყენოთ."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Intel-ის აპარატურასთან საუკეთესო თავსებადობისთვის შეგიძლიათ მათი სრულად ღია კოდის მქონე ვარიანტი გამოიყენოთ.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Nvidia-ის თქვენს აპარატურასთან საუკეთესო თავსებადობისთვის შეიძლება Nvidia-ის დახურული კოდის მქონე დრაივერის დაყენება გნებავდეთ.\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ გრაფიკის დრაივერი ან, ღია კოდის მქონე დრაივერის დასაყენებლად, ცარიელი დატოვეთ"
+
+msgid "All open-source (default)"
+msgstr "ყველა ღია კოდით (ნაგულისხმები)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "აირჩიეთ, რომელი ბირთვი გნებავთ, გამოიყენოთ. ან ნაგულისხმებისთვის (\"{}\") ცარიელი დატოვეთ"
+
+msgid "Choose which locale language to use"
+msgstr "აირჩიეთ, რომელი ლოკალის ენა გნებავთ, გამოიყენოთ"
+
+msgid "Choose which locale encoding to use"
+msgstr "აირჩიეთ, რომელი ლოკალის კოდირება გნებავთ, გამოიყენოთ"
+
+msgid "Select one of the values shown below: "
+msgstr "აირჩიეთ ერთ-ერთი ქვემოთ მოყვანილი მნიშვნელობებიდან: "
+
+msgid "Select one or more of the options below: "
+msgstr "აირჩეთ ერთი ან მეტი პარამეტრი ქვემოდან: "
+
+msgid "Adding partition...."
+msgstr "დანაყოფის დამატება..."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "გასაგრძელებლად აუცილებელია სწორი fs-type შეიყვანოთ. ხელმისაწვდომი სიის სანახავად იხილეთ 'man parted'."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "შეცდომა: URL-ზე \"{}\" პროფილების ჩამოთვლის შედეგია:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "შეცდომა: \"{}\" შედეგის JSON-ის სახით გაშიფვრა შეუძლებელია:"
+
+msgid "Keyboard layout"
+msgstr "კლავიატურის განლაგება"
+
+msgid "Mirror region"
+msgstr "სარკის რეგიონი"
+
+msgid "Locale language"
+msgstr "ლოკალის ენა"
+
+msgid "Locale encoding"
+msgstr "ლოკალის კოდირება"
+
+msgid "Drive(s)"
+msgstr "დისკები"
+
+msgid "Disk layout"
+msgstr "დისკის განლაგება"
+
+msgid "Encryption password"
+msgstr "დაშიფვრის პაროლი"
+
+msgid "Swap"
+msgstr "სვოპი"
+
+msgid "Bootloader"
+msgstr "ჩამტვირთავი"
+
+msgid "Root password"
+msgstr "Root-ის პაროლი"
+
+msgid "Superuser account"
+msgstr "ზემომხმარებლის ანგარიში"
+
+msgid "User account"
+msgstr "მომხმარებლის ანგარიში"
+
+msgid "Profile"
+msgstr "პროფილი"
+
+msgid "Audio"
+msgstr "აუდიო"
+
+msgid "Kernels"
+msgstr "ბირთვები"
+
+msgid "Additional packages"
+msgstr "დამატებითი პაკეტები"
+
+msgid "Network configuration"
+msgstr "ქსელის მორგება"
+
+msgid "Automatic time sync (NTP)"
+msgstr "დროის ავტომატური სინქრონიზაცია (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "დაყენება (აკლია {} კონფიგურაცია)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"გადაწყვიტეთ, გამოტოვოთ მყარი დისკის არჩევანი\n"
+"და გამოიყენოთ ის, რაც {}-ზეა მიმაგრებული (ექსპერიმენტალური)\n"
+"გაფრთხილება: Archinstall-ს ამ მორგების სტაბილურობის გადამოწმება არ შეუძლია.\n"
+"გნებავთ, გააგრძელოთ?"
+
+msgid "Re-using partition instance: {}"
+msgstr "დანაყოფის ასლის თავიდან გამოყენება: {}"
+
+msgid "Create a new partition"
+msgstr "ახალი დანაყოფის შექმნა"
+
+msgid "Delete a partition"
+msgstr "დანაყოფის წაშლა"
+
+msgid "Clear/Delete all partitions"
+msgstr "დანაყოფების გასუფთავება/წაშლა"
+
+msgid "Assign mount-point for a partition"
+msgstr "დანაყოფის მიმაგრების წერტილის მინიჭება"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "დანაყოფის დასაფორმატებლობის ჭდის მოხსნა/დადება (მონაცემები წაიშლება)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "დანაყოფის დაშიფრულობის ჭდის დადება/მოხსნა"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "დანაყოფის ჩატვირთვადობის ჭდის მოხსნა/დადება (ავტომატურია /boot-სთვის)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "აირჩიეთ დანაყოფის სასურველი ფაილური სისტემა"
+
+msgid "Abort"
+msgstr "გაუქმება"
+
+msgid "Hostname"
+msgstr "ჰოსტის სახელი"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "მორგებული არაა. მიუწვდომელია, სანამ ხელით არ მოირგებთ"
+
+msgid "Timezone"
+msgstr "დროის სარტყელი"
+
+msgid "Set/Modify the below options"
+msgstr "დააყენეთ/შეცვალეთ ქვედა პარამეტრები"
+
+msgid "Install"
+msgstr "დაყენება"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"გამოსატოვებლად გამოიყენეთ ღილაკი Esc\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "დანაყოფების განლაგების მინიშნება"
+
+msgid "Enter a password: "
+msgstr "შეიყვანეთ პაროლი: "
+
+msgid "Enter a encryption password for {}"
+msgstr "შეიყვანეთ {}-ის დაშიფვრის პაროლი"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "შეიყვანეთ დისკის დაშიფვრის პაროლი (დაშიფვრის გასათიშად დატოვეთ ცარიელი): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Sudo-ის პრივილეგიების სმქონე აუცილებელი ზემომხმარებლის: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "შეიყვანეთ root-ის პაროლი (თუ გნებავთ, გათიშოთ root, ცარიელი დატოვეთ): "
+
+msgid "Password for user \"{}\": "
+msgstr "პაროლი მომხმარებლისთვის \"{}\": "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "დამატებითი პაკეტების არსებობის შემოწმება (ამას რამდენიმე წამი შეიძლება დასჭირდეს)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "გნებავთ დროის ავტომატური სინქრონიზაციის (NTP) ნაგულისხმები დროის სერვერებით გამოყენება?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"NTP-ის ასამუშავებლად აპარატურული დრო და სხვა დაყენების-შემდგომი ნაბიჯები დაგჭირდებათ.\n"
+"მეტი ინფორმაციისთვის იხილეთ Arch-ის დოკუმენტაცია"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "დამატებითი მომხმარებლის შესაქმნელად შეიყვანეთ მისი სახელი (გამოსატოვებლად ცარიელი დატოვეთ): "
+
+msgid "Use ESC to skip\n"
+msgstr "გამოსატოვებლად გამოიყენეთ ღილაკი Esc\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+" შესასრულებლად აირჩიეთ ობიექტი სიიდან და აირჩიეთ მისთვის ხელმისაწვდომი ქმედება"
+
+msgid "Cancel"
+msgstr "შეწყვეტა"
+
+msgid "Confirm and exit"
+msgstr "დადასტურება და გასვლა"
+
+msgid "Add"
+msgstr "დამატება"
+
+msgid "Copy"
+msgstr "კოპირება"
+
+msgid "Edit"
+msgstr "ჩასწორება"
+
+msgid "Delete"
+msgstr "წაშლა"
+
+msgid "Select an action for '{}'"
+msgstr "აირჩიეთ ქმედება '{}'-სთვის"
+
+msgid "Copy to new key:"
+msgstr "ახალ გასაღებში კოპირება:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "NIC-ის უცნობი ტიპი: {}. შესაძლო მნიშვნელობებია {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"ეს თქვენი არჩეული კონფიგურაციაა:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman- უკვე გაშვებულია. მოკვლამდე 10 წუთი დაველოდები."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "წინასწარ packman-ის ბლოკი არასდროს არსებობდა. Archinstall-ის დაყენებამდე აუცილებელია pacman-ს სესიების მოსუფთავება აუცილებელია."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "აირჩიეთ, რომელი არასავალდებულო დამატებითი რეპოზიტორია გნებავთ, ჩართოთ"
+
+msgid "Add a user"
+msgstr "მომხმარებლის დამატება"
+
+msgid "Change password"
+msgstr "პაროლის შეცვლა"
+
+msgid "Promote/Demote user"
+msgstr "მომხმარებლის დაწინაურება/ჩამოქვეითება"
+
+msgid "Delete User"
+msgstr "მომხმარებლის წაშლა"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"აღწერეთ ახალი მომხმარებელი\n"
+
+msgid "User Name : "
+msgstr "მომხმარებლის სახელი : "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "იყოს {} ზემომხმარებელი (sudoer)?"
+
+msgid "Define users with sudo privilege: "
+msgstr "აღწერეთ sudo პრივილეგიის მქონე მომხმარებლები: "
+
+msgid "No network configuration"
+msgstr "ქსელის მორგების გარეშე"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "დააყენეთ Btrfs დანაყოფის სასურველი ქვეტომები"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"აირჩიეთ, რომელ დანაყოფზე აპირებთ ქვეტომების დაყენებას"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "Btrfs-ის ქვეტომების მართვა მიმდინარე დანაყოფისთვის"
+
+msgid "No configuration"
+msgstr "მორგების გარეშე"
+
+msgid "Save user configuration"
+msgstr "მომხმარებლის კონფიგურაციის შენახვა"
+
+msgid "Save user credentials"
+msgstr "მომხმარებლის ავტორიზაციის დეტალების შენახვა"
+
+msgid "Save disk layout"
+msgstr "დისკის განლაგების შენახვა"
+
+msgid "Save all"
+msgstr "ყველაფრის შენახვა"
+
+msgid "Choose which configuration to save"
+msgstr "აირჩიეთ, რომელი კონფიგურაცია შევინახო"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "შეიყვანეთ საქაღალდე, სადაც კონფიგურაცი(ებ)-ი იქნება შენახული: "
+
+msgid "Not a valid directory: {}"
+msgstr "არასწორი საქაღალდე: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "პაროლი, რომელიც შეიყვანეთ, სუსტია,"
+
+msgid "are you sure you want to use it?"
+msgstr "დარწმუნებული ბრძანდებით, რომ გნებავთ, გამოიყენოთ ის?"
+
+msgid "Optional repositories"
+msgstr "არასავალდებულო რეპოზიტორიები"
+
+msgid "Save configuration"
+msgstr "კონფიგურაციი შენახვა"
+
+msgid "Missing configurations:\n"
+msgstr "ნაკლული კონფიგურაციები:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "შეიყვანეთ root-ის პაროლი ან მიუთითეთ 1 ზემომხმარებელი მაინც"
+
+msgid "Manage superuser accounts: "
+msgstr "ზემომხმარებლის ანგარიშების მართვა: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "ჩვეულებრივი მომხმარებლის ანგარიშების მართვა: "
+
+msgid " Subvolume :{:16}"
+msgstr " ქვეტომი :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " მიმაგრების წერტილი {:16}"
+
+msgid " with option {}"
+msgstr " პარამეტრით {}"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+"შეავსეთ სასურველი მნიშვნელობები ახალი ქვეტომისთვის \n"
+
+msgid "Subvolume name "
+msgstr "ქვეტომის სახელი "
+
+msgid "Subvolume mountpoint"
+msgstr "ქვეტომის მიმაგრების წერტილი"
+
+msgid "Subvolume options"
+msgstr "ქვეტომის მორგება"
+
+msgid "Save"
+msgstr "შენახვა"
+
+msgid "Subvolume name :"
+msgstr "ქვეტომის სახელი :"
+
+msgid "Select a mount point :"
+msgstr "აირჩიეთ მიმაგრების წერტილი :"
+
+msgid "Select the desired subvolume options "
+msgstr "აირჩიეთ სასურველი ქვეტომის პარამეტრები "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "აღწერეთ sudo-ის პრივილეგიების მქონე მომხმარებლები, მათი სახელით: "
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] ჟურნალის ფაილის მდებარეობა: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "გნებავთ BTRFS-ის ქვეტომები ნაგულისხმები სტრუქტურით გამოიყენოთ?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "გნებავთ BTRFS-ის შეკუმშვის გამოყენება?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "გნებავთ /home-სთვის ცალკე დანაყოფი შექმნათ?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "მონიშნულ დისკებზე ავტომატურად დასაყენებლად საკმარისი მინიმალური ადგილი აღმოჩენილი არაა\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "მინიმალური სივრცე დანაყოფისთვის /home: {}გბ\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "მინიმალური სივრცე ArchLinux-ის დანაყოფისთვის: {}გბ"
+
+msgid "Continue"
+msgstr "გაგრძელება"
+
+msgid "yes"
+msgstr "დიახ"
+
+msgid "no"
+msgstr "არა"
+
+msgid "set: {}"
+msgstr "დაყენება: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "მორგებული კონფიგურაციის პარამეტრი სია უნდა იყოს"
+
+msgid "No iface specified for manual configuration"
+msgstr "მორგებული კონფიგურაციისთვის ინტერფეისი მითითებული არაა"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "NIC-ის DHCP-ის გარეშე მოსარგებად IP მისამართის მითითება აუცილებელია"
+
+msgid "Add interface"
+msgstr "ინტერფეისის დამატება"
+
+msgid "Edit interface"
+msgstr "ინტერფეისის ჩასწორება"
+
+msgid "Delete interface"
+msgstr "ინტერფეისის წაშლა"
+
+msgid "Select interface to add"
+msgstr "აირჩიეთ დასამატებელი ინტერფეისი"
+
+msgid "Manual configuration"
+msgstr "ხელით მორგება"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "დანაყოფზე შეკუმშულობის ჭდის მოხსნა/დადება (მხოლოდ btrfs)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "როგორც ჩანს პაროლი, რომელსაც იყენებთ, სუსტია. დარწმუნებული ბრძანდებით, რომ გნებავთ, გამოიყენოთ ის?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "მოგაწვდით სამუშაო გარემოებისა და ფანჯრების მმართველების არჩევანს. მაგ: gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "აირჩიეთ სასურველი სამუშაო მაგიდის გარემო"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "მინიმალური დაყენება, რომელიც საშუალებას გაძლევთ, Arch Linux სურვილისამებრ მოირგოთ."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "სერვერის ისეთი პაკეტების დაყენება და ჩართვა, როგორიცაა httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "აირჩიეთ, რომელი სერვერების დაყენება გნებავთ. თუ არაფერს შეიყვანთ, მინიმალური დაყენება მოხდება"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "აყენებს მინიმალურ სისტემას, ასევე xorg-ს და გრაფიკის დრაივერებს."
+
+msgid "Press Enter to continue."
+msgstr "გასაგრძელებლად დააჭირეთ Enter-ს."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "გნებავთ chroot ახალ დაყენებულ სისტემაში და დაყენების შემდეგი კონფიგურაციის გაშვება?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "დარწმუნებული ბრძანდებით, რომ გნებავთ, დააბრუნოთ ეს პარამეტრი?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "მოსარგებად და გამოსაყენებლად აირჩიეთ ერთი ან მეტი მყარი დისკი\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "არსებული პარამეტრის ნებისმიერი ცვლილება დისკის განლაგებას საწყის მნიშვნელობებზე დააბრუნებს!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "ეს მყარი დისკის არჩევანს და მიმდინარე დისკის განლაგებას საწყის მნიშვნელობებზე დააბრუნებს. დარწმუნებული ბრძანდებით?"
+
+msgid "Save and exit"
+msgstr "შენახვა და გასვლა"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"რიგში ჩაყენებულ დანაყოფებს შეიცავს. ეს წაშლის მათ. დარწმუნებული ბრძანდებით?"
+
+msgid "No audio server"
+msgstr "აუდიოსერვერის გრეშე"
+
+msgid "(default)"
+msgstr "(ნაგულისხმები)"
+
+msgid "Use ESC to skip"
+msgstr "გამოსატოვებლად გამოიყენეთ ღილაკი Esc"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"მიმდინარე მონიშვნის დასაბრუნებლად დააწექით CTRL+C\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "კოპირება: "
+
+msgid "Edit: "
+msgstr "ჩასწორება: "
+
+msgid "Key: "
+msgstr "გასაღები: "
+
+msgid "Edit {}: "
+msgstr "ჩასწორება {}: "
+
+msgid "Add: "
+msgstr "დამატება: "
+
+msgid "Value: "
+msgstr "მნიშვნელობა: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "შეგიძლიათ დისკის არჩევანი და დაყოფა გამოტოვოთ და გამოიყენოთ სასურველი დისკი, რომელიც /mnt-ზეა მიმაგრებული (ექსპერიმენტალური)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "აირჩიეთ ერტი ან მეტი დისკი ან გამოტოვება და ნაგულისხმები /mnt-ის გამოყენება"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "აირჩიეთ, რომელი დანაყოფები მოვნიშნო დასაფორმატებლად:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "დაშიფრული დისკის გასახსნელად HSM-ის გამოყენება"
+
+msgid "Device"
+msgstr "მოწყობილობა"
+
+msgid "Size"
+msgstr "ზომა"
+
+msgid "Free space"
+msgstr "თავისუფალი ადგილი"
+
+msgid "Bus-type"
+msgstr "მატარებლის-ტიპი"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Root-ის პაროლის ან მინიმუმ 1 sudo-ის პრივილეგიების მქონე მომხმარებლის მითითება აუცილებელია"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "შეიყვანეთ მომხმარებლი სახელი (გამოსატოვებლად ცარიელი დატოვეთ): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "შეყვანილი მომხმარებლის სახელი არასწორია. კიდევ სცადეთ"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "იყოს \"{}\" ზემომხმარებელი(sudo)?"
+
+msgid "Select which partitions to encrypt"
+msgstr "არჩიეთ დასაშიფრი დანაყოფები"
+
+msgid "very weak"
+msgstr "ძალიან სუსტი"
+
+msgid "weak"
+msgstr "სუსტი"
+
+msgid "moderate"
+msgstr "საშუალო"
+
+msgid "strong"
+msgstr "ძლიერი"
+
+msgid "Add subvolume"
+msgstr "ქვეტომის დამატება"
+
+msgid "Edit subvolume"
+msgstr "ქვეტომის ჩასწორება"
+
+msgid "Delete subvolume"
+msgstr "ქვეტომის წაშლა"
+
+msgid "Configured {} interfaces"
+msgstr "მორგებულია {} ინტერფეისი"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "ეს პარამეტრი დაყენებისას მითითებული რაოდენობის პარალელურ გადმოწერას დაუშვებს"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {})\n"
+"Note:"
+msgstr ""
+"შეიყვანეთ დასაშვები პარალელური გადმოწერების რაოდენობა.\n"
+" (შეიყვანეთ მნიშვნელობა 1-დან {}-მდე)\n"
+"დაიმახსოვრეთ:"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - მინიმალური მნიშვნელობა   : {} ( დაუშვებს {} პარალელურ გადმოწერას, დაუშვებს {} ერთდროულ გადმოწერას )"
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - მინიმალური მნიშვნელობა   : 1 ( დაუშვებს 1 პარალელურ გადმოწერას, დაუშვებს 2 ერთდროულ გადმოწერას )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - გამორთვა/ნაგულისხმები : 0 ( პარალელური გადმოწერების გათიშვა. დროის ერთ მომენტში მხოლოდ ერთი გადმოწერა მოხდება )"
+
+#, fuzzy, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {}-მდე, ან 0, გასათიშად]"
+
+msgid "Parallel Downloads"
+msgstr "პარალელური გადმოწერები"
+
+msgid "ESC to skip"
+msgstr "გამოსატოვებლად ღილაკი Esc"
+
+msgid "CTRL+C to reset"
+msgstr "დასაბრუნებლად CTRL+C"
+
+msgid "TAB to select"
+msgstr "ასარჩევად TAB"
+
+msgid "[Default value: 0] > "
+msgstr "[ნაგულისხმები მნიშვნელობა: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "თარგმანის გამოსაყენებლად ფონტი, რომელსაც ენის მხარდაჭერა გააჩნია, ხელით უნდა დააყენოთ."
+
+msgid "The font should be stored as {}"
+msgstr "ფონტი {}-ში უნდა იყოს შენახული"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "აირჩიეთ ქმედება '{}'-სთვის"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "ეს მყარი დისკის არჩევანს და მიმდინარე დისკის განლაგებას საწყის მნიშვნელობებზე დააბრუნებს. დარწმუნებული ბრძანდებით?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "დანაყოფები"
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "შეიყვანეთ საქაღალდე, სადაც კონფიგურაცი(ებ)-ი იქნება შენახული: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "მინიმალური სივრცე დანაყოფისთვის /home: {}გბ\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "მინიმალური სივრცე ArchLinux-ის დანაყოფისთვის: {}გბ"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "ეს წინასწარ მითითებული პროფილების სიაა. მათი დახმარებით ისეთი რამების, როგორიცაა სამუშაო მაგიდის გარემოები, დაყენება უფრო ადვილია"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "მიმდინარე დანაყოფების განლაგება"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "ახალი დანაყოფის შექმნა"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "დანაყოფის მიმაგრების წერტილის მინიჭება"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "დანაყოფის დასაფორმატებლობის ჭდის მოხსნა/დადება (მონაცემები წაიშლება)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "დანაყოფზე შეკუმშულობის ჭდის მოხსნა/დადება (მხოლოდ btrfs)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "ქვეტომის წაშლა"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "დანაყოფის წაშლა"
+
+#, fuzzy
+msgid "Partition"
+msgstr "დანაყოფები"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * დანაყოფის მიმაგრების წერტილები შედარებითია დაყენების შიგნით. ჩატვირთვა, მაგალითად, /boot შეიძლება, იყოს."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "არასწორი საქაღალდე: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "შეიყვანეთ საწყისი სექტორი (პროცენტებში ან ბლოკის ნომერი. ნაგულისხმები: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "შეიყვანეთ დანაყოფის ბოლო სექტორი (პროცენტულად ან ბლოკის ნომერი. მაგ: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+msgid "Encryption type"
+msgstr "დაშიფვრის ტიპი"
+
+msgid "Partitions"
+msgstr "დანაყოფები"
+
+msgid "No HSM devices available"
+msgstr "HSM მოწყობილობები მიუწვდომელია"
+
+msgid "Partitions to be encrypted"
+msgstr "დასაშიფრი დანაყოფები"
+
+msgid "Select disk encryption option"
+msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "აირჩიეთ HSM-სთვის გამოსაყენებელი FIDO2 მოწყობილობა"
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "მონიშნულ დისკებზე ყველაფრის წაშლა და დანაყოფების განლაგების საუკეთესო განლაგების გამოყენება"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "დანაყოფები"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "მორგების გარეშე"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr "დანაყოფის დაშიფვრა"
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+#, fuzzy
+msgid "← Back"
+msgstr "უკან"
+
+msgid "Disk encryption"
+msgstr "დისკის დაშიფვრა"
+
+#, fuzzy
+msgid "Configuration"
+msgstr "მორგების გარეშე"
+
+msgid "Password"
+msgstr "პაროლი"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "ყველა პარამეტრი დაბრუნდება. დარწმუნებული ბრძანდებით?"
+
+msgid "Back"
+msgstr "უკან"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "დამატებითი პაკეტები"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "პროფილი"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "პროფილი"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "ინტერფეისის წაშლა"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "პროფილი"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "შეყვანილი მომხმარებლის სახელი არასწორია. კიდევ სცადეთ"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "დამატებითი პაკეტები დასაყენებლად (გამოტოვებით გამოყოფილი, გამოსატოვებლად ცარიელი დატოვეთ): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "დამატებითი პაკეტები დასაყენებლად (გამოტოვებით გამოყოფილი, გამოსატოვებლად ცარიელი დატოვეთ): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ გრაფიკის დრაივერი ან, ღია კოდის მქონე დრაივერის დასაყენებლად, ცარიელი დატოვეთ"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "მორგების გარეშე"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "პროფილი"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "მომხმარებლის დამატება"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "შეიყვანეთ მომხმარებლი სახელი (გამოსატოვებლად ცარიელი დატოვეთ): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "შეიყვანეთ მომხმარებლი სახელი (გამოსატოვებლად ცარიელი დატოვეთ): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "მომხმარებლის კონფიგურაციის შენახვა"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "შეიყვანეთ საქაღალდე, სადაც კონფიგურაცი(ებ)-ი იქნება შენახული: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "კონფიგურაციი შენახვა"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "სარკის რეგიონი"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "სარკის რეგიონი"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - მინიმალური მნიშვნელობა   : {} ( დაუშვებს {} პარალელურ გადმოწერას, დაუშვებს {} ერთდროულ გადმოწერას )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {}-მდე, ან 0, გასათიშად]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager-ის გამოყენება (აუცილებელია ინტერნეტის GNOME/KDE-დან მოსარგებად)"

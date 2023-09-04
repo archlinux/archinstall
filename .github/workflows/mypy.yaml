@@ -8,15 +8,11 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - run: pacman --noconfirm -Syu python mypy python-pip
-            - run: python -m pip install --upgrade pip
-            - run: pip install fastapi pydantic
+            - run: pip install --break-system-packages --upgrade pip
+            - run: pip install --break-system-packages fastapi pydantic
             - run: python --version
             - run: mypy --version
             # one day this will be enabled
               # run: mypy --strict --module archinstall || exit 0
             - name: run mypy
-              run: mypy --follow-imports=silent archinstall/lib/menu/abstract_menu.py archinstall/lib/menu/global_menu.py
-                archinstall/lib/models/network_configuration.py archinstall/lib/menu/list_manager.py archinstall/lib/user_interaction/network_conf.py archinstall/lib/models/users.py
-                archinstall/lib/disk/blockdevice.py archinstall/lib/user_interaction/subvolume_config.py archinstall/lib/disk/btrfs/btrfs_helpers.py
-                archinstall/lib/translationhandler.py archinstall/lib/disk/diskinfo.py archinstall/lib/menu/table_selection_menu.py archinstall/lib/hsm
-                archinstall/lib/disk/encryption.py archinstall/lib/models/disk_encryption.py
+              run: mypy --config-file pyproject.toml

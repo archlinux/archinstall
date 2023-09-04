@@ -27,8 +27,7 @@ The exceptions to PEP8 are:
 * Archinstall uses [tabs instead of spaces](https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces) simply to make it
   easier for non-IDE developers to navigate the code *(Tab display-width should be equal to 4 spaces)*. Exception to the
   rule are comments that need fine-tuned indentation for documentation purposes.
-* [Line length](https://www.python.org/dev/peps/pep-0008/#maximum-line-length) should aim for no more than 100
-  characters, but not strictly enforced.
+* [Line length](https://www.python.org/dev/peps/pep-0008/#maximum-line-length) a maximum line length is enforced via flake8 with 236 characters
 * [Line breaks before/after binary operator](https://www.python.org/dev/peps/pep-0008/#should-a-line-break-before-or-after-a-binary-operator)
   is not enforced, as long as the style of line breaks is consistent within the same code block.
 * Archinstall should always be saved with **Unix-formatted line endings** and no other platform-specific formats.
@@ -38,6 +37,16 @@ The exceptions to PEP8 are:
 
 Most of these style guidelines have been put into place after the fact *(in an attempt to clean up the code)*.<br>
 There might therefore be older code which does not follow the coding convention and the code is subject to change.
+
+## Git hooks
+
+`archinstall` ships pre-commit hooks that make it easier to run check such as `mypy` and `flake8` locally.
+The checks are listed in `.pre-commit-config.yaml` and can be installed via
+```
+pre-commit install
+```
+
+This will install the pre-commit hook and run it every time a `git commit` is executed.
 
 ## Documentation
 

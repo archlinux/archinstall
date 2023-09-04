@@ -1,0 +1,42 @@
+default_stages: ['commit']
+repos:
+  - repo: https://github.com/pycqa/autoflake
+    rev: v2.1.1
+    hooks:
+      - id: autoflake
+        args: [
+          '--in-place',
+          '--remove-all-unused-imports',
+          '--ignore-init-module-imports'
+        ]
+        files: \.py$
+        require_serial: true
+        fail_fast: true
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    # general hooks:
+    - id: check-added-large-files  # Prevent giant files from being committed
+      args: ['--maxkb=5000']
+    - id: check-merge-conflict  # Check for files that contain merge conflict strings
+    - id: check-symlinks  # Checks for symlinks which do not point to anything
+    - id: check-yaml  # Attempts to load all yaml files to verify syntax
+    - id: destroyed-symlinks  # Detects symlinks which are changed to regular files
+    - id: detect-private-key  # Checks for the existence of private keys
+    - id: end-of-file-fixer  # Makes sure files end in a newline and only a newline
+    - id: trailing-whitespace  # Trims trailing whitespace
+    # Python specific hooks:
+    - id: check-ast  # Simply check whether files parse as valid python
+    - id: check-docstring-first  # Checks for a common error of placing code before the docstring
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+    - id: flake8
+      args: [--config=.flake8]
+      fail_fast: true
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.1.1
+    hooks:
+    - id: mypy
+      args: [--config=pyproject.toml]
+      fail_fast: true

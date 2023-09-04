@@ -62,7 +62,7 @@ msgstr "Zadejte další balíčky k instalaci (oddělené mezerou, ponechte prá
 msgid "Copy ISO network configuration to installation"
 msgstr "Zkopírovat do instalace konfiguraci sítě z ISO"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
 
 msgid "Select one network interface to configure"
@@ -94,11 +94,11 @@ msgstr "Zvolte co dělat s {}"
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Zadejte požadovaný souborový systém pro oddíl"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Zadejte počáteční sektor (procenta nebo číslo bloku, výchozí: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Zadejte koncový sektor oddílu (procenta nebo číslo bloku, např. {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} obsahuje oddíly ve frontě, toto je odstraní, jste si jisti?"
@@ -786,18 +786,17 @@ msgstr "Nakonfigurováno {} rozhraní"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Tato možnost povolí specifikovaný počet paralelních stahování, která mohou nastat při instalaci"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Zadejte povolený počet paralelních stahování.\n"
-" (Zadejte hodnotu mezi 1 a {max_downloads})\n"
+" (Zadejte hodnotu mezi 1 a {})\n"
 "Poznámka:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Maximální hodnota  : {max_downloads} (Povolí {max_downloads} paralelních stahování, povolí {max_downloads+1} stahování naráz )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Maximální hodnota  : {} (Povolí {} paralelních stahování, povolí {} stahování naráz )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Minimální hodnota   : 1 (Povolí 1 paralelní stahování, povolí 2 stahování naráz)"
@@ -805,9 +804,9 @@ msgstr " - Minimální hodnota   : 1 (Povolí 1 paralelní stahování, povolí 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Zakázáno/Výchozí    : 0 (Zakáže paralelní stahování, povolí pouze 1 stahování naráz)"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {max_downloads}, nebo 0 pro vypnutí]"
+msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {}, nebo 0 pro vypnutí]"
 
 msgid "Parallel Downloads"
 msgstr "Paralelní stahování"
@@ -821,3 +820,359 @@ msgstr ""
 
 msgid "TAB to select"
 msgstr ""
+
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "Zvolte akci pro '{}'"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "Zvolte jeden nebo více pevných disků k použití a konfiguraci"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Pokud resetujete výběr disku, také tím resetujete stávající rozdělení. Přejete si pokračovat?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "Přidávání nového oddílu..."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "Smazat oddíl"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Zadejte adresář pro uložení konfigurace (konfigurací): "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Minimální kapacita pro oddíl /home: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Minimální kapacita pro oddíl s Arch Linux: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Toto je seznam před-programovaných profilů, které by mohly usnadnit instalaci věcí jako jsou desktopová prostředí"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "Aktuální rozdělení disku"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "Vytvořit nový oddíl"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "Přiřaďte přípojný bod k oddílu"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Označení/Odznačení oddílu ke zformátování (vymaže data)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "Označit/Odznačit oddíl s kompresí (jen pro btrfs)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "Smazat podsvazek"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "Smazat oddíl"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Přípojné body diskových oddílů jsou relativní uvnitř instalace, například spouštěcí bod by byl /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "Adresář není validní: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "Zadejte počáteční sektor (procenta nebo číslo bloku, výchozí: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Zadejte koncový sektor oddílu (procenta nebo číslo bloku, např. {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Šifrovací heslo"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Zvolte oddíl, který bude označen jako šifrovaný"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "Vymazat všechny vybrané disky a použít chytré výchozí rozdělení oddílů"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "Ruční konfigurace"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "Žádná konfigurace"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration"
+msgstr "Žádná konfigurace"
+
+#, fuzzy
+msgid "Password"
+msgstr "Heslo správce (root)"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} obsahuje oddíly ve frontě, toto je odstraní, jste si jisti?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "Dodatečné balíčky"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "Profil"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "Profil"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "Smazat rozhraní"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "Profil"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Zadané uživatelské jméno není platné. Zkuste to znovu"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Zadejte další balíčky k instalaci (oddělené mezerou, ponechte prázdné k přeskočení): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Zadejte další balíčky k instalaci (oddělené mezerou, ponechte prázdné k přeskočení): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Zvolte ovladač grafické karty nebo ponechte prázdné k instalaci všech open-source ovladačů"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "Žádná konfigurace"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "Profil"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Zvolte jeden nebo více pevných disků k použití a konfiguraci"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Přidat uživatele"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Zadejte uživatelské jméno (ponechte prázdné k přeskočení): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Zadejte uživatelské jméno (ponechte prázdné k přeskočení): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Zvolit rozhraní k přidání"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Zvolit rozhraní k přidání"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Uložit uživatelskou konfiguraci"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Zadejte adresář pro uložení konfigurace (konfigurací): "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Uložit konfiguraci"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Oblast zrcadla"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Oblast zrcadla"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Maximální hodnota  : {} (Povolí {} paralelních stahování, povolí {} stahování naráz )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {}, nebo 0 pro vypnutí]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"

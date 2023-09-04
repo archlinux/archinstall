@@ -1,3 +1,4 @@
+import dataclasses
 import json
 import ssl
 from typing import Dict, Any, Tuple, List
@@ -6,8 +7,8 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 from ..exceptions import PackageError, SysCallError
-from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
-from ..pacman import run_pacman
+from ..models.gen import PackageSearch, PackageSearchResult, LocalPackage
+from ..pacman import Pacman
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
@@ -105,11 +106,11 @@ def validate_package_list(packages :list) -> Tuple[list, list]:
 def installed_package(package :str) -> LocalPackage:
 	package_info = {}
 	try:
-		for line in run_pacman(f"-Q --info {package}"):
+		for line in Pacman.run(f"-Q --info {package}"):
 			if b':' in line:
 				key, value = line.decode().split(':', 1)
 				package_info[key.strip().lower().replace(' ', '_')] = value.strip()
 	except SysCallError:
 		pass
 
-	return LocalPackage(**package_info)
+	return LocalPackage({field.name: package_info.get(field.name) for field in dataclasses.fields(LocalPackage)})  # type: ignore

@@ -1,18 +1,26 @@
 import logging
 import os
 import sys
+from enum import Enum
+
 from pathlib import Path
-from typing import Dict, Union, List, Any, Callable
+from typing import Dict, Union, List, Any, Callable, Optional
+from dataclasses import asdict, is_dataclass
 
 from .storage import storage
-from dataclasses import asdict, is_dataclass
 
 
 class FormattedOutput:
 
 	@classmethod
-	def values(cls, o: Any, class_formatter: str = None, filter_list: List[str] = None) -> Dict[str, Any]:
-		""" the original values returned a dataclass as dict thru the call to some specific methods
+	def _get_values(
+		cls,
+		o: Any,
+		class_formatter: Optional[Union[str, Callable]] = None,
+		filter_list: List[str] = []
+	) -> Dict[str, Any]:
+		"""
+		the original values returned a dataclass as dict thru the call to some specific methods
 		this version allows thru the parameter class_formatter to call a dynamicly selected formatting method.
 		Can transmit a filter list to the class_formatter,
 		"""
@@ -25,9 +33,10 @@ class FormattedOutput:
 			elif hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
 				func = getattr(o, class_formatter)
 				return func(filter_list)
-		# kept as to make it backward compatible
-		elif hasattr(o, 'as_json'):
-			return o.as_json()
+
+			raise ValueError('Unsupported formatting call')
+		elif hasattr(o, 'table_data'):
+			return o.table_data()
 		elif hasattr(o, 'json'):
 			return o.json()
 		elif is_dataclass(o):
@@ -36,7 +45,13 @@ class FormattedOutput:
 			return o.__dict__
 
 	@classmethod
-	def as_table(cls, obj: List[Any], class_formatter: Union[str, Callable] = None, filter_list: List[str] = None) -> str:
+	def as_table(
+		cls,
+		obj: List[Any],
+		class_formatter: Optional[Union[str, Callable]] = None,
+		filter_list: List[str] = [],
+		capitalize: bool = False
+	) -> str:
 		""" variant of as_table (subtly different code) which has two additional parameters
 		filter which is a list of fields which will be shon
 		class_formatter a special method to format the outgoing data
@@ -45,7 +60,8 @@ class FormattedOutput:
 		is for compatibility with a print statement
 		As_table_filter can be a drop in replacement for as_table
 		"""
-		raw_data = [cls.values(o, class_formatter, filter_list) for o in obj]
+		raw_data = [cls._get_values(o, class_formatter, filter_list) for o in obj]
+
 		# determine the maximum column size
 		column_width: Dict[str, int] = {}
 		for o in raw_data:
@@ -55,14 +71,20 @@ class FormattedOutput:
 					column_width[k] = max([column_width[k], len(str(v)), len(k)])
 
 		if not filter_list:
-			filter_list = (column_width.keys())
+			filter_list = list(column_width.keys())
+
 		# create the header lines
 		output = ''
 		key_list = []
 		for key in filter_list:
 			width = column_width[key]
-			key = key.replace('!', '')
+			key = key.replace('!', '').replace('_', ' ')
+
+			if capitalize:
+				key = key.capitalize()
+
 			key_list.append(key.ljust(width))
+
 		output += ' | '.join(key_list) + '\n'
 		output += '-' * len(output) + '\n'
 
@@ -72,20 +94,40 @@ class FormattedOutput:
 			for key in filter_list:
 				width = column_width.get(key, len(key))
 				value = record.get(key, '')
+
 				if '!' in key:
 					value = '*' * width
-				if isinstance(value,(int, float)) or (isinstance(value, str) and value.isnumeric()):
+
+				if isinstance(value, (int, float)) or (isinstance(value, str) and value.isnumeric()):
 					obj_data.append(str(value).rjust(width))
 				else:
 					obj_data.append(str(value).ljust(width))
+
 			output += ' | '.join(obj_data) + '\n'
+
+		return output
+
+	@classmethod
+	def as_columns(cls, entries: List[str], cols: int) -> str:
+		"""
+		Will format a list into a given number of columns
+		"""
+		chunks = []
+		output = ''
+
+		for i in range(0, len(entries), cols):
+			chunks.append(entries[i:i + cols])
+
+		for row in chunks:
+			out_fmt = '{: <30} ' * len(row)
+			output += out_fmt.format(*row) + '\n'
 
 		return output
 
 
 class Journald:
 	@staticmethod
-	def log(message :str, level :int = logging.DEBUG) -> None:
+	def log(message: str, level: int = logging.DEBUG) -> None:
 		try:
 			import systemd.journal  # type: ignore
 		except ModuleNotFoundError:
@@ -101,16 +143,39 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-# TODO: Replace log() for session based logging.
-class SessionLogging:
-	def __init__(self):
-		pass
+def _check_log_permissions():
+	filename = storage.get('LOG_FILE', None)
+	log_dir = storage.get('LOG_PATH', Path('./'))
+
+	if not filename:
+		raise ValueError('No log file name defined')
+
+	log_file = log_dir / filename
+
+	try:
+		log_dir.mkdir(exist_ok=True, parents=True)
+		log_file.touch(exist_ok=True)
+
+		with log_file.open('a') as fp:
+			fp.write('')
+	except PermissionError:
+		# Fallback to creating the log file in the current folder
+		fallback_dir = Path('./').absolute()
+		fallback_log_file = fallback_dir / filename
+
+		fallback_log_file.touch(exist_ok=True)
+
+		storage['LOG_PATH'] = fallback_dir
+		warn(f'Not enough permission to place log file at {log_file}, creating it in {fallback_log_file} instead')
 
 
-# Found first reference here: https://stackoverflow.com/questions/7445658/how-to-detect-if-the-console-does-support-ansi-escape-codes-in-python
-# And re-used this: https://github.com/django/django/blob/master/django/core/management/color.py#L12
-def supports_color() -> bool:
+def _supports_color() -> bool:
 	"""
+	Found first reference here:
+		https://stackoverflow.com/questions/7445658/how-to-detect-if-the-console-does-support-ansi-escape-codes-in-python
+	And re-used this:
+		https://github.com/django/django/blob/master/django/core/management/color.py#L12
+
 	Return True if the running system's terminal supports color,
 	and False otherwise.
 	"""
@@ -121,13 +186,30 @@ def supports_color() -> bool:
 	return supported_platform and is_a_tty
 
 
-# Heavily influenced by: https://github.com/django/django/blob/ae8338daf34fd746771e0678081999b656177bae/django/utils/termcolors.py#L13
-# Color options here: https://askubuntu.com/questions/528928/how-to-do-underline-bold-italic-strikethrough-color-background-and-size-i
-def stylize_output(text: str, *opts :str, **kwargs) -> str:
+class Font(Enum):
+	bold = '1'
+	italic = '3'
+	underscore = '4'
+	blink = '5'
+	reverse = '7'
+	conceal = '8'
+
+
+def _stylize_output(
+	text: str,
+	fg: str,
+	bg: Optional[str],
+	reset: bool,
+	font: List[Font] = [],
+) -> str:
 	"""
+	Heavily influenced by:
+		https://github.com/django/django/blob/ae8338daf34fd746771e0678081999b656177bae/django/utils/termcolors.py#L13
+	Color options here:
+		https://askubuntu.com/questions/528928/how-to-do-underline-bold-italic-strikethrough-color-background-and-size-i
+
 	Adds styling to a text given a set of color arguments.
 	"""
-	opt_dict = {'bold': '1', 'italic': '3', 'underscore': '4', 'blink': '5', 'reverse': '7', 'conceal': '8'}
 	colors = {
 		'black' : '0',
 		'red' : '1',
@@ -145,65 +227,102 @@ def stylize_output(text: str, *opts :str, **kwargs) -> str:
 		'darkgray' : '8;5;240',
 		'lightgray' : '8;5;256'
 	}
+
 	foreground = {key: f'3{colors[key]}' for key in colors}
 	background = {key: f'4{colors[key]}' for key in colors}
-	reset = '0'
-
 	code_list = []
-	if text == '' and len(opts) == 1 and opts[0] == 'reset':
-		return '\x1b[%sm' % reset
 
-	for k, v in kwargs.items():
-		if k == 'fg':
-			code_list.append(foreground[str(v)])
-		elif k == 'bg':
-			code_list.append(background[str(v)])
+	if text == '' and reset:
+		return '\x1b[%sm' % '0'
 
-	for o in opts:
-		if o in opt_dict:
-			code_list.append(opt_dict[o])
+	code_list.append(foreground[str(fg)])
 
-	if 'noreset' not in opts:
-		text = '%s\x1b[%sm' % (text or '', reset)
+	if bg:
+		code_list.append(background[str(bg)])
 
-	return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
+	for o in font:
+		code_list.append(o.value)
+
+	ansi = ';'.join(code_list)
+
+	return f'\033[{ansi}m{text}\033[0m'
 
 
-def log(*args :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> None:
-	string = orig_string = ' '.join([str(x) for x in args])
+def info(
+	*msgs: str,
+	level: int = logging.INFO,
+	fg: str = 'white',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
+
+
+def debug(
+	*msgs: str,
+	level: int = logging.DEBUG,
+	fg: str = 'white',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
+
+
+def error(
+	*msgs: str,
+	level: int = logging.ERROR,
+	fg: str = 'red',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
+
+
+def warn(
+	*msgs: str,
+	level: int = logging.WARN,
+	fg: str = 'yellow',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
+
+
+def log(
+	*msgs: str,
+	level: int = logging.INFO,
+	fg: str = 'white',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	# leave this check here as we need to setup the logging
+	# right from the beginning when the modules are loaded
+	_check_log_permissions()
+
+	text = orig_string = ' '.join([str(x) for x in msgs])
 
 	# Attempt to colorize the output if supported
 	# Insert default colors and override with **kwargs
-	if supports_color():
-		kwargs = {'fg': 'white', **kwargs}
-		string = stylize_output(string, **kwargs)
+	if _supports_color():
+		text = _stylize_output(text, fg, bg, reset, font)
 
-	# If a logfile is defined in storage,
-	# we use that one to output everything
-	if filename := storage.get('LOG_FILE', None):
-		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
+	log_file: Path = storage['LOG_PATH'] / storage['LOG_FILE']
 
-		try:
-			Path(absolute_logfile).parents[0].mkdir(exist_ok=True, parents=True)
-			with open(absolute_logfile, 'a') as log_file:
-				log_file.write("")
-		except PermissionError:
-			# Fallback to creating the log file in the current folder
-			err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute() / filename} instead."
-			absolute_logfile = Path('./').absolute() / filename
-			absolute_logfile.parents[0].mkdir(exist_ok=True)
-			absolute_logfile = str(absolute_logfile)
-			storage['LOG_PATH'] = './'
-			log(err_string, fg="red")
+	with log_file.open('a') as fp:
+		fp.write(f"{orig_string}\n")
 
-		with open(absolute_logfile, 'a') as log_file:
-			log_file.write(f"{orig_string}\n")
+	Journald.log(text, level=level)
 
-	Journald.log(string, level=int(str(kwargs.get('level', logging.INFO))))
-
-	# Finally, print the log unless we skipped it based on level.
-	# We use sys.stdout.write()+flush() instead of print() to try and
-	# fix issue #94
-	if kwargs.get('level', logging.INFO) != logging.DEBUG or storage['arguments'].get('verbose', False):
-		sys.stdout.write(f"{string}\n")
-		sys.stdout.flush()
+	from .menu import Menu
+	if not Menu.is_menu_active():
+		# Finally, print the log unless we skipped it based on level.
+		# We use sys.stdout.write()+flush() instead of print() to try and
+		# fix issue #94
+		if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
+			sys.stdout.write(f"{text}\n")
+			sys.stdout.flush()

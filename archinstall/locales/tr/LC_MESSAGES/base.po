@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 21.05.2022\n"
 "PO-Revision-Date: 2022-05-25 17:42+0300\n"
-"Last-Translator: Abdullah Koyuncu @wiseweb-works <wisewebworks@outlook.com>\n"
+"Last-Translator: Hasan Oruc <oruch379@gmail.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -55,15 +55,15 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Sadece base, base-devel, linux, linux-firmware, efibootmgr ve tercihi profil paketleri kuruldu."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Eğer bir internet tarayıcısı arzu ediyorsanız, Firefox ya da Chromium gibi, sıra gelen ekranda belirtebilirsiniz."
+msgstr "Firefox ya da Chromium gibi bir web tarayıcısı isterseniz, sıradaki ekranda belirtebilirsiniz."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
 
 msgid "Copy ISO network configuration to installation"
-msgstr "Kuruluma ISO'dan ağ yapılandırmasını kopyala"
+msgstr "ISO Ağ yapılandırmasını kuruluma kopyala"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "NetworkManager'ı kullan (GNOME ya da KDE'de interneti grafik olarak yapılandırmak için gerekli)"
 
 msgid "Select one network interface to configure"
@@ -97,11 +97,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Disk bölümü için arzu edilen bir dosya systemi tipi girin"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Başlangıç kesimini girin (yüzde ya da blok numarası, varsayılan: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Başlangıç lokasyonunu girin (parted birimlerinde: s, GB, %, vb. ; default: {}): "
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Disk bölümünün bitiş kesimini girin (yüzde ya da blok numarası, ör: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Bitiş lokasyonunu girin (parted birimlerinde: s, GB, %, vb. ; ex: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} işlem sırasında bekleyen disk bölümleri bulunduruyor, bu onları kaldıracak, emin misiniz?"
@@ -122,13 +122,13 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Dizinden hangi disk bölümünün nereye mount (monte) edileceğini seçin"
+"Dizinden hangi disk bölümünün nereye mount edileceğini (bağlanacağını) seçin"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Disk bölümü mount (monte) noktaları iç kurulumla ilişkilidir, örnek olarak boot, /boot olacaktır."
+msgstr " * Disk bölümü mount (bağlantı) noktaları iç kurulumla ilişkilidir, örnek olarak boot, /boot olacaktır."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Disk bölümünün nereye mount (monte) edileceğini seçin (mount noktasını kaldırmak için boş bırakın): "
+msgstr "Disk bölümünün nereye mount edileceğini (bağlanacağını) seçin (mount (bağlantı) noktasını kaldırmak için boş bırakın): "
 
 msgid ""
 "{}\n"
@@ -155,7 +155,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Hangi disk bölümünün boot edilebilir olarak işaretleneceğini seçin"
+"Hangi disk bölümünün önyüklenebilir olarak işaretleneceğini seçin"
 
 msgid ""
 "{}\n"
@@ -173,7 +173,7 @@ msgid "Archinstall language"
 msgstr "Archinstall dili"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Bütün seçilmiş diskleri temizle ve elden gelen en iyi varsayılan disk bölümü düzenini kullan"
+msgstr "Bütün seçilmiş diskleri temizle ve olabilecek en iyi varsayılan disk bölümü düzenini kullan"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
 msgstr "Her bir disk ile ne yapılacağını seçin (disk bölümü kullanımı ile takip edilir)"
@@ -200,7 +200,7 @@ msgid "For the best compatibility with your Intel hardware, you may want to use 
 msgstr "Intel donanımınızla en iyi uyumluluk için, tam açık-kaynak ya da Intel ayarlarından birini kullanmak isteyebilirsiniz.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Nvidia donanımınızla en iyi uyumluluk için, Nvidia patentli sürücüyü kullanmak isteyebilirsiniz.\n"
+msgstr "Nvidia donanımınızla en iyi uyumluluk için, Nvidia sahipli sürücüyü kullanmak isteyebilirsiniz.\n"
 
 msgid ""
 "\n"
@@ -264,11 +264,12 @@ msgstr "Disk(ler)"
 msgid "Disk layout"
 msgstr "Disk şeması"
 
+# Şifreleme şifresi bana bir tık garip geldi, o yüzden parolayla değiştirdim
 msgid "Encryption password"
-msgstr "Şifreleme şifresi"
+msgstr "Şifreleme parolası"
 
 msgid "Swap"
-msgstr "Swap (değişim)"
+msgstr "Swap (takas)"
 
 msgid "Bootloader"
 msgstr "Önyükleyici"
@@ -310,7 +311,7 @@ msgid ""
 "Do you wish to continue?"
 msgstr ""
 "Sabit disk seçimini geçmeye karar verdiniz ve\n"
-"{}'e ne mount (monte) edilmişse onu kullanacaksınız (deneysel)\n"
+"{}'e ne mount edilmişse (bağlanmışsa) onu kullanacaksınız (deneysel)\n"
 "UYARI: Archinstall bu kurulumun uygunluğunu kontrol etmeyecek\n"
 "Devam etmek istiyor musunuz?"
 
@@ -327,7 +328,7 @@ msgid "Clear/Delete all partitions"
 msgstr "Bütün disk bölümlerini temizle/sil"
 
 msgid "Assign mount-point for a partition"
-msgstr "Bir disk bölümü için mount (monte) noktası ata"
+msgstr "Bir disk bölümü için mount (bağlantı) noktası ata"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
 msgstr "Bir disk bölümünü biçimlendirilmek üzere işaretle/işareti kaldır (veriyi temizler)"
@@ -336,10 +337,10 @@ msgid "Mark/Unmark a partition as encrypted"
 msgstr "Bir disk bölümünü şifrelenmiş olarak işaretle/işareti kaldır"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Bir disk bölümünü boot edilebilir olarak işaretle/işareti kaldır (/boot için otomatik)"
+msgstr "Bir disk bölümünü önyüklenebilir olarak işaretle/işareti kaldır (/boot için otomatik)"
 
 msgid "Set desired filesystem for a partition"
-msgstr "Bir disk bölümü için arzu edilen dosya sistemini ayarla"
+msgstr "Bir disk bölümü için istenilen dosya sistemini ayarla"
 
 msgid "Abort"
 msgstr "İptal et"
@@ -354,7 +355,7 @@ msgid "Timezone"
 msgstr "Zaman dilimi"
 
 msgid "Set/Modify the below options"
-msgstr "Aşağıdaki ayarları ayarla/modifiye et"
+msgstr "Aşağıdaki ayarları ayarla/değiştir"
 
 msgid "Install"
 msgstr "Kur"
@@ -370,17 +371,18 @@ msgstr "Disk bölümü şeması öner"
 msgid "Enter a password: "
 msgstr "Bir şifre girin: "
 
+# şifreleme şifresi tam olmuyor sanki, değiştirdim
 msgid "Enter a encryption password for {}"
-msgstr "{} için bir şifreleme şifresi girin"
+msgstr "{} için bir şifreleme parolası girin"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Disk şifreleme şifresi girin (şifreleme olmaması için boş bırakın): "
+msgstr "Disk şifreleme parolası girin (şifreleme olmaması için boş bırakın): "
 
 msgid "Create a required super-user with sudo privileges: "
 msgstr "Gerekli bir sudo yetkilerine sahip süper-kullanıcı oluşturun: "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "Root (kök) şifresi girin (root'u hizmet dışı bırakmak için boş bırakın): "
+msgstr "Root (kök) şifresi girin (root'u devre dışı bırakmak için boş bırakın): "
 
 msgid "Password for user \"{}\": "
 msgstr "Kullanıcı \"{}\" için şifre: "
@@ -389,7 +391,7 @@ msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "Ek paketlerin varlığı doğrulanıyor (bu bir kaç saniye alabilir)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Varsayılan zaman sunucularıyla otomatik zaman eşzamanlamasını (NTP) kullanmak ister misiniz?\n"
+msgstr "Varsayılan zaman sunucularıyla otomatik zaman eş zamanlamasını (NTP) kullanmak ister misiniz?\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
@@ -452,7 +454,7 @@ msgid "Pre-existing pacman lock never exited. Please clean up any existing pacma
 msgstr "Önceden var olan pacman kilidi çıkış yapmadı. Lütfen archinstall'ı kullanmadan once mevcut olan pacman oturumlarını temizleyin."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Hangi tercihi ek repositorylerin (depoların) aktifleştirileceğini seçin"
+msgstr "Hangi tercihi ek depoların (repositorylerin) aktifleştirileceğini seçin"
 
 msgid "Add a user"
 msgstr "Kullanıcı ekle"
@@ -461,7 +463,7 @@ msgid "Change password"
 msgstr "Şifre değiştir"
 
 msgid "Promote/Demote user"
-msgstr "Kullanıcı terfi ettir/indirge"
+msgstr "Kullanıcı terfi et/indirge"
 
 msgid "Delete User"
 msgstr "Kullanıcı Sil"
@@ -477,7 +479,7 @@ msgid "User Name : "
 msgstr "Kullanıcı Adı : "
 
 msgid "Should {} be a superuser (sudoer)?"
-msgstr "{} bir süper kullanıcı (sudoer) olmalı mı?"
+msgstr "{} bir süper kullanıcı (sudoer) mı olmalı?"
 
 msgid "Define users with sudo privilege: "
 msgstr "Sudo yetkilerine sahip kullanıcıları tanımlayın: "
@@ -486,7 +488,7 @@ msgid "No network configuration"
 msgstr "Ağ yapılandırması yok"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Btrfs disk bölümünde arzu edilen alt disk bölümülerini ayarlayın"
+msgstr "Btrfs disk bölümünde istenilen alt disk bölümülerini ayarlayın"
 
 msgid ""
 "{}\n"
@@ -525,22 +527,22 @@ msgid "Not a valid directory: {}"
 msgstr "Geçerli bir dizin değil: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "Kullandığınız şifre zayıf gözüküyor,"
+msgstr "Kullandığınız şifre zayıf görünüyor,"
 
 msgid "are you sure you want to use it?"
-msgstr "kullanmak istediğinize emin misiniz?"
+msgstr "Kullanmak istediğinize emin misiniz?"
 
 msgid "Optional repositories"
-msgstr "Tercihi \"repository\"ler (depolar)"
+msgstr "Tercihi depolar"
 
 msgid "Save configuration"
-msgstr "Yapılandırmayı kaydet"
+msgstr "Konfigürasyonu kaydet"
 
 msgid "Missing configurations:\n"
-msgstr "Eksik yapılandırmalar:\n"
+msgstr "Eksik konfigürasyon:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Root (kök) şifresi ya da en azından 1 adet süper-kullanıcı belirtilmek zorunda"
+msgstr "Kök (yönetici) şifresi ya da en azından 1 adet süper-kullanıcı belirtilmek zorunda"
 
 msgid "Manage superuser accounts: "
 msgstr "Süper-kullanıcı hesaplarını yönet: "
@@ -552,7 +554,7 @@ msgid " Subvolume :{:16}"
 msgstr " alt disk bölümü :{:16}"
 
 msgid " mounted at {:16}"
-msgstr "  {:16}'da mount (monte) edildi"
+msgstr "  {:16}'da monte edildi"
 
 msgid " with option {}"
 msgstr " {} seçeneğiyle"
@@ -562,16 +564,16 @@ msgid ""
 " Fill the desired values for a new subvolume \n"
 msgstr ""
 "\n"
-"Yeni bir alt disk bölümü için arzu edilen değerleri doldurun\n"
+"Yeni bir alt disk bölümü için istenilen değerleri doldurun\n"
 
 msgid "Subvolume name "
 msgstr "Alt disk bölümü ismi "
 
 msgid "Subvolume mountpoint"
-msgstr "Alt disk bölümü mount (monte) noktası"
+msgstr "Alt disk bölümü bağlantı noktası"
 
 msgid "Subvolume options"
-msgstr "Alt dizin bölümü seçenekleri"
+msgstr "Alt disk bölümü seçenekleri"
 
 msgid "Save"
 msgstr "Kaydet"
@@ -580,16 +582,16 @@ msgid "Subvolume name :"
 msgstr "Alt disk bölümü ismi :"
 
 msgid "Select a mount point :"
-msgstr "Bir mount (monte) noktası seçin :"
+msgstr "Bir bağlantı noktası seçin :"
 
 msgid "Select the desired subvolume options "
-msgstr "İstenilen alt dizin bölümü ayarlarını seçin "
+msgstr "İstenilen alt disk bölümü ayarlarını seçin "
 
 msgid "Define users with sudo privilege, by username: "
-msgstr "Sudo yetkilerine sahip kullanıcıları tanımlayın, kullanıcı adı ile: "
+msgstr "Süper-kullanıcı yetkilerine sahip kullanıcıları tanımlayın, kullanıcı adı ile: "
 
 msgid "[!] A log file has been created here: {}"
-msgstr "[!] Burada bir günlük (log) dosyası oluşturuldu: {}"
+msgstr "[!] Burada bir günlük dosyası oluşturuldu: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
 msgstr "BTRFS alt disk bölümlerini varsayılan yapıyla kullanmak ister misiniz?"
@@ -649,13 +651,13 @@ msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr "Bir disk bölümünü sıkıştırılmış olarak işaretle/işareti kaldır (sadece btrfs)"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Kullandığınız şifre zayıf gözüküyor, kullanmak istediğinize emin misiniz?"
+msgstr "Kullandığınız şifre zayıf görünüyor, kullanmak istediğinize emin misiniz?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Masaüstü ortamları ve otomatik hizalamalı pencere yöneticilerine bir seçenek sunar, örnek olarak gnome, kde, sway"
+msgstr "Masaüstü ortamları ve otomatik döşemeli pencere yöneticilerine bir seçenek sunar, örnek olarak gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr "Arzu ettiğiniz masaüstü ortamını seçin"
+msgstr "İstediğiniz masaüstü ortamını seçin"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
 msgstr "Arch Linux'u istediğin gibi kişiselleştirmeni sağlayan çok basit bir kurulum."
@@ -733,7 +735,7 @@ msgid "Value: "
 msgstr "Değer: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Disk seçmeyi ve disk bölümlendirmeyi geçebilir ve disk kurulumu /mnt dizininde neye mount (monte) ediliyse onu kullanabilirsiniz (deneysel)"
+msgstr "Disk seçmeyi ve disk bölümlendirmeyi geçebilir ve disk kurulumu /mnt dizininde neye mount ediliyse (bağlandıysa) onu kullanabilirsiniz (deneysel)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "Disklerden birini seçin ya da geçin ve /mnt dizinini varsayılan olarak kullanın"
@@ -758,14 +760,14 @@ msgstr "Bus(veri yolu)-tipi"
 
 #, fuzzy
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "Root (kök) şifresi ya da en azından 1 adet süper-kullanıcı belirtilmek zorunda"
+msgstr "Kök şifresi ya da en azından 1 adet süper-kullanıcı belirtilmek zorunda"
 
 #, fuzzy
 msgid "Enter username (leave blank to skip): "
 msgstr "Ek kullanıcı oluşturmak için bir kullanıcı adı girin (geçmek için boş bırakın): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr ""
+msgstr "Girdiğiniz kullanıcı adı geçersiz. Tekrar deneyin"
 
 #, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?"
@@ -776,63 +778,422 @@ msgid "Select which partitions to encrypt"
 msgstr "Hangi disk bölümünün şifrelenmiş olarak işaretleneceğini seçin"
 
 msgid "very weak"
-msgstr ""
+msgstr "çok zayıf"
 
 msgid "weak"
-msgstr ""
+msgstr "zayıf"
 
 msgid "moderate"
-msgstr ""
+msgstr "ortalama"
 
 msgid "strong"
-msgstr ""
+msgstr "güçlü"
 
 #, fuzzy
 msgid "Add subvolume"
-msgstr " alt disk bölümü :{:16}"
+msgstr "alt disk bölümü ekle :{:16}"
 
 msgid "Edit subvolume"
-msgstr ""
+msgstr "Alt disk bölümünü düzenle"
 
 #, fuzzy
 msgid "Delete subvolume"
-msgstr "Kullanıcı Sil"
+msgstr "Alt disk bölümü sil"
 
 msgid "Configured {} interfaces"
-msgstr ""
+msgstr "Yapılandırılmış {} arayüzler"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr ""
+msgstr "Bu seçenek, yükleme sırasında meydana gelebilecek paralel indirme sayısını etkinleştirir"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
+"Etkinleştirilecek paralel indirme sayısını girin.\n"
+" (1 ile {max_downloads} arasında bir değer girin)\n"
+"Not:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr "- Maksimum değer : {} ( {} paralel indirmeye izin verir, bir seferde {} indirmeye izin verir)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr "- Minimum değer : 1 ( 1 paralel indirmeye izin verir, bir seferde 2 indirmeye izin verir )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr "- Devre Dışı Bırak/Varsayılan : 0 (Paralel indirmeyi devre dışı bırakır, aynı anda yalnızca 1 indirmeye izin verir)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "Geçersiz Giriş! Geçerli bir girişle tekrar deneyin [1 - {max_downloads} veya 0 devre dışı bırakmak için]"
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Paralel İndirmeler"
 
 #, fuzzy
 msgid "ESC to skip"
-msgstr "Geçmek için ESC'yi kullanın"
+msgstr "Geçmek için ESC'ye basın"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "Sıfırlamak için CTRL+C"
 
 msgid "TAB to select"
+msgstr "Seçmek için TAB"
+
+msgid "[Default value: 0] > "
+msgstr "[Varsayılan değer: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Bu çeviriyi kullanabilmek için lütfen dili destekleyen bir yazı tipini manuel olarak yükleyin."
+
+msgid "The font should be stored as {}"
+msgstr "Yazı tipi {} olarak saklanmalıdır."
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall'ın çalışması için kök ayrıcalıkları gerekir. Daha fazla bilgi için --help'e bakın."
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "'{}' için bir eylem seçin"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Belirtilen url'den profil getirilemiyor: {}"
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Profiller benzersiz ada sahip olmalıdır, ancak yinelenen ada sahip profil tanımları bulundu: {}"
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "Kullanmak ve yapılandırmak için bir veya daha fazla sabit disk seçin"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Eğer sabit disk seçimini sıfırlarsanız bu ayrıca mevcut disk şemasını da sıfırlayacaktır. Emin misiniz?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "Disk bölümü ekleniyor…."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "Disk bölümü sil"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "/home disk bölümü için minimum kapasite: {}GiB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Arch Linux disk bölümü için minimum kapasite: {}GiB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Bu ön-programlanmış profillerin bir listesidir, bunlar masaüstü ortamları gibi şeyler kurmayı kolaylaştırabilir"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "Mevcut disk bölümü düzeni"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "Yeni eklenen tüm disk bölümleri kaldırın"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "Bir disk bölümü için monte noktası ata"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Bir disk bölümünü biçimlendirilmek üzere işaretle/işareti kaldır (verileri siler)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Önyüklenebilir olarak işaretle/işareti kaldır"
+
+msgid "Change filesystem"
+msgstr "Dosya sistemini değiştir"
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "Bir disk bölümünü sıkıştırılmış olarak işaretle/işareti kaldır (sadece btrfs)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "Alt disk bölümü ayarla"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "Disk bölümü sil"
+
+msgid "Partition"
+msgstr "Disk bölümü"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Bu disk bölümü şu anda şifrelenmiştir, biçimlendirmek için bir dosya sistemi belirtilmelidir"
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Disk bölümü mount (bağlantı) noktaları iç kurulumla ilişkilidir, örnek olarak boot, /boot olacaktır."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr "mountpoint /boot ayarlanmışsa, bölüm de önyüklenebilir olarak işaretlenecektir."
+
+msgid "Mountpoint: "
+msgstr "Bağlantı noktası: "
+
+msgid "Current free sectors on device {}:"
+msgstr "{} cihazındaki mevcut boş sektörler:"
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "Geçerli bir dizin değil: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "Başlangıç kesimini girin (yüzde ya da blok numarası, varsayılan: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Disk bölümünün bitiş kesimini girin (yüzde ya da blok numarası, ör: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Bu işlem yeni eklenmiş tüm bölümleri kaldıracaktır, devam edilsin?"
+
+msgid "Partition management: {}"
+msgstr "Bölüm yönetimi: {}"
+
+msgid "Total length: {}"
+msgstr "Toplam uzunluk: {}"
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Şifreleme parolası"
+
+msgid "Partitions"
+msgstr "Disk bölümleri"
+
+msgid "No HSM devices available"
+msgstr "Kullanılabilir HSM cihazı yok"
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Hangi disk bölümünün şifrelenmiş olarak işaretleneceğini seçin"
+
+msgid "Select disk encryption option"
+msgstr "Disk şifreleme seçeneğini seçin"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "HSM için kullanılacak bir FIDO2 cihazı seçin"
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "Bütün seçilmiş diskleri temizle ve elden gelen en iyi varsayılan disk bölümü düzenini kullan"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "Manuel yapılandırma"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "Yapılandırma yok"
+
+msgid "Unknown"
+msgstr "Bilinmeyen"
+
+msgid "Partition encryption"
+msgstr "Disk bölümü şifrelemesi"
+
+msgid " ! Formatting {} in "
+msgstr " ! {} biçimlendiriliyor "
+
+msgid "← Back"
+msgstr "← Geri"
+
+msgid "Disk encryption"
+msgstr "Disk şifrelemesi"
+
+#, fuzzy
+msgid "Configuration"
+msgstr "Konfigürasyon"
+
+#, fuzzy
+msgid "Password"
+msgstr "Şifre"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "Bütün ayarlar sıfırlanacak, emin misiniz?"
+
+msgid "Back"
+msgstr "Geri"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "Lütfen seçilen profiller için hangi karşılayıcının kurulacağını seçin: {}"
+
+msgid "Environment type: {}"
+msgstr "Ortam türü: {}"
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr "Tescilli Nvidia sürücüsü Sway tarafından desteklenmiyor. Sorunlarla karşılaşmanız muhtemeldir, bu sizin için uygun mu?"
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "İndirilmiş paketler"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "Profil ekle"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "Profil düzenle"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "Profil sil"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "Profil ismi:"
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Girdiğiniz profil adı zaten kullanılıyor. Tekrar deneyin"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "Bu profil kurulum için etkinleştirilmeli mi?"
+
+msgid "Create your own"
+msgstr "Kendinizinkini oluşturun"
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
+"\n"
+"\n"
+"Bir grafik sürücüsü seçin ya da bütün açık-kaynak sürücüleri kurmak için boş bırakın"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway'in seat'e erişmesi gerekir (klavye, fare vb. donanım aygıtlarının birleşimi)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Sway'in donanımınıza erişmesine izin vermek için bir seçenek belirleyin"
+
+msgid "Graphics driver"
+msgstr "Grafik sürücüsü"
+
+msgid "Greeter"
+msgstr "Karşılayıcı"
+
+msgid "Please chose which greeter to install"
+msgstr "Lütfen hangi karşılayıcının kurulacağını seçin"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "Bu, önceden programlanmış default_profiles listesidir"
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "Yapılandırma yok"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "Profiller"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "Yapılandırma dosyalarını kaydetmek için olası dizinler aranıyor..."
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Kullanmak ve yapılandırmak için bir veya daha fazla sabit disk seçin"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Özel indirme sunucusu ekleyin"
+
+msgid "Change custom mirror"
+msgstr "Özel indirme sunucusunu değiştirin"
+
+msgid "Delete custom mirror"
+msgstr "Özel indirme sunucusunu silin"
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "İsim girin (geçmek için boş bırakın): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "url girin (geçmek için boş bırakın): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "İmzalama kontrol opsiyonu seçin"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "İmza seçeneğini seçin"
+
+msgid "Custom mirrors"
+msgstr "Kişisel depo aynası"
+
+msgid "Defined"
+msgstr "Tanımlı"
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Kullanıcı konfigürasyonunu kaydet (Disk düzeni ile birlikte)"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin (tab ile tamamlama etkin)\n "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr "{} konfigürasyon dosya(lar)ını gösterilen konuma kaydetmek ister miydiniz?"
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "{} konfigürasyon dosyaları {} konumuna kaydediliyor"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Depo sunucusu"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Deop sunucusu bölgesi"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr "Maximum değer : {} ( {} paralel indirmelerine izin verir, Tek seferde {max_download+1} indirmeye izin verir.)"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Geçersiz girdi! Geçerli bir girdiyle tekrar deneyin [1 ila {} veya devre dışı bırakmak için 0]"
+
+msgid "Locales"
+msgstr "Yerel Ayarlar"
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager'ı kullan (GNOME ya da KDE'de interneti grafik olarak yapılandırmak için gerekli)"

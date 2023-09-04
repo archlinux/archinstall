@@ -62,7 +62,7 @@ msgstr "انسٹال کرنےکے لیے اضافی پیکجز لکھیں (ال�
 msgid "Copy ISO network configuration to installation"
 msgstr "آئی ایس او نیٹ ورک کنفیگریشن کو انسٹالیشن میں کاپی کریں"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "نیٹ ورک مینجر کا استعمال کریں (GNOME اور KDE میں انٹرنیٹ کو گرافیکلی ترتیب دینے کے لیے ضروری ہے)"
 
 msgid "Select one network interface to configure"
@@ -96,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "اسٹارٹ سیکٹر درج کریں (فیصد یا بلاک نمبر، ڈیفالٹ: {}):"
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "پارٹیشن کا آخری سیکٹر درج کریں (فیصد یا بلاک نمبر، مثال کے طور پر: {}):"
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} پارٹیشنزکے گروپ پر مشتمل ہے، یہ ان کو مٹا دے گا، کیا آپ پر اعتماد ہیں؟"
@@ -825,14 +825,13 @@ msgstr ""
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr ""
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
 msgstr ""
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
@@ -858,8 +857,358 @@ msgstr ""
 msgid "TAB to select"
 msgstr ""
 
-#~ msgid "Select disk layout"
-#~ msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "'{}' کے لیے ایک عمل منتخب کریں"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "استعمال کرنے اور کنفیگر کے لیے ایک یا زیادہ ہارڈ ڈرائیوز منتخب کریں"
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr ""
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "پارٹیشن شامل ہو رہی ہے..."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "ایک پارٹیشن کو حذف کریں"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "محفوظ کیے جانے والے کنفیگریشن کے لیے ایک ڈائرکٹری درج کریں:"
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr ""
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr ""
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "یہ پہلے سے پروگرام شدہ پروفائلز کی فہرست ہے، وہ ڈیسک ٹاپ انسٹالیشن جیسی چیزوں کو آسان بناتے ہیں"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "موجودہ پارٹیشن کی ترتیب"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "ایک نیا پارٹیشن بنائیں"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "پارٹیشن کے لیے ماؤنٹ پوائنٹ تفویض کریں"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "فارمیٹ کرنے کے لیے پارٹیشن کو مارک​​ /انمارک کریں (ڈیٹا صاف کرتا ہے)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "انکرپٹڈ کرنے کے لیے پارٹیشن کو مارک​​ /انمارک کریں"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "صارف کو حذف کریں"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "ایک پارٹیشن کو حذف کریں"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "* پارٹیشن ماؤنٹ پوائنٹس انسٹالیشن کی نسبت سے ہیں، بوٹ مثال کے طور /boot پرہوگا۔"
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "درست ڈائریکٹری نہیں ہے: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "اسٹارٹ سیکٹر درج کریں (فیصد یا بلاک نمبر، ڈیفالٹ: {}):"
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "پارٹیشن کا آخری سیکٹر درج کریں (فیصد یا بلاک نمبر، مثال کے طور پر: {}):"
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "انکرپشن پاس ورڈ سیٹ کریں"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "منتخب کریں کہ کس پارٹیشن کو انکرپٹڈ یا خفیہ رکھنا ہے"
+
+#, fuzzy
+msgid "Select disk encryption option"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "تمام منتخب ڈرائیوز کو صاف کریں اور ایک بہترین ڈیفالٹ پارٹیشن لے آؤٹ استعمال کریں"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "ترتیب کو محفوظ کریں"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "کوئی کنفیگریشن نہیں"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration"
+msgstr "کوئی کنفیگریشن نہیں"
+
+#, fuzzy
+msgid "Password"
+msgstr "روٹ پاس ورڈ"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} پارٹیشنزکے گروپ پر مشتمل ہے، یہ ان کو مٹا دے گا، کیا آپ پر اعتماد ہیں؟"
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "اضافی پیکجز"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "پروفائل"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "پروفائل"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "صارف کو حذف کریں"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "پروفائل"
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr ""
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "انسٹال کرنےکے لیے اضافی پیکجز لکھیں (الگ الگ لیکھیں، نہیں کی صورت میں خالی چھوڑیں):"
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "انسٹال کرنےکے لیے اضافی پیکجز لکھیں (الگ الگ لیکھیں، نہیں کی صورت میں خالی چھوڑیں):"
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"\n"
+"ایک گرافکس ڈرائیور منتخب کریں یا تمام اوپن سورس ڈرائیورز کو انسٹال کرنے کے لیے خالی چھوڑ دیں"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "کوئی کنفیگریشن نہیں"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "پروفائل"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "استعمال کرنے اور کنفیگر کے لیے ایک یا زیادہ ہارڈ ڈرائیوز منتخب کریں"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "ایک صارف شامل کریں"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "ایک اضافی صارف بنانے کے لیے صارف نام درج کریں (چھوڑنے کے لیے خالی چھوڑیں):"
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "ایک اضافی صارف بنانے کے لیے صارف نام درج کریں (چھوڑنے کے لیے خالی چھوڑیں):"
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "صارف کنفیگریشن کو محفوظ کریں"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "محفوظ کیے جانے والے کنفیگریشن کے لیے ایک ڈائرکٹری درج کریں:"
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "ترتیب کو محفوظ کریں"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "متبادل علاقہ"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "متبادل علاقہ"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr ""
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "نیٹ ورک مینجر کا استعمال کریں (GNOME اور KDE میں انٹرنیٹ کو گرافیکلی ترتیب دینے کے لیے ضروری ہے)"
 
 #~ msgid "Add :"
 #~ msgstr "شامل:"

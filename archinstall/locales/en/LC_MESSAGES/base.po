@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.3\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr ""
@@ -62,7 +62,7 @@ msgstr ""
 msgid "Copy ISO network configuration to installation"
 msgstr ""
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr ""
 
 msgid "Select one network interface to configure"
@@ -94,10 +94,10 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr ""
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
 msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
@@ -747,14 +747,13 @@ msgstr ""
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr ""
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
 msgstr ""
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
@@ -777,4 +776,305 @@ msgid "CTRL+C to reset"
 msgstr ""
 
 msgid "TAB to select"
+msgstr ""
+
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+msgid "Select an execution mode"
+msgstr ""
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+msgid "Select one or more devices to use and configure"
+msgstr ""
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr ""
+
+msgid "Existing Partitions"
+msgstr ""
+
+msgid "Select a partitioning option"
+msgstr ""
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr ""
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr ""
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr ""
+
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr ""
+
+msgid "Current profile selection"
+msgstr ""
+
+msgid "Remove all newly added partitions"
+msgstr ""
+
+msgid "Assign mountpoint"
+msgstr ""
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr ""
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+msgid "Mark/Unmark as compressed"
+msgstr ""
+
+msgid "Set subvolumes"
+msgstr ""
+
+msgid "Delete partition"
+msgstr ""
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr ""
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+msgid "Total sectors: {}"
+msgstr ""
+
+msgid "Enter the start sector (default: {}): "
+msgstr ""
+
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr ""
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+msgid "Encryption type"
+msgstr ""
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+msgid "Partitions to be encrypted"
+msgstr ""
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+msgid "Use a best-effort default partition layout"
+msgstr ""
+
+msgid "Manual Partitioning"
+msgstr ""
+
+msgid "Pre-mounted configuration"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "All settings will be reset, are you sure?"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+msgid "Installed packages"
+msgstr ""
+
+msgid "Add profile"
+msgstr ""
+
+msgid "Edit profile"
+msgstr ""
+
+msgid "Delete profile"
+msgstr ""
+
+msgid "Profile name: "
+msgstr ""
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr ""
+
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr ""
+
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr ""
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+msgid "Disk configuration"
+msgstr ""
+
+msgid "Profiles"
+msgstr ""
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr ""
+
+msgid "Add a custom mirror"
+msgstr ""
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+msgid "Enter name (leave blank to skip): "
+msgstr ""
+
+msgid "Enter url (leave blank to skip): "
+msgstr ""
+
+msgid "Select signature check option"
+msgstr ""
+
+msgid "Select signature option"
+msgstr ""
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+msgid "Save user configuration (including disk layout)"
+msgstr ""
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+msgid "Saving {} configuration files to {}"
+msgstr ""
+
+msgid "Mirrors"
+msgstr ""
+
+msgid "Mirror regions"
+msgstr ""
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr ""
+
+msgid "Locales"
+msgstr ""
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr ""

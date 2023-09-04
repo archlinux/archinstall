@@ -29,7 +29,7 @@ To start the installer, run the following in the latest Arch Linux ISO:
 .. code-block:: sh
 
     archinstall --script guided
-    
+
 | The ``--script guided`` argument is optional as it's the default behavior.
 | But this will use our most guided installation and if you skip all the option steps it will install a minimal Arch Linux experience.
 
@@ -49,11 +49,11 @@ There are three different configuration files, all of which are optional.
 .. note::
     You can always get the latest options with ``archinstall --dry-run``, but edit the following json according to your needs.
     Save the configuration as a ``.json`` file. Archinstall can source it via a local or remote path (URL)
-    
+
 .. code-block:: json
 
     {
-        "audio": "pipewire",
+        "audio_config": {"audio": "pipewire"},
         "bootloader": "systemd-bootctl",
         "custom-commands": [
             "cd /home/devel; git clone https://aur.archlinux.org/paru.git",
@@ -72,8 +72,8 @@ There are three different configuration files, all of which are optional.
         ],
         "keyboard-language": "us",
         "mirror-region": "Worldwide",
-        "nic": {
-            "type": "NM"
+        "network_config": {
+            "type": "nm"
         },
         "ntp": true,
         "packages": ["docker", "git", "wget", "zsh"],
@@ -115,9 +115,9 @@ Options for ``--config``
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
 | hostname             | any                                                    | Hostname of machine after installation. Default will be ``archinstall``                     | No                                            |
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| kernels              | [ "kernel1", "kernel2"]                                | List of kernels to install eg: linux, linux-lts, linux-zen  etc                             | At least 1                                     |
+| kernels              | [ "kernel1", "kernel2"]                                | List of kernels to install eg: linux, linux-lts, linux-zen  etc                             | At least 1                                    |
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| keyboard-language    | Any valid layout given by ``localectl list-keymaps``   | eg: ``us``, ``de`` or ``de-latin1`` etc. Defaults to ``us``                                 | No                                            |
+| keyboard-layout      | Any valid layout given by ``localectl list-keymaps``   | eg: ``us``, ``de`` or ``de-latin1`` etc. Defaults to ``us``                                 | No                                            |
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
 | mirror-region        | | {"<Region Name>": { "Mirror URL": True/False}, ..}   | | Defaults to automatic selection.                                                          | No                                            |
 |                      | | "Worldwide" or "Sweden"                              | | Either takes a dictionary structure of region and a given set of mirrors.                 |                                               |
