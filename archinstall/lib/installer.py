@@ -972,6 +972,8 @@ When = PostTransaction
 Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
 			""")
 		else:
+			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+
 			try:
 				# The `limine.sys` file, contains stage 3 code.
 				cmd = f'/usr/bin/arch-chroot' \
@@ -987,7 +989,7 @@ Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
 					f' {self.target}' \
 					f' limine' \
 					f' bios-install' \
-					f' {boot_partition.dev_path}'
+					f' {parent_dev_path}'
 
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
