@@ -887,18 +887,13 @@ class Installer:
 				except SysCallError as err:
 					raise DiskError(f"Could not install GRUB to {self.target}{boot_partition.mountpoint}: {err}")
 		else:
-			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
-
-			if not device:
-				raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
-
 			try:
 				cmd = f'/usr/bin/arch-chroot' \
 					f' {self.target}' \
 					f' grub-install' \
 					f' --debug' \
 					f' --target=i386-pc' \
-					f' --recheck {device.device_info.path}'
+					f' --recheck {boot_partition.dev_path}'
 
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
@@ -923,10 +918,6 @@ class Installer:
 		#      partition before the format.
 		root_uuid = get_lsblk_info(root_partition.safe_dev_path).uuid
 
-		device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
-		if not device:
-			raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
-
 		def create_pacman_hook(contents: str):
 			HOOK_DIR = "/etc/pacman.d/hooks"
 			SysCommand(f"/usr/bin/arch-chroot {self.target} mkdir -p {HOOK_DIR}")
@@ -940,6 +931,8 @@ class Installer:
 					f' cp' \
 					f' /usr/share/limine/BOOTX64.EFI' \
 					f' /boot/EFI/BOOT/'
+
+				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
 				raise DiskError(f"Failed to install Limine BOOTX64.EFI on {boot_partition.dev_path}: {err}")
 
@@ -972,7 +965,7 @@ Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
 					f' {self.target}' \
 					f' limine' \
 					f' bios-install' \
-					f' {device.device_info.path}'
+					f' {boot_partition.dev_path}'
 
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
@@ -1062,13 +1055,8 @@ TIMEOUT=5
 				debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
 				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
 
-			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
-
-			if not device:
-				raise ValueError(f'Unable to find block device: {boot_partition.safe_dev_path}')
-
 			cmd = f'efibootmgr ' \
-				f'--disk {device.device_info.path} ' \
+				f'--disk {boot_partition.dev_path} ' \
 				f'--part {boot_partition.safe_dev_path} ' \
 				f'--create ' \
 				f'--label "{label}" ' \
