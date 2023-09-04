@@ -1,10 +1,15 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
 "Last-Translator: andrewKode iancu.andrei312@gmail.com\n"
+"Language-Team: \n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.3.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Un fișier jurnal a fost creat aici: {}"
@@ -119,10 +124,10 @@ msgstr ""
 "Selectați pe baza indexului partițiile pentru a fi montate și locația"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Punctele de montare ale partițiilor sunt relevante pentru instalate, de exemplu partiția boot va fi /boot"
+msgstr " * Punctele de montare ale partițiilor sunt relevante pentru instalate, de exemplu partiția boot va fi /boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Selectați locul de montare a partiției (lăsați gol pentru a șterge punctul de montare)"
+msgstr "Selectați locul de montare a partiției (lăsați gol pentru a șterge punctul de montare): "
 
 msgid ""
 "{}\n"
@@ -185,10 +190,10 @@ msgid "Select one of the regions to download packages from"
 msgstr "Selectați regiunea pentru care se vor descărca pachetele"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr "Selectați unul sau mai multe discuri dure pentru a fi utilizate și configurate "
+msgstr "Selectați unul sau mai multe discuri dure pentru a fi utilizate și configurate"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Pentru cea mai bună compatibilitate cu hardware-ul dumneavoastră AMD ați putea folosi fie opțiunea All Open-Source sau AMD / ATI"
+msgstr "Pentru cea mai bună compatibilitate cu hardware-ul dumneavoastră AMD ați putea folosi fie opțiunea All Open-Source sau AMD / ATI."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
 msgstr "Pentru cea mai bună compatibilitate cu hardware-ul dumneavoastră Intel ați putea folosi fie opțiunea All Open-Source sau Intel.\n"
@@ -230,10 +235,10 @@ msgid "You need to enter a valid fs-type in order to continue. See `man parted` 
 msgstr "Trebuie să introduceți un tip de fișiere de sistem valid pentru a continua. Vedeți 'man parted' pentru tipurile de fișiere de sistem disponibile."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Eroare: Listare profiluri pe URL \"{}\" rezultate în: "
+msgstr "Eroare: Listare profiluri pe URL \"{}\" rezultate în:"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr "Eroare: Nu s-a putut decoda rezultatul \"{}\" ca un JSON: "
+msgstr "Eroare: Nu s-a putut decoda rezultatul \"{}\" ca un JSON:"
 
 msgid "Keyboard layout"
 msgstr "Aranjament tastatură"
@@ -368,10 +373,10 @@ msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "Introduceți parola de criptare a discului (lăsați liber pentru a evita criptarea): "
 
 msgid "Create a required super-user with sudo privileges: "
-msgstr "Crează un utilizator cu privilegii (root)"
+msgstr "Crează un utilizator cu privilegii (root): "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "Introuceți parola pentru root (lăsați liber pentru a dezactiva utilizatorul root)"
+msgstr "Introuceți parola pentru root (lăsați liber pentru a dezactiva utilizatorul root): "
 
 msgid "Password for user \"{}\": "
 msgstr "Parola pentru utilizatorul \"{}\": "
@@ -434,7 +439,7 @@ msgid ""
 "This is your chosen configuration:"
 msgstr ""
 "\n"
-"Aceasta este configurația selectată de către dumneavoastră."
+"Aceasta este configurația selectată de către dumneavoastră:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
 msgstr "Pacman rulează deja, aștept maxim 10 minute pentru a termina."
@@ -516,7 +521,7 @@ msgid "Not a valid directory: {}"
 msgstr "Nu este un director valid: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "Parola pe care doriți să o folosiți pare să fie slabă."
+msgstr "Parola pe care doriți să o folosiți pare să fie slabă,"
 
 msgid "are you sure you want to use it?"
 msgstr "sigur doriți să o folosiți?"
@@ -531,7 +536,7 @@ msgid "Missing configurations:\n"
 msgstr "Configurații lipsă:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Este necesar ca parola pentru utilizatorul root sau măcar un utilizator cu privilegii să fie adăugat."
+msgstr "Este necesar ca parola pentru utilizatorul root sau măcar un utilizator cu privilegii să fie adăugat"
 
 msgid "Manage superuser accounts: "
 msgstr "Administrează conturile pentru utilizatorii cu privilegii: "
@@ -540,7 +545,7 @@ msgid "Manage ordinary user accounts: "
 msgstr "Adminstrează conturile pentru utilizatorii obișnuiți: "
 
 msgid " Subvolume :{:16}"
-msgstr "Subvolum :{:16}"
+msgstr " Subvolum :{:16}"
 
 msgid " mounted at {:16}"
 msgstr " montat la {:16}"
@@ -655,7 +660,7 @@ msgid "Provides a selection of various server packages to install and enable, e.
 msgstr "Oferă o selecție de diferite pachete de sistem pentru instalare și activare precum httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Alegeți serverele dorite pentru instalare, dacă nu este selectat niciunul se va realiza o instalare minimală."
+msgstr "Alegeți serverele dorite pentru instalare, dacă nu este selectat niciunul se va realiza o instalare minimală"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Instalează un sistem minimal împreună cu xorg și driverele grafice."
@@ -729,7 +734,7 @@ msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "Selectați unul din discuri sau ignorați și folosiți /mnt ca predefinit"
 
 msgid "Select which partitions to mark for formatting:"
-msgstr "Selectați partițiile pentru a fi marcate pentru formatare: "
+msgstr "Selectați partițiile pentru a fi marcate pentru formatare:"
 
 msgid "Use HSM to unlock encrypted drive"
 msgstr "Folosiți HSM pentru deblocarea dispozitivului criptat"
@@ -744,7 +749,7 @@ msgid "Free space"
 msgstr "Spațiu liber"
 
 msgid "Bus-type"
-msgstr "tip magistrală"
+msgstr "Tip magistrală"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
 msgstr "O parolă pentru utilizatorul root sau măcar un utilizator cu privilegii sudo trebuie adăugat"
@@ -753,7 +758,7 @@ msgid "Enter username (leave blank to skip): "
 msgstr "Introduceți numele de utilizator (lăsați gol pentru a ignora): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr "Numele de utilizator adăugat este invalid. Încercați din nou!"
+msgstr "Numele de utilizator adăugat este invalid. Încercați din nou"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Ar trebui ca \"{}\" să fie un utilizator cu privilegii (sudo)?"
@@ -824,7 +829,7 @@ msgid "TAB to select"
 msgstr "TAB pentru a selecta"
 
 msgid "[Default value: 0] > "
-msgstr "[Valoare predefinită: 0] >"
+msgstr "[Valoare predefinită: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
 msgstr "Pentru a putea folosi această traducere, vă rog să instalați  manual un font compatibil cu această limbă."
@@ -832,7 +837,6 @@ msgstr "Pentru a putea folosi această traducere, vă rog să instalați  manual
 msgid "The font should be stored as {}"
 msgstr "Fontul ar trebui salvat ca {}"
 
-#, fuzzy
 msgid "Encryption type"
 msgstr "Tipul de criptare"
 
@@ -842,7 +846,6 @@ msgstr "Partiții"
 msgid "No HSM devices available"
 msgstr "Nicun dispozitiv HSM disponibil"
 
-#, fuzzy
 msgid "Partitions to be encrypted"
 msgstr "Selectați partițiile pentru criptare"
 
@@ -852,7 +855,6 @@ msgstr "Selectați opțiunea pentru criptarea discului"
 msgid "Select a FIDO2 device to use for HSM"
 msgstr "Selectați utilizarea unui device FID02 pentru HSM"
 
-#, fuzzy
 msgid "All settings will be reset, are you sure?"
 msgstr "{} conține partiții în așteptare, acest proces le va șterge, doriți acest lucru?"
 
@@ -862,9 +864,8 @@ msgstr "Înapoi"
 msgid "Disk encryption"
 msgstr "Criptarea discului"
 
-#, fuzzy
 msgid "Password"
-msgstr "Parola pentru root"
+msgstr "Parola"
 
 msgid "Partition encryption"
 msgstr "Criptare partiție"
