@@ -62,7 +62,7 @@ msgstr "Scrieți pachete adiționale pe care doriți să le instalați(separare 
 msgid "Copy ISO network configuration to installation"
 msgstr "Copiați configurarea ISO prin rețea la instalare"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "Folosiți NetworkManager (necesar pentru configurarea setărilor de rețea într-un mod grafic pentru GNOME și KDE)"
 
 msgid "Select one network interface to configure"
@@ -96,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Introduceți un sistem de fișiere dorit pentru partiția"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
 msgstr "Introduceți sectorul de început (procentaj sau numărul block-ului, predefinit: {}): "
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Introduceți sectorul de final pentru partiționare (procentaj sau numărul block-ului, ex: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Introduceți locația finală (în unități de partiționare: s, GB, %, etc. ; ex: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} conține partiții în așteptare, acest proces le va șterge, doriți acest lucru?"
@@ -793,18 +793,17 @@ msgstr "Configurează interfața {}"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Această opținea setează numărul de descărcări paralele care pot avea loc în timpul instalării"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Introduceți numărul de descărcări simultane pentru a fi activat.\n"
 " (Introduceți o valuare între 1 și {max_downloads})\n"
 "Info:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Valoare maximă  : {max_downloads} ( Permite {max_downloads} descărcări simultane, permite {max_downloads+1} descărcări în același timp )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Valoare minimă   : 1 ( Permite o descărcare simultană, permite 2 descărcări simultane )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Valoare minimă  : 1 ( Permite o descărcare simultană, permite 2 descărcări simultane )"
@@ -837,6 +836,105 @@ msgstr "Pentru a putea folosi această traducere, vă rog să instalați  manual
 msgid "The font should be stored as {}"
 msgstr "Fontul ar trebui salvat ca {}"
 
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall necesită privilegii avansate pentru execuție. Vedeți --help pentru mai multe."
+
+msgid "Select an execution mode"
+msgstr "Selectați un mod de execuție"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Nu se poate prelua profilul de la URL-ul specificat: {}"
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Profilurile trebuie să aibă nume unicate, dar definiții de profil cu nume duplicate au fost găsite: {}"
+
+msgid "Select one or more devices to use and configure"
+msgstr "Selectați unul sau mai multe discuri dure pentru a fi utilizate și configurate"
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Dacă resetați selecția de discuri de stocare acest lucru va rezulta în resetarea schemei de partiționare existente a discului. Sigur doriți acest lucru?"
+
+msgid "Existing Partitions"
+msgstr "Partiții Existente"
+
+msgid "Select a partitioning option"
+msgstr "Selectați o opțiune de partiționare"
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Introduceți directorul rădăcină a dispozitivelor montate: "
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Capacitatea minimă pentru partiția /home: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Capacitatea minimă pentru partiția Arch Linux: {}GB"
+
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Aceasta este o listă de profiluri pre-programate \"profiluris_bck\", ar putea să ușureze instalarea unor lucruri precum spațiile de lucru"
+
+msgid "Current profile selection"
+msgstr "Selecția curentă a profilului"
+
+msgid "Remove all newly added partitions"
+msgstr "Șterge toate partițiile noi adăugate"
+
+msgid "Assign mountpoint"
+msgstr "Asignează punctul de montare"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Marchează/Demarchează pentru formatare (șterge toate datele)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Marchează/Demarchează ca bootabil"
+
+msgid "Change filesystem"
+msgstr "Schimbă sistemul de fișiere"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Marchează/Demarchează ca comprimat"
+
+msgid "Set subvolumes"
+msgstr "Setează subvolumele"
+
+msgid "Delete partition"
+msgstr "Șterge partiția"
+
+msgid "Partition"
+msgstr "Partiție"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Partiția curentă este criptată, pentru a fi formatată un sistem de fișiere trebuie specificat"
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Punctele de montare ale partițiilor sunt relevante pentru instalate, de exemplu partiția boot va fi /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr "Dacă punctul de montare /boot este setat, atunci partiția va fi marcată ca fiind bootabilă."
+
+msgid "Mountpoint: "
+msgstr "Punct de montare: "
+
+msgid "Current free sectors on device {}:"
+msgstr "Sectoarele libere curente de pe dispozitiv {}:"
+
+msgid "Total sectors: {}"
+msgstr "Toate sectoarele: {}"
+
+msgid "Enter the start sector (default: {}): "
+msgstr "Introduceți sectorul de început (predefinit: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Introduceți sectorul de final pentru partiționare (procentaj sau numărul block-ului, predefinit: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Această acțiune va șterge toate partițiile noi adăugate, continuați?"
+
+msgid "Partition management: {}"
+msgstr "Managementul partiției: {}"
+
+msgid "Total length: {}"
+msgstr "Lungime totală: {}"
+
 msgid "Encryption type"
 msgstr "Tipul de criptare"
 
@@ -855,17 +953,239 @@ msgstr "Selectați opțiunea pentru criptarea discului"
 msgid "Select a FIDO2 device to use for HSM"
 msgstr "Selectați utilizarea unui device FID02 pentru HSM"
 
+msgid "Use a best-effort default partition layout"
+msgstr "Folosește cea mai bună configurație de partiționare"
+
+msgid "Manual Partitioning"
+msgstr "Partiționare manuală"
+
+msgid "Pre-mounted configuration"
+msgstr "Configurație pre-montată"
+
+msgid "Unknown"
+msgstr "Neștiut"
+
+msgid "Partition encryption"
+msgstr "Criptare partiție"
+
+msgid " ! Formatting {} in "
+msgstr " ! Se formatează {} in "
+
+msgid "← Back"
+msgstr "← Înapoi"
+
+msgid "Disk encryption"
+msgstr "Criptarea discului"
+
+msgid "Configuration"
+msgstr "Configurație"
+
+msgid "Password"
+msgstr "Parola"
+
 msgid "All settings will be reset, are you sure?"
 msgstr "{} conține partiții în așteptare, acest proces le va șterge, doriți acest lucru?"
 
 msgid "Back"
 msgstr "Înapoi"
 
-msgid "Disk encryption"
-msgstr "Criptarea discului"
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "Vă rog selectați un manager de afișare pentru profilurile selectate: {}"
 
-msgid "Password"
-msgstr "Parola"
+msgid "Environment type: {}"
+msgstr "Tip mediu: {}"
 
-msgid "Partition encryption"
-msgstr "Criptare partiție"
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr "Driverul proprietar Nvidia nu este compatibil cu Sway. Se poate să aveți probleme, sunteți ok cu asta?"
+
+msgid "Installed packages"
+msgstr "Pachete instalate"
+
+msgid "Add profile"
+msgstr "Adaugă profil"
+
+msgid "Edit profile"
+msgstr "Editează profil"
+
+msgid "Delete profile"
+msgstr "Șterge profil"
+
+msgid "Profile name: "
+msgstr "Nume profil: "
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Numele de utilizator adăugat este invalid. Încercați din nou"
+
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Pachetele care se instalează cu acest profil (separare prin spațiu, lăsați liber pentru a ignora): "
+
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Serviciile activate cu acest profil (separare prin spațiu, lăsați liber pentru a ignora): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "Ar trebui ca acest profil să fie bifat pentru instalare?"
+
+msgid "Create your own"
+msgstr "Crează-ți propriul tău"
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"Selectați un driver grafic sau lăsați liber pentru a instala toate driverele open-source"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+msgid "Graphics driver"
+msgstr "Driver grafic"
+
+msgid "Greeter"
+msgstr "Manager afișare"
+
+msgid "Please chose which greeter to install"
+msgstr "Vă rog selectați managerul de afișare pentru instalare"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "Aceasta este o listă cu profiluri pre-programate"
+
+msgid "Disk configuration"
+msgstr "Configurație disc"
+
+msgid "Profiles"
+msgstr "Profiluri"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "Caut directoare pentru salvarea fișierelor de configurare ..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Selectați directorul (sau directoarele), pentru salvarea fișierelor de configurare"
+
+msgid "Add a custom mirror"
+msgstr "Adaugă o oglindă customizată"
+
+msgid "Change custom mirror"
+msgstr "Schimbă oglinda customizată"
+
+msgid "Delete custom mirror"
+msgstr "Șterge oglinda customizată"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "Introduceți numele (lăsați gol pentru a ignora): "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "Introduceți URL (lăsați gol pentru a ignora): "
+
+msgid "Select signature check option"
+msgstr "Selectați opțiunea pentru verificarea semnăturii"
+
+msgid "Select signature option"
+msgstr "Selectați opțiunea pentru semnătură"
+
+msgid "Custom mirrors"
+msgstr "Oglinzi customizate"
+
+msgid "Defined"
+msgstr "Definit"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Salvează configurația utilizatorului (schema discului este inclusă)"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+"Introduceți un director pentru salvarea configurării (configurațiilor, completare automată cu Tab activată)\n"
+"Directorul pentru salvare: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"Doriți să salvați fișierele de configurare {} în această locație?\n"
+"\n"
+"{]"
+
+msgid "Saving {} configuration files to {}"
+msgstr "Salvez {} fișierele de configurație la {}"
+
+msgid "Mirrors"
+msgstr "Oglinzi"
+
+msgid "Mirror regions"
+msgstr "Regiuni oglinzi"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Valoare maximă  : {} ( Permite {} descărcări simultane, permite {max_downloads+1} descărcări în același timp )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Input invalid! Încercați din nou cu un input valid [1 la {}, sau 0 pentru dezactivare]"
+
+msgid "Locales"
+msgstr "Locale"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Folosiți NetworkManager (necesar pentru configurarea setărilor de rețea într-un mod grafic pentru GNOME și KDE)"
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Această opțiune setează numărul de descărcări paralele care pot avea loc în timpul instalării"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Introduceți numărul de descărcări simultane pentru a fi activat.\n"
+"\n"
+"Notă:\n"
+
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Valoare minimă  : {} ( Permite {} descărcări simultane în același timp )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Dezactivează/Predefinit: 0 (Dezactivează descărcările simultane, permite o singură descărcare în același timp )\n"
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Input invalid! Încercați din nou cu un input valid [0 pentru dezactivare]"
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Configurație invalidă: {error}"
+
+msgid "Total: {} / {}"
+msgstr "Total: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr "Toate valorile introduse pot fi notate cu unități precum: B, KB, KiB, MB, MiB ..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Dacă nicio unitate nu este specificate, atunci valorile vor fi interpretate ca sectoare"
+
+msgid "Enter start (default: sector {}): "
+msgstr "Introduceți start (predefinit: sector {}): "
+
+msgid "Enter end (default: {}): "
+msgstr "Introduceți final (predefinit: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "Nu se pot identifica dispozitive de tip fido2. Este libfido2 instalată?"
+
+msgid "Path"
+msgstr "Cale"
+
+msgid "Manufacturer"
+msgstr "Producător"
+
+msgid "Product"
+msgstr "Produs"
