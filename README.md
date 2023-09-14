@@ -208,11 +208,11 @@ you can replace the version of archinstall with a new version and run that with 
 1. You need a working network connection
 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
    *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
-3. Uninstall the previous version of archinstall with `pip uninstall archinstall`
+3. Uninstall the previous version of archinstall with `pip uninstall --break-system-packages archinstall`
 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
 5. Enter the repository with `cd archinstall`
    *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
-6. Build the project and install it using `pip install --break-operating-system .`
+6. Build the project and install it using `pip install --break-system-packages .`
 
 After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
 
