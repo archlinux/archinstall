@@ -20,6 +20,7 @@ from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
 from ..output import debug, error
 from ..storage import storage
+from ..output import info
 
 if TYPE_CHECKING:
 	_: Any
@@ -509,13 +510,15 @@ class BDevice:
 class PartitionType(Enum):
 	Boot = 'boot'
 	Primary = 'primary'
+	_Unknown = 'unknown'
 
 	@classmethod
 	def get_type_from_code(cls, code: int) -> PartitionType:
 		if code == parted.PARTITION_NORMAL:
 			return PartitionType.Primary
-
-		raise DiskError(f'Partition code not supported: {code}')
+		else:
+			info(f'Partition code not supported: {code}')
+			return PartitionType._Unknown
 
 	def get_partition_code(self) -> Optional[int]:
 		if self == PartitionType.Primary:
@@ -659,9 +662,9 @@ class PartitionModification:
 		if partition_info.btrfs_subvol_infos:
 			mountpoint = None
 			subvol_mods = []
-			for info in partition_info.btrfs_subvol_infos:
+			for i in partition_info.btrfs_subvol_infos:
 				subvol_mods.append(
-					SubvolumeModification.from_existing_subvol_info(info)
+					SubvolumeModification.from_existing_subvol_info(i)
 				)
 		else:
 			mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
