@@ -112,7 +112,7 @@ Therefore, Archinstall will try its best to not introduce any breaking changes e
 
 There are some examples in the `examples/` directory that should serve as a starting point.
 
-The following is a small example of how to script your own *interative* installation:
+The following is a small example of how to script your own *interactive* installation:
 
 ```python
 from pathlib import Path
