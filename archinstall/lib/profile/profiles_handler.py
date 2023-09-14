@@ -182,6 +182,9 @@ class ProfileHandler:
 			case GreeterType.Gdm:
 				packages = ['gdm']
 				service = ['gdm']
+			case GreeterType.Ly:
+				packages = ['ly']
+				service = ['ly']
 
 		if packages:
 			install_session.add_additional_packages(packages)
