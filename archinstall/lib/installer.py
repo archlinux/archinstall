@@ -600,7 +600,7 @@ class Installer:
 
 					if part in self._disk_encryption.partitions:
 						if self._disk_encryption.hsm_device:
-							# Required bby mkinitcpio to add support for fido2-device options
+							# Required by mkinitcpio to add support for fido2-device options
 							self.pacman.strap('libfido2')
 
 							if 'sd-encrypt' not in self._hooks:
