@@ -600,7 +600,7 @@ class Installer:
 
 					if part in self._disk_encryption.partitions:
 						if self._disk_encryption.hsm_device:
-							# Required bby mkinitcpio to add support for fido2-device options
+							# Required by mkinitcpio to add support for fido2-device options
 							self.pacman.strap('libfido2')
 
 							if 'sd-encrypt' not in self._hooks:
@@ -880,20 +880,27 @@ class Installer:
 
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
+			cmd = str(
+				f'/usr/bin/arch-chroot {self.target} grub-install '
+				f'--debug '
+				f'--target=x86_64-efi '
+				f'--efi-directory={efi_partition.mountpoint} '
+				f'{f"--boot-directory={boot_partition.mountpoint} " if boot_partition else ""}'
+				f'--bootloader-id=GRUB '
+				f'--removable'
+			)
+
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={efi_partition.mountpoint} {f'--boot-directory={boot_partition.mountpoint}' if boot_partition} --bootloader-id=GRUB --removable', peek_output=True)
+				SysCommand(cmd, peek_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={efi_partition.mountpoint} {f'--boot-directory={boot_partition.mountpoint}' if boot_partition} --bootloader-id=GRUB --removable', peek_output=True)
+					SysCommand(cmd, peek_output=True)
 				except SysCallError as err:
 					raise DiskError(f"Could not install GRUB to {self.target}{efi_partition.mountpoint}: {err}")
 		else:
 			info(f"GRUB boot partition: {boot_partition.dev_path}")
 
-			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
-
-			if not device:
-				raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
+			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
 			try:
 				cmd = f'/usr/bin/arch-chroot' \
@@ -901,17 +908,17 @@ class Installer:
 					f' grub-install' \
 					f' --debug' \
 					f' --target=i386-pc' \
-					f' --recheck {device.device_info.path}'
+					f' --recheck {parent_dev_path}'
 
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
 				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {err}")
 
 		try:
-			if boot_partition != None:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o {boot_partition.mountpoint}/grub/grub.cfg')
-			else:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
+			SysCommand(
+				f'/usr/bin/arch-chroot {self.target} '
+				f'grub-mkconfig -o {boot_partition.mountpoint if boot_partition else "/boot"}/grub/grub.cfg'
+			)
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
 
@@ -929,10 +936,6 @@ class Installer:
 		#      partition before the format.
 		root_uuid = get_lsblk_info(root_partition.safe_dev_path).uuid
 
-		device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
-		if not device:
-			raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
-
 		def create_pacman_hook(contents: str):
 			HOOK_DIR = "/etc/pacman.d/hooks"
 			SysCommand(f"/usr/bin/arch-chroot {self.target} mkdir -p {HOOK_DIR}")
@@ -946,6 +949,8 @@ class Installer:
 					f' cp' \
 					f' /usr/share/limine/BOOTX64.EFI' \
 					f' /boot/EFI/BOOT/'
+
+				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
 				raise DiskError(f"Failed to install Limine BOOTX64.EFI on {boot_partition.dev_path}: {err}")
 
@@ -963,6 +968,8 @@ When = PostTransaction
 Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
 			""")
 		else:
+			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+
 			try:
 				# The `limine.sys` file, contains stage 3 code.
 				cmd = f'/usr/bin/arch-chroot' \
@@ -978,7 +985,7 @@ Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
 					f' {self.target}' \
 					f' limine' \
 					f' bios-install' \
-					f' {device.device_info.path}'
+					f' {parent_dev_path}'
 
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
@@ -1068,13 +1075,10 @@ TIMEOUT=5
 				debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
 				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
 
-			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
-
-			if not device:
-				raise ValueError(f'Unable to find block device: {boot_partition.safe_dev_path}')
+			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
 			cmd = f'efibootmgr ' \
-				f'--disk {device.device_info.path} ' \
+				f'--disk {parent_dev_path} ' \
 				f'--part {boot_partition.safe_dev_path} ' \
 				f'--create ' \
 				f'--label "{label}" ' \
