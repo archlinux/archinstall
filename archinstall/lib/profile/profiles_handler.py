@@ -52,9 +52,9 @@ class ProfileHandler:
 
 	def parse_profile_config(self, profile_config: Dict[str, Any]) -> Optional[Profile]:
 		"""
-		Deserialize JSON configuration
+		Deserialize JSON configuration for profile
 		"""
-		profile = None
+		profile: Optional[Profile] = None
 
 		# the order of these is important, we want to
 		# load all the default_profiles from url and custom
@@ -97,29 +97,26 @@ class ProfileHandler:
 		if main := profile_config.get('main', None):
 			profile = self.get_profile_by_name(main) if main else None
 
-		valid: List[Profile] = []
+		if not profile:
+			return None
+
+		valid_sub_profiles: List[Profile] = []
+		invalid_sub_profiles: List[str] = []
 		details: List[str] = profile_config.get('details', [])
+
 		if details:
-			valid = []
-			invalid = []
-
 			for detail in filter(None, details):
-				if profile := self.get_profile_by_name(detail):
-					valid.append(profile)
+				if sub_profile := self.get_profile_by_name(detail):
+					valid_sub_profiles.append(sub_profile)
 				else:
-					invalid.append(detail)
+					invalid_sub_profiles.append(detail)
 
-			if invalid:
-				info('No profile definition found: {}'.format(', '.join(invalid)))
+			if invalid_sub_profiles:
+				info('No profile definition found: {}'.format(', '.join(invalid_sub_profiles)))
 
 		custom_settings = profile_config.get('custom_settings', {})
-		for profile in valid:
-			profile.set_custom_settings(
-				custom_settings.get(profile.name, {})
-			)
-
-		if profile is not None:
-			profile.set_current_selection(valid)
+		profile.set_custom_settings(custom_settings)
+		profile.set_current_selection(valid_sub_profiles)
 
 		return profile
 
@@ -176,6 +173,9 @@ class ProfileHandler:
 		service = None
 
 		match greeter:
+			case GreeterType.LightdmSlick:
+				packages = ['lightdm', 'lightdm-slick-greeter']
+				service = ['lightdm']
 			case GreeterType.Lightdm:
 				packages = ['lightdm', 'lightdm-gtk-greeter']
 				service = ['lightdm']
@@ -185,11 +185,25 @@ class ProfileHandler:
 			case GreeterType.Gdm:
 				packages = ['gdm']
 				service = ['gdm']
+			case GreeterType.Ly:
+				packages = ['ly']
+				service = ['ly']
 
 		if packages:
 			install_session.add_additional_packages(packages)
 		if service:
 			install_session.enable_service(service)
+
+		# slick-greeter requires a config change
+		if greeter == GreeterType.LightdmSlick:
+			path = install_session.target.joinpath('etc/lightdm/lightdm.conf')
+			with open(path, 'r') as file:
+				filedata = file.read()
+
+			filedata = filedata.replace('#greeter-session=example-gtk-gnome', 'greeter-session=lightdm-slick-greeter')
+
+			with open(path, 'w') as file:
+				file.write(filedata)
 
 	def install_gfx_driver(self, install_session: 'Installer', driver: Optional[GfxDriver]):
 		try:
