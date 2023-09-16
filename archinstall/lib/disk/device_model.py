@@ -412,12 +412,18 @@ class SubvolumeModification:
 
 			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
 
+			compress = entry.get('compress', False)
+			nodatacow = entry.get('nodatacow', False)
+
+			if compress and nodatacow:
+				raise ValueError('compress and nodatacow flags cannot be enabled simultaneously on a btfrs subvolume')
+
 			mods.append(
 				SubvolumeModification(
 					entry['name'],
 					mountpoint,
-					entry.get('compress', False),
-					entry.get('nodatacow', False)
+					compress,
+					nodatacow
 				)
 			)
 
