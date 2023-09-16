@@ -217,6 +217,7 @@ class SysCommandWorker:
 
 		if self.child_fd:
 			return os.write(self.child_fd, data + (b'\n' if line_ending else b''))
+			os.fsync(self.child_fd)
 
 		return 0
 
