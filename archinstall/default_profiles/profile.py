@@ -31,9 +31,11 @@ class ProfileType(Enum):
 
 
 class GreeterType(Enum):
-	Lightdm = 'lightdm'
+	Lightdm = 'lightdm-gtk-greeter'
+	LightdmSlick = 'lightdm-slick-greeter'
 	Sddm = 'sddm'
 	Gdm = 'gdm'
+	Ly = 'ly'
 
 
 class SelectResult(Enum):

@@ -23,4 +23,4 @@ class BudgieProfile(XorgProfile):
 
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
-		return GreeterType.Lightdm
+		return GreeterType.LightdmSlick

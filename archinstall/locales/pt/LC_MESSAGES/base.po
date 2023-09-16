@@ -16,7 +16,7 @@ msgstr ""
 "X-Generator: Poedit 3.3.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] Um ficheiro de registo foi criado aqui: {} {}"
+msgstr "[!] Foi criado um ficheiro de registo aqui: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
 msgstr "    Submeta este problema (e ficheiro) para https://github.com/archlinux/archinstall/issues"
@@ -61,19 +61,19 @@ msgid "If you desire a web browser, such as firefox or chromium, you may specify
 msgstr "Se quer um navegador web, como firefox ou chromium, deve especificá-lo na próxima pergunta."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Escreva pacotes adicionais para instalar (separados por espaço, deixar em branco para ignorar): "
+msgstr "Inserir pacotes adicionais a instalar (separados por espaço, deixar em branco para ignorar): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Copiar a configuração de rede da ISO para a instalação"
 
 msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "Usar o NetworkManager (necessário para configurar Internet graficamente em GNOME e KDE)"
+msgstr "Usar o Gestor de Redes \"NetworkManager\" (necessário para configurar Internet graficamente em GNOME e KDE)"
 
 msgid "Select one network interface to configure"
 msgstr "Selecione uma interface de rede para configurar"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Seleccione qual o modo a configurar para \"{}\" ou ignorar para usar o modo padrão \"{}\""
+msgstr "Selecionar qual o modo a configurar para \"{}\" ou ignorar para usar o modo predefinido \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Inserir o IP e subrede para {} (exemplo: 192.168.0.5/24): "
@@ -101,10 +101,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Inserir o tipo de sistema de ficheiros desejado para a partição"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Inserir o local inicial (em unidades do parted: s, GB, %, etc. ; padrão: {}): "
+msgstr "Inserir o local inicial (em unidades do parted: s, GB, %, etc. ; predefinido: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Inserir o local final (em unidades do parted: s, GB, %, etc. ; padrão: {}): "
+msgstr "Inserir o local final (em unidades do parted: s, GB, %, etc. ; predefinido: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contem partições em fila, isto irá remover essas, tem a certeza?"
@@ -176,7 +176,7 @@ msgid "Archinstall language"
 msgstr "Idioma do Archinstall"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Limpar todos os discos selecionados e usar um esquema de partições padrão de melhor desempenho"
+msgstr "Limpar todos os discos selecionados e usar um esquema de partições predefinido de melhor desempenho"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
 msgstr "Seleciona o que fazer com cada disco individual (seguido de uso de partição)"
@@ -191,7 +191,7 @@ msgid "Select keyboard layout"
 msgstr "Seleciona o esquema de teclado"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Seleciona uma das regiões para descarregar pacotes"
+msgstr "Selecione uma das regiões a partir da qual pretende transferir pacotes"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "Seleciona um ou mais discos rígidos para usar e configurar"
@@ -215,10 +215,10 @@ msgstr ""
 "Seleciona um controlador de gráficos ou deixa em branco para instalar todos os controladores de código-aberto"
 
 msgid "All open-source (default)"
-msgstr "Todos os controladores de código-aberto (padrão)"
+msgstr "Todos os controladores de código-aberto (predefinido)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Escolhe quais kernels usar ou deixa em branco para o padrão \"{}\""
+msgstr "Escolha os kernels a usar ou deixe em branco para a predefinição \"{}\""
 
 msgid "Choose which locale language to use"
 msgstr "Escolhe qual idioma de localização usar"
@@ -546,7 +546,7 @@ msgid "Manage superuser accounts: "
 msgstr "Administrar contas de superutilizador: "
 
 msgid "Manage ordinary user accounts: "
-msgstr "Administrar contas de utilizador padrão: "
+msgstr "Administrar contas de utilizador normal: "
 
 msgid " Subvolume :{:16}"
 msgstr " Subvolume :{:16}"
@@ -592,7 +592,7 @@ msgid "[!] A log file has been created here: {}"
 msgstr "[!] Um ficheiro de registo foi criado aqui: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Deseja usar subvolumes BTRFS com a estrutura padrão?"
+msgstr "Deseja usar subvolumes BTRFS com a estrutura predefinida?"
 
 msgid "Would you like to use BTRFS compression?"
 msgstr "Deseja usar a compressão BTRFS?"
@@ -735,7 +735,7 @@ msgid "You can skip selecting a drive and partitioning and use whatever drive-se
 msgstr "Pode ignorar a seleção de unidade e particionar seja lá o que estiver montado em /mnt (experimental)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Selecionar um dos discos ou ignore e use /mnt como padrão"
+msgstr "Selecionar um dos discos ou ignorar e usar /mnt como predefinição"
 
 msgid "Select which partitions to mark for formatting:"
 msgstr "Selecionar quais partições a marcar para formatar:"
@@ -795,25 +795,25 @@ msgid "Configured {} interfaces"
 msgstr "{} interfaces configuradas"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Esta opção ativa o número de descargas paralelas que podem ocorrer durante a instalação"
+msgstr "Esta opção ativa o número de transferências paralelas que podem ocorrer durante a instalação"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 " (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
-"Insira o número de descargas paralelas a serem ativadas.\n"
-" (Insira um valor entre 1 e {})\n"
-"Observação:"
+"Inserir o número de transferências paralelas a ativar.\n"
+" (Inserir um valor entre 1 e {})\n"
+"Nota:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr " - Valor máximo   : {} ( Permite {} descargas paralelas, permite {} descargas de cada vez )"
+msgstr " - Valor máximo   : {} ( Permite {} transferências paralelas, permite {} transferências de cada vez )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Valor mínimo   : 1 ( Permite 1 descarga paralela, permite 2 descargas de cada vez )"
+msgstr " - Valor mínimo   : 1 ( Permite 1 transferência paralela, permite 2 transferências de cada vez )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr " - Desativar/Padrão : 0 ( Desativa as descargas paralelas, permite apenas 1 descarga de cada vez )"
+msgstr " - Desativar/Padrão : 0 ( Desativa as transferências paralelas, permite apenas 1 transferência de cada vez )"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
@@ -832,7 +832,7 @@ msgid "TAB to select"
 msgstr "TAB para selecionar"
 
 msgid "[Default value: 0] > "
-msgstr "[Valor padrão: 0] > "
+msgstr "[Valor predefinido: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
 msgstr "Para poder usar esta tradução, instale manualmente um tipo de letra que suporte o idioma."
@@ -925,10 +925,10 @@ msgid "Total sectors: {}"
 msgstr "Total de setores: {}"
 
 msgid "Enter the start sector (default: {}): "
-msgstr "Inserir o setor inicial (padrão: {}): "
+msgstr "Inserir o setor inicial (predefinido: {}): "
 
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "Inserir o setor final da partição (percentagem ou número de bloco, padrão: {}): "
+msgstr "Inserir o setor final da partição (percentagem ou número de bloco, predefinido: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Isto irá remover todas as partições recém adicionadas, continuar?"
@@ -958,7 +958,7 @@ msgid "Select a FIDO2 device to use for HSM"
 msgstr "Selecionar um dispositivo FIDO2 para usar como HSM"
 
 msgid "Use a best-effort default partition layout"
-msgstr "Usar um esquema de partição padrão de melhor desempenho"
+msgstr "Usar um esquema de partições predefinido de melhor desempenho"
 
 msgid "Manual Partitioning"
 msgstr "Particionamento manual"
@@ -970,7 +970,7 @@ msgid "Unknown"
 msgstr "Desconhecido"
 
 msgid "Partition encryption"
-msgstr "Encriptação de partição"
+msgstr "Encriptação de partições"
 
 msgid " ! Formatting {} in "
 msgstr " ! A formatar {} em "
@@ -979,7 +979,7 @@ msgid "← Back"
 msgstr "← Voltar"
 
 msgid "Disk encryption"
-msgstr "Encriptação de disco"
+msgstr "Encriptação de discos"
 
 msgid "Configuration"
 msgstr "Configuração"
@@ -994,7 +994,7 @@ msgid "Back"
 msgstr "Voltar"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr "Escolha qual o ecrã de boas vindas a instalar para os perfis escolhidos: {}"
+msgstr "Escolha qual a interface gráfica de início de sessão a instalar para os perfis escolhidos: {}"
 
 msgid "Environment type: {}"
 msgstr "Tipo de ambiente: {}"
@@ -1030,7 +1030,7 @@ msgid "Should this profile be enabled for installation?"
 msgstr "Este perfil deve ser ativado para instalação?"
 
 msgid "Create your own"
-msgstr "Crie o seu próprio"
+msgstr "Criar o seu próprio"
 
 msgid ""
 "\n"
@@ -1041,7 +1041,7 @@ msgstr ""
 "Selecionar um controlador gráfico ou deixe em branco para instalar todos os controladores de código aberto"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como teclado, rato, etc)"
+msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
 
 msgid ""
 "\n"
@@ -1056,10 +1056,10 @@ msgid "Graphics driver"
 msgstr "Controlador gráfico"
 
 msgid "Greeter"
-msgstr "Ecrã de boas vindas"
+msgstr "Interface gráfica de início de sessão"
 
 msgid "Please chose which greeter to install"
-msgstr "Escolha qual o ecrã de boas vindas a instalar"
+msgstr "Escolha qual a interface gráfica de início de sessão a instalar"
 
 msgid "This is a list of pre-programmed default_profiles"
 msgstr "Esta é uma lista de perfis pré-programados (default_profiles)"
@@ -1132,7 +1132,7 @@ msgid "Mirror regions"
 msgstr "Regiões dos espelhos"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Valor máximo   : {} ( Permite {} descargas paralelas, permite {max_downloads+1} descargas de cada vez )"
+msgstr " - Valor máximo   : {} ( Permite {} transferências paralelas, permite {max_downloads+1} transferências de cada vez )"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Entrada inválida! Tente novamente com uma entrada válida [1 para {}, ou 0 para desativar]"
@@ -1141,7 +1141,59 @@ msgid "Locales"
 msgstr "Localidades"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "Usar o NetworkManager (necessário para configurar a Internet graficamente no GNOME e KDE)"
+msgstr "Usar o Gestor de Redes \"NetworkManager\" (necessário para configurar a Internet graficamente no GNOME e KDE)"
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "Não foi possível determinar os dispositivos fido2. A libfido2 está instalada?"
+
+msgid "Path"
+msgstr "Caminho"
+
+msgid "Manufacturer"
+msgstr "Fabricante"
+
+msgid "Product"
+msgstr "Produto"
+
+msgid "Total: {} / {}"
+msgstr "Total: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr "Todos os valores inseridos podem ser sufixados com uma unidade: B, KB, KiB, MB, MiB..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Se nenhuma unidade for fornecida, o valor será interpretado como setores"
+
+msgid "Enter start (default: sector {}): "
+msgstr "Inserir o início (predefinido: sector {}): "
+
+msgid "Enter end (default: {}): "
+msgstr "Inserir o fim (predefinido: {}): "
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Configuração inválida: {error}"
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Esta opção ativa o número de transferências paralelas que podem ocorrer durante as transferências de pacotes"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Inserir o número de transferências paralelas a ativar.\n"
+"\n"
+"Nota:\n"
+
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Valor máximo recomendado : {} ( Permite {} transferências paralelas de cada vez )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Desativar/Predefinido : 0 ( Desativa as transferências paralelas, permite apenas 1 transferência de cada vez )\n"
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Entrada inválida! Tente novamente com uma entrada válida [ou 0 para desativar]"
 
 #~ msgid "Add :"
 #~ msgstr "Adicionar :"
