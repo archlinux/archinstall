@@ -1047,37 +1047,43 @@ TIMEOUT=5
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
 
+		microcode = []
+
+		if not SysInfo.is_vm():
+			vendor = SysInfo.cpu_vendor()
+			if vendor == "AuthenticAMD":
+				microcode.append("initrd=\\amd-ucode.img")
+			elif vendor == "GenuineIntel":
+				microcode.append("initrd=\\intel-ucode.img")
+			else:
+				debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.")
+
+		# blkid doesn't trigger on loopback devices really well,
+		# so we'll use the old manual method until we get that sorted out.
+
+		kernel_parameters = []
+
+		if root_partition in self._disk_encryption.partitions:
+			# TODO: We need to detect if the encrypted device is a whole disk encryption,
+			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+			debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
+			kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
+		else:
+			debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
+			kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
+
+		parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+
 		for kernel in self.kernels:
 			# Setup the firmware entry
 			label = f'Arch Linux ({kernel})'
 			loader = f"/vmlinuz-{kernel}"
 
-			kernel_parameters = []
+			cmdline = []
 
-			if not SysInfo.is_vm():
-				vendor = SysInfo.cpu_vendor()
-				if vendor == "AuthenticAMD":
-					kernel_parameters.append("initrd=\\amd-ucode.img")
-				elif vendor == "GenuineIntel":
-					kernel_parameters.append("initrd=\\intel-ucode.img")
-				else:
-					debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.")
-
-			kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
-
-			# blkid doesn't trigger on loopback devices really well,
-			# so we'll use the old manual method until we get that sorted out.
-
-			if root_partition in self._disk_encryption.partitions:
-				# TODO: We need to detect if the encrypted device is a whole disk encryption,
-				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-				debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
-				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
-			else:
-				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
-				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
-
-			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+			cmdline.extend(microcode)
+			cmdline.append(f"initrd=\\initramfs-{kernel}.img")
+			cmdline.extend(kernel_parameters)
 
 			cmd = f'efibootmgr ' \
 				f'--disk {parent_dev_path} ' \
@@ -1085,7 +1091,7 @@ TIMEOUT=5
 				f'--create ' \
 				f'--label "{label}" ' \
 				f'--loader {loader} ' \
-				f'--unicode \'{" ".join(kernel_parameters)}\' ' \
+				f'--unicode \'{" ".join(cmdline)}\' ' \
 				f'--verbose'
 
 			SysCommand(cmd)
