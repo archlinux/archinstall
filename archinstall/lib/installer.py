@@ -890,7 +890,7 @@ class Installer:
 				'--target=x86_64-efi',
 				f'--efi-directory={boot_partition.mountpoint}',
 				'--bootloader-id=GRUB',
-				' --removable'
+				'--removable'
 			]
 
 			command.extend(add_options)
