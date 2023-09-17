@@ -230,9 +230,6 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 					archinstall.arguments.get('profile_config', None)
 				)
 
-			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-				installation.add_additional_packages(archinstall.arguments.get('packages', []))
-
 			if users := archinstall.arguments.get('!users', None):
 				installation.create_users(users)
 
@@ -241,6 +238,9 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 				audio_config.install_audio_config(installation)
 			else:
 				info("No audio server will be installed")
+
+			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
+				installation.add_additional_packages(archinstall.arguments.get('packages', []))
 
 			if profile_config := archinstall.arguments.get('profile_config', None):
 				profile_handler.install_profile_config(installation, profile_config)

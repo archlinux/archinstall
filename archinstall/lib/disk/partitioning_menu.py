@@ -347,7 +347,7 @@ def manual_partitioning(
 		manual_preset = preset
 
 	menu_list = PartitioningList(prompt, device, manual_preset)
-	partitions = menu_list.run()
+	partitions: List[PartitionModification] = menu_list.run()
 
 	if menu_list.is_last_choice_cancel():
 		return preset

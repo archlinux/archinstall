@@ -132,7 +132,7 @@
  {"abbr": "ps", "lang": "Pushto"},
  {"abbr": "qu", "lang": "Quechua"},
  {"abbr": "rm", "lang": "Romansh"},
- {"abbr": "ro", "lang": "Romanian"},
+ {"abbr": "ro", "lang": "Romanian", "translated_lang": "Română"},
  {"abbr": "rn", "lang": "Rundi"},
  {"abbr": "ru", "lang": "Russian", "translated_lang":  "Русский"},
  {"abbr": "sg", "lang": "Sango"},

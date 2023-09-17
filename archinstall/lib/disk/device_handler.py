@@ -117,6 +117,10 @@ class DeviceHandler(object):
 				return part
 		return None
 
+	def get_parent_device_path(self, dev_path: Path) -> Path:
+		lsblk = get_lsblk_info(dev_path)
+		return Path(f'/dev/{lsblk.pkname}')
+
 	def get_uuid_for_path(self, path: Path) -> Optional[str]:
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None
@@ -242,7 +246,7 @@ class DeviceHandler(object):
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
 
-	def _validate(self, device_mod: DeviceModification):
+	def _validate_partitions(self, partitions: List[PartitionModification]):
 		checks = {
 			# verify that all partitions have a path set (which implies that they have been created)
 			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
@@ -253,7 +257,7 @@ class DeviceHandler(object):
 		}
 
 		for check, exc in checks.items():
-			found = next(filter(check, device_mod.partitions), None)
+			found = next(filter(check, partitions), None)
 			if found is not None:
 				raise exc
 
@@ -266,12 +270,16 @@ class DeviceHandler(object):
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
 		"""
-		self._validate(device_mod)
+
+		# don't touch existing partitions
+		filtered_part = [p for p in device_mod.partitions if not p.exists()]
+
+		self._validate_partitions(filtered_part)
 
 		# make sure all devices are unmounted
-		self._umount_all_existing(device_mod)
+		self._umount_all_existing(device_mod.device_path)
 
-		for part_mod in device_mod.partitions:
+		for part_mod in filtered_part:
 			# partition will be encrypted
 			if enc_conf is not None and part_mod in enc_conf.partitions:
 				self._perform_enc_formatting(
@@ -442,10 +450,10 @@ class DeviceHandler(object):
 
 		return luks_handler
 
-	def _umount_all_existing(self, modification: DeviceModification):
-		info(f'Unmounting all partitions: {modification.device_path}')
+	def _umount_all_existing(self, device_path: Path):
+		info(f'Unmounting all existing partitions: {device_path}')
 
-		existing_partitions = self._devices[modification.device_path].partition_infos
+		existing_partitions = self._devices[device_path].partition_infos
 
 		for partition in existing_partitions:
 			debug(f'Unmounting: {partition.path}')
@@ -472,7 +480,7 @@ class DeviceHandler(object):
 				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
 
 		# make sure all devices are unmounted
-		self._umount_all_existing(modification)
+		self._umount_all_existing(modification.device_path)
 
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
@@ -485,13 +493,10 @@ class DeviceHandler(object):
 
 		info(f'Creating partitions: {modification.device_path}')
 
-		# TODO sort by delete first
+		# don't touch existing partitions
+		filtered_part = [p for p in modification.partitions if not p.exists()]
 
-		for part_mod in modification.partitions:
-			# don't touch existing partitions
-			if part_mod.exists():
-				continue
-
+		for part_mod in filtered_part:
 			# if the entire disk got nuked then we don't have to delete
 			# any existing partitions anymore because they're all gone already
 			requires_delete = modification.wipe is False

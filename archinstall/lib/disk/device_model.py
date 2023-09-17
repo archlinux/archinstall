@@ -20,6 +20,7 @@ from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
 from ..output import debug, error
 from ..storage import storage
+from ..output import info
 
 if TYPE_CHECKING:
 	_: Any
@@ -95,6 +96,7 @@ class DiskLayoutConfiguration:
 					length=Size.parse_args(partition['length']),
 					mount_options=partition['mount_options'],
 					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
+					dev_path=Path(partition['dev_path']) if partition['dev_path'] else None,
 					type=PartitionType(partition['type']),
 					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
 					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', [])),
@@ -410,12 +412,18 @@ class SubvolumeModification:
 
 			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
 
+			compress = entry.get('compress', False)
+			nodatacow = entry.get('nodatacow', False)
+
+			if compress and nodatacow:
+				raise ValueError('compress and nodatacow flags cannot be enabled simultaneously on a btfrs subvolume')
+
 			mods.append(
 				SubvolumeModification(
 					entry['name'],
 					mountpoint,
-					entry.get('compress', False),
-					entry.get('nodatacow', False)
+					compress,
+					nodatacow
 				)
 			)
 
@@ -509,13 +517,15 @@ class BDevice:
 class PartitionType(Enum):
 	Boot = 'boot'
 	Primary = 'primary'
+	_Unknown = 'unknown'
 
 	@classmethod
 	def get_type_from_code(cls, code: int) -> PartitionType:
 		if code == parted.PARTITION_NORMAL:
 			return PartitionType.Primary
-
-		raise DiskError(f'Partition code not supported: {code}')
+		else:
+			info(f'Partition code not supported: {code}')
+			return PartitionType._Unknown
 
 	def get_partition_code(self) -> Optional[int]:
 		if self == PartitionType.Primary:
@@ -659,9 +669,9 @@ class PartitionModification:
 		if partition_info.btrfs_subvol_infos:
 			mountpoint = None
 			subvol_mods = []
-			for info in partition_info.btrfs_subvol_infos:
+			for i in partition_info.btrfs_subvol_infos:
 				subvol_mods.append(
-					SubvolumeModification.from_existing_subvol_info(info)
+					SubvolumeModification.from_existing_subvol_info(i)
 				)
 		else:
 			mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
@@ -747,6 +757,7 @@ class PartitionModification:
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
+			'dev_path': str(self.dev_path) if self.dev_path else None,
 			'btrfs': [vol.__dump__() for vol in self.btrfs_subvols]
 		}
 
@@ -1079,7 +1090,6 @@ def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
 
 def get_all_lsblk_info() -> List[LsblkInfo]:
 	return _fetch_lsblk_info()
-
 
 def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[LsblkInfo]:
 	def _check(infos: List[LsblkInfo]) -> List[LsblkInfo]:

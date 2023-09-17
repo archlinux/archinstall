@@ -97,10 +97,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Ingrese un tipo de sistema de archivos deseado para la partición"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "Seleccione la ubicación de inicio (en unidades parted: s, GB, %, etc. ; predeterminado: {}):"
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "Seleccione la ubicación de fin (en unidades parted: s, GB, %, etc. ; ej.: {}):"
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contiene particiones en cola, esto eliminará esas particiones, ¿estás seguro?"
@@ -766,23 +766,23 @@ msgid "Select which partitions to encrypt"
 msgstr "Seleccione qué particiones cifrar"
 
 msgid "very weak"
-msgstr ""
+msgstr "Muy débil"
 
 msgid "weak"
-msgstr ""
+msgstr "Débil"
 
 msgid "moderate"
-msgstr ""
+msgstr "Moderado"
 
 msgid "strong"
-msgstr ""
+msgstr "Fuerte"
 
 #, fuzzy
 msgid "Add subvolume"
 msgstr " Subvolumen :{:16}"
 
 msgid "Edit subvolume"
-msgstr ""
+msgstr "Editar subvolumen"
 
 #, fuzzy
 msgid "Delete subvolume"
@@ -792,51 +792,54 @@ msgid "Configured {} interfaces"
 msgstr ""
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr ""
+msgstr "Esta opción habilita la cantidad de descargas paralelas que pueden ocurrir durante la instalación"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 " (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
+"Introduzca el número de descargas paralelas que se habilitarán.\n"
+" (Ingrese un valor entre 1 y {})\n"
+"Nota:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr ""
+msgstr " - Valor máximo   : {} ( Habilita {} descargas paralelas, permite {} descargas simultáneas )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr " - Valor mínimo   : 1 ( Habilita 1 descarga paralela, permite 2 descargas simultáneas )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr " - Deshabilitar/Predeterminado : 0 ( Deshabilita la descarga paralela, permite solo 1 descarga simultánea )"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "¡Entrada no válida! Inténtelo de nuevo con un valor válido [1 a {max_downloads}, o 0 para deshabilitar]"
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Descargas paralelas"
 
 #, fuzzy
 msgid "ESC to skip"
 msgstr "Use ESC para saltar"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "CTRL+C para restablecer"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "TAB para seleccionar"
 
 msgid "[Default value: 0] > "
-msgstr ""
+msgstr "[Valor predeterminado: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
+msgstr "Para poder usar esta traducción, instale manualmente una fuente que admita el idioma."
 
 msgid "The font should be stored as {}"
-msgstr ""
+msgstr "La fuente debe almacenarse como {}"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall requiere privilegios de root para ejecutarse. Consulte --help para más información."
 
 #, fuzzy
 msgid "Select an execution mode"
@@ -846,7 +849,7 @@ msgid "Unable to fetch profile from specified url: {}"
 msgstr ""
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "Los perfiles deben tener un nombre único, pero se encontraron definiciones de perfil con nombre duplicado: {}"
 
 #, fuzzy
 msgid "Select one or more devices to use and configure"
@@ -897,10 +900,10 @@ msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Marcar/Desmarcar una partición para ser formateada (borra los datos)"
 
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "Marcar/Desmarcar como bootable"
 
 msgid "Change filesystem"
-msgstr ""
+msgstr "Cambiar el sistema de archivos"
 
 #, fuzzy
 msgid "Mark/Unmark as compressed"
@@ -915,23 +918,23 @@ msgid "Delete partition"
 msgstr "Eliminar una partición"
 
 msgid "Partition"
-msgstr ""
+msgstr "Partición"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "Esta partición está actualmente cifrada, para formatearla se debe especificar un sistema de archivos"
 
 #, fuzzy
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr " * Los puntos de montaje de partición son relativos a la instalación, el arranque sería /boot como ejemplo."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "Si se establece el punto de montaje /boot, la partición también se marcará como bootable."
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "Punto de montaje: "
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "Sectores libres actuales en el dispositivo {}:"
 
 #, fuzzy
 msgid "Total sectors: {}"
@@ -946,7 +949,7 @@ msgid "Enter the end sector of the partition (percentage or block number, defaul
 msgstr "Ingrese el sector final de la partición (porcentaje o número de bloque, ej: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "Esto eliminará todas las particiones recientemente agregadas, ¿continuar?"
 
 msgid "Partition management: {}"
 msgstr ""
@@ -959,10 +962,10 @@ msgid "Encryption type"
 msgstr "Contraseña de cifrado"
 
 msgid "Partitions"
-msgstr ""
+msgstr "Particiones"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "No hay dispositivos HSM disponibles"
 
 #, fuzzy
 msgid "Partitions to be encrypted"
@@ -988,19 +991,19 @@ msgid "Pre-mounted configuration"
 msgstr "Sin configuración"
 
 msgid "Unknown"
-msgstr ""
+msgstr "Desconocido"
 
 msgid "Partition encryption"
-msgstr ""
+msgstr "Cifrado de partición"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! Formateando {} en "
 
 msgid "← Back"
-msgstr ""
+msgstr "← Regresar"
 
 msgid "Disk encryption"
-msgstr ""
+msgstr "Cifrado de disco"
 
 #, fuzzy
 msgid "Configuration"
@@ -1015,16 +1018,16 @@ msgid "All settings will be reset, are you sure?"
 msgstr "{} contiene particiones en cola, esto eliminará esas particiones, ¿estás seguro?"
 
 msgid "Back"
-msgstr ""
+msgstr "Regresar"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "Por favor, elija qué greeter instalar para los perfiles elegidos: {}"
 
 msgid "Environment type: {}"
 msgstr ""
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "El controlador propietario de Nvidia no es compatible con Sway. Es probable que encuentre problemas, ¿Desear continuar?"
 
 #, fuzzy
 msgid "Installed packages"
@@ -1074,22 +1077,25 @@ msgstr ""
 "Seleccione un controlador de gráficos o déjelo en blanco para instalar todos los controladores de código abierto"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Sway necesita acceso a sus dispositivos de hardware (teclado, mouse, etc.)"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Elija una opción para darle a Sway acceso a su hardware"
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "Controlador de gráficos"
 
 msgid "Greeter"
 msgstr ""
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "Por favor, elija qué greeter instalar"
 
 msgid "This is a list of pre-programmed default_profiles"
 msgstr ""
@@ -1103,7 +1109,7 @@ msgid "Profiles"
 msgstr "Perfil"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "Buscando posibles directorios para guardar los archivos de configuración ..."
 
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
@@ -1114,10 +1120,10 @@ msgid "Add a custom mirror"
 msgstr "Añadir un usuario"
 
 msgid "Change custom mirror"
-msgstr ""
+msgstr "Modificar servidor de réplica personalizado"
 
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "Eliminar servidor de réplica personalizado"
 
 #, fuzzy
 msgid "Enter name (leave blank to skip): "
@@ -1136,7 +1142,7 @@ msgid "Select signature option"
 msgstr "Seleccione el diseño del disco"
 
 msgid "Custom mirrors"
-msgstr ""
+msgstr "Servidores de réplica personalizados"
 
 msgid "Defined"
 msgstr ""
@@ -1156,6 +1162,9 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
+"¿Desea guardar {} archivo(s) de configuración en la siguiente ubicación?\n"
+"\n"
+"{}"
 
 #, fuzzy
 msgid "Saving {} configuration files to {}"
@@ -1170,10 +1179,10 @@ msgid "Mirror regions"
 msgstr "Región del servidor"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr " - Valor máximo   : {} ( Habilita {} descargas paralelas, permite {max_downloads+1} descargas simultáneas )"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr ""
+msgstr "¡Entrada no válida! Intente nuevamente con un valor válido [1 a {}, o 0 para deshabilitar]"
 
 msgid "Locales"
 msgstr ""
@@ -1181,6 +1190,65 @@ msgstr ""
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Usar NetworkManager (necesario para configurar internet gráficamente en GNOME y KDE)"
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Configuración manual"
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Esta opción habilita la cantidad de descargas paralelas que pueden ocurrir durante la instalación"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Introduzca el número de descargas paralelas que se habilitarán.\n"
+" (Ingrese un valor entre 1 y {})\n"
+"Nota:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Valor máximo   : {} ( Habilita {} descargas paralelas, permite {} descargas simultáneas )"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Deshabilitar/Predeterminado : 0 ( Deshabilita la descarga paralela, permite solo 1 descarga simultánea )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "¡Entrada no válida! Intente nuevamente con un valor válido [1 a {}, o 0 para deshabilitar]"
+
+msgid "Total: {} / {}"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr "Todos los valores ingresados pueden tener una unidad como sufijo: B, KB, KiB, MB, MiB ..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Si no se proporciona ninguna unidad, el valor se interpreta como sectores"
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "Introduzca el sector de inicio (porcentaje o número de bloque, predeterminado: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "Introduzca el sector de inicio (porcentaje o número de bloque, predeterminado: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr "Fabricante"
+
+msgid "Product"
+msgstr "Producto"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
