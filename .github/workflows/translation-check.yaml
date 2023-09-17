@@ -5,7 +5,7 @@ on:
     pull_request:
         paths:
         - 'archinstall/locales/**'
-name: translation file checks
+name: Translation files generated from latest master
 jobs:
     translation-check:
         runs-on: ubuntu-latest
@@ -24,4 +24,4 @@ jobs:
                 ls -l
                 bash locales_generator.sh
                 cd ../../..
-                git diff --no-index archinstall_master archinstall
+                git diff --name-only --no-index archinstall_master archinstall
