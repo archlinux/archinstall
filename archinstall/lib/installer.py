@@ -1058,19 +1058,21 @@ TIMEOUT=5
 			else:
 				debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.")
 
-		# blkid doesn't trigger on loopback devices really well,
-		# so we'll use the old manual method until we get that sorted out.
-
 		kernel_parameters = []
 
 		if root_partition in self._disk_encryption.partitions:
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
 			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 			debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
-			kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
+			kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev')
+			kernel_parameters.append('root=/dev/mapper/luksdev')
 		else:
 			debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
-			kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
+			kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid}')
+
+		kernel_parameters.append('rw')
+		kernel_parameters.append(f'rootfstype={root_partition.safe_fs_type.value}')
+		kernel_parameters.extend(self._kernel_params)
 
 		parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
