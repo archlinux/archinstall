@@ -5,7 +5,7 @@ on:
     pull_request:
         paths:
         - 'archinstall/locales/**'
-name: Check translation changes run generate script
+name: Verify local_generate script was run on translation changes
 jobs:
     translation-check:
         runs-on: ubuntu-latest
