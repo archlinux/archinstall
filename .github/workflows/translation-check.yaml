@@ -19,7 +19,7 @@ jobs:
                 git clone https://github.com/archlinux/archinstall.git archinstall_master
                 ls -la
                 pwd
-                cd archinstall/locales
+                cd archinstall/archinstall/locales
                 pwd
                 ls -l
                 bash locales_generator.sh
