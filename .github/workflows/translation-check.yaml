@@ -20,4 +20,4 @@ jobs:
                 cd archinstall/archinstall/locales
                 bash locales_generator.sh
                 cd ../../..
-                diff archinstall_orig archinstall
+                git diff --no-index --name-only archinstall_orig archinstall
