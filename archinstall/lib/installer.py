@@ -1058,9 +1058,6 @@ TIMEOUT=5
 			else:
 				debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.")
 
-		# blkid doesn't trigger on loopback devices really well,
-		# so we'll use the old manual method until we get that sorted out.
-
 		kernel_parameters = []
 
 		if root_partition in self._disk_encryption.partitions:
