@@ -23,7 +23,5 @@ jobs:
                 pwd
                 ls -l
                 bash locales_generator.sh
-                git diff --name-only
-                ls
-                cd ../..
+                cd ../../..
                 git diff --no-index archinstall_master archinstall
