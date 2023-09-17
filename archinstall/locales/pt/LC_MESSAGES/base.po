@@ -1143,18 +1143,6 @@ msgstr "Localidades"
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Usar o Gestor de Redes \"NetworkManager\" (necessário para configurar a Internet graficamente no GNOME e KDE)"
 
-msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr "Não foi possível determinar os dispositivos fido2. A libfido2 está instalada?"
-
-msgid "Path"
-msgstr "Caminho"
-
-msgid "Manufacturer"
-msgstr "Fabricante"
-
-msgid "Product"
-msgstr "Produto"
-
 msgid "Total: {} / {}"
 msgstr "Total: {} / {}"
 
@@ -1170,9 +1158,24 @@ msgstr "Inserir o início (predefinido: sector {}): "
 msgid "Enter end (default: {}): "
 msgstr "Inserir o fim (predefinido: {}): "
 
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "Não foi possível determinar os dispositivos fido2. A libfido2 está instalada?"
+
+msgid "Path"
+msgstr "Caminho"
+
+msgid "Manufacturer"
+msgstr "Fabricante"
+
+msgid "Product"
+msgstr "Produto"
+
 #, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "Configuração inválida: {error}"
+
+msgid "Type"
+msgstr ""
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
 msgstr "Esta opção ativa o número de transferências paralelas que podem ocorrer durante as transferências de pacotes"

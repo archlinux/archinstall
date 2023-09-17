@@ -1138,31 +1138,6 @@ msgstr "Locale"
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Folosiți NetworkManager (necesar pentru configurarea setărilor de rețea într-un mod grafic pentru GNOME și KDE)"
 
-msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Această opțiune setează numărul de descărcări paralele care pot avea loc în timpul instalării"
-
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-"\n"
-"Note:\n"
-msgstr ""
-"Introduceți numărul de descărcări simultane pentru a fi activat.\n"
-"\n"
-"Notă:\n"
-
-msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Valoare minimă  : {} ( Permite {} descărcări simultane în același timp )"
-
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - Dezactivează/Predefinit: 0 (Dezactivează descărcările simultane, permite o singură descărcare în același timp )\n"
-
-msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "Input invalid! Încercați din nou cu un input valid [0 pentru dezactivare]"
-
-#, python-brace-format
-msgid "Invalid configuration: {error}"
-msgstr "Configurație invalidă: {error}"
-
 msgid "Total: {} / {}"
 msgstr "Total: {} / {}"
 
@@ -1189,3 +1164,31 @@ msgstr "Producător"
 
 msgid "Product"
 msgstr "Produs"
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Configurație invalidă: {error}"
+
+msgid "Type"
+msgstr ""
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Această opțiune setează numărul de descărcări paralele care pot avea loc în timpul instalării"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Introduceți numărul de descărcări simultane pentru a fi activat.\n"
+"\n"
+"Notă:\n"
+
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Valoare minimă  : {} ( Permite {} descărcări simultane în același timp )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Dezactivează/Predefinit: 0 (Dezactivează descărcările simultane, permite o singură descărcare în același timp )\n"
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Input invalid! Încercați din nou cu un input valid [0 pentru dezactivare]"

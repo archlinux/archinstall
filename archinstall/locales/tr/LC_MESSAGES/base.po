@@ -1165,7 +1165,9 @@ msgstr "Kullanıcı konfigürasyonunu kaydet (Disk düzeni ile birlikte)"
 msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
-msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin (tab ile tamamlama etkin)\n "
+msgstr ""
+"Yapılandırma(lar)ın kaydedilmesi için bir dizin girin (tab ile tamamlama etkin)\n"
+" "
 
 msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
@@ -1197,3 +1199,66 @@ msgstr "Yerel Ayarlar"
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "NetworkManager'ı kullan (GNOME ya da KDE'de interneti grafik olarak yapılandırmak için gerekli)"
+
+#, fuzzy
+msgid "Total: {} / {}"
+msgstr "Toplam uzunluk: {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "Başlangıç kesimini girin (yüzde ya da blok numarası, varsayılan: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "Başlangıç kesimini girin (yüzde ya da blok numarası, varsayılan: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Manuel yapılandırma"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Bu seçenek, yükleme sırasında meydana gelebilecek paralel indirme sayısını etkinleştirir"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Etkinleştirilecek paralel indirme sayısını girin.\n"
+" (1 ile {max_downloads} arasında bir değer girin)\n"
+"Not:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr "- Maksimum değer : {} ( {} paralel indirmeye izin verir, bir seferde {} indirmeye izin verir)"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr "- Devre Dışı Bırak/Varsayılan : 0 (Paralel indirmeyi devre dışı bırakır, aynı anda yalnızca 1 indirmeye izin verir)"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Geçersiz girdi! Geçerli bir girdiyle tekrar deneyin [1 ila {} veya devre dışı bırakmak için 0]"

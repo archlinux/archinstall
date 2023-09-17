@@ -1151,5 +1151,68 @@ msgstr "Localidades"
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Usar NetworkManager (necessário para configurar internet graficamente no GNOME e KDE)"
 
+#, fuzzy
+msgid "Total: {} / {}"
+msgstr "Tamanho total: {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "Digite o setor de início (padrão: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "Digite o setor de início (padrão: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Configuração manual"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Esta opção habilita o número de downloads paralelos que podem ocorrer durante a instalação"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Insira o número de downloads paralelos para serem habilitados.\n"
+" (Insira um valor entre 1 e {})\n"
+"Observação:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Valor máximo   : {} ( Permite {} downloads paralelos, permite {} downloads por vez )"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Desativar/Padrão : 0 ( Desativa os downloads paralelos, permite apenas 1 download por vez )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Entrada inválida! Tente novamente com uma entrada válida [1 para {}, ou 0 para desativar]"
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "
