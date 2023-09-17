@@ -14,9 +14,10 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - run: pacman --noconfirm -Syu python
-            - run: cd archinstall/locales
-            - run: pwd
-            - run: ls -l
-            - run: bash locales_generator.sh
-            - run: git diff --name-only
-            - run: ls
+            - run: |
+                cd archinstall/locales
+                pwd
+                ls -l
+                bash locales_generator.sh
+                git diff --name-only
+                ls

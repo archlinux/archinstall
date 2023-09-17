@@ -1183,3 +1183,65 @@ msgstr ""
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "NetworkManager 사용 (GNOME 이나 KDE 에서 그래픽으로 인터넷을 구성하는 데 필요)"
+
+msgid "Total: {} / {}"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "시작 섹터를 입력하세요 (백분율 또는 블록 번호, 기본값: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "시작 섹터를 입력하세요 (백분율 또는 블록 번호, 기본값: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "수동 구성"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "이 옵션은 설치 중에 발생할 수 있는 병렬 다운로드 수를 활성화합니다"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"활성화할 병렬 다운로드 수를 입력하세요.\n"
+" (1 부터 {} 까지의 숫자중 하나를 입력하세요)\n"
+"메모:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - 최댓값   : {} ( {} 개의 병렬 다운로드 허용, 한 번에 {} 개의 다운로드 허용 )"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - 비활성화/기본 : - ( 병렬 다운로드 비활성화, 한 번에 1 개의 다운로드만 허용 )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {} 까지, 비활성화 하려면 0]"

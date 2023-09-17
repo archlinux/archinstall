@@ -1139,3 +1139,65 @@ msgstr "Локализации"
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Использовать NetworkManager (необходим для графической настройки интернета в GNOME и KDE)"
 
+#, fuzzy
+msgid "Total: {} / {}"
+msgstr "Весь размер: {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "Введите начальный сектор (по умолчанию: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "Введите начальный сектор (по умолчанию: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Ручная конфигурация"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Этот параметр определяет количество параллельных загрузок, которые могут происходить во время установки"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Введите количество параллельных загрузок, которые будут включены.\n"
+" (Введите значение от 1 до {})\n"
+"Примечание:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Минимальное значение: {} ( Позволяет {} параллельную загрузку, позволяет {} загрузки одновременно )"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Отключить/по умолчанию: 0 ( Отключает параллельную загрузку, позволяет только 1 загрузку за один раз )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Неверный ввод! Повторите попытку с правильным вводом [1 - {}, или 0 - отключить]"
