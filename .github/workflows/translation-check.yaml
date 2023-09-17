@@ -16,7 +16,7 @@ jobs:
             - run: pacman --noconfirm -Syu python git
             - run: |
                 cd ..
-                git clone https://github.com/archlinux/archinstall.git
+                git clone https://github.com/archlinux/archinstall.git archinstall_master
                 ls -la
                 pwd
                 cd archinstall/locales
@@ -25,3 +25,5 @@ jobs:
                 bash locales_generator.sh
                 git diff --name-only
                 ls
+                cd ../..
+                git diff --no-index archinstall_master archinstall
