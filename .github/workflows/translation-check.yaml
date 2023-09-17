@@ -12,11 +12,11 @@ jobs:
         container:
             image: archlinux:latest
         steps:
-            - uses: actions/checkout@master
-              with:
-                ref: ${{ github.head_ref }}
+            - uses: actions/checkout@v4
             - run: pacman --noconfirm -Syu python git
             - run: |
+                cd ..
+                git clone https://github.com/archlinux/archinstall.git
                 ls -la
                 pwd
                 cd archinstall/locales
