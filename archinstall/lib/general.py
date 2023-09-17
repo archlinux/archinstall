@@ -217,6 +217,7 @@ class SysCommandWorker:
 
 		if self.child_fd:
 			return os.write(self.child_fd, data + (b'\n' if line_ending else b''))
+			os.fsync(self.child_fd)
 
 		return 0
 
@@ -459,10 +460,12 @@ def _pid_exists(pid: int) -> bool:
 def run_custom_user_commands(commands :List[str], installation :Installer) -> None:
 	for index, command in enumerate(commands):
 		script_path = f"/var/tmp/user-command.{index}.sh"
-		chroot_path = installation.target / script_path
+		chroot_path = f"{installation.target}/{script_path}"
 		
 		info(f'Executing custom command "{command}" ...')
-		chroot_path.write_text(command)
+		with open(chroot_path, "w") as user_script:
+			user_script.write(command)
+			
 		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
 		
 		os.unlink(chroot_path)
