@@ -5,7 +5,7 @@ on:
     pull_request:
         paths:
         - 'archinstall/locales/**'
-name: Translation files generated from latest master
+name: Check translation changes run generate script
 jobs:
     translation-check:
         runs-on: ubuntu-latest
@@ -13,7 +13,7 @@ jobs:
             image: archlinux:latest
         steps:
             - uses: actions/checkout@v4
-            - run: pacman --noconfirm -Syu python git
+            - run: pacman --noconfirm -Syu python git diffutils
             - run: |
                 cd ..
                 cp -r archinstall archinstall_orig
