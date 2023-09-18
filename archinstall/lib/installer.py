@@ -194,7 +194,7 @@ class Installer:
 			for part_mod in sorted_part_mods:
 				if luks_handler := luks_handlers.get(part_mod):
 					# mount encrypted partition
-					self._mount_luks_partiton(part_mod, luks_handler)
+					self._mount_luks_partition(part_mod, luks_handler)
 				else:
 					# partition is not encrypted
 					self._mount_partition(part_mod)
@@ -219,7 +219,7 @@ class Installer:
 		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.dev_path:
 			self._mount_btrfs_subvol(part_mod.dev_path, part_mod.btrfs_subvols)
 
-	def _mount_luks_partiton(self, part_mod: disk.PartitionModification, luks_handler: Luks2):
+	def _mount_luks_partition(self, part_mod: disk.PartitionModification, luks_handler: Luks2):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint and luks_handler.mapper_dev:
 			target = self.target / part_mod.relative_mountpoint
@@ -315,7 +315,7 @@ class Installer:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
 		if not gen_fstab:
-			raise RequirementError(f'Genrating fstab returned empty value')
+			raise RequirementError(f'Generating fstab returned empty value')
 
 		with open(fstab_path, 'a') as fp:
 			fp.write(gen_fstab)
@@ -434,7 +434,7 @@ class Installer:
 
 		return False
 
-	def activate_time_syncronization(self) -> None:
+	def activate_time_synchronization(self) -> None:
 		info('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers')
 		self.enable_service('systemd-timesyncd')
 
@@ -1008,7 +1008,7 @@ When = PostTransaction
 Exec = /bin/sh -c \\"/usr/bin/limine bios-install /dev/disk/by-uuid/{root_uuid} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
 			""")
 
-		# Limine does not ship with a default configuation file. We are going to
+		# Limine does not ship with a default configuration file. We are going to
 		# create a basic one that is similar to the one GRUB generates.
 		try:
 			config = f"""
