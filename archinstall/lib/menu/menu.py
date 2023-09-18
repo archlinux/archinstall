@@ -123,7 +123,7 @@ class Menu(TerminalMenu):
 		:param allow_reset: This will explicitly handle a ctrl+c instead and return that specific state
 		:type allow_reset: bool
 
-		param allow_reset_warning_msg: If raise_error_on_interrupt is True the warnign is set, a user confirmation is displayed
+		param allow_reset_warning_msg: If raise_error_on_interrupt is True the warning is set, a user confirmation is displayed
 		type allow_reset_warning_msg: str
 
 		:param extra_bottom_space: Add an extra empty line at the end of the menu

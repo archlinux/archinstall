@@ -22,7 +22,7 @@ class FormattedOutput:
 	) -> Dict[str, Any]:
 		"""
 		the original values returned a dataclass as dict thru the call to some specific methods
-		this version allows thru the parameter class_formatter to call a dynamicly selected formatting method.
+		this version allows thru the parameter class_formatter to call a dynamically selected formatting method.
 		Can transmit a filter list to the class_formatter,
 		"""
 		if class_formatter:

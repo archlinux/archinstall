@@ -81,7 +81,7 @@ class Profile:
 	def packages(self) -> List[str]:
 		"""
 		Returns a list of packages that should be installed when
-		this profile is among the choosen ones
+		this profile is among the chosen ones
 		"""
 		return self._packages
 
@@ -128,7 +128,7 @@ class Profile:
 		"""
 		Set the custom settings for the profile.
 		This is also called when the settings are parsed from the config
-		and can be overriden to perform further actions based on the profile
+		and can be overridden to perform further actions based on the profile
 		"""
 		self.custom_settings = settings
 
@@ -179,7 +179,7 @@ class Profile:
 	def preview_text(self) -> Optional[str]:
 		"""
 		Used for preview text in profiles_bck. If a description is set for a
-		profile it will automatically display that one in the preivew.
+		profile it will automatically display that one in the preview.
 		If no preview or a different text should be displayed just
 		"""
 		if self.description:

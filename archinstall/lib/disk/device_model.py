@@ -202,7 +202,7 @@ class Size:
 
 		# not sure why we would ever wanna convert to percentages
 		if target_unit == Unit.Percent and total_size is None:
-			raise ValueError('Missing paramter total size to be able to convert to percentage')
+			raise ValueError('Missing parameter total size to be able to convert to percentage')
 
 		if self.unit == target_unit:
 			return self

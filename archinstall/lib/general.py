@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 def generate_password(length :int = 64) -> str:
-	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
+	haystack = string.printable # digits, ascii_letters, punctuation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for i in range(length))
 
 

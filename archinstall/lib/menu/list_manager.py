@@ -80,7 +80,7 @@ class ListManager:
 				self._data = self.handle_action(choice.value, None, self._data)
 			elif choice.value in self._terminate_actions:
 				break
-			else:  # an entry of the existing selection was choosen
+			else:  # an entry of the existing selection was chosen
 				selected_entry = data_formatted[choice.value]  # type: ignore
 				self._run_actions_on_entry(selected_entry)
 
