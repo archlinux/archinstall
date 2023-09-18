@@ -59,7 +59,7 @@ If any issues are encountered please submit an issue here on Github or submit a 
 When submitting an issue, pleasee:
 * Provide the stacktrace of the output if there is any
 * Attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
-  * To extract the log from the ISO image, one way is to use
+  * To extract the log from the ISO image, one way is to use<br>
     ```curl -F'file=@/var/log/archinstall/install.log' https://0x0.st```
 
 
