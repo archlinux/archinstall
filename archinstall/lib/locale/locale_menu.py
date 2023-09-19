@@ -52,9 +52,9 @@ class LocaleMenu(AbstractSubMenu):
 	def __init__(
 		self,
 		data_store: Dict[str, Any],
-		locele_conf: LocaleConfiguration
+		locale_conf: LocaleConfiguration
 	):
-		self._preset = locele_conf
+		self._preset = locale_conf
 		super().__init__(data_store=data_store)
 
 	def setup_selection_menu_options(self):
