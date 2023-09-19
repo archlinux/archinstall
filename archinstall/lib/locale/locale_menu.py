@@ -62,19 +62,19 @@ class LocaleMenu(AbstractSubMenu):
 			Selector(
 				_('Keyboard layout'),
 				lambda preset: self._select_kb_layout(preset),
-				default='us',
+				default=self._preset.kb_layout,
 				enabled=True)
 		self._menu_options['sys-language'] = \
 			Selector(
 				_('Locale language'),
 				lambda preset: select_locale_lang(preset),
-				default='en_US',
+				default=self._preset.sys_lang,
 				enabled=True)
 		self._menu_options['sys-encoding'] = \
 			Selector(
 				_('Locale encoding'),
 				lambda preset: select_locale_enc(preset),
-				default='UTF-8',
+				default=self._preset.sys_enc,
 				enabled=True)
 
 	def run(self, allow_reset: bool = True) -> LocaleConfiguration:
