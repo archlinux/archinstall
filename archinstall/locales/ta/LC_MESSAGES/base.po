@@ -1139,3 +1139,66 @@ msgstr "மொழி குறியீடுகள்"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "NetworkManager ஐப் பயன்படுத்தவும் (GNOME மற்றும் KDE இல் இணையத்தை வரைகலை முறையில் கட்டமைக்க அவசியம்)"
+
+#, fuzzy
+msgid "Total: {} / {}"
+msgstr "முழு நீளம்: {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (இயல்புநிலை: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (இயல்புநிலை: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "கைமுறை கட்டமைப்பு"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "இந்த விருப்பம் நிறுவலின் போது நிகழக்கூடிய இணையான பதிவிறக்கங்களின் எண்ணிக்கையை செயல்படுத்துகிறது"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"இயக்கப்பட வேண்டிய இணையான பதிவிறக்கங்களின் எண்ணிக்கையை உள்ளிடவும்.\n"
+"  (1 முதல் {} வரையிலான மதிப்பை உள்ளிடவும்)\n"
+"குறிப்பு:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - அதிகபட்ச மதிப்பு  : {} ( {} இணையான பதிவிறக்கங்களை அனுமதிக்கிறது, ஒரே நேரத்தில் {} பதிவிறக்கங்களை அனுமதிக்கிறது )"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - முடக்கு/இயல்புநிலை: 0 (இணை பதிவிறக்கத்தை முடக்குகிறது, ஒரு நேரத்தில் 1 பதிவிறக்கத்தை மட்டுமே அனுமதிக்கிறது )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "தவறான உள்ளீடு! சரியான உள்ளீட்டில் [1 முதல் {} வரை அல்லது முடக்க 0 வரை] மீண்டும் முயற்சிக்கவும்"

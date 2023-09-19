@@ -1207,6 +1207,60 @@ msgstr ""
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "NetworkManager gebruiken (benodigd om internetinstellingen grafisch in te stellen in GNOME en KDE)"
 
+msgid "Total: {} / {}"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Configuratie vastleggen"
+
+msgid "Type"
+msgstr ""
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr ""
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr ""
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr ""
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

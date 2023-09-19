@@ -15,7 +15,7 @@ from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
 from .storage import storage
 from .configuration import save_config
-from .interactions import add_number_of_parrallel_downloads
+from .interactions import add_number_of_parallel_downloads
 from .interactions import ask_additional_packages_to_install
 from .interactions import ask_for_additional_users
 from .interactions import ask_for_audio_selection
@@ -119,7 +119,7 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['parallel downloads'] = \
 			Selector(
 				_('Parallel Downloads'),
-				lambda preset: add_number_of_parrallel_downloads(preset),
+				lambda preset: add_number_of_parallel_downloads(preset),
 				display_func=lambda x: x if x else '0',
 				default=0
 			)

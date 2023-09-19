@@ -43,7 +43,7 @@ __version__ = "2.6.0"
 storage['__version__'] = __version__
 
 
-# add the custome _ as a builtin, it can now be used anywhere in the
+# add the custom _ as a builtin, it can now be used anywhere in the
 # project to mark strings as translatable with _('translate me')
 DeferredTranslation.install()
 

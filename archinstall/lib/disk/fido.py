@@ -34,7 +34,7 @@ class Fido2:
 		/dev/hidraw1 Yubico       YubiKey OTP+FIDO+CCID
 		"""
 
-		# to prevent continous reloading which will slow
+		# to prevent continuous reloading which will slow
 		# down moving the cursor in the menu
 		if not cls._loaded or reload:
 			try:

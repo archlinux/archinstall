@@ -1136,3 +1136,66 @@ msgstr "区域设置"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置互联网所必需）"
+
+#, fuzzy
+msgid "Total: {} / {}"
+msgstr "总长度：{}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "输入起始扇区（百分比或块号，默认：{}）： "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "输入起始扇区（百分比或块号，默认：{}）： "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "手动配置"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "此选项启用安装期间可以发生的并行下载数"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"输入要启用的并行下载数。\n"
+"  （输入一个介于 1 到 {} 之间的值）\n"
+"提示："
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - 最大值：{}（允许 {} 次并行下载，一次允许 {} 次下载）"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - 禁用/默认值：0（禁用并行下载，同时只允许 1 个下载）"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "输入无效！ 使用有效输入重试 [1 到 {}，或 0 到禁用]"

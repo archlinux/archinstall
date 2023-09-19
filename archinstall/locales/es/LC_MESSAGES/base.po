@@ -1191,36 +1191,6 @@ msgstr ""
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Usar NetworkManager (necesario para configurar internet gráficamente en GNOME y KDE)"
 
-#, fuzzy, python-brace-format
-msgid "Invalid configuration: {error}"
-msgstr "Configuración manual"
-
-#, fuzzy
-msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Esta opción habilita la cantidad de descargas paralelas que pueden ocurrir durante la instalación"
-
-#, fuzzy
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-"\n"
-"Note:\n"
-msgstr ""
-"Introduzca el número de descargas paralelas que se habilitarán.\n"
-" (Ingrese un valor entre 1 y {})\n"
-"Nota:"
-
-#, fuzzy
-msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Valor máximo   : {} ( Habilita {} descargas paralelas, permite {} descargas simultáneas )"
-
-#, fuzzy
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - Deshabilitar/Predeterminado : 0 ( Deshabilita la descarga paralela, permite solo 1 descarga simultánea )"
-
-#, fuzzy
-msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "¡Entrada no válida! Intente nuevamente con un valor válido [1 a {}, o 0 para deshabilitar]"
-
 msgid "Total: {} / {}"
 msgstr ""
 
@@ -1249,6 +1219,39 @@ msgstr "Fabricante"
 
 msgid "Product"
 msgstr "Producto"
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Configuración manual"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Esta opción habilita la cantidad de descargas paralelas que pueden ocurrir durante la instalación"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Introduzca el número de descargas paralelas que se habilitarán.\n"
+" (Ingrese un valor entre 1 y {})\n"
+"Nota:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Valor máximo   : {} ( Habilita {} descargas paralelas, permite {} descargas simultáneas )"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Deshabilitar/Predeterminado : 0 ( Deshabilita la descarga paralela, permite solo 1 descarga simultánea )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "¡Entrada no válida! Intente nuevamente con un valor válido [1 a {}, o 0 para deshabilitar]"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
