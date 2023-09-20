@@ -203,7 +203,12 @@ The definitions of the profiles and what packages they will install can be seen 
 ## Using a Live ISO Image
 
 If you want to test a commit, branch or bleeding edge release from the repository using the vanilla Arch Live ISO image,
-you can replace the version of archinstall with a new version and run that with the steps described below:
+you can replace the version of archinstall with a new version and run that with the steps described below.
+
+*Note: When booting from a live USB then the space on the ramdisk is limited and may not be sufficient to allow
+running a re-installation or upgrade of the installer. In case one runs into this issue, the boot parameter
+`copytoram=y` (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26)
+can be specified which will copy the root filesystem to tmpfs.
 
 1. You need a working network connection
 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
@@ -212,11 +217,10 @@ you can replace the version of archinstall with a new version and run that with 
 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
 5. Enter the repository with `cd archinstall`
    *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
-6. When the ISO was booted as a live image then there will most likely not be enough ramdisk space available to manually install a new version, so we have 2 options
-   - Run a specific branch version from source using `python -m archinstall`, in most cases this will work just fine, the
+6. To run the source code, there are 2 different options:
+   - Run a specific branch version from source directly using `python -m archinstall`, in most cases this will work just fine, the
       rare case it will not work is if the source has introduced any new dependencies that are not installed yet
-   - Installing the branch version with `pip install --break-system-packages .` and `archinstall`; bare in mind that this may fail due to
-      lack of disk space, a solution is to set kernel parameters to increase the ramdisk space
+   - Installing the branch version with `pip install --break-system-packages .` and `archinstall`
 
 ## Without a Live ISO Image
 
