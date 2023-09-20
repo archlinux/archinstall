@@ -15,7 +15,7 @@ class SeatAccess(Enum):
 	polkit = 'polkit'
 
 
-class HyperlandProfile(XorgProfile):
+class HyprlandProfile(XorgProfile):
 	def __init__(self):
 		super().__init__('Hyprland', ProfileType.DesktopEnv, description='')
 
@@ -27,7 +27,6 @@ class HyperlandProfile(XorgProfile):
 			"hyprland",
 			"dunst",
 			"xdg-desktop-portal-hyprland",
-			"kitty",
 			"qt5-wayland",
 			"qt6-wayland"
 		]
