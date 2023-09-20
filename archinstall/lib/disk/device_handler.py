@@ -291,6 +291,11 @@ class DeviceHandler(object):
 			else:
 				self._perform_formatting(part_mod.safe_fs_type, part_mod.safe_dev_path)
 
+			lsblk_info = self._fetch_partuuid(part_mod.safe_dev_path)
+
+			part_mod.partuuid = lsblk_info.partuuid
+			part_mod.uuid = lsblk_info.uuid
+
 	def _perform_partitioning(
 		self,
 		part_mod: PartitionModification,
@@ -354,11 +359,6 @@ class DeviceHandler(object):
 
 			# the partition has a real path now as it was created
 			part_mod.dev_path = Path(partition.path)
-
-			lsblk_info = self._fetch_partuuid(part_mod.dev_path)
-
-			part_mod.partuuid = lsblk_info.partuuid
-			part_mod.uuid = lsblk_info.uuid
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
