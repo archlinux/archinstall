@@ -212,9 +212,11 @@ you can replace the version of archinstall with a new version and run that with 
 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
 5. Enter the repository with `cd archinstall`
    *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
-6. Build the project and install it using `pip install --break-system-packages .`
-
-After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
+6. When the ISO was booted as a live image then there will most likely not be enough ramdisk space available to manually install a new version, so we have 2 options
+   - Run a specific branch version from source using `python -m archinstall`, in most cases this will work just fine, the
+      rare case it will not work is if the source has introduced any new dependencies that are not installed yet
+   - Installing the branch version with `pip install --break-system-packages .` and `archinstall`; bare in mind that this may fail due to
+      lack of disk space, a solution is to set kernel parameters to increase the ramdisk space
 
 ## Without a Live ISO Image
 
@@ -226,7 +228,9 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
-    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
+    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive
+file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
 
 This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
