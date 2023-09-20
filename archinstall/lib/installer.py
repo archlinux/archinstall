@@ -8,8 +8,6 @@ import time
 from pathlib import Path
 from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
 
-from ..lib.disk.device_model import get_lsblk_info
-
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
@@ -937,9 +935,7 @@ class Installer:
 		self.pacman.strap('limine')
 		info(f"Limine boot partition: {boot_partition.dev_path}")
 
-		# XXX: We cannot use `root_partition.uuid` since corresponds to the UUID of the root
-		#      partition before the format.
-		root_uuid = get_lsblk_info(root_partition.safe_dev_path).uuid
+		root_uuid = root_partition.uuid
 
 		def create_pacman_hook(contents: str):
 			HOOK_DIR = "/etc/pacman.d/hooks"
