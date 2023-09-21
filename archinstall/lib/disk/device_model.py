@@ -627,6 +627,7 @@ class PartitionModification:
 
 	# only set if the device was created or exists
 	dev_path: Optional[Path] = None
+	partn: Optional[int] = None
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
 
@@ -933,6 +934,7 @@ class LsblkInfo:
 	ptuuid: str = ''
 	rota: bool = False
 	tran: Optional[str] = None
+	partn: Optional[int] = None
 	partuuid: Optional[str] = None
 	parttype :Optional[str] = None
 	uuid: Optional[str] = None
@@ -957,6 +959,7 @@ class LsblkInfo:
 			'ptuuid': self.ptuuid,
 			'rota': self.rota,
 			'tran': self.tran,
+			'partn': self.partn,
 			'partuuid': self.partuuid,
 			'parttype' : self.parttype,
 			'uuid': self.uuid,

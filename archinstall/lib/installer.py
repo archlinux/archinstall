@@ -1085,7 +1085,7 @@ TIMEOUT=5
 
 			cmd = f'efibootmgr ' \
 				f'--disk {parent_dev_path} ' \
-				f'--part {boot_partition.safe_dev_path} ' \
+				f'--part {boot_partition.partn} ' \
 				f'--create ' \
 				f'--label "{label}" ' \
 				f'--loader {loader} ' \
