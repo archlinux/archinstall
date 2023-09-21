@@ -713,41 +713,59 @@ class Installer:
 				return root
 		return None
 
-	def _get_kernel_params(self, root_partition: disk.PartitionModification) -> List[str]:
+	def _get_kernel_params(
+		self,
+		root_partition: disk.PartitionModification,
+		id_root: bool = True,
+		partuuid: bool = True
+	) -> List[str]:
 		kernel_parameters = []
 
 		if root_partition in self._disk_encryption.partitions:
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
 			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-			debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
 
 			if self._disk_encryption and self._disk_encryption.hsm_device:
-				# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
-				kernel_parameters.append(f'rd.luks.name={root_partition.uuid}=luksdev')
+				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
+				# Note: UUID must be used, not PARTUUID for sd-encrypt to work
+				kernel_parameters.append(f'rd.luks.name={root_partition.uuid}=root')
 				# Note: tpm2-device and fido2-device don't play along very well:
 				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
 				kernel_parameters.append('rd.luks.options=fido2-device=auto,password-echo=no')
+			elif partuuid:
+				debug(f'Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
+				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:root')
 			else:
-				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev')
+				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
+				kernel_parameters.append(f'cryptdevice=UUID={root_partition.uuid}:root')
 
-			kernel_parameters.append('root=/dev/mapper/luksdev')
-		else:
-			debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
-			kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid}')
+			if id_root:
+				kernel_parameters.append('root=/dev/mapper/root')
+		elif id_root:
+			if partuuid:
+				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
+				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid}')
+			else:
+				debug(f'Identifying root partition by UUID: {root_partition.uuid}')
+				kernel_parameters.append(f'root=UUID={root_partition.uuid}')
 
 		# Zswap should be disabled when using zram.
 		# https://github.com/archlinux/archinstall/issues/881
 		if self._zram_enabled:
 			kernel_parameters.append('zswap.enabled=0')
 
-		for sub_vol in root_partition.btrfs_subvols:
-			if sub_vol.is_root():
-				kernel_parameters.append(f'rootflags=subvol={sub_vol.name}')
-				break
+		if id_root:
+			for sub_vol in root_partition.btrfs_subvols:
+				if sub_vol.is_root():
+					kernel_parameters.append(f'rootflags=subvol={sub_vol.name}')
+					break
 
-		kernel_parameters.append('rw')
+			kernel_parameters.append('rw')
+
 		kernel_parameters.append(f'rootfstype={root_partition.safe_fs_type.fs_type_mount}')
 		kernel_parameters.extend(self._kernel_params)
+
+		debug(f'kernel parameters: {" ".join(kernel_parameters)}')
 
 		return kernel_parameters
 
@@ -863,16 +881,9 @@ class Installer:
 		grub_default = self.target / 'etc/default/grub'
 		config = grub_default.read_text()
 
-		cmdline_linux = []
+		kernel_parameters = ' '.join(self._get_kernel_params(root_partition, False, False))
+		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
 
-		if root_partition in self._disk_encryption.partitions:
-			debug(f"Using UUID {root_partition.uuid} as encrypted root identifier")
-
-			cmdline_linux.append(f'cryptdevice=UUID={root_partition.uuid}:cryptlvm')
-			config = re.sub(r'#(GRUB_ENABLE_CRYPTODISK=y\n)', r'\1', config, 1)
-
-		cmdline_linux.append(f'rootfstype={root_partition.safe_fs_type.value}')
-		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{" ".join(cmdline_linux)}\2', config, 1)
 		grub_default.write_text(config)
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
