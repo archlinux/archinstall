@@ -170,7 +170,13 @@ The definitions of the profiles and what packages they will install can be seen 
 ## Using a Live ISO Image
 
 If you want to test a commit, branch or bleeding edge release from the repository using the vanilla Arch Live ISO image,
-you can replace the version of archinstall with a new version and run that with the steps described below:
+you can replace the version of archinstall with a new version and run that with the steps described below.
+
+*Note: When booting from a live USB then the space on the ramdisk is limited and may not be sufficient to allow
+running a re-installation or upgrade of the installer. In case one runs into this issue, any of the following can be used
+- Resize the root partition on the fly https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_root_partition_on_the_fly
+- The boot parameter `copytoram=y` (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26)
+can be specified which will copy the root filesystem to tmpfs.*
 
 1. You need a working network connection
 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
@@ -179,9 +185,10 @@ you can replace the version of archinstall with a new version and run that with 
 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
 5. Enter the repository with `cd archinstall`
    *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
-6. Build the project and install it using `pip install --break-system-packages .`
-
-After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
+6. To run the source code, there are 2 different options:
+   - Run a specific branch version from source directly using `python -m archinstall`, in most cases this will work just fine, the
+      rare case it will not work is if the source has introduced any new dependencies that are not installed yet
+   - Installing the branch version with `pip install --break-system-packages .` and `archinstall`
 
 ## Without a Live ISO Image
 
@@ -193,7 +200,9 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
-    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
+    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive
+file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
 
 This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
