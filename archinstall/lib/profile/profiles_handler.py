@@ -371,6 +371,7 @@ class ProfileHandler:
 		Helper function to perform a profile selection
 		"""
 		options = {p.name: p for p in selectable_profiles}
+		options = dict((k, v) for k, v in sorted(options.items(), key=lambda x: x[0].upper()))
 
 		warning = str(_('Are you sure you want to reset this setting?'))
 
@@ -388,7 +389,7 @@ class ProfileHandler:
 			allow_reset=allow_reset,
 			allow_reset_warning_msg=warning,
 			multi=multi,
-			sort=True,
+			sort=False,
 			preview_command=self.preview_text,
 			preview_size=0.5
 		).run()
