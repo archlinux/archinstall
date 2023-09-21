@@ -881,9 +881,6 @@ class Installer:
 		grub_default = self.target / 'etc/default/grub'
 		config = grub_default.read_text()
 
-		if root_partition in self._disk_encryption.partitions:
-			config = re.sub(r'#(GRUB_ENABLE_CRYPTODISK=y\n)', r'\1', config, 1)
-
 		kernel_parameters = ' '.join(self._get_kernel_params(root_partition, False, False))
 		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
 
