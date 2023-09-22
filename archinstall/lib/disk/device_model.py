@@ -256,6 +256,11 @@ class Size:
 		dest_norm = other._normalize()
 		return Size(abs(src_norm - dest_norm), Unit.B)
 
+	def __add__(self, other: Size) -> Size:
+		src_norm = self._normalize()
+		dest_norm = other._normalize()
+		return Size(abs(src_norm + dest_norm), Unit.B)
+
 	def __lt__(self, other):
 		return self._normalize() < other._normalize()
 
@@ -296,13 +301,21 @@ class _PartitionInfo:
 	mountpoints: List[Path]
 	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
 
+	@property
+	def sector_size(self) -> Size:
+		sector_size = self.partition.geometry.device.sectorSize
+		return Size(sector_size, Unit.B)
+
 	def table_data(self) -> Dict[str, Any]:
+		end = self.start + self.length
+
 		part_info = {
 			'Name': self.name,
 			'Type': self.type.value,
 			'Filesystem': self.fs_type.value if self.fs_type else str(_('Unknown')),
 			'Path': str(self.path),
-			'Start': self.start.format_size(Unit.MiB),
+			'Start': self.start.format_size(Unit.sectors, self.sector_size, include_unit=False),
+			'End': end.format_size(Unit.sectors, self.sector_size, include_unit=False),
 			'Length': self.length.format_size(Unit.MiB),
 			'Flags': ', '.join([f.name for f in self.flags])
 		}
@@ -765,11 +778,14 @@ class PartitionModification:
 		"""
 		Called for displaying data in table format
 		"""
+		end = self.start + self.length
+
 		part_mod = {
 			'Status': self.status.value,
 			'Device': str(self.dev_path) if self.dev_path else '',
 			'Type': self.type.value,
-			'Start': self.start.format_size(Unit.MiB),
+			'Start': self.start.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
+			'End': end.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
 			'Length': self.length.format_size(Unit.MiB),
 			'FS type': self.fs_type.value if self.fs_type else 'Unknown',
 			'Mountpoint': self.mountpoint if self.mountpoint else '',
