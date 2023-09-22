@@ -26,6 +26,9 @@ class HyprlandProfile(XorgProfile):
 		return [
 			"hyprland",
 			"dunst",
+			"kitty",
+			"dolphin",
+			"wofi",
 			"xdg-desktop-portal-hyprland",
 			"qt5-wayland",
 			"qt6-wayland"
