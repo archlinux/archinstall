@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+import inspect
 from collections import Counter
 from functools import cached_property
 from pathlib import Path
@@ -276,12 +277,15 @@ class ProfileHandler:
 		profiles = []
 		for k, v in module.__dict__.items():
 			if isinstance(v, type) and v.__module__ == module.__name__:
-				try:
-					cls_ = v()
-					if isinstance(cls_, Profile):
-						profiles.append(cls_)
-				except Exception:
-					debug(f'Cannot import {module}, it does not appear to be a Profile class')
+				bases = inspect.getmro(v)
+
+				if Profile in bases:
+					try:
+						cls_ = v()
+						if isinstance(cls_, Profile):
+							profiles.append(cls_)
+					except Exception:
+						debug(f'Cannot import {module}, it does not appear to be a Profile class')
 
 		return profiles
 
