@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 def generate_password(length :int = 64) -> str:
-	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
+	haystack = string.printable # digits, ascii_letters, punctuation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for i in range(length))
 
 
@@ -217,6 +217,7 @@ class SysCommandWorker:
 
 		if self.child_fd:
 			return os.write(self.child_fd, data + (b'\n' if line_ending else b''))
+			os.fsync(self.child_fd)
 
 		return 0
 

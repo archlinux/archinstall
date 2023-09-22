@@ -11,7 +11,7 @@ from .disk_conf import (
 from .general_conf import (
 	ask_ntp, ask_hostname, ask_for_a_timezone, ask_for_audio_selection,
 	select_archinstall_language, ask_additional_packages_to_install,
-	add_number_of_parrallel_downloads, select_additional_repositories
+	add_number_of_parallel_downloads, select_additional_repositories
 )
 
 from .system_conf import (

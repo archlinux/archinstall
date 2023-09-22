@@ -54,7 +54,7 @@ class SetupMenu(GlobalMenu):
 		super().setup_selection_menu_options()
 
 		self._menu_options['mode'] = menu.Selector(
-			'Excution mode',
+			'Execution mode',
 			lambda x : select_mode(),
 			display_func=lambda x: x.value if x else '',
 			default=ExecutionMode.Full)
@@ -249,7 +249,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 				installation.set_timezone(timezone)
 
 			if archinstall.arguments.get('ntp', False):
-				installation.activate_time_syncronization()
+				installation.activate_time_synchronization()
 
 			if archinstall.accessibility_tools_in_use():
 				installation.enable_espeakup()
@@ -257,7 +257,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
 
-			# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
+			# This step must be after profile installs to allow profiles_bck to install language pre-requisites.
 			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 			installation.set_keyboard_language(locale_config.kb_layout)
 

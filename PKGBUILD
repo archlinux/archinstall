@@ -16,6 +16,7 @@ depends=(
   'coreutils'
   'cryptsetup'
   'e2fsprogs'
+  'glibc'
   'kbd'
   'pciutils'
   'procps-ng'

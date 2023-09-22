@@ -291,6 +291,12 @@ class DeviceHandler(object):
 			else:
 				self._perform_formatting(part_mod.safe_fs_type, part_mod.safe_dev_path)
 
+			lsblk_info = self._fetch_part_info(part_mod.safe_dev_path)
+
+			part_mod.partn = lsblk_info.partn
+			part_mod.partuuid = lsblk_info.partuuid
+			part_mod.uuid = lsblk_info.uuid
+
 	def _perform_partitioning(
 		self,
 		part_mod: PartitionModification,
@@ -354,15 +360,10 @@ class DeviceHandler(object):
 
 			# the partition has a real path now as it was created
 			part_mod.dev_path = Path(partition.path)
-
-			lsblk_info = self._fetch_partuuid(part_mod.dev_path)
-
-			part_mod.partuuid = lsblk_info.partuuid
-			part_mod.uuid = lsblk_info.uuid
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
-	def _fetch_partuuid(self, path: Path) -> LsblkInfo:
+	def _fetch_part_info(self, path: Path) -> LsblkInfo:
 		attempts = 3
 		lsblk_info: Optional[LsblkInfo] = None
 
@@ -371,16 +372,28 @@ class DeviceHandler(object):
 			time.sleep(attempt_nr + 1)
 			lsblk_info = get_lsblk_info(path)
 
-			if lsblk_info.partuuid:
+			if lsblk_info.partn and lsblk_info.partuuid and lsblk_info.uuid:
 				break
 
 			self.partprobe(path)
 
-		if not lsblk_info or not lsblk_info.partuuid:
+		if not lsblk_info:
+			debug(f'Unable to get partition information: {path}')
+			raise DiskError(f'Unable to get partition information: {path}')
+
+		if not lsblk_info.partn:
+			debug(f'Unable to determine new partition number: {path}\n{lsblk_info}')
+			raise DiskError(f'Unable to determine new partition number: {path}')
+
+		if not lsblk_info.partuuid:
 			debug(f'Unable to determine new partition uuid: {path}\n{lsblk_info}')
 			raise DiskError(f'Unable to determine new partition uuid: {path}')
 
-		debug(f'partuuid found: {lsblk_info.json()}')
+		if not lsblk_info.uuid:
+			debug(f'Unable to determine new uuid: {path}\n{lsblk_info}')
+			raise DiskError(f'Unable to determine new uuid: {path}')
+
+		debug(f'partition information found: {lsblk_info.json()}')
 
 		return lsblk_info
 

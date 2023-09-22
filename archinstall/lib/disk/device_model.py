@@ -202,7 +202,7 @@ class Size:
 
 		# not sure why we would ever wanna convert to percentages
 		if target_unit == Unit.Percent and total_size is None:
-			raise ValueError('Missing paramter total size to be able to convert to percentage')
+			raise ValueError('Missing parameter total size to be able to convert to percentage')
 
 		if self.unit == target_unit:
 			return self
@@ -412,12 +412,18 @@ class SubvolumeModification:
 
 			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
 
+			compress = entry.get('compress', False)
+			nodatacow = entry.get('nodatacow', False)
+
+			if compress and nodatacow:
+				raise ValueError('compress and nodatacow flags cannot be enabled simultaneously on a btfrs subvolume')
+
 			mods.append(
 				SubvolumeModification(
 					entry['name'],
 					mountpoint,
-					entry.get('compress', False),
-					entry.get('nodatacow', False)
+					compress,
+					nodatacow
 				)
 			)
 
@@ -621,6 +627,7 @@ class PartitionModification:
 
 	# only set if the device was created or exists
 	dev_path: Optional[Path] = None
+	partn: Optional[int] = None
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
 
@@ -932,6 +939,7 @@ class LsblkInfo:
 	ptuuid: str = ''
 	rota: bool = False
 	tran: Optional[str] = None
+	partn: Optional[int] = None
 	partuuid: Optional[str] = None
 	parttype :Optional[str] = None
 	uuid: Optional[str] = None
@@ -956,6 +964,7 @@ class LsblkInfo:
 			'ptuuid': self.ptuuid,
 			'rota': self.rota,
 			'tran': self.tran,
+			'partn': self.partn,
 			'partuuid': self.partuuid,
 			'parttype' : self.parttype,
 			'uuid': self.uuid,

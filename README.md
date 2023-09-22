@@ -53,58 +53,25 @@ To load the configuration file into `archinstall` run the following command
 archinstall --config <path to user config file or URL> --creds <path to user credentials config file or URL>
 ```
 
+# Help or Issues
+
+If any issues are encountered please submit an issue here on Github or submit a post in the discord help channel.
+When submitting an issue, pleasee:
+* Provide the stacktrace of the output if there is any
+* Attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
+  * To extract the log from the ISO image, one way is to use<br>
+    ```curl -F'file=@/var/log/archinstall/install.log' https://0x0.st```
+
+
 # Available Languages
 
 Archinstall is available in different languages which have been contributed and are maintained by the community.
-Current translations are listed below and vary in the amount of translations per language
-```
-English
-Arabic
-Brazilian Portuguese
-Czech
-Dutch
-Estonian
-French
-Georgian
-German
-Indonesian
-Italian
-Korean
-Modern Greek
-Polish
-Portuguese
-Russian
-Spanish
-Swedish
-Tamil
-Turkish
-Ukrainian
-Urdu
-```
+The language can be switched inside the installer (first menu entry). Bare in mind that not all languages provide
+full translations as we rely on contributors to do the translations. Each language has an indicator that shows
+how much has been translated.
 
 Any contributions to the translations are more than welcome,
 to get started please follow [the guide](https://github.com/archlinux/archinstall/blob/master/archinstall/locales/README.md)
-
-# Help or Issues
-
-Submit an issue here on GitHub, or submit a post in the discord help channel.<br>
-When doing so, attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
-
-# Mission Statement
-
-Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) that follows
-the [Arch Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages and other Arch Linux aspects.
-
-The guided installer will provide user-friendly options along the way, but the keyword here is options, they are optional and will never be forced upon anyone.
-The guided installer itself is also optional to use if so desired and not forced upon anyone.
-
----
-
-Archinstall has one fundamental function which is to be a flexible library to manage services, packages and other aspects inside the installed system.
-This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
-
-Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compatibility after notifying about such changes.
-
 
 # Scripting your own installation
 
@@ -203,7 +170,13 @@ The definitions of the profiles and what packages they will install can be seen 
 ## Using a Live ISO Image
 
 If you want to test a commit, branch or bleeding edge release from the repository using the vanilla Arch Live ISO image,
-you can replace the version of archinstall with a new version and run that with the steps described below:
+you can replace the version of archinstall with a new version and run that with the steps described below.
+
+*Note: When booting from a live USB then the space on the ramdisk is limited and may not be sufficient to allow
+running a re-installation or upgrade of the installer. In case one runs into this issue, any of the following can be used
+- Resize the root partition on the fly https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_root_partition_on_the_fly
+- The boot parameter `copytoram=y` (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26)
+can be specified which will copy the root filesystem to tmpfs.*
 
 1. You need a working network connection
 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
@@ -212,9 +185,10 @@ you can replace the version of archinstall with a new version and run that with 
 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
 5. Enter the repository with `cd archinstall`
    *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
-6. Build the project and install it using `pip install --break-system-packages .`
-
-After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
+6. To run the source code, there are 2 different options:
+   - Run a specific branch version from source directly using `python -m archinstall`, in most cases this will work just fine, the
+      rare case it will not work is if the source has introduced any new dependencies that are not installed yet
+   - Installing the branch version with `pip install --break-system-packages .` and `archinstall`
 
 ## Without a Live ISO Image
 
@@ -226,7 +200,9 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
-    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
+    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive
+file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
 
 This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
@@ -234,6 +210,42 @@ This will create a *20 GB* `testimage.img` and create a loop device which we can
 
 There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.
+
+
+# FAQ
+
+## How to dual boot with Windows
+
+`archinstall` can be used to install Arch alongside an existing Windows installation.
+Below are the necessary steps:
+* After the Windows installation make sure there is some unallocated space for a Linux installation available
+* Boot into the ISO and run`archinstall`
+* Select `Disk configuration` -> `Manual partitioning`
+* Select the disk on which Windows resides
+* Chose `Create a new partition`
+* Select a filesystem type
+* Now the location of the new partition has to be specified as start and end sectors (values can be suffixed with various units)
+* Assign mountpoint `/`
+* Back in the partitioning menu, assign the `Boot/ESP` partition the mountpoint `/boot`
+* This is all for the partitioning menu, select `Confirm and exit` to return to the main menu
+* Set any additional settings you would like to have for the installation
+* After completing the setup start the installation
+
+
+# Mission Statement
+
+Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) that follows
+the [Arch Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages and other Arch Linux aspects.
+
+The guided installer will provide user-friendly options along the way, but the keyword here is options, they are optional and will never be forced upon anyone.
+The guided installer itself is also optional to use if so desired and not forced upon anyone.
+
+---
+
+Archinstall has one fundamental function which is to be a flexible library to manage services, packages and other aspects inside the installed system.
+This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
+
+Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compatibility after notifying about such changes.
 
 
 # Contributing
