@@ -293,6 +293,7 @@ class DeviceHandler(object):
 
 			lsblk_info = self._fetch_part_info(part_mod.safe_dev_path)
 
+			part_mod.partn = lsblk_info.partn
 			part_mod.partuuid = lsblk_info.partuuid
 			part_mod.uuid = lsblk_info.uuid
 
@@ -371,7 +372,7 @@ class DeviceHandler(object):
 			time.sleep(attempt_nr + 1)
 			lsblk_info = get_lsblk_info(path)
 
-			if lsblk_info.partuuid and lsblk_info.uuid:
+			if lsblk_info.partn and lsblk_info.partuuid and lsblk_info.uuid:
 				break
 
 			self.partprobe(path)
@@ -379,6 +380,10 @@ class DeviceHandler(object):
 		if not lsblk_info:
 			debug(f'Unable to get partition information: {path}')
 			raise DiskError(f'Unable to get partition information: {path}')
+
+		if not lsblk_info.partn:
+			debug(f'Unable to determine new partition number: {path}\n{lsblk_info}')
+			raise DiskError(f'Unable to determine new partition number: {path}')
 
 		if not lsblk_info.partuuid:
 			debug(f'Unable to determine new partition uuid: {path}\n{lsblk_info}')
