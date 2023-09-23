@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ஒரு பதிவு கோப்பு இங்கே உருவாக்கப்பட்டது: {} {}"
@@ -1108,7 +1108,7 @@ msgid ""
 "Save directory: "
 msgstr ""
 "உள்ளமைவு(களை) சேமிக்கப்படுவதற்கான கோப்பகத்தை உள்ளிடவும் (தாவல் நிறைவு இயக்கப்பட்டது)\n"
-"கோப்பகத்தை சேமி:"
+"கோப்பகத்தை சேமி: "
 
 msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
@@ -1129,7 +1129,7 @@ msgid "Mirror regions"
 msgstr "கண்ணாடிப் பகுதிகள்"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr "- அதிகபட்ச மதிப்பு: {} ( {} இணையான பதிவிறக்கங்களை அனுமதிக்கிறது, ஒரே நேரத்தில் {max download+1} பதிவிறக்க அனுமதிக்கிறது )"
+msgstr " - அதிகபட்ச மதிப்பு  : {} ( {} இணையான பதிவிறக்கங்களை அனுமதிக்கிறது, ஒரே நேரத்தில் {max_downloads+1} பதிவிறக்கங்களை அனுமதிக்கிறது )"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "தவறான உள்ளீடு! சரியான உள்ளீட்டில் [1 முதல் {} வரை அல்லது முடக்க 0 வரை] மீண்டும் முயற்சிக்கவும்"
@@ -1140,65 +1140,57 @@ msgstr "மொழி குறியீடுகள்"
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "NetworkManager ஐப் பயன்படுத்தவும் (GNOME மற்றும் KDE இல் இணையத்தை வரைகலை முறையில் கட்டமைக்க அவசியம்)"
 
-#, fuzzy
 msgid "Total: {} / {}"
-msgstr "முழு நீளம்: {}"
+msgstr "மொத்தம்: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "உள்ளிடப்பட்ட அனைத்து மதிப்புகளையும் ஒரு அலகுடன் பின்னொட்டு இடலாம்: B, KB, KiB, MB, MiB..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "அலகு வழங்கப்படவில்லை எனில், மதிப்பு பிரிவுகளாக விளக்கப்படும்"
 
-#, fuzzy
 msgid "Enter start (default: sector {}): "
-msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (இயல்புநிலை: {}): "
+msgstr "தொடக்கத்தை உள்ளிடவும் (இயல்பு: sector {}): "
 
-#, fuzzy
 msgid "Enter end (default: {}): "
-msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (இயல்புநிலை: {}): "
+msgstr "முடிவை உள்ளிடவும் (இயல்பு: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "தீர்மானிக்க முடியவில்லை fido2 சாதனங்களை. libfido2 நிறுவப்பட்டுள்ளதா?"
 
 msgid "Path"
-msgstr ""
+msgstr "பாதை"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "உற்பத்தியாளர்"
 
 msgid "Product"
-msgstr ""
+msgstr "தயாரிப்பு"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Invalid configuration: {error}"
-msgstr "கைமுறை கட்டமைப்பு"
+msgstr "தவறான கட்டமைப்பு: {error}"
 
 msgid "Type"
-msgstr ""
+msgstr "வகை"
 
-#, fuzzy
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "இந்த விருப்பம் நிறுவலின் போது நிகழக்கூடிய இணையான பதிவிறக்கங்களின் எண்ணிக்கையை செயல்படுத்துகிறது"
+msgstr "தொகுப்பு பதிவிறக்கங்களின் போது ஏற்படும் இணையான பதிவிறக்கங்களின் எண்ணிக்கையை இந்த விருப்பம் செயல்படுத்துகிறது"
 
-#, fuzzy
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 "\n"
 "Note:\n"
 msgstr ""
 "இயக்கப்பட வேண்டிய இணையான பதிவிறக்கங்களின் எண்ணிக்கையை உள்ளிடவும்.\n"
-"  (1 முதல் {} வரையிலான மதிப்பை உள்ளிடவும்)\n"
-"குறிப்பு:"
+"\n"
+"குறிப்பு:\n"
 
-#, fuzzy
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - அதிகபட்ச மதிப்பு  : {} ( {} இணையான பதிவிறக்கங்களை அனுமதிக்கிறது, ஒரே நேரத்தில் {} பதிவிறக்கங்களை அனுமதிக்கிறது )"
+msgstr " - பரிந்துரைக்கப்பட்ட அதிகபட்ச மதிப்பு: {} (ஒரு நேரத்தில் {} இணையான பதிவிறக்கங்களை அனுமதிக்கிறது)"
 
-#, fuzzy
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - முடக்கு/இயல்புநிலை: 0 (இணை பதிவிறக்கத்தை முடக்குகிறது, ஒரு நேரத்தில் 1 பதிவிறக்கத்தை மட்டுமே அனுமதிக்கிறது )"
+msgstr " - முடக்கு/இயல்புநிலை: 0 (இணை பதிவிறக்கத்தை முடக்குகிறது, ஒரு நேரத்தில் 1 பதிவிறக்கத்தை மட்டுமே அனுமதிக்கிறது)\n"
 
-#, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "தவறான உள்ளீடு! சரியான உள்ளீட்டில் [1 முதல் {} வரை அல்லது முடக்க 0 வரை] மீண்டும் முயற்சிக்கவும்"
+msgstr "தவறான உள்ளீடு! சரியான உள்ளீட்டுடன் மீண்டும் முயற்சிக்கவும் [அல்லது முடக்க 0]"
