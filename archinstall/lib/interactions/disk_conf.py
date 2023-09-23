@@ -170,7 +170,7 @@ def select_disk_config(
 	return None
 
 
-def _boot_partition(sector_size: disk.Size) -> disk.PartitionModification:
+def _boot_partition(sector_size: disk.SectorSize) -> disk.PartitionModification:
 	if SysInfo.has_uefi():
 		start = disk.Size(1, disk.Unit.MiB, sector_size)
 		size = disk.Size(512, disk.Unit.MiB, sector_size)
@@ -264,7 +264,7 @@ def suggest_single_disk_layout(
 
 	# Set a size for / (/root)
 	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
-		length = disk.Size(100, disk.Unit.Percent, sector_size, total_size=device.device_info.total_size)
+		length = device.device_info.total_size - start
 	else:
 		length = min(device.device_info.total_size, root_partition_size)
 
@@ -295,11 +295,14 @@ def suggest_single_disk_layout(
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
+		start = root_partition.length
+		length = device.device_info.total_size - root_partition.length
+
 		home_partition = disk.PartitionModification(
 			status=disk.ModificationStatus.Create,
 			type=disk.PartitionType.Primary,
-			start=root_partition.length,
-			length=disk.Size(100, disk.Unit.Percent, sector_size, total_size=sector_size),
+			start=start,
+			length=length,
 			mountpoint=Path('/home'),
 			fs_type=filesystem_type,
 			mount_options=['compress=zstd'] if compression else []
@@ -320,9 +323,9 @@ def suggest_multi_disk_layout(
 	# Not really a rock solid foundation of information to stand on, but it's a start:
 	# https://www.reddit.com/r/btrfs/comments/m287gp/partition_strategy_for_two_physical_disks/
 	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/
-	min_home_partition_size = disk.Size(40, disk.Unit.GiB, disk.Size.DEFAULT_SECTOR_SIZE)
+	min_home_partition_size = disk.Size(40, disk.Unit.GiB, disk.SectorSize.default())
 	# rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
-	desired_root_partition_size = disk.Size(20, disk.Unit.GiB, disk.Size.DEFAULT_SECTOR_SIZE)
+	desired_root_partition_size = disk.Size(20, disk.Unit.GiB,  disk.SectorSize.default())
 	compression = False
 
 	if not filesystem_type:
@@ -375,12 +378,7 @@ def suggest_multi_disk_layout(
 	else:
 		root_start = disk.Size(206, disk.Unit.MiB, root_device_sector_size)
 
-	root_length = disk.Size(
-		100,
-		disk.Unit.Percent,
-		root_device_sector_size,
-		total_size=root_device.device_info.total_size
-	)
+	root_length = root_device.device_info.total_size - root_start
 
 	# add root partition to the root device
 	root_partition = disk.PartitionModification(
@@ -394,12 +392,15 @@ def suggest_multi_disk_layout(
 	)
 	root_device_modification.add_partition(root_partition)
 
+	start = disk.Size(1, disk.Unit.MiB, home_device_sector_size)
+	length = home_device.device_info.total_size - start
+
 	# add home partition to home device
 	home_partition = disk.PartitionModification(
 		status=disk.ModificationStatus.Create,
 		type=disk.PartitionType.Primary,
-		start=disk.Size(1, disk.Unit.MiB, home_device_sector_size),
-		length=disk.Size(100, disk.Unit.Percent, home_device_sector_size, total_size=home_device.device_info.total_size),
+		start=start,
+		length=length,
 		mountpoint=Path('/home'),
 		mount_options=['compress=zstd'] if compression else [],
 		fs_type=filesystem_type,
