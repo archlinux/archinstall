@@ -146,10 +146,33 @@ class Unit(Enum):
 
 
 @dataclass
+class SectorSize:
+	value: int
+	unit: Unit
+
+	@staticmethod
+	def default() -> SectorSize:
+		return SectorSize(512, Unit.B)
+
+	def __dump__(self) -> Dict[str, Any]:
+		return {
+			'value': self.value,
+			'unit': self.unit.name,
+		}
+
+	@classmethod
+	def parse_args(cls, arg: Dict[str, Any]) -> SectorSize:
+		return SectorSize(
+			arg['value'],
+			Unit[arg['unit']]
+		)
+
+
+@dataclass
 class Size:
 	value: int
 	unit: Unit
-	sector_size: Optional[Size] = None  # only required when unit is sector
+	sector_size: SectorSize
 	total_size: Optional[Size] = None  # required when operating on percentages
 
 	def __post_init__(self):
@@ -187,14 +210,14 @@ class Size:
 		return Size(
 			size_arg['value'],
 			Unit[size_arg['unit']],
-			Size.parse_args(sector_size) if sector_size else None,
+			SectorSize.parse_args(sector_size),
 			Size.parse_args(total_size) if total_size else None
 		)
 
 	def convert(
 		self,
 		target_unit: Unit,
-		sector_size: Optional[Size] = None,
+		sector_size: Optional[SectorSize] = None,
 		total_size: Optional[Size] = None
 	) -> Size:
 		if target_unit == Unit.sectors and sector_size is None:
@@ -208,10 +231,10 @@ class Size:
 			return self
 		elif self.unit == Unit.Percent:
 			amount = int(self._total_size._normalize() * (self.value / 100))
-			return Size(amount, Unit.B)
+			return Size(amount, Unit.B, self.sector_size)
 		elif self.unit == Unit.sectors:
 			norm = self._normalize()
-			return Size(norm, Unit.B).convert(target_unit, sector_size)
+			return Size(norm, Unit.B, self.sector_size).convert(target_unit, sector_size)
 		else:
 			if target_unit == Unit.sectors and sector_size is not None:
 				norm = self._normalize()
@@ -219,7 +242,7 @@ class Size:
 				return Size(sectors, Unit.sectors, sector_size)
 			else:
 				value = int(self._normalize() / target_unit.value)  # type: ignore
-				return Size(value, target_unit)
+				return Size(value, target_unit, self.sector_size)
 
 	def as_text(self) -> str:
 		return self.format_size(
@@ -230,7 +253,7 @@ class Size:
 	def format_size(
 		self,
 		target_unit: Unit,
-		sector_size: Optional[Size] = None,
+		sector_size: Optional[SectorSize] = None,
 		include_unit: bool = True
 	) -> str:
 		if self.unit == Unit.Percent:
@@ -254,12 +277,12 @@ class Size:
 	def __sub__(self, other: Size) -> Size:
 		src_norm = self._normalize()
 		dest_norm = other._normalize()
-		return Size(abs(src_norm - dest_norm), Unit.B)
+		return Size(abs(src_norm - dest_norm), Unit.B, self.sector_size)
 
 	def __add__(self, other: Size) -> Size:
 		src_norm = self._normalize()
 		dest_norm = other._normalize()
-		return Size(abs(src_norm + dest_norm), Unit.B)
+		return Size(abs(src_norm + dest_norm), Unit.B, self.sector_size)
 
 	def __lt__(self, other):
 		return self._normalize() < other._normalize()
@@ -302,9 +325,9 @@ class _PartitionInfo:
 	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
 
 	@property
-	def sector_size(self) -> Size:
+	def sector_size(self) -> SectorSize:
 		sector_size = self.partition.geometry.device.sectorSize
-		return Size(sector_size, Unit.B)
+		return SectorSize(sector_size, Unit.B)
 
 	def table_data(self) -> Dict[str, Any]:
 		end = self.start + self.length
@@ -340,10 +363,14 @@ class _PartitionInfo:
 		start = Size(
 			partition.geometry.start,
 			Unit.sectors,
-			Size(partition.disk.device.sectorSize, Unit.B)
+			SectorSize(partition.disk.device.sectorSize, Unit.B)
 		)
 
-		length = Size(int(partition.getLength(unit='B')), Unit.B)
+		length = Size(
+			int(partition.getLength(unit='B')),
+			Unit.B,
+			SectorSize(partition.disk.device.sectorSize, Unit.B)
+		)
 
 		return _PartitionInfo(
 			partition=partition,
@@ -368,7 +395,7 @@ class _DeviceInfo:
 	type: str
 	total_size: Size
 	free_space_regions: List[DeviceGeometry]
-	sector_size: Size
+	sector_size: SectorSize
 	read_only: bool
 	dirty: bool
 
@@ -389,7 +416,7 @@ class _DeviceInfo:
 		device = disk.device
 		device_type = parted.devices[device.type]
 
-		sector_size = Size(device.sectorSize, Unit.B)
+		sector_size = SectorSize(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
 
 		return _DeviceInfo(
@@ -397,7 +424,7 @@ class _DeviceInfo:
 			path=Path(device.path),
 			type=device_type,
 			sector_size=sector_size,
-			total_size=Size(int(device.getLength(unit='B')), Unit.B),
+			total_size=Size(int(device.getLength(unit='B')), Unit.B, device.sectorSize),
 			free_space_regions=free_space,
 			read_only=device.readOnly,
 			dirty=device.dirty
@@ -485,7 +512,7 @@ class SubvolumeModification:
 
 
 class DeviceGeometry:
-	def __init__(self, geometry: Geometry, sector_size: Size):
+	def __init__(self, geometry: Geometry, sector_size: SectorSize):
 		self._geometry = geometry
 		self._sector_size = sector_size
 
@@ -944,7 +971,7 @@ class LsblkInfo:
 	name: str = ''
 	path: Path = Path()
 	pkname: str = ''
-	size: Size = field(default_factory=lambda: Size(0, Unit.B))
+	size: Size = field(default_factory=lambda: Size(0, Unit.B, SectorSize.default()))
 	log_sec: int = 0
 	pttype: str = ''
 	ptuuid: str = ''
@@ -1023,7 +1050,8 @@ class LsblkInfo:
 			if isinstance(getattr(lsblk_info, data_field), Path):
 				val = Path(blockdevice[lsblk_field])
 			elif isinstance(getattr(lsblk_info, data_field), Size):
-				val = Size(blockdevice[lsblk_field], Unit.B)
+				sector_size = SectorSize(blockdevice['log-sec'], Unit.B)
+				val = Size(blockdevice[lsblk_field], Unit.B, sector_size)
 			else:
 				val = blockdevice[lsblk_field]
 
