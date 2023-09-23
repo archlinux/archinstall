@@ -56,7 +56,7 @@ archinstall --config <path to user config file or URL> --creds <path to user cre
 # Help or Issues
 
 If any issues are encountered please submit an issue here on Github or submit a post in the discord help channel.
-When submitting an issue, pleasee:
+When submitting an issue, please:
 * Provide the stacktrace of the output if there is any
 * Attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
   * To extract the log from the ISO image, one way is to use<br>
