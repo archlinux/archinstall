@@ -874,7 +874,8 @@ class Installer:
 	def _add_grub_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
-		root_partition: disk.PartitionModification
+		root_partition: disk.PartitionModification,
+		efi_partition: Optional[disk.PartitionModification]
 	):
 		self.pacman.strap('grub')  # no need?
 
@@ -895,12 +896,15 @@ class Installer:
 			'--debug'
 		]
 
-		if SysInfo.has_uefi():
+		if SysInfo.has_uefi() and efi_partition is not None:
+			info(f"GRUB EFI partition: {efi_partition.dev_path}")
+
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			add_options = [
 				'--target=x86_64-efi',
-				f'--efi-directory={boot_partition.mountpoint}',
+				f'--efi-directory={efi_partition.mountpoint}'
+				f'--boot-directory={boot_partition.mountpoint if boot_partition else "/boot"}'
 				'--bootloader-id=GRUB',
 				'--removable'
 			]
@@ -913,8 +917,10 @@ class Installer:
 				try:
 					SysCommand(command, peek_output=True)
 				except SysCallError as err:
-					raise DiskError(f"Could not install GRUB to {self.target}{boot_partition.mountpoint}: {err}")
+					raise DiskError(f"Could not install GRUB to {self.target}{efi_partition.mountpoint}: {err}")
 		else:
+			info(f"GRUB boot partition: {boot_partition.dev_path}")
+
 			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
 			add_options = [
@@ -931,7 +937,7 @@ class Installer:
 		try:
 			SysCommand(
 				f'/usr/bin/arch-chroot {self.target} '
-				f'grub-mkconfig -o {boot_partition.mountpoint}/grub/grub.cfg'
+				f'grub-mkconfig -o {boot_partition.mountpoint if boot_partition else "/boot"}/grub/grub.cfg'
 			)
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
@@ -1131,7 +1137,7 @@ TIMEOUT=5
 			case Bootloader.Systemd:
 				self._add_systemd_bootloader(boot_partition, root_partition, efi_partition)
 			case Bootloader.Grub:
-				self._add_grub_bootloader(boot_partition, root_partition)
+				self._add_grub_bootloader(boot_partition, root_partition, efi_partition)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root_partition)
 			case Bootloader.Limine:
