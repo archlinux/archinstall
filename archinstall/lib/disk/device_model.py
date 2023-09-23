@@ -374,7 +374,10 @@ class _DeviceInfo:
 	@classmethod
 	def from_disk(cls, disk: Disk) -> _DeviceInfo:
 		device = disk.device
-		device_type = parted.devices[device.type]
+		if device.type == 18:
+			device_type = 'loop'
+		else:
+			device_type = parted.devices[device.type]
 
 		sector_size = Size(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
