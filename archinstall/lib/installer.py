@@ -873,7 +873,7 @@ class Installer:
 
 	def _add_grub_bootloader(
 		self,
-		boot_partition: Optional[disk.PartitionModification],
+		boot_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification,
 		efi_partition: Optional[disk.PartitionModification]
 	):
@@ -896,7 +896,7 @@ class Installer:
 			'--debug'
 		]
 
-		if SysInfo.has_uefi() and efi_partition != None:
+		if SysInfo.has_uefi() and efi_partition is not None:
 			info(f"GRUB EFI partition: {efi_partition.dev_path}")
 
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
