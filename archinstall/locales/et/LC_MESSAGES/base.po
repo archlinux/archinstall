@@ -1218,3 +1218,17 @@ msgstr " - Keela/Vaikimisi : 0 ( keelab paralleelse allalaadimise, võimaldab ai
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Vale sisestus! Proovige uuesti kehtiva sisendiga [1 {max_downloads} või 0 keelamiseks]."
+
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway vajab juurdepääsu teie seatile (riistvaraseadmete kogum, st klaviatuur, hiir jne."
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valige valik, et anda Sway'le juurdepääs teie riistvarale"

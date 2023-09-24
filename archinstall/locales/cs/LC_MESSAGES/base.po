@@ -1238,3 +1238,12 @@ msgstr " - Zakázáno/Výchozí    : 0 (Zakáže paralelní stahování, povolí
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {}, nebo 0 pro vypnutí]"
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""

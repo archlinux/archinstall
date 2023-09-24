@@ -1130,3 +1130,12 @@ msgstr ""
 
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr ""
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""

@@ -1245,3 +1245,12 @@ msgstr " - 비활성화/기본 : - ( 병렬 다운로드 비활성화, 한 번�
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {} 까지, 비활성화 하려면 0]"
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""

@@ -1253,6 +1253,20 @@ msgstr " - Deshabilitar/Predeterminado : 0 ( Deshabilita la descarga paralela, p
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "¡Entrada no válida! Intente nuevamente con un valor válido [1 a {}, o 0 para deshabilitar]"
 
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway necesita acceso a sus dispositivos de hardware (teclado, mouse, etc.)"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Elija una opción para darle a Sway acceso a su hardware"
+
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
 
