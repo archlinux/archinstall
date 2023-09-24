@@ -49,10 +49,10 @@ class DiskLayoutConfiguration:
 		if self.config_type == DiskLayoutType.Pre_mount and self.relative_mountpoint is None:
 			raise ValueError('Must set a relative mountpoint when layout type is pre-mount"')
 
-	def __dump__(self) -> Dict[str, Any]:
+	def json(self) -> Dict[str, Any]:
 		return {
 			'config_type': self.config_type.value,
-			'device_modifications': [mod.__dump__() for mod in self.device_modifications]
+			'device_modifications': [mod.json() for mod in self.device_modifications]
 		}
 
 	@classmethod
@@ -171,12 +171,12 @@ class Size:
 			raise ValueError('Percent unit size must specify a total size')
 		return self.total_size  # type: ignore
 
-	def __dump__(self) -> Dict[str, Any]:
+	def json(self) -> Dict[str, Any]:
 		return {
 			'value': self.value,
 			'unit': self.unit.name,
-			'sector_size': self.sector_size.__dump__() if self.sector_size else None,
-			'total_size': self._total_size.__dump__() if self._total_size else None
+			'sector_size': self.sector_size.json() if self.sector_size else None,
+			'total_size': self._total_size.json() if self._total_size else None
 		}
 
 	@classmethod
@@ -457,7 +457,7 @@ class SubvolumeModification:
 			return self.mountpoint == Path('/')
 		return False
 
-	def __dump__(self) -> Dict[str, Any]:
+	def json(self) -> Dict[str, Any]:
 		return {
 			'name': str(self.name),
 			'mountpoint': str(self.mountpoint),
@@ -466,12 +466,7 @@ class SubvolumeModification:
 		}
 
 	def table_data(self) -> Dict[str, Any]:
-		return {
-			'name': str(self.name),
-			'mountpoint': str(self.mountpoint),
-			'compress': self.compress,
-			'nodatacow': self.nodatacow
-		}
+		return self.json()
 
 
 class DeviceGeometry:
@@ -755,14 +750,14 @@ class PartitionModification:
 			'obj_id': self.obj_id,
 			'status': self.status.value,
 			'type': self.type.value,
-			'start': self.start.__dump__(),
-			'length': self.length.__dump__(),
+			'start': self.start.json(),
+			'length': self.length.json(),
 			'fs_type': self.fs_type.value if self.fs_type else '',
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
 			'dev_path': str(self.dev_path) if self.dev_path else None,
-			'btrfs': [vol.__dump__() for vol in self.btrfs_subvols]
+			'btrfs': [vol.json() for vol in self.btrfs_subvols]
 		}
 
 	def table_data(self) -> Dict[str, Any]:
@@ -830,7 +825,7 @@ class DeviceModification:
 		filtered = filter(lambda x: x.is_root(relative_path), self.partitions)
 		return next(filtered, None)
 
-	def __dump__(self) -> Dict[str, Any]:
+	def json(self) -> Dict[str, Any]:
 		"""
 		Called when generating configuration files
 		"""
@@ -920,6 +915,13 @@ class Fido2Device:
 			'path': str(self.path),
 			'manufacturer': self.manufacturer,
 			'product': self.product
+		}
+
+	def table_data(self) -> Dict[str, str]:
+		return {
+			'Path': str(self.path),
+			'Manufacturer': self.manufacturer,
+			'Product': self.product
 		}
 
 	@classmethod
