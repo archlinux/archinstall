@@ -188,8 +188,8 @@ class Size:
 	sector_size: SectorSize
 
 	def __post_init__(self):
-		if self.unit == Unit.sectors and self.sector_size is None:
-			raise ValueError('Sector size is required when unit is sectors')
+		if not isinstance(self.sector_size, SectorSize):
+			raise ValueError('sector size must be of type SectorSize')
 
 	def __dump__(self) -> Dict[str, Any]:
 		return {
@@ -411,12 +411,14 @@ class _DeviceInfo:
 		sector_size = SectorSize(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
 
+		sector_size = SectorSize(device.sectorSize, Unit.B)
+
 		return _DeviceInfo(
 			model=device.model.strip(),
 			path=Path(device.path),
 			type=device_type,
 			sector_size=sector_size,
-			total_size=Size(int(device.getLength(unit='B')), Unit.B, device.sectorSize),
+			total_size=Size(int(device.getLength(unit='B')), Unit.B, sector_size),
 			free_space_regions=free_space,
 			read_only=device.readOnly,
 			dirty=device.dirty
@@ -785,7 +787,7 @@ class PartitionModification:
 			'status': self.status.value,
 			'type': self.type.value,
 			'start': self.start.__dump__(),
-			'Size': self.length.__dump__(),
+			'size': self.length.__dump__(),
 			'fs_type': self.fs_type.value if self.fs_type else '',
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,

@@ -196,24 +196,26 @@ class PartitioningList(ListManager):
 		self,
 		sector_size: SectorSize,
 		total_size: Size,
-		value: str,
+		text: str,
 		start: Optional[Size]
 	) -> Optional[Size]:
-		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', value, re.I)
+		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', text, re.I)
 
 		if match:
-			value, unit = match.groups()
+			str_value, unit = match.groups()
 
-			if unit == '%':
+			if unit == '%' and start:
 				available = total_size - start
-				value = int(available.value * (int(value)/100))
+				value = int(available.value * (int(str_value) / 100))
 				unit = available.unit.name
+			else:
+				value = int(str_value)
 
 			if unit and unit not in Unit.get_all_units():
 				return None
 
 			unit = Unit[unit] if unit else Unit.sectors
-			return Size(int(value), unit, sector_size, total_size)
+			return Size(value, unit, sector_size)
 
 		return None
 
