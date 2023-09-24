@@ -1,12 +1,11 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 import archinstall
 from archinstall import Installer
 from archinstall import profile
 from archinstall import SysInfo
 from archinstall import mirrors
-from archinstall.default_profiles.applications.pipewire import PipewireProfile
 from archinstall import disk
 from archinstall import menu
 from archinstall import models
@@ -49,7 +48,7 @@ def ask_user_questions():
 	global_menu.enable('profile_config')
 
 	# Ask about audio server selection if one is not already set
-	global_menu.enable('audio')
+	global_menu.enable('audio_config')
 
 	# Ask for preferred kernel:
 	global_menu.enable('kernels', mandatory=True)
@@ -61,7 +60,7 @@ def ask_user_questions():
 		global_menu.enable('parallel downloads')
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
-	global_menu.enable('nic')
+	global_menu.enable('network_config')
 
 	global_menu.enable('timezone')
 
@@ -137,35 +136,25 @@ def perform_installation(mountpoint: Path):
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
-		network_config = archinstall.arguments.get('nic', None)
+		network_config = archinstall.arguments.get('network_config', None)
 
 		if network_config:
-			handler = models.NetworkConfigurationHandler(network_config)
-			handler.config_installer(
+			network_config.install_network_config(
 				installation,
 				archinstall.arguments.get('profile_config', None)
 			)
 
-		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-			installation.add_additional_packages(archinstall.arguments.get('packages', []))
-
 		if users := archinstall.arguments.get('!users', None):
 			installation.create_users(users)
 
-		if audio := archinstall.arguments.get('audio', None):
-			info(f'Installing audio server: {audio}')
-			if audio == 'pipewire':
-				PipewireProfile().install(installation)
-			elif audio == 'pulseaudio':
-				installation.add_additional_packages("pulseaudio")
-
-			if SysInfo.requires_sof_fw():
-				installation.add_additional_packages('sof-firmware')
-
-			if SysInfo.requires_alsa_fw():
-				installation.add_additional_packages('alsa-firmware')
+		audio_config: Optional[models.AudioConfiguration] = archinstall.arguments.get('audio_config', None)
+		if audio_config:
+			audio_config.install_audio_config(installation)
 		else:
-			info("No audio server will be installed.")
+			info("No audio server will be installed")
+
+		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
+			installation.add_additional_packages(archinstall.arguments.get('packages', []))
 
 		if profile_config := archinstall.arguments.get('profile_config', None):
 			profile.profile_handler.install_profile_config(installation, profile_config)
@@ -174,7 +163,7 @@ def perform_installation(mountpoint: Path):
 			installation.set_timezone(timezone)
 
 		if archinstall.arguments.get('ntp', False):
-			installation.activate_time_syncronization()
+			installation.activate_time_synchronization()
 
 		if archinstall.accessibility_tools_in_use():
 			installation.enable_espeakup()
@@ -182,7 +171,7 @@ def perform_installation(mountpoint: Path):
 		if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 			installation.user_set_pw('root', root_pw)
 
-		# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
+		# This step must be after profile installs to allow profiles_bck to install language pre-requisites.
 		# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 		installation.set_keyboard_language(locale_config.kb_layout)
 

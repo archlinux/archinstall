@@ -34,6 +34,11 @@ class MenuSelection:
 
 
 class Menu(TerminalMenu):
+	_menu_is_active: bool = False
+
+	@staticmethod
+	def is_menu_active() -> bool:
+		return Menu._menu_is_active
 
 	@classmethod
 	def back(cls) -> str:
@@ -118,7 +123,7 @@ class Menu(TerminalMenu):
 		:param allow_reset: This will explicitly handle a ctrl+c instead and return that specific state
 		:type allow_reset: bool
 
-		param allow_reset_warning_msg: If raise_error_on_interrupt is True the warnign is set, a user confirmation is displayed
+		param allow_reset_warning_msg: If raise_error_on_interrupt is True the warning is set, a user confirmation is displayed
 		type allow_reset_warning_msg: str
 
 		:param extra_bottom_space: Add an extra empty line at the end of the menu
@@ -260,6 +265,8 @@ class Menu(TerminalMenu):
 			return MenuSelection(type_=MenuSelectionType.Skip)
 
 	def run(self) -> MenuSelection:
+		Menu._menu_is_active = True
+
 		selection = self._show()
 
 		if selection.type_ == MenuSelectionType.Reset:
@@ -276,6 +283,8 @@ class Menu(TerminalMenu):
 			if selection.value == self.back():
 				selection.type_ = MenuSelectionType.Skip
 				selection.value = None
+
+		Menu._menu_is_active = False
 
 		return selection
 

@@ -138,7 +138,7 @@ class TranslationHandler:
 
 	def get_language_by_abbr(self, abbr: str) -> Language:
 		"""
-		Get a language object by its abbrevation, e.g. en
+		Get a language object by its abbreviation, e.g. en
 		"""
 		try:
 			return next(filter(lambda x: x.abbr == abbr, self._translated_languages))
@@ -168,7 +168,7 @@ class TranslationHandler:
 
 		translation_files = []
 		for filename in filenames:
-			if len(filename) == 2 or filename == 'pt_BR':
+			if len(filename) == 2 or filename in ['pt_BR', 'zh-CN', 'zh-TW']:
 				translation_files.append(filename)
 
 		return translation_files

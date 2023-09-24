@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 def generate_password(length :int = 64) -> str:
-	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
+	haystack = string.printable # digits, ascii_letters, punctuation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for i in range(length))
 
 
@@ -79,7 +79,8 @@ def jsonify(obj: Any, safe: bool = True) -> Any:
 		return str(obj)
 	if hasattr(obj, "__dict__"):
 		return vars(obj)
-	return str(obj)
+
+	return obj
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
@@ -210,12 +211,13 @@ class SysCommandWorker:
 		return False
 
 	def write(self, data: bytes, line_ending :bool = True) -> int:
-		assert type(data) == bytes  # TODO: Maybe we can support str as well and encode it
+		assert isinstance(data, bytes)  # TODO: Maybe we can support str as well and encode it
 
 		self.make_sure_we_are_executing()
 
 		if self.child_fd:
 			return os.write(self.child_fd, data + (b'\n' if line_ending else b''))
+			os.fsync(self.child_fd)
 
 		return 0
 
@@ -459,10 +461,12 @@ def _pid_exists(pid: int) -> bool:
 def run_custom_user_commands(commands :List[str], installation :Installer) -> None:
 	for index, command in enumerate(commands):
 		script_path = f"/var/tmp/user-command.{index}.sh"
-		chroot_path = installation.target / script_path
+		chroot_path = f"{installation.target}/{script_path}"
 		
 		info(f'Executing custom command "{command}" ...')
-		chroot_path.write_text(command)
+		with open(chroot_path, "w") as user_script:
+			user_script.write(command)
+			
 		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
 		
 		os.unlink(chroot_path)

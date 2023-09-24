@@ -39,11 +39,11 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.6.0rc1"
+__version__ = "2.6.1"
 storage['__version__'] = __version__
 
 
-# add the custome _ as a builtin, it can now be used anywhere in the
+# add the custom _ as a builtin, it can now be used anywhere in the
 # project to mark strings as translatable with _('translate me')
 DeferredTranslation.install()
 
@@ -145,12 +145,12 @@ def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
 	Takes arguments (dictionary or argparse Namespace) and removes any
 	None values. This ensures clean mergers during dict.update(args)
 	"""
-	if type(args) == Namespace:
+	if type(args) is Namespace:
 		args = vars(args)
 
 	clean_args = {}
 	for key, val in args.items():
-		if type(val) == dict:
+		if isinstance(val, dict):
 			val = cleanup_empty_args(val)
 
 		if val is not None:
@@ -225,10 +225,9 @@ def load_config():
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
 
-	if arguments.get('nic', None) is not None:
-		handler = models.NetworkConfigurationHandler()
-		handler.parse_arguments(arguments.get('nic'))
-		arguments['nic'] = handler.configuration
+	if arguments.get('network_config', None) is not None:
+		config = NetworkConfiguration.parse_arg(arguments.get('network_config'))
+		arguments['network_config'] = config
 
 	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:
 		users = arguments.get('!users', None)
@@ -237,6 +236,9 @@ def load_config():
 
 	if arguments.get('bootloader', None) is not None:
 		arguments['bootloader'] = models.Bootloader.from_arg(arguments['bootloader'])
+
+	if arguments.get('audio_config', None) is not None:
+		arguments['audio_config'] = models.AudioConfiguration.parse_arg(arguments['audio_config'])
 
 	if arguments.get('disk_encryption', None) is not None and disk_config is not None:
 		password = arguments.get('encryption_password', '')

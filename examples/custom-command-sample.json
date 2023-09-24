@@ -1,6 +1,5 @@
 {
     "dry_run": true,
-    "audio": "none",
     "bootloader": "systemd-bootctl",
     "debug": false,
     "harddrives": [
@@ -12,8 +11,8 @@
     ],
     "keyboard-layout": "us",
     "mirror-region": "Worldwide",
-    "nic": {
-    	"type": "NM"
+    "network_config": {
+    	"type": "nm"
     },
     "ntp": true,
     "packages": ["docker", "git", "wget", "zsh"],

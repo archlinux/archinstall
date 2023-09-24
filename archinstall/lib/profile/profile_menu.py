@@ -27,7 +27,7 @@ class ProfileMenu(AbstractSubMenu):
 
 	def setup_selection_menu_options(self):
 		self._menu_options['profile'] = Selector(
-			_('Profile'),
+			_('Type'),
 			lambda x: self._select_profile(x),
 			display_func=lambda x: x.name if x else None,
 			preview_func=self._preview_profile,

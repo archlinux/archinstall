@@ -1,7 +1,7 @@
 import os
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import archinstall
 from archinstall import SysInfo, info, debug
@@ -9,13 +9,13 @@ from archinstall.lib import mirrors
 from archinstall.lib import models
 from archinstall.lib import disk
 from archinstall.lib import locale
+from archinstall.lib.models import AudioConfiguration
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib import menu
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
 from archinstall.lib.configuration import ConfigurationOutput
-from archinstall.default_profiles.applications.pipewire import PipewireProfile
 
 if TYPE_CHECKING:
 	_: Any
@@ -54,7 +54,7 @@ class SetupMenu(GlobalMenu):
 		super().setup_selection_menu_options()
 
 		self._menu_options['mode'] = menu.Selector(
-			'Excution mode',
+			'Execution mode',
 			lambda x : select_mode(),
 			display_func=lambda x: x.value if x else '',
 			default=ExecutionMode.Full)
@@ -95,7 +95,7 @@ class SwissMainMenu(GlobalMenu):
 				options_list = [
 					'mirror_config', 'disk_config',
 					'disk_encryption', 'swap', 'bootloader', 'hostname', '!root-password',
-					'!users', 'profile_config', 'audio', 'kernels', 'packages', 'additional-repositories', 'nic',
+					'!users', 'profile_config', 'audio_config', 'kernels', 'packages', 'additional-repositories', 'network_config',
 					'timezone', 'ntp'
 				]
 
@@ -109,8 +109,8 @@ class SwissMainMenu(GlobalMenu):
 			case ExecutionMode.Only_OS:
 				options_list = [
 					'mirror_config','bootloader', 'hostname',
-					'!root-password', '!users', 'profile_config', 'audio', 'kernels',
-					'packages', 'additional-repositories', 'nic', 'timezone', 'ntp'
+					'!root-password', '!users', 'profile_config', 'audio_config', 'kernels',
+					'packages', 'additional-repositories', 'network_config', 'timezone', 'ntp'
 				]
 
 				mandatory_list = ['hostname']
@@ -222,29 +222,25 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
-			network_config = archinstall.arguments.get('nic', None)
+			network_config = archinstall.arguments.get('network_config', None)
 
 			if network_config:
-				handler = models.NetworkConfigurationHandler(network_config)
-				handler.config_installer(
+				network_config.install_network_config(
 					installation,
 					archinstall.arguments.get('profile_config', None)
 				)
 
-			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-				installation.add_additional_packages(archinstall.arguments.get('packages', []))
-
 			if users := archinstall.arguments.get('!users', None):
 				installation.create_users(users)
 
-			if audio := archinstall.arguments.get('audio', None):
-				info(f'Installing audio server: {audio}')
-				if audio == 'pipewire':
-					PipewireProfile().install(installation)
-				elif audio == 'pulseaudio':
-					installation.add_additional_packages("pulseaudio")
+			audio_config: Optional[AudioConfiguration] = archinstall.arguments.get('audio_config', None)
+			if audio_config:
+				audio_config.install_audio_config(installation)
 			else:
-				info("No audio server will be installed.")
+				info("No audio server will be installed")
+
+			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
+				installation.add_additional_packages(archinstall.arguments.get('packages', []))
 
 			if profile_config := archinstall.arguments.get('profile_config', None):
 				profile_handler.install_profile_config(installation, profile_config)
@@ -253,7 +249,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 				installation.set_timezone(timezone)
 
 			if archinstall.arguments.get('ntp', False):
-				installation.activate_time_syncronization()
+				installation.activate_time_synchronization()
 
 			if archinstall.accessibility_tools_in_use():
 				installation.enable_espeakup()
@@ -261,7 +257,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
 
-			# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
+			# This step must be after profile installs to allow profiles_bck to install language pre-requisites.
 			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 			installation.set_keyboard_language(locale_config.kb_layout)
 

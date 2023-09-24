@@ -15,40 +15,28 @@ class SeatAccess(Enum):
 	polkit = 'polkit'
 
 
-class SwayProfile(XorgProfile):
+class HyprlandProfile(XorgProfile):
 	def __init__(self):
-		super().__init__(
-			'Sway',
-			ProfileType.WindowMgr,
-			description=''
-		)
+		super().__init__('Hyprland', ProfileType.DesktopEnv, description='')
 
 		self.custom_settings = {'seat_access': None}
 
 	@property
 	def packages(self) -> List[str]:
-		additional = []
-		if seat := self.custom_settings.get('seat_access', None):
-			additional = [seat]
-
 		return [
-			"sway",
-			"swaybg",
-			"swaylock",
-			"swayidle",
-			"waybar",
-			"dmenu",
-			"brightnessctl",
-			"grim",
-			"slurp",
-			"pavucontrol",
-			"foot",
-			"xorg-xwayland"
-		] + additional
+			"hyprland",
+			"dunst",
+			"kitty",
+			"dolphin",
+			"wofi",
+			"xdg-desktop-portal-hyprland",
+			"qt5-wayland",
+			"qt6-wayland"
+		]
 
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
-		return GreeterType.Lightdm
+		return GreeterType.Sddm
 
 	@property
 	def services(self) -> List[str]:
@@ -58,8 +46,8 @@ class SwayProfile(XorgProfile):
 
 	def _ask_seat_access(self):
 		# need to activate seat service and add to seat group
-		title = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
-		title += str(_('\n\nChoose an option to give Sway access to your hardware'))
+		title = str(_('Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		title += str(_('\n\nChoose an option to give Hyprland access to your hardware'))
 
 		options = [e.value for e in SeatAccess]
 		default = None

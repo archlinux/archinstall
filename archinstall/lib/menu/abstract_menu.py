@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING, Union
+from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
 from ..output import error
+from ..output import unicode_ljust
 from ..translationhandler import TranslationHandler, Language
 
 if TYPE_CHECKING:
 	_: Any
-
 
 class Selector:
 	def __init__(
@@ -18,8 +18,8 @@ class Selector:
 		display_func: Optional[Callable] = None,
 		default: Optional[Any] = None,
 		enabled: bool = False,
-		dependencies: List[Union[str, Callable]] = [],
-		dependencies_not: List[str] = [],
+		dependencies: List = [],
+		dependencies_not: List = [],
 		exec_func: Optional[Callable] = None,
 		preview_func: Optional[Callable] = None,
 		mandatory: bool = False,
@@ -68,23 +68,42 @@ class Selector:
 		:param no_store: A boolean which determines that the field should or shouldn't be stored in the data storage
 		:type no_store: bool
 		"""
+		self._description = description
+		self.func = func
 		self._display_func = display_func
 		self._current_selection = default
-		self._no_store = no_store
-
-		self.func = func
 		self.enabled = enabled
+		self._dependencies = dependencies
+		self._dependencies_not = dependencies_not
 		self.exec_func = exec_func
+		self._preview_func = preview_func
 		self.mandatory = mandatory
-		self.preview_func = preview_func
-		self.description = description
-		self.default = default
-		self.dependencies = dependencies
-		self.dependencies_not = dependencies_not
+		self._no_store = no_store
+		self._default = default
+
+	@property
+	def default(self) -> Any:
+		return self._default
+
+	@property
+	def description(self) -> str:
+		return self._description
+
+	@property
+	def dependencies(self) -> List:
+		return self._dependencies
+
+	@property
+	def dependencies_not(self) -> List:
+		return self._dependencies_not
 
 	@property
 	def current_selection(self) -> Optional[Any]:
 		return self._current_selection
+
+	@property
+	def preview_func(self):
+		return self._preview_func
 
 	def do_store(self) -> bool:
 		return self._no_store is False
@@ -93,10 +112,10 @@ class Selector:
 		self.enabled = status
 
 	def update_description(self, description: str):
-		self.description = description
+		self._description = description
 
 	def menu_text(self, padding: int = 0) -> str:
-		if self.description == '':  # special menu option for __separator__
+		if self._description == '':  # special menu option for __separator__
 			return ''
 
 		current = ''
@@ -109,10 +128,10 @@ class Selector:
 
 		if current:
 			padding += 5
-			description = str(self.description).ljust(padding, ' ')
+			description = unicode_ljust(str(self._description), padding, ' ')
 			current = current
 		else:
-			description = self.description
+			description = self._description
 			current = ''
 
 		return f'{description} {current}'
@@ -177,8 +196,6 @@ class AbstractMenu:
 		self.setup_selection_menu_options()
 		self._sync_all()
 		self._populate_default_values()
-
-		self.defined_text = str(_('Defined'))
 
 	@property
 	def last_choice(self):
@@ -380,23 +397,19 @@ class AbstractMenu:
 		return True
 
 	def _verify_selection_enabled(self, selection_name: str) -> bool:
+		""" general """
 		if selection := self._menu_options.get(selection_name, None):
 			if not selection.enabled:
 				return False
 
 			if len(selection.dependencies) > 0:
-				for dep in selection.dependencies:
-					if isinstance(dep, str):
-						if not self._verify_selection_enabled(dep) or self._menu_options[dep].is_empty():
-							return False
-					elif callable(dep):  # callable dependency eval
-						return dep()
-					else:
-						raise ValueError(f'Unsupported dependency: {selection_name}')
+				for d in selection.dependencies:
+					if not self._verify_selection_enabled(d) or self._menu_options[d].is_empty():
+						return False
 
 			if len(selection.dependencies_not) > 0:
-				for dep in selection.dependencies_not:
-					if not self._menu_options[dep].is_empty():
+				for d in selection.dependencies_not:
+					if not self._menu_options[d].is_empty():
 						return False
 			return True
 
@@ -440,12 +453,8 @@ class AbstractMenu:
 
 
 class AbstractSubMenu(AbstractMenu):
-	def __init__(
-		self,
-		data_store: Dict[str, Any] = {},
-		preview_size: float = 0.2
-	):
-		super().__init__(data_store=data_store, preview_size=preview_size)
+	def __init__(self, data_store: Dict[str, Any] = {}):
+		super().__init__(data_store=data_store)
 
 		self._menu_options['__separator__'] = Selector('')
 		self._menu_options['back'] = \

@@ -2,7 +2,7 @@
     "config_version": "2.5.2",
     "additional-repositories": [],
     "archinstall-language": "English",
-    "audio": "pipewire",
+    "audio_config": {"audio": "pipewire"},
     "bootloader": "Systemd-boot",
     "debug": false,
     "disk_config": {

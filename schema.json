@@ -12,14 +12,19 @@
                 "testing"
             ]
         },
-        "audio": {
+        "audio_config": {
             "description": "Audio server to be installed",
-            "type": "string",
-            "enum": [
-                "pipewire",
-                "pulseaudio",
-                "none"
-            ]
+            "type": "object",
+            "properties": {
+                "audio": {
+                    "description": "Audio server to be installed",
+                    "type": "string",
+                    "enum": [
+                        "pipewire",
+                        "pulseaudio"
+                    ]
+                }
+            },
         },
         "bootloader": {
             "description": "Bootloader  to be installed",
@@ -69,21 +74,26 @@
             "description": "By default, it will autodetect the best region. Enter a region or a dictionary of regions and mirrors to use specific ones",
             "type": "object"
         },
-        "nic": {
+        "network_config": {
             "description": "Choose between NetworkManager, manual configuration, use systemd-networkd from the ISO or no configuration",
             "type": "object",
             "properties": {
                 "type": "string",
-                "iface": "string",
-                "dhcp": "boolean",
-                "ip": "string",
-                "gateway": "string",
-                "dns": {
-                    "description": "List of DNS servers",
+                "nics": [
                     "type": "array",
                     "items": {
-                        "type": "string"
-                    }
+                        "iface": "string",
+                        "dhcp": "boolean",
+                        "ip": "string",
+                        "gateway": "string",
+                        "dns": {
+                            "description": "List of DNS servers",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 }
             }
         },

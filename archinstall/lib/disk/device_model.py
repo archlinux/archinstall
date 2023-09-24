@@ -13,15 +13,18 @@ from typing import Optional, List, Dict, TYPE_CHECKING, Any
 from typing import Union
 
 import parted  # type: ignore
+import _ped  # type: ignore
 from parted import Disk, Geometry, Partition
 
 from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
 from ..output import debug, error
 from ..storage import storage
+from ..output import info
 
 if TYPE_CHECKING:
 	_: Any
+
 
 
 class PartitionTable(Enum):
@@ -115,7 +118,7 @@ class Size:
 
 		# not sure why we would ever wanna convert to percentages
 		if target_unit == Unit.Percent and total_size is None:
-			raise ValueError('Missing paramter total size to be able to convert to percentage')
+			raise ValueError('Missing parameter total size to be able to convert to percentage')
 
 		if self.unit == target_unit:
 			return self
@@ -292,7 +295,10 @@ class _DeviceInfo:
 	@classmethod
 	def from_disk(cls, disk: Disk) -> _DeviceInfo:
 		device = disk.device
-		device_type = parted.devices[device.type]
+		if device.type == 18:
+			device_type = 'loop'
+		else:
+			device_type = parted.devices[device.type]
 
 		sector_size = Size(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
@@ -425,12 +431,18 @@ class SubvolumeModification:
 
 			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
 
+			compress = entry.get('compress', False)
+			nodatacow = entry.get('nodatacow', False)
+
+			if compress and nodatacow:
+				raise ValueError('compress and nodatacow flags cannot be enabled simultaneously on a btfrs subvolume')
+
 			mods.append(
 				SubvolumeModification(
 					entry['name'],
 					mountpoint,
-					entry.get('compress', False),
-					entry.get('nodatacow', False)
+					compress,
+					nodatacow
 				)
 			)
 
@@ -524,13 +536,15 @@ class BDevice:
 class PartitionType(Enum):
 	Boot = 'boot'
 	Primary = 'primary'
+	_Unknown = 'unknown'
 
 	@classmethod
 	def get_type_from_code(cls, code: int) -> PartitionType:
 		if code == parted.PARTITION_NORMAL:
 			return PartitionType.Primary
-
-		raise DiskError(f'Partition code not supported: {code}')
+		else:
+			info(f'Partition code not supported: {code}')
+			return PartitionType._Unknown
 
 	def get_partition_code(self) -> Optional[int]:
 		if self == PartitionType.Primary:
@@ -541,7 +555,21 @@ class PartitionType(Enum):
 
 
 class PartitionFlag(Enum):
-	Boot = 1
+	"""
+	Flags are taken from _ped because pyparted uses this to look
+	up their flag definitions: https://github.com/dcantrell/pyparted/blob/c4e0186dad45c8efbe67c52b02c8c4319df8aa9b/src/parted/__init__.py#L200-L202
+	Which is the way libparted checks for its flags: https://git.savannah.gnu.org/gitweb/?p=parted.git;a=blob;f=libparted/labels/gpt.c;hb=4a0e468ed63fff85a1f9b923189f20945b32f4f1#l183
+	"""
+	Boot = _ped.PARTITION_BOOT
+	XBOOTLDR = _ped.PARTITION_BLS_BOOT # Note: parted calls this bls_boot
+	ESP = _ped.PARTITION_ESP
+
+
+# class PartitionGUIDs(Enum):
+# 	"""
+# 	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
+# 	"""
+# 	XBOOTLDR = 'bc13c2ff-59e6-4262-a352-b275fd6f7172'
 
 
 class FilesystemType(Enum):
@@ -622,8 +650,11 @@ class PartitionModification:
 
 	# only set if the device was created or exists
 	dev_path: Optional[Path] = None
+	partn: Optional[int] = None
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
+
+	_boot_indicator_flags = [PartitionFlag.Boot, PartitionFlag.XBOOTLDR]
 
 	def __post_init__(self):
 		# needed to use the object as a dictionary key due to hash func
@@ -662,9 +693,9 @@ class PartitionModification:
 		if partition_info.btrfs_subvol_infos:
 			mountpoint = None
 			subvol_mods = []
-			for info in partition_info.btrfs_subvol_infos:
+			for i in partition_info.btrfs_subvol_infos:
 				subvol_mods.append(
-					SubvolumeModification.from_existing_subvol_info(info)
+					SubvolumeModification.from_existing_subvol_info(i)
 				)
 		else:
 			mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
@@ -695,7 +726,10 @@ class PartitionModification:
 		raise ValueError('Mountpoint is not specified')
 
 	def is_boot(self) -> bool:
-		return PartitionFlag.Boot in self.flags
+		"""
+		Returns True if any of the boot indicator flags are found in self.flags
+		"""
+		return any(set(self.flags) & set(self._boot_indicator_flags))
 
 	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
 		if relative_mountpoint is not None and self.mountpoint is not None:
@@ -748,6 +782,7 @@ class PartitionModification:
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
+			'dev_path': str(self.dev_path) if self.dev_path else None,
 			'btrfs': [vol.__dump__() for vol in self.btrfs_subvols]
 		}
 
@@ -915,9 +950,31 @@ class DeviceModification:
 	def add_partition(self, partition: PartitionModification):
 		self.partitions.append(partition)
 
+	def get_efi_partition(self) -> Optional[PartitionModification]:
+		"""
+		Similar to get_boot_partition() but excludes XBOOTLDR partitions from it's candidates.
+		Also works with ESP flag.
+		"""
+		filtered = filter(lambda x: (x.is_boot() or PartitionFlag.ESP in x.flags) and x.fs_type == FilesystemType.Fat32 and PartitionFlag.XBOOTLDR not in x.flags, self.partitions)
+		return next(filtered, None)
+
 	def get_boot_partition(self) -> Optional[PartitionModification]:
-		liltered = filter(lambda x: x.is_boot(), self.partitions)
-		return next(liltered, None)
+		"""
+		Returns the first partition marked as XBOOTLDR (PARTTYPE id of bc13c2ff-...) or Boot and has a mountpoint.
+		Only returns XBOOTLDR if separate EFI is detected using self.get_efi_partition()
+		Will return None if no suitable partition is found.
+		"""
+		if efi_partition := self.get_efi_partition():
+			filtered = filter(lambda x: x.is_boot() and x != efi_partition and x.mountpoint, self.partitions)
+			if boot_partition := next(filtered, None):
+				return boot_partition
+			if efi_partition.is_boot():
+				return efi_partition
+			else:
+				return None
+		else:
+			filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
+			return next(filtered, None)
 
 	def get_root_partition(self, relative_path: Optional[Path]) -> Optional[PartitionModification]:
 		filtered = filter(lambda x: x.is_root(relative_path), self.partitions)
@@ -1035,7 +1092,9 @@ class LsblkInfo:
 	ptuuid: str = ''
 	rota: bool = False
 	tran: Optional[str] = None
+	partn: Optional[int] = None
 	partuuid: Optional[str] = None
+	parttype :Optional[str] = None
 	uuid: Optional[str] = None
 	fstype: Optional[str] = None
 	fsver: Optional[str] = None
@@ -1058,7 +1117,9 @@ class LsblkInfo:
 			'ptuuid': self.ptuuid,
 			'rota': self.rota,
 			'tran': self.tran,
+			'partn': self.partn,
 			'partuuid': self.partuuid,
+			'parttype' : self.parttype,
 			'uuid': self.uuid,
 			'fstype': self.fstype,
 			'fsver': self.fsver,
@@ -1190,7 +1251,6 @@ def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
 
 def get_all_lsblk_info() -> List[LsblkInfo]:
 	return _fetch_lsblk_info()
-
 
 def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[LsblkInfo]:
 	def _check(infos: List[LsblkInfo]) -> List[LsblkInfo]:

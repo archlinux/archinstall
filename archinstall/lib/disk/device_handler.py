@@ -3,13 +3,14 @@ from __future__ import annotations
 import json
 import os
 import time
+import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
 
 from parted import (  # type: ignore
 	Disk, Geometry, FileSystem,
 	PartitionException, DiskLabelException,
-	getAllDevices, freshDisk, Partition, Device
+	getDevice, getAllDevices, freshDisk, Partition, Device
 )
 
 from .device_model import (
@@ -23,7 +24,7 @@ from .device_model import (
 from ..exceptions import DiskError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCallError, JSON
 from ..luks import Luks2
-from ..output import debug, error, info, warn
+from ..output import debug, error, info, warn, log
 from ..utils.util import is_subpath
 
 if TYPE_CHECKING:
@@ -44,7 +45,18 @@ class DeviceHandler(object):
 	def load_devices(self):
 		block_devices = {}
 
-		for device in getAllDevices():
+		devices = getAllDevices()
+
+		try:
+			loop_devices = SysCommand(['losetup', '-a'])
+		except SysCallError as err:
+			debug(f'Failed to get loop devices: {err}')
+		else:
+			for ld_info in str(loop_devices).splitlines():
+				loop_device = getDevice(ld_info.split(':', maxsplit=1)[0])
+				devices.append(loop_device)
+
+		for device in devices:
 			if get_lsblk_info(device.path).type == 'rom':
 				continue
 
@@ -115,6 +127,10 @@ class DeviceHandler(object):
 			if part is not None:
 				return part
 		return None
+
+	def get_parent_device_path(self, dev_path: Path) -> Path:
+		lsblk = get_lsblk_info(dev_path)
+		return Path(f'/dev/{lsblk.pkname}')
 
 	def get_uuid_for_path(self, path: Path) -> Optional[str]:
 		partition = self.find_partition(path)
@@ -241,7 +257,7 @@ class DeviceHandler(object):
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
 
-	def _validate(self, device_mod: DeviceModification):
+	def _validate_partitions(self, partitions: List[PartitionModification]):
 		checks = {
 			# verify that all partitions have a path set (which implies that they have been created)
 			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
@@ -252,7 +268,7 @@ class DeviceHandler(object):
 		}
 
 		for check, exc in checks.items():
-			found = next(filter(check, device_mod.partitions), None)
+			found = next(filter(check, partitions), None)
 			if found is not None:
 				raise exc
 
@@ -265,12 +281,16 @@ class DeviceHandler(object):
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
 		"""
-		self._validate(device_mod)
+
+		# don't touch existing partitions
+		filtered_part = [p for p in device_mod.partitions if not p.exists()]
+
+		self._validate_partitions(filtered_part)
 
 		# make sure all devices are unmounted
-		self._umount_all_existing(device_mod)
+		self._umount_all_existing(device_mod.device_path)
 
-		for part_mod in device_mod.partitions:
+		for part_mod in filtered_part:
 			# partition will be encrypted
 			if enc_conf is not None and part_mod in enc_conf.partitions:
 				self._perform_enc_formatting(
@@ -281,6 +301,12 @@ class DeviceHandler(object):
 				)
 			else:
 				self._perform_formatting(part_mod.safe_fs_type, part_mod.safe_dev_path)
+
+			lsblk_info = self._fetch_part_info(part_mod.safe_dev_path)
+
+			part_mod.partn = lsblk_info.partn
+			part_mod.partuuid = lsblk_info.partuuid
+			part_mod.uuid = lsblk_info.uuid
 
 	def _perform_partitioning(
 		self,
@@ -345,15 +371,10 @@ class DeviceHandler(object):
 
 			# the partition has a real path now as it was created
 			part_mod.dev_path = Path(partition.path)
-
-			lsblk_info = self._fetch_partuuid(part_mod.dev_path)
-
-			part_mod.partuuid = lsblk_info.partuuid
-			part_mod.uuid = lsblk_info.uuid
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
-	def _fetch_partuuid(self, path: Path) -> LsblkInfo:
+	def _fetch_part_info(self, path: Path) -> LsblkInfo:
 		attempts = 3
 		lsblk_info: Optional[LsblkInfo] = None
 
@@ -362,16 +383,28 @@ class DeviceHandler(object):
 			time.sleep(attempt_nr + 1)
 			lsblk_info = get_lsblk_info(path)
 
-			if lsblk_info.partuuid:
+			if lsblk_info.partn and lsblk_info.partuuid and lsblk_info.uuid:
 				break
 
 			self.partprobe(path)
 
-		if not lsblk_info or not lsblk_info.partuuid:
+		if not lsblk_info:
+			debug(f'Unable to get partition information: {path}')
+			raise DiskError(f'Unable to get partition information: {path}')
+
+		if not lsblk_info.partn:
+			debug(f'Unable to determine new partition number: {path}\n{lsblk_info}')
+			raise DiskError(f'Unable to determine new partition number: {path}')
+
+		if not lsblk_info.partuuid:
 			debug(f'Unable to determine new partition uuid: {path}\n{lsblk_info}')
 			raise DiskError(f'Unable to determine new partition uuid: {path}')
 
-		debug(f'partuuid found: {lsblk_info.json()}')
+		if not lsblk_info.uuid:
+			debug(f'Unable to determine new uuid: {path}\n{lsblk_info}')
+			raise DiskError(f'Unable to determine new uuid: {path}')
+
+		debug(f'partition information found: {lsblk_info.json()}')
 
 		return lsblk_info
 
@@ -441,10 +474,10 @@ class DeviceHandler(object):
 
 		return luks_handler
 
-	def _umount_all_existing(self, modification: DeviceModification):
-		info(f'Unmounting all partitions: {modification.device_path}')
+	def _umount_all_existing(self, device_path: Path):
+		info(f'Unmounting all existing partitions: {device_path}')
 
-		existing_partitions = self._devices[modification.device_path].partition_infos
+		existing_partitions = self._devices[device_path].partition_infos
 
 		for partition in existing_partitions:
 			debug(f'Unmounting: {partition.path}')
@@ -471,7 +504,7 @@ class DeviceHandler(object):
 				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
 
 		# make sure all devices are unmounted
-		self._umount_all_existing(modification)
+		self._umount_all_existing(modification.device_path)
 
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
@@ -484,13 +517,10 @@ class DeviceHandler(object):
 
 		info(f'Creating partitions: {modification.device_path}')
 
-		# TODO sort by delete first
+		# don't touch existing partitions
+		filtered_part = [p for p in modification.partitions if not p.exists()]
 
-		for part_mod in modification.partitions:
-			# don't touch existing partitions
-			if part_mod.exists():
-				continue
-
+		for part_mod in filtered_part:
 			# if the entire disk got nuked then we don't have to delete
 			# any existing partitions anymore because they're all gone already
 			requires_delete = modification.wipe is False
@@ -584,7 +614,10 @@ class DeviceHandler(object):
 			debug(f'Calling partprobe: {command}')
 			SysCommand(command)
 		except SysCallError as err:
-			error(f'"{command}" failed to run: {err}')
+			if 'have been written, but we have been unable to inform the kernel of the change' in str(err):
+				log(f"Partprobe was not able to inform the kernel of the new disk state (ignoring error): {err}", fg="gray", level=logging.INFO)
+			else:
+				error(f'"{command}" failed to run (continuing anyway): {err}')
 
 	def _wipe(self, dev_path: Path):
 		"""

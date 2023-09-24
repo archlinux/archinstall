@@ -30,7 +30,6 @@ class SubvolumeMenu(ListManager):
 			['nodatacow', 'compress'],
 			skip=True,
 			preset_values=preset_options,
-			multi=True
 		).run()
 
 		if choice.type_ == MenuSelectionType.Selection:

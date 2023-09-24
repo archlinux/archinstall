@@ -46,14 +46,13 @@ class PartitioningList(ListManager):
 		if not selection.exists():
 			not_filter += [self._actions['mark_formatting']]
 		else:
-			# only allow these options if the existing partition
+			# only allow options if the existing partition
 			# was marked as formatting, otherwise we run into issues where
 			# 1. select a new fs -> potentially mark as wipe now
 			# 2. Switch back to old filesystem -> should unmark wipe now, but
 			#     how do we know it was the original one?
 			not_filter += [
 				self._actions['set_filesystem'],
-				self._actions['assign_mountpoint'],
 				self._actions['mark_bootable'],
 				self._actions['btrfs_mark_compressed'],
 				self._actions['btrfs_set_subvolumes']
@@ -331,7 +330,7 @@ def manual_partitioning(
 		manual_preset = preset
 
 	menu_list = PartitioningList(prompt, device, manual_preset)
-	partitions = menu_list.run()
+	partitions: List[PartitionModification] = menu_list.run()
 
 	if menu_list.is_last_choice_cancel():
 		return preset

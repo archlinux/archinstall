@@ -27,11 +27,13 @@ class ProfileConfiguration:
 	@classmethod
 	def parse_arg(cls, arg: Dict[str, Any]) -> 'ProfileConfiguration':
 		from .profiles_handler import profile_handler
+
+		profile = profile_handler.parse_profile_config(arg['profile'])
 		greeter = arg.get('greeter', None)
 		gfx_driver = arg.get('gfx_driver', None)
 
 		return ProfileConfiguration(
-			profile_handler.parse_profile_config(arg['profile']),
+			profile,
 			GfxDriver(gfx_driver) if gfx_driver else None,
 			GreeterType(greeter) if greeter else None
 		)
