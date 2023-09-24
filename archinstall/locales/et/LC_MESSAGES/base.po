@@ -1232,3 +1232,6 @@ msgstr ""
 "\n"
 "\n"
 "Valige valik, et anda Sway'le juurdepääs teie riistvarale"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""

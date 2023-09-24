@@ -1223,3 +1223,6 @@ msgstr ""
 "\n"
 "\n"
 "選擇一個選項以提供 Sway 對您硬件的訪問權限"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""
