@@ -1242,6 +1242,15 @@ msgstr " - Wyłącz/Domyślne     : 0 ( Wyłącza pobieranie wielu plików jedno
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Nieprawidłowa wartość! Spróbuj wprowadzić wartość od 1 do {}, lub 0 aby wyłączyć."
 
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
 

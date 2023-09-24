@@ -1244,3 +1244,12 @@ msgstr " - Disabilita/Predefinito : 0 ( Disabilita il download parallelo, consen
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Input non valido! Riprova con un input valido [da 1 a {}, o 0 per disabilitare]."
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""

@@ -1201,3 +1201,17 @@ msgstr " - Отключить/по умолчанию: 0 ( Отключает п
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Неверный ввод! Повторите попытку с правильным вводом [1 - {}, или 0 - отключить]"
+
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway необходим доступ к вашему компьютеру (набор аппаратных устройств, т.е. клавиатура, мышь и т.д.)"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Выберите опцию, чтобы предоставить Sway доступ к вашему оборудованию"

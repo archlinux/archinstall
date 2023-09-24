@@ -42,7 +42,7 @@ class Nic:
 			'dns': self.dns
 		}
 
-	def __dump__(self) -> Dict[str, Any]:
+	def json(self) -> Dict[str, Any]:
 		return {
 			'iface': self.iface,
 			'ip': self.ip,
@@ -94,10 +94,10 @@ class NetworkConfiguration:
 	type: NicType
 	nics: List[Nic] = field(default_factory=list)
 
-	def __dump__(self) -> Dict[str, Any]:
+	def json(self) -> Dict[str, Any]:
 		config: Dict[str, Any] = {'type': self.type.value}
 		if self.nics:
-			config['nics'] = [n.__dump__() for n in self.nics]
+			config['nics'] = [n.json() for n in self.nics]
 
 		return config
 

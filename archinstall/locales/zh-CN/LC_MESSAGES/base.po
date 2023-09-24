@@ -1199,3 +1199,17 @@ msgstr " - 禁用/默认值：0（禁用并行下载，同时只允许 1 个下�
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "输入无效！ 使用有效输入重试 [1 到 {}，或 0 到禁用]"
+
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway 需要访问您的用户环境（硬件设备的集合，例如键盘，鼠标等）"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"选择一个选项来给 Sway 提供对您硬件的访问权限"
