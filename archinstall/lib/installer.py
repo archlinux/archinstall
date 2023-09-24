@@ -163,7 +163,7 @@ class Installer:
 		lsblk_info = disk.get_lsblk_by_mountpoint(boot_mount)
 
 		if len(lsblk_info) > 0:
-			if lsblk_info[0].size < disk.Size(200, disk.Unit.MiB):
+			if lsblk_info[0].size < disk.Size(200, disk.Unit.MiB, disk.SectorSize.default()):
 				raise DiskError(
 					f'The boot partition mounted at {boot_mount} is not large enough to install a boot loader. '
 					f'Please resize it to at least 200MiB and re-run the installation.'

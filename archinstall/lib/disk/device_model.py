@@ -93,7 +93,7 @@ class DiskLayoutConfiguration:
 					status=ModificationStatus(partition['status']),
 					fs_type=FilesystemType(partition['fs_type']),
 					start=Size.parse_args(partition['start']),
-					length=Size.parse_args(partition['length']),
+					length=Size.parse_args(partition['size']),
 					mount_options=partition['mount_options'],
 					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
 					dev_path=Path(partition['dev_path']) if partition['dev_path'] else None,
@@ -138,80 +138,89 @@ class Unit(Enum):
 
 	sectors = 'sectors'  # size in sector
 
-	Percent = '%' 	# size in percentile
-
 	@staticmethod
 	def get_all_units() -> List[str]:
 		return [u.name for u in Unit]
+
+	@staticmethod
+	def get_si_units() -> List[Unit]:
+		return [u for u in Unit if 'i' not in u.name and u.name != 'sectors']
+
+
+@dataclass
+class SectorSize:
+	value: int
+	unit: Unit
+
+	def __post_init__(self):
+		match self.unit:
+			case Unit.sectors:
+				raise ValueError('Unit type sector not allowed for SectorSize')
+
+	@staticmethod
+	def default() -> SectorSize:
+		return SectorSize(512, Unit.B)
+
+	def json(self) -> Dict[str, Any]:
+		return {
+			'value': self.value,
+			'unit': self.unit.name,
+		}
+
+	@classmethod
+	def parse_args(cls, arg: Dict[str, Any]) -> SectorSize:
+		return SectorSize(
+			arg['value'],
+			Unit[arg['unit']]
+		)
+
+	def normalize(self) -> int:
+		"""
+		will normalize the value of the unit to Byte
+		"""
+		return int(self.value * self.unit.value)  # type: ignore
 
 
 @dataclass
 class Size:
 	value: int
 	unit: Unit
-	sector_size: Optional[Size] = None  # only required when unit is sector
-	total_size: Optional[Size] = None  # required when operating on percentages
+	sector_size: SectorSize
 
 	def __post_init__(self):
-		if self.unit == Unit.sectors and self.sector_size is None:
-			raise ValueError('Sector size is required when unit is sectors')
-		elif self.unit == Unit.Percent:
-			if self.value < 0 or self.value > 100:
-				raise ValueError('Percentage must be between 0 and 100')
-			elif self.total_size is None:
-				raise ValueError('Total size is required when unit is percentage')
-
-	@property
-	def _total_size(self) -> Size:
-		"""
-		Save method to get the total size, mainly to satisfy mypy
-		This shouldn't happen as the Size object fails instantiation on missing total size
-		"""
-		if self.unit == Unit.Percent and self.total_size is None:
-			raise ValueError('Percent unit size must specify a total size')
-		return self.total_size  # type: ignore
+		if not isinstance(self.sector_size, SectorSize):
+			raise ValueError('sector size must be of type SectorSize')
 
 	def json(self) -> Dict[str, Any]:
 		return {
 			'value': self.value,
 			'unit': self.unit.name,
-			'sector_size': self.sector_size.json() if self.sector_size else None,
-			'total_size': self._total_size.json() if self._total_size else None
+			'sector_size': self.sector_size.json() if self.sector_size else None
 		}
 
 	@classmethod
 	def parse_args(cls, size_arg: Dict[str, Any]) -> Size:
 		sector_size = size_arg['sector_size']
-		total_size = size_arg['total_size']
 
 		return Size(
 			size_arg['value'],
 			Unit[size_arg['unit']],
-			Size.parse_args(sector_size) if sector_size else None,
-			Size.parse_args(total_size) if total_size else None
+			SectorSize.parse_args(sector_size),
 		)
 
 	def convert(
 		self,
 		target_unit: Unit,
-		sector_size: Optional[Size] = None,
-		total_size: Optional[Size] = None
+		sector_size: Optional[SectorSize] = None
 	) -> Size:
 		if target_unit == Unit.sectors and sector_size is None:
 			raise ValueError('If target has unit sector, a sector size must be provided')
 
-		# not sure why we would ever wanna convert to percentages
-		if target_unit == Unit.Percent and total_size is None:
-			raise ValueError('Missing parameter total size to be able to convert to percentage')
-
 		if self.unit == target_unit:
 			return self
-		elif self.unit == Unit.Percent:
-			amount = int(self._total_size._normalize() * (self.value / 100))
-			return Size(amount, Unit.B)
 		elif self.unit == Unit.sectors:
 			norm = self._normalize()
-			return Size(norm, Unit.B).convert(target_unit, sector_size)
+			return Size(norm, Unit.B, self.sector_size).convert(target_unit, sector_size)
 		else:
 			if target_unit == Unit.sectors and sector_size is not None:
 				norm = self._normalize()
@@ -219,7 +228,7 @@ class Size:
 				return Size(sectors, Unit.sectors, sector_size)
 			else:
 				value = int(self._normalize() / target_unit.value)  # type: ignore
-				return Size(value, target_unit)
+				return Size(value, target_unit, self.sector_size)
 
 	def as_text(self) -> str:
 		return self.format_size(
@@ -230,31 +239,45 @@ class Size:
 	def format_size(
 		self,
 		target_unit: Unit,
-		sector_size: Optional[Size] = None,
+		sector_size: Optional[SectorSize] = None,
 		include_unit: bool = True
 	) -> str:
-		if self.unit == Unit.Percent:
-			return f'{self.value}%'
-		else:
-			target_size = self.convert(target_unit, sector_size)
-			if include_unit:
-				return f'{target_size.value} {target_unit.name}'
-			return f'{target_size.value}'
+		target_size = self.convert(target_unit, sector_size)
+
+		if include_unit:
+			return f'{target_size.value} {target_unit.name}'
+		return f'{target_size.value}'
+
+	def format_highest(self, include_unit: bool = True) -> str:
+		si_units = Unit.get_si_units()
+		all_si_values = [self.convert(si) for si in si_units]
+		filtered = filter(lambda x: x.value >= 1, all_si_values)
+
+		# we have to get the max by the unit value as we're interested
+		# in getting the value in the highest possible unit without floats
+		si_value = max(filtered, key=lambda x: x.unit.value)
+
+		if include_unit:
+			return f'{si_value.value} {si_value.unit.name}'
+		return f'{si_value.value}'
 
 	def _normalize(self) -> int:
 		"""
 		will normalize the value of the unit to Byte
 		"""
-		if self.unit == Unit.Percent:
-			return self.convert(Unit.B).value
-		elif self.unit == Unit.sectors and self.sector_size is not None:
-			return self.value * self.sector_size._normalize()
+		if self.unit == Unit.sectors and self.sector_size is not None:
+			return self.value * self.sector_size.normalize()
 		return int(self.value * self.unit.value)  # type: ignore
 
 	def __sub__(self, other: Size) -> Size:
 		src_norm = self._normalize()
 		dest_norm = other._normalize()
-		return Size(abs(src_norm - dest_norm), Unit.B)
+		return Size(abs(src_norm - dest_norm), Unit.B, self.sector_size)
+
+	def __add__(self, other: Size) -> Size:
+		src_norm = self._normalize()
+		dest_norm = other._normalize()
+		return Size(abs(src_norm + dest_norm), Unit.B, self.sector_size)
 
 	def __lt__(self, other):
 		return self._normalize() < other._normalize()
@@ -296,14 +319,22 @@ class _PartitionInfo:
 	mountpoints: List[Path]
 	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
 
+	@property
+	def sector_size(self) -> SectorSize:
+		sector_size = self.partition.geometry.device.sectorSize
+		return SectorSize(sector_size, Unit.B)
+
 	def table_data(self) -> Dict[str, Any]:
+		end = self.start + self.length
+
 		part_info = {
 			'Name': self.name,
 			'Type': self.type.value,
 			'Filesystem': self.fs_type.value if self.fs_type else str(_('Unknown')),
 			'Path': str(self.path),
-			'Start': self.start.format_size(Unit.MiB),
-			'Length': self.length.format_size(Unit.MiB),
+			'Start': self.start.format_size(Unit.sectors, self.sector_size, include_unit=False),
+			'End': end.format_size(Unit.sectors, self.sector_size, include_unit=False),
+			'Size': self.length.format_highest(),
 			'Flags': ', '.join([f.name for f in self.flags])
 		}
 
@@ -327,10 +358,14 @@ class _PartitionInfo:
 		start = Size(
 			partition.geometry.start,
 			Unit.sectors,
-			Size(partition.disk.device.sectorSize, Unit.B)
+			SectorSize(partition.disk.device.sectorSize, Unit.B)
 		)
 
-		length = Size(int(partition.getLength(unit='B')), Unit.B)
+		length = Size(
+			int(partition.getLength(unit='B')),
+			Unit.B,
+			SectorSize(partition.disk.device.sectorSize, Unit.B)
+		)
 
 		return _PartitionInfo(
 			partition=partition,
@@ -355,7 +390,7 @@ class _DeviceInfo:
 	type: str
 	total_size: Size
 	free_space_regions: List[DeviceGeometry]
-	sector_size: Size
+	sector_size: SectorSize
 	read_only: bool
 	dirty: bool
 
@@ -365,7 +400,7 @@ class _DeviceInfo:
 			'Model': self.model,
 			'Path': str(self.path),
 			'Type': self.type,
-			'Size': self.total_size.format_size(Unit.MiB),
+			'Size': self.total_size.format_highest(),
 			'Free space': int(total_free_space),
 			'Sector size': self.sector_size.value,
 			'Read only': self.read_only
@@ -379,15 +414,17 @@ class _DeviceInfo:
 		else:
 			device_type = parted.devices[device.type]
 
-		sector_size = Size(device.sectorSize, Unit.B)
+		sector_size = SectorSize(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
+
+		sector_size = SectorSize(device.sectorSize, Unit.B)
 
 		return _DeviceInfo(
 			model=device.model.strip(),
 			path=Path(device.path),
 			type=device_type,
 			sector_size=sector_size,
-			total_size=Size(int(device.getLength(unit='B')), Unit.B),
+			total_size=Size(int(device.getLength(unit='B')), Unit.B, sector_size),
 			free_space_regions=free_space,
 			read_only=device.readOnly,
 			dirty=device.dirty
@@ -470,7 +507,7 @@ class SubvolumeModification:
 
 
 class DeviceGeometry:
-	def __init__(self, geometry: Geometry, sector_size: Size):
+	def __init__(self, geometry: Geometry, sector_size: SectorSize):
 		self._geometry = geometry
 		self._sector_size = sector_size
 
@@ -498,7 +535,7 @@ class DeviceGeometry:
 			'Sector size': self._sector_size.value,
 			'Start (sector/B)': start_str,
 			'End (sector/B)': end_str,
-			'Length (sectors/B)': length_str
+			'Size (sectors/B)': length_str
 		}
 
 
@@ -751,7 +788,7 @@ class PartitionModification:
 			'status': self.status.value,
 			'type': self.type.value,
 			'start': self.start.json(),
-			'length': self.length.json(),
+			'size': self.length.json(),
 			'fs_type': self.fs_type.value if self.fs_type else '',
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
@@ -764,12 +801,15 @@ class PartitionModification:
 		"""
 		Called for displaying data in table format
 		"""
+		end = self.start + self.length
+
 		part_mod = {
 			'Status': self.status.value,
 			'Device': str(self.dev_path) if self.dev_path else '',
 			'Type': self.type.value,
-			'Start': self.start.format_size(Unit.MiB),
-			'Length': self.length.format_size(Unit.MiB),
+			'Start': self.start.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
+			'End': end.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
+			'Size': self.length.format_highest(),
 			'FS type': self.fs_type.value if self.fs_type else 'Unknown',
 			'Mountpoint': self.mountpoint if self.mountpoint else '',
 			'Mount options': ', '.join(self.mount_options),
@@ -938,7 +978,7 @@ class LsblkInfo:
 	name: str = ''
 	path: Path = Path()
 	pkname: str = ''
-	size: Size = field(default_factory=lambda: Size(0, Unit.B))
+	size: Size = field(default_factory=lambda: Size(0, Unit.B, SectorSize.default()))
 	log_sec: int = 0
 	pttype: str = ''
 	ptuuid: str = ''
@@ -1017,7 +1057,8 @@ class LsblkInfo:
 			if isinstance(getattr(lsblk_info, data_field), Path):
 				val = Path(blockdevice[lsblk_field])
 			elif isinstance(getattr(lsblk_info, data_field), Size):
-				val = Size(blockdevice[lsblk_field], Unit.B)
+				sector_size = SectorSize(blockdevice['log-sec'], Unit.B)
+				val = Size(blockdevice[lsblk_field], Unit.B, sector_size)
 			else:
 				val = blockdevice[lsblk_field]
 

@@ -14,6 +14,7 @@ from .device_model import (
 	PartitionTable,
 	Unit,
 	Size,
+	SectorSize,
 	SubvolumeModification,
 	DeviceGeometry,
 	PartitionType,
