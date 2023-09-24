@@ -19,7 +19,7 @@ jobs:
                 cd ..
                 cp -r archinstall archinstall_orig
                 cd archinstall/archinstall/locales
-                bash locales_generator.sh
+                bash locales_generator.sh 1> /dev/null
                 cd ../../..
                 git diff \
                   --quiet --no-index --name-only \
