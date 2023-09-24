@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional, TYPE_CHECKING
 from parted import (  # type: ignore
 	Disk, Geometry, FileSystem,
 	PartitionException, DiskLabelException,
-	getAllDevices, freshDisk, Partition, Device
+	getDevice, getAllDevices, freshDisk, Partition, Device
 )
 
 from .device_model import (
@@ -45,7 +45,18 @@ class DeviceHandler(object):
 	def load_devices(self):
 		block_devices = {}
 
-		for device in getAllDevices():
+		devices = getAllDevices()
+
+		try:
+			loop_devices = SysCommand(['losetup', '-a'])
+		except SysCallError as err:
+			debug(f'Failed to get loop devices: {err}')
+		else:
+			for ld_info in str(loop_devices).splitlines():
+				loop_device = getDevice(ld_info.split(':', maxsplit=1)[0])
+				devices.append(loop_device)
+
+		for device in devices:
 			if get_lsblk_info(device.path).type == 'rom':
 				continue
 
