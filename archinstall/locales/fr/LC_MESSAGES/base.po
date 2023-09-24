@@ -1201,6 +1201,20 @@ msgstr " - Désactiver/Défaut : 0 (Désactive le téléchargement parallèle, n
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Entrée invalide ! Réessayer avec une entrée valide [1 pour {}, ou 0 pour désactiver]"
 
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway a besoin d'accéder à votre espace (ensemble de périphériques matériels : clavier, souris, etc.)"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Choisir une option pour permettre à Sway d'accéder à votre matériel"
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Modifier {origkey} :"

@@ -1262,3 +1262,17 @@ msgstr "- Devre Dışı Bırak/Varsayılan : 0 (Paralel indirmeyi devre dışı 
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Geçersiz girdi! Geçerli bir girdiyle tekrar deneyin [1 ila {} veya devre dışı bırakmak için 0]"
+
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway'in seat'e erişmesi gerekir (klavye, fare vb. donanım aygıtlarının birleşimi)"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Sway'in donanımınıza erişmesine izin vermek için bir seçenek belirleyin"
