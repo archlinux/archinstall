@@ -14,12 +14,12 @@ class Bootloader(Enum):
 	Efistub = 'Efistub'
 	Limine = 'Limine'
 
-	def json(self):
+	def json(self) -> str:
 		return self.value
 
-	@classmethod
-	def values(cls) -> List[str]:
-		return [e.value for e in cls]
+	@staticmethod
+	def values() -> List[str]:
+		return [e.value for e in Bootloader]
 
 	@classmethod
 	def get_default(cls) -> Bootloader:
