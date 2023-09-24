@@ -574,6 +574,12 @@ class Installer:
 				log(error.worker._trace_log.decode())
 			return False
 
+	def _get_microcode(self) -> Optional[Path]:
+		if not SysInfo.is_vm():
+			if vendor := SysInfo.cpu_vendor():
+				return vendor.get_ucode()
+		return None
+
 	def minimal_installation(
 		self,
 		testing: bool = False,
@@ -610,18 +616,11 @@ class Installer:
 		if not SysInfo.has_uefi():
 			self.base_packages.append('grub')
 
-		if not SysInfo.is_vm():
-			vendor = SysInfo.cpu_vendor()
-			if vendor == "AuthenticAMD":
-				self.base_packages.append("amd-ucode")
-				if (ucode := Path(f"{self.target}/boot/amd-ucode.img")).exists():
-					ucode.unlink()
-			elif vendor == "GenuineIntel":
-				self.base_packages.append("intel-ucode")
-				if (ucode := Path(f"{self.target}/boot/intel-ucode.img")).exists():
-					ucode.unlink()
-			else:
-				debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode")
+		if ucode := self._get_microcode():
+			(self.target / 'boot' / ucode).unlink(missing_ok=True)
+			self.base_packages.append(ucode.stem)
+		else:
+			debug('Archinstall will not install any ucode.')
 
 		# Determine whether to enable multilib/testing repositories before running pacstrap if testing flag is set.
 		# This action takes place on the host system as pacstrap copies over package repository lists.
@@ -840,17 +839,10 @@ class Installer:
 
 		microcode = []
 
-		if not SysInfo.is_vm():
-			vendor = SysInfo.cpu_vendor()
-			if vendor == "AuthenticAMD":
-				microcode.append('initrd  /amd-ucode.img\n')
-			elif vendor == "GenuineIntel":
-				microcode.append('initrd  /intel-ucode.img\n')
-			else:
-				debug(
-					f"Unknown CPU vendor '{vendor}' detected.",
-					"Archinstall won't add any ucode to systemd-boot config.",
-				)
+		if ucode := self._get_microcode():
+			microcode.append(f'initrd  /{ucode}\n')
+		else:
+			debug('Archinstall will not add any ucode to systemd-boot config.')
 
 		options = 'options ' + ' '.join(self._get_kernel_params(root_partition)) + '\n'
 
@@ -1065,14 +1057,10 @@ TIMEOUT=5
 
 		microcode = []
 
-		if not SysInfo.is_vm():
-			vendor = SysInfo.cpu_vendor()
-			if vendor == "AuthenticAMD":
-				microcode.append("initrd=\\amd-ucode.img")
-			elif vendor == "GenuineIntel":
-				microcode.append("initrd=\\intel-ucode.img")
-			else:
-				debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.")
+		if ucode := self._get_microcode():
+			microcode.append(f'initrd=\\{ucode}')
+		else:
+			debug('Archinstall will not add any ucode to firmware boot entry.')
 
 		kernel_parameters = self._get_kernel_params(root_partition)
 
