@@ -25,4 +25,4 @@ jobs:
                   --quiet --no-index --name-only \
                   archinstall_orig/archinstall/locales \
                   archinstall/archinstall/locales \
-                  || echo "Translation files are not updated, please run ./locales_generator.sh" && exit 1
+                  || echo "Translation files have not been updated after translation, please run ./locales_generator.sh once more and commit" && exit 1
