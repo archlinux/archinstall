@@ -325,7 +325,7 @@ def suggest_multi_disk_layout(
 	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/
 	min_home_partition_size = disk.Size(40, disk.Unit.GiB, disk.SectorSize.default())
 	# rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
-	desired_root_partition_size = disk.Size(20, disk.Unit.GiB,  disk.SectorSize.default())
+	desired_root_partition_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
 	compression = False
 
 	if not filesystem_type:
