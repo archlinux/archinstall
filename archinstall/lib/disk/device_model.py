@@ -251,8 +251,11 @@ class Size:
 	def format_highest(self, include_unit: bool = True) -> str:
 		si_units = Unit.get_si_units()
 		all_si_values = [self.convert(si) for si in si_units]
-		si_larger_zero = sorted(filter(lambda x: x.value > 1, all_si_values))
-		si_value = si_larger_zero[0]
+		filtered = filter(lambda x: x.value >= 1, all_si_values)
+
+		# we have to get the max by the unit value as we're interested
+		# in getting the value in the highest possible unit without floats
+		si_value = max(filtered, key=lambda x: x.unit.value)
 
 		if include_unit:
 			return f'{si_value.value} {si_value.unit.name}'
