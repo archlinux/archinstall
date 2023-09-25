@@ -708,7 +708,7 @@ class Installer:
 
 	def _get_root_partition(self) -> Optional[disk.PartitionModification]:
 		for mod in self._disk_config.device_modifications:
-			if root := mod.get_root_partition(self._disk_config.relative_mountpoint):
+			if root := mod.get_root_partition():
 				return root
 		return None
 
