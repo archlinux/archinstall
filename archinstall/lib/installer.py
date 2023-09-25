@@ -895,8 +895,8 @@ class Installer:
 
 			add_options = [
 				'--target=x86_64-efi',
-				f'--efi-directory={efi_partition.mountpoint}'
-				f'--boot-directory={boot_partition.mountpoint if boot_partition else "/boot"}'
+				f'--efi-directory={efi_partition.mountpoint}',
+				f'--boot-directory={boot_partition.mountpoint if boot_partition else "/boot"}',
 				'--bootloader-id=GRUB',
 				'--removable'
 			]
