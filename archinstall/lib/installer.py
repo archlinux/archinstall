@@ -587,6 +587,7 @@ class Installer:
 		hostname: str = 'archinstall',
 		locale_config: LocaleConfiguration = LocaleConfiguration.default()
 	):
+		_disable_fstrim = False
 		for mod in self._disk_config.device_modifications:
 			for part in mod.partitions:
 				if part.fs_type is not None:
@@ -596,6 +597,10 @@ class Installer:
 						self.modules.append(module)
 					if (binary := part.fs_type.installation_binary) is not None:
 						self._binaries.append(binary)
+
+					# https://github.com/archlinux/archinstall/issues/1837
+					if part.fs_type.fs_type_mount == 'btrfs':
+						_disable_fstrim = True
 
 					# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 					if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
@@ -651,7 +656,10 @@ class Installer:
 		# periodic TRIM by default.
 		#
 		# https://github.com/archlinux/archinstall/issues/880
-		self.enable_periodic_trim()
+		# https://github.com/archlinux/archinstall/issues/1837
+		# https://github.com/archlinux/archinstall/issues/1841
+		if not _disable_fstrim:
+			self.enable_periodic_trim()
 
 		# TODO: Support locale and timezone
 		# os.remove(f'{self.target}/etc/localtime')
