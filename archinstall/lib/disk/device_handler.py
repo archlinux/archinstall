@@ -49,12 +49,11 @@ class DeviceHandler(object):
 
 		try:
 			loop_devices = SysCommand(['losetup', '-a'])
-		except SysCallError as err:
-			debug(f'Failed to get loop devices: {err}')
-		else:
 			for ld_info in str(loop_devices).splitlines():
 				loop_device = getDevice(ld_info.split(':', maxsplit=1)[0])
 				devices.append(loop_device)
+		except Exception as err:
+			debug(f'Failed to get loop devices: {err}')
 
 		for device in devices:
 			if get_lsblk_info(device.path).type == 'rom':
