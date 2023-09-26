@@ -716,7 +716,7 @@ class Installer:
 
 	def _get_root_partition(self) -> Optional[disk.PartitionModification]:
 		for mod in self._disk_config.device_modifications:
-			if root := mod.get_root_partition(self._disk_config.relative_mountpoint):
+			if root := mod.get_root_partition():
 				return root
 		return None
 
@@ -903,8 +903,8 @@ class Installer:
 
 			add_options = [
 				'--target=x86_64-efi',
-				f'--efi-directory={efi_partition.mountpoint}'
-				f'--boot-directory={boot_partition.mountpoint if boot_partition else "/boot"}'
+				f'--efi-directory={efi_partition.mountpoint}',
+				f'--boot-directory={boot_partition.mountpoint if boot_partition else "/boot"}',
 				'--bootloader-id=GRUB',
 				'--removable'
 			]

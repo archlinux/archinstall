@@ -139,7 +139,6 @@ def select_disk_config(
 
 				return disk.DiskLayoutConfiguration(
 					config_type=disk.DiskLayoutType.Pre_mount,
-					relative_mountpoint=path,
 					device_modifications=mods
 				)
 

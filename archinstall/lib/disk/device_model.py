@@ -42,12 +42,6 @@ class DiskLayoutType(Enum):
 class DiskLayoutConfiguration:
 	config_type: DiskLayoutType
 	device_modifications: List[DeviceModification] = field(default_factory=list)
-	# used for pre-mounted config
-	relative_mountpoint: Optional[Path] = None
-
-	def __post_init__(self):
-		if self.config_type == DiskLayoutType.Pre_mount and self.relative_mountpoint is None:
-			raise ValueError('Must set a relative mountpoint when layout type is pre-mount"')
 
 	def json(self) -> Dict[str, Any]:
 		return {
@@ -487,10 +481,8 @@ class SubvolumeModification:
 
 		raise ValueError('Mountpoint is not specified')
 
-	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
+	def is_root(self) -> bool:
 		if self.mountpoint:
-			if relative_mountpoint is not None:
-				return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
 			return self.mountpoint == Path('/')
 		return False
 
@@ -742,14 +734,12 @@ class PartitionModification:
 		"""
 		return any(set(self.flags) & set(self._boot_indicator_flags))
 
-	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
-		if relative_mountpoint is not None and self.mountpoint is not None:
-			return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
-		elif self.mountpoint is not None:
+	def is_root(self) -> bool:
+		if self.mountpoint is not None:
 			return Path('/') == self.mountpoint
 		else:
 			for subvol in self.btrfs_subvols:
-				if subvol.is_root(relative_mountpoint):
+				if subvol.is_root():
 					return True
 
 		return False
@@ -861,8 +851,8 @@ class DeviceModification:
 			filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
 			return next(filtered, None)
 
-	def get_root_partition(self, relative_path: Optional[Path]) -> Optional[PartitionModification]:
-		filtered = filter(lambda x: x.is_root(relative_path), self.partitions)
+	def get_root_partition(self) -> Optional[PartitionModification]:
+		filtered = filter(lambda x: x.is_root(), self.partitions)
 		return next(filtered, None)
 
 	def json(self) -> Dict[str, Any]:

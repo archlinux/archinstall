@@ -594,7 +594,9 @@ class DeviceHandler(object):
 					if is_subpath(mountpoint, base_mountpoint):
 						path = Path(part_info.disk.device.path)
 						part_mods.setdefault(path, [])
-						part_mods[path].append(PartitionModification.from_existing_partition(part_info))
+						part_mod = PartitionModification.from_existing_partition(part_info)
+						part_mod.mountpoint = mountpoint.root / mountpoint.relative_to(base_mountpoint)
+						part_mods[path].append(part_mod)
 						break
 
 		device_mods: List[DeviceModification] = []
