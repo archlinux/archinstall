@@ -553,7 +553,7 @@ class DeviceHandler(object):
 
 		command = f'mount {mount_fs} {str_options} {dev_path} {target_mountpoint}'
 
-		debug(f'Mounting {dev_path}: command')
+		debug(f'Mounting {dev_path}: {command}')
 
 		try:
 			SysCommand(command)
