@@ -79,6 +79,9 @@ class DeviceHandler(object):
 				if fs_type == FilesystemType.Btrfs:
 					subvol_infos = self.get_btrfs_info(partition.path)
 
+				if not lsblk_info.partuuid:
+					raise ValueError('Partition has no partuuid')
+
 				partition_infos.append(
 					_PartitionInfo.from_partition(
 						partition,
@@ -152,20 +155,19 @@ class DeviceHandler(object):
 			mountpoint = Path(common_prefix)
 
 		try:
-			result = SysCommand(f'btrfs subvolume list {mountpoint}')
+			result = SysCommand(f'btrfs subvolume list {mountpoint}').decode()
 		except SysCallError as err:
 			debug(f'Failed to read btrfs subvolume information: {err}')
 			return subvol_infos
 
 		try:
-			if decoded := result.decode('utf-8'):
-				# ID 256 gen 16 top level 5 path @
-				for line in decoded.splitlines():
-					# expected output format:
-					# ID 257 gen 8 top level 5 path @home
-					name = Path(line.split(' ')[-1])
-					sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
-					subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
+			# ID 256 gen 16 top level 5 path @
+			for line in result.splitlines():
+				# expected output format:
+				# ID 257 gen 8 top level 5 path @home
+				name = Path(line.split(' ')[-1])
+				sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
+				subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
 		except json.decoder.JSONDecodeError as err:
 			error(f"Could not decode lsblk JSON: {result}")
 			raise err

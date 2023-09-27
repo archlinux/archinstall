@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, Any, TYPE_CHECKING, Optional
 
-from .locale import set_kb_layout, list_keyboard_languages, list_locales
+from .utils import list_keyboard_languages, list_locales, set_kb_layout
 from ..menu import Selector, AbstractSubMenu, MenuSelectionType, Menu
 
 if TYPE_CHECKING:

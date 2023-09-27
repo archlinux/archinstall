@@ -116,7 +116,7 @@ class Luks2:
 		command = f'/usr/bin/cryptsetup luksUUID {self.luks_dev_path}'
 
 		try:
-			return SysCommand(command).decode().strip()  # type: ignore
+			return SysCommand(command).decode()
 		except SysCallError as err:
 			info(f'Unable to get UUID for Luks device: {self.luks_dev_path}')
 			raise err

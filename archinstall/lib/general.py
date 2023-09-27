@@ -430,10 +430,15 @@ class SysCommand:
 
 		return True
 
-	def decode(self, *args, **kwargs) -> Optional[str]:
-		if self.session:
-			return self.session._trace_log.decode(*args, **kwargs)
-		return None
+	def decode(self, encoding: str = 'utf-8', errors='backlashreplace', strip: bool = True) -> str:
+		if not self.session:
+			raise ValueError('No session available to decode')
+
+		val = self.session._trace_log.decode(encoding)
+
+		if strip:
+			return val.strip()
+		return val
 
 	@property
 	def exit_code(self) -> Optional[int]:
