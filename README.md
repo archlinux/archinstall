@@ -73,6 +73,14 @@ how much has been translated.
 Any contributions to the translations are more than welcome,
 to get started please follow [the guide](https://github.com/archlinux/archinstall/blob/master/archinstall/locales/README.md)
 
+## Fonts
+The ISO does not ship with ship with all fonts needed for different languages.
+Fonts that are using a different character set than Latin will not be displayed correctly. If those languages
+want to be selected than a proper font has to be set manually in the console.
+
+All available console fonts can be found in `/usr/share/kbd/consolefonts` and can be set with `setfont LatGrkCyr-8x16`.
+
+
 # Scripting your own installation
 
 ## Scripting interactive installation
