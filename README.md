@@ -196,8 +196,7 @@ To test this without a live ISO, the simplest approach is to use a local image a
 This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
 
     # truncate -s 20G testimage.img
-    # losetup -fP ./testimage.img
-    # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
+    # losetup --partscan --show --find ./testimage.img
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
