@@ -857,17 +857,17 @@ class Installer:
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
 				# Setup the loader entry
-				with open(entries_dir / f'{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
-					entry_lines: List[str] = []
+				entry = [
+					*comments,
+					f'title   Arch Linux ({kernel}{variant})\n',
+					f'linux   /vmlinuz-{kernel}\n',
+					*microcode,
+					f'initrd  /initramfs-{kernel}{variant}.img\n',
+					options,
+				]
 
-					entry_lines.extend(comments)
-					entry_lines.append(f'title   Arch Linux ({kernel}{variant})\n')
-					entry_lines.append(f'linux   /vmlinuz-{kernel}\n')
-					entry_lines.extend(microcode)
-					entry_lines.append(f'initrd  /initramfs-{kernel}{variant}.img\n')
-					entry_lines.append(options)
-
-					entry.writelines(entry_lines)
+				entry_conf = entries_dir / f'{self.init_time}_{kernel}{variant}.conf'
+				entry_conf.write_text(''.join(entry))
 
 		self.helper_flags['bootloader'] = 'systemd'
 
@@ -1079,11 +1079,11 @@ TIMEOUT=5
 			label = f'Arch Linux ({kernel})'
 			loader = f"/vmlinuz-{kernel}"
 
-			cmdline = []
-
-			cmdline.extend(microcode)
-			cmdline.append(f"initrd=\\initramfs-{kernel}.img")
-			cmdline.extend(kernel_parameters)
+			cmdline = [
+				*microcode,
+				f"initrd=\\initramfs-{kernel}.img",
+				*kernel_parameters,
+			]
 
 			cmd = f'efibootmgr ' \
 				f'--disk {parent_dev_path} ' \
