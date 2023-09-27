@@ -308,7 +308,7 @@ class _PartitionInfo:
 	start: Size
 	length: Size
 	flags: List[PartitionFlag]
-	partuuid: str
+	partuuid: Optional[str]
 	disk: Disk
 	mountpoints: List[Path]
 	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
@@ -342,7 +342,7 @@ class _PartitionInfo:
 		cls,
 		partition: Partition,
 		fs_type: Optional[FilesystemType],
-		partuuid: str,
+		partuuid: Optional[str],
 		mountpoints: List[Path],
 		btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = []
 	) -> _PartitionInfo:

@@ -79,9 +79,6 @@ class DeviceHandler(object):
 				if fs_type == FilesystemType.Btrfs:
 					subvol_infos = self.get_btrfs_info(partition.path)
 
-				if not lsblk_info.partuuid:
-					raise ValueError(f'Partition has no partuuid: {lsblk_info}')
-
 				partition_infos.append(
 					_PartitionInfo.from_partition(
 						partition,
