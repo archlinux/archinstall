@@ -225,8 +225,8 @@ def load_config():
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
 
-	if arguments.get('network_config', None) is not None:
-		config = NetworkConfiguration.parse_arg(arguments.get('network_config'))
+	if (net_config := arguments.get('network_config', None)) is not None:
+		config = NetworkConfiguration.parse_arg(net_config)
 		arguments['network_config'] = config
 
 	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:

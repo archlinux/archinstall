@@ -206,4 +206,4 @@ class DeferredTranslation:
 	@classmethod
 	def install(cls):
 		import builtins
-		builtins._ = cls
+		builtins._ = cls  # type: ignore

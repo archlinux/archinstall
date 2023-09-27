@@ -61,7 +61,7 @@ packages = ["archinstall"]
 python_version = "3.11"
 files = "archinstall/"
 exclude = "tests"
-#check_untyped_defs=true
+check_untyped_defs=true
 
 [tool.bandit]
 targets = ["archinstall"]

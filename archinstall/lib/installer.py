@@ -131,7 +131,11 @@ class Installer:
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
 		info('Waiting for time sync (systemd-timesyncd.service) to complete.')
-		while SysCommand('timedatectl show --property=NTPSynchronized --value').decode().rstrip() != 'yes':
+
+		while True:
+			time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
+			if time_val and time_val.strip() == 'yes':
+				break
 			time.sleep(1)
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
@@ -237,7 +241,7 @@ class Installer:
 			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
 
 			luks_handler = Luks2(
-				part_mod.dev_path,
+				part_mod.safe_dev_path,
 				mapper_name=part_mod.mapper_name,
 				password=self._disk_encryption.encryption_password
 			)
@@ -281,8 +285,17 @@ class Installer:
 		self._fstab_entries.append(f'{file} none swap defaults 0 0')
 
 		if enable_resume:
-			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode('UTF-8').strip()
-			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8').split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
+			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode('UTF-8')
+			if not resume_uuid:
+				raise ValueError(f'Could not find mount point: {self.target}{file}')
+
+			resume_uuid = resume_uuid.strip()
+
+			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8')
+			if not resume_offset:
+				raise ValueError('Could not determine resume offset')
+
+			resume_offset = resume_offset.split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
 
 			self._hooks.append('resume')
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
