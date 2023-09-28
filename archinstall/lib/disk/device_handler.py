@@ -546,12 +546,16 @@ class DeviceHandler(object):
 			info(f'Device already mounted at {target_mountpoint}')
 			return
 
-		str_options = ','.join(options)
-		str_options = f'-o {str_options}' if str_options else ''
+		cmd = ['mount']
 
-		mount_fs = f'-t {mount_fs}' if mount_fs else ''
+		if len(options):
+			cmd.extend(('-o', ','.join(options)))
+		if mount_fs:
+			cmd.extend(('-t', mount_fs))
 
-		command = f'mount {mount_fs} {str_options} {dev_path} {target_mountpoint}'
+		cmd.extend((str(dev_path), str(target_mountpoint)))
+
+		command = ' '.join(cmd)
 
 		debug(f'Mounting {dev_path}: {command}')
 
