@@ -1076,23 +1076,22 @@ TIMEOUT=5
 
 		for kernel in self.kernels:
 			# Setup the firmware entry
-			label = f'Arch Linux ({kernel})'
-			loader = f"/vmlinuz-{kernel}"
-
 			cmdline = [
 				*microcode,
 				f"initrd=\\initramfs-{kernel}.img",
 				*kernel_parameters,
 			]
 
-			cmd = f'efibootmgr ' \
-				f'--disk {parent_dev_path} ' \
-				f'--part {boot_partition.partn} ' \
-				f'--create ' \
-				f'--label "{label}" ' \
-				f'--loader {loader} ' \
-				f'--unicode \'{" ".join(cmdline)}\' ' \
-				f'--verbose'
+			cmd = [
+				'efibootmgr',
+				'--disk', str(parent_dev_path),
+				'--part', str(boot_partition.partn),
+				'--create',
+				'--label', f'Arch Linux ({kernel})',
+				'--loader', f"/vmlinuz-{kernel}",
+				'--unicode', ' '.join(cmdline),
+				'--verbose'
+			]
 
 			SysCommand(cmd)
 
