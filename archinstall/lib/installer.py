@@ -903,15 +903,22 @@ class Installer:
 			'--debug'
 		]
 
-		if SysInfo.has_uefi() and efi_partition is not None:
+		if SysInfo.has_uefi():
+			if not efi_partition:
+				raise ValueError('Could not detect efi partition')
+
 			info(f"GRUB EFI partition: {efi_partition.dev_path}")
 
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
+			boot_dir_arg = []
+			if boot_partition != efi_partition:
+				boot_dir_arg.append(f'--boot-directory={boot_dir}')
+
 			add_options = [
 				'--target=x86_64-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
-				f'--boot-directory={boot_dir}',
+				*boot_dir_arg,
 				'--bootloader-id=GRUB',
 				'--removable'
 			]

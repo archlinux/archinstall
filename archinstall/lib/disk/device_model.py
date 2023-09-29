@@ -658,7 +658,8 @@ class PartitionModification:
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
 
-	_boot_indicator_flags = [PartitionFlag.Boot, PartitionFlag.XBOOTLDR]
+	_efi_indicator_flags = (PartitionFlag.Boot, PartitionFlag.ESP)
+	_boot_indicator_flags = (PartitionFlag.Boot, PartitionFlag.XBOOTLDR)
 
 	def __post_init__(self):
 		# needed to use the object as a dictionary key due to hash func
@@ -727,6 +728,13 @@ class PartitionModification:
 			return self.mountpoint.relative_to(self.mountpoint.anchor)
 
 		raise ValueError('Mountpoint is not specified')
+
+	def is_efi(self) -> bool:
+		return (
+			any(set(self.flags) & set(self._efi_indicator_flags))
+			and self.fs_type == FilesystemType.Fat32
+			and PartitionFlag.XBOOTLDR not in self.flags
+		)
 
 	def is_boot(self) -> bool:
 		"""
@@ -828,9 +836,8 @@ class DeviceModification:
 	def get_efi_partition(self) -> Optional[PartitionModification]:
 		"""
 		Similar to get_boot_partition() but excludes XBOOTLDR partitions from it's candidates.
-		Also works with ESP flag.
 		"""
-		filtered = filter(lambda x: (x.is_boot() or PartitionFlag.ESP in x.flags) and x.fs_type == FilesystemType.Fat32 and PartitionFlag.XBOOTLDR not in x.flags, self.partitions)
+		filtered = filter(lambda x: x.is_efi() and x.mountpoint, self.partitions)
 		return next(filtered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
@@ -843,10 +850,7 @@ class DeviceModification:
 			filtered = filter(lambda x: x.is_boot() and x != efi_partition and x.mountpoint, self.partitions)
 			if boot_partition := next(filtered, None):
 				return boot_partition
-			if efi_partition.is_boot():
-				return efi_partition
-			else:
-				return None
+			return efi_partition
 		else:
 			filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
 			return next(filtered, None)
