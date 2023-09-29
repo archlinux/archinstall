@@ -889,6 +889,13 @@ class Installer:
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
+		if boot_partition == root_partition and root_partition.mountpoint:
+			boot_dir = root_partition.mountpoint / 'boot'
+		elif boot_partition.mountpoint:
+			boot_dir = boot_partition.mountpoint
+		else:
+			raise ValueError('Could not detect boot directory')
+
 		command = [
 			'/usr/bin/arch-chroot',
 			str(self.target),
@@ -904,7 +911,7 @@ class Installer:
 			add_options = [
 				'--target=x86_64-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
-				f'--boot-directory={boot_partition.mountpoint if boot_partition else "/boot"}',
+				f'--boot-directory={boot_dir}',
 				'--bootloader-id=GRUB',
 				'--removable'
 			]
@@ -937,7 +944,7 @@ class Installer:
 		try:
 			SysCommand(
 				f'/usr/bin/arch-chroot {self.target} '
-				f'grub-mkconfig -o {boot_partition.mountpoint if boot_partition else "/boot"}/grub/grub.cfg'
+				f'grub-mkconfig -o {boot_dir}/grub/grub.cfg'
 			)
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
