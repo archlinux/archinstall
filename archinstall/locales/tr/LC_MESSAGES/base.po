@@ -1208,3 +1208,7 @@ msgstr ""
 "\n"
 "\n"
 "Hyprland’e donanımınıza erişim izni vermek için bir seçenek belirleyin"
+
+#, fuzzy
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Girilen tüm değerlerin sonuna bir birim eklenebilir: B, KB, KiB, MB, MiB…"
