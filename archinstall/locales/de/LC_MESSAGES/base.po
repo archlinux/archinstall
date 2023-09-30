@@ -1215,3 +1215,6 @@ msgstr ""
 "\n"
 "\n"
 "Option auswählen, um Sway Zugriff auf deine Hardware zu geben"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""

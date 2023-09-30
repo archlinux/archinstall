@@ -1267,6 +1267,10 @@ msgstr ""
 "\n"
 "Elija una opción para darle a Sway acceso a su hardware"
 
+#, fuzzy
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Todos los valores ingresados pueden tener una unidad como sufijo: B, KB, KiB, MB, MiB ..."
+
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
 

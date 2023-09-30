@@ -1208,3 +1208,7 @@ msgstr ""
 "\n"
 "\n"
 "உங்கள் வன்பொருளுக்கான அணுகலை வழங்குவதற்கான விருப்பத்தைத் தேர்வுசெய்யவும்"
+
+#, fuzzy
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "உள்ளிடப்பட்ட அனைத்து மதிப்புகளையும் ஒரு அலகுடன் பின்னொட்டு இடலாம்: B, KB, KiB, MB, MiB..."
