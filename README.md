@@ -73,6 +73,14 @@ how much has been translated.
 Any contributions to the translations are more than welcome,
 to get started please follow [the guide](https://github.com/archlinux/archinstall/blob/master/archinstall/locales/README.md)
 
+## Fonts
+The ISO does not ship with ship with all fonts needed for different languages.
+Fonts that are using a different character set than Latin will not be displayed correctly. If those languages
+want to be selected than a proper font has to be set manually in the console.
+
+All available console fonts can be found in `/usr/share/kbd/consolefonts` and can be set with `setfont LatGrkCyr-8x16`.
+
+
 # Scripting your own installation
 
 ## Scripting interactive installation
@@ -196,8 +204,7 @@ To test this without a live ISO, the simplest approach is to use a local image a
 This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
 
     # truncate -s 20G testimage.img
-    # losetup -fP ./testimage.img
-    # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
+    # losetup --partscan --show --find ./testimage.img
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd

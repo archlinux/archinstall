@@ -2,11 +2,48 @@
 
 cd $(dirname "$0")/..
 
-find . -type f -iname "*.py" | xargs xgettext --join-existing --no-location --omit-header -d base -o locales/base.pot
+function update_lang() {
+  file=$1
 
-for file in $(find locales/ -name "base.po"); do
 	echo "Updating: $file"
 	path=$(dirname $file)
 	msgmerge --quiet --no-location --width 512 --backup none --update $file locales/base.pot
 	msgfmt -o $path/base.mo $file
-done
+}
+
+
+function generate_all() {
+  for file in $(find locales/ -name "base.po"); do
+    update_lang "$file"
+  done
+}
+
+function generate_single_lang() {
+  lang_file="locales/$1/LC_MESSAGES/base.po"
+
+  if [ ! -f "$lang_file" ]; then
+    echo "Language files not found: $lang_file"
+    exit 1
+  fi
+
+  update_lang "$lang_file"
+}
+
+
+
+if [ $# -eq 0 ]
+  then
+    echo "Usage: locales_generator.sh <language_abbr>"
+    exit 1
+fi
+
+lang=$1
+
+# Update the base file containing all translatable string
+find . -type f -iname "*.py" | xargs xgettext --join-existing --no-location --omit-header -d base -o locales/base.pot
+
+case "$lang" in
+  "all") generate_all
+  ;;
+  *) generate_single_lang "$lang"
+esac

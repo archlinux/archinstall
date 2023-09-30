@@ -587,6 +587,7 @@ class Installer:
 		hostname: str = 'archinstall',
 		locale_config: LocaleConfiguration = LocaleConfiguration.default()
 	):
+		_disable_fstrim = False
 		for mod in self._disk_config.device_modifications:
 			for part in mod.partitions:
 				if part.fs_type is not None:
@@ -596,6 +597,10 @@ class Installer:
 						self.modules.append(module)
 					if (binary := part.fs_type.installation_binary) is not None:
 						self._binaries.append(binary)
+
+					# https://github.com/archlinux/archinstall/issues/1837
+					if part.fs_type.fs_type_mount == 'btrfs':
+						_disable_fstrim = True
 
 					# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 					if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
@@ -651,7 +656,10 @@ class Installer:
 		# periodic TRIM by default.
 		#
 		# https://github.com/archlinux/archinstall/issues/880
-		self.enable_periodic_trim()
+		# https://github.com/archlinux/archinstall/issues/1837
+		# https://github.com/archlinux/archinstall/issues/1841
+		if not _disable_fstrim:
+			self.enable_periodic_trim()
 
 		# TODO: Support locale and timezone
 		# os.remove(f'{self.target}/etc/localtime')
@@ -708,7 +716,7 @@ class Installer:
 
 	def _get_root_partition(self) -> Optional[disk.PartitionModification]:
 		for mod in self._disk_config.device_modifications:
-			if root := mod.get_root_partition(self._disk_config.relative_mountpoint):
+			if root := mod.get_root_partition():
 				return root
 		return None
 
@@ -849,17 +857,17 @@ class Installer:
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
 				# Setup the loader entry
-				with open(entries_dir / f'{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
-					entry_lines: List[str] = []
+				entry = [
+					*comments,
+					f'title   Arch Linux ({kernel}{variant})\n',
+					f'linux   /vmlinuz-{kernel}\n',
+					*microcode,
+					f'initrd  /initramfs-{kernel}{variant}.img\n',
+					options,
+				]
 
-					entry_lines.extend(comments)
-					entry_lines.append(f'title   Arch Linux ({kernel}{variant})\n')
-					entry_lines.append(f'linux   /vmlinuz-{kernel}\n')
-					entry_lines.extend(microcode)
-					entry_lines.append(f'initrd  /initramfs-{kernel}{variant}.img\n')
-					entry_lines.append(options)
-
-					entry.writelines(entry_lines)
+				entry_conf = entries_dir / f'{self.init_time}_{kernel}{variant}.conf'
+				entry_conf.write_text(''.join(entry))
 
 		self.helper_flags['bootloader'] = 'systemd'
 
@@ -881,6 +889,13 @@ class Installer:
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
+		if boot_partition == root_partition and root_partition.mountpoint:
+			boot_dir = root_partition.mountpoint / 'boot'
+		elif boot_partition.mountpoint:
+			boot_dir = boot_partition.mountpoint
+		else:
+			raise ValueError('Could not detect boot directory')
+
 		command = [
 			'/usr/bin/arch-chroot',
 			str(self.target),
@@ -888,15 +903,22 @@ class Installer:
 			'--debug'
 		]
 
-		if SysInfo.has_uefi() and efi_partition is not None:
+		if SysInfo.has_uefi():
+			if not efi_partition:
+				raise ValueError('Could not detect efi partition')
+
 			info(f"GRUB EFI partition: {efi_partition.dev_path}")
 
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
+			boot_dir_arg = []
+			if boot_partition != efi_partition:
+				boot_dir_arg.append(f'--boot-directory={boot_dir}')
+
 			add_options = [
 				'--target=x86_64-efi',
-				f'--efi-directory={efi_partition.mountpoint}'
-				f'--boot-directory={boot_partition.mountpoint if boot_partition else "/boot"}'
+				f'--efi-directory={efi_partition.mountpoint}',
+				*boot_dir_arg,
 				'--bootloader-id=GRUB',
 				'--removable'
 			]
@@ -929,7 +951,7 @@ class Installer:
 		try:
 			SysCommand(
 				f'/usr/bin/arch-chroot {self.target} '
-				f'grub-mkconfig -o {boot_partition.mountpoint if boot_partition else "/boot"}/grub/grub.cfg'
+				f'grub-mkconfig -o {boot_dir}/grub/grub.cfg'
 			)
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
@@ -1068,23 +1090,22 @@ TIMEOUT=5
 
 		for kernel in self.kernels:
 			# Setup the firmware entry
-			label = f'Arch Linux ({kernel})'
-			loader = f"/vmlinuz-{kernel}"
+			cmdline = [
+				*microcode,
+				f"initrd=\\initramfs-{kernel}.img",
+				*kernel_parameters,
+			]
 
-			cmdline = []
-
-			cmdline.extend(microcode)
-			cmdline.append(f"initrd=\\initramfs-{kernel}.img")
-			cmdline.extend(kernel_parameters)
-
-			cmd = f'efibootmgr ' \
-				f'--disk {parent_dev_path} ' \
-				f'--part {boot_partition.partn} ' \
-				f'--create ' \
-				f'--label "{label}" ' \
-				f'--loader {loader} ' \
-				f'--unicode \'{" ".join(cmdline)}\' ' \
-				f'--verbose'
+			cmd = [
+				'efibootmgr',
+				'--disk', str(parent_dev_path),
+				'--part', str(boot_partition.partn),
+				'--create',
+				'--label', f'Arch Linux ({kernel})',
+				'--loader', f"/vmlinuz-{kernel}",
+				'--unicode', ' '.join(cmdline),
+				'--verbose'
+			]
 
 			SysCommand(cmd)
 

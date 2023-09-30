@@ -42,12 +42,6 @@ class DiskLayoutType(Enum):
 class DiskLayoutConfiguration:
 	config_type: DiskLayoutType
 	device_modifications: List[DeviceModification] = field(default_factory=list)
-	# used for pre-mounted config
-	relative_mountpoint: Optional[Path] = None
-
-	def __post_init__(self):
-		if self.config_type == DiskLayoutType.Pre_mount and self.relative_mountpoint is None:
-			raise ValueError('Must set a relative mountpoint when layout type is pre-mount"')
 
 	def json(self) -> Dict[str, Any]:
 		return {
@@ -487,10 +481,8 @@ class SubvolumeModification:
 
 		raise ValueError('Mountpoint is not specified')
 
-	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
+	def is_root(self) -> bool:
 		if self.mountpoint:
-			if relative_mountpoint is not None:
-				return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
 			return self.mountpoint == Path('/')
 		return False
 
@@ -666,7 +658,8 @@ class PartitionModification:
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
 
-	_boot_indicator_flags = [PartitionFlag.Boot, PartitionFlag.XBOOTLDR]
+	_efi_indicator_flags = (PartitionFlag.Boot, PartitionFlag.ESP)
+	_boot_indicator_flags = (PartitionFlag.Boot, PartitionFlag.XBOOTLDR)
 
 	def __post_init__(self):
 		# needed to use the object as a dictionary key due to hash func
@@ -736,20 +729,25 @@ class PartitionModification:
 
 		raise ValueError('Mountpoint is not specified')
 
+	def is_efi(self) -> bool:
+		return (
+			any(set(self.flags) & set(self._efi_indicator_flags))
+			and self.fs_type == FilesystemType.Fat32
+			and PartitionFlag.XBOOTLDR not in self.flags
+		)
+
 	def is_boot(self) -> bool:
 		"""
 		Returns True if any of the boot indicator flags are found in self.flags
 		"""
 		return any(set(self.flags) & set(self._boot_indicator_flags))
 
-	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
-		if relative_mountpoint is not None and self.mountpoint is not None:
-			return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
-		elif self.mountpoint is not None:
+	def is_root(self) -> bool:
+		if self.mountpoint is not None:
 			return Path('/') == self.mountpoint
 		else:
 			for subvol in self.btrfs_subvols:
-				if subvol.is_root(relative_mountpoint):
+				if subvol.is_root():
 					return True
 
 		return False
@@ -838,9 +836,8 @@ class DeviceModification:
 	def get_efi_partition(self) -> Optional[PartitionModification]:
 		"""
 		Similar to get_boot_partition() but excludes XBOOTLDR partitions from it's candidates.
-		Also works with ESP flag.
 		"""
-		filtered = filter(lambda x: (x.is_boot() or PartitionFlag.ESP in x.flags) and x.fs_type == FilesystemType.Fat32 and PartitionFlag.XBOOTLDR not in x.flags, self.partitions)
+		filtered = filter(lambda x: x.is_efi() and x.mountpoint, self.partitions)
 		return next(filtered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
@@ -853,16 +850,13 @@ class DeviceModification:
 			filtered = filter(lambda x: x.is_boot() and x != efi_partition and x.mountpoint, self.partitions)
 			if boot_partition := next(filtered, None):
 				return boot_partition
-			if efi_partition.is_boot():
-				return efi_partition
-			else:
-				return None
+			return efi_partition
 		else:
 			filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
 			return next(filtered, None)
 
-	def get_root_partition(self, relative_path: Optional[Path]) -> Optional[PartitionModification]:
-		filtered = filter(lambda x: x.is_root(relative_path), self.partitions)
+	def get_root_partition(self) -> Optional[PartitionModification]:
+		filtered = filter(lambda x: x.is_root(), self.partitions)
 		return next(filtered, None)
 
 	def json(self) -> Dict[str, Any]:

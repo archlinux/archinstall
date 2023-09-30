@@ -139,7 +139,6 @@ def select_disk_config(
 
 				return disk.DiskLayoutConfiguration(
 					config_type=disk.DiskLayoutType.Pre_mount,
-					relative_mountpoint=path,
 					device_modifications=mods
 				)
 
@@ -171,9 +170,11 @@ def select_disk_config(
 
 
 def _boot_partition(sector_size: disk.SectorSize) -> disk.PartitionModification:
+	flags = [disk.PartitionFlag.Boot]
 	if SysInfo.has_uefi():
 		start = disk.Size(1, disk.Unit.MiB, sector_size)
 		size = disk.Size(512, disk.Unit.MiB, sector_size)
+		flags.append(disk.PartitionFlag.ESP)
 	else:
 		start = disk.Size(3, disk.Unit.MiB, sector_size)
 		size = disk.Size(203, disk.Unit.MiB, sector_size)
@@ -186,7 +187,7 @@ def _boot_partition(sector_size: disk.SectorSize) -> disk.PartitionModification:
 		length=size,
 		mountpoint=Path('/boot'),
 		fs_type=disk.FilesystemType.Fat32,
-		flags=[disk.PartitionFlag.Boot]
+		flags=flags
 	)
 
 

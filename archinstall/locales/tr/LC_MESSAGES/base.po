@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 21.05.2022\n"
-"PO-Revision-Date: 2022-05-25 17:42+0300\n"
+"PO-Revision-Date: 2023-09-26 23:01+0200\n"
 "Last-Translator: Hasan Oruc <oruch379@gmail.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
@@ -10,13 +10,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] Burada bir günlük (log) dosyası oluşturuldu: {} {}"
+msgstr "[!] Burada bir günlük dosyası oluşturuldu: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Lütfen bu sorunu (ve dosyayı) https://github.com/archlinux/archinstall/issues 'a bildirin"
+msgstr "    Lütfen bu sorunu (ve dosyayı) https://github.com/archlinux/archinstall/issues adresine gönderin"
 
 msgid "Do you really want to abort?"
 msgstr "Gerçekten iptal etmek istiyor musunuz?"
@@ -28,13 +28,13 @@ msgid "Would you like to use swap on zram?"
 msgstr "\"Swap\"i (takas) zram üzerinde kullanmak ister misiniz?"
 
 msgid "Desired hostname for the installation: "
-msgstr "Kurulum için tercih edilen bilgisayar ismi: "
+msgstr "Kurulum için istenen ana bilgisayar adı: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "Sudo yetkilerine sahip, gerekli bir süper kullanıcı için kullanıcı adı: "
+msgstr "Sudo ayrıcalıklarına sahip gerekli süper kullanıcı için kullanıcı adı: "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "Kurulum için ek kullanıcılar (ek kullanıcı istemiyorsanız boş bırakın): "
+msgstr "Yüklenecek herhangi bir ek kullanıcı (kullanıcı yok için boş bırakın): "
 
 msgid "Should this user be a superuser (sudoer)?"
 msgstr "Bu kullanıcı bir süper kullanıcı (sudoer) olmalı mı?"
@@ -530,7 +530,7 @@ msgid "The password you are using seems to be weak,"
 msgstr "Kullandığınız şifre zayıf görünüyor,"
 
 msgid "are you sure you want to use it?"
-msgstr "Kullanmak istediğinize emin misiniz?"
+msgstr "kullanmak istediğinize emin misiniz?"
 
 msgid "Optional repositories"
 msgstr "Tercihi depolar"
@@ -665,7 +665,6 @@ msgstr "Arch Linux'u istediğin gibi kişiselleştirmeni sağlayan çok basit bi
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Kurmak ve aktif etmek için bazı seçilmiş çeşitli sunucu paketleri sunar, örnek olarak httpd, nginx, mariadb"
 
-#, fuzzy
 msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Hangi sunucuların kurulacağını seçin, eğer hiçbiri seçilmezse minimal bir kurulum gerçekleştirilecektir"
 
@@ -758,24 +757,20 @@ msgstr "Boş alan"
 msgid "Bus-type"
 msgstr "Bus(veri yolu)-tipi"
 
-#, fuzzy
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
 msgstr "Kök şifresi ya da en azından 1 adet süper-kullanıcı belirtilmek zorunda"
 
-#, fuzzy
 msgid "Enter username (leave blank to skip): "
 msgstr "Ek kullanıcı oluşturmak için bir kullanıcı adı girin (geçmek için boş bırakın): "
 
 msgid "The username you entered is invalid. Try again"
 msgstr "Girdiğiniz kullanıcı adı geçersiz. Tekrar deneyin"
 
-#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "{} bir süper kullanıcı (sudoer) olmalı mı?"
 
-#, fuzzy
 msgid "Select which partitions to encrypt"
-msgstr "Hangi disk bölümünün şifrelenmiş olarak işaretleneceğini seçin"
+msgstr "Hangi disk bölümünün şifrelemek için işaretleneceğini seçin"
 
 msgid "very weak"
 msgstr "çok zayıf"
@@ -789,14 +784,12 @@ msgstr "ortalama"
 msgid "strong"
 msgstr "güçlü"
 
-#, fuzzy
 msgid "Add subvolume"
-msgstr "alt disk bölümü ekle :{:16}"
+msgstr "Alt disk bölümü ekle"
 
 msgid "Edit subvolume"
 msgstr "Alt disk bölümünü düzenle"
 
-#, fuzzy
 msgid "Delete subvolume"
 msgstr "Alt disk bölümü sil"
 
@@ -816,13 +809,13 @@ msgstr ""
 "Not:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr "- Maksimum değer : {} ( {} paralel indirmeye izin verir, bir seferde {} indirmeye izin verir)"
+msgstr " - Maksimum değer : {} ( {} paralel indirmeye izin verir, bir seferde {} indirmeye izin verir)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr "- Minimum değer : 1 ( 1 paralel indirmeye izin verir, bir seferde 2 indirmeye izin verir )"
+msgstr " - Minimum değer : 1 ( 1 paralel indirmeye izin verir, bir seferde 2 indirmeye izin verir )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr "- Devre Dışı Bırak/Varsayılan : 0 (Paralel indirmeyi devre dışı bırakır, aynı anda yalnızca 1 indirmeye izin verir)"
+msgstr " - Devre Dışı Bırak/Varsayılan : 0 (Paralel indirmeyi devre dışı bırakır, aynı anda yalnızca 1 indirmeye izin verir)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
@@ -831,7 +824,6 @@ msgstr "Geçersiz Giriş! Geçerli bir girişle tekrar deneyin [1 - {max_downloa
 msgid "Parallel Downloads"
 msgstr "Paralel İndirmeler"
 
-#, fuzzy
 msgid "ESC to skip"
 msgstr "Geçmek için ESC'ye basın"
 
@@ -853,9 +845,8 @@ msgstr "Yazı tipi {} olarak saklanmalıdır."
 msgid "Archinstall requires root privileges to run. See --help for more."
 msgstr "Archinstall'ın çalışması için kök ayrıcalıkları gerekir. Daha fazla bilgi için --help'e bakın."
 
-#, fuzzy
 msgid "Select an execution mode"
-msgstr "'{}' için bir eylem seçin"
+msgstr "Bir çalıştırma modu seçin"
 
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Belirtilen url'den profil getirilemiyor: {}"
@@ -863,51 +854,40 @@ msgstr "Belirtilen url'den profil getirilemiyor: {}"
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Profiller benzersiz ada sahip olmalıdır, ancak yinelenen ada sahip profil tanımları bulundu: {}"
 
-#, fuzzy
 msgid "Select one or more devices to use and configure"
-msgstr "Kullanmak ve yapılandırmak için bir veya daha fazla sabit disk seçin"
+msgstr "Kullanılacak ve yapılandırılacak bir veya daha fazla cihaz seçin"
 
-#, fuzzy
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr "Eğer sabit disk seçimini sıfırlarsanız bu ayrıca mevcut disk şemasını da sıfırlayacaktır. Emin misiniz?"
+msgstr "Aygıt seçimini sıfırlarsanız, bu aynı zamanda geçerli disk düzenini de sıfırlayacaktır. Emin misiniz?"
 
-#, fuzzy
 msgid "Existing Partitions"
-msgstr "Disk bölümü ekleniyor…."
+msgstr "Mevcut Bölmeler"
 
-#, fuzzy
 msgid "Select a partitioning option"
-msgstr "Disk bölümü sil"
+msgstr "Bir bölümleme seçeneği belirleyin"
 
-#, fuzzy
 msgid "Enter the root directory of the mounted devices: "
-msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin: "
+msgstr "Takılı aygıtların kök dizinini girin: "
 
-#, fuzzy
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "/home disk bölümü için minimum kapasite: {}GiB\n"
 
-#, fuzzy
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Arch Linux disk bölümü için minimum kapasite: {}GiB"
 
-#, fuzzy
+# “profiles_bck” bir yer tutucu olabilir. O yuzden sabit tuttum.
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "Bu ön-programlanmış profillerin bir listesidir, bunlar masaüstü ortamları gibi şeyler kurmayı kolaylaştırabilir"
+msgstr "Bu, önceden programlanmış profiles_bck  listesidir, masaüstü ortamları gibi şeyleri yüklemeyi kolaylaştırabilirler"
 
-#, fuzzy
 msgid "Current profile selection"
 msgstr "Mevcut disk bölümü düzeni"
 
-#, fuzzy
 msgid "Remove all newly added partitions"
 msgstr "Yeni eklenen tüm disk bölümleri kaldırın"
 
-#, fuzzy
 msgid "Assign mountpoint"
 msgstr "Bir disk bölümü için monte noktası ata"
 
-#, fuzzy
 msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Bir disk bölümünü biçimlendirilmek üzere işaretle/işareti kaldır (verileri siler)"
 
@@ -917,15 +897,12 @@ msgstr "Önyüklenebilir olarak işaretle/işareti kaldır"
 msgid "Change filesystem"
 msgstr "Dosya sistemini değiştir"
 
-#, fuzzy
 msgid "Mark/Unmark as compressed"
-msgstr "Bir disk bölümünü sıkıştırılmış olarak işaretle/işareti kaldır (sadece btrfs)"
+msgstr "Sıkıştırıldı olarak işaretle/işareti kaldır"
 
-#, fuzzy
 msgid "Set subvolumes"
 msgstr "Alt disk bölümü ayarla"
 
-#, fuzzy
 msgid "Delete partition"
 msgstr "Disk bölümü sil"
 
@@ -935,12 +912,11 @@ msgstr "Disk bölümü"
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
 msgstr "Bu disk bölümü şu anda şifrelenmiştir, biçimlendirmek için bir dosya sistemi belirtilmelidir"
 
-#, fuzzy
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Disk bölümü mount (bağlantı) noktaları iç kurulumla ilişkilidir, örnek olarak boot, /boot olacaktır."
+msgstr "Bölüm bağlama noktaları kurulumun içine görelidir, örnek olarak önyükleme /boot olacaktır."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr "mountpoint /boot ayarlanmışsa, bölüm de önyüklenebilir olarak işaretlenecektir."
+msgstr "Mountpoint /boot ayarlanmışsa, bölüm de önyüklenebilir olarak işaretlenecektir."
 
 msgid "Mountpoint: "
 msgstr "Bağlantı noktası: "
@@ -948,17 +924,14 @@ msgstr "Bağlantı noktası: "
 msgid "Current free sectors on device {}:"
 msgstr "{} cihazındaki mevcut boş sektörler:"
 
-#, fuzzy
 msgid "Total sectors: {}"
-msgstr "Geçerli bir dizin değil: {}"
+msgstr "Toplam sektörler: {}"
 
-#, fuzzy
 msgid "Enter the start sector (default: {}): "
-msgstr "Başlangıç kesimini girin (yüzde ya da blok numarası, varsayılan: {}): "
+msgstr "Başlangıç sektörünü girin (varsayılan: {}): "
 
-#, fuzzy
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "Disk bölümünün bitiş kesimini girin (yüzde ya da blok numarası, ör: {}): "
+msgstr "Bölümün bitiş sektörünü girin (yüzde veya blok numarası, varsayılan: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Bu işlem yeni eklenmiş tüm bölümleri kaldıracaktır, devam edilsin?"
@@ -969,9 +942,8 @@ msgstr "Bölüm yönetimi: {}"
 msgid "Total length: {}"
 msgstr "Toplam uzunluk: {}"
 
-#, fuzzy
 msgid "Encryption type"
-msgstr "Şifreleme parolası"
+msgstr "Şifreleme türü"
 
 msgid "Partitions"
 msgstr "Disk bölümleri"
@@ -979,9 +951,8 @@ msgstr "Disk bölümleri"
 msgid "No HSM devices available"
 msgstr "Kullanılabilir HSM cihazı yok"
 
-#, fuzzy
 msgid "Partitions to be encrypted"
-msgstr "Hangi disk bölümünün şifrelenmiş olarak işaretleneceğini seçin"
+msgstr "Şifrelenecek bölümler"
 
 msgid "Select disk encryption option"
 msgstr "Disk şifreleme seçeneğini seçin"
@@ -989,17 +960,14 @@ msgstr "Disk şifreleme seçeneğini seçin"
 msgid "Select a FIDO2 device to use for HSM"
 msgstr "HSM için kullanılacak bir FIDO2 cihazı seçin"
 
-#, fuzzy
 msgid "Use a best-effort default partition layout"
-msgstr "Bütün seçilmiş diskleri temizle ve elden gelen en iyi varsayılan disk bölümü düzenini kullan"
+msgstr "En iyi çabayı gösteren bir varsayılan bölüm düzeni kullanın"
 
-#, fuzzy
 msgid "Manual Partitioning"
 msgstr "Manuel yapılandırma"
 
-#, fuzzy
 msgid "Pre-mounted configuration"
-msgstr "Yapılandırma yok"
+msgstr "Önceden monte edilmiş konfigürasyon"
 
 msgid "Unknown"
 msgstr "Bilinmeyen"
@@ -1016,15 +984,12 @@ msgstr "← Geri"
 msgid "Disk encryption"
 msgstr "Disk şifrelemesi"
 
-#, fuzzy
 msgid "Configuration"
 msgstr "Konfigürasyon"
 
-#, fuzzy
 msgid "Password"
 msgstr "Şifre"
 
-#, fuzzy
 msgid "All settings will be reset, are you sure?"
 msgstr "Bütün ayarlar sıfırlanacak, emin misiniz?"
 
@@ -1040,36 +1005,29 @@ msgstr "Ortam türü: {}"
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
 msgstr "Tescilli Nvidia sürücüsü Sway tarafından desteklenmiyor. Sorunlarla karşılaşmanız muhtemeldir, bu sizin için uygun mu?"
 
-#, fuzzy
 msgid "Installed packages"
-msgstr "İndirilmiş paketler"
+msgstr "Yüklü paketler"
 
-#, fuzzy
 msgid "Add profile"
 msgstr "Profil ekle"
 
-#, fuzzy
 msgid "Edit profile"
 msgstr "Profil düzenle"
 
-#, fuzzy
 msgid "Delete profile"
 msgstr "Profil sil"
 
-#, fuzzy
 msgid "Profile name: "
-msgstr "Profil ismi:"
+msgstr "Profil ismi: "
 
 msgid "The profile name you entered is already in use. Try again"
 msgstr "Girdiğiniz profil adı zaten kullanılıyor. Tekrar deneyin"
 
-#, fuzzy
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
 msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
 
-#, fuzzy
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
+msgstr "Bu profille etkinleştirilecek hizmetler (boşluk bırakılmış, atlamak için boş bırakın): "
 
 msgid "Should this profile be enabled for installation?"
 msgstr "Bu profil kurulum için etkinleştirilmeli mi?"
@@ -1077,14 +1035,12 @@ msgstr "Bu profil kurulum için etkinleştirilmeli mi?"
 msgid "Create your own"
 msgstr "Kendinizinkini oluşturun"
 
-#, fuzzy
 msgid ""
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
 "\n"
-"\n"
-"Bir grafik sürücüsü seçin ya da bütün açık-kaynak sürücüleri kurmak için boş bırakın"
+"Bir grafik sürücüsü seçin veya tüm açık kaynak sürücülerini yüklemek için boş bırakın"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Sway'in seat'e erişmesi gerekir (klavye, fare vb. donanım aygıtlarının birleşimi)"
@@ -1110,22 +1066,18 @@ msgstr "Lütfen hangi karşılayıcının kurulacağını seçin"
 msgid "This is a list of pre-programmed default_profiles"
 msgstr "Bu, önceden programlanmış default_profiles listesidir"
 
-#, fuzzy
 msgid "Disk configuration"
-msgstr "Yapılandırma yok"
+msgstr "Disk yapılandırması"
 
-#, fuzzy
 msgid "Profiles"
 msgstr "Profiller"
 
 msgid "Finding possible directories to save configuration files ..."
 msgstr "Yapılandırma dosyalarını kaydetmek için olası dizinler aranıyor..."
 
-#, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
-msgstr "Kullanmak ve yapılandırmak için bir veya daha fazla sabit disk seçin"
+msgstr "Yapılandırma dosyalarını kaydetmek için dizin (veya dizinler) seçin"
 
-#, fuzzy
 msgid "Add a custom mirror"
 msgstr "Özel indirme sunucusu ekleyin"
 
@@ -1135,19 +1087,15 @@ msgstr "Özel indirme sunucusunu değiştirin"
 msgid "Delete custom mirror"
 msgstr "Özel indirme sunucusunu silin"
 
-#, fuzzy
 msgid "Enter name (leave blank to skip): "
 msgstr "İsim girin (geçmek için boş bırakın): "
 
-#, fuzzy
 msgid "Enter url (leave blank to skip): "
-msgstr "url girin (geçmek için boş bırakın): "
+msgstr "Url girin (geçmek için boş bırakın): "
 
-#, fuzzy
 msgid "Select signature check option"
-msgstr "İmzalama kontrol opsiyonu seçin"
+msgstr "İmza kontrolü seçeneğini seçin"
 
-#, fuzzy
 msgid "Select signature option"
 msgstr "İmza seçeneğini seçin"
 
@@ -1157,17 +1105,15 @@ msgstr "Kişisel depo aynası"
 msgid "Defined"
 msgstr "Tanımlı"
 
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "Kullanıcı konfigürasyonunu kaydet (Disk düzeni ile birlikte)"
 
-#, fuzzy
 msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
-"Yapılandırma(lar)ın kaydedilmesi için bir dizin girin (tab ile tamamlama etkin)\n"
-" "
+"Kaydedilecek yapılandırma(lar) için bir dizin girin (sekme tamamlama etkin)\n"
+"Dizini kaydet: "
 
 msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
@@ -1175,20 +1121,17 @@ msgid ""
 "{}"
 msgstr "{} konfigürasyon dosya(lar)ını gösterilen konuma kaydetmek ister miydiniz?"
 
-#, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "{} konfigürasyon dosyaları {} konumuna kaydediliyor"
 
-#, fuzzy
 msgid "Mirrors"
-msgstr "Depo sunucusu"
+msgstr "Ayna sunucular"
 
-#, fuzzy
 msgid "Mirror regions"
-msgstr "Deop sunucusu bölgesi"
+msgstr "Ayna sunucusu bölgesi"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr "Maximum değer : {} ( {} paralel indirmelerine izin verir, Tek seferde {max_download+1} indirmeye izin verir.)"
+msgstr " Maximum değer : {} ( {} paralel indirmelerine izin verir, Tek seferde {max_download+1} indirmeye izin verir.)"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Geçersiz girdi! Geçerli bir girdiyle tekrar deneyin [1 ila {} veya devre dışı bırakmak için 0]"
@@ -1196,78 +1139,67 @@ msgstr "Geçersiz girdi! Geçerli bir girdiyle tekrar deneyin [1 ila {} veya dev
 msgid "Locales"
 msgstr "Yerel Ayarlar"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "NetworkManager'ı kullan (GNOME ya da KDE'de interneti grafik olarak yapılandırmak için gerekli)"
 
-#, fuzzy
 msgid "Total: {} / {}"
-msgstr "Toplam uzunluk: {}"
+msgstr "Toplam: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Girilen tüm değerlerin sonuna bir birim eklenebilir: B, KB, KiB, MB, MiB…"
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Herhangi bir birim belirtilmezse, değer sektörler olarak yorumlanır"
 
-#, fuzzy
 msgid "Enter start (default: sector {}): "
-msgstr "Başlangıç kesimini girin (yüzde ya da blok numarası, varsayılan: {}): "
+msgstr "Başlangıç girin (varsayılan: sektör {}): "
 
-#, fuzzy
 msgid "Enter end (default: {}): "
-msgstr "Başlangıç kesimini girin (yüzde ya da blok numarası, varsayılan: {}): "
+msgstr "Bitiş girin (varsayılan: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "Fido2 cihazları belirlenemiyor. libfido2 yüklü mü?"
 
 msgid "Path"
-msgstr ""
+msgstr "Yol/Konum"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "Üretici firma"
 
 msgid "Product"
-msgstr ""
+msgstr "Ürün"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Invalid configuration: {error}"
-msgstr "Manuel yapılandırma"
+msgstr "Geçersiz yapılandırma: {error}"
 
 msgid "Type"
-msgstr ""
+msgstr "Tür"
 
-#, fuzzy
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Bu seçenek, yükleme sırasında meydana gelebilecek paralel indirme sayısını etkinleştirir"
+msgstr "Bu seçenek, paket indirmeleri sırasında oluşabilecek paralel indirme sayısını etkinleştirir"
 
-#, fuzzy
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 "\n"
 "Note:\n"
 msgstr ""
 "Etkinleştirilecek paralel indirme sayısını girin.\n"
-" (1 ile {max_downloads} arasında bir değer girin)\n"
-"Not:"
+"\n"
+"Not:\n"
 
-#, fuzzy
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr "- Maksimum değer : {} ( {} paralel indirmeye izin verir, bir seferde {} indirmeye izin verir)"
+msgstr " - Önerilen maksimum değer : {} ( Bir seferde {} paralel indirmeye izin verir )"
 
-#, fuzzy
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr "- Devre Dışı Bırak/Varsayılan : 0 (Paralel indirmeyi devre dışı bırakır, aynı anda yalnızca 1 indirmeye izin verir)"
+msgstr " - Devre Dışı / Varsayılan : 0 (Paralel indirmeyi devre dışı bırakır, bir seferde yalnızca 1 indirmeye izin verir)\n"
 
-#, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "Geçersiz girdi! Geçerli bir girdiyle tekrar deneyin [1 ila {} veya devre dışı bırakmak için 0]"
+msgstr "Geçersiz girdi! Geçerli bir girişle [veya devre dışı bırakmak için 0 ile] tekrar deneyin"
 
-#, fuzzy
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway'in seat'e erişmesi gerekir (klavye, fare vb. donanım aygıtlarının birleşimi)"
+msgstr "Hyprland’in donanımlarınıza erişmesi gerekir (klavye, fare vb. donanım aygıtlarının toplanması)"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
@@ -1275,7 +1207,8 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Sway'in donanımınıza erişmesine izin vermek için bir seçenek belirleyin"
+"Hyprland’e donanımınıza erişim izni vermek için bir seçenek belirleyin"
 
+#, fuzzy
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Girilen tüm değerlerin sonuna bir birim eklenebilir: B, KB, KiB, MB, MiB…"
