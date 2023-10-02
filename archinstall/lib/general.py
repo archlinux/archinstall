@@ -430,11 +430,11 @@ class SysCommand:
 
 		return True
 
-	def decode(self, encoding: str = 'utf-8', errors='backlashreplace', strip: bool = True) -> str:
+	def decode(self, encoding: str = 'utf-8', errors='backslashreplace', strip: bool = True) -> str:
 		if not self.session:
 			raise ValueError('No session available to decode')
 
-		val = self.session._trace_log.decode(encoding)
+		val = self.session._trace_log.decode(encoding, errors=errors)
 
 		if strip:
 			return val.strip()
