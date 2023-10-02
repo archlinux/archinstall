@@ -1111,12 +1111,12 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 
 	for retry_attempt in range(retry):
 		try:
-			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}')
+			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}').decode()
 			break
 		except SysCallError as err:
 			# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
 			if err.worker:
-				err_str = err.worker.decode('UTF-8')
+				err_str = err.worker.decode()
 				debug(f'Error calling lsblk: {err_str}')
 			else:
 				raise err
@@ -1127,10 +1127,9 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 			time.sleep(1)
 
 	try:
-		if decoded := result.decode('utf-8'):
-			block_devices = json.loads(decoded)
-			blockdevices = block_devices['blockdevices']
-			return [LsblkInfo.from_json(device) for device in blockdevices]
+		block_devices = json.loads(result)
+		blockdevices = block_devices['blockdevices']
+		return [LsblkInfo.from_json(device) for device in blockdevices]
 	except json.decoder.JSONDecodeError as err:
 		error(f"Could not decode lsblk JSON: {result}")
 		raise err

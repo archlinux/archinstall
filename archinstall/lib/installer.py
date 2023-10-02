@@ -131,7 +131,7 @@ class Installer:
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
 		info('Waiting for time sync (systemd-timesyncd.service) to complete.')
-		while SysCommand('timedatectl show --property=NTPSynchronized --value').decode().rstrip() != 'yes':
+		while SysCommand('timedatectl show --property=NTPSynchronized --value').decode() != 'yes':
 			time.sleep(1)
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
@@ -282,7 +282,7 @@ class Installer:
 
 		if enable_resume:
 			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode('UTF-8').strip()
-			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8').split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
+			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode().split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
 
 			self._hooks.append('resume')
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
@@ -311,9 +311,6 @@ class Installer:
 			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
-
-		if not gen_fstab:
-			raise RequirementError(f'Generating fstab returned empty value')
 
 		with open(fstab_path, 'a') as fp:
 			fp.write(gen_fstab)
@@ -1318,17 +1315,21 @@ TIMEOUT=5
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
-		last_execution_time = b''.join(SysCommand(f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}", environment_vars={'SYSTEMD_COLORS': '0'}))
-		last_execution_time = last_execution_time.lstrip(b'ActiveEnterTimestamp=').strip()
+		last_execution_time = SysCommand(
+			f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}",
+			environment_vars={'SYSTEMD_COLORS': '0'}
+		).decode().lstrip('ActiveEnterTimestamp=')
+
 		if not last_execution_time:
 			return None
 
-		return last_execution_time.decode('UTF-8')
+		return last_execution_time
 
 	def _service_state(self, service_name: str) -> str:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
-		state = b''.join(SysCommand(f'systemctl show --no-pager -p SubState --value {service_name}', environment_vars={'SYSTEMD_COLORS': '0'}))
-
-		return state.strip().decode('UTF-8')
+		return SysCommand(
+			f'systemctl show --no-pager -p SubState --value {service_name}',
+			environment_vars={'SYSTEMD_COLORS': '0'}
+		).decode()
