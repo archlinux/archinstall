@@ -131,7 +131,7 @@ class Installer:
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
 		info('Waiting for time sync (systemd-timesyncd.service) to complete.')
-		while SysCommand('timedatectl show --property=NTPSynchronized --value').decode().rstrip() != 'yes':
+		while SysCommand('timedatectl show --property=NTPSynchronized --value').decode() != 'yes':
 			time.sleep(1)
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
@@ -163,7 +163,7 @@ class Installer:
 		lsblk_info = disk.get_lsblk_by_mountpoint(boot_mount)
 
 		if len(lsblk_info) > 0:
-			if lsblk_info[0].size < disk.Size(200, disk.Unit.MiB):
+			if lsblk_info[0].size < disk.Size(200, disk.Unit.MiB, disk.SectorSize.default()):
 				raise DiskError(
 					f'The boot partition mounted at {boot_mount} is not large enough to install a boot loader. '
 					f'Please resize it to at least 200MiB and re-run the installation.'
@@ -282,7 +282,7 @@ class Installer:
 
 		if enable_resume:
 			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode('UTF-8').strip()
-			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8').split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
+			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode().split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
 
 			self._hooks.append('resume')
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
@@ -311,9 +311,6 @@ class Installer:
 			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
-
-		if not gen_fstab:
-			raise RequirementError(f'Generating fstab returned empty value')
 
 		with open(fstab_path, 'a') as fp:
 			fp.write(gen_fstab)
@@ -574,6 +571,12 @@ class Installer:
 				log(error.worker._trace_log.decode())
 			return False
 
+	def _get_microcode(self) -> Optional[Path]:
+		if not SysInfo.is_vm():
+			if vendor := SysInfo.cpu_vendor():
+				return vendor.get_ucode()
+		return None
+
 	def minimal_installation(
 		self,
 		testing: bool = False,
@@ -581,6 +584,7 @@ class Installer:
 		hostname: str = 'archinstall',
 		locale_config: LocaleConfiguration = LocaleConfiguration.default()
 	):
+		_disable_fstrim = False
 		for mod in self._disk_config.device_modifications:
 			for part in mod.partitions:
 				if part.fs_type is not None:
@@ -590,6 +594,10 @@ class Installer:
 						self.modules.append(module)
 					if (binary := part.fs_type.installation_binary) is not None:
 						self._binaries.append(binary)
+
+					# https://github.com/archlinux/archinstall/issues/1837
+					if part.fs_type.fs_type_mount == 'btrfs':
+						_disable_fstrim = True
 
 					# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 					if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
@@ -610,18 +618,11 @@ class Installer:
 		if not SysInfo.has_uefi():
 			self.base_packages.append('grub')
 
-		if not SysInfo.is_vm():
-			vendor = SysInfo.cpu_vendor()
-			if vendor == "AuthenticAMD":
-				self.base_packages.append("amd-ucode")
-				if (ucode := Path(f"{self.target}/boot/amd-ucode.img")).exists():
-					ucode.unlink()
-			elif vendor == "GenuineIntel":
-				self.base_packages.append("intel-ucode")
-				if (ucode := Path(f"{self.target}/boot/intel-ucode.img")).exists():
-					ucode.unlink()
-			else:
-				debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode")
+		if ucode := self._get_microcode():
+			(self.target / 'boot' / ucode).unlink(missing_ok=True)
+			self.base_packages.append(ucode.stem)
+		else:
+			debug('Archinstall will not install any ucode.')
 
 		# Determine whether to enable multilib/testing repositories before running pacstrap if testing flag is set.
 		# This action takes place on the host system as pacstrap copies over package repository lists.
@@ -652,7 +653,10 @@ class Installer:
 		# periodic TRIM by default.
 		#
 		# https://github.com/archlinux/archinstall/issues/880
-		self.enable_periodic_trim()
+		# https://github.com/archlinux/archinstall/issues/1837
+		# https://github.com/archlinux/archinstall/issues/1841
+		if not _disable_fstrim:
+			self.enable_periodic_trim()
 
 		# TODO: Support locale and timezone
 		# os.remove(f'{self.target}/etc/localtime')
@@ -709,7 +713,7 @@ class Installer:
 
 	def _get_root_partition(self) -> Optional[disk.PartitionModification]:
 		for mod in self._disk_config.device_modifications:
-			if root := mod.get_root_partition(self._disk_config.relative_mountpoint):
+			if root := mod.get_root_partition():
 				return root
 		return None
 
@@ -840,34 +844,27 @@ class Installer:
 
 		microcode = []
 
-		if not SysInfo.is_vm():
-			vendor = SysInfo.cpu_vendor()
-			if vendor == "AuthenticAMD":
-				microcode.append('initrd  /amd-ucode.img\n')
-			elif vendor == "GenuineIntel":
-				microcode.append('initrd  /intel-ucode.img\n')
-			else:
-				debug(
-					f"Unknown CPU vendor '{vendor}' detected.",
-					"Archinstall won't add any ucode to systemd-boot config.",
-				)
+		if ucode := self._get_microcode():
+			microcode.append(f'initrd  /{ucode}\n')
+		else:
+			debug('Archinstall will not add any ucode to systemd-boot config.')
 
 		options = 'options ' + ' '.join(self._get_kernel_params(root_partition)) + '\n'
 
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
 				# Setup the loader entry
-				with open(entries_dir / f'{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
-					entry_lines: List[str] = []
+				entry = [
+					*comments,
+					f'title   Arch Linux ({kernel}{variant})\n',
+					f'linux   /vmlinuz-{kernel}\n',
+					*microcode,
+					f'initrd  /initramfs-{kernel}{variant}.img\n',
+					options,
+				]
 
-					entry_lines.extend(comments)
-					entry_lines.append(f'title   Arch Linux ({kernel}{variant})\n')
-					entry_lines.append(f'linux   /vmlinuz-{kernel}\n')
-					entry_lines.extend(microcode)
-					entry_lines.append(f'initrd  /initramfs-{kernel}{variant}.img\n')
-					entry_lines.append(options)
-
-					entry.writelines(entry_lines)
+				entry_conf = entries_dir / f'{self.init_time}_{kernel}{variant}.conf'
+				entry_conf.write_text(''.join(entry))
 
 		self.helper_flags['bootloader'] = 'systemd'
 
@@ -889,6 +886,13 @@ class Installer:
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
+		if boot_partition == root_partition and root_partition.mountpoint:
+			boot_dir = root_partition.mountpoint / 'boot'
+		elif boot_partition.mountpoint:
+			boot_dir = boot_partition.mountpoint
+		else:
+			raise ValueError('Could not detect boot directory')
+
 		command = [
 			'/usr/bin/arch-chroot',
 			str(self.target),
@@ -896,15 +900,22 @@ class Installer:
 			'--debug'
 		]
 
-		if SysInfo.has_uefi() and efi_partition is not None:
+		if SysInfo.has_uefi():
+			if not efi_partition:
+				raise ValueError('Could not detect efi partition')
+
 			info(f"GRUB EFI partition: {efi_partition.dev_path}")
 
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
+			boot_dir_arg = []
+			if boot_partition != efi_partition:
+				boot_dir_arg.append(f'--boot-directory={boot_dir}')
+
 			add_options = [
 				'--target=x86_64-efi',
-				f'--efi-directory={efi_partition.mountpoint}'
-				f'--boot-directory={boot_partition.mountpoint if boot_partition else "/boot"}'
+				f'--efi-directory={efi_partition.mountpoint}',
+				*boot_dir_arg,
 				'--bootloader-id=GRUB',
 				'--removable'
 			]
@@ -937,7 +948,7 @@ class Installer:
 		try:
 			SysCommand(
 				f'/usr/bin/arch-chroot {self.target} '
-				f'grub-mkconfig -o {boot_partition.mountpoint if boot_partition else "/boot"}/grub/grub.cfg'
+				f'grub-mkconfig -o {boot_dir}/grub/grub.cfg'
 			)
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
@@ -1065,14 +1076,10 @@ TIMEOUT=5
 
 		microcode = []
 
-		if not SysInfo.is_vm():
-			vendor = SysInfo.cpu_vendor()
-			if vendor == "AuthenticAMD":
-				microcode.append("initrd=\\amd-ucode.img")
-			elif vendor == "GenuineIntel":
-				microcode.append("initrd=\\intel-ucode.img")
-			else:
-				debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.")
+		if ucode := self._get_microcode():
+			microcode.append(f'initrd=\\{ucode}')
+		else:
+			debug('Archinstall will not add any ucode to firmware boot entry.')
 
 		kernel_parameters = self._get_kernel_params(root_partition)
 
@@ -1080,23 +1087,22 @@ TIMEOUT=5
 
 		for kernel in self.kernels:
 			# Setup the firmware entry
-			label = f'Arch Linux ({kernel})'
-			loader = f"/vmlinuz-{kernel}"
+			cmdline = [
+				*microcode,
+				f"initrd=\\initramfs-{kernel}.img",
+				*kernel_parameters,
+			]
 
-			cmdline = []
-
-			cmdline.extend(microcode)
-			cmdline.append(f"initrd=\\initramfs-{kernel}.img")
-			cmdline.extend(kernel_parameters)
-
-			cmd = f'efibootmgr ' \
-				f'--disk {parent_dev_path} ' \
-				f'--part {boot_partition.partn} ' \
-				f'--create ' \
-				f'--label "{label}" ' \
-				f'--loader {loader} ' \
-				f'--unicode \'{" ".join(cmdline)}\' ' \
-				f'--verbose'
+			cmd = [
+				'efibootmgr',
+				'--disk', str(parent_dev_path),
+				'--part', str(boot_partition.partn),
+				'--create',
+				'--label', f'Arch Linux ({kernel})',
+				'--loader', f"/vmlinuz-{kernel}",
+				'--unicode', ' '.join(cmdline),
+				'--verbose'
+			]
 
 			SysCommand(cmd)
 
@@ -1309,17 +1315,21 @@ TIMEOUT=5
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
-		last_execution_time = b''.join(SysCommand(f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}", environment_vars={'SYSTEMD_COLORS': '0'}))
-		last_execution_time = last_execution_time.lstrip(b'ActiveEnterTimestamp=').strip()
+		last_execution_time = SysCommand(
+			f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}",
+			environment_vars={'SYSTEMD_COLORS': '0'}
+		).decode().lstrip('ActiveEnterTimestamp=')
+
 		if not last_execution_time:
 			return None
 
-		return last_execution_time.decode('UTF-8')
+		return last_execution_time
 
 	def _service_state(self, service_name: str) -> str:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
-		state = b''.join(SysCommand(f'systemctl show --no-pager -p SubState --value {service_name}', environment_vars={'SYSTEMD_COLORS': '0'}))
-
-		return state.strip().decode('UTF-8')
+		return SysCommand(
+			f'systemctl show --no-pager -p SubState --value {service_name}',
+			environment_vars={'SYSTEMD_COLORS': '0'}
+		).decode()

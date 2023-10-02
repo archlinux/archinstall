@@ -1198,6 +1198,24 @@ msgstr " - Desativar/Predefinido : 0 ( Desativa as transferências paralelas, pe
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Entrada inválida! Tente novamente com uma entrada válida [ou 0 para desativar]"
 
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Selecionar uma opção para permitir o acesso do Sway ao seu hardware"
+
+#, fuzzy
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Todos os valores inseridos podem ser sufixados com uma unidade: B, KB, KiB, MB, MiB..."
+
 #~ msgid "Add :"
 #~ msgstr "Adicionar :"
 

@@ -140,7 +140,6 @@ def select_disk_config(
 
 				return disk.DiskLayoutConfiguration(
 					config_type=disk.DiskLayoutType.Pre_mount,
-					relative_mountpoint=path,
 					device_modifications=mods
 				)
 
@@ -201,13 +200,15 @@ def select_lvm_config(
 	return preset
 
 
-def _boot_partition() -> disk.PartitionModification:
+def _boot_partition(sector_size: disk.SectorSize) -> disk.PartitionModification:
+	flags = [disk.PartitionFlag.Boot]
 	if SysInfo.has_uefi():
-		start = disk.Size(1, disk.Unit.MiB)
-		size = disk.Size(512, disk.Unit.MiB)
+		start = disk.Size(1, disk.Unit.MiB, sector_size)
+		size = disk.Size(512, disk.Unit.MiB, sector_size)
+		flags.append(disk.PartitionFlag.ESP)
 	else:
-		start = disk.Size(3, disk.Unit.MiB)
-		size = disk.Size(203, disk.Unit.MiB)
+		start = disk.Size(3, disk.Unit.MiB, sector_size)
+		size = disk.Size(203, disk.Unit.MiB, sector_size)
 
 	# boot partition
 	return disk.PartitionModification(
@@ -217,7 +218,7 @@ def _boot_partition() -> disk.PartitionModification:
 		length=size,
 		mountpoint=Path('/boot'),
 		fs_type=disk.FilesystemType.Fat32,
-		flags=[disk.PartitionFlag.Boot]
+		flags=flags
 	)
 
 
@@ -246,8 +247,9 @@ def suggest_single_disk_layout(
 	if not filesystem_type:
 		filesystem_type = select_main_filesystem_format(advanced_options)
 
-	min_size_to_allow_home_part = disk.Size(40, disk.Unit.GiB)
-	root_partition_size = disk.Size(20, disk.Unit.GiB)
+	sector_size = device.device_info.sector_size
+	min_size_to_allow_home_part = disk.Size(40, disk.Unit.GiB, sector_size)
+	root_partition_size = disk.Size(20, disk.Unit.GiB, sector_size)
 	using_subvolumes = False
 	using_home_partition = False
 	compression = False
@@ -275,7 +277,7 @@ def suggest_single_disk_layout(
 	# Also re-align the start to 1MiB since we don't need the first sectors
 	# like we do in MBR layouts where the boot loader is installed traditionally.
 
-	boot_partition = _boot_partition()
+	boot_partition = _boot_partition(sector_size)
 	device_modification.add_partition(boot_partition)
 
 	if not using_subvolumes:
@@ -290,11 +292,11 @@ def suggest_single_disk_layout(
 				using_home_partition = False
 
 	# root partition
-	start = disk.Size(513, disk.Unit.MiB) if SysInfo.has_uefi() else disk.Size(206, disk.Unit.MiB)
+	start = disk.Size(513, disk.Unit.MiB, sector_size) if SysInfo.has_uefi() else disk.Size(206, disk.Unit.MiB, sector_size)
 
 	# Set a size for / (/root)
 	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
-		length = disk.Size(100, disk.Unit.Percent, total_size=device.device_info.total_size)
+		length = device.device_info.total_size - start
 	else:
 		length = min(device.device_info.total_size, root_partition_size)
 
@@ -325,11 +327,14 @@ def suggest_single_disk_layout(
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
+		start = root_partition.length
+		length = device.device_info.total_size - root_partition.length
+
 		home_partition = disk.PartitionModification(
 			status=disk.ModificationStatus.Create,
 			type=disk.PartitionType.Primary,
-			start=root_partition.length,
-			length=disk.Size(100, disk.Unit.Percent, total_size=device.device_info.total_size),
+			start=start,
+			length=length,
 			mountpoint=Path('/home'),
 			fs_type=filesystem_type,
 			mount_options=['compress=zstd'] if compression else []
@@ -350,9 +355,9 @@ def suggest_multi_disk_layout(
 	# Not really a rock solid foundation of information to stand on, but it's a start:
 	# https://www.reddit.com/r/btrfs/comments/m287gp/partition_strategy_for_two_physical_disks/
 	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/
-	min_home_partition_size = disk.Size(40, disk.Unit.GiB)
+	min_home_partition_size = disk.Size(40, disk.Unit.GiB, disk.SectorSize.default())
 	# rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
-	desired_root_partition_size = disk.Size(20, disk.Unit.GiB)
+	desired_root_partition_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
 	compression = False
 
 	if not filesystem_type:
@@ -393,28 +398,41 @@ def suggest_multi_disk_layout(
 	root_device_modification = disk.DeviceModification(root_device, wipe=True)
 	home_device_modification = disk.DeviceModification(home_device, wipe=True)
 
+	root_device_sector_size = root_device_modification.device.device_info.sector_size
+	home_device_sector_size = home_device_modification.device.device_info.sector_size
+
 	# add boot partition to the root device
-	boot_partition = _boot_partition()
+	boot_partition = _boot_partition(root_device_sector_size)
 	root_device_modification.add_partition(boot_partition)
+
+	if SysInfo.has_uefi():
+		root_start = disk.Size(513, disk.Unit.MiB, root_device_sector_size)
+	else:
+		root_start = disk.Size(206, disk.Unit.MiB, root_device_sector_size)
+
+	root_length = root_device.device_info.total_size - root_start
 
 	# add root partition to the root device
 	root_partition = disk.PartitionModification(
 		status=disk.ModificationStatus.Create,
 		type=disk.PartitionType.Primary,
-		start=disk.Size(513, disk.Unit.MiB) if SysInfo.has_uefi() else disk.Size(206, disk.Unit.MiB),
-		length=disk.Size(100, disk.Unit.Percent, total_size=root_device.device_info.total_size),
+		start=root_start,
+		length=root_length,
 		mountpoint=Path('/'),
 		mount_options=['compress=zstd'] if compression else [],
 		fs_type=filesystem_type
 	)
 	root_device_modification.add_partition(root_partition)
 
+	start = disk.Size(1, disk.Unit.MiB, home_device_sector_size)
+	length = home_device.device_info.total_size - start
+
 	# add home partition to home device
 	home_partition = disk.PartitionModification(
 		status=disk.ModificationStatus.Create,
 		type=disk.PartitionType.Primary,
-		start=disk.Size(1, disk.Unit.MiB),
-		length=disk.Size(100, disk.Unit.Percent, total_size=home_device.device_info.total_size),
+		start=start,
+		length=length,
 		mountpoint=Path('/home'),
 		mount_options=['compress=zstd'] if compression else [],
 		fs_type=filesystem_type,

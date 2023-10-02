@@ -1201,3 +1201,20 @@ msgstr " - Deaktivieren/Standard : 0 (Deaktiviert parallele Downloads, erlaubt n
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Ungültige Eingabe! Erneut mit gültiger Eingabe versuchen [1 bis {}, oder 0 zum deaktivieren]"
+
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway benötigt Zugriff auf ihren Seat (Sammlung von Hardwaregeräten wie Tastatur, Maus, usw.)"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Option auswählen, um Sway Zugriff auf deine Hardware zu geben"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""

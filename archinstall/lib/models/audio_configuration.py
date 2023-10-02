@@ -24,7 +24,7 @@ class Audio(Enum):
 class AudioConfiguration:
 	audio: Audio
 
-	def __dump__(self) -> Dict[str, Any]:
+	def json(self) -> Dict[str, Any]:
 		return {
 			'audio': self.audio.value
 		}

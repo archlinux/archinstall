@@ -1192,3 +1192,21 @@ msgstr " - Dezactivează/Predefinit: 0 (Dezactivează descărcările simultane, 
 
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Input invalid! Încercați din nou cu un input valid [0 pentru dezactivare]"
+
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Toate valorile introduse pot fi notate cu unități precum: B, KB, KiB, MB, MiB ..."

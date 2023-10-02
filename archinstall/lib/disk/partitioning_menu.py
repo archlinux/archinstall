@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING, List, Optional, Tuple
 
 from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
-	ModificationStatus, DeviceGeometry
+	ModificationStatus, DeviceGeometry, SectorSize
+from ..hardware import SysInfo
 from ..menu import Menu, ListManager, MenuSelection, TextInput
 from ..output import FormattedOutput, warn
 from .subvolume_menu import SubvolumeMenu
@@ -90,10 +91,14 @@ class PartitioningList(ListManager):
 				entry.mountpoint = self._prompt_mountpoint()
 				if entry.mountpoint == Path('/boot'):
 					entry.set_flag(PartitionFlag.Boot)
+					if SysInfo.has_uefi():
+						entry.set_flag(PartitionFlag.ESP)
 			case 'mark_formatting' if entry:
 				self._prompt_formatting(entry)
 			case 'mark_bootable' if entry:
 				entry.invert_flag(PartitionFlag.Boot)
+				if SysInfo.has_uefi():
+					entry.invert_flag(PartitionFlag.ESP)
 			case 'set_filesystem' if entry:
 				fs_type = self._prompt_partition_fs_type()
 				if fs_type:
@@ -179,41 +184,46 @@ class PartitioningList(ListManager):
 
 	def _validate_value(
 		self,
-		sector_size: Size,
+		sector_size: SectorSize,
 		total_size: Size,
-		value: str
+		text: str,
+		start: Optional[Size]
 	) -> Optional[Size]:
-		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', value, re.I)
+		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', text, re.I)
 
 		if match:
-			value, unit = match.groups()
+			str_value, unit = match.groups()
 
-			if unit == '%':
-				unit = Unit.Percent.name
+			if unit == '%' and start:
+				available = total_size - start
+				value = int(available.value * (int(str_value) / 100))
+				unit = available.unit.name
+			else:
+				value = int(str_value)
 
 			if unit and unit not in Unit.get_all_units():
 				return None
 
 			unit = Unit[unit] if unit else Unit.sectors
-			return Size(int(value), unit, sector_size, total_size)
+			return Size(value, unit, sector_size)
 
 		return None
 
 	def _enter_size(
 		self,
-		sector_size: Size,
+		sector_size: SectorSize,
 		total_size: Size,
 		prompt: str,
-		default: Size
+		default: Size,
+		start: Optional[Size],
 	) -> Size:
 		while True:
 			value = TextInput(prompt).run().strip()
-
 			size: Optional[Size] = None
 			if not value:
 				size = default
 			else:
-				size = self._validate_value(sector_size, total_size, value)
+				size = self._validate_value(sector_size, total_size, value, start)
 
 			if size:
 				return size
@@ -231,7 +241,7 @@ class PartitioningList(ListManager):
 		total_bytes = device_info.total_size.format_size(Unit.B)
 
 		prompt += str(_('Total: {} / {}')).format(total_sectors, total_bytes) + '\n\n'
-		prompt += str(_('All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB...')) + '\n'
+		prompt += str(_('All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB...')) + '\n'
 		prompt += str(_('If no unit is provided, the value is interpreted as sectors')) + '\n'
 		print(prompt)
 
@@ -244,13 +254,14 @@ class PartitioningList(ListManager):
 			device_info.sector_size,
 			device_info.total_size,
 			start_prompt,
-			default_start
+			default_start,
+			None
 		)
 
 		if start_size.value == largest_free_area.start:
 			end_size = Size(largest_free_area.end, Unit.sectors, device_info.sector_size)
 		else:
-			end_size = Size(100, Unit.Percent, total_size=device_info.total_size)
+			end_size = device_info.total_size
 
 		# prompt until valid end sector was entered
 		end_prompt = str(_('Enter end (default: {}): ')).format(end_size.as_text())
@@ -258,7 +269,8 @@ class PartitioningList(ListManager):
 			device_info.sector_size,
 			device_info.total_size,
 			end_prompt,
-			end_size
+			end_size,
+			start_size
 		)
 
 		return start_size, end_size
@@ -287,6 +299,8 @@ class PartitioningList(ListManager):
 
 		if partition.mountpoint == Path('/boot'):
 			partition.set_flag(PartitionFlag.Boot)
+			if SysInfo.has_uefi():
+				partition.set_flag(PartitionFlag.ESP)
 
 		return partition
 

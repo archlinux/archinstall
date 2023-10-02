@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Roxfr <roxfr@outlook.fr>\n"
+"PO-Revision-Date: 2023/09/25\n"
+"Last-Translator: T13nou <etienne.blanchet@soverin.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -1146,7 +1146,7 @@ msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
 msgstr ""
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Si aucune unité n'est fournie, la valeur est interprétée comme des secteurs""
 
 #, fuzzy
 msgid "Enter start (default: sector {}): "
@@ -1157,23 +1157,23 @@ msgid "Enter end (default: {}): "
 msgstr "Saisir le secteur de départ (par défaut : {}) : "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "Impossible de déterminer les appareils fido2.  Est-ce que libfido2 est installé ?"
 
 msgid "Path"
-msgstr ""
+msgstr "Chemin"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "Fabricant"
 
 msgid "Product"
-msgstr ""
+msgstr "Produit"
 
 #, fuzzy, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "Configuration manuelle"
 
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #, fuzzy
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
@@ -1200,6 +1200,23 @@ msgstr " - Désactiver/Défaut : 0 (Désactive le téléchargement parallèle, n
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Entrée invalide ! Réessayer avec une entrée valide [1 pour {}, ou 0 pour désactiver]"
+
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway a besoin d'accéder à votre espace (ensemble de périphériques matériels : clavier, souris, etc.)"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Choisir une option pour permettre à Sway d'accéder à votre matériel"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

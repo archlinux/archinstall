@@ -69,8 +69,6 @@ def jsonify(obj: Any, safe: bool = True) -> Any:
 		# a dictionary representation of the object so that it can be
 		# processed by the json library.
 		return jsonify(obj.json(), safe)
-	if hasattr(obj, '__dump__'):
-		return obj.__dump__()
 	if isinstance(obj, (datetime, date)):
 		return obj.isoformat()
 	if isinstance(obj, (list, set, tuple)):
@@ -432,10 +430,15 @@ class SysCommand:
 
 		return True
 
-	def decode(self, *args, **kwargs) -> Optional[str]:
-		if self.session:
-			return self.session._trace_log.decode(*args, **kwargs)
-		return None
+	def decode(self, encoding: str = 'utf-8', errors='backslashreplace', strip: bool = True) -> str:
+		if not self.session:
+			raise ValueError('No session available to decode')
+
+		val = self.session._trace_log.decode(encoding, errors=errors)
+
+		if strip:
+			return val.strip()
+		return val
 
 	@property
 	def exit_code(self) -> Optional[int]:
@@ -462,13 +465,13 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 	for index, command in enumerate(commands):
 		script_path = f"/var/tmp/user-command.{index}.sh"
 		chroot_path = f"{installation.target}/{script_path}"
-		
+
 		info(f'Executing custom command "{command}" ...')
 		with open(chroot_path, "w") as user_script:
 			user_script.write(command)
-			
+
 		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
-		
+
 		os.unlink(chroot_path)
 
 

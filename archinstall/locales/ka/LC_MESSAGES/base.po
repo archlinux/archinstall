@@ -1243,3 +1243,15 @@ msgstr " - გამორთვა/ნაგულისხმები : 0 ( �
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {}-მდე, ან 0, გასათიშად]"
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""
