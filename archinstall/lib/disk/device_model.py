@@ -308,7 +308,9 @@ class _PartitionInfo:
 	start: Size
 	length: Size
 	flags: List[PartitionFlag]
+	partn: int
 	partuuid: str
+	uuid: str
 	disk: Disk
 	mountpoints: List[Path]
 	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
@@ -342,7 +344,9 @@ class _PartitionInfo:
 		cls,
 		partition: Partition,
 		fs_type: Optional[FilesystemType],
+		partn: int,
 		partuuid: str,
+		uuid: str,
 		mountpoints: List[Path],
 		btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = []
 	) -> _PartitionInfo:
@@ -370,7 +374,9 @@ class _PartitionInfo:
 			start=start,
 			length=length,
 			flags=flags,
+			partn=partn,
 			partuuid=partuuid,
+			uuid=uuid,
 			disk=partition.disk,
 			mountpoints=mountpoints,
 			btrfs_subvol_infos=btrfs_subvol_infos
@@ -713,6 +719,9 @@ class PartitionModification:
 			length=partition_info.length,
 			fs_type=partition_info.fs_type,
 			dev_path=partition_info.path,
+			partn=partition_info.partn,
+			partuuid=partition_info.partuuid,
+			uuid=partition_info.uuid,
 			flags=partition_info.flags,
 			mountpoint=mountpoint,
 			btrfs_subvols=subvol_mods

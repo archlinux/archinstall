@@ -83,7 +83,9 @@ class DeviceHandler(object):
 					_PartitionInfo.from_partition(
 						partition,
 						fs_type,
+						lsblk_info.partn,
 						lsblk_info.partuuid,
+						lsblk_info.uuid,
 						lsblk_info.mountpoints,
 						subvol_infos
 					)
@@ -598,7 +600,12 @@ class DeviceHandler(object):
 						path = Path(part_info.disk.device.path)
 						part_mods.setdefault(path, [])
 						part_mod = PartitionModification.from_existing_partition(part_info)
-						part_mod.mountpoint = mountpoint.root / mountpoint.relative_to(base_mountpoint)
+						if part_mod.mountpoint:
+							part_mod.mountpoint = mountpoint.root / mountpoint.relative_to(base_mountpoint)
+						else:
+							for subvol in part_mod.btrfs_subvols:
+								if sm := subvol.mountpoint:
+									subvol.mountpoint = sm.root / sm.relative_to(base_mountpoint)
 						part_mods[path].append(part_mod)
 						break
 
