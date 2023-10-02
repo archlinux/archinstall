@@ -1,29 +1,29 @@
-from itertools import takewhile
-from pathlib import Path
 from typing import Iterator, List
 
-from archinstall.lib.exceptions import ServiceException, SysCallError
-from archinstall.lib.general import SysCommand
-from archinstall.lib.output import error
+from ..exceptions import ServiceException, SysCallError
+from ..general import SysCommand
+from ..output import error
 
 
 def list_keyboard_languages() -> Iterator[str]:
 	for line in SysCommand("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS': '0'}):
-		yield line.decode()
+		yield line.decode('UTF-8').strip()
 
 
 def list_locales() -> List[str]:
-	entries = Path('/etc/locale.gen').read_text().splitlines()
-	# Before the list of locales begins there's an empty line with a '#' in front
-	# so we'll collect the locales from bottom up and halt when we're done.
-	locales = list(takewhile(bool, map(lambda entry: entry.strip('\n\t #'), reversed(entries))))
-	locales.reverse()
+	locales = []
+
+	with open('/usr/share/i18n/SUPPORTED') as file:
+		for line in file:
+			if line != 'C.UTF-8 UTF-8\n':
+				locales.append(line.rstrip())
+
 	return locales
 
 
 def list_x11_keyboard_languages() -> Iterator[str]:
 	for line in SysCommand("localectl --no-pager list-x11-keymap-layouts", environment_vars={'SYSTEMD_COLORS': '0'}):
-		yield line.decode()
+		yield line.decode('UTF-8').strip()
 
 
 def verify_keyboard_layout(layout :str) -> bool:
@@ -58,4 +58,4 @@ def set_kb_layout(locale :str) -> bool:
 
 def list_timezones() -> Iterator[str]:
 	for line in SysCommand("timedatectl --no-pager list-timezones", environment_vars={'SYSTEMD_COLORS': '0'}):
-		yield line.decode()
+		yield line.decode('UTF-8').strip()
