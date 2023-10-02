@@ -6,6 +6,7 @@ from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
 from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
 	ModificationStatus, DeviceGeometry, SectorSize
+from ..hardware import SysInfo
 from ..menu import Menu, ListManager, MenuSelection, TextInput
 from ..output import FormattedOutput, warn
 from .subvolume_menu import SubvolumeMenu
@@ -105,10 +106,14 @@ class PartitioningList(ListManager):
 				entry.mountpoint = self._prompt_mountpoint()
 				if entry.mountpoint == Path('/boot'):
 					entry.set_flag(PartitionFlag.Boot)
+					if SysInfo.has_uefi():
+						entry.set_flag(PartitionFlag.ESP)
 			case 'mark_formatting' if entry:
 				self._prompt_formatting(entry)
 			case 'mark_bootable' if entry:
 				entry.invert_flag(PartitionFlag.Boot)
+				if SysInfo.has_uefi():
+					entry.invert_flag(PartitionFlag.ESP)
 			case 'set_filesystem' if entry:
 				fs_type = self._prompt_partition_fs_type()
 				if fs_type:
@@ -310,6 +315,8 @@ class PartitioningList(ListManager):
 
 		if partition.mountpoint == Path('/boot'):
 			partition.set_flag(PartitionFlag.Boot)
+			if SysInfo.has_uefi():
+				partition.set_flag(PartitionFlag.ESP)
 
 		return partition
 

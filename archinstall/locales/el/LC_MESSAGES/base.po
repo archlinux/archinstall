@@ -1254,3 +1254,6 @@ msgid ""
 "\n"
 "Choose an option to give Hyprland access to your hardware"
 msgstr ""
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""

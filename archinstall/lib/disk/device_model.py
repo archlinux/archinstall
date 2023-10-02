@@ -308,7 +308,9 @@ class _PartitionInfo:
 	start: Size
 	length: Size
 	flags: List[PartitionFlag]
+	partn: Optional[int]
 	partuuid: Optional[str]
+	uuid: str
 	disk: Disk
 	mountpoints: List[Path]
 	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
@@ -342,7 +344,9 @@ class _PartitionInfo:
 		cls,
 		partition: Partition,
 		fs_type: Optional[FilesystemType],
+		partn: Optional[int],
 		partuuid: Optional[str],
+		uuid: str,
 		mountpoints: List[Path],
 		btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = []
 	) -> _PartitionInfo:
@@ -370,7 +374,9 @@ class _PartitionInfo:
 			start=start,
 			length=length,
 			flags=flags,
+			partn=partn,
 			partuuid=partuuid,
+			uuid=uuid,
 			disk=partition.disk,
 			mountpoints=mountpoints,
 			btrfs_subvol_infos=btrfs_subvol_infos
@@ -658,7 +664,8 @@ class PartitionModification:
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
 
-	_boot_indicator_flags = [PartitionFlag.Boot, PartitionFlag.XBOOTLDR]
+	_efi_indicator_flags = (PartitionFlag.Boot, PartitionFlag.ESP)
+	_boot_indicator_flags = (PartitionFlag.Boot, PartitionFlag.XBOOTLDR)
 
 	def __post_init__(self):
 		# needed to use the object as a dictionary key due to hash func
@@ -712,6 +719,9 @@ class PartitionModification:
 			length=partition_info.length,
 			fs_type=partition_info.fs_type,
 			dev_path=partition_info.path,
+			partn=partition_info.partn,
+			partuuid=partition_info.partuuid,
+			uuid=partition_info.uuid,
 			flags=partition_info.flags,
 			mountpoint=mountpoint,
 			btrfs_subvols=subvol_mods
@@ -727,6 +737,13 @@ class PartitionModification:
 			return self.mountpoint.relative_to(self.mountpoint.anchor)
 
 		raise ValueError('Mountpoint is not specified')
+
+	def is_efi(self) -> bool:
+		return (
+			any(set(self.flags) & set(self._efi_indicator_flags))
+			and self.fs_type == FilesystemType.Fat32
+			and PartitionFlag.XBOOTLDR not in self.flags
+		)
 
 	def is_boot(self) -> bool:
 		"""
@@ -828,9 +845,8 @@ class DeviceModification:
 	def get_efi_partition(self) -> Optional[PartitionModification]:
 		"""
 		Similar to get_boot_partition() but excludes XBOOTLDR partitions from it's candidates.
-		Also works with ESP flag.
 		"""
-		filtered = filter(lambda x: (x.is_boot() or PartitionFlag.ESP in x.flags) and x.fs_type == FilesystemType.Fat32 and PartitionFlag.XBOOTLDR not in x.flags, self.partitions)
+		filtered = filter(lambda x: x.is_efi() and x.mountpoint, self.partitions)
 		return next(filtered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
@@ -843,10 +859,7 @@ class DeviceModification:
 			filtered = filter(lambda x: x.is_boot() and x != efi_partition and x.mountpoint, self.partitions)
 			if boot_partition := next(filtered, None):
 				return boot_partition
-			if efi_partition.is_boot():
-				return efi_partition
-			else:
-				return None
+			return efi_partition
 		else:
 			filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
 			return next(filtered, None)
@@ -1098,12 +1111,12 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 
 	for retry_attempt in range(retry):
 		try:
-			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}')
+			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}').decode()
 			break
 		except SysCallError as err:
 			# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
 			if err.worker:
-				err_str = err.worker.decode('UTF-8')
+				err_str = err.worker.decode()
 				debug(f'Error calling lsblk: {err_str}')
 			else:
 				raise err
@@ -1114,10 +1127,9 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 			time.sleep(1)
 
 	try:
-		if decoded := result.decode('utf-8'):
-			block_devices = json.loads(decoded)
-			blockdevices = block_devices['blockdevices']
-			return [LsblkInfo.from_json(device) for device in blockdevices]
+		block_devices = json.loads(result)
+		blockdevices = block_devices['blockdevices']
+		return [LsblkInfo.from_json(device) for device in blockdevices]
 	except json.decoder.JSONDecodeError as err:
 		error(f"Could not decode lsblk JSON: {result}")
 		raise err

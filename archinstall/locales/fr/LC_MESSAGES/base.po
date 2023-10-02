@@ -1215,6 +1215,9 @@ msgstr ""
 "\n"
 "Choisir une option pour permettre à Sway d'accéder à votre matériel"
 
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Modifier {origkey} :"

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import getpass
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from .device_model import PartitionModification, Fido2Device
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
@@ -38,13 +38,10 @@ class Fido2:
 		# down moving the cursor in the menu
 		if not cls._loaded or reload:
 			try:
-				ret: Optional[str] = SysCommand("systemd-cryptenroll --fido2-device=list").decode('UTF-8')
+				ret = SysCommand("systemd-cryptenroll --fido2-device=list").decode()
 			except SysCallError:
 				error('fido2 support is most likely not installed')
 				raise ValueError('HSM devices can not be detected, is libfido2 installed?')
-
-			if not ret:
-				return []
 
 			fido_devices: str = clear_vt100_escape_codes(ret)  # type: ignore
 

@@ -285,17 +285,10 @@ class Installer:
 		self._fstab_entries.append(f'{file} none swap defaults 0 0')
 
 		if enable_resume:
-			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode('UTF-8')
-			if not resume_uuid:
-				raise ValueError(f'Could not find mount point: {self.target}{file}')
-
-			resume_uuid = resume_uuid.strip()
-
-			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8')
-			if not resume_offset:
-				raise ValueError('Could not determine resume offset')
-
-			resume_offset = resume_offset.split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
+			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode()
+			resume_offset = SysCommand(
+				f'/usr/bin/filefrag -v {self.target}{file}'
+			).decode().split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
 
 			self._hooks.append('resume')
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
@@ -324,9 +317,6 @@ class Installer:
 			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
-
-		if not gen_fstab:
-			raise RequirementError(f'Generating fstab returned empty value')
 
 		with open(fstab_path, 'a') as fp:
 			fp.write(gen_fstab)
@@ -902,6 +892,13 @@ class Installer:
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
+		if boot_partition == root_partition and root_partition.mountpoint:
+			boot_dir = root_partition.mountpoint / 'boot'
+		elif boot_partition.mountpoint:
+			boot_dir = boot_partition.mountpoint
+		else:
+			raise ValueError('Could not detect boot directory')
+
 		command = [
 			'/usr/bin/arch-chroot',
 			str(self.target),
@@ -909,15 +906,22 @@ class Installer:
 			'--debug'
 		]
 
-		if SysInfo.has_uefi() and efi_partition is not None:
+		if SysInfo.has_uefi():
+			if not efi_partition:
+				raise ValueError('Could not detect efi partition')
+
 			info(f"GRUB EFI partition: {efi_partition.dev_path}")
 
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
+			boot_dir_arg = []
+			if boot_partition != efi_partition:
+				boot_dir_arg.append(f'--boot-directory={boot_dir}')
+
 			add_options = [
 				'--target=x86_64-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
-				f'--boot-directory={boot_partition.mountpoint if boot_partition else "/boot"}',
+				*boot_dir_arg,
 				'--bootloader-id=GRUB',
 				'--removable'
 			]
@@ -950,7 +954,7 @@ class Installer:
 		try:
 			SysCommand(
 				f'/usr/bin/arch-chroot {self.target} '
-				f'grub-mkconfig -o {boot_partition.mountpoint if boot_partition else "/boot"}/grub/grub.cfg'
+				f'grub-mkconfig -o {boot_dir}/grub/grub.cfg'
 			)
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
@@ -1089,23 +1093,22 @@ TIMEOUT=5
 
 		for kernel in self.kernels:
 			# Setup the firmware entry
-			label = f'Arch Linux ({kernel})'
-			loader = f"/vmlinuz-{kernel}"
-
 			cmdline = [
 				*microcode,
 				f"initrd=\\initramfs-{kernel}.img",
 				*kernel_parameters,
 			]
 
-			cmd = f'efibootmgr ' \
-				f'--disk {parent_dev_path} ' \
-				f'--part {boot_partition.partn} ' \
-				f'--create ' \
-				f'--label "{label}" ' \
-				f'--loader {loader} ' \
-				f'--unicode \'{" ".join(cmdline)}\' ' \
-				f'--verbose'
+			cmd = [
+				'efibootmgr',
+				'--disk', str(parent_dev_path),
+				'--part', str(boot_partition.partn),
+				'--create',
+				'--label', f'Arch Linux ({kernel})',
+				'--loader', f"/vmlinuz-{kernel}",
+				'--unicode', ' '.join(cmdline),
+				'--verbose'
+			]
 
 			SysCommand(cmd)
 
@@ -1318,17 +1321,21 @@ TIMEOUT=5
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
-		last_execution_time = b''.join(SysCommand(f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}", environment_vars={'SYSTEMD_COLORS': '0'}))
-		last_execution_time = last_execution_time.lstrip(b'ActiveEnterTimestamp=').strip()
+		last_execution_time = SysCommand(
+			f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}",
+			environment_vars={'SYSTEMD_COLORS': '0'}
+		).decode().lstrip('ActiveEnterTimestamp=')
+
 		if not last_execution_time:
 			return None
 
-		return last_execution_time.decode('UTF-8')
+		return last_execution_time
 
 	def _service_state(self, service_name: str) -> str:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
-		state = b''.join(SysCommand(f'systemctl show --no-pager -p SubState --value {service_name}', environment_vars={'SYSTEMD_COLORS': '0'}))
-
-		return state.strip().decode('UTF-8')
+		return SysCommand(
+			f'systemctl show --no-pager -p SubState --value {service_name}',
+			environment_vars={'SYSTEMD_COLORS': '0'}
+		).decode()

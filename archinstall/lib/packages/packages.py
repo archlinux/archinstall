@@ -37,7 +37,7 @@ def group_search(name :str) -> List[PackageSearchResult]:
 			raise err
 
 	# Just to be sure some code didn't slip through the exception
-	data = response.read().decode('UTF-8')
+	data = response.read().decode('utf-8')
 
 	return [PackageSearchResult(**package) for package in json.loads(data)['results']]
 

@@ -1251,6 +1251,9 @@ msgid ""
 "Choose an option to give Hyprland access to your hardware"
 msgstr ""
 
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
 

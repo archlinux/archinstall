@@ -6,8 +6,11 @@ from ..output import error
 
 
 def list_keyboard_languages() -> Iterator[str]:
-	for line in SysCommand("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS': '0'}):
-		yield line.decode('UTF-8').strip()
+	for line in SysCommand(
+		"localectl --no-pager list-keymaps",
+		environment_vars={'SYSTEMD_COLORS': '0'}
+	).decode():
+		yield line
 
 
 def list_locales() -> List[str]:
@@ -22,8 +25,11 @@ def list_locales() -> List[str]:
 
 
 def list_x11_keyboard_languages() -> Iterator[str]:
-	for line in SysCommand("localectl --no-pager list-x11-keymap-layouts", environment_vars={'SYSTEMD_COLORS': '0'}):
-		yield line.decode('UTF-8').strip()
+	for line in SysCommand(
+		"localectl --no-pager list-x11-keymap-layouts",
+		environment_vars={'SYSTEMD_COLORS': '0'}
+	).decode():
+		yield line
 
 
 def verify_keyboard_layout(layout :str) -> bool:
@@ -57,5 +63,8 @@ def set_kb_layout(locale :str) -> bool:
 
 
 def list_timezones() -> Iterator[str]:
-	for line in SysCommand("timedatectl --no-pager list-timezones", environment_vars={'SYSTEMD_COLORS': '0'}):
-		yield line.decode('UTF-8').strip()
+	for line in SysCommand(
+		"timedatectl --no-pager list-timezones",
+		environment_vars={'SYSTEMD_COLORS': '0'}
+	).decode():
+		yield line
