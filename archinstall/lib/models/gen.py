@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 
 @dataclass
@@ -87,6 +87,10 @@ class PackageSearchResult:
 	makedepends: List[str]
 	checkdepends: List[str]
 
+	@staticmethod
+	def from_json(data: Dict[str, Any]) -> 'PackageSearchResult':
+		return PackageSearchResult(**data)
+
 	@property
 	def pkg_version(self) -> str:
 		return self.pkgver
@@ -107,8 +111,18 @@ class PackageSearch:
 	page: int
 	results: List[PackageSearchResult]
 
-	def __post_init__(self):
-		self.results = [PackageSearchResult(**x) for x in self.results]
+	@staticmethod
+	def from_json(data: Dict[str, Any]) -> 'PackageSearch':
+		results = [PackageSearchResult.from_json(r) for r in data['results']]
+
+		return PackageSearch(
+			version=data['version'],
+			limit=data['limit'],
+			valid=data['valid'],
+			num_pages=data['num_pages'],
+			page=data['page'],
+			results=results
+		)
 
 
 @dataclass

@@ -3,6 +3,7 @@ from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
 from ..disk import (
 	DeviceModification,
+	DiskLayoutConfiguration,
 	PartitionModification,
 	DiskEncryption,
 	EncryptionType
@@ -26,7 +27,7 @@ if TYPE_CHECKING:
 class DiskEncryptionMenu(AbstractSubMenu):
 	def __init__(
 		self,
-		mods: List[DeviceModification],
+		disk_config: DiskLayoutConfiguration,
 		data_store: Dict[str, Any],
 		preset: Optional[DiskEncryption] = None
 	):
@@ -35,7 +36,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		else:
 			self._preset = DiskEncryption()
 
-		self._modifications = mods
+		self._disk_config = disk_config
 		super().__init__(data_store=data_store)
 
 	def setup_selection_menu_options(self):
@@ -59,7 +60,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		self._menu_options['partitions'] = \
 			Selector(
 				_('Partitions'),
-				func=lambda preset: select_partitions_to_encrypt(self._modifications.device_modifications, preset),
+				func=lambda preset: select_partitions_to_encrypt(self._disk_config.device_modifications, preset),
 				display_func=lambda x: f'{len(x)} {_("Partitions")}' if x else None,
 				dependencies=['encryption_password'],
 				default=self._preset.partitions,

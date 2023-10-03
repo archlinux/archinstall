@@ -14,7 +14,7 @@ class Selector:
 	def __init__(
 		self,
 		description: str,
-		func: Optional[Callable[[str], Any]] = None,
+		func: Optional[Callable[[Any], Any]] = None,
 		display_func: Optional[Callable] = None,
 		default: Optional[Any] = None,
 		enabled: bool = False,

@@ -176,8 +176,11 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
 
 	def _missing_configs(self) -> List[str]:
-		def check(s):
-			return self._menu_options.get(s).has_selection()
+		def check(s) -> bool:
+			obj = self._menu_options.get(s)
+			if obj and obj.has_selection():
+				return True
+			return False
 
 		def has_superuser() -> bool:
 			sel = self._menu_options['!users']
@@ -228,7 +231,7 @@ class GlobalMenu(AbstractMenu):
 		return config.type.display_msg()
 
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
-		mods: Optional[List[disk.DeviceModification]] = self._menu_options['disk_config'].current_selection
+		mods: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
 
 		if not mods:
 			# this should not happen as the encryption menu has the disk_config as dependency
@@ -263,7 +266,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_additional_pkgs(self):
 		selector = self._menu_options['packages']
-		if selector.has_selection():
+		if selector.current_selection:
 			packages: List[str] = selector.current_selection
 			return format_cols(packages, None)
 		return None
