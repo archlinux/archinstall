@@ -15,7 +15,7 @@ class KdeProfile(XorgProfile):
 	def packages(self) -> List[str]:
 		return [
 			"plasma-Desktop",
-			"konsole",
+			"konsole"
 		]
 
 	@property
