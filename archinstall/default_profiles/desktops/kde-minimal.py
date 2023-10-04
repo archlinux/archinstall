@@ -9,12 +9,12 @@ if TYPE_CHECKING:
 
 class KdeProfile(XorgProfile):
 	def __init__(self):
-		super().__init__('Kde', ProfileType.DesktopEnv, description='a more minimal Plasma installation.')
+		super().__init__('Kde', ProfileType.DesktopEn, description='a more minimal Plasma installation.')
 
 	@property
 	def packages(self) -> List[str]:
 		return [
-			"plasma-DesktopEnv",
+			"plasma-Desktop",
 			"konsole",
 		]
 
