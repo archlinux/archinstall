@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from typing import List, Any, Optional, TYPE_CHECKING
 
-from ..locale import list_timezones, list_keyboard_languages
+from ..locale import list_timezones
 from ..menu import MenuSelectionType, Menu, TextInput
 from ..models.audio_configuration import Audio, AudioConfiguration
 from ..output import warn
@@ -81,32 +81,6 @@ def ask_for_audio_selection(
 				return None
 			else:
 				return AudioConfiguration(Audio[value])
-
-	return None
-
-
-def select_language(preset: Optional[str] = None) -> Optional[str]:
-	"""
-	Asks the user to select a language
-	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
-
-	:return: The language/dictionary key of the selected language
-	:rtype: str
-	"""
-	kb_lang = list_keyboard_languages()
-	# sort alphabetically and then by length
-	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
-
-	choice = Menu(
-		_('Select keyboard layout'),
-		sorted_kb_lang,
-		preset_values=preset,
-		sort=False
-	).run()
-
-	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return choice.single_value
 
 	return None
 
