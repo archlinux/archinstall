@@ -139,7 +139,7 @@ def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
 	"""
 	kb_lang = list_keyboard_languages()
 	# sort alphabetically and then by length
-	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
+	sorted_kb_lang = sorted(kb_lang, key=lambda x: (len(x), x))
 
 	choice = Menu(
 		_('Select keyboard layout'),
