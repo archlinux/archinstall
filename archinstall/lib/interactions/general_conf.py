@@ -44,7 +44,7 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 
 	choice = Menu(
 		_('Select a timezone'),
-		list(timezones),
+		timezones,
 		preset_values=preset,
 		default_option=default
 	).run()
@@ -95,7 +95,7 @@ def select_language(preset: Optional[str] = None) -> Optional[str]:
 	"""
 	kb_lang = list_keyboard_languages()
 	# sort alphabetically and then by length
-	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
+	sorted_kb_lang = sorted(kb_lang, key=lambda x: (len(x), x))
 
 	choice = Menu(
 		_('Select keyboard layout'),
