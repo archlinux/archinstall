@@ -28,14 +28,15 @@ def ask_ntp(preset: bool = True) -> bool:
 
 
 def ask_hostname(preset: str = '') -> str:
-	while True:
-		hostname = TextInput(
-			str(_('Desired hostname for the installation: ')),
-			preset
-		).run().strip()
+	hostname = TextInput(
+		str(_('Desired hostname for the installation: ')),
+		preset
+	).run().strip()
 
-		if hostname:
-			return hostname
+	if not hostname:
+		return preset
+
+	return hostname
 
 
 def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
