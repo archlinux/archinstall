@@ -851,10 +851,12 @@ class PartitionModification:
 
 
 class LvmLayoutType(Enum):
+	Default = 'default'
 	Manual = 'manual_lvm'
 
 	def display_msg(self) -> str:
 		match self:
+			case LvmLayoutType.Default: return str(_('Default layout'))
 			case LvmLayoutType.Manual: return str(_('Manual configuration'))
 
 		raise ValueError(f'Unknown type: {self}')

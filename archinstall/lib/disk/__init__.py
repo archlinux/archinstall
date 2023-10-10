@@ -13,6 +13,8 @@ from .device_model import (
 	DiskLayoutConfiguration,
 	LvmLayoutType,
 	LvmConfiguration,
+	LvmVolumeGroup,
+	LvmVolume,
 	PartitionTable,
 	Unit,
 	Size,

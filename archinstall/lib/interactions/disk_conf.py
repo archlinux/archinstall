@@ -174,9 +174,16 @@ def select_lvm_config(
 	disk_config: disk.DiskLayoutConfiguration,
 	preset: Optional[disk.LvmConfiguration] = None,
 ) -> Optional[disk.LvmConfiguration]:
+	default_mode = disk.LvmLayoutType.Default.display_msg()
 	manual_mode = disk.LvmLayoutType.Manual.display_msg()
 
-	options = [manual_mode]
+	if disk_config.config_type == disk.DiskLayoutType.Default:
+		options = [default_mode, manual_mode]
+	elif disk_config.config_type == disk.DiskLayoutType.Manual:
+		options = [manual_mode]
+	else:
+		raise ValueError(f'Unsupported disk config type for LVM configuration: {disk_config.config_type.value}')
+
 	preset_value = preset.config_type.display_msg() if preset else None
 	warning = str(_('Are you sure you want to reset this setting?'))
 
@@ -194,7 +201,9 @@ def select_lvm_config(
 		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Reset: return None
 		case MenuSelectionType.Selection:
-			if choice.value == manual_mode:
+			if choice.single_value == default_mode:
+				return suggest_lvm_layout()
+			elif choice.single_value == manual_mode:
 				lvm_config = LvmConfigurationMenu(preset, {}, disk_config.device_modifications).run()
 				return lvm_config
 	return preset
@@ -440,3 +449,25 @@ def suggest_multi_disk_layout(
 	home_device_modification.add_partition(home_partition)
 
 	return [root_device_modification, home_device_modification]
+
+
+def suggest_lvm_layout(disk_config: disk.DiskLayoutConfiguration) -> disk.LvmConfiguration:
+	lvm_pvs: List[disk.PartitionModification] = []
+
+	for mod in disk_config.device_modifications:
+		for part in mod.partitions:
+			lvm_pvs.append(part)
+
+	lvm_vol_group = disk.LvmVolumeGroup('VolGroup', lvm_pvs=lvm_pvs)
+
+	home_vol = disk.LvmVolume(
+
+	)
+
+
+
+	return disk.LvmConfiguration(
+		disk.LvmLayoutType.Default,
+		lvm_pvs=lvm_pvs,
+		lvm_vol_group
+	)
