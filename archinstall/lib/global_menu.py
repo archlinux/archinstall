@@ -211,11 +211,11 @@ class GlobalMenu(AbstractMenu):
 			return False
 		return self._validate_bootloader() is None
 
-	def _update_install_text(self, name: str, value: str):
+	def _update_install_text(self, name: Optional[str] = None, value: Any = None):
 		text = self._install_text()
 		self._menu_options['install'].update_description(text)
 
-	def post_callback(self, name: str, value: str):
+	def post_callback(self, name: Optional[str] = None, value: Any = None):
 		self._update_install_text(name, value)
 
 	def _install_text(self):
