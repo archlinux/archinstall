@@ -88,9 +88,9 @@ def ask_for_audio_selection(
 
 def select_language(preset: Optional[str] = None) -> Optional[str]:
 	from ..locale.locale_menu import select_kb_layout
-	from ..exceptions import Deprecated
 
 	# We'll raise an exception in an upcoming version.
+	# from ..exceptions import Deprecated
 	# raise Deprecated("select_language() has been deprecated, use select_kb_layout() instead.")
 
 	# No need to translate this i feel, as it's a short lived message.
