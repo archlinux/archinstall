@@ -32,6 +32,8 @@ msgstr ""
 The `msgid` is the identifier of the string in the code as well as the default text to be displayed, meaning that if no
 translation is provided for a language then this is the text that is going to be shown.
 
+## Perform translations
+
 To perform translations for a language this file can be edited manually or the neat `poedit` can be used (https://poedit.net/).
 If editing the file manually, write the translation in the `msgstr` part
 
