@@ -17,7 +17,12 @@ def get_password(prompt: str = '') -> Optional[str]:
 	if not prompt:
 		prompt = _("Enter a password: ")
 
-	while password := getpass.getpass(prompt):
+	while True:
+		try:
+			password = getpass.getpass(prompt)
+		except (KeyboardInterrupt, EOFError):
+			break
+
 		if len(password.strip()) <= 0:
 			break
 

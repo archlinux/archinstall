@@ -134,7 +134,10 @@ def select_disk_config(
 				output = "You will use whatever drive-setup is mounted at the specified directory\n"
 				output += "WARNING: Archinstall won't check the suitability of this setup\n"
 
-				path = prompt_dir(str(_('Enter the root directory of the mounted devices: ')), output)
+				try:
+					path = prompt_dir(str(_('Enter the root directory of the mounted devices: ')), output)
+				except (KeyboardInterrupt, EOFError):
+					return preset
 				mods = disk.device_handler.detect_pre_mounted_mods(path)
 
 				return disk.DiskLayoutConfiguration(
