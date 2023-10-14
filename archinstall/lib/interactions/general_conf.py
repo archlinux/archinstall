@@ -85,6 +85,19 @@ def ask_for_audio_selection(
 	return None
 
 
+def select_language(preset: Optional[str] = None) -> Optional[str]:
+	from ..locale.locale_menu import select_kb_layout
+	from ..exceptions import Deprecated
+
+	# We'll raise an exception in an upcoming version.
+	# raise Deprecated("select_language() has been deprecated, use select_kb_layout() instead.")
+
+	# No need to translate this i feel, as it's a short lived message.
+	warn("select_language() is deprecated, use select_kb_layout() instead. select_language() will be removed in a future version")
+
+	return select_kb_layout(preset)
+
+
 def select_archinstall_language(languages: List[Language], preset: Language) -> Language:
 	# these are the displayed language names which can either be
 	# the english name of a language or, if present, the
@@ -193,15 +206,3 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		case MenuSelectionType.Selection: return choice.single_value
 
 	return []
-
-def select_language(preset: Optional[str] = None) -> Optional[str]:
-	from ..locale.locale_menu import select_kb_layout
-	from ..exceptions import Deprecated
-
-	# We'll raise an exception in an upcoming version.
-	# raise Deprecated("select_language() has been deprecated, use select_kb_layout() instead.")
-
-	# No need to translate this i feel, as it's a short lived message.
-	warn("select_language() is deprecated, use select_kb_layout() instead. select_language() will be removed in a future version")
-
-	return select_kb_layout(preset)
