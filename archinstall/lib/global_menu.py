@@ -243,7 +243,6 @@ class GlobalMenu(AbstractMenu):
 
 	def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration:
 		data_store: Dict[str, Any] = {}
-		raise ValueError('not good')
 		locale_config = LocaleMenu(data_store, preset).run()
 		return locale_config
 
