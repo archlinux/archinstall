@@ -107,8 +107,7 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 	argument value value ...
 	which isn't am error if multiple is specified
 	"""
-	tmp_list = unknowns[
-			   :]  # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
+	tmp_list = unknowns[:]  # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
 	config = {}
 	key = None
 	last_key = None
