@@ -55,8 +55,8 @@ def package_search(package :str) -> PackageSearch:
 		raise PackageError(f"Could not locate package: [{response.code}] {response}")
 
 	data = response.read().decode('UTF-8')
-
-	return PackageSearch(**json.loads(data))
+	json_data = json.loads(data)
+	return PackageSearch.from_json(json_data)
 
 
 def find_package(package :str) -> List[PackageSearchResult]:

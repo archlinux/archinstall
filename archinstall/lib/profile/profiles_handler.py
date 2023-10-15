@@ -138,16 +138,16 @@ class ProfileHandler:
 			profiles = [profiles]
 
 		for profile in profiles:
-			self._profiles.append(profile)
+			self.profiles.append(profile)
 
-		self._verify_unique_profile_names(self._profiles)
+		self._verify_unique_profile_names(self.profiles)
 
 	def remove_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
 		remove_names = [p.name for p in profiles]
-		self._profiles = [p for p in self._profiles if p.name not in remove_names]
+		self._profiles = [p for p in self.profiles if p.name not in remove_names]
 
 	def get_profile_by_name(self, name: str) -> Optional[Profile]:
 		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore

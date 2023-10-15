@@ -15,7 +15,7 @@ class Selector:
 	def __init__(
 		self,
 		description: str,
-		func: Optional[Callable[[str], Any]] = None,
+		func: Optional[Callable[[Any], Any]] = None,
 		display_func: Optional[Callable] = None,
 		default: Optional[Any] = None,
 		enabled: bool = False,
@@ -232,7 +232,7 @@ class AbstractMenu:
 		""" will be called before each action in the menu """
 		return
 
-	def post_callback(self, selection_name: str, value: Any):
+	def post_callback(self, selection_name: Optional[str] = None, value: Any = None):
 		""" will be called after each action in the menu """
 		return True
 
@@ -279,6 +279,7 @@ class AbstractMenu:
 
 	def run(self, allow_reset: bool = False):
 		self._sync_all()
+		self.post_callback()
 		cursor_pos = None
 
 		while True:
