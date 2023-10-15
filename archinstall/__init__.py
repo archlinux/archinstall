@@ -1,6 +1,7 @@
 """Arch Linux installer - guided, templates etc."""
 import importlib
 import os
+import time
 import traceback
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
@@ -22,6 +23,7 @@ from . import default_profiles
 from .lib.hardware import SysInfo, GfxDriver
 from .lib.installer import Installer, accessibility_tools_in_use
 from .lib.output import FormattedOutput, log, error, debug, warn, info
+from .lib.pacman import Pacman
 from .lib.storage import storage
 from .lib.global_menu import GlobalMenu
 from .lib.boot import Boot
@@ -37,6 +39,7 @@ from .lib.general import (
 
 if TYPE_CHECKING:
 	_: Any
+
 
 __version__ = "2.6.3"
 storage['__version__'] = __version__
@@ -276,12 +279,27 @@ def plugin(f, *args, **kwargs):
 	plugins[f.__name__] = f
 
 
+def _check_new_version():
+	info("Checking version...")
+	Pacman.run("-Sy")
+	upgradable_packages = Pacman.run("-Qu").decode()
+	pkg_ugr = [p for p in upgradable_packages if 'archinstall' in p]
+
+	if len(pkg_ugr) == 1:
+		pkg = pkg[0].strip()
+		text = f'New version available: {pkg}'
+		print(text)
+		time.sleep(3)
+
+
 def main():
 	"""
 	This can either be run as the compiled and installed application: python setup.py install
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
+	_check_new_version()
+
 	script = arguments.get('script', None)
 
 	if script is None:
