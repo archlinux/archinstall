@@ -282,13 +282,11 @@ def plugin(f, *args, **kwargs):
 def _check_new_version():
 	info("Checking version...")
 	Pacman.run("-Sy")
-	upgradable_packages = Pacman.run("-Qu").decode()
-	pkg_ugr = [p for p in upgradable_packages if 'archinstall' in p]
+	upgrade = Pacman.run("-Qu archinstall").decode()
 
-	if len(pkg_ugr) == 1:
-		pkg = pkg[0].strip()
-		text = f'New version available: {pkg}'
-		print(text)
+	if upgrade:
+		text = f'New version available: {upgrade}'
+		info(text)
 		time.sleep(3)
 
 
