@@ -11,6 +11,7 @@ from ..menu import TableMenu
 from ..menu.menu import MenuSelectionType
 from ..output import FormattedOutput, debug
 from ..utils.util import prompt_dir
+from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any
@@ -139,6 +140,8 @@ def select_disk_config(
 				except (KeyboardInterrupt, EOFError):
 					return preset
 				mods = disk.device_handler.detect_pre_mounted_mods(path)
+
+				storage['MOUNT_POINT'] = Path(path)
 
 				return disk.DiskLayoutConfiguration(
 					config_type=disk.DiskLayoutType.Pre_mount,
