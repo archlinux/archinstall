@@ -818,15 +818,14 @@ class Installer:
 		# Modify or create a loader.conf
 		loader_conf = loader_dir / 'loader.conf'
 
-		default = f'default {self.init_time}_{self.kernels[0]}.conf\n'
+		default = f'default {self.init_time}_{self.kernels[0]}.conf'
 
 		try:
-			with loader_conf.open() as loader:
-				loader_data = loader.readlines()
+			loader_data = loader_conf.read_text().splitlines()
 		except FileNotFoundError:
 			loader_data = [
 				default,
-				'timeout 15\n'
+				'timeout 15'
 			]
 		else:
 			for index, line in enumerate(loader_data):
@@ -836,41 +835,40 @@ class Installer:
 					# We add in the default timeout to support dual-boot
 					loader_data[index] = line.removeprefix('#')
 
-		with loader_conf.open('w') as loader:
-			loader.writelines(loader_data)
+		loader_conf.write_text('\n'.join(loader_data) + '\n')
 
 		# Ensure that the $BOOT/loader/entries/ directory exists before we try to create files in it
 		entries_dir = loader_dir / 'entries'
 		entries_dir.mkdir(parents=True, exist_ok=True)
 
 		comments = (
-			'# Created by: archinstall\n',
-			f'# Created on: {self.init_time}\n'
+			'# Created by: archinstall',
+			f'# Created on: {self.init_time}'
 		)
 
 		microcode = []
 
 		if ucode := self._get_microcode():
-			microcode.append(f'initrd  /{ucode}\n')
+			microcode.append(f'initrd  /{ucode}')
 		else:
 			debug('Archinstall will not add any ucode to systemd-boot config.')
 
-		options = 'options ' + ' '.join(self._get_kernel_params(root_partition)) + '\n'
+		options = 'options ' + ' '.join(self._get_kernel_params(root_partition))
 
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
 				# Setup the loader entry
 				entry = [
 					*comments,
-					f'title   Arch Linux ({kernel}{variant})\n',
-					f'linux   /vmlinuz-{kernel}\n',
+					f'title   Arch Linux ({kernel}{variant})',
+					f'linux   /vmlinuz-{kernel}',
 					*microcode,
-					f'initrd  /initramfs-{kernel}{variant}.img\n',
+					f'initrd  /initramfs-{kernel}{variant}.img',
 					options,
 				]
 
 				entry_conf = entries_dir / f'{self.init_time}_{kernel}{variant}.conf'
-				entry_conf.write_text(''.join(entry))
+				entry_conf.write_text('\n'.join(entry) + '\n')
 
 		self.helper_flags['bootloader'] = 'systemd'
 
