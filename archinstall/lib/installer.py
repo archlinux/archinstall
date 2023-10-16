@@ -843,7 +843,7 @@ class Installer:
 
 		comments = (
 			'# Created by: archinstall',
-			'# Created on: ' + self.init_time
+			f'# Created on: {self.init_time}'
 		)
 
 		microcode = []
