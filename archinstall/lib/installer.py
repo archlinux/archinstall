@@ -1105,10 +1105,10 @@ TIMEOUT=5
 				*self._get_kernel_params(root_partition)
 			)
 
-			cmdline = tuple(' '.join(entries))
+			cmdline = [' '.join(entries)]
 		else:
 			loader = '/EFI/Linux/arch-{kernel}.efi'
-			cmdline = tuple()
+			cmdline = []
 
 		parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
