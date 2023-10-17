@@ -32,6 +32,9 @@ class ProfileConfiguration:
 		greeter = arg.get('greeter', None)
 		gfx_driver = arg.get('gfx_driver', None)
 
+		if gfx_driver == 'All open-source (default)':
+			gfx_driver = 'All open-source'
+
 		return ProfileConfiguration(
 			profile,
 			GfxDriver(gfx_driver) if gfx_driver else None,
