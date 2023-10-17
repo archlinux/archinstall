@@ -56,6 +56,8 @@ def ask_user_questions():
 	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
 	global_menu.enable('bootloader')
 
+	global_menu.enable('uki')
+
 	global_menu.enable('swap')
 
 	# Get the hostname for the machine
@@ -111,6 +113,7 @@ def perform_installation(mountpoint: Path):
 	# Retrieve list of additional repositories and set boolean values appropriately
 	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
 	enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', [])
+	run_mkinitcpio = not archinstall.arguments.get('uki')
 	locale_config: locale.LocaleConfiguration = archinstall.arguments['locale_config']
 	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
@@ -141,6 +144,7 @@ def perform_installation(mountpoint: Path):
 		installation.minimal_installation(
 			testing=enable_testing,
 			multilib=enable_multilib,
+			mkinitcpio=run_mkinitcpio,
 			hostname=archinstall.arguments.get('hostname', 'archlinux'),
 			locale_config=locale_config
 		)
@@ -154,7 +158,10 @@ def perform_installation(mountpoint: Path):
 		if archinstall.arguments.get("bootloader") == Bootloader.Grub and SysInfo.has_uefi():
 			installation.add_additional_packages("grub")
 
-		installation.add_bootloader(archinstall.arguments["bootloader"])
+		installation.add_bootloader(
+			archinstall.arguments["bootloader"],
+			archinstall.arguments["uki"]
+		)
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config

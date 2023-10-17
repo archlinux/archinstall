@@ -4,6 +4,7 @@ from typing import Any, List, Optional, Dict, TYPE_CHECKING
 
 from . import disk
 from .general import secret
+from .hardware import SysInfo
 from .locale.locale_menu import LocaleConfiguration, LocaleMenu
 from .menu import Selector, AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
@@ -20,6 +21,7 @@ from .interactions import ask_additional_packages_to_install
 from .interactions import ask_for_additional_users
 from .interactions import ask_for_audio_selection
 from .interactions import ask_for_bootloader
+from .interactions import ask_for_uki
 from .interactions import ask_for_swap
 from .interactions import ask_hostname
 from .interactions import ask_to_configure_network
@@ -85,6 +87,11 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: ask_for_bootloader(preset),
 				display_func=lambda x: x.value,
 				default=Bootloader.get_default())
+		self._menu_options['uki'] = \
+			Selector(
+				_('Unified kernel images'),
+				lambda preset: ask_for_uki(preset),
+				default=False)
 		self._menu_options['hostname'] = \
 			Selector(
 				_('Hostname'),
@@ -216,6 +223,9 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['install'].update_description(text)
 
 	def post_callback(self, name: Optional[str] = None, value: Any = None):
+		if not SysInfo.has_uefi():
+			self._menu_options['uki'].set_enabled(False)
+
 		self._update_install_text(name, value)
 
 	def _install_text(self):
