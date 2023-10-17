@@ -80,6 +80,9 @@ class LocaleMenu(AbstractSubMenu):
 	def run(self, allow_reset: bool = True) -> LocaleConfiguration:
 		super().run(allow_reset=allow_reset)
 
+		if not self._data_store:
+			return LocaleConfiguration.default()
+
 		return LocaleConfiguration(
 			self._data_store['keyboard-layout'],
 			self._data_store['sys-language'],
