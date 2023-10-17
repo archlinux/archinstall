@@ -65,6 +65,22 @@ def ask_for_bootloader(preset: Bootloader) -> Bootloader:
 	return preset
 
 
+def ask_for_uki(preset: bool = True) -> bool:
+	if preset:
+		preset_val = Menu.yes()
+	else:
+		preset_val = Menu.no()
+
+	prompt = _('Would you like to use unified kernel images?')
+	choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), preset_values=preset_val).run()
+
+	match choice.type_:
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Selection: return False if choice.value == Menu.no() else True
+
+	return preset
+
+
 def select_driver(options: List[GfxDriver] = [], current_value: Optional[GfxDriver] = None) -> Optional[GfxDriver]:
 	"""
 	Some what convoluted function, whose job is simple.
