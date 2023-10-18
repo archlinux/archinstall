@@ -1,4 +1,3 @@
-import os
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
@@ -10,7 +9,6 @@ from archinstall.lib import models
 from archinstall.lib import disk
 from archinstall.lib import locale
 from archinstall.lib.models import AudioConfiguration
-from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib import menu
 from archinstall.lib.global_menu import GlobalMenu
@@ -19,11 +17,6 @@ from archinstall.lib.configuration import ConfigurationOutput
 
 if TYPE_CHECKING:
 	_: Any
-
-
-if archinstall.arguments.get('help'):
-	print("See `man archinstall` for help.")
-	exit(0)
 
 
 class ExecutionMode(Enum):
@@ -289,11 +282,6 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 
 		debug(f"Disk states after installing: {disk.disk_layouts()}")
 
-
-if not check_mirror_reachable():
-	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	info(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'")
-	exit(1)
 
 param_mode = archinstall.arguments.get('mode', ExecutionMode.Full.value).lower()
 

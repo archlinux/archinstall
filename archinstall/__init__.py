@@ -89,6 +89,8 @@ def define_arguments():
 	parser.add_argument("--no-pkg-lookups", action="store_true", default=False,
 						help="Disabled package validation specifically prior to starting installation.")
 	parser.add_argument("--plugin", nargs="?", type=str)
+	parser.add_argument("--skip-version-check", action="store_true",
+						help="Skip the version check when running archinstall")
 
 
 def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err: bool = False) -> dict:
@@ -280,8 +282,20 @@ def plugin(f, *args, **kwargs):
 
 def _check_new_version():
 	info("Checking version...")
-	Pacman.run("-Sy")
-	upgrade = Pacman.run("-Qu archinstall").decode()
+
+	try:
+		Pacman.run("-Sy")
+	except Exception as e:
+		debug(f'Failed to perform version check: {e}')
+		info(f'Arch Linux mirrors are not reachable. Please check your internet connection')
+		exit(1)
+
+	upgrade = None
+
+	try:
+		upgrade = Pacman.run("-Qu archinstall").decode()
+	except Exception as e:
+		debug(f'Failed determine pacman version: {e}')
 
 	if upgrade:
 		text = f'New version available: {upgrade}'
@@ -295,7 +309,8 @@ def main():
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
-	_check_new_version()
+	if not arguments.get('skip_version_check', False):
+		_check_new_version()
 
 	script = arguments.get('script', None)
 
