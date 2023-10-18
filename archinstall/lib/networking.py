@@ -8,7 +8,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 from .exceptions import SysCallError
-from .output import error, info, debug
+from .output import error, info
 from .pacman import Pacman
 
 
@@ -30,19 +30,6 @@ def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
 		interfaces[mac] = iface
 
 	return interfaces
-
-
-def check_mirror_reachable() -> bool:
-	info("Testing connectivity to the Arch Linux mirrors...")
-	try:
-		Pacman.run("-Sy")
-		return True
-	except SysCallError as err:
-		if os.geteuid() != 0:
-			error("check_mirror_reachable() uses 'pacman -Sy' which requires root.")
-		debug(f'exit_code: {err.exit_code}, Error: {err.message}')
-
-	return False
 
 
 def update_keyring() -> bool:
