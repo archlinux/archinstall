@@ -38,6 +38,8 @@ class FormattedOutput:
 			raise ValueError('Unsupported formatting call')
 		elif hasattr(o, 'table_data'):
 			return o.table_data()
+		elif hasattr(o, 'json'):
+			return o.json()
 		elif is_dataclass(o):
 			return asdict(o)
 		else:
