@@ -373,13 +373,6 @@ class DiskLayoutConfiguration:
 	device_modifications: List[DeviceModification] = field(default_factory=list)
 	lvm_config: Optional[LvmConfiguration] = None
 
-	# used for pre-mounted config
-	relative_mountpoint: Optional[Path] = None
-
-	def __post_init__(self):
-		if self.config_type == DiskLayoutType.Pre_mount and self.relative_mountpoint is None:
-			raise ValueError('Must set a relative mountpoint when layout type is pre-mount"')
-
 	def json(self) -> Dict[str, Any]:
 		config: Dict[str, Any] = {
 			'config_type': self.config_type.value,
