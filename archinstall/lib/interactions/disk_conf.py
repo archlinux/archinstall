@@ -55,8 +55,10 @@ def select_devices(preset: List[disk.BDevice] = []) -> List[disk.BDevice]:
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Reset: return []
-		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Reset:
+			return []
+		case MenuSelectionType.Skip:
+			return preset
 		case MenuSelectionType.Selection:
 			selected_device_info: List[disk._DeviceInfo] = choice.single_value
 			selected_devices = []
@@ -73,7 +75,6 @@ def get_default_partition_layout(
 	filesystem_type: Optional[disk.FilesystemType] = None,
 	advanced_option: bool = False
 ) -> List[disk.DeviceModification]:
-
 	if len(devices) == 1:
 		device_modification = suggest_single_disk_layout(
 			devices[0],
@@ -129,8 +130,10 @@ def select_disk_config(
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return None
+		case MenuSelectionType.Skip:
+			return preset
+		case MenuSelectionType.Reset:
+			return None
 		case MenuSelectionType.Selection:
 			if choice.single_value == pre_mount_mode:
 				output = "You will use whatever drive-setup is mounted at the specified directory\n"
@@ -204,11 +207,13 @@ def select_lvm_config(
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return None
+		case MenuSelectionType.Skip:
+			return preset
+		case MenuSelectionType.Reset:
+			return None
 		case MenuSelectionType.Selection:
 			if choice.single_value == default_mode:
-				return suggest_lvm_layout()
+				return suggest_lvm_layout(disk_config)
 			elif choice.single_value == manual_mode:
 				lvm_config = LvmConfigurationMenu(preset, {}, disk_config.device_modifications).run()
 				return lvm_config
@@ -307,7 +312,8 @@ def suggest_single_disk_layout(
 				using_home_partition = False
 
 	# root partition
-	start = disk.Size(513, disk.Unit.MiB, sector_size) if SysInfo.has_uefi() else disk.Size(206, disk.Unit.MiB, sector_size)
+	start = disk.Size(513, disk.Unit.MiB, sector_size) if SysInfo.has_uefi() else disk.Size(206, disk.Unit.MiB,
+																							sector_size)
 
 	# Set a size for / (/root)
 	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
@@ -324,6 +330,7 @@ def suggest_single_disk_layout(
 		fs_type=filesystem_type,
 		mount_options=['compress=zstd'] if compression else [],
 	)
+
 	device_modification.add_partition(root_partition)
 
 	if using_subvolumes:
@@ -394,8 +401,10 @@ def suggest_multi_disk_layout(
 
 	if home_device is None or root_device is None:
 		text = _('The selected drives do not have the minimum capacity required for an automatic suggestion\n')
-		text += _('Minimum capacity for /home partition: {}GiB\n').format(min_home_partition_size.format_size(disk.Unit.GiB))
-		text += _('Minimum capacity for Arch Linux partition: {}GiB').format(desired_root_partition_size.format_size(disk.Unit.GiB))
+		text += _('Minimum capacity for /home partition: {}GiB\n').format(
+			min_home_partition_size.format_size(disk.Unit.GiB))
+		text += _('Minimum capacity for Arch Linux partition: {}GiB').format(
+			desired_root_partition_size.format_size(disk.Unit.GiB))
 		Menu(str(text), [str(_('Continue'))], skip=False).run()
 		return []
 
@@ -458,22 +467,49 @@ def suggest_multi_disk_layout(
 
 
 def suggest_lvm_layout(disk_config: disk.DiskLayoutConfiguration) -> disk.LvmConfiguration:
-	lvm_pvs: List[disk.PartitionModification] = []
+	if disk_config.config_type != disk.DiskLayoutType.Default:
+		raise ValueError('LVM suggested volumes are only available for default partitioning')
+
+	boot_part: Optional[disk.PartitionModification] = None
+	other_part: List[disk.PartitionModification] = []
 
 	for mod in disk_config.device_modifications:
 		for part in mod.partitions:
-			lvm_pvs.append(part)
+			if part.is_boot():
+				boot_part = part
+			else:
+				other_part.append(part)
 
-	lvm_vol_group = disk.LvmVolumeGroup('VolGroup', lvm_pvs=lvm_pvs)
+	if not boot_part:
+		raise ValueError('Unable to find boot partition in partition modifications')
 
-	home_vol = disk.LvmVolume(
+	total_vol_available = sum([p.length for p in other_part], disk.Size(0, disk.Unit.B, disk.SectorSize.default()))
+	root_vol_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
+	home_vol_size = total_vol_available - root_vol_size
 
+	root_vol = disk.LvmVolume(
+		status=disk.LvmVolumeStatus.Create,
+		name='root',
+		fs_type=disk.FilesystemType.Ext4,
+		length=root_vol_size,
+		mountpoint=Path('/')
 	)
 
+	home_vol = disk.LvmVolume(
+		status=disk.LvmVolumeStatus.Create,
+		name='home',
+		fs_type=disk.FilesystemType.Ext4,
+		length=home_vol_size,
+		mountpoint=Path('/home')
+	)
 
+	lvm_vol_group = disk.LvmVolumeGroup(
+		'ArchinstallVolGroup',
+		pvs=other_part,
+		volumes=[root_vol, home_vol]
+	)
 
 	return disk.LvmConfiguration(
 		disk.LvmLayoutType.Default,
-		lvm_pvs=lvm_pvs,
-		lvm_vol_group
+		[lvm_vol_group]
 	)

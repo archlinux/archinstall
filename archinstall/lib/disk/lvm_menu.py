@@ -216,7 +216,7 @@ class LvmVolumeList(ListManager):
 			warn(f'Invalid value: {value}')
 
 	def _prompt_size(self) -> Tuple[Size, Size]:
-		lvm_pvs = self._lvm_vol_group.lvm_pvs
+		lvm_pvs = self._lvm_vol_group.pvs
 		lvm_pvs_table = FormattedOutput.as_table(lvm_pvs)
 
 		sector_size = self._device_mods[0].device.device_info.sector_size
@@ -325,7 +325,7 @@ class LvmConfigurationMenu(AbstractSubMenu):
 				lambda x: self._select_lvm_vol_group(x),
 				display_func=lambda x: self.defined_text if x else '',
 				preview_func=self._prev_lvm_vol_group,
-				default=self._lvm_config.vol_group if self._lvm_config else [],
+				default=self._lvm_config.vol_groups if self._lvm_config else [],
 				dependencies=['lvm_pvs'],
 				enabled=True
 			)
@@ -351,7 +351,7 @@ class LvmConfigurationMenu(AbstractSubMenu):
 			return LvmConfiguration(
 				config_type=LvmLayoutType.Manual,
 				lvm_pvs=lvm_pvs,
-				vol_group=lvm_vol_group,
+				vol_groups=lvm_vol_group,
 				volumes=lvm_volumes
 			)
 
@@ -396,7 +396,7 @@ class LvmConfigurationMenu(AbstractSubMenu):
 
 		if lvm_vol_group:
 			output = '{}: {}\n\n'.format(str(_('Volume group')), lvm_vol_group.name)
-			output += FormattedOutput.as_table(lvm_vol_group.lvm_pvs)
+			output += FormattedOutput.as_table(lvm_vol_group.pvs)
 			return output
 
 		return None
@@ -491,7 +491,7 @@ def select_lvm_vol_group(
 		return preset
 
 	title = '{}: {}'.format(str(_('Select the devices to be associated with the volume group')), group_name)
-	preset_choices = preset.lvm_pvs if preset else []
+	preset_choices = preset.pvs if preset else []
 
 	choice = TableMenu(
 		title,

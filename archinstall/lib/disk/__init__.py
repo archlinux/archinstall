@@ -15,6 +15,7 @@ from .device_model import (
 	LvmConfiguration,
 	LvmVolumeGroup,
 	LvmVolume,
+	LvmVolumeStatus,
 	PartitionTable,
 	Unit,
 	Size,

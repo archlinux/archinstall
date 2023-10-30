@@ -5,10 +5,13 @@ import sys
 import time
 from typing import Any, Optional, TYPE_CHECKING
 
-from .device_model import DiskLayoutConfiguration, DiskLayoutType, PartitionTable, FilesystemType, DiskEncryption
+from .device_model import (
+	DiskLayoutConfiguration, DiskLayoutType, PartitionTable,
+	FilesystemType, DiskEncryption, LvmConfiguration, LvmVolumeGroup, Size, Unit, SectorSize
+)
 from .device_handler import device_handler
 from ..hardware import SysInfo
-from ..output import debug
+from ..output import debug, info
 from ..menu import Menu
 
 if TYPE_CHECKING:
@@ -52,11 +55,75 @@ class FilesystemHandler:
 
 		for mod in device_mods:
 			device_handler.partition(mod, partition_table=partition_table)
-			device_handler.format(mod, enc_conf=self._enc_config)
 
-			for part_mod in mod.partitions:
-				if part_mod.fs_type == FilesystemType.Btrfs:
-					device_handler.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
+		if self._disk_config.lvm_config:
+			for mod in device_mods:
+				if boot_part := mod.get_boot_partition():
+					info(f'Formatting boot partition: {boot_part.dev_path}')
+					device_handler.format_partitions(
+						[boot_part],
+						mod.device_path
+					)
+
+			self.setup_lvm(self._disk_config.lvm_config)
+			exit(1)
+		else:
+			for mod in device_mods:
+				device_handler.format_partitions(
+					mod.partitions,
+					mod.device_path,
+					enc_conf=self._enc_config
+				)
+
+				for part_mod in mod.partitions:
+					if part_mod.fs_type == FilesystemType.Btrfs:
+						device_handler.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
+
+	def setup_lvm(
+		self,
+		lvm_config: LvmConfiguration,
+		enc_conf: Optional['DiskEncryption'] = None
+	):
+		info('Setting up LVM config')
+
+		if not enc_conf:
+			for vol_gp in lvm_config.vol_groups:
+				device_handler.lvm_pv_create(vol_gp.pvs)
+				device_handler.lvm_group_create(vol_gp)
+
+				# figure out what the actual available size in the group is
+				lvm_gp_info = device_handler.lvm_group_info(vol_gp.name)
+
+				# the actual available LVM Group size will be smaller than the
+				# total PVs size due to reserved metadata storage etc.
+				# so we'll have a look at the total avail. size, check the delta
+				# to the desired sizes and subtract some equally from the actually
+				# created volume
+				avail_size = lvm_gp_info.vg_size
+				total_lvm_size = sum([vol.length for vol in vol_gp.volumes], Size(0, Unit.B, SectorSize.default()))
+
+				delta = total_lvm_size - avail_size
+				offset = delta.convert(Unit.B)
+				offset.value = int(offset.value / len(vol_gp.volumes))
+
+				for volume in vol_gp.volumes:
+					device_handler.lvm_vol_create(vol_gp.name, volume, offset)
+					device_handler._format(volume.fs_type, volume.safe_dev_path)
+
+				self._lvm_vol_handle_e2scrub(vol_gp)
+
+	def _lvm_vol_handle_e2scrub(self, vol_gp: LvmVolumeGroup):
+		# from arch wiki:
+		# If a logical volume will be formatted with ext4, leave at least 256 MiB
+		# free space in the volume group to allow using e2scrub
+		if any([vol.fs_type == FilesystemType.Ext4 for vol in vol_gp.volumes]):
+			largest_vol = max(vol_gp.volumes, key=lambda x: x.length)
+			print(largest_vol.length.convert(Unit.MiB))
+
+			device_handler.lvm_vol_reduce(
+				largest_vol.safe_dev_path,
+				Size(256, Unit.MiB, SectorSize.default())
+			)
 
 	def _do_countdown(self) -> bool:
 		SIG_TRIGGER = False

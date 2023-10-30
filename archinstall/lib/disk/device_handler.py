@@ -18,11 +18,12 @@ from .device_model import (
 	BDevice, _DeviceInfo, _PartitionInfo,
 	FilesystemType, Unit, PartitionTable,
 	ModificationStatus, get_lsblk_info, LsblkInfo,
-	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption
+	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
+	SectorSize
 )
 
 from ..exceptions import DiskError, UnknownFilesystemFormat
-from ..general import SysCommand, SysCallError, JSON
+from ..general import SysCommand, SysCallError, JSON, SysCommandWorker
 from ..luks import Luks2
 from ..output import debug, error, info, warn, log
 from ..utils.util import is_subpath
@@ -176,7 +177,7 @@ class DeviceHandler(object):
 
 		return subvol_infos
 
-	def _perform_formatting(
+	def _format(
 		self,
 		fs_type: FilesystemType,
 		path: Path,
@@ -230,7 +231,7 @@ class DeviceHandler(object):
 			error(msg)
 			raise DiskError(msg) from err
 
-	def _perform_enc_formatting(
+	def _format_enc(
 		self,
 		dev_path: Path,
 		mapper_name: Optional[str],
@@ -252,7 +253,7 @@ class DeviceHandler(object):
 			raise DiskError('Failed to unlock luks device')
 
 		info(f'luks2 formatting mapper dev: {luks_handler.mapper_dev}')
-		self._perform_formatting(fs_type, luks_handler.mapper_dev)
+		self._format(fs_type, luks_handler.mapper_dev)
 
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
@@ -262,7 +263,8 @@ class DeviceHandler(object):
 			# verify that all partitions have a path set (which implies that they have been created)
 			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
 			# crypto luks is not a valid file system type
-			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError('Crypto luks cannot be set as a filesystem type'),
+			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError(
+				'Crypto luks cannot be set as a filesystem type'),
 			# file system type must be set
 			lambda x: x.fs_type is None: ValueError('File system type must be set for modification')
 		}
@@ -272,9 +274,10 @@ class DeviceHandler(object):
 			if found is not None:
 				raise exc
 
-	def format(
+	def format_partitions(
 		self,
-		device_mod: DeviceModification,
+		partitions: List[PartitionModification],
+		device_path: Path,
 		enc_conf: Optional['DiskEncryption'] = None
 	):
 		"""
@@ -283,30 +286,82 @@ class DeviceHandler(object):
 		"""
 
 		# don't touch existing partitions
-		filtered_part = [p for p in device_mod.partitions if not p.exists()]
+		filtered_part = [p for p in partitions if not p.exists()]
 
 		self._validate_partitions(filtered_part)
 
 		# make sure all devices are unmounted
-		self._umount_all_existing(device_mod.device_path)
+		self._umount_all_existing(device_path)
 
 		for part_mod in filtered_part:
 			# partition will be encrypted
 			if enc_conf is not None and part_mod in enc_conf.partitions:
-				self._perform_enc_formatting(
+				self._format_enc(
 					part_mod.safe_dev_path,
 					part_mod.mapper_name,
 					part_mod.safe_fs_type,
 					enc_conf
 				)
 			else:
-				self._perform_formatting(part_mod.safe_fs_type, part_mod.safe_dev_path)
+				self._format(part_mod.safe_fs_type, part_mod.safe_dev_path)
 
 			lsblk_info = self._fetch_part_info(part_mod.safe_dev_path)
 
 			part_mod.partn = lsblk_info.partn
 			part_mod.partuuid = lsblk_info.partuuid
 			part_mod.uuid = lsblk_info.uuid
+
+	def lvm_group_info(self, vg_name: str) -> LvmGroupInfo:
+		cmd = f'vgdisplay -S vgname={vg_name} --units B'
+		info = SysCommand(cmd).decode().split('\n')
+
+		def ex(field):
+			return next(filter(lambda x: field in x, info)).split(field)[1].strip()
+
+		# 85354086400 B
+		vg_size = ex('VG Size').split(' ')
+		size = Size(int(vg_size[0]), Unit.B, SectorSize.default())
+
+		return LvmGroupInfo(
+			format=ex('Format'),
+			vg_size=size,
+			uuid=ex('VG UUID')
+		)
+
+	def lvm_vol_reduce(self, vol_path: Path, amount: Size):
+		val = amount.format_size(Unit.B, include_unit=False)
+		cmd = f'lvreduce -L -{val}B {vol_path}'
+
+		debug(f'Reducing LVM volume size: {cmd}')
+		SysCommand(cmd)
+
+	def lvm_pv_create(self, pvs: List[PartitionModification]):
+		cmd = 'pvcreate ' + ' '.join([str(pv.safe_dev_path) for pv in pvs])
+		debug(f'Creating LVM PVS: {cmd}')
+
+		# SysCommand(cmd, peek_output=True)
+
+		worker = SysCommandWorker(cmd)
+		worker.poll()
+		info(worker)
+		worker.write(b'y\n', line_ending=False)
+
+	def lvm_group_create(self, group: LvmVolumeGroup):
+		pvs_str = ' '.join([str(pv.safe_dev_path) for pv in group.pvs])
+		cmd = f'vgcreate {group.name} {pvs_str}'
+
+		debug(f'Creating LVM group: {cmd}')
+		SysCommand(cmd)
+
+	def lvm_vol_create(self, group: str, volume: LvmVolume, offset: Size):
+		length = volume.length - offset
+		length = length.format_size(Unit.B, include_unit=False)
+		cmd = f'lvcreate -L {length}B {group} -n {volume.name} --wipesignatures y'
+
+		debug(f'Creating volume: {cmd}')
+		SysCommand(cmd, peek_output=True)
+
+		volume.dev_path = f'/dev/{group}/{volume.name}'
 
 	def _perform_partitioning(
 		self,
@@ -475,7 +530,7 @@ class DeviceHandler(object):
 		return luks_handler
 
 	def _umount_all_existing(self, device_path: Path):
-		info(f'Unmounting all existing partitions: {device_path}')
+		debug(f'Unmounting all existing partitions: {device_path}')
 
 		existing_partitions = self._devices[device_path].partition_infos
 
@@ -626,7 +681,8 @@ class DeviceHandler(object):
 			SysCommand(command)
 		except SysCallError as err:
 			if 'have been written, but we have been unable to inform the kernel of the change' in str(err):
-				log(f"Partprobe was not able to inform the kernel of the new disk state (ignoring error): {err}", fg="gray", level=logging.INFO)
+				log(f"Partprobe was not able to inform the kernel of the new disk state (ignoring error): {err}",
+					fg="gray", level=logging.INFO)
 			else:
 				error(f'"{command}" failed to run (continuing anyway): {err}')
 

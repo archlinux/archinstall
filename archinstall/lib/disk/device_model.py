@@ -32,24 +32,24 @@ class PartitionTable(Enum):
 
 
 class Unit(Enum):
-	B = 1          # byte
-	kB = 1000**1   # kilobyte
-	MB = 1000**2   # megabyte
-	GB = 1000**3   # gigabyte
-	TB = 1000**4   # terabyte
-	PB = 1000**5   # petabyte
-	EB = 1000**6   # exabyte
-	ZB = 1000**7   # zettabyte
-	YB = 1000**8   # yottabyte
+	B = 1  # byte
+	kB = 1000 ** 1  # kilobyte
+	MB = 1000 ** 2  # megabyte
+	GB = 1000 ** 3  # gigabyte
+	TB = 1000 ** 4  # terabyte
+	PB = 1000 ** 5  # petabyte
+	EB = 1000 ** 6  # exabyte
+	ZB = 1000 ** 7  # zettabyte
+	YB = 1000 ** 8  # yottabyte
 
-	KiB = 1024**1 	# kibibyte
-	MiB = 1024**2 	# mebibyte
-	GiB = 1024**3  	# gibibyte
-	TiB = 1024**4  	# tebibyte
-	PiB = 1024**5  	# pebibyte
-	EiB = 1024**6  	# exbibyte
-	ZiB = 1024**7  	# zebibyte
-	YiB = 1024**8  	# yobibyte
+	KiB = 1024 ** 1  # kibibyte
+	MiB = 1024 ** 2  # mebibyte
+	GiB = 1024 ** 3  # gibibyte
+	TiB = 1024 ** 4  # tebibyte
+	PiB = 1024 ** 5  # pebibyte
+	EiB = 1024 ** 6  # exbibyte
+	ZiB = 1024 ** 7  # zebibyte
+	YiB = 1024 ** 8  # yobibyte
 
 	sectors = 'sectors'  # size in sector
 
@@ -359,9 +359,12 @@ class DiskLayoutType(Enum):
 
 	def display_msg(self) -> str:
 		match self:
-			case DiskLayoutType.Default: return str(_('Use a best-effort default partition layout'))
-			case DiskLayoutType.Manual: return str(_('Manual Partitioning'))
-			case DiskLayoutType.Pre_mount: return str(_('Pre-mounted configuration'))
+			case DiskLayoutType.Default:
+				return str(_('Use a best-effort default partition layout'))
+			case DiskLayoutType.Manual:
+				return str(_('Manual Partitioning'))
+			case DiskLayoutType.Pre_mount:
+				return str(_('Pre-mounted configuration'))
 
 
 @dataclass
@@ -426,7 +429,7 @@ class DiskLayoutConfiguration:
 					status=ModificationStatus(partition['status']),
 					fs_type=FilesystemType(partition['fs_type']),
 					start=Size.parse_args(partition['start']),
-					length=Size.parse_args(partition['length']),
+					length=Size.parse_args(partition['size']),
 					mount_options=partition['mount_options'],
 					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
 					type=PartitionType(partition['type']),
@@ -591,7 +594,7 @@ class PartitionFlag(Enum):
 	Which is the way libparted checks for its flags: https://git.savannah.gnu.org/gitweb/?p=parted.git;a=blob;f=libparted/labels/gpt.c;hb=4a0e468ed63fff85a1f9b923189f20945b32f4f1#l183
 	"""
 	Boot = _ped.PARTITION_BOOT
-	XBOOTLDR = _ped.PARTITION_BLS_BOOT # Note: parted calls this bls_boot
+	XBOOTLDR = _ped.PARTITION_BLS_BOOT  # Note: parted calls this bls_boot
 	ESP = _ped.PARTITION_ESP
 
 
@@ -624,35 +627,48 @@ class FilesystemType(Enum):
 	@property
 	def fs_type_mount(self) -> str:
 		match self:
-			case FilesystemType.Ntfs: return 'ntfs3'
-			case FilesystemType.Fat32: return 'vfat'
-			case _: return self.value  # type: ignore
+			case FilesystemType.Ntfs:
+				return 'ntfs3'
+			case FilesystemType.Fat32:
+				return 'vfat'
+			case _:
+				return self.value  # type: ignore
 
 	@property
 	def installation_pkg(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs: return 'btrfs-progs'
-			case FilesystemType.Xfs: return 'xfsprogs'
-			case FilesystemType.F2fs: return 'f2fs-tools'
-			case _: return None
+			case FilesystemType.Btrfs:
+				return 'btrfs-progs'
+			case FilesystemType.Xfs:
+				return 'xfsprogs'
+			case FilesystemType.F2fs:
+				return 'f2fs-tools'
+			case _:
+				return None
 
 	@property
 	def installation_module(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs: return 'btrfs'
-			case _: return None
+			case FilesystemType.Btrfs:
+				return 'btrfs'
+			case _:
+				return None
 
 	@property
 	def installation_binary(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs: return '/usr/bin/btrfs'
-			case _: return None
+			case FilesystemType.Btrfs:
+				return '/usr/bin/btrfs'
+			case _:
+				return None
 
 	@property
 	def installation_hooks(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs: return 'btrfs'
-			case _: return None
+			case FilesystemType.Btrfs:
+				return 'btrfs'
+			case _:
+				return None
 
 
 class ModificationStatus(Enum):
@@ -856,8 +872,10 @@ class LvmLayoutType(Enum):
 
 	def display_msg(self) -> str:
 		match self:
-			case LvmLayoutType.Default: return str(_('Default layout'))
-			case LvmLayoutType.Manual: return str(_('Manual configuration'))
+			case LvmLayoutType.Default:
+				return str(_('Default layout'))
+			case LvmLayoutType.Manual:
+				return str(_('Manual configuration'))
 
 		raise ValueError(f'Unknown type: {self}')
 
@@ -865,12 +883,14 @@ class LvmLayoutType(Enum):
 @dataclass
 class LvmVolumeGroup:
 	name: str
-	lvm_pvs: List[PartitionModification]
+	pvs: List[PartitionModification]
+	volumes: List[LvmVolume]
 
 	def json(self) -> Dict[str, Any]:
 		return {
 			'name': self.name,
-			'lvm_pvs': [p.obj_id for p in self.lvm_pvs]
+			'lvm_pvs': [p.obj_id for p in self.pvs],
+			'volumes': [vol.json() for vol in self.volumes]
 		}
 
 	@staticmethod
@@ -881,7 +901,11 @@ class LvmVolumeGroup:
 				if part.obj_id in arg.get('lvm_pvs', []):
 					lvm_pvs.append(part)
 
-		return LvmVolumeGroup(arg['name'], lvm_pvs)
+		return LvmVolumeGroup(
+			arg['name'],
+			lvm_pvs,
+			[LvmVolume.parse_arg(vol) for vol in arg['volumes']]
+		)
 
 
 class LvmVolumeStatus(Enum):
@@ -896,11 +920,18 @@ class LvmVolume:
 	status: LvmVolumeStatus
 	name: str
 	fs_type: FilesystemType
-	start: Size
 	length: Size
 	mountpoint: Optional[Path]
 	mount_options: List[str] = field(default_factory=list)
 	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
+
+	dev_path: Optional[Path] = None
+
+	@property
+	def safe_dev_path(self) -> Path:
+		if self.dev_path:
+			return self.dev_path
+		raise ValueError('No device path for volume defined')
 
 	@staticmethod
 	def parse_arg(arg: Dict[str, Any]) -> LvmVolume:
@@ -908,7 +939,6 @@ class LvmVolume:
 			status=LvmVolumeStatus(arg['status']),
 			name=arg['name'],
 			fs_type=FilesystemType(arg['fs_type']),
-			start=Size.parse_args(arg['start']),
 			length=Size.parse_args(arg['length']),
 			mountpoint=Path(arg['mountpoint']) if arg['mountpoint'] else None,
 			mount_options=arg.get('mount_options', []),
@@ -920,9 +950,8 @@ class LvmVolume:
 			'status': self.status.value,
 			'name': self.name,
 			'fs_type': self.fs_type.value,
-			'start': self.start.json(),
 			'length': self.length.json(),
-			'mountpoint': str(self.mountpoint) if self.mount_options else None,
+			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'btrfs': [vol.json() for vol in self.btrfs_subvols]
 		}
@@ -931,10 +960,9 @@ class LvmVolume:
 		part_mod = {
 			'Type': self.status.value,
 			'Name': self.name,
-			'Start': self.start.format_size(Unit.MiB),
-			'Length': self.length.format_size(Unit.MiB),
+			'Size': self.length.format_highest(),
 			'FS type': self.fs_type.value,
-			'Mountpoint': str(self.mountpoint) if self.mount_options else '',
+			'Mountpoint': str(self.mountpoint) if self.mountpoint else '',
 			'Mount options': ', '.join(self.mount_options),
 			'Btrfs': '{} {}'.format(str(len(self.btrfs_subvols)), 'vol')
 		}
@@ -951,18 +979,30 @@ class LvmVolume:
 
 
 @dataclass
+class LvmGroupInfo:
+	format: str
+	vg_size: Size
+	uuid: str
+
+
+@dataclass
 class LvmConfiguration:
 	config_type: LvmLayoutType
-	lvm_pvs: List[PartitionModification]
-	vol_group: LvmVolumeGroup
-	volumes: List[LvmVolume]
+	vol_groups: List[LvmVolumeGroup]
+
+	def __post_init__(self):
+		# make sure all volume groups have unique PVs
+		pvs = []
+		for group in self.vol_groups:
+			for pv in group.pvs:
+				if pv in pvs:
+					raise ValueError('A PV cannot be used in multiple volume groups')
+				pvs.append(pv)
 
 	def json(self) -> Dict[str, Any]:
 		return {
 			'config_type': self.config_type.value,
-			'lvm_pvs': [p.obj_id for p in self.lvm_pvs],
-			'vol_group': self.vol_group.json(),
-			'volumes': [v.json() for v in self.volumes]
+			'vol_groups': [vol_gr.json() for vol_gr in self.vol_groups]
 		}
 
 	@staticmethod
@@ -975,9 +1015,7 @@ class LvmConfiguration:
 
 		return LvmConfiguration(
 			config_type=LvmLayoutType(arg['config_type']),
-			lvm_pvs=lvm_pvs,
-			vol_group=LvmVolumeGroup.parse_arg(arg['vol_group'], disk_config),
-			volumes=[LvmVolume.parse_arg(v) for v in arg.get('volumes', [])]
+			vol_groups=[LvmVolumeGroup.parse_arg(vol_group, disk_config) for vol_group in arg['vol_groups']],
 		)
 
 
@@ -1141,7 +1179,7 @@ class LsblkInfo:
 	tran: Optional[str] = None
 	partn: Optional[int] = None
 	partuuid: Optional[str] = None
-	parttype :Optional[str] = None
+	parttype: Optional[str] = None
 	uuid: Optional[str] = None
 	fstype: Optional[str] = None
 	fsver: Optional[str] = None
@@ -1166,7 +1204,7 @@ class LsblkInfo:
 			'tran': self.tran,
 			'partn': self.partn,
 			'partuuid': self.partuuid,
-			'parttype' : self.parttype,
+			'parttype': self.parttype,
 			'uuid': self.uuid,
 			'fstype': self.fstype,
 			'fsver': self.fsver,
@@ -1298,6 +1336,7 @@ def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
 
 def get_all_lsblk_info() -> List[LsblkInfo]:
 	return _fetch_lsblk_info()
+
 
 def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[LsblkInfo]:
 	def _check(infos: List[LsblkInfo]) -> List[LsblkInfo]:

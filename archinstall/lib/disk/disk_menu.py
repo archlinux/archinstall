@@ -125,14 +125,14 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 		if lvm_config:
 			output = '{}: {}\n'.format(str(_('Configuration')), lvm_config.config_type.display_msg())
-			output += '{}: {}\n'.format(str(_('Volume group')), lvm_config.vol_group.name)
 
-			pv_table = FormattedOutput.as_table(lvm_config.lvm_pvs)
-			output += '{}:\n{}'.format(str(_('Physical volumes')), pv_table)
+			for vol_gp in lvm_config.vol_groups:
+				pv_table = FormattedOutput.as_table(vol_gp.pvs)
+				output += '{}:\n{}'.format(str(_('Physical volumes')), pv_table)
 
-			lvm_volumes = FormattedOutput.as_table(lvm_config.volumes)
-			output += '\n{}:\n{}'.format(str(_('Volumes')), lvm_volumes)
+				lvm_volumes = FormattedOutput.as_table(vol_gp.volumes)
+				output += '\n{}:\n{}'.format(str(_('Volumes')), lvm_volumes)
 
-			return output
+				return output
 
 		return None
