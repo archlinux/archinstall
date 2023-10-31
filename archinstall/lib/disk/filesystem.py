@@ -3,11 +3,13 @@ from __future__ import annotations
 import signal
 import sys
 import time
-from typing import Any, Optional, TYPE_CHECKING
+from pathlib import Path
+from typing import Any, Optional, TYPE_CHECKING, List
 
 from .device_model import (
 	DiskLayoutConfiguration, DiskLayoutType, PartitionTable,
-	FilesystemType, DiskEncryption, LvmConfiguration, LvmVolumeGroup, Size, Unit, SectorSize
+	FilesystemType, DiskEncryption, LvmConfiguration, LvmVolumeGroup,
+	Size, Unit, SectorSize, PartitionModification
 )
 from .device_handler import device_handler
 from ..hardware import SysInfo
@@ -66,7 +68,6 @@ class FilesystemHandler:
 					)
 
 			self.setup_lvm(self._disk_config.lvm_config)
-			exit(1)
 		else:
 			for mod in device_mods:
 				device_handler.format_partitions(
@@ -78,6 +79,59 @@ class FilesystemHandler:
 				for part_mod in mod.partitions:
 					if part_mod.fs_type == FilesystemType.Btrfs:
 						device_handler.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
+
+	def format_partitions(
+		self,
+		partitions: List[PartitionModification],
+		device_path: Path,
+		enc_conf: Optional['DiskEncryption'] = None
+	):
+		"""
+		Format can be given an overriding path, for instance /dev/null to test
+		the formatting functionality and in essence the support for the given filesystem.
+		"""
+
+		# don't touch existing partitions
+		filtered_part = [p for p in partitions if not p.exists()]
+
+		self._validate_partitions(filtered_part)
+
+		# make sure all devices are unmounted
+		device_handler.umount_all_existing(device_path)
+
+		for part_mod in filtered_part:
+			# partition will be encrypted
+			if enc_conf is not None and part_mod in enc_conf.partitions:
+				device_handler.format_enc(
+					part_mod.safe_dev_path,
+					part_mod.mapper_name,
+					part_mod.safe_fs_type,
+					enc_conf
+				)
+			else:
+				device_handler.format(part_mod.safe_fs_type, part_mod.safe_dev_path)
+
+			lsblk_info = device_handler.fetch_part_info(part_mod.safe_dev_path)
+
+			part_mod.partn = lsblk_info.partn
+			part_mod.partuuid = lsblk_info.partuuid
+			part_mod.uuid = lsblk_info.uuid
+
+	def _validate_partitions(self, partitions: List[PartitionModification]):
+		checks = {
+			# verify that all partitions have a path set (which implies that they have been created)
+			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
+			# crypto luks is not a valid file system type
+			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError(
+				'Crypto luks cannot be set as a filesystem type'),
+			# file system type must be set
+			lambda x: x.fs_type is None: ValueError('File system type must be set for modification')
+		}
+
+		for check, exc in checks.items():
+			found = next(filter(check, partitions), None)
+			if found is not None:
+				raise exc
 
 	def setup_lvm(
 		self,
@@ -108,7 +162,7 @@ class FilesystemHandler:
 
 				for volume in vol_gp.volumes:
 					device_handler.lvm_vol_create(vol_gp.name, volume, offset)
-					device_handler._format(volume.fs_type, volume.safe_dev_path)
+					device_handler.format(volume.fs_type, volume.safe_dev_path)
 
 				self._lvm_vol_handle_e2scrub(vol_gp)
 

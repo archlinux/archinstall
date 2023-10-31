@@ -177,7 +177,7 @@ class DeviceHandler(object):
 
 		return subvol_infos
 
-	def _format(
+	def format(
 		self,
 		fs_type: FilesystemType,
 		path: Path,
@@ -231,7 +231,7 @@ class DeviceHandler(object):
 			error(msg)
 			raise DiskError(msg) from err
 
-	def _format_enc(
+	def format_enc(
 		self,
 		dev_path: Path,
 		mapper_name: Optional[str],
@@ -253,63 +253,10 @@ class DeviceHandler(object):
 			raise DiskError('Failed to unlock luks device')
 
 		info(f'luks2 formatting mapper dev: {luks_handler.mapper_dev}')
-		self._format(fs_type, luks_handler.mapper_dev)
+		self.format(fs_type, luks_handler.mapper_dev)
 
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
-
-	def _validate_partitions(self, partitions: List[PartitionModification]):
-		checks = {
-			# verify that all partitions have a path set (which implies that they have been created)
-			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
-			# crypto luks is not a valid file system type
-			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError(
-				'Crypto luks cannot be set as a filesystem type'),
-			# file system type must be set
-			lambda x: x.fs_type is None: ValueError('File system type must be set for modification')
-		}
-
-		for check, exc in checks.items():
-			found = next(filter(check, partitions), None)
-			if found is not None:
-				raise exc
-
-	def format_partitions(
-		self,
-		partitions: List[PartitionModification],
-		device_path: Path,
-		enc_conf: Optional['DiskEncryption'] = None
-	):
-		"""
-		Format can be given an overriding path, for instance /dev/null to test
-		the formatting functionality and in essence the support for the given filesystem.
-		"""
-
-		# don't touch existing partitions
-		filtered_part = [p for p in partitions if not p.exists()]
-
-		self._validate_partitions(filtered_part)
-
-		# make sure all devices are unmounted
-		self._umount_all_existing(device_path)
-
-		for part_mod in filtered_part:
-			# partition will be encrypted
-			if enc_conf is not None and part_mod in enc_conf.partitions:
-				self._format_enc(
-					part_mod.safe_dev_path,
-					part_mod.mapper_name,
-					part_mod.safe_fs_type,
-					enc_conf
-				)
-			else:
-				self._format(part_mod.safe_fs_type, part_mod.safe_dev_path)
-
-			lsblk_info = self._fetch_part_info(part_mod.safe_dev_path)
-
-			part_mod.partn = lsblk_info.partn
-			part_mod.partuuid = lsblk_info.partuuid
-			part_mod.uuid = lsblk_info.uuid
 
 	def lvm_group_info(self, vg_name: str) -> LvmGroupInfo:
 		cmd = f'vgdisplay -S vgname={vg_name} --units B'
@@ -346,22 +293,22 @@ class DeviceHandler(object):
 		info(worker)
 		worker.write(b'y\n', line_ending=False)
 
-	def lvm_group_create(self, group: LvmVolumeGroup):
-		pvs_str = ' '.join([str(pv.safe_dev_path) for pv in group.pvs])
-		cmd = f'vgcreate {group.name} {pvs_str}'
+	def lvm_group_create(self, vg: LvmVolumeGroup):
+		pvs_str = ' '.join([str(pv.safe_dev_path) for pv in vg.pvs])
+		cmd = f'vgcreate {vg.name} {pvs_str}'
 
 		debug(f'Creating LVM group: {cmd}')
 		SysCommand(cmd)
 
-	def lvm_vol_create(self, group: str, volume: LvmVolume, offset: Size):
+	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Size):
 		length = volume.length - offset
 		length = length.format_size(Unit.B, include_unit=False)
-		cmd = f'lvcreate -L {length}B {group} -n {volume.name} --wipesignatures y'
+		cmd = f'lvcreate -L {length}B {vg_name} -n {volume.name} --wipesignatures y --zero y --yes'
 
 		debug(f'Creating volume: {cmd}')
-		SysCommand(cmd, peek_output=True)
+		SysCommand(cmd)
 
-		volume.dev_path = f'/dev/{group}/{volume.name}'
+		volume.dev_path = f'/dev/{vg_name}/{volume.name}'
 
 	def _perform_partitioning(
 		self,
@@ -429,7 +376,7 @@ class DeviceHandler(object):
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
-	def _fetch_part_info(self, path: Path) -> LsblkInfo:
+	def fetch_part_info(self, path: Path) -> LsblkInfo:
 		attempts = 3
 		lsblk_info: Optional[LsblkInfo] = None
 
@@ -529,7 +476,7 @@ class DeviceHandler(object):
 
 		return luks_handler
 
-	def _umount_all_existing(self, device_path: Path):
+	def umount_all_existing(self, device_path: Path):
 		debug(f'Unmounting all existing partitions: {device_path}')
 
 		existing_partitions = self._devices[device_path].partition_infos
@@ -559,7 +506,7 @@ class DeviceHandler(object):
 				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
 
 		# make sure all devices are unmounted
-		self._umount_all_existing(modification.device_path)
+		self.umount_all_existing(modification.device_path)
 
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
