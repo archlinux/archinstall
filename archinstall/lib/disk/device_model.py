@@ -1106,10 +1106,7 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 	if not dev_path:
 		dev_path = ''
 
-	if retry == 0:
-		retry = 1
-
-	for retry_attempt in range(retry):
+	for retry_attempt in range(retry + 1):
 		try:
 			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}').decode()
 			break
@@ -1121,7 +1118,7 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 			else:
 				raise err
 
-			if retry_attempt == retry - 1:
+			if retry_attempt == retry:
 				raise err
 
 			time.sleep(1)
