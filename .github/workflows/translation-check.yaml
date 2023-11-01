@@ -1,22 +1,28 @@
-on:
-    push:
-        paths:
-        - 'archinstall/locales/**'
-    pull_request:
-        paths:
-        - 'archinstall/locales/**'
-name: translation file checks
-jobs:
-    translation-check:
-        runs-on: ubuntu-latest
-        container:
-            image: archlinux:latest
-        steps:
-            - uses: actions/checkout@v3
-            - run: pacman --noconfirm -Syu python
-            - run: cd archinstall/locales
-            - run: pwd
-            - run: ls -l
-            - run: bash locales_generator.sh
-            - run: git diff --name-only
-            - run: ls
+#on:
+#    push:
+#        paths:
+#        - 'archinstall/locales/**'
+#    pull_request:
+#        paths:
+#        - 'archinstall/locales/**'
+#name: Verify local_generate script was run on translation changes
+#jobs:
+#    translation-check:
+#        runs-on: ubuntu-latest
+#        container:
+#            image: archlinux:latest
+#        steps:
+#            - uses: actions/checkout@v4
+#            - run: pacman --noconfirm -Syu python git diffutils
+#            - name: Verify all translation scripts are up to date
+#              run: |
+#                cd ..
+#                cp -r archinstall archinstall_orig
+#                cd archinstall/archinstall/locales
+#                bash locales_generator.sh 1> /dev/null
+#                cd ../../..
+#                git diff \
+#                  --quiet --no-index --name-only \
+#                  archinstall_orig/archinstall/locales \
+#                  archinstall/archinstall/locales \
+#                  || (echo "Translation files have not been updated after translation, please run ./locales_generator.sh once more and commit" && exit 1)

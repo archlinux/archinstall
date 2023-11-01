@@ -1146,3 +1146,83 @@ msgstr ""
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "使用 NetworkManager（在 GNOME 和 KDE 透過圖形界面設置網際網路連線所需）"
+
+#, fuzzy
+msgid "Total: {} / {}"
+msgstr "總長度：{}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "輸入起始區塊（默認：{}）："
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "輸入起始區塊（默認：{}）："
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "手動配置"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "此選項啟用安裝期間可能發生的並行下載數"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"輸入要啟用的並行下載數。\n"
+"  （輸入一個 1 到 {max_downloads} 之間的值）\n"
+"提示："
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr "  - 最小值：1（允許 1 个並行下載，同時允許 2 个下載）"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr "  - 禁用/默認：0（禁用並行下載，同時只允許 1 个下載）"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "輸入無效！ 請嘗試使用有效輸入重試 [1 到 {max_downloads}，或 0 到禁用]"
+
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway 需要訪問您的用戶環境（硬體設備的集合，例如鍵盤，滑鼠等）"
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"選擇一個選項以提供 Sway 對您硬件的訪問權限"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""

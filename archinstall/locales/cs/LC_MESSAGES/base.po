@@ -1176,3 +1176,77 @@ msgstr ""
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
+
+msgid "Total: {} / {}"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "Zadejte počáteční sektor (procenta nebo číslo bloku, výchozí: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "Zadejte počáteční sektor (procenta nebo číslo bloku, výchozí: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Ruční konfigurace"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Tato možnost povolí specifikovaný počet paralelních stahování, která mohou nastat při instalaci"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Zadejte povolený počet paralelních stahování.\n"
+" (Zadejte hodnotu mezi 1 a {})\n"
+"Poznámka:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Maximální hodnota  : {} (Povolí {} paralelních stahování, povolí {} stahování naráz )"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Zakázáno/Výchozí    : 0 (Zakáže paralelní stahování, povolí pouze 1 stahování naráz)"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {}, nebo 0 pro vypnutí]"
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""

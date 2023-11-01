@@ -23,8 +23,8 @@ device_modification = disk.DeviceModification(device, wipe=True)
 boot_partition = disk.PartitionModification(
 	status=disk.ModificationStatus.Create,
 	type=disk.PartitionType.Primary,
-	start=disk.Size(1, disk.Unit.MiB),
-	length=disk.Size(512, disk.Unit.MiB),
+	start=disk.Size(1, disk.Unit.MiB, device.device_info.sector_size),
+	length=disk.Size(512, disk.Unit.MiB, device.device_info.sector_size),
 	mountpoint=Path('/boot'),
 	fs_type=disk.FilesystemType.Fat32,
 	flags=[disk.PartitionFlag.Boot]
@@ -35,20 +35,23 @@ device_modification.add_partition(boot_partition)
 root_partition = disk.PartitionModification(
 	status=disk.ModificationStatus.Create,
 	type=disk.PartitionType.Primary,
-	start=disk.Size(513, disk.Unit.MiB),
-	length=disk.Size(20, disk.Unit.GiB),
+	start=disk.Size(513, disk.Unit.MiB, device.device_info.sector_size),
+	length=disk.Size(20, disk.Unit.GiB, device.device_info.sector_size),
 	mountpoint=None,
 	fs_type=fs_type,
 	mount_options=[],
 )
 device_modification.add_partition(root_partition)
 
+start_home = root_partition.length
+length_home = device.device_info.total_size - start_home
+
 # create a new home partition
 home_partition = disk.PartitionModification(
 	status=disk.ModificationStatus.Create,
 	type=disk.PartitionType.Primary,
-	start=root_partition.length,
-	length=disk.Size(100, disk.Unit.Percent, total_size=device.device_info.total_size),
+	start=start_home,
+	length=length_home,
 	mountpoint=Path('/home'),
 	fs_type=fs_type,
 	mount_options=[]

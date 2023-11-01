@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, Any, TYPE_CHECKING, Optional
 
-from .locale import set_kb_layout, list_keyboard_languages, list_locales
+from .utils import list_keyboard_languages, list_locales, set_kb_layout
 from ..menu import Selector, AbstractSubMenu, MenuSelectionType, Menu
 
 if TYPE_CHECKING:
@@ -52,9 +52,9 @@ class LocaleMenu(AbstractSubMenu):
 	def __init__(
 		self,
 		data_store: Dict[str, Any],
-		locele_conf: LocaleConfiguration
+		locale_conf: LocaleConfiguration
 	):
-		self._preset = locele_conf
+		self._preset = locale_conf
 		super().__init__(data_store=data_store)
 
 	def setup_selection_menu_options(self):
@@ -62,23 +62,26 @@ class LocaleMenu(AbstractSubMenu):
 			Selector(
 				_('Keyboard layout'),
 				lambda preset: self._select_kb_layout(preset),
-				default='us',
+				default=self._preset.kb_layout,
 				enabled=True)
 		self._menu_options['sys-language'] = \
 			Selector(
 				_('Locale language'),
 				lambda preset: select_locale_lang(preset),
-				default='en_US',
+				default=self._preset.sys_lang,
 				enabled=True)
 		self._menu_options['sys-encoding'] = \
 			Selector(
 				_('Locale encoding'),
 				lambda preset: select_locale_enc(preset),
-				default='UTF-8',
+				default=self._preset.sys_enc,
 				enabled=True)
 
 	def run(self, allow_reset: bool = True) -> LocaleConfiguration:
 		super().run(allow_reset=allow_reset)
+
+		if not self._data_store:
+			return LocaleConfiguration.default()
 
 		return LocaleConfiguration(
 			self._data_store['keyboard-layout'],
@@ -139,7 +142,7 @@ def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
 	"""
 	kb_lang = list_keyboard_languages()
 	# sort alphabetically and then by length
-	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
+	sorted_kb_lang = sorted(kb_lang, key=lambda x: (len(x), x))
 
 	choice = Menu(
 		_('Select keyboard layout'),

@@ -144,9 +144,6 @@ def perform_installation(mountpoint: Path):
 				archinstall.arguments.get('profile_config', None)
 			)
 
-		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-			installation.add_additional_packages(archinstall.arguments.get('packages', []))
-
 		if users := archinstall.arguments.get('!users', None):
 			installation.create_users(users)
 
@@ -156,6 +153,9 @@ def perform_installation(mountpoint: Path):
 		else:
 			info("No audio server will be installed")
 
+		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
+			installation.add_additional_packages(archinstall.arguments.get('packages', []))
+
 		if profile_config := archinstall.arguments.get('profile_config', None):
 			profile.profile_handler.install_profile_config(installation, profile_config)
 
@@ -163,7 +163,7 @@ def perform_installation(mountpoint: Path):
 			installation.set_timezone(timezone)
 
 		if archinstall.arguments.get('ntp', False):
-			installation.activate_time_syncronization()
+			installation.activate_time_synchronization()
 
 		if archinstall.accessibility_tools_in_use():
 			installation.enable_espeakup()
@@ -171,7 +171,7 @@ def perform_installation(mountpoint: Path):
 		if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 			installation.user_set_pw('root', root_pw)
 
-		# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
+		# This step must be after profile installs to allow profiles_bck to install language pre-requisites.
 		# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 		installation.set_keyboard_language(locale_config.kb_layout)
 

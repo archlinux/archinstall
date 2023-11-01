@@ -1,4 +1,3 @@
-import os
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
@@ -10,7 +9,6 @@ from archinstall.lib import models
 from archinstall.lib import disk
 from archinstall.lib import locale
 from archinstall.lib.models import AudioConfiguration
-from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib import menu
 from archinstall.lib.global_menu import GlobalMenu
@@ -19,11 +17,6 @@ from archinstall.lib.configuration import ConfigurationOutput
 
 if TYPE_CHECKING:
 	_: Any
-
-
-if archinstall.arguments.get('help'):
-	print("See `man archinstall` for help.")
-	exit(0)
 
 
 class ExecutionMode(Enum):
@@ -54,7 +47,7 @@ class SetupMenu(GlobalMenu):
 		super().setup_selection_menu_options()
 
 		self._menu_options['mode'] = menu.Selector(
-			'Excution mode',
+			'Execution mode',
 			lambda x : select_mode(),
 			display_func=lambda x: x.value if x else '',
 			default=ExecutionMode.Full)
@@ -230,9 +223,6 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 					archinstall.arguments.get('profile_config', None)
 				)
 
-			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-				installation.add_additional_packages(archinstall.arguments.get('packages', []))
-
 			if users := archinstall.arguments.get('!users', None):
 				installation.create_users(users)
 
@@ -242,6 +232,9 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			else:
 				info("No audio server will be installed")
 
+			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
+				installation.add_additional_packages(archinstall.arguments.get('packages', []))
+
 			if profile_config := archinstall.arguments.get('profile_config', None):
 				profile_handler.install_profile_config(installation, profile_config)
 
@@ -249,7 +242,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 				installation.set_timezone(timezone)
 
 			if archinstall.arguments.get('ntp', False):
-				installation.activate_time_syncronization()
+				installation.activate_time_synchronization()
 
 			if archinstall.accessibility_tools_in_use():
 				installation.enable_espeakup()
@@ -257,7 +250,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
 
-			# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
+			# This step must be after profile installs to allow profiles_bck to install language pre-requisites.
 			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 			installation.set_keyboard_language(locale_config.kb_layout)
 
@@ -289,11 +282,6 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 
 		debug(f"Disk states after installing: {disk.disk_layouts()}")
 
-
-if not check_mirror_reachable():
-	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	info(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'")
-	exit(1)
 
 param_mode = archinstall.arguments.get('mode', ExecutionMode.Full.value).lower()
 

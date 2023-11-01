@@ -6,7 +6,9 @@ packages_file="/tmp/archlive/packages.x86_64"
 
 # Packages to add to the archiso profile packages
 packages=(
+	gcc
 	git
+	pkgconfig
 	python
 	python-pip
 	python-build
@@ -24,14 +26,14 @@ cat <<- _EOF_ | tee /tmp/archlive/airootfs/root/.zprofile
 	rm -rf dist
 
 	python -m build --wheel --no-isolation
-	pip install dist/archinstall*.whl
+	pip install dist/archinstall*.whl --break-system-packages
 
 	echo "This is an unofficial ISO for development and testing of archinstall. No support will be provided."
 	echo "This ISO was built from Git SHA $GITHUB_SHA"
 	echo "Type archinstall to launch the installer."
 _EOF_
 
-pacman --noconfirm -S git archiso
+pacman --noconfirm -S archiso
 
 cp -r /usr/share/archiso/configs/releng/* /tmp/archlive
 

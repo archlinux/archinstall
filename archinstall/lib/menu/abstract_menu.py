@@ -1,37 +1,20 @@
 from __future__ import annotations
-import unicodedata
 
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
 from ..output import error
+from ..output import unicode_ljust
 from ..translationhandler import TranslationHandler, Language
 
 if TYPE_CHECKING:
 	_: Any
 
-def count_cjk_chars(string):
-	"Count the total number of CJK characters contained in a string"
-	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
-
-def cjkljust(string, width, fillbyte=' '):
-	"""Support left alignment of Chinese, Japanese, Korean text
-	>>> cjkljust('Hello', 15, '*')
-	'Hello**********'
-	>>> cjkljust('你好', 15, '*')
-	'你好***********'
-	>>> cjkljust('안녕하세요', 15, '*')
-	'안녕하세요*****'
-	>>> cjkljust('こんにちは', 15, '*')
-	'こんにちは*****'
-	"""
-	return string.ljust(width - count_cjk_chars(string), fillbyte)
-
 class Selector:
 	def __init__(
 		self,
 		description: str,
-		func: Optional[Callable[[str], Any]] = None,
+		func: Optional[Callable[[Any], Any]] = None,
 		display_func: Optional[Callable] = None,
 		default: Optional[Any] = None,
 		enabled: bool = False,
@@ -145,7 +128,7 @@ class Selector:
 
 		if current:
 			padding += 5
-			description = cjkljust(str(self._description), padding, ' ')
+			description = unicode_ljust(str(self._description), padding, ' ')
 			current = current
 		else:
 			description = self._description
@@ -269,7 +252,7 @@ class AbstractMenu:
 		""" will be called before each action in the menu """
 		return
 
-	def post_callback(self, selection_name: str, value: Any):
+	def post_callback(self, selection_name: Optional[str] = None, value: Any = None):
 		""" will be called after each action in the menu """
 		return True
 
@@ -316,6 +299,7 @@ class AbstractMenu:
 
 	def run(self, allow_reset: bool = False):
 		self._sync_all()
+		self.post_callback()
 		cursor_pos = None
 
 		while True:

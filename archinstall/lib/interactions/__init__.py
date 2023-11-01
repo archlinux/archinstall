@@ -11,9 +11,9 @@ from .disk_conf import (
 from .general_conf import (
 	ask_ntp, ask_hostname, ask_for_a_timezone, ask_for_audio_selection,
 	select_archinstall_language, ask_additional_packages_to_install,
-	add_number_of_parrallel_downloads, select_additional_repositories
+	add_number_of_parallel_downloads, select_additional_repositories
 )
 
 from .system_conf import (
-	select_kernel, ask_for_bootloader, select_driver, ask_for_swap
+	select_kernel, ask_for_bootloader, ask_for_uki, select_driver, ask_for_swap
 )

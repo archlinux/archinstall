@@ -1155,3 +1155,83 @@ msgstr ""
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Kasutage NetworkManagerit (vajalik interneti graafiliseks konfigureerimiseks GNOME-s ja KDE-s)."
+
+#, fuzzy
+msgid "Total: {} / {}"
+msgstr "Kogupikkus: {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "Sisestage algussektor (vaikimisi: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "Sisestage algussektor (vaikimisi: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Manuaalne konfiguratsioon"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "See valik võimaldab installimise ajal valida paralleelsete allalaadimiste arvu"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Sisestage lubatavate paralleelsete allalaadimiste arv.\n"
+" (Sisestage väärtus vahemikus 1 kuni {max_downloads})\n"
+"note:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Minimaalne väärtus   : 1 ( Võimaldab 1 paralleelset allalaadimist, võimaldab 2 allalaadimist korraga )"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Keela/Vaikimisi : 0 ( keelab paralleelse allalaadimise, võimaldab ainult 1 allalaadimist korraga )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Vale sisestus! Proovige uuesti kehtiva sisendiga [1 {max_downloads} või 0 keelamiseks]."
+
+#, fuzzy
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway vajab juurdepääsu teie seatile (riistvaraseadmete kogum, st klaviatuur, hiir jne."
+
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valige valik, et anda Sway'le juurdepääs teie riistvarale"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""

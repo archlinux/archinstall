@@ -28,14 +28,15 @@ def ask_ntp(preset: bool = True) -> bool:
 
 
 def ask_hostname(preset: str = '') -> str:
-	while True:
-		hostname = TextInput(
-			str(_('Desired hostname for the installation: ')),
-			preset
-		).run().strip()
+	hostname = TextInput(
+		str(_('Desired hostname for the installation: ')),
+		preset
+	).run().strip()
 
-		if hostname:
-			return hostname
+	if not hostname:
+		return preset
+
+	return hostname
 
 
 def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
@@ -44,7 +45,7 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 
 	choice = Menu(
 		_('Select a timezone'),
-		list(timezones),
+		timezones,
 		preset_values=preset,
 		default_option=default
 	).run()
@@ -95,7 +96,7 @@ def select_language(preset: Optional[str] = None) -> Optional[str]:
 	"""
 	kb_lang = list_keyboard_languages()
 	# sort alphabetically and then by length
-	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
+	sorted_kb_lang = sorted(kb_lang, key=lambda x: (len(x), x))
 
 	choice = Menu(
 		_('Select keyboard layout'),
@@ -164,7 +165,7 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	return packages
 
 
-def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
+def add_number_of_parallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
 	max_recommended = 5
 	print(_(f"This option enables the number of parallel downloads that can occur during package downloads"))
 	print(_("Enter the number of parallel downloads to be enabled.\n\nNote:\n"))

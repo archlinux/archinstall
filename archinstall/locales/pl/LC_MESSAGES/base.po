@@ -1180,6 +1180,80 @@ msgstr ""
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Użyj programu NetworkManager (niezbędne do graficznej konfiguracji Internetu w środowiskach GNOME i KDE)"
 
+msgid "Total: {} / {}"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy
+msgid "Enter start (default: sector {}): "
+msgstr "Wprowadź sektor początkowy (procent lub numer bloku, domyślnie: {}): "
+
+#, fuzzy
+msgid "Enter end (default: {}): "
+msgstr "Wprowadź sektor początkowy (procent lub numer bloku, domyślnie: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Ręczna konfiguracja"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Ta opcja pozwala określić maksymalną liczbę pobieranych plików podczas instalacji"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Wprowadź maksymalną liczbę plików pobieranych jednocześnie.\n"
+" (Liczba z zakresu od 1 do {})\n"
+"Zauważ:"
+
+#, fuzzy
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Maksymalna wartość   : {} ( Zwiększa liczbę zadań o {}, co pozwala na pobieranie {} plików jednocześnie )"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Wyłącz/Domyślne     : 0 ( Wyłącza pobieranie wielu plików jednocześnie, więc tylko 1 plik może być pobierany w tym samym czasie )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Nieprawidłowa wartość! Spróbuj wprowadzić wartość od 1 do {}, lub 0 aby wyłączyć."
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
 

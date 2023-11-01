@@ -10,6 +10,32 @@ from .networking import list_interfaces, enrich_iface_types
 from .output import debug
 
 
+class CpuVendor(Enum):
+	AuthenticAMD = 'amd'
+	GenuineIntel = 'intel'
+	_Unknown = 'unknown'
+
+	@classmethod
+	def get_vendor(cls, name: str) -> 'CpuVendor':
+		if vendor := getattr(cls, name, None):
+			return vendor
+		else:
+			debug(f"Unknown CPU vendor '{name}' detected.")
+			return cls._Unknown
+
+	def _has_microcode(self) -> bool:
+		match self:
+			case CpuVendor.AuthenticAMD | CpuVendor.GenuineIntel:
+				return True
+			case _:
+				return False
+
+	def get_ucode(self) -> Optional[Path]:
+		if self._has_microcode():
+			return Path(self.value + '-ucode.img')
+		return None
+
+
 class GfxPackage(Enum):
 	IntelMediaDriver = 'intel-media-driver'
 	LibvaIntelDriver = 'libva-intel-driver'
@@ -180,8 +206,10 @@ class SysInfo:
 		return any('intel' in x.lower() for x in SysInfo._graphics_devices())
 
 	@staticmethod
-	def cpu_vendor() -> Optional[str]:
-		return _sys_info.cpu_info.get('vendor_id', None)
+	def cpu_vendor() -> Optional[CpuVendor]:
+		if vendor := _sys_info.cpu_info.get('vendor_id'):
+			return CpuVendor.get_vendor(vendor)
+		return None
 
 	@staticmethod
 	def cpu_model() -> Optional[str]:
