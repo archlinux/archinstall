@@ -219,7 +219,7 @@ The contents of :code:`https://domain.lan/config.json`:
 *(Scroll to the right in the table to see required options.)*
 
 .. csv-table:: JSON options
-   :file: config_options.csv
+   :file: ../cli_parameters/config/config_options.csv
    :widths: 15, 40, 40, 5
    :escape: !
    :header-rows: 1
