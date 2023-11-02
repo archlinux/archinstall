@@ -83,7 +83,9 @@ class DeviceHandler(object):
 					_PartitionInfo.from_partition(
 						partition,
 						fs_type,
+						lsblk_info.partn,
 						lsblk_info.partuuid,
+						lsblk_info.uuid,
 						lsblk_info.mountpoints,
 						subvol_infos
 					)
@@ -152,20 +154,19 @@ class DeviceHandler(object):
 			mountpoint = Path(common_prefix)
 
 		try:
-			result = SysCommand(f'btrfs subvolume list {mountpoint}')
+			result = SysCommand(f'btrfs subvolume list {mountpoint}').decode()
 		except SysCallError as err:
 			debug(f'Failed to read btrfs subvolume information: {err}')
 			return subvol_infos
 
 		try:
-			if decoded := result.decode('utf-8'):
-				# ID 256 gen 16 top level 5 path @
-				for line in decoded.splitlines():
-					# expected output format:
-					# ID 257 gen 8 top level 5 path @home
-					name = Path(line.split(' ')[-1])
-					sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
-					subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
+			# ID 256 gen 16 top level 5 path @
+			for line in result.splitlines():
+				# expected output format:
+				# ID 257 gen 8 top level 5 path @home
+				name = Path(line.split(' ')[-1])
+				sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
+				subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
 		except json.decoder.JSONDecodeError as err:
 			error(f"Could not decode lsblk JSON: {result}")
 			raise err
@@ -598,7 +599,12 @@ class DeviceHandler(object):
 						path = Path(part_info.disk.device.path)
 						part_mods.setdefault(path, [])
 						part_mod = PartitionModification.from_existing_partition(part_info)
-						part_mod.mountpoint = mountpoint.root / mountpoint.relative_to(base_mountpoint)
+						if part_mod.mountpoint:
+							part_mod.mountpoint = mountpoint.root / mountpoint.relative_to(base_mountpoint)
+						else:
+							for subvol in part_mod.btrfs_subvols:
+								if sm := subvol.mountpoint:
+									subvol.mountpoint = sm.root / sm.relative_to(base_mountpoint)
 						part_mods[path].append(part_mod)
 						break
 

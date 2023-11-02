@@ -1,4 +1,5 @@
 import readline
+import sys
 
 
 class TextInput:
@@ -12,6 +13,14 @@ class TextInput:
 
 	def run(self) -> str:
 		readline.set_pre_input_hook(self._hook)
-		result = input(self._prompt)
+		try:
+			result = input(self._prompt)
+		except (KeyboardInterrupt, EOFError):
+			# To make sure any output that may follow
+			# will be on the line after the prompt
+			sys.stdout.write('\n')
+			sys.stdout.flush()
+
+			result = ''
 		readline.set_pre_input_hook()
 		return result

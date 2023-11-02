@@ -15,5 +15,5 @@ from .general_conf import (
 )
 
 from .system_conf import (
-	select_kernel, ask_for_bootloader, select_driver, ask_for_swap
+	select_kernel, ask_for_bootloader, ask_for_uki, select_driver, ask_for_swap
 )

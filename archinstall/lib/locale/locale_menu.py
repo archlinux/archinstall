@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, Any, TYPE_CHECKING, Optional
 
-from .locale import set_kb_layout, list_keyboard_languages, list_locales
+from .utils import list_keyboard_languages, list_locales, set_kb_layout
 from ..menu import Selector, AbstractSubMenu, MenuSelectionType, Menu
 
 if TYPE_CHECKING:
@@ -80,6 +80,9 @@ class LocaleMenu(AbstractSubMenu):
 	def run(self, allow_reset: bool = True) -> LocaleConfiguration:
 		super().run(allow_reset=allow_reset)
 
+		if not self._data_store:
+			return LocaleConfiguration.default()
+
 		return LocaleConfiguration(
 			self._data_store['keyboard-layout'],
 			self._data_store['sys-language'],
@@ -139,7 +142,7 @@ def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
 	"""
 	kb_lang = list_keyboard_languages()
 	# sort alphabetically and then by length
-	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
+	sorted_kb_lang = sorted(kb_lang, key=lambda x: (len(x), x))
 
 	choice = Menu(
 		_('Select keyboard layout'),

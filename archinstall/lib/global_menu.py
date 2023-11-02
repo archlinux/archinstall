@@ -4,6 +4,7 @@ from typing import Any, List, Optional, Dict, TYPE_CHECKING
 
 from . import disk
 from .general import secret
+from .hardware import SysInfo
 from .locale.locale_menu import LocaleConfiguration, LocaleMenu
 from .menu import Selector, AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
@@ -20,6 +21,7 @@ from .interactions import ask_additional_packages_to_install
 from .interactions import ask_for_additional_users
 from .interactions import ask_for_audio_selection
 from .interactions import ask_for_bootloader
+from .interactions import ask_for_uki
 from .interactions import ask_for_swap
 from .interactions import ask_hostname
 from .interactions import ask_to_configure_network
@@ -85,6 +87,11 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: ask_for_bootloader(preset),
 				display_func=lambda x: x.value,
 				default=Bootloader.get_default())
+		self._menu_options['uki'] = \
+			Selector(
+				_('Unified kernel images'),
+				lambda preset: ask_for_uki(preset),
+				default=False)
 		self._menu_options['hostname'] = \
 			Selector(
 				_('Hostname'),
@@ -176,8 +183,11 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
 
 	def _missing_configs(self) -> List[str]:
-		def check(s):
-			return self._menu_options.get(s).has_selection()
+		def check(s) -> bool:
+			obj = self._menu_options.get(s)
+			if obj and obj.has_selection():
+				return True
+			return False
 
 		def has_superuser() -> bool:
 			sel = self._menu_options['!users']
@@ -208,11 +218,14 @@ class GlobalMenu(AbstractMenu):
 			return False
 		return self._validate_bootloader() is None
 
-	def _update_install_text(self, name: str, value: str):
+	def _update_install_text(self, name: Optional[str] = None, value: Any = None):
 		text = self._install_text()
 		self._menu_options['install'].update_description(text)
 
-	def post_callback(self, name: str, value: str):
+	def post_callback(self, name: Optional[str] = None, value: Any = None):
+		if not SysInfo.has_uefi():
+			self._menu_options['uki'].set_enabled(False)
+
 		self._update_install_text(name, value)
 
 	def _install_text(self):
@@ -228,7 +241,7 @@ class GlobalMenu(AbstractMenu):
 		return config.type.display_msg()
 
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
-		mods: Optional[List[disk.DeviceModification]] = self._menu_options['disk_config'].current_selection
+		mods: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
 
 		if not mods:
 			# this should not happen as the encryption menu has the disk_config as dependency
@@ -263,7 +276,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_additional_pkgs(self):
 		selector = self._menu_options['packages']
-		if selector.has_selection():
+		if selector.current_selection:
 			packages: List[str] = selector.current_selection
 			return format_cols(packages, None)
 		return None

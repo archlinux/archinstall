@@ -308,7 +308,9 @@ class _PartitionInfo:
 	start: Size
 	length: Size
 	flags: List[PartitionFlag]
-	partuuid: str
+	partn: Optional[int]
+	partuuid: Optional[str]
+	uuid: Optional[str]
 	disk: Disk
 	mountpoints: List[Path]
 	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
@@ -342,7 +344,9 @@ class _PartitionInfo:
 		cls,
 		partition: Partition,
 		fs_type: Optional[FilesystemType],
-		partuuid: str,
+		partn: Optional[int],
+		partuuid: Optional[str],
+		uuid: Optional[str],
 		mountpoints: List[Path],
 		btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = []
 	) -> _PartitionInfo:
@@ -370,7 +374,9 @@ class _PartitionInfo:
 			start=start,
 			length=length,
 			flags=flags,
+			partn=partn,
 			partuuid=partuuid,
+			uuid=uuid,
 			disk=partition.disk,
 			mountpoints=mountpoints,
 			btrfs_subvol_infos=btrfs_subvol_infos
@@ -713,6 +719,9 @@ class PartitionModification:
 			length=partition_info.length,
 			fs_type=partition_info.fs_type,
 			dev_path=partition_info.path,
+			partn=partition_info.partn,
+			partuuid=partition_info.partuuid,
+			uuid=partition_info.uuid,
 			flags=partition_info.flags,
 			mountpoint=mountpoint,
 			btrfs_subvols=subvol_mods
@@ -1097,31 +1106,27 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 	if not dev_path:
 		dev_path = ''
 
-	if retry == 0:
-		retry = 1
-
-	for retry_attempt in range(retry):
+	for retry_attempt in range(retry + 1):
 		try:
-			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}')
+			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}').decode()
 			break
 		except SysCallError as err:
 			# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
 			if err.worker:
-				err_str = err.worker.decode('UTF-8')
+				err_str = err.worker.decode()
 				debug(f'Error calling lsblk: {err_str}')
 			else:
 				raise err
 
-			if retry_attempt == retry - 1:
+			if retry_attempt == retry:
 				raise err
 
 			time.sleep(1)
 
 	try:
-		if decoded := result.decode('utf-8'):
-			block_devices = json.loads(decoded)
-			blockdevices = block_devices['blockdevices']
-			return [LsblkInfo.from_json(device) for device in blockdevices]
+		block_devices = json.loads(result)
+		blockdevices = block_devices['blockdevices']
+		return [LsblkInfo.from_json(device) for device in blockdevices]
 	except json.decoder.JSONDecodeError as err:
 		error(f"Could not decode lsblk JSON: {result}")
 		raise err

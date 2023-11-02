@@ -1206,3 +1206,7 @@ msgstr ""
 "\n"
 "\n"
 "Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Toate valorile introduse pot fi notate cu unități precum: B, KB, KiB, MB, MiB ..."

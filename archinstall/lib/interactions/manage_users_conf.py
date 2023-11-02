@@ -75,7 +75,11 @@ class UserList(ListManager):
 		prompt = '\n\n' + str(_('Enter username (leave blank to skip): '))
 
 		while True:
-			username = input(prompt).strip(' ')
+			try:
+				username = input(prompt).strip(' ')
+			except (KeyboardInterrupt, EOFError):
+				return None
+
 			if not username:
 				return None
 			if not self._check_for_correct_username(username):

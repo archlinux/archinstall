@@ -177,5 +177,5 @@ def save_config(config: Dict):
 			case "all":
 				config_output.save(dest_path)
 
-	except KeyboardInterrupt:
+	except (KeyboardInterrupt, EOFError):
 		return

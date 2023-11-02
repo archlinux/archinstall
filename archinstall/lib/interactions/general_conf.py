@@ -28,14 +28,15 @@ def ask_ntp(preset: bool = True) -> bool:
 
 
 def ask_hostname(preset: str = '') -> str:
-	while True:
-		hostname = TextInput(
-			str(_('Desired hostname for the installation: ')),
-			preset
-		).run().strip()
+	hostname = TextInput(
+		str(_('Desired hostname for the installation: ')),
+		preset
+	).run().strip()
 
-		if hostname:
-			return hostname
+	if not hostname:
+		return preset
+
+	return hostname
 
 
 def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
@@ -44,7 +45,7 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 
 	choice = Menu(
 		_('Select a timezone'),
-		list(timezones),
+		timezones,
 		preset_values=preset,
 		default_option=default
 	).run()
@@ -95,7 +96,7 @@ def select_language(preset: Optional[str] = None) -> Optional[str]:
 	"""
 	kb_lang = list_keyboard_languages()
 	# sort alphabetically and then by length
-	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
+	sorted_kb_lang = sorted(kb_lang, key=lambda x: (len(x), x))
 
 	choice = Menu(
 		_('Select keyboard layout'),
