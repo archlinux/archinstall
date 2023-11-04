@@ -75,7 +75,6 @@ class DeviceHandler(object):
 				lsblk_info = get_lsblk_info(partition.path)
 				fs_type = self._determine_fs_type(partition, lsblk_info)
 				subvol_infos = []
-				path_override = None
 
 				if fs_type == FilesystemType.Btrfs:
 					subvol_infos = self.get_btrfs_info(partition.path)
@@ -83,9 +82,8 @@ class DeviceHandler(object):
 					child_lsblk_info = lsblk_info.children[0]
 					if FilesystemType(child_lsblk_info.fstype) == FilesystemType.Btrfs:
 						subvol_infos = self.get_btrfs_info(child_lsblk_info.path)
-						lsblk_info = child_lsblk_info
-						path_override = child_lsblk_info.path
-				info = _PartitionInfo.from_partition(
+						fs_type = FilesystemType.Btrfs # Hack to ensure btrfs-progs gets installed
+				partition_infos.append(_PartitionInfo.from_partition(
 					partition,
 					fs_type,
 					lsblk_info.partn,
@@ -93,10 +91,7 @@ class DeviceHandler(object):
 					lsblk_info.uuid,
 					lsblk_info.mountpoints,
 					subvol_infos
-				)
-				if path_override:
-					info.path = path_override
-				partition_infos.append(info)
+				))
 
 			block_device = BDevice(disk, device_info, partition_infos)
 			block_devices[block_device.device_info.path] = block_device
