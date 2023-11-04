@@ -1156,10 +1156,10 @@ msgid "Total: {} / {}"
 msgstr "Tamanho total: {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Todos os valores inseridos podem ser seguidos por uma unidade: B, KB, KiB, MB, MiB..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Se nenhuma unidade for fornecida, o valor será interpretado como setores"
 
 #, fuzzy
 msgid "Enter start (default: sector {}): "
@@ -1173,20 +1173,20 @@ msgid "Unable to determine fido2 devices. Is libfido2 installed?"
 msgstr ""
 
 msgid "Path"
-msgstr ""
+msgstr "Caminho"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "Fabricante"
 
 msgid "Product"
-msgstr ""
+msgstr "Produto"
 
 #, fuzzy, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "Configuração manual"
 
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #, fuzzy
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
@@ -1229,7 +1229,7 @@ msgstr ""
 "Selecione uma opção para permitir o acesso do Sway ao seu hardware"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Todos os valores inseridos podem ser seguidos por uma unidade: B, KB, KiB, MB, MiB..."
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "
