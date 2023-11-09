@@ -90,14 +90,14 @@ class Luks2:
 		# Retry formatting the volume because archinstall can some times be too quick
 		# which generates a "Device /dev/sdX does not exist or access denied." between
 		# setting up partitions and us trying to encrypt it.
-		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
+		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS'] + 1):
 			try:
 				SysCommand(cryptsetup_args)
 				break
 			except SysCallError as err:
 				time.sleep(storage['DISK_TIMEOUTS'])
 
-				if retry_attempt != storage['DISK_RETRY_ATTEMPTS'] - 1:
+				if retry_attempt != storage['DISK_RETRY_ATTEMPTS']:
 					continue
 
 				if err.exit_code == 1:
