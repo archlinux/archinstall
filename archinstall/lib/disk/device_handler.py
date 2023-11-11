@@ -378,15 +378,12 @@ class DeviceHandler(object):
 		attempts = 3
 		lsblk_info: Optional[LsblkInfo] = None
 
-		self.partprobe(path)
 		for attempt_nr in range(attempts):
 			time.sleep(attempt_nr + 1)
 			lsblk_info = get_lsblk_info(path)
 
 			if lsblk_info.partn and lsblk_info.partuuid and lsblk_info.uuid:
 				break
-
-			self.partprobe(path)
 
 		if not lsblk_info:
 			debug(f'Unable to get partition information: {path}')
@@ -525,8 +522,6 @@ class DeviceHandler(object):
 			# any existing partitions anymore because they're all gone already
 			requires_delete = modification.wipe is False
 			self._perform_partitioning(part_mod, modification.device, disk, requires_delete=requires_delete)
-
-		self.partprobe(modification.device.device_info.path)
 
 	def mount(
 		self,
