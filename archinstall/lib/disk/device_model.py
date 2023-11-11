@@ -926,6 +926,17 @@ class LvmVolume:
 			return self.dev_path
 		raise ValueError('No device path for volume defined')
 
+	@property
+	def relative_mountpoint(self) -> Path:
+		"""
+		Will return the relative path based on the anchor
+		e.g. Path('/mnt/test') -> Path('mnt/test')
+		"""
+		if self.mountpoint is not None:
+			return self.mountpoint.relative_to(self.mountpoint.anchor)
+
+		raise ValueError('Mountpoint is not specified')
+
 	@staticmethod
 	def parse_arg(arg: Dict[str, Any]) -> LvmVolume:
 		return LvmVolume(

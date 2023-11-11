@@ -28,7 +28,6 @@ from .storage import storage
 if TYPE_CHECKING:
 	_: Any
 
-
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
@@ -104,7 +103,8 @@ class Installer:
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
-			print(_("[!] A log file has been created here: {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
+			print(_("[!] A log file has been created here: {}").format(
+				os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
 			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
 			raise exc_val
 
@@ -180,6 +180,12 @@ class Installer:
 	def mount_ordered_layout(self):
 		info('Mounting partitions in order')
 
+		if self._disk_config.lvm_config:
+			self._mount_lvm_layout()
+		else:
+			self._mount_partition_layout()
+
+	def _mount_partition_layout(self):
 		for mod in self._disk_config.device_modifications:
 			# partitions have to mounted in the right order on btrfs the mountpoint will
 			# be empty as the actual subvolumes are getting mounted instead so we'll use
@@ -201,7 +207,20 @@ class Installer:
 					# partition is not encrypted
 					self._mount_partition(part_mod)
 
-	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[disk.PartitionModification, Luks2]:
+	def _mount_lvm_layout(self):
+		lvm_config = self._disk_config.lvm_config
+
+		if not lvm_config:
+			raise ValueError('lvm configuration must be set')
+
+		for vg in lvm_config.vol_groups:
+			sorted_vol = sorted(vg.volumes, key=lambda x: x.mountpoint or Path('/'))
+
+			for vol in sorted_vol:
+				self._mount_lvm_vol(vol)
+
+	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[
+		disk.PartitionModification, Luks2]:
 		return {
 			part_mod: disk.device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
@@ -220,6 +239,14 @@ class Installer:
 
 		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.dev_path:
 			self._mount_btrfs_subvol(part_mod.dev_path, part_mod.btrfs_subvols)
+
+	def _mount_lvm_vol(self, volume: disk.LvmVolume):
+		if volume.dev_path:
+			if volume.fs_type == disk.FilesystemType.Btrfs:
+				self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols)
+			elif volume.mountpoint:
+					target = self.target / volume.relative_mountpoint
+					disk.device_handler.mount(volume.dev_path, target, options=volume.mount_options)
 
 	def _mount_luks_partition(self, part_mod: disk.PartitionModification, luks_handler: Luks2):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
@@ -294,7 +321,7 @@ class Installer:
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
-	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
+	def post_install_check(self, *args: str, **kwargs: str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
 	def set_mirrors(self, mirror_config: MirrorConfiguration):
@@ -309,14 +336,15 @@ class Installer:
 		if mirror_config.custom_mirrors:
 			add_custom_mirrors(mirror_config.custom_mirrors)
 
-	def genfstab(self, flags :str = '-pU'):
+	def genfstab(self, flags: str = '-pU'):
 		fstab_path = self.target / "etc" / "fstab"
 		info(f"Updating {fstab_path}")
 
 		try:
 			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
 		except SysCallError as err:
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
+			raise RequirementError(
+				f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
 		with open(fstab_path, 'a') as fp:
 			fp.write(gen_fstab)
@@ -356,14 +384,15 @@ class Installer:
 						# We then locate the correct subvolume and check if it's compressed,
 						# and skip entries where compression is already defined
 						# We then sneak in the compress=zstd option if it doesn't already exist:
-						if sub_vol.compress and str(sub_vol.mountpoint) == Path(mountpoint[0].strip()) and ',compress=zstd,' not in line:
+						if sub_vol.compress and str(sub_vol.mountpoint) == Path(
+							mountpoint[0].strip()) and ',compress=zstd,' not in line:
 							fstab[index] = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
 							break
 
 				with fstab_path.open('w') as fp:
 					fp.writelines(fstab)
 
-	def set_hostname(self, hostname: str, *args :str, **kwargs :str) -> None:
+	def set_hostname(self, hostname: str, *args: str, **kwargs: str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
@@ -414,7 +443,7 @@ class Installer:
 		(self.target / 'etc/locale.conf').write_text(f'LANG={lang_value}\n')
 		return True
 
-	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
+	def set_timezone(self, zone: str, *args: str, **kwargs: str) -> bool:
 		if not zone:
 			return True
 		if not len(zone):
@@ -464,10 +493,10 @@ class Installer:
 				if hasattr(plugin, 'on_service'):
 					plugin.on_service(service)
 
-	def run_command(self, cmd :str, *args :str, **kwargs :str) -> SysCommand:
+	def run_command(self, cmd: str, *args: str, **kwargs: str) -> SysCommand:
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
-	def arch_chroot(self, cmd :str, run_as :Optional[str] = None) -> SysCommand:
+	def arch_chroot(self, cmd: str, run_as: Optional[str] = None) -> SysCommand:
 		if run_as:
 			cmd = f"su - {run_as} -c {shlex.quote(cmd)}"
 
@@ -492,7 +521,7 @@ class Installer:
 		with open(f"{self.target}/etc/systemd/network/10-{nic.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
 
-	def copy_iso_network_config(self, enable_services :bool = False) -> bool:
+	def copy_iso_network_config(self, enable_services: bool = False) -> bool:
 		# Copy (if any) iwd password and config files
 		if os.path.isdir('/var/lib/iwd/'):
 			if psk_files := glob.glob('/var/lib/iwd/*.psk'):
@@ -507,7 +536,7 @@ class Installer:
 						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
 						# base is not installed yet.
-						def post_install_enable_iwd_service(*args :str, **kwargs :str):
+						def post_install_enable_iwd_service(*args: str, **kwargs: str):
 							self.enable_service('iwd')
 
 						self.post_base_install.append(post_install_enable_iwd_service)
@@ -532,7 +561,7 @@ class Installer:
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self.helper_flags.get('base', False) is False:
 
-					def post_install_enable_networkd_resolved(*args :str, **kwargs :str):
+					def post_install_enable_networkd_resolved(*args: str, **kwargs: str):
 						self.enable_service(['systemd-networkd', 'systemd-resolved'])
 
 					self.post_base_install.append(post_install_enable_networkd_resolved)
@@ -617,6 +646,10 @@ class Installer:
 							if 'encrypt' not in self._hooks:
 								self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
 
+		if self._disk_config.lvm_config:
+			self.add_additional_packages('lvm2')
+			self._hooks.insert(self._hooks.index('filesystems')-1, 'lvm2')
+
 		if not SysInfo.has_uefi():
 			self.base_packages.append('grub')
 
@@ -684,7 +717,7 @@ class Installer:
 			if hasattr(plugin, 'on_install'):
 				plugin.on_install(self)
 
-	def setup_swap(self, kind :str = 'zram'):
+	def setup_swap(self, kind: str = 'zram'):
 		if kind == 'zram':
 			info(f"Setting up swap on zram")
 			self.pacman.strap('zram-generator')
@@ -920,7 +953,7 @@ class Installer:
 
 			info(f"GRUB EFI partition: {efi_partition.dev_path}")
 
-			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+			self.pacman.strap('efibootmgr')  # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			boot_dir_arg = []
 			if boot_partition != efi_partition:
@@ -988,10 +1021,10 @@ class Installer:
 			try:
 				# The `limine.sys` file, contains stage 3 code.
 				cmd = f'/usr/bin/arch-chroot' \
-					f' {self.target}' \
-					f' cp' \
-					f' /usr/share/limine/BOOTX64.EFI' \
-					f' /boot/EFI/BOOT/'
+					  f' {self.target}' \
+					  f' cp' \
+					  f' /usr/share/limine/BOOTX64.EFI' \
+					  f' /boot/EFI/BOOT/'
 
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
@@ -1016,19 +1049,19 @@ Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
 			try:
 				# The `limine.sys` file, contains stage 3 code.
 				cmd = f'/usr/bin/arch-chroot' \
-					f' {self.target}' \
-					f' cp' \
-					f' /usr/share/limine/limine-bios.sys' \
-					f' /boot/limine-bios.sys'
+					  f' {self.target}' \
+					  f' cp' \
+					  f' /usr/share/limine/limine-bios.sys' \
+					  f' /boot/limine-bios.sys'
 
 				SysCommand(cmd, peek_output=True)
 
 				# `limine bios-install` deploys the stage 1 and 2 to the disk.
 				cmd = f'/usr/bin/arch-chroot' \
-					f' {self.target}' \
-					f' limine' \
-					f' bios-install' \
-					f' {parent_dev_path}'
+					  f' {self.target}' \
+					  f' limine' \
+					  f' bios-install' \
+					  f' {parent_dev_path}'
 
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
@@ -1232,11 +1265,7 @@ TIMEOUT=5
 	def add_additional_packages(self, packages: Union[str, List[str]]) -> bool:
 		return self.pacman.strap(packages)
 
-	def _enable_users(self, service: str, users: List[User]):
-		for user in users:
-			self.arch_chroot(f'systemctl enable --user {service}', run_as=user.username)
-
-	def enable_sudo(self, entity: str, group :bool = False):
+	def enable_sudo(self, entity: str, group: bool = False):
 		info(f'Enabling sudo permissions for {entity}')
 
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
@@ -1252,7 +1281,7 @@ TIMEOUT=5
 
 		# We count how many files are there already so we know which number to prefix the file with
 		num_of_rules_already = len(os.listdir(sudoers_dir))
-		file_num_str = "{:02d}".format(num_of_rules_already) # We want 00_user1, 01_user2, etc
+		file_num_str = "{:02d}".format(num_of_rules_already)  # We want 00_user1, 01_user2, etc
 
 		# Guarantees that entity str does not contain invalid characters for a linux file name:
 		# \ / : * ? " < > |
@@ -1273,7 +1302,8 @@ TIMEOUT=5
 		for user in users:
 			self.user_create(user.username, user.password, user.groups, user.sudo)
 
-	def user_create(self, user :str, password :Optional[str] = None, groups :Optional[List[str]] = None, sudo :bool = False) -> None:
+	def user_create(self, user: str, password: Optional[str] = None, groups: Optional[List[str]] = None,
+					sudo: bool = False) -> None:
 		if groups is None:
 			groups = []
 
@@ -1307,7 +1337,7 @@ TIMEOUT=5
 		if sudo and self.enable_sudo(user):
 			self.helper_flags['user'] = True
 
-	def user_set_pw(self, user :str, password :str) -> bool:
+	def user_set_pw(self, user: str, password: str) -> bool:
 		info(f'Setting password for {user}')
 
 		if user == 'root':
@@ -1324,7 +1354,7 @@ TIMEOUT=5
 		except SysCallError:
 			return False
 
-	def user_set_shell(self, user :str, shell :str) -> bool:
+	def user_set_shell(self, user: str, shell: str) -> bool:
 		info(f'Setting shell for {user} to {shell}')
 
 		try:
@@ -1333,7 +1363,7 @@ TIMEOUT=5
 		except SysCallError:
 			return False
 
-	def chown(self, owner :str, path :str, options :List[str] = []) -> bool:
+	def chown(self, owner: str, path: str, options: List[str] = []) -> bool:
 		cleaned_path = path.replace('\'', '\\\'')
 		try:
 			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'")
