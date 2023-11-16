@@ -972,6 +972,7 @@ class Installer:
 	def _add_limine_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
+		efi_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification
 	):
 		self.pacman.strap('limine')
@@ -985,20 +986,32 @@ class Installer:
 			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{contents}' > {HOOK_DIR}/liminedeploy.hook\"")
 
 		if SysInfo.has_uefi():
+			if not efi_partition:
+				raise ValueError('Could not detect efi partition')
+
+			info(f"Limine EFI partition: {efi_partition.dev_path}")
+
 			try:
-				# The `limine.sys` file, contains stage 3 code.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' mkdir' \
+					f' -p' \
+					f' {efi_partition.mountpoint}/EFI/BOOT'
+
+				SysCommand(cmd, peek_output=True)
+
 				cmd = f'/usr/bin/arch-chroot' \
 					f' {self.target}' \
 					f' cp' \
 					f' /usr/share/limine/BOOTX64.EFI' \
-					f' /boot/EFI/BOOT/'
+					f' {efi_partition.mountpoint}/EFI/BOOT/'
 
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
 				raise DiskError(f"Failed to install Limine BOOTX64.EFI on {boot_partition.dev_path}: {err}")
 
 			# Create the EFI limine pacman hook.
-			create_pacman_hook("""
+			create_pacman_hook(f"""
 [Trigger]
 Operation = Install
 Operation = Upgrade
@@ -1008,13 +1021,15 @@ Target = limine
 [Action]
 Description = Deploying Limine after upgrade...
 When = PostTransaction
-Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
+Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/
 			""")
 		else:
 			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+			if unique_path := disk.device_handler.get_unique_path_for_device(parent_dev_path):
+				parent_dev_path = unique_path
 
 			try:
-				# The `limine.sys` file, contains stage 3 code.
+				# The `limine-bios.sys` file contains stage 3 code.
 				cmd = f'/usr/bin/arch-chroot' \
 					f' {self.target}' \
 					f' cp' \
@@ -1044,9 +1059,7 @@ Target = limine
 [Action]
 Description = Deploying Limine after upgrade...
 When = PostTransaction
-# XXX: Kernel name descriptors cannot be used since they are not persistent and
-#      can change after each boot.
-Exec = /bin/sh -c \\"/usr/bin/limine bios-install /dev/disk/by-uuid/{root_uuid} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
+Exec = /bin/sh -c \\"/usr/bin/limine bios-install {parent_dev_path} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
 			""")
 
 		# Limine does not ship with a default configuration file. We are going to
@@ -1227,7 +1240,7 @@ TIMEOUT=5
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root_partition, uki_enabled)
 			case Bootloader.Limine:
-				self._add_limine_bootloader(boot_partition, root_partition)
+				self._add_limine_bootloader(boot_partition, efi_partition, root_partition)
 
 	def add_additional_packages(self, packages: Union[str, List[str]]) -> bool:
 		return self.pacman.strap(packages)
