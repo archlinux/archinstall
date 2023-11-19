@@ -62,7 +62,7 @@ class FilesystemHandler:
 			for mod in device_mods:
 				if boot_part := mod.get_boot_partition():
 					info(f'Formatting boot partition: {boot_part.dev_path}')
-					device_handler.format_partitions(
+					self.format_partitions(
 						[boot_part],
 						mod.device_path
 					)
@@ -70,7 +70,7 @@ class FilesystemHandler:
 			self.setup_lvm(self._disk_config.lvm_config)
 		else:
 			for mod in device_mods:
-				device_handler.format_partitions(
+				self.format_partitions(
 					mod.partitions,
 					mod.device_path,
 					enc_conf=self._enc_config
@@ -162,9 +162,13 @@ class FilesystemHandler:
 
 				for volume in vol_gp.volumes:
 					device_handler.lvm_vol_create(vol_gp.name, volume, offset)
-					device_handler.format(volume.fs_type, volume.safe_dev_path)
 
 				self._lvm_vol_handle_e2scrub(vol_gp)
+
+				for volume in vol_gp.volumes:
+					# wait a bit otherwise the mkfs will fail as it can't
+					# find the mapper device yet
+					device_handler.format(volume.fs_type, volume.safe_dev_path)
 
 	def _lvm_vol_handle_e2scrub(self, vol_gp: LvmVolumeGroup):
 		# from arch wiki:

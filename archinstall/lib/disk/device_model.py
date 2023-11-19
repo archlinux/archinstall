@@ -918,6 +918,7 @@ class LvmVolume:
 	mount_options: List[str] = field(default_factory=list)
 	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
 
+	# mapper device path /dev/<vg>/<vol>
 	dev_path: Optional[Path] = None
 
 	@property
@@ -925,6 +926,12 @@ class LvmVolume:
 		if self.dev_path:
 			return self.dev_path
 		raise ValueError('No device path for volume defined')
+
+	@property
+	def safe_fs_type(self) -> FilesystemType:
+		if self.fs_type is None:
+			raise ValueError('File system type is not set')
+		return self.fs_type
 
 	@property
 	def relative_mountpoint(self) -> Path:
@@ -981,6 +988,16 @@ class LvmVolume:
 	def is_exists_or_modify(self) -> bool:
 		return self.status in [LvmVolumeStatus.Exist, LvmVolumeStatus.Modify]
 
+	def is_root(self) -> bool:
+		if self.mountpoint is not None:
+			return Path('/') == self.mountpoint
+		else:
+			for subvol in self.btrfs_subvols:
+				if subvol.is_root():
+					return True
+
+		return False
+
 
 @dataclass
 class LvmGroupInfo:
@@ -1022,6 +1039,20 @@ class LvmConfiguration:
 			vol_groups=[LvmVolumeGroup.parse_arg(vol_group, disk_config) for vol_group in arg['vol_groups']],
 		)
 
+	def get_all_pvs(self) -> List[PartitionModification]:
+		pvs = []
+		for vg in self.vol_groups:
+			pvs += vg.pvs
+
+		return pvs
+
+	def get_root_volume(self) -> Optional[LvmVolume]:
+		for vg in self.vol_groups:
+			filtered = next(filter(lambda x: x.is_root(), vg.volumes), None)
+			if filtered:
+				return filtered
+
+		return None
 
 @dataclass
 class DeviceModification:

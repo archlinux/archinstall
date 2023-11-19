@@ -286,12 +286,7 @@ class DeviceHandler(object):
 		cmd = 'pvcreate ' + ' '.join([str(pv.safe_dev_path) for pv in pvs])
 		debug(f'Creating LVM PVS: {cmd}')
 
-		# SysCommand(cmd, peek_output=True)
-
-		worker = SysCommandWorker(cmd)
-		worker.poll()
-		info(worker)
-		worker.write(b'y\n', line_ending=False)
+		SysCommand(cmd)
 
 	def lvm_group_create(self, vg: LvmVolumeGroup):
 		pvs_str = ' '.join([str(pv.safe_dev_path) for pv in vg.pvs])
@@ -302,11 +297,14 @@ class DeviceHandler(object):
 
 	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Size):
 		length = volume.length - offset
-		length = length.format_size(Unit.B, include_unit=False)
-		cmd = f'lvcreate -L {length}B {vg_name} -n {volume.name} --wipesignatures y --zero y --yes'
+		length_str = length.format_size(Unit.B, include_unit=False)
+		cmd = f'lvcreate -L {length_str}B {vg_name} -n {volume.name} --wipesignatures y --zero y'
 
 		debug(f'Creating volume: {cmd}')
-		SysCommand(cmd)
+
+		worker = SysCommandWorker(cmd)
+		worker.poll()
+		worker.write(b'y\n', line_ending=False)
 
 		volume.dev_path = f'/dev/{vg_name}/{volume.name}'
 

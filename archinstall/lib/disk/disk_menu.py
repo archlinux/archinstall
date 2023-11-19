@@ -130,8 +130,10 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 				pv_table = FormattedOutput.as_table(vol_gp.pvs)
 				output += '{}:\n{}'.format(str(_('Physical volumes')), pv_table)
 
+				output += f'\nVolume Group: {vol_gp.name}'
+
 				lvm_volumes = FormattedOutput.as_table(vol_gp.volumes)
-				output += '\n{}:\n{}'.format(str(_('Volumes')), lvm_volumes)
+				output += '\n\n{}:\n{}'.format(str(_('Volumes')), lvm_volumes)
 
 				return output
 
