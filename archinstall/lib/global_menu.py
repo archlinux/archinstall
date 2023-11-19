@@ -364,10 +364,10 @@ class GlobalMenu(AbstractMenu):
 			return "Boot partition not found"
 
 		if bootloader == Bootloader.Limine:
-			if boot_partition.fs_type == disk.FilesystemType.Btrfs:
-				return "Limine does not support booting from BTRFS filesystem"
+			if boot_partition.fs_type != disk.FilesystemType.Fat32:
+				return "Limine does not support booting from filesystems other than FAT32"
 			elif self._menu_options['uki'].current_selection:
-				return "Limine does not support booting UKI"
+				return "Limine does not support booting UKIs"
 
 		return None
 
