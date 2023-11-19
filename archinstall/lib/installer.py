@@ -972,20 +972,21 @@ class Installer:
 	def _add_limine_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
-		efi_partition: disk.PartitionModification,
+		efi_partition: Optional[disk.PartitionModification],
 		root_partition: disk.PartitionModification
 	):
 		self.pacman.strap('limine')
 
 		info(f"Limine boot partition: {boot_partition.dev_path}")
 
-		root_uuid = root_partition.uuid
 		limine_path = self.target / 'usr' / 'share' / 'limine'
 		hook_command = None
 
 		if SysInfo.has_uefi():
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
+			elif not efi_partition.mountpoint:
+				raise ValueError('EFI partition is not mounted')
 
 			info(f"Limine EFI partition: {efi_partition.dev_path}")
 
