@@ -162,7 +162,6 @@ class Luks2:
 
 		# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 		# For instance: /dev/sda
-		disk.device_handler.partprobe(self.luks_dev_path)
 		lsblk_info = disk.get_lsblk_info(self.luks_dev_path)
 
 		# For each child (sub-partition/sub-device)
