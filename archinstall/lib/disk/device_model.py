@@ -42,12 +42,20 @@ class DiskLayoutType(Enum):
 class DiskLayoutConfiguration:
 	config_type: DiskLayoutType
 	device_modifications: List[DeviceModification] = field(default_factory=list)
+	# used for pre-mounted config
+	mountpoint: Optional[Path] = None
 
 	def json(self) -> Dict[str, Any]:
-		return {
-			'config_type': self.config_type.value,
-			'device_modifications': [mod.json() for mod in self.device_modifications]
-		}
+		if self.config_type == DiskLayoutType.Pre_mount:
+			return {
+				'config_type': self.config_type.value,
+				'mountpoint': str(self.mountpoint)
+			}
+		else:
+			return {
+				'config_type': self.config_type.value,
+				'device_modifications': [mod.json() for mod in self.device_modifications]
+			}
 
 	@classmethod
 	def parse_arg(cls, disk_config: Dict[str, List[Dict[str, Any]]]) -> Optional[DiskLayoutConfiguration]:
@@ -63,6 +71,21 @@ class DiskLayoutConfiguration:
 			config_type=DiskLayoutType(config_type),
 			device_modifications=device_modifications
 		)
+
+		if config_type == DiskLayoutType.Pre_mount.value:
+			if not (mountpoint := disk_config.get('mountpoint')):
+				raise ValueError('Must set a mountpoint when layout type is pre-mount')
+
+			path = Path(str(mountpoint))
+
+			mods = device_handler.detect_pre_mounted_mods(path)
+			device_modifications.extend(mods)
+
+			storage['MOUNT_POINT'] = path
+
+			config.mountpoint = path
+
+			return config
 
 		for entry in disk_config.get('device_modifications', []):
 			device_path = Path(entry.get('device', None)) if entry.get('device', None) else None

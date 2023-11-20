@@ -145,7 +145,8 @@ def select_disk_config(
 
 				return disk.DiskLayoutConfiguration(
 					config_type=disk.DiskLayoutType.Pre_mount,
-					device_modifications=mods
+					device_modifications=mods,
+					mountpoint=path
 				)
 
 			preset_devices = [mod.device for mod in preset.device_modifications] if preset else []
