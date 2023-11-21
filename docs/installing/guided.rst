@@ -3,7 +3,7 @@
 Guided installation
 ===================
 
-Archinstall ships with a pre-programmed `Guided Installer <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py>`_ guiding you through the mandatory steps as well as some optional configurations that can be done.
+Archinstall ships with a pre-programmed `Guided Installer`_ guiding you through the mandatory steps as well as some optional configurations that can be done.
 
 .. note::
 
@@ -26,7 +26,7 @@ To start the installer, run the following in the latest Arch Linux ISO:
 
     archinstall
 
-Since the guided installer is the default script, this is the equvilant of running :code:`archinstall guided`
+Since the `Guided Installer`_ is the default script, this is the equvilant of running :code:`archinstall guided`
 
 
 The guided installation also supports installing with pre-configured answers to all the guided steps. This can be a quick and convenient way to re-run one or several installations.
@@ -216,7 +216,13 @@ The contents of :code:`https://domain.lan/config.json`:
 ``--config`` options
 ^^^^^^^^^^^^^^^^^^^^
 
-*(Scroll to the right in the table to see required options.)*
+.. warning::
+
+   All key and value entries must conform to the JSON standard. Below is human readable examples with links, effectively breaking the syntax. Adapt the descriptions below to suit your needs and the JSON format.
+
+.. note::
+
+   Scroll to the right in the table to see required options.
 
 .. csv-table:: JSON options
    :file: ../cli_parameters/config/config_options.csv
@@ -224,6 +230,7 @@ The contents of :code:`https://domain.lan/config.json`:
    :escape: !
    :header-rows: 1
 
+.. I'd like to keep this note, as this is the intended behavior of archinstall.
 .. note::
 
    If no entries are found in ``disk_config``, archinstall guided installation will use whatever is mounted currently under ``/mnt/archinstall`` without performing any disk operations.
@@ -240,20 +247,41 @@ Options for ``--creds``
         "!root-password" : "SecretSanta2022"
     }
 
-+----------------------+--------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-|         Key          |                 Values                                 |                                     Description                                      |                   Required                    |
-+======================+========================================================+======================================================================================+===============================================+
-| !encryption-password | any                                                    | Password to encrypt disk, not encrypted if password not provided                     | No                                            |
-+----------------------+--------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| !root-password       | any                                                    | The root account password                                                            | No                                            |
-+----------------------+--------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| !users               | { "username": "<USERNAME>"                             | List of regular user credentials, see configuration for reference                    | No                                            |
-|                      |   "!password": "<PASSWORD>",                           |                                                                                      |                                               |
-|                      |   "sudo": false|true}                                  |                                                                                      |                                               |
-+----------------------+--------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+.. list-table:: --creds options
+   :widths: 25 25 40 10
+   :header-rows: 1
+
+   * - Key
+     - Values
+     - Description
+     - Required
+   * - !encryption-password
+     - ``str``
+     - Password to encrypt disk, not encrypted if password not provided
+     - No
+   * - !root-password
+     - ``str``
+     - The root account password
+     - No
+   * - !users
+     - .. code-block:: json
+
+          {
+              "username": "<USERNAME>",
+              "!password": "<PASSWORD>",
+              "sudo": false   
+          }
+     - List of regular user credentials, see configuration for reference
+     - Maybe
+
 
 .. note::
-    ``!users`` is optional only if ``!root-password`` was set. ``!users`` will be enforced otherwise and the minimum amount of users with sudo privileges required will be set to 1.
 
+   ``!users`` is optional only if ``!root-password`` was set. ``!users`` will be enforced otherwise and the minimum amount of users with sudo privileges required will be set to 1.
+
+.. note::
+
+   The key's start with ``!`` because internal log functions will mask any keys starting with explamation from logs and unrestricted configurations.
 
 .. _scripts: https://github.com/archlinux/archinstall/tree/master/archinstall/scripts
+.. _Guided Installer: https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py

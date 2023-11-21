@@ -1,4 +1,4 @@
-.. _help.issues:
+.. _help.known_issues:
 
 Known Issues
 ============
@@ -6,6 +6,7 @@ Known Issues
 | Some issues are out of the `archinstall`_ projects scope, and the ones we know of are listed below.
 
 .. _waiting for time sync:
+
 Waiting for time sync `#2144`_
 ------------------------------
 
