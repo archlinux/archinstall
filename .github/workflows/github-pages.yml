@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
+      - name: Install pre-dependencies
+        run: |
+          apt update && apt install libparted-dev
       - name: Install dependencies
         run: |
           pip install sphinx sphinx_rtd_theme pyparted simple-term-menu
