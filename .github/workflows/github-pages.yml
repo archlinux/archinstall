@@ -14,15 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
-      - name: debug
-        run: |
-          whoami
       - name: Install pre-dependencies
         run: |
-          pacman -Sy --noconfirm git python-pyparted python-simple-term-menu python-setuptools python-sphinx python-sphinx_rtd_theme python-build python-installer python-wheel
+          pacman -Sy --noconfirm tree git python-pyparted python-simple-term-menu python-setuptools python-sphinx python-sphinx_rtd_theme python-build python-installer python-wheel
       - name: Sphinx build
         run: |
           sphinx-build docs _build
+      - name: Some debugging
+        run: |
+          tree /__w/archinstall/archinstall/
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
       #  if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -31,3 +31,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _build/
           force_orphan: true
+          enable_jekyll: false
