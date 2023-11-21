@@ -253,78 +253,7 @@ Options for ``--creds``
 +----------------------+--------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
 
 .. note::
-    [1] ``!users`` is optional only if ``!root-password`` was set. ``!users`` will be enforced otherwise and the minimum amount of users with sudo privileges required will be set to 1.
-
-Options for ``--disk_layouts``
-------------------------------
-
-.. note::
-    | The layout of ``--disk_layouts`` is a bit complicated.
-    | It's highly recommended that you generate it using ``--dry-run`` which will simulate an installation, without performing any damaging actions on your machine. *(no formatting is done)*
-
-.. code-block:: json
-
-    {
-        "/dev/loop0": {
-            "partitions": [
-                {
-                    "boot": true,
-                    "encrypted": false,
-                    "filesystem": {
-                        "format": "fat32"
-                    },
-                    "wipe": true,
-                    "mountpoint": "/boot",
-                    "size": "513MB",
-                    "start": "5MB",
-                    "type": "primary"
-                },
-                {
-                    "btrfs": {
-                        "subvolumes": {
-                            "@.snapshots": "/.snapshots",
-                            "@home": "/home",
-                            "@log": "/var/log",
-                            "@pkgs": "/var/cache/pacman/pkg"
-                        }
-                    },
-                    "encrypted": true,
-                    "filesystem": {
-                        "format": "btrfs"
-                    },
-                    "wipe": true,
-                    "mountpoint": "/",
-                    "size": "100%",
-                    "start": "518MB",
-                    "type": "primary"
-                }
-            ],
-            "wipe": true
-        }
-    }
-
-| The overall structure is that of ``{ "blockdevice-path" : ...}`` followed by options for that blockdevice.
-| Each partition has it's own settings, and the formatting is executed in order *(top to bottom in the above example)*.
-| Mountpoints is later mounted in order of path traversal, ``/`` before ``/home`` etc.
-
-+----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-|         Key          |                 Values                              |                                     Description                                      |                   Required                    |
-|                      |                                                     |                                                                                      |                                               |
-+======================+=====================================================+======================================================================================+===============================================+
-| filesystem           | { "format": "ext4 / btrfs / fat32 etc." }           | Filesystem for root and other partitions                                             | Yes                                           |
-+----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| boot                 | <bool>                                              | Marks the partition as bootable                                                      | No                                            |
-+----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| encrypted            | <bool>                                              | Mark the partition for encryption                                                    | No                                            |
-+----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| mountpoint           | /path                                               | Relative to the inside of the installation, where should the partition be mounted    | Yes                                           |
-+----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| start                | <size><B, MiB, GiB, %, etc>                         | The start position of the partition                                                  | Yes                                           |
-+----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| type                 | primary                                             | Only used if MBR and BIOS is used. Marks what kind of partition it is.               | No                                            |
-+----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| btrfs                | { "subvolumes": {"subvolume": "mountpoint"}}        | Support for btrfs subvolumes for a given partition                                   | No                                            |
-+----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+    ``!users`` is optional only if ``!root-password`` was set. ``!users`` will be enforced otherwise and the minimum amount of users with sudo privileges required will be set to 1.
 
 
 .. _scripts: https://github.com/archlinux/archinstall/tree/master/archinstall/scripts

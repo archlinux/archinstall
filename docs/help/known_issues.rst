@@ -5,6 +5,7 @@ Known Issues
 
 | Some issues are out of the `archinstall`_ projects scope, and the ones we know of are listed below.
 
+.. _waiting for time sync:
 Waiting for time sync `#2144`_
 ------------------------------
 
@@ -27,7 +28,7 @@ Missing Nvidia Proprietary Driver `#2002`_
 A common workaround is to install the package `linux-headers`_ and `nvidia-dkms`_
 
 ARM, 32bit and other CPU types error out `#1686`_, `#2185`_
--------------------------------------------------
+-----------------------------------------------------------
 
 | This is a bit of a catch-all known issue.
 | Officially `x86_64`_ is only supported by Arch Linux.
@@ -54,6 +55,10 @@ Keyring is out of date `#2213`_
 
    The issue can happen on new ISO's too even as little as a few days after release, as some keys might expire right after the keyring is *"burnt in"* to the ISO.
 
+.. note::
+
+   Another common issue relating to the network not being configured, is that time might not be set correctly - resulting in the keyring not being able to update. See :ref:`waiting for time sync`.
+
 AUR packages
 ------------
 
@@ -64,7 +69,7 @@ AUR packages
 
 .. note::
 
-   But in spirit of giving the community options, you can run ``archinstall --plugin <url>`` and source an AUR plugin.
+   But in spirit of giving the community options, ``archinstall`` supports :ref:`archinstall.Plugins`, which means you can run ``archinstall --plugin <url>`` and source an AUR plugin.
 
    `torxed/archinstall-aur <https://github.com/torxed/archinstall-aur>`_ is a reference implementation for plugins:
 

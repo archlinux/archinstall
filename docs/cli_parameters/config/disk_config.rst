@@ -11,7 +11,8 @@ There are only three modes in the ``disk_config`` option. They are described in 
 .. code-block:: json
 
    {
-       "disk_config": null
+       "config_type": "pre_mounted_config",
+       "mountpoint": "/mnt/archinstall"
    }
 
 This mode will not perform any partitioning what so ever.

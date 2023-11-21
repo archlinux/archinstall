@@ -43,6 +43,15 @@ If the function exists, :code:`.strap()` will call the plugin's function and rep
 
 The best way to document these calls is currently undecided, as it's hard to document this behavior dynamically.
 
+Writing your own?
+-----------------
+
+The simplest way currently is to look at a reference implementation or the community. Two of these are:
+
+* `torxed/archinstall-aur <https://github.com/torxed/archinstall-aur>`_
+* `phisch/archinstall-aur <https://github.com/phisch/archinstall-aur>`_
+
+And search for `plugin.on_ <https://github.com/search?q=repo%3Aarchlinux%2Farchinstall+%22plugin.on_%22&type=code>`_ in the code base to find what ``archinstall`` will look for. PR's are welcome to widen the support for this.
 
 .. _plugin discovery: https://packaging.python.org/en/latest/specifications/entry-points/
 .. _entry points: https://docs.python.org/3/library/importlib.metadata.html#entry-points
