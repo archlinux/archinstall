@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from typing import List, Any, Optional, TYPE_CHECKING
 
-from ..locale import list_timezones, list_keyboard_languages
+from ..locale import list_timezones
 from ..menu import MenuSelectionType, Menu, TextInput
 from ..models.audio_configuration import Audio, AudioConfiguration
 from ..output import warn
@@ -87,29 +87,16 @@ def ask_for_audio_selection(
 
 
 def select_language(preset: Optional[str] = None) -> Optional[str]:
-	"""
-	Asks the user to select a language
-	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
+	from ..locale.locale_menu import select_kb_layout
 
-	:return: The language/dictionary key of the selected language
-	:rtype: str
-	"""
-	kb_lang = list_keyboard_languages()
-	# sort alphabetically and then by length
-	sorted_kb_lang = sorted(kb_lang, key=lambda x: (len(x), x))
+	# We'll raise an exception in an upcoming version.
+	# from ..exceptions import Deprecated
+	# raise Deprecated("select_language() has been deprecated, use select_kb_layout() instead.")
 
-	choice = Menu(
-		_('Select keyboard layout'),
-		sorted_kb_lang,
-		preset_values=preset,
-		sort=False
-	).run()
+	# No need to translate this i feel, as it's a short lived message.
+	warn("select_language() is deprecated, use select_kb_layout() instead. select_language() will be removed in a future version")
 
-	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return choice.single_value
-
-	return None
+	return select_kb_layout(preset)
 
 
 def select_archinstall_language(languages: List[Language], preset: Language) -> Language:

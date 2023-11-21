@@ -149,7 +149,8 @@ def select_disk_config(
 
 				return disk.DiskLayoutConfiguration(
 					config_type=disk.DiskLayoutType.Pre_mount,
-					device_modifications=mods
+					device_modifications=mods,
+					mountpoint=path
 				)
 
 			preset_devices = [mod.device for mod in preset.device_modifications] if preset else []
@@ -220,9 +221,9 @@ def select_lvm_config(
 	return preset
 
 
-def _boot_partition(sector_size: disk.SectorSize) -> disk.PartitionModification:
+def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.PartitionModification:
 	flags = [disk.PartitionFlag.Boot]
-	if SysInfo.has_uefi():
+	if using_gpt:
 		start = disk.Size(1, disk.Unit.MiB, sector_size)
 		size = disk.Size(512, disk.Unit.MiB, sector_size)
 		flags.append(disk.PartitionFlag.ESP)
@@ -286,6 +287,8 @@ def suggest_single_disk_layout(
 
 	device_modification = disk.DeviceModification(device, wipe=True)
 
+	using_gpt = SysInfo.has_uefi()
+
 	# Used for reference: https://wiki.archlinux.org/title/partitioning
 	# 2 MiB is unallocated for GRUB on BIOS. Potentially unneeded for other bootloaders?
 
@@ -297,7 +300,7 @@ def suggest_single_disk_layout(
 	# Also re-align the start to 1MiB since we don't need the first sectors
 	# like we do in MBR layouts where the boot loader is installed traditionally.
 
-	boot_partition = _boot_partition(sector_size)
+	boot_partition = _boot_partition(sector_size, using_gpt)
 	device_modification.add_partition(boot_partition)
 
 	if not using_subvolumes:
@@ -311,21 +314,25 @@ def suggest_single_disk_layout(
 			else:
 				using_home_partition = False
 
+	align_buffer = disk.Size(1, disk.Unit.MiB, sector_size)
+
 	# root partition
-	start = disk.Size(513, disk.Unit.MiB, sector_size) if SysInfo.has_uefi() else disk.Size(206, disk.Unit.MiB,
-																							sector_size)
+	root_start = boot_partition.start + boot_partition.length
 
 	# Set a size for / (/root)
 	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
-		length = device.device_info.total_size - start
+		root_length = device.device_info.total_size - root_start
 	else:
-		length = min(device.device_info.total_size, root_partition_size)
+		root_length = min(device.device_info.total_size, root_partition_size)
+
+	if using_gpt and not using_home_partition:
+		root_length -= align_buffer
 
 	root_partition = disk.PartitionModification(
 		status=disk.ModificationStatus.Create,
 		type=disk.PartitionType.Primary,
-		start=start,
-		length=length,
+		start=root_start,
+		length=root_length,
 		mountpoint=Path('/') if not using_subvolumes else None,
 		fs_type=filesystem_type,
 		mount_options=['compress=zstd'] if compression else [],
@@ -349,14 +356,17 @@ def suggest_single_disk_layout(
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
-		start = root_partition.length
-		length = device.device_info.total_size - root_partition.length
+		home_start = root_partition.length
+		home_length = device.device_info.total_size - root_partition.length
+
+		if using_gpt:
+			home_length -= align_buffer
 
 		home_partition = disk.PartitionModification(
 			status=disk.ModificationStatus.Create,
 			type=disk.PartitionType.Primary,
-			start=start,
-			length=length,
+			start=home_start,
+			length=home_length,
 			mountpoint=Path('/home'),
 			fs_type=filesystem_type,
 			mount_options=['compress=zstd'] if compression else []
@@ -425,16 +435,20 @@ def suggest_multi_disk_layout(
 	root_device_sector_size = root_device_modification.device.device_info.sector_size
 	home_device_sector_size = home_device_modification.device.device_info.sector_size
 
+	root_align_buffer = disk.Size(1, disk.Unit.MiB, root_device_sector_size)
+	home_align_buffer = disk.Size(1, disk.Unit.MiB, home_device_sector_size)
+
+	using_gpt = SysInfo.has_uefi()
+
 	# add boot partition to the root device
-	boot_partition = _boot_partition(root_device_sector_size)
+	boot_partition = _boot_partition(root_device_sector_size, using_gpt)
 	root_device_modification.add_partition(boot_partition)
 
-	if SysInfo.has_uefi():
-		root_start = disk.Size(513, disk.Unit.MiB, root_device_sector_size)
-	else:
-		root_start = disk.Size(206, disk.Unit.MiB, root_device_sector_size)
-
+	root_start = boot_partition.start + boot_partition.length
 	root_length = root_device.device_info.total_size - root_start
+
+	if using_gpt:
+		root_length -= root_align_buffer
 
 	# add root partition to the root device
 	root_partition = disk.PartitionModification(
@@ -448,15 +462,18 @@ def suggest_multi_disk_layout(
 	)
 	root_device_modification.add_partition(root_partition)
 
-	start = disk.Size(1, disk.Unit.MiB, home_device_sector_size)
-	length = home_device.device_info.total_size - start
+	home_start = home_align_buffer
+	home_length = home_device.device_info.total_size - home_start
+
+	if using_gpt:
+		home_length -= home_align_buffer
 
 	# add home partition to home device
 	home_partition = disk.PartitionModification(
 		status=disk.ModificationStatus.Create,
 		type=disk.PartitionType.Primary,
-		start=start,
-		length=length,
+		start=home_start,
+		length=home_length,
 		mountpoint=Path('/home'),
 		mount_options=['compress=zstd'] if compression else [],
 		fs_type=filesystem_type,
