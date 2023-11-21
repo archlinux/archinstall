@@ -20,9 +20,6 @@ jobs:
       - name: Sphinx build
         run: |
           sphinx-build docs _build
-      - name: Some debugging
-        run: |
-          tree /__w/archinstall/archinstall/
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
       #  if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -31,4 +28,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _build/
           force_orphan: true
-          enable_jekyll: false
+          enable_jekyll: false # This is required to preserve _static (and thus the theme)
+          cname: archinstall.archlinux.page
