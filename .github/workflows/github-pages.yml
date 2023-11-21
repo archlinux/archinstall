@@ -31,4 +31,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _build/
           force_orphan: true
-          enable_jekyll: true
+          enable_jekyll: false
