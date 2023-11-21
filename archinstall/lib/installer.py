@@ -130,13 +130,23 @@ class Installer:
 		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
-		info('Waiting for time sync (systemd-timesyncd.service) to complete.')
 
-		while True:
-			time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
-			if time_val and time_val.strip() == 'yes':
-				break
-			time.sleep(1)
+		if not storage['arguments'].get('skip_ntp', False):
+			info('Waiting for time sync (timedatectl show) to complete.')
+
+			_started_wait = time.time()
+			_notified = False
+			while True:
+				if not _notified and time.time() - _started_wait > 5:
+					_notified = True
+					warn("Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/")
+					
+				time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
+				if time_val and time_val.strip() == 'yes':
+					break
+				time.sleep(1)
+		else:
+			info('Skipping waiting for automatic time sync (this can cause issues if time it out of sync during installation)')
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
