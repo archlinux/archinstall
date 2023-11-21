@@ -180,25 +180,25 @@ class Installer:
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
-		info('Mounting partitions in order')
-		self._mount_partition_layout()
-
 		info('Mounting LVM in order')
 		self._mount_lvm_layout()
 
+		info('Mounting partitions in order')
+		self._mount_partition_layout()
+
 	def _mount_partition_layout(self):
-		# do not mount any PVs from the LVM configuration
+		# do not mount any PVs part of the LVM configuration
 		pvs = []
 		if self._disk_config.lvm_config:
 			pvs = self._disk_config.lvm_config.get_all_pvs()
 
 		for mod in self._disk_config.device_modifications:
-			part_mods = list(filter(lambda x: x not in pvs, mod.partitions))
+			not_pv_part_mods = list(filter(lambda x: x not in pvs, mod.partitions))
 
 			# partitions have to mounted in the right order on btrfs the mountpoint will
 			# be empty as the actual subvolumes are getting mounted instead so we'll use
 			# '/' just for sorting
-			sorted_part_mods = sorted(part_mods, key=lambda x: x.mountpoint or Path('/'))
+			sorted_part_mods = sorted(not_pv_part_mods, key=lambda x: x.mountpoint or Path('/'))
 
 			enc_partitions = []
 			if self._disk_encryption.encryption_type is not disk.EncryptionType.NoEncryption:
@@ -219,7 +219,8 @@ class Installer:
 		lvm_config = self._disk_config.lvm_config
 
 		if not lvm_config:
-			raise ValueError('lvm configuration must be set')
+			debug('no lvm config set to be mounted')
+			return
 
 		for vg in lvm_config.vol_groups:
 			sorted_vol = sorted(vg.volumes, key=lambda x: x.mountpoint or Path('/'))
@@ -902,10 +903,6 @@ class Installer:
 		try:
 			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl {' '.join(bootctl_options)} install")
 		except SysCallError as e:
-			debug(e.message)
-			debug(e.exit_code)
-			deubut(e.worker.decode())
-
 			# Fallback, try creating the boot loader without touching the EFI variables
 			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(bootctl_options)} install")
 

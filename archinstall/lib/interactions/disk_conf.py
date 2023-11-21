@@ -475,7 +475,6 @@ def suggest_lvm_layout(disk_config: disk.DiskLayoutConfiguration) -> disk.LvmCon
 
 	for mod in disk_config.device_modifications:
 		for part in mod.partitions:
-			# or is EFI???
 			if part.is_boot():
 				boot_part = part
 			else:
