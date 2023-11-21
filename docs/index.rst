@@ -34,6 +34,7 @@ Some of the features of Archinstall are:
 
    installing/python
    examples/python
+   archinstall/plugins
 
 .. toctree::
    :maxdepth: 3
