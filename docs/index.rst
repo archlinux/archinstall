@@ -24,8 +24,9 @@ Some of the features of Archinstall are:
    :maxdepth: 3
    :caption: Getting help
 
+   help/known_issues
+   help/report_bug
    help/discord
-   help/issues
 
 .. toctree::
    :maxdepth: 3

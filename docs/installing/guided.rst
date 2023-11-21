@@ -9,9 +9,9 @@ Archinstall ships with a pre-programmed `Guided Installer <https://github.com/ar
 
    Other pre-programmed scripts can be invoked by executing :code:`archinstall <script>` *(without .py)*. To see a complete list of scripts, run :code:`archinstall --script list` or check the source code `scripts`_ directory.
 
-.. warning::
+.. note::
 
-   The installer requires the latest version of `Arch Linux ISO <https://archlinux.org/download/>`_ as well as basic understanding of how ISO's and computers work. Please read the official `Arch Linux Wiki <https://wiki.archlinux.org/>`_ to learn more about your future operating system.
+   It's recommended to run ``archinstall`` from the official Arch Linux ISO.
 
 
 .. warning::
