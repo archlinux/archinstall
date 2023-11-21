@@ -7,7 +7,7 @@ Archinstall ships with a pre-programmed `Guided Installer <https://github.com/ar
 
 .. note::
 
-   Other pre-programmed scripts can be invoked by executing :code:`archinstall <script>` *(without .py)*. To see a complete list of scripts, see the source code directory `archinstall/scripts/ <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/>`_
+   Other pre-programmed scripts can be invoked by executing :code:`archinstall <script>` *(without .py)*. To see a complete list of scripts, run :code:`archinstall --script list` or check the source code `scripts`_ directory.
 
 .. warning::
 
@@ -325,3 +325,6 @@ Options for ``--disk_layouts``
 +----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
 | btrfs                | { "subvolumes": {"subvolume": "mountpoint"}}        | Support for btrfs subvolumes for a given partition                                   | No                                            |
 +----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+
+
+.. _scripts: https://github.com/archlinux/archinstall/tree/master/archinstall/scripts
