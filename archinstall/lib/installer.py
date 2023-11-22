@@ -132,21 +132,21 @@ class Installer:
 		"""
 
 		if not storage['arguments'].get('skip_ntp', False):
-			info('Waiting for time sync (timedatectl show) to complete.')
+			info(_('Waiting for time sync (timedatectl show) to complete.'))
 
 			_started_wait = time.time()
 			_notified = False
 			while True:
 				if not _notified and time.time() - _started_wait > 5:
 					_notified = True
-					warn("Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/")
+					warn(_("Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
 					
 				time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
 				if time_val and time_val.strip() == 'yes':
 					break
 				time.sleep(1)
 		else:
-			info('Skipping waiting for automatic time sync (this can cause issues if time it out of sync during installation)')
+			info(_('Skipping waiting for automatic time sync (this can cause issues if time it out of sync during installation)'))
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
@@ -156,7 +156,7 @@ class Installer:
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 		# 	time.sleep(1)
 
-		info('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')
+		info(_('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.'))
 		# Wait for the timer to kick in
 		while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
 			time.sleep(1)
