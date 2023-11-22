@@ -1,0 +1,2 @@
+sphinx_rtd_theme
+simple-term-menu
