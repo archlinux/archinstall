@@ -18,7 +18,6 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
-    "pyparted==3.12.0",
     "simple-term-menu==1.6.3",
 ]
 
