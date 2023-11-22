@@ -1,3 +1,0 @@
-sphinx_rtd_theme
-pyparted
-simple-term-menu
