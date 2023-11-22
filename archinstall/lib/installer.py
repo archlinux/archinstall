@@ -146,7 +146,7 @@ class Installer:
 					break
 				time.sleep(1)
 		else:
-			info(_('Skipping waiting for automatic time sync (this can cause issues if time it out of sync during installation)'))
+			info(_('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
