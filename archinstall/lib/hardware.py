@@ -111,7 +111,7 @@ class GfxDriver(Enum):
 			case GfxDriver.NvidiaProprietary:
 				return [
 					GfxPackage.Nvidia,
-					NvidiaDKMS
+					GfxPackage.NvidiaDKMS
 				]
 			case GfxDriver.VMOpenSource:
 				return [
