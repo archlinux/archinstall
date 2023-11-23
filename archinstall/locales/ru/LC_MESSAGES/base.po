@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Здесь был создан файл журнала: {} {}"
@@ -1209,21 +1209,20 @@ msgstr ""
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "Все вводимые значения могут иметь суффикс с единицей измерения: %, Б, Кб, КиБ, Мб, МиБ..."
 
-#, fuzzy
 msgid "Would you like to use unified kernel images?"
-msgstr "Вы хотите использовать подкачку на zram?"
+msgstr "Хотите ли Вы использовать унифицированные образы ядра?"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "Унифицированные образы ядра"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "Ожидание завершения синхронизации времени (timedatectl show)."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Синхронизация времени не завершена, пока вы ждете - проверьте документацию на предмет обходных путей: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "Пропуск ожидания автоматической синхронизации времени (это может привести к проблемам, если время не синхронизируется во время установки)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "Ожидание завершения синхронизации связки ключей Arch Linux (archlinux-keyring-wkd-sync)."
