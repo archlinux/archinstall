@@ -1199,3 +1199,22 @@ msgstr ""
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "Všechny zadané hodnoty mohou byt doplněny jednotkou: %, B, KB, KiB, MB, MiB..."
+
+#, fuzzy
+msgid "Would you like to use unified kernel images?"
+msgstr "Přejete si použít swap na zram?"
+
+msgid "Unified kernel images"
+msgstr ""
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr ""
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr ""
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr ""
