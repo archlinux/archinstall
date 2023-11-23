@@ -28,7 +28,7 @@ Source = "https://github.com/archlinux/archinstall"
 
 [project.optional-dependencies]
 dev = [
-    "mypy==1.6.1",
+    "mypy==1.7.0",
     "pre-commit==3.5.0",
 ]
 doc = ["sphinx"]
