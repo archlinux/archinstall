@@ -212,6 +212,7 @@ class ProfileHandler:
 			if driver is not None:
 				driver_pkgs = driver.packages()
 				pkg_names = [p.value for p in driver_pkgs]
+
 				for driver_pkg in {GfxPackage.Nvidia, GfxPackage.NvidiaOpen} & set(driver_pkgs):
 					for kernel in {"linux-lts", "linux-zen"} & set(install_session.kernels):
 						# Fixes https://github.com/archlinux/archinstall/issues/585
@@ -221,6 +222,7 @@ class ProfileHandler:
 					install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', f'{driver_pkg.value}-dkms'])
 					# Return after first driver match, since it is impossible to use both simultaneously.
 					return
+
 				if 'amdgpu' in driver_pkgs:
 					# The order of these two are important if amdgpu is installed #808
 					if 'amdgpu' in install_session.modules:
@@ -245,7 +247,7 @@ class ProfileHandler:
 
 		profile.install(install_session)
 
-		if profile_config.gfx_driver and (profile.is_xorg_type_profile() or profile.is_desktop_type_profile()):
+		if profile_config.gfx_driver and (profile.is_xorg_type_profile() or profile.is_desktop_profile()):
 			self.install_gfx_driver(install_session, profile_config.gfx_driver)
 
 		if profile_config.greeter:

@@ -133,7 +133,7 @@ class NetworkConfiguration:
 			case NicType.NM:
 				installation.add_additional_packages(["networkmanager"])
 				if profile_config and profile_config.profile:
-					if profile_config.profile.is_desktop_type_profile():
+					if profile_config.profile.is_desktop_profile():
 						installation.add_additional_packages(["network-manager-applet"])
 				installation.enable_service('NetworkManager.service')
 			case NicType.MANUAL:
