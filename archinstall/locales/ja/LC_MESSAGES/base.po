@@ -726,7 +726,7 @@ msgid "The username you entered is invalid. Try again"
 msgstr "入力したユーザー名は無効です。もう一度やり直してください"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "\"{}\" はスーパーユーザー（sudo）であるべきですか？"
+msgstr "\"{}\" はスーパーユーザー（sudo）になりますか？"
 
 msgid "Select which partitions to encrypt"
 msgstr ""
