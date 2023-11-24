@@ -272,7 +272,7 @@ msgid "Network configuration"
 msgstr "ネットワーク設定"
 
 msgid "Automatic time sync (NTP)"
-msgstr "自動時刻同期（NTP）"
+msgstr "時刻の自動同期（NTP）"
 
 msgid "Install ({} config(s) missing)"
 msgstr "インストール（{} 個の設定がありません）"
@@ -283,6 +283,10 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
+"ハードドライブの選択をスキップし、\n"
+"{} にマウントしているドライブのセットアップを使用します（実験的）\n"
+"警告: Archinstall はこのセットアップの適合性をチェックしません\n"
+"続行しますか？"
 
 msgid "Re-using partition instance: {}"
 msgstr ""
@@ -361,7 +365,7 @@ msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "追加のパッケージが存在することを確認（これには数秒かかる場合があります）"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "デフォルトのタイムサーバーで自動時刻同期（NTP）を使用しますか？\n"
+msgstr "デフォルトのタイムサーバーで時刻の自動同期（NTP）を使用しますか？\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
@@ -461,9 +465,12 @@ msgid ""
 "\n"
 "Select which partition to set subvolumes on"
 msgstr ""
+"{}\n"
+"\n"
+"サブボリュームを設定するパーティションを選択"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr ""
+msgstr "現在のパーティションの btrfs サブボリュームを管理"
 
 msgid "No configuration"
 msgstr "設定なし"
@@ -472,7 +479,7 @@ msgid "Save user configuration"
 msgstr "ユーザー設定を保存"
 
 msgid "Save user credentials"
-msgstr "ユーザー認証情報を保存"
+msgstr "ユーザーの認証情報を保存"
 
 msgid "Save disk layout"
 msgstr "ディスクレイアウトを保存"
@@ -490,7 +497,7 @@ msgid "Not a valid directory: {}"
 msgstr "有効なディレクトリではありません: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "使用しているパスワードは脆弱なようです。"
+msgstr "使用しているパスワードは脆弱なようです、"
 
 msgid "are you sure you want to use it?"
 msgstr "本当に使用してもよろしいですか？"
@@ -514,7 +521,7 @@ msgid "Manage ordinary user accounts: "
 msgstr "一般ユーザーのアカウントを管理: "
 
 msgid " Subvolume :{:16}"
-msgstr ""
+msgstr " サブボリューム :{:16}"
 
 msgid " mounted at {:16}"
 msgstr ""
@@ -528,10 +535,10 @@ msgid ""
 msgstr ""
 
 msgid "Subvolume name "
-msgstr ""
+msgstr "サブボリューム名 "
 
 msgid "Subvolume mountpoint"
-msgstr ""
+msgstr "サブボリュームのマウントポイント"
 
 msgid "Subvolume options"
 msgstr ""
@@ -540,37 +547,37 @@ msgid "Save"
 msgstr "保存"
 
 msgid "Subvolume name :"
-msgstr ""
+msgstr "サブボリューム名:"
 
 msgid "Select a mount point :"
 msgstr "マウント ポイントを選択:"
 
 msgid "Select the desired subvolume options "
-msgstr ""
+msgstr "希望するサブボリュームオプションを選択"
 
 msgid "Define users with sudo privilege, by username: "
 msgstr ""
 
 msgid "[!] A log file has been created here: {}"
-msgstr ""
+msgstr "[!] ここにログファイルが作成されました: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr ""
+msgstr "デフォルトの設定で BTRFS サブボリュームを使用しますか？"
 
 msgid "Would you like to use BTRFS compression?"
-msgstr ""
+msgstr "BTRFS の圧縮を使用しますか？"
 
 msgid "Would you like to create a separate partition for /home?"
 msgstr "/home 用に別のパーティションを作成しますか？"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr ""
+msgstr "選択したドライブには、自動提案に必要な最小容量がありません\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr ""
+msgstr "/home パーティションの最小容量: {}GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr ""
+msgstr "Arch Linux パーティションの最小容量: {}GB"
 
 msgid "Continue"
 msgstr "続行"
@@ -585,10 +592,10 @@ msgid "set: {}"
 msgstr "セット: {}"
 
 msgid "Manual configuration setting must be a list"
-msgstr ""
+msgstr "手動設定はリストである必要があります"
 
 msgid "No iface specified for manual configuration"
-msgstr ""
+msgstr "手動設定に iface が指定されていません"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr ""
@@ -693,7 +700,7 @@ msgid "Value: "
 msgstr "値: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr ""
+msgstr "ドライブの選択とパーティショニングをスキップして、/mnt にマウントしているドライブのセットアップを使用できます（実験的）"
 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr ""
@@ -744,7 +751,7 @@ msgid "strong"
 msgstr "強い"
 
 msgid "Add subvolume"
-msgstr ""
+msgstr "サブボリュームを追加"
 
 msgid "Edit subvolume"
 msgstr ""
@@ -787,7 +794,7 @@ msgid "CTRL+C to reset"
 msgstr "CTRL+C でリセット"
 
 msgid "TAB to select"
-msgstr "TAB で選択"
+msgstr "Tab で選択"
 
 msgid "[Default value: 0] > "
 msgstr "[デフォルト値: 0] > "
@@ -856,7 +863,7 @@ msgid "Mark/Unmark as compressed"
 msgstr "圧縮するものとしてマーク/マーク解除"
 
 msgid "Set subvolumes"
-msgstr ""
+msgstr "サブボリュームを設定"
 
 msgid "Delete partition"
 msgstr "パーティションを削除"
@@ -922,7 +929,7 @@ msgid "Manual Partitioning"
 msgstr "手動パーティショニング"
 
 msgid "Pre-mounted configuration"
-msgstr "事前にマウントされている設定"
+msgstr "マウント済みのものの設定"
 
 msgid "Unknown"
 msgstr "不明"
@@ -1064,7 +1071,7 @@ msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
-"設定を保存するディレクトリを入力（タブ補完有効）\n"
+"設定を保存するディレクトリを入力（Tab で補完可能）\n"
 "保存ディレクトリ: "
 
 msgid ""
@@ -1113,7 +1120,7 @@ msgid "Enter end (default: {}): "
 msgstr "終了値を入力（デフォルト: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr "fido2 デバイスを特定できません。lifido2はインストールされていますか？"
+msgstr "fido2 デバイスを特定できません。lifido2 はインストールされていますか？"
 
 msgid "Path"
 msgstr "パス"
