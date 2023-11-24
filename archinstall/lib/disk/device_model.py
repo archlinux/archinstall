@@ -902,7 +902,7 @@ class LvmLayoutType(Enum):
 class LvmVolumeGroup:
 	name: str
 	pvs: List[PartitionModification]
-	volumes: List[LvmVolume]
+	volumes: List[LvmVolume] = field(default_factory=list)
 
 	def json(self) -> Dict[str, Any]:
 		return {
@@ -1026,9 +1026,15 @@ class LvmVolume:
 
 @dataclass
 class LvmGroupInfo:
-	format: str
 	vg_size: Size
-	uuid: str
+	vg_uuid: str
+
+
+@dataclass
+class LvmVolumeInfo:
+	lv_name: str
+	vg_name: str
+	lv_size: Size
 
 
 @dataclass

@@ -19,7 +19,7 @@ from .device_model import (
 	FilesystemType, Unit, PartitionTable,
 	ModificationStatus, get_lsblk_info, LsblkInfo,
 	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
-	SectorSize
+	SectorSize, LvmVolumeInfo
 )
 
 from ..exceptions import DiskError, UnknownFilesystemFormat
@@ -272,21 +272,48 @@ class DeviceHandler(object):
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
 
-	def lvm_group_info(self, vg_name: str) -> LvmGroupInfo:
-		cmd = f'vgdisplay -S vgname={vg_name} --units B'
-		info = SysCommand(cmd).decode().split('\n')
+	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
+		cmd = 'lvs --reportformat json ' \
+			  '--unit B ' \
+			  f'-S lv_name={lv_name}'
 
-		def ex(field):
-			return next(filter(lambda x: field in x, info)).split(field)[1].strip()
+		raw_info = SysCommand(cmd).decode()
+		lv_info = json.loads(raw_info)
 
-		# 85354086400 B
-		vg_size = ex('VG Size').split(' ')
-		size = Size(int(vg_size[0]), Unit.B, SectorSize.default())
+		lv = next(filter(lambda x: x['lv_name'] == lv_name, lv_info['report']['lv']), None)
+
+		if lv is None:
+			return None
+
+		size = Size(int(lv['lv_size'][-1]), Unit.B, SectorSize.default())
+
+		return LvmVolumeInfo(
+			lv_name=lv['lv_name'],
+			vg_name=lv['vg_name'],
+			lv_size=size
+		)
+
+	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
+		cmd = 'vgs --reportformat json ' \
+			  '--unit B ' \
+			  '-o vg_name,vg_uuid,vg_size ' \
+			  f'-S vg_name={vg_name}'
+
+		debug(f'LVM group info: {cmd}')
+		raw_info = SysCommand(cmd).decode().strip()
+		print(f'xxx{raw_info}xxx')
+		vg_info = json.loads(raw_info)
+
+		vg = next(filter(lambda x: x['vg_name'] == vg_name, vg_info['report']['vg']), None)
+
+		if vg is None:
+			return None
+
+		size = Size(int(vg['vg_size'][-1]), Unit.B, SectorSize.default())
 
 		return LvmGroupInfo(
-			format=ex('Format'),
 			vg_size=size,
-			uuid=ex('VG UUID')
+			vg_uuid=vg['vg_uuid']
 		)
 
 	def lvm_vol_reduce(self, vol_path: Path, amount: Size):
@@ -309,10 +336,17 @@ class DeviceHandler(object):
 		cmd = f'vgcreate {vg.name} {pvs_str}'
 
 		debug(f'Creating LVM group: {cmd}')
-		SysCommand(cmd)
 
-	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Size):
-		length = volume.length - offset
+		worker = SysCommandWorker(cmd)
+		worker.poll()
+		worker.write(b'y\n', line_ending=False)
+
+	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Optional[Size] = None):
+		if offset is not None:
+			length = volume.length - offset
+		else:
+			length = volume.length
+
 		length_str = length.format_size(Unit.B, include_unit=False)
 		cmd = f'lvcreate -L {length_str}B {vg_name} -n {volume.name} --wipesignatures y --zero y'
 

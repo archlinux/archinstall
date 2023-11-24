@@ -243,7 +243,7 @@ def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.Parti
 	)
 
 
-def select_main_filesystem_format(advanced_options=False) -> disk.FilesystemType:
+def select_main_filesystem_format(advanced_options: bool = False) -> disk.FilesystemType:
 	options = {
 		'btrfs': disk.FilesystemType.Btrfs,
 		'ext4': disk.FilesystemType.Ext4,
@@ -483,9 +483,44 @@ def suggest_multi_disk_layout(
 	return [root_device_modification, home_device_modification]
 
 
-def suggest_lvm_layout(disk_config: disk.DiskLayoutConfiguration) -> disk.LvmConfiguration:
+def suggest_lvm_layout(
+	disk_config: disk.DiskLayoutConfiguration,
+	filesystem_type: Optional[disk.FilesystemType] = None,
+	vg_grp_name: str = 'ArchinstallVg'
+) -> disk.LvmConfiguration:
 	if disk_config.config_type != disk.DiskLayoutType.Default:
 		raise ValueError('LVM suggested volumes are only available for default partitioning')
+
+	using_subvolumes = False
+	compression = False
+	btrfs_subvols = []
+	home_volume = True
+
+	if not filesystem_type:
+		filesystem_type = select_main_filesystem_format()
+
+	if filesystem_type == disk.FilesystemType.Btrfs:
+		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
+		using_subvolumes = choice.value == Menu.yes()
+
+		prompt = str(_('Would you like to use BTRFS compression?'))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
+		compression = choice.value == Menu.yes()
+
+	if using_subvolumes:
+		# https://btrfs.wiki.kernel.org/index.php/FAQ
+		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
+		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
+		btrfs_subvols = [
+			disk.SubvolumeModification(Path('@'), Path('/')),
+			disk.SubvolumeModification(Path('@home'), Path('/home')),
+			disk.SubvolumeModification(Path('@log'), Path('/var/log')),
+			disk.SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
+			disk.SubvolumeModification(Path('@.snapshots'), Path('/.snapshots'))
+		]
+
+		home_volume = False
 
 	boot_part: Optional[disk.PartitionModification] = None
 	other_part: List[disk.PartitionModification] = []
@@ -504,27 +539,35 @@ def suggest_lvm_layout(disk_config: disk.DiskLayoutConfiguration) -> disk.LvmCon
 	root_vol_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
 	home_vol_size = total_vol_available - root_vol_size
 
+	lvm_vol_group = disk.LvmVolumeGroup(
+		vg_grp_name,
+		pvs=other_part,
+	)
+
 	root_vol = disk.LvmVolume(
 		status=disk.LvmVolumeStatus.Create,
 		name='root',
-		fs_type=disk.FilesystemType.Ext4,
+		fs_type=filesystem_type,
 		length=root_vol_size,
-		mountpoint=Path('/')
+		mountpoint=Path('/'),
+		btrfs_subvols=btrfs_subvols,
+		mount_options=['compress=zstd'] if compression else []
 	)
 
-	home_vol = disk.LvmVolume(
-		status=disk.LvmVolumeStatus.Create,
-		name='home',
-		fs_type=disk.FilesystemType.Ext4,
-		length=home_vol_size,
-		mountpoint=Path('/home')
-	)
+	lvm_vol_group.volumes.append(root_vol)
 
-	lvm_vol_group = disk.LvmVolumeGroup(
-		'ArchinstallVolGroup',
-		pvs=other_part,
-		volumes=[root_vol, home_vol]
-	)
+	if home_volume:
+		home_vol = disk.LvmVolume(
+			status=disk.LvmVolumeStatus.Create,
+			name='home',
+			fs_type=filesystem_type,
+			length=home_vol_size,
+			mountpoint=Path('/home')
+		)
+
+		lvm_vol_group.volumes.append(home_vol)
+
+	debug(lvm_vol_group)
 
 	return disk.LvmConfiguration(
 		disk.LvmLayoutType.Default,

@@ -154,14 +154,27 @@ class FilesystemHandler:
 				# to the desired sizes and subtract some equally from the actually
 				# created volume
 				avail_size = lvm_gp_info.vg_size
-				total_lvm_size = sum([vol.length for vol in vol_gp.volumes], Size(0, Unit.B, SectorSize.default()))
+				desired_size = sum([vol.length for vol in vol_gp.volumes], Size(0, Unit.B, SectorSize.default()))
 
-				delta = total_lvm_size - avail_size
-				offset = delta.convert(Unit.B)
-				offset.value = int(offset.value / len(vol_gp.volumes))
+				delta = desired_size - avail_size
+				max_vol_offset = delta.convert(Unit.B)
+
+				max_vol = max(vol_gp.volumes, key=lambda x: x.length)
 
 				for volume in vol_gp.volumes:
+					offset = max_vol_offset if volume == max_vol else None
+
+					debug(f'vg: {vol_gp.name}, vol: {volume.name}, offset: {offset}')
 					device_handler.lvm_vol_create(vol_gp.name, volume, offset)
+
+					info('Getting LVM volume info...')
+					while True:
+						debug('Fetching LVM volume info')
+						lv_info = device_handler.lvm_vol_info(volume.name)
+						if lv_info is not None:
+							break
+
+						time.sleep(1)
 
 				self._lvm_vol_handle_e2scrub(vol_gp)
 
