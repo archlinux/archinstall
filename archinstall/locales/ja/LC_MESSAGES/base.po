@@ -27,7 +27,7 @@ msgid "Would you like to use swap on zram?"
 msgstr "zram でスワップを使用しますか？"
 
 msgid "Desired hostname for the installation: "
-msgstr "インストール時に希望するホスト名: "
+msgstr "インストール時のホスト名: "
 
 msgid "Username for required superuser with sudo privileges: "
 msgstr ""
@@ -42,7 +42,7 @@ msgid "Select a timezone"
 msgstr "タイムゾーンを選択"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr ""
+msgstr "systemd-boot の代わりに GRUB をブートローダーとして使用しますか？"
 
 msgid "Choose a bootloader"
 msgstr "ブートローダーを選択"
@@ -54,7 +54,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "base、base-devel、linux、linux-firmware、efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "firefox や chromium などのウェブブラウザを希望する場合は、以下のプロンプトで指定できます。"
+msgstr "firefox や chromium などのウェブブラウザーをインストールする場合は、次のプロンプトで指定できます。"
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "追加でインストールするパッケージを書く（スペースで区切る。無記入でスキップ）: "
@@ -66,7 +66,7 @@ msgid "Use NetworkManager (necessary for configuring internet graphically in GNO
 msgstr "NetworkManager を使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
 
 msgid "Select one network interface to configure"
-msgstr ""
+msgstr "設定するネットワークインターフェイスを 1 つ選択"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr ""
@@ -92,7 +92,7 @@ msgid ""
 msgstr ""
 
 msgid "Enter a desired filesystem type for the partition"
-msgstr "パーティションに希望するファイルシステムを入力"
+msgstr "パーティションのファイルシステムを入力"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
 msgstr ""
@@ -146,7 +146,7 @@ msgid ""
 msgstr ""
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr ""
+msgstr "パーティションのファイルシステムを入力: "
 
 msgid "Archinstall language"
 msgstr "Archinstall の言語"
@@ -170,7 +170,7 @@ msgid "Select one of the regions to download packages from"
 msgstr "パッケージをダウンロードする地域を 1 つ選択"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr ""
+msgstr "使用・設定する 1 つ以上のハードドライブを選択"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
 msgstr "AMD ハードウェアとの互換性を最大限に高めるには、すべてのオープンソースまたは AMD/ATI オプションのいずれかを使用することをお勧めします。"
@@ -212,7 +212,7 @@ msgid "Adding partition...."
 msgstr "パーティションを追加...."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr ""
+msgstr "続行するには、有効な fs-type を入力する必要があります。有効な fs-type については、 `man parted` を参照してください。"
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
 msgstr ""
@@ -416,9 +416,11 @@ msgid ""
 "\n"
 "This is your chosen configuration:"
 msgstr ""
+"\n"
+"これが選択した設定です:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr ""
+msgstr "Pacman はすでに実行されており、終了するまで最大 10 分間待機します。"
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
 msgstr ""
@@ -553,7 +555,7 @@ msgid "Select a mount point :"
 msgstr "マウント ポイントを選択:"
 
 msgid "Select the desired subvolume options "
-msgstr "希望するサブボリュームオプションを選択"
+msgstr "サブボリュームのオプションを選択"
 
 msgid "Define users with sudo privilege, by username: "
 msgstr ""
@@ -625,7 +627,7 @@ msgid "Provides a selection of desktop environments and tiling window managers, 
 msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。e.g. gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr "希望するデスクトップ環境を選択"
+msgstr "デスクトップ環境を選択"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
 msgstr "Arch Linux を必要に応じてカスタマイズできる非常に基本的なインストールです。"
@@ -682,7 +684,7 @@ msgstr ""
 "\n"
 
 msgid "Copy to: "
-msgstr ""
+msgstr "コピー先: "
 
 msgid "Edit: "
 msgstr "編集: "
@@ -754,22 +756,25 @@ msgid "Add subvolume"
 msgstr "サブボリュームを追加"
 
 msgid "Edit subvolume"
-msgstr ""
+msgstr "サブボリュームを編集"
 
 msgid "Delete subvolume"
-msgstr ""
+msgstr "サブボリュームを削除"
 
 msgid "Configured {} interfaces"
-msgstr ""
+msgstr "設定した {} インターフェース"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr ""
+msgstr "このオプションは、インストール中に実行できる並列ダウンロードの数を有効にします"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 " (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
+"有効にする並列ダウンロードの数を入力してください。\n"
+" （1 から {} の値を入力）\n"
+"注意:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
 msgstr ""
@@ -806,7 +811,7 @@ msgid "The font should be stored as {}"
 msgstr ""
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall を実行するには root 権限が必要です。詳細については --help を参照してください。"
 
 msgid "Select an execution mode"
 msgstr ""
@@ -929,7 +934,7 @@ msgid "Manual Partitioning"
 msgstr "手動パーティショニング"
 
 msgid "Pre-mounted configuration"
-msgstr "マウント済みのものの設定"
+msgstr "事前にマウントされた設定"
 
 msgid "Unknown"
 msgstr "不明"
@@ -968,7 +973,7 @@ msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that
 msgstr ""
 
 msgid "Installed packages"
-msgstr "インストールされるパッケージ"
+msgstr "インストールするパッケージ"
 
 msgid "Add profile"
 msgstr "プロファイルを追加"
