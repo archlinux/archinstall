@@ -42,7 +42,6 @@ class GfxPackage(Enum):
 	LibvaMesaDriver = 'libva-mesa-driver'
 	Mesa = "mesa"
 	Nvidia = 'nvidia'
-	NvidiaDKMS = 'nvidia-dkms'
 	NvidiaOpen = 'nvidia-open'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
@@ -110,8 +109,7 @@ class GfxDriver(Enum):
 				]
 			case GfxDriver.NvidiaProprietary:
 				return [
-					GfxPackage.Nvidia,
-					GfxPackage.NvidiaDKMS
+					GfxPackage.Nvidia
 				]
 			case GfxDriver.VMOpenSource:
 				return [
