@@ -13,7 +13,7 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
       - name: Install pre-dependencies
         run: |
           pacman -Sy --noconfirm tree git python-pyparted python-simple-term-menu python-setuptools python-sphinx python-sphinx_rtd_theme python-build python-installer python-wheel
