@@ -458,6 +458,10 @@ class Installer:
 		# fstrim is owned by util-linux, a dependency of both base and systemd.
 		self.enable_service("fstrim.timer")
 
+	def enable_systemd_oomd(self) -> None:
+		info('Enabling systemd-oomd.service to handle OOM events')
+		self.enable_service('systemd-oomd')
+
 	def enable_service(self, services: Union[str, List[str]]) -> None:
 		if isinstance(services, str):
 			services = [services]
