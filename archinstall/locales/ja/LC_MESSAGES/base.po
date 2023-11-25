@@ -732,7 +732,7 @@ msgid "Enter username (leave blank to skip): "
 msgstr "ユーザー名を入力（無記入でスキップ）: "
 
 msgid "The username you entered is invalid. Try again"
-msgstr "入力したユーザー名は無効です。もう一度やり直してください"
+msgstr "入力したユーザー名は無効です。もう1度やり直してください"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "\"{}\" はスーパーユーザー（sudo）になりますか？"
@@ -988,7 +988,7 @@ msgid "Profile name: "
 msgstr "プロファイル名: "
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr "入力したプロファイル名はすでに使用されています。もう一度やり直してください"
+msgstr "入力したプロファイル名はすでに使用されています。もう1度やり直してください"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
 msgstr "このプロファイルでインストールするパッケージ（スペースで区切る。無記入でスキップ）: "
@@ -1107,7 +1107,7 @@ msgid "Locales"
 msgstr "ロケール"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "NetworkManager を使用（GNOME と KDE でインターネットをグラフィカルに設定するために必要）"
+msgstr "NetworkManager を使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
 
 msgid "Total: {} / {}"
 msgstr "全体: {} / {}"
