@@ -639,25 +639,25 @@ msgid "Choose which servers to install, if none then a minimal installation will
 msgstr ""
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr ""
+msgstr "最小限のシステムと xorg およびグラフィックドライバーをインストール。"
 
 msgid "Press Enter to continue."
 msgstr "Enter キーで続行します。"
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr ""
+msgstr "新しく作成したインストールに chroot して、インストール後の設定を実行しますか？"
 
 msgid "Are you sure you want to reset this setting?"
 msgstr "この設定をリセットしてもよろしいですか？"
 
 msgid "Select one or more hard drives to use and configure\n"
-msgstr ""
+msgstr "使用・設定する 1 つ以上のハードドライブを選択\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr ""
+msgstr "既存の設定を変更すると、ディスクレイアウトがリセットされます！"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr ""
+msgstr "ハードドライブの選択をリセットすると、現在のディスクレイアウトもリセットされます。よろしいですか？"
 
 msgid "Save and exit"
 msgstr "保存して終了"
@@ -666,6 +666,8 @@ msgid ""
 "{}\n"
 "contains queued partitions, this will remove those, are you sure?"
 msgstr ""
+"{}\n"
+"キューに入れられたパーティションが含まれています。削除しますがよろしいですか？"
 
 msgid "No audio server"
 msgstr "オーディオサーバーなし"
@@ -705,10 +707,10 @@ msgid "You can skip selecting a drive and partitioning and use whatever drive-se
 msgstr "ドライブの選択とパーティショニングをスキップして、/mnt にマウントしているドライブのセットアップを使用できます（実験的）"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr ""
+msgstr "いずれかのディスクを選択するか、スキップして /mnt をデフォルトとして使用"
 
 msgid "Select which partitions to mark for formatting:"
-msgstr ""
+msgstr "フォーマット対象としてマークするパーティションを選択:"
 
 msgid "Use HSM to unlock encrypted drive"
 msgstr "HSM を使用して暗号化されたドライブのロックを解除"
@@ -738,7 +740,7 @@ msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "\"{}\" はスーパーユーザー（sudo）になりますか？"
 
 msgid "Select which partitions to encrypt"
-msgstr ""
+msgstr "暗号化するパーティションを選択"
 
 msgid "very weak"
 msgstr "非常に弱い"
@@ -916,16 +918,16 @@ msgid "Partitions"
 msgstr "パーティション"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "利用可能な HSM デバイスがありません"
 
 msgid "Partitions to be encrypted"
-msgstr ""
+msgstr "暗号化するパーティション"
 
 msgid "Select disk encryption option"
 msgstr "ディスクの暗号化オプションを選択"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "HSM に使用する FIDO2 デバイスを選択"
 
 msgid "Use a best-effort default partition layout"
 msgstr "ベストエフォートのデフォルトパーティションレイアウトを使用"
@@ -940,10 +942,10 @@ msgid "Unknown"
 msgstr "不明"
 
 msgid "Partition encryption"
-msgstr ""
+msgstr "パーティションの暗号化"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! {} のフォーマットまで "
 
 msgid " Back"
 msgstr " 戻る"
@@ -970,7 +972,7 @@ msgid "Environment type: {}"
 msgstr "環境のタイプ: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "プロプライエタリの Nvidia ドライバーは Sway ではサポートされていません。問題が発生する可能性がありますが、よろしいですか？"
 
 msgid "Installed packages"
 msgstr "インストールするパッケージ"
@@ -994,10 +996,10 @@ msgid "Packages to be install with this profile (space separated, leave blank to
 msgstr "このプロファイルでインストールするパッケージ（スペースで区切る。無記入でスキップ）: "
 
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr ""
+msgstr "このプロファイルで有効にするサービス（スペースで区切る。未記入でスキップ): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "このプロファイルのインストールを有効にしますか？"
 
 msgid "Create your own"
 msgstr ""
@@ -1010,7 +1012,7 @@ msgstr ""
 "グラフィックドライバーを選択。無記入ですべてのオープンソースドライバーをインストール"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Sway はシート（キーボード、マウスなどハードウェアデバイスの集合）にアクセスする必要があります"
 
 msgid ""
 "\n"
@@ -1055,7 +1057,7 @@ msgid "Enter name (leave blank to skip): "
 msgstr "名前を入力（無記入でスキップ）: "
 
 msgid "Enter url (leave blank to skip): "
-msgstr ""
+msgstr "URL を入力（未記入でスキップ）: "
 
 msgid "Select signature check option"
 msgstr ""
@@ -1131,10 +1133,10 @@ msgid "Path"
 msgstr "パス"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "メーカー"
 
 msgid "Product"
-msgstr ""
+msgstr "製品"
 
 #, python-brace-format
 msgid "Invalid configuration: {error}"
@@ -1180,7 +1182,7 @@ msgid "Unified kernel images"
 msgstr "Unified カーネルイメージ"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "時刻の同期（timedatectl show）が完了するのを待機しています。"
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr ""
