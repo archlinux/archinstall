@@ -239,7 +239,7 @@ msgid "Disk layout"
 msgstr "ディスクレイアウト"
 
 msgid "Encryption password"
-msgstr "暗号化のパスワード"
+msgstr "暗号化パスワード"
 
 msgid "Swap"
 msgstr "スワップ"
@@ -337,7 +337,7 @@ msgid ""
 "Use ESC to skip\n"
 "\n"
 msgstr ""
-"ESC でスキップ\n"
+"Esc でスキップ\n"
 "\n"
 
 msgid "Suggest partition layout"
@@ -347,7 +347,7 @@ msgid "Enter a password: "
 msgstr "パスワードを入力: "
 
 msgid "Enter a encryption password for {}"
-msgstr ""
+msgstr "{} の暗号化パスワードを入力"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "ディスクの暗号化パスワードを入力（暗号化しない場合は無記入）: "
@@ -376,7 +376,7 @@ msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "ユーザー名を入力して追加ユーザーを作成（無記入でスキップ）: "
 
 msgid "Use ESC to skip\n"
-msgstr "ESC でスキップ\n"
+msgstr "Esc でスキップ\n"
 
 msgid ""
 "\n"
@@ -472,7 +472,7 @@ msgstr ""
 "サブボリュームを設定するパーティションを選択"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr "現在のパーティションの btrfs サブボリュームを管理"
+msgstr "現在のパーティションの Btrfs サブボリュームを管理"
 
 msgid "No configuration"
 msgstr "設定なし"
@@ -499,7 +499,7 @@ msgid "Not a valid directory: {}"
 msgstr "有効なディレクトリではありません: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "使用しているパスワードは脆弱なようです、"
+msgstr "使用しているパスワードは弱いようです、"
 
 msgid "are you sure you want to use it?"
 msgstr "本当に使用してもよろしいですか？"
@@ -514,7 +514,7 @@ msgid "Missing configurations:\n"
 msgstr "設定が存在しません:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "root-パスワードか少なくとも 1 人のスーパーユーザーを指定してください"
+msgstr "root-パスワードか1人以上のスーパーユーザーを指定してください"
 
 msgid "Manage superuser accounts: "
 msgstr "スーパーユーザーアカウントを管理: "
@@ -564,10 +564,10 @@ msgid "[!] A log file has been created here: {}"
 msgstr "[!] ここにログファイルが作成されました: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "デフォルトの設定で BTRFS サブボリュームを使用しますか？"
+msgstr "デフォルトの設定で Btrfs サブボリュームを使用しますか？"
 
 msgid "Would you like to use BTRFS compression?"
-msgstr "BTRFS の圧縮を使用しますか？"
+msgstr "Btrfs の圧縮を使用しますか？"
 
 msgid "Would you like to create a separate partition for /home?"
 msgstr "/home 用に別のパーティションを作成しますか？"
@@ -618,10 +618,10 @@ msgid "Manual configuration"
 msgstr "手動設定"
 
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "パーティションを圧縮するものとしてマーク/マーク解除（btrfs のみ）"
+msgstr "パーティションを圧縮するものとしてマーク/マーク解除（Btrfs のみ）"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr ""
+msgstr "使用しているパスワードは弱いようですが、本当に使用してもよろしいですか？"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
 msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。e.g. gnome, kde, sway"
@@ -674,13 +674,13 @@ msgid "(default)"
 msgstr "（デフォルト）"
 
 msgid "Use ESC to skip"
-msgstr "ESC でスキップ"
+msgstr "Esc でスキップ"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
-"CTRL+C で現在の選択をリセット\n"
+"Ctrl+C で現在の選択をリセット\n"
 "\n"
 
 msgid "Copy to: "
@@ -726,7 +726,7 @@ msgid "Bus-type"
 msgstr "Bus タイプ"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "root-パスワードまたは sudo 権限を持つ、最低 1 人のユーザーを指定する必要があります"
+msgstr "root-パスワードか、1人以上の sudo 権限を持つユーザーを指定する必要があります"
 
 msgid "Enter username (leave blank to skip): "
 msgstr "ユーザー名を入力（無記入でスキップ）: "
@@ -793,10 +793,10 @@ msgid "Parallel Downloads"
 msgstr "並行ダウンロード"
 
 msgid "ESC to skip"
-msgstr "ESCでスキップ"
+msgstr "Esc でスキップ"
 
 msgid "CTRL+C to reset"
-msgstr "CTRL+C でリセット"
+msgstr "Ctrl+C でリセット"
 
 msgid "TAB to select"
 msgstr "Tab で選択"
