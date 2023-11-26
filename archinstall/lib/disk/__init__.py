@@ -46,10 +46,3 @@ from .encryption_menu import (
 )
 
 from .disk_menu import DiskLayoutConfigurationMenu
-
-from .lvm_menu import (
-	LvmConfigurationMenu,
-	LvmVolumeList,
-	select_lvm_pvs,
-	select_lvm_vol_group
-)

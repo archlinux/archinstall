@@ -68,7 +68,7 @@ class DiskLayoutConfiguration:
 			return config
 
 	@classmethod
-	def parse_arg(cls, disk_config: Dict[str, Dict[str, Any]]) -> Optional[DiskLayoutConfiguration]:
+	def parse_arg(cls, disk_config: Dict[str, Any]) -> Optional[DiskLayoutConfiguration]:
 		from .device_handler import device_handler
 
 		device_modifications: List[DeviceModification] = []
@@ -136,7 +136,7 @@ class DiskLayoutConfiguration:
 			device_modifications.append(device_modification)
 
 		# Parse LVM configuration from settings
-		if lvm_arg := disk_config.get('lvm_config', None):
+		if (lvm_arg := disk_config.get('lvm_config', None)) is not None:
 			config.lvm_config = LvmConfiguration.parse_arg(lvm_arg, config)
 
 		return config

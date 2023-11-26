@@ -5,7 +5,6 @@ from typing import Any, TYPE_CHECKING
 from typing import Optional, List, Tuple
 
 from .. import disk
-from ..disk.lvm_menu import LvmConfigurationMenu
 from ..hardware import SysInfo
 from ..menu import Menu
 from ..menu import TableMenu
@@ -216,8 +215,9 @@ def select_lvm_config(
 			if choice.single_value == default_mode:
 				return suggest_lvm_layout(disk_config)
 			elif choice.single_value == manual_mode:
-				lvm_config = LvmConfigurationMenu(preset, {}, disk_config.device_modifications).run()
-				return lvm_config
+				raise ValueError('Implement me')
+				# lvm_config = LvmConfigurationMenu(preset, {}, disk_config.device_modifications).run()
+				# return lvm_config
 	return preset
 
 
@@ -509,9 +509,6 @@ def suggest_lvm_layout(
 		compression = choice.value == Menu.yes()
 
 	if using_subvolumes:
-		# https://btrfs.wiki.kernel.org/index.php/FAQ
-		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
-		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
 		btrfs_subvols = [
 			disk.SubvolumeModification(Path('@'), Path('/')),
 			disk.SubvolumeModification(Path('@home'), Path('/home')),
@@ -566,8 +563,6 @@ def suggest_lvm_layout(
 		)
 
 		lvm_vol_group.volumes.append(home_vol)
-
-	debug(lvm_vol_group)
 
 	return disk.LvmConfiguration(
 		disk.LvmLayoutType.Default,

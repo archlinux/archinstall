@@ -5,7 +5,7 @@ import os
 import time
 import logging
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING
+from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal
 
 from parted import (  # type: ignore
 	Disk, Geometry, FileSystem,
@@ -272,76 +272,54 @@ class DeviceHandler(object):
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
 
-	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
-		cmd = 'lvs --reportformat json ' \
-			  '--unit B ' \
-			  f'-S lv_name={lv_name}'
-
+	def _lvm_info(self, cmd: str, name: str, info_type: Literal['lv', 'vg']) -> Optional[Any]:
 		raw_info = SysCommand(cmd).decode().split('\n')
 
 		# for whatever reason the output sometimes contains
 		# "File descriptor X leaked leaked on vgs invocation
-		data = '\n'.join([l for l in raw_info if 'File descriptor' not in l])
+		data = '\n'.join([raw for raw in raw_info if 'File descriptor' not in raw])
 
-		debug(f'LVM info: {data}')
+		debug(f'LVM raw: {data}')
 
 		reports = json.loads(data)
 
-		lv = None
+		type_name = f'{info_type}_name'
 
 		for report in reports['report']:
-			lvs = report.get('lv', [])
-			for lv_data in lvs:
-				if lv_data['lv_name'] == lv_name:
-					lv = lv_data
+			entries = report.get(info_type, [])
+			for entry in entries:
+				if entry[type_name] == name:
+					lv_size = int(entry[f'{info_type}_size'][:-1])
+					size = Size(lv_size, Unit.B, SectorSize.default())
 
-		if lv is None:
-			return None
+					match info_type:
+						case 'lv':
+							return LvmVolumeInfo(
+								lv_name=entry['lv_name'],
+								vg_name=entry['vg_name'],
+								lv_size=size
+							)
+						case 'vg':
+							return LvmGroupInfo(
+								vg_size=size,
+								vg_uuid=entry['vg_uuid']
+							)
+		return None
 
-		lv_size = int(lv['lv_size'][:-1])
-		size = Size(lv_size, Unit.B, SectorSize.default())
+	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
+		cmd = 'lvs --reportformat json ' \
+			'--unit B ' \
+			f'-S lv_name={lv_name}'
 
-		return LvmVolumeInfo(
-			lv_name=lv['lv_name'],
-			vg_name=lv['vg_name'],
-			lv_size=size
-		)
+		return self._lvm_info(cmd, lv_name, 'lv')
 
 	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
 		cmd = 'vgs --reportformat json ' \
-			  '--unit B ' \
-			  '-o vg_name,vg_uuid,vg_size ' \
-			  f'-S vg_name={vg_name}'
+			'--unit B ' \
+			'-o vg_name,vg_uuid,vg_size ' \
+			f'-S vg_name={vg_name}'
 
-		debug(f'LVM group info: {cmd}')
-		raw_info = SysCommand(cmd).decode().strip().split('\n')
-
-		# for whatever reason the output sometimes contains
-		# "File descriptor X leaked leaked on vgs invocation
-		data = '\n'.join([l for l in raw_info if 'File descriptor' not in l])
-
-		debug(f'VG info: {data}')
-
-		reports = json.loads(data)
-
-		vg = None
-
-		for report in reports['report']:
-			vgs = report.get('vg', [])
-			for vg_data in vgs:
-				if vg_data['vg_name'] == vg_name:
-					vg = vg_data
-
-		if vg is None:
-			return None
-
-		vg_size = int(vg['vg_size'][:-1])
-		size = Size(vg_size, Unit.B, SectorSize.default())
-
-		return LvmGroupInfo(
-			vg_size=size,
-			vg_uuid=vg['vg_uuid']
-		)
+		return self._lvm_info(cmd, vg_name, 'vg')
 
 	def lvm_vol_reduce(self, vol_path: Path, amount: Size):
 		val = amount.format_size(Unit.B, include_unit=False)
@@ -383,7 +361,7 @@ class DeviceHandler(object):
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
-		volume.dev_path = f'/dev/{vg_name}/{volume.name}'
+		volume.dev_path = Path(f'/dev/{vg_name}/{volume.name}')
 
 	def _perform_partitioning(
 		self,

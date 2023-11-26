@@ -695,7 +695,6 @@ class Installer:
 					# 		if 'encrypt' not in self._hooks:
 					# 			self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
 
-
 	def minimal_installation(
 		self,
 		testing: bool = False,
@@ -825,7 +824,7 @@ class Installer:
 	) -> List[str]:
 		kernel_parameters = []
 
-		if root in self._disk_encryption.partitions:
+		if isinstance(root, disk.PartitionModification) and root in self._disk_encryption.partitions:
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
 			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 
@@ -903,7 +902,7 @@ class Installer:
 		# Install the boot loader
 		try:
 			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl {' '.join(bootctl_options)} install")
-		except SysCallError as e:
+		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
 			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(bootctl_options)} install")
 
@@ -1103,8 +1102,10 @@ class Installer:
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
-			hook_command = f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/' \
-						   f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
+			hook_command = (
+				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/'
+				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
+			)
 		else:
 			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
@@ -1120,8 +1121,10 @@ class Installer:
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine on {parent_dev_path}: {err}')
 
-			hook_command = f'/usr/bin/limine bios-install {parent_dev_path}' \
-						   f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/'
+			hook_command = (
+				f'/usr/bin/limine bios-install {parent_dev_path}'
+				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/'
+			)
 
 		hook_contents = f'''[Trigger]
 	Operation = Install
@@ -1166,7 +1169,6 @@ class Installer:
 		config_path.write_text(config_contents)
 
 		self.helper_flags['bootloader'] = "limine"
-
 
 	def _add_efistub_bootloader(
 		self,

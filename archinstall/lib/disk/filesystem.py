@@ -148,6 +148,9 @@ class FilesystemHandler:
 				# figure out what the actual available size in the group is
 				lvm_gp_info = device_handler.lvm_group_info(vol_gp.name)
 
+				if not lvm_gp_info:
+					raise ValueError('Unable to fetch VG info')
+
 				# the actual available LVM Group size will be smaller than the
 				# total PVs size due to reserved metadata storage etc.
 				# so we'll have a look at the total avail. size, check the delta
@@ -184,7 +187,7 @@ class FilesystemHandler:
 					device_handler.format(lv.fs_type, lv.safe_dev_path)
 
 					if lv.fs_type == FilesystemType.Btrfs:
-						device_handler.create_btrfs_volumes(lv, enc_conf=self._enc_config)
+						device_handler.create_lvm_btrfs_subvolumes(lv, enc_conf=self._enc_config)
 
 	def _lvm_vol_handle_e2scrub(self, vol_gp: LvmVolumeGroup):
 		# from arch wiki:
