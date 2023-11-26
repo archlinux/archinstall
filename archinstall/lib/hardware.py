@@ -112,7 +112,7 @@ class GfxDriver(Enum):
 					GfxPackage.NvidiaOpenDkms
 				]
 			case GfxDriver.NvidiaOpenSource:
-				packages = [
+				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoNouveau,
 					GfxPackage.LibvaMesaDriver
