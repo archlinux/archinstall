@@ -277,15 +277,29 @@ class DeviceHandler(object):
 			  '--unit B ' \
 			  f'-S lv_name={lv_name}'
 
-		raw_info = SysCommand(cmd).decode()
-		lv_info = json.loads(raw_info)
+		raw_info = SysCommand(cmd).decode().split('\n')
 
-		lv = next(filter(lambda x: x['lv_name'] == lv_name, lv_info['report']['lv']), None)
+		# for whatever reason the output sometimes contains
+		# "File descriptor X leaked leaked on vgs invocation
+		data = '\n'.join([l for l in raw_info if 'File descriptor' not in l])
+
+		debug(f'LVM info: {data}')
+
+		reports = json.loads(data)
+
+		lv = None
+
+		for report in reports['report']:
+			lvs = report.get('lv', [])
+			for lv_data in lvs:
+				if lv_data['lv_name'] == lv_name:
+					lv = lv_data
 
 		if lv is None:
 			return None
 
-		size = Size(int(lv['lv_size'][-1]), Unit.B, SectorSize.default())
+		lv_size = int(lv['lv_size'][:-1])
+		size = Size(lv_size, Unit.B, SectorSize.default())
 
 		return LvmVolumeInfo(
 			lv_name=lv['lv_name'],
@@ -300,16 +314,29 @@ class DeviceHandler(object):
 			  f'-S vg_name={vg_name}'
 
 		debug(f'LVM group info: {cmd}')
-		raw_info = SysCommand(cmd).decode().strip()
-		print(f'xxx{raw_info}xxx')
-		vg_info = json.loads(raw_info)
+		raw_info = SysCommand(cmd).decode().strip().split('\n')
 
-		vg = next(filter(lambda x: x['vg_name'] == vg_name, vg_info['report']['vg']), None)
+		# for whatever reason the output sometimes contains
+		# "File descriptor X leaked leaked on vgs invocation
+		data = '\n'.join([l for l in raw_info if 'File descriptor' not in l])
+
+		debug(f'VG info: {data}')
+
+		reports = json.loads(data)
+
+		vg = None
+
+		for report in reports['report']:
+			vgs = report.get('vg', [])
+			for vg_data in vgs:
+				if vg_data['vg_name'] == vg_name:
+					vg = vg_data
 
 		if vg is None:
 			return None
 
-		size = Size(int(vg['vg_size'][-1]), Unit.B, SectorSize.default())
+		vg_size = int(vg['vg_size'][:-1])
+		size = Size(vg_size, Unit.B, SectorSize.default())
 
 		return LvmGroupInfo(
 			vg_size=size,
@@ -454,6 +481,61 @@ class DeviceHandler(object):
 		debug(f'partition information found: {lsblk_info.json()}')
 
 		return lsblk_info
+
+	def create_lvm_btrfs_subvolumes(
+		self,
+		lv: LvmVolume,
+		enc_conf: Optional['DiskEncryption'] = None
+	):
+		info(f'Creating subvolumes: {lv.safe_dev_path}')
+
+		luks_handler = None
+
+		# # unlock the partition first if it's encrypted
+		# if enc_conf is not None and lv in enc_conf.partitions:
+		# 	if not part_mod.mapper_name:
+		# 		raise ValueError('No device path specified for modification')
+		#
+		# 	luks_handler = self.unlock_luks2_dev(
+		# 		part_mod.safe_dev_path,
+		# 		part_mod.mapper_name,
+		# 		enc_conf.encryption_password
+		# 	)
+		#
+		# 	if not luks_handler.mapper_dev:
+		# 		raise DiskError('Failed to unlock luks device')
+		#
+		# 	self.mount(luks_handler.mapper_dev, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+		# else:
+		self.mount(lv.safe_dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+
+		for sub_vol in lv.btrfs_subvols:
+			debug(f'Creating subvolume: {sub_vol.name}')
+
+			if luks_handler is not None:
+				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
+			else:
+				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
+
+			SysCommand(f"btrfs subvolume create {subvol_path}")
+
+			if sub_vol.nodatacow:
+				try:
+					SysCommand(f'chattr +C {subvol_path}')
+				except SysCallError as err:
+					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {err}')
+
+			if sub_vol.compress:
+				try:
+					SysCommand(f'chattr +c {subvol_path}')
+				except SysCallError as err:
+					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
+
+		if luks_handler is not None and luks_handler.mapper_dev is not None:
+			self.umount(luks_handler.mapper_dev)
+			luks_handler.lock()
+		else:
+			self.umount(lv.safe_dev_path)
 
 	def create_btrfs_volumes(
 		self,

@@ -161,16 +161,16 @@ class FilesystemHandler:
 
 				max_vol = max(vol_gp.volumes, key=lambda x: x.length)
 
-				for volume in vol_gp.volumes:
-					offset = max_vol_offset if volume == max_vol else None
+				for lv in vol_gp.volumes:
+					offset = max_vol_offset if lv == max_vol else None
 
-					debug(f'vg: {vol_gp.name}, vol: {volume.name}, offset: {offset}')
-					device_handler.lvm_vol_create(vol_gp.name, volume, offset)
+					debug(f'vg: {vol_gp.name}, vol: {lv.name}, offset: {offset}')
+					device_handler.lvm_vol_create(vol_gp.name, lv, offset)
 
 					info('Getting LVM volume info...')
 					while True:
 						debug('Fetching LVM volume info')
-						lv_info = device_handler.lvm_vol_info(volume.name)
+						lv_info = device_handler.lvm_vol_info(lv.name)
 						if lv_info is not None:
 							break
 
@@ -178,10 +178,13 @@ class FilesystemHandler:
 
 				self._lvm_vol_handle_e2scrub(vol_gp)
 
-				for volume in vol_gp.volumes:
+				for lv in vol_gp.volumes:
 					# wait a bit otherwise the mkfs will fail as it can't
 					# find the mapper device yet
-					device_handler.format(volume.fs_type, volume.safe_dev_path)
+					device_handler.format(lv.fs_type, lv.safe_dev_path)
+
+					if lv.fs_type == FilesystemType.Btrfs:
+						device_handler.create_btrfs_volumes(lv, enc_conf=self._enc_config)
 
 	def _lvm_vol_handle_e2scrub(self, vol_gp: LvmVolumeGroup):
 		# from arch wiki:

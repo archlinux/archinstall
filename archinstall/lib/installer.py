@@ -250,9 +250,10 @@ class Installer:
 			self._mount_btrfs_subvol(part_mod.dev_path, part_mod.btrfs_subvols)
 
 	def _mount_lvm_vol(self, volume: disk.LvmVolume):
-		if volume.mountpoint and volume.dev_path:
-			target = self.target / volume.relative_mountpoint
-			disk.device_handler.mount(volume.dev_path, target, options=volume.mount_options)
+		if volume.fs_type != disk.FilesystemType.Btrfs:
+			if volume.mountpoint and volume.dev_path:
+				target = self.target / volume.relative_mountpoint
+				disk.device_handler.mount(volume.dev_path, target, options=volume.mount_options)
 
 		if volume.fs_type == disk.FilesystemType.Btrfs and volume.dev_path:
 			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols)
