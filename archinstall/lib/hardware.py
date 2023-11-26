@@ -69,7 +69,18 @@ class GfxDriver(Enum):
 			case _:
 				return False
 
-	def packages(self) -> List[GfxPackage]:
+	def general_packages(self) -> List[str]:
+		packages = ['xorg-server', 'xorg-xinit']
+
+		match self:
+			case GfxDriver.NvidiaOpenKernel:
+				packages += ['dkms', 'nvidia-open-dkms']
+			case GfxDriver.NvidiaProprietary:
+				packages += ['dkms', 'nvidia-dkms']
+
+		return packages
+
+	def gfx_packages(self) -> List[GfxPackage]:
 		match self:
 			case GfxDriver.AllOpenSource:
 				return [

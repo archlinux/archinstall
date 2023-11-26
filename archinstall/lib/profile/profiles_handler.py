@@ -12,10 +12,10 @@ from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
 from archinstall.default_profiles.profile import Profile, TProfile, GreeterType
 from .profile_model import ProfileConfiguration
-from ..hardware import GfxDriver, GfxPackage
+from ..hardware import GfxDriver
 from ..menu import MenuSelectionType, Menu, MenuSelection
 from ..networking import list_interfaces, fetch_data_from_url
-from ..output import error, debug, info, warn
+from ..output import error, debug, info
 from ..storage import storage
 
 if TYPE_CHECKING:
@@ -206,38 +206,24 @@ class ProfileHandler:
 			with open(path, 'w') as file:
 				file.write(filedata)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: Optional[GfxDriver]):
-		try:
+	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver):
+		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
+			headers = [f'{kernel}-headers' for kernel in install_session.kernels]
+			# Fixes https://github.com/archlinux/archinstall/issues/585
+			install_session.add_additional_packages(headers)
+		elif driver in [GfxDriver.AllOpenSource, GfxDriver.AmdOpenSource]:
+			# The order of these two are important if amdgpu is installed #808
+			install_session.remove_mod('amdgpu')
+			install_session.remove_mod('radeon')
 
-			if driver is not None:
-				driver_pkgs = driver.packages()
-				pkg_names = [p.value for p in driver_pkgs]
+			install_session.append_mod('amdgpu')
+			install_session.append_mod('radeon')
 
-				for driver_pkg in {GfxPackage.Nvidia, GfxPackage.NvidiaOpen} & set(driver_pkgs):
-					for kernel in {"linux-lts", "linux-zen"} & set(install_session.kernels):
-						# Fixes https://github.com/archlinux/archinstall/issues/585
-						install_session.add_additional_packages(f"{kernel}-headers")
+		driver_pkgs = driver.gfx_packages()
+		pkg_names = [p.value for p in driver_pkgs]
 
-						# I've had kernel regen fail if it wasn't installed before nvidia-dkms
-					install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', f'{driver_pkg.value}-dkms'])
-					# Return after first driver match, since it is impossible to use both simultaneously.
-					return
-
-				if 'amdgpu' in driver_pkgs:
-					# The order of these two are important if amdgpu is installed #808
-					if 'amdgpu' in install_session.modules:
-						install_session.modules.remove('amdgpu')
-					install_session.modules.append('amdgpu')
-
-					if 'radeon' in install_session.modules:
-						install_session.modules.remove('radeon')
-					install_session.modules.append('radeon')
-
-				install_session.add_additional_packages(pkg_names)
-		except Exception as err:
-			warn(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}")
-			# Prep didn't run, so there's no driver to install
-		install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
+		install_session.add_additional_packages(pkg_names)
+		install_session.add_additional_packages(driver.general_packages())
 
 	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
 		profile = profile_config.profile
