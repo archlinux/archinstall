@@ -37,18 +37,22 @@ class CpuVendor(Enum):
 
 
 class GfxPackage(Enum):
+	Dkms = 'dkms'
 	IntelMediaDriver = 'intel-media-driver'
 	LibvaIntelDriver = 'libva-intel-driver'
 	LibvaMesaDriver = 'libva-mesa-driver'
 	Mesa = "mesa"
-	Nvidia = 'nvidia'
+	NvidiaDkms = 'nvidia-dkms'
 	NvidiaOpen = 'nvidia-open'
+	NvidiaOpenDkms = 'nvidia-open-dkms'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	Xf86VideoAmdgpu = "xf86-video-amdgpu"
 	Xf86VideoAti = "xf86-video-ati"
 	Xf86VideoNouveau = 'xf86-video-nouveau'
 	Xf86VideoVmware = 'xf86-video-vmware'
+	XorgServer = 'xorg-server'
+	XorgXinit = 'xorg-xinit'
 
 
 class GfxDriver(Enum):
@@ -69,21 +73,12 @@ class GfxDriver(Enum):
 			case _:
 				return False
 
-	def general_packages(self) -> List[str]:
-		packages = ['xorg-server', 'xorg-xinit']
-
-		match self:
-			case GfxDriver.NvidiaOpenKernel:
-				packages += ['dkms', 'nvidia-open-dkms']
-			case GfxDriver.NvidiaProprietary:
-				packages += ['dkms', 'nvidia-dkms']
-
-		return packages
-
 	def gfx_packages(self) -> List[GfxPackage]:
+		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
+
 		match self:
 			case GfxDriver.AllOpenSource:
-				return [
+				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoAmdgpu,
 					GfxPackage.Xf86VideoAti,
@@ -96,7 +91,7 @@ class GfxDriver(Enum):
 					GfxPackage.VulkanIntel
 				]
 			case GfxDriver.AmdOpenSource:
-				return [
+				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoAmdgpu,
 					GfxPackage.Xf86VideoAti,
@@ -104,30 +99,36 @@ class GfxDriver(Enum):
 					GfxPackage.VulkanRadeon
 				]
 			case GfxDriver.IntelOpenSource:
-				return [
+				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel
 				]
 			case GfxDriver.NvidiaOpenKernel:
-				return [GfxPackage.NvidiaOpen]
+				packages += [
+					GfxPackage.NvidiaOpen,
+					GfxPackage.Dkms,
+					GfxPackage.NvidiaOpenDkms
+				]
 			case GfxDriver.NvidiaOpenSource:
-				return [
+				packages = [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoNouveau,
 					GfxPackage.LibvaMesaDriver
 				]
 			case GfxDriver.NvidiaProprietary:
-				return [
-					GfxPackage.Nvidia
+				packages += [
+					GfxPackage.NvidiaDkms,
+					GfxPackage.Dkms,
 				]
 			case GfxDriver.VMOpenSource:
-				return [
+				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoVmware
 				]
 
+		return packages
 
 class _SysInfo:
 	def __init__(self):

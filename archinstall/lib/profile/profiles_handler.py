@@ -207,6 +207,8 @@ class ProfileHandler:
 				file.write(filedata)
 
 	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver):
+		debug(f'Installing GFX driver: {driver.value}')
+
 		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
 			headers = [f'{kernel}-headers' for kernel in install_session.kernels]
 			# Fixes https://github.com/archlinux/archinstall/issues/585
@@ -221,9 +223,7 @@ class ProfileHandler:
 
 		driver_pkgs = driver.gfx_packages()
 		pkg_names = [p.value for p in driver_pkgs]
-
 		install_session.add_additional_packages(pkg_names)
-		install_session.add_additional_packages(driver.general_packages())
 
 	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
 		profile = profile_config.profile
