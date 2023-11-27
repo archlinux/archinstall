@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Foi criado um ficheiro de registo aqui: {} {}"
@@ -1175,7 +1175,7 @@ msgid "Invalid configuration: {error}"
 msgstr "Configuração inválida: {error}"
 
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
 msgstr "Esta opção ativa o número de transferências paralelas que podem ocorrer durante as transferências de pacotes"
@@ -1198,11 +1198,9 @@ msgstr " - Desativar/Predefinido : 0 ( Desativa as transferências paralelas, pe
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Entrada inválida! Tente novamente com uma entrada válida [ou 0 para desativar]"
 
-#, fuzzy
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
+msgstr "O Hyprland precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
@@ -1210,30 +1208,28 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Selecionar uma opção para permitir o acesso do Sway ao seu hardware"
+"Selecionar uma opção para permitir o acesso do Hyprland ao seu hardware"
 
-#, fuzzy
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr "Todos os valores inseridos podem ser sufixados com uma unidade: B, KB, KiB, MB, MiB..."
+msgstr "Todos os valores inseridos podem ser sufixados com uma unidade: %, B, KB, KiB, MB, MiB..."
 
-#, fuzzy
 msgid "Would you like to use unified kernel images?"
-msgstr "Gostaria de usar a swap em zram?"
+msgstr "Gostaria de usar imagens de kernel unificados?"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "Imagens de kernel unificados"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "À espera que a sincronização da hora (timedatectl show) seja concluída."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "A sincronização da hora não está a ser concluída, enquanto espera - consulte a documentação para obter soluções alternativas: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "Ignorar a espera pela sincronização automática da hora (isto pode causar problemas se a hora estiver dessincronizada durante a instalação)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "A aguardar que a sincronização do chaveiro do Arch Linux (archlinux-keyring-wkd-sync) seja concluída."
 
 #~ msgid "Add :"
 #~ msgstr "Adicionar :"
