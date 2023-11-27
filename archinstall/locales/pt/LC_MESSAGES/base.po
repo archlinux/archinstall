@@ -1217,7 +1217,7 @@ msgid "Would you like to use unified kernel images?"
 msgstr "Gostaria de usar imagens unificadas do kernel?"
 
 msgid "Unified kernel images"
-msgstr "Imagens de kernel unificadas"
+msgstr "Imagens unificadas do kernel"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
 msgstr "À espera que a sincronização da hora (timedatectl show) seja concluída."
