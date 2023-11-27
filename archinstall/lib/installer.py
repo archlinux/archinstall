@@ -28,7 +28,6 @@ from .storage import storage
 if TYPE_CHECKING:
 	_: Any
 
-
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
@@ -77,7 +76,7 @@ class Installer:
 		storage['session'] = self
 		storage['installation_session'] = self
 
-		self.modules: List[str] = []
+		self._modules: List[str] = []
 		self._binaries: List[str] = []
 		self._files: List[str] = []
 
@@ -104,7 +103,8 @@ class Installer:
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
-			print(_("[!] A log file has been created here: {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
+			print(_("[!] A log file has been created here: {}").format(
+				os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
 			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
 			raise exc_val
 
@@ -124,6 +124,14 @@ class Installer:
 			self.sync_log_to_install_medium()
 			return False
 
+	def remove_mod(self, mod: str):
+		if mod in self._modules:
+			self._modules.remove(mod)
+
+	def append_mod(self, mod: str):
+		if mod not in self._modules:
+			self._modules.append(mod)
+
 	def _verify_service_stop(self):
 		"""
 		Certain services might be running that affects the system during installation.
@@ -139,14 +147,16 @@ class Installer:
 			while True:
 				if not _notified and time.time() - _started_wait > 5:
 					_notified = True
-					warn(_("Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
-					
+					warn(
+						_("Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
+
 				time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
 				if time_val and time_val.strip() == 'yes':
 					break
 				time.sleep(1)
 		else:
-			info(_('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
+			info(
+				_('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
@@ -211,7 +221,8 @@ class Installer:
 					# partition is not encrypted
 					self._mount_partition(part_mod)
 
-	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[disk.PartitionModification, Luks2]:
+	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[
+		disk.PartitionModification, Luks2]:
 		return {
 			part_mod: disk.device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
@@ -304,7 +315,7 @@ class Installer:
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
-	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
+	def post_install_check(self, *args: str, **kwargs: str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
 	def set_mirrors(self, mirror_config: MirrorConfiguration):
@@ -319,14 +330,15 @@ class Installer:
 		if mirror_config.custom_mirrors:
 			add_custom_mirrors(mirror_config.custom_mirrors)
 
-	def genfstab(self, flags :str = '-pU'):
+	def genfstab(self, flags: str = '-pU'):
 		fstab_path = self.target / "etc" / "fstab"
 		info(f"Updating {fstab_path}")
 
 		try:
 			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
 		except SysCallError as err:
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
+			raise RequirementError(
+				f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
 		with open(fstab_path, 'a') as fp:
 			fp.write(gen_fstab)
@@ -366,14 +378,15 @@ class Installer:
 						# We then locate the correct subvolume and check if it's compressed,
 						# and skip entries where compression is already defined
 						# We then sneak in the compress=zstd option if it doesn't already exist:
-						if sub_vol.compress and str(sub_vol.mountpoint) == Path(mountpoint[0].strip()) and ',compress=zstd,' not in line:
+						if sub_vol.compress and str(sub_vol.mountpoint) == Path(
+							mountpoint[0].strip()) and ',compress=zstd,' not in line:
 							fstab[index] = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
 							break
 
 				with fstab_path.open('w') as fp:
 					fp.writelines(fstab)
 
-	def set_hostname(self, hostname: str, *args :str, **kwargs :str) -> None:
+	def set_hostname(self, hostname: str, *args: str, **kwargs: str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
@@ -424,7 +437,7 @@ class Installer:
 		(self.target / 'etc/locale.conf').write_text(f'LANG={lang_value}\n')
 		return True
 
-	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
+	def set_timezone(self, zone: str, *args: str, **kwargs: str) -> bool:
 		if not zone:
 			return True
 		if not len(zone):
@@ -474,10 +487,10 @@ class Installer:
 				if hasattr(plugin, 'on_service'):
 					plugin.on_service(service)
 
-	def run_command(self, cmd :str, *args :str, **kwargs :str) -> SysCommand:
+	def run_command(self, cmd: str, *args: str, **kwargs: str) -> SysCommand:
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
-	def arch_chroot(self, cmd :str, run_as :Optional[str] = None) -> SysCommand:
+	def arch_chroot(self, cmd: str, run_as: Optional[str] = None) -> SysCommand:
 		if run_as:
 			cmd = f"su - {run_as} -c {shlex.quote(cmd)}"
 
@@ -502,7 +515,7 @@ class Installer:
 		with open(f"{self.target}/etc/systemd/network/10-{nic.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
 
-	def copy_iso_network_config(self, enable_services :bool = False) -> bool:
+	def copy_iso_network_config(self, enable_services: bool = False) -> bool:
 		# Copy (if any) iwd password and config files
 		if os.path.isdir('/var/lib/iwd/'):
 			if psk_files := glob.glob('/var/lib/iwd/*.psk'):
@@ -517,7 +530,7 @@ class Installer:
 						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
 						# base is not installed yet.
-						def post_install_enable_iwd_service(*args :str, **kwargs :str):
+						def post_install_enable_iwd_service(*args: str, **kwargs: str):
 							self.enable_service('iwd')
 
 						self.post_base_install.append(post_install_enable_iwd_service)
@@ -542,7 +555,7 @@ class Installer:
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self.helper_flags.get('base', False) is False:
 
-					def post_install_enable_networkd_resolved(*args :str, **kwargs :str):
+					def post_install_enable_networkd_resolved(*args: str, **kwargs: str):
 						self.enable_service(['systemd-networkd', 'systemd-resolved'])
 
 					self.post_base_install.append(post_install_enable_networkd_resolved)
@@ -560,7 +573,7 @@ class Installer:
 					return True
 
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
-			mkinit.write(f"MODULES=({' '.join(self.modules)})\n")
+			mkinit.write(f"MODULES=({' '.join(self._modules)})\n")
 			mkinit.write(f"BINARIES=({' '.join(self._binaries)})\n")
 			mkinit.write(f"FILES=({' '.join(self._files)})\n")
 
@@ -603,7 +616,7 @@ class Installer:
 					if (pkg := part.fs_type.installation_pkg) is not None:
 						self.base_packages.append(pkg)
 					if (module := part.fs_type.installation_module) is not None:
-						self.modules.append(module)
+						self._modules.append(module)
 					if (binary := part.fs_type.installation_binary) is not None:
 						self._binaries.append(binary)
 
@@ -694,7 +707,7 @@ class Installer:
 			if hasattr(plugin, 'on_install'):
 				plugin.on_install(self)
 
-	def setup_swap(self, kind :str = 'zram'):
+	def setup_swap(self, kind: str = 'zram'):
 		if kind == 'zram':
 			info(f"Setting up swap on zram")
 			self.pacman.strap('zram-generator')
@@ -1272,7 +1285,8 @@ Exec = /bin/sh -c "{hook_command}"
 		for user in users:
 			self.user_create(user.username, user.password, user.groups, user.sudo)
 
-	def user_create(self, user :str, password :Optional[str] = None, groups :Optional[List[str]] = None, sudo :bool = False) -> None:
+	def user_create(self, user: str, password: Optional[str] = None, groups: Optional[List[str]] = None,
+					sudo: bool = False) -> None:
 		if groups is None:
 			groups = []
 
