@@ -1214,10 +1214,10 @@ msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB...
 msgstr "Todos os valores inseridos podem ser sufixados com uma unidade: %, B, KB, KiB, MB, MiB..."
 
 msgid "Would you like to use unified kernel images?"
-msgstr "Gostaria de usar imagens unificadas do kernel?"
+msgstr "Gostaria de usar imagens de kernel unificados?"
 
 msgid "Unified kernel images"
-msgstr "Imagens unificadas do kernel"
+msgstr "Imagens de kernel unificados"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
 msgstr "À espera que a sincronização da hora (timedatectl show) seja concluída."
