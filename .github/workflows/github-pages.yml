@@ -1,6 +1,15 @@
 name: documentation
 
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    paths:
+      - "docs/**"
+
+  pull_request:
+    paths:
+      - "docs/**"
+
+  workflow_dispatch:
 
 permissions:
   contents: write
