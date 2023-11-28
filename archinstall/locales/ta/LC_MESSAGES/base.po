@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ஒரு பதிவு கோப்பு இங்கே உருவாக்கப்பட்டது: {} {}"
@@ -72,7 +72,7 @@ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{
 msgstr "எந்த பயன்முறையை \"{}\" உள்ளமைக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும் அல்லது இயல்புநிலை பயன்முறை \"{}\" ஐப் பயன்படுத்த தவிர்க்கவும்"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "உள்ளிடுங்கள் IP மற்றும் சப்நெட்டை {}(எடுத்துக்காட்டு: 192.168.0.5/24): "
+msgstr "உள்ளிடுங்கள் IP மற்றும் சப்நெட்டை {} (எடுத்துக்காட்டு: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr "உங்கள் நுழைவாயில் (திசைவி) IP முகவரியை உள்ளிடவும் அல்லது எதற்கும் காலியாக விடவும்: "
@@ -367,7 +367,7 @@ msgid "Enter a password: "
 msgstr "கடவுச்சொல்லை உள்ளிடவும்: "
 
 msgid "Enter a encryption password for {}"
-msgstr "{}க்கான என்க்ரிப்ஷன் கடவுச்சொல்லை உள்ளிடவும்"
+msgstr "{} க்கான என்க்ரிப்ஷன் கடவுச்சொல்லை உள்ளிடவும்"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "வட்டு குறியாக்க கடவுச்சொல்லை உள்ளிடவும் (குறியாக்கம் இல்லாமல் இருப்பதற்கு காலியாக விடவும்): "
@@ -426,7 +426,7 @@ msgid "Delete"
 msgstr "அழி"
 
 msgid "Select an action for '{}'"
-msgstr "'{}'க்கான செயலைத் தேர்ந்தெடுக்கவும்"
+msgstr "'{}' க்கான செயலைத் தேர்ந்தெடுக்கவும்"
 
 msgid "Copy to new key:"
 msgstr "புதிய விசைக்கு நகலெடு:"
@@ -869,7 +869,7 @@ msgstr ""
 "\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "ஆர்ச் லினக்ஸ் பகிர்வுக்கான குறைந்தபட்ச கொள்ளளவு: {}ஜிபி"
+msgstr "ஆர்ச் லினக்ஸ் பகிர்வுக்கான குறைந்தபட்ச கொள்ளளவு: {}GiB"
 
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
 msgstr "இது முன்-திட்டமிடப்பட்ட profiles_bck இன் பட்டியல், அவை டெஸ்க்டாப் சூழல்கள் போன்றவற்றை நிறுவுவதை எளிதாக்கலாம்"
@@ -1210,21 +1210,20 @@ msgstr ""
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "உள்ளிடப்பட்ட அனைத்து மதிப்புகளையும் ஒரு அலகுடன் பின்னொட்டு இடலாம்: %, B, KB, KiB, MB, MiB..."
 
-#, fuzzy
 msgid "Would you like to use unified kernel images?"
-msgstr "நீங்கள் zram இல் swap ஐப் பயன்படுத்த விரும்புகிறீர்களா?"
+msgstr "ஒருங்கிணைந்த கர்னல் படங்களைப் பயன்படுத்த விரும்புகிறீர்களா?"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "ஒருங்கிணைந்த கர்னல் படங்கள்"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "நேர ஒத்திசைவு (timedatectl show) முடிவடைவதற்காகக் காத்திருக்கிறது."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "நேர ஒத்திசைவு முடிவடையவில்லை, நீங்கள் காத்திருக்கும் போது - தீர்வுக்கான ஆவணங்களைச் சரிபார்க்கவும்: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "தானியங்கி நேர ஒத்திசைவுக்காக காத்திருப்பதைத் தவிர்த்தல் (நிறுவலின் போது நேரம் ஒத்திசைக்கப்படாவிட்டால் இது சிக்கல்களை ஏற்படுத்தும்)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "ஆர்ச் லினக்ஸ் கீரிங் ஒத்திசைவு (archlinux-keyring-wkd-sync) முடிவடைவதற்குக் காத்திருக்கிறது."
