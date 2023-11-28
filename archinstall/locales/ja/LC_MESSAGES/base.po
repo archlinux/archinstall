@@ -947,7 +947,8 @@ msgstr "パーティションの暗号化"
 msgid " ! Formatting {} in "
 msgstr " ! {} のフォーマットまで "
 
-msgid " Back"
+#, fuzzy
+msgid "← Back"
 msgstr " 戻る"
 
 msgid "Disk encryption"
