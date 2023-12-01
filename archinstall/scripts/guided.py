@@ -158,7 +158,7 @@ def perform_installation(mountpoint: Path):
 
 		installation.add_bootloader(
 			archinstall.arguments["bootloader"],
-			archinstall.arguments["uki"]
+			archinstall.arguments.get('uki', False)
 		)
 
 		# If user selected to copy the current ISO network configuration
