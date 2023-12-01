@@ -36,7 +36,7 @@
             ]
         },
         "uki": {
-            "description": "Set to true to use a unified kernel images",
+            "description": "Set to true to use unified kernel images",
             "type": "boolean"
         },
         "custom-commands": {
