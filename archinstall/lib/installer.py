@@ -694,7 +694,7 @@ class Installer:
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
 		if mkinitcpio and not self.mkinitcpio(['-P']):
-			error(f"Error generating initramfs (continuing anyway)")
+			error('Error generating initramfs (continuing anyway)')
 
 		self.helper_flags['base'] = True
 
@@ -1157,11 +1157,10 @@ Exec = /bin/sh -c "{hook_command}"
 
 		ucode = self._get_microcode()
 
-		esp = efi_partition.mountpoint
-
 		diff_mountpoint = None
-		if esp != Path('/efi'):
-			diff_mountpoint = str(esp)
+
+		if efi_partition.mountpoint != Path('/efi'):
+			diff_mountpoint = str(efi_partition.mountpoint)
 
 		image_re = re.compile('(.+_image="/([^"]+).+\n)')
 		uki_re = re.compile('#((.+_uki=")/[^/]+(.+\n))')
@@ -1190,12 +1189,12 @@ Exec = /bin/sh -c "{hook_command}"
 			preset.write_text(''.join(config))
 
 		# Directory for the UKIs
-		uki_dir = self.target / esp.relative_to(Path('/')) / 'EFI/Linux'
+		uki_dir = self.target / efi_partition.relative_mountpoint / 'EFI/Linux'
 		uki_dir.mkdir(parents=True, exist_ok=True)
 
 		# Build the UKIs
 		if not self.mkinitcpio(['-P']):
-			error(f"Error generating initramfs (continuing anyway)")
+			error('Error generating initramfs (continuing anyway)')
 
 	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False):
 		"""
