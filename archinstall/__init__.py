@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.7.0"
+__version__ = "2.7.1"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the
@@ -243,6 +243,9 @@ def load_config():
 
 	if arguments.get('bootloader', None) is not None:
 		arguments['bootloader'] = models.Bootloader.from_arg(arguments['bootloader'])
+
+		if arguments.get('uki') and not arguments['bootloader'].has_uki_support():
+			arguments['uki'] = False
 
 	if arguments.get('audio_config', None) is not None:
 		arguments['audio_config'] = models.AudioConfiguration.parse_arg(arguments['audio_config'])

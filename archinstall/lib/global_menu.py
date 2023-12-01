@@ -218,14 +218,20 @@ class GlobalMenu(AbstractMenu):
 			return False
 		return self._validate_bootloader() is None
 
+	def _update_uki_display(self, name: Optional[str] = None):
+		if bootloader := self._menu_options['bootloader'].current_selection:
+			if not SysInfo.has_uefi() or not bootloader.has_uki_support():
+				self._menu_options['uki'].set_current_selection(False)
+				self._menu_options['uki'].set_enabled(False)
+			elif name and name == 'bootloader':
+				self._menu_options['uki'].set_enabled(True)
+
 	def _update_install_text(self, name: Optional[str] = None, value: Any = None):
 		text = self._install_text()
 		self._menu_options['install'].update_description(text)
 
 	def post_callback(self, name: Optional[str] = None, value: Any = None):
-		if not SysInfo.has_uefi():
-			self._menu_options['uki'].set_enabled(False)
-
+		self._update_uki_display(name)
 		self._update_install_text(name, value)
 
 	def _install_text(self):
@@ -366,8 +372,6 @@ class GlobalMenu(AbstractMenu):
 		if bootloader == Bootloader.Limine:
 			if boot_partition.fs_type != disk.FilesystemType.Fat32:
 				return "Limine does not support booting from filesystems other than FAT32"
-			elif self._menu_options['uki'].current_selection:
-				return "Limine does not support booting UKIs"
 
 		return None
 

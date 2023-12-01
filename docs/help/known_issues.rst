@@ -13,12 +13,11 @@ Waiting for time sync `#2144`_
 | The usual root cause of this is the network topology.
 | More specifically `timedatectl show`_ cannot perform a proper time sync against the default servers.
 
-| A *"fix"* for this is mentioned in the issue above.
-| That is to configure ``/etc/systemd/timesyncd.conf`` and restart ``systemd-timesyncd.service``.
+| Restarting ``systemd-timesyncd.service`` might work but most often you need to configure ``/etc/systemd/timesyncd.conf`` to match your network design.
 
 .. note::
 
-   A proposal to override the time sync check has been put up for discussion in `#2144`_.
+   If you know your time is correct on the machine, you can run ``archinstall --skip-ntp`` to ignore time sync.
 
 Missing Nvidia Proprietary Driver `#2002`_
 ------------------------------------------

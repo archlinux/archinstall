@@ -94,7 +94,7 @@
  {"abbr": "lv", "lang": "Latvian"},
  {"abbr": "li", "lang": "Limburgan"},
  {"abbr": "ln", "lang": "Lingala"},
- {"abbr": "lt", "lang": "Lithuanian"},
+ {"abbr": "lt", "lang": "Lithuanian", "translated_lang": "Lietuvių"},
  {"abbr": "lb", "lang": "Luxembourgish"},
  {"abbr": "lu", "lang": "Luba-Katanga"},
  {"abbr": "lg", "lang": "Ganda"},

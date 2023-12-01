@@ -694,7 +694,7 @@ class Installer:
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
 		if mkinitcpio and not self.mkinitcpio(['-P']):
-			error(f"Error generating initramfs (continuing anyway)")
+			error('Error generating initramfs (continuing anyway)')
 
 		self.helper_flags['base'] = True
 
@@ -907,19 +907,17 @@ class Installer:
 		self,
 		boot_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification,
-		efi_partition: Optional[disk.PartitionModification],
-		uki_enabled: bool = False
+		efi_partition: Optional[disk.PartitionModification]
 	):
 		self.pacman.strap('grub')  # no need?
 
-		if not uki_enabled:
-			grub_default = self.target / 'etc/default/grub'
-			config = grub_default.read_text()
+		grub_default = self.target / 'etc/default/grub'
+		config = grub_default.read_text()
 
-			kernel_parameters = ' '.join(self._get_kernel_params(root_partition, False, False))
-			config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
+		kernel_parameters = ' '.join(self._get_kernel_params(root_partition, False, False))
+		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
 
-			grub_default.write_text(config)
+		grub_default.write_text(config)
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
@@ -1157,11 +1155,10 @@ Exec = /bin/sh -c "{hook_command}"
 
 		ucode = self._get_microcode()
 
-		esp = efi_partition.mountpoint
-
 		diff_mountpoint = None
-		if esp != Path('/efi'):
-			diff_mountpoint = str(esp)
+
+		if efi_partition.mountpoint != Path('/efi'):
+			diff_mountpoint = str(efi_partition.mountpoint)
 
 		image_re = re.compile('(.+_image="/([^"]+).+\n)')
 		uki_re = re.compile('#((.+_uki=")/[^/]+(.+\n))')
@@ -1190,12 +1187,12 @@ Exec = /bin/sh -c "{hook_command}"
 			preset.write_text(''.join(config))
 
 		# Directory for the UKIs
-		uki_dir = self.target / esp.relative_to(Path('/')) / 'EFI/Linux'
+		uki_dir = self.target / efi_partition.relative_mountpoint / 'EFI/Linux'
 		uki_dir.mkdir(parents=True, exist_ok=True)
 
 		# Build the UKIs
 		if not self.mkinitcpio(['-P']):
-			error(f"Error generating initramfs (continuing anyway)")
+			error('Error generating initramfs (continuing anyway)')
 
 	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False):
 		"""
@@ -1235,7 +1232,7 @@ Exec = /bin/sh -c "{hook_command}"
 			case Bootloader.Systemd:
 				self._add_systemd_bootloader(boot_partition, root_partition, efi_partition, uki_enabled)
 			case Bootloader.Grub:
-				self._add_grub_bootloader(boot_partition, root_partition, efi_partition, uki_enabled)
+				self._add_grub_bootloader(boot_partition, root_partition, efi_partition)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root_partition, uki_enabled)
 			case Bootloader.Limine:
