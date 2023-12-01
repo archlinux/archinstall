@@ -244,6 +244,9 @@ def load_config():
 	if arguments.get('bootloader', None) is not None:
 		arguments['bootloader'] = models.Bootloader.from_arg(arguments['bootloader'])
 
+		if arguments.get('uki') and not arguments['bootloader'].has_uki_support():
+			arguments['uki'] = False
+
 	if arguments.get('audio_config', None) is not None:
 		arguments['audio_config'] = models.AudioConfiguration.parse_arg(arguments['audio_config'])
 
