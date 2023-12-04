@@ -75,10 +75,10 @@ msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Εισάγετε την IP και το υποδίκτυο για το {} (παράδειγμα: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Εισάγετε τη διεύθυνση IP του router σας ή αφήστε άδειο για καμία διεύθυνση: "
+msgstr "Εισάγετε τη διεύθυνση IP του router σας ή αφήστε κενό για καμία διεύθυνση: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Εισάγετε τους διακομιστές DNS σας (χωρισμένοι με κενό, αφήστε άδειο για κανέναν διακομιστή): "
+msgstr "Εισάγετε τους διακομιστές DNS σας (χωρισμένοι με κενό, αφήστε κενό για κανέναν διακομιστή): "
 
 msgid "Select which filesystem your main partition should use"
 msgstr "Επιλέξτε ποιο σύστημα αρχείων θέλετε να χρησιμοποιεί η κύρια διαμέριση"
@@ -127,7 +127,7 @@ msgid " * Partition mount-points are relative to inside the installation, the bo
 msgstr " * Τα σημεία mount της διαμέρισης είναι σχετικά ως προς το εσωτερικό της εγκατάστασης, για παράδειγμα το boot θα ήταν /boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Επιλέξτε που να γίνει mount η διαμέρισιη (αφήστε άδειο για να διαγραφεί το σημείο mount): "
+msgstr "Επιλέξτε που να γίνει mount η διαμέρισιη (αφήστε κενό για να διαγραφεί το σημείο mount): "
 
 msgid ""
 "{}\n"
@@ -193,10 +193,10 @@ msgid "Select one or more hard drives to use and configure"
 msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Για την καλύτερη συμβατότητα με το AMD υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε είτε την \"όλα ανοιχτής πηγής\", είτε την AMD / ATI επιλογή."
+msgstr "Για την καλύτερη συμβατότητα με το AMD υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε είτε την \"όλα ανοιχτού κώδικα\", είτε την AMD / ATI επιλογή."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Για την καλύτερη συμβατότητα με το Intel υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε είτε την \"όλα ανοιχτής πηγής\", είτε την Intel επιλογή.\n"
+msgstr "Για την καλύτερη συμβατότητα με το Intel υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε είτε την \"όλα ανοιχτού κώδικα\", είτε την Intel επιλογή.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
 msgstr "Για την καλύτερη συμβατότητα με το Nvidia υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε τον ιδιόκτητο οδηγό της Nvidia.\n"
@@ -208,13 +208,13 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Επιλέξτε έναν οδηγό γραφικών ή αφήστε άδειο για να εγκατασταθούν όλοι οι οδηγοί ανοιχτής πηγής"
+"Επιλέξτε έναν οδηγό γραφικών ή αφήστε κενό για να εγκατασταθούν όλοι οι οδηγοί ανοιχτού κώδικα"
 
 msgid "All open-source (default)"
 msgstr "Όλα ανοιχτού κώδικα (προκαθορισμένο)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Επιλέξτε ποια kernels να χρησιμοποιηθούν ή αφήστε άδειο για το προκαθορισμένο \"{}\""
+msgstr "Επιλέξτε ποια kernels να χρησιμοποιηθούν ή αφήστε κενό για το προκαθορισμένο \"{}\""
 
 msgid "Choose which locale language to use"
 msgstr "Επιλέξτε ποια τοπική γλώσσα να χρησιμοποιηθεί"
@@ -370,13 +370,13 @@ msgid "Enter a encryption password for {}"
 msgstr "Εισάγετε έναν κωδικό κρυπτογράφησης για {}"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Εισάγετε κωδικό κρυπτογράφησης δίσκου (αφήστε άδειο για καμία κρυπτογράφηση): "
+msgstr "Εισάγετε κωδικό κρυπτογράφησης δίσκου (αφήστε κενό για καμία κρυπτογράφηση): "
 
 msgid "Create a required super-user with sudo privileges: "
 msgstr "Δημιουργήστε έναν απαιτούμενο υπερχρήστη με δικαιώματα sudo: "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "Εισάγετε τον κωδικό root (αφήστε άδειο για να απενεργοποιηθεί το root): "
+msgstr "Εισάγετε τον κωδικό root (αφήστε κενό για να απενεργοποιηθεί το root): "
 
 msgid "Password for user \"{}\": "
 msgstr "Κωδικός για τον χρήστη \"{}\": "
@@ -395,7 +395,7 @@ msgstr ""
 "Για περισσότερες πληροφορίες, παρακαλώ ελέγξτε το Arch wiki"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "Εισάγετε ένα όνομα χρήστη για να δημιουργήσετε έναν ακόμα χρήστη (αφήστε άδειο για παράλειψη): "
+msgstr "Εισάγετε ένα όνομα χρήστη για να δημιουργήσετε έναν ακόμα χρήστη (αφήστε κενό για παράλειψη): "
 
 msgid "Use ESC to skip\n"
 msgstr "Χρησιμοποιήστε ESC για παράλειψη\n"
@@ -1053,11 +1053,11 @@ msgstr "Το όνομα χρήστη που εισάγατε δεν είναι �
 
 #, fuzzy
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
+msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε κενό για να παραληφθεί): "
 
 #, fuzzy
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
+msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε κενό για να παραληφθεί): "
 
 msgid "Should this profile be enabled for installation?"
 msgstr "Ενεργοποίηση του προφίλ για εγκατάσταση;"
@@ -1072,7 +1072,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Επιλέξτε έναν οδηγώ γραφικών ή αφήστε άδειο για να εγκατασταθούν όλοι οι οδηγοί ανοιχτής πηγής"
+"Επιλέξτε έναν οδηγό γραφικών ή αφήστε κενό για να εγκατασταθούν όλοι οι οδηγοί ανοιχτού κώδικα"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr ""
