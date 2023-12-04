@@ -1045,7 +1045,7 @@ msgstr "Διαγραφή προφίλ"
 
 #, fuzzy
 msgid "Profile name: "
-msgstr "Όνομα προφίλ"
+msgstr "Όνομα προφίλ: "
 
 #, fuzzy
 msgid "The profile name you entered is already in use. Try again"
