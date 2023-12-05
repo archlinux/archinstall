@@ -399,6 +399,8 @@ class DeviceHandler(object):
 			if lsblk_info.partn and lsblk_info.partuuid and lsblk_info.uuid:
 				break
 
+			self.partprobe()
+
 		if not lsblk_info:
 			debug(f'Unable to get partition information: {path}')
 			raise DiskError(f'Unable to get partition information: {path}')
