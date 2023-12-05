@@ -214,7 +214,7 @@ msgid "All open-source (default)"
 msgstr "Όλα ανοιχτού κώδικα (προκαθορισμένο)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Επιλέξτε ποια kernels να χρησιμοποιηθούν ή αφήστε κενό για το προκαθορισμένο \"{}\""
+msgstr "Επιλέξτε ποιοι kernels να χρησιμοποιηθούν ή αφήστε κενό για το προκαθορισμένο \"{}\""
 
 msgid "Choose which locale language to use"
 msgstr "Επιλέξτε ποια τοπική γλώσσα να χρησιμοποιηθεί"
@@ -1112,13 +1112,13 @@ msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς
 
 #, fuzzy
 msgid "Add a custom mirror"
-msgstr "Προσθήκη χρήστη"
+msgstr "Προσθήκη custom mirror"
 
 msgid "Change custom mirror"
-msgstr ""
+msgstr "Αλλαγή custom mirror"
 
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "Διαγραφή custom mirror"
 
 #, fuzzy
 msgid "Enter name (leave blank to skip): "
@@ -1272,7 +1272,7 @@ msgid "Time syncronization not completing, while you wait - check the docs for w
 msgstr ""
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "Παραλείποντας την αναμονή για αυτόματο συγχρονισμό χρόνου (μπορεί να προκαλέσει προβλήματα αν ο χρόνος δεν είναι συγχρονισμένος κατά την εγκατάσταση)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""
