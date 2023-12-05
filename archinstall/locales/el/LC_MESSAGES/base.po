@@ -1185,13 +1185,13 @@ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME 
 msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"
 
 msgid "Total: {} / {}"
-msgstr ""
+msgstr "Σύνολο: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
 msgstr ""
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Αν δεν έχει δωθεί μονάδα, η τιμή ερμηνεύεται ως sectors"
 
 #, fuzzy
 msgid "Enter start (default: sector {}): "
@@ -1269,7 +1269,7 @@ msgid "Waiting for time sync (timedatectl show) to complete."
 msgstr "Περιμένοντας να ολοκληρωθεί ο συγχρονισμός του χρόνου (timedatectl show)"
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Ο συγχρονισμός χρόνου δεν ολοκληρώνεται, όσο περιμένετε - ελέγξτε την τεκμηρίωση για λύσεις: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
 msgstr "Παραλείποντας την αναμονή για αυτόματο συγχρονισμό χρόνου (μπορεί να προκαλέσει προβλήματα αν ο χρόνος δεν είναι συγχρονισμένος κατά την εγκατάσταση)"
