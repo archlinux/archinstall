@@ -823,32 +823,32 @@ msgid "ESC to skip"
 msgstr "Χρησιμοποιήστε ESC για παράλειψη"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "CTRL+C για επαναφορά"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "TAB για επιλογή"
 
 msgid "[Default value: 0] > "
-msgstr ""
+msgstr "[Προεπιλεγμένη τιμή: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
+msgstr "Για να μπορείτε να χρησιμοποιήσετε αυτή την μετάφραση, παρακαλώ εγκαταστήστε χειροκίνητα την γραμματοσειρά που υποστηρίζει την γλώσσα."
 
 msgid "The font should be stored as {}"
-msgstr ""
+msgstr "Η γραμματοσειρά θα πρέπει να αποθηκευτεί ως {}"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Το Archinstall απαιτεί δικαιώματα υπερχρήστη για να εκτελεστεί. Δείτε --help for more."
 
 #, fuzzy
 msgid "Select an execution mode"
 msgstr "Επιλέξτε μία ενέργεια για '{}'"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "Αδύνατη η λήψη προφίλ από το συγκεκριμένο url: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "Τα προφίλ πρέπει να έχουν μοναδικό όνομα, αλλά βρέθηκαν ορισμοί προφίλ με διπλό όνομα: {}"
 
 #, fuzzy
 msgid "Select one or more devices to use and configure"
@@ -899,7 +899,7 @@ msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης προς μορφοποίηση (διαγράφει τα δεδομένα)"
 
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
 
 msgid "Change filesystem"
 msgstr "Αλλαγή συστήματος αρχείων"
@@ -920,7 +920,7 @@ msgid "Partition"
 msgstr "Διαμέριση"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "Αυτή η διαμέριση είναι κρυπτογραφημένη, για μορφοποίηση πρέπει να οριστεί ένα σύστημα αρχείων"
 
 #, fuzzy
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
@@ -995,7 +995,7 @@ msgid "Partition encryption"
 msgstr "Κρυπτογράφηση διαμέρισης"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! Μορφοποίηση {} σε "
 
 msgid "← Back"
 msgstr "← Πίσω"
