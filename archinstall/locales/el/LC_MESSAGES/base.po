@@ -813,7 +813,7 @@ msgstr " - Απενεργοποίηση/Προκαθορισμένο : 0 ( Απ�
 
 #, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"
+msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {max_downloads}, ή 0 για απενεργοποίηση]"
 
 msgid "Parallel Downloads"
 msgstr "Παράλληλες Λήψεις"
@@ -888,7 +888,7 @@ msgstr "Τρέχουσα διάταξη διαμέρισης"
 
 #, fuzzy
 msgid "Remove all newly added partitions"
-msgstr "Δημιουργία καινούργιας διαμέρισης"
+msgstr "Αφαίρεση όλων των νέων διαμερίσεων"
 
 #, fuzzy
 msgid "Assign mountpoint"
@@ -910,7 +910,7 @@ msgstr "Σημείωση/Ξεμαρκάρισμα μίας διαμέρισως 
 
 #, fuzzy
 msgid "Set subvolumes"
-msgstr "Διαγραφή υποόγκου"
+msgstr "Ορισμός υποόγκων"
 
 #, fuzzy
 msgid "Delete partition"
@@ -937,7 +937,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Total sectors: {}"
-msgstr "Μη έγκυρος φάκελος: {}"
+msgstr "Σύνολο sectors: {}"
 
 #, fuzzy
 msgid "Enter the start sector (default: {}): "
@@ -971,7 +971,7 @@ msgid "Partitions to be encrypted"
 msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
 
 msgid "Select disk encryption option"
-msgstr ""
+msgstr "Επιλογή κρυπτογράφησης δίσκου"
 
 msgid "Select a FIDO2 device to use for HSM"
 msgstr ""
@@ -989,7 +989,7 @@ msgid "Pre-mounted configuration"
 msgstr "Καμία διαμόρφωση"
 
 msgid "Unknown"
-msgstr ""
+msgstr "Άγνωστο"
 
 msgid "Partition encryption"
 msgstr "Κρυπτογράφηση διαμέρισης"
