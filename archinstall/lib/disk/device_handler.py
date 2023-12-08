@@ -322,7 +322,7 @@ class DeviceHandler(object):
 			part_mod.partuuid = lsblk_info.partuuid
 			part_mod.uuid = lsblk_info.uuid
 
-	def _perform_partitioning(
+	def _setup_partition(
 		self,
 		part_mod: PartitionModification,
 		block_device: BDevice,
@@ -339,7 +339,6 @@ class DeviceHandler(object):
 				raise DiskError(f'No partition for dev path found: {part_mod.safe_dev_path}')
 
 			disk.deletePartition(part_info.partition)
-			disk.commit()
 
 		if part_mod.status == ModificationStatus.Delete:
 			return
@@ -378,15 +377,11 @@ class DeviceHandler(object):
 
 		try:
 			disk.addPartition(partition=partition, constraint=disk.device.optimalAlignedConstraint)
-			disk.commit()
-
-			# the creation will take a bit of time
-			time.sleep(3)
-
-			# the partition has a real path now as it was created
-			part_mod.dev_path = Path(partition.path)
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
+
+		# the partition has a path now that it has been added
+		part_mod.dev_path = Path(partition.path)
 
 	def _fetch_part_info(self, path: Path) -> LsblkInfo:
 		attempts = 3
@@ -535,7 +530,9 @@ class DeviceHandler(object):
 			# if the entire disk got nuked then we don't have to delete
 			# any existing partitions anymore because they're all gone already
 			requires_delete = modification.wipe is False
-			self._perform_partitioning(part_mod, modification.device, disk, requires_delete=requires_delete)
+			self._setup_partition(part_mod, modification.device, disk, requires_delete=requires_delete)
+
+		disk.commit()
 
 	def mount(
 		self,
