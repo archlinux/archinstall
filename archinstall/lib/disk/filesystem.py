@@ -4,17 +4,18 @@ import signal
 import sys
 import time
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING, List
+from typing import Any, Optional, TYPE_CHECKING, List, Dict, Set
 
+from .device_handler import device_handler
 from .device_model import (
 	DiskLayoutConfiguration, DiskLayoutType, PartitionTable,
-	FilesystemType, DiskEncryption, LvmConfiguration, LvmVolumeGroup,
-	Size, Unit, SectorSize, PartitionModification
+	FilesystemType, DiskEncryption, LvmVolumeGroup,
+	Size, Unit, SectorSize, PartitionModification, EncryptionType, DeviceModification, LvmConfiguration
 )
-from .device_handler import device_handler
 from ..hardware import SysInfo
-from ..output import debug, info
+from ..luks import Luks2
 from ..menu import Menu
+from ..output import debug, info
 
 if TYPE_CHECKING:
 	_: Any
@@ -61,13 +62,13 @@ class FilesystemHandler:
 		if self._disk_config.lvm_config:
 			for mod in device_mods:
 				if boot_part := mod.get_boot_partition():
-					info(f'Formatting boot partition: {boot_part.dev_path}')
+					debug(f'Formatting boot partition: {boot_part.dev_path}')
 					self.format_partitions(
 						[boot_part],
 						mod.device_path
 					)
 
-			self.setup_lvm(self._disk_config.lvm_config)
+			self.perform_lvm_operations(self._disk_config, self._enc_config)
 		else:
 			for mod in device_mods:
 				self.format_partitions(
@@ -102,7 +103,7 @@ class FilesystemHandler:
 		for part_mod in filtered_part:
 			# partition will be encrypted
 			if enc_conf is not None and part_mod in enc_conf.partitions:
-				device_handler.format_enc(
+				device_handler.format_encrypted(
 					part_mod.safe_dev_path,
 					part_mod.mapper_name,
 					part_mod.safe_fs_type,
@@ -133,61 +134,160 @@ class FilesystemHandler:
 			if found is not None:
 				raise exc
 
-	def setup_lvm(
+	def perform_lvm_operations(
 		self,
-		lvm_config: LvmConfiguration,
+		disk_conf: DiskLayoutConfiguration,
 		enc_conf: Optional['DiskEncryption'] = None
 	):
-		info('Setting up LVM config')
+		info('Setting up LVM config...')
 
 		if not enc_conf:
-			for vol_gp in lvm_config.vol_groups:
-				device_handler.lvm_pv_create(vol_gp.pvs)
-				device_handler.lvm_group_create(vol_gp)
+			self._setup_lvm(disk_conf.lvm_config, {})
+		else:
+			self._setup_lvm_encrypted(disk_conf, enc_conf)
 
-				# figure out what the actual available size in the group is
-				lvm_gp_info = device_handler.lvm_group_info(vol_gp.name)
+	def _setup_lvm_encrypted(
+		self,
+		disk_conf: DiskLayoutConfiguration,
+		enc_conf: Optional['DiskEncryption'] = None
+	):
+		if enc_conf.encryption_type == EncryptionType.LvmOnLuks:
+			enc_mods = self._encrypt_partitions(
+				enc_conf,
+				disk_conf.device_modifications,
+				lock_after_create=False
+			)
 
-				if not lvm_gp_info:
-					raise ValueError('Unable to fetch VG info')
+			self._setup_lvm(disk_conf.lvm_config, enc_mods)
 
-				# the actual available LVM Group size will be smaller than the
-				# total PVs size due to reserved metadata storage etc.
-				# so we'll have a look at the total avail. size, check the delta
-				# to the desired sizes and subtract some equally from the actually
-				# created volume
-				avail_size = lvm_gp_info.vg_size
-				desired_size = sum([vol.length for vol in vol_gp.volumes], Size(0, Unit.B, SectorSize.default()))
+			# export the lvm group safely otherwise the Luks cannot be closed
+			self._safely_close_lvm(disk_conf.lvm_config)
 
-				delta = desired_size - avail_size
-				max_vol_offset = delta.convert(Unit.B)
+			for luks in enc_mods.values():
+				luks.lock()
 
-				max_vol = max(vol_gp.volumes, key=lambda x: x.length)
+	def _safely_close_lvm(self, lvm_config: LvmConfiguration):
+		for vg in lvm_config.vol_groups:
+			for vol in vg.volumes:
+				device_handler.lvm_vol_change(vol)
 
-				for lv in vol_gp.volumes:
-					offset = max_vol_offset if lv == max_vol else None
+			device_handler.lvm_export_vg(vg)
 
-					debug(f'vg: {vol_gp.name}, vol: {lv.name}, offset: {offset}')
-					device_handler.lvm_vol_create(vol_gp.name, lv, offset)
+	def _setup_lvm(
+		self,
+		lvm_config: LvmConfiguration,
+		enc_mods: Dict[PartitionModification, Luks2] = {}
+	):
+		self._lvm_create_pvs(lvm_config, enc_mods=enc_mods)
 
-					info('Getting LVM volume info...')
-					while True:
-						debug('Fetching LVM volume info')
-						lv_info = device_handler.lvm_vol_info(lv.name)
-						if lv_info is not None:
-							break
+		for vg in lvm_config.vol_groups:
+			pv_dev_paths = self._get_all_pv_dev_paths(vg.pvs, enc_mods)
+			device_handler.lvm_group_create(pv_dev_paths, vg.name)
 
-						time.sleep(1)
+			# figure out what the actual available size in the group is
+			lvm_vg_info = device_handler.lvm_group_info(vg.name)
 
-				self._lvm_vol_handle_e2scrub(vol_gp)
+			if not lvm_vg_info:
+				raise ValueError('Unable to fetch VG info')
 
-				for lv in vol_gp.volumes:
-					# wait a bit otherwise the mkfs will fail as it can't
-					# find the mapper device yet
-					device_handler.format(lv.fs_type, lv.safe_dev_path)
+			# the actual available LVM Group size will be smaller than the
+			# total PVs size due to reserved metadata storage etc.
+			# so we'll have a look at the total avail. size, check the delta
+			# to the desired sizes and subtract some equally from the actually
+			# created volume
+			avail_size = lvm_vg_info.vg_size
+			desired_size = sum([vol.length for vol in vg.volumes], Size(0, Unit.B, SectorSize.default()))
 
-					if lv.fs_type == FilesystemType.Btrfs:
-						device_handler.create_lvm_btrfs_subvolumes(lv, enc_conf=self._enc_config)
+			delta = desired_size - avail_size
+			max_vol_offset = delta.convert(Unit.B)
+
+			max_vol = max(vg.volumes, key=lambda x: x.length)
+
+			for lv in vg.volumes:
+				offset = max_vol_offset if lv == max_vol else None
+
+				debug(f'vg: {vg.name}, vol: {lv.name}, offset: {offset}')
+				device_handler.lvm_vol_create(vg.name, lv, offset)
+
+				while True:
+					debug('Fetching LVM volume info')
+					lv_info = device_handler.lvm_vol_info(lv.name)
+					if lv_info is not None:
+						break
+
+					time.sleep(1)
+
+			self._lvm_vol_handle_e2scrub(vg)
+
+			for lv in vg.volumes:
+				# wait a bit otherwise the mkfs will fail as it can't
+				# find the mapper device yet
+				device_handler.format(lv.fs_type, lv.safe_dev_path)
+
+				if lv.fs_type == FilesystemType.Btrfs:
+					device_handler.create_lvm_btrfs_subvolumes(lv, enc_conf=self._enc_config)
+
+	def _lvm_create_pvs(
+		self,
+		lvm_config: LvmConfiguration,
+		enc_mods: Dict[PartitionModification, Luks2] = {}
+	):
+		pv_paths: Set[Path] = set()
+
+		for vg in lvm_config.vol_groups:
+			pv_paths |= self._get_all_pv_dev_paths(vg.pvs, enc_mods)
+
+		device_handler.lvm_pv_create(pv_paths)
+
+	def _get_all_pv_dev_paths(
+		self,
+		pvs: List[PartitionModification],
+		enc_mods: Dict[PartitionModification, Luks2] = {}
+	) -> Set[Path]:
+		pv_paths: Set[Path] = set()
+
+		for pv in pvs:
+			if pv in enc_mods.keys():
+				pv_paths.add(enc_mods[pv].mapper_dev)
+			else:
+				pv_paths.add(pv.safe_dev_path)
+
+		return pv_paths
+
+	def _encrypt_partitions(
+		self,
+		enc_conf: DiskEncryption,
+		mods: List[DeviceModification],
+		lock_after_create: bool = True
+	) -> Dict[PartitionModification, Luks2]:
+		enc_mods: Dict[PartitionModification, Luks2] = {}
+
+		for mod in mods:
+			partitions = mod.partitions
+
+			# don't touch existing partitions
+			filtered_part = [p for p in partitions if not p.exists()]
+
+			self._validate_partitions(filtered_part)
+
+			# make sure all devices are unmounted
+			device_handler.umount_all_existing(mod.device_path)
+
+			enc_mods = {}
+
+			for part_mod in filtered_part:
+				# partition will be encrypted
+				if part_mod in enc_conf.partitions:
+					luks_handler = device_handler.encrypt_partition(
+						part_mod.safe_dev_path,
+						part_mod.mapper_name,
+						enc_conf,
+						lock_after_create=lock_after_create
+					)
+
+					enc_mods[part_mod] = luks_handler
+
+		return enc_mods
 
 	def _lvm_vol_handle_e2scrub(self, vol_gp: LvmVolumeGroup):
 		# from arch wiki:
@@ -195,7 +295,6 @@ class FilesystemHandler:
 		# free space in the volume group to allow using e2scrub
 		if any([vol.fs_type == FilesystemType.Ext4 for vol in vol_gp.volumes]):
 			largest_vol = max(vol_gp.volumes, key=lambda x: x.length)
-			print(largest_vol.length.convert(Unit.MiB))
 
 			device_handler.lvm_vol_reduce(
 				largest_vol.safe_dev_path,

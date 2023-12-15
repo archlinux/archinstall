@@ -947,6 +947,12 @@ class LvmVolume:
 	dev_path: Optional[Path] = None
 
 	@property
+	def mapper_name(self) -> Optional[str]:
+		if self.dev_path:
+			return f'{storage.get("ENC_IDENTIFIER", "ai")}{self.dev_path.name}'
+		return None
+
+	@property
 	def safe_dev_path(self) -> Path:
 		if self.dev_path:
 			return self.dev_path
@@ -1138,11 +1144,16 @@ class DeviceModification:
 class EncryptionType(Enum):
 	NoEncryption = "no_encryption"
 	Luks = "luks"
+	LvmOnLuks = 'lvm_on_luks'
+	LuksOnLvm = 'luks_on_lvm'
 
 	@classmethod
 	def _encryption_type_mapper(cls) -> Dict[str, 'EncryptionType']:
 		return {
-			'Luks': EncryptionType.Luks
+			str(_('No Encryption')): EncryptionType.NoEncryption,
+			str(_('LUKS')): EncryptionType.Luks,
+			str(_('LVM on LUKS')): EncryptionType.LvmOnLuks,
+			str(_('LUKS on LVM')): EncryptionType.LuksOnLvm
 		}
 
 	@classmethod
@@ -1159,7 +1170,7 @@ class EncryptionType(Enum):
 
 @dataclass
 class DiskEncryption:
-	encryption_type: EncryptionType = EncryptionType.Luks
+	encryption_type: EncryptionType = EncryptionType.NoEncryption
 	encryption_password: str = ''
 	partitions: List[PartitionModification] = field(default_factory=list)
 	hsm_device: Optional[Fido2Device] = None

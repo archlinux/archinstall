@@ -5,7 +5,7 @@ import os
 import time
 import logging
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal
+from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
 
 from parted import (  # type: ignore
 	Disk, Geometry, FileSystem,
@@ -236,7 +236,7 @@ class DeviceHandler(object):
 		options += additional_parted_options
 		options_str = ' '.join(options)
 
-		info(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
+		debug(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
 
 		try:
 			SysCommand(f"/usr/bin/{command} {options_str} {path}")
@@ -245,7 +245,34 @@ class DeviceHandler(object):
 			error(msg)
 			raise DiskError(msg) from err
 
-	def format_enc(
+	def encrypt_partition(
+		self,
+		dev_path: Path,
+		mapper_name: Optional[str],
+		enc_conf: DiskEncryption,
+		lock_after_create: bool = True
+	) -> Luks2:
+		luks_handler = Luks2(
+			dev_path,
+			mapper_name=mapper_name,
+			password=enc_conf.encryption_password
+		)
+
+		key_file = luks_handler.encrypt()
+
+		debug(f'Unlocking luks2 device: {dev_path}')
+		luks_handler.unlock(key_file=key_file)
+
+		if not luks_handler.mapper_dev:
+			raise DiskError('Failed to unlock luks device')
+
+		if lock_after_create:
+			debug(f'luks2 locking device: {dev_path}')
+			luks_handler.lock()
+
+		return luks_handler
+
+	def format_encrypted(
 		self,
 		dev_path: Path,
 		mapper_name: Optional[str],
@@ -321,6 +348,18 @@ class DeviceHandler(object):
 
 		return self._lvm_info(cmd, vg_name, 'vg')
 
+	def lvm_vol_change(self, vol: LvmVolume):
+		cmd = f'lvchange -a n {vol.safe_dev_path}'
+
+		debug(f'lvchange volume: {cmd}')
+		SysCommand(cmd)
+
+	def lvm_export_vg(self, vg: LvmVolumeGroup):
+		cmd = f'vgexport {vg.name}'
+
+		debug(f'vgexport: {cmd}')
+		SysCommand(cmd)
+
 	def lvm_vol_reduce(self, vol_path: Path, amount: Size):
 		val = amount.format_size(Unit.B, include_unit=False)
 		cmd = f'lvreduce -L -{val}B {vol_path}'
@@ -328,17 +367,17 @@ class DeviceHandler(object):
 		debug(f'Reducing LVM volume size: {cmd}')
 		SysCommand(cmd)
 
-	def lvm_pv_create(self, pvs: List[PartitionModification]):
-		cmd = 'pvcreate ' + ' '.join([str(pv.safe_dev_path) for pv in pvs])
+	def lvm_pv_create(self, pvs: Iterable[Path]):
+		cmd = 'pvcreate ' + ' '.join([str(pv) for pv in pvs])
 		debug(f'Creating LVM PVS: {cmd}')
 
 		worker = SysCommandWorker(cmd)
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
-	def lvm_group_create(self, vg: LvmVolumeGroup):
-		pvs_str = ' '.join([str(pv.safe_dev_path) for pv in vg.pvs])
-		cmd = f'vgcreate {vg.name} {pvs_str}'
+	def lvm_group_create(self, pvs: List[Path], vg_name: str):
+		pvs_str = ' '.join([str(pv) for pv in pvs])
+		cmd = f'vgcreate {vg_name} {pvs_str}'
 
 		debug(f'Creating LVM group: {cmd}')
 

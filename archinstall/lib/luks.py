@@ -60,7 +60,7 @@ class Luks2:
 		iter_time: int = 10000,
 		key_file: Optional[Path] = None
 	) -> Path:
-		info(f'Luks2 encrypting: {self.luks_dev_path}')
+		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
 		byte_password = self._password_bytes()
 
@@ -109,6 +109,8 @@ class Luks2:
 					SysCommand(cryptsetup_args)
 				else:
 					raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {err}')
+
+		self.key_file = key_file
 
 		return key_file
 
