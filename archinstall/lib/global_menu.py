@@ -210,13 +210,22 @@ class GlobalMenu(AbstractMenu):
 
 		return list(missing)
 
+	def _invalid_configs(self) -> List[str]:
+		errors = []
+
+		if error := self._validate_bootloader():
+			errors.append(error)
+
+		return errors
+
 	def _is_config_valid(self) -> bool:
 		"""
 		Checks the validity of the current configuration.
 		"""
-		if len(self._missing_configs()) != 0:
+		if len(self._missing_configs()) or len(self._invalid_configs()):
 			return False
-		return self._validate_bootloader() is None
+
+		return True
 
 	def _update_uki_display(self, name: Optional[str] = None):
 		if bootloader := self._menu_options['bootloader'].current_selection:
@@ -235,9 +244,12 @@ class GlobalMenu(AbstractMenu):
 		self._update_install_text(name, value)
 
 	def _install_text(self):
-		missing = len(self._missing_configs())
-		if missing > 0:
+		if missing := len(self._missing_configs()):
 			return _('Install ({} config(s) missing)').format(missing)
+
+		if invalid := len(self._invalid_configs()):
+			return _('Install ({} config(s) invalid)').format(invalid)
+
 		return _('Install')
 
 	def _display_network_conf(self, config: Optional[NetworkConfiguration]) -> str:
@@ -357,17 +369,23 @@ class GlobalMenu(AbstractMenu):
 			shim if necessary.
 		"""
 		bootloader = self._menu_options['bootloader'].current_selection
-		boot_partition: Optional[disk.PartitionModification] = None
 
-		if disk_config := self._menu_options['disk_config'].current_selection:
-			for layout in disk_config.device_modifications:
-				if boot_partition := layout.get_boot_partition():
-					break
-		else:
+		if not (disk_config := self._menu_options['disk_config'].current_selection):
 			return "No disk layout selected"
 
-		if boot_partition is None:
+		for layout in disk_config.device_modifications:
+			if boot_partition := layout.get_boot_partition():
+				break
+		else:
 			return "Boot partition not found"
+
+		# An EFI system partition is mandatory for UEFI boot
+		if SysInfo.has_uefi():
+			for layout in disk_config.device_modifications:
+				if layout.get_efi_partition():
+					break
+			else:
+				return "EFI system partition not found"
 
 		if bootloader == Bootloader.Limine:
 			if boot_partition.fs_type != disk.FilesystemType.Fat32:
@@ -382,8 +400,11 @@ class GlobalMenu(AbstractMenu):
 				text += f'- {m}\n'
 			return text[:-1]  # remove last new line
 
-		if error := self._validate_bootloader():
-			return str(_(f"Invalid configuration: {error}"))
+		if errors := self._invalid_configs():
+			text = str(_('Invalid configurations:\n'))
+			for error in errors:
+				text += f'- {error}\n'
+			return text[:-1]  # remove last new line
 
 		return None
 
