@@ -87,12 +87,15 @@ class Luks2:
 			'luksFormat', str(self.luks_dev_path),
 		])
 
+		debug(f'cryptsetup format: {cryptsetup_args}')
+
 		# Retry formatting the volume because archinstall can some times be too quick
 		# which generates a "Device /dev/sdX does not exist or access denied." between
 		# setting up partitions and us trying to encrypt it.
 		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS'] + 1):
 			try:
-				SysCommand(cryptsetup_args)
+				result = SysCommand(cryptsetup_args).decode()
+				debug(f'cryptsetup luksFormat output: {result}')
 				break
 			except SysCallError as err:
 				time.sleep(storage['DISK_TIMEOUTS'])
@@ -106,7 +109,8 @@ class Luks2:
 
 					self.lock()
 					# Then try again to set up the crypt-device
-					SysCommand(cryptsetup_args)
+					result = SysCommand(cryptsetup_args).decode()
+					debug(f'cryptsetup luksFormat output: {result}')
 				else:
 					raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {err}')
 
@@ -154,7 +158,15 @@ class Luks2:
 		while Path(self.luks_dev_path).exists() is False and time.time() - wait_timer < 10:
 			time.sleep(0.025)
 
-		SysCommand(f'/usr/bin/cryptsetup open {self.luks_dev_path} {self.mapper_name} --key-file {key_file} --type luks2')
+		result = SysCommand(
+			'/usr/bin/cryptsetup open '
+			f'{self.luks_dev_path} '
+			f'{self.mapper_name} '
+			f'--key-file {key_file} '
+			f'--type luks2'
+		).decode()
+
+		debug(f'cryptsetup open output: {result}')
 
 		if not self.mapper_dev or not self.mapper_dev.is_symlink():
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')

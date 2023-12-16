@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
+from . import LvmConfiguration, LvmVolume
 from ..disk import (
 	DeviceModification,
 	DiskLayoutConfiguration,
@@ -46,7 +47,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 				func=lambda preset: select_encryption_type(self._disk_config, preset),
 				display_func=lambda x: EncryptionType.type_to_text(x) if x else None,
 				default=self._preset.encryption_type,
-				enabled=True
+				enabled=True,
 			)
 		self._menu_options['encryption_password'] = \
 			Selector(
@@ -64,7 +65,17 @@ class DiskEncryptionMenu(AbstractSubMenu):
 				display_func=lambda x: f'{len(x)} {_("Partitions")}' if x else None,
 				dependencies=[self._check_dep_partitions],
 				default=self._preset.partitions,
-				preview_func=self._prev_disk_layouts,
+				preview_func=self._prev_partitions,
+				enabled=True
+			)
+		self._menu_options['lvm_vols'] = \
+			Selector(
+				_('LVM volumes'),
+				func=lambda preset: select_lvm_vols_to_encrypt(self._disk_config.lvm_config, preset),
+				display_func=lambda x: f'{len(x)} {_("LVM volumes")}' if x else None,
+				dependencies=[self._check_dep_lvm_vols],
+				default=self._preset.lvm_volumes,
+				preview_func=self._prev_lvm_vols,
 				enabled=True
 			)
 		self._menu_options['HSM'] = \
@@ -90,20 +101,32 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			return True
 		return False
 
+	def _check_dep_lvm_vols(self) -> bool:
+		enc_type: Optional[EncryptionType] = self._menu_options['encryption_type'].current_selection
+		if enc_type and enc_type == EncryptionType.LuksOnLvm:
+			return True
+		return False
+
 	def run(self, allow_reset: bool = True) -> Optional[DiskEncryption]:
 		super().run(allow_reset=allow_reset)
 
 		enc_type = self._data_store.get('encryption_type', None)
 		enc_password = self._data_store.get('encryption_password', None)
 		enc_partitions = self._data_store.get('partitions', None)
+		enc_lvm_vols = self._data_store.get('lvm_vols', None)
 
-		if enc_type in [EncryptionType.LvmOnLuks, EncryptionType.Luks] and \
-			enc_password and \
-			enc_partitions:
+		if enc_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks] and enc_partitions:
+			enc_lvm_vols = []
+
+		if enc_type == EncryptionType.LuksOnLvm:
+			enc_partitions = []
+
+		if enc_type != EncryptionType.NoEncryption and enc_password and (enc_partitions or enc_lvm_vols):
 			return DiskEncryption(
 				encryption_password=enc_password,
 				encryption_type=enc_type,
 				partitions=enc_partitions,
+				lvm_volumes=enc_lvm_vols,
 				hsm_device=self._data_store.get('HSM', None)
 			)
 
@@ -115,11 +138,20 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		return None
 
-	def _prev_disk_layouts(self) -> Optional[str]:
+	def _prev_partitions(self) -> Optional[str]:
 		partitions: Optional[List[PartitionModification]] = self._menu_options['partitions'].current_selection
 		if partitions:
 			output = str(_('Partitions to be encrypted')) + '\n'
 			output += FormattedOutput.as_table(partitions)
+			return output.rstrip()
+
+		return None
+
+	def _prev_lvm_vols(self) -> Optional[str]:
+		volumes: Optional[List[PartitionModification]] = self._menu_options['lvm_vols'].current_selection
+		if volumes:
+			output = str(_('LVM volumes to be encrypted')) + '\n'
+			output += FormattedOutput.as_table(volumes)
 			return output.rstrip()
 
 		return None
@@ -224,4 +256,32 @@ def select_partitions_to_encrypt(
 				return preset
 			case MenuSelectionType.Selection:
 				return choice.multi_value
+	return []
+
+
+def select_lvm_vols_to_encrypt(
+	lvm_config: LvmConfiguration,
+	preset: List[LvmVolume]
+):
+	volumes: List[LvmVolume] = lvm_config.get_all_volumes()
+
+	if volumes:
+		title = str(_('Select which LVM volumes to encrypt'))
+		partition_table = FormattedOutput.as_table(volumes)
+
+		choice = TableMenu(
+			title,
+			table_data=(volumes, partition_table),
+			preset=preset,
+			multi=True
+		).run()
+
+		match choice.type_:
+			case MenuSelectionType.Reset:
+				return []
+			case MenuSelectionType.Skip:
+				return preset
+			case MenuSelectionType.Selection:
+				return choice.multi_value
+
 	return []

@@ -943,13 +943,27 @@ class LvmVolume:
 	mount_options: List[str] = field(default_factory=list)
 	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
 
+	def __post_init__(self):
+		# needed to use the object as a dictionary key due to hash func
+		if not hasattr(self, '_obj_id'):
+			self._obj_id = uuid.uuid4()
+
 	# mapper device path /dev/<vg>/<vol>
 	dev_path: Optional[Path] = None
+
+	def __hash__(self):
+		return hash(self._obj_id)
+
+	@property
+	def obj_id(self) -> str:
+		if hasattr(self, '_obj_id'):
+			return str(self._obj_id)
+		return ''
 
 	@property
 	def mapper_name(self) -> Optional[str]:
 		if self.dev_path:
-			return f'{storage.get("ENC_IDENTIFIER", "ai")}{self.dev_path.name}'
+			return f'{storage.get("ENC_IDENTIFIER", "ai")}{self.safe_dev_path.name}'
 		return None
 
 	@property
@@ -977,7 +991,7 @@ class LvmVolume:
 
 	@staticmethod
 	def parse_arg(arg: Dict[str, Any]) -> LvmVolume:
-		return LvmVolume(
+		volume = LvmVolume(
 			status=LvmVolumeStatus(arg['status']),
 			name=arg['name'],
 			fs_type=FilesystemType(arg['fs_type']),
@@ -987,8 +1001,13 @@ class LvmVolume:
 			btrfs_subvols=SubvolumeModification.parse_args(arg.get('btrfs', []))
 		)
 
+		setattr(volume, '_obj_id', arg['obj_id'])
+
+		return volume
+
 	def json(self) -> Dict[str, Any]:
 		return {
+			'obj_id': self.obj_id,
 			'status': self.status.value,
 			'name': self.name,
 			'fs_type': self.fs_type.value,
@@ -1083,6 +1102,14 @@ class LvmConfiguration:
 
 		return pvs
 
+	def get_all_volumes(self) -> List[LvmVolume]:
+		volumes = []
+
+		for vg in self.vol_groups:
+			volumes += vg.volumes
+
+		return volumes
+
 	def get_root_volume(self) -> Optional[LvmVolume]:
 		for vg in self.vol_groups:
 			filtered = next(filter(lambda x: x.is_root(), vg.volumes), None)
@@ -1173,7 +1200,15 @@ class DiskEncryption:
 	encryption_type: EncryptionType = EncryptionType.NoEncryption
 	encryption_password: str = ''
 	partitions: List[PartitionModification] = field(default_factory=list)
+	lvm_volumes: List[LvmVolume] = field(default_factory=list)
 	hsm_device: Optional[Fido2Device] = None
+
+	def __post_init__(self):
+		if self.encryption_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks] and not self.partitions:
+			raise ValueError('Luks or LvmOnLuks encryption require partitions to be defined')
+
+		if self.encryption_type == EncryptionType.LuksOnLvm and not self.lvm_volumes:
+			raise ValueError('LuksOnLvm encryption require LMV volumes to be defined')
 
 	def should_generate_encryption_file(self, part_mod: PartitionModification) -> bool:
 		return part_mod in self.partitions and part_mod.mountpoint != Path('/')
@@ -1181,7 +1216,8 @@ class DiskEncryption:
 	def json(self) -> Dict[str, Any]:
 		obj: Dict[str, Any] = {
 			'encryption_type': self.encryption_type.value,
-			'partitions': [p.obj_id for p in self.partitions]
+			'partitions': [p.obj_id for p in self.partitions],
+			'lvm_volumes': [vol.obj_id for vol in self.lvm_volumes]
 		}
 
 		if self.hsm_device:
@@ -1202,10 +1238,17 @@ class DiskEncryption:
 				if part.obj_id in arg.get('partitions', []):
 					enc_partitions.append(part)
 
+		volumes = []
+		if disk_config.lvm_config:
+			for vol in disk_config.lvm_config.get_all_volumes():
+				if vol.obj_id in arg.get('lvm_volumes', []):
+					volumes.append(vol)
+
 		enc = DiskEncryption(
 			EncryptionType(arg['encryption_type']),
 			password,
-			enc_partitions
+			enc_partitions,
+			volumes
 		)
 
 		if hsm := arg.get('hsm_device', None):

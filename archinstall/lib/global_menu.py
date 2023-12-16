@@ -301,6 +301,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_disk_encryption(self) -> Optional[str]:
 		encryption: Optional[disk.DiskEncryption] = self._menu_options['disk_encryption'].current_selection
+
 		if encryption:
 			enc_type = disk.EncryptionType.type_to_text(encryption.encryption_type)
 			output = str(_('Encryption type')) + f': {enc_type}\n'
@@ -308,6 +309,8 @@ class GlobalMenu(AbstractMenu):
 
 			if encryption.partitions:
 				output += 'Partitions: {} selected'.format(len(encryption.partitions)) + '\n'
+			elif encryption.lvm_volumes:
+				output += 'LVM volumes: {} selected'.format(len(encryption.lvm_volumes)) + '\n'
 
 			if encryption.hsm_device:
 				output += f'HSM: {encryption.hsm_device.manufacturer}'

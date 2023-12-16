@@ -245,22 +245,21 @@ class DeviceHandler(object):
 			error(msg)
 			raise DiskError(msg) from err
 
-	def encrypt_partition(
+	def encrypt(
 		self,
 		dev_path: Path,
 		mapper_name: Optional[str],
-		enc_conf: DiskEncryption,
+		enc_password: str,
 		lock_after_create: bool = True
 	) -> Luks2:
 		luks_handler = Luks2(
 			dev_path,
 			mapper_name=mapper_name,
-			password=enc_conf.encryption_password
+			password=enc_password
 		)
 
 		key_file = luks_handler.encrypt()
 
-		debug(f'Unlocking luks2 device: {dev_path}')
 		luks_handler.unlock(key_file=key_file)
 
 		if not luks_handler.mapper_dev:
@@ -287,7 +286,6 @@ class DeviceHandler(object):
 
 		key_file = luks_handler.encrypt()
 
-		debug(f'Unlocking luks2 device: {dev_path}')
 		luks_handler.unlock(key_file=key_file)
 
 		if not luks_handler.mapper_dev:
@@ -392,7 +390,7 @@ class DeviceHandler(object):
 			length = volume.length
 
 		length_str = length.format_size(Unit.B, include_unit=False)
-		cmd = f'lvcreate -L {length_str}B {vg_name} -n {volume.name} --wipesignatures y --zero y'
+		cmd = f'lvcreate -L {length_str}B {vg_name} -n {volume.name} --wipesignatures y --zero y --yes'
 
 		debug(f'Creating volume: {cmd}')
 

@@ -362,9 +362,10 @@ class AbstractMenu:
 		result = None
 
 		if selector.func is not None:
-			presel_val = self.option(config_name).get_selection()
-			result = selector.func(presel_val)
+			cur_value = self.option(config_name).get_selection()
+			result = selector.func(cur_value)
 			self._menu_options[config_name].set_current_selection(result)
+
 			if selector.do_store():
 				self._data_store[config_name] = result
 
