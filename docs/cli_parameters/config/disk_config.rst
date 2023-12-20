@@ -26,7 +26,7 @@ Given the following disk example:
         ├── boot       (/dev/sda1)
         └── home       (/dev/sda3)
 
-Runing ``archinstall --conf your.json --silent`` where the above JSON is configured. The disk will be left alone — and a working system will be installed to the above folders and mountpoints will be translated into the installed system.
+Running ``archinstall --conf your.json --silent`` where the above JSON is configured. The disk will be left alone — and a working system will be installed to the above folders and mountpoints will be translated into the installed system.
 
 .. note::
 
