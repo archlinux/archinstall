@@ -943,12 +943,14 @@ class Installer:
 
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
+			efi_target = 'i386' if SysInfo.uefi_size() == 32 else 'x86-64'
+
 			boot_dir_arg = []
 			if boot_partition != efi_partition:
 				boot_dir_arg.append(f'--boot-directory={boot_dir}')
 
 			add_options = [
-				'--target=x86_64-efi',
+				f'--target={efi_target}-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
 				*boot_dir_arg,
 				'--bootloader-id=GRUB',
@@ -1015,8 +1017,9 @@ class Installer:
 				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'BOOT'
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
-				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
-					shutil.copy(limine_path / file, efi_dir_path)
+				efi_binary = 'BOOTIA32.EFI' if SysInfo.uefi_size() == 32 else 'BOOTX64.EFI'
+
+				shutil.copy(limine_path / efi_binary, efi_dir_path)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
