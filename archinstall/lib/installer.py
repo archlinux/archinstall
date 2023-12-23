@@ -943,7 +943,7 @@ class Installer:
 
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
-			efi_target = 'i386' if SysInfo.uefi_size() == 32 else 'x86-64'
+			efi_target = 'i386' if SysInfo.uefi_size() == 32 else 'x86_64'
 
 			boot_dir_arg = []
 			if boot_partition != efi_partition:
