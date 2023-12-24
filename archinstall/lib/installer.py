@@ -819,12 +819,29 @@ class Installer:
 			bootctl_options.append(f'--esp-path={efi_partition.mountpoint}')
 			bootctl_options.append(f'--boot-path={boot_partition.mountpoint}')
 
+		command = [
+			'/usr/bin/arch-chroot',
+			'bootctl',
+			'install',
+			*bootctl_options
+		]
+
 		# Install the boot loader
 		try:
-			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl {' '.join(bootctl_options)} install")
+			SysCommand(command, peek_output=True)
 		except SysCallError:
-			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(bootctl_options)} install")
+			# Try normally one more time (helps buggy EFIs)
+			try:
+				SysCommand(command, peek_output=True)
+				debug('Installed systemd-boot after initial error.')
+			except SysCallError:
+				# Fallback, try creating the boot loader without EFI variables
+				command.append('--no-variables')
+				try:
+					SysCommand(command, peek_output=True)
+					debug('Installed systemd-boot without EFI variables.')
+				except SysCallError as err:
+					raise DiskError(f'Failed to install systemd-boot on {boot_partition.dev_path}: {err}')
 
 		# Ensure that the $BOOT/loader/ directory exists before we try to create files in it.
 		#
@@ -931,13 +948,14 @@ class Installer:
 		command = [
 			'/usr/bin/arch-chroot',
 			str(self.target),
-			'grub-install',
-			'--debug'
+			'grub-install'
 		]
 
 		if SysInfo.has_uefi():
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
+			elif not efi_partition.mountpoint:
+				raise ValueError('EFI partition is not mounted')
 
 			info(f"GRUB EFI partition: {efi_partition.dev_path}")
 
@@ -950,20 +968,31 @@ class Installer:
 			add_options = [
 				'--target=x86_64-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
-				*boot_dir_arg,
-				'--bootloader-id=GRUB',
-				'--removable'
+				*boot_dir_arg
 			]
 
 			command.extend(add_options)
 
+			# Install the bootloader
 			try:
 				SysCommand(command, peek_output=True)
 			except SysCallError:
+				# Try normally one more time (helps buggy EFIs)
 				try:
 					SysCommand(command, peek_output=True)
-				except SysCallError as err:
-					raise DiskError(f"Could not install GRUB to {self.target}{efi_partition.mountpoint}: {err}")
+					debug('Installed GRUB after initial error.')
+				except SysCallError:
+					# Fallback, try creating the boot loader without EFI variables
+					try:
+						command.append('--no-nvram')
+						SysCommand(command, peek_output=True)
+						debug('Installed GRUB without EFI variables.')
+					except SysCallError as err:
+						raise DiskError(f'Could not install GRUB to {self.target}{efi_partition.mountpoint}: {err}')
+
+			# Copy to standard EFI path
+			efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/')
+			shutil.copy(efi_dir_path / 'grub' / 'grubx64.efi', efi_dir_path / 'BOOT' / 'BOOTX64.EFI')
 		else:
 			info(f"GRUB boot partition: {boot_partition.dev_path}")
 
@@ -1003,6 +1032,8 @@ class Installer:
 		limine_path = self.target / 'usr' / 'share' / 'limine'
 		hook_command = None
 
+		parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+
 		if SysInfo.has_uefi():
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
@@ -1022,9 +1053,28 @@ class Installer:
 
 			hook_command = f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/' \
 				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
-		else:
-			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
+			command = [
+				'efibootmgr',
+				'--create',
+				'--disk', str(parent_dev_path),
+				'--part', str(boot_partition.partn),
+				'--label', 'Limine',
+				'--loader', '/EFI/BOOT/BOOTX64.EFI',
+				'--verbose'
+			]
+
+			# Add EFI entry
+			try:
+				SysCommand(command, peek_output=True)
+			except SysCallError:
+				# Try normally one more time (helps buggy EFIs)
+				try:
+					SysCommand(command, peek_output=True)
+					debug('Added Limine EFI entry after initial error.')
+				except SysCallError:
+					debug('Failed to add Limine EFI entry.')
+		else:
 			if unique_path := disk.device_handler.get_unique_path_for_device(parent_dev_path):
 				parent_dev_path = unique_path
 
@@ -1099,6 +1149,8 @@ Exec = /bin/sh -c "{hook_command}"
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
 
+		cmdline = []
+
 		if not uki_enabled:
 			loader = '/vmlinuz-{kernel}'
 
@@ -1109,34 +1161,42 @@ Exec = /bin/sh -c "{hook_command}"
 			else:
 				debug('Archinstall will not add any ucode to firmware boot entry.')
 
-			entries = (
+			entries = [
 				*microcode,
 				'initrd=/initramfs-{kernel}.img',
 				*self._get_kernel_params(root_partition)
-			)
+			]
 
-			cmdline = [' '.join(entries)]
+			cmdline.append('--unicode')
+			cmdline.append(' '.join(entries))
 		else:
 			loader = '/EFI/Linux/arch-{kernel}.efi'
-			cmdline = []
 
 		parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
-		cmd_template = (
+		cmd_template = [
 			'efibootmgr',
 			'--create',
 			'--disk', str(parent_dev_path),
 			'--part', str(boot_partition.partn),
 			'--label', 'Arch Linux ({kernel})',
 			'--loader', loader,
-			'--unicode', *cmdline,
-			'--verbose'
-		)
+			'--verbose',
+			*cmdline
+		]
 
 		for kernel in self.kernels:
 			# Setup the firmware entry
-			cmd = [arg.format(kernel=kernel) for arg in cmd_template]
-			SysCommand(cmd)
+			command = [arg.format(kernel=kernel) for arg in cmd_template]
+			try:
+				SysCommand(command, peek_output=True)
+			except SysCallError:
+				# Try normally one more time (helps buggy EFIs)
+				try:
+					SysCommand(command, peek_output=True)
+					debug(f'Added firmware entry for "{kernel}" after initial error.')
+				except SysCallError as err:
+					raise DiskError(f'Failed to add firmware entry for "{kernel}": {err}')
 
 		self.helper_flags['bootloader'] = "efistub"
 
