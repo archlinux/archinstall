@@ -63,7 +63,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 	def _check_dep_lvm(self) -> bool:
 		disk_layout_conf: Optional[DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
 
-		if disk_layout_conf and disk_layout_conf.config_type != DiskLayoutType.Pre_mount:
+		if disk_layout_conf and disk_layout_conf.config_type == DiskLayoutType.Default:
 			return True
 
 		return False

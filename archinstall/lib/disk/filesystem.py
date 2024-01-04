@@ -167,7 +167,7 @@ class FilesystemHandler:
 	def _safely_close_lvm(self):
 		for vg in self._disk_config.lvm_config.vol_groups:
 			for vol in vg.volumes:
-				device_handler.lvm_vol_change(vol)
+				device_handler.lvm_vol_change(vol, False)
 
 			device_handler.lvm_export_vg(vg)
 
@@ -203,7 +203,6 @@ class FilesystemHandler:
 				debug(f'vg: {vg.name}, vol: {lv.name}, offset: {offset}')
 				device_handler.lvm_vol_create(vg.name, lv, offset)
 
-				time.sleep(1)
 				while True:
 					debug('Fetching LVM volume info')
 					lv_info = device_handler.lvm_vol_info(lv.name)

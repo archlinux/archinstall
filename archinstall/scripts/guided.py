@@ -105,7 +105,7 @@ def perform_installation(mountpoint: Path):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	info('Starting installation')
+	info('Starting installation...')
 	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
 
 	# Retrieve list of additional repositories and set boolean values appropriately
@@ -125,6 +125,7 @@ def perform_installation(mountpoint: Path):
 		if disk_config.config_type != disk.DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
 
+		exit(1)
 		installation.sanity_check()
 
 		if disk_config.config_type != disk.DiskLayoutType.Pre_mount:
@@ -252,7 +253,5 @@ fs_handler = disk.FilesystemHandler(
 )
 
 fs_handler.perform_filesystem_operations()
-
-exit(1)
 
 perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))

@@ -346,8 +346,9 @@ class DeviceHandler(object):
 
 		return self._lvm_info(cmd, vg_name, 'vg')
 
-	def lvm_vol_change(self, vol: LvmVolume):
-		cmd = f'lvchange -a n {vol.safe_dev_path}'
+	def lvm_vol_change(self, vol: LvmVolume, activate: bool):
+		active_flag = 'y' if activate else 'n'
+		cmd = f'lvchange -a {active_flag} {vol.safe_dev_path}'
 
 		debug(f'lvchange volume: {cmd}')
 		SysCommand(cmd)
@@ -356,6 +357,12 @@ class DeviceHandler(object):
 		cmd = f'vgexport {vg.name}'
 
 		debug(f'vgexport: {cmd}')
+		SysCommand(cmd)
+
+	def lvm_import_vg(self, vg: LvmVolumeGroup):
+		cmd = f'vgimport {vg.name}'
+
+		debug(f'vgimport: {cmd}')
 		SysCommand(cmd)
 
 	def lvm_vol_reduce(self, vol_path: Path, amount: Size):
@@ -375,7 +382,7 @@ class DeviceHandler(object):
 
 	def lvm_group_create(self, pvs: List[Path], vg_name: str):
 		pvs_str = ' '.join([str(pv) for pv in pvs])
-		cmd = f'vgcreate {vg_name} {pvs_str}'
+		cmd = f'vgcreate --yes {vg_name} {pvs_str}'
 
 		debug(f'Creating LVM group: {cmd}')
 
@@ -390,7 +397,7 @@ class DeviceHandler(object):
 			length = volume.length
 
 		length_str = length.format_size(Unit.B, include_unit=False)
-		cmd = f'lvcreate -L {length_str}B {vg_name} -n {volume.name} --wipesignatures y --zero y --yes'
+		cmd = f'lvcreate --yes -L {length_str}B {vg_name} -n {volume.name}'
 
 		debug(f'Creating volume: {cmd}')
 

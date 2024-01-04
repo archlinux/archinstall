@@ -180,13 +180,26 @@ class Installer:
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
+		luks_handlers = self._decrypt_layout()
+
 		info('Mounting LVM in order')
-		self._mount_lvm_layout()
+		self._mount_lvm_layout(luks_handlers)
 
 		info('Mounting partitions in order')
-		self._mount_partition_layout()
+		self._mount_partition_layout(luks_handlers)
 
-	def _mount_partition_layout(self):
+	def _decrypt_layout(self) -> Dict[Any, Luks2]:
+		match self._disk_encryption.encryption_type:
+			case disk.EncryptionType.Luks:
+				return self._prepare_luks_partitions(self._disk_encryption.partitions)
+			case disk.EncryptionType.LvmOnLuks:
+				return self._prepare_luks_partitions(self._disk_encryption.partitions)
+			case disk.EncryptionType.LuksOnLvm:
+				return self._prepare_luks_lvm(self._disk_encryption.lvm_volumes)
+
+		return {}
+
+	def _mount_partition_layout(self, luks_handlers: Dict[Any, Luks2]):
 		# do not mount any PVs part of the LVM configuration
 		pvs = []
 		if self._disk_config.lvm_config:
@@ -200,22 +213,13 @@ class Installer:
 			# '/' just for sorting
 			sorted_part_mods = sorted(not_pv_part_mods, key=lambda x: x.mountpoint or Path('/'))
 
-			enc_partitions = []
-			if self._disk_encryption.encryption_type is not disk.EncryptionType.NoEncryption:
-				enc_partitions = list(set(sorted_part_mods) & set(self._disk_encryption.partitions))
-
-			# attempt to decrypt all luks partitions
-			luks_handlers = self._prepare_luks_partitions(enc_partitions)
-
 			for part_mod in sorted_part_mods:
 				if luks_handler := luks_handlers.get(part_mod):
-					# mount encrypted partition
 					self._mount_luks_partition(part_mod, luks_handler)
 				else:
-					# partition is not encrypted
 					self._mount_partition(part_mod)
 
-	def _mount_lvm_layout(self):
+	def _mount_lvm_layout(self, luks_handlers: Dict[Any, Luks2]):
 		lvm_config = self._disk_config.lvm_config
 
 		if not lvm_config:
@@ -223,13 +227,22 @@ class Installer:
 			return
 
 		for vg in lvm_config.vol_groups:
+			disk.device_handler.lvm_import_vg(vg)
+
 			sorted_vol = sorted(vg.volumes, key=lambda x: x.mountpoint or Path('/'))
 
 			for vol in sorted_vol:
-				self._mount_lvm_vol(vol)
+				disk.device_handler.lvm_vol_change(vol, True)
 
-	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[
-		disk.PartitionModification, Luks2]:
+				if luks_handler := luks_handlers.get(vol):
+					self._mount_luks_volume(vol, luks_handler)
+				else:
+					self._mount_lvm_vol(vol)
+
+	def _prepare_luks_partitions(
+		self,
+		partitions: List[disk.PartitionModification]
+	) -> Dict[disk.PartitionModification, Luks2]:
 		return {
 			part_mod: disk.device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
@@ -239,6 +252,22 @@ class Installer:
 			for part_mod in partitions
 			if part_mod.mapper_name and part_mod.dev_path
 		}
+
+	def _prepare_luks_lvm(
+		self,
+		lvm_volumes: List[disk.LvmVolume]
+	) -> Dict[disk.LvmVolume, Luks2]:
+		return {
+			vol: disk.device_handler.unlock_luks2_dev(
+				vol.dev_path,
+				vol.mapper_name,
+				self._disk_encryption.encryption_password
+			)
+			for vol in lvm_volumes
+			if vol.mapper_name and vol.dev_path
+		}
+
+	# need to import and lvchange -a y to be able to decrypt
 
 	def _mount_partition(self, part_mod: disk.PartitionModification):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
@@ -259,13 +288,22 @@ class Installer:
 			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols)
 
 	def _mount_luks_partition(self, part_mod: disk.PartitionModification, luks_handler: Luks2):
-		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
-		if part_mod.mountpoint and luks_handler.mapper_dev:
-			target = self.target / part_mod.relative_mountpoint
-			disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+		if part_mod.fs_type != disk.FilesystemType.Btrfs:
+			if part_mod.mountpoint and luks_handler.mapper_dev:
+				target = self.target / part_mod.relative_mountpoint
+				disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
 		if part_mod.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
 			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols)
+
+	def _mount_luks_volume(self, volume: disk.LvmVolume, luks_handler: Luks2):
+		if volume.fs_type != disk.FilesystemType.Btrfs:
+			if volume.mountpoint and luks_handler.mapper_dev:
+				target = self.target / volume.relative_mountpoint
+				disk.device_handler.mount(luks_handler.mapper_dev, target, options=volume.mount_options)
+
+		if volume.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
+			self._mount_btrfs_subvol(luks_handler.mapper_dev, volume.btrfs_subvols)
 
 	def _mount_btrfs_subvol(self, dev_path: Path, subvolumes: List[disk.SubvolumeModification]):
 		for subvol in subvolumes:
