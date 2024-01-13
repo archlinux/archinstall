@@ -389,6 +389,16 @@ class Installer:
 	def set_hostname(self, hostname: str, *args: str, **kwargs: str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
+		hosts_entries = [
+				'# Created by: archinstall',
+				f'# Created on: {self.init_time}',
+				'See hosts(5) for details.',
+				'127.0.0.1	localhost.localdomain	localhost',
+				'::1		localhost.localdomain	localhost',
+				f'127.0.1.1	{hostname}.localdomain	{hostname}'
+			]
+		with open(f'{self.target}/etc/hosts', 'w') as fh:
+			fh.write('\n'.join(hosts_entries) + '\n')
 
 	def set_locale(self, locale_config: LocaleConfiguration) -> bool:
 		modifier = ''
