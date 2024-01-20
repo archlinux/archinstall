@@ -661,8 +661,6 @@ class Installer:
 		if testing:
 			info("The testing flag is set. This system will be installed with testing repositories enabled.")
 			pacman_conf.enable(pacman.Repo.Testing)
-			if multilib:
-				pacman_conf.enable(pacman.Repo.MultilibTesting)
 		else:
 			info("The testing flag is not set. This system will be installed without testing repositories enabled.")
 
