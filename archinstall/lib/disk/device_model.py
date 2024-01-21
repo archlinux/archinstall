@@ -793,6 +793,9 @@ class PartitionModification:
 	def is_exists_or_modify(self) -> bool:
 		return self.status in [ModificationStatus.Exist, ModificationStatus.Modify]
 
+	def is_create_or_modify(self) -> bool:
+		return self.status in [ModificationStatus.Create, ModificationStatus.Modify]
+
 	@property
 	def mapper_name(self) -> Optional[str]:
 		if self.dev_path:
