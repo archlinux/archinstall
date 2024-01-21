@@ -180,15 +180,17 @@ class Installer:
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
+		debug('Mounting ordered layout')
+
 		luks_handlers = self._decrypt_layout()
 
-		info('Mounting LVM in order')
 		self._mount_lvm_layout(luks_handlers)
 
-		info('Mounting partitions in order')
 		self._mount_partition_layout(luks_handlers)
 
 	def _decrypt_layout(self) -> Dict[Any, Luks2]:
+		debug(f'Decrypt layout: {self._disk_encryption.encryption_type.value}')
+
 		match self._disk_encryption.encryption_type:
 			case disk.EncryptionType.Luks:
 				return self._prepare_luks_partitions(self._disk_encryption.partitions)
@@ -200,6 +202,8 @@ class Installer:
 		return {}
 
 	def _mount_partition_layout(self, luks_handlers: Dict[Any, Luks2]):
+		debug('Mounting partition layout')
+
 		# do not mount any PVs part of the LVM configuration
 		pvs = []
 		if self._disk_config.lvm_config:
@@ -223,17 +227,17 @@ class Installer:
 		lvm_config = self._disk_config.lvm_config
 
 		if not lvm_config:
-			debug('no lvm config set to be mounted')
+			debug('No lvm config defined to be mounted')
 			return
 
-		for vg in lvm_config.vol_groups:
-			disk.device_handler.lvm_import_vg(vg)
+		debug('Mounting LVM  layout')
 
+		self._import_lvm(self._disk_config.lvm_config)
+
+		for vg in lvm_config.vol_groups:
 			sorted_vol = sorted(vg.volumes, key=lambda x: x.mountpoint or Path('/'))
 
 			for vol in sorted_vol:
-				disk.device_handler.lvm_vol_change(vol, True)
-
 				if luks_handler := luks_handlers.get(vol):
 					self._mount_luks_volume(vol, luks_handler)
 				else:
@@ -253,6 +257,16 @@ class Installer:
 			if part_mod.mapper_name and part_mod.dev_path
 		}
 
+	def _import_lvm(
+		self,
+		lvm_config: disk.LvmConfiguration
+	):
+		for vg in lvm_config.vol_groups:
+			disk.device_handler.lvm_import_vg(vg)
+
+			for vol in vg.volumes:
+				disk.device_handler.lvm_vol_change(vol, True)
+
 	def _prepare_luks_lvm(
 		self,
 		lvm_volumes: List[disk.LvmVolume]
@@ -266,8 +280,6 @@ class Installer:
 			for vol in lvm_volumes
 			if vol.mapper_name and vol.dev_path
 		}
-
-	# need to import and lvchange -a y to be able to decrypt
 
 	def _mount_partition(self, part_mod: disk.PartitionModification):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
@@ -312,6 +324,15 @@ class Installer:
 			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
 
 	def generate_key_files(self):
+		match self._disk_encryption.encryption_type:
+			case disk.EncryptionType.Luks:
+				self._generate_key_files_partitions()
+			case disk.EncryptionType.LvmOnLuks:
+				pass
+			case disk.EncryptionType.LuksOnLvm:
+				pass
+
+	def _generate_key_files_partitions(self):
 		for part_mod in self._disk_encryption.partitions:
 			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
 
@@ -448,7 +469,7 @@ class Installer:
 			with fstab_path.open('w') as fp:
 				fp.writelines(fstab)
 
-	def set_hostname(self, hostname: str, *args: str, **kwargs: str) -> None:
+	def set_hostname(self, hostname: str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
@@ -499,7 +520,7 @@ class Installer:
 		(self.target / 'etc/locale.conf').write_text(f'LANG={lang_value}\n')
 		return True
 
-	def set_timezone(self, zone: str, *args: str, **kwargs: str) -> bool:
+	def set_timezone(self, zone: str) -> bool:
 		if not zone:
 			return True
 		if not len(zone):
@@ -704,6 +725,9 @@ class Installer:
 		if not self._disk_config.lvm_config:
 			return
 
+		self.add_additional_packages('lvm2')
+		self._hooks.insert(self._hooks.index('filesystems') - 1, 'lvm2')
+
 		for vg in self._disk_config.lvm_config.vol_groups:
 			for vol in vg.volumes:
 				if vol.fs_type is not None:
@@ -722,16 +746,16 @@ class Installer:
 						if 'fsck' in self._hooks:
 							self._hooks.remove('fsck')
 
-					# if part in self._disk_encryption.partitions:
-					# 	if self._disk_encryption.hsm_device:
-					# 		# Required by mkinitcpio to add support for fido2-device options
-					# 		self.pacman.strap('libfido2')
-					#
-					# 		if 'sd-encrypt' not in self._hooks:
-					# 			self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
-					# 	else:
-					# 		if 'encrypt' not in self._hooks:
-					# 			self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
+		if self._disk_encryption.encryption_type in [disk.EncryptionType.LvmOnLuks, disk.EncryptionType.LuksOnLvm]:
+			if self._disk_encryption.hsm_device:
+				# Required by mkinitcpio to add support for fido2-device options
+				self.pacman.strap('libfido2')
+
+				if 'sd-encrypt' not in self._hooks:
+					self._hooks.insert(self._hooks.index('lvm2') - 1, 'sd-encrypt')
+			else:
+				if 'encrypt' not in self._hooks:
+					self._hooks.insert(self._hooks.index('lvm2') - 1, 'encrypt')
 
 	def minimal_installation(
 		self,
@@ -743,9 +767,6 @@ class Installer:
 	):
 		if self._disk_config.lvm_config:
 			self._handle_lvm_installation()
-
-			self.add_additional_packages('lvm2')
-			self._hooks.insert(self._hooks.index('filesystems') - 1, 'lvm2')
 		else:
 			self._handle_partition_installation()
 
@@ -854,6 +875,83 @@ class Installer:
 					return root
 		return None
 
+	def _get_luks_uuid_from_mapper_dev(self, mapper_dev_path: Path) -> str:
+		lsblk_info = disk.get_luks_mapper_lsblk_info(mapper_dev_path)
+
+		if not lsblk_info or not lsblk_info[0].children:
+			raise ValueError('Unable to determine UUID of luks superblock')
+
+		return lsblk_info[0].children[0].uuid
+
+	def _get_kernel_params_partition(
+		self,
+		root_partition: disk.PartitionModification,
+		id_root: bool = True,
+		partuuid: bool = True
+	) -> List[str]:
+		kernel_parameters = []
+
+		if root_partition in self._disk_encryption.partitions:
+			# TODO: We need to detect if the encrypted device is a whole disk encryption,
+			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+
+			if self._disk_encryption and self._disk_encryption.hsm_device:
+				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
+				# Note: UUID must be used, not PARTUUID for sd-encrypt to work
+				kernel_parameters.append(f'rd.luks.name={root_partition.uuid}=root')
+				# Note: tpm2-device and fido2-device don't play along very well:
+				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
+				kernel_parameters.append('rd.luks.options=fido2-device=auto,password-echo=no')
+			elif partuuid:
+				debug(f'Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
+				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:root')
+			else:
+				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
+				kernel_parameters.append(f'cryptdevice=UUID={root_partition.uuid}:root')
+
+			if id_root:
+				kernel_parameters.append('root=/dev/mapper/root')
+		elif id_root:
+			if partuuid:
+				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
+				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid}')
+			else:
+				debug(f'Identifying root partition by UUID: {root_partition.uuid}')
+				kernel_parameters.append(f'root=UUID={root_partition.uuid}')
+
+		return kernel_parameters
+
+	def _get_kernel_params_lvm(
+		self,
+		lvm: disk.LvmVolume
+	) -> List[str]:
+		kernel_parameters = []
+
+		if disk.EncryptionType.LvmOnLuks:
+			pv_seg_info = disk.device_handler.lvm_pvseg_info(lvm.vg_name, lvm.name)
+			uuid = self._get_luks_uuid_from_mapper_dev(pv_seg_info.pv_name)
+
+			if self._disk_encryption.hsm_device:
+				debug(f'LvmOnLuks, encrypted root partition, HSM, identifying by UUID: {uuid}')
+				kernel_parameters.append(f'rd.luks.name={uuid}=cryptlvm root={lvm.safe_dev_path}')
+			else:
+				debug(f'LvmOnLuks, encrypted root partition, identifying by UUID: {uuid}')
+				kernel_parameters.append(f'cryptdevice=UUID={uuid}:cryptlvm root={lvm.safe_dev_path}')
+		elif disk.EncryptionType.LuksOnLvm:
+			uuid = self._get_luks_uuid_from_mapper_dev(lvm.safe_dev_path)
+
+			if self._disk_encryption.hsm_device:
+				debug(f'LuksOnLvm, encrypted root partition, HSM, identifying by UUID: {uuid}')
+				kernel_parameters.append(f'rd.luks.name={uuid}=root root={lvm.safe_dev_path}')
+			else:
+				debug(f'LuksOnLvm, encrypted root partition, identifying by UUID: {uuid}')
+				kernel_parameters.append(f'cryptdevice=UUID={uuid}:root root={lvm.safe_dev_path}')
+		elif disk.EncryptionType.NoEncryption:
+			debug(f'Identifying root lvm by mapper device: {lvm.dev_path}')
+			kernel_parameters.append(f'root={lvm.safe_dev_path}')
+
+		return kernel_parameters
+
 	def _get_kernel_params(
 		self,
 		root: disk.PartitionModification | disk.LvmVolume,
@@ -862,39 +960,10 @@ class Installer:
 	) -> List[str]:
 		kernel_parameters = []
 
-		if isinstance(root, disk.PartitionModification) and root in self._disk_encryption.partitions:
-			# TODO: We need to detect if the encrypted device is a whole disk encryption,
-			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-
-			if self._disk_encryption and self._disk_encryption.hsm_device:
-				debug(f'Root partition is an encrypted device, identifying by UUID: {root.uuid}')
-				# Note: UUID must be used, not PARTUUID for sd-encrypt to work
-				kernel_parameters.append(f'rd.luks.name={root.uuid}=root')
-				# Note: tpm2-device and fido2-device don't play along very well:
-				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
-				kernel_parameters.append('rd.luks.options=fido2-device=auto,password-echo=no')
-			elif partuuid:
-				debug(f'Root partition is an encrypted device, identifying by PARTUUID: {root.partuuid}')
-				kernel_parameters.append(f'cryptdevice=PARTUUID={root.partuuid}:root')
-			else:
-				debug(f'Root partition is an encrypted device, identifying by UUID: {root.uuid}')
-				kernel_parameters.append(f'cryptdevice=UUID={root.uuid}:root')
-
-			if id_root:
-				kernel_parameters.append('root=/dev/mapper/root')
-		elif id_root:
-			if isinstance(root, disk.PartitionModification):
-				if partuuid:
-					debug(f'Identifying root partition by PARTUUID: {root.partuuid}')
-					kernel_parameters.append(f'root=PARTUUID={root.partuuid}')
-				else:
-					debug(f'Identifying root partition by UUID: {root.uuid}')
-					kernel_parameters.append(f'root=UUID={root.uuid}')
-			elif isinstance(root, disk.LvmVolume):
-				debug(f'Identifying root lvm by mapper device: {root.dev_path}')
-				kernel_parameters.append(f'root={root.safe_dev_path}')
-			else:
-				raise ValueError('root is of unknown type')
+		if isinstance(root, disk.LvmVolume):
+			kernel_parameters = self._get_kernel_params_lvm(root)
+		else:
+			kernel_parameters = self._get_kernel_params_partition(root, id_root, partuuid)
 
 		# Zswap should be disabled when using zram.
 		# https://github.com/archlinux/archinstall/issues/881

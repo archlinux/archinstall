@@ -19,7 +19,7 @@ from .device_model import (
 	FilesystemType, Unit, PartitionTable,
 	ModificationStatus, get_lsblk_info, LsblkInfo,
 	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
-	SectorSize, LvmVolumeInfo
+	SectorSize, LvmVolumeInfo, LvmPVInfo
 )
 
 from ..exceptions import DiskError, UnknownFilesystemFormat
@@ -138,7 +138,7 @@ class DeviceHandler(object):
 		paths = Path('/dev/disk/by-id').glob('*')
 		linked_targets = {p.resolve(): p for p in paths}
 		linked_wwn_targets = {p: linked_targets[p] for p in linked_targets
-			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
+							  if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
 
 		if dev_path in linked_wwn_targets:
 			return linked_wwn_targets[dev_path]
@@ -297,54 +297,70 @@ class DeviceHandler(object):
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
 
-	def _lvm_info(self, cmd: str, name: str, info_type: Literal['lv', 'vg']) -> Optional[Any]:
+	def _lvm_info(
+		self,
+		cmd: str,
+		info_type: Literal['lv', 'vg', 'pvseg']
+	) -> Optional[Any]:
 		raw_info = SysCommand(cmd).decode().split('\n')
 
 		# for whatever reason the output sometimes contains
 		# "File descriptor X leaked leaked on vgs invocation
 		data = '\n'.join([raw for raw in raw_info if 'File descriptor' not in raw])
 
-		debug(f'LVM raw: {data}')
+		debug(f'LVM info: {data}')
 
 		reports = json.loads(data)
 
-		type_name = f'{info_type}_name'
-
 		for report in reports['report']:
-			entries = report.get(info_type, [])
-			for entry in entries:
-				if entry[type_name] == name:
-					lv_size = int(entry[f'{info_type}_size'][:-1])
-					size = Size(lv_size, Unit.B, SectorSize.default())
+			if len(report) != 1:
+				raise ValueError(f'Report does not contain single entry')
 
-					match info_type:
-						case 'lv':
-							return LvmVolumeInfo(
-								lv_name=entry['lv_name'],
-								vg_name=entry['vg_name'],
-								lv_size=size
-							)
-						case 'vg':
-							return LvmGroupInfo(
-								vg_size=size,
-								vg_uuid=entry['vg_uuid']
-							)
+			entry = report[info_type][0]
+
+			match info_type:
+				case 'pvseg':
+					return LvmPVInfo(
+						pv_name=entry['pv_name'],
+						lv_name=entry['lv_name'],
+						vg_name=entry['vg_name'],
+					)
+				case 'lv':
+					return LvmVolumeInfo(
+						lv_name=entry['lv_name'],
+						vg_name=entry['vg_name'],
+						lv_size=Size(int(entry[f'lv_size'][:-1]), Unit.B, SectorSize.default())
+					)
+				case 'vg':
+					return LvmGroupInfo(
+						vg_uuid=entry['vg_uuid'],
+						vg_size=Size(int(entry[f'vg_size'][:-1]), Unit.B, SectorSize.default())
+					)
+
 		return None
 
 	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
 		cmd = 'lvs --reportformat json ' \
-			'--unit B ' \
-			f'-S lv_name={lv_name}'
+			  '--unit B ' \
+			  f'-S lv_name={lv_name}'
 
-		return self._lvm_info(cmd, lv_name, 'lv')
+		return self._lvm_info(cmd, 'lv')
 
 	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
 		cmd = 'vgs --reportformat json ' \
-			'--unit B ' \
-			'-o vg_name,vg_uuid,vg_size ' \
-			f'-S vg_name={vg_name}'
+			  '--unit B ' \
+			  '-o vg_name,vg_uuid,vg_size ' \
+			  f'-S vg_name={vg_name}'
 
-		return self._lvm_info(cmd, vg_name, 'vg')
+		return self._lvm_info(cmd, 'vg')
+
+	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> Optional[LvmPVInfo]:
+		cmd = 'pvs ' \
+			  '--segments -o+lv_name,vg_name ' \
+			  f'-S vg_name={vg_name},lv_name={lv_name} ' \
+			  '--reportformat json '
+
+		return self._lvm_info(cmd, 'pvseg')
 
 	def lvm_vol_change(self, vol: LvmVolume, activate: bool):
 		active_flag = 'y' if activate else 'n'
@@ -405,6 +421,7 @@ class DeviceHandler(object):
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
+		volume.vg_name = vg_name
 		volume.dev_path = Path(f'/dev/{vg_name}/{volume.name}')
 
 	def _perform_partitioning(

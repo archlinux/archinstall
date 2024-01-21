@@ -886,6 +886,7 @@ class PartitionModification:
 
 class LvmLayoutType(Enum):
 	Default = 'default'
+
 	# Manual = 'manual_lvm'
 
 	def display_msg(self) -> str:
@@ -925,6 +926,9 @@ class LvmVolumeGroup:
 			[LvmVolume.parse_arg(vol) for vol in arg['volumes']]
 		)
 
+	def contains_lv(self, lv: LvmVolume) -> bool:
+		return lv in self.volumes
+
 
 class LvmVolumeStatus(Enum):
 	Exist = 'existing'
@@ -943,13 +947,15 @@ class LvmVolume:
 	mount_options: List[str] = field(default_factory=list)
 	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
 
+	# volume group name
+	vg_name: Optional[str] = None
+	# mapper device path /dev/<vg>/<vol>
+	dev_path: Optional[Path] = None
+
 	def __post_init__(self):
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
 			self._obj_id = uuid.uuid4()
-
-	# mapper device path /dev/<vg>/<vol>
-	dev_path: Optional[Path] = None
 
 	def __hash__(self):
 		return hash(self._obj_id)
@@ -1063,6 +1069,13 @@ class LvmVolumeInfo:
 
 
 @dataclass
+class LvmPVInfo:
+	pv_name: str
+	lv_name: str
+	vg_name: str
+
+
+@dataclass
 class LvmConfiguration:
 	config_type: LvmLayoutType
 	vol_groups: List[LvmVolumeGroup]
@@ -1117,6 +1130,16 @@ class LvmConfiguration:
 				return filtered
 
 		return None
+
+
+# def get_lv_crypt_uuid(self, lv: LvmVolume, encryption: EncryptionType) -> str:
+# 	"""
+# 	Find the LUKS superblock UUID for the device that
+# 	contains the given logical volume
+# 	"""
+# 	for vg in self.vol_groups:
+# 		if vg.contains_lv(lv):
+
 
 @dataclass
 class DeviceModification:
@@ -1409,16 +1432,25 @@ def _clean_field(name: str, clean_type: CleanType) -> str:
 			return name.replace('_percentage', '%').replace('_', '-')
 
 
-def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 3) -> List[LsblkInfo]:
+def _fetch_lsblk_info(
+	dev_path: Optional[Union[Path, str]] = None,
+	reverse: bool = False,
+	full_dev_path: bool = False,
+	retry: int = 3
+) -> List[LsblkInfo]:
 	fields = [_clean_field(f, CleanType.Lsblk) for f in LsblkInfo.fields()]
 	lsblk_fields = ','.join(fields)
 
 	if not dev_path:
 		dev_path = ''
 
+	cmd = f'lsblk --json -b -o+{lsblk_fields} {dev_path}'
+	cmd += ' -s' if reverse else ''
+	cmd += ' -p ' if full_dev_path else ''
+
 	for retry_attempt in range(retry + 1):
 		try:
-			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}').decode()
+			result = SysCommand(cmd).decode()
 			break
 		except SysCallError as err:
 			# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
@@ -1474,3 +1506,10 @@ def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[L
 
 	all_info = get_all_lsblk_info()
 	return _check(all_info)
+
+
+def get_luks_mapper_lsblk_info(mapper_dev_path: Union[Path, str]) -> List[LsblkInfo]:
+	"""
+	Find the LUKS superblock UUID for the given mapper path
+	"""
+	return _fetch_lsblk_info(mapper_dev_path, reverse=True, full_dev_path=True)

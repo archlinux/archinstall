@@ -599,6 +599,8 @@ def suggest_lvm_layout(
 		pvs=other_part,
 	)
 
+	# ... one vol per part
+
 	root_vol = disk.LvmVolume(
 		status=disk.LvmVolumeStatus.Create,
 		name="root",
