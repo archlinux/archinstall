@@ -27,6 +27,7 @@ Assuming you are on an Arch Linux live-ISO or installed via `pip`:
 
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
 
+    # cd archinstall-git
     # python -m archinstall
 
 #### Advanced
