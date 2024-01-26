@@ -219,8 +219,8 @@ class Luks2:
 
 		key_file.parent.mkdir(parents=True, exist_ok=True)
 
-		with open(key_file, "w") as keyfile:
-			keyfile.write(generate_password(length=512))
+		pwd = generate_password(length=512)
+		key_file.write_text(pwd)
 
 		key_file.chmod(0o400)
 

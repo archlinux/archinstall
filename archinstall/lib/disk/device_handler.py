@@ -313,8 +313,8 @@ class DeviceHandler(object):
 		reports = json.loads(data)
 
 		for report in reports['report']:
-			if len(report) != 1:
-				raise ValueError(f'Report does not contain single entry')
+			if len(report[info_type]) != 1:
+				raise ValueError(f'Report does not contain entry')
 
 			entry = report[info_type][0]
 
@@ -339,12 +339,23 @@ class DeviceHandler(object):
 
 		return None
 
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Optional[Any]:
+		attempts = 3
+
+		for attempt_nr in range(attempts):
+			try:
+				return self._lvm_info(cmd, info_type)
+			except ValueError:
+				time.sleep(attempt_nr + 1)
+
+		raise ValueError(f'Failed to fetch {info_type} information')
+
 	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
 		cmd = 'lvs --reportformat json ' \
 			  '--unit B ' \
 			  f'-S lv_name={lv_name}'
 
-		return self._lvm_info(cmd, 'lv')
+		return self._lvm_info_with_retry(cmd, 'lv')
 
 	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
 		cmd = 'vgs --reportformat json ' \
@@ -352,7 +363,7 @@ class DeviceHandler(object):
 			  '-o vg_name,vg_uuid,vg_size ' \
 			  f'-S vg_name={vg_name}'
 
-		return self._lvm_info(cmd, 'vg')
+		return self._lvm_info_with_retry(cmd, 'vg')
 
 	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> Optional[LvmPVInfo]:
 		cmd = 'pvs ' \
@@ -360,7 +371,7 @@ class DeviceHandler(object):
 			  f'-S vg_name={vg_name},lv_name={lv_name} ' \
 			  '--reportformat json '
 
-		return self._lvm_info(cmd, 'pvseg')
+		return self._lvm_info_with_retry(cmd, 'pvseg')
 
 	def lvm_vol_change(self, vol: LvmVolume, activate: bool):
 		active_flag = 'y' if activate else 'n'
@@ -396,7 +407,7 @@ class DeviceHandler(object):
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
-	def lvm_group_create(self, pvs: List[Path], vg_name: str):
+	def lvm_vg_create(self, pvs: List[Path], vg_name: str):
 		pvs_str = ' '.join([str(pv) for pv in pvs])
 		cmd = f'vgcreate --yes {vg_name} {pvs_str}'
 

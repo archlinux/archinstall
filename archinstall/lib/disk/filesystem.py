@@ -176,12 +176,13 @@ class FilesystemHandler:
 
 		for vg in self._disk_config.lvm_config.vol_groups:
 			pv_dev_paths = self._get_all_pv_dev_paths(vg.pvs, enc_mods)
-			device_handler.lvm_group_create(pv_dev_paths, vg.name)
+
+			device_handler.lvm_vg_create(pv_dev_paths, vg.name)
 
 			# figure out what the actual available size in the group is
-			lvm_vg_info = device_handler.lvm_group_info(vg.name)
+			vg_info = device_handler.lvm_group_info(vg.name)
 
-			if not lvm_vg_info:
+			if not vg_info:
 				raise ValueError('Unable to fetch VG info')
 
 			# the actual available LVM Group size will be smaller than the
@@ -189,7 +190,7 @@ class FilesystemHandler:
 			# so we'll have a look at the total avail. size, check the delta
 			# to the desired sizes and subtract some equally from the actually
 			# created volume
-			avail_size = lvm_vg_info.vg_size
+			avail_size = vg_info.vg_size
 			desired_size = sum([vol.length for vol in vg.volumes], Size(0, Unit.B, SectorSize.default()))
 
 			delta = desired_size - avail_size

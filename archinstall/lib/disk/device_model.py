@@ -973,6 +973,13 @@ class LvmVolume:
 		return None
 
 	@property
+	def mapper_path(self) -> Path:
+		if self.mapper_name:
+			return Path(f'/dev/mapper/{self.mapper_name}')
+
+		raise ValueError('No mapper path set')
+
+	@property
 	def safe_dev_path(self) -> Path:
 		if self.dev_path:
 			return self.dev_path
@@ -1233,8 +1240,14 @@ class DiskEncryption:
 		if self.encryption_type == EncryptionType.LuksOnLvm and not self.lvm_volumes:
 			raise ValueError('LuksOnLvm encryption require LMV volumes to be defined')
 
-	def should_generate_encryption_file(self, part_mod: PartitionModification) -> bool:
-		return part_mod in self.partitions and part_mod.mountpoint != Path('/')
+	def should_generate_encryption_file(
+		self,
+		dev: PartitionModification | LvmVolume
+	) -> bool:
+		if isinstance(dev, PartitionModification):
+			return dev in self.partitions and dev.mountpoint != Path('/')
+		else:
+			return dev in self.lvm_volumes and dev.mountpoint != Path('/')
 
 	def json(self) -> Dict[str, Any]:
 		obj: Dict[str, Any] = {
@@ -1249,12 +1262,29 @@ class DiskEncryption:
 		return obj
 
 	@classmethod
+	def validate_enc(cls, disk_config: DiskLayoutConfiguration) -> bool:
+		partitions = []
+
+		for mod in disk_config.device_modifications:
+			for part in mod.partitions:
+				partitions.append(part)
+
+		if len(partitions) > 2:  # assume one boot and at least 2 additional
+			if disk_config.lvm_config:
+				return False
+
+		return True
+
+	@classmethod
 	def parse_arg(
 		cls,
 		disk_config: DiskLayoutConfiguration,
 		arg: Dict[str, Any],
 		password: str = ''
-	) -> 'DiskEncryption':
+	) -> Optional['DiskEncryption']:
+		if not cls.validate_enc(disk_config):
+			return None
+
 		enc_partitions = []
 		for mod in disk_config.device_modifications:
 			for part in mod.partitions:
@@ -1476,8 +1506,12 @@ def _fetch_lsblk_info(
 	raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
 
 
-def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
-	if infos := _fetch_lsblk_info(dev_path):
+def get_lsblk_info(
+	dev_path: Union[Path, str],
+	reverse: bool = False,
+	full_dev_path: bool = False
+) -> LsblkInfo:
+	if infos := _fetch_lsblk_info(dev_path, reverse=reverse, full_dev_path=full_dev_path):
 		return infos[0]
 
 	raise DiskError(f'lsblk failed to retrieve information for "{dev_path}"')
@@ -1506,10 +1540,3 @@ def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[L
 
 	all_info = get_all_lsblk_info()
 	return _check(all_info)
-
-
-def get_luks_mapper_lsblk_info(mapper_dev_path: Union[Path, str]) -> List[LsblkInfo]:
-	"""
-	Find the LUKS superblock UUID for the given mapper path
-	"""
-	return _fetch_lsblk_info(mapper_dev_path, reverse=True, full_dev_path=True)

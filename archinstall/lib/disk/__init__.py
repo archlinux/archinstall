@@ -36,7 +36,6 @@ from .device_model import (
 	get_lsblk_info,
 	get_all_lsblk_info,
 	get_lsblk_by_mountpoint,
-	get_luks_mapper_lsblk_info
 )
 from .encryption_menu import (
 	select_encryption_type,

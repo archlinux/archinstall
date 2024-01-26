@@ -66,7 +66,7 @@ class Menu(TerminalMenu):
 		sort: bool = True,
 		preset_values: Optional[Union[str, List[str]]] = None,
 		cursor_index: Optional[int] = None,
-		preview_command: Optional[Callable] = None,
+		preview_command: Optional[Callable[[Any], str]] = None,
 		preview_size: float = 0.0,
 		preview_title: str = 'Info',
 		header: Union[List[str], str] = [],
@@ -228,7 +228,7 @@ class Menu(TerminalMenu):
 		default_str = str(_('(default)'))
 		return f'{self._default_option} {default_str}'
 
-	def _show_preview(self, preview_command: Optional[Callable], selection: str) -> Optional[str]:
+	def _show_preview(self, preview_command: Optional[Callable[[Any], str]], selection: str) -> Optional[str]:
 		if selection == self.back():
 			return None
 

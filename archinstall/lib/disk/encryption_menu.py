@@ -187,7 +187,12 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 		]
 
 	preset_value = EncryptionType.type_to_text(preset)
-	choice = Menu(title, options, preset_values=preset_value).run()
+
+	choice = Menu(
+		title,
+		options,
+		preset_values=preset_value
+	).run()
 
 	match choice.type_:
 		case MenuSelectionType.Reset:

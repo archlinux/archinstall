@@ -72,7 +72,8 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: self._disk_encryption(preset),
 				preview_func=self._prev_disk_encryption,
 				display_func=lambda x: self._display_disk_encryption(x),
-				dependencies=['disk_config'])
+				dependencies=['disk_config']
+			)
 		self._menu_options['swap'] = \
 			Selector(
 				_('Swap'),
@@ -238,14 +239,17 @@ class GlobalMenu(AbstractMenu):
 		return config.type.display_msg()
 
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
-		mods: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+		disk_config: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
 
-		if not mods:
+		if not disk_config:
 			# this should not happen as the encryption menu has the disk_config as dependency
 			raise ValueError('No disk layout specified')
 
+		if not disk.DiskEncryption.validate_enc(disk_config):
+			return None
+
 		data_store: Dict[str, Any] = {}
-		disk_encryption = disk.DiskEncryptionMenu(mods, data_store, preset=preset).run()
+		disk_encryption = disk.DiskEncryptionMenu(disk_config, data_store, preset=preset).run()
 		return disk_encryption
 
 	def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration:
@@ -300,6 +304,11 @@ class GlobalMenu(AbstractMenu):
 		return ''
 
 	def _prev_disk_encryption(self) -> Optional[str]:
+		disk_config: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+
+		if disk_config and not disk.DiskEncryption.validate_enc(disk_config):
+			return str(_('LVM disk encryption with more than 2 partitions is currently not supported'))
+
 		encryption: Optional[disk.DiskEncryption] = self._menu_options['disk_encryption'].current_selection
 
 		if encryption:

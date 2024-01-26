@@ -536,9 +536,7 @@ def suggest_lvm_layout(
 	vg_grp_name: str = "ArchinstallVg",
 ) -> disk.LvmConfiguration:
 	if disk_config.config_type != disk.DiskLayoutType.Default:
-		raise ValueError(
-			"LVM suggested volumes are only available for default partitioning"
-		)
+		raise ValueError("LVM suggested volumes are only available for default partitioning")
 
 	using_subvolumes = False
 	compression = False

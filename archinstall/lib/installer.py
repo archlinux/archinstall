@@ -182,24 +182,22 @@ class Installer:
 	def mount_ordered_layout(self):
 		debug('Mounting ordered layout')
 
-		luks_handlers = self._decrypt_layout()
-
-		self._mount_lvm_layout(luks_handlers)
-
-		self._mount_partition_layout(luks_handlers)
-
-	def _decrypt_layout(self) -> Dict[Any, Luks2]:
-		debug(f'Decrypt layout: {self._disk_encryption.encryption_type.value}')
+		luks_handlers = {}
 
 		match self._disk_encryption.encryption_type:
 			case disk.EncryptionType.Luks:
-				return self._prepare_luks_partitions(self._disk_encryption.partitions)
+				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
 			case disk.EncryptionType.LvmOnLuks:
-				return self._prepare_luks_partitions(self._disk_encryption.partitions)
+				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
+				self._import_lvm()
+				self._mount_lvm_layout(luks_handlers)
 			case disk.EncryptionType.LuksOnLvm:
-				return self._prepare_luks_lvm(self._disk_encryption.lvm_volumes)
+				self._import_lvm()
+				luks_handlers = self._prepare_luks_lvm(self._disk_encryption.lvm_volumes)
+				self._mount_lvm_layout(luks_handlers)
 
-		return {}
+		# mount all regular partitions
+		self._mount_partition_layout(luks_handlers)
 
 	def _mount_partition_layout(self, luks_handlers: Dict[Any, Luks2]):
 		debug('Mounting partition layout')
@@ -230,9 +228,7 @@ class Installer:
 			debug('No lvm config defined to be mounted')
 			return
 
-		debug('Mounting LVM  layout')
-
-		self._import_lvm(self._disk_config.lvm_config)
+		debug('Mounting LVM layout')
 
 		for vg in lvm_config.vol_groups:
 			sorted_vol = sorted(vg.volumes, key=lambda x: x.mountpoint or Path('/'))
@@ -257,10 +253,13 @@ class Installer:
 			if part_mod.mapper_name and part_mod.dev_path
 		}
 
-	def _import_lvm(
-		self,
-		lvm_config: disk.LvmConfiguration
-	):
+	def _import_lvm(self):
+		lvm_config = self._disk_config.lvm_config
+
+		if not lvm_config:
+			debug('No lvm config defined to be imported')
+			return
+
 		for vg in lvm_config.vol_groups:
 			disk.device_handler.lvm_import_vg(vg)
 
@@ -327,9 +326,12 @@ class Installer:
 		match self._disk_encryption.encryption_type:
 			case disk.EncryptionType.Luks:
 				self._generate_key_files_partitions()
-			case disk.EncryptionType.LvmOnLuks:
-				pass
 			case disk.EncryptionType.LuksOnLvm:
+				self._generate_key_file_lvm_volumes()
+			case disk.EncryptionType.LvmOnLuks:
+				# currently LvmOnLuks only supports a single
+				# partitioning layout (boot + partition)
+				# so we won't need any keyfile generation atm
 				pass
 
 	def _generate_key_files_partitions(self):
@@ -350,7 +352,29 @@ class Installer:
 				if self._disk_encryption.hsm_device:
 					disk.Fido2.fido2_enroll(
 						self._disk_encryption.hsm_device,
-						part_mod,
+						part_mod.safe_dev_path,
+						self._disk_encryption.encryption_password
+					)
+
+	def _generate_key_file_lvm_volumes(self):
+		for vol in self._disk_encryption.lvm_volumes:
+			gen_enc_file = self._disk_encryption.should_generate_encryption_file(vol)
+
+			luks_handler = Luks2(
+				vol.safe_dev_path,
+				mapper_name=vol.mapper_name,
+				password=self._disk_encryption.encryption_password
+			)
+
+			if gen_enc_file and not vol.is_root():
+				info(f'Creating key-file: {vol.dev_path}')
+				luks_handler.create_keyfile(self.target)
+
+			if vol.is_root() and not gen_enc_file:
+				if self._disk_encryption.hsm_device:
+					disk.Fido2.fido2_enroll(
+						self._disk_encryption.hsm_device,
+						vol.safe_dev_path,
 						self._disk_encryption.encryption_password
 					)
 
@@ -876,12 +900,12 @@ class Installer:
 		return None
 
 	def _get_luks_uuid_from_mapper_dev(self, mapper_dev_path: Path) -> str:
-		lsblk_info = disk.get_luks_mapper_lsblk_info(mapper_dev_path)
+		lsblk_info = disk.get_lsblk_info(mapper_dev_path, reverse=True, full_dev_path=True)
 
-		if not lsblk_info or not lsblk_info[0].children:
+		if not lsblk_info.children:
 			raise ValueError('Unable to determine UUID of luks superblock')
 
-		return lsblk_info[0].children[0].uuid
+		return lsblk_info.children[0].uuid
 
 	def _get_kernel_params_partition(
 		self,
@@ -927,28 +951,29 @@ class Installer:
 	) -> List[str]:
 		kernel_parameters = []
 
-		if disk.EncryptionType.LvmOnLuks:
-			pv_seg_info = disk.device_handler.lvm_pvseg_info(lvm.vg_name, lvm.name)
-			uuid = self._get_luks_uuid_from_mapper_dev(pv_seg_info.pv_name)
+		match self._disk_encryption.encryption_type:
+			case disk.EncryptionType.LvmOnLuks:
+				pv_seg_info = disk.device_handler.lvm_pvseg_info(lvm.vg_name, lvm.name)
+				uuid = self._get_luks_uuid_from_mapper_dev(pv_seg_info.pv_name)
 
-			if self._disk_encryption.hsm_device:
-				debug(f'LvmOnLuks, encrypted root partition, HSM, identifying by UUID: {uuid}')
-				kernel_parameters.append(f'rd.luks.name={uuid}=cryptlvm root={lvm.safe_dev_path}')
-			else:
-				debug(f'LvmOnLuks, encrypted root partition, identifying by UUID: {uuid}')
-				kernel_parameters.append(f'cryptdevice=UUID={uuid}:cryptlvm root={lvm.safe_dev_path}')
-		elif disk.EncryptionType.LuksOnLvm:
-			uuid = self._get_luks_uuid_from_mapper_dev(lvm.safe_dev_path)
+				if self._disk_encryption.hsm_device:
+					debug(f'LvmOnLuks, encrypted root partition, HSM, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'rd.luks.name={uuid}=cryptlvm root={lvm.safe_dev_path}')
+				else:
+					debug(f'LvmOnLuks, encrypted root partition, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'cryptdevice=UUID={uuid}:cryptlvm root={lvm.safe_dev_path}')
+			case disk.EncryptionType.LuksOnLvm:
+				uuid = self._get_luks_uuid_from_mapper_dev(lvm.mapper_path)
 
-			if self._disk_encryption.hsm_device:
-				debug(f'LuksOnLvm, encrypted root partition, HSM, identifying by UUID: {uuid}')
-				kernel_parameters.append(f'rd.luks.name={uuid}=root root={lvm.safe_dev_path}')
-			else:
-				debug(f'LuksOnLvm, encrypted root partition, identifying by UUID: {uuid}')
-				kernel_parameters.append(f'cryptdevice=UUID={uuid}:root root={lvm.safe_dev_path}')
-		elif disk.EncryptionType.NoEncryption:
-			debug(f'Identifying root lvm by mapper device: {lvm.dev_path}')
-			kernel_parameters.append(f'root={lvm.safe_dev_path}')
+				if self._disk_encryption.hsm_device:
+					debug(f'LuksOnLvm, encrypted root partition, HSM, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'rd.luks.name={uuid}=root root=/dev/mapper/root')
+				else:
+					debug(f'LuksOnLvm, encrypted root partition, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'cryptdevice=UUID={uuid}:root root=/dev/mapper/root')
+			case disk.EncryptionType.NoEncryption:
+				debug(f'Identifying root lvm by mapper device: {lvm.dev_path}')
+				kernel_parameters.append(f'root={lvm.safe_dev_path}')
 
 		return kernel_parameters
 
