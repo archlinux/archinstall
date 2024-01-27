@@ -18,8 +18,8 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
-    "pyparted==3.12.0",
     "simple-term-menu==1.6.3",
+    "pyparted==3.13.0",
 ]
 
 [project.urls]
@@ -28,8 +28,9 @@ Documentation = "https://archinstall.readthedocs.io/"
 Source = "https://github.com/archlinux/archinstall"
 
 [project.optional-dependencies]
+log = ["systemd_python==235"]
 dev = [
-    "mypy==1.6.1",
+    "mypy==1.7.1",
     "pre-commit==3.5.0",
 ]
 doc = ["sphinx"]

@@ -1170,7 +1170,7 @@ msgid "Enter end (default: {}): "
 msgstr "Digite o setor de início (padrão: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "Incapaz de determinar dispositivos FIDO2. O libfido2 está instalado?"
 
 msgid "Path"
 msgstr "Caminho"
@@ -1230,6 +1230,25 @@ msgstr ""
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "Todos os valores inseridos podem ser seguidos por uma unidade: B, KB, KiB, MB, MiB..."
+
+#, fuzzy
+msgid "Would you like to use unified kernel images?"
+msgstr "Deseja usar imagens de kernel unificados?"
+
+msgid "Unified kernel images"
+msgstr "Imagens de kernel unificados"
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Aguardando a sincronização do fuso horário (timedatectl show) ser concluida."
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Sincronização de fuso horário não concluída, enquanto você espera - confira a documentação para soluções alternativas: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Pulando a espera pela sincronização automática de fuso horário (isso pode causar problemas se o fuso horário estiver desincronizado durante a instalação)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Aguardando a sincronização do Arch Linux Keyring (archlinux-keyring-wkd-sync) ser concluída."
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

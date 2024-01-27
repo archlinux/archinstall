@@ -76,7 +76,7 @@ class Installer:
 		storage['session'] = self
 		storage['installation_session'] = self
 
-		self.modules: List[str] = []
+		self._modules: List[str] = []
 		self._binaries: List[str] = []
 		self._files: List[str] = []
 
@@ -126,19 +126,39 @@ class Installer:
 			self.sync_log_to_install_medium()
 			return False
 
+	def remove_mod(self, mod: str):
+		if mod in self._modules:
+			self._modules.remove(mod)
+
+	def append_mod(self, mod: str):
+		if mod not in self._modules:
+			self._modules.append(mod)
+
 	def _verify_service_stop(self):
 		"""
 		Certain services might be running that affects the system during installation.
 		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
-		info('Waiting for time sync (systemd-timesyncd.service) to complete.')
 
-		while True:
-			time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
-			if time_val and time_val.strip() == 'yes':
-				break
-			time.sleep(1)
+		if not storage['arguments'].get('skip_ntp', False):
+			info(_('Waiting for time sync (timedatectl show) to complete.'))
+
+			_started_wait = time.time()
+			_notified = False
+			while True:
+				if not _notified and time.time() - _started_wait > 5:
+					_notified = True
+					warn(
+						_("Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
+
+				time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
+				if time_val and time_val.strip() == 'yes':
+					break
+				time.sleep(1)
+		else:
+			info(
+				_('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
@@ -148,7 +168,7 @@ class Installer:
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 		# 	time.sleep(1)
 
-		info('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')
+		info(_('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.'))
 		# Wait for the timer to kick in
 		while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
 			time.sleep(1)
@@ -492,8 +512,8 @@ class Installer:
 					fstab[index] = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
 					break
 
-			with fstab_path.open('w') as fp:
-				fp.writelines(fstab)
+		with fstab_path.open('w') as fp:
+			fp.writelines(fstab)
 
 	def set_hostname(self, hostname: str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
@@ -682,7 +702,7 @@ class Installer:
 					return True
 
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
-			mkinit.write(f"MODULES=({' '.join(self.modules)})\n")
+			mkinit.write(f"MODULES=({' '.join(self._modules)})\n")
 			mkinit.write(f"BINARIES=({' '.join(self._binaries)})\n")
 			mkinit.write(f"FILES=({' '.join(self._files)})\n")
 
@@ -723,7 +743,7 @@ class Installer:
 				if (pkg := part.fs_type.installation_pkg) is not None:
 					self._base_packages.append(pkg)
 				if (module := part.fs_type.installation_module) is not None:
-					self.modules.append(module)
+					self._modules.append(module)
 				if (binary := part.fs_type.installation_binary) is not None:
 					self._binaries.append(binary)
 
@@ -760,7 +780,7 @@ class Installer:
 					if (pkg := vol.fs_type.installation_pkg) is not None:
 						self._base_packages.append(pkg)
 					if (module := vol.fs_type.installation_module) is not None:
-						self.modules.append(module)
+						self._modules.append(module)
 					if (binary := vol.fs_type.installation_binary) is not None:
 						self._binaries.append(binary)
 
@@ -850,7 +870,7 @@ class Installer:
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
 		if mkinitcpio and not self.mkinitcpio(['-P']):
-			error(f"Error generating initramfs (continuing anyway)")
+			error('Error generating initramfs (continuing anyway)')
 
 		self.helper_flags['base'] = True
 
@@ -1130,21 +1150,19 @@ class Installer:
 		self,
 		boot_partition: disk.PartitionModification,
 		root: disk.PartitionModification | disk.LvmVolume,
-		efi_partition: Optional[disk.PartitionModification],
-		uki_enabled: bool = False
+		efi_partition: Optional[disk.PartitionModification]
 	):
 		debug('Installing grub bootloader')
 
 		self.pacman.strap('grub')  # no need?
 
-		if not uki_enabled:
-			grub_default = self.target / 'etc/default/grub'
-			config = grub_default.read_text()
+		grub_default = self.target / 'etc/default/grub'
+		config = grub_default.read_text()
 
-			kernel_parameters = ' '.join(self._get_kernel_params(root, False, False))
-			config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
+		kernel_parameters = ' '.join(self._get_kernel_params(root, False, False))
+		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
 
-			grub_default.write_text(config)
+		grub_default.write_text(config)
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
@@ -1390,11 +1408,10 @@ class Installer:
 
 		ucode = self._get_microcode()
 
-		esp = efi_partition.mountpoint
-
 		diff_mountpoint = None
-		if esp != Path('/efi'):
-			diff_mountpoint = str(esp)
+
+		if efi_partition.mountpoint != Path('/efi'):
+			diff_mountpoint = str(efi_partition.mountpoint)
 
 		image_re = re.compile('(.+_image="/([^"]+).+\n)')
 		uki_re = re.compile('#((.+_uki=")/[^/]+(.+\n))')
@@ -1423,12 +1440,12 @@ class Installer:
 			preset.write_text(''.join(config))
 
 		# Directory for the UKIs
-		uki_dir = self.target / esp.relative_to(Path('/')) / 'EFI/Linux'
+		uki_dir = self.target / efi_partition.relative_mountpoint / 'EFI/Linux'
 		uki_dir.mkdir(parents=True, exist_ok=True)
 
 		# Build the UKIs
 		if not self.mkinitcpio(['-P']):
-			error(f"Error generating initramfs (continuing anyway)")
+			error('Error generating initramfs (continuing anyway)')
 
 	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False):
 		"""
@@ -1468,7 +1485,7 @@ class Installer:
 			case Bootloader.Systemd:
 				self._add_systemd_bootloader(boot_partition, root, efi_partition, uki_enabled)
 			case Bootloader.Grub:
-				self._add_grub_bootloader(boot_partition, root, efi_partition, uki_enabled)
+				self._add_grub_bootloader(boot_partition, root, efi_partition)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:

@@ -1254,6 +1254,25 @@ msgstr ""
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr ""
 
+#, fuzzy
+msgid "Would you like to use unified kernel images?"
+msgstr "Czy chcesz używać swap w zramie?"
+
+msgid "Unified kernel images"
+msgstr ""
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr ""
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr ""
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
 

@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023/09/25\n"
-"Last-Translator: T13nou <etienne.blanchet@soverin.net>\n"
+"PO-Revision-Date: 2023-11-18 14:25+0100\n"
+"Last-Translator: Roxfr <roxfr@outlook.fr>\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Un fichier journal a été créé ici : {} {}"
@@ -921,7 +921,7 @@ msgid "Total sectors: {}"
 msgstr "Total des secteurs : {}"
 
 msgid "Enter the start sector (default: {}): "
-msgstr "Saisir le secteur de départ (par défaut : {}) : "
+msgstr "Saisir le secteur de début (par défaut : {}) : "
 
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
 msgstr "Saisir le secteur de fin de la partition (pourcentage ou numéro de bloc, par défaut : {}) : "
@@ -1138,23 +1138,20 @@ msgstr "Paramètres régionaux"
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Utiliser NetworkManager (nécessaire pour configurer graphiquement internet dans GNOME et KDE)"
 
-#, fuzzy
 msgid "Total: {} / {}"
-msgstr "Total (taille) : {}"
+msgstr "Total (taille) : {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Toutes les valeurs saisies peuvent être saccompagnées par une unité : B, KB, KiB, MB, MiB..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr "Si aucune unité n'est fournie, la valeur est interprétée comme des secteurs""
+msgstr "Si aucune unité n'est fournie, la valeur est interprétée comme des secteurs\""
 
-#, fuzzy
 msgid "Enter start (default: sector {}): "
-msgstr "Saisir le secteur de départ (par défaut : {}) : "
+msgstr "Saisir le secteur de début (par défaut : secteur {}) : "
 
-#, fuzzy
 msgid "Enter end (default: {}): "
-msgstr "Saisir le secteur de départ (par défaut : {}) : "
+msgstr "Saisir le secteur de fin (par défaut : secteur {}) : "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
 msgstr "Impossible de déterminer les appareils fido2.  Est-ce que libfido2 est installé ?"
@@ -1168,44 +1165,37 @@ msgstr "Fabricant"
 msgid "Product"
 msgstr "Produit"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Invalid configuration: {error}"
-msgstr "Configuration manuelle"
+msgstr "Configuration invalide : {error}"
 
 msgid "Type"
 msgstr "Type"
 
-#, fuzzy
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Cette option active le nombre de téléchargements parallèles qui peuvent se produire pendant l'installation"
+msgstr "Cette option active le nombre de téléchargements parallèles pouvant avoir lieu lors des téléchargements des paquets"
 
-#, fuzzy
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 "\n"
 "Note:\n"
 msgstr ""
 "Saisir le nombre de téléchargements parallèles à activer.\n"
-"  (Entrer une valeur comprise entre 1 et {})\n"
-"Note :"
+"\n"
+"Note :\n"
 
-#, fuzzy
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Valeur maximale : {} (Autorise {} téléchargements parallèles, autorise {} téléchargements à la fois)"
+msgstr " - Valeur maximale recommandée : {} (Autorise {} téléchargements parallèles à la fois)"
 
-#, fuzzy
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - Désactiver/Défaut : 0 (Désactive le téléchargement parallèle, n'autorise qu'un seul téléchargement à la fois)"
+msgstr " - Désactiver/Par défaut : 0 (Désactive le téléchargement parallèle, autorise un seul téléchargement à la fois)\n"
 
-#, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "Entrée invalide ! Réessayer avec une entrée valide [1 pour {}, ou 0 pour désactiver]"
+msgstr "Entrée invalide ! Réessayer avec une entrée valide [ou 0 pour désactiver]"
 
-#, fuzzy
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway a besoin d'accéder à votre espace (ensemble de périphériques matériels : clavier, souris, etc.)"
+msgstr "Hyprland a besoin d'accéder à votre espace (ensemble de périphériques matériels, par exemple clavier, souris, etc)"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
@@ -1213,9 +1203,28 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Choisir une option pour permettre à Sway d'accéder à votre matériel"
+"Choisir une option pour donner à Hyprland l'accès à votre matériel"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Toutes les valeurs saisies peuvent être accompagnées par une unité : %, B, KB, KiB, MB, MiB..."
+
+#, fuzzy
+msgid "Would you like to use unified kernel images?"
+msgstr "Souhaitez-vous utiliser le swap sur zram ?"
+
+msgid "Unified kernel images"
+msgstr ""
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr ""
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr ""
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""
 
 #, python-brace-format

@@ -1,6 +1,7 @@
 """Arch Linux installer - guided, templates etc."""
 import importlib
 import os
+import sys
 import time
 import traceback
 from argparse import ArgumentParser, Namespace
@@ -41,7 +42,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.6.3"
+__version__ = "2.7.1"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the
@@ -58,7 +59,7 @@ debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 debug(f"Disk states before installing: {disk.disk_layouts()}")
 
-if os.getuid() != 0:
+if 'sphinx' not in sys.modules and os.getuid() != 0:
 	print(_("Archinstall requires root privileges to run. See --help for more."))
 	exit(1)
 
@@ -83,6 +84,7 @@ def define_arguments():
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--mount-point", "--mount_point", nargs="?", type=str,
 						help="Define an alternate mount point for installation")
+	parser.add_argument("--skip-ntp", action="store_true", help="Disables NTP checks during instalation", default=False)
 	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
 	parser.add_argument("--offline", action="store_true", default=False,
 						help="Disabled online upstream services such as package search and key-ring auto update.")
@@ -241,6 +243,9 @@ def load_config():
 
 	if arguments.get('bootloader', None) is not None:
 		arguments['bootloader'] = models.Bootloader.from_arg(arguments['bootloader'])
+
+		if arguments.get('uki') and not arguments['bootloader'].has_uki_support():
+			arguments['uki'] = False
 
 	if arguments.get('audio_config', None) is not None:
 		arguments['audio_config'] = models.AudioConfiguration.parse_arg(arguments['audio_config'])
