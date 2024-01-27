@@ -14,12 +14,6 @@ from .storage import storage
 
 
 @dataclass
-class Luks2Decryption:
-	luks_handler: Luks2
-	partition: Partition
-
-
-@dataclass
 class Luks2:
 	luks_dev_path: Path
 	mapper_name: Optional[str] = None

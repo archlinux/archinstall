@@ -182,7 +182,7 @@ class Installer:
 	def mount_ordered_layout(self):
 		debug('Mounting ordered layout')
 
-		luks_handlers = {}
+		luks_handlers: Dict[Any, Luks2] = {}
 
 		match self._disk_encryption.encryption_type:
 			case disk.EncryptionType.NoEncryption:
@@ -904,7 +904,7 @@ class Installer:
 	def _get_luks_uuid_from_mapper_dev(self, mapper_dev_path: Path) -> str:
 		lsblk_info = disk.get_lsblk_info(mapper_dev_path, reverse=True, full_dev_path=True)
 
-		if not lsblk_info.children:
+		if not lsblk_info.children or not lsblk_info.children[0].uuid:
 			raise ValueError('Unable to determine UUID of luks superblock')
 
 		return lsblk_info.children[0].uuid
@@ -955,7 +955,14 @@ class Installer:
 
 		match self._disk_encryption.encryption_type:
 			case disk.EncryptionType.LvmOnLuks:
+				if not lvm.vg_name:
+					raise ValueError(f'Unable to determine VG name for {lvm.name}')
+
 				pv_seg_info = disk.device_handler.lvm_pvseg_info(lvm.vg_name, lvm.name)
+
+				if not pv_seg_info:
+					raise ValueError(f'Unable to determine PV segment info for {lvm.vg_name}/{lvm.name}')
+
 				uuid = self._get_luks_uuid_from_mapper_dev(pv_seg_info.pv_name)
 
 				if self._disk_encryption.hsm_device:

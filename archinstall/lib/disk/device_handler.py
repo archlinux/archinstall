@@ -137,8 +137,11 @@ class DeviceHandler(object):
 	def get_unique_path_for_device(self, dev_path: Path) -> Optional[Path]:
 		paths = Path('/dev/disk/by-id').glob('*')
 		linked_targets = {p.resolve(): p for p in paths}
-		linked_wwn_targets = {p: linked_targets[p] for p in linked_targets
-							  if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
+		linked_wwn_targets = {}
+
+		for p in linked_targets:
+			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.'):
+				linked_wwn_targets[p] = linked_targets[p]
 
 		if dev_path in linked_wwn_targets:
 			return linked_wwn_targets[dev_path]
@@ -321,7 +324,7 @@ class DeviceHandler(object):
 			match info_type:
 				case 'pvseg':
 					return LvmPVInfo(
-						pv_name=entry['pv_name'],
+						Path(pv_name=entry['pv_name']),
 						lv_name=entry['lv_name'],
 						vg_name=entry['vg_name'],
 					)
@@ -352,24 +355,24 @@ class DeviceHandler(object):
 
 	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
 		cmd = 'lvs --reportformat json ' \
-			  '--unit B ' \
-			  f'-S lv_name={lv_name}'
+			'--unit B ' \
+			f'-S lv_name={lv_name}'
 
 		return self._lvm_info_with_retry(cmd, 'lv')
 
 	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
 		cmd = 'vgs --reportformat json ' \
-			  '--unit B ' \
-			  '-o vg_name,vg_uuid,vg_size ' \
-			  f'-S vg_name={vg_name}'
+			'--unit B ' \
+			'-o vg_name,vg_uuid,vg_size ' \
+			f'-S vg_name={vg_name}'
 
 		return self._lvm_info_with_retry(cmd, 'vg')
 
 	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> Optional[LvmPVInfo]:
 		cmd = 'pvs ' \
-			  '--segments -o+lv_name,vg_name ' \
-			  f'-S vg_name={vg_name},lv_name={lv_name} ' \
-			  '--reportformat json '
+			'--segments -o+lv_name,vg_name ' \
+			f'-S vg_name={vg_name},lv_name={lv_name} ' \
+			'--reportformat json '
 
 		return self._lvm_info_with_retry(cmd, 'pvseg')
 
@@ -407,7 +410,7 @@ class DeviceHandler(object):
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
-	def lvm_vg_create(self, pvs: List[Path], vg_name: str):
+	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str):
 		pvs_str = ' '.join([str(pv) for pv in pvs])
 		cmd = f'vgcreate --yes {vg_name} {pvs_str}'
 

@@ -11,7 +11,7 @@ from .device_model import (
 	DiskLayoutConfiguration, DiskLayoutType, PartitionTable,
 	FilesystemType, DiskEncryption, LvmVolumeGroup,
 	Size, Unit, SectorSize, PartitionModification, EncryptionType,
-	LvmVolume
+	LvmVolume, LvmConfiguration
 )
 from ..hardware import SysInfo
 from ..luks import Luks2
@@ -136,45 +136,55 @@ class FilesystemHandler:
 	def perform_lvm_operations(self):
 		info('Setting up LVM config...')
 
+		if not self._disk_config.lvm_config:
+			return
+
 		if self._enc_config:
-			self._setup_lvm_encrypted()
+			self._setup_lvm_encrypted(
+				self._disk_config.lvm_config,
+				self._enc_config
+			)
 		else:
-			self._setup_lvm()
-			self._format_lvm_vols()
+			self._setup_lvm(self._disk_config.lvm_config)
+			self._format_lvm_vols(self._disk_config.lvm_config)
 
-	def _setup_lvm_encrypted(self):
-		if self._enc_config.encryption_type == EncryptionType.LvmOnLuks:
-			enc_mods = self.encrypt_partitions(lock_after_create=False)
+	def _setup_lvm_encrypted(self, lvm_config: LvmConfiguration, enc_config: DiskEncryption):
+		if enc_config.encryption_type == EncryptionType.LvmOnLuks:
+			enc_mods = self._encrypt_partitions(enc_config, lock_after_create=False)
 
-			self._setup_lvm(enc_mods)
-			self._format_lvm_vols()
+			self._setup_lvm(lvm_config, enc_mods)
+			self._format_lvm_vols(lvm_config)
 
 			# export the lvm group safely otherwise the Luks cannot be closed
-			self._safely_close_lvm()
+			self._safely_close_lvm(lvm_config)
 
 			for luks in enc_mods.values():
 				luks.lock()
-		elif self._enc_config.encryption_type == EncryptionType.LuksOnLvm:
-			self._setup_lvm()
-			enc_vols = self.encrypt_lvm_vols(False)
-			self._format_lvm_vols(enc_vols)
+		elif enc_config.encryption_type == EncryptionType.LuksOnLvm:
+			self._setup_lvm(lvm_config)
+			enc_vols = self._encrypt_lvm_vols(lvm_config, enc_config, False)
+			self._format_lvm_vols(lvm_config, enc_vols)
 
 			for luks in enc_vols.values():
 				luks.lock()
 
-			self._safely_close_lvm()
+			self._safely_close_lvm(lvm_config)
 
-	def _safely_close_lvm(self):
-		for vg in self._disk_config.lvm_config.vol_groups:
+	def _safely_close_lvm(self, lvm_config: LvmConfiguration):
+		for vg in lvm_config.vol_groups:
 			for vol in vg.volumes:
 				device_handler.lvm_vol_change(vol, False)
 
 			device_handler.lvm_export_vg(vg)
 
-	def _setup_lvm(self, enc_mods: Dict[PartitionModification, Luks2] = {}):
-		self._lvm_create_pvs(enc_mods)
+	def _setup_lvm(
+		self,
+		lvm_config: LvmConfiguration,
+		enc_mods: Dict[PartitionModification, Luks2] = {}
+	):
+		self._lvm_create_pvs(lvm_config, enc_mods)
 
-		for vg in self._disk_config.lvm_config.vol_groups:
+		for vg in lvm_config.vol_groups:
 			pv_dev_paths = self._get_all_pv_dev_paths(vg.pvs, enc_mods)
 
 			device_handler.lvm_vg_create(pv_dev_paths, vg.name)
@@ -214,10 +224,16 @@ class FilesystemHandler:
 
 			self._lvm_vol_handle_e2scrub(vg)
 
-	def _format_lvm_vols(self, enc_vols: Dict[LvmVolume, Luks2] = {}):
-		for vol in self._disk_config.lvm_config.get_all_volumes():
-			if vol in enc_vols.keys():
-				path = enc_vols[vol].mapper_dev
+	def _format_lvm_vols(
+		self,
+		lvm_config: LvmConfiguration,
+		enc_vols: Dict[LvmVolume, Luks2] = {}
+	):
+		for vol in lvm_config.get_all_volumes():
+			if enc_vol := enc_vols.get(vol, None):
+				if not enc_vol.mapper_dev:
+					raise ValueError('No mapper device defined')
+				path = enc_vol.mapper_dev
 			else:
 				path = vol.safe_dev_path
 
@@ -228,10 +244,14 @@ class FilesystemHandler:
 			if vol.fs_type == FilesystemType.Btrfs:
 				device_handler.create_lvm_btrfs_subvolumes(vol, enc_conf=self._enc_config)
 
-	def _lvm_create_pvs(self, enc_mods: Dict[PartitionModification, Luks2] = {}):
+	def _lvm_create_pvs(
+		self,
+		lvm_config: LvmConfiguration,
+		enc_mods: Dict[PartitionModification, Luks2] = {}
+	):
 		pv_paths: Set[Path] = set()
 
-		for vg in self._disk_config.lvm_config.vol_groups:
+		for vg in lvm_config.vol_groups:
 			pv_paths |= self._get_all_pv_dev_paths(vg.pvs, enc_mods)
 
 		device_handler.lvm_pv_create(pv_paths)
@@ -244,22 +264,28 @@ class FilesystemHandler:
 		pv_paths: Set[Path] = set()
 
 		for pv in pvs:
-			if pv in enc_mods.keys():
-				pv_paths.add(enc_mods[pv].mapper_dev)
+			if enc_pv := enc_mods.get(pv, None):
+				if mapper := enc_pv.mapper_dev:
+					pv_paths.add(mapper)
 			else:
 				pv_paths.add(pv.safe_dev_path)
 
 		return pv_paths
 
-	def encrypt_lvm_vols(self, lock_after_create: bool = True) -> Dict[LvmVolume, Luks2]:
+	def _encrypt_lvm_vols(
+		self,
+		lvm_config: LvmConfiguration,
+		enc_config: DiskEncryption,
+		lock_after_create: bool = True
+	) -> Dict[LvmVolume, Luks2]:
 		enc_vols: Dict[LvmVolume, Luks2] = {}
 
-		for vol in self._disk_config.lvm_config.get_all_volumes():
-			if vol in self._enc_config.lvm_volumes:
+		for vol in lvm_config.get_all_volumes():
+			if vol in enc_config.lvm_volumes:
 				luks_handler = device_handler.encrypt(
 					vol.safe_dev_path,
 					vol.mapper_name,
-					self._enc_config.encryption_password,
+					enc_config.encryption_password,
 					lock_after_create
 				)
 
@@ -267,7 +293,11 @@ class FilesystemHandler:
 
 		return enc_vols
 
-	def encrypt_partitions(self, lock_after_create: bool = True) -> Dict[PartitionModification, Luks2]:
+	def _encrypt_partitions(
+		self,
+		enc_config: DiskEncryption,
+		lock_after_create: bool = True
+	) -> Dict[PartitionModification, Luks2]:
 		enc_mods: Dict[PartitionModification, Luks2] = {}
 
 		for mod in self._disk_config.device_modifications:
@@ -284,11 +314,11 @@ class FilesystemHandler:
 			enc_mods = {}
 
 			for part_mod in filtered_part:
-				if part_mod in self._enc_config.partitions:
+				if part_mod in enc_config.partitions:
 					luks_handler = device_handler.encrypt(
 						part_mod.safe_dev_path,
 						part_mod.mapper_name,
-						self._enc_config.encryption_password,
+						enc_config.encryption_password,
 						lock_after_create=lock_after_create
 					)
 

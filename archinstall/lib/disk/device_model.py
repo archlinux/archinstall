@@ -1077,7 +1077,7 @@ class LvmVolumeInfo:
 
 @dataclass
 class LvmPVInfo:
-	pv_name: str
+	pv_name: Path
 	lv_name: str
 	vg_name: str
 

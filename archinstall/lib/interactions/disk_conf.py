@@ -227,10 +227,6 @@ def select_lvm_config(
 		case MenuSelectionType.Selection:
 			if choice.single_value == default_mode:
 				return suggest_lvm_layout(disk_config)
-			elif choice.single_value == manual_mode:
-				raise ValueError("Implement me")
-				# lvm_config = LvmConfigurationMenu(preset, {}, disk_config.device_modifications).run()
-				# return lvm_config
 	return preset
 
 

@@ -71,7 +71,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		self._menu_options['lvm_vols'] = \
 			Selector(
 				_('LVM volumes'),
-				func=lambda preset: select_lvm_vols_to_encrypt(self._disk_config.lvm_config, preset),
+				func=lambda preset: self._select_lvm_vols(preset),
 				display_func=lambda x: f'{len(x)} {_("LVM volumes")}' if x else None,
 				dependencies=[self._check_dep_lvm_vols],
 				default=self._preset.lvm_volumes,
@@ -88,6 +88,11 @@ class DiskEncryptionMenu(AbstractSubMenu):
 				default=self._preset.hsm_device,
 				enabled=True
 			)
+
+	def _select_lvm_vols(self, preset: List[LvmVolume]) -> List[LvmVolume]:
+		if self._disk_config.lvm_config:
+			return select_lvm_vols_to_encrypt(self._disk_config.lvm_config, preset=preset)
+		return []
 
 	def _check_dep_enc_type(self) -> bool:
 		enc_type: Optional[EncryptionType] = self._menu_options['encryption_type'].current_selection
@@ -267,7 +272,7 @@ def select_partitions_to_encrypt(
 def select_lvm_vols_to_encrypt(
 	lvm_config: LvmConfiguration,
 	preset: List[LvmVolume]
-):
+) -> List[LvmVolume]:
 	volumes: List[LvmVolume] = lvm_config.get_all_volumes()
 
 	if volumes:
