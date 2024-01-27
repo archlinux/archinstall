@@ -185,6 +185,8 @@ class Installer:
 		luks_handlers = {}
 
 		match self._disk_encryption.encryption_type:
+			case disk.EncryptionType.NoEncryption:
+				self._mount_lvm_layout()
 			case disk.EncryptionType.Luks:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
 			case disk.EncryptionType.LvmOnLuks:
@@ -221,7 +223,7 @@ class Installer:
 				else:
 					self._mount_partition(part_mod)
 
-	def _mount_lvm_layout(self, luks_handlers: Dict[Any, Luks2]):
+	def _mount_lvm_layout(self, luks_handlers: Dict[Any, Luks2] = {}):
 		lvm_config = self._disk_config.lvm_config
 
 		if not lvm_config:
@@ -1017,6 +1019,8 @@ class Installer:
 		efi_partition: Optional[disk.PartitionModification],
 		uki_enabled: bool = False
 	):
+		debug('Installing systemd bootloader')
+
 		self.pacman.strap('efibootmgr')
 
 		if not SysInfo.has_uefi():
@@ -1122,6 +1126,8 @@ class Installer:
 		efi_partition: Optional[disk.PartitionModification],
 		uki_enabled: bool = False
 	):
+		debug('Installing grub bootloader')
+
 		self.pacman.strap('grub')  # no need?
 
 		if not uki_enabled:
@@ -1210,6 +1216,8 @@ class Installer:
 		efi_partition: Optional[disk.PartitionModification],
 		root: disk.PartitionModification | disk.LvmVolume
 	):
+		debug('Installing limine bootloader')
+
 		self.pacman.strap('limine')
 
 		info(f"Limine boot partition: {boot_partition.dev_path}")
@@ -1308,6 +1316,8 @@ class Installer:
 		root: disk.PartitionModification | disk.LvmVolume,
 		uki_enabled: bool = False
 	):
+		debug('Installing efistub bootloader')
+
 		self.pacman.strap('efibootmgr')
 
 		if not SysInfo.has_uefi():
