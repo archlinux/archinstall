@@ -324,7 +324,7 @@ class DeviceHandler(object):
 			match info_type:
 				case 'pvseg':
 					return LvmPVInfo(
-						Path(pv_name=entry['pv_name']),
+						pv_name=Path(entry['pv_name']),
 						lv_name=entry['lv_name'],
 						vg_name=entry['vg_name'],
 					)

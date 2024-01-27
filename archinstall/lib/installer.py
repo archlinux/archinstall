@@ -1292,16 +1292,16 @@ class Installer:
 			)
 
 		hook_contents = f'''[Trigger]
-	Operation = Install
-	Operation = Upgrade
-	Type = Package
-	Target = limine
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
 
-	[Action]
-	Description = Deploying Limine after upgrade...
-	When = PostTransaction
-	Exec = /bin/sh -c "{hook_command}"
-	'''
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+Exec = /bin/sh -c "{hook_command}"
+'''
 
 		hooks_dir = self.target / 'etc' / 'pacman.d' / 'hooks'
 		hooks_dir.mkdir(parents=True, exist_ok=True)
