@@ -318,27 +318,44 @@ class Installer:
 	def post_install_check(self, *args: str, **kwargs: str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
-	def set_local_mirrors(self, mirror_config: MirrorConfiguration):
-		local_pacman_conf = Path('/etc/pacman.conf')
+	def set_mirrors(self, mirror_config: MirrorConfiguration, on_target: bool = False):
+		"""
+		Set the mirror configuration for the installation.
 
-		if mirror_config.custom_mirrors:
-			config = mirror_config.custom_mirrors_to_config()
+		:param mirror_config: The mirror configuration to use.
+		:type mirror_config: MirrorConfiguration
 
-			with local_pacman_conf.open('a') as fp:
-				fp.write(config)
+		:on_target: Whether to set the mirrors on the target system or the live system.
+		:param on_target: bool
+		"""
+		debug('Setting mirrors')
 
-	def set_target_mirrors(self, mirror_config: MirrorConfiguration):
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mirrors'):
 				if result := plugin.on_mirrors(mirror_config):
 					mirror_config = result
 
-		target_mirror_conf = Path(f'{self.target}/etc/pacman.d/mirrorlist')
-		mirror_list_config = mirror_config.mirror_list_config()
+		if on_target:
+			local_pacman_conf = Path(f'{self.target}/etc/pacman.conf')
+			local_mirrorlist_conf = Path(f'{self.target}/etc/pacman.d/mirrorlist')
+		else:
+			local_pacman_conf = Path('/etc/pacman.conf')
+			local_mirrorlist_conf = Path('/etc/pacman.d/mirrorlist')
 
-		if mirror_list_config:
-			with target_mirror_conf.open('a') as fp:
-				fp.write(mirror_list_config)
+		mirrorlist_config = mirror_config.mirrorlist_config()
+		pacman_config = mirror_config.pacman_config()
+
+		if pacman_config:
+			debug(f'Pacman config: {pacman_config}')
+
+			with local_pacman_conf.open('a') as fp:
+				fp.write(pacman_config)
+
+		if mirrorlist_config:
+			debug(f'Mirrorlist: {mirrorlist_config}')
+
+			with local_mirrorlist_conf.open('a') as fp:
+				fp.write(mirrorlist_config)
 
 	def genfstab(self, flags: str = '-pU'):
 		fstab_path = self.target / "etc" / "fstab"

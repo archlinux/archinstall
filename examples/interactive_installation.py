@@ -109,7 +109,7 @@ def perform_installation(mountpoint: Path):
 				installation.generate_key_files()
 
 		if mirror_config := archinstall.arguments.get('mirror_config', None):
-			installation.set_local_mirrors(mirror_config)
+			installation.set_mirrors(mirror_config)
 
 		installation.minimal_installation(
 			testing=enable_testing,
@@ -119,7 +119,7 @@ def perform_installation(mountpoint: Path):
 		)
 
 		if mirror_config := archinstall.arguments.get('mirror_config', None):
-			installation.set_target_mirrors(mirror_config)
+			installation.set_mirrors(mirror_config, on_target=True)
 
 		if archinstall.arguments.get('swap'):
 			installation.setup_swap('zram')

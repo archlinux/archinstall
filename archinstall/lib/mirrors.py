@@ -77,28 +77,25 @@ class MirrorConfiguration:
 			'custom_mirrors': [c.json() for c in self.custom_mirrors]
 		}
 
-	def _server_config(self, name: str, url: str) -> str:
-		return f'\n\n## {name}\nServer = {url}'
-
-	def mirror_list_config(self) -> str:
+	def mirrorlist_config(self) -> str:
 		config = ''
 
 		for region, mirrors in self.mirror_regions.items():
 			for mirror in mirrors:
-				config += self._server_config(region, mirror)
+				config += f'\n\n## {region}\nServer = {mirror}\n'
 
 		for cm in self.custom_mirrors:
-			config += self._server_config(cm.name, cm.url)
+			config += f'\n\n## {cm.name}\nServer = {cm.url}\n'
 
 		return config
 
-	def custom_mirrors_to_config(self) -> str:
+	def pacman_config(self) -> str:
 		config = ''
 
 		for mirror in self.custom_mirrors:
 			config += f'\n\n[{mirror.name}]\n'
 			config += f'SigLevel = {mirror.sign_check.value} {mirror.sign_option.value}\n'
-			config += f'Server = {mirror.url}'
+			config += f'Server = {mirror.url}\n'
 
 		return config
 
