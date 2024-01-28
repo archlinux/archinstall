@@ -194,7 +194,8 @@ class DeviceHandler(object):
 		self,
 		fs_type: FilesystemType,
 		path: Path,
-		additional_parted_options: List[str] = []
+		additional_parted_options: List[str] = [],
+		lock_device: bool = False
 	):
 		options = []
 		command = ''
@@ -203,6 +204,8 @@ class DeviceHandler(object):
 			case FilesystemType.Btrfs:
 				options += ['-f']
 				command += 'mkfs.btrfs'
+				# Ensure updated device information will be available after formatting
+				lock_device = True
 			case FilesystemType.Fat16:
 				options += ['-F16']
 				command += 'mkfs.fat'
@@ -236,6 +239,11 @@ class DeviceHandler(object):
 		options_str = ' '.join(options)
 
 		info(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
+
+		if lock_device:
+			# Ensure systemd-udev does not probe the device while changes are made to it
+			command = f'udevadm lock --device={path} {command}'
+			debug(f'Using an exclusive lock while formatting: {path}')
 
 		try:
 			SysCommand(f"/usr/bin/{command} {options_str} {path}")
