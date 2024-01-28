@@ -5,7 +5,7 @@ from typing import Dict, Any, List, Optional, TYPE_CHECKING
 
 from .menu import AbstractSubMenu, Selector, MenuSelectionType, Menu, ListManager, TextInput
 from .networking import fetch_data_from_url
-from .output import info, warn, FormattedOutput
+from .output import warn, FormattedOutput
 from .storage import storage
 
 if TYPE_CHECKING:
@@ -76,6 +76,31 @@ class MirrorConfiguration:
 			'mirror_regions': self.mirror_regions,
 			'custom_mirrors': [c.json() for c in self.custom_mirrors]
 		}
+
+	def _server_config(self, name: str, url: str) -> str:
+		return f'\n\n## {name}\nServer = {url}'
+
+	def mirror_list_config(self) -> str:
+		config = ''
+
+		for region, mirrors in self.mirror_regions.items():
+			for mirror in mirrors:
+				config += self._server_config(region, mirror)
+
+		for cm in self.custom_mirrors:
+			config += self._server_config(cm.name, cm.url)
+
+		return config
+
+	def custom_mirrors_to_config(self) -> str:
+		config = ''
+
+		for mirror in self.custom_mirrors:
+			config += f'\n\n[{mirror.name}]\n'
+			config += f'SigLevel = {mirror.sign_check.value} {mirror.sign_option.value}\n'
+			config += f'Server = {mirror.url}'
+
+		return config
 
 	@classmethod
 	def parse_args(cls, args: Dict[str, Any]) -> 'MirrorConfiguration':
@@ -271,33 +296,6 @@ def select_mirror_regions(preset_values: Dict[str, List[str]] = {}) -> Dict[str,
 def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []):
 	custom_mirrors = CustomMirrorList(prompt, preset).run()
 	return custom_mirrors
-
-
-def add_custom_mirrors(mirrors: List[CustomMirror]):
-	"""
-	This will append custom mirror definitions in pacman.conf
-
-	:param mirrors: A list of custom mirrors
-	:type mirrors: List[CustomMirror]
-	"""
-	with open('/etc/pacman.conf', 'a') as pacman:
-		for mirror in mirrors:
-			pacman.write(f"\n\n[{mirror.name}]\n")
-			pacman.write(f"SigLevel = {mirror.sign_check.value} {mirror.sign_option.value}\n")
-			pacman.write(f"Server = {mirror.url}\n")
-
-
-def use_mirrors(
-	regions: Dict[str, List[str]],
-	destination: str = '/etc/pacman.d/mirrorlist'
-):
-	with open(destination, 'w') as fp:
-		for region, mirrors in regions.items():
-			for mirror in mirrors:
-				fp.write(f'## {region}\n')
-				fp.write(f'Server = {mirror}\n')
-
-	info(f'A new package mirror-list has been created: {destination}')
 
 
 def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[str]]:

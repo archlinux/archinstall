@@ -15,7 +15,7 @@ from .hardware import SysInfo
 from .locale import LocaleConfiguration
 from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
-from .mirrors import use_mirrors, MirrorConfiguration, add_custom_mirrors
+from .mirrors import MirrorConfiguration
 from .models.bootloader import Bootloader
 from .models.network_configuration import Nic
 from .models.users import User
@@ -318,17 +318,27 @@ class Installer:
 	def post_install_check(self, *args: str, **kwargs: str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
-	def set_mirrors(self, mirror_config: MirrorConfiguration):
+	def set_local_mirrors(self, mirror_config: MirrorConfiguration):
+		local_pacman_conf = Path('/etc/pacman.conf')
+
+		if mirror_config.custom_mirrors:
+			config = mirror_config.custom_mirrors_to_config()
+
+			with local_pacman_conf.open('a') as fp:
+				fp.write(config)
+
+	def set_target_mirrors(self, mirror_config: MirrorConfiguration):
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mirrors'):
 				if result := plugin.on_mirrors(mirror_config):
 					mirror_config = result
 
-		destination = f'{self.target}/etc/pacman.d/mirrorlist'
-		if mirror_config.mirror_regions:
-			use_mirrors(mirror_config.mirror_regions, destination)
-		if mirror_config.custom_mirrors:
-			add_custom_mirrors(mirror_config.custom_mirrors)
+		target_mirror_conf = Path(f'{self.target}/etc/pacman.d/mirrorlist')
+		mirror_list_config = mirror_config.mirror_list_config()
+
+		if mirror_list_config:
+			with target_mirror_conf.open('a') as fp:
+				fp.write(mirror_list_config)
 
 	def genfstab(self, flags: str = '-pU'):
 		fstab_path = self.target / "etc" / "fstab"
