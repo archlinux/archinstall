@@ -19,7 +19,7 @@ from .device_model import (
 	FilesystemType, Unit, PartitionTable,
 	ModificationStatus, get_lsblk_info, LsblkInfo,
 	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
-	SectorSize, LvmVolumeInfo, LvmPVInfo
+	SectorSize, LvmVolumeInfo, LvmPVInfo, SubvolumeModification
 )
 
 from ..exceptions import DiskError, UnknownFilesystemFormat
@@ -537,38 +537,17 @@ class DeviceHandler(object):
 
 	def create_lvm_btrfs_subvolumes(
 		self,
-		lv: LvmVolume,
-		enc_conf: Optional['DiskEncryption'] = None
+		path: Path,
+		btrfs_subvols: List[SubvolumeModification]
 	):
-		info(f'Creating subvolumes: {lv.safe_dev_path}')
+		info(f'Creating subvolumes: {path}')
 
-		luks_handler = None
+		self.mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 
-		# # unlock the partition first if it's encrypted
-		# if enc_conf is not None and lv in enc_conf.partitions:
-		# 	if not part_mod.mapper_name:
-		# 		raise ValueError('No device path specified for modification')
-		#
-		# 	luks_handler = self.unlock_luks2_dev(
-		# 		part_mod.safe_dev_path,
-		# 		part_mod.mapper_name,
-		# 		enc_conf.encryption_password
-		# 	)
-		#
-		# 	if not luks_handler.mapper_dev:
-		# 		raise DiskError('Failed to unlock luks device')
-		#
-		# 	self.mount(luks_handler.mapper_dev, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
-		# else:
-		self.mount(lv.safe_dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
-
-		for sub_vol in lv.btrfs_subvols:
+		for sub_vol in btrfs_subvols:
 			debug(f'Creating subvolume: {sub_vol.name}')
 
-			if luks_handler is not None:
-				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
-			else:
-				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
+			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
 			SysCommand(f"btrfs subvolume create {subvol_path}")
 
@@ -584,11 +563,7 @@ class DeviceHandler(object):
 				except SysCallError as err:
 					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
 
-		if luks_handler is not None and luks_handler.mapper_dev is not None:
-			self.umount(luks_handler.mapper_dev)
-			luks_handler.lock()
-		else:
-			self.umount(lv.safe_dev_path)
+		self.umount(path)
 
 	def create_btrfs_volumes(
 		self,

@@ -242,7 +242,7 @@ class FilesystemHandler:
 			device_handler.format(vol.fs_type, path)
 
 			if vol.fs_type == FilesystemType.Btrfs:
-				device_handler.create_lvm_btrfs_subvolumes(vol, enc_conf=self._enc_config)
+				device_handler.create_lvm_btrfs_subvolumes(path, vol.btrfs_subvols)
 
 	def _lvm_create_pvs(
 		self,
