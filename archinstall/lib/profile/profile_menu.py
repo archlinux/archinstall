@@ -120,8 +120,7 @@ class ProfileMenu(AbstractSubMenu):
 		text = ''
 
 		if profile:
-			sub_profiles = profile.current_selection
-			if sub_profiles is not None:
+			if (sub_profiles := profile.current_selection) is not None:
 				text += str(_('Selected profiles: '))
 				text += ', '.join([p.name for p in sub_profiles]) + '\n'
 
