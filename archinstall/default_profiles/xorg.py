@@ -22,7 +22,10 @@ class XorgProfile(Profile):
 
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
-		return text + '\n' + self.packages_text()
+		if packages := self.packages_text():
+			text += f'\n{packages}'
+
+		return text
 
 	@property
 	def packages(self) -> List[str]:

@@ -2,12 +2,16 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, TYPE_CHECKING, Any
 
 from .exceptions import SysCallError
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
 from .output import debug
+from .utils.util import format_cols
+
+if TYPE_CHECKING:
+	_: Any
 
 
 class CpuVendor(Enum):
@@ -72,6 +76,12 @@ class GfxDriver(Enum):
 				return True
 			case _:
 				return False
+
+	def packages_text(self) -> str:
+		text = str(_('Installed packages')) + ':\n'
+		pkg_names = [p.value for p in self.gfx_packages()]
+		text += format_cols(sorted(pkg_names))
+		return text
 
 	def gfx_packages(self) -> List[GfxPackage]:
 		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
