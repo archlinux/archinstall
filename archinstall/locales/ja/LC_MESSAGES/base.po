@@ -1,0 +1,1195 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: UTUMI Hirosi <utuhiro78@yahoo.co.jp>\n"
+"Language-Team: \n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.1\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] ここにログファイルが作成されました: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr ""
+
+msgid "Do you really want to abort?"
+msgstr "本当に中止しますか？"
+
+msgid "And one more time for verification: "
+msgstr "確認のためにもう1度: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "zram でスワップを使用しますか？"
+
+msgid "Desired hostname for the installation: "
+msgstr "インストール時のホスト名: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr ""
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "インストールする追加のユーザー（ユーザーがない場合は無記入）: "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr ""
+
+msgid "Select a timezone"
+msgstr "タイムゾーンを選択"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "systemd-boot の代わりに GRUB をブートローダーとして使用しますか？"
+
+msgid "Choose a bootloader"
+msgstr "ブートローダーを選択"
+
+msgid "Choose an audio server"
+msgstr "オーディオサーバーを選択"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "base、base-devel、linux、linux-firmware、efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "firefox や chromium などのウェブブラウザーをインストールする場合は、次のプロンプトで指定できます。"
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "追加でインストールするパッケージを書く（スペースで区切る。無記入でスキップ）: "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "ISO ネットワーク設定をインストール環境にコピー"
+
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "NetworkManager を使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
+
+msgid "Select one network interface to configure"
+msgstr "設定するネットワークインターフェイスを 1 つ選択"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr ""
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr ""
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr ""
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr ""
+
+msgid "Select which filesystem your main partition should use"
+msgstr "メインパーティションで使用するファイルシステムを選択"
+
+msgid "Current partition layout"
+msgstr "現在のパーティションレイアウト"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "パーティションのファイルシステムを入力"
+
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "* パーティションのマウントポイントはインストールにおける相対的なものであり、例として boot は /boot になります。"
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "パーティションをマウントする場所を選択（無記入でマウントポイントを削除）: "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "パーティションのファイルシステムを入力: "
+
+msgid "Archinstall language"
+msgstr "Archinstall の言語"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "選択したすべてのドライブを消去し、ベストエフォートのデフォルトパーティションレイアウトを使用する"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr ""
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr ""
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "これは事前にプログラムされたプロファイルのリストです。デスクトップ環境などのインストールが簡単になる可能性があります"
+
+msgid "Select keyboard layout"
+msgstr "キーボードレイアウトを選択"
+
+msgid "Select one of the regions to download packages from"
+msgstr "パッケージをダウンロードする地域を 1 つ選択"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "使用・設定する 1 つ以上のハードドライブを選択"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "AMD ハードウェアとの互換性を最大限に高めるには、すべてのオープンソースまたは AMD/ATI オプションのいずれかを使用することをお勧めします。"
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Intel ハードウェアとの互換性を最大限に高めるには、すべてのオープンソースまたは Intel オプションのいずれかを使用することをお勧めします。\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Nvidia ハードウェアとの互換性を最大限に高めるには、Nvidia 独自のドライバーを使用することをお勧めします。\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"グラフィックドライバーを選択するか、無記入ですべてのオープンソースドライバーをインストール"
+
+msgid "All open-source (default)"
+msgstr "すべてのオープンソース（デフォルト）"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "使用するカーネルを選択。無記入でデフォルトの \"{}\""
+
+msgid "Choose which locale language to use"
+msgstr "使用するロケール言語を選択"
+
+msgid "Choose which locale encoding to use"
+msgstr "使用するロケール エンコーディングを選択"
+
+msgid "Select one of the values shown below: "
+msgstr "以下の値のいずれかを選択: "
+
+msgid "Select one or more of the options below: "
+msgstr "以下のオプションを 1 つ以上選択: "
+
+msgid "Adding partition...."
+msgstr "パーティションを追加...."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "続行するには、有効な fs-type を入力する必要があります。有効な fs-type については、 `man parted` を参照してください。"
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr ""
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr ""
+
+msgid "Keyboard layout"
+msgstr "キーボードレイアウト"
+
+msgid "Mirror region"
+msgstr "ミラーの地域"
+
+msgid "Locale language"
+msgstr "ロケール言語"
+
+msgid "Locale encoding"
+msgstr "ロケールエンコーディング"
+
+msgid "Drive(s)"
+msgstr "ドライブ"
+
+msgid "Disk layout"
+msgstr "ディスクレイアウト"
+
+msgid "Encryption password"
+msgstr "暗号化パスワード"
+
+msgid "Swap"
+msgstr "スワップ"
+
+msgid "Bootloader"
+msgstr "ブートローダー"
+
+msgid "Root password"
+msgstr "root パスワード"
+
+msgid "Superuser account"
+msgstr "スーパーユーザーアカウント"
+
+msgid "User account"
+msgstr "ユーザーアカウント"
+
+msgid "Profile"
+msgstr "プロファイル"
+
+msgid "Audio"
+msgstr "オーディオ"
+
+msgid "Kernels"
+msgstr "カーネル"
+
+msgid "Additional packages"
+msgstr "追加パッケージ"
+
+msgid "Network configuration"
+msgstr "ネットワーク設定"
+
+msgid "Automatic time sync (NTP)"
+msgstr "時刻の自動同期（NTP）"
+
+msgid "Install ({} config(s) missing)"
+msgstr "インストール（{} 個の設定がありません）"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"ハードドライブの選択をスキップし、\n"
+"{} にマウントしているドライブのセットアップを使用します（実験的）\n"
+"警告: Archinstall はこのセットアップの適合性をチェックしません\n"
+"続行しますか？"
+
+msgid "Re-using partition instance: {}"
+msgstr ""
+
+msgid "Create a new partition"
+msgstr "新しいパーティションを作成"
+
+msgid "Delete a partition"
+msgstr "パーティションを削除"
+
+msgid "Clear/Delete all partitions"
+msgstr "すべてのパーティションをクリア/削除"
+
+msgid "Assign mount-point for a partition"
+msgstr "パーティションにマウントポイントを割り当てる"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "フォーマットするパーティションをマーク/マーク解除（データを消去）"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr ""
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "パーティションをブータブルとしてマーク/マーク解除（/boot の場合は自動）"
+
+msgid "Set desired filesystem for a partition"
+msgstr ""
+
+msgid "Abort"
+msgstr "中止"
+
+msgid "Hostname"
+msgstr "ホスト名"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "未設定。手動で設定しない限り使用できません"
+
+msgid "Timezone"
+msgstr "タイムゾーン"
+
+msgid "Set/Modify the below options"
+msgstr "以下のオプションを設定/変更"
+
+msgid "Install"
+msgstr "インストール"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"Esc でスキップ\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "パーティションレイアウトを提案"
+
+msgid "Enter a password: "
+msgstr "パスワードを入力: "
+
+msgid "Enter a encryption password for {}"
+msgstr "{} の暗号化パスワードを入力"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "ディスクの暗号化パスワードを入力（暗号化しない場合は無記入）: "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr ""
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "root パスワードを入力（root を無効にする場合は無記入）: "
+
+msgid "Password for user \"{}\": "
+msgstr "ユーザー \"{}\" のパスワード: "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "追加のパッケージが存在することを確認（これには数秒かかる場合があります）"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "デフォルトのタイムサーバーで時刻の自動同期（NTP）を使用しますか？\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "ユーザー名を入力して追加ユーザーを作成（無記入でスキップ）: "
+
+msgid "Use ESC to skip\n"
+msgstr "Esc でスキップ\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+"リストからオブジェクトを選択し、そのオブジェクトで実行できるアクションの 1 つを選択"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Confirm and exit"
+msgstr "確認して終了"
+
+msgid "Add"
+msgstr "追加"
+
+msgid "Copy"
+msgstr "コピー"
+
+msgid "Edit"
+msgstr "編集"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "Select an action for '{}'"
+msgstr "'{}' へのアクションを選択"
+
+msgid "Copy to new key:"
+msgstr ""
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr ""
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"これが選択した設定です:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman はすでに実行されており、終了するまで最大 10 分間待機します。"
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr ""
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "オプションで有効にする追加リポジトリを選択"
+
+msgid "Add a user"
+msgstr "ユーザーを追加"
+
+msgid "Change password"
+msgstr "パスワードを変更"
+
+msgid "Promote/Demote user"
+msgstr "ユーザーを昇格/降格"
+
+msgid "Delete User"
+msgstr "ユーザーを削除"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"新しいユーザーを定義\n"
+
+msgid "User Name : "
+msgstr "ユーザー名: "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr ""
+
+msgid "Define users with sudo privilege: "
+msgstr ""
+
+msgid "No network configuration"
+msgstr "ネットワーク設定なし"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr ""
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"サブボリュームを設定するパーティションを選択"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "現在のパーティションの Btrfs サブボリュームを管理"
+
+msgid "No configuration"
+msgstr "設定なし"
+
+msgid "Save user configuration"
+msgstr "ユーザー設定を保存"
+
+msgid "Save user credentials"
+msgstr "ユーザーの認証情報を保存"
+
+msgid "Save disk layout"
+msgstr "ディスクレイアウトを保存"
+
+msgid "Save all"
+msgstr "すべて保存"
+
+msgid "Choose which configuration to save"
+msgstr "保存する設定を選択"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "設定を保存するディレクトリを入力: "
+
+msgid "Not a valid directory: {}"
+msgstr "有効なディレクトリではありません: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "使用しているパスワードは弱いようです、"
+
+msgid "are you sure you want to use it?"
+msgstr "本当に使用してもよろしいですか？"
+
+msgid "Optional repositories"
+msgstr "オプションのリポジトリ"
+
+msgid "Save configuration"
+msgstr "設定を保存"
+
+msgid "Missing configurations:\n"
+msgstr "設定が存在しません:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "root-パスワードか1人以上のスーパーユーザーを指定してください"
+
+msgid "Manage superuser accounts: "
+msgstr "スーパーユーザーアカウントを管理: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "一般ユーザーのアカウントを管理: "
+
+msgid " Subvolume :{:16}"
+msgstr " サブボリューム :{:16}"
+
+msgid " mounted at {:16}"
+msgstr ""
+
+msgid " with option {}"
+msgstr ""
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+
+msgid "Subvolume name "
+msgstr "サブボリューム名 "
+
+msgid "Subvolume mountpoint"
+msgstr "サブボリュームのマウントポイント"
+
+msgid "Subvolume options"
+msgstr ""
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Subvolume name :"
+msgstr "サブボリューム名:"
+
+msgid "Select a mount point :"
+msgstr "マウント ポイントを選択:"
+
+msgid "Select the desired subvolume options "
+msgstr "サブボリュームのオプションを選択"
+
+msgid "Define users with sudo privilege, by username: "
+msgstr ""
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] ここにログファイルが作成されました: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "デフォルトの設定で Btrfs サブボリュームを使用しますか？"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "Btrfs の圧縮を使用しますか？"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "/home 用に別のパーティションを作成しますか？"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "選択したドライブには、自動提案に必要な最小容量がありません\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "/home パーティションの最小容量: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Arch Linux パーティションの最小容量: {}GB"
+
+msgid "Continue"
+msgstr "続行"
+
+msgid "yes"
+msgstr "はい"
+
+msgid "no"
+msgstr "いいえ"
+
+msgid "set: {}"
+msgstr "セット: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "手動設定はリストである必要があります"
+
+msgid "No iface specified for manual configuration"
+msgstr "手動設定に iface が指定されていません"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr ""
+
+msgid "Add interface"
+msgstr "インターフェイスを追加"
+
+msgid "Edit interface"
+msgstr "インターフェイスを編集"
+
+msgid "Delete interface"
+msgstr "インターフェイスを削除"
+
+msgid "Select interface to add"
+msgstr "追加するインターフェースを選択"
+
+msgid "Manual configuration"
+msgstr "手動設定"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "パーティションを圧縮するものとしてマーク/マーク解除（Btrfs のみ）"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "使用しているパスワードは弱いようですが、本当に使用してもよろしいですか？"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。e.g. gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "デスクトップ環境を選択"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Arch Linux を必要に応じてカスタマイズできる非常に基本的なインストールです。"
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "さまざまなサーバー パッケージの選択肢を提供します。e.g. httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr ""
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "最小限のシステムと xorg およびグラフィックドライバーをインストール。"
+
+msgid "Press Enter to continue."
+msgstr "Enter キーで続行します。"
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "新しく作成したインストールに chroot して、インストール後の設定を実行しますか？"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "この設定をリセットしてもよろしいですか？"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "使用・設定する 1 つ以上のハードドライブを選択\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "既存の設定を変更すると、ディスクレイアウトがリセットされます！"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "ハードドライブの選択をリセットすると、現在のディスクレイアウトもリセットされます。よろしいですか？"
+
+msgid "Save and exit"
+msgstr "保存して終了"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"キューに入れられたパーティションが含まれています。削除しますがよろしいですか？"
+
+msgid "No audio server"
+msgstr "オーディオサーバーなし"
+
+msgid "(default)"
+msgstr "（デフォルト）"
+
+msgid "Use ESC to skip"
+msgstr "Esc でスキップ"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"Ctrl+C で現在の選択をリセット\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "コピー先: "
+
+msgid "Edit: "
+msgstr "編集: "
+
+msgid "Key: "
+msgstr "キー: "
+
+msgid "Edit {}: "
+msgstr "編集 {}: "
+
+msgid "Add: "
+msgstr "追加: "
+
+msgid "Value: "
+msgstr "値: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "ドライブの選択とパーティショニングをスキップして、/mnt にマウントしているドライブのセットアップを使用できます（実験的）"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "いずれかのディスクを選択するか、スキップして /mnt をデフォルトとして使用"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "フォーマット対象としてマークするパーティションを選択:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "HSM を使用して暗号化されたドライブのロックを解除"
+
+msgid "Device"
+msgstr "デバイス"
+
+msgid "Size"
+msgstr "サイズ"
+
+msgid "Free space"
+msgstr "空き容量"
+
+msgid "Bus-type"
+msgstr "Bus タイプ"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "root-パスワードか、1人以上の sudo 権限を持つユーザーを指定する必要があります"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "ユーザー名を入力（無記入でスキップ）: "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "入力したユーザー名は無効です。もう1度やり直してください"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "\"{}\" はスーパーユーザー（sudo）になりますか？"
+
+msgid "Select which partitions to encrypt"
+msgstr "暗号化するパーティションを選択"
+
+msgid "very weak"
+msgstr "非常に弱い"
+
+msgid "weak"
+msgstr "弱い"
+
+msgid "moderate"
+msgstr "中程度"
+
+msgid "strong"
+msgstr "強い"
+
+msgid "Add subvolume"
+msgstr "サブボリュームを追加"
+
+msgid "Edit subvolume"
+msgstr "サブボリュームを編集"
+
+msgid "Delete subvolume"
+msgstr "サブボリュームを削除"
+
+msgid "Configured {} interfaces"
+msgstr "設定した {} インターフェース"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "このオプションは、インストール中に実行できる並列ダウンロードの数を有効にします"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {})\n"
+"Note:"
+msgstr ""
+"有効にする並列ダウンロードの数を入力してください。\n"
+" （1 から {} の値を入力）\n"
+"注意:"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr ""
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr ""
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr ""
+
+msgid "Parallel Downloads"
+msgstr "並行ダウンロード"
+
+msgid "ESC to skip"
+msgstr "Esc でスキップ"
+
+msgid "CTRL+C to reset"
+msgstr "Ctrl+C でリセット"
+
+msgid "TAB to select"
+msgstr "Tab で選択"
+
+msgid "[Default value: 0] > "
+msgstr "[デフォルト値: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall を実行するには root 権限が必要です。詳細については --help を参照してください。"
+
+msgid "Select an execution mode"
+msgstr ""
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "プロファイルには一意の名前が必要ですが、重複した名前のプロファイル定義が見つかりました: {}"
+
+msgid "Select one or more devices to use and configure"
+msgstr "使用・設定する 1 つ以上のデバイスを選択"
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "デバイスの選択をリセットすると、現在のディスクレイアウトもリセットされます。よろしいですか？"
+
+msgid "Existing Partitions"
+msgstr "既存のパーティション"
+
+msgid "Select a partitioning option"
+msgstr "パーティションの分割オプションを選択"
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr "マウントされたデバイスのルートディレクトリを入力: "
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "/home パーティションの最小容量: {}GiB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Arch Linux パーティションの最小容量: {}GiB"
+
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "これは事前にプログラムされたプロファイルのリストです。デスクトップ環境などのインストールが簡単になる可能性があります"
+
+msgid "Current profile selection"
+msgstr "現在のプロファイルの選択"
+
+msgid "Remove all newly added partitions"
+msgstr "新しく追加されたパーティションをすべて削除"
+
+msgid "Assign mountpoint"
+msgstr "マウントポイントを割り当てる"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "フォーマットするものとしてマーク/マーク解除（データを消去）"
+
+msgid "Mark/Unmark as bootable"
+msgstr "ブータブルとしてマーク/マーク解除"
+
+msgid "Change filesystem"
+msgstr "ファイルシステムを変更"
+
+msgid "Mark/Unmark as compressed"
+msgstr "圧縮するものとしてマーク/マーク解除"
+
+msgid "Set subvolumes"
+msgstr "サブボリュームを設定"
+
+msgid "Delete partition"
+msgstr "パーティションを削除"
+
+msgid "Partition"
+msgstr "パーティション"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "パーティションのマウントポイントはインストールにおける相対的なもので、例として boot は /boot になります。"
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr "マウントポイントに /boot が設定された場合、パーティションはブータブルとしてマークされます。"
+
+msgid "Mountpoint: "
+msgstr "マウントポイント: "
+
+msgid "Current free sectors on device {}:"
+msgstr "デバイス {} の現在の空きセクター:"
+
+msgid "Total sectors: {}"
+msgstr "総セクター数: {}"
+
+msgid "Enter the start sector (default: {}): "
+msgstr ""
+
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr ""
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "これは新しく追加されたパーティションをすべて削除します。続けますか？"
+
+msgid "Partition management: {}"
+msgstr "パーティションを管理: {}"
+
+msgid "Total length: {}"
+msgstr "全体のサイズ: {}"
+
+msgid "Encryption type"
+msgstr "暗号化のタイプ"
+
+msgid "Partitions"
+msgstr "パーティション"
+
+msgid "No HSM devices available"
+msgstr "利用可能な HSM デバイスがありません"
+
+msgid "Partitions to be encrypted"
+msgstr "暗号化するパーティション"
+
+msgid "Select disk encryption option"
+msgstr "ディスクの暗号化オプションを選択"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "HSM に使用する FIDO2 デバイスを選択"
+
+msgid "Use a best-effort default partition layout"
+msgstr "ベストエフォートのデフォルトパーティションレイアウトを使用"
+
+msgid "Manual Partitioning"
+msgstr "手動パーティショニング"
+
+msgid "Pre-mounted configuration"
+msgstr "事前にマウントされた設定"
+
+msgid "Unknown"
+msgstr "不明"
+
+msgid "Partition encryption"
+msgstr "パーティションの暗号化"
+
+msgid " ! Formatting {} in "
+msgstr " ! {} のフォーマットまで "
+
+#, fuzzy
+msgid "← Back"
+msgstr " 戻る"
+
+msgid "Disk encryption"
+msgstr "ディスクの暗号化"
+
+msgid "Configuration"
+msgstr "設定"
+
+msgid "Password"
+msgstr "パスワード"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "すべての設定がリセットされます。よろしいですか？"
+
+msgid "Back"
+msgstr "戻る"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "選択したプロファイルにインストールするグリーターを選択: {}"
+
+msgid "Environment type: {}"
+msgstr "環境のタイプ: {}"
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr "プロプライエタリの Nvidia ドライバーは Sway ではサポートされていません。問題が発生する可能性がありますが、よろしいですか？"
+
+msgid "Installed packages"
+msgstr "インストールするパッケージ"
+
+msgid "Add profile"
+msgstr "プロファイルを追加"
+
+msgid "Edit profile"
+msgstr "プロファイルを編集"
+
+msgid "Delete profile"
+msgstr "プロファイルを削除"
+
+msgid "Profile name: "
+msgstr "プロファイル名: "
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "入力したプロファイル名はすでに使用されています。もう1度やり直してください"
+
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "このプロファイルでインストールするパッケージ（スペースで区切る。無記入でスキップ）: "
+
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "このプロファイルで有効にするサービス（スペースで区切る。未記入でスキップ): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "このプロファイルのインストールを有効にしますか？"
+
+msgid "Create your own"
+msgstr ""
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"グラフィックドライバーを選択。無記入ですべてのオープンソースドライバーをインストール"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway はシート（キーボード、マウスなどハードウェアデバイスの集合）にアクセスする必要があります"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Graphics driver"
+msgstr "グラフィックドライバー"
+
+msgid "Greeter"
+msgstr "グリーター"
+
+msgid "Please chose which greeter to install"
+msgstr "インストールするグリーターを選択"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "これは、事前にプログラムされた default_profile のリストです"
+
+msgid "Disk configuration"
+msgstr "ディスクの設定"
+
+msgid "Profiles"
+msgstr "プロファイル"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "設定ファイルを保存できるディレクトリを検索しています..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr ""
+
+msgid "Add a custom mirror"
+msgstr "カスタムミラーを追加"
+
+msgid "Change custom mirror"
+msgstr "カスタムミラーを変更"
+
+msgid "Delete custom mirror"
+msgstr "カスタムミラーを削除"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "名前を入力（無記入でスキップ）: "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "URL を入力（未記入でスキップ）: "
+
+msgid "Select signature check option"
+msgstr ""
+
+msgid "Select signature option"
+msgstr ""
+
+msgid "Custom mirrors"
+msgstr "カスタムミラー"
+
+msgid "Defined"
+msgstr "定義済み"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "ユーザー設定を保存（ディスクレイアウトを含む）"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+"設定を保存するディレクトリを入力（Tab で補完可能）\n"
+"保存ディレクトリ: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"{} 設定ファイルを次の場所に保存しますか？\n"
+"\n"
+"{}"
+
+msgid "Saving {} configuration files to {}"
+msgstr "{} 設定ファイルを {} に保存"
+
+msgid "Mirrors"
+msgstr "ミラー"
+
+msgid "Mirror regions"
+msgstr "ミラーの地域"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr ""
+
+msgid "Locales"
+msgstr "ロケール"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager を使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
+
+msgid "Total: {} / {}"
+msgstr "全体: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr "入力したすべての値に、B、KB、KiB、MB、MiB などの単位を付けることができます。"
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "単位が指定されていない場合、値はセクターとして解釈されます"
+
+msgid "Enter start (default: sector {}): "
+msgstr "開始値を入力（デフォルト: セクター {}): "
+
+msgid "Enter end (default: {}): "
+msgstr "終了値を入力（デフォルト: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "fido2 デバイスを特定できません。lifido2 はインストールされていますか？"
+
+msgid "Path"
+msgstr "パス"
+
+msgid "Manufacturer"
+msgstr "メーカー"
+
+msgid "Product"
+msgstr "製品"
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "無効な設定: {error}"
+
+msgid "Type"
+msgstr "タイプ"
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr ""
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr ""
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr ""
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr ""
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "入力したすべての値に、%、B、KB、KiB、MB、MiB などの単位を付けることができます。"
+
+msgid "Would you like to use unified kernel images?"
+msgstr "Unified カーネルイメージを使用しますか？"
+
+msgid "Unified kernel images"
+msgstr "Unified カーネルイメージ"
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "時刻の同期（timedatectl show）が完了するのを待機しています。"
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr ""
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr ""

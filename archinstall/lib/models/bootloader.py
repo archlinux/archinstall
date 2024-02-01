@@ -14,6 +14,13 @@ class Bootloader(Enum):
 	Efistub = 'Efistub'
 	Limine = 'Limine'
 
+	def has_uki_support(self) -> bool:
+		match self:
+			case Bootloader.Efistub | Bootloader.Systemd:
+				return True
+			case _:
+				return False
+
 	def json(self) -> str:
 		return self.value
 

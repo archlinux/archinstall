@@ -28,7 +28,6 @@ from .storage import storage
 if TYPE_CHECKING:
 	_: Any
 
-
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
@@ -77,7 +76,7 @@ class Installer:
 		storage['session'] = self
 		storage['installation_session'] = self
 
-		self.modules: List[str] = []
+		self._modules: List[str] = []
 		self._binaries: List[str] = []
 		self._files: List[str] = []
 
@@ -104,7 +103,8 @@ class Installer:
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
-			print(_("[!] A log file has been created here: {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
+			print(_("[!] A log file has been created here: {}").format(
+				os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
 			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
 			raise exc_val
 
@@ -124,19 +124,39 @@ class Installer:
 			self.sync_log_to_install_medium()
 			return False
 
+	def remove_mod(self, mod: str):
+		if mod in self._modules:
+			self._modules.remove(mod)
+
+	def append_mod(self, mod: str):
+		if mod not in self._modules:
+			self._modules.append(mod)
+
 	def _verify_service_stop(self):
 		"""
 		Certain services might be running that affects the system during installation.
 		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
-		info('Waiting for time sync (systemd-timesyncd.service) to complete.')
 
-		while True:
-			time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
-			if time_val and time_val.strip() == 'yes':
-				break
-			time.sleep(1)
+		if not storage['arguments'].get('skip_ntp', False):
+			info(_('Waiting for time sync (timedatectl show) to complete.'))
+
+			_started_wait = time.time()
+			_notified = False
+			while True:
+				if not _notified and time.time() - _started_wait > 5:
+					_notified = True
+					warn(
+						_("Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
+
+				time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
+				if time_val and time_val.strip() == 'yes':
+					break
+				time.sleep(1)
+		else:
+			info(
+				_('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
@@ -146,7 +166,7 @@ class Installer:
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 		# 	time.sleep(1)
 
-		info('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')
+		info(_('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.'))
 		# Wait for the timer to kick in
 		while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
 			time.sleep(1)
@@ -201,7 +221,8 @@ class Installer:
 					# partition is not encrypted
 					self._mount_partition(part_mod)
 
-	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[disk.PartitionModification, Luks2]:
+	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[
+		disk.PartitionModification, Luks2]:
 		return {
 			part_mod: disk.device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
@@ -294,7 +315,7 @@ class Installer:
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
-	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
+	def post_install_check(self, *args: str, **kwargs: str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
 	def set_mirrors(self, mirror_config: MirrorConfiguration):
@@ -309,14 +330,15 @@ class Installer:
 		if mirror_config.custom_mirrors:
 			add_custom_mirrors(mirror_config.custom_mirrors)
 
-	def genfstab(self, flags :str = '-pU'):
+	def genfstab(self, flags: str = '-pU'):
 		fstab_path = self.target / "etc" / "fstab"
 		info(f"Updating {fstab_path}")
 
 		try:
 			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
 		except SysCallError as err:
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
+			raise RequirementError(
+				f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
 		with open(fstab_path, 'a') as fp:
 			fp.write(gen_fstab)
@@ -356,14 +378,15 @@ class Installer:
 						# We then locate the correct subvolume and check if it's compressed,
 						# and skip entries where compression is already defined
 						# We then sneak in the compress=zstd option if it doesn't already exist:
-						if sub_vol.compress and str(sub_vol.mountpoint) == Path(mountpoint[0].strip()) and ',compress=zstd,' not in line:
+						if sub_vol.compress and str(sub_vol.mountpoint) == Path(
+							mountpoint[0].strip()) and ',compress=zstd,' not in line:
 							fstab[index] = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
 							break
 
 				with fstab_path.open('w') as fp:
 					fp.writelines(fstab)
 
-	def set_hostname(self, hostname: str, *args :str, **kwargs :str) -> None:
+	def set_hostname(self, hostname: str, *args: str, **kwargs: str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
@@ -414,7 +437,7 @@ class Installer:
 		(self.target / 'etc/locale.conf').write_text(f'LANG={lang_value}\n')
 		return True
 
-	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
+	def set_timezone(self, zone: str, *args: str, **kwargs: str) -> bool:
 		if not zone:
 			return True
 		if not len(zone):
@@ -464,10 +487,10 @@ class Installer:
 				if hasattr(plugin, 'on_service'):
 					plugin.on_service(service)
 
-	def run_command(self, cmd :str, *args :str, **kwargs :str) -> SysCommand:
+	def run_command(self, cmd: str, *args: str, **kwargs: str) -> SysCommand:
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
-	def arch_chroot(self, cmd :str, run_as :Optional[str] = None) -> SysCommand:
+	def arch_chroot(self, cmd: str, run_as: Optional[str] = None) -> SysCommand:
 		if run_as:
 			cmd = f"su - {run_as} -c {shlex.quote(cmd)}"
 
@@ -492,7 +515,7 @@ class Installer:
 		with open(f"{self.target}/etc/systemd/network/10-{nic.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
 
-	def copy_iso_network_config(self, enable_services :bool = False) -> bool:
+	def copy_iso_network_config(self, enable_services: bool = False) -> bool:
 		# Copy (if any) iwd password and config files
 		if os.path.isdir('/var/lib/iwd/'):
 			if psk_files := glob.glob('/var/lib/iwd/*.psk'):
@@ -507,7 +530,7 @@ class Installer:
 						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
 						# base is not installed yet.
-						def post_install_enable_iwd_service(*args :str, **kwargs :str):
+						def post_install_enable_iwd_service(*args: str, **kwargs: str):
 							self.enable_service('iwd')
 
 						self.post_base_install.append(post_install_enable_iwd_service)
@@ -532,7 +555,7 @@ class Installer:
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self.helper_flags.get('base', False) is False:
 
-					def post_install_enable_networkd_resolved(*args :str, **kwargs :str):
+					def post_install_enable_networkd_resolved(*args: str, **kwargs: str):
 						self.enable_service(['systemd-networkd', 'systemd-resolved'])
 
 					self.post_base_install.append(post_install_enable_networkd_resolved)
@@ -550,7 +573,7 @@ class Installer:
 					return True
 
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
-			mkinit.write(f"MODULES=({' '.join(self.modules)})\n")
+			mkinit.write(f"MODULES=({' '.join(self._modules)})\n")
 			mkinit.write(f"BINARIES=({' '.join(self._binaries)})\n")
 			mkinit.write(f"FILES=({' '.join(self._files)})\n")
 
@@ -593,7 +616,7 @@ class Installer:
 					if (pkg := part.fs_type.installation_pkg) is not None:
 						self.base_packages.append(pkg)
 					if (module := part.fs_type.installation_module) is not None:
-						self.modules.append(module)
+						self._modules.append(module)
 					if (binary := part.fs_type.installation_binary) is not None:
 						self._binaries.append(binary)
 
@@ -671,7 +694,7 @@ class Installer:
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
 		if mkinitcpio and not self.mkinitcpio(['-P']):
-			error(f"Error generating initramfs (continuing anyway)")
+			error('Error generating initramfs (continuing anyway)')
 
 		self.helper_flags['base'] = True
 
@@ -684,7 +707,7 @@ class Installer:
 			if hasattr(plugin, 'on_install'):
 				plugin.on_install(self)
 
-	def setup_swap(self, kind :str = 'zram'):
+	def setup_swap(self, kind: str = 'zram'):
 		if kind == 'zram':
 			info(f"Setting up swap on zram")
 			self.pacman.strap('zram-generator')
@@ -884,19 +907,17 @@ class Installer:
 		self,
 		boot_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification,
-		efi_partition: Optional[disk.PartitionModification],
-		uki_enabled: bool = False
+		efi_partition: Optional[disk.PartitionModification]
 	):
 		self.pacman.strap('grub')  # no need?
 
-		if not uki_enabled:
-			grub_default = self.target / 'etc/default/grub'
-			config = grub_default.read_text()
+		grub_default = self.target / 'etc/default/grub'
+		config = grub_default.read_text()
 
-			kernel_parameters = ' '.join(self._get_kernel_params(root_partition, False, False))
-			config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
+		kernel_parameters = ' '.join(self._get_kernel_params(root_partition, False, False))
+		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
 
-			grub_default.write_text(config)
+		grub_default.write_text(config)
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
@@ -972,70 +993,54 @@ class Installer:
 	def _add_limine_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
+		efi_partition: Optional[disk.PartitionModification],
 		root_partition: disk.PartitionModification
 	):
 		self.pacman.strap('limine')
+
 		info(f"Limine boot partition: {boot_partition.dev_path}")
 
-		root_uuid = root_partition.uuid
-
-		def create_pacman_hook(contents: str):
-			HOOK_DIR = "/etc/pacman.d/hooks"
-			SysCommand(f"/usr/bin/arch-chroot {self.target} mkdir -p {HOOK_DIR}")
-			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{contents}' > {HOOK_DIR}/liminedeploy.hook\"")
+		limine_path = self.target / 'usr' / 'share' / 'limine'
+		hook_command = None
 
 		if SysInfo.has_uefi():
+			if not efi_partition:
+				raise ValueError('Could not detect efi partition')
+			elif not efi_partition.mountpoint:
+				raise ValueError('EFI partition is not mounted')
+
+			info(f"Limine EFI partition: {efi_partition.dev_path}")
+
 			try:
-				# The `limine.sys` file, contains stage 3 code.
-				cmd = f'/usr/bin/arch-chroot' \
-					f' {self.target}' \
-					f' cp' \
-					f' /usr/share/limine/BOOTX64.EFI' \
-					f' /boot/EFI/BOOT/'
+				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'BOOT'
+				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
-				SysCommand(cmd, peek_output=True)
-			except SysCallError as err:
-				raise DiskError(f"Failed to install Limine BOOTX64.EFI on {boot_partition.dev_path}: {err}")
+				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
+					shutil.copy(limine_path / file, efi_dir_path)
+			except Exception as err:
+				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
-			# Create the EFI limine pacman hook.
-			create_pacman_hook("""
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = limine
-
-[Action]
-Description = Deploying Limine after upgrade...
-When = PostTransaction
-Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
-			""")
+			hook_command = f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/' \
+				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
 		else:
 			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
-			try:
-				# The `limine.sys` file, contains stage 3 code.
-				cmd = f'/usr/bin/arch-chroot' \
-					f' {self.target}' \
-					f' cp' \
-					f' /usr/share/limine/limine-bios.sys' \
-					f' /boot/limine-bios.sys'
+			if unique_path := disk.device_handler.get_unique_path_for_device(parent_dev_path):
+				parent_dev_path = unique_path
 
-				SysCommand(cmd, peek_output=True)
+			try:
+				# The `limine-bios.sys` file contains stage 3 code.
+				shutil.copy(limine_path / 'limine-bios.sys', self.target / 'boot')
 
 				# `limine bios-install` deploys the stage 1 and 2 to the disk.
-				cmd = f'/usr/bin/arch-chroot' \
-					f' {self.target}' \
-					f' limine' \
-					f' bios-install' \
-					f' {parent_dev_path}'
+				SysCommand(f'/usr/bin/arch-chroot {self.target} limine bios-install {parent_dev_path}', peek_output=True)
+			except Exception as err:
+				raise DiskError(f'Failed to install Limine on {parent_dev_path}: {err}')
 
-				SysCommand(cmd, peek_output=True)
-			except SysCallError as err:
-				raise DiskError(f"Failed to install Limine on {boot_partition.dev_path}: {err}")
+			hook_command = f'/usr/bin/limine bios-install {parent_dev_path}' \
+				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/'
 
-			create_pacman_hook(f"""
-[Trigger]
+		hook_contents = f'''[Trigger]
 Operation = Install
 Operation = Upgrade
 Type = Package
@@ -1044,33 +1049,38 @@ Target = limine
 [Action]
 Description = Deploying Limine after upgrade...
 When = PostTransaction
-# XXX: Kernel name descriptors cannot be used since they are not persistent and
-#      can change after each boot.
-Exec = /bin/sh -c \\"/usr/bin/limine bios-install /dev/disk/by-uuid/{root_uuid} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
-			""")
+Exec = /bin/sh -c "{hook_command}"
+'''
 
-		# Limine does not ship with a default configuration file. We are going to
-		# create a basic one that is similar to the one GRUB generates.
-		try:
-			config = f"""
-TIMEOUT=5
+		hooks_dir = self.target / 'etc' / 'pacman.d' / 'hooks'
+		hooks_dir.mkdir(parents=True, exist_ok=True)
 
-:Arch Linux
-	PROTOCOL=linux
-	KERNEL_PATH=boot:///vmlinuz-linux
-	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
-	MODULE_PATH=boot:///initramfs-linux.img
+		hook_path = hooks_dir / '99-limine.hook'
+		hook_path.write_text(hook_contents)
 
-:Arch Linux (fallback)
-	PROTOCOL=linux
-	KERNEL_PATH=boot:///vmlinuz-linux
-	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
-	MODULE_PATH=boot:///initramfs-linux-fallback.img
-			"""
+		microcode = []
 
-			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{config}' > /boot/limine.cfg\"")
-		except SysCallError as err:
-			raise DiskError(f"Could not configure Limine: {err}")
+		if ucode := self._get_microcode():
+			microcode = [f'MODULE_PATH=boot:///{ucode}']
+
+		kernel_params = ' '.join(self._get_kernel_params(root_partition))
+		config_contents = 'TIMEOUT=5\n'
+
+		for kernel in self.kernels:
+			for variant in ('', '-fallback'):
+				entry = [
+					f'PROTOCOL=linux',
+					f'KERNEL_PATH=boot:///vmlinuz-{kernel}',
+					*microcode,
+					f'MODULE_PATH=boot:///initramfs-{kernel}{variant}.img',
+					f'CMDLINE={kernel_params}',
+				]
+
+				config_contents += f'\n:Arch Linux ({kernel}{variant})\n'
+				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
+
+		config_path = self.target / 'boot' / 'limine.cfg'
+		config_path.write_text(config_contents)
 
 		self.helper_flags['bootloader'] = "limine"
 
@@ -1145,11 +1155,10 @@ TIMEOUT=5
 
 		ucode = self._get_microcode()
 
-		esp = efi_partition.mountpoint
-
 		diff_mountpoint = None
-		if esp != Path('/efi'):
-			diff_mountpoint = str(esp)
+
+		if efi_partition.mountpoint != Path('/efi'):
+			diff_mountpoint = str(efi_partition.mountpoint)
 
 		image_re = re.compile('(.+_image="/([^"]+).+\n)')
 		uki_re = re.compile('#((.+_uki=")/[^/]+(.+\n))')
@@ -1178,12 +1187,12 @@ TIMEOUT=5
 			preset.write_text(''.join(config))
 
 		# Directory for the UKIs
-		uki_dir = self.target / esp.relative_to(Path('/')) / 'EFI/Linux'
+		uki_dir = self.target / efi_partition.relative_mountpoint / 'EFI/Linux'
 		uki_dir.mkdir(parents=True, exist_ok=True)
 
 		# Build the UKIs
 		if not self.mkinitcpio(['-P']):
-			error(f"Error generating initramfs (continuing anyway)")
+			error('Error generating initramfs (continuing anyway)')
 
 	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False):
 		"""
@@ -1223,11 +1232,11 @@ TIMEOUT=5
 			case Bootloader.Systemd:
 				self._add_systemd_bootloader(boot_partition, root_partition, efi_partition, uki_enabled)
 			case Bootloader.Grub:
-				self._add_grub_bootloader(boot_partition, root_partition, efi_partition, uki_enabled)
+				self._add_grub_bootloader(boot_partition, root_partition, efi_partition)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root_partition, uki_enabled)
 			case Bootloader.Limine:
-				self._add_limine_bootloader(boot_partition, root_partition)
+				self._add_limine_bootloader(boot_partition, efi_partition, root_partition)
 
 	def add_additional_packages(self, packages: Union[str, List[str]]) -> bool:
 		return self.pacman.strap(packages)
@@ -1273,7 +1282,8 @@ TIMEOUT=5
 		for user in users:
 			self.user_create(user.username, user.password, user.groups, user.sudo)
 
-	def user_create(self, user :str, password :Optional[str] = None, groups :Optional[List[str]] = None, sudo :bool = False) -> None:
+	def user_create(self, user: str, password: Optional[str] = None, groups: Optional[List[str]] = None,
+					sudo: bool = False) -> None:
 		if groups is None:
 			groups = []
 

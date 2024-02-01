@@ -11,7 +11,7 @@ The installer also doubles as a python library to install Arch Linux and manage 
 * archinstall [discord](https://discord.gg/cqXU88y) server
 * archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
 * archinstall [#archinstall@irc.libera.chat](irc://#archinstall@irc.libera.chat:6697)
-* archinstall [documentation](https://archinstall.readthedocs.io/)
+* archinstall [documentation](https://archinstall.archlinux.page/)
 
 # Installation & Usage
 

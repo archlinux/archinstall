@@ -50,8 +50,10 @@ You can either move the folder into your project and simply do
 
     import archinstall
 
-Or you can use `setuptools <https://pypi.org/project/setuptools/>`_ to install it into the module path.
+Or you can PyPa's `build <https://github.com/pypa/build>`_ and `installer <https://github.com/pypa/installer>`_ to install it into pythons module path.
 
 .. code-block:: console
 
-    sudo python setup.py install
+    $ cd archinstall
+    $ python -m build .
+    $ python -m installer dist/*.whl
