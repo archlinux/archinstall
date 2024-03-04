@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any, TYPE_CHECKING, Optional
 
 import archinstall
@@ -7,7 +6,6 @@ from archinstall import SysInfo
 from archinstall.lib import locale
 from archinstall.lib import disk
 from archinstall.lib.global_menu import GlobalMenu
-from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.installer import Installer
 from archinstall.lib.menu import Menu
 from archinstall.lib.mirrors import use_mirrors, add_custom_mirrors
@@ -18,6 +16,35 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 
 if TYPE_CHECKING:
 	_: Any
+
+from archinstall.tui.curses_menu import MenuItem, ArchinstallTui, Menu, MenuItemGroup
+
+try:
+	tui = ArchinstallTui()
+
+	item1 = MenuItem('hello')
+	item2 = MenuItem('hello2')
+	item3 = MenuItem('')
+	item4 = MenuItem('world')
+	item5 = MenuItem('asdf')
+	items = [item1, item2, item3, item4, item5]
+	group = MenuItemGroup(items, multi_selection=True)
+
+	menu = Menu(tui, group, header='test header')
+	tui.run(menu)
+finally:
+	import curses
+	curses.nocbreak()
+
+	try:
+		tui.screen.keypad(False)
+	except Exception:
+		pass
+
+	curses.echo()
+	curses.endwin()
+
+exit(1)
 
 
 if archinstall.arguments.get('help'):
@@ -216,10 +243,12 @@ def perform_installation(mountpoint: Path):
 
 		installation.genfstab()
 
-		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
+		info(
+			"For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 		if not archinstall.arguments.get('silent'):
-			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
+			prompt = str(
+				_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
 			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
 			if choice.value == Menu.yes():
 				try:
