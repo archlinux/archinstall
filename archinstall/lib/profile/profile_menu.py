@@ -40,6 +40,7 @@ class ProfileMenu(AbstractSubMenu):
 			lambda preset: self._select_gfx_driver(preset),
 			display_func=lambda x: x.value if x else None,
 			dependencies=['profile'],
+			preview_func=self._preview_gfx,
 			default=self._preset.gfx_driver if self._preset.profile and self._preset.profile.is_graphic_driver_supported() else None,
 			enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False
 		)
@@ -67,6 +68,7 @@ class ProfileMenu(AbstractSubMenu):
 
 	def _select_profile(self, preset: Optional[Profile]) -> Optional[Profile]:
 		profile = select_profile(preset)
+
 		if profile is not None:
 			if not profile.is_graphic_driver_supported():
 				self._menu_options['gfx_driver'].set_enabled(False)
@@ -105,12 +107,28 @@ class ProfileMenu(AbstractSubMenu):
 
 		return driver
 
+	def _preview_gfx(self) -> Optional[str]:
+		driver: Optional[GfxDriver] = self._menu_options['gfx_driver'].current_selection
+
+		if driver:
+			return driver.packages_text()
+
+		return None
+
 	def _preview_profile(self) -> Optional[str]:
 		profile: Optional[Profile] = self._menu_options['profile'].current_selection
+		text = ''
 
 		if profile:
-			names = profile.current_selection_names()
-			return '\n'.join(names)
+			if (sub_profiles := profile.current_selection) is not None:
+				text += str(_('Selected profiles: '))
+				text += ', '.join([p.name for p in sub_profiles]) + '\n'
+
+			if packages := profile.packages_text(include_sub_packages=True):
+				text += f'{packages}'
+
+			if text:
+				return text
 
 		return None
 

@@ -235,7 +235,9 @@ class Menu(TerminalMenu):
 		if preview_command:
 			if self._default_option is not None and self._default_menu_value == selection:
 				selection = self._default_option
-			return preview_command(selection)
+
+			if res := preview_command(selection):
+				return res.rstrip('\n')
 
 		return None
 

@@ -103,14 +103,15 @@ def select_driver(options: List[GfxDriver] = [], current_value: Optional[GfxDriv
 		if SysInfo.has_nvidia_graphics():
 			title += str(_('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'))
 
-		title += str(_('\nSelect a graphics driver or leave blank to install all open-source drivers'))
-
 		preset = current_value.value if current_value else None
+
 		choice = Menu(
 			title,
 			drivers,
 			preset_values=preset,
-			default_option=GfxDriver.AllOpenSource.value
+			default_option=GfxDriver.AllOpenSource.value,
+			preview_command=lambda x: GfxDriver(x).packages_text(),
+			preview_size=0.3
 		).run()
 
 		if choice.type_ != MenuSelectionType.Selection:
