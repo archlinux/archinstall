@@ -1,0 +1,4 @@
+Key,Value(s),Description,Required
+device,``str``,Which block-device to format,yes
+partitions,[ {key: val} ],The data describing the change/addition in a partition,yes
+wipe,``bool``,clear the disk before adding any partitions,No

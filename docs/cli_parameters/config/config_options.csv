@@ -1,0 +1,24 @@
+Key,Value(s),Description,Required
+additional-repositories,[ `multilib <https://wiki.archlinux.org/title/Official_repositories#multilib>`_!, `testing <https://wiki.archlinux.org/title/Official_repositories#Testing_repositories>`_ ],Enables one or more of the testing and multilib repositories before proceeding with installation,No
+archinstall-language,`lang <https://github.com/archlinux/archinstall/blob/master/archinstall/locales/languages.json>`__,Sets the TUI language used *(make sure to use the ``lang`` value not the ``abbr``)*,No
+audio_config,`pipewire <https://wiki.archlinux.org/title/PipeWire>`_!, `pulseaudio <https://wiki.archlinux.org/title/PulseAudio>`_,Audioserver to be installed,No
+bootloader,`Systemd-boot <https://wiki.archlinux.org/title/Systemd-boot>`_!, `grub <https://wiki.archlinux.org/title/GRUB>`_,Bootloader to be installed *(grub being mandatory on BIOS machines)*,Yes
+debug,``true``!, ``false``,Enables debug output,No
+disk_config,*Read more under* :ref:`disk config`,Contains the desired disk setup to be used during installation,No
+disk_encryption,*Read more about under* :ref:`disk encryption`,Parameters for disk encryption applied on top of ``disk_config``,No
+hostname,``str``,A string defining your machines hostname on the network *(defaults to ``archinstall``)*,No
+kernels,[ `linux <https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels>`_!, `linux-hardened <https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels>`_!, `linux-lts <https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels>`_!, `linux-rt <https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels>`_!, `linux-rt-lts <https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels>`_!, `linux-zen <https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels>`_ ],Defines which kernels should be installed and setup in the boot loader options,Yes
+custom-commands,*Read more under* :ref:`custom commands`,Custom commands that will be run post-install chrooted inside the installed system,No
+locale_config,{kb_layout: `lang <https://wiki.archlinux.org/title/Linux_console/Keyboard_configuration>`__!, sys_enc: `Character encoding <https://wiki.archlinux.org/title/Locale>`_!, sys_lang: `locale <https://wiki.archlinux.org/title/Locale>`_},Defines the keyboard key map!, system encoding and system locale,No
+mirror_config,{custom_mirrors: [ https://... ]!, mirror_regions: { "Worldwide": [ "https://geo.mirror.pkgbuild.com/$repo/os/$arch" ] } },Sets various mirrors *(defaults to ISO's ``/etc/pacman.d/mirrors`` if not defined)*,No
+network_config,*`see options under Network Configuration`*,Sets which type of *(if any)* network configuration should be used,No
+no_pkg_lookups,``true``!, ``false``,Disabled package checking against https://archlinux.org/packages/,No
+ntp,``true``!, ``false``,enables or disables `NTP <https://wiki.archlinux.org/title/Network_Time_Protocol_daemon>`_ during installation,No
+offline,``true``!, ``false``,enables or disables certain online checks such as mirror reachability etc,No
+packages,[ <package1>!, <package2>!, ... ],A list of packages to install during installation,No
+parallel downloads,0-∞,sets a given number of parallel downloads to be used by `pacman <https://wiki.archlinux.org/title/Pacman#Enabling_parallel_downloads>`_,No
+profile_config,*`read more under the profiles section`*,Installs a given profile if defined,No
+script,`guided <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py>`__! *(default)*!, `minimal <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/minimal.py>`__!, `only_hdd <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/only_hdd.py>`_!, `swiss <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/swiss.py>`_!, `unattended <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/unattended.py>`_,When used to autorun an installation!, this sets which script to autorun with,No
+silent,``true``!, ``false``,disables or enables user questions using the TUI,No
+swap,``true``!, ``false``,enables or disables swap,No
+timezone,`timezone <https://wiki.archlinux.org/title/System_time#Time_zone>`_,sets a timezone for the installed system,No

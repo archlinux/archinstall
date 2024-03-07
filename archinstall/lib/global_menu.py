@@ -4,6 +4,7 @@ from typing import Any, List, Optional, Dict, TYPE_CHECKING
 
 from . import disk
 from .general import secret
+from .hardware import SysInfo
 from .locale.locale_menu import LocaleConfiguration, LocaleMenu
 from .menu import Selector, AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
@@ -20,6 +21,7 @@ from .interactions import ask_additional_packages_to_install
 from .interactions import ask_for_additional_users
 from .interactions import ask_for_audio_selection
 from .interactions import ask_for_bootloader
+from .interactions import ask_for_uki
 from .interactions import ask_for_swap
 from .interactions import ask_hostname
 from .interactions import ask_to_configure_network
@@ -85,6 +87,11 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: ask_for_bootloader(preset),
 				display_func=lambda x: x.value,
 				default=Bootloader.get_default())
+		self._menu_options['uki'] = \
+			Selector(
+				_('Unified kernel images'),
+				lambda preset: ask_for_uki(preset),
+				default=False)
 		self._menu_options['hostname'] = \
 			Selector(
 				_('Hostname'),
@@ -211,11 +218,20 @@ class GlobalMenu(AbstractMenu):
 			return False
 		return self._validate_bootloader() is None
 
+	def _update_uki_display(self, name: Optional[str] = None):
+		if bootloader := self._menu_options['bootloader'].current_selection:
+			if not SysInfo.has_uefi() or not bootloader.has_uki_support():
+				self._menu_options['uki'].set_current_selection(False)
+				self._menu_options['uki'].set_enabled(False)
+			elif name and name == 'bootloader':
+				self._menu_options['uki'].set_enabled(True)
+
 	def _update_install_text(self, name: Optional[str] = None, value: Any = None):
 		text = self._install_text()
 		self._menu_options['install'].update_description(text)
 
 	def post_callback(self, name: Optional[str] = None, value: Any = None):
+		self._update_uki_display(name)
 		self._update_install_text(name, value)
 
 	def _install_text(self):
@@ -353,8 +369,9 @@ class GlobalMenu(AbstractMenu):
 		if boot_partition is None:
 			return "Boot partition not found"
 
-		if bootloader == Bootloader.Limine and boot_partition.fs_type == disk.FilesystemType.Btrfs:
-			return "Limine bootloader does not support booting from BTRFS filesystem"
+		if bootloader == Bootloader.Limine:
+			if boot_partition.fs_type != disk.FilesystemType.Fat32:
+				return "Limine does not support booting from filesystems other than FAT32"
 
 		return None
 

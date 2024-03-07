@@ -35,6 +35,10 @@
                 "efistub"
             ]
         },
+        "uki": {
+            "description": "Set to true to use unified kernel images",
+            "type": "boolean"
+        },
         "custom-commands": {
             "description": "Custom commands to be run post install",
             "type": "array",

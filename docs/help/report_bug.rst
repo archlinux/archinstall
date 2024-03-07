@@ -1,6 +1,6 @@
 .. _help.issues:
 
-Issue tracker & bugs
+Report Issues & Bugs
 ====================
 
 Issues and bugs should be reported over at `https://github.com/archlinux/archinstall/issues <https://github.com/Torxed/archinstall/issues>`_.

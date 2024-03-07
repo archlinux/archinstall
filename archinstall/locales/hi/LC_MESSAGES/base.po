@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr ""
@@ -24,10 +24,10 @@ msgid "And one more time for verification: "
 msgstr "सत्यापन के लिए एक बार और: "
 
 msgid "Would you like to use swap on zram?"
-msgstr ""
+msgstr "क्या आप swap के लिए zram इस्तेमाल करना चाहेंगे?"
 
 msgid "Desired hostname for the installation: "
-msgstr ""
+msgstr "इच्छित होस्ट का नाम (hostname) इंस्टालेशन के लिए: "
 
 msgid "Username for required superuser with sudo privileges: "
 msgstr ""
@@ -36,19 +36,19 @@ msgid "Any additional users to install (leave blank for no users): "
 msgstr ""
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr ""
+msgstr "क्या यह user एक superuser होना चाहिए (sudoer)?"
 
 msgid "Select a timezone"
 msgstr "एक समयक्षेत्र चुनें"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr ""
+msgstr "क्या आप systemd-boot की जगह GRUB इस्तेमाल करना चाहेंगे bootloader ke liye?"
 
 msgid "Choose a bootloader"
-msgstr ""
+msgstr "एक bootloader चुनें"
 
 msgid "Choose an audio server"
-msgstr ""
+msgstr "एक audio server चुनें"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr ""
@@ -57,7 +57,7 @@ msgid "If you desire a web browser, such as firefox or chromium, you may specify
 msgstr ""
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr ""
+msgstr "अन्य packages का नाम लिखें (स्पेस छोड़कर, अन्यथा खाली छोड़ें): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr ""
@@ -922,7 +922,7 @@ msgstr ""
 msgid " ! Formatting {} in "
 msgstr ""
 
-msgid " Back"
+msgid "← Back"
 msgstr ""
 
 msgid "Disk encryption"
@@ -1141,4 +1141,22 @@ msgid ""
 msgstr ""
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "Would you like to use unified kernel images?"
+msgstr ""
+
+msgid "Unified kernel images"
+msgstr ""
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr ""
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr ""
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""

@@ -4,19 +4,19 @@ if TYPE_CHECKING:
 	from .general import SysCommandWorker
 
 
-class RequirementError(BaseException):
+class RequirementError(Exception):
 	pass
 
 
-class DiskError(BaseException):
+class DiskError(Exception):
 	pass
 
 
-class UnknownFilesystemFormat(BaseException):
+class UnknownFilesystemFormat(Exception):
 	pass
 
 
-class SysCallError(BaseException):
+class SysCallError(Exception):
 	def __init__(self, message :str, exit_code :Optional[int] = None, worker :Optional['SysCommandWorker'] = None) -> None:
 		super(SysCallError, self).__init__(message)
 		self.message = message
@@ -24,17 +24,17 @@ class SysCallError(BaseException):
 		self.worker = worker
 
 
-class HardwareIncompatibilityError(BaseException):
+class HardwareIncompatibilityError(Exception):
 	pass
 
 
-class ServiceException(BaseException):
+class ServiceException(Exception):
 	pass
 
 
-class PackageError(BaseException):
+class PackageError(Exception):
 	pass
 
 
-class Deprecated(BaseException):
+class Deprecated(Exception):
 	pass
