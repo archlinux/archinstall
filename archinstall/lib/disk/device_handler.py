@@ -296,15 +296,15 @@ class DeviceHandler(object):
 		the formatting functionality and in essence the support for the given filesystem.
 		"""
 
-		# don't touch existing partitions
-		filtered_part = [p for p in device_mod.partitions if not p.exists()]
+		# only verify partitions that are being created or modified
+		create_or_modify_parts = [p for p in device_mod.partitions if p.is_create_or_modify()]
 
-		self._validate_partitions(filtered_part)
+		self._validate_partitions(create_or_modify_parts)
 
 		# make sure all devices are unmounted
 		self._umount_all_existing(device_mod.device_path)
 
-		for part_mod in filtered_part:
+		for part_mod in create_or_modify_parts:
 			# partition will be encrypted
 			if enc_conf is not None and part_mod in enc_conf.partitions:
 				self._perform_enc_formatting(
