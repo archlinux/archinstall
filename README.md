@@ -189,7 +189,7 @@ replace the archinstall version with a newer one and execute the subsequent step
 
 *Note: When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow
 running a re-installation or upgrade of the installer. In case one runs into this issue, any of the following can be used
-- Resize the root partition on the fly https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_root_partition_on_the_fly
+- Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
 - The boot parameter `copytoram=y` (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26)
 can be specified which will copy the root filesystem to tmpfs.*
 
