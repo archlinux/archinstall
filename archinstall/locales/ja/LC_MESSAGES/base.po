@@ -15,7 +15,7 @@ msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ここにログファイルが作成されました: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr ""
+msgstr "    この問題（およびファイル）を https://github.com/archlinux/archinstall/issues に送信してください"
 
 msgid "Do you really want to abort?"
 msgstr "本当に中止しますか？"
@@ -30,13 +30,13 @@ msgid "Desired hostname for the installation: "
 msgstr "インストール時のホスト名: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr ""
+msgstr "sudo 権限を持つスーパーユーザーのユーザー名: "
 
 msgid "Any additional users to install (leave blank for no users): "
 msgstr "インストールする追加のユーザー（ユーザーがない場合は無記入）: "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr ""
+msgstr "このユーザーはスーパーユーザーに昇格しますか（sudoer）？"
 
 msgid "Select a timezone"
 msgstr "タイムゾーンを選択"
@@ -69,7 +69,7 @@ msgid "Select one network interface to configure"
 msgstr "設定するネットワークインターフェイスを 1 つ選択"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr ""
+msgstr "どのモードを \"{}\" に設定するかを選択。スキップでデフォルトモード \"{}\" を使用"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr ""
@@ -108,12 +108,18 @@ msgid ""
 "\n"
 "Select by index which partitions to delete"
 msgstr ""
+"{}\n"
+"\n"
+"削除するパーティションをインデックスで選択"
 
 msgid ""
 "{}\n"
 "\n"
 "Select by index which partition to mount where"
 msgstr ""
+"{}\n"
+"\n"
+"どのパーティションをどこにマウントするかをインデックスで選択"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr "* パーティションのマウントポイントはインストールにおける相対的なものであり、例として boot は /boot になります。"
@@ -126,24 +132,36 @@ msgid ""
 "\n"
 "Select which partition to mask for formatting"
 msgstr ""
+"{}\n"
+"\n"
+"フォーマット対象としてマークするパーティションを選択"
 
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mark as encrypted"
 msgstr ""
+"{}\n"
+"\n"
+"暗号化対象としてマークするパーティションを選択"
 
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mark as bootable"
 msgstr ""
+"{}\n"
+"\n"
+"ブータブルとしてマークするパーティションを選択"
 
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to set a filesystem on"
 msgstr ""
+"{}\n"
+"\n"
+"ファイルシステムを設定するパーティションを選択"
 
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "パーティションのファイルシステムを入力: "
@@ -155,10 +173,10 @@ msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "選択したすべてのドライブを消去し、ベストエフォートのデフォルトパーティションレイアウトを使用する"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr ""
+msgstr "個々のドライブをどうするかを選択（次にパーティションの使用方法が続く）"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr ""
+msgstr "選択したブロックデバイスで何をするかを選択"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "これは事前にプログラムされたプロファイルのリストです。デスクトップ環境などのインストールが簡単になる可能性があります"
@@ -215,7 +233,7 @@ msgid "You need to enter a valid fs-type in order to continue. See `man parted` 
 msgstr "続行するには、有効な fs-type を入力する必要があります。有効な fs-type については、 `man parted` を参照してください。"
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr ""
+msgstr "エラー: URL \"{}\" のプロファイルをリストすると、次の結果が発生:"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr ""
@@ -304,16 +322,16 @@ msgid "Assign mount-point for a partition"
 msgstr "パーティションにマウントポイントを割り当てる"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "フォーマットするパーティションをマーク/マーク解除（データを消去）"
+msgstr "フォーマットするパーティションとしてマーク/マーク解除（データを消去）"
 
 msgid "Mark/Unmark a partition as encrypted"
 msgstr ""
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "パーティションをブータブルとしてマーク/マーク解除（/boot の場合は自動）"
+msgstr "ブータブルなパーティションとしてマーク/マーク解除（/boot の場合は自動）"
 
 msgid "Set desired filesystem for a partition"
-msgstr ""
+msgstr "パーティションのファイルシステムを設定"
 
 msgid "Abort"
 msgstr "中止"
@@ -353,7 +371,7 @@ msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "ディスクの暗号化パスワードを入力（暗号化しない場合は無記入）: "
 
 msgid "Create a required super-user with sudo privileges: "
-msgstr ""
+msgstr "sudo 権限を持つスーパーユーザーを作成: "
 
 msgid "Enter root password (leave blank to disable root): "
 msgstr "root パスワードを入力（root を無効にする場合は無記入）: "
@@ -371,6 +389,8 @@ msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
+"NTP が機能するには、ハードウェアクロックおよびその他の設定後のステップが必要になる場合があります。\n"
+"詳細については Arch wiki を確認してください"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "ユーザー名を入力して追加ユーザーを作成（無記入でスキップ）: "
@@ -407,7 +427,7 @@ msgid "Select an action for '{}'"
 msgstr "'{}' へのアクションを選択"
 
 msgid "Copy to new key:"
-msgstr ""
+msgstr "新しいキーにコピー:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
 msgstr ""
@@ -451,10 +471,10 @@ msgid "User Name : "
 msgstr "ユーザー名: "
 
 msgid "Should {} be a superuser (sudoer)?"
-msgstr ""
+msgstr "{} はスーパーユーザーに昇格しますか（sudoer）？"
 
 msgid "Define users with sudo privilege: "
-msgstr ""
+msgstr "sudo 権限を持つユーザーを定義: "
 
 msgid "No network configuration"
 msgstr "ネットワーク設定なし"
@@ -535,6 +555,8 @@ msgid ""
 "\n"
 " Fill the desired values for a new subvolume \n"
 msgstr ""
+"\n"
+" 新しいサブボリュームに必要な値を入力 \n"
 
 msgid "Subvolume name "
 msgstr "サブボリューム名 "
@@ -558,7 +580,7 @@ msgid "Select the desired subvolume options "
 msgstr "サブボリュームのオプションを選択"
 
 msgid "Define users with sudo privilege, by username: "
-msgstr ""
+msgstr "sudo 権限を持つユーザーを、ユーザー名で定義: "
 
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] ここにログファイルが作成されました: {}"
@@ -618,7 +640,7 @@ msgid "Manual configuration"
 msgstr "手動設定"
 
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "パーティションを圧縮するものとしてマーク/マーク解除（Btrfs のみ）"
+msgstr "圧縮するパーティションとしてマーク/マーク解除（Btrfs のみ）"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
 msgstr "使用しているパスワードは弱いようですが、本当に使用してもよろしいですか？"
@@ -636,7 +658,7 @@ msgid "Provides a selection of various server packages to install and enable, e.
 msgstr "さまざまなサーバー パッケージの選択肢を提供します。e.g. httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr ""
+msgstr "インストールするサーバーを選択。存在しない場合は最小限のインストールが実行されます"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "最小限のシステムと xorg およびグラフィックドライバーをインストール。"
@@ -710,7 +732,7 @@ msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "いずれかのディスクを選択するか、スキップして /mnt をデフォルトとして使用"
 
 msgid "Select which partitions to mark for formatting:"
-msgstr "フォーマット対象としてマークするパーティションを選択:"
+msgstr "フォーマットするパーティションを選択:"
 
 msgid "Use HSM to unlock encrypted drive"
 msgstr "HSM を使用して暗号化されたドライブのロックを解除"
@@ -737,7 +759,7 @@ msgid "The username you entered is invalid. Try again"
 msgstr "入力したユーザー名は無効です。もう1度やり直してください"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "\"{}\" はスーパーユーザー（sudo）になりますか？"
+msgstr "\"{}\" はスーパーユーザーに昇格しますか（sudo）？"
 
 msgid "Select which partitions to encrypt"
 msgstr "暗号化するパーティションを選択"
@@ -807,19 +829,19 @@ msgid "[Default value: 0] > "
 msgstr "[デフォルト値: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
+msgstr "この翻訳を使用できるようにするには、その言語をサポートするフォントを手動でインストールしてください。"
 
 msgid "The font should be stored as {}"
-msgstr ""
+msgstr "フォントは {} として保存する必要があります"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
 msgstr "Archinstall を実行するには root 権限が必要です。詳細については --help を参照してください。"
 
 msgid "Select an execution mode"
-msgstr ""
+msgstr "実行モードを選択"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "指定された URL からプロファイルを取得できません: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "プロファイルには一意の名前が必要ですが、重複した名前のプロファイル定義が見つかりました: {}"
@@ -858,7 +880,7 @@ msgid "Assign mountpoint"
 msgstr "マウントポイントを割り当てる"
 
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr "フォーマットするものとしてマーク/マーク解除（データを消去）"
+msgstr "フォーマット対象としてマーク/マーク解除（データを消去）"
 
 msgid "Mark/Unmark as bootable"
 msgstr "ブータブルとしてマーク/マーク解除"
@@ -867,7 +889,7 @@ msgid "Change filesystem"
 msgstr "ファイルシステムを変更"
 
 msgid "Mark/Unmark as compressed"
-msgstr "圧縮するものとしてマーク/マーク解除"
+msgstr "圧縮対象としてマーク/マーク解除"
 
 msgid "Set subvolumes"
 msgstr "サブボリュームを設定"
@@ -879,7 +901,7 @@ msgid "Partition"
 msgstr "パーティション"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "このパーティションは現在暗号化されています。フォーマットするにはファイルシステムを指定してください"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr "パーティションのマウントポイントはインストールにおける相対的なもので、例として boot は /boot になります。"
@@ -897,10 +919,10 @@ msgid "Total sectors: {}"
 msgstr "総セクター数: {}"
 
 msgid "Enter the start sector (default: {}): "
-msgstr ""
+msgstr "開始セクターを入力（デフォルト: {}): "
 
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr ""
+msgstr "パーティションの終了セクターを入力（パーセンテージかブロック番号。デフォルト: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "これは新しく追加されたパーティションをすべて削除します。続けますか？"
@@ -947,9 +969,8 @@ msgstr "パーティションの暗号化"
 msgid " ! Formatting {} in "
 msgstr " ! {} のフォーマットまで "
 
-#, fuzzy
 msgid "← Back"
-msgstr " 戻る"
+msgstr "← 戻る"
 
 msgid "Disk encryption"
 msgstr "ディスクの暗号化"
@@ -1020,6 +1041,9 @@ msgid ""
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Sway にハードウェアへのアクセスを許可するオプションを選択"
 
 msgid "Graphics driver"
 msgstr "グラフィックドライバー"
@@ -1043,7 +1067,7 @@ msgid "Finding possible directories to save configuration files ..."
 msgstr "設定ファイルを保存できるディレクトリを検索しています..."
 
 msgid "Select directory (or directories) for saving configuration files"
-msgstr ""
+msgstr "設定ファイルを保存するディレクトリを選択"
 
 msgid "Add a custom mirror"
 msgstr "カスタムミラーを追加"
@@ -1061,10 +1085,10 @@ msgid "Enter url (leave blank to skip): "
 msgstr "URL を入力（未記入でスキップ）: "
 
 msgid "Select signature check option"
-msgstr ""
+msgstr "署名チェックのオプションを選択"
 
 msgid "Select signature option"
-msgstr ""
+msgstr "署名オプションを選択"
 
 msgid "Custom mirrors"
 msgstr "カスタムミラー"
@@ -1101,10 +1125,10 @@ msgid "Mirror regions"
 msgstr "ミラーの地域"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr " - 最大値   : {}（{} 個の並列ダウンロードを許可し、1度に {max_downloads+1} 個のダウンロードを許可する）"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr ""
+msgstr "無効な入力です！有効な入力でやり直してください [1 から {}、または 0 で無効]"
 
 msgid "Locales"
 msgstr "ロケール"
@@ -1162,16 +1186,19 @@ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 dow
 msgstr ""
 
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr ""
+msgstr "無効な入力です！有効な入力でやり直してください（無効にする場合は 0）"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Hyprland はあなたのシート（キーボード、マウスなどのハードウェアデバイスの集合）にアクセスする必要があります"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Hyprland access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Hyprland にハードウェアへのアクセスを許可するオプションを選択"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "入力したすべての値に、%、B、KB、KiB、MB、MiB などの単位を付けることができます。"
@@ -1186,10 +1213,10 @@ msgid "Waiting for time sync (timedatectl show) to complete."
 msgstr "時刻の同期（timedatectl show）が完了するのを待機しています。"
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "待機中に時刻同期が完了しません - 回避策についてはドキュメントを確認してください: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "自動での時刻同期の待機をスキップします（インストール中に時刻が同期していない場合は、問題が発生する可能性があります）"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "Arch Linux キーリングの同期（archlinux-keyring-wkd-sync）が完了するのを待っています。"
