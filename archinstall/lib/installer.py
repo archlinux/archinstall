@@ -83,7 +83,7 @@ class Installer:
 		# systemd, sd-vconsole and sd-encrypt will be replaced by udev, keymap and encrypt
 		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
 		self._hooks: List[str] = [
-			"base", "systemd", "autodetect", "keyboard",
+			"base", "systemd", "autodetect", "microcode", "keyboard",
 			"sd-vconsole", "modconf", "block", "filesystems", "fsck"
 		]
 		self._kernel_params: List[str] = []
@@ -901,13 +901,6 @@ class Installer:
 			f'# Created on: {self.init_time}'
 		)
 
-		microcode = []
-
-		if ucode := self._get_microcode():
-			microcode.append(f'initrd  /{ucode}')
-		else:
-			debug('Archinstall will not add any ucode to systemd-boot config.')
-
 		options = 'options ' + ' '.join(self._get_kernel_params(root_partition))
 
 		for kernel in self.kernels:
@@ -917,7 +910,6 @@ class Installer:
 					*comments,
 					f'title   Arch Linux ({kernel}{variant})',
 					f'linux   /vmlinuz-{kernel}',
-					*microcode,
 					f'initrd  /initramfs-{kernel}{variant}.img',
 					options,
 				]
@@ -1083,11 +1075,6 @@ Exec = /bin/sh -c "{hook_command}"
 		hook_path = hooks_dir / '99-limine.hook'
 		hook_path.write_text(hook_contents)
 
-		microcode = []
-
-		if ucode := self._get_microcode():
-			microcode = [f'MODULE_PATH=boot:///{ucode}']
-
 		kernel_params = ' '.join(self._get_kernel_params(root_partition))
 		config_contents = 'TIMEOUT=5\n'
 
@@ -1096,7 +1083,6 @@ Exec = /bin/sh -c "{hook_command}"
 				entry = [
 					f'PROTOCOL=linux',
 					f'KERNEL_PATH=boot:///vmlinuz-{kernel}',
-					*microcode,
 					f'MODULE_PATH=boot:///initramfs-{kernel}{variant}.img',
 					f'CMDLINE={kernel_params}',
 				]
@@ -1127,15 +1113,7 @@ Exec = /bin/sh -c "{hook_command}"
 		if not uki_enabled:
 			loader = '/vmlinuz-{kernel}'
 
-			microcode = []
-
-			if ucode := self._get_microcode():
-				microcode.append(f'initrd=/{ucode}')
-			else:
-				debug('Archinstall will not add any ucode to firmware boot entry.')
-
 			entries = (
-				*microcode,
 				'initrd=/initramfs-{kernel}.img',
 				*self._get_kernel_params(root_partition)
 			)
@@ -1178,8 +1156,6 @@ Exec = /bin/sh -c "{hook_command}"
 			kernel_parameters = self._get_kernel_params(root_partition)
 			cmdline.write(' '.join(kernel_parameters) + '\n')
 
-		ucode = self._get_microcode()
-
 		diff_mountpoint = None
 
 		if efi_partition.mountpoint != Path('/efi'):
@@ -1194,10 +1170,8 @@ Exec = /bin/sh -c "{hook_command}"
 			config = preset.read_text().splitlines(True)
 
 			for index, line in enumerate(config):
-				if not ucode and line.startswith('ALL_microcode='):
-					config[index] = '#' + line
 				# Avoid storing redundant image file
-				elif m := image_re.match(line):
+				if m := image_re.match(line):
 					image = self.target / m.group(2)
 					image.unlink(missing_ok=True)
 					config[index] = '#' + m.group(1)
