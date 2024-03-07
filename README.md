@@ -28,8 +28,7 @@ Assuming you are on an Arch Linux live-ISO or installed via `pip`:
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
 
     # cd archinstall-git
-    # cp archinstall/scripts/guided.py
-    # python guided.py
+    # python -m archinstall
 
 #### Advanced
 Some additional options that are not needed by most users are hidden behind the `--advanced` flag.
