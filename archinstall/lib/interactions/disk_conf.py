@@ -310,8 +310,8 @@ def suggest_single_disk_layout(
 		# If we don't want to use subvolumes,
 		# But we want to be able to reuse data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
-		home_start = root_partition.length
-		home_length = device.device_info.total_size - root_partition.length
+		home_start = root_partition.start + root_partition.length
+		home_length = device.device_info.total_size - home_start
 
 		if using_gpt:
 			home_length -= align_buffer
