@@ -180,7 +180,7 @@ def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.Parti
 	flags = [disk.PartitionFlag.Boot]
 	if using_gpt:
 		start = disk.Size(1, disk.Unit.MiB, sector_size)
-		size = disk.Size(512, disk.Unit.MiB, sector_size)
+		size = disk.Size(1, disk.Unit.GiB, sector_size)
 		flags.append(disk.PartitionFlag.ESP)
 	else:
 		start = disk.Size(3, disk.Unit.MiB, sector_size)
