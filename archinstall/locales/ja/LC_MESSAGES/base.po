@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ここにログファイルが作成されました: {} {}"
@@ -72,13 +72,13 @@ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{
 msgstr "どのモードを \"{}\" に設定するかを選択。スキップでデフォルトモード \"{}\" を使用"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr ""
+msgstr "{} の IP とサブネットを入力（例: 192.168.0.5/24）: "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr ""
+msgstr "ゲートウェイ（ルーター）の IP アドレスを入力。無い場合は無記入: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr ""
+msgstr "DNS サーバーを入力（スペースで区切る。無い場合は無記入）: "
 
 msgid "Select which filesystem your main partition should use"
 msgstr "メインパーティションで使用するファイルシステムを選択"
@@ -95,13 +95,13 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "パーティションのファイルシステムを入力"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "開始場所を入力（単位: s, GB, % など。デフォルト: {}）: "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "終了場所を入力（単位: s, GB, % など。例: {}）: "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr ""
+msgstr "{} にはキューに入っているパーティションが含まれます。それらが削除されますがよろしいですか？"
 
 msgid ""
 "{}\n"
@@ -236,7 +236,7 @@ msgid "Error: Listing profiles on URL \"{}\" resulted in:"
 msgstr "エラー: URL \"{}\" のプロファイルをリストすると、次の結果が発生:"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr ""
+msgstr "エラー: \"{}\" の結果を JSON としてデコードできませんでした:"
 
 msgid "Keyboard layout"
 msgstr "キーボードレイアウト"
@@ -325,7 +325,7 @@ msgid "Mark/Unmark a partition to be formatted (wipes data)"
 msgstr "フォーマットするパーティションとしてマーク/マーク解除（データを消去）"
 
 msgid "Mark/Unmark a partition as encrypted"
-msgstr ""
+msgstr "パーティションを暗号化するものとしてマーク/マーク解除"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
 msgstr "ブータブルなパーティションとしてマーク/マーク解除（/boot の場合は自動）"
@@ -443,7 +443,7 @@ msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate
 msgstr "Pacman はすでに実行されており、終了するまで最大 10 分間待機します。"
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr ""
+msgstr "既存の pacman のロックが終了しませんでした。Archinstall を使用する前に、既存の pacman セッションをクリーンアップしてください。"
 
 msgid "Choose which optional additional repositories to enable"
 msgstr "オプションで有効にする追加リポジトリを選択"
@@ -480,7 +480,7 @@ msgid "No network configuration"
 msgstr "ネットワーク設定なし"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr ""
+msgstr "Btrfs パーティションに必要なサブボリュームを設定"
 
 msgid ""
 "{}\n"
@@ -565,7 +565,7 @@ msgid "Subvolume mountpoint"
 msgstr "サブボリュームのマウントポイント"
 
 msgid "Subvolume options"
-msgstr ""
+msgstr "サブボリュームのオプション"
 
 msgid "Save"
 msgstr "保存"
@@ -622,7 +622,7 @@ msgid "No iface specified for manual configuration"
 msgstr "手動設定に iface が指定されていません"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr ""
+msgstr "自動 DHCP を使用しない手動 NIC 設定には、IP アドレスが必要です"
 
 msgid "Add interface"
 msgstr "インターフェイスを追加"
@@ -811,7 +811,7 @@ msgstr ""
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "無効な入力です！有効な入力を使用して再試行してください [1 - {max_downloads}、0 で無効]"
 
 msgid "Parallel Downloads"
 msgstr "並行ダウンロード"
@@ -1024,7 +1024,7 @@ msgid "Should this profile be enabled for installation?"
 msgstr "このプロファイルのインストールを有効にしますか？"
 
 msgid "Create your own"
-msgstr ""
+msgstr "自分で作成"
 
 msgid ""
 "\n"
@@ -1171,19 +1171,22 @@ msgid "Type"
 msgstr "タイプ"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr ""
+msgstr "このオプションは、パッケージのダウンロード中に実行できる並列ダウンロードの数を設定します"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 "\n"
 "Note:\n"
 msgstr ""
+"並列ダウンロードの数を入力してください。\n"
+"\n"
+"注意:\n"
 
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr ""
+msgstr " - 最大推奨値 : {} （1度に {} 個の並列ダウンロードを許可する）"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr ""
+msgstr " - 無効/デフォルト : 0 （並列ダウンロードを無効にして、1度に 1 個のダウンロードのみ許可する）\n"
 
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "無効な入力です！有効な入力でやり直してください（無効にする場合は 0）"
@@ -1220,3 +1223,9 @@ msgstr "自動での時刻同期の待機をスキップします（インスト
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Arch Linux キーリングの同期（archlinux-keyring-wkd-sync）が完了するのを待っています。"
+
+msgid "Selected profiles: "
+msgstr "選択したプロファイル: "
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "待機中に時刻同期が完了しません - 回避策についてはドキュメントを確認してください: https://archinstall.readthedocs.io/"
