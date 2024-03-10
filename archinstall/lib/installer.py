@@ -714,6 +714,7 @@ class Installer:
 		# sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
 		self.set_hostname(hostname)
 		self.set_locale(locale_config)
+		self.set_keyboard_language(locale_config.kb_layout)
 
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')

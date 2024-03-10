@@ -193,10 +193,6 @@ def perform_installation(mountpoint: Path):
 		if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 			installation.user_set_pw('root', root_pw)
 
-		# This step must be after profile installs to allow profiles_bck to install language pre-requisites.
-		# After which, this step will set the language both for console and x11 if x11 was installed for instance.
-		installation.set_keyboard_language(locale_config.kb_layout)
-
 		if profile_config := archinstall.arguments.get('profile_config', None):
 			profile_config.profile.post_install(installation)
 
