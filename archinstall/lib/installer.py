@@ -362,12 +362,12 @@ class Installer:
 		info(f"Updating {fstab_path}")
 
 		try:
-			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
+			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').output()
 		except SysCallError as err:
 			raise RequirementError(
 				f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
-		with open(fstab_path, 'a') as fp:
+		with open(fstab_path, 'ab') as fp:
 			fp.write(gen_fstab)
 
 		if not fstab_path.is_file():
