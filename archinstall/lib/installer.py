@@ -919,12 +919,7 @@ class Installer:
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
-		if boot_partition == root_partition and root_partition.mountpoint:
-			boot_dir = root_partition.mountpoint / 'boot'
-		elif boot_partition.mountpoint:
-			boot_dir = boot_partition.mountpoint
-		else:
-			raise ValueError('Could not detect boot directory')
+		boot_dir = Path('/boot')
 
 		command = [
 			'/usr/bin/arch-chroot',
@@ -942,8 +937,9 @@ class Installer:
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			boot_dir_arg = []
-			if boot_partition != efi_partition:
-				boot_dir_arg.append(f'--boot-directory={boot_dir}')
+			if boot_partition.mountpoint and boot_partition.mountpoint != boot_dir:
+				boot_dir_arg.append(f'--boot-directory={boot_partition.mountpoint}')
+				boot_dir = boot_partition.mountpoint
 
 			add_options = [
 				'--target=x86_64-efi',
