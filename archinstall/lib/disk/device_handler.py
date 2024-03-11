@@ -437,9 +437,19 @@ class DeviceHandler(object):
 			if not luks_handler.mapper_dev:
 				raise DiskError('Failed to unlock luks device')
 
-			self.mount(luks_handler.mapper_dev, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			self.mount(
+				luks_handler.mapper_dev,
+				self._TMP_BTRFS_MOUNT,
+				create_target_mountpoint=True,
+				options=part_mod.mount_options
+			)
 		else:
-			self.mount(part_mod.safe_dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			self.mount(
+				part_mod.safe_dev_path,
+				self._TMP_BTRFS_MOUNT,
+				create_target_mountpoint=True,
+				options=part_mod.mount_options
+			)
 
 		for sub_vol in part_mod.btrfs_subvols:
 			debug(f'Creating subvolume: {sub_vol.name}')
@@ -450,18 +460,6 @@ class DeviceHandler(object):
 				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
 			SysCommand(f"btrfs subvolume create {subvol_path}")
-
-			if sub_vol.nodatacow:
-				try:
-					SysCommand(f'chattr +C {subvol_path}')
-				except SysCallError as err:
-					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {err}')
-
-			if sub_vol.compress:
-				try:
-					SysCommand(f'chattr +c {subvol_path}')
-				except SysCallError as err:
-					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
 
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
 			self.umount(luks_handler.mapper_dev)

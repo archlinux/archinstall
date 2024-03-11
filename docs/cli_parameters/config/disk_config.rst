@@ -186,34 +186,24 @@ This example contains both subvolumes and compression.
    {
       "btrfs": [
           {
-              "compress": false,
               "mountpoint": "/",
               "name": "@",
-              "nodatacow": false
           },
           {
-              "compress": false,
               "mountpoint": "/home",
               "name": "@home",
-              "nodatacow": false
           },
           {
-              "compress": false,
               "mountpoint": "/var/log",
               "name": "@log",
-              "nodatacow": false
           },
           {
-              "compress": false,
               "mountpoint": "/var/cache/pacman/pkg",
               "name": "@pkg",
-              "nodatacow": false
           },
           {
-              "compress": false,
               "mountpoint": "/.snapshots",
               "name": "@.snapshots",
-              "nodatacow": false
           }
       ],
       "dev_path": null,
