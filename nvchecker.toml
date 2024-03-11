@@ -1,5 +1,4 @@
 [nvchecker]
-source = "github"
-github = "archlinux/archinstall"
+source = "git"
+url = "git@github.com:archlinux/archinstall.git"
 branch = "master"
-use_latest_release = true
