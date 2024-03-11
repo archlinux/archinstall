@@ -1,4 +1,4 @@
 [nvchecker]
 source = "git"
-url = "git@github.com:archlinux/archinstall.git"
-branch = "master"
+git = "https://github.com/archlinux/archinstall"
+prefix = "v"
