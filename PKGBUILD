@@ -9,7 +9,7 @@ pkgrel=1
 pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)
 url="https://github.com/archlinux/archinstall"
-license=(GPL3)
+license=(GPL-3.0-or-later)
 depends=(
   'arch-install-scripts'
   'coreutils'
