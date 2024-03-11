@@ -240,7 +240,11 @@ class Installer:
 			disk.device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
 
 		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.dev_path:
-			self._mount_btrfs_subvol(part_mod.dev_path, part_mod.btrfs_subvols)
+			self._mount_btrfs_subvol(
+				part_mod.dev_path,
+				part_mod.btrfs_subvols,
+				part_mod.mount_options
+			)
 
 	def _mount_luks_partition(self, part_mod: disk.PartitionModification, luks_handler: Luks2):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
@@ -251,11 +255,18 @@ class Installer:
 		if part_mod.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
 			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols)
 
-	def _mount_btrfs_subvol(self, dev_path: Path, subvolumes: List[disk.SubvolumeModification]):
+	def _mount_btrfs_subvol(
+		self,
+		dev_path: Path,
+		subvolumes: List[disk.SubvolumeModification],
+		mount_options: List[str] = []
+	):
 		for subvol in subvolumes:
-			mountpoint = self.target / subvol.relative_mountpoint
-			mount_options = subvol.mount_options + [f'subvol={subvol.name}']
-			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
+			disk.device_handler.mount(
+				dev_path,
+				self.target / subvol.relative_mountpoint,
+				options=mount_options + [f'subvol={subvol.name}']
+			)
 
 	def generate_key_files(self):
 		for part_mod in self._disk_encryption.partitions:
@@ -381,37 +392,6 @@ class Installer:
 		with open(fstab_path, 'a') as fp:
 			for entry in self._fstab_entries:
 				fp.write(f'{entry}\n')
-
-		for mod in self._disk_config.device_modifications:
-			for part_mod in mod.partitions:
-				if part_mod.fs_type != disk.FilesystemType.Btrfs:
-					continue
-
-				with fstab_path.open('r') as fp:
-					fstab = fp.readlines()
-
-				# Replace the {installation}/etc/fstab with entries
-				# using the compress=zstd where the mountpoint has compression set.
-				for index, line in enumerate(fstab):
-					# So first we grab the mount options by using subvol=.*? as a locator.
-					# And we also grab the mountpoint for the entry, for instance /var/log
-					subvoldef = re.findall(',.*?subvol=.*?[\t ]', line)
-					mountpoint = re.findall('[\t ]/.*?[\t ]', line)
-
-					if not subvoldef or not mountpoint:
-						continue
-
-					for sub_vol in part_mod.btrfs_subvols:
-						# We then locate the correct subvolume and check if it's compressed,
-						# and skip entries where compression is already defined
-						# We then sneak in the compress=zstd option if it doesn't already exist:
-						if sub_vol.compress and str(sub_vol.mountpoint) == Path(
-							mountpoint[0].strip()) and ',compress=zstd,' not in line:
-							fstab[index] = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
-							break
-
-				with fstab_path.open('w') as fp:
-					fp.writelines(fstab)
 
 	def set_hostname(self, hostname: str, *args: str, **kwargs: str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:

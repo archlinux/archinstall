@@ -315,6 +315,11 @@ class Size:
 		return self._normalize() >= other._normalize()
 
 
+class BtrfsMountOption(Enum):
+	compress = 'compress=zstd'
+	nodatacow = 'nodatacow'
+
+
 @dataclass
 class _BtrfsSubvolumeInfo:
 	name: Path
@@ -458,8 +463,6 @@ class _DeviceInfo:
 class SubvolumeModification:
 	name: Path
 	mountpoint: Optional[Path] = None
-	compress: bool = False
-	nodatacow: bool = False
 
 	@classmethod
 	def from_existing_subvol_info(cls, info: _BtrfsSubvolumeInfo) -> SubvolumeModification:
@@ -475,29 +478,9 @@ class SubvolumeModification:
 
 			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
 
-			compress = entry.get('compress', False)
-			nodatacow = entry.get('nodatacow', False)
-
-			if compress and nodatacow:
-				raise ValueError('compress and nodatacow flags cannot be enabled simultaneously on a btfrs subvolume')
-
-			mods.append(
-				SubvolumeModification(
-					entry['name'],
-					mountpoint,
-					compress,
-					nodatacow
-				)
-			)
+			mods.append(SubvolumeModification(entry['name'], mountpoint))
 
 		return mods
-
-	@property
-	def mount_options(self) -> List[str]:
-		options = []
-		options += ['compress'] if self.compress else []
-		options += ['nodatacow'] if self.nodatacow else []
-		return options
 
 	@property
 	def relative_mountpoint(self) -> Path:
@@ -516,12 +499,7 @@ class SubvolumeModification:
 		return False
 
 	def json(self) -> Dict[str, Any]:
-		return {
-			'name': str(self.name),
-			'mountpoint': str(self.mountpoint),
-			'compress': self.compress,
-			'nodatacow': self.nodatacow
-		}
+		return {'name': str(self.name), 'mountpoint': str(self.mountpoint)}
 
 	def table_data(self) -> Dict[str, Any]:
 		return self.json()

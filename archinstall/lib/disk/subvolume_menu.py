@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any, TYPE_CHECKING
 
 from .device_model import SubvolumeModification
-from ..menu import Menu, TextInput, MenuSelectionType, ListManager
+from ..menu import TextInput, ListManager
 from ..output import FormattedOutput
 
 if TYPE_CHECKING:
@@ -36,23 +36,6 @@ class SubvolumeMenu(ListManager):
 	def selected_action_display(self, subvolume: SubvolumeModification) -> str:
 		return str(subvolume.name)
 
-	def _prompt_options(self, editing: Optional[SubvolumeModification] = None) -> List[str]:
-		preset_options = []
-		if editing:
-			preset_options = editing.mount_options
-
-		choice = Menu(
-			str(_("Select the desired subvolume options ")),
-			['nodatacow', 'compress'],
-			skip=True,
-			preset_values=preset_options,
-		).run()
-
-		if choice.type_ == MenuSelectionType.Selection:
-			return choice.value  # type: ignore
-
-		return []
-
 	def _add_subvolume(self, editing: Optional[SubvolumeModification] = None) -> Optional[SubvolumeModification]:
 		name = TextInput(f'\n\n{_("Subvolume name")}: ', editing.name if editing else '').run()
 
@@ -64,13 +47,7 @@ class SubvolumeMenu(ListManager):
 		if not mountpoint:
 			return None
 
-		options = self._prompt_options(editing)
-
-		subvolume = SubvolumeModification(Path(name), Path(mountpoint))
-		subvolume.compress = 'compress' in options
-		subvolume.nodatacow = 'nodatacow' in options
-
-		return subvolume
+		return SubvolumeModification(Path(name), Path(mountpoint))
 
 	def handle_action(
 		self,
