@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Un file di log è stato creato qui: {} {}"
@@ -97,10 +97,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Immettere un tipo di filesystem desiderato per la partizione"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Inserisci la posizione iniziale (in unità separate: s, GB, %, ecc.; impostazione predefinita: {}):"
+msgstr "Inserisci la posizione iniziale (in unità separate: s, GB, %, ecc.; impostazione predefinita: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Inserisci la posizione finale (in unità separate: s, GB, %, ecc.; es: {}):"
+msgstr "Inserisci la posizione finale (in unità separate: s, GB, %, ecc.; es: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contiene partizioni in coda, questo le rimuoverà, sei sicuro?"
@@ -1225,3 +1225,21 @@ msgstr "Salto l’attesa della sincronizzazione automatica dell’ora (potrebbe 
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "In attesa che la sincronizzazione del portachiavi di Arch Linux (archlinux-keyring-wkd-sync) sia completa."
+
+msgid "Selected profiles: "
+msgstr "Profili selezionati: "
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "La sincronizzazione dell’orario non si sta completando, in attesa, leggi la documentazione alla ricerca di una soluzione: https://archinstall.readthedocs.io/"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "Seleziona/Deseleziona come nodatacow"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Vorresti usare la compressione o disabilitare CoW?"
+
+msgid "Use compression"
+msgstr "Usa la compressione"
+
+msgid "Disable Copy-on-Write"
+msgstr "Disabilita Copy-on-Write"
