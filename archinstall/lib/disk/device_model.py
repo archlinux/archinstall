@@ -3,7 +3,6 @@ from __future__ import annotations
 import dataclasses
 import json
 import math
-import time
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum
@@ -1103,39 +1102,34 @@ def _clean_field(name: str, clean_type: CleanType) -> str:
 			return name.replace('_percentage', '%').replace('_', '-')
 
 
-def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 3) -> List[LsblkInfo]:
+def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None) -> List[LsblkInfo]:
 	fields = [_clean_field(f, CleanType.Lsblk) for f in LsblkInfo.fields()]
-	lsblk_fields = ','.join(fields)
+	cmd = ['lsblk', '--json', '--bytes', '--output', '+' + ','.join(fields)]
 
-	if not dev_path:
-		dev_path = ''
+	if dev_path:
+		cmd.append(str(dev_path))
 
-	for retry_attempt in range(retry + 1):
-		try:
-			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}').decode()
-			break
-		except SysCallError as err:
-			# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
-			if err.worker:
-				err_str = err.worker.decode()
-				debug(f'Error calling lsblk: {err_str}')
-			else:
-				raise err
+	try:
+		result = SysCommand(cmd).decode()
+	except SysCallError as err:
+		# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
+		if err.worker:
+			err_str = err.worker.decode()
+			debug(f'Error calling lsblk: {err_str}')
 
-			if retry_attempt == retry:
-				raise err
+		if dev_path:
+			raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
 
-			time.sleep(1)
+		raise err
 
 	try:
 		block_devices = json.loads(result)
-		blockdevices = block_devices['blockdevices']
-		return [LsblkInfo.from_json(device) for device in blockdevices]
 	except json.decoder.JSONDecodeError as err:
 		error(f"Could not decode lsblk JSON: {result}")
 		raise err
 
-	raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
+	blockdevices = block_devices['blockdevices']
+	return [LsblkInfo.from_json(device) for device in blockdevices]
 
 
 def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
