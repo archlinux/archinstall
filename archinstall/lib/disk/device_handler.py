@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import time
 import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
@@ -316,6 +315,9 @@ class DeviceHandler(object):
 			else:
 				self._perform_formatting(part_mod.safe_fs_type, part_mod.safe_dev_path)
 
+			# synchronize with udev before using lsblk
+			SysCommand('udevadm settle')
+
 			lsblk_info = self._fetch_part_info(part_mod.safe_dev_path)
 
 			part_mod.partn = lsblk_info.partn
@@ -384,19 +386,7 @@ class DeviceHandler(object):
 		part_mod.dev_path = Path(partition.path)
 
 	def _fetch_part_info(self, path: Path) -> LsblkInfo:
-		attempts = 3
-		lsblk_info: Optional[LsblkInfo] = None
-
-		for attempt_nr in range(attempts):
-			time.sleep(attempt_nr + 1)
-			lsblk_info = get_lsblk_info(path)
-
-			if lsblk_info.partn and lsblk_info.partuuid and lsblk_info.uuid:
-				break
-
-		if not lsblk_info:
-			debug(f'Unable to get partition information: {path}')
-			raise DiskError(f'Unable to get partition information: {path}')
+		lsblk_info = get_lsblk_info(path)
 
 		if not lsblk_info.partn:
 			debug(f'Unable to determine new partition number: {path}\n{lsblk_info}')
