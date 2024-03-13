@@ -50,7 +50,11 @@ storage['__version__'] = __version__
 DeferredTranslation.install()
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
-debug(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}")
+if SysInfo.has_uefi():
+	debug(f"Boot mode: UEFI ({SysInfo.uefi_size()}-bit)")
+else:
+	debug("Boot mode: BIOS")
+debug(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}")
 debug(f"Processor model detected: {SysInfo.cpu_model()}")
 debug(f"Memory statistics: {SysInfo.mem_available()} available out of {SysInfo.mem_total()} total installed")
 debug(f"Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_vm()}")
