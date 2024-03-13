@@ -92,14 +92,14 @@ class FilesystemHandler:
 		"""
 
 		# don't touch existing partitions
-		filtered_part = [p for p in partitions if not p.exists()]
+		create_or_modify_parts = [p for p in partitions if p.is_create_or_modify()]
 
-		self._validate_partitions(filtered_part)
+		self._validate_partitions(create_or_modify_parts)
 
 		# make sure all devices are unmounted
 		device_handler.umount_all_existing(device_path)
 
-		for part_mod in filtered_part:
+		for part_mod in create_or_modify_parts:
 			# partition will be encrypted
 			if self._enc_config is not None and part_mod in self._enc_config.partitions:
 				device_handler.format_encrypted(
@@ -242,7 +242,7 @@ class FilesystemHandler:
 			device_handler.format(vol.fs_type, path)
 
 			if vol.fs_type == FilesystemType.Btrfs:
-				device_handler.create_lvm_btrfs_subvolumes(path, vol.btrfs_subvols)
+				device_handler.create_lvm_btrfs_subvolumes(path, vol.btrfs_subvols, vol.mount_options)
 
 	def _lvm_create_pvs(
 		self,

@@ -324,7 +324,7 @@ class AbstractMenu:
 					value = value.strip()
 
 					# if this calls returns false, we exit the menu
-					# we allow for an callback for special processing on realeasing control
+					# we allow for an callback for special processing on releasing control
 					if not self._process_selection(value):
 						break
 

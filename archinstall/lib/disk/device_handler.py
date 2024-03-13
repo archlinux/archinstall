@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 import os
-import time
 import logging
+import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
 
@@ -19,7 +19,7 @@ from .device_model import (
 	FilesystemType, Unit, PartitionTable,
 	ModificationStatus, get_lsblk_info, LsblkInfo,
 	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
-	SectorSize, LvmVolumeInfo, LvmPVInfo, SubvolumeModification
+	SectorSize, LvmVolumeInfo, LvmPVInfo, SubvolumeModification, BtrfsMountOption
 )
 
 from ..exceptions import DiskError, UnknownFilesystemFormat
@@ -317,7 +317,7 @@ class DeviceHandler(object):
 
 		for report in reports['report']:
 			if len(report[info_type]) != 1:
-				raise ValueError(f'Report does not contain entry')
+				raise ValueError(f'Report does not contain any entry')
 
 			entry = report[info_type][0]
 
@@ -354,25 +354,31 @@ class DeviceHandler(object):
 		raise ValueError(f'Failed to fetch {info_type} information')
 
 	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
-		cmd = 'lvs --reportformat json ' \
-			'--unit B ' \
+		cmd = (
+			'lvs --reportformat json '
+			'--unit B '
 			f'-S lv_name={lv_name}'
+		)
 
 		return self._lvm_info_with_retry(cmd, 'lv')
 
 	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
-		cmd = 'vgs --reportformat json ' \
-			'--unit B ' \
-			'-o vg_name,vg_uuid,vg_size ' \
+		cmd = (
+			'vgs --reportformat json '
+			'--unit B '
+			'-o vg_name,vg_uuid,vg_size '
 			f'-S vg_name={vg_name}'
+		)
 
 		return self._lvm_info_with_retry(cmd, 'vg')
 
 	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> Optional[LvmPVInfo]:
-		cmd = 'pvs ' \
-			'--segments -o+lv_name,vg_name ' \
-			f'-S vg_name={vg_name},lv_name={lv_name} ' \
+		cmd = (
+			'pvs '
+			'--segments -o+lv_name,vg_name '
+			f'-S vg_name={vg_name},lv_name={lv_name} '
 			'--reportformat json '
+		)
 
 		return self._lvm_info_with_retry(cmd, 'pvseg')
 
@@ -438,7 +444,7 @@ class DeviceHandler(object):
 		volume.vg_name = vg_name
 		volume.dev_path = Path(f'/dev/{vg_name}/{volume.name}')
 
-	def _perform_partitioning(
+	def _setup_partition(
 		self,
 		part_mod: PartitionModification,
 		block_device: BDevice,
@@ -455,7 +461,6 @@ class DeviceHandler(object):
 				raise DiskError(f'No partition for dev path found: {part_mod.safe_dev_path}')
 
 			disk.deletePartition(part_info.partition)
-			disk.commit()
 
 		if part_mod.status == ModificationStatus.Delete:
 			return
@@ -494,13 +499,6 @@ class DeviceHandler(object):
 
 		try:
 			disk.addPartition(partition=partition, constraint=disk.device.optimalAlignedConstraint)
-			disk.commit()
-
-			# the creation will take a bit of time
-			time.sleep(3)
-
-			# the partition has a real path now as it was created
-			part_mod.dev_path = Path(partition.path)
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
@@ -538,7 +536,8 @@ class DeviceHandler(object):
 	def create_lvm_btrfs_subvolumes(
 		self,
 		path: Path,
-		btrfs_subvols: List[SubvolumeModification]
+		btrfs_subvols: List[SubvolumeModification],
+		mount_options: List[str]
 	):
 		info(f'Creating subvolumes: {path}')
 
@@ -551,13 +550,13 @@ class DeviceHandler(object):
 
 			SysCommand(f"btrfs subvolume create {subvol_path}")
 
-			if sub_vol.nodatacow:
+			if BtrfsMountOption.nodatacow.value in mount_options:
 				try:
 					SysCommand(f'chattr +C {subvol_path}')
 				except SysCallError as err:
 					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {err}')
 
-			if sub_vol.compress:
+			if BtrfsMountOption.compress.value in mount_options:
 				try:
 					SysCommand(f'chattr +c {subvol_path}')
 				except SysCallError as err:
@@ -588,9 +587,19 @@ class DeviceHandler(object):
 			if not luks_handler.mapper_dev:
 				raise DiskError('Failed to unlock luks device')
 
-			self.mount(luks_handler.mapper_dev, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			self.mount(
+				luks_handler.mapper_dev,
+				self._TMP_BTRFS_MOUNT,
+				create_target_mountpoint=True,
+				options=part_mod.mount_options
+			)
 		else:
-			self.mount(part_mod.safe_dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			self.mount(
+				part_mod.safe_dev_path,
+				self._TMP_BTRFS_MOUNT,
+				create_target_mountpoint=True,
+				options=part_mod.mount_options
+			)
 
 		for sub_vol in part_mod.btrfs_subvols:
 			debug(f'Creating subvolume: {sub_vol.name}')
@@ -601,18 +610,6 @@ class DeviceHandler(object):
 				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
 			SysCommand(f"btrfs subvolume create {subvol_path}")
-
-			if sub_vol.nodatacow:
-				try:
-					SysCommand(f'chattr +C {subvol_path}')
-				except SysCallError as err:
-					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {err}')
-
-			if sub_vol.compress:
-				try:
-					SysCommand(f'chattr +c {subvol_path}')
-				except SysCallError as err:
-					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
 
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
 			self.umount(luks_handler.mapper_dev)
@@ -681,7 +678,9 @@ class DeviceHandler(object):
 			# if the entire disk got nuked then we don't have to delete
 			# any existing partitions anymore because they're all gone already
 			requires_delete = modification.wipe is False
-			self._perform_partitioning(part_mod, modification.device, disk, requires_delete=requires_delete)
+			self._setup_partition(part_mod, modification.device, disk, requires_delete=requires_delete)
+
+		disk.commit()
 
 	def mount(
 		self,

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Soubor protokolu byl vytvořen zde: {} {}"
@@ -895,13 +895,13 @@ msgid "Partition"
 msgstr "Diskový oddíl"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr "Tento oddíl je zašifrovaný, k naformátování zadejte souborový systém."
+msgstr "Tento oddíl je zašifrovaný, k naformátování zadejte souborový systém"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr "Přípojné body diskových oddílů jsou relativní uvnitř instalace, například spouštěcí bod by byl /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr "Pokud je nastaven přípojný bod /boot, oddíl je zároveň označený jako zaváděcí"
+msgstr "Pokud je nastaven přípojný bod /boot, oddíl je zároveň označený jako zaváděcí."
 
 msgid "Mountpoint: "
 msgstr "Přípojný bod: "
@@ -1200,21 +1200,20 @@ msgstr ""
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "Všechny zadané hodnoty mohou byt doplněny jednotkou: %, B, KB, KiB, MB, MiB..."
 
-#, fuzzy
 msgid "Would you like to use unified kernel images?"
-msgstr "Přejete si použít swap na zram?"
+msgstr "Přejete si použít Unified Kernel Images?"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "Unified Kernel Images"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "Čekám na dokončení synchronizace času (timedatectl show)."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Synchronizace času není dokončena, mezitím se můžete podívat na možnosti řešení: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "Přeskakuji čekání na automatickou synchronizaci času (nesynchronizovaný čas může způsobit problémy během instalace)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "Čekám na dokončení synchronizace Arch Linux keyring (archlinux-keyring-wkd-sync)."

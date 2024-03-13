@@ -5,6 +5,7 @@ from typing import Any, TYPE_CHECKING
 from typing import Optional, List, Tuple
 
 from .. import disk
+from ..disk.device_model import BtrfsMountOption
 from ..hardware import SysInfo
 from ..menu import Menu
 from ..menu import TableMenu
@@ -236,7 +237,7 @@ def _boot_partition(
 	flags = [disk.PartitionFlag.Boot]
 	if using_gpt:
 		start = disk.Size(1, disk.Unit.MiB, sector_size)
-		size = disk.Size(512, disk.Unit.MiB, sector_size)
+		size = disk.Size(1, disk.Unit.GiB, sector_size)
 		flags.append(disk.PartitionFlag.ESP)
 	else:
 		start = disk.Size(3, disk.Unit.MiB, sector_size)
@@ -272,6 +273,20 @@ def select_main_filesystem_format(
 	return options[choice.single_value]
 
 
+def select_mount_options() -> List[str]:
+	prompt = str(_('Would you like to use compression or disable CoW?'))
+	options = [str(_('Use compression')), str(_('Disable Copy-on-Write'))]
+	choice = Menu(prompt, options, sort=False).run()
+
+	if choice.type_ == MenuSelectionType.Selection:
+		if choice.single_value == options[0]:
+			return [BtrfsMountOption.compress.value]
+		else:
+			return [BtrfsMountOption.nodatacow.value]
+
+	return []
+
+
 def suggest_single_disk_layout(
 	device: disk.BDevice,
 	filesystem_type: Optional[disk.FilesystemType] = None,
@@ -286,23 +301,14 @@ def suggest_single_disk_layout(
 	root_partition_size = disk.Size(20, disk.Unit.GiB, sector_size)
 	using_subvolumes = False
 	using_home_partition = False
-	compression = False
+	mount_options = []
 	device_size_gib = device.device_info.total_size
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
-		prompt = str(
-			_("Would you like to use BTRFS subvolumes with a default structure?")
-		)
-		choice = Menu(
-			prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()
-		).run()
+		prompt = str(_("Would you like to use BTRFS subvolumes with a default structure?"))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
 		using_subvolumes = choice.value == Menu.yes()
-
-		prompt = str(_("Would you like to use BTRFS compression?"))
-		choice = Menu(
-			prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()
-		).run()
-		compression = choice.value == Menu.yes()
+		mount_options = select_mount_options()
 
 	device_modification = disk.DeviceModification(device, wipe=True)
 
@@ -325,12 +331,8 @@ def suggest_single_disk_layout(
 	if not using_subvolumes:
 		if device_size_gib >= min_size_to_allow_home_part:
 			if separate_home is None:
-				prompt = str(
-					_("Would you like to create a separate partition for /home?")
-				)
-				choice = Menu(
-					prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()
-				).run()
+				prompt = str(_("Would you like to create a separate partition for /home?"))
+				choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
 				using_home_partition = choice.value == Menu.yes()
 			elif separate_home is True:
 				using_home_partition = True
@@ -362,7 +364,7 @@ def suggest_single_disk_layout(
 		length=root_length,
 		mountpoint=Path("/") if not using_subvolumes else None,
 		fs_type=filesystem_type,
-		mount_options=["compress=zstd"] if compression else [],
+		mount_options=mount_options
 	)
 
 	device_modification.add_partition(root_partition)
@@ -381,10 +383,10 @@ def suggest_single_disk_layout(
 		root_partition.btrfs_subvols = subvolumes
 	elif using_home_partition:
 		# If we don't want to use subvolumes,
-		# But we want to be able to re-use data between re-installs..
+		# But we want to be able to reuse data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
-		home_start = root_partition.length
-		home_length = device.device_info.total_size - root_partition.length
+		home_start = root_partition.start + root_partition.length
+		home_length = device.device_info.total_size - home_start
 
 		if using_gpt:
 			home_length -= align_buffer
@@ -396,7 +398,7 @@ def suggest_single_disk_layout(
 			length=home_length,
 			mountpoint=Path("/home"),
 			fs_type=filesystem_type,
-			mount_options=["compress=zstd"] if compression else [],
+			mount_options=mount_options
 		)
 		device_modification.add_partition(home_partition)
 
@@ -416,23 +418,15 @@ def suggest_multi_disk_layout(
 	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/
 	min_home_partition_size = disk.Size(40, disk.Unit.GiB, disk.SectorSize.default())
 	# rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
-	desired_root_partition_size = disk.Size(
-		20, disk.Unit.GiB, disk.SectorSize.default()
-	)
-	compression = False
+	desired_root_partition_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
+	mount_options = []
 
 	if not filesystem_type:
 		filesystem_type = select_main_filesystem_format(advanced_options)
 
 	# find proper disk for /home
-	possible_devices = list(
-		filter(lambda x: x.device_info.total_size >= min_home_partition_size, devices)
-	)
-	home_device = (
-		max(possible_devices, key=lambda d: d.device_info.total_size)
-		if possible_devices
-		else None
-	)
+	possible_devices = list(filter(lambda x: x.device_info.total_size >= min_home_partition_size, devices))
+	home_device = max(possible_devices, key=lambda d: d.device_info.total_size) if possible_devices else None
 
 	# find proper device for /root
 	devices_delta = {}
@@ -441,30 +435,20 @@ def suggest_multi_disk_layout(
 			delta = device.device_info.total_size - desired_root_partition_size
 			devices_delta[device] = delta
 
-	sorted_delta: List[Tuple[disk.BDevice, Any]] = sorted(
-		devices_delta.items(), key=lambda x: x[1]
-	)
+	sorted_delta: List[Tuple[disk.BDevice, Any]] = sorted(devices_delta.items(), key=lambda x: x[1])
 	root_device: Optional[disk.BDevice] = sorted_delta[0][0]
 
 	if home_device is None or root_device is None:
-		text = _(
-			"The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-		)
+		text = _("The selected drives do not have the minimum capacity required for an automatic suggestion\n")
 		text += _("Minimum capacity for /home partition: {}GiB\n").format(
-			min_home_partition_size.format_size(disk.Unit.GiB)
-		)
+			min_home_partition_size.format_size(disk.Unit.GiB))
 		text += _("Minimum capacity for Arch Linux partition: {}GiB").format(
-			desired_root_partition_size.format_size(disk.Unit.GiB)
-		)
+			desired_root_partition_size.format_size(disk.Unit.GiB))
 		Menu(str(text), [str(_("Continue"))], skip=False).run()
 		return []
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
-		prompt = str(_("Would you like to use BTRFS compression?"))
-		choice = Menu(
-			prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()
-		).run()
-		compression = choice.value == Menu.yes()
+		mount_options = select_mount_options()
 
 	device_paths = ", ".join([str(d.device_info.path) for d in devices])
 
@@ -499,9 +483,9 @@ def suggest_multi_disk_layout(
 		type=disk.PartitionType.Primary,
 		start=root_start,
 		length=root_length,
-		mountpoint=Path("/"),
-		mount_options=["compress=zstd"] if compression else [],
-		fs_type=filesystem_type,
+		mountpoint=Path('/'),
+		mount_options=mount_options,
+		fs_type=filesystem_type
 	)
 	root_device_modification.add_partition(root_partition)
 
@@ -517,8 +501,8 @@ def suggest_multi_disk_layout(
 		type=disk.PartitionType.Primary,
 		start=home_start,
 		length=home_length,
-		mountpoint=Path("/home"),
-		mount_options=["compress=zstd"] if compression else [],
+		mountpoint=Path('/home'),
+		mount_options=mount_options,
 		fs_type=filesystem_type,
 	)
 	home_device_modification.add_partition(home_partition)
@@ -535,27 +519,19 @@ def suggest_lvm_layout(
 		raise ValueError("LVM suggested volumes are only available for default partitioning")
 
 	using_subvolumes = False
-	compression = False
 	btrfs_subvols = []
 	home_volume = True
+	mount_options = []
 
 	if not filesystem_type:
 		filesystem_type = select_main_filesystem_format()
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
-		prompt = str(
-			_("Would you like to use BTRFS subvolumes with a default structure?")
-		)
-		choice = Menu(
-			prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()
-		).run()
+		prompt = str(_("Would you like to use BTRFS subvolumes with a default structure?"))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
 		using_subvolumes = choice.value == Menu.yes()
 
-		prompt = str(_("Would you like to use BTRFS compression?"))
-		choice = Menu(
-			prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()
-		).run()
-		compression = choice.value == Menu.yes()
+		mount_options = select_mount_options()
 
 	if using_subvolumes:
 		btrfs_subvols = [
@@ -588,12 +564,7 @@ def suggest_lvm_layout(
 	root_vol_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
 	home_vol_size = total_vol_available - root_vol_size
 
-	lvm_vol_group = disk.LvmVolumeGroup(
-		vg_grp_name,
-		pvs=other_part,
-	)
-
-	# ... one vol per part
+	lvm_vol_group = disk.LvmVolumeGroup(vg_grp_name, pvs=other_part, )
 
 	root_vol = disk.LvmVolume(
 		status=disk.LvmVolumeStatus.Create,
@@ -602,7 +573,7 @@ def suggest_lvm_layout(
 		length=root_vol_size,
 		mountpoint=Path("/"),
 		btrfs_subvols=btrfs_subvols,
-		mount_options=["compress=zstd"] if compression else [],
+		mount_options=mount_options
 	)
 
 	lvm_vol_group.volumes.append(root_vol)

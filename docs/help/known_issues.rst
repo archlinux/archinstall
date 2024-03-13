@@ -22,7 +22,7 @@ Waiting for time sync `#2144`_
 Missing Nvidia Proprietary Driver `#2002`_
 ------------------------------------------
 
-| In some instances, the nvidia driver might not have all the nessecary packages installed.
+| In some instances, the nvidia driver might not have all the necessary packages installed.
 | This is due to the kernel selection and/or hardware setups requiring additional packages to work properly.
 
 A common workaround is to install the package `linux-headers`_ and `nvidia-dkms`_
@@ -49,7 +49,7 @@ Keyring is out of date `#2213`_
 | Subsequently the ``archinstall`` run might operate on a old keyring despite there being an update service for this.
 
 | There is really no way to reliably over time work around this issue in ``archinstall``.
-| Instead, efforts to the upstream service should be considered the way forward. And/or keys not expiring betwene a sane ammount of ISO's.
+| Instead, efforts to the upstream service should be considered the way forward. And/or keys not expiring between a sane amount of ISO's.
 
 .. note::
 

@@ -15,7 +15,7 @@ from .hardware import SysInfo
 from .locale import LocaleConfiguration
 from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
-from .mirrors import use_mirrors, MirrorConfiguration, add_custom_mirrors
+from .mirrors import MirrorConfiguration
 from .models.bootloader import Bootloader
 from .models.network_configuration import Nic
 from .models.users import User
@@ -83,7 +83,7 @@ class Installer:
 		# systemd, sd-vconsole and sd-encrypt will be replaced by udev, keymap and encrypt
 		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
 		self._hooks: List[str] = [
-			"base", "systemd", "autodetect", "keyboard",
+			"base", "systemd", "autodetect", "microcode", "keyboard",
 			"sd-vconsole", "modconf", "block", "filesystems", "fsck"
 		]
 		self._kernel_params: List[str] = []
@@ -150,7 +150,7 @@ class Installer:
 				if not _notified and time.time() - _started_wait > 5:
 					_notified = True
 					warn(
-						_("Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
+						_("Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
 
 				time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
 				if time_val and time_val.strip() == 'yes':
@@ -309,7 +309,11 @@ class Installer:
 			disk.device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
 
 		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.dev_path:
-			self._mount_btrfs_subvol(part_mod.dev_path, part_mod.btrfs_subvols)
+			self._mount_btrfs_subvol(
+				part_mod.dev_path,
+				part_mod.btrfs_subvols,
+				part_mod.mount_options
+			)
 
 	def _mount_lvm_vol(self, volume: disk.LvmVolume):
 		if volume.fs_type != disk.FilesystemType.Btrfs:
@@ -318,7 +322,7 @@ class Installer:
 				disk.device_handler.mount(volume.dev_path, target, options=volume.mount_options)
 
 		if volume.fs_type == disk.FilesystemType.Btrfs and volume.dev_path:
-			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols)
+			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols, volume.mount_options)
 
 	def _mount_luks_partition(self, part_mod: disk.PartitionModification, luks_handler: Luks2):
 		if part_mod.fs_type != disk.FilesystemType.Btrfs:
@@ -327,7 +331,7 @@ class Installer:
 				disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
 		if part_mod.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
-			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols)
+			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
 
 	def _mount_luks_volume(self, volume: disk.LvmVolume, luks_handler: Luks2):
 		if volume.fs_type != disk.FilesystemType.Btrfs:
@@ -336,12 +340,17 @@ class Installer:
 				disk.device_handler.mount(luks_handler.mapper_dev, target, options=volume.mount_options)
 
 		if volume.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
-			self._mount_btrfs_subvol(luks_handler.mapper_dev, volume.btrfs_subvols)
+			self._mount_btrfs_subvol(luks_handler.mapper_dev, volume.btrfs_subvols, volume.mount_options)
 
-	def _mount_btrfs_subvol(self, dev_path: Path, subvolumes: List[disk.SubvolumeModification]):
+	def _mount_btrfs_subvol(
+		self,
+		dev_path: Path,
+		subvolumes: List[disk.SubvolumeModification],
+		mount_options: List[str] = []
+	):
 		for subvol in subvolumes:
 			mountpoint = self.target / subvol.relative_mountpoint
-			mount_options = subvol.mount_options + [f'subvol={subvol.name}']
+			mount_options = mount_options + [f'subvol={subvol.name}']
 			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
 
 	def generate_key_files(self):
@@ -439,29 +448,57 @@ class Installer:
 	def post_install_check(self, *args: str, **kwargs: str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
-	def set_mirrors(self, mirror_config: MirrorConfiguration):
+	def set_mirrors(self, mirror_config: MirrorConfiguration, on_target: bool = False):
+		"""
+		Set the mirror configuration for the installation.
+
+		:param mirror_config: The mirror configuration to use.
+		:type mirror_config: MirrorConfiguration
+
+		:on_target: Whether to set the mirrors on the target system or the live system.
+		:param on_target: bool
+		"""
+		debug('Setting mirrors')
+
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mirrors'):
 				if result := plugin.on_mirrors(mirror_config):
 					mirror_config = result
 
-		destination = f'{self.target}/etc/pacman.d/mirrorlist'
-		if mirror_config.mirror_regions:
-			use_mirrors(mirror_config.mirror_regions, destination)
-		if mirror_config.custom_mirrors:
-			add_custom_mirrors(mirror_config.custom_mirrors)
+		if on_target:
+			local_pacman_conf = Path(f'{self.target}/etc/pacman.conf')
+			local_mirrorlist_conf = Path(f'{self.target}/etc/pacman.d/mirrorlist')
+		else:
+			local_pacman_conf = Path('/etc/pacman.conf')
+			local_mirrorlist_conf = Path('/etc/pacman.d/mirrorlist')
+
+		mirrorlist_config = mirror_config.mirrorlist_config()
+		pacman_config = mirror_config.pacman_config()
+
+		if pacman_config:
+			debug(f'Pacman config: {pacman_config}')
+
+			with local_pacman_conf.open('a') as fp:
+				fp.write(pacman_config)
+
+		if mirrorlist_config:
+			debug(f'Mirrorlist: {mirrorlist_config}')
+
+			with local_mirrorlist_conf.open('a') as fp:
+				fp.write(mirrorlist_config)
 
 	def genfstab(self, flags: str = '-pU'):
 		fstab_path = self.target / "etc" / "fstab"
 		info(f"Updating {fstab_path}")
 
 		try:
-			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
+			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').output()
 		except SysCallError as err:
 			raise RequirementError(
-				f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
+				f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}'
+			)
 
-		with open(fstab_path, 'a') as fp:
+		with open(fstab_path, 'ab') as fp:
 			fp.write(gen_fstab)
 
 		if not fstab_path.is_file():
@@ -476,46 +513,7 @@ class Installer:
 			for entry in self._fstab_entries:
 				fp.write(f'{entry}\n')
 
-		btrfs_sub_vols: List[disk.SubvolumeModification] = []
-
-		if self._disk_config.lvm_config:
-			for vg in self._disk_config.lvm_config.vol_groups:
-				for vol in vg.volumes:
-					if vol.fs_type == disk.FilesystemType.Btrfs:
-						btrfs_sub_vols += vol.btrfs_subvols
-		else:
-			for mod in self._disk_config.device_modifications:
-				for part_mod in mod.partitions:
-					if part_mod.fs_type == disk.FilesystemType.Btrfs:
-						btrfs_sub_vols += part_mod.btrfs_subvols
-
-		with fstab_path.open('r') as fp:
-			fstab = fp.readlines()
-
-		# Replace the {installation}/etc/fstab with entries
-		# using the compress=zstd where the mountpoint has compression set.
-		for index, line in enumerate(fstab):
-			# So first we grab the mount options by using subvol=.*? as a locator.
-			# And we also grab the mountpoint for the entry, for instance /var/log
-			subvoldef = re.findall(',.*?subvol=.*?[\t ]', line)
-			mountpoint = re.findall('[\t ]/.*?[\t ]', line)
-
-			if not subvoldef or not mountpoint:
-				continue
-
-			for sub_vol in btrfs_sub_vols:
-				# We then locate the correct subvolume and check if it's compressed,
-				# and skip entries where compression is already defined
-				# We then sneak in the compress=zstd option if it doesn't already exist:
-				if sub_vol.compress and str(sub_vol.mountpoint) == Path(
-					mountpoint[0].strip()) and ',compress=zstd,' not in line:
-					fstab[index] = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
-					break
-
-		with fstab_path.open('w') as fp:
-			fp.writelines(fstab)
-
-	def set_hostname(self, hostname: str) -> None:
+	def set_hostname(self, hostname: str):
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
@@ -837,8 +835,6 @@ class Installer:
 		if testing:
 			info("The testing flag is set. This system will be installed with testing repositories enabled.")
 			pacman_conf.enable(pacman.Repo.Testing)
-			if multilib:
-				pacman_conf.enable(pacman.Repo.MultilibTesting)
 		else:
 			info("The testing flag is not set. This system will be installed without testing repositories enabled.")
 
@@ -865,6 +861,7 @@ class Installer:
 		# sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
 		self.set_hostname(hostname)
 		self.set_locale(locale_config)
+		self.set_keyboard_language(locale_config.kb_layout)
 
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
@@ -1119,13 +1116,6 @@ class Installer:
 			f'# Created on: {self.init_time}'
 		)
 
-		microcode = []
-
-		if ucode := self._get_microcode():
-			microcode.append(f'initrd  /{ucode}')
-		else:
-			debug('Archinstall will not add any ucode to systemd-boot config.')
-
 		options = 'options ' + ' '.join(self._get_kernel_params(root))
 
 		for kernel in self.kernels:
@@ -1135,7 +1125,6 @@ class Installer:
 					*comments,
 					f'title   Arch Linux ({kernel}{variant})',
 					f'linux   /vmlinuz-{kernel}',
-					*microcode,
 					f'initrd  /initramfs-{kernel}{variant}.img',
 					options,
 				]
@@ -1166,12 +1155,7 @@ class Installer:
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
-		if boot_partition == root and root.mountpoint:
-			boot_dir = root.mountpoint / 'boot'
-		elif boot_partition.mountpoint:
-			boot_dir = boot_partition.mountpoint
-		else:
-			raise ValueError('Could not detect boot directory')
+		boot_dir = Path('/boot')
 
 		command = [
 			'/usr/bin/arch-chroot',
@@ -1189,8 +1173,9 @@ class Installer:
 			self.pacman.strap('efibootmgr')  # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			boot_dir_arg = []
-			if boot_partition != efi_partition:
-				boot_dir_arg.append(f'--boot-directory={boot_dir}')
+			if boot_partition.mountpoint and boot_partition.mountpoint != boot_dir:
+				boot_dir_arg.append(f'--boot-directory={boot_partition.mountpoint}')
+				boot_dir = boot_partition.mountpoint
 
 			add_options = [
 				'--target=x86_64-efi',
@@ -1282,7 +1267,10 @@ class Installer:
 				shutil.copy(limine_path / 'limine-bios.sys', self.target / 'boot')
 
 				# `limine bios-install` deploys the stage 1 and 2 to the disk.
-				SysCommand(f'/usr/bin/arch-chroot {self.target} limine bios-install {parent_dev_path}', peek_output=True)
+				SysCommand(
+					f'/usr/bin/arch-chroot {self.target} limine bios-install {parent_dev_path}',
+					peek_output=True
+				)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine on {parent_dev_path}: {err}')
 
@@ -1309,11 +1297,6 @@ Exec = /bin/sh -c "{hook_command}"
 		hook_path = hooks_dir / '99-limine.hook'
 		hook_path.write_text(hook_contents)
 
-		microcode = []
-
-		if ucode := self._get_microcode():
-			microcode = [f'MODULE_PATH=boot:///{ucode}']
-
 		kernel_params = ' '.join(self._get_kernel_params(root))
 		config_contents = 'TIMEOUT=5\n'
 
@@ -1322,7 +1305,6 @@ Exec = /bin/sh -c "{hook_command}"
 				entry = [
 					f'PROTOCOL=linux',
 					f'KERNEL_PATH=boot:///vmlinuz-{kernel}',
-					*microcode,
 					f'MODULE_PATH=boot:///initramfs-{kernel}{variant}.img',
 					f'CMDLINE={kernel_params}',
 				]
@@ -1355,15 +1337,7 @@ Exec = /bin/sh -c "{hook_command}"
 		if not uki_enabled:
 			loader = '/vmlinuz-{kernel}'
 
-			microcode = []
-
-			if ucode := self._get_microcode():
-				microcode.append(f'initrd=/{ucode}')
-			else:
-				debug('Archinstall will not add any ucode to firmware boot entry.')
-
 			entries = (
-				*microcode,
 				'initrd=/initramfs-{kernel}.img',
 				*self._get_kernel_params(root)
 			)
@@ -1406,8 +1380,6 @@ Exec = /bin/sh -c "{hook_command}"
 			kernel_parameters = self._get_kernel_params(root)
 			cmdline.write(' '.join(kernel_parameters) + '\n')
 
-		ucode = self._get_microcode()
-
 		diff_mountpoint = None
 
 		if efi_partition.mountpoint != Path('/efi'):
@@ -1422,10 +1394,8 @@ Exec = /bin/sh -c "{hook_command}"
 			config = preset.read_text().splitlines(True)
 
 			for index, line in enumerate(config):
-				if not ucode and line.startswith('ALL_microcode='):
-					config[index] = '#' + line
 				# Avoid storing redundant image file
-				elif m := image_re.match(line):
+				if m := image_re.match(line):
 					image = self.target / m.group(2)
 					image.unlink(missing_ok=True)
 					config[index] = '#' + m.group(1)
