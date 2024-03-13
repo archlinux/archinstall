@@ -32,11 +32,22 @@ boot_partition = disk.PartitionModification(
 device_modification.add_partition(boot_partition)
 
 # create a root partition
+total_size_value = device.device_info.total_size.value
+total_size_unit = device.device_info.total_size.unit
+
+root_partition_size = 20
+if total_size_unit == disk.Unit.GiB:
+	if 51 > total_size_value // 10 > 19:
+		root_partition_size = total_size_value // 10
+elif total_size_unit == disk.Unit.TiB:
+	# maximum part size
+	root_partition_size = 50
+
 root_partition = disk.PartitionModification(
 	status=disk.ModificationStatus.Create,
 	type=disk.PartitionType.Primary,
 	start=disk.Size(513, disk.Unit.MiB, device.device_info.sector_size),
-	length=disk.Size(20, disk.Unit.GiB, device.device_info.sector_size),
+	length=disk.Size(root_partition_size, disk.Unit.GiB, device.device_info.sector_size),
 	mountpoint=None,
 	fs_type=fs_type,
 	mount_options=[],
