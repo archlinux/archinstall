@@ -238,9 +238,21 @@ def suggest_single_disk_layout(
 	if not filesystem_type:
 		filesystem_type = select_main_filesystem_format(advanced_options)
 
+	# root partition size processing
+	total_device_size = device.device_info.total_size.convert(disk.Unit.GiB)
+	if total_device_size.value > 500:
+		# maximum size
+		root_partition_size_gib = 50
+	elif total_device_size.value < 200:
+		# minimum size
+		root_partition_size_gib = 20
+	else:
+		# 10% of total size
+		root_partition_size_gib = total_device_size.value // 10
+
 	sector_size = device.device_info.sector_size
 	min_size_to_allow_home_part = disk.Size(40, disk.Unit.GiB, sector_size)
-	root_partition_size = disk.Size(20, disk.Unit.GiB, sector_size)
+	root_partition_size = disk.Size(root_partition_size_gib, disk.Unit.GiB, sector_size)
 	using_subvolumes = False
 	using_home_partition = False
 	mount_options = []
