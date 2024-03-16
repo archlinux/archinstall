@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, TYPE_CHECKING, List, Optional
+from typing import Any, TYPE_CHECKING, List, Optional
 
 from .utils import get_password
 from ..menu import Menu, ListManager
 from ..models.users import User
-from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any
@@ -25,21 +24,6 @@ class UserList(ListManager):
 			str(_('Delete User'))
 		]
 		super().__init__(prompt, lusers, [self._actions[0]], self._actions[1:])
-
-	def reformat(self, data: List[User]) -> Dict[str, Any]:
-		table = FormattedOutput.as_table(data)
-		rows = table.split('\n')
-
-		# these are the header rows of the table and do not map to any User obviously
-		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
-		# the selectable rows so the header has to be aligned
-		display_data: Dict[str, Optional[User]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
-
-		for row, user in zip(rows[2:], data):
-			row = row.replace('|', '\\|')
-			display_data[row] = user
-
-		return display_data
 
 	def selected_action_display(self, user: User) -> str:
 		return user.username

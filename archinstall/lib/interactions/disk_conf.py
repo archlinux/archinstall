@@ -58,7 +58,7 @@ def select_devices(preset: List[disk.BDevice] = []) -> List[disk.BDevice]:
 		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection:
-			selected_device_info: List[disk._DeviceInfo] = choice.value  # type: ignore
+			selected_device_info: List[disk._DeviceInfo] = choice.single_value
 			selected_devices = []
 
 			for device in devices:
@@ -73,7 +73,6 @@ def get_default_partition_layout(
 	filesystem_type: Optional[disk.FilesystemType] = None,
 	advanced_option: bool = False
 ) -> List[disk.DeviceModification]:
-
 	if len(devices) == 1:
 		device_modification = suggest_single_disk_layout(
 			devices[0],
@@ -133,7 +132,7 @@ def select_disk_config(
 		case MenuSelectionType.Reset: return None
 		case MenuSelectionType.Selection:
 			if choice.single_value == pre_mount_mode:
-				output = "You will use whatever drive-setup is mounted at the specified directory\n"
+				output = 'You will use whatever drive-setup is mounted at the specified directory\n'
 				output += "WARNING: Archinstall won't check the suitability of this setup\n"
 
 				try:
@@ -151,7 +150,6 @@ def select_disk_config(
 				)
 
 			preset_devices = [mod.device for mod in preset.device_modifications] if preset else []
-
 			devices = select_devices(preset_devices)
 
 			if not devices:
@@ -177,6 +175,36 @@ def select_disk_config(
 	return None
 
 
+def select_lvm_config(
+	disk_config: disk.DiskLayoutConfiguration,
+	preset: Optional[disk.LvmConfiguration] = None,
+) -> Optional[disk.LvmConfiguration]:
+	default_mode = disk.LvmLayoutType.Default.display_msg()
+
+	options = [default_mode]
+
+	preset_value = preset.config_type.display_msg() if preset else None
+	warning = str(_('Are you sure you want to reset this setting?'))
+
+	choice = Menu(
+		_('Select a LVM option'),
+		options,
+		allow_reset=True,
+		allow_reset_warning_msg=warning,
+		sort=False,
+		preview_size=0.2,
+		preset_values=preset_value
+	).run()
+
+	match choice.type_:
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Reset: return None
+		case MenuSelectionType.Selection:
+			if choice.single_value == default_mode:
+				return suggest_lvm_layout(disk_config)
+	return preset
+
+
 def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.PartitionModification:
 	flags = [disk.PartitionFlag.Boot]
 	if using_gpt:
@@ -199,7 +227,7 @@ def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.Parti
 	)
 
 
-def select_main_filesystem_format(advanced_options=False) -> disk.FilesystemType:
+def select_main_filesystem_format(advanced_options: bool = False) -> disk.FilesystemType:
 	options = {
 		'btrfs': disk.FilesystemType.Btrfs,
 		'ext4': disk.FilesystemType.Ext4,
@@ -250,7 +278,6 @@ def suggest_single_disk_layout(
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
 		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
 		using_subvolumes = choice.value == Menu.yes()
-
 		mount_options = select_mount_options()
 
 	device_modification = disk.DeviceModification(device, wipe=True)
@@ -288,7 +315,11 @@ def suggest_single_disk_layout(
 	root_start = boot_partition.start + boot_partition.length
 
 	# Set a size for / (/root)
-	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
+	if (
+		using_subvolumes
+		or device_size_gib < min_size_to_allow_home_part
+		or not using_home_partition
+	):
 		root_length = device.device_info.total_size - root_start
 	else:
 		root_length = min(device.device_info.total_size, root_partition_size)
@@ -305,6 +336,7 @@ def suggest_single_disk_layout(
 		fs_type=filesystem_type,
 		mount_options=mount_options
 	)
+
 	device_modification.add_partition(root_partition)
 
 	if using_subvolumes:
@@ -388,9 +420,9 @@ def suggest_multi_disk_layout(
 
 	device_paths = ', '.join([str(d.device_info.path) for d in devices])
 
-	debug(f"Suggesting multi-disk-layout for devices: {device_paths}")
-	debug(f"/root: {root_device.device_info.path}")
-	debug(f"/home: {home_device.device_info.path}")
+	debug(f'Suggesting multi-disk-layout for devices: {device_paths}')
+	debug(f'/root: {root_device.device_info.path}')
+	debug(f'/home: {home_device.device_info.path}')
 
 	root_device_modification = disk.DeviceModification(root_device, wipe=True)
 	home_device_modification = disk.DeviceModification(home_device, wipe=True)
@@ -444,3 +476,85 @@ def suggest_multi_disk_layout(
 	home_device_modification.add_partition(home_partition)
 
 	return [root_device_modification, home_device_modification]
+
+
+def suggest_lvm_layout(
+	disk_config: disk.DiskLayoutConfiguration,
+	filesystem_type: Optional[disk.FilesystemType] = None,
+	vg_grp_name: str = 'ArchinstallVg',
+) -> disk.LvmConfiguration:
+	if disk_config.config_type != disk.DiskLayoutType.Default:
+		raise ValueError('LVM suggested volumes are only available for default partitioning')
+
+	using_subvolumes = False
+	btrfs_subvols = []
+	home_volume = True
+	mount_options = []
+
+	if not filesystem_type:
+		filesystem_type = select_main_filesystem_format()
+
+	if filesystem_type == disk.FilesystemType.Btrfs:
+		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
+		using_subvolumes = choice.value == Menu.yes()
+
+		mount_options = select_mount_options()
+
+	if using_subvolumes:
+		btrfs_subvols = [
+			disk.SubvolumeModification(Path('@'), Path('/')),
+			disk.SubvolumeModification(Path('@home'), Path('/home')),
+			disk.SubvolumeModification(Path('@log'), Path('/var/log')),
+			disk.SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
+			disk.SubvolumeModification(Path('@.snapshots'), Path('/.snapshots')),
+		]
+
+		home_volume = False
+
+	boot_part: Optional[disk.PartitionModification] = None
+	other_part: List[disk.PartitionModification] = []
+
+	for mod in disk_config.device_modifications:
+		for part in mod.partitions:
+			if part.is_boot():
+				boot_part = part
+			else:
+				other_part.append(part)
+
+	if not boot_part:
+		raise ValueError('Unable to find boot partition in partition modifications')
+
+	total_vol_available = sum(
+		[p.length for p in other_part],
+		disk.Size(0, disk.Unit.B, disk.SectorSize.default()),
+	)
+	root_vol_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
+	home_vol_size = total_vol_available - root_vol_size
+
+	lvm_vol_group = disk.LvmVolumeGroup(vg_grp_name, pvs=other_part, )
+
+	root_vol = disk.LvmVolume(
+		status=disk.LvmVolumeStatus.Create,
+		name='root',
+		fs_type=filesystem_type,
+		length=root_vol_size,
+		mountpoint=Path('/'),
+		btrfs_subvols=btrfs_subvols,
+		mount_options=mount_options
+	)
+
+	lvm_vol_group.volumes.append(root_vol)
+
+	if home_volume:
+		home_vol = disk.LvmVolume(
+			status=disk.LvmVolumeStatus.Create,
+			name='home',
+			fs_type=filesystem_type,
+			length=home_vol_size,
+			mountpoint=Path('/home'),
+		)
+
+		lvm_vol_group.volumes.append(home_vol)
+
+	return disk.LvmConfiguration(disk.LvmLayoutType.Default, [lvm_vol_group])

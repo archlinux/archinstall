@@ -60,7 +60,7 @@ class Luks2:
 		iter_time: int = 10000,
 		key_file: Optional[Path] = None
 	) -> Path:
-		info(f'Luks2 encrypting: {self.luks_dev_path}')
+		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
 		byte_password = self._password_bytes()
 
@@ -87,12 +87,15 @@ class Luks2:
 			'luksFormat', str(self.luks_dev_path),
 		])
 
+		debug(f'cryptsetup format: {cryptsetup_args}')
+
 		# Retry formatting the volume because archinstall can some times be too quick
 		# which generates a "Device /dev/sdX does not exist or access denied." between
 		# setting up partitions and us trying to encrypt it.
 		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS'] + 1):
 			try:
-				SysCommand(cryptsetup_args)
+				result = SysCommand(cryptsetup_args).decode()
+				debug(f'cryptsetup luksFormat output: {result}')
 				break
 			except SysCallError as err:
 				time.sleep(storage['DISK_TIMEOUTS'])
@@ -106,9 +109,12 @@ class Luks2:
 
 					self.lock()
 					# Then try again to set up the crypt-device
-					SysCommand(cryptsetup_args)
+					result = SysCommand(cryptsetup_args).decode()
+					debug(f'cryptsetup luksFormat output: {result}')
 				else:
 					raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {err}')
+
+		self.key_file = key_file
 
 		return key_file
 
@@ -152,7 +158,15 @@ class Luks2:
 		while Path(self.luks_dev_path).exists() is False and time.time() - wait_timer < 10:
 			time.sleep(0.025)
 
-		SysCommand(f'/usr/bin/cryptsetup open {self.luks_dev_path} {self.mapper_name} --key-file {key_file} --type luks2')
+		result = SysCommand(
+			'/usr/bin/cryptsetup open '
+			f'{self.luks_dev_path} '
+			f'{self.mapper_name} '
+			f'--key-file {key_file} '
+			f'--type luks2'
+		).decode()
+
+		debug(f'cryptsetup open output: {result}')
 
 		if not self.mapper_dev or not self.mapper_dev.is_symlink():
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
@@ -199,8 +213,8 @@ class Luks2:
 
 		key_file.parent.mkdir(parents=True, exist_ok=True)
 
-		with open(key_file, "w") as keyfile:
-			keyfile.write(generate_password(length=512))
+		pwd = generate_password(length=512)
+		key_file.write_text(pwd)
 
 		key_file.chmod(0o400)
 
@@ -208,7 +222,7 @@ class Luks2:
 		self._crypttab(crypttab_path, kf_path, options=["luks", "key-slot=1"])
 
 	def _add_key(self, key_file: Path):
-		info(f'Adding additional key-file {key_file}')
+		debug(f'Adding additional key-file {key_file}')
 
 		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
 		worker = SysCommandWorker(command, environment_vars={'LC_ALL': 'C'})
@@ -228,7 +242,7 @@ class Luks2:
 		key_file: Path,
 		options: List[str]
 	) -> None:
-		info(f'Adding crypttab entry for key {key_file}')
+		debug(f'Adding crypttab entry for key {key_file}')
 
 		with open(crypttab_path, 'a') as crypttab:
 			opt = ','.join(options)

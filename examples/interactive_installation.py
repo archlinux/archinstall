@@ -82,7 +82,7 @@ def perform_installation(mountpoint: Path):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	info('Starting installation')
+	info('Starting installation...')
 	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
 
 	# Retrieve list of additional repositories and set boolean values appropriately
