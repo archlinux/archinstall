@@ -7,9 +7,9 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class KdeProfile(XorgProfile):
+class PlasmaProfile(XorgProfile):
 	def __init__(self):
-		super().__init__('Kde', ProfileType.DesktopEnv, description='')
+		super().__init__('Plasma', ProfileType.DesktopEnv, description='')
 
 	@property
 	def packages(self) -> List[str]:
