@@ -129,7 +129,7 @@
                 ]
             },
             "details": {
-                "description": "Specific profile to be installed based on the 'main' selection; these profiles are present in profiles_v2/, use the name of a profile to install it (case insensitive)",
+                "description": "Specific profile to be installed based on the 'main' selection; these profiles are present in default_profiles/, use the file name of a profile without the extension to install it (case insensitive)",
                 "type": "string",
                 "enum": [
                     "awesome",
@@ -142,8 +142,7 @@
                     "enlightenment",
                     "gnome",
                     "i3-wm",
-                    "i3-gasp",
-                    "kde",
+                    "plasma",
                     "lxqt",
                     "mate",
                     "sway",
