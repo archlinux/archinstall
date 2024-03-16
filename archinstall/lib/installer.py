@@ -376,7 +376,7 @@ class Installer:
 			)
 
 			if gen_enc_file and not part_mod.is_root():
-				info(f'Creating key-file: {part_mod.dev_path}')
+				debug(f'Creating key-file: {part_mod.dev_path}')
 				luks_handler.create_keyfile(self.target)
 
 			if part_mod.is_root() and not gen_enc_file:

@@ -222,7 +222,7 @@ class Luks2:
 		self._crypttab(crypttab_path, kf_path, options=["luks", "key-slot=1"])
 
 	def _add_key(self, key_file: Path):
-		info(f'Adding additional key-file {key_file}')
+		debug(f'Adding additional key-file {key_file}')
 
 		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
 		worker = SysCommandWorker(command, environment_vars={'LC_ALL': 'C'})
@@ -242,7 +242,7 @@ class Luks2:
 		key_file: Path,
 		options: List[str]
 	) -> None:
-		info(f'Adding crypttab entry for key {key_file}')
+		debug(f'Adding crypttab entry for key {key_file}')
 
 		with open(crypttab_path, 'a') as crypttab:
 			opt = ','.join(options)
