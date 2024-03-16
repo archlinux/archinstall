@@ -495,8 +495,7 @@ class Installer:
 			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').output()
 		except SysCallError as err:
 			raise RequirementError(
-				f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}'
-			)
+				f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
 		with open(fstab_path, 'ab') as fp:
 			fp.write(gen_fstab)
@@ -1252,10 +1251,8 @@ class Installer:
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
-			hook_command = (
-				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/'
+			hook_command = f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/' \
 				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
-			)
 		else:
 			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
@@ -1267,17 +1264,12 @@ class Installer:
 				shutil.copy(limine_path / 'limine-bios.sys', self.target / 'boot')
 
 				# `limine bios-install` deploys the stage 1 and 2 to the disk.
-				SysCommand(
-					f'/usr/bin/arch-chroot {self.target} limine bios-install {parent_dev_path}',
-					peek_output=True
-				)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} limine bios-install {parent_dev_path}', peek_output=True)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine on {parent_dev_path}: {err}')
 
-			hook_command = (
-				f'/usr/bin/limine bios-install {parent_dev_path}'
+			hook_command = f'/usr/bin/limine bios-install {parent_dev_path}' \
 				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/'
-			)
 
 		hook_contents = f'''[Trigger]
 Operation = Install

@@ -622,48 +622,35 @@ class FilesystemType(Enum):
 	@property
 	def fs_type_mount(self) -> str:
 		match self:
-			case FilesystemType.Ntfs:
-				return 'ntfs3'
-			case FilesystemType.Fat32:
-				return 'vfat'
-			case _:
-				return self.value  # type: ignore
+			case FilesystemType.Ntfs: return 'ntfs3'
+			case FilesystemType.Fat32: return 'vfat'
+			case _: return self.value  # type: ignore
 
 	@property
 	def installation_pkg(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs:
-				return 'btrfs-progs'
-			case FilesystemType.Xfs:
-				return 'xfsprogs'
-			case FilesystemType.F2fs:
-				return 'f2fs-tools'
-			case _:
-				return None
+			case FilesystemType.Btrfs: return 'btrfs-progs'
+			case FilesystemType.Xfs: return 'xfsprogs'
+			case FilesystemType.F2fs: return 'f2fs-tools'
+			case _: return None
 
 	@property
 	def installation_module(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs:
-				return 'btrfs'
-			case _:
-				return None
+			case FilesystemType.Btrfs: return 'btrfs'
+			case _: return None
 
 	@property
 	def installation_binary(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs:
-				return '/usr/bin/btrfs'
-			case _:
-				return None
+			case FilesystemType.Btrfs: return '/usr/bin/btrfs'
+			case _: return None
 
 	@property
 	def installation_hooks(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs:
-				return 'btrfs'
-			case _:
-				return None
+			case FilesystemType.Btrfs: return 'btrfs'
+			case _: return None
 
 
 class ModificationStatus(Enum):
@@ -1220,14 +1207,12 @@ class DiskEncryption:
 		if self.encryption_type == EncryptionType.LuksOnLvm and not self.lvm_volumes:
 			raise ValueError('LuksOnLvm encryption require LMV volumes to be defined')
 
-	def should_generate_encryption_file(
-		self,
-		dev: PartitionModification | LvmVolume
-	) -> bool:
+	def should_generate_encryption_file(self, dev: PartitionModification | LvmVolume) -> bool:
 		if isinstance(dev, PartitionModification):
 			return dev in self.partitions and dev.mountpoint != Path('/')
-		else:
+		elif isinstance(dev, LvmVolume):
 			return dev in self.lvm_volumes and dev.mountpoint != Path('/')
+		return False
 
 	def json(self) -> Dict[str, Any]:
 		obj: Dict[str, Any] = {

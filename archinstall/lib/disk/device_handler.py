@@ -137,11 +137,8 @@ class DeviceHandler(object):
 	def get_unique_path_for_device(self, dev_path: Path) -> Optional[Path]:
 		paths = Path('/dev/disk/by-id').glob('*')
 		linked_targets = {p.resolve(): p for p in paths}
-		linked_wwn_targets = {}
-
-		for p in linked_targets:
-			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.'):
-				linked_wwn_targets[p] = linked_targets[p]
+		linked_wwn_targets = {p: linked_targets[p] for p in linked_targets
+			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
 
 		if dev_path in linked_wwn_targets:
 			return linked_wwn_targets[dev_path]
@@ -502,20 +499,11 @@ class DeviceHandler(object):
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
+		# the partition has a path now that it has been added
+		part_mod.dev_path = Path(partition.path)
+
 	def fetch_part_info(self, path: Path) -> LsblkInfo:
-		attempts = 3
-		lsblk_info: Optional[LsblkInfo] = None
-
-		for attempt_nr in range(attempts):
-			time.sleep(attempt_nr + 1)
-			lsblk_info = get_lsblk_info(path)
-
-			if lsblk_info.partn and lsblk_info.partuuid and lsblk_info.uuid:
-				break
-
-		if not lsblk_info:
-			debug(f'Unable to get partition information: {path}')
-			raise DiskError(f'Unable to get partition information: {path}')
+		lsblk_info = get_lsblk_info(path)
 
 		if not lsblk_info.partn:
 			debug(f'Unable to determine new partition number: {path}\n{lsblk_info}')
@@ -780,8 +768,7 @@ class DeviceHandler(object):
 			SysCommand(command)
 		except SysCallError as err:
 			if 'have been written, but we have been unable to inform the kernel of the change' in str(err):
-				log(f"Partprobe was not able to inform the kernel of the new disk state (ignoring error): {err}",
-					fg="gray", level=logging.INFO)
+				log(f"Partprobe was not able to inform the kernel of the new disk state (ignoring error): {err}", fg="gray", level=logging.INFO)
 			else:
 				error(f'"{command}" failed to run (continuing anyway): {err}')
 
