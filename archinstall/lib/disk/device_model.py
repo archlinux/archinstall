@@ -32,12 +32,9 @@ class DiskLayoutType(Enum):
 
 	def display_msg(self) -> str:
 		match self:
-			case DiskLayoutType.Default:
-				return str(_('Use a best-effort default partition layout'))
-			case DiskLayoutType.Manual:
-				return str(_('Manual Partitioning'))
-			case DiskLayoutType.Pre_mount:
-				return str(_('Pre-mounted configuration'))
+			case DiskLayoutType.Default: return str(_('Use a best-effort default partition layout'))
+			case DiskLayoutType.Manual: return str(_('Manual Partitioning'))
+			case DiskLayoutType.Pre_mount: return str(_('Pre-mounted configuration'))
 
 
 @dataclass

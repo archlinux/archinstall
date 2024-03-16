@@ -51,7 +51,7 @@ def select_devices(preset: List[disk.BDevice] = []) -> List[disk.BDevice]:
 		preview_title=str(_('Existing Partitions')),
 		preview_size=0.2,
 		allow_reset=True,
-		allow_reset_warning_msg=warning,
+		allow_reset_warning_msg=warning
 	).run()
 
 	match choice.type_:
@@ -149,16 +149,14 @@ def select_disk_config(
 					mountpoint=path
 				)
 
-			preset_devices = ([mod.device for mod in preset.device_modifications] if preset else [])
+			preset_devices = [mod.device for mod in preset.device_modifications] if preset else []
 			devices = select_devices(preset_devices)
 
 			if not devices:
 				return None
 
 			if choice.value == default_layout:
-				modifications = get_default_partition_layout(
-					devices, advanced_option=advanced_option
-				)
+				modifications = get_default_partition_layout(devices, advanced_option=advanced_option)
 				if modifications:
 					return disk.DiskLayoutConfiguration(
 						config_type=disk.DiskLayoutType.Default,
@@ -350,7 +348,7 @@ def suggest_single_disk_layout(
 			disk.SubvolumeModification(Path('@home'), Path('/home')),
 			disk.SubvolumeModification(Path('@log'), Path('/var/log')),
 			disk.SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
-			disk.SubvolumeModification(Path('@.snapshots'), Path('/.snapshots')),
+			disk.SubvolumeModification(Path('@.snapshots'), Path('/.snapshots'))
 		]
 		root_partition.btrfs_subvols = subvolumes
 	elif using_home_partition:
@@ -412,10 +410,8 @@ def suggest_multi_disk_layout(
 
 	if home_device is None or root_device is None:
 		text = _('The selected drives do not have the minimum capacity required for an automatic suggestion\n')
-		text += _('Minimum capacity for /home partition: {}GiB\n').format(
-			min_home_partition_size.format_size(disk.Unit.GiB))
-		text += _('Minimum capacity for Arch Linux partition: {}GiB').format(
-			desired_root_partition_size.format_size(disk.Unit.GiB))
+		text += _('Minimum capacity for /home partition: {}GiB\n').format(min_home_partition_size.format_size(disk.Unit.GiB))
+		text += _('Minimum capacity for Arch Linux partition: {}GiB').format(desired_root_partition_size.format_size(disk.Unit.GiB))
 		Menu(str(text), [str(_('Continue'))], skip=False).run()
 		return []
 

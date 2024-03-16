@@ -187,25 +187,16 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 			EncryptionType.type_to_text(EncryptionType.LuksOnLvm)
 		]
 	else:
-		options = [
-			EncryptionType.type_to_text(EncryptionType.Luks)
-		]
+		options = [EncryptionType.type_to_text(EncryptionType.Luks)]
 
 	preset_value = EncryptionType.type_to_text(preset)
 
-	choice = Menu(
-		title,
-		options,
-		preset_values=preset_value
-	).run()
+	choice = Menu(title, options, preset_values=preset_value).run()
 
 	match choice.type_:
-		case MenuSelectionType.Reset:
-			return None
-		case MenuSelectionType.Skip:
-			return preset
-		case MenuSelectionType.Selection:
-			return EncryptionType.text_to_type(choice.value)  # type: ignore
+		case MenuSelectionType.Reset: return None
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Selection: return EncryptionType.text_to_type(choice.value)  # type: ignore
 
 
 def select_encrypted_password() -> Optional[str]:
