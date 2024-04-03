@@ -903,7 +903,7 @@ msgid "Partition"
 msgstr "Partition"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr "Cette partition est actuellement cryptée, pour la formater, un système de fichiers doit être spécifié"
+msgstr "Cette partition est actuellement chiffrée, pour la formater, un système de fichiers doit être spécifié"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr "Les points de montage de partition sont relatifs à l'intérieur de l'installation, le démarrage serait /boot par exemple."
@@ -975,7 +975,7 @@ msgid "← Back"
 msgstr "← Retour"
 
 msgid "Disk encryption"
-msgstr "Cryptage du disque"
+msgstr "Chiffrement du disque"
 
 msgid "Configuration"
 msgstr "Configuration"

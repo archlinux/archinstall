@@ -178,15 +178,28 @@ class Profile:
 
 	def preview_text(self) -> Optional[str]:
 		"""
-		Used for preview text in profiles_bck. If a description is set for a
-		profile it will automatically display that one in the preview.
-		If no preview or a different text should be displayed just
+		Override this method to provide a preview text for the profile
 		"""
-		if self.description:
-			return self.description
-		return None
+		return self.packages_text()
 
-	def packages_text(self) -> str:
+	def packages_text(self, include_sub_packages: bool = False) -> Optional[str]:
 		header = str(_('Installed packages'))
-		output = format_cols(self.packages, header)
-		return output
+
+		text = ''
+		packages = []
+
+		if self.packages:
+			packages = self.packages
+
+		if include_sub_packages:
+			for p in self.current_selection:
+				if p.packages:
+					packages += p.packages
+
+		text += format_cols(sorted(set(packages)))
+
+		if text:
+			text = f'{header}: \n{text}'
+			return text
+
+		return None

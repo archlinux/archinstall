@@ -55,8 +55,9 @@ class FilesystemHandler:
 			device_handler.format(mod, enc_conf=self._enc_config)
 
 			for part_mod in mod.partitions:
-				if part_mod.fs_type == FilesystemType.Btrfs:
-					device_handler.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
+				if part_mod.is_create_or_modify():
+					if part_mod.fs_type == FilesystemType.Btrfs:
+						device_handler.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
 
 	def _do_countdown(self) -> bool:
 		SIG_TRIGGER = False

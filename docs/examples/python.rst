@@ -38,7 +38,7 @@ To do this, we'll begin by importing :code:`archinstall` in our "`scripts`_:code
     print(archinstall.disk.device_handler.devices)
 
 Now, go ahead and reference the :ref:`installing.python.manual` installation method.
-After runnig ``python -m archinstall test_installer`` it should print something that looks like:
+After running ``python -m archinstall test_installer`` it should print something that looks like:
 
 .. code-block:: text
 
