@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
+from dataclasses import dataclass
 
 from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
 	ModificationStatus, DeviceGeometry, SectorSize, BtrfsMountOption
@@ -13,6 +14,12 @@ from .subvolume_menu import SubvolumeMenu
 
 if TYPE_CHECKING:
 	_: Any
+
+
+@dataclass
+class DefaultFreeSector:
+	start: Size
+	end: Size
 
 
 class PartitioningList(ListManager):
@@ -284,21 +291,27 @@ class PartitioningList(ListManager):
 		prompt += str(_('If no unit is provided, the value is interpreted as sectors')) + '\n'
 		print(prompt)
 
-		largest_free_area: DeviceGeometry = max(device_info.free_space_regions, key=lambda r: r.get_length())
+		default_free_sector = self._find_default_free_space()
+
+		if not default_free_sector:
+			default_free_sector = DefaultFreeSector(
+				Size(0, Unit.sectors, self._device.device_info.sector_size),
+				Size(0, Unit.sectors, self._device.device_info.sector_size)
+			)
 
 		# prompt until a valid start sector was entered
-		default_start = Size(largest_free_area.start, Unit.sectors, device_info.sector_size)
-		start_prompt = str(_('Enter start (default: sector {}): ')).format(largest_free_area.start)
+		start_prompt = str(_('Enter start (default: sector {}): ')).format(default_free_sector.start.value)
+
 		start_size = self._enter_size(
 			device_info.sector_size,
 			device_info.total_size,
 			start_prompt,
-			default_start,
+			default_free_sector.start,
 			None
 		)
 
-		if start_size.value == largest_free_area.start:
-			end_size = Size(largest_free_area.end, Unit.sectors, device_info.sector_size)
+		if start_size.value == default_free_sector.start.value and default_free_sector.end.value != 0:
+			end_size = default_free_sector.end
 		else:
 			end_size = device_info.total_size
 
@@ -313,6 +326,44 @@ class PartitioningList(ListManager):
 		)
 
 		return start_size, end_size
+
+	def _find_default_free_space(self) -> Optional[DefaultFreeSector]:
+		device_info = self._device.device_info
+
+		largest_free_area: Optional[DeviceGeometry] = None
+		largest_deleted_area: Optional[PartitionModification] = None
+
+		if len(device_info.free_space_regions) > 0:
+			largest_free_area = max(device_info.free_space_regions, key=lambda r: r.get_length())
+
+		deleted_partitions = list(filter(lambda x: x.status == ModificationStatus.Delete, self._data))
+		if len(deleted_partitions) > 0:
+			largest_deleted_area = max(deleted_partitions, key=lambda p: p.length)
+
+		def _free_space(space: DeviceGeometry) -> DefaultFreeSector:
+			start = Size(space.start, Unit.sectors, device_info.sector_size)
+			end = Size(space.end, Unit.sectors, device_info.sector_size)
+			return DefaultFreeSector(start, end)
+
+		def _free_deleted(space: PartitionModification) -> DefaultFreeSector:
+			start = space.start.convert(Unit.sectors, self._device.device_info.sector_size)
+			end = space.end.convert(Unit.sectors, self._device.device_info.sector_size)
+			return DefaultFreeSector(start, end)
+
+		if not largest_deleted_area and largest_free_area:
+			return _free_space(largest_free_area)
+		elif not largest_free_area and largest_deleted_area:
+			return _free_deleted(largest_deleted_area)
+		elif not largest_deleted_area and not largest_free_area:
+			return None
+		elif largest_free_area and largest_deleted_area:
+			free_space = _free_space(largest_free_area)
+			if free_space.start > largest_deleted_area.start:
+				return free_space
+			else:
+				return _free_deleted(largest_deleted_area)
+
+		return None
 
 	def _create_new_partition(self) -> PartitionModification:
 		fs_type = self._prompt_partition_fs_type()
