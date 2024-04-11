@@ -4,7 +4,7 @@
 # These jobs should leverage the same tag as that runner. If necessary, change the tag from 'docker' to the one it uses.
 # All jobs will be run in the official archlinux container image, so we will declare that here.
 
-image: archlinux:latest
+image: archlinux/archlinux:latest
 
 # This can be used to handle common actions. In this case, we do a pacman -Sy to make sure repos are ready to use.
 before_script:
