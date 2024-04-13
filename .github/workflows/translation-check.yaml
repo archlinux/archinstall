@@ -10,7 +10,7 @@
 #    translation-check:
 #        runs-on: ubuntu-latest
 #        container:
-#            image: archlinux:latest
+#            image: archlinux/archlinux:latest
 #        steps:
 #            - uses: actions/checkout@v4
 #            - run: pacman --noconfirm -Syu python git diffutils

@@ -18,7 +18,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     container:
-      image: archlinux:latest
+      image: archlinux/archlinux:latest
       options: --privileged
     steps:
       - uses: actions/checkout@v4
