@@ -107,7 +107,7 @@ class DiskLayoutConfiguration:
 			for partition in entry.get('partitions', []):
 				device_partition = PartitionModification(
 					status=ModificationStatus(partition['status']),
-					fs_type=FilesystemType(partition['fs_type']),
+					fs_type=FilesystemType(partition['fs_type']) if partition.get('fs_type') else None,
 					start=Size.parse_args(partition['start']),
 					length=Size.parse_args(partition['size']),
 					mount_options=partition['mount_options'],
@@ -652,7 +652,7 @@ class PartitionModification:
 	type: PartitionType
 	start: Size
 	length: Size
-	fs_type: Optional[FilesystemType]
+	fs_type: Optional[FilesystemType] = None
 	mountpoint: Optional[Path] = None
 	mount_options: List[str] = field(default_factory=list)
 	flags: List[PartitionFlag] = field(default_factory=list)
@@ -799,7 +799,7 @@ class PartitionModification:
 			'type': self.type.value,
 			'start': self.start.json(),
 			'size': self.length.json(),
-			'fs_type': self.fs_type.value if self.fs_type else '',
+			'fs_type': self.fs_type.value if self.fs_type else None,
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
