@@ -1236,6 +1236,20 @@ msgstr "Perfiles seleccionados: "
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "La sincronización de hora no se completa mientras espera - consulte los documentos para encontrar soluciones: https://archinstall.readthedocs.io/"
 
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "Marcar/Desmarcar como arrancable"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "¿Te gustaría usar la compresión BTRFS?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
 

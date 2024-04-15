@@ -1235,5 +1235,27 @@ msgstr "Pulando a espera pela sincronização automática de fuso horário (isso
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Aguardando a sincronização do Arch Linux Keyring (archlinux-keyring-wkd-sync) ser concluída."
 
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "Deletar perfil"
+
+#, fuzzy
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Sincronização de fuso horário não concluída, enquanto você espera - confira a documentação para soluções alternativas: https://archinstall.readthedocs.io/"
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "Marcar/desmarcar como inicializável"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Deseja usar a compressão BTRFS?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

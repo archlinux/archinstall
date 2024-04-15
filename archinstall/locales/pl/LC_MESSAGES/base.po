@@ -1251,7 +1251,6 @@ msgstr "Nieprawidłowa wartość! Spróbuj wprowadzić wartość od 1 do {}, lub
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Hyprland potrzebuje dostępu do twojego stanowia (sprzętu, np. klawiatury, myszki)"
 
-
 msgid ""
 "\n"
 "\n"
@@ -1263,7 +1262,6 @@ msgstr ""
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "Do wszystkich wybranych wartości może być podana jednostka: % B, KB, KiB, MB, MiB..."
-
 
 #, fuzzy
 msgid "Would you like to use unified kernel images?"
@@ -1283,6 +1281,28 @@ msgstr "Pomiń Oczekiwanie na automatyczną synchronizację czasu (może spowodo
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Oczekiwanie na synchronizację Arch Linux keyring (archlinux-keyring-wkd-sync)."
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "Usuń interfejs"
+
+#, fuzzy
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Synchronizacja czasu w toku. Oczekując - sprawdź dokumentacje: https://archinstall.readthedocs.io/"
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "Zaznacz/Odznacz jako bootowalne"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Czy chcesz użyć kompresji BTRFS?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
