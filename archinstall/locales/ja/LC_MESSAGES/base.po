@@ -1232,6 +1232,9 @@ msgstr "選択したプロファイル: "
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "待機中に時刻同期が完了しません - 回避策についてはドキュメントを確認してください: https://archinstall.readthedocs.io/"
 
+msgid "Mark/Unmark as nodatacow"
+msgstr "nodatacow としてマーク/マーク解除"
+
 msgid "Would you like to use compression or disable CoW?"
 msgstr "圧縮を使用しますか、それとも CoW を無効にしますか？"
 
@@ -1240,6 +1243,3 @@ msgstr "圧縮する"
 
 msgid "Disable Copy-on-Write"
 msgstr "コピーオンライトを無効にする"
-
-msgid "Mark/Unmark as nodatacow"
-msgstr "nodatacow としてマーク/マーク解除"

@@ -1264,3 +1264,15 @@ msgid ""
 "Time synchronization not completing, while you wait - check the docs for "
 "workarounds: https://archinstall.readthedocs.io/"
 msgstr ""
+
+msgid "Mark/Unmark as nodatacow"
+msgstr ""
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr ""
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""

@@ -1225,3 +1225,24 @@ msgstr ""
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "删除配置文件"
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "将分区标记/取消标记为可引导"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "您想使用 BTRFS 压缩吗？"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""
