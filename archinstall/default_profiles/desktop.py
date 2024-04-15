@@ -24,6 +24,8 @@ class DesktopProfile(Profile):
 	def packages(self) -> List[str]:
 		return [
 			'nano',
+			'nftables',
+			'firewalld',
 			'vim',
 			'openssh',
 			'htop',
