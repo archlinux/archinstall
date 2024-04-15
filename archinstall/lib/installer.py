@@ -52,7 +52,7 @@ class Installer:
 		`Installer()` is the wrapper for most basic installation steps.
 		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
 		"""
-		self.base_packages = base_packages or __packages__[:3]
+		self._base_packages = base_packages or __packages__[:3]
 		self.kernels = kernels or ['linux']
 		self._disk_config = disk_config
 
@@ -64,11 +64,11 @@ class Installer:
 		self.helper_flags: Dict[str, Any] = {'base': False, 'bootloader': None}
 
 		for kernel in self.kernels:
-			self.base_packages.append(kernel)
+			self._base_packages.append(kernel)
 
 		# If using accessibility tools in the live environment, append those to the packages list
 		if accessibility_tools_in_use():
-			self.base_packages.extend(__accessibility_packages__)
+			self._base_packages.extend(__accessibility_packages__)
 
 		self.post_base_install: List[Callable] = []
 
@@ -90,6 +90,8 @@ class Installer:
 		self._fstab_entries: List[str] = []
 
 		self._zram_enabled = False
+		self._disable_fstrim = False
+
 		self.pacman = Pacman(self.target, storage['arguments'].get('silent', False))
 
 	def __enter__(self) -> 'Installer':
@@ -198,31 +200,71 @@ class Installer:
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
-		info('Mounting partitions in order')
+		debug('Mounting ordered layout')
+
+		luks_handlers: Dict[Any, Luks2] = {}
+
+		match self._disk_encryption.encryption_type:
+			case disk.EncryptionType.NoEncryption:
+				self._mount_lvm_layout()
+			case disk.EncryptionType.Luks:
+				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
+			case disk.EncryptionType.LvmOnLuks:
+				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
+				self._import_lvm()
+				self._mount_lvm_layout(luks_handlers)
+			case disk.EncryptionType.LuksOnLvm:
+				self._import_lvm()
+				luks_handlers = self._prepare_luks_lvm(self._disk_encryption.lvm_volumes)
+				self._mount_lvm_layout(luks_handlers)
+
+		# mount all regular partitions
+		self._mount_partition_layout(luks_handlers)
+
+	def _mount_partition_layout(self, luks_handlers: Dict[Any, Luks2]):
+		debug('Mounting partition layout')
+
+		# do not mount any PVs part of the LVM configuration
+		pvs = []
+		if self._disk_config.lvm_config:
+			pvs = self._disk_config.lvm_config.get_all_pvs()
 
 		for mod in self._disk_config.device_modifications:
+			not_pv_part_mods = list(filter(lambda x: x not in pvs, mod.partitions))
+
 			# partitions have to mounted in the right order on btrfs the mountpoint will
 			# be empty as the actual subvolumes are getting mounted instead so we'll use
 			# '/' just for sorting
-			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint or Path('/'))
-
-			enc_partitions = []
-			if self._disk_encryption.encryption_type is not disk.EncryptionType.NoEncryption:
-				enc_partitions = list(set(sorted_part_mods) & set(self._disk_encryption.partitions))
-
-			# attempt to decrypt all luks partitions
-			luks_handlers = self._prepare_luks_partitions(enc_partitions)
+			sorted_part_mods = sorted(not_pv_part_mods, key=lambda x: x.mountpoint or Path('/'))
 
 			for part_mod in sorted_part_mods:
 				if luks_handler := luks_handlers.get(part_mod):
-					# mount encrypted partition
 					self._mount_luks_partition(part_mod, luks_handler)
 				else:
-					# partition is not encrypted
 					self._mount_partition(part_mod)
 
-	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[
-		disk.PartitionModification, Luks2]:
+	def _mount_lvm_layout(self, luks_handlers: Dict[Any, Luks2] = {}):
+		lvm_config = self._disk_config.lvm_config
+
+		if not lvm_config:
+			debug('No lvm config defined to be mounted')
+			return
+
+		debug('Mounting LVM layout')
+
+		for vg in lvm_config.vol_groups:
+			sorted_vol = sorted(vg.volumes, key=lambda x: x.mountpoint or Path('/'))
+
+			for vol in sorted_vol:
+				if luks_handler := luks_handlers.get(vol):
+					self._mount_luks_volume(vol, luks_handler)
+				else:
+					self._mount_lvm_vol(vol)
+
+	def _prepare_luks_partitions(
+		self,
+		partitions: List[disk.PartitionModification]
+	) -> Dict[disk.PartitionModification, Luks2]:
 		return {
 			part_mod: disk.device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
@@ -231,6 +273,33 @@ class Installer:
 			)
 			for part_mod in partitions
 			if part_mod.mapper_name and part_mod.dev_path
+		}
+
+	def _import_lvm(self):
+		lvm_config = self._disk_config.lvm_config
+
+		if not lvm_config:
+			debug('No lvm config defined to be imported')
+			return
+
+		for vg in lvm_config.vol_groups:
+			disk.device_handler.lvm_import_vg(vg)
+
+			for vol in vg.volumes:
+				disk.device_handler.lvm_vol_change(vol, True)
+
+	def _prepare_luks_lvm(
+		self,
+		lvm_volumes: List[disk.LvmVolume]
+	) -> Dict[disk.LvmVolume, Luks2]:
+		return {
+			vol: disk.device_handler.unlock_luks2_dev(
+				vol.dev_path,
+				vol.mapper_name,
+				self._disk_encryption.encryption_password
+			)
+			for vol in lvm_volumes
+			if vol.mapper_name and vol.dev_path
 		}
 
 	def _mount_partition(self, part_mod: disk.PartitionModification):
@@ -246,14 +315,32 @@ class Installer:
 				part_mod.mount_options
 			)
 
+	def _mount_lvm_vol(self, volume: disk.LvmVolume):
+		if volume.fs_type != disk.FilesystemType.Btrfs:
+			if volume.mountpoint and volume.dev_path:
+				target = self.target / volume.relative_mountpoint
+				disk.device_handler.mount(volume.dev_path, target, options=volume.mount_options)
+
+		if volume.fs_type == disk.FilesystemType.Btrfs and volume.dev_path:
+			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols, volume.mount_options)
+
 	def _mount_luks_partition(self, part_mod: disk.PartitionModification, luks_handler: Luks2):
-		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
-		if part_mod.mountpoint and luks_handler.mapper_dev:
-			target = self.target / part_mod.relative_mountpoint
-			disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+		if part_mod.fs_type != disk.FilesystemType.Btrfs:
+			if part_mod.mountpoint and luks_handler.mapper_dev:
+				target = self.target / part_mod.relative_mountpoint
+				disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
 		if part_mod.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
-			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols)
+			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
+
+	def _mount_luks_volume(self, volume: disk.LvmVolume, luks_handler: Luks2):
+		if volume.fs_type != disk.FilesystemType.Btrfs:
+			if volume.mountpoint and luks_handler.mapper_dev:
+				target = self.target / volume.relative_mountpoint
+				disk.device_handler.mount(luks_handler.mapper_dev, target, options=volume.mount_options)
+
+		if volume.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
+			self._mount_btrfs_subvol(luks_handler.mapper_dev, volume.btrfs_subvols, volume.mount_options)
 
 	def _mount_btrfs_subvol(
 		self,
@@ -262,13 +349,23 @@ class Installer:
 		mount_options: List[str] = []
 	):
 		for subvol in subvolumes:
-			disk.device_handler.mount(
-				dev_path,
-				self.target / subvol.relative_mountpoint,
-				options=mount_options + [f'subvol={subvol.name}']
-			)
+			mountpoint = self.target / subvol.relative_mountpoint
+			mount_options = mount_options + [f'subvol={subvol.name}']
+			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
 
 	def generate_key_files(self):
+		match self._disk_encryption.encryption_type:
+			case disk.EncryptionType.Luks:
+				self._generate_key_files_partitions()
+			case disk.EncryptionType.LuksOnLvm:
+				self._generate_key_file_lvm_volumes()
+			case disk.EncryptionType.LvmOnLuks:
+				# currently LvmOnLuks only supports a single
+				# partitioning layout (boot + partition)
+				# so we won't need any keyfile generation atm
+				pass
+
+	def _generate_key_files_partitions(self):
 		for part_mod in self._disk_encryption.partitions:
 			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
 
@@ -279,14 +376,36 @@ class Installer:
 			)
 
 			if gen_enc_file and not part_mod.is_root():
-				info(f'Creating key-file: {part_mod.dev_path}')
+				debug(f'Creating key-file: {part_mod.dev_path}')
 				luks_handler.create_keyfile(self.target)
 
 			if part_mod.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
 					disk.Fido2.fido2_enroll(
 						self._disk_encryption.hsm_device,
-						part_mod,
+						part_mod.safe_dev_path,
+						self._disk_encryption.encryption_password
+					)
+
+	def _generate_key_file_lvm_volumes(self):
+		for vol in self._disk_encryption.lvm_volumes:
+			gen_enc_file = self._disk_encryption.should_generate_encryption_file(vol)
+
+			luks_handler = Luks2(
+				vol.safe_dev_path,
+				mapper_name=vol.mapper_name,
+				password=self._disk_encryption.encryption_password
+			)
+
+			if gen_enc_file and not vol.is_root():
+				info(f'Creating key-file: {vol.dev_path}')
+				luks_handler.create_keyfile(self.target)
+
+			if vol.is_root() and not gen_enc_file:
+				if self._disk_encryption.hsm_device:
+					disk.Fido2.fido2_enroll(
+						self._disk_encryption.hsm_device,
+						vol.safe_dev_path,
 						self._disk_encryption.encryption_password
 					)
 
@@ -393,7 +512,7 @@ class Installer:
 			for entry in self._fstab_entries:
 				fp.write(f'{entry}\n')
 
-	def set_hostname(self, hostname: str, *args: str, **kwargs: str) -> None:
+	def set_hostname(self, hostname: str):
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
@@ -444,7 +563,7 @@ class Installer:
 		(self.target / 'etc/locale.conf').write_text(f'LANG={lang_value}\n')
 		return True
 
-	def set_timezone(self, zone: str, *args: str, **kwargs: str) -> bool:
+	def set_timezone(self, zone: str) -> bool:
 		if not zone:
 			return True
 		if not len(zone):
@@ -532,7 +651,7 @@ class Installer:
 				if enable_services:
 					# If we haven't installed the base yet (function called pre-maturely)
 					if self.helper_flags.get('base', False) is False:
-						self.base_packages.append('iwd')
+						self._base_packages.append('iwd')
 
 						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
@@ -608,6 +727,79 @@ class Installer:
 				return vendor.get_ucode()
 		return None
 
+	def _handle_partition_installation(self):
+		pvs = []
+		if self._disk_config.lvm_config:
+			pvs = self._disk_config.lvm_config.get_all_pvs()
+
+		for mod in self._disk_config.device_modifications:
+			for part in mod.partitions:
+				if part in pvs or part.fs_type is None:
+					continue
+
+				if (pkg := part.fs_type.installation_pkg) is not None:
+					self._base_packages.append(pkg)
+				if (module := part.fs_type.installation_module) is not None:
+					self._modules.append(module)
+				if (binary := part.fs_type.installation_binary) is not None:
+					self._binaries.append(binary)
+
+				# https://github.com/archlinux/archinstall/issues/1837
+				if part.fs_type.fs_type_mount == 'btrfs':
+					self._disable_fstrim = True
+
+				# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
+				if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
+					if 'fsck' in self._hooks:
+						self._hooks.remove('fsck')
+
+				if part in self._disk_encryption.partitions:
+					if self._disk_encryption.hsm_device:
+						# Required by mkinitcpio to add support for fido2-device options
+						self.pacman.strap('libfido2')
+
+						if 'sd-encrypt' not in self._hooks:
+							self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
+					else:
+						if 'encrypt' not in self._hooks:
+							self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
+
+	def _handle_lvm_installation(self):
+		if not self._disk_config.lvm_config:
+			return
+
+		self.add_additional_packages('lvm2')
+		self._hooks.insert(self._hooks.index('filesystems') - 1, 'lvm2')
+
+		for vg in self._disk_config.lvm_config.vol_groups:
+			for vol in vg.volumes:
+				if vol.fs_type is not None:
+					if (pkg := vol.fs_type.installation_pkg) is not None:
+						self._base_packages.append(pkg)
+					if (module := vol.fs_type.installation_module) is not None:
+						self._modules.append(module)
+					if (binary := vol.fs_type.installation_binary) is not None:
+						self._binaries.append(binary)
+
+					if vol.fs_type.fs_type_mount == 'btrfs':
+						self._disable_fstrim = True
+
+					# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
+					if vol.fs_type.fs_type_mount == 'ntfs3' and vol.mountpoint == self.target:
+						if 'fsck' in self._hooks:
+							self._hooks.remove('fsck')
+
+		if self._disk_encryption.encryption_type in [disk.EncryptionType.LvmOnLuks, disk.EncryptionType.LuksOnLvm]:
+			if self._disk_encryption.hsm_device:
+				# Required by mkinitcpio to add support for fido2-device options
+				self.pacman.strap('libfido2')
+
+				if 'sd-encrypt' not in self._hooks:
+					self._hooks.insert(self._hooks.index('lvm2') - 1, 'sd-encrypt')
+			else:
+				if 'encrypt' not in self._hooks:
+					self._hooks.insert(self._hooks.index('lvm2') - 1, 'encrypt')
+
 	def minimal_installation(
 		self,
 		testing: bool = False,
@@ -616,43 +808,17 @@ class Installer:
 		hostname: str = 'archinstall',
 		locale_config: LocaleConfiguration = LocaleConfiguration.default()
 	):
-		_disable_fstrim = False
-		for mod in self._disk_config.device_modifications:
-			for part in mod.partitions:
-				if part.fs_type is not None:
-					if (pkg := part.fs_type.installation_pkg) is not None:
-						self.base_packages.append(pkg)
-					if (module := part.fs_type.installation_module) is not None:
-						self._modules.append(module)
-					if (binary := part.fs_type.installation_binary) is not None:
-						self._binaries.append(binary)
-
-					# https://github.com/archlinux/archinstall/issues/1837
-					if part.fs_type.fs_type_mount == 'btrfs':
-						_disable_fstrim = True
-
-					# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-					if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
-						if 'fsck' in self._hooks:
-							self._hooks.remove('fsck')
-
-					if part in self._disk_encryption.partitions:
-						if self._disk_encryption.hsm_device:
-							# Required by mkinitcpio to add support for fido2-device options
-							self.pacman.strap('libfido2')
-
-							if 'sd-encrypt' not in self._hooks:
-								self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
-						else:
-							if 'encrypt' not in self._hooks:
-								self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
+		if self._disk_config.lvm_config:
+			self._handle_lvm_installation()
+		else:
+			self._handle_partition_installation()
 
 		if not SysInfo.has_uefi():
-			self.base_packages.append('grub')
+			self._base_packages.append('grub')
 
 		if ucode := self._get_microcode():
 			(self.target / 'boot' / ucode).unlink(missing_ok=True)
-			self.base_packages.append(ucode.stem)
+			self._base_packages.append(ucode.stem)
 		else:
 			debug('Archinstall will not install any ucode.')
 
@@ -673,7 +839,7 @@ class Installer:
 
 		pacman_conf.apply()
 
-		self.pacman.strap(self.base_packages)
+		self.pacman.strap(self._base_packages)
 		self.helper_flags['base-strapped'] = True
 
 		pacman_conf.persist()
@@ -685,7 +851,7 @@ class Installer:
 		# https://github.com/archlinux/archinstall/issues/880
 		# https://github.com/archlinux/archinstall/issues/1837
 		# https://github.com/archlinux/archinstall/issues/1841
-		if not _disable_fstrim:
+		if not self._disable_fstrim:
 			self.enable_periodic_trim()
 
 		# TODO: Support locale and timezone
@@ -742,13 +908,24 @@ class Installer:
 				return boot
 		return None
 
-	def _get_root_partition(self) -> Optional[disk.PartitionModification]:
-		for mod in self._disk_config.device_modifications:
-			if root := mod.get_root_partition():
-				return root
+	def _get_root(self) -> Optional[disk.PartitionModification | disk.LvmVolume]:
+		if self._disk_config.lvm_config:
+			return self._disk_config.lvm_config.get_root_volume()
+		else:
+			for mod in self._disk_config.device_modifications:
+				if root := mod.get_root_partition():
+					return root
 		return None
 
-	def _get_kernel_params(
+	def _get_luks_uuid_from_mapper_dev(self, mapper_dev_path: Path) -> str:
+		lsblk_info = disk.get_lsblk_info(mapper_dev_path, reverse=True, full_dev_path=True)
+
+		if not lsblk_info.children or not lsblk_info.children[0].uuid:
+			raise ValueError('Unable to determine UUID of luks superblock')
+
+		return lsblk_info.children[0].uuid
+
+	def _get_kernel_params_partition(
 		self,
 		root_partition: disk.PartitionModification,
 		id_root: bool = True,
@@ -784,20 +961,74 @@ class Installer:
 				debug(f'Identifying root partition by UUID: {root_partition.uuid}')
 				kernel_parameters.append(f'root=UUID={root_partition.uuid}')
 
+		return kernel_parameters
+
+	def _get_kernel_params_lvm(
+		self,
+		lvm: disk.LvmVolume
+	) -> List[str]:
+		kernel_parameters = []
+
+		match self._disk_encryption.encryption_type:
+			case disk.EncryptionType.LvmOnLuks:
+				if not lvm.vg_name:
+					raise ValueError(f'Unable to determine VG name for {lvm.name}')
+
+				pv_seg_info = disk.device_handler.lvm_pvseg_info(lvm.vg_name, lvm.name)
+
+				if not pv_seg_info:
+					raise ValueError(f'Unable to determine PV segment info for {lvm.vg_name}/{lvm.name}')
+
+				uuid = self._get_luks_uuid_from_mapper_dev(pv_seg_info.pv_name)
+
+				if self._disk_encryption.hsm_device:
+					debug(f'LvmOnLuks, encrypted root partition, HSM, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'rd.luks.name={uuid}=cryptlvm root={lvm.safe_dev_path}')
+				else:
+					debug(f'LvmOnLuks, encrypted root partition, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'cryptdevice=UUID={uuid}:cryptlvm root={lvm.safe_dev_path}')
+			case disk.EncryptionType.LuksOnLvm:
+				uuid = self._get_luks_uuid_from_mapper_dev(lvm.mapper_path)
+
+				if self._disk_encryption.hsm_device:
+					debug(f'LuksOnLvm, encrypted root partition, HSM, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'rd.luks.name={uuid}=root root=/dev/mapper/root')
+				else:
+					debug(f'LuksOnLvm, encrypted root partition, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'cryptdevice=UUID={uuid}:root root=/dev/mapper/root')
+			case disk.EncryptionType.NoEncryption:
+				debug(f'Identifying root lvm by mapper device: {lvm.dev_path}')
+				kernel_parameters.append(f'root={lvm.safe_dev_path}')
+
+		return kernel_parameters
+
+	def _get_kernel_params(
+		self,
+		root: disk.PartitionModification | disk.LvmVolume,
+		id_root: bool = True,
+		partuuid: bool = True
+	) -> List[str]:
+		kernel_parameters = []
+
+		if isinstance(root, disk.LvmVolume):
+			kernel_parameters = self._get_kernel_params_lvm(root)
+		else:
+			kernel_parameters = self._get_kernel_params_partition(root, id_root, partuuid)
+
 		# Zswap should be disabled when using zram.
 		# https://github.com/archlinux/archinstall/issues/881
 		if self._zram_enabled:
 			kernel_parameters.append('zswap.enabled=0')
 
 		if id_root:
-			for sub_vol in root_partition.btrfs_subvols:
+			for sub_vol in root.btrfs_subvols:
 				if sub_vol.is_root():
 					kernel_parameters.append(f'rootflags=subvol={sub_vol.name}')
 					break
 
 			kernel_parameters.append('rw')
 
-		kernel_parameters.append(f'rootfstype={root_partition.safe_fs_type.fs_type_mount}')
+		kernel_parameters.append(f'rootfstype={root.safe_fs_type.fs_type_mount}')
 		kernel_parameters.extend(self._kernel_params)
 
 		debug(f'kernel parameters: {" ".join(kernel_parameters)}')
@@ -807,10 +1038,12 @@ class Installer:
 	def _add_systemd_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
-		root_partition: disk.PartitionModification,
+		root: disk.PartitionModification | disk.LvmVolume,
 		efi_partition: Optional[disk.PartitionModification],
 		uki_enabled: bool = False
 	):
+		debug('Installing systemd bootloader')
+
 		self.pacman.strap('efibootmgr')
 
 		if not SysInfo.has_uefi():
@@ -882,7 +1115,7 @@ class Installer:
 			f'# Created on: {self.init_time}'
 		)
 
-		options = 'options ' + ' '.join(self._get_kernel_params(root_partition))
+		options = 'options ' + ' '.join(self._get_kernel_params(root))
 
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
@@ -904,15 +1137,17 @@ class Installer:
 	def _add_grub_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
-		root_partition: disk.PartitionModification,
+		root: disk.PartitionModification | disk.LvmVolume,
 		efi_partition: Optional[disk.PartitionModification]
 	):
+		debug('Installing grub bootloader')
+
 		self.pacman.strap('grub')  # no need?
 
 		grub_default = self.target / 'etc/default/grub'
 		config = grub_default.read_text()
 
-		kernel_parameters = ' '.join(self._get_kernel_params(root_partition, False, False))
+		kernel_parameters = ' '.join(self._get_kernel_params(root, False, False))
 		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
 
 		grub_default.write_text(config)
@@ -934,7 +1169,7 @@ class Installer:
 
 			info(f"GRUB EFI partition: {efi_partition.dev_path}")
 
-			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+			self.pacman.strap('efibootmgr')  # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			boot_dir_arg = []
 			if boot_partition.mountpoint and boot_partition.mountpoint != boot_dir:
@@ -988,8 +1223,10 @@ class Installer:
 		self,
 		boot_partition: disk.PartitionModification,
 		efi_partition: Optional[disk.PartitionModification],
-		root_partition: disk.PartitionModification
+		root: disk.PartitionModification | disk.LvmVolume
 	):
+		debug('Installing limine bootloader')
+
 		self.pacman.strap('limine')
 
 		info(f"Limine boot partition: {boot_partition.dev_path}")
@@ -1052,7 +1289,7 @@ Exec = /bin/sh -c "{hook_command}"
 		hook_path = hooks_dir / '99-limine.hook'
 		hook_path.write_text(hook_contents)
 
-		kernel_params = ' '.join(self._get_kernel_params(root_partition))
+		kernel_params = ' '.join(self._get_kernel_params(root))
 		config_contents = 'TIMEOUT=5\n'
 
 		for kernel in self.kernels:
@@ -1075,9 +1312,11 @@ Exec = /bin/sh -c "{hook_command}"
 	def _add_efistub_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
-		root_partition: disk.PartitionModification,
+		root: disk.PartitionModification | disk.LvmVolume,
 		uki_enabled: bool = False
 	):
+		debug('Installing efistub bootloader')
+
 		self.pacman.strap('efibootmgr')
 
 		if not SysInfo.has_uefi():
@@ -1092,7 +1331,7 @@ Exec = /bin/sh -c "{hook_command}"
 
 			entries = (
 				'initrd=/initramfs-{kernel}.img',
-				*self._get_kernel_params(root_partition)
+				*self._get_kernel_params(root)
 			)
 
 			cmdline = [' '.join(entries)]
@@ -1122,7 +1361,7 @@ Exec = /bin/sh -c "{hook_command}"
 
 	def _config_uki(
 		self,
-		root_partition: disk.PartitionModification,
+		root: disk.PartitionModification | disk.LvmVolume,
 		efi_partition: Optional[disk.PartitionModification]
 	):
 		if not efi_partition or not efi_partition.mountpoint:
@@ -1130,7 +1369,7 @@ Exec = /bin/sh -c "{hook_command}"
 
 		# Set up kernel command line
 		with open(self.target / 'etc/kernel/cmdline', 'w') as cmdline:
-			kernel_parameters = self._get_kernel_params(root_partition)
+			kernel_parameters = self._get_kernel_params(root)
 			cmdline.write(' '.join(kernel_parameters) + '\n')
 
 		diff_mountpoint = None
@@ -1191,37 +1430,33 @@ Exec = /bin/sh -c "{hook_command}"
 
 		efi_partition = self._get_efi_partition()
 		boot_partition = self._get_boot_partition()
-		root_partition = self._get_root_partition()
+		root = self._get_root()
 
 		if boot_partition is None:
 			raise ValueError(f'Could not detect boot at mountpoint {self.target}')
 
-		if root_partition is None:
+		if root is None:
 			raise ValueError(f'Could not detect root at mountpoint {self.target}')
 
 		info(f'Adding bootloader {bootloader.value} to {boot_partition.dev_path}')
 
 		if uki_enabled:
-			self._config_uki(root_partition, efi_partition)
+			self._config_uki(root, efi_partition)
 
 		match bootloader:
 			case Bootloader.Systemd:
-				self._add_systemd_bootloader(boot_partition, root_partition, efi_partition, uki_enabled)
+				self._add_systemd_bootloader(boot_partition, root, efi_partition, uki_enabled)
 			case Bootloader.Grub:
-				self._add_grub_bootloader(boot_partition, root_partition, efi_partition)
+				self._add_grub_bootloader(boot_partition, root, efi_partition)
 			case Bootloader.Efistub:
-				self._add_efistub_bootloader(boot_partition, root_partition, uki_enabled)
+				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:
-				self._add_limine_bootloader(boot_partition, efi_partition, root_partition)
+				self._add_limine_bootloader(boot_partition, efi_partition, root)
 
 	def add_additional_packages(self, packages: Union[str, List[str]]) -> bool:
 		return self.pacman.strap(packages)
 
-	def _enable_users(self, service: str, users: List[User]):
-		for user in users:
-			self.arch_chroot(f'systemctl enable --user {service}', run_as=user.username)
-
-	def enable_sudo(self, entity: str, group :bool = False):
+	def enable_sudo(self, entity: str, group: bool = False):
 		info(f'Enabling sudo permissions for {entity}')
 
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
@@ -1237,7 +1472,7 @@ Exec = /bin/sh -c "{hook_command}"
 
 		# We count how many files are there already so we know which number to prefix the file with
 		num_of_rules_already = len(os.listdir(sudoers_dir))
-		file_num_str = "{:02d}".format(num_of_rules_already) # We want 00_user1, 01_user2, etc
+		file_num_str = "{:02d}".format(num_of_rules_already)  # We want 00_user1, 01_user2, etc
 
 		# Guarantees that entity str does not contain invalid characters for a linux file name:
 		# \ / : * ? " < > |
@@ -1293,7 +1528,7 @@ Exec = /bin/sh -c "{hook_command}"
 		if sudo and self.enable_sudo(user):
 			self.helper_flags['user'] = True
 
-	def user_set_pw(self, user :str, password :str) -> bool:
+	def user_set_pw(self, user: str, password: str) -> bool:
 		info(f'Setting password for {user}')
 
 		if user == 'root':
@@ -1310,7 +1545,7 @@ Exec = /bin/sh -c "{hook_command}"
 		except SysCallError:
 			return False
 
-	def user_set_shell(self, user :str, shell :str) -> bool:
+	def user_set_shell(self, user: str, shell: str) -> bool:
 		info(f'Setting shell for {user} to {shell}')
 
 		try:
@@ -1319,7 +1554,7 @@ Exec = /bin/sh -c "{hook_command}"
 		except SysCallError:
 			return False
 
-	def chown(self, owner :str, path :str, options :List[str] = []) -> bool:
+	def chown(self, owner: str, path: str, options: List[str] = []) -> bool:
 		cleaned_path = path.replace('\'', '\\\'')
 		try:
 			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'")
