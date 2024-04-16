@@ -19,6 +19,7 @@ class TableMenu(Menu):
 		preview_size: float = 0.0,
 		allow_reset: bool = True,
 		allow_reset_warning_msg: Optional[str] = None,
+		skip: bool = True
 	):
 		"""
 		param title: Text that will be displayed above the menu
@@ -81,7 +82,8 @@ class TableMenu(Menu):
 			preview_title=preview_title,
 			extra_bottom_space=extra_bottom_space,
 			allow_reset=allow_reset,
-			allow_reset_warning_msg=allow_reset_warning_msg
+			allow_reset_warning_msg=allow_reset_warning_msg,
+			skip=skip
 		)
 
 	def _preset_values(self, preset: List[Any]) -> List[str]:

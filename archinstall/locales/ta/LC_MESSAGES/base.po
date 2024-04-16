@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ஒரு பதிவு கோப்பு இங்கே உருவாக்கப்பட்டது: {} {}"
@@ -63,7 +63,7 @@ msgid "Copy ISO network configuration to installation"
 msgstr "நிறுவலுக்கு ISO பிணைய கட்டமைப்பு நகலெடுக்கவும்"
 
 msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "பயன்படுத்துங்கள் NetworkManager ஐப்(GNOME மற்றும் KDE இல் இணையத்தை வரைகலை முறையில் கட்டமைக்க அவசியம்)"
+msgstr "பயன்படுத்துங்கள் NetworkManager ஐப் (GNOME மற்றும் KDE இல் இணையத்தை வரைகலை முறையில் கட்டமைக்க அவசியம்)"
 
 msgid "Select one network interface to configure"
 msgstr "கட்டமைக்க ஒரு பிணைய இடைமுகத்தைத் தேர்ந்தெடுக்கவும்"
@@ -295,7 +295,7 @@ msgid "Automatic time sync (NTP)"
 msgstr "தானியங்கி நேர ஒத்திசைவு (NTP)"
 
 msgid "Install ({} config(s) missing)"
-msgstr "நிறுவு ({} config(கள்) இல்லை)"
+msgstr "நிறுவு ({} கட்டமைப்பு(கள்) இல்லை)"
 
 msgid ""
 "You decided to skip harddrive selection\n"
@@ -1227,3 +1227,23 @@ msgstr "தானியங்கி நேர ஒத்திசைவுக்�
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "ஆர்ச் லினக்ஸ் கீரிங் ஒத்திசைவு (archlinux-keyring-wkd-sync) முடிவடைவதற்குக் காத்திருக்கிறது."
+
+msgid "Selected profiles: "
+msgstr "தேர்ந்தெடுக்கப்பட்ட சுயவிவரங்கள்: "
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "நேரம் ஒத்திசைவு முடிவடையவில்லை, நீங்கள் காத்திருக்கும் போது - தீர்வுகளுக்கான ஆவணங்களைச் சரிபார்க்கவும்: https://archinstall.readthedocs.io/"
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "துவக்கக்கூடியதாகக் குறி/குறிநீக்கு"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "BTRFS சுருக்கத்தைப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""

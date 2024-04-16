@@ -1229,3 +1229,25 @@ msgstr "Otomatik zaman senkronizasyonunu beklemenin atlanması (kurulum sırası
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Arch Linux anahtarlık senkronizasyonunun (archlinux-keyring-wkd-sync) tamamlanması bekleniyor."
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "Profil sil"
+
+#, fuzzy
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Siz beklerken zaman senkronizasyonu tamamlanmıyor - geçici çözümler için dokümanları kontrol edin: https://archinstall.readthedocs.io/"
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "Önyüklenebilir olarak işaretle/işareti kaldır"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "BTRFS sıkıştırmasını kullanmak ister misiniz?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""

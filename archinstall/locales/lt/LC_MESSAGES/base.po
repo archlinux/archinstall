@@ -329,9 +329,7 @@ msgstr "Įdiegti"
 msgid ""
 "Use ESC to skip\n"
 "\n"
-msgstr ""
-"Naudokit ESC tam, kad praleistį"
-"\n"
+msgstr "Naudokit ESC tam, kad praleistį\n"
 
 msgid "Suggest partition layout"
 msgstr ""
@@ -1161,4 +1159,23 @@ msgid "Skipping waiting for automatic time sync (this can cause issues if time i
 msgstr ""
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr ""
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "Pašalinti profilį"
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+msgid "Mark/Unmark as nodatacow"
+msgstr ""
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr ""
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
 msgstr ""
