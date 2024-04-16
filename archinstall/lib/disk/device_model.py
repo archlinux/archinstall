@@ -697,6 +697,10 @@ class PartitionModification:
 		return hash(self._obj_id)
 
 	@property
+	def end(self) -> Size:
+		return self.start + self.length
+
+	@property
 	def obj_id(self) -> str:
 		if hasattr(self, '_obj_id'):
 			return str(self._obj_id)
@@ -827,14 +831,12 @@ class PartitionModification:
 		"""
 		Called for displaying data in table format
 		"""
-		end = self.start + self.length
-
 		part_mod = {
 			'Status': self.status.value,
 			'Device': str(self.dev_path) if self.dev_path else '',
 			'Type': self.type.value,
 			'Start': self.start.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
-			'End': end.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
+			'End': self.end.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
 			'Size': self.length.format_highest(),
 			'FS type': self.fs_type.value if self.fs_type else 'Unknown',
 			'Mountpoint': self.mountpoint if self.mountpoint else '',
