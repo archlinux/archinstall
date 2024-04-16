@@ -19,7 +19,6 @@ class KdeProfile(XorgProfile):
 			"kwrite",
 			"dolphin",
 			"ark",
-			"plasma-workspace",
 			"egl-wayland"
 		]
 
