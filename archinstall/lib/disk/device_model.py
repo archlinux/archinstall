@@ -1429,8 +1429,7 @@ def _clean_field(name: str, clean_type: CleanType) -> str:
 def _fetch_lsblk_info(
 	dev_path: Optional[Union[Path, str]] = None,
 	reverse: bool = False,
-	full_dev_path: bool = False,
-	retry: int = 3
+	full_dev_path: bool = False
 ) -> List[LsblkInfo]:
 	fields = [_clean_field(f, CleanType.Lsblk) for f in LsblkInfo.fields()]
 	cmd = ['lsblk', '--json', '--bytes', '--output', '+' + ','.join(fields)]
