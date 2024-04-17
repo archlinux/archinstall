@@ -1,0 +1,1469 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.3\n"
+"Last-Translator: Kimmo Kujansuu <mrkujansuu@gmail.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fi\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] Lokitiedosto luotiin tähän: {} {}"
+
+msgid ""
+"    Please submit this issue (and file) to https://github.com/archlinux/"
+"archinstall/issues"
+msgstr ""
+"    Lähetä tämä ongelma (ja tiedosto) osoitteeseen https://github.com/"
+"archlinux/archinstall/issues"
+
+msgid "Do you really want to abort?"
+msgstr "Haluatko todella poistua?"
+
+msgid "And one more time for verification: "
+msgstr "Ja vielä kerran vahvistukseksi: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "Haluatko käyttää swap:ia zram:ssa?"
+
+msgid "Desired hostname for the installation: "
+msgstr "Valitse hostname asennukselle: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Käyttäjänimi superkäyttäjälle, jolla on sudo-oikeudet: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Muut asennettavat käyttäjät (jätä tyhjäksi, jos ei muita käyttäjiä): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Pitäisikö tämän käyttäjän olla superkäyttäjä (sudoer)?"
+
+msgid "Select a timezone"
+msgstr "Valitse aikavyöhyke"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Haluatko käyttää GRUB:ia lataimena systemd-bootin sijaan?"
+
+msgid "Choose a bootloader"
+msgstr "Valitse käynnistyslatain"
+
+msgid "Choose an audio server"
+msgstr "Valitse audiopalvelin"
+
+msgid ""
+"Only packages such as base, base-devel, linux, linux-firmware, efibootmgr "
+"and optional profile packages are installed."
+msgstr ""
+"Vain paketit, kuten base, base-devel, linux, linux-firmware, efibootmgr ja "
+"valinnaiset profiili-paketit, asennetaan."
+
+msgid ""
+"If you desire a web browser, such as firefox or chromium, you may specify it "
+"in the following prompt."
+msgstr ""
+"Jos haluat selaimen, kuten firefox tai chromium, voit valita sen seuraavassa "
+"kohdassa."
+
+msgid ""
+"Write additional packages to install (space separated, leave blank to skip): "
+msgstr ""
+"Kirjoita asennettavat lisäpaketit (välilyönnillä erotettuna, ohita vaihe "
+"jättämällä tyhjäksi): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Kopioi ISO verkkoasetukset asennukseen"
+
+msgid ""
+"Use NetworkManager (necessary for configuring internet graphically in GNOME "
+"and KDE)"
+msgstr ""
+"Käytä NetworkManager ohjelmaa (Internetin graafinen määritys GNOME ja KDE)"
+
+msgid "Select one network interface to configure"
+msgstr "Valitse yksi määritettävä verkkoliitäntä"
+
+msgid ""
+"Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr ""
+"Valitse, mikä tila määritetään \"{}\", tai ohita ja käytä \"{}\" oletusta."
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Anna IP-osoite ja aliverkko {} (esim. 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Anna yhdyskäytävän (reitittimen) IP-osoite tai jätä tyhjäksi: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr ""
+"Anna DNS-osoitteet (välilyönti erottaa kaksi osoitetta toisistaan, tyhjä ei "
+"mitään): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "Valitse, mitä tiedostojärjestelmä pääosiolle"
+
+msgid "Current partition layout"
+msgstr "Tämänhetkinen osion asettelu"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"Valitse mitä haluat tehdä\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Anna osiolle haluttu tiedostojärjestelmän tyyppi"
+
+msgid ""
+"Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Anna aloituspaikka (yksiköt: s, GB, %, etc. ; oletus: {}): "
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Anna lopetuspaikka (yksiköt: s, GB, %, etc. ; ex: {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} sisältää jonossa olevat osiot, tämä poistaa ne, oletko varma?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"Valitse indeksin perusteella, mitkä osiot haluat poistaa"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"Valitse indeksin perusteella, mikä osio liitetään mihin"
+
+msgid ""
+" * Partition mount-points are relative to inside the installation, the boot "
+"would be /boot as an example."
+msgstr ""
+" * Osioiden liitoskohdat ovat suhteessa asennuksen sisäpuolelle, käynnistys "
+"olisi esimerkiksi /boot."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr ""
+"Valitse, mihin osio asennetaan (jätä tyhjäksi, jos haluat poistaa "
+"liitoskohdan): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"Valitse, mikä osio merkitään alustusta varten"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"Valitse, mikä osio merkitään salattavaksi"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"Valitse, mikä osio merkitään käynnistyväksi"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"Valitse, mikä osio merkitään tiedostojärjestelmää varten"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Anna osiolle haluttu tiedostojärjestelmän tyyppi: "
+
+msgid "Archinstall language"
+msgstr "Archinstall kieli"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr ""
+"Pyyhi kaikki valitut asemat ja käytä parasta mahdollista oletusosion "
+"asettelua"
+
+msgid ""
+"Select what to do with each individual drive (followed by partition usage)"
+msgstr ""
+"Valitse, mitä tehdään kullekin yksittäiselle asemalle (ja osion käytölle)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "Valitse, mitä haluat tehdä valituilla lohkoilla"
+
+msgid ""
+"This is a list of pre-programmed profiles, they might make it easier to "
+"install things like desktop environments"
+msgstr ""
+"Tämä on lista valmiista profiileista, jotka saattavat helpottaa esimerkiksi "
+"työpöytäympäristön asentamista"
+
+msgid "Select keyboard layout"
+msgstr "Valitse näppäimistön asettelu"
+
+msgid "Select one of the regions to download packages from"
+msgstr "Valitse yksi alueista, joista paketit ladataan"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "Valitse yksi tai useampi kiintolevy käytettäväksi ja määritettäväksi"
+
+msgid ""
+"For the best compatibility with your AMD hardware, you may want to use "
+"either the all open-source or AMD / ATI options."
+msgstr ""
+"Saat parhaan yhteensopivuuden AMD:n kanssa käyttämällä joko avoimen "
+"lähdekoodin vaihtoehtoja tai AMD/ATI valmistajan vaihtoehtoja."
+
+msgid ""
+"For the best compatibility with your Intel hardware, you may want to use "
+"either the all open-source or Intel options.\n"
+msgstr ""
+"Saat parhaan yhteensopivuuden Intelin kanssa käyttämällä joko avoimen "
+"lähdekoodin vaihtoehtoja tai Intel valmistajan vaihtoehtoja.\n"
+
+msgid ""
+"For the best compatibility with your Nvidia hardware, you may want to use "
+"the Nvidia proprietary driver.\n"
+msgstr ""
+"Saat parhaan yhteensopivuuden Nvidian kanssa käyttämällä Nvidia valmistajan "
+"omaa ohjainta.\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Valitse näytönohjaimen ohjain tai jätä tyhjäksi niin kaikki asennetaan "
+"avoimen lähdekoodin ohjaimilla"
+
+msgid "All open-source (default)"
+msgstr "Kaikki avoimet lähdekoodit (oletus)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "Valitse käytettävät kernelit tai jätä tyhjäksi oletuksena \"{}\""
+
+msgid "Choose which locale language to use"
+msgstr "Valitse käytettävä kieli"
+
+msgid "Choose which locale encoding to use"
+msgstr "Valitse käytettävä kielialueen koodaus"
+
+msgid "Select one of the values shown below: "
+msgstr "Valitse jokin alla olevista arvoista: "
+
+msgid "Select one or more of the options below: "
+msgstr "Valitse yksi tai useampi alla olevista: "
+
+msgid "Adding partition...."
+msgstr "Lisätään osiota...."
+
+msgid ""
+"You need to enter a valid fs-type in order to continue. See `man parted` for "
+"valid fs-type's."
+msgstr ""
+"Sinun on annettava kelvollinen fs-tyyppi jatkaaksesi. Katso kelvolliset fs-"
+"tyypit kohdasta \"man parted\"."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "Virhe: Profiilien luettelointi URL \"{}\" johti:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "Virhe: Tulosta \"{}\" ei voitu purkaa JSON-muodossa:"
+
+msgid "Keyboard layout"
+msgstr "Näppäimistö"
+
+msgid "Mirror region"
+msgstr "Pakettivarasto"
+
+msgid "Locale language"
+msgstr "Kieli"
+
+msgid "Locale encoding"
+msgstr "Kieli-koodaus"
+
+msgid "Drive(s)"
+msgstr "Levyasemat"
+
+msgid "Disk layout"
+msgstr "Levyn asettelu"
+
+msgid "Encryption password"
+msgstr "Salauksen salasana"
+
+msgid "Swap"
+msgstr "Swap"
+
+msgid "Bootloader"
+msgstr "Käynnistyksenlataaja"
+
+msgid "Root password"
+msgstr "Root salasana"
+
+msgid "Superuser account"
+msgstr "Superkäyttäjätili"
+
+msgid "User account"
+msgstr "Käyttäjätili"
+
+msgid "Profile"
+msgstr "Profiili"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Kernels"
+msgstr "Kernelit"
+
+msgid "Additional packages"
+msgstr "Lisäpaketit"
+
+msgid "Network configuration"
+msgstr "Verkkoasetukset"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Autom. kellonajan synkronointi (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "Asenna ({} asetusta puuttuu)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"Päätit ohittaa kiintolevyn valinnan ja käyttää\n"
+"mitä tahansa asema-asetusta {} (kokeellinen)\n"
+"VAROITUS: Archinstall ei voi tarkista asennuksen sopivuutta\n"
+"Haluatko jatkaa?"
+
+msgid "Re-using partition instance: {}"
+msgstr "Käytetään osiointi esimerkkiä: {}"
+
+msgid "Create a new partition"
+msgstr "Luo uusi osio"
+
+msgid "Delete a partition"
+msgstr "Poista osio"
+
+msgid "Clear/Delete all partitions"
+msgstr "Tyhjennä/poista kaikki osiot"
+
+msgid "Assign mount-point for a partition"
+msgstr "Määritä osion liitoskohta"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "Merkitse/poista osion alustaminen (pyyhkii tiedot)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "Merkitse/poista osio salataan merkintä"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "Merkitse/poista osion merkintä käynnistyväksi (automaattinen /boot)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "Aseta osiolle haluttu tiedostojärjestelmä"
+
+msgid "Abort"
+msgstr "Keskeytä"
+
+msgid "Hostname"
+msgstr "Hostname \"kone-nimi\""
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "Ei määritetty, ei käytettävissä, ellei asennusta ole käsin määritetty"
+
+msgid "Timezone"
+msgstr "Aikavyöhyke"
+
+msgid "Set/Modify the below options"
+msgstr "Aseta/muokkaa alla olevia asetuksia"
+
+msgid "Install"
+msgstr "Asenna"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"Ohita painamalla ESC\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "Ehdota osion asettelua"
+
+msgid "Enter a password: "
+msgstr "Anna salasana: "
+
+msgid "Enter a encryption password for {}"
+msgstr "Anna salauksen salasana {}"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "Anna levyn salauksen salasana (jätä tyhjäksi, jos et salaa): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Luo vaadittu superkäyttäjä, jolla on sudo-oikeudet: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "Anna root-salasana (jätä tyhjäksi niin root poistetaan käytöstä): "
+
+msgid "Password for user \"{}\": "
+msgstr "Salasana käyttäjälle \"{}\": "
+
+msgid ""
+"Verifying that additional packages exist (this might take a few seconds)"
+msgstr ""
+"Varmistetaan, että lisäpaketit ovat olemassa (saattaa kestää muutaman "
+"sekunnin)"
+
+msgid ""
+"Would you like to use automatic time synchronization (NTP) with the default "
+"time servers?\n"
+msgstr ""
+"Haluatko käyttää automaattista ajan synkronointia oletus (NTP) "
+"aikapalvelinten kanssa?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order "
+"for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"NTP:n toiminta saattaa vaatia laitteistolle muita määrityksen jälkeisiä "
+"vaiheita.\n"
+"Katso lisätietoja Arch-wiki"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "Luo uusi käyttäjä antamalla käyttäjänimi (jätä tyhjäksi ja ohita): "
+
+msgid "Use ESC to skip\n"
+msgstr "Ohita painamalla ESC\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for "
+"it to execute"
+msgstr ""
+"\n"
+"Valitse suoritettava toiminto luettelosta"
+
+msgid "Cancel"
+msgstr "Peruuta"
+
+msgid "Confirm and exit"
+msgstr "Vahvista ja poistu"
+
+msgid "Add"
+msgstr "Lisää"
+
+msgid "Copy"
+msgstr "Kopioi"
+
+msgid "Edit"
+msgstr "Muokkaa"
+
+msgid "Delete"
+msgstr "Poista"
+
+msgid "Select an action for '{}'"
+msgstr "Valitse toiminta \"{}\""
+
+msgid "Copy to new key:"
+msgstr "Kopioi uuteen avaimeen:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "Tuntematon verkkokortin tyyppi: {}. Mahdolliset arvot ovat {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"Tämä on sinun valitsema kokoonpano:"
+
+msgid ""
+"Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman on jo käynnissä, odota enintään 10 minuuttia sen päättymistä."
+
+msgid ""
+"Pre-existing pacman lock never exited. Please clean up any existing pacman "
+"sessions before using archinstall."
+msgstr ""
+"Aiempi pacman-lukko ei ole poistunut. Lopeta kaikki olemassa olevat pacman-"
+"istunnot ennen archinstall ohjelman käyttöä."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "Valitse, valinnaiset lisävarastot jotka otetaan käyttöön"
+
+msgid "Add a user"
+msgstr "Lisää käyttäjä"
+
+msgid "Change password"
+msgstr "Vaihda salasana"
+
+msgid "Promote/Demote user"
+msgstr "Korota/alenna käyttäjä"
+
+msgid "Delete User"
+msgstr "Poista käyttäjä"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"Määritä uusi käyttäjä\n"
+
+msgid "User Name : "
+msgstr "Käyttäjänimi : "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "Pitäisikö {} olla superkäyttäjä (sudoer)?"
+
+msgid "Define users with sudo privilege: "
+msgstr "Määritä käyttäjät, joilla on sudo-oikeudet: "
+
+msgid "No network configuration"
+msgstr "Ei verkkoasetuksia"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "Aseta haluamasi alitaltiot btrfs-osioon"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"Valitse, mille osioille alitaltiot asetetaan"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "Hallitse nykyisen osion btrfs-alitaltioita"
+
+msgid "No configuration"
+msgstr "Ei määritystä"
+
+msgid "Save user configuration"
+msgstr "Tallenna käyttäjän määritykset"
+
+msgid "Save user credentials"
+msgstr "Tallenna käyttäjän tunnistetiedot"
+
+msgid "Save disk layout"
+msgstr "Tallenna levyasettelu"
+
+msgid "Save all"
+msgstr "Tallenna kaikki"
+
+msgid "Choose which configuration to save"
+msgstr "Valitse tallennettavat määritykset"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "Anna hakemisto tallennettaville määrityksille: "
+
+msgid "Not a valid directory: {}"
+msgstr "Hakemisto ei ole kelvollinen: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "Käyttämäsi salasana vaikuttaa heikolta,"
+
+msgid "are you sure you want to use it?"
+msgstr "oletko varma että haluat käyttää sitä?"
+
+msgid "Optional repositories"
+msgstr "Valinnaiset arkistot"
+
+msgid "Save configuration"
+msgstr "Tallenna määritykset"
+
+msgid "Missing configurations:\n"
+msgstr "Puuttuvat määritykset:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "Joko root-salasana tai vähintään yksi pääkäyttäjä on määritettävä"
+
+msgid "Manage superuser accounts: "
+msgstr "Hallitse superkäyttäjätilejä: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "Hallitse tavallisia käyttäjätilejä: "
+
+msgid " Subvolume :{:16}"
+msgstr " Alitaltio :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " liitetty {:16}"
+
+msgid " with option {}"
+msgstr " valinnalla {}"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+" Täytä halutut arvot uudelle alitaltiolle \n"
+
+msgid "Subvolume name "
+msgstr "Alitaltion nimi "
+
+msgid "Subvolume mountpoint"
+msgstr "Alitaltion liitoskohta"
+
+msgid "Subvolume options"
+msgstr "Alitaltion valinnat"
+
+msgid "Save"
+msgstr "Tallenna"
+
+msgid "Subvolume name :"
+msgstr "Alitaltion nimi :"
+
+msgid "Select a mount point :"
+msgstr "Valitse liitoskohta :"
+
+msgid "Select the desired subvolume options "
+msgstr "Valitse alitaltion asetukset "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "Määritä käyttäjät, joilla on sudo-oikeudet, käyttäjänimen mukaan: "
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] Lokitiedosto on luotu tähän: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Haluatko käyttää BTRFS-alitaltioita oletusrakenteena?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "Haluatko käyttää BTRFS-pakkausta?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Haluatko luoda erillisen osion /home ?"
+
+msgid ""
+"The selected drives do not have the minimum capacity required for an "
+"automatic suggestion\n"
+msgstr ""
+"Valituilla asemilla ei ole automaattiseen ehdotukseen vaadittavaa "
+"vähimmäistilaa\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "Minimi tila /home osiolle: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Minimi tila Arch Linux osiolle: {}GB"
+
+msgid "Continue"
+msgstr "Jatka"
+
+msgid "yes"
+msgstr "kyllä"
+
+msgid "no"
+msgstr "ei"
+
+msgid "set: {}"
+msgstr "aseta: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "Manuaaliset asetukset on oltava lista muodossa"
+
+msgid "No iface specified for manual configuration"
+msgstr "Manuaalista määritystä varten iface on tekemättä"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr ""
+"Manuaalinen verkkokortin määritys ilman autom. DHCP:tä vaatii IP-osoitteen"
+
+msgid "Add interface"
+msgstr "Lisää liitäntä"
+
+msgid "Edit interface"
+msgstr "Muokkaa liitäntää"
+
+msgid "Delete interface"
+msgstr "Poista liitäntä"
+
+msgid "Select interface to add"
+msgstr "Valitse lisättävä liitäntä"
+
+msgid "Manual configuration"
+msgstr "Käsin määrittely"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "Merkitse/poista osio pakatuksi (vain btrfs)"
+
+msgid ""
+"The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "Käyttämäsi salasana vaikuttaa heikolta, haluatko käyttää sitä?"
+
+msgid ""
+"Provides a selection of desktop environments and tiling window managers, e."
+"g. gnome, kde, sway"
+msgstr ""
+"Tarjoaa valikoiman erilaisia työpöytiä ja ikkunointia esim. gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "Valitse haluamasi työpöytä"
+
+msgid ""
+"A very basic installation that allows you to customize Arch Linux as you see "
+"fit."
+msgstr ""
+"Hyvin kevyt asennus, jonka avulla voit mukauttaa Arch Linuxia haluamallasi "
+"tavalla."
+
+msgid ""
+"Provides a selection of various server packages to install and enable, e.g. "
+"httpd, nginx, mariadb"
+msgstr ""
+"Tarjoaa valikoiman erilaisia palvelinpaketteja ja saatavilla käyttöön esim. "
+"httpd, nginx, mariadb"
+
+msgid ""
+"Choose which servers to install, if none then a minimal installation will be "
+"done"
+msgstr ""
+"Valitse mitkä palvelimet asennetaan. Jos ei yhtään, tehdään pienin "
+"mahdollinen asennus"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr ""
+"Asentaa minimaalisen järjestelmän sekä xorg ja ohjaimet näytönohjaimelle."
+
+msgid "Press Enter to continue."
+msgstr "Paina ENTER ja jatka."
+
+msgid ""
+"Would you like to chroot into the newly created installation and perform "
+"post-installation configuration?"
+msgstr ""
+"Haluatko chroot:in uuteen asennukseen ja suorittaa asennuksen jälkeiset "
+"asetukset?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Haluatko varmasti nollata tämän asetuksen?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "Valitse yksi tai useampi kiintolevy määritettäväksi\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "Kaikki muutokset olemassa olevaan asetukseen nollaavat levyasettelun!"
+
+msgid ""
+"If you reset the harddrive selection this will also reset the current disk "
+"layout. Are you sure?"
+msgstr ""
+"Jos nollaat kiintolevyn valinnan, tämä nollaa myös nykyisen levyasettelun. "
+"Oletko varma?"
+
+msgid "Save and exit"
+msgstr "Tallenna ja poistu"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"sisältää jonossa olevia osioita, tämä poistaa ne, oletko varma?"
+
+msgid "No audio server"
+msgstr "Ei audiopalvelinta"
+
+msgid "(default)"
+msgstr "(oletus)"
+
+msgid "Use ESC to skip"
+msgstr "Ohita painamalla ESC"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"CTRL+C nollaa nykyisen valinnan\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "Kopioi…: "
+
+msgid "Edit: "
+msgstr "Muokkaa: "
+
+msgid "Key: "
+msgstr "Avain: "
+
+msgid "Edit {}: "
+msgstr "Muokkaa {}: "
+
+msgid "Add: "
+msgstr "Lisää: "
+
+msgid "Value: "
+msgstr "Arvo: "
+
+msgid ""
+"You can skip selecting a drive and partitioning and use whatever drive-setup "
+"is mounted at /mnt (experimental)"
+msgstr ""
+"Voit ohittaa aseman valinnan, sekä osioinnin ja käyttää mitä tahansa asemaa, "
+"joka on kytketty /mnt hakemistossa (kokeellinen)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Valitse jokin levyistä tai ohita ja käytä /mnt oletuksena"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Valitse alustettavat osiot:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Käytä HSM:ää avataksesi salatun aseman"
+
+msgid "Device"
+msgstr "Laite"
+
+msgid "Size"
+msgstr "Koko"
+
+msgid "Free space"
+msgstr "Vapaata tilaa"
+
+msgid "Bus-type"
+msgstr "Väylän tyyppi"
+
+msgid ""
+"Either root-password or at least 1 user with sudo privileges must be "
+"specified"
+msgstr ""
+"Joko root-salasana tai vähintään yksi käyttäjä, jolla on sudo-oikeudet, on "
+"määritettävä"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Anna käyttäjänimi (jätä tyhjäksi ja ohita): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "Antamasi käyttäjänimi ei kelpaa. Yritä uudelleen"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Pitäisikö \"{}\" olla superkäyttäjä (sudo)?"
+
+msgid "Select which partitions to encrypt"
+msgstr "Valitse salattavat osiot"
+
+msgid "very weak"
+msgstr "hyvin heikko"
+
+msgid "weak"
+msgstr "heikko"
+
+msgid "moderate"
+msgstr "kohtalainen"
+
+msgid "strong"
+msgstr "vahva"
+
+msgid "Add subvolume"
+msgstr "Lisää alitaltio"
+
+msgid "Edit subvolume"
+msgstr "Muokkaa alitaltiota"
+
+msgid "Delete subvolume"
+msgstr "Poista alitaltio"
+
+msgid "Configured {} interfaces"
+msgstr "Määritetty {} liittymää"
+
+msgid ""
+"This option enables the number of parallel downloads that can occur during "
+"installation"
+msgstr ""
+"Tämä valinta mahdollistaa asennuksen aikana tapahtuvien rinnakkaisten "
+"latausten määrän"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {})\n"
+"Note:"
+msgstr ""
+"Anna rinnakkaisten latausten määrä.\n"
+" (anna arvo väliltä 1 - {})\n"
+"Huomaa:"
+
+msgid ""
+" - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads "
+"at a time )"
+msgstr ""
+" - Suurin arvo   : {} ( sallii {} rinnakkaista latausta, sallii {} latausta "
+"kerralla )"
+
+msgid ""
+" - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a "
+"time )"
+msgstr ""
+" - Pienin arvo   : 1 ( sallii 1 rinnakkaisen latauksen, sallii {} 2 latausta "
+"kerralla )"
+
+msgid ""
+" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 "
+"download at a time )"
+msgstr ""
+" - Pois/oletus   : 0 ( ei salli rinnakkaisia latauksia, sallii vain 1 "
+"latauksen kerralla )"
+
+#, python-brace-format
+msgid ""
+"Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to "
+"disable]"
+msgstr ""
+"Virheellinen arvo! Yritä uudelleen kelvollisella arvolla [1 - "
+"{max_downloads}, tai 0 on poistettu]"
+
+msgid "Parallel Downloads"
+msgstr "Rinnakkaiset lataukset"
+
+msgid "ESC to skip"
+msgstr "Ohita painamalla ESC"
+
+msgid "CTRL+C to reset"
+msgstr "CTRL+C nollaa"
+
+msgid "TAB to select"
+msgstr "TAB valitsee"
+
+msgid "[Default value: 0] > "
+msgstr "[oletusarvo: 0] > "
+
+msgid ""
+"To be able to use this translation, please install a font manually that "
+"supports the language."
+msgstr ""
+"Jotta voit käyttää tätä käännöstä, asenna käsin fontti, joka tukee tätä "
+"kieltä."
+
+msgid "The font should be stored as {}"
+msgstr "Fontti tulee tallentaa {}"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+"Archinstall vaatii toimiakseen root oikeudet. Katso --help ja saat "
+"lisätietoja."
+
+msgid "Select an execution mode"
+msgstr "Valitse suoritustila"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Profiilia ei voi hakea määritetystä URL-osoitteesta: {}"
+
+msgid ""
+"Profiles must have unique name, but profile definitions with duplicate name "
+"found: {}"
+msgstr ""
+"Profiilin nimi on oltava yksilöllinen, mutta määrityksistä löytyy "
+"päällekkäinen nimi: {}"
+
+msgid "Select one or more devices to use and configure"
+msgstr "Valitse yksi tai useampi laite määritettäväksi"
+
+msgid ""
+"If you reset the device selection this will also reset the current disk "
+"layout. Are you sure?"
+msgstr ""
+"Jos nollaat laitevalinnan, tämä nollaa myös nykyisen levyasettelun. Oletko "
+"varma?"
+
+msgid "Existing Partitions"
+msgstr "Olemassa olevat osiot"
+
+msgid "Select a partitioning option"
+msgstr "Valitse osiointivaihtoehto"
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Anna root hahemisto liitetylle laitteelle: "
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Minimi tila /home osiolle: {}GiB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Minimi tila Arch Linux osiolle: {}GiB"
+
+msgid ""
+"This is a list of pre-programmed profiles_bck, they might make it easier to "
+"install things like desktop environments"
+msgstr ""
+"Lista esiohjelmoiduista profiles_bck paketeista, joka voivat helpottaa "
+"asioita, kuten työpöydän asentamista"
+
+msgid "Current profile selection"
+msgstr "Nykyinen profiilivalinta"
+
+msgid "Remove all newly added partitions"
+msgstr "Poista kaikki juuri lisätyt osiot"
+
+msgid "Assign mountpoint"
+msgstr "Määritä liitoskohta"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Merkitse/poista osion alustaminen (pyyhkii tiedot)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Merkitse/poista käynnistyvä"
+
+msgid "Change filesystem"
+msgstr "Vaihda tiedostojärjestelmä"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Merkitse/poista pakatuksi"
+
+msgid "Set subvolumes"
+msgstr "Aseta alitaltiot"
+
+msgid "Delete partition"
+msgstr "Poista osio"
+
+msgid "Partition"
+msgstr "Osio"
+
+msgid ""
+"This partition is currently encrypted, to format it a filesystem has to be "
+"specified"
+msgstr ""
+"Tämä osio on tällä hetkellä salattu, joten sen alustamiseksi on määritettävä "
+"tiedostojärjestelmä"
+
+msgid ""
+"Partition mount-points are relative to inside the installation, the boot "
+"would be /boot as an example."
+msgstr ""
+"Osioiden liitoskohdat ovat suhteessa asennuksen sisäpuolelle, käynnistys "
+"olisi esimerkiksi /boot."
+
+msgid ""
+"If mountpoint /boot is set, then the partition will also be marked as "
+"bootable."
+msgstr ""
+"Jos liitoskohta /boot on asetettu, myös osio merkitään käynnistettäväksi."
+
+msgid "Mountpoint: "
+msgstr "Liitoskohta: "
+
+msgid "Current free sectors on device {}:"
+msgstr "Laitteen nykyiset vapaat sektorit {}:"
+
+msgid "Total sectors: {}"
+msgstr "Sektoreita kaikkiaan: {}"
+
+msgid "Enter the start sector (default: {}): "
+msgstr "Anna aloitussektori (oletus: {}): "
+
+msgid ""
+"Enter the end sector of the partition (percentage or block number, default: "
+"{}): "
+msgstr "Anna osion loppusektori (prosenttina tai lohkonumerona, oletus:: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Tämä poistaa kaikki juuri lisätyt osiot, jatkaako?"
+
+msgid "Partition management: {}"
+msgstr "Osioiden hallinta: {}"
+
+msgid "Total length: {}"
+msgstr "Kokonaispituus: {}"
+
+msgid "Encryption type"
+msgstr "Salaustyyppi"
+
+msgid "Partitions"
+msgstr "Osiot"
+
+msgid "No HSM devices available"
+msgstr "Ei HSM-laitteita saatavilla"
+
+msgid "Partitions to be encrypted"
+msgstr "Salattavat osiot"
+
+msgid "Select disk encryption option"
+msgstr "Valitse levyn salausasetus"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Valitse HSM:ään käytettävä FIDO2-laite"
+
+msgid "Use a best-effort default partition layout"
+msgstr "Käytä parasta mahdollista oletusosion asettelua"
+
+msgid "Manual Partitioning"
+msgstr "Osiointi käsin"
+
+msgid "Pre-mounted configuration"
+msgstr "Valmiiksi liitetty kokoonpano"
+
+msgid "Unknown"
+msgstr "Tuntematon"
+
+msgid "Partition encryption"
+msgstr "Osion salaus"
+
+msgid " ! Formatting {} in "
+msgstr " ! Alustetaan {} "
+
+msgid "← Back"
+msgstr "← Takaisin"
+
+msgid "Disk encryption"
+msgstr "Levyn salaus"
+
+msgid "Configuration"
+msgstr "Asetukset"
+
+msgid "Password"
+msgstr "Salasana"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "Kaikki asetukset nollataan, oletko varma?"
+
+msgid "Back"
+msgstr "Takaisin"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "Valitse asennettava käyttöliittymä valituille profiileille: {}"
+
+msgid "Environment type: {}"
+msgstr "Ympäristötyyppi: {}"
+
+msgid ""
+"The proprietary Nvidia driver is not supported by Sway. It is likely that "
+"you will run into issues, are you okay with that?"
+msgstr ""
+"Sway ei tue patentoitua Nvidia-ohjainta. Todennäköistä, että kohtaat joitain "
+"ongelmia, kelpaako se silti sinulle?"
+
+msgid "Installed packages"
+msgstr "Asennetut paketit"
+
+msgid "Add profile"
+msgstr "Lisää profiili"
+
+msgid "Edit profile"
+msgstr "Muokkaa profiilia"
+
+msgid "Delete profile"
+msgstr "Poista profiili"
+
+msgid "Profile name: "
+msgstr "Profiilinimi: "
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Antamasi profiilinimi on jo käytössä. Yritä uudelleen"
+
+msgid ""
+"Packages to be install with this profile (space separated, leave blank to "
+"skip): "
+msgstr ""
+"Tällä profiililla asennettavat paketit (välilyönnillä erotettuna, ohita "
+"jättämällä tyhjäksi): "
+
+msgid ""
+"Services to be enabled with this profile (space separated, leave blank to "
+"skip): "
+msgstr ""
+"Palvelut, jotka otetaan käyttöön tällä profiililla (välilyönnillä "
+"erotettuna, ohita jättämällä tyhjäksi): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "Pitäisikö tämä profiili ottaa käyttöön asennusta varten?"
+
+msgid "Create your own"
+msgstr "Luo sinun oma"
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"Valitse näytönohjaimen ohjain tai jätä tyhjäksi niin kaikki asennetaan "
+"avoimen lähdekoodin ohjaimilla"
+
+msgid ""
+"Sway needs access to your seat (collection of hardware devices i.e. "
+"keyboard, mouse, etc)"
+msgstr ""
+"Sway tarvitsee pääsyn istuntoon (kokoelma laitteistoja, kuten näppäimistö, "
+"hiiri jne.)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valitse asetus antaaksesi Swaylle pääsyn laitteistoosi"
+
+msgid "Graphics driver"
+msgstr "Näytönohjaimen ohjain"
+
+msgid "Greeter"
+msgstr "Käyttöliittymä"
+
+msgid "Please chose which greeter to install"
+msgstr "Valitse asennettava käyttöliittymä"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "Tämä on lista esiohjelmoiduista default_profiles"
+
+msgid "Disk configuration"
+msgstr "Kiintolevyn määritys"
+
+msgid "Profiles"
+msgstr "Profiilit"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "Etsitään hakemistoja asetustiedostojen tallentamiseen ..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Valitse hakemisto (tai hakemistot) asetustiedostojen tallentamiseen"
+
+msgid "Add a custom mirror"
+msgstr "Lisää mukautettu peilipaikka"
+
+msgid "Change custom mirror"
+msgstr "Vaihda mukautettu peilipaikka"
+
+msgid "Delete custom mirror"
+msgstr "Poista mukautettu peilipaikka"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "Anna nimi (jätä tyhjäksi ja ohita): "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "Anna url (jätä tyhjäksi ja ohita): "
+
+msgid "Select signature check option"
+msgstr "Valitse allekirjoituksen tarkistusvaihtoehto"
+
+msgid "Select signature option"
+msgstr "Valitse allekirjoituksen asetus"
+
+msgid "Custom mirrors"
+msgstr "Mukautetut peilipaikat"
+
+msgid "Defined"
+msgstr "Määritelty"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Tallenna käyttäjän asetukset (myös levyasettelu)"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion "
+"enabled)\n"
+"Save directory: "
+msgstr ""
+"Anna hakemisto tallennettaville määrityksille (välilehden viimeistely "
+"käytössä)\n"
+"Tallennushakemisto: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"Haluatko tallentaa {} asetustiedostoa seuraavaan paikkaan?\n"
+"\n"
+"{}"
+
+msgid "Saving {} configuration files to {}"
+msgstr "Tallennetaan {} määritystiedostoa {}"
+
+msgid "Mirrors"
+msgstr "Peilipaikat"
+
+msgid "Mirror regions"
+msgstr "Peilipaikan maa"
+
+msgid ""
+" - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads"
+"+1} downloads at a time )"
+msgstr ""
+" - Suurin arvo   : {} ( sallii {} rinnakkaista latausta, sallii "
+"{max_downloads+1} latausta kerralla )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr ""
+"Virheellinen arvo! Yritä uudelleen kelvollisella arvolla [1 - {}, tai 0 on "
+"poistettu]"
+
+msgid "Locales"
+msgstr "Alueet"
+
+msgid ""
+"Use NetworkManager (necessary to configure internet graphically in GNOME and "
+"KDE)"
+msgstr ""
+"Käytä NetworkManager -ohjelmaa (Internetin määritys graafisesti GNOME ja KDE)"
+
+msgid "Total: {} / {}"
+msgstr "Yhteensä: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr ""
+"Kaikki annetut arvot voidaan liittää käyttäen yksikköjä: B, KB, KiB, MB, "
+"MiB..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Jos yksikköä ei ole annettu, arvo tulkitaan sektoreiksi"
+
+msgid "Enter start (default: sector {}): "
+msgstr "Anna alku (oletus: sektori {}): "
+
+msgid "Enter end (default: {}): "
+msgstr "Anna loppu (oletus:  {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "Fido2-laitteita ei voida määrittää. Onko libfido2 asennettu?"
+
+msgid "Path"
+msgstr "Polku"
+
+msgid "Manufacturer"
+msgstr "Valmistaja"
+
+msgid "Product"
+msgstr "Tuote"
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Virheellinen määritys: {error}"
+
+msgid "Type"
+msgstr "Tyyppi"
+
+msgid ""
+"This option enables the number of parallel downloads that can occur during "
+"package downloads"
+msgstr ""
+"Tämä valinta mahdollistaa asennuksen aikana tapahtuvien rinnakkaisten "
+"latausten määrän"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Anna rinnakkaisten latausten määrä.\n"
+"\n"
+"Huomaa:\n"
+
+msgid ""
+" - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr ""
+" - Suurin suositeltu arvo   : {} ( sallii {} rinnakkaista latausta kerralla )"
+
+msgid ""
+" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 "
+"download at a time )\n"
+msgstr ""
+" - Pois/oletus   : 0 ( ei salli rinnakkaisia latauksia, sallii vain 1 "
+"latauksen kerralla )\n"
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr ""
+"Virheellinen arvo! Yritä uudelleen kelvollisella arvolla [tai 0 on poistettu]"
+
+msgid ""
+"Hyprland needs access to your seat (collection of hardware devices i.e. "
+"keyboard, mouse, etc)"
+msgstr ""
+"Hyprland tarvitsee pääsyn istuntoon (kokoelma laitteistoja, kuten "
+"näppäimistö, hiiri jne.)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valitse asetus antaaksesi Hyprlandille pääsyn laitteistoosi"
+
+msgid ""
+"All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""
+"Kaikki annetut arvot voidaan liittää käyttäen yksikköjä: B, KB, KiB, MB, "
+"MiB..."
+
+msgid "Would you like to use unified kernel images?"
+msgstr ""
+"Haluatko käyttää Unified Kernel Images, joka voidaan käynnistää suoraan UEFI-"
+"ohjelmistosta?"
+
+msgid "Unified kernel images"
+msgstr "UKI Unified Kernel Images"
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Odotetaan ajan synkronoinnin (timedatectl show) päättymistä."
+
+msgid ""
+"Time syncronization not completing, while you wait - check the docs for "
+"workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+"Ajan synkronointi ei ole valmis, kun odotat voit tarkistaa kiertotapoja: "
+"https://archinstall.readthedocs.io/"
+
+msgid ""
+"Skipping waiting for automatic time sync (this can cause issues if time is "
+"out of sync during installation)"
+msgstr ""
+"Autom. ajan synkronoinnin odottaminen ohitetaan (voi aiheuttaa ongelmia, jos "
+"aikaa ei ole synkronoitu asennuksen aikana)"
+
+msgid ""
+"Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr ""
+"Odotetaan Arch Linux avainten synkronoinnin valmistumista (archlinux-keyring-"
+"wkd-sync)."
+
+msgid "Selected profiles: "
+msgstr "Valitut profiilit: "
+
+msgid ""
+"Time synchronization not completing, while you wait - check the docs for "
+"workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+"Ajan synkronointi ei ole valmis, kun odotat voit tarkistaa kiertotapoja: "
+"https://archinstall.readthedocs.io/"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "Merkitse/poista nodatacow merkintä"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Haluatko käyttää pakkausta vai poistaa CoW:n käytöstä?"
+
+msgid "Use compression"
+msgstr "Käytä pakkausta"
+
+msgid "Disable Copy-on-Write"
+msgstr "Poista kopiointi kirjoittamisen yhteydessä"
