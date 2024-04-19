@@ -25,24 +25,3 @@ class PlasmaProfile(XorgProfile):
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
 		return GreeterType.Sddm
-
-# 2024-04-16 TODO deprecated Class with old naming, remove in a future version
-class KdeProfile(XorgProfile):
-	def __init__(self):
-		super().__init__('Kde', ProfileType.DesktopEnv, description='[Deprecated] Alias to KDE Plasma')
-
-	@property
-	def packages(self) -> List[str]:
-		return [
-			"plasma-meta",
-			"konsole",
-			"kwrite",
-			"dolphin",
-			"ark",
-			"plasma-workspace",
-			"egl-wayland"
-		]
-
-	@property
-	def default_greeter_type(self) -> Optional[GreeterType]:
-		return GreeterType.Sddm
