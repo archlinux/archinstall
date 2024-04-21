@@ -100,27 +100,45 @@ def select_language(preset: Optional[str] = None) -> Optional[str]:
 
 
 def select_archinstall_language(languages: List[Language], preset: Language) -> Language:
+	from ..output import debug
+
 	# these are the displayed language names which can either be
 	# the english name of a language or, if present, the
 	# name of the language in its own language
-	options = {lang.display_name: lang for lang in languages}
+	from ...tui import curses_menu
+	from ...tui.curses_menu import MenuItem, MenuItemGroup, ResultType
+
+	options = [MenuItem(lang.display_name, key=lang) for lang in languages]
+	debug(preset)
+	menu_preset = list(filter(lambda x: x.key == preset, options))
+	debug(menu_preset)
+	group = MenuItemGroup(options, selected_items=menu_preset)
 
 	title = 'NOTE: If a language can not displayed properly, a proper font must be set manually in the console.\n'
 	title += 'All available fonts can be found in "/usr/share/kbd/consolefonts"\n'
 	title += 'e.g. setfont LatGrkCyr-8x16 (to display latin/greek/cyrillic characters)\n'
 
-	choice = Menu(
-		title,
-		list(options.keys()),
-		default_option=preset.display_name,
-		preview_size=0.5
-	).run()
+	# choice = Menu(
+	# 	title,
+	# 	list(options.keys()),
+	# 	default_option=preset.display_name,
+	# 	preview_size=0.5
+	# ).run()
+	#
+	# match choice.type_:
+	# 	case MenuSelectionType.Skip: return preset
+	# 	case MenuSelectionType.Selection: return options[choice.single_value]
+	#
+	# raise ValueError('Language selection not handled')
+
+
+	choice = curses_menu.Menu(group, header=title).run()
 
 	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return options[choice.single_value]
-
-	raise ValueError('Language selection not handled')
+		case ResultType.Skip: return preset
+		case ResultType.Selection:
+			debug(choice.value.key)
+			return choice.value.key
 
 
 def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
