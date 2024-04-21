@@ -1,74 +1,54 @@
+from pathlib import Path
 from typing import Any, TYPE_CHECKING, Optional
 
 import archinstall
-from archinstall import info, debug, TranslationHandler
+from archinstall import info, debug
 from archinstall import SysInfo
 from archinstall.lib import locale
 from archinstall.lib import disk
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
-from archinstall.lib.interactions import select_archinstall_language
 from archinstall.lib.menu import Menu
 from archinstall.lib.models import AudioConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.lib.translationhandler import translation_handler
 
 if TYPE_CHECKING:
 	_: Any
 
-from archinstall.tui.curses_menu import MenuItem, Menu, MenuItemGroup
+from archinstall.tui.curses_menu import Menu
 
-try:
-
-
-	def _select_archinstall_language(preset):
-		language = select_archinstall_language(translation_handler.translated_languages, preset)
-		translation_handler.activate(language)
-		return language
-
-
-	item1 = MenuItem(
-		str(_('Archinstall language')),
-		value=TranslationHandler().get_language_by_abbr('en'),
-		action=lambda x: _select_archinstall_language(x),
-		display_action=lambda x: x.display_name
-	)
-
-	item4 = MenuItem('the end')
-	group = MenuItemGroup([item1, item4], sort_items=False)
-
-	menu = Menu(
-		group,
-		header='test header',
-		multi=False,
-		reset_warning_msg='are you certain?',
-		allow_skip=False,
-		allow_reset=False
-	)
-	tmp = menu.run()
-	debug(tmp)
-
-	debug(item1.value)
-	debug(item4.value)
+# def _select_archinstall_language(preset):
+# 	language = select_archinstall_language(translation_handler.translated_languages, preset)
+# 	translation_handler.activate(language)
+# 	return language
+#
+#
+# item1 = MenuItem(
+# 	str(_('Archinstall language')),
+# 	value=TranslationHandler().get_language_by_abbr('en'),
+# 	action=lambda x: _select_archinstall_language(x),
+# 	display_action=lambda x: x.display_name
+# )
+#
+# item4 = MenuItem('the end')
+# group = MenuItemGroup([item1, item4], sort_items=False)
+#
+# menu = Menu(
+# 	group,
+# 	header='test header',
+# 	reset_warning_msg='are you certain?',
+# 	allow_skip=False,
+# 	allow_reset=False
+# ).single()
+# debug(tmp)
+#
+# debug(item1.value)
+# debug(item4.value)
+#
 
 
-
-finally:
-	import curses
-
-	curses.nocbreak()
-
-	try:
-		tui.screen.keypad(False)
-	except Exception:
-		pass
-
-	curses.echo()
-	curses.endwin()
-
-exit(1)
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")

@@ -4,7 +4,7 @@ import signal
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any, Self, Optional, Tuple, Dict, List, TYPE_CHECKING, TypeVar
+from typing import Any, Self, Optional, Tuple, Dict, List, TYPE_CHECKING, TypeVar, Generic
 from typing import Callable
 
 from archinstall.lib.output import unicode_ljust, debug
@@ -31,6 +31,14 @@ class MenuItem:
 	display_action: Optional[Callable[[Any], str]] = None
 	preview_action: Optional[Callable[[Any], Optional[str]]] = None
 	key: Optional[Any] = None
+
+	@classmethod
+	def default_yes(cls) -> Self:
+		return cls(str(_('Yes')))
+
+	@classmethod
+	def default_no(cls) -> Self:
+		return cls(str(_('No')))
 
 	def is_empty(self) -> bool:
 		return self.text == '' or self.text is None
@@ -81,6 +89,13 @@ class MenuItemGroup:
 
 		if self.focus_item not in self.menu_items:
 			raise ValueError('Selected item not in menu')
+
+	@staticmethod
+	def default_confirm():
+		return MenuItemGroup(
+			[MenuItem.default_yes(), MenuItem.default_no()],
+			sort_items=False
+		)
 
 	@property
 	def items(self) -> List[MenuItem]:
@@ -256,26 +271,22 @@ class MenuKeys(Enum):
 		return matches
 
 
-V = TypeVar('V', MenuItem, List[MenuItem], None)
-
-
 class ResultType(Enum):
 	Selection = auto()
 	Skip = auto()
 	Reset = auto()
 
 
+V = TypeVar('V', MenuItem, List[MenuItem])
+
+
 @dataclass
-class Result:
+class Result(Generic[V]):
 	type_: ResultType
 	value: V
 
 
 class AbstractCurses(metaclass=ABCMeta):
-	@abstractmethod
-	def run(self):
-		pass
-
 	@abstractmethod
 	def draw(self):
 		pass
@@ -296,7 +307,6 @@ class Menu(AbstractCurses):
 		header: Optional[str] = None,
 		cursor_char: str = '>',
 		search_enabled: bool = True,
-		multi: bool = False,
 		allow_skip: bool = True,
 		allow_reset: bool = False,
 		reset_warning_msg: Optional[str] = None,
@@ -305,7 +315,7 @@ class Menu(AbstractCurses):
 		self._header = header
 		self._cursor_char = cursor_char
 		self._search_enabled = search_enabled
-		self._multi = multi
+		self._multi = False
 		self._interrupt_warning = reset_warning_msg
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
@@ -317,8 +327,19 @@ class Menu(AbstractCurses):
 		self._menu_screen = curses.newpad(max_height, max_width)
 		self._menu_screen.nodelay(False)
 
-	def run(self) -> Result:
-		return tui.run(self)
+	def single(self) -> Result[MenuItem]:
+		self._multi = False
+		result = tui.run(self)
+
+		assert type(result.value) == MenuItem
+		return result
+
+	def multi(self) -> Result[List[MenuItem]]:
+		self._multi = True
+		result = tui.run(self)
+
+		assert type(result.value) == List[MenuItem]
+		return result
 
 	def _add_str(self, row: int, col: int, text: str, color: STYLE):
 		assert tui is not None
@@ -377,16 +398,16 @@ class Menu(AbstractCurses):
 
 		while True:
 			warning_text = f'{self._interrupt_warning}'
-			group = MenuItemGroup(
-				[MenuItem(str(_('Yes'))), MenuItem(str(_('No')))],
-				sort_items=False
-			)
 
-			choice = Menu(group, header=warning_text, cursor_char=self._cursor_char).run()
+			choice = Menu(
+				MenuItemGroup.default_confirm(),
+				header=warning_text,
+				cursor_char=self._cursor_char
+			).single()
 
 			match choice.type_:
 				case ResultType.Selection:
-					if choice.value == yes:
+					if choice.value == MenuItem.default_yes():
 						return True
 
 			return False
@@ -449,11 +470,14 @@ class Menu(AbstractCurses):
 						return Result(ResultType.Selection, self._item_group.selected_items)
 				else:
 					item = self._item_group.focus_item
-					if item.action:
-						item.value = item.action(item.value)
-					else:
-						if self._item_group.is_mandatory_fulfilled():
-							return Result(ResultType.Selection, self._item_group.focus_item)
+					if item:
+						if item.action:
+							item.value = item.action(item.value)
+						else:
+							if self._item_group.is_mandatory_fulfilled():
+								return Result(ResultType.Selection, self._item_group.focus_item)
+
+					return None
 			case MenuKeys.MENU_UP:
 				self._item_group.focus_prev(self._skip_empty_entries)
 			case MenuKeys.MENU_DOWN:
@@ -520,6 +544,7 @@ class ArchinstallTui:
 		return self._screen.getmaxyx()
 
 	def run(self, component: AbstractCurses) -> Result:
+		raise ValueError('test')
 		ret = self._main_loop(component)
 		return ret
 
@@ -560,4 +585,4 @@ class ArchinstallTui:
 		return curses.color_pair(color.value)
 
 
-tui = ArchinstallTui()
+# tui = ArchinstallTui()
