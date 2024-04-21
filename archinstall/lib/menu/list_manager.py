@@ -3,6 +3,7 @@ from os import system
 from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple, List
 
 from .menu import Menu
+from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any
@@ -127,18 +128,29 @@ class ListManager:
 		if choice.value and choice.value != self._cancel_action:
 			self._data = self.handle_action(choice.value, entry, self._data)
 
+	def reformat(self, data: List[Any]) -> Dict[str, Optional[Any]]:
+		"""
+		Default implementation of the table to be displayed.
+		Override if any custom formatting is needed
+		"""
+		table = FormattedOutput.as_table(data)
+		rows = table.split('\n')
+
+		# these are the header rows of the table and do not map to any User obviously
+		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
+		# the selectable rows so the header has to be aligned
+		display_data: Dict[str, Optional[Any]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
+
+		for row, entry in zip(rows[2:], data):
+			row = row.replace('|', '\\|')
+			display_data[row] = entry
+
+		return display_data
+
 	def selected_action_display(self, selection: Any) -> str:
 		"""
 		this will return the value to be displayed in the
 		"Select an action for '{}'" string
-		"""
-		raise NotImplementedError('Please implement me in the child class')
-
-	def reformat(self, data: List[Any]) -> Dict[str, Optional[Any]]:
-		"""
-		this should return a dictionary of display string to actual data entry
-		mapping; if the value for a given display string is None it will be used
-		in the header value (useful when displaying tables)
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 

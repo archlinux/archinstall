@@ -1173,3 +1173,22 @@ msgstr ""
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""
+
+msgid "Selected profiles: "
+msgstr ""
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+msgid "Mark/Unmark as nodatacow"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "هل تريد استخدام swap أو zram؟"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""

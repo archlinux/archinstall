@@ -1231,6 +1231,28 @@ msgstr "Ignorar a espera pela sincronização automática da hora (isto pode cau
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "A aguardar que a sincronização do chaveiro do Arch Linux (archlinux-keyring-wkd-sync) seja concluída."
 
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "Eliminar perfil"
+
+#, fuzzy
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "A sincronização da hora não está a ser concluída, enquanto espera - consulte a documentação para obter soluções alternativas: https://archinstall.readthedocs.io/"
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "Marcar/Desmarcar como partição de aranque"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Deseja usar a compressão BTRFS?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Adicionar :"
 

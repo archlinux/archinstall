@@ -15,7 +15,7 @@ class DesktopProfile(Profile):
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
-			description=str(_('Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway')),
+			description=str(_('Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway')),
 			current_selection=current_selection,
 			support_greeter=True
 		)
