@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import archinstall
 from archinstall import SysInfo, info, debug
-from archinstall.lib import mirrors
 from archinstall.lib import models
 from archinstall.lib import disk
 from archinstall.lib import locale
@@ -188,12 +187,8 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 					# generate encryption key files for the mounted luks devices
 					installation.generate_key_files()
 
-			# Set mirrors used by pacstrap (outside of installation)
 			if mirror_config := archinstall.arguments.get('mirror_config', None):
-				if mirror_config.mirror_regions:
-					mirrors.use_mirrors(mirror_config.mirror_regions)
-				if mirror_config.custom_mirrors:
-					mirrors.add_custom_mirrors(mirror_config.custom_mirrors)
+				installation.set_mirrors(mirror_config)
 
 			installation.minimal_installation(
 				testing=enable_testing,
@@ -203,7 +198,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			)
 
 			if mirror_config := archinstall.arguments.get('mirror_config', None):
-				installation.set_mirrors(mirror_config)  # Set the mirrors in the installation medium
+				installation.set_mirrors(mirror_config, on_target=True)
 
 			if archinstall.arguments.get('swap'):
 				installation.setup_swap('zram')
@@ -249,10 +244,6 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
-
-			# This step must be after profile installs to allow profiles_bck to install language pre-requisites.
-			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
-			installation.set_keyboard_language(locale_config.kb_layout)
 
 			if profile_config := archinstall.arguments.get('profile_config', None):
 				profile_config.profile.post_install(installation)

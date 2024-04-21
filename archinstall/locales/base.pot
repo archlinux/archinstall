@@ -1256,3 +1256,11 @@ msgstr ""
 msgid ""
 "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""
+
+msgid "Selected profiles: "
+msgstr ""
+
+msgid ""
+"Time synchronization not completing, while you wait - check the docs for "
+"workarounds: https://archinstall.readthedocs.io/"
+msgstr ""

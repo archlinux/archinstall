@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import time
 import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
@@ -296,15 +295,15 @@ class DeviceHandler(object):
 		the formatting functionality and in essence the support for the given filesystem.
 		"""
 
-		# don't touch existing partitions
-		filtered_part = [p for p in device_mod.partitions if not p.exists()]
+		# only verify partitions that are being created or modified
+		create_or_modify_parts = [p for p in device_mod.partitions if p.is_create_or_modify()]
 
-		self._validate_partitions(filtered_part)
+		self._validate_partitions(create_or_modify_parts)
 
 		# make sure all devices are unmounted
 		self._umount_all_existing(device_mod.device_path)
 
-		for part_mod in filtered_part:
+		for part_mod in create_or_modify_parts:
 			# partition will be encrypted
 			if enc_conf is not None and part_mod in enc_conf.partitions:
 				self._perform_enc_formatting(
@@ -316,13 +315,16 @@ class DeviceHandler(object):
 			else:
 				self._perform_formatting(part_mod.safe_fs_type, part_mod.safe_dev_path)
 
+			# synchronize with udev before using lsblk
+			SysCommand('udevadm settle')
+
 			lsblk_info = self._fetch_part_info(part_mod.safe_dev_path)
 
 			part_mod.partn = lsblk_info.partn
 			part_mod.partuuid = lsblk_info.partuuid
 			part_mod.uuid = lsblk_info.uuid
 
-	def _perform_partitioning(
+	def _setup_partition(
 		self,
 		part_mod: PartitionModification,
 		block_device: BDevice,
@@ -339,7 +341,6 @@ class DeviceHandler(object):
 				raise DiskError(f'No partition for dev path found: {part_mod.safe_dev_path}')
 
 			disk.deletePartition(part_info.partition)
-			disk.commit()
 
 		if part_mod.status == ModificationStatus.Delete:
 			return
@@ -378,30 +379,14 @@ class DeviceHandler(object):
 
 		try:
 			disk.addPartition(partition=partition, constraint=disk.device.optimalAlignedConstraint)
-			disk.commit()
-
-			# the creation will take a bit of time
-			time.sleep(3)
-
-			# the partition has a real path now as it was created
-			part_mod.dev_path = Path(partition.path)
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
+		# the partition has a path now that it has been added
+		part_mod.dev_path = Path(partition.path)
+
 	def _fetch_part_info(self, path: Path) -> LsblkInfo:
-		attempts = 3
-		lsblk_info: Optional[LsblkInfo] = None
-
-		for attempt_nr in range(attempts):
-			time.sleep(attempt_nr + 1)
-			lsblk_info = get_lsblk_info(path)
-
-			if lsblk_info.partn and lsblk_info.partuuid and lsblk_info.uuid:
-				break
-
-		if not lsblk_info:
-			debug(f'Unable to get partition information: {path}')
-			raise DiskError(f'Unable to get partition information: {path}')
+		lsblk_info = get_lsblk_info(path)
 
 		if not lsblk_info.partn:
 			debug(f'Unable to determine new partition number: {path}\n{lsblk_info}')
@@ -442,9 +427,19 @@ class DeviceHandler(object):
 			if not luks_handler.mapper_dev:
 				raise DiskError('Failed to unlock luks device')
 
-			self.mount(luks_handler.mapper_dev, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			self.mount(
+				luks_handler.mapper_dev,
+				self._TMP_BTRFS_MOUNT,
+				create_target_mountpoint=True,
+				options=part_mod.mount_options
+			)
 		else:
-			self.mount(part_mod.safe_dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			self.mount(
+				part_mod.safe_dev_path,
+				self._TMP_BTRFS_MOUNT,
+				create_target_mountpoint=True,
+				options=part_mod.mount_options
+			)
 
 		for sub_vol in part_mod.btrfs_subvols:
 			debug(f'Creating subvolume: {sub_vol.name}')
@@ -455,18 +450,6 @@ class DeviceHandler(object):
 				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
 			SysCommand(f"btrfs subvolume create {subvol_path}")
-
-			if sub_vol.nodatacow:
-				try:
-					SysCommand(f'chattr +C {subvol_path}')
-				except SysCallError as err:
-					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {err}')
-
-			if sub_vol.compress:
-				try:
-					SysCommand(f'chattr +c {subvol_path}')
-				except SysCallError as err:
-					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
 
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
 			self.umount(luks_handler.mapper_dev)
@@ -535,7 +518,9 @@ class DeviceHandler(object):
 			# if the entire disk got nuked then we don't have to delete
 			# any existing partitions anymore because they're all gone already
 			requires_delete = modification.wipe is False
-			self._perform_partitioning(part_mod, modification.device, disk, requires_delete=requires_delete)
+			self._setup_partition(part_mod, modification.device, disk, requires_delete=requires_delete)
+
+		disk.commit()
 
 	def mount(
 		self,

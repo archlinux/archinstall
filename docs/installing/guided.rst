@@ -26,7 +26,7 @@ To start the installer, run the following in the latest Arch Linux ISO:
 
     archinstall
 
-Since the `Guided Installer`_ is the default script, this is the equvilant of running :code:`archinstall guided`
+Since the `Guided Installer`_ is the default script, this is the equivalent of running :code:`archinstall guided`
 
 
 The guided installation also supports installing with pre-configured answers to all the guided steps. This can be a quick and convenient way to re-run one or several installations.

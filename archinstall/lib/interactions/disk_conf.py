@@ -5,6 +5,7 @@ from typing import Any, TYPE_CHECKING
 from typing import Optional, List, Tuple
 
 from .. import disk
+from ..disk.device_model import BtrfsMountOption
 from ..hardware import SysInfo
 from ..menu import Menu
 from ..menu import TableMenu
@@ -180,7 +181,7 @@ def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.Parti
 	flags = [disk.PartitionFlag.Boot]
 	if using_gpt:
 		start = disk.Size(1, disk.Unit.MiB, sector_size)
-		size = disk.Size(512, disk.Unit.MiB, sector_size)
+		size = disk.Size(1, disk.Unit.GiB, sector_size)
 		flags.append(disk.PartitionFlag.ESP)
 	else:
 		start = disk.Size(3, disk.Unit.MiB, sector_size)
@@ -214,6 +215,20 @@ def select_main_filesystem_format(advanced_options=False) -> disk.FilesystemType
 	return options[choice.single_value]
 
 
+def select_mount_options() -> List[str]:
+	prompt = str(_('Would you like to use compression or disable CoW?'))
+	options = [str(_('Use compression')), str(_('Disable Copy-on-Write'))]
+	choice = Menu(prompt, options, sort=False).run()
+
+	if choice.type_ == MenuSelectionType.Selection:
+		if choice.single_value == options[0]:
+			return [BtrfsMountOption.compress.value]
+		else:
+			return [BtrfsMountOption.nodatacow.value]
+
+	return []
+
+
 def suggest_single_disk_layout(
 	device: disk.BDevice,
 	filesystem_type: Optional[disk.FilesystemType] = None,
@@ -228,7 +243,7 @@ def suggest_single_disk_layout(
 	root_partition_size = disk.Size(20, disk.Unit.GiB, sector_size)
 	using_subvolumes = False
 	using_home_partition = False
-	compression = False
+	mount_options = []
 	device_size_gib = device.device_info.total_size
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
@@ -236,9 +251,7 @@ def suggest_single_disk_layout(
 		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
 		using_subvolumes = choice.value == Menu.yes()
 
-		prompt = str(_('Would you like to use BTRFS compression?'))
-		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		compression = choice.value == Menu.yes()
+		mount_options = select_mount_options()
 
 	device_modification = disk.DeviceModification(device, wipe=True)
 
@@ -290,7 +303,7 @@ def suggest_single_disk_layout(
 		length=root_length,
 		mountpoint=Path('/') if not using_subvolumes else None,
 		fs_type=filesystem_type,
-		mount_options=['compress=zstd'] if compression else [],
+		mount_options=mount_options
 	)
 	device_modification.add_partition(root_partition)
 
@@ -308,10 +321,10 @@ def suggest_single_disk_layout(
 		root_partition.btrfs_subvols = subvolumes
 	elif using_home_partition:
 		# If we don't want to use subvolumes,
-		# But we want to be able to re-use data between re-installs..
+		# But we want to be able to reuse data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
-		home_start = root_partition.length
-		home_length = device.device_info.total_size - root_partition.length
+		home_start = root_partition.start + root_partition.length
+		home_length = device.device_info.total_size - home_start
 
 		if using_gpt:
 			home_length -= align_buffer
@@ -323,7 +336,7 @@ def suggest_single_disk_layout(
 			length=home_length,
 			mountpoint=Path('/home'),
 			fs_type=filesystem_type,
-			mount_options=['compress=zstd'] if compression else []
+			mount_options=mount_options
 		)
 		device_modification.add_partition(home_partition)
 
@@ -344,7 +357,7 @@ def suggest_multi_disk_layout(
 	min_home_partition_size = disk.Size(40, disk.Unit.GiB, disk.SectorSize.default())
 	# rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
 	desired_root_partition_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
-	compression = False
+	mount_options = []
 
 	if not filesystem_type:
 		filesystem_type = select_main_filesystem_format(advanced_options)
@@ -371,9 +384,7 @@ def suggest_multi_disk_layout(
 		return []
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
-		prompt = str(_('Would you like to use BTRFS compression?'))
-		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		compression = choice.value == Menu.yes()
+		mount_options = select_mount_options()
 
 	device_paths = ', '.join([str(d.device_info.path) for d in devices])
 
@@ -409,7 +420,7 @@ def suggest_multi_disk_layout(
 		start=root_start,
 		length=root_length,
 		mountpoint=Path('/'),
-		mount_options=['compress=zstd'] if compression else [],
+		mount_options=mount_options,
 		fs_type=filesystem_type
 	)
 	root_device_modification.add_partition(root_partition)
@@ -427,7 +438,7 @@ def suggest_multi_disk_layout(
 		start=home_start,
 		length=home_length,
 		mountpoint=Path('/home'),
-		mount_options=['compress=zstd'] if compression else [],
+		mount_options=mount_options,
 		fs_type=filesystem_type,
 	)
 	home_device_modification.add_partition(home_partition)

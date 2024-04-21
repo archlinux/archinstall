@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
 from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
-	ModificationStatus, DeviceGeometry, SectorSize
+	ModificationStatus, DeviceGeometry, SectorSize, BtrfsMountOption
 from ..hardware import SysInfo
 from ..menu import Menu, ListManager, MenuSelection, TextInput
 from ..output import FormattedOutput, warn
@@ -30,6 +30,7 @@ class PartitioningList(ListManager):
 			'mark_bootable': str(_('Mark/Unmark as bootable')),
 			'set_filesystem': str(_('Change filesystem')),
 			'btrfs_mark_compressed': str(_('Mark/Unmark as compressed')),  # btrfs only
+			'btrfs_mark_nodatacow': str(_('Mark/Unmark as nodatacow')),  # btrfs only
 			'btrfs_set_subvolumes': str(_('Set subvolumes')),  # btrfs only
 			'delete_partition': str(_('Delete partition'))
 		}
@@ -71,12 +72,17 @@ class PartitioningList(ListManager):
 				self._actions['set_filesystem'],
 				self._actions['mark_bootable'],
 				self._actions['btrfs_mark_compressed'],
+				self._actions['btrfs_mark_nodatacow'],
 				self._actions['btrfs_set_subvolumes']
 			]
 
 		# non btrfs partitions shouldn't get btrfs options
 		if selection.fs_type != FilesystemType.Btrfs:
-			not_filter += [self._actions['btrfs_mark_compressed'], self._actions['btrfs_set_subvolumes']]
+			not_filter += [
+				self._actions['btrfs_mark_compressed'],
+				self._actions['btrfs_mark_nodatacow'],
+				self._actions['btrfs_set_subvolumes']
+			]
 		else:
 			not_filter += [self._actions['assign_mountpoint']]
 
@@ -122,7 +128,9 @@ class PartitioningList(ListManager):
 					if fs_type == FilesystemType.Btrfs:
 						entry.mountpoint = None
 			case 'btrfs_mark_compressed' if entry:
-				self._set_compressed(entry)
+				self._toggle_mount_option(entry, BtrfsMountOption.compress)
+			case 'btrfs_mark_nodatacow' if entry:
+				self._toggle_mount_option(entry, BtrfsMountOption.nodatacow)
 			case 'btrfs_set_subvolumes' if entry:
 				self._set_btrfs_subvolumes(entry)
 			case 'delete_partition' if entry:
@@ -141,13 +149,28 @@ class PartitioningList(ListManager):
 		else:
 			return [d for d in data if d != entry]
 
-	def _set_compressed(self, partition: PartitionModification):
-		compression = 'compress=zstd'
+	def _toggle_mount_option(
+		self,
+		partition: PartitionModification,
+		option: BtrfsMountOption
+	):
+		if option.value not in partition.mount_options:
+			if option == BtrfsMountOption.compress:
+				partition.mount_options = [
+					o for o in partition.mount_options
+					if o != BtrfsMountOption.nodatacow.value
+				]
 
-		if compression in partition.mount_options:
-			partition.mount_options = [o for o in partition.mount_options if o != compression]
+			partition.mount_options = [
+				o for o in partition.mount_options
+				if not o.startswith(BtrfsMountOption.compress.name)
+			]
+
+			partition.mount_options.append(option.value)
 		else:
-			partition.mount_options.append(compression)
+			partition.mount_options = [
+				o for o in partition.mount_options if o != option.value
+			]
 
 	def _set_btrfs_subvolumes(self, partition: PartitionModification):
 		partition.btrfs_subvols = SubvolumeMenu(

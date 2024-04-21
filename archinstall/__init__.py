@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.7.1"
+__version__ = "2.7.2"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the
@@ -84,7 +84,7 @@ def define_arguments():
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--mount-point", "--mount_point", nargs="?", type=str,
 						help="Define an alternate mount point for installation")
-	parser.add_argument("--skip-ntp", action="store_true", help="Disables NTP checks during instalation", default=False)
+	parser.add_argument("--skip-ntp", action="store_true", help="Disables NTP checks during installation", default=False)
 	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
 	parser.add_argument("--offline", action="store_true", default=False,
 						help="Disabled online upstream services such as package search and key-ring auto update.")

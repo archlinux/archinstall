@@ -440,6 +440,12 @@ class SysCommand:
 			return val.strip()
 		return val
 
+	def output(self) -> bytes:
+		if not self.session:
+			raise ValueError('No session available')
+
+		return self.session._trace_log.replace(b'\r\n', b'\n')
+
 	@property
 	def exit_code(self) -> Optional[int]:
 		if self.session:
