@@ -3,21 +3,14 @@ import os
 import signal
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Self, Optional, Tuple, Dict, List
+from enum import Enum, auto
+from typing import Any, Self, Optional, Tuple, Dict, List, TYPE_CHECKING, TypeVar
 from typing import Callable
 
 from archinstall.lib.output import unicode_ljust, debug
 
-
-class AbstractCurses(metaclass=ABCMeta):
-	@abstractmethod
-	def draw(self):
-		pass
-
-	@abstractmethod
-	def process_input_key(self, key: int):
-		pass
+if TYPE_CHECKING:
+	_: Any
 
 
 class STYLE(Enum):
@@ -29,77 +22,71 @@ class STYLE(Enum):
 @dataclass
 class MenuItem:
 	text: str
+	value: Optional[Any] = None
 	action: Optional[Callable[[Any], Any]] = None
-	default: Optional[Any] = None
-	enabled: bool = False
+	enabled: bool = True
 	mandatory: bool = False
 	dependencies: List[Self] = field(default_factory=list)
 	dependencies_not: List[Self] = field(default_factory=list)
 	display_action: Optional[Callable[[Any], str]] = None
 	preview_action: Optional[Callable[[Any], Optional[str]]] = None
-	current_value: Optional[Any] = None
-
-	_spacing: int = 0
+	key: Optional[Any] = None
 
 	def is_empty(self) -> bool:
 		return self.text == '' or self.text is None
 
-	def set_spacing(self, spacing: int):
-		self._spacing = spacing
-
-	def show(self, spacing: int = 0) -> str:
+	def show(self, spacing: int = 0, suffix: str = '') -> str:
 		if self.is_empty():
 			return ''
 
-		current_text = ''
+		value_text = ''
 
-		if self.current_value is not None:
-			if self.display_action:
-				current_text = self.display_action(self.current_value)
-			else:
-				current_text = str(self.current_value)
-
-		entry = unicode_ljust(str(self.text), spacing, ' ')
-		if current_text:
-			return f'{entry} {current_text}'
+		if self.display_action:
+			value_text = self.display_action(self.value)
 		else:
-			return entry
+			if self.value is not None:
+				value_text = str(self.value)
 
+		if value_text:
+			spacing += 2
+			text = unicode_ljust(str(self.text), spacing, ' ')
+		else:
+			text = self.text
 
-# def set_current_selection(self, current: Optional[Any]):
-# 	self._current_selection = current
-#
-# def has_selection(self) -> bool:
-# 	if not self._current_selection:
-# 		return False
-# 	return True
-#
-# def get_selection(self) -> Any:
-# 	return self._current_selection
+		return f'{text} {value_text}{suffix}'
 
 
 @dataclass
 class MenuItemGroup:
-	items: List[MenuItem]
+	menu_items: List[MenuItem]
 	focus_item: Optional[MenuItem] = None
-	multi_selection: bool = False
+	default_item: Optional[MenuItem] = None
 	selected_items: List[MenuItem] = field(default_factory=list)
+	sort_items: bool = True
 
 	_filter_pattern: str = ''
 
 	def __post_init__(self):
-		if not self.focus_item:
-			self.focus_item = self.items[0]
+		if len(self.menu_items) < 1:
+			raise ValueError('Menu must have at least one item')
 
-		if self.focus_item not in self.items:
+		if self.sort_items:
+			self.menu_items = sorted(self.menu_items, key=lambda x: x.text)
+
+		if not self.focus_item:
+			if self.selected_items:
+				self.focus_item = self.selected_items[0]
+			else:
+				self.focus_item = self.menu_items[0]
+
+		if self.focus_item not in self.menu_items:
 			raise ValueError('Selected item not in menu')
 
-		if not self.multi_selection:
-			self.selected_items = []
-
-		spacing = self._determine_spacing()
-		for item in self.items:
-			item.set_spacing(spacing)
+	@property
+	def items(self) -> List[MenuItem]:
+		f = self._filter_pattern.lower()
+		items = filter(lambda item: item.is_empty() or f in item.text.lower(), self.menu_items)
+		return list(items)
 
 	@property
 	def filter_pattern(self):
@@ -117,32 +104,30 @@ class MenuItemGroup:
 		self._filter_pattern = self._filter_pattern[:-1]
 		self.reload_focus_itme()
 
+	def set_focus_item_index(self, index: int):
+		items = self.items
+		non_empty_items = [item for item in items if not item.is_empty()]
+		if index < 0 or index >= len(non_empty_items):
+			return
+
+		for item in non_empty_items[index:]:
+			if not item.is_empty():
+				self.focus_item = item
+				return
+
 	def reload_focus_itme(self):
-		if self.focus_item not in self.get_items():
+		if self.focus_item not in self.items:
 			self.focus_first()
 
+	def is_item_selected(self, item: MenuItem) -> bool:
+		return item in self.selected_items
+
 	def select_current_item(self):
-		if self.multi_selection:
+		if self.focus_item:
 			if self.focus_item in self.selected_items:
 				self.selected_items.remove(self.focus_item)
 			else:
 				self.selected_items.append(self.focus_item)
-
-			debug('')
-			debug(self.focus_item)
-			debug(self.selected_items)
-
-	def get_items(self) -> List[MenuItem]:
-		items = []
-		for item in self.items:
-			if self._filter_pattern.lower() in item.text.lower() or not item.text:
-				items.append(item)
-
-		return items
-
-	def _determine_spacing(self) -> int:
-		max_length = max([len(item.text) for item in self.items])
-		return max_length + 1
 
 	def is_focused(self, item: MenuItem) -> bool:
 		if isinstance(self.focus_item, list):
@@ -152,19 +137,19 @@ class MenuItemGroup:
 
 	def _first(self, items: List[MenuItem], ignore_empty: bool) -> Optional[MenuItem]:
 		for item in items:
-			if ignore_empty and not item.is_empty():
+			if not ignore_empty:
 				return item
-			else:
+
+			if not item.is_empty():
 				return item
 
 		return None
 
 	def get_first_item(self, ignore_empty: bool = True) -> Optional[MenuItem]:
-		items = self.get_items()
-		return self._first(items, ignore_empty)
+		return self._first(self.items, ignore_empty)
 
 	def get_last_item(self, ignore_empty: bool = True) -> Optional[MenuItem]:
-		items = self.get_items()
+		items = self.items
 		rev_items = list(reversed(items))
 		return self._first(rev_items, ignore_empty)
 
@@ -179,7 +164,11 @@ class MenuItemGroup:
 			self.focus_item = last_item
 
 	def focus_prev(self, skip_empty: bool = True):
-		items = self.get_items()
+		items = self.items
+
+		if self.focus_item not in items:
+			return
+
 		if self.focus_item == items[0]:
 			self.focus_item = items[-1]
 		else:
@@ -189,7 +178,11 @@ class MenuItemGroup:
 			self.focus_prev(skip_empty)
 
 	def focus_next(self, skip_empty: bool = True):
-		items = self.get_items()
+		items = self.items
+
+		if self.focus_item not in items:
+			return
+
 		if self.focus_item == items[-1]:
 			self.focus_item = items[0]
 		else:
@@ -198,10 +191,38 @@ class MenuItemGroup:
 		if self.focus_item.is_empty() and skip_empty:
 			self.focus_next(skip_empty)
 
+	def is_mandatory_fulfilled(self) -> bool:
+		for item in self.menu_items:
+			if item.mandatory and not item.value:
+				return False
+		return True
+
+	def get_spacing(self) -> int:
+		return max([len(str(it.text)) for it in self.items])
+
+	def verify_item_enabled(self, item: MenuItem) -> bool:
+		if not item.enabled:
+			return False
+
+		if item in self.menu_items:
+			for dep in item.dependencies:
+				if not self.verify_item_enabled(dep):
+					return False
+
+			for dep in item.dependencies_not:
+				if dep.value is not None:
+					return False
+
+			return True
+
+		return False
+
 
 class MenuKeys(Enum):
 	# alphabet keys
 	STD_KEYS = set(range(32, 127))
+	# numbers
+	NUM_KEYS = set(range(49, 58))
 	# up k
 	MENU_UP = {259, 107}
 	# down j
@@ -226,7 +247,7 @@ class MenuKeys(Enum):
 	BACKSPACE = {127, 263}
 
 	@classmethod
-	def from_ord(cls, key: int) -> List[Self]:
+	def from_ord(cls, key: int) -> List['MenuKeys']:
 		matches = []
 		for group in MenuKeys:
 			if key in group.value:
@@ -235,114 +256,204 @@ class MenuKeys(Enum):
 		return matches
 
 
+V = TypeVar('V', MenuItem, List[MenuItem], None)
+
+
+class ResultType(Enum):
+	Selection = auto()
+	Skip = auto()
+	Reset = auto()
+
+
+@dataclass
+class Result:
+	type_: ResultType
+	value: V
+
+
+class AbstractCurses(metaclass=ABCMeta):
+	@abstractmethod
+	def run(self):
+		pass
+
+	@abstractmethod
+	def draw(self):
+		pass
+
+	@abstractmethod
+	def process_input_key(self, key: int) -> Optional[Result]:
+		pass
+
+	@abstractmethod
+	def handle_interrupt(self) -> bool:
+		pass
+
+
 class Menu(AbstractCurses):
 	def __init__(
 		self,
-		tui: 'ArchinstallTui',
-		item_group: MenuItemGroup,
+		group: MenuItemGroup,
 		header: Optional[str] = None,
 		cursor_char: str = '>',
-		skip_empty_entries: bool = True,
-		search_enabled: bool = True
+		search_enabled: bool = True,
+		multi: bool = False,
+		allow_skip: bool = True,
+		allow_reset: bool = False,
+		reset_warning_msg: Optional[str] = None,
+
 	):
-		self._tui = tui
 		self._header = header
-		self._item_group = item_group
 		self._cursor_char = cursor_char
-		self._skip_empty_entries = skip_empty_entries
 		self._search_enabled = search_enabled
-
+		self._multi = multi
+		self._interrupt_warning = reset_warning_msg
+		self._allow_skip = allow_skip
+		self._allow_reset = allow_reset
 		self._active_search = False
+		self._skip_empty_entries = True
+		self._item_group = group
 
-		if len(item_group.items) < 1:
-			raise ValueError('Menu must have at least one item')
-
-		max_height = self._tui.max_yx[0]
-		max_width = self._tui.max_yx[1]
+		max_height, max_width = tui.max_yx
 		self._menu_screen = curses.newpad(max_height, max_width)
+		self._menu_screen.nodelay(False)
+
+	def run(self) -> Result:
+		return tui.run(self)
 
 	def _add_str(self, row: int, col: int, text: str, color: STYLE):
-		self._menu_screen.addstr(row, col, text, self._tui.get_color(color))
+		assert tui is not None
+		self._menu_screen.addstr(row, col, text, tui.get_color(color))
 
 	def draw(self):
 		self._menu_screen.clear()
 
-		col_offset = 0
-		min_row_offset = 1
+		row_offset = 0
+		min_col_offset = 1
 		cursor_offset = len(self._cursor_char)
-		row_offset = min_row_offset + cursor_offset + 1
-		multi_offset = min_row_offset + cursor_offset + 1
+		col_offset = min_col_offset + cursor_offset + 1
+		multi_offset = min_col_offset + cursor_offset + 1
 
-		if self._item_group.multi_selection:
-			row_offset += 4  # [x] or [ ] prefix
+		if self._multi:
+			col_offset += 4  # [x] or [ ] prefix
 
 		if self._header:
-			self._add_str(col_offset, 0, self._header, STYLE.NORMAL)
-			col_offset += 2
+			self._add_str(row_offset, 0, self._header, STYLE.NORMAL)
+			row_offset += self._header.count('\n') + 1
 
-		items = self._item_group.get_items()
+		items = [it for it in self._item_group.items if self._item_group.verify_item_enabled(it)]
+
+		spacing = self._item_group.get_spacing()
 
 		for index, item in enumerate(items):
-			item_row = col_offset + index
+			item_row = row_offset + index
 			style = STYLE.NORMAL
 
 			if item == self._item_group.focus_item:
-				cursor = f'{self._cursor_char} '.ljust(row_offset)
-				self._add_str(item_row, min_row_offset, cursor, STYLE.NORMAL)
+				cursor = f'{self._cursor_char} '.ljust(col_offset)
+				self._add_str(item_row, min_col_offset, cursor, STYLE.NORMAL)
 				style = STYLE.MENU_STYLE
 
-			if multi_prefix := self._multi_prefix(item):
+			if self._multi and not item.is_empty():
+				multi_prefix = self._multi_prefix(item)
 				self._add_str(item_row, multi_offset, multi_prefix, style)
 
-			self._add_str(item_row, row_offset, item.show(), style)
+			suffix = str(_(' (default)')) if self._item_group.default_item == item else ''
+
+			item_text = item.show(spacing=spacing, suffix=suffix)
+			self._add_str(item_row, col_offset, item_text, style)
 
 		if self._active_search:
 			filter_pattern = self._item_group.filter_pattern
-			self._add_str(col_offset + len(self._item_group.items), 0, f'/{filter_pattern}', STYLE.NORMAL)
+			self._add_str(row_offset + len(self._item_group.items), 0, f'/{filter_pattern}', STYLE.NORMAL)
 
 		self._refresh()
 
-	def _multi_prefix(self, item: MenuItem) -> str:
-		if not self._item_group.multi_selection or item.is_empty():
-			return ''
+	def _confirm_interrupt(self) -> bool:
+		self._menu_screen.clear()
+		# when a interrupt signal happens then getchr
+		# doesn't seem to work anymore so we need to
+		# call it twice to get it to block and wait for input
+		self._menu_screen.getch()
 
-		if item in self._item_group.selected_items:
+		while True:
+			warning_text = f'{self._interrupt_warning}'
+			group = MenuItemGroup(
+				[MenuItem(str(_('Yes'))), MenuItem(str(_('No')))],
+				sort_items=False
+			)
+
+			choice = Menu(group, header=warning_text, cursor_char=self._cursor_char).run()
+
+			match choice.type_:
+				case ResultType.Selection:
+					if choice.value == yes:
+						return True
+
+			return False
+
+	def _multi_prefix(self, item: MenuItem) -> str:
+		if self._item_group.is_item_selected(item):
 			return '[x] '
 		else:
 			return '[ ] '
 
 	def _refresh(self):
-		y, x = self._tui.max_yx
+		y, x = tui.max_yx
 		self._menu_screen.refresh(0, 0, 0, 0, x - 1, y - 1)
 
-	def process_input_key(self, key: int):
+	def handle_interrupt(self) -> bool:
+		debug('Signal interrupt')
+
+		if self._allow_reset:
+			if self._interrupt_warning:
+				return self._confirm_interrupt()
+		else:
+			return False
+
+		return True
+
+	def process_input_key(self, key: int) -> Optional[Result]:
 		key_handles = MenuKeys.from_ord(key)
+
+		debug(f'key: {key}, key_handles: {key_handles}')
 
 		# special case when search is currently active
 		if self._active_search:
 			if MenuKeys.STD_KEYS in key_handles:
 				self._item_group.append_filter(chr(key))
 				self.draw()
-				return
+				return None
 			elif MenuKeys.BACKSPACE in key_handles:
 				self._item_group.reduce_filter()
 				self.draw()
-				return
+				return None
 
 		# remove standard keys from the list of key handles
 		key_handles = [key for key in key_handles if key != MenuKeys.STD_KEYS]
 
 		if len(key_handles) > 1:
-			t = curses.keyname(key)
-			t = t.decode('utf-8')
+			byte_str = curses.keyname(key)
+			dec_str = byte_str.decode('utf-8')
 			handles = ', '.join([k.name for k in key_handles])
-			raise ValueError(f'Multiple key matches for key {t}: {handles}')
+			raise ValueError(f'Multiple key matches for key {dec_str}: {handles}')
 		elif len(key_handles) == 0:
-			return
+			return None
 
 		handle = key_handles[0]
 
 		match handle:
+			case MenuKeys.ACCEPT:
+				if self._multi:
+					self._item_group.select_current_item()
+					if self._item_group.is_mandatory_fulfilled():
+						return Result(ResultType.Selection, self._item_group.selected_items)
+				else:
+					item = self._item_group.focus_item
+					if item.action:
+						item.value = item.action(item.value)
+					else:
+						if self._item_group.is_mandatory_fulfilled():
+							return Result(ResultType.Selection, self._item_group.focus_item)
 			case MenuKeys.MENU_UP:
 				self._item_group.focus_prev(self._skip_empty_entries)
 			case MenuKeys.MENU_DOWN:
@@ -355,10 +466,9 @@ class Menu(AbstractCurses):
 				self._item_group.focus_first()
 			case MenuKeys.MENU_END:
 				self._item_group.focus_last()
-			case MenuKeys.ACCEPT:
-				pass
 			case MenuKeys.MULTI_SELECT:
-				self._item_group.select_current_item()
+				if self._multi:
+					self._item_group.select_current_item()
 			case MenuKeys.ENABLE_SEARCH:
 				if self._search_enabled and not self._active_search:
 					self._active_search = True
@@ -367,10 +477,16 @@ class Menu(AbstractCurses):
 				if self._active_search:
 					self._active_search = False
 					self._item_group.set_filter_pattern('')
+				else:
+					if self._allow_skip:
+						return Result(ResultType.Skip, None)
+			case MenuKeys.NUM_KEYS:
+				self._item_group.set_focus_item_index(key - 49)
 			case _:
 				pass
 
 		self.draw()
+		return None
 
 
 class ArchinstallTui:
@@ -380,6 +496,7 @@ class ArchinstallTui:
 		curses.noecho()
 		curses.cbreak()
 		curses.curs_set(0)
+		curses.set_escdelay(25)
 
 		self._screen.keypad(True)
 
@@ -392,7 +509,7 @@ class ArchinstallTui:
 
 		self._component: Optional[AbstractCurses] = None
 
-		signal.signal(signal.SIGWINCH, self._win_resize_handler)
+		signal.signal(signal.SIGWINCH, self._sig_win_resize)
 
 	@property
 	def screen(self) -> Any:
@@ -402,22 +519,30 @@ class ArchinstallTui:
 	def max_yx(self) -> Tuple[int, int]:
 		return self._screen.getmaxyx()
 
-	def run(self, component: AbstractCurses):
-		self._component = component
-		self._main_loop(component)
+	def run(self, component: AbstractCurses) -> Result:
+		ret = self._main_loop(component)
+		return ret
 
-	def _win_resize_handler(self, signum: int, frame):
+	def _sig_win_resize(self, signum: int, frame):
 		if self._component:
 			self._component.draw()
 
-	def _main_loop(self, component: AbstractCurses) -> None:
+	def _main_loop(self, component: AbstractCurses) -> Result:
 		self._screen.refresh()
-
 		component.draw()
 
 		while True:
-			key = self._process_input_key()
-			component.process_input_key(key)
+			try:
+				key = self._screen.getch()
+				ret = component.process_input_key(key)
+
+				if ret is not None:
+					return ret
+			except KeyboardInterrupt:
+				if component.handle_interrupt():
+					return Result(ResultType.Reset, None)
+				else:
+					component.draw()
 
 	def _reset_terminal(self):
 		os.system("reset")
@@ -434,5 +559,5 @@ class ArchinstallTui:
 	def get_color(self, color: STYLE) -> int:
 		return curses.color_pair(color.value)
 
-	def _process_input_key(self) -> int:
-		return self._screen.getch()
+
+tui = ArchinstallTui()
