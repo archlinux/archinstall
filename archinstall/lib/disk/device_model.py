@@ -451,7 +451,7 @@ class _DeviceInfo:
 		elif device.type in parted.devices:
 			device_type = parted.devices[device.type]
 		else:
-			debug(f'Device code not unknown: {device.type}')
+			debug(f'Device code unknown: {device.type}')
 			device_type = parted.devices[parted.DEVICE_UNKNOWN]
 
 		sector_size = SectorSize(device.sectorSize, Unit.B)
