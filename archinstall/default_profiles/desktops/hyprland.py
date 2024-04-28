@@ -31,7 +31,10 @@ class HyprlandProfile(XorgProfile):
 			"wofi",
 			"xdg-desktop-portal-hyprland",
 			"qt5-wayland",
-			"qt6-wayland"
+			"qt6-wayland",
+			"polkit-kde-agent",
+			"grim",
+			"slurp"
 		]
 
 	@property
