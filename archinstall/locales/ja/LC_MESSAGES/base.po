@@ -728,7 +728,7 @@ msgid "Value: "
 msgstr "値: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "ドライブの選択とパーティショニングをスキップして、/mnt にマウントしているドライブのセットアップを使用できます（実験的）"
+msgstr "ドライブ選択とパーティション作成をスキップして、/mnt にマウントしているドライブのセットアップを使用できます（実験的）"
 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "いずれかのディスクを選択するか、スキップして /mnt をデフォルトとして使用"
@@ -858,7 +858,7 @@ msgid "Existing Partitions"
 msgstr "既存のパーティション"
 
 msgid "Select a partitioning option"
-msgstr "パーティションの分割オプションを選択"
+msgstr "パーティション作成のオプションを選択"
 
 msgid "Enter the root directory of the mounted devices: "
 msgstr "マウントされたデバイスのルートディレクトリを入力: "
@@ -957,7 +957,7 @@ msgid "Use a best-effort default partition layout"
 msgstr "ベストエフォートのデフォルトパーティションレイアウトを使用"
 
 msgid "Manual Partitioning"
-msgstr "手動パーティショニング"
+msgstr "手動でパーティションを作成"
 
 msgid "Pre-mounted configuration"
 msgstr "事前にマウントされた設定"
@@ -1243,3 +1243,57 @@ msgstr "圧縮する"
 
 msgid "Disable Copy-on-Write"
 msgstr "コピーオンライトを無効にする"
+
+msgid "Configuration type: {}"
+msgstr "設定タイプ: {}"
+
+msgid "LVM configuration type"
+msgstr "LVM の設定タイプ"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "パーティションが2個を超える場合の LVM ディスク暗号化は、現在サポートしていません"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "NetworkManager を使用する（GNOME と KDE Plasma でインターネットをグラフィカルに設定するのに必要）"
+
+msgid "Select a LVM option"
+msgstr "LVM のオプションを選択"
+
+msgid "Default layout"
+msgstr "デフォルトのレイアウト"
+
+msgid "No Encryption"
+msgstr "暗号化なし"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LUKS 上の LVM"
+
+msgid "LUKS on LVM"
+msgstr "LVM 上の LUKS"
+
+msgid "Partitioning"
+msgstr "パーティションを作成"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "論理ボリューム管理（LVM）"
+
+msgid "Physical volumes"
+msgstr "物理ボリューム"
+
+msgid "Volumes"
+msgstr "ボリューム"
+
+msgid "LVM volumes"
+msgstr "LVM ボリューム"
+
+msgid "LVM volumes to be encrypted"
+msgstr "暗号化する LVM ボリューム"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "暗号化する LVM ボリュームを選択"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。例: GNOME, KDE Plasma, Sway"

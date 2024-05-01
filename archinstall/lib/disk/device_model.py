@@ -19,7 +19,6 @@ from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
 from ..output import debug, error
 from ..storage import storage
-from ..output import info
 
 if TYPE_CHECKING:
 	_: Any
@@ -449,8 +448,11 @@ class _DeviceInfo:
 		device = disk.device
 		if device.type == 18:
 			device_type = 'loop'
-		else:
+		elif device.type in parted.devices:
 			device_type = parted.devices[device.type]
+		else:
+			debug(f'Device code unknown: {device.type}')
+			device_type = parted.devices[parted.DEVICE_UNKNOWN]
 
 		sector_size = SectorSize(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
@@ -568,7 +570,7 @@ class PartitionType(Enum):
 		if code == parted.PARTITION_NORMAL:
 			return PartitionType.Primary
 		else:
-			info(f'Partition code not supported: {code}')
+			debug(f'Partition code not supported: {code}')
 			return PartitionType._Unknown
 
 	def get_partition_code(self) -> Optional[int]:
