@@ -1252,21 +1252,21 @@ msgid "Partitioning"
 msgstr "Disk bölümü"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Mantıksal Hacim Yönetimi (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "Fiziksel birimler"
 
 msgid "Volumes"
-msgstr ""
+msgstr "Birimler"
 
 #, fuzzy
 msgid "Default layout"
-msgstr "Disk şeması"
+msgstr "Varsayılan düzen"
 
 #, fuzzy
 msgid "No Encryption"
-msgstr "Şifreleme türü"
+msgstr "Şifreleme yok"
 
 msgid "LUKS"
 msgstr ""
@@ -1291,23 +1291,23 @@ msgstr "Hangi disk bölümünün şifrelemek için işaretleneceğini seçin"
 
 #, fuzzy
 msgid "Configuration type: {}"
-msgstr "Konfigürasyon"
+msgstr "Konfigürasyon tipi: {}"
 
 #, fuzzy
 msgid "LVM configuration type"
-msgstr "Yapılandırma yok"
+msgstr "LVM yapılandırma türü"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "Şu anda 2'den fazla bölüm içeren LVM disk şifrelemesi desteklenmemektedir"
 
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "NetworkManager'ı kullan (GNOME ya da KDE'de interneti grafik olarak yapılandırmak için gerekli)"
+msgstr "NetworkManager'ı kullan (GNOME ya da KDE Plasma'da interneti grafik olarak yapılandırmak için gerekli)"
 
 #, fuzzy
 msgid "Select a LVM option"
-msgstr "Bir saat dilimi seçin"
+msgstr "bir LVM seçeneği seçin."
 
 #, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Masaüstü ortamları ve otomatik döşemeli pencere yöneticilerine bir seçenek sunar, örnek olarak gnome, kde, sway"
+msgstr "Masaüstü ortamları ve otomatik döşemeli pencere yöneticilerine bir seçenek sunar, örnek olarak GNOME, KDE Plasma, Sway"
