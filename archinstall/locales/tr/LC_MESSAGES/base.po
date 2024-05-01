@@ -217,15 +217,12 @@ msgstr "Tam açık-kaynak (varsayılan)"
 msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "Hangi çekirdekleri kullanmak istediğinizi seçin ya da varsayılan \"{}\" için boş bırakın"
 
-# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Choose which locale language to use"
-msgstr "Hangi dilin kullanılacağını seçin"
+msgstr "Hangi yerel ayar dilinin kullanılacağını seçin"
 
-# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Choose which locale encoding to use"
-msgstr "Hangi yerel dil kod şemasının kullanılacağını seçin"
+msgstr "Hangi yerel ayar kod şemasının kullanılacağını seçin"
 
-# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Select one of the values shown below: "
 msgstr "Aşağıda gösterilen değerlerden birini seçin: "
 
@@ -250,13 +247,11 @@ msgstr "Klavye düzeni"
 msgid "Mirror region"
 msgstr "İndirme sunucusu bölgesi"
 
-# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Locale language"
-msgstr "Yerel dil"
+msgstr "Yerel ayar dili"
 
-# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Locale encoding"
-msgstr "Yerel dil kod şeması"
+msgstr "Yerel ayar dil kod şeması"
 
 msgid "Drive(s)"
 msgstr "Disk(ler)"
@@ -451,7 +446,7 @@ msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate
 msgstr "Pacman hâlihazırda çalışıyor, işlemin sonlandırılması için en fazla 10 dakika beklenecek."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Önceden var olan pacman kilidi çıkış yapmadı. Lütfen archinstall'ı kullanmadan once mevcut olan pacman oturumlarını temizleyin."
+msgstr "Önceden var olan pacman kilidi çıkış yapmadı. Lütfen archinstall'u kullanmadan önce mevcut olan pacman oturumlarını temizleyin."
 
 msgid "Choose which optional additional repositories to enable"
 msgstr "Hangi tercihi ek depoların (repositorylerin) aktifleştirileceğini seçin"
@@ -463,10 +458,10 @@ msgid "Change password"
 msgstr "Şifre değiştir"
 
 msgid "Promote/Demote user"
-msgstr "Kullanıcı terfi et/indirge"
+msgstr "Kullanıcıyı terfi et/indirge"
 
 msgid "Delete User"
-msgstr "Kullanıcı Sil"
+msgstr "Kullanıcıyı Sil"
 
 msgid ""
 "\n"
@@ -660,7 +655,7 @@ msgid "Select your desired desktop environment"
 msgstr "İstediğiniz masaüstü ortamını seçin"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr "Arch Linux'u istediğin gibi kişiselleştirmeni sağlayan çok basit bir kurulum."
+msgstr "Arch Linux'u uygun gördüğünüz şekilde özelleştirmenize olanak tanıyan çok basit bir kurulum."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Kurmak ve aktif etmek için bazı seçilmiş çeşitli sunucu paketleri sunar, örnek olarak httpd, nginx, mariadb"
@@ -675,7 +670,7 @@ msgid "Press Enter to continue."
 msgstr "Devam etmek için Enter'a bas."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Yeni oluşturulmuş kuruluma chroot etmek ve kurulum sonrası konfigürasyon gerçekleştirmek ister misiniz?"
+msgstr "Yeni oluşturulan kuruluma chroot ile girmek ve kurulum sonrası yapılandırmayı gerçekleştirmek ister misiniz?"
 
 msgid "Are you sure you want to reset this setting?"
 msgstr "Bu ayarı sıfırlamak istediğinize emin misiniz?"
@@ -684,7 +679,7 @@ msgid "Select one or more hard drives to use and configure\n"
 msgstr "Kullanmak ve yapılandırmak için bir ya da daha fazla sabit disk seçin\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Mevcut ayara herhangi bir modifikasyon disk şemasını sıfırlayacaktır!"
+msgstr "Mevcut ayarda yapılacak herhangi bir değişiklik disk düzenini sıfırlayacaktır!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
 msgstr "Eğer sabit disk seçimini sıfırlarsanız bu ayrıca mevcut disk şemasını da sıfırlayacaktır. Emin misiniz?"
@@ -819,7 +814,7 @@ msgstr " - Devre Dışı Bırak/Varsayılan : 0 (Paralel indirmeyi devre dışı
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Geçersiz Giriş! Geçerli bir girişle tekrar deneyin [1 - {max_downloads} veya 0 devre dışı bırakmak için]"
+msgstr "Geçersiz girdi! Geçerli bir girdiyle tekrar deneyin [{max_downloads} için 1, veya devre dışı bırakmak için 0]"
 
 msgid "Parallel Downloads"
 msgstr "Paralel İndirmeler"
@@ -843,7 +838,7 @@ msgid "The font should be stored as {}"
 msgstr "Yazı tipi {} olarak saklanmalıdır."
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr "Archinstall'ın çalışması için kök ayrıcalıkları gerekir. Daha fazla bilgi için --help'e bakın."
+msgstr "Archinstall'un çalışması için kök ayrıcalıkları gerekir. Daha fazla bilgi için --help'e bakın."
 
 msgid "Select an execution mode"
 msgstr "Bir çalıştırma modu seçin"
@@ -886,7 +881,7 @@ msgid "Remove all newly added partitions"
 msgstr "Yeni eklenen tüm disk bölümleri kaldırın"
 
 msgid "Assign mountpoint"
-msgstr "Bir disk bölümü için monte noktası ata"
+msgstr "Bir disk bölümü için mount (bağlantı) noktası ata"
 
 msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Bir disk bölümünü biçimlendirilmek üzere işaretle/işareti kaldır (verileri siler)"
@@ -934,7 +929,7 @@ msgid "Enter the end sector of the partition (percentage or block number, defaul
 msgstr "Bölümün bitiş sektörünü girin (yüzde veya blok numarası, varsayılan: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr "Bu işlem yeni eklenmiş tüm bölümleri kaldıracaktır, devam edilsin?"
+msgstr "Bu işlem yeni eklenmiş tüm bölümleri kaldıracaktır, devam edilsin mi?"
 
 msgid "Partition management: {}"
 msgstr "Bölüm yönetimi: {}"
@@ -961,13 +956,13 @@ msgid "Select a FIDO2 device to use for HSM"
 msgstr "HSM için kullanılacak bir FIDO2 cihazı seçin"
 
 msgid "Use a best-effort default partition layout"
-msgstr "En iyi çabayı gösteren bir varsayılan bölüm düzeni kullanın"
+msgstr "Olabilecek en iyi varsayılan bölüm düzeni kullanın"
 
 msgid "Manual Partitioning"
 msgstr "Manuel yapılandırma"
 
 msgid "Pre-mounted configuration"
-msgstr "Önceden monte edilmiş konfigürasyon"
+msgstr "Önceden mount edilmiş (bağlanmış) konfigürasyon"
 
 msgid "Unknown"
 msgstr "Bilinmeyen"
@@ -1247,7 +1242,72 @@ msgid "Would you like to use compression or disable CoW?"
 msgstr "BTRFS sıkıştırmasını kullanmak ister misiniz?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Sıkıştırma kullan"
 
 msgid "Disable Copy-on-Write"
+msgstr "Copy-on-write'ı devre dışı bırak"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "Disk bölümü"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Mantıksal Hacim Yönetimi (LVM)"
+
+msgid "Physical volumes"
+msgstr "Fiziksel birimler"
+
+msgid "Volumes"
+msgstr "Birimler"
+
+#, fuzzy
+msgid "Default layout"
+msgstr "Varsayılan düzen"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "Şifreleme yok"
+
+msgid "LUKS"
 msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "Alt disk bölümü ayarla"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "Şifrelenecek bölümler"
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "Hangi disk bölümünün şifrelemek için işaretleneceğini seçin"
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "Konfigürasyon tipi: {}"
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "LVM yapılandırma türü"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "Şu anda 2'den fazla bölüm içeren LVM disk şifrelemesi desteklenmemektedir"
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "NetworkManager'ı kullan (GNOME ya da KDE Plasma'da interneti grafik olarak yapılandırmak için gerekli)"
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "bir LVM seçeneği seçin."
+
+#, fuzzy
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Masaüstü ortamları ve otomatik döşemeli pencere yöneticilerine bir seçenek sunar, örnek olarak GNOME, KDE Plasma, Sway"
