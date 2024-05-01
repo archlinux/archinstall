@@ -679,7 +679,7 @@ msgid "Select one or more hard drives to use and configure\n"
 msgstr "Kullanmak ve yapılandırmak için bir ya da daha fazla sabit disk seçin\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Mevcut ayarda yapılacak herhangi bir değişiklik disk düzenini sıfırlayacaktır!!"
+msgstr "Mevcut ayarda yapılacak herhangi bir değişiklik disk düzenini sıfırlayacaktır!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
 msgstr "Eğer sabit disk seçimini sıfırlarsanız bu ayrıca mevcut disk şemasını da sıfırlayacaktır. Emin misiniz?"
