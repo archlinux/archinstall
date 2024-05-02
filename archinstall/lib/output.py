@@ -328,9 +328,11 @@ def log(
 			sys.stdout.write(f"{text}\n")
 			sys.stdout.flush()
 
-def _count_wchars(string: str) -> int:
+
+def count_wchars(string: str) -> int:
 	"Count the total number of wide characters contained in a string"
 	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
+
 
 def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
 	"""Return a left-justified unicode string of length width.
@@ -343,7 +345,8 @@ def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
 	>>> unicode_ljust('こんにちは', 15, '*')
 	'こんにちは*****'
 	"""
-	return string.ljust(width - _count_wchars(string), fillbyte)
+	return string.ljust(width - count_wchars(string), fillbyte)
+
 
 def unicode_rjust(string: str, width: int, fillbyte: str = ' ') -> str:
 	"""Return a right-justified unicode string of length width.
@@ -356,4 +359,4 @@ def unicode_rjust(string: str, width: int, fillbyte: str = ' ') -> str:
 	>>> unicode_rjust('こんにちは', 15, '*')
 	'*****こんにちは'
 	"""
-	return string.rjust(width - _count_wchars(string), fillbyte)
+	return string.rjust(width - count_wchars(string), fillbyte)

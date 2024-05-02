@@ -8,7 +8,6 @@ from archinstall.lib import locale
 from archinstall.lib import disk
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
-from archinstall.lib.menu import Menu
 from archinstall.lib.models import AudioConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
@@ -17,36 +16,23 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 if TYPE_CHECKING:
 	_: Any
 
-from archinstall.tui.curses_menu import Menu
+from archinstall.tui.curses_menu import NewMenu, MenuItem, MenuItemGroup, PreviewStyle
 
-# def _select_archinstall_language(preset):
-# 	language = select_archinstall_language(translation_handler.translated_languages, preset)
-# 	translation_handler.activate(language)
-# 	return language
-#
-#
-# item1 = MenuItem(
-# 	str(_('Archinstall language')),
-# 	value=TranslationHandler().get_language_by_abbr('en'),
-# 	action=lambda x: _select_archinstall_language(x),
-# 	display_action=lambda x: x.display_name
-# )
-#
-# item4 = MenuItem('the end')
-# group = MenuItemGroup([item1, item4], sort_items=False)
-#
-# menu = Menu(
-# 	group,
-# 	header='test header',
-# 	reset_warning_msg='are you certain?',
-# 	allow_skip=False,
-# 	allow_reset=False
-# ).single()
-# debug(tmp)
-#
-# debug(item1.value)
-# debug(item4.value)
-#
+item1 = MenuItem( str(_('Archinstall language')), )
+items = [MenuItem(f'item {i}') for i in range(67)]
+group = MenuItemGroup(items, sort_items=False)
+
+menu = NewMenu(
+	group,
+	header='test header',
+	reset_warning_msg='are you certain?',
+	allow_skip=False,
+	allow_reset=False,
+	preview_style=PreviewStyle.NONE,
+	preview_size=0.3
+).single()
+
+exit(1)
 
 
 
@@ -244,8 +230,8 @@ def perform_installation(mountpoint: Path):
 		if not archinstall.arguments.get('silent'):
 			prompt = str(
 				_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
-			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-			if choice.value == Menu.yes():
+			choice = NewMenu(prompt, NewMenu.yes_no(), default_option=NewMenu.yes()).run()
+			if choice.value == NewMenu.yes():
 				try:
 					installation.drop_to_shell()
 				except:

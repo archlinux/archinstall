@@ -7,7 +7,7 @@ from enum import Enum, auto
 from typing import Any, Self, Optional, Tuple, Dict, List, TYPE_CHECKING, TypeVar, Generic
 from typing import Callable
 
-from archinstall.lib.output import unicode_ljust, debug
+from archinstall.lib.output import unicode_ljust, debug, count_wchars
 
 if TYPE_CHECKING:
 	_: Any
@@ -96,6 +96,12 @@ class MenuItemGroup:
 			[MenuItem.default_yes(), MenuItem.default_no()],
 			sort_items=False
 		)
+
+	@property
+	def max_width(self) -> int:
+		# use the menu_items not the items here otherwise the preview
+		# will get resized all the time when a filter is applied
+		return max([count_wchars(item.text) for item in self.menu_items])
 
 	@property
 	def items(self) -> List[MenuItem]:
@@ -286,6 +292,14 @@ class Result(Generic[V]):
 	value: V
 
 
+@dataclass
+class ViewportEntry:
+	text: str
+	row: int
+	col: int
+	style: STYLE
+
+
 class AbstractCurses(metaclass=ABCMeta):
 	@abstractmethod
 	def draw(self):
@@ -300,7 +314,57 @@ class AbstractCurses(metaclass=ABCMeta):
 		pass
 
 
-class Menu(AbstractCurses):
+class PreviewStyle(Enum):
+	NONE = auto()
+	MENU_BELOW = auto()
+	MENU_RIGHT = auto()
+
+
+@dataclass
+class Viewport:
+	screen: Any
+	x_ul: int  # x upper left
+	y_ul: int  # y upper left
+	x_lr: int  # x lower right
+	y_lr: int  # y lower right
+
+	_screen: Any
+
+	def __post_init__(self):
+		self._screen = curses.newwin(self._max_height, self._max_width, 0, 0)
+
+	def update(self, entries: List[ViewportEntry], focus_row: int):
+		for offset, entry in enumerate(entries):
+			row = entry.row  # - offset
+			self._add_str(row, entry.col, entry.text, entry.style)
+
+		# the parameters of display will determine which section of the pad is shown
+		# p_1, p_2 : coordinate of upper-left corner of pad area to display.
+		# p_3, p_4 : coordinate of upper-left corner of window area to be filled with pad content.
+		# p_5, p_6 : coordinate of lower-right corner of window area to be filled with pad content.
+		self.screen.refresh(
+			self.x_ul, self.y_ul,
+			self.x_ul, self.y_ul,
+			self.x_lr, self.y_lr
+		)
+
+	def _add_str(self, row: int, col: int, text: str, color: STYLE):
+		if row >= self.y_lr:
+			raise ValueError(f'Cannot insert row outside available window height: {row} > {self.y_lr - 1}')
+		if col >= self.x_lr:
+			raise ValueError(f'Cannot insert col outside available window width: {col} > {self.x_lr - 1}')
+
+		self.screen.addstr(row, col, text, tui.get_color(color))
+
+	def _debug_viewport(self):
+		debug('[VIEWPORT]')
+		debug(f'X_UPPER_LEFT => {self.x_ul}')
+		debug(f'Y_UPPER_LEFT => {self.y_ul}')
+		debug(f'X_LOWER_RIGHT => {self.x_lr}')
+		debug(f'Y_LOWER_RIGHT => {self.y_lr}')
+
+
+class NewMenu(AbstractCurses):
 	def __init__(
 		self,
 		group: MenuItemGroup,
@@ -310,7 +374,8 @@ class Menu(AbstractCurses):
 		allow_skip: bool = True,
 		allow_reset: bool = False,
 		reset_warning_msg: Optional[str] = None,
-
+		preview_style: PreviewStyle = PreviewStyle.NONE,
+		preview_size: float = 0.2
 	):
 		self._header = header
 		self._cursor_char = cursor_char
@@ -322,9 +387,36 @@ class Menu(AbstractCurses):
 		self._active_search = False
 		self._skip_empty_entries = True
 		self._item_group = group
+		self._preview_style = preview_style
 
-		max_height, max_width = tui.max_yx
-		self._menu_screen = curses.newpad(max_height, max_width)
+		self._max_height, self._max_width = tui.max_yx
+		self._menu_screen = curses.newwin(self._max_height, self._max_width, 0, 0)
+		self._preview_screen = curses.newwin(self._max_height, self._max_width)
+
+		if preview_size > 0.9:
+			preview_size = 0.9
+
+		match self._preview_style:
+			case PreviewStyle.MENU_BELOW:
+				y_lr = int(self._max_height * (1 - preview_size))
+				self._menu_viewport = Viewport(self._menu_screen, 0, 0, self._max_width, y_lr)
+				self._preview_viewport = Viewport(self._preview_screen, 0, y_lr, self._max_width, self._max_height)
+			case PreviewStyle.MENU_RIGHT:
+				self._menu_viewport = Viewport(self._menu_screen, 0, 0, self._item_group.max_width, self._max_height)
+				self._preview_viewport = Viewport(
+					self._preview_screen,
+					self._max_width - self._item_group.max_width,
+					0,
+					self._max_width,
+					self._max_height
+				)
+			case PreviewStyle.NONE:
+				self._menu_viewport = Viewport(self._menu_screen, 0, 0, self._max_width, self._max_height)
+				self._preview_viewport = Viewport(self._menu_screen, 0, 0, 0, 0)
+
+		assert self._menu_viewport
+		assert self._preview_viewport
+
 		self._menu_screen.nodelay(False)
 
 	def single(self) -> Result[MenuItem]:
@@ -341,10 +433,6 @@ class Menu(AbstractCurses):
 		assert type(result.value) == List[MenuItem]
 		return result
 
-	def _add_str(self, row: int, col: int, text: str, color: STYLE):
-		assert tui is not None
-		self._menu_screen.addstr(row, col, text, tui.get_color(color))
-
 	def draw(self):
 		self._menu_screen.clear()
 
@@ -353,41 +441,89 @@ class Menu(AbstractCurses):
 		cursor_offset = len(self._cursor_char)
 		col_offset = min_col_offset + cursor_offset + 1
 		multi_offset = min_col_offset + cursor_offset + 1
+		header_offset = 0
+
+		viewport_entries = []
 
 		if self._multi:
 			col_offset += 4  # [x] or [ ] prefix
 
 		if self._header:
-			self._add_str(row_offset, 0, self._header, STYLE.NORMAL)
-			row_offset += self._header.count('\n') + 1
+			viewport_entries.append(
+				ViewportEntry(self._header, row_offset, 0, STYLE.NORMAL)
+			)
+			header_offset = self._header.count('\n') + 1
+
+		row_offset += header_offset
 
 		items = [it for it in self._item_group.items if self._item_group.verify_item_enabled(it)]
+		focus_idx = items.index(self._item_group.focus_item)
+		visible_items = self._visible_entries(items, focus_idx, header_offset)
 
 		spacing = self._item_group.get_spacing()
 
-		for index, item in enumerate(items):
+		for index, item in enumerate(visible_items):
 			item_row = row_offset + index
 			style = STYLE.NORMAL
 
-			if item == self._item_group.focus_item:
+			if item == focus_idx:
 				cursor = f'{self._cursor_char} '.ljust(col_offset)
-				self._add_str(item_row, min_col_offset, cursor, STYLE.NORMAL)
+				viewport_entries.append(
+					ViewportEntry(cursor, item_row, min_col_offset, STYLE.NORMAL)
+				)
 				style = STYLE.MENU_STYLE
 
 			if self._multi and not item.is_empty():
 				multi_prefix = self._multi_prefix(item)
-				self._add_str(item_row, multi_offset, multi_prefix, style)
+				viewport_entries.append(
+					ViewportEntry(multi_prefix, item_row, multi_offset, style)
+				)
 
 			suffix = str(_(' (default)')) if self._item_group.default_item == item else ''
 
 			item_text = item.show(spacing=spacing, suffix=suffix)
-			self._add_str(item_row, col_offset, item_text, style)
+			viewport_entries.append(
+				ViewportEntry(item_text, item_row, col_offset, style)
+			)
 
 		if self._active_search:
 			filter_pattern = self._item_group.filter_pattern
-			self._add_str(row_offset + len(self._item_group.items), 0, f'/{filter_pattern}', STYLE.NORMAL)
+			viewport_entries.append(
+				ViewportEntry(
+					f'/{filter_pattern}',
+					row_offset + len(self._item_group.items),
+					0,
+					STYLE.NORMAL
+				)
+			)
 
-		self._refresh()
+		self._menu_viewport.update(viewport_entries, focus_idx)
+
+	def _visible_entries(self, items: List[MenuItem], focus_row: int, header_offset: int) -> List[MenuItem]:
+		debug('@@@@')
+		debug(len(items))
+		debug(focus_row)
+		debug(header_offset)
+
+		visible_rows = self._menu_viewport.y_lr - self._menu_viewport.y_ul - header_offset
+
+		if visible_rows < 1:
+			raise ValueError('No visible area left')
+
+		if focus_row > visible_rows:
+			start = focus_row - visible_rows
+			end = focus_row
+		elif focus_row < visible_rows:
+			start = focus_row
+			end = focus_row + visible_rows
+		else:
+			start = 0
+			end = visible_rows
+
+
+		debug(len(items[start:end]))
+
+		return items[start:end]
 
 	def _confirm_interrupt(self) -> bool:
 		self._menu_screen.clear()
@@ -399,7 +535,7 @@ class Menu(AbstractCurses):
 		while True:
 			warning_text = f'{self._interrupt_warning}'
 
-			choice = Menu(
+			choice = NewMenu(
 				MenuItemGroup.default_confirm(),
 				header=warning_text,
 				cursor_char=self._cursor_char
@@ -417,10 +553,6 @@ class Menu(AbstractCurses):
 			return '[x] '
 		else:
 			return '[ ] '
-
-	def _refresh(self):
-		y, x = tui.max_yx
-		self._menu_screen.refresh(0, 0, 0, 0, x - 1, y - 1)
 
 	def handle_interrupt(self) -> bool:
 		debug('Signal interrupt')
@@ -544,7 +676,6 @@ class ArchinstallTui:
 		return self._screen.getmaxyx()
 
 	def run(self, component: AbstractCurses) -> Result:
-		raise ValueError('test')
 		ret = self._main_loop(component)
 		return ret
 
@@ -585,4 +716,4 @@ class ArchinstallTui:
 		return curses.color_pair(color.value)
 
 
-# tui = ArchinstallTui()
+tui = ArchinstallTui()

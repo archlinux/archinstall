@@ -11,15 +11,15 @@ from pathlib import Path
 from typing import Optional, List, Dict, TYPE_CHECKING, Any
 from typing import Union
 
-import parted  # type: ignore
 import _ped  # type: ignore
+import parted  # type: ignore
 from parted import Disk, Geometry, Partition
 
 from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
 from ..output import debug, error
-from ..storage import storage
 from ..output import info
+from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any
@@ -449,8 +449,10 @@ class _DeviceInfo:
 		device = disk.device
 		if device.type == 18:
 			device_type = 'loop'
-		else:
+		elif device.type in parted.devices:
 			device_type = parted.devices[device.type]
+		else:
+			device_type = parted.devices[parted.DEVICE_UNKNOWN]
 
 		sector_size = SectorSize(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
