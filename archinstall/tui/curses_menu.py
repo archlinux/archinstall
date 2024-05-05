@@ -97,6 +97,22 @@ class MenuItemGroup:
 			sort_items=False
 		)
 
+	def index_of(self, item) -> int:
+		return self.items.index(item)
+
+	def index_focus(self) -> int:
+		return self.index_of(self.focus_item)
+
+	def index_last(self) -> int:
+		return self.index_of(self.items[-1])
+
+	def index_first(self) -> int:
+		return self.index_of(self.items[0])
+
+	@property
+	def size(self) -> int:
+		return len(self.items)
+
 	@property
 	def max_width(self) -> int:
 		# use the menu_items not the items here otherwise the preview
@@ -322,18 +338,28 @@ class PreviewStyle(Enum):
 
 @dataclass
 class Viewport:
-	screen: Any
-	x_ul: int  # x upper left
-	y_ul: int  # y upper left
-	x_lr: int  # x lower right
-	y_lr: int  # y lower right
+	# x_ul: int  # x upper left
+	# y_ul: int  # y upper left
+	# x_lr: int  # x lower right
+	# y_lr: int  # y lower right
 
-	_screen: Any
+	width: int
+	height: int
+	x_start: int
+	y_start: int
+
+	_screen: Any = None
 
 	def __post_init__(self):
-		self._screen = curses.newwin(self._max_height, self._max_width, 0, 0)
+		self._screen = curses.newwin(self.height, self.width, self.y_start, self.x_start)
+		self._screen.nodelay(False)
+
+	def getch(self):
+		return self._screen.getch()
 
 	def update(self, entries: List[ViewportEntry], focus_row: int):
+		self._screen.clear()
+
 		for offset, entry in enumerate(entries):
 			row = entry.row  # - offset
 			self._add_str(row, entry.col, entry.text, entry.style)
@@ -342,26 +368,21 @@ class Viewport:
 		# p_1, p_2 : coordinate of upper-left corner of pad area to display.
 		# p_3, p_4 : coordinate of upper-left corner of window area to be filled with pad content.
 		# p_5, p_6 : coordinate of lower-right corner of window area to be filled with pad content.
-		self.screen.refresh(
-			self.x_ul, self.y_ul,
-			self.x_ul, self.y_ul,
-			self.x_lr, self.y_lr
-		)
+		self._screen.refresh()
+
+	# self.screen.refresh(
+	# 	self.x_ul, self.y_ul,
+	# 	self.x_ul, self.y_ul,
+	# 	self.x_lr, self.y_lr
+	# )
 
 	def _add_str(self, row: int, col: int, text: str, color: STYLE):
-		if row >= self.y_lr:
-			raise ValueError(f'Cannot insert row outside available window height: {row} > {self.y_lr - 1}')
-		if col >= self.x_lr:
-			raise ValueError(f'Cannot insert col outside available window width: {col} > {self.x_lr - 1}')
+		if row >= self.height:
+			raise ValueError(f'Cannot insert row outside available window height: {row} > {self.height - 1}')
+		if col >= self.width:
+			raise ValueError(f'Cannot insert col outside available window width: {col} > {self.width - 1}')
 
-		self.screen.addstr(row, col, text, tui.get_color(color))
-
-	def _debug_viewport(self):
-		debug('[VIEWPORT]')
-		debug(f'X_UPPER_LEFT => {self.x_ul}')
-		debug(f'Y_UPPER_LEFT => {self.y_ul}')
-		debug(f'X_LOWER_RIGHT => {self.x_lr}')
-		debug(f'Y_LOWER_RIGHT => {self.y_lr}')
+		self._screen.addstr(row, col, text, tui.get_color(color))
 
 
 class NewMenu(AbstractCurses):
@@ -389,35 +410,30 @@ class NewMenu(AbstractCurses):
 		self._item_group = group
 		self._preview_style = preview_style
 
+		self._visisble_items: List[MenuItem] = []
+
 		self._max_height, self._max_width = tui.max_yx
-		self._menu_screen = curses.newwin(self._max_height, self._max_width, 0, 0)
-		self._preview_screen = curses.newwin(self._max_height, self._max_width)
 
 		if preview_size > 0.9:
 			preview_size = 0.9
 
 		match self._preview_style:
 			case PreviewStyle.MENU_BELOW:
-				y_lr = int(self._max_height * (1 - preview_size))
-				self._menu_viewport = Viewport(self._menu_screen, 0, 0, self._max_width, y_lr)
-				self._preview_viewport = Viewport(self._preview_screen, 0, y_lr, self._max_width, self._max_height)
+				y_split = int(self._max_height * (1 - preview_size))
+				self._menu_viewport = Viewport(self._max_width, y_split, 0, 0)
+				self._preview_viewport = Viewport(self._max_width, self._max_height - y_split, 0, y_split)
 			case PreviewStyle.MENU_RIGHT:
-				self._menu_viewport = Viewport(self._menu_screen, 0, 0, self._item_group.max_width, self._max_height)
-				self._preview_viewport = Viewport(
-					self._preview_screen,
-					self._max_width - self._item_group.max_width,
-					0,
-					self._max_width,
-					self._max_height
-				)
+				x_split = int(self._max_width * (1 - preview_size))
+				self._menu_viewport = Viewport(x_split, self._max_height, 0, 0)
+				self._preview_viewport = Viewport(self._max_height, self._max_width - x_split, x_split, 0)
 			case PreviewStyle.NONE:
-				self._menu_viewport = Viewport(self._menu_screen, 0, 0, self._max_width, self._max_height)
-				self._preview_viewport = Viewport(self._menu_screen, 0, 0, 0, 0)
+				self._menu_viewport = Viewport(self._max_width, self._max_height, 0, 0)
+				self._preview_viewport = Viewport(0, 0, 0, 0)
 
 		assert self._menu_viewport
 		assert self._preview_viewport
 
-		self._menu_screen.nodelay(False)
+	# self._menu_screen.nodelay(False)
 
 	def single(self) -> Result[MenuItem]:
 		self._multi = False
@@ -434,7 +450,7 @@ class NewMenu(AbstractCurses):
 		return result
 
 	def draw(self):
-		self._menu_screen.clear()
+		# self._menu_screen.clear()
 
 		row_offset = 0
 		min_col_offset = 1
@@ -443,13 +459,13 @@ class NewMenu(AbstractCurses):
 		multi_offset = min_col_offset + cursor_offset + 1
 		header_offset = 0
 
-		viewport_entries = []
+		vp_entries = []
 
 		if self._multi:
 			col_offset += 4  # [x] or [ ] prefix
 
 		if self._header:
-			viewport_entries.append(
+			vp_entries.append(
 				ViewportEntry(self._header, row_offset, 0, STYLE.NORMAL)
 			)
 			header_offset = self._header.count('\n') + 1
@@ -458,37 +474,37 @@ class NewMenu(AbstractCurses):
 
 		items = [it for it in self._item_group.items if self._item_group.verify_item_enabled(it)]
 		focus_idx = items.index(self._item_group.focus_item)
-		visible_items = self._visible_entries(items, focus_idx, header_offset)
+		self._visisble_items = self._visible_entries(items, header_offset)
 
 		spacing = self._item_group.get_spacing()
 
-		for index, item in enumerate(visible_items):
+		for index, item in enumerate(self._visisble_items):
 			item_row = row_offset + index
 			style = STYLE.NORMAL
 
-			if item == focus_idx:
+			if item == self._item_group.focus_item:
 				cursor = f'{self._cursor_char} '.ljust(col_offset)
-				viewport_entries.append(
+				vp_entries.append(
 					ViewportEntry(cursor, item_row, min_col_offset, STYLE.NORMAL)
 				)
 				style = STYLE.MENU_STYLE
 
 			if self._multi and not item.is_empty():
 				multi_prefix = self._multi_prefix(item)
-				viewport_entries.append(
+				vp_entries.append(
 					ViewportEntry(multi_prefix, item_row, multi_offset, style)
 				)
 
 			suffix = str(_(' (default)')) if self._item_group.default_item == item else ''
 
 			item_text = item.show(spacing=spacing, suffix=suffix)
-			viewport_entries.append(
+			vp_entries.append(
 				ViewportEntry(item_text, item_row, col_offset, style)
 			)
 
 		if self._active_search:
 			filter_pattern = self._item_group.filter_pattern
-			viewport_entries.append(
+			vp_entries.append(
 				ViewportEntry(
 					f'/{filter_pattern}',
 					row_offset + len(self._item_group.items),
@@ -497,40 +513,78 @@ class NewMenu(AbstractCurses):
 				)
 			)
 
-		self._menu_viewport.update(viewport_entries, focus_idx)
+		self._menu_viewport.update(vp_entries, focus_idx)
 
-	def _visible_entries(self, items: List[MenuItem], focus_row: int, header_offset: int) -> List[MenuItem]:
-		debug('@@@@')
-		debug(len(items))
-		debug(focus_row)
-		debug(header_offset)
+	def _determine_initial_visibility(
+		self,
+		items: List[MenuItem],
+		visible_rows: int
+	) -> List[MenuItem]:
+		idx_focus = self._item_group.index_focus()
+		idx_last = self._item_group.index_last()
 
-		visible_rows = self._menu_viewport.y_lr - self._menu_viewport.y_ul - header_offset
+		if idx_focus < visible_rows:
+			start = 0
+			end = visible_rows
+		elif self._item_group.size - visible_rows < idx_focus:
+			start = idx_last - visible_rows + 1
+			end = idx_last + 1
+		else:
+			start = idx_focus
+			end = idx_focus + visible_rows
+
+		return items[start:end]
+
+	def _visible_entries(
+		self,
+		items: List[MenuItem],
+		header_offset: int
+	) -> List[MenuItem]:
+		visible_rows = self._menu_viewport.height - header_offset
+
+		if len(self._item_group.items) <= visible_rows:
+			return self._item_group.items
+
+		if not self._visisble_items:
+			return self._determine_initial_visibility(items, visible_rows)
+
+		if self._item_group.focus_item in self._visisble_items:
+			return self._visisble_items
+
+		idx_focus = self._item_group.index_focus()
+		cur_idx_first = self._item_group.index_of(self._visisble_items[0])
+		cur_idx_last = self._item_group.index_of(self._visisble_items[-1])
+
+		idx_last = self._item_group.index_last()
 
 		if visible_rows < 1:
 			raise ValueError('No visible area left')
 
-		if focus_row > visible_rows:
-			start = focus_row - visible_rows
-			end = focus_row
-		elif focus_row < visible_rows:
-			start = focus_row
-			end = focus_row + visible_rows
-		else:
+		start = end = 0
+
+		if idx_focus == 0:
 			start = 0
 			end = visible_rows
+		elif idx_focus == idx_last:
+			start = idx_last - visible_rows + 1
+			end = idx_last + 1
+		elif idx_focus >= cur_idx_last:
+			start = cur_idx_first + 1
+			end = idx_focus + 1
+		elif idx_focus < cur_idx_last:
+			start = idx_focus
+			end = cur_idx_last
 
+		tmp = items[start:end]
 
-		debug(len(items[start:end]))
-
-		return items[start:end]
+		return tmp
 
 	def _confirm_interrupt(self) -> bool:
-		self._menu_screen.clear()
+		# self._menu_screen.clear()
 		# when a interrupt signal happens then getchr
 		# doesn't seem to work anymore so we need to
 		# call it twice to get it to block and wait for input
-		self._menu_screen.getch()
+		self._menu_viewport.getch()
 
 		while True:
 			warning_text = f'{self._interrupt_warning}'

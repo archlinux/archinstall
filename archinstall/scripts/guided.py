@@ -18,9 +18,8 @@ if TYPE_CHECKING:
 
 from archinstall.tui.curses_menu import NewMenu, MenuItem, MenuItemGroup, PreviewStyle
 
-item1 = MenuItem( str(_('Archinstall language')), )
-items = [MenuItem(f'item {i}') for i in range(67)]
-group = MenuItemGroup(items, sort_items=False)
+items = [MenuItem(f'item {i}') for i in range(6)]
+group = MenuItemGroup(items, sort_items=False, focus_item=items[5])
 
 menu = NewMenu(
 	group,
@@ -28,8 +27,8 @@ menu = NewMenu(
 	reset_warning_msg='are you certain?',
 	allow_skip=False,
 	allow_reset=False,
-	preview_style=PreviewStyle.NONE,
-	preview_size=0.3
+	preview_style=PreviewStyle.MENU_BELOW,
+	preview_size=0.9
 ).single()
 
 exit(1)
