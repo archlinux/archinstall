@@ -257,6 +257,21 @@ def select_mount_options() -> List[str]:
 	return []
 
 
+def process_root_partition_size(available_space: disk.Size, sector_size: disk.SectorSize) -> disk.Size:
+	# root partition size processing
+	total_device_size = available_space.convert(disk.Unit.GiB)
+	if total_device_size.value > 500:
+		# maximum size
+		return disk.Size(value=50, unit=disk.Unit.GiB, sector_size=sector_size)
+	elif total_device_size.value < 200:
+		# minimum size
+		return disk.Size(value=20, unit=disk.Unit.GiB, sector_size=sector_size)
+	else:
+		# 10% of total size
+		length = total_device_size.value // 10
+		return disk.Size(value=length, unit=disk.Unit.GiB, sector_size=sector_size)
+
+
 def suggest_single_disk_layout(
 	device: disk.BDevice,
 	filesystem_type: Optional[disk.FilesystemType] = None,
@@ -267,8 +282,9 @@ def suggest_single_disk_layout(
 		filesystem_type = select_main_filesystem_format(advanced_options)
 
 	sector_size = device.device_info.sector_size
+	total_size = device.device_info.total_size
 	min_size_to_allow_home_part = disk.Size(40, disk.Unit.GiB, sector_size)
-	root_partition_size = disk.Size(20, disk.Unit.GiB, sector_size)
+	root_partition_size = process_root_partition_size(available_space=total_size, sector_size=sector_size)
 	using_subvolumes = False
 	using_home_partition = False
 	mount_options = []
@@ -315,14 +331,10 @@ def suggest_single_disk_layout(
 	root_start = boot_partition.start + boot_partition.length
 
 	# Set a size for / (/root)
-	if (
-		using_subvolumes
-		or device_size_gib < min_size_to_allow_home_part
-		or not using_home_partition
-	):
-		root_length = device.device_info.total_size - root_start
+	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
+		root_length = total_size - root_start
 	else:
-		root_length = min(device.device_info.total_size, root_partition_size)
+		root_length = min(total_size, root_partition_size)
 
 	if using_gpt and not using_home_partition:
 		root_length -= align_buffer
@@ -356,7 +368,7 @@ def suggest_single_disk_layout(
 		# But we want to be able to reuse data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
 		home_start = root_partition.start + root_partition.length
-		home_length = device.device_info.total_size - home_start
+		home_length = total_size - home_start
 
 		if using_gpt:
 			home_length -= align_buffer
