@@ -14,7 +14,7 @@ packages=(
 	python-build
 	python-setuptools
 	python-wheel
- 	python-simple-term-menu
+	python-simple-term-menu
 	python-pyparted
 )
 
@@ -37,11 +37,11 @@ pacman --noconfirm -S archiso
 
 cp -r /usr/share/archiso/configs/releng/* /tmp/archlive
 
-sed -i /archinstall/d $packages_file
+sed -i /archinstall/d "$packages_file"
 
 # Add packages to the archiso profile packages
 for package in "${packages[@]}"; do
-	echo "$package" >> $packages_file
+	echo "$package" >> "$packages_file"
 done
 
 find /tmp/archlive
