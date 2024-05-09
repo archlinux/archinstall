@@ -671,10 +671,6 @@ class PartitionModification:
 	flags: List[PartitionFlag] = field(default_factory=list)
 	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
 
-	# only set when modification was created from an existing
-	# partition info object to be able to reference it back
-	part_info: Optional[_PartitionInfo] = None
-
 	# only set if the device was created or exists
 	dev_path: Optional[Path] = None
 	partn: Optional[int] = None
@@ -745,8 +741,7 @@ class PartitionModification:
 			uuid=partition_info.uuid,
 			flags=partition_info.flags,
 			mountpoint=mountpoint,
-			btrfs_subvols=subvol_mods,
-			part_info=partition_info
+			btrfs_subvols=subvol_mods
 		)
 
 	@property
