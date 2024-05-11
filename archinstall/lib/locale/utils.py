@@ -45,15 +45,18 @@ def verify_x11_keyboard_layout(layout :str) -> bool:
 
 
 def get_kb_layout() -> str:
-	lines = SysCommand(
-		"localectl --no-pager status",
-		environment_vars={'SYSTEMD_COLORS': '0'}
-	).decode().splitlines()
+	try:
+		lines = SysCommand(
+			"localectl --no-pager status",
+			environment_vars={'SYSTEMD_COLORS': '0'}
+		).decode().splitlines()
+	except:
+		return ""
 
 	vcline = ""
-	for l in lines:
-		if "VC Keymap: " in l:
-			vcline = l
+	for line in lines:
+		if "VC Keymap: " in line:
+			vcline = line
 	
 	if vcline == "":
 		return ""
