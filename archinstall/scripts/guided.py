@@ -244,4 +244,4 @@ fs_handler = disk.FilesystemHandler(
 
 fs_handler.perform_filesystem_operations()
 
-# perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
