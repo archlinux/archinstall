@@ -58,6 +58,10 @@ class FilesystemHandler:
 		if SysInfo.has_uefi() is False:
 			partition_table = PartitionTable.MBR
 
+		# make sure all devices are unmounted
+		for mod in device_mods:
+			device_handler.umount_all_existing(mod.device_path)
+
 		for mod in device_mods:
 			device_handler.partition(mod, partition_table=partition_table)
 
@@ -96,9 +100,6 @@ class FilesystemHandler:
 		create_or_modify_parts = [p for p in partitions if p.is_create_or_modify()]
 
 		self._validate_partitions(create_or_modify_parts)
-
-		# make sure all devices are unmounted
-		device_handler.umount_all_existing(device_path)
 
 		for part_mod in create_or_modify_parts:
 			# partition will be encrypted
@@ -311,9 +312,6 @@ class FilesystemHandler:
 			filtered_part = [p for p in partitions if not p.exists()]
 
 			self._validate_partitions(filtered_part)
-
-			# make sure all devices are unmounted
-			device_handler.umount_all_existing(mod.device_path)
 
 			enc_mods = {}
 
