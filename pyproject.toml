@@ -43,20 +43,20 @@ version = {attr = "archinstall.__version__"}
 readme = {file = ["README.rst", "USAGE.rst"]}
 
 [tool.setuptools]
-packages = ["archinstall"]
+include-package-data = true
 
 [tool.setuptools.package-data]
-# We could specify locales/lancuages.json etc instead, but catchall works too.
+# We could specify locales/languages.json etc instead, but catchall works too.
 "archinstall" = [
-    "**/*.py",
-    "**/*.mo",
-    "**/*.po",
-    "**/*.pot",
-    "**/*.json",
+    "archinstall/**/*.py",
+    "archinstall/**/*.mo",
+    "archinstall/**/*.po",
+    "archinstall/**/*.pot",
+    "archinstall/**/*.json",
 ]
 
-# [tool.setuptools.packages.find]
-# where = ["archinstall"]
+[tool.setuptools.package-dir]
+where = "archinstall"
 
 [tool.mypy]
 python_version = "3.11"
