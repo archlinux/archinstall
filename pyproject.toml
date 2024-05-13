@@ -66,13 +66,7 @@ include-package-data = true
 ]
 
 [tool.setuptools.package-dir]
-archinstall = [
-    "archinstall/**/*.py",
-    "archinstall/**/*.mo",
-    "archinstall/**/*.po",
-    "archinstall/**/*.pot",
-    "archinstall/**/*.json",
-]
+archinstall = "archinstall"
 
 [tool.mypy]
 python_version = "3.14"
