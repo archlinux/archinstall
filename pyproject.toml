@@ -56,7 +56,7 @@ include-package-data = true
 ]
 
 [tool.setuptools.package-dir]
-where = "archinstall"
+archinstall = "archinstall"
 
 [tool.mypy]
 python_version = "3.11"
