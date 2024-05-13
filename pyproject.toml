@@ -48,11 +48,11 @@ include-package-data = true
 [tool.setuptools.package-data]
 # We could specify locales/languages.json etc instead, but catchall works too.
 "archinstall" = [
-    "archinstall/**/*.py",
-    "archinstall/**/*.mo",
-    "archinstall/**/*.po",
-    "archinstall/**/*.pot",
-    "archinstall/**/*.json",
+    "**/*.py",
+    "**/*.mo",
+    "**/*.po",
+    "**/*.pot",
+    "**/*.json",
 ]
 
 [tool.setuptools.package-dir]
