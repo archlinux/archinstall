@@ -4,13 +4,10 @@ import threading
 import pathlib
 import socket
 import select
-import os
-import json
 import logging
 import sys
-import enum
 from subprocess import Popen, PIPE, STDOUT
-from qemu.qmp import QMPClient, Message
+from qemu.qmp import QMPClient
 from machines import parameters
 
 logger = logging.getLogger("archtest")
@@ -64,19 +61,25 @@ class SerialMonitor(threading.Thread):
 				'send-key',
 				arguments={
 					'keys': [
-						{ "type": "qcode", "data": "e" }
+						{
+							"type": "qcode",
+							"data": "e"
+						}
 					]
 				}
 			)
 		)
 
 		await asyncio.sleep(1)
-		ret = await self.QMP.qmp.execute_msg(
+		await self.QMP.qmp.execute_msg(
 			self.QMP.qmp.make_execute_msg(
 				'send-key',
 				arguments={
 					'keys': [
-						{ "type": "qcode", "data": "end" }
+						{
+							"type": "qcode",
+							"data": "end"
+						}
 					]
 				}
 			)
@@ -85,15 +88,15 @@ class SerialMonitor(threading.Thread):
 
 		keys = []
 		# https://gist.github.com/mvidner/8939289
-		keys.append({ "type": "qcode", "data": "spc" })
+		keys.append({"type": "qcode", "data": "spc"})
 		for character in list('console=tty0 console=ttyS0,115200'):
 			if character.isupper():
-				keys.append({ "type": "qcode", "data": 'caps_lock' })
-			keys.append({ "type": "qcode", "data": character.lower().replace('=', 'equal').replace(',', 'comma').replace(' ', 'spc') })
+				keys.append({"type": "qcode", "data": 'caps_lock'})
+			keys.append({"type": "qcode", "data": character.lower().replace('=', 'equal').replace(',', 'comma').replace(' ', 'spc')})
 			if character.isupper():
-				keys.append({ "type": "qcode", "data": 'caps_lock' })
+				keys.append({"type": "qcode", "data": 'caps_lock'})
 
-		ret = await self.QMP.qmp.execute_msg(
+		await self.QMP.qmp.execute_msg(
 			self.QMP.qmp.make_execute_msg(
 				'send-key',
 				arguments={
@@ -103,12 +106,15 @@ class SerialMonitor(threading.Thread):
 		)
 
 		await asyncio.sleep(1)
-		ret = await self.QMP.qmp.execute_msg(
+		await self.QMP.qmp.execute_msg(
 			self.QMP.qmp.make_execute_msg(
 				'send-key',
 				arguments={
 					'keys': [
-						{ "type": "qcode", "data": "kp_enter" }
+						{
+							"type": "qcode",
+							"data": "kp_enter"
+						}
 					]
 				}
 			)
@@ -181,7 +187,6 @@ class QemuSession(threading.Thread):
 		self.start()
 
 	def run(self):
-		#print(self.cmd)
 		self.handle = Popen(
 			' '.join(self.cmd),
 			stdout=PIPE,
@@ -200,9 +205,9 @@ class QemuSession(threading.Thread):
 				if fd == self.handle.stdout.fileno():
 					if (output := self.handle.stdout.read()):
 						print(output)
-				#elif fd == self.handle.stderr.fileno():
-				#	if (output := self.handle.stderr.read()):
-				#		print(output)
+				# elif fd == self.handle.stderr.fileno():
+				# 	if (output := self.handle.stderr.read()):
+				# 		print(output)
 			# No exit signal yet
 			time.sleep(0.25)
 
@@ -210,15 +215,16 @@ class QemuSession(threading.Thread):
 		for fd in r:
 			if fd == self.handle.stdout.fileno():
 				if (output := self.handle.stdout.read()):
-						print(output)
-				#elif fd == self.handle.stderr.fileno():
-				#	if (output := self.handle.stderr.read()):
-				#		print(output)
+					print(output)
+				# elif fd == self.handle.stderr.fileno():
+				# 	if (output := self.handle.stderr.read()):
+				# 		print(output)
 
 		self.handle.stdin.close()
 		self.handle.stdout.close()
 		# self.handle.stderr.close()
 		logger.warning("Qemu closed..")
+
 
 # .. todo::
 #    Needs a bit of more work to allow for multiple runners and test benches.
