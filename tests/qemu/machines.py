@@ -1,3 +1,5 @@
+# flake8: noqa E131
+
 import pathlib
 from runners import TestLeaveAllDefault
 
@@ -9,7 +11,6 @@ parameters = {
 			'-name', '"archinstall-test"',
 			'-display', 'none',
 			'-monitor', 'none',
-			#'-serial', 'none',
 			'-nographic',
 			'-m', '4096',
 			'-smp', '4,sockets=1,dies=1,cores=4,threads=1',
@@ -36,8 +37,8 @@ parameters = {
 			'-device', 'pcie-root-port,port=0x11,chassis=13,id=pci.13,bus=pcie.0,addr=0x6.0x3',
 			'-drive', 'if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF_CODE.secboot.fd',
 			'-drive', f'if=pflash,format=raw,file={pathlib.Path(__file__).parent}/OVMF_VARS.fd',
-			#'-tpmdev', 'passthrough,id=tpm0,path=/dev/tpm0,cancel-path=/tmp/foo-cancel2',
-			#'-device', 'tpm-tis,tpmdev=tpm0',
+			# '-tpmdev', 'passthrough,id=tpm0,path=/dev/tpm0,cancel-path=/tmp/foo-cancel2',
+			# '-device', 'tpm-tis,tpmdev=tpm0',
 			'-object', 'iothread,id=iothread1',
 				'-device', 'virtio-scsi-pci,bus=pcie.0,id=scsi2,addr=0x8',
 				'-device', 'virtio-scsi-pci,iothread=iothread1,id=scsi0,num_queues=8,bus=pci.13,addr=0x0',

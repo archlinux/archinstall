@@ -10,7 +10,7 @@ logger = logging.getLogger("archtest")
 class Keyboard(enum.Enum):
 	# https://vt100.net/docs/vt100-ug/chapter3.html
 	# https://espterm.github.io/docs/VT100%20escape%20codes.html
-	arrow_up='\033[A'
+	arrow_up = '\033[A'
 	arrow_down = '\033[B'
 	arrow_right = '\033[C'
 	arrow_left = '\033[D'
@@ -29,11 +29,11 @@ class TestBase(threading.Thread):
 	def send_string(self, chars, delay=None):
 		logger.debug(f"Sending string: {chars.encode('UTF-8')}")
 
-		while len((r := select.select([self.serial_monitor.client_socket], [], [], 0.2)[0])):
+		while len(select.select([self.serial_monitor.client_socket], [], [], 0.2)[0]):
 			# Waiting for read buffer to finish to not collide
 			time.sleep(0.02)
 
-		if len(w := select.select([], [self.serial_monitor.client_socket], [], 0.2)[1]):
+		if len(select.select([], [self.serial_monitor.client_socket], [], 0.2)[1]):
 			# asyncio.run_coroutine_threadsafe(self._send_key(vt100_key), loop=self.serial_monitor.QMP.loop)
 			self.serial_monitor.client_socket.send(chars.encode('UTF-8'), socket.MSG_WAITALL) # flags=socket.MSG_WAITALL
 			# os.fsync(self.serial_monitor.client_socket.fileno())
@@ -52,11 +52,11 @@ class TestBase(threading.Thread):
 
 		logger.debug(f"Sending key: {key} \033[0;32m({vt100_key})\033[0m")
 
-		while len((r := select.select([self.serial_monitor.client_socket], [], [], 0.2)[0])):
+		while len(select.select([self.serial_monitor.client_socket], [], [], 0.2)[0]):
 			# Waiting for read buffer to finish to not collide
 			time.sleep(0.02)
 
-		if len(w := select.select([], [self.serial_monitor.client_socket], [], 0.2)[1]):
+		if len(select.select([], [self.serial_monitor.client_socket], [], 0.2)[1]):
 			# asyncio.run_coroutine_threadsafe(self._send_key(vt100_key), loop=self.serial_monitor.QMP.loop)
 			self.serial_monitor.client_socket.send(vt100_key, socket.MSG_WAITALL) # flags=socket.MSG_WAITALL
 			# os.fsync(self.serial_monitor.client_socket.fileno())
