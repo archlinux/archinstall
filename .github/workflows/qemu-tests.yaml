@@ -9,6 +9,7 @@ jobs:
     name: qemu testbench
     if: ${{ github.actor == 'Torxed' }}
     runs-on: self-hosted
+    environment: testing
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@master
