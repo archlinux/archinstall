@@ -6,6 +6,7 @@ on:
 
 jobs:
   run-qemu:
+    name: qemu testbench
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +31,7 @@ jobs:
       - run: pwd
       - run: tree
       - run: cat .screenrc_test
+      - run: script /dev/null
       - run: screen -c .screenrc_test
       - uses: actions/upload-artifact@v4
         with:
