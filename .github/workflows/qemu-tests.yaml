@@ -3,6 +3,11 @@ name: Runs Qemu test case pci_emulation
 # This job is callewd from iso-build
 on:
   workflow_call:
+  workflow_run:
+    workflows: ["Build Arch ISO with ArchInstall Commit"]
+    branches: [main, test-cases]
+    types:
+      - completed
 
 jobs:
   run-qemu:
