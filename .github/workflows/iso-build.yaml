@@ -36,3 +36,5 @@ jobs:
         with:
           name: Arch Live ISO
           path: /tmp/archlive/out/*.iso
+  call-workflow-qemu-test:
+    uses: ./.github/workflows/qemu-tests.yaml
