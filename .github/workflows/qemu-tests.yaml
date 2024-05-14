@@ -31,8 +31,7 @@ jobs:
       - run: pwd
       - run: tree
       - run: cat .screenrc_test
-      - run: script /dev/null
-      - run: screen -c .screenrc_test
+      - run: script /dev/null -c "screen -c .screenrc_test"
       - uses: actions/upload-artifact@v4
         with:
           name: archtest-pci_emulation
