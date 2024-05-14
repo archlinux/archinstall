@@ -26,6 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: pwd
       - run: tree
+      - run: whoami
 #      - uses: actions/upload-artifact@v4
 #        with:
 #          name: Arch Live ISO
