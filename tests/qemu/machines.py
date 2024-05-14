@@ -43,7 +43,7 @@ parameters = {
 				'-device', 'virtio-scsi-pci,bus=pcie.0,id=scsi2,addr=0x8',
 				'-device', 'virtio-scsi-pci,iothread=iothread1,id=scsi0,num_queues=8,bus=pci.13,addr=0x0',
 					'-device', '"scsi-hd,serial=S5GBAD12345ABCE,drive=libvirt-1-format,bus=scsi2.0,id=scsi0-0-0-0,channel=0,scsi-id=0,lun=0,device_id=drive-scsi0-0-0-0,bootindex=2,write-cache=on"',
-						'-blockdev', '\'{"driver":"file","filename":"/home/anton/archtest.img","aio":"threads","node-name":"libvirt-1-storage","cache":{"direct":true,"no-flush":false},"auto-read-only":true,"discard":"unmap"}\'',
+						'-blockdev', '\'{"driver":"file","filename":"./archtest.img","aio":"threads","node-name":"libvirt-1-storage","cache":{"direct":true,"no-flush":false},"auto-read-only":true,"discard":"unmap"}\'',
 						'-blockdev', '\'{"node-name":"libvirt-1-format","read-only":false,"discard":"unmap","cache":{"direct":true,"no-flush":false},"driver":"qcow2","file":"libvirt-1-storage","backing":null}\'',
 			'-device', 'pcie-root-port,multifunction=on,bus=pcie.0,id=port9-0,addr=0x9,chassis=0',
 				'-device', 'virtio-net-pci,mac=FE:00:00:00:00:01,id=network0,netdev=network0.0,status=on,bus=port9-0',
