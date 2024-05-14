@@ -1,17 +1,11 @@
-# This workflow will build an Arch Linux ISO file with the commit on it
-
 name: Runs Qemu test case pci_emulation
 
-# We run this job, only if there's an ISO to test.
+# This job is callewd from iso-build
 on:
-  workflow_run:
-    workflows: ["Build Arch ISO with ArchInstall Commit"]
-    branches: [main, test-cases]
-    types:
-      - completed
+  workflow_call:
 
 jobs:
-  build:
+  run-qemu:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +15,22 @@ jobs:
           path: /tmp/archlive/out/*.iso
       - run: cd tests/qemu
       - run: echo '' > serial.log
+      # Generate a .screenrc that will auto-run the test
+      # as well as record it for publishing using asciinema.
+      - run: |
+        cat <<EOF >> .screenrc_test
+        startup_message off
+        chdir tests/qemu
+        screen 0 python run_test.py
+        split
+        focus down
+        resize 24
+        screen 1 asciinema rec demo.cast --overwrite -c "tail -f serial.log"
+        EOF
       - run: pwd
       - run: tree
+      - run: cat .screenrc_test
+      - run: screen -c .screenrc_test
       - uses: actions/upload-artifact@v4
         with:
           name: archtest-pci_emulation
