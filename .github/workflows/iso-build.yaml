@@ -43,4 +43,4 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: ./.github/workflows/qemu-tests.yaml
+    uses: Torxed/archinstall-runner/qemu-tests.yaml@master
