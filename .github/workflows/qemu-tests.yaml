@@ -1,2 +1,2 @@
-# Uses https://github.com/Torxed/archinstall-runner.git to avoid 
+# Uses https://github.com/Torxed/archinstall-runner.git to avoid
 # PR's changing the runner permissions by submitting a PR to this repo.
