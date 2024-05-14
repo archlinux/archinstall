@@ -7,7 +7,7 @@ on:
 jobs:
   run-qemu:
     name: qemu testbench
-    if: ${{ github.actor == 'torxed' }}
+    if: ${{ github.actor == 'Torxed' }}
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
