@@ -1,5 +1,6 @@
 import threading
 import time
+import os
 import logging
 import asyncio
 from testbase import TestBase
@@ -170,3 +171,6 @@ class TestLeaveAllDefault(TestBase):
 				break
 
 			time.sleep(0.25)
+
+		os.system('pkill tail')
+		exit(self.exit_code)
