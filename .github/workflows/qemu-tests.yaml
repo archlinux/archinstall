@@ -1,0 +1,32 @@
+# This workflow will build an Arch Linux ISO file with the commit on it
+
+name: Runs Qemu test case pci_emulation
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '**.editorconfig'
+      - '**.gitignore'
+      - '**.md'
+      - 'LICENSE'
+      - 'PKGBUILD'
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - run: pwd
+      - run: tree
+#      - uses: actions/upload-artifact@v4
+#        with:
+#          name: Arch Live ISO
+#          path: /tmp/archlive/out/*.iso
