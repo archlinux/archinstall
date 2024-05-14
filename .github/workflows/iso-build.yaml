@@ -39,10 +39,9 @@ jobs:
           path: /tmp/archlive/out/*.iso
   call-workflow-qemu-test:
     environment: testing
-    steps:
-      - name: call qemu testbench
-        needs: build
-        permissions:
-          contents: read
-          pull-requests: write
-        uses: Torxed/archinstall-runner/.github/workflows/qemu-tests.yaml@master
+    name: call qemu testbench
+    needs: build
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: Torxed/archinstall-runner/.github/workflows/qemu-tests.yaml@master
