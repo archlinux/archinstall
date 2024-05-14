@@ -34,7 +34,7 @@ jobs:
       - run: qemu-img create -f qcow2 ./tests/qemu/archtest.img 10G
       - run: tree
       - run: cat .screenrc_test
-      - run: script -c "resize -s 24 80 && stty rows 24 && stty cols 80 && screen -c .screenrc_test"
+      - run: script -c "stty rows 24 && stty cols 80 && screen -c .screenrc_test"
       - uses: actions/upload-artifact@v4
         with:
           name: archtest-pci_emulation
