@@ -14,8 +14,7 @@ jobs:
         with:
           name: Arch Live ISO
           path: ./_work/iso/
-      - run: cd tests/qemu
-      - run: echo '' > serial.log
+      - run: echo '' > ./tests/qemu/serial.log
       # Generate a .screenrc that will auto-run the test
       # as well as record it for publishing using asciinema.
       - run: |
@@ -29,10 +28,10 @@ jobs:
             screen 1 asciinema rec demo.cast --overwrite -c "tail -f serial.log"
             EOF
       - run: pwd
-      - run: cp /usr/share/ovmf/x64/OVMF_VARS.fd ./OVMF_VARS.fd
+      - run: cp /usr/share/ovmf/x64/OVMF_VARS.fd ./tests/qemu/OVMF_VARS.fd
       - run: tree
       - run: cat .screenrc_test
-      - run: script /dev/null -c "screen -c .screenrc_test"
+      - run: script -c "screen -c .screenrc_test"
       - uses: actions/upload-artifact@v4
         with:
           name: archtest-pci_emulation
