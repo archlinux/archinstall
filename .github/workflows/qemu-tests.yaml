@@ -29,10 +29,11 @@ jobs:
             screen 1 asciinema rec demo.cast --overwrite -c "tail -f serial.log"
             EOF
       - run: pwd
+      - run: cp /usr/share/ovmf/x64/OVMF_VARS.fd ./OVMF_VARS.fd
       - run: tree
       - run: cat .screenrc_test
       - run: script /dev/null -c "screen -c .screenrc_test"
       - uses: actions/upload-artifact@v4
         with:
           name: archtest-pci_emulation
-          path: ./demo.cast
+          path: ./tests/qemu/demo.cast
