@@ -18,15 +18,15 @@ jobs:
       # Generate a .screenrc that will auto-run the test
       # as well as record it for publishing using asciinema.
       - run: |
-        cat <<EOF >> .screenrc_test
-        startup_message off
-        chdir tests/qemu
-        screen 0 python run_test.py
-        split
-        focus down
-        resize 24
-        screen 1 asciinema rec demo.cast --overwrite -c "tail -f serial.log"
-        EOF
+            cat <<EOF >> .screenrc_test
+            startup_message off
+            chdir tests/qemu
+            screen 0 python run_test.py
+            split
+            focus down
+            resize 24
+            screen 1 asciinema rec demo.cast --overwrite -c "tail -f serial.log"
+            EOF
       - run: pwd
       - run: tree
       - run: cat .screenrc_test
