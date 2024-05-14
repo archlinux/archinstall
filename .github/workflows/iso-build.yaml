@@ -39,7 +39,6 @@ jobs:
           path: /tmp/archlive/out/*.iso
   call-workflow-qemu-test:
     environment: testing
-    name: call qemu testbench
     needs: build
     permissions:
       contents: read
