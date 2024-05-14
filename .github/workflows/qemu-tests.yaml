@@ -3,6 +3,11 @@
 name: Runs Qemu test case pci_emulation
 
 on:
+  workflow_run:
+    workflows: ["Build Arch ISO with ArchInstall Commit"]
+    branches: [main, test-cases]
+    types:
+      - completed
   push:
     branches:
       - master
@@ -24,10 +29,15 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@master
+        with:
+          name: Arch Live ISO
+          path: /tmp/archlive/out/*.iso
+      - run: cd tests/qemu
+      - run: echo '' > serial.log
       - run: pwd
       - run: tree
-      - run: whoami
-#      - uses: actions/upload-artifact@v4
-#        with:
-#          name: Arch Live ISO
-#          path: /tmp/archlive/out/*.iso
+      - uses: actions/upload-artifact@v4
+        with:
+          name: archtest-pci_emulation
+          path: ./demo.cast
