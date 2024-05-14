@@ -38,6 +38,7 @@ jobs:
           name: Arch Live ISO
           path: /tmp/archlive/out/*.iso
   call-workflow-qemu-test:
+    environment: testing
     steps:
       - name: call qemu testbench
         needs: build
