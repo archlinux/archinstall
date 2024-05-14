@@ -11,6 +11,7 @@ on:
 
 jobs:
   run-qemu:
+    needs: build
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
