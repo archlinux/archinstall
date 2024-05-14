@@ -2,27 +2,13 @@
 
 name: Runs Qemu test case pci_emulation
 
+# We run this job, only if there's an ISO to test.
 on:
   workflow_run:
     workflows: ["Build Arch ISO with ArchInstall Commit"]
     branches: [main, test-cases]
     types:
       - completed
-  push:
-    branches:
-      - master
-      - main
-  pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '**.editorconfig'
-      - '**.gitignore'
-      - '**.md'
-      - 'LICENSE'
-      - 'PKGBUILD'
-  release:
-    types:
-      - created
 
 jobs:
   build:
