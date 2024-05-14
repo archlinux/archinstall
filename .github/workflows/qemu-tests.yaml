@@ -13,7 +13,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: Arch Live ISO
-          path: /tmp/archlive/out/*.iso
+          path: ./_work/iso/
       - run: cd tests/qemu
       - run: echo '' > serial.log
       # Generate a .screenrc that will auto-run the test

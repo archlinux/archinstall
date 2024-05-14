@@ -248,7 +248,7 @@ for profile in parameters:
 				'-chardev', f'socket,id=serial1,fd={serial_socket.fileno()},server=on,wait=on',
 				'-mon', f'chardev=qmp1,mode=control,pretty=off',
 				'-serial', f"chardev:serial1",
-				'-drive', f'file=/home/anton/Downloads/archlinux-2024.05.13-x86_64.iso,media=cdrom,cache=none,id=cdrom0,index=0'
+				'-drive', f'file=$(ls -t ./_work/iso/archlinux-*-x86_64.iso | head -n 1),media=cdrom,cache=none,id=cdrom0,index=0'
 			]
 
 			logger.info(f"Spawning Qemu test profile {profile}")
