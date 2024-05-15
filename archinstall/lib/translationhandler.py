@@ -174,9 +174,6 @@ class TranslationHandler:
 		return translation_files
 
 
-translation_handler = TranslationHandler()
-
-
 class DeferredTranslation:
 	def __init__(self, message: str):
 		self.message = message

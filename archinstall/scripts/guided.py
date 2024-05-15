@@ -7,7 +7,9 @@ from archinstall import SysInfo
 from archinstall.lib import locale
 from archinstall.lib import disk
 from archinstall.lib.global_menu import GlobalMenu
+from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.installer import Installer
+from archinstall.lib.menu import Menu
 from archinstall.lib.models import AudioConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
@@ -210,8 +212,8 @@ def perform_installation(mountpoint: Path):
 		if not archinstall.arguments.get('silent'):
 			prompt = str(
 				_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
-			choice = NewMenu(prompt, NewMenu.yes_no(), default_option=NewMenu.yes()).run()
-			if choice.value == NewMenu.yes():
+			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+			if choice.value == Menu.yes():
 				try:
 					installation.drop_to_shell()
 				except:
