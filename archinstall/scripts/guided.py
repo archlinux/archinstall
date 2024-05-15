@@ -16,55 +16,6 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 if TYPE_CHECKING:
 	_: Any
 
-from archinstall.tui.curses_menu import NewMenu, MenuItem, MenuItemGroup, PreviewStyle
-
-def test_data():
-	return """{
-    "__separator__": null,
-    "additional-repositories": [
-        "multilib"
-    ],
-    "archinstall-language": "English",
-    "audio_config": {
-        "audio": "pipewire"
-    },
-    "bootloader": "Grub",
-    "config_version": "2.7.2",
-    "debug": false,
-    "disk_config": {
-        "config_type": "pre_mounted_config",
-        "mountpoint": "/mnt"
-    },
-    "disk_encryption": null,
-    ...
-"""
-
-
-items = [
-	MenuItem(f'Language', preview_action=lambda x: test_data()),
-	MenuItem(f'Disk configuration', preview_action=lambda x: test_data()),
-	MenuItem(f'Install', preview_action=lambda x: test_data()),
-	MenuItem(f'Abort', preview_action=lambda x: test_data()),
-]
-
-group = MenuItemGroup(items, sort_items=False, focus_item=items[0])
-
-menu = NewMenu(
-	group,
-	header='Press <H> for help',
-	reset_warning_msg='are you certain?',
-	allow_skip=False,
-	allow_reset=False,
-	preview_style=PreviewStyle.RIGHT,
-	preview_size='auto',
-	preview_frame=True,
-	preview_header='INFO'
-).single()
-
-exit(1)
-
-
-
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
