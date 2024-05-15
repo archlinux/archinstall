@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, Any, TYPE_CHECKING, Optional
 
-from .utils import list_keyboard_languages, list_locales, set_kb_layout
+from .utils import list_keyboard_languages, list_locales, set_kb_layout, get_kb_layout
 from ..menu import Selector, AbstractSubMenu, MenuSelectionType, Menu
 
 if TYPE_CHECKING:
@@ -16,7 +16,10 @@ class LocaleConfiguration:
 
 	@staticmethod
 	def default() -> 'LocaleConfiguration':
-		return LocaleConfiguration('us', 'en_US', 'UTF-8')
+		layout = get_kb_layout()
+		if layout == "":
+			return LocaleConfiguration('us', 'en_US', 'UTF-8')
+		return LocaleConfiguration(layout, 'en_US', 'UTF-8')
 
 	def json(self) -> Dict[str, str]:
 		return {
