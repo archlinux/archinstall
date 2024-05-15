@@ -4,6 +4,7 @@ import json
 import os
 import logging
 import time
+import uuid
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
 
@@ -499,6 +500,10 @@ class DeviceHandler(object):
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
+		if disk.type == PartitionTable.GPT.value and part_mod.is_root():
+			linux_root_x86_64 = "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709"
+			partition.type_uuid = uuid.UUID(linux_root_x86_64).bytes
+
 		# the partition has a path now that it has been added
 		part_mod.dev_path = Path(partition.path)
 
@@ -644,9 +649,6 @@ class DeviceHandler(object):
 
 			if partition_table.MBR and len(modification.partitions) > 3:
 				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
-
-		# make sure all devices are unmounted
-		self.umount_all_existing(modification.device_path)
 
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:

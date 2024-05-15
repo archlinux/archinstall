@@ -5,11 +5,9 @@ import json
 import math
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum
-from enum import auto
+from enum import Enum, auto
 from pathlib import Path
-from typing import Optional, List, Dict, TYPE_CHECKING, Any
-from typing import Union
+from typing import Optional, List, Dict, TYPE_CHECKING, Any, Union
 
 import _ped  # type: ignore
 import parted  # type: ignore
@@ -18,7 +16,6 @@ from parted import Disk, Geometry, Partition
 from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
 from ..output import debug, error
-from ..output import info
 from ..storage import storage
 
 if TYPE_CHECKING:
@@ -452,6 +449,7 @@ class _DeviceInfo:
 		elif device.type in parted.devices:
 			device_type = parted.devices[device.type]
 		else:
+			debug(f'Device code unknown: {device.type}')
 			device_type = parted.devices[parted.DEVICE_UNKNOWN]
 
 		sector_size = SectorSize(device.sectorSize, Unit.B)
@@ -570,7 +568,7 @@ class PartitionType(Enum):
 		if code == parted.PARTITION_NORMAL:
 			return PartitionType.Primary
 		else:
-			info(f'Partition code not supported: {code}')
+			debug(f'Partition code not supported: {code}')
 			return PartitionType._Unknown
 
 	def get_partition_code(self) -> Optional[int]:
@@ -671,10 +669,6 @@ class PartitionModification:
 	flags: List[PartitionFlag] = field(default_factory=list)
 	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
 
-	# only set when modification was created from an existing
-	# partition info object to be able to reference it back
-	part_info: Optional[_PartitionInfo] = None
-
 	# only set if the device was created or exists
 	dev_path: Optional[Path] = None
 	partn: Optional[int] = None
@@ -745,8 +739,7 @@ class PartitionModification:
 			uuid=partition_info.uuid,
 			flags=partition_info.flags,
 			mountpoint=mountpoint,
-			btrfs_subvols=subvol_mods,
-			part_info=partition_info
+			btrfs_subvols=subvol_mods
 		)
 
 	@property

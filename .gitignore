@@ -21,10 +21,11 @@ SAFETY_LOCK
 **/**.network
 **/**.target
 **/**.qcow2
+**/**.log
+**/**.fd
 /test*.py
 **/archiso
 /guided.py
-/install.log
 venv
 .venv
 .idea/**
