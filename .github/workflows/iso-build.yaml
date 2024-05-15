@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pwd
-      - run: echo "Building for - $GITHUB_ACTOR"
+      - run: echo "Building for $GITHUB_ACTOR"
       - run: cat /etc/os-release
       - run: pacman-key --init
       - run: pacman --noconfirm -Sy archlinux-keyring
@@ -38,7 +38,7 @@ jobs:
         with:
           name: Arch Live ISO
           path: /tmp/archlive/out/*.iso
-  call-workflow-qemu-test:
+  run:
     needs: build
     permissions:
       contents: read
