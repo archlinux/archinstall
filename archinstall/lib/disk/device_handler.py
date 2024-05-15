@@ -4,6 +4,7 @@ import json
 import os
 import logging
 import time
+import uuid
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
 
@@ -498,6 +499,10 @@ class DeviceHandler(object):
 			disk.addPartition(partition=partition, constraint=disk.device.optimalAlignedConstraint)
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
+
+		if disk.type == PartitionTable.GPT.value and part_mod.is_root():
+			linux_root_x86_64 = "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709"
+			partition.type_uuid = uuid.UUID(linux_root_x86_64).bytes
 
 		# the partition has a path now that it has been added
 		part_mod.dev_path = Path(partition.path)
