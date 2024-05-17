@@ -7,7 +7,6 @@ on:
     branches:
       - master
       - main # In case we adopt this convention in the future
-      - test-runners
   pull_request:
     paths-ignore:
       - 'docs/**'
@@ -33,7 +32,7 @@ jobs:
       - run: cat /etc/os-release
       - run: pacman-key --init
       - run: pacman --noconfirm -Sy archlinux-keyring
-      # - run: ./build_iso.sh
+      - run: ./build_iso.sh
       - uses: actions/upload-artifact@v4
         with:
           name: Arch Live ISO
@@ -44,13 +43,15 @@ jobs:
     steps:
       - name: Access check
         run: |
-            env
-            if [[ "$GITHUB_WORKFLOW_REF" == "Torxed/archinstall/.github/workflows/iso-build.yaml@refs/heads/master" && \
+            # Check if GITHUB_WORKFLOW_REF starts with iso-build.yaml as a base
+            # And that the GITHUB_REPOSITORY is a trusted one
+            # Then finally check if the secret store matches the local runner token
+            if [[ "$GITHUB_WORKFLOW_REF" == "Torxed/archinstall/.github/workflows/iso-build.yaml@refs/"* && \
                   "$GITHUB_REPOSITORY" == "Torxed/archinstall" && \
                   "${{ secrets.CALLTOKEN }}" != "" && \
                   "${{ secrets.CALLTOKEN }}" == "$LOCALRUNNER" ]]; then
                 exit 0
-            elif [[ "$GITHUB_WORKFLOW_REF" != "Torxed/archinstall/.github/workflows/iso-build.yaml@refs/heads/master" ]]; then
+            elif [[ "$GITHUB_WORKFLOW_REF" != "Torxed/archinstall/.github/workflows/iso-build.yaml@refs/"* ]]; then
                 echo "Invalid caller workflow: $GITHUB_WORKFLOW_REF"
                 exit 1
             elif [[ "$GITHUB_REPOSITORY" != "Torxed/archinstall" ]]; then
@@ -63,7 +64,7 @@ jobs:
   run-qemu:
     name: qemu testbench
     needs: access-check
-    if: contains( fromJSON('["Torxed"]'), github.actor )
+    # if: contains( fromJSON('["Torxed"]'), github.actor )
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
