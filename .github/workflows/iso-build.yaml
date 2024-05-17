@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - master
-      - main # In case we adopt this convention in the future 
+      - main # In case we adopt this convention in the future
       - test-runners
   pull_request:
     paths-ignore:
