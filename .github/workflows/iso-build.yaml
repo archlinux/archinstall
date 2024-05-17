@@ -33,13 +33,14 @@ jobs:
       - run: cat /etc/os-release
       - run: pacman-key --init
       - run: pacman --noconfirm -Sy archlinux-keyring
-      - run: ./build_iso.sh
+      # - run: ./build_iso.sh
       - uses: actions/upload-artifact@v4
         with:
           name: Arch Live ISO
           path: /tmp/archlive/out/*.iso
   access-check:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    environment: testing
     steps:
       - name: Access check
         run: |
