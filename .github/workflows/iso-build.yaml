@@ -38,12 +38,63 @@ jobs:
         with:
           name: Arch Live ISO
           path: /tmp/archlive/out/*.iso
-  run:
-    needs: build
-    permissions:
-      contents: read
-      pull-requests: write
-    uses: Torxed/archinstall-runner/.github/workflows/qemu-tests.yaml@main
-    secrets: inherit
-    # secrets:
-    #   callToken: ${{ secrets.callToken }}
+  access-check:
+    runs-on: self-hosted
+    steps:
+      - name: Access check
+        run: |
+            env
+            if [[ "$GITHUB_WORKFLOW_REF" == "Torxed/archinstall/.github/workflows/iso-build.yaml@refs/heads/master" && \
+                  "$GITHUB_REPOSITORY" == "Torxed/archinstall" && \
+                  "${{ secrets.CALLTOKEN }}" != "" && \
+                  "${{ secrets.CALLTOKEN }}" == "$LOCALRUNNER" ]]; then
+                exit 0
+            elif [[ "$GITHUB_WORKFLOW_REF" != "Torxed/archinstall/.github/workflows/iso-build.yaml@refs/heads/master" ]]; then
+                echo "Invalid caller workflow: $GITHUB_WORKFLOW_REF"
+                exit 1
+            elif [[ "$GITHUB_REPOSITORY" != "Torxed/archinstall" ]]; then
+                echo "Invalid caller repository: $GITHUB_REPOSITORY"
+                exit 1
+            else
+                echo "Invalid CALLTOKEN, not matching that of the LOCALRUNNER"
+                exit 1
+            fi
+  run-qemu:
+    name: qemu testbench
+    needs: access-check
+    if: contains( fromJSON('["Torxed"]'), github.actor )
+    runs-on: self-hosted
+    environment: testing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@master
+        with:
+          name: Arch Live ISO
+          path: ./_work/iso/
+      - run: echo '' > ./tests/qemu/serial.log
+      - run: echo "GITHUB_ACTOR is ${{ env.GITHUB_ACTOR }}"
+      - run: echo "GITHUB_REF_NAME is ${{ env.GITHUB_REF_NAME }}"
+      - run: echo "GITHUB_REPOSITORY is ${{ env.GITHUB_REPOSITORY }}"
+      # Generate a .screenrc that will auto-run the test
+      # as well as record it for publishing using asciinema.
+      - run: |
+            cat <<EOF >> .screenrc_test
+            startup_message off
+            chdir tests/qemu
+            screen 0 python run_test.py
+            split
+            focus down
+            resize 24
+            screen 1 asciinema rec demo.cast --overwrite -c "tail -f serial.log"
+            EOF
+      - run: pwd
+      - run: cp /usr/share/ovmf/x64/OVMF_VARS.fd ./tests/qemu/OVMF_VARS.fd
+      - run: rm -f -- ./tests/qemu/archtest.img
+      - run: qemu-img create -f qcow2 ./tests/qemu/archtest.img 10G
+      - run: tree -L 2
+      - run: cat .screenrc_test
+      - run: script -c "stty rows 24 && stty cols 80 && screen -c .screenrc_test"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: archtest-pci_emulation
+          path: ./tests/qemu/demo.cast
