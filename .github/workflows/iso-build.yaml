@@ -8,6 +8,7 @@ on:
   #     - master
   #     - main # In case we adopt this convention in the future
   #     - testcase
+  # 
   pull_request:
     paths-ignore:
       - 'docs/**'
