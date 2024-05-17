@@ -7,7 +7,7 @@ on:
   #   branches:
   #     - master
   #     - main # In case we adopt this convention in the future
-  #     - testcase 
+  #     - testcase
   pull_request:
     paths-ignore:
       - 'docs/**'
