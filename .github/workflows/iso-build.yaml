@@ -40,7 +40,6 @@ jobs:
           path: /tmp/archlive/out/*.iso
   access-check:
     runs-on: ubuntu-latest
-    environment: testing
     steps:
       - name: Access check
         run: |
@@ -65,7 +64,6 @@ jobs:
     needs: access-check
     if: contains( fromJSON('["Torxed"]'), github.actor )
     runs-on: self-hosted
-    environment: testing
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@master
