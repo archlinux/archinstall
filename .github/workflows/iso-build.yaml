@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - master
-      - main # In case we adopt this convention in the future 
+      - main # In case we adopt this convention in the future
       - test-runners
   pull_request:
     paths-ignore:
@@ -40,6 +40,7 @@ jobs:
           path: /tmp/archlive/out/*.iso
   access-check:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Access check
         run: |
