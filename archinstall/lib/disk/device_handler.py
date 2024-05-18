@@ -198,49 +198,34 @@ class DeviceHandler(object):
 		path: Path,
 		additional_parted_options: List[str] = []
 	):
+		mkfs_type = fs_type.value
 		options = []
-		command = ''
 
 		match fs_type:
-			case FilesystemType.Btrfs:
-				options += ['-f']
-				command += 'mkfs.btrfs'
-			case FilesystemType.Fat16:
-				options += ['-F16']
-				command += 'mkfs.fat'
-			case FilesystemType.Fat32:
-				options += ['-F32']
-				command += 'mkfs.fat'
-			case FilesystemType.Ext2:
-				options += ['-F']
-				command += 'mkfs.ext2'
-			case FilesystemType.Ext3:
-				options += ['-F']
-				command += 'mkfs.ext3'
-			case FilesystemType.Ext4:
-				options += ['-F']
-				command += 'mkfs.ext4'
-			case FilesystemType.Xfs:
-				options += ['-f']
-				command += 'mkfs.xfs'
-			case FilesystemType.F2fs:
-				options += ['-f']
-				command += 'mkfs.f2fs'
+			case FilesystemType.Btrfs | FilesystemType.F2fs | FilesystemType.Xfs:
+				# Force overwrite
+				options.append('-f')
+			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
+				# Force create
+				options.append('-F')
+			case FilesystemType.Fat16 | FilesystemType.Fat32:
+				mkfs_type = 'fat'
+				# Set FAT size
+				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
 			case FilesystemType.Ntfs:
-				options += ['-f', '-Q']
-				command += 'mkfs.ntfs'
+				# Skip zeroing and bad sector check
+				options.append('--fast')
 			case FilesystemType.Reiserfs:
-				command += 'mkfs.reiserfs'
+				pass
 			case _:
 				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
 
-		options += additional_parted_options
-		options_str = ' '.join(options)
+		cmd = [f'mkfs.{mkfs_type}', *options, *additional_parted_options, str(path)]
 
-		debug(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
+		debug('Formatting filesystem:', ' '.join(cmd))
 
 		try:
-			SysCommand(f"/usr/bin/{command} {options_str} {path}")
+			SysCommand(cmd)
 		except SysCallError as err:
 			msg = f'Could not format {path} with {fs_type.value}: {err.message}'
 			error(msg)
