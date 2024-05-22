@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-08 15:40+0100\n"
+"PO-Revision-Date: 2024-05-22 11:36+0100\n"
 "Last-Translator: zer0-x\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -101,7 +101,7 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "إدخال نوع نظام الملفات المطلوب للقسم"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "أدخل نقطة البداية (بوحدات مجزأة: s، GB، %، إلخ؛ default: {}):"
+msgstr "أدخل نقطة البداية (بوحدات مجزأة: s، GB، %، إلخ؛ default: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr "أدخل موقع النهاية (بوحدات مجزأة: s، GB، %، إلخ؛ على سبيل المثال: {}): "
@@ -128,10 +128,10 @@ msgstr ""
 "اختر حسب الفهرس القسم الذي تريد تحميله حيث"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr "* نقاط تحميل القسم هي نسبية داخل التثبيت، سيكون الإقلاع /boot كمثال."
+msgstr "* نقاط تحميل القسم هي نسبية داخل التثبيت، سيكون الإقلاع /boot كمثال. "
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "حدد مكان تحميل القسم (اتركه فارغاً لإزالة نقطة التحميل):"
+msgstr "حدد مكان تحميل القسم (اتركه فارغاً لإزالة نقطة التحميل): "
 
 msgid ""
 "{}\n"
@@ -170,7 +170,7 @@ msgstr ""
 "حدد القسم المراد وضع علامة على أنه قابل للتمهيد"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "أدخل نوع نظام الملفات المطلوب للقسم:"
+msgstr "أدخل نوع نظام الملفات المطلوب للقسم: "
 
 msgid "Archinstall language"
 msgstr "لغات التثبيت"
@@ -227,10 +227,10 @@ msgid "Choose which locale encoding to use"
 msgstr "اختر ترميز الإعدادات المحلية المراد استخدامها"
 
 msgid "Select one of the values shown below: "
-msgstr "اختر إحدى القيم الموضحة أدناه:"
+msgstr "اختر إحدى القيم الموضحة أدناه: "
 
 msgid "Select one or more of the options below: "
-msgstr "حدد واحداً أو أكثر من الخيارات أدناه:"
+msgstr "حدد واحداً أو أكثر من الخيارات أدناه: "
 
 msgid "Adding partition...."
 msgstr "إضافة قسم...."
@@ -366,22 +366,22 @@ msgid "Suggest partition layout"
 msgstr "اقتراح تخطيط التقسيم"
 
 msgid "Enter a password: "
-msgstr "أدخل كلمة مرور:"
+msgstr "أدخل كلمة مرور: "
 
 msgid "Enter a encryption password for {}"
 msgstr "أدخل كلمة مرور تشفير لـ {}"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "أدخل كلمة مرور تشفير القرص (اتركها فارغة لعدم وجود تشفير):"
+msgstr "أدخل كلمة مرور تشفير القرص (اتركها فارغة لعدم وجود تشفير): "
 
 msgid "Create a required super-user with sudo privileges: "
-msgstr "أدخل كلمة مرور تشفير القرص (اتركها فارغة لعدم استخدام التشفير):"
+msgstr "أدخل كلمة مرور تشفير القرص (اتركها فارغة لعدم استخدام التشفير): "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "أدخل كلمة مرور الجذر (اتركها فارغة لتعطيل الجذر):"
+msgstr "أدخل كلمة مرور الجذر (اتركها فارغة لتعطيل الجذر): "
 
 msgid "Password for user \"{}\": "
-msgstr "كلمة المرور للمستخدم \"{}\":"
+msgstr "كلمة المرور للمستخدم \"{}\": "
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "التحقق من وجود حزم إضافية (قد يستغرق ذلك بضع ثوانٍ)"
@@ -397,7 +397,7 @@ msgstr ""
 "للمزيد من المعلومات، يُرجى مراجعة ويكي Arch"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "أدخل اسم مستخدم لإنشاء مستخدم إضافي (اتركه فارغاً للتخطي):"
+msgstr "أدخل اسم مستخدم لإنشاء مستخدم إضافي (اتركه فارغاً للتخطي): "
 
 msgid "Use ESC to skip\n"
 msgstr "استخدم ESC لتخطي\n"
@@ -472,13 +472,13 @@ msgstr ""
 "تعريف مستخدم جديد\n"
 
 msgid "User Name : "
-msgstr "اسم المستخدم :"
+msgstr "اسم المستخدم : "
 
 msgid "Should {} be a superuser (sudoer)?"
 msgstr "هل يجب أن يكون {} مستخدمًا خارقًا (سودو)؟"
 
 msgid "Define users with sudo privilege: "
-msgstr "تعريف المستخدمين بامتياز sudo:"
+msgstr "تعريف المستخدمين بامتياز sudo: "
 
 msgid "No network configuration"
 msgstr "لا يوجد إعداد للشبكة"
@@ -517,7 +517,7 @@ msgid "Choose which configuration to save"
 msgstr "اختر الإعدادات التي تريد حفظها"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "أدخل مجلداً للإعدادات التي سيتم حفظها:"
+msgstr "أدخل مجلداً للإعدادات التي سيتم حفظها: "
 
 msgid "Not a valid directory: {}"
 msgstr "ليس مجلدًا صالحًا: {}"
@@ -541,19 +541,19 @@ msgid "Either root-password or at least 1 superuser must be specified"
 msgstr "يجب تحديد إما كلمة مرور الجذر أو على الأقل المستخدم المتميز"
 
 msgid "Manage superuser accounts: "
-msgstr "إدارة حسابات المستخدمين المتميزين:"
+msgstr "إدارة حسابات المستخدمين المتميزين: "
 
 msgid "Manage ordinary user accounts: "
-msgstr "إدارة حسابات المستخدمين العاديين:"
+msgstr "إدارة حسابات المستخدمين العاديين: "
 
 msgid " Subvolume :{:16}"
-msgstr "المجلد الفرعي :{:16}"
+msgstr "المجلد الفرعي :{:16} "
 
 msgid " mounted at {:16}"
-msgstr "مثبتة في {:16}"
+msgstr "مثبتة في {:16} "
 
 msgid " with option {}"
-msgstr "مع الخيار {}"
+msgstr "مع الخيار {} "
 
 msgid ""
 "\n"
@@ -563,7 +563,7 @@ msgstr ""
 " املأ القيم المطلوبة لوحدة التخزين الفرعية الجديدة \n"
 
 msgid "Subvolume name "
-msgstr "اسم وحدة التخزين الفرعية"
+msgstr "اسم وحدة التخزين الفرعية "
 
 msgid "Subvolume mountpoint"
 msgstr "نقطة تحميل وحدة التخزين الفرعية"
@@ -581,10 +581,10 @@ msgid "Select a mount point :"
 msgstr "حدد نقطة التثبيت :"
 
 msgid "Select the desired subvolume options "
-msgstr "حدد خيارات وحدة التخزين الفرعية المطلوبة"
+msgstr "حدد خيارات وحدة التخزين الفرعية المطلوبة "
 
 msgid "Define users with sudo privilege, by username: "
-msgstr "تحديد المستخدمين الذين لديهم امتياز sudo، حسب اسم المستخدم:"
+msgstr "تحديد المستخدمين الذين لديهم امتياز sudo، حسب اسم المستخدم: "
 
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] تم إنشاء ملف سجل هنا: {}"
@@ -653,7 +653,7 @@ msgid "Provides a selection of desktop environments and tiling window managers, 
 msgstr "يوفر مجموعة مختارة من بيئات سطح المكتب ومديري نوافذ التجانب، مثل gnome و kde و sway"
 
 msgid "Select your desired desktop environment"
-msgstr ""
+msgstr "حدد بيئة سطح المكتب التي تريدها"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
 msgstr ""
