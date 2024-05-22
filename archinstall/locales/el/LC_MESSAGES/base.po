@@ -1276,3 +1276,25 @@ msgstr "Παραλείποντας την αναμονή για αυτόματο
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "Διαγραφή προφίλ"
+
+#, fuzzy
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Ο συγχρονισμός χρόνου δεν ολοκληρώνεται, όσο περιμένετε - ελέγξτε την τεκμηρίωση για λύσεις: https://archinstall.readthedocs.io/"
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""

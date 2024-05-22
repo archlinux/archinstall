@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
+from typing import Any, TYPE_CHECKING, List, Optional, Tuple
+from dataclasses import dataclass
 
-from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
+from .device_model import (
+	PartitionModification, FilesystemType, BDevice,
+	Size, Unit, PartitionType, PartitionFlag,
 	ModificationStatus, DeviceGeometry, SectorSize, BtrfsMountOption
+)
 from ..hardware import SysInfo
 from ..menu import Menu, ListManager, MenuSelection, TextInput
 from ..output import FormattedOutput, warn
@@ -13,6 +17,12 @@ from .subvolume_menu import SubvolumeMenu
 
 if TYPE_CHECKING:
 	_: Any
+
+
+@dataclass
+class DefaultFreeSector:
+	start: Size
+	end: Size
 
 
 class PartitioningList(ListManager):
@@ -37,21 +47,6 @@ class PartitioningList(ListManager):
 
 		display_actions = list(self._actions.values())
 		super().__init__(prompt, device_partitions, display_actions[:2], display_actions[3:])
-
-	def reformat(self, data: List[PartitionModification]) -> Dict[str, Optional[PartitionModification]]:
-		table = FormattedOutput.as_table(data)
-		rows = table.split('\n')
-
-		# these are the header rows of the table and do not map to any User obviously
-		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
-		# the selectable rows so the header has to be aligned
-		display_data: Dict[str, Optional[PartitionModification]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
-
-		for row, user in zip(rows[2:], data):
-			row = row.replace('|', '\\|')
-			display_data[row] = user
-
-		return display_data
 
 	def selected_action_display(self, partition: PartitionModification) -> str:
 		return str(_('Partition'))
@@ -258,7 +253,6 @@ class PartitioningList(ListManager):
 		while True:
 			value = TextInput(prompt).run().strip()
 			size: Optional[Size] = None
-
 			if not value:
 				size = default
 			else:
@@ -284,21 +278,27 @@ class PartitioningList(ListManager):
 		prompt += str(_('If no unit is provided, the value is interpreted as sectors')) + '\n'
 		print(prompt)
 
-		largest_free_area: DeviceGeometry = max(device_info.free_space_regions, key=lambda r: r.get_length())
+		default_free_sector = self._find_default_free_space()
+
+		if not default_free_sector:
+			default_free_sector = DefaultFreeSector(
+				Size(0, Unit.sectors, self._device.device_info.sector_size),
+				Size(0, Unit.sectors, self._device.device_info.sector_size)
+			)
 
 		# prompt until a valid start sector was entered
-		default_start = Size(largest_free_area.start, Unit.sectors, device_info.sector_size)
-		start_prompt = str(_('Enter start (default: sector {}): ')).format(largest_free_area.start)
+		start_prompt = str(_('Enter start (default: sector {}): ')).format(default_free_sector.start.value)
+
 		start_size = self._enter_size(
 			device_info.sector_size,
 			device_info.total_size,
 			start_prompt,
-			default_start,
+			default_free_sector.start,
 			None
 		)
 
-		if start_size.value == largest_free_area.start:
-			end_size = Size(largest_free_area.end, Unit.sectors, device_info.sector_size)
+		if start_size.value == default_free_sector.start.value and default_free_sector.end.value != 0:
+			end_size = default_free_sector.end
 		else:
 			end_size = device_info.total_size
 
@@ -313,6 +313,44 @@ class PartitioningList(ListManager):
 		)
 
 		return start_size, end_size
+
+	def _find_default_free_space(self) -> Optional[DefaultFreeSector]:
+		device_info = self._device.device_info
+
+		largest_free_area: Optional[DeviceGeometry] = None
+		largest_deleted_area: Optional[PartitionModification] = None
+
+		if len(device_info.free_space_regions) > 0:
+			largest_free_area = max(device_info.free_space_regions, key=lambda r: r.get_length())
+
+		deleted_partitions = list(filter(lambda x: x.status == ModificationStatus.Delete, self._data))
+		if len(deleted_partitions) > 0:
+			largest_deleted_area = max(deleted_partitions, key=lambda p: p.length)
+
+		def _free_space(space: DeviceGeometry) -> DefaultFreeSector:
+			start = Size(space.start, Unit.sectors, device_info.sector_size)
+			end = Size(space.end, Unit.sectors, device_info.sector_size)
+			return DefaultFreeSector(start, end)
+
+		def _free_deleted(space: PartitionModification) -> DefaultFreeSector:
+			start = space.start.convert(Unit.sectors, self._device.device_info.sector_size)
+			end = space.end.convert(Unit.sectors, self._device.device_info.sector_size)
+			return DefaultFreeSector(start, end)
+
+		if not largest_deleted_area and largest_free_area:
+			return _free_space(largest_free_area)
+		elif not largest_free_area and largest_deleted_area:
+			return _free_deleted(largest_deleted_area)
+		elif not largest_deleted_area and not largest_free_area:
+			return None
+		elif largest_free_area and largest_deleted_area:
+			free_space = _free_space(largest_free_area)
+			if free_space.start > largest_deleted_area.start:
+				return free_space
+			else:
+				return _free_deleted(largest_deleted_area)
+
+		return None
 
 	def _create_new_partition(self) -> PartitionModification:
 		fs_type = self._prompt_partition_fs_type()

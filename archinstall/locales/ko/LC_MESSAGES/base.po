@@ -1276,3 +1276,24 @@ msgstr ""
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "인터페이스 제거"
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "파티션을 압축된 것으로 표시/표시 해제(btrfs만 해당)"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "BTRFS 압축을 사용하시겠습니까?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""

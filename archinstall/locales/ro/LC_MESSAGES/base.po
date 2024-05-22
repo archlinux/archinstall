@@ -1229,3 +1229,24 @@ msgstr ""
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "Șterge profil"
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "Marchează/Demarchează ca bootabil"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""

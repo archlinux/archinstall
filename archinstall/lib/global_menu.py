@@ -14,7 +14,6 @@ from .models.audio_configuration import Audio, AudioConfiguration
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
-from .storage import storage
 from .configuration import save_config
 from .interactions import add_number_of_parallel_downloads
 from .interactions import ask_additional_packages_to_install
@@ -30,7 +29,6 @@ from .interactions import select_additional_repositories
 from .interactions import select_kernel
 from .utils.util import format_cols
 from .interactions import ask_ntp
-from .interactions.disk_conf import select_disk_config
 
 if TYPE_CHECKING:
 	_: Any
@@ -38,7 +36,6 @@ if TYPE_CHECKING:
 
 class GlobalMenu(AbstractMenu):
 	def __init__(self, data_store: Dict[str, Any]):
-		self._defined_text = str(_('Defined'))
 		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
 	def setup_selection_menu_options(self):
@@ -54,20 +51,20 @@ class GlobalMenu(AbstractMenu):
 				_('Locales'),
 				lambda preset: self._locale_selection(preset),
 				preview_func=self._prev_locale,
-				display_func=lambda x: self._defined_text if x else '')
+				display_func=lambda x: self.defined_text if x else '')
 		self._menu_options['mirror_config'] = \
 			Selector(
 				_('Mirrors'),
 				lambda preset: self._mirror_configuration(preset),
-				display_func=lambda x: self._defined_text if x else '',
+				display_func=lambda x: self.defined_text if x else '',
 				preview_func=self._prev_mirror_config
 			)
 		self._menu_options['disk_config'] = \
 			Selector(
 				_('Disk configuration'),
 				lambda preset: self._select_disk_config(preset),
-				preview_func=self._prev_disk_layouts,
-				display_func=lambda x: self._display_disk_layout(x),
+				preview_func=self._prev_disk_config,
+				display_func=lambda x: self.defined_text if x else '',
 			)
 		self._menu_options['disk_encryption'] = \
 			Selector(
@@ -75,7 +72,8 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: self._disk_encryption(preset),
 				preview_func=self._prev_disk_encryption,
 				display_func=lambda x: self._display_disk_encryption(x),
-				dependencies=['disk_config'])
+				dependencies=['disk_config']
+			)
 		self._menu_options['swap'] = \
 			Selector(
 				_('Swap'),
@@ -140,7 +138,7 @@ class GlobalMenu(AbstractMenu):
 			Selector(
 				_('Additional packages'),
 				lambda preset: ask_additional_packages_to_install(preset),
-				display_func=lambda x: self._defined_text if x else '',
+				display_func=lambda x: self.defined_text if x else '',
 				preview_func=self._prev_additional_pkgs,
 				default=[])
 		self._menu_options['additional-repositories'] = \
@@ -247,14 +245,17 @@ class GlobalMenu(AbstractMenu):
 		return config.type.display_msg()
 
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
-		mods: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+		disk_config: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
 
-		if not mods:
+		if not disk_config:
 			# this should not happen as the encryption menu has the disk_config as dependency
 			raise ValueError('No disk layout specified')
 
+		if not disk.DiskEncryption.validate_enc(disk_config):
+			return None
+
 		data_store: Dict[str, Any] = {}
-		disk_encryption = disk.DiskEncryptionMenu(mods, data_store, preset=preset).run()
+		disk_encryption = disk.DiskEncryptionMenu(disk_config, data_store, preset=preset).run()
 		return disk_encryption
 
 	def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration:
@@ -287,44 +288,35 @@ class GlobalMenu(AbstractMenu):
 			return format_cols(packages, None)
 		return None
 
-	def _prev_disk_layouts(self) -> Optional[str]:
+	def _prev_disk_config(self) -> Optional[str]:
 		selector = self._menu_options['disk_config']
 		disk_layout_conf: Optional[disk.DiskLayoutConfiguration] = selector.current_selection
 
+		output = ''
 		if disk_layout_conf:
-			device_mods: List[disk.DeviceModification] = \
-				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
+			output += str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg())
 
-			if device_mods:
-				output_partition = '{}: {}\n'.format(str(_('Configuration')), disk_layout_conf.config_type.display_msg())
-				output_btrfs = ''
+			if disk_layout_conf.lvm_config:
+				output += '\n{}: {}'.format(str(_('LVM configuration type')), disk_layout_conf.lvm_config.config_type.display_msg())
 
-				for mod in device_mods:
-					# create partition table
-					partition_table = FormattedOutput.as_table(mod.partitions)
-
-					output_partition += f'{mod.device_path}: {mod.device.device_info.model}\n'
-					output_partition += partition_table + '\n'
-
-					# create btrfs table
-					btrfs_partitions = list(
-						filter(lambda p: len(p.btrfs_subvols) > 0, mod.partitions)
-					)
-					for partition in btrfs_partitions:
-						output_btrfs += FormattedOutput.as_table(partition.btrfs_subvols) + '\n'
-
-				output = output_partition + output_btrfs
-				return output.rstrip()
+		if output:
+			return output
 
 		return None
 
-	def _display_disk_layout(self, current_value: Optional[disk.DiskLayoutConfiguration] = None) -> str:
+	def _display_disk_config(self, current_value: Optional[disk.DiskLayoutConfiguration] = None) -> str:
 		if current_value:
 			return current_value.config_type.display_msg()
 		return ''
 
 	def _prev_disk_encryption(self) -> Optional[str]:
+		disk_config: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+
+		if disk_config and not disk.DiskEncryption.validate_enc(disk_config):
+			return str(_('LVM disk encryption with more than 2 partitions is currently not supported'))
+
 		encryption: Optional[disk.DiskEncryption] = self._menu_options['disk_encryption'].current_selection
+
 		if encryption:
 			enc_type = disk.EncryptionType.type_to_text(encryption.encryption_type)
 			output = str(_('Encryption type')) + f': {enc_type}\n'
@@ -332,6 +324,8 @@ class GlobalMenu(AbstractMenu):
 
 			if encryption.partitions:
 				output += 'Partitions: {} selected'.format(len(encryption.partitions)) + '\n'
+			elif encryption.lvm_volumes:
+				output += 'LVM volumes: {} selected'.format(len(encryption.lvm_volumes)) + '\n'
 
 			if encryption.hsm_device:
 				output += f'HSM: {encryption.hsm_device.manufacturer}'
@@ -425,10 +419,8 @@ class GlobalMenu(AbstractMenu):
 		self,
 		preset: Optional[disk.DiskLayoutConfiguration] = None
 	) -> Optional[disk.DiskLayoutConfiguration]:
-		disk_config = select_disk_config(
-			preset,
-			storage['arguments'].get('advanced', False)
-		)
+		data_store: Dict[str, Any] = {}
+		disk_config = disk.DiskLayoutConfigurationMenu(preset, data_store).run()
 
 		if disk_config != preset:
 			self._menu_options['disk_encryption'].set_current_selection(None)

@@ -1233,3 +1233,25 @@ msgstr "לדלג על המתנה לסנכרון השעון אוטומטית (י�
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "בהמתנה לסיום סנכרון מחזיק מפתחות של Arch Linux‏ (archlinux-keyring-wkd-sync)."
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "מחיקת פרופיל"
+
+#, fuzzy
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "סנכרון זמן לא מסתיים, בזמן ההמתנה - כדאי לחפש צורות לעקוף את זה במסמכים: https://archinstall.readthedocs.io/‎"
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "סימון/ביטול סימון כזמין לטעינה"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "להשתמש בדחיסה של BTRFS?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""

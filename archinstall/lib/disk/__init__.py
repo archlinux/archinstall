@@ -11,6 +11,11 @@ from .device_model import (
 	BDevice,
 	DiskLayoutType,
 	DiskLayoutConfiguration,
+	LvmLayoutType,
+	LvmConfiguration,
+	LvmVolumeGroup,
+	LvmVolume,
+	LvmVolumeStatus,
 	PartitionTable,
 	Unit,
 	Size,
@@ -30,7 +35,7 @@ from .device_model import (
 	CleanType,
 	get_lsblk_info,
 	get_all_lsblk_info,
-	get_lsblk_by_mountpoint
+	get_lsblk_by_mountpoint,
 )
 from .encryption_menu import (
 	select_encryption_type,
@@ -39,3 +44,5 @@ from .encryption_menu import (
 	select_partitions_to_encrypt,
 	DiskEncryptionMenu,
 )
+
+from .disk_menu import DiskLayoutConfigurationMenu

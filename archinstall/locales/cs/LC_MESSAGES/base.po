@@ -1217,3 +1217,25 @@ msgstr "Přeskakuji čekání na automatickou synchronizaci času (nesynchronizo
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Čekám na dokončení synchronizace Arch Linux keyring (archlinux-keyring-wkd-sync)."
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "Smazat profil"
+
+#, fuzzy
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Synchronizace času není dokončena, mezitím se můžete podívat na možnosti řešení: https://archinstall.readthedocs.io/"
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "Označit/Odznačit jako zaváděcí"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Přejete si použít BTRFS kompresi?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""

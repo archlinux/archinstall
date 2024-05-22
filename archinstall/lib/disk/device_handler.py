@@ -3,8 +3,10 @@ from __future__ import annotations
 import json
 import os
 import logging
+import time
+import uuid
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING
+from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
 
 from parted import (  # type: ignore
 	Disk, Geometry, FileSystem,
@@ -17,11 +19,12 @@ from .device_model import (
 	BDevice, _DeviceInfo, _PartitionInfo,
 	FilesystemType, Unit, PartitionTable,
 	ModificationStatus, get_lsblk_info, LsblkInfo,
-	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption
+	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
+	SectorSize, LvmVolumeInfo, LvmPVInfo, SubvolumeModification, BtrfsMountOption
 )
 
 from ..exceptions import DiskError, UnknownFilesystemFormat
-from ..general import SysCommand, SysCallError, JSON
+from ..general import SysCommand, SysCallError, JSON, SysCommandWorker
 from ..luks import Luks2
 from ..output import debug, error, info, warn, log
 from ..utils.util import is_subpath
@@ -189,61 +192,72 @@ class DeviceHandler(object):
 
 		return subvol_infos
 
-	def _perform_formatting(
+	def format(
 		self,
 		fs_type: FilesystemType,
 		path: Path,
 		additional_parted_options: List[str] = []
 	):
+		mkfs_type = fs_type.value
 		options = []
-		command = ''
 
 		match fs_type:
-			case FilesystemType.Btrfs:
-				options += ['-f']
-				command += 'mkfs.btrfs'
-			case FilesystemType.Fat16:
-				options += ['-F16']
-				command += 'mkfs.fat'
-			case FilesystemType.Fat32:
-				options += ['-F32']
-				command += 'mkfs.fat'
-			case FilesystemType.Ext2:
-				options += ['-F']
-				command += 'mkfs.ext2'
-			case FilesystemType.Ext3:
-				options += ['-F']
-				command += 'mkfs.ext3'
-			case FilesystemType.Ext4:
-				options += ['-F']
-				command += 'mkfs.ext4'
-			case FilesystemType.Xfs:
-				options += ['-f']
-				command += 'mkfs.xfs'
-			case FilesystemType.F2fs:
-				options += ['-f']
-				command += 'mkfs.f2fs'
+			case FilesystemType.Btrfs | FilesystemType.F2fs | FilesystemType.Xfs:
+				# Force overwrite
+				options.append('-f')
+			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
+				# Force create
+				options.append('-F')
+			case FilesystemType.Fat16 | FilesystemType.Fat32:
+				mkfs_type = 'fat'
+				# Set FAT size
+				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
 			case FilesystemType.Ntfs:
-				options += ['-f', '-Q']
-				command += 'mkfs.ntfs'
+				# Skip zeroing and bad sector check
+				options.append('--fast')
 			case FilesystemType.Reiserfs:
-				command += 'mkfs.reiserfs'
+				pass
 			case _:
 				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
 
-		options += additional_parted_options
-		options_str = ' '.join(options)
+		cmd = [f'mkfs.{mkfs_type}', *options, *additional_parted_options, str(path)]
 
-		info(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
+		debug('Formatting filesystem:', ' '.join(cmd))
 
 		try:
-			SysCommand(f"/usr/bin/{command} {options_str} {path}")
+			SysCommand(cmd)
 		except SysCallError as err:
 			msg = f'Could not format {path} with {fs_type.value}: {err.message}'
 			error(msg)
 			raise DiskError(msg) from err
 
-	def _perform_enc_formatting(
+	def encrypt(
+		self,
+		dev_path: Path,
+		mapper_name: Optional[str],
+		enc_password: str,
+		lock_after_create: bool = True
+	) -> Luks2:
+		luks_handler = Luks2(
+			dev_path,
+			mapper_name=mapper_name,
+			password=enc_password
+		)
+
+		key_file = luks_handler.encrypt()
+
+		luks_handler.unlock(key_file=key_file)
+
+		if not luks_handler.mapper_dev:
+			raise DiskError('Failed to unlock luks device')
+
+		if lock_after_create:
+			debug(f'luks2 locking device: {dev_path}')
+			luks_handler.lock()
+
+		return luks_handler
+
+	def format_encrypted(
 		self,
 		dev_path: Path,
 		mapper_name: Optional[str],
@@ -258,71 +272,160 @@ class DeviceHandler(object):
 
 		key_file = luks_handler.encrypt()
 
-		debug(f'Unlocking luks2 device: {dev_path}')
 		luks_handler.unlock(key_file=key_file)
 
 		if not luks_handler.mapper_dev:
 			raise DiskError('Failed to unlock luks device')
 
 		info(f'luks2 formatting mapper dev: {luks_handler.mapper_dev}')
-		self._perform_formatting(fs_type, luks_handler.mapper_dev)
+		self.format(fs_type, luks_handler.mapper_dev)
 
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
 
-	def _validate_partitions(self, partitions: List[PartitionModification]):
-		checks = {
-			# verify that all partitions have a path set (which implies that they have been created)
-			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
-			# crypto luks is not a valid file system type
-			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError('Crypto luks cannot be set as a filesystem type'),
-			# file system type must be set
-			lambda x: x.fs_type is None: ValueError('File system type must be set for modification')
-		}
-
-		for check, exc in checks.items():
-			found = next(filter(check, partitions), None)
-			if found is not None:
-				raise exc
-
-	def format(
+	def _lvm_info(
 		self,
-		device_mod: DeviceModification,
-		enc_conf: Optional['DiskEncryption'] = None
-	):
-		"""
-		Format can be given an overriding path, for instance /dev/null to test
-		the formatting functionality and in essence the support for the given filesystem.
-		"""
+		cmd: str,
+		info_type: Literal['lv', 'vg', 'pvseg']
+	) -> Optional[Any]:
+		raw_info = SysCommand(cmd).decode().split('\n')
 
-		# only verify partitions that are being created or modified
-		create_or_modify_parts = [p for p in device_mod.partitions if p.is_create_or_modify()]
+		# for whatever reason the output sometimes contains
+		# "File descriptor X leaked leaked on vgs invocation
+		data = '\n'.join([raw for raw in raw_info if 'File descriptor' not in raw])
 
-		self._validate_partitions(create_or_modify_parts)
+		debug(f'LVM info: {data}')
 
-		# make sure all devices are unmounted
-		self._umount_all_existing(device_mod.device_path)
+		reports = json.loads(data)
 
-		for part_mod in create_or_modify_parts:
-			# partition will be encrypted
-			if enc_conf is not None and part_mod in enc_conf.partitions:
-				self._perform_enc_formatting(
-					part_mod.safe_dev_path,
-					part_mod.mapper_name,
-					part_mod.safe_fs_type,
-					enc_conf
-				)
-			else:
-				self._perform_formatting(part_mod.safe_fs_type, part_mod.safe_dev_path)
+		for report in reports['report']:
+			if len(report[info_type]) != 1:
+				raise ValueError(f'Report does not contain any entry')
 
-			# synchronize with udev before using lsblk
-			SysCommand('udevadm settle')
+			entry = report[info_type][0]
 
-			lsblk_info = self._fetch_part_info(part_mod.safe_dev_path)
+			match info_type:
+				case 'pvseg':
+					return LvmPVInfo(
+						pv_name=Path(entry['pv_name']),
+						lv_name=entry['lv_name'],
+						vg_name=entry['vg_name'],
+					)
+				case 'lv':
+					return LvmVolumeInfo(
+						lv_name=entry['lv_name'],
+						vg_name=entry['vg_name'],
+						lv_size=Size(int(entry[f'lv_size'][:-1]), Unit.B, SectorSize.default())
+					)
+				case 'vg':
+					return LvmGroupInfo(
+						vg_uuid=entry['vg_uuid'],
+						vg_size=Size(int(entry[f'vg_size'][:-1]), Unit.B, SectorSize.default())
+					)
 
-			part_mod.partn = lsblk_info.partn
-			part_mod.partuuid = lsblk_info.partuuid
-			part_mod.uuid = lsblk_info.uuid
+		return None
+
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Optional[Any]:
+		attempts = 3
+
+		for attempt_nr in range(attempts):
+			try:
+				return self._lvm_info(cmd, info_type)
+			except ValueError:
+				time.sleep(attempt_nr + 1)
+
+		raise ValueError(f'Failed to fetch {info_type} information')
+
+	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
+		cmd = (
+			'lvs --reportformat json '
+			'--unit B '
+			f'-S lv_name={lv_name}'
+		)
+
+		return self._lvm_info_with_retry(cmd, 'lv')
+
+	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
+		cmd = (
+			'vgs --reportformat json '
+			'--unit B '
+			'-o vg_name,vg_uuid,vg_size '
+			f'-S vg_name={vg_name}'
+		)
+
+		return self._lvm_info_with_retry(cmd, 'vg')
+
+	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> Optional[LvmPVInfo]:
+		cmd = (
+			'pvs '
+			'--segments -o+lv_name,vg_name '
+			f'-S vg_name={vg_name},lv_name={lv_name} '
+			'--reportformat json '
+		)
+
+		return self._lvm_info_with_retry(cmd, 'pvseg')
+
+	def lvm_vol_change(self, vol: LvmVolume, activate: bool):
+		active_flag = 'y' if activate else 'n'
+		cmd = f'lvchange -a {active_flag} {vol.safe_dev_path}'
+
+		debug(f'lvchange volume: {cmd}')
+		SysCommand(cmd)
+
+	def lvm_export_vg(self, vg: LvmVolumeGroup):
+		cmd = f'vgexport {vg.name}'
+
+		debug(f'vgexport: {cmd}')
+		SysCommand(cmd)
+
+	def lvm_import_vg(self, vg: LvmVolumeGroup):
+		cmd = f'vgimport {vg.name}'
+
+		debug(f'vgimport: {cmd}')
+		SysCommand(cmd)
+
+	def lvm_vol_reduce(self, vol_path: Path, amount: Size):
+		val = amount.format_size(Unit.B, include_unit=False)
+		cmd = f'lvreduce -L -{val}B {vol_path}'
+
+		debug(f'Reducing LVM volume size: {cmd}')
+		SysCommand(cmd)
+
+	def lvm_pv_create(self, pvs: Iterable[Path]):
+		cmd = 'pvcreate ' + ' '.join([str(pv) for pv in pvs])
+		debug(f'Creating LVM PVS: {cmd}')
+
+		worker = SysCommandWorker(cmd)
+		worker.poll()
+		worker.write(b'y\n', line_ending=False)
+
+	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str):
+		pvs_str = ' '.join([str(pv) for pv in pvs])
+		cmd = f'vgcreate --yes {vg_name} {pvs_str}'
+
+		debug(f'Creating LVM group: {cmd}')
+
+		worker = SysCommandWorker(cmd)
+		worker.poll()
+		worker.write(b'y\n', line_ending=False)
+
+	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Optional[Size] = None):
+		if offset is not None:
+			length = volume.length - offset
+		else:
+			length = volume.length
+
+		length_str = length.format_size(Unit.B, include_unit=False)
+		cmd = f'lvcreate --yes -L {length_str}B {vg_name} -n {volume.name}'
+
+		debug(f'Creating volume: {cmd}')
+
+		worker = SysCommandWorker(cmd)
+		worker.poll()
+		worker.write(b'y\n', line_ending=False)
+
+		volume.vg_name = vg_name
+		volume.dev_path = Path(f'/dev/{vg_name}/{volume.name}')
 
 	def _setup_partition(
 		self,
@@ -382,10 +485,14 @@ class DeviceHandler(object):
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
+		if disk.type == PartitionTable.GPT.value and part_mod.is_root():
+			linux_root_x86_64 = "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709"
+			partition.type_uuid = uuid.UUID(linux_root_x86_64).bytes
+
 		# the partition has a path now that it has been added
 		part_mod.dev_path = Path(partition.path)
 
-	def _fetch_part_info(self, path: Path) -> LsblkInfo:
+	def fetch_part_info(self, path: Path) -> LsblkInfo:
 		lsblk_info = get_lsblk_info(path)
 
 		if not lsblk_info.partn:
@@ -403,6 +510,37 @@ class DeviceHandler(object):
 		debug(f'partition information found: {lsblk_info.json()}')
 
 		return lsblk_info
+
+	def create_lvm_btrfs_subvolumes(
+		self,
+		path: Path,
+		btrfs_subvols: List[SubvolumeModification],
+		mount_options: List[str]
+	):
+		info(f'Creating subvolumes: {path}')
+
+		self.mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+
+		for sub_vol in btrfs_subvols:
+			debug(f'Creating subvolume: {sub_vol.name}')
+
+			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
+
+			SysCommand(f"btrfs subvolume create {subvol_path}")
+
+			if BtrfsMountOption.nodatacow.value in mount_options:
+				try:
+					SysCommand(f'chattr +C {subvol_path}')
+				except SysCallError as err:
+					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {err}')
+
+			if BtrfsMountOption.compress.value in mount_options:
+				try:
+					SysCommand(f'chattr +c {subvol_path}')
+				except SysCallError as err:
+					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
+
+		self.umount(path)
 
 	def create_btrfs_volumes(
 		self,
@@ -468,8 +606,8 @@ class DeviceHandler(object):
 
 		return luks_handler
 
-	def _umount_all_existing(self, device_path: Path):
-		info(f'Unmounting all existing partitions: {device_path}')
+	def umount_all_existing(self, device_path: Path):
+		debug(f'Unmounting all existing partitions: {device_path}')
 
 		existing_partitions = self._devices[device_path].partition_infos
 
@@ -496,9 +634,6 @@ class DeviceHandler(object):
 
 			if partition_table.MBR and len(modification.partitions) > 3:
 				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
-
-		# make sure all devices are unmounted
-		self._umount_all_existing(modification.device_path)
 
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
@@ -560,28 +695,21 @@ class DeviceHandler(object):
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
 	def umount(self, mountpoint: Path, recursive: bool = False):
-		try:
-			lsblk_info = get_lsblk_info(mountpoint)
-		except SysCallError as ex:
-			# this could happen if before partitioning the device contained 3 partitions
-			# and after partitioning only 2 partitions were created, then the modifications object
-			# will have a reference to /dev/sX3 which is being tried to umount here now
-			if 'not a block device' in ex.message:
-				return
-			raise ex
+		lsblk_info = get_lsblk_info(mountpoint)
 
-		if len(lsblk_info.mountpoints) > 0:
-			debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
+		if not lsblk_info.mountpoints:
+			return
 
-			for mountpoint in lsblk_info.mountpoints:
-				debug(f'Unmounting mountpoint: {mountpoint}')
+		debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
 
-				command = 'umount'
+		cmd = ['umount']
 
-				if recursive:
-					command += ' -R'
+		if recursive:
+			cmd.append('-R')
 
-				SysCommand(f'{command} {mountpoint}')
+		for path in lsblk_info.mountpoints:
+			debug(f'Unmounting mountpoint: {path}')
+			SysCommand(cmd + [str(path)])
 
 	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> List[DeviceModification]:
 		part_mods: Dict[Path, List[PartitionModification]] = {}
