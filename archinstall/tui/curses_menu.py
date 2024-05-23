@@ -864,7 +864,8 @@ class NewMenu(AbstractCurses):
 				if col < len(row):
 					col_entries += [len(row[col].text)]
 
-			col_widths += [max(col_entries)]
+			if col_entries:
+				col_widths += [max(col_entries) if col_entries else 0]
 
 		return col_widths
 
@@ -1095,7 +1096,7 @@ class NewMenu(AbstractCurses):
 		self._item_group.focus_item = self._row_entries[next_row][next_col].item
 
 
-class ArchinstallTui:
+class Tui:
 	def __init__(self):
 		self._screen = curses.initscr()
 
@@ -1168,4 +1169,4 @@ class ArchinstallTui:
 		return curses.color_pair(color.value)
 
 
-tui = ArchinstallTui()
+tui = Tui()
