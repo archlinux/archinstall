@@ -627,7 +627,7 @@ class NewMenu(AbstractCurses):
 		self,
 		group: MenuItemGroup,
 		orientation: MenuOrientation = MenuOrientation.VERTICAL,
-		horizontal_cols: int = 1,
+		columns: int = 1,
 		column_spacing: int = 10,
 		header: Optional[str] = None,
 		cursor_char: str = '>',
@@ -657,7 +657,7 @@ class NewMenu(AbstractCurses):
 		self._column_spacing = column_spacing
 
 		if self._orientation == MenuOrientation.HORIZONTAL:
-			self._horizontal_cols = horizontal_cols
+			self._horizontal_cols = columns
 		else:
 			self._horizontal_cols = 1
 
@@ -746,7 +746,7 @@ class NewMenu(AbstractCurses):
 		self._multi = False
 		result = tui.run(self)
 
-		assert type(result.value) == MenuItem
+		assert isinstance(result.value, MenuItem)
 		return result
 
 	def multi(self) -> Result[List[MenuItem]]:
