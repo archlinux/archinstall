@@ -206,12 +206,10 @@ def perform_installation(mountpoint: Path):
 
 		installation.genfstab()
 
-		info(
-			"For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
+		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 		if not archinstall.arguments.get('silent'):
-			prompt = str(
-				_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
+			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
 			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
 			if choice.value == Menu.yes():
 				try:

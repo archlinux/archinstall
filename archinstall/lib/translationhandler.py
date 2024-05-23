@@ -207,4 +207,3 @@ class DeferredTranslation:
 	def install(cls):
 		import builtins
 		builtins._ = cls  # type: ignore
-

@@ -5,12 +5,14 @@ import json
 import math
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum, auto
+from enum import Enum
+from enum import auto
 from pathlib import Path
-from typing import Optional, List, Dict, TYPE_CHECKING, Any, Union
+from typing import Optional, List, Dict, TYPE_CHECKING, Any
+from typing import Union
 
-import _ped  # type: ignore
 import parted  # type: ignore
+import _ped  # type: ignore
 from parted import Disk, Geometry, Partition
 
 from ..exceptions import DiskError, SysCallError
