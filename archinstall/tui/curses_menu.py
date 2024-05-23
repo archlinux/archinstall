@@ -43,7 +43,7 @@ class MenuItem:
 	def is_empty(self) -> bool:
 		return self.text == '' or self.text is None
 
-	def show(self, spacing: int = 0, suffix: str = '') -> str:
+	def get_text(self, spacing: int = 0, suffix: str = '') -> str:
 		if self.is_empty():
 			return ''
 
@@ -234,7 +234,7 @@ class MenuItemGroup:
 				return False
 		return True
 
-	def get_spacing(self) -> int:
+	def max_item_width(self) -> int:
 		spaces = [len(str(it.text)) for it in self.items]
 		if spaces:
 			return max(spaces)
@@ -265,15 +265,15 @@ class MenuKeys(Enum):
 	NUM_KEYS = set(range(49, 58))
 	# up k
 	MENU_UP = {259, 107}
-	# down j
+	# down j, down arrow
 	MENU_DOWN = {258, 106}
-	# page_up ctrl-b
-	MENU_PAGE_UP = {339, 2}
-	# page_down ctrl-f
-	MENU_PAGE_DOWN = {338, 6}
-	# home ctrl-a
+	# left h, left arrow
+	MENU_LEFT = {260, 104}
+	# right l, right arrow
+	MENU_RIGHT = {261, 108}
+	# home ctrl-a, Home
 	MENU_START = {262, 1}
-	# end ctrl-e
+	# end ctrl-e, End
 	MENU_END = {360, 5}
 	# enter
 	ACCEPT = {10}
@@ -556,6 +556,7 @@ class Help:
 			HelpText('Move down', ['j', '↓']),
 			HelpText('Move right', ['l', '→']),
 			HelpText('Move left', ['h', '←']),
+			HelpText('Jump to entry', ['1..9'])
 		]
 	)
 
@@ -604,10 +605,30 @@ class Help:
 		return help_output
 
 
+class MenuOrientation(Enum):
+	VERTICAL = auto()
+	HORIZONTAL = auto()
+
+
+class MenuAlignment(Enum):
+	LEFT = auto()
+	CENTER = auto()
+	RIGHT = auto()
+
+
+@dataclass
+class MenuCell:
+	item: MenuItem
+	text: str
+
+
 class NewMenu(AbstractCurses):
 	def __init__(
 		self,
 		group: MenuItemGroup,
+		orientation: MenuOrientation = MenuOrientation.VERTICAL,
+		horizontal_cols: int = 1,
+		column_spacing: int = 10,
 		header: Optional[str] = None,
 		cursor_char: str = '>',
 		search_enabled: bool = True,
@@ -632,6 +653,15 @@ class NewMenu(AbstractCurses):
 		self._preview_style = preview_style
 		self._preview_frame = preview_frame
 		self._preview_header = preview_header
+		self._orientation = orientation
+		self._column_spacing = column_spacing
+
+		if self._orientation == MenuOrientation.HORIZONTAL:
+			self._horizontal_cols = horizontal_cols
+		else:
+			self._horizontal_cols = 1
+
+		self._row_entries: List[List[MenuCell]] = []
 
 		self._visible_entries: List[ViewportEntry] = []
 		self._max_height, self._max_width = tui.max_yx
@@ -642,6 +672,8 @@ class NewMenu(AbstractCurses):
 		self._preview_viewport: Optional[Viewport] = None
 
 		self._set_viewports(preview_size)
+
+		assert self._menu_viewport is not None
 
 	def _set_viewports(self, preview_size):
 		header_height = 0
@@ -721,7 +753,7 @@ class NewMenu(AbstractCurses):
 		self._multi = True
 		result = tui.run(self)
 
-		assert type(result.value) == List[MenuItem]
+		assert isinstance(result.value, list)
 		return result
 
 	def _header_entries(self) -> List[ViewportEntry]:
@@ -742,90 +774,134 @@ class NewMenu(AbstractCurses):
 		header_entries = self._header_entries()
 		footer_entries = self._footer_entries()
 
-		row_entries = self._get_row_items()
+		vp_entries = self._get_row_entries()
 		cursor_idx = self._cursor_index()
 
-		self._update_viewport(self._header_viewport, header_entries)
-		self._update_viewport(self._menu_viewport, row_entries, cursor_idx)
+		if self._header_viewport:
+			self._update_viewport(self._header_viewport, header_entries)
 
-		if row_entries:
-			self._update_preview_screen()
-		else:
-			self._update_viewport(self._preview_viewport, None)
+		if self._menu_viewport:
+			self._update_viewport(self._menu_viewport, vp_entries, cursor_idx)
 
-		self._update_viewport(self._footer_viewport, footer_entries, 0)
+		if vp_entries:
+			self._update_preview()
+		elif self._preview_viewport:
+			self._update_viewport(self._preview_viewport, [])
+
+		if self._footer_viewport:
+			self._update_viewport(self._footer_viewport, footer_entries, 0)
 
 	def _update_viewport(
 		self,
 		viewport: Viewport,
-		entries: Optional[List[ViewportEntry]],
+		entries: List[ViewportEntry],
 		cursor_idx: int = 0
 	):
-		if viewport:
-			if entries:
-				viewport.update(entries, cursor_idx)
-			else:
-				viewport.update([])
+		if entries:
+			viewport.update(entries, cursor_idx)
+		else:
+			viewport.update([])
 
 	def _cursor_index(self) -> int:
-		items = [it for it in self._item_group.items if self._item_group.verify_item_enabled(it)]
-		try:
-			return items.index(self._item_group.focus_item)
-		except ValueError:
-			return 0
+		for idx, cell in enumerate(self._row_entries):
+			if self._item_group.focus_item in cell:
+				return idx
+		return 0
 
-	def _get_row_items(self) -> Optional[List[ViewportEntry]]:
-		min_col_offset = 1
-		cursor_offset = len(self._cursor_char)
-		col_offset = min_col_offset + cursor_offset + 1
-		multi_offset = min_col_offset + cursor_offset + 1
+	def _get_visible_items(self) -> List[MenuItem]:
+		return [it for it in self._item_group.items if self._item_group.verify_item_enabled(it)]
 
-		if self._multi:
-			col_offset += 4  # [x] or [ ] prefix
+	def _to_cols(self, items: List[MenuItem], cols: int) -> List[List[MenuItem]]:
+		return [items[i:i + cols] for i in range(0, len(items), cols)]
 
-		row_entries = []
-		items = [it for it in self._item_group.items if self._item_group.verify_item_enabled(it)]
-		spacing = self._item_group.get_spacing()
+	def _get_row_entries(self) -> List[ViewportEntry]:
+		cells = self._determine_menu_cells()
+		cursor = f'{self._cursor_char} '
+		entries = []
+		cols = self._horizontal_cols
 
-		if not items:
-			return None
+		if cols == 1:
+			item_distance = 0
+		else:
+			item_distance = self._column_spacing
 
-		for idx, item in enumerate(items):
-			style = STYLE.NORMAL
+		self._row_entries = [cells[x:x + cols] for x in range(0, len(cells), cols)]
+		cols_widths = self._calc_col_widths(self._row_entries, cols)
+		cols_widths = [col_width + len(cursor) + item_distance for col_width in cols_widths]
 
-			if item == self._item_group.focus_item:
-				cursor = f'{self._cursor_char} '.ljust(col_offset)
-				row_entries.append(
-					ViewportEntry(cursor, idx, min_col_offset, style)
-				)
-				style = STYLE.MENU_STYLE
+		for row_idx, row in enumerate(self._row_entries):
+			cur_pos = len(cursor)
+
+			for col_idx, cell in enumerate(row):
+				cur_text = ''
+				style = STYLE.NORMAL
+
+				if cell.item == self._item_group.focus_item:
+					cur_text = cursor
+					style = STYLE.MENU_STYLE
+
+				entries += [ViewportEntry(cur_text, row_idx, cur_pos - len(cursor), STYLE.CURSOR_STYLE)]
+
+				entries += [ViewportEntry(cell.text, row_idx, cur_pos, style)]
+				cur_pos += len(cell.text)
+
+				if col_idx < len(row) - 1:
+					spacer_len = cols_widths[col_idx] - len(cell.text)
+					entries += [ViewportEntry(' ' * spacer_len, row_idx, cur_pos, STYLE.NORMAL)]
+					cur_pos += spacer_len
+
+		return entries
+
+	def _calc_col_widths(
+		self,
+		row_chunks: List[List[MenuCell]],
+		cols: int
+	) -> List[int]:
+		col_widths = []
+		for col in range(cols):
+			col_entries = []
+			for row in row_chunks:
+				if col < len(row):
+					col_entries += [len(row[col].text)]
+
+			col_widths += [max(col_entries)]
+
+		return col_widths
+
+	def _determine_menu_cells(self) -> List[MenuCell]:
+		items = self._get_visible_items()
+		entries = []
+
+		for row_idx, item in enumerate(items):
+			item_text = ''
 
 			if self._multi and not item.is_empty():
-				multi_prefix = self._multi_prefix(item)
-				row_entries.append(
-					ViewportEntry(multi_prefix, idx, multi_offset, style)
-				)
+				item_text += self._multi_prefix(item)
 
-			suffix = str(_(' (default)')) if self._item_group.default_item == item else ''
+			suffix = self._default_suffix(item)
+			item_text += item.get_text(suffix=suffix)
 
-			item_text = item.show(spacing=spacing, suffix=suffix)
-			row_entries.append(
-				ViewportEntry(item_text, idx, col_offset, style)
-			)
+			entries += [MenuCell(item, item_text)]
 
-		return row_entries
+		return entries
 
-	def _update_preview_screen(self):
+	def _update_preview(self):
 		if not self._preview_viewport:
 			return
 
 		focus_item = self._item_group.focus_item
 
-		if focus_item.preview_action is None:
+		if not focus_item or focus_item.preview_action is None:
 			self._preview_viewport.update([])
 			return
 
-		preview_text = focus_item.preview_action(focus_item).split('\n')
+		action_text = focus_item.preview_action(focus_item)
+
+		if not action_text:
+			self._preview_viewport.update([])
+			return
+
+		preview_text = action_text.split('\n')
 		entries = [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(preview_text)]
 
 		self._preview_viewport.update(
@@ -856,6 +932,7 @@ class NewMenu(AbstractCurses):
 		# when a interrupt signal happens then getchr
 		# doesn't seem to work anymore so we need to
 		# call it twice to get it to block and wait for input
+		assert self._menu_viewport is not None
 		self._menu_viewport.getch()
 
 		while True:
@@ -873,6 +950,14 @@ class NewMenu(AbstractCurses):
 						return True
 
 			return False
+
+	def _default_suffix(self, item: MenuItem) -> str:
+		suffix = ''
+
+		if self._item_group.default_item == item:
+			suffix = str(_(' (default)'))
+
+		return suffix
 
 	def _multi_prefix(self, item: MenuItem) -> str:
 		if self._item_group.is_item_selected(item):
@@ -939,14 +1024,8 @@ class NewMenu(AbstractCurses):
 								return Result(ResultType.Selection, self._item_group.focus_item)
 
 					return None
-			case MenuKeys.MENU_UP:
-				self._item_group.focus_prev(self._skip_empty_entries)
-			case MenuKeys.MENU_DOWN:
-				self._item_group.focus_next(self._skip_empty_entries)
-			case MenuKeys.MENU_PAGE_UP:
-				pass
-			case MenuKeys.MENU_PAGE_DOWN:
-				pass
+			case MenuKeys.MENU_UP | MenuKeys.MENU_DOWN | MenuKeys.MENU_LEFT | MenuKeys.MENU_RIGHT:
+				self._focus_item(handle)
 			case MenuKeys.MENU_START:
 				self._item_group.focus_first()
 			case MenuKeys.MENU_END:
@@ -972,6 +1051,48 @@ class NewMenu(AbstractCurses):
 
 		self.draw()
 		return None
+
+	def _focus_item(self, key: MenuKeys):
+		focus_item = self._item_group.focus_item
+		next_row = 0
+		next_col = 0
+
+		for row_idx, row in enumerate(self._row_entries):
+			for col_idx, cell in enumerate(row):
+				if cell.item == focus_item:
+					match key:
+						case MenuKeys.MENU_UP:
+							next_row = row_idx - 1
+							next_col = col_idx
+
+							if next_row < 0:
+								next_row = len(self._row_entries) - 1
+							if next_col >= len(self._row_entries[next_row]):
+								next_col = len(self._row_entries[next_row]) - 1
+						case MenuKeys.MENU_DOWN:
+							next_row = row_idx + 1
+							next_col = col_idx
+
+							if next_row >= len(self._row_entries):
+								next_row = 0
+							if next_col >= len(self._row_entries[next_row]):
+								next_col = len(self._row_entries[next_row]) - 1
+						case MenuKeys.MENU_RIGHT:
+							next_col = col_idx + 1
+							next_row = row_idx
+
+							if next_col >= len(self._row_entries[row_idx]):
+								next_col = 0
+								next_row = 0 if next_row == (len(self._row_entries) - 1) else next_row + 1
+						case MenuKeys.MENU_LEFT:
+							next_col = col_idx - 1
+							next_row = row_idx
+
+							if next_col < 0:
+								next_row = len(self._row_entries) - 1 if next_row == 0 else next_row - 1
+								next_col = len(self._row_entries[next_row]) - 1
+
+		self._item_group.focus_item = self._row_entries[next_row][next_col].item
 
 
 class ArchinstallTui:
