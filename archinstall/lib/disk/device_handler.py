@@ -198,49 +198,34 @@ class DeviceHandler(object):
 		path: Path,
 		additional_parted_options: List[str] = []
 	):
+		mkfs_type = fs_type.value
 		options = []
-		command = ''
 
 		match fs_type:
-			case FilesystemType.Btrfs:
-				options += ['-f']
-				command += 'mkfs.btrfs'
-			case FilesystemType.Fat16:
-				options += ['-F16']
-				command += 'mkfs.fat'
-			case FilesystemType.Fat32:
-				options += ['-F32']
-				command += 'mkfs.fat'
-			case FilesystemType.Ext2:
-				options += ['-F']
-				command += 'mkfs.ext2'
-			case FilesystemType.Ext3:
-				options += ['-F']
-				command += 'mkfs.ext3'
-			case FilesystemType.Ext4:
-				options += ['-F']
-				command += 'mkfs.ext4'
-			case FilesystemType.Xfs:
-				options += ['-f']
-				command += 'mkfs.xfs'
-			case FilesystemType.F2fs:
-				options += ['-f']
-				command += 'mkfs.f2fs'
+			case FilesystemType.Btrfs | FilesystemType.F2fs | FilesystemType.Xfs:
+				# Force overwrite
+				options.append('-f')
+			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
+				# Force create
+				options.append('-F')
+			case FilesystemType.Fat16 | FilesystemType.Fat32:
+				mkfs_type = 'fat'
+				# Set FAT size
+				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
 			case FilesystemType.Ntfs:
-				options += ['-f', '-Q']
-				command += 'mkfs.ntfs'
+				# Skip zeroing and bad sector check
+				options.append('--fast')
 			case FilesystemType.Reiserfs:
-				command += 'mkfs.reiserfs'
+				pass
 			case _:
 				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
 
-		options += additional_parted_options
-		options_str = ' '.join(options)
+		cmd = [f'mkfs.{mkfs_type}', *options, *additional_parted_options, str(path)]
 
-		debug(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
+		debug('Formatting filesystem:', ' '.join(cmd))
 
 		try:
-			SysCommand(f"/usr/bin/{command} {options_str} {path}")
+			SysCommand(cmd)
 		except SysCallError as err:
 			msg = f'Could not format {path} with {fs_type.value}: {err.message}'
 			error(msg)
@@ -710,28 +695,21 @@ class DeviceHandler(object):
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
 	def umount(self, mountpoint: Path, recursive: bool = False):
-		try:
-			lsblk_info = get_lsblk_info(mountpoint)
-		except SysCallError as ex:
-			# this could happen if before partitioning the device contained 3 partitions
-			# and after partitioning only 2 partitions were created, then the modifications object
-			# will have a reference to /dev/sX3 which is being tried to umount here now
-			if 'not a block device' in ex.message:
-				return
-			raise ex
+		lsblk_info = get_lsblk_info(mountpoint)
 
-		if len(lsblk_info.mountpoints) > 0:
-			debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
+		if not lsblk_info.mountpoints:
+			return
 
-			for mountpoint in lsblk_info.mountpoints:
-				debug(f'Unmounting mountpoint: {mountpoint}')
+		debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
 
-				command = 'umount'
+		cmd = ['umount']
 
-				if recursive:
-					command += ' -R'
+		if recursive:
+			cmd.append('-R')
 
-				SysCommand(f'{command} {mountpoint}')
+		for path in lsblk_info.mountpoints:
+			debug(f'Unmounting mountpoint: {path}')
+			SysCommand(cmd + [str(path)])
 
 	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> List[DeviceModification]:
 		part_mods: Dict[Path, List[PartitionModification]] = {}

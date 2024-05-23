@@ -257,9 +257,9 @@ def select_mount_options() -> List[str]:
 	return []
 
 
-def process_root_partition_size(available_space: disk.Size, sector_size: disk.SectorSize) -> disk.Size:
+def process_root_partition_size(total_size: disk.Size, sector_size: disk.SectorSize) -> disk.Size:
 	# root partition size processing
-	total_device_size = available_space.convert(disk.Unit.GiB)
+	total_device_size = total_size.convert(disk.Unit.GiB)
 	if total_device_size.value > 500:
 		# maximum size
 		return disk.Size(value=50, unit=disk.Unit.GiB, sector_size=sector_size)
@@ -283,22 +283,25 @@ def suggest_single_disk_layout(
 
 	sector_size = device.device_info.sector_size
 	total_size = device.device_info.total_size
+	available_space = total_size
 	min_size_to_allow_home_part = disk.Size(40, disk.Unit.GiB, sector_size)
-	root_partition_size = process_root_partition_size(available_space=total_size, sector_size=sector_size)
-	using_subvolumes = False
-	using_home_partition = False
-	mount_options = []
-	device_size_gib = device.device_info.total_size
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
 		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
 		using_subvolumes = choice.value == Menu.yes()
 		mount_options = select_mount_options()
+	else:
+		using_subvolumes = False
+		mount_options = []
 
 	device_modification = disk.DeviceModification(device, wipe=True)
 
 	using_gpt = SysInfo.has_uefi()
+
+	if using_gpt:
+		# Remove space for end alignment buffer
+		available_space -= disk.Size(1, disk.Unit.MiB, sector_size)
 
 	# Used for reference: https://wiki.archlinux.org/title/partitioning
 	# 2 MiB is unallocated for GRUB on BIOS. Potentially unneeded for other bootloaders?
@@ -314,30 +317,27 @@ def suggest_single_disk_layout(
 	boot_partition = _boot_partition(sector_size, using_gpt)
 	device_modification.add_partition(boot_partition)
 
-	if not using_subvolumes:
-		if device_size_gib >= min_size_to_allow_home_part:
-			if separate_home is None:
-				prompt = str(_('Would you like to create a separate partition for /home?'))
-				choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-				using_home_partition = choice.value == Menu.yes()
-			elif separate_home is True:
-				using_home_partition = True
-			else:
-				using_home_partition = False
-
-	align_buffer = disk.Size(1, disk.Unit.MiB, sector_size)
+	if (
+		separate_home is False
+		or using_subvolumes
+		or total_size < min_size_to_allow_home_part
+	):
+		using_home_partition = False
+	elif separate_home:
+		using_home_partition = True
+	else:
+		prompt = str(_('Would you like to create a separate partition for /home?'))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
+		using_home_partition = choice.value == Menu.yes()
 
 	# root partition
 	root_start = boot_partition.start + boot_partition.length
 
 	# Set a size for / (/root)
-	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
-		root_length = total_size - root_start
+	if using_home_partition:
+		root_length = process_root_partition_size(total_size, sector_size)
 	else:
-		root_length = min(total_size, root_partition_size)
-
-	if using_gpt and not using_home_partition:
-		root_length -= align_buffer
+		root_length = available_space - root_start
 
 	root_partition = disk.PartitionModification(
 		status=disk.ModificationStatus.Create,
@@ -368,10 +368,7 @@ def suggest_single_disk_layout(
 		# But we want to be able to reuse data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
 		home_start = root_partition.start + root_partition.length
-		home_length = total_size - home_start
-
-		if using_gpt:
-			home_length -= align_buffer
+		home_length = available_space - home_start
 
 		home_partition = disk.PartitionModification(
 			status=disk.ModificationStatus.Create,

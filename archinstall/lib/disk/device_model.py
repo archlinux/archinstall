@@ -407,7 +407,7 @@ class _PartitionInfo:
 			name=partition.get_name(),
 			type=partition_type,
 			fs_type=fs_type,
-			path=partition.path,
+			path=Path(partition.path),
 			start=start,
 			length=length,
 			flags=flags,
