@@ -18,6 +18,7 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 if TYPE_CHECKING:
 	_: Any
 
+
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)

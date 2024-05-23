@@ -328,7 +328,6 @@ def log(
 			sys.stdout.write(f"{text}\n")
 			sys.stdout.flush()
 
-
 def _count_wchars(string: str) -> int:
 	"Count the total number of wide characters contained in a string"
 	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
