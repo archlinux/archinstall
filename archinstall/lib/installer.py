@@ -83,8 +83,8 @@ class Installer:
 		# systemd, sd-vconsole and sd-encrypt will be replaced by udev, keymap and encrypt
 		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
 		self._hooks: List[str] = [
-			"base", "systemd", "autodetect", "microcode", "keyboard",
-			"sd-vconsole", "modconf", "block", "filesystems", "fsck"
+			"base", "systemd", "autodetect", "microcode", "modconf", "kms", "keyboard",
+			"sd-vconsole", "block", "filesystems", "fsck"
 		]
 		self._kernel_params: List[str] = []
 		self._fstab_entries: List[str] = []
@@ -709,7 +709,7 @@ class Installer:
 				# This is purely for stability reasons, we're going away from this.
 				# * systemd -> udev
 				# * sd-vconsole -> keymap
-				self._hooks = [hook.replace('systemd', 'udev').replace('sd-vconsole', 'keymap') for hook in self._hooks]
+				self._hooks = [hook.replace('systemd', 'udev').replace('sd-vconsole', 'keymap consolefont') for hook in self._hooks]
 
 			mkinit.write(f"HOOKS=({' '.join(self._hooks)})\n")
 
