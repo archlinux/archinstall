@@ -15,6 +15,7 @@ depends=(
   'btrfs-progs'
   'coreutils'
   'cryptsetup'
+  'dosfstools'
   'e2fsprogs'
   'glibc'
   'kbd'
