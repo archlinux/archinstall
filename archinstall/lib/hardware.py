@@ -116,7 +116,6 @@ class GfxDriver(Enum):
 				]
 			case GfxDriver.NvidiaOpenKernel:
 				packages += [
-					GfxPackage.NvidiaOpen,
 					GfxPackage.Dkms,
 					GfxPackage.NvidiaOpenDkms
 				]
