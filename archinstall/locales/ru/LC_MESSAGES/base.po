@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Здесь был создан файл журнала: {} {}"
@@ -1233,16 +1233,14 @@ msgstr "Выбранные профили: "
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "Синхронизация времени не завершена, пока вы ждете - проверьте документацию на предмет обходных путей: https://archinstall.readthedocs.io/"
 
-#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr "Пометить/снять пометку как загрузочный"
+msgstr "Пометить/снять пометку как nodatacow"
 
-#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "Хотите ли вы использовать сжатие BTRFS?"
+msgstr "Хотите ли вы использовать сжатие или отключить CoW?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Использовать сжатие"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Отключить копирование при записи (CoW)"
