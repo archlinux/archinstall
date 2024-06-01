@@ -367,8 +367,9 @@ class Viewport:
 	def getch(self):
 		return self._screen.getch()
 
-	def clear(self):
-		self._screen.clear()
+	def erase(self):
+		self._screen.erase()
+		self._screen.refresh()
 
 	def update(
 		self,
@@ -391,7 +392,7 @@ class Viewport:
 			visible_rows = self._add_frame(visible_rows, frame_header)
 
 		visible_entries = header + visible_rows + footer
-		self._screen.clear()
+		self._screen.erase()
 
 		for entry in visible_entries:
 			# try:
@@ -670,10 +671,33 @@ class NewMenu(AbstractCurses):
 		self._footer_viewport: Optional[Viewport] = None
 		self._menu_viewport: Optional[Viewport] = None
 		self._preview_viewport: Optional[Viewport] = None
+		self._help_viewport: Optional[Viewport] = None
 
 		self._set_viewports(preview_size)
+		self._set_help_viewport()
 
-		assert self._menu_viewport is not None
+	def _clear_all(self):
+		if self._header_viewport:
+			self._header_viewport.erase()
+		if self._menu_viewport:
+			self._menu_viewport.erase()
+		if self._preview_viewport:
+			self._preview_viewport.erase()
+		if self._footer_viewport:
+			self._footer_viewport.erase()
+		if self._help_viewport:
+			self._help_viewport.erase()
+
+	def _set_help_viewport(self):
+		width = self._max_width - 10
+		height = self._max_height - 10
+
+		self._help_viewport = Viewport(
+			width,
+			height,
+			int((self._max_width / 2) - width / 2),
+			int((self._max_height / 2) - height / 2)
+		)
 
 	def _set_viewports(self, preview_size):
 		header_height = 0
@@ -912,24 +936,17 @@ class NewMenu(AbstractCurses):
 		)
 
 	def _show_help(self):
-		height = 30
-		width = self._max_width - 10
-
-		vp = Viewport(
-			width,
-			height,
-			int((self._max_width / 2) - width / 2),
-			int((self._max_height / 2) - height / 2)
-		)
+		assert self._help_viewport
 
 		help_text = Help.get_help_text()
 		lines = help_text.split('\n')
 
 		entries = [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
-		vp.update(entries, 0, frame=True, frame_header='Help')
+		self._clear_all()
+
+		self._help_viewport.update(entries, 0, frame=True, frame_header=str(_('Archinstall help')))
 
 	def _confirm_interrupt(self) -> bool:
-		# self._menu_screen.clear()
 		# when a interrupt signal happens then getchr
 		# doesn't seem to work anymore so we need to
 		# call it twice to get it to block and wait for input
