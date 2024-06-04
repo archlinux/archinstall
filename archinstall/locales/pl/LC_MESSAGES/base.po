@@ -1299,10 +1299,10 @@ msgid "Would you like to use compression or disable CoW?"
 msgstr "Czy chcesz użyć kompresji BTRFS?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Użyj kompresji"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Wyłącz kopiowanie przy zapisie (Copy-on-Write)"
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
