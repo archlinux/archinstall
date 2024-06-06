@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Any, Self, Optional, Tuple, Dict, List, TYPE_CHECKING, TypeVar, Generic, Literal
 from typing import Callable
-from archinstall.lib.output import unicode_ljust, debug
+from ..lib.output import unicode_ljust, debug
 
 if TYPE_CHECKING:
 	_: Any
