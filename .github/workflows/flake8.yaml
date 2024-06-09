@@ -9,6 +9,8 @@ jobs:
             - uses: actions/checkout@v4
             - run: pacman --noconfirm -Syu python python-pip
             - run: pip install --break-system-packages --upgrade pip
-            - run: pip install --break-system-packages flake8
+            # this will install the exact version of mypy that is in the pyproject.toml file
+            - name: Install archinstall dependencies
+              run: pip
             - name: Lint with flake8
               run: flake8

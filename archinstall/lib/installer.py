@@ -195,11 +195,11 @@ class Installer:
 					f'Please resize it to at least 200MiB and re-run the installation.'
 				)
 
-	def sanity_check(self):
+	def sanity_check(self) -> None:
 		# self._verify_boot_part()
 		self._verify_service_stop()
 
-	def mount_ordered_layout(self):
+	def mount_ordered_layout(self) -> None:
 		debug('Mounting ordered layout')
 
 		luks_handlers: Dict[Any, Luks2] = {}
@@ -353,7 +353,7 @@ class Installer:
 			mount_options = mount_options + [f'subvol={subvol.name}']
 			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
 
-	def generate_key_files(self):
+	def generate_key_files(self) -> None:
 		match self._disk_encryption.encryption_type:
 			case disk.EncryptionType.Luks:
 				self._generate_key_files_partitions()

@@ -31,6 +31,7 @@ Source = "https://github.com/archlinux/archinstall"
 log = ["systemd_python==235"]
 dev = [
     "mypy==1.10.0",
+    "flake8==7.0.0",
     "pre-commit==3.7.1",
 ]
 doc = ["sphinx"]
