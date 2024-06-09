@@ -10,8 +10,8 @@ from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
 
 from parted import (  # type: ignore
 	Disk, Geometry, FileSystem,
-	PartitionException, DiskLabelException,
-	getDevice, getAllDevices, freshDisk, Partition, Device
+	PartitionException, DiskException,
+	getDevice, getAllDevices, newDisk, freshDisk, Partition, Device
 )
 
 from .device_model import (
@@ -58,17 +58,19 @@ class DeviceHandler(object):
 			debug(f'Failed to get loop devices: {err}')
 
 		for device in devices:
-			if get_lsblk_info(device.path).type == 'rom':
+			dev_lsblk_info = get_lsblk_info(device.path)
+
+			if dev_lsblk_info.type == 'rom':
 				continue
 
 			try:
-				disk = Disk(device)
-			except DiskLabelException as err:
-				if 'unrecognised disk label' in getattr(error, 'message', str(err)):
-					disk = freshDisk(device, PartitionTable.GPT.value)
+				if dev_lsblk_info.pttype:
+					disk = newDisk(device)
 				else:
-					debug(f'Unable to get disk from device: {device}')
-					continue
+					disk = freshDisk(device, PartitionTable.GPT.value)
+			except DiskException as err:
+				debug(f'Unable to get disk from {device.path}: {err}')
+				continue
 
 			device_info = _DeviceInfo.from_disk(disk)
 			partition_infos = []
