@@ -17,5 +17,7 @@ jobs:
             # this will install the exact version of mypy that is in the pyproject.toml file
             - name: Install archinstall dependencies
               run: pip install --break-system-packages .[dev]
+            - run: python --version
+            - run: flake8 --version
             - name: Lint with flake8
               run: flake8
