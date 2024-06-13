@@ -7,8 +7,17 @@ jobs:
             image: archlinux/archlinux:latest
         steps:
             - uses: actions/checkout@v4
-            - run: pacman --noconfirm -Syu python python-pip
+            - name: Prepare arch
+              run: |
+                pacman-key --init
+                pacman --noconfirm -Sy archlinux-keyring
+                pacman --noconfirm -Syyu
+                pacman --noconfirm -Sy python-pip python-pyparted python-simple-term-menu pkgconfig gcc
             - run: pip install --break-system-packages --upgrade pip
-            - run: pip install --break-system-packages flake8
+            # this will install the exact version of mypy that is in the pyproject.toml file
+            - name: Install archinstall dependencies
+              run: pip install --break-system-packages .[dev]
+            - run: python --version
+            - run: flake8 --version
             - name: Lint with flake8
               run: flake8
