@@ -57,7 +57,7 @@ msgid "If you desire a web browser, such as firefox or chromium, you may specify
 msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő prompt-ban adhatja meg."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Írjon be további telepítendő csomag neveket (szóközzel elválasztva, ha ki akarja hagyni ezt lépést, akkor üresen hagyható): "
+msgstr "Írjon be további telepítendő csomag neveket (szóközzel elválasztva, ha ki akarja hagyni ezt lépést, akkor hagyja üresen): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Másolja be az ISO hálózati konfigurációt a telepítéshez"
@@ -72,13 +72,13 @@ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{
 msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) \"{}\" számára, vagy hagyja ki ezt a lépést az alapértelmezett \"{}\" mód használatához"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Adja meg az IP-címét és alhálózatát (például: 192.168.0.5/24) ehhez: {}: "
+msgstr "Adja meg az IP-címét és az alhálózatát (például: 192.168.0.5/24) ehhez: {}: "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Adja meg az átjáró (router) IP-címét, vagy hagyja üresen, ha nincs ilyen: "
+msgstr "Adja meg az elosztó (router) IP-címét, vagy hagyja üresen, ha nincs ilyen: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Adja meg DNS-kiszolgálókat (szóközzel elválasztva, vagy hagyja üresen, ha nincsenek ilyenek): "
+msgstr "Adja meg a DNS-kiszolgálókat (szóközzel elválasztva, vagy hagyja üresen, ha nincsenek ilyenek): "
 
 msgid "Select which filesystem your main partition should use"
 msgstr "Válassza ki, hogy a fő partíció milyen fájlrendszert használjon"
@@ -342,7 +342,7 @@ msgid "Hostname"
 msgstr "A számítógép neve"
 
 msgid "Not configured, unavailable unless setup manually"
-msgstr "Nincs konfigurálva, nem érhető el, kivéve, ha manuálisan állítja be"
+msgstr "Nincs konfigurálva, nem érhető el, kivéve, ha kézzel állítja be"
 
 msgid "Timezone"
 msgstr "Időzóna"
@@ -357,7 +357,7 @@ msgid ""
 "Use ESC to skip\n"
 "\n"
 msgstr ""
-"Használd az ESC billentyűt a kihagyáshoz\n"
+"Használja az ESC billentyűt a kihagyáshoz\n"
 "\n"
 
 msgid "Suggest partition layout"
@@ -385,7 +385,7 @@ msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "További csomagok létezésének ellenőrzése (ez eltarthat néhány másodpercig)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Szeretné használni az automatikus időszinkronizálást (NTP) az alapértelmezett időszerverekkel?\n"
+msgstr "Szeretné használni az automatikus időszinkronizálást (NTP) az alapértelmezett kiszolgálókkal?\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
@@ -441,7 +441,7 @@ msgid ""
 "This is your chosen configuration:"
 msgstr ""
 "\n"
-"Ez a választott konfiguráció:"
+"Ez az ön által választott konfiguráció:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
 msgstr "A Pacman már fut, várjon maximum 10 percet a megszakításával."
@@ -659,10 +659,10 @@ msgid "A very basic installation that allows you to customize Arch Linux as you 
 msgstr "Egy nagyon alapszintű telepítés, amely lehetővé teszi, hogy az Arch Linuxot saját belátása szerint testre szabja."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Különböző szervercsomagok széles választékát kínálja a telepítéshez és az engedélyezéshez, pl. httpd, nginx, mariadb"
+msgstr "Különböző kiszolgálócsomagok széles választékát kínálja a telepítéshez és az engedélyezéshez, pl. httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Válassza ki, hogy mely szervereket kívánja telepíteni, ha egyiket sem, akkor minimális telepítés történik"
+msgstr "Válassza ki, hogy mely kiszolgálókat kívánja telepíteni, ha egyiket sem, akkor minimális telepítés történik"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Telepít egy minimális rendszert, valamint a xorg és a grafikus illesztőprogramokat."
@@ -833,7 +833,7 @@ msgid "[Default value: 0] > "
 msgstr "[Alapértelmezett érték: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr "A fordítás használatához telepítsen manuálisan egy olyan betűtípust, amelyik támogatja ezt a nyelvet."
+msgstr "A fordítás használatához telepítsen kézileg egy olyan betűtípust, amelyik támogatja ezt a nyelvet."
 
 msgid "The font should be stored as {}"
 msgstr "A betűtípust úgy kell eltárolni mint {}"
@@ -1107,7 +1107,7 @@ msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
-"Adjon meg egy könyvtárat a menteni kívánt konfiguráció(k) számára (a lap kitöltés engedélyezve)\n"
+"Adjon meg egy könyvtárat a menteni kívánt konfiguráció(k) számára (a lap kitöltés engedélyezve van)\n"
 "Mentési könyvtár: "
 
 msgid ""
