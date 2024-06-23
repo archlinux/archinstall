@@ -1316,6 +1316,83 @@ msgstr ""
 msgid "Disable Copy-on-Write"
 msgstr ""
 
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "کوئی کنفیگریشن نہیں"
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "کوئی کنفیگریشن نہیں"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "نیٹ ورک مینجر کا استعمال کریں (GNOME اور KDE میں انٹرنیٹ کو گرافیکلی ترتیب دینے کے لیے ضروری ہے)"
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "ٹائم زون کا انتخاب کریں"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "ترتیب کو محفوظ کریں"
+
+msgid "Logical Volume Management (LVM)"
+msgstr ""
+
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "صارف کو حذف کریں"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "منتخب کریں کہ کس پارٹیشن کو انکرپٹڈ یا خفیہ رکھنا ہے"
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "منتخب کریں کہ کس پارٹیشن کو انکرپٹڈ یا خفیہ رکھنا ہے"
+
+#, fuzzy
+msgid "Default layout"
+msgstr "ڈسک لے آؤٹ کو محفوظ کریں"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "انکرپشن پاس ورڈ سیٹ کریں"
+
+msgid "LUKS"
+msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "آرچ انسٹال کے لیے زبان"
+
+msgid " (default)"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "شامل:"
 

@@ -1248,46 +1248,8 @@ msgid "Disable Copy-on-Write"
 msgstr "Copy-on-write'ı devre dışı bırak"
 
 #, fuzzy
-msgid "Partitioning"
-msgstr "Disk bölümü"
-
-msgid "Logical Volume Management (LVM)"
-msgstr "Mantıksal Hacim Yönetimi (LVM)"
-
-msgid "Physical volumes"
-msgstr "Fiziksel birimler"
-
-msgid "Volumes"
-msgstr "Birimler"
-
-#, fuzzy
-msgid "Default layout"
-msgstr "Varsayılan düzen"
-
-#, fuzzy
-msgid "No Encryption"
-msgstr "Şifreleme yok"
-
-msgid "LUKS"
-msgstr "LUKS"
-
-msgid "LVM on LUKS"
-msgstr "LUKS üzerinde LVM"
-
-msgid "LUKS on LVM"
-msgstr "LVM üzerinde LUKS"
-
-#, fuzzy
-msgid "LVM volumes"
-msgstr "Alt disk bölümü ayarla"
-
-#, fuzzy
-msgid "LVM volumes to be encrypted"
-msgstr "Şifrelenecek bölümler"
-
-#, fuzzy
-msgid "Select which LVM volumes to encrypt"
-msgstr "Hangi disk bölümünün şifrelemek için işaretleneceğini seçin"
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Masaüstü ortamları ve otomatik döşemeli pencere yöneticilerine bir seçenek sunar, örnek olarak GNOME, KDE Plasma, Sway"
 
 #, fuzzy
 msgid "Configuration type: {}"
@@ -1309,5 +1271,58 @@ msgid "Select a LVM option"
 msgstr "bir LVM seçeneği seçin."
 
 #, fuzzy
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Masaüstü ortamları ve otomatik döşemeli pencere yöneticilerine bir seçenek sunar, örnek olarak GNOME, KDE Plasma, Sway"
+msgid "Partitioning"
+msgstr "Disk bölümü"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Mantıksal Hacim Yönetimi (LVM)"
+
+msgid "Physical volumes"
+msgstr "Fiziksel birimler"
+
+msgid "Volumes"
+msgstr "Birimler"
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "Alt disk bölümü ayarla"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "Şifrelenecek bölümler"
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "Hangi disk bölümünün şifrelemek için işaretleneceğini seçin"
+
+#, fuzzy
+msgid "Default layout"
+msgstr "Varsayılan düzen"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "Şifreleme yok"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LUKS üzerinde LVM"
+
+msgid "LUKS on LVM"
+msgstr "LVM üzerinde LUKS"
+
+#, fuzzy
+msgid "Yes"
+msgstr "evet"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Archinstall dili"
+
+#, fuzzy
+msgid " (default)"
+msgstr "(varsayılan)"

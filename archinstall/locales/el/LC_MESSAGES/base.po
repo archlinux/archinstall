@@ -1253,7 +1253,10 @@ msgid ""
 "\n"
 "\n"
 "Choose an option to give Hyprland access to your hardware"
-msgstr "Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+msgstr ""
+"\n"
+"\n"
+"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr ""
@@ -1298,3 +1301,83 @@ msgstr ""
 
 msgid "Disable Copy-on-Write"
 msgstr ""
+
+#, fuzzy
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Παρέχει μία επιλογή από περιβάλλοντα επιφάνειας εργασίας και διαχειριστές tiling παραθύρων, π.χ. gnome, kde, sway"
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "Καμία διαμόρφωση"
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "Καμία διαμόρφωση"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "Επιλέξτε μία ζώνη ώρας"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "Διαμέριση"
+
+msgid "Logical Volume Management (LVM)"
+msgstr ""
+
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "Ορισμός υποόγκων"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
+
+#, fuzzy
+msgid "Default layout"
+msgstr "Διάταξη δίσκου"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "Κωδικός κρυπτογράφησης"
+
+msgid "LUKS"
+msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "ναι"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Γλώσσα archinstall"
+
+#, fuzzy
+msgid " (default)"
+msgstr "(προκαθορισμένο)"
