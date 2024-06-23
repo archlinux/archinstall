@@ -1294,3 +1294,83 @@ msgstr ""
 
 msgid "Disable Copy-on-Write"
 msgstr ""
+
+#, fuzzy
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Надає вибір середовищ робочого столу та тайлінгових диспетчерів вікон, наприклад gnome, kde, sway"
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "Конфігурація відсутня"
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "Конфігурація відсутня"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "Використовувати NetworkManager (необхідний для графічного налаштування Інтернету в GNOME та KDE)"
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "Оберіть часовий пояс"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "Розділи"
+
+msgid "Logical Volume Management (LVM)"
+msgstr ""
+
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "Видалити підтом"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "Розділи, які потрібно зашифрувати"
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "Виберіть розділи для шифрування"
+
+#, fuzzy
+msgid "Default layout"
+msgstr "Схема розмітки диска"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "Тип шифрування"
+
+msgid "LUKS"
+msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "так"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Мова Archinstall"
+
+#, fuzzy
+msgid " (default)"
+msgstr "(типово)"

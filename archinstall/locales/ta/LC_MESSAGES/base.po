@@ -1247,3 +1247,83 @@ msgstr ""
 
 msgid "Disable Copy-on-Write"
 msgstr ""
+
+#, fuzzy
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "டெஸ்க்டாப் சூழல்கள் மற்றும் டைலிங் சாளர மேலாளர்களின் தேர்வை வழங்குகிறது, எ.கா. gnome, kde, sway"
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "கட்டமைப்பு"
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "கட்டமைப்பு இல்லை"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "NetworkManager ஐப் பயன்படுத்தவும் (GNOME மற்றும் KDE இல் இணையத்தை வரைகலை முறையில் கட்டமைக்க அவசியம்)"
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "நேர மண்டலத்தைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "பகிர்வு"
+
+msgid "Logical Volume Management (LVM)"
+msgstr ""
+
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "துணைத் தொகுதிகளை அமைக்கவும்"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "குறியாக்கம் செய்யப்பட வேண்டிய பகிர்வுகள்"
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "குறியாக்கம் செய்ய வேண்டிய பகிர்வுகளைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Default layout"
+msgstr "வட்டு தளவமைப்பு"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "குறியாக்க வகை"
+
+msgid "LUKS"
+msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "ஆமாம்"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Archinstall மொழி"
+
+#, fuzzy
+msgid " (default)"
+msgstr "(இயல்புநிலை)"

@@ -1244,6 +1244,9 @@ msgstr "圧縮する"
 msgid "Disable Copy-on-Write"
 msgstr "コピーオンライトを無効にする"
 
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。例: GNOME, KDE Plasma, Sway"
+
 msgid "Configuration type: {}"
 msgstr "設定タイプ: {}"
 
@@ -1258,21 +1261,6 @@ msgstr "NetworkManager を使用する（GNOME と KDE Plasma でインターネ
 
 msgid "Select a LVM option"
 msgstr "LVM のオプションを選択"
-
-msgid "Default layout"
-msgstr "デフォルトのレイアウト"
-
-msgid "No Encryption"
-msgstr "暗号化なし"
-
-msgid "LUKS"
-msgstr "LUKS"
-
-msgid "LVM on LUKS"
-msgstr "LUKS 上の LVM"
-
-msgid "LUKS on LVM"
-msgstr "LVM 上の LUKS"
 
 msgid "Partitioning"
 msgstr "パーティションを作成"
@@ -1295,5 +1283,32 @@ msgstr "暗号化する LVM ボリューム"
 msgid "Select which LVM volumes to encrypt"
 msgstr "暗号化する LVM ボリュームを選択"
 
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。例: GNOME, KDE Plasma, Sway"
+msgid "Default layout"
+msgstr "デフォルトのレイアウト"
+
+msgid "No Encryption"
+msgstr "暗号化なし"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LUKS 上の LVM"
+
+msgid "LUKS on LVM"
+msgstr "LVM 上の LUKS"
+
+#, fuzzy
+msgid "Yes"
+msgstr "はい"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Archinstall の言語"
+
+#, fuzzy
+msgid " (default)"
+msgstr "（デフォルト）"

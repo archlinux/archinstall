@@ -1248,3 +1248,83 @@ msgstr "استخدام الضغط"
 
 msgid "Disable Copy-on-Write"
 msgstr "تعطيل النسخ عند الكتابة"
+
+#, fuzzy
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "يوفر مجموعة مختارة من بيئات سطح المكتب ومديري نوافذ التجانب، مثل gnome و kde و sway"
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "الإعداد "
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "لا يوجد إعدادات"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "استخدم مُدير الشبكة NetworkManager (ضروري لإعداد الإنترنت باستخدام واجهة رسومية في جنوم و كيدي)"
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "حدِّد منطقة زمنية"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "تقسيم"
+
+msgid "Logical Volume Management (LVM)"
+msgstr ""
+
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "تعيين المجلدات الفرعية"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "الأقسام المراد تشفيرها"
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "حدد الأقسام المراد تشفيرها"
+
+#, fuzzy
+msgid "Default layout"
+msgstr "تخطيط القرص"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "نوع التشفير"
+
+msgid "LUKS"
+msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "نعم"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "لغات التثبيت"
+
+#, fuzzy
+msgid " (default)"
+msgstr "(افتراضي)"

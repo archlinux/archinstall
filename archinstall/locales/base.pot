@@ -1335,3 +1335,15 @@ msgstr ""
 
 msgid "LUKS on LVM"
 msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Archinstall help"
+msgstr ""
+
+msgid " (default)"
+msgstr ""

@@ -1299,6 +1299,21 @@ msgstr "LVM en LUKS"
 msgid "LUKS on LVM"
 msgstr "LUKS en LVM"
 
+#, fuzzy
+msgid "Yes"
+msgstr "sí"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Idioma de Archinstall"
+
+#, fuzzy
+msgid " (default)"
+msgstr "(predeterminado)"
+
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
 

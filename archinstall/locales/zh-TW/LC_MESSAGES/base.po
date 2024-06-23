@@ -1266,3 +1266,83 @@ msgstr ""
 
 msgid "Disable Copy-on-Write"
 msgstr ""
+
+#, fuzzy
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "提供一系列桌面環境和平鋪視窗管理器，例如 gnome, kde, sway"
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "配置"
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "無配置"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "使用 NetworkManager（在 GNOME 和 KDE 透過圖形界面設置網際網路連線所需）"
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "選擇時區"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "分割區"
+
+msgid "Logical Volume Management (LVM)"
+msgstr ""
+
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "刪除子卷"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "要加密的分割區："
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "選擇要加密的分割區："
+
+#, fuzzy
+msgid "Default layout"
+msgstr "磁盤佈局"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "加密類型"
+
+msgid "LUKS"
+msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "是"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Archinstall 語言"
+
+#, fuzzy
+msgid " (default)"
+msgstr "（默認）"

@@ -1245,3 +1245,83 @@ msgstr "Tömörítés használata"
 
 msgid "Disable Copy-on-Write"
 msgstr "Írás közbeni adatmásolás letiltása"
+
+#, fuzzy
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Asztali környezetek és ablakkezelők széles választékát kínálja, pl. gnome, kde, sway"
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "Konfiguráció"
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "Nincs konfiguráció"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "A hálózatkezelő használata (szükséges az internet grafikus konfigurálásához GNOME-ban és KDE-ben)"
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "Időzóna kiválasztása"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "Partíció"
+
+msgid "Logical Volume Management (LVM)"
+msgstr ""
+
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "Alkötetek beállítása"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "Titkosítandó partíciók"
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "Válassza ki mely partíciókat szeretné titkosítani"
+
+#, fuzzy
+msgid "Default layout"
+msgstr "Lemez elrendezése"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "Titkosítás típusa"
+
+msgid "LUKS"
+msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "igen"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Az Archtelepítő nyelve"
+
+#, fuzzy
+msgid " (default)"
+msgstr "(alapértelmezett)"
