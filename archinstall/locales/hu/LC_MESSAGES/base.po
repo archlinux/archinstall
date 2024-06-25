@@ -869,7 +869,7 @@ msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "A /home partíció minimális kapacitása: {}GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "Az Arch Linux partíció minimális kapacitása: {} GB"
+msgstr "Az Arch Linux partíció minimális kapacitása: {}GB"
 
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
 msgstr "Ez az előre programozott profiles_bck lista, ami megkönnyítheti az olyan dolgok telepítését, mint például az asztali környezetekét"
@@ -971,7 +971,7 @@ msgid "Partition encryption"
 msgstr "Partíció titkosítás"
 
 msgid " ! Formatting {} in "
-msgstr " ! {} formázása erre: "
+msgstr " ! {} formázása ebben: "
 
 msgid "← Back"
 msgstr "← Vissza"
@@ -1246,82 +1246,68 @@ msgstr "Tömörítés használata"
 msgid "Disable Copy-on-Write"
 msgstr "Írás közbeni adatmásolás letiltása"
 
-#, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Asztali környezetek és ablakkezelők széles választékát kínálja, pl. gnome, kde, sway"
+msgstr "Asztali környezetek és csempés ablakkezelők széles választékát kínálja, pl. GNOME, KDE Plasma, Sway"
 
-#, fuzzy
 msgid "Configuration type: {}"
-msgstr "Konfiguráció"
+msgstr "Konfiguráció típusa: {}"
 
-#, fuzzy
 msgid "LVM configuration type"
-msgstr "Nincs konfiguráció"
+msgstr "LVM konfiguráció típusa"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "Az LVM lemez titkosítása 2-nél több partícióval jelenleg nem támogatott"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "A hálózatkezelő használata (szükséges az internet grafikus konfigurálásához GNOME-ban és KDE-ben)"
+msgstr "A hálózatkezelő használata (szükséges az internet grafikus konfigurálásához GNOME-ban és KDE Plasma-ban)"
 
-#, fuzzy
 msgid "Select a LVM option"
-msgstr "Időzóna kiválasztása"
+msgstr "Válasszon ki egy LVM-beállítást"
 
-#, fuzzy
 msgid "Partitioning"
-msgstr "Partíció"
+msgstr "Partícionálás"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Logikai kötetkezelés (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "Fizikai kötetek"
 
 msgid "Volumes"
-msgstr ""
+msgstr "Kötetek"
 
-#, fuzzy
 msgid "LVM volumes"
-msgstr "Alkötetek beállítása"
+msgstr "LVM kötetek"
 
-#, fuzzy
 msgid "LVM volumes to be encrypted"
-msgstr "Titkosítandó partíciók"
+msgstr "A titkosítandó LVM kötetek"
 
-#, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr "Válassza ki mely partíciókat szeretné titkosítani"
+msgstr "Válassza ki a titkosítandó LVM köteteket"
 
-#, fuzzy
 msgid "Default layout"
-msgstr "Lemez elrendezése"
+msgstr "Alapértelmezett elrendezés"
 
-#, fuzzy
 msgid "No Encryption"
-msgstr "Titkosítás típusa"
+msgstr "Nincs titkosítás"
 
 msgid "LUKS"
-msgstr ""
+msgstr "Egységes Linux kulcskezelés (LUKS)"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM a LUKS-on"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS az LVM-en"
 
-#, fuzzy
 msgid "Yes"
-msgstr "igen"
+msgstr "Igen"
 
 msgid "No"
-msgstr ""
+msgstr "Nem"
 
-#, fuzzy
 msgid "Archinstall help"
-msgstr "Az Archtelepítő nyelve"
+msgstr "Archtelepítő súgó"
 
-#, fuzzy
 msgid " (default)"
-msgstr "(alapértelmezett)"
+msgstr " (alapértelmezett)"
