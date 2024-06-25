@@ -1,15 +1,23 @@
 import curses
+import curses.panel
+from curses.textpad import Textbox
 import os
 import signal
 from abc import ABCMeta, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Any, Self, Optional, Tuple, Dict, List, TYPE_CHECKING, TypeVar, Generic, Literal
+from types import NoneType
+from typing import Any, Optional, Tuple, Dict, List, TYPE_CHECKING, TypeVar, Generic, Literal
 from typing import Callable
-from ..lib.output import unicode_ljust, debug
+
+from .help import Help
+from .menu_item import MenuItem, MenuItemGroup
+from ..lib.output import debug
 
 if TYPE_CHECKING:
 	_: Any
+
+CursesWindow = TypeVar('CursesWindow', bound=Any)
 
 
 class STYLE(Enum):
@@ -17,245 +25,7 @@ class STYLE(Enum):
 	CURSOR_STYLE = 2
 	MENU_STYLE = 3
 	HELP = 4
-
-
-@dataclass
-class MenuItem:
-	text: str
-	value: Optional[Any] = None
-	action: Optional[Callable[[Any], Any]] = None
-	enabled: bool = True
-	mandatory: bool = False
-	dependencies: List[Self] = field(default_factory=list)
-	dependencies_not: List[Self] = field(default_factory=list)
-	display_action: Optional[Callable[[Any], str]] = None
-	preview_action: Optional[Callable[[Any], Optional[str]]] = None
-	key: Optional[Any] = None
-
-	@classmethod
-	def default_yes(cls) -> Self:
-		return cls(str(_('Yes')))
-
-	@classmethod
-	def default_no(cls) -> Self:
-		return cls(str(_('No')))
-
-	def is_empty(self) -> bool:
-		return self.text == '' or self.text is None
-
-	def get_text(self, spacing: int = 0, suffix: str = '') -> str:
-		if self.is_empty():
-			return ''
-
-		value_text = ''
-
-		if self.display_action:
-			value_text = self.display_action(self.value)
-		else:
-			if self.value is not None:
-				value_text = str(self.value)
-
-		if value_text:
-			spacing += 2
-			text = unicode_ljust(str(self.text), spacing, ' ')
-		else:
-			text = self.text
-
-		return f'{text} {value_text}{suffix}'
-
-
-@dataclass
-class MenuItemGroup:
-	menu_items: List[MenuItem]
-	focus_item: Optional[MenuItem] = None
-	default_item: Optional[MenuItem] = None
-	selected_items: List[MenuItem] = field(default_factory=list)
-	sort_items: bool = True
-
-	_filter_pattern: str = ''
-
-	def __post_init__(self):
-		if len(self.menu_items) < 1:
-			raise ValueError('Menu must have at least one item')
-
-		if self.sort_items:
-			self.menu_items = sorted(self.menu_items, key=lambda x: x.text)
-
-		if not self.focus_item:
-			if self.selected_items:
-				self.focus_item = self.selected_items[0]
-			else:
-				self.focus_item = self.menu_items[0]
-
-		if self.focus_item not in self.menu_items:
-			raise ValueError('Selected item not in menu')
-
-	@staticmethod
-	def default_confirm():
-		return MenuItemGroup(
-			[MenuItem.default_yes(), MenuItem.default_no()],
-			sort_items=False
-		)
-
-	def index_of(self, item) -> int:
-		return self.items.index(item)
-
-	def index_focus(self) -> int:
-		return self.index_of(self.focus_item)
-
-	def index_last(self) -> int:
-		return self.index_of(self.items[-1])
-
-	def index_first(self) -> int:
-		return self.index_of(self.items[0])
-
-	@property
-	def size(self) -> int:
-		return len(self.items)
-
-	@property
-	def max_width(self) -> int:
-		# use the menu_items not the items here otherwise the preview
-		# will get resized all the time when a filter is applied
-		return max([len(item.text) for item in self.menu_items])
-
-	@property
-	def items(self) -> List[MenuItem]:
-		f = self._filter_pattern.lower()
-		items = filter(lambda item: item.is_empty() or f in item.text.lower(), self.menu_items)
-		return list(items)
-
-	@property
-	def filter_pattern(self):
-		return self._filter_pattern
-
-	def set_filter_pattern(self, pattern: str):
-		self._filter_pattern = pattern
-		self.reload_focus_itme()
-
-	def append_filter(self, pattern: str):
-		self._filter_pattern += pattern
-		self.reload_focus_itme()
-
-	def reduce_filter(self):
-		self._filter_pattern = self._filter_pattern[:-1]
-		self.reload_focus_itme()
-
-	def set_focus_item_index(self, index: int):
-		items = self.items
-		non_empty_items = [item for item in items if not item.is_empty()]
-		if index < 0 or index >= len(non_empty_items):
-			return
-
-		for item in non_empty_items[index:]:
-			if not item.is_empty():
-				self.focus_item = item
-				return
-
-	def reload_focus_itme(self):
-		if self.focus_item not in self.items:
-			self.focus_first()
-
-	def is_item_selected(self, item: MenuItem) -> bool:
-		return item in self.selected_items
-
-	def select_current_item(self):
-		if self.focus_item:
-			if self.focus_item in self.selected_items:
-				self.selected_items.remove(self.focus_item)
-			else:
-				self.selected_items.append(self.focus_item)
-
-	def is_focused(self, item: MenuItem) -> bool:
-		if isinstance(self.focus_item, list):
-			return item in self.focus_item
-		else:
-			return item == self.focus_item
-
-	def _first(self, items: List[MenuItem], ignore_empty: bool) -> Optional[MenuItem]:
-		for item in items:
-			if not ignore_empty:
-				return item
-
-			if not item.is_empty():
-				return item
-
-		return None
-
-	def get_first_item(self, ignore_empty: bool = True) -> Optional[MenuItem]:
-		return self._first(self.items, ignore_empty)
-
-	def get_last_item(self, ignore_empty: bool = True) -> Optional[MenuItem]:
-		items = self.items
-		rev_items = list(reversed(items))
-		return self._first(rev_items, ignore_empty)
-
-	def focus_first(self):
-		first_item = self.get_first_item()
-		if first_item:
-			self.focus_item = first_item
-
-	def focus_last(self):
-		last_item = self.get_last_item()
-		if last_item:
-			self.focus_item = last_item
-
-	def focus_prev(self, skip_empty: bool = True):
-		items = self.items
-
-		if self.focus_item not in items:
-			return
-
-		if self.focus_item == items[0]:
-			self.focus_item = items[-1]
-		else:
-			self.focus_item = items[items.index(self.focus_item) - 1]
-
-		if self.focus_item.is_empty() and skip_empty:
-			self.focus_prev(skip_empty)
-
-	def focus_next(self, skip_empty: bool = True):
-		items = self.items
-
-		if self.focus_item not in items:
-			return
-
-		if self.focus_item == items[-1]:
-			self.focus_item = items[0]
-		else:
-			self.focus_item = items[items.index(self.focus_item) + 1]
-
-		if self.focus_item.is_empty() and skip_empty:
-			self.focus_next(skip_empty)
-
-	def is_mandatory_fulfilled(self) -> bool:
-		for item in self.menu_items:
-			if item.mandatory and not item.value:
-				return False
-		return True
-
-	def max_item_width(self) -> int:
-		spaces = [len(str(it.text)) for it in self.items]
-		if spaces:
-			return max(spaces)
-		return 0
-
-	def verify_item_enabled(self, item: MenuItem) -> bool:
-		if not item.enabled:
-			return False
-
-		if item in self.menu_items:
-			for dep in item.dependencies:
-				if not self.verify_item_enabled(dep):
-					return False
-
-			for dep in item.dependencies_not:
-				if dep.value is not None:
-					return False
-
-			return True
-
-		return False
+	ERROR = 5
 
 
 class MenuKeys(Enum):
@@ -285,8 +55,10 @@ class MenuKeys(Enum):
 	ESC = {27}
 	# backspace
 	BACKSPACE = {127, 263}
-	# help
-	HELP = {72}
+	# Ctrl+h
+	HELP = {8}
+	# Text input: T
+	TEXT_INPUT = {84}
 
 	@classmethod
 	def from_ord(cls, key: int) -> List['MenuKeys']:
@@ -304,13 +76,13 @@ class ResultType(Enum):
 	Reset = auto()
 
 
-V = TypeVar('V', MenuItem, List[MenuItem])
+V = TypeVar('V', MenuItem, List[MenuItem], str)
 
 
 @dataclass
 class Result(Generic[V]):
 	type_: ResultType
-	value: V
+	value: Optional[V]
 
 
 @dataclass
@@ -322,17 +94,63 @@ class ViewportEntry:
 
 
 class AbstractCurses(metaclass=ABCMeta):
+	def __init__(self):
+		self._help_viewport: Optional[Viewport] = None
+
+		self._set_help_viewport()
+
+	def _set_help_viewport(self):
+		max_height, max_width = tui.max_yx
+		width = max_width - 10
+		height = max_height - 10
+
+		self._help_viewport = Viewport(
+			width,
+			height,
+			int((max_width / 2) - width / 2),
+			int((max_height / 2) - height / 2)
+		)
+
+	def _confirm_interrupt(self, screen: Any, warning: str) -> bool:
+		# when a interrupt signal happens then getchr
+		# doesn't seem to work anymore so we need to
+		# call it twice to get it to block and wait for input
+		screen.getch()
+
+		while True:
+			choice = NewMenu(MenuItemGroup.default_confirm(), header=warning).single()
+
+			match choice.type_:
+				case ResultType.Selection:
+					if choice.value == MenuItem.default_yes():
+						return True
+
+			return False
+
+	def help_header_str(self) -> str:
+		return str(_('Press Ctrl+h for help'))
+
 	@abstractmethod
-	def draw(self):
+	def resize_win(self):
 		pass
 
 	@abstractmethod
-	def process_input_key(self, key: int) -> Optional[Result]:
+	def kickoff(self, win: CursesWindow) -> Result:
 		pass
 
-	@abstractmethod
-	def handle_interrupt(self) -> bool:
-		pass
+	def _show_help(self):
+		assert self._help_viewport
+
+		help_text = Help.get_help_text()
+		lines = help_text.split('\n')
+
+		entries = [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
+		self._help_viewport.update(
+			entries,
+			0,
+			frame=True,
+			frame_header=str(_('Archinstall help'))
+		)
 
 
 class PreviewStyle(Enum):
@@ -351,6 +169,216 @@ class FrameChars:
 	Lower_right = "┘"
 
 
+class Alignment(Enum):
+	LEFT = auto()
+	CENTER = auto()
+
+
+@dataclass
+class AbstractViewport:
+	def add_frame(
+		self,
+		width: int,
+		height: int,
+		entries: List[ViewportEntry],
+		frame_header: Optional[str] = None,
+	) -> List[ViewportEntry]:
+		rows = self._assemble_str(width, entries).split('\n')
+		top = (width - 2) * FrameChars.Horizontal
+
+		if frame_header:
+			top = self._replace_str(top, 3, f' {frame_header} ')
+
+		frame_width = len(FrameChars.Vertical) + 1
+
+		filler = ' ' * (width - frame_width)
+		filler_nr = height - self._unique_rows(entries) - 2  # header and bottom of frame
+		filler_rows = [filler] * filler_nr
+
+		empty_rows = '\n'.join([f'{FrameChars.Vertical}{r}{FrameChars.Vertical}' for r in filler_rows])
+		empty_rows += '\n' if empty_rows else ''
+
+		content_rows = ''
+		for row in rows:
+			row = row.expandtabs()
+			row = row[:width]
+			row = row.ljust(width - frame_width)
+			content_rows += f'{FrameChars.Vertical}{row[:-frame_width]}{FrameChars.Vertical}\n'
+
+		framed = (
+			FrameChars.Upper_left + top + FrameChars.Upper_right + '\n' +
+			content_rows +
+			empty_rows +
+			FrameChars.Lower_left + (width - 2) * FrameChars.Horizontal + FrameChars.Lower_right
+		)
+
+		preview = framed.split('\n')
+		return [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(preview)]
+
+	def _unique_rows(self, entries: List[ViewportEntry]) -> int:
+		return len(set([e.row for e in entries]))
+
+	def _replace_str(self, text: str, index: int = 0, replacement: str = '') -> str:
+		len_replace = len(replacement)
+		return f'{text[:index]}{replacement}{text[index + len_replace:]}'
+
+	def _assemble_str(self, width: int, entries: List[ViewportEntry]) -> str:
+		view = [width * ' '] * self._unique_rows(entries)
+
+		for e in entries:
+			view[e.row] = self._replace_str(view[e.row], e.col, e.text)
+
+		return '\n'.join(view)
+
+	def add_str(self, screen: Any, row: int, col: int, text: str, color: STYLE):
+		screen.insstr(row, col, text, tui.get_color(color))
+
+
+class EditViewport(AbstractViewport):
+	def __init__(
+		self,
+		process_key: Callable[[int], int],
+		frame_title: str,
+		headers: List[ViewportEntry] = [],
+		help_text: Optional[str] = None,
+		alignment: Alignment = Alignment.LEFT
+	):
+		self._max_height, self._max_width = tui.max_yx
+		self._edit_win_width = 60
+
+		self._process_key = process_key
+		self._frame_title = frame_title
+		self._headers = headers
+		self._help_text = help_text
+		self._error_entry: Optional[ViewportEntry] = None
+		self._alignment = alignment
+
+		self._main_win: Optional[Any] = None
+		self._input_win: Optional[Any] = None
+		self._edit_win: Optional[Any] = None
+		self._error_win: Optional[Any] = None
+
+		self._init_wins()
+
+		self._textbox: Optional[Textbox] = None
+
+	def _init_wins(self):
+		header_offset = len(self._headers)
+		edit_lines = 1
+		edit_win_height = edit_lines + 2  # borders
+
+		y_offset = 0
+
+		self._main_win = curses.newwin(
+			self._max_height,
+			self._max_width,
+			y_offset,
+			0
+		)
+
+		self._help_header_win = self._main_win.subwin(
+			2,
+			self._max_width,
+			y_offset,
+			0
+		)
+		y_offset += 2
+
+		self._header_win = self._main_win.subwin(
+			header_offset,
+			self._max_width,
+			y_offset,
+			0
+		)
+		y_offset += header_offset
+
+		self._input_win = self._main_win.subwin(
+			edit_win_height,
+			self._max_width,
+			y_offset,
+			0
+		)
+
+		self._edit_win = self._input_win.subwin(
+			1,
+			self._edit_win_width - 2,
+			y_offset + 1,
+			self._get_x_offset() + 1
+		)
+		y_offset += edit_win_height
+
+		self._error_win = self._main_win.subwin(
+			1,
+			self._max_width,
+			y_offset,
+			0
+		)
+
+	def _get_x_offset(self) -> int:
+		if self._alignment == Alignment.CENTER:
+			return int((self._max_width / 2) - (self._edit_win_width / 2))
+
+		return 0
+
+	def update(self):
+		self._main_win.erase()
+
+		x_offset = self._get_x_offset()
+
+		framed = self._create_framed_input_win(self._frame_title)
+
+		if self._help_text:
+			self.add_str(self._help_header_win, 0, 0, self._help_text, STYLE.NORMAL)
+
+		for entry in self._headers:
+			self.add_str(self._header_win, entry.row, entry.col + x_offset, entry.text, entry.style)
+
+		for row in framed:
+			self.add_str(self._input_win, row.row, row.col + x_offset, row.text, row.style)
+
+		if self._error_entry:
+			self.add_str(self._error_win, self._error_entry.row, self._error_entry.col + x_offset,
+						 self._error_entry.text, self._error_entry.style)
+
+		self._main_win.refresh()
+
+	def _create_framed_input_win(self, frame_text: str) -> List[ViewportEntry]:
+		return self.add_frame(
+			self._edit_win_width,
+			1,
+			[ViewportEntry('', 0, 0, STYLE.NORMAL)],
+			frame_header=frame_text
+		)
+
+	def erase(self):
+		assert self._main_win
+		self._main_win.erase()
+		self._main_win.refresh()
+
+	def update_error(self, entry: Optional[ViewportEntry]):
+		self._error_entry = entry
+
+	def edit(self):
+		assert self._edit_win
+
+		self._edit_win.erase()
+		self._error_win.erase()
+
+		# if this gets initialized multiple times it will be an overlay
+		# and ENTER has to be pressed multiple times to accept
+		if not self._textbox:
+			self._textbox = curses.textpad.Textbox(self._edit_win)
+			self._main_win.refresh()
+
+		self._textbox.edit(self._process_key)
+
+	def gather(self) -> Optional[str]:
+		if not self._textbox:
+			return None
+
+		return self._textbox.gather().strip()
+
+
 @dataclass
 class Viewport:
 	width: int
@@ -359,6 +387,7 @@ class Viewport:
 	y_start: int
 
 	_screen: Any = None
+	_textbox: Optional[Textbox] = None
 
 	def __post_init__(self):
 		self._screen = curses.newwin(self.height, self.width, self.y_start, self.x_start)
@@ -410,6 +439,9 @@ class Viewport:
 		# p_3, p_4 : coordinate of upper-left corner of window area to be filled with pad content.
 		# p_5, p_6 : coordinate of lower-right corner of window area to be filled with pad content.
 		self._screen.refresh()
+
+	def _add_str(self, row: int, col: int, text: str, color: STYLE):
+		self._screen.insstr(row, col, text, tui.get_color(color))
 
 	def _available_visible_rows(
 		self,
@@ -496,9 +528,6 @@ class Viewport:
 		preview = framed.split('\n')
 		return [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(preview)]
 
-	def _unique_rows(self, entries: List[ViewportEntry]) -> int:
-		return len(set([e.row for e in entries]))
-
 	def _assemble_str(self, entries: List[ViewportEntry]) -> str:
 		view = [self.width * ' '] * self._unique_rows(entries)
 
@@ -507,114 +536,13 @@ class Viewport:
 
 		return '\n'.join(view)
 
-	def _add_str(self, row: int, col: int, text: str, color: STYLE):
-		if row >= self.height:
-			raise ValueError(f'Cannot insert row outside available window height: {row} > {self.height - 1}')
-		if col >= self.width:
-			raise ValueError(f'Cannot insert col outside available window width: {col} > {self.width - 1}')
-
-		self._screen.insstr(row, col, text, tui.get_color(color))
-
-
-class HelpTextGroupId(Enum):
-	GENERAL = 'General'
-	NAVIGATION = 'Navigation'
-	SELECTION = 'Selection'
-	SEARCH = 'Search'
-
-
-@dataclass
-class HelpText:
-	description: str
-	keys: List[str] = field(default_factory=list)
-
-
-@dataclass
-class HelpGroup:
-	group_id: HelpTextGroupId
-	group_entries: List[HelpText]
-
-	def get_desc_width(self) -> int:
-		return max([len(e.description) for e in self.group_entries])
-
-	def get_key_width(self) -> int:
-		return max([len(', '.join(e.keys)) for e in self.group_entries])
-
-
-class Help:
-	general = HelpGroup(
-		group_id=HelpTextGroupId.GENERAL,
-		group_entries=[
-			HelpText('Show help', ['H']),
-			HelpText('Exit help', ['Esc']),
-		]
-	)
-
-	navigation = HelpGroup(
-		group_id=HelpTextGroupId.NAVIGATION,
-		group_entries=[
-			HelpText('Move up', ['k', '↑']),
-			HelpText('Move down', ['j', '↓']),
-			HelpText('Move right', ['l', '→']),
-			HelpText('Move left', ['h', '←']),
-			HelpText('Jump to entry', ['1..9'])
-		]
-	)
-
-	selection = HelpGroup(
-		group_id=HelpTextGroupId.SELECTION,
-		group_entries=[
-			HelpText('Select on single select', ['Enter']),
-			HelpText('Select on select', ['Space', 'Tab']),
-			HelpText('Reset', ['Ctrl-C']),
-			HelpText('Skip selection menu', ['Esc']),
-		]
-	)
-
-	search = HelpGroup(
-		group_id=HelpTextGroupId.SEARCH,
-		group_entries=[
-			HelpText('Start search mode', ['/']),
-			HelpText('Exit search mode', ['Esc']),
-		]
-	)
-
-	@staticmethod
-	def get_help_text() -> str:
-		help_output = ''
-		help_texts = [Help.general, Help.navigation, Help.selection, Help.search]
-		max_desc_width = max([help.get_desc_width() for help in help_texts])
-		max_key_width = max([help.get_key_width() for help in help_texts])
-
-		margin = ' ' * 3
-
-		for help in help_texts:
-			help_output += f'{margin}{help.group_id.value}\n'
-			divider_len = max_desc_width + max_key_width + len(margin * 2)
-			help_output += margin + '-' * divider_len + '\n'
-
-			for entry in help.group_entries:
-				help_output += (
-					margin +
-					entry.description.ljust(max_desc_width, ' ') +
-					margin +
-					', '.join(entry.keys) + '\n'
-				)
-
-			help_output += '\n'
-
-		return help_output
+	def _unique_rows(self, entries: List[ViewportEntry]) -> int:
+		return len(set([e.row for e in entries]))
 
 
 class MenuOrientation(Enum):
 	VERTICAL = auto()
 	HORIZONTAL = auto()
-
-
-class MenuAlignment(Enum):
-	LEFT = auto()
-	CENTER = auto()
-	RIGHT = auto()
 
 
 @dataclass
@@ -623,26 +551,185 @@ class MenuCell:
 	text: str
 
 
+class EditMenu(AbstractCurses):
+	def __init__(
+		self,
+		title: str,
+		header: Optional[str] = None,
+		validator: Optional[Callable[[str], Optional[str]]] = None,
+		allow_skip: bool = False,
+		allow_reset: bool = False,
+		reset_warning_msg: Optional[str] = None,
+		alignment: Alignment = Alignment.LEFT
+	):
+		self._header = header
+		self._validator = validator
+		self._allow_skip = allow_skip
+		self._allow_reset = allow_reset
+		self._interrupt_warning = reset_warning_msg
+
+		self._title = f'* {title}' if not self._allow_skip else title
+
+		header_entries = self._assemble_header()
+
+		self._input_viewport = EditViewport(
+			self._process_edit_key,
+			self._title,
+			header_entries,
+			help_text=self.help_header_str(),
+			alignment=alignment
+		)
+
+		self._last_state: Optional[Result] = None
+		self._help_active = False
+
+		super().__init__()
+
+	def input(self, ) -> Result[str]:
+		result = tui.run(self)
+
+		assert isinstance(result.value, (str, NoneType))
+		return result
+
+	def resize_win(self):
+		self._draw()
+
+	def _assemble_header(self) -> List[ViewportEntry]:
+		cur_row = 0
+		full_header = []
+
+		if self._header:
+			for header in self._header.split('\n'):
+				full_header += [ViewportEntry(header, cur_row, 0, STYLE.NORMAL)]
+				cur_row += 1
+
+		if full_header:
+			ViewportEntry('', cur_row, 0, STYLE.NORMAL)
+			cur_row += 1
+
+		return full_header
+
+	def _clear_all(self):
+		if self._input_viewport:
+			self._input_viewport.erase()
+		if self._help_viewport:
+			self._help_viewport.erase()
+
+	def _get_input_text(self) -> Optional[str]:
+		text = self._input_viewport.gather()
+
+		if text and self._validator:
+			if (err := self._validator(text)) is not None:
+				entry = ViewportEntry(err, 0, 0, STYLE.ERROR)
+				self._input_viewport.update_error(entry)
+				return None
+
+		return text
+
+	def _draw(self):
+		try:
+			self._input_viewport.update()
+			self._input_viewport.edit()
+		except KeyboardInterrupt:
+			if not self._handle_interrupt():
+				self._draw()
+			else:
+				self._last_state = Result(ResultType.Reset, None)
+
+	def kickoff(self, win: CursesWindow) -> Result:
+		self._draw()
+
+		if not self._last_state:
+			self.kickoff(win)
+
+		match self._last_state.type_:
+			case ResultType.Selection:
+				text = self._get_input_text()
+
+				if text is None:
+					return self.kickoff(win)
+				else:
+					if not text and not self._allow_skip:
+						return self.kickoff(win)
+
+				return Result(ResultType.Selection, text)
+			case ResultType.Skip:
+				return self._last_state
+			case ResultType.Reset:
+				return self._last_state
+
+	def _process_edit_key(self, key: int):
+		key_handles = MenuKeys.from_ord(key)
+
+		if self._help_active:
+			if MenuKeys.ESC in key_handles:
+				self._help_active = False
+				return 7
+			else:
+				return None
+
+		# remove standard keys from the list of key handles
+		key_handles = [key for key in key_handles if key != MenuKeys.STD_KEYS]
+
+		# regular key stroke should be passed to the editor
+		if not key_handles:
+			return key
+
+		special_key = key_handles[0]
+
+		debug(f'key: {key}, handle: {special_key}')
+
+		match special_key:
+			case MenuKeys.HELP:
+				self._clear_all()
+				self._help_active = True
+				self._show_help()
+				return None
+			case MenuKeys.ESC:
+				if self._help_active:
+					self._help_active = False
+					self._draw()
+				if self._allow_skip:
+					self._last_state = Result(ResultType.Skip, None)
+					key = 7
+			case MenuKeys.ACCEPT:
+				self._last_state = Result(ResultType.Selection, None)
+				key = 7
+
+		return key
+
+	def _handle_interrupt(self) -> bool:
+		if self._allow_reset:
+			if self._interrupt_warning:
+				return self._confirm_interrupt(self._input_viewport, self._interrupt_warning)
+		else:
+			return False
+
+		return True
+
+
 class NewMenu(AbstractCurses):
 	def __init__(
 		self,
 		group: MenuItemGroup,
 		orientation: MenuOrientation = MenuOrientation.VERTICAL,
+		alignment: Alignment = Alignment.LEFT,
 		columns: int = 1,
 		column_spacing: int = 10,
 		header: Optional[str] = None,
 		cursor_char: str = '>',
 		search_enabled: bool = True,
-		allow_skip: bool = True,
+		allow_skip: bool = False,
 		allow_reset: bool = False,
 		reset_warning_msg: Optional[str] = None,
 		preview_style: PreviewStyle = PreviewStyle.NONE,
 		preview_size: float | Literal['auto'] = 0.2,
 		preview_frame: bool = True,
-		preview_header: Optional[str] = None
+		preview_header: Optional[str] = None,
+		help_header: bool = True
 	):
 		self._header = header
-		self._cursor_char = cursor_char
+		self._cursor_char = f'{cursor_char} '
 		self._search_enabled = search_enabled
 		self._multi = False
 		self._interrupt_warning = reset_warning_msg
@@ -656,6 +743,12 @@ class NewMenu(AbstractCurses):
 		self._preview_header = preview_header
 		self._orientation = orientation
 		self._column_spacing = column_spacing
+		self._alignment = alignment
+
+		if help_header:
+			header = header or ''
+			help_header = self.help_header_str()
+			self._header = f'{help_header}\n{header}'
 
 		if self._orientation == MenuOrientation.HORIZONTAL:
 			self._horizontal_cols = columns
@@ -671,10 +764,10 @@ class NewMenu(AbstractCurses):
 		self._footer_viewport: Optional[Viewport] = None
 		self._menu_viewport: Optional[Viewport] = None
 		self._preview_viewport: Optional[Viewport] = None
-		self._help_viewport: Optional[Viewport] = None
 
-		self._set_viewports(preview_size)
-		self._set_help_viewport()
+		self._set_main_viewports(preview_size)
+
+		super().__init__()
 
 	def _clear_all(self):
 		if self._header_viewport:
@@ -688,18 +781,7 @@ class NewMenu(AbstractCurses):
 		if self._help_viewport:
 			self._help_viewport.erase()
 
-	def _set_help_viewport(self):
-		width = self._max_width - 10
-		height = self._max_height - 10
-
-		self._help_viewport = Viewport(
-			width,
-			height,
-			int((self._max_width / 2) - width / 2),
-			int((self._max_height / 2) - height / 2)
-		)
-
-	def _set_viewports(self, preview_size):
+	def _set_main_viewports(self, preview_size):
 		header_height = 0
 		footer_height = 1  # possible filter at the bottom
 
@@ -770,14 +852,14 @@ class NewMenu(AbstractCurses):
 		self._multi = False
 		result = tui.run(self)
 
-		assert isinstance(result.value, MenuItem)
+		assert isinstance(result.value, (MenuItem, NoneType))
 		return result
 
 	def multi(self) -> Result[List[MenuItem]]:
 		self._multi = True
 		result = tui.run(self)
 
-		assert isinstance(result.value, list)
+		assert isinstance(result.value, (list, NoneType))
 		return result
 
 	def _header_entries(self) -> List[ViewportEntry]:
@@ -794,7 +876,24 @@ class NewMenu(AbstractCurses):
 
 		return []
 
-	def draw(self):
+	def resize_win(self):
+		self._draw()
+
+	def kickoff(self, win: CursesWindow) -> Result:
+		self._draw()
+
+		while True:
+			try:
+				key = win.getch()
+				ret = self._process_input_key(key)
+
+				if ret is not None:
+					return ret
+			except KeyboardInterrupt:
+				if self.handle_interrupt():
+					return Result(ResultType.Reset, None)
+
+	def _draw(self):
 		header_entries = self._header_entries()
 		footer_entries = self._footer_entries()
 
@@ -838,33 +937,45 @@ class NewMenu(AbstractCurses):
 	def _to_cols(self, items: List[MenuItem], cols: int) -> List[List[MenuItem]]:
 		return [items[i:i + cols] for i in range(0, len(items), cols)]
 
-	def _get_row_entries(self) -> List[ViewportEntry]:
-		cells = self._determine_menu_cells()
-		cursor = f'{self._cursor_char} '
-		entries = []
-		cols = self._horizontal_cols
+	def _get_col_widths(self) -> List[int]:
+		cols_widths = self._calc_col_widths(self._row_entries, self._horizontal_cols)
+		return [col_width + len(self._cursor_char) + self._item_distance() for col_width in cols_widths]
 
-		if cols == 1:
-			item_distance = 0
+	def _item_distance(self) -> int:
+		if self._horizontal_cols == 1:
+			return 0
 		else:
-			item_distance = self._column_spacing
+			return self._column_spacing
 
-		self._row_entries = [cells[x:x + cols] for x in range(0, len(cells), cols)]
-		cols_widths = self._calc_col_widths(self._row_entries, cols)
-		cols_widths = [col_width + len(cursor) + item_distance for col_width in cols_widths]
+	def _x_align_offset(self) -> int:
+		x_offset = 0
+		if self._alignment == Alignment.CENTER:
+			cols_widths = self._get_col_widths()
+			total_col_width = sum(cols_widths)
+			x_offset = int((self._menu_viewport.width / 2) - (total_col_width / 2))
+
+		return x_offset
+
+	def _get_row_entries(self) -> List[ViewportEntry]:
+		cells = self._assemble_menu_cells()
+		entries = []
+
+		self._row_entries = [cells[x:x + self._horizontal_cols] for x in range(0, len(cells), self._horizontal_cols)]
+		cols_widths = self._get_col_widths()
+		x_offset = self._x_align_offset()
 
 		for row_idx, row in enumerate(self._row_entries):
-			cur_pos = len(cursor)
+			cur_pos = len(self._cursor_char) + x_offset
 
 			for col_idx, cell in enumerate(row):
 				cur_text = ''
 				style = STYLE.NORMAL
 
 				if cell.item == self._item_group.focus_item:
-					cur_text = cursor
+					cur_text = self._cursor_char
 					style = STYLE.MENU_STYLE
 
-				entries += [ViewportEntry(cur_text, row_idx, cur_pos - len(cursor), STYLE.CURSOR_STYLE)]
+				entries += [ViewportEntry(cur_text, row_idx, cur_pos - len(self._cursor_char), STYLE.CURSOR_STYLE)]
 
 				entries += [ViewportEntry(cell.text, row_idx, cur_pos, style)]
 				cur_pos += len(cell.text)
@@ -893,7 +1004,7 @@ class NewMenu(AbstractCurses):
 
 		return col_widths
 
-	def _determine_menu_cells(self) -> List[MenuCell]:
+	def _assemble_menu_cells(self) -> List[MenuCell]:
 		items = self._get_visible_items()
 		entries = []
 
@@ -935,40 +1046,6 @@ class NewMenu(AbstractCurses):
 			frame_header=self._preview_header,
 		)
 
-	def _show_help(self):
-		assert self._help_viewport
-
-		help_text = Help.get_help_text()
-		lines = help_text.split('\n')
-
-		entries = [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
-		self._clear_all()
-
-		self._help_viewport.update(entries, 0, frame=True, frame_header=str(_('Archinstall help')))
-
-	def _confirm_interrupt(self) -> bool:
-		# when a interrupt signal happens then getchr
-		# doesn't seem to work anymore so we need to
-		# call it twice to get it to block and wait for input
-		assert self._menu_viewport is not None
-		self._menu_viewport.getch()
-
-		while True:
-			warning_text = f'{self._interrupt_warning}'
-
-			choice = NewMenu(
-				MenuItemGroup.default_confirm(),
-				header=warning_text,
-				cursor_char=self._cursor_char
-			).single()
-
-			match choice.type_:
-				case ResultType.Selection:
-					if choice.value == MenuItem.default_yes():
-						return True
-
-			return False
-
 	def _default_suffix(self, item: MenuItem) -> str:
 		suffix = ''
 
@@ -984,30 +1061,26 @@ class NewMenu(AbstractCurses):
 			return '[ ] '
 
 	def handle_interrupt(self) -> bool:
-		debug('Signal interrupt')
-
 		if self._allow_reset:
 			if self._interrupt_warning:
-				return self._confirm_interrupt()
+				return self._confirm_interrupt(self._menu_viewport, self._interrupt_warning)
 		else:
 			return False
 
 		return True
 
-	def process_input_key(self, key: int) -> Optional[Result]:
+	def _process_input_key(self, key: int) -> Optional[Result]:
 		key_handles = MenuKeys.from_ord(key)
-
-		debug(f'key: {key}, key_handles: {key_handles}')
 
 		# special case when search is currently active
 		if self._active_search:
 			if MenuKeys.STD_KEYS in key_handles:
 				self._item_group.append_filter(chr(key))
-				self.draw()
+				self._draw()
 				return None
 			elif MenuKeys.BACKSPACE in key_handles:
 				self._item_group.reduce_filter()
-				self.draw()
+				self._draw()
 				return None
 
 		# remove standard keys from the list of key handles
@@ -1025,6 +1098,7 @@ class NewMenu(AbstractCurses):
 
 		match handle:
 			case MenuKeys.HELP:
+				self._clear_all()
 				self._show_help()
 				return None
 			case MenuKeys.ACCEPT:
@@ -1067,7 +1141,7 @@ class NewMenu(AbstractCurses):
 			case _:
 				pass
 
-		self.draw()
+		self._draw()
 		return None
 
 	def _focus_item(self, key: MenuKeys):
@@ -1144,29 +1218,15 @@ class Tui:
 		return self._screen.getmaxyx()
 
 	def run(self, component: AbstractCurses) -> Result:
-		ret = self._main_loop(component)
-		return ret
+		return self._main_loop(component)
 
 	def _sig_win_resize(self, signum: int, frame):
 		if self._component:
-			self._component.draw()
+			self._component.resize_win()
 
 	def _main_loop(self, component: AbstractCurses) -> Result:
 		self._screen.refresh()
-		component.draw()
-
-		while True:
-			try:
-				key = self._screen.getch()
-				ret = component.process_input_key(key)
-
-				if ret is not None:
-					return ret
-			except KeyboardInterrupt:
-				if component.handle_interrupt():
-					return Result(ResultType.Reset, None)
-				else:
-					component.draw()
+		return component.kickoff(self._screen)
 
 	def _reset_terminal(self):
 		os.system("reset")
@@ -1181,6 +1241,7 @@ class Tui:
 		curses.init_pair(STYLE.MENU_STYLE.value, curses.COLOR_WHITE, curses.COLOR_BLUE)
 		curses.init_pair(STYLE.MENU_STYLE.value, curses.COLOR_WHITE, curses.COLOR_BLUE)
 		curses.init_pair(STYLE.HELP.value, curses.COLOR_GREEN, curses.COLOR_BLACK)
+		curses.init_pair(STYLE.ERROR.value, curses.COLOR_RED, curses.COLOR_BLACK)
 
 	def get_color(self, color: STYLE) -> int:
 		return curses.color_pair(color.value)

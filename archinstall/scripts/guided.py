@@ -18,6 +18,92 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 if TYPE_CHECKING:
 	_: Any
 
+from archinstall.tui.curses_menu import NewMenu, MenuItem, MenuItemGroup, MenuOrientation, Alignment
+
+
+def test_data():
+	return """{
+	"__separator__": null,
+	"additional-repositories": [
+		"multilib"
+	],
+	"archinstall-language": "English",
+	"audio_config": {
+		"audio": "pipewire"
+	},
+	"bootloader": "Grub",
+	"config_version": "2.7.2",
+	"debug": false,
+	"disk_config": {
+		"config_type": "pre_mounted_config",
+		"mountpoint": "/mnt"
+	},
+	"disk_encryption": null,
+	...
+"""
+
+
+items = [
+	MenuItem(f'Language', preview_action=lambda x: test_data()),
+	MenuItem(f'Disk configuration', preview_action=lambda x: test_data()),
+	MenuItem(f'Install', preview_action=lambda x: test_data()),
+	MenuItem(f'Abort', preview_action=lambda x: test_data()),
+]
+
+group = MenuItemGroup(items, sort_items=False, focus_item=items[0])
+
+# menu = NewMenu(
+# 	group,
+# 	reset_warning_msg='are you certain?',
+# 	allow_skip=False,
+# 	allow_reset=False,
+# 	preview_style=PreviewStyle.RIGHT,
+# 	preview_size='auto',
+# 	preview_frame=True,
+# 	preview_header='INFO'
+# ).single()
+#
+
+
+def validator(value: str):
+	import re
+	if not re.match(r"^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$", value):
+		return 'Specify a valid username'
+	return None
+
+header = ''
+
+# username = EditMenu('Username', validator=validator, header=header, alignment=Alignment.CENTER).input()
+# header += f'Username: {username.value}\n'
+# password = EditMenu('Password', header=header, alignment=Alignment.CENTER).input()
+# header += f'Password: {password.value}\n'
+# confirm_password = EditMenu('Confirm password', header=header, alignment=Alignment.CENTER).input()
+# header += f'Confirm password: {confirm_password.value}\n'
+
+header += 'Super user account?'
+
+menu = NewMenu(
+	MenuItemGroup.default_confirm(),
+	header=header,
+	orientation=MenuOrientation.HORIZONTAL,
+	alignment=Alignment.CENTER,
+	columns=2,
+	allow_skip=True,
+	allow_reset=True,
+	reset_warning_msg='Are you sure?',
+).single()
+
+
+
+
+
+exit(1)
+
+
+
+
+
+
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
