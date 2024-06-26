@@ -95,8 +95,7 @@ class ViewportEntry:
 
 class AbstractCurses(metaclass=ABCMeta):
 	def __init__(self):
-		self._help_viewport: Optional[Viewport] = None
-
+		self._help_window: Optional[Viewport] = None
 		self._set_help_viewport()
 
 	def _set_help_viewport(self):
@@ -104,7 +103,7 @@ class AbstractCurses(metaclass=ABCMeta):
 		width = max_width - 10
 		height = max_height - 10
 
-		self._help_viewport = Viewport(
+		self._help_window = Viewport(
 			width,
 			height,
 			int((max_width / 2) - width / 2),
@@ -127,8 +126,8 @@ class AbstractCurses(metaclass=ABCMeta):
 
 			return False
 
-	def help_header_str(self) -> str:
-		return str(_('Press Ctrl+h for help'))
+	def help_entry(self) -> ViewportEntry:
+		return ViewportEntry(str(_('Press Ctrl+h for help')), 0, 0, STYLE.NORMAL)
 
 	@abstractmethod
 	def resize_win(self):
@@ -139,13 +138,13 @@ class AbstractCurses(metaclass=ABCMeta):
 		pass
 
 	def _show_help(self):
-		assert self._help_viewport
+		assert self._help_window
 
 		help_text = Help.get_help_text()
 		lines = help_text.split('\n')
 
 		entries = [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
-		self._help_viewport.update(
+		self._help_window.update(
 			entries,
 			0,
 			frame=True,
@@ -240,7 +239,7 @@ class EditViewport(AbstractViewport):
 		process_key: Callable[[int], int],
 		frame_title: str,
 		headers: List[ViewportEntry] = [],
-		help_text: Optional[str] = None,
+		help_entry: Optional[ViewportEntry] = None,
 		alignment: Alignment = Alignment.LEFT
 	):
 		self._max_height, self._max_width = tui.max_yx
@@ -249,7 +248,7 @@ class EditViewport(AbstractViewport):
 		self._process_key = process_key
 		self._frame_title = frame_title
 		self._headers = headers
-		self._help_text = help_text
+		self._help_entry = help_entry
 		self._error_entry: Optional[ViewportEntry] = None
 		self._alignment = alignment
 
@@ -327,8 +326,8 @@ class EditViewport(AbstractViewport):
 
 		framed = self._create_framed_input_win(self._frame_title)
 
-		if self._help_text:
-			self.add_str(self._help_header_win, 0, 0, self._help_text, STYLE.NORMAL)
+		if self._help_entry:
+			self.add_str(self._help_header_win, 0, 0, self._help_entry.text, STYLE.NORMAL)
 
 		for entry in self._headers:
 			self.add_str(self._header_win, entry.row, entry.col + x_offset, entry.text, entry.style)
@@ -562,28 +561,38 @@ class EditMenu(AbstractCurses):
 		reset_warning_msg: Optional[str] = None,
 		alignment: Alignment = Alignment.LEFT
 	):
+		super().__init__()
+
+		self._max_height, self._max_width = tui.max_yx
+
 		self._header = header
 		self._validator = validator
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
 		self._interrupt_warning = reset_warning_msg
-
 		self._title = f'* {title}' if not self._allow_skip else title
+		self._headers = self._header_entries(header)
 
-		header_entries = self._assemble_header()
+		self._help_vp: Optional[Viewport] = None
+
+		self._init_viewports()
+
+		xxx move the win out here as VPs
 
 		self._input_viewport = EditViewport(
 			self._process_edit_key,
 			self._title,
-			header_entries,
-			help_text=self.help_header_str(),
+			headers=self._headers,
+			help_entry=self.help_entry(),
 			alignment=alignment
 		)
 
 		self._last_state: Optional[Result] = None
 		self._help_active = False
 
-		super().__init__()
+	def _init_viewports(self):
+		y_offset = 0
+		self._help_vp = Viewport(self._max_width, 2, 0, y_offset)
 
 	def input(self, ) -> Result[str]:
 		result = tui.run(self)
@@ -594,12 +603,12 @@ class EditMenu(AbstractCurses):
 	def resize_win(self):
 		self._draw()
 
-	def _assemble_header(self) -> List[ViewportEntry]:
+	def _header_entries(self, header: str) -> List[ViewportEntry]:
 		cur_row = 0
 		full_header = []
 
-		if self._header:
-			for header in self._header.split('\n'):
+		if header:
+			for header in header.split('\n'):
 				full_header += [ViewportEntry(header, cur_row, 0, STYLE.NORMAL)]
 				cur_row += 1
 
@@ -612,8 +621,8 @@ class EditMenu(AbstractCurses):
 	def _clear_all(self):
 		if self._input_viewport:
 			self._input_viewport.erase()
-		if self._help_viewport:
-			self._help_viewport.erase()
+		if self._help_vp:
+			self._help_vp.erase()
 
 	def _get_input_text(self) -> Optional[str]:
 		text = self._input_viewport.gather()
@@ -628,6 +637,7 @@ class EditMenu(AbstractCurses):
 
 	def _draw(self):
 		try:
+			self._help_vp.update([self.help_entry()], 0)
 			self._input_viewport.update()
 			self._input_viewport.edit()
 		except KeyboardInterrupt:
@@ -662,11 +672,8 @@ class EditMenu(AbstractCurses):
 		key_handles = MenuKeys.from_ord(key)
 
 		if self._help_active:
-			if MenuKeys.ESC in key_handles:
-				self._help_active = False
-				return 7
-			else:
-				return None
+			self._help_active = False
+			return None
 
 		# remove standard keys from the list of key handles
 		key_handles = [key for key in key_handles if key != MenuKeys.STD_KEYS]
@@ -725,10 +732,10 @@ class NewMenu(AbstractCurses):
 		preview_style: PreviewStyle = PreviewStyle.NONE,
 		preview_size: float | Literal['auto'] = 0.2,
 		preview_frame: bool = True,
-		preview_header: Optional[str] = None,
-		help_header: bool = True
+		preview_header: Optional[str] = None
 	):
-		self._header = header
+		super().__init__()
+
 		self._cursor_char = f'{cursor_char} '
 		self._search_enabled = search_enabled
 		self._multi = False
@@ -744,11 +751,8 @@ class NewMenu(AbstractCurses):
 		self._orientation = orientation
 		self._column_spacing = column_spacing
 		self._alignment = alignment
-
-		if help_header:
-			header = header or ''
-			help_header = self.help_header_str()
-			self._header = f'{help_header}\n{header}'
+		self._headers = self._header_entries(header)
+		self._footers = self._footer_entries()
 
 		if self._orientation == MenuOrientation.HORIZONTAL:
 			self._horizontal_cols = columns
@@ -760,36 +764,85 @@ class NewMenu(AbstractCurses):
 		self._visible_entries: List[ViewportEntry] = []
 		self._max_height, self._max_width = tui.max_yx
 
-		self._header_viewport: Optional[Viewport] = None
-		self._footer_viewport: Optional[Viewport] = None
-		self._menu_viewport: Optional[Viewport] = None
-		self._preview_viewport: Optional[Viewport] = None
+		self._help_vp: Optional[Viewport] = None
+		self._header_vp: Optional[Viewport] = None
+		self._footer_vp: Optional[Viewport] = None
+		self._menu_vp: Optional[Viewport] = None
+		self._preview_vp: Optional[Viewport] = None
 
-		self._set_main_viewports(preview_size)
+		self._init_viewports(preview_size)
 
-		super().__init__()
+	def single(self) -> Result[MenuItem]:
+		self._multi = False
+		result = tui.run(self)
+
+		assert isinstance(result.value, (MenuItem, NoneType))
+		return result
+
+	def multi(self) -> Result[List[MenuItem]]:
+		self._multi = True
+		result = tui.run(self)
+
+		assert isinstance(result.value, (list, NoneType))
+		return result
+
+	def kickoff(self, win: CursesWindow) -> Result:
+		self._draw()
+
+		while True:
+			try:
+				key = win.getch()
+				ret = self._process_input_key(key)
+
+				if ret is not None:
+					return ret
+			except KeyboardInterrupt:
+				if self._handle_interrupt():
+					return Result(ResultType.Reset, None)
+
+	def resize_win(self):
+		self._draw()
 
 	def _clear_all(self):
-		if self._header_viewport:
-			self._header_viewport.erase()
-		if self._menu_viewport:
-			self._menu_viewport.erase()
-		if self._preview_viewport:
-			self._preview_viewport.erase()
-		if self._footer_viewport:
-			self._footer_viewport.erase()
-		if self._help_viewport:
-			self._help_viewport.erase()
+		if self._header_vp:
+			self._header_vp.erase()
+		if self._menu_vp:
+			self._menu_vp.erase()
+		if self._preview_vp:
+			self._preview_vp.erase()
+		if self._footer_vp:
+			self._footer_vp.erase()
+		if self._help_vp:
+			self._help_vp.erase()
 
-	def _set_main_viewports(self, preview_size):
+	def _header_entries(self, header: str) -> List[ViewportEntry]:
+		if header:
+			header = header.split('\n')
+			return [ViewportEntry(h, idx, 0, STYLE.NORMAL) for idx, h in enumerate(header)]
+
+		return []
+
+	def _footer_entries(self) -> List[ViewportEntry]:
+		if self._active_search:
+			filter_pattern = self._item_group.filter_pattern
+			return [ViewportEntry(f'/{filter_pattern}', 0, 0, STYLE.NORMAL)]
+
+		return []
+
+	def _init_viewports(self, preview_size):
 		header_height = 0
 		footer_height = 1  # possible filter at the bottom
+		y_offset = 0
 
-		if self._header:
-			header_height = self._header.count('\n') + 2
-			self._header_viewport = Viewport(self._max_width, header_height, 0, 0)
+		self._help_vp = Viewport(self._max_width, 2, 0, y_offset)
+		y_offset += 2
 
-		preview_offset = header_height + footer_height
+		if self._headers:
+			header_height = len(self._headers) + 1
+			self._header_vp = Viewport(self._max_width, header_height, 0, y_offset)
+			y_offset += header_height
+
+		preview_offset = y_offset + footer_height
 		preview_size = self._determine_prev_size(preview_size, offset=preview_offset)
 
 		match self._preview_style:
@@ -797,25 +850,25 @@ class NewMenu(AbstractCurses):
 				y_split = int(self._max_height * (1 - preview_size))
 				height = self._max_height - y_split - footer_height
 
-				self._menu_viewport = Viewport(self._max_width, y_split, 0, header_height)
-				self._preview_viewport = Viewport(self._max_width, height, 0, y_split)
+				self._menu_vp = Viewport(self._max_width, y_split, 0, y_offset)
+				self._preview_vp = Viewport(self._max_width, height, 0, y_split)
 			case PreviewStyle.RIGHT:
 				x_split = int(self._max_width * (1 - preview_size))
 				height = self._max_height - header_height - footer_height
 
-				self._menu_viewport = Viewport(x_split, height, 0, header_height)
-				self._preview_viewport = Viewport(self._max_width - x_split, height, x_split, header_height)
+				self._menu_vp = Viewport(x_split, height, 0, y_offset)
+				self._preview_vp = Viewport(self._max_width - x_split, height, x_split, header_height)
 			case PreviewStyle.TOP:
 				y_split = int(self._max_height * (1 - preview_size))
 				height = self._max_height - y_split - footer_height
 
-				self._menu_viewport = Viewport(self._max_width, y_split, 0, height)
-				self._preview_viewport = Viewport(self._max_width, height - header_height, 0, header_height)
+				self._menu_vp = Viewport(self._max_width, y_split, 0, height)
+				self._preview_vp = Viewport(self._max_width, height - header_height, 0, y_offset)
 			case PreviewStyle.NONE:
 				height = self._max_height - header_height - footer_height
-				self._menu_viewport = Viewport(self._max_width, height, 0, header_height)
+				self._menu_vp = Viewport(self._max_width, height, 0, y_offset)
 
-		self._footer_viewport = Viewport(self._max_width, 1, 0, self._max_height - 1)
+		self._footer_vp = Viewport(self._max_width, 1, 0, self._max_height - 1)
 
 	def _determine_prev_size(
 		self,
@@ -848,71 +901,27 @@ class NewMenu(AbstractCurses):
 
 		return size
 
-	def single(self) -> Result[MenuItem]:
-		self._multi = False
-		result = tui.run(self)
-
-		assert isinstance(result.value, (MenuItem, NoneType))
-		return result
-
-	def multi(self) -> Result[List[MenuItem]]:
-		self._multi = True
-		result = tui.run(self)
-
-		assert isinstance(result.value, (list, NoneType))
-		return result
-
-	def _header_entries(self) -> List[ViewportEntry]:
-		if self._header:
-			header = self._header.split('\n')
-			return [ViewportEntry(h, idx, 0, STYLE.NORMAL) for idx, h in enumerate(header)]
-
-		return []
-
-	def _footer_entries(self) -> List[ViewportEntry]:
-		if self._active_search:
-			filter_pattern = self._item_group.filter_pattern
-			return [ViewportEntry(f'/{filter_pattern}', 0, 0, STYLE.NORMAL)]
-
-		return []
-
-	def resize_win(self):
-		self._draw()
-
-	def kickoff(self, win: CursesWindow) -> Result:
-		self._draw()
-
-		while True:
-			try:
-				key = win.getch()
-				ret = self._process_input_key(key)
-
-				if ret is not None:
-					return ret
-			except KeyboardInterrupt:
-				if self.handle_interrupt():
-					return Result(ResultType.Reset, None)
-
 	def _draw(self):
-		header_entries = self._header_entries()
 		footer_entries = self._footer_entries()
 
 		vp_entries = self._get_row_entries()
 		cursor_idx = self._cursor_index()
 
-		if self._header_viewport:
-			self._update_viewport(self._header_viewport, header_entries)
+		self._update_viewport(self._help_vp, [self.help_entry()])
 
-		if self._menu_viewport:
-			self._update_viewport(self._menu_viewport, vp_entries, cursor_idx)
+		if self._header_vp:
+			self._update_viewport(self._header_vp, self._headers)
+
+		if self._menu_vp:
+			self._update_viewport(self._menu_vp, vp_entries, cursor_idx)
 
 		if vp_entries:
 			self._update_preview()
-		elif self._preview_viewport:
-			self._update_viewport(self._preview_viewport, [])
+		elif self._preview_vp:
+			self._update_viewport(self._preview_vp, [])
 
-		if self._footer_viewport:
-			self._update_viewport(self._footer_viewport, footer_entries, 0)
+		if self._footer_vp:
+			self._update_viewport(self._footer_vp, footer_entries, 0)
 
 	def _update_viewport(
 		self,
@@ -934,7 +943,7 @@ class NewMenu(AbstractCurses):
 	def _get_visible_items(self) -> List[MenuItem]:
 		return [it for it in self._item_group.items if self._item_group.verify_item_enabled(it)]
 
-	def _to_cols(self, items: List[MenuItem], cols: int) -> List[List[MenuItem]]:
+	def _list_to_cols(self, items: List[MenuItem], cols: int) -> List[List[MenuItem]]:
 		return [items[i:i + cols] for i in range(0, len(items), cols)]
 
 	def _get_col_widths(self) -> List[int]:
@@ -952,7 +961,7 @@ class NewMenu(AbstractCurses):
 		if self._alignment == Alignment.CENTER:
 			cols_widths = self._get_col_widths()
 			total_col_width = sum(cols_widths)
-			x_offset = int((self._menu_viewport.width / 2) - (total_col_width / 2))
+			x_offset = int((self._menu_vp.width / 2) - (total_col_width / 2))
 
 		return x_offset
 
@@ -1022,25 +1031,25 @@ class NewMenu(AbstractCurses):
 		return entries
 
 	def _update_preview(self):
-		if not self._preview_viewport:
+		if not self._preview_vp:
 			return
 
 		focus_item = self._item_group.focus_item
 
 		if not focus_item or focus_item.preview_action is None:
-			self._preview_viewport.update([])
+			self._preview_vp.update([])
 			return
 
 		action_text = focus_item.preview_action(focus_item)
 
 		if not action_text:
-			self._preview_viewport.update([])
+			self._preview_vp.update([])
 			return
 
 		preview_text = action_text.split('\n')
 		entries = [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(preview_text)]
 
-		self._preview_viewport.update(
+		self._preview_vp.update(
 			entries,
 			frame=self._preview_frame,
 			frame_header=self._preview_header,
@@ -1060,10 +1069,10 @@ class NewMenu(AbstractCurses):
 		else:
 			return '[ ] '
 
-	def handle_interrupt(self) -> bool:
+	def _handle_interrupt(self) -> bool:
 		if self._allow_reset:
 			if self._interrupt_warning:
-				return self._confirm_interrupt(self._menu_viewport, self._interrupt_warning)
+				return self._confirm_interrupt(self._menu_vp, self._interrupt_warning)
 		else:
 			return False
 
