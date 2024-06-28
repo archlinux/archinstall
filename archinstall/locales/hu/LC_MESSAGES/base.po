@@ -75,7 +75,7 @@ msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Adja meg az IP-címét és az alhálózatát (például: 192.168.0.5/24) ehhez: {}: "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Adja meg az elosztó (router) IP-címét, vagy hagyja üresen, ha nincs ilyen: "
+msgstr "Adja meg az átjáró (router) IP-címét, vagy hagyja üresen, ha nincs ilyen: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
 msgstr "Adja meg a DNS-kiszolgálókat (szóközzel elválasztva, vagy hagyja üresen, ha nincsenek ilyenek): "
@@ -214,7 +214,7 @@ msgid "All open-source (default)"
 msgstr "Minden nyílt forráskódú (alapértelmezett)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Válassza ki a használni kívánt kerneleket, vagy hagyja üresen az alapértelmezetthez \"{}\""
+msgstr "Válassza ki a használni kívánt kerneleket, vagy hagyja üresen a(z) alapértelmezett \"{}\" kernel használatához"
 
 msgid "Choose which locale language to use"
 msgstr "Válassza ki a használni kívánt területi nyelvet"
@@ -244,7 +244,7 @@ msgid "Keyboard layout"
 msgstr "Billentyűzetkiosztás"
 
 msgid "Mirror region"
-msgstr "Tükör régió"
+msgstr "Tükörrégió"
 
 msgid "Locale language"
 msgstr "Helyi nyelv"
@@ -696,7 +696,7 @@ msgstr ""
 "sorban álló partíciót tartalmaz, ez eltávolítja azokat, biztos benne?"
 
 msgid "No audio server"
-msgstr "Nincs hang kiszolgáló"
+msgstr "Nincs kiválasztva hangkiszolgáló"
 
 msgid "(default)"
 msgstr "(alapértelmezett)"
@@ -827,7 +827,7 @@ msgid "CTRL+C to reset"
 msgstr "Használja a CTRL+C billentyűkombinációt a visszaállításhoz"
 
 msgid "TAB to select"
-msgstr "Használja a TAB billentyűt a kiválasztáshoz"
+msgstr "TAB billentyűvel több elemet is megjelölhet telepítésre"
 
 msgid "[Default value: 0] > "
 msgstr "[Alapértelmezett érték: 0] > "
@@ -1062,7 +1062,7 @@ msgid "This is a list of pre-programmed default_profiles"
 msgstr "Ez az előre programozott default_profiles listája"
 
 msgid "Disk configuration"
-msgstr "Lemez konfiguráció"
+msgstr "Lemez-konfiguráció"
 
 msgid "Profiles"
 msgstr "Profilok"
@@ -1126,7 +1126,7 @@ msgid "Mirrors"
 msgstr "Tükrök"
 
 msgid "Mirror regions"
-msgstr "Tükör régiók"
+msgstr "Tükörrégiók"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
 msgstr " - Maximális érték   : {} ( {} párhuzamos letöltést tesz lehetővé és egyszerre {max_downloads+1} letöltést enged meg )"
