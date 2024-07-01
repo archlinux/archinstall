@@ -70,6 +70,17 @@ class MenuKeys(Enum):
 		return matches
 
 
+class FrameStyle(Enum):
+	MAX = auto()
+	MIN = auto()
+
+
+@dataclass
+class FrameProperties:
+	header: str
+	frame_style: FrameStyle
+
+
 class ResultType(Enum):
 	Selection = auto()
 	Skip = auto()
@@ -93,10 +104,27 @@ class ViewportEntry:
 	style: STYLE
 
 
+class Alignment(Enum):
+	LEFT = auto()
+	CENTER = auto()
+
+
 class AbstractCurses(metaclass=ABCMeta):
 	def __init__(self):
 		self._help_window: Optional[Viewport] = None
 		self._set_help_viewport()
+
+	@abstractmethod
+	def resize_win(self):
+		pass
+
+	def clear_help_win(self):
+		if self._help_window:
+			self._help_window.erase()
+
+	@abstractmethod
+	def kickoff(self, win: CursesWindow) -> Result:
+		pass
 
 	def _set_help_viewport(self):
 		max_height, max_width = tui.max_yx
@@ -117,7 +145,7 @@ class AbstractCurses(metaclass=ABCMeta):
 		screen.getch()
 
 		while True:
-			choice = NewMenu(MenuItemGroup.default_confirm(), header=warning).single()
+			choice = SelectMenu(MenuItemGroup.default_confirm(), header=warning).single()
 
 			match choice.type_:
 				case ResultType.Selection:
@@ -129,14 +157,6 @@ class AbstractCurses(metaclass=ABCMeta):
 	def help_entry(self) -> ViewportEntry:
 		return ViewportEntry(str(_('Press Ctrl+h for help')), 0, 0, STYLE.NORMAL)
 
-	@abstractmethod
-	def resize_win(self):
-		pass
-
-	@abstractmethod
-	def kickoff(self, win: CursesWindow) -> Result:
-		pass
-
 	def _show_help(self):
 		assert self._help_window
 
@@ -147,9 +167,40 @@ class AbstractCurses(metaclass=ABCMeta):
 		self._help_window.update(
 			entries,
 			0,
-			frame=True,
-			frame_header=str(_('Archinstall help'))
+			frame=FrameProperties(str(_('Archinstall help')), FrameStyle.MAX)
 		)
+
+	def get_header_entries(
+		self,
+		header: str,
+		alignment: Alignment = Alignment.LEFT
+	) -> List[ViewportEntry]:
+		cur_row = 0
+		full_header = []
+
+		if header:
+			for header in header.split('\n'):
+				full_header += [ViewportEntry(header, cur_row, 0, STYLE.NORMAL)]
+				cur_row += 1
+
+		if full_header:
+			ViewportEntry('', cur_row, 0, STYLE.NORMAL)
+			cur_row += 1
+
+		aligned_headers = self._align_headers(alignment, full_header)
+		return aligned_headers
+
+	def _align_headers(
+		self,
+		alignment: Alignment,
+		headers: List[ViewportEntry]
+	) -> List[ViewportEntry]:
+		if alignment == Alignment.CENTER:
+			longest_header = max([len(h.text) for h in headers])
+			x_offset = int((tui.max_yx[1] / 2) - (longest_header / 2))
+			headers = [ViewportEntry(h.text, h.row, x_offset, h.style) for h in headers]
+
+		return headers
 
 
 class PreviewStyle(Enum):
@@ -168,27 +219,28 @@ class FrameChars:
 	Lower_right = "┘"
 
 
-class Alignment(Enum):
-	LEFT = auto()
-	CENTER = auto()
-
-
 @dataclass
 class AbstractViewport:
+	def __init__(self):
+		pass
+
 	def add_frame(
 		self,
+		entries: List[ViewportEntry],
 		width: int,
 		height: int,
-		entries: List[ViewportEntry],
-		frame_header: Optional[str] = None,
+		frame: FrameProperties
 	) -> List[ViewportEntry]:
 		rows = self._assemble_str(width, entries).split('\n')
 		top = (width - 2) * FrameChars.Horizontal
 
-		if frame_header:
-			top = self._replace_str(top, 3, f' {frame_header} ')
+		if frame.header:
+			top = self._replace_str(top, 1, f' {frame.header} ')
 
 		frame_width = len(FrameChars.Vertical) + 1
+
+		if frame.frame_style == FrameStyle.MIN:
+			width = max([len(r) for r in rows])
 
 		filler = ' ' * (width - frame_width)
 		filler_nr = height - self._unique_rows(entries) - 2  # header and bottom of frame
@@ -198,6 +250,7 @@ class AbstractViewport:
 		empty_rows += '\n' if empty_rows else ''
 
 		content_rows = ''
+
 		for row in rows:
 			row = row.expandtabs()
 			row = row[:width]
@@ -236,132 +289,66 @@ class AbstractViewport:
 class EditViewport(AbstractViewport):
 	def __init__(
 		self,
+		width: int,
+		height: int,
+		x_start: int,
+		y_start: int,
 		process_key: Callable[[int], int],
-		frame_title: str,
-		headers: List[ViewportEntry] = [],
-		help_entry: Optional[ViewportEntry] = None,
-		alignment: Alignment = Alignment.LEFT
+		frame: FrameProperties
 	):
+		super().__init__()
+
 		self._max_height, self._max_width = tui.max_yx
-		self._edit_win_width = 60
 
-		self._process_key = process_key
-		self._frame_title = frame_title
-		self._headers = headers
-		self._help_entry = help_entry
-		self._error_entry: Optional[ViewportEntry] = None
-		self._alignment = alignment
-
-		self._main_win: Optional[Any] = None
-		self._input_win: Optional[Any] = None
-		self._edit_win: Optional[Any] = None
-		self._error_win: Optional[Any] = None
-
-		self._init_wins()
+		self.width = width
+		self.height = height
+		self.x_start = x_start
+		self.y_start = y_start
+		self.process_key = process_key
+		self._frame = frame
 
 		self._textbox: Optional[Textbox] = None
 
+		self._main_win: Optional[CursesWindow] = None
+		self._edit_win: Optional[CursesWindow] = None
+		self._textbox: Optional[Textbox] = None
+
+		self._init_wins()
+
 	def _init_wins(self):
-		header_offset = len(self._headers)
-		edit_lines = 1
-		edit_win_height = edit_lines + 2  # borders
+		self._main_win = curses.newwin(self.height, self.width, self.y_start, self.x_start)
+		self._main_win.nodelay(False)
 
-		y_offset = 0
-
-		self._main_win = curses.newwin(
-			self._max_height,
-			self._max_width,
-			y_offset,
-			0
-		)
-
-		self._help_header_win = self._main_win.subwin(
-			2,
-			self._max_width,
-			y_offset,
-			0
-		)
-		y_offset += 2
-
-		self._header_win = self._main_win.subwin(
-			header_offset,
-			self._max_width,
-			y_offset,
-			0
-		)
-		y_offset += header_offset
-
-		self._input_win = self._main_win.subwin(
-			edit_win_height,
-			self._max_width,
-			y_offset,
-			0
-		)
-
-		self._edit_win = self._input_win.subwin(
+		self._edit_win = self._main_win.subwin(
 			1,
-			self._edit_win_width - 2,
-			y_offset + 1,
-			self._get_x_offset() + 1
+			self.width - 2,
+			self.y_start + 1,
+			self.x_start + 1
 		)
-		y_offset += edit_win_height
-
-		self._error_win = self._main_win.subwin(
-			1,
-			self._max_width,
-			y_offset,
-			0
-		)
-
-	def _get_x_offset(self) -> int:
-		if self._alignment == Alignment.CENTER:
-			return int((self._max_width / 2) - (self._edit_win_width / 2))
-
-		return 0
 
 	def update(self):
 		self._main_win.erase()
 
-		x_offset = self._get_x_offset()
-
-		framed = self._create_framed_input_win(self._frame_title)
-
-		if self._help_entry:
-			self.add_str(self._help_header_win, 0, 0, self._help_entry.text, STYLE.NORMAL)
-
-		for entry in self._headers:
-			self.add_str(self._header_win, entry.row, entry.col + x_offset, entry.text, entry.style)
+		framed = self.add_frame(
+			[ViewportEntry('', 0, 0, STYLE.NORMAL)],
+			self.width,
+			1,
+			frame=self._frame
+		)
 
 		for row in framed:
-			self.add_str(self._input_win, row.row, row.col + x_offset, row.text, row.style)
-
-		if self._error_entry:
-			self.add_str(self._error_win, self._error_entry.row, self._error_entry.col + x_offset,
-						 self._error_entry.text, self._error_entry.style)
+			self.add_str(self._main_win, row.row, row.col, row.text, row.style)
 
 		self._main_win.refresh()
-
-	def _create_framed_input_win(self, frame_text: str) -> List[ViewportEntry]:
-		return self.add_frame(
-			self._edit_win_width,
-			1,
-			[ViewportEntry('', 0, 0, STYLE.NORMAL)],
-			frame_header=frame_text
-		)
 
 	def erase(self):
 		assert self._main_win
 		self._main_win.erase()
 		self._main_win.refresh()
 
-	def update_error(self, entry: Optional[ViewportEntry]):
-		self._error_entry = entry
-
 	def edit(self):
 		assert self._edit_win
-
 		self._edit_win.erase()
-		self._error_win.erase()
 
 		# if this gets initialized multiple times it will be an overlay
 		# and ENTER has to be pressed multiple times to accept
@@ -369,7 +356,7 @@ class EditViewport(AbstractViewport):
 			self._textbox = curses.textpad.Textbox(self._edit_win)
 			self._main_win.refresh()
 
-		self._textbox.edit(self._process_key)
+		self._textbox.edit(self.process_key)
 
 	def gather(self) -> Optional[str]:
 		if not self._textbox:
@@ -379,25 +366,30 @@ class EditViewport(AbstractViewport):
 
 
 @dataclass
-class Viewport:
-	width: int
-	height: int
-	x_start: int
-	y_start: int
+class Viewport(AbstractViewport):
+	def __init__(
+		self,
+		width: int,
+		height: int,
+		x_start: int,
+		y_start: int,
+	):
+		super().__init__()
 
-	_screen: Any = None
-	_textbox: Optional[Textbox] = None
+		self.width = width
+		self.height = height
+		self.x_start = x_start
+		self.y_start = y_start
 
-	def __post_init__(self):
-		self._screen = curses.newwin(self.height, self.width, self.y_start, self.x_start)
-		self._screen.nodelay(False)
+		self._main_win = curses.newwin(self.height, self.width, self.y_start, self.x_start)
+		self._main_win.nodelay(False)
 
 	def getch(self):
-		return self._screen.getch()
+		return self._main_win.getch()
 
 	def erase(self):
-		self._screen.erase()
-		self._screen.refresh()
+		self._main_win.erase()
+		self._main_win.refresh()
 
 	def update(
 		self,
@@ -405,8 +397,7 @@ class Viewport:
 		cursor_idx: int = 0,
 		header: List[ViewportEntry] = [],
 		footer: List[ViewportEntry] = [],
-		frame: bool = False,
-		frame_header: Optional[str] = None,
+		frame: Optional[FrameProperties] = None
 	):
 		visible_rows = self._find_visible_rows(
 			entries,
@@ -417,10 +408,15 @@ class Viewport:
 		)
 
 		if frame:
-			visible_rows = self._add_frame(visible_rows, frame_header)
+			visible_rows = self.add_frame(
+				visible_rows,
+				self.width,
+				self.height,
+				frame
+			)
 
 		visible_entries = header + visible_rows + footer
-		self._screen.erase()
+		self._main_win.erase()
 
 		for entry in visible_entries:
 			# try:
@@ -437,16 +433,16 @@ class Viewport:
 		# p_1, p_2 : coordinate of upper-left corner of pad area to display.
 		# p_3, p_4 : coordinate of upper-left corner of window area to be filled with pad content.
 		# p_5, p_6 : coordinate of lower-right corner of window area to be filled with pad content.
-		self._screen.refresh()
+		self._main_win.refresh()
 
 	def _add_str(self, row: int, col: int, text: str, color: STYLE):
-		self._screen.insstr(row, col, text, tui.get_color(color))
+		self._main_win.insstr(row, col, text, tui.get_color(color))
 
 	def _available_visible_rows(
 		self,
 		header: List[ViewportEntry] = [],
 		footer: List[ViewportEntry] = [],
-		frame: bool = True
+		frame: Optional[FrameProperties] = None
 	) -> int:
 		y_offset = len(header) + len(footer)
 		y_offset += 2 if frame else 0
@@ -456,7 +452,7 @@ class Viewport:
 		self,
 		entries: List[ViewportEntry],
 		cursor_pos: int,
-		frame: bool,
+		frame: Optional[FrameProperties] = None,
 		header: List[ViewportEntry] = [],
 		footer: List[ViewportEntry] = [],
 	) -> List[ViewportEntry]:
@@ -489,51 +485,6 @@ class Viewport:
 	def _replace_str(self, text: str, index: int = 0, replacement: str = '') -> str:
 		len_replace = len(replacement)
 		return f'{text[:index]}{replacement}{text[index + len_replace:]}'
-
-	def _add_frame(
-		self,
-		entries: List[ViewportEntry],
-		frame_header: Optional[str] = None,
-	) -> List[ViewportEntry]:
-		rows = self._assemble_str(entries).split('\n')
-		top = (self.width - 2) * FrameChars.Horizontal
-
-		if frame_header:
-			top = self._replace_str(top, 3, f' {frame_header} ')
-
-		frame_width = len(FrameChars.Vertical) + 1
-
-		filler = ' ' * (self.width - frame_width)
-		filler_nr = self.height - self._unique_rows(entries) - 2  # header and bottom of frame
-		filler_rows = [filler] * filler_nr
-
-		empty_rows = '\n'.join([f'{FrameChars.Vertical}{r}{FrameChars.Vertical}' for r in filler_rows])
-		empty_rows += '\n' if empty_rows else ''
-
-		content_rows = ''
-		for row in rows:
-			row = row.expandtabs()
-			row = row[:self.width]
-			row = row.ljust(self.width - frame_width)
-			content_rows += f'{FrameChars.Vertical}{row[:-frame_width]}{FrameChars.Vertical}\n'
-
-		framed = (
-			FrameChars.Upper_left + top + FrameChars.Upper_right + '\n' +
-			content_rows +
-			empty_rows +
-			FrameChars.Lower_left + (self.width - 2) * FrameChars.Horizontal + FrameChars.Lower_right
-		)
-
-		preview = framed.split('\n')
-		return [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(preview)]
-
-	def _assemble_str(self, entries: List[ViewportEntry]) -> str:
-		view = [self.width * ' '] * self._unique_rows(entries)
-
-		for e in entries:
-			view[e.row] = self._replace_str(view[e.row], e.col, e.text)
-
-		return '\n'.join(view)
 
 	def _unique_rows(self, entries: List[ViewportEntry]) -> int:
 		return len(set([e.row for e in entries]))
@@ -570,29 +521,49 @@ class EditMenu(AbstractCurses):
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
 		self._interrupt_warning = reset_warning_msg
-		self._title = f'* {title}' if not self._allow_skip else title
-		self._headers = self._header_entries(header)
+		self._headers = self.get_header_entries(header, alignment=alignment)
+		self._alignment = alignment
+
+		title = f'* {title}' if not self._allow_skip else title
+		self._frame = FrameProperties(title, FrameStyle.MIN)
 
 		self._help_vp: Optional[Viewport] = None
+		self._header_vp: Optional[Viewport] = None
+		self._input_vp: Optional[EditViewport] = None
+		self._error_vp: Optional[Viewport] = None
 
 		self._init_viewports()
-
-		xxx move the win out here as VPs
-
-		self._input_viewport = EditViewport(
-			self._process_edit_key,
-			self._title,
-			headers=self._headers,
-			help_entry=self.help_entry(),
-			alignment=alignment
-		)
 
 		self._last_state: Optional[Result] = None
 		self._help_active = False
 
 	def _init_viewports(self):
+		x_offset = 0
 		y_offset = 0
+		edit_width = 50
+
+		if self._alignment == Alignment.CENTER:
+			x_offset = int((self._max_width / 2) - edit_width / 2)
+
 		self._help_vp = Viewport(self._max_width, 2, 0, y_offset)
+		y_offset += 2
+
+		if self._headers:
+			header_height = len(self._headers) + 1
+			self._header_vp = Viewport(self._max_width, header_height, 0, y_offset)
+			y_offset += header_height
+
+		self._input_vp = EditViewport(
+			edit_width,
+			3,
+			x_offset,
+			y_offset,
+			self._process_edit_key,
+			frame=self._frame
+		)
+		y_offset += 3
+
+		self._error_vp = Viewport(self._max_width, 1, x_offset, y_offset)
 
 	def input(self, ) -> Result[str]:
 		result = tui.run(self)
@@ -603,51 +574,44 @@ class EditMenu(AbstractCurses):
 	def resize_win(self):
 		self._draw()
 
-	def _header_entries(self, header: str) -> List[ViewportEntry]:
-		cur_row = 0
-		full_header = []
-
-		if header:
-			for header in header.split('\n'):
-				full_header += [ViewportEntry(header, cur_row, 0, STYLE.NORMAL)]
-				cur_row += 1
-
-		if full_header:
-			ViewportEntry('', cur_row, 0, STYLE.NORMAL)
-			cur_row += 1
-
-		return full_header
-
 	def _clear_all(self):
-		if self._input_viewport:
-			self._input_viewport.erase()
 		if self._help_vp:
 			self._help_vp.erase()
+		if self._header_vp:
+			self._header_vp.erase()
+		if self._input_vp:
+			self._input_vp.erase()
+		if self._error_vp:
+			self._error_vp.erase()
 
 	def _get_input_text(self) -> Optional[str]:
-		text = self._input_viewport.gather()
+		text = self._input_vp.gather()
 
 		if text and self._validator:
 			if (err := self._validator(text)) is not None:
 				entry = ViewportEntry(err, 0, 0, STYLE.ERROR)
-				self._input_viewport.update_error(entry)
+				self._error_vp.update([entry], 0)
 				return None
 
 		return text
 
 	def _draw(self):
-		try:
-			self._help_vp.update([self.help_entry()], 0)
-			self._input_viewport.update()
-			self._input_viewport.edit()
-		except KeyboardInterrupt:
-			if not self._handle_interrupt():
-				self._draw()
-			else:
-				self._last_state = Result(ResultType.Reset, None)
+		self._help_vp.update([self.help_entry()], 0)
+
+		if self._headers:
+			self._header_vp.update(self._headers, 0)
+
+		self._input_vp.update()
+		self._input_vp.edit()
 
 	def kickoff(self, win: CursesWindow) -> Result:
-		self._draw()
+		try:
+			self._draw()
+		except KeyboardInterrupt:
+			if not self._handle_interrupt():
+				self.kickoff(win)
+			else:
+				self._last_state = Result(ResultType.Reset, None)
 
 		if not self._last_state:
 			self.kickoff(win)
@@ -673,7 +637,8 @@ class EditMenu(AbstractCurses):
 
 		if self._help_active:
 			self._help_active = False
-			return None
+			self.clear_help_win()
+			return 7
 
 		# remove standard keys from the list of key handles
 		key_handles = [key for key in key_handles if key != MenuKeys.STD_KEYS]
@@ -708,14 +673,14 @@ class EditMenu(AbstractCurses):
 	def _handle_interrupt(self) -> bool:
 		if self._allow_reset:
 			if self._interrupt_warning:
-				return self._confirm_interrupt(self._input_viewport, self._interrupt_warning)
+				return self._confirm_interrupt(self._input_vp, self._interrupt_warning)
 		else:
 			return False
 
 		return True
 
 
-class NewMenu(AbstractCurses):
+class SelectMenu(AbstractCurses):
 	def __init__(
 		self,
 		group: MenuItemGroup,
@@ -724,6 +689,7 @@ class NewMenu(AbstractCurses):
 		columns: int = 1,
 		column_spacing: int = 10,
 		header: Optional[str] = None,
+		frame: Optional[FrameProperties] = None,
 		cursor_char: str = '>',
 		search_enabled: bool = True,
 		allow_skip: bool = False,
@@ -731,8 +697,7 @@ class NewMenu(AbstractCurses):
 		reset_warning_msg: Optional[str] = None,
 		preview_style: PreviewStyle = PreviewStyle.NONE,
 		preview_size: float | Literal['auto'] = 0.2,
-		preview_frame: bool = True,
-		preview_header: Optional[str] = None
+		preview_frame: Optional[FrameProperties] = None,
 	):
 		super().__init__()
 
@@ -747,12 +712,12 @@ class NewMenu(AbstractCurses):
 		self._item_group = group
 		self._preview_style = preview_style
 		self._preview_frame = preview_frame
-		self._preview_header = preview_header
 		self._orientation = orientation
 		self._column_spacing = column_spacing
 		self._alignment = alignment
-		self._headers = self._header_entries(header)
+		self._headers = self.get_header_entries(header, alignment)
 		self._footers = self._footer_entries()
+		self._frame = frame
 
 		if self._orientation == MenuOrientation.HORIZONTAL:
 			self._horizontal_cols = columns
@@ -804,6 +769,8 @@ class NewMenu(AbstractCurses):
 		self._draw()
 
 	def _clear_all(self):
+		self.clear_help_win()
+
 		if self._header_vp:
 			self._header_vp.erase()
 		if self._menu_vp:
@@ -814,13 +781,6 @@ class NewMenu(AbstractCurses):
 			self._footer_vp.erase()
 		if self._help_vp:
 			self._help_vp.erase()
-
-	def _header_entries(self, header: str) -> List[ViewportEntry]:
-		if header:
-			header = header.split('\n')
-			return [ViewportEntry(h, idx, 0, STYLE.NORMAL) for idx, h in enumerate(header)]
-
-		return []
 
 	def _footer_entries(self) -> List[ViewportEntry]:
 		if self._active_search:
@@ -913,7 +873,12 @@ class NewMenu(AbstractCurses):
 			self._update_viewport(self._header_vp, self._headers)
 
 		if self._menu_vp:
-			self._update_viewport(self._menu_vp, vp_entries, cursor_idx)
+			self._update_viewport(
+				self._menu_vp,
+				vp_entries,
+				cursor_idx,
+				self._frame,
+			)
 
 		if vp_entries:
 			self._update_preview()
@@ -927,10 +892,11 @@ class NewMenu(AbstractCurses):
 		self,
 		viewport: Viewport,
 		entries: List[ViewportEntry],
-		cursor_idx: int = 0
+		cursor_idx: int = 0,
+		frame: Optional[FrameProperties] = None,
 	):
 		if entries:
-			viewport.update(entries, cursor_idx)
+			viewport.update(entries, cursor_idx, frame=frame)
 		else:
 			viewport.update([])
 
@@ -956,7 +922,7 @@ class NewMenu(AbstractCurses):
 		else:
 			return self._column_spacing
 
-	def _x_align_offset(self) -> int:
+	def _cols_x_align_offset(self) -> int:
 		x_offset = 0
 		if self._alignment == Alignment.CENTER:
 			cols_widths = self._get_col_widths()
@@ -971,7 +937,7 @@ class NewMenu(AbstractCurses):
 
 		self._row_entries = [cells[x:x + self._horizontal_cols] for x in range(0, len(cells), self._horizontal_cols)]
 		cols_widths = self._get_col_widths()
-		x_offset = self._x_align_offset()
+		x_offset = self._cols_x_align_offset()
 
 		for row_idx, row in enumerate(self._row_entries):
 			cur_pos = len(self._cursor_char) + x_offset
@@ -1052,7 +1018,6 @@ class NewMenu(AbstractCurses):
 		self._preview_vp.update(
 			entries,
 			frame=self._preview_frame,
-			frame_header=self._preview_header,
 		)
 
 	def _default_suffix(self, item: MenuItem) -> str:

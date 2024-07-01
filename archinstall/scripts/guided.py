@@ -18,7 +18,7 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 if TYPE_CHECKING:
 	_: Any
 
-from archinstall.tui.curses_menu import NewMenu, MenuItem, MenuItemGroup, MenuOrientation, Alignment
+from archinstall.tui.curses_menu import SelectMenu, MenuItem, MenuItemGroup, Alignment, FrameProperties, FrameStyle
 
 
 def test_data():
@@ -50,19 +50,23 @@ items = [
 	MenuItem(f'Abort', preview_action=lambda x: test_data()),
 ]
 
+header = 'testinsakdfjsadfkjs;df\nsadkfjasl;dkfjlasdkjfasldf\nsadfkjas;dfkjsa;dlfkj'
+
 group = MenuItemGroup(items, sort_items=False, focus_item=items[0])
 
-# menu = NewMenu(
-# 	group,
-# 	reset_warning_msg='are you certain?',
-# 	allow_skip=False,
-# 	allow_reset=False,
-# 	preview_style=PreviewStyle.RIGHT,
-# 	preview_size='auto',
-# 	preview_frame=True,
-# 	preview_header='INFO'
-# ).single()
-#
+menu = SelectMenu(
+	group,
+	reset_warning_msg='are you certain?',
+	allow_skip=False,
+	allow_reset=False,
+	header=header,
+	# preview_style=PreviewStyle.RIGHT,
+	alignment=Alignment.CENTER,
+	preview_size='auto',
+	preview_frame=FrameProperties('Info', FrameStyle.MAX),
+	frame=FrameProperties('Select me', FrameStyle.MIN),
+).single()
+
 
 
 def validator(value: str):
@@ -71,7 +75,7 @@ def validator(value: str):
 		return 'Specify a valid username'
 	return None
 
-header = ''
+header = 'testing\ntest\nsjfskjdf;'
 
 # username = EditMenu('Username', validator=validator, header=header, alignment=Alignment.CENTER).input()
 # header += f'Username: {username.value}\n'
@@ -80,19 +84,19 @@ header = ''
 # confirm_password = EditMenu('Confirm password', header=header, alignment=Alignment.CENTER).input()
 # header += f'Confirm password: {confirm_password.value}\n'
 
-header += 'Super user account?'
+# header += 'Super user account?'
 
-menu = NewMenu(
-	MenuItemGroup.default_confirm(),
-	header=header,
-	orientation=MenuOrientation.HORIZONTAL,
-	alignment=Alignment.CENTER,
-	columns=2,
-	allow_skip=True,
-	allow_reset=True,
-	reset_warning_msg='Are you sure?',
-).single()
-
+# menu = SelectMenu(
+# 	MenuItemGroup.default_confirm(),
+# 	header=header,
+# 	orientation=MenuOrientation.HORIZONTAL,
+# 	alignment=Alignment.CENTER,
+# 	columns=2,
+# 	allow_skip=True,
+# 	allow_reset=True,
+# 	reset_warning_msg='Are you sure?',
+# ).single()
+#
 
 
 
