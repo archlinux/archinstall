@@ -1,0 +1,17 @@
+name: feature request
+description: a new feature!
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please read our short mission statement before requesting more features:
+        https://github.com/archlinux/archinstall?tab=readme-ov-file#mission-statement
+
+  - type: textarea
+    id: freeform
+    attributes:
+      label: describe the request
+      description: >
+        Feel free to write any feature you think others might benefit from:
+    validations:
+      required: true
