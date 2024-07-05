@@ -14,11 +14,12 @@ from archinstall.lib.models import AudioConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
+from archinstall.tui.types import PreviewStyle
 
 if TYPE_CHECKING:
 	_: Any
 
-from archinstall.tui.curses_menu import SelectMenu, MenuItem, MenuItemGroup, Alignment, FrameProperties, FrameStyle
+from archinstall.tui.curses_menu import SelectMenu, MenuItem, MenuItemGroup, FrameProperties, FrameStyle
 
 
 def test_data():
@@ -39,7 +40,49 @@ def test_data():
 		"mountpoint": "/mnt"
 	},
 	"disk_encryption": null,
-	...
+items = [
+	MenuItem(f'Language', preview_action=lambda x: test_data()),
+	MenuItem(f'Disk configuration', preview_action=lambda x: test_data()),
+	MenuItem(f'Install', preview_action=lambda x: test_data()),
+	MenuItem(f'Abort', preview_action=lambda x: test_data()),
+]
+
+# header = 'testinsakdfjsadfkjs;df\nsadkfjasl;dkfjlasdkjfasldf\nsadfkjas;dfkjsa;dlfkj'
+
+group = MenuItemGroup(items, sort_items=False, focus_item=items[0])
+
+menu = SelectMenu(
+	group,
+	reset_warning_msg='are you certain?',
+	allow_skip=False,
+	allow_reset=False,
+	header='sadf\nasdf\nsafd',
+	preview_style=PreviewStyle.RIGHT,
+	# alignment=Alignment.CENTER,
+	preview_size='auto',
+	preview_frame=FrameProperties('Info', FrameStyle.MAX),
+	# frame=FrameProperties('Select me', FrameStyle.MIN, FrameStyle.MAX),
+).single()
+
+
+
+def validator(value: str):
+	import re
+	if not re.match(r"^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$", value):
+		return 'Specify a valid username'
+	return None
+
+header = 'testing\ntest\nsjfskjdf;'
+
+# username = EditMenu('Username', validator=validator, header=header, alignment=Alignment.CENTER).input()
+# header += f'Username: {username.value}\n'
+# password = EditMenu('Password', header=header, alignment=Alignment.CENTER).input()
+# header += f'Password: {password.value}\n'
+# confirm_password = EditMenu('Confirm password', header=header, alignment=Alignment.CENTER).input()
+# header += f'Confirm password: {confirm_password.value}\n'
+
+# header += 'Super user account?'
+
 """
 
 
@@ -50,7 +93,7 @@ items = [
 	MenuItem(f'Abort', preview_action=lambda x: test_data()),
 ]
 
-header = 'testinsakdfjsadfkjs;df\nsadkfjasl;dkfjlasdkjfasldf\nsadfkjas;dfkjsa;dlfkj'
+# header = 'testinsakdfjsadfkjs;df\nsadkfjasl;dkfjlasdkjfasldf\nsadfkjas;dfkjsa;dlfkj'
 
 group = MenuItemGroup(items, sort_items=False, focus_item=items[0])
 
@@ -59,12 +102,12 @@ menu = SelectMenu(
 	reset_warning_msg='are you certain?',
 	allow_skip=False,
 	allow_reset=False,
-	header=header,
-	# preview_style=PreviewStyle.RIGHT,
-	alignment=Alignment.CENTER,
+	header='sadf\nasdf\nsafd',
+	preview_style=PreviewStyle.RIGHT,
+	# alignment=Alignment.CENTER,
 	preview_size='auto',
 	preview_frame=FrameProperties('Info', FrameStyle.MAX),
-	frame=FrameProperties('Select me', FrameStyle.MIN),
+	# frame=FrameProperties('Select me', FrameStyle.MIN, FrameStyle.MAX),
 ).single()
 
 
