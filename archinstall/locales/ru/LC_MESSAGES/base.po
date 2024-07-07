@@ -1245,82 +1245,68 @@ msgstr "Использовать сжатие"
 msgid "Disable Copy-on-Write"
 msgstr "Отключить копирование при записи (CoW)"
 
-#, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Предоставляет выбор окружений рабочего стола и тайловых оконных менеджеров, например, gnome, kde, sway"
+msgstr "Предоставляет выбор окружений рабочего стола и тайловых оконных менеджеров, например, GNOME, KDE Plasma, Sway"
 
-#, fuzzy
 msgid "Configuration type: {}"
-msgstr "Конфигурация"
+msgstr "Тип конфигурации: {}"
 
-#, fuzzy
 msgid "LVM configuration type"
-msgstr "Отсутствует конфигурация"
+msgstr "Тип конфигурации LVM"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "Шифрование дисков LVM с более чем 2 разделами в настоящее время не поддерживается"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "Использовать NetworkManager (необходим для графической настройки интернета в GNOME и KDE)"
+msgstr "Использовать NetworkManager (необходим для графической настройки интернета в GNOME и KDE Plasma)"
 
-#, fuzzy
 msgid "Select a LVM option"
-msgstr "Выберите часовой пояс"
+msgstr "Выберите вариант LVM"
 
-#, fuzzy
 msgid "Partitioning"
-msgstr "Раздел"
+msgstr "Разбивка на разделы"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Управление логическими томами (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "Физические тома"
 
 msgid "Volumes"
-msgstr ""
+msgstr "Тома"
 
-#, fuzzy
 msgid "LVM volumes"
-msgstr "Установить подтома"
+msgstr "Тома LVM"
 
-#, fuzzy
 msgid "LVM volumes to be encrypted"
-msgstr "Разделы, подлежащие шифрованию"
+msgstr "Тома LVM, подлежащие шифрованию"
 
-#, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr "Выберите разделы для шифрования"
+msgstr "Выберите тома LVM для шифрования"
 
-#, fuzzy
 msgid "Default layout"
-msgstr "Разметка диска"
+msgstr "Разметка по умолчанию"
 
-#, fuzzy
 msgid "No Encryption"
-msgstr "Тип шифрования"
+msgstr "Нет шифрования"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM на LUKS"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS на LVM"
 
-#, fuzzy
 msgid "Yes"
-msgstr "да"
+msgstr "Да"
 
 msgid "No"
-msgstr ""
+msgstr "Нет"
 
-#, fuzzy
 msgid "Archinstall help"
-msgstr "Язык Archinstall"
+msgstr "Справка Archinstall"
 
-#, fuzzy
 msgid " (default)"
-msgstr "(по умолчанию)"
+msgstr " (по умолчанию)"
