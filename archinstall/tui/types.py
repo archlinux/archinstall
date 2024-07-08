@@ -5,7 +5,7 @@ from typing import Optional, List, TypeVar, Generic
 
 from .menu_item import MenuItem
 
-V = TypeVar('V', MenuItem, List[MenuItem], str)
+ItemType = TypeVar('ItemType', MenuItem, List[MenuItem], str)
 
 
 SCROLL_INTERVAL = 10
@@ -119,9 +119,9 @@ class Chars:
 
 
 @dataclass
-class Result(Generic[V]):
+class Result(Generic[ItemType]):
 	type_: ResultType
-	value: Optional[V]
+	value: Optional[ItemType]
 
 
 @dataclass
