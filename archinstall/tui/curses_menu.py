@@ -2,17 +2,23 @@ import curses
 import curses.panel
 import os
 import signal
+from _curses import _CursesWindow as _CursesWindow
 from abc import ABCMeta, abstractmethod
 from curses.textpad import Textbox
 from dataclasses import dataclass
+from pprint import pformat
 from types import NoneType
 from typing import Any, Optional, Tuple, Dict, List, TYPE_CHECKING, Literal
 from typing import Callable
 
 from .help import Help
 from .menu_item import MenuItem, MenuItemGroup
-from .types import CursesWindow, Result, ResultType, ViewportEntry, STYLE, FrameProperties, FrameStyle, Alignment, \
-	Chars, MenuKeys, MenuOrientation, PreviewStyle, MenuCell, _FrameDim
+from .types import (
+	Result, ResultType, ViewportEntry,
+	STYLE, FrameProperties, FrameStyle, Alignment,
+	Chars, MenuKeys, MenuOrientation, PreviewStyle,
+	MenuCell, _FrameDim, SCROLL_INTERVAL
+)
 from ..lib.output import debug
 
 if TYPE_CHECKING:
@@ -33,7 +39,7 @@ class AbstractCurses(metaclass=ABCMeta):
 			self._help_window.erase()
 
 	@abstractmethod
-	def kickoff(self, win: CursesWindow) -> Result:
+	def kickoff(self, win: _CursesWindow) -> Result:
 		pass
 
 	def _set_help_viewport(self):
@@ -79,7 +85,7 @@ class AbstractCurses(metaclass=ABCMeta):
 
 	def get_header_entries(
 		self,
-		header: str,
+		header: Optional[str],
 		alignment: Alignment = Alignment.LEFT
 	) -> List[ViewportEntry]:
 		cur_row = 0
@@ -127,23 +133,23 @@ class AbstractViewport:
 		max_width: int,
 		max_height: int,
 		frame: FrameProperties,
-		scroll_percentage: Optional[int] = None
+		scroll_pct: Optional[int] = None
 	) -> List[ViewportEntry]:
 		if not entries:
 			return []
 
 		dim = self._get_frame_dim(entries, max_width, max_height, frame)
 
-		h_bar = Chars.Horizontal * (dim.delta() - 2)
-		top_ve = self._get_top(dim, h_bar, frame, scroll_percentage)
-		bottom_ve = self._get_bottom(dim, h_bar, scroll_percentage)
+		h_bar = Chars.Horizontal * (dim.x_delta() - 2)
+		top_ve = self._get_top(dim, h_bar, frame, scroll_pct)
+		bottom_ve = self._get_bottom(dim, h_bar, scroll_pct)
 
 		frame_border = []
 
 		for i in range(1, dim.height):
-			frame_border += [ViewportEntry(Chars.Vertical, i, dim.start, STYLE.NORMAL)]
+			frame_border += [ViewportEntry(Chars.Vertical, i, dim.x_start, STYLE.NORMAL)]
 
-		frame_border += self._get_right_frame(dim, scroll_percentage)
+		frame_border += self._get_right_frame(dim, scroll_pct)
 
 		# adjust the original rows and cols of the entries as they need to be
 		# shrunk by 1 to make space for the frame
@@ -155,6 +161,8 @@ class AbstractViewport:
 			*frame_border,
 			*entries
 		]
+
+		debug(pformat(framed_entries))
 
 		return framed_entries
 
@@ -173,14 +181,14 @@ class AbstractViewport:
 
 		if scroll_percentage is not None:
 			right_frame = [
-				ViewportEntry(Chars.Triangle_up, 0, dim.end - 1, STYLE.NORMAL),
-				ViewportEntry(Chars.Block, scroll_height, dim.end - 1, STYLE.NORMAL),
-				ViewportEntry(Chars.Triangle_down, dim.height, dim.end - 1, STYLE.NORMAL)
+				ViewportEntry(Chars.Triangle_up, 0, dim.x_end - 1, STYLE.NORMAL),
+				ViewportEntry(Chars.Block, scroll_height, dim.x_end - 1, STYLE.NORMAL),
+				ViewportEntry(Chars.Triangle_down, dim.height, dim.x_end - 1, STYLE.NORMAL)
 			]
 		else:
 			for i in range(1, dim.height):
 				right_frame += [
-					ViewportEntry(Chars.Vertical, i, dim.end - 1, STYLE.NORMAL)
+					ViewportEntry(Chars.Vertical, i, dim.x_end - 1, STYLE.NORMAL)
 				]
 
 		return right_frame
@@ -199,20 +207,20 @@ class AbstractViewport:
 		else:
 			top = Chars.Upper_left + top[:-1]
 
-		return ViewportEntry(top, 0, dim.start, STYLE.NORMAL)
+		return ViewportEntry(top, 0, dim.x_start, STYLE.NORMAL)
 
 	def _get_bottom(
 		self,
 		dim: _FrameDim,
 		h_bar: str,
-		scroll_percentage: Optional[int] = None
+		scroll_pct: Optional[int] = None
 	):
-		if scroll_percentage is None:
+		if scroll_pct is None:
 			bottom = Chars.Lower_left + h_bar + Chars.Lower_right
 		else:
 			bottom = Chars.Lower_left + h_bar[:-1]
 
-		return ViewportEntry(bottom, dim.height, dim.start, STYLE.NORMAL)
+		return ViewportEntry(bottom, dim.height, dim.x_start, STYLE.NORMAL)
 
 	def _get_frame_dim(
 		self,
@@ -238,8 +246,7 @@ class AbstractViewport:
 			if frame_height > max_height:
 				frame_height = max_height
 		else:
-			frame_height = max_height
-			frame_height -= 2  # 2 from top and lower horizontal bars
+			frame_height = max_height - 1
 
 		return _FrameDim(frame_start, frame_end, frame_height)
 
@@ -295,10 +302,8 @@ class EditViewport(AbstractViewport):
 		self.process_key = process_key
 		self._frame = frame
 
-		self._textbox: Optional[Textbox] = None
-
-		self._main_win: Optional[CursesWindow] = None
-		self._edit_win: Optional[CursesWindow] = None
+		self._main_win: Optional[_CursesWindow] = None
+		self._edit_win: Optional[_CursesWindow] = None
 		self._textbox: Optional[Textbox] = None
 
 		self._init_wins()
@@ -315,12 +320,14 @@ class EditViewport(AbstractViewport):
 		)
 
 	def update(self):
+		assert self._main_win
+
 		self._main_win.erase()
 
 		framed = self.add_frame(
 			[ViewportEntry('', 0, 0, STYLE.NORMAL)],
 			self.width,
-			1,
+			3,
 			frame=self._frame
 		)
 
@@ -336,6 +343,8 @@ class EditViewport(AbstractViewport):
 
 	def edit(self):
 		assert self._edit_win
+		assert self._main_win
+
 		self._edit_win.erase()
 
 		# if this gets initialized multiple times it will be an overlay
@@ -386,9 +395,10 @@ class Viewport(AbstractViewport):
 	def update(
 		self,
 		entries: List[ViewportEntry],
-		cursor_pos: int = 0
+		cursor_pos: int = 0,
+		scroll_pos: Optional[int] = 0
 	):
-		visible_rows, percentage = self._find_visible_rows(entries, cursor_pos)
+		visible_rows, percentage = self._find_visible_rows(entries, cursor_pos, scroll_pos)
 
 		if self._frame:
 			visible_rows = self.add_frame(
@@ -396,7 +406,7 @@ class Viewport(AbstractViewport):
 				self.width,
 				self.height,
 				frame=self._frame,
-				scroll_percentage=percentage
+				scroll_pct=percentage
 			)
 
 		self._main_win.erase()
@@ -416,17 +426,26 @@ class Viewport(AbstractViewport):
 		y_offset = 3 if self._frame else 0
 		return self.height - y_offset
 
-	def _calc_percentage(self, total: int, cursor_pos: int, available_rows: int) -> Optional[int]:
+	def _calc_scroll_percent(
+		self, total: int,
+		available_rows: int,
+		scroll_pos: int
+	) -> Optional[int]:
 		if total <= available_rows:
 			return None
 
-		percentage = int((cursor_pos / total) * available_rows)
+		percentage = int(scroll_pos / total * 100)
+
+		if percentage + SCROLL_INTERVAL > 100:
+			percentage = 100
+
 		return percentage
 
 	def _find_visible_rows(
 		self,
 		entries: List[ViewportEntry],
 		cursor_pos: int,
+		scroll_pos: Optional[int] = 0
 	) -> Tuple[List[ViewportEntry], Optional[int]]:
 		if not entries:
 			return [], 0
@@ -434,18 +453,23 @@ class Viewport(AbstractViewport):
 		total_rows = max([e.row for e in entries]) + 1  # rows start with 0 and we need the count
 		available_rows = self._get_nr_available_rows()
 
-		if cursor_pos >= total_rows:
-			cursor_pos = total_rows - 1
-
-		if total_rows <= available_rows:
-			start = 0
-			end = total_rows
-		elif cursor_pos < available_rows:
-			start = 0
-			end = available_rows
+		if scroll_pos is not None:
+			if total_rows <= available_rows:
+				start = 0
+				end = total_rows
+			else:
+				start = scroll_pos
+				end = scroll_pos + available_rows
 		else:
-			start = cursor_pos - available_rows + 1
-			end = cursor_pos + 1
+			if total_rows <= available_rows:
+				start = 0
+				end = total_rows
+			elif cursor_pos < available_rows:
+				start = 0
+				end = available_rows
+			else:
+				start = cursor_pos - available_rows + 1
+				end = cursor_pos + 1
 
 		rows = [entry for entry in entries if start <= entry.row < end]
 		smallest = min([e.row for e in rows])
@@ -453,7 +477,10 @@ class Viewport(AbstractViewport):
 		for entry in rows:
 			entry.row = entry.row - smallest
 
-		percentage = self._calc_percentage(total_rows, cursor_pos, available_rows)
+		if scroll_pos is not None:
+			percentage = self._calc_scroll_percent(total_rows, available_rows, scroll_pos)
+		else:
+			percentage = None
 
 		return rows, percentage
 
@@ -489,7 +516,7 @@ class EditMenu(AbstractCurses):
 		self._alignment = alignment
 
 		title = f'* {title}' if not self._allow_skip else title
-		self._frame = FrameProperties(title, FrameStyle.MIN)
+		self._frame = FrameProperties(title, FrameStyle.MAX)
 
 		self._help_vp: Optional[Viewport] = None
 		self._header_vp: Optional[Viewport] = None
@@ -533,6 +560,8 @@ class EditMenu(AbstractCurses):
 		result = tui.run(self)
 
 		assert isinstance(result.value, (str, NoneType))
+
+		self._clear_all()
 		return result
 
 	def resize_win(self):
@@ -549,6 +578,9 @@ class EditMenu(AbstractCurses):
 			self._error_vp.erase()
 
 	def _get_input_text(self) -> Optional[str]:
+		assert self._input_vp
+		assert self._error_vp
+
 		text = self._input_vp.gather()
 
 		if text and self._validator:
@@ -560,6 +592,10 @@ class EditMenu(AbstractCurses):
 		return text
 
 	def _draw(self):
+		assert self._help_vp
+		assert self._header_vp
+		assert self._input_vp
+
 		self._help_vp.update([self.help_entry()], 0)
 
 		if self._headers:
@@ -568,33 +604,30 @@ class EditMenu(AbstractCurses):
 		self._input_vp.update()
 		self._input_vp.edit()
 
-	def kickoff(self, win: CursesWindow) -> Result:
+	def kickoff(self, win: _CursesWindow) -> Result:
 		try:
 			self._draw()
 		except KeyboardInterrupt:
 			if not self._handle_interrupt():
-				self.kickoff(win)
+				return self.kickoff(win)
 			else:
 				self._last_state = Result(ResultType.Reset, None)
 
-		if not self._last_state:
-			self.kickoff(win)
+		if self._last_state is None:
+			return self.kickoff(win)
 
-		match self._last_state.type_:
-			case ResultType.Selection:
-				text = self._get_input_text()
+		if self._last_state.type_ == ResultType.Selection:
+			text = self._get_input_text()
 
-				if text is None:
+			if text is None:
+				return self.kickoff(win)
+			else:
+				if not text and not self._allow_skip:
 					return self.kickoff(win)
-				else:
-					if not text and not self._allow_skip:
-						return self.kickoff(win)
 
-				return Result(ResultType.Selection, text)
-			case ResultType.Skip:
-				return self._last_state
-			case ResultType.Reset:
-				return self._last_state
+			return Result(ResultType.Selection, text)
+
+		return self._last_state
 
 	def _process_edit_key(self, key: int):
 		key_handles = MenuKeys.from_ord(key)
@@ -614,8 +647,6 @@ class EditMenu(AbstractCurses):
 			return key
 
 		special_key = key_handles[0]
-
-		debug(f'key: {key}, handle: {special_key}')
 
 		match special_key:
 			case MenuKeys.HELP:
@@ -692,7 +723,7 @@ class SelectMenu(AbstractCurses):
 			self._horizontal_cols = 1
 
 		self._row_entries: List[List[MenuCell]] = []
-		self._preview_cursor_pos = 0
+		self._prev_scroll_pos = 0
 
 		self._visible_entries: List[ViewportEntry] = []
 		self._max_height, self._max_width = tui.max_yx
@@ -710,6 +741,8 @@ class SelectMenu(AbstractCurses):
 		result = tui.run(self)
 
 		assert isinstance(result.value, (MenuItem, NoneType))
+
+		self._clear_all()
 		return result
 
 	def multi(self) -> Result[List[MenuItem]]:
@@ -717,9 +750,11 @@ class SelectMenu(AbstractCurses):
 		result = tui.run(self)
 
 		assert isinstance(result.value, (list, NoneType))
+
+		self._clear_all()
 		return result
 
-	def kickoff(self, win: CursesWindow) -> Result:
+	def kickoff(self, win: _CursesWindow) -> Result:
 		self._draw()
 
 		while True:
@@ -757,7 +792,7 @@ class SelectMenu(AbstractCurses):
 
 		return []
 
-	def _init_viewports(self, preview_size):
+	def _init_viewports(self, arg_prev_size: float | Literal['auto']):
 		footer_height = 2  # possible filter at the bottom
 		y_offset = 0
 
@@ -769,27 +804,28 @@ class SelectMenu(AbstractCurses):
 			self._header_vp = Viewport(self._max_width, header_height, 0, y_offset)
 			y_offset += header_height
 
-		preview_offset = y_offset + footer_height
-		preview_size = self._determine_prev_size(preview_size, offset=preview_offset)
+		prev_offset = y_offset + footer_height
+		prev_size = self._determine_prev_size(arg_prev_size, offset=prev_offset)
 		available_height = self._max_height - y_offset - footer_height
 
 		match self._preview_style:
 			case PreviewStyle.BOTTOM:
-				y_split = int(available_height * (1 - preview_size))
+				menu_height = available_height - prev_size
 
-				self._menu_vp = Viewport(self._max_width, y_split, 0, y_offset, frame=self._frame)
-				self._preview_vp = Viewport(self._max_width, available_height, 0, y_split, frame=self._preview_frame)
+				self._menu_vp = Viewport(self._max_width, menu_height, 0, y_offset, frame=self._frame)
+				self._preview_vp = Viewport(self._max_width, prev_size, 0, menu_height + y_offset,
+											frame=self._preview_frame)
 			case PreviewStyle.RIGHT:
-				x_split = int(self._max_width * (1 - preview_size))
+				menu_width = self._max_width - prev_size
 
-				self._menu_vp = Viewport(x_split, available_height, 0, y_offset, frame=self._frame)
-				self._preview_vp = Viewport(self._max_width - x_split, available_height, x_split, y_offset,
+				self._menu_vp = Viewport(menu_width, available_height, 0, y_offset, frame=self._frame)
+				self._preview_vp = Viewport(prev_size, available_height, menu_width, y_offset,
 											frame=self._preview_frame)
 			case PreviewStyle.TOP:
-				y_split = int(self._max_height * (1 - preview_size))
+				menu_height = available_height - prev_size
 
-				self._menu_vp = Viewport(self._max_width, y_split, 0, available_height, frame=self._frame)
-				self._preview_vp = Viewport(self._max_width, available_height, 0, y_offset, frame=self._preview_frame)
+				self._menu_vp = Viewport(self._max_width, menu_height, 0, prev_size + y_offset, frame=self._frame)
+				self._preview_vp = Viewport(self._max_width, prev_size, 0, y_offset, frame=self._preview_frame)
 			case PreviewStyle.NONE:
 				self._menu_vp = Viewport(self._max_width, available_height, 0, y_offset, frame=self._frame)
 
@@ -799,32 +835,33 @@ class SelectMenu(AbstractCurses):
 		self,
 		preview_size: float | Literal['auto'],
 		offset: int = 0
-	) -> float:
+	) -> int:
 		if not isinstance(preview_size, float) and preview_size != 'auto':
 			raise ValueError('preview size must be a float or "auto"')
 
-		size: float = 0
+		prev_size: int = 0
 
-		if preview_size != 'auto':
-			size = preview_size
-		else:
+		if preview_size == 'auto':
 			match self._preview_style:
 				case PreviewStyle.RIGHT:
 					menu_width = self._item_group.max_width + 5
-					size = 1 - (menu_width / self._max_width)
+					prev_size = self._max_width - menu_width
 				case PreviewStyle.BOTTOM:
-					offset += len(self._item_group.items)
-					available_height = self._max_height - offset
-					size = available_height / self._max_height
+					menu_height = len(self._item_group.items) + 1  # leave empty line between menu and preview
+					prev_size = self._max_height - offset - menu_height
 				case PreviewStyle.TOP:
-					offset += len(self._item_group.items)
-					available_height = self._max_height - offset
-					size = available_height / self._max_height
+					menu_height = len(self._item_group.items)
+					prev_size = self._max_height - offset - menu_height
+		else:
+			match self._preview_style:
+				case PreviewStyle.RIGHT:
+					prev_size = int(self._max_width * preview_size)
+				case PreviewStyle.BOTTOM:
+					prev_size = int((self._max_height - offset) * preview_size)
+				case PreviewStyle.TOP:
+					prev_size = int((self._max_height - offset) * preview_size)
 
-		if size > 0.9:
-			size = 0.9
-
-		return size
+		return prev_size
 
 	def _draw(self):
 		footer_entries = self._footer_entries()
@@ -832,13 +869,14 @@ class SelectMenu(AbstractCurses):
 		vp_entries = self._get_row_entries()
 		cursor_pos = self._get_cursor_pos()
 
-		self._update_viewport(self._help_vp, [self.help_entry()])
+		if self._help_vp:
+			self._update_viewport(self._help_vp, [self.help_entry()])
 
 		if self._header_vp:
 			self._update_viewport(self._header_vp, self._headers)
 
 		if self._menu_vp:
-			self._update_viewport(self._menu_vp, vp_entries, cursor_pos)
+			self._update_viewport(self._menu_vp, vp_entries, cursor_pos=cursor_pos)
 
 		if vp_entries:
 			self._update_preview()
@@ -855,7 +893,7 @@ class SelectMenu(AbstractCurses):
 		cursor_pos: int = 0
 	):
 		if entries:
-			viewport.update(entries, cursor_pos)
+			viewport.update(entries, cursor_pos=cursor_pos)
 		else:
 			viewport.update([])
 
@@ -882,6 +920,8 @@ class SelectMenu(AbstractCurses):
 			return self._column_spacing
 
 	def _cols_x_align_offset(self) -> int:
+		assert self._menu_vp
+
 		x_offset = 0
 		if self._alignment == Alignment.CENTER:
 			cols_widths = self._get_col_widths()
@@ -974,7 +1014,17 @@ class SelectMenu(AbstractCurses):
 		preview_text = action_text.split('\n')
 		entries = [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(preview_text)]
 
-		self._preview_vp.update(entries, cursor_pos=self._preview_cursor_pos)
+		self._calc_prev_scroll_pos(entries)
+
+		self._preview_vp.update(entries, scroll_pos=self._prev_scroll_pos)
+
+	def _calc_prev_scroll_pos(self, entries: List[ViewportEntry]):
+		total_rows = max([e.row for e in entries]) + 1  # rows start with 0 and we need the count
+
+		if self._prev_scroll_pos >= total_rows:
+			self._prev_scroll_pos = total_rows - 2
+		elif self._prev_scroll_pos < 0:
+			self._prev_scroll_pos = 0
 
 	def _default_suffix(self, item: MenuItem) -> str:
 		suffix = ''
@@ -1001,8 +1051,6 @@ class SelectMenu(AbstractCurses):
 
 	def _process_input_key(self, key: int) -> Optional[Result]:
 		key_handles = MenuKeys.from_ord(key)
-
-		debug(f'key: {key}, handle: {key_handles}')
 
 		if self._help_active:
 			if MenuKeys.ESC in key_handles:
@@ -1078,9 +1126,9 @@ class SelectMenu(AbstractCurses):
 			case MenuKeys.NUM_KEYS:
 				self._item_group.set_focus_item_index(key - 49)
 			case MenuKeys.SCROLL_DOWN:
-				self._preview_cursor_pos += 10
+				self._prev_scroll_pos += SCROLL_INTERVAL
 			case MenuKeys.SCROLL_UP:
-				self._preview_cursor_pos -= 10
+				self._prev_scroll_pos -= SCROLL_INTERVAL
 			case _:
 				pass
 

@@ -1,12 +1,14 @@
 import curses
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Any, Optional, List, TypeVar, Generic
+from typing import Optional, List, TypeVar, Generic
 
 from .menu_item import MenuItem
 
 V = TypeVar('V', MenuItem, List[MenuItem], str)
-CursesWindow = TypeVar('CursesWindow', bound=Any)
+
+
+SCROLL_INTERVAL = 10
 
 
 class STYLE(Enum):
@@ -47,18 +49,13 @@ class MenuKeys(Enum):
 	# Help view: CTRL+h
 	HELP = {8}
 	# Scroll up: CTRL+up, CTRL+k
-	SCROLL_UP = {581, 11}
+	SCROLL_UP = {581}
 	# Scroll down: CTRL+down, CTRL+j
-	SCROLL_DOWN = {540, 10}
+	SCROLL_DOWN = {540}
 
 	@classmethod
 	def from_ord(cls, key: int) -> List['MenuKeys']:
 		matches = []
-		decoded = MenuKeys.decode(key)
-
-		# special handler as ENTER and CTRL+j result in the same code
-		# if decoded == '^J':
-		# 	key = 540
 
 		for group in MenuKeys:
 			if key in group.value:
@@ -142,9 +139,9 @@ class Alignment(Enum):
 
 @dataclass
 class _FrameDim:
-	start: int
-	end: int
+	x_start: int
+	x_end: int
 	height: int
 
-	def delta(self) -> int:
-		return self.end - self.start
+	def x_delta(self) -> int:
+		return self.x_end - self.x_start
