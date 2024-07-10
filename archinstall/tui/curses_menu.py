@@ -2,7 +2,6 @@ import curses
 import curses.panel
 import os
 import signal
-from _curses import _CursesWindow as _CursesWindow
 from abc import ABCMeta, abstractmethod
 from curses.textpad import Textbox
 from dataclasses import dataclass
@@ -39,7 +38,7 @@ class AbstractCurses(metaclass=ABCMeta):
 			self._help_window.erase()
 
 	@abstractmethod
-	def kickoff(self, win: _CursesWindow) -> Result:
+	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		pass
 
 	def _set_help_viewport(self):
@@ -302,8 +301,8 @@ class EditViewport(AbstractViewport):
 		self.process_key = process_key
 		self._frame = frame
 
-		self._main_win: Optional[_CursesWindow] = None
-		self._edit_win: Optional[_CursesWindow] = None
+		self._main_win: Optional['curses._CursesWindow'] = None
+		self._edit_win: Optional['curses._CursesWindow'] = None
 		self._textbox: Optional[Textbox] = None
 
 		self._init_wins()
@@ -604,7 +603,7 @@ class EditMenu(AbstractCurses):
 		self._input_vp.update()
 		self._input_vp.edit()
 
-	def kickoff(self, win: _CursesWindow) -> Result:
+	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		try:
 			self._draw()
 		except KeyboardInterrupt:
@@ -754,7 +753,7 @@ class SelectMenu(AbstractCurses):
 		self._clear_all()
 		return result
 
-	def kickoff(self, win: _CursesWindow) -> Result:
+	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		self._draw()
 
 		while True:
@@ -1180,6 +1179,13 @@ class SelectMenu(AbstractCurses):
 
 class Tui:
 	def __init__(self):
+		self._screen: Any = None
+		self._colors: Dict[str, int] = {}
+		self._component: Optional[AbstractCurses] = None
+
+		signal.signal(signal.SIGWINCH, self._sig_win_resize)
+
+	def init(self):
 		self._screen = curses.initscr()
 
 		curses.noecho()
@@ -1193,12 +1199,7 @@ class Tui:
 			curses.start_color()
 			self._set_up_colors()
 
-		self._colors: Dict[str, int] = {}
 		self._soft_clear_terminal()
-
-		self._component: Optional[AbstractCurses] = None
-
-		signal.signal(signal.SIGWINCH, self._sig_win_resize)
 
 	@property
 	def screen(self) -> Any:
