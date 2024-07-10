@@ -64,12 +64,12 @@ parser = ArgumentParser()
 
 def define_arguments():
 	"""
-    Define which explicit arguments do we allow.
-    Refer to https://docs.python.org/3/library/argparse.html for documentation and
-            https://docs.python.org/3/howto/argparse.html for a tutorial
-    Remember that the property/entry name python assigns to the parameters is the first string defined as argument and
-    dashes inside it '-' are changed to '_'
-    """
+	Define which explicit arguments do we allow.
+	Refer to https://docs.python.org/3/library/argparse.html for documentation and
+			https://docs.python.org/3/howto/argparse.html for a tutorial
+	Remember that the property/entry name python assigns to the parameters is the first string defined as argument and
+	dashes inside it '-' are changed to '_'
+	"""
 	parser.add_argument("-v", "--version", action="version", version="%(prog)s " + __version__)
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
 	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
@@ -105,22 +105,22 @@ if 'sphinx' not in sys.modules:
 
 def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err: bool = False) -> dict:
 	"""We accept arguments not defined to the parser. (arguments "ad hoc").
-    Internally argparse return to us a list of words so we have to parse its contents, manually.
-    We accept following individual syntax for each argument
-        --argument value
-        --argument=value
-        --argument = value
-        --argument   (boolean as default)
-    the optional parameters to the function alter a bit its behaviour:
-    * multiple allows multivalued arguments, each value separated by whitespace. They're returned as a list
-    * error. If set any non correctly specified argument-value pair to raise an exception. Else, simply notifies the existence of a problem and continues processing.
+	Internally argparse return to us a list of words so we have to parse its contents, manually.
+	We accept following individual syntax for each argument
+		--argument valuetmp_list
+		--argument=value
+		--argument = value
+		--argument   (boolean as default)
+	the optional parameters to the function alter a bit its behaviour:
+	* multiple allows multivalued arguments, each value separated by whitespace. They're returned as a list
+	* error. If set any non correctly specified argument-value pair to raise an exception. Else, simply notifies the existence of a problem and continues processing.
 
-    To a certain extent, multiple and error are incompatible. In fact, the only error this routine can catch, as of now, is the event
-    argument value value ...
-    which isn't am error if multiple is specified
-    """
+	To a certain extent, multiple and error are incompatible. In fact, the only error this routine can catch, as of now, is the event
+	argument value value ...
+	which isn't am error if multiple is specified
+	"""
 	tmp_list = unknowns[
-			   :]  # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
+				:]  # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
 	config = {}
 	key = None
 	last_key = None
@@ -157,9 +157,9 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 
 def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
 	"""
-    Takes arguments (dictionary or argparse Namespace) and removes any
-    None values. This ensures clean mergers during dict.update(args)
-    """
+	Takes arguments (dictionary or argparse Namespace) and removes any
+	None values. This ensures clean mergers during dict.update(args)
+	"""
 	if type(args) is Namespace:
 		args = vars(args)
 
@@ -176,18 +176,18 @@ def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
 
 def get_arguments() -> Dict[str, Any]:
 	""" The handling of parameters from the command line
-    Is done on following steps:
-    0) we create a dict to store the arguments and their values
-    1) preprocess.
-        We take those arguments which use JSON files, and read them into the argument dict. So each first level entry becomes a argument on it's own right
-    2) Load.
-        We convert the predefined argument list directly into the dict via the vars() function. Non specified arguments are loaded with value None or false if they are booleans (action="store_true").
-        The name is chosen according to argparse conventions. See above (the first text is used as argument name, but underscore substitutes dash)
-        We then load all the undefined arguments. In this case the names are taken as written.
-        Important. This way explicit command line arguments take precedence over configuration files.
-    3) Amend
-        Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments dictionary
-    """
+	Is done on following steps:
+	0) we create a dict to store the arguments and their values
+	1) preprocess.
+		We take those arguments which use JSON files, and read them into the argument dict. So each first level entry becomes a argument on it's own right
+	2) Load.
+		We convert the predefined argument list directly into the dict via the vars() function. Non specified arguments are loaded with value None or false if they are booleans (action="store_true").
+		The name is chosen according to argparse conventions. See above (the first text is used as argument name, but underscore substitutes dash)
+		We then load all the undefined arguments. In this case the names are taken as written.
+		Important. This way explicit command line arguments take precedence over configuration files.
+	3) Amend
+		Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments dictionary
+	"""
 	config: Dict[str, Any] = {}
 	args, unknowns = parser.parse_known_args()
 	# preprocess the JSON files.
@@ -220,8 +220,8 @@ def get_arguments() -> Dict[str, Any]:
 
 def load_config():
 	"""
-    refine and set some arguments. Formerly at the scripts
-    """
+	refine and set some arguments. Formerly at the scripts
+	"""
 	from .lib.models import NetworkConfiguration
 
 	arguments['locale_config'] = locale.LocaleConfiguration.parse_arg(arguments)
@@ -319,10 +319,10 @@ def _check_new_version():
 
 def main():
 	"""
-    This can either be run as the compiled and installed application: python setup.py install
-    OR straight as a module: python -m archinstall
-    In any case we will be attempting to load the provided script to be run from the scripts/ folder
-    """
+	This can either be run as the compiled and installed application: python setup.py install
+	OR straight as a module: python -m archinstall
+	In any case we will be attempting to load the provided script to be run from the scripts/ folder
+	"""
 	if not arguments.get('skip_version_check', False):
 		_check_new_version()
 
