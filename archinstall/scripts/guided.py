@@ -2,15 +2,15 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING, Optional
 
 import archinstall
-from archinstall import SysInfo, ConfigurationOutput
 from archinstall import info, debug
-from archinstall.lib import disk
+from archinstall import SysInfo
 from archinstall.lib import locale
+from archinstall.lib import disk
 from archinstall.lib.global_menu import GlobalMenu
+from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.installer import Installer
 from archinstall.lib.menu import Menu
-from archinstall.lib.models import AudioConfiguration
-from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
 
