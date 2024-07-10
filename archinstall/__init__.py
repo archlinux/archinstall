@@ -92,10 +92,10 @@ def define_arguments():
 						help="Skip the version check when running archinstall")
 
 
-define_arguments()
 
 if 'sphinx' not in sys.modules:
 	if '--help' in sys.argv or '-h' in sys.argv:
+		define_arguments()
 		parser.print_help()
 		exit(0)
 	if os.getuid() != 0:
