@@ -74,7 +74,8 @@ class AbstractCurses(metaclass=ABCMeta):
 		return ViewportEntry(str(_('Press Ctrl+h for help')), 0, 0, STYLE.NORMAL)
 
 	def _show_help(self):
-		assert self._help_window
+		if not self._help_window:
+			return
 
 		help_text = Help.get_help_text()
 		lines = help_text.split('\n')
@@ -319,7 +320,8 @@ class EditViewport(AbstractViewport):
 		)
 
 	def update(self):
-		assert self._main_win
+		if not self._main_win:
+			return
 
 		self._main_win.erase()
 
@@ -336,13 +338,13 @@ class EditViewport(AbstractViewport):
 		self._main_win.refresh()
 
 	def erase(self):
-		assert self._main_win
-		self._main_win.erase()
-		self._main_win.refresh()
+		if self._main_win:
+			self._main_win.erase()
+			self._main_win.refresh()
 
 	def edit(self):
-		assert self._edit_win
-		assert self._main_win
+		if not self._edit_win or not self._main_win:
+			return
 
 		self._edit_win.erase()
 
@@ -591,17 +593,15 @@ class EditMenu(AbstractCurses):
 		return text
 
 	def _draw(self):
-		assert self._help_vp
-		assert self._header_vp
-		assert self._input_vp
+		if self._help_vp:
+			self._help_vp.update([self.help_entry()], 0)
 
-		self._help_vp.update([self.help_entry()], 0)
-
-		if self._headers:
+		if self._headers and self._header_vp:
 			self._header_vp.update(self._headers, 0)
 
-		self._input_vp.update()
-		self._input_vp.edit()
+		if self._input_vp:
+			self._input_vp.update()
+			self._input_vp.edit()
 
 	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		try:
