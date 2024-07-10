@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from dataclasses import dataclass, field
 from typing import Any, Self, Optional, List, TYPE_CHECKING
 from typing import Callable
 
