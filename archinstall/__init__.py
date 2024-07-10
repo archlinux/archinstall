@@ -42,6 +42,7 @@ from .lib.general import (
 if TYPE_CHECKING:
 	_: Any
 
+
 __version__ = "2.8.1"
 storage['__version__'] = __version__
 
