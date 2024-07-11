@@ -60,10 +60,6 @@ debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 debug(f"Disk states before installing: {disk.disk_layouts()}")
 
-if 'sphinx' not in sys.modules and os.getuid() != 0:
-	print(_("Archinstall requires root privileges to run. See --help for more."))
-	exit(1)
-
 parser = ArgumentParser()
 
 
@@ -94,6 +90,16 @@ def define_arguments():
 	parser.add_argument("--plugin", nargs="?", type=str)
 	parser.add_argument("--skip-version-check", action="store_true",
 						help="Skip the version check when running archinstall")
+
+
+if 'sphinx' not in sys.modules:
+	if '--help' in sys.argv or '-h' in sys.argv:
+		define_arguments()
+		parser.print_help()
+		exit(0)
+	if os.getuid() != 0:
+		print(_("Archinstall requires root privileges to run. See --help for more."))
+		exit(1)
 
 
 def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err: bool = False) -> dict:
