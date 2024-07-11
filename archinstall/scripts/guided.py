@@ -10,8 +10,7 @@ from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.installer import Installer
 from archinstall.lib.menu import Menu
-from archinstall.lib.models import AudioConfiguration
-from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
 
