@@ -1144,10 +1144,10 @@ msgid "Total: {} / {}"
 msgstr "Gesamtlänge: {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Alle eingegebenen Werte können mit einer Einheit angegeben werden: B, KB, KiB, MB, MiB..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Wenn keine Einheit angegeben wurde, wird der Wert als Sektoren interpretiert."
 
 #, fuzzy
 msgid "Enter start (default: sector {}): "
@@ -1158,23 +1158,23 @@ msgid "Enter end (default: {}): "
 msgstr "Bitte geben Sie den Startsektor ein (Standard: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "Fehler beim Finden der fido2 Geräte. Ist libfido2 installiert?"
 
 msgid "Path"
-msgstr ""
+msgstr "Pfad"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "Hersteller"
 
 msgid "Product"
-msgstr ""
+msgstr "Produkt"
 
 #, fuzzy, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "Manuelle Konfiguration"
 
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #, fuzzy
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
@@ -1188,7 +1188,7 @@ msgid ""
 msgstr ""
 "Geben Sie die Nummer an parallelen Downloads an.\n"
 " (Wert zwischen 1 und {max_downloads})\n"
-"Achtung:"
+"Achtung:\n"
 
 #, fuzzy
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
@@ -1217,23 +1217,23 @@ msgstr ""
 "Option auswählen, um Sway Zugriff auf deine Hardware zu geben"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Alle eingegebenen Werte können mit einer Einheit angegeben werden: %, B, KB, KiB, MB, Mib"
 
 #, fuzzy
 msgid "Would you like to use unified kernel images?"
 msgstr "Möchten Sie Auslagerungsspeicher (Swap) als zram verwenden?"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "Vereinigte Kernel-Images"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "Warte auf fertigstellung Zeitsynchronisierung (timedatectl show)."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Zeitsynchronisierung wird nicht fertig, während du wartest, lies dir die Dokumentation für Umgehungen dieses Fehlers durch: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "Überspringe warten auf die Automatische Zeitsynchronisierung (dies kann Fehler verursachen, wenn die Zeit während der Installation nicht synchronisiert ist.)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr ""
