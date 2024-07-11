@@ -41,7 +41,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 			)
 		self._menu_options['lvm_config'] = \
 			Selector(
-				_('Logical Volume Management (LVM)'),
+				f'{_('LVM - Logical Volume Management')} (BETA)',
 				lambda x: self._select_lvm_config(x),
 				display_func=lambda x: self.defined_text if x else '',
 				preview_func=self._prev_lvm_config,

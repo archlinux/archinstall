@@ -536,7 +536,7 @@ msgid "Missing configurations:\n"
 msgstr "設定が存在しません:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "root-パスワードか1人以上のスーパーユーザーを指定してください"
+msgstr "root パスワードか、1人以上のスーパーユーザーを指定してください"
 
 msgid "Manage superuser accounts: "
 msgstr "スーパーユーザーアカウントを管理: "
@@ -576,7 +576,7 @@ msgid "Subvolume name :"
 msgstr "サブボリューム名:"
 
 msgid "Select a mount point :"
-msgstr "マウント ポイントを選択:"
+msgstr "マウントポイントを選択:"
 
 msgid "Select the desired subvolume options "
 msgstr "サブボリュームのオプションを選択"
@@ -752,7 +752,7 @@ msgid "Bus-type"
 msgstr "Bus タイプ"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "root-パスワードか、1人以上の sudo 権限を持つユーザーを指定する必要があります"
+msgstr "root パスワードか、1人以上の sudo 権限を持つユーザーを指定する必要があります"
 
 msgid "Enter username (leave blank to skip): "
 msgstr "ユーザー名を入力（無記入でスキップ）: "
@@ -861,7 +861,7 @@ msgid "Select a partitioning option"
 msgstr "パーティション作成のオプションを選択"
 
 msgid "Enter the root directory of the mounted devices: "
-msgstr "マウントされたデバイスのルートディレクトリを入力: "
+msgstr "マウントしているデバイスのルートディレクトリを入力: "
 
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "/home パーティションの最小容量: {}GiB\n"
@@ -960,7 +960,7 @@ msgid "Manual Partitioning"
 msgstr "手動でパーティションを作成"
 
 msgid "Pre-mounted configuration"
-msgstr "事前にマウントされた設定"
+msgstr "現在のマウント設定"
 
 msgid "Unknown"
 msgstr "不明"
@@ -1244,6 +1244,9 @@ msgstr "圧縮する"
 msgid "Disable Copy-on-Write"
 msgstr "コピーオンライトを無効にする"
 
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。例: GNOME, KDE Plasma, Sway"
+
 msgid "Configuration type: {}"
 msgstr "設定タイプ: {}"
 
@@ -1258,21 +1261,6 @@ msgstr "NetworkManager を使用する（GNOME と KDE Plasma でインターネ
 
 msgid "Select a LVM option"
 msgstr "LVM のオプションを選択"
-
-msgid "Default layout"
-msgstr "デフォルトのレイアウト"
-
-msgid "No Encryption"
-msgstr "暗号化なし"
-
-msgid "LUKS"
-msgstr "LUKS"
-
-msgid "LVM on LUKS"
-msgstr "LUKS 上の LVM"
-
-msgid "LUKS on LVM"
-msgstr "LVM 上の LUKS"
 
 msgid "Partitioning"
 msgstr "パーティションを作成"
@@ -1295,5 +1283,29 @@ msgstr "暗号化する LVM ボリューム"
 msgid "Select which LVM volumes to encrypt"
 msgstr "暗号化する LVM ボリュームを選択"
 
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。例: GNOME, KDE Plasma, Sway"
+msgid "Default layout"
+msgstr "デフォルトのレイアウト"
+
+msgid "No Encryption"
+msgstr "暗号化なし"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LUKS 上の LVM"
+
+msgid "LUKS on LVM"
+msgstr "LVM 上の LUKS"
+
+msgid "Yes"
+msgstr "はい"
+
+msgid "No"
+msgstr "いいえ"
+
+msgid "Archinstall help"
+msgstr "Archinstall ヘルプ"
+
+msgid " (default)"
+msgstr " (デフォルト)"

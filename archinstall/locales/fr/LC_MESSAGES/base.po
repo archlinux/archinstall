@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-23 21:38+0200\n"
+"PO-Revision-Date: 2024-06-24 21:28+0200\n"
 "Last-Translator: Roxfr <roxfr@outlook.fr>\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Un fichier journal a été créé ici : {} {}"
@@ -1520,13 +1520,90 @@ msgstr "Marquer/Démarquer comme nodatacow"
 msgid "Would you like to use compression or disable CoW?"
 msgstr ""
 "Souhaitez-vous utiliser la compression ou désactiver la copie à l'écriture "
-"(CoW ) ?"
+"(CoW) ?"
 
 msgid "Use compression"
 msgstr "Utiliser la compression"
 
 msgid "Disable Copy-on-Write"
 msgstr "Désactiver la copie à l'écriture (CoW)"
+
+msgid ""
+"Provides a selection of desktop environments and tiling window managers, e."
+"g. GNOME, KDE Plasma, Sway"
+msgstr ""
+"Fournit une sélection d'environnements de bureau et de gestionnaires de "
+"fenêtres en mosaïque, par ex. GNOME, KDE Plasma, Sway"
+
+msgid "Configuration type: {}"
+msgstr "Type de configuration : {}"
+
+msgid "LVM configuration type"
+msgstr "Type de configuration LVM"
+
+msgid ""
+"LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+"Le chiffrement de disque LVM avec plus de 2 partitions n'est actuellement "
+"pas pris en charge"
+
+msgid ""
+"Use NetworkManager (necessary to configure internet graphically in GNOME and "
+"KDE Plasma)"
+msgstr ""
+"Utiliser NetworkManager (nécessaire pour configurer internet graphiquement "
+"dans GNOME et KDE Plasma)"
+
+msgid "Select a LVM option"
+msgstr "Sélectionner une option LVM"
+
+msgid "Partitioning"
+msgstr "Partitionnement"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Gestion des volumes logiques (LVM)"
+
+msgid "Physical volumes"
+msgstr "Volumes physiques"
+
+msgid "Volumes"
+msgstr "Volumes"
+
+msgid "LVM volumes"
+msgstr "Volumes LVM"
+
+msgid "LVM volumes to be encrypted"
+msgstr "Volumes LVM à chiffrer"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "Sélectionner les volumes LVM à chiffrer"
+
+msgid "Default layout"
+msgstr "Disposition par défaut"
+
+msgid "No Encryption"
+msgstr "Pas de chiffrement"
+
+msgid "LUKS"
+msgstr "Configuration de la clé unifiée Linux (LUKS)"
+
+msgid "LVM on LUKS"
+msgstr "LVM sur LUKS (sécurité maximale)"
+
+msgid "LUKS on LVM"
+msgstr "LUKS sur LVM (flexibilité)"
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "No"
+msgstr "Non"
+
+msgid "Archinstall help"
+msgstr "Aide pour Archinstall"
+
+msgid " (default)"
+msgstr " (défaut)"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

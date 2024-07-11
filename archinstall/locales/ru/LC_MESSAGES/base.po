@@ -1244,3 +1244,69 @@ msgstr "Использовать сжатие"
 
 msgid "Disable Copy-on-Write"
 msgstr "Отключить копирование при записи (CoW)"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Предоставляет выбор окружений рабочего стола и тайловых оконных менеджеров, например, GNOME, KDE Plasma, Sway"
+
+msgid "Configuration type: {}"
+msgstr "Тип конфигурации: {}"
+
+msgid "LVM configuration type"
+msgstr "Тип конфигурации LVM"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "Шифрование дисков LVM с более чем 2 разделами в настоящее время не поддерживается"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "Использовать NetworkManager (необходим для графической настройки интернета в GNOME и KDE Plasma)"
+
+msgid "Select a LVM option"
+msgstr "Выберите вариант LVM"
+
+msgid "Partitioning"
+msgstr "Разбивка на разделы"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Управление логическими томами (LVM)"
+
+msgid "Physical volumes"
+msgstr "Физические тома"
+
+msgid "Volumes"
+msgstr "Тома"
+
+msgid "LVM volumes"
+msgstr "Тома LVM"
+
+msgid "LVM volumes to be encrypted"
+msgstr "Тома LVM, подлежащие шифрованию"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "Выберите тома LVM для шифрования"
+
+msgid "Default layout"
+msgstr "Разметка по умолчанию"
+
+msgid "No Encryption"
+msgstr "Нет шифрования"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM на LUKS"
+
+msgid "LUKS on LVM"
+msgstr "LUKS на LVM"
+
+msgid "Yes"
+msgstr "Да"
+
+msgid "No"
+msgstr "Нет"
+
+msgid "Archinstall help"
+msgstr "Справка Archinstall"
+
+msgid " (default)"
+msgstr " (по умолчанию)"
