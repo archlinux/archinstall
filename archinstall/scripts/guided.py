@@ -128,7 +128,7 @@ def perform_installation(mountpoint: Path):
 		if disk_config.config_type != disk.DiskLayoutType.Pre_mount:
 			if disk_encryption and disk_encryption.encryption_type != disk.EncryptionType.NoEncryption:
 				# generate encryption key files for the mounted luks devices
-				installation.generate_key_files()
+				installation.setup_luks_unlock()
 
 		if mirror_config := archinstall.arguments.get('mirror_config', None):
 			installation.set_mirrors(mirror_config, on_target=False)

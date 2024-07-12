@@ -354,9 +354,13 @@ class Installer:
 			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
 
 	def generate_key_files(self) -> None:
+		warn("Deprecation warning: generate_key_files() has been renamed to setup_luks_unlock() and generate_key_files will be removed.")
+		return this.setup_luks_unlock(self)
+
+	def setup_luks_unlock(self) -> None:
 		match self._disk_encryption.encryption_type:
 			case disk.EncryptionType.Luks:
-				self._generate_key_files_partitions()
+				self._setup_luks_unlock_partitions()
 			case disk.EncryptionType.LuksOnLvm:
 				self._generate_key_file_lvm_volumes()
 			case disk.EncryptionType.LvmOnLuks:
@@ -365,7 +369,11 @@ class Installer:
 				# so we won't need any keyfile generation atm
 				pass
 
-	def _generate_key_files_partitions(self):
+	def _generate_key_files_partitions(self) -> None:
+		warn("Deprecation warning: _generate_key_files_partitions() has been renamed to _setup_luks_unlock_partitions() and _generate_key_files_partitions will be removed.")
+		return this._setup_luks_unlock_partitions(self)
+
+	def _setup_luks_unlock_partitions(self) -> None:
 		for part_mod in self._disk_encryption.partitions:
 			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
 
@@ -386,6 +394,8 @@ class Installer:
 						part_mod.safe_dev_path,
 						self._disk_encryption.encryption_password
 					)
+
+			luks_handler.create_crypttab(self.target)
 
 	def _generate_key_file_lvm_volumes(self):
 		for vol in self._disk_encryption.lvm_volumes:

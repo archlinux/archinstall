@@ -191,6 +191,10 @@ class Luks2:
 
 		self._mapper_dev = None
 
+	def create_crypttab(self, target_path: Path, override: bool = False):
+		crypttab_path = target_path / 'etc/crypttab'
+		self._crypttab(crypttab_path, kf_path, options=["luks", "key-slot=1"], override=override)
+
 	def create_keyfile(self, target_path: Path, override: bool = False):
 		"""
 		Routine to create keyfiles, so it can be moved elsewhere
@@ -202,7 +206,6 @@ class Luks2:
 		# automatically load this key if we name the device to "xyzloop"
 		kf_path = Path(f'/etc/cryptsetup-keys.d/{self.mapper_name}.key')
 		key_file = target_path / kf_path.relative_to(kf_path.root)
-		crypttab_path = target_path / 'etc/crypttab'
 
 		if key_file.exists():
 			if not override:
@@ -219,7 +222,6 @@ class Luks2:
 		key_file.chmod(0o400)
 
 		self._add_key(key_file)
-		self._crypttab(crypttab_path, kf_path, options=["luks", "key-slot=1"])
 
 	def _add_key(self, key_file: Path):
 		debug(f'Adding additional key-file {key_file}')
@@ -240,12 +242,34 @@ class Luks2:
 		self,
 		crypttab_path: Path,
 		key_file: Path,
-		options: List[str]
+		options: List[str],
+		override: bool = False
 	) -> None:
 		debug(f'Adding crypttab entry for key {key_file}')
 
-		with open(crypttab_path, 'a') as crypttab:
+		with open(crypttab_path, 'r+') as crypttab:
+			existing_data = crypttab.readlines()
 			opt = ','.join(options)
 			uuid = self._get_luks_uuid()
-			row = f"{self.mapper_name} UUID={uuid} {key_file} {opt}\n"
-			crypttab.write(row)
+			new_row = f"{self.mapper_name} UUID={uuid} {key_file} {opt}\n"
+
+			for index, existing_row in enumerate(existing_data):
+				if uuid in existing_row:
+					if override is False:
+						print(f"Found {uuid} in {existing_row}")
+						return True
+					else:
+						existing_data.pop(index)
+
+			# Make sure the last entry ends with \n
+			# before inserting our new entry at the end
+			if not existing_data[-1][-1:] == '\n':
+				existing_data.append('\n')
+
+			existing_data.append(new_row)
+
+			print(f"Writing {existing_data}")
+
+			crypttab.seek(0)
+			crypttab.truncate()
+			crypttab.write(''.join(existing_data))
