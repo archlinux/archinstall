@@ -191,11 +191,16 @@ class Luks2:
 
 		self._mapper_dev = None
 
-	def create_crypttab(self, target_path: Path, override: bool = False):
+	def create_crypttab(self, target_path: Path, key_file: Path|None = None, options: List[str] = None, override: bool = False):
 		crypttab_path = target_path / 'etc/crypttab'
-		self._crypttab(crypttab_path, kf_path, options=["luks", "key-slot=1"], override=override)
+		self._crypttab(
+			crypttab_path,
+			key_file=key_file,
+			options=options or ["luks", "key-slot=1"],
+			override=override
+		)
 
-	def create_keyfile(self, target_path: Path, override: bool = False):
+	def create_keyfile(self, target_path: Path, override: bool = False) -> Path:
 		"""
 		Routine to create keyfiles, so it can be moved elsewhere
 		"""
@@ -223,6 +228,8 @@ class Luks2:
 
 		self._add_key(key_file)
 
+		return kf_path
+
 	def _add_key(self, key_file: Path):
 		debug(f'Adding additional key-file {key_file}')
 
@@ -241,8 +248,8 @@ class Luks2:
 	def _crypttab(
 		self,
 		crypttab_path: Path,
-		key_file: Path,
 		options: List[str],
+		key_file: Path|None = None,
 		override: bool = False
 	) -> None:
 		debug(f'Adding crypttab entry for key {key_file}')
@@ -251,7 +258,7 @@ class Luks2:
 			existing_data = crypttab.readlines()
 			opt = ','.join(options)
 			uuid = self._get_luks_uuid()
-			new_row = f"{self.mapper_name} UUID={uuid} {key_file} {opt}\n"
+			new_row = f"{self.mapper_name} UUID={uuid} {key_file or 'none'} {opt}\n"
 
 			for index, existing_row in enumerate(existing_data):
 				if uuid in existing_row:

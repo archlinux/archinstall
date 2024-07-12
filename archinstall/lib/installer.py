@@ -355,7 +355,7 @@ class Installer:
 
 	def generate_key_files(self) -> None:
 		warn("Deprecation warning: generate_key_files() has been renamed to setup_luks_unlock() and generate_key_files will be removed.")
-		return this.setup_luks_unlock(self)
+		return self.setup_luks_unlock(self)
 
 	def setup_luks_unlock(self) -> None:
 		match self._disk_encryption.encryption_type:
@@ -371,7 +371,7 @@ class Installer:
 
 	def _generate_key_files_partitions(self) -> None:
 		warn("Deprecation warning: _generate_key_files_partitions() has been renamed to _setup_luks_unlock_partitions() and _generate_key_files_partitions will be removed.")
-		return this._setup_luks_unlock_partitions(self)
+		return self._setup_luks_unlock_partitions(self)
 
 	def _setup_luks_unlock_partitions(self) -> None:
 		for part_mod in self._disk_encryption.partitions:
@@ -385,7 +385,9 @@ class Installer:
 
 			if gen_enc_file and not part_mod.is_root():
 				debug(f'Creating key-file: {part_mod.dev_path}')
-				luks_handler.create_keyfile(self.target)
+				key_file = luks_handler.create_keyfile(self.target)
+			else:
+				key_file = None
 
 			if part_mod.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
@@ -395,7 +397,10 @@ class Installer:
 						self._disk_encryption.encryption_password
 					)
 
-			luks_handler.create_crypttab(self.target)
+			luks_handler.create_crypttab(
+				target_path=self.target,
+				key_file=key_file
+			)
 
 	def _generate_key_file_lvm_volumes(self):
 		for vol in self._disk_encryption.lvm_volumes:
