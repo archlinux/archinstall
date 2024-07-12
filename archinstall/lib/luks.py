@@ -191,7 +191,7 @@ class Luks2:
 
 		self._mapper_dev = None
 
-	def create_crypttab(self, target_path: Path, key_file: Path|None = None, options: List[str] = None, override: bool = False):
+	def create_crypttab(self, target_path: Path, key_file: Path|None = None, options: List[str]|None = None, override: bool = False):
 		crypttab_path = target_path / 'etc/crypttab'
 		self._crypttab(
 			crypttab_path,
@@ -215,7 +215,7 @@ class Luks2:
 		if key_file.exists():
 			if not override:
 				info(f'Key file {key_file} already exists, keeping existing')
-				return
+				return kf_path
 			else:
 				info(f'Key file {key_file} already exists, overriding')
 
