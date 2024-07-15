@@ -263,7 +263,7 @@ class Luks2:
 			for index, existing_row in enumerate(existing_data):
 				if uuid in existing_row:
 					if override is False:
-						print(f"Found {uuid} in {existing_row}")
+						debug(f"Found {uuid} in {existing_row}")
 						return True
 					else:
 						existing_data.pop(index)
@@ -274,8 +274,6 @@ class Luks2:
 				existing_data.append('\n')
 
 			existing_data.append(new_row)
-
-			print(f"Writing {existing_data}")
 
 			crypttab.seek(0)
 			crypttab.truncate()
