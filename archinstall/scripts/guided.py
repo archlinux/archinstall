@@ -13,6 +13,7 @@ from archinstall.lib.menu import Menu
 from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
+from archinstall.tui.curses_menu import tui
 
 if TYPE_CHECKING:
 	_: Any
@@ -23,7 +24,7 @@ if archinstall.arguments.get('help'):
 	exit(0)
 
 
-def ask_user_questions():
+def ask_user_questions() -> None:
 	"""
 		First, we'll ask the user for a bunch of user input.
 		Not until we're satisfied with what we want to install
@@ -37,63 +38,61 @@ def ask_user_questions():
 	# the system immediately
 	global_menu = GlobalMenu(data_store=archinstall.arguments)
 
-	global_menu.enable('archinstall-language')
-
-	# Set which region to download packages from during the installation
-	global_menu.enable('mirror_config')
-
-	global_menu.enable('locale_config')
-
-	global_menu.enable('disk_config', mandatory=True)
-
-	# Specify disk encryption options
-	global_menu.enable('disk_encryption')
-
-	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
-	global_menu.enable('bootloader')
-
-	global_menu.enable('uki')
-
-	global_menu.enable('swap')
-
-	# Get the hostname for the machine
-	global_menu.enable('hostname')
-
-	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
-	global_menu.enable('!root-password', mandatory=True)
-
-	global_menu.enable('!users', mandatory=True)
-
-	# Ask for archinstall-specific profiles_bck (such as desktop environments etc)
-	global_menu.enable('profile_config')
-
-	# Ask about audio server selection if one is not already set
-	global_menu.enable('audio_config')
-
-	# Ask for preferred kernel:
-	global_menu.enable('kernels', mandatory=True)
-
-	global_menu.enable('packages')
-
-	if archinstall.arguments.get('advanced', False):
-		# Enable parallel downloads
-		global_menu.enable('parallel downloads')
-
-	# Ask or Call the helper function that asks the user to optionally configure a network.
-	global_menu.enable('network_config')
-
-	global_menu.enable('timezone')
-
-	global_menu.enable('ntp')
-
-	global_menu.enable('additional-repositories')
-
-	global_menu.enable('__separator__')
-
-	global_menu.enable('save_config')
-	global_menu.enable('install')
-	global_menu.enable('abort')
-
+	# # Set which region to download packages from during the installation
+	# global_menu.enable('mirror_config')
+	#
+	# global_menu.enable('locale_config')
+	#
+	# global_menu.enable('disk_config', mandatory=True)
+	#
+	# # Specify disk encryption options
+	# global_menu.enable('disk_encryption')
+	#
+	# # Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
+	# global_menu.enable('bootloader')
+	#
+	# global_menu.enable('uki')
+	#
+	# global_menu.enable('swap')
+	#
+	# # Get the hostname for the machine
+	# global_menu.enable('hostname')
+	#
+	# # Ask for a root password (optional, but triggers requirement for super-user if skipped)
+	# global_menu.enable('!root-password', mandatory=True)
+	#
+	# global_menu.enable('!users', mandatory=True)
+	#
+	# # Ask for archinstall-specific profiles_bck (such as desktop environments etc)
+	# global_menu.enable('profile_config')
+	#
+	# # Ask about audio server selection if one is not already set
+	# global_menu.enable('audio_config')
+	#
+	# # Ask for preferred kernel:
+	# global_menu.enable('kernels', mandatory=True)
+	#
+	# global_menu.enable('packages')
+	#
+	# if archinstall.arguments.get('advanced', False):
+	# 	# Enable parallel downloads
+	# 	global_menu.enable('parallel downloads')
+	#
+	# # Ask or Call the helper function that asks the user to optionally configure a network.
+	# global_menu.enable('network_config')
+	#
+	# global_menu.enable('timezone')
+	#
+	# global_menu.enable('ntp')
+	#
+	# global_menu.enable('additional-repositories')
+	#
+	# global_menu.enable('__separator__')
+	#
+	# global_menu.enable('save_config')
+	# global_menu.enable('install')
+	# global_menu.enable('abort')
+	#
 	global_menu.run()
 
 
@@ -218,6 +217,10 @@ def perform_installation(mountpoint: Path):
 					pass
 
 	debug(f"Disk states after installing: {disk.disk_layouts()}")
+
+
+# initialize the curses menu
+tui.init()
 
 
 if not archinstall.arguments.get('silent'):

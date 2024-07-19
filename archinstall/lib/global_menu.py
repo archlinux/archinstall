@@ -14,21 +14,17 @@ from .models.audio_configuration import Audio, AudioConfiguration
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
-from .configuration import save_config
-from .interactions import add_number_of_parallel_downloads
-from .interactions import ask_additional_packages_to_install
 from .interactions import ask_for_additional_users
 from .interactions import ask_for_audio_selection
-from .interactions import ask_for_bootloader
-from .interactions import ask_for_uki
-from .interactions import ask_for_swap
-from .interactions import ask_hostname
-from .interactions import ask_to_configure_network
-from .interactions import get_password, ask_for_a_timezone
-from .interactions import select_additional_repositories
-from .interactions import select_kernel
+from .interactions import get_password
 from .utils.util import format_cols
-from .interactions import ask_ntp
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem
+)
+
+
+from .translationhandler import Language, TranslationHandler
 
 if TYPE_CHECKING:
 	_: Any
@@ -36,147 +32,187 @@ if TYPE_CHECKING:
 
 class GlobalMenu(AbstractMenu):
 	def __init__(self, data_store: Dict[str, Any]):
-		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
+		self._data_store = data_store
+		self._translation_handler = TranslationHandler()
 
-	def setup_selection_menu_options(self):
+		if 'archinstall-language' not in data_store:
+			data_store['archinstall-language'] = self._translation_handler.get_language_by_abbr('en')
+
+		menu_optioons = self._get_menu_options(data_store)
+
+		self._item_group = MenuItemGroup(
+			menu_optioons,
+			sort_items=False,
+			checkmarks=True
+		)
+
+		super().__init__(
+			self._item_group,
+			data_store
+		)
+
+	def _get_menu_options(self, data_store: Dict[str, Any]) -> List[MenuItem]:
+		return [
+			MenuItem(
+				text=str(_('Archinstall language')),
+				action=lambda x: self._select_archinstall_language(x),
+				display_action=lambda x: x.display_name if x else '',
+				ds_key = 'archinstall-language'
+			),
+			MenuItem(
+				text=str(_('Locales')),
+				action=lambda x: self._locale_selection(x),
+				preview_action=self._prev_locale,
+				ds_key='locale_config'
+			),
+			MenuItem(
+				text=str(_('Abort')),
+				terminate=True
+			)
+		]
+
+		return menu_options
+
+	# def setup_selection_menu_options(self):
 		# archinstall.Language will not use preset values
-		self._menu_options['archinstall-language'] = \
-			Selector(
-				_('Archinstall language'),
-				lambda x: self._select_archinstall_language(x),
-				display_func=lambda x: x.display_name,
-				default=self.translation_handler.get_language_by_abbr('en'))
-		self._menu_options['locale_config'] = \
-			Selector(
-				_('Locales'),
-				lambda preset: self._locale_selection(preset),
-				preview_func=self._prev_locale,
-				display_func=lambda x: self.defined_text if x else '')
-		self._menu_options['mirror_config'] = \
-			Selector(
-				_('Mirrors'),
-				lambda preset: self._mirror_configuration(preset),
-				display_func=lambda x: self.defined_text if x else '',
-				preview_func=self._prev_mirror_config
-			)
-		self._menu_options['disk_config'] = \
-			Selector(
-				_('Disk configuration'),
-				lambda preset: self._select_disk_config(preset),
-				preview_func=self._prev_disk_config,
-				display_func=lambda x: self.defined_text if x else '',
-			)
-		self._menu_options['disk_encryption'] = \
-			Selector(
-				_('Disk encryption'),
-				lambda preset: self._disk_encryption(preset),
-				preview_func=self._prev_disk_encryption,
-				display_func=lambda x: self._display_disk_encryption(x),
-				dependencies=['disk_config']
-			)
-		self._menu_options['swap'] = \
-			Selector(
-				_('Swap'),
-				lambda preset: ask_for_swap(preset),
-				default=True)
-		self._menu_options['bootloader'] = \
-			Selector(
-				_('Bootloader'),
-				lambda preset: ask_for_bootloader(preset),
-				display_func=lambda x: x.value,
-				default=Bootloader.get_default())
-		self._menu_options['uki'] = \
-			Selector(
-				_('Unified kernel images'),
-				lambda preset: ask_for_uki(preset),
-				default=False)
-		self._menu_options['hostname'] = \
-			Selector(
-				_('Hostname'),
-				lambda preset: ask_hostname(preset),
-				default='archlinux')
-		# root password won't have preset value
-		self._menu_options['!root-password'] = \
-			Selector(
-				_('Root password'),
-				lambda preset:self._set_root_password(),
-				display_func=lambda x: secret(x) if x else '')
-		self._menu_options['!users'] = \
-			Selector(
-				_('User account'),
-				lambda x: self._create_user_account(x),
-				default=[],
-				display_func=lambda x: f'{len(x)} {_("User(s)")}' if len(x) > 0 else '',
-				preview_func=self._prev_users)
-		self._menu_options['profile_config'] = \
-			Selector(
-				_('Profile'),
-				lambda preset: self._select_profile(preset),
-				display_func=lambda x: x.profile.name if x else '',
-				preview_func=self._prev_profile
-			)
-		self._menu_options['audio_config'] = \
-			Selector(
-				_('Audio'),
-				lambda preset: self._select_audio(preset),
-				display_func=lambda x: self._display_audio(x)
-			)
-		self._menu_options['parallel downloads'] = \
-			Selector(
-				_('Parallel Downloads'),
-				lambda preset: add_number_of_parallel_downloads(preset),
-				display_func=lambda x: x if x else '0',
-				default=0
-			)
-		self._menu_options['kernels'] = \
-			Selector(
-				_('Kernels'),
-				lambda preset: select_kernel(preset),
-				display_func=lambda x: ', '.join(x) if x else None,
-				default=['linux'])
-		self._menu_options['packages'] = \
-			Selector(
-				_('Additional packages'),
-				lambda preset: ask_additional_packages_to_install(preset),
-				display_func=lambda x: self.defined_text if x else '',
-				preview_func=self._prev_additional_pkgs,
-				default=[])
-		self._menu_options['additional-repositories'] = \
-			Selector(
-				_('Optional repositories'),
-				lambda preset: select_additional_repositories(preset),
-				display_func=lambda x: ', '.join(x) if x else None,
-				default=[])
-		self._menu_options['network_config'] = \
-			Selector(
-				_('Network configuration'),
-				lambda preset: ask_to_configure_network(preset),
-				display_func=lambda x: self._display_network_conf(x),
-				preview_func=self._prev_network_config,
-				default={})
-		self._menu_options['timezone'] = \
-			Selector(
-				_('Timezone'),
-				lambda preset: ask_for_a_timezone(preset),
-				default='UTC')
-		self._menu_options['ntp'] = \
-			Selector(
-				_('Automatic time sync (NTP)'),
-				lambda preset: ask_ntp(preset),
-				default=True)
-		self._menu_options['__separator__'] = \
-			Selector('')
-		self._menu_options['save_config'] = \
-			Selector(
-				_('Save configuration'),
-				lambda preset: save_config(self._data_store),
-				no_store=True)
-		self._menu_options['install'] = \
-			Selector(
-				self._install_text(),
-				exec_func=lambda n, v: self._is_config_valid(),
-				preview_func=self._prev_install_invalid_config,
-				no_store=True)
+		# self._menu_options['archinstall-language'] = \
+		# 	MenuItem(
+		# 		text=str(_('Archinstall language')),
+		# 		action=lambda x: self._select_archinstall_language(x),
+		# 		value=self.translation_handler.get_language_by_abbr('en'),
+		# 		display_action=lambda x: x.display_name,
+		# 	)
+		# self._menu_options['locale_config'] = \
+		# 	Selector(
+		# 		_('Locales'),
+		# 		lambda preset: self._locale_selection(preset),
+		# 		preview_func=self._prev_locale,
+		# 		display_func=lambda x: self.defined_text if x else '')
+		# self._menu_options['mirror_config'] = \
+		# 	Selector(
+		# 		_('Mirrors'),
+		# 		lambda preset: self._mirror_configuration(preset),
+		# 		display_func=lambda x: self.defined_text if x else '',
+		# 		preview_func=self._prev_mirror_config
+		# 	)
+		# self._menu_options['disk_config'] = \
+		# 	Selector(
+		# 		_('Disk configuration'),
+		# 		lambda preset: self._select_disk_config(preset),
+		# 		preview_func=self._prev_disk_config,
+		# 		display_func=lambda x: self.defined_text if x else '',
+		# 	)
+		# self._menu_options['disk_encryption'] = \
+		# 	Selector(
+		# 		_('Disk encryption'),
+		# 		lambda preset: self._disk_encryption(preset),
+		# 		preview_func=self._prev_disk_encryption,
+		# 		display_func=lambda x: self._display_disk_encryption(x),
+		# 		dependencies=['disk_config']
+		# 	)
+		# self._menu_options['swap'] = \
+		# 	Selector(
+		# 		_('Swap'),
+		# 		lambda preset: ask_for_swap(preset),
+		# 		default=True)
+		# self._menu_options['bootloader'] = \
+		# 	Selector(
+		# 		_('Bootloader'),
+		# 		lambda preset: ask_for_bootloader(preset),
+		# 		display_func=lambda x: x.value,
+		# 		default=Bootloader.get_default())
+		# self._menu_options['uki'] = \
+		# 	Selector(
+		# 		_('Unified kernel images'),
+		# 		lambda preset: ask_for_uki(preset),
+		# 		default=False)
+		# self._menu_options['hostname'] = \
+		# 	Selector(
+		# 		_('Hostname'),
+		# 		lambda preset: ask_hostname(preset),
+		# 		default='archlinux')
+		# # root password won't have preset value
+		# self._menu_options['!root-password'] = \
+		# 	Selector(
+		# 		_('Root password'),
+		# 		lambda preset:self._set_root_password(),
+		# 		display_func=lambda x: secret(x) if x else '')
+		# self._menu_options['!users'] = \
+		# 	Selector(
+		# 		_('User account'),
+		# 		lambda x: self._create_user_account(x),
+		# 		default=[],
+		# 		display_func=lambda x: f'{len(x)} {_("User(s)")}' if len(x) > 0 else '',
+		# 		preview_func=self._prev_users)
+		# self._menu_options['profile_config'] = \
+		# 	Selector(
+		# 		_('Profile'),
+		# 		lambda preset: self._select_profile(preset),
+		# 		display_func=lambda x: x.profile.name if x else '',
+		# 		preview_func=self._prev_profile
+		# 	)
+		# self._menu_options['audio_config'] = \
+		# 	Selector(
+		# 		_('Audio'),
+		# 		lambda preset: self._select_audio(preset),
+		# 		display_func=lambda x: self._display_audio(x)
+		# 	)
+		# self._menu_options['parallel downloads'] = \
+		# 	Selector(
+		# 		_('Parallel Downloads'),
+		# 		lambda preset: add_number_of_parallel_downloads(preset),
+		# 		display_func=lambda x: x if x else '0',
+		# 		default=0
+		# 	)
+		# self._menu_options['kernels'] = \
+		# 	Selector(
+		# 		_('Kernels'),
+		# 		lambda preset: select_kernel(preset),
+		# 		display_func=lambda x: ', '.join(x) if x else None,
+		# 		default=['linux'])
+		# self._menu_options['packages'] = \
+		# 	Selector(
+		# 		_('Additional packages'),
+		# 		lambda preset: ask_additional_packages_to_install(preset),
+		# 		display_func=lambda x: self.defined_text if x else '',
+		# 		preview_func=self._prev_additional_pkgs,
+		# 		default=[])
+		# self._menu_options['additional-repositories'] = \
+		# 	Selector(
+		# 		_('Optional repositories'),
+		# 		lambda preset: select_additional_repositories(preset),
+		# 		display_func=lambda x: ', '.join(x) if x else None,
+		# 		default=[])
+		# self._menu_options['network_config'] = \
+		# 	Selector(
+		# 		_('Network configuration'),
+		# 		lambda preset: ask_to_configure_network(preset),
+		# 		display_func=lambda x: self._display_network_conf(x),
+		# 		preview_func=self._prev_network_config,
+		# 		default={})
+		# self._menu_options['timezone'] = \
+		# 	Selector(
+		# 		_('Timezone'),
+		# 		lambda preset: ask_for_a_timezone(preset),
+		# 		default='UTC')
+		# self._menu_options['ntp'] = \
+		# 	Selector(
+		# 		_('Automatic time sync (NTP)'),
+		# 		lambda preset: ask_ntp(preset),
+		# 		default=True)
+		# self._menu_options['__separator__'] = \
+		# 	Selector('')
+		# self._menu_options['save_config'] = \
+		# 	Selector(
+		# 		_('Save configuration'),
+		# 		lambda preset: save_config(self._data_store),
+		# 		no_store=True)
+		# self._menu_options['install'] = \
+		# 	Selector(
+		# 		self._install_text(),
+		# 		exec_func=lambda n, v: self._is_config_valid(),
+		# 		preview_func=self._prev_install_invalid_config,
+		# 		no_store=True)
 
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
 
@@ -238,6 +274,12 @@ class GlobalMenu(AbstractMenu):
 			return _('Install ({} config(s) missing)').format(missing)
 		return _('Install')
 
+	def _select_archinstall_language(self, preset: Language) -> Language:
+		from .interactions.general_conf import select_archinstall_language
+		language = select_archinstall_language(self._translation_handler.translated_languages, preset)
+		self._translation_handler.activate(language)
+		return language
+
 	def _display_network_conf(self, config: Optional[NetworkConfiguration]) -> str:
 		if not config:
 			return str(_('Not configured, unavailable unless setup manually'))
@@ -263,15 +305,12 @@ class GlobalMenu(AbstractMenu):
 		locale_config = LocaleMenu(data_store, preset).run()
 		return locale_config
 
-	def _prev_locale(self) -> Optional[str]:
-		selector = self._menu_options['locale_config']
-		if selector.has_selection():
-			config: LocaleConfiguration = selector.current_selection  # type: ignore
-			output = '{}: {}\n'.format(str(_('Keyboard layout')), config.kb_layout)
-			output += '{}: {}\n'.format(str(_('Locale language')), config.sys_lang)
-			output += '{}: {}'.format(str(_('Locale encoding')), config.sys_enc)
-			return output
-		return None
+	def _prev_locale(self, item: MenuItem) -> Optional[str]:
+		if not item.value:
+			return
+
+		config: LocaleConfiguration = item.value
+		return config.preview()
 
 	def _prev_network_config(self) -> Optional[str]:
 		selector: Optional[NetworkConfiguration] = self._menu_options['network_config'].current_selection

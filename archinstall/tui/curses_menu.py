@@ -5,7 +5,6 @@ import signal
 from abc import ABCMeta, abstractmethod
 from curses.textpad import Textbox
 from dataclasses import dataclass
-from pprint import pformat
 from types import NoneType
 from typing import Any, Optional, Tuple, Dict, List, TYPE_CHECKING, Literal
 from typing import Callable
@@ -25,47 +24,48 @@ if TYPE_CHECKING:
 
 
 class AbstractCurses(metaclass=ABCMeta):
-	def __init__(self):
-		self._help_window: Optional[Viewport] = None
-		self._set_help_viewport()
+	def __init__(self) -> None:
+		self._help_window = self._set_help_viewport()
 
 	@abstractmethod
-	def resize_win(self):
+	def resize_win(self) -> None:
 		pass
-
-	def clear_help_win(self):
-		if self._help_window:
-			self._help_window.erase()
 
 	@abstractmethod
 	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		pass
 
-	def _set_help_viewport(self):
+	def clear_help_win(self) -> None:
+		self._help_window.erase()
+
+	def _set_help_viewport(self) -> 'Viewport':
 		max_height, max_width = tui.max_yx
 		width = max_width - 10
 		height = max_height - 10
 
-		self._help_window = Viewport(
-			width,
+		max_help_width = max([len(l) for l in Help.get_help_text().split('\n')])
+		x_start = int((max_width / 2) - (max_help_width / 2))
+
+		return Viewport(
+			max_help_width+10,
 			height,
-			int((max_width / 2) - width / 2),
+			x_start,
 			int((max_height / 2) - height / 2),
-			frame=FrameProperties(str(_('Archinstall help')), FrameStyle.MAX)
+			frame=FrameProperties(str(_('Archinstall help')), FrameStyle.MIN, FrameStyle.MIN)
 		)
 
 	def _confirm_interrupt(self, screen: Any, warning: str) -> bool:
 		# when a interrupt signal happens then getchr
 		# doesn't seem to work anymore so we need to
 		# call it twice to get it to block and wait for input
-		screen.getch()
+		# screen.getch()
 
 		while True:
-			choice = SelectMenu(MenuItemGroup.default_confirm(), header=warning).single()
+			result = SelectMenu(MenuItemGroup.default_confirm(), header=warning).single()
 
-			match choice.type_:
+			match result.type_:
 				case ResultType.Selection:
-					if choice.value == MenuItem.default_yes():
+					if result.item == MenuItem.default_yes():
 						return True
 
 			return False
@@ -80,7 +80,8 @@ class AbstractCurses(metaclass=ABCMeta):
 		help_text = Help.get_help_text()
 		lines = help_text.split('\n')
 
-		entries = [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
+		entries = [ViewportEntry('', 0, 0, STYLE.NORMAL)]
+		entries += [ViewportEntry(f'   {e}   ', idx+1, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
 		self._help_window.update(entries, 0)
 
 	def get_header_entries(
@@ -125,7 +126,7 @@ class AbstractViewport:
 		try:
 			screen.addstr(row, col, text, tui.get_color(color))
 		except curses.error:
-			debug('Curses error while adding string to viewport')
+			debug(f'Curses error while adding string to viewport: {text}')
 
 	def add_frame(
 		self,
@@ -162,8 +163,6 @@ class AbstractViewport:
 			*entries
 		]
 
-		debug(pformat(framed_entries))
-
 		return framed_entries
 
 	def _get_right_frame(
@@ -171,7 +170,7 @@ class AbstractViewport:
 		dim: _FrameDim,
 		scroll_percentage: Optional[int] = None
 	) -> List[ViewportEntry]:
-		right_frame = []
+		right_frame = {}
 		scroll_height = int(dim.height * scroll_percentage // 100) if scroll_percentage else 0
 
 		if scroll_height <= 0:
@@ -179,19 +178,15 @@ class AbstractViewport:
 		elif scroll_height >= dim.height:
 			scroll_height = dim.height - 1
 
-		if scroll_percentage is not None:
-			right_frame = [
-				ViewportEntry(Chars.Triangle_up, 0, dim.x_end - 1, STYLE.NORMAL),
-				ViewportEntry(Chars.Block, scroll_height, dim.x_end - 1, STYLE.NORMAL),
-				ViewportEntry(Chars.Triangle_down, dim.height, dim.x_end - 1, STYLE.NORMAL)
-			]
-		else:
-			for i in range(1, dim.height):
-				right_frame += [
-					ViewportEntry(Chars.Vertical, i, dim.x_end - 1, STYLE.NORMAL)
-				]
+		for i in range(1, dim.height):
+			right_frame[i] = ViewportEntry(Chars.Vertical, i, dim.x_end - 1, STYLE.NORMAL)
 
-		return right_frame
+		if scroll_percentage is not None:
+			right_frame[0] = ViewportEntry(Chars.Triangle_up, 0, dim.x_end - 1, STYLE.NORMAL)
+			right_frame[scroll_height] = ViewportEntry(Chars.Block, scroll_height, dim.x_end - 1, STYLE.NORMAL)
+			right_frame[dim.height] = ViewportEntry(Chars.Triangle_down, dim.height, dim.x_end - 1, STYLE.NORMAL)
+
+		return list(right_frame.values())
 
 	def _get_top(
 		self,
@@ -319,7 +314,7 @@ class EditViewport(AbstractViewport):
 			self.x_start + 1
 		)
 
-	def update(self):
+	def update(self) -> None:
 		if not self._main_win:
 			return
 
@@ -342,7 +337,7 @@ class EditViewport(AbstractViewport):
 			self._main_win.erase()
 			self._main_win.refresh()
 
-	def edit(self):
+	def edit(self) -> None:
 		if not self._edit_win or not self._main_win:
 			return
 
@@ -389,7 +384,7 @@ class Viewport(AbstractViewport):
 	def getch(self):
 		return self._main_win.getch()
 
-	def erase(self):
+	def erase(self) -> None:
 		self._main_win.erase()
 		self._main_win.refresh()
 
@@ -397,7 +392,7 @@ class Viewport(AbstractViewport):
 		self,
 		entries: List[ViewportEntry],
 		cursor_pos: int = 0,
-		scroll_pos: Optional[int] = 0
+		scroll_pos: Optional[int] = None
 	):
 		visible_rows, percentage = self._find_visible_rows(entries, cursor_pos, scroll_pos)
 
@@ -592,7 +587,7 @@ class EditMenu(AbstractCurses):
 
 		return text
 
-	def _draw(self):
+	def _draw(self) -> None:
 		if self._help_vp:
 			self._help_vp.update([self.help_entry()], 0)
 
@@ -739,7 +734,7 @@ class SelectMenu(AbstractCurses):
 		self._multi = False
 		result = tui.run(self)
 
-		assert isinstance(result.value, (MenuItem, NoneType))
+		assert isinstance(result.item, (MenuItem, NoneType))
 
 		self._clear_all()
 		return result
@@ -748,7 +743,7 @@ class SelectMenu(AbstractCurses):
 		self._multi = True
 		result = tui.run(self)
 
-		assert isinstance(result.value, (list, NoneType))
+		assert isinstance(result.item, (list, NoneType))
 
 		self._clear_all()
 		return result
@@ -766,11 +761,13 @@ class SelectMenu(AbstractCurses):
 			except KeyboardInterrupt:
 				if self._handle_interrupt():
 					return Result(ResultType.Reset, None)
+				else:
+					self.kickoff(win)
 
-	def resize_win(self):
+	def resize_win(self) -> None:
 		self._draw()
 
-	def _clear_all(self):
+	def _clear_all(self) -> None:
 		self.clear_help_win()
 
 		if self._header_vp:
@@ -862,7 +859,7 @@ class SelectMenu(AbstractCurses):
 
 		return prev_size
 
-	def _draw(self):
+	def _draw(self) -> None:
 		footer_entries = self._footer_entries()
 
 		vp_entries = self._get_row_entries()
@@ -890,16 +887,17 @@ class SelectMenu(AbstractCurses):
 		viewport: Viewport,
 		entries: List[ViewportEntry],
 		cursor_pos: int = 0
-	):
+	) -> None:
 		if entries:
 			viewport.update(entries, cursor_pos=cursor_pos)
 		else:
 			viewport.update([])
 
 	def _get_cursor_pos(self) -> int:
-		for idx, cell in enumerate(self._row_entries):
-			if self._item_group.focus_item in cell:
-				return idx
+		for idx, cells in enumerate(self._row_entries):
+			for cell in cells:
+				if self._item_group.focus_item == cell.item:
+					return idx
 		return 0
 
 	def _get_visible_items(self) -> List[MenuItem]:
@@ -987,14 +985,13 @@ class SelectMenu(AbstractCurses):
 			if self._multi and not item.is_empty():
 				item_text += self._multi_prefix(item)
 
-			suffix = self._default_suffix(item)
-			item_text += item.get_text(suffix=suffix)
+			item_text = self._item_group.get_item_text(item)
 
 			entries += [MenuCell(item, item_text)]
 
 		return entries
 
-	def _update_preview(self):
+	def _update_preview(self) -> None:
 		if not self._preview_vp:
 			return
 
@@ -1025,14 +1022,6 @@ class SelectMenu(AbstractCurses):
 		elif self._prev_scroll_pos < 0:
 			self._prev_scroll_pos = 0
 
-	def _default_suffix(self, item: MenuItem) -> str:
-		suffix = ''
-
-		if self._item_group.default_item == item:
-			suffix = str(_(' (default)'))
-
-		return suffix
-
 	def _multi_prefix(self, item: MenuItem) -> str:
 		if self._item_group.is_item_selected(item):
 			return '[x] '
@@ -1040,9 +1029,8 @@ class SelectMenu(AbstractCurses):
 			return '[ ] '
 
 	def _handle_interrupt(self) -> bool:
-		if self._allow_reset:
-			if self._interrupt_warning:
-				return self._confirm_interrupt(self._menu_vp, self._interrupt_warning)
+		if self._allow_reset and self._interrupt_warning:
+			return self._confirm_interrupt(self._menu_vp, self._interrupt_warning)
 		else:
 			return False
 
@@ -1097,9 +1085,9 @@ class SelectMenu(AbstractCurses):
 					if item:
 						if item.action:
 							item.value = item.action(item.value)
-						else:
-							if self._item_group.is_mandatory_fulfilled():
-								return Result(ResultType.Selection, self._item_group.focus_item)
+
+						if self._item_group.is_mandatory_fulfilled():
+							return Result(ResultType.Selection, self._item_group.focus_item)
 
 					return None
 			case MenuKeys.MENU_UP | MenuKeys.MENU_DOWN | MenuKeys.MENU_LEFT | MenuKeys.MENU_RIGHT:
@@ -1185,7 +1173,7 @@ class Tui:
 
 		signal.signal(signal.SIGWINCH, self._sig_win_resize)
 
-	def init(self):
+	def init(self) -> None:
 		self._screen = curses.initscr()
 
 		curses.noecho()

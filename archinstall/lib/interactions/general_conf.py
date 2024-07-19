@@ -10,6 +10,10 @@ from ..output import warn
 from ..packages.packages import validate_package_list
 from ..storage import storage
 from ..translationhandler import Language
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, FrameStyle, Alignment, Result, ResultType
+)
 
 if TYPE_CHECKING:
 	_: Any
@@ -17,7 +21,8 @@ if TYPE_CHECKING:
 
 def ask_ntp(preset: bool = True) -> bool:
 	prompt = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n'))
-	prompt += str(_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'))
+	prompt += str(
+		_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'))
 	if preset:
 		preset_val = Menu.yes()
 	else:
@@ -51,8 +56,10 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return choice.single_value
+		case MenuSelectionType.Skip:
+			return preset
+		case MenuSelectionType.Selection:
+			return choice.single_value
 
 	return None
 
@@ -75,7 +82,8 @@ def ask_for_audio_selection(
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Skip: return current
+		case MenuSelectionType.Skip:
+			return current
 		case MenuSelectionType.Selection:
 			value = choice.single_value
 			if value == Audio.no_audio_text():
@@ -94,7 +102,8 @@ def select_language(preset: Optional[str] = None) -> Optional[str]:
 	# raise Deprecated("select_language() has been deprecated, use select_kb_layout() instead.")
 
 	# No need to translate this i feel, as it's a short lived message.
-	warn("select_language() is deprecated, use select_kb_layout() instead. select_language() will be removed in a future version")
+	warn(
+		"select_language() is deprecated, use select_kb_layout() instead. select_language() will be removed in a future version")
 
 	return select_kb_layout(preset)
 
@@ -103,34 +112,47 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 	# these are the displayed language names which can either be
 	# the english name of a language or, if present, the
 	# name of the language in its own language
-	options = {lang.display_name: lang for lang in languages}
+
+	items = [MenuItem(lang.display_name, lang) for lang in languages]
+	group = MenuItemGroup(items, sort_items=True)
+	group.set_focus_by_value(preset)
 
 	title = 'NOTE: If a language can not displayed properly, a proper font must be set manually in the console.\n'
 	title += 'All available fonts can be found in "/usr/share/kbd/consolefonts"\n'
 	title += 'e.g. setfont LatGrkCyr-8x16 (to display latin/greek/cyrillic characters)\n'
 
-	choice = Menu(
-		title,
-		list(options.keys()),
-		default_option=preset.display_name,
-		preview_size=0.5
-	).run()
+	choice: Result[MenuItem] = SelectMenu(
+		group,
+		header=title,
+		allow_skip=True,
+		allow_reset=False,
+		alignment=Alignment.CENTER,
+		frame=FrameProperties(
+			header=str(_('Select language')),
+			w_frame_style=FrameStyle.MIN,
+			 h_frame_style=FrameStyle.MIN
+		)
+	).single()
 
 	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return options[choice.single_value]
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return choice.value.value
 
 	raise ValueError('Language selection not handled')
 
 
 def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
-	print(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
+	print(
+		_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
 
 	def read_packages(p: List = []) -> list:
 		display = ' '.join(p)
-		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run().strip()
+		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '),
+								   display).run().strip()
 		return input_packages.split() if input_packages else []
 
 	preset = preset if preset else []
@@ -152,11 +174,12 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	return packages
 
 
-def add_number_of_parallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
+def add_number_of_parallel_downloads(input_number: Optional[int] = None) -> Optional[int]:
 	max_recommended = 5
 	print(_(f"This option enables the number of parallel downloads that can occur during package downloads"))
 	print(_("Enter the number of parallel downloads to be enabled.\n\nNote:\n"))
-	print(str(_(" - Maximum recommended value : {} ( Allows {} parallel downloads at a time )")).format(max_recommended, max_recommended))
+	print(str(_(" - Maximum recommended value : {} ( Allows {} parallel downloads at a time )")).format(max_recommended,
+																										max_recommended))
 	print(_(" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"))
 
 	while True:
@@ -175,7 +198,8 @@ def add_number_of_parallel_downloads(input_number :Optional[int] = None) -> Opti
 	with pacman_conf_path.open("w") as fwrite:
 		for line in pacman_conf:
 			if "ParallelDownloads" in line:
-				fwrite.write(f"ParallelDownloads = {input_number}\n") if not input_number == 0 else fwrite.write("#ParallelDownloads = 0\n")
+				fwrite.write(f"ParallelDownloads = {input_number}\n") if not input_number == 0 else fwrite.write(
+					"#ParallelDownloads = 0\n")
 			else:
 				fwrite.write(f"{line}\n")
 
@@ -202,8 +226,11 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return []
-		case MenuSelectionType.Selection: return choice.single_value
+		case MenuSelectionType.Skip:
+			return preset
+		case MenuSelectionType.Reset:
+			return []
+		case MenuSelectionType.Selection:
+			return choice.single_value
 
 	return []

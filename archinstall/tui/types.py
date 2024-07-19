@@ -116,12 +116,15 @@ class Chars:
 	Block = "█"
 	Triangle_up = "▲"
 	Triangle_down = "▼"
+	Check = "🗸"
+	Cross = "𐄂"
+	Right_arrow = "←"
 
 
 @dataclass
 class Result(Generic[ItemType]):
 	type_: ResultType
-	value: Optional[ItemType]
+	item: Optional[ItemType]
 
 
 @dataclass

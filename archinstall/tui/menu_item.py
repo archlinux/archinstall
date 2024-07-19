@@ -15,11 +15,12 @@ class MenuItem:
 	action: Optional[Callable[[Any], Any]] = None
 	enabled: bool = True
 	mandatory: bool = False
+	terminate: bool = False
 	dependencies: List[Self] = field(default_factory=list)
 	dependencies_not: List[Self] = field(default_factory=list)
 	display_action: Optional[Callable[[Any], str]] = None
 	preview_action: Optional[Callable[[Any], Optional[str]]] = None
-	key: Optional[Any] = None
+	ds_key: Optional[str] = None
 
 	@classmethod
 	def default_yes(cls) -> Self:
@@ -32,25 +33,11 @@ class MenuItem:
 	def is_empty(self) -> bool:
 		return self.text == '' or self.text is None
 
-	def get_text(self, spacing: int = 0, suffix: str = '') -> str:
-		if self.is_empty():
-			return ''
+	def get_display_value(self) -> Optional[str]:
+		if self.display_action is not None:
+			return self.display_action(self.value)
 
-		value_text = ''
-
-		if self.display_action:
-			value_text = self.display_action(self.value)
-		else:
-			if self.value is not None:
-				value_text = str(self.value)
-
-		if value_text:
-			spacing += 2
-			text = unicode_ljust(str(self.text), spacing, ' ')
-		else:
-			text = self.text
-
-		return f'{text} {value_text}{suffix}'.rstrip(' ')
+		return None
 
 
 @dataclass
@@ -60,6 +47,7 @@ class MenuItemGroup:
 	default_item: Optional[MenuItem] = None
 	selected_items: List[MenuItem] = field(default_factory=list)
 	sort_items: bool = True
+	checkmarks: bool = False
 
 	_filter_pattern: str = ''
 
@@ -79,18 +67,34 @@ class MenuItemGroup:
 		if self.focus_item not in self.menu_items:
 			raise ValueError('Selected item not in menu')
 
+	def find_by_ds_key(self, key: str) -> Optional[MenuItem]:
+		for item in self.menu_items:
+			if item.ds_key == key:
+				return item
+
+		return None
+
 	@staticmethod
-	def default_confirm():
+	def default_confirm() -> 'MenuItemGroup':
 		return MenuItemGroup(
 			[MenuItem.default_yes(), MenuItem.default_no()],
 			sort_items=False
 		)
 
-	def index_of(self, item) -> int:
+	def set_focus_by_value(self, value: Any) -> None:
+		for item in self.menu_items:
+			if item.value == value:
+				self.focus_item = item
+				break
+
+	def index_of(self, item: MenuItem) -> int:
 		return self.items.index(item)
 
 	def index_focus(self) -> int:
-		return self.index_of(self.focus_item)
+		if self.focus_item:
+			return self.index_of(self.focus_item)
+
+		raise ValueError('No focus item set')
 
 	def index_last(self) -> int:
 		return self.index_of(self.items[-1])
@@ -106,7 +110,42 @@ class MenuItemGroup:
 	def max_width(self) -> int:
 		# use the menu_items not the items here otherwise the preview
 		# will get resized all the time when a filter is applied
+		return max([len(self.get_item_text(item)) for item in self.menu_items])
+
+	def _max_item_width(self) -> int:
 		return max([len(item.text) for item in self.menu_items])
+
+	def get_item_text(self, item: MenuItem) -> str:
+		if item.is_empty():
+			return ''
+
+		max_width = self._max_item_width()
+		display_text = item.get_display_value()
+		default_text = self._default_suffix(item)
+
+		text = unicode_ljust(str(item.text), max_width, ' ')
+		spacing = ' ' * 4
+
+		if display_text:
+			text = f'{text}{spacing}{display_text}'
+		elif self.checkmarks:
+			from .types import Chars
+			if item.value:
+				text = f'{text}{spacing}{Chars.Check}'
+			elif item.mandatory:
+				text = f'{text}{spacing}{Chars.Cross}'
+			else:
+				text = item.text
+
+		if default_text:
+			text = f'{text} {default_text}'
+
+		return text.rstrip(' ')
+
+	def _default_suffix(self, item: MenuItem) -> str:
+		if self.default_item == item:
+			return str(_(' (default)'))
+		return ''
 
 	@property
 	def items(self) -> List[MenuItem]:
@@ -115,10 +154,10 @@ class MenuItemGroup:
 		return list(items)
 
 	@property
-	def filter_pattern(self):
+	def filter_pattern(self) -> str:
 		return self._filter_pattern
 
-	def set_filter_pattern(self, pattern: str):
+	def set_filter_pattern(self, pattern: str) -> None:
 		self._filter_pattern = pattern
 		self.reload_focus_itme()
 
@@ -141,7 +180,7 @@ class MenuItemGroup:
 				self.focus_item = item
 				return
 
-	def reload_focus_itme(self):
+	def reload_focus_itme(self) -> None:
 		if self.focus_item not in self.items:
 			self.focus_first()
 
@@ -179,7 +218,7 @@ class MenuItemGroup:
 		rev_items = list(reversed(items))
 		return self._first(rev_items, ignore_empty)
 
-	def focus_first(self):
+	def focus_first(self) -> None:
 		first_item = self.get_first_item()
 		if first_item:
 			self.focus_item = first_item
