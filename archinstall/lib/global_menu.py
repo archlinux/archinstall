@@ -66,35 +66,28 @@ class GlobalMenu(AbstractMenu):
 				ds_key='locale_config'
 			),
 			MenuItem(
+				text=str(_('Mirrors')),
+				action=lambda x: self._mirror_configuration(x),
+				preview_action=self._prev_mirror_config,
+				ds_key='mirror_config'
+			),
+			MenuItem(
+				text=str(_('Disk configuration')),
+				action=lambda x: self._select_disk_config(x),
+				preview_action=self._prev_disk_config,
+				ds_key='disk_config'
+			),
+
+			MenuItem(
 				text=str(_('Abort')),
 				terminate=True
 			)
 		]
 
-		return menu_options
 
 	# def setup_selection_menu_options(self):
 		# archinstall.Language will not use preset values
-		# self._menu_options['archinstall-language'] = \
-		# 	MenuItem(
-		# 		text=str(_('Archinstall language')),
-		# 		action=lambda x: self._select_archinstall_language(x),
-		# 		value=self.translation_handler.get_language_by_abbr('en'),
-		# 		display_action=lambda x: x.display_name,
-		# 	)
-		# self._menu_options['locale_config'] = \
-		# 	Selector(
-		# 		_('Locales'),
-		# 		lambda preset: self._locale_selection(preset),
-		# 		preview_func=self._prev_locale,
-		# 		display_func=lambda x: self.defined_text if x else '')
 		# self._menu_options['mirror_config'] = \
-		# 	Selector(
-		# 		_('Mirrors'),
-		# 		lambda preset: self._mirror_configuration(preset),
-		# 		display_func=lambda x: self.defined_text if x else '',
-		# 		preview_func=self._prev_mirror_config
-		# 	)
 		# self._menu_options['disk_config'] = \
 		# 	Selector(
 		# 		_('Disk configuration'),
@@ -327,18 +320,15 @@ class GlobalMenu(AbstractMenu):
 			return format_cols(packages, None)
 		return None
 
-	def _prev_disk_config(self) -> Optional[str]:
-		selector = self._menu_options['disk_config']
-		disk_layout_conf: Optional[disk.DiskLayoutConfiguration] = selector.current_selection
+	def _prev_disk_config(self, item: MenuItem) -> Optional[str]:
+		disk_layout_conf: Optional[disk.DiskLayoutConfiguration] = item.value
 
-		output = ''
 		if disk_layout_conf:
-			output += str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg())
+			output = str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg())
 
 			if disk_layout_conf.lvm_config:
 				output += '\n{}: {}'.format(str(_('LVM configuration type')), disk_layout_conf.lvm_config.config_type.display_msg())
 
-		if output:
 			return output
 
 		return None
@@ -462,7 +452,7 @@ class GlobalMenu(AbstractMenu):
 		disk_config = disk.DiskLayoutConfigurationMenu(preset, data_store).run()
 
 		if disk_config != preset:
-			self._menu_options['disk_encryption'].set_current_selection(None)
+			self._menu_item_group.find_by_ds_key('disk_encryption').value = None
 
 		return disk_config
 
@@ -494,18 +484,18 @@ class GlobalMenu(AbstractMenu):
 		mirror_configuration = MirrorMenu(data_store, preset=preset).run()
 		return mirror_configuration
 
-	def _prev_mirror_config(self) -> Optional[str]:
-		selector = self._menu_options['mirror_config']
+	def _prev_mirror_config(self, item: MenuItem) -> Optional[str]:
+		if not item.value:
+			return None
 
-		if selector.has_selection():
-			mirror_config: MirrorConfiguration = selector.current_selection  # type: ignore
-			output = ''
-			if mirror_config.regions:
-				output += '{}: {}\n\n'.format(str(_('Mirror regions')), mirror_config.regions)
-			if mirror_config.custom_mirrors:
-				table = FormattedOutput.as_table(mirror_config.custom_mirrors)
-				output += '{}\n{}'.format(str(_('Custom mirrors')), table)
+		mirror_config: MirrorConfiguration = item.value
 
-			return output.strip()
+		output = ''
+		if mirror_config.regions:
+			output += '{}: {}\n\n'.format(str(_('Mirror regions')), mirror_config.regions)
+		if mirror_config.custom_mirrors:
+			table = FormattedOutput.as_table(mirror_config.custom_mirrors)
+			output += '{}\n{}'.format(str(_('Custom mirrors')), table)
 
-		return None
+		return output.strip()
+

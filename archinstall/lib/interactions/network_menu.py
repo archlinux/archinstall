@@ -3,7 +3,7 @@ from __future__ import annotations
 import ipaddress
 from typing import Any, Optional, TYPE_CHECKING, List, Dict
 
-from ..menu import MenuSelectionType, TextInput
+from ..menu import MenuSelectionType
 from ..models.network_configuration import NetworkConfiguration, NicType, Nic
 
 from ..networking import list_interfaces

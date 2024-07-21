@@ -11,7 +11,7 @@ from .device_model import (
 	ModificationStatus, DeviceGeometry, SectorSize, BtrfsMountOption
 )
 from ..hardware import SysInfo
-from ..menu import Menu, ListManager, MenuSelection, TextInput
+from ..menu import Menu, ListManager, MenuSelection
 from ..output import FormattedOutput, warn
 from .subvolume_menu import SubvolumeMenu
 

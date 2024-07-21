@@ -13,7 +13,6 @@ from ..menu import (
 	Selector,
 	AbstractSubMenu,
 	MenuSelectionType,
-	TableMenu
 )
 from ..interactions.utils import get_password
 from ..menu import Menu
@@ -214,7 +213,7 @@ def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
 		return None
 
 	if fido_devices:
-		choice = TableMenu(title, data=fido_devices).run()
+		choice = MenuHelper(title, data=fido_devices).run()
 		match choice.type_:
 			case MenuSelectionType.Reset:
 				return None
@@ -243,7 +242,7 @@ def select_partitions_to_encrypt(
 		title = str(_('Select which partitions to encrypt'))
 		partition_table = FormattedOutput.as_table(avail_partitions)
 
-		choice = TableMenu(
+		choice = MenuHelper(
 			title,
 			table_data=(avail_partitions, partition_table),
 			preset=preset,
@@ -270,7 +269,7 @@ def select_lvm_vols_to_encrypt(
 		title = str(_('Select which LVM volumes to encrypt'))
 		partition_table = FormattedOutput.as_table(volumes)
 
-		choice = TableMenu(
+		choice = MenuHelper(
 			title,
 			table_data=(volumes, partition_table),
 			preset=preset,

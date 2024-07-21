@@ -16,7 +16,7 @@ class MenuItem:
 	enabled: bool = True
 	mandatory: bool = False
 	terminate: bool = False
-	dependencies: List[Self] = field(default_factory=list)
+	dependencies: List[Self | Callable[[], bool]] = field(default_factory=list)
 	dependencies_not: List[Self] = field(default_factory=list)
 	display_action: Optional[Callable[[Any], str]] = None
 	preview_action: Optional[Callable[[Any], Optional[str]]] = None
@@ -67,12 +67,12 @@ class MenuItemGroup:
 		if self.focus_item not in self.menu_items:
 			raise ValueError('Selected item not in menu')
 
-	def find_by_ds_key(self, key: str) -> Optional[MenuItem]:
+	def find_by_ds_key(self, key: str) -> MenuItem:
 		for item in self.menu_items:
 			if item.ds_key == key:
 				return item
 
-		return None
+		raise ValueError(f'No key found for: {key}')
 
 	@staticmethod
 	def default_confirm() -> 'MenuItemGroup':
@@ -169,7 +169,7 @@ class MenuItemGroup:
 		self._filter_pattern = self._filter_pattern[:-1]
 		self.reload_focus_itme()
 
-	def set_focus_item_index(self, index: int):
+	def set_focus_item_index(self, index: int) -> None:
 		items = self.items
 		non_empty_items = [item for item in items if not item.is_empty()]
 		if index < 0 or index >= len(non_empty_items):
@@ -274,8 +274,11 @@ class MenuItemGroup:
 
 		if item in self.menu_items:
 			for dep in item.dependencies:
-				if not self.verify_item_enabled(dep):
-					return False
+				if isinstance(dep, MenuItem):
+					if not self.verify_item_enabled(dep):
+						return False
+				else:
+					return dep()
 
 			for dep in item.dependencies_not:
 				if dep.value is not None:

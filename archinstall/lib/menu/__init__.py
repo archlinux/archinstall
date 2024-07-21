@@ -5,5 +5,3 @@ from .menu import (
 	MenuSelection,
 	Menu,
 )
-from .table_selection_menu import TableMenu
-from .text_input import TextInput

@@ -71,21 +71,12 @@ class LocaleMenu(AbstractSubMenu):
 	):
 		self._locale_conf = locale_conf
 		self._data_store = data_store
-		menu_optioons = self._define_menu_options(locale_conf)
+		menu_optioons = self._define_menu_options()
 
-		self._item_group = MenuItemGroup(
-			menu_optioons,
-			sort_items=False,
-			checkmarks=True
-		)
+		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
+		super().__init__(self._item_group, data_store=data_store, allow_reset=True)
 
-		super().__init__(
-			self._item_group,
-			data_store=data_store,
-			allow_reset=True
-		)
-
-	def _define_menu_options(self, locale_conf: LocaleConfiguration) -> List[MenuItem]:
+	def _define_menu_options(self) -> List[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Keyboard layout')),
@@ -108,7 +99,6 @@ class LocaleMenu(AbstractSubMenu):
 				preview_action=self._prev_locale,
 				ds_key='sys-encoding'
 			)
-
 		]
 
 	def _prev_locale(self, item: MenuItem) -> Optional[str]:

@@ -4,7 +4,7 @@ import pathlib
 from typing import List, Any, Optional, TYPE_CHECKING
 
 from ..locale import list_timezones
-from ..menu import MenuSelectionType, Menu, TextInput
+from ..menu import MenuSelectionType, Menu
 from ..models.audio_configuration import Audio, AudioConfiguration
 from ..output import warn
 from ..packages.packages import validate_package_list

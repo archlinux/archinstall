@@ -10,3 +10,5 @@ from .types import (
 	PreviewStyle, FrameProperties, FrameStyle, Alignment,
 	Result, ResultType, ItemType, Chars
 )
+
+from .table_menu import MenuHelper

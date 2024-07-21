@@ -97,10 +97,6 @@ class AbstractCurses(metaclass=ABCMeta):
 				full_header += [ViewportEntry(header, cur_row, 0, STYLE.NORMAL)]
 				cur_row += 1
 
-		if full_header:
-			ViewportEntry('', cur_row, 0, STYLE.NORMAL)
-			cur_row += 1
-
 		aligned_headers = self._align_headers(alignment, full_header)
 		return aligned_headers
 
@@ -536,7 +532,7 @@ class EditMenu(AbstractCurses):
 		y_offset += 2
 
 		if self._headers:
-			header_height = len(self._headers) + 1
+			header_height = len(self._headers)
 			self._header_vp = Viewport(self._max_width, header_height, 0, y_offset)
 			y_offset += header_height
 
@@ -555,7 +551,7 @@ class EditMenu(AbstractCurses):
 	def input(self, ) -> Result[str]:
 		result = tui.run(self)
 
-		assert isinstance(result.value, (str, NoneType))
+		assert isinstance(result.item, (str, NoneType))
 
 		self._clear_all()
 		return result
@@ -695,7 +691,6 @@ class SelectMenu(AbstractCurses):
 		self._cursor_char = f'{cursor_char} '
 		self._search_enabled = search_enabled
 		self._multi = False
-		self._interrupt_warning = reset_warning_msg
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
 		self._active_search = False
@@ -710,6 +705,10 @@ class SelectMenu(AbstractCurses):
 		self._headers = self.get_header_entries(header, alignment)
 		self._footers = self._footer_entries()
 		self._frame = frame
+		self._interrupt_warning = reset_warning_msg
+
+		if self._interrupt_warning is None:
+			self._interrupt_warning = str(_('Are you sure you want to reset this setting?'))
 
 		if self._orientation == MenuOrientation.HORIZONTAL:
 			self._horizontal_cols = columns
@@ -796,7 +795,7 @@ class SelectMenu(AbstractCurses):
 		y_offset += 2
 
 		if self._headers:
-			header_height = len(self._headers) + 1
+			header_height = len(self._headers)
 			self._header_vp = Viewport(self._max_width, header_height, 0, y_offset)
 			y_offset += header_height
 
@@ -985,7 +984,7 @@ class SelectMenu(AbstractCurses):
 			if self._multi and not item.is_empty():
 				item_text += self._multi_prefix(item)
 
-			item_text = self._item_group.get_item_text(item)
+			item_text += self._item_group.get_item_text(item)
 
 			entries += [MenuCell(item, item_text)]
 
@@ -1077,7 +1076,6 @@ class SelectMenu(AbstractCurses):
 				return None
 			case MenuKeys.ACCEPT:
 				if self._multi:
-					self._item_group.select_current_item()
 					if self._item_group.is_mandatory_fulfilled():
 						return Result(ResultType.Selection, self._item_group.selected_items)
 				else:

@@ -8,24 +8,22 @@ from .. import disk
 from ..disk.device_model import BtrfsMountOption
 from ..hardware import SysInfo
 from ..menu import Menu
-from ..menu import TableMenu
 from ..menu.menu import MenuSelectionType
 from ..output import FormattedOutput, debug
 from ..utils.util import prompt_dir
 from ..storage import storage
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, FrameStyle, Alignment,
+	ResultType, EditMenu, MenuHelper
+)
 
 if TYPE_CHECKING:
 	_: Any
 
 
 def select_devices(preset: List[disk.BDevice] = []) -> List[disk.BDevice]:
-	"""
-	Asks the user to select one or multiple devices
-
-	:return: List of selected devices
-	:rtype: list
-	"""
-
 	def _preview_device_selection(selection: disk._DeviceInfo) -> Optional[str]:
 		dev = disk.device_handler.get_device(selection.path)
 		if dev and dev.partition_infos:
@@ -42,17 +40,8 @@ def select_devices(preset: List[disk.BDevice] = []) -> List[disk.BDevice]:
 	options = [d.device_info for d in devices]
 	preset_value = [p.device_info for p in preset]
 
-	choice = TableMenu(
-		title,
-		data=options,
-		multi=True,
-		preset=preset_value,
-		preview_command=_preview_device_selection,
-		preview_title=str(_('Existing Partitions')),
-		preview_size=0.2,
-		allow_reset=True,
-		allow_reset_warning_msg=warning
-	).run()
+	group, header = MenuHelper.create_table(data=options)
+	result = SelectMenu(group, header=header, search_enabled=False).multi()
 
 	match choice.type_:
 		case MenuSelectionType.Reset: return []
@@ -113,35 +102,38 @@ def select_disk_config(
 	manual_mode = disk.DiskLayoutType.Manual.display_msg()
 	pre_mount_mode = disk.DiskLayoutType.Pre_mount.display_msg()
 
-	options = [default_layout, manual_mode, pre_mount_mode]
-	preset_value = preset.config_type.display_msg() if preset else None
+	items = [
+		MenuItem(default_layout, value=default_layout),
+		MenuItem(manual_mode, value=manual_mode),
+		MenuItem(pre_mount_mode, value=pre_mount_mode)
+	]
+	group = MenuItemGroup(items, sort_items=False)
+
+	if preset:
+		group.set_focus_by_value(preset.config_type.display_msg())
+
 	warning = str(_('Are you sure you want to reset this setting?'))
 
-	choice = Menu(
-		_('Select a partitioning option'),
-		options,
-		allow_reset=True,
-		allow_reset_warning_msg=warning,
-		sort=False,
-		preview_size=0.2,
-		preset_values=preset_value
-	).run()
+	result = SelectMenu(
+		group,
+		allow_skip=True,
+		allow_reset=True
+	).single()
 
-	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return None
-		case MenuSelectionType.Selection:
-			if choice.single_value == pre_mount_mode:
+	match result.type_:
+		case ResultType.Skip: return preset
+		case ResultType.Reset: return None
+		case ResultType.Selection:
+			selection = result.item.value
+
+			if selection == pre_mount_mode:
 				output = 'You will use whatever drive-setup is mounted at the specified directory\n'
 				output += "WARNING: Archinstall won't check the suitability of this setup\n"
 
-				try:
-					path = prompt_dir(str(_('Enter the root directory of the mounted devices: ')), output)
-				except (KeyboardInterrupt, EOFError):
-					return preset
+				path = prompt_dir(str(_('Root mount directory')), output)
 				mods = disk.device_handler.detect_pre_mounted_mods(path)
 
-				storage['MOUNT_POINT'] = Path(path)
+				storage['MOUNT_POINT'] = path
 
 				return disk.DiskLayoutConfiguration(
 					config_type=disk.DiskLayoutType.Pre_mount,

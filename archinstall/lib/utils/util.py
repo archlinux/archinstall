@@ -4,20 +4,34 @@ from typing import Any, TYPE_CHECKING, Optional, List
 from ..output import FormattedOutput
 from ..output import info
 
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, FrameStyle, Alignment,
+	ResultType, EditMenu
+)
+
 if TYPE_CHECKING:
 	_: Any
 
 
 def prompt_dir(text: str, header: Optional[str] = None) -> Path:
-	if header:
-		print(header)
-
-	while True:
-		path = input(text).strip(' ')
+	def validate_path(path: str) -> Optional[str]:
 		dest_path = Path(path)
+
 		if dest_path.exists() and dest_path.is_dir():
-			return dest_path
-		info(_('Not a valid directory: {}').format(dest_path))
+			return None
+
+		return str(_('Not a valid directory'))
+
+	result = EditMenu(
+		text,
+		header=header,
+		alignment=Alignment.CENTER,
+		allow_skip=True,
+		validator=validate_path
+	).input()
+
+	return Path(result.item)
 
 
 def is_subpath(first: Path, second: Path):

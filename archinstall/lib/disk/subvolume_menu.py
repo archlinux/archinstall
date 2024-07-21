@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Optional, Any, TYPE_CHECKING
 
 from .device_model import SubvolumeModification
-from ..menu import TextInput, ListManager
+from ..menu import ListManager
 
 if TYPE_CHECKING:
 	_: Any

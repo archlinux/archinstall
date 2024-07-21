@@ -3,10 +3,17 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, Any, List, Optional, TYPE_CHECKING
 
-from .menu import AbstractSubMenu, Selector, MenuSelectionType, Menu, ListManager, TextInput
+from .menu import AbstractSubMenu, ListManager
 from .networking import fetch_data_from_url
 from .output import warn, FormattedOutput
 from .storage import storage
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, FrameStyle, Alignment,
+	ResultType, EditMenu
+)
+
 
 if TYPE_CHECKING:
 	_: Any
@@ -113,13 +120,18 @@ class MirrorConfiguration:
 
 
 class CustomMirrorList(ListManager):
-	def __init__(self, prompt: str, custom_mirrors: List[CustomMirror]):
+	def __init__(self, custom_mirrors: List[CustomMirror]):
 		self._actions = [
 			str(_('Add a custom mirror')),
 			str(_('Change custom mirror')),
 			str(_('Delete custom mirror'))
 		]
-		super().__init__(prompt, custom_mirrors, [self._actions[0]], self._actions[1:])
+		super().__init__(
+			'',
+			custom_mirrors,
+			[self._actions[0]],
+			self._actions[1:]
+		)
 
 	def selected_action_display(self, mirror: CustomMirror) -> str:
 		return mirror.name
@@ -146,46 +158,65 @@ class CustomMirrorList(ListManager):
 		return data
 
 	def _add_custom_mirror(self, mirror: Optional[CustomMirror] = None) -> Optional[CustomMirror]:
-		prompt = '\n\n' + str(_('Enter name (leave blank to skip): '))
-		existing_name = mirror.name if mirror else ''
+		result = EditMenu(
+			str(_('Mirror name')),
+			alignment=Alignment.CENTER,
+			allow_skip=True
+		).input()
 
-		while True:
-			name = TextInput(prompt, existing_name).run()
-			if not name:
-				return mirror
-			break
+		if not result.item:
+			return mirror
 
-		prompt = '\n' + str(_('Enter url (leave blank to skip): '))
-		existing_url = mirror.url if mirror else ''
+		name = result.item
+		header = f'{str(_("Name"))}: {name}'
 
-		while True:
-			url = TextInput(prompt, existing_url).run()
-			if not url:
-				return mirror
-			break
+		result = EditMenu(
+			str(_('Url')),
+			header=header,
+			alignment=Alignment.CENTER,
+			allow_skip=True
+		).input()
 
-		sign_check_choice = Menu(
-			str(_('Select signature check option')),
-			[s.value for s in SignCheck],
-			skip=False,
-			clear_screen=False,
-			preset_values=mirror.sign_check.value if mirror else None
-		).run()
+		if not result.item:
+		  return mirror
 
-		sign_option_choice = Menu(
-			str(_('Select signature option')),
-			[s.value for s in SignOption],
-			skip=False,
-			clear_screen=False,
-			preset_values=mirror.sign_option.value if mirror else None
-		).run()
+		url = result.item
 
-		return CustomMirror(
-			name,
-			url,
-			SignCheck(sign_check_choice.single_value),
-			SignOption(sign_option_choice.single_value)
-		)
+		header += f'\n{str(_("Url"))}: {url}\n'
+		prompt = f'{header}\n' + str(_('Select signature check'))
+
+		sign_chk_items = [MenuItem(s.value, value=s.value) for s in SignCheck]
+		group = MenuItemGroup(sign_chk_items, sort_items=False)
+		result = SelectMenu(
+			group,
+			header=prompt,
+			alignment=Alignment.CENTER,
+			allow_skip=False
+		).single()
+
+		if not result.item:
+			raise ValueError('Unexpected missing item')
+
+		sign_check = SignCheck(result.item.value)
+
+		header += f'{str(_("Signature check"))}: {sign_check.value}\n'
+		prompt = f'{header}\n' + 'Select signature option'
+
+		sign_opt_items = [MenuItem(s.value, value=s.value) for s in SignOption]
+		group = MenuItemGroup(sign_opt_items, sort_items=False)
+		result = SelectMenu(
+			group,
+			header=prompt,
+			alignment=Alignment.CENTER,
+			allow_skip=False
+		).single()
+
+		if not result.item:
+			raise ValueError('Unexpected missing item')
+
+		sign_opt = SignOption(result.item.value)
+
+		return CustomMirror(name, url, sign_check, sign_opt)
 
 
 class MirrorMenu(AbstractSubMenu):
@@ -195,88 +226,95 @@ class MirrorMenu(AbstractSubMenu):
 		preset: Optional[MirrorConfiguration] = None
 	):
 		if preset:
-			self._preset = preset
+			self._mirror_config = preset
 		else:
-			self._preset = MirrorConfiguration()
+			self._mirror_config = MirrorConfiguration()
 
-		super().__init__(data_store=data_store)
+		menu_optioons = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
 
-	def setup_selection_menu_options(self):
-		self._menu_options['mirror_regions'] = \
-			Selector(
-				_('Mirror region'),
-				lambda preset: select_mirror_regions(preset),
-				display_func=lambda x: ', '.join(x.keys()) if x else '',
-				default=self._preset.mirror_regions,
-				enabled=True)
-		self._menu_options['custom_mirrors'] = \
-			Selector(
-				_('Custom mirrors'),
-				lambda preset: select_custom_mirror(preset=preset),
-				display_func=lambda x: str(_('Defined')) if x else '',
-				preview_func=self._prev_custom_mirror,
-				default=self._preset.custom_mirrors,
-				enabled=True
+		super().__init__(self._item_group, data_store=data_store, allow_reset=True)
+
+	def _define_menu_options(self) -> List[MenuItem]:
+		return [
+			MenuItem(
+				text=str(_('Mirror region')),
+				action=lambda x: select_mirror_regions(x),
+				value=self._mirror_config.mirror_regions,
+				preview_action=self._prev_regions,
+				ds_key='mirror_regions'
+			),
+			MenuItem(
+				text=str(_('Custom mirrors')),
+				action=lambda x: select_custom_mirror(x),
+				value=self._mirror_config.custom_mirrors,
+				preview_action=self._prev_custom_mirror,
+				ds_key='custom_mirrors'
 			)
+		]
 
-	def _prev_custom_mirror(self) -> Optional[str]:
-		selector = self._menu_options['custom_mirrors']
+	def _prev_regions(self, item: MenuItem) -> Optional[str]:
+		regions = item.value
 
-		if selector.has_selection():
-			custom_mirrors: List[CustomMirror] = selector.current_selection  # type: ignore
-			output = FormattedOutput.as_table(custom_mirrors)
-			return output.strip()
+		output = ''
+		for region, urls in regions.items():
+			max_len = max([len(url) for url in urls])
+			output += f'{region}\n'
+			output += '-' * max_len + '\n'
 
-		return None
+			for url in urls:
+				output += f'{url}\n'
 
-	def run(self, allow_reset: bool = True) -> Optional[MirrorConfiguration]:
-		super().run(allow_reset=allow_reset)
+			output += '\n'
 
-		if self._data_store.get('mirror_regions', None) or self._data_store.get('custom_mirrors', None):
-			return MirrorConfiguration(
-				mirror_regions=self._data_store['mirror_regions'],
-				custom_mirrors=self._data_store['custom_mirrors'],
-			)
+		return output
 
-		return None
+	def _prev_custom_mirror(self, item: MenuItem) -> Optional[str]:
+		if not item.value:
+			return None
+
+		custom_mirrors: List[CustomMirror] = item.value
+		output = FormattedOutput.as_table(custom_mirrors)
+		return output.strip()
+
+	def run(self) -> MirrorConfiguration:
+		super().run()
+
+		if not self._data_store:
+			return MirrorConfiguration()
+
+		return MirrorConfiguration(
+			mirror_regions=self._data_store.get('mirror_regions', None),
+			custom_mirrors=self._data_store.get('custom_mirrors', None),
+		)
 
 
-def select_mirror_regions(preset_values: Dict[str, List[str]] = {}) -> Dict[str, List[str]]:
-	"""
-	Asks the user to select a mirror or region
-	Usually this is combined with :ref:`archinstall.list_mirrors`.
-
-	:return: The dictionary information about a mirror/region.
-	:rtype: dict
-	"""
-	if preset_values is None:
-		preselected = None
-	else:
-		preselected = list(preset_values.keys())
-
+def select_mirror_regions(preset: Dict[str, List[str]]) -> Dict[str, List[str]]:
 	mirrors = list_mirrors()
 
-	choice = Menu(
-		_('Select one of the regions to download packages from'),
-		list(mirrors.keys()),
-		preset_values=preselected,
-		multi=True,
-		allow_reset=True
-	).run()
+	items = [MenuItem(mirror, value=mirror) for mirror in mirrors.keys()]
+	group = MenuItemGroup(items, sort_items=True)
+	group.set_focus_by_value(preset)
 
-	match choice.type_:
-		case MenuSelectionType.Reset:
-			return {}
-		case MenuSelectionType.Skip:
-			return preset_values
-		case MenuSelectionType.Selection:
-			return {selected: mirrors[selected] for selected in choice.multi_value}
+	result = SelectMenu(
+		group,
+		alignment=Alignment.CENTER,
+		frame=FrameProperties(str(_('Mirror regions')), FrameStyle.MIN, FrameStyle.MIN),
+		allow_reset=True,
+		allow_skip=True,
+	).multi()
+
+	match result.type_:
+		case ResultType.Skip: return preset
+		case ResultType.Reset: return {}
+		case ResultType.Selection:
+			return {item.value: mirrors[item.value] for item in result.item}
 
 	return {}
 
 
-def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []):
-	custom_mirrors = CustomMirrorList(prompt, preset).run()
+def select_custom_mirror(preset: List[CustomMirror] = []):
+	custom_mirrors = CustomMirrorList(preset).run()
 	return custom_mirrors
 
 
