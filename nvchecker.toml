@@ -1,0 +1,4 @@
+[nvchecker]
+source = "git"
+git = "https://github.com/archlinux/archinstall"
+prefix = "v"
