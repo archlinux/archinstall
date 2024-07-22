@@ -1319,5 +1319,8 @@ msgstr "Ajuda do archinstall"
 msgid " (default)"
 msgstr "(padrão)"
 
+msgid "Press Ctrl+h for help"
+msgstr "Pressione Ctrl+h para ajuda"
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "
