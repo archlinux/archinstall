@@ -5,13 +5,12 @@ import unicodedata
 from enum import Enum
 
 from pathlib import Path
-from typing import Dict, Union, List, Any, Callable, Optional, TYPE_CHECKING
+from typing import Dict, Union, List, Any, Callable, Optional
 from dataclasses import asdict, is_dataclass
+from _typeshed import DataclassInstance
 
 from .storage import storage
 
-if TYPE_CHECKING:
-	from _typeshed import DataclassInstance
 
 class FormattedOutput:
 
