@@ -101,7 +101,7 @@ class ProfileHandler:
 		if not profile:
 			return None
 
-		valid_sub_profiles: List[Profile] = []
+		valid_sub_profiles: List[TProfile] = []  # type: ignore
 		invalid_sub_profiles: List[str] = []
 		details: List[str] = profile_config.get('details', [])
 
@@ -122,7 +122,7 @@ class ProfileHandler:
 
 		custom_settings = profile_config.get('custom_settings', {})
 		profile.set_custom_settings(custom_settings)
-		profile.set_current_selection(valid_sub_profiles)
+		profile.current_selection = valid_sub_profiles
 
 		return profile
 
