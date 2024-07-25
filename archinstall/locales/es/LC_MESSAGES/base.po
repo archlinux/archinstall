@@ -990,7 +990,7 @@ msgid "Back"
 msgstr "Regresar"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr "Por favor, elija qué saludador instalar para los perfiles elegidos: {}"
+msgstr "Por favor, elija qué gestor de inicio de sesión instalar para los perfiles elegidos: {}"
 
 msgid "Environment type: {}"
 msgstr "Tipo de entorno: {}"
@@ -1051,10 +1051,10 @@ msgid "Graphics driver"
 msgstr "Controlador de gráficos"
 
 msgid "Greeter"
-msgstr "Saludador"
+msgstr "Gestor de inicio de sesión"
 
 msgid "Please chose which greeter to install"
-msgstr "Por favor, elija qué saludador instalar"
+msgstr "Por favor, elija qué gestor de inicio de sesión instalar"
 
 msgid "This is a list of pre-programmed default_profiles"
 msgstr "Esta es una lista de default_profiles preprogramados"
@@ -1310,6 +1310,9 @@ msgstr "Ayuda de archinstall"
 
 msgid " (default)"
 msgstr " (predeterminado)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
