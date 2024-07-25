@@ -39,7 +39,6 @@ class GlobalMenu(AbstractMenu):
 			data_store['archinstall-language'] = self._translation_handler.get_language_by_abbr('en')
 
 		menu_optioons = self._get_menu_options(data_store)
-
 		self._item_group = MenuItemGroup(
 			menu_optioons,
 			sort_items=False,

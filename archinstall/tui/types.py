@@ -80,6 +80,14 @@ class FrameProperties:
 	w_frame_style: FrameStyle = FrameStyle.MAX
 	h_frame_style: FrameStyle = FrameStyle.MAX
 
+	@classmethod
+	def minimal(cls, header: str) -> 'FrameProperties':
+		return FrameProperties(
+			header,
+			FrameStyle.MIN,
+			FrameStyle.MIN,
+		)
+
 
 class ResultType(Enum):
 	Selection = auto()

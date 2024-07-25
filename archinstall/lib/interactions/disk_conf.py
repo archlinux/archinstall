@@ -7,23 +7,21 @@ from typing import Optional, List, Tuple
 from .. import disk
 from ..disk.device_model import BtrfsMountOption
 from ..hardware import SysInfo
-from ..menu import Menu
-from ..menu.menu import MenuSelectionType
 from ..output import FormattedOutput, debug
 from ..utils.util import prompt_dir
 from ..storage import storage
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu, MenuHelper
+	FrameProperties, Alignment, ResultType,
+	MenuHelper, MenuOrientation
 )
 
 if TYPE_CHECKING:
 	_: Any
 
 
-def select_devices(preset: List[disk.BDevice] = []) -> List[disk.BDevice]:
+def select_devices(preset: Optional[List[disk.BDevice]] = []) -> List[disk.BDevice]:
 	def _preview_device_selection(selection: disk._DeviceInfo) -> Optional[str]:
 		dev = disk.device_handler.get_device(selection.path)
 		if dev and dev.partition_infos:
@@ -33,21 +31,24 @@ def select_devices(preset: List[disk.BDevice] = []) -> List[disk.BDevice]:
 	if preset is None:
 		preset = []
 
-	title = str(_('Select one or more devices to use and configure'))
-	warning = str(_('If you reset the device selection this will also reset the current disk layout. Are you sure?'))
-
 	devices = disk.device_handler.devices
 	options = [d.device_info for d in devices]
-	preset_value = [p.device_info for p in preset]
+	presets = [p.device_info for p in preset]
 
 	group, header = MenuHelper.create_table(data=options)
-	result = SelectMenu(group, header=header, search_enabled=False).multi()
+	group.set_selected_by_value(presets)
+	result = SelectMenu(
+		group,
+		header=header,
+		alignment=Alignment.CENTER,
+		search_enabled=False
+	).multi()
 
-	match choice.type_:
-		case MenuSelectionType.Reset: return []
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection:
-			selected_device_info: List[disk._DeviceInfo] = choice.single_value
+	match result.type_:
+		case ResultType.Reset: return []
+		case ResultType.Skip: return preset
+		case ResultType.Selection:
+			selected_device_info: List[disk._DeviceInfo] = [i.value for i in result.item]
 			selected_devices = []
 
 			for device in devices:
@@ -110,13 +111,12 @@ def select_disk_config(
 	group = MenuItemGroup(items, sort_items=False)
 
 	if preset:
-		group.set_focus_by_value(preset.config_type.display_msg())
-
-	warning = str(_('Are you sure you want to reset this setting?'))
+		group.set_selected_by_value(preset.config_type.display_msg())
 
 	result = SelectMenu(
 		group,
 		allow_skip=True,
+		alignment=Alignment.CENTER,
 		allow_reset=True
 	).single()
 
@@ -124,13 +124,16 @@ def select_disk_config(
 		case ResultType.Skip: return preset
 		case ResultType.Reset: return None
 		case ResultType.Selection:
+			if not result.item:
+				return None
+
 			selection = result.item.value
 
 			if selection == pre_mount_mode:
 				output = 'You will use whatever drive-setup is mounted at the specified directory\n'
 				output += "WARNING: Archinstall won't check the suitability of this setup\n"
 
-				path = prompt_dir(str(_('Root mount directory')), output)
+				path = prompt_dir(str(_('Root mount directory')), output, allow_skip=False)
 				mods = disk.device_handler.detect_pre_mounted_mods(path)
 
 				storage['MOUNT_POINT'] = path
@@ -147,14 +150,14 @@ def select_disk_config(
 			if not devices:
 				return None
 
-			if choice.value == default_layout:
+			if result.item.value == default_layout:
 				modifications = get_default_partition_layout(devices, advanced_option=advanced_option)
 				if modifications:
 					return disk.DiskLayoutConfiguration(
 						config_type=disk.DiskLayoutType.Default,
 						device_modifications=modifications
 					)
-			elif choice.value == manual_mode:
+			elif result.item.value == manual_mode:
 				preset_mods = preset.device_modifications if preset else []
 				modifications = _manual_partitioning(preset_mods, devices)
 
@@ -220,33 +223,43 @@ def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.Parti
 
 
 def select_main_filesystem_format(advanced_options: bool = False) -> disk.FilesystemType:
-	options = {
-		'btrfs': disk.FilesystemType.Btrfs,
-		'ext4': disk.FilesystemType.Ext4,
-		'xfs': disk.FilesystemType.Xfs,
-		'f2fs': disk.FilesystemType.F2fs
-	}
+	items = [
+		MenuItem('btrfs', value=disk.FilesystemType.Btrfs),
+		MenuItem('ext4', value=disk.FilesystemType.Ext4),
+		MenuItem('xfs', value=disk.FilesystemType.Xfs),
+		MenuItem('f2fs', value=disk.FilesystemType.F2fs)
+	]
 
 	if advanced_options:
-		options.update({'ntfs': disk.FilesystemType.Ntfs})
+		items.append(MenuItem('ntfs', value=disk.FilesystemType.Ntfs))
 
-	prompt = _('Select which filesystem your main partition should use')
-	choice = Menu(prompt, options, skip=False, sort=False).run()
-	return options[choice.single_value]
+	group = MenuItemGroup(items, sort_items=False)
+	result = SelectMenu(
+		group,
+		alignment=Alignment.CENTER,
+		frame=FrameProperties.minimal('Filesystem'),
+		allow_skip=False
+	).single()
+
+	return result.item.value
 
 
 def select_mount_options() -> List[str]:
 	prompt = str(_('Would you like to use compression or disable CoW?'))
-	options = [str(_('Use compression')), str(_('Disable Copy-on-Write'))]
-	choice = Menu(prompt, options, sort=False).run()
+	compression = str(_('Use compression'))
+	disable_cow = str(_('Disable Copy-on-Write'))
 
-	if choice.type_ == MenuSelectionType.Selection:
-		if choice.single_value == options[0]:
-			return [BtrfsMountOption.compress.value]
-		else:
-			return [BtrfsMountOption.nodatacow.value]
+	items = [
+		MenuItem(compression, value=BtrfsMountOption.compress.value),
+		MenuItem(disable_cow, value=BtrfsMountOption.nodatacow.value),
+	]
+	group = MenuItemGroup(items, sort_items=False)
+	result = SelectMenu(group, header=prompt, search_enabled=False, allow_skip=False).single()
 
-	return []
+	if not result.item:
+		return []
+
+	return [result.item.value]
 
 
 def process_root_partition_size(total_size: disk.Size, sector_size: disk.SectorSize) -> disk.Size:
@@ -279,9 +292,16 @@ def suggest_single_disk_layout(
 	min_size_to_allow_home_part = disk.Size(40, disk.Unit.GiB, sector_size)
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
-		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
-		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		using_subvolumes = choice.value == Menu.yes()
+		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?')) + '\n'
+		group = MenuItemGroup.default_confirm()
+		group.set_focus_by_value(MenuItem.default_yes().value)
+		result = SelectMenu(
+			group,
+			header=prompt,
+			allow_skip=False
+		).single()
+
+		using_subvolumes = result.item == MenuItem.default_yes()
 		mount_options = select_mount_options()
 	else:
 		using_subvolumes = False
@@ -318,9 +338,19 @@ def suggest_single_disk_layout(
 	elif separate_home:
 		using_home_partition = True
 	else:
-		prompt = str(_('Would you like to create a separate partition for /home?'))
-		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		using_home_partition = choice.value == Menu.yes()
+		prompt = str(_('Would you like to create a separate partition for /home?')) + '\n'
+		group = MenuItemGroup.default_confirm()
+		group.set_focus_by_value(MenuItem.default_yes().value)
+		result = SelectMenu(
+			group,
+			header=prompt,
+			orientation=MenuOrientation.HORIZONTAL,
+			columns=2,
+			alignment=Alignment.CENTER,
+			allow_skip=False
+		).single()
+
+		using_home_partition = result.item == MenuItem.default_yes()
 
 	# root partition
 	root_start = boot_partition.start + boot_partition.length
@@ -410,10 +440,14 @@ def suggest_multi_disk_layout(
 	root_device: Optional[disk.BDevice] = sorted_delta[0][0]
 
 	if home_device is None or root_device is None:
-		text = _('The selected drives do not have the minimum capacity required for an automatic suggestion\n')
-		text += _('Minimum capacity for /home partition: {}GiB\n').format(min_home_partition_size.format_size(disk.Unit.GiB))
-		text += _('Minimum capacity for Arch Linux partition: {}GiB').format(desired_root_partition_size.format_size(disk.Unit.GiB))
-		Menu(str(text), [str(_('Continue'))], skip=False).run()
+		text = str(_('The selected drives do not have the minimum capacity required for an automatic suggestion\n'))
+		text += str(_('Minimum capacity for /home partition: {}GiB\n').format(min_home_partition_size.format_size(disk.Unit.GiB)))
+		text += str(_('Minimum capacity for Arch Linux partition: {}GiB').format(desired_root_partition_size.format_size(disk.Unit.GiB)))
+
+		items = [MenuItem(str(_('Continue')))]
+		group = MenuItemGroup(items)
+		SelectMenu(group).single()
+
 		return []
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
@@ -497,8 +531,10 @@ def suggest_lvm_layout(
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
-		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		using_subvolumes = choice.value == Menu.yes()
+		group = MenuItemGroup.default_confirm()
+		result = SelectMenu(group, header=prompt, search_enabled=False, allow_skip=False).single()
+
+		using_subvolumes = MenuItem.default_yes() == result.item
 
 		mount_options = select_mount_options()
 

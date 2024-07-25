@@ -8,12 +8,10 @@ from ..disk import (
 from ..interactions import select_disk_config
 from ..interactions.disk_conf import select_lvm_config
 from ..output import FormattedOutput
-from ..menu import AbstractSubMenu, ListManager
+from ..menu import AbstractSubMenu
 
 from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu
+	MenuItemGroup, MenuItem
 )
 
 if TYPE_CHECKING:
@@ -45,7 +43,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 				ds_key='disk_config'
 			),
 			MenuItem(
-				text=f'{_('LVM - Logical Volume Management')} (BETA)',
+				text='LVM (BETA)',
 				action=lambda x: self._select_lvm_config(x),
 				value=self._disk_layout_config.lvm_config if self._disk_layout_config else None,
 				preview_action=self._prev_lvm_config,

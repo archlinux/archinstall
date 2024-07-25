@@ -152,14 +152,10 @@ class AbstractMenu:
 		data_store: Dict[str, Any],
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
-		post_callback: Optional[Callable[[str, Any], None]] = None,
-		exit_callback: Optional[Callable] = None
 	):
 		self._menu_item_group = item_group
 		self._data_store = data_store
 		self.auto_cursor = auto_cursor
-		self._post_callback = post_callback
-		self._exit_callback = exit_callback
 		self._allow_reset = allow_reset
 		self._reset_warning: Optional[str] = None
 
@@ -185,8 +181,6 @@ class AbstractMenu:
 			raise args[1]
 
 		self._sync_all_to_ds()
-
-		self._exit_callback()
 
 	def _sync_all_from_ds(self) -> None:
 		for item in self._menu_item_group.menu_items:
@@ -216,13 +210,10 @@ class AbstractMenu:
 			self._enabled_order.append(key)
 			return
 
-		raise ValueError(f'No selector found: {selector_name}')
+		raise ValueError(f'No selector found: {key}')
 
 	def run(self) -> None:
 		self._sync_all_from_ds()
-
-		if self._post_callback is not None:
-			self._post_callback()
 
 		while True:
 			result = SelectMenu(
@@ -235,6 +226,9 @@ class AbstractMenu:
 				preview_frame=FrameProperties('Info', FrameStyle.MAX),
 			).single()
 
+			if not result.item:
+				break
+
 			match result.type_:
 				case ResultType.Selection:
 					item: MenuItem = result.item
@@ -245,8 +239,9 @@ class AbstractMenu:
 					if item.action is None:
 						break
 
-					if self.auto_cursor:
-						self._menu_item_group.focus_next()
+					# TODO doesn't work properly with multi columns and certain sub-menus
+					# if self.auto_cursor:
+					# 	self._menu_item_group.focus_next()
 				case ResultType.Reset:
 					return None
 

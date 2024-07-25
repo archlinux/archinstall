@@ -695,7 +695,6 @@ class SelectMenu(AbstractCurses):
 		self._allow_reset = allow_reset
 		self._active_search = False
 		self._help_active = False
-		self._skip_empty_entries = True
 		self._item_group = group
 		self._preview_style = preview_style
 		self._preview_frame = preview_frame
@@ -1077,6 +1076,8 @@ class SelectMenu(AbstractCurses):
 			case MenuKeys.ACCEPT:
 				if self._multi:
 					if self._item_group.is_mandatory_fulfilled():
+						if self._item_group.focus_item not in self._item_group.selected_items:
+							self._item_group.selected_items.append(self._item_group.focus_item)
 						return Result(ResultType.Selection, self._item_group.selected_items)
 				else:
 					item = self._item_group.focus_item
@@ -1120,7 +1121,7 @@ class SelectMenu(AbstractCurses):
 		self._draw()
 		return None
 
-	def _focus_item(self, key: MenuKeys):
+	def _focus_item(self, key: MenuKeys) -> None:
 		focus_item = self._item_group.focus_item
 		next_row = 0
 		next_col = 0
@@ -1160,7 +1161,13 @@ class SelectMenu(AbstractCurses):
 								next_row = len(self._row_entries) - 1 if next_row == 0 else next_row - 1
 								next_col = len(self._row_entries[next_row]) - 1
 
-		self._item_group.focus_item = self._row_entries[next_row][next_col].item
+		if next_row < len(self._row_entries):
+			row = self._row_entries[next_row]
+			if next_col < len(row):
+				self._item_group.focus_item = row[next_col].item
+
+		if self._item_group.focus_item.is_empty():
+			self._focus_item(key)
 
 
 class Tui:

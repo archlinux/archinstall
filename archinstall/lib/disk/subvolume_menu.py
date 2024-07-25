@@ -3,6 +3,11 @@ from typing import List, Optional, Any, TYPE_CHECKING
 
 from .device_model import SubvolumeModification
 from ..menu import ListManager
+from ..utils.util import prompt_dir
+
+from archinstall.tui import (
+	Alignment, EditMenu
+)
 
 if TYPE_CHECKING:
 	_: Any
@@ -21,17 +26,29 @@ class SubvolumeMenu(ListManager):
 		return str(subvolume.name)
 
 	def _add_subvolume(self, editing: Optional[SubvolumeModification] = None) -> Optional[SubvolumeModification]:
-		name = TextInput(f'\n\n{_("Subvolume name")}: ', editing.name if editing else '').run()
+		result = EditMenu(
+			str(_('Subvolume name')),
+			alignment=Alignment.CENTER,
+			allow_skip=True
+		).input()
 
-		if not name:
+		if not result.item:
 			return None
 
-		mountpoint = TextInput(f'{_("Subvolume mountpoint")}: ', str(editing.mountpoint) if editing else '').run()
+		name = result.item
 
-		if not mountpoint:
+		header = f"{str(_('Subvolume name'))}: {name}\n"
+
+		path = prompt_dir(
+			str(_("Subvolume mountpoint")),
+			header=header,
+			allow_skip=True
+		)
+
+		if not path:
 			return None
 
-		return SubvolumeModification(Path(name), Path(mountpoint))
+		return SubvolumeModification(Path(name), path)
 
 	def handle_action(
 		self,

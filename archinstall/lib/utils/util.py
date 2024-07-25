@@ -2,19 +2,21 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING, Optional, List
 
 from ..output import FormattedOutput
-from ..output import info
 
 from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu
+	Alignment, EditMenu
 )
 
 if TYPE_CHECKING:
 	_: Any
 
 
-def prompt_dir(text: str, header: Optional[str] = None) -> Path:
+def prompt_dir(
+	text: str,
+	header: Optional[str] = None,
+	validate: bool = True,
+	allow_skip: bool = False
+) -> Optional[Path]:
 	def validate_path(path: str) -> Optional[str]:
 		dest_path = Path(path)
 
@@ -23,13 +25,21 @@ def prompt_dir(text: str, header: Optional[str] = None) -> Path:
 
 		return str(_('Not a valid directory'))
 
+	if validate:
+		validate_func = validate_path
+	else:
+		validate_func = None
+
 	result = EditMenu(
 		text,
 		header=header,
 		alignment=Alignment.CENTER,
-		allow_skip=True,
-		validator=validate_path
+		allow_skip=allow_skip,
+		validator=validate_func
 	).input()
+
+	if allow_skip and not result.item:
+		return None
 
 	return Path(result.item)
 

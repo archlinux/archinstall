@@ -1,14 +1,10 @@
 import copy
-from os import system
 from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple, List
 
-from .menu import Menu
 from ..output import FormattedOutput
 
 from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType
+	MenuItemGroup, MenuItem, SelectMenu
 )
 
 if TYPE_CHECKING:
@@ -127,11 +123,7 @@ class ListManager:
 
 		items = [MenuItem(o, value=o) for o in options]
 		group = MenuItemGroup(items, sort_items=False)
-		result = SelectMenu(
-			group,
-			search_enabled=False,
-			allow_skip=False,
-		).single()
+		result = SelectMenu(group, search_enabled=False, allow_skip=False).single()
 
 		if not result.item:
 			raise ValueError('Unexpected missing item')

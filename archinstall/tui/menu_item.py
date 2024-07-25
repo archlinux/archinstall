@@ -87,6 +87,17 @@ class MenuItemGroup:
 				self.focus_item = item
 				break
 
+	def set_selected_by_value(self, values: Any | List[Any]) -> None:
+		if not isinstance(values, list):
+			values = [values]
+
+		for item in self.menu_items:
+			if item.value in values:
+				self.selected_items.append(item)
+
+		if values:
+			self.set_focus_by_value(values[0])
+
 	def index_of(self, item: MenuItem) -> int:
 		return self.items.index(item)
 
