@@ -55,7 +55,7 @@ class DesktopProfile(Profile):
 	def do_on_select(self) -> SelectResult:
 		choice = profile_handler.select_profile(
 			profile_handler.get_desktop_profiles(),
-			self._current_selection,
+			self.current_selection,
 			title=str(_('Select your desired desktop environment')),
 			multi=True
 		)
@@ -71,14 +71,14 @@ class DesktopProfile(Profile):
 				return SelectResult.ResetCurrent
 
 	def post_install(self, install_session: 'Installer'):
-		for profile in self._current_selection:
+		for profile in self.current_selection:
 			profile.post_install(install_session)
 
 	def install(self, install_session: 'Installer'):
 		# Install common packages for all desktop environments
 		install_session.add_additional_packages(self.packages)
 
-		for profile in self._current_selection:
+		for profile in self.current_selection:
 			info(f'Installing profile {profile.name}...')
 
 			install_session.add_additional_packages(profile.packages)
