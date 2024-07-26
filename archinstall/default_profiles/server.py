@@ -3,7 +3,7 @@ from typing import Any, TYPE_CHECKING, List
 from archinstall.lib.output import info
 from archinstall.lib.menu import MenuSelectionType
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.default_profiles.profile import ProfileType, Profile, SelectResult, TProfile
+from archinstall.default_profiles.profile import ProfileType, Profile, SelectResult
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class ServerProfile(Profile):
-	def __init__(self, current_value: List[TProfile] = []):
+	def __init__(self, current_value: List[Profile] = []):
 		super().__init__(
 			'Server',
 			ProfileType.Server,

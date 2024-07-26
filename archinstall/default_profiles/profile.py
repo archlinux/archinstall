@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 from enum import Enum, auto
-from typing import List, Optional, Any, Dict, TYPE_CHECKING, TypeVar
+from typing import List, Optional, Any, Dict, TYPE_CHECKING
 
 from archinstall.lib.utils.util import format_cols
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 	_: Any
-
-
-TProfile = TypeVar('TProfile', bound='Profile')
 
 
 class ProfileType(Enum):
@@ -50,7 +47,7 @@ class Profile:
 		name: str,
 		profile_type: ProfileType,
 		description: str = '',
-		current_selection: List[TProfile] = [],
+		current_selection: List[Profile] = [],
 		packages: List[str] = [],
 		services: List[str] = [],
 		support_gfx_driver: bool = False,
