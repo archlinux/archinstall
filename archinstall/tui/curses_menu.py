@@ -87,7 +87,6 @@ class AbstractCurses(metaclass=ABCMeta):
 	def get_header_entries(
 		self,
 		header: Optional[str],
-		alignment: Alignment = Alignment.LEFT
 	) -> List[ViewportEntry]:
 		cur_row = 0
 		full_header = []
@@ -97,20 +96,7 @@ class AbstractCurses(metaclass=ABCMeta):
 				full_header += [ViewportEntry(header, cur_row, 0, STYLE.NORMAL)]
 				cur_row += 1
 
-		aligned_headers = self._align_headers(alignment, full_header)
-		return aligned_headers
-
-	def _align_headers(
-		self,
-		alignment: Alignment,
-		headers: List[ViewportEntry]
-	) -> List[ViewportEntry]:
-		if alignment == Alignment.CENTER and headers:
-			longest_header = max([len(h.text) for h in headers])
-			x_offset = int((tui.max_yx[1] / 2) - (longest_header / 2))
-			headers = [ViewportEntry(h.text, h.row, x_offset, h.style) for h in headers]
-
-		return headers
+		return full_header
 
 
 @dataclass
@@ -160,6 +146,11 @@ class AbstractViewport:
 		]
 
 		return framed_entries
+
+	def align_center(self, lines: List[ViewportEntry], width: int) -> int:
+		max_col = self._max_col(lines)
+		x_offset = int((width / 2) - (max_col / 2))
+		return x_offset
 
 	def _get_right_frame(
 		self,
@@ -244,15 +235,18 @@ class AbstractViewport:
 	def _adjust_entries(self, entries: List[ViewportEntry]) -> List[ViewportEntry]:
 		for entry in entries:
 			entry.row += 1
-			entry.col += 1
+			entry.col += 2
 
 		return entries
 
-	def _unique_rows(self, entries: List[ViewportEntry]) -> int:
+	def _num_unique_rows(self, entries: List[ViewportEntry]) -> int:
 		return len(set([e.row for e in entries]))
 
 	def _max_col(self, entries: List[ViewportEntry]) -> int:
-		return max([len(e.text) + e.col for e in entries]) + 1
+		values = [len(e.text) + e.col for e in entries]
+		if not values:
+			return 0
+		return max(values)
 
 	def _replace_str(self, text: str, index: int = 0, replacement: str = '') -> str:
 		len_replace = len(replacement)
@@ -263,7 +257,7 @@ class AbstractViewport:
 			return ''
 
 		max_col = self._max_col(entries)
-		view = [max_col * ' '] * self._unique_rows(entries)
+		view = [max_col * ' '] * self._num_unique_rows(entries)
 
 		for e in entries:
 			view[e.row] = self._replace_str(view[e.row], e.col, e.text)
@@ -363,7 +357,8 @@ class Viewport(AbstractViewport):
 		x_start: int,
 		y_start: int,
 		enable_scroll: bool = False,
-		frame: Optional[FrameProperties] = None
+		frame: Optional[FrameProperties] = None,
+		alignment: Alignment = Alignment.LEFT
 	):
 		super().__init__()
 
@@ -373,6 +368,7 @@ class Viewport(AbstractViewport):
 		self.y_start = y_start
 		self._enable_scroll = enable_scroll
 		self._frame = frame
+		self._alignment = alignment
 
 		self._main_win = curses.newwin(self.height, self.width, self.y_start, self.x_start)
 		self._main_win.nodelay(False)
@@ -386,30 +382,34 @@ class Viewport(AbstractViewport):
 
 	def update(
 		self,
-		entries: List[ViewportEntry],
+		lines: List[ViewportEntry],
 		cursor_pos: int = 0,
 		scroll_pos: Optional[int] = None
 	):
-		visible_rows, percentage = self._find_visible_rows(entries, cursor_pos, scroll_pos)
+		lines, percentage = self._find_visible_rows(lines, cursor_pos, scroll_pos)
 
 		if self._frame:
-			visible_rows = self.add_frame(
-				visible_rows,
+			lines = self.add_frame(
+				lines,
 				self.width,
 				self.height,
 				frame=self._frame,
 				scroll_pct=percentage
 			)
 
+		x_offset = 0
+		if self._alignment == Alignment.CENTER:
+			x_offset = self.align_center(lines, self.width)
+
 		self._main_win.erase()
 
-		for entry in visible_rows:
+		for line in lines:
 			self.add_str(
 				self._main_win,
-				entry.row,
-				entry.col,
-				entry.text,
-				entry.style
+				line.row,
+				line.col + x_offset,
+				line.text,
+				line.style
 			)
 
 		self._main_win.refresh()
@@ -701,7 +701,7 @@ class SelectMenu(AbstractCurses):
 		self._orientation = orientation
 		self._column_spacing = column_spacing
 		self._alignment = alignment
-		self._headers = self.get_header_entries(header, alignment)
+		self._headers = self.get_header_entries(header)
 		self._footers = self._footer_entries()
 		self._frame = frame
 		self._interrupt_warning = reset_warning_msg
@@ -795,7 +795,13 @@ class SelectMenu(AbstractCurses):
 
 		if self._headers:
 			header_height = len(self._headers)
-			self._header_vp = Viewport(self._max_width, header_height, 0, y_offset)
+			self._header_vp = Viewport(
+				self._max_width,
+				header_height,
+				0,
+				y_offset,
+				alignment=self._alignment
+			)
 			y_offset += header_height
 
 		prev_offset = y_offset + footer_height
@@ -806,24 +812,75 @@ class SelectMenu(AbstractCurses):
 			case PreviewStyle.BOTTOM:
 				menu_height = available_height - prev_size
 
-				self._menu_vp = Viewport(self._max_width, menu_height, 0, y_offset, frame=self._frame)
-				self._preview_vp = Viewport(self._max_width, prev_size, 0, menu_height + y_offset,
-											frame=self._preview_frame)
+				self._menu_vp = Viewport(
+					self._max_width,
+					menu_height,
+					0,
+					y_offset,
+					frame=self._frame,
+					alignment=self._alignment
+				)
+				self._preview_vp = Viewport(
+					self._max_width,
+					prev_size,
+					0,
+					menu_height + y_offset,
+					frame=self._preview_frame
+				)
 			case PreviewStyle.RIGHT:
 				menu_width = self._max_width - prev_size
 
-				self._menu_vp = Viewport(menu_width, available_height, 0, y_offset, frame=self._frame)
-				self._preview_vp = Viewport(prev_size, available_height, menu_width, y_offset,
-											frame=self._preview_frame)
+				self._menu_vp = Viewport(
+					menu_width,
+					available_height,
+					0,
+					y_offset,
+					frame=self._frame,
+					alignment=self._alignment
+				)
+				self._preview_vp = Viewport(
+					prev_size,
+					available_height,
+					menu_width,
+					y_offset,
+					frame=self._preview_frame,
+					alignment=self._alignment
+				)
 			case PreviewStyle.TOP:
 				menu_height = available_height - prev_size
 
-				self._menu_vp = Viewport(self._max_width, menu_height, 0, prev_size + y_offset, frame=self._frame)
-				self._preview_vp = Viewport(self._max_width, prev_size, 0, y_offset, frame=self._preview_frame)
+				self._menu_vp = Viewport(
+					self._max_width,
+					menu_height,
+					0,
+					prev_size + y_offset,
+					frame=self._frame,
+					alignment=self._alignment
+				)
+				self._preview_vp = Viewport(
+					self._max_width,
+					prev_size,
+					0,
+					y_offset,
+					frame=self._preview_frame,
+					alignment=self._alignment
+				)
 			case PreviewStyle.NONE:
-				self._menu_vp = Viewport(self._max_width, available_height, 0, y_offset, frame=self._frame)
+				self._menu_vp = Viewport(
+					self._max_width,
+					available_height,
+					0,
+					y_offset,
+					frame=self._frame,
+					alignment=self._alignment
+				)
 
-		self._footer_vp = Viewport(self._max_width, footer_height, 0, self._max_height - footer_height)
+		self._footer_vp = Viewport(
+			self._max_width,
+			footer_height,
+			0,
+			self._max_height - footer_height
+		)
 
 	def _determine_prev_size(
 		self,
@@ -914,27 +971,15 @@ class SelectMenu(AbstractCurses):
 		else:
 			return self._column_spacing
 
-	def _cols_x_align_offset(self) -> int:
-		assert self._menu_vp
-
-		x_offset = 0
-		if self._alignment == Alignment.CENTER:
-			cols_widths = self._get_col_widths()
-			total_col_width = sum(cols_widths)
-			x_offset = int((self._menu_vp.width / 2) - (total_col_width / 2))
-
-		return x_offset
-
 	def _get_row_entries(self) -> List[ViewportEntry]:
 		cells = self._assemble_menu_cells()
 		entries = []
 
 		self._row_entries = [cells[x:x + self._horizontal_cols] for x in range(0, len(cells), self._horizontal_cols)]
 		cols_widths = self._get_col_widths()
-		x_offset = self._cols_x_align_offset()
 
 		for row_idx, row in enumerate(self._row_entries):
-			cur_pos = len(self._cursor_char) + x_offset
+			cur_pos = len(self._cursor_char)
 
 			for col_idx, cell in enumerate(row):
 				cur_text = ''

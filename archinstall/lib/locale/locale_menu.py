@@ -6,8 +6,7 @@ from ..menu import AbstractSubMenu
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType
+	FrameProperties, Alignment, ResultType
 )
 
 if TYPE_CHECKING:
@@ -73,7 +72,7 @@ class LocaleMenu(AbstractSubMenu):
 		menu_optioons = self._define_menu_options()
 
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
-		super().__init__(self._item_group, data_store=data_store, allow_reset=True)
+		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
 
 	def _define_menu_options(self) -> List[MenuItem]:
 		return [
