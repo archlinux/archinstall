@@ -320,10 +320,10 @@ class SysCommandWorker:
 					error(f"Unexpected {exception_type} occurred in {self.cmd}: {e}")
 					raise e
 
-				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
-				if storage['arguments'].get('debug'):
+				if storage.get('arguments', {}).get('debug'):
 					debug(f"Executing: {self.cmd}")
 
+				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
 			except FileNotFoundError:
 				error(f"{self.cmd[0]} does not exist.")
 				self.exit_code = 1
