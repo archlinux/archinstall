@@ -117,6 +117,7 @@ def select_disk_config(
 		group,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
+		frame=FrameProperties.minimal(str(_('Disk configuration type'))),
 		allow_reset=True
 	).single()
 
@@ -174,30 +175,29 @@ def select_lvm_config(
 	disk_config: disk.DiskLayoutConfiguration,
 	preset: Optional[disk.LvmConfiguration] = None,
 ) -> Optional[disk.LvmConfiguration]:
+	preset_value = preset.config_type.display_msg() if preset else None
 	default_mode = disk.LvmLayoutType.Default.display_msg()
 
-	options = [default_mode]
+	items = [MenuItem(default_mode, value=default_mode)]
+	group = MenuItemGroup(items)
+	group.set_focus_by_value(preset_value)
 
-	preset_value = preset.config_type.display_msg() if preset else None
-	warning = str(_('Are you sure you want to reset this setting?'))
-
-	choice = Menu(
-		_('Select a LVM option'),
-		options,
+	result = SelectMenu(
+		group,
 		allow_reset=True,
-		allow_reset_warning_msg=warning,
-		sort=False,
-		preview_size=0.2,
-		preset_values=preset_value
-	).run()
+		allow_skip=True,
+		frame=FrameProperties.minimal(str(_('LVM configuration type'))),
+		alignment=Alignment.CENTER
+	).single()
 
-	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return None
-		case MenuSelectionType.Selection:
-			if choice.single_value == default_mode:
+	match result.type_:
+		case ResultType.Skip: return preset
+		case ResultType.Reset: return None
+		case ResultType.Selection:
+			if result.item and result.item.value == default_mode:
 				return suggest_lvm_layout(disk_config)
-	return preset
+
+	return None
 
 
 def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.PartitionModification:
@@ -245,7 +245,7 @@ def select_main_filesystem_format(advanced_options: bool = False) -> disk.Filesy
 
 
 def select_mount_options() -> List[str]:
-	prompt = str(_('Would you like to use compression or disable CoW?'))
+	prompt = str(_('Would you like to use compression or disable CoW?')) + '\n'
 	compression = str(_('Use compression'))
 	disable_cow = str(_('Disable Copy-on-Write'))
 
@@ -254,7 +254,15 @@ def select_mount_options() -> List[str]:
 		MenuItem(disable_cow, value=BtrfsMountOption.nodatacow.value),
 	]
 	group = MenuItemGroup(items, sort_items=False)
-	result = SelectMenu(group, header=prompt, search_enabled=False, allow_skip=False).single()
+	result = SelectMenu(
+		group,
+		header=prompt,
+		alignment=Alignment.CENTER,
+		columns=2,
+		orientation=MenuOrientation.HORIZONTAL,
+		search_enabled=False,
+		allow_skip=False
+	).single()
 
 	if not result.item:
 		return []
@@ -298,6 +306,9 @@ def suggest_single_disk_layout(
 		result = SelectMenu(
 			group,
 			header=prompt,
+			alignment=Alignment.CENTER,
+			columns=2,
+			orientation=MenuOrientation.HORIZONTAL,
 			allow_skip=False
 		).single()
 

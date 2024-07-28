@@ -11,6 +11,34 @@ if TYPE_CHECKING:
 	_: Any
 
 
+def get_password(text: str, header: Optional[str] = None, allow_skip: bool = False) -> Optional[str]:
+	result = EditMenu(
+		text,
+		header=header,
+		alignment=Alignment.CENTER,
+		allow_skip=allow_skip,
+	).input()
+
+	if allow_skip and not result.item:
+		return None
+
+	password = result.item
+	hidden = '*' * len(password)
+	confirmation_header = f'{header}\n{str(_("Entered password"))}: {hidden}\n'
+
+	result = EditMenu(
+		str(_('Confirm')),
+		header=confirmation_header,
+		alignment=Alignment.CENTER,
+		allow_skip=False,
+	).input()
+
+	if password != result.item:
+		return get_password(text, header, allow_skip)
+
+	return password
+
+
 def prompt_dir(
 	text: str,
 	header: Optional[str] = None,

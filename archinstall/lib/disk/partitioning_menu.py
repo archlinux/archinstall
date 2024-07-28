@@ -18,7 +18,8 @@ from .subvolume_menu import SubvolumeMenu
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, EditMenu
+	FrameProperties, Alignment, EditMenu,
+	MenuOrientation
 )
 
 if TYPE_CHECKING:
@@ -402,10 +403,14 @@ class PartitioningList(ListManager):
 		return partition
 
 	def _reset_confirmation(self) -> bool:
-		prompt = str(_('This will remove all newly added partitions, continue?'))
+		prompt = str(_('This will remove all newly added partitions, continue?')) + '\n'
 
 		result = SelectMenu(
 			MenuItemGroup.default_confirm(),
+			header=prompt,
+			alignment=Alignment.CENTER,
+			orientation=MenuOrientation.HORIZONTAL,
+			columns=2,
 			reset_warning_msg=prompt,
 			allow_skip=False
 		).single()
@@ -416,7 +421,7 @@ class PartitioningList(ListManager):
 		# if modifications have been done already, inform the user
 		# that this operation will erase those modifications
 		if any([not entry.exists() for entry in data]):
-			if self._reset_confirmation():
+			if not self._reset_confirmation():
 				return []
 
 		from ..interactions.disk_conf import suggest_single_disk_layout

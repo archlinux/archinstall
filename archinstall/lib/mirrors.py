@@ -222,7 +222,6 @@ class CustomMirrorList(ListManager):
 class MirrorMenu(AbstractSubMenu):
 	def __init__(
 		self,
-		data_store: Dict[str, Any],
 		preset: Optional[MirrorConfiguration] = None
 	):
 		if preset:
@@ -230,10 +229,12 @@ class MirrorMenu(AbstractSubMenu):
 		else:
 			self._mirror_config = MirrorConfiguration()
 
-		menu_optioons = self._define_menu_options()
-		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
+		self._data_store: Dict[str, Any] = {}
 
-		super().__init__(self._item_group, data_store=data_store, allow_reset=True)
+		menu_optioons = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)
+
+		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
 
 	def _define_menu_options(self) -> List[MenuItem]:
 		return [
@@ -299,7 +300,7 @@ def select_mirror_regions(preset: Dict[str, List[str]]) -> Dict[str, List[str]]:
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties(str(_('Mirror regions')), FrameStyle.MIN, FrameStyle.MIN),
+		frame=FrameProperties.minimal(str(_('Mirror regions'))),
 		allow_reset=True,
 		allow_skip=True,
 	).multi()

@@ -51,7 +51,7 @@ class AbstractCurses(metaclass=ABCMeta):
 			height,
 			x_start,
 			int((max_height / 2) - height / 2),
-			frame=FrameProperties(str(_('Archinstall help')), FrameStyle.MIN, FrameStyle.MIN)
+			frame=FrameProperties.minimal(str(_('Archinstall help')))
 		)
 
 	def _confirm_interrupt(self, screen: Any, warning: str) -> bool:
@@ -899,7 +899,7 @@ class SelectMenu(AbstractCurses):
 		return 0
 
 	def _get_visible_items(self) -> List[MenuItem]:
-		return [it for it in self._item_group.items if self._item_group.verify_item_enabled(it)]
+		return [it for it in self._item_group.items if self._item_group.should_enable_item(it)]
 
 	def _list_to_cols(self, items: List[MenuItem], cols: int) -> List[List[MenuItem]]:
 		return [items[i:i + cols] for i in range(0, len(items), cols)]
@@ -1203,6 +1203,7 @@ class Tui:
 		return self._screen.getmaxyx()
 
 	def run(self, component: AbstractCurses) -> Result:
+		self._screen.clear()
 		return self._main_loop(component)
 
 	def _sig_win_resize(self, signum: int, frame):

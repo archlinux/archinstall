@@ -16,8 +16,8 @@ class MenuItem:
 	enabled: bool = True
 	mandatory: bool = False
 	terminate: bool = False
-	dependencies: List[Self | Callable[[], bool]] = field(default_factory=list)
-	dependencies_not: List[Self] = field(default_factory=list)
+	dependencies: List[str | Callable[[], bool]] = field(default_factory=list)
+	dependencies_not: List[str] = field(default_factory=list)
 	display_action: Optional[Callable[[Any], str]] = None
 	preview_action: Optional[Callable[[Any], Optional[str]]] = None
 	ds_key: Optional[str] = None
@@ -46,7 +46,7 @@ class MenuItemGroup:
 	focus_item: Optional[MenuItem] = None
 	default_item: Optional[MenuItem] = None
 	selected_items: List[MenuItem] = field(default_factory=list)
-	sort_items: bool = True
+	sort_items: bool = False
 	checkmarks: bool = False
 
 	_filter_pattern: str = ''
@@ -279,20 +279,22 @@ class MenuItemGroup:
 			return max(spaces)
 		return 0
 
-	def verify_item_enabled(self, item: MenuItem) -> bool:
+	def should_enable_item(self, item: MenuItem) -> bool:
 		if not item.enabled:
 			return False
 
 		if item in self.menu_items:
 			for dep in item.dependencies:
-				if isinstance(dep, MenuItem):
-					if not self.verify_item_enabled(dep):
+				if isinstance(dep, str):
+					item = self.find_by_ds_key(dep)
+					if not item.value or not self.should_enable_item(item):
 						return False
 				else:
 					return dep()
 
-			for dep in item.dependencies_not:
-				if dep.value is not None:
+			for dep_not in item.dependencies_not:
+				item = self.find_by_ds_key(dep_not)
+				if item.value is not None:
 					return False
 
 			return True

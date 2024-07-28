@@ -22,16 +22,16 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 	def __init__(
 		self,
 		disk_layout_config: Optional[DiskLayoutConfiguration],
-		data_store: Dict[str, Any],
 		advanced: bool = False
 	):
 		self._disk_layout_config = disk_layout_config
 		self._advanced = advanced
+		self._data_store: Dict[str, Any] = {}
 
 		menu_optioons = self._define_menu_options()
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
 
-		super().__init__(self._item_group, data_store=data_store, allow_reset=True)
+		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
 
 	def _define_menu_options(self) -> List[MenuItem]:
 		return [

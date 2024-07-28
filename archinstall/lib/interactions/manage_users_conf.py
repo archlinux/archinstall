@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any, TYPE_CHECKING, List, Optional
 
-from .utils import get_password
+from ..utils.util import get_password
 from ..menu import Menu, ListManager
 from ..models.users import User
 
@@ -37,8 +37,9 @@ class UserList(ListManager):
 				data = [d for d in data if d.username != new_user.username]
 				data += [new_user]
 		elif action == self._actions[1] and entry:  # change password
-			prompt = str(_('Password for user "{}": ').format(entry.username))
-			new_password = get_password(prompt=prompt)
+			header = f'{str(_("User"))}: {entry.username}'
+			new_password = get_password(str(_('Password')), header=header)
+
 			if new_password:
 				user = next(filter(lambda x: x == entry, data))
 				user.password = new_password

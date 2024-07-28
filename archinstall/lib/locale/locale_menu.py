@@ -66,11 +66,10 @@ class LocaleConfiguration:
 class LocaleMenu(AbstractSubMenu):
 	def __init__(
 		self,
-		data_store: Dict[str, Any],
 		locale_conf: LocaleConfiguration
 	):
 		self._locale_conf = locale_conf
-		self._data_store = data_store
+		self._data_store: Dict[str, Any] = {}
 		menu_optioons = self._define_menu_options()
 
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
@@ -139,7 +138,7 @@ def select_locale_lang(preset: Optional[str] = None) -> Optional[str]:
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties(str(_('Locale language')), FrameStyle.MIN, FrameStyle.MIN),
+		frame=FrameProperties(str(_('Locale language'))),
 		allow_skip=True,
 	).single()
 
@@ -161,7 +160,7 @@ def select_locale_enc(preset: Optional[str] = None) -> Optional[str]:
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties(str(_('Locale encoding')), FrameStyle.MIN, FrameStyle.MIN),
+		frame=FrameProperties(str(_('Locale encoding'))),
 		allow_skip=True,
 	).single()
 
@@ -191,7 +190,7 @@ def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties(str(_('Keyboard layout')), FrameStyle.MIN, FrameStyle.MIN),
+		frame=FrameProperties.minimal(str(_('Keyboard layout'))),
 		allow_skip=True,
 	).single()
 

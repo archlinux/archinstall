@@ -127,11 +127,7 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 		allow_skip=True,
 		allow_reset=False,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties(
-			header=str(_('Select language')),
-			w_frame_style=FrameStyle.MIN,
-			 h_frame_style=FrameStyle.MIN
-		)
+		frame=FrameProperties.minimal( header=str(_('Select language')))
 	).single()
 
 	match choice.type_:

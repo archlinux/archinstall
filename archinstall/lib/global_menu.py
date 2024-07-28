@@ -16,7 +16,7 @@ from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
 from .interactions import ask_for_additional_users
 from .interactions import ask_for_audio_selection
-from .interactions import get_password
+from .utils.util import get_password
 from .utils.util import format_cols
 
 from archinstall.tui import (
@@ -76,7 +76,13 @@ class GlobalMenu(AbstractMenu):
 				preview_action=self._prev_disk_config,
 				ds_key='disk_config'
 			),
-
+			MenuItem(
+				text=str(_('Disk encryption')),
+				action=lambda x: self._disk_encryption(x),
+				preview_action=self._prev_disk_encryption,
+				ds_key='disk_encryption',
+				dependencies=['disk_config']
+			),
 			MenuItem(
 				text=str(_('Abort')),
 				terminate=True
@@ -85,23 +91,6 @@ class GlobalMenu(AbstractMenu):
 
 
 	# def setup_selection_menu_options(self):
-		# archinstall.Language will not use preset values
-		# self._menu_options['mirror_config'] = \
-		# self._menu_options['disk_config'] = \
-		# 	Selector(
-		# 		_('Disk configuration'),
-		# 		lambda preset: self._select_disk_config(preset),
-		# 		preview_func=self._prev_disk_config,
-		# 		display_func=lambda x: self.defined_text if x else '',
-		# 	)
-		# self._menu_options['disk_encryption'] = \
-		# 	Selector(
-		# 		_('Disk encryption'),
-		# 		lambda preset: self._disk_encryption(preset),
-		# 		preview_func=self._prev_disk_encryption,
-		# 		display_func=lambda x: self._display_disk_encryption(x),
-		# 		dependencies=['disk_config']
-		# 	)
 		# self._menu_options['swap'] = \
 		# 	Selector(
 		# 		_('Swap'),
@@ -279,7 +268,7 @@ class GlobalMenu(AbstractMenu):
 		return config.type.display_msg()
 
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
-		disk_config: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+		disk_config: Optional[disk.DiskLayoutConfiguration] = self._item_group.find_by_ds_key('disk_config').value
 
 		if not disk_config:
 			# this should not happen as the encryption menu has the disk_config as dependency
@@ -288,13 +277,11 @@ class GlobalMenu(AbstractMenu):
 		if not disk.DiskEncryption.validate_enc(disk_config):
 			return None
 
-		data_store: Dict[str, Any] = {}
-		disk_encryption = disk.DiskEncryptionMenu(disk_config, data_store, preset=preset).run()
+		disk_encryption = disk.DiskEncryptionMenu(disk_config, preset=preset).run()
 		return disk_encryption
 
 	def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration:
-		data_store: Dict[str, Any] = {}
-		locale_config = LocaleMenu(data_store, preset).run()
+		locale_config = LocaleMenu(preset).run()
 		return locale_config
 
 	def _prev_locale(self, item: MenuItem) -> Optional[str]:
@@ -337,26 +324,25 @@ class GlobalMenu(AbstractMenu):
 			return current_value.config_type.display_msg()
 		return ''
 
-	def _prev_disk_encryption(self) -> Optional[str]:
-		disk_config: Optional[disk.DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+	def _prev_disk_encryption(self, item: MenuItem) -> Optional[str]:
+		disk_config: Optional[disk.DiskLayoutConfiguration] = self._item_group.find_by_ds_key('disk_config').value
+		enc_config: Optional[disk.DiskEncryption] = item.value
 
 		if disk_config and not disk.DiskEncryption.validate_enc(disk_config):
 			return str(_('LVM disk encryption with more than 2 partitions is currently not supported'))
 
-		encryption: Optional[disk.DiskEncryption] = self._menu_options['disk_encryption'].current_selection
-
-		if encryption:
-			enc_type = disk.EncryptionType.type_to_text(encryption.encryption_type)
+		if enc_config:
+			enc_type = disk.EncryptionType.type_to_text(enc_config.encryption_type)
 			output = str(_('Encryption type')) + f': {enc_type}\n'
-			output += str(_('Password')) + f': {secret(encryption.encryption_password)}\n'
+			output += str(_('Password')) + f': {secret(enc_config.encryption_password)}\n'
 
-			if encryption.partitions:
-				output += 'Partitions: {} selected'.format(len(encryption.partitions)) + '\n'
-			elif encryption.lvm_volumes:
-				output += 'LVM volumes: {} selected'.format(len(encryption.lvm_volumes)) + '\n'
+			if enc_config.partitions:
+				output += 'Partitions: {} selected'.format(len(enc_config.partitions)) + '\n'
+			elif enc_config.lvm_volumes:
+				output += 'LVM volumes: {} selected'.format(len(enc_config.lvm_volumes)) + '\n'
 
-			if encryption.hsm_device:
-				output += f'HSM: {encryption.hsm_device.manufacturer}'
+			if enc_config.hsm_device:
+				output += f'HSM: {enc_config.hsm_device.manufacturer}'
 
 			return output
 
@@ -439,16 +425,14 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _set_root_password(self) -> Optional[str]:
-		prompt = str(_('Enter root password (leave blank to disable root): '))
-		password = get_password(prompt=prompt)
+		password = get_password(text=str(_('Root password')), allow_skip=True)
 		return password
 
 	def _select_disk_config(
 		self,
 		preset: Optional[disk.DiskLayoutConfiguration] = None
 	) -> Optional[disk.DiskLayoutConfiguration]:
-		data_store: Dict[str, Any] = {}
-		disk_config = disk.DiskLayoutConfigurationMenu(preset, data_store).run()
+		disk_config = disk.DiskLayoutConfigurationMenu(preset).run()
 
 		if disk_config != preset:
 			self._menu_item_group.find_by_ds_key('disk_encryption').value = None
@@ -479,8 +463,7 @@ class GlobalMenu(AbstractMenu):
 		return users
 
 	def _mirror_configuration(self, preset: Optional[MirrorConfiguration] = None) -> Optional[MirrorConfiguration]:
-		data_store: Dict[str, Any] = {}
-		mirror_configuration = MirrorMenu(data_store, preset=preset).run()
+		mirror_configuration = MirrorMenu(preset=preset).run()
 		return mirror_configuration
 
 	def _prev_mirror_config(self, item: MenuItem) -> Optional[str]:
