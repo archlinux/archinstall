@@ -10,7 +10,7 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from archinstall.default_profiles.profile import Profile, TProfile, GreeterType
+from archinstall.default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
 from ..hardware import GfxDriver
 from ..menu import MenuSelectionType, Menu, MenuSelection
@@ -122,7 +122,7 @@ class ProfileHandler:
 
 		custom_settings = profile_config.get('custom_settings', {})
 		profile.set_custom_settings(custom_settings)
-		profile.set_current_selection(valid_sub_profiles)
+		profile.current_selection = valid_sub_profiles
 
 		return profile
 
@@ -138,7 +138,7 @@ class ProfileHandler:
 	def _local_mac_addresses(self) -> List[str]:
 		return list(list_interfaces())
 
-	def add_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
+	def add_custom_profiles(self, profiles: Union[Profile, List[Profile]]):
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -147,7 +147,7 @@ class ProfileHandler:
 
 		self._verify_unique_profile_names(self.profiles)
 
-	def remove_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
+	def remove_custom_profiles(self, profiles: Union[Profile, List[Profile]]):
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -359,7 +359,7 @@ class ProfileHandler:
 	def select_profile(
 		self,
 		selectable_profiles: List[Profile],
-		current_profile: Optional[Union[TProfile, List[TProfile]]] = None,
+		current_profile: Optional[Union[Profile, List[Profile]]] = None,
 		title: str = '',
 		allow_reset: bool = True,
 		multi: bool = False,

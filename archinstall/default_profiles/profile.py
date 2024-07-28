@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 from enum import Enum, auto
-from typing import List, Optional, Any, Dict, TYPE_CHECKING, TypeVar
+from typing import List, Optional, Any, Dict, TYPE_CHECKING
 
 from archinstall.lib.utils.util import format_cols
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 	_: Any
-
-
-TProfile = TypeVar('TProfile', bound='Profile')
 
 
 class ProfileType(Enum):
@@ -50,7 +47,7 @@ class Profile:
 		name: str,
 		profile_type: ProfileType,
 		description: str = '',
-		current_selection: List[TProfile] = [],
+		current_selection: List[Profile] = [],
 		packages: List[str] = [],
 		services: List[str] = [],
 		support_gfx_driver: bool = False,
@@ -66,16 +63,12 @@ class Profile:
 
 		# self.gfx_driver: Optional[str] = None
 
-		self._current_selection = current_selection
+		self.current_selection = current_selection
 		self._packages = packages
 		self._services = services
 
 		# Only used for custom default_profiles
 		self.custom_enabled = False
-
-	@property
-	def current_selection(self) -> List[TProfile]:
-		return self._current_selection
 
 	@property
 	def packages(self) -> List[str]:
@@ -133,15 +126,12 @@ class Profile:
 		self.custom_settings = settings
 
 	def current_selection_names(self) -> List[str]:
-		if self._current_selection:
-			return [s.name for s in self._current_selection]
+		if self.current_selection:
+			return [s.name for s in self.current_selection]
 		return []
 
 	def reset(self):
-		self.set_current_selection([])
-
-	def set_current_selection(self, current_selection: List[TProfile]):
-		self._current_selection = current_selection
+		self.current_selection = []
 
 	def is_top_level_profile(self) -> bool:
 		top_levels = [ProfileType.Desktop, ProfileType.Server, ProfileType.Xorg, ProfileType.Minimal, ProfileType.Custom]
@@ -166,10 +156,10 @@ class Profile:
 		return self.profile_type == ProfileType.CustomType
 
 	def is_graphic_driver_supported(self) -> bool:
-		if not self._current_selection:
+		if not self.current_selection:
 			return self._support_gfx_driver
 		else:
-			if any([p._support_gfx_driver for p in self._current_selection]):
+			if any([p._support_gfx_driver for p in self.current_selection]):
 				return True
 			return False
 
