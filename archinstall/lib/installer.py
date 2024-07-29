@@ -229,7 +229,16 @@ class Installer:
 		if self._disk_config.lvm_config:
 			pvs = self._disk_config.lvm_config.get_all_pvs()
 
+		sorted_device_mods = self._disk_config.device_modifications.copy()
+
+		# move the device with the root partition to the beginning of the list
 		for mod in self._disk_config.device_modifications:
+			if any(partition.is_root() for partition in mod.partitions):
+				sorted_device_mods.remove(mod)
+				sorted_device_mods.insert(0, mod)
+				break
+
+		for mod in sorted_device_mods:
 			not_pv_part_mods = list(filter(lambda x: x not in pvs, mod.partitions))
 
 			# partitions have to mounted in the right order on btrfs the mountpoint will
