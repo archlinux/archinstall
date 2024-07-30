@@ -804,10 +804,10 @@ class Installer:
 				self.pacman.strap('libfido2')
 
 				if 'sd-encrypt' not in self._hooks:
-					self._hooks.insert(self._hooks.index('lvm2') - 1, 'sd-encrypt')
+					self._hooks.insert(self._hooks.index('lvm2'), 'sd-encrypt')
 			else:
 				if 'encrypt' not in self._hooks:
-					self._hooks.insert(self._hooks.index('lvm2') - 1, 'encrypt')
+					self._hooks.insert(self._hooks.index('lvm2'), 'encrypt')
 
 	def minimal_installation(
 		self,
