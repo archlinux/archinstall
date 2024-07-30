@@ -1218,104 +1218,86 @@ msgstr "Přeskakuji čekání na automatickou synchronizaci času (nesynchronizo
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Čekám na dokončení synchronizace Arch Linux keyring (archlinux-keyring-wkd-sync)."
 
-#, fuzzy
 msgid "Selected profiles: "
-msgstr "Smazat profil"
+msgstr "Vybrané profily: "
 
-#, fuzzy
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "Synchronizace času není dokončena, mezitím se můžete podívat na možnosti řešení: https://archinstall.readthedocs.io/"
 
-#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr "Označit/Odznačit jako zaváděcí"
+msgstr "Označit/Odznačit jako nodatacow"
 
-#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "Přejete si použít BTRFS kompresi?"
+msgstr "Přejete si použít kompresi nebo zakázat CoW?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Použít kompresi"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Zakázat Copy-on-Write"
 
-#, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Nabízí výběr desktopových prostředí a tiling správců oken, např. gnome, kde, sway"
+msgstr "Nabízí výběr desktopových prostředí a dlaždicových správců oken, např. GNOME, KDE Plasma, Sway"
 
-#, fuzzy
 msgid "Configuration type: {}"
-msgstr "Konfigurace"
+msgstr "Typ konfigurace: {}"
 
-#, fuzzy
 msgid "LVM configuration type"
-msgstr "Žádná konfigurace"
+msgstr "Typ LVM konfigurace"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "LVM šifrování disku s více jak dvěma oddíly není v tuto chvíli podporováno"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
+msgstr "Použít NetworkManager (neubytné pro grafickou konfiguraci inernetu v GNOME a KDE)"
 
-#, fuzzy
 msgid "Select a LVM option"
-msgstr "Zvolte časovou zónu"
+msgstr "Vyberte možnost LVM"
 
-#, fuzzy
 msgid "Partitioning"
-msgstr "Diskový oddíl"
+msgstr "Rozdělení diskových oddílů"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Logical Volume Management (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "Fyzické svazky"
 
 msgid "Volumes"
-msgstr ""
+msgstr "Svazky"
 
-#, fuzzy
 msgid "LVM volumes"
-msgstr "Nastavit podsvazky"
+msgstr "LVM svazky"
 
-#, fuzzy
 msgid "LVM volumes to be encrypted"
-msgstr "Zvolte oddíl k zašifrování"
+msgstr "LVM svazky k zašifrování"
 
-#, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr "Zvolte oddíl, který bude označen jako šifrovaný"
+msgstr "Zvolte LVM svazky k zašifrování"
 
-#, fuzzy
 msgid "Default layout"
-msgstr "Rozdělení disku"
+msgstr "Výchozí rozložení"
 
-#, fuzzy
 msgid "No Encryption"
-msgstr "Typ šifrování"
+msgstr "Žádné šifrování"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM na LUKS"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS na LVM"
 
-#, fuzzy
 msgid "Yes"
-msgstr "ano"
+msgstr "Ano"
 
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
-#, fuzzy
 msgid "Archinstall help"
-msgstr "Jazyk pro Archinstall"
+msgstr "Nápověda pro Archinstall"
 
-#, fuzzy
 msgid " (default)"
-msgstr "(výchozí)"
+msgstr " (výchozí)"
