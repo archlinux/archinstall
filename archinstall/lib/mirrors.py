@@ -289,6 +289,13 @@ def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[str]]:
 
 	for mirror in mirror_status.urls:
 		if mirror.url.startswith('http'):
+			if mirror.country == "":
+				# TODO: This should be removed once RFC!29 is merged and completed
+				# Until then, there are mirrors which lacks data in the backend
+				# and there is no way of knowing where they're located.
+				# So we have to assume world-wide
+				mirror.country = "Worldwide"
+
 			mirror_list.setdefault(mirror.country, []).append(mirror.url)
 
 	return mirror_list
