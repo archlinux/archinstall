@@ -62,7 +62,7 @@ class DesktopProfile(Profile):
 
 		match choice.type_:
 			case menu.MenuSelectionType.Selection:
-				self.set_current_selection(choice.value)  # type: ignore
+				self.current_selection = choice.value  # type: ignore
 				self._do_on_select_profiles()
 				return SelectResult.NewSelection
 			case menu.MenuSelectionType.Skip:
