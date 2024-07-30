@@ -1,3 +1,4 @@
+import json
 import pathlib
 from dataclasses import dataclass, field
 from enum import Enum
@@ -7,6 +8,7 @@ from .menu import AbstractSubMenu, Selector, MenuSelectionType, Menu, ListManage
 from .networking import fetch_data_from_url
 from .output import warn, FormattedOutput
 from .storage import storage
+from .models.mirrors import MirrorStatusListV3
 
 if TYPE_CHECKING:
 	_: Any
@@ -281,17 +283,13 @@ def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []):
 
 
 def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[str]]:
-	file_content = mirrorlist.split('\n')
-	file_content = list(filter(lambda x: x, file_content))  # filter out empty lines
-	first_srv_idx = [idx for idx, line in enumerate(file_content) if 'server' in line.lower()][0]
-	mirrors = file_content[first_srv_idx - 1:]
+	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
 
 	mirror_list: Dict[str, List[str]] = {}
 
-	for idx in range(0, len(mirrors), 2):
-		region = mirrors[idx].removeprefix('## ')
-		url = mirrors[idx + 1].removeprefix('#').removeprefix('Server = ')
-		mirror_list.setdefault(region, []).append(url)
+	for mirror in mirror_status.urls:
+		if mirror.url.startswith('http'):
+			mirror_list.setdefault(mirror.country, []).append(mirror.url)
 
 	return mirror_list
 
@@ -303,7 +301,7 @@ def list_mirrors() -> Dict[str, List[str]]:
 		with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fp:
 			mirrorlist = fp.read()
 	else:
-		url = "https://archlinux.org/mirrorlist/?protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on"
+		url = "https://archlinux.org/mirrors/status/json/"
 		try:
 			mirrorlist = fetch_data_from_url(url)
 		except ValueError as err:
