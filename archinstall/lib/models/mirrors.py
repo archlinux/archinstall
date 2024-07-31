@@ -70,7 +70,7 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 	def debug_output(cls, data: str|bool|int|datetime.datetime|float|None) -> str|bool|int|datetime.datetime|float|None:
 		parsed_uri = urllib.parse.urlparse(data['url'])
 		hostname, *port = parsed_uri.netloc.split(':', 1)
-		debug(f"Loaded mirror {hostname} with current score of {round(data['score'])}")
+		debug(f"Loaded mirror {hostname}" + (f"with current score of {round(data['score'])}" if data['score'] else ''))
 
 class MirrorStatusListV3(pydantic.BaseModel):
 	cutoff :int
