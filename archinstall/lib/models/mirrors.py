@@ -1,6 +1,5 @@
 import datetime
 import pydantic
-import socket
 import urllib.parse
 import urllib.request
 from typing import (
@@ -23,20 +22,19 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 	ipv6 :bool
 	details :str
 	delay :int|None = None
-	last_sync :datetime.datetime|None=None
+	last_sync :datetime.datetime|None = None
 	duration_avg :float|None = None
 	duration_stddev :float|None = None
 	completion_pct :float|None = None
 	score :int|None = None
 	_latency :float|None = None
 	_speed :float|None = None
+	_hostname :str|None = None
 
 	@property
 	def speed(self):
 		if self._speed is None:
-			parsed_uri = urllib.parse.urlparse(self.url)
-			hostname, *port = parsed_uri.netloc.split(':', 1)
-			info(f"Checking download speed of {hostname} by getting {self.url}core/os/x86_64/core.db")
+			info(f"Checking download speed of {self._hostname} by getting {self.url}core/os/x86_64/core.db")
 			req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
 			with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
 				size = len(handle.read())
@@ -55,18 +53,24 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 		"""
 		if self._latency is None:
 			info(f"Checking latency for {self.url}")
-			parsed_uri = urllib.parse.urlparse(self.url)
-			hostname, *port = parsed_uri.netloc.split(':', 1)
-			self._latency = ping(hostname, port=port, timeout=2)
+			self._latency = ping(self._hostname, timeout=2)
 			debug(f"  latency: {self._latency}")
 
 		return self._latency
 
 	@pydantic.field_validator('score', mode='before')
-	def score(cls, value):
+	def validate_score(cls, value):
 		if value is not None:
 			value = round(value)
+			debug(f"    score: {value}")
+
 		return value
+
+	@pydantic.model_validator(mode='before')
+	def debug_output(cls, data: str|bool|int|datetime.datetime|float|None) -> str|bool|int|datetime.datetime|float|None:
+		parsed_uri = urllib.parse.urlparse(data['url'])
+		hostname, *port = parsed_uri.netloc.split(':', 1)
+		debug(f"Loaded mirror {hostname} with current score of {round(data['score'])}")
 
 class MirrorStatusListV3(pydantic.BaseModel):
 	cutoff :int

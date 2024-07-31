@@ -157,7 +157,7 @@ def build_icmp(payload):
 
 	return struct.pack('!BBHHH', 8, 0, checksum, 0, 1) + payload
 
-def ping(hostname, port=None, timeout=5):
+def ping(hostname, timeout=5):
 	watchdog = select.epoll()
 	started = time.time()
 	random_identifier = f'archinstall-{random.randint(1000, 9999)}'.encode()
@@ -169,7 +169,7 @@ def ping(hostname, port=None, timeout=5):
 	icmp_packet = build_icmp(random_identifier)
 
 	# Send the ICMP packet
-	icmp_socket.sendto(icmp_packet, (hostname, port or 0))
+	icmp_socket.sendto(icmp_packet, (hostname, 0))
 	latency = -1
 
 	# Gracefully wait for X amount of time
