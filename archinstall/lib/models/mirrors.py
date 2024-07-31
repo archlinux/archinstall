@@ -9,6 +9,7 @@ from typing import (
 )
 
 from ..networking import ping, DownloadTimer
+from ..output import info, debug
 
 
 class MirrorStatusEntryV3(pydantic.BaseModel):
@@ -33,12 +34,15 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 	@property
 	def speed(self):
 		if self._speed is None:
-			print(f"Checking download speed for {self.url}core/os/x86_64/core.db")
+			parsed_uri = urllib.parse.urlparse(self.url)
+			hostname, *port = parsed_uri.netloc.split(':', 1)
+			info(f"Checking download speed of {hostname} by getting {self.url}core/os/x86_64/core.db")
 			req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
 			with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
 				size = len(handle.read())
 
 			self._speed = size / timer.time
+			debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
 
 		return self._speed
 
@@ -50,10 +54,11 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 		We do this because some hosts blocks ICMP so we'll have to rely on .speed() instead which is slower.
 		"""
 		if self._latency is None:
-			print(f"Checking latency for {self.url}")
+			info(f"Checking latency for {self.url}")
 			parsed_uri = urllib.parse.urlparse(self.url)
 			hostname, *port = parsed_uri.netloc.split(':', 1)
 			self._latency = ping(hostname, port=port, timeout=2)
+			debug(f"  latency: {self._latency}")
 
 		return self._latency
 

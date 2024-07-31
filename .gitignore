@@ -37,4 +37,5 @@ venv
 /*.json
 requirements.txt
 /.gitconfig
-/actions-runner/
+/actions-runner
+/cmd_output.txt
