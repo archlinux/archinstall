@@ -272,7 +272,11 @@ def select_mirror_regions(preset_values: Dict[str, List[str]] = {}) -> Dict[str,
 		case MenuSelectionType.Skip:
 			return preset_values
 		case MenuSelectionType.Selection:
-			return {selected: mirrors[selected] for selected in choice.multi_value}
+			return {
+				selected: [
+					mirror.url for mirror in sort_mirrors_by_performance(mirrors[selected])
+				] for selected in choice.multi_value
+			}
 
 	return {}
 
@@ -282,7 +286,7 @@ def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []):
 	return custom_mirrors
 
 
-def sort_mirror_list(mirror_list :List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
+def sort_mirrors_by_performance(mirror_list :List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
 	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
