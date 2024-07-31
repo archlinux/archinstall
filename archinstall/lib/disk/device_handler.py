@@ -4,13 +4,14 @@ import json
 import os
 import logging
 import time
+import uuid
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
 
 from parted import (  # type: ignore
 	Disk, Geometry, FileSystem,
-	PartitionException, DiskLabelException,
-	getDevice, getAllDevices, freshDisk, Partition, Device
+	PartitionException, DiskException,
+	getDevice, getAllDevices, newDisk, freshDisk, Partition, Device
 )
 
 from .device_model import (
@@ -57,17 +58,19 @@ class DeviceHandler(object):
 			debug(f'Failed to get loop devices: {err}')
 
 		for device in devices:
-			if get_lsblk_info(device.path).type == 'rom':
+			dev_lsblk_info = get_lsblk_info(device.path)
+
+			if dev_lsblk_info.type == 'rom':
 				continue
 
 			try:
-				disk = Disk(device)
-			except DiskLabelException as err:
-				if 'unrecognised disk label' in getattr(error, 'message', str(err)):
-					disk = freshDisk(device, PartitionTable.GPT.value)
+				if dev_lsblk_info.pttype:
+					disk = newDisk(device)
 				else:
-					debug(f'Unable to get disk from device: {device}')
-					continue
+					disk = freshDisk(device, PartitionTable.GPT.value)
+			except DiskException as err:
+				debug(f'Unable to get disk from {device.path}: {err}')
+				continue
 
 			device_info = _DeviceInfo.from_disk(disk)
 			partition_infos = []
@@ -197,49 +200,34 @@ class DeviceHandler(object):
 		path: Path,
 		additional_parted_options: List[str] = []
 	):
+		mkfs_type = fs_type.value
 		options = []
-		command = ''
 
 		match fs_type:
-			case FilesystemType.Btrfs:
-				options += ['-f']
-				command += 'mkfs.btrfs'
-			case FilesystemType.Fat16:
-				options += ['-F16']
-				command += 'mkfs.fat'
-			case FilesystemType.Fat32:
-				options += ['-F32']
-				command += 'mkfs.fat'
-			case FilesystemType.Ext2:
-				options += ['-F']
-				command += 'mkfs.ext2'
-			case FilesystemType.Ext3:
-				options += ['-F']
-				command += 'mkfs.ext3'
-			case FilesystemType.Ext4:
-				options += ['-F']
-				command += 'mkfs.ext4'
-			case FilesystemType.Xfs:
-				options += ['-f']
-				command += 'mkfs.xfs'
-			case FilesystemType.F2fs:
-				options += ['-f']
-				command += 'mkfs.f2fs'
+			case FilesystemType.Btrfs | FilesystemType.F2fs | FilesystemType.Xfs:
+				# Force overwrite
+				options.append('-f')
+			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
+				# Force create
+				options.append('-F')
+			case FilesystemType.Fat16 | FilesystemType.Fat32:
+				mkfs_type = 'fat'
+				# Set FAT size
+				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
 			case FilesystemType.Ntfs:
-				options += ['-f', '-Q']
-				command += 'mkfs.ntfs'
+				# Skip zeroing and bad sector check
+				options.append('--fast')
 			case FilesystemType.Reiserfs:
-				command += 'mkfs.reiserfs'
+				pass
 			case _:
 				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
 
-		options += additional_parted_options
-		options_str = ' '.join(options)
+		cmd = [f'mkfs.{mkfs_type}', *options, *additional_parted_options, str(path)]
 
-		debug(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
+		debug('Formatting filesystem:', ' '.join(cmd))
 
 		try:
-			SysCommand(f"/usr/bin/{command} {options_str} {path}")
+			SysCommand(cmd)
 		except SysCallError as err:
 			msg = f'Could not format {path} with {fs_type.value}: {err.message}'
 			error(msg)
@@ -499,6 +487,10 @@ class DeviceHandler(object):
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
+		if disk.type == PartitionTable.GPT.value and part_mod.is_root():
+			linux_root_x86_64 = "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709"
+			partition.type_uuid = uuid.UUID(linux_root_x86_64).bytes
+
 		# the partition has a path now that it has been added
 		part_mod.dev_path = Path(partition.path)
 
@@ -645,9 +637,6 @@ class DeviceHandler(object):
 			if partition_table.MBR and len(modification.partitions) > 3:
 				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
 
-		# make sure all devices are unmounted
-		self.umount_all_existing(modification.device_path)
-
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
 			self.wipe_dev(modification.device)
@@ -708,28 +697,21 @@ class DeviceHandler(object):
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
 	def umount(self, mountpoint: Path, recursive: bool = False):
-		try:
-			lsblk_info = get_lsblk_info(mountpoint)
-		except SysCallError as ex:
-			# this could happen if before partitioning the device contained 3 partitions
-			# and after partitioning only 2 partitions were created, then the modifications object
-			# will have a reference to /dev/sX3 which is being tried to umount here now
-			if 'not a block device' in ex.message:
-				return
-			raise ex
+		lsblk_info = get_lsblk_info(mountpoint)
 
-		if len(lsblk_info.mountpoints) > 0:
-			debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
+		if not lsblk_info.mountpoints:
+			return
 
-			for mountpoint in lsblk_info.mountpoints:
-				debug(f'Unmounting mountpoint: {mountpoint}')
+		debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
 
-				command = 'umount'
+		cmd = ['umount']
 
-				if recursive:
-					command += ' -R'
+		if recursive:
+			cmd.append('-R')
 
-				SysCommand(f'{command} {mountpoint}')
+		for path in lsblk_info.mountpoints:
+			debug(f'Unmounting mountpoint: {path}')
+			SysCommand(cmd + [str(path)])
 
 	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> List[DeviceModification]:
 		part_mods: Dict[Path, List[PartitionModification]] = {}

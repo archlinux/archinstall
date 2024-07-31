@@ -1179,3 +1179,76 @@ msgstr ""
 
 msgid "Disable Copy-on-Write"
 msgstr ""
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "Nėra konfigūracijos"
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "Nėra konfigūracijos"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr ""
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "Išrinkite laiko zona"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "Skaidinys"
+
+msgid "Logical Volume Management (LVM)"
+msgstr ""
+
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+msgid "LVM volumes"
+msgstr ""
+
+msgid "LVM volumes to be encrypted"
+msgstr ""
+
+msgid "Select which LVM volumes to encrypt"
+msgstr ""
+
+msgid "Default layout"
+msgstr ""
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "Nėra konfigūracijos"
+
+msgid "LUKS"
+msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "taip"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Archinstall liežuvis"
+
+msgid " (default)"
+msgstr ""

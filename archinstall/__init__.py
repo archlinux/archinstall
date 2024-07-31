@@ -3,6 +3,7 @@ import importlib
 import os
 import sys
 import time
+import curses
 import traceback
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
@@ -42,7 +43,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.8.0"
+__version__ = "2.8.1"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the
@@ -327,18 +328,44 @@ def main():
 	importlib.import_module(mod_name)
 
 
+def _shutdown_curses():
+	try:
+		curses.nocbreak()
+
+		try:
+			from archinstall.tui.curses_menu import tui
+			tui.screen.keypad(False)
+		except Exception:
+			pass
+
+		curses.echo()
+		curses.curs_set(True)
+		curses.endwin()
+	except Exception:
+		# this may happen when curses has not been initialized
+		pass
+
+
 def run_as_a_module():
+	exc = None
+
 	try:
 		main()
 	except Exception as e:
-		err = ''.join(traceback.format_exception(e))
-		error(err)
+		exc = e
+	finally:
+		# restore the terminal to the original state
+		_shutdown_curses()
 
-		text = (
-			'Archinstall experienced the above error. If you think this is a bug, please report it to\n'
-			'https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".\n\n'
-			'Hint: To extract the log from a live ISO \ncurl -F\'file=@/var/log/archinstall/install.log\' https://0x0.st\n'
-		)
+		if exc:
+			err = ''.join(traceback.format_exception(exc))
+			error(err)
 
-		warn(text)
-		exit(1)
+			text = (
+				'Archinstall experienced the above error. If you think this is a bug, please report it to\n'
+				'https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".\n\n'
+				'Hint: To extract the log from a live ISO \ncurl -F\'file=@/var/log/archinstall/install.log\' https://0x0.st\n'
+			)
+
+			warn(text)
+			exit(1)

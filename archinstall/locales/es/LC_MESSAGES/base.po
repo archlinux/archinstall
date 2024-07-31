@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Se ha creado un archivo de registro aquí: {} {}"
@@ -869,7 +869,6 @@ msgstr "Capacidad mínima para la partición /home: {}GiB\n"
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Capacidad mínima para la partición Arch Linux: {}GiB"
 
-#, fuzzy
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
 msgstr "Esta es una lista de profiles_bck preprogramados que podrían facilitar la instalación de cosas como entornos de escritorio"
 
@@ -1057,7 +1056,6 @@ msgstr "Saludador"
 msgid "Please chose which greeter to install"
 msgstr "Por favor, elija qué saludador instalar"
 
-#, fuzzy
 msgid "This is a list of pre-programmed default_profiles"
 msgstr "Esta es una lista de default_profiles preprogramados"
 
@@ -1125,9 +1123,8 @@ msgstr "Guardar {} archivos de configuración en {}"
 msgid "Mirrors"
 msgstr "Espejos"
 
-#, fuzzy
 msgid "Mirror regions"
-msgstr "Regiones espejo"
+msgstr "Regiones de espejos"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
 msgstr " - Valor máximo   : {} ( Habilita {} descargas paralelas, permite {max_downloads+1} descargas simultáneas )"
@@ -1136,7 +1133,7 @@ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [1 a {}, o 0 para deshabilitar]"
 
 msgid "Locales"
-msgstr ""
+msgstr "Lugares"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Usar NetworkManager (necesario para configurar internet gráficamente en GNOME y KDE)"
@@ -1196,7 +1193,6 @@ msgstr " - Deshabilitar/Predeterminado : 0 ( Deshabilita la descarga paralela, p
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [o 0 para deshabilitar]"
 
-#, fuzzy
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Hyprland necesita acceso a su asiento (colección de dispositivos de hardware, es decir, teclado, mouse, etc.)"
 
@@ -1236,19 +1232,84 @@ msgstr "Perfiles seleccionados: "
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "La sincronización de hora no se completa mientras espera - consulte los documentos para encontrar soluciones: https://archinstall.readthedocs.io/"
 
-#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr "Marcar/Desmarcar como arrancable"
+msgstr "Marcar/Desmarcar como nodatacow"
 
-#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "¿Te gustaría usar la compresión BTRFS?"
+msgstr "¿Le gustaría utilizar compresión o desactivar CoW?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Usar compresión"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Desactivar copia en escritura"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Proporciona una selección de entornos de escritorio y administradores de ventanas en mosaico, p.e. GNOME, KDE Plasma, Sway"
+
+msgid "Configuration type: {}"
+msgstr "Tipo de configuración: {}"
+
+msgid "LVM configuration type"
+msgstr "Tipo de configuración LVM"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "Actualmente no se admite el cifrado de disco LVM con más de 2 particiones"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "Usar NetworkManager (necesario para configurar internet gráficamente en GNOME y KDE Plasma)"
+
+msgid "Select a LVM option"
+msgstr "Seleccione una opción LVM"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "Particionamiento"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Gestión de volúmenes lógicos (LVM)"
+
+msgid "Physical volumes"
+msgstr "Volúmenes físicos"
+
+msgid "Volumes"
+msgstr "Volúmenes"
+
+msgid "LVM volumes"
+msgstr "Volúmenes LVM"
+
+msgid "LVM volumes to be encrypted"
+msgstr "Volúmenes LVM a cifrar"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "Seleccione qué volúmenes LVM cifrar"
+
+msgid "Default layout"
+msgstr "Diseño predeterminado"
+
+msgid "No Encryption"
+msgstr "Sin cifrado"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM en LUKS"
+
+msgid "LUKS on LVM"
+msgstr "LUKS en LVM"
+
+msgid "Yes"
+msgstr "Sí"
+
+msgid "No"
+msgstr "No"
+
+msgid "Archinstall help"
+msgstr "Ayuda de archinstall"
+
+msgid " (default)"
+msgstr " (predeterminado)"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"

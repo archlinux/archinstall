@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ஒரு பதிவு கோப்பு இங்கே உருவாக்கப்பட்டது: {} {}"
@@ -1234,16 +1234,80 @@ msgstr "தேர்ந்தெடுக்கப்பட்ட சுயவ�
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "நேரம் ஒத்திசைவு முடிவடையவில்லை, நீங்கள் காத்திருக்கும் போது - தீர்வுகளுக்கான ஆவணங்களைச் சரிபார்க்கவும்: https://archinstall.readthedocs.io/"
 
-#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr "துவக்கக்கூடியதாகக் குறி/குறிநீக்கு"
+msgstr "nodatacow குறி/குறிநீக்கு"
 
-#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "BTRFS சுருக்கத்தைப் பயன்படுத்த விரும்புகிறீர்களா?"
+msgstr "நீங்கள் சுருக்கத்தைப் பயன்படுத்த விரும்புகிறீர்களா அல்லது CoW ஐ முடக்க விரும்புகிறீர்களா?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "சுருக்கத்தைப் பயன்படுத்தவும்"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "எழுத்தில் நகலை (CoW) முடக்கு"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "டெஸ்க்டாப் சூழல்கள் மற்றும் டைலிங் சாளர மேலாளர்களின் தேர்வை வழங்குகிறது, எ.கா. GNOME, KDE Plasma, Sway"
+
+msgid "Configuration type: {}"
+msgstr "உள்ளமைவு வகை: {}"
+
+msgid "LVM configuration type"
+msgstr "LVM கட்டமைப்பு வகை"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "2க்கும் மேற்பட்ட பகிர்வுகளைக் கொண்ட LVM வட்டு குறியாக்கம் தற்போது ஆதரிக்கப்படவில்லை"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "NetworkManager ஐப் பயன்படுத்தவும் (GNOME மற்றும் KDE Plasma இணையத்தை வரைகலை முறையில் கட்டமைக்க அவசியம்)"
+
+msgid "Select a LVM option"
+msgstr "LVM விருப்பத்தைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Partitioning"
+msgstr "பிரித்தல்"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "தருக்க தொகுதி மேலாண்மை (LVM)"
+
+msgid "Physical volumes"
+msgstr "இயற்பியல் தொகுதிகள்"
+
+msgid "Volumes"
+msgstr "தொகுதிகள்"
+
+msgid "LVM volumes"
+msgstr "LVM தொகுதிகள்"
+
+msgid "LVM volumes to be encrypted"
+msgstr "LVM தொகுதிகள் குறியாக்கம் செய்யப்பட வேண்டும்"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "எந்த LVM தொகுதிகளை குறியாக்கம் செய்ய வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Default layout"
+msgstr "இயல்புநிலை தளவமைப்பு"
+
+msgid "No Encryption"
+msgstr "குறியாக்கம் இல்லை"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LUKS இல் LVM"
+
+msgid "LUKS on LVM"
+msgstr "LVM இல் LUKS"
+
+msgid "Yes"
+msgstr "ஆமாம்"
+
+msgid "No"
+msgstr "இல்லை"
+
+msgid "Archinstall help"
+msgstr "Archinstall உதவி"
+
+msgid " (default)"
+msgstr "(இயல்புநிலை)"

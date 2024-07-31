@@ -44,6 +44,30 @@ def verify_x11_keyboard_layout(layout :str) -> bool:
 	return False
 
 
+def get_kb_layout() -> str:
+	try:
+		lines = SysCommand(
+			"localectl --no-pager status",
+			environment_vars={'SYSTEMD_COLORS': '0'}
+		).decode().splitlines()
+	except:
+		return ""
+
+	vcline = ""
+	for line in lines:
+		if "VC Keymap: " in line:
+			vcline = line
+	
+	if vcline == "":
+		return ""
+
+	layout = vcline.split(": ")[1]
+	if not verify_keyboard_layout(layout):
+		return ""
+
+	return layout
+
+
 def set_kb_layout(locale :str) -> bool:
 	if len(locale.strip()):
 		if not verify_keyboard_layout(locale):

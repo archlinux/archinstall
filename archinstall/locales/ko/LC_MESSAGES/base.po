@@ -1297,3 +1297,83 @@ msgstr ""
 
 msgid "Disable Copy-on-Write"
 msgstr ""
+
+#, fuzzy
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "gnome, kde, sway 같은 다양한 데스크탑 환경 및 타일링 창 관리자를 제공합니다"
+
+#, fuzzy
+msgid "Configuration type: {}"
+msgstr "구성 없음"
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "구성 없음"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "NetworkManager 사용 (GNOME 이나 KDE 에서 그래픽으로 인터넷을 구성하는 데 필요)"
+
+#, fuzzy
+msgid "Select a LVM option"
+msgstr "시간대를 선택하세요"
+
+#, fuzzy
+msgid "Partitioning"
+msgstr "수동 구성"
+
+msgid "Logical Volume Management (LVM)"
+msgstr ""
+
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+#, fuzzy
+msgid "LVM volumes"
+msgstr "하위 볼륨 제거"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "암호화할 파티션을 선택하세요:"
+
+#, fuzzy
+msgid "Select which LVM volumes to encrypt"
+msgstr "암호화할 파티션을 선택하세요:"
+
+#, fuzzy
+msgid "Default layout"
+msgstr "디스크 레이아웃"
+
+#, fuzzy
+msgid "No Encryption"
+msgstr "비밀번호 암호화"
+
+msgid "LUKS"
+msgstr ""
+
+msgid "LVM on LUKS"
+msgstr ""
+
+msgid "LUKS on LVM"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "예"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Archinstall help"
+msgstr "Archinstall 언어"
+
+#, fuzzy
+msgid " (default)"
+msgstr "(기본)"

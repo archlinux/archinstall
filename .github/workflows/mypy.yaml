@@ -7,12 +7,19 @@ jobs:
             image: archlinux/archlinux:latest
         steps:
             - uses: actions/checkout@v4
-            - run: pacman --noconfirm -Syu python mypy python-pip
+            - name: Prepare arch
+              run: |
+                pacman-key --init
+                pacman --noconfirm -Sy archlinux-keyring
+                pacman --noconfirm -Syyu
+                pacman --noconfirm -Sy python-pip python-pyparted python-simple-term-menu pkgconfig gcc
             - run: pip install --break-system-packages --upgrade pip
-            - run: pip install --break-system-packages fastapi pydantic
+            # this will install the exact version of mypy that is in the pyproject.toml file
+            - name: Install archinstall dependencies
+              run: pip install --break-system-packages .[dev]
             - run: python --version
             - run: mypy --version
-            # one day this will be enabled
-              # run: mypy --strict --module archinstall || exit 0
             - name: run mypy
               run: mypy --config-file pyproject.toml
+            - name: run mypy strict
+              run: mypy --config-file mypy.ini
