@@ -30,11 +30,12 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 	_latency :float|None = None
 	_speed :float|None = None
 	_hostname :str|None = None
+	_port :int|None = None
 
 	@property
 	def speed(self):
 		if self._speed is None:
-			info(f"Checking download speed of {self._hostname} by getting {self.url}core/os/x86_64/core.db")
+			info(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
 			req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
 			with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
 				size = len(handle.read())
@@ -70,6 +71,8 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 	def debug_output(cls, data: str|bool|int|datetime.datetime|float|None) -> str|bool|int|datetime.datetime|float|None:
 		parsed_uri = urllib.parse.urlparse(data['url'])
 		hostname, *port = parsed_uri.netloc.split(':', 1)
+		data['_hostname'] = hostname
+		data['_port'] = port
 		debug(f"Loaded mirror {hostname}" + (f"with current score of {round(data['score'])}" if data['score'] else ''))
 		return data
 
