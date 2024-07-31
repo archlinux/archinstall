@@ -282,11 +282,11 @@ def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []):
 	return custom_mirrors
 
 
-def sort_mirror_list(mirror_list :List[MirrorStatusEntryV3], sorting_element :str = "url") -> List[MirrorStatusEntryV3]:
-	return sorted(mirror_list, key=lambda item: getattr(item, sorting_element))
+def sort_mirror_list(mirror_list :List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
+	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
-def _parse_mirror_list(mirrorlist: str, sorting_element :str = "url") -> Dict[str, List[str]]:
+def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[str]]:
 	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
 
 	sorting_placeholder: Dict[str, List[MirrorStatusEntryV3]] = {}
@@ -311,14 +311,12 @@ def _parse_mirror_list(mirrorlist: str, sorting_element :str = "url") -> Dict[st
 		if mirror.url.startswith('http'):
 			sorting_placeholder.setdefault(mirror.country, []).append(mirror)
 
-	sorted_by_element: Dict[str, List[str]] = dict({
-		region: [
-			mirror.url for mirror in sort_mirror_list(unsorted_mirrors, sorting_element=sorting_element)
-		]
+	sorted_by_regions: Dict[str, List[str]] = dict({
+		region: unsorted_mirrors
 		for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])
 	})
 
-	return sorted_by_element
+	return sorted_by_regions
 
 
 def list_mirrors() -> Dict[str, List[str]]:
@@ -335,4 +333,4 @@ def list_mirrors() -> Dict[str, List[str]]:
 			warn(f'Could not fetch an active mirror-list: {err}')
 			return regions
 
-	return _parse_mirror_list(mirrorlist, sorting_element="score")
+	return _parse_mirror_list(mirrorlist)

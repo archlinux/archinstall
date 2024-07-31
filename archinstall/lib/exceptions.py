@@ -38,3 +38,9 @@ class PackageError(Exception):
 
 class Deprecated(Exception):
 	pass
+
+
+class DownloadTimeout(Exception):
+	'''
+	Download timeout exception raised by DownloadTimer.
+	'''
