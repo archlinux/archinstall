@@ -274,7 +274,7 @@ def select_mirror_regions(preset_values: Dict[str, List[str]] = {}) -> Dict[str,
 		case MenuSelectionType.Selection:
 			return {
 				selected: [
-					mirror.url for mirror in sort_mirrors_by_performance(mirrors[selected])
+					f"{mirror.url}$repo/os/$arch" for mirror in sort_mirrors_by_performance(mirrors[selected])
 				] for selected in choice.multi_value
 			}
 
