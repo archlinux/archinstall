@@ -67,14 +67,12 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 
 		return value
 
-	@pydantic.model_validator(mode='before')
-	def debug_output(cls, data: str|bool|int|datetime.datetime|float|None) -> str|bool|int|datetime.datetime|float|None:
-		parsed_uri = urllib.parse.urlparse(data['url'])
-		hostname, *port = parsed_uri.netloc.split(':', 1)
-		data['_hostname'] = hostname
-		data['_port'] = port
-		debug(f"Loaded mirror {hostname}" + (f"with current score of {round(data['score'])}" if data['score'] else ''))
-		return data
+	@pydantic.model_validator(mode='after')
+	def debug_output(self, validation_info) -> 'MirrorStatusEntryV3':
+		self._hostname, *self._port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
+		
+		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {round(self.score)}" if self.score else ''))
+		return self
 
 class MirrorStatusListV3(pydantic.BaseModel):
 	cutoff :int
