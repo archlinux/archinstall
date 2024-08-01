@@ -290,7 +290,7 @@ def sort_mirrors_by_performance(mirror_list :List[MirrorStatusEntryV3]) -> List[
 	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
-def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[str]]:
+def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
 	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
 
 	sorting_placeholder: Dict[str, List[MirrorStatusEntryV3]] = {}
@@ -315,7 +315,7 @@ def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[str]]:
 		if mirror.url.startswith('http'):
 			sorting_placeholder.setdefault(mirror.country, []).append(mirror)
 
-	sorted_by_regions: Dict[str, List[str]] = dict({
+	sorted_by_regions: Dict[str, List[MirrorStatusEntryV3]] = dict({
 		region: unsorted_mirrors
 		for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])
 	})
@@ -323,8 +323,8 @@ def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[str]]:
 	return sorted_by_regions
 
 
-def list_mirrors() -> Dict[str, List[str]]:
-	regions: Dict[str, List[str]] = {}
+def list_mirrors() -> Dict[str, List[MirrorStatusEntryV3]]:
+	regions: Dict[str, List[MirrorStatusEntryV3]] = {}
 
 	if storage['arguments']['offline']:
 		with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fp:

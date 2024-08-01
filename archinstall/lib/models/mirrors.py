@@ -69,8 +69,9 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 
 	@pydantic.model_validator(mode='after')
 	def debug_output(self, validation_info) -> 'MirrorStatusEntryV3':
-		self._hostname, *self._port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
-		
+		self._hostname, *_port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
+		self._port = int(_port[0]) if _port and len(_port) >= 1 else None
+
 		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {round(self.score)}" if self.score else ''))
 		return self
 

@@ -47,20 +47,21 @@ class DownloadTimer():
 		return self
 
 	def __exit__(self, typ, value, traceback):
-		time_delta = time.time() - self.start_time
-		signal.alarm(0)
-		self.time = time_delta
-		if self.timeout > 0:
-			signal.signal(signal.SIGALRM, self.previous_handler)
+		if self.start_time:
+			time_delta = time.time() - self.start_time
+			signal.alarm(0)
+			self.time = time_delta
+			if self.timeout > 0:
+				signal.signal(signal.SIGALRM, self.previous_handler)
 
-			previous_timer = self.previous_timer
-			if previous_timer > 0:
-				remaining_time = int(previous_timer - time_delta)
-				# The alarm should have been raised during the download.
-				if remaining_time <= 0:
-					signal.raise_signal(signal.SIGALRM)
-				else:
-					signal.alarm(remaining_time)
+				previous_timer = self.previous_timer
+				if previous_timer and previous_timer > 0:
+					remaining_time = int(previous_timer - time_delta)
+					# The alarm should have been raised during the download.
+					if remaining_time <= 0:
+						signal.raise_signal(signal.SIGALRM)
+					else:
+						signal.alarm(remaining_time)
 		self.start_time = None
 
 
@@ -182,7 +183,7 @@ def ping(hostname, timeout=5):
 
 				# Check if it's an Echo Reply (ICMP type 0)
 				if icmp_type == 0 and response[-len(random_identifier):] == random_identifier:
-					latency = (time.time() - started) * 1000
+					latency = round((time.time() - started) * 1000)
 					break
 		except socket.error as error:
 			print(f"Error: {error}")
