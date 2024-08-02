@@ -493,7 +493,7 @@ class Installer:
 		if mirrorlist_config:
 			debug(f'Mirrorlist: {mirrorlist_config}')
 
-			with local_mirrorlist_conf.open('a') as fp:
+			with local_mirrorlist_conf.open('w') as fp:
 				fp.write(mirrorlist_config)
 
 	def genfstab(self, flags: str = '-pU'):
