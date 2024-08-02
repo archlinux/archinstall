@@ -141,16 +141,15 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 			config[key] = element
 			last_key = key  # multiple
 			key = None
-		else:
-			if multiple and last_key:
-				if isinstance(config[last_key], str):
-					config[last_key] = [config[last_key], element]
-				else:
-					config[last_key].append(element)
-			elif err:
-				raise ValueError(f"Entry {element} is not related to any argument")
+		elif multiple and last_key:
+			if isinstance(config[last_key], str):
+				config[last_key] = [config[last_key], element]
 			else:
-				print(f" We ignore the entry {element} as it isn't related to any argument")
+				config[last_key].append(element)
+		elif err:
+			raise ValueError(f"Entry {element} is not related to any argument")
+		else:
+			print(f" We ignore the entry {element} as it isn't related to any argument")
 	return config
 
 
