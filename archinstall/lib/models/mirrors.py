@@ -33,7 +33,7 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 	_port :int|None = None
 
 	@property
-	def speed(self):
+	def speed(self) -> float|None:
 		if self._speed is None:
 			info(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
 			req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
@@ -46,7 +46,7 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 		return self._speed
 
 	@property
-	def latency(self):
+	def latency(self) -> float|None:
 		"""
 		Latency measures the miliseconds between one ICMP request & response.
 		It only does so once because we check if self._latency is None, and a ICMP timeout result in -1
@@ -60,7 +60,7 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 		return self._latency
 
 	@pydantic.field_validator('score', mode='before')
-	def validate_score(cls, value):
+	def validate_score(cls, value) -> int|None:
 		if value is not None:
 			value = round(value)
 			debug(f"    score: {value}")
