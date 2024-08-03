@@ -1299,21 +1299,21 @@ Exec = /bin/sh -c "{hook_command}"
 		hook_path.write_text(hook_contents)
 
 		kernel_params = ' '.join(self._get_kernel_params(root))
-		config_contents = 'TIMEOUT=5\n'
+		config_contents = 'timeout: 5\n'
 
 		for kernel in self.kernels:
 			for variant in ('', '-fallback'):
 				entry = [
-					f'PROTOCOL=linux',
-					f'KERNEL_PATH=boot:///vmlinuz-{kernel}',
-					f'MODULE_PATH=boot:///initramfs-{kernel}{variant}.img',
-					f'CMDLINE={kernel_params}',
+					f'protocol: linux',
+					f'kernel_path: boot():/vmlinuz-{kernel}',
+					f'kernel_cmdline: {kernel_params}',
+					f'module_path: boot():/initramfs-{kernel}{variant}.img',
 				]
 
-				config_contents += f'\n:Arch Linux ({kernel}{variant})\n'
+				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
 				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
 
-		config_path = self.target / 'boot' / 'limine.cfg'
+		config_path = self.target / 'boot' / 'limine.conf'
 		config_path.write_text(config_contents)
 
 		self.helper_flags['bootloader'] = "limine"
