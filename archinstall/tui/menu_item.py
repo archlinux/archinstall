@@ -24,14 +24,24 @@ class MenuItem:
 
 	@classmethod
 	def default_yes(cls) -> Self:
-		return cls(str(_('Yes')))
+		return cls(str(_('Yes')), value=True)
 
 	@classmethod
 	def default_no(cls) -> Self:
-		return cls(str(_('No')))
+		return cls(str(_('No')), value=False)
 
 	def is_empty(self) -> bool:
 		return self.text == '' or self.text is None
+
+	def has_value(self) -> bool:
+		if self.value is None:
+			return False
+		elif isinstance(self.value, list) and len(self.value) == 0:
+			return False
+		elif isinstance(self.value, dict) and len(self.value) == 0:
+			return False
+		else:
+			return True
 
 	def get_display_value(self) -> Optional[str]:
 		if self.display_action is not None:
@@ -87,7 +97,16 @@ class MenuItemGroup:
 				self.focus_item = item
 				break
 
-	def set_selected_by_value(self, values: Any | List[Any]) -> None:
+	def set_default_by_value(self, value: Any) -> None:
+		for item in self.menu_items:
+			if item.value == value:
+				self.default_item = item
+				break
+
+	def set_selected_by_value(self, values: Optional[Any | List[Any]]) -> None:
+		if values is None:
+			return
+
 		if not isinstance(values, list):
 			values = [values]
 
@@ -141,12 +160,14 @@ class MenuItemGroup:
 			text = f'{text}{spacing}{display_text}'
 		elif self.checkmarks:
 			from .types import Chars
-			if item.value:
+
+			if item.has_value():
 				text = f'{text}{spacing}{Chars.Check}'
-			elif item.mandatory:
-				text = f'{text}{spacing}{Chars.Cross}'
 			else:
-				text = item.text
+				if item.mandatory:
+					text = f'{text}{spacing}{Chars.Cross}'
+				else:
+					text = item.text
 
 		if default_text:
 			text = f'{text} {default_text}'

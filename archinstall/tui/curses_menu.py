@@ -270,22 +270,26 @@ class EditViewport(AbstractViewport):
 	def __init__(
 		self,
 		width: int,
-		height: int,
+		edit_width: int,
+		edit_height: int,
 		x_start: int,
 		y_start: int,
 		process_key: Callable[[int], int],
-		frame: FrameProperties
+		frame: FrameProperties,
+		alignment=Alignment.CENTER
 	):
 		super().__init__()
 
 		self._max_height, self._max_width = tui.max_yx
 
-		self.width = width
-		self.height = height
+		self._width = width
+		self._edit_width = edit_width
+		self._edit_height = edit_height
 		self.x_start = x_start
 		self.y_start = y_start
 		self.process_key = process_key
 		self._frame = frame
+		self._alignment = alignment
 
 		self._main_win: Optional['curses._CursesWindow'] = None
 		self._edit_win: Optional['curses._CursesWindow'] = None
@@ -294,14 +298,18 @@ class EditViewport(AbstractViewport):
 		self._init_wins()
 
 	def _init_wins(self):
-		self._main_win = curses.newwin(self.height, self.width, self.y_start, self.x_start)
+		self._main_win = curses.newwin(self._edit_height , self._width, self.y_start, 0)
 		self._main_win.nodelay(False)
+
+		x_offset = 0
+		if self._alignment == Alignment.CENTER:
+			x_offset = int((self._width / 2) - (self._edit_width / 2))
 
 		self._edit_win = self._main_win.subwin(
 			1,
-			self.width - 2,
+			self._edit_width - 2,
 			self.y_start + 1,
-			self.x_start + 1
+			self.x_start + x_offset + 1
 		)
 
 	def update(self) -> None:
@@ -312,13 +320,23 @@ class EditViewport(AbstractViewport):
 
 		framed = self.add_frame(
 			[ViewportEntry('', 0, 0, STYLE.NORMAL)],
-			self.width,
+			self._edit_width,
 			3,
 			frame=self._frame
 		)
 
+		x_offset = 0
+		if self._alignment == Alignment.CENTER:
+			x_offset = self.align_center(framed, self._width)
+
 		for row in framed:
-			self.add_str(self._main_win, row.row, row.col, row.text, row.style)
+			self.add_str(
+				self._main_win,
+				row.row,
+				row.col + x_offset,
+				row.text,
+				row.style
+			)
 
 		self._main_win.refresh()
 
@@ -493,7 +511,7 @@ class EditMenu(AbstractCurses):
 		allow_skip: bool = False,
 		allow_reset: bool = False,
 		reset_warning_msg: Optional[str] = None,
-		alignment: Alignment = Alignment.LEFT
+		alignment: Alignment = Alignment.CENTER
 	):
 		super().__init__()
 
@@ -504,7 +522,7 @@ class EditMenu(AbstractCurses):
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
 		self._interrupt_warning = reset_warning_msg
-		self._headers = self.get_header_entries(header, alignment=alignment)
+		self._headers = self.get_header_entries(header)
 		self._alignment = alignment
 
 		title = f'* {title}' if not self._allow_skip else title
@@ -521,32 +539,30 @@ class EditMenu(AbstractCurses):
 		self._help_active = False
 
 	def _init_viewports(self):
-		x_offset = 0
 		y_offset = 0
 		edit_width = 50
-
-		if self._alignment == Alignment.CENTER:
-			x_offset = int((self._max_width / 2) - edit_width / 2)
 
 		self._help_vp = Viewport(self._max_width, 2, 0, y_offset)
 		y_offset += 2
 
 		if self._headers:
 			header_height = len(self._headers)
-			self._header_vp = Viewport(self._max_width, header_height, 0, y_offset)
+			self._header_vp = Viewport(self._max_width, header_height, 0, y_offset, alignment=self._alignment)
 			y_offset += header_height
 
 		self._input_vp = EditViewport(
+			self._max_width,
 			edit_width,
 			3,
-			x_offset,
+			0,
 			y_offset,
 			self._process_edit_key,
-			frame=self._frame
+			frame=self._frame,
+			alignment=self._alignment
 		)
 		y_offset += 3
 
-		self._error_vp = Viewport(self._max_width, 1, x_offset, y_offset)
+		self._error_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
 
 	def input(self, ) -> Result[str]:
 		result = tui.run(self)

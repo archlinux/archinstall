@@ -18,6 +18,13 @@ from ..networking import list_interfaces, fetch_data_from_url
 from ..output import error, debug, info
 from ..storage import storage
 
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, FrameStyle, Alignment,
+	ResultType, EditMenu
+)
+
+
 if TYPE_CHECKING:
 	from ..installer import Installer
 	_: Any
@@ -355,59 +362,6 @@ class ProfileHandler:
 		for profile in self.get_top_level_profiles():
 			if profile.name not in excluded_profiles:
 				profile.reset()
-
-	def select_profile(
-		self,
-		selectable_profiles: List[Profile],
-		current_profile: Optional[Union[TProfile, List[TProfile]]] = None,
-		title: str = '',
-		allow_reset: bool = True,
-		multi: bool = False,
-	) -> MenuSelection:
-		"""
-		Helper function to perform a profile selection
-		"""
-		options = {p.name: p for p in selectable_profiles}
-		options = dict((k, v) for k, v in sorted(options.items(), key=lambda x: x[0].upper()))
-
-		warning = str(_('Are you sure you want to reset this setting?'))
-
-		preset_value: Optional[Union[str, List[str]]] = None
-		if current_profile is not None:
-			if isinstance(current_profile, list):
-				preset_value = [p.name for p in current_profile]
-			else:
-				preset_value = current_profile.name
-
-		choice = Menu(
-			title=title,
-			preset_values=preset_value,
-			p_options=options,
-			allow_reset=allow_reset,
-			allow_reset_warning_msg=warning,
-			multi=multi,
-			sort=False,
-			preview_command=self.preview_text,
-			preview_size=0.5
-		).run()
-
-		if choice.type_ == MenuSelectionType.Selection:
-			value = choice.value
-			if multi:
-				# this is quite dirty and should eb switched to a
-				# dedicated return type instead
-				choice.value = [options[val] for val in value]  # type: ignore
-			else:
-				choice.value = options[value]  # type: ignore
-
-		return choice
-
-	def preview_text(self, selection: str) -> Optional[str]:
-		"""
-		Callback for preview display on profile selection
-		"""
-		profile = self.get_profile_by_name(selection)
-		return profile.preview_text() if profile is not None else None
 
 
 profile_handler = ProfileHandler()

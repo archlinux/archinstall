@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING, Optional, List
 
 from ..output import FormattedOutput
+from ..general import secret
 
 from archinstall.tui import (
 	Alignment, EditMenu
@@ -12,31 +13,43 @@ if TYPE_CHECKING:
 
 
 def get_password(text: str, header: Optional[str] = None, allow_skip: bool = False) -> Optional[str]:
-	result = EditMenu(
-		text,
-		header=header,
-		alignment=Alignment.CENTER,
-		allow_skip=allow_skip,
-	).input()
+	failure: Optional[str] = None
 
-	if allow_skip and not result.item:
-		return None
+	while True:
+		if failure is not None:
+			user_hdr = f'{header}\n{failure}\n'
+		else:
+			user_hdr = header
 
-	password = result.item
-	hidden = '*' * len(password)
-	confirmation_header = f'{header}\n{str(_("Entered password"))}: {hidden}\n'
+		result = EditMenu(
+			text,
+			header=user_hdr,
+			alignment=Alignment.CENTER,
+			allow_skip=allow_skip,
+		).input()
 
-	result = EditMenu(
-		str(_('Confirm')),
-		header=confirmation_header,
-		alignment=Alignment.CENTER,
-		allow_skip=False,
-	).input()
+		if allow_skip and not result.item:
+			return None
 
-	if password != result.item:
-		return get_password(text, header, allow_skip)
+		password = result.item
+		hidden = secret(password)
 
-	return password
+		if header is not None:
+			confirmation_header = f'{header}{str(_("Pssword"))}: {hidden}\n'
+		else:
+			confirmation_header = f'{str(_("Password"))}: {hidden}\n'
+
+		result = EditMenu(
+			str(_('Confirm password')),
+			header=confirmation_header,
+			alignment=Alignment.CENTER,
+			allow_skip=False,
+		).input()
+
+		if password == result.item:
+			return password
+
+		failure = str(_('The confirmation password did not match, please try again'))
 
 
 def prompt_dir(

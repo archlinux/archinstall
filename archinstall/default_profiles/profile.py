@@ -118,7 +118,7 @@ class Profile:
 		"""
 		return {}
 
-	def do_on_select(self) -> SelectResult:
+	def do_on_select(self) -> Optional[SelectResult]:
 		"""
 		Hook that will be called when a profile is selected
 		"""

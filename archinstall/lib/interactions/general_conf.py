@@ -12,7 +12,13 @@ from ..storage import storage
 from ..translationhandler import Language
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment, Result, ResultType
+	FrameProperties, FrameStyle, Alignment, Result, ResultType,
+	EditMenu
+)
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, Alignment, EditMenu,
+	MenuOrientation
 )
 
 if TYPE_CHECKING:
@@ -33,15 +39,16 @@ def ask_ntp(preset: bool = True) -> bool:
 
 
 def ask_hostname(preset: str = '') -> str:
-	hostname = TextInput(
-		str(_('Desired hostname for the installation: ')),
-		preset
-	).run().strip()
+	result = EditMenu(
+		str(_('Hostname')),
+		alignment=Alignment.CENTER,
+		allow_skip=True,
+	).input()
 
-	if not hostname:
+	if not result.item:
 		return preset
 
-	return hostname
+	return result.item
 
 
 def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
@@ -64,32 +71,27 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 	return None
 
 
-def ask_for_audio_selection(
-	current: Optional[AudioConfiguration] = None
-) -> Optional[AudioConfiguration]:
-	choices = [
-		Audio.Pipewire.name,
-		Audio.Pulseaudio.name,
-		Audio.no_audio_text()
-	]
+def ask_for_audio_selection(preset: Optional[AudioConfiguration] = None) -> Optional[AudioConfiguration]:
+	items = [MenuItem(a.value, value=a) for a in Audio]
+	group = MenuItemGroup(items)
 
-	preset = current.audio.name if current else None
+	if preset:
+		group.set_focus_by_value(preset.audio)
 
-	choice = Menu(
-		_('Choose an audio server'),
-		choices,
-		preset_values=preset
-	).run()
+	result = SelectMenu(
+		group,
+		allow_skip=True,
+		alignment=Alignment.CENTER,
+		frame=FrameProperties.minimal(str(_('Audio')))
+	).single()
 
-	match choice.type_:
-		case MenuSelectionType.Skip:
-			return current
-		case MenuSelectionType.Selection:
-			value = choice.single_value
-			if value == Audio.no_audio_text():
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			if result.item is None or result.item.value is None:
 				return None
-			else:
-				return AudioConfiguration(Audio[value])
+			return AudioConfiguration(audio=result.item.value)
 
 	return None
 
@@ -134,7 +136,7 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			return choice.value.value
+			return choice.item.value
 
 	raise ValueError('Language selection not handled')
 
@@ -170,22 +172,36 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	return packages
 
 
-def add_number_of_parallel_downloads(input_number: Optional[int] = None) -> Optional[int]:
+def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[int]:
 	max_recommended = 5
-	print(_(f"This option enables the number of parallel downloads that can occur during package downloads"))
-	print(_("Enter the number of parallel downloads to be enabled.\n\nNote:\n"))
-	print(str(_(" - Maximum recommended value : {} ( Allows {} parallel downloads at a time )")).format(max_recommended,
-																										max_recommended))
-	print(_(" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"))
 
-	while True:
+	header = str(_('This option enables the number of parallel downloads that can occur during package downloads')) + '\n'
+	header += str(_('Enter the number of parallel downloads to be enabled.\n\nNote:\n'))
+	header += str(_(' - Maximum recommended value : {} ( Allows {} parallel downloads at a time )')).format(max_recommended, max_recommended) + '\n'
+	header += str(_(' - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n'))
+
+	def validator(s: str) -> Optional[str]:
 		try:
-			input_number = int(TextInput(_("[Default value: 0] > ")).run().strip() or 0)
-			if input_number <= 0:
-				input_number = 0
-			break
-		except:
-			print(str(_("Invalid input! Try again with a valid input [or 0 to disable]")).format(max_recommended))
+			value = int(s)
+			if value >= 0:
+				return None
+		except Exception:
+			pass
+
+		return str(_('Invalid download number'))
+
+	result = EditMenu(
+		str(_('Number downloads')),
+		header=header,
+		allow_skip=True,
+		allow_reset=True,
+		validator=validator
+	).input()
+
+	if result.type_ == ResultType.Skip:
+		return preset
+
+	downloads: int = int(result.item)
 
 	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
@@ -194,12 +210,11 @@ def add_number_of_parallel_downloads(input_number: Optional[int] = None) -> Opti
 	with pacman_conf_path.open("w") as fwrite:
 		for line in pacman_conf:
 			if "ParallelDownloads" in line:
-				fwrite.write(f"ParallelDownloads = {input_number}\n") if not input_number == 0 else fwrite.write(
-					"#ParallelDownloads = 0\n")
+				fwrite.write(f"ParallelDownloads = {downloads}\n")
 			else:
 				fwrite.write(f"{line}\n")
 
-	return input_number
+	return downloads
 
 
 def select_additional_repositories(preset: List[str]) -> List[str]:

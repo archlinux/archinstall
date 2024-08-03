@@ -268,7 +268,6 @@ class PartitioningList(ListManager):
 		result = EditMenu(
 			text,
 			header=f'{header}\b',
-			alignment=Alignment.CENTER,
 			allow_skip=True,
 			validator=validate
 		).input()

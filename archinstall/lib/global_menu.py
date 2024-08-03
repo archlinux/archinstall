@@ -15,7 +15,11 @@ from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
 from .interactions import ask_for_additional_users
-from .interactions import ask_for_audio_selection
+from .interactions import (
+		ask_for_audio_selection, ask_for_swap,
+		ask_for_bootloader, ask_for_uki, ask_hostname,
+		add_number_of_parallel_downloads, select_kernel
+)
 from .utils.util import get_password
 from .utils.util import format_cols
 
@@ -84,6 +88,72 @@ class GlobalMenu(AbstractMenu):
 				dependencies=['disk_config']
 			),
 			MenuItem(
+				text=str(_('Swap')),
+				value=True,
+				action=lambda x: ask_for_swap(x),
+				preview_action=self._prev_swap,
+				ds_key='swap',
+			),
+			MenuItem(
+				text=str(_('Bootloader')),
+				value=Bootloader.get_default(),
+				action=lambda x: ask_for_bootloader(x),
+				preview_action=self._prev_bootloader,
+				ds_key='bootloader',
+			),
+			MenuItem(
+				text=str(_('Unified kernel images')),
+				value=False,
+				action=lambda x: ask_for_uki(x),
+				preview_action=self._prev_uki,
+				ds_key='uki',
+			),
+			MenuItem(
+				text=str(_('Hostname')),
+				value='archlinux',
+				action=lambda x: ask_hostname(x),
+				preview_action=self._prev_hostname,
+				ds_key='hostname',
+			),
+			MenuItem(
+				text=str(_('Root password')),
+				action=lambda x: self._set_root_password(x),
+				preview_action=self._prev_root_pwd,
+				ds_key='!root-password',
+			),
+			MenuItem(
+				text=str(_('User account')),
+				action=lambda x: self._create_user_account(x),
+				preview_action=self._prev_users,
+				ds_key='!users'
+			),
+			MenuItem(
+				text=str(_('Profile')),
+				action=lambda x: self._select_profile(x),
+				preview_action=self._prev_profile,
+				ds_key='profile_config'
+			),
+			MenuItem(
+				text=str(_('Audio')),
+				action=lambda x: ask_for_audio_selection(x),
+				preview_action=self._prev_audio,
+				ds_key='audio_config'
+			),
+			MenuItem(
+				text=str(_('Parallel Downloads')),
+				action=lambda x: add_number_of_parallel_downloads(x),
+				value=0,
+				preview_action=self._prev_parallel_dw,
+				ds_key='parallel downloads'
+			),
+			MenuItem(
+				text=str(_('Kernels')),
+				action=lambda x: select_kernel(x),
+				preview_action=self._prev_kernel,
+				ds_key='kernels'
+			),
+
+			MenuItem(
 				text=str(_('Abort')),
 				terminate=True
 			)
@@ -91,66 +161,7 @@ class GlobalMenu(AbstractMenu):
 
 
 	# def setup_selection_menu_options(self):
-		# self._menu_options['swap'] = \
-		# 	Selector(
-		# 		_('Swap'),
-		# 		lambda preset: ask_for_swap(preset),
-		# 		default=True)
-		# self._menu_options['bootloader'] = \
-		# 	Selector(
-		# 		_('Bootloader'),
-		# 		lambda preset: ask_for_bootloader(preset),
-		# 		display_func=lambda x: x.value,
-		# 		default=Bootloader.get_default())
-		# self._menu_options['uki'] = \
-		# 	Selector(
-		# 		_('Unified kernel images'),
-		# 		lambda preset: ask_for_uki(preset),
-		# 		default=False)
-		# self._menu_options['hostname'] = \
-		# 	Selector(
-		# 		_('Hostname'),
-		# 		lambda preset: ask_hostname(preset),
-		# 		default='archlinux')
 		# # root password won't have preset value
-		# self._menu_options['!root-password'] = \
-		# 	Selector(
-		# 		_('Root password'),
-		# 		lambda preset:self._set_root_password(),
-		# 		display_func=lambda x: secret(x) if x else '')
-		# self._menu_options['!users'] = \
-		# 	Selector(
-		# 		_('User account'),
-		# 		lambda x: self._create_user_account(x),
-		# 		default=[],
-		# 		display_func=lambda x: f'{len(x)} {_("User(s)")}' if len(x) > 0 else '',
-		# 		preview_func=self._prev_users)
-		# self._menu_options['profile_config'] = \
-		# 	Selector(
-		# 		_('Profile'),
-		# 		lambda preset: self._select_profile(preset),
-		# 		display_func=lambda x: x.profile.name if x else '',
-		# 		preview_func=self._prev_profile
-		# 	)
-		# self._menu_options['audio_config'] = \
-		# 	Selector(
-		# 		_('Audio'),
-		# 		lambda preset: self._select_audio(preset),
-		# 		display_func=lambda x: self._display_audio(x)
-		# 	)
-		# self._menu_options['parallel downloads'] = \
-		# 	Selector(
-		# 		_('Parallel Downloads'),
-		# 		lambda preset: add_number_of_parallel_downloads(preset),
-		# 		display_func=lambda x: x if x else '0',
-		# 		default=0
-		# 	)
-		# self._menu_options['kernels'] = \
-		# 	Selector(
-		# 		_('Kernels'),
-		# 		lambda preset: select_kernel(preset),
-		# 		display_func=lambda x: ', '.join(x) if x else None,
-		# 		default=['linux'])
 		# self._menu_options['packages'] = \
 		# 	Selector(
 		# 		_('Additional packages'),
@@ -319,10 +330,53 @@ class GlobalMenu(AbstractMenu):
 
 		return None
 
-	def _display_disk_config(self, current_value: Optional[disk.DiskLayoutConfiguration] = None) -> str:
-		if current_value:
-			return current_value.config_type.display_msg()
-		return ''
+	def _prev_swap(self, item: MenuItem) -> Optional[str]:
+		if item.value is not None:
+			output = f'{str(_("Swap on zram"))}: '
+			output += str(_('Enabled')) if item.value else str(_('Disabled'))
+			return output
+		return None
+
+	def _prev_uki(self, item: MenuItem) -> Optional[str]:
+		if item.value is not None:
+			output = f'{str(_('Unified kernel images'))}: '
+			output += str(_('Enabled')) if item.value else str(_('Disabled'))
+			return output
+		return None
+
+	def _prev_hostname(self, item: MenuItem) -> Optional[str]:
+		if item.value is not None:
+			return f'{str(_("Hostname"))}: {item.value}'
+		return None
+
+	def _prev_root_pwd(self, item: MenuItem) -> Optional[str]:
+		if item.value is not None:
+			return f'{str(_("Root password"))}: {secret(item.value)}'
+		return None
+
+	def _prev_audio(self, item: MenuItem) -> Optional[str]:
+		if item.value is not None:
+			config: AudioConfiguration = item.value
+			return f'{str(_("Audio"))}: {config.audio.value}'
+		return None
+
+	def _prev_parallel_dw(self, item: MenuItem) -> Optional[str]:
+		if item.value is not None:
+			return f'{str(_("Parallel Downloads"))}: {item.value}'
+		return None
+
+	def _prev_kernel(self, item: MenuItem) -> Optional[str]:
+		if item.value is not None:
+			from archinstall.lib.output import debug
+			debug(item.value)
+			kernel = ', '.join(item.value)
+			return f'{str(_("Kernel"))}: {kernel}'
+		return None
+
+	def _prev_bootloader(self, item: MenuItem) -> Optional[str]:
+		if item.value is not None:
+			return f'{str(_("Bootloader"))}: {item.value.value}'
+		return None
 
 	def _prev_disk_encryption(self, item: MenuItem) -> Optional[str]:
 		disk_config: Optional[disk.DiskLayoutConfiguration] = self._item_group.find_by_ds_key('disk_config').value
@@ -395,17 +449,15 @@ class GlobalMenu(AbstractMenu):
 
 		return None
 
-	def _prev_users(self) -> Optional[str]:
-		selector = self._menu_options['!users']
-		users: Optional[List[User]] = selector.current_selection
+	def _prev_users(self, item: MenuItem) -> Optional[str]:
+		users: Optional[List[User]] = item.value
 
 		if users:
 			return FormattedOutput.as_table(users)
 		return None
 
-	def _prev_profile(self) -> Optional[str]:
-		selector = self._menu_options['profile_config']
-		profile_config: Optional[ProfileConfiguration] = selector.current_selection
+	def _prev_profile(self, item: MenuItem) -> Optional[str]:
+		profile_config: Optional[ProfileConfiguration] = item.value
 
 		if profile_config and profile_config.profile:
 			output = str(_('Profiles')) + ': '
@@ -424,7 +476,7 @@ class GlobalMenu(AbstractMenu):
 
 		return None
 
-	def _set_root_password(self) -> Optional[str]:
+	def _set_root_password(self, preset: Optional[str] = None) -> Optional[str]:
 		password = get_password(text=str(_('Root password')), allow_skip=True)
 		return password
 
@@ -441,16 +493,8 @@ class GlobalMenu(AbstractMenu):
 
 	def _select_profile(self, current_profile: Optional[ProfileConfiguration]):
 		from .profile.profile_menu import ProfileMenu
-		store: Dict[str, Any] = {}
-		profile_config = ProfileMenu(store, preset=current_profile).run()
+		profile_config = ProfileMenu(preset=current_profile).run()
 		return profile_config
-
-	def _select_audio(
-		self,
-		current: Optional[AudioConfiguration] = None
-	) -> Optional[AudioConfiguration]:
-		selection = ask_for_audio_selection(current)
-		return selection
 
 	def _display_audio(self, current: Optional[AudioConfiguration]) -> str:
 		if not current:
@@ -458,8 +502,9 @@ class GlobalMenu(AbstractMenu):
 		else:
 			return current.audio.name
 
-	def _create_user_account(self, defined_users: List[User]) -> List[User]:
-		users = ask_for_additional_users(defined_users=defined_users)
+	def _create_user_account(self, preset: Optional[List[User]] = None) -> List[User]:
+		preset = [] if preset is None else preset
+		users = ask_for_additional_users(defined_users=preset)
 		return users
 
 	def _mirror_configuration(self, preset: Optional[MirrorConfiguration] = None) -> Optional[MirrorConfiguration]:
