@@ -29,7 +29,7 @@ repos:
     - id: check-ast  # Simply check whether files parse as valid python
     - id: check-docstring-first  # Checks for a common error of placing code before the docstring
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.0
+    rev: 7.1.1
     hooks:
     - id: flake8
       args: [--config=.flake8]
