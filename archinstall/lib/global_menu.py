@@ -16,12 +16,15 @@ from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
 from .interactions import ask_for_additional_users
 from .interactions import (
-		ask_for_audio_selection, ask_for_swap,
-		ask_for_bootloader, ask_for_uki, ask_hostname,
-		add_number_of_parallel_downloads, select_kernel
+	ask_for_audio_selection, ask_for_swap,
+	ask_for_bootloader, ask_for_uki, ask_hostname,
+	add_number_of_parallel_downloads, select_kernel,
+	ask_additional_packages_to_install, select_additional_repositories,
+	ask_for_a_timezone, ask_ntp, ask_to_configure_network
 )
 from .utils.util import get_password
 from .utils.util import format_cols
+from .configuration import save_config
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem
@@ -78,6 +81,7 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Disk configuration')),
 				action=lambda x: self._select_disk_config(x),
 				preview_action=self._prev_disk_config,
+				mandatory=True,
 				ds_key='disk_config'
 			),
 			MenuItem(
@@ -99,6 +103,7 @@ class GlobalMenu(AbstractMenu):
 				value=Bootloader.get_default(),
 				action=lambda x: ask_for_bootloader(x),
 				preview_action=self._prev_bootloader,
+				mandatory=True,
 				ds_key='bootloader',
 			),
 			MenuItem(
@@ -140,6 +145,21 @@ class GlobalMenu(AbstractMenu):
 				ds_key='audio_config'
 			),
 			MenuItem(
+				text=str(_('Kernels')),
+				value=['linux'],
+				action=lambda x: select_kernel(x),
+				preview_action=self._prev_kernel,
+				mandatory=True,
+				ds_key='kernels'
+			),
+			MenuItem(
+				text=str(_('Network configuration')),
+				action=lambda x: ask_to_configure_network(x),
+				value={},
+				preview_action=self._prev_network_config,
+				ds_key='network_config'
+			),
+			MenuItem(
 				text=str(_('Parallel Downloads')),
 				action=lambda x: add_number_of_parallel_downloads(x),
 				value=0,
@@ -147,92 +167,84 @@ class GlobalMenu(AbstractMenu):
 				ds_key='parallel downloads'
 			),
 			MenuItem(
-				text=str(_('Kernels')),
-				action=lambda x: select_kernel(x),
-				preview_action=self._prev_kernel,
-				ds_key='kernels'
+				text=str(_('Additional packages')),
+				action=lambda x: ask_additional_packages_to_install(x),
+				value=[],
+				preview_action=self._prev_additional_pkgs,
+				ds_key='packages'
 			),
-
+			MenuItem(
+				text=str(_('Optional repositories')),
+				action=lambda x: select_additional_repositories(x),
+				value=[],
+				preview_action=self._prev_additional_repos,
+				ds_key='additional-repositories'
+			),
+			MenuItem(
+				text=str(_('Timezone')),
+				action=lambda x: ask_for_a_timezone(x),
+				value='UTC',
+				preview_action=self._prev_tz,
+				ds_key='timezone'
+			),
+			MenuItem(
+				text=str(_('Automatic time sync (NTP)')),
+				action=lambda x: ask_ntp(x),
+				value=True,
+				preview_action=self._prev_ntp,
+				ds_key='ntp'
+			),
+			MenuItem( text=''),
+			MenuItem(
+				text=str(_('Save configuration')),
+				action=lambda x: self._save_config(),
+				ds_key='save_config'
+			),
+			MenuItem(
+				text=str(_('Install')),
+				preview_action=self._prev_install_invalid_config,
+				ds_key='install'
+			),
 			MenuItem(
 				text=str(_('Abort')),
 				terminate=True
 			)
 		]
 
+	def _save_config(self) -> None:
+		data = {}
+		for item in self._item_group.items:
+			data[item.ds_key] = item.value
 
-	# def setup_selection_menu_options(self):
-		# # root password won't have preset value
-		# self._menu_options['packages'] = \
-		# 	Selector(
-		# 		_('Additional packages'),
-		# 		lambda preset: ask_additional_packages_to_install(preset),
-		# 		display_func=lambda x: self.defined_text if x else '',
-		# 		preview_func=self._prev_additional_pkgs,
-		# 		default=[])
-		# self._menu_options['additional-repositories'] = \
-		# 	Selector(
-		# 		_('Optional repositories'),
-		# 		lambda preset: select_additional_repositories(preset),
-		# 		display_func=lambda x: ', '.join(x) if x else None,
-		# 		default=[])
-		# self._menu_options['network_config'] = \
-		# 	Selector(
-		# 		_('Network configuration'),
-		# 		lambda preset: ask_to_configure_network(preset),
-		# 		display_func=lambda x: self._display_network_conf(x),
-		# 		preview_func=self._prev_network_config,
-		# 		default={})
-		# self._menu_options['timezone'] = \
-		# 	Selector(
-		# 		_('Timezone'),
-		# 		lambda preset: ask_for_a_timezone(preset),
-		# 		default='UTC')
-		# self._menu_options['ntp'] = \
-		# 	Selector(
-		# 		_('Automatic time sync (NTP)'),
-		# 		lambda preset: ask_ntp(preset),
-		# 		default=True)
-		# self._menu_options['__separator__'] = \
-		# 	Selector('')
-		# self._menu_options['save_config'] = \
-		# 	Selector(
-		# 		_('Save configuration'),
-		# 		lambda preset: save_config(self._data_store),
-		# 		no_store=True)
-		# self._menu_options['install'] = \
-		# 	Selector(
-		# 		self._install_text(),
-		# 		exec_func=lambda n, v: self._is_config_valid(),
-		# 		preview_func=self._prev_install_invalid_config,
-		# 		no_store=True)
-
-		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
+		save_config(data)
 
 	def _missing_configs(self) -> List[str]:
 		def check(s) -> bool:
-			obj = self._menu_options.get(s)
-			if obj and obj.has_selection():
-				return True
-			return False
+			item = self._item_group.find_by_ds_key(s)
+			return item.has_value()
 
 		def has_superuser() -> bool:
-			sel = self._menu_options['!users']
-			if sel.current_selection:
-				return any([u.sudo for u in sel.current_selection])
+			item = self._item_group.find_by_ds_key('!users')
+
+			from .output import debug
+
+			debug(item)
+			if item.has_value():
+				users = item.value
+				return any([u.sudo for u in users])
 			return False
 
-		mandatory_fields = dict(filter(lambda x: x[1].is_mandatory(), self._menu_options.items()))
 		missing = set()
 
-		for key, selector in mandatory_fields.items():
-			if key in ['!root-password', '!users']:
+		for item in self._item_group.items:
+			if item.ds_key in ['!root-password', '!users']:
 				if not check('!root-password') and not has_superuser():
 					missing.add(
 						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))
 					)
-			elif key == 'disk_config':
-				if not check('disk_config'):
-					missing.add(self._menu_options['disk_config'].description)
+			elif item.mandatory:
+				if not check(item.ds_key):
+					missing.add(item.text)
 
 		return list(missing)
 
@@ -252,19 +264,8 @@ class GlobalMenu(AbstractMenu):
 			elif name and name == 'bootloader':
 				self._menu_options['uki'].set_enabled(True)
 
-	def _update_install_text(self, name: Optional[str] = None, value: Any = None):
-		text = self._install_text()
-		self._menu_options['install'].update_description(text)
-
 	def post_callback(self, name: Optional[str] = None, value: Any = None):
 		self._update_uki_display(name)
-		self._update_install_text(name, value)
-
-	def _install_text(self):
-		missing = len(self._missing_configs())
-		if missing > 0:
-			return _('Install ({} config(s) missing)').format(missing)
-		return _('Install')
 
 	def _select_archinstall_language(self, preset: Language) -> Language:
 		from .interactions.general_conf import select_archinstall_language
@@ -302,19 +303,39 @@ class GlobalMenu(AbstractMenu):
 		config: LocaleConfiguration = item.value
 		return config.preview()
 
-	def _prev_network_config(self) -> Optional[str]:
-		selector: Optional[NetworkConfiguration] = self._menu_options['network_config'].current_selection
-		if selector:
-			if selector.type == NicType.MANUAL:
-				output = FormattedOutput.as_table(selector.nics)
-				return output
+	def _prev_network_config(self, item: MenuItem) -> Optional[str]:
+		if item.value:
+			network_config: NetworkConfiguration = item.value
+			if network_config.type == NicType.MANUAL:
+				output = FormattedOutput.as_table(network_config.nics)
+			else:
+				output = f'{str(_('Network configuration'))}:\n{network_config.type.display_msg()}'
+
+			return output
 		return None
 
-	def _prev_additional_pkgs(self):
-		selector = self._menu_options['packages']
-		if selector.current_selection:
-			packages: List[str] = selector.current_selection
-			return format_cols(packages, None)
+	def _prev_additional_pkgs(self, item: MenuItem) -> Optional[str]:
+		if item.value:
+			packages = format_cols(item.value, None)
+			return f'{str(_("Additional packages"))}:\n{packages}'
+		return None
+
+	def _prev_additional_repos(self, item: MenuItem) -> Optional[str]:
+		if item.value:
+			repos = ', '.join(item.value)
+			return f'{str(_("Additional repositories"))}: {repos}'
+		return None
+
+	def _prev_tz(self, item: MenuItem) -> Optional[str]:
+		if item.value:
+			return f'{str(_("Timezone"))}: {item.value}'
+		return None
+
+	def _prev_ntp(self, item: MenuItem) -> Optional[str]:
+		if item.value is not None:
+			output = f'{str(_("NTP"))}: '
+			output += str(_('Enabled')) if item.value else str(_('Disabled'))
+			return output
 		return None
 
 	def _prev_disk_config(self, item: MenuItem) -> Optional[str]:
@@ -418,10 +439,10 @@ class GlobalMenu(AbstractMenu):
 		XXX: The caller is responsible for wrapping the string with the translation
 			shim if necessary.
 		"""
-		bootloader = self._menu_options['bootloader'].current_selection
+		bootloader = self._item_group.find_by_ds_key('bootloader').value
 		boot_partition: Optional[disk.PartitionModification] = None
 
-		if disk_config := self._menu_options['disk_config'].current_selection:
+		if disk_config := self._item_group.find_by_ds_key('disk_config').value:
 			for layout in disk_config.device_modifications:
 				if boot_partition := layout.get_boot_partition():
 					break
@@ -437,7 +458,7 @@ class GlobalMenu(AbstractMenu):
 
 		return None
 
-	def _prev_install_invalid_config(self) -> Optional[str]:
+	def _prev_install_invalid_config(self, item: MenuItem) -> Optional[str]:
 		if missing := self._missing_configs():
 			text = str(_('Missing configurations:\n'))
 			for m in missing:

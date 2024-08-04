@@ -5,10 +5,17 @@ import readline
 from pathlib import Path
 from typing import Optional, Dict, Any, TYPE_CHECKING
 
-from .menu import Menu, MenuSelectionType
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
 from .output import debug, info, warn
+from .utils.util import prompt_dir
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, FrameStyle, Alignment,
+	ResultType, EditMenu, PreviewStyle,
+	MenuOrientation
+)
 
 if TYPE_CHECKING:
 	_: Any
@@ -122,60 +129,63 @@ def save_config(config: Dict):
 				return '\n'.join(output)
 		return None
 
-	try:
-		config_output = ConfigurationOutput(config)
+	config_output = ConfigurationOutput(config)
+	options = {
+		str(_("Save user configuration (including disk layout)")): "user_config",
+		str(_("Save user credentials")): "user_creds",
+		str(_("Save all")): "all",
+	}
 
-		options = {
-			str(_("Save user configuration (including disk layout)")): "user_config",
-			str(_("Save user credentials")): "user_creds",
-			str(_("Save all")): "all",
-		}
+	items = [MenuItem(o, value=o, preview_action=lambda x: preview(x.value)) for o in options]
+	group = MenuItemGroup(items)
+	result = SelectMenu(
+		group,
+		allow_skip=True,
+		preview_frame=FrameProperties.max(str(_('Preview'))),
+		preview_size='auto',
+		preview_style=PreviewStyle.RIGHT
+	).single()
 
-		save_choice = Menu(
-			_("Choose which configuration to save"),
-			list(options),
-			sort=False,
-			skip=True,
-			preview_size=0.75,
-			preview_command=preview,
-		).run()
-
-		if save_choice.type_ == MenuSelectionType.Skip:
+	match result.type_:
+		case ResultType.Skip:
 			return
+		case ResultType.Selection:
+			save_option = result.item.value
 
-		readline.set_completer_delims("\t\n=")
-		readline.parse_and_bind("tab: complete")
-		while True:
-			path = input(
-				_(
-					"Enter a directory for the configuration(s) to be saved (tab completion enabled)\nSave directory: "
-				)
-			).strip(" ")
-			dest_path = Path(path)
-			if dest_path.exists() and dest_path.is_dir():
-				break
-			info(_("Not a valid directory: {}").format(dest_path), fg="red")
+			readline.set_completer_delims("\t\n=")
+			readline.parse_and_bind("tab: complete")
 
-		if not path:
-			return
+			dest_path = prompt_dir(
+				str(_('Directory')),
+				str(_('Enter a directory for the configuration(s) to be saved (tab completion enabled)')) + '\n',
+				allow_skip=True
+			)
 
-		prompt = _(
-			"Do you want to save {} configuration file(s) in the following location?\n\n{}"
-		).format(options[str(save_choice.value)], dest_path.absolute())
+			if not dest_path:
+				return
 
-		save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-		if save_confirmation == Menu.no():
-			return
+			header = str( _("Do you want to save the configuration file(s) to {}?")).format(dest_path)
 
-		debug("Saving {} configuration files to {}".format(options[str(save_choice.value)], dest_path.absolute()))
+			group = MenuItemGroup.default_confirm()
+			group.set_focus_by_value(MenuItem.default_yes().value)
+			result = SelectMenu(
+				group,
+				header=header,
+				allow_skip=False,
+				alignment=Alignment.CENTER,
+				columns=2,
+				orientation=MenuOrientation.HORIZONTAL
+			).single()
 
-		match options[str(save_choice.value)]:
-			case "user_config":
-				config_output.save_user_config(dest_path)
-			case "user_creds":
-				config_output.save_user_creds(dest_path)
-			case "all":
-				config_output.save(dest_path)
+			if result.item == MenuItem.default_no():
+				return
 
-	except (KeyboardInterrupt, EOFError):
-		return
+			debug("Saving {} configuration files to {}".format(save_option, dest_path.absolute()))
+
+			match save_option:
+				case "user_config":
+					config_output.save_user_config(dest_path)
+				case "user_creds":
+					config_output.save_user_creds(dest_path)
+				case "all":
+					config_output.save(dest_path)

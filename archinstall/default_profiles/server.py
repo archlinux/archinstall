@@ -1,7 +1,6 @@
 from typing import Any, TYPE_CHECKING, List
 
 from archinstall.lib.output import info
-from archinstall.lib.menu import MenuSelectionType
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.default_profiles.profile import ProfileType, Profile, SelectResult, TProfile
 
@@ -54,9 +53,9 @@ class ServerProfile(Profile):
 				selections = [i.value for i in result.item]
 				self.set_current_selection(selections)
 				return SelectResult.NewSelection
-			case MenuSelectionType.Skip:
+			case ResultType.Skip:
 				return SelectResult.SameSelection
-			case MenuSelectionType.Reset:
+			case ResultType.Reset:
 				return SelectResult.ResetCurrent
 
 		return None

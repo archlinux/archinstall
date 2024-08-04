@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import List, Any, TYPE_CHECKING, Optional
 
 from ..hardware import SysInfo, GfxDriver
-from ..menu import MenuSelectionType, Menu
 from ..models.bootloader import Bootloader
 
 from archinstall.tui import (

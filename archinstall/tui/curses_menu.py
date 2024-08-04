@@ -506,12 +506,13 @@ class EditMenu(AbstractCurses):
 	def __init__(
 		self,
 		title: str,
+		edit_width: int = 50,
 		header: Optional[str] = None,
 		validator: Optional[Callable[[str], Optional[str]]] = None,
 		allow_skip: bool = False,
 		allow_reset: bool = False,
 		reset_warning_msg: Optional[str] = None,
-		alignment: Alignment = Alignment.CENTER
+		alignment: Alignment = Alignment.CENTER,
 	):
 		super().__init__()
 
@@ -524,6 +525,7 @@ class EditMenu(AbstractCurses):
 		self._interrupt_warning = reset_warning_msg
 		self._headers = self.get_header_entries(header)
 		self._alignment = alignment
+		self._edit_width = edit_width
 
 		title = f'* {title}' if not self._allow_skip else title
 		self._frame = FrameProperties(title, FrameStyle.MAX)
@@ -538,9 +540,8 @@ class EditMenu(AbstractCurses):
 		self._last_state: Optional[Result] = None
 		self._help_active = False
 
-	def _init_viewports(self):
+	def _init_viewports(self) -> None:
 		y_offset = 0
-		edit_width = 50
 
 		self._help_vp = Viewport(self._max_width, 2, 0, y_offset)
 		y_offset += 2
@@ -552,7 +553,7 @@ class EditMenu(AbstractCurses):
 
 		self._input_vp = EditViewport(
 			self._max_width,
-			edit_width,
+			self._edit_width,
 			3,
 			0,
 			y_offset,

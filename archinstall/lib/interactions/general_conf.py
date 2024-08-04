@@ -4,7 +4,6 @@ import pathlib
 from typing import List, Any, Optional, TYPE_CHECKING
 
 from ..locale import list_timezones
-from ..menu import MenuSelectionType, Menu
 from ..models.audio_configuration import Audio, AudioConfiguration
 from ..output import warn
 from ..packages.packages import validate_package_list
@@ -26,16 +25,32 @@ if TYPE_CHECKING:
 
 
 def ask_ntp(preset: bool = True) -> bool:
-	prompt = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n'))
-	prompt += str(
-		_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'))
-	if preset:
-		preset_val = Menu.yes()
-	else:
-		preset_val = Menu.no()
-	choice = Menu(prompt, Menu.yes_no(), skip=False, preset_values=preset_val, default_option=Menu.yes()).run()
+	header = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n')) + '\n'
+	header += str( _('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki')) + '\n'
 
-	return False if choice.value == Menu.no() else True
+	preset_val = MenuItem.default_yes() if preset else MenuItem.default_no()
+	group = MenuItemGroup.default_confirm()
+	group.focus_item = preset_val
+
+	result = SelectMenu(
+		group,
+		header=header,
+		allow_skip=True,
+		alignment=Alignment.CENTER,
+		columns=2,
+		orientation=MenuOrientation.HORIZONTAL
+	).single()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			if result.item is None:
+				return preset
+
+			return result.item == MenuItem.default_yes()
+
+	return False
 
 
 def ask_hostname(preset: str = '') -> str:
@@ -52,23 +67,30 @@ def ask_hostname(preset: str = '') -> str:
 
 
 def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
-	timezones = list_timezones()
 	default = 'UTC'
 
-	choice = Menu(
-		_('Select a timezone'),
-		timezones,
-		preset_values=preset,
-		default_option=default
-	).run()
+	items = [MenuItem(tz, value=tz) for tz in list_timezones()]
+	group = MenuItemGroup(items, sort_items=True)
+	group.set_selected_by_value(preset)
+	group.set_default_by_value(default)
 
-	match choice.type_:
-		case MenuSelectionType.Skip:
+	result = SelectMenu(
+		group,
+		allow_reset=True,
+		allow_skip=True,
+		frame=FrameProperties.minimal(str(_('Timezone'))),
+		alignment=Alignment.CENTER,
+	).single()
+
+	match result.type_:
+		case ResultType.Skip:
 			return preset
-		case MenuSelectionType.Selection:
-			return choice.single_value
-
-	return None
+		case ResultType.Reset:
+			return default
+		case ResultType.Selection:
+			if result.item is None:
+				return preset
+			return result.item.value
 
 
 def ask_for_audio_selection(preset: Optional[AudioConfiguration] = None) -> Optional[AudioConfiguration]:
@@ -129,7 +151,7 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 		allow_skip=True,
 		allow_reset=False,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal( header=str(_('Select language')))
+		frame=FrameProperties.minimal(header=str(_('Select language')))
 	).single()
 
 	match choice.type_:
@@ -143,31 +165,44 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 
 def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
-	print(
-		_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
-	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
+	header = str(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.')) + '\n'
+	header += str(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.')) + '\n'
+	header += str(_('Write additional packages to install (space separated, leave blank to skip)'))
 
-	def read_packages(p: List = []) -> list:
+	def read_packages(p: List[str] = [], failure: Optional[str] = None) -> List[str]:
 		display = ' '.join(p)
-		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '),
-								   display).run().strip()
-		return input_packages.split() if input_packages else []
+
+		result = EditMenu(
+			str(_('Additional packages')),
+			alignment=Alignment.CENTER,
+			allow_skip=True,
+			edit_width=100
+		).input()
+
+		if result.item is None:
+			return []
+
+		packages = result.item
+
+		return packages.split() if packages else []
 
 	preset = preset if preset else []
-	packages = read_packages(preset)
+	packages = read_packages(preset, None)
 
 	if not storage['arguments']['offline'] and not storage['arguments']['no_pkg_lookups']:
 		while True:
-			if len(packages):
-				# Verify packages that were given
-				print(_("Verifying that additional packages exist (this might take a few seconds)"))
-				valid, invalid = validate_package_list(packages)
+			if not len(packages):
+				break
 
-				if invalid:
-					warn(f"Some packages could not be found in the repository: {invalid}")
-					packages = read_packages(valid)
-					continue
-			break
+			# Verify packages that were given
+			print(_("Verifying that additional packages exist (this might take a few seconds)"))
+			valid, invalid = validate_package_list(packages)
+
+			if invalid:
+				failure = f'{str(_("Some packages could not be found in the repository"))}: {invalid}'
+				packages = read_packages(valid, failure)
+			else:
+				break
 
 	return packages
 
@@ -226,22 +261,26 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 	"""
 
 	repositories = ["multilib", "testing"]
+	items = [MenuItem(r, value=r) for r in repositories]
+	group = MenuItemGroup(items, sort_items=True)
+	group.set_selected_by_value(preset)
 
-	choice = Menu(
-		_('Choose which optional additional repositories to enable'),
-		repositories,
-		sort=False,
-		multi=True,
-		preset_values=preset,
-		allow_reset=True
-	).run()
+	result = SelectMenu(
+		group,
+		alignment=Alignment.CENTER,
+		frame=FrameProperties.minimal('Additional repositories'),
+		allow_reset=True,
+		allow_skip=True
+	).multi()
 
-	match choice.type_:
-		case MenuSelectionType.Skip:
+	match result.type_:
+		case ResultType.Skip:
 			return preset
-		case MenuSelectionType.Reset:
+		case ResultType.Reset:
 			return []
-		case MenuSelectionType.Selection:
-			return choice.single_value
+		case ResultType.Selection:
+			if not result.item:
+				return preset
 
-	return []
+			values = [i.value for i in result.item]
+			return values
