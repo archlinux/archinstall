@@ -118,12 +118,13 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 	argument value value ...
 	which isn't am error if multiple is specified
 	"""
-	tmp_list = unknowns[:]  # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
+	tmp_list = [arg for arg in unknowns if arg != "="]  # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
 	config = {}
 	key = None
 	last_key = None
 	while tmp_list:
 		element = tmp_list.pop(0)  # retrieve an element of the list
+
 		if element.startswith('--'):  # is an argument ?
 			if '=' in element:  # uses the arg=value syntax ?
 				key, value = [x.strip() for x in element[2:].split('=', 1)]
@@ -133,23 +134,19 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 			else:
 				key = element[2:]
 				config[key] = True  # every argument starts its lifecycle as boolean
-		else:
-			if element == '=':
-				continue
-			if key:
-				config[key] = element
-				last_key = key  # multiple
-				key = None
+		elif key:
+			config[key] = element
+			last_key = key  # multiple
+			key = None
+		elif multiple and last_key:
+			if isinstance(config[last_key], str):
+				config[last_key] = [config[last_key], element]
 			else:
-				if multiple and last_key:
-					if isinstance(config[last_key], str):
-						config[last_key] = [config[last_key], element]
-					else:
-						config[last_key].append(element)
-				elif err:
-					raise ValueError(f"Entry {element} is not related to any argument")
-				else:
-					print(f" We ignore the entry {element} as it isn't related to any argument")
+				config[last_key].append(element)
+		elif err:
+			raise ValueError(f"Entry {element} is not related to any argument")
+		else:
+			print(f" We ignore the entry {element} as it isn't related to any argument")
 	return config
 
 
