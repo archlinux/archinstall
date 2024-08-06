@@ -273,7 +273,7 @@ class Installer:
 	def _prepare_luks_partitions(
 		self,
 		partitions: List[disk.PartitionModification]
-	) -> Dict[disk.PartitionModification, Luks2]:
+	) -> Dict[disk.PartitionModification, Luks2] -> Dict[disk.PartitionModification, disk.device_handler.unlock_luks2_dev]:
 		return {
 			part_mod: disk.device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
@@ -363,9 +363,13 @@ class Installer:
 			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
 
 	def generate_key_files(self) -> None:
+		warn("Deprecation warning: generate_key_files() has been renamed to setup_luks_unlock() and generate_key_files will be removed.")
+		return self.setup_luks_unlock(self)
+
+	def setup_luks_unlock(self) -> None:
 		match self._disk_encryption.encryption_type:
 			case disk.EncryptionType.Luks:
-				self._generate_key_files_partitions()
+				self._setup_luks_unlock_partitions()
 			case disk.EncryptionType.LuksOnLvm:
 				self._generate_key_file_lvm_volumes()
 			case disk.EncryptionType.LvmOnLuks:
@@ -374,9 +378,13 @@ class Installer:
 				# so we won't need any keyfile generation atm
 				pass
 
-	def _generate_key_files_partitions(self):
+	def _generate_key_files_partitions(self) -> None:
+		warn("Deprecation warning: _generate_key_files_partitions() has been renamed to _setup_luks_unlock_partitions() and _generate_key_files_partitions will be removed.")
+		return self._setup_luks_unlock_partitions(self)
+
+	def _setup_luks_unlock_partitions(self) -> None:
 		for part_mod in self._disk_encryption.partitions:
-			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
+			gen_enc_file = self._disk_encryption.should_generate_encryption_keyfile(part_mod)
 
 			luks_handler = Luks2(
 				part_mod.safe_dev_path,
@@ -386,7 +394,9 @@ class Installer:
 
 			if gen_enc_file and not part_mod.is_root():
 				debug(f'Creating key-file: {part_mod.dev_path}')
-				luks_handler.create_keyfile(self.target)
+				key_file = luks_handler.create_keyfile(self.target)
+			else:
+				key_file = None
 
 			if part_mod.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
@@ -396,9 +406,14 @@ class Installer:
 						self._disk_encryption.encryption_password
 					)
 
+			luks_handler.create_crypttab(
+				target_path=self.target,
+				key_file=key_file
+			)
+
 	def _generate_key_file_lvm_volumes(self):
 		for vol in self._disk_encryption.lvm_volumes:
-			gen_enc_file = self._disk_encryption.should_generate_encryption_file(vol)
+			gen_enc_file = self._disk_encryption.should_generate_encryption_keyfile(vol)
 
 			luks_handler = Luks2(
 				vol.safe_dev_path,
@@ -406,9 +421,11 @@ class Installer:
 				password=self._disk_encryption.encryption_password
 			)
 
-			if gen_enc_file and not vol.is_root():
-				info(f'Creating key-file: {vol.dev_path}')
-				luks_handler.create_keyfile(self.target)
+			if gen_enc_file and not part_mod.is_root():
+				debug(f'Creating key-file: {part_mod.dev_path}')
+				key_file = luks_handler.create_keyfile(self.target)
+			else:
+				key_file = None
 
 			if vol.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
@@ -417,6 +434,11 @@ class Installer:
 						vol.safe_dev_path,
 						self._disk_encryption.encryption_password
 					)
+
+			luks_handler.create_crypttab(
+				target_path=self.target,
+				key_file=key_file
+			)
 
 	def sync_log_to_install_medium(self) -> bool:
 		# Copy over the install log (if there is one) to the install medium if

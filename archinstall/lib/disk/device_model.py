@@ -17,7 +17,7 @@ from parted import Disk, Geometry, Partition
 
 from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
-from ..output import debug, error
+from ..output import debug, error, warn
 from ..storage import storage
 
 if TYPE_CHECKING:
@@ -1204,10 +1204,21 @@ class DiskEncryption:
 			raise ValueError('LuksOnLvm encryption require LMV volumes to be defined')
 
 	def should_generate_encryption_file(self, dev: PartitionModification | LvmVolume) -> bool:
-		if isinstance(dev, PartitionModification):
+		warn("Deprecation warning: should_generate_encryption_file() has been renamed to should_generate_encryption_keyfile() and should_generate_encryption_file will be removed.")
+		return self.should_generate_encryption_keyfile(dev)
+
+	def should_generate_encryption_keyfile(self, dev: PartitionModification | LvmVolume) -> bool:
+		# If all partitions being encrypted, are non-root file systems
+		# we will not generate key-files as their safety can not be guaranteed.
+		if all([part.mountpoint != Path('/') for part in self.partitions]):
+			return False
+		# If the device mountpoint is anything but root,
+		# we want to create a keyfile for unlocking
+		elif isinstance(dev, PartitionModification):
 			return dev in self.partitions and dev.mountpoint != Path('/')
 		elif isinstance(dev, LvmVolume):
 			return dev in self.lvm_volumes and dev.mountpoint != Path('/')
+
 		return False
 
 	def json(self) -> Dict[str, Any]:
