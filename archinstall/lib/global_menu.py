@@ -6,7 +6,7 @@ from . import disk
 from .general import secret
 from .hardware import SysInfo
 from .locale.locale_menu import LocaleConfiguration, LocaleMenu
-from .menu import Selector, AbstractMenu
+from .menu import AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
 from .models import NetworkConfiguration, NicType
 from .models.bootloader import Bootloader
@@ -52,10 +52,7 @@ class GlobalMenu(AbstractMenu):
 			checkmarks=True
 		)
 
-		super().__init__(
-			self._item_group,
-			data_store
-		)
+		super().__init__(self._item_group, data_store)
 
 	def _get_menu_options(self, data_store: Dict[str, Any]) -> List[MenuItem]:
 		return [
@@ -194,10 +191,12 @@ class GlobalMenu(AbstractMenu):
 				preview_action=self._prev_ntp,
 				ds_key='ntp'
 			),
-			MenuItem( text=''),
+			MenuItem(
+				text=''
+			),
 			MenuItem(
 				text=str(_('Save configuration')),
-				action=lambda x: self._save_config(),
+				action=lambda x: self._safe_config(),
 				ds_key='save_config'
 			),
 			MenuItem(
@@ -207,11 +206,11 @@ class GlobalMenu(AbstractMenu):
 			),
 			MenuItem(
 				text=str(_('Abort')),
-				terminate=True
+				action=lambda x: exit(1),
 			)
 		]
 
-	def _save_config(self) -> None:
+	def _safe_config(self) -> None:
 		data = {}
 		for item in self._item_group.items:
 			data[item.ds_key] = item.value
@@ -316,8 +315,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_additional_pkgs(self, item: MenuItem) -> Optional[str]:
 		if item.value:
-			packages = format_cols(item.value, None)
-			return f'{str(_("Additional packages"))}:\n{packages}'
+			return format_cols(item.value, None)
 		return None
 
 	def _prev_additional_repos(self, item: MenuItem) -> Optional[str]:

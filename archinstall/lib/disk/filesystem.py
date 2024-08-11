@@ -15,9 +15,15 @@ from .device_model import (
 )
 from ..hardware import SysInfo
 from ..luks import Luks2
-from ..menu import Menu
 from ..output import debug, info
 from ..general import SysCommand
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, FrameStyle, Alignment,
+	ResultType, EditMenu, MenuOrientation,
+	tui
+)
+
 
 if TYPE_CHECKING:
 	_: Any
@@ -51,6 +57,8 @@ class FilesystemHandler:
 
 		if show_countdown:
 			self._do_countdown()
+
+		exit(0)
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
@@ -354,7 +362,7 @@ class FilesystemHandler:
 		signal.signal(signal.SIGINT, sig_handler)
 
 		for i in range(5, 0, -1):
-			print(f"{i}", end='')
+			print(f"{i}")
 
 			for x in range(4):
 				sys.stdout.flush()
@@ -362,9 +370,19 @@ class FilesystemHandler:
 				print(".", end='')
 
 			if SIG_TRIGGER:
-				prompt = _('Do you really want to abort?')
-				choice = Menu(prompt, Menu.yes_no(), skip=False).run()
-				if choice.value == Menu.yes():
+				prompt = str(_('Do you really want to abort?')) + '\n'
+				group = MenuItemGroup.yes_no()
+
+				result = SelectMenu(
+					group,
+					header=prompt,
+					allow_skip=False,
+					alignment=Alignment.CENTER,
+					columns=2,
+					orientation=MenuOrientation.HORIZONTAL
+				).single()
+
+				if result.item == MenuItem.yes():
 					exit(0)
 
 				if SIG_TRIGGER is False:

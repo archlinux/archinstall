@@ -162,7 +162,6 @@ class AbstractMenu:
 		if self._allow_reset:
 			self._reset_warning = str(_('Are you sure you want to reset this setting?'))
 
-		self._enabled_order: List[str] = []
 		self.is_context_mgr = False
 
 		self._sync_all_from_ds()
@@ -203,17 +202,21 @@ class AbstractMenu:
 		elif item.value is not None:
 			self._data_store[item.ds_key] = item.value
 
-	def enable(self, key: str, mandatory: bool = False) -> None:
+	def set_enabled(self, key: str, enabled: bool) -> None:
 		if (item := self._menu_item_group.find_by_ds_key(key)) is not None:
-			item.enabled = True
-			item.mandatory = mandatory
-			self._enabled_order.append(key)
-			return
+			item.enabled = enabled
+			return None
 
 		raise ValueError(f'No selector found: {key}')
 
+	def disable_all(self) -> None:
+		for item in self._menu_item_group.items:
+			item.enabled = False
+
 	def run(self) -> None:
 		self._sync_all_from_ds()
+
+		from ..output import debug
 
 		while True:
 			result = SelectMenu(
@@ -233,15 +236,8 @@ class AbstractMenu:
 				case ResultType.Selection:
 					item: MenuItem = result.item
 
-					if item.terminate:
-						exit(1)
-
 					if item.action is None:
 						break
-
-					# TODO doesn't work properly with multi columns and certain sub-menus
-					# if self.auto_cursor:
-					# 	self._menu_item_group.focus_next()
 				case ResultType.Reset:
 					return None
 

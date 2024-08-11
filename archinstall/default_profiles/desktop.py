@@ -1,6 +1,5 @@
 from typing import Any, TYPE_CHECKING, List, Optional, Dict
 
-from archinstall.lib import menu
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult, GreeterType

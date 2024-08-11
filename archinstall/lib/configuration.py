@@ -75,12 +75,34 @@ class ConfigurationOutput:
 			return json.dumps(self._user_credentials, indent=4, sort_keys=True, cls=UNSAFE_JSON)
 		return None
 
-	def show(self):
-		print(_('\nThis is your chosen configuration:'))
+	def write_debug(self) -> None:
 		debug(" -- Chosen configuration --")
+		debug(self.user_config_to_json())
 
-		info(self.user_config_to_json())
-		print()
+	def confirm_config(self) -> bool:
+		header = f'{str(_("The specified configuration will be applied"))}. '
+		header += str(_('Would you like to continue?')) + '\n'
+
+		group = MenuItemGroup.yes_no()
+		group.focus_item = MenuItem.yes()
+		group.set_preview_for_all(lambda x: self.user_config_to_json())
+
+		result = SelectMenu(
+			group,
+			header=header,
+			alignment=Alignment.CENTER,
+			columns=2,
+			orientation=MenuOrientation.HORIZONTAL,
+			allow_skip=False,
+			preview_size='auto',
+			preview_style=PreviewStyle.BOTTOM,
+			preview_frame=FrameProperties.max(str(_('Configuration')))
+		).single()
+
+		if result.item != MenuItem.yes():
+			return False
+
+		return True
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
 		dest_path_ok = dest_path.exists() and dest_path.is_dir()
@@ -112,9 +134,9 @@ class ConfigurationOutput:
 			self.save_user_creds(dest_path)
 
 
-def save_config(config: Dict):
-	def preview(selection: str):
-		match options[selection]:
+def save_config(config: Dict[str, Any]) -> None:
+	def preview(item: MenuItem) -> Optional[str]:
+		match item.value:
 			case "user_config":
 				serialized = config_output.user_config_to_json()
 				return f"{config_output.user_configuration_file}\n{serialized}"
@@ -130,18 +152,30 @@ def save_config(config: Dict):
 		return None
 
 	config_output = ConfigurationOutput(config)
-	options = {
-		str(_("Save user configuration (including disk layout)")): "user_config",
-		str(_("Save user credentials")): "user_creds",
-		str(_("Save all")): "all",
-	}
 
-	items = [MenuItem(o, value=o, preview_action=lambda x: preview(x.value)) for o in options]
+	items = [
+		MenuItem(
+			str(_("Save user configuration (including disk layout)")),
+			value="user_config",
+			preview_action=lambda x: preview(x)
+		),
+		MenuItem(
+			str(_("Save user credentials")),
+			value="user_creds",
+			preview_action=lambda x: preview(x)
+		),
+		MenuItem(
+			str(_("Save all")),
+			value="all",
+			preview_action=lambda x: preview(x)
+		)
+	]
+
 	group = MenuItemGroup(items)
 	result = SelectMenu(
 		group,
 		allow_skip=True,
-		preview_frame=FrameProperties.max(str(_('Preview'))),
+		preview_frame=FrameProperties.max(str(_('Configuration'))),
 		preview_size='auto',
 		preview_style=PreviewStyle.RIGHT
 	).single()
@@ -166,8 +200,9 @@ def save_config(config: Dict):
 
 			header = str( _("Do you want to save the configuration file(s) to {}?")).format(dest_path)
 
-			group = MenuItemGroup.default_confirm()
-			group.set_focus_by_value(MenuItem.default_yes().value)
+			group = MenuItemGroup.yes_no()
+			group.set_focus_by_value(MenuItem.yes().value)
+
 			result = SelectMenu(
 				group,
 				header=header,
@@ -177,10 +212,10 @@ def save_config(config: Dict):
 				orientation=MenuOrientation.HORIZONTAL
 			).single()
 
-			if result.item == MenuItem.default_no():
+			if result.item == MenuItem.no():
 				return
 
-			debug("Saving {} configuration files to {}".format(save_option, dest_path.absolute()))
+			debug("Saving configuration files to {}".format(dest_path.absolute()))
 
 			match save_option:
 				case "user_config":

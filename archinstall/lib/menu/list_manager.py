@@ -1,10 +1,11 @@
 import copy
 from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple, List
-
 from ..output import FormattedOutput
 
 from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, FrameStyle, Alignment,
+	ResultType, EditMenu
 )
 
 if TYPE_CHECKING:
@@ -75,6 +76,7 @@ class ListManager:
 				header=header,
 				search_enabled=False,
 				allow_skip=False,
+				alignment=Alignment.CENTER,
 			).single()
 
 			if not result.item:

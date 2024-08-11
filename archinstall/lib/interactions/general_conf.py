@@ -17,7 +17,7 @@ from archinstall.tui import (
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, Alignment, EditMenu,
-	MenuOrientation
+	MenuOrientation, tui
 )
 
 if TYPE_CHECKING:
@@ -28,8 +28,8 @@ def ask_ntp(preset: bool = True) -> bool:
 	header = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n')) + '\n'
 	header += str( _('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki')) + '\n'
 
-	preset_val = MenuItem.default_yes() if preset else MenuItem.default_no()
-	group = MenuItemGroup.default_confirm()
+	preset_val = MenuItem.yes() if preset else MenuItem.no()
+	group = MenuItemGroup.yes_no()
 	group.focus_item = preset_val
 
 	result = SelectMenu(
@@ -48,7 +48,7 @@ def ask_ntp(preset: bool = True) -> bool:
 			if result.item is None:
 				return preset
 
-			return result.item == MenuItem.default_yes()
+			return result.item == MenuItem.yes()
 
 	return False
 
@@ -169,42 +169,37 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	header += str(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.')) + '\n'
 	header += str(_('Write additional packages to install (space separated, leave blank to skip)'))
 
-	def read_packages(p: List[str] = [], failure: Optional[str] = None) -> List[str]:
-		display = ' '.join(p)
+	def validator(value: str) -> Optional[str]:
+		packages = value.split() if value else []
 
-		result = EditMenu(
-			str(_('Additional packages')),
-			alignment=Alignment.CENTER,
-			allow_skip=True,
-			edit_width=100
-		).input()
+		if len(packages) == 0:
+			return None
 
-		if result.item is None:
-			return []
+		if storage['arguments']['offline'] or storage['arguments']['no_pkg_lookups']:
+			return None
 
-		packages = result.item
+		# Verify packages that were given
+		tui.print(str(_("Verifying that additional packages exist (this might take a few seconds)")))
+		valid, invalid = validate_package_list(packages)
 
-		return packages.split() if packages else []
+		if invalid:
+			return f'{str(_("Some packages could not be found in the repository"))}: {invalid}'
 
-	preset = preset if preset else []
-	packages = read_packages(preset, None)
+		return None
 
-	if not storage['arguments']['offline'] and not storage['arguments']['no_pkg_lookups']:
-		while True:
-			if not len(packages):
-				break
+	result = EditMenu(
+		str(_('Additional packages')),
+		alignment=Alignment.CENTER,
+		allow_skip=True,
+		edit_width=100,
+		validator=validator
+	).input()
 
-			# Verify packages that were given
-			print(_("Verifying that additional packages exist (this might take a few seconds)"))
-			valid, invalid = validate_package_list(packages)
+	if result.item:
+		packages = result.item.split()
+		return packages
 
-			if invalid:
-				failure = f'{str(_("Some packages could not be found in the repository"))}: {invalid}'
-				packages = read_packages(valid, failure)
-			else:
-				break
-
-	return packages
+	return preset
 
 
 def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[int]:

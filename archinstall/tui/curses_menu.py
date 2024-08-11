@@ -35,6 +35,10 @@ class AbstractCurses(metaclass=ABCMeta):
 	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		pass
 
+	def clear_all(self) -> None:
+		tui.screen.clear()
+		tui.screen.refresh()
+
 	def clear_help_win(self) -> None:
 		self._help_window.erase()
 
@@ -61,11 +65,11 @@ class AbstractCurses(metaclass=ABCMeta):
 		# screen.getch()
 
 		while True:
-			result = SelectMenu(MenuItemGroup.default_confirm(), header=warning).single()
+			result = SelectMenu(MenuItemGroup.yes_no(), header=warning).single()
 
 			match result.type_:
 				case ResultType.Selection:
-					if result.item == MenuItem.default_yes():
+					if result.item == MenuItem.yes():
 						return True
 
 			return False
@@ -390,6 +394,7 @@ class Viewport(AbstractViewport):
 
 		self._main_win = curses.newwin(self.height, self.width, self.y_start, self.x_start)
 		self._main_win.nodelay(False)
+		self._main_win.standout()
 
 	def getch(self):
 		return self._main_win.getch()
@@ -592,8 +597,11 @@ class EditMenu(AbstractCurses):
 
 		text = self._input_vp.gather()
 
+		self.clear_all()
+
 		if text and self._validator:
 			if (err := self._validator(text)) is not None:
+				self.clear_all()
 				entry = ViewportEntry(err, 0, 0, STYLE.ERROR)
 				self._error_vp.update([entry], 0)
 				return None
@@ -1242,7 +1250,6 @@ class Tui:
 
 	def init(self) -> None:
 		self._screen = curses.initscr()
-
 		curses.noecho()
 		curses.cbreak()
 		curses.curs_set(0)
@@ -1259,6 +1266,10 @@ class Tui:
 	@property
 	def screen(self) -> Any:
 		return self._screen
+
+	def print(self, text: str) -> None:
+		self.screen.addstr(text)
+		self.screen.refresh()
 
 	@property
 	def max_yx(self) -> Tuple[int, int]:

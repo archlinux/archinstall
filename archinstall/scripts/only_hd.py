@@ -55,17 +55,21 @@ def perform_installation(mountpoint: Path):
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-config_output = ConfigurationOutput(archinstall.arguments)
-if not archinstall.arguments.get('silent'):
-	config_output.show()
 
-config_output.save()
+config = ConfigurationOutput(archinstall.arguments)
+config.write_debug()
+config.save()
+
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)
 
+
 if not archinstall.arguments.get('silent'):
-	input('Press Enter to continue.')
+	if not config.confirm_config():
+		debug('Installation aborted')
+		exit(0)
+
 
 fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],

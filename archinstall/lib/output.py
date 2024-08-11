@@ -319,14 +319,9 @@ def log(
 
 	Journald.log(text, level=level)
 
-	from .menu import Menu
-	if not Menu.is_menu_active():
-		# Finally, print the log unless we skipped it based on level.
-		# We use sys.stdout.write()+flush() instead of print() to try and
-		# fix issue #94
-		if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
-			sys.stdout.write(f"{text}\n")
-			sys.stdout.flush()
+	if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
+		sys.stdout.write(f"{text}\n")
+		sys.stdout.flush()
 
 def _count_wchars(string: str) -> int:
 	"Count the total number of wide characters contained in a string"

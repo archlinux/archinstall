@@ -80,8 +80,8 @@ class UserList(ListManager):
 		header += f'{str(_("Password"))}: {secret(password)}\n\n'
 		header += str(_('Should "{}" be a superuser (sudo)?\n')).format(username)
 
-		group = MenuItemGroup.default_confirm()
-		group.default_item = MenuItem.default_yes()
+		group = MenuItemGroup.yes_no()
+		group.focus_item = MenuItem.yes()
 
 		result = SelectMenu(
 			group,
@@ -96,7 +96,7 @@ class UserList(ListManager):
 		if result.item is None:
 			return None
 
-		sudo = True if result.item == MenuItem.default_yes() else False
+		sudo = True if result.item == MenuItem.yes() else False
 		return User(username, password, sudo)
 
 

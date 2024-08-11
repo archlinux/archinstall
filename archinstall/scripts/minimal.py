@@ -91,16 +91,27 @@ def parse_disk_encryption():
 prompt_disk_layout()
 parse_disk_encryption()
 
-config_output = ConfigurationOutput(archinstall.arguments)
-config_output.show()
 
-input(str(_('Press Enter to continue.')))
+config = ConfigurationOutput(archinstall.arguments)
+config.write_debug()
+config.save()
+
+
+if archinstall.arguments.get('dry_run'):
+	exit(0)
+
+
+if not archinstall.arguments.get('silent'):
+	if not config.confirm_config():
+		debug('Installation aborted')
+		exit(0)
+
 
 fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
 
-fs_handler.perform_filesystem_operations()
 
+fs_handler.perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))

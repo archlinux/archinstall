@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Any, Self, Optional, List, TYPE_CHECKING
-from typing import Callable
+from typing import Callable, ClassVar
 
 from ..lib.output import unicode_ljust
 
@@ -15,20 +15,28 @@ class MenuItem:
 	action: Optional[Callable[[Any], Any]] = None
 	enabled: bool = True
 	mandatory: bool = False
-	terminate: bool = False
 	dependencies: List[str | Callable[[], bool]] = field(default_factory=list)
 	dependencies_not: List[str] = field(default_factory=list)
 	display_action: Optional[Callable[[Any], str]] = None
 	preview_action: Optional[Callable[[Any], Optional[str]]] = None
 	ds_key: Optional[str] = None
 
-	@classmethod
-	def default_yes(cls) -> Self:
-		return cls(str(_('Yes')), value=True)
+	_yes: ClassVar[Optional['MenuItem']] = None
+	_no: ClassVar[Optional['MenuItem']] = None
 
 	@classmethod
-	def default_no(cls) -> Self:
-		return cls(str(_('No')), value=False)
+	def yes(cls) -> 'MenuItem':
+		if cls._yes is None:
+			cls._yes = cls(str(_('Yes')), value=True)
+
+		return cls._yes
+
+	@classmethod
+	def no(cls) -> 'MenuItem':
+		if cls._no is None:
+			cls._no = cls(str(_('No')), value=True)
+
+		return cls._no
 
 	def is_empty(self) -> bool:
 		return self.text == '' or self.text is None
@@ -85,11 +93,15 @@ class MenuItemGroup:
 		raise ValueError(f'No key found for: {key}')
 
 	@staticmethod
-	def default_confirm() -> 'MenuItemGroup':
+	def yes_no() -> 'MenuItemGroup':
 		return MenuItemGroup(
-			[MenuItem.default_yes(), MenuItem.default_no()],
-			sort_items=False
+			[MenuItem.yes(), MenuItem.no()],
+			sort_items=True
 		)
+
+	def set_preview_for_all(self, action: Callable[[Any], Optional[str]]) -> None:
+		for item in self.items:
+			item.preview_action = action
 
 	def set_focus_by_value(self, value: Any) -> None:
 		for item in self.menu_items:

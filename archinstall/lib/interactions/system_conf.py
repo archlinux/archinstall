@@ -87,16 +87,10 @@ def ask_for_bootloader(preset: Bootloader) -> Bootloader:
 
 
 def ask_for_uki(preset: bool = True) -> bool:
-	if preset:
-		default_item = MenuItem.default_yes()
-	else:
-		default_item = MenuItem.default_no()
-
 	prompt = str(_('Would you like to use unified kernel images?')) + '\n'
 
-	group = MenuItemGroup.default_confirm()
+	group = MenuItemGroup.yes_no()
 	group.set_focus_by_value(preset)
-	group.default_item = MenuItem.default_no()
 
 	result = SelectMenu(
 		group,
@@ -112,7 +106,7 @@ def ask_for_uki(preset: bool = True) -> bool:
 		case ResultType.Selection:
 			if not result.item:
 				return preset
-			elif result.item == MenuItem.default_yes():
+			elif result.item == MenuItem.yes():
 				return True
 			else:
 				return False
@@ -171,13 +165,13 @@ def select_driver(options: List[GfxDriver] = [], preset: Optional[GfxDriver] = N
 
 def ask_for_swap(preset: bool = True) -> bool:
 	if preset:
-		default_item = MenuItem.default_yes()
+		default_item = MenuItem.yes()
 	else:
-		default_item = MenuItem.default_no()
+		default_item = MenuItem.no()
 
 	prompt = str(_('Would you like to use swap on zram?')) + '\n'
 
-	group = MenuItemGroup.default_confirm()
+	group = MenuItemGroup.yes_no()
 	group.set_focus_by_value(preset)
 
 	result = SelectMenu(
@@ -194,7 +188,7 @@ def ask_for_swap(preset: bool = True) -> bool:
 		case ResultType.Selection:
 			if not result.item:
 				return preset
-			elif result.item == MenuItem.default_yes():
+			elif result.item == MenuItem.yes():
 				return True
 			else:
 				return False

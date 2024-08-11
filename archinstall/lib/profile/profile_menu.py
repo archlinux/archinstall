@@ -112,9 +112,9 @@ class ProfileMenu(AbstractSubMenu):
 					header = str(_('The proprietary Nvidia driver is not supported by Sway.')) + '\n'
 					header += str(_('It is likely that you will run into issues, are you okay with that?')) + '\n'
 
-					group = MenuItemGroup.default_confirm()
-					group.focus_item = MenuItem.default_no()
-					group.default_item = MenuItem.default_no()
+					group = MenuItemGroup.yes_no()
+					group.focus_item = MenuItem.no()
+					group.default_item = MenuItem.no()
 
 					result = SelectMenu(
 						group,
@@ -125,7 +125,7 @@ class ProfileMenu(AbstractSubMenu):
 						alignment=Alignment.CENTER
 					).single()
 
-					if result.item == MenuItem.default_no():
+					if result.item == MenuItem.no():
 						return preset
 
 		return driver

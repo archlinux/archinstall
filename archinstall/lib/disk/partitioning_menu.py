@@ -405,7 +405,7 @@ class PartitioningList(ListManager):
 		prompt = str(_('This will remove all newly added partitions, continue?')) + '\n'
 
 		result = SelectMenu(
-			MenuItemGroup.default_confirm(),
+			MenuItemGroup.yes_no(),
 			header=prompt,
 			alignment=Alignment.CENTER,
 			orientation=MenuOrientation.HORIZONTAL,
@@ -414,7 +414,7 @@ class PartitioningList(ListManager):
 			allow_skip=False
 		).single()
 
-		return result.item == MenuItem.default_yes()
+		return result.item == MenuItem.yes()
 
 	def _suggest_partition_layout(self, data: List[PartitionModification]) -> List[PartitionModification]:
 		# if modifications have been done already, inform the user

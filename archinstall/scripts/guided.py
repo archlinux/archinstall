@@ -9,11 +9,16 @@ from archinstall.lib import disk
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.installer import Installer
-from archinstall.lib.menu import Menu
 from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui.curses_menu import tui
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, FrameStyle, Alignment,
+	ResultType, EditMenu, MenuOrientation,
+	PreviewStyle
+)
 
 if TYPE_CHECKING:
 	_: Any
@@ -26,73 +31,15 @@ if archinstall.arguments.get('help'):
 
 def ask_user_questions() -> None:
 	"""
-		First, we'll ask the user for a bunch of user input.
-		Not until we're satisfied with what we want to install
-		will we continue with the actual installation steps.
+	First, we'll ask the user for a bunch of user input.
+	Not until we're satisfied with what we want to install
+	will we continue with the actual installation steps.
 	"""
-
-	# ref: https://github.com/archlinux/archinstall/pull/831
-	# we'll set NTP to true by default since this is also
-	# the default value specified in the menu options; in
-	# case it will be changed by the user we'll also update
-	# the system immediately
 	global_menu = GlobalMenu(data_store=archinstall.arguments)
 
-	# # Set which region to download packages from during the installation
-	# global_menu.enable('mirror_config')
-	#
-	# global_menu.enable('locale_config')
-	#
-	# global_menu.enable('disk_config', mandatory=True)
-	#
-	# # Specify disk encryption options
-	# global_menu.enable('disk_encryption')
-	#
-	# # Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
-	# global_menu.enable('bootloader')
-	#
-	# global_menu.enable('uki')
-	#
-	# global_menu.enable('swap')
-	#
-	# # Get the hostname for the machine
-	# global_menu.enable('hostname')
-	#
-	# # Ask for a root password (optional, but triggers requirement for super-user if skipped)
-	# global_menu.enable('!root-password', mandatory=True)
-	#
-	# global_menu.enable('!users', mandatory=True)
-	#
-	# # Ask for archinstall-specific profiles_bck (such as desktop environments etc)
-	# global_menu.enable('profile_config')
-	#
-	# # Ask about audio server selection if one is not already set
-	# global_menu.enable('audio_config')
-	#
-	# # Ask for preferred kernel:
-	# global_menu.enable('kernels', mandatory=True)
-	#
-	# global_menu.enable('packages')
-	#
-	# if archinstall.arguments.get('advanced', False):
-	# 	# Enable parallel downloads
-	# 	global_menu.enable('parallel downloads')
-	#
-	# # Ask or Call the helper function that asks the user to optionally configure a network.
-	# global_menu.enable('network_config')
-	#
-	# global_menu.enable('timezone')
-	#
-	# global_menu.enable('ntp')
-	#
-	# global_menu.enable('additional-repositories')
-	#
-	# global_menu.enable('__separator__')
-	#
-	# global_menu.enable('save_config')
-	# global_menu.enable('install')
-	# global_menu.enable('abort')
-	#
+	if not archinstall.arguments.get('advanced', False):
+		global_menu.set_enabled('parallel downloads', False)
+
 	global_menu.run()
 
 
@@ -208,9 +155,18 @@ def perform_installation(mountpoint: Path):
 		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 		if not archinstall.arguments.get('silent'):
-			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
-			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-			if choice.value == Menu.yes():
+			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?')) + '\n'
+			group = MenuItemGroup.yes_no()
+
+			result = SelectMenu(
+				group,
+				header=prompt,
+				alignment=Alignment.CENTER,
+				columns=2,
+				orientation=MenuOrientation.HORIZONTAL
+			).single()
+
+			if result.item == MenuItem.yes():
 				try:
 					installation.drop_to_shell()
 				except:
@@ -226,23 +182,27 @@ tui.init()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-config_output = ConfigurationOutput(archinstall.arguments)
 
-if not archinstall.arguments.get('silent'):
-	config_output.show()
+config = ConfigurationOutput(archinstall.arguments)
+config.write_debug()
+config.save()
 
-config_output.save()
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)
 
+
 if not archinstall.arguments.get('silent'):
-	input(str(_('Press Enter to continue.')))
+	if not config.confirm_config():
+		debug('Installation aborted')
+		exit(0)
+
 
 fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
+
 
 fs_handler.perform_filesystem_operations()
 

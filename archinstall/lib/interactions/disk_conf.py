@@ -301,8 +301,8 @@ def suggest_single_disk_layout(
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?')) + '\n'
-		group = MenuItemGroup.default_confirm()
-		group.set_focus_by_value(MenuItem.default_yes().value)
+		group = MenuItemGroup.yes_no()
+		group.set_focus_by_value(MenuItem.yes().value)
 		result = SelectMenu(
 			group,
 			header=prompt,
@@ -312,7 +312,7 @@ def suggest_single_disk_layout(
 			allow_skip=False
 		).single()
 
-		using_subvolumes = result.item == MenuItem.default_yes()
+		using_subvolumes = result.item == MenuItem.yes()
 		mount_options = select_mount_options()
 	else:
 		using_subvolumes = False
@@ -350,8 +350,8 @@ def suggest_single_disk_layout(
 		using_home_partition = True
 	else:
 		prompt = str(_('Would you like to create a separate partition for /home?')) + '\n'
-		group = MenuItemGroup.default_confirm()
-		group.set_focus_by_value(MenuItem.default_yes().value)
+		group = MenuItemGroup.yes_no()
+		group.set_focus_by_value(MenuItem.yes().value)
 		result = SelectMenu(
 			group,
 			header=prompt,
@@ -361,7 +361,7 @@ def suggest_single_disk_layout(
 			allow_skip=False
 		).single()
 
-		using_home_partition = result.item == MenuItem.default_yes()
+		using_home_partition = result.item == MenuItem.yes()
 
 	# root partition
 	root_start = boot_partition.start + boot_partition.length
@@ -542,10 +542,10 @@ def suggest_lvm_layout(
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
-		group = MenuItemGroup.default_confirm()
+		group = MenuItemGroup.yes_no()
 		result = SelectMenu(group, header=prompt, search_enabled=False, allow_skip=False).single()
 
-		using_subvolumes = MenuItem.default_yes() == result.item
+		using_subvolumes = MenuItem.yes() == result.item
 
 		mount_options = select_mount_options()
 
