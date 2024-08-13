@@ -10,7 +10,7 @@ from .menu import AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
 from .models import NetworkConfiguration, NicType
 from .models.bootloader import Bootloader
-from .models.audio_configuration import Audio, AudioConfiguration
+from .models.audio_configuration import AudioConfiguration
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
@@ -60,32 +60,32 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Archinstall language')),
 				action=lambda x: self._select_archinstall_language(x),
 				display_action=lambda x: x.display_name if x else '',
-				ds_key = 'archinstall-language'
+				key = 'archinstall-language'
 			),
 			MenuItem(
 				text=str(_('Locales')),
 				action=lambda x: self._locale_selection(x),
 				preview_action=self._prev_locale,
-				ds_key='locale_config'
+				key='locale_config'
 			),
 			MenuItem(
 				text=str(_('Mirrors')),
 				action=lambda x: self._mirror_configuration(x),
 				preview_action=self._prev_mirror_config,
-				ds_key='mirror_config'
+				key='mirror_config'
 			),
 			MenuItem(
 				text=str(_('Disk configuration')),
 				action=lambda x: self._select_disk_config(x),
 				preview_action=self._prev_disk_config,
 				mandatory=True,
-				ds_key='disk_config'
+				key='disk_config'
 			),
 			MenuItem(
 				text=str(_('Disk encryption')),
 				action=lambda x: self._disk_encryption(x),
 				preview_action=self._prev_disk_encryption,
-				ds_key='disk_encryption',
+				key='disk_encryption',
 				dependencies=['disk_config']
 			),
 			MenuItem(
@@ -93,53 +93,53 @@ class GlobalMenu(AbstractMenu):
 				value=True,
 				action=lambda x: ask_for_swap(x),
 				preview_action=self._prev_swap,
-				ds_key='swap',
+				key='swap',
 			),
 			MenuItem(
 				text=str(_('Bootloader')),
 				value=Bootloader.get_default(),
-				action=lambda x: ask_for_bootloader(x),
+				action=lambda x: self._select_bootloader(x),
 				preview_action=self._prev_bootloader,
 				mandatory=True,
-				ds_key='bootloader',
+				key='bootloader',
 			),
 			MenuItem(
 				text=str(_('Unified kernel images')),
 				value=False,
 				action=lambda x: ask_for_uki(x),
 				preview_action=self._prev_uki,
-				ds_key='uki',
+				key='uki',
 			),
 			MenuItem(
 				text=str(_('Hostname')),
 				value='archlinux',
 				action=lambda x: ask_hostname(x),
 				preview_action=self._prev_hostname,
-				ds_key='hostname',
+				key='hostname',
 			),
 			MenuItem(
 				text=str(_('Root password')),
 				action=lambda x: self._set_root_password(x),
 				preview_action=self._prev_root_pwd,
-				ds_key='!root-password',
+				key='!root-password',
 			),
 			MenuItem(
 				text=str(_('User account')),
 				action=lambda x: self._create_user_account(x),
 				preview_action=self._prev_users,
-				ds_key='!users'
+				key='!users'
 			),
 			MenuItem(
 				text=str(_('Profile')),
 				action=lambda x: self._select_profile(x),
 				preview_action=self._prev_profile,
-				ds_key='profile_config'
+				key='profile_config'
 			),
 			MenuItem(
 				text=str(_('Audio')),
 				action=lambda x: ask_for_audio_selection(x),
 				preview_action=self._prev_audio,
-				ds_key='audio_config'
+				key='audio_config'
 			),
 			MenuItem(
 				text=str(_('Kernels')),
@@ -147,49 +147,49 @@ class GlobalMenu(AbstractMenu):
 				action=lambda x: select_kernel(x),
 				preview_action=self._prev_kernel,
 				mandatory=True,
-				ds_key='kernels'
+				key='kernels'
 			),
 			MenuItem(
 				text=str(_('Network configuration')),
 				action=lambda x: ask_to_configure_network(x),
 				value={},
 				preview_action=self._prev_network_config,
-				ds_key='network_config'
+				key='network_config'
 			),
 			MenuItem(
 				text=str(_('Parallel Downloads')),
 				action=lambda x: add_number_of_parallel_downloads(x),
 				value=0,
 				preview_action=self._prev_parallel_dw,
-				ds_key='parallel downloads'
+				key='parallel downloads'
 			),
 			MenuItem(
 				text=str(_('Additional packages')),
 				action=lambda x: ask_additional_packages_to_install(x),
 				value=[],
 				preview_action=self._prev_additional_pkgs,
-				ds_key='packages'
+				key='packages'
 			),
 			MenuItem(
 				text=str(_('Optional repositories')),
 				action=lambda x: select_additional_repositories(x),
 				value=[],
 				preview_action=self._prev_additional_repos,
-				ds_key='additional-repositories'
+				key='additional-repositories'
 			),
 			MenuItem(
 				text=str(_('Timezone')),
 				action=lambda x: ask_for_a_timezone(x),
 				value='UTC',
 				preview_action=self._prev_tz,
-				ds_key='timezone'
+				key='timezone'
 			),
 			MenuItem(
 				text=str(_('Automatic time sync (NTP)')),
 				action=lambda x: ask_ntp(x),
 				value=True,
 				preview_action=self._prev_ntp,
-				ds_key='ntp'
+				key='ntp'
 			),
 			MenuItem(
 				text=''
@@ -197,12 +197,12 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Save configuration')),
 				action=lambda x: self._safe_config(),
-				ds_key='save_config'
+				key='save_config'
 			),
 			MenuItem(
 				text=str(_('Install')),
 				preview_action=self._prev_install_invalid_config,
-				ds_key='install'
+				key='install'
 			),
 			MenuItem(
 				text=str(_('Abort')),
@@ -213,17 +213,17 @@ class GlobalMenu(AbstractMenu):
 	def _safe_config(self) -> None:
 		data = {}
 		for item in self._item_group.items:
-			data[item.ds_key] = item.value
+			data[item.key] = item.value
 
 		save_config(data)
 
 	def _missing_configs(self) -> List[str]:
 		def check(s) -> bool:
-			item = self._item_group.find_by_ds_key(s)
+			item = self._item_group.find_by_key(s)
 			return item.has_value()
 
 		def has_superuser() -> bool:
-			item = self._item_group.find_by_ds_key('!users')
+			item = self._item_group.find_by_key('!users')
 
 			from .output import debug
 
@@ -236,13 +236,13 @@ class GlobalMenu(AbstractMenu):
 		missing = set()
 
 		for item in self._item_group.items:
-			if item.ds_key in ['!root-password', '!users']:
+			if item.key in ['!root-password', '!users']:
 				if not check('!root-password') and not has_superuser():
 					missing.add(
 						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))
 					)
 			elif item.mandatory:
-				if not check(item.ds_key):
+				if not check(item.key):
 					missing.add(item.text)
 
 		return list(missing)
@@ -255,31 +255,14 @@ class GlobalMenu(AbstractMenu):
 			return False
 		return self._validate_bootloader() is None
 
-	def _update_uki_display(self, name: Optional[str] = None):
-		if bootloader := self._menu_options['bootloader'].current_selection:
-			if not SysInfo.has_uefi() or not bootloader.has_uki_support():
-				self._menu_options['uki'].set_current_selection(False)
-				self._menu_options['uki'].set_enabled(False)
-			elif name and name == 'bootloader':
-				self._menu_options['uki'].set_enabled(True)
-
-	def post_callback(self, name: Optional[str] = None, value: Any = None):
-		self._update_uki_display(name)
-
 	def _select_archinstall_language(self, preset: Language) -> Language:
 		from .interactions.general_conf import select_archinstall_language
 		language = select_archinstall_language(self._translation_handler.translated_languages, preset)
 		self._translation_handler.activate(language)
 		return language
 
-	def _display_network_conf(self, config: Optional[NetworkConfiguration]) -> str:
-		if not config:
-			return str(_('Not configured, unavailable unless setup manually'))
-
-		return config.type.display_msg()
-
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
-		disk_config: Optional[disk.DiskLayoutConfiguration] = self._item_group.find_by_ds_key('disk_config').value
+		disk_config: Optional[disk.DiskLayoutConfiguration] = self._item_group.find_by_key('disk_config').value
 
 		if not disk_config:
 			# this should not happen as the encryption menu has the disk_config as dependency
@@ -398,7 +381,7 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_disk_encryption(self, item: MenuItem) -> Optional[str]:
-		disk_config: Optional[disk.DiskLayoutConfiguration] = self._item_group.find_by_ds_key('disk_config').value
+		disk_config: Optional[disk.DiskLayoutConfiguration] = self._item_group.find_by_key('disk_config').value
 		enc_config: Optional[disk.DiskEncryption] = item.value
 
 		if disk_config and not disk.DiskEncryption.validate_enc(disk_config):
@@ -421,11 +404,6 @@ class GlobalMenu(AbstractMenu):
 
 		return None
 
-	def _display_disk_encryption(self, current_value: Optional[disk.DiskEncryption]) -> str:
-		if current_value:
-			return disk.EncryptionType.type_to_text(current_value.encryption_type)
-		return ''
-
 	def _validate_bootloader(self) -> Optional[str]:
 		"""
 		Checks the selected bootloader is valid for the selected filesystem
@@ -437,10 +415,10 @@ class GlobalMenu(AbstractMenu):
 		XXX: The caller is responsible for wrapping the string with the translation
 			shim if necessary.
 		"""
-		bootloader = self._item_group.find_by_ds_key('bootloader').value
+		bootloader = self._item_group.find_by_key('bootloader').value
 		boot_partition: Optional[disk.PartitionModification] = None
 
-		if disk_config := self._item_group.find_by_ds_key('disk_config').value:
+		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
 				if boot_partition := layout.get_boot_partition():
 					break
@@ -506,20 +484,27 @@ class GlobalMenu(AbstractMenu):
 		disk_config = disk.DiskLayoutConfigurationMenu(preset).run()
 
 		if disk_config != preset:
-			self._menu_item_group.find_by_ds_key('disk_encryption').value = None
+			self._menu_item_group.find_by_key('disk_encryption').value = None
 
 		return disk_config
+
+	def _select_bootloader(self, preset: Optional[Bootloader]) -> Optional[Bootloader]:
+		bootloader = ask_for_bootloader(preset)
+
+		if bootloader:
+			uki = self._item_group.find_by_key('uki')
+			if not SysInfo.has_uefi() or not bootloader.has_uki_support():
+				uki.value = False
+				uki.enabled = False
+			else:
+				uki.enabled = True
+
+		return bootloader
 
 	def _select_profile(self, current_profile: Optional[ProfileConfiguration]):
 		from .profile.profile_menu import ProfileMenu
 		profile_config = ProfileMenu(preset=current_profile).run()
 		return profile_config
-
-	def _display_audio(self, current: Optional[AudioConfiguration]) -> str:
-		if not current:
-			return Audio.no_audio_text()
-		else:
-			return current.audio.name
 
 	def _create_user_account(self, preset: Optional[List[User]] = None) -> List[User]:
 		preset = [] if preset is None else preset

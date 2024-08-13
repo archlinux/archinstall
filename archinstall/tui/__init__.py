@@ -8,7 +8,7 @@ from .menu_item import (
 
 from .types import (
 	PreviewStyle, FrameProperties, FrameStyle, Alignment,
-	Result, ResultType, ItemType, Chars, MenuOrientation
+	Result, ResultType, ItemType, Chars, Orientation
 )
 
 from .table_menu import MenuHelper

@@ -19,7 +19,7 @@ from .subvolume_menu import SubvolumeMenu
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, Alignment, EditMenu,
-	MenuOrientation
+	Orientation
 )
 
 if TYPE_CHECKING:
@@ -408,7 +408,7 @@ class PartitioningList(ListManager):
 			MenuItemGroup.yes_no(),
 			header=prompt,
 			alignment=Alignment.CENTER,
-			orientation=MenuOrientation.HORIZONTAL,
+			orientation=Orientation.HORIZONTAL,
 			columns=2,
 			reset_warning_msg=prompt,
 			allow_skip=False

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Self, Optional, List, TYPE_CHECKING
+from typing import Any, Optional, List, TYPE_CHECKING
 from typing import Callable, ClassVar
 
 from ..lib.output import unicode_ljust
@@ -19,7 +19,7 @@ class MenuItem:
 	dependencies_not: List[str] = field(default_factory=list)
 	display_action: Optional[Callable[[Any], str]] = None
 	preview_action: Optional[Callable[[Any], Optional[str]]] = None
-	ds_key: Optional[str] = None
+	key: Optional[str] = None
 
 	_yes: ClassVar[Optional['MenuItem']] = None
 	_no: ClassVar[Optional['MenuItem']] = None
@@ -85,9 +85,9 @@ class MenuItemGroup:
 		if self.focus_item not in self.menu_items:
 			raise ValueError('Selected item not in menu')
 
-	def find_by_ds_key(self, key: str) -> MenuItem:
+	def find_by_key(self, key: str) -> MenuItem:
 		for item in self.menu_items:
-			if item.ds_key == key:
+			if item.key == key:
 				return item
 
 		raise ValueError(f'No key found for: {key}')
@@ -319,14 +319,14 @@ class MenuItemGroup:
 		if item in self.menu_items:
 			for dep in item.dependencies:
 				if isinstance(dep, str):
-					item = self.find_by_ds_key(dep)
+					item = self.find_by_key(dep)
 					if not item.value or not self.should_enable_item(item):
 						return False
 				else:
 					return dep()
 
 			for dep_not in item.dependencies_not:
-				item = self.find_by_ds_key(dep_not)
+				item = self.find_by_key(dep_not)
 				if item.value is not None:
 					return False
 

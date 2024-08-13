@@ -103,7 +103,7 @@ class ResultType(Enum):
 	Reset = auto()
 
 
-class MenuOrientation(Enum):
+class Orientation(Enum):
 	VERTICAL = auto()
 	HORIZONTAL = auto()
 

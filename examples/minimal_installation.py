@@ -72,15 +72,22 @@ def parse_disk_encryption() -> None:
 		)
 
 
+# initialize the curses menu
+tui.init()
+
+
 prompt_disk_layout()
 parse_disk_encryption()
+
 
 fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
 
+
 fs_handler.perform_filesystem_operations()
+
 
 mount_point = Path('/mnt')
 perform_installation(mount_point)

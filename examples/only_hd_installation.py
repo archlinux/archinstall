@@ -48,6 +48,9 @@ def perform_installation(mountpoint: Path) -> None:
 	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
+# initialize the curses menu
+tui.init()
+
 ask_user_questions()
 
 fs_handler = disk.FilesystemHandler(

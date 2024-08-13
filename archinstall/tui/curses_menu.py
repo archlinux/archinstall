@@ -14,7 +14,7 @@ from .menu_item import MenuItem, MenuItemGroup
 from .types import (
 	Result, ResultType, ViewportEntry,
 	STYLE, FrameProperties, FrameStyle, Alignment,
-	Chars, MenuKeys, MenuOrientation, PreviewStyle,
+	Chars, MenuKeys, Orientation, PreviewStyle,
 	MenuCell, _FrameDim, SCROLL_INTERVAL
 )
 from ..lib.output import debug
@@ -65,7 +65,13 @@ class AbstractCurses(metaclass=ABCMeta):
 		# screen.getch()
 
 		while True:
-			result = SelectMenu(MenuItemGroup.yes_no(), header=warning).single()
+			result = SelectMenu(
+				MenuItemGroup.yes_no(),
+				header=warning,
+				alignment=Alignment.CENTER,
+				columns=2,
+				orientation=Orientation.HORIZONTAL
+			).single()
 
 			match result.type_:
 				case ResultType.Selection:
@@ -696,7 +702,7 @@ class SelectMenu(AbstractCurses):
 	def __init__(
 		self,
 		group: MenuItemGroup,
-		orientation: MenuOrientation = MenuOrientation.VERTICAL,
+		orientation: Orientation = Orientation.VERTICAL,
 		alignment: Alignment = Alignment.LEFT,
 		columns: int = 1,
 		column_spacing: int = 10,
@@ -732,9 +738,9 @@ class SelectMenu(AbstractCurses):
 		self._interrupt_warning = reset_warning_msg
 
 		if self._interrupt_warning is None:
-			self._interrupt_warning = str(_('Are you sure you want to reset this setting?'))
+			self._interrupt_warning = str(_('Are you sure you want to reset this setting?')) + '\n'
 
-		if self._orientation == MenuOrientation.HORIZONTAL:
+		if self._orientation == Orientation.HORIZONTAL:
 			self._horizontal_cols = columns
 		else:
 			self._horizontal_cols = 1
@@ -776,6 +782,7 @@ class SelectMenu(AbstractCurses):
 
 		while True:
 			try:
+				self._draw()
 				key = win.getch()
 				ret = self._process_input_key(key)
 
@@ -1267,8 +1274,14 @@ class Tui:
 	def screen(self) -> Any:
 		return self._screen
 
-	def print(self, text: str) -> None:
-		self.screen.addstr(text)
+	def print(self, text: str, row: int = 0, col: int = 0) -> None:
+		if row == -1:
+			last_row = self.max_yx[0] - 1
+			self.screen.scroll(1)
+			self.screen.addstr(last_row, col, text)
+		else:
+			self.screen.addstr(row, col, text)
+
 		self.screen.refresh()
 
 	@property

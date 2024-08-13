@@ -10,8 +10,8 @@ from ..hardware import GfxDriver
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu, MenuOrientation
+	FrameProperties, Alignment, ResultType,
+	Orientation
 )
 
 if TYPE_CHECKING:
@@ -42,7 +42,7 @@ class ProfileMenu(AbstractSubMenu):
 				action=lambda x: self._select_profile(x),
 				value=self._preset.profile,
 				preview_action=self._preview_profile,
-				ds_key='profile'
+				key='profile'
 			),
 			MenuItem(
 				text=str(_('Graphics driver')),
@@ -51,7 +51,7 @@ class ProfileMenu(AbstractSubMenu):
 				preview_action=self._prev_gfx,
 				enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False,
 				dependencies=['profile'],
-				ds_key='gfx_driver',
+				key='gfx_driver',
 			),
 			MenuItem(
 				text=str(_('Greeter')),
@@ -60,7 +60,7 @@ class ProfileMenu(AbstractSubMenu):
 				enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False,
 				preview_action=self._prev_greeter,
 				dependencies=['profile'],
-				ds_key='greeter',
+				key='greeter',
 			)
 		]
 
@@ -81,27 +81,27 @@ class ProfileMenu(AbstractSubMenu):
 
 		if profile is not None:
 			if not profile.is_graphic_driver_supported():
-				self._item_group.find_by_ds_key('gfx_driver').enabled = False
-				self._item_group.find_by_ds_key('gfx_driver').value = None
+				self._item_group.find_by_key('gfx_driver').enabled = False
+				self._item_group.find_by_key('gfx_driver').value = None
 			else:
-				self._item_group.find_by_ds_key('gfx_driver').enabled = True
-				self._item_group.find_by_ds_key('gfx_driver').value = GfxDriver.AllOpenSource
+				self._item_group.find_by_key('gfx_driver').enabled = True
+				self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
 
 			if not profile.is_greeter_supported():
-				self._item_group.find_by_ds_key('greeter').enabled = False
-				self._item_group.find_by_ds_key('greeter').value = None
+				self._item_group.find_by_key('greeter').enabled = False
+				self._item_group.find_by_key('greeter').value = None
 			else:
-				self._item_group.find_by_ds_key('greeter').enabled = True
-				self._item_group.find_by_ds_key('greeter').value = profile.default_greeter_type
+				self._item_group.find_by_key('greeter').enabled = True
+				self._item_group.find_by_key('greeter').value = profile.default_greeter_type
 		else:
-			self._item_group.find_by_ds_key('gfx_driver').value = None
-			self._item_group.find_by_ds_key('greeter').value = None
+			self._item_group.find_by_key('gfx_driver').value = None
+			self._item_group.find_by_key('greeter').value = None
 
 		return profile
 
 	def _select_gfx_driver(self, preset: Optional[GfxDriver] = None) -> Optional[GfxDriver]:
 		driver = preset
-		profile: Optional[Profile] = self._item_group.find_by_ds_key('profile').value
+		profile: Optional[Profile] = self._item_group.find_by_key('profile').value
 
 		if profile:
 			if profile.is_graphic_driver_supported():
@@ -121,7 +121,7 @@ class ProfileMenu(AbstractSubMenu):
 						header=header,
 						allow_skip=False,
 						columns=2,
-						orientation=MenuOrientation.HORIZONTAL,
+						orientation=Orientation.HORIZONTAL,
 						alignment=Alignment.CENTER
 					).single()
 

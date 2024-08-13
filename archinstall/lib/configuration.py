@@ -7,14 +7,13 @@ from typing import Optional, Dict, Any, TYPE_CHECKING
 
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
-from .output import debug, info, warn
+from .output import debug, warn
 from .utils.util import prompt_dir
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu, PreviewStyle,
-	MenuOrientation
+	FrameProperties, Alignment, ResultType,
+	PreviewStyle, Orientation
 )
 
 if TYPE_CHECKING:
@@ -92,7 +91,7 @@ class ConfigurationOutput:
 			header=header,
 			alignment=Alignment.CENTER,
 			columns=2,
-			orientation=MenuOrientation.HORIZONTAL,
+			orientation=Orientation.HORIZONTAL,
 			allow_skip=False,
 			preview_size='auto',
 			preview_style=PreviewStyle.BOTTOM,
@@ -209,7 +208,7 @@ def save_config(config: Dict[str, Any]) -> None:
 				allow_skip=False,
 				alignment=Alignment.CENTER,
 				columns=2,
-				orientation=MenuOrientation.HORIZONTAL
+				orientation=Orientation.HORIZONTAL
 			).single()
 
 			if result.item == MenuItem.no():

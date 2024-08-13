@@ -150,13 +150,35 @@ def perform_installation(mountpoint: Path) -> None:
 	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
-ask_user_questions()
+def _interactive() -> None:
+	if not archinstall.arguments.get('silent'):
+		ask_user_questions()
 
-fs_handler = disk.FilesystemHandler(
-	archinstall.arguments['disk_config'],
-	archinstall.arguments.get('disk_encryption', None)
-)
+	config = ConfigurationOutput(archinstall.arguments)
+	config.write_debug()
+	config.save()
 
-fs_handler.perform_filesystem_operations()
+	if archinstall.arguments.get('dry_run'):
+		exit(0)
 
-perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+	if not archinstall.arguments.get('silent'):
+		if not config.confirm_config():
+			debug('Installation aborted')
+			_interactive()
+
+	fs_handler = disk.FilesystemHandler(
+		archinstall.arguments['disk_config'],
+		archinstall.arguments.get('disk_encryption', None)
+	)
+
+	fs_handler.perform_filesystem_operations()
+
+	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+
+
+# initialize the curses menu
+tui.init()
+
+
+_interactive()
+

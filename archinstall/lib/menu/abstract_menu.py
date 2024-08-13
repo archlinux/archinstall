@@ -183,27 +183,27 @@ class AbstractMenu:
 
 	def _sync_all_from_ds(self) -> None:
 		for item in self._menu_item_group.menu_items:
-			if (store_value := self._data_store.get(item.ds_key, None)) is not None:
+			if (store_value := self._data_store.get(item.key, None)) is not None:
 				item.value = store_value
 
 	def _sync_all_to_ds(self) -> None:
 		for item in self._menu_item_group.menu_items:
-			if item.ds_key:
-				self._data_store[item.ds_key] = item.value
+			if item.key:
+				self._data_store[item.key] = item.value
 
 	def _sync(self, item: MenuItem) -> None:
-		if not item.ds_key:
+		if not item.key:
 			return
 
-		store_value = self._data_store.get(item.ds_key, None)
+		store_value = self._data_store.get(item.key, None)
 
 		if store_value is not None:
 			item.value = store_value
 		elif item.value is not None:
-			self._data_store[item.ds_key] = item.value
+			self._data_store[item.key] = item.value
 
 	def set_enabled(self, key: str, enabled: bool) -> None:
-		if (item := self._menu_item_group.find_by_ds_key(key)) is not None:
+		if (item := self._menu_item_group.find_by_key(key)) is not None:
 			item.enabled = enabled
 			return None
 
@@ -215,8 +215,6 @@ class AbstractMenu:
 
 	def run(self) -> None:
 		self._sync_all_from_ds()
-
-		from ..output import debug
 
 		while True:
 			result = SelectMenu(
@@ -261,4 +259,3 @@ class AbstractSubMenu(AbstractMenu):
 			auto_cursor=auto_cursor,
 			allow_reset=allow_reset
 		)
-

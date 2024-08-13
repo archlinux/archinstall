@@ -10,8 +10,8 @@ from .storage import storage
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu
+	FrameProperties, Alignment, ResultType,
+	EditMenu
 )
 
 
@@ -243,14 +243,14 @@ class MirrorMenu(AbstractSubMenu):
 				action=lambda x: select_mirror_regions(x),
 				value=self._mirror_config.mirror_regions,
 				preview_action=self._prev_regions,
-				ds_key='mirror_regions'
+				key='mirror_regions'
 			),
 			MenuItem(
 				text=str(_('Custom mirrors')),
 				action=lambda x: select_custom_mirror(x),
 				value=self._mirror_config.custom_mirrors,
 				preview_action=self._prev_custom_mirror,
-				ds_key='custom_mirrors'
+				key='custom_mirrors'
 			)
 		]
 

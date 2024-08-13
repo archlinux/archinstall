@@ -15,9 +15,7 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui.curses_menu import tui
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu, MenuOrientation,
-	PreviewStyle
+	Alignment, Orientation
 )
 
 if TYPE_CHECKING:
@@ -163,7 +161,7 @@ def perform_installation(mountpoint: Path):
 				header=prompt,
 				alignment=Alignment.CENTER,
 				columns=2,
-				orientation=MenuOrientation.HORIZONTAL
+				orientation=Orientation.HORIZONTAL
 			).single()
 
 			if result.item == MenuItem.yes():
@@ -175,35 +173,34 @@ def perform_installation(mountpoint: Path):
 	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
+def _guided() -> None:
+	if not archinstall.arguments.get('silent'):
+		ask_user_questions()
+
+	config = ConfigurationOutput(archinstall.arguments)
+	config.write_debug()
+	config.save()
+
+	if archinstall.arguments.get('dry_run'):
+		exit(0)
+
+	if not archinstall.arguments.get('silent'):
+		if not config.confirm_config():
+			debug('Installation aborted')
+			_guided()
+
+	fs_handler = disk.FilesystemHandler(
+		archinstall.arguments['disk_config'],
+		archinstall.arguments.get('disk_encryption', None)
+	)
+
+	fs_handler.perform_filesystem_operations()
+
+	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+
+
 # initialize the curses menu
 tui.init()
 
 
-if not archinstall.arguments.get('silent'):
-	ask_user_questions()
-
-
-config = ConfigurationOutput(archinstall.arguments)
-config.write_debug()
-config.save()
-
-
-if archinstall.arguments.get('dry_run'):
-	exit(0)
-
-
-if not archinstall.arguments.get('silent'):
-	if not config.confirm_config():
-		debug('Installation aborted')
-		exit(0)
-
-
-fs_handler = disk.FilesystemHandler(
-	archinstall.arguments['disk_config'],
-	archinstall.arguments.get('disk_encryption', None)
-)
-
-
-fs_handler.perform_filesystem_operations()
-
-perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+_guided()

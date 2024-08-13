@@ -10,8 +10,7 @@ from ..general import secret
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, EditMenu,
-	MenuOrientation
+	Alignment, EditMenu, Orientation
 )
 
 if TYPE_CHECKING:
@@ -88,7 +87,7 @@ class UserList(ListManager):
 			header=header,
 			alignment=Alignment.CENTER,
 			columns=2,
-			orientation=MenuOrientation.HORIZONTAL,
+			orientation=Orientation.HORIZONTAL,
 			search_enabled=False,
 			allow_skip=False
 		).single()

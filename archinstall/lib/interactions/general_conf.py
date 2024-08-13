@@ -11,13 +11,12 @@ from ..storage import storage
 from ..translationhandler import Language
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment, Result, ResultType,
-	EditMenu
+	FrameProperties, Alignment, Result, ResultType, EditMenu
 )
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, Alignment, EditMenu,
-	MenuOrientation, tui
+	Orientation, tui
 )
 
 if TYPE_CHECKING:
@@ -38,7 +37,7 @@ def ask_ntp(preset: bool = True) -> bool:
 		allow_skip=True,
 		alignment=Alignment.CENTER,
 		columns=2,
-		orientation=MenuOrientation.HORIZONTAL
+		orientation=Orientation.HORIZONTAL
 	).single()
 
 	match result.type_:
@@ -179,7 +178,8 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 			return None
 
 		# Verify packages that were given
-		tui.print(str(_("Verifying that additional packages exist (this might take a few seconds)")))
+		out = str(_("Verifying that additional packages exist (this might take a few seconds)"))
+		tui.print(out, 0)
 		valid, invalid = validate_package_list(packages)
 
 		if invalid:

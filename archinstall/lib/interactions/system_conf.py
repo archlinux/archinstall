@@ -8,8 +8,7 @@ from ..models.bootloader import Bootloader
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu, MenuOrientation,
-	PreviewStyle
+	ResultType, Orientation, PreviewStyle
 )
 
 if TYPE_CHECKING:
@@ -56,7 +55,7 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 	return []
 
 
-def ask_for_bootloader(preset: Bootloader) -> Bootloader:
+def ask_for_bootloader(preset: Optional[Bootloader]) -> Bootloader:
 	# Systemd is UEFI only
 	if not SysInfo.has_uefi():
 		options = [Bootloader.Grub, Bootloader.Limine]
@@ -67,8 +66,8 @@ def ask_for_bootloader(preset: Bootloader) -> Bootloader:
 
 	items = [MenuItem(o.value, value=o) for o in options]
 	group = MenuItemGroup(items)
-	group.set_focus_by_value(preset)
 	group.set_default_by_value(default)
+	group.set_focus_by_value(preset)
 
 	result = SelectMenu(
 		group,
@@ -96,7 +95,7 @@ def ask_for_uki(preset: bool = True) -> bool:
 		group,
 		header=prompt,
 		columns=2,
-		orientation=MenuOrientation.HORIZONTAL,
+		orientation=Orientation.HORIZONTAL,
 		alignment=Alignment.CENTER,
 		allow_skip=True
 	).single()
@@ -178,7 +177,7 @@ def ask_for_swap(preset: bool = True) -> bool:
 		group,
 		header=prompt,
 		columns=2,
-		orientation=MenuOrientation.HORIZONTAL,
+		orientation=Orientation.HORIZONTAL,
 		alignment=Alignment.CENTER,
 		allow_skip=True
 	).single()

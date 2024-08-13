@@ -81,29 +81,29 @@ class LocaleMenu(AbstractSubMenu):
 				action=lambda x: self._select_kb_layout(x),
 				value=self._locale_conf.kb_layout,
 				preview_action=self._prev_locale,
-				ds_key='keyboard-layout'
+				key='keyboard-layout'
 			),
 			MenuItem(
 				text=str(_('Locale language')),
 				action=lambda x: select_locale_lang(x),
 				value=self._locale_conf.sys_lang,
 				preview_action=self._prev_locale,
-				ds_key='sys-language'
+				key='sys-language'
 			),
 			MenuItem(
 				text=str(_('Locale encoding')),
 				action=lambda x: select_locale_enc(x),
 				value=self._locale_conf.sys_enc,
 				preview_action=self._prev_locale,
-				ds_key='sys-encoding'
+				key='sys-encoding'
 			)
 		]
 
 	def _prev_locale(self, item: MenuItem) -> Optional[str]:
 		temp_locale = LocaleConfiguration(
-			self._menu_item_group.find_by_ds_key('keyboard-layout').value,
-			self._menu_item_group.find_by_ds_key('sys-language').value,
-			self._menu_item_group.find_by_ds_key('sys-encoding').value,
+			self._menu_item_group.find_by_key('keyboard-layout').value,
+			self._menu_item_group.find_by_key('sys-language').value,
+			self._menu_item_group.find_by_key('sys-encoding').value,
 		)
 		return temp_locale.preview()
 

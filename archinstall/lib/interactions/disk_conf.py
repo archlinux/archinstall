@@ -14,7 +14,7 @@ from ..storage import storage
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, Alignment, ResultType,
-	MenuHelper, MenuOrientation
+	MenuHelper, Orientation
 )
 
 if TYPE_CHECKING:
@@ -259,7 +259,7 @@ def select_mount_options() -> List[str]:
 		header=prompt,
 		alignment=Alignment.CENTER,
 		columns=2,
-		orientation=MenuOrientation.HORIZONTAL,
+		orientation=Orientation.HORIZONTAL,
 		search_enabled=False,
 		allow_skip=False
 	).single()
@@ -308,7 +308,7 @@ def suggest_single_disk_layout(
 			header=prompt,
 			alignment=Alignment.CENTER,
 			columns=2,
-			orientation=MenuOrientation.HORIZONTAL,
+			orientation=Orientation.HORIZONTAL,
 			allow_skip=False
 		).single()
 
@@ -355,7 +355,7 @@ def suggest_single_disk_layout(
 		result = SelectMenu(
 			group,
 			header=prompt,
-			orientation=MenuOrientation.HORIZONTAL,
+			orientation=Orientation.HORIZONTAL,
 			columns=2,
 			alignment=Alignment.CENTER,
 			allow_skip=False

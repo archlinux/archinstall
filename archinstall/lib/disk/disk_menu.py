@@ -40,7 +40,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 				action=lambda x: self._select_disk_layout_config(x),
 				value=self._disk_layout_config,
 				preview_action=self._prev_disk_layouts,
-				ds_key='disk_config'
+				key='disk_config'
 			),
 			MenuItem(
 				text='LVM (BETA)',
@@ -48,7 +48,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 				value=self._disk_layout_config.lvm_config if self._disk_layout_config else None,
 				preview_action=self._prev_lvm_config,
 				dependencies=[self._check_dep_lvm],
-				ds_key='lvm_config'
+				key='lvm_config'
 			),
 		]
 
@@ -63,7 +63,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		return disk_layout_config
 
 	def _check_dep_lvm(self) -> bool:
-		disk_layout_conf: Optional[DiskLayoutConfiguration] = self._menu_item_group.find_by_ds_key('disk_config').value
+		disk_layout_conf: Optional[DiskLayoutConfiguration] = self._menu_item_group.find_by_key('disk_config').value
 
 		if disk_layout_conf and disk_layout_conf.config_type == DiskLayoutType.Default:
 			return True
@@ -77,12 +77,12 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		disk_config = select_disk_config(preset, advanced_option=self._advanced)
 
 		if disk_config != preset:
-			self._menu_item_group.find_by_ds_key('lvm_config').value = None
+			self._menu_item_group.find_by_key('lvm_config').value = None
 
 		return disk_config
 
 	def _select_lvm_config(self, preset: Optional[LvmConfiguration]) -> Optional[LvmConfiguration]:
-		disk_config: Optional[DiskLayoutConfiguration] = self._item_group.find_by_ds_key('disk_config').value
+		disk_config: Optional[DiskLayoutConfiguration] = self._item_group.find_by_key('disk_config').value
 
 		if disk_config:
 			return select_lvm_config(disk_config, preset=preset)
