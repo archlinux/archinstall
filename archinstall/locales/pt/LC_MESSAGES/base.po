@@ -1333,6 +1333,9 @@ msgstr "Idioma do Archinstall"
 msgid " (default)"
 msgstr "(por omissão)"
 
+msgid "Press Ctrl+h for help"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Adicionar :"
 

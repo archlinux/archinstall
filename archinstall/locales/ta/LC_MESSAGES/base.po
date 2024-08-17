@@ -1311,3 +1311,6 @@ msgstr "Archinstall உதவி"
 
 msgid " (default)"
 msgstr "(இயல்புநிலை)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

@@ -1376,3 +1376,6 @@ msgstr "Bahasa Archinstall"
 #, fuzzy
 msgid " (default)"
 msgstr "(default)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

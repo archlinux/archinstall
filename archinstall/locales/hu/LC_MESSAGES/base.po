@@ -1311,3 +1311,6 @@ msgstr "Archtelepítő súgó"
 
 msgid " (default)"
 msgstr " (alapértelmezett)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""
