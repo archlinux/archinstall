@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 if TYPE_CHECKING:
 	_: Any
 
-class PlasmaProfile(XorgProfile):
+class CosmicProfile(XorgProfile):
 	def __init__(self):
 		super().__init__('cosmic-epoch', ProfileType.DesktopEnv, description='')
 
