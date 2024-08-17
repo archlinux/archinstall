@@ -1328,3 +1328,6 @@ msgstr "لغات التثبيت"
 #, fuzzy
 msgid " (default)"
 msgstr "(افتراضي)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

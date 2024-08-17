@@ -1301,3 +1301,6 @@ msgstr "Nápověda pro Archinstall"
 
 msgid " (default)"
 msgstr " (výchozí)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

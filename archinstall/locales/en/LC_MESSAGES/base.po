@@ -1244,3 +1244,6 @@ msgstr ""
 
 msgid " (default)"
 msgstr ""
+
+msgid "Press Ctrl+h for help"
+msgstr ""

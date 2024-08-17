@@ -1393,6 +1393,9 @@ msgstr "آرچ انسٹال کے لیے زبان"
 msgid " (default)"
 msgstr ""
 
+msgid "Press Ctrl+h for help"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "شامل:"
 
