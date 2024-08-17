@@ -33,7 +33,7 @@ class GreeterType(Enum):
 	Sddm = 'sddm'
 	Gdm = 'gdm'
 	Ly = 'ly'
-
+	CosmicSession = "cosmic-greeter"
 
 class SelectResult(Enum):
 	NewSelection = auto()
