@@ -1313,4 +1313,4 @@ msgid " (default)"
 msgstr " (alapértelmezett)"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "Használja a CTRL+h billentyűkombinációt a segítségért"
