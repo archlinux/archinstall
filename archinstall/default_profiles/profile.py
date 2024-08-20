@@ -3,10 +3,11 @@ from __future__ import annotations
 from enum import Enum, auto
 from typing import List, Optional, Any, Dict, TYPE_CHECKING
 
-from archinstall.lib.utils.util import format_cols
+from ..lib.utils.util import format_cols
+from ..lib.storage import storage
 
 if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
+	from ..lib.installer import Installer
 	_: Any
 
 
@@ -51,12 +52,14 @@ class Profile:
 		packages: List[str] = [],
 		services: List[str] = [],
 		support_gfx_driver: bool = False,
-		support_greeter: bool = False
+		support_greeter: bool = False,
+		advanced: bool = False
 	):
 		self.name = name
 		self.description = description
 		self.profile_type = profile_type
 		self.custom_settings: Dict[str, Any] = {}
+		self.advanced = advanced
 
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
@@ -138,16 +141,16 @@ class Profile:
 		return self.profile_type in top_levels
 
 	def is_desktop_profile(self) -> bool:
-		return self.profile_type == ProfileType.Desktop
+		return self.profile_type == ProfileType.Desktop if self.advanced is False or storage['arguments'].get('advanced', False) is True else False
 
 	def is_server_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.ServerType
 
 	def is_desktop_type_profile(self) -> bool:
-		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
+		return (self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr) if self.advanced is False or storage['arguments'].get('advanced', False) is True else False
 
 	def is_xorg_type_profile(self) -> bool:
-		return self.profile_type == ProfileType.Xorg
+		return self.profile_type == ProfileType.Xorg if self.advanced is False or storage['arguments'].get('advanced', False) is True else False
 
 	def is_tailored(self) -> bool:
 		return self.profile_type == ProfileType.Tailored

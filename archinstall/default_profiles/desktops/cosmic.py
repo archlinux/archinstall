@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 class CosmicProfile(XorgProfile):
 	def __init__(self):
-		super().__init__('cosmic-epoch', ProfileType.DesktopEnv, description='')
+		super().__init__('cosmic-epoch', ProfileType.DesktopEnv, description='', advanced=True)
 
 	@property
 	def packages(self) -> List[str]:

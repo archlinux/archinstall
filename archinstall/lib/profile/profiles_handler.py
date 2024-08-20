@@ -10,7 +10,7 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from archinstall.default_profiles.profile import Profile, GreeterType
+from ...default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
 from ..hardware import GfxDriver
 from ..menu import MenuSelectionType, Menu, MenuSelection
@@ -329,6 +329,8 @@ class ProfileHandler:
 					return self._load_profile_class(imported)
 		except Exception as e:
 			error(f'Unable to parse file {file}: {e}')
+			import time
+			time.sleep(10)
 
 		return []
 
