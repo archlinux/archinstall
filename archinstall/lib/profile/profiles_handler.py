@@ -329,8 +329,6 @@ class ProfileHandler:
 					return self._load_profile_class(imported)
 		except Exception as e:
 			error(f'Unable to parse file {file}: {e}')
-			import time
-			time.sleep(10)
 
 		return []
 
