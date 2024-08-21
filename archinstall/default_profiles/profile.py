@@ -34,7 +34,10 @@ class GreeterType(Enum):
 	Sddm = 'sddm'
 	Gdm = 'gdm'
 	Ly = 'ly'
-	CosmicSession = "cosmic-greeter"
+
+	# .. todo:: Remove when we un-hide cosmic behind --advanced
+	if storage['arguments'].get('advanced', False) is True:
+		CosmicSession = "cosmic-greeter"
 
 class SelectResult(Enum):
 	NewSelection = auto()
@@ -96,6 +99,13 @@ class Profile:
 		"""
 		return None
 
+	def _advanced_check(self):
+		"""
+		Used to control if the Profile() should be visible or not in different contexts.
+		Returns True if --advanced is given on a Profile(advanced=True) instance.
+		"""
+		return self.advanced is False or storage['arguments'].get('advanced', False) is True
+
 	def install(self, install_session: 'Installer'):
 		"""
 		Performs installation steps when this profile was selected
@@ -141,16 +151,16 @@ class Profile:
 		return self.profile_type in top_levels
 
 	def is_desktop_profile(self) -> bool:
-		return self.profile_type == ProfileType.Desktop if self.advanced is False or storage['arguments'].get('advanced', False) is True else False
+		return self.profile_type == ProfileType.Desktop if self._advanced_check() else False
 
 	def is_server_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.ServerType
 
 	def is_desktop_type_profile(self) -> bool:
-		return (self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr) if self.advanced is False or storage['arguments'].get('advanced', False) is True else False
+		return (self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr) if self._advanced_check() else False
 
 	def is_xorg_type_profile(self) -> bool:
-		return self.profile_type == ProfileType.Xorg if self.advanced is False or storage['arguments'].get('advanced', False) is True else False
+		return self.profile_type == ProfileType.Xorg if self._advanced_check() else False
 
 	def is_tailored(self) -> bool:
 		return self.profile_type == ProfileType.Tailored

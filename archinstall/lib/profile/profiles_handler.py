@@ -194,6 +194,8 @@ class ProfileHandler:
 			case GreeterType.Ly:
 				packages = ['ly']
 				service = ['ly']
+			case GreeterType.CosmicSession:
+				packages = ['cosmic-greeter']
 
 		if packages:
 			install_session.add_additional_packages(packages)
