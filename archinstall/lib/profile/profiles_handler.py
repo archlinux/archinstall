@@ -10,7 +10,7 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from archinstall.default_profiles.profile import Profile, GreeterType
+from ...default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
 from ..hardware import GfxDriver
 from ..menu import MenuSelectionType, Menu, MenuSelection
@@ -194,6 +194,8 @@ class ProfileHandler:
 			case GreeterType.Ly:
 				packages = ['ly']
 				service = ['ly']
+			case GreeterType.CosmicSession:
+				packages = ['cosmic-greeter']
 
 		if packages:
 			install_session.add_additional_packages(packages)
