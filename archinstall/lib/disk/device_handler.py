@@ -551,8 +551,6 @@ class DeviceHandler(object):
 	):
 		info(f'Creating subvolumes: {part_mod.safe_dev_path}')
 
-		luks_handler = None
-
 		# unlock the partition first if it's encrypted
 		if enc_conf is not None and part_mod in enc_conf.partitions:
 			if not part_mod.mapper_name:
@@ -567,35 +565,29 @@ class DeviceHandler(object):
 			if not luks_handler.mapper_dev:
 				raise DiskError('Failed to unlock luks device')
 
-			self.mount(
-				luks_handler.mapper_dev,
-				self._TMP_BTRFS_MOUNT,
-				create_target_mountpoint=True,
-				options=part_mod.mount_options
-			)
+			dev_path = luks_handler.mapper_dev
 		else:
-			self.mount(
-				part_mod.safe_dev_path,
-				self._TMP_BTRFS_MOUNT,
-				create_target_mountpoint=True,
-				options=part_mod.mount_options
-			)
+			luks_handler = None
+			dev_path = part_mod.safe_dev_path
+
+		self.mount(
+			dev_path,
+			self._TMP_BTRFS_MOUNT,
+			create_target_mountpoint=True,
+			options=part_mod.mount_options
+		)
 
 		for sub_vol in part_mod.btrfs_subvols:
 			debug(f'Creating subvolume: {sub_vol.name}')
 
-			if luks_handler is not None:
-				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
-			else:
-				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
+			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
 			SysCommand(f"btrfs subvolume create {subvol_path}")
 
+		self.umount(dev_path)
+
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
-			self.umount(luks_handler.mapper_dev)
 			luks_handler.lock()
-		else:
-			self.umount(part_mod.safe_dev_path)
 
 	def unlock_luks2_dev(self, dev_path: Path, mapper_name: str, enc_password: str) -> Luks2:
 		luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
