@@ -18,7 +18,7 @@ from .device_model import (
 	DeviceModification, PartitionModification,
 	BDevice, _DeviceInfo, _PartitionInfo,
 	FilesystemType, Unit, PartitionTable,
-	ModificationStatus, get_lsblk_info, LsblkInfo,
+	ModificationStatus, get_lsblk_info, find_lsblk_info, LsblkInfo,
 	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
 	SectorSize, LvmVolumeInfo, LvmPVInfo, SubvolumeModification, BtrfsMountOption
 )
@@ -47,6 +47,8 @@ class DeviceHandler(object):
 	def load_devices(self):
 		block_devices = {}
 
+		SysCommand('udevadm settle')
+		all_lsblk_info = get_all_lsblk_info()
 		devices = getAllDevices()
 
 		try:
@@ -58,7 +60,11 @@ class DeviceHandler(object):
 			debug(f'Failed to get loop devices: {err}')
 
 		for device in devices:
-			dev_lsblk_info = get_lsblk_info(device.path)
+			dev_lsblk_info = find_lsblk_info(device.path, all_lsblk_info)
+
+			if not dev_lsblk_info:
+				debug(f'Device lsblk info not found: {device.path}')
+				continue
 
 			if dev_lsblk_info.type == 'rom':
 				continue
@@ -76,12 +82,17 @@ class DeviceHandler(object):
 			partition_infos = []
 
 			for partition in disk.partitions:
-				lsblk_info = get_lsblk_info(partition.path)
+				lsblk_info = find_lsblk_info(partition.path, dev_lsblk_info.children)
+
+				if not lsblk_info:
+					debug(f'Partition lsblk info not found: {partition.path}')
+					continue
+
 				fs_type = self._determine_fs_type(partition, lsblk_info)
 				subvol_infos = []
 
 				if fs_type == FilesystemType.Btrfs:
-					subvol_infos = self.get_btrfs_info(partition.path)
+					subvol_infos = self.get_btrfs_info(partition.path, lsblk_info)
 
 				partition_infos.append(
 					_PartitionInfo.from_partition(
@@ -155,8 +166,14 @@ class DeviceHandler(object):
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None
 
-	def get_btrfs_info(self, dev_path: Path) -> List[_BtrfsSubvolumeInfo]:
-		lsblk_info = get_lsblk_info(dev_path)
+	def get_btrfs_info(
+			self,
+			dev_path: Path,
+			lsblk_info: Optional[LsblkInfo] = None
+	) -> List[_BtrfsSubvolumeInfo]:
+		if not lsblk_info:
+			lsblk_info = get_lsblk_info(dev_path)
+
 		subvol_infos: List[_BtrfsSubvolumeInfo] = []
 
 		if not lsblk_info.mountpoint:

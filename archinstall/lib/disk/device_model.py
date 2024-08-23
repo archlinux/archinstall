@@ -1478,6 +1478,20 @@ def get_all_lsblk_info() -> List[LsblkInfo]:
 	return _fetch_lsblk_info()
 
 
+def find_lsblk_info(
+	dev_path: Union[Path, str],
+	info: List[LsblkInfo]
+) -> Optional[LsblkInfo]:
+	if isinstance(dev_path, str):
+		dev_path = Path(dev_path)
+
+	for lsblk_info in info:
+		if lsblk_info.path == dev_path:
+			return lsblk_info
+
+	return None
+
+
 def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[LsblkInfo]:
 	def _check(infos: List[LsblkInfo]) -> List[LsblkInfo]:
 		devices = []
