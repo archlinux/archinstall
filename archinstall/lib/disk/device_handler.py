@@ -47,6 +47,7 @@ class DeviceHandler(object):
 	def load_devices(self):
 		block_devices = {}
 
+		SysCommand('udevadm settle')
 		all_lsblk_info = get_all_lsblk_info()
 		devices = getAllDevices()
 
