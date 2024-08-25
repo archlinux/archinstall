@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: archinstall\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.0.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Foi criado um ficheiro de registo aqui: {} {}"
@@ -22,13 +22,13 @@ msgid "    Please submit this issue (and file) to https://github.com/archlinux/a
 msgstr "    Submeta este problema (e ficheiro) para https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr "Queres mesmo abortar?"
+msgstr "Quer mesmo abortar?"
 
 msgid "And one more time for verification: "
 msgstr "Uma última vez para verificação: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "Gostaria de usar a swap em zram?"
+msgstr "Pretende usar a swap em zram?"
 
 msgid "Desired hostname for the installation: "
 msgstr "Nome do computador desejado para a instalação: "
@@ -43,10 +43,10 @@ msgid "Should this user be a superuser (sudoer)?"
 msgstr "Deve este utilizador ser um superutilizador (sudoer)?"
 
 msgid "Select a timezone"
-msgstr "Selecione um fuso horário"
+msgstr "Selecionar um fuso horário"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Gostaria de utilizar o GRUB como carregador de arranque em vez do systemd-boot?"
+msgstr "Pretende usar o GRUB como carregador de arranque em vez do systemd-boot?"
 
 msgid "Choose a bootloader"
 msgstr "Escolha um carregador de arranque"
@@ -58,7 +58,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Se quer um navegador web, como firefox ou chromium, deve especificá-lo na próxima pergunta."
+msgstr "Se quer um navegador web, como firefox ou chromium, deve especificá-lo na pergunta seguinte."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Inserir pacotes adicionais a instalar (separados por espaço, deixar em branco para ignorar): "
@@ -70,7 +70,7 @@ msgid "Use NetworkManager (necessary for configuring internet graphically in GNO
 msgstr "Usar o Gestor de Redes \"NetworkManager\" (necessário para configurar Internet graficamente em GNOME e KDE)"
 
 msgid "Select one network interface to configure"
-msgstr "Selecione uma interface de rede para configurar"
+msgstr "Selecionar uma interface de rede para configurar"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Selecionar qual o modo a configurar para \"{}\" ou ignorar para usar o modo predefinido \"{}\""
@@ -88,7 +88,7 @@ msgid "Select which filesystem your main partition should use"
 msgstr "Selecionar o sistema de ficheiros que a partição principal deve utilizar"
 
 msgid "Current partition layout"
-msgstr "Esquema actual da partições"
+msgstr "Esquema atual da partições"
 
 msgid ""
 "Select what to do with\n"
@@ -116,7 +116,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleciona por índice quais partições remover"
+"Selecionar por índice quais partições remover"
 
 msgid ""
 "{}\n"
@@ -125,13 +125,13 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleciona por índice quais partições montar em"
+"Selecionar por índice quais partições montar em"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr " * Os pontos de montagem das partições são relativos à dentro da instalação, o boot seria /boot por exemplo."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Seleciona onde montar a partição (deixa em branco para remover o ponto de montagem): "
+msgstr "Selecionar onde montar a partição (deixa em branco para remover o ponto de montagem): "
 
 msgid ""
 "{}\n"
@@ -140,7 +140,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleciona a partição a mascar para formatar"
+"Selecionar a partição a mascar para formatar"
 
 msgid ""
 "{}\n"
@@ -149,7 +149,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleciona a partição a marcar como encriptada"
+"Selecionar a partição a marcar como encriptada"
 
 msgid ""
 "{}\n"
@@ -158,7 +158,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleciona a partição a marcar como bootável"
+"Selecionar a partição a marcar como de arranque"
 
 msgid ""
 "{}\n"
@@ -167,10 +167,10 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleciona a partição a definir um sistema de ficheiros"
+"Selecionar a partição a definir um sistema de ficheiros"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Escreve o tipo de sistema de ficheiros desejado para a partição: "
+msgstr "Introduza o tipo de sistema de ficheiros desejado para a partição: "
 
 msgid "Archinstall language"
 msgstr "Idioma do Archinstall"
@@ -182,7 +182,7 @@ msgid "Select what to do with each individual drive (followed by partition usage
 msgstr "Seleciona o que fazer com cada disco individual (seguido de uso de partição)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Seleciona o que desejas fazer com os dispositivos de bloco selecionados"
+msgstr "Selecionar o que desejas fazer com os dispositivos de bloco selecionados"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Esta é uma lista de perfis pré-programados, podem facilitar a instalação de ambientes de trabalho"
@@ -652,7 +652,7 @@ msgid "The password you are using seems to be weak, are you sure you want to use
 msgstr "A palavra-passe que está a usar parece ser fraca, tem a certeza que deseja utilizá-la?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Proporciona uma seleção de ambientes gráficos e gerenciadores de janela como por exemplo gnome, kde, sway"
+msgstr "Disponibiliza uma seleção de ambientes gráficos e gestores de janela como por exemplo gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
 msgstr "Selecionar o ambiente gráfico desejado"
@@ -673,10 +673,10 @@ msgid "Press Enter to continue."
 msgstr "Prima Enter para continuar."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Deseja fazer chroot para a nova instalação e realizar configuração pós-instalação?"
+msgstr "Pretende fazer chroot para a nova instalação e realizar configuração pós-instalação?"
 
 msgid "Are you sure you want to reset this setting?"
-msgstr "Tem a certeza que desejar repor esta configuração?"
+msgstr "Tem a certeza que pretende repor esta configuração?"
 
 msgid "Select one or more hard drives to use and configure\n"
 msgstr "Selecionar uma ou mais unidades a usar e configurar\n"
@@ -685,7 +685,7 @@ msgid "Any modifications to the existing setting will reset the disk layout!"
 msgstr "Quaisquer modificações na configuração existente irá repor o esquema de disco!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Se repor a seleção da unidade isso também repor o esquema do disco atual. Tem a certeza?"
+msgstr "Se repor a seleção da unidade isto também repor o esquema do disco atual. Tem a certeza?"
 
 msgid "Save and exit"
 msgstr "Guardar e sair"
@@ -695,22 +695,22 @@ msgid ""
 "contains queued partitions, this will remove those, are you sure?"
 msgstr ""
 "{}\n"
-"contém partições enfileiradas, isso irá removê-las, tem certeza?"
+"contém partições em fila de espera, isto irá removê-las, tem a certeza?"
 
 msgid "No audio server"
 msgstr "Sem servidor de áudio"
 
 msgid "(default)"
-msgstr "(por omissão)"
+msgstr " (predefinição)"
 
 msgid "Use ESC to skip"
-msgstr "Use ESC para ignorar"
+msgstr "Usar ESC para ignorar"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
-"Use CTRL+C para redefinir a seleção atual\n"
+"Usar CTRL+C para repor a seleção atual\n"
 "\n"
 
 msgid "Copy to: "
@@ -1231,110 +1231,92 @@ msgstr "Ignorar a espera pela sincronização automática da hora (isto pode cau
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "A aguardar que a sincronização do chaveiro do Arch Linux (archlinux-keyring-wkd-sync) seja concluída."
 
-#, fuzzy
 msgid "Selected profiles: "
-msgstr "Eliminar perfil"
+msgstr "Perfis selecionados: "
 
-#, fuzzy
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "A sincronização da hora não está a ser concluída, enquanto espera - consulte a documentação para obter soluções alternativas: https://archinstall.readthedocs.io/"
 
-#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr "Marcar/Desmarcar como partição de aranque"
+msgstr "Marcar/Desmarcar como nodatacow"
 
-#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "Deseja usar a compressão BTRFS?"
+msgstr "Pretende utilizar a compressão ou desativar o CoW?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Usar compressão"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Desativar Copy-on-Write"
 
-#, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Proporciona uma seleção de ambientes gráficos e gerenciadores de janela como por exemplo gnome, kde, sway"
+msgstr "Disponibiliza uma seleção de ambientes gráficos e gestores de janelas em mosaico, por exemplo, GNOME, KDE Plasma, Sway"
 
-#, fuzzy
 msgid "Configuration type: {}"
-msgstr "Configuração"
+msgstr "Tipo de configuração: {}"
 
-#, fuzzy
 msgid "LVM configuration type"
-msgstr "Nenhuma configuração"
+msgstr "Tipo de configuração LVM"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "A encriptação de disco LVM com mais de 2 partições não é atualmente suportada"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "Usar o Gestor de Redes \"NetworkManager\" (necessário para configurar a Internet graficamente no GNOME e KDE)"
+msgstr "Usar o Gestor de redes \"NetworkManager\" (necessário para configurar a Internet graficamente no GNOME e no KDE Plasma)"
 
-#, fuzzy
 msgid "Select a LVM option"
-msgstr "Selecione um fuso horário"
+msgstr "Selecionar uma opção LVM"
 
-#, fuzzy
 msgid "Partitioning"
-msgstr "Partição"
+msgstr "Particionamento"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Gestão de volumes lógicos (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "Volumes físicos"
 
 msgid "Volumes"
-msgstr ""
+msgstr "Volumes"
 
-#, fuzzy
 msgid "LVM volumes"
-msgstr "Definir subvolumes"
+msgstr "Volumes LVM"
 
-#, fuzzy
 msgid "LVM volumes to be encrypted"
-msgstr "Partições a serem encriptadas"
+msgstr "Volumes LVM a encriptar"
 
-#, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr "Selecionar quais as partições encriptar"
+msgstr "Selecionar os volumes LVM a encriptar"
 
-#, fuzzy
 msgid "Default layout"
-msgstr "Esquema do disco"
+msgstr "Estrutura predefinida"
 
-#, fuzzy
 msgid "No Encryption"
-msgstr "Tipo de encriptação"
+msgstr "Sem encriptação"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM em LUKS"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS em LVM"
 
-#, fuzzy
 msgid "Yes"
-msgstr "sim"
+msgstr "Sim"
 
 msgid "No"
-msgstr ""
+msgstr "Não"
 
-#, fuzzy
 msgid "Archinstall help"
-msgstr "Idioma do Archinstall"
+msgstr "Ajuda do Archinstall"
 
-#, fuzzy
 msgid " (default)"
-msgstr "(por omissão)"
+msgstr " (predefinição)"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "Prima Ctrl+h para obter ajuda"
 
 #~ msgid "Add :"
 #~ msgstr "Adicionar :"
