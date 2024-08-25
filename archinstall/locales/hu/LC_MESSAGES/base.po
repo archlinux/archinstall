@@ -66,10 +66,10 @@ msgid "Use NetworkManager (necessary for configuring internet graphically in GNO
 msgstr "A hálózatkezelő használata (szükséges az internet grafikus konfigurálásához GNOME-ban és KDE-ben)"
 
 msgid "Select one network interface to configure"
-msgstr "Válasszon ki egy hálózati interfészt a konfiguráláshoz"
+msgstr "Válasszon ki egy hálózati csatolót a konfiguráláshoz"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) \"{}\" számára, vagy hagyja ki ezt a lépést az alapértelmezett \"{}\" mód használatához"
+msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) „{}” számára, vagy hagyja ki ezt a lépést az alapértelmezett „{}” mód használatához"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Adja meg az IP-címét és az alhálózatát (például: 192.168.0.5/24) ehhez: {}: "
@@ -214,7 +214,7 @@ msgid "All open-source (default)"
 msgstr "Minden nyílt forráskódú (alapértelmezett)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Válassza ki a használni kívánt kerneleket, vagy hagyja üresen a(z) alapértelmezett \"{}\" kernel használatához"
+msgstr "Válassza ki a használni kívánt kerneleket, vagy hagyja üresen a(z) alapértelmezett „{}” kernel használatához"
 
 msgid "Choose which locale language to use"
 msgstr "Válassza ki a használni kívánt területi nyelvet"
@@ -232,13 +232,13 @@ msgid "Adding partition...."
 msgstr "Partíció hozzáadása...."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "A folytatáshoz meg kell adnia egy érvényes fs-típust. Az érvényes fs-típusokat megtekinthetőek a `man parted` részben."
+msgstr "A folytatáshoz meg kell adnia egy érvényes fs-típust. Az érvényes fs-típusokat megtekinthetőek a „man parted” részben."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Hiba: A(z) \"{}\" URL-címen lévő profilok listázása a következőket eredményezte:"
+msgstr "Hiba: A(z) „{}” URL-címen lévő profilok listázása a következőket eredményezte:"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr "Hiba: Nem sikerült dekódolni a(z) \"{}\" eredményt JSON-ként:"
+msgstr "Hiba: Nem sikerült dekódolni a(z) „{}” eredményt JSON-ként:"
 
 msgid "Keyboard layout"
 msgstr "Billentyűzetkiosztás"
@@ -357,7 +357,7 @@ msgid ""
 "Use ESC to skip\n"
 "\n"
 msgstr ""
-"Használja az ESC billentyűt a kihagyáshoz\n"
+"ESC → a kihagyáshoz\n"
 "\n"
 
 msgid "Suggest partition layout"
@@ -379,7 +379,7 @@ msgid "Enter root password (leave blank to disable root): "
 msgstr "Adjon meg egy root jelszót (a root letiltásához hagyja üresen): "
 
 msgid "Password for user \"{}\": "
-msgstr "\"{}\" felhasználó jelszava: "
+msgstr "„{}” felhasználó jelszava: "
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "További csomagok létezésének ellenőrzése (ez eltarthat néhány másodpercig)"
@@ -399,7 +399,7 @@ msgstr "Adjon meg egy felhasználónevet egy további felhasználó létrehozás
 
 msgid "Use ESC to skip\n"
 msgstr ""
-"Használja az ESC billentyűt a kihagyáshoz\n"
+"ESC → a kihagyáshoz\n"
 "\n"
 
 msgid ""
@@ -428,7 +428,7 @@ msgid "Delete"
 msgstr "Törlés"
 
 msgid "Select an action for '{}'"
-msgstr "Válasszon egy műveletet a következőhöz: '{}'"
+msgstr "Válasszon egy műveletet a következőhöz: „{}”"
 
 msgid "Copy to new key:"
 msgstr "Másolás új kulcsba:"
@@ -617,7 +617,7 @@ msgid "no"
 msgstr "nem"
 
 msgid "set: {}"
-msgstr "beállít: {}"
+msgstr "beállítás: {}"
 
 msgid "Manual configuration setting must be a list"
 msgstr "A kézi konfigurációs beállításnak egy listának kell lennie"
@@ -629,16 +629,16 @@ msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr "A kézi nic konfiguráció automatikus DHCP nélkül egy IP-címet igényel"
 
 msgid "Add interface"
-msgstr "Interfész hozzáadása"
+msgstr "Csatoló hozzáadása"
 
 msgid "Edit interface"
-msgstr "Interfész szerkesztése"
+msgstr "Csatoló szerkesztése"
 
 msgid "Delete interface"
-msgstr "Interfész törlése"
+msgstr "Csatoló törlése"
 
 msgid "Select interface to add"
-msgstr "Válassza ki a hozzáadandó interfészt"
+msgstr "Válassza ki a hozzáadandó csatolót"
 
 msgid "Manual configuration"
 msgstr "Kézi konfiguráció"
@@ -702,13 +702,13 @@ msgid "(default)"
 msgstr "(alapértelmezett)"
 
 msgid "Use ESC to skip"
-msgstr "Használja az ESC billentyűt a kihagyáshoz"
+msgstr "ESC → a kihagyáshoz"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
-"Használja a CTRL+C billentyűkombinációt az aktuális kijelölés visszaállításához\n"
+"CTRL+C → az aktuális kijelölés visszaállításához\n"
 "\n"
 
 msgid "Copy to: "
@@ -751,7 +751,7 @@ msgid "Free space"
 msgstr "Szabad terület"
 
 msgid "Bus-type"
-msgstr "Bus-típus"
+msgstr "Busz-típus"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
 msgstr "Meg kell adni egy root jelszót, vagy legalább 1 sudo jogosultsággal rendelkező felhasználót"
@@ -763,7 +763,7 @@ msgid "The username you entered is invalid. Try again"
 msgstr "A megadott felhasználónév érvénytelen. Próbálja újra"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "\"{}\" felhasználónak rendszergazdának (sudoer) kell lennie?"
+msgstr "„{}” felhasználónak rendszergazdának (sudoer) kell lennie?"
 
 msgid "Select which partitions to encrypt"
 msgstr "Válassza ki mely partíciókat szeretné titkosítani"
@@ -790,7 +790,7 @@ msgid "Delete subvolume"
 msgstr "Alkötet törlése"
 
 msgid "Configured {} interfaces"
-msgstr "{} konfigurált interfész"
+msgstr "{} konfigurált csatoló"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Ez a beállítás lehetővé teszi, hogy a telepítés során hány párhuzamos letöltés történhet"
@@ -821,13 +821,13 @@ msgid "Parallel Downloads"
 msgstr "Párhuzamos letöltések"
 
 msgid "ESC to skip"
-msgstr "Használja az ESC billentyűt a kihagyáshoz"
+msgstr "ESC → a kihagyáshoz"
 
 msgid "CTRL+C to reset"
-msgstr "Használja a CTRL+C billentyűkombinációt a visszaállításhoz"
+msgstr "CTRL+C → a visszaállításhoz"
 
 msgid "TAB to select"
-msgstr "TAB billentyűvel több elemet is megjelölhet telepítésre"
+msgstr "TAB → az elem(ek) megjelöléséhez"
 
 msgid "[Default value: 0] > "
 msgstr "[Alapértelmezett érték: 0] > "
@@ -1107,7 +1107,7 @@ msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
-"Adjon meg egy könyvtárat a menteni kívánt konfiguráció(k) számára (a lap kitöltés engedélyezve van)\n"
+"Adjon meg egy könyvtárat a menteni kívánt konfiguráció(k) számára (a tabulátoros kiegészítés engedélyezve van)\n"
 "Mentési könyvtár: "
 
 msgid ""
@@ -1313,4 +1313,4 @@ msgid " (default)"
 msgstr " (alapértelmezett)"
 
 msgid "Press Ctrl+h for help"
-msgstr "Használja a CTRL+h billentyűkombinációt a segítségért"
+msgstr "CTRL+h → a súgó megnyitásához"
