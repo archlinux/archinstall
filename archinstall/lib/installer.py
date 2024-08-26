@@ -707,10 +707,11 @@ class Installer:
 				if plugin.on_mkinitcpio(self):
 					return True
 
-		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
-			mkinit.write(f"MODULES=({' '.join(self._modules)})\n")
-			mkinit.write(f"BINARIES=({' '.join(self._binaries)})\n")
-			mkinit.write(f"FILES=({' '.join(self._files)})\n")
+		with open(f'{self.target}/etc/mkinitcpio.conf', 'r+') as mkinit:
+			content = mkinit.read()
+			content = re.sub("\nMODULES=(.*)", f"\nMODULES=({' '.join(self._modules)})", content)
+			content = re.sub("\nBINARIES=(.*)", f"\nBINARIES=({' '.join(self._binaries)})", content)
+			content = re.sub("\nFILES=(.*)", f"\nFILES=({' '.join(self._files)})", content)
 
 			if not self._disk_encryption.hsm_device:
 				# For now, if we don't use HSM we revert to the old
@@ -720,7 +721,9 @@ class Installer:
 				# * sd-vconsole -> keymap
 				self._hooks = [hook.replace('systemd', 'udev').replace('sd-vconsole', 'keymap consolefont') for hook in self._hooks]
 
-			mkinit.write(f"HOOKS=({' '.join(self._hooks)})\n")
+			content = re.sub("\nHOOKS=(.*)", f"\nHOOKS=({' '.join(self._hooks)})", content)
+			mkinit.seek(0)
+			mkinit.write(content)
 
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}', peek_output=True)
