@@ -1,5 +1,6 @@
 import datetime
 import pydantic
+import http.client
 import urllib.parse
 import urllib.request
 from typing import (
@@ -37,11 +38,16 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 		if self._speed is None:
 			info(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
 			req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
-			with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
-				size = len(handle.read())
 
-			self._speed = size / timer.time
-			debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
+			try:
+				with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
+					size = len(handle.read())
+
+				self._speed = size / timer.time
+				debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
+			except http.client.IncompleteRead:
+				debug(f"    speed: <undetermined>")
+				self._speed = None
 
 		return self._speed
 
