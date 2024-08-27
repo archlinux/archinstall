@@ -40,7 +40,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		self._disk_config = disk_config
 		super().__init__(data_store=data_store)
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		self._menu_options['encryption_type'] = \
 			Selector(
 				_('Encryption type'),

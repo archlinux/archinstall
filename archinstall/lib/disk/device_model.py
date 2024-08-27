@@ -178,7 +178,7 @@ class SectorSize:
 	value: int
 	unit: Unit
 
-	def __post_init__(self):
+	def __post_init__(self) -> None:
 		match self.unit:
 			case Unit.sectors:
 				raise ValueError('Unit type sector not allowed for SectorSize')
@@ -204,7 +204,7 @@ class SectorSize:
 		"""
 		will normalize the value of the unit to Byte
 		"""
-		return int(self.value * self.unit.value)  # type: ignore
+		return int(self.value * self.unit.value)
 
 
 @dataclass
@@ -213,7 +213,7 @@ class Size:
 	unit: Unit
 	sector_size: SectorSize
 
-	def __post_init__(self):
+	def __post_init__(self) -> None:
 		if not isinstance(self.sector_size, SectorSize):
 			raise ValueError('sector size must be of type SectorSize')
 
@@ -253,7 +253,7 @@ class Size:
 				sectors = math.ceil(norm / sector_size.value)
 				return Size(sectors, Unit.sectors, sector_size)
 			else:
-				value = int(self._normalize() / target_unit.value)  # type: ignore
+				value = int(self._normalize() / target_unit.value)
 				return Size(value, target_unit, self.sector_size)
 
 	def as_text(self) -> str:
@@ -293,7 +293,7 @@ class Size:
 		"""
 		if self.unit == Unit.sectors and self.sector_size is not None:
 			return self.value * self.sector_size.normalize()
-		return int(self.value * self.unit.value)  # type: ignore
+		return int(self.value * self.unit.value)
 
 	def __sub__(self, other: Size) -> Size:
 		src_norm = self._normalize()
@@ -305,22 +305,22 @@ class Size:
 		dest_norm = other._normalize()
 		return Size(abs(src_norm + dest_norm), Unit.B, self.sector_size)
 
-	def __lt__(self, other):
+	def __lt__(self, other: Size) -> bool:
 		return self._normalize() < other._normalize()
 
-	def __le__(self, other):
+	def __le__(self, other: Size) -> bool:
 		return self._normalize() <= other._normalize()
 
-	def __eq__(self, other):
+	def __eq__(self, other) -> bool:
 		return self._normalize() == other._normalize()
 
-	def __ne__(self, other):
+	def __ne__(self, other) -> bool:
 		return self._normalize() != other._normalize()
 
-	def __gt__(self, other):
+	def __gt__(self, other: Size) -> bool:
 		return self._normalize() > other._normalize()
 
-	def __ge__(self, other):
+	def __ge__(self, other: Size) -> bool:
 		return self._normalize() >= other._normalize()
 
 
@@ -556,7 +556,7 @@ class BDevice:
 	device_info: _DeviceInfo
 	partition_infos: List[_PartitionInfo]
 
-	def __hash__(self):
+	def __hash__(self) -> int:
 		return hash(self.disk.device.path)
 
 
@@ -680,7 +680,7 @@ class PartitionModification:
 	_efi_indicator_flags = (PartitionFlag.Boot, PartitionFlag.ESP)
 	_boot_indicator_flags = (PartitionFlag.Boot, PartitionFlag.XBOOTLDR)
 
-	def __post_init__(self):
+	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
 			self._obj_id = uuid.uuid4()
@@ -691,7 +691,7 @@ class PartitionModification:
 		if self.fs_type is None and self.status == ModificationStatus.Modify:
 			raise ValueError('FS type must not be empty on modifications with status type modify')
 
-	def __hash__(self):
+	def __hash__(self) -> int:
 		return hash(self._obj_id)
 
 	@property
@@ -796,11 +796,11 @@ class PartitionModification:
 			return f'{storage.get("ENC_IDENTIFIER", "ai")}{self.dev_path.name}'
 		return None
 
-	def set_flag(self, flag: PartitionFlag):
+	def set_flag(self, flag: PartitionFlag) -> None:
 		if flag not in self.flags:
 			self.flags.append(flag)
 
-	def invert_flag(self, flag: PartitionFlag):
+	def invert_flag(self, flag: PartitionFlag) -> None:
 		if flag in self.flags:
 			self.flags = [f for f in self.flags if f != flag]
 		else:
@@ -915,12 +915,12 @@ class LvmVolume:
 	# mapper device path /dev/<vg>/<vol>
 	dev_path: Optional[Path] = None
 
-	def __post_init__(self):
+	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
 			self._obj_id = uuid.uuid4()
 
-	def __hash__(self):
+	def __hash__(self) -> int:
 		return hash(self._obj_id)
 
 	@property
@@ -1050,7 +1050,7 @@ class LvmConfiguration:
 	config_type: LvmLayoutType
 	vol_groups: List[LvmVolumeGroup]
 
-	def __post_init__(self):
+	def __post_init__(self) -> None:
 		# make sure all volume groups have unique PVs
 		pvs = []
 		for group in self.vol_groups:
@@ -1121,7 +1121,7 @@ class DeviceModification:
 	def device_path(self) -> Path:
 		return self.device.device_info.path
 
-	def add_partition(self, partition: PartitionModification):
+	def add_partition(self, partition: PartitionModification) -> None:
 		self.partitions.append(partition)
 
 	def get_efi_partition(self) -> Optional[PartitionModification]:
@@ -1196,7 +1196,7 @@ class DiskEncryption:
 	lvm_volumes: List[LvmVolume] = field(default_factory=list)
 	hsm_device: Optional[Fido2Device] = None
 
-	def __post_init__(self):
+	def __post_init__(self) -> None:
 		if self.encryption_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks] and not self.partitions:
 			raise ValueError('Luks or LvmOnLuks encryption require partitions to be defined')
 

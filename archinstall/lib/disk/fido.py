@@ -74,7 +74,7 @@ class Fido2:
 		hsm_device: Fido2Device,
 		dev_path: Path,
 		password: str
-	):
+	) -> None:
 		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {dev_path}", peek_output=True)
 		pw_inputted = False
 		pin_inputted = False
