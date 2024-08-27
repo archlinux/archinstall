@@ -42,7 +42,7 @@ class SetupMenu(GlobalMenu):
 	def __init__(self, storage_area: Dict[str, Any]):
 		super().__init__(data_store=storage_area)
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		super().setup_selection_menu_options()
 
 		self._menu_options['mode'] = menu.Selector(
@@ -61,7 +61,7 @@ class SetupMenu(GlobalMenu):
 		self.enable('continue')
 		self.enable('abort')
 
-	def exit_callback(self):
+	def exit_callback(self) -> None:
 		if self._data_store.get('mode', None):
 			archinstall.arguments['mode'] = self._data_store['mode']
 			info(f"Archinstall will execute under {archinstall.arguments['mode']} mode")
@@ -76,7 +76,7 @@ class SwissMainMenu(GlobalMenu):
 		self._execution_mode = exec_mode
 		super().__init__(data_store)
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		super().setup_selection_menu_options()
 
 		options_list = []
@@ -130,7 +130,7 @@ class SwissMainMenu(GlobalMenu):
 			self.enable(entry)
 
 
-def ask_user_questions(exec_mode: ExecutionMode = ExecutionMode.Full):
+def ask_user_questions(exec_mode: ExecutionMode = ExecutionMode.Full) -> None:
 	"""
 		First, we'll ask the user for a bunch of user input.
 		Not until we're satisfied with what we want to install
@@ -163,7 +163,7 @@ def ask_user_questions(exec_mode: ExecutionMode = ExecutionMode.Full):
 			menu.run()
 
 
-def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
+def perform_installation(mountpoint: Path, exec_mode: ExecutionMode) -> None:
 	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
 	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
