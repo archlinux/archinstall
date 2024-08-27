@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 class ProfileHandler:
 	def __init__(self) -> None:
 		self._profiles_path: Path = storage['PROFILE']
-		self._profiles = None
+		self._profiles: Optional[list[Profile]] = None
 
 		# special variable to keep track of a profile url configuration
 		# it is merely used to be able to export the path again when a user

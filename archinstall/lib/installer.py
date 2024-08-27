@@ -1465,7 +1465,7 @@ Exec = /bin/sh -c "{hook_command}"
 			case Bootloader.Limine:
 				self._add_limine_bootloader(boot_partition, efi_partition, root)
 
-	def add_additional_packages(self, packages: Union[str, List[str]]) -> bool:
+	def add_additional_packages(self, packages: Union[str, List[str]]) -> None:
 		return self.pacman.strap(packages)
 
 	def enable_sudo(self, entity: str, group: bool = False):

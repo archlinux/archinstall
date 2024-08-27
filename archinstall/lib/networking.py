@@ -26,11 +26,11 @@ class DownloadTimer():
 				The download timeout in seconds. The DownloadTimeout exception
 				will be raised in the context after this many seconds.
 		'''
-		self.time = None
-		self.start_time = None
+		self.time: Optional[float] = None
+		self.start_time: Optional[float] = None
 		self.timeout = timeout
 		self.previous_handler = None
-		self.previous_timer = None
+		self.previous_timer: Optional[int] = None
 
 	def raise_timeout(self, signl, frame) -> None:
 		'''
@@ -40,7 +40,7 @@ class DownloadTimer():
 
 	def __enter__(self):
 		if self.timeout > 0:
-			self.previous_handler = signal.signal(signal.SIGALRM, self.raise_timeout)
+			self.previous_handler = signal.signal(signal.SIGALRM, self.raise_timeout)  # type: ignore[assignment]
 			self.previous_timer = signal.alarm(self.timeout)
 
 		self.start_time = time.time()
