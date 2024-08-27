@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class PipewireProfile(Profile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Pipewire', ProfileType.Application)
 
 	@property
@@ -26,7 +26,7 @@ class PipewireProfile(Profile):
 			'wireplumber'
 		]
 
-	def _enable_pipewire_for_all(self, install_session: 'Installer'):
+	def _enable_pipewire_for_all(self, install_session: 'Installer') -> None:
 		users: Union[User, List[User]] = archinstall.arguments.get('!users', [])
 		if not isinstance(users, list):
 			users = [users]
@@ -34,7 +34,7 @@ class PipewireProfile(Profile):
 		for user in users:
 			install_session.arch_chroot('systemctl enable --user pipewire-pulse.service', run_as=user.username)
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)
 		install_session.add_additional_packages(self.packages)
 		self._enable_pipewire_for_all(install_session)

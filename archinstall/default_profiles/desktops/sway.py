@@ -16,7 +16,7 @@ class SeatAccess(Enum):
 
 
 class SwayProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__(
 			'Sway',
 			ProfileType.WindowMgr,
@@ -56,7 +56,7 @@ class SwayProfile(XorgProfile):
 			return [pref]
 		return []
 
-	def _ask_seat_access(self):
+	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
 		title = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
 		title += str(_('\n\nChoose an option to give Sway access to your hardware'))
@@ -73,5 +73,5 @@ class SwayProfile(XorgProfile):
 	def do_on_select(self):
 		self._ask_seat_access()
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)

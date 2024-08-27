@@ -58,7 +58,7 @@ class Profile:
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
 		advanced: bool = False
-	):
+	) -> None:
 		self.name = name
 		self.description = description
 		self.profile_type = profile_type
@@ -100,19 +100,19 @@ class Profile:
 		"""
 		return None
 
-	def _advanced_check(self):
+	def _advanced_check(self) -> bool:
 		"""
 		Used to control if the Profile() should be visible or not in different contexts.
 		Returns True if --advanced is given on a Profile(advanced=True) instance.
 		"""
 		return self.advanced is False or storage['arguments'].get('advanced', False) is True
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		"""
 		Performs installation steps when this profile was selected
 		"""
 
-	def post_install(self, install_session: 'Installer'):
+	def post_install(self, install_session: 'Installer') -> None:
 		"""
 		Hook that will be called when the installation process is
 		finished and custom installation steps for specific default_profiles
@@ -131,7 +131,7 @@ class Profile:
 		"""
 		return SelectResult.NewSelection
 
-	def set_custom_settings(self, settings: Dict[str, Any]):
+	def set_custom_settings(self, settings: Dict[str, Any]) -> None:
 		"""
 		Set the custom settings for the profile.
 		This is also called when the settings are parsed from the config
@@ -144,7 +144,7 @@ class Profile:
 			return [s.name for s in self.current_selection]
 		return []
 
-	def reset(self):
+	def reset(self) -> None:
 		self.current_selection = []
 
 	def is_top_level_profile(self) -> bool:
