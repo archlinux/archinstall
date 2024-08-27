@@ -148,7 +148,7 @@ class PartitioningList(ListManager):
 		self,
 		partition: PartitionModification,
 		option: BtrfsMountOption
-	):
+	) -> None:
 		if option.value not in partition.mount_options:
 			if option == BtrfsMountOption.compress:
 				partition.mount_options = [
@@ -167,13 +167,13 @@ class PartitioningList(ListManager):
 				o for o in partition.mount_options if o != option.value
 			]
 
-	def _set_btrfs_subvolumes(self, partition: PartitionModification):
+	def _set_btrfs_subvolumes(self, partition: PartitionModification) -> None:
 		partition.btrfs_subvols = SubvolumeMenu(
 			_("Manage btrfs subvolumes for current partition"),
 			partition.btrfs_subvols
 		).run()
 
-	def _prompt_formatting(self, partition: PartitionModification):
+	def _prompt_formatting(self, partition: PartitionModification) -> None:
 		# an existing partition can toggle between Exist or Modify
 		if partition.is_modify():
 			partition.status = ModificationStatus.Exist

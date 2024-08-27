@@ -29,7 +29,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 		super().__init__(data_store=data_store, preview_size=0.5)
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		self._menu_options['disk_config'] = \
 			Selector(
 				_('Partitioning'),
