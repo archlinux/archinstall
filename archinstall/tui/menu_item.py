@@ -63,7 +63,7 @@ class MenuItemGroup:
 
 	_filter_pattern: str = ''
 
-	def __post_init__(self):
+	def __post_init__(self) -> None:
 		if len(self.menu_items) < 1:
 			raise ValueError('Menu must have at least one item')
 
@@ -118,19 +118,19 @@ class MenuItemGroup:
 	def filter_pattern(self):
 		return self._filter_pattern
 
-	def set_filter_pattern(self, pattern: str):
+	def set_filter_pattern(self, pattern: str) -> None:
 		self._filter_pattern = pattern
 		self.reload_focus_itme()
 
-	def append_filter(self, pattern: str):
+	def append_filter(self, pattern: str) -> None:
 		self._filter_pattern += pattern
 		self.reload_focus_itme()
 
-	def reduce_filter(self):
+	def reduce_filter(self) -> None:
 		self._filter_pattern = self._filter_pattern[:-1]
 		self.reload_focus_itme()
 
-	def set_focus_item_index(self, index: int):
+	def set_focus_item_index(self, index: int) -> None:
 		items = self.items
 		non_empty_items = [item for item in items if not item.is_empty()]
 		if index < 0 or index >= len(non_empty_items):
@@ -141,14 +141,14 @@ class MenuItemGroup:
 				self.focus_item = item
 				return
 
-	def reload_focus_itme(self):
+	def reload_focus_itme(self) -> None:
 		if self.focus_item not in self.items:
 			self.focus_first()
 
 	def is_item_selected(self, item: MenuItem) -> bool:
 		return item in self.selected_items
 
-	def select_current_item(self):
+	def select_current_item(self) -> None:
 		if self.focus_item:
 			if self.focus_item in self.selected_items:
 				self.selected_items.remove(self.focus_item)
@@ -179,17 +179,17 @@ class MenuItemGroup:
 		rev_items = list(reversed(items))
 		return self._first(rev_items, ignore_empty)
 
-	def focus_first(self):
+	def focus_first(self) -> None:
 		first_item = self.get_first_item()
 		if first_item:
 			self.focus_item = first_item
 
-	def focus_last(self):
+	def focus_last(self) -> None:
 		last_item = self.get_last_item()
 		if last_item:
 			self.focus_item = last_item
 
-	def focus_prev(self, skip_empty: bool = True):
+	def focus_prev(self, skip_empty: bool = True) -> None:
 		items = self.items
 
 		if self.focus_item not in items:
@@ -203,7 +203,7 @@ class MenuItemGroup:
 		if self.focus_item.is_empty() and skip_empty:
 			self.focus_prev(skip_empty)
 
-	def focus_next(self, skip_empty: bool = True):
+	def focus_next(self, skip_empty: bool = True) -> None:
 		items = self.items
 
 		if self.focus_item not in items:

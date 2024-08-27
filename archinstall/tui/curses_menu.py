@@ -25,15 +25,15 @@ if TYPE_CHECKING:
 
 
 class AbstractCurses(metaclass=ABCMeta):
-	def __init__(self):
+	def __init__(self) -> None:
 		self._help_window: Optional[Viewport] = None
 		self._set_help_viewport()
 
 	@abstractmethod
-	def resize_win(self):
+	def resize_win(self) -> None:
 		pass
 
-	def clear_help_win(self):
+	def clear_help_win(self) -> None:
 		if self._help_window:
 			self._help_window.erase()
 
@@ -41,7 +41,7 @@ class AbstractCurses(metaclass=ABCMeta):
 	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		pass
 
-	def _set_help_viewport(self):
+	def _set_help_viewport(self) -> None:
 		max_height, max_width = tui.max_yx
 		width = max_width - 10
 		height = max_height - 10
@@ -73,7 +73,7 @@ class AbstractCurses(metaclass=ABCMeta):
 	def help_entry(self) -> ViewportEntry:
 		return ViewportEntry(str(_('Press Ctrl+h for help')), 0, 0, STYLE.NORMAL)
 
-	def _show_help(self):
+	def _show_help(self) -> None:
 		if not self._help_window:
 			return
 
@@ -118,10 +118,10 @@ class AbstractCurses(metaclass=ABCMeta):
 
 @dataclass
 class AbstractViewport:
-	def __init__(self):
+	def __init__(self) -> None:
 		pass
 
-	def add_str(self, screen: Any, row: int, col: int, text: str, color: STYLE):
+	def add_str(self, screen: Any, row: int, col: int, text: str, color: STYLE) -> None:
 		try:
 			screen.addstr(row, col, text, tui.get_color(color))
 		except curses.error:
@@ -214,7 +214,7 @@ class AbstractViewport:
 		dim: _FrameDim,
 		h_bar: str,
 		scroll_pct: Optional[int] = None
-	):
+	) -> ViewportEntry:
 		if scroll_pct is None:
 			bottom = Chars.Lower_left + h_bar + Chars.Lower_right
 		else:
@@ -290,7 +290,7 @@ class EditViewport(AbstractViewport):
 		y_start: int,
 		process_key: Callable[[int], int],
 		frame: FrameProperties
-	):
+	) -> None:
 		super().__init__()
 
 		self._max_height, self._max_width = tui.max_yx
@@ -308,7 +308,7 @@ class EditViewport(AbstractViewport):
 
 		self._init_wins()
 
-	def _init_wins(self):
+	def _init_wins(self) -> None:
 		self._main_win = curses.newwin(self.height, self.width, self.y_start, self.x_start)
 		self._main_win.nodelay(False)
 
@@ -319,7 +319,7 @@ class EditViewport(AbstractViewport):
 			self.x_start + 1
 		)
 
-	def update(self):
+	def update(self) -> None:
 		if not self._main_win:
 			return
 
@@ -337,12 +337,12 @@ class EditViewport(AbstractViewport):
 
 		self._main_win.refresh()
 
-	def erase(self):
+	def erase(self) -> None:
 		if self._main_win:
 			self._main_win.erase()
 			self._main_win.refresh()
 
-	def edit(self):
+	def edit(self) -> None:
 		if not self._edit_win or not self._main_win:
 			return
 
@@ -373,7 +373,7 @@ class Viewport(AbstractViewport):
 		y_start: int,
 		enable_scroll: bool = False,
 		frame: Optional[FrameProperties] = None
-	):
+	) -> None:
 		super().__init__()
 
 		self.width = width
@@ -389,7 +389,7 @@ class Viewport(AbstractViewport):
 	def getch(self):
 		return self._main_win.getch()
 
-	def erase(self):
+	def erase(self) -> None:
 		self._main_win.erase()
 		self._main_win.refresh()
 
@@ -398,7 +398,7 @@ class Viewport(AbstractViewport):
 		entries: List[ViewportEntry],
 		cursor_pos: int = 0,
 		scroll_pos: Optional[int] = 0
-	):
+	) -> None:
 		visible_rows, percentage = self._find_visible_rows(entries, cursor_pos, scroll_pos)
 
 		if self._frame:
@@ -529,7 +529,7 @@ class EditMenu(AbstractCurses):
 		self._last_state: Optional[Result] = None
 		self._help_active = False
 
-	def _init_viewports(self):
+	def _init_viewports(self) -> None:
 		x_offset = 0
 		y_offset = 0
 		edit_width = 50
@@ -565,10 +565,10 @@ class EditMenu(AbstractCurses):
 		self._clear_all()
 		return result
 
-	def resize_win(self):
+	def resize_win(self) -> None:
 		self._draw()
 
-	def _clear_all(self):
+	def _clear_all(self) -> None:
 		if self._help_vp:
 			self._help_vp.erase()
 		if self._header_vp:
@@ -592,7 +592,7 @@ class EditMenu(AbstractCurses):
 
 		return text
 
-	def _draw(self):
+	def _draw(self) -> None:
 		if self._help_vp:
 			self._help_vp.update([self.help_entry()], 0)
 
@@ -767,10 +767,10 @@ class SelectMenu(AbstractCurses):
 				if self._handle_interrupt():
 					return Result(ResultType.Reset, None)
 
-	def resize_win(self):
+	def resize_win(self) -> None:
 		self._draw()
 
-	def _clear_all(self):
+	def _clear_all(self) -> None:
 		self.clear_help_win()
 
 		if self._header_vp:
@@ -791,7 +791,7 @@ class SelectMenu(AbstractCurses):
 
 		return []
 
-	def _init_viewports(self, arg_prev_size: float | Literal['auto']):
+	def _init_viewports(self, arg_prev_size: float | Literal['auto']) -> None:
 		footer_height = 2  # possible filter at the bottom
 		y_offset = 0
 
@@ -862,7 +862,7 @@ class SelectMenu(AbstractCurses):
 
 		return prev_size
 
-	def _draw(self):
+	def _draw(self) -> None:
 		footer_entries = self._footer_entries()
 
 		vp_entries = self._get_row_entries()
@@ -890,7 +890,7 @@ class SelectMenu(AbstractCurses):
 		viewport: Viewport,
 		entries: List[ViewportEntry],
 		cursor_pos: int = 0
-	):
+	) -> None:
 		if entries:
 			viewport.update(entries, cursor_pos=cursor_pos)
 		else:
@@ -994,7 +994,7 @@ class SelectMenu(AbstractCurses):
 
 		return entries
 
-	def _update_preview(self):
+	def _update_preview(self) -> None:
 		if not self._preview_vp:
 			return
 
@@ -1017,7 +1017,7 @@ class SelectMenu(AbstractCurses):
 
 		self._preview_vp.update(entries, scroll_pos=self._prev_scroll_pos)
 
-	def _calc_prev_scroll_pos(self, entries: List[ViewportEntry]):
+	def _calc_prev_scroll_pos(self, entries: List[ViewportEntry]) -> None:
 		total_rows = max([e.row for e in entries]) + 1  # rows start with 0 and we need the count
 
 		if self._prev_scroll_pos >= total_rows:
@@ -1134,7 +1134,7 @@ class SelectMenu(AbstractCurses):
 		self._draw()
 		return None
 
-	def _focus_item(self, key: MenuKeys):
+	def _focus_item(self, key: MenuKeys) -> None:
 		focus_item = self._item_group.focus_item
 		next_row = 0
 		next_col = 0
@@ -1178,14 +1178,14 @@ class SelectMenu(AbstractCurses):
 
 
 class Tui:
-	def __init__(self):
+	def __init__(self) -> None:
 		self._screen: Any = None
 		self._colors: Dict[str, int] = {}
 		self._component: Optional[AbstractCurses] = None
 
 		signal.signal(signal.SIGWINCH, self._sig_win_resize)
 
-	def init(self):
+	def init(self) -> None:
 		self._screen = curses.initscr()
 
 		curses.noecho()
@@ -1212,7 +1212,7 @@ class Tui:
 	def run(self, component: AbstractCurses) -> Result:
 		return self._main_loop(component)
 
-	def _sig_win_resize(self, signum: int, frame):
+	def _sig_win_resize(self, signum: int, frame) -> None:
 		if self._component:
 			self._component.resize_win()
 
@@ -1220,14 +1220,14 @@ class Tui:
 		self._screen.refresh()
 		return component.kickoff(self._screen)
 
-	def _reset_terminal(self):
+	def _reset_terminal(self) -> None:
 		os.system("reset")
 
-	def _soft_clear_terminal(self):
+	def _soft_clear_terminal(self) -> None:
 		print(chr(27) + "[2J", end="")
 		print(chr(27) + "[1;1H", end="")
 
-	def _set_up_colors(self):
+	def _set_up_colors(self) -> None:
 		curses.init_pair(STYLE.NORMAL.value, curses.COLOR_WHITE, curses.COLOR_BLACK)
 		curses.init_pair(STYLE.CURSOR_STYLE.value, curses.COLOR_CYAN, curses.COLOR_BLACK)
 		curses.init_pair(STYLE.MENU_STYLE.value, curses.COLOR_WHITE, curses.COLOR_BLUE)
