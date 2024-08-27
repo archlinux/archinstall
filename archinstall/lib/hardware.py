@@ -141,7 +141,7 @@ class GfxDriver(Enum):
 		return packages
 
 class _SysInfo:
-	def __init__(self):
+	def __init__(self) -> None:
 		pass
 
 	@cached_property

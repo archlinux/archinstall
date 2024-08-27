@@ -60,7 +60,7 @@ class LocaleMenu(AbstractSubMenu):
 		self._preset = locale_conf
 		super().__init__(data_store=data_store)
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		self._menu_options['keyboard-layout'] = \
 			Selector(
 				_('Keyboard layout'),

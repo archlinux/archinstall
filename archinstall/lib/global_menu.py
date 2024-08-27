@@ -38,7 +38,7 @@ class GlobalMenu(AbstractMenu):
 	def __init__(self, data_store: Dict[str, Any]):
 		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		# archinstall.Language will not use preset values
 		self._menu_options['archinstall-language'] = \
 			Selector(
@@ -181,7 +181,7 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
 
 	def _missing_configs(self) -> List[str]:
-		def check(s) -> bool:
+		def check(s: str) -> bool:
 			obj = self._menu_options.get(s)
 			if obj and obj.has_selection():
 				return True
@@ -216,7 +216,7 @@ class GlobalMenu(AbstractMenu):
 			return False
 		return self._validate_bootloader() is None
 
-	def _update_uki_display(self, name: Optional[str] = None):
+	def _update_uki_display(self, name: Optional[str] = None) -> None:
 		if bootloader := self._menu_options['bootloader'].current_selection:
 			if not SysInfo.has_uefi() or not bootloader.has_uki_support():
 				self._menu_options['uki'].set_current_selection(False)
@@ -224,15 +224,15 @@ class GlobalMenu(AbstractMenu):
 			elif name and name == 'bootloader':
 				self._menu_options['uki'].set_enabled(True)
 
-	def _update_install_text(self, name: Optional[str] = None, value: Any = None):
+	def _update_install_text(self, name: Optional[str] = None, value: Any = None) -> None:
 		text = self._install_text()
 		self._menu_options['install'].update_description(text)
 
-	def post_callback(self, name: Optional[str] = None, value: Any = None):
+	def post_callback(self, name: Optional[str] = None, value: Any = None) -> None:
 		self._update_uki_display(name)
 		self._update_install_text(name, value)
 
-	def _install_text(self):
+	def _install_text(self) -> str:
 		missing = len(self._missing_configs())
 		if missing > 0:
 			return _('Install ({} config(s) missing)').format(missing)
@@ -281,7 +281,7 @@ class GlobalMenu(AbstractMenu):
 				return output
 		return None
 
-	def _prev_additional_pkgs(self):
+	def _prev_additional_pkgs(self) -> Optional[str]:
 		selector = self._menu_options['packages']
 		if selector.current_selection:
 			packages: List[str] = selector.current_selection

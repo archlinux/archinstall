@@ -19,7 +19,7 @@ class DownloadTimer():
 	'''
 	Context manager for timing downloads with timeouts.
 	'''
-	def __init__(self, timeout=5):
+	def __init__(self, timeout: int = 5):
 		'''
 		Args:
 			timeout:
@@ -32,7 +32,7 @@ class DownloadTimer():
 		self.previous_handler = None
 		self.previous_timer = None
 
-	def raise_timeout(self, signl, frame):
+	def raise_timeout(self, signl, frame) -> None:
 		'''
 		Raise the DownloadTimeout exception.
 		'''
@@ -46,7 +46,7 @@ class DownloadTimer():
 		self.start_time = time.time()
 		return self
 
-	def __exit__(self, typ, value, traceback):
+	def __exit__(self, typ, value, traceback) -> None:
 		if self.start_time:
 			time_delta = time.time() - self.start_time
 			signal.alarm(0)
@@ -136,7 +136,7 @@ def fetch_data_from_url(url: str, params: Optional[Dict] = None) -> str:
 		raise ValueError(f'Unable to fetch data from url: {url}')
 
 
-def calc_checksum(icmp_packet):
+def calc_checksum(icmp_packet) -> int:
 	# Calculate the ICMP checksum
 	checksum = 0
 	for i in range(0, len(icmp_packet), 2):
@@ -158,7 +158,7 @@ def build_icmp(payload):
 
 	return struct.pack('!BBHHH', 8, 0, checksum, 0, 1) + payload
 
-def ping(hostname, timeout=5):
+def ping(hostname, timeout=5) -> int:
 	watchdog = select.epoll()
 	started = time.time()
 	random_identifier = f'archinstall-{random.randint(1000, 9999)}'.encode()

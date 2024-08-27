@@ -124,7 +124,7 @@ class NetworkConfiguration:
 		self,
 		installation: Any,
 		profile_config: Optional[ProfileConfiguration] = None
-	):
+	) -> None:
 		match self.type:
 			case NicType.ISO:
 				installation.copy_iso_network_config(

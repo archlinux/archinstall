@@ -430,7 +430,7 @@ class SysCommand:
 
 		return True
 
-	def decode(self, encoding: str = 'utf-8', errors='backslashreplace', strip: bool = True) -> str:
+	def decode(self, encoding: str = 'utf-8', errors: str = 'backslashreplace', strip: bool = True) -> str:
 		if not self.session:
 			raise ValueError('No session available to decode')
 
@@ -520,6 +520,6 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 	return True
 
 
-def secret(x :str):
+def secret(x :str) -> str:
 	""" return * with len equal to to the input string """
 	return '*' * len(x)

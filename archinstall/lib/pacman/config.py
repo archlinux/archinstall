@@ -12,10 +12,10 @@ class Config:
 		self.chroot_path = target / "etc" / "pacman.conf"
 		self.repos: List[Repo] = []
 
-	def enable(self, repo: Repo):
+	def enable(self, repo: Repo) -> None:
 		self.repos.append(repo)
 
-	def apply(self):
+	def apply(self) -> None:
 		if not self.repos:
 			return
 
@@ -39,6 +39,6 @@ class Config:
 				else:
 					f.write(line)
 
-	def persist(self):
+	def persist(self) -> None:
 		if self.repos:
 			copy2(self.path, self.chroot_path)

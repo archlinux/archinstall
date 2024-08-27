@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 
 class ProfileHandler:
-	def __init__(self):
+	def __init__(self) -> None:
 		self._profiles_path: Path = storage['PROFILE']
 		self._profiles = None
 
@@ -138,7 +138,7 @@ class ProfileHandler:
 	def _local_mac_addresses(self) -> List[str]:
 		return list(list_interfaces())
 
-	def add_custom_profiles(self, profiles: Union[Profile, List[Profile]]):
+	def add_custom_profiles(self, profiles: Union[Profile, List[Profile]]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -147,7 +147,7 @@ class ProfileHandler:
 
 		self._verify_unique_profile_names(self.profiles)
 
-	def remove_custom_profiles(self, profiles: Union[Profile, List[Profile]]):
+	def remove_custom_profiles(self, profiles: Union[Profile, List[Profile]]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -174,7 +174,7 @@ class ProfileHandler:
 		match_mac_addr_profiles = list(filter(lambda x: x.name in self._local_mac_addresses, tailored))
 		return match_mac_addr_profiles
 
-	def install_greeter(self, install_session: 'Installer', greeter: GreeterType):
+	def install_greeter(self, install_session: 'Installer', greeter: GreeterType) -> None:
 		packages = []
 		service = None
 
@@ -213,7 +213,7 @@ class ProfileHandler:
 			with open(path, 'w') as file:
 				file.write(filedata)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver):
+	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
 		debug(f'Installing GFX driver: {driver.value}')
 
 		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
@@ -232,7 +232,7 @@ class ProfileHandler:
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
 
-	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
+	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration) -> None:
 		profile = profile_config.profile
 
 		if not profile:
@@ -246,7 +246,7 @@ class ProfileHandler:
 		if profile_config.greeter:
 			self.install_greeter(install_session, profile_config.greeter)
 
-	def _import_profile_from_url(self, url: str):
+	def _import_profile_from_url(self, url: str) -> None:
 		"""
 		Import default_profiles from a url path
 		"""

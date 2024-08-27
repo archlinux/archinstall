@@ -7,7 +7,7 @@ class TextInput:
 		self._prompt = prompt
 		self._prefilled_text = prefilled_text
 
-	def _hook(self):
+	def _hook(self) -> None:
 		readline.insert_text(self._prefilled_text)
 		readline.redisplay()
 

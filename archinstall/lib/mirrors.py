@@ -203,7 +203,7 @@ class MirrorMenu(AbstractSubMenu):
 
 		super().__init__(data_store=data_store)
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		self._menu_options['mirror_regions'] = \
 			Selector(
 				_('Mirror region'),
@@ -281,7 +281,7 @@ def select_mirror_regions(preset_values: Dict[str, List[str]] = {}) -> Dict[str,
 	return {}
 
 
-def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []):
+def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []) -> list[CustomMirror]:
 	custom_mirrors = CustomMirrorList(prompt, preset).run()
 	return custom_mirrors
 
