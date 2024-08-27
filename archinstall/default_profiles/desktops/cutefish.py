@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class CutefishProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Cutefish', ProfileType.DesktopEnv, description='')
 
 	@property
@@ -23,5 +23,5 @@ class CutefishProfile(XorgProfile):
 	def default_greeter_type(self) -> Optional[GreeterType]:
 		return GreeterType.Sddm
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)

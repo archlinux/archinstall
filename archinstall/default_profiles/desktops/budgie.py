@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class BudgieProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Budgie', ProfileType.DesktopEnv, description='')
 
 	@property

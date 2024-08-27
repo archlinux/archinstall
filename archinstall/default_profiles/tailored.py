@@ -9,13 +9,13 @@ if TYPE_CHECKING:
 
 
 class TailoredProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('52-54-00-12-34-56', ProfileType.Tailored, description='')
 
 	@property
 	def packages(self) -> List[str]:
 		return ['nano', 'wget', 'git']
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)
 		# do whatever you like here :)

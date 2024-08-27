@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class MateProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Mate', ProfileType.DesktopEnv, description='')
 
 	@property

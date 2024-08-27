@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class AwesomeProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Awesome', ProfileType.WindowMgr, description='')
 
 	@property
@@ -28,7 +28,7 @@ class AwesomeProfile(XorgProfile):
 			'xsel',
 		]
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)
 
 		# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.
