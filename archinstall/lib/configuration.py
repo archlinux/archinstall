@@ -36,14 +36,14 @@ class ConfigurationOutput:
 		self._process_config()
 
 	@property
-	def user_credentials_file(self):
+	def user_credentials_file(self) -> str:
 		return self._user_creds_file
 
 	@property
-	def user_configuration_file(self):
+	def user_configuration_file(self) -> str:
 		return self._user_config_file
 
-	def _process_config(self):
+	def _process_config(self) -> None:
 		for key, value in self._config.items():
 			if key in self._sensitive:
 				self._user_credentials[key] = value
@@ -68,7 +68,7 @@ class ConfigurationOutput:
 			return json.dumps(self._user_credentials, indent=4, sort_keys=True, cls=UNSAFE_JSON)
 		return None
 
-	def show(self):
+	def show(self) -> None:
 		print(_('\nThis is your chosen configuration:'))
 		debug(" -- Chosen configuration --")
 
@@ -84,20 +84,20 @@ class ConfigurationOutput:
 			)
 		return dest_path_ok
 
-	def save_user_config(self, dest_path: Path):
+	def save_user_config(self, dest_path: Path) -> None:
 		if self._is_valid_path(dest_path):
 			target = dest_path / self._user_config_file
 			target.write_text(self.user_config_to_json())
 			os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save_user_creds(self, dest_path: Path):
+	def save_user_creds(self, dest_path: Path) -> None:
 		if self._is_valid_path(dest_path):
 			if user_creds := self.user_credentials_to_json():
 				target = dest_path / self._user_creds_file
 				target.write_text(user_creds)
 				os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save(self, dest_path: Optional[Path] = None):
+	def save(self, dest_path: Optional[Path] = None) -> None:
 		dest_path = dest_path or self._default_save_path
 
 		if self._is_valid_path(dest_path):
@@ -105,8 +105,8 @@ class ConfigurationOutput:
 			self.save_user_creds(dest_path)
 
 
-def save_config(config: Dict):
-	def preview(selection: str):
+def save_config(config: Dict) -> None:
+	def preview(selection: str) -> Optional[str]:
 		match options[selection]:
 			case "user_config":
 				serialized = config_output.user_config_to_json()

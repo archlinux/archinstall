@@ -26,7 +26,7 @@ class MenuSelection:
 
 	@property
 	def single_value(self) -> Any:
-		return self.value  # type: ignore
+		return self.value
 
 	@property
 	def multi_value(self) -> List[Any]:
@@ -251,7 +251,7 @@ class Menu(TerminalMenu):
 		except KeyboardInterrupt:
 			return MenuSelection(type_=MenuSelectionType.Reset)
 
-		def check_default(elem):
+		def check_default(elem) -> str:
 			if self._default_option is not None and self._default_menu_value in elem:
 				return self._default_option
 			else:
@@ -294,13 +294,13 @@ class Menu(TerminalMenu):
 
 		return selection
 
-	def set_cursor_pos(self,pos :int):
+	def set_cursor_pos(self,pos :int) -> None:
 		if pos and 0 < pos < len(self._menu_entries):
 			self._view.active_menu_index = pos
 		else:
 			self._view.active_menu_index = 0  # we define a default
 
-	def set_cursor_pos_entry(self,value :str):
+	def set_cursor_pos_entry(self,value :str) -> None:
 		pos = self._menu_entries.index(value)
 		self.set_cursor_pos(pos)
 

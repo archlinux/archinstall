@@ -86,10 +86,10 @@ class Selector:
 	def do_store(self) -> bool:
 		return self._no_store is False
 
-	def set_enabled(self, status: bool = True):
+	def set_enabled(self, status: bool = True) -> None:
 		self.enabled = status
 
-	def update_description(self, description: str):
+	def update_description(self, description: str) -> None:
 		self.description = description
 
 	def menu_text(self, padding: int = 0) -> str:
@@ -114,7 +114,7 @@ class Selector:
 
 		return f'{description} {current}'
 
-	def set_current_selection(self, current: Optional[Any]):
+	def set_current_selection(self, current: Optional[Any]) -> None:
 		self.current_selection = current
 
 	def has_selection(self) -> bool:
@@ -138,7 +138,7 @@ class Selector:
 	def is_mandatory(self) -> bool:
 		return self.mandatory
 
-	def set_mandatory(self, value: bool):
+	def set_mandatory(self, value: bool) -> None:
 		self.mandatory = value
 
 
@@ -204,16 +204,16 @@ class AbstractMenu:
 	def translation_handler(self) -> TranslationHandler:
 		return self._translation_handler
 
-	def _populate_default_values(self):
+	def _populate_default_values(self) -> None:
 		for config_key, selector in self._menu_options.items():
 			if selector.default is not None and config_key not in self._data_store:
 				self._data_store[config_key] = selector.default
 
-	def _sync_all(self):
+	def _sync_all(self) -> None:
 		for key in self._menu_options.keys():
 			self._sync(key)
 
-	def _sync(self, selector_name: str):
+	def _sync(self, selector_name: str) -> None:
 		value = self._data_store.get(selector_name, None)
 		selector = self._menu_options.get(selector_name, None)
 
@@ -222,13 +222,13 @@ class AbstractMenu:
 		elif selector is not None and selector.has_selection():
 			self._data_store[selector_name] = selector.current_selection
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		""" Define the menu options.
 			Menu options can be defined here in a subclass or done per program calling self.set_option()
 		"""
 		return
 
-	def pre_callback(self, selector_name):
+	def pre_callback(self, selector_name) -> None:
 		""" will be called before each action in the menu """
 		return
 
@@ -236,14 +236,14 @@ class AbstractMenu:
 		""" will be called after each action in the menu """
 		return True
 
-	def exit_callback(self):
+	def exit_callback(self) -> None:
 		""" will be called at the end of the processing of the menu """
 		return
 
-	def _update_enabled_order(self, selector_name: str):
+	def _update_enabled_order(self, selector_name: str) -> None:
 		self._enabled_order.append(selector_name)
 
-	def enable(self, selector_name: str, mandatory: bool = False):
+	def enable(self, selector_name: str, mandatory: bool = False) -> None:
 		""" activates menu options """
 		if self._menu_options.get(selector_name, None):
 			self._menu_options[selector_name].set_enabled(True)
@@ -259,7 +259,7 @@ class AbstractMenu:
 			return preview()
 		return None
 
-	def _get_menu_text_padding(self, entries: List[Selector]):
+	def _get_menu_text_padding(self, entries: List[Selector]) -> int:
 		return max([len(str(selection.description)) for selection in entries])
 
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:

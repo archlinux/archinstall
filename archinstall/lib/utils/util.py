@@ -20,7 +20,7 @@ def prompt_dir(text: str, header: Optional[str] = None) -> Path:
 		info(_('Not a valid directory: {}').format(dest_path))
 
 
-def is_subpath(first: Path, second: Path):
+def is_subpath(first: Path, second: Path) -> bool:
 	"""
 	Check if _first_ a subpath of _second_
 	"""

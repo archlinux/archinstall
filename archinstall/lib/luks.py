@@ -30,14 +30,14 @@ class Luks2:
 			return Path(f'/dev/mapper/{self.mapper_name}')
 		return None
 
-	def __post_init__(self):
+	def __post_init__(self) -> None:
 		if self.luks_dev_path is None:
 			raise ValueError('Partition must have a path set')
 
-	def __enter__(self):
+	def __enter__(self) -> None:
 		self.unlock(self.key_file)
 
-	def __exit__(self, *args: str, **kwargs: str):
+	def __exit__(self, *args: str, **kwargs: str) -> None:
 		if self.auto_unmount:
 			self.lock()
 
@@ -130,7 +130,7 @@ class Luks2:
 	def is_unlocked(self) -> bool:
 		return self.mapper_name is not None and Path(f'/dev/mapper/{self.mapper_name}').exists()
 
-	def unlock(self, key_file: Optional[Path] = None):
+	def unlock(self, key_file: Optional[Path] = None) -> None:
 		"""
 		Unlocks the luks device, an optional key file location for unlocking can be specified,
 		otherwise a default location for the key file will be used.
@@ -171,7 +171,7 @@ class Luks2:
 		if not self.mapper_dev or not self.mapper_dev.is_symlink():
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
-	def lock(self):
+	def lock(self) -> None:
 		disk.device_handler.umount(self.luks_dev_path)
 
 		# Get crypt-information about the device by doing a reverse lookup starting with the partition path
@@ -191,7 +191,7 @@ class Luks2:
 
 		self._mapper_dev = None
 
-	def create_keyfile(self, target_path: Path, override: bool = False):
+	def create_keyfile(self, target_path: Path, override: bool = False) -> None:
 		"""
 		Routine to create keyfiles, so it can be moved elsewhere
 		"""
@@ -221,7 +221,7 @@ class Luks2:
 		self._add_key(key_file)
 		self._crypttab(crypttab_path, kf_path, options=["luks", "key-slot=1"])
 
-	def _add_key(self, key_file: Path):
+	def _add_key(self, key_file: Path) -> None:
 		debug(f'Adding additional key-file {key_file}')
 
 		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'

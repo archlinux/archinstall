@@ -38,7 +38,7 @@ class AudioConfiguration:
 	def install_audio_config(
 		self,
 		installation: Any
-	):
+	) -> None:
 		info(f'Installing audio server: {self.audio.name}')
 
 		match self.audio:

@@ -146,7 +146,7 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-def _check_log_permissions():
+def _check_log_permissions() -> None:
 	filename = storage.get('LOG_FILE', None)
 	log_dir = storage.get('LOG_PATH', Path('./'))
 
@@ -258,7 +258,7 @@ def info(
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
@@ -269,7 +269,7 @@ def debug(
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
@@ -280,7 +280,7 @@ def error(
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
@@ -291,7 +291,7 @@ def warn(
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
@@ -302,7 +302,7 @@ def log(
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	# leave this check here as we need to setup the logging
 	# right from the beginning when the modules are loaded
 	_check_log_permissions()
