@@ -23,7 +23,7 @@ if archinstall.arguments.get('help'):
 	exit(0)
 
 
-def ask_user_questions():
+def ask_user_questions() -> None:
 	"""
 		First, we'll ask the user for a bunch of user input.
 		Not until we're satisfied with what we want to install
@@ -97,7 +97,7 @@ def ask_user_questions():
 	global_menu.run()
 
 
-def perform_installation(mountpoint: Path):
+def perform_installation(mountpoint: Path) -> None:
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
