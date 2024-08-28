@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Optional, List, Dict, TYPE_CHECKING, Any
 from typing import Union
 
-import parted  # type: ignore
+import parted
 import _ped  # type: ignore
 from parted import Disk, Geometry, Partition
 
@@ -623,7 +623,7 @@ class FilesystemType(Enum):
 		match self:
 			case FilesystemType.Ntfs: return 'ntfs3'
 			case FilesystemType.Fat32: return 'vfat'
-			case _: return self.value  # type: ignore
+			case _: return self.value
 
 	@property
 	def installation_pkg(self) -> Optional[str]:

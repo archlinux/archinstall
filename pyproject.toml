@@ -62,9 +62,58 @@ archinstall = "archinstall"
 
 [tool.mypy]
 python_version = "3.11"
-files = "archinstall/"
-exclude = "tests"
-check_untyped_defs=true
+files = "."
+exclude = "^build/"
+check_untyped_defs = true
+disallow_any_explicit = false
+disallow_any_expr = false
+disallow_any_generics = false
+disallow_any_unimported = false
+disallow_incomplete_defs = false
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = false
+extra_checks = true
+strict = false
+strict_equality = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "archinstall.examples.*"
+disallow_any_explicit = true
+disallow_any_generics = true
+disallow_any_unimported = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+follow_imports = "silent"
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.*"
+strict_equality = false
+warn_return_any = false
+warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.scripts.*"
+warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.tui.*"
+strict_equality = false
+warn_return_any = false
+warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = [
+    "parted",
+    "simple_term_menu",
+]
+ignore_missing_imports = true
 
 [tool.bandit]
 targets = ["archinstall"]

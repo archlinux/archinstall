@@ -20,6 +20,4 @@ jobs:
             - run: python --version
             - run: mypy --version
             - name: run mypy
-              run: mypy --config-file pyproject.toml
-            - name: run mypy strict
-              run: mypy --config-file mypy.ini
+              run: mypy

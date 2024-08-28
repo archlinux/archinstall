@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Callable, Optional
 
 import archinstall
 from archinstall import Installer
@@ -12,7 +12,7 @@ from archinstall import locale
 from archinstall import info, debug
 
 if TYPE_CHECKING:
-	_: Any
+	_: Callable[[str], str]
 
 
 def ask_user_questions() -> None:

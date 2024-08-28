@@ -665,7 +665,7 @@ class Installer:
 						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
 						# base is not installed yet.
-						def post_install_enable_iwd_service(*args: str, **kwargs: str):
+						def post_install_enable_iwd_service(*args: str, **kwargs: str) -> None:
 							self.enable_service('iwd')
 
 						self.post_base_install.append(post_install_enable_iwd_service)
