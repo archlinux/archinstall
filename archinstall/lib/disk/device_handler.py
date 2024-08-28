@@ -319,7 +319,7 @@ class DeviceHandler(object):
 
 		for report in reports['report']:
 			if len(report[info_type]) != 1:
-				raise ValueError(f'Report does not contain any entry')
+				raise ValueError('Report does not contain any entry')
 
 			entry = report[info_type][0]
 
@@ -334,12 +334,12 @@ class DeviceHandler(object):
 					return LvmVolumeInfo(
 						lv_name=entry['lv_name'],
 						vg_name=entry['vg_name'],
-						lv_size=Size(int(entry[f'lv_size'][:-1]), Unit.B, SectorSize.default())
+						lv_size=Size(int(entry['lv_size'][:-1]), Unit.B, SectorSize.default())
 					)
 				case 'vg':
 					return LvmGroupInfo(
 						vg_uuid=entry['vg_uuid'],
-						vg_size=Size(int(entry[f'vg_size'][:-1]), Unit.B, SectorSize.default())
+						vg_size=Size(int(entry['vg_size'][:-1]), Unit.B, SectorSize.default())
 					)
 
 		return None

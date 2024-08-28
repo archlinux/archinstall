@@ -382,7 +382,7 @@ class SysCommand:
 
 	def __getitem__(self, key: slice) -> Optional[bytes]:
 		if not self.session:
-			raise KeyError(f"SysCommand() does not have an active session.")
+			raise KeyError("SysCommand() does not have an active session.")
 		elif type(key) is slice:
 			start = key.start or 0
 			end = key.stop or len(self.session._trace_log)
