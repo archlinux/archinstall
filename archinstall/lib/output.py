@@ -287,7 +287,7 @@ def error(
 
 def warn(
 	*msgs: str,
-	level: int = logging.WARN,
+	level: int = logging.WARNING,
 	fg: str = 'yellow',
 	bg: Optional[str] = None,
 	reset: bool = False,
