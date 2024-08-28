@@ -150,7 +150,7 @@ def calc_checksum(icmp_packet) -> int:
 	
 	return checksum
 
-def build_icmp(payload):
+def build_icmp(payload: bytes) -> bytes:
 	# Define the ICMP Echo Request packet
 	icmp_packet = struct.pack('!BBHHH', 8, 0, 0, 0, 1) + payload
 

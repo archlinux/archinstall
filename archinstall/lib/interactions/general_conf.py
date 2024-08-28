@@ -128,7 +128,7 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	print(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
 
-	def read_packages(p: List = []) -> list:
+	def read_packages(p: list[str] = []) -> list[str]:
 		display = ' '.join(p)
 		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run().strip()
 		return input_packages.split() if input_packages else []

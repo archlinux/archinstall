@@ -8,7 +8,7 @@ import uuid
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
 
-from parted import (  # type: ignore
+from parted import (
 	Disk, Geometry, FileSystem,
 	PartitionException, DiskException,
 	getDevice, getAllDevices, newDisk, freshDisk, Partition, Device
