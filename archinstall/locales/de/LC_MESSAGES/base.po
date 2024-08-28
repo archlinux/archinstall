@@ -1144,10 +1144,10 @@ msgid "Total: {} / {}"
 msgstr "Gesamtlänge: {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Alle eingegebenen Werte können mit einer Einheit angegeben werden: B, KB, KiB, MB, MiB..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Wenn keine Einheit angegeben wurde, wird der Wert als Sektoren interpretiert."
 
 #, fuzzy
 msgid "Enter start (default: sector {}): "
@@ -1158,23 +1158,23 @@ msgid "Enter end (default: {}): "
 msgstr "Bitte geben Sie den Startsektor ein (Standard: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "Fehler beim Finden der fido2 Geräte. Ist libfido2 installiert?"
 
 msgid "Path"
-msgstr ""
+msgstr "Pfad"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "Hersteller"
 
 msgid "Product"
-msgstr ""
+msgstr "Produkt"
 
 #, fuzzy, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "Manuelle Konfiguration"
 
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #, fuzzy
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
@@ -1188,7 +1188,7 @@ msgid ""
 msgstr ""
 "Geben Sie die Nummer an parallelen Downloads an.\n"
 " (Wert zwischen 1 und {max_downloads})\n"
-"Achtung:"
+"Achtung:\n"
 
 #, fuzzy
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
@@ -1214,36 +1214,36 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Option auswählen, um Sway Zugriff auf deine Hardware zu geben"
+"Option auswählen, um Hyprland Zugriff auf deine Hardware zu geben"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Alle eingegebenen Werte können mit einer Einheit angegeben werden: %, B, KB, KiB, MB, Mib"
 
 #, fuzzy
 msgid "Would you like to use unified kernel images?"
 msgstr "Möchten Sie Auslagerungsspeicher (Swap) als zram verwenden?"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "Vereinigte Kernel-Images"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "Warte auf fertigstellung Zeitsynchronisierung (timedatectl show)."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Zeitsynchronisierung wird nicht fertig, während du wartest, lies dir die Dokumentation für Umgehungen dieses Fehlers durch: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "Überspringe warten auf die Automatische Zeitsynchronisierung (dies kann Fehler verursachen, wenn die Zeit während der Installation nicht synchronisiert ist.)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "Warte auf Arch Linux keyring synchronisation (archlinux-keyring-wkd-sync)."
 
 #, fuzzy
 msgid "Selected profiles: "
 msgstr "Profil entfernen"
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Zeitsynchronisierung wird nicht fertig, während du wartest, lies dir die Dokumentation für Umgehungen dieses Fehlers durch: https://archinstall.readthedocs.io/"
 
 #, fuzzy
 msgid "Mark/Unmark as nodatacow"
@@ -1254,10 +1254,10 @@ msgid "Would you like to use compression or disable CoW?"
 msgstr "Möchten sie btrfs Komprimierung verwenden?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Kompriemirung verwenden"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Copy-on-Write deaktivieren"
 
 #, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
@@ -1272,7 +1272,7 @@ msgid "LVM configuration type"
 msgstr "Keine Konfiguration"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "LVM-Verschlüsselung ist derzeit nicht mit mehr als 2 Partitionen unterstützt"
 
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
@@ -1287,13 +1287,13 @@ msgid "Partitioning"
 msgstr "Partition"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Logisches Volumenmanagement (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "Physisches Volumen"
 
 msgid "Volumes"
-msgstr ""
+msgstr "Volumen"
 
 #, fuzzy
 msgid "LVM volumes"
@@ -1316,20 +1316,20 @@ msgid "No Encryption"
 msgstr "Verschlüsselungstyp"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM auf LUKS"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS auf LVM"
 
 #, fuzzy
 msgid "Yes"
 msgstr "Ja"
 
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
 #, fuzzy
 msgid "Archinstall help"
@@ -1338,3 +1338,6 @@ msgstr "Sprache für Archinstall"
 #, fuzzy
 msgid " (default)"
 msgstr "(Standard)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

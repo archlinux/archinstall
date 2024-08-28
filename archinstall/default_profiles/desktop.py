@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class DesktopProfile(Profile):
-	def __init__(self, current_selection: List[Profile] = []):
+	def __init__(self, current_selection: List[Profile] = []) -> None:
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
@@ -48,21 +48,21 @@ class DesktopProfile(Profile):
 
 		return None
 
-	def _do_on_select_profiles(self):
+	def _do_on_select_profiles(self) -> None:
 		for profile in self.current_selection:
 			profile.do_on_select()
 
 	def do_on_select(self) -> SelectResult:
 		choice = profile_handler.select_profile(
 			profile_handler.get_desktop_profiles(),
-			self._current_selection,
+			self.current_selection,
 			title=str(_('Select your desired desktop environment')),
 			multi=True
 		)
 
 		match choice.type_:
 			case menu.MenuSelectionType.Selection:
-				self.set_current_selection(choice.value)  # type: ignore
+				self.current_selection = choice.value  # type: ignore
 				self._do_on_select_profiles()
 				return SelectResult.NewSelection
 			case menu.MenuSelectionType.Skip:
@@ -70,15 +70,15 @@ class DesktopProfile(Profile):
 			case menu.MenuSelectionType.Reset:
 				return SelectResult.ResetCurrent
 
-	def post_install(self, install_session: 'Installer'):
-		for profile in self._current_selection:
+	def post_install(self, install_session: 'Installer') -> None:
+		for profile in self.current_selection:
 			profile.post_install(install_session)
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		# Install common packages for all desktop environments
 		install_session.add_additional_packages(self.packages)
 
-		for profile in self._current_selection:
+		for profile in self.current_selection:
 			info(f'Installing profile {profile.name}...')
 
 			install_session.add_additional_packages(profile.packages)

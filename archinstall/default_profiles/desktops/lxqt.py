@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class LxqtProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Lxqt', ProfileType.DesktopEnv, description='')
 
 	# NOTE: SDDM is the only officially supported greeter for LXQt, so unlike other DEs, lightdm is not used here.

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class CinnamonProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Cinnamon', ProfileType.DesktopEnv, description='')
 
 	@property
@@ -18,8 +18,13 @@ class CinnamonProfile(XorgProfile):
 			"system-config-printer",
 			"gnome-keyring",
 			"gnome-terminal",
-			"blueberry",
-			"metacity"
+			"blueman",
+			"bluez-utils",
+			"engrampa",
+			"gnome-screenshot",
+			"gvfs-smb",
+			"xed",
+			"xdg-user-dirs-gtk"
 		]
 
 	@property

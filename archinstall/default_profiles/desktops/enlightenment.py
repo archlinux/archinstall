@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class EnlighenmentProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Enlightenment', ProfileType.WindowMgr, description='')
 
 	@property

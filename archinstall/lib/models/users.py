@@ -13,14 +13,14 @@ class PasswordStrength(Enum):
 	STRONG = 'strong'
 
 	@property
-	def value(self):
+	def value(self) -> str:
 		match self:
 			case PasswordStrength.VERY_WEAK: return str(_('very weak'))
 			case PasswordStrength.WEAK: return str(_('weak'))
 			case PasswordStrength.MODERATE: return str(_('moderate'))
 			case PasswordStrength.STRONG: return str(_('strong'))
 
-	def color(self):
+	def color(self) -> str:
 		match self:
 			case PasswordStrength.VERY_WEAK: return 'red'
 			case PasswordStrength.WEAK: return 'red'

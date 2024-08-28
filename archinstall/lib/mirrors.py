@@ -1,3 +1,4 @@
+import json
 import pathlib
 from dataclasses import dataclass, field
 from enum import Enum
@@ -7,6 +8,7 @@ from .menu import AbstractSubMenu, Selector, MenuSelectionType, Menu, ListManage
 from .networking import fetch_data_from_url
 from .output import warn, FormattedOutput
 from .storage import storage
+from .models.mirrors import MirrorStatusListV3, MirrorStatusEntryV3
 
 if TYPE_CHECKING:
 	_: Any
@@ -201,7 +203,7 @@ class MirrorMenu(AbstractSubMenu):
 
 		super().__init__(data_store=data_store)
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		self._menu_options['mirror_regions'] = \
 			Selector(
 				_('Mirror region'),
@@ -270,49 +272,69 @@ def select_mirror_regions(preset_values: Dict[str, List[str]] = {}) -> Dict[str,
 		case MenuSelectionType.Skip:
 			return preset_values
 		case MenuSelectionType.Selection:
-			return {selected: mirrors[selected] for selected in choice.multi_value}
+			return {
+				selected: [
+					f"{mirror.url}$repo/os/$arch" for mirror in sort_mirrors_by_performance(mirrors[selected])
+				] for selected in choice.multi_value
+			}
 
 	return {}
 
 
-def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []):
+def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []) -> list[CustomMirror]:
 	custom_mirrors = CustomMirrorList(prompt, preset).run()
 	return custom_mirrors
 
 
-def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[str]]:
-	file_content = mirrorlist.split('\n')
-	file_content = list(filter(lambda x: x, file_content))  # filter out empty lines
-	first_srv_idx = [idx for idx, line in enumerate(file_content) if 'server' in line.lower()][0]
-	mirrors = file_content[first_srv_idx - 1:]
-
-	mirror_list: Dict[str, List[str]] = {}
-
-	for idx in range(0, len(mirrors), 2):
-		region = mirrors[idx].removeprefix('## ')
-		url = mirrors[idx + 1].removeprefix('#').removeprefix('Server = ')
-		mirror_list.setdefault(region, []).append(url)
-
-	return mirror_list
+def sort_mirrors_by_performance(mirror_list :List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
+	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
-def list_mirrors() -> Dict[str, List[str]]:
-	regions: Dict[str, List[str]] = {}
+def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
+	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
+
+	sorting_placeholder: Dict[str, List[MirrorStatusEntryV3]] = {}
+
+	for mirror in mirror_status.urls:
+		# We filter out mirrors that have bad criteria values
+		if any([
+			mirror.active is False, # Disabled by mirror-list admins
+			mirror.last_sync is None, # Has not synced recently
+			# mirror.score (error rate) over time reported from backend: https://github.com/archlinux/archweb/blob/31333d3516c91db9a2f2d12260bd61656c011fd1/mirrors/utils.py#L111C22-L111C66
+			(mirror.score is None or mirror.score >= 100),
+		]):
+			continue
+
+		if mirror.country == "":
+			# TODO: This should be removed once RFC!29 is merged and completed
+			# Until then, there are mirrors which lacks data in the backend
+			# and there is no way of knowing where they're located.
+			# So we have to assume world-wide
+			mirror.country = "Worldwide"
+
+		if mirror.url.startswith('http'):
+			sorting_placeholder.setdefault(mirror.country, []).append(mirror)
+
+	sorted_by_regions: Dict[str, List[MirrorStatusEntryV3]] = dict({
+		region: unsorted_mirrors
+		for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])
+	})
+
+	return sorted_by_regions
+
+
+def list_mirrors() -> Dict[str, List[MirrorStatusEntryV3]]:
+	regions: Dict[str, List[MirrorStatusEntryV3]] = {}
 
 	if storage['arguments']['offline']:
 		with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fp:
 			mirrorlist = fp.read()
 	else:
-		url = "https://archlinux.org/mirrorlist/?protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on"
+		url = "https://archlinux.org/mirrors/status/json/"
 		try:
 			mirrorlist = fetch_data_from_url(url)
 		except ValueError as err:
 			warn(f'Could not fetch an active mirror-list: {err}')
 			return regions
 
-	regions = _parse_mirror_list(mirrorlist)
-	sorted_regions = {}
-	for region, urls in regions.items():
-		sorted_regions[region] = sorted(urls, reverse=True)
-
-	return sorted_regions
+	return _parse_mirror_list(mirrorlist)

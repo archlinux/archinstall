@@ -320,10 +320,10 @@ class SysCommandWorker:
 					error(f"Unexpected {exception_type} occurred in {self.cmd}: {e}")
 					raise e
 
-				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
-				if storage['arguments'].get('debug'):
+				if storage.get('arguments', {}).get('debug'):
 					debug(f"Executing: {self.cmd}")
 
+				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
 			except FileNotFoundError:
 				error(f"{self.cmd[0]} does not exist.")
 				self.exit_code = 1
@@ -430,7 +430,7 @@ class SysCommand:
 
 		return True
 
-	def decode(self, encoding: str = 'utf-8', errors='backslashreplace', strip: bool = True) -> str:
+	def decode(self, encoding: str = 'utf-8', errors: str = 'backslashreplace', strip: bool = True) -> str:
 		if not self.session:
 			raise ValueError('No session available to decode')
 
@@ -520,6 +520,6 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 	return True
 
 
-def secret(x :str):
+def secret(x :str) -> str:
 	""" return * with len equal to to the input string """
 	return '*' * len(x)

@@ -3,7 +3,7 @@ from typing import Any, TYPE_CHECKING, List
 from archinstall.lib.output import info
 from archinstall.lib.menu import MenuSelectionType
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.default_profiles.profile import ProfileType, Profile, SelectResult, TProfile
+from archinstall.default_profiles.profile import ProfileType, Profile, SelectResult
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class ServerProfile(Profile):
-	def __init__(self, current_value: List[TProfile] = []):
+	def __init__(self, current_value: List[Profile] = []):
 		super().__init__(
 			'Server',
 			ProfileType.Server,
@@ -24,7 +24,7 @@ class ServerProfile(Profile):
 
 		choice = profile_handler.select_profile(
 			available_servers,
-			self._current_selection,
+			self.current_selection,
 			title=str(_('Choose which servers to install, if none then a minimal installation will be done')),
 			multi=True
 		)
@@ -38,16 +38,16 @@ class ServerProfile(Profile):
 			case MenuSelectionType.Reset:
 				return SelectResult.ResetCurrent
 
-	def post_install(self, install_session: 'Installer'):
-		for profile in self._current_selection:
+	def post_install(self, install_session: 'Installer') -> None:
+		for profile in self.current_selection:
 			profile.post_install(install_session)
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		server_info = self.current_selection_names()
 		details = ', '.join(server_info)
 		info(f'Now installing the selected servers: {details}')
 
-		for server in self._current_selection:
+		for server in self.current_selection:
 			info(f'Installing {server.name}...')
 			install_session.add_additional_packages(server.packages)
 			install_session.enable_service(server.services)

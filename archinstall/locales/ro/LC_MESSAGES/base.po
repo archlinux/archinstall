@@ -1330,3 +1330,6 @@ msgstr "Limba pentru Archinstall"
 #, fuzzy
 msgid " (default)"
 msgstr "(predefinit)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

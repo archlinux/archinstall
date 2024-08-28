@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class DockerProfile(Profile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__(
 			'Docker',
 			ProfileType.ServerType
@@ -24,7 +24,7 @@ class DockerProfile(Profile):
 	def services(self) -> List[str]:
 		return ['docker']
 
-	def post_install(self, install_session: 'Installer'):
+	def post_install(self, install_session: 'Installer') -> None:
 		users: Union[User, List[User]] = archinstall.arguments.get('!users', [])
 		if not isinstance(users, list):
 			users = [users]

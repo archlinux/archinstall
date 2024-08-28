@@ -1,0 +1,85 @@
+name: bug report
+description: archinstall crashed or could not install properly?
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please read the ~5 known issues first:
+        https://archinstall.archlinux.page/help/known_issues.html
+
+  - type: markdown
+    attributes:
+      value: >
+        **NOTE: Always try the latest official ISO**
+
+  - type: input
+    id: iso
+    attributes:
+      label: Which ISO version are you using?
+      description: 'Always use the latest ISO version'
+      placeholder: '"2024-12-01" or "Dec 1:st"'
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-report
+    attributes:
+      label: The installation log 
+      description: 'note: located at `/var/log/archinstall/install.log`'
+      placeholder: |
+        Hardware model detected: Dell Inc. Precision 7670; UEFI mode: True
+        Processor model detected: 12th Gen Intel(R) Core(TM) i7-12850HX
+        Memory statistics: 31111048 available out of 32545396 total installed
+        Disk states before installing: {'blockdevices': ... }
+        Testing connectivity to the Arch Linux mirrors ...
+        ...
+      render: json
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: >
+        **Note**: Assuming you have network connectivity,
+        you can easily post the installation log using the following command:
+        `curl -F'file=@/var/log/archinstall/install.log' https://0x0.st`
+
+  - type: textarea
+    id: freeform
+    attributes:
+      label: describe the problem
+      description: >
+        Please describe your issue as best as you can.
+        And please consider personal preferences vs what the recommended
+        steps/values are in https://wiki.archlinux.org/title/Installation_guide
+        as we try to abide by them as best we can.
+      value: |
+        #### Description of the issue
+
+        I was installing on X hardware ...
+
+        Then X Y Z happened and archinstall crashed ...
+
+        #### Virtual machine config:
+
+        ```xml
+        <domain type="kvm">
+          <name>my-arch-machine</name>
+          ...
+          </devices>
+        </domain>
+        ```
+
+        ```console
+        /usr/bin/qemu-system-x86_64 -name guest=my-arch-machine,debug-threads=on -object ...
+        ```
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: >
+        **Note**: Feel free to modify the textarea above as you wish.
+        But it will grately help us in testing if we can generate the specific qemu command line,
+        for instance via:
+        `sudo virsh domxml-to-native qemu-argv --domain my-arch-machine`

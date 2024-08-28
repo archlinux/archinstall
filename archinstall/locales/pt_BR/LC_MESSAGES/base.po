@@ -1235,107 +1235,92 @@ msgstr "Pulando a espera pela sincronização automática de fuso horário (isso
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Aguardando a sincronização do Arch Linux Keyring (archlinux-keyring-wkd-sync) ser concluída."
 
-#, fuzzy
 msgid "Selected profiles: "
-msgstr "Deletar perfil"
+msgstr "Perfis selecionados: "
 
-#, fuzzy
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "Sincronização de fuso horário não concluída, enquanto você espera - confira a documentação para soluções alternativas: https://archinstall.readthedocs.io/"
 
-#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr "Marcar/desmarcar como inicializável"
+msgstr "Marcar/desmarcar como nodatacow"
 
-#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "Deseja usar a compressão BTRFS?"
+msgstr "Você gostaria de usar compressão ou desativar a Cópia na Gravação?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Usar compressão"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Desativar Cópia na Gravação"
 
-#, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Proporciona uma seleção de ambientes gráficos e gerenciadores de janela como por exemplo gnome, kde, sway"
 
-#, fuzzy
 msgid "Configuration type: {}"
-msgstr "Configuração"
+msgstr "Tipo de configuração: {}"
 
-#, fuzzy
 msgid "LVM configuration type"
-msgstr "Nenhuma configuração"
+msgstr "Tipo de configuracao LVM"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "Criptografia de disco LVM com mais de 2 partições atualmente não é suportada."
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
 msgstr "Usar NetworkManager (necessário para configurar internet graficamente no GNOME e KDE)"
 
-#, fuzzy
 msgid "Select a LVM option"
-msgstr "Selecione um fuso horário"
+msgstr "Selecione uma opção de Gerenciador de Volume Logico"
 
-#, fuzzy
 msgid "Partitioning"
-msgstr "Partição"
+msgstr "Particionado"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Gerenciamento de Volume Lógico (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "Volumes físicos"
 
 msgid "Volumes"
-msgstr ""
+msgstr "Volumes"
 
-#, fuzzy
 msgid "LVM volumes"
-msgstr "Definir subvolumes"
+msgstr "LVM Volumes"
 
-#, fuzzy
 msgid "LVM volumes to be encrypted"
 msgstr "Partições a serem encriptadas"
 
-#, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr "Selecione quais partições encriptar"
+msgstr "Selecione quais volumes encriptar"
 
-#, fuzzy
 msgid "Default layout"
-msgstr "Layout da unidade"
+msgstr "Layout padrão"
 
-#, fuzzy
 msgid "No Encryption"
-msgstr "Tipo de encriptação"
+msgstr "Sem encriptação"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM em LUKS"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS em LVM"
 
-#, fuzzy
 msgid "Yes"
-msgstr "sim"
+msgstr "Sim"
 
 msgid "No"
-msgstr ""
+msgstr "Não"
 
-#, fuzzy
 msgid "Archinstall help"
-msgstr "Idioma do Archinstall"
+msgstr "Ajuda do archinstall"
 
-#, fuzzy
 msgid " (default)"
 msgstr "(padrão)"
+
+msgid "Press Ctrl+h for help"
+msgstr "Pressione Ctrl+h para ajuda"
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

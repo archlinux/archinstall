@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 class MariadbProfile(Profile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__(
 			'Mariadb',
 			ProfileType.ServerType
@@ -21,5 +21,5 @@ class MariadbProfile(Profile):
 	def services(self) -> List[str]:
 		return ['mariadb']
 
-	def post_install(self, install_session: 'Installer'):
+	def post_install(self, install_session: 'Installer') -> None:
 		install_session.arch_chroot('mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql')

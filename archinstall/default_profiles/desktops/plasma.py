@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 	_: Any
 
 class PlasmaProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('KDE Plasma', ProfileType.DesktopEnv, description='')
 
 	@property

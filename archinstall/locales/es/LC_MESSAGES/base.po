@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.4.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Se ha creado un archivo de registro aquí: {} {}"
@@ -24,7 +24,7 @@ msgid "And one more time for verification: "
 msgstr "Una vez más para verificar: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "¿Te gustaría usar swap en zram?"
+msgstr "¿Le gustaría usar swap en zram?"
 
 msgid "Desired hostname for the installation: "
 msgstr "Nombre de host deseado para la instalación: "
@@ -367,7 +367,7 @@ msgid "Enter a password: "
 msgstr "Ingrese una contraseña: "
 
 msgid "Enter a encryption password for {}"
-msgstr "Introduzca una contraseña de cifrado para {}"
+msgstr "Ingrese una contraseña de cifrado para {}"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "Ingrese la contraseña de cifrado de disco (deje en blanco para no cifrar): "
@@ -385,7 +385,7 @@ msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "Verificando que los paquetes adicionales existen (esto puede tardar unos segundos)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Te gustaría utilizar la sincronización automática de hora (NTP) con los servidores de hora predeterminados?\n"
+msgstr "Le gustaría utilizar la sincronización automática de hora (NTP) con los servidores de hora predeterminados?\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
@@ -591,7 +591,7 @@ msgid "Would you like to use BTRFS subvolumes with a default structure?"
 msgstr "¿Le gustaría utilizar subvolúmenes BTRFS con una estructura predeterminada?"
 
 msgid "Would you like to use BTRFS compression?"
-msgstr "¿Te gustaría usar la compresión BTRFS?"
+msgstr "¿Le gustaría usar la compresión BTRFS?"
 
 msgid "Would you like to create a separate partition for /home?"
 msgstr "¿Le gustaría crear una partición separada para /home?"
@@ -990,7 +990,7 @@ msgid "Back"
 msgstr "Regresar"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr "Por favor, elija qué saludador instalar para los perfiles elegidos: {}"
+msgstr "Por favor, elija qué gestor de inicio de sesión instalar para los perfiles elegidos: {}"
 
 msgid "Environment type: {}"
 msgstr "Tipo de entorno: {}"
@@ -1051,10 +1051,10 @@ msgid "Graphics driver"
 msgstr "Controlador de gráficos"
 
 msgid "Greeter"
-msgstr "Saludador"
+msgstr "Gestor de inicio de sesión"
 
 msgid "Please chose which greeter to install"
-msgstr "Por favor, elija qué saludador instalar"
+msgstr "Por favor, elija qué gestor de inicio de sesión instalar"
 
 msgid "This is a list of pre-programmed default_profiles"
 msgstr "Esta es una lista de default_profiles preprogramados"
@@ -1262,7 +1262,6 @@ msgstr "Usar NetworkManager (necesario para configurar internet gráficamente en
 msgid "Select a LVM option"
 msgstr "Seleccione una opción LVM"
 
-#, fuzzy
 msgid "Partitioning"
 msgstr "Particionamiento"
 
@@ -1310,6 +1309,9 @@ msgstr "Ayuda de archinstall"
 
 msgid " (default)"
 msgstr " (predeterminado)"
+
+msgid "Press Ctrl+h for help"
+msgstr "Presione Ctrl+h para obtener ayuda"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"

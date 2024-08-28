@@ -1376,3 +1376,6 @@ msgstr "Språk för detta gränssnitt"
 #, fuzzy
 msgid " (default)"
 msgstr "(standard)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

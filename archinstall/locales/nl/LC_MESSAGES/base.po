@@ -1390,6 +1390,9 @@ msgstr "Archinstall-taal"
 msgid " (default)"
 msgstr ""
 
+msgid "Press Ctrl+h for help"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

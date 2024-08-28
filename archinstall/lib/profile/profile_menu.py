@@ -25,7 +25,7 @@ class ProfileMenu(AbstractSubMenu):
 
 		super().__init__(data_store=data_store)
 
-	def setup_selection_menu_options(self):
+	def setup_selection_menu_options(self) -> None:
 		self._menu_options['profile'] = Selector(
 			_('Type'),
 			lambda x: self._select_profile(x),

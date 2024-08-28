@@ -45,7 +45,7 @@ class ManualNetworkConfig(ListManager):
 	def selected_action_display(self, nic: Nic) -> str:
 		return nic.iface if nic.iface else ''
 
-	def handle_action(self, action: str, entry: Optional[Nic], data: List[Nic]):
+	def handle_action(self, action: str, entry: Optional[Nic], data: List[Nic]) -> list[Nic]:
 		if action == self._actions[0]:  # add
 			iface = self._select_iface(data)
 			if iface:

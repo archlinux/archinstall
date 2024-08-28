@@ -1324,3 +1324,6 @@ msgstr "Archinstall kieli"
 #, fuzzy
 msgid " (default)"
 msgstr "(oletus)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

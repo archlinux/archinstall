@@ -1355,3 +1355,6 @@ msgstr "Archinstalli keel"
 #, fuzzy
 msgid " (default)"
 msgstr "(vaikimisi)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

@@ -1309,3 +1309,6 @@ msgstr "Archinstall ヘルプ"
 
 msgid " (default)"
 msgstr " (デフォルト)"
+
+msgid "Press Ctrl+h for help"
+msgstr "Ctrl+H でヘルプを表示"

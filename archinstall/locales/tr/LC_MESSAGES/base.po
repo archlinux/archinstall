@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 21.05.2022\n"
 "PO-Revision-Date: 2024-7-6 23:34+0100\n"
-"Last-Translator: arlsdk @arlsdk <arlsdk@proton.me>\n"
+"Last-Translator: Abdullah Koyuncu @wiseweb-works <wisewebworks@outlook.com>\n"
 "Language-Team: wiseweb-works, AlperShal, arlsdk, tugsatenes, eren-ince, Schwarzeisc00l, Oruch379\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -230,7 +230,7 @@ msgid "Select one or more of the options below: "
 msgstr "Aşağıdaki seçeneklerden bir ya da daha fazlasını seçin: "
 
 msgid "Adding partition...."
-msgstr "Disk bölümü ekleniyor…."
+msgstr "Disk bölümü ekleniyor...."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
 msgstr "Devam etmek için geçerli bir ds-tipi (dosya sistemi / fs-type) girmeniz gerekiyor. Geçerli ds-tiplerini görmek için `man parted` komutunu çalıştırın.."
@@ -1314,15 +1314,18 @@ msgstr "LVM üzerinde LUKS"
 
 #, fuzzy
 msgid "Yes"
-msgstr "evet"
+msgstr "Evet"
 
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #, fuzzy
 msgid "Archinstall help"
-msgstr "Archinstall dili"
+msgstr "Archinstall yardım"
 
 #, fuzzy
 msgid " (default)"
 msgstr "(varsayılan)"
+
+msgid "Press Ctrl+h for help"
+msgstr "Yardım için Ctrl+h tuşlarına basınız"

@@ -18,7 +18,7 @@ from .device_model import (
 	DeviceModification, PartitionModification,
 	BDevice, _DeviceInfo, _PartitionInfo,
 	FilesystemType, Unit, PartitionTable,
-	ModificationStatus, get_lsblk_info, LsblkInfo,
+	ModificationStatus, get_lsblk_info, find_lsblk_info, LsblkInfo,
 	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
 	SectorSize, LvmVolumeInfo, LvmPVInfo, SubvolumeModification, BtrfsMountOption
 )
@@ -36,7 +36,7 @@ if TYPE_CHECKING:
 class DeviceHandler(object):
 	_TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs')
 
-	def __init__(self):
+	def __init__(self) -> None:
 		self._devices: Dict[Path, BDevice] = {}
 		self.load_devices()
 
@@ -44,9 +44,11 @@ class DeviceHandler(object):
 	def devices(self) -> List[BDevice]:
 		return list(self._devices.values())
 
-	def load_devices(self):
+	def load_devices(self) -> None:
 		block_devices = {}
 
+		SysCommand('udevadm settle')
+		all_lsblk_info = get_all_lsblk_info()
 		devices = getAllDevices()
 
 		try:
@@ -58,7 +60,11 @@ class DeviceHandler(object):
 			debug(f'Failed to get loop devices: {err}')
 
 		for device in devices:
-			dev_lsblk_info = get_lsblk_info(device.path)
+			dev_lsblk_info = find_lsblk_info(device.path, all_lsblk_info)
+
+			if not dev_lsblk_info:
+				debug(f'Device lsblk info not found: {device.path}')
+				continue
 
 			if dev_lsblk_info.type == 'rom':
 				continue
@@ -76,12 +82,17 @@ class DeviceHandler(object):
 			partition_infos = []
 
 			for partition in disk.partitions:
-				lsblk_info = get_lsblk_info(partition.path)
+				lsblk_info = find_lsblk_info(partition.path, dev_lsblk_info.children)
+
+				if not lsblk_info:
+					debug(f'Partition lsblk info not found: {partition.path}')
+					continue
+
 				fs_type = self._determine_fs_type(partition, lsblk_info)
 				subvol_infos = []
 
 				if fs_type == FilesystemType.Btrfs:
-					subvol_infos = self.get_btrfs_info(partition.path)
+					subvol_infos = self.get_btrfs_info(partition.path, lsblk_info)
 
 				partition_infos.append(
 					_PartitionInfo.from_partition(
@@ -155,8 +166,14 @@ class DeviceHandler(object):
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None
 
-	def get_btrfs_info(self, dev_path: Path) -> List[_BtrfsSubvolumeInfo]:
-		lsblk_info = get_lsblk_info(dev_path)
+	def get_btrfs_info(
+			self,
+			dev_path: Path,
+			lsblk_info: Optional[LsblkInfo] = None
+	) -> List[_BtrfsSubvolumeInfo]:
+		if not lsblk_info:
+			lsblk_info = get_lsblk_info(dev_path)
+
 		subvol_infos: List[_BtrfsSubvolumeInfo] = []
 
 		if not lsblk_info.mountpoint:
@@ -199,7 +216,7 @@ class DeviceHandler(object):
 		fs_type: FilesystemType,
 		path: Path,
 		additional_parted_options: List[str] = []
-	):
+	) -> None:
 		mkfs_type = fs_type.value
 		options = []
 
@@ -265,7 +282,7 @@ class DeviceHandler(object):
 		mapper_name: Optional[str],
 		fs_type: FilesystemType,
 		enc_conf: DiskEncryption
-	):
+	) -> None:
 		luks_handler = Luks2(
 			dev_path,
 			mapper_name=mapper_name,
@@ -367,33 +384,33 @@ class DeviceHandler(object):
 
 		return self._lvm_info_with_retry(cmd, 'pvseg')
 
-	def lvm_vol_change(self, vol: LvmVolume, activate: bool):
+	def lvm_vol_change(self, vol: LvmVolume, activate: bool) -> None:
 		active_flag = 'y' if activate else 'n'
 		cmd = f'lvchange -a {active_flag} {vol.safe_dev_path}'
 
 		debug(f'lvchange volume: {cmd}')
 		SysCommand(cmd)
 
-	def lvm_export_vg(self, vg: LvmVolumeGroup):
+	def lvm_export_vg(self, vg: LvmVolumeGroup) -> None:
 		cmd = f'vgexport {vg.name}'
 
 		debug(f'vgexport: {cmd}')
 		SysCommand(cmd)
 
-	def lvm_import_vg(self, vg: LvmVolumeGroup):
+	def lvm_import_vg(self, vg: LvmVolumeGroup) -> None:
 		cmd = f'vgimport {vg.name}'
 
 		debug(f'vgimport: {cmd}')
 		SysCommand(cmd)
 
-	def lvm_vol_reduce(self, vol_path: Path, amount: Size):
+	def lvm_vol_reduce(self, vol_path: Path, amount: Size) -> None:
 		val = amount.format_size(Unit.B, include_unit=False)
 		cmd = f'lvreduce -L -{val}B {vol_path}'
 
 		debug(f'Reducing LVM volume size: {cmd}')
 		SysCommand(cmd)
 
-	def lvm_pv_create(self, pvs: Iterable[Path]):
+	def lvm_pv_create(self, pvs: Iterable[Path]) -> None:
 		cmd = 'pvcreate ' + ' '.join([str(pv) for pv in pvs])
 		debug(f'Creating LVM PVS: {cmd}')
 
@@ -401,7 +418,7 @@ class DeviceHandler(object):
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
-	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str):
+	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str) -> None:
 		pvs_str = ' '.join([str(pv) for pv in pvs])
 		cmd = f'vgcreate --yes {vg_name} {pvs_str}'
 
@@ -411,7 +428,7 @@ class DeviceHandler(object):
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
-	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Optional[Size] = None):
+	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Optional[Size] = None) -> None:
 		if offset is not None:
 			length = volume.length - offset
 		else:
@@ -435,7 +452,7 @@ class DeviceHandler(object):
 		block_device: BDevice,
 		disk: Disk,
 		requires_delete: bool
-	):
+	) -> None:
 		# when we require a delete and the partition to be (re)created
 		# already exists then we have to delete it first
 		if requires_delete and part_mod.status in [ModificationStatus.Modify, ModificationStatus.Delete]:
@@ -518,7 +535,7 @@ class DeviceHandler(object):
 		path: Path,
 		btrfs_subvols: List[SubvolumeModification],
 		mount_options: List[str]
-	):
+	) -> None:
 		info(f'Creating subvolumes: {path}')
 
 		self.mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
@@ -548,10 +565,8 @@ class DeviceHandler(object):
 		self,
 		part_mod: PartitionModification,
 		enc_conf: Optional['DiskEncryption'] = None
-	):
+	) -> None:
 		info(f'Creating subvolumes: {part_mod.safe_dev_path}')
-
-		luks_handler = None
 
 		# unlock the partition first if it's encrypted
 		if enc_conf is not None and part_mod in enc_conf.partitions:
@@ -567,35 +582,29 @@ class DeviceHandler(object):
 			if not luks_handler.mapper_dev:
 				raise DiskError('Failed to unlock luks device')
 
-			self.mount(
-				luks_handler.mapper_dev,
-				self._TMP_BTRFS_MOUNT,
-				create_target_mountpoint=True,
-				options=part_mod.mount_options
-			)
+			dev_path = luks_handler.mapper_dev
 		else:
-			self.mount(
-				part_mod.safe_dev_path,
-				self._TMP_BTRFS_MOUNT,
-				create_target_mountpoint=True,
-				options=part_mod.mount_options
-			)
+			luks_handler = None
+			dev_path = part_mod.safe_dev_path
+
+		self.mount(
+			dev_path,
+			self._TMP_BTRFS_MOUNT,
+			create_target_mountpoint=True,
+			options=part_mod.mount_options
+		)
 
 		for sub_vol in part_mod.btrfs_subvols:
 			debug(f'Creating subvolume: {sub_vol.name}')
 
-			if luks_handler is not None:
-				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
-			else:
-				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
+			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
 			SysCommand(f"btrfs subvolume create {subvol_path}")
 
+		self.umount(dev_path)
+
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
-			self.umount(luks_handler.mapper_dev)
 			luks_handler.lock()
-		else:
-			self.umount(part_mod.safe_dev_path)
 
 	def unlock_luks2_dev(self, dev_path: Path, mapper_name: str, enc_password: str) -> Luks2:
 		luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
@@ -608,7 +617,7 @@ class DeviceHandler(object):
 
 		return luks_handler
 
-	def umount_all_existing(self, device_path: Path):
+	def umount_all_existing(self, device_path: Path) -> None:
 		debug(f'Unmounting all existing partitions: {device_path}')
 
 		existing_partitions = self._devices[device_path].partition_infos
@@ -626,7 +635,7 @@ class DeviceHandler(object):
 		self,
 		modification: DeviceModification,
 		partition_table: Optional[PartitionTable] = None
-	):
+	) -> None:
 		"""
 		Create a partition table on the block device and create all partitions.
 		"""
@@ -666,7 +675,7 @@ class DeviceHandler(object):
 		mount_fs: Optional[str] = None,
 		create_target_mountpoint: bool = True,
 		options: List[str] = []
-	):
+	) -> None:
 		if create_target_mountpoint and not target_mountpoint.exists():
 			target_mountpoint.mkdir(parents=True, exist_ok=True)
 
@@ -696,7 +705,7 @@ class DeviceHandler(object):
 		except SysCallError as err:
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
-	def umount(self, mountpoint: Path, recursive: bool = False):
+	def umount(self, mountpoint: Path, recursive: bool = False) -> None:
 		lsblk_info = get_lsblk_info(mountpoint)
 
 		if not lsblk_info.mountpoints:
@@ -739,7 +748,7 @@ class DeviceHandler(object):
 
 		return device_mods
 
-	def partprobe(self, path: Optional[Path] = None):
+	def partprobe(self, path: Optional[Path] = None) -> None:
 		if path is not None:
 			command = f'partprobe {path}'
 		else:
@@ -754,7 +763,7 @@ class DeviceHandler(object):
 			else:
 				error(f'"{command}" failed to run (continuing anyway): {err}')
 
-	def _wipe(self, dev_path: Path):
+	def _wipe(self, dev_path: Path) -> None:
 		"""
 		Wipe a device (partition or otherwise) of meta-data, be it file system, LVM, etc.
 		@param dev_path:    Device path of the partition to be wiped.
@@ -763,7 +772,7 @@ class DeviceHandler(object):
 		with open(dev_path, 'wb') as p:
 			p.write(bytearray(1024))
 
-	def wipe_dev(self, block_device: BDevice):
+	def wipe_dev(self, block_device: BDevice) -> None:
 		"""
 		Wipe the block device of meta-data, be it file system, LVM, etc.
 		This is not intended to be secure, but rather to ensure that

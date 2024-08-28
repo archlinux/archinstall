@@ -1346,3 +1346,6 @@ msgstr "Archinstall 語言"
 #, fuzzy
 msgid " (default)"
 msgstr "（默認）"
+
+msgid "Press Ctrl+h for help"
+msgstr ""
