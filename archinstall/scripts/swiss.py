@@ -47,13 +47,13 @@ class SetupMenu(GlobalMenu):
 
 		self._menu_options['mode'] = menu.Selector(
 			'Execution mode',
-			lambda x : select_mode(),
+			lambda x: select_mode(),
 			display_func=lambda x: x.value if x else '',
 			default=ExecutionMode.Full)
 
 		self._menu_options['continue'] = menu.Selector(
 			'Continue',
-			exec_func=lambda n,v: True)
+			exec_func=lambda n, v: True)
 
 		self.enable('archinstall-language')
 		self.enable('ntp')
@@ -96,11 +96,11 @@ class SwissMainMenu(GlobalMenu):
 
 				mandatory_list = ['disk_config', 'bootloader', 'hostname']
 			case ExecutionMode.Only_HD:
-				options_list = ['disk_config', 'disk_encryption','swap']
+				options_list = ['disk_config', 'disk_encryption', 'swap']
 				mandatory_list = ['disk_config']
 			case ExecutionMode.Only_OS:
 				options_list = [
-					'mirror_config','bootloader', 'hostname',
+					'mirror_config', 'bootloader', 'hostname',
 					'!root-password', '!users', 'profile_config', 'audio_config', 'kernels',
 					'packages', 'additional-repositories', 'network_config', 'timezone', 'ntp'
 				]

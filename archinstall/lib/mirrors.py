@@ -286,7 +286,7 @@ def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []) -> l
 	return custom_mirrors
 
 
-def sort_mirrors_by_performance(mirror_list :List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
+def sort_mirrors_by_performance(mirror_list: List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
 	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
@@ -298,8 +298,8 @@ def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
 	for mirror in mirror_status.urls:
 		# We filter out mirrors that have bad criteria values
 		if any([
-			mirror.active is False, # Disabled by mirror-list admins
-			mirror.last_sync is None, # Has not synced recently
+			mirror.active is False,  # Disabled by mirror-list admins
+			mirror.last_sync is None,  # Has not synced recently
 			# mirror.score (error rate) over time reported from backend: https://github.com/archlinux/archweb/blob/31333d3516c91db9a2f2d12260bd61656c011fd1/mirrors/utils.py#L111C22-L111C66
 			(mirror.score is None or mirror.score >= 100),
 		]):

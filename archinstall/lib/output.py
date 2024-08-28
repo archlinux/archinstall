@@ -13,6 +13,7 @@ from .storage import storage
 if TYPE_CHECKING:
 	from _typeshed import DataclassInstance
 
+
 class FormattedOutput:
 
 	@classmethod
@@ -214,21 +215,21 @@ def _stylize_output(
 	Adds styling to a text given a set of color arguments.
 	"""
 	colors = {
-		'black' : '0',
-		'red' : '1',
-		'green' : '2',
-		'yellow' : '3',
-		'blue' : '4',
-		'magenta' : '5',
-		'cyan' : '6',
-		'white' : '7',
-		'teal' : '8;5;109',      # Extended 256-bit colors (not always supported)
-		'orange' : '8;5;208',    # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
-		'darkorange' : '8;5;202',
-		'gray' : '8;5;246',
-		'grey' : '8;5;246',
-		'darkgray' : '8;5;240',
-		'lightgray' : '8;5;256'
+		'black': '0',
+		'red': '1',
+		'green': '2',
+		'yellow': '3',
+		'blue': '4',
+		'magenta': '5',
+		'cyan': '6',
+		'white': '7',
+		'teal': '8;5;109',      # Extended 256-bit colors (not always supported)
+		'orange': '8;5;208',    # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+		'darkorange': '8;5;202',
+		'gray': '8;5;246',
+		'grey': '8;5;246',
+		'darkgray': '8;5;240',
+		'lightgray': '8;5;256'
 	}
 
 	foreground = {key: f'3{colors[key]}' for key in colors}
@@ -330,9 +331,11 @@ def log(
 			sys.stdout.write(f"{text}\n")
 			sys.stdout.flush()
 
+
 def _count_wchars(string: str) -> int:
 	"Count the total number of wide characters contained in a string"
 	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
+
 
 def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
 	"""Return a left-justified unicode string of length width.
@@ -346,6 +349,7 @@ def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
 	'こんにちは*****'
 	"""
 	return string.ljust(width - _count_wchars(string), fillbyte)
+
 
 def unicode_rjust(string: str, width: int, fillbyte: str = ' ') -> str:
 	"""Return a right-justified unicode string of length width.

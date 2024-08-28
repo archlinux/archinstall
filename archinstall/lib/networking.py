@@ -15,6 +15,7 @@ from .exceptions import SysCallError, DownloadTimeout
 from .output import error, info
 from .pacman import Pacman
 
+
 class DownloadTimer():
 	'''
 	Context manager for timing downloads with timeouts.
@@ -65,14 +66,14 @@ class DownloadTimer():
 		self.start_time = None
 
 
-def get_hw_addr(ifname :str) -> str:
+def get_hw_addr(ifname: str) -> str:
 	import fcntl
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	ret = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
 	return ':'.join('%02x' % b for b in ret[18:24])
 
 
-def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
+def list_interfaces(skip_loopback: bool = True) -> Dict[str, str]:
 	interfaces = {}
 
 	for index, iface in socket.if_nameindex():
@@ -147,8 +148,9 @@ def calc_checksum(icmp_packet) -> int:
 
 	checksum = (checksum >> 16) + (checksum & 0xFFFF)
 	checksum = ~checksum & 0xFFFF
-	
+
 	return checksum
+
 
 def build_icmp(payload: bytes) -> bytes:
 	# Define the ICMP Echo Request packet
@@ -158,11 +160,12 @@ def build_icmp(payload: bytes) -> bytes:
 
 	return struct.pack('!BBHHH', 8, 0, checksum, 0, 1) + payload
 
+
 def ping(hostname, timeout=5) -> int:
 	watchdog = select.epoll()
 	started = time.time()
 	random_identifier = f'archinstall-{random.randint(1000, 9999)}'.encode()
-	
+
 	# Create a raw socket (requires root, which should be fine on archiso)
 	icmp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
 	watchdog.register(icmp_socket, select.EPOLLIN | select.EPOLLHUP)

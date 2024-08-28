@@ -30,14 +30,14 @@ def list_x11_keyboard_languages() -> List[str]:
 	).decode().splitlines()
 
 
-def verify_keyboard_layout(layout :str) -> bool:
+def verify_keyboard_layout(layout: str) -> bool:
 	for language in list_keyboard_languages():
 		if layout.lower() == language.lower():
 			return True
 	return False
 
 
-def verify_x11_keyboard_layout(layout :str) -> bool:
+def verify_x11_keyboard_layout(layout: str) -> bool:
 	for language in list_x11_keyboard_languages():
 		if layout.lower() == language.lower():
 			return True
@@ -57,7 +57,7 @@ def get_kb_layout() -> str:
 	for line in lines:
 		if "VC Keymap: " in line:
 			vcline = line
-	
+
 	if vcline == "":
 		return ""
 
@@ -68,7 +68,7 @@ def get_kb_layout() -> str:
 	return layout
 
 
-def set_kb_layout(locale :str) -> bool:
+def set_kb_layout(locale: str) -> bool:
 	if len(locale.strip()):
 		if not verify_keyboard_layout(locale):
 			error(f"Invalid keyboard locale specified: {locale}")

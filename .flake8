@@ -1,11 +1,11 @@
 [flake8]
 count = True
 # Several of the following could be autofixed or improved by running the code through psf/black
-ignore = E123,E126,E128,E203,E227,E231,E261,E302,E402,E722,F541,W191,W292,W293,W503,W504
+ignore = E123,E128,E722,F541,W191,W503,W504
 max-complexity = 40
-max-line-length = 236
+max-line-length = 220
 show-source = True
 statistics = True
 builtins = _
-per-file-ignores = __init__.py:F401,F403,F405 simple_menu.py:C901,W503 guided.py:C901 network_configuration.py:F821
-exclude = .git,__pycache__,docs,actions-runner
+per-file-ignores = __init__.py:F401
+exclude = .git,__pycache__,build,docs,actions-runner

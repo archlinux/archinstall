@@ -129,7 +129,7 @@ class PackageSearch:
 class LocalPackage:
 	name: str
 	version: str
-	description:str
+	description: str
 	architecture: str
 	url: str
 	licenses: str
