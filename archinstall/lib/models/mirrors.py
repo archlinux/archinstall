@@ -48,6 +48,12 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 			except http.client.IncompleteRead:
 				debug(f"    speed: <undetermined>")
 				self._speed = None
+			except urllib.error.URLError as error:
+				debug(f"    speed: <undetermined> ({error})")
+				self._speed = None
+			except Exception as error:
+				debug(f"    speed: <undetermined> ({error})")
+				self._speed = None
 
 		return self._speed
 
