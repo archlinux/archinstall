@@ -242,12 +242,12 @@ class SysInfo:
 
 	@staticmethod
 	def sys_vendor() -> str:
-		with open(f"/sys/devices/virtual/dmi/id/sys_vendor") as vendor:
+		with open("/sys/devices/virtual/dmi/id/sys_vendor") as vendor:
 			return vendor.read().strip()
 
 	@staticmethod
 	def product_name() -> str:
-		with open(f"/sys/devices/virtual/dmi/id/product_name") as product:
+		with open("/sys/devices/virtual/dmi/id/product_name") as product:
 			return product.read().strip()
 
 	@staticmethod

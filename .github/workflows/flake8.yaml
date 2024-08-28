@@ -1,5 +1,5 @@
 on: [ push, pull_request ]
-name: flake8 linting (7 ignores)
+name: flake8 linting (6 ignores)
 jobs:
     flake8:
         runs-on: ubuntu-latest

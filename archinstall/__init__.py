@@ -296,7 +296,7 @@ def _check_new_version() -> None:
 		Pacman.run("-Sy")
 	except Exception as e:
 		debug(f'Failed to perform version check: {e}')
-		info(f'Arch Linux mirrors are not reachable. Please check your internet connection')
+		info('Arch Linux mirrors are not reachable. Please check your internet connection')
 		exit(1)
 
 	upgrade = None

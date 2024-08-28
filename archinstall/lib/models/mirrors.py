@@ -46,7 +46,7 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 				self._speed = size / timer.time
 				debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
 			except http.client.IncompleteRead:
-				debug(f"    speed: <undetermined>")
+				debug("    speed: <undetermined>")
 				self._speed = 0
 			except urllib.error.URLError as error:
 				debug(f"    speed: <undetermined> ({error})")
@@ -101,4 +101,4 @@ class MirrorStatusListV3(pydantic.BaseModel):
 		if data.get('version') == 3:
 			return data
 
-		raise ValueError(f"MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/")
+		raise ValueError("MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/")
