@@ -31,7 +31,7 @@ class ServerProfile(Profile):
 
 		match choice.type_:
 			case MenuSelectionType.Selection:
-				self.set_current_selection(choice.value)  # type: ignore
+				self.current_selection = choice.value  # type: ignore
 				return SelectResult.NewSelection
 			case MenuSelectionType.Skip:
 				return SelectResult.SameSelection
