@@ -32,28 +32,38 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 	_speed :float|None = None
 	_hostname :str|None = None
 	_port :int|None = None
+	_speedtest_limit:int = 3
 
 	@property
 	def speed(self) -> float|None:
 		if self._speed is None:
-			info(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
-			req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
+			_retry = 0
+			if self._speedtest_limit < 1:
+				self._speedtest_limit = 1
+			while _retry < self._speedtest_limit and self._speed is None:
+				info(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
+				req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
 
-			try:
-				with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
-					size = len(handle.read())
+				try:
+					with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
+						size = len(handle.read())
 
-				self._speed = size / timer.time
-				debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
-			except http.client.IncompleteRead:
-				debug(f"    speed: <undetermined>")
-				self._speed = None
-			except urllib.error.URLError as error:
-				debug(f"    speed: <undetermined> ({error})")
-				self._speed = None
-			except Exception as error:
-				debug(f"    speed: <undetermined> ({error})")
-				self._speed = None
+					self._speed = size / timer.time
+					debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
+				except http.client.IncompleteRead:
+					debug(f"    speed: <undetermined>")
+					self._speed = None
+				except urllib.error.URLError as error:
+					debug(f"    speed: <undetermined> ({error})")
+					self._speed = None
+				except Exception as error:
+					debug(f"    speed: <undetermined> ({error})")
+					self._speed = None
+				_retry += 1
+			else:
+				if self._speed is None:
+					debug(f"    failed to test speed for {self._speedtest_limit} time(s), set to 0")
+					self._speed = 0
 
 		return self._speed
 
