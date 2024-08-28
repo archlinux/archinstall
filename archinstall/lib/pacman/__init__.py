@@ -23,7 +23,7 @@ class Pacman:
 		self.target = target
 
 	@staticmethod
-	def run(args :str, default_cmd :str = 'pacman') -> SysCommand:
+	def run(args: str, default_cmd: str = 'pacman') -> SysCommand:
 		"""
 		A centralized function to call `pacman` from.
 		It also protects us from colliding with other running pacman sessions (if used locally).

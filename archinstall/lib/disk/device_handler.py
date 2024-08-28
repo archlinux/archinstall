@@ -167,9 +167,9 @@ class DeviceHandler(object):
 		return partition.partuuid if partition else None
 
 	def get_btrfs_info(
-			self,
-			dev_path: Path,
-			lsblk_info: Optional[LsblkInfo] = None
+		self,
+		dev_path: Path,
+		lsblk_info: Optional[LsblkInfo] = None
 	) -> List[_BtrfsSubvolumeInfo]:
 		if not lsblk_info:
 			lsblk_info = get_lsblk_info(dev_path)

@@ -140,6 +140,7 @@ class GfxDriver(Enum):
 
 		return packages
 
+
 class _SysInfo:
 	def __init__(self) -> None:
 		pass

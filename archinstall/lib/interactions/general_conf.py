@@ -152,7 +152,7 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	return packages
 
 
-def add_number_of_parallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
+def add_number_of_parallel_downloads(input_number: Optional[int] = None) -> Optional[int]:
 	max_recommended = 5
 	print(_(f"This option enables the number of parallel downloads that can occur during package downloads"))
 	print(_("Enter the number of parallel downloads to be enabled.\n\nNote:\n"))
