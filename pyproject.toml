@@ -34,6 +34,7 @@ dev = [
     "mypy==1.11.2",
     "flake8==7.1.1",
     "pre-commit==3.8.0",
+    "ruff==0.6.2",
 ]
 doc = ["sphinx"]
 
@@ -118,3 +119,39 @@ ignore_missing_imports = true
 [tool.bandit]
 targets = ["archinstall"]
 exclude = ["/tests"]
+
+[tool.ruff]
+target-version = "py311"
+builtins = ["_"]
+line-length = 220
+
+[tool.ruff.lint]
+select = [
+    "ASYNC",  # flake8-async
+    "C90",    # mccabe
+    "E",      # pycodestyle errors
+    "EXE",    # flake8-executable
+    "F",      # Pyflakes
+    "FLY",    # flynt
+    "G",      # flake8-logging-format
+    "ICN",    # flake8-import-conventions
+    "LOG",    # flake8-logging
+    "PIE",    # flake8-pie
+    "PLC",    # Pylint conventions
+    "PLE",    # Pylint errors
+    "RSE",    # flake8-raise
+    "SLOT",   # flake8-slot
+    "T10",    # flake8-debugger
+    "W",      # pycodestyle warnings
+    "YTT",    # flake8-2020
+]
+
+ignore = [
+    "E701",  # multiple-statements-on-one-line-colon
+    "E722",  # bare-except
+    "F401",  # unused-import
+    "W191",  # tab-indentation
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 40

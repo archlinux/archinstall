@@ -40,7 +40,7 @@ There might therefore be older code which does not follow the coding convention 
 
 ## Git hooks
 
-`archinstall` ships pre-commit hooks that make it easier to run check such as `mypy` and `flake8` locally.
+`archinstall` ships pre-commit hooks that make it easier to run checks such as `mypy`, `ruff check`, and `flake8` locally.
 The checks are listed in `.pre-commit-config.yaml` and can be installed via
 ```
 pre-commit install
