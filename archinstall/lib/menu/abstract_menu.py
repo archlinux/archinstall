@@ -259,3 +259,4 @@ class AbstractSubMenu(AbstractMenu):
 			auto_cursor=auto_cursor,
 			allow_reset=allow_reset
 		)
+

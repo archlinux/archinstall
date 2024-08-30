@@ -3,6 +3,7 @@ from typing import Any, Optional, List, TYPE_CHECKING
 from typing import Callable, ClassVar
 
 from ..lib.output import unicode_ljust
+from ..lib.translationhandler import DeferredTranslation
 
 if TYPE_CHECKING:
 	_: Any
@@ -10,7 +11,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class MenuItem:
-	text: str
+	text: str | DeferredTranslation
 	value: Optional[Any] = None
 	action: Optional[Callable[[Any], Any]] = None
 	enabled: bool = True

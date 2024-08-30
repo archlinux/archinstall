@@ -60,7 +60,7 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Archinstall language')),
 				action=lambda x: self._select_archinstall_language(x),
 				display_action=lambda x: x.display_name if x else '',
-				key = 'archinstall-language'
+				key='archinstall-language'
 			),
 			MenuItem(
 				text=str(_('Locales')),
@@ -207,6 +207,7 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Abort')),
 				action=lambda x: exit(1),
+				key='abort'
 			)
 		]
 
@@ -259,7 +260,20 @@ class GlobalMenu(AbstractMenu):
 		from .interactions.general_conf import select_archinstall_language
 		language = select_archinstall_language(self._translation_handler.translated_languages, preset)
 		self._translation_handler.activate(language)
+
+		self._upate_lang_text()
+
 		return language
+
+	def _upate_lang_text(self) -> None:
+		"""
+		The options for the global menu are generated with a static text;
+		each entry of the menu needs to be updated with the new translation
+		"""
+		new_options = self._get_menu_options(self._data_store)
+
+		for o in new_options:
+			self._item_group.find_by_key(o.key).text = o.text
 
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
 		disk_config: Optional[disk.DiskLayoutConfiguration] = self._item_group.find_by_key('disk_config').value

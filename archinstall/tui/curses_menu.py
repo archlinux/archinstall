@@ -83,8 +83,9 @@ class AbstractCurses(metaclass=ABCMeta):
 	def help_entry(self) -> ViewportEntry:
 		return ViewportEntry(str(_('Press Ctrl+h for help')), 0, 0, STYLE.NORMAL)
 
-	def _show_help(self):
+	def _show_help(self) -> None:
 		if not self._help_window:
+			debug('no help window set')
 			return
 
 		help_text = Help.get_help_text()
@@ -272,7 +273,6 @@ class AbstractViewport:
 		for e in entries:
 			view[e.row] = self._replace_str(view[e.row], e.col, e.text)
 
-		view = [v.rstrip() for v in view]
 		return '\n'.join(view)
 
 
@@ -782,7 +782,9 @@ class SelectMenu(AbstractCurses):
 
 		while True:
 			try:
-				self._draw()
+				if not self._help_active:
+					self._draw()
+
 				key = win.getch()
 				ret = self._process_input_key(key)
 
