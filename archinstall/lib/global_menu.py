@@ -543,4 +543,3 @@ class GlobalMenu(AbstractMenu):
 			output += '{}\n{}'.format(str(_('Custom mirrors')), table)
 
 		return output.strip()
-
