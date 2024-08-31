@@ -98,7 +98,7 @@ class PackageSearchResult:
 	def __eq__(self, other) -> bool:
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other) -> bool:
+	def __lt__(self, other: 'PackageSearchResult') -> bool:
 		return self.pkg_version < other.pkg_version
 
 
@@ -129,7 +129,7 @@ class PackageSearch:
 class LocalPackage:
 	name: str
 	version: str
-	description:str
+	description: str
 	architecture: str
 	url: str
 	licenses: str

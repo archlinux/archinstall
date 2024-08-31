@@ -171,6 +171,11 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	def validator(value: str) -> Optional[str]:
 		packages = value.split() if value else []
 
+	def read_packages(p: list[str] = []) -> list[str]:
+		display = ' '.join(p)
+		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run().strip()
+		return input_packages.split() if input_packages else []
+
 		if len(packages) == 0:
 			return None
 

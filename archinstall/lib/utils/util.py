@@ -85,7 +85,7 @@ def prompt_dir(
 	return Path(result.item)
 
 
-def is_subpath(first: Path, second: Path):
+def is_subpath(first: Path, second: Path) -> bool:
 	"""
 	Check if _first_ a subpath of _second_
 	"""

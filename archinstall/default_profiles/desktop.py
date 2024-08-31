@@ -6,8 +6,7 @@ from archinstall.default_profiles.profile import Profile, ProfileType, SelectRes
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu, PreviewStyle
+	FrameProperties, ResultType, PreviewStyle
 )
 
 if TYPE_CHECKING:
@@ -16,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class DesktopProfile(Profile):
-	def __init__(self, current_selection: List[Profile] = []):
+	def __init__(self, current_selection: List[Profile] = []) -> None:
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
@@ -53,7 +52,7 @@ class DesktopProfile(Profile):
 
 		return None
 
-	def _do_on_select_profiles(self):
+	def _do_on_select_profiles(self) -> None:
 		for profile in self.current_selection:
 			profile.do_on_select()
 
@@ -94,15 +93,15 @@ class DesktopProfile(Profile):
 
 		return None
 
-	def post_install(self, install_session: 'Installer'):
+	def post_install(self, install_session: 'Installer') -> None:
 		for profile in self._current_selection:
 			profile.post_install(install_session)
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		# Install common packages for all desktop environments
 		install_session.add_additional_packages(self.packages)
 
-		for profile in self._current_selection:
+		for profile in self.current_selection:
 			info(f'Installing profile {profile.name}...')
 
 			install_session.add_additional_packages(profile.packages)

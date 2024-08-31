@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class BspwmProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Bspwm', ProfileType.WindowMgr, description='')
 
 	@property

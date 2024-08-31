@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.3.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ჟურნალის ფაილი შეიქმნა აქ: {} {}"
@@ -70,13 +70,13 @@ msgid "Select one network interface to configure"
 msgstr "მოსარგებად ერთ-ერთი ქსელის ინტერფეისი აირჩიეთ"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "აირჩიეთ მოსარგები რეჟიმი \"{}\"-სთვის ან გამოტოვეთ ნაგულისხმები რეჟიმის \"{}\" გამოსაყენებლად"
+msgstr "აირჩიეთ მოსარგები რეჟიმი \"{}\"-სთვის ან გამოტოვეთ ნაგულისხმევი რეჟიმის \"{}\" გამოსაყენებლად"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "შეიყვანეთ IP მისამართი და ქვექსელი {}-სთვის (მაგ: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "აირჩიეთ ნაგულისხმები რაუტერის IP მისამართი, ან ცარიელი დატოვეთ: "
+msgstr "აირჩიეთ ნაგულისხმევი რაუტერის IP მისამართი, ან ცარიელი დატოვეთ: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
 msgstr "შეიყვანეთ თქვენი DNS სერვერების მისამართები (გამოყოფილი ცარიელი ადგილით. ცარიელი, თუ არ გნებავთ, გამოიყენოთ): "
@@ -98,10 +98,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "შეიყვანეთ დანაყოფის სასურველი ფაილური სისტემის ტიპი"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "აირჩიეთ დაწყების მდებარეობა (parted-ის ერთეულებში: s, GB, % და ა.შ. ; ნაგულისხმევი: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "აირჩიეთ დასრულების მდებარეობა (parted-ის ერთეულებში: s, GB, % და ა.შ. ; მაგ: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} რიგში ჩაყენებულ დანაყოფებს შეიცავს. ეს წაშლის მათ. დარწმუნებული ბრძანდებით?"
@@ -212,10 +212,10 @@ msgstr ""
 "აირჩიეთ გრაფიკის დრაივერი ან, ღია კოდის მქონე დრაივერის დასაყენებლად, ცარიელი დატოვეთ"
 
 msgid "All open-source (default)"
-msgstr "ყველა ღია კოდით (ნაგულისხმები)"
+msgstr "ყველა ღია კოდით (ნაგულისხმევი)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "აირჩიეთ, რომელი ბირთვი გნებავთ, გამოიყენოთ. ან ნაგულისხმებისთვის (\"{}\") ცარიელი დატოვეთ"
+msgstr "აირჩიეთ, რომელი ბირთვი გნებავთ, გამოიყენოთ. ან ნაგულისხმევისთვის (\"{}\") ცარიელი დატოვეთ"
 
 msgid "Choose which locale language to use"
 msgstr "აირჩიეთ, რომელი ლოკალის ენა გნებავთ, გამოიყენოთ"
@@ -386,7 +386,7 @@ msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "დამატებითი პაკეტების არსებობის შემოწმება (ამას რამდენიმე წამი შეიძლება დასჭირდეს)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "გნებავთ დროის ავტომატური სინქრონიზაციის (NTP) ნაგულისხმები დროის სერვერებით გამოყენება?\n"
+msgstr "გნებავთ დროის ავტომატური სინქრონიზაციის (NTP) ნაგულისხმევი დროის სერვერებით გამოყენება?\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
@@ -589,7 +589,7 @@ msgid "[!] A log file has been created here: {}"
 msgstr "[!] ჟურნალის ფაილის მდებარეობა: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "გნებავთ BTRFS-ის ქვეტომები ნაგულისხმები სტრუქტურით გამოიყენოთ?"
+msgstr "გნებავთ BTRFS-ის ქვეტომები ნაგულისხმევი სტრუქტურით გამოიყენოთ?"
 
 msgid "Would you like to use BTRFS compression?"
 msgstr "გნებავთ BTRFS-ის შეკუმშვის გამოყენება?"
@@ -698,7 +698,7 @@ msgid "No audio server"
 msgstr "აუდიოსერვერის გრეშე"
 
 msgid "(default)"
-msgstr "(ნაგულისხმები)"
+msgstr "(ნაგულისხმევი)"
 
 msgid "Use ESC to skip"
 msgstr "გამოსატოვებლად გამოიყენეთ ღილაკი Esc"
@@ -732,7 +732,7 @@ msgid "You can skip selecting a drive and partitioning and use whatever drive-se
 msgstr "შეგიძლიათ დისკის არჩევანი და დაყოფა გამოტოვოთ და გამოიყენოთ სასურველი დისკი, რომელიც /mnt-ზეა მიმაგრებული (ექსპერიმენტალური)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "აირჩიეთ ერტი ან მეტი დისკი ან გამოტოვება და ნაგულისხმები /mnt-ის გამოყენება"
+msgstr "აირჩიეთ ერტი ან მეტი დისკი ან გამოტოვება და ნაგულისხმევი /mnt-ის გამოყენება"
 
 msgid "Select which partitions to mark for formatting:"
 msgstr "აირჩიეთ, რომელი დანაყოფები მოვნიშნო დასაფორმატებლად:"
@@ -810,11 +810,11 @@ msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads a
 msgstr " - მინიმალური მნიშვნელობა   : 1 ( დაუშვებს 1 პარალელურ გადმოწერას, დაუშვებს 2 ერთდროულ გადმოწერას )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr " - გამორთვა/ნაგულისხმები : 0 ( პარალელური გადმოწერების გათიშვა. დროის ერთ მომენტში მხოლოდ ერთი გადმოწერა მოხდება )"
+msgstr " - გამორთვა/ნაგულისხმევი : 0 ( პარალელური გადმოწერების გათიშვა. დროის ერთ მომენტში მხოლოდ ერთი გადმოწერა მოხდება )"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {}-მდე, ან 0, გასათიშად]"
+msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {max_downloads}-მდე, ან 0, გასათიშად]"
 
 msgid "Parallel Downloads"
 msgstr "პარალელური გადმოწერები"
@@ -829,7 +829,7 @@ msgid "TAB to select"
 msgstr "ასარჩევად TAB"
 
 msgid "[Default value: 0] > "
-msgstr "[ნაგულისხმები მნიშვნელობა: 0] > "
+msgstr "[ნაგულისხმევი მნიშვნელობა: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
 msgstr "თარგმანის გამოსაყენებლად ფონტი, რომელსაც ენის მხარდაჭერა გააჩნია, ხელით უნდა დააყენოთ."
@@ -838,124 +838,103 @@ msgid "The font should be stored as {}"
 msgstr "ფონტი {}-ში უნდა იყოს შენახული"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall-ს გასაშვებად root მომხმარებლის პრივილეგიები სჭირდება. მეტი ინფორმაციისთვის იხილეთ --help."
 
-#, fuzzy
 msgid "Select an execution mode"
-msgstr "აირჩიეთ ქმედება '{}'-სთვის"
+msgstr "აირჩიეთ შესრულების რეჟიმი"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "პროფილის მიღება შეუძლებელია მითითებული ბმულიდან: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "პროფილებს უნიკალური სახელი უნდა ჰქონდეთ, მაგრამ აღმოჩენილია პროფილის აღწერები გამეორებადი სახელით: {}"
 
-#, fuzzy
 msgid "Select one or more devices to use and configure"
-msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"
+msgstr "აირჩიეთ ერთი ან მეტი მოწყობილობა და მოირგეთ"
 
-#, fuzzy
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
 msgstr "ეს მყარი დისკის არჩევანს და მიმდინარე დისკის განლაგებას საწყის მნიშვნელობებზე დააბრუნებს. დარწმუნებული ბრძანდებით?"
 
-#, fuzzy
 msgid "Existing Partitions"
-msgstr "დანაყოფები"
+msgstr "არსებული დანაყოფები"
 
-#, fuzzy
 msgid "Select a partitioning option"
-msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+msgstr "აირჩიეთ დისკის დაყოფის პარამეტრი"
 
-#, fuzzy
 msgid "Enter the root directory of the mounted devices: "
-msgstr "შეიყვანეთ საქაღალდე, სადაც კონფიგურაცი(ებ)-ი იქნება შენახული: "
+msgstr "შეიყვანეთ მიმაგრებული მოწყობილობების ძირითადი საქაღალდე: "
 
-#, fuzzy
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "მინიმალური სივრცე დანაყოფისთვის /home: {}გბ\n"
+msgstr "მინიმალური სივრცე დანაყოფისთვის /home: {}გიბ\n"
 
-#, fuzzy
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "მინიმალური სივრცე ArchLinux-ის დანაყოფისთვის: {}გბ"
+msgstr "მინიმალური სივრცე Arch Linux-ის დანაყოფისთვის: {}გიბ"
 
-#, fuzzy
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "ეს წინასწარ მითითებული პროფილების სიაა. მათი დახმარებით ისეთი რამების, როგორიცაა სამუშაო მაგიდის გარემოები, დაყენება უფრო ადვილია"
+msgstr "ეს წინასწარ მითითებული profiles_bck-ის სიაა. მათი დახმარებით ისეთი რამების, როგორიცაა სამუშაო მაგიდის გარემოები, დაყენება უფრო ადვილია"
 
-#, fuzzy
 msgid "Current profile selection"
-msgstr "მიმდინარე დანაყოფების განლაგება"
+msgstr "მიმდინარე პროფილის არჩევანი"
 
-#, fuzzy
 msgid "Remove all newly added partitions"
-msgstr "ახალი დანაყოფის შექმნა"
+msgstr "ყველა ახლად დამატებული დანაყოფის წაშლა"
 
-#, fuzzy
 msgid "Assign mountpoint"
-msgstr "დანაყოფის მიმაგრების წერტილის მინიჭება"
+msgstr "მიმაგრების წერტილის მინიჭება"
 
-#, fuzzy
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr "დანაყოფის დასაფორმატებლობის ჭდის მოხსნა/დადება (მონაცემები წაიშლება)"
+msgstr "დასაფორმატებულობის ჭდის მოხსნა/დადება (მონაცემები წაიშლება)"
 
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "ჩატვირთვადი ალმის დაყენება/მოხსნა"
 
 msgid "Change filesystem"
-msgstr ""
+msgstr "ფაილური სისტემის შეცვლა"
 
-#, fuzzy
 msgid "Mark/Unmark as compressed"
-msgstr "დანაყოფზე შეკუმშულობის ჭდის მოხსნა/დადება (მხოლოდ btrfs)"
+msgstr "შეკუმშულად მონიშვნა/მონიშვნის მოხსნა"
 
-#, fuzzy
 msgid "Set subvolumes"
-msgstr "ქვეტომის წაშლა"
+msgstr "ქვეტომების დაყენება"
 
-#, fuzzy
 msgid "Delete partition"
 msgstr "დანაყოფის წაშლა"
 
-#, fuzzy
 msgid "Partition"
-msgstr "დანაყოფები"
+msgstr "დანაყოფი"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "ეს დანაყოფი ამჟამად დაშიფრულია. დასაფორმატებლად აუცილებელია ფაილური სისტემის მითითება"
 
-#, fuzzy
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * დანაყოფის მიმაგრების წერტილები შედარებითია დაყენების შიგნით. ჩატვირთვა, მაგალითად, /boot შეიძლება, იყოს."
+msgstr "დანაყოფის მიმაგრების წერტილები შედარებითია დაყენების შიგნით. ჩატვირთვა, მაგალითად, /boot შეიძლება, იყოს."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "თუ /boot მიმაგრების წერტილი დაყენებულია, ეს დანაყოფი ასევე მოინიშნება, როგორც ჩატვირთვადი."
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "მიმაგრების წერტილი: "
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "ამჟამად თავისუფალი სექტორები მოწყობილობაზე {}:"
 
-#, fuzzy
 msgid "Total sectors: {}"
-msgstr "არასწორი საქაღალდე: {}"
+msgstr "სექტორები ჯამში: {}"
 
-#, fuzzy
 msgid "Enter the start sector (default: {}): "
-msgstr "შეიყვანეთ საწყისი სექტორი (პროცენტებში ან ბლოკის ნომერი. ნაგულისხმები: {}): "
+msgstr "შეიყვანეთ საწყისი სექტორი (ნაგულისხმევი: {}): "
 
-#, fuzzy
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "შეიყვანეთ დანაყოფის ბოლო სექტორი (პროცენტულად ან ბლოკის ნომერი. მაგ: {}): "
+msgstr "შეიყვანეთ დანაყოფის ბოლო სექტორი (პროცენტულად ან ბლოკის ნომერი. ნაგულისხმევი: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "ეს ყველა ახლად დამატებულ დანაყოფს წაშლის. გავაგრძელო?"
 
 msgid "Partition management: {}"
-msgstr ""
+msgstr "დანაყოფების მართვა: {}"
 
 msgid "Total length: {}"
-msgstr ""
+msgstr "ჯამური სიგრძე: {}"
 
 msgid "Encryption type"
 msgstr "დაშიფვრის ტიპი"
@@ -975,37 +954,32 @@ msgstr "აირჩიეთ დისკის დაშიფვრის პ
 msgid "Select a FIDO2 device to use for HSM"
 msgstr "აირჩიეთ HSM-სთვის გამოსაყენებელი FIDO2 მოწყობილობა"
 
-#, fuzzy
 msgid "Use a best-effort default partition layout"
-msgstr "მონიშნულ დისკებზე ყველაფრის წაშლა და დანაყოფების განლაგების საუკეთესო განლაგების გამოყენება"
+msgstr "დანაყოფების განლაგების საუკეთესო განლაგების გამოყენება"
 
-#, fuzzy
 msgid "Manual Partitioning"
-msgstr "დანაყოფები"
+msgstr "ხელით დაყოფა"
 
-#, fuzzy
 msgid "Pre-mounted configuration"
-msgstr "მორგების გარეშე"
+msgstr "წინასწარ მიმაგრებული კონფიგურაცია"
 
 msgid "Unknown"
-msgstr ""
+msgstr "უცნობი"
 
 msgid "Partition encryption"
 msgstr "დანაყოფის დაშიფვრა"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! {}-ის დაფორმატება ფორმატში "
 
-#, fuzzy
 msgid "← Back"
-msgstr "უკან"
+msgstr "← უკან"
 
 msgid "Disk encryption"
 msgstr "დისკის დაშიფვრა"
 
-#, fuzzy
 msgid "Configuration"
-msgstr "მორგების გარეშე"
+msgstr "მორგება"
 
 msgid "Password"
 msgstr "პაროლი"
@@ -1017,361 +991,325 @@ msgid "Back"
 msgstr "უკან"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "აირჩიეთ, რომელი მისალმების ეკრანის დაყენება გნებავთ არჩეული პროფილებისთვის: {}"
 
 msgid "Environment type: {}"
-msgstr ""
+msgstr "გარემოს ტიპი: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "Sway-ის დახურული კოდის მქონე Nvidia-ის დრაივერის მხარდაჭერა არ გააჩნია. როგორც ჩანს, შარში ყოფთ თავს. დარწმუნებული ბრძანდებით?"
 
-#, fuzzy
 msgid "Installed packages"
-msgstr "დამატებითი პაკეტები"
+msgstr "დაყენებული პაკეტები"
 
-#, fuzzy
 msgid "Add profile"
-msgstr "პროფილი"
+msgstr "პროფილის დამატება"
 
-#, fuzzy
 msgid "Edit profile"
-msgstr "პროფილი"
+msgstr "პროფილის ჩასწორება"
 
-#, fuzzy
 msgid "Delete profile"
-msgstr "ინტერფეისის წაშლა"
+msgstr "პროფილის წაშლა"
 
-#, fuzzy
 msgid "Profile name: "
-msgstr "პროფილი"
+msgstr "პროფილის სახელი: "
 
-#, fuzzy
 msgid "The profile name you entered is already in use. Try again"
-msgstr "შეყვანილი მომხმარებლის სახელი არასწორია. კიდევ სცადეთ"
+msgstr "შეყვანილი პროფილის სახელი უკვე გამოიყენება. კიდევ სცადეთ"
 
-#, fuzzy
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "დამატებითი პაკეტები დასაყენებლად (გამოტოვებით გამოყოფილი, გამოსატოვებლად ცარიელი დატოვეთ): "
+msgstr "ამ პროფილთან დასაყენებელი პაკეტები (ჰარეებით გამოყოფილი, გამოსატოვებლად ცარიელი დატოვეთ): "
 
-#, fuzzy
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "დამატებითი პაკეტები დასაყენებლად (გამოტოვებით გამოყოფილი, გამოსატოვებლად ცარიელი დატოვეთ): "
+msgstr "ამ პროფილთან ჩასართავი სერვისები (ჰარეებით გამოყოფილი, გამოსატოვებლად ცარიელი დატოვეთ): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "უნდა ჩაირთოს თუ არა ეს პროფილი დაყენებისთვის?"
 
 msgid "Create your own"
-msgstr ""
+msgstr "შექმენით საკუთარი"
 
-#, fuzzy
 msgid ""
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
 "\n"
-"\n"
 "აირჩიეთ გრაფიკის დრაივერი ან, ღია კოდის მქონე დრაივერის დასაყენებლად, ცარიელი დატოვეთ"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Sway-ს თქვენს სამუშაო ადგილთან (აპარატურასთან, როგორიცაა კლავიატურა, თაგუნა და ა.შ>) წვდომა სჭირდება"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Sway-ს თქვენს აპარატურასთან წვდომა მისცეთ"
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "გრაფიკის დრაივერი"
 
 msgid "Greeter"
-msgstr ""
+msgstr "მისამების ეკრანი"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "აირჩიეთ, რომელი მისალმების ეკრანის დაყენება გნებავთ"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "ეს წინასწარ დაპროგრამებული ნაგულისხმევი პროფილების სიაა"
 
-#, fuzzy
 msgid "Disk configuration"
-msgstr "მორგების გარეშე"
+msgstr "დისკის მორგება"
 
-#, fuzzy
 msgid "Profiles"
-msgstr "პროფილი"
+msgstr "პროფილები"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "მიმდინარეობს კონფიგურაციის ფაილების შესანახად შესაძლო საქაღალდეების ძებნა ..."
 
-#, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
-msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"
+msgstr "აირჩიეთ საქაღალდე (ან საქაღალდეები) კონფიგურაციის ფაილების შესანახად"
 
-#, fuzzy
 msgid "Add a custom mirror"
-msgstr "მომხმარებლის დამატება"
+msgstr "მორგებული სარკის დამატება"
 
 msgid "Change custom mirror"
-msgstr ""
+msgstr "მორგებული სარკის შეცვლა"
 
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "მორგებული სარკის წაშლა"
 
-#, fuzzy
 msgid "Enter name (leave blank to skip): "
-msgstr "შეიყვანეთ მომხმარებლი სახელი (გამოსატოვებლად ცარიელი დატოვეთ): "
+msgstr "შეიყვანეთ სახელი (გამოსატოვებლად ცარიელი დატოვეთ): "
 
-#, fuzzy
 msgid "Enter url (leave blank to skip): "
-msgstr "შეიყვანეთ მომხმარებლი სახელი (გამოსატოვებლად ცარიელი დატოვეთ): "
+msgstr "შეიყვანეთ ბმული (გამოსატოვებლად ცარიელი დატოვეთ): "
 
-#, fuzzy
 msgid "Select signature check option"
-msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+msgstr "აირჩიეთ ხელმოწერის შემოწმების პარამეტრი"
 
-#, fuzzy
 msgid "Select signature option"
-msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+msgstr "აირჩიეთ ხელმოწერის პარამეტრი"
 
 msgid "Custom mirrors"
-msgstr ""
+msgstr "მორგებული სარკეები"
 
 msgid "Defined"
-msgstr ""
+msgstr "აღწერილია"
 
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
-msgstr "მომხმარებლის კონფიგურაციის შენახვა"
+msgstr "მომხმარებლის კონფიგურაციის შენახვა (დისკის განლაგების ჩართვით)"
 
-#, fuzzy
 msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
-msgstr "შეიყვანეთ საქაღალდე, სადაც კონფიგურაცი(ებ)-ი იქნება შენახული: "
+msgstr ""
+"შეიყვანეთ საქაღალდე კონფიგურაცი(ებ)-ის შესანახად (ტაბით დასრულება ჩართულია)\n"
+"შენახვის საქაღალდე: "
 
 msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
 "\n"
 "{}"
 msgstr ""
+"გნებავთ, შეინახოთ {} კონფიგურაციის ფაილები შემდეგ მისამართზე?\n"
+"\n"
+"{}"
 
-#, fuzzy
 msgid "Saving {} configuration files to {}"
-msgstr "კონფიგურაციი შენახვა"
+msgstr "{}-კონფიგურაციის ფაილების შენახვა {}-ზე"
 
-#, fuzzy
 msgid "Mirrors"
-msgstr "სარკის რეგიონი"
+msgstr "სარკეები"
 
-#, fuzzy
 msgid "Mirror regions"
-msgstr "სარკის რეგიონი"
+msgstr "სარკის რეგიონები"
 
-#, fuzzy
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - მინიმალური მნიშვნელობა   : {} ( დაუშვებს {} პარალელურ გადმოწერას, დაუშვებს {} ერთდროულ გადმოწერას )"
+msgstr " - მინიმალური მნიშვნელობა   : {} ( დაუშვებს {} პარალელურ გადმოწერას, დაუშვებს {მაქს_გადმოწერები+1} ერთდროულ გადმოწერას )"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {}-მდე, ან 0, გასათიშად]"
 
 msgid "Locales"
-msgstr ""
+msgstr "ლოკალები"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "NetworkManager-ის გამოყენება (აუცილებელია ინტერნეტის GNOME/KDE-დან მოსარგებად)"
 
 msgid "Total: {} / {}"
-msgstr ""
+msgstr "სულ: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "ყველა შეყვანილ მნიშვნელობად სუფიქსად შეგიძლიათ მიუთითოთ ერთეული: B, KB, KiB, MB, MiB..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "თუ ერთეული მითითებული არაა, მნიშვნელობა სექტორების რაოდენობად იქნება აღქმული"
 
-#, fuzzy
 msgid "Enter start (default: sector {}): "
-msgstr "შეიყვანეთ საწყისი სექტორი (პროცენტებში ან ბლოკის ნომერი. ნაგულისხმები: {}): "
+msgstr "შეიყვანეთ საწყისი სექტორი (ნაგულისხმევი: {}): "
 
-#, fuzzy
 msgid "Enter end (default: {}): "
-msgstr "შეიყვანეთ საწყისი სექტორი (პროცენტებში ან ბლოკის ნომერი. ნაგულისხმები: {}): "
+msgstr "შეიყვანეთ ბოლო სექტორი (ნაგულისხმევი: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "შეცდომა fido2 მოწყობილობების დადგენისას. libfido2 დაყენებული გაქვთ?"
 
 msgid "Path"
-msgstr ""
+msgstr "ბილიკი"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "მწარმოებელი"
 
 msgid "Product"
-msgstr ""
+msgstr "პროდუქტი"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Invalid configuration: {error}"
-msgstr "ხელით მორგება"
+msgstr "არასწორი კონფიგურაცია: {error}"
 
 msgid "Type"
-msgstr ""
+msgstr "ტიპი"
 
-#, fuzzy
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
 msgstr "ეს პარამეტრი დაყენებისას მითითებული რაოდენობის პარალელურ გადმოწერას დაუშვებს"
 
-#, fuzzy
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 "\n"
 "Note:\n"
 msgstr ""
 "შეიყვანეთ დასაშვები პარალელური გადმოწერების რაოდენობა.\n"
-" (შეიყვანეთ მნიშვნელობა 1-დან {}-მდე)\n"
-"დაიმახსოვრეთ:"
+"\n"
+"შენიშვნა:\n"
 
-#, fuzzy
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - მინიმალური მნიშვნელობა   : {} ( დაუშვებს {} პარალელურ გადმოწერას, დაუშვებს {} ერთდროულ გადმოწერას )"
+msgstr " - მინიმალური მნიშვნელობა   : {} ( დაუშვებს {} პარალელურ გადმოწერას )"
 
-#, fuzzy
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - გამორთვა/ნაგულისხმები : 0 ( პარალელური გადმოწერების გათიშვა. დროის ერთ მომენტში მხოლოდ ერთი გადმოწერა მოხდება )"
+msgstr " - გამორთვა/ნაგულისხმევი : 0 ( პარალელური გადმოწერების გათიშვა. დროის ერთ მომენტში მხოლოდ ერთი გადმოწერა მოხდება )\n"
 
-#, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {}-მდე, ან 0, გასათიშად]"
+msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [ან დააყენეთ 0, გასათიშად]"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Hyperland-ს თქვენს სამუშაო ადგილთან (აპარატურასთან, როგორიცაა კლავიატურა, თაგუნა და ა.შ>) წვდომა სჭირდება"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Hyprland access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Hyperland-ს თქვენს აპარატურასთან წვდომა მისცეთ"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "ყველა შეყვანილ მნიშვნელობად სუფიქსად შეგიძლიათ მიუთითოთ ერთეული: B, KB, KiB, MB, MiB..."
 
-#, fuzzy
 msgid "Would you like to use unified kernel images?"
-msgstr "გნებავთ სვოპის ZRAM-ზე გამოყენება?"
+msgstr "გნებავთ გაერთიანებული ბირთვის დისკის ასლის ფაილების გამოყენება?"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "გაერთიანებული ბირთვის დისკის ასლის ფაილები"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "დროის სინქრონიზაციის (timedatectl show) დასრულების მოლოდინი."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "დროის სინქრონიზაცია არ სრულდება. სანამ ელოდებით, შეამოწმეთ დოკუმენტაცია, როგორ აიცილოთ ეს თავიდან: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "ავტომატური დროის სინქრონიზაციის მოლოდინის გამოტოვება (ამას შეუძლია, პრობლემები გამოიწვიოს, თუ დრო დაყენებისას აირევა)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "ველოდები Arch Linux-ის ბრელოკის სინქრონიზაციის (archlinux-keyring-wkd-sync) დასრულებას."
 
-#, fuzzy
 msgid "Selected profiles: "
-msgstr "ინტერფეისის წაშლა"
+msgstr "მონიშნული პროფილები: "
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "დროის სინქრონიზაცია არ სრულდება. სანამ ელოდებით, შეამოწმეთ დოკუმენტაცია, როგორ აიცილოთ ეს თავიდან: https://archinstall.readthedocs.io/"
 
-#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr "დანაყოფზე შეკუმშულობის ჭდის მოხსნა/დადება (მხოლოდ btrfs)"
+msgstr "'nodatacow' ალმის დასმა/მოხსნა"
 
-#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "გნებავთ BTRFS-ის შეკუმშვის გამოყენება?"
+msgstr "შეკუმშვის გამოყენება გნებავთ, თუ CoW-ის გათიშვა?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "შეკუმშვის გამოყენება"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "ჩაწერისას-დაკოპირების გათიშვა"
 
-#, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "მოგაწვდით სამუშაო გარემოებისა და ფანჯრების მმართველების არჩევანს. მაგ: gnome, kde, sway"
+msgstr "მოგაწვდით სამუშაო გარემოებისა და ფანჯრების მმართველების არჩევანს. მაგ: GNOME, KDE Plasma, Sway"
 
-#, fuzzy
 msgid "Configuration type: {}"
-msgstr "მორგების გარეშე"
+msgstr "მორგების ტიპი: {}"
 
-#, fuzzy
 msgid "LVM configuration type"
-msgstr "მორგების გარეშე"
+msgstr "LVM-ის კონფიგურაციის ტიპი"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "LVM დისკის დაშიფვრა ორზე მეტი დანაყოფით ამჟამად მხარდაჭერილი არაა"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "NetworkManager-ის გამოყენება (აუცილებელია ინტერნეტის GNOME/KDE-დან მოსარგებად)"
+msgstr "NetworkManager-ის გამოყენება (აუცილებელია ინტერნეტის GNOME/KDE Plasma-დან მოსარგებად)"
 
-#, fuzzy
 msgid "Select a LVM option"
-msgstr "აირჩიეთ დროის სარტყელი"
+msgstr "აირჩიეთ LVM-ის პარამეტრი"
 
-#, fuzzy
 msgid "Partitioning"
-msgstr "დანაყოფები"
+msgstr "დაყოფა"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "ლოგიკური ტომების მართვა (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "ფიზიკური ტომები"
 
 msgid "Volumes"
-msgstr ""
+msgstr "ტომები"
 
-#, fuzzy
 msgid "LVM volumes"
-msgstr "ქვეტომის წაშლა"
+msgstr "LVM-ის ტომები"
 
-#, fuzzy
 msgid "LVM volumes to be encrypted"
-msgstr "დასაშიფრი დანაყოფები"
+msgstr "დასაშიფრი LVM-ის ტომები"
 
-#, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr "არჩიეთ დასაშიფრი დანაყოფები"
+msgstr "აირჩიეთ, რომელი LVM-ის ტომი დაიშიფროს"
 
-#, fuzzy
 msgid "Default layout"
-msgstr "დისკის განლაგება"
+msgstr "ნაგულისხმები განლაგება"
 
-#, fuzzy
 msgid "No Encryption"
-msgstr "დაშიფვრის ტიპი"
+msgstr "დაშიფვრის გარეშე"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM LUKS-ზე"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS LVM-ზე"
 
-#, fuzzy
 msgid "Yes"
 msgstr "დიახ"
 
 msgid "No"
-msgstr ""
+msgstr "არა"
 
-#, fuzzy
 msgid "Archinstall help"
-msgstr "Archinstall-ის ენა"
+msgstr "Archinstall-ის დახმარება"
 
-#, fuzzy
 msgid " (default)"
-msgstr "(ნაგულისხმები)"
+msgstr " (ნაგულისხმევი)"
+
+msgid "Press Ctrl+h for help"
+msgstr ""

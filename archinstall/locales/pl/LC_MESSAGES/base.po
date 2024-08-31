@@ -1384,6 +1384,9 @@ msgstr "Język archinstall-a"
 msgid " (default)"
 msgstr "(domyślne)"
 
+msgid "Press Ctrl+h for help"
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
 

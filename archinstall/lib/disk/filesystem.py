@@ -34,7 +34,7 @@ class FilesystemHandler:
 		self._disk_config = disk_config
 		self._enc_config = enc_conf
 
-	def perform_filesystem_operations(self, show_countdown: bool = True):
+	def perform_filesystem_operations(self, show_countdown: bool = True) -> None:
 		if self._disk_config.config_type == DiskLayoutType.Pre_mount:
 			debug('Disk layout configuration is set to pre-mount, not performing any operations')
 			return
@@ -88,7 +88,7 @@ class FilesystemHandler:
 		self,
 		partitions: List[PartitionModification],
 		device_path: Path
-	):
+	) -> None:
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
@@ -120,7 +120,7 @@ class FilesystemHandler:
 			part_mod.partuuid = lsblk_info.partuuid
 			part_mod.uuid = lsblk_info.uuid
 
-	def _validate_partitions(self, partitions: List[PartitionModification]):
+	def _validate_partitions(self, partitions: List[PartitionModification]) -> None:
 		checks = {
 			# verify that all partitions have a path set (which implies that they have been created)
 			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
@@ -136,7 +136,7 @@ class FilesystemHandler:
 			if found is not None:
 				raise exc
 
-	def perform_lvm_operations(self):
+	def perform_lvm_operations(self) -> None:
 		info('Setting up LVM config...')
 
 		if not self._disk_config.lvm_config:
@@ -151,7 +151,7 @@ class FilesystemHandler:
 			self._setup_lvm(self._disk_config.lvm_config)
 			self._format_lvm_vols(self._disk_config.lvm_config)
 
-	def _setup_lvm_encrypted(self, lvm_config: LvmConfiguration, enc_config: DiskEncryption):
+	def _setup_lvm_encrypted(self, lvm_config: LvmConfiguration, enc_config: DiskEncryption) -> None:
 		if enc_config.encryption_type == EncryptionType.LvmOnLuks:
 			enc_mods = self._encrypt_partitions(enc_config, lock_after_create=False)
 
@@ -173,7 +173,7 @@ class FilesystemHandler:
 
 			self._safely_close_lvm(lvm_config)
 
-	def _safely_close_lvm(self, lvm_config: LvmConfiguration):
+	def _safely_close_lvm(self, lvm_config: LvmConfiguration) -> None:
 		for vg in lvm_config.vol_groups:
 			for vol in vg.volumes:
 				device_handler.lvm_vol_change(vol, False)
@@ -184,7 +184,7 @@ class FilesystemHandler:
 		self,
 		lvm_config: LvmConfiguration,
 		enc_mods: Dict[PartitionModification, Luks2] = {}
-	):
+	) -> None:
 		self._lvm_create_pvs(lvm_config, enc_mods)
 
 		for vg in lvm_config.vol_groups:
@@ -231,7 +231,7 @@ class FilesystemHandler:
 		self,
 		lvm_config: LvmConfiguration,
 		enc_vols: Dict[LvmVolume, Luks2] = {}
-	):
+	) -> None:
 		for vol in lvm_config.get_all_volumes():
 			if enc_vol := enc_vols.get(vol, None):
 				if not enc_vol.mapper_dev:
@@ -251,7 +251,7 @@ class FilesystemHandler:
 		self,
 		lvm_config: LvmConfiguration,
 		enc_mods: Dict[PartitionModification, Luks2] = {}
-	):
+	) -> None:
 		pv_paths: Set[Path] = set()
 
 		for vg in lvm_config.vol_groups:
@@ -326,7 +326,7 @@ class FilesystemHandler:
 
 		return enc_mods
 
-	def _lvm_vol_handle_e2scrub(self, vol_gp: LvmVolumeGroup):
+	def _lvm_vol_handle_e2scrub(self, vol_gp: LvmVolumeGroup) -> None:
 		# from arch wiki:
 		# If a logical volume will be formatted with ext4, leave at least 256 MiB
 		# free space in the volume group to allow using e2scrub

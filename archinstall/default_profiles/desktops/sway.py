@@ -6,8 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu
+	FrameProperties, Alignment, ResultType
 )
 
 if TYPE_CHECKING:
@@ -21,7 +20,7 @@ class SeatAccess(Enum):
 
 
 class SwayProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__(
 			'Sway',
 			ProfileType.WindowMgr,
@@ -61,7 +60,7 @@ class SwayProfile(XorgProfile):
 			return [pref]
 		return []
 
-	def _ask_seat_access(self):
+	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
 		header = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
 		header += '\n' + str(_('Choose an option to give Sway access to your hardware')) + '\n'
@@ -88,5 +87,5 @@ class SwayProfile(XorgProfile):
 		self._ask_seat_access()
 		return None
 
-	def install(self, install_session: 'Installer'):
+	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)

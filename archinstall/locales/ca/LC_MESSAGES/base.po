@@ -1,0 +1,1314 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ca\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] S'ha creat un fitxer de registre aquí: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Si us plau envieu aquest problema (i fitxer) a https://github.com/archlinux/archinstall/issues"
+
+msgid "Do you really want to abort?"
+msgstr "Segur que voleu avortar?"
+
+msgid "And one more time for verification: "
+msgstr "Una vegada més per a verificar: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "Us agradaria utilitzar swap a zram?"
+
+msgid "Desired hostname for the installation: "
+msgstr "Nom de host desitjat per a la instal·lació: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Nom d'usuari pel superusuari amb privilegis sudo: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Algun usuari addicional a instal·lar (deixeu-ho en blanc per no afegir-ne cap): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Cal que aquest usuari sigui un superusuari (sudoer)?"
+
+msgid "Select a timezone"
+msgstr "Seleccioneu una franja horària"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Voleu utilitzar GRUB com a gestor d'arranc en comptes de systemd-boot?"
+
+msgid "Choose a bootloader"
+msgstr "Trieu un gestor d'arranc"
+
+msgid "Choose an audio server"
+msgstr "Trieu un servidor d'àudio"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Només s'instal·laran paquets com base, base-devel, linux, linux-firmware, efibootmgr i altres paquets de perfil opcionals."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "Si desitgeu un navegador web, com ara firefox o chromium, ho podeu especificar al proper missatge."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Escriviu paquets addicionals a instal·lar (separats per espais, deixeu-ho en blanc per saltar aquest pas): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Copiar la configuració de xarxa ISO a la instal·lació"
+
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "Utilitzar NetworkManager (necessari per a configurar internet gràficament a GNOME i KDE)"
+
+msgid "Select one network interface to configure"
+msgstr "Seleccioneu una interfície de xarxa a configurar"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "Seleccioneu quin mode configurar per a \"{}\" o ometeu per a usar el mode predeterminat \"{}\""
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Introduïu la IP i la subxarxa per a {} (exemple: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Introduïu la IP de la porta d'enllaç (router) o deixeu-ho en blanc per a no utilitzar-ne cap: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "Introduïu els vostres servidors DNS (separats per espais o deixeu-ho en blanc per a cap): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "Seleccioneu quin sistema de fitxers cal utilitzar a la vostra partició principal"
+
+msgid "Current partition layout"
+msgstr "Distribució actual de les particions"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"Seleccioneu què fer amb\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Introduïu el tipus de sistema de fitxers desitjat per a la partició"
+
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Introduïu la ubicació d'inici (en unitats dividides: s, GB, %, etc. ; per defecte: {}): "
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Introduïu la ubicació final (en unitats dividides: s, GB, %, etc. ; ex.: {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} conté particions en cua. Això eliminarà aquestes particions. N'esteu segurs?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"Seleccioneu per índex la ubicació de les particions a eliminar"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"Seleccioneu per índex la ubicació de la partició a muntar"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Els punts de muntatge de la partició són relatius a l'interior de la instal·lació. Per exemple, /boot seria l'arranc."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "Seleccioneu a on muntar la partició (deixeu-ho en blanc per a eliminar el punt de muntatge): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"Seleccioneu quina partició emmascarar per a formatejar"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"Seleccioneu quina partició marcar com a encriptada"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"Seleccioneu quina partició marcar com a arranc"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"Seleccioneu en quina partició establir un sistema de fitxers"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Introduïu un sistema de fitxers desitjat per a la partició: "
+
+msgid "Archinstall language"
+msgstr "Idioma d'Archinstall"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "Esborrar totes les unitats seleccionades i utilitzar una taula de particions òptima predeterminada"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "Seleccioneu què fer amb cada volum individual (seguit de l'ús de la partició)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "Seleccioneu que desitgeu fer amb els dispositius de blocs seleccionats"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "Aquesta és una llista de perfils preprogramats que podrien facilitar la instal·lació de coses com entorns d'escriptori"
+
+msgid "Select keyboard layout"
+msgstr "Seleccioneu la distribució del teclat"
+
+msgid "Select one of the regions to download packages from"
+msgstr "Seleccioneu una de les regions des de la qual descarregar paquets"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "Seleccioneu un o més discos durs per a utilitzar i configurar"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Per a obtenir la millor compatibilitat amb el vostre hardware AMD, és possible que us interessi utilitzar les opcions de codi obert o d'AMD / ATI."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Per a obtenir la millor compatibilitat amb el vostre hardware Intel, és possible que us interessi utilitzar les opcions de codi obert o d'Intel.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Per a obtenir la millor compatibilitat amb el vostre hardware Nvidia, és possible que us interessi utilitzar les opcions de controlador propietari d'Nvidia.\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Seleccioneu un controlador gràfic o deixeu-ho en blanc per a instal·lar tots els controladors de codi obert"
+
+msgid "All open-source (default)"
+msgstr "Tots els de codi obert (per defecte)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "Escolliu quin kernel utilitzar o deixeu-ho en blanc per utilitzar el kernel per defecte \"{}\""
+
+msgid "Choose which locale language to use"
+msgstr "Escolliu quin idioma de localització utilitzar"
+
+msgid "Choose which locale encoding to use"
+msgstr "Escolliu quin idioma de codificació utilitzar"
+
+msgid "Select one of the values shown below: "
+msgstr "Seleccioneu un dels valors mostrats a sota: "
+
+msgid "Select one or more of the options below: "
+msgstr "Seleccioneu una o més de les opcions de sota: "
+
+msgid "Adding partition...."
+msgstr "Afegint partició...."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "Necessiteu introduir un fs-type vàlid per a continuar. Veieu `man parted` per a tipus de sistemes de fitxers vàlids."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "Error: L'enllistament de perfils de la URL \"{}\" ha resultat en:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "Error: No s'ha pogut de-codificar el resultat \"{}\" com a JSON:"
+
+msgid "Keyboard layout"
+msgstr "Distribució del teclat"
+
+msgid "Mirror region"
+msgstr "Regió del servidor"
+
+msgid "Locale language"
+msgstr "Idioma local"
+
+msgid "Locale encoding"
+msgstr "Codificació local"
+
+msgid "Drive(s)"
+msgstr "Disc(s)"
+
+msgid "Disk layout"
+msgstr "Disseny del disc"
+
+msgid "Encryption password"
+msgstr "Contrasenya de xifrat"
+
+msgid "Swap"
+msgstr "Swap"
+
+msgid "Bootloader"
+msgstr "Gestor d'arranc"
+
+msgid "Root password"
+msgstr "Contrasenya de root"
+
+msgid "Superuser account"
+msgstr "Compte de superusuari"
+
+msgid "User account"
+msgstr "Compte d'usuari"
+
+msgid "Profile"
+msgstr "Perfil"
+
+msgid "Audio"
+msgstr "Àudio"
+
+msgid "Kernels"
+msgstr "Kernels"
+
+msgid "Additional packages"
+msgstr "Paquets addicionals"
+
+msgid "Network configuration"
+msgstr "Configuració de la xarxa"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Sincronització automàtica de l'hora (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "Instal·lar ({} ajust(s) faltant(s))"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"Heu decidit saltar-vos la selecció de disc dur\n"
+"i utilitzar la configuració muntada a {} (experimental)\n"
+"AVÍS: Archinstall no verificarà la idoneïtat d'aquesta configuració\n"
+"Voleu continuar?"
+
+msgid "Re-using partition instance: {}"
+msgstr "Re-utilitzant instància de partició: {}"
+
+msgid "Create a new partition"
+msgstr "Crear una nova partició"
+
+msgid "Delete a partition"
+msgstr "Eliminar una partició"
+
+msgid "Clear/Delete all partitions"
+msgstr "Netejar/Eliminar totes les particions"
+
+msgid "Assign mount-point for a partition"
+msgstr "Assignar punt de muntatge per a una partició"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "Marcar/Desmarcar una partició per a ser formatada (esborra les dades)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "Marcar/Desmarcar una partició com a encriptada"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "Marcar/Desmarcar una partició com a arranc (automàtic per a /boot)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "Establir el sistema de fitxers desitjat per a una partició"
+
+msgid "Abort"
+msgstr "Avortar"
+
+msgid "Hostname"
+msgstr "Nom del host"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "No configurat. No disponible a no ser que es configuri manualment"
+
+msgid "Timezone"
+msgstr "Franja horària"
+
+msgid "Set/Modify the below options"
+msgstr "Establir/Modificar les opcions següents"
+
+msgid "Install"
+msgstr "Instal·lar"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"Utilitzar ESC per a saltar\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "Recomanar el disseny de partició"
+
+msgid "Enter a password: "
+msgstr "Introduïu una contrasenya: "
+
+msgid "Enter a encryption password for {}"
+msgstr "Introduïu una contrasenya de xifrat per {}"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "Introduïu la contrasenya de xifrat de disc (deixeu-ho en blanc per a no xifrar): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Crear un superusuari requerit amb privilegis sudo: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "Introduïu la contrasenya de root (deixeu-ho en blanc per a deshabilitar root): "
+
+msgid "Password for user \"{}\": "
+msgstr "Contrasenya per a l'usuari \"{}\": "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "Verificant que els paquets addicionals existeixen (això pot tardar uns segons)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Voleu utilitzar la sincronització automàtica d'hora (NTP) amb els servidors d'hora predeterminats?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"L'hora del hardware i altres passos post-configuració poden ser necessaris per tal que NTP funcioni.\n"
+"Per a més informació, consulteu la wiki d'Arch"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "Introduïu un nom d'usuari per a crear un usuari addicional (deixeu-ho en blanc per a saltar): "
+
+msgid "Use ESC to skip\n"
+msgstr "Utilitzeu ESC per a ometre\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+" Trieu un objecte de la llista i seleccioneu una de les accions disponibles per a executar"
+
+msgid "Cancel"
+msgstr "Cancel·lar"
+
+msgid "Confirm and exit"
+msgstr "Confirmar i sortir"
+
+msgid "Add"
+msgstr "Afegir"
+
+msgid "Copy"
+msgstr "Copiar"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Select an action for '{}'"
+msgstr "Seleccioneu una acció per a '{}'"
+
+msgid "Copy to new key:"
+msgstr "Copiar a clau nova:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "Tipus de nic desconegut: {}. Els valors possibles són {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"Aquesta és la vostra configuració escollida:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman ja està en execució; s'esperarà un màxim de 10 minuts perquè acabi."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "El bloqueig pre-existent de pacman mai s'ha tancat. Si us plau, netegeu qualsevol sessió de pacman existent abans d'utilitzar archinstall."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "Trieu quins repositoris addicionals opcionals cal activar"
+
+msgid "Add a user"
+msgstr "Afegir un usuari"
+
+msgid "Change password"
+msgstr "Canviar contrasenya"
+
+msgid "Promote/Demote user"
+msgstr "Promocionar/Degradar usuari"
+
+msgid "Delete User"
+msgstr "Eliminar usuari"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"Definir un usuari nou\n"
+
+msgid "User Name : "
+msgstr "Nom d'usuari: "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "Cal que {} sigui un superusuari (sudoer)?"
+
+msgid "Define users with sudo privilege: "
+msgstr "Definiu usuaris amb privilegis sudo: "
+
+msgid "No network configuration"
+msgstr "Sense configuració de xarxa"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "Establir els subvolums desitjats a una partició btrfs"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"Seleccioneu en quina partició configurar els subvolums"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "Administrar subvolums btrfs per a la partició actual"
+
+msgid "No configuration"
+msgstr "Sense configuració"
+
+msgid "Save user configuration"
+msgstr "Guardar configuració d'usuari"
+
+msgid "Save user credentials"
+msgstr "Guardar credencials d'usuari"
+
+msgid "Save disk layout"
+msgstr "Guardar disseny del disc"
+
+msgid "Save all"
+msgstr "Guardar tot"
+
+msgid "Choose which configuration to save"
+msgstr "Escolliu quina configuració guardar"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "Introduïu un directori on guardar les configuracions: "
+
+msgid "Not a valid directory: {}"
+msgstr "Directori invàlid: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "La contrasenya que esteu utilitzant sembla dèbil,"
+
+msgid "are you sure you want to use it?"
+msgstr "segur que voleu utilitzar-la?"
+
+msgid "Optional repositories"
+msgstr "Repositoris opcionals"
+
+msgid "Save configuration"
+msgstr "Guardar configuració"
+
+msgid "Missing configurations:\n"
+msgstr "Configuracions que falten:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "Cal especificar una contrasenya de root o un mínim d'un superusuari"
+
+msgid "Manage superuser accounts: "
+msgstr "Gestionar comptes de superusuari: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "Gestionar comptes d'usuaris ordinaris: "
+
+msgid " Subvolume :{:16}"
+msgstr " Subvolum :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " muntat a {:16}"
+
+msgid " with option {}"
+msgstr " amb opció {}"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+" Completeu els valors desitjats per a un nou subvolum\n"
+
+msgid "Subvolume name "
+msgstr "Nom del subvolum "
+
+msgid "Subvolume mountpoint"
+msgstr "Punt de muntatge del subvolum"
+
+msgid "Subvolume options"
+msgstr "Opcions del subvolum"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Subvolume name :"
+msgstr "Nom del subvolum :"
+
+msgid "Select a mount point :"
+msgstr "Seleccioneu un punt de muntatge :"
+
+msgid "Select the desired subvolume options "
+msgstr "Seleccioneu les opcions de subvolum desitjades "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "Definiu usuaris amb privilegi sudo, per nom d'usuari: "
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] S'ha creat un fitxer de registre aquí: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Us agradaria utilitzar subvolums BTRFS amb una estructura predeterminada?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "Us agradaria utilitzar la compressió BTRFS?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Us agradaria crear una partició separada per a /home?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Les unitats seleccionades no tenen la capacitat mínima requerida per una recomanació automàtica\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "Capacitat mínima per la partició /home: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Capacitat mínima per la partició Arch Linux: {}GB"
+
+msgid "Continue"
+msgstr "Continuar"
+
+msgid "yes"
+msgstr "sí"
+
+msgid "no"
+msgstr "no"
+
+msgid "set: {}"
+msgstr "establir: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "La configuració manual ha de ser una llista"
+
+msgid "No iface specified for manual configuration"
+msgstr "No s'ha especificat iface per a la configuració manual"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "La configuració manual de la NIC sense DHCP automàtic necessita una direcció IP"
+
+msgid "Add interface"
+msgstr "Afegir interfície"
+
+msgid "Edit interface"
+msgstr "Editar interfície"
+
+msgid "Delete interface"
+msgstr "Eliminar interfície"
+
+msgid "Select interface to add"
+msgstr "Seleccioneu la interfície a afegir"
+
+msgid "Manual configuration"
+msgstr "Configuració manual"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "Marcar/Desmarcar una partició com a comprimida (només btrfs)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "La contrasenya que esteu utilitzant sembla dèbil, segur que voleu utilitzar-la?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "Proporciona una selecció d'entorns d'escriptori i gestors de finestres en mosaic, com ara gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "Seleccioneu el vostre entorn d'escriptori desitjat"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Una instal·lació molt bàsica que us permet personalitzar Arch Linux com us sembli millor."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "Proporciona una selecció de varis paquets de servidor per a instal·lar i habilitar, com ara httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "Escolliu quins servidors instal·lar. Si no n'hi ha cap, es farà una instal·lació mínima"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "Instal·la un sistema mínim, així com controladors xorg i gràfics."
+
+msgid "Press Enter to continue."
+msgstr "Polseu Enter per a continuar."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "Us agradaria accedir a la instal·lació acabada de crear i realitzar la configuració posterior a la instal·lació?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Segur que voleu re-establir aquesta configuració?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "Seleccioneu un o més discos durs per a utilitzar i configurar\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "Qualsevol modificació a la configuració existent re-establirà el disseny del disc!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "Si re-establiu la selecció del disc dur, això també reiniciarà el disseny actual del disc. N'esteu segurs?"
+
+msgid "Save and exit"
+msgstr "Guardar i sortir"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"conté particions a la cua, això les eliminarà, n'esteu segurs?"
+
+msgid "No audio server"
+msgstr "Sense servidor d'àudio"
+
+msgid "(default)"
+msgstr "(per defecte)"
+
+msgid "Use ESC to skip"
+msgstr "Utilitzeu ESC per a ometre"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"Utilitzeu CTRL+C per reiniciar la selecció actual\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "Copiar a: "
+
+msgid "Edit: "
+msgstr "Editar: "
+
+msgid "Key: "
+msgstr "Clau: "
+
+msgid "Edit {}: "
+msgstr "Editar {}: "
+
+msgid "Add: "
+msgstr "Afegir: "
+
+msgid "Value: "
+msgstr "Valor: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "Podeu ometre la selecció d'una unitat i la partició i utilitzar qualsevol configuració d'unitat que estigui muntada a /mnt (experimental)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Seleccioneu un dels discs o ometeu i utilitzeu /mnt com a predeterminat"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Seleccioneu quines particions marcar per a formatar:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Utilitzar HSM per desbloquejar la unitat xifrada"
+
+msgid "Device"
+msgstr "Dispositiu"
+
+msgid "Size"
+msgstr "Mida"
+
+msgid "Free space"
+msgstr "Espai lliure"
+
+msgid "Bus-type"
+msgstr "Tipus de bus"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "S'ha d'especificar una contrasenya de root o un mínim d'un usuari amb privilegis sudo"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Introduïu el nom d'usuari (deixeu-ho en blanc per a ometre): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "El nom d'usuari introduït no és vàlid. Intenteu-ho de nou"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Cal que \"{}\" sigui un superusuari (sudo)?"
+
+msgid "Select which partitions to encrypt"
+msgstr "Seleccioneu quines particions xifrar"
+
+msgid "very weak"
+msgstr "molt dèbil"
+
+msgid "weak"
+msgstr "dèbil"
+
+msgid "moderate"
+msgstr "moderada"
+
+msgid "strong"
+msgstr "forta"
+
+msgid "Add subvolume"
+msgstr "Afegir subvolum"
+
+msgid "Edit subvolume"
+msgstr "Editar subvolum"
+
+msgid "Delete subvolume"
+msgstr "Eliminar subvolum"
+
+msgid "Configured {} interfaces"
+msgstr "{} interfícies configurades"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "Aquesta opció habilita el número de descàrregues paral·leles que poden haver-hi durant la instal·lació"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {})\n"
+"Note:"
+msgstr ""
+"Introduïu el número de descàrregues paral·leles a activar.\n"
+" (Introduïu un valor entre 1 i {})\n"
+"Nota:"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Valor màxim   : {} ( Permet {} descàrregues paral·leles, permet {} descàrregues simultànies )"
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - Valor mínim   : 1 ( Permet 1 descàrrega paral·lela, permet 2 descàrregues simultànies )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - Deshabilitar/Per defecte : 0 ( Desactiva les descàrregues paral·leles, només permet 1 descàrrega simultània )"
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "Entrada no vàlida! Intenteu-ho novament amb una entrada vàlida [1 a {max_downloads}, o 0 per desactivar]"
+
+msgid "Parallel Downloads"
+msgstr "Descàrregues paral·leles"
+
+msgid "ESC to skip"
+msgstr "ESC per a ometre"
+
+msgid "CTRL+C to reset"
+msgstr "CTRL+C per a re-establir"
+
+msgid "TAB to select"
+msgstr "TAB per a seleccionar"
+
+msgid "[Default value: 0] > "
+msgstr "[Valor per defecte: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Per a poder utilitzar aquesta traducció, instal·leu manualment una font que suporti l'idioma."
+
+msgid "The font should be stored as {}"
+msgstr "La font s'ha de guardar com a {}"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall necessita permisos de root per a executar-se. Vegeu --help per a més detalls."
+
+msgid "Select an execution mode"
+msgstr "Seleccioneu un mode d'execució"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "No es pot recuperar el perfil de la URL especificada: {}"
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Els perfils han de tenir un nom únic, però s'han trobat definicions de perfil amb noms duplicats: {}"
+
+msgid "Select one or more devices to use and configure"
+msgstr "Seleccioneu un o més dispositius per a utilitzar i configurar"
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Si re-establiu la selecció del dispositiu, això també en re-establirà el seu disseny actual. N'esteu segurs?"
+
+msgid "Existing Partitions"
+msgstr "Particions existents"
+
+msgid "Select a partitioning option"
+msgstr "Seleccioneu una opció de partició"
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Introduïu el directori arrel dels dispositius muntats: "
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Capacitat mínima per a la partició /home: {}GiB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Capacitat mínima per a la partició Arch Linux: {}GiB"
+
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Aquesta és una llista de profiles_bck preprogramada que podria facilitar la instal·lació de coses com ara entorns d'escriptori"
+
+msgid "Current profile selection"
+msgstr "Selecció de perfil actual"
+
+msgid "Remove all newly added partitions"
+msgstr "Eliminar totes les particions afegides recentment"
+
+msgid "Assign mountpoint"
+msgstr "Assignar punt de muntatge"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Marcar/Desmarcar per a formatar (esborra les dades)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Marcar/Desmarcar com a arranc"
+
+msgid "Change filesystem"
+msgstr "Canviar el sistema de fitxers"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Marcar/Desmarcar com a comprimit"
+
+msgid "Set subvolumes"
+msgstr "Establir subvolums"
+
+msgid "Delete partition"
+msgstr "Eliminar partició"
+
+msgid "Partition"
+msgstr "Partició"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Aquesta partició està actualment xifrada, cal especificar un sistema de fitxers per a formatar-la"
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Els punts de muntatge de la partició són relatius a l'interior de la instal·lació; per exemple, /boot seria l'arranc."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr "Si s'estableix el punt de muntatge /boot, la partició també es marcarà com a partició d'arranc."
+
+msgid "Mountpoint: "
+msgstr "Punt de muntatge: "
+
+msgid "Current free sectors on device {}:"
+msgstr "Sectors lliures actuals al dispositiu {}:"
+
+msgid "Total sectors: {}"
+msgstr "Sectors totals: {}"
+
+msgid "Enter the start sector (default: {}): "
+msgstr "Introduïu el sector d'inici (per defecte: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Introduïu el sector final de la partició (percentatge o número de bloc, per defecte: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Això eliminarà totes les particions recentment afegides, continuar?"
+
+msgid "Partition management: {}"
+msgstr "Gestió de particions: {}"
+
+msgid "Total length: {}"
+msgstr "Llargada total: {}"
+
+msgid "Encryption type"
+msgstr "Tipus de xifrat"
+
+msgid "Partitions"
+msgstr "Particions"
+
+msgid "No HSM devices available"
+msgstr "No hi ha dispositius HSM disponibles"
+
+msgid "Partitions to be encrypted"
+msgstr "Particions a xifrar"
+
+msgid "Select disk encryption option"
+msgstr "Seleccioneu la opció de xifrat de disc"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Seleccioneu un dispositiu FIDO2 per a utilitzar amb HSM"
+
+msgid "Use a best-effort default partition layout"
+msgstr "Utilitzar un disseny de partició òptim perdeterminat"
+
+msgid "Manual Partitioning"
+msgstr "Partició manual"
+
+msgid "Pre-mounted configuration"
+msgstr "Configuració premuntada"
+
+msgid "Unknown"
+msgstr "Desconegut"
+
+msgid "Partition encryption"
+msgstr "Xifrat de partició"
+
+msgid " ! Formatting {} in "
+msgstr " ! Formatant {} en "
+
+msgid "← Back"
+msgstr "← Tornar"
+
+msgid "Disk encryption"
+msgstr "Xifrat de disc"
+
+msgid "Configuration"
+msgstr "Configuració"
+
+msgid "Password"
+msgstr "Contrasenya"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "Tots els ajusts es reiniciaran, n'esteu segurs?"
+
+msgid "Back"
+msgstr "Tornar"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "Si us plau, seleccioneu quin gestor d'inici de sessió instal·lar pels perfils escollits: {}"
+
+msgid "Environment type: {}"
+msgstr "Tipus d'entorn: {}"
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr "El controlador propietari d'Nvidia no és compatible amb sway. És possible que experimenteu problemes. Voleu continuar?"
+
+msgid "Installed packages"
+msgstr "Paquets instal·lats"
+
+msgid "Add profile"
+msgstr "Afegir perfil"
+
+msgid "Edit profile"
+msgstr "Editar perfil"
+
+msgid "Delete profile"
+msgstr "Eliminar perfil"
+
+msgid "Profile name: "
+msgstr "Nom del perfil: "
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "El nom de perfil que heu introduït ja està en ús. Intenteu-ho de nou"
+
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Paquets que s'instal·laran amb aquest perfil (separats per espais, deixeu-ho en blanc per a ometre): "
+
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Serveis que s'habilitaran amb aquest perfil (separats per espais, deixeu-ho en blanc per a ometre): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "Cal habilitar aquest perfil per la instal·lació?"
+
+msgid "Create your own"
+msgstr "Creeu el vostre propi"
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"Seleccioneu un controlador gràfic o deixeu-ho en blanc per instal·lar tots els controladors de codi obert"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway necessita accés als vostres dispositius de hardware (teclat, ratolí, etc)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Escolliu una opció per permetre que Sway accedeixi al vostre hardware"
+
+msgid "Graphics driver"
+msgstr "Controlador de gràfics"
+
+msgid "Greeter"
+msgstr "Gestor d'inici de sessió"
+
+msgid "Please chose which greeter to install"
+msgstr "Si us plau, escolliu quin gestor d'inici de sessió instal·lar"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "Això és una llista de default_profiles preprogramada"
+
+msgid "Disk configuration"
+msgstr "Configuració del disc"
+
+msgid "Profiles"
+msgstr "Perfils"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "Buscant possibles directoris on guardar els fitxers de configuració ..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Seleccioneu un directori (o directoris) on guardar els fitxers de configuració"
+
+msgid "Add a custom mirror"
+msgstr "Afegir un mirall personalitzat"
+
+msgid "Change custom mirror"
+msgstr "Canviar mirall personalitzat"
+
+msgid "Delete custom mirror"
+msgstr "Eliminar mirall personalitzat"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "Introduïu el nom: (deixeu-ho en blanc per a ometre): "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "Introduïu la URL (deixeu-ho en blanc per a ometre): "
+
+msgid "Select signature check option"
+msgstr "Seleccioneu la opció de verificació de firma"
+
+msgid "Select signature option"
+msgstr "Seleccioneu la opció de firma"
+
+msgid "Custom mirrors"
+msgstr "Miralls personalitzats"
+
+msgid "Defined"
+msgstr "Definit"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Guardar la configuració de l'usuari (incloent el disseny del disc)"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+"Introduïu un directori on guardar les configuracions (compleció amb TAB activada)\n"
+"Directori d'emmagatzematge: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"Voleu guardar {} fitxer(s) de configuració a la següent ubicació?\n"
+"\n"
+"{}"
+
+msgid "Saving {} configuration files to {}"
+msgstr "Guardant {} fitxer(s) de configuració a {}"
+
+msgid "Mirrors"
+msgstr "Miralls"
+
+msgid "Mirror regions"
+msgstr "Regions dels miralls"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Valor màxim   : {} ( Permet {} descàrregues paral·leles, permets {max_downloads+1} descàrregues simultànies )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Entrada no vàlida! Intenteu-ho de nou amb una entrada vàlida [1 a {}, o 0 per desactivar]"
+
+msgid "Locales"
+msgstr "Llocs"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Utilitzar NetworkManager (necessari per a configurar internet gràficament a GNOME i KDE)"
+
+msgid "Total: {} / {}"
+msgstr "Total: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr "Tots els valors introduïts poden tenir una unitat com a sufix: B, KB, KiB, MB, MiB..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Si no es proporciona cap unitat, el valor s'interpreta com sectors"
+
+msgid "Enter start (default: sector {}): "
+msgstr "Introduïu l'inici (per defecte: sector {}): "
+
+msgid "Enter end (default: {}): "
+msgstr "Introduïu el final (per defecte: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "No es poden determinar els dispositius fido2. Està instal·lat libfido2?"
+
+msgid "Path"
+msgstr "Ruta"
+
+msgid "Manufacturer"
+msgstr "Fabricant"
+
+msgid "Product"
+msgstr "Producte"
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Configuració no vàlida: {error}"
+
+msgid "Type"
+msgstr "Tipus"
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Aquesta opció habilita el número de descàrregues paral·leles que poden haver-hi mentre es descarreguen paquets"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Introduïu el número de descàrregues paral·leles a activar.\n"
+"\n"
+"Nota:\n"
+
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Valor màxim recomanat : {} ( Permets {} descàrregues paral·leles simultànies )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Desactivar/Per defecte : 0 ( Desactiva les descàrregues paral·leles, només permet 1 descàrrega simultània )\n"
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Entrada no vàlida! Intenteu-ho de nou amb una entrada vàlida [o 0 per a desactivar]"
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Hyprland necessita accés al vostre seient (col·lecció de dispositius de hardware, és a dir, teclat, ratolí, etc)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Escolliu una opció per permetre a Hyprland l'accés al vostre hardware"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Tots els valors introduïts poden tenir un sufix d'unitat: %, B, KB, KiB, MB, MiB..."
+
+msgid "Would you like to use unified kernel images?"
+msgstr "Us agradaria utilitzar imatges del kernel unificades?"
+
+msgid "Unified kernel images"
+msgstr "Imatges del kernel unificades"
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Esperant a què es completi la sincronització de l'hora (timedatectl show)."
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "La sincronització d'hora no es completa. Mentre espereu - consulteu la documentació per a trobar solucions: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Ometent l'espera de la sincronització automàtica de l'hora (això pot causar problemes si l'hora no està sincronitzada durant la instal·lació)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Esperant a què es completi la sincronització del clauer d'Arch Linux (archlinux-keyring-wkd-sync)."
+
+msgid "Selected profiles: "
+msgstr "Perfils seleccionats: "
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "La sincronització d'hora no es completa. Mentre espereu - consulteu la documentació per a trobar solucions: https://archinstall.readthedocs.io/"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "Marcar/Desmarcar com nodatacow"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Us agradaria utilitzar compressió o desactivar CoW?"
+
+msgid "Use compression"
+msgstr "Utilitzar compressió"
+
+msgid "Disable Copy-on-Write"
+msgstr "Desactivar Copy-on-Write"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Proporciona una selecció d'entorns d'escriptori i gestors de finestres en mosaic, com ara GNOME, KDE Plasma, Sway"
+
+msgid "Configuration type: {}"
+msgstr "Tipus de configuració: {}"
+
+msgid "LVM configuration type"
+msgstr "Tipus de configuració LVM"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "Actualment no s'admet el xifrat de disc LVM amb més de 2 particions"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "Utilitzar NetworkManager (necessari per a configurar internet gràficament a GNOME i KDE Plasma)"
+
+msgid "Select a LVM option"
+msgstr "Seleccionar una opció LVM"
+
+msgid "Partitioning"
+msgstr "Particionament"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Gestió de volums lògics (LVM)"
+
+msgid "Physical volumes"
+msgstr "Volums físics"
+
+msgid "Volumes"
+msgstr "Volums"
+
+msgid "LVM volumes"
+msgstr "Volums LVM"
+
+msgid "LVM volumes to be encrypted"
+msgstr "Volums LVM a xifrar"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "Seleccioneu quins volums LVM cal xifrar"
+
+msgid "Default layout"
+msgstr "Disseny predeterminat"
+
+msgid "No Encryption"
+msgstr "Sense xifrat"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM en LUKS"
+
+msgid "LUKS on LVM"
+msgstr "LUKS en LVM"
+
+msgid "Yes"
+msgstr "Sí"
+
+msgid "No"
+msgstr "No"
+
+msgid "Archinstall help"
+msgstr "Ajuda d'Archinstall"
+
+msgid " (default)"
+msgstr " (predeterminat)"
+
+msgid "Press Ctrl+h for help"
+msgstr "Polseu Ctrl+h per ajuda"

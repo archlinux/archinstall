@@ -42,7 +42,7 @@ class Boot:
 		storage['active_boot'] = self
 		return self
 
-	def __exit__(self, *args :str, **kwargs :str) -> None:
+	def __exit__(self, *args: str, **kwargs: str) -> None:
 		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
@@ -94,7 +94,7 @@ class Boot:
 
 		return self.session.is_alive()
 
-	def SysCommand(self, cmd: list, *args, **kwargs) -> SysCommand:
+	def SysCommand(self, cmd: list[str], *args, **kwargs) -> SysCommand:
 		if cmd[0][0] != '/' and cmd[0][:2] != './':
 			# This check is also done in SysCommand & SysCommandWorker.
 			# However, that check is done for `machinectl` and not for our chroot command.
@@ -104,7 +104,7 @@ class Boot:
 
 		return SysCommand(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd], *args, **kwargs)
 
-	def SysCommandWorker(self, cmd: list, *args, **kwargs) -> SysCommandWorker:
+	def SysCommandWorker(self, cmd: list[str], *args, **kwargs) -> SysCommandWorker:
 		if cmd[0][0] != '/' and cmd[0][:2] != './':
 			cmd[0] = locate_binary(cmd[0])
 

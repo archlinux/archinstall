@@ -10,18 +10,13 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from archinstall.default_profiles.profile import Profile, TProfile, GreeterType
+from ...default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
 from ..hardware import GfxDriver
 from ..networking import list_interfaces, fetch_data_from_url
 from ..output import error, debug, info
 from ..storage import storage
 
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu
-)
 
 
 if TYPE_CHECKING:
@@ -30,9 +25,9 @@ if TYPE_CHECKING:
 
 
 class ProfileHandler:
-	def __init__(self):
+	def __init__(self) -> None:
 		self._profiles_path: Path = storage['PROFILE']
-		self._profiles = None
+		self._profiles: Optional[list[Profile]] = None
 
 		# special variable to keep track of a profile url configuration
 		# it is merely used to be able to export the path again when a user
@@ -128,7 +123,7 @@ class ProfileHandler:
 
 		custom_settings = profile_config.get('custom_settings', {})
 		profile.set_custom_settings(custom_settings)
-		profile.set_current_selection(valid_sub_profiles)
+		profile.current_selection = valid_sub_profiles
 
 		return profile
 
@@ -144,7 +139,7 @@ class ProfileHandler:
 	def _local_mac_addresses(self) -> List[str]:
 		return list(list_interfaces())
 
-	def add_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
+	def add_custom_profiles(self, profiles: Union[Profile, List[Profile]]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -153,7 +148,7 @@ class ProfileHandler:
 
 		self._verify_unique_profile_names(self.profiles)
 
-	def remove_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
+	def remove_custom_profiles(self, profiles: Union[Profile, List[Profile]]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -180,7 +175,7 @@ class ProfileHandler:
 		match_mac_addr_profiles = list(filter(lambda x: x.name in self._local_mac_addresses, tailored))
 		return match_mac_addr_profiles
 
-	def install_greeter(self, install_session: 'Installer', greeter: GreeterType):
+	def install_greeter(self, install_session: 'Installer', greeter: GreeterType) -> None:
 		packages = []
 		service = None
 
@@ -200,6 +195,8 @@ class ProfileHandler:
 			case GreeterType.Ly:
 				packages = ['ly']
 				service = ['ly']
+			case GreeterType.CosmicSession:
+				packages = ['cosmic-greeter']
 
 		if packages:
 			install_session.add_additional_packages(packages)
@@ -217,7 +214,7 @@ class ProfileHandler:
 			with open(path, 'w') as file:
 				file.write(filedata)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver):
+	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
 		debug(f'Installing GFX driver: {driver.value}')
 
 		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
@@ -236,7 +233,7 @@ class ProfileHandler:
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
 
-	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
+	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration) -> None:
 		profile = profile_config.profile
 
 		if not profile:
@@ -250,7 +247,7 @@ class ProfileHandler:
 		if profile_config.greeter:
 			self.install_greeter(install_session, profile_config.greeter)
 
-	def _import_profile_from_url(self, url: str):
+	def _import_profile_from_url(self, url: str) -> None:
 		"""
 		Import default_profiles from a url path
 		"""

@@ -89,10 +89,10 @@ class Selector:
 	def do_store(self) -> bool:
 		return self._no_store is False
 
-	def set_enabled(self, status: bool = True):
+	def set_enabled(self, status: bool = True) -> None:
 		self.enabled = status
 
-	def update_description(self, description: str):
+	def update_description(self, description: str) -> None:
 		self.description = description
 
 	def menu_text(self, padding: int = 0) -> str:
@@ -117,7 +117,7 @@ class Selector:
 
 		return f'{description} {current}'
 
-	def set_current_selection(self, current: Optional[Any]):
+	def set_current_selection(self, current: Optional[Any]) -> None:
 		self.current_selection = current
 
 	def has_selection(self) -> bool:
@@ -141,7 +141,7 @@ class Selector:
 	def is_mandatory(self) -> bool:
 		return self.mandatory
 
-	def set_mandatory(self, value: bool):
+	def set_mandatory(self, value: bool) -> None:
 		self.mandatory = value
 
 

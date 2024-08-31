@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 class PostgresqlProfile(Profile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__(
 			'Postgresql',
 			ProfileType.ServerType,
@@ -22,5 +22,5 @@ class PostgresqlProfile(Profile):
 	def services(self) -> List[str]:
 		return ['postgresql']
 
-	def post_install(self, install_session: 'Installer'):
+	def post_install(self, install_session: 'Installer') -> None:
 		install_session.arch_chroot("initdb -D /var/lib/postgres/data", run_as='postgres')

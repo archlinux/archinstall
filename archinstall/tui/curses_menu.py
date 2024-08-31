@@ -267,6 +267,7 @@ class AbstractViewport:
 		for e in entries:
 			view[e.row] = self._replace_str(view[e.row], e.col, e.text)
 
+		view = [v.rstrip() for v in view]
 		return '\n'.join(view)
 
 
@@ -302,7 +303,7 @@ class EditViewport(AbstractViewport):
 		self._init_wins()
 
 	def _init_wins(self):
-		self._main_win = curses.newwin(self._edit_height , self._width, self.y_start, 0)
+		self._main_win = curses.newwin(self._edit_height, self._width, self.y_start, 0)
 		self._main_win.nodelay(False)
 
 		x_offset = 0
@@ -1249,7 +1250,6 @@ class Tui:
 		self._screen: Any = None
 		self._colors: Dict[str, int] = {}
 		self._component: Optional[AbstractCurses] = None
-
 		signal.signal(signal.SIGWINCH, self._sig_win_resize)
 
 	def init(self) -> None:
@@ -1289,7 +1289,7 @@ class Tui:
 		self._screen.clear()
 		return self._main_loop(component)
 
-	def _sig_win_resize(self, signum: int, frame):
+	def _sig_win_resize(self, signum: int, frame) -> None:
 		if self._component:
 			self._component.resize_win()
 
@@ -1300,11 +1300,11 @@ class Tui:
 	def _reset_terminal(self):
 		os.system("reset")
 
-	def _soft_clear_terminal(self):
+	def _soft_clear_terminal(self) -> None:
 		print(chr(27) + "[2J", end="")
 		print(chr(27) + "[1;1H", end="")
 
-	def _set_up_colors(self):
+	def _set_up_colors(self) -> None:
 		curses.init_pair(STYLE.NORMAL.value, curses.COLOR_WHITE, curses.COLOR_BLACK)
 		curses.init_pair(STYLE.CURSOR_STYLE.value, curses.COLOR_CYAN, curses.COLOR_BLACK)
 		curses.init_pair(STYLE.MENU_STYLE.value, curses.COLOR_WHITE, curses.COLOR_BLUE)

@@ -23,7 +23,7 @@ if archinstall.arguments.get('help', None):
 	info(" - Optional systemd network via --network")
 
 
-def perform_installation(mountpoint: Path):
+def perform_installation(mountpoint: Path) -> None:
 	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
 	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
@@ -58,7 +58,7 @@ def perform_installation(mountpoint: Path):
 	info(" * devel (password: devel)")
 
 
-def prompt_disk_layout():
+def prompt_disk_layout() -> None:
 	fs_type = None
 	if filesystem := archinstall.arguments.get('filesystem', None):
 		fs_type = disk.FilesystemType(filesystem)
@@ -72,7 +72,7 @@ def prompt_disk_layout():
 	)
 
 
-def parse_disk_encryption():
+def parse_disk_encryption() -> None:
 	if enc_password := archinstall.arguments.get('!encryption-password', None):
 		modification: List[disk.DeviceModification] = archinstall.arguments['disk_config']
 		partitions: List[disk.PartitionModification] = []

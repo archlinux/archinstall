@@ -1,16 +1,15 @@
 from __future__ import annotations
 
+import sys
 from enum import Enum, auto
-from typing import List, Optional, Any, Dict, TYPE_CHECKING, TypeVar
+from typing import List, Optional, Any, Dict, TYPE_CHECKING
 
-from archinstall.lib.utils.util import format_cols
+from ..lib.utils.util import format_cols
+from ..lib.storage import storage
 
 if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
+	from ..lib.installer import Installer
 	_: Any
-
-
-TProfile = TypeVar('TProfile', bound='Profile')
 
 
 class ProfileType(Enum):
@@ -37,6 +36,10 @@ class GreeterType(Enum):
 	Gdm = 'gdm'
 	Ly = 'ly'
 
+	# .. todo:: Remove when we un-hide cosmic behind --advanced
+	if '--advanced' in sys.argv:
+		CosmicSession = "cosmic-greeter"
+
 
 class SelectResult(Enum):
 	NewSelection = auto()
@@ -50,32 +53,30 @@ class Profile:
 		name: str,
 		profile_type: ProfileType,
 		description: str = '',
-		current_selection: List[TProfile] = [],
+		current_selection: List[Profile] = [],
 		packages: List[str] = [],
 		services: List[str] = [],
 		support_gfx_driver: bool = False,
-		support_greeter: bool = False
-	):
+		support_greeter: bool = False,
+		advanced: bool = False
+	) -> None:
 		self.name = name
 		self.description = description
 		self.profile_type = profile_type
 		self.custom_settings: Dict[str, Any] = {}
+		self.advanced = advanced
 
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
 
 		# self.gfx_driver: Optional[str] = None
 
-		self._current_selection = current_selection
+		self.current_selection = current_selection
 		self._packages = packages
 		self._services = services
 
 		# Only used for custom default_profiles
 		self.custom_enabled = False
-
-	@property
-	def current_selection(self) -> List[TProfile]:
-		return self._current_selection
 
 	@property
 	def packages(self) -> List[str]:
@@ -100,12 +101,19 @@ class Profile:
 		"""
 		return None
 
-	def install(self, install_session: 'Installer'):
+	def _advanced_check(self) -> bool:
+		"""
+		Used to control if the Profile() should be visible or not in different contexts.
+		Returns True if --advanced is given on a Profile(advanced=True) instance.
+		"""
+		return self.advanced is False or storage['arguments'].get('advanced', False) is True
+
+	def install(self, install_session: 'Installer') -> None:
 		"""
 		Performs installation steps when this profile was selected
 		"""
 
-	def post_install(self, install_session: 'Installer'):
+	def post_install(self, install_session: 'Installer') -> None:
 		"""
 		Hook that will be called when the installation process is
 		finished and custom installation steps for specific default_profiles
@@ -124,7 +132,7 @@ class Profile:
 		"""
 		return SelectResult.NewSelection
 
-	def set_custom_settings(self, settings: Dict[str, Any]):
+	def set_custom_settings(self, settings: Dict[str, Any]) -> None:
 		"""
 		Set the custom settings for the profile.
 		This is also called when the settings are parsed from the config
@@ -133,31 +141,28 @@ class Profile:
 		self.custom_settings = settings
 
 	def current_selection_names(self) -> List[str]:
-		if self._current_selection:
-			return [s.name for s in self._current_selection]
+		if self.current_selection:
+			return [s.name for s in self.current_selection]
 		return []
 
-	def reset(self):
-		self.set_current_selection([])
-
-	def set_current_selection(self, current_selection: List[TProfile]):
-		self._current_selection = current_selection
+	def reset(self) -> None:
+		self.current_selection = []
 
 	def is_top_level_profile(self) -> bool:
 		top_levels = [ProfileType.Desktop, ProfileType.Server, ProfileType.Xorg, ProfileType.Minimal, ProfileType.Custom]
 		return self.profile_type in top_levels
 
 	def is_desktop_profile(self) -> bool:
-		return self.profile_type == ProfileType.Desktop
+		return self.profile_type == ProfileType.Desktop if self._advanced_check() else False
 
 	def is_server_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.ServerType
 
 	def is_desktop_type_profile(self) -> bool:
-		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
+		return (self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr) if self._advanced_check() else False
 
 	def is_xorg_type_profile(self) -> bool:
-		return self.profile_type == ProfileType.Xorg
+		return self.profile_type == ProfileType.Xorg if self._advanced_check() else False
 
 	def is_tailored(self) -> bool:
 		return self.profile_type == ProfileType.Tailored
@@ -166,10 +171,10 @@ class Profile:
 		return self.profile_type == ProfileType.CustomType
 
 	def is_graphic_driver_supported(self) -> bool:
-		if not self._current_selection:
+		if not self.current_selection:
 			return self._support_gfx_driver
 		else:
-			if any([p._support_gfx_driver for p in self._current_selection]):
+			if any([p._support_gfx_driver for p in self.current_selection]):
 				return True
 			return False
 

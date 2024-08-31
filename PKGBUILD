@@ -22,6 +22,7 @@ depends=(
   'pciutils'
   'procps-ng'
   'python'
+  'python-pydantic'
   'python-pyparted'
   'python-simple-term-menu'
   'systemd'

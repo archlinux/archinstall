@@ -23,7 +23,7 @@ class Pacman:
 		self.target = target
 
 	@staticmethod
-	def run(args :str, default_cmd :str = 'pacman') -> SysCommand:
+	def run(args: str, default_cmd: str = 'pacman') -> SysCommand:
 		"""
 		A centralized function to call `pacman` from.
 		It also protects us from colliding with other running pacman sessions (if used locally).
@@ -44,7 +44,7 @@ class Pacman:
 
 		return SysCommand(f'{default_cmd} {args}')
 
-	def ask(self, error_message: str, bail_message: str, func: Callable, *args, **kwargs):
+	def ask(self, error_message: str, bail_message: str, func: Callable, *args, **kwargs) -> None:
 		while True:
 			try:
 				func(*args, **kwargs)
@@ -55,7 +55,7 @@ class Pacman:
 					continue
 				raise RequirementError(f'{bail_message}: {err}')
 
-	def sync(self):
+	def sync(self) -> None:
 		if self.synced:
 			return
 		self.ask(
@@ -67,7 +67,7 @@ class Pacman:
 		)
 		self.synced = True
 
-	def strap(self, packages: Union[str, List[str]]):
+	def strap(self, packages: Union[str, List[str]]) -> None:
 		self.sync()
 		if isinstance(packages, str):
 			packages = [packages]

@@ -7,7 +7,7 @@ from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib import disk
 
 
-def ask_user_questions():
+def ask_user_questions() -> None:
 	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
 
 	global_menu.enable('archinstall-language')
@@ -23,7 +23,7 @@ def ask_user_questions():
 	global_menu.run()
 
 
-def perform_installation(mountpoint: Path):
+def perform_installation(mountpoint: Path) -> None:
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class QtileProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Qtile', ProfileType.WindowMgr, description='')
 
 	@property

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class I3wmProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('i3-wm', ProfileType.WindowMgr, description='')
 
 	@property

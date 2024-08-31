@@ -5,10 +5,13 @@ import unicodedata
 from enum import Enum
 
 from pathlib import Path
-from typing import Dict, Union, List, Any, Callable, Optional
+from typing import Dict, Union, List, Any, Callable, Optional, TYPE_CHECKING
 from dataclasses import asdict, is_dataclass
 
 from .storage import storage
+
+if TYPE_CHECKING:
+	from _typeshed import DataclassInstance
 
 
 class FormattedOutput:
@@ -16,7 +19,7 @@ class FormattedOutput:
 	@classmethod
 	def _get_values(
 		cls,
-		o: Any,
+		o: 'DataclassInstance',
 		class_formatter: Optional[Union[str, Callable]] = None,
 		filter_list: List[str] = []
 	) -> Dict[str, Any]:
@@ -144,7 +147,7 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-def _check_log_permissions():
+def _check_log_permissions() -> None:
 	filename = storage.get('LOG_FILE', None)
 	log_dir = storage.get('LOG_PATH', Path('./'))
 
@@ -212,21 +215,21 @@ def _stylize_output(
 	Adds styling to a text given a set of color arguments.
 	"""
 	colors = {
-		'black' : '0',
-		'red' : '1',
-		'green' : '2',
-		'yellow' : '3',
-		'blue' : '4',
-		'magenta' : '5',
-		'cyan' : '6',
-		'white' : '7',
-		'teal' : '8;5;109',      # Extended 256-bit colors (not always supported)
-		'orange' : '8;5;208',    # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
-		'darkorange' : '8;5;202',
-		'gray' : '8;5;246',
-		'grey' : '8;5;246',
-		'darkgray' : '8;5;240',
-		'lightgray' : '8;5;256'
+		'black': '0',
+		'red': '1',
+		'green': '2',
+		'yellow': '3',
+		'blue': '4',
+		'magenta': '5',
+		'cyan': '6',
+		'white': '7',
+		'teal': '8;5;109',      # Extended 256-bit colors (not always supported)
+		'orange': '8;5;208',    # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+		'darkorange': '8;5;202',
+		'gray': '8;5;246',
+		'grey': '8;5;246',
+		'darkgray': '8;5;240',
+		'lightgray': '8;5;256'
 	}
 
 	foreground = {key: f'3{colors[key]}' for key in colors}
@@ -256,7 +259,7 @@ def info(
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
@@ -267,7 +270,7 @@ def debug(
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
@@ -278,18 +281,18 @@ def error(
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
 def warn(
 	*msgs: str,
-	level: int = logging.WARN,
+	level: int = logging.WARNING,
 	fg: str = 'yellow',
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
@@ -300,7 +303,7 @@ def log(
 	bg: Optional[str] = None,
 	reset: bool = False,
 	font: List[Font] = []
-):
+) -> None:
 	# leave this check here as we need to setup the logging
 	# right from the beginning when the modules are loaded
 	_check_log_permissions()
@@ -323,9 +326,11 @@ def log(
 		sys.stdout.write(f"{text}\n")
 		sys.stdout.flush()
 
+
 def _count_wchars(string: str) -> int:
 	"Count the total number of wide characters contained in a string"
 	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
+
 
 def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
 	"""Return a left-justified unicode string of length width.
@@ -339,6 +344,7 @@ def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
 	'こんにちは*****'
 	"""
 	return string.ljust(width - _count_wchars(string), fillbyte)
+
 
 def unicode_rjust(string: str, width: int, fillbyte: str = ' ') -> str:
 	"""Return a right-justified unicode string of length width.

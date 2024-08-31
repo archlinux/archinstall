@@ -41,7 +41,7 @@ def ask_user_questions() -> None:
 	global_menu.run()
 
 
-def perform_installation(mountpoint: Path):
+def perform_installation(mountpoint: Path) -> None:
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are

@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.8.1"
+__version__ = "2.8.6"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the
@@ -62,7 +62,7 @@ debug(f"Disk states before installing: {disk.disk_layouts()}")
 parser = ArgumentParser()
 
 
-def define_arguments():
+def define_arguments() -> None:
 	"""
 	Define which explicit arguments do we allow.
 	Refer to https://docs.python.org/3/library/argparse.html for documentation and
@@ -117,12 +117,13 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 	argument value value ...
 	which isn't am error if multiple is specified
 	"""
-	tmp_list = unknowns[:]  # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
+	tmp_list = [arg for arg in unknowns if arg != "="]  # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
 	config = {}
 	key = None
 	last_key = None
 	while tmp_list:
 		element = tmp_list.pop(0)  # retrieve an element of the list
+
 		if element.startswith('--'):  # is an argument ?
 			if '=' in element:  # uses the arg=value syntax ?
 				key, value = [x.strip() for x in element[2:].split('=', 1)]
@@ -132,23 +133,19 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 			else:
 				key = element[2:]
 				config[key] = True  # every argument starts its lifecycle as boolean
-		else:
-			if element == '=':
-				continue
-			if key:
-				config[key] = element
-				last_key = key  # multiple
-				key = None
+		elif key:
+			config[key] = element
+			last_key = key  # multiple
+			key = None
+		elif multiple and last_key:
+			if isinstance(config[last_key], str):
+				config[last_key] = [config[last_key], element]
 			else:
-				if multiple and last_key:
-					if isinstance(config[last_key], str):
-						config[last_key] = [config[last_key], element]
-					else:
-						config[last_key].append(element)
-				elif err:
-					raise ValueError(f"Entry {element} is not related to any argument")
-				else:
-					print(f" We ignore the entry {element} as it isn't related to any argument")
+				config[last_key].append(element)
+		elif err:
+			raise ValueError(f"Entry {element} is not related to any argument")
+		else:
+			print(f" We ignore the entry {element} as it isn't related to any argument")
 	return config
 
 
@@ -215,7 +212,7 @@ def get_arguments() -> Dict[str, Any]:
 	return config
 
 
-def load_config():
+def load_config() -> None:
 	"""
 	refine and set some arguments. Formerly at the scripts
 	"""
@@ -265,7 +262,7 @@ def load_config():
 		)
 
 
-def post_process_arguments(arguments):
+def post_process_arguments(arguments: dict[str, Any]) -> None:
 	storage['arguments'] = arguments
 	if mountpoint := arguments.get('mount_point', None):
 		storage['MOUNT_POINT'] = Path(mountpoint)
@@ -287,18 +284,18 @@ post_process_arguments(arguments)
 
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles_bck and other things.
-def plugin(f, *args, **kwargs):
+def plugin(f, *args, **kwargs) -> None:
 	plugins[f.__name__] = f
 
 
-def _check_new_version():
+def _check_new_version() -> None:
 	info("Checking version...")
 
 	try:
 		Pacman.run("-Sy")
 	except Exception as e:
 		debug(f'Failed to perform version check: {e}')
-		info(f'Arch Linux mirrors are not reachable. Please check your internet connection')
+		info('Arch Linux mirrors are not reachable. Please check your internet connection')
 		exit(1)
 
 	upgrade = None
@@ -314,7 +311,7 @@ def _check_new_version():
 		time.sleep(3)
 
 
-def main():
+def main() -> None:
 	"""
 	This can either be run as the compiled and installed application: python setup.py install
 	OR straight as a module: python -m archinstall
@@ -333,7 +330,7 @@ def main():
 	importlib.import_module(mod_name)
 
 
-def _shutdown_curses():
+def _shutdown_curses() -> None:
 	try:
 		curses.nocbreak()
 
@@ -351,7 +348,7 @@ def _shutdown_curses():
 		pass
 
 
-def run_as_a_module():
+def run_as_a_module() -> None:
 	exc = None
 
 	try:

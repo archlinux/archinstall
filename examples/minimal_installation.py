@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, Callable, List
 
 import archinstall
 from archinstall import disk
@@ -10,7 +10,7 @@ from archinstall import interactions
 from archinstall.default_profiles.minimal import MinimalProfile
 
 if TYPE_CHECKING:
-	_: Any
+	_: Callable[[str], str]
 
 
 def perform_installation(mountpoint: Path) -> None:

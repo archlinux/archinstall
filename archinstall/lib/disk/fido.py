@@ -74,7 +74,7 @@ class Fido2:
 		hsm_device: Fido2Device,
 		dev_path: Path,
 		password: str
-	):
+	) -> None:
 		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {dev_path}", peek_output=True)
 		pw_inputted = False
 		pin_inputted = False
@@ -85,7 +85,7 @@ class Fido2:
 					worker.write(bytes(password, 'UTF-8'))
 					pw_inputted = True
 			elif pin_inputted is False:
-				if bytes(f"please enter security token pin", 'UTF-8') in worker._trace_log.lower():
+				if bytes("please enter security token pin", 'UTF-8') in worker._trace_log.lower():
 					worker.write(bytes(getpass.getpass(" "), 'UTF-8'))
 					pin_inputted = True
 

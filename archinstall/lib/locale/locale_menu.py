@@ -182,7 +182,7 @@ def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
 	# sort alphabetically and then by length
 	sorted_kb_lang = sorted(kb_lang, key=lambda x: (len(x), x))
 
-	items = [MenuItem(l, value=l) for l in sorted_kb_lang]
+	items = [MenuItem(lang, value=lang) for lang in sorted_kb_lang]
 	group = MenuItemGroup(items, sort_items=False)
 	group.set_focus_by_value(preset)
 

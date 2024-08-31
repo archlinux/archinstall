@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class DeepinProfile(XorgProfile):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__('Deepin', ProfileType.DesktopEnv, description='')
 
 	@property

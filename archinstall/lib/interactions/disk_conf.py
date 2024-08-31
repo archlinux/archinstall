@@ -202,13 +202,12 @@ def select_lvm_config(
 
 def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.PartitionModification:
 	flags = [disk.PartitionFlag.Boot]
+	size = disk.Size(1, disk.Unit.GiB, sector_size)
 	if using_gpt:
 		start = disk.Size(1, disk.Unit.MiB, sector_size)
-		size = disk.Size(1, disk.Unit.GiB, sector_size)
 		flags.append(disk.PartitionFlag.ESP)
 	else:
 		start = disk.Size(3, disk.Unit.MiB, sector_size)
-		size = disk.Size(203, disk.Unit.MiB, sector_size)
 
 	# boot partition
 	return disk.PartitionModification(

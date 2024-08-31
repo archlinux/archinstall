@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import Any, Optional, TYPE_CHECKING, List, Dict
+from typing import Any, Optional, TYPE_CHECKING, List
 
 from ..models.network_configuration import NetworkConfiguration, NicType, Nic
 
 from ..networking import list_interfaces
-from ..output import FormattedOutput, warn
 from ..menu import ListManager
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu
+	FrameProperties, Alignment, ResultType,
+	EditMenu
 )
 
 if TYPE_CHECKING:
@@ -30,7 +29,7 @@ class ManualNetworkConfig(ListManager):
 	def selected_action_display(self, nic: Nic) -> str:
 		return nic.iface if nic.iface else ''
 
-	def handle_action(self, action: str, entry: Optional[Nic], data: List[Nic]):
+	def handle_action(self, action: str, entry: Optional[Nic], data: List[Nic]) -> list[Nic]:
 		if action == self._actions[0]:  # add
 			iface = self._select_iface(data)
 			if iface:

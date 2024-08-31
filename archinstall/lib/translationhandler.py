@@ -39,7 +39,7 @@ class Language:
 
 
 class TranslationHandler:
-	def __init__(self):
+	def __init__(self) -> None:
 		self._base_pot = 'base.pot'
 		self._languages = 'languages.json'
 
@@ -145,7 +145,7 @@ class TranslationHandler:
 		except Exception:
 			raise ValueError(f'No language with abbreviation "{abbr}" found')
 
-	def activate(self, language: Language):
+	def activate(self, language: Language) -> None:
 		"""
 		Set the provided language as the current translation
 		"""
@@ -204,7 +204,7 @@ class DeferredTranslation:
 		return self.message.format(*args)
 
 	@classmethod
-	def install(cls):
+	def install(cls) -> None:
 		import builtins
 		builtins._ = cls  # type: ignore
 
