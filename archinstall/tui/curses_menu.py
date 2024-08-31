@@ -44,14 +44,13 @@ class AbstractCurses(metaclass=ABCMeta):
 
 	def _set_help_viewport(self) -> 'Viewport':
 		max_height, max_width = tui.max_yx
-		width = max_width - 10
 		height = max_height - 10
 
-		max_help_width = max([len(l) for l in Help.get_help_text().split('\n')])
+		max_help_width = max([len(line) for line in Help.get_help_text().split('\n')])
 		x_start = int((max_width / 2) - (max_help_width / 2))
 
 		return Viewport(
-			max_help_width+10,
+			max_help_width + 10,
 			height,
 			x_start,
 			int((max_height / 2) - height / 2),
@@ -59,11 +58,6 @@ class AbstractCurses(metaclass=ABCMeta):
 		)
 
 	def _confirm_interrupt(self, screen: Any, warning: str) -> bool:
-		# when a interrupt signal happens then getchr
-		# doesn't seem to work anymore so we need to
-		# call it twice to get it to block and wait for input
-		# screen.getch()
-
 		while True:
 			result = SelectMenu(
 				MenuItemGroup.yes_no(),
@@ -92,7 +86,7 @@ class AbstractCurses(metaclass=ABCMeta):
 		lines = help_text.split('\n')
 
 		entries = [ViewportEntry('', 0, 0, STYLE.NORMAL)]
-		entries += [ViewportEntry(f'   {e}   ', idx+1, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
+		entries += [ViewportEntry(f'   {e}   ', idx + 1, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
 		self._help_window.update(entries, 0)
 
 	def get_header_entries(
@@ -786,6 +780,7 @@ class SelectMenu(AbstractCurses):
 					self._draw()
 
 				key = win.getch()
+
 				ret = self._process_input_key(key)
 
 				if ret is not None:
@@ -794,7 +789,7 @@ class SelectMenu(AbstractCurses):
 				if self._handle_interrupt():
 					return Result(ResultType.Reset, None)
 				else:
-					self.kickoff(win)
+					return self.kickoff(win)
 
 	def resize_win(self) -> None:
 		self._draw()

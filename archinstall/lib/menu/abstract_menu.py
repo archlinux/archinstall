@@ -152,15 +152,13 @@ class AbstractMenu:
 		data_store: Dict[str, Any],
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
+		reset_warning: Optional[str] = None
 	):
 		self._menu_item_group = item_group
 		self._data_store = data_store
 		self.auto_cursor = auto_cursor
 		self._allow_reset = allow_reset
-		self._reset_warning: Optional[str] = None
-
-		if self._allow_reset:
-			self._reset_warning = str(_('Are you sure you want to reset this setting?'))
+		self._reset_warning = reset_warning
 
 		self.is_context_mgr = False
 
@@ -227,16 +225,17 @@ class AbstractMenu:
 				preview_frame=FrameProperties('Info', FrameStyle.MAX),
 			).single()
 
-			if not result.item:
-				break
-
 			match result.type_:
 				case ResultType.Selection:
-					item: MenuItem = result.item
+					item: Optional[MenuItem] = result.item
+
+					if item is None:
+						break
 
 					if item.action is None:
 						break
 				case ResultType.Reset:
+					self._data_store = {}
 					return None
 
 		self._sync_all_to_ds()
@@ -259,4 +258,3 @@ class AbstractSubMenu(AbstractMenu):
 			auto_cursor=auto_cursor,
 			allow_reset=allow_reset
 		)
-
