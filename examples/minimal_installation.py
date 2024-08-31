@@ -8,6 +8,7 @@ from archinstall import profile
 from archinstall import models
 from archinstall import interactions
 from archinstall.default_profiles.minimal import MinimalProfile
+from archinstall.tui.curses_menu import tui
 
 if TYPE_CHECKING:
 	_: Callable[[str], str]

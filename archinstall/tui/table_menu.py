@@ -1,11 +1,9 @@
-from typing import Any, Tuple, List, Dict, Optional, Callable
+from typing import Any, Tuple, List, Dict, Optional
 
 from archinstall.lib.output import FormattedOutput
 
 from . import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType
+	MenuItemGroup, MenuItem
 )
 
 

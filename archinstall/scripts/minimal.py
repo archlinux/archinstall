@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
-from archinstall import info
+from archinstall import info, debug
 from archinstall import Installer, ConfigurationOutput
 from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall.lib.interactions import suggest_single_disk_layout, select_devices

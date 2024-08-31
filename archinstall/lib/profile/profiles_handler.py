@@ -18,7 +18,6 @@ from ..output import error, debug, info
 from ..storage import storage
 
 
-
 if TYPE_CHECKING:
 	from ..installer import Installer
 	_: Any

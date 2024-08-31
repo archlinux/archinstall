@@ -74,7 +74,14 @@ class ManualNetworkConfig(ListManager):
 
 		return None
 
-	def _get_ip_address(self, title: str, header: str, allow_skip: bool, multi: bool) -> Optional[str]:
+	def _get_ip_address(
+		self,
+		title: str,
+		header: str,
+		allow_skip: bool,
+		multi: bool,
+		preset: Optional[str] = None
+	) -> Optional[str]:
 		def validator(ip: str) -> Optional[str]:
 			if multi:
 				ips = ip.split(' ')
@@ -128,7 +135,13 @@ class ManualNetworkConfig(ListManager):
 				display_dns = None
 
 			header = str(_('Enter your DNS servers with space separated (leave blank for none)')) + '\n'
-			dns_servers = self._get_ip_address(str(_('DNS servers')), header, True, True)
+			dns_servers = self._get_ip_address(
+				str(_('DNS servers')),
+				header,
+				True,
+				True,
+				display_dns
+			)
 
 			dns = []
 			if dns_servers is not None:

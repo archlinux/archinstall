@@ -2,6 +2,7 @@ from pathlib import Path
 
 import archinstall
 from archinstall import Installer, disk, debug
+from archinstall.tui.curses_menu import tui
 
 
 def ask_user_questions() -> None:

@@ -9,6 +9,12 @@ from archinstall import disk
 from archinstall import models
 from archinstall import locale
 from archinstall import info, debug
+from archinstall import ConfigurationOutput
+from archinstall.tui.curses_menu import tui
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	Alignment, Orientation
+)
 
 if TYPE_CHECKING:
 	_: Callable[[str], str]
@@ -131,14 +137,14 @@ def perform_installation(mountpoint: Path) -> None:
 
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?')) + '\n'
-			group = MenuItemGroup.default_confirm()
+			group = MenuItemGroup.yes_no()
 
 			result = SelectMenu(
 				group,
 				header=prompt,
 				alignment=Alignment.CENTER,
 				columns=2,
-				orientation=MenuOrientation.HORIZONTAL
+				orientation=Orientation.HORIZONTAL
 			).single()
 
 			if result.item == MenuItem.yes():

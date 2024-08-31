@@ -171,7 +171,7 @@ def ask_for_swap(preset: bool = True) -> bool:
 	prompt = str(_('Would you like to use swap on zram?')) + '\n'
 
 	group = MenuItemGroup.yes_no()
-	group.set_focus_by_value(preset)
+	group.set_focus_by_value(default_item)
 
 	result = SelectMenu(
 		group,

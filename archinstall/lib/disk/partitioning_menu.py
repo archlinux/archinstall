@@ -262,7 +262,7 @@ class PartitioningList(ListManager):
 		def validate(value: str) -> Optional[str]:
 			size = self._validate_value(sector_size, total_size, value, start)
 			if not size:
-				return str(_(f'Invalid size'))
+				return str(_('Invalid size'))
 			return None
 
 		result = EditMenu(

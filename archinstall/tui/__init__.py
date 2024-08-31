@@ -1,9 +1,9 @@
 from .curses_menu import (
-    tui, SelectMenu, EditMenu
+	tui, SelectMenu, EditMenu
 )
 
 from .menu_item import (
-    MenuItem, MenuItemGroup
+	MenuItem, MenuItemGroup
 )
 
 from .types import (

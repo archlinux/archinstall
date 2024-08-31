@@ -1,8 +1,12 @@
 from enum import Enum
 from typing import List, Optional, TYPE_CHECKING, Any
 
-from archinstall.default_profiles.profile import ProfileType, GreeterType
+from archinstall.default_profiles.profile import ProfileType, GreeterType, SelectResult
 from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, ResultType, Alignment
+)
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

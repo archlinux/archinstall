@@ -4,8 +4,7 @@ from ..output import FormattedOutput
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, EditMenu
+	Alignment
 )
 
 if TYPE_CHECKING:
@@ -119,9 +118,6 @@ class ListManager:
 
 	def _run_actions_on_entry(self, entry: Any) -> None:
 		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]
-		display_value = self.selected_action_display(entry)
-
-		prompt = _("Select an action for '{}'").format(display_value)
 
 		items = [MenuItem(o, value=o) for o in options]
 		group = MenuItemGroup(items, sort_items=False)

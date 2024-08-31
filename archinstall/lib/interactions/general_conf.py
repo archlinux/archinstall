@@ -9,14 +9,11 @@ from ..output import warn
 from ..packages.packages import validate_package_list
 from ..storage import storage
 from ..translationhandler import Language
+from archinstall.tui.curses_menu import tui
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, Result, ResultType, EditMenu
-)
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, EditMenu,
-	Orientation, tui
+	FrameProperties, Alignment, Result,
+	ResultType, EditMenu, Orientation
 )
 
 if TYPE_CHECKING:
@@ -25,7 +22,7 @@ if TYPE_CHECKING:
 
 def ask_ntp(preset: bool = True) -> bool:
 	header = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n')) + '\n'
-	header += str( _('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki')) + '\n'
+	header += str(_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki')) + '\n'
 
 	preset_val = MenuItem.yes() if preset else MenuItem.no()
 	group = MenuItemGroup.yes_no()
@@ -171,11 +168,6 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	def validator(value: str) -> Optional[str]:
 		packages = value.split() if value else []
 
-	def read_packages(p: list[str] = []) -> list[str]:
-		display = ' '.join(p)
-		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run().strip()
-		return input_packages.split() if input_packages else []
-
 		if len(packages) == 0:
 			return None
 
@@ -235,6 +227,8 @@ def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[i
 
 	if result.type_ == ResultType.Skip:
 		return preset
+
+	assert result.item
 
 	downloads: int = int(result.item)
 

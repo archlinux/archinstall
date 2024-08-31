@@ -16,18 +16,18 @@ if TYPE_CHECKING:
 
 class Selector:
 	def __init__(
-			self,
-			description: str,
-			func: Optional[Callable[[Any], Any]] = None,
-			display_func: Optional[Callable] = None,
-			default: Optional[Any] = None,
-			enabled: bool = False,
-			dependencies: List = [],
-			dependencies_not: List = [],
-			exec_func: Optional[Callable] = None,
-			preview_func: Optional[Callable] = None,
-			mandatory: bool = False,
-			no_store: bool = False
+		self,
+		description: str,
+		func: Optional[Callable[[Any], Any]] = None,
+		display_func: Optional[Callable] = None,
+		default: Optional[Any] = None,
+		enabled: bool = False,
+		dependencies: List = [],
+		dependencies_not: List = [],
+		exec_func: Optional[Callable] = None,
+		preview_func: Optional[Callable] = None,
+		mandatory: bool = False,
+		no_store: bool = False
 	):
 		"""
 		Create a new menu selection entry
