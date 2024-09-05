@@ -40,6 +40,6 @@ repos:
     - id: mypy
       fail_fast: true
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.3
+    rev: v0.6.4
     hooks:
       - id: ruff
