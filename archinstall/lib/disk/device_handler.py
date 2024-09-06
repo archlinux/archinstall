@@ -47,7 +47,7 @@ class DeviceHandler(object):
 	def load_devices(self) -> None:
 		block_devices = {}
 
-		SysCommand('udevadm settle')
+		self.udev_sync()
 		all_lsblk_info = get_all_lsblk_info()
 		devices = getAllDevices()
 
@@ -783,6 +783,13 @@ class DeviceHandler(object):
 			self._wipe(partition.path)
 
 		self._wipe(block_device.device_info.path)
+
+	@staticmethod
+	def udev_sync() -> None:
+		try:
+			SysCommand('udevadm settle')
+		except SysCallError as err:
+			debug(f'Failed to synchronize with udev: {err}')
 
 
 device_handler = DeviceHandler()
