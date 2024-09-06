@@ -1431,14 +1431,14 @@ def _fetch_lsblk_info(
 	fields = [_clean_field(f, CleanType.Lsblk) for f in LsblkInfo.fields()]
 	cmd = ['lsblk', '--json', '--bytes', '--output', '+' + ','.join(fields)]
 
-	if dev_path:
-		cmd.append(str(dev_path))
-
 	if reverse:
 		cmd.append('--inverse')
 
 	if full_dev_path:
 		cmd.append('--paths')
+
+	if dev_path:
+		cmd.append(str(dev_path))
 
 	try:
 		result = SysCommand(cmd).decode()
