@@ -1,4 +1,4 @@
-from typing import Optional, List, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 
 from archinstall.default_profiles.profile import ProfileType, GreeterType
 from archinstall.default_profiles.xorg import XorgProfile
@@ -12,7 +12,7 @@ class I3wmProfile(XorgProfile):
 		super().__init__('i3-wm', ProfileType.WindowMgr, description='')
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			'i3-wm',
 			'i3lock',

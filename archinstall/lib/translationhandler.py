@@ -6,7 +6,7 @@ import gettext
 from dataclasses import dataclass
 
 from pathlib import Path
-from typing import List, Dict, Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING, Optional
 
 from .output import error, debug
 
@@ -47,10 +47,10 @@ class TranslationHandler:
 		self._translated_languages = self._get_translations()
 
 	@property
-	def translated_languages(self) -> List[Language]:
+	def translated_languages(self) -> list[Language]:
 		return self._translated_languages
 
-	def _get_translations(self) -> List[Language]:
+	def _get_translations(self) -> list[Language]:
 		"""
 		Load all translated languages and return a list of such
 		"""
@@ -60,7 +60,7 @@ class TranslationHandler:
 		languages = []
 
 		for short_form in defined_languages:
-			mapping_entry: Dict[str, Any] = next(filter(lambda x: x['abbr'] == short_form, mappings))
+			mapping_entry: dict[str, Any] = next(filter(lambda x: x['abbr'] == short_form, mappings))
 			abbr = mapping_entry['abbr']
 			lang = mapping_entry['lang']
 			translated_lang = mapping_entry.get('translated_lang', None)
@@ -96,7 +96,7 @@ class TranslationHandler:
 		except Exception:
 			error(f'Unable to set font {font}')
 
-	def _load_language_mappings(self) -> List[Dict[str, Any]]:
+	def _load_language_mappings(self) -> list[dict[str, Any]]:
 		"""
 		Load the mapping table of all known languages
 		"""
@@ -159,7 +159,7 @@ class TranslationHandler:
 		locales_dir = Path.joinpath(cur_path, 'locales')
 		return locales_dir
 
-	def _provided_translations(self) -> List[str]:
+	def _provided_translations(self) -> list[str]:
 		"""
 		Get a list of all known languages
 		"""

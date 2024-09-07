@@ -1,4 +1,4 @@
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from archinstall.default_profiles.profile import Profile, ProfileType
 
@@ -14,11 +14,11 @@ class MariadbProfile(Profile):
 		)
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return ['mariadb']
 
 	@property
-	def services(self) -> List[str]:
+	def services(self) -> list[str]:
 		return ['mariadb']
 
 	def post_install(self, install_session: 'Installer') -> None:
