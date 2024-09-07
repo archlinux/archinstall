@@ -1,4 +1,4 @@
-from typing import List, Union, Any, TYPE_CHECKING
+from typing import Union, Any, TYPE_CHECKING
 
 import archinstall
 
@@ -15,7 +15,7 @@ class PipewireProfile(Profile):
 		super().__init__('Pipewire', ProfileType.Application)
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			'pipewire',
 			'pipewire-alsa',
@@ -27,7 +27,7 @@ class PipewireProfile(Profile):
 		]
 
 	def _enable_pipewire_for_all(self, install_session: 'Installer') -> None:
-		users: Union[User, List[User]] = archinstall.arguments.get('!users', [])
+		users: Union[User, list[User]] = archinstall.arguments.get('!users', [])
 		if not isinstance(users, list):
 			users = [users]
 

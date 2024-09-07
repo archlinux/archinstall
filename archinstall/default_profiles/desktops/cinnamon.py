@@ -1,4 +1,4 @@
-from typing import Optional, List, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 
 from archinstall.default_profiles.profile import ProfileType, GreeterType
 from archinstall.default_profiles.xorg import XorgProfile
@@ -12,7 +12,7 @@ class CinnamonProfile(XorgProfile):
 		super().__init__('Cinnamon', ProfileType.DesktopEnv, description='')
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			"cinnamon",
 			"system-config-printer",

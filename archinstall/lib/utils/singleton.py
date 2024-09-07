@@ -1,9 +1,9 @@
-from typing import Dict, Any
+from typing import Any
 
 
 class _Singleton(type):
 	""" A metaclass that creates a Singleton base class when called. """
-	_instances: Dict[Any, Any] = {}
+	_instances: dict[Any, Any] = {}
 
 	def __call__(cls, *args, **kwargs):
 		if cls not in cls._instances:
