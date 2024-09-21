@@ -382,9 +382,7 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_kernel(self, item: MenuItem) -> Optional[str]:
-		if item.value is not None:
-			from archinstall.lib.output import debug
-			debug(item.value)
+		if item.value:
 			kernel = ', '.join(item.value)
 			return f'{str(_("Kernel"))}: {kernel}'
 		return None

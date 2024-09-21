@@ -132,7 +132,9 @@ class ProfileMenu(AbstractSubMenu):
 
 	def _prev_gfx(self, item: MenuItem) -> Optional[str]:
 		if item.value:
-			return item.value.packages_text()
+			driver = item.get_value().value
+			packages = item.get_value().packages_text()
+			return f'Driver: {driver}\n{packages}'
 		return None
 
 	def _prev_greeter(self, item: MenuItem) -> Optional[str]:

@@ -68,8 +68,9 @@ def ask_hostname(preset: Optional[str] = None) -> Optional[str]:
 
 def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 	default = 'UTC'
+	timezones = list_timezones()
 
-	items = [MenuItem(tz, value=tz) for tz in list_timezones()]
+	items = [MenuItem(tz, value=tz) for tz in timezones]
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_selected_by_value(preset)
 	group.set_default_by_value(default)
@@ -188,6 +189,7 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 		str(_('Additional packages')),
 		alignment=Alignment.CENTER,
 		allow_skip=True,
+		allow_reset=True,
 		edit_width=100,
 		validator=validator,
 		default_text=' '.join(preset)
@@ -196,12 +198,11 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	match result.type_:
 		case ResultType.Skip:
 			return preset
-		case ResultType.Selection:
-			pck_str = result.get_value()
-			packages = pck_str
-			return packages
 		case ResultType.Reset:
-			raise ValueError('Unhandled result type')
+			return []
+		case ResultType.Selection:
+			packages = result.text()
+			return packages.split(' ')
 
 
 def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[int]:
@@ -231,10 +232,13 @@ def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[i
 		default_text=str(preset) if preset is not None else None
 	).input()
 
-	if result.type_ == ResultType.Skip:
-		return preset
-
-	downloads: int = int(result.text())
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return 0
+		case ResultType.Selection:
+			downloads: int = int(result.text())
 
 	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
