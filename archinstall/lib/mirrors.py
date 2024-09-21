@@ -313,7 +313,7 @@ class MirrorMenu(AbstractSubMenu):
 def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[str, List[MirrorStatusEntryV3]]:
 	mirrors: Dict[str, List[MirrorStatusEntryV3]] = list_mirrors()
 
-	items = [MenuItem(name, value=(name, mirror)) for name, mirror in mirrors.items()]
+	items = [MenuItem(name, value=(name, mirrors)) for name, mirrors in mirrors.items()]
 	group = MenuItemGroup(items, sort_items=True)
 
 	preset_values = [(name, mirror) for name, mirror in preset.items()]
@@ -333,7 +333,7 @@ def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[
 		case ResultType.Reset:
 			return {}
 		case ResultType.Selection:
-			selected_mirrors: List[Tuple[str, MirrorStatusEntryV3]] = result.get_values()
+			selected_mirrors: List[Tuple[str, List[MirrorStatusEntryV3]]] = result.get_values()
 			return {name: mirror for name, mirror in selected_mirrors}
 
 	return {}
