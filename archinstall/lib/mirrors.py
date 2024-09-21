@@ -163,7 +163,8 @@ class CustomMirrorList(ListManager):
 		result = EditMenu(
 			str(_('Mirror name')),
 			alignment=Alignment.CENTER,
-			allow_skip=True
+			allow_skip=True,
+			default_text=mirror.name if mirror else None
 		).input()
 
 		if not result.item:
@@ -176,7 +177,8 @@ class CustomMirrorList(ListManager):
 			str(_('Url')),
 			header=header,
 			alignment=Alignment.CENTER,
-			allow_skip=True
+			allow_skip=True,
+			default_text=mirror.url if mirror else None
 		).input()
 
 		if not result.item:

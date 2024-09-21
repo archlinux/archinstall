@@ -211,7 +211,7 @@ class AbstractMenu:
 		for item in self._menu_item_group.items:
 			item.enabled = False
 
-	def run(self) -> None:
+	def run(self) -> Optional[Any]:
 		self._sync_all_from_ds()
 
 		while True:
@@ -239,6 +239,7 @@ class AbstractMenu:
 					return None
 
 		self._sync_all_to_ds()
+		return None
 
 
 class AbstractSubMenu(AbstractMenu):

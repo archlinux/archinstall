@@ -25,11 +25,12 @@ class SubvolumeMenu(ListManager):
 	def selected_action_display(self, subvolume: SubvolumeModification) -> str:
 		return str(subvolume.name)
 
-	def _add_subvolume(self, editing: Optional[SubvolumeModification] = None) -> Optional[SubvolumeModification]:
+	def _add_subvolume(self, preset: Optional[SubvolumeModification] = None) -> Optional[SubvolumeModification]:
 		result = EditMenu(
 			str(_('Subvolume name')),
 			alignment=Alignment.CENTER,
-			allow_skip=True
+			allow_skip=True,
+			default_text=preset.name if preset else None
 		).input()
 
 		if not result.item:

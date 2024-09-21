@@ -12,7 +12,12 @@ if TYPE_CHECKING:
 	_: Any
 
 
-def get_password(text: str, header: Optional[str] = None, allow_skip: bool = False) -> Optional[str]:
+def get_password(
+	text: str,
+	header: Optional[str] = None,
+	allow_skip: bool = False,
+	preset: Optional[str] = None
+) -> Optional[str]:
 	failure: Optional[str] = None
 
 	while True:
@@ -26,6 +31,7 @@ def get_password(text: str, header: Optional[str] = None, allow_skip: bool = Fal
 			header=user_hdr,
 			alignment=Alignment.CENTER,
 			allow_skip=allow_skip,
+			default_text=preset
 		).input()
 
 		if allow_skip and not result.item:
@@ -56,7 +62,8 @@ def prompt_dir(
 	text: str,
 	header: Optional[str] = None,
 	validate: bool = True,
-	allow_skip: bool = False
+	allow_skip: bool = False,
+	preset: Optional[str] = None
 ) -> Optional[Path]:
 	def validate_path(path: str) -> Optional[str]:
 		dest_path = Path(path)
@@ -76,7 +83,8 @@ def prompt_dir(
 		header=header,
 		alignment=Alignment.CENTER,
 		allow_skip=allow_skip,
-		validator=validate_func
+		validator=validate_func,
+		default_text=preset
 	).input()
 
 	if allow_skip and not result.item:

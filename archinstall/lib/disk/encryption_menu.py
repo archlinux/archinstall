@@ -118,6 +118,10 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_vols').value
 
+		assert enc_type is not None
+		assert enc_partitions is not None
+		assert enc_lvm_vols is not None
+
 		if enc_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks] and enc_partitions:
 			enc_lvm_vols = []
 
@@ -304,7 +308,12 @@ def select_partitions_to_encrypt(
 			case ResultType.Skip: return preset
 			case ResultType.Selection:
 				if result.item:
-					return [item.value for item in result.item]
+					partitions = []
+					for item in result.item:
+						if item is not None and item.value is not None:
+							partitions.append(item.value)
+
+					return partitions
 
 	return []
 
@@ -329,6 +338,11 @@ def select_lvm_vols_to_encrypt(
 			case ResultType.Skip: return preset
 			case ResultType.Selection:
 				if result.item:
-					return [item.value for item in result.item]
+					volumes = []
+					for item in result.item:
+						if item is not None and item.value is not None:
+							volumes.append(item.value)
+
+					return volumes
 
 	return []

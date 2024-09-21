@@ -54,6 +54,7 @@ def ask_hostname(preset: str = '') -> str:
 		str(_('Hostname')),
 		alignment=Alignment.CENTER,
 		allow_skip=True,
+		default_text=preset
 	).input()
 
 	if not result.item:
@@ -189,12 +190,18 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 		alignment=Alignment.CENTER,
 		allow_skip=True,
 		edit_width=100,
-		validator=validator
+		validator=validator,
+		default_text=' '.join(preset)
 	).input()
 
-	if result.item:
-		packages = result.item.split()
-		return packages
+	match result.type_:
+		case ResultType.Skip: return preset
+		case ResultType.Selection:
+			if result.item:
+				packages = result.item.split()
+				return packages
+			else:
+				return []
 
 	return preset
 
@@ -222,7 +229,8 @@ def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[i
 		header=header,
 		allow_skip=True,
 		allow_reset=True,
-		validator=validator
+		validator=validator,
+		default_text=str(preset) if preset is not None else None
 	).input()
 
 	if result.type_ == ResultType.Skip:

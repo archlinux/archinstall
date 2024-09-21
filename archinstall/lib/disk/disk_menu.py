@@ -52,7 +52,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 			),
 		]
 
-	def run(self, allow_reset: bool = True) -> Optional[DiskLayoutConfiguration]:
+	def run(self) -> Optional[DiskLayoutConfiguration]:
 		super().run()
 
 		disk_layout_config: Optional[DiskLayoutConfiguration] = self._data_store.get('disk_config', None)

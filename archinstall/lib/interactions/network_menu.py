@@ -95,7 +95,13 @@ class ManualNetworkConfig(ListManager):
 			except ValueError:
 				return str(_('You need to enter a valid IP in IP-config mode'))
 
-		result = EditMenu(title, header=header, validator=validator, allow_skip=allow_skip).input()
+		result = EditMenu(
+			title,
+			header=header,
+			validator=validator,
+			allow_skip=allow_skip,
+			default_text=preset
+		).input()
 
 		if result.item is None:
 			return None

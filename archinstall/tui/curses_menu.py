@@ -281,7 +281,7 @@ class EditViewport(AbstractViewport):
 		y_start: int,
 		process_key: Callable[[int], int],
 		frame: FrameProperties,
-		alignment=Alignment.CENTER
+		alignment: Alignment = Alignment.CENTER
 	):
 		super().__init__()
 
@@ -350,11 +350,13 @@ class EditViewport(AbstractViewport):
 			self._main_win.erase()
 			self._main_win.refresh()
 
-	def edit(self) -> None:
-		if not self._edit_win or not self._main_win:
-			return
+	def edit(self, default_text: Optional[str] = None) -> None:
+		assert self._edit_win and self._main_win
 
 		self._edit_win.erase()
+
+		if default_text is not None and len(default_text) > 0:
+			self._edit_win.addstr(0, 0, default_text)
 
 		# if this gets initialized multiple times it will be an overlay
 		# and ENTER has to be pressed multiple times to accept
@@ -519,6 +521,7 @@ class EditMenu(AbstractCurses):
 		allow_reset: bool = False,
 		reset_warning_msg: Optional[str] = None,
 		alignment: Alignment = Alignment.CENTER,
+		default_text: Optional[str] = None
 	):
 		super().__init__()
 
@@ -532,6 +535,7 @@ class EditMenu(AbstractCurses):
 		self._headers = self.get_header_entries(header)
 		self._alignment = alignment
 		self._edit_width = edit_width
+		self._default_text = default_text
 
 		title = f'* {title}' if not self._allow_skip else title
 		self._frame = FrameProperties(title, FrameStyle.MAX)
@@ -571,7 +575,7 @@ class EditMenu(AbstractCurses):
 
 		self._error_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
 
-	def input(self, ) -> Result[str]:
+	def input(self) -> Result[str]:
 		result = tui.run(self)
 
 		assert isinstance(result.item, (str, NoneType))
@@ -618,7 +622,7 @@ class EditMenu(AbstractCurses):
 
 		if self._input_vp:
 			self._input_vp.update()
-			self._input_vp.edit()
+			self._input_vp.edit(default_text=self._default_text)
 
 	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		try:
