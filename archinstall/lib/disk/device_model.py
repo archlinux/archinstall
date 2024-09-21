@@ -1345,7 +1345,7 @@ class LsblkInfo:
 			'fsavail': self.fsavail,
 			'fsuse_percentage': self.fsuse_percentage,
 			'type': self.type,
-			'mountpoint': self.mountpoint,
+			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mountpoints': [str(m) for m in self.mountpoints],
 			'fsroots': [str(r) for r in self.fsroots],
 			'children': [c.json() for c in self.children]
@@ -1393,6 +1393,8 @@ class LsblkInfo:
 
 		lsblk_info.children = [LsblkInfo.from_json(child) for child in blockdevice.get('children', [])]
 
+		lsblk_info.mountpoint = Path(lsblk_info.mountpoint) if lsblk_info.mountpoint else None
+
 		# sometimes lsblk returns 'mountpoints': [null]
 		lsblk_info.mountpoints = [Path(mnt) for mnt in lsblk_info.mountpoints if mnt]
 
@@ -1431,14 +1433,14 @@ def _fetch_lsblk_info(
 	fields = [_clean_field(f, CleanType.Lsblk) for f in LsblkInfo.fields()]
 	cmd = ['lsblk', '--json', '--bytes', '--output', '+' + ','.join(fields)]
 
-	if dev_path:
-		cmd.append(str(dev_path))
-
 	if reverse:
 		cmd.append('--inverse')
 
 	if full_dev_path:
 		cmd.append('--paths')
+
+	if dev_path:
+		cmd.append(str(dev_path))
 
 	try:
 		result = SysCommand(cmd).decode()

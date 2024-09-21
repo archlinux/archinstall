@@ -1,5 +1,3 @@
-from typing import List
-
 from archinstall.default_profiles.profile import Profile, ProfileType
 
 
@@ -11,9 +9,9 @@ class NginxProfile(Profile):
 		)
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return ['nginx']
 
 	@property
-	def services(self) -> List[str]:
+	def services(self) -> list[str]:
 		return ['nginx']

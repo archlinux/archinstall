@@ -6,7 +6,7 @@ import time
 import select
 import signal
 import random
-from typing import Union, Dict, Any, List, Optional
+from typing import Union, Any, Optional
 from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -74,7 +74,7 @@ def get_hw_addr(ifname: str) -> str:
 	return ':'.join('%02x' % b for b in ret[18:24])
 
 
-def list_interfaces(skip_loopback: bool = True) -> Dict[str, str]:
+def list_interfaces(skip_loopback: bool = True) -> dict[str, str]:
 	interfaces = {}
 
 	for index, iface in socket.if_nameindex():
@@ -99,7 +99,7 @@ def update_keyring() -> bool:
 	return False
 
 
-def enrich_iface_types(interfaces: Union[Dict[str, Any], List[str]]) -> Dict[str, str]:
+def enrich_iface_types(interfaces: Union[dict[str, Any], list[str]]) -> dict[str, str]:
 	result = {}
 
 	for iface in interfaces:
@@ -119,7 +119,7 @@ def enrich_iface_types(interfaces: Union[Dict[str, Any], List[str]]) -> Dict[str
 	return result
 
 
-def fetch_data_from_url(url: str, params: Optional[Dict] = None) -> str:
+def fetch_data_from_url(url: str, params: Optional[dict] = None) -> str:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE

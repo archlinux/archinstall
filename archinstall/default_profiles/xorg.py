@@ -1,4 +1,4 @@
-from typing import Any, Optional, TYPE_CHECKING, List
+from typing import Any, Optional, TYPE_CHECKING
 
 from archinstall.default_profiles.profile import Profile, ProfileType
 
@@ -30,7 +30,7 @@ class XorgProfile(Profile):
 		return text
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			'xorg-server'
 		]

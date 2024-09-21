@@ -1,4 +1,4 @@
-from typing import List, Optional, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 
 from archinstall.default_profiles.profile import ProfileType, GreeterType
 from archinstall.default_profiles.xorg import XorgProfile
@@ -15,7 +15,7 @@ class LxqtProfile(XorgProfile):
 	# LXQt works with lightdm, but since this is not supported, we will not default to this.
 	# https://github.com/lxqt/lxqt/issues/795
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			"lxqt",
 			"breeze-icons",

@@ -1,4 +1,4 @@
-from typing import List, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from archinstall.default_profiles.profile import ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
@@ -13,7 +13,7 @@ class AwesomeProfile(XorgProfile):
 		super().__init__('Awesome', ProfileType.WindowMgr, description='')
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return super().packages + [
 			'awesome',
 			'alacritty',
