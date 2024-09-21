@@ -51,7 +51,7 @@ msgid "Choose an audio server"
 msgstr "Válasszon ki egy hangkiszolgálót"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és az opcionális profilcsomagok kerülnek telepítésre."
+msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok kerülnek telepítésre."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő prompt-ban adhatja meg."
@@ -187,7 +187,7 @@ msgid "Select keyboard layout"
 msgstr "Válassza ki a billentyűzetkiosztást"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Válasszon ki egy régiót a csomagok letöltéséhez"
+msgstr "Válassza ki a régiót a csomagok letöltéséhez"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "Válasszon ki egy vagy több meghajtót a használathoz és a konfiguráláshoz"
@@ -450,7 +450,7 @@ msgid "Pre-existing pacman lock never exited. Please clean up any existing pacma
 msgstr "A már meglévő pacman zár soha nem lép ki. Az Archtelepítő használata előtt tisztítsa meg a meglévő pacman munkameneteket."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Válassza ki, hogy mely további opcionális tárolókat kívánja engedélyezni"
+msgstr "Válassza ki, hogy mely további nem kötelező tárolókat kívánja engedélyezni"
 
 msgid "Add a user"
 msgstr "Felhasználó hozzáadása"
@@ -569,7 +569,7 @@ msgid "Subvolume mountpoint"
 msgstr "Alkötet csatolási pontja"
 
 msgid "Subvolume options"
-msgstr "Alkötet beállítások"
+msgstr "Alkötet-beállítások"
 
 msgid "Save"
 msgstr "Mentés"
@@ -581,7 +581,7 @@ msgid "Select a mount point :"
 msgstr "Válasszon ki egy csatolási pontot :"
 
 msgid "Select the desired subvolume options "
-msgstr "Válassza ki a kívánt alkötet beállításokat "
+msgstr "Válassza ki a kívánt alkötet-beállításokat "
 
 msgid "Define users with sudo privilege, by username: "
 msgstr "Sudo jogosultsággal rendelkező felhasználók meghatározása felhasználónév alapján: "
@@ -680,7 +680,7 @@ msgid "Select one or more hard drives to use and configure\n"
 msgstr "Válasszon ki egy vagy több meghajtót a használathoz és konfiguráláshoz.\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "A meglévő beállítások bármilyen módosítása visszaállítja a lemez elrendezését az alaphelyzetbe!"
+msgstr "A meglévő beállítások bármilyen módosítása visszaállítja a lemez elrendezését az alaphelyzetre!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
 msgstr "Ha alaphelyzetbe állítja a meghajtó-kiválasztást, akkor az aktuális lemezelrendezést is visszaállítja. Biztos benne?"
@@ -1092,7 +1092,7 @@ msgid "Select signature check option"
 msgstr "Válasszon egy aláírás-ellenőrzési lehetőséget"
 
 msgid "Select signature option"
-msgstr "Válasszon egy aláírás beállítást"
+msgstr "Válasszon egy aláírásbeállítást"
 
 msgid "Custom mirrors"
 msgstr "Egyedi tükrök"
@@ -1175,7 +1175,7 @@ msgid "Type"
 msgstr "Típus"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Ez a beállítás lehetővé teszi, hogy a csomagletöltések során hány párhuzamos letöltés történhet"
+msgstr "Ez a beállítás engedélyezi a csomagletöltések közben a lehetséges párhuzamos letöltések számát"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
