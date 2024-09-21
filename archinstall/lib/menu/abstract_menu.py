@@ -181,8 +181,9 @@ class AbstractMenu:
 
 	def _sync_all_from_ds(self) -> None:
 		for item in self._menu_item_group.menu_items:
-			if (store_value := self._data_store.get(item.key, None)) is not None:
-				item.value = store_value
+			if item.key is not None:
+				if (store_value := self._data_store.get(item.key, None)) is not None:
+					item.value = store_value
 
 	def _sync_all_to_ds(self) -> None:
 		for item in self._menu_item_group.menu_items:
@@ -227,10 +228,7 @@ class AbstractMenu:
 
 			match result.type_:
 				case ResultType.Selection:
-					item: Optional[MenuItem] = result.item
-
-					if item is None:
-						break
+					item: MenuItem = result.item()
 
 					if item.action is None:
 						break

@@ -9,16 +9,15 @@ from archinstall.lib import disk
 
 def ask_user_questions() -> None:
 	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+	global_menu.disable_all()
 
-	global_menu.enable('archinstall-language')
-
-	global_menu.enable('disk_config', mandatory=True)
-	global_menu.enable('disk_encryption')
-	global_menu.enable('swap')
-
-	global_menu.enable('save_config')
-	global_menu.enable('install')
-	global_menu.enable('abort')
+	global_menu.set_enabled('archinstall-language', True)
+	global_menu.set_enabled('disk_config', True)
+	global_menu.set_enabled('disk_encryption', True)
+	global_menu.set_enabled('swap', True)
+	global_menu.set_enabled('save_config', True)
+	global_menu.set_enabled('install', True)
+	global_menu.set_enabled('abort', True)
 
 	global_menu.run()
 

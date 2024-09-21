@@ -106,7 +106,7 @@ class AbstractCurses(metaclass=ABCMeta):
 
 @dataclass
 class AbstractViewport:
-	def __init__(self):
+	def __init__(self) -> None:
 		pass
 
 	def add_str(self, screen: Any, row: int, col: int, text: str, color: STYLE):
@@ -279,10 +279,10 @@ class EditViewport(AbstractViewport):
 		edit_height: int,
 		x_start: int,
 		y_start: int,
-		process_key: Callable[[int], int],
+		process_key: Callable[[int], Optional[int]],
 		frame: FrameProperties,
 		alignment: Alignment = Alignment.CENTER
-	):
+	) -> None:
 		super().__init__()
 
 		self._max_height, self._max_width = tui.max_yx
@@ -302,7 +302,7 @@ class EditViewport(AbstractViewport):
 
 		self._init_wins()
 
-	def _init_wins(self):
+	def _init_wins(self) -> None:
 		self._main_win = curses.newwin(self._edit_height, self._width, self.y_start, 0)
 		self._main_win.nodelay(False)
 
@@ -345,7 +345,7 @@ class EditViewport(AbstractViewport):
 
 		self._main_win.refresh()
 
-	def erase(self):
+	def erase(self) -> None:
 		if self._main_win:
 			self._main_win.erase()
 			self._main_win.refresh()
@@ -364,7 +364,7 @@ class EditViewport(AbstractViewport):
 			self._textbox = curses.textpad.Textbox(self._edit_win)
 			self._main_win.refresh()
 
-		self._textbox.edit(self.process_key)
+		self._textbox.edit(self.process_key)  # type: ignore
 
 	def gather(self) -> Optional[str]:
 		if not self._textbox:
@@ -586,7 +586,7 @@ class EditMenu(AbstractCurses):
 	def resize_win(self):
 		self._draw()
 
-	def _clear_all(self):
+	def _clear_all(self) -> None:
 		if self._help_vp:
 			self._help_vp.erase()
 		if self._header_vp:
@@ -649,7 +649,7 @@ class EditMenu(AbstractCurses):
 
 		return self._last_state
 
-	def _process_edit_key(self, key: int):
+	def _process_edit_key(self, key: int) -> Optional[int]:
 		key_handles = MenuKeys.from_ord(key)
 
 		if self._help_active:
@@ -1155,9 +1155,10 @@ class SelectMenu(AbstractCurses):
 			case MenuKeys.ACCEPT:
 				if self._multi:
 					if self._item_group.is_mandatory_fulfilled():
-						if self._item_group.focus_item not in self._item_group.selected_items:
-							self._item_group.selected_items.append(self._item_group.focus_item)
-						return Result(ResultType.Selection, self._item_group.selected_items)
+						if self._item_group.focus_item is not None:
+							if self._item_group.focus_item not in self._item_group.selected_items:
+								self._item_group.selected_items.append(self._item_group.focus_item)
+							return Result(ResultType.Selection, self._item_group.selected_items)
 				else:
 					item = self._item_group.focus_item
 					if item:
@@ -1245,12 +1246,12 @@ class SelectMenu(AbstractCurses):
 			if next_col < len(row):
 				self._item_group.focus_item = row[next_col].item
 
-		if self._item_group.focus_item.is_empty():
+		if self._item_group.focus_item and self._item_group.focus_item.is_empty():
 			self._focus_item(key)
 
 
 class Tui:
-	def __init__(self):
+	def __init__(self) -> None:
 		self._screen: Any = None
 		self._colors: Dict[str, int] = {}
 		self._component: Optional[AbstractCurses] = None

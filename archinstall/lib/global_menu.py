@@ -212,9 +212,10 @@ class GlobalMenu(AbstractMenu):
 		]
 
 	def _safe_config(self) -> None:
-		data = {}
+		data: Dict[str, Any] = {}
 		for item in self._item_group.items:
-			data[item.key] = item.value
+			if item.key is not None:
+				data[item.key] = item.value
 
 		save_config(data)
 
@@ -226,12 +227,10 @@ class GlobalMenu(AbstractMenu):
 		def has_superuser() -> bool:
 			item = self._item_group.find_by_key('!users')
 
-			from .output import debug
-
-			debug(item)
 			if item.has_value():
 				users = item.value
-				return any([u.sudo for u in users])
+				if users:
+					return any([u.sudo for u in users])
 			return False
 
 		missing = set()
@@ -273,7 +272,8 @@ class GlobalMenu(AbstractMenu):
 		new_options = self._get_menu_options(self._data_store)
 
 		for o in new_options:
-			self._item_group.find_by_key(o.key).text = o.text
+			if o.key is not None:
+				self._item_group.find_by_key(o.key).text = o.text
 
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
 		disk_config: Optional[disk.DiskLayoutConfiguration] = self._item_group.find_by_key('disk_config').value
@@ -294,7 +294,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_locale(self, item: MenuItem) -> Optional[str]:
 		if not item.value:
-			return
+			return None
 
 		config: LocaleConfiguration = item.value
 		return config.preview()

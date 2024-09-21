@@ -67,12 +67,9 @@ class ManualNetworkConfig(ListManager):
 			case ResultType.Skip:
 				return None
 			case ResultType.Selection:
-				if result.item is None:
-					return None
-
-				return result.item.value
-
-		return None
+				return result.get_value()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
 
 	def _get_ip_address(
 		self,
@@ -103,10 +100,13 @@ class ManualNetworkConfig(ListManager):
 			default_text=preset
 		).input()
 
-		if result.item is None:
-			return None
-
-		return result.item
+		match result.type_:
+			case ResultType.Skip:
+				return preset
+			case ResultType.Selection:
+				return result.text()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
 
 	def _edit_iface(self, edit_nic: Nic) -> Nic:
 		iface_name = edit_nic.iface
@@ -126,7 +126,11 @@ class ManualNetworkConfig(ListManager):
 			frame=FrameProperties.minimal(str(_('Modes')))
 		).single()
 
-		mode = result.item.value
+		match result.type_:
+			case ResultType.Selection:
+				mode = result.get_value()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
 
 		if mode == 'IP (static)':
 			header = str(_('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(iface_name)) + '\n'
@@ -184,13 +188,7 @@ def ask_to_configure_network(preset: Optional[NetworkConfiguration]) -> Optional
 		case ResultType.Reset:
 			return None
 		case ResultType.Selection:
-			if result.item is None:
-				return preset
-
-			config = result.item.value
-
-			from archinstall.lib.output import debug
-			debug(config)
+			config = result.get_value()
 
 			match config:
 				case NicType.ISO:

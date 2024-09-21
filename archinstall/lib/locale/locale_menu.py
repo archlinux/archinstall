@@ -101,9 +101,9 @@ class LocaleMenu(AbstractSubMenu):
 
 	def _prev_locale(self, item: MenuItem) -> Optional[str]:
 		temp_locale = LocaleConfiguration(
-			self._menu_item_group.find_by_key('keyboard-layout').value,
-			self._menu_item_group.find_by_key('sys-language').value,
-			self._menu_item_group.find_by_key('sys-encoding').value,
+			self._menu_item_group.find_by_key('keyboard-layout').get_value(),
+			self._menu_item_group.find_by_key('sys-language').get_value(),
+			self._menu_item_group.find_by_key('sys-encoding').get_value(),
 		)
 		return temp_locale.preview()
 
@@ -142,10 +142,12 @@ def select_locale_lang(preset: Optional[str] = None) -> Optional[str]:
 	).single()
 
 	match result.type_:
-		case ResultType.Selection: return result.item.value
-		case ResultType.Skip: return preset
-
-	return None
+		case ResultType.Selection:
+			return result.get_value()
+		case ResultType.Skip:
+			return preset
+		case _:
+			raise ValueError('Unhandled return type')
 
 
 def select_locale_enc(preset: Optional[str] = None) -> Optional[str]:
@@ -164,18 +166,20 @@ def select_locale_enc(preset: Optional[str] = None) -> Optional[str]:
 	).single()
 
 	match result.type_:
-		case ResultType.Selection: return result.item.value
-		case ResultType.Skip: return preset
-
-	return None
+		case ResultType.Selection:
+			return result.get_value()
+		case ResultType.Skip:
+			return preset
+		case _:
+			raise ValueError('Unhandled return type')
 
 
 def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
 	"""
-		Select keyboard layout
+	Select keyboard layout
 
-		:return: The keyboard layout shortcut for the selected layout
-		:rtype: str
+	:return: The keyboard layout shortcut for the selected layout
+	:rtype: str
 	"""
 
 	kb_lang = list_keyboard_languages()
@@ -194,7 +198,11 @@ def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
 	).single()
 
 	match result.type_:
-		case ResultType.Skip: return preset
-		case ResultType.Selection: return result.item.value
+		case ResultType.Selection:
+			return result.get_value()
+		case ResultType.Skip:
+			return preset
+		case _:
+			raise ValueError('Unhandled return type')
 
 	return None

@@ -1,7 +1,7 @@
 import curses
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Optional, List, TypeVar, Generic
+from typing import Optional, List, TypeVar, Generic, Any
 
 from .menu_item import MenuItem
 
@@ -141,7 +141,28 @@ class Chars:
 @dataclass
 class Result(Generic[ItemType]):
 	type_: ResultType
-	item: Optional[ItemType]
+	_item: Optional[ItemType]
+
+	def has_item(self) -> bool:
+		return self._item is not None
+
+	def get_value(self) -> Any:
+		return self.item().get_value()
+
+	def get_values(self) -> List[Any]:
+		return [i.get_value() for i in self.items()]
+
+	def item(self) -> MenuItem:
+		assert self._item is not None and isinstance(self._item, MenuItem)
+		return self._item
+
+	def items(self) -> List[MenuItem]:
+		assert self._item is not None and isinstance(self._item, list)
+		return self._item
+
+	def text(self) -> str:
+		assert self._item is not None and isinstance(self._item, str)
+		return self._item
 
 
 @dataclass

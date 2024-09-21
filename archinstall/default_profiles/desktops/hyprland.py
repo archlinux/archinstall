@@ -71,7 +71,7 @@ class HyprlandProfile(XorgProfile):
 
 		if result.type_ == ResultType.Selection:
 			if result.item is not None:
-				self.custom_settings['seat_access'] = result.item.value.value
+				self.custom_settings['seat_access'] = result.get_value()
 
 	def do_on_select(self) -> Optional[SelectResult]:
 		self._ask_seat_access()

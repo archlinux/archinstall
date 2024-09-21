@@ -236,10 +236,7 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 		case ResultType.Reset: return None
 		case ResultType.Skip: return preset
 		case ResultType.Selection:
-			if result.item:
-				return result.item.value
-
-	return None
+			return result.get_value()
 
 
 def select_encrypted_password() -> Optional[str]:
@@ -275,8 +272,7 @@ def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
 			case ResultType.Reset: return None
 			case ResultType.Skip: return preset
 			case ResultType.Selection:
-				if result.item:
-					return result.item.value
+				return result.get_value()
 
 	return None
 
@@ -307,13 +303,8 @@ def select_partitions_to_encrypt(
 			case ResultType.Reset: return []
 			case ResultType.Skip: return preset
 			case ResultType.Selection:
-				if result.item:
-					partitions = []
-					for item in result.item:
-						if item is not None and item.value is not None:
-							partitions.append(item.value)
-
-					return partitions
+				partitions = result.get_values()
+				return partitions
 
 	return []
 
@@ -337,12 +328,7 @@ def select_lvm_vols_to_encrypt(
 			case ResultType.Reset: return []
 			case ResultType.Skip: return preset
 			case ResultType.Selection:
-				if result.item:
-					volumes = []
-					for item in result.item:
-						if item is not None and item.value is not None:
-							volumes.append(item.value)
-
-					return volumes
+				volumes = result.get_values()
+				return volumes
 
 	return []

@@ -46,16 +46,10 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 		case ResultType.Reset:
 			return []
 		case ResultType.Selection:
-			if result.item is None:
-				return []
-
-			kernels = [i.value for i in result.item]
-			return kernels
-
-	return []
+			return result.get_values()
 
 
-def ask_for_bootloader(preset: Optional[Bootloader]) -> Bootloader:
+def ask_for_bootloader(preset: Optional[Bootloader]) -> Optional[Bootloader]:
 	# Systemd is UEFI only
 	if not SysInfo.has_uefi():
 		options = [Bootloader.Grub, Bootloader.Limine]
@@ -77,12 +71,12 @@ def ask_for_bootloader(preset: Optional[Bootloader]) -> Bootloader:
 	).single()
 
 	match result.type_:
-		case ResultType.Skip: return preset
+		case ResultType.Skip:
+			return preset
 		case ResultType.Selection:
-			if result.item and result.item.value:
-				return result.item.value
-
-	return preset
+			return result.get_value()
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
 
 
 def ask_for_uki(preset: bool = True) -> bool:
@@ -103,14 +97,9 @@ def ask_for_uki(preset: bool = True) -> bool:
 	match result.type_:
 		case ResultType.Skip: return preset
 		case ResultType.Selection:
-			if not result.item:
-				return preset
-			elif result.item == MenuItem.yes():
-				return True
-			else:
-				return False
-
-	return preset
+			return result.item() == MenuItem.yes()
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
 
 
 def select_driver(options: List[GfxDriver] = [], preset: Optional[GfxDriver] = None) -> Optional[GfxDriver]:
@@ -155,11 +144,7 @@ def select_driver(options: List[GfxDriver] = [], preset: Optional[GfxDriver] = N
 		case ResultType.Reset:
 			return None
 		case ResultType.Selection:
-			if result.item is None:
-				return None
-			return result.item.value
-
-	return None
+			return result.get_value()
 
 
 def ask_for_swap(preset: bool = True) -> bool:
@@ -185,11 +170,8 @@ def ask_for_swap(preset: bool = True) -> bool:
 	match result.type_:
 		case ResultType.Skip: return preset
 		case ResultType.Selection:
-			if not result.item:
-				return preset
-			elif result.item == MenuItem.yes():
-				return True
-			else:
-				return False
+			return result.item() == MenuItem.yes()
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
 
 	return preset

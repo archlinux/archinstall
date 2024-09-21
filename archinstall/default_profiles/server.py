@@ -33,7 +33,7 @@ class ServerProfile(Profile):
 		]
 
 		group = MenuItemGroup(items, sort_items=True)
-		group.set_selected_by_value(self._current_selection)
+		group.set_selected_by_value(self.current_selection)
 
 		result = SelectMenu(
 			group,
@@ -46,21 +46,16 @@ class ServerProfile(Profile):
 
 		match result.type_:
 			case ResultType.Selection:
-				if not result.item:
-					return None
-
-				selections = [i.value for i in result.item]
-				self.set_current_selection(selections)
+				selections = result.get_values()
+				self.current_selection = selections
 				return SelectResult.NewSelection
 			case ResultType.Skip:
 				return SelectResult.SameSelection
 			case ResultType.Reset:
 				return SelectResult.ResetCurrent
 
-		return None
-
 	def post_install(self, install_session: 'Installer') -> None:
-		for profile in self._current_selection:
+		for profile in self.current_selection:
 			profile.post_install(install_session)
 
 	def install(self, install_session: 'Installer') -> None:

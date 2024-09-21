@@ -19,7 +19,7 @@ from .subvolume_menu import SubvolumeMenu
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, Alignment, EditMenu,
-	Orientation
+	Orientation, ResultType
 )
 
 if TYPE_CHECKING:
@@ -218,10 +218,11 @@ class PartitioningList(ListManager):
 			allow_skip=False
 		).single()
 
-		assert result.item
-		assert isinstance(result.item.value, FilesystemType)
-
-		return result.item.value
+		match result.type_:
+			case ResultType.Selection:
+				return result.get_value()
+			case _:
+				raise ValueError('Unhandled result type')
 
 	def _validate_value(
 		self,
@@ -273,11 +274,12 @@ class PartitioningList(ListManager):
 		).input()
 
 		size: Optional[Size] = None
+		value = result.text()
 
-		if not result.item:
+		if value is None:
 			size = default
 		else:
-			size = self._validate_value(sector_size, total_size, result.item, start)
+			size = self._validate_value(sector_size, total_size, value, start)
 
 		assert size
 		return size

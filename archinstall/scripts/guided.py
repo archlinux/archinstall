@@ -164,7 +164,7 @@ def perform_installation(mountpoint: Path) -> None:
 				orientation=Orientation.HORIZONTAL
 			).single()
 
-			if result.item == MenuItem.yes():
+			if result.item() == MenuItem.yes():
 				try:
 					installation.drop_to_shell()
 				except:

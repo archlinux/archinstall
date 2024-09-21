@@ -48,7 +48,7 @@ def select_devices(preset: Optional[List[disk.BDevice]] = []) -> List[disk.BDevi
 		case ResultType.Reset: return []
 		case ResultType.Skip: return preset
 		case ResultType.Selection:
-			selected_device_info: List[disk._DeviceInfo] = [i.value for i in result.item]
+			selected_device_info: List[disk._DeviceInfo] = result.get_values()
 			selected_devices = []
 
 			for device in devices:
@@ -125,16 +125,15 @@ def select_disk_config(
 		case ResultType.Skip: return preset
 		case ResultType.Reset: return None
 		case ResultType.Selection:
-			if not result.item:
-				return None
-
-			selection = result.item.value
+			selection = result.get_value()
 
 			if selection == pre_mount_mode:
 				output = 'You will use whatever drive-setup is mounted at the specified directory\n'
 				output += "WARNING: Archinstall won't check the suitability of this setup\n"
 
 				path = prompt_dir(str(_('Root mount directory')), output, allow_skip=False)
+				assert path is not None
+
 				mods = disk.device_handler.detect_pre_mounted_mods(path)
 
 				storage['MOUNT_POINT'] = path
@@ -151,14 +150,14 @@ def select_disk_config(
 			if not devices:
 				return None
 
-			if result.item.value == default_layout:
+			if result.get_value() == default_layout:
 				modifications = get_default_partition_layout(devices, advanced_option=advanced_option)
 				if modifications:
 					return disk.DiskLayoutConfiguration(
 						config_type=disk.DiskLayoutType.Default,
 						device_modifications=modifications
 					)
-			elif result.item.value == manual_mode:
+			elif result.get_value() == manual_mode:
 				preset_mods = preset.device_modifications if preset else []
 				modifications = _manual_partitioning(preset_mods, devices)
 
@@ -194,7 +193,7 @@ def select_lvm_config(
 		case ResultType.Skip: return preset
 		case ResultType.Reset: return None
 		case ResultType.Selection:
-			if result.item and result.item.value == default_mode:
+			if result.get_value() == default_mode:
 				return suggest_lvm_layout(disk_config)
 
 	return None
@@ -240,7 +239,11 @@ def select_main_filesystem_format(advanced_options: bool = False) -> disk.Filesy
 		allow_skip=False
 	).single()
 
-	return result.item.value
+	match result.type_:
+		case ResultType.Selection:
+			return result.get_value()
+		case _:
+			raise ValueError('Unhandled result type')
 
 
 def select_mount_options() -> List[str]:
@@ -263,10 +266,11 @@ def select_mount_options() -> List[str]:
 		allow_skip=False
 	).single()
 
-	if not result.item:
-		return []
-
-	return [result.item.value]
+	match result.type_:
+		case ResultType.Selection:
+			return result.get_value()
+		case _:
+			raise ValueError('Unhandled result type')
 
 
 def process_root_partition_size(total_size: disk.Size, sector_size: disk.SectorSize) -> disk.Size:

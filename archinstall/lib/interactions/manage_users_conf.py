@@ -10,7 +10,8 @@ from ..general import secret
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	Alignment, EditMenu, Orientation
+	Alignment, EditMenu, Orientation,
+	ResultType
 )
 
 if TYPE_CHECKING:
@@ -59,16 +60,20 @@ class UserList(ListManager):
 		return str(_("The username you entered is invalid"))
 
 	def _add_user(self) -> Optional[User]:
-		user_res = EditMenu(
+		editResult = EditMenu(
 			str(_('Username')),
 			allow_skip=True,
 			validator=self._check_for_correct_username
 		).input()
 
-		if not user_res.item:
-			return None
+		match editResult.type_:
+			case ResultType.Skip:
+				return None
+			case ResultType.Selection:
+				username = editResult.text()
+			case _:
+				raise ValueError('Unhandled result type')
 
-		username = user_res.item
 		header = f'{str(_("Username"))}: {username}\n'
 
 		password = get_password(str(_('Password')), header=header, allow_skip=True)
@@ -92,10 +97,12 @@ class UserList(ListManager):
 			allow_skip=False
 		).single()
 
-		if result.item is None:
-			return None
+		match result.type_:
+			case ResultType.Selection:
+				sudo = result.item() == MenuItem.yes()
+			case _:
+				raise ValueError('Unhandled result type')
 
-		sudo = True if result.item == MenuItem.yes() else False
 		return User(username, password, sudo)
 
 

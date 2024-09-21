@@ -12,8 +12,8 @@ from ..translationhandler import Language
 from archinstall.tui.curses_menu import tui
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, Result,
-	ResultType, EditMenu, Orientation
+	FrameProperties, Alignment, ResultType,
+	EditMenu, Orientation
 )
 
 if TYPE_CHECKING:
@@ -57,10 +57,13 @@ def ask_hostname(preset: str = '') -> str:
 		default_text=preset
 	).input()
 
-	if not result.item:
-		return preset
-
-	return result.item
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return result.get_value()
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
 
 
 def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
@@ -85,9 +88,7 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 		case ResultType.Reset:
 			return default
 		case ResultType.Selection:
-			if result.item is None:
-				return preset
-			return result.item.value
+			return result.get_value()
 
 
 def ask_for_audio_selection(preset: Optional[AudioConfiguration] = None) -> Optional[AudioConfiguration]:
@@ -108,11 +109,9 @@ def ask_for_audio_selection(preset: Optional[AudioConfiguration] = None) -> Opti
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			if result.item is None or result.item.value is None:
-				return None
-			return AudioConfiguration(audio=result.item.value)
-
-	return None
+			return AudioConfiguration(audio=result.get_value())
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
 
 
 def select_language(preset: Optional[str] = None) -> Optional[str]:
@@ -142,7 +141,7 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 	title += 'All available fonts can be found in "/usr/share/kbd/consolefonts"\n'
 	title += 'e.g. setfont LatGrkCyr-8x16 (to display latin/greek/cyrillic characters)\n'
 
-	choice: Result[MenuItem] = SelectMenu(
+	result = SelectMenu(
 		group,
 		header=title,
 		allow_skip=True,
@@ -151,13 +150,13 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 		frame=FrameProperties.minimal(header=str(_('Select language')))
 	).single()
 
-	match choice.type_:
+	match result.type_:
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			return choice.item.value
-
-	raise ValueError('Language selection not handled')
+			return result.get_value()
+		case ResultType.Reset:
+			raise ValueError('Language selection not handled')
 
 
 def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
@@ -195,15 +194,14 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	).input()
 
 	match result.type_:
-		case ResultType.Skip: return preset
+		case ResultType.Skip:
+			return preset
 		case ResultType.Selection:
-			if result.item:
-				packages = result.item.split()
-				return packages
-			else:
-				return []
-
-	return preset
+			pck_str = result.get_value()
+			packages = pck_str
+			return packages
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
 
 
 def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[int]:
@@ -236,9 +234,7 @@ def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[i
 	if result.type_ == ResultType.Skip:
 		return preset
 
-	assert result.item
-
-	downloads: int = int(result.item)
+	downloads: int = int(result.text())
 
 	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
@@ -281,8 +277,4 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		case ResultType.Reset:
 			return []
 		case ResultType.Selection:
-			if not result.item:
-				return preset
-
-			values = [i.value for i in result.item]
-			return values
+			return result.get_values()

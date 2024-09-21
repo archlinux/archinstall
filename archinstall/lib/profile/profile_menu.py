@@ -186,10 +186,9 @@ def select_greeter(
 			case ResultType.Skip:
 				return preset
 			case ResultType.Selection:
-				if result.item is None:
-					return preset
-
-				return result.item.value
+				return result.get_value()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
 
 	return None
 
@@ -224,11 +223,11 @@ def select_profile(
 		case ResultType.Skip:
 			return current_profile
 		case ResultType.Selection:
-			if result.item is None or result.item.value is None:
-				return None
-
-			profile_selection: Profile = result.item.value
+			profile_selection: Profile = result.get_value()
 			select_result = profile_selection.do_on_select()
+
+			if not select_result:
+				return None
 
 			# we're going to reset the currently selected profile(s) to avoid
 			# any stale data laying around

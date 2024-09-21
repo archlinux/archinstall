@@ -4,7 +4,7 @@ from ..output import FormattedOutput
 
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
-	Alignment
+	Alignment, ResultType
 )
 
 if TYPE_CHECKING:
@@ -65,8 +65,6 @@ class ListManager:
 			data_formatted = self.reformat(self._data)
 			options, header = self._prepare_selection(data_formatted)
 
-			# system('clear')
-
 			items = [MenuItem(o, value=o) for o in options]
 			group = MenuItemGroup(items, sort_items=False)
 
@@ -78,22 +76,23 @@ class ListManager:
 				alignment=Alignment.CENTER,
 			).single()
 
-			if not result.item:
-				raise ValueError('Unexpected missing item')
-
-			value = result.item.value
+			match result.type_:
+				case ResultType.Selection:
+					value = result.get_value()
+				case _:
+					raise ValueError('Unhandled return type')
 
 			if value in self._base_actions:
 				self._data = self.handle_action(value, None, self._data)
 			elif value in self._terminate_actions:
 				break
 			else:  # an entry of the existing selection was chosen
-				selected_entry = data_formatted[value]  # type: ignore
+				selected_entry = data_formatted[value]
 				self._run_actions_on_entry(selected_entry)
 
 		self._last_choice = value
 
-		if result.item.value == self._cancel_action:
+		if result.get_value() == self._cancel_action:
 			return self._original_data  # return the original list
 		else:
 			return self._data
@@ -121,13 +120,20 @@ class ListManager:
 
 		items = [MenuItem(o, value=o) for o in options]
 		group = MenuItemGroup(items, sort_items=False)
-		result = SelectMenu(group, search_enabled=False, allow_skip=False).single()
+		result = SelectMenu(
+			group,
+			search_enabled=False,
+			allow_skip=False
+		).single()
 
-		if not result.item:
-			raise ValueError('Unexpected missing item')
+		match result.type_:
+			case ResultType.Selection:
+				value = result.get_value()
+			case _:
+				raise ValueError('Unhandled return type')
 
-		if result.item.value != self._cancel_action:
-			self._data = self.handle_action(result.item.value, entry, self._data)
+		if value != self._cancel_action:
+			self._data = self.handle_action(value, entry, self._data)
 
 	def reformat(self, data: List[Any]) -> Dict[str, Optional[Any]]:
 		"""

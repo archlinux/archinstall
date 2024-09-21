@@ -159,38 +159,46 @@ class CustomMirrorList(ListManager):
 
 		return data
 
-	def _add_custom_mirror(self, mirror: Optional[CustomMirror] = None) -> Optional[CustomMirror]:
-		result = EditMenu(
+	def _add_custom_mirror(self, preset: Optional[CustomMirror] = None) -> Optional[CustomMirror]:
+		edit_result = EditMenu(
 			str(_('Mirror name')),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
-			default_text=mirror.name if mirror else None
+			default_text=preset.name if preset else None
 		).input()
 
-		if not result.item:
-			return mirror
+		match edit_result.type_:
+			case ResultType.Selection:
+				name = edit_result.text()
+			case ResultType.Skip:
+				return preset
+			case _:
+				raise ValueError('Unhandled return type')
 
-		name = result.item
 		header = f'{str(_("Name"))}: {name}'
 
-		result = EditMenu(
+		edit_result = EditMenu(
 			str(_('Url')),
 			header=header,
 			alignment=Alignment.CENTER,
 			allow_skip=True,
-			default_text=mirror.url if mirror else None
+			default_text=preset.url if preset else None
 		).input()
 
-		if not result.item:
-			return mirror
-
-		url = result.item
+		match edit_result.type_:
+			case ResultType.Selection:
+				url = edit_result.text()
+			case ResultType.Skip:
+				return preset
+			case _:
+				raise ValueError('Unhandled return type')
 
 		header += f'\n{str(_("Url"))}: {url}\n'
 		prompt = f'{header}\n' + str(_('Select signature check'))
 
 		sign_chk_items = [MenuItem(s.value, value=s.value) for s in SignCheck]
 		group = MenuItemGroup(sign_chk_items, sort_items=False)
+
 		result = SelectMenu(
 			group,
 			header=prompt,
@@ -198,16 +206,18 @@ class CustomMirrorList(ListManager):
 			allow_skip=False
 		).single()
 
-		if not result.item:
-			raise ValueError('Unexpected missing item')
-
-		sign_check = SignCheck(result.item.value)
+		match result.type_:
+			case ResultType.Selection:
+				sign_check = SignCheck(result.get_value())
+			case _:
+				raise ValueError('Unhandled return type')
 
 		header += f'{str(_("Signature check"))}: {sign_check.value}\n'
 		prompt = f'{header}\n' + 'Select signature option'
 
 		sign_opt_items = [MenuItem(s.value, value=s.value) for s in SignOption]
 		group = MenuItemGroup(sign_opt_items, sort_items=False)
+
 		result = SelectMenu(
 			group,
 			header=prompt,
@@ -215,10 +225,11 @@ class CustomMirrorList(ListManager):
 			allow_skip=False
 		).single()
 
-		if not result.item:
-			raise ValueError('Unexpected missing item')
-
-		sign_opt = SignOption(result.item.value)
+		match result.type_:
+			case ResultType.Selection:
+				sign_opt = SignOption(result.get_value())
+			case _:
+				raise ValueError('Unhandled return type')
 
 		return CustomMirror(name, url, sign_check, sign_opt)
 
@@ -259,7 +270,7 @@ class MirrorMenu(AbstractSubMenu):
 		]
 
 	def _prev_regions(self, item: MenuItem) -> Optional[str]:
-		mirrors: Dict[str, MirrorStatusEntryV3] = item.value
+		mirrors: Dict[str, List[MirrorStatusEntryV3]] = item.get_value()
 
 		output = ''
 		for name, status_list in mirrors.items():
@@ -293,7 +304,7 @@ class MirrorMenu(AbstractSubMenu):
 		)
 
 
-def select_mirror_regions(preset: Dict[str, List[str]]) -> Dict[str, List[str]]:
+def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[str, List[MirrorStatusEntryV3]]:
 	mirrors = list_mirrors()
 
 	items = [MenuItem(mirror, value=mirror) for mirror in mirrors.keys()]
@@ -309,10 +320,12 @@ def select_mirror_regions(preset: Dict[str, List[str]]) -> Dict[str, List[str]]:
 	).multi()
 
 	match result.type_:
-		case ResultType.Skip: return preset
-		case ResultType.Reset: return {}
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return {}
 		case ResultType.Selection:
-			return {item.value: mirrors[item.value] for item in result.item}
+			return {value.country: value for value in result.get_values()}
 
 	return {}
 

@@ -6,7 +6,7 @@ from ..menu import ListManager
 from ..utils.util import prompt_dir
 
 from archinstall.tui import (
-	Alignment, EditMenu
+	Alignment, EditMenu, ResultType
 )
 
 if TYPE_CHECKING:
@@ -30,13 +30,16 @@ class SubvolumeMenu(ListManager):
 			str(_('Subvolume name')),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
-			default_text=preset.name if preset else None
+			default_text=str(preset.name) if preset else None
 		).input()
 
-		if not result.item:
-			return None
-
-		name = result.item
+		match result.type_:
+			case ResultType.Skip:
+				return preset
+			case ResultType.Selection:
+				name = result.text()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
 
 		header = f"{str(_('Subvolume name'))}: {name}\n"
 

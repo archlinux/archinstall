@@ -21,9 +21,10 @@ def get_password(
 	failure: Optional[str] = None
 
 	while True:
+		user_hdr = None
 		if failure is not None:
 			user_hdr = f'{header}\n{failure}\n'
-		else:
+		elif header is not None:
 			user_hdr = header
 
 		result = EditMenu(
@@ -34,10 +35,10 @@ def get_password(
 			default_text=preset
 		).input()
 
-		if allow_skip and not result.item:
+		if allow_skip and not result.has_item():
 			return None
 
-		password = result.item
+		password = result.text()
 		hidden = secret(password)
 
 		if header is not None:
@@ -87,10 +88,10 @@ def prompt_dir(
 		default_text=preset
 	).input()
 
-	if allow_skip and not result.item:
+	if allow_skip and not result.has_item():
 		return None
 
-	return Path(result.item)
+	return Path(result.text())
 
 
 def is_subpath(first: Path, second: Path) -> bool:

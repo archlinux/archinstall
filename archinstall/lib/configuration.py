@@ -183,43 +183,47 @@ def save_config(config: Dict[str, Any]) -> None:
 		case ResultType.Skip:
 			return
 		case ResultType.Selection:
-			save_option = result.item.value
+			save_option = result.get_value()
+		case _:
+			raise ValueError('Unhandled return type')
 
-			readline.set_completer_delims("\t\n=")
-			readline.parse_and_bind("tab: complete")
+	readline.set_completer_delims("\t\n=")
+	readline.parse_and_bind("tab: complete")
 
-			dest_path = prompt_dir(
-				str(_('Directory')),
-				str(_('Enter a directory for the configuration(s) to be saved (tab completion enabled)')) + '\n',
-				allow_skip=True
-			)
+	dest_path = prompt_dir(
+		str(_('Directory')),
+		str(_('Enter a directory for the configuration(s) to be saved (tab completion enabled)')) + '\n',
+		allow_skip=True
+	)
 
-			if not dest_path:
+	if not dest_path:
+		return
+
+	header = str(_("Do you want to save the configuration file(s) to {}?")).format(dest_path)
+
+	group = MenuItemGroup.yes_no()
+	group.set_focus_by_value(MenuItem.yes().value)
+
+	result = SelectMenu(
+		group,
+		header=header,
+		allow_skip=False,
+		alignment=Alignment.CENTER,
+		columns=2,
+		orientation=Orientation.HORIZONTAL
+	).single()
+
+	match result.type_:
+		case ResultType.Selection:
+			if result.item() == MenuItem.no():
 				return
 
-			header = str(_("Do you want to save the configuration file(s) to {}?")).format(dest_path)
+	debug("Saving configuration files to {}".format(dest_path.absolute()))
 
-			group = MenuItemGroup.yes_no()
-			group.set_focus_by_value(MenuItem.yes().value)
-
-			result = SelectMenu(
-				group,
-				header=header,
-				allow_skip=False,
-				alignment=Alignment.CENTER,
-				columns=2,
-				orientation=Orientation.HORIZONTAL
-			).single()
-
-			if result.item == MenuItem.no():
-				return
-
-			debug("Saving configuration files to {}".format(dest_path.absolute()))
-
-			match save_option:
-				case "user_config":
-					config_output.save_user_config(dest_path)
-				case "user_creds":
-					config_output.save_user_creds(dest_path)
-				case "all":
-					config_output.save(dest_path)
+	match save_option:
+		case "user_config":
+			config_output.save_user_config(dest_path)
+		case "user_creds":
+			config_output.save_user_creds(dest_path)
+		case "all":
+			config_output.save(dest_path)

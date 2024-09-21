@@ -3,7 +3,6 @@ from typing import Any, Optional, List, TYPE_CHECKING
 from typing import Callable, ClassVar
 
 from ..lib.output import unicode_ljust
-from ..lib.translationhandler import DeferredTranslation
 
 if TYPE_CHECKING:
 	_: Any
@@ -11,7 +10,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class MenuItem:
-	text: str | DeferredTranslation
+	text: str
 	value: Optional[Any] = None
 	action: Optional[Callable[[Any], Any]] = None
 	enabled: bool = True
@@ -24,6 +23,10 @@ class MenuItem:
 
 	_yes: ClassVar[Optional['MenuItem']] = None
 	_no: ClassVar[Optional['MenuItem']] = None
+
+	def get_value(self) -> Any:
+		assert self.value is not None
+		return self.value
 
 	@classmethod
 	def yes(cls) -> 'MenuItem':
@@ -210,7 +213,7 @@ class MenuItemGroup:
 		self._filter_pattern += pattern
 		self.reload_focus_itme()
 
-	def reduce_filter(self):
+	def reduce_filter(self) -> None:
 		self._filter_pattern = self._filter_pattern[:-1]
 		self.reload_focus_itme()
 
@@ -232,7 +235,7 @@ class MenuItemGroup:
 	def is_item_selected(self, item: MenuItem) -> bool:
 		return item in self.selected_items
 
-	def select_current_item(self):
+	def select_current_item(self) -> None:
 		if self.focus_item:
 			if self.focus_item in self.selected_items:
 				self.selected_items.remove(self.focus_item)
@@ -268,7 +271,7 @@ class MenuItemGroup:
 		if first_item:
 			self.focus_item = first_item
 
-	def focus_last(self):
+	def focus_last(self) -> None:
 		last_item = self.get_last_item()
 		if last_item:
 			self.focus_item = last_item
