@@ -2,6 +2,11 @@ import time
 
 import archinstall
 from archinstall import profile, info
+from archinstall.tui.curses_menu import tui
+
+
+tui.init()
+
 
 for _profile in profile.profile_handler.get_mac_addr_profiles():
 	# Tailored means it's a match for this machine
@@ -11,7 +16,7 @@ for _profile in profile.profile_handler.get_mac_addr_profiles():
 
 	print('Starting install in:')
 	for i in range(10, 0, -1):
-		print(f'{i}...')
+		tui.print(f'{i}...')
 		time.sleep(1)
 
 	install_session = archinstall.storage['installation_session']

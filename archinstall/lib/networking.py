@@ -14,6 +14,7 @@ from urllib.request import urlopen
 from .exceptions import SysCallError, DownloadTimeout
 from .output import error, info
 from .pacman import Pacman
+from .output import debug
 
 
 class DownloadTimer():
@@ -189,7 +190,7 @@ def ping(hostname, timeout=5) -> int:
 					latency = round((time.time() - started) * 1000)
 					break
 		except socket.error as error:
-			print(f"Error: {error}")
+			debug(f"Error: {error}")
 			break
 
 	icmp_socket.close()
