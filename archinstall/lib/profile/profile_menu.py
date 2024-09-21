@@ -125,7 +125,7 @@ class ProfileMenu(AbstractSubMenu):
 						alignment=Alignment.CENTER
 					).single()
 
-					if result.item == MenuItem.no():
+					if result.item() == MenuItem.no():
 						return preset
 
 		return driver

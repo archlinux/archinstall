@@ -5,7 +5,6 @@ import signal
 from abc import ABCMeta, abstractmethod
 from curses.textpad import Textbox
 from dataclasses import dataclass
-from types import NoneType
 from typing import Any, Optional, Tuple, Dict, List, TYPE_CHECKING, Literal
 from typing import Callable
 
@@ -69,7 +68,7 @@ class AbstractCurses(metaclass=ABCMeta):
 
 			match result.type_:
 				case ResultType.Selection:
-					if result.item == MenuItem.yes():
+					if result.item() == MenuItem.yes():
 						return True
 
 			return False
@@ -578,7 +577,7 @@ class EditMenu(AbstractCurses):
 	def input(self) -> Result[str]:
 		result = tui.run(self)
 
-		assert isinstance(result.item, (str, NoneType))
+		assert not result.has_item() or isinstance(result.text(), str)
 
 		self._clear_all()
 		return result
@@ -762,7 +761,7 @@ class SelectMenu(AbstractCurses):
 		self._multi = False
 		result = tui.run(self)
 
-		assert isinstance(result.item, (MenuItem, NoneType))
+		assert not result.has_item() or isinstance(result.item(), MenuItem)
 
 		self._clear_all()
 		return result
@@ -771,7 +770,7 @@ class SelectMenu(AbstractCurses):
 		self._multi = True
 		result = tui.run(self)
 
-		assert isinstance(result.item, (list, NoneType))
+		assert not result.has_item() or isinstance(result.items(), list)
 
 		self._clear_all()
 		return result

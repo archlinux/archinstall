@@ -133,7 +133,7 @@ class Journald:
 	@staticmethod
 	def log(message: str, level: int = logging.DEBUG) -> None:
 		try:
-			import systemd.journal
+			import systemd.journal  # type: ignore
 		except ModuleNotFoundError:
 			return None
 

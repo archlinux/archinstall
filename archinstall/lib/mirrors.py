@@ -2,7 +2,7 @@ import json
 import pathlib
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Any, List, Optional, TYPE_CHECKING
+from typing import Dict, Any, List, Optional, TYPE_CHECKING, Tuple
 
 from .menu import AbstractSubMenu, ListManager
 from .networking import fetch_data_from_url
@@ -199,6 +199,9 @@ class CustomMirrorList(ListManager):
 		sign_chk_items = [MenuItem(s.value, value=s.value) for s in SignCheck]
 		group = MenuItemGroup(sign_chk_items, sort_items=False)
 
+		if preset is not None:
+			group.set_selected_by_value(preset.sign_check.value)
+
 		result = SelectMenu(
 			group,
 			header=prompt,
@@ -217,6 +220,9 @@ class CustomMirrorList(ListManager):
 
 		sign_opt_items = [MenuItem(s.value, value=s.value) for s in SignOption]
 		group = MenuItemGroup(sign_opt_items, sort_items=False)
+
+		if preset is not None:
+			group.set_selected_by_value(preset.sign_option.value)
 
 		result = SelectMenu(
 			group,
@@ -305,11 +311,13 @@ class MirrorMenu(AbstractSubMenu):
 
 
 def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[str, List[MirrorStatusEntryV3]]:
-	mirrors = list_mirrors()
+	mirrors: Dict[str, List[MirrorStatusEntryV3]] = list_mirrors()
 
-	items = [MenuItem(mirror, value=mirror) for mirror in mirrors.keys()]
+	items = [MenuItem(name, value=(name, mirror)) for name, mirror in mirrors.items()]
 	group = MenuItemGroup(items, sort_items=True)
-	group.set_selected_by_value(preset.values())
+
+	preset_values = [(name, mirror) for name, mirror in preset.items()]
+	group.set_selected_by_value(preset_values)
 
 	result = SelectMenu(
 		group,
@@ -325,7 +333,8 @@ def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[
 		case ResultType.Reset:
 			return {}
 		case ResultType.Selection:
-			return {value.country: value for value in result.get_values()}
+			selected_mirrors: List[Tuple[str, MirrorStatusEntryV3]] = result.get_values()
+			return {name: mirror for name, mirror in selected_mirrors}
 
 	return {}
 

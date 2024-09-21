@@ -41,15 +41,12 @@ def ask_ntp(preset: bool = True) -> bool:
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			if result.item is None:
-				return preset
-
-			return result.item == MenuItem.yes()
-
-	return False
+			return result.item() == MenuItem.yes()
+		case _:
+			raise ValueError('Unhandled return type')
 
 
-def ask_hostname(preset: str = '') -> str:
+def ask_hostname(preset: Optional[str] = None) -> Optional[str]:
 	result = EditMenu(
 		str(_('Hostname')),
 		alignment=Alignment.CENTER,
@@ -61,7 +58,10 @@ def ask_hostname(preset: str = '') -> str:
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			return result.get_value()
+			hostname = result.text()
+			if len(hostname) < 1:
+				return None
+			return hostname
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
 

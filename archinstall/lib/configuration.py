@@ -98,7 +98,7 @@ class ConfigurationOutput:
 			preview_frame=FrameProperties.max(str(_('Configuration')))
 		).single()
 
-		if result.item != MenuItem.yes():
+		if result.item() != MenuItem.yes():
 			return False
 
 		return True

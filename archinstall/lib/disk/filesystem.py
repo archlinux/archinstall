@@ -365,7 +365,7 @@ class FilesystemHandler:
 				orientation=Orientation.HORIZONTAL
 			).single()
 
-			if result.item == MenuItem.yes():
+			if result.item() == MenuItem.yes():
 				exit(0)
 
 		return True

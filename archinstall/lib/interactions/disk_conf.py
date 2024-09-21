@@ -315,7 +315,7 @@ def suggest_single_disk_layout(
 			allow_skip=False
 		).single()
 
-		using_subvolumes = result.item == MenuItem.yes()
+		using_subvolumes = result.item() == MenuItem.yes()
 		mount_options = select_mount_options()
 	else:
 		using_subvolumes = False
@@ -364,7 +364,7 @@ def suggest_single_disk_layout(
 			allow_skip=False
 		).single()
 
-		using_home_partition = result.item == MenuItem.yes()
+		using_home_partition = result.item() == MenuItem.yes()
 
 	# root partition
 	root_start = boot_partition.start + boot_partition.length
@@ -548,7 +548,7 @@ def suggest_lvm_layout(
 		group = MenuItemGroup.yes_no()
 		result = SelectMenu(group, header=prompt, search_enabled=False, allow_skip=False).single()
 
-		using_subvolumes = MenuItem.yes() == result.item
+		using_subvolumes = MenuItem.yes() == result.item()
 
 		mount_options = select_mount_options()
 

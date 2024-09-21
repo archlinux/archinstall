@@ -416,7 +416,7 @@ class PartitioningList(ListManager):
 			allow_skip=False
 		).single()
 
-		return result.item == MenuItem.yes()
+		return result.item() == MenuItem.yes()
 
 	def _suggest_partition_layout(self, data: List[PartitionModification]) -> List[PartitionModification]:
 		# if modifications have been done already, inform the user

@@ -120,10 +120,15 @@ class ListManager:
 
 		items = [MenuItem(o, value=o) for o in options]
 		group = MenuItemGroup(items, sort_items=False)
+
+		header = f'{self.selected_action_display(entry)}\n'
+
 		result = SelectMenu(
 			group,
+			header=header,
 			search_enabled=False,
-			allow_skip=False
+			allow_skip=False,
+			alignment=Alignment.CENTER
 		).single()
 
 		match result.type_:

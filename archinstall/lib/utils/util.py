@@ -53,7 +53,7 @@ def get_password(
 			allow_skip=False,
 		).input()
 
-		if password == result.item:
+		if password == result.text():
 			return password
 
 		failure = str(_('The confirmation password did not match, please try again'))
