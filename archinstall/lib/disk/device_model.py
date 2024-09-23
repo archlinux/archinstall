@@ -12,7 +12,6 @@ from typing import Optional, List, Dict, TYPE_CHECKING, Any
 from typing import Union
 
 import parted
-import _ped  # type: ignore
 from parted import Disk, Geometry, Partition
 
 from ..exceptions import DiskError, SysCallError
@@ -582,14 +581,9 @@ class PartitionType(Enum):
 
 
 class PartitionFlag(Enum):
-	"""
-	Flags are taken from _ped because pyparted uses this to look
-	up their flag definitions: https://github.com/dcantrell/pyparted/blob/c4e0186dad45c8efbe67c52b02c8c4319df8aa9b/src/parted/__init__.py#L200-L202
-	Which is the way libparted checks for its flags: https://git.savannah.gnu.org/gitweb/?p=parted.git;a=blob;f=libparted/labels/gpt.c;hb=4a0e468ed63fff85a1f9b923189f20945b32f4f1#l183
-	"""
-	Boot = _ped.PARTITION_BOOT
-	XBOOTLDR = _ped.PARTITION_BLS_BOOT  # Note: parted calls this bls_boot
-	ESP = _ped.PARTITION_ESP
+	Boot = parted.PARTITION_BOOT
+	XBOOTLDR = parted.PARTITION_BLS_BOOT  # Note: parted calls this bls_boot
+	ESP = parted.PARTITION_ESP
 
 
 # class PartitionGUIDs(Enum):
