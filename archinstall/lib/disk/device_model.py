@@ -1425,7 +1425,7 @@ def _fetch_lsblk_info(
 	full_dev_path: bool = False
 ) -> List[LsblkInfo]:
 	fields = [_clean_field(f, CleanType.Lsblk) for f in LsblkInfo.fields()]
-	cmd = ['lsblk', '--json', '--bytes', '--output', '+' + ','.join(fields)]
+	cmd = ['lsblk', '--json', '--bytes', '--output', ','.join(fields)]
 
 	if reverse:
 		cmd.append('--inverse')
