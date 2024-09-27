@@ -456,8 +456,6 @@ class _DeviceInfo:
 		sector_size = SectorSize(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
 
-		sector_size = SectorSize(device.sectorSize, Unit.B)
-
 		return _DeviceInfo(
 			model=device.model.strip(),
 			path=Path(device.path),
