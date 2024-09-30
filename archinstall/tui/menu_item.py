@@ -320,20 +320,17 @@ class MenuItemGroup:
 		if not item.enabled:
 			return False
 
-		if item in self.menu_items:
-			for dep in item.dependencies:
-				if isinstance(dep, str):
-					item = self.find_by_key(dep)
-					if not item.value or not self.should_enable_item(item):
-						return False
-				else:
-					return dep()
-
-			for dep_not in item.dependencies_not:
-				item = self.find_by_key(dep_not)
-				if item.value is not None:
+		for dep in item.dependencies:
+			if isinstance(dep, str):
+				item = self.find_by_key(dep)
+				if not item.value or not self.should_enable_item(item):
 					return False
+			else:
+				return dep()
 
-			return True
+		for dep_not in item.dependencies_not:
+			item = self.find_by_key(dep_not)
+			if item.value is not None:
+				return False
 
-		return False
+		return True

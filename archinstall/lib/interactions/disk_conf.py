@@ -11,10 +11,11 @@ from ..output import FormattedOutput, debug
 from ..utils.util import prompt_dir
 from ..storage import storage
 
+from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, Alignment, ResultType,
-	MenuHelper, Orientation
+	Orientation
 )
 
 if TYPE_CHECKING:
@@ -268,7 +269,7 @@ def select_mount_options() -> List[str]:
 
 	match result.type_:
 		case ResultType.Selection:
-			return result.get_value()
+			return [result.get_value()]
 		case _:
 			raise ValueError('Unhandled result type')
 
@@ -544,12 +545,21 @@ def suggest_lvm_layout(
 		filesystem_type = select_main_filesystem_format()
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
-		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
+		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?')) + '\n'
 		group = MenuItemGroup.yes_no()
-		result = SelectMenu(group, header=prompt, search_enabled=False, allow_skip=False).single()
+		group.set_focus_by_value(MenuItem.yes().value)
+
+		result = SelectMenu(
+			group,
+			header=prompt,
+			search_enabled=False,
+			allow_skip=False,
+			orientation=Orientation.HORIZONTAL,
+			columns=2,
+			alignment=Alignment.CENTER,
+		).single()
 
 		using_subvolumes = MenuItem.yes() == result.item()
-
 		mount_options = select_mount_options()
 
 	if using_subvolumes:

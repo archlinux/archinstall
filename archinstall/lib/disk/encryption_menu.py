@@ -18,7 +18,7 @@ from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, Alignment, ResultType
 )
-from archinstall.tui.table_menu import MenuHelper
+from archinstall.lib.menu.menu_helper import MenuHelper
 
 
 if TYPE_CHECKING:

@@ -93,7 +93,12 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		if not item.value:
 			return None
 
-		disk_layout_conf: DiskLayoutConfiguration = item.value
+		disk_layout_conf: DiskLayoutConfiguration = item.get_value()
+
+		if disk_layout_conf.config_type == DiskLayoutType.Pre_mount:
+			msg = str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg()) + '\n'
+			msg += str(_('Mountpoint')) + ': ' + str(disk_layout_conf.mountpoint)
+			return msg
 
 		device_mods: List[DeviceModification] = \
 			list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))

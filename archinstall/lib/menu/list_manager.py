@@ -87,7 +87,7 @@ class ListManager:
 			elif value in self._terminate_actions:
 				break
 			else:  # an entry of the existing selection was chosen
-				selected_entry = data_formatted[value]
+				selected_entry = result.get_value()
 				self._run_actions_on_entry(selected_entry)
 
 		self._last_choice = value
@@ -151,7 +151,7 @@ class ListManager:
 		# these are the header rows of the table and do not map to any User obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data: Dict[str, Optional[Any]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
+		display_data: Dict[str, Optional[Any]] = {f'{rows[0]}': None, f'{rows[1]}': None}
 
 		for row, entry in zip(rows[2:], data):
 			display_data[row] = entry

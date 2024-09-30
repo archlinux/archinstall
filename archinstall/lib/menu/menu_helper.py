@@ -2,7 +2,7 @@ from typing import Any, Tuple, List, Dict, Optional
 
 from archinstall.lib.output import FormattedOutput
 
-from . import (
+from archinstall.tui import (
 	MenuItemGroup, MenuItem
 )
 

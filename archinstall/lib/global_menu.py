@@ -337,10 +337,13 @@ class GlobalMenu(AbstractMenu):
 		disk_layout_conf: Optional[disk.DiskLayoutConfiguration] = item.value
 
 		if disk_layout_conf:
-			output = str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg())
+			output = str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg()) + '\n'
+
+			if disk_layout_conf.config_type == disk.DiskLayoutType.Pre_mount:
+				output += str(_('Mountpoint')) + ': ' + str(disk_layout_conf.mountpoint)
 
 			if disk_layout_conf.lvm_config:
-				output += '\n{}: {}'.format(str(_('LVM configuration type')), disk_layout_conf.lvm_config.config_type.display_msg())
+				output += '{}: {}'.format(str(_('LVM configuration type')), disk_layout_conf.lvm_config.config_type.display_msg())
 
 			return output
 
