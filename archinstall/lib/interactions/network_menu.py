@@ -59,7 +59,7 @@ class ManualNetworkConfig(ListManager):
 		result = SelectMenu(
 			group,
 			alignment=Alignment.CENTER,
-			frame=FrameProperties.minimal(str(_('Interfaces'))),
+			frame=FrameProperties.min(str(_('Interfaces'))),
 			allow_skip=True
 		).single()
 
@@ -123,7 +123,7 @@ class ManualNetworkConfig(ListManager):
 			header=header,
 			allow_skip=False,
 			alignment=Alignment.CENTER,
-			frame=FrameProperties.minimal(str(_('Modes')))
+			frame=FrameProperties.min(str(_('Modes')))
 		).single()
 
 		match result.type_:
@@ -177,7 +177,7 @@ def ask_to_configure_network(preset: Optional[NetworkConfiguration]) -> Optional
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(str(_('Network configuration'))),
+		frame=FrameProperties.min(str(_('Network configuration'))),
 		allow_reset=True,
 		allow_skip=True
 	).single()

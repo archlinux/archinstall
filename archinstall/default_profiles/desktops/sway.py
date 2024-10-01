@@ -75,7 +75,7 @@ class SwayProfile(XorgProfile):
 			group,
 			header=header,
 			allow_skip=False,
-			frame=FrameProperties.minimal(str(_('Seat access'))),
+			frame=FrameProperties.min(str(_('Seat access'))),
 			alignment=Alignment.CENTER
 		).single()
 

@@ -137,7 +137,7 @@ def select_locale_lang(preset: Optional[str] = None) -> Optional[str]:
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties(str(_('Locale language'))),
+		frame=FrameProperties.min(str(_('Locale language'))),
 		allow_skip=True,
 	).single()
 
@@ -161,7 +161,7 @@ def select_locale_enc(preset: Optional[str] = None) -> Optional[str]:
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties(str(_('Locale encoding'))),
+		frame=FrameProperties.min(str(_('Locale encoding'))),
 		allow_skip=True,
 	).single()
 
@@ -193,7 +193,7 @@ def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(str(_('Keyboard layout'))),
+		frame=FrameProperties.min(str(_('Keyboard layout'))),
 		allow_skip=True,
 	).single()
 

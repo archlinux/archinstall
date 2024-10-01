@@ -79,7 +79,7 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 		group,
 		allow_reset=True,
 		allow_skip=True,
-		frame=FrameProperties.minimal(str(_('Timezone'))),
+		frame=FrameProperties.min(str(_('Timezone'))),
 		alignment=Alignment.CENTER,
 	).single()
 
@@ -103,7 +103,7 @@ def ask_for_audio_selection(preset: Optional[AudioConfiguration] = None) -> Opti
 		group,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(str(_('Audio')))
+		frame=FrameProperties.min(str(_('Audio')))
 	).single()
 
 	match result.type_:
@@ -148,7 +148,7 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 		allow_skip=True,
 		allow_reset=False,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(header=str(_('Select language')))
+		frame=FrameProperties.min(header=str(_('Select language')))
 	).single()
 
 	match result.type_:
@@ -270,7 +270,7 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal('Additional repositories'),
+		frame=FrameProperties.min('Additional repositories'),
 		allow_reset=True,
 		allow_skip=True
 	).multi()

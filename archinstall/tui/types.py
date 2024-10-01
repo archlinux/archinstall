@@ -89,7 +89,7 @@ class FrameProperties:
 		)
 
 	@classmethod
-	def minimal(cls, header: str) -> 'FrameProperties':
+	def min(cls, header: str) -> 'FrameProperties':
 		return FrameProperties(
 			header,
 			FrameStyle.MIN,

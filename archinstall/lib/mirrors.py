@@ -322,7 +322,7 @@ def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(str(_('Mirror regions'))),
+		frame=FrameProperties.min(str(_('Mirror regions'))),
 		allow_reset=True,
 		allow_skip=True,
 	).multi()

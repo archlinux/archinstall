@@ -217,7 +217,7 @@ class PartitioningList(ListManager):
 			group,
 			header=prompt,
 			alignment=Alignment.CENTER,
-			frame=FrameProperties.minimal(str(_('Filesystem'))),
+			frame=FrameProperties.min(str(_('Filesystem'))),
 			allow_skip=False
 		).single()
 

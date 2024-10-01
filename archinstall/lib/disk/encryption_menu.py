@@ -229,7 +229,7 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 		allow_skip=True,
 		allow_reset=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(str(_('Encryption type')))
+		frame=FrameProperties.min(str(_('Encryption type')))
 	).single()
 
 	match result.type_:

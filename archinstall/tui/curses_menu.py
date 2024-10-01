@@ -1,4 +1,5 @@
 import curses
+import dataclasses
 import curses.panel
 import os
 import signal
@@ -53,7 +54,7 @@ class AbstractCurses(metaclass=ABCMeta):
 			height,
 			x_start,
 			int((max_height / 2) - height / 2),
-			frame=FrameProperties.minimal(str(_('Archinstall help')))
+			frame=FrameProperties.min(str(_('Archinstall help')))
 		)
 
 	def _confirm_interrupt(self, screen: Any, warning: str) -> bool:
@@ -113,7 +114,8 @@ class AbstractViewport:
 		try:
 			screen.addstr(row, col, text, tui.get_color(color))
 		except curses.error:
-			debug(f'Curses error while adding string to viewport: {text}')
+			# debug(f'Curses error while adding string to viewport: {text}')
+			pass
 
 	def add_frame(
 		self,
@@ -222,19 +224,20 @@ class AbstractViewport:
 
 		if frame.w_frame_style == FrameStyle.MIN:
 			frame_start = min([e.col for e in entries])
-			frame_end = max([(e.col + len(e.text)) for e in entries])
+			max_row_cols = [(e.col + len(e.text) + 1) for e in entries]
+			max_row_cols.append(header_len)
+			frame_end = max(max_row_cols)
+
 			# 2 for frames, 1 for extra space start away from frame
 			# must align with def _adjust_entries
 			frame_end += 3  # 2 for frame
-		else:
-			frame_start = 0
-			frame_end = max_width
 
-		if frame.h_frame_style == FrameStyle.MIN:
 			frame_height = len(rows) + 1
 			if frame_height > max_height:
 				frame_height = max_height
 		else:
+			frame_start = 0
+			frame_end = max_width
 			frame_height = max_height - 1
 
 		return _FrameDim(frame_start, frame_end, frame_height)
@@ -276,6 +279,7 @@ class AbstractViewport:
 			view[e.row] = self._replace_str(view[e.row], e.col, e.text)
 
 		view = [v.rstrip() for v in view]
+
 		return '\n'.join(view)
 
 
@@ -383,8 +387,18 @@ class EditViewport(AbstractViewport):
 
 @dataclass
 class ViewportState:
-	displayed_rows: List[ViewportEntry]
-	percentage: Optional[int]
+	cur_pos: int
+	displayed_entries: List[ViewportEntry]
+	scroll_pct: Optional[int]
+
+	def offset(self) -> int:
+		return min([entry.row for entry in self.displayed_entries], default=0)
+
+	def get_rows(self) -> list[int]:
+		rows = set()
+		for entry in self.displayed_entries:
+			rows.add(entry.row)
+		return list(rows)
 
 
 @dataclass
@@ -428,32 +442,31 @@ class Viewport(AbstractViewport):
 		cur_pos: int = 0,
 		scroll_pos: Optional[int] = None
 	):
-		self._state = self._find_visible_rows(lines, cur_pos, scroll_pos)
+		self._state = self._get_viewport_state(lines, cur_pos, scroll_pos)
+		visible_entries = self._adjust_entries_row(self._state.displayed_entries)
 
 		if self._frame:
-			lines = self.add_frame(
-				self._state.displayed_rows,
+			visible_entries = self.add_frame(
+				visible_entries,
 				self.width,
 				self.height,
 				frame=self._frame,
-				scroll_pct=self._state.percentage
+				scroll_pct=self._state.scroll_pct
 			)
-		else:
-			lines = self._state.displayed_rows
 
 		x_offset = 0
 		if self._alignment == Alignment.CENTER:
-			x_offset = self.align_center(lines, self.width)
+			x_offset = self.align_center(visible_entries, self.width)
 
 		self._main_win.erase()
 
-		for line in lines:
+		for entry in visible_entries:
 			self.add_str(
 				self._main_win,
-				line.row,
-				line.col + x_offset,
-				line.text,
-				line.style
+				entry.row,
+				entry.col + x_offset,
+				entry.text,
+				entry.style
 			)
 
 		self._main_win.refresh()
@@ -477,36 +490,54 @@ class Viewport(AbstractViewport):
 
 		return percentage
 
-	def _find_visible_rows(
+	def _get_viewport_state(
 		self,
 		entries: List[ViewportEntry],
 		cur_pos: int,
 		scroll_pos: Optional[int] = 0
 	) -> ViewportState:
 		if not entries:
-			return ViewportState([], 0)
+			return ViewportState(cur_pos, [], 0)
 
+		# we will be checking if the cursor pos is in the same window
+		# of rows as the previous selection, in that case we can keep
+		# the currently shows entries to prevent weird moving in long lists
 		if self._state is not None:
-			if cur_pos > 0:
-				try:
-					a=1/0
-				except Exception:
-					import traceback
-					debug(traceback.format_exc())
-					debug(cur_pos)
+			rows = self._state.get_rows()
 
-			prev_rows = [e.row for e in self._state.displayed_rows]
+			if cur_pos in rows:
+				same_row_entries = [entry for entry in entries if entry.row in rows]
+				return ViewportState(
+					cur_pos,
+					same_row_entries,
+					self._state.scroll_pct
+				)
 
-			# if cur_pos in prev_rows:
-			# 	return self._state
-		else:
-			debug("NOOOOOOOOOOOOOOOOONE")
-
-		row_values = [e.row for e in entries]
-
-		total_rows = max(row_values) + 1  # rows start with 0 and we need the count
+		total_rows = max([e.row for e in entries]) + 1  # rows start with 0 so add 1 for the count
 		screen_rows = self._get_available_screen_rows()
+		visible_entries = self._get_visible_entries(
+			entries,
+			cur_pos,
+			screen_rows,
+			scroll_pos,
+			total_rows
+		)
 
+		if scroll_pos is not None:
+			percentage = self._calc_scroll_percent(total_rows, screen_rows, scroll_pos)
+		else:
+			percentage = None
+
+		return ViewportState(cur_pos, visible_entries, percentage)
+
+	def _get_visible_entries(
+		self,
+		entries: List[ViewportEntry],
+		cur_pos: int,
+		screen_rows: int,
+		scroll_pos: Optional[int],
+		total_rows: int
+	) -> list[ViewportEntry]:
 		if scroll_pos is not None:
 			if total_rows <= screen_rows:
 				start = 0
@@ -518,25 +549,34 @@ class Viewport(AbstractViewport):
 			if total_rows <= screen_rows:
 				start = 0
 				end = total_rows
-			elif cur_pos < screen_rows:
-				start = 0
-				end = screen_rows
 			else:
-				start = cur_pos - screen_rows + 1
-				end = cur_pos + 1
+				if self._state is None:
+					if cur_pos < screen_rows:
+						start = 0
+						end = screen_rows
+					else:
+						start = cur_pos - screen_rows + 1
+						end = cur_pos + 1
+				else:
+					if cur_pos < self._state.cur_pos:
+						start = cur_pos
+						end = cur_pos + screen_rows
+					else:
+						start = cur_pos - screen_rows + 1
+						end = cur_pos + 1
 
-		rows = [entry for entry in entries if start <= entry.row < end]
-		smallest = min([e.row for e in rows])
+		return [entry for entry in entries if start <= entry.row < end]
 
-		for entry in rows:
-			entry.row = entry.row - smallest
+	def _adjust_entries_row(self, entries: List[ViewportEntry]) -> List[ViewportEntry]:
+		assert self._state is not None
+		modified = []
 
-		if scroll_pos is not None:
-			percentage = self._calc_scroll_percent(total_rows, screen_rows, scroll_pos)
-		else:
-			percentage = None
+		for entry in entries:
+			mod = dataclasses.replace(entry)
+			mod.row = entry.row - self._state.offset()
+			modified.append(mod)
 
-		return ViewportState(rows, percentage)
+		return modified
 
 	def _replace_str(self, text: str, index: int = 0, replacement: str = '') -> str:
 		len_replace = len(replacement)

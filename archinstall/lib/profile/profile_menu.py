@@ -180,7 +180,7 @@ def select_greeter(
 		result = SelectMenu(
 			group,
 			allow_skip=True,
-			frame=FrameProperties.minimal(str(_('Greeter'))),
+			frame=FrameProperties.min(str(_('Greeter'))),
 			alignment=Alignment.CENTER
 		).single()
 
@@ -216,7 +216,7 @@ def select_profile(
 		allow_reset=allow_reset,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(str(_('Main profile')))
+		frame=FrameProperties.min(str(_('Main profile')))
 	).single()
 
 	match result.type_:

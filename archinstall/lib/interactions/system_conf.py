@@ -37,7 +37,7 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 		allow_skip=True,
 		allow_reset=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(str(_('Kernel')))
+		frame=FrameProperties.min(str(_('Kernel')))
 	).multi()
 
 	match result.type_:
@@ -66,7 +66,7 @@ def ask_for_bootloader(preset: Optional[Bootloader]) -> Optional[Bootloader]:
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(str(_('Bootloader'))),
+		frame=FrameProperties.min(str(_('Bootloader'))),
 		allow_skip=True
 	).single()
 

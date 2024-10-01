@@ -118,7 +118,7 @@ def select_disk_config(
 		group,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal(str(_('Disk configuration type'))),
+		frame=FrameProperties.min(str(_('Disk configuration type'))),
 		allow_reset=True
 	).single()
 
@@ -186,7 +186,7 @@ def select_lvm_config(
 		group,
 		allow_reset=True,
 		allow_skip=True,
-		frame=FrameProperties.minimal(str(_('LVM configuration type'))),
+		frame=FrameProperties.min(str(_('LVM configuration type'))),
 		alignment=Alignment.CENTER
 	).single()
 
@@ -236,7 +236,7 @@ def select_main_filesystem_format(advanced_options: bool = False) -> disk.Filesy
 	result = SelectMenu(
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.minimal('Filesystem'),
+		frame=FrameProperties.min('Filesystem'),
 		allow_skip=False
 	).single()
 
