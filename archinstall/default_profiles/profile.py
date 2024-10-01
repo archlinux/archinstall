@@ -4,7 +4,6 @@ import sys
 from enum import Enum, auto
 from typing import List, Optional, Any, Dict, TYPE_CHECKING
 
-from ..lib.utils.util import format_cols
 from ..lib.storage import storage
 
 if TYPE_CHECKING:
@@ -187,24 +186,20 @@ class Profile:
 		"""
 		return self.packages_text()
 
-	def packages_text(self, include_sub_packages: bool = False) -> Optional[str]:
-		header = str(_('Installed packages'))
-
-		text = ''
-		packages = []
+	def packages_text(self, include_sub_packages: bool = False) -> str:
+		packages = set()
 
 		if self.packages:
-			packages = self.packages
+			packages = set(self.packages)
 
 		if include_sub_packages:
-			for p in self.current_selection:
-				if p.packages:
-					packages += p.packages
+			for sub_profile in self.current_selection:
+				if sub_profile.packages:
+					packages.update(sub_profile.packages)
 
-		text += format_cols(sorted(set(packages)))
+		text = str(_('Installed packages')) + ':\n'
 
-		if text:
-			text = f'{header}: \n{text}'
-			return text
+		for pkg in sorted(packages):
+			text += f'\t- {pkg}\n'
 
-		return None
+		return text

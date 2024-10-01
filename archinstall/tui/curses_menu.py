@@ -780,6 +780,7 @@ class SelectMenu(AbstractCurses):
 	def __init__(
 		self,
 		group: MenuItemGroup,
+		multi: bool = False,
 		orientation: Orientation = Orientation.VERTICAL,
 		alignment: Alignment = Alignment.LEFT,
 		columns: int = 1,
@@ -797,9 +798,9 @@ class SelectMenu(AbstractCurses):
 	):
 		super().__init__()
 
+		self._multi = multi
 		self._cursor_char = f'{cursor_char} '
 		self._search_enabled = search_enabled
-		self._multi = False
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
 		self._active_search = False
@@ -847,6 +848,11 @@ class SelectMenu(AbstractCurses):
 		if self._multi:
 			offset += 3
 		return offset
+
+	def run(self) -> Result:
+		result = tui.run(self)
+		self._clear_all()
+		return result
 
 	def single(self) -> Result[MenuItem]:
 		self._multi = False
@@ -1020,6 +1026,8 @@ class SelectMenu(AbstractCurses):
 			match self._preview_style:
 				case PreviewStyle.RIGHT:
 					menu_width = self._item_group.max_width + 5
+					if self._multi:
+						menu_width += 5
 					prev_size = self._max_width - menu_width
 				case PreviewStyle.BOTTOM:
 					menu_height = len(self._item_group.items) + 1  # leave empty line between menu and preview

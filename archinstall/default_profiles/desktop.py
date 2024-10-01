@@ -70,12 +70,13 @@ class DesktopProfile(Profile):
 
 		result = SelectMenu(
 			group,
+			multi=True,
 			allow_reset=True,
 			allow_skip=True,
 			preview_style=PreviewStyle.RIGHT,
 			preview_size='auto',
 			preview_frame=FrameProperties.max('Info')
-		).multi()
+		).run()
 
 		match result.type_:
 			case ResultType.Selection:
