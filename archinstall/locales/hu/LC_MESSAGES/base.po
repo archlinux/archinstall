@@ -529,7 +529,7 @@ msgid "are you sure you want to use it?"
 msgstr "biztosan használni akarja?"
 
 msgid "Optional repositories"
-msgstr "Opcionális tárolók"
+msgstr "Nem kötelező tárolók"
 
 msgid "Save configuration"
 msgstr "Konfiguráció mentése"
