@@ -52,6 +52,8 @@ class DeviceHandler(object):
 		devices = getAllDevices()
 		devices.extend(self.get_loop_devices())
 
+		archiso_mountpoint = Path('/run/archiso/airootfs')
+
 		for device in devices:
 			dev_lsblk_info = find_lsblk_info(device.path, all_lsblk_info)
 
@@ -60,6 +62,10 @@ class DeviceHandler(object):
 				continue
 
 			if dev_lsblk_info.type == 'rom':
+				continue
+
+			# exclude archiso loop device
+			if dev_lsblk_info.mountpoint == archiso_mountpoint:
 				continue
 
 			try:
