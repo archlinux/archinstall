@@ -33,8 +33,8 @@ log = ["systemd_python==235"]
 dev = [
     "mypy==1.11.2",
     "flake8==7.1.1",
-    "pre-commit==3.8.0",
-    "ruff==0.6.5",
+    "pre-commit==4.0.0",
+    "ruff==0.6.9",
 ]
 doc = ["sphinx"]
 

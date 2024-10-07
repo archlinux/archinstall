@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
 
 from parted import (
 	Disk, Geometry, FileSystem,
-	PartitionException, DiskException,
+	PartitionException, DiskException, IOException,
 	getDevice, getAllDevices, newDisk, freshDisk, Partition, Device
 )
 
@@ -50,14 +50,9 @@ class DeviceHandler(object):
 		self.udev_sync()
 		all_lsblk_info = get_all_lsblk_info()
 		devices = getAllDevices()
+		devices.extend(self.get_loop_devices())
 
-		try:
-			loop_devices = SysCommand(['losetup', '-a'])
-			for ld_info in str(loop_devices).splitlines():
-				loop_device = getDevice(ld_info.split(':', maxsplit=1)[0])
-				devices.append(loop_device)
-		except Exception as err:
-			debug(f'Failed to get loop devices: {err}')
+		archiso_mountpoint = Path('/run/archiso/airootfs')
 
 		for device in devices:
 			dev_lsblk_info = find_lsblk_info(device.path, all_lsblk_info)
@@ -67,6 +62,10 @@ class DeviceHandler(object):
 				continue
 
 			if dev_lsblk_info.type == 'rom':
+				continue
+
+			# exclude archiso loop device
+			if dev_lsblk_info.mountpoint == archiso_mountpoint:
 				continue
 
 			try:
@@ -110,6 +109,30 @@ class DeviceHandler(object):
 			block_devices[block_device.device_info.path] = block_device
 
 		self._devices = block_devices
+
+	@staticmethod
+	def get_loop_devices() -> list[Device]:
+		devices = []
+
+		try:
+			loop_devices = SysCommand(['losetup', '-a'])
+		except SysCallError as err:
+			debug(f'Failed to get loop devices: {err}')
+		else:
+			for ld_info in str(loop_devices).splitlines():
+				try:
+					loop_device_path, _ = ld_info.split(':', maxsplit=1)
+				except ValueError:
+					continue
+
+				try:
+					loop_device = getDevice(loop_device_path)
+				except IOException as err:
+					debug(f'Failed to get loop device: {err}')
+				else:
+					devices.append(loop_device)
+
+		return devices
 
 	def _determine_fs_type(
 		self,
