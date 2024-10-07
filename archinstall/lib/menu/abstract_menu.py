@@ -224,7 +224,7 @@ class AbstractMenu:
 				preview_style=PreviewStyle.RIGHT,
 				preview_size='auto',
 				preview_frame=FrameProperties('Info', FrameStyle.MAX),
-			).single()
+			).run()
 
 			match result.type_:
 				case ResultType.Selection:

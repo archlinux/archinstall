@@ -207,7 +207,7 @@ class CustomMirrorList(ListManager):
 			header=prompt,
 			alignment=Alignment.CENTER,
 			allow_skip=False
-		).single()
+		).run()
 
 		match result.type_:
 			case ResultType.Selection:
@@ -229,7 +229,7 @@ class CustomMirrorList(ListManager):
 			header=prompt,
 			alignment=Alignment.CENTER,
 			allow_skip=False
-		).single()
+		).run()
 
 		match result.type_:
 			case ResultType.Selection:
@@ -325,7 +325,7 @@ def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[
 		frame=FrameProperties.min(str(_('Mirror regions'))),
 		allow_reset=True,
 		allow_skip=True,
-	).multi()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:

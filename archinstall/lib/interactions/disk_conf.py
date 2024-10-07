@@ -43,7 +43,7 @@ def select_devices(preset: Optional[List[disk.BDevice]] = []) -> List[disk.BDevi
 		header=header,
 		alignment=Alignment.CENTER,
 		search_enabled=False
-	).multi()
+	).run()
 
 	match result.type_:
 		case ResultType.Reset: return []
@@ -120,7 +120,7 @@ def select_disk_config(
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Disk configuration type'))),
 		allow_reset=True
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip: return preset
@@ -188,7 +188,7 @@ def select_lvm_config(
 		allow_skip=True,
 		frame=FrameProperties.min(str(_('LVM configuration type'))),
 		alignment=Alignment.CENTER
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip: return preset
@@ -238,7 +238,7 @@ def select_main_filesystem_format(advanced_options: bool = False) -> disk.Filesy
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min('Filesystem'),
 		allow_skip=False
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Selection:
@@ -265,7 +265,7 @@ def select_mount_options() -> List[str]:
 		orientation=Orientation.HORIZONTAL,
 		search_enabled=False,
 		allow_skip=False
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Selection:
@@ -314,7 +314,7 @@ def suggest_single_disk_layout(
 			columns=2,
 			orientation=Orientation.HORIZONTAL,
 			allow_skip=False
-		).single()
+		).run()
 
 		using_subvolumes = result.item() == MenuItem.yes()
 		mount_options = select_mount_options()
@@ -363,7 +363,7 @@ def suggest_single_disk_layout(
 			columns=2,
 			alignment=Alignment.CENTER,
 			allow_skip=False
-		).single()
+		).run()
 
 		using_home_partition = result.item() == MenuItem.yes()
 
@@ -461,7 +461,7 @@ def suggest_multi_disk_layout(
 
 		items = [MenuItem(str(_('Continue')))]
 		group = MenuItemGroup(items)
-		SelectMenu(group).single()
+		SelectMenu(group).run()
 
 		return []
 
@@ -557,7 +557,7 @@ def suggest_lvm_layout(
 			orientation=Orientation.HORIZONTAL,
 			columns=2,
 			alignment=Alignment.CENTER,
-		).single()
+		).run()
 
 		using_subvolumes = MenuItem.yes() == result.item()
 		mount_options = select_mount_options()

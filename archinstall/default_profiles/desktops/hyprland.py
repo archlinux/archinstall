@@ -67,7 +67,7 @@ class HyprlandProfile(XorgProfile):
 			allow_skip=False,
 			frame=FrameProperties.min(str(_('Seat access'))),
 			alignment=Alignment.CENTER
-		).single()
+		).run()
 
 		if result.type_ == ResultType.Selection:
 			if result.item() is not None:

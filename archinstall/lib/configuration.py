@@ -96,7 +96,7 @@ class ConfigurationOutput:
 			preview_size='auto',
 			preview_style=PreviewStyle.BOTTOM,
 			preview_frame=FrameProperties.max(str(_('Configuration')))
-		).single()
+		).run()
 
 		if result.item() != MenuItem.yes():
 			return False
@@ -177,7 +177,7 @@ def save_config(config: Dict[str, Any]) -> None:
 		preview_frame=FrameProperties.max(str(_('Configuration'))),
 		preview_size='auto',
 		preview_style=PreviewStyle.RIGHT
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -211,7 +211,7 @@ def save_config(config: Dict[str, Any]) -> None:
 		alignment=Alignment.CENTER,
 		columns=2,
 		orientation=Orientation.HORIZONTAL
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Selection:

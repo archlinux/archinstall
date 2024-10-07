@@ -61,7 +61,7 @@ class ManualNetworkConfig(ListManager):
 			alignment=Alignment.CENTER,
 			frame=FrameProperties.min(str(_('Interfaces'))),
 			allow_skip=True
-		).single()
+		).run()
 
 		match result.type_:
 			case ResultType.Skip:
@@ -124,7 +124,7 @@ class ManualNetworkConfig(ListManager):
 			allow_skip=False,
 			alignment=Alignment.CENTER,
 			frame=FrameProperties.min(str(_('Modes')))
-		).single()
+		).run()
 
 		match result.type_:
 			case ResultType.Selection:
@@ -180,7 +180,7 @@ def ask_to_configure_network(preset: Optional[NetworkConfiguration]) -> Optional
 		frame=FrameProperties.min(str(_('Network configuration'))),
 		allow_reset=True,
 		allow_skip=True
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:

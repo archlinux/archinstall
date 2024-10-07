@@ -38,7 +38,7 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 		allow_reset=True,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Kernel')))
-	).multi()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -68,7 +68,7 @@ def ask_for_bootloader(preset: Optional[Bootloader]) -> Optional[Bootloader]:
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Bootloader'))),
 		allow_skip=True
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -92,7 +92,7 @@ def ask_for_uki(preset: bool = True) -> bool:
 		orientation=Orientation.HORIZONTAL,
 		alignment=Alignment.CENTER,
 		allow_skip=True
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip: return preset
@@ -136,7 +136,7 @@ def select_driver(options: List[GfxDriver] = [], preset: Optional[GfxDriver] = N
 		preview_size='auto',
 		preview_style=PreviewStyle.BOTTOM,
 		preview_frame=FrameProperties(str(_('Info')), h_frame_style=FrameStyle.MIN)
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -165,7 +165,7 @@ def ask_for_swap(preset: bool = True) -> bool:
 		orientation=Orientation.HORIZONTAL,
 		alignment=Alignment.CENTER,
 		allow_skip=True
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip: return preset

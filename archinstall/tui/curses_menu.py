@@ -65,7 +65,7 @@ class AbstractCurses(metaclass=ABCMeta):
 				alignment=Alignment.CENTER,
 				columns=2,
 				orientation=Orientation.HORIZONTAL
-			).single()
+			).run()
 
 			match result.type_:
 				case ResultType.Selection:
@@ -654,7 +654,7 @@ class EditMenu(AbstractCurses):
 
 		self._error_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
 
-	def input(self) -> Result[str]:
+	def input(self) -> Result:
 		result = tui.run(self)
 
 		assert not result.has_item() or isinstance(result.text(), str)
@@ -851,24 +851,6 @@ class SelectMenu(AbstractCurses):
 
 	def run(self) -> Result:
 		result = tui.run(self)
-		self._clear_all()
-		return result
-
-	def single(self) -> Result[MenuItem]:
-		self._multi = False
-		result = tui.run(self)
-
-		assert not result.has_item() or isinstance(result.item(), MenuItem)
-
-		self._clear_all()
-		return result
-
-	def multi(self) -> Result[List[MenuItem]]:
-		self._multi = True
-		result = tui.run(self)
-
-		assert not result.has_item() or isinstance(result.items(), list)
-
 		self._clear_all()
 		return result
 

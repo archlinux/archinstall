@@ -219,7 +219,7 @@ class PartitioningList(ListManager):
 			alignment=Alignment.CENTER,
 			frame=FrameProperties.min(str(_('Filesystem'))),
 			allow_skip=False
-		).single()
+		).run()
 
 		match result.type_:
 			case ResultType.Selection:
@@ -417,7 +417,7 @@ class PartitioningList(ListManager):
 			columns=2,
 			reset_warning_msg=prompt,
 			allow_skip=False
-		).single()
+		).run()
 
 		return result.item() == MenuItem.yes()
 

@@ -42,7 +42,7 @@ class ServerProfile(Profile):
 			preview_style=PreviewStyle.RIGHT,
 			preview_size='auto',
 			preview_frame=FrameProperties.max('Info')
-		).multi()
+		).run()
 
 		match result.type_:
 			case ResultType.Selection:

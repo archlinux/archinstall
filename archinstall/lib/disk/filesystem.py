@@ -363,7 +363,7 @@ class FilesystemHandler:
 				alignment=Alignment.CENTER,
 				columns=2,
 				orientation=Orientation.HORIZONTAL
-			).single()
+			).run()
 
 			if result.item() == MenuItem.yes():
 				exit(0)

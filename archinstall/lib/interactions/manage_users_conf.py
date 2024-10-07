@@ -95,7 +95,7 @@ class UserList(ListManager):
 			orientation=Orientation.HORIZONTAL,
 			search_enabled=False,
 			allow_skip=False
-		).single()
+		).run()
 
 		match result.type_:
 			case ResultType.Selection:

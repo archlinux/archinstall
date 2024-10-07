@@ -139,7 +139,7 @@ def select_locale_lang(preset: Optional[str] = None) -> Optional[str]:
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Locale language'))),
 		allow_skip=True,
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Selection:
@@ -163,7 +163,7 @@ def select_locale_enc(preset: Optional[str] = None) -> Optional[str]:
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Locale encoding'))),
 		allow_skip=True,
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Selection:
@@ -195,7 +195,7 @@ def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Keyboard layout'))),
 		allow_skip=True,
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Selection:

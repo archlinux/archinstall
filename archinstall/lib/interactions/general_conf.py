@@ -35,7 +35,7 @@ def ask_ntp(preset: bool = True) -> bool:
 		alignment=Alignment.CENTER,
 		columns=2,
 		orientation=Orientation.HORIZONTAL
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -81,7 +81,7 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 		allow_skip=True,
 		frame=FrameProperties.min(str(_('Timezone'))),
 		alignment=Alignment.CENTER,
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -104,7 +104,7 @@ def ask_for_audio_selection(preset: Optional[AudioConfiguration] = None) -> Opti
 		allow_skip=True,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Audio')))
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -149,7 +149,7 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 		allow_reset=False,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(header=str(_('Select language')))
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -273,7 +273,7 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		frame=FrameProperties.min('Additional repositories'),
 		allow_reset=True,
 		allow_skip=True
-	).multi()
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:

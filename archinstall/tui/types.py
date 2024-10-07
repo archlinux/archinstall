@@ -1,11 +1,9 @@
 import curses
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Optional, List, TypeVar, Generic, Any
+from typing import Optional, List, Any
 
 from .menu_item import MenuItem
-
-ItemType = TypeVar('ItemType', MenuItem, List[MenuItem], str)
 
 
 SCROLL_INTERVAL = 10
@@ -139,9 +137,9 @@ class Chars:
 
 
 @dataclass
-class Result(Generic[ItemType]):
+class Result:
 	type_: ResultType
-	_item: Optional[ItemType]
+	_item: Optional[MenuItem | List[MenuItem] | str]
 
 	def has_item(self) -> bool:
 		return self._item is not None

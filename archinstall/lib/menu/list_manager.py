@@ -74,7 +74,7 @@ class ListManager:
 				search_enabled=False,
 				allow_skip=False,
 				alignment=Alignment.CENTER,
-			).single()
+			).run()
 
 			match result.type_:
 				case ResultType.Selection:
@@ -129,7 +129,7 @@ class ListManager:
 			search_enabled=False,
 			allow_skip=False,
 			alignment=Alignment.CENTER
-		).single()
+		).run()
 
 		match result.type_:
 			case ResultType.Selection:

@@ -123,7 +123,7 @@ class ProfileMenu(AbstractSubMenu):
 						columns=2,
 						orientation=Orientation.HORIZONTAL,
 						alignment=Alignment.CENTER
-					).single()
+					).run()
 
 					if result.item() == MenuItem.no():
 						return preset
@@ -182,7 +182,7 @@ def select_greeter(
 			allow_skip=True,
 			frame=FrameProperties.min(str(_('Greeter'))),
 			alignment=Alignment.CENTER
-		).single()
+		).run()
 
 		match result.type_:
 			case ResultType.Skip:
@@ -217,7 +217,7 @@ def select_profile(
 		allow_skip=True,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Main profile')))
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Reset:

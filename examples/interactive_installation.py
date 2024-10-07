@@ -145,7 +145,7 @@ def perform_installation(mountpoint: Path) -> None:
 				alignment=Alignment.CENTER,
 				columns=2,
 				orientation=Orientation.HORIZONTAL
-			).single()
+			).run()
 
 			if result.item() == MenuItem.yes():
 				try:

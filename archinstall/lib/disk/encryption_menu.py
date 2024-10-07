@@ -230,7 +230,7 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 		allow_reset=True,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Encryption type')))
-	).single()
+	).run()
 
 	match result.type_:
 		case ResultType.Reset: return None
@@ -266,7 +266,7 @@ def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
 			group,
 			header=header,
 			alignment=Alignment.CENTER,
-		).single()
+		).run()
 
 		match result.type_:
 			case ResultType.Reset: return None
@@ -297,7 +297,7 @@ def select_partitions_to_encrypt(
 			group,
 			header=header,
 			alignment=Alignment.CENTER
-		).multi()
+		).run()
 
 		match result.type_:
 			case ResultType.Reset: return []
@@ -322,7 +322,7 @@ def select_lvm_vols_to_encrypt(
 			group,
 			header=header,
 			alignment=Alignment.CENTER
-		).multi()
+		).run()
 
 		match result.type_:
 			case ResultType.Reset: return []

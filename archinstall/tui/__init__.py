@@ -8,5 +8,5 @@ from .menu_item import (
 
 from .types import (
 	PreviewStyle, FrameProperties, FrameStyle, Alignment,
-	Result, ResultType, ItemType, Chars, Orientation
+	Result, ResultType, Chars, Orientation
 )
