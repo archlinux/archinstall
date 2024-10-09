@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Union
 
 from .lib import disk
-from .lib import menu
 from .lib import models
 from .lib import packages
 from .lib import exceptions

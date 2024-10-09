@@ -1,6 +1,5 @@
 from .manage_users_conf import UserList, ask_for_additional_users
 from .network_menu import ManualNetworkConfig, ask_to_configure_network
-from .utils import get_password
 
 from .disk_conf import (
 	select_devices, select_disk_config, get_default_partition_layout,

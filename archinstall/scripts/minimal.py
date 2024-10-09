@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
-from archinstall import info
+from archinstall import info, debug
 from archinstall import Installer, ConfigurationOutput
 from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall.lib.interactions import suggest_single_disk_layout, select_devices
@@ -91,16 +91,27 @@ def parse_disk_encryption() -> None:
 prompt_disk_layout()
 parse_disk_encryption()
 
-config_output = ConfigurationOutput(archinstall.arguments)
-config_output.show()
 
-input(str(_('Press Enter to continue.')))
+config = ConfigurationOutput(archinstall.arguments)
+config.write_debug()
+config.save()
+
+
+if archinstall.arguments.get('dry_run'):
+	exit(0)
+
+
+if not archinstall.arguments.get('silent'):
+	if not config.confirm_config():
+		debug('Installation aborted')
+		exit(0)
+
 
 fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
 
-fs_handler.perform_filesystem_operations()
 
+fs_handler.perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))

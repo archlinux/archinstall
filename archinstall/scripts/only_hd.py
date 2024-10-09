@@ -9,16 +9,15 @@ from archinstall.lib import disk
 
 def ask_user_questions() -> None:
 	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+	global_menu.disable_all()
 
-	global_menu.enable('archinstall-language')
-
-	global_menu.enable('disk_config', mandatory=True)
-	global_menu.enable('disk_encryption')
-	global_menu.enable('swap')
-
-	global_menu.enable('save_config')
-	global_menu.enable('install')
-	global_menu.enable('abort')
+	global_menu.set_enabled('archinstall-language', True)
+	global_menu.set_enabled('disk_config', True)
+	global_menu.set_enabled('disk_encryption', True)
+	global_menu.set_enabled('swap', True)
+	global_menu.set_enabled('save_config', True)
+	global_menu.set_enabled('install', True)
+	global_menu.set_enabled('abort', True)
 
 	global_menu.run()
 
@@ -55,17 +54,21 @@ def perform_installation(mountpoint: Path) -> None:
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-config_output = ConfigurationOutput(archinstall.arguments)
-if not archinstall.arguments.get('silent'):
-	config_output.show()
 
-config_output.save()
+config = ConfigurationOutput(archinstall.arguments)
+config.write_debug()
+config.save()
+
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)
 
+
 if not archinstall.arguments.get('silent'):
-	input('Press Enter to continue.')
+	if not config.confirm_config():
+		debug('Installation aborted')
+		exit(0)
+
 
 fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],

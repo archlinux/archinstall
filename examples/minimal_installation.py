@@ -8,6 +8,7 @@ from archinstall import profile
 from archinstall import models
 from archinstall import interactions
 from archinstall.default_profiles.minimal import MinimalProfile
+from archinstall.tui.curses_menu import tui
 
 if TYPE_CHECKING:
 	_: Callable[[str], str]
@@ -72,15 +73,22 @@ def parse_disk_encryption() -> None:
 		)
 
 
+# initialize the curses menu
+tui.init()
+
+
 prompt_disk_layout()
 parse_disk_encryption()
+
 
 fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
 
+
 fs_handler.perform_filesystem_operations()
+
 
 mount_point = Path('/mnt')
 perform_installation(mount_point)

@@ -269,7 +269,7 @@ Options for ``--creds``
           {
               "username": "<USERNAME>",
               "!password": "<PASSWORD>",
-              "sudo": false   
+              "sudo": false
           }
      - List of regular user credentials, see configuration for reference
      - Maybe

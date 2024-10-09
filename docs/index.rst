@@ -3,7 +3,7 @@ archinstall Documentation
 
 | **archinstall** is library which can be used to install Arch Linux.
 | The library comes packaged with different pre-configured installers, such as the default :ref:`guided` installer.
-| 
+|
 | A demo of the :ref:`guided` installer can be seen here: `https://www.youtube.com/watch?v=9Xt7X_Iqg6E <https://www.youtube.com/watch?v=9Xt7X_Iqg6E>`_.
 
 Some of the features of Archinstall are:

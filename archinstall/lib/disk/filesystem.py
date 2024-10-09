@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import signal
-import sys
 import time
 from pathlib import Path
 from typing import Any, Optional, TYPE_CHECKING, List, Dict, Set
@@ -15,8 +13,12 @@ from .device_model import (
 )
 from ..hardware import SysInfo
 from ..luks import Luks2
-from ..menu import Menu
 from ..output import debug, info
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	Alignment, Orientation, tui
+)
+
 
 if TYPE_CHECKING:
 	_: Any
@@ -44,12 +46,8 @@ class FilesystemHandler:
 
 		device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
 
-		# Issue a final warning before we continue with something un-revertable.
-		# We mention the drive one last time, and count from 5 to 0.
-		print(str(_(' ! Formatting {} in ')).format(device_paths))
-
 		if show_countdown:
-			self._do_countdown()
+			self._final_warning(device_paths)
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
@@ -339,40 +337,35 @@ class FilesystemHandler:
 				Size(256, Unit.MiB, SectorSize.default())
 			)
 
-	def _do_countdown(self) -> bool:
-		SIG_TRIGGER = False
+	def _final_warning(self, device_paths: str) -> bool:
+		# Issue a final warning before we continue with something un-revertable.
+		# We mention the drive one last time, and count from 5 to 0.
+		out = str(_(' ! Formatting {} in ')).format(device_paths)
+		tui.print(out, row=0)
 
-		def kill_handler(sig: int, frame: Any) -> None:
-			print()
-			exit(0)
+		try:
+			for i in range(5, 0, -1):
+				out += str(i)
+				tui.print(out, row=0)
 
-		def sig_handler(sig: int, frame: Any) -> None:
-			signal.signal(signal.SIGINT, kill_handler)
+				for x in range(4):
+					time.sleep(0.25)
+					out += '.'
+					tui.print(out, row=0)
+		except KeyboardInterrupt:
+			prompt = str(_('Do you really want to abort?')) + '\n'
+			group = MenuItemGroup.yes_no()
 
-		original_sigint_handler = signal.getsignal(signal.SIGINT)
-		signal.signal(signal.SIGINT, sig_handler)
+			result = SelectMenu(
+				group,
+				header=prompt,
+				allow_skip=False,
+				alignment=Alignment.CENTER,
+				columns=2,
+				orientation=Orientation.HORIZONTAL
+			).run()
 
-		for i in range(5, 0, -1):
-			print(f"{i}", end='')
-
-			for x in range(4):
-				sys.stdout.flush()
-				time.sleep(0.25)
-				print(".", end='')
-
-			if SIG_TRIGGER:
-				prompt = _('Do you really want to abort?')
-				choice = Menu(prompt, Menu.yes_no(), skip=False).run()
-				if choice.value == Menu.yes():
-					exit(0)
-
-				if SIG_TRIGGER is False:
-					sys.stdin.read()
-
-				SIG_TRIGGER = False
-				signal.signal(signal.SIGINT, sig_handler)
-
-		print()
-		signal.signal(signal.SIGINT, original_sigint_handler)
+			if result.item() == MenuItem.yes():
+				exit(0)
 
 		return True
