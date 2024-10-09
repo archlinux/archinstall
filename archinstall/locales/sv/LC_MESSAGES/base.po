@@ -58,13 +58,13 @@ msgid "If you desire a web browser, such as firefox or chromium, you may specify
 msgstr "Om du önskar en webbläsare, exempelvis firefox eller chromium, bör du skriva in dom i följande fält."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Skriv ytterligare paket som skall installeras (separerade med mellanslag, lämna tom för att skippa): "
+msgstr "Skriv in ytterligare paket som skall installeras (separerade med mellanslag, lämna tomt för att skippa): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Kopiera nätverkskonfigurationen från ISO till installationen"
 
 msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "Använd NetworkManager (nödvändig för konfigurera internet i grafiska miljöerna GNOME och KDE)"
+msgstr "Använd NetworkManager (nödvändigt för att konfigurera internet i grafiska miljöerna GNOME och KDE)"
 
 msgid "Select one network interface to configure"
 msgstr "Välj ett nätverkskort för konfigurering"
@@ -85,7 +85,7 @@ msgid "Select which filesystem your main partition should use"
 msgstr "Välj vilket filsystem din huvudpartition skall använda"
 
 msgid "Current partition layout"
-msgstr "Nuvarande partioneringslayout"
+msgstr "Nuvarande partitionslayout"
 
 msgid ""
 "Select what to do with\n"
@@ -128,7 +128,7 @@ msgid " * Partition mount-points are relative to inside the installation, the bo
 msgstr " * Partitionens monteringsplats är relativa till insidan av installationen, boot är exempelvis /boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Välj vart du vill montera partitionen (lämna tom för att ta bort montering): "
+msgstr "Välj vart du vill montera partitionen (lämna tomt för att ta bort montering): "
 
 msgid ""
 "{}\n"
@@ -176,10 +176,10 @@ msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "Töm alla partitioner och använd en generiskt rekommenderad partitionslayout"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Välj vad som skall hända med varje individuell hårddisk (följt av partitionsanvändning)"
+msgstr "Välj vad som skall hända med varje individuell disk (följt av partitionsanvändning)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Välj vad du önskar göra med valda hårddiskarna"
+msgstr "Välj vad du önskar göra med valda blockenheterna"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Detta är en lista med förprogrammerade profiler, dom kan göra installation av exempelvis skrivbordsmiljöer lite enklare"
@@ -194,13 +194,13 @@ msgid "Select one or more hard drives to use and configure"
 msgstr "Välj en eller flera hårddiskar som skall användas och konfigureras"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "För bästa kompabilitet med din AMD-hårdvara, vill du förmodligen använda antingen \"open-source\" eller \"AMD/ATI\" valet."
+msgstr "För bästa kompabilitet med din AMD-hårdvara, vill du förmodligen använda antingen \"öppen mjukvara\" eller \"AMD/ATI\" valet."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "För bästa kompabilitet med din Intel-hårdvara, vill du förmodligen använda antingen \"open-source\" eller \"Intel\" valet.\n"
+msgstr "För bästa kompabilitet med din Intel-hårdvara, vill du förmodligen använda antingen \"öppen mjukvara\" eller \"Intel\" valet.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "För bästa kompabilitet med din nVidia-hårdvara, vill du förmodligen använda antingen \"nVidia priprieetary driver\".\n"
+msgstr "För bästa kompabilitet med din nVidia-hårdvara, vill du förmodligen använda antingen \"nVidia proprietär drivrutin\".\n"
 
 msgid ""
 "\n"
@@ -209,13 +209,13 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Välj en grafikdrivrutin eller lämna blank för att installera alla med publika drivrutiner"
+"Välj en grafikdrivrutin eller lämna blankt för att installera alla med öppen mjukvara"
 
 msgid "All open-source (default)"
 msgstr "Alla med öppen mjukvara (standardvalet)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Välj vilken Linux-kernel du vill använda, lämna tomt för att använda \"{}\""
+msgstr "Välj vilken Linux-kärna du vill använda, lämna tomt för att använda \"{}\""
 
 msgid "Choose which locale language to use"
 msgstr "Välj vilket språk du vill använda"
@@ -254,7 +254,7 @@ msgid "Locale encoding"
 msgstr "Teckenuppsättning du vill använda"
 
 msgid "Drive(s)"
-msgstr "Hårddiskar"
+msgstr "Hårddisk(ar)"
 
 msgid "Disk layout"
 msgstr "Disklayout"
@@ -284,13 +284,13 @@ msgid "Audio"
 msgstr "Ljud mjukvara"
 
 msgid "Kernels"
-msgstr "Linux-kernels"
+msgstr "Linux-kärnor"
 
 msgid "Additional packages"
 msgstr "Extra paket"
 
 msgid "Network configuration"
-msgstr "Konfigurera nätverk"
+msgstr "Nätverkskonfiguration"
 
 msgid "Automatic time sync (NTP)"
 msgstr "Automatisk tidssynk (NTP)"
@@ -319,16 +319,16 @@ msgid "Delete a partition"
 msgstr "Ta bort en partition"
 
 msgid "Clear/Delete all partitions"
-msgstr "Ränsa alla partitioner"
+msgstr "Rensa/Ta bort alla partitioner"
 
 msgid "Assign mount-point for a partition"
 msgstr "Välj monteringspunkt för en partition"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "Markera/Avmarkera en partition för formatering (tar bort alla data)"
+msgstr "Markera/Avmarkera en partition för formatering (tar bort alla dess data)"
 
 msgid "Mark/Unmark a partition as encrypted"
-msgstr "Markera/Avmarkera en partition för att bli krypterad"
+msgstr "Markera/Avmarkera en partition som krypterad"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
 msgstr "Markera/Avmarkera en partition som bootbar (automatiskt gjort för /boot)"
@@ -340,7 +340,7 @@ msgid "Abort"
 msgstr "Avbryt"
 
 msgid "Hostname"
-msgstr "Hostname"
+msgstr "Värdnamn"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "Inte konfigurerad, otillgängligt utan manuell konfigurering"
@@ -362,7 +362,7 @@ msgstr ""
 "\n"
 
 msgid "Suggest partition layout"
-msgstr "Rekommendera en disk-layout"
+msgstr "Rekommendera en partitionslayout"
 
 msgid "Enter a password: "
 msgstr "Mata in ett lösenord: "
@@ -396,7 +396,7 @@ msgstr ""
 "För mer information, se Arch Wiki-sidan"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "Mata in ett användarnamn för att skapa ytterligare användare (lämna tom för att hoppa över): "
+msgstr "Mata in ett användarnamn för att skapa ytterligare användare (lämna tomt för att hoppa över): "
 
 msgid "Use ESC to skip\n"
 msgstr "Använd ESC för att hoppa över\n"
@@ -412,7 +412,7 @@ msgid "Cancel"
 msgstr "Avbryt"
 
 msgid "Confirm and exit"
-msgstr "Godkän och gå ur"
+msgstr "Godkänn och gå ur"
 
 msgid "Add"
 msgstr "Lägg till"
@@ -446,7 +446,7 @@ msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate
 msgstr "Pacman körs redan, väntar max 10 minuter innan vi avbryter."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Existerande pacman-lås avslutades aldrig. Vänligen ränsa upp föregående körningar av pacman-sessioner innan du använder achinstall."
+msgstr "Existerande pacman-lås avslutades aldrig. Vänligen rensa upp föregående körningar av pacman-sessioner innan du använder archinstall."
 
 msgid "Choose which optional additional repositories to enable"
 msgstr "Välj vilka frivilliga repositories som ska aktiveras"
@@ -528,10 +528,10 @@ msgid "are you sure you want to use it?"
 msgstr "Är du säker på att du vill använda det?"
 
 msgid "Optional repositories"
-msgstr "Extra repositories"
+msgstr "Valfria repositories"
 
 msgid "Save configuration"
-msgstr "Spara konfigurationen"
+msgstr "Spara konfiguration"
 
 msgid "Missing configurations:\n"
 msgstr "Konfigurationer som saknas:\n"
@@ -628,7 +628,7 @@ msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr "Manuell NIC-konfiguration utan DHCP kräver en IP adress"
 
 msgid "Add interface"
-msgstr "Lätt till interface"
+msgstr "Lägg till interface"
 
 msgid "Edit interface"
 msgstr "Editera interface"
@@ -649,16 +649,16 @@ msgid "The password you are using seems to be weak, are you sure you want to use
 msgstr "Lösenordet du angav verkar svagt, är du säker på att du vill använda det?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Ger ett urval av desktop-val och fönster-hanterare, t.ex. Gnome, KDE och sway"
+msgstr "Ger ett urval av skrivbordsval och fönsterhanterare, t.ex. Gnome, KDE och sway"
 
 msgid "Select your desired desktop environment"
-msgstr "Välj din desktop miljö"
+msgstr "Välj din skrivbordsmiljö"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
 msgstr "En väldigt minimal installation som möjliggör konfigurering av Arch Linux som du själv vill ha det."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Erbjuder ett urval av olika server-packeteringar, t.ex. httpd, nginx och mariadb"
+msgstr "Erbjuder ett urval av olika server-paketeringar, t.ex. httpd, nginx och mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Välj vilka servrar som ska installeras, om ingen kommer en minimal installation att göras"
@@ -783,7 +783,7 @@ msgid "Add subvolume"
 msgstr "Lägg till Sub-volym"
 
 msgid "Edit subvolume"
-msgstr "Redigera Sub-volym"
+msgstr "Editera Sub-volym"
 
 msgid "Delete subvolume"
 msgstr "Ta bort Sub-volym"
@@ -886,7 +886,7 @@ msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Markera/avmarkera som det som ska formateras (tar bort all data)"
 
 msgid "Mark/Unmark as bootable"
-msgstr "Markera/avmarkera som startbar"
+msgstr "Markera/avmarkera som bootbar"
 
 msgid "Change filesystem"
 msgstr "Byt filsystem"
@@ -991,7 +991,7 @@ msgid "Back"
 msgstr "Tillbaka"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "Vänligen välj vilken displayhanterare du vill installera för de valda profilerna: {}"
 
 msgid "Environment type: {}"
 msgstr "Miljötyp: {}"
@@ -1021,7 +1021,7 @@ msgid "Packages to be install with this profile (space separated, leave blank to
 msgstr "Paket som ska installeras med den här profilen (separerade med mellanslag, lämna tomt för att skippa): "
 
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Tjänster som ska aktiveras med den här profilen (separerade med mellanslag, lämna tom för att skippa): "
+msgstr "Tjänster som ska aktiveras med den här profilen (separerade med mellanslag, lämna tomt för att skippa): "
 
 msgid "Should this profile be enabled for installation?"
 msgstr "Ska denna profil aktiveras för installation?"
@@ -1037,7 +1037,7 @@ msgstr ""
 "Välj en grafikdrivrutin eller lämna tomt för att installera alla drivrutiner med öppen källkod"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
 
 msgid ""
 "\n"
@@ -1052,10 +1052,10 @@ msgid "Graphics driver"
 msgstr "Grafik drivrutin"
 
 msgid "Greeter"
-msgstr ""
+msgstr "Displayhanterare"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "Välj vilken displayhanterare att installera"
 
 msgid "This is a list of pre-programmed default_profiles"
 msgstr "Detta är en lista över förprogrammerade standard_profiler"
@@ -1067,7 +1067,7 @@ msgid "Profiles"
 msgstr "Profiler"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "Hittar möjliga kataloger att spara konfigurationsfiler i ..."
 
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Välj katalog (eller kataloger) för att spara konfigurationsfiler"
@@ -1102,11 +1102,12 @@ msgstr "Definierat"
 msgid "Save user configuration (including disk layout)"
 msgstr "Spara användarkonfiguration (inklusive disklayout)"
 
-#, fuzzy
 msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
-msgstr "Välj vilken mapp du vill spara konfigurerationerna till: "
+msgstr ""
+"Välj vilken mapp som konfigureratione(rna) ska sparas till TAB-komplettering (aktiverat)\n"
+"Sparkatalog: "
 
 msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
@@ -1194,7 +1195,7 @@ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Ogiltig inmatning! Försök igen med en giltig inmatning [eller 0 för att inaktivera]"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Hyprland behöver tillgång till din sitshantering (samling av hårdvaruenheter t.ex. tangentbord, mus, etc)"
 
 msgid ""
 "\n"
@@ -1230,7 +1231,7 @@ msgid "Selected profiles: "
 msgstr "Valda profiler: "
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "Tidssynkroniseringen slutförs inte medan du väntar - kontrollera dokumentationen för lösningar: https://archinstall.readthedocs.io/"
+msgstr "Tidsynkroniseringen slutförs inte medan du väntar - kontrollera dokumentationen för lösningar: https://archinstall.readthedocs.io/"
 
 msgid "Mark/Unmark as nodatacow"
 msgstr "Markera/avmarkera som nodatacow"
