@@ -8,7 +8,6 @@ from archinstall.tui import (
 
 
 class MenuHelper:
-
 	@staticmethod
 	def create_table(
 		data: Optional[List[Any]] = None,

@@ -24,7 +24,7 @@ from . import pacman
 from .pacman import Pacman
 from .plugins import plugins
 from .storage import storage
-from archinstall.tui.curses_menu import tui
+from archinstall.tui.curses_menu import Tui
 
 if TYPE_CHECKING:
 	_: Any
@@ -107,8 +107,8 @@ class Installer:
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
 			log_file = os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])
-			tui.print(str(_("[!] A log file has been created here: {}").format(log_file)))
-			tui.print(str(_('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')))
+			Tui.print(str(_("[!] A log file has been created here: {}").format(log_file)))
+			Tui.print(str(_('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')))
 			raise exc_val
 
 		if not (missing_steps := self.post_install_check()):

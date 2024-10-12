@@ -325,6 +325,7 @@ def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[
 		frame=FrameProperties.min(str(_('Mirror regions'))),
 		allow_reset=True,
 		allow_skip=True,
+		multi=True,
 	).run()
 
 	match result.type_:

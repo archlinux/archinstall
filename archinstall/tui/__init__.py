@@ -1,5 +1,5 @@
 from .curses_menu import (
-	tui, SelectMenu, EditMenu
+	SelectMenu, EditMenu, Tui
 )
 
 from .menu_item import (

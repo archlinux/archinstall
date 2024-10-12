@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 from typing import Any, Optional, TYPE_CHECKING, List, Dict, Set
 
+from ..interactions.general_conf import ask_abort
 from .device_handler import device_handler
 from .device_model import (
 	DiskLayoutConfiguration, DiskLayoutType, PartitionTable,
@@ -15,8 +16,7 @@ from ..hardware import SysInfo
 from ..luks import Luks2
 from ..output import debug, info
 from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	Alignment, Orientation, tui
+	Tui
 )
 
 
@@ -341,31 +341,15 @@ class FilesystemHandler:
 		# Issue a final warning before we continue with something un-revertable.
 		# We mention the drive one last time, and count from 5 to 0.
 		out = str(_(' ! Formatting {} in ')).format(device_paths)
-		tui.print(out, row=0)
+		Tui.print(out, row=0, endl='', clear_screen=True)
 
 		try:
-			for i in range(5, 0, -1):
-				out += str(i)
-				tui.print(out, row=0)
-
-				for x in range(4):
-					time.sleep(0.25)
-					out += '.'
-					tui.print(out, row=0)
+			countdown = '\n5...4...3...2...1'
+			for c in countdown:
+				Tui.print(c, row=0, endl='')
+				time.sleep(0.25)
 		except KeyboardInterrupt:
-			prompt = str(_('Do you really want to abort?')) + '\n'
-			group = MenuItemGroup.yes_no()
-
-			result = SelectMenu(
-				group,
-				header=prompt,
-				allow_skip=False,
-				alignment=Alignment.CENTER,
-				columns=2,
-				orientation=Orientation.HORIZONTAL
-			).run()
-
-			if result.item() == MenuItem.yes():
-				exit(0)
+			with Tui():
+				ask_abort()
 
 		return True

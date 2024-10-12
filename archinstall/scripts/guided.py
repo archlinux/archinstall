@@ -12,11 +12,8 @@ from archinstall.lib.installer import Installer
 from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.tui.curses_menu import tui
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	Alignment, Orientation
-)
+from archinstall.lib.interactions.general_conf import ask_chroot
+from archinstall.tui import Tui
 
 if TYPE_CHECKING:
 	_: Any
@@ -33,12 +30,14 @@ def ask_user_questions() -> None:
 	Not until we're satisfied with what we want to install
 	will we continue with the actual installation steps.
 	"""
-	global_menu = GlobalMenu(data_store=archinstall.arguments)
 
-	if not archinstall.arguments.get('advanced', False):
-		global_menu.set_enabled('parallel downloads', False)
+	with Tui():
+		global_menu = GlobalMenu(data_store=archinstall.arguments)
 
-	global_menu.run()
+		if not archinstall.arguments.get('advanced', False):
+			global_menu.set_enabled('parallel downloads', False)
+
+		global_menu.run()
 
 
 def perform_installation(mountpoint: Path) -> None:
@@ -153,18 +152,10 @@ def perform_installation(mountpoint: Path) -> None:
 		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 		if not archinstall.arguments.get('silent'):
-			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?')) + '\n'
-			group = MenuItemGroup.yes_no()
+			with Tui():
+				chroot = ask_chroot()
 
-			result = SelectMenu(
-				group,
-				header=prompt,
-				alignment=Alignment.CENTER,
-				columns=2,
-				orientation=Orientation.HORIZONTAL
-			).run()
-
-			if result.item() == MenuItem.yes():
+			if chroot:
 				try:
 					installation.drop_to_shell()
 				except:
@@ -185,9 +176,10 @@ def _guided() -> None:
 		exit(0)
 
 	if not archinstall.arguments.get('silent'):
-		if not config.confirm_config():
-			debug('Installation aborted')
-			_guided()
+		with Tui():
+			if not config.confirm_config():
+				debug('Installation aborted')
+				_guided()
 
 	fs_handler = disk.FilesystemHandler(
 		archinstall.arguments['disk_config'],
@@ -195,12 +187,7 @@ def _guided() -> None:
 	)
 
 	fs_handler.perform_filesystem_operations()
-
 	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
-
-
-# initialize the curses menu
-tui.init()
 
 
 _guided()

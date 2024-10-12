@@ -323,8 +323,8 @@ def log(
 	Journald.log(text, level=level)
 
 	if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
-		sys.stdout.write(f"{text}\n")
-		sys.stdout.flush()
+		from archinstall.tui import Tui
+		Tui.print(text)
 
 
 def _count_wchars(string: str) -> int:

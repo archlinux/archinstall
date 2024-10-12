@@ -296,7 +296,8 @@ def select_partitions_to_encrypt(
 		result = SelectMenu(
 			group,
 			header=header,
-			alignment=Alignment.CENTER
+			alignment=Alignment.CENTER,
+			multi=True
 		).run()
 
 		match result.type_:
@@ -321,7 +322,8 @@ def select_lvm_vols_to_encrypt(
 		result = SelectMenu(
 			group,
 			header=header,
-			alignment=Alignment.CENTER
+			alignment=Alignment.CENTER,
+			multi=True
 		).run()
 
 		match result.type_:

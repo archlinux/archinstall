@@ -9,11 +9,10 @@ from ..output import warn
 from ..packages.packages import validate_package_list
 from ..storage import storage
 from ..translationhandler import Language
-from archinstall.tui.curses_menu import tui
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, Alignment, ResultType,
-	EditMenu, Orientation
+	EditMenu, Orientation, Tui
 )
 
 if TYPE_CHECKING:
@@ -177,7 +176,7 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 
 		# Verify packages that were given
 		out = str(_("Verifying that additional packages exist (this might take a few seconds)"))
-		tui.print(out, 0)
+		Tui.print(out, 0)
 		valid, invalid = validate_package_list(packages)
 
 		if invalid:
@@ -272,7 +271,8 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min('Additional repositories'),
 		allow_reset=True,
-		allow_skip=True
+		allow_skip=True,
+		multi=True
 	).run()
 
 	match result.type_:
@@ -282,3 +282,35 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 			return []
 		case ResultType.Selection:
 			return result.get_values()
+
+
+def ask_chroot() -> bool:
+	prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?')) + '\n'
+	group = MenuItemGroup.yes_no()
+
+	result = SelectMenu(
+		group,
+		header=prompt,
+		alignment=Alignment.CENTER,
+		columns=2,
+		orientation=Orientation.HORIZONTAL,
+	).run()
+
+	return result.item() == MenuItem.yes()
+
+
+def ask_abort() -> None:
+	prompt = str(_('Do you really want to abort?')) + '\n'
+	group = MenuItemGroup.yes_no()
+
+	result = SelectMenu(
+		group,
+		header=prompt,
+		allow_skip=False,
+		alignment=Alignment.CENTER,
+		columns=2,
+		orientation=Orientation.HORIZONTAL
+	).run()
+
+	if result.item() == MenuItem.yes():
+		exit(0)

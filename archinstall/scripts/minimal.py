@@ -9,6 +9,7 @@ from archinstall.lib.interactions import suggest_single_disk_layout, select_devi
 from archinstall.lib.models import Bootloader, User
 from archinstall.lib.profile import ProfileConfiguration, profile_handler
 from archinstall.lib import disk
+from archinstall.tui import Tui
 
 if TYPE_CHECKING:
 	_: Any
@@ -88,30 +89,31 @@ def parse_disk_encryption() -> None:
 		)
 
 
-prompt_disk_layout()
-parse_disk_encryption()
+def _minimal() -> None:
+	with Tui():
+		prompt_disk_layout()
+		parse_disk_encryption()
 
+	config = ConfigurationOutput(archinstall.arguments)
+	config.write_debug()
+	config.save()
 
-config = ConfigurationOutput(archinstall.arguments)
-config.write_debug()
-config.save()
-
-
-if archinstall.arguments.get('dry_run'):
-	exit(0)
-
-
-if not archinstall.arguments.get('silent'):
-	if not config.confirm_config():
-		debug('Installation aborted')
+	if archinstall.arguments.get('dry_run'):
 		exit(0)
 
+	if not archinstall.arguments.get('silent'):
+		with Tui():
+			if not config.confirm_config():
+				debug('Installation aborted')
+				_minimal()
 
-fs_handler = disk.FilesystemHandler(
-	archinstall.arguments['disk_config'],
-	archinstall.arguments.get('disk_encryption', None)
-)
+	fs_handler = disk.FilesystemHandler(
+		archinstall.arguments['disk_config'],
+		archinstall.arguments.get('disk_encryption', None)
+	)
+
+	fs_handler.perform_filesystem_operations()
+	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
 
 
-fs_handler.perform_filesystem_operations()
-perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+_minimal()

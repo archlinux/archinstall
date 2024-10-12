@@ -42,7 +42,8 @@ def select_devices(preset: Optional[List[disk.BDevice]] = []) -> List[disk.BDevi
 		group,
 		header=header,
 		alignment=Alignment.CENTER,
-		search_enabled=False
+		search_enabled=False,
+		multi=True
 	).run()
 
 	match result.type_:

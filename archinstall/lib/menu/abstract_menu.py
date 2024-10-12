@@ -4,11 +4,10 @@ from typing import Callable, Any, List, Optional, Dict, TYPE_CHECKING
 
 from ..output import error
 from ..output import unicode_ljust
-from archinstall.tui.curses_menu import tui
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	PreviewStyle, FrameProperties, FrameStyle,
-	ResultType, Chars
+	ResultType, Chars, Tui
 )
 
 if TYPE_CHECKING:
@@ -174,7 +173,7 @@ class AbstractMenu:
 		# TODO: skip processing when it comes from a planified exit
 		if len(args) >= 2 and args[1]:
 			error(args[1])
-			tui.print("Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
+			Tui.print("Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
 		self._sync_all_to_ds()

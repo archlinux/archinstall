@@ -1,3 +1,4 @@
+import sys
 import curses
 import dataclasses
 import curses.panel
@@ -6,7 +7,7 @@ import signal
 from abc import ABCMeta, abstractmethod
 from curses.textpad import Textbox
 from dataclasses import dataclass
-from typing import Any, Optional, Tuple, Dict, List, TYPE_CHECKING, Literal
+from typing import Any, Optional, Tuple, List, TYPE_CHECKING, Literal
 from typing import Callable
 
 from .help import Help
@@ -36,14 +37,14 @@ class AbstractCurses(metaclass=ABCMeta):
 		pass
 
 	def clear_all(self) -> None:
-		tui.screen.clear()
-		tui.screen.refresh()
+		Tui.t().screen.clear()
+		Tui.t().screen.refresh()
 
 	def clear_help_win(self) -> None:
 		self._help_window.erase()
 
 	def _set_help_viewport(self) -> 'Viewport':
-		max_height, max_width = tui.max_yx
+		max_height, max_width = Tui.t().max_yx
 		height = max_height - 10
 
 		max_help_width = max([len(line) for line in Help.get_help_text().split('\n')])
@@ -75,7 +76,7 @@ class AbstractCurses(metaclass=ABCMeta):
 			return False
 
 	def help_entry(self) -> ViewportEntry:
-		return ViewportEntry(str(_('Press Ctrl+h for help')), 0, 0, STYLE.NORMAL)
+		return ViewportEntry(str(_('Press ? for help')), 0, 0, STYLE.NORMAL)
 
 	def _show_help(self) -> None:
 		if not self._help_window:
@@ -112,7 +113,7 @@ class AbstractViewport:
 
 	def add_str(self, screen: Any, row: int, col: int, text: str, color: STYLE):
 		try:
-			screen.addstr(row, col, text, tui.get_color(color))
+			screen.addstr(row, col, text, Tui.t().get_color(color))
 		except curses.error:
 			# debug(f'Curses error while adding string to viewport: {text}')
 			pass
@@ -297,7 +298,7 @@ class EditViewport(AbstractViewport):
 	) -> None:
 		super().__init__()
 
-		self._max_height, self._max_width = tui.max_yx
+		self._max_height, self._max_width = Tui.t().max_yx
 
 		self._width = width
 		self._edit_width = edit_width
@@ -390,6 +391,7 @@ class ViewportState:
 	cur_pos: int
 	displayed_entries: List[ViewportEntry]
 	scroll_pct: Optional[int]
+	scroll_pos: Optional[int] = 0
 
 	def offset(self) -> int:
 		return min([entry.row for entry in self.displayed_entries], default=0)
@@ -505,7 +507,7 @@ class Viewport(AbstractViewport):
 		if self._state is not None:
 			rows = self._state.get_rows()
 
-			if cur_pos in rows:
+			if cur_pos in rows and self._state.scroll_pos == scroll_pos:
 				same_row_entries = [entry for entry in entries if entry.row in rows]
 				return ViewportState(
 					cur_pos,
@@ -528,7 +530,12 @@ class Viewport(AbstractViewport):
 		else:
 			percentage = None
 
-		return ViewportState(cur_pos, visible_entries, percentage)
+		return ViewportState(
+			cur_pos,
+			visible_entries,
+			percentage,
+			scroll_pos
+		)
 
 	def _get_visible_entries(
 		self,
@@ -601,7 +608,7 @@ class EditMenu(AbstractCurses):
 	):
 		super().__init__()
 
-		self._max_height, self._max_width = tui.max_yx
+		self._max_height, self._max_width = Tui.t().max_yx
 
 		self._header = header
 		self._validator = validator
@@ -655,7 +662,7 @@ class EditMenu(AbstractCurses):
 		self._error_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
 
 	def input(self) -> Result:
-		result = tui.run(self)
+		result = Tui.run(self)
 
 		assert not result.has_item() or isinstance(result.text(), str)
 
@@ -832,7 +839,7 @@ class SelectMenu(AbstractCurses):
 		self._cur_pos: Optional[int] = None
 
 		self._visible_entries: List[ViewportEntry] = []
-		self._max_height, self._max_width = tui.max_yx
+		self._max_height, self._max_width = Tui.t().max_yx
 
 		self._help_vp: Optional[Viewport] = None
 		self._header_vp: Optional[Viewport] = None
@@ -850,7 +857,7 @@ class SelectMenu(AbstractCurses):
 		return offset
 
 	def run(self) -> Result:
-		result = tui.run(self)
+		result = Tui.run(self)
 		self._clear_all()
 		return result
 
@@ -1335,13 +1342,22 @@ class SelectMenu(AbstractCurses):
 
 
 class Tui:
-	def __init__(self) -> None:
-		self._screen: Any = None
-		self._colors: Dict[str, int] = {}
-		self._component: Optional[AbstractCurses] = None
-		signal.signal(signal.SIGWINCH, self._sig_win_resize)
+	_t: Optional['Tui'] = None
 
-	def init(self) -> None:
+	def __enter__(self):
+		if Tui._t is None:
+			tui = self.init()
+			Tui._t = tui
+
+	def __exit__(self, exc_type, exc_val, tb):
+		self.stop()
+
+	@staticmethod
+	def t() -> 'Tui':
+		assert Tui._t is not None
+		return Tui._t
+
+	def init(self) -> 'Tui':
 		self._screen = curses.initscr()
 		curses.noecho()
 		curses.cbreak()
@@ -1349,37 +1365,86 @@ class Tui:
 		curses.set_escdelay(25)
 
 		self._screen.keypad(True)
+		self._screen.scrollok(True)
 
 		if curses.has_colors():
 			curses.start_color()
 			self._set_up_colors()
 
-		self._soft_clear_terminal()
+		signal.signal(signal.SIGWINCH, self._sig_win_resize)
+		self._screen.refresh()
+
+		return self
+
+	def stop(self) -> None:
+		try:
+			curses.nocbreak()
+
+			try:
+				self.screen.keypad(False)
+			except Exception:
+				pass
+
+			curses.echo()
+			curses.curs_set(True)
+			curses.endwin()
+		except Exception:
+			# this may happen when curses has not been initialized
+			pass
+
+		Tui._t = None
 
 	@property
 	def screen(self) -> Any:
 		return self._screen
 
-	def print(self, text: str, row: int = 0, col: int = 0) -> None:
-		if row == -1:
-			last_row = self.max_yx[0] - 1
-			self.screen.scroll(1)
-			self.screen.addstr(last_row, col, text)
-		else:
-			self.screen.addstr(row, col, text)
+	@staticmethod
+	def print(
+		text: str,
+		row: int = 0,
+		col: int = 0,
+		endl: Optional[str] = '\n',
+		clear_screen: bool = False
+	) -> None:
+		if Tui._t is None:
+			if clear_screen:
+				os.system('clear')
 
-		self.screen.refresh()
+			print(text, end=endl)
+			sys.stdout.flush()
+
+			return
+
+		# will append the row at the very bottom of the screen
+		# and also scroll the existing text up by 1 line
+		if row == -1:
+			last_row = Tui.t().max_yx[0] - 1
+			Tui.t().screen.scroll(1)
+			Tui.t().screen.addstr(last_row, col, text)
+		else:
+			Tui.t().screen.addstr(row, col, text)
+
+		Tui.t().screen.refresh()
 
 	@property
 	def max_yx(self) -> Tuple[int, int]:
 		return self._screen.getmaxyx()
 
-	def run(self, component: AbstractCurses) -> Result:
-		self._screen.clear()
-		return self._main_loop(component)
+	@staticmethod
+	def run(component: AbstractCurses) -> Result:
+		if Tui._t is None:
+			tui = Tui().init()
+			tui.screen.clear()
+			results = tui._main_loop(component)
+			Tui().stop()
+			return results
+		else:
+			tui = Tui._t
+			tui.screen.clear()
+			return Tui.t()._main_loop(component)
 
 	def _sig_win_resize(self, signum: int, frame) -> None:
-		if self._component:
+		if hasattr(self, '_component') and self._component is not None:
 			self._component.resize_win()
 
 	def _main_loop(self, component: AbstractCurses) -> Result:
@@ -1388,10 +1453,6 @@ class Tui:
 
 	def _reset_terminal(self):
 		os.system("reset")
-
-	def _soft_clear_terminal(self) -> None:
-		print(chr(27) + "[2J", end="")
-		print(chr(27) + "[1;1H", end="")
 
 	def _set_up_colors(self) -> None:
 		curses.init_pair(STYLE.NORMAL.value, curses.COLOR_WHITE, curses.COLOR_BLACK)
@@ -1403,6 +1464,3 @@ class Tui:
 
 	def get_color(self, color: STYLE) -> int:
 		return curses.color_pair(color.value)
-
-
-tui = Tui()

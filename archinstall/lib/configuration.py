@@ -13,7 +13,7 @@ from .utils.util import prompt_dir
 from archinstall.tui import (
 	MenuItemGroup, MenuItem, SelectMenu,
 	FrameProperties, Alignment, ResultType,
-	PreviewStyle, Orientation
+	PreviewStyle, Orientation, Tui
 )
 
 if TYPE_CHECKING:
@@ -82,24 +82,25 @@ class ConfigurationOutput:
 		header = f'{str(_("The specified configuration will be applied"))}. '
 		header += str(_('Would you like to continue?')) + '\n'
 
-		group = MenuItemGroup.yes_no()
-		group.focus_item = MenuItem.yes()
-		group.set_preview_for_all(lambda x: self.user_config_to_json())
+		with Tui():
+			group = MenuItemGroup.yes_no()
+			group.focus_item = MenuItem.yes()
+			group.set_preview_for_all(lambda x: self.user_config_to_json())
 
-		result = SelectMenu(
-			group,
-			header=header,
-			alignment=Alignment.CENTER,
-			columns=2,
-			orientation=Orientation.HORIZONTAL,
-			allow_skip=False,
-			preview_size='auto',
-			preview_style=PreviewStyle.BOTTOM,
-			preview_frame=FrameProperties.max(str(_('Configuration')))
-		).run()
+			result = SelectMenu(
+				group,
+				header=header,
+				alignment=Alignment.CENTER,
+				columns=2,
+				orientation=Orientation.HORIZONTAL,
+				allow_skip=False,
+				preview_size='auto',
+				preview_style=PreviewStyle.BOTTOM,
+				preview_frame=FrameProperties.max(str(_('Configuration')))
+			).run()
 
-		if result.item() != MenuItem.yes():
-			return False
+			if result.item() != MenuItem.yes():
+				return False
 
 		return True
 
@@ -202,7 +203,7 @@ def save_config(config: Dict[str, Any]) -> None:
 	header = str(_("Do you want to save the configuration file(s) to {}?")).format(dest_path)
 
 	group = MenuItemGroup.yes_no()
-	group.set_focus_by_value(MenuItem.yes().value)
+	group.focus_item = MenuItem.yes()
 
 	result = SelectMenu(
 		group,

@@ -44,8 +44,8 @@ class MenuKeys(Enum):
 	ESC = {27}
 	# BACKSPACE (search)
 	BACKSPACE = {127, 263}
-	# Help view: CTRL+h
-	HELP = {8}
+	# Help view: ?
+	HELP = {63}
 	# Scroll up: CTRL+up, CTRL+k
 	SCROLL_UP = {581}
 	# Scroll down: CTRL+down, CTRL+j

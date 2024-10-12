@@ -41,7 +41,8 @@ class ServerProfile(Profile):
 			allow_skip=True,
 			preview_style=PreviewStyle.RIGHT,
 			preview_size='auto',
-			preview_frame=FrameProperties.max('Info')
+			preview_frame=FrameProperties.max('Info'),
+			multi=True
 		).run()
 
 		match result.type_:

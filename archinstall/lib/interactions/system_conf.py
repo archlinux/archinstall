@@ -37,7 +37,8 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 		allow_skip=True,
 		allow_reset=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_('Kernel')))
+		frame=FrameProperties.min(str(_('Kernel'))),
+		multi=True
 	).run()
 
 	match result.type_:
