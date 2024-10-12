@@ -503,11 +503,11 @@ class Viewport(AbstractViewport):
 
 		# we will be checking if the cursor pos is in the same window
 		# of rows as the previous selection, in that case we can keep
-		# the currently shows entries to prevent weird moving in long lists
-		if self._state is not None:
+		# the currently shown entries to prevent weird moving in long lists
+		if self._state is not None and scroll_pos is None:
 			rows = self._state.get_rows()
 
-			if cur_pos in rows and self._state.scroll_pos == scroll_pos:
+			if cur_pos in rows:
 				same_row_entries = [entry for entry in entries if entry.row in rows]
 				return ViewportState(
 					cur_pos,
