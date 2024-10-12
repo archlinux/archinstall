@@ -178,7 +178,8 @@ class MenuItemGroup:
 			from .types import Chars
 
 			if item.has_value():
-				text = f'{text}{spacing}{Chars.Check}'
+				if item.get_value() is not False:
+					text = f'{text}{spacing}{Chars.Check}'
 			else:
 				if item.mandatory:
 					text = f'{text}{spacing}{Chars.Cross}'
