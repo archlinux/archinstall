@@ -1,32 +1,43 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import Any, TYPE_CHECKING, Optional
 
 import archinstall
-from archinstall import Installer
-from archinstall import profile
-from archinstall import SysInfo
-from archinstall import disk
-from archinstall import models
-from archinstall import locale
 from archinstall import info, debug
-from archinstall import ConfigurationOutput
-from archinstall.tui.curses_menu import tui
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	Alignment, Orientation
-)
+from archinstall import SysInfo
+from archinstall.lib import locale
+from archinstall.lib import disk
+from archinstall.lib.global_menu import GlobalMenu
+from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.installer import Installer
+from archinstall.lib.models import AudioConfiguration, Bootloader
+from archinstall.lib.models.network_configuration import NetworkConfiguration
+from archinstall.lib.profile.profiles_handler import profile_handler
+from archinstall.lib.interactions.general_conf import ask_chroot
+from archinstall.tui import Tui
 
 if TYPE_CHECKING:
-	_: Callable[[str], str]
+	_: Any
+
+
+if archinstall.arguments.get('help'):
+	print("See `man archinstall` for help.")
+	exit(0)
 
 
 def ask_user_questions() -> None:
-	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+	"""
+	First, we'll ask the user for a bunch of user input.
+	Not until we're satisfied with what we want to install
+	will we continue with the actual installation steps.
+	"""
 
-	if not archinstall.arguments.get('advanced', False):
-		global_menu.set_enabled('parallel downloads', False)
+	with Tui():
+		global_menu = GlobalMenu(data_store=archinstall.arguments)
 
-	global_menu.run()
+		if not archinstall.arguments.get('advanced', False):
+			global_menu.set_enabled('parallel downloads', False)
+
+		global_menu.run()
 
 
 def perform_installation(mountpoint: Path) -> None:
@@ -41,6 +52,7 @@ def perform_installation(mountpoint: Path) -> None:
 	# Retrieve list of additional repositories and set boolean values appropriately
 	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
 	enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', [])
+	run_mkinitcpio = not archinstall.arguments.get('uki')
 	locale_config: locale.LocaleConfiguration = archinstall.arguments['locale_config']
 	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
@@ -62,11 +74,12 @@ def perform_installation(mountpoint: Path) -> None:
 				installation.generate_key_files()
 
 		if mirror_config := archinstall.arguments.get('mirror_config', None):
-			installation.set_mirrors(mirror_config)
+			installation.set_mirrors(mirror_config, on_target=False)
 
 		installation.minimal_installation(
 			testing=enable_testing,
 			multilib=enable_multilib,
+			mkinitcpio=run_mkinitcpio,
 			hostname=archinstall.arguments.get('hostname', 'archlinux'),
 			locale_config=locale_config
 		)
@@ -77,14 +90,17 @@ def perform_installation(mountpoint: Path) -> None:
 		if archinstall.arguments.get('swap'):
 			installation.setup_swap('zram')
 
-		if archinstall.arguments.get("bootloader") == models.Bootloader.Grub and SysInfo.has_uefi():
+		if archinstall.arguments.get("bootloader") == Bootloader.Grub and SysInfo.has_uefi():
 			installation.add_additional_packages("grub")
 
-		installation.add_bootloader(archinstall.arguments["bootloader"])
+		installation.add_bootloader(
+			archinstall.arguments["bootloader"],
+			archinstall.arguments.get('uki', False)
+		)
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
-		network_config = archinstall.arguments.get('network_config', None)
+		network_config: Optional[NetworkConfiguration] = archinstall.arguments.get('network_config', None)
 
 		if network_config:
 			network_config.install_network_config(
@@ -95,17 +111,17 @@ def perform_installation(mountpoint: Path) -> None:
 		if users := archinstall.arguments.get('!users', None):
 			installation.create_users(users)
 
-		audio_config: Optional[models.AudioConfiguration] = archinstall.arguments.get('audio_config', None)
+		audio_config: Optional[AudioConfiguration] = archinstall.arguments.get('audio_config', None)
 		if audio_config:
 			audio_config.install_audio_config(installation)
 		else:
 			info("No audio server will be installed")
 
 		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-			installation.add_additional_packages(archinstall.arguments.get('packages', []))
+			installation.add_additional_packages(archinstall.arguments.get('packages', None))
 
 		if profile_config := archinstall.arguments.get('profile_config', None):
-			profile.profile_handler.install_profile_config(installation, profile_config)
+			profile_handler.install_profile_config(installation, profile_config)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)
@@ -136,27 +152,19 @@ def perform_installation(mountpoint: Path) -> None:
 		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 		if not archinstall.arguments.get('silent'):
-			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?')) + '\n'
-			group = MenuItemGroup.yes_no()
+			with Tui():
+				chroot = ask_chroot()
 
-			result = SelectMenu(
-				group,
-				header=prompt,
-				alignment=Alignment.CENTER,
-				columns=2,
-				orientation=Orientation.HORIZONTAL
-			).run()
-
-			if result.item() == MenuItem.yes():
+			if chroot:
 				try:
 					installation.drop_to_shell()
-				except Exception:
+				except:
 					pass
 
 	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
-def _interactive() -> None:
+def _guided() -> None:
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()
 
@@ -168,9 +176,10 @@ def _interactive() -> None:
 		exit(0)
 
 	if not archinstall.arguments.get('silent'):
-		if not config.confirm_config():
-			debug('Installation aborted')
-			_interactive()
+		with Tui():
+			if not config.confirm_config():
+				debug('Installation aborted')
+				_guided()
 
 	fs_handler = disk.FilesystemHandler(
 		archinstall.arguments['disk_config'],
@@ -178,12 +187,7 @@ def _interactive() -> None:
 	)
 
 	fs_handler.perform_filesystem_operations()
-
 	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
 
 
-# initialize the curses menu
-tui.init()
-
-
-_interactive()
+_guided()
