@@ -1352,10 +1352,21 @@ class Tui:
 	def __exit__(self, exc_type, exc_val, tb):
 		self.stop()
 
+	@property
+	def screen(self) -> Any:
+		return self._screen
+
 	@staticmethod
 	def t() -> 'Tui':
 		assert Tui._t is not None
 		return Tui._t
+
+	@staticmethod
+	def shutdown() -> None:
+		if Tui._t is None:
+			return
+
+		Tui.t().stop()
 
 	def init(self) -> 'Tui':
 		self._screen = curses.initscr()
@@ -1393,10 +1404,6 @@ class Tui:
 			pass
 
 		Tui._t = None
-
-	@property
-	def screen(self) -> Any:
-		return self._screen
 
 	@staticmethod
 	def print(

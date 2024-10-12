@@ -9,10 +9,10 @@
 # from archinstall.lib import locale
 # from archinstall.lib.models import AudioConfiguration
 # from archinstall.lib.profile.profiles_handler import profile_handler
-# from archinstall.lib import menu
 # from archinstall.lib.global_menu import GlobalMenu
 # from archinstall.lib.installer import Installer
 # from archinstall.lib.configuration import ConfigurationOutput
+# from archinstall.tui import Tui
 #
 # if TYPE_CHECKING:
 # 	_: Any
@@ -27,15 +27,16 @@
 #
 #
 # def select_mode() -> ExecutionMode:
-# 	options = [str(e.value) for e in ExecutionMode]
-# 	choice = menu.Menu(
-# 		str(_('Select an execution mode')),
-# 		options,
-# 		default_option=ExecutionMode.Full.value,
-# 		skip=False
-# 	).run()
+# 	with Tui():
+# 		options = [str(e.value) for e in ExecutionMode]
+# 		choice = Menu(
+# 			str(_('Select an execution mode')),
+# 			options,
+# 			default_option=ExecutionMode.Full.value,
+# 			skip=False
+# 		).run()
 #
-# 	return ExecutionMode(choice.single_value)
+# 		return ExecutionMode(choice.single_value)
 #
 #
 # class SetupMenu(GlobalMenu):
@@ -131,36 +132,32 @@
 #
 #
 # def ask_user_questions(exec_mode: ExecutionMode = ExecutionMode.Full) -> None:
-# 	"""
-# 		First, we'll ask the user for a bunch of user input.
-# 		Not until we're satisfied with what we want to install
-# 		will we continue with the actual installation steps.
-# 	"""
-# 	if archinstall.arguments.get('advanced', None):
-# 		setup_area: Dict[str, Any] = {}
-# 		setup = SetupMenu(setup_area)
+# 	with Tui():
+# 		if archinstall.arguments.get('advanced', None):
+# 			setup_area: Dict[str, Any] = {}
+# 			setup = SetupMenu(setup_area)
 #
-# 		if exec_mode == ExecutionMode.Lineal:
-# 			for entry in setup.list_enabled_options():
-# 				if entry in ('continue', 'abort'):
-# 					continue
-# 				if not setup.option(entry).enabled:
-# 					continue
-# 				setup.exec_option(entry)
-# 		else:
-# 			setup.run()
+# 			if exec_mode == ExecutionMode.Lineal:
+# 				for entry in setup.list_enabled_options():
+# 					if entry in ('continue', 'abort'):
+# 						continue
+# 					if not setup.option(entry).enabled:
+# 						continue
+# 					setup.exec_option(entry)
+# 			else:
+# 				setup.run()
 #
-# 		archinstall.arguments['archinstall-language'] = setup_area.get('archinstall-language')
+# 			archinstall.arguments['archinstall-language'] = setup_area.get('archinstall-language')
 #
-# 	with SwissMainMenu(data_store=archinstall.arguments, exec_mode=exec_mode) as menu:
-# 		if mode == ExecutionMode.Lineal:
-# 			for entry in menu.list_enabled_options():
-# 				if entry in ('install', 'abort'):
-# 					continue
-# 				menu.exec_option(entry)
-# 				archinstall.arguments[entry] = menu.option(entry).get_selection()
-# 		else:
-# 			menu.run()
+# 		with SwissMainMenu(data_store=archinstall.arguments, exec_mode=exec_mode) as menu:
+# 			if mode == ExecutionMode.Lineal:
+# 				for entry in menu.list_enabled_options():
+# 					if entry in ('install', 'abort'):
+# 						continue
+# 					menu.exec_option(entry)
+# 					archinstall.arguments[entry] = menu.option(entry).get_selection()
+# 			else:
+# 				menu.run()
 #
 #
 # def perform_installation(mountpoint: Path, exec_mode: ExecutionMode) -> None:
@@ -274,39 +271,40 @@
 # 		debug(f"Disk states after installing: {disk.disk_layouts()}")
 #
 #
-# param_mode = archinstall.arguments.get('mode', ExecutionMode.Full.value).lower()
+# def _swiss() -> None:
+# 	param_mode = archinstall.arguments.get('mode', ExecutionMode.Full.value).lower()
 #
-# try:
-# 	mode = ExecutionMode(param_mode)
-# except KeyError:
-# 	info(f'Mode "{param_mode}" is not supported')
-# 	exit(1)
+# 	try:
+# 		mode = ExecutionMode(param_mode)
+# 	except KeyError:
+# 		info(f'Mode "{param_mode}" is not supported')
+# 		exit(1)
 #
-# if not archinstall.arguments.get('silent'):
-# 	ask_user_questions(mode)
+# 	if not archinstall.arguments.get('silent'):
+# 		ask_user_questions(mode)
 #
+# 	config = ConfigurationOutput(archinstall.arguments)
+# 	config.write_debug()
+# 	config.save()
 #
-# config = ConfigurationOutput(archinstall.arguments)
-# config.write_debug()
-# config.save()
-#
-#
-# if archinstall.arguments.get('dry_run'):
-# 	exit(0)
-#
-#
-# if not archinstall.arguments.get('silent'):
-# 	if not config.confirm_config():
-# 		debug('Installation aborted')
+# 	if archinstall.arguments.get('dry_run'):
 # 		exit(0)
 #
+# 	if not archinstall.arguments.get('silent'):
+# 		with Tui():
+# 			if not config.confirm_config():
+# 				debug('Installation aborted')
+# 				_swiss()
 #
-# if mode in (ExecutionMode.Full, ExecutionMode.Only_HD):
-# 	fs_handler = disk.FilesystemHandler(
-# 		archinstall.arguments['disk_config'],
-# 		archinstall.arguments.get('disk_encryption', None)
-# 	)
+# 	if mode in (ExecutionMode.Full, ExecutionMode.Only_HD):
+# 		fs_handler = disk.FilesystemHandler(
+# 			archinstall.arguments['disk_config'],
+# 			archinstall.arguments.get('disk_encryption', None)
+# 		)
 #
-# 	fs_handler.perform_filesystem_operations()
+# 		fs_handler.perform_filesystem_operations()
 #
-# perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')), mode)
+# 	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')), mode)
+#
+#
+# _swiss()

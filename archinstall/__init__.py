@@ -31,6 +31,7 @@ from .lib.boot import Boot
 from .lib.translationhandler import TranslationHandler, Language, DeferredTranslation
 from .lib.plugins import plugins, load_plugin
 from .lib.configuration import ConfigurationOutput
+from .tui import Tui
 
 from .lib.general import (
 	generate_password, locate_binary, clear_vt100_escape_codes,
@@ -330,24 +331,6 @@ def main() -> None:
 	importlib.import_module(mod_name)
 
 
-def _shutdown_curses() -> None:
-	try:
-		curses.nocbreak()
-
-		try:
-			from archinstall.tui.curses_menu import tui
-			tui.screen.keypad(False)
-		except Exception:
-			pass
-
-		curses.echo()
-		curses.curs_set(True)
-		curses.endwin()
-	except Exception:
-		# this may happen when curses has not been initialized
-		pass
-
-
 def run_as_a_module() -> None:
 	exc = None
 
@@ -357,7 +340,7 @@ def run_as_a_module() -> None:
 		exc = e
 	finally:
 		# restore the terminal to the original state
-		_shutdown_curses()
+		Tui.shutdown()
 
 		if exc:
 			err = ''.join(traceback.format_exception(exc))
