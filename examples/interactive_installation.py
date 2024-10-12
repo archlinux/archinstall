@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Optional
 
 import archinstall
 from archinstall import info, debug
@@ -14,9 +14,6 @@ from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.interactions.general_conf import ask_chroot
 from archinstall.tui import Tui
-
-if TYPE_CHECKING:
-	_: Any
 
 
 if archinstall.arguments.get('help'):

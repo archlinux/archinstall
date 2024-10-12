@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, List
+from typing import List
 
 import archinstall
 from archinstall import info, debug
@@ -10,9 +10,6 @@ from archinstall.lib.models import Bootloader, User
 from archinstall.lib.profile import ProfileConfiguration, profile_handler
 from archinstall.lib import disk
 from archinstall.tui import Tui
-
-if TYPE_CHECKING:
-	_: Any
 
 
 info("Minimal only supports:")
