@@ -37,8 +37,8 @@ The basic concept of PyPI applies using `pip`.
 Install using source code
 -------------------------
 
-| You can also install using the source code.
-| For sake of simplicity we will use ``git clone`` in this example.
+You can also install using the source code.
+For sake of simplicity we will use ``git clone`` in this example.
 
 .. code-block:: console
 
