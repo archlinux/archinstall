@@ -1,18 +1,19 @@
+from pydantic import BaseModel, field_validator, model_validator
 import datetime
-import pydantic
 import http.client
 import urllib.parse
 import urllib.request
 from typing import (
 	Dict,
-	List
+	List,
+	Optional
 )
 
 from ..networking import ping, DownloadTimer
 from ..output import info, debug
 
 
-class MirrorStatusEntryV3(pydantic.BaseModel):
+class MirrorStatusEntryV3(BaseModel):
 	url: str
 	protocol: str
 	active: bool
@@ -71,15 +72,15 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 
 		return self._latency
 
-	@pydantic.field_validator('score', mode='before')
-	def validate_score(cls, value) -> int | None:
+	@field_validator('score', mode='before')
+	def validate_score(cls, value: int) -> Optional[int]:
 		if value is not None:
 			value = round(value)
 			debug(f"    score: {value}")
 
 		return value
 
-	@pydantic.model_validator(mode='after')
+	@model_validator(mode='after')
 	def debug_output(self, validation_info) -> 'MirrorStatusEntryV3':
 		self._hostname, *_port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(_port[0]) if _port and len(_port) >= 1 else None
@@ -88,16 +89,19 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 		return self
 
 
-class MirrorStatusListV3(pydantic.BaseModel):
+class MirrorStatusListV3(BaseModel):
 	cutoff: int
 	last_check: datetime.datetime
 	num_checks: int
 	urls: List[MirrorStatusEntryV3]
 	version: int
 
-	@pydantic.model_validator(mode='before')
+	@model_validator(mode='before')
 	@classmethod
-	def check_model(cls, data: Dict[str, int | datetime.datetime | List[MirrorStatusEntryV3]]) -> Dict[str, int | datetime.datetime | List[MirrorStatusEntryV3]]:
+	def check_model(
+		cls,
+		data: Dict[str, int | datetime.datetime | List[MirrorStatusEntryV3]]
+	) -> Dict[str, int | datetime.datetime | List[MirrorStatusEntryV3]]:
 		if data.get('version') == 3:
 			return data
 
