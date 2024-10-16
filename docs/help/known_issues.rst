@@ -3,17 +3,17 @@
 Known Issues
 ============
 
-| Some issues are out of the `archinstall`_ projects scope, and the ones we know of are listed below.
+Some issues are out of the `archinstall`_ projects scope, and the ones we know of are listed below.
 
 .. _waiting for time sync:
 
 Waiting for time sync `#2144`_
 ------------------------------
 
-| The usual root cause of this is the network topology.
-| More specifically `timedatectl show`_ cannot perform a proper time sync against the default servers.
+The usual root cause of this is the network topology.
+More specifically `timedatectl show`_ cannot perform a proper time sync against the default servers.
 
-| Restarting ``systemd-timesyncd.service`` might work but most often you need to configure ``/etc/systemd/timesyncd.conf`` to match your network design.
+Restarting ``systemd-timesyncd.service`` might work but most often you need to configure ``/etc/systemd/timesyncd.conf`` to match your network design.
 
 .. note::
 
@@ -22,34 +22,34 @@ Waiting for time sync `#2144`_
 Missing Nvidia Proprietary Driver `#2002`_
 ------------------------------------------
 
-| In some instances, the nvidia driver might not have all the necessary packages installed.
-| This is due to the kernel selection and/or hardware setups requiring additional packages to work properly.
+In some instances, the nvidia driver might not have all the necessary packages installed.
+This is due to the kernel selection and/or hardware setups requiring additional packages to work properly.
 
 A common workaround is to install the package `linux-headers`_ and `nvidia-dkms`_
 
 ARM, 32bit and other CPU types error out `#1686`_, `#2185`_
 -----------------------------------------------------------
 
-| This is a bit of a catch-all known issue.
-| Officially `x86_64`_ is only supported by Arch Linux.
-| Hence little effort have been put into supporting other platforms.
+This is a bit of a catch-all known issue.
+Officially `x86_64`_ is only supported by Arch Linux.
+Hence little effort have been put into supporting other platforms.
 
-| In theory, other architectures should work but small quirks might arise.
+In theory, other architectures should work but small quirks might arise.
 
-| PR's are welcome but please be respectful of the delays in merging.
-| Other fixes, issues or features will be prioritized for the above reasons.
+PR's are welcome but please be respectful of the delays in merging.
+Other fixes, issues or features will be prioritized for the above reasons.
 
 Keyring is out of date `#2213`_
 -------------------------------
 
-| Missing key-issues tend to be that the `archlinux-keyring`_ package is out of date, usually as a result of an outdated ISO.
-| There is an attempt from upstream to fix this issue, and it's the `archlinux-keyring-wkd-sync.service`_
+Missing key-issues tend to be that the `archlinux-keyring`_ package is out of date, usually as a result of an outdated ISO.
+There is an attempt from upstream to fix this issue, and it's the `archlinux-keyring-wkd-sync.service`_
 
-| The service starts almost immediately during boot, and if network is not configured in time — the service will fail.
-| Subsequently the ``archinstall`` run might operate on a old keyring despite there being an update service for this.
+The service starts almost immediately during boot, and if network is not configured in time — the service will fail.
+Subsequently the ``archinstall`` run might operate on a old keyring despite there being an update service for this.
 
-| There is really no way to reliably over time work around this issue in ``archinstall``.
-| Instead, efforts to the upstream service should be considered the way forward. And/or keys not expiring between a sane amount of ISO's.
+There is really no way to reliably over time work around this issue in ``archinstall``.
+Instead, efforts to the upstream service should be considered the way forward. And/or keys not expiring between a sane amount of ISO's.
 
 .. note::
 
@@ -62,10 +62,10 @@ Keyring is out of date `#2213`_
 AUR packages
 ------------
 
-| This is also a catch-all issue.
-| `AUR is unsupported <https://wiki.archlinux.org/title/Arch_User_Repository#Updating_packages>`_, and until that changes we cannot use AUR packages to solve feature requests in ``archinstall``.
+This is also a catch-all issue.
+`AUR is unsupported <https://wiki.archlinux.org/title/Arch_User_Repository#Updating_packages>`_, and until that changes we cannot use AUR packages to solve feature requests in ``archinstall``.
 
-| This means that feature requests like supporting filesystems such as `ZFS`_ can not be added, and issues cannot be solved by using AUR packages either.
+This means that feature requests like supporting filesystems such as `ZFS`_ can not be added, and issues cannot be solved by using AUR packages either.
 
 .. note::
 
