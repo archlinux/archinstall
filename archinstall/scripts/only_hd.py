@@ -53,7 +53,7 @@ def perform_installation(mountpoint: Path) -> None:
 	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
-def _only_hd() -> None:
+def only_hd() -> None:
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()
 
@@ -68,7 +68,7 @@ def _only_hd() -> None:
 		with Tui():
 			if not config.confirm_config():
 				debug('Installation aborted')
-				_only_hd()
+				only_hd()
 
 	fs_handler = disk.FilesystemHandler(
 		archinstall.arguments['disk_config'],
@@ -79,4 +79,4 @@ def _only_hd() -> None:
 	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
 
 
-_only_hd()
+only_hd()

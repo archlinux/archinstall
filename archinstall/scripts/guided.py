@@ -164,7 +164,7 @@ def perform_installation(mountpoint: Path) -> None:
 	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
-def _guided() -> None:
+def guided() -> None:
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()
 
@@ -179,7 +179,7 @@ def _guided() -> None:
 		with Tui():
 			if not config.confirm_config():
 				debug('Installation aborted')
-				_guided()
+				guided()
 
 	fs_handler = disk.FilesystemHandler(
 		archinstall.arguments['disk_config'],
@@ -190,4 +190,4 @@ def _guided() -> None:
 	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
 
 
-_guided()
+guided()

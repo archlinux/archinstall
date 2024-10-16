@@ -89,7 +89,7 @@ def parse_disk_encryption() -> None:
 		)
 
 
-def _minimal() -> None:
+def minimal() -> None:
 	with Tui():
 		prompt_disk_layout()
 		parse_disk_encryption()
@@ -105,7 +105,7 @@ def _minimal() -> None:
 		with Tui():
 			if not config.confirm_config():
 				debug('Installation aborted')
-				_minimal()
+				minimal()
 
 	fs_handler = disk.FilesystemHandler(
 		archinstall.arguments['disk_config'],
@@ -116,4 +116,4 @@ def _minimal() -> None:
 	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
 
 
-_minimal()
+minimal()
