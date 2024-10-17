@@ -13,7 +13,7 @@ class PasswordStrength(Enum):
 	STRONG = 'strong'
 
 	@property
-	def value(self) -> str:
+	def value(self) -> str:  # pylint: disable=invalid-overridden-method
 		match self:
 			case PasswordStrength.VERY_WEAK: return str(_('very weak'))
 			case PasswordStrength.WEAK: return str(_('weak'))
