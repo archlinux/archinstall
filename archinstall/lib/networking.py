@@ -12,7 +12,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 from .exceptions import SysCallError, DownloadTimeout
-from .output import error, info
+from .output import error, info, debug
 from .pacman import Pacman
 
 
@@ -118,7 +118,7 @@ def enrich_iface_types(interfaces: Union[dict[str, Any], list[str]]) -> dict[str
 	return result
 
 
-def fetch_data_from_url(url: str, params: Optional[dict] = None) -> str:
+def fetch_data_from_url(url: str, params: Optional[dict] = None, retry: int = 3) -> str:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -129,12 +129,23 @@ def fetch_data_from_url(url: str, params: Optional[dict] = None) -> str:
 	else:
 		full_url = url
 
-	try:
-		response = urlopen(full_url, context=ssl_context)
-		data = response.read().decode('UTF-8')
-		return data
-	except URLError:
-		raise ValueError(f'Unable to fetch data from url: {url}')
+	error_msg: str = ''
+
+	while retry > 0:
+		retry -= 1
+
+		try:
+			response = urlopen(full_url, context=ssl_context)
+			data = response.read().decode('UTF-8')
+			return data
+		except URLError as e:
+			error_msg = f'Unable to fetch data from url: {url}\n{e}'
+			debug(error_msg)
+		except Exception as e:
+			error_msg = f'Unexpected error when parsing resonse: {e}'
+			debug(error_msg)
+
+	raise ValueError(f'Failed fetching data: {error_msg}')
 
 
 def calc_checksum(icmp_packet) -> int:
