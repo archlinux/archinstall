@@ -142,7 +142,7 @@ def fetch_data_from_url(url: str, params: Optional[dict] = None, retry: int = 3)
 			error_msg = f'Unable to fetch data from url: {url}\n{e}'
 			debug(error_msg)
 		except Exception as e:
-			error_msg = f'Unexpected error when parsing resonse: {e}'
+			error_msg = f'Unexpected error when parsing response: {e}'
 			debug(error_msg)
 
 	raise ValueError(f'Failed fetching data: {error_msg}')
