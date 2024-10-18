@@ -5,22 +5,23 @@ from archinstall import debug
 from archinstall.lib.installer import Installer
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib import disk
+from archinstall.tui import Tui
 
 
 def ask_user_questions() -> None:
-	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+	with Tui():
+		global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+		global_menu.disable_all()
 
-	global_menu.enable('archinstall-language')
+		global_menu.set_enabled('archinstall-language', True)
+		global_menu.set_enabled('disk_config', True)
+		global_menu.set_enabled('disk_encryption', True)
+		global_menu.set_enabled('swap', True)
+		global_menu.set_enabled('save_config', True)
+		global_menu.set_enabled('install', True)
+		global_menu.set_enabled('abort', True)
 
-	global_menu.enable('disk_config', mandatory=True)
-	global_menu.enable('disk_encryption')
-	global_menu.enable('swap')
-
-	global_menu.enable('save_config')
-	global_menu.enable('install')
-	global_menu.enable('abort')
-
-	global_menu.run()
+		global_menu.run()
 
 
 def perform_installation(mountpoint: Path) -> None:
@@ -52,27 +53,30 @@ def perform_installation(mountpoint: Path) -> None:
 	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
-if not archinstall.arguments.get('silent'):
-	ask_user_questions()
+def only_hd() -> None:
+	if not archinstall.arguments.get('silent'):
+		ask_user_questions()
 
-config_output = ConfigurationOutput(archinstall.arguments)
-if not archinstall.arguments.get('silent'):
-	config_output.show()
+	config = ConfigurationOutput(archinstall.arguments)
+	config.write_debug()
+	config.save()
 
-config_output.save()
+	if archinstall.arguments.get('dry_run'):
+		exit(0)
 
-if archinstall.arguments.get('dry_run'):
-	exit(0)
+	if not archinstall.arguments.get('silent'):
+		with Tui():
+			if not config.confirm_config():
+				debug('Installation aborted')
+				only_hd()
 
-if not archinstall.arguments.get('silent'):
-	input('Press Enter to continue.')
+	fs_handler = disk.FilesystemHandler(
+		archinstall.arguments['disk_config'],
+		archinstall.arguments.get('disk_encryption', None)
+	)
 
-fs_handler = disk.FilesystemHandler(
-	archinstall.arguments['disk_config'],
-	archinstall.arguments.get('disk_encryption', None)
-)
-
-fs_handler.perform_filesystem_operations()
+	fs_handler.perform_filesystem_operations()
+	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
 
 
-perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+only_hd()

@@ -12,12 +12,9 @@ if TYPE_CHECKING:
 
 @dataclass
 class Audio(Enum):
+	NoAudio = 'No audio server'
 	Pipewire = 'pipewire'
 	Pulseaudio = 'pulseaudio'
-
-	@staticmethod
-	def no_audio_text() -> str:
-		return str(_('No audio server'))
 
 
 @dataclass
@@ -47,8 +44,9 @@ class AudioConfiguration:
 			case Audio.Pulseaudio:
 				installation.add_additional_packages("pulseaudio")
 
-		if SysInfo.requires_sof_fw():
-			installation.add_additional_packages('sof-firmware')
+		if self.audio != Audio.NoAudio:
+			if SysInfo.requires_sof_fw():
+				installation.add_additional_packages('sof-firmware')
 
-		if SysInfo.requires_alsa_fw():
-			installation.add_additional_packages('alsa-firmware')
+			if SysInfo.requires_alsa_fw():
+				installation.add_additional_packages('alsa-firmware')
