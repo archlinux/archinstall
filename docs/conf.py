@@ -5,13 +5,13 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 
-def process_docstring(app, what, name, obj, options, lines):
+def process_docstring(app, what, name, obj, options, lines) -> None:
 	spaces_pat = re.compile(r"( {8})")
 	ll = [spaces_pat.sub("    ", line) for line in lines]
 	lines[:] = ll
 
 
-def setup(app):
+def setup(app) -> None:
 	app.connect('autodoc-process-docstring', process_docstring)
 
 

@@ -13,28 +13,28 @@ from ..output import info, debug
 
 
 class MirrorStatusEntryV3(pydantic.BaseModel):
-	url :str
-	protocol :str
-	active :bool
-	country :str
-	country_code :str
-	isos :bool
-	ipv4 :bool
-	ipv6 :bool
-	details :str
-	delay :int|None = None
-	last_sync :datetime.datetime|None = None
-	duration_avg :float|None = None
-	duration_stddev :float|None = None
-	completion_pct :float|None = None
-	score :int|None = None
-	_latency :float|None = None
-	_speed :float|None = None
-	_hostname :str|None = None
-	_port :int|None = None
+	url: str
+	protocol: str
+	active: bool
+	country: str
+	country_code: str
+	isos: bool
+	ipv4: bool
+	ipv6: bool
+	details: str
+	delay: int | None = None
+	last_sync: datetime.datetime | None = None
+	duration_avg: float | None = None
+	duration_stddev: float | None = None
+	completion_pct: float | None = None
+	score: int | None = None
+	_latency: float | None = None
+	_speed: float | None = None
+	_hostname: str | None = None
+	_port: int | None = None
 
 	@property
-	def speed(self) -> float|None:
+	def speed(self) -> float | None:
 		if self._speed is None:
 			info(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
 			req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
@@ -46,13 +46,19 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 				self._speed = size / timer.time
 				debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
 			except http.client.IncompleteRead:
-				debug(f"    speed: <undetermined>")
-				self._speed = None
+				debug("    speed: <undetermined>")
+				self._speed = 0
+			except urllib.error.URLError as error:
+				debug(f"    speed: <undetermined> ({error})")
+				self._speed = 0
+			except Exception as error:
+				debug(f"    speed: <undetermined> ({error})")
+				self._speed = 0
 
 		return self._speed
 
 	@property
-	def latency(self) -> float|None:
+	def latency(self) -> float | None:
 		"""
 		Latency measures the miliseconds between one ICMP request & response.
 		It only does so once because we check if self._latency is None, and a ICMP timeout result in -1
@@ -66,7 +72,7 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 		return self._latency
 
 	@pydantic.field_validator('score', mode='before')
-	def validate_score(cls, value) -> int|None:
+	def validate_score(cls, value) -> int | None:
 		if value is not None:
 			value = round(value)
 			debug(f"    score: {value}")
@@ -81,17 +87,18 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {round(self.score)}" if self.score else ''))
 		return self
 
+
 class MirrorStatusListV3(pydantic.BaseModel):
-	cutoff :int
-	last_check :datetime.datetime
-	num_checks :int
-	urls :List[MirrorStatusEntryV3]
-	version :int
+	cutoff: int
+	last_check: datetime.datetime
+	num_checks: int
+	urls: List[MirrorStatusEntryV3]
+	version: int
 
 	@pydantic.model_validator(mode='before')
 	@classmethod
-	def check_model(cls, data: Dict[str, int|datetime.datetime|List[MirrorStatusEntryV3]]) -> Dict[str, int|datetime.datetime|List[MirrorStatusEntryV3]]:
+	def check_model(cls, data: Dict[str, int | datetime.datetime | List[MirrorStatusEntryV3]]) -> Dict[str, int | datetime.datetime | List[MirrorStatusEntryV3]]:
 		if data.get('version') == 3:
 			return data
 
-		raise ValueError(f"MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/")
+		raise ValueError("MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/")

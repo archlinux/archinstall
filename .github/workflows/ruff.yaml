@@ -1,0 +1,12 @@
+on: [ push, pull_request ]
+name: ruff linting
+jobs:
+    ruff:
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux/archlinux:latest
+        steps:
+            - uses: actions/checkout@v4
+            - run: pacman --noconfirm -Syu ruff
+            - name: Lint with ruff
+              run: ruff check

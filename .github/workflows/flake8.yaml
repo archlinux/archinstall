@@ -1,5 +1,5 @@
 on: [ push, pull_request ]
-name: flake8 linting (15 ignores)
+name: flake8 linting (6 ignores)
 jobs:
     flake8:
         runs-on: ubuntu-latest
@@ -14,7 +14,7 @@ jobs:
                 pacman --noconfirm -Syyu
                 pacman --noconfirm -Sy python-pip python-pyparted python-simple-term-menu pkgconfig gcc
             - run: pip install --break-system-packages --upgrade pip
-            # this will install the exact version of mypy that is in the pyproject.toml file
+            # this will install the exact version of flake8 that is in the pyproject.toml file
             - name: Install archinstall dependencies
               run: pip install --break-system-packages .[dev]
             - run: python --version

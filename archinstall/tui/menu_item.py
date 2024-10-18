@@ -80,7 +80,7 @@ class MenuItemGroup:
 			raise ValueError('Selected item not in menu')
 
 	@staticmethod
-	def default_confirm():
+	def default_confirm() -> 'MenuItemGroup':
 		return MenuItemGroup(
 			[MenuItem.default_yes(), MenuItem.default_no()],
 			sort_items=False

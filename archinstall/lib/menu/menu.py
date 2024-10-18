@@ -3,7 +3,7 @@ from enum import Enum, auto
 from os import system
 from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional, Callable
 
-from simple_term_menu import TerminalMenu  # type: ignore
+from simple_term_menu import TerminalMenu
 
 from ..exceptions import RequirementError
 from ..output import debug
@@ -33,7 +33,7 @@ class MenuSelection:
 		return self.value  # type: ignore
 
 
-class Menu(TerminalMenu):
+class Menu(TerminalMenu):  # type: ignore[misc]
 	_menu_is_active: bool = False
 
 	@staticmethod
@@ -168,7 +168,7 @@ class Menu(TerminalMenu):
 		menu_title = f'\n{action_info}{title}\n'
 
 		if header:
-			if not isinstance(header,(list,tuple)):
+			if not isinstance(header, (list, tuple)):
 				header = [header]
 			menu_title += '\n' + '\n'.join(header)
 
@@ -294,13 +294,13 @@ class Menu(TerminalMenu):
 
 		return selection
 
-	def set_cursor_pos(self,pos :int) -> None:
+	def set_cursor_pos(self, pos: int) -> None:
 		if pos and 0 < pos < len(self._menu_entries):
 			self._view.active_menu_index = pos
 		else:
 			self._view.active_menu_index = 0  # we define a default
 
-	def set_cursor_pos_entry(self,value :str) -> None:
+	def set_cursor_pos_entry(self, value: str) -> None:
 		pos = self._menu_entries.index(value)
 		self.set_cursor_pos(pos)
 

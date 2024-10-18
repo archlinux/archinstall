@@ -510,7 +510,7 @@ class Installer:
 			fp.write(gen_fstab)
 
 		if not fstab_path.is_file():
-			raise RequirementError(f'Could not create fstab file')
+			raise RequirementError('Could not create fstab file')
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_genfstab'):
@@ -665,7 +665,7 @@ class Installer:
 						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
 						# base is not installed yet.
-						def post_install_enable_iwd_service(*args: str, **kwargs: str):
+						def post_install_enable_iwd_service(*args: str, **kwargs: str) -> None:
 							self.enable_service('iwd')
 
 						self.post_base_install.append(post_install_enable_iwd_service)
@@ -893,7 +893,7 @@ class Installer:
 
 	def setup_swap(self, kind: str = 'zram') -> None:
 		if kind == 'zram':
-			info(f"Setting up swap on zram")
+			info("Setting up swap on zram")
 			self.pacman.strap('zram-generator')
 
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
@@ -906,7 +906,7 @@ class Installer:
 
 			self._zram_enabled = True
 		else:
-			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
+			raise ValueError("Archinstall currently only supports setting up swap on zram")
 
 	def _get_efi_partition(self) -> Optional[disk.PartitionModification]:
 		for layout in self._disk_config.device_modifications:
@@ -1307,7 +1307,7 @@ Exec = /bin/sh -c "{hook_command}"
 		for kernel in self.kernels:
 			for variant in ('', '-fallback'):
 				entry = [
-					f'protocol: linux',
+					'protocol: linux',
 					f'kernel_path: boot():/vmlinuz-{kernel}',
 					f'kernel_cmdline: {kernel_params}',
 					f'module_path: boot():/initramfs-{kernel}{variant}.img',
@@ -1620,7 +1620,7 @@ Exec = /bin/sh -c "{hook_command}"
 				except SysCallError as err:
 					raise ServiceException(f"Unable to set locale '{language}' for X11: {err}")
 		else:
-			info(f'X11-Keyboard language was not changed from default (no language specified)')
+			info('X11-Keyboard language was not changed from default (no language specified)')
 
 		return True
 

@@ -17,7 +17,6 @@ from ..hardware import SysInfo
 from ..luks import Luks2
 from ..menu import Menu
 from ..output import debug, info
-from ..general import SysCommand
 
 if TYPE_CHECKING:
 	_: Any
@@ -114,7 +113,7 @@ class FilesystemHandler:
 				device_handler.format(part_mod.safe_fs_type, part_mod.safe_dev_path)
 
 			# synchronize with udev before using lsblk
-			SysCommand('udevadm settle')
+			device_handler.udev_sync()
 
 			lsblk_info = device_handler.fetch_part_info(part_mod.safe_dev_path)
 

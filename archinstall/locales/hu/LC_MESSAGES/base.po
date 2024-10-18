@@ -27,16 +27,16 @@ msgid "Would you like to use swap on zram?"
 msgstr "Biztosan cserehelyet akar használni a zram-on?"
 
 msgid "Desired hostname for the installation: "
-msgstr "A számítógép neve a telepítéshez: "
+msgstr "A kiszolgáló neve a telepítéshez: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "A rendszergazda felhasználó neve a számítógép használatához szükséges sudo jogosultságokkal: "
+msgstr "A rendszergazda felhasználó neve a számítógép használatához szükséges „sudo” jogosultságokkal: "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "További hozzáadandó felhasználók (ha nem akar több felhasználót hozzáadni, akkor hagyja üresen): "
+msgstr "További felhasználók hozzáadása a telepítéshez (hagyja üresen, ha nem akar több felhasználót hozzáadni): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Ennek a felhasználónak rendszergazdának (sudoer-nek) kell lennie?"
+msgstr "Ennek a felhasználónak rendszergazdának (sudoer) kell lennie?"
 
 msgid "Select a timezone"
 msgstr "Időzóna kiválasztása"
@@ -51,13 +51,13 @@ msgid "Choose an audio server"
 msgstr "Válasszon ki egy hangkiszolgálót"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és az opcionális profilcsomagok kerülnek telepítésre."
+msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok kerülnek telepítésre."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő prompt-ban adhatja meg."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Írjon be további telepítendő csomag neveket (szóközzel elválasztva, ha ki akarja hagyni ezt lépést, akkor hagyja üresen): "
+msgstr "Írjon be további csomagneveket a telepítéshez (szóközzel elválasztva; hagyja üresen a kihagyáshoz): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Másolja be az ISO hálózati konfigurációt a telepítéshez"
@@ -75,10 +75,10 @@ msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Adja meg az IP-címét és az alhálózatát (például: 192.168.0.5/24) ehhez: {}: "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Adja meg az átjáró (router) IP-címét, vagy hagyja üresen, ha nincs ilyen: "
+msgstr "Adja meg az átjáró (elosztó) IP-címét (hagyja üresen, ha nincs ilyen): "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Adja meg a DNS-kiszolgálókat (szóközzel elválasztva, vagy hagyja üresen, ha nincsenek ilyenek): "
+msgstr "Adja meg a DNS-kiszolgálókat (szóközzel elválasztva; hagyja üresen, ha nincsenek ilyenek): "
 
 msgid "Select which filesystem your main partition should use"
 msgstr "Válassza ki, hogy a fő partíció milyen fájlrendszert használjon"
@@ -94,13 +94,13 @@ msgstr ""
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
-msgstr "Adja meg a partíció kívánt fájlrendszer típusát"
+msgstr "Adja meg a partíció fájlrendszertípusát"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Adja meg a kiindulási helyet (felosztott egységekben: s, GB, % stb. ; alapértelmezett: {}): "
+msgstr "Adja meg a kiindulási helyet (felosztott egységekben: s, GB, %, stb. ; alapértelmezett: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Adja meg a befejezési helyet (felosztott egységekben: s, GB, % stb. ; pl.: {}): "
+msgstr "Adja meg a befejezési helyet (felosztott egységekben: s, GB, %, stb. ; pl.: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "A(z) {} sorban álló partíciókat tartalmaz, ez eltávolítja azokat, biztos benne?"
@@ -112,7 +112,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Index alapján válassza ki a törölni kívánt partíciókat"
+"Index alapján válassza ki a törlendő partíciókat"
 
 msgid ""
 "{}\n"
@@ -124,7 +124,7 @@ msgstr ""
 "Index alapján válassza ki, hogy melyik partíciót hová szeretné csatolni"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * A partíció csatolási pontjai a telepítésen belülre vonatkoznak, a boot pédául /boot lesz."
+msgstr " * A partíció csatolási pontjai a telepítésen belülre vonatkoznak, a „boot” pédául „/boot” lesz."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr "Válassza ki, hogy hová szeretné csatolni a partíciót (hagyja üresen a csatolási pont eltávolításához): "
@@ -166,19 +166,19 @@ msgstr ""
 "Válassza ki, hogy melyik partícióra kívánja a fájlrendszert beállítani"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Adja meg a kívánt fájlrendszer típusát a partíciónak: "
+msgstr "Adja meg a partíció fájlrendszertípusát: "
 
 msgid "Archinstall language"
-msgstr "Az Archtelepítő nyelve"
+msgstr "Az Archinstall nyelve"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Törölje az összes kiválasztott meghajtót, és használja a lehető legjobb beállítást lehetővé tévő alapértelmezett partíció-elrendezést"
+msgstr "Törölje az összes kiválasztott meghajtót, és használja a lehető legjobb beállítást lehetővé tévő alapértelmezett partícióelrendezést"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
 msgstr "Válassza ki, hogy mit tegyen a telepítő az egyes meghajtókkal (ezt a partícióhasználat követi)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Válassza ki, hogy mit tegyen a telepítő a kiválasztott blokk-eszközökkel"
+msgstr "Válassza ki, hogy mit tegyen a telepítő a kiválasztott blokkeszközökkel"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Ez az előre programozott profilok listája, amelyek megkönnyíthetik az olyan dolgok telepítését, mint például az asztali környezetek"
@@ -187,19 +187,19 @@ msgid "Select keyboard layout"
 msgstr "Válassza ki a billentyűzetkiosztást"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Válasszon ki egy régiót a csomagok letöltéséhez"
+msgstr "Válassza ki a régiót a csomagok letöltéséhez"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "Válasszon ki egy vagy több meghajtót a használathoz és a konfiguráláshoz"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Az AMD hardverrel való legjobb kompatibilitás érdekében érdemes lehet az összes nyílt forráskódú vagy az AMD / ATI opciót használni."
+msgstr "Az AMD hardverrel való legjobb kompatibilitás érdekében érdemes lehet az összes nyílt forráskódú- vagy az AMD / ATI beállítást használni."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Az Intel hardverrel való legjobb kompatibilitás érdekében érdemes lehet az összes nyílt forráskódú vagy Intel opciót használni.\n"
+msgstr "Az Intel hardverrel való legjobb kompatibilitás érdekében érdemes lehet az összes nyílt forráskódú- vagy az Intel beállítást használni.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Az Nvidia hardverrel való legjobb kompatibilitás érdekében érdemes lehet az Nvidia saját fejlesztésű illesztőprogramját használni.\n"
+msgstr "Az Nvidia hardverrel való legjobb kompatibilitás érdekében érdemes lehet az Nvidia saját fejlesztésű, zárt illesztőprogramját használni.\n"
 
 msgid ""
 "\n"
@@ -208,34 +208,34 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Válasszon ki egy grafikus illesztőprogramot, vagy hagyja üresen az összes nyílt forráskódú illesztőprogram telepítéséhez"
+"Válasszon ki egy grafikus illesztőprogramot vagy hagyja üresen az összes nyílt forráskódú illesztőprogram telepítéséhez"
 
 msgid "All open-source (default)"
-msgstr "Minden nyílt forráskódú (alapértelmezett)"
+msgstr "Összes nyílt forráskódú (alapértelmezett)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Válassza ki a használni kívánt kerneleket, vagy hagyja üresen a(z) alapértelmezett „{}” kernel használatához"
+msgstr "Válassza ki a használandó kerneleket, vagy hagyja üresen az alapértelmezett „{}” kernel használatához"
 
 msgid "Choose which locale language to use"
-msgstr "Válassza ki a használni kívánt területi nyelvet"
+msgstr "Válassza ki a használandó területi nyelvet"
 
 msgid "Choose which locale encoding to use"
-msgstr "Válassza ki a használni kívánt nyelvi kódolást"
+msgstr "Válassza ki a használandó nyelvi kódolást"
 
 msgid "Select one of the values shown below: "
 msgstr "Válasszon az alábbi értékek egyikéből: "
 
 msgid "Select one or more of the options below: "
-msgstr "Válasszon ki egyet vagy többet az alábbi lehetőségek közül: "
+msgstr "Válasszon ki egyet vagy többet az alábbi beállítások közül: "
 
 msgid "Adding partition...."
-msgstr "Partíció hozzáadása...."
+msgstr "Partíció hozzáadása…"
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "A folytatáshoz meg kell adnia egy érvényes fs-típust. Az érvényes fs-típusokat megtekinthetőek a „man parted” részben."
+msgstr "A folytatáshoz meg kell adnia egy érvényes fs-típust. Az érvényes fs-típusok megtekinthetők a „man parted” részben."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Hiba: A(z) „{}” URL-címen lévő profilok listázása a következőket eredményezte:"
+msgstr "Hiba: A(z) „{}” webcímen lévő profilok listázása a következőket eredményezte:"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Hiba: Nem sikerült dekódolni a(z) „{}” eredményt JSON-ként:"
@@ -256,7 +256,7 @@ msgid "Drive(s)"
 msgstr "Meghajtó(k)"
 
 msgid "Disk layout"
-msgstr "Lemez elrendezése"
+msgstr "Lemezelrendezés"
 
 msgid "Encryption password"
 msgstr "Titkosítási jelszó"
@@ -268,10 +268,10 @@ msgid "Bootloader"
 msgstr "Rendszerbetöltő"
 
 msgid "Root password"
-msgstr "Root jelszó"
+msgstr "Root-jelszó"
 
 msgid "Superuser account"
-msgstr "Rendszergazda fiók"
+msgstr "Rendszergazdai fiók"
 
 msgid "User account"
 msgstr "Felhasználói fiók"
@@ -305,7 +305,7 @@ msgid ""
 msgstr ""
 "Úgy döntött, hogy kihagyja a merevlemez kiválasztását\n"
 "és azt a meghajtóbeállítást fogja használni, amely a(z) {} helyen van csatolva (kísérleti)\n"
-"FIGYELMEZTETÉS: Az Archtelepítő nem ellenőrzi ennek a beállításnak a megfelelőségét\n"
+"FIGYELMEZTETÉS: Az Archinstall nem ellenőrzi ennek a beállításnak a megfelelőségét\n"
 "Biztosan folytatni akarja?"
 
 msgid "Re-using partition instance: {}"
@@ -318,28 +318,28 @@ msgid "Delete a partition"
 msgstr "Partíció törlése"
 
 msgid "Clear/Delete all partitions"
-msgstr "Minden partíció tisztítása/törlése"
+msgstr "Az összes partíció tisztítása/törlése"
 
 msgid "Assign mount-point for a partition"
 msgstr "Csatolási pont hozzárendelése egy partícióhoz"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "Egy partíció megjelölése/megjelölés-visszavonása formázandóként (adatok törlése)"
+msgstr "Egy partíció megjelölése/elvetése mint formázandó (adatok törlése)"
 
 msgid "Mark/Unmark a partition as encrypted"
-msgstr "Egy partíció megjelölése/megjelölés-visszavonása titkosítottként"
+msgstr "Egy partíció megjelölése/elvetése mint titkosított"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Egy partíció megjelölése/megjelölés-visszavonása mint rendszerindító (automatikus a /boot esetében)"
+msgstr "Egy partíció megjelölése/elvetése mint rendszerindító (automatikus a „/boot” esetében)"
 
 msgid "Set desired filesystem for a partition"
-msgstr "Állítsa be a kívánt fájlrendszer típusát a partíciónak"
+msgstr "Állítsa be a partíció fájlrendszertípusát"
 
 msgid "Abort"
 msgstr "Megszakítás"
 
 msgid "Hostname"
-msgstr "A számítógép neve"
+msgstr "Kiszolgálónév"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "Nincs konfigurálva, nem érhető el, kivéve, ha kézzel állítja be"
@@ -348,7 +348,7 @@ msgid "Timezone"
 msgstr "Időzóna"
 
 msgid "Set/Modify the below options"
-msgstr "Az alábbi opciók beállítása/módosítása"
+msgstr "Az alábbi beállítások beállítása/módosítása"
 
 msgid "Install"
 msgstr "Telepítés"
@@ -361,7 +361,7 @@ msgstr ""
 "\n"
 
 msgid "Suggest partition layout"
-msgstr "Partíció elrendezési javaslat"
+msgstr "Partícióelrendezési javaslat"
 
 msgid "Enter a password: "
 msgstr "Adjon meg egy jelszót: "
@@ -370,16 +370,16 @@ msgid "Enter a encryption password for {}"
 msgstr "Adjon meg egy titkosítási jelszót ehhez: {}"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Adjon meg egy jelszót a lemez titkosításához (ha üresen hagyja nem lesz titkosítva): "
+msgstr "Adjon meg egy jelszót a lemez titkosításához (hagyja üresen, ha nem akarja titkosítani): "
 
 msgid "Create a required super-user with sudo privileges: "
-msgstr "Hozzon létre egy szükséges rendszergazdát sudo jogosultságokkal: "
+msgstr "Hozzon létre egy szükséges rendszergazdát „sudo” jogosultságokkal: "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "Adjon meg egy root jelszót (a root letiltásához hagyja üresen): "
+msgstr "Adjon meg egy root-jelszót (hagyja üresen a „root” letiltásához): "
 
 msgid "Password for user \"{}\": "
-msgstr "„{}” felhasználó jelszava: "
+msgstr "A(z) „{}” nevű felhasználó jelszava: "
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "További csomagok létezésének ellenőrzése (ez eltarthat néhány másodpercig)"
@@ -407,7 +407,7 @@ msgid ""
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-"Tallózzon ki egy objektumot a listából, majd válasszon ki egyet a végrehajtandó műveletek közül"
+"Válasszon ki egy objektumot a listából, majd válasszon ki egyet a végrehajtandó műveletek közül"
 
 msgid "Cancel"
 msgstr "Mégse"
@@ -428,13 +428,13 @@ msgid "Delete"
 msgstr "Törlés"
 
 msgid "Select an action for '{}'"
-msgstr "Válasszon egy műveletet a következőhöz: „{}”"
+msgstr "Válasszon ki egy műveletet a következőhöz: „{}”"
 
 msgid "Copy to new key:"
 msgstr "Másolás új kulcsba:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "Ismeretlen nic típus: {}. Lehetséges értékek: {}"
+msgstr "Ismeretlen nic-típus: {}. Lehetséges értékek: {}"
 
 msgid ""
 "\n"
@@ -447,10 +447,10 @@ msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate
 msgstr "A Pacman már fut, várjon maximum 10 percet a megszakításával."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "A már meglévő pacman zár soha nem lép ki. Az Archtelepítő használata előtt tisztítsa meg a meglévő pacman munkameneteket."
+msgstr "A már meglévő pacman-zár soha nem lép ki. Az Archinstall használata előtt tisztítsa meg a meglévő pacman-munkameneteket."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Válassza ki, hogy mely további opcionális tárolókat kívánja engedélyezni"
+msgstr "Válassza ki, hogy mely további nem kötelező tárolókat kívánja engedélyezni"
 
 msgid "Add a user"
 msgstr "Felhasználó hozzáadása"
@@ -478,13 +478,13 @@ msgid "Should {} be a superuser (sudoer)?"
 msgstr "{} rendszergazda (sudoer) legyen?"
 
 msgid "Define users with sudo privilege: "
-msgstr "A sudo jogosultsággal rendelkező felhasználók meghatározása: "
+msgstr "A „sudo” jogosultsággal rendelkező felhasználók meghatározása: "
 
 msgid "No network configuration"
 msgstr "Nincs hálózati konfiguráció"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Állítsa be a kívánt alköteteket egy BTRFS partíción"
+msgstr "Állítsa be egy BTRFS-partíció alköteteteit"
 
 msgid ""
 "{}\n"
@@ -496,7 +496,7 @@ msgstr ""
 "Válassza ki, hogy melyik partícióra kívánja beállítani az alköteteket"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr "Az aktuális partíció BTRFS alköteteinek kezelése"
+msgstr "A jelenlegi partíció BTRFS-alköteteinek kezelése"
 
 msgid "No configuration"
 msgstr "Nincs konfiguráció"
@@ -508,16 +508,16 @@ msgid "Save user credentials"
 msgstr "Felhasználói hitelesítő adatok mentése"
 
 msgid "Save disk layout"
-msgstr "Lemez elrendezésének mentése"
+msgstr "Lemezelrendezés mentése"
 
 msgid "Save all"
 msgstr "Összes mentése"
 
 msgid "Choose which configuration to save"
-msgstr "Válassza ki a menteni kívánt konfigurációt"
+msgstr "Válassza ki a mentendő konfiguráció(ka)t"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "Adjon meg egy könyvtárat a menteni kívánt konfiguráció(k) számára: "
+msgstr "Adjon meg egy könyvtárat a mentendő konfiguráció(k) számára: "
 
 msgid "Not a valid directory: {}"
 msgstr "Érvénytelen könyvtár: {}"
@@ -526,10 +526,10 @@ msgid "The password you are using seems to be weak,"
 msgstr "Úgy tűnik, hogy a megadott jelszó gyenge,"
 
 msgid "are you sure you want to use it?"
-msgstr "biztos, hogy használni akarja?"
+msgstr "biztosan használni akarja?"
 
 msgid "Optional repositories"
-msgstr "Opcionális tárolók"
+msgstr "Nem kötelező tárolók"
 
 msgid "Save configuration"
 msgstr "Konfiguráció mentése"
@@ -553,14 +553,14 @@ msgid " mounted at {:16}"
 msgstr " csatolva ehhez {:16}"
 
 msgid " with option {}"
-msgstr " {} opcióval"
+msgstr " a következő beállítással: {}"
 
 msgid ""
 "\n"
 " Fill the desired values for a new subvolume \n"
 msgstr ""
 "\n"
-"Töltse ki a kívánt értékeket egy új alkötethez \n"
+"Adja meg az értékeket egy új alkötethez \n"
 
 msgid "Subvolume name "
 msgstr "Alkötet neve "
@@ -569,7 +569,7 @@ msgid "Subvolume mountpoint"
 msgstr "Alkötet csatolási pontja"
 
 msgid "Subvolume options"
-msgstr "Alkötet beállítások"
+msgstr "Alkötetbeállítások"
 
 msgid "Save"
 msgstr "Mentés"
@@ -581,31 +581,31 @@ msgid "Select a mount point :"
 msgstr "Válasszon ki egy csatolási pontot :"
 
 msgid "Select the desired subvolume options "
-msgstr "Válassza ki a kívánt alkötet beállításokat "
+msgstr "Válassza ki az alkötetbeállításokat "
 
 msgid "Define users with sudo privilege, by username: "
-msgstr "Sudo jogosultsággal rendelkező felhasználók meghatározása felhasználónév alapján: "
+msgstr "A „sudo” jogosultsággal rendelkező felhasználók meghatározása a felhasználónév alapján: "
 
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] A naplófájl itt jött létre: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Szeretne BTRFS alköteteket alapértelmezett struktúrával használni?"
+msgstr "Szeretne BTRFS-alköteteket alapértelmezett struktúrával használni?"
 
 msgid "Would you like to use BTRFS compression?"
-msgstr "Szeretne BTRFS tömörítést használni?"
+msgstr "Szeretne BTRFS-tömörítést használni?"
 
 msgid "Would you like to create a separate partition for /home?"
-msgstr "Szeretne egy külön partíciót létrehozni a /home számára?"
+msgstr "Szeretne egy külön partíciót létrehozni a „/home” számára?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
 msgstr "A kiválasztott meghajtók nem rendelkeznek az automatikus javaslathoz szükséges minimális kapacitással.\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr "A /home partíció minimális kapacitása: {}GB\n"
+msgstr "A „/home” partíció minimális kapacitása: {} GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr "Az Arch Linux partíció minimális kapacitása: {}GB"
+msgstr "Az Arch Linux-partíció minimális kapacitása: {} GB"
 
 msgid "Continue"
 msgstr "Folytatás"
@@ -626,7 +626,7 @@ msgid "No iface specified for manual configuration"
 msgstr "Nincs megadva iface a kézi konfigurációhoz"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr "A kézi nic konfiguráció automatikus DHCP nélkül egy IP-címet igényel"
+msgstr "A kézi nic-konfiguráció automatikus DHCP nélkül egy IP-címet igényel"
 
 msgid "Add interface"
 msgstr "Csatoló hozzáadása"
@@ -644,16 +644,16 @@ msgid "Manual configuration"
 msgstr "Kézi konfiguráció"
 
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "A partíció tömörítettként való megjelölése/megjelölés-visszavonása (csak btrfs)"
+msgstr "A partíció megjelölése/elvetése mint tömörített (csak BTRFS)"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Úgy tűnik, hogy a megadott jelszó gyenge. Biztos, hogy használni akarja?"
+msgstr "Úgy tűnik, hogy a megadott jelszó gyenge. Biztosan használni akarja?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
 msgstr "Asztali környezetek és ablakkezelők széles választékát kínálja, pl. gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr "Válassza ki a kívánt asztali környezetet"
+msgstr "Válassza ki az asztali környezetet"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
 msgstr "Egy nagyon alapszintű telepítés, amely lehetővé teszi, hogy az Arch Linuxot saját belátása szerint testre szabja."
@@ -668,22 +668,22 @@ msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Telepít egy minimális rendszert, valamint a xorg és a grafikus illesztőprogramokat."
 
 msgid "Press Enter to continue."
-msgstr "A folytatáshoz nyomja meg az Entert."
+msgstr "A folytatáshoz nyomja meg az „Entert”."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
 msgstr "Szeretne chroot-olni az újonnan létrehozott telepítésbe, és elvégezni a telepítés utáni konfigurációt?"
 
 msgid "Are you sure you want to reset this setting?"
-msgstr "Biztos, hogy vissza akarja állítani ezt a beállítást alaphelyzetbe?"
+msgstr "Biztosan vissza akarja állítani ezt a beállítást alapértelmezettre?"
 
 msgid "Select one or more hard drives to use and configure\n"
 msgstr "Válasszon ki egy vagy több meghajtót a használathoz és konfiguráláshoz.\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "A meglévő beállítások bármilyen módosítása visszaállítja a lemez elrendezését az alaphelyzetbe!"
+msgstr "A meglévő beállítások bármilyen módosítása visszaállítja a lemezelrendezést az alapértelmezettre!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Ha alaphelyzetbe állítja a meghajtó-kiválasztást, akkor az aktuális lemezelrendezést is visszaállítja. Biztos benne?"
+msgstr "Ha alapértelmezettre állítja a meghajtókiválasztást, akkor a jelenlegi lemezelrendezést is visszaállítja. Biztos benne?"
 
 msgid "Save and exit"
 msgstr "Mentés és kilépés"
@@ -708,7 +708,7 @@ msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
-"CTRL+C → az aktuális kijelölés visszaállításához\n"
+"CTRL+C → a jelenlegi kiválasztás visszaállításához\n"
 "\n"
 
 msgid "Copy to: "
@@ -730,10 +730,10 @@ msgid "Value: "
 msgstr "Érték: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Kihagyhatja a meghajtó kiválasztását és a particionálást és bármilyen meghajtó-beállítást használhat, amely az /mnt könyvtárhoz van csatolva (kísérleti)"
+msgstr "Kihagyhatja a meghajtó kiválasztását és a particionálást, továbbá bármilyen meghajtóbeállítást használhat, amely az „/mnt” könyvtárhoz van csatolva (kísérleti)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Válassza ki az egyik lemezt, vagy hagyja ki ezt a lépést és használja az /mnt-t alapértelmezettként"
+msgstr "Válassza ki az egyik lemezt, vagy hagyja ki ezt a lépést és használja az „/mnt” csatolási pontot alapértelmezettként"
 
 msgid "Select which partitions to mark for formatting:"
 msgstr "Válassza ki, hogy mely partíciókat szeretné formázásra megjelölni:"
@@ -751,10 +751,10 @@ msgid "Free space"
 msgstr "Szabad terület"
 
 msgid "Bus-type"
-msgstr "Busz-típus"
+msgstr "Busztípus"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "Meg kell adni egy root jelszót, vagy legalább 1 sudo jogosultsággal rendelkező felhasználót"
+msgstr "Meg kell adni egy root-jelszót, vagy legalább 1 „sudo” jogosultsággal rendelkező felhasználót"
 
 msgid "Enter username (leave blank to skip): "
 msgstr "Felhasználónév megadása (hagyja üresen a kihagyáshoz): "
@@ -763,7 +763,7 @@ msgid "The username you entered is invalid. Try again"
 msgstr "A megadott felhasználónév érvénytelen. Próbálja újra"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "„{}” felhasználónak rendszergazdának (sudoer) kell lennie?"
+msgstr "A(z) „{}” nevű felhasználónak rendszergazdának (sudoer) kell lennie?"
 
 msgid "Select which partitions to encrypt"
 msgstr "Válassza ki mely partíciókat szeretné titkosítani"
@@ -793,14 +793,14 @@ msgid "Configured {} interfaces"
 msgstr "{} konfigurált csatoló"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Ez a beállítás lehetővé teszi, hogy a telepítés során hány párhuzamos letöltés történhet"
+msgstr "Ez a beállítás lehetővé teszi, hogy telepítéskor hány párhuzamos letöltés történhet"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 " (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
-"Adja meg az engedélyezni kívánt párhuzamos letöltések számát.\n"
+"Adja meg az engedélyezendő párhuzamos letöltések számát.\n"
 " (Adjon meg egy értéket 1 és {} között)\n"
 "Megjegyzés:"
 
@@ -811,7 +811,7 @@ msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads a
 msgstr " - Minimális érték   : 1 (1 párhuzamos letöltést tesz lehetővé és egyszerre 2 letöltést enged meg)"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr " - Letiltás/Alapértelmezett: 0 (Kikapcsolja a párhuzamos letöltést, egyszerre csak 1 letöltést tesz lehetővé)"
+msgstr " - Letiltás/alapértelmezett: 0 (Kikapcsolja a párhuzamos letöltést, egyszerre csak 1 letöltést tesz lehetővé)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
@@ -827,7 +827,7 @@ msgid "CTRL+C to reset"
 msgstr "CTRL+C → a visszaállításhoz"
 
 msgid "TAB to select"
-msgstr "TAB → az elem(ek) megjelöléséhez"
+msgstr "TAB → a listaelem(ek) kiválasztásához"
 
 msgid "[Default value: 0] > "
 msgstr "[Alapértelmezett érték: 0] > "
@@ -839,43 +839,43 @@ msgid "The font should be stored as {}"
 msgstr "A betűtípust úgy kell eltárolni mint {}"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr "Az Archtelepítő futtatásához root jogosultságok szükségesek. További információkért tekintse meg  a --help menüpontot."
+msgstr "Az Archinstall futtatásához root-jogosultságok szükségesek. További információkért tekintse meg a súgót: --help."
 
 msgid "Select an execution mode"
 msgstr "Válasszon ki egy végrehajtási módot"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr "Nem sikerült lekérni a profilt a megadott URL-cím-ről: {}"
+msgstr "Nem sikerült lekérni a profilt a megadott webcímről: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr "A profiloknak egyedi névvel kell rendelkezniük, de ismétlődő névvel rendelkező profildefiníciók találhatóak: {}"
+msgstr "A profiloknak egyedi névvel kell rendelkezniük, de ismétlődő névvel rendelkező profildefiníciók találhatók: {}"
 
 msgid "Select one or more devices to use and configure"
 msgstr "Válasszon ki egy vagy több eszközt a használathoz és a konfiguráláshoz"
 
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr "Ha visszaállítja az eszköz-kiválasztást, akkor az aktuális lemezelrendezést is visszaállítja. Biztos benne?"
+msgstr "Ha visszaállítja az eszközkiválasztást, akkor a jelenlegi lemezelrendezést is visszaállítja. Biztos benne?"
 
 msgid "Existing Partitions"
 msgstr "Meglévő partíciók"
 
 msgid "Select a partitioning option"
-msgstr "Válasszon egy particionálási lehetőséget"
+msgstr "Válasszon ki egy particionálási beállítást"
 
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Adja meg a csatolt eszközök gyökérkönyvtárát: "
 
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "A /home partíció minimális kapacitása: {}GB\n"
+msgstr "A „/home” partíció minimális kapacitása: {} GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "Az Arch Linux partíció minimális kapacitása: {}GB"
+msgstr "Az Arch Linux partíció minimális kapacitása: {} GB"
 
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
 msgstr "Ez az előre programozott profiles_bck lista, ami megkönnyítheti az olyan dolgok telepítését, mint például az asztali környezetekét"
 
 msgid "Current profile selection"
-msgstr "Aktuális profil kiválasztása"
+msgstr "Jelenlegi profil kiválasztása"
 
 msgid "Remove all newly added partitions"
 msgstr "Az összes újonnan hozzáadott partíció eltávolítása"
@@ -884,16 +884,16 @@ msgid "Assign mountpoint"
 msgstr "Csatolási pont hozzárendelése"
 
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr "Megjelölés/megjelölés-visszavonása formázandóként (adatok törlése)"
+msgstr "Megjelölés/elvetés mint formázandó (adatok törlése)"
 
 msgid "Mark/Unmark as bootable"
-msgstr "Megjelölés/megjelölés-visszavonása mint rendszerindító"
+msgstr "Megjelölés/elvetés mint rendszerindító"
 
 msgid "Change filesystem"
 msgstr "Fájlrendszer módosítása"
 
 msgid "Mark/Unmark as compressed"
-msgstr "Megjelölés/megjelölés-visszavonása mint tömörített"
+msgstr "Megjelölés/elvetés mint tömörített"
 
 msgid "Set subvolumes"
 msgstr "Alkötetek beállítása"
@@ -908,10 +908,10 @@ msgid "This partition is currently encrypted, to format it a filesystem has to b
 msgstr "Ez a partíció jelenleg titkosított, a formázásához meg kell adni egy fájlrendszert"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr "A partíció csatolási pontok a telepítésen belülre vonatkoznak, a boot pédául /boot lesz."
+msgstr "A partíció csatolási pontok a telepítésen belülre vonatkoznak, a „boot” pédául „/boot” lesz."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr "Ha a /boot csatolási pont be van állítva, akkor a partíció is rendszerbetöltőnek lesz jelölve."
+msgstr "Ha a „/boot” csatolási pont be van állítva, akkor a partíció is rendszerbetöltőnek lesz megjelölve."
 
 msgid "Mountpoint: "
 msgstr "Csatolási pont: "
@@ -938,7 +938,7 @@ msgid "Total length: {}"
 msgstr "Teljes hossz: {}"
 
 msgid "Encryption type"
-msgstr "Titkosítás típusa"
+msgstr "Titkosítástípus"
 
 msgid "Partitions"
 msgstr "Partíciók"
@@ -950,13 +950,13 @@ msgid "Partitions to be encrypted"
 msgstr "Titkosítandó partíciók"
 
 msgid "Select disk encryption option"
-msgstr "Válasszon ki egy lemeztitkosítási lehetőséget"
+msgstr "Válasszon ki egy lemeztitkosítási beállítást"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr "Válassza ki a HSM-hez használni kívánt FIDO2-eszközt"
+msgstr "Válassza ki a HSM-hez használandó FIDO2-eszközt"
 
 msgid "Use a best-effort default partition layout"
-msgstr "A lehető legjobb beállítást lehetővé tévő alapértelmezett partíció-elrendezés használata"
+msgstr "A lehető legjobb beállítást lehetővé tévő alapértelmezett partícióelrendezés használata"
 
 msgid "Manual Partitioning"
 msgstr "Kézi particionálás"
@@ -968,16 +968,16 @@ msgid "Unknown"
 msgstr "Ismeretlen"
 
 msgid "Partition encryption"
-msgstr "Partíció titkosítás"
+msgstr "Partíciótitkosítás"
 
 msgid " ! Formatting {} in "
-msgstr " ! {} formázása ebben: "
+msgstr " ! {} formázása erre: "
 
 msgid "← Back"
 msgstr "← Vissza"
 
 msgid "Disk encryption"
-msgstr "Lemez titkosítás"
+msgstr "Lemeztitkosítás"
 
 msgid "Configuration"
 msgstr "Konfiguráció"
@@ -986,7 +986,7 @@ msgid "Password"
 msgstr "Jelszó"
 
 msgid "All settings will be reset, are you sure?"
-msgstr "Minden beállítás visszaállításra kerül alaphelyzetre, biztos benne?"
+msgstr "Az összes beállítás visszaállításra kerül az alapértelmezettre, biztos benne?"
 
 msgid "Back"
 msgstr "Vissza"
@@ -998,7 +998,7 @@ msgid "Environment type: {}"
 msgstr "Környezet típusa: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr "Az Sway nem támogatja az Nvidia saját fejlesztésű illesztőprogramját. Valószínű, hogy problémákba fog ütközni, rendben van ez így?"
+msgstr "A Sway nem támogatja az Nvidia saját fejlesztésű, zárt illesztőprogramját. Valószínű, hogy problémákba fog ütközni, rendben van ez így?"
 
 msgid "Installed packages"
 msgstr "Telepített csomagok"
@@ -1019,10 +1019,10 @@ msgid "The profile name you entered is already in use. Try again"
 msgstr "A megadott profilnév már használatban van. Próbálja újra"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "A profilhoz telepítendő csomagok (szóközzel elválasztva, vagy hagyja üresen a kihagyáshoz): "
+msgstr "Ezzel a profillal telepítendő csomagok (szóközzel elválasztva; hagyja üresen a kihagyáshoz): "
 
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "A profillal engedélyezendő szolgáltatások (szóközzel elválasztva, vagy hagyja üresen a kihagyáshoz): "
+msgstr "A profillal engedélyezendő szolgáltatások (szóközzel elválasztva; hagyja üresen a kihagyáshoz): "
 
 msgid "Should this profile be enabled for installation?"
 msgstr "Engedélyezi ezt a profilt a telepítéshez?"
@@ -1038,7 +1038,7 @@ msgstr ""
 "Válasszon ki egy grafikus illesztőprogramot, vagy hagyja üresen az összes nyílt forráskódú illesztőprogram telepítéséhez"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Az Sway-nek hozzáférésre van szüksége (olyan hardvereszközök gyűjteményéhez mint például a billentyűzet, az egér, stb.)"
+msgstr "A Swaynek hozzáférésre van szüksége (olyan hardvereszközök gyűjteményéhez mint például a billentyűzet, az egér, stb.)"
 
 msgid ""
 "\n"
@@ -1047,7 +1047,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Válasszon egy opciót, hogy engedélyezze az Sway számára a hardverekhez való hozzáférést"
+"Válasszon ki egy beállítást, hogy engedélyezze a Sway számára a hardverekhez való hozzáférést"
 
 msgid "Graphics driver"
 msgstr "Grafikus illesztőprogram"
@@ -1059,19 +1059,19 @@ msgid "Please chose which greeter to install"
 msgstr "Válassza ki, hogy melyik bejelentkezési segédet szeretné telepíteni"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr "Ez az előre programozott default_profiles listája"
+msgstr "Ez az előre programozott „default_profiles” listája"
 
 msgid "Disk configuration"
-msgstr "Lemez-konfiguráció"
+msgstr "Lemezkonfiguráció"
 
 msgid "Profiles"
 msgstr "Profilok"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr "Lehetséges könyvtárak keresése a konfigurációs fájlok mentéséhez..."
+msgstr "Lehetséges könyvtárak keresése a konfigurációs fájlok mentéséhez…"
 
 msgid "Select directory (or directories) for saving configuration files"
-msgstr "Válassza ki a könyvtárat (vagy könyvtárakat) a konfigurációs fájlok mentéséhez"
+msgstr "Válassza ki a könyvtára(ka)t a konfigurációs fájlok mentéséhez"
 
 msgid "Add a custom mirror"
 msgstr "Egyéni tükör hozzáadása"
@@ -1083,16 +1083,16 @@ msgid "Delete custom mirror"
 msgstr "Egyéni tükör törlése"
 
 msgid "Enter name (leave blank to skip): "
-msgstr "Adjon meg egy nevet (vagy hagyja üresen a kihagyáshoz): "
+msgstr "Adjon meg egy nevet (hagyja üresen a kihagyáshoz): "
 
 msgid "Enter url (leave blank to skip): "
-msgstr "Adjon megy egy URL-címet (vagy hagyja üresen a kihagyáshoz): "
+msgstr "Adjon megy egy webcímet (hagyja üresen a kihagyáshoz): "
 
 msgid "Select signature check option"
-msgstr "Válasszon egy aláírás-ellenőrzési lehetőséget"
+msgstr "Válasszon ki egy aláírásellenőrzési beállítást"
 
 msgid "Select signature option"
-msgstr "Válasszon egy aláírás beállítást"
+msgstr "Válasszon ki egy aláírásbeállítást"
 
 msgid "Custom mirrors"
 msgstr "Egyedi tükrök"
@@ -1107,7 +1107,7 @@ msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
-"Adjon meg egy könyvtárat a menteni kívánt konfiguráció(k) számára (a tabulátoros kiegészítés engedélyezve van)\n"
+"Adjon meg egy könyvtárat a mentendő konfiguráció(k) számára (a tabulátoros kiegészítés engedélyezve van)\n"
 "Mentési könyvtár: "
 
 msgid ""
@@ -1141,10 +1141,10 @@ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME 
 msgstr "A hálózatkezelő használata (szükséges az internet grafikus konfigurálásához GNOME-ban és KDE-ben)"
 
 msgid "Total: {} / {}"
-msgstr "Összes: {} / {}"
+msgstr "Összesen: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr "Minden beírt értéket mértékegységekkel kell ellátni: B, KB, KiB, MB, MiB..."
+msgstr "Az öszes beírt értéket mértékegységekkel kell ellátni: B, KB, KiB, MB, MiB…"
 
 msgid "If no unit is provided, the value is interpreted as sectors"
 msgstr "Ha nincs mértékegység megadva, akkor az értéket szektorokként értelmezi"
@@ -1156,7 +1156,7 @@ msgid "Enter end (default: {}): "
 msgstr "Végpont megadása (alapértelmezett: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr "Nem sikerült meghatározni a fido2 eszközöket. Telepítve van a libfido2?"
+msgstr "Nem sikerült meghatározni a FIDO2-eszközöket. Telepítve van a libfido2?"
 
 msgid "Path"
 msgstr "Elérési útvonal"
@@ -1175,14 +1175,14 @@ msgid "Type"
 msgstr "Típus"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Ez a beállítás lehetővé teszi, hogy a csomagletöltések során hány párhuzamos letöltés történhet"
+msgstr "Ez a beállítás engedélyezi a csomagletöltéskor a lehetséges párhuzamos letöltések számát"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 "\n"
 "Note:\n"
 msgstr ""
-"Adja meg az engedélyezni kívánt párhuzamos letöltések számát.\n"
+"Adja meg az engedélyezendő párhuzamos letöltések számát.\n"
 "\n"
 "Megjegyzés:\n"
 
@@ -1196,7 +1196,7 @@ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Érvénytelen bemenet! Próbálja újra egy érvényes bemenettel [vagy 0-t a letiltáshoz]"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "A Hyprland-nek hozzáférésre van szüksége (olyan hardvereszközök gyűjteményéhez mint például a billentyűzet, az egér, stb.)"
+msgstr "A Hyprlandnek hozzáférésre van szüksége (olyan hardvereszközök gyűjteményéhez mint például a billentyűzet, az egér, stb.)"
 
 msgid ""
 "\n"
@@ -1205,10 +1205,10 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Válasszon egy opciót, hogy engedélyezze a Hyprland számára a hardverekhez való hozzáférést"
+"Válasszon ki egy beállítást, hogy engedélyezze a Hyprland számára a hardverekhez való hozzáférést"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr "Minden beírt értéket mértékegységgel kell ellátni: %, B, KB, KiB, MB, MiB..."
+msgstr "Az összes beírt értéket mértékegységgel kell ellátni: %, B, KB, KiB, MB, MiB…"
 
 msgid "Would you like to use unified kernel images?"
 msgstr "Szeretne egységesített kernelképeket (UKI) használni?"
@@ -1223,10 +1223,10 @@ msgid "Time syncronization not completing, while you wait - check the docs for w
 msgstr "Az időszinkronizálás nem fejeződik be, amíg várakozik - tekintse meg a dokumentációban a megoldásokat: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr "Az automatikus időszinkronizálásra való várakozás kihagyása (ez problémákat okozhat, ha az idő nincs szinkronban a telepítés során)"
+msgstr "Az automatikus időszinkronizálásra való várakozás kihagyása (ez problémákat okozhat, ha az idő nincs szinkronban a telepítéskor)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr "Várakozás az Arch Linux kulcstartó szinkronizálásának (archlinux-keyring-wkd-sync) befejezésére."
+msgstr "Várakozás az Arch Linux-kulcstartó szinkronizálásának (archlinux-keyring-wkd-sync) befejezésére."
 
 msgid "Selected profiles: "
 msgstr "Kiválasztott profil: "
@@ -1235,28 +1235,28 @@ msgid "Time synchronization not completing, while you wait - check the docs for 
 msgstr "Az időszinkronizálás nem fejeződik be, amíg várakozik - tekintse meg a dokumentációban a megoldásokat: https://archinstall.readthedocs.io/"
 
 msgid "Mark/Unmark as nodatacow"
-msgstr "Megjelölés/megjelölés-visszavonása mint nodatacow"
+msgstr "Megjelölés/elvetés mint „nodatacow”"
 
 msgid "Would you like to use compression or disable CoW?"
-msgstr "Szeretne tömörítést használni vagy letiltani az adatmásolást írás közben?"
+msgstr "Szeretne tömörítést használni, vagy letiltani az adatmásolást íráskor?"
 
 msgid "Use compression"
 msgstr "Tömörítés használata"
 
 msgid "Disable Copy-on-Write"
-msgstr "Írás közbeni adatmásolás letiltása"
+msgstr "Adatmásolás letiltása íráskor"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Asztali környezetek és csempés ablakkezelők széles választékát kínálja, pl. GNOME, KDE Plasma, Sway"
 
 msgid "Configuration type: {}"
-msgstr "Konfiguráció típusa: {}"
+msgstr "Konfigurációtípus: {}"
 
 msgid "LVM configuration type"
-msgstr "LVM konfiguráció típusa"
+msgstr "LVM-konfigurációtípus"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr "Az LVM lemez titkosítása 2-nél több partícióval jelenleg nem támogatott"
+msgstr "Az LVM-lemez titkosítása 2-nél több partícióval jelenleg nem támogatott"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
 msgstr "A hálózatkezelő használata (szükséges az internet grafikus konfigurálásához GNOME-ban és KDE Plasma-ban)"
@@ -1268,7 +1268,7 @@ msgid "Partitioning"
 msgstr "Partícionálás"
 
 msgid "Logical Volume Management (LVM)"
-msgstr "Logikai kötetkezelés (LVM)"
+msgstr "Logikai kötetkezelő (LVM)"
 
 msgid "Physical volumes"
 msgstr "Fizikai kötetek"
@@ -1277,13 +1277,13 @@ msgid "Volumes"
 msgstr "Kötetek"
 
 msgid "LVM volumes"
-msgstr "LVM kötetek"
+msgstr "LVM-kötetek"
 
 msgid "LVM volumes to be encrypted"
-msgstr "A titkosítandó LVM kötetek"
+msgstr "Titkosítandó LVM-kötetek"
 
 msgid "Select which LVM volumes to encrypt"
-msgstr "Válassza ki a titkosítandó LVM köteteket"
+msgstr "Válassza ki a titkosítandó LVM-köteteket"
 
 msgid "Default layout"
 msgstr "Alapértelmezett elrendezés"
@@ -1292,13 +1292,13 @@ msgid "No Encryption"
 msgstr "Nincs titkosítás"
 
 msgid "LUKS"
-msgstr "Egységes Linux kulcskezelés (LUKS)"
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr "LVM a LUKS-on"
+msgstr "LVM a LUKS fölött"
 
 msgid "LUKS on LVM"
-msgstr "LUKS az LVM-en"
+msgstr "LUKS az LVM fölött"
 
 msgid "Yes"
 msgstr "Igen"
@@ -1307,7 +1307,7 @@ msgid "No"
 msgstr "Nem"
 
 msgid "Archinstall help"
-msgstr "Archtelepítő súgó"
+msgstr "Archinstall súgó"
 
 msgid " (default)"
 msgstr " (alapértelmezett)"

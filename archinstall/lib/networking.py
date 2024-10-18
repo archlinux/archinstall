@@ -6,7 +6,7 @@ import time
 import select
 import signal
 import random
-from typing import Union, Dict, Any, List, Optional
+from typing import Union, Any, Optional
 from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -14,6 +14,7 @@ from urllib.request import urlopen
 from .exceptions import SysCallError, DownloadTimeout
 from .output import error, info
 from .pacman import Pacman
+
 
 class DownloadTimer():
 	'''
@@ -65,14 +66,14 @@ class DownloadTimer():
 		self.start_time = None
 
 
-def get_hw_addr(ifname :str) -> str:
+def get_hw_addr(ifname: str) -> str:
 	import fcntl
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	ret = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
 	return ':'.join('%02x' % b for b in ret[18:24])
 
 
-def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
+def list_interfaces(skip_loopback: bool = True) -> dict[str, str]:
 	interfaces = {}
 
 	for index, iface in socket.if_nameindex():
@@ -97,7 +98,7 @@ def update_keyring() -> bool:
 	return False
 
 
-def enrich_iface_types(interfaces: Union[Dict[str, Any], List[str]]) -> Dict[str, str]:
+def enrich_iface_types(interfaces: Union[dict[str, Any], list[str]]) -> dict[str, str]:
 	result = {}
 
 	for iface in interfaces:
@@ -117,7 +118,7 @@ def enrich_iface_types(interfaces: Union[Dict[str, Any], List[str]]) -> Dict[str
 	return result
 
 
-def fetch_data_from_url(url: str, params: Optional[Dict] = None) -> str:
+def fetch_data_from_url(url: str, params: Optional[dict] = None) -> str:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -147,10 +148,11 @@ def calc_checksum(icmp_packet) -> int:
 
 	checksum = (checksum >> 16) + (checksum & 0xFFFF)
 	checksum = ~checksum & 0xFFFF
-	
+
 	return checksum
 
-def build_icmp(payload):
+
+def build_icmp(payload: bytes) -> bytes:
 	# Define the ICMP Echo Request packet
 	icmp_packet = struct.pack('!BBHHH', 8, 0, 0, 0, 1) + payload
 
@@ -158,11 +160,12 @@ def build_icmp(payload):
 
 	return struct.pack('!BBHHH', 8, 0, checksum, 0, 1) + payload
 
+
 def ping(hostname, timeout=5) -> int:
 	watchdog = select.epoll()
 	started = time.time()
 	random_identifier = f'archinstall-{random.randint(1000, 9999)}'.encode()
-	
+
 	# Create a raw socket (requires root, which should be fine on archiso)
 	icmp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
 	watchdog.register(icmp_socket, select.EPOLLIN | select.EPOLLHUP)

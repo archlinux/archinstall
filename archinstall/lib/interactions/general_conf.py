@@ -128,7 +128,7 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	print(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
 
-	def read_packages(p: List = []) -> list:
+	def read_packages(p: list[str] = []) -> list[str]:
 		display = ' '.join(p)
 		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run().strip()
 		return input_packages.split() if input_packages else []
@@ -152,9 +152,9 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	return packages
 
 
-def add_number_of_parallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
+def add_number_of_parallel_downloads(input_number: Optional[int] = None) -> Optional[int]:
 	max_recommended = 5
-	print(_(f"This option enables the number of parallel downloads that can occur during package downloads"))
+	print(_("This option enables the number of parallel downloads that can occur during package downloads"))
 	print(_("Enter the number of parallel downloads to be enabled.\n\nNote:\n"))
 	print(str(_(" - Maximum recommended value : {} ( Allows {} parallel downloads at a time )")).format(max_recommended, max_recommended))
 	print(_(" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"))

@@ -42,7 +42,7 @@ class Boot:
 		storage['active_boot'] = self
 		return self
 
-	def __exit__(self, *args :str, **kwargs :str) -> None:
+	def __exit__(self, *args: str, **kwargs: str) -> None:
 		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 

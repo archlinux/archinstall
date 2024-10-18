@@ -1,4 +1,4 @@
-from typing import List, Optional, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 
 from archinstall.default_profiles.profile import ProfileType, GreeterType
 from archinstall.default_profiles.xorg import XorgProfile
@@ -12,7 +12,7 @@ class BudgieProfile(XorgProfile):
 		super().__init__('Budgie', ProfileType.DesktopEnv, description='')
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			"arc-gtk-theme",
 			"budgie",

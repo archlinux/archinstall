@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.8.4"
+__version__ = "2.8.6"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the
@@ -63,7 +63,7 @@ debug(f"Disk states before installing: {disk.disk_layouts()}")
 parser = ArgumentParser()
 
 
-def define_arguments():
+def define_arguments() -> None:
 	"""
 	Define which explicit arguments do we allow.
 	Refer to https://docs.python.org/3/library/argparse.html for documentation and
@@ -213,7 +213,7 @@ def get_arguments() -> Dict[str, Any]:
 	return config
 
 
-def load_config():
+def load_config() -> None:
 	"""
 	refine and set some arguments. Formerly at the scripts
 	"""
@@ -263,7 +263,7 @@ def load_config():
 		)
 
 
-def post_process_arguments(arguments):
+def post_process_arguments(arguments: dict[str, Any]) -> None:
 	storage['arguments'] = arguments
 	if mountpoint := arguments.get('mount_point', None):
 		storage['MOUNT_POINT'] = Path(mountpoint)
@@ -285,18 +285,18 @@ post_process_arguments(arguments)
 
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles_bck and other things.
-def plugin(f, *args, **kwargs):
+def plugin(f, *args, **kwargs) -> None:
 	plugins[f.__name__] = f
 
 
-def _check_new_version():
+def _check_new_version() -> None:
 	info("Checking version...")
 
 	try:
 		Pacman.run("-Sy")
 	except Exception as e:
 		debug(f'Failed to perform version check: {e}')
-		info(f'Arch Linux mirrors are not reachable. Please check your internet connection')
+		info('Arch Linux mirrors are not reachable. Please check your internet connection')
 		exit(1)
 
 	upgrade = None
@@ -312,7 +312,7 @@ def _check_new_version():
 		time.sleep(3)
 
 
-def main():
+def main() -> None:
 	"""
 	This can either be run as the compiled and installed application: python setup.py install
 	OR straight as a module: python -m archinstall
@@ -331,7 +331,7 @@ def main():
 	importlib.import_module(mod_name)
 
 
-def _shutdown_curses():
+def _shutdown_curses() -> None:
 	try:
 		curses.nocbreak()
 
@@ -349,7 +349,7 @@ def _shutdown_curses():
 		pass
 
 
-def run_as_a_module():
+def run_as_a_module() -> None:
 	exc = None
 
 	try:

@@ -20,7 +20,7 @@ classifiers = [
 dependencies = [
     "simple-term-menu==1.6.4",
     "pyparted @ https://github.com//dcantrell/pyparted/archive/v3.13.0.tar.gz#sha512=26819e28d73420937874f52fda03eb50ab1b136574ea9867a69d46ae4976d38c4f26a2697fa70597eed90dd78a5ea209bafcc3227a17a7a5d63cff6d107c2b11",
-    "pydantic==2.8.2"
+    "pydantic==2.9.2"
 ]
 
 [project.urls]
@@ -31,9 +31,10 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.11.2",
+    "mypy==1.12.0",
     "flake8==7.1.1",
-    "pre-commit==3.8.0",
+    "pre-commit==4.0.1",
+    "ruff==0.7.0",
 ]
 doc = ["sphinx"]
 
@@ -62,10 +63,95 @@ archinstall = "archinstall"
 
 [tool.mypy]
 python_version = "3.11"
-files = "archinstall/"
-exclude = "tests"
-check_untyped_defs=true
+files = "."
+exclude = "^build/"
+check_untyped_defs = true
+disallow_any_explicit = false
+disallow_any_expr = false
+disallow_any_generics = false
+disallow_any_unimported = false
+disallow_incomplete_defs = false
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = false
+extra_checks = true
+strict = false
+strict_equality = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "archinstall.examples.*"
+disallow_any_explicit = true
+disallow_any_generics = true
+disallow_any_unimported = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+follow_imports = "silent"
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.*"
+strict_equality = false
+warn_return_any = false
+warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.scripts.*"
+warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.tui.*"
+strict_equality = false
+warn_return_any = false
+warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = [
+    "parted",
+    "simple_term_menu",
+]
+ignore_missing_imports = true
 
 [tool.bandit]
 targets = ["archinstall"]
 exclude = ["/tests"]
+
+[tool.ruff]
+target-version = "py311"
+builtins = ["_"]
+line-length = 220
+
+[tool.ruff.lint]
+select = [
+    "ASYNC",  # flake8-async
+    "C90",    # mccabe
+    "E",      # pycodestyle errors
+    "EXE",    # flake8-executable
+    "F",      # Pyflakes
+    "FLY",    # flynt
+    "G",      # flake8-logging-format
+    "ICN",    # flake8-import-conventions
+    "LOG",    # flake8-logging
+    "PIE",    # flake8-pie
+    "PLC",    # Pylint conventions
+    "PLE",    # Pylint errors
+    "RSE",    # flake8-raise
+    "SLOT",   # flake8-slot
+    "T10",    # flake8-debugger
+    "W",      # pycodestyle warnings
+    "YTT",    # flake8-2020
+]
+
+ignore = [
+    "E701",  # multiple-statements-on-one-line-colon
+    "E722",  # bare-except
+    "F401",  # unused-import
+    "W191",  # tab-indentation
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 40

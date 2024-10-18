@@ -99,7 +99,7 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['!root-password'] = \
 			Selector(
 				_('Root password'),
-				lambda preset:self._set_root_password(),
+				lambda preset: self._set_root_password(),
 				display_func=lambda x: secret(x) if x else '')
 		self._menu_options['!users'] = \
 			Selector(
@@ -178,7 +178,7 @@ class GlobalMenu(AbstractMenu):
 				preview_func=self._prev_install_invalid_config,
 				no_store=True)
 
-		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
+		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n, v: exit(1))
 
 	def _missing_configs(self) -> List[str]:
 		def check(s: str) -> bool:

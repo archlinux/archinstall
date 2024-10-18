@@ -40,6 +40,7 @@ class GreeterType(Enum):
 	if '--advanced' in sys.argv:
 		CosmicSession = "cosmic-greeter"
 
+
 class SelectResult(Enum):
 	NewSelection = auto()
 	SameSelection = auto()

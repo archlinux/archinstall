@@ -11,8 +11,7 @@ from pathlib import Path
 from typing import Optional, List, Dict, TYPE_CHECKING, Any
 from typing import Union
 
-import parted  # type: ignore
-import _ped  # type: ignore
+import parted
 from parted import Disk, Geometry, Partition
 
 from ..exceptions import DiskError, SysCallError
@@ -457,8 +456,6 @@ class _DeviceInfo:
 		sector_size = SectorSize(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
 
-		sector_size = SectorSize(device.sectorSize, Unit.B)
-
 		return _DeviceInfo(
 			model=device.model.strip(),
 			path=Path(device.path),
@@ -582,14 +579,9 @@ class PartitionType(Enum):
 
 
 class PartitionFlag(Enum):
-	"""
-	Flags are taken from _ped because pyparted uses this to look
-	up their flag definitions: https://github.com/dcantrell/pyparted/blob/c4e0186dad45c8efbe67c52b02c8c4319df8aa9b/src/parted/__init__.py#L200-L202
-	Which is the way libparted checks for its flags: https://git.savannah.gnu.org/gitweb/?p=parted.git;a=blob;f=libparted/labels/gpt.c;hb=4a0e468ed63fff85a1f9b923189f20945b32f4f1#l183
-	"""
-	Boot = _ped.PARTITION_BOOT
-	XBOOTLDR = _ped.PARTITION_BLS_BOOT  # Note: parted calls this bls_boot
-	ESP = _ped.PARTITION_ESP
+	Boot = parted.PARTITION_BOOT
+	XBOOTLDR = parted.PARTITION_BLS_BOOT  # Note: parted calls this bls_boot
+	ESP = parted.PARTITION_ESP
 
 
 # class PartitionGUIDs(Enum):
@@ -623,7 +615,7 @@ class FilesystemType(Enum):
 		match self:
 			case FilesystemType.Ntfs: return 'ntfs3'
 			case FilesystemType.Fat32: return 'vfat'
-			case _: return self.value  # type: ignore
+			case _: return self.value
 
 	@property
 	def installation_pkg(self) -> Optional[str]:
@@ -1345,7 +1337,7 @@ class LsblkInfo:
 			'fsavail': self.fsavail,
 			'fsuse_percentage': self.fsuse_percentage,
 			'type': self.type,
-			'mountpoint': self.mountpoint,
+			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mountpoints': [str(m) for m in self.mountpoints],
 			'fsroots': [str(r) for r in self.fsroots],
 			'children': [c.json() for c in self.children]
@@ -1393,6 +1385,8 @@ class LsblkInfo:
 
 		lsblk_info.children = [LsblkInfo.from_json(child) for child in blockdevice.get('children', [])]
 
+		lsblk_info.mountpoint = Path(lsblk_info.mountpoint) if lsblk_info.mountpoint else None
+
 		# sometimes lsblk returns 'mountpoints': [null]
 		lsblk_info.mountpoints = [Path(mnt) for mnt in lsblk_info.mountpoints if mnt]
 
@@ -1429,16 +1423,16 @@ def _fetch_lsblk_info(
 	full_dev_path: bool = False
 ) -> List[LsblkInfo]:
 	fields = [_clean_field(f, CleanType.Lsblk) for f in LsblkInfo.fields()]
-	cmd = ['lsblk', '--json', '--bytes', '--output', '+' + ','.join(fields)]
-
-	if dev_path:
-		cmd.append(str(dev_path))
+	cmd = ['lsblk', '--json', '--bytes', '--output', ','.join(fields)]
 
 	if reverse:
 		cmd.append('--inverse')
 
 	if full_dev_path:
 		cmd.append('--paths')
+
+	if dev_path:
+		cmd.append(str(dev_path))
 
 	try:
 		result = SysCommand(cmd).decode()

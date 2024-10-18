@@ -1,7 +1,7 @@
 from pathlib import Path
 import time
 import re
-from typing import TYPE_CHECKING, Any, List, Callable, Union
+from typing import TYPE_CHECKING, Any, Callable, Union
 from shutil import copy2
 
 from ..general import SysCommand
@@ -23,7 +23,7 @@ class Pacman:
 		self.target = target
 
 	@staticmethod
-	def run(args :str, default_cmd :str = 'pacman') -> SysCommand:
+	def run(args: str, default_cmd: str = 'pacman') -> SysCommand:
 		"""
 		A centralized function to call `pacman` from.
 		It also protects us from colliding with other running pacman sessions (if used locally).
@@ -67,7 +67,7 @@ class Pacman:
 		)
 		self.synced = True
 
-	def strap(self, packages: Union[str, List[str]]) -> None:
+	def strap(self, packages: Union[str, list[str]]) -> None:
 		self.sync()
 		if isinstance(packages, str):
 			packages = [packages]
