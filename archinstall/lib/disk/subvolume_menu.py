@@ -2,7 +2,12 @@ from pathlib import Path
 from typing import List, Optional, Any, TYPE_CHECKING
 
 from .device_model import SubvolumeModification
-from ..menu import TextInput, ListManager
+from ..menu import ListManager
+from ..utils.util import prompt_dir
+
+from archinstall.tui import (
+	Alignment, EditMenu, ResultType
+)
 
 if TYPE_CHECKING:
 	_: Any
@@ -20,18 +25,34 @@ class SubvolumeMenu(ListManager):
 	def selected_action_display(self, subvolume: SubvolumeModification) -> str:
 		return str(subvolume.name)
 
-	def _add_subvolume(self, editing: Optional[SubvolumeModification] = None) -> Optional[SubvolumeModification]:
-		name = TextInput(f'\n\n{_("Subvolume name")}: ', editing.name if editing else '').run()
+	def _add_subvolume(self, preset: Optional[SubvolumeModification] = None) -> Optional[SubvolumeModification]:
+		result = EditMenu(
+			str(_('Subvolume name')),
+			alignment=Alignment.CENTER,
+			allow_skip=True,
+			default_text=str(preset.name) if preset else None
+		).input()
 
-		if not name:
+		match result.type_:
+			case ResultType.Skip:
+				return preset
+			case ResultType.Selection:
+				name = result.text()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
+
+		header = f"{str(_('Subvolume name'))}: {name}\n"
+
+		path = prompt_dir(
+			str(_("Subvolume mountpoint")),
+			header=header,
+			allow_skip=True
+		)
+
+		if not path:
 			return None
 
-		mountpoint = TextInput(f'{_("Subvolume mountpoint")}: ', str(editing.mountpoint) if editing else '').run()
-
-		if not mountpoint:
-			return None
-
-		return SubvolumeModification(Path(name), Path(mountpoint))
+		return SubvolumeModification(Path(name), path)
 
 	def handle_action(
 		self,

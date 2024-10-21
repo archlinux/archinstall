@@ -8,7 +8,6 @@ from .exceptions import SysCallError
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
 from .output import debug
-from .utils.util import format_cols
 
 if TYPE_CHECKING:
 	_: Any
@@ -78,9 +77,12 @@ class GfxDriver(Enum):
 				return False
 
 	def packages_text(self) -> str:
-		text = str(_('Installed packages')) + ':\n'
 		pkg_names = [p.value for p in self.gfx_packages()]
-		text += format_cols(sorted(pkg_names))
+		text = str(_('Installed packages')) + ':\n'
+
+		for p in sorted(pkg_names):
+			text += f'\t- {p}\n'
+
 		return text
 
 	def gfx_packages(self) -> List[GfxPackage]:

@@ -6,7 +6,7 @@
 
 ## Tests and Checks
 - [ ] I have tested the code!<br>
-  <!-- 
+  <!--
       After submitting your PR, an ISO can be downloaded below the PR description. After testing it you can check the box
       You can do manual tests too, like isolated function tests, just something!
   -->
