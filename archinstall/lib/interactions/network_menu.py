@@ -65,6 +65,10 @@ class ManualNetworkConfig(ListManager):
 		all_ifaces = list_interfaces().values()
 		existing_ifaces = [d.iface for d in data]
 		available = set(all_ifaces) - set(existing_ifaces)
+
+		if not available:
+			return None
+
 		choice = Menu(str(_('Select interface to add')), list(available), skip=True).run()
 
 		if choice.type_ == MenuSelectionType.Skip:
