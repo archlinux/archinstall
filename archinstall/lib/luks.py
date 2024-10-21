@@ -30,6 +30,19 @@ class Luks2:
 			return Path(f'/dev/mapper/{self.mapper_name}')
 		return None
 
+	def isLuks(self) -> bool:
+		try:
+			SysCommand(f'cryptsetup isLuks {self.luks_dev_path}')
+			return True
+		except SysCallError:
+			return False
+
+	def erase(self) -> None:
+		debug(f'Erasing luks partition: {self.luks_dev_path}')
+		worker = SysCommandWorker(f'cryptsetup erase {self.luks_dev_path}')
+		worker.poll()
+		worker.write(b'YES\n', line_ending=False)
+
 	def __post_init__(self) -> None:
 		if self.luks_dev_path is None:
 			raise ValueError('Partition must have a path set')
