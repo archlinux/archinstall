@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 import logging
-import time
 import uuid
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
@@ -367,17 +366,6 @@ class DeviceHandler(object):
 
 		return None
 
-	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Optional[Any]:
-		attempts = 3
-
-		for attempt_nr in range(attempts):
-			try:
-				return self._lvm_info(cmd, info_type)
-			except ValueError:
-				time.sleep(attempt_nr + 1)
-
-		raise ValueError(f'Failed to fetch {info_type} information')
-
 	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
 		cmd = (
 			'lvs --reportformat json '
@@ -385,7 +373,7 @@ class DeviceHandler(object):
 			f'-S lv_name={lv_name}'
 		)
 
-		return self._lvm_info_with_retry(cmd, 'lv')
+		return self._lvm_info(cmd, 'lv')
 
 	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
 		cmd = (
@@ -395,7 +383,7 @@ class DeviceHandler(object):
 			f'-S vg_name={vg_name}'
 		)
 
-		return self._lvm_info_with_retry(cmd, 'vg')
+		return self._lvm_info(cmd, 'vg')
 
 	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> Optional[LvmPVInfo]:
 		cmd = (
@@ -405,7 +393,7 @@ class DeviceHandler(object):
 			'--reportformat json '
 		)
 
-		return self._lvm_info_with_retry(cmd, 'pvseg')
+		return self._lvm_info(cmd, 'pvseg')
 
 	def lvm_vol_change(self, vol: LvmVolume, activate: bool) -> None:
 		active_flag = 'y' if activate else 'n'
@@ -441,6 +429,8 @@ class DeviceHandler(object):
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
+		self.udev_sync()
+
 	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str) -> None:
 		pvs_str = ' '.join([str(pv) for pv in pvs])
 		cmd = f'vgcreate --yes {vg_name} {pvs_str}'
@@ -450,6 +440,8 @@ class DeviceHandler(object):
 		worker = SysCommandWorker(cmd)
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
+
+		self.udev_sync()
 
 	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Optional[Size] = None) -> None:
 		if offset is not None:
@@ -465,6 +457,8 @@ class DeviceHandler(object):
 		worker = SysCommandWorker(cmd)
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
+
+		self.udev_sync()
 
 		volume.vg_name = vg_name
 		volume.dev_path = Path(f'/dev/{vg_name}/{volume.name}')
