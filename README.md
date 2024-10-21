@@ -227,8 +227,9 @@ It will go through everything from packaging, building and running *(with qemu)*
 # FAQ
 
 ## Keyring out-of-date
-For a description of the problem see https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213.
+For a description of the problem see https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 and discussion in issue https://github.com/archlinux/archinstall/issues/2213.
 For a quick fix the below command should update the
+
 ```pacman -Sy archlinux-keyring```
 
 ## How to dual boot with Windows
