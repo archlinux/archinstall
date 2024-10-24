@@ -38,6 +38,9 @@ repos:
     rev: v1.13.0
     hooks:
     - id: mypy
+      args: [
+        '--config-file=pyproject.toml'
+      ]
       fail_fast: true
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.7.0
