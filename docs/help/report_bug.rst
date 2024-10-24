@@ -3,7 +3,7 @@
 Report Issues & Bugs
 ====================
 
-Issues and bugs should be reported over at `https://github.com/archlinux/archinstall/issues <https://github.com/Torxed/archinstall/issues>`_.
+Issues and bugs should be reported over at `https://github.com/archlinux/archinstall/issues <https://github.com/archlinux/archinstall/issues>`_.
 
 General questions, enhancements and security issues can be reported over there too.
 For quick issues or if you need help, head over to the Discord server which has a help channel.
