@@ -803,6 +803,10 @@ class DeviceHandler(object):
 		"""
 		info(f'Wiping partitions and metadata: {block_device.device_info.path}')
 		for partition in block_device.partition_infos:
+			luks = Luks2(partition.path)
+			if luks.isLuks():
+				luks.erase()
+
 			self._wipe(partition.path)
 
 		self._wipe(block_device.device_info.path)
