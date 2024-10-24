@@ -1,0 +1,22 @@
+on: [ push, pull_request ]
+name: Pylint linting
+jobs:
+    pylint:
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux/archlinux:latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Prepare arch
+              run: |
+                pacman-key --init
+                pacman --noconfirm -Sy archlinux-keyring
+                pacman --noconfirm -Syyu
+                pacman --noconfirm -Sy python-pip python-pyparted python-simple-term-menu pkgconfig gcc
+            - run: pip install --break-system-packages --upgrade pip
+            - name: Install Pylint and Pylint plug-ins
+              run: pip install --break-system-packages .[dev]
+            - run: python --version
+            - run: pylint --version
+            - name: Lint with Pylint
+              run: pylint .

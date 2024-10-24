@@ -35,6 +35,8 @@ dev = [
     "flake8==7.1.1",
     "pre-commit==4.0.1",
     "ruff==0.7.0",
+    "pylint==3.3.1",
+    "pylint-pydantic==0.3.2",
 ]
 doc = ["sphinx"]
 
@@ -119,6 +121,53 @@ ignore_missing_imports = true
 [tool.bandit]
 targets = ["archinstall"]
 exclude = ["/tests"]
+
+[tool.pylint.main]
+ignore-paths = [
+    "^build/",
+    "^docs/",
+]
+load-plugins = ["pylint_pydantic"]
+persistent = false
+py-version = "3.11"
+recursive = true
+
+[tool.pylint.format]
+max-line-length = 220
+
+[tool.pylint."messages control"]
+disable = [
+    "C",
+    "R",
+    "arguments-renamed",
+    "attribute-defined-outside-init",
+    "bad-indentation",
+    "bare-except",
+    "broad-exception-caught",
+    "cell-var-from-loop",
+    "comparison-with-callable",
+    "dangerous-default-value",
+    "expression-not-assigned",
+    "f-string-without-interpolation",
+    "fixme",
+    "protected-access",
+    "raise-missing-from",
+    "redefined-builtin",
+    "redefined-outer-name",
+    "self-assigning-variable",
+    "unnecessary-lambda",
+    "unreachable",
+    "unspecified-encoding",
+    "unused-argument",
+    "unused-variable",
+    "useless-parent-delegation",
+]
+
+[tool.pylint.refactoring]
+score = false
+
+[tool.pylint.variables]
+additional-builtins = ["_"]
 
 [tool.ruff]
 target-version = "py311"
