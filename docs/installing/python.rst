@@ -23,10 +23,10 @@ To install both the library and the archinstall script:
 
 Alternatively, you can install only the library and not the helper executable using the ``python-archinstall`` package.
 
-Installing with PyPi
+Installing from PyPI
 --------------------
 
-The basic concept of PyPi applies using `pip`.
+The basic concept of PyPI applies using `pip`.
 
 .. code-block:: console
 
@@ -37,8 +37,8 @@ The basic concept of PyPi applies using `pip`.
 Install using source code
 -------------------------
 
-| You can also install using the source code.
-| For sake of simplicity we will use ``git clone`` in this example.
+You can also install using the source code.
+For sake of simplicity we will use ``git clone`` in this example.
 
 .. code-block:: console
 

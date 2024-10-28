@@ -31,10 +31,10 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.11.2",
+    "mypy==1.13.0",
     "flake8==7.1.1",
-    "pre-commit==3.8.0",
-    "ruff==0.6.8",
+    "pre-commit==4.0.1",
+    "ruff==0.7.1",
 ]
 doc = ["sphinx"]
 
