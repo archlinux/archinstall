@@ -133,7 +133,7 @@ msgstr "Valitse, mihin osio asennetaan (jätä tyhjäksi, jos haluat poistaa lii
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"

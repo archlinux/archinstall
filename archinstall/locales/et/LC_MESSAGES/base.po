@@ -134,7 +134,7 @@ msgstr "Valige, kuhu partitsiooni paigaldada (jätke tühjaks, et eemaldada paig
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"

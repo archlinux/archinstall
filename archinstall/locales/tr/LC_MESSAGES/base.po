@@ -133,7 +133,7 @@ msgstr "Disk bölümünün nereye bağlanacağını (mount) seçin (bağlantı (
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"

@@ -132,7 +132,7 @@ msgstr "منتخب کریں کہ پارٹیشن کہاں ماؤنٹ کرنا ہ�
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"

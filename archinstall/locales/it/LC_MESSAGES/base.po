@@ -132,7 +132,7 @@ msgstr "Seleziona dove montare la partizione (lascia vuoto per rimuovere il punt
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
