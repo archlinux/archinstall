@@ -34,7 +34,7 @@ dev = [
     "mypy==1.13.0",
     "flake8==7.1.1",
     "pre-commit==4.0.1",
-    "ruff==0.7.1",
+    "ruff==0.7.2",
 ]
 doc = ["sphinx"]
 
