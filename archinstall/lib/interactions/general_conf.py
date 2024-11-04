@@ -61,8 +61,8 @@ def ask_for_audio_selection(
 	current: Optional[AudioConfiguration] = None
 ) -> Optional[AudioConfiguration]:
 	choices = [
-		Audio.Pipewire.name,
-		Audio.Pulseaudio.name,
+		Audio.Pipewire.name,  # pylint: disable=no-member
+		Audio.Pulseaudio.name,  # pylint: disable=no-member
 		Audio.no_audio_text()
 	]
 
