@@ -107,7 +107,6 @@ class Selector:
 		if current:
 			padding += 5
 			description = unicode_ljust(str(self.description), padding, ' ')
-			current = current
 		else:
 			description = self.description
 			current = ''
