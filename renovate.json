@@ -5,5 +5,23 @@
   ],
   "pre-commit": {
     "enabled": true
-  }
+  },
+  "packageRules": [
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "matchPackageNames": [
+        "mypy",
+        "ruff",
+        "pre-commit",
+        "pre-commit/pre-commit-hooks",
+        "pre-commit/mirrors-mypy",
+        "dev/flake8",
+        "pycqa/flake8",
+        "astral-sh/ruff-pre-commit"
+      ],
+      "automerge": true
+    }
+  ]
 }
