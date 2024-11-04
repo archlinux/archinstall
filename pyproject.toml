@@ -154,7 +154,6 @@ disable = [
     "raise-missing-from",
     "redefined-builtin",
     "redefined-outer-name",
-    "self-assigning-variable",
     "unnecessary-lambda",
     "unreachable",
     "unspecified-encoding",
