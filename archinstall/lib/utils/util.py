@@ -32,7 +32,8 @@ def get_password(
 			header=user_hdr,
 			alignment=Alignment.CENTER,
 			allow_skip=allow_skip,
-			default_text=preset
+			default_text=preset,
+			hide_input=True
 		).input()
 
 		if allow_skip and not result.has_item():
@@ -51,6 +52,7 @@ def get_password(
 			header=confirmation_header,
 			alignment=Alignment.CENTER,
 			allow_skip=False,
+			hide_input=True
 		).input()
 
 		if password == result.text():

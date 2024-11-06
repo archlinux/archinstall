@@ -294,7 +294,8 @@ class EditViewport(AbstractViewport):
 		y_start: int,
 		process_key: Callable[[int], Optional[int]],
 		frame: FrameProperties,
-		alignment: Alignment = Alignment.CENTER
+		alignment: Alignment = Alignment.CENTER,
+		hide_input: bool = False
 	) -> None:
 		super().__init__()
 
@@ -308,6 +309,7 @@ class EditViewport(AbstractViewport):
 		self.process_key = process_key
 		self._frame = frame
 		self._alignment = alignment
+		self._hide_input = hide_input
 
 		self._main_win: Optional['curses._CursesWindow'] = None
 		self._edit_win: Optional['curses._CursesWindow'] = None
@@ -604,7 +606,8 @@ class EditMenu(AbstractCurses):
 		allow_reset: bool = False,
 		reset_warning_msg: Optional[str] = None,
 		alignment: Alignment = Alignment.CENTER,
-		default_text: Optional[str] = None
+		default_text: Optional[str] = None,
+		hide_input: bool = False
 	):
 		super().__init__()
 
@@ -619,6 +622,7 @@ class EditMenu(AbstractCurses):
 		self._alignment = alignment
 		self._edit_width = edit_width
 		self._default_text = default_text
+		self._hide_input = hide_input
 
 		if self._interrupt_warning is None:
 			self._interrupt_warning = str(_('Are you sure you want to reset this setting?')) + '\n'
@@ -635,6 +639,7 @@ class EditMenu(AbstractCurses):
 
 		self._last_state: Optional[Result] = None
 		self._help_active = False
+		self._real_input = ""
 
 	def _init_viewports(self) -> None:
 		y_offset = 0
@@ -655,10 +660,11 @@ class EditMenu(AbstractCurses):
 			y_offset,
 			self._process_edit_key,
 			frame=self._frame,
-			alignment=self._alignment
+			alignment=self._alignment,
+			hide_input=self._hide_input
 		)
-		y_offset += 3
 
+		y_offset += 3
 		self._error_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
 
 	def input(self) -> Result:
@@ -686,7 +692,8 @@ class EditMenu(AbstractCurses):
 		assert self._input_vp
 		assert self._error_vp
 
-		text = self._input_vp.gather()
+		text = self._real_input
+		# text = self._input_vp.gather()
 
 		self.clear_all()
 
@@ -749,27 +756,39 @@ class EditMenu(AbstractCurses):
 		key_handles = [key for key in key_handles if key != MenuKeys.STD_KEYS]
 
 		# regular key stroke should be passed to the editor
-		if not key_handles:
-			return key
+		if key_handles:
+			special_key = key_handles[0]
 
-		special_key = key_handles[0]
-
-		match special_key:
-			case MenuKeys.HELP:
-				self._clear_all()
-				self._help_active = True
-				self._show_help()
-				return None
-			case MenuKeys.ESC:
-				if self._help_active:
-					self._help_active = False
-					self._draw()
-				if self._allow_skip:
-					self._last_state = Result(ResultType.Skip, None)
+			match special_key:
+				case MenuKeys.HELP:
+					self._clear_all()
+					self._help_active = True
+					self._show_help()
+					return None
+				case MenuKeys.ESC:
+					if self._help_active:
+						self._help_active = False
+						self._draw()
+					if self._allow_skip:
+						self._last_state = Result(ResultType.Skip, None)
+						key = 7
+				case MenuKeys.ACCEPT:
+					self._last_state = Result(ResultType.Selection, None)
 					key = 7
-			case MenuKeys.ACCEPT:
-				self._last_state = Result(ResultType.Selection, None)
-				key = 7
+				case MenuKeys.BACKSPACE:
+					if len(self._real_input) > 0:
+						self._real_input = self._real_input[:-1]
+				case _:
+					self._real_input += chr(key)
+					if self._hide_input:
+						key = 42
+		else:
+			try:
+				self._real_input += chr(key)
+				if self._hide_input:
+					key = 42
+			except:
+				pass
 
 		return key
 
