@@ -131,7 +131,8 @@ class Chars:
 	Block = "█"
 	Triangle_up = "▲"
 	Triangle_down = "▼"
-	Check = "✓"
+	# Check = "✓"
+	Check = u'\N{check mark}'
 	Cross = "𐄂"
 	Right_arrow = "←"
 
