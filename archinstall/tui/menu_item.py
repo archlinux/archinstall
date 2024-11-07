@@ -181,10 +181,7 @@ class MenuItemGroup:
 				if item.get_value() is not False:
 					text = f'{text}{spacing}{Chars.Check}'
 			else:
-				if item.mandatory:
-					text = f'{text}{spacing}{Chars.Cross}'
-				else:
-					text = item.text
+				text = item.text
 
 		if default_text:
 			text = f'{text} {default_text}'
