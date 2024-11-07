@@ -255,11 +255,10 @@ def load_config() -> None:
 		arguments['audio_config'] = models.AudioConfiguration.parse_arg(arguments['audio_config'])
 
 	if arguments.get('disk_encryption', None) is not None and disk_config is not None:
-		password = arguments.get('encryption_password', '')
 		arguments['disk_encryption'] = disk.DiskEncryption.parse_arg(
 			arguments['disk_config'],
 			arguments['disk_encryption'],
-			password
+			arguments.get('encryption_password', '')
 		)
 
 
