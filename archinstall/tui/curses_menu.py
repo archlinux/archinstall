@@ -381,12 +381,6 @@ class EditViewport(AbstractViewport):
 
 		self._textbox.edit(self.process_key)  # type: ignore
 
-	def gather(self) -> Optional[str]:
-		if not self._textbox:
-			return None
-
-		return self._textbox.gather().strip()
-
 
 @dataclass
 class ViewportState:
@@ -693,7 +687,6 @@ class EditMenu(AbstractCurses):
 		assert self._error_vp
 
 		text = self._real_input
-		# text = self._input_vp.gather()
 
 		self.clear_all()
 
@@ -702,6 +695,7 @@ class EditMenu(AbstractCurses):
 				self.clear_all()
 				entry = ViewportEntry(err, 0, 0, STYLE.ERROR)
 				self._error_vp.update([entry], 0)
+				self._real_input = ''
 				return None
 
 		return text

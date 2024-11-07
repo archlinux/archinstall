@@ -100,7 +100,7 @@ class FormattedOutput:
 				value = record.get(key, '')
 
 				if '!' in key:
-					value = '*' * width
+					value = '*' * len(value)
 
 				if isinstance(value, (int, float)) or (isinstance(value, str) and value.isnumeric()):
 					obj_data.append(unicode_rjust(str(value), width))
