@@ -374,8 +374,6 @@ class DeviceHandler(object):
 			except ValueError:
 				time.sleep(3)
 
-		raise ValueError(f'Failed to fetch {info_type} information')
-
 	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
 		cmd = (
 			'lvs --reportformat json '
