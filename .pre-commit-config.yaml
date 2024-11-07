@@ -46,3 +46,12 @@ repos:
     rev: v0.7.2
     hooks:
       - id: ruff
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        fail_fast: true
+        require_serial: true
