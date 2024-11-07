@@ -124,7 +124,6 @@ class PreviewStyle(Enum):
 class Chars:
 	Horizontal = "─"
 	Vertical = "│"
-	Upper_left = "╭"
 	Upper_left = "┌"
 	Upper_right = "┐"
 	Lower_left = "└"

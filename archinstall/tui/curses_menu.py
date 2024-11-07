@@ -1464,8 +1464,8 @@ class Tui:
 			return Tui.t()._main_loop(component)
 
 	def _sig_win_resize(self, signum: int, frame) -> None:
-		if hasattr(self, '_component') and self._component is not None:
-			self._component.resize_win()
+		if hasattr(self, '_component') and self._component is not None:  # pylint: disable=E1101
+			self._component.resize_win()  # pylint: disable=E1101
 
 	def _main_loop(self, component: AbstractCurses) -> Result:
 		self._screen.refresh()
