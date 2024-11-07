@@ -134,8 +134,10 @@ def fetch_data_from_url(url: str, params: Optional[dict] = None) -> str:
 		response = urlopen(full_url, context=ssl_context)
 		data = response.read().decode('UTF-8')
 		return data
-	except URLError:
-		raise ValueError(f'Unable to fetch data from url: {url}')
+	except URLError as e:
+		raise ValueError(f'Unable to fetch data from url: {url}\n{e}')
+	except Exception as e:
+		raise ValueError(f'Unexpected error when parsing response: {e}')
 
 
 def calc_checksum(icmp_packet) -> int:

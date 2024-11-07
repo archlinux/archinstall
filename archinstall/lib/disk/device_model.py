@@ -1435,7 +1435,7 @@ def _fetch_lsblk_info(
 		cmd.append(str(dev_path))
 
 	try:
-		result = SysCommand(cmd).decode()
+		worker = SysCommand(cmd)
 	except SysCallError as err:
 		# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
 		if err.worker:
@@ -1448,12 +1448,12 @@ def _fetch_lsblk_info(
 		raise err
 
 	try:
-		block_devices = json.loads(result)
+		data = json.loads(worker.output(remove_cr=False))
 	except json.decoder.JSONDecodeError as err:
-		error(f"Could not decode lsblk JSON: {result}")
+		error(f"Could not decode lsblk JSON:\n{worker.output().decode().rstrip()}")
 		raise err
 
-	blockdevices = block_devices['blockdevices']
+	blockdevices = data['blockdevices']
 	return [LsblkInfo.from_json(device) for device in blockdevices]
 
 

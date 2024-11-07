@@ -302,28 +302,29 @@ class SysCommandWorker:
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
 			history_logfile = pathlib.Path(f"{storage['LOG_PATH']}/cmd_history.txt")
+
+			change_perm = False
+			if history_logfile.exists() is False:
+				change_perm = True
+
 			try:
-				change_perm = False
-				if history_logfile.exists() is False:
-					change_perm = True
+				with history_logfile.open("a") as cmd_log:
+					cmd_log.write(f"{time.time()} {self.cmd}\n")
 
-				try:
-					with history_logfile.open("a") as cmd_log:
-						cmd_log.write(f"{time.time()} {self.cmd}\n")
+				if change_perm:
+					os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+			except (PermissionError, FileNotFoundError):
+				# If history_logfile does not exist, ignore the error
+				pass
+			except Exception as e:
+				exception_type = type(e).__name__
+				error(f"Unexpected {exception_type} occurred in {self.cmd}: {e}")
+				raise e
 
-					if change_perm:
-						os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
-				except (PermissionError, FileNotFoundError):
-					# If history_logfile does not exist, ignore the error
-					pass
-				except Exception as e:
-					exception_type = type(e).__name__
-					error(f"Unexpected {exception_type} occurred in {self.cmd}: {e}")
-					raise e
+			if storage.get('arguments', {}).get('debug'):
+				debug(f"Executing: {self.cmd}")
 
-				if storage.get('arguments', {}).get('debug'):
-					debug(f"Executing: {self.cmd}")
-
+			try:
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
 			except FileNotFoundError:
 				error(f"{self.cmd[0]} does not exist.")
@@ -441,11 +442,14 @@ class SysCommand:
 			return val.strip()
 		return val
 
-	def output(self) -> bytes:
+	def output(self, remove_cr: bool = True) -> bytes:
 		if not self.session:
 			raise ValueError('No session available')
 
-		return self.session._trace_log.replace(b'\r\n', b'\n')
+		if remove_cr:
+			return self.session._trace_log.replace(b'\r\n', b'\n')
+
+		return self.session._trace_log
 
 	@property
 	def exit_code(self) -> Optional[int]:

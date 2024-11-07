@@ -1,6 +1,7 @@
 from pydantic import BaseModel, field_validator, model_validator
 import datetime
 import http.client
+import urllib.error
 import urllib.parse
 import urllib.request
 from typing import (
@@ -33,27 +34,42 @@ class MirrorStatusEntryV3(BaseModel):
 	_speed: float | None = None
 	_hostname: str | None = None
 	_port: int | None = None
+	_speedtest_retries: int | None = None
 
 	@property
-	def speed(self) -> float | None:
+	def speed(self) -> float:
 		if self._speed is None:
-			info(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
-			req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
+			if not self._speedtest_retries:
+				self._speedtest_retries = 3
+			elif self._speedtest_retries < 1:
+				self._speedtest_retries = 1
 
-			try:
-				with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
-					size = len(handle.read())
+			_retry = 0
+			while _retry < self._speedtest_retries and self._speed is None:
+				info(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
+				req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
 
-				self._speed = size / timer.time
-				debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
-			except http.client.IncompleteRead:
-				debug("    speed: <undetermined>")
-				self._speed = 0
-			except urllib.error.URLError as error:
-				debug(f"    speed: <undetermined> ({error})")
-				self._speed = 0
-			except Exception as error:
-				debug(f"    speed: <undetermined> ({error})")
+				try:
+					with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
+						size = len(handle.read())
+
+					self._speed = size / timer.time
+					debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
+				# Do not retry error
+				except (urllib.error.URLError, ) as error:
+					debug(f"    speed: <undetermined> ({error}), skip")
+					self._speed = 0
+				# Do retry error
+				except (http.client.IncompleteRead, ConnectionResetError) as error:
+					debug(f"    speed: <undetermined> ({error}), retry")
+				# Catch all
+				except Exception as error:
+					debug(f"    speed: <undetermined> ({error}), skip")
+					self._speed = 0
+
+				_retry += 1
+
+			if self._speed is None:
 				self._speed = 0
 
 		return self._speed

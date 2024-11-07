@@ -1,3 +1,4 @@
+import time
 import json
 import pathlib
 from dataclasses import dataclass, field
@@ -6,7 +7,7 @@ from typing import Dict, Any, List, Optional, TYPE_CHECKING, Tuple
 
 from .menu import AbstractSubMenu, ListManager
 from .networking import fetch_data_from_url
-from .output import warn, FormattedOutput
+from .output import FormattedOutput, debug
 from .storage import storage
 from .models.mirrors import MirrorStatusListV3, MirrorStatusEntryV3
 
@@ -383,17 +384,22 @@ def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
 
 
 def list_mirrors() -> Dict[str, List[MirrorStatusEntryV3]]:
-	regions: Dict[str, List[MirrorStatusEntryV3]] = {}
-
-	if storage['arguments']['offline']:
-		with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fp:
-			mirrorlist = fp.read()
-	else:
+	if not storage['arguments']['offline']:
 		url = "https://archlinux.org/mirrors/status/json/"
-		try:
-			mirrorlist = fetch_data_from_url(url)
-		except ValueError as err:
-			warn(f'Could not fetch an active mirror-list: {err}')
-			return regions
+		attempts = 3
 
-	return _parse_mirror_list(mirrorlist)
+		for attempt_nr in range(attempts):
+			try:
+				mirrorlist = fetch_data_from_url(url)
+				return _parse_mirror_list(mirrorlist)
+			except Exception as e:
+				debug(f'Error while fetching mirror list: {e}')
+				time.sleep(attempt_nr + 1)
+
+		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
+
+	# we'll use the local mirror list if the offline flag is set
+	# or if fetching the mirror list remotely failed
+	with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fp:
+		mirrorlist = fp.read()
+		return _parse_mirror_list(mirrorlist)

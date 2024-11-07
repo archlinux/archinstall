@@ -53,6 +53,9 @@ class ManualNetworkConfig(ListManager):
 		if not available:
 			return None
 
+		if not available:
+			return None
+
 		items = [MenuItem(i, value=i) for i in available]
 		group = MenuItemGroup(items, sort_items=True)
 
