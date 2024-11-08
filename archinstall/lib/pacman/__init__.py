@@ -148,7 +148,7 @@ class Pacman:
 		self.synced = synced
 		self.rootdir = rootdir
 
-		self._temporary_pacman_root :pathlib.Path | None = None
+		self._temporary_pacman_root: pathlib.Path | None = None
 		self._session = None
 		self._source_config_mirrors = True if servers is None or include_config_mirrors is True else False
 
@@ -186,7 +186,7 @@ class Pacman:
 
 		print(f"Loading pacman configuration {self.config}")
 
-		config :typing.Dict[str, typing.Any] = {}
+		config: typing.Dict[str, typing.Any] = {}
 		with self.config.open('r') as fh:
 			_section = None
 			for line in fh:
@@ -200,7 +200,7 @@ class Pacman:
 				config_item = line.strip()
 
 				if _section and _section not in config:
-					config[_section]  = {}
+					config[_section] = {}
 
 				if _section and _section.lower() == 'options':
 					if '=' in config_item:
@@ -348,8 +348,8 @@ class Pacman:
 			[_transaction.add_pkg(pkg) for pkg in pyalpm_package_list]
 
 	def search(self, *patterns: str, exact: bool = True):
-		results :typing.List[pyalpm.Package] = []
-		queries :typing.List[str] = []
+		results: typing.List[pyalpm.Package] = []
+		queries: typing.List[str] = []
 
 		if not self._session:
 			raise PacmanIssue("Pacman() needs to be executed in a context")
@@ -382,8 +382,8 @@ class Pacman:
 		return results
 
 	def query(self, *patterns: str, exact: bool = True):
-		results :typing.List[pyalpm.Package] = []
-		queries :typing.List[str] = []
+		results: typing.List[pyalpm.Package] = []
+		queries: typing.List[str] = []
 
 		if not self._session:
 			raise PacmanIssue("Pacman() needs to be executed in a context")
