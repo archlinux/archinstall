@@ -76,7 +76,7 @@ class PacmanTransaction:
 				allexplicit=self.allexplicit
 			)
 		except pyalpm.error as error:
-			message, code, _ = error.args
+			message, code, _ = error.args  # pylint: disable=unbalanced-tuple-unpacking
 
 			if code == 10:
 				raise PermissionError(f"Could not lock database {self._session.dbpath}")
@@ -90,7 +90,7 @@ class PacmanTransaction:
 				self._transaction.prepare()
 				self._transaction.commit()
 			except pyalpm.error as error:
-				message, code, _ = error.args
+				message, code, _ = error.args  # pylint: disable=unbalanced-tuple-unpacking
 
 				if code == 28:
 					# Transaction was not prepared
@@ -318,7 +318,7 @@ class Pacman:
 
 				db.update(force=True)
 
-	def install(self, *packages):
+	def install(self, *packages: typing.List[str]):
 		pyalpm_package_list = []
 		missing_packages = []
 
@@ -336,7 +336,7 @@ class Pacman:
 			print(f"Installing packages: {pyalpm_package_list}")
 			[_transaction.add_pkg(pkg) for pkg in pyalpm_package_list]
 
-	def search(self, *patterns, exact=True):
+	def search(self, *patterns: typing.List[str], exact: bool = True):
 		results = []
 		queries = []
 
@@ -367,7 +367,7 @@ class Pacman:
 
 		return results
 
-	def query(self, *patterns, exact=True):
+	def query(self, *patterns: typing.List[str], exact: bool = True):
 		results = []
 		queries = []
 
@@ -438,7 +438,7 @@ class Pacman:
 		self.update()
 		self.synced = True
 
-	def strap(self, target, packages: Union[str, list[str]]) -> None:
+	def strap(self, target: str, packages: Union[str, list[str]]) -> None:
 		self.sync()
 		if isinstance(packages, str):
 			packages = [packages]
