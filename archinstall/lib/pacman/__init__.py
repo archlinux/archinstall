@@ -285,13 +285,13 @@ class Pacman:
 		if getattr(self, 'dbpath', None) is None:
 			self.dbpath = pathlib.Path('/var/lib/pacman/')
 		if self.repos is None:
-			raise PacmanIssue(f"No repositories are configured.")
+			raise PacmanIssue("No repositories are configured.")
 
 		# Session is our libalpm handle with 2 databases
 		self._session = pyalpm.Handle(str(self.rootdir), str(self.dbpath))
 
 		if not self._session:
-			raise PacmanIssue(f"Could not initate a pyalpm handle.")
+			raise PacmanIssue("Could not initate a pyalpm handle.")
 
 		for repo in self.repos:
 			self._session.register_syncdb(repo, pyalpm.SIG_DATABASE_OPTIONAL)
