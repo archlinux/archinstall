@@ -98,8 +98,7 @@ if 'sphinx' not in sys.modules:
 		parser.print_help()
 		exit(0)
 	if os.getuid() != 0:
-		print(_("Archinstall requires root privileges to run. See --help for more."))
-		exit(1)
+		warn(_("Archinstall might require root privileges to run. See --help for more."))
 
 
 def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err: bool = False) -> dict:
