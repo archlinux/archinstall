@@ -23,15 +23,16 @@ if TYPE_CHECKING:
 
 
 class PacmanServer(pydantic.BaseModel):
-	address :urllib.parse.ParseResult
+	address: urllib.parse.ParseResult
 
 	def geturl(self):
 		return self.address.geturl()
 
 
 class PacmanTransaction:
-	def __init__(self,
-		session :pyalpm.Handle,
+	def __init__(
+		self,
+		session: pyalpm.Handle,
 		cascade=False,
 		nodeps=False,
 		force=True,
@@ -78,7 +79,7 @@ class PacmanTransaction:
 			message, code, _ = error.args
 
 			if code == 10:
-				raise PermissionError(f"Could not lock database {db.name}.db in {self.dbpath}")
+				raise PermissionError(f"Could not lock database {self._session.dbpath}")
 
 			raise error
 		return self
@@ -112,24 +113,25 @@ class PacmanTransaction:
 
 
 class Pacman:
-	def __init__(self,
-		config :pathlib.Path = pathlib.Path('/etc/pacman.conf'),
-		servers :typing.List[str] | typing.Dict[str, PacmanServer] | None = None,
-		dbpath :pathlib.Path | None = None, # pathlib.Path('/var/lib/pacman/')
-		cachedir :pathlib.Path | None = None, # pathlib.Path('/var/cache/pacman/pkg')
-		hooks :typing.List[pathlib.Path] | None = None,
-		repos :typing.List[str] | None = None,
+	def __init__(
+		self,
+		config: pathlib.Path = pathlib.Path('/etc/pacman.conf'),
+		servers: typing.List[str] | typing.Dict[str, PacmanServer] | None = None,
+		dbpath: pathlib.Path | None = None,  # pathlib.Path('/var/lib/pacman/')
+		cachedir: pathlib.Path | None = None,  # pathlib.Path('/var/cache/pacman/pkg')
+		hooks: typing.List[pathlib.Path] | None = None,
+		repos: typing.List[str] | None = None,
 		# hooks = [
 		# 	pathlib.Path('/usr/share/libalpm/hooks/'),
 		# 	pathlib.Path('/etc/pacman.d/hooks/')
 		# ],
-		logfile :pathlib.Path | None = None, # pathlib.Path('/var/log/pacman.log'),
-		gpgdir :pathlib.Path | None = None, # pathlib.Path('/etc/pacman.d/gnupg/'),
-		lock :pathlib.Path | None = None,
-		include_config_mirrors :bool = False,
-		temporary :bool = False,
-		silent :bool = False,
-		synced :float | None = None,
+		logfile: pathlib.Path | None = None,  # pathlib.Path('/var/log/pacman.log'),
+		gpgdir: pathlib.Path | None = None,  # pathlib.Path('/etc/pacman.d/gnupg/'),
+		lock: pathlib.Path | None = None,
+		include_config_mirrors: bool = False,
+		temporary: bool = False,
+		silent: bool = False,
+		synced: float | None = None,
 		**kwargs
 	):
 		self.config = config
@@ -194,7 +196,7 @@ class Pacman:
 					continue
 
 				config_item = line.strip()
-				
+
 				if _section not in config:
 					config[_section] = {}
 
@@ -306,7 +308,7 @@ class Pacman:
 		# we ensure we rely on the latest information
 		for db in self._session.get_syncdbs():
 			# Set up a transaction with some sane defaults
-			with PacmanTransaction(session=self._session) as _transaction:
+			with PacmanTransaction(session=self._session) as _transaction:  # noqa: F841
 				# Populate the database with the servers
 				# listed in the configuration (we could manually override a list here)
 				db.servers = [
@@ -326,7 +328,7 @@ class Pacman:
 				continue
 
 			pyalpm_package_list += results
-		
+
 		if missing_packages:
 			raise ValueError(f"Could not find package(s): {' '.join(missing_packages)}")
 
@@ -352,13 +354,10 @@ class Pacman:
 			# print(f"Searching {db.name} for: {' '.join(patterns)}")
 			results += db.search(*queries)
 
-		# !! Workaround for https://gitlab.archlinux.org/pacman/pacman/-/issues/204
-		# 
-		# Since the regex ^<package>$ should make absolute matches
-		# but doesn't. This could be because I assume (incorrectly) that
-		# `pacman -Ss <name>` should match on `pkgname` and `pkgdescr` in PKGBUILD
-		# or because it's a bug.
-		# But we can remove the following workaround once that is sorted out:
+		# Because `pacman -Ss <name>` doesn't perform exact matches,
+		# as discussed in https://gitlab.archlinux.org/pacman/pacman/-/issues/204
+		# we need to filter out any inexact results until we figure out if libalpm
+		# can be used to implement `pacman --sync --nodeps --nodeps --print --print-format '%n' nano`
 		if exact:
 			results = [
 				package
@@ -385,13 +384,10 @@ class Pacman:
 		db = self._session.get_localdb()
 		results += db.search(*queries)
 
-		# !! Workaround for https://gitlab.archlinux.org/pacman/pacman/-/issues/204
-		# 
-		# Since the regex ^<package>$ should make absolute matches
-		# but doesn't. This could be because I assume (incorrectly) that
-		# `pacman -Ss <name>` should match on `pkgname` and `pkgdescr` in PKGBUILD
-		# or because it's a bug.
-		# But we can remove the following workaround once that is sorted out:
+		# Because `pacman -Ss <name>` doesn't perform exact matches,
+		# as discussed in https://gitlab.archlinux.org/pacman/pacman/-/issues/204
+		# we need to filter out any inexact results until we figure out if libalpm
+		# can be used to implement `pacman --sync --nodeps --nodeps --print --print-format '%n' nano`
 		if exact:
 			results = [
 				package
