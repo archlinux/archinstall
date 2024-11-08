@@ -44,3 +44,6 @@ class DownloadTimeout(Exception):
 	'''
 	Download timeout exception raised by DownloadTimer.
 	'''
+
+class PacmanIssue(Exception):
+	pass

@@ -15,7 +15,7 @@ from ..general import SysCommand
 from ..output import warn, error, info
 from .repo import Repo
 from .config import Config
-from ..exceptions import RequirementError
+from ..exceptions import RequirementError, PacmanIssue
 from ..plugins import plugins
 
 if TYPE_CHECKING:
@@ -100,7 +100,6 @@ class PacmanTransaction:
 					self._transaction.release()
 					return False
 			self._transaction.release()
-		return True
 
 	def __getattr__(self, key):
 		# Transparency function to route calls directly towards
@@ -116,7 +115,7 @@ class Pacman:
 	def __init__(
 		self,
 		config: pathlib.Path = pathlib.Path('/etc/pacman.conf'),
-		servers: typing.List[str] | typing.Dict[str, PacmanServer] | None = None,
+		servers: typing.List[str] | typing.Dict[str, typing.List[PacmanServer]] | None = None,
 		dbpath: pathlib.Path | None = None,  # pathlib.Path('/var/lib/pacman/')
 		cachedir: pathlib.Path | None = None,  # pathlib.Path('/var/cache/pacman/pkg')
 		hooks: typing.List[pathlib.Path] | None = None,
@@ -132,6 +131,7 @@ class Pacman:
 		temporary: bool = False,
 		silent: bool = False,
 		synced: float | None = None,
+		rootdir: pathlib.Path | None = None,
 		**kwargs
 	):
 		self.config = config
@@ -146,8 +146,9 @@ class Pacman:
 		self.temporary = temporary
 		self.silent = silent
 		self.synced = synced
+		self.rootdir = rootdir
 
-		self._temporary_pacman_root = None
+		self._temporary_pacman_root :pathlib.Path | None = None
 		self._session = None
 		self._source_config_mirrors = True if servers is None or include_config_mirrors is True else False
 
@@ -155,9 +156,10 @@ class Pacman:
 
 		if self.repos is None:
 			# Get the activated repositories from the config
-			self.repos = list(set(self._config.keys()) - {'options'})
+			# and if none are set, use None
+			self.repos = list(set(self._config.keys()) - {'options'}) or None
 
-		if isinstance(self.servers, list):
+		if self.repos is not None and isinstance(self.servers, list):
 			_mapped_to_repos = {
 
 			}
@@ -168,13 +170,13 @@ class Pacman:
 				]
 
 			self.servers = _mapped_to_repos
-		elif self.servers is None:
+		elif self.repos and self.servers is None:
 			self.servers = {
 				repo: self._config[repo]
 				for repo in self.repos
 			}
 
-	def load_config(self):
+	def load_config(self) -> typing.Dict[str, Any]:
 		"""
 		Loads the given pacman.conf (usually /etc/pacman.conf)
 		and initiates not-None-values.
@@ -184,7 +186,7 @@ class Pacman:
 
 		print(f"Loading pacman configuration {self.config}")
 
-		config = {}
+		config :typing.Dict[str, typing.Any] = {}
 		with self.config.open('r') as fh:
 			_section = None
 			for line in fh:
@@ -197,10 +199,10 @@ class Pacman:
 
 				config_item = line.strip()
 
-				if _section not in config:
-					config[_section] = {}
+				if _section and _section not in config:
+					config[_section]  = {}
 
-				if _section.lower() == 'options':
+				if _section and _section.lower() == 'options':
 					if '=' in config_item:
 						# Key = Value pair
 						key, value = config_item.split('=', 1)
@@ -210,7 +212,7 @@ class Pacman:
 					else:
 						config[_section][key] = True
 
-				elif _section.lower() != 'options':
+				elif _section and _section.lower() != 'options':
 					repo = _section
 					if isinstance(config[_section], dict):
 						# Only the [options] section is "key: value" pairs
@@ -227,11 +229,11 @@ class Pacman:
 							value = value.strip()
 
 							if key.lower() == 'include':
-								value = pathlib.Path(value).expanduser().resolve().absolute()
-								if value.exists() is False:
-									raise PermissionError(f"Could not open mirror definitions for [{repo}] by including {value}")
+								absolute_path = pathlib.Path(value).expanduser().resolve().absolute()
+								if absolute_path.exists() is False:
+									raise PermissionError(f"Could not open mirror definitions for [{repo}] by including {absolute_path}")
 
-								with value.open('r') as mirrors:
+								with absolute_path.open('r') as mirrors:
 									for mirror_line in mirrors:
 										if len(mirror_line.strip()) == 0 or mirror_line.startswith('#'):
 											continue
@@ -256,7 +258,7 @@ class Pacman:
 
 		# A lot of inspiration is taken from pycman: https://github.com/archlinux/pyalpm/blob/6a0b75dac7151dfa2ea28f368db22ade1775ee2b/pycman/action_sync.py#L184
 		if self.temporary:
-			with tempfile.TemporaryDirectory(delete=False) as temporary_pacman_root:
+			with tempfile.TemporaryDirectory(delete=False) as temporary_pacman_root:  # type: ignore
 				# First we set a bunch of general configurations
 				# which load_config() will honor as long as they are not None
 				# (Anything we set here = is honored by load_config())
@@ -279,12 +281,18 @@ class Pacman:
 				setattr(self, key, value)
 
 		if getattr(self, 'rootdir', None) is None:
-			self.rootdir = '/'
+			self.rootdir = pathlib.Path('/')
 		if getattr(self, 'dbpath', None) is None:
-			self.dbpath = '/var/lib/pacman/'
+			self.dbpath = pathlib.Path('/var/lib/pacman/')
+		if self.repos is None:
+			raise PacmanIssue(f"No repositories are configured.")
 
 		# Session is our libalpm handle with 2 databases
 		self._session = pyalpm.Handle(str(self.rootdir), str(self.dbpath))
+
+		if not self._session:
+			raise PacmanIssue(f"Could not initate a pyalpm handle.")
+
 		for repo in self.repos:
 			self._session.register_syncdb(repo, pyalpm.SIG_DATABASE_OPTIONAL)
 
@@ -298,12 +306,15 @@ class Pacman:
 		return self
 
 	def __exit__(self, exit_type, exit_value, exit_tb) -> None:
-		if self.temporary:
+		if self.temporary and self._temporary_pacman_root:
 			shutil.rmtree(self._temporary_pacman_root.expanduser().resolve().absolute())
 
 		return None
 
-	def update(self):
+	def update(self) -> None:
+		if not self._session:
+			raise PacmanIssue("Pacman() needs to be executed in a context")
+
 		# We update our temporary (fresh) database so that
 		# we ensure we rely on the latest information
 		for db in self._session.get_syncdbs():
@@ -318,7 +329,7 @@ class Pacman:
 
 				db.update(force=True)
 
-	def install(self, *packages: typing.List[str]):
+	def install(self, *packages: str):
 		pyalpm_package_list = []
 		missing_packages = []
 
@@ -336,9 +347,12 @@ class Pacman:
 			print(f"Installing packages: {pyalpm_package_list}")
 			[_transaction.add_pkg(pkg) for pkg in pyalpm_package_list]
 
-	def search(self, *patterns: typing.List[str], exact: bool = True):
-		results = []
-		queries = []
+	def search(self, *patterns: str, exact: bool = True):
+		results :typing.List[pyalpm.Package] = []
+		queries :typing.List[str] = []
+
+		if not self._session:
+			raise PacmanIssue("Pacman() needs to be executed in a context")
 
 		if exact:
 			for pattern in patterns:
@@ -367,9 +381,12 @@ class Pacman:
 
 		return results
 
-	def query(self, *patterns: typing.List[str], exact: bool = True):
-		results = []
-		queries = []
+	def query(self, *patterns: str, exact: bool = True):
+		results :typing.List[pyalpm.Package] = []
+		queries :typing.List[str] = []
+
+		if not self._session:
+			raise PacmanIssue("Pacman() needs to be executed in a context")
 
 		if exact:
 			for pattern in patterns:
@@ -438,7 +455,7 @@ class Pacman:
 		self.update()
 		self.synced = True
 
-	def strap(self, target: str, packages: Union[str, list[str]]) -> None:
+	def strap(self, target: pathlib.Path, packages: Union[str, list[str]]) -> None:
 		self.sync()
 		if isinstance(packages, str):
 			packages = [packages]

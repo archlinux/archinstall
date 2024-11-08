@@ -116,6 +116,7 @@ warn_unreachable = false
 module = [
     "parted",
     "simple_term_menu",
+    "pyalpm"
 ]
 ignore_missing_imports = true
 
