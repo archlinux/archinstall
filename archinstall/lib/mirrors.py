@@ -429,10 +429,10 @@ def _parse_locale_mirrors(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3
 						mirror_list.setdefault(current_region, [])
 						break
 
-			url = urllib.parse.urlparse(line.removeprefix('Server = '))
+			url = line.removeprefix('Server = ')
 			mirror_entry = MirrorStatusEntryV3(
 				url=url.rstrip('$repo/os/$arch'),
-				protocol=url.scheme,
+				protocol=urllib.parse.urlparse(url).scheme,
 				active=True,
 				country=current_region or 'Worldwide',
 				# The following values are normally populated by
