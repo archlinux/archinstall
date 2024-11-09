@@ -93,7 +93,7 @@ class MirrorConfiguration:
 
 		for region, mirrors in self.mirror_regions.items():
 			for mirror in mirrors:
-				config += f'\n\n## {region}\nServer = {mirror}\n'
+				config += f'\n\n## {region}\nServer = {mirror.url}$repo/os/$arch\n'
 
 		for cm in self.custom_mirrors:
 			config += f'\n\n## {cm.name}\nServer = {cm.url}\n'
