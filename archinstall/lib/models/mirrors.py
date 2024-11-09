@@ -10,7 +10,7 @@ from typing import (
 )
 
 from ..networking import ping, DownloadTimer
-from ..output import info, debug
+from ..output import debug
 
 
 class MirrorStatusEntryV3(pydantic.BaseModel):
@@ -36,6 +36,10 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 	_speedtest_retries: int | None = None
 
 	@property
+	def server_url(self) -> str:
+		return f'{self.url}$repo/os/$arch'
+
+	@property
 	def speed(self) -> float:
 		if self._speed is None:
 			if not self._speedtest_retries:
@@ -45,7 +49,7 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 
 			_retry = 0
 			while _retry < self._speedtest_retries and self._speed is None:
-				info(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
+				debug(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
 				req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
 
 				try:
@@ -81,7 +85,7 @@ class MirrorStatusEntryV3(pydantic.BaseModel):
 		We do this because some hosts blocks ICMP so we'll have to rely on .speed() instead which is slower.
 		"""
 		if self._latency is None:
-			info(f"Checking latency for {self.url}")
+			debug(f"Checking latency for {self.url}")
 			self._latency = ping(self._hostname, timeout=2)
 			debug(f"  latency: {self._latency}")
 
