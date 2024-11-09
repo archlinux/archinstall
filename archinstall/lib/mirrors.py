@@ -1,6 +1,6 @@
 import time
 import json
-import pathlib
+from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, Any, List, Optional, TYPE_CHECKING
@@ -257,29 +257,51 @@ def select_mirror_regions(preset_values: Dict[str, List[str]] = {}) -> Dict[str,
 	else:
 		preselected = list(preset_values.keys())
 
-	mirrors = list_mirrors()
+	remote_mirrors = list_mirrors_from_remote()
+	mirrors: Dict[str, list[str]] = {}
 
-	choice = Menu(
-		_('Select one of the regions to download packages from'),
-		list(mirrors.keys()),
-		preset_values=preselected,
-		multi=True,
-		allow_reset=True
-	).run()
+	if remote_mirrors:
+		choice = Menu(
+			_('Select one of the regions to download packages from'),
+			list(remote_mirrors.keys()),
+			preset_values=preselected,
+			multi=True,
+			allow_reset=True
+		).run()
 
-	match choice.type_:
-		case MenuSelectionType.Reset:
-			return {}
-		case MenuSelectionType.Skip:
-			return preset_values
-		case MenuSelectionType.Selection:
-			return {
-				selected: [
-					f"{mirror.url}$repo/os/$arch" for mirror in sort_mirrors_by_performance(mirrors[selected])
-				] for selected in choice.multi_value
-			}
+		match choice.type_:
+			case MenuSelectionType.Reset:
+				return {}
+			case MenuSelectionType.Skip:
+				return preset_values
+			case MenuSelectionType.Selection:
+				for region in choice.multi_value:
+					mirrors.setdefault(region, [])
+					for mirror in _sort_mirrors_by_performance(remote_mirrors[region]):
+						mirrors[region].append(mirror.server_url)
+				return mirrors
+	else:
+		local_mirrors = list_mirrors_from_local()
 
-	return {}
+		choice = Menu(
+			_('Select one of the regions to download packages from'),
+			list(local_mirrors.keys()),
+			preset_values=preselected,
+			multi=True,
+			allow_reset=True
+		).run()
+
+		match choice.type_:
+			case MenuSelectionType.Reset:
+				return {}
+			case MenuSelectionType.Skip:
+				return preset_values
+			case MenuSelectionType.Selection:
+				for region in choice.multi_value:
+					mirrors[region] = local_mirrors[region]
+				return mirrors
+
+	return mirrors
 
 
 def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []) -> list[CustomMirror]:
@@ -287,11 +309,35 @@ def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []) -> l
 	return custom_mirrors
 
 
-def sort_mirrors_by_performance(mirror_list: List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
+def list_mirrors_from_remote() -> Optional[Dict[str, List[MirrorStatusEntryV3]]]:
+	if not storage['arguments']['offline']:
+		url = "https://archlinux.org/mirrors/status/json/"
+		attempts = 3
+
+		for attempt_nr in range(attempts):
+			try:
+				mirrorlist = fetch_data_from_url(url)
+				return _parse_remote_mirror_list(mirrorlist)
+			except Exception as e:
+				debug(f'Error while fetching mirror list: {e}')
+				time.sleep(attempt_nr + 1)
+
+		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
+
+	return None
+
+
+def list_mirrors_from_local() -> Dict[str, list[str]]:
+	with Path('/etc/pacman.d/mirrorlist').open('r') as fp:
+		mirrorlist = fp.read()
+		return _parse_locale_mirrors(mirrorlist)
+
+
+def _sort_mirrors_by_performance(mirror_list: List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
 	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
-def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
+def _parse_remote_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
 	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
 
 	sorting_placeholder: Dict[str, List[MirrorStatusEntryV3]] = {}
@@ -324,23 +370,27 @@ def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
 	return sorted_by_regions
 
 
-def list_mirrors() -> Dict[str, List[MirrorStatusEntryV3]]:
-	if not storage['arguments']['offline']:
-		url = "https://archlinux.org/mirrors/status/json/"
-		attempts = 3
+def _parse_locale_mirrors(mirrorlist: str) -> Dict[str, List[str]]:
+	lines = mirrorlist.splitlines()
 
-		for attempt_nr in range(attempts):
-			try:
-				mirrorlist = fetch_data_from_url(url)
-				return _parse_mirror_list(mirrorlist)
-			except Exception as e:
-				debug(f'Error while fetching mirror list: {e}')
-				time.sleep(attempt_nr + 1)
+	# remove empty lines
+	lines = [line for line in lines if line]
 
-		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
+	mirror_list: Dict[str, List[str]] = {}
 
-	# we'll use the local mirror list if the offline flag is set
-	# or if fetching the mirror list remotely failed
-	with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fp:
-		mirrorlist = fp.read()
-		return _parse_mirror_list(mirrorlist)
+	current_region = ''
+	for idx, line in enumerate(lines):
+		line = line.strip()
+
+		if line.lower().startswith('server'):
+			if not current_region:
+				for i in range(idx - 1, 0, -1):
+					if lines[i].startswith('##'):
+						current_region = lines[i].replace('#', '').strip()
+						mirror_list.setdefault(current_region, [])
+						break
+
+			url = line.removeprefix('Server = ')
+			mirror_list[current_region].append(url)
+
+	return mirror_list
