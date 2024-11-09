@@ -99,11 +99,14 @@
       "type": "manual",
       "nics": [
         {
-          "iface": null,
-          "ip": null,
+          "iface": "eno1",
+          "ip": "192.168.1.15/24",
           "dhcp": true,
-          "gateway": null,
-          "dns": null
+          "gateway": "192.168.1.1",
+          "dns": [
+              "192.168.1.1",
+              "9.9.9.9"
+          ]
         }
       ]
     },

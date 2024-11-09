@@ -1,6 +1,7 @@
 import time
 import json
-import pathlib
+import urllib.parse
+from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, Any, List, Optional, TYPE_CHECKING, Tuple
@@ -312,7 +313,10 @@ class MirrorMenu(AbstractSubMenu):
 
 
 def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[str, List[MirrorStatusEntryV3]]:
-	mirrors: Dict[str, List[MirrorStatusEntryV3]] = list_mirrors()
+	mirrors: Dict[str, List[MirrorStatusEntryV3]] | None = list_mirrors_from_remote()
+
+	if not mirrors:
+		mirrors = list_mirrors_from_local()
 
 	items = [MenuItem(name, value=(name, mirrors)) for name, mirrors in mirrors.items()]
 	group = MenuItemGroup(items, sort_items=True)
@@ -338,19 +342,41 @@ def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[
 			selected_mirrors: List[Tuple[str, List[MirrorStatusEntryV3]]] = result.get_values()
 			return {name: mirror for name, mirror in selected_mirrors}
 
-	return {}
-
 
 def select_custom_mirror(preset: List[CustomMirror] = []):
 	custom_mirrors = CustomMirrorList(preset).run()
 	return custom_mirrors
 
 
-def sort_mirrors_by_performance(mirror_list: List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
+def list_mirrors_from_remote() -> Optional[Dict[str, List[MirrorStatusEntryV3]]]:
+	if not storage['arguments']['offline']:
+		url = "https://archlinux.org/mirrors/status/json/"
+		attempts = 3
+
+		for attempt_nr in range(attempts):
+			try:
+				mirrorlist = fetch_data_from_url(url)
+				return _parse_remote_mirror_list(mirrorlist)
+			except Exception as e:
+				debug(f'Error while fetching mirror list: {e}')
+				time.sleep(attempt_nr + 1)
+
+		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
+
+	return None
+
+
+def list_mirrors_from_local() -> Dict[str, List[MirrorStatusEntryV3]]:
+	with Path('/etc/pacman.d/mirrorlist').open('r') as fp:
+		mirrorlist = fp.read()
+		return _parse_locale_mirrors(mirrorlist)
+
+
+def _sort_mirrors_by_performance(mirror_list: List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
 	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
-def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
+def _parse_remote_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
 	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
 
 	sorting_placeholder: Dict[str, List[MirrorStatusEntryV3]] = {}
@@ -383,23 +409,41 @@ def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
 	return sorted_by_regions
 
 
-def list_mirrors() -> Dict[str, List[MirrorStatusEntryV3]]:
-	if not storage['arguments']['offline']:
-		url = "https://archlinux.org/mirrors/status/json/"
-		attempts = 3
+def _parse_locale_mirrors(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
+	lines = mirrorlist.splitlines()
 
-		for attempt_nr in range(attempts):
-			try:
-				mirrorlist = fetch_data_from_url(url)
-				return _parse_mirror_list(mirrorlist)
-			except Exception as e:
-				debug(f'Error while fetching mirror list: {e}')
-				time.sleep(attempt_nr + 1)
+	# remove empty lines
+	lines = [line for line in lines if line]
 
-		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
+	mirror_list: Dict[str, List[MirrorStatusEntryV3]] = {}
 
-	# we'll use the local mirror list if the offline flag is set
-	# or if fetching the mirror list remotely failed
-	with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fp:
-		mirrorlist = fp.read()
-		return _parse_mirror_list(mirrorlist)
+	current_region = ''
+	for idx, line in enumerate(lines):
+		line = line.strip()
+
+		if line.lower().startswith('server'):
+			if not current_region:
+				for i in range(idx - 1, 0, -1):
+					if lines[i].startswith('##'):
+						current_region = lines[i].replace('#', '').strip()
+						mirror_list.setdefault(current_region, [])
+						break
+
+			url = urllib.parse.urlparse(line.removeprefix('Server = '))
+			mirror_entry = MirrorStatusEntryV3(
+				url=url.rstrip('$repo/os/$arch'),
+				protocol=url.scheme,
+				active=True,
+				country=current_region or 'Worldwide',
+				# The following values are normally populated by
+				# archlinux.org mirror-list endpoint, and can't be known
+				# from just the local mirror-list file.
+				country_code='WW',
+				isos=True,
+				ipv4=True,
+				ipv6=True,
+				details='Locally defined mirror',
+			)
+			mirror_list[current_region].append(mirror_entry)
+
+	return mirror_list

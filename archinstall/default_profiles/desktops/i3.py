@@ -18,6 +18,7 @@ class I3wmProfile(XorgProfile):
 			'i3lock',
 			'i3status',
 			'i3blocks',
+			'xss-set',
 			'xterm',
 			'lightdm-gtk-greeter',
 			'lightdm',
