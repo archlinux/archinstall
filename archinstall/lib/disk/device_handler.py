@@ -368,15 +368,11 @@ class DeviceHandler(object):
 		return None
 
 	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Optional[Any]:
-		attempts = 3
-
-		for attempt_nr in range(attempts):
+		while True:
 			try:
 				return self._lvm_info(cmd, info_type)
 			except ValueError:
-				time.sleep(attempt_nr + 1)
-
-		raise ValueError(f'Failed to fetch {info_type} information')
+				time.sleep(3)
 
 	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
 		cmd = (
