@@ -75,7 +75,7 @@ class CustomMirror:
 
 @dataclass
 class MirrorConfiguration:
-	mirror_regions: Dict[str, List[str]] = field(default_factory=dict)
+	mirror_regions: Dict[str, List[MirrorStatusEntryV3]] = field(default_factory=dict)
 	custom_mirrors: List[CustomMirror] = field(default_factory=list)
 
 	@property
