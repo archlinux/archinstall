@@ -27,6 +27,11 @@ depends=(
   'python-simple-term-menu'
   'systemd'
   'util-linux'
+  'xfsprogs'
+  'lvm2'
+  'f2fs-tools'
+  'ntfs-3g'
+  'reiserfsprogs'
 )
 makedepends=(
   'python-setuptools'
