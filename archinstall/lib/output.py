@@ -258,7 +258,6 @@ def _stylize_output(
 	return f'\033[{ansi}m{text}\033[0m'
 
 
-
 class Teacher:
 	"""
 	Used to support the --teach command line argument
@@ -278,7 +277,7 @@ class Teacher:
 	COUNT = 1
 
 	@classmethod
-	def initialize(cls):
+	def initialize(cls) -> None:
 		"""
 		Enable teacher mode.
 
@@ -302,11 +301,11 @@ class Teacher:
 ''')
 
 	@classmethod
-	def is_disabled(cls):
+	def is_disabled(cls) -> bool:
 		return not cls.ENABLED
 
 	@classmethod
-	def teach(cls, command: str) -> None:
+	def teach(cls, command: str | list[str]) -> None:
 		"""
 		Display command and sleep for a few seconds
 
@@ -320,7 +319,6 @@ class Teacher:
 
 		command_str = command if isinstance(command, str) else ' '.join([str(x) for x in command])
 
-
 		text = f'\nCOMMAND {cls.COUNT}:\n{cls.LEFT_PAD}{command_str}\n\n\n'
 		cls.emit(text)
 
@@ -329,7 +327,7 @@ class Teacher:
 		cls.COUNT += 1
 
 	@classmethod
-	def emit(cls, text: str ) -> None:
+	def emit(cls, text: str) -> None:
 		"""
 		Print the output to the screen with color
 		"""
@@ -456,5 +454,4 @@ def unicode_rjust(string: str, width: int, fillbyte: str = ' ') -> str:
 
 # Import at the end of the file instead of the beginning
 # to avoid a circular import
-from .menu import Menu
-
+from .menu import Menu  # noqa: E402
