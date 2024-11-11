@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 import os
 import sys
 import unicodedata
@@ -183,11 +184,16 @@ def _supports_color() -> bool:
 	Return True if the running system's terminal supports color,
 	and False otherwise.
 	"""
-	supported_platform = sys.platform != 'win32' or 'ANSICON' in os.environ
+	# On windows platforms, only allow color when ANSICON is installed
+	if sys.platform == 'win32' and not os.environ['ANSICON']:
+		return False
+
+	if 'COLORTERM' in os.environ:
+		# Check COLORTERM first, because sometimes sys.stdout.isatty() returns false even when color is supported
+		return True
 
 	# isatty is not always implemented, #6223.
-	is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
-	return supported_platform and is_a_tty
+	return hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
 
 
 class Font(Enum):
@@ -250,6 +256,90 @@ def _stylize_output(
 	ansi = ';'.join(code_list)
 
 	return f'\033[{ansi}m{text}\033[0m'
+
+
+
+class Teacher:
+	"""
+	Used to support the --teach command line argument
+	"""
+	# Call initialize() to enable
+	ENABLED = False
+
+	# Adjust how long to pause after eaach teaching moment
+	DELAY_SECONDS = 5
+
+	# Foreground color
+	COLOR = 'yellow'
+
+	# Use spaces instead of tabs for precise positioning
+	LEFT_PAD = ''.ljust(7)
+
+	COUNT = 1
+
+	@classmethod
+	def initialize(cls):
+		"""
+		Enable teacher mode.
+
+		Note teacher is disabled on startup because we are most interested
+		in displaying the commands used to effect a running system.
+		(Not the commands used to initialize the menus.)
+		"""
+		cls.ENABLED = True
+		# Specify precise number of spaces programmatically because
+		# some editors convert multiple spaces in a row to tabs
+		pad1, pad2, pad3 = (''.ljust(54), ''.ljust(67), ''.ljust(8))
+		cls.emit(f'''\n
+((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+(( TEACHING MODE{pad1}((
+(( {pad2}((
+(( Commands will be echoed to the screen with a pause after each one. ((
+(( {pad2}((
+(( Read along to understand what's happening under the hood. {pad3} ((
+((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+\n\n
+''')
+
+	@classmethod
+	def is_disabled(cls):
+		return not cls.ENABLED
+
+	@classmethod
+	def teach(cls, command: str) -> None:
+		"""
+		Display command and sleep for a few seconds
+
+		The intention is to make it clear which commands are actually
+		run to create a working system. Therefore these commands are
+		printed in color to the screen, with a delay afterward so
+		student can absorb the information.
+		"""
+		if cls.is_disabled():
+			return
+
+		command_str = command if isinstance(command, str) else ' '.join([str(x) for x in command])
+
+
+		text = f'\nCOMMAND {cls.COUNT}:\n{cls.LEFT_PAD}{command_str}\n\n\n'
+		cls.emit(text)
+
+		# Give the student time to ingest the message before the console scrolls past
+		sleep(cls.DELAY_SECONDS)
+		cls.COUNT += 1
+
+	@classmethod
+	def emit(cls, text: str ) -> None:
+		"""
+		Print the output to the screen with color
+		"""
+		if _supports_color():
+			text = _stylize_output(text, fg=cls.COLOR, bg=None, reset=False, font=[])
+
+		# We use sys.stdout.write()+flush() instead of print() to try and
+		# fix issue #94
+		sys.stdout.write(text)
+		sys.stdout.flush()
 
 
 def info(
@@ -322,7 +412,6 @@ def log(
 
 	Journald.log(text, level=level)
 
-	from .menu import Menu
 	if not Menu.is_menu_active():
 		# Finally, print the log unless we skipped it based on level.
 		# We use sys.stdout.write()+flush() instead of print() to try and
@@ -363,3 +452,9 @@ def unicode_rjust(string: str, width: int, fillbyte: str = ' ') -> str:
 	'*****こんにちは'
 	"""
 	return string.rjust(width - _count_wchars(string), fillbyte)
+
+
+# Import at the end of the file instead of the beginning
+# to avoid a circular import
+from .menu import Menu
+

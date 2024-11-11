@@ -21,7 +21,7 @@ from select import epoll, EPOLLIN, EPOLLHUP
 from shutil import which
 
 from .exceptions import RequirementError, SysCallError
-from .output import debug, error, info
+from .output import debug, error, info, Teacher
 from .storage import storage
 
 
@@ -412,6 +412,11 @@ class SysCommand:
 		"""
 		if self.session:
 			return True
+
+		if storage.get('arguments', {}).get('teach'):
+			# Call Teacher here (before worker starts), so that its stdout
+			# does not get in the way of JSON parsing the output from SysCommandWorker
+			Teacher.teach(self.cmd)
 
 		with SysCommandWorker(
 			self.cmd,

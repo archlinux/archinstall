@@ -13,6 +13,7 @@ from archinstall.lib.menu import Menu
 from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
+from archinstall.lib.output import Teacher
 
 if TYPE_CHECKING:
 	_: Any
@@ -104,6 +105,12 @@ def perform_installation(mountpoint: Path) -> None:
 	formatted and setup prior to entering this function.
 	"""
 	info('Starting installation...')
+
+	# Teacher is initialized only after we start installation to avoid
+	# lots of messages during menu startup
+	if archinstall.storage.get('arguments', {}).get('teach'):
+		Teacher.initialize()
+
 	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
 
 	# Retrieve list of additional repositories and set boolean values appropriately
