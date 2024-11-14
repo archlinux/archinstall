@@ -152,8 +152,8 @@ def save_config(config: Dict) -> None:
 Into which DIRECTORY should the configuration(s) be saved?
 
 	TIPS
-	1. Tab completion is enabled to help you locate a full directory name.
-	2. To persist a configuration file through a reboot, mount a separate drive before running `archinstall`.
+	1. Tab completion is enabled to help you locate a full directory name
+	2. To persist a configuration file through a reboot, mount a separate drive before running `archinstall`
 	3. If you are not sure what to choose, try "." or "/"
 
 Save Directory:  '''
