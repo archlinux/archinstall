@@ -73,12 +73,12 @@ def define_arguments() -> None:
 	"""
 	parser.add_argument("-v", "--version", action="version", version="%(prog)s " + __version__)
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
-	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
+	parser.add_argument("--creds", nargs="?", help="JSON credentials file or URL")
 	parser.add_argument("--silent", action="store_true",
 						help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored")
 	parser.add_argument("--dry-run", "--dry_run", action="store_true",
 						help="Generates a configuration file and then exits instead of performing an installation")
-	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
+	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation. Default: guided", type=str)
 	parser.add_argument("--mount-point", "--mount_point", nargs="?", type=str,
 						help="Define an alternate mount point for installation")
 	parser.add_argument("--skip-ntp", action="store_true", help="Disables NTP checks during installation", default=False)
