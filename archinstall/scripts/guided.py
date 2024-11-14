@@ -1,4 +1,6 @@
+import sys
 from pathlib import Path
+from time import sleep
 from typing import Any, TYPE_CHECKING, Optional
 
 import archinstall
@@ -219,6 +221,11 @@ def perform_installation(mountpoint: Path) -> None:
 
 	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
+
+if len(sys.argv) == 1:
+	# Make it obvious that there are options you can pass
+	info('Additional command-line options are available. See `archinstall --help`.')
+	sleep(4)
 
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
