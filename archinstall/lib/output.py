@@ -100,7 +100,7 @@ class FormattedOutput:
 				value = record.get(key, '')
 
 				if '!' in key:
-					value = '*' * width
+					value = '*' * len(value)
 
 				if isinstance(value, (int, float)) or (isinstance(value, str) and value.isnumeric()):
 					obj_data.append(unicode_rjust(str(value), width))
@@ -322,14 +322,9 @@ def log(
 
 	Journald.log(text, level=level)
 
-	from .menu import Menu
-	if not Menu.is_menu_active():
-		# Finally, print the log unless we skipped it based on level.
-		# We use sys.stdout.write()+flush() instead of print() to try and
-		# fix issue #94
-		if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
-			sys.stdout.write(f"{text}\n")
-			sys.stdout.flush()
+	if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
+		from archinstall.tui import Tui
+		Tui.print(text)
 
 
 def _count_wchars(string: str) -> int:

@@ -38,6 +38,9 @@ repos:
     rev: v1.13.0
     hooks:
     - id: mypy
+      args: [
+        '--config-file=pyproject.toml'
+      ]
       fail_fast: true
       additional_dependencies:
         - pydantic

@@ -1,9 +1,11 @@
 import copy
-from os import system
 from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple, List
-
-from .menu import Menu
 from ..output import FormattedOutput
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	Alignment, ResultType
+)
 
 if TYPE_CHECKING:
 	_: Any
@@ -63,31 +65,34 @@ class ListManager:
 			data_formatted = self.reformat(self._data)
 			options, header = self._prepare_selection(data_formatted)
 
-			system('clear')
+			items = [MenuItem(o, value=o) for o in options]
+			group = MenuItemGroup(items, sort_items=False)
 
-			choice = Menu(
-				self._prompt,
-				options,
-				sort=False,
-				clear_screen=False,
-				clear_menu_on_exit=False,
+			result = SelectMenu(
+				group,
 				header=header,
-				skip_empty_entries=True,
-				skip=False,
-				show_search_hint=False
+				search_enabled=False,
+				allow_skip=False,
+				alignment=Alignment.CENTER,
 			).run()
 
-			if choice.value in self._base_actions:
-				self._data = self.handle_action(choice.value, None, self._data)
-			elif choice.value in self._terminate_actions:
+			match result.type_:
+				case ResultType.Selection:
+					value = result.get_value()
+				case _:
+					raise ValueError('Unhandled return type')
+
+			if value in self._base_actions:
+				self._data = self.handle_action(value, None, self._data)
+			elif value in self._terminate_actions:
 				break
 			else:  # an entry of the existing selection was chosen
-				selected_entry = data_formatted[choice.value]  # type: ignore
+				selected_entry = result.get_value()
 				self._run_actions_on_entry(selected_entry)
 
-		self._last_choice = choice.value  # type: ignore
+		self._last_choice = value
 
-		if choice.value == self._cancel_action:
+		if result.get_value() == self._cancel_action:
 			return self._original_data  # return the original list
 		else:
 			return self._data
@@ -110,23 +115,30 @@ class ListManager:
 
 		return options, header
 
-	def _run_actions_on_entry(self, entry: Any):
+	def _run_actions_on_entry(self, entry: Any) -> None:
 		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]
-		display_value = self.selected_action_display(entry)
 
-		prompt = _("Select an action for '{}'").format(display_value)
+		items = [MenuItem(o, value=o) for o in options]
+		group = MenuItemGroup(items, sort_items=False)
 
-		choice = Menu(
-			prompt,
-			options,
-			sort=False,
-			clear_screen=False,
-			clear_menu_on_exit=False,
-			show_search_hint=False
+		header = f'{self.selected_action_display(entry)}\n'
+
+		result = SelectMenu(
+			group,
+			header=header,
+			search_enabled=False,
+			allow_skip=False,
+			alignment=Alignment.CENTER
 		).run()
 
-		if choice.value and choice.value != self._cancel_action:
-			self._data = self.handle_action(choice.value, entry, self._data)
+		match result.type_:
+			case ResultType.Selection:
+				value = result.get_value()
+			case _:
+				raise ValueError('Unhandled return type')
+
+		if value != self._cancel_action:
+			self._data = self.handle_action(value, entry, self._data)
 
 	def reformat(self, data: List[Any]) -> Dict[str, Optional[Any]]:
 		"""
@@ -139,10 +151,9 @@ class ListManager:
 		# these are the header rows of the table and do not map to any User obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data: Dict[str, Optional[Any]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
+		display_data: Dict[str, Optional[Any]] = {f'{rows[0]}': None, f'{rows[1]}': None}
 
 		for row, entry in zip(rows[2:], data):
-			row = row.replace('|', '\\|')
 			display_data[row] = entry
 
 		return display_data

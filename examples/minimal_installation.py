@@ -1,16 +1,24 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, List
+from typing import List
 
 import archinstall
-from archinstall import disk
-from archinstall import Installer
-from archinstall import profile
-from archinstall import models
-from archinstall import interactions
+from archinstall import info, debug
+from archinstall import Installer, ConfigurationOutput
 from archinstall.default_profiles.minimal import MinimalProfile
+from archinstall.lib.interactions import suggest_single_disk_layout, select_devices
+from archinstall.lib.models import Bootloader, User
+from archinstall.lib.profile import ProfileConfiguration, profile_handler
+from archinstall.lib import disk
+from archinstall.tui import Tui
 
-if TYPE_CHECKING:
-	_: Callable[[str], str]
+
+info("Minimal only supports:")
+info(" * Being installed to a single disk")
+
+if archinstall.arguments.get('help', None):
+	info(" - Optional disk encryption via --!encryption-password=<password>")
+	info(" - Optional filesystem type via --filesystem=<fs type>")
+	info(" - Optional systemd network via --network")
 
 
 def perform_installation(mountpoint: Path) -> None:
@@ -27,7 +35,7 @@ def perform_installation(mountpoint: Path) -> None:
 		# some other minor details as specified by this profile and user.
 		if installation.minimal_installation():
 			installation.set_hostname('minimal-arch')
-			installation.add_bootloader(models.Bootloader.Systemd)
+			installation.add_bootloader(Bootloader.Systemd)
 
 			# Optionally enable networking:
 			if archinstall.arguments.get('network', None):
@@ -35,11 +43,17 @@ def perform_installation(mountpoint: Path) -> None:
 
 			installation.add_additional_packages(['nano', 'wget', 'git'])
 
-			profile_config = profile.ProfileConfiguration(MinimalProfile())
-			profile.profile_handler.install_profile_config(installation, profile_config)
+			profile_config = ProfileConfiguration(MinimalProfile())
+			profile_handler.install_profile_config(installation, profile_config)
 
-			user = models.User('devel', 'devel', False)
+			user = User('devel', 'devel', False)
 			installation.create_users(user)
+
+	# Once this is done, we output some useful information to the user
+	# And the installation is complete.
+	info("There are two new accounts in your installation after reboot:")
+	info(" * root (password: airoot)")
+	info(" * devel (password: devel)")
 
 
 def prompt_disk_layout() -> None:
@@ -47,8 +61,8 @@ def prompt_disk_layout() -> None:
 	if filesystem := archinstall.arguments.get('filesystem', None):
 		fs_type = disk.FilesystemType(filesystem)
 
-	devices = interactions.select_devices()
-	modifications = interactions.suggest_single_disk_layout(devices[0], filesystem_type=fs_type)
+	devices = select_devices()
+	modifications = suggest_single_disk_layout(devices[0], filesystem_type=fs_type)
 
 	archinstall.arguments['disk_config'] = disk.DiskLayoutConfiguration(
 		config_type=disk.DiskLayoutType.Default,
@@ -72,15 +86,31 @@ def parse_disk_encryption() -> None:
 		)
 
 
-prompt_disk_layout()
-parse_disk_encryption()
+def _minimal() -> None:
+	with Tui():
+		prompt_disk_layout()
+		parse_disk_encryption()
 
-fs_handler = disk.FilesystemHandler(
-	archinstall.arguments['disk_config'],
-	archinstall.arguments.get('disk_encryption', None)
-)
+	config = ConfigurationOutput(archinstall.arguments)
+	config.write_debug()
+	config.save()
 
-fs_handler.perform_filesystem_operations()
+	if archinstall.arguments.get('dry_run'):
+		exit(0)
 
-mount_point = Path('/mnt')
-perform_installation(mount_point)
+	if not archinstall.arguments.get('silent'):
+		with Tui():
+			if not config.confirm_config():
+				debug('Installation aborted')
+				_minimal()
+
+	fs_handler = disk.FilesystemHandler(
+		archinstall.arguments['disk_config'],
+		archinstall.arguments.get('disk_encryption', None)
+	)
+
+	fs_handler.perform_filesystem_operations()
+	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+
+
+_minimal()

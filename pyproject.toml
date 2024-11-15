@@ -118,6 +118,11 @@ module = [
 ]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "archinstall.lib.models.mirrors"
+disallow_untyped_decorators = false
+disallow_subclassing_any = false
+
 [tool.bandit]
 targets = ["archinstall"]
 exclude = ["/tests"]
