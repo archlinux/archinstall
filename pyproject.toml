@@ -97,7 +97,6 @@ follow_imports = "silent"
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.*"
-strict_equality = false
 warn_return_any = false
 warn_unreachable = false
 
@@ -107,8 +106,6 @@ warn_unreachable = false
 
 [[tool.mypy.overrides]]
 module = "archinstall.tui.*"
-strict_equality = false
-warn_return_any = false
 warn_unreachable = false
 
 [[tool.mypy.overrides]]
