@@ -149,7 +149,6 @@ disable = [
     "cell-var-from-loop",
     "comparison-with-callable",
     "dangerous-default-value",
-    "f-string-without-interpolation",
     "fixme",
     "protected-access",
     "raise-missing-from",
