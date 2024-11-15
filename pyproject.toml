@@ -178,9 +178,11 @@ line-length = 220
 select = [
     "ASYNC",  # flake8-async
     "C90",    # mccabe
+    "DTZ",    # flake8-datetimez
     "E",      # pycodestyle errors
     "EXE",    # flake8-executable
     "F",      # Pyflakes
+    "FA",     # flake8-future-annotations
     "FLY",    # flynt
     "G",      # flake8-logging-format
     "ICN",    # flake8-import-conventions
