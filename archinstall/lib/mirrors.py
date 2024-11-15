@@ -4,7 +4,7 @@ import urllib.parse
 from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Any, List, Optional, TYPE_CHECKING, Tuple
+from typing import Dict, Any, Optional, TYPE_CHECKING, Tuple
 
 from .menu import AbstractSubMenu, ListManager
 from .networking import fetch_data_from_url
@@ -58,7 +58,7 @@ class CustomMirror:
 		}
 
 	@classmethod
-	def parse_args(cls, args: List[Dict[str, str]]) -> List['CustomMirror']:
+	def parse_args(cls, args: list[Dict[str, str]]) -> list['CustomMirror']:
 		configs = []
 		for arg in args:
 			configs.append(
@@ -75,8 +75,8 @@ class CustomMirror:
 
 @dataclass
 class MirrorConfiguration:
-	mirror_regions: Dict[str, List[MirrorStatusEntryV3]] = field(default_factory=dict)
-	custom_mirrors: List[CustomMirror] = field(default_factory=list)
+	mirror_regions: Dict[str, list[MirrorStatusEntryV3]] = field(default_factory=dict)
+	custom_mirrors: list[CustomMirror] = field(default_factory=list)
 
 	@property
 	def regions(self) -> str:
@@ -124,7 +124,7 @@ class MirrorConfiguration:
 
 
 class CustomMirrorList(ListManager):
-	def __init__(self, custom_mirrors: List[CustomMirror]):
+	def __init__(self, custom_mirrors: list[CustomMirror]):
 		self._actions = [
 			str(_('Add a custom mirror')),
 			str(_('Change custom mirror')),
@@ -144,8 +144,8 @@ class CustomMirrorList(ListManager):
 		self,
 		action: str,
 		entry: Optional[CustomMirror],
-		data: List[CustomMirror]
-	) -> List[CustomMirror]:
+		data: list[CustomMirror]
+	) -> list[CustomMirror]:
 		if action == self._actions[0]:  # add
 			new_mirror = self._add_custom_mirror()
 			if new_mirror is not None:
@@ -259,7 +259,7 @@ class MirrorMenu(AbstractSubMenu):
 
 		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
 
-	def _define_menu_options(self) -> List[MenuItem]:
+	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Mirror region')),
@@ -278,7 +278,7 @@ class MirrorMenu(AbstractSubMenu):
 		]
 
 	def _prev_regions(self, item: MenuItem) -> Optional[str]:
-		mirrors: Dict[str, List[MirrorStatusEntryV3]] = item.get_value()
+		mirrors: Dict[str, list[MirrorStatusEntryV3]] = item.get_value()
 
 		output = ''
 		for name, status_list in mirrors.items():
@@ -296,7 +296,7 @@ class MirrorMenu(AbstractSubMenu):
 		if not item.value:
 			return None
 
-		custom_mirrors: List[CustomMirror] = item.value
+		custom_mirrors: list[CustomMirror] = item.value
 		output = FormattedOutput.as_table(custom_mirrors)
 		return output.strip()
 
@@ -312,8 +312,8 @@ class MirrorMenu(AbstractSubMenu):
 		)
 
 
-def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[str, List[MirrorStatusEntryV3]]:
-	mirrors: Dict[str, List[MirrorStatusEntryV3]] | None = list_mirrors_from_remote()
+def select_mirror_regions(preset: Dict[str, list[MirrorStatusEntryV3]]) -> Dict[str, list[MirrorStatusEntryV3]]:
+	mirrors: Dict[str, list[MirrorStatusEntryV3]] | None = list_mirrors_from_remote()
 
 	if not mirrors:
 		mirrors = list_mirrors_from_local()
@@ -339,16 +339,16 @@ def select_mirror_regions(preset: Dict[str, List[MirrorStatusEntryV3]]) -> Dict[
 		case ResultType.Reset:
 			return {}
 		case ResultType.Selection:
-			selected_mirrors: List[Tuple[str, List[MirrorStatusEntryV3]]] = result.get_values()
+			selected_mirrors: list[Tuple[str, list[MirrorStatusEntryV3]]] = result.get_values()
 			return {name: mirror for name, mirror in selected_mirrors}
 
 
-def select_custom_mirror(preset: List[CustomMirror] = []):
+def select_custom_mirror(preset: list[CustomMirror] = []):
 	custom_mirrors = CustomMirrorList(preset).run()
 	return custom_mirrors
 
 
-def list_mirrors_from_remote() -> Optional[Dict[str, List[MirrorStatusEntryV3]]]:
+def list_mirrors_from_remote() -> Optional[Dict[str, list[MirrorStatusEntryV3]]]:
 	if not storage['arguments']['offline']:
 		url = "https://archlinux.org/mirrors/status/json/"
 		attempts = 3
@@ -366,20 +366,20 @@ def list_mirrors_from_remote() -> Optional[Dict[str, List[MirrorStatusEntryV3]]]
 	return None
 
 
-def list_mirrors_from_local() -> Dict[str, List[MirrorStatusEntryV3]]:
+def list_mirrors_from_local() -> Dict[str, list[MirrorStatusEntryV3]]:
 	with Path('/etc/pacman.d/mirrorlist').open('r') as fp:
 		mirrorlist = fp.read()
 		return _parse_locale_mirrors(mirrorlist)
 
 
-def _sort_mirrors_by_performance(mirror_list: List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
+def _sort_mirrors_by_performance(mirror_list: list[MirrorStatusEntryV3]) -> list[MirrorStatusEntryV3]:
 	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
-def _parse_remote_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
+def _parse_remote_mirror_list(mirrorlist: str) -> Dict[str, list[MirrorStatusEntryV3]]:
 	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
 
-	sorting_placeholder: Dict[str, List[MirrorStatusEntryV3]] = {}
+	sorting_placeholder: Dict[str, list[MirrorStatusEntryV3]] = {}
 
 	for mirror in mirror_status.urls:
 		# We filter out mirrors that have bad criteria values
@@ -401,7 +401,7 @@ def _parse_remote_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEnt
 		if mirror.url.startswith('http'):
 			sorting_placeholder.setdefault(mirror.country, []).append(mirror)
 
-	sorted_by_regions: Dict[str, List[MirrorStatusEntryV3]] = dict({
+	sorted_by_regions: Dict[str, list[MirrorStatusEntryV3]] = dict({
 		region: unsorted_mirrors
 		for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])
 	})
@@ -409,13 +409,13 @@ def _parse_remote_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEnt
 	return sorted_by_regions
 
 
-def _parse_locale_mirrors(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
+def _parse_locale_mirrors(mirrorlist: str) -> Dict[str, list[MirrorStatusEntryV3]]:
 	lines = mirrorlist.splitlines()
 
 	# remove empty lines
 	lines = [line for line in lines if line]
 
-	mirror_list: Dict[str, List[MirrorStatusEntryV3]] = {}
+	mirror_list: Dict[str, list[MirrorStatusEntryV3]] = {}
 
 	current_region = ''
 	for idx, line in enumerate(lines):

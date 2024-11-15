@@ -5,7 +5,7 @@ import unicodedata
 from enum import Enum
 
 from pathlib import Path
-from typing import Dict, Union, List, Any, Callable, Optional, TYPE_CHECKING
+from typing import Dict, Union, Any, Callable, Optional, TYPE_CHECKING
 from dataclasses import asdict, is_dataclass
 
 from .storage import storage
@@ -21,7 +21,7 @@ class FormattedOutput:
 		cls,
 		o: 'DataclassInstance',
 		class_formatter: Optional[Union[str, Callable]] = None,
-		filter_list: List[str] = []
+		filter_list: list[str] = []
 	) -> Dict[str, Any]:
 		"""
 		the original values returned a dataclass as dict thru the call to some specific methods
@@ -51,9 +51,9 @@ class FormattedOutput:
 	@classmethod
 	def as_table(
 		cls,
-		obj: List[Any],
+		obj: list[Any],
 		class_formatter: Optional[Union[str, Callable]] = None,
-		filter_list: List[str] = [],
+		filter_list: list[str] = [],
 		capitalize: bool = False
 	) -> str:
 		""" variant of as_table (subtly different code) which has two additional parameters
@@ -112,7 +112,7 @@ class FormattedOutput:
 		return output
 
 	@classmethod
-	def as_columns(cls, entries: List[str], cols: int) -> str:
+	def as_columns(cls, entries: list[str], cols: int) -> str:
 		"""
 		Will format a list into a given number of columns
 		"""
@@ -204,7 +204,7 @@ def _stylize_output(
 	fg: str,
 	bg: Optional[str],
 	reset: bool,
-	font: List[Font] = [],
+	font: list[Font] = [],
 ) -> str:
 	"""
 	Heavily influenced by:
@@ -258,7 +258,7 @@ def info(
 	fg: str = 'white',
 	bg: Optional[str] = None,
 	reset: bool = False,
-	font: List[Font] = []
+	font: list[Font] = []
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -269,7 +269,7 @@ def debug(
 	fg: str = 'white',
 	bg: Optional[str] = None,
 	reset: bool = False,
-	font: List[Font] = []
+	font: list[Font] = []
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -280,7 +280,7 @@ def error(
 	fg: str = 'red',
 	bg: Optional[str] = None,
 	reset: bool = False,
-	font: List[Font] = []
+	font: list[Font] = []
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -291,7 +291,7 @@ def warn(
 	fg: str = 'yellow',
 	bg: Optional[str] = None,
 	reset: bool = False,
-	font: List[Font] = []
+	font: list[Font] = []
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -302,7 +302,7 @@ def log(
 	fg: str = 'white',
 	bg: Optional[str] = None,
 	reset: bool = False,
-	font: List[Font] = []
+	font: list[Font] = []
 ) -> None:
 	# leave this check here as we need to setup the logging
 	# right from the beginning when the modules are loaded

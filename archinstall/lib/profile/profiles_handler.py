@@ -8,7 +8,7 @@ from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
+from typing import TYPE_CHECKING, Any, Optional, Dict, Union
 
 from ...default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
@@ -101,9 +101,9 @@ class ProfileHandler:
 		if not profile:
 			return None
 
-		valid_sub_profiles: List[Profile] = []
-		invalid_sub_profiles: List[str] = []
-		details: List[str] = profile_config.get('details', [])
+		valid_sub_profiles: list[Profile] = []
+		invalid_sub_profiles: list[str] = []
+		details: list[str] = profile_config.get('details', [])
 
 		if details:
 			for detail in filter(None, details):
@@ -127,7 +127,7 @@ class ProfileHandler:
 		return profile
 
 	@property
-	def profiles(self) -> List[Profile]:
+	def profiles(self) -> list[Profile]:
 		"""
 		List of all available default_profiles
 		"""
@@ -135,10 +135,10 @@ class ProfileHandler:
 		return self._profiles
 
 	@cached_property
-	def _local_mac_addresses(self) -> List[str]:
+	def _local_mac_addresses(self) -> list[str]:
 		return list(list_interfaces())
 
-	def add_custom_profiles(self, profiles: Union[Profile, List[Profile]]) -> None:
+	def add_custom_profiles(self, profiles: Union[Profile, list[Profile]]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -147,7 +147,7 @@ class ProfileHandler:
 
 		self._verify_unique_profile_names(self.profiles)
 
-	def remove_custom_profiles(self, profiles: Union[Profile, List[Profile]]) -> None:
+	def remove_custom_profiles(self, profiles: Union[Profile, list[Profile]]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -157,19 +157,19 @@ class ProfileHandler:
 	def get_profile_by_name(self, name: str) -> Optional[Profile]:
 		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore
 
-	def get_top_level_profiles(self) -> List[Profile]:
+	def get_top_level_profiles(self) -> list[Profile]:
 		return list(filter(lambda x: x.is_top_level_profile(), self.profiles))
 
-	def get_server_profiles(self) -> List[Profile]:
+	def get_server_profiles(self) -> list[Profile]:
 		return list(filter(lambda x: x.is_server_type_profile(), self.profiles))
 
-	def get_desktop_profiles(self) -> List[Profile]:
+	def get_desktop_profiles(self) -> list[Profile]:
 		return list(filter(lambda x: x.is_desktop_type_profile(), self.profiles))
 
-	def get_custom_profiles(self) -> List[Profile]:
+	def get_custom_profiles(self) -> list[Profile]:
 		return list(filter(lambda x: x.is_custom_type_profile(), self.profiles))
 
-	def get_mac_addr_profiles(self) -> List[Profile]:
+	def get_mac_addr_profiles(self) -> list[Profile]:
 		tailored = list(filter(lambda x: x.is_tailored(), self.profiles))
 		match_mac_addr_profiles = list(filter(lambda x: x.name in self._local_mac_addresses, tailored))
 		return match_mac_addr_profiles
@@ -265,7 +265,7 @@ class ProfileHandler:
 			err = str(_('Unable to fetch profile from specified url: {}')).format(url)
 			error(err)
 
-	def _load_profile_class(self, module: ModuleType) -> List[Profile]:
+	def _load_profile_class(self, module: ModuleType) -> list[Profile]:
 		"""
 		Load all default_profiles defined in a module
 		"""
@@ -284,7 +284,7 @@ class ProfileHandler:
 
 		return profiles
 
-	def _verify_unique_profile_names(self, profiles: List[Profile]):
+	def _verify_unique_profile_names(self, profiles: list[Profile]):
 		"""
 		All profile names have to be unique, this function will verify
 		that the provided list contains only default_profiles with unique names
@@ -308,7 +308,7 @@ class ProfileHandler:
 					return True
 		return False
 
-	def _process_profile_file(self, file: Path) -> List[Profile]:
+	def _process_profile_file(self, file: Path) -> list[Profile]:
 		"""
 		Process a file for profile definitions
 		"""
@@ -334,7 +334,7 @@ class ProfileHandler:
 
 		return []
 
-	def _find_available_profiles(self) -> List[Profile]:
+	def _find_available_profiles(self) -> list[Profile]:
 		"""
 		Search the profile path for profile definitions
 		"""
@@ -348,7 +348,7 @@ class ProfileHandler:
 		self._verify_unique_profile_names(profiles)
 		return profiles
 
-	def reset_top_level_profiles(self, exclude: List[Profile] = []):
+	def reset_top_level_profiles(self, exclude: list[Profile] = []):
 		"""
 		Reset all top level profile configurations, this is usually necessary
 		when a new top level profile is selected

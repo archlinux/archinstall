@@ -6,7 +6,7 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
+from typing import Any, Optional, TYPE_CHECKING, Union, Dict, Callable
 
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
@@ -46,8 +46,8 @@ class Installer:
 		target: Path,
 		disk_config: disk.DiskLayoutConfiguration,
 		disk_encryption: Optional[disk.DiskEncryption] = None,
-		base_packages: List[str] = [],
-		kernels: Optional[List[str]] = None
+		base_packages: list[str] = [],
+		kernels: Optional[list[str]] = None
 	):
 		"""
 		`Installer()` is the wrapper for most basic installation steps.
@@ -71,24 +71,24 @@ class Installer:
 		if accessibility_tools_in_use():
 			self._base_packages.extend(__accessibility_packages__)
 
-		self.post_base_install: List[Callable] = []
+		self.post_base_install: list[Callable] = []
 
 		# TODO: Figure out which one of these two we'll use.. But currently we're mixing them..
 		storage['session'] = self
 		storage['installation_session'] = self
 
-		self._modules: List[str] = []
-		self._binaries: List[str] = []
-		self._files: List[str] = []
+		self._modules: list[str] = []
+		self._binaries: list[str] = []
+		self._files: list[str] = []
 
 		# systemd, sd-vconsole and sd-encrypt will be replaced by udev, keymap and encrypt
 		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
-		self._hooks: List[str] = [
+		self._hooks: list[str] = [
 			"base", "systemd", "autodetect", "microcode", "modconf", "kms", "keyboard",
 			"sd-vconsole", "block", "filesystems", "fsck"
 		]
-		self._kernel_params: List[str] = []
-		self._fstab_entries: List[str] = []
+		self._kernel_params: list[str] = []
+		self._fstab_entries: list[str] = []
 
 		self._zram_enabled = False
 		self._disable_fstrim = False
@@ -273,7 +273,7 @@ class Installer:
 
 	def _prepare_luks_partitions(
 		self,
-		partitions: List[disk.PartitionModification]
+		partitions: list[disk.PartitionModification]
 	) -> Dict[disk.PartitionModification, Luks2]:
 		return {
 			part_mod: disk.device_handler.unlock_luks2_dev(
@@ -300,7 +300,7 @@ class Installer:
 
 	def _prepare_luks_lvm(
 		self,
-		lvm_volumes: List[disk.LvmVolume]
+		lvm_volumes: list[disk.LvmVolume]
 	) -> Dict[disk.LvmVolume, Luks2]:
 		return {
 			vol: disk.device_handler.unlock_luks2_dev(
@@ -355,8 +355,8 @@ class Installer:
 	def _mount_btrfs_subvol(
 		self,
 		dev_path: Path,
-		subvolumes: List[disk.SubvolumeModification],
-		mount_options: List[str] = []
+		subvolumes: list[disk.SubvolumeModification],
+		mount_options: list[str] = []
 	) -> None:
 		for subvol in subvolumes:
 			mountpoint = self.target / subvol.relative_mountpoint
@@ -455,7 +455,7 @@ class Installer:
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
-	def post_install_check(self, *args: str, **kwargs: str) -> List[str]:
+	def post_install_check(self, *args: str, **kwargs: str) -> list[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
 	def set_mirrors(self, mirror_config: MirrorConfiguration, on_target: bool = False) -> None:
@@ -607,7 +607,7 @@ class Installer:
 		# fstrim is owned by util-linux, a dependency of both base and systemd.
 		self.enable_service("fstrim.timer")
 
-	def enable_service(self, services: Union[str, List[str]]) -> None:
+	def enable_service(self, services: Union[str, list[str]]) -> None:
 		if isinstance(services, str):
 			services = [services]
 
@@ -701,7 +701,7 @@ class Installer:
 
 		return True
 
-	def mkinitcpio(self, flags: List[str]) -> bool:
+	def mkinitcpio(self, flags: list[str]) -> bool:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mkinitcpio'):
 				# Allow plugins to override the usage of mkinitcpio altogether.
@@ -943,7 +943,7 @@ class Installer:
 		root_partition: disk.PartitionModification,
 		id_root: bool = True,
 		partuuid: bool = True
-	) -> List[str]:
+	) -> list[str]:
 		kernel_parameters = []
 
 		if root_partition in self._disk_encryption.partitions:
@@ -979,7 +979,7 @@ class Installer:
 	def _get_kernel_params_lvm(
 		self,
 		lvm: disk.LvmVolume
-	) -> List[str]:
+	) -> list[str]:
 		kernel_parameters = []
 
 		match self._disk_encryption.encryption_type:
@@ -1020,7 +1020,7 @@ class Installer:
 		root: disk.PartitionModification | disk.LvmVolume,
 		id_root: bool = True,
 		partuuid: bool = True
-	) -> List[str]:
+	) -> list[str]:
 		kernel_parameters = []
 
 		if isinstance(root, disk.LvmVolume):
@@ -1466,7 +1466,7 @@ Exec = /bin/sh -c "{hook_command}"
 			case Bootloader.Limine:
 				self._add_limine_bootloader(boot_partition, efi_partition, root)
 
-	def add_additional_packages(self, packages: Union[str, List[str]]) -> None:
+	def add_additional_packages(self, packages: Union[str, list[str]]) -> None:
 		return self.pacman.strap(packages)
 
 	def enable_sudo(self, entity: str, group: bool = False):
@@ -1499,14 +1499,14 @@ Exec = /bin/sh -c "{hook_command}"
 		# Guarantees sudoer conf file recommended perms
 		os.chmod(Path(rule_file_name), 0o440)
 
-	def create_users(self, users: Union[User, List[User]]) -> None:
+	def create_users(self, users: Union[User, list[User]]) -> None:
 		if not isinstance(users, list):
 			users = [users]
 
 		for user in users:
 			self.user_create(user.username, user.password, user.groups, user.sudo)
 
-	def user_create(self, user: str, password: Optional[str] = None, groups: Optional[List[str]] = None,
+	def user_create(self, user: str, password: Optional[str] = None, groups: Optional[list[str]] = None,
 					sudo: bool = False) -> None:
 		if groups is None:
 			groups = []
@@ -1567,7 +1567,7 @@ Exec = /bin/sh -c "{hook_command}"
 		except SysCallError:
 			return False
 
-	def chown(self, owner: str, path: str, options: List[str] = []) -> bool:
+	def chown(self, owner: str, path: str, options: list[str] = []) -> bool:
 		cleaned_path = path.replace('\'', '\\\'')
 		try:
 			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'")

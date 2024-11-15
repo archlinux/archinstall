@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional, Dict, List
+from typing import TYPE_CHECKING, Any, Optional, Dict
 
 from archinstall.default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
@@ -35,7 +35,7 @@ class ProfileMenu(AbstractSubMenu):
 
 		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
 
-	def _define_menu_options(self) -> List[MenuItem]:
+	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Type')),

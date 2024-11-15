@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, List, Optional
+from typing import Any, TYPE_CHECKING, Optional
 
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class ServerProfile(Profile):
-	def __init__(self, current_value: List[Profile] = []):
+	def __init__(self, current_value: list[Profile] = []):
 		super().__init__(
 			'Server',
 			ProfileType.Server,

@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List
 
 
 class HelpTextGroupId(Enum):
@@ -13,13 +12,13 @@ class HelpTextGroupId(Enum):
 @dataclass
 class HelpText:
 	description: str
-	keys: List[str] = field(default_factory=list)
+	keys: list[str] = field(default_factory=list)
 
 
 @dataclass
 class HelpGroup:
 	group_id: HelpTextGroupId
-	group_entries: List[HelpText]
+	group_entries: list[HelpText]
 
 	def get_desc_width(self) -> int:
 		return max([len(e.description) for e in self.group_entries])

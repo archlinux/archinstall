@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
-from typing import Optional, List, Tuple
+from typing import Optional, Tuple
 
 from .. import disk
 from ..disk.device_model import BtrfsMountOption
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-def select_devices(preset: Optional[List[disk.BDevice]] = []) -> List[disk.BDevice]:
+def select_devices(preset: Optional[list[disk.BDevice]] = []) -> list[disk.BDevice]:
 	def _preview_device_selection(selection: disk._DeviceInfo) -> Optional[str]:
 		dev = disk.device_handler.get_device(selection.path)
 		if dev and dev.partition_infos:
@@ -50,7 +50,7 @@ def select_devices(preset: Optional[List[disk.BDevice]] = []) -> List[disk.BDevi
 		case ResultType.Reset: return []
 		case ResultType.Skip: return preset
 		case ResultType.Selection:
-			selected_device_info: List[disk._DeviceInfo] = result.get_values()
+			selected_device_info: list[disk._DeviceInfo] = result.get_values()
 			selected_devices = []
 
 			for device in devices:
@@ -61,10 +61,10 @@ def select_devices(preset: Optional[List[disk.BDevice]] = []) -> List[disk.BDevi
 
 
 def get_default_partition_layout(
-	devices: List[disk.BDevice],
+	devices: list[disk.BDevice],
 	filesystem_type: Optional[disk.FilesystemType] = None,
 	advanced_option: bool = False
-) -> List[disk.DeviceModification]:
+) -> list[disk.DeviceModification]:
 	if len(devices) == 1:
 		device_modification = suggest_single_disk_layout(
 			devices[0],
@@ -81,9 +81,9 @@ def get_default_partition_layout(
 
 
 def _manual_partitioning(
-	preset: List[disk.DeviceModification],
-	devices: List[disk.BDevice]
-) -> List[disk.DeviceModification]:
+	preset: list[disk.DeviceModification],
+	devices: list[disk.BDevice]
+) -> list[disk.DeviceModification]:
 	modifications = []
 	for device in devices:
 		mod = next(filter(lambda x: x.device == device, preset), None)
@@ -248,7 +248,7 @@ def select_main_filesystem_format(advanced_options: bool = False) -> disk.Filesy
 			raise ValueError('Unhandled result type')
 
 
-def select_mount_options() -> List[str]:
+def select_mount_options() -> list[str]:
 	prompt = str(_('Would you like to use compression or disable CoW?')) + '\n'
 	compression = str(_('Use compression'))
 	disable_cow = str(_('Disable Copy-on-Write'))
@@ -423,10 +423,10 @@ def suggest_single_disk_layout(
 
 
 def suggest_multi_disk_layout(
-	devices: List[disk.BDevice],
+	devices: list[disk.BDevice],
 	filesystem_type: Optional[disk.FilesystemType] = None,
 	advanced_options: bool = False
-) -> List[disk.DeviceModification]:
+) -> list[disk.DeviceModification]:
 	if not devices:
 		return []
 
@@ -452,7 +452,7 @@ def suggest_multi_disk_layout(
 			delta = device.device_info.total_size - desired_root_partition_size
 			devices_delta[device] = delta
 
-	sorted_delta: List[Tuple[disk.BDevice, Any]] = sorted(devices_delta.items(), key=lambda x: x[1])
+	sorted_delta: list[Tuple[disk.BDevice, Any]] = sorted(devices_delta.items(), key=lambda x: x[1])
 	root_device: Optional[disk.BDevice] = sorted_delta[0][0]
 
 	if home_device is None or root_device is None:
@@ -575,7 +575,7 @@ def suggest_lvm_layout(
 		home_volume = False
 
 	boot_part: Optional[disk.PartitionModification] = None
-	other_part: List[disk.PartitionModification] = []
+	other_part: list[disk.PartitionModification] = []
 
 	for mod in disk_config.device_modifications:
 		for part in mod.partitions:

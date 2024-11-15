@@ -2,7 +2,7 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
-from typing import Optional, Dict, List, TYPE_CHECKING, Any
+from typing import Optional, Dict, TYPE_CHECKING, Any
 
 from .exceptions import SysCallError
 from .general import SysCommand
@@ -85,7 +85,7 @@ class GfxDriver(Enum):
 
 		return text
 
-	def gfx_packages(self) -> List[GfxPackage]:
+	def gfx_packages(self) -> list[GfxPackage]:
 		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
 
 		match self:
@@ -183,12 +183,12 @@ class _SysInfo:
 		return self.mem_info[key]
 
 	@cached_property
-	def loaded_modules(self) -> List[str]:
+	def loaded_modules(self) -> list[str]:
 		"""
 		Returns loaded kernel modules
 		"""
 		modules_path = Path('/proc/modules')
-		modules: List[str] = []
+		modules: list[str] = []
 
 		with modules_path.open() as file:
 			for line in file:

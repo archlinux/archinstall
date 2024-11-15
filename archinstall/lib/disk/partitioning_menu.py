@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, List, Optional, Tuple
+from typing import Any, TYPE_CHECKING, Optional, Tuple
 from dataclasses import dataclass
 
 from ..utils.util import prompt_dir
@@ -33,7 +33,7 @@ class DefaultFreeSector:
 
 
 class PartitioningList(ListManager):
-	def __init__(self, prompt: str, device: BDevice, device_partitions: List[PartitionModification]):
+	def __init__(self, prompt: str, device: BDevice, device_partitions: list[PartitionModification]):
 		self._device = device
 		self._actions = {
 			'create_new_partition': str(_('Create a new partition')),
@@ -58,7 +58,7 @@ class PartitioningList(ListManager):
 		else:
 			return str(partition.dev_path)
 
-	def filter_options(self, selection: PartitionModification, options: List[str]) -> List[str]:
+	def filter_options(self, selection: PartitionModification, options: list[str]) -> list[str]:
 		not_filter = []
 
 		# only display formatting if the partition exists already
@@ -94,8 +94,8 @@ class PartitioningList(ListManager):
 		self,
 		action: str,
 		entry: Optional[PartitionModification],
-		data: List[PartitionModification]
-	) -> List[PartitionModification]:
+		data: list[PartitionModification]
+	) -> list[PartitionModification]:
 		action_key = [k for k, v in self._actions.items() if v == action][0]
 
 		match action_key:
@@ -142,8 +142,8 @@ class PartitioningList(ListManager):
 	def _delete_partition(
 		self,
 		entry: PartitionModification,
-		data: List[PartitionModification]
-	) -> List[PartitionModification]:
+		data: list[PartitionModification]
+	) -> list[PartitionModification]:
 		if entry.is_exists_or_modify():
 			entry.status = ModificationStatus.Delete
 			return data
@@ -421,7 +421,7 @@ class PartitioningList(ListManager):
 
 		return result.item() == MenuItem.yes()
 
-	def _suggest_partition_layout(self, data: List[PartitionModification]) -> List[PartitionModification]:
+	def _suggest_partition_layout(self, data: list[PartitionModification]) -> list[PartitionModification]:
 		# if modifications have been done already, inform the user
 		# that this operation will erase those modifications
 		if any([not entry.exists() for entry in data]):
@@ -437,8 +437,8 @@ class PartitioningList(ListManager):
 def manual_partitioning(
 	device: BDevice,
 	prompt: str = '',
-	preset: List[PartitionModification] = []
-) -> List[PartitionModification]:
+	preset: list[PartitionModification] = []
+) -> list[PartitionModification]:
 	if not prompt:
 		prompt = str(_('Partition management: {}')).format(device.device_info.path) + '\n'
 		prompt += str(_('Total length: {}')).format(device.device_info.total_size.format_size(Unit.MiB))
@@ -455,7 +455,7 @@ def manual_partitioning(
 		manual_preset = preset
 
 	menu_list = PartitioningList(prompt, device, manual_preset)
-	partitions: List[PartitionModification] = menu_list.run()
+	partitions: list[PartitionModification] = menu_list.run()
 
 	if menu_list.is_last_choice_cancel():
 		return preset

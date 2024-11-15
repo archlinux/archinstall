@@ -4,7 +4,7 @@ import shlex
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional
 
 from . import disk
 from .general import SysCommand, generate_password, SysCommandWorker
@@ -253,7 +253,7 @@ class Luks2:
 		self,
 		crypttab_path: Path,
 		key_file: Path,
-		options: List[str]
+		options: list[str]
 	) -> None:
 		debug(f'Adding crypttab entry for key {key_file}')
 

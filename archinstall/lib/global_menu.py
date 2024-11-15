@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional, Dict, TYPE_CHECKING
+from typing import Any, Optional, Dict, TYPE_CHECKING
 
 from . import disk
 from .general import secret
@@ -54,7 +54,7 @@ class GlobalMenu(AbstractMenu):
 
 		super().__init__(self._item_group, data_store)
 
-	def _get_menu_options(self, data_store: Dict[str, Any]) -> List[MenuItem]:
+	def _get_menu_options(self, data_store: Dict[str, Any]) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Archinstall language')),
@@ -219,7 +219,7 @@ class GlobalMenu(AbstractMenu):
 
 		save_config(data)
 
-	def _missing_configs(self) -> List[str]:
+	def _missing_configs(self) -> list[str]:
 		def check(s) -> bool:
 			item = self._item_group.find_by_key(s)
 			return item.has_value()
@@ -462,7 +462,7 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_users(self, item: MenuItem) -> Optional[str]:
-		users: Optional[List[User]] = item.value
+		users: Optional[list[User]] = item.value
 
 		if users:
 			return FormattedOutput.as_table(users)
@@ -521,7 +521,7 @@ class GlobalMenu(AbstractMenu):
 		profile_config = ProfileMenu(preset=current_profile).run()
 		return profile_config
 
-	def _create_user_account(self, preset: Optional[List[User]] = None) -> List[User]:
+	def _create_user_account(self, preset: Optional[list[User]] = None) -> list[User]:
 		preset = [] if preset is None else preset
 		users = ask_for_additional_users(defined_users=preset)
 		return users

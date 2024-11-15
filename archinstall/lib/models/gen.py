@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Any
+from typing import Optional, Dict, Any
 
 
 @dataclass
@@ -7,7 +7,7 @@ class VersionDef:
 	version_string: str
 
 	@classmethod
-	def parse_version(cls) -> List[str]:
+	def parse_version(cls) -> list[str]:
 		if '.' in cls.version_string:
 			versions = cls.version_string.split('.')
 		else:
@@ -75,17 +75,17 @@ class PackageSearchResult:
 	build_date: str
 	last_update: str
 	flag_date: Optional[str]
-	maintainers: List[str]
+	maintainers: list[str]
 	packager: str
-	groups: List[str]
-	licenses: List[str]
-	conflicts: List[str]
-	provides: List[str]
-	replaces: List[str]
-	depends: List[str]
-	optdepends: List[str]
-	makedepends: List[str]
-	checkdepends: List[str]
+	groups: list[str]
+	licenses: list[str]
+	conflicts: list[str]
+	provides: list[str]
+	replaces: list[str]
+	depends: list[str]
+	optdepends: list[str]
+	makedepends: list[str]
+	checkdepends: list[str]
 
 	@staticmethod
 	def from_json(data: Dict[str, Any]) -> 'PackageSearchResult':
@@ -109,7 +109,7 @@ class PackageSearch:
 	valid: bool
 	num_pages: int
 	page: int
-	results: List[PackageSearchResult]
+	results: list[PackageSearchResult]
 
 	@staticmethod
 	def from_json(data: Dict[str, Any]) -> 'PackageSearch':

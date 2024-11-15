@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional, Dict, Any, TYPE_CHECKING, Tuple
+from typing import Optional, Dict, Any, TYPE_CHECKING, Tuple
 
 from ..profile import ProfileConfiguration
 
@@ -31,7 +31,7 @@ class Nic:
 	ip: Optional[str] = None
 	dhcp: bool = True
 	gateway: Optional[str] = None
-	dns: List[str] = field(default_factory=list)
+	dns: list[str] = field(default_factory=list)
 
 	def table_data(self) -> Dict[str, Any]:
 		return {
@@ -62,8 +62,8 @@ class Nic:
 		)
 
 	def as_systemd_config(self) -> str:
-		match: List[Tuple[str, str]] = []
-		network: List[Tuple[str, str]] = []
+		match: list[Tuple[str, str]] = []
+		network: list[Tuple[str, str]] = []
 
 		if self.iface:
 			match.append(('Name', self.iface))
@@ -92,7 +92,7 @@ class Nic:
 @dataclass
 class NetworkConfiguration:
 	type: NicType
-	nics: List[Nic] = field(default_factory=list)
+	nics: list[Nic] = field(default_factory=list)
 
 	def json(self) -> Dict[str, Any]:
 		config: Dict[str, Any] = {'type': self.type.value}

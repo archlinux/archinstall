@@ -1,5 +1,5 @@
 import copy
-from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple, List
+from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple
 from ..output import FormattedOutput
 
 from archinstall.tui import (
@@ -15,9 +15,9 @@ class ListManager:
 	def __init__(
 		self,
 		prompt: str,
-		entries: List[Any],
-		base_actions: List[str],
-		sub_menu_actions: List[str]
+		entries: list[Any],
+		base_actions: list[str],
+		sub_menu_actions: list[str]
 	):
 		"""
 		:param prompt:  Text which will appear at the header
@@ -58,7 +58,7 @@ class ListManager:
 			return self._last_choice == self._cancel_action
 		return False
 
-	def run(self) -> List[Any]:
+	def run(self) -> list[Any]:
 		while True:
 			# this will return a dictionary with the key as the menu entry to be displayed
 			# and the value is the original value from the self._data container
@@ -97,10 +97,10 @@ class ListManager:
 		else:
 			return self._data
 
-	def _prepare_selection(self, data_formatted: Dict[str, Any]) -> Tuple[List[str], str]:
+	def _prepare_selection(self, data_formatted: Dict[str, Any]) -> Tuple[list[str], str]:
 		# header rows are mapped to None so make sure
 		# to exclude those from the selectable data
-		options: List[str] = [key for key, val in data_formatted.items() if val is not None]
+		options: list[str] = [key for key, val in data_formatted.items() if val is not None]
 		header = ''
 
 		if len(options) > 0:
@@ -140,7 +140,7 @@ class ListManager:
 		if value != self._cancel_action:
 			self._data = self.handle_action(value, entry, self._data)
 
-	def reformat(self, data: List[Any]) -> Dict[str, Optional[Any]]:
+	def reformat(self, data: list[Any]) -> Dict[str, Optional[Any]]:
 		"""
 		Default implementation of the table to be displayed.
 		Override if any custom formatting is needed
@@ -165,14 +165,14 @@ class ListManager:
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def handle_action(self, action: Any, entry: Optional[Any], data: List[Any]) -> List[Any]:
+	def handle_action(self, action: Any, entry: Optional[Any], data: list[Any]) -> list[Any]:
 		"""
 		this function is called when a base action or
 		a specific action for an entry is triggered
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def filter_options(self, selection: Any, options: List[str]) -> List[str]:
+	def filter_options(self, selection: Any, options: list[str]) -> list[str]:
 		"""
 		filter which actions to show for an specific selection
 		"""

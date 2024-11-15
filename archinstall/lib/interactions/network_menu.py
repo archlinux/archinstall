@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import Any, Optional, TYPE_CHECKING, List
+from typing import Any, Optional, TYPE_CHECKING
 
 from ..models.network_configuration import NetworkConfiguration, NicType, Nic
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 class ManualNetworkConfig(ListManager):
-	def __init__(self, prompt: str, preset: List[Nic]):
+	def __init__(self, prompt: str, preset: list[Nic]):
 		self._actions = [
 			str(_('Add interface')),
 			str(_('Edit interface')),
@@ -29,7 +29,7 @@ class ManualNetworkConfig(ListManager):
 	def selected_action_display(self, nic: Nic) -> str:
 		return nic.iface if nic.iface else ''
 
-	def handle_action(self, action: str, entry: Optional[Nic], data: List[Nic]) -> list[Nic]:
+	def handle_action(self, action: str, entry: Optional[Nic], data: list[Nic]) -> list[Nic]:
 		if action == self._actions[0]:  # add
 			iface = self._select_iface(data)
 			if iface:
@@ -45,7 +45,7 @@ class ManualNetworkConfig(ListManager):
 
 		return data
 
-	def _select_iface(self, data: List[Nic]) -> Optional[str]:
+	def _select_iface(self, data: list[Nic]) -> Optional[str]:
 		all_ifaces = list_interfaces().values()
 		existing_ifaces = [d.iface for d in data]
 		available = set(all_ifaces) - set(existing_ifaces)

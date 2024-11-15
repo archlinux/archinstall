@@ -1,7 +1,7 @@
 import dataclasses
 import json
 import ssl
-from typing import Dict, Any, Tuple, List
+from typing import Dict, Any, Tuple
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -26,7 +26,7 @@ def _make_request(url: str, params: Dict) -> Any:
 	return urlopen(full_url, context=ssl_context)
 
 
-def group_search(name: str) -> List[PackageSearchResult]:
+def group_search(name: str) -> list[PackageSearchResult]:
 	# TODO UPSTREAM: Implement /json/ for the groups search
 	try:
 		response = _make_request(BASE_GROUP_URL, {'name': name})
@@ -59,7 +59,7 @@ def package_search(package: str) -> PackageSearch:
 	return PackageSearch.from_json(json_data)
 
 
-def find_package(package: str) -> List[PackageSearchResult]:
+def find_package(package: str) -> list[PackageSearchResult]:
 	data = package_search(package)
 	results = []
 

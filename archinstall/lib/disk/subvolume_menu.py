@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 
 from .device_model import SubvolumeModification
 from ..menu import ListManager
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class SubvolumeMenu(ListManager):
-	def __init__(self, prompt: str, btrfs_subvols: List[SubvolumeModification]):
+	def __init__(self, prompt: str, btrfs_subvols: list[SubvolumeModification]):
 		self._actions = [
 			str(_('Add subvolume')),
 			str(_('Edit subvolume')),
@@ -58,8 +58,8 @@ class SubvolumeMenu(ListManager):
 		self,
 		action: str,
 		entry: Optional[SubvolumeModification],
-		data: List[SubvolumeModification]
-	) -> List[SubvolumeModification]:
+		data: list[SubvolumeModification]
+	) -> list[SubvolumeModification]:
 		if action == self._actions[0]:  # add
 			new_subvolume = self._add_subvolume()
 

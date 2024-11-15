@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List
 
 import archinstall
 from archinstall import info, debug
@@ -72,8 +71,8 @@ def prompt_disk_layout() -> None:
 
 def parse_disk_encryption() -> None:
 	if enc_password := archinstall.arguments.get('!encryption-password', None):
-		modification: List[disk.DeviceModification] = archinstall.arguments['disk_config']
-		partitions: List[disk.PartitionModification] = []
+		modification: list[disk.DeviceModification] = archinstall.arguments['disk_config']
+		partitions: list[disk.PartitionModification] = []
 
 		# encrypt all partitions except the /boot
 		for mod in modification:

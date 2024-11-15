@@ -6,7 +6,7 @@ import urllib.parse
 import urllib.request
 from importlib import metadata
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional
 
 from .output import error, info, warn
 from .storage import storage
@@ -75,7 +75,7 @@ def _import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[st
 	return namespace
 
 
-def _find_nth(haystack: List[str], needle: str, n: int) -> Optional[int]:
+def _find_nth(haystack: list[str], needle: str, n: int) -> Optional[int]:
 	indices = [idx for idx, elem in enumerate(haystack) if elem == needle]
 	if n <= len(indices):
 		return indices[n - 1]
