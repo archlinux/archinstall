@@ -7,7 +7,7 @@ import curses
 import traceback
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from .lib import disk
 from .lib import models
@@ -150,7 +150,7 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 	return config
 
 
-def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
+def cleanup_empty_args(args: Union[Namespace, dict]) -> dict:
 	"""
 	Takes arguments (dictionary or argparse Namespace) and removes any
 	None values. This ensures clean mergers during dict.update(args)
@@ -169,7 +169,7 @@ def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
 	return clean_args
 
 
-def get_arguments() -> Dict[str, Any]:
+def get_arguments() -> dict[str, Any]:
 	""" The handling of parameters from the command line
 	Is done on following steps:
 	0) we create a dict to store the arguments and their values
@@ -183,7 +183,7 @@ def get_arguments() -> Dict[str, Any]:
 	3) Amend
 		Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments dictionary
 	"""
-	config: Dict[str, Any] = {}
+	config: dict[str, Any] = {}
 	args, unknowns = parser.parse_known_args()
 	# preprocess the JSON files.
 	# TODO Expand the url access to the other JSON file arguments ?
@@ -278,7 +278,7 @@ def post_process_arguments(arguments: dict[str, Any]) -> None:
 
 
 define_arguments()
-arguments: Dict[str, Any] = get_arguments()
+arguments: dict[str, Any] = get_arguments()
 post_process_arguments(arguments)
 
 

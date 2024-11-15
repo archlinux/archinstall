@@ -4,7 +4,7 @@ import urllib.parse
 from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Any, Optional, TYPE_CHECKING, Tuple
+from typing import Any, Optional, TYPE_CHECKING, Tuple
 
 from .menu import AbstractSubMenu, ListManager
 from .networking import fetch_data_from_url
@@ -41,7 +41,7 @@ class CustomMirror:
 	sign_check: SignCheck
 	sign_option: SignOption
 
-	def table_data(self) -> Dict[str, str]:
+	def table_data(self) -> dict[str, str]:
 		return {
 			'Name': self.name,
 			'Url': self.url,
@@ -49,7 +49,7 @@ class CustomMirror:
 			'Sign options': self.sign_option.value
 		}
 
-	def json(self) -> Dict[str, str]:
+	def json(self) -> dict[str, str]:
 		return {
 			'name': self.name,
 			'url': self.url,
@@ -58,7 +58,7 @@ class CustomMirror:
 		}
 
 	@classmethod
-	def parse_args(cls, args: list[Dict[str, str]]) -> list['CustomMirror']:
+	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomMirror']:
 		configs = []
 		for arg in args:
 			configs.append(
@@ -75,14 +75,14 @@ class CustomMirror:
 
 @dataclass
 class MirrorConfiguration:
-	mirror_regions: Dict[str, list[MirrorStatusEntryV3]] = field(default_factory=dict)
+	mirror_regions: dict[str, list[MirrorStatusEntryV3]] = field(default_factory=dict)
 	custom_mirrors: list[CustomMirror] = field(default_factory=list)
 
 	@property
 	def regions(self) -> str:
 		return ', '.join(self.mirror_regions.keys())
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'mirror_regions': self.mirror_regions,
 			'custom_mirrors': [c.json() for c in self.custom_mirrors]
@@ -111,7 +111,7 @@ class MirrorConfiguration:
 		return config
 
 	@classmethod
-	def parse_args(cls, args: Dict[str, Any]) -> 'MirrorConfiguration':
+	def parse_args(cls, args: dict[str, Any]) -> 'MirrorConfiguration':
 		config = MirrorConfiguration()
 
 		if 'mirror_regions' in args:
@@ -252,7 +252,7 @@ class MirrorMenu(AbstractSubMenu):
 		else:
 			self._mirror_config = MirrorConfiguration()
 
-		self._data_store: Dict[str, Any] = {}
+		self._data_store: dict[str, Any] = {}
 
 		menu_optioons = self._define_menu_options()
 		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)
@@ -278,7 +278,7 @@ class MirrorMenu(AbstractSubMenu):
 		]
 
 	def _prev_regions(self, item: MenuItem) -> Optional[str]:
-		mirrors: Dict[str, list[MirrorStatusEntryV3]] = item.get_value()
+		mirrors: dict[str, list[MirrorStatusEntryV3]] = item.get_value()
 
 		output = ''
 		for name, status_list in mirrors.items():
@@ -312,8 +312,8 @@ class MirrorMenu(AbstractSubMenu):
 		)
 
 
-def select_mirror_regions(preset: Dict[str, list[MirrorStatusEntryV3]]) -> Dict[str, list[MirrorStatusEntryV3]]:
-	mirrors: Dict[str, list[MirrorStatusEntryV3]] | None = list_mirrors_from_remote()
+def select_mirror_regions(preset: dict[str, list[MirrorStatusEntryV3]]) -> dict[str, list[MirrorStatusEntryV3]]:
+	mirrors: dict[str, list[MirrorStatusEntryV3]] | None = list_mirrors_from_remote()
 
 	if not mirrors:
 		mirrors = list_mirrors_from_local()
@@ -348,7 +348,7 @@ def select_custom_mirror(preset: list[CustomMirror] = []):
 	return custom_mirrors
 
 
-def list_mirrors_from_remote() -> Optional[Dict[str, list[MirrorStatusEntryV3]]]:
+def list_mirrors_from_remote() -> Optional[dict[str, list[MirrorStatusEntryV3]]]:
 	if not storage['arguments']['offline']:
 		url = "https://archlinux.org/mirrors/status/json/"
 		attempts = 3
@@ -366,7 +366,7 @@ def list_mirrors_from_remote() -> Optional[Dict[str, list[MirrorStatusEntryV3]]]
 	return None
 
 
-def list_mirrors_from_local() -> Dict[str, list[MirrorStatusEntryV3]]:
+def list_mirrors_from_local() -> dict[str, list[MirrorStatusEntryV3]]:
 	with Path('/etc/pacman.d/mirrorlist').open('r') as fp:
 		mirrorlist = fp.read()
 		return _parse_locale_mirrors(mirrorlist)
@@ -376,10 +376,10 @@ def _sort_mirrors_by_performance(mirror_list: list[MirrorStatusEntryV3]) -> list
 	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
-def _parse_remote_mirror_list(mirrorlist: str) -> Dict[str, list[MirrorStatusEntryV3]]:
+def _parse_remote_mirror_list(mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
 	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
 
-	sorting_placeholder: Dict[str, list[MirrorStatusEntryV3]] = {}
+	sorting_placeholder: dict[str, list[MirrorStatusEntryV3]] = {}
 
 	for mirror in mirror_status.urls:
 		# We filter out mirrors that have bad criteria values
@@ -401,7 +401,7 @@ def _parse_remote_mirror_list(mirrorlist: str) -> Dict[str, list[MirrorStatusEnt
 		if mirror.url.startswith('http'):
 			sorting_placeholder.setdefault(mirror.country, []).append(mirror)
 
-	sorted_by_regions: Dict[str, list[MirrorStatusEntryV3]] = dict({
+	sorted_by_regions: dict[str, list[MirrorStatusEntryV3]] = dict({
 		region: unsorted_mirrors
 		for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])
 	})
@@ -409,13 +409,13 @@ def _parse_remote_mirror_list(mirrorlist: str) -> Dict[str, list[MirrorStatusEnt
 	return sorted_by_regions
 
 
-def _parse_locale_mirrors(mirrorlist: str) -> Dict[str, list[MirrorStatusEntryV3]]:
+def _parse_locale_mirrors(mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
 	lines = mirrorlist.splitlines()
 
 	# remove empty lines
 	lines = [line for line in lines if line]
 
-	mirror_list: Dict[str, list[MirrorStatusEntryV3]] = {}
+	mirror_list: dict[str, list[MirrorStatusEntryV3]] = {}
 
 	current_region = ''
 	for idx, line in enumerate(lines):

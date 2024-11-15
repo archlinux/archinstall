@@ -2,7 +2,7 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
-from typing import Optional, Dict, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING, Any
 
 from .exceptions import SysCallError
 from .general import SysCommand
@@ -148,12 +148,12 @@ class _SysInfo:
 		pass
 
 	@cached_property
-	def cpu_info(self) -> Dict[str, str]:
+	def cpu_info(self) -> dict[str, str]:
 		"""
 		Returns system cpu information
 		"""
 		cpu_info_path = Path("/proc/cpuinfo")
-		cpu: Dict[str, str] = {}
+		cpu: dict[str, str] = {}
 
 		with cpu_info_path.open() as file:
 			for line in file:
@@ -164,12 +164,12 @@ class _SysInfo:
 		return cpu
 
 	@cached_property
-	def mem_info(self) -> Dict[str, int]:
+	def mem_info(self) -> dict[str, int]:
 		"""
 		Returns system memory information
 		"""
 		mem_info_path = Path("/proc/meminfo")
-		mem_info: Dict[str, int] = {}
+		mem_info: dict[str, int] = {}
 
 		with mem_info_path.open() as file:
 			for line in file:
@@ -212,8 +212,8 @@ class SysInfo:
 		return os.path.isdir('/sys/firmware/efi')
 
 	@staticmethod
-	def _graphics_devices() -> Dict[str, str]:
-		cards: Dict[str, str] = {}
+	def _graphics_devices() -> dict[str, str]:
+		cards: dict[str, str] = {}
 		for line in SysCommand("lspci"):
 			if b' VGA ' in line or b' 3D ' in line:
 				_, identifier = line.split(b': ', 1)

@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 
 from . import DiskLayoutConfiguration, DiskLayoutType
 from .device_model import LvmConfiguration
@@ -26,7 +26,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 	):
 		self._disk_layout_config = disk_layout_config
 		self._advanced = advanced
-		self._data_store: Dict[str, Any] = {}
+		self._data_store: dict[str, Any] = {}
 
 		menu_optioons = self._define_menu_options()
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Optional, Dict
+from typing import TYPE_CHECKING, Any, Optional
 
 from ..hardware import GfxDriver
 from archinstall.default_profiles.profile import Profile, GreeterType
@@ -16,7 +16,7 @@ class ProfileConfiguration:
 	gfx_driver: Optional[GfxDriver] = None
 	greeter: Optional[GreeterType] = None
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		from .profiles_handler import profile_handler
 		return {
 			'profile': profile_handler.to_json(self.profile),
@@ -25,7 +25,7 @@ class ProfileConfiguration:
 		}
 
 	@classmethod
-	def parse_arg(cls, arg: Dict[str, Any]) -> 'ProfileConfiguration':
+	def parse_arg(cls, arg: dict[str, Any]) -> 'ProfileConfiguration':
 		from .profiles_handler import profile_handler
 
 		profile = profile_handler.parse_profile_config(arg['profile'])

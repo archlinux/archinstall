@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional, Dict, Any, TYPE_CHECKING, Tuple
+from typing import Optional, Any, TYPE_CHECKING, Tuple
 
 from ..profile import ProfileConfiguration
 
@@ -33,7 +33,7 @@ class Nic:
 	gateway: Optional[str] = None
 	dns: list[str] = field(default_factory=list)
 
-	def table_data(self) -> Dict[str, Any]:
+	def table_data(self) -> dict[str, Any]:
 		return {
 			'iface': self.iface if self.iface else '',
 			'ip': self.ip if self.ip else '',
@@ -42,7 +42,7 @@ class Nic:
 			'dns': self.dns
 		}
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'iface': self.iface,
 			'ip': self.ip,
@@ -52,7 +52,7 @@ class Nic:
 		}
 
 	@staticmethod
-	def parse_arg(arg: Dict[str, Any]) -> Nic:
+	def parse_arg(arg: dict[str, Any]) -> Nic:
 		return Nic(
 			iface=arg.get('iface', None),
 			ip=arg.get('ip', None),
@@ -94,15 +94,15 @@ class NetworkConfiguration:
 	type: NicType
 	nics: list[Nic] = field(default_factory=list)
 
-	def json(self) -> Dict[str, Any]:
-		config: Dict[str, Any] = {'type': self.type.value}
+	def json(self) -> dict[str, Any]:
+		config: dict[str, Any] = {'type': self.type.value}
 		if self.nics:
 			config['nics'] = [n.json() for n in self.nics]
 
 		return config
 
 	@staticmethod
-	def parse_arg(config: Dict[str, Any]) -> Optional[NetworkConfiguration]:
+	def parse_arg(config: dict[str, Any]) -> Optional[NetworkConfiguration]:
 		nic_type = config.get('type', None)
 		if not nic_type:
 			return None

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from enum import Enum, auto
-from typing import Optional, Any, Dict, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 
 from ..lib.storage import storage
 
@@ -62,7 +62,7 @@ class Profile:
 		self.name = name
 		self.description = description
 		self.profile_type = profile_type
-		self.custom_settings: Dict[str, Any] = {}
+		self.custom_settings: dict[str, Any] = {}
 		self.advanced = advanced
 
 		self._support_gfx_driver = support_gfx_driver
@@ -119,7 +119,7 @@ class Profile:
 		are needed
 		"""
 
-	def json(self) -> Dict:
+	def json(self) -> dict:
 		"""
 		Returns a json representation of the profile
 		"""
@@ -131,7 +131,7 @@ class Profile:
 		"""
 		return SelectResult.NewSelection
 
-	def set_custom_settings(self, settings: Dict[str, Any]) -> None:
+	def set_custom_settings(self, settings: dict[str, Any]) -> None:
 		"""
 		Set the custom settings for the profile.
 		This is also called when the settings are parsed from the config

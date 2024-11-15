@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING, Dict, Set
+from typing import Any, Optional, TYPE_CHECKING, Set
 
 from ..interactions.general_conf import ask_abort
 from .device_handler import device_handler
@@ -182,7 +182,7 @@ class FilesystemHandler:
 	def _setup_lvm(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: Dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {}
 	) -> None:
 		self._lvm_create_pvs(lvm_config, enc_mods)
 
@@ -229,7 +229,7 @@ class FilesystemHandler:
 	def _format_lvm_vols(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_vols: Dict[LvmVolume, Luks2] = {}
+		enc_vols: dict[LvmVolume, Luks2] = {}
 	) -> None:
 		for vol in lvm_config.get_all_volumes():
 			if enc_vol := enc_vols.get(vol, None):
@@ -249,7 +249,7 @@ class FilesystemHandler:
 	def _lvm_create_pvs(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: Dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {}
 	) -> None:
 		pv_paths: Set[Path] = set()
 
@@ -261,7 +261,7 @@ class FilesystemHandler:
 	def _get_all_pv_dev_paths(
 		self,
 		pvs: list[PartitionModification],
-		enc_mods: Dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {}
 	) -> Set[Path]:
 		pv_paths: Set[Path] = set()
 
@@ -279,8 +279,8 @@ class FilesystemHandler:
 		lvm_config: LvmConfiguration,
 		enc_config: DiskEncryption,
 		lock_after_create: bool = True
-	) -> Dict[LvmVolume, Luks2]:
-		enc_vols: Dict[LvmVolume, Luks2] = {}
+	) -> dict[LvmVolume, Luks2]:
+		enc_vols: dict[LvmVolume, Luks2] = {}
 
 		for vol in lvm_config.get_all_volumes():
 			if vol in enc_config.lvm_volumes:
@@ -299,8 +299,8 @@ class FilesystemHandler:
 		self,
 		enc_config: DiskEncryption,
 		lock_after_create: bool = True
-	) -> Dict[PartitionModification, Luks2]:
-		enc_mods: Dict[PartitionModification, Luks2] = {}
+	) -> dict[PartitionModification, Luks2]:
+		enc_mods: dict[PartitionModification, Luks2] = {}
 
 		for mod in self._disk_config.device_modifications:
 			partitions = mod.partitions

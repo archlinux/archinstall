@@ -5,7 +5,7 @@ import unicodedata
 from enum import Enum
 
 from pathlib import Path
-from typing import Dict, Union, Any, Callable, Optional, TYPE_CHECKING
+from typing import Union, Any, Callable, Optional, TYPE_CHECKING
 from dataclasses import asdict, is_dataclass
 
 from .storage import storage
@@ -22,7 +22,7 @@ class FormattedOutput:
 		o: 'DataclassInstance',
 		class_formatter: Optional[Union[str, Callable]] = None,
 		filter_list: list[str] = []
-	) -> Dict[str, Any]:
+	) -> dict[str, Any]:
 		"""
 		the original values returned a dataclass as dict thru the call to some specific methods
 		this version allows thru the parameter class_formatter to call a dynamically selected formatting method.
@@ -67,7 +67,7 @@ class FormattedOutput:
 		raw_data = [cls._get_values(o, class_formatter, filter_list) for o in obj]
 
 		# determine the maximum column size
-		column_width: Dict[str, int] = {}
+		column_width: dict[str, int] = {}
 		for o in raw_data:
 			for k, v in o.items():
 				if not filter_list or k in filter_list:

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Union, Any, TYPE_CHECKING
+from typing import Union, Any, TYPE_CHECKING
 from enum import Enum
 
 if TYPE_CHECKING:
@@ -102,7 +102,7 @@ class User:
 		# if it's every going to be used
 		return []
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'username': self.username,
 			'!password': self.password,
@@ -110,7 +110,7 @@ class User:
 		}
 
 	@classmethod
-	def _parse(cls, config_users: list[Dict[str, Any]]) -> list['User']:
+	def _parse(cls, config_users: list[dict[str, Any]]) -> list['User']:
 		users = []
 
 		for entry in config_users:
@@ -127,7 +127,7 @@ class User:
 		return users
 
 	@classmethod
-	def _parse_backwards_compatible(cls, config_users: Dict, sudo: bool) -> list['User']:
+	def _parse_backwards_compatible(cls, config_users: dict, sudo: bool) -> list['User']:
 		if len(config_users.keys()) > 0:
 			username = list(config_users.keys())[0]
 			password = config_users[username]['!password']
@@ -140,8 +140,8 @@ class User:
 	@classmethod
 	def parse_arguments(
 		cls,
-		config_users: Union[list[Dict[str, str]], Dict[str, str]],
-		config_superusers: Union[list[Dict[str, str]], Dict[str, str]]
+		config_users: Union[list[dict[str, str]], dict[str, str]],
+		config_superusers: Union[list[dict[str, str]], dict[str, str]]
 	) -> list['User']:
 		users = []
 

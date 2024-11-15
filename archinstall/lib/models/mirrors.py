@@ -4,10 +4,7 @@ import http.client
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import (
-	Dict,
-	Optional
-)
+from typing import Optional
 
 from ..networking import ping, DownloadTimer
 from ..output import debug
@@ -119,8 +116,8 @@ class MirrorStatusListV3(BaseModel):
 	@classmethod
 	def check_model(
 		cls,
-		data: Dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]
-	) -> Dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]:
+		data: dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]
+	) -> dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]:
 		if data.get('version') == 3:
 			return data
 
