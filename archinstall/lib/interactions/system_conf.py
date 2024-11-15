@@ -55,9 +55,11 @@ def ask_for_bootloader(preset: Optional[Bootloader]) -> Optional[Bootloader]:
 	if not SysInfo.has_uefi():
 		options = [Bootloader.Grub, Bootloader.Limine]
 		default = Bootloader.Grub
+		header = str(_('UEFI is not detected and some options are disabled'))
 	else:
 		options = [b for b in Bootloader]
 		default = Bootloader.Systemd
+		header = None
 
 	items = [MenuItem(o.value, value=o) for o in options]
 	group = MenuItemGroup(items)
@@ -66,6 +68,7 @@ def ask_for_bootloader(preset: Optional[Bootloader]) -> Optional[Bootloader]:
 
 	result = SelectMenu(
 		group,
+		header=header,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Bootloader'))),
 		allow_skip=True
