@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any, TYPE_CHECKING, List, Optional
+from typing import Any, TYPE_CHECKING, Optional
 
 from ..utils.util import get_password
 from ..menu import ListManager
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 class UserList(ListManager):
-	def __init__(self, prompt: str, lusers: List[User]):
+	def __init__(self, prompt: str, lusers: list[User]):
 		self._actions = [
 			str(_('Add a user')),
 			str(_('Change password')),
@@ -31,7 +31,7 @@ class UserList(ListManager):
 	def selected_action_display(self, user: User) -> str:
 		return user.username
 
-	def handle_action(self, action: str, entry: Optional[User], data: List[User]) -> List[User]:
+	def handle_action(self, action: str, entry: Optional[User], data: list[User]) -> list[User]:
 		if action == self._actions[0]:  # add
 			new_user = self._add_user()
 			if new_user is not None:
@@ -106,6 +106,6 @@ class UserList(ListManager):
 		return User(username, password, sudo)
 
 
-def ask_for_additional_users(prompt: str = '', defined_users: List[User] = []) -> List[User]:
+def ask_for_additional_users(prompt: str = '', defined_users: list[User] = []) -> list[User]:
 	users = UserList(prompt, defined_users).run()
 	return users

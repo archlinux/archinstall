@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from enum import Enum, auto
-from typing import List, Optional, Any, Dict, TYPE_CHECKING
+from typing import Optional, Any, Dict, TYPE_CHECKING
 
 from ..lib.storage import storage
 
@@ -52,9 +52,9 @@ class Profile:
 		name: str,
 		profile_type: ProfileType,
 		description: str = '',
-		current_selection: List[Profile] = [],
-		packages: List[str] = [],
-		services: List[str] = [],
+		current_selection: list[Profile] = [],
+		packages: list[str] = [],
+		services: list[str] = [],
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
 		advanced: bool = False
@@ -78,7 +78,7 @@ class Profile:
 		self.custom_enabled = False
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		"""
 		Returns a list of packages that should be installed when
 		this profile is among the chosen ones
@@ -86,7 +86,7 @@ class Profile:
 		return self._packages
 
 	@property
-	def services(self) -> List[str]:
+	def services(self) -> list[str]:
 		"""
 		Returns a list of services that should be enabled when
 		this profile is among the chosen ones
@@ -139,7 +139,7 @@ class Profile:
 		"""
 		self.custom_settings = settings
 
-	def current_selection_names(self) -> List[str]:
+	def current_selection_names(self) -> list[str]:
 		if self.current_selection:
 			return [s.name for s in self.current_selection]
 		return []

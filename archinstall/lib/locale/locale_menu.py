@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any, TYPE_CHECKING, Optional, List
+from typing import Dict, Any, TYPE_CHECKING, Optional
 
 from .utils import list_keyboard_languages, list_locales, set_kb_layout, get_kb_layout
 from ..menu import AbstractSubMenu
@@ -74,7 +74,7 @@ class LocaleMenu(AbstractSubMenu):
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
 		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
 
-	def _define_menu_options(self) -> List[MenuItem]:
+	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Keyboard layout')),

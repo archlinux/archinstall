@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, List, Optional, Dict
+from typing import Any, TYPE_CHECKING, Optional, Dict
 
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class DesktopProfile(Profile):
-	def __init__(self, current_selection: List[Profile] = []) -> None:
+	def __init__(self, current_selection: list[Profile] = []) -> None:
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
@@ -25,7 +25,7 @@ class DesktopProfile(Profile):
 		)
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			'nano',
 			'vim',

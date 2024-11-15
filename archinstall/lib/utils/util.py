@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional, List
+from typing import Any, TYPE_CHECKING, Optional
 
 from ..output import FormattedOutput
 from ..general import secret
@@ -107,7 +107,7 @@ def is_subpath(first: Path, second: Path) -> bool:
 		return False
 
 
-def format_cols(items: List[str], header: Optional[str] = None) -> str:
+def format_cols(items: list[str], header: Optional[str] = None) -> str:
 	if header:
 		text = f'{header}:\n'
 	else:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING, List, Dict, Set
+from typing import Any, Optional, TYPE_CHECKING, Dict, Set
 
 from ..interactions.general_conf import ask_abort
 from .device_handler import device_handler
@@ -85,7 +85,7 @@ class FilesystemHandler:
 
 	def _format_partitions(
 		self,
-		partitions: List[PartitionModification],
+		partitions: list[PartitionModification],
 		device_path: Path
 	) -> None:
 		"""
@@ -119,7 +119,7 @@ class FilesystemHandler:
 			part_mod.partuuid = lsblk_info.partuuid
 			part_mod.uuid = lsblk_info.uuid
 
-	def _validate_partitions(self, partitions: List[PartitionModification]) -> None:
+	def _validate_partitions(self, partitions: list[PartitionModification]) -> None:
 		checks = {
 			# verify that all partitions have a path set (which implies that they have been created)
 			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
@@ -260,7 +260,7 @@ class FilesystemHandler:
 
 	def _get_all_pv_dev_paths(
 		self,
-		pvs: List[PartitionModification],
+		pvs: list[PartitionModification],
 		enc_mods: Dict[PartitionModification, Luks2] = {}
 	) -> Set[Path]:
 		pv_paths: Set[Path] = set()

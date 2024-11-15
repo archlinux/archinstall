@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Any, TYPE_CHECKING, List
+from typing import Dict, Optional, Any, TYPE_CHECKING
 
 from . import DiskLayoutConfiguration, DiskLayoutType
 from .device_model import LvmConfiguration
@@ -33,7 +33,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
 
-	def _define_menu_options(self) -> List[MenuItem]:
+	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Partitioning')),
@@ -100,7 +100,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 			msg += str(_('Mountpoint')) + ': ' + str(disk_layout_conf.mountpoint)
 			return msg
 
-		device_mods: List[DeviceModification] = \
+		device_mods: list[DeviceModification] = \
 			list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
 
 		if device_mods:

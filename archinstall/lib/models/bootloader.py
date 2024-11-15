@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import sys
 from enum import Enum
-from typing import List
 
 from ..hardware import SysInfo
 from ..output import warn
@@ -25,7 +24,7 @@ class Bootloader(Enum):
 		return self.value
 
 	@staticmethod
-	def values() -> List[str]:
+	def values() -> list[str]:
 		return [e.value for e in Bootloader]
 
 	@classmethod

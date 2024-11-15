@@ -6,7 +6,6 @@ import urllib.parse
 import urllib.request
 from typing import (
 	Dict,
-	List,
 	Optional
 )
 
@@ -113,15 +112,15 @@ class MirrorStatusListV3(BaseModel):
 	cutoff: int
 	last_check: datetime.datetime
 	num_checks: int
-	urls: List[MirrorStatusEntryV3]
+	urls: list[MirrorStatusEntryV3]
 	version: int
 
 	@model_validator(mode='before')
 	@classmethod
 	def check_model(
 		cls,
-		data: Dict[str, int | datetime.datetime | List[MirrorStatusEntryV3]]
-	) -> Dict[str, int | datetime.datetime | List[MirrorStatusEntryV3]]:
+		data: Dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]
+	) -> Dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]:
 		if data.get('version') == 3:
 			return data
 

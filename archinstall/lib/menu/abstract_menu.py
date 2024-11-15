@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Any, List, Optional, Dict, TYPE_CHECKING
+from typing import Callable, Any, Optional, Dict, TYPE_CHECKING
 
 from ..output import error
 from ..output import unicode_ljust
@@ -22,8 +22,8 @@ class Selector:
 		display_func: Optional[Callable] = None,
 		default: Optional[Any] = None,
 		enabled: bool = False,
-		dependencies: List = [],
-		dependencies_not: List = [],
+		dependencies: list = [],
+		dependencies_not: list = [],
 		exec_func: Optional[Callable] = None,
 		preview_func: Optional[Callable] = None,
 		mandatory: bool = False,

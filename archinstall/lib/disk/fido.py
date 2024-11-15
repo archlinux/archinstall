@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import getpass
 from pathlib import Path
-from typing import List
 
 from .device_model import Fido2Device
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
@@ -12,10 +11,10 @@ from ..exceptions import SysCallError
 
 class Fido2:
 	_loaded: bool = False
-	_fido2_devices: List[Fido2Device] = []
+	_fido2_devices: list[Fido2Device] = []
 
 	@classmethod
-	def get_fido2_devices(cls, reload: bool = False) -> List[Fido2Device]:
+	def get_fido2_devices(cls, reload: bool = False) -> list[Fido2Device]:
 		"""
 		Uses systemd-cryptenroll to list the FIDO2 devices
 		connected that supports FIDO2.

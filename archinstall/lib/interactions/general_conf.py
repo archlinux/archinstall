@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pathlib
-from typing import List, Any, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from ..locale import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration
@@ -128,7 +128,7 @@ def select_language(preset: Optional[str] = None) -> Optional[str]:
 	return select_kb_layout(preset)
 
 
-def select_archinstall_language(languages: List[Language], preset: Language) -> Language:
+def select_archinstall_language(languages: list[Language], preset: Language) -> Language:
 	# these are the displayed language names which can either be
 	# the english name of a language or, if present, the
 	# name of the language in its own language
@@ -159,7 +159,7 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 			raise ValueError('Language selection not handled')
 
 
-def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
+def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
 	header = str(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.')) + '\n'
 	header += str(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.')) + '\n'
@@ -253,7 +253,7 @@ def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[i
 	return downloads
 
 
-def select_additional_repositories(preset: List[str]) -> List[str]:
+def select_additional_repositories(preset: list[str]) -> list[str]:
 	"""
 	Allows the user to select additional repositories (multilib, and testing) if desired.
 

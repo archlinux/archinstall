@@ -16,7 +16,7 @@ import urllib.error
 import pathlib
 from datetime import datetime, date
 from enum import Enum
-from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
+from typing import Callable, Optional, Dict, Any, Union, Iterator, TYPE_CHECKING
 from select import epoll, EPOLLIN, EPOLLHUP
 from shutil import which
 
@@ -102,7 +102,7 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 class SysCommandWorker:
 	def __init__(
 		self,
-		cmd: Union[str, List[str]],
+		cmd: Union[str, list[str]],
 		callbacks: Optional[Dict[str, Any]] = None,
 		peek_output: Optional[bool] = False,
 		environment_vars: Optional[Dict[str, Any]] = None,
@@ -345,7 +345,7 @@ class SysCommandWorker:
 
 class SysCommand:
 	def __init__(self,
-		cmd: Union[str, List[str]],
+		cmd: Union[str, list[str]],
 		callbacks: Dict[str, Callable[[Any], Any]] = {},
 		start_callback: Optional[Callable[[Any], Any]] = None,
 		peek_output: Optional[bool] = False,
@@ -376,7 +376,7 @@ class SysCommand:
 		if len(args) >= 2 and args[1]:
 			error(args[1])
 
-	def __iter__(self, *args: List[Any], **kwargs: Dict[str, Any]) -> Iterator[bytes]:
+	def __iter__(self, *args: list[Any], **kwargs: Dict[str, Any]) -> Iterator[bytes]:
 		if self.session:
 			for line in self.session:
 				yield line
@@ -392,10 +392,10 @@ class SysCommand:
 		else:
 			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
 
-	def __repr__(self, *args: List[Any], **kwargs: Dict[str, Any]) -> str:
+	def __repr__(self, *args: list[Any], **kwargs: Dict[str, Any]) -> str:
 		return self.decode('UTF-8', errors='backslashreplace') or ''
 
-	def __json__(self) -> Dict[str, Union[str, bool, List[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
+	def __json__(self) -> Dict[str, Union[str, bool, list[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
 		return {
 			'cmd': self.cmd,
 			'callbacks': self._callbacks,
@@ -472,7 +472,7 @@ def _pid_exists(pid: int) -> bool:
 		return False
 
 
-def run_custom_user_commands(commands: List[str], installation: Installer) -> None:
+def run_custom_user_commands(commands: list[str], installation: Installer) -> None:
 	for index, command in enumerate(commands):
 		script_path = f"/var/tmp/user-command.{index}.sh"
 		chroot_path = f"{installation.target}/{script_path}"

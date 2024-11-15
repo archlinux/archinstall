@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING, Any
 
 from archinstall.default_profiles.profile import ProfileType, GreeterType, SelectResult
 from archinstall.default_profiles.xorg import XorgProfile
@@ -25,7 +25,7 @@ class HyprlandProfile(XorgProfile):
 		self.custom_settings = {'seat_access': None}
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			"hyprland",
 			"dunst",
@@ -45,7 +45,7 @@ class HyprlandProfile(XorgProfile):
 		return GreeterType.Sddm
 
 	@property
-	def services(self) -> List[str]:
+	def services(self) -> list[str]:
 		if pref := self.custom_settings.get('seat_access', None):
 			return [pref]
 		return []

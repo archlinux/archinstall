@@ -7,7 +7,7 @@ import signal
 from abc import ABCMeta, abstractmethod
 from curses.textpad import Textbox
 from dataclasses import dataclass
-from typing import Any, Optional, Tuple, List, TYPE_CHECKING, Literal
+from typing import Any, Optional, Tuple, TYPE_CHECKING, Literal
 from typing import Callable
 
 from .help import Help
@@ -94,7 +94,7 @@ class AbstractCurses(metaclass=ABCMeta):
 		self,
 		header: Optional[str],
 		offset: int = 0
-	) -> List[ViewportEntry]:
+	) -> list[ViewportEntry]:
 		cur_row = 0
 		full_header = []
 
@@ -120,12 +120,12 @@ class AbstractViewport:
 
 	def add_frame(
 		self,
-		entries: List[ViewportEntry],
+		entries: list[ViewportEntry],
 		max_width: int,
 		max_height: int,
 		frame: FrameProperties,
 		scroll_pct: Optional[int] = None
-	) -> List[ViewportEntry]:
+	) -> list[ViewportEntry]:
 		if not entries:
 			return []
 
@@ -155,7 +155,7 @@ class AbstractViewport:
 
 		return framed_entries
 
-	def align_center(self, lines: List[ViewportEntry], width: int) -> int:
+	def align_center(self, lines: list[ViewportEntry], width: int) -> int:
 		max_col = self._max_col(lines)
 		x_offset = int((width / 2) - (max_col / 2))
 		return x_offset
@@ -164,7 +164,7 @@ class AbstractViewport:
 		self,
 		dim: _FrameDim,
 		scroll_percentage: Optional[int] = None
-	) -> List[ViewportEntry]:
+	) -> list[ViewportEntry]:
 		right_frame = {}
 		scroll_height = int(dim.height * scroll_percentage // 100) if scroll_percentage else 0
 
@@ -214,7 +214,7 @@ class AbstractViewport:
 
 	def _get_frame_dim(
 		self,
-		entries: List[ViewportEntry],
+		entries: list[ViewportEntry],
 		max_width: int,
 		max_height: int,
 		frame: FrameProperties
@@ -245,9 +245,9 @@ class AbstractViewport:
 
 	def _adjust_entries(
 		self,
-		entries: List[ViewportEntry],
+		entries: list[ViewportEntry],
 		frame_dim: _FrameDim
-	) -> List[ViewportEntry]:
+	) -> list[ViewportEntry]:
 		for entry in entries:
 			# top row frame offset
 			entry.row += 1
@@ -256,10 +256,10 @@ class AbstractViewport:
 
 		return entries
 
-	def _num_unique_rows(self, entries: List[ViewportEntry]) -> int:
+	def _num_unique_rows(self, entries: list[ViewportEntry]) -> int:
 		return len(set([e.row for e in entries]))
 
-	def _max_col(self, entries: List[ViewportEntry]) -> int:
+	def _max_col(self, entries: list[ViewportEntry]) -> int:
 		values = [len(e.text) + e.col for e in entries]
 		if not values:
 			return 0
@@ -269,7 +269,7 @@ class AbstractViewport:
 		len_replace = len(replacement)
 		return f'{text[:index]}{replacement}{text[index + len_replace:]}'
 
-	def _assemble_entries(self, entries: List[ViewportEntry]) -> str:
+	def _assemble_entries(self, entries: list[ViewportEntry]) -> str:
 		if not entries:
 			return ''
 
@@ -385,7 +385,7 @@ class EditViewport(AbstractViewport):
 @dataclass
 class ViewportState:
 	cur_pos: int
-	displayed_entries: List[ViewportEntry]
+	displayed_entries: list[ViewportEntry]
 	scroll_pct: Optional[int]
 	scroll_pos: Optional[int] = 0
 
@@ -436,7 +436,7 @@ class Viewport(AbstractViewport):
 
 	def update(
 		self,
-		lines: List[ViewportEntry],
+		lines: list[ViewportEntry],
 		cur_pos: int = 0,
 		scroll_pos: Optional[int] = None
 	):
@@ -490,7 +490,7 @@ class Viewport(AbstractViewport):
 
 	def _get_viewport_state(
 		self,
-		entries: List[ViewportEntry],
+		entries: list[ViewportEntry],
 		cur_pos: int,
 		scroll_pos: Optional[int] = 0
 	) -> ViewportState:
@@ -535,7 +535,7 @@ class Viewport(AbstractViewport):
 
 	def _get_visible_entries(
 		self,
-		entries: List[ViewportEntry],
+		entries: list[ViewportEntry],
 		cur_pos: int,
 		screen_rows: int,
 		scroll_pos: Optional[int],
@@ -570,7 +570,7 @@ class Viewport(AbstractViewport):
 
 		return [entry for entry in entries if start <= entry.row < end]
 
-	def _adjust_entries_row(self, entries: List[ViewportEntry]) -> List[ViewportEntry]:
+	def _adjust_entries_row(self, entries: list[ViewportEntry]) -> list[ViewportEntry]:
 		assert self._state is not None
 		modified = []
 
@@ -585,7 +585,7 @@ class Viewport(AbstractViewport):
 		len_replace = len(replacement)
 		return f'{text[:index]}{replacement}{text[index + len_replace:]}'
 
-	def _unique_rows(self, entries: List[ViewportEntry]) -> int:
+	def _unique_rows(self, entries: list[ViewportEntry]) -> int:
 		return len(set([e.row for e in entries]))
 
 
@@ -847,11 +847,11 @@ class SelectMenu(AbstractCurses):
 		else:
 			self._horizontal_cols = 1
 
-		self._row_entries: List[List[MenuCell]] = []
+		self._row_entries: list[list[MenuCell]] = []
 		self._prev_scroll_pos: int = 0
 		self._cur_pos: Optional[int] = None
 
-		self._visible_entries: List[ViewportEntry] = []
+		self._visible_entries: list[ViewportEntry] = []
 		self._max_height, self._max_width = Tui.t().max_yx
 
 		self._help_vp: Optional[Viewport] = None
@@ -911,7 +911,7 @@ class SelectMenu(AbstractCurses):
 		if self._help_vp:
 			self._help_vp.erase()
 
-	def _footer_entries(self) -> List[ViewportEntry]:
+	def _footer_entries(self) -> list[ViewportEntry]:
 		if self._active_search:
 			filter_pattern = self._item_group.filter_pattern
 			return [ViewportEntry(f'/{filter_pattern}', 0, 0, STYLE.NORMAL)]
@@ -1078,7 +1078,7 @@ class SelectMenu(AbstractCurses):
 	def _update_viewport(
 		self,
 		viewport: Viewport,
-		entries: List[ViewportEntry],
+		entries: list[ViewportEntry],
 		cur_pos: int = 0
 	) -> None:
 		if entries:
@@ -1093,13 +1093,13 @@ class SelectMenu(AbstractCurses):
 					return idx
 		return 0
 
-	def _get_visible_items(self) -> List[MenuItem]:
+	def _get_visible_items(self) -> list[MenuItem]:
 		return [it for it in self._item_group.items if self._item_group.should_enable_item(it)]
 
-	def _list_to_cols(self, items: List[MenuItem], cols: int) -> List[List[MenuItem]]:
+	def _list_to_cols(self, items: list[MenuItem], cols: int) -> list[list[MenuItem]]:
 		return [items[i:i + cols] for i in range(0, len(items), cols)]
 
-	def _get_col_widths(self) -> List[int]:
+	def _get_col_widths(self) -> list[int]:
 		cols_widths = self._calc_col_widths(self._row_entries, self._horizontal_cols)
 		return [col_width + len(self._cursor_char) + self._item_distance() for col_width in cols_widths]
 
@@ -1109,7 +1109,7 @@ class SelectMenu(AbstractCurses):
 		else:
 			return self._column_spacing
 
-	def _get_row_entries(self) -> List[ViewportEntry]:
+	def _get_row_entries(self) -> list[ViewportEntry]:
 		cells = self._assemble_menu_cells()
 		entries = []
 
@@ -1141,9 +1141,9 @@ class SelectMenu(AbstractCurses):
 
 	def _calc_col_widths(
 		self,
-		row_chunks: List[List[MenuCell]],
+		row_chunks: list[list[MenuCell]],
 		cols: int
-	) -> List[int]:
+	) -> list[int]:
 		col_widths = []
 		for col in range(cols):
 			col_entries = []
@@ -1156,7 +1156,7 @@ class SelectMenu(AbstractCurses):
 
 		return col_widths
 
-	def _assemble_menu_cells(self) -> List[MenuCell]:
+	def _assemble_menu_cells(self) -> list[MenuCell]:
 		items = self._get_visible_items()
 		entries = []
 
@@ -1195,7 +1195,7 @@ class SelectMenu(AbstractCurses):
 
 		self._preview_vp.update(entries, scroll_pos=self._prev_scroll_pos)
 
-	def _calc_prev_scroll_pos(self, entries: List[ViewportEntry]):
+	def _calc_prev_scroll_pos(self, entries: list[ViewportEntry]):
 		total_rows = max([e.row for e in entries]) + 1  # rows start with 0 and we need the count
 
 		if self._prev_scroll_pos >= total_rows:

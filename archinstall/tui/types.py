@@ -1,7 +1,7 @@
 import curses
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Optional, List, Any
+from typing import Optional, Any
 
 from .menu_item import MenuItem
 
@@ -52,7 +52,7 @@ class MenuKeys(Enum):
 	SCROLL_DOWN = {540}
 
 	@classmethod
-	def from_ord(cls, key: int) -> List['MenuKeys']:
+	def from_ord(cls, key: int) -> list['MenuKeys']:
 		matches = []
 
 		for group in MenuKeys:
@@ -139,7 +139,7 @@ class Chars:
 @dataclass
 class Result:
 	type_: ResultType
-	_item: Optional[MenuItem | List[MenuItem] | str]
+	_item: Optional[MenuItem | list[MenuItem] | str]
 
 	def has_item(self) -> bool:
 		return self._item is not None
@@ -147,14 +147,14 @@ class Result:
 	def get_value(self) -> Any:
 		return self.item().get_value()
 
-	def get_values(self) -> List[Any]:
+	def get_values(self) -> list[Any]:
 		return [i.get_value() for i in self.items()]
 
 	def item(self) -> MenuItem:
 		assert self._item is not None and isinstance(self._item, MenuItem)
 		return self._item
 
-	def items(self) -> List[MenuItem]:
+	def items(self) -> list[MenuItem]:
 		assert self._item is not None and isinstance(self._item, list)
 		return self._item
 

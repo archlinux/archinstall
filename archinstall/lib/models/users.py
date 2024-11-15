@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Union, Any, TYPE_CHECKING
+from typing import Dict, Union, Any, TYPE_CHECKING
 from enum import Enum
 
 if TYPE_CHECKING:
@@ -97,7 +97,7 @@ class User:
 	sudo: bool
 
 	@property
-	def groups(self) -> List[str]:
+	def groups(self) -> list[str]:
 		# this property should be transferred into a class attr instead
 		# if it's every going to be used
 		return []
@@ -110,7 +110,7 @@ class User:
 		}
 
 	@classmethod
-	def _parse(cls, config_users: List[Dict[str, Any]]) -> List['User']:
+	def _parse(cls, config_users: list[Dict[str, Any]]) -> list['User']:
 		users = []
 
 		for entry in config_users:
@@ -127,7 +127,7 @@ class User:
 		return users
 
 	@classmethod
-	def _parse_backwards_compatible(cls, config_users: Dict, sudo: bool) -> List['User']:
+	def _parse_backwards_compatible(cls, config_users: Dict, sudo: bool) -> list['User']:
 		if len(config_users.keys()) > 0:
 			username = list(config_users.keys())[0]
 			password = config_users[username]['!password']
@@ -140,9 +140,9 @@ class User:
 	@classmethod
 	def parse_arguments(
 		cls,
-		config_users: Union[List[Dict[str, str]], Dict[str, str]],
-		config_superusers: Union[List[Dict[str, str]], Dict[str, str]]
-	) -> List['User']:
+		config_users: Union[list[Dict[str, str]], Dict[str, str]],
+		config_superusers: Union[list[Dict[str, str]], Dict[str, str]]
+	) -> list['User']:
 		users = []
 
 		# backwards compatibility

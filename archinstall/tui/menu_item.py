@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Optional, List, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 from typing import Callable, ClassVar
 
 from ..lib.output import unicode_ljust
@@ -15,8 +15,8 @@ class MenuItem:
 	action: Optional[Callable[[Any], Any]] = None
 	enabled: bool = True
 	mandatory: bool = False
-	dependencies: List[str | Callable[[], bool]] = field(default_factory=list)
-	dependencies_not: List[str] = field(default_factory=list)
+	dependencies: list[str | Callable[[], bool]] = field(default_factory=list)
+	dependencies_not: list[str] = field(default_factory=list)
 	display_action: Optional[Callable[[Any], str]] = None
 	preview_action: Optional[Callable[[Any], Optional[str]]] = None
 	key: Optional[str] = None
@@ -64,10 +64,10 @@ class MenuItem:
 
 @dataclass
 class MenuItemGroup:
-	menu_items: List[MenuItem]
+	menu_items: list[MenuItem]
 	focus_item: Optional[MenuItem] = None
 	default_item: Optional[MenuItem] = None
-	selected_items: List[MenuItem] = field(default_factory=list)
+	selected_items: list[MenuItem] = field(default_factory=list)
 	sort_items: bool = False
 	checkmarks: bool = False
 
@@ -119,7 +119,7 @@ class MenuItemGroup:
 				self.default_item = item
 				break
 
-	def set_selected_by_value(self, values: Optional[Any | List[Any]]) -> None:
+	def set_selected_by_value(self, values: Optional[Any | list[Any]]) -> None:
 		if values is None:
 			return
 
@@ -194,7 +194,7 @@ class MenuItemGroup:
 		return ''
 
 	@property
-	def items(self) -> List[MenuItem]:
+	def items(self) -> list[MenuItem]:
 		f = self._filter_pattern.lower()
 		items = filter(lambda item: item.is_empty() or f in item.text.lower(), self.menu_items)
 		return list(items)
@@ -246,7 +246,7 @@ class MenuItemGroup:
 		else:
 			return item == self.focus_item
 
-	def _first(self, items: List[MenuItem], ignore_empty: bool) -> Optional[MenuItem]:
+	def _first(self, items: list[MenuItem], ignore_empty: bool) -> Optional[MenuItem]:
 		for item in items:
 			if not ignore_empty:
 				return item
