@@ -93,7 +93,7 @@ class Installer:
 		self._zram_enabled = False
 		self._disable_fstrim = False
 
-		self.pacman = Pacman(self.target, storage['arguments'].get('silent', False))
+		self.pacman = Pacman(silent=storage['arguments'].get('silent', False))
 
 	def __enter__(self) -> 'Installer':
 		return self
@@ -673,7 +673,7 @@ class Installer:
 					# Otherwise, we can go ahead and add the required package
 					# and enable it's service:
 					else:
-						self.pacman.strap('iwd')
+						self.pacman.strap(self.target, 'iwd')
 						self.enable_service('iwd')
 
 				for psk in psk_files:
@@ -769,7 +769,7 @@ class Installer:
 				if part in self._disk_encryption.partitions:
 					if self._disk_encryption.hsm_device:
 						# Required by mkinitcpio to add support for fido2-device options
-						self.pacman.strap('libfido2')
+						self.pacman.strap(self.target, 'libfido2')
 
 						if 'sd-encrypt' not in self._hooks:
 							self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
@@ -805,7 +805,7 @@ class Installer:
 		if self._disk_encryption.encryption_type in [disk.EncryptionType.LvmOnLuks, disk.EncryptionType.LuksOnLvm]:
 			if self._disk_encryption.hsm_device:
 				# Required by mkinitcpio to add support for fido2-device options
-				self.pacman.strap('libfido2')
+				self.pacman.strap(self.target, 'libfido2')
 
 				if 'sd-encrypt' not in self._hooks:
 					self._hooks.insert(self._hooks.index('lvm2'), 'sd-encrypt')
@@ -852,7 +852,7 @@ class Installer:
 
 		pacman_conf.apply()
 
-		self.pacman.strap(self._base_packages)
+		self.pacman.strap(self.target, self._base_packages)
 		self.helper_flags['base-strapped'] = True
 
 		pacman_conf.persist()
@@ -895,7 +895,7 @@ class Installer:
 	def setup_swap(self, kind: str = 'zram') -> None:
 		if kind == 'zram':
 			info("Setting up swap on zram")
-			self.pacman.strap('zram-generator')
+			self.pacman.strap(self.target, 'zram-generator')
 
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
@@ -1057,7 +1057,7 @@ class Installer:
 	) -> None:
 		debug('Installing systemd bootloader')
 
-		self.pacman.strap('efibootmgr')
+		self.pacman.strap(self.target, 'efibootmgr')
 
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
@@ -1155,7 +1155,7 @@ class Installer:
 	) -> None:
 		debug('Installing grub bootloader')
 
-		self.pacman.strap('grub')  # no need?
+		self.pacman.strap(self.target, 'grub')  # no need?
 
 		grub_default = self.target / 'etc/default/grub'
 		config = grub_default.read_text()
@@ -1182,7 +1182,7 @@ class Installer:
 
 			info(f"GRUB EFI partition: {efi_partition.dev_path}")
 
-			self.pacman.strap('efibootmgr')  # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+			self.pacman.strap(self.target, 'efibootmgr')  # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			boot_dir_arg = []
 			if boot_partition.mountpoint and boot_partition.mountpoint != boot_dir:
@@ -1240,7 +1240,7 @@ class Installer:
 	) -> None:
 		debug('Installing limine bootloader')
 
-		self.pacman.strap('limine')
+		self.pacman.strap(self.target, 'limine')
 
 		info(f"Limine boot partition: {boot_partition.dev_path}")
 
@@ -1330,7 +1330,7 @@ Exec = /bin/sh -c "{hook_command}"
 	) -> None:
 		debug('Installing efistub bootloader')
 
-		self.pacman.strap('efibootmgr')
+		self.pacman.strap(self.target, 'efibootmgr')
 
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
@@ -1467,7 +1467,7 @@ Exec = /bin/sh -c "{hook_command}"
 				self._add_limine_bootloader(boot_partition, efi_partition, root)
 
 	def add_additional_packages(self, packages: Union[str, List[str]]) -> None:
-		return self.pacman.strap(packages)
+		return self.pacman.strap(self.target, packages)
 
 	def enable_sudo(self, entity: str, group: bool = False):
 		info(f'Enabling sudo permissions for {entity}')
