@@ -40,7 +40,7 @@ class UserList(ListManager):
 				data = [d for d in data if d.username != new_user.username]
 				data += [new_user]
 		elif action == self._actions[1] and entry:  # change password
-			header = f'{str(_("User"))}: {entry.username}\n'
+			header = f'{_("User")}: {entry.username}\n'
 			new_password = get_password(str(_('Password')), header=header)
 
 			if new_password:
@@ -74,14 +74,14 @@ class UserList(ListManager):
 			case _:
 				raise ValueError('Unhandled result type')
 
-		header = f'{str(_("Username"))}: {username}\n'
+		header = f'{_("Username")}: {username}\n'
 
 		password = get_password(str(_('Password')), header=header, allow_skip=True)
 
 		if not password:
 			return None
 
-		header += f'{str(_("Password"))}: {secret(password)}\n\n'
+		header += f'{_("Password")}: {secret(password)}\n\n'
 		header += str(_('Should "{}" be a superuser (sudo)?\n')).format(username)
 
 		group = MenuItemGroup.yes_no()

@@ -139,7 +139,7 @@ class ProfileMenu(AbstractSubMenu):
 
 	def _prev_greeter(self, item: MenuItem) -> Optional[str]:
 		if item.value:
-			return f'{str(_("Greeter"))}: {item.value.value}'
+			return f'{_("Greeter")}: {item.value.value}'
 		return None
 
 	def _preview_profile(self, item: MenuItem) -> Optional[str]:

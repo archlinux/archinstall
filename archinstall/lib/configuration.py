@@ -79,7 +79,7 @@ class ConfigurationOutput:
 		debug(self.user_config_to_json())
 
 	def confirm_config(self) -> bool:
-		header = f'{str(_("The specified configuration will be applied"))}. '
+		header = f'{_("The specified configuration will be applied")}. '
 		header += str(_('Would you like to continue?')) + '\n'
 
 		with Tui():

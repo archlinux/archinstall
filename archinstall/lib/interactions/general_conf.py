@@ -180,7 +180,7 @@ def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
 		valid, invalid = validate_package_list(packages)
 
 		if invalid:
-			return f'{str(_("Some packages could not be found in the repository"))}: {invalid}'
+			return f'{_("Some packages could not be found in the repository")}: {invalid}'
 
 		return None
 

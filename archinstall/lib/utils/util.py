@@ -43,9 +43,9 @@ def get_password(
 		hidden = secret(password)
 
 		if header is not None:
-			confirmation_header = f'{header}{str(_("Pssword"))}: {hidden}\n'
+			confirmation_header = f'{header}{_("Pssword")}: {hidden}\n'
 		else:
-			confirmation_header = f'{str(_("Password"))}: {hidden}\n'
+			confirmation_header = f'{_("Password")}: {hidden}\n'
 
 		result = EditMenu(
 			str(_('Confirm password')),
