@@ -1265,8 +1265,10 @@ class Installer:
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
-			hook_command = f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/' \
+			hook_command = (
+				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/'
 				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
+			)
 		else:
 			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
@@ -1282,8 +1284,10 @@ class Installer:
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine on {parent_dev_path}: {err}')
 
-			hook_command = f'/usr/bin/limine bios-install {parent_dev_path}' \
+			hook_command = (
+				f'/usr/bin/limine bios-install {parent_dev_path}'
 				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/'
+			)
 
 		hook_contents = f'''[Trigger]
 Operation = Install
