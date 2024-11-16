@@ -1,4 +1,4 @@
-from typing import Any, Tuple, Optional
+from typing import Any, Optional
 
 from archinstall.lib.output import FormattedOutput
 
@@ -11,8 +11,8 @@ class MenuHelper:
 	@staticmethod
 	def create_table(
 		data: Optional[list[Any]] = None,
-		table_data: Optional[Tuple[list[Any], str]] = None,
-	) -> Tuple[MenuItemGroup, str]:
+		table_data: Optional[tuple[list[Any], str]] = None,
+	) -> tuple[MenuItemGroup, str]:
 		if data is not None:
 			table_text = FormattedOutput.as_table(data)
 			rows = table_text.split('\n')
@@ -52,7 +52,7 @@ class MenuHelper:
 		return display_data
 
 	@staticmethod
-	def _prepare_selection(table: dict[str, Any]) -> Tuple[dict[str, Any], str]:
+	def _prepare_selection(table: dict[str, Any]) -> tuple[dict[str, Any], str]:
 		# header rows are mapped to None so make sure to exclude those from the selectable data
 		options = {key: val for key, val in table.items() if val is not None}
 		header = ''

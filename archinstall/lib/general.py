@@ -14,9 +14,10 @@ import urllib.parse
 from urllib.request import Request, urlopen
 import urllib.error
 import pathlib
+from collections.abc import Callable, Iterator
 from datetime import datetime, date
 from enum import Enum
-from typing import Callable, Optional, Any, Union, Iterator, TYPE_CHECKING
+from typing import Optional, Any, Union, TYPE_CHECKING
 from select import epoll, EPOLLIN, EPOLLHUP
 from shutil import which
 

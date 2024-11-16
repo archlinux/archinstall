@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable, Any, Optional, TYPE_CHECKING
+from collections.abc import Callable
+from typing import Any, Optional, TYPE_CHECKING
 
 from ..output import error
 from ..output import unicode_ljust

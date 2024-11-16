@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional, Any, TYPE_CHECKING, Tuple
+from typing import Optional, Any, TYPE_CHECKING
 
 from ..profile import ProfileConfiguration
 
@@ -62,8 +62,8 @@ class Nic:
 		)
 
 	def as_systemd_config(self) -> str:
-		match: list[Tuple[str, str]] = []
-		network: list[Tuple[str, str]] = []
+		match: list[tuple[str, str]] = []
+		network: list[tuple[str, str]] = []
 
 		if self.iface:
 			match.append(('Name', self.iface))

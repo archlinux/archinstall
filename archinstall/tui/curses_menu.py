@@ -5,11 +5,11 @@ import curses.panel
 import os
 import signal
 from abc import ABCMeta, abstractmethod
+from collections.abc import Callable
 from curses.textpad import Textbox
 from dataclasses import dataclass
 from types import FrameType, TracebackType
-from typing import Any, Optional, Tuple, TYPE_CHECKING, Literal
-from typing import Callable
+from typing import Any, Optional, TYPE_CHECKING, Literal
 
 from .help import Help
 from .menu_item import MenuItem, MenuItemGroup
@@ -1448,7 +1448,7 @@ class Tui:
 		Tui.t().screen.refresh()
 
 	@property
-	def max_yx(self) -> Tuple[int, int]:
+	def max_yx(self) -> tuple[int, int]:
 		return self._screen.getmaxyx()
 
 	@staticmethod

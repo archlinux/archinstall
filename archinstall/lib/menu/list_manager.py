@@ -1,5 +1,5 @@
 import copy
-from typing import Any, TYPE_CHECKING, Optional, Tuple
+from typing import Any, TYPE_CHECKING, Optional
 from ..output import FormattedOutput
 
 from archinstall.tui import (
@@ -97,7 +97,7 @@ class ListManager:
 		else:
 			return self._data
 
-	def _prepare_selection(self, data_formatted: dict[str, Any]) -> Tuple[list[str], str]:
+	def _prepare_selection(self, data_formatted: dict[str, Any]) -> tuple[list[str], str]:
 		# header rows are mapped to None so make sure
 		# to exclude those from the selectable data
 		options: list[str] = [key for key, val in data_formatted.items() if val is not None]

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional, Tuple
+from typing import Any, TYPE_CHECKING, Optional
 from dataclasses import dataclass
 
 from ..utils.util import prompt_dir
@@ -287,7 +287,7 @@ class PartitioningList(ListManager):
 		assert size
 		return size
 
-	def _prompt_size(self) -> Tuple[Size, Size]:
+	def _prompt_size(self) -> tuple[Size, Size]:
 		device_info = self._device.device_info
 
 		text = str(_('Current free sectors on device {}:')).format(device_info.path) + '\n\n'

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING, Set
+from typing import Any, Optional, TYPE_CHECKING
 
 from ..interactions.general_conf import ask_abort
 from .device_handler import device_handler
@@ -251,7 +251,7 @@ class FilesystemHandler:
 		lvm_config: LvmConfiguration,
 		enc_mods: dict[PartitionModification, Luks2] = {}
 	) -> None:
-		pv_paths: Set[Path] = set()
+		pv_paths: set[Path] = set()
 
 		for vg in lvm_config.vol_groups:
 			pv_paths |= self._get_all_pv_dev_paths(vg.pvs, enc_mods)
@@ -262,8 +262,8 @@ class FilesystemHandler:
 		self,
 		pvs: list[PartitionModification],
 		enc_mods: dict[PartitionModification, Luks2] = {}
-	) -> Set[Path]:
-		pv_paths: Set[Path] = set()
+	) -> set[Path]:
+		pv_paths: set[Path] = set()
 
 		for pv in pvs:
 			if enc_pv := enc_mods.get(pv, None):

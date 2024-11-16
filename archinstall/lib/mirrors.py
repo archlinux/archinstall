@@ -4,7 +4,7 @@ import urllib.parse
 from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Optional, TYPE_CHECKING, Tuple
+from typing import Any, Optional, TYPE_CHECKING
 
 from .menu import AbstractSubMenu, ListManager
 from .networking import fetch_data_from_url
@@ -339,7 +339,7 @@ def select_mirror_regions(preset: dict[str, list[MirrorStatusEntryV3]]) -> dict[
 		case ResultType.Reset:
 			return {}
 		case ResultType.Selection:
-			selected_mirrors: list[Tuple[str, list[MirrorStatusEntryV3]]] = result.get_values()
+			selected_mirrors: list[tuple[str, list[MirrorStatusEntryV3]]] = result.get_values()
 			return {name: mirror for name, mirror in selected_mirrors}
 
 
