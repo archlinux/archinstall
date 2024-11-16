@@ -32,7 +32,8 @@ class PipewireProfile(Profile):
 			users = [users]
 
 		for user in users:
-			install_session.arch_chroot('systemctl enable --user pipewire-pulse.service', run_as=user.username)
+			install_session.arch_chroot('ln -s /usr/lib/systemd/user/pipewire-pulse.service ~/.config/systemd/user/default.target.wants/pipewire-pulse.service', run_as=user.username)
+			install_session.arch_chroot('ln -s /usr/lib/systemd/user/pipewire-pulse.socket ~/.config/systemd/user/default.target.wants/pipewire-pulse.socket', run_as=user.username)
 
 	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)
