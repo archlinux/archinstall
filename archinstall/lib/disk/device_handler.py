@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class DeviceHandler(object):
+class DeviceHandler:
 	_TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs')
 
 	def __init__(self) -> None:
