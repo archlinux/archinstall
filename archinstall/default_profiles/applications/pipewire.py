@@ -37,7 +37,7 @@ class PipewireProfile(Profile):
 			service_dir.mkdir(parents=True, exist_ok=True)
 
 			# Set ownership of the entire user catalogue
-			install_session.arch_chroot(f'chown -R {user.username}:{user.username} "/home/{user.username}"', run_as=user.username)
+			install_session.arch_chroot(f'chown -R {user.username}:{user.username} /home/{user.username}')
 
 			# symlink in the correct pipewire systemd items
 			install_session.arch_chroot(f'ln -s /usr/lib/systemd/user/pipewire-pulse.service {service_dir}/pipewire-pulse.service', run_as=user.username)
