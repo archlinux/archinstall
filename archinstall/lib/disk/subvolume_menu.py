@@ -22,8 +22,8 @@ class SubvolumeMenu(ListManager):
 		]
 		super().__init__(prompt, btrfs_subvols, [self._actions[0]], self._actions[1:])
 
-	def selected_action_display(self, subvolume: SubvolumeModification) -> str:
-		return str(subvolume.name)
+	def selected_action_display(self, selection: SubvolumeModification) -> str:
+		return str(selection.name)
 
 	def _add_subvolume(self, preset: SubvolumeModification | None = None) -> SubvolumeModification | None:
 		result = EditMenu(

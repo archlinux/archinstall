@@ -26,8 +26,8 @@ class ManualNetworkConfig(ListManager):
 		]
 		super().__init__(prompt, preset, [self._actions[0]], self._actions[1:])
 
-	def selected_action_display(self, nic: Nic) -> str:
-		return nic.iface if nic.iface else ''
+	def selected_action_display(self, selection: Nic) -> str:
+		return selection.iface if selection.iface else ''
 
 	def handle_action(self, action: str, entry: Nic | None, data: list[Nic]) -> list[Nic]:
 		if action == self._actions[0]:  # add

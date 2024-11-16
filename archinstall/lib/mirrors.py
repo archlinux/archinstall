@@ -137,8 +137,8 @@ class CustomMirrorList(ListManager):
 			self._actions[1:]
 		)
 
-	def selected_action_display(self, mirror: CustomMirror) -> str:
-		return mirror.name
+	def selected_action_display(self, selection: CustomMirror) -> str:
+		return selection.name
 
 	def handle_action(
 		self,

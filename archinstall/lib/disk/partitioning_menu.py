@@ -52,11 +52,11 @@ class PartitioningList(ListManager):
 		display_actions = list(self._actions.values())
 		super().__init__(prompt, device_partitions, display_actions[:2], display_actions[3:])
 
-	def selected_action_display(self, partition: PartitionModification) -> str:
-		if partition.status == ModificationStatus.Create:
+	def selected_action_display(self, selection: PartitionModification) -> str:
+		if selection.status == ModificationStatus.Create:
 			return str(_('Partition - New'))
 		else:
-			return str(partition.dev_path)
+			return str(selection.dev_path)
 
 	def filter_options(self, selection: PartitionModification, options: list[str]) -> list[str]:
 		not_filter = []

@@ -87,8 +87,8 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	A safe JSON encoder that will omit private information in dicts (starting with !)
 	"""
 
-	def encode(self, obj: Any) -> str:
-		return super().encode(jsonify(obj))
+	def encode(self, o: Any) -> str:
+		return super().encode(jsonify(o))
 
 
 class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
@@ -96,8 +96,8 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	UNSAFE_JSON will call/encode and keep private information in dicts (starting with !)
 	"""
 
-	def encode(self, obj: Any) -> str:
-		return super().encode(jsonify(obj, safe=False))
+	def encode(self, o: Any) -> str:
+		return super().encode(jsonify(o, safe=False))
 
 
 class SysCommandWorker:
