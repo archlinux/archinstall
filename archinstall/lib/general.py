@@ -345,7 +345,8 @@ class SysCommandWorker:
 
 
 class SysCommand:
-	def __init__(self,
+	def __init__(
+		self,
 		cmd: Union[str, list[str]],
 		callbacks: dict[str, Callable[[Any], Any]] = {},
 		start_callback: Optional[Callable[[Any], Any]] = None,

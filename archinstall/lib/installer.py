@@ -1512,8 +1512,7 @@ Exec = /bin/sh -c "{hook_command}"
 		for user in users:
 			self.user_create(user.username, user.password, user.groups, user.sudo)
 
-	def user_create(self, user: str, password: Optional[str] = None, groups: Optional[list[str]] = None,
-					sudo: bool = False) -> None:
+	def user_create(self, user: str, password: Optional[str] = None, groups: Optional[list[str]] = None, sudo: bool = False) -> None:
 		if groups is None:
 			groups = []
 
