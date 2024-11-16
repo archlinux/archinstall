@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, TYPE_CHECKING, Dict
+from typing import Any, TYPE_CHECKING
 
 from ..hardware import SysInfo
 from ..output import info
@@ -21,13 +21,13 @@ class Audio(Enum):
 class AudioConfiguration:
 	audio: Audio
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'audio': self.audio.value
 		}
 
 	@staticmethod
-	def parse_arg(arg: Dict[str, Any]) -> 'AudioConfiguration':
+	def parse_arg(arg: dict[str, Any]) -> 'AudioConfiguration':
 		return AudioConfiguration(
 			Audio(arg['audio'])
 		)

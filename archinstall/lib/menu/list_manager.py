@@ -1,5 +1,5 @@
 import copy
-from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple
+from typing import Any, TYPE_CHECKING, Optional, Tuple
 from ..output import FormattedOutput
 
 from archinstall.tui import (
@@ -97,7 +97,7 @@ class ListManager:
 		else:
 			return self._data
 
-	def _prepare_selection(self, data_formatted: Dict[str, Any]) -> Tuple[list[str], str]:
+	def _prepare_selection(self, data_formatted: dict[str, Any]) -> Tuple[list[str], str]:
 		# header rows are mapped to None so make sure
 		# to exclude those from the selectable data
 		options: list[str] = [key for key, val in data_formatted.items() if val is not None]
@@ -140,7 +140,7 @@ class ListManager:
 		if value != self._cancel_action:
 			self._data = self.handle_action(value, entry, self._data)
 
-	def reformat(self, data: list[Any]) -> Dict[str, Optional[Any]]:
+	def reformat(self, data: list[Any]) -> dict[str, Optional[Any]]:
 		"""
 		Default implementation of the table to be displayed.
 		Override if any custom formatting is needed
@@ -151,7 +151,7 @@ class ListManager:
 		# these are the header rows of the table and do not map to any User obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data: Dict[str, Optional[Any]] = {f'{rows[0]}': None, f'{rows[1]}': None}
+		display_data: dict[str, Optional[Any]] = {f'{rows[0]}': None, f'{rows[1]}': None}
 
 		for row, entry in zip(rows[2:], data):
 			display_data[row] = entry

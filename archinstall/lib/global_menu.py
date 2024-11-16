@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Dict, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from . import disk
 from .general import secret
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
 
 class GlobalMenu(AbstractMenu):
-	def __init__(self, data_store: Dict[str, Any]):
+	def __init__(self, data_store: dict[str, Any]):
 		self._data_store = data_store
 		self._translation_handler = TranslationHandler()
 
@@ -54,7 +54,7 @@ class GlobalMenu(AbstractMenu):
 
 		super().__init__(self._item_group, data_store)
 
-	def _get_menu_options(self, data_store: Dict[str, Any]) -> list[MenuItem]:
+	def _get_menu_options(self, data_store: dict[str, Any]) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Archinstall language')),
@@ -212,7 +212,7 @@ class GlobalMenu(AbstractMenu):
 		]
 
 	def _safe_config(self) -> None:
-		data: Dict[str, Any] = {}
+		data: dict[str, Any] = {}
 		for item in self._item_group.items:
 			if item.key is not None:
 				data[item.key] = item.value

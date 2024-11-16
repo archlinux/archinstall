@@ -16,7 +16,7 @@ import urllib.error
 import pathlib
 from datetime import datetime, date
 from enum import Enum
-from typing import Callable, Optional, Dict, Any, Union, Iterator, TYPE_CHECKING
+from typing import Callable, Optional, Any, Union, Iterator, TYPE_CHECKING
 from select import epoll, EPOLLIN, EPOLLHUP
 from shutil import which
 
@@ -103,9 +103,9 @@ class SysCommandWorker:
 	def __init__(
 		self,
 		cmd: Union[str, list[str]],
-		callbacks: Optional[Dict[str, Any]] = None,
+		callbacks: Optional[dict[str, Any]] = None,
 		peek_output: Optional[bool] = False,
-		environment_vars: Optional[Dict[str, Any]] = None,
+		environment_vars: Optional[dict[str, Any]] = None,
 		logfile: Optional[None] = None,
 		working_directory: Optional[str] = './',
 		remove_vt100_escape_codes_from_lines: bool = True
@@ -151,7 +151,7 @@ class SysCommandWorker:
 
 		return False
 
-	def __iter__(self, *args: str, **kwargs: Dict[str, Any]) -> Iterator[bytes]:
+	def __iter__(self, *args: str, **kwargs: dict[str, Any]) -> Iterator[bytes]:
 		last_line = self._trace_log.rfind(b'\n')
 		lines = filter(None, self._trace_log[self._trace_log_pos:last_line].splitlines())
 		for line in lines:
@@ -346,10 +346,10 @@ class SysCommandWorker:
 class SysCommand:
 	def __init__(self,
 		cmd: Union[str, list[str]],
-		callbacks: Dict[str, Callable[[Any], Any]] = {},
+		callbacks: dict[str, Callable[[Any], Any]] = {},
 		start_callback: Optional[Callable[[Any], Any]] = None,
 		peek_output: Optional[bool] = False,
-		environment_vars: Optional[Dict[str, Any]] = None,
+		environment_vars: Optional[dict[str, Any]] = None,
 		working_directory: Optional[str] = './',
 		remove_vt100_escape_codes_from_lines: bool = True):
 
@@ -369,14 +369,14 @@ class SysCommand:
 	def __enter__(self) -> Optional[SysCommandWorker]:
 		return self.session
 
-	def __exit__(self, *args: str, **kwargs: Dict[str, Any]) -> None:
+	def __exit__(self, *args: str, **kwargs: dict[str, Any]) -> None:
 		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
 			error(args[1])
 
-	def __iter__(self, *args: list[Any], **kwargs: Dict[str, Any]) -> Iterator[bytes]:
+	def __iter__(self, *args: list[Any], **kwargs: dict[str, Any]) -> Iterator[bytes]:
 		if self.session:
 			for line in self.session:
 				yield line
@@ -392,10 +392,10 @@ class SysCommand:
 		else:
 			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
 
-	def __repr__(self, *args: list[Any], **kwargs: Dict[str, Any]) -> str:
+	def __repr__(self, *args: list[Any], **kwargs: dict[str, Any]) -> str:
 		return self.decode('UTF-8', errors='backslashreplace') or ''
 
-	def __json__(self) -> Dict[str, Union[str, bool, list[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
+	def __json__(self) -> dict[str, Union[str, bool, list[str], dict[str, Any], Optional[bool], Optional[dict[str, Any]]]]:
 		return {
 			'cmd': self.cmd,
 			'callbacks': self._callbacks,

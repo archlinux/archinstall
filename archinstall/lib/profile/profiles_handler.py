@@ -8,7 +8,7 @@ from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Optional, Dict, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from ...default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
@@ -33,11 +33,11 @@ class ProfileHandler:
 		# wants to save the configuration
 		self._url_path = None
 
-	def to_json(self, profile: Optional[Profile]) -> Dict[str, Any]:
+	def to_json(self, profile: Optional[Profile]) -> dict[str, Any]:
 		"""
 		Serialize the selected profile setting to JSON
 		"""
-		data: Dict[str, Any] = {}
+		data: dict[str, Any] = {}
 
 		if profile is not None:
 			data = {
@@ -51,7 +51,7 @@ class ProfileHandler:
 
 		return data
 
-	def parse_profile_config(self, profile_config: Dict[str, Any]) -> Optional[Profile]:
+	def parse_profile_config(self, profile_config: dict[str, Any]) -> Optional[Profile]:
 		"""
 		Deserialize JSON configuration for profile
 		"""

@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 import archinstall
 from archinstall import SysInfo, info, debug
@@ -34,7 +34,7 @@ class ExecutionMode(Enum):
 class SwissMainMenu(GlobalMenu):
 	def __init__(
 		self,
-		data_store: Dict[str, Any],
+		data_store: dict[str, Any],
 		mode: ExecutionMode = ExecutionMode.Guided,
 		advanced: bool = False
 	):

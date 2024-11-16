@@ -3,7 +3,7 @@ import json
 import stat
 import readline
 from pathlib import Path
-from typing import Optional, Dict, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
@@ -21,17 +21,17 @@ if TYPE_CHECKING:
 
 
 class ConfigurationOutput:
-	def __init__(self, config: Dict):
+	def __init__(self, config: dict):
 		"""
 		Configuration output handler to parse the existing configuration data structure and prepare for output on the
 		console and for saving it to configuration files
 
 		:param config: A dictionary containing configurations (basically archinstall.arguments)
-		:type config: Dict
+		:type config: dict
 		"""
 		self._config = config
-		self._user_credentials: Dict[str, Any] = {}
-		self._user_config: Dict[str, Any] = {}
+		self._user_credentials: dict[str, Any] = {}
+		self._user_config: dict[str, Any] = {}
 		self._default_save_path = storage.get('LOG_PATH', Path('.'))
 		self._user_config_file = 'user_configuration.json'
 		self._user_creds_file = "user_credentials.json"
@@ -134,7 +134,7 @@ class ConfigurationOutput:
 			self.save_user_creds(dest_path)
 
 
-def save_config(config: Dict[str, Any]) -> None:
+def save_config(config: dict[str, Any]) -> None:
 	def preview(item: MenuItem) -> Optional[str]:
 		match item.value:
 			case "user_config":

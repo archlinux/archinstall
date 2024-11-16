@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Optional, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 
 from . import LvmConfiguration, LvmVolume
 from ..disk import (
@@ -36,7 +36,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		else:
 			self._preset = DiskEncryption()
 
-		self._data_store: Dict[str, Any] = {}
+		self._data_store: dict[str, Any] = {}
 		self._disk_config = disk_config
 
 		menu_optioons = self._define_menu_options()

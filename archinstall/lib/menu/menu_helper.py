@@ -1,4 +1,4 @@
-from typing import Any, Tuple, Dict, Optional
+from typing import Any, Tuple, Optional
 
 from archinstall.lib.output import FormattedOutput
 
@@ -39,7 +39,7 @@ class MenuHelper:
 		return group, header
 
 	@staticmethod
-	def _create_table(data: list[Any], rows: list[str], header_padding: int = 2) -> Dict[str, Any]:
+	def _create_table(data: list[Any], rows: list[str], header_padding: int = 2) -> dict[str, Any]:
 		# these are the header rows of the table and do not map to any data obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
@@ -52,7 +52,7 @@ class MenuHelper:
 		return display_data
 
 	@staticmethod
-	def _prepare_selection(table: Dict[str, Any]) -> Tuple[Dict[str, Any], str]:
+	def _prepare_selection(table: dict[str, Any]) -> Tuple[dict[str, Any], str]:
 		# header rows are mapped to None so make sure to exclude those from the selectable data
 		options = {key: val for key, val in table.items() if val is not None}
 		header = ''

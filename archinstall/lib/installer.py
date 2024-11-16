@@ -6,7 +6,7 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING, Union, Dict, Callable
+from typing import Any, Optional, TYPE_CHECKING, Union, Callable
 
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
@@ -62,7 +62,7 @@ class Installer:
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
-		self.helper_flags: Dict[str, Any] = {'base': False, 'bootloader': None}
+		self.helper_flags: dict[str, Any] = {'base': False, 'bootloader': None}
 
 		for kernel in self.kernels:
 			self._base_packages.append(kernel)
@@ -203,7 +203,7 @@ class Installer:
 	def mount_ordered_layout(self) -> None:
 		debug('Mounting ordered layout')
 
-		luks_handlers: Dict[Any, Luks2] = {}
+		luks_handlers: dict[Any, Luks2] = {}
 
 		match self._disk_encryption.encryption_type:
 			case disk.EncryptionType.NoEncryption:
@@ -222,7 +222,7 @@ class Installer:
 		# mount all regular partitions
 		self._mount_partition_layout(luks_handlers)
 
-	def _mount_partition_layout(self, luks_handlers: Dict[Any, Luks2]) -> None:
+	def _mount_partition_layout(self, luks_handlers: dict[Any, Luks2]) -> None:
 		debug('Mounting partition layout')
 
 		# do not mount any PVs part of the LVM configuration
@@ -253,7 +253,7 @@ class Installer:
 				else:
 					self._mount_partition(part_mod)
 
-	def _mount_lvm_layout(self, luks_handlers: Dict[Any, Luks2] = {}) -> None:
+	def _mount_lvm_layout(self, luks_handlers: dict[Any, Luks2] = {}) -> None:
 		lvm_config = self._disk_config.lvm_config
 
 		if not lvm_config:
@@ -274,7 +274,7 @@ class Installer:
 	def _prepare_luks_partitions(
 		self,
 		partitions: list[disk.PartitionModification]
-	) -> Dict[disk.PartitionModification, Luks2]:
+	) -> dict[disk.PartitionModification, Luks2]:
 		return {
 			part_mod: disk.device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
@@ -301,7 +301,7 @@ class Installer:
 	def _prepare_luks_lvm(
 		self,
 		lvm_volumes: list[disk.LvmVolume]
-	) -> Dict[disk.LvmVolume, Luks2]:
+	) -> dict[disk.LvmVolume, Luks2]:
 		return {
 			vol: disk.device_handler.unlock_luks2_dev(
 				vol.dev_path,

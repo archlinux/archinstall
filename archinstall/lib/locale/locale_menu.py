@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING, Optional
 
 from .utils import list_keyboard_languages, list_locales, set_kb_layout, get_kb_layout
 from ..menu import AbstractSubMenu
@@ -26,7 +26,7 @@ class LocaleConfiguration:
 			return LocaleConfiguration('us', 'en_US', 'UTF-8')
 		return LocaleConfiguration(layout, 'en_US', 'UTF-8')
 
-	def json(self) -> Dict[str, str]:
+	def json(self) -> dict[str, str]:
 		return {
 			'kb_layout': self.kb_layout,
 			'sys_lang': self.sys_lang,
@@ -40,7 +40,7 @@ class LocaleConfiguration:
 		return output
 
 	@classmethod
-	def _load_config(cls, config: 'LocaleConfiguration', args: Dict[str, Any]) -> 'LocaleConfiguration':
+	def _load_config(cls, config: 'LocaleConfiguration', args: dict[str, Any]) -> 'LocaleConfiguration':
 		if 'sys_lang' in args:
 			config.sys_lang = args['sys_lang']
 		if 'sys_enc' in args:
@@ -51,7 +51,7 @@ class LocaleConfiguration:
 		return config
 
 	@classmethod
-	def parse_arg(cls, args: Dict[str, Any]) -> 'LocaleConfiguration':
+	def parse_arg(cls, args: dict[str, Any]) -> 'LocaleConfiguration':
 		default = cls.default()
 
 		if 'locale_config' in args:
@@ -68,7 +68,7 @@ class LocaleMenu(AbstractSubMenu):
 		locale_conf: LocaleConfiguration
 	):
 		self._locale_conf = locale_conf
-		self._data_store: Dict[str, Any] = {}
+		self._data_store: dict[str, Any] = {}
 		menu_optioons = self._define_menu_options()
 
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)

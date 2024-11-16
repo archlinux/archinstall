@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Any, Optional, Dict, TYPE_CHECKING
+from typing import Callable, Any, Optional, TYPE_CHECKING
 
 from ..output import error
 from ..output import unicode_ljust
@@ -148,7 +148,7 @@ class AbstractMenu:
 	def __init__(
 		self,
 		item_group: MenuItemGroup,
-		data_store: Dict[str, Any],
+		data_store: dict[str, Any],
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
 		reset_warning: Optional[str] = None
@@ -242,7 +242,7 @@ class AbstractSubMenu(AbstractMenu):
 	def __init__(
 		self,
 		item_group: MenuItemGroup,
-		data_store: Dict[str, Any],
+		data_store: dict[str, Any],
 		auto_cursor: bool = True,
 		allow_reset: bool = False
 	):

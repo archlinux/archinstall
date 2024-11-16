@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, Optional, Dict
+from typing import Any, TYPE_CHECKING, Optional
 
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -41,7 +41,7 @@ class DesktopProfile(Profile):
 
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
-		combined_greeters: Dict[GreeterType, int] = {}
+		combined_greeters: dict[GreeterType, int] = {}
 		for profile in self.current_selection:
 			if profile.default_greeter_type:
 				combined_greeters.setdefault(profile.default_greeter_type, 0)
