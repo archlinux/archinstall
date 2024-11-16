@@ -6,6 +6,7 @@ import time
 import select
 import signal
 import random
+from types import FrameType
 from typing import Union, Any, Optional
 from urllib.error import URLError
 from urllib.parse import urlencode
@@ -34,7 +35,7 @@ class DownloadTimer():
 		self.previous_handler = None
 		self.previous_timer: Optional[int] = None
 
-	def raise_timeout(self, signl, frame) -> None:
+	def raise_timeout(self, signl: int, frame: FrameType | None) -> None:
 		'''
 		Raise the DownloadTimeout exception.
 		'''
@@ -119,7 +120,7 @@ def enrich_iface_types(interfaces: Union[dict[str, Any], list[str]]) -> dict[str
 	return result
 
 
-def fetch_data_from_url(url: str, params: Optional[dict] = None) -> str:
+def fetch_data_from_url(url: str, params: Optional[dict[str, str]] = None) -> str:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -140,7 +141,7 @@ def fetch_data_from_url(url: str, params: Optional[dict] = None) -> str:
 		raise ValueError(f'Unexpected error when parsing response: {e}')
 
 
-def calc_checksum(icmp_packet) -> int:
+def calc_checksum(icmp_packet: bytes) -> int:
 	# Calculate the ICMP checksum
 	checksum = 0
 	for i in range(0, len(icmp_packet), 2):

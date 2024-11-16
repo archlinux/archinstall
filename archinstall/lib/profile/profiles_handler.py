@@ -284,7 +284,7 @@ class ProfileHandler:
 
 		return profiles
 
-	def _verify_unique_profile_names(self, profiles: list[Profile]):
+	def _verify_unique_profile_names(self, profiles: list[Profile]) -> None:
 		"""
 		All profile names have to be unique, this function will verify
 		that the provided list contains only default_profiles with unique names
@@ -348,7 +348,7 @@ class ProfileHandler:
 		self._verify_unique_profile_names(profiles)
 		return profiles
 
-	def reset_top_level_profiles(self, exclude: list[Profile] = []):
+	def reset_top_level_profiles(self, exclude: list[Profile] = []) -> None:
 		"""
 		Reset all top level profile configurations, this is usually necessary
 		when a new top level profile is selected
