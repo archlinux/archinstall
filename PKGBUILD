@@ -24,9 +24,13 @@ depends=(
   'python'
   'python-pydantic'
   'python-pyparted'
-  'python-simple-term-menu'
   'systemd'
   'util-linux'
+  'xfsprogs'
+  'lvm2'
+  'f2fs-tools'
+  'ntfs-3g'
+  'reiserfsprogs'
 )
 makedepends=(
   'python-setuptools'
@@ -34,6 +38,7 @@ makedepends=(
   'python-build'
   'python-installer'
   'python-wheel'
+  'python-sphinx_rtd_theme'
 )
 optdepends=(
   'python-systemd: Adds journald logging'

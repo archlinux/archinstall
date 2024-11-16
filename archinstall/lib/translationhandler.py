@@ -85,7 +85,7 @@ class TranslationHandler:
 
 		return languages
 
-	def _set_font(self, font: str):
+	def _set_font(self, font: str) -> None:
 		"""
 		Set the provided font as the new terminal font
 		"""
@@ -103,7 +103,7 @@ class TranslationHandler:
 		locales_dir = self._get_locales_dir()
 		languages = Path.joinpath(locales_dir, self._languages)
 
-		with open(languages, 'r') as fp:
+		with open(languages) as fp:
 			return json.load(fp)
 
 	def _get_catalog_size(self, translation: gettext.NullTranslations) -> int:
@@ -121,7 +121,7 @@ class TranslationHandler:
 		Get total messages that could be translated
 		"""
 		locales = self._get_locales_dir()
-		with open(f'{locales}/{self._base_pot}', 'r') as fp:
+		with open(f'{locales}/{self._base_pot}') as fp:
 			lines = fp.readlines()
 			msgid_lines = [line for line in lines if 'msgid' in line]
 

@@ -4,7 +4,7 @@ import shlex
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional
 
 from . import disk
 from .general import SysCommand, generate_password, SysCommandWorker
@@ -29,6 +29,19 @@ class Luks2:
 		if self.mapper_name:
 			return Path(f'/dev/mapper/{self.mapper_name}')
 		return None
+
+	def isLuks(self) -> bool:
+		try:
+			SysCommand(f'cryptsetup isLuks {self.luks_dev_path}')
+			return True
+		except SysCallError:
+			return False
+
+	def erase(self) -> None:
+		debug(f'Erasing luks partition: {self.luks_dev_path}')
+		worker = SysCommandWorker(f'cryptsetup erase {self.luks_dev_path}')
+		worker.poll()
+		worker.write(b'YES\n', line_ending=False)
 
 	def __post_init__(self) -> None:
 		if self.luks_dev_path is None:
@@ -240,7 +253,7 @@ class Luks2:
 		self,
 		crypttab_path: Path,
 		key_file: Path,
-		options: List[str]
+		options: list[str]
 	) -> None:
 		debug(f'Adding crypttab entry for key {key_file}')
 

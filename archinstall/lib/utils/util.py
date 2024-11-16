@@ -1,23 +1,99 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional, List
+from typing import Any, TYPE_CHECKING, Optional
 
 from ..output import FormattedOutput
-from ..output import info
+from ..general import secret
+
+from archinstall.tui import (
+	Alignment, EditMenu
+)
 
 if TYPE_CHECKING:
 	_: Any
 
 
-def prompt_dir(text: str, header: Optional[str] = None) -> Path:
-	if header:
-		print(header)
+def get_password(
+	text: str,
+	header: Optional[str] = None,
+	allow_skip: bool = False,
+	preset: Optional[str] = None
+) -> Optional[str]:
+	failure: Optional[str] = None
 
 	while True:
-		path = input(text).strip(' ')
+		user_hdr = None
+		if failure is not None:
+			user_hdr = f'{header}\n{failure}\n'
+		elif header is not None:
+			user_hdr = header
+
+		result = EditMenu(
+			text,
+			header=user_hdr,
+			alignment=Alignment.CENTER,
+			allow_skip=allow_skip,
+			default_text=preset,
+			hide_input=True
+		).input()
+
+		if allow_skip and not result.has_item():
+			return None
+
+		password = result.text()
+		hidden = secret(password)
+
+		if header is not None:
+			confirmation_header = f'{header}{_("Pssword")}: {hidden}\n'
+		else:
+			confirmation_header = f'{_("Password")}: {hidden}\n'
+
+		result = EditMenu(
+			str(_('Confirm password')),
+			header=confirmation_header,
+			alignment=Alignment.CENTER,
+			allow_skip=False,
+			hide_input=True
+		).input()
+
+		if password == result.text():
+			return password
+
+		failure = str(_('The confirmation password did not match, please try again'))
+
+
+def prompt_dir(
+	text: str,
+	header: Optional[str] = None,
+	validate: bool = True,
+	allow_skip: bool = False,
+	preset: Optional[str] = None
+) -> Optional[Path]:
+	def validate_path(path: str) -> Optional[str]:
 		dest_path = Path(path)
+
 		if dest_path.exists() and dest_path.is_dir():
-			return dest_path
-		info(_('Not a valid directory: {}').format(dest_path))
+			return None
+
+		return str(_('Not a valid directory'))
+
+	if validate:
+		validate_func = validate_path
+	else:
+		validate_func = None
+
+	result = EditMenu(
+		text,
+		header=header,
+		alignment=Alignment.CENTER,
+		allow_skip=allow_skip,
+		validator=validate_func,
+		default_text=preset
+	).input()
+
+	if allow_skip and not result.has_item():
+		return None
+
+	return Path(result.text())
 
 
 def is_subpath(first: Path, second: Path) -> bool:
@@ -31,7 +107,7 @@ def is_subpath(first: Path, second: Path) -> bool:
 		return False
 
 
-def format_cols(items: List[str], header: Optional[str] = None) -> str:
+def format_cols(items: list[str], header: Optional[str] = None) -> str:
 	if header:
 		text = f'{header}:\n'
 	else:
@@ -48,4 +124,6 @@ def format_cols(items: List[str], header: Optional[str] = None) -> str:
 		col = 4
 
 	text += FormattedOutput.as_columns(items, col)
+	# remove whitespaces on each row
+	text = '\n'.join([t.strip() for t in text.split('\n')])
 	return text

@@ -1,9 +1,13 @@
-from typing import Any, TYPE_CHECKING, List, Optional, Dict
+from typing import Any, TYPE_CHECKING, Optional
 
-from archinstall.lib import menu
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult, GreeterType
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, ResultType, PreviewStyle
+)
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -11,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class DesktopProfile(Profile):
-	def __init__(self, current_selection: List[Profile] = []) -> None:
+	def __init__(self, current_selection: list[Profile] = []) -> None:
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
@@ -21,7 +25,7 @@ class DesktopProfile(Profile):
 		)
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			'nano',
 			'vim',
@@ -37,7 +41,7 @@ class DesktopProfile(Profile):
 
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
-		combined_greeters: Dict[GreeterType, int] = {}
+		combined_greeters: dict[GreeterType, int] = {}
 		for profile in self.current_selection:
 			if profile.default_greeter_type:
 				combined_greeters.setdefault(profile.default_greeter_type, 0)
@@ -52,22 +56,36 @@ class DesktopProfile(Profile):
 		for profile in self.current_selection:
 			profile.do_on_select()
 
-	def do_on_select(self) -> SelectResult:
-		choice = profile_handler.select_profile(
-			profile_handler.get_desktop_profiles(),
-			self.current_selection,
-			title=str(_('Select your desired desktop environment')),
-			multi=True
-		)
+	def do_on_select(self) -> Optional[SelectResult]:
+		items = [
+			MenuItem(
+				p.name,
+				value=p,
+				preview_action=lambda x: x.value.preview_text()
+			) for p in profile_handler.get_desktop_profiles()
+		]
 
-		match choice.type_:
-			case menu.MenuSelectionType.Selection:
-				self.current_selection = choice.value  # type: ignore
+		group = MenuItemGroup(items, sort_items=True)
+		group.set_selected_by_value(self.current_selection)
+
+		result = SelectMenu(
+			group,
+			multi=True,
+			allow_reset=True,
+			allow_skip=True,
+			preview_style=PreviewStyle.RIGHT,
+			preview_size='auto',
+			preview_frame=FrameProperties.max('Info')
+		).run()
+
+		match result.type_:
+			case ResultType.Selection:
+				self.current_selection = result.get_values()
 				self._do_on_select_profiles()
 				return SelectResult.NewSelection
-			case menu.MenuSelectionType.Skip:
+			case ResultType.Skip:
 				return SelectResult.SameSelection
-			case menu.MenuSelectionType.Reset:
+			case ResultType.Reset:
 				return SelectResult.ResetCurrent
 
 	def post_install(self, install_session: 'Installer') -> None:

@@ -7,10 +7,9 @@ import curses
 import traceback
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from .lib import disk
-from .lib import menu
 from .lib import models
 from .lib import packages
 from .lib import exceptions
@@ -32,6 +31,7 @@ from .lib.boot import Boot
 from .lib.translationhandler import TranslationHandler, Language, DeferredTranslation
 from .lib.plugins import plugins, load_plugin
 from .lib.configuration import ConfigurationOutput
+from .tui import Tui
 
 from .lib.general import (
 	generate_password, locate_binary, clear_vt100_escape_codes,
@@ -102,7 +102,7 @@ if 'sphinx' not in sys.modules:
 		exit(1)
 
 
-def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err: bool = False) -> dict:
+def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err: bool = False) -> dict:  # type: ignore[type-arg]
 	"""We accept arguments not defined to the parser. (arguments "ad hoc").
 	Internally argparse return to us a list of words so we have to parse its contents, manually.
 	We accept following individual syntax for each argument
@@ -150,7 +150,7 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 	return config
 
 
-def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
+def cleanup_empty_args(args: Union[Namespace, dict]) -> dict:  # type: ignore[type-arg]
 	"""
 	Takes arguments (dictionary or argparse Namespace) and removes any
 	None values. This ensures clean mergers during dict.update(args)
@@ -169,7 +169,7 @@ def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
 	return clean_args
 
 
-def get_arguments() -> Dict[str, Any]:
+def get_arguments() -> dict[str, Any]:
 	""" The handling of parameters from the command line
 	Is done on following steps:
 	0) we create a dict to store the arguments and their values
@@ -183,7 +183,7 @@ def get_arguments() -> Dict[str, Any]:
 	3) Amend
 		Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments dictionary
 	"""
-	config: Dict[str, Any] = {}
+	config: dict[str, Any] = {}
 	args, unknowns = parser.parse_known_args()
 	# preprocess the JSON files.
 	# TODO Expand the url access to the other JSON file arguments ?
@@ -255,11 +255,10 @@ def load_config() -> None:
 		arguments['audio_config'] = models.AudioConfiguration.parse_arg(arguments['audio_config'])
 
 	if arguments.get('disk_encryption', None) is not None and disk_config is not None:
-		password = arguments.get('encryption_password', '')
 		arguments['disk_encryption'] = disk.DiskEncryption.parse_arg(
 			arguments['disk_config'],
 			arguments['disk_encryption'],
-			password
+			arguments.get('encryption_password', '')
 		)
 
 
@@ -279,13 +278,13 @@ def post_process_arguments(arguments: dict[str, Any]) -> None:
 
 
 define_arguments()
-arguments: Dict[str, Any] = get_arguments()
+arguments: dict[str, Any] = get_arguments()
 post_process_arguments(arguments)
 
 
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles_bck and other things.
-def plugin(f, *args, **kwargs) -> None:
+def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
 	plugins[f.__name__] = f
 
 
@@ -331,24 +330,6 @@ def main() -> None:
 	importlib.import_module(mod_name)
 
 
-def _shutdown_curses() -> None:
-	try:
-		curses.nocbreak()
-
-		try:
-			from archinstall.tui.curses_menu import tui
-			tui.screen.keypad(False)
-		except Exception:
-			pass
-
-		curses.echo()
-		curses.curs_set(True)
-		curses.endwin()
-	except Exception:
-		# this may happen when curses has not been initialized
-		pass
-
-
 def run_as_a_module() -> None:
 	exc = None
 
@@ -358,7 +339,7 @@ def run_as_a_module() -> None:
 		exc = e
 	finally:
 		# restore the terminal to the original state
-		_shutdown_curses()
+		Tui.shutdown()
 
 		if exc:
 			err = ''.join(traceback.format_exception(exc))

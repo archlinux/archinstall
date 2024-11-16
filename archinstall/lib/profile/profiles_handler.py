@@ -8,15 +8,15 @@ from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from ...default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
 from ..hardware import GfxDriver
-from ..menu import MenuSelectionType, Menu, MenuSelection
 from ..networking import list_interfaces, fetch_data_from_url
 from ..output import error, debug, info
 from ..storage import storage
+
 
 if TYPE_CHECKING:
 	from ..installer import Installer
@@ -33,11 +33,11 @@ class ProfileHandler:
 		# wants to save the configuration
 		self._url_path = None
 
-	def to_json(self, profile: Optional[Profile]) -> Dict[str, Any]:
+	def to_json(self, profile: Optional[Profile]) -> dict[str, Any]:
 		"""
 		Serialize the selected profile setting to JSON
 		"""
-		data: Dict[str, Any] = {}
+		data: dict[str, Any] = {}
 
 		if profile is not None:
 			data = {
@@ -51,7 +51,7 @@ class ProfileHandler:
 
 		return data
 
-	def parse_profile_config(self, profile_config: Dict[str, Any]) -> Optional[Profile]:
+	def parse_profile_config(self, profile_config: dict[str, Any]) -> Optional[Profile]:
 		"""
 		Deserialize JSON configuration for profile
 		"""
@@ -101,9 +101,9 @@ class ProfileHandler:
 		if not profile:
 			return None
 
-		valid_sub_profiles: List[Profile] = []
-		invalid_sub_profiles: List[str] = []
-		details: List[str] = profile_config.get('details', [])
+		valid_sub_profiles: list[Profile] = []
+		invalid_sub_profiles: list[str] = []
+		details: list[str] = profile_config.get('details', [])
 
 		if details:
 			for detail in filter(None, details):
@@ -127,7 +127,7 @@ class ProfileHandler:
 		return profile
 
 	@property
-	def profiles(self) -> List[Profile]:
+	def profiles(self) -> list[Profile]:
 		"""
 		List of all available default_profiles
 		"""
@@ -135,10 +135,10 @@ class ProfileHandler:
 		return self._profiles
 
 	@cached_property
-	def _local_mac_addresses(self) -> List[str]:
+	def _local_mac_addresses(self) -> list[str]:
 		return list(list_interfaces())
 
-	def add_custom_profiles(self, profiles: Union[Profile, List[Profile]]) -> None:
+	def add_custom_profiles(self, profiles: Union[Profile, list[Profile]]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -147,7 +147,7 @@ class ProfileHandler:
 
 		self._verify_unique_profile_names(self.profiles)
 
-	def remove_custom_profiles(self, profiles: Union[Profile, List[Profile]]) -> None:
+	def remove_custom_profiles(self, profiles: Union[Profile, list[Profile]]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -157,19 +157,19 @@ class ProfileHandler:
 	def get_profile_by_name(self, name: str) -> Optional[Profile]:
 		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore
 
-	def get_top_level_profiles(self) -> List[Profile]:
+	def get_top_level_profiles(self) -> list[Profile]:
 		return list(filter(lambda x: x.is_top_level_profile(), self.profiles))
 
-	def get_server_profiles(self) -> List[Profile]:
+	def get_server_profiles(self) -> list[Profile]:
 		return list(filter(lambda x: x.is_server_type_profile(), self.profiles))
 
-	def get_desktop_profiles(self) -> List[Profile]:
+	def get_desktop_profiles(self) -> list[Profile]:
 		return list(filter(lambda x: x.is_desktop_type_profile(), self.profiles))
 
-	def get_custom_profiles(self) -> List[Profile]:
+	def get_custom_profiles(self) -> list[Profile]:
 		return list(filter(lambda x: x.is_custom_type_profile(), self.profiles))
 
-	def get_mac_addr_profiles(self) -> List[Profile]:
+	def get_mac_addr_profiles(self) -> list[Profile]:
 		tailored = list(filter(lambda x: x.is_tailored(), self.profiles))
 		match_mac_addr_profiles = list(filter(lambda x: x.name in self._local_mac_addresses, tailored))
 		return match_mac_addr_profiles
@@ -205,7 +205,7 @@ class ProfileHandler:
 		# slick-greeter requires a config change
 		if greeter == GreeterType.LightdmSlick:
 			path = install_session.target.joinpath('etc/lightdm/lightdm.conf')
-			with open(path, 'r') as file:
+			with open(path) as file:
 				filedata = file.read()
 
 			filedata = filedata.replace('#greeter-session=example-gtk-gnome', 'greeter-session=lightdm-slick-greeter')
@@ -265,7 +265,7 @@ class ProfileHandler:
 			err = str(_('Unable to fetch profile from specified url: {}')).format(url)
 			error(err)
 
-	def _load_profile_class(self, module: ModuleType) -> List[Profile]:
+	def _load_profile_class(self, module: ModuleType) -> list[Profile]:
 		"""
 		Load all default_profiles defined in a module
 		"""
@@ -284,7 +284,7 @@ class ProfileHandler:
 
 		return profiles
 
-	def _verify_unique_profile_names(self, profiles: List[Profile]):
+	def _verify_unique_profile_names(self, profiles: list[Profile]) -> None:
 		"""
 		All profile names have to be unique, this function will verify
 		that the provided list contains only default_profiles with unique names
@@ -302,13 +302,13 @@ class ProfileHandler:
 		Check if the provided profile file contains a
 		legacy profile definition
 		"""
-		with open(file, 'r') as fp:
+		with open(file) as fp:
 			for line in fp.readlines():
 				if '__packages__' in line:
 					return True
 		return False
 
-	def _process_profile_file(self, file: Path) -> List[Profile]:
+	def _process_profile_file(self, file: Path) -> list[Profile]:
 		"""
 		Process a file for profile definitions
 		"""
@@ -334,7 +334,7 @@ class ProfileHandler:
 
 		return []
 
-	def _find_available_profiles(self) -> List[Profile]:
+	def _find_available_profiles(self) -> list[Profile]:
 		"""
 		Search the profile path for profile definitions
 		"""
@@ -348,7 +348,7 @@ class ProfileHandler:
 		self._verify_unique_profile_names(profiles)
 		return profiles
 
-	def reset_top_level_profiles(self, exclude: List[Profile] = []):
+	def reset_top_level_profiles(self, exclude: list[Profile] = []) -> None:
 		"""
 		Reset all top level profile configurations, this is usually necessary
 		when a new top level profile is selected
@@ -357,59 +357,6 @@ class ProfileHandler:
 		for profile in self.get_top_level_profiles():
 			if profile.name not in excluded_profiles:
 				profile.reset()
-
-	def select_profile(
-		self,
-		selectable_profiles: List[Profile],
-		current_profile: Optional[Union[Profile, List[Profile]]] = None,
-		title: str = '',
-		allow_reset: bool = True,
-		multi: bool = False,
-	) -> MenuSelection:
-		"""
-		Helper function to perform a profile selection
-		"""
-		options = {p.name: p for p in selectable_profiles}
-		options = dict((k, v) for k, v in sorted(options.items(), key=lambda x: x[0].upper()))
-
-		warning = str(_('Are you sure you want to reset this setting?'))
-
-		preset_value: Optional[Union[str, List[str]]] = None
-		if current_profile is not None:
-			if isinstance(current_profile, list):
-				preset_value = [p.name for p in current_profile]
-			else:
-				preset_value = current_profile.name
-
-		choice = Menu(
-			title=title,
-			preset_values=preset_value,
-			p_options=options,
-			allow_reset=allow_reset,
-			allow_reset_warning_msg=warning,
-			multi=multi,
-			sort=False,
-			preview_command=self.preview_text,
-			preview_size=0.5
-		).run()
-
-		if choice.type_ == MenuSelectionType.Selection:
-			value = choice.value
-			if multi:
-				# this is quite dirty and should eb switched to a
-				# dedicated return type instead
-				choice.value = [options[val] for val in value]  # type: ignore
-			else:
-				choice.value = options[value]  # type: ignore
-
-		return choice
-
-	def preview_text(self, selection: str) -> Optional[str]:
-		"""
-		Callback for preview display on profile selection
-		"""
-		profile = self.get_profile_by_name(selection)
-		return profile.preview_text() if profile is not None else None
 
 
 profile_handler = ProfileHandler()

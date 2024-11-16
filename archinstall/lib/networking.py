@@ -6,6 +6,7 @@ import time
 import select
 import signal
 import random
+from types import FrameType
 from typing import Union, Any, Optional
 from urllib.error import URLError
 from urllib.parse import urlencode
@@ -14,9 +15,10 @@ from urllib.request import urlopen
 from .exceptions import SysCallError, DownloadTimeout
 from .output import error, info
 from .pacman import Pacman
+from .output import debug
 
 
-class DownloadTimer():
+class DownloadTimer:
 	'''
 	Context manager for timing downloads with timeouts.
 	'''
@@ -33,7 +35,7 @@ class DownloadTimer():
 		self.previous_handler = None
 		self.previous_timer: Optional[int] = None
 
-	def raise_timeout(self, signl, frame) -> None:
+	def raise_timeout(self, signl: int, frame: FrameType | None) -> None:
 		'''
 		Raise the DownloadTimeout exception.
 		'''
@@ -118,7 +120,7 @@ def enrich_iface_types(interfaces: Union[dict[str, Any], list[str]]) -> dict[str
 	return result
 
 
-def fetch_data_from_url(url: str, params: Optional[dict] = None) -> str:
+def fetch_data_from_url(url: str, params: Optional[dict[str, str]] = None) -> str:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -133,11 +135,13 @@ def fetch_data_from_url(url: str, params: Optional[dict] = None) -> str:
 		response = urlopen(full_url, context=ssl_context)
 		data = response.read().decode('UTF-8')
 		return data
-	except URLError:
-		raise ValueError(f'Unable to fetch data from url: {url}')
+	except URLError as e:
+		raise ValueError(f'Unable to fetch data from url: {url}\n{e}')
+	except Exception as e:
+		raise ValueError(f'Unexpected error when parsing response: {e}')
 
 
-def calc_checksum(icmp_packet) -> int:
+def calc_checksum(icmp_packet: bytes) -> int:
 	# Calculate the ICMP checksum
 	checksum = 0
 	for i in range(0, len(icmp_packet), 2):
@@ -188,8 +192,8 @@ def ping(hostname, timeout=5) -> int:
 				if icmp_type == 0 and response[-len(random_identifier):] == random_identifier:
 					latency = round((time.time() - started) * 1000)
 					break
-		except socket.error as error:
-			print(f"Error: {error}")
+		except OSError as error:
+			debug(f"Error: {error}")
 			break
 
 	icmp_socket.close()

@@ -1232,32 +1232,35 @@ class DiskEncryption:
 	def parse_arg(
 		cls,
 		disk_config: DiskLayoutConfiguration,
-		arg: Dict[str, Any],
+		disk_encryption: Dict[str, Any],
 		password: str = ''
 	) -> Optional['DiskEncryption']:
 		if not cls.validate_enc(disk_config):
 			return None
 
+		if len(password) < 1:
+			return None
+
 		enc_partitions = []
 		for mod in disk_config.device_modifications:
 			for part in mod.partitions:
-				if part.obj_id in arg.get('partitions', []):
+				if part.obj_id in disk_encryption.get('partitions', []):
 					enc_partitions.append(part)
 
 		volumes = []
 		if disk_config.lvm_config:
 			for vol in disk_config.lvm_config.get_all_volumes():
-				if vol.obj_id in arg.get('lvm_volumes', []):
+				if vol.obj_id in disk_encryption.get('lvm_volumes', []):
 					volumes.append(vol)
 
 		enc = DiskEncryption(
-			EncryptionType(arg['encryption_type']),
+			EncryptionType(disk_encryption['encryption_type']),
 			password,
 			enc_partitions,
 			volumes
 		)
 
-		if hsm := arg.get('hsm_device', None):
+		if hsm := disk_encryption.get('hsm_device', None):
 			enc.hsm_device = Fido2Device.parse_arg(hsm)
 
 		return enc
@@ -1435,7 +1438,7 @@ def _fetch_lsblk_info(
 		cmd.append(str(dev_path))
 
 	try:
-		result = SysCommand(cmd).decode()
+		worker = SysCommand(cmd)
 	except SysCallError as err:
 		# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
 		if err.worker:
@@ -1448,12 +1451,12 @@ def _fetch_lsblk_info(
 		raise err
 
 	try:
-		block_devices = json.loads(result)
+		data = json.loads(worker.output(remove_cr=False))
 	except json.decoder.JSONDecodeError as err:
-		error(f"Could not decode lsblk JSON: {result}")
+		error(f"Could not decode lsblk JSON:\n{worker.output().decode().rstrip()}")
 		raise err
 
-	blockdevices = block_devices['blockdevices']
+	blockdevices = data['blockdevices']
 	return [LsblkInfo.from_json(device) for device in blockdevices]
 
 

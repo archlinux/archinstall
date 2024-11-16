@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, TYPE_CHECKING, Dict
+from typing import Any, TYPE_CHECKING
 
 from ..hardware import SysInfo
 from ..output import info
@@ -12,25 +12,22 @@ if TYPE_CHECKING:
 
 @dataclass
 class Audio(Enum):
+	NoAudio = 'No audio server'
 	Pipewire = 'pipewire'
 	Pulseaudio = 'pulseaudio'
-
-	@staticmethod
-	def no_audio_text() -> str:
-		return str(_('No audio server'))
 
 
 @dataclass
 class AudioConfiguration:
 	audio: Audio
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'audio': self.audio.value
 		}
 
 	@staticmethod
-	def parse_arg(arg: Dict[str, Any]) -> 'AudioConfiguration':
+	def parse_arg(arg: dict[str, Any]) -> 'AudioConfiguration':
 		return AudioConfiguration(
 			Audio(arg['audio'])
 		)
@@ -47,8 +44,9 @@ class AudioConfiguration:
 			case Audio.Pulseaudio:
 				installation.add_additional_packages("pulseaudio")
 
-		if SysInfo.requires_sof_fw():
-			installation.add_additional_packages('sof-firmware')
+		if self.audio != Audio.NoAudio:
+			if SysInfo.requires_sof_fw():
+				installation.add_additional_packages('sof-firmware')
 
-		if SysInfo.requires_alsa_fw():
-			installation.add_additional_packages('alsa-firmware')
+			if SysInfo.requires_alsa_fw():
+				installation.add_additional_packages('alsa-firmware')

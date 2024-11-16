@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional, Dict, Any, TYPE_CHECKING, Tuple
+from typing import Optional, Any, TYPE_CHECKING
 
 from ..profile import ProfileConfiguration
 
@@ -31,9 +31,9 @@ class Nic:
 	ip: Optional[str] = None
 	dhcp: bool = True
 	gateway: Optional[str] = None
-	dns: List[str] = field(default_factory=list)
+	dns: list[str] = field(default_factory=list)
 
-	def table_data(self) -> Dict[str, Any]:
+	def table_data(self) -> dict[str, Any]:
 		return {
 			'iface': self.iface if self.iface else '',
 			'ip': self.ip if self.ip else '',
@@ -42,7 +42,7 @@ class Nic:
 			'dns': self.dns
 		}
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'iface': self.iface,
 			'ip': self.ip,
@@ -52,7 +52,7 @@ class Nic:
 		}
 
 	@staticmethod
-	def parse_arg(arg: Dict[str, Any]) -> Nic:
+	def parse_arg(arg: dict[str, Any]) -> Nic:
 		return Nic(
 			iface=arg.get('iface', None),
 			ip=arg.get('ip', None),
@@ -62,8 +62,8 @@ class Nic:
 		)
 
 	def as_systemd_config(self) -> str:
-		match: List[Tuple[str, str]] = []
-		network: List[Tuple[str, str]] = []
+		match: list[tuple[str, str]] = []
+		network: list[tuple[str, str]] = []
 
 		if self.iface:
 			match.append(('Name', self.iface))
@@ -92,17 +92,17 @@ class Nic:
 @dataclass
 class NetworkConfiguration:
 	type: NicType
-	nics: List[Nic] = field(default_factory=list)
+	nics: list[Nic] = field(default_factory=list)
 
-	def json(self) -> Dict[str, Any]:
-		config: Dict[str, Any] = {'type': self.type.value}
+	def json(self) -> dict[str, Any]:
+		config: dict[str, Any] = {'type': self.type.value}
 		if self.nics:
 			config['nics'] = [n.json() for n in self.nics]
 
 		return config
 
 	@staticmethod
-	def parse_arg(config: Dict[str, Any]) -> Optional[NetworkConfiguration]:
+	def parse_arg(config: dict[str, Any]) -> Optional[NetworkConfiguration]:
 		nic_type = config.get('type', None)
 		if not nic_type:
 			return None

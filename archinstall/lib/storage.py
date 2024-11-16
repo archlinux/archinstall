@@ -5,11 +5,11 @@
 #   (4. Added the ~/.config directory as an additional option for future reasons)
 #
 # And Keeping this in dict ensures that variables are shared across imports.
-from typing import Any, Dict
+from typing import Any
 from pathlib import Path
 
 
-storage: Dict[str, Any] = {
+storage: dict[str, Any] = {
 	'PROFILE': Path(__file__).parent.parent.joinpath('default_profiles'),
 	'LOG_PATH': Path('/var/log/archinstall'),
 	'LOG_FILE': Path('install.log'),

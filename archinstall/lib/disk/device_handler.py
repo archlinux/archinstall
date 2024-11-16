@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class DeviceHandler(object):
+class DeviceHandler:
 	_TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs')
 
 	def __init__(self) -> None:
@@ -174,8 +174,10 @@ class DeviceHandler(object):
 	def get_unique_path_for_device(self, dev_path: Path) -> Optional[Path]:
 		paths = Path('/dev/disk/by-id').glob('*')
 		linked_targets = {p.resolve(): p for p in paths}
-		linked_wwn_targets = {p: linked_targets[p] for p in linked_targets
-			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
+		linked_wwn_targets = {
+			p: linked_targets[p] for p in linked_targets
+			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')
+		}
 
 		if dev_path in linked_wwn_targets:
 			return linked_wwn_targets[dev_path]
@@ -368,15 +370,11 @@ class DeviceHandler(object):
 		return None
 
 	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Optional[Any]:
-		attempts = 3
-
-		for attempt_nr in range(attempts):
+		while True:
 			try:
 				return self._lvm_info(cmd, info_type)
 			except ValueError:
-				time.sleep(attempt_nr + 1)
-
-		raise ValueError(f'Failed to fetch {info_type} information')
+				time.sleep(3)
 
 	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
 		cmd = (
@@ -803,6 +801,10 @@ class DeviceHandler(object):
 		"""
 		info(f'Wiping partitions and metadata: {block_device.device_info.path}')
 		for partition in block_device.partition_infos:
+			luks = Luks2(partition.path)
+			if luks.isLuks():
+				luks.erase()
+
 			self._wipe(partition.path)
 
 		self._wipe(block_device.device_info.path)

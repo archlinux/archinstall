@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List
 
 
 class HelpTextGroupId(Enum):
@@ -13,13 +12,13 @@ class HelpTextGroupId(Enum):
 @dataclass
 class HelpText:
 	description: str
-	keys: List[str] = field(default_factory=list)
+	keys: list[str] = field(default_factory=list)
 
 
 @dataclass
 class HelpGroup:
 	group_id: HelpTextGroupId
-	group_entries: List[HelpText]
+	group_entries: list[HelpText]
 
 	def get_desc_width(self) -> int:
 		return max([len(e.description) for e in self.group_entries])
@@ -53,6 +52,8 @@ class Help:
 	selection = HelpGroup(
 		group_id=HelpTextGroupId.SELECTION,
 		group_entries=[
+			HelpText('Skip selction (if available)', ['Esc']),
+			HelpText('Reset selection (if available)', ['Ctrl+c']),
 			HelpText('Select on single select', ['Enter']),
 			HelpText('Select on select', ['Space', 'Tab']),
 			HelpText('Reset', ['Ctrl-C']),
@@ -75,19 +76,15 @@ class Help:
 		max_desc_width = max([help.get_desc_width() for help in help_texts])
 		max_key_width = max([help.get_key_width() for help in help_texts])
 
-		margin = ' ' * 3
-
 		for help in help_texts:
-			help_output += f'{margin}{help.group_id.value}\n'
-			divider_len = max_desc_width + max_key_width + len(margin * 2)
-			help_output += margin + '-' * divider_len + '\n'
+			help_output += f'{help.group_id.value}\n'
+			divider_len = max_desc_width + max_key_width
+			help_output += '-' * divider_len + '\n'
 
 			for entry in help.group_entries:
 				help_output += (
-					margin +
-					entry.description.ljust(max_desc_width, ' ') +
-					margin +
-					', '.join(entry.keys) + '\n'
+					entry.description.ljust(max_desc_width, ' ')
+					+ ', '.join(entry.keys) + '\n'
 				)
 
 			help_output += '\n'

@@ -1,5 +1,6 @@
 import time
-from typing import Iterator, Optional
+from collections.abc import Iterator
+from typing import Optional
 from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer

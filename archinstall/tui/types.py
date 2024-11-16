@@ -1,11 +1,9 @@
 import curses
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Optional, List, TypeVar, Generic
+from typing import Optional, Any
 
 from .menu_item import MenuItem
-
-ItemType = TypeVar('ItemType', MenuItem, List[MenuItem], str)
 
 
 SCROLL_INTERVAL = 10
@@ -46,15 +44,15 @@ class MenuKeys(Enum):
 	ESC = {27}
 	# BACKSPACE (search)
 	BACKSPACE = {127, 263}
-	# Help view: CTRL+h
-	HELP = {8}
+	# Help view: ?
+	HELP = {63}
 	# Scroll up: CTRL+up, CTRL+k
 	SCROLL_UP = {581}
 	# Scroll down: CTRL+down, CTRL+j
 	SCROLL_DOWN = {540}
 
 	@classmethod
-	def from_ord(cls, key: int) -> List['MenuKeys']:
+	def from_ord(cls, key: int) -> list['MenuKeys']:
 		matches = []
 
 		for group in MenuKeys:
@@ -80,6 +78,22 @@ class FrameProperties:
 	w_frame_style: FrameStyle = FrameStyle.MAX
 	h_frame_style: FrameStyle = FrameStyle.MAX
 
+	@classmethod
+	def max(cls, header: str) -> 'FrameProperties':
+		return FrameProperties(
+			header,
+			FrameStyle.MAX,
+			FrameStyle.MAX,
+		)
+
+	@classmethod
+	def min(cls, header: str) -> 'FrameProperties':
+		return FrameProperties(
+			header,
+			FrameStyle.MIN,
+			FrameStyle.MIN,
+		)
+
 
 class ResultType(Enum):
 	Selection = auto()
@@ -87,7 +101,7 @@ class ResultType(Enum):
 	Reset = auto()
 
 
-class MenuOrientation(Enum):
+class Orientation(Enum):
 	VERTICAL = auto()
 	HORIZONTAL = auto()
 
@@ -106,6 +120,7 @@ class PreviewStyle(Enum):
 
 
 # https://www.compart.com/en/unicode/search?q=box+drawings#characters
+# https://en.wikipedia.org/wiki/Box-drawing_characters
 class Chars:
 	Horizontal = "─"
 	Vertical = "│"
@@ -116,12 +131,36 @@ class Chars:
 	Block = "█"
 	Triangle_up = "▲"
 	Triangle_down = "▼"
+	Check = "+"
+	Cross = "x"
+	Right_arrow = "←"
 
 
 @dataclass
-class Result(Generic[ItemType]):
+class Result:
 	type_: ResultType
-	value: Optional[ItemType]
+	_item: Optional[MenuItem | list[MenuItem] | str]
+
+	def has_item(self) -> bool:
+		return self._item is not None
+
+	def get_value(self) -> Any:
+		return self.item().get_value()
+
+	def get_values(self) -> list[Any]:
+		return [i.get_value() for i in self.items()]
+
+	def item(self) -> MenuItem:
+		assert self._item is not None and isinstance(self._item, MenuItem)
+		return self._item
+
+	def items(self) -> list[MenuItem]:
+		assert self._item is not None and isinstance(self._item, list)
+		return self._item
+
+	def text(self) -> str:
+		assert self._item is not None and isinstance(self._item, str)
+		return self._item
 
 
 @dataclass

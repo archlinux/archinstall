@@ -269,7 +269,7 @@ Below is an example of how to set the root password and below that are descripti
           {
               "username": "<USERNAME>",
               "!password": "<PASSWORD>",
-              "sudo": false   
+              "sudo": false
           }
      - List of regular user credentials, see configuration for reference
      - Maybe

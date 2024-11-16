@@ -1,11 +1,11 @@
 [flake8]
 count = True
 # Several of the following could be autofixed or improved by running the code through psf/black
-ignore = E123,E128,E722,W191,W503,W504
+ignore = E722,W191,W503
 max-complexity = 40
 max-line-length = 220
 show-source = True
 statistics = True
 builtins = _
-per-file-ignores = __init__.py:F401
+per-file-ignores = __init__.py:E128,F401
 exclude = .git,__pycache__,build,docs,actions-runner
