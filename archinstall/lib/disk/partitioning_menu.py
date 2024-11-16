@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 from dataclasses import dataclass
 
 from ..utils.util import prompt_dir
@@ -93,7 +93,7 @@ class PartitioningList(ListManager):
 	def handle_action(
 		self,
 		action: str,
-		entry: Optional[PartitionModification],
+		entry: PartitionModification | None,
 		data: list[PartitionModification]
 	) -> list[PartitionModification]:
 		action_key = [k for k, v in self._actions.items() if v == action][0]
@@ -208,7 +208,7 @@ class PartitioningList(ListManager):
 
 		return mountpoint
 
-	def _prompt_partition_fs_type(self, prompt: Optional[str] = None) -> FilesystemType:
+	def _prompt_partition_fs_type(self, prompt: str | None = None) -> FilesystemType:
 		fs_types = filter(lambda fs: fs != FilesystemType.Crypto_luks, FilesystemType)
 		items = [MenuItem(fs.value, value=fs) for fs in fs_types]
 		group = MenuItemGroup(items, sort_items=False)
@@ -232,8 +232,8 @@ class PartitioningList(ListManager):
 		sector_size: SectorSize,
 		total_size: Size,
 		text: str,
-		start: Optional[Size]
-	) -> Optional[Size]:
+		start: Size | None
+	) -> Size | None:
 		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', text, re.I)
 
 		if match:
@@ -261,9 +261,9 @@ class PartitioningList(ListManager):
 		text: str,
 		header: str,
 		default: Size,
-		start: Optional[Size],
+		start: Size | None,
 	) -> Size:
-		def validate(value: str) -> Optional[str]:
+		def validate(value: str) -> str | None:
 			size = self._validate_value(sector_size, total_size, value, start)
 			if not size:
 				return str(_('Invalid size'))
@@ -276,7 +276,7 @@ class PartitioningList(ListManager):
 			validator=validate
 		).input()
 
-		size: Optional[Size] = None
+		size: Size | None = None
 		value = result.text()
 
 		if value is None:
@@ -342,11 +342,11 @@ class PartitioningList(ListManager):
 
 		return start_size, end_size
 
-	def _find_default_free_space(self) -> Optional[DefaultFreeSector]:
+	def _find_default_free_space(self) -> DefaultFreeSector | None:
 		device_info = self._device.device_info
 
-		largest_free_area: Optional[DeviceGeometry] = None
-		largest_deleted_area: Optional[PartitionModification] = None
+		largest_free_area: DeviceGeometry | None = None
+		largest_deleted_area: PartitionModification | None = None
 
 		if len(device_info.free_space_regions) > 0:
 			largest_free_area = max(device_info.free_space_regions, key=lambda r: r.get_length())

@@ -1,5 +1,5 @@
 import copy
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 from ..output import FormattedOutput
 
 from archinstall.tui import (
@@ -47,10 +47,10 @@ class ListManager:
 		self._base_actions = base_actions
 		self._sub_menu_actions = sub_menu_actions
 
-		self._last_choice: Optional[str] = None
+		self._last_choice: str | None = None
 
 	@property
-	def last_choice(self) -> Optional[str]:
+	def last_choice(self) -> str | None:
 		return self._last_choice
 
 	def is_last_choice_cancel(self) -> bool:
@@ -140,7 +140,7 @@ class ListManager:
 		if value != self._cancel_action:
 			self._data = self.handle_action(value, entry, self._data)
 
-	def reformat(self, data: list[Any]) -> dict[str, Optional[Any]]:
+	def reformat(self, data: list[Any]) -> dict[str, Any | None]:
 		"""
 		Default implementation of the table to be displayed.
 		Override if any custom formatting is needed
@@ -151,7 +151,7 @@ class ListManager:
 		# these are the header rows of the table and do not map to any User obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data: dict[str, Optional[Any]] = {f'{rows[0]}': None, f'{rows[1]}': None}
+		display_data: dict[str, Any | None] = {f'{rows[0]}': None, f'{rows[1]}': None}
 
 		for row, entry in zip(rows[2:], data):
 			display_data[row] = entry
@@ -165,7 +165,7 @@ class ListManager:
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def handle_action(self, action: Any, entry: Optional[Any], data: list[Any]) -> list[Any]:
+	def handle_action(self, action: Any, entry: Any | None, data: list[Any]) -> list[Any]:
 		"""
 		this function is called when a base action or
 		a specific action for an entry is triggered

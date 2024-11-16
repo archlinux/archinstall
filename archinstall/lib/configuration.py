@@ -3,7 +3,7 @@ import json
 import stat
 import readline
 from pathlib import Path
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
@@ -69,7 +69,7 @@ class ConfigurationOutput:
 			'version': storage['__version__']
 		}, indent=4, sort_keys=True, cls=JSON)
 
-	def user_credentials_to_json(self) -> Optional[str]:
+	def user_credentials_to_json(self) -> str | None:
 		if self._user_credentials:
 			return json.dumps(self._user_credentials, indent=4, sort_keys=True, cls=UNSAFE_JSON)
 		return None
@@ -126,7 +126,7 @@ class ConfigurationOutput:
 				target.write_text(user_creds)
 				os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save(self, dest_path: Optional[Path] = None) -> None:
+	def save(self, dest_path: Path | None = None) -> None:
 		dest_path = dest_path or self._default_save_path
 
 		if self._is_valid_path(dest_path):
@@ -135,7 +135,7 @@ class ConfigurationOutput:
 
 
 def save_config(config: dict[str, Any]) -> None:
-	def preview(item: MenuItem) -> Optional[str]:
+	def preview(item: MenuItem) -> str | None:
 		match item.value:
 			case "user_config":
 				serialized = config_output.user_config_to_json()

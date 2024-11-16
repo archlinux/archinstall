@@ -4,7 +4,7 @@ import urllib.parse
 from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from .menu import AbstractSubMenu, ListManager
 from .networking import fetch_data_from_url
@@ -143,7 +143,7 @@ class CustomMirrorList(ListManager):
 	def handle_action(
 		self,
 		action: str,
-		entry: Optional[CustomMirror],
+		entry: CustomMirror | None,
 		data: list[CustomMirror]
 	) -> list[CustomMirror]:
 		if action == self._actions[0]:  # add
@@ -161,7 +161,7 @@ class CustomMirrorList(ListManager):
 
 		return data
 
-	def _add_custom_mirror(self, preset: Optional[CustomMirror] = None) -> Optional[CustomMirror]:
+	def _add_custom_mirror(self, preset: CustomMirror | None = None) -> CustomMirror | None:
 		edit_result = EditMenu(
 			str(_('Mirror name')),
 			alignment=Alignment.CENTER,
@@ -245,7 +245,7 @@ class CustomMirrorList(ListManager):
 class MirrorMenu(AbstractSubMenu):
 	def __init__(
 		self,
-		preset: Optional[MirrorConfiguration] = None
+		preset: MirrorConfiguration | None = None
 	):
 		if preset:
 			self._mirror_config = preset
@@ -277,7 +277,7 @@ class MirrorMenu(AbstractSubMenu):
 			)
 		]
 
-	def _prev_regions(self, item: MenuItem) -> Optional[str]:
+	def _prev_regions(self, item: MenuItem) -> str | None:
 		mirrors: dict[str, list[MirrorStatusEntryV3]] = item.get_value()
 
 		output = ''
@@ -292,7 +292,7 @@ class MirrorMenu(AbstractSubMenu):
 
 		return output
 
-	def _prev_custom_mirror(self, item: MenuItem) -> Optional[str]:
+	def _prev_custom_mirror(self, item: MenuItem) -> str | None:
 		if not item.value:
 			return None
 
@@ -348,7 +348,7 @@ def select_custom_mirror(preset: list[CustomMirror] = []):
 	return custom_mirrors
 
 
-def list_mirrors_from_remote() -> Optional[dict[str, list[MirrorStatusEntryV3]]]:
+def list_mirrors_from_remote() -> dict[str, list[MirrorStatusEntryV3]] | None:
 	if not storage['arguments']['offline']:
 		url = "https://archlinux.org/mirrors/status/json/"
 		attempts = 3
