@@ -7,6 +7,7 @@ import signal
 from abc import ABCMeta, abstractmethod
 from curses.textpad import Textbox
 from dataclasses import dataclass
+from types import FrameType, TracebackType
 from typing import Any, Optional, Tuple, TYPE_CHECKING, Literal
 from typing import Callable
 
@@ -111,7 +112,7 @@ class AbstractViewport:
 	def __init__(self) -> None:
 		pass
 
-	def add_str(self, screen: Any, row: int, col: int, text: str, color: STYLE):
+	def add_str(self, screen: Any, row: int, col: int, text: str, color: STYLE) -> None:
 		try:
 			screen.addstr(row, col, text, Tui.t().get_color(color))
 		except curses.error:
@@ -204,7 +205,7 @@ class AbstractViewport:
 		dim: _FrameDim,
 		h_bar: str,
 		scroll_pct: Optional[int] = None
-	):
+	) -> ViewportEntry:
 		if scroll_pct is None:
 			bottom = Chars.Lower_left + h_bar + Chars.Lower_right
 		else:
@@ -427,7 +428,7 @@ class Viewport(AbstractViewport):
 
 		self._state: Optional[ViewportState] = None
 
-	def getch(self):
+	def getch(self) -> int:
 		return self._main_win.getch()
 
 	def erase(self) -> None:
@@ -439,7 +440,7 @@ class Viewport(AbstractViewport):
 		lines: list[ViewportEntry],
 		cur_pos: int = 0,
 		scroll_pos: Optional[int] = None
-	):
+	) -> None:
 		self._state = self._get_viewport_state(lines, cur_pos, scroll_pos)
 		visible_entries = self._adjust_entries_row(self._state.displayed_entries)
 
@@ -669,7 +670,7 @@ class EditMenu(AbstractCurses):
 		self._clear_all()
 		return result
 
-	def resize_win(self):
+	def resize_win(self) -> None:
 		self._draw()
 
 	def _clear_all(self) -> None:
@@ -918,7 +919,7 @@ class SelectMenu(AbstractCurses):
 
 		return []
 
-	def _init_viewports(self, arg_prev_size: float | Literal['auto']):
+	def _init_viewports(self, arg_prev_size: float | Literal['auto']) -> None:
 		footer_height = 2  # possible filter at the bottom
 		y_offset = 0
 
@@ -1195,7 +1196,7 @@ class SelectMenu(AbstractCurses):
 
 		self._preview_vp.update(entries, scroll_pos=self._prev_scroll_pos)
 
-	def _calc_prev_scroll_pos(self, entries: list[ViewportEntry]):
+	def _calc_prev_scroll_pos(self, entries: list[ViewportEntry]) -> None:
 		total_rows = max([e.row for e in entries]) + 1  # rows start with 0 and we need the count
 
 		if self._prev_scroll_pos >= total_rows:
@@ -1357,12 +1358,12 @@ class SelectMenu(AbstractCurses):
 class Tui:
 	_t: Optional['Tui'] = None
 
-	def __enter__(self):
+	def __enter__(self) -> None:
 		if Tui._t is None:
 			tui = self.init()
 			Tui._t = tui
 
-	def __exit__(self, exc_type, exc_val, tb):
+	def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, tb: TracebackType | None) -> None:
 		self.stop()
 
 	@property
@@ -1463,7 +1464,7 @@ class Tui:
 			tui.screen.clear()
 			return Tui.t()._main_loop(component)
 
-	def _sig_win_resize(self, signum: int, frame) -> None:
+	def _sig_win_resize(self, signum: int, frame: FrameType | None) -> None:
 		if hasattr(self, '_component') and self._component is not None:  # pylint: disable=E1101
 			self._component.resize_win()  # pylint: disable=E1101
 
@@ -1471,7 +1472,7 @@ class Tui:
 		self._screen.refresh()
 		return component.kickoff(self._screen)
 
-	def _reset_terminal(self):
+	def _reset_terminal(self) -> None:
 		os.system("reset")
 
 	def _set_up_colors(self) -> None:

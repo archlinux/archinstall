@@ -73,7 +73,7 @@ class MenuItemGroup:
 
 	_filter_pattern: str = ''
 
-	def __post_init__(self):
+	def __post_init__(self) -> None:
 		if len(self.menu_items) < 1:
 			raise ValueError('Menu must have at least one item')
 
@@ -207,7 +207,7 @@ class MenuItemGroup:
 		self._filter_pattern = pattern
 		self.reload_focus_itme()
 
-	def append_filter(self, pattern: str):
+	def append_filter(self, pattern: str) -> None:
 		self._filter_pattern += pattern
 		self.reload_focus_itme()
 
@@ -274,7 +274,7 @@ class MenuItemGroup:
 		if last_item:
 			self.focus_item = last_item
 
-	def focus_prev(self, skip_empty: bool = True):
+	def focus_prev(self, skip_empty: bool = True) -> None:
 		items = self.items
 
 		if self.focus_item not in items:
@@ -288,7 +288,7 @@ class MenuItemGroup:
 		if self.focus_item.is_empty() and skip_empty:
 			self.focus_prev(skip_empty)
 
-	def focus_next(self, skip_empty: bool = True):
+	def focus_next(self, skip_empty: bool = True) -> None:
 		items = self.items
 
 		if self.focus_item not in items:
