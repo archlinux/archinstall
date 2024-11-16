@@ -1,4 +1,4 @@
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from .general import SysCommandWorker
@@ -17,7 +17,7 @@ class UnknownFilesystemFormat(Exception):
 
 
 class SysCallError(Exception):
-	def __init__(self, message: str, exit_code: Optional[int] = None, worker: Optional['SysCommandWorker'] = None) -> None:
+	def __init__(self, message: str, exit_code: int | None = None, worker: 'SysCommandWorker | None' = None) -> None:
 		super().__init__(message)
 		self.message = message
 		self.exit_code = exit_code

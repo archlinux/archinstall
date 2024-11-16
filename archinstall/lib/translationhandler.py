@@ -6,7 +6,7 @@ import gettext
 from dataclasses import dataclass
 
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 
 from .output import error, debug
 
@@ -20,7 +20,7 @@ class Language:
 	name_en: str
 	translation: gettext.NullTranslations
 	translation_percent: int
-	translated_lang: Optional[str]
+	translated_lang: str | None
 
 	@property
 	def display_name(self) -> str:
