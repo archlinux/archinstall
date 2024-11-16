@@ -32,9 +32,16 @@ class PipewireProfile(Profile):
 			users = [users]
 
 		for user in users:
-			(install_session.target / "home" / user.username / ".config" / "systemd" / "user" / "default.target.wants").mkdir(parents=True, exist_ok=True)
-			install_session.arch_chroot('ln -s /usr/lib/systemd/user/pipewire-pulse.service ~/.config/systemd/user/default.target.wants/pipewire-pulse.service', run_as=user.username)
-			install_session.arch_chroot('ln -s /usr/lib/systemd/user/pipewire-pulse.socket ~/.config/systemd/user/default.target.wants/pipewire-pulse.socket', run_as=user.username)
+			# Create the full path for enabling the pipewire systemd items
+			service_dir = install_session.target / "home" / user.username / ".config" / "systemd" / "user" / "default.target.wants"
+			service_dir.mkdir(parents=True, exist_ok=True)
+
+			# Set ownership of the entire user catalogue
+			install_session.arch_chroot(f'chown -R {user.username}:{user.username} {install_session.target / "home" / user.username}', run_as=user.username)
+
+			# symlink in the correct pipewire systemd items
+			install_session.arch_chroot(f'ln -s /usr/lib/systemd/user/pipewire-pulse.service {service_dir}/pipewire-pulse.service', run_as=user.username)
+			install_session.arch_chroot(f'ln -s /usr/lib/systemd/user/pipewire-pulse.socket {service_dir}/pipewire-pulse.socket', run_as=user.username)
 
 	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)
