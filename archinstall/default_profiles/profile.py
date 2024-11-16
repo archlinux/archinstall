@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from enum import Enum, auto
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from ..lib.storage import storage
 
@@ -68,7 +68,7 @@ class Profile:
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
 
-		# self.gfx_driver: Optional[str] = None
+		# self.gfx_driver: str | None = None
 
 		self.current_selection = current_selection
 		self._packages = packages
@@ -94,7 +94,7 @@ class Profile:
 		return self._services
 
 	@property
-	def default_greeter_type(self) -> Optional[GreeterType]:
+	def default_greeter_type(self) -> GreeterType | None:
 		"""
 		Setting a default greeter type for a desktop profile
 		"""
@@ -125,7 +125,7 @@ class Profile:
 		"""
 		return {}
 
-	def do_on_select(self) -> Optional[SelectResult]:
+	def do_on_select(self) -> SelectResult | None:
 		"""
 		Hook that will be called when a profile is selected
 		"""
@@ -180,7 +180,7 @@ class Profile:
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
-	def preview_text(self) -> Optional[str]:
+	def preview_text(self) -> str | None:
 		"""
 		Override this method to provide a preview text for the profile
 		"""

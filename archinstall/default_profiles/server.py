@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -23,7 +23,7 @@ class ServerProfile(Profile):
 			current_selection=current_value
 		)
 
-	def do_on_select(self) -> Optional[SelectResult]:
+	def do_on_select(self) -> SelectResult | None:
 		items = [
 			MenuItem(
 				p.name,

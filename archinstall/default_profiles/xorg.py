@@ -1,4 +1,4 @@
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from archinstall.default_profiles.profile import Profile, ProfileType
 
@@ -22,7 +22,7 @@ class XorgProfile(Profile):
 			advanced=advanced
 		)
 
-	def preview_text(self) -> Optional[str]:
+	def preview_text(self) -> str | None:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
 		if packages := self.packages_text():
 			text += f'\n{packages}'
