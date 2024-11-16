@@ -102,7 +102,7 @@ if 'sphinx' not in sys.modules:
 		exit(1)
 
 
-def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err: bool = False) -> dict:
+def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err: bool = False) -> dict:  # type: ignore[type-arg]
 	"""We accept arguments not defined to the parser. (arguments "ad hoc").
 	Internally argparse return to us a list of words so we have to parse its contents, manually.
 	We accept following individual syntax for each argument
@@ -150,7 +150,7 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 	return config
 
 
-def cleanup_empty_args(args: Union[Namespace, dict]) -> dict:
+def cleanup_empty_args(args: Union[Namespace, dict]) -> dict:  # type: ignore[type-arg]
 	"""
 	Takes arguments (dictionary or argparse Namespace) and removes any
 	None values. This ensures clean mergers during dict.update(args)
@@ -284,7 +284,7 @@ post_process_arguments(arguments)
 
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles_bck and other things.
-def plugin(f, *args, **kwargs) -> None:
+def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
 	plugins[f.__name__] = f
 
 
