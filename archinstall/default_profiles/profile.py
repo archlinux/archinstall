@@ -119,7 +119,7 @@ class Profile:
 		are needed
 		"""
 
-	def json(self) -> dict:
+	def json(self) -> dict[str, Any]:
 		"""
 		Returns a json representation of the profile
 		"""
