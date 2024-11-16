@@ -38,6 +38,7 @@ makedepends=(
   'python-build'
   'python-installer'
   'python-wheel'
+  'python-sphinx_rtd_theme'
 )
 optdepends=(
   'python-systemd: Adds journald logging'
