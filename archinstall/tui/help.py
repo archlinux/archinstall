@@ -83,8 +83,8 @@ class Help:
 
 			for entry in help.group_entries:
 				help_output += (
-					entry.description.ljust(max_desc_width, ' ') +
-					', '.join(entry.keys) + '\n'
+					entry.description.ljust(max_desc_width, ' ')
+					+ ', '.join(entry.keys) + '\n'
 				)
 
 			help_output += '\n'
