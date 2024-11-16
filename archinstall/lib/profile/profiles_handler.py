@@ -205,7 +205,7 @@ class ProfileHandler:
 		# slick-greeter requires a config change
 		if greeter == GreeterType.LightdmSlick:
 			path = install_session.target.joinpath('etc/lightdm/lightdm.conf')
-			with open(path, 'r') as file:
+			with open(path) as file:
 				filedata = file.read()
 
 			filedata = filedata.replace('#greeter-session=example-gtk-gnome', 'greeter-session=lightdm-slick-greeter')
@@ -302,7 +302,7 @@ class ProfileHandler:
 		Check if the provided profile file contains a
 		legacy profile definition
 		"""
-		with open(file, 'r') as fp:
+		with open(file) as fp:
 			for line in fp.readlines():
 				if '__packages__' in line:
 					return True
