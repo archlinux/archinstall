@@ -7,7 +7,7 @@ import curses
 import traceback
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 from .lib import disk
 from .lib import models
@@ -150,7 +150,7 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 	return config
 
 
-def cleanup_empty_args(args: Union[Namespace, dict]) -> dict:  # type: ignore[type-arg]
+def cleanup_empty_args(args: Namespace | dict) -> dict:  # type: ignore[type-arg]
 	"""
 	Takes arguments (dictionary or argparse Namespace) and removes any
 	None values. This ensures clean mergers during dict.update(args)

@@ -2,7 +2,7 @@ from pathlib import Path
 import time
 import re
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 from shutil import copy2
 
 from ..general import SysCommand
@@ -68,7 +68,7 @@ class Pacman:
 		)
 		self.synced = True
 
-	def strap(self, packages: Union[str, list[str]]) -> None:
+	def strap(self, packages: str | list[str]) -> None:
 		self.sync()
 		if isinstance(packages, str):
 			packages = [packages]
