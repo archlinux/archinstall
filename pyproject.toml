@@ -192,6 +192,7 @@ select = [
     "RSE",    # flake8-raise
     "SLOT",   # flake8-slot
     "T10",    # flake8-debugger
+    "UP025",  # pyupgrade - unicode-kind-prefix
     "W",      # pycodestyle warnings
     "YTT",    # flake8-2020
 ]
