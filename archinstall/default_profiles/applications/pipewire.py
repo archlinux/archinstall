@@ -32,6 +32,7 @@ class PipewireProfile(Profile):
 			users = [users]
 
 		for user in users:
+			(install_session.target / "home" / user / ".config" / "systemd" / "user" / "default.target.wants").mkdir(parents=True, exist_ok=True)
 			install_session.arch_chroot('ln -s /usr/lib/systemd/user/pipewire-pulse.service ~/.config/systemd/user/default.target.wants/pipewire-pulse.service', run_as=user.username)
 			install_session.arch_chroot('ln -s /usr/lib/systemd/user/pipewire-pulse.socket ~/.config/systemd/user/default.target.wants/pipewire-pulse.socket', run_as=user.username)
 
