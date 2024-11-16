@@ -18,7 +18,7 @@ from .pacman import Pacman
 from .output import debug
 
 
-class DownloadTimer():
+class DownloadTimer:
 	'''
 	Context manager for timing downloads with timeouts.
 	'''
