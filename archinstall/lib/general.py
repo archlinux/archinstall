@@ -70,9 +70,9 @@ def jsonify(obj: Any, safe: bool = True) -> Any:
 		# a dictionary representation of the object so that it can be
 		# processed by the json library.
 		return jsonify(obj.json(), safe)
-	if isinstance(obj, (datetime, date)):
+	if isinstance(obj, datetime | date):
 		return obj.isoformat()
-	if isinstance(obj, (list, set, tuple)):
+	if isinstance(obj, list | set | tuple):
 		return [jsonify(item, safe) for item in obj]
 	if isinstance(obj, pathlib.Path):
 		return str(obj)
