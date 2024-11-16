@@ -24,7 +24,6 @@ depends=(
   'python'
   'python-pydantic'
   'python-pyparted'
-  'python-simple-term-menu'
   'systemd'
   'util-linux'
   'xfsprogs'
