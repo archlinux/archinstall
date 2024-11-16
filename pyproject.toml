@@ -185,6 +185,7 @@ select = [
     "PIE",    # flake8-pie
     "PLC",    # Pylint conventions
     "PLE",    # Pylint errors
+    "PLW",    # Pylint warnings
     "RSE",    # flake8-raise
     "SLOT",   # flake8-slot
     "T10",    # flake8-debugger
@@ -194,10 +195,11 @@ select = [
 ]
 
 ignore = [
-    "E701",  # multiple-statements-on-one-line-colon
-    "E722",  # bare-except
-    "F401",  # unused-import
-    "W191",  # tab-indentation
+    "E701",     # multiple-statements-on-one-line-colon
+    "E722",     # bare-except
+    "F401",     # unused-import
+    "PLW2901",  # redefined-loop-name
+    "W191",     # tab-indentation
 ]
 
 [tool.ruff.lint.mccabe]
