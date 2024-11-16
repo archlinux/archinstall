@@ -131,7 +131,7 @@ class Selector:
 	def is_empty(self) -> bool:
 		if self.current_selection is None:
 			return True
-		elif isinstance(self.current_selection, (str, list, dict)) and len(self.current_selection) == 0:
+		elif isinstance(self.current_selection, str | list | dict) and len(self.current_selection) == 0:
 			return True
 		return False
 
