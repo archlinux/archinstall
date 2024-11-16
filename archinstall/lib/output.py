@@ -2,10 +2,11 @@ import logging
 import os
 import sys
 import unicodedata
+from collections.abc import Callable
 from enum import Enum
 
 from pathlib import Path
-from typing import Union, Any, Callable, Optional, TYPE_CHECKING
+from typing import Union, Any, Optional, TYPE_CHECKING
 from dataclasses import asdict, is_dataclass
 
 from .storage import storage

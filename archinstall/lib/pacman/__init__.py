@@ -1,7 +1,8 @@
 from pathlib import Path
 import time
 import re
-from typing import TYPE_CHECKING, Any, Callable, Union
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, Union
 from shutil import copy2
 
 from ..general import SysCommand

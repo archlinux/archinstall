@@ -1,7 +1,7 @@
 import dataclasses
 import json
 import ssl
-from typing import Any, Tuple
+from typing import Any
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -91,7 +91,7 @@ def find_packages(*names: str) -> dict[str, Any]:
 	return result
 
 
-def validate_package_list(packages: list) -> Tuple[list, list]:
+def validate_package_list(packages: list) -> tuple[list, list]:
 	"""
 	Validates a list of given packages.
 	return: Tuple of lists containing valid packavges in the first and invalid

@@ -5,8 +5,9 @@ import shlex
 import shutil
 import subprocess
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING, Union, Callable
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError

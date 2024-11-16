@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
-from typing import Optional, Tuple
+from typing import Optional
 
 from .. import disk
 from ..disk.device_model import BtrfsMountOption
@@ -452,7 +452,7 @@ def suggest_multi_disk_layout(
 			delta = device.device_info.total_size - desired_root_partition_size
 			devices_delta[device] = delta
 
-	sorted_delta: list[Tuple[disk.BDevice, Any]] = sorted(devices_delta.items(), key=lambda x: x[1])
+	sorted_delta: list[tuple[disk.BDevice, Any]] = sorted(devices_delta.items(), key=lambda x: x[1])
 	root_device: Optional[disk.BDevice] = sorted_delta[0][0]
 
 	if home_device is None or root_device is None:

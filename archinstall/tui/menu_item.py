@@ -1,6 +1,7 @@
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, Optional, TYPE_CHECKING
-from typing import Callable, ClassVar
+from typing import ClassVar
 
 from ..lib.output import unicode_ljust
 
