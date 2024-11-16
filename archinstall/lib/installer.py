@@ -337,13 +337,14 @@ class Installer:
 			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols, volume.mount_options)
 
 	def _mount_luks_partition(self, part_mod: disk.PartitionModification, luks_handler: Luks2) -> None:
-		if part_mod.fs_type != disk.FilesystemType.Btrfs:
-			if part_mod.mountpoint and luks_handler.mapper_dev:
-				target = self.target / part_mod.relative_mountpoint
-				disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+		if not luks_handler.mapper_dev:
+			return None
 
-		if part_mod.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
+		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.btrfs_subvols:
 			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
+		elif part_mod.mountpoint:
+			target = self.target / part_mod.relative_mountpoint
+			disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
 	def _mount_luks_volume(self, volume: disk.LvmVolume, luks_handler: Luks2) -> None:
 		if volume.fs_type != disk.FilesystemType.Btrfs:
