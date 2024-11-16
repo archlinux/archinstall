@@ -18,7 +18,7 @@ class UnknownFilesystemFormat(Exception):
 
 class SysCallError(Exception):
 	def __init__(self, message: str, exit_code: Optional[int] = None, worker: Optional['SysCommandWorker'] = None) -> None:
-		super(SysCallError, self).__init__(message)
+		super().__init__(message)
 		self.message = message
 		self.exit_code = exit_code
 		self.worker = worker
