@@ -1218,8 +1218,6 @@ class SelectMenu(AbstractCurses):
 		else:
 			return False
 
-		return True
-
 	def _process_input_key(self, key: int) -> Result | None:
 		key_handles = MenuKeys.from_ord(key)
 
