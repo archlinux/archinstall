@@ -177,7 +177,7 @@ class CustomMirrorList(ListManager):
 			case _:
 				raise ValueError('Unhandled return type')
 
-		header = f'{str(_("Name"))}: {name}'
+		header = f'{_("Name")}: {name}'
 
 		edit_result = EditMenu(
 			str(_('Url')),
@@ -195,7 +195,7 @@ class CustomMirrorList(ListManager):
 			case _:
 				raise ValueError('Unhandled return type')
 
-		header += f'\n{str(_("Url"))}: {url}\n'
+		header += f'\n{_("Url")}: {url}\n'
 		prompt = f'{header}\n' + str(_('Select signature check'))
 
 		sign_chk_items = [MenuItem(s.value, value=s.value) for s in SignCheck]
@@ -217,7 +217,7 @@ class CustomMirrorList(ListManager):
 			case _:
 				raise ValueError('Unhandled return type')
 
-		header += f'{str(_("Signature check"))}: {sign_check.value}\n'
+		header += f'{_("Signature check")}: {sign_check.value}\n'
 		prompt = f'{header}\n' + 'Select signature option'
 
 		sign_opt_items = [MenuItem(s.value, value=s.value) for s in SignOption]

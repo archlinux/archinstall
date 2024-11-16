@@ -167,7 +167,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		if enc_type:
 			enc_text = EncryptionType.type_to_text(enc_type)
-			return f'{str(_("Encryption type"))}: {enc_text}'
+			return f'{_("Encryption type")}: {enc_text}'
 
 		return None
 
@@ -176,7 +176,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		if enc_pwd:
 			pwd_text = '*' * len(enc_pwd)
-			return f'{str(_("Encryption password"))}: {pwd_text}'
+			return f'{_("Encryption password")}: {pwd_text}'
 
 		return None
 
@@ -208,7 +208,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		output = str(fido_device.path)
 		output += f' ({fido_device.manufacturer}, {fido_device.product})'
-		return f'{str(_("HSM device"))}: {output}'
+		return f'{_("HSM device")}: {output}'
 
 
 def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: EncryptionType) -> Optional[EncryptionType]:

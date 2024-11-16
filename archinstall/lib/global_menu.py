@@ -318,17 +318,17 @@ class GlobalMenu(AbstractMenu):
 	def _prev_additional_repos(self, item: MenuItem) -> Optional[str]:
 		if item.value:
 			repos = ', '.join(item.value)
-			return f'{str(_("Additional repositories"))}: {repos}'
+			return f'{_("Additional repositories")}: {repos}'
 		return None
 
 	def _prev_tz(self, item: MenuItem) -> Optional[str]:
 		if item.value:
-			return f'{str(_("Timezone"))}: {item.value}'
+			return f'{_("Timezone")}: {item.value}'
 		return None
 
 	def _prev_ntp(self, item: MenuItem) -> Optional[str]:
 		if item.value is not None:
-			output = f'{str(_("NTP"))}: '
+			output = f'{_("NTP")}: '
 			output += str(_('Enabled')) if item.value else str(_('Disabled'))
 			return output
 		return None
@@ -351,7 +351,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_swap(self, item: MenuItem) -> Optional[str]:
 		if item.value is not None:
-			output = f'{str(_("Swap on zram"))}: '
+			output = f'{_("Swap on zram")}: '
 			output += str(_('Enabled')) if item.value else str(_('Disabled'))
 			return output
 		return None
@@ -365,34 +365,34 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_hostname(self, item: MenuItem) -> Optional[str]:
 		if item.value is not None:
-			return f'{str(_("Hostname"))}: {item.value}'
+			return f'{_("Hostname")}: {item.value}'
 		return None
 
 	def _prev_root_pwd(self, item: MenuItem) -> Optional[str]:
 		if item.value is not None:
-			return f'{str(_("Root password"))}: {secret(item.value)}'
+			return f'{_("Root password")}: {secret(item.value)}'
 		return None
 
 	def _prev_audio(self, item: MenuItem) -> Optional[str]:
 		if item.value is not None:
 			config: AudioConfiguration = item.value
-			return f'{str(_("Audio"))}: {config.audio.value}'
+			return f'{_("Audio")}: {config.audio.value}'
 		return None
 
 	def _prev_parallel_dw(self, item: MenuItem) -> Optional[str]:
 		if item.value is not None:
-			return f'{str(_("Parallel Downloads"))}: {item.value}'
+			return f'{_("Parallel Downloads")}: {item.value}'
 		return None
 
 	def _prev_kernel(self, item: MenuItem) -> Optional[str]:
 		if item.value:
 			kernel = ', '.join(item.value)
-			return f'{str(_("Kernel"))}: {kernel}'
+			return f'{_("Kernel")}: {kernel}'
 		return None
 
 	def _prev_bootloader(self, item: MenuItem) -> Optional[str]:
 		if item.value is not None:
-			return f'{str(_("Bootloader"))}: {item.value.value}'
+			return f'{_("Bootloader")}: {item.value.value}'
 		return None
 
 	def _prev_disk_encryption(self, item: MenuItem) -> Optional[str]:
