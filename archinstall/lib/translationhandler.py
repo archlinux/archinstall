@@ -85,7 +85,7 @@ class TranslationHandler:
 
 		return languages
 
-	def _set_font(self, font: str):
+	def _set_font(self, font: str) -> None:
 		"""
 		Set the provided font as the new terminal font
 		"""

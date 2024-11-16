@@ -82,7 +82,7 @@ def _find_nth(haystack: list[str], needle: str, n: int) -> Optional[int]:
 	return None
 
 
-def load_plugin(path: Path):
+def load_plugin(path: Path) -> None:
 	namespace: Optional[str] = None
 	parsed_url = urllib.parse.urlparse(str(path))
 	info(f"Loading plugin from url {parsed_url}")

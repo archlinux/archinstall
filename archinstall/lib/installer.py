@@ -7,6 +7,7 @@ import subprocess
 import time
 from collections.abc import Callable
 from pathlib import Path
+from types import TracebackType
 from typing import Any, Optional, TYPE_CHECKING, Union
 
 from . import disk
@@ -99,7 +100,7 @@ class Installer:
 	def __enter__(self) -> 'Installer':
 		return self
 
-	def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_val, exc_tb: TracebackType | None) -> bool:
 		if exc_type is not None:
 			error(exc_val)
 
@@ -692,7 +693,7 @@ class Installer:
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self.helper_flags.get('base', False) is False:
 
-					def post_install_enable_networkd_resolved(*args: str, **kwargs: str):
+					def post_install_enable_networkd_resolved(*args: str, **kwargs: str) -> None:
 						self.enable_service(['systemd-networkd', 'systemd-resolved'])
 
 					self.post_base_install.append(post_install_enable_networkd_resolved)

@@ -15,7 +15,7 @@ BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
 BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/'
 
 
-def _make_request(url: str, params: dict) -> Any:
+def _make_request(url: str, params: dict[str, str]) -> Any:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -91,7 +91,7 @@ def find_packages(*names: str) -> dict[str, Any]:
 	return result
 
 
-def validate_package_list(packages: list) -> tuple[list, list]:
+def validate_package_list(packages: list[str]) -> tuple[list[str], list[str]]:
 	"""
 	Validates a list of given packages.
 	return: Tuple of lists containing valid packavges in the first and invalid
