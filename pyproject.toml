@@ -187,7 +187,7 @@ select = [
     "RSE",    # flake8-raise
     "SLOT",   # flake8-slot
     "T10",    # flake8-debugger
-    "UP025",  # pyupgrade - unicode-kind-prefix
+    "UP",     # pyupgrade
     "W",      # pycodestyle warnings
     "YTT",    # flake8-2020
 ]
@@ -197,6 +197,14 @@ ignore = [
     "E722",     # bare-except
     "F401",     # unused-import
     "PLW2901",  # redefined-loop-name
+    "UP006",    # non-pep585-annotation
+    "UP007",    # non-pep604-annotation
+    "UP027",    # unpacked-list-comprehension
+    "UP028",    # yield-in-for-loop
+    "UP031",    # printf-string-formatting
+    "UP032",    # f-string
+    "UP035",    # deprecated-import
+    "UP037",    # quoted-annotation
     "W191",     # tab-indentation
 ]
 
