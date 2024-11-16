@@ -174,8 +174,10 @@ class DeviceHandler(object):
 	def get_unique_path_for_device(self, dev_path: Path) -> Optional[Path]:
 		paths = Path('/dev/disk/by-id').glob('*')
 		linked_targets = {p.resolve(): p for p in paths}
-		linked_wwn_targets = {p: linked_targets[p] for p in linked_targets
-			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
+		linked_wwn_targets = {
+			p: linked_targets[p] for p in linked_targets
+			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')
+		}
 
 		if dev_path in linked_wwn_targets:
 			return linked_wwn_targets[dev_path]
