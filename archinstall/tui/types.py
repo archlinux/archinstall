@@ -1,7 +1,7 @@
 import curses
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Optional, Any
+from typing import Any
 
 from .menu_item import MenuItem
 
@@ -139,7 +139,7 @@ class Chars:
 @dataclass
 class Result:
 	type_: ResultType
-	_item: Optional[MenuItem | list[MenuItem] | str]
+	_item: MenuItem | list[MenuItem] | str | None
 
 	def has_item(self) -> bool:
 		return self._item is not None

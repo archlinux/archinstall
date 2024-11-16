@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 from typing import ClassVar
 
 from ..lib.output import unicode_ljust
@@ -12,18 +14,18 @@ if TYPE_CHECKING:
 @dataclass
 class MenuItem:
 	text: str
-	value: Optional[Any] = None
-	action: Optional[Callable[[Any], Any]] = None
+	value: Any | None = None
+	action: Callable[[Any], Any] | None = None
 	enabled: bool = True
 	mandatory: bool = False
 	dependencies: list[str | Callable[[], bool]] = field(default_factory=list)
 	dependencies_not: list[str] = field(default_factory=list)
-	display_action: Optional[Callable[[Any], str]] = None
-	preview_action: Optional[Callable[[Any], Optional[str]]] = None
-	key: Optional[str] = None
+	display_action: Callable[[Any], str] | None = None
+	preview_action: Callable[[Any], str | None] | None = None
+	key: str | None = None
 
-	_yes: ClassVar[Optional['MenuItem']] = None
-	_no: ClassVar[Optional['MenuItem']] = None
+	_yes: ClassVar[MenuItem | None] = None
+	_no: ClassVar[MenuItem | None] = None
 
 	def get_value(self) -> Any:
 		assert self.value is not None
@@ -56,7 +58,7 @@ class MenuItem:
 		else:
 			return True
 
-	def get_display_value(self) -> Optional[str]:
+	def get_display_value(self) -> str | None:
 		if self.display_action is not None:
 			return self.display_action(self.value)
 
@@ -66,8 +68,8 @@ class MenuItem:
 @dataclass
 class MenuItemGroup:
 	menu_items: list[MenuItem]
-	focus_item: Optional[MenuItem] = None
-	default_item: Optional[MenuItem] = None
+	focus_item: MenuItem | None = None
+	default_item: MenuItem | None = None
 	selected_items: list[MenuItem] = field(default_factory=list)
 	sort_items: bool = False
 	checkmarks: bool = False
@@ -104,7 +106,7 @@ class MenuItemGroup:
 			sort_items=True
 		)
 
-	def set_preview_for_all(self, action: Callable[[Any], Optional[str]]) -> None:
+	def set_preview_for_all(self, action: Callable[[Any], str | None]) -> None:
 		for item in self.items:
 			item.preview_action = action
 
@@ -120,7 +122,7 @@ class MenuItemGroup:
 				self.default_item = item
 				break
 
-	def set_selected_by_value(self, values: Optional[Any | list[Any]]) -> None:
+	def set_selected_by_value(self, values: Any | list[Any] | None) -> None:
 		if values is None:
 			return
 
@@ -247,7 +249,7 @@ class MenuItemGroup:
 		else:
 			return item == self.focus_item
 
-	def _first(self, items: list[MenuItem], ignore_empty: bool) -> Optional[MenuItem]:
+	def _first(self, items: list[MenuItem], ignore_empty: bool) -> MenuItem | None:
 		for item in items:
 			if not ignore_empty:
 				return item
@@ -257,10 +259,10 @@ class MenuItemGroup:
 
 		return None
 
-	def get_first_item(self, ignore_empty: bool = True) -> Optional[MenuItem]:
+	def get_first_item(self, ignore_empty: bool = True) -> MenuItem | None:
 		return self._first(self.items, ignore_empty)
 
-	def get_last_item(self, ignore_empty: bool = True) -> Optional[MenuItem]:
+	def get_last_item(self, ignore_empty: bool = True) -> MenuItem | None:
 		items = self.items
 		rev_items = list(reversed(items))
 		return self._first(rev_items, ignore_empty)

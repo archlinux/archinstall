@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import archinstall
 from archinstall import SysInfo, info, debug
@@ -184,7 +184,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode) -> None:
 		if users := archinstall.arguments.get('!users', None):
 			installation.create_users(users)
 
-		audio_config: Optional[AudioConfiguration] = archinstall.arguments.get('audio_config', None)
+		audio_config: AudioConfiguration | None = archinstall.arguments.get('audio_config', None)
 		if audio_config:
 			audio_config.install_audio_config(installation)
 		else:
