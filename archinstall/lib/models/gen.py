@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Any
+from typing import Any
 
 
 @dataclass
@@ -20,7 +20,7 @@ class VersionDef:
 		return self.parse_version()[0]
 
 	@classmethod
-	def minor(cls) -> Optional[str]:
+	def minor(cls) -> str | None:
 		versions = cls.parse_version()
 		if len(versions) >= 2:
 			return versions[1]
@@ -28,7 +28,7 @@ class VersionDef:
 		return None
 
 	@classmethod
-	def patch(cls) -> Optional[str]:
+	def patch(cls) -> str | None:
 		versions = cls.parse_version()
 		if '-' in versions[-1]:
 			_, patch_version = versions[-1].split('-', 1)
@@ -74,7 +74,7 @@ class PackageSearchResult:
 	installed_size: int
 	build_date: str
 	last_update: str
-	flag_date: Optional[str]
+	flag_date: str | None
 	maintainers: list[str]
 	packager: str
 	groups: list[str]

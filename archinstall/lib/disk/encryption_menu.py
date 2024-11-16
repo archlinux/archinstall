@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from . import LvmConfiguration, LvmVolume
 from ..disk import (
@@ -29,7 +29,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 	def __init__(
 		self,
 		disk_config: DiskLayoutConfiguration,
-		preset: Optional[DiskEncryption] = None
+		preset: DiskEncryption | None = None
 	):
 		if preset:
 			self._preset = preset
@@ -93,28 +93,28 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		return []
 
 	def _check_dep_enc_type(self) -> bool:
-		enc_type: Optional[EncryptionType] = self._item_group.find_by_key('encryption_type').value
+		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		if enc_type and enc_type != EncryptionType.NoEncryption:
 			return True
 		return False
 
 	def _check_dep_partitions(self) -> bool:
-		enc_type: Optional[EncryptionType] = self._item_group.find_by_key('encryption_type').value
+		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		if enc_type and enc_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks]:
 			return True
 		return False
 
 	def _check_dep_lvm_vols(self) -> bool:
-		enc_type: Optional[EncryptionType] = self._item_group.find_by_key('encryption_type').value
+		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		if enc_type and enc_type == EncryptionType.LuksOnLvm:
 			return True
 		return False
 
-	def run(self) -> Optional[DiskEncryption]:
+	def run(self) -> DiskEncryption | None:
 		super().run()
 
-		enc_type: Optional[EncryptionType] = self._item_group.find_by_key('encryption_type').value
-		enc_password: Optional[str] = self._item_group.find_by_key('encryption_password').value
+		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
+		enc_password: str | None = self._item_group.find_by_key('encryption_password').value
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_vols').value
 
@@ -139,7 +139,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		return None
 
-	def _preview(self, item: MenuItem) -> Optional[str]:
+	def _preview(self, item: MenuItem) -> str | None:
 		output = ''
 
 		if (enc_type := self._prev_type()) is not None:
@@ -162,7 +162,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		return output
 
-	def _prev_type(self) -> Optional[str]:
+	def _prev_type(self) -> str | None:
 		enc_type = self._item_group.find_by_key('encryption_type').value
 
 		if enc_type:
@@ -171,7 +171,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		return None
 
-	def _prev_password(self) -> Optional[str]:
+	def _prev_password(self) -> str | None:
 		enc_pwd = self._item_group.find_by_key('encryption_password').value
 
 		if enc_pwd:
@@ -180,8 +180,8 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		return None
 
-	def _prev_partitions(self) -> Optional[str]:
-		partitions: Optional[list[PartitionModification]] = self._item_group.find_by_key('partitions').value
+	def _prev_partitions(self) -> str | None:
+		partitions: list[PartitionModification] | None = self._item_group.find_by_key('partitions').value
 
 		if partitions:
 			output = str(_('Partitions to be encrypted')) + '\n'
@@ -190,8 +190,8 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		return None
 
-	def _prev_lvm_vols(self) -> Optional[str]:
-		volumes: Optional[list[PartitionModification]] = self._item_group.find_by_key('lvm_vols').value
+	def _prev_lvm_vols(self) -> str | None:
+		volumes: list[PartitionModification] | None = self._item_group.find_by_key('lvm_vols').value
 
 		if volumes:
 			output = str(_('LVM volumes to be encrypted')) + '\n'
@@ -200,8 +200,8 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		return None
 
-	def _prev_hsm(self) -> Optional[str]:
-		fido_device: Optional[Fido2Device] = self._item_group.find_by_key('HSM').value
+	def _prev_hsm(self) -> str | None:
+		fido_device: Fido2Device | None = self._item_group.find_by_key('HSM').value
 
 		if not fido_device:
 			return None
@@ -211,7 +211,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		return f'{_("HSM device")}: {output}'
 
 
-def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: EncryptionType) -> Optional[EncryptionType]:
+def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: EncryptionType) -> EncryptionType | None:
 	options: list[EncryptionType] = []
 	preset_value = EncryptionType.type_to_text(preset)
 
@@ -239,7 +239,7 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 			return result.get_value()
 
 
-def select_encrypted_password() -> Optional[str]:
+def select_encrypted_password() -> str | None:
 	header = str(_('Enter disk encryption password (leave blank for no encryption)')) + '\n'
 	password = get_password(
 		text=str(_('Disk encryption password')),
@@ -250,7 +250,7 @@ def select_encrypted_password() -> Optional[str]:
 	return password
 
 
-def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
+def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 	header = str(_('Select a FIDO2 device to use for HSM'))
 
 	try:

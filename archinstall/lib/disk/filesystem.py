@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from ..interactions.general_conf import ask_abort
 from .device_handler import device_handler
@@ -28,7 +28,7 @@ class FilesystemHandler:
 	def __init__(
 		self,
 		disk_config: DiskLayoutConfiguration,
-		enc_conf: Optional[DiskEncryption] = None
+		enc_conf: DiskEncryption | None = None
 	):
 		self._disk_config = disk_config
 		self._enc_config = enc_conf

@@ -1,4 +1,4 @@
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from . import DiskLayoutConfiguration, DiskLayoutType
 from .device_model import LvmConfiguration
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class DiskLayoutConfigurationMenu(AbstractSubMenu):
 	def __init__(
 		self,
-		disk_layout_config: Optional[DiskLayoutConfiguration],
+		disk_layout_config: DiskLayoutConfiguration | None,
 		advanced: bool = False
 	):
 		self._disk_layout_config = disk_layout_config
@@ -52,10 +52,10 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 			),
 		]
 
-	def run(self) -> Optional[DiskLayoutConfiguration]:
+	def run(self) -> DiskLayoutConfiguration | None:
 		super().run()
 
-		disk_layout_config: Optional[DiskLayoutConfiguration] = self._data_store.get('disk_config', None)
+		disk_layout_config: DiskLayoutConfiguration | None = self._data_store.get('disk_config', None)
 
 		if disk_layout_config:
 			disk_layout_config.lvm_config = self._data_store.get('lvm_config', None)
@@ -63,7 +63,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		return disk_layout_config
 
 	def _check_dep_lvm(self) -> bool:
-		disk_layout_conf: Optional[DiskLayoutConfiguration] = self._menu_item_group.find_by_key('disk_config').value
+		disk_layout_conf: DiskLayoutConfiguration | None = self._menu_item_group.find_by_key('disk_config').value
 
 		if disk_layout_conf and disk_layout_conf.config_type == DiskLayoutType.Default:
 			return True
@@ -72,8 +72,8 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 	def _select_disk_layout_config(
 		self,
-		preset: Optional[DiskLayoutConfiguration]
-	) -> Optional[DiskLayoutConfiguration]:
+		preset: DiskLayoutConfiguration | None
+	) -> DiskLayoutConfiguration | None:
 		disk_config = select_disk_config(preset, advanced_option=self._advanced)
 
 		if disk_config != preset:
@@ -81,15 +81,15 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 		return disk_config
 
-	def _select_lvm_config(self, preset: Optional[LvmConfiguration]) -> Optional[LvmConfiguration]:
-		disk_config: Optional[DiskLayoutConfiguration] = self._item_group.find_by_key('disk_config').value
+	def _select_lvm_config(self, preset: LvmConfiguration | None) -> LvmConfiguration | None:
+		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
 
 		if disk_config:
 			return select_lvm_config(disk_config, preset=preset)
 
 		return preset
 
-	def _prev_disk_layouts(self, item: MenuItem) -> Optional[str]:
+	def _prev_disk_layouts(self, item: MenuItem) -> str | None:
 		if not item.value:
 			return None
 
@@ -126,7 +126,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 		return None
 
-	def _prev_lvm_config(self, item: MenuItem) -> Optional[str]:
+	def _prev_lvm_config(self, item: MenuItem) -> str | None:
 		if not item.value:
 			return None
 

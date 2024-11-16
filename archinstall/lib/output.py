@@ -6,7 +6,7 @@ from collections.abc import Callable
 from enum import Enum
 
 from pathlib import Path
-from typing import Union, Any, Optional, TYPE_CHECKING
+from typing import Union, Any, TYPE_CHECKING
 from dataclasses import asdict, is_dataclass
 
 from .storage import storage
@@ -21,7 +21,7 @@ class FormattedOutput:
 	def _get_values(
 		cls,
 		o: 'DataclassInstance',
-		class_formatter: Optional[Union[str, Callable]] = None,
+		class_formatter: Union[str, Callable] | None = None,
 		filter_list: list[str] = []
 	) -> dict[str, Any]:
 		"""
@@ -53,7 +53,7 @@ class FormattedOutput:
 	def as_table(
 		cls,
 		obj: list[Any],
-		class_formatter: Optional[Union[str, Callable]] = None,
+		class_formatter: Union[str, Callable] | None = None,
 		filter_list: list[str] = [],
 		capitalize: bool = False
 	) -> str:
@@ -203,7 +203,7 @@ class Font(Enum):
 def _stylize_output(
 	text: str,
 	fg: str,
-	bg: Optional[str],
+	bg: str | None,
 	reset: bool,
 	font: list[Font] = [],
 ) -> str:
@@ -257,7 +257,7 @@ def info(
 	*msgs: str,
 	level: int = logging.INFO,
 	fg: str = 'white',
-	bg: Optional[str] = None,
+	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = []
 ) -> None:
@@ -268,7 +268,7 @@ def debug(
 	*msgs: str,
 	level: int = logging.DEBUG,
 	fg: str = 'white',
-	bg: Optional[str] = None,
+	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = []
 ) -> None:
@@ -279,7 +279,7 @@ def error(
 	*msgs: str,
 	level: int = logging.ERROR,
 	fg: str = 'red',
-	bg: Optional[str] = None,
+	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = []
 ) -> None:
@@ -290,7 +290,7 @@ def warn(
 	*msgs: str,
 	level: int = logging.WARNING,
 	fg: str = 'yellow',
-	bg: Optional[str] = None,
+	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = []
 ) -> None:
@@ -301,7 +301,7 @@ def log(
 	*msgs: str,
 	level: int = logging.INFO,
 	fg: str = 'white',
-	bg: Optional[str] = None,
+	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = []
 ) -> None:
