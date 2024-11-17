@@ -46,8 +46,10 @@ def select_devices(preset: list[disk.BDevice] | None = []) -> list[disk.BDevice]
 	).run()
 
 	match result.type_:
-		case ResultType.Reset: return []
-		case ResultType.Skip: return preset
+		case ResultType.Reset:
+			return []
+		case ResultType.Skip:
+			return preset
 		case ResultType.Selection:
 			selected_device_info: list[disk._DeviceInfo] = result.get_values()
 			selected_devices = []
@@ -123,8 +125,10 @@ def select_disk_config(
 	).run()
 
 	match result.type_:
-		case ResultType.Skip: return preset
-		case ResultType.Reset: return None
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return None
 		case ResultType.Selection:
 			selection = result.get_value()
 
@@ -191,8 +195,10 @@ def select_lvm_config(
 	).run()
 
 	match result.type_:
-		case ResultType.Skip: return preset
-		case ResultType.Reset: return None
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return None
 		case ResultType.Selection:
 			if result.get_value() == default_mode:
 				return suggest_lvm_layout(disk_config)

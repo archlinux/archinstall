@@ -192,7 +192,6 @@ select = [
 ]
 
 ignore = [
-    "E701",     # multiple-statements-on-one-line-colon
     "E722",     # bare-except
     "PLW2901",  # redefined-loop-name
     "UP006",    # non-pep585-annotation

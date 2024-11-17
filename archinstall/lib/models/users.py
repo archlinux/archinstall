@@ -15,17 +15,25 @@ class PasswordStrength(Enum):
 	@property
 	def value(self) -> str:  # pylint: disable=invalid-overridden-method
 		match self:
-			case PasswordStrength.VERY_WEAK: return str(_('very weak'))
-			case PasswordStrength.WEAK: return str(_('weak'))
-			case PasswordStrength.MODERATE: return str(_('moderate'))
-			case PasswordStrength.STRONG: return str(_('strong'))
+			case PasswordStrength.VERY_WEAK:
+				return str(_('very weak'))
+			case PasswordStrength.WEAK:
+				return str(_('weak'))
+			case PasswordStrength.MODERATE:
+				return str(_('moderate'))
+			case PasswordStrength.STRONG:
+				return str(_('strong'))
 
 	def color(self) -> str:
 		match self:
-			case PasswordStrength.VERY_WEAK: return 'red'
-			case PasswordStrength.WEAK: return 'red'
-			case PasswordStrength.MODERATE: return 'yellow'
-			case PasswordStrength.STRONG: return 'green'
+			case PasswordStrength.VERY_WEAK:
+				return 'red'
+			case PasswordStrength.WEAK:
+				return 'red'
+			case PasswordStrength.MODERATE:
+				return 'yellow'
+			case PasswordStrength.STRONG:
+				return 'green'
 
 	@classmethod
 	def strength(cls, password: str) -> 'PasswordStrength':
