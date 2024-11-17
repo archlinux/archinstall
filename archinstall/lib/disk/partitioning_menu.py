@@ -277,12 +277,17 @@ class PartitioningList(ListManager):
 		).input()
 
 		size: Size | None = None
-		value = result.text()
 
-		if value is None:
-			size = default
-		else:
-			size = self._validate_value(sector_size, total_size, value, start)
+		match result.type_:
+			case ResultType.Skip:
+				size = default
+			case ResultType.Selection:
+				value = result.text()
+
+				if value:
+					size = self._validate_value(sector_size, total_size, value, start)
+				else:
+					size = default
 
 		assert size
 		return size
