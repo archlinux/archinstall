@@ -6,7 +6,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Optional, List, Dict, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING, Any
 from typing import Union
 
 import parted
@@ -40,20 +40,20 @@ class DiskLayoutType(Enum):
 @dataclass
 class DiskLayoutConfiguration:
 	config_type: DiskLayoutType
-	device_modifications: List[DeviceModification] = field(default_factory=list)
+	device_modifications: list[DeviceModification] = field(default_factory=list)
 	lvm_config: Optional[LvmConfiguration] = None
 
 	# used for pre-mounted config
 	mountpoint: Optional[Path] = None
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		if self.config_type == DiskLayoutType.Pre_mount:
 			return {
 				'config_type': self.config_type.value,
 				'mountpoint': str(self.mountpoint)
 			}
 		else:
-			config: Dict[str, Any] = {
+			config: dict[str, Any] = {
 				'config_type': self.config_type.value,
 				'device_modifications': [mod.json() for mod in self.device_modifications],
 			}
@@ -64,10 +64,10 @@ class DiskLayoutConfiguration:
 			return config
 
 	@classmethod
-	def parse_arg(cls, disk_config: Dict[str, Any]) -> Optional[DiskLayoutConfiguration]:
+	def parse_arg(cls, disk_config: dict[str, Any]) -> Optional[DiskLayoutConfiguration]:
 		from .device_handler import device_handler
 
-		device_modifications: List[DeviceModification] = []
+		device_modifications: list[DeviceModification] = []
 		config_type = disk_config.get('config_type', None)
 
 		if not config_type:
@@ -109,7 +109,7 @@ class DiskLayoutConfiguration:
 				device=device
 			)
 
-			device_partitions: List[PartitionModification] = []
+			device_partitions: list[PartitionModification] = []
 
 			for partition in entry.get('partitions', []):
 				device_partition = PartitionModification(
@@ -166,11 +166,11 @@ class Unit(Enum):
 	sectors = 'sectors'  # size in sector
 
 	@staticmethod
-	def get_all_units() -> List[str]:
+	def get_all_units() -> list[str]:
 		return [u.name for u in Unit]
 
 	@staticmethod
-	def get_si_units() -> List[Unit]:
+	def get_si_units() -> list[Unit]:
 		return [u for u in Unit if 'i' not in u.name and u.name != 'sectors']
 
 
@@ -188,14 +188,14 @@ class SectorSize:
 	def default() -> SectorSize:
 		return SectorSize(512, Unit.B)
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'value': self.value,
 			'unit': self.unit.name,
 		}
 
 	@classmethod
-	def parse_args(cls, arg: Dict[str, Any]) -> SectorSize:
+	def parse_args(cls, arg: dict[str, Any]) -> SectorSize:
 		return SectorSize(
 			arg['value'],
 			Unit[arg['unit']]
@@ -218,7 +218,7 @@ class Size:
 		if not isinstance(self.sector_size, SectorSize):
 			raise ValueError('sector size must be of type SectorSize')
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'value': self.value,
 			'unit': self.unit.name,
@@ -226,7 +226,7 @@ class Size:
 		}
 
 	@classmethod
-	def parse_args(cls, size_arg: Dict[str, Any]) -> Size:
+	def parse_args(cls, size_arg: dict[str, Any]) -> Size:
 		sector_size = size_arg['sector_size']
 
 		return Size(
@@ -345,20 +345,20 @@ class _PartitionInfo:
 	path: Path
 	start: Size
 	length: Size
-	flags: List[PartitionFlag]
+	flags: list[PartitionFlag]
 	partn: Optional[int]
 	partuuid: Optional[str]
 	uuid: Optional[str]
 	disk: Disk
-	mountpoints: List[Path]
-	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
+	mountpoints: list[Path]
+	btrfs_subvol_infos: list[_BtrfsSubvolumeInfo] = field(default_factory=list)
 
 	@property
 	def sector_size(self) -> SectorSize:
 		sector_size = self.partition.geometry.device.sectorSize
 		return SectorSize(sector_size, Unit.B)
 
-	def table_data(self) -> Dict[str, Any]:
+	def table_data(self) -> dict[str, Any]:
 		end = self.start + self.length
 
 		part_info = {
@@ -385,8 +385,8 @@ class _PartitionInfo:
 		partn: Optional[int],
 		partuuid: Optional[str],
 		uuid: Optional[str],
-		mountpoints: List[Path],
-		btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = []
+		mountpoints: list[Path],
+		btrfs_subvol_infos: list[_BtrfsSubvolumeInfo] = []
 	) -> _PartitionInfo:
 		partition_type = PartitionType.get_type_from_code(partition.type)
 		flags = [f for f in PartitionFlag if partition.getFlag(f.value)]
@@ -427,12 +427,12 @@ class _DeviceInfo:
 	path: Path
 	type: str
 	total_size: Size
-	free_space_regions: List[DeviceGeometry]
+	free_space_regions: list[DeviceGeometry]
 	sector_size: SectorSize
 	read_only: bool
 	dirty: bool
 
-	def table_data(self) -> Dict[str, Any]:
+	def table_data(self) -> dict[str, Any]:
 		total_free_space = sum([region.get_length(unit=Unit.MiB) for region in self.free_space_regions])
 		return {
 			'Model': self.model,
@@ -480,7 +480,7 @@ class SubvolumeModification:
 		return SubvolumeModification(info.name, mountpoint=info.mountpoint)
 
 	@classmethod
-	def parse_args(cls, subvol_args: List[Dict[str, Any]]) -> List[SubvolumeModification]:
+	def parse_args(cls, subvol_args: list[dict[str, Any]]) -> list[SubvolumeModification]:
 		mods = []
 		for entry in subvol_args:
 			if not entry.get('name', None) or not entry.get('mountpoint', None):
@@ -509,10 +509,10 @@ class SubvolumeModification:
 			return self.mountpoint == Path('/')
 		return False
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {'name': str(self.name), 'mountpoint': str(self.mountpoint)}
 
-	def table_data(self) -> Dict[str, Any]:
+	def table_data(self) -> dict[str, Any]:
 		return self.json()
 
 
@@ -532,7 +532,7 @@ class DeviceGeometry:
 	def get_length(self, unit: Unit = Unit.sectors) -> int:
 		return self._geometry.getLength(unit.name)
 
-	def table_data(self) -> Dict[str, Any]:
+	def table_data(self) -> dict[str, Any]:
 		start = Size(self._geometry.start, Unit.sectors, self._sector_size)
 		end = Size(self._geometry.end, Unit.sectors, self._sector_size)
 		length = Size(self._geometry.getLength(), Unit.sectors, self._sector_size)
@@ -553,7 +553,7 @@ class DeviceGeometry:
 class BDevice:
 	disk: Disk
 	device_info: _DeviceInfo
-	partition_infos: List[_PartitionInfo]
+	partition_infos: list[_PartitionInfo]
 
 	def __hash__(self) -> int:
 		return hash(self.disk.device.path)
@@ -674,9 +674,9 @@ class PartitionModification:
 	length: Size
 	fs_type: Optional[FilesystemType] = None
 	mountpoint: Optional[Path] = None
-	mount_options: List[str] = field(default_factory=list)
-	flags: List[PartitionFlag] = field(default_factory=list)
-	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
+	mount_options: list[str] = field(default_factory=list)
+	flags: list[PartitionFlag] = field(default_factory=list)
+	btrfs_subvols: list[SubvolumeModification] = field(default_factory=list)
 
 	# only set if the device was created or exists
 	dev_path: Optional[Path] = None
@@ -813,7 +813,7 @@ class PartitionModification:
 		else:
 			self.set_flag(flag)
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		"""
 		Called for configuration settings
 		"""
@@ -831,7 +831,7 @@ class PartitionModification:
 			'btrfs': [vol.json() for vol in self.btrfs_subvols]
 		}
 
-	def table_data(self) -> Dict[str, Any]:
+	def table_data(self) -> dict[str, Any]:
 		"""
 		Called for displaying data in table format
 		"""
@@ -872,10 +872,10 @@ class LvmLayoutType(Enum):
 @dataclass
 class LvmVolumeGroup:
 	name: str
-	pvs: List[PartitionModification]
-	volumes: List[LvmVolume] = field(default_factory=list)
+	pvs: list[PartitionModification]
+	volumes: list[LvmVolume] = field(default_factory=list)
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'name': self.name,
 			'lvm_pvs': [p.obj_id for p in self.pvs],
@@ -883,7 +883,7 @@ class LvmVolumeGroup:
 		}
 
 	@staticmethod
-	def parse_arg(arg: Dict[str, Any], disk_config: DiskLayoutConfiguration) -> LvmVolumeGroup:
+	def parse_arg(arg: dict[str, Any], disk_config: DiskLayoutConfiguration) -> LvmVolumeGroup:
 		lvm_pvs = []
 		for mod in disk_config.device_modifications:
 			for part in mod.partitions:
@@ -914,8 +914,8 @@ class LvmVolume:
 	fs_type: FilesystemType
 	length: Size
 	mountpoint: Optional[Path]
-	mount_options: List[str] = field(default_factory=list)
-	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
+	mount_options: list[str] = field(default_factory=list)
+	btrfs_subvols: list[SubvolumeModification] = field(default_factory=list)
 
 	# volume group name
 	vg_name: Optional[str] = None
@@ -973,7 +973,7 @@ class LvmVolume:
 		raise ValueError('Mountpoint is not specified')
 
 	@staticmethod
-	def parse_arg(arg: Dict[str, Any]) -> LvmVolume:
+	def parse_arg(arg: dict[str, Any]) -> LvmVolume:
 		volume = LvmVolume(
 			status=LvmVolumeStatus(arg['status']),
 			name=arg['name'],
@@ -988,7 +988,7 @@ class LvmVolume:
 
 		return volume
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'obj_id': self.obj_id,
 			'status': self.status.value,
@@ -1000,7 +1000,7 @@ class LvmVolume:
 			'btrfs': [vol.json() for vol in self.btrfs_subvols]
 		}
 
-	def table_data(self) -> Dict[str, Any]:
+	def table_data(self) -> dict[str, Any]:
 		part_mod = {
 			'Type': self.status.value,
 			'Name': self.name,
@@ -1055,7 +1055,7 @@ class LvmPVInfo:
 @dataclass
 class LvmConfiguration:
 	config_type: LvmLayoutType
-	vol_groups: List[LvmVolumeGroup]
+	vol_groups: list[LvmVolumeGroup]
 
 	def __post_init__(self) -> None:
 		# make sure all volume groups have unique PVs
@@ -1066,14 +1066,14 @@ class LvmConfiguration:
 					raise ValueError('A PV cannot be used in multiple volume groups')
 				pvs.append(pv)
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'config_type': self.config_type.value,
 			'vol_groups': [vol_gr.json() for vol_gr in self.vol_groups]
 		}
 
 	@staticmethod
-	def parse_arg(arg: Dict[str, Any], disk_config: DiskLayoutConfiguration) -> LvmConfiguration:
+	def parse_arg(arg: dict[str, Any], disk_config: DiskLayoutConfiguration) -> LvmConfiguration:
 		lvm_pvs = []
 		for mod in disk_config.device_modifications:
 			for part in mod.partitions:
@@ -1085,14 +1085,14 @@ class LvmConfiguration:
 			vol_groups=[LvmVolumeGroup.parse_arg(vol_group, disk_config) for vol_group in arg['vol_groups']],
 		)
 
-	def get_all_pvs(self) -> List[PartitionModification]:
+	def get_all_pvs(self) -> list[PartitionModification]:
 		pvs = []
 		for vg in self.vol_groups:
 			pvs += vg.pvs
 
 		return pvs
 
-	def get_all_volumes(self) -> List[LvmVolume]:
+	def get_all_volumes(self) -> list[LvmVolume]:
 		volumes = []
 
 		for vg in self.vol_groups:
@@ -1122,7 +1122,7 @@ class LvmConfiguration:
 class DeviceModification:
 	device: BDevice
 	wipe: bool
-	partitions: List[PartitionModification] = field(default_factory=list)
+	partitions: list[PartitionModification] = field(default_factory=list)
 
 	@property
 	def device_path(self) -> Path:
@@ -1157,7 +1157,7 @@ class DeviceModification:
 		filtered = filter(lambda x: x.is_root(), self.partitions)
 		return next(filtered, None)
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		"""
 		Called when generating configuration files
 		"""
@@ -1175,7 +1175,7 @@ class EncryptionType(Enum):
 	LuksOnLvm = 'luks_on_lvm'
 
 	@classmethod
-	def _encryption_type_mapper(cls) -> Dict[str, 'EncryptionType']:
+	def _encryption_type_mapper(cls) -> dict[str, 'EncryptionType']:
 		return {
 			str(_('No Encryption')): EncryptionType.NoEncryption,
 			str(_('LUKS')): EncryptionType.Luks,
@@ -1199,8 +1199,8 @@ class EncryptionType(Enum):
 class DiskEncryption:
 	encryption_type: EncryptionType = EncryptionType.NoEncryption
 	encryption_password: str = ''
-	partitions: List[PartitionModification] = field(default_factory=list)
-	lvm_volumes: List[LvmVolume] = field(default_factory=list)
+	partitions: list[PartitionModification] = field(default_factory=list)
+	lvm_volumes: list[LvmVolume] = field(default_factory=list)
 	hsm_device: Optional[Fido2Device] = None
 
 	def __post_init__(self) -> None:
@@ -1217,8 +1217,8 @@ class DiskEncryption:
 			return dev in self.lvm_volumes and dev.mountpoint != Path('/')
 		return False
 
-	def json(self) -> Dict[str, Any]:
-		obj: Dict[str, Any] = {
+	def json(self) -> dict[str, Any]:
+		obj: dict[str, Any] = {
 			'encryption_type': self.encryption_type.value,
 			'partitions': [p.obj_id for p in self.partitions],
 			'lvm_volumes': [vol.obj_id for vol in self.lvm_volumes]
@@ -1247,7 +1247,7 @@ class DiskEncryption:
 	def parse_arg(
 		cls,
 		disk_config: DiskLayoutConfiguration,
-		disk_encryption: Dict[str, Any],
+		disk_encryption: dict[str, Any],
 		password: str = ''
 	) -> Optional['DiskEncryption']:
 		if not cls.validate_enc(disk_config):
@@ -1287,14 +1287,14 @@ class Fido2Device:
 	manufacturer: str
 	product: str
 
-	def json(self) -> Dict[str, str]:
+	def json(self) -> dict[str, str]:
 		return {
 			'path': str(self.path),
 			'manufacturer': self.manufacturer,
 			'product': self.product
 		}
 
-	def table_data(self) -> Dict[str, str]:
+	def table_data(self) -> dict[str, str]:
 		return {
 			'Path': str(self.path),
 			'Manufacturer': self.manufacturer,
@@ -1302,7 +1302,7 @@ class Fido2Device:
 		}
 
 	@classmethod
-	def parse_arg(cls, arg: Dict[str, str]) -> 'Fido2Device':
+	def parse_arg(cls, arg: dict[str, str]) -> 'Fido2Device':
 		return Fido2Device(
 			Path(arg['path']),
 			arg['manufacturer'],
@@ -1366,7 +1366,7 @@ def _fetch_lsblk_info(
 	dev_path: Optional[Union[Path, str]] = None,
 	reverse: bool = False,
 	full_dev_path: bool = False
-) -> List[LsblkInfo]:
+) -> list[LsblkInfo]:
 	cmd = ['lsblk', '--json', '--bytes', '--output', ','.join(LsblkInfo.fields())]
 
 	if reverse:
@@ -1411,13 +1411,13 @@ def get_lsblk_info(
 	raise DiskError(f'lsblk failed to retrieve information for "{dev_path}"')
 
 
-def get_all_lsblk_info() -> List[LsblkInfo]:
+def get_all_lsblk_info() -> list[LsblkInfo]:
 	return _fetch_lsblk_info()
 
 
 def find_lsblk_info(
 	dev_path: Union[Path, str],
-	info: List[LsblkInfo]
+	info: list[LsblkInfo]
 ) -> Optional[LsblkInfo]:
 	if isinstance(dev_path, str):
 		dev_path = Path(dev_path)
@@ -1429,8 +1429,8 @@ def find_lsblk_info(
 	return None
 
 
-def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[LsblkInfo]:
-	def _check(infos: List[LsblkInfo]) -> List[LsblkInfo]:
+def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> list[LsblkInfo]:
+	def _check(infos: list[LsblkInfo]) -> list[LsblkInfo]:
 		devices = []
 		for entry in infos:
 			if as_prefix:
