@@ -32,7 +32,6 @@ from .device_model import (
 	DiskEncryption,
 	Fido2Device,
 	LsblkInfo,
-	CleanType,
 	get_lsblk_info,
 	get_all_lsblk_info,
 	get_lsblk_by_mountpoint,
