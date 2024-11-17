@@ -28,8 +28,6 @@ The exceptions to PEP8 are:
   easier for non-IDE developers to navigate the code *(Tab display-width should be equal to 4 spaces)*. Exception to the
   rule are comments that need fine-tuned indentation for documentation purposes.
 * [Line length](https://www.python.org/dev/peps/pep-0008/#maximum-line-length) a maximum line length is enforced via flake8 with 220 characters
-* [Line breaks before/after binary operator](https://www.python.org/dev/peps/pep-0008/#should-a-line-break-before-or-after-a-binary-operator)
-  is not enforced, as long as the style of line breaks is consistent within the same code block.
 * Archinstall should always be saved with **Unix-formatted line endings** and no other platform-specific formats.
 * [String quotes](https://www.python.org/dev/peps/pep-0008/#string-quotes) follow PEP8, the exception being when
   creating formatted strings, double-quoted strings are *preferred* but not required on the outer edges *(
