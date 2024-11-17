@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 
 from ..utils.util import get_password
 from ..menu import ListManager
@@ -28,10 +28,10 @@ class UserList(ListManager):
 		]
 		super().__init__(prompt, lusers, [self._actions[0]], self._actions[1:])
 
-	def selected_action_display(self, user: User) -> str:
-		return user.username
+	def selected_action_display(self, selection: User) -> str:
+		return selection.username
 
-	def handle_action(self, action: str, entry: Optional[User], data: list[User]) -> list[User]:
+	def handle_action(self, action: str, entry: User | None, data: list[User]) -> list[User]:
 		if action == self._actions[0]:  # add
 			new_user = self._add_user()
 			if new_user is not None:
@@ -54,12 +54,12 @@ class UserList(ListManager):
 
 		return data
 
-	def _check_for_correct_username(self, username: str) -> Optional[str]:
+	def _check_for_correct_username(self, username: str) -> str | None:
 		if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
 			return None
 		return str(_("The username you entered is invalid"))
 
-	def _add_user(self) -> Optional[User]:
+	def _add_user(self) -> User | None:
 		editResult = EditMenu(
 			str(_('Username')),
 			allow_skip=True,

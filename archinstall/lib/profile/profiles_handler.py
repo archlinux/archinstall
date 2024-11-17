@@ -8,7 +8,7 @@ from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from ...default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
@@ -26,14 +26,14 @@ if TYPE_CHECKING:
 class ProfileHandler:
 	def __init__(self) -> None:
 		self._profiles_path: Path = storage['PROFILE']
-		self._profiles: Optional[list[Profile]] = None
+		self._profiles: list[Profile] | None = None
 
 		# special variable to keep track of a profile url configuration
 		# it is merely used to be able to export the path again when a user
 		# wants to save the configuration
 		self._url_path = None
 
-	def to_json(self, profile: Optional[Profile]) -> dict[str, Any]:
+	def to_json(self, profile: Profile | None) -> dict[str, Any]:
 		"""
 		Serialize the selected profile setting to JSON
 		"""
@@ -51,11 +51,11 @@ class ProfileHandler:
 
 		return data
 
-	def parse_profile_config(self, profile_config: dict[str, Any]) -> Optional[Profile]:
+	def parse_profile_config(self, profile_config: dict[str, Any]) -> Profile | None:
 		"""
 		Deserialize JSON configuration for profile
 		"""
-		profile: Optional[Profile] = None
+		profile: Profile | None = None
 
 		# the order of these is important, we want to
 		# load all the default_profiles from url and custom
@@ -154,7 +154,7 @@ class ProfileHandler:
 		remove_names = [p.name for p in profiles]
 		self._profiles = [p for p in self.profiles if p.name not in remove_names]
 
-	def get_profile_by_name(self, name: str) -> Optional[Profile]:
+	def get_profile_by_name(self, name: str) -> Profile | None:
 		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore
 
 	def get_top_level_profiles(self) -> list[Profile]:

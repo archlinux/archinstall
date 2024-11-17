@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from .device_model import SubvolumeModification
 from ..menu import ListManager
@@ -22,10 +22,10 @@ class SubvolumeMenu(ListManager):
 		]
 		super().__init__(prompt, btrfs_subvols, [self._actions[0]], self._actions[1:])
 
-	def selected_action_display(self, subvolume: SubvolumeModification) -> str:
-		return str(subvolume.name)
+	def selected_action_display(self, selection: SubvolumeModification) -> str:
+		return str(selection.name)
 
-	def _add_subvolume(self, preset: Optional[SubvolumeModification] = None) -> Optional[SubvolumeModification]:
+	def _add_subvolume(self, preset: SubvolumeModification | None = None) -> SubvolumeModification | None:
 		result = EditMenu(
 			str(_('Subvolume name')),
 			alignment=Alignment.CENTER,
@@ -57,7 +57,7 @@ class SubvolumeMenu(ListManager):
 	def handle_action(
 		self,
 		action: str,
-		entry: Optional[SubvolumeModification],
+		entry: SubvolumeModification | None,
 		data: list[SubvolumeModification]
 	) -> list[SubvolumeModification]:
 		if action == self._actions[0]:  # add

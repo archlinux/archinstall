@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 
 import archinstall
 from archinstall import info, debug
@@ -100,7 +100,7 @@ def perform_installation(mountpoint: Path) -> None:
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
-		network_config: Optional[NetworkConfiguration] = archinstall.arguments.get('network_config', None)
+		network_config: NetworkConfiguration | None = archinstall.arguments.get('network_config', None)
 
 		if network_config:
 			network_config.install_network_config(
@@ -111,7 +111,7 @@ def perform_installation(mountpoint: Path) -> None:
 		if users := archinstall.arguments.get('!users', None):
 			installation.create_users(users)
 
-		audio_config: Optional[AudioConfiguration] = archinstall.arguments.get('audio_config', None)
+		audio_config: AudioConfiguration | None = archinstall.arguments.get('audio_config', None)
 		if audio_config:
 			audio_config.install_audio_config(installation)
 		else:

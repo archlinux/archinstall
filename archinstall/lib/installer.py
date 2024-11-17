@@ -8,7 +8,7 @@ import time
 from collections.abc import Callable
 from pathlib import Path
 from types import TracebackType
-from typing import Any, Optional, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union
 
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
@@ -47,9 +47,9 @@ class Installer:
 		self,
 		target: Path,
 		disk_config: disk.DiskLayoutConfiguration,
-		disk_encryption: Optional[disk.DiskEncryption] = None,
+		disk_encryption: disk.DiskEncryption | None = None,
 		base_packages: list[str] = [],
-		kernels: Optional[list[str]] = None
+		kernels: list[str] | None = None
 	):
 		"""
 		`Installer()` is the wrapper for most basic installation steps.
@@ -337,13 +337,14 @@ class Installer:
 			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols, volume.mount_options)
 
 	def _mount_luks_partition(self, part_mod: disk.PartitionModification, luks_handler: Luks2) -> None:
-		if part_mod.fs_type != disk.FilesystemType.Btrfs:
-			if part_mod.mountpoint and luks_handler.mapper_dev:
-				target = self.target / part_mod.relative_mountpoint
-				disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+		if not luks_handler.mapper_dev:
+			return None
 
-		if part_mod.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
+		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.btrfs_subvols:
 			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
+		elif part_mod.mountpoint:
+			target = self.target / part_mod.relative_mountpoint
+			disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
 	def _mount_luks_volume(self, volume: disk.LvmVolume, luks_handler: Luks2) -> None:
 		if volume.fs_type != disk.FilesystemType.Btrfs:
@@ -628,7 +629,7 @@ class Installer:
 	def run_command(self, cmd: str, *args: str, **kwargs: str) -> SysCommand:
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
-	def arch_chroot(self, cmd: str, run_as: Optional[str] = None) -> SysCommand:
+	def arch_chroot(self, cmd: str, run_as: str | None = None) -> SysCommand:
 		if run_as:
 			cmd = f"su - {run_as} -c {shlex.quote(cmd)}"
 
@@ -736,7 +737,7 @@ class Installer:
 				log(error.worker._trace_log.decode())
 			return False
 
-	def _get_microcode(self) -> Optional[Path]:
+	def _get_microcode(self) -> Path | None:
 		if not SysInfo.is_vm():
 			if vendor := SysInfo.cpu_vendor():
 				return vendor.get_ucode()
@@ -911,19 +912,19 @@ class Installer:
 		else:
 			raise ValueError("Archinstall currently only supports setting up swap on zram")
 
-	def _get_efi_partition(self) -> Optional[disk.PartitionModification]:
+	def _get_efi_partition(self) -> disk.PartitionModification | None:
 		for layout in self._disk_config.device_modifications:
 			if partition := layout.get_efi_partition():
 				return partition
 		return None
 
-	def _get_boot_partition(self) -> Optional[disk.PartitionModification]:
+	def _get_boot_partition(self) -> disk.PartitionModification | None:
 		for layout in self._disk_config.device_modifications:
 			if boot := layout.get_boot_partition():
 				return boot
 		return None
 
-	def _get_root(self) -> Optional[disk.PartitionModification | disk.LvmVolume]:
+	def _get_root(self) -> disk.PartitionModification | disk.LvmVolume | None:
 		if self._disk_config.lvm_config:
 			return self._disk_config.lvm_config.get_root_volume()
 		else:
@@ -1054,7 +1055,7 @@ class Installer:
 		self,
 		boot_partition: disk.PartitionModification,
 		root: disk.PartitionModification | disk.LvmVolume,
-		efi_partition: Optional[disk.PartitionModification],
+		efi_partition: disk.PartitionModification | None,
 		uki_enabled: bool = False
 	) -> None:
 		debug('Installing systemd bootloader')
@@ -1153,7 +1154,7 @@ class Installer:
 		self,
 		boot_partition: disk.PartitionModification,
 		root: disk.PartitionModification | disk.LvmVolume,
-		efi_partition: Optional[disk.PartitionModification]
+		efi_partition: disk.PartitionModification | None
 	) -> None:
 		debug('Installing grub bootloader')
 
@@ -1237,7 +1238,7 @@ class Installer:
 	def _add_limine_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
-		efi_partition: Optional[disk.PartitionModification],
+		efi_partition: disk.PartitionModification | None,
 		root: disk.PartitionModification | disk.LvmVolume
 	) -> None:
 		debug('Installing limine bootloader')
@@ -1381,7 +1382,7 @@ Exec = /bin/sh -c "{hook_command}"
 	def _config_uki(
 		self,
 		root: disk.PartitionModification | disk.LvmVolume,
-		efi_partition: Optional[disk.PartitionModification]
+		efi_partition: disk.PartitionModification | None
 	) -> None:
 		if not efi_partition or not efi_partition.mountpoint:
 			raise ValueError(f'Could not detect ESP at mountpoint {self.target}')
@@ -1512,7 +1513,7 @@ Exec = /bin/sh -c "{hook_command}"
 		for user in users:
 			self.user_create(user.username, user.password, user.groups, user.sudo)
 
-	def user_create(self, user: str, password: Optional[str] = None, groups: Optional[list[str]] = None, sudo: bool = False) -> None:
+	def user_create(self, user: str, password: str | None = None, groups: list[str] | None = None, sudo: bool = False) -> None:
 		if groups is None:
 			groups = []
 
@@ -1630,7 +1631,7 @@ Exec = /bin/sh -c "{hook_command}"
 
 		return True
 
-	def _service_started(self, service_name: str) -> Optional[str]:
+	def _service_started(self, service_name: str) -> str | None:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 

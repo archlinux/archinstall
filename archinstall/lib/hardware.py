@@ -2,7 +2,7 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any
 
 from .exceptions import SysCallError
 from .general import SysCommand
@@ -33,7 +33,7 @@ class CpuVendor(Enum):
 			case _:
 				return False
 
-	def get_ucode(self) -> Optional[Path]:
+	def get_ucode(self) -> Path | None:
 		if self._has_microcode():
 			return Path(self.value + '-ucode.img')
 		return None
@@ -233,13 +233,13 @@ class SysInfo:
 		return any('intel' in x.lower() for x in SysInfo._graphics_devices())
 
 	@staticmethod
-	def cpu_vendor() -> Optional[CpuVendor]:
+	def cpu_vendor() -> CpuVendor | None:
 		if vendor := _sys_info.cpu_info.get('vendor_id'):
 			return CpuVendor.get_vendor(vendor)
 		return None
 
 	@staticmethod
-	def cpu_model() -> Optional[str]:
+	def cpu_model() -> str | None:
 		return _sys_info.cpu_info.get('model name', None)
 
 	@staticmethod
@@ -265,7 +265,7 @@ class SysInfo:
 		return _sys_info.mem_info_by_key('MemTotal')
 
 	@staticmethod
-	def virtualization() -> Optional[str]:
+	def virtualization() -> str | None:
 		try:
 			return str(SysCommand("systemd-detect-virt")).strip('\r\n')
 		except SysCallError as err:

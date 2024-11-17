@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from ..hardware import GfxDriver
 from archinstall.default_profiles.profile import Profile, GreeterType
@@ -12,9 +12,9 @@ if TYPE_CHECKING:
 
 @dataclass
 class ProfileConfiguration:
-	profile: Optional[Profile] = None
-	gfx_driver: Optional[GfxDriver] = None
-	greeter: Optional[GreeterType] = None
+	profile: Profile | None = None
+	gfx_driver: GfxDriver | None = None
+	greeter: GreeterType | None = None
 
 	def json(self) -> dict[str, Any]:
 		from .profiles_handler import profile_handler

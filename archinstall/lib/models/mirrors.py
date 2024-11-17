@@ -4,7 +4,6 @@ import http.client
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Optional
 
 from ..networking import ping, DownloadTimer
 from ..output import debug
@@ -89,7 +88,7 @@ class MirrorStatusEntryV3(BaseModel):
 		return self._latency
 
 	@field_validator('score', mode='before')
-	def validate_score(cls, value: int) -> Optional[int]:
+	def validate_score(cls, value: int) -> int | None:
 		if value is not None:
 			value = round(value)
 			debug(f"    score: {value}")

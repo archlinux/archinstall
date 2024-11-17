@@ -17,7 +17,7 @@ import pathlib
 from collections.abc import Callable, Iterator
 from datetime import datetime, date
 from enum import Enum
-from typing import Optional, Any, Union, TYPE_CHECKING
+from typing import Any, Union, TYPE_CHECKING
 from select import epoll, EPOLLIN, EPOLLHUP
 from shutil import which
 
@@ -87,8 +87,8 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	A safe JSON encoder that will omit private information in dicts (starting with !)
 	"""
 
-	def encode(self, obj: Any) -> str:
-		return super().encode(jsonify(obj))
+	def encode(self, o: Any) -> str:
+		return super().encode(jsonify(o))
 
 
 class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
@@ -96,19 +96,19 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	UNSAFE_JSON will call/encode and keep private information in dicts (starting with !)
 	"""
 
-	def encode(self, obj: Any) -> str:
-		return super().encode(jsonify(obj, safe=False))
+	def encode(self, o: Any) -> str:
+		return super().encode(jsonify(o, safe=False))
 
 
 class SysCommandWorker:
 	def __init__(
 		self,
 		cmd: Union[str, list[str]],
-		callbacks: Optional[dict[str, Any]] = None,
-		peek_output: Optional[bool] = False,
-		environment_vars: Optional[dict[str, Any]] = None,
-		logfile: Optional[None] = None,
-		working_directory: Optional[str] = './',
+		callbacks: dict[str, Any] | None = None,
+		peek_output: bool | None = False,
+		environment_vars: dict[str, Any] | None = None,
+		logfile: None = None,
+		working_directory: str | None = './',
 		remove_vt100_escape_codes_from_lines: bool = True
 	):
 		callbacks = callbacks or {}
@@ -129,13 +129,13 @@ class SysCommandWorker:
 		self.logfile = logfile
 		self.working_directory = working_directory
 
-		self.exit_code: Optional[int] = None
+		self.exit_code: int | None = None
 		self._trace_log = b''
 		self._trace_log_pos = 0
 		self.poll_object = epoll()
-		self.child_fd: Optional[int] = None
-		self.started: Optional[float] = None
-		self.ended: Optional[float] = None
+		self.child_fd: int | None = None
+		self.started: float | None = None
+		self.ended: float | None = None
 		self.remove_vt100_escape_codes_from_lines: bool = remove_vt100_escape_codes_from_lines
 
 	def __contains__(self, key: bytes) -> bool:
@@ -349,10 +349,10 @@ class SysCommand:
 		self,
 		cmd: Union[str, list[str]],
 		callbacks: dict[str, Callable[[Any], Any]] = {},
-		start_callback: Optional[Callable[[Any], Any]] = None,
-		peek_output: Optional[bool] = False,
-		environment_vars: Optional[dict[str, Any]] = None,
-		working_directory: Optional[str] = './',
+		start_callback: Callable[[Any], Any] | None = None,
+		peek_output: bool | None = False,
+		environment_vars: dict[str, Any] | None = None,
+		working_directory: str | None = './',
 		remove_vt100_escape_codes_from_lines: bool = True):
 
 		self._callbacks = callbacks.copy()
@@ -365,10 +365,10 @@ class SysCommand:
 		self.working_directory = working_directory
 		self.remove_vt100_escape_codes_from_lines = remove_vt100_escape_codes_from_lines
 
-		self.session: Optional[SysCommandWorker] = None
+		self.session: SysCommandWorker | None = None
 		self.create_session()
 
-	def __enter__(self) -> Optional[SysCommandWorker]:
+	def __enter__(self) -> SysCommandWorker | None:
 		return self.session
 
 	def __exit__(self, *args: str, **kwargs: dict[str, Any]) -> None:
@@ -383,7 +383,7 @@ class SysCommand:
 			for line in self.session:
 				yield line
 
-	def __getitem__(self, key: slice) -> Optional[bytes]:
+	def __getitem__(self, key: slice) -> bytes | None:
 		if not self.session:
 			raise KeyError("SysCommand() does not have an active session.")
 		elif type(key) is slice:
@@ -397,7 +397,7 @@ class SysCommand:
 	def __repr__(self, *args: list[Any], **kwargs: dict[str, Any]) -> str:
 		return self.decode('UTF-8', errors='backslashreplace') or ''
 
-	def __json__(self) -> dict[str, Union[str, bool, list[str], dict[str, Any], Optional[bool], Optional[dict[str, Any]]]]:
+	def __json__(self) -> dict[str, Union[str, bool, list[str], dict[str, Any], bool | None, dict[str, Any] | None]]:
 		return {
 			'cmd': self.cmd,
 			'callbacks': self._callbacks,
@@ -454,14 +454,14 @@ class SysCommand:
 		return self.session._trace_log
 
 	@property
-	def exit_code(self) -> Optional[int]:
+	def exit_code(self) -> int | None:
 		if self.session:
 			return self.session.exit_code
 		else:
 			return None
 
 	@property
-	def trace_log(self) -> Optional[bytes]:
+	def trace_log(self) -> bytes | None:
 		if self.session:
 			return self.session._trace_log
 		return None
@@ -496,7 +496,7 @@ def json_stream_to_structure(configuration_identifier: str, stream: str, target:
 	+configuration_identifier is just a parameter to get meaningful, but not so long messages
 	"""
 
-	raw: Optional[str] = None
+	raw: str | None = None
 	# Try using the stream as a URL that should be grabbed
 	if urllib.parse.urlparse(stream).scheme:
 		try:

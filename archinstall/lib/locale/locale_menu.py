@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 
 from .utils import list_keyboard_languages, list_locales, set_kb_layout, get_kb_layout
 from ..menu import AbstractSubMenu
@@ -99,7 +99,7 @@ class LocaleMenu(AbstractSubMenu):
 			)
 		]
 
-	def _prev_locale(self, item: MenuItem) -> Optional[str]:
+	def _prev_locale(self, item: MenuItem) -> str | None:
 		temp_locale = LocaleConfiguration(
 			self._menu_item_group.find_by_key('keyboard-layout').get_value(),
 			self._menu_item_group.find_by_key('sys-language').get_value(),
@@ -119,14 +119,14 @@ class LocaleMenu(AbstractSubMenu):
 			self._data_store['sys-encoding']
 		)
 
-	def _select_kb_layout(self, preset: Optional[str]) -> Optional[str]:
+	def _select_kb_layout(self, preset: str | None) -> str | None:
 		kb_lang = select_kb_layout(preset)
 		if kb_lang:
 			set_kb_layout(kb_lang)
 		return kb_lang
 
 
-def select_locale_lang(preset: Optional[str] = None) -> Optional[str]:
+def select_locale_lang(preset: str | None = None) -> str | None:
 	locales = list_locales()
 	locale_lang = set([locale.split()[0] for locale in locales])
 
@@ -150,7 +150,7 @@ def select_locale_lang(preset: Optional[str] = None) -> Optional[str]:
 			raise ValueError('Unhandled return type')
 
 
-def select_locale_enc(preset: Optional[str] = None) -> Optional[str]:
+def select_locale_enc(preset: str | None = None) -> str | None:
 	locales = list_locales()
 	locale_enc = set([locale.split()[1] for locale in locales])
 
@@ -174,7 +174,7 @@ def select_locale_enc(preset: Optional[str] = None) -> Optional[str]:
 			raise ValueError('Unhandled return type')
 
 
-def select_kb_layout(preset: Optional[str] = None) -> Optional[str]:
+def select_kb_layout(preset: str | None = None) -> str | None:
 	"""
 	Select keyboard layout
 

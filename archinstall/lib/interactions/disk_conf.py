@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
-from typing import Optional
 
 from .. import disk
 from ..disk.device_model import BtrfsMountOption
@@ -22,8 +21,8 @@ if TYPE_CHECKING:
 	_: Any
 
 
-def select_devices(preset: Optional[list[disk.BDevice]] = []) -> list[disk.BDevice]:
-	def _preview_device_selection(selection: disk._DeviceInfo) -> Optional[str]:
+def select_devices(preset: list[disk.BDevice] | None = []) -> list[disk.BDevice]:
+	def _preview_device_selection(selection: disk._DeviceInfo) -> str | None:
 		dev = disk.device_handler.get_device(selection.path)
 		if dev and dev.partition_infos:
 			return FormattedOutput.as_table(dev.partition_infos)
@@ -47,8 +46,10 @@ def select_devices(preset: Optional[list[disk.BDevice]] = []) -> list[disk.BDevi
 	).run()
 
 	match result.type_:
-		case ResultType.Reset: return []
-		case ResultType.Skip: return preset
+		case ResultType.Reset:
+			return []
+		case ResultType.Skip:
+			return preset
 		case ResultType.Selection:
 			selected_device_info: list[disk._DeviceInfo] = result.get_values()
 			selected_devices = []
@@ -62,7 +63,7 @@ def select_devices(preset: Optional[list[disk.BDevice]] = []) -> list[disk.BDevi
 
 def get_default_partition_layout(
 	devices: list[disk.BDevice],
-	filesystem_type: Optional[disk.FilesystemType] = None,
+	filesystem_type: disk.FilesystemType | None = None,
 	advanced_option: bool = False
 ) -> list[disk.DeviceModification]:
 	if len(devices) == 1:
@@ -98,9 +99,9 @@ def _manual_partitioning(
 
 
 def select_disk_config(
-	preset: Optional[disk.DiskLayoutConfiguration] = None,
+	preset: disk.DiskLayoutConfiguration | None = None,
 	advanced_option: bool = False
-) -> Optional[disk.DiskLayoutConfiguration]:
+) -> disk.DiskLayoutConfiguration | None:
 	default_layout = disk.DiskLayoutType.Default.display_msg()
 	manual_mode = disk.DiskLayoutType.Manual.display_msg()
 	pre_mount_mode = disk.DiskLayoutType.Pre_mount.display_msg()
@@ -124,8 +125,10 @@ def select_disk_config(
 	).run()
 
 	match result.type_:
-		case ResultType.Skip: return preset
-		case ResultType.Reset: return None
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return None
 		case ResultType.Selection:
 			selection = result.get_value()
 
@@ -174,8 +177,8 @@ def select_disk_config(
 
 def select_lvm_config(
 	disk_config: disk.DiskLayoutConfiguration,
-	preset: Optional[disk.LvmConfiguration] = None,
-) -> Optional[disk.LvmConfiguration]:
+	preset: disk.LvmConfiguration | None = None,
+) -> disk.LvmConfiguration | None:
 	preset_value = preset.config_type.display_msg() if preset else None
 	default_mode = disk.LvmLayoutType.Default.display_msg()
 
@@ -192,8 +195,10 @@ def select_lvm_config(
 	).run()
 
 	match result.type_:
-		case ResultType.Skip: return preset
-		case ResultType.Reset: return None
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return None
 		case ResultType.Selection:
 			if result.get_value() == default_mode:
 				return suggest_lvm_layout(disk_config)
@@ -292,9 +297,9 @@ def process_root_partition_size(total_size: disk.Size, sector_size: disk.SectorS
 
 def suggest_single_disk_layout(
 	device: disk.BDevice,
-	filesystem_type: Optional[disk.FilesystemType] = None,
+	filesystem_type: disk.FilesystemType | None = None,
 	advanced_options: bool = False,
-	separate_home: Optional[bool] = None
+	separate_home: bool | None = None
 ) -> disk.DeviceModification:
 	if not filesystem_type:
 		filesystem_type = select_main_filesystem_format(advanced_options)
@@ -424,7 +429,7 @@ def suggest_single_disk_layout(
 
 def suggest_multi_disk_layout(
 	devices: list[disk.BDevice],
-	filesystem_type: Optional[disk.FilesystemType] = None,
+	filesystem_type: disk.FilesystemType | None = None,
 	advanced_options: bool = False
 ) -> list[disk.DeviceModification]:
 	if not devices:
@@ -453,7 +458,7 @@ def suggest_multi_disk_layout(
 			devices_delta[device] = delta
 
 	sorted_delta: list[tuple[disk.BDevice, Any]] = sorted(devices_delta.items(), key=lambda x: x[1])
-	root_device: Optional[disk.BDevice] = sorted_delta[0][0]
+	root_device: disk.BDevice | None = sorted_delta[0][0]
 
 	if home_device is None or root_device is None:
 		text = str(_('The selected drives do not have the minimum capacity required for an automatic suggestion\n'))
@@ -531,7 +536,7 @@ def suggest_multi_disk_layout(
 
 def suggest_lvm_layout(
 	disk_config: disk.DiskLayoutConfiguration,
-	filesystem_type: Optional[disk.FilesystemType] = None,
+	filesystem_type: disk.FilesystemType | None = None,
 	vg_grp_name: str = 'ArchinstallVg',
 ) -> disk.LvmConfiguration:
 	if disk_config.config_type != disk.DiskLayoutType.Default:
@@ -574,7 +579,7 @@ def suggest_lvm_layout(
 
 		home_volume = False
 
-	boot_part: Optional[disk.PartitionModification] = None
+	boot_part: disk.PartitionModification | None = None
 	other_part: list[disk.PartitionModification] = []
 
 	for mod in disk_config.device_modifications:

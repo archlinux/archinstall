@@ -30,9 +30,12 @@ class DiskLayoutType(Enum):
 
 	def display_msg(self) -> str:
 		match self:
-			case DiskLayoutType.Default: return str(_('Use a best-effort default partition layout'))
-			case DiskLayoutType.Manual: return str(_('Manual Partitioning'))
-			case DiskLayoutType.Pre_mount: return str(_('Pre-mounted configuration'))
+			case DiskLayoutType.Default:
+				return str(_('Use a best-effort default partition layout'))
+			case DiskLayoutType.Manual:
+				return str(_('Manual Partitioning'))
+			case DiskLayoutType.Pre_mount:
+				return str(_('Pre-mounted configuration'))
 
 
 @dataclass
@@ -613,35 +616,48 @@ class FilesystemType(Enum):
 	@property
 	def fs_type_mount(self) -> str:
 		match self:
-			case FilesystemType.Ntfs: return 'ntfs3'
-			case FilesystemType.Fat32: return 'vfat'
-			case _: return self.value
+			case FilesystemType.Ntfs:
+				return 'ntfs3'
+			case FilesystemType.Fat32:
+				return 'vfat'
+			case _:
+				return self.value
 
 	@property
 	def installation_pkg(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs: return 'btrfs-progs'
-			case FilesystemType.Xfs: return 'xfsprogs'
-			case FilesystemType.F2fs: return 'f2fs-tools'
-			case _: return None
+			case FilesystemType.Btrfs:
+				return 'btrfs-progs'
+			case FilesystemType.Xfs:
+				return 'xfsprogs'
+			case FilesystemType.F2fs:
+				return 'f2fs-tools'
+			case _:
+				return None
 
 	@property
 	def installation_module(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs: return 'btrfs'
-			case _: return None
+			case FilesystemType.Btrfs:
+				return 'btrfs'
+			case _:
+				return None
 
 	@property
 	def installation_binary(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs: return '/usr/bin/btrfs'
-			case _: return None
+			case FilesystemType.Btrfs:
+				return '/usr/bin/btrfs'
+			case _:
+				return None
 
 	@property
 	def installation_hooks(self) -> Optional[str]:
 		match self:
-			case FilesystemType.Btrfs: return 'btrfs'
-			case _: return None
+			case FilesystemType.Btrfs:
+				return 'btrfs'
+			case _:
+				return None
 
 
 class ModificationStatus(Enum):

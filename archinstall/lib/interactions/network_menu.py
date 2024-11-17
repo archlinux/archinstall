@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from ..models.network_configuration import NetworkConfiguration, NicType, Nic
 
@@ -26,10 +26,10 @@ class ManualNetworkConfig(ListManager):
 		]
 		super().__init__(prompt, preset, [self._actions[0]], self._actions[1:])
 
-	def selected_action_display(self, nic: Nic) -> str:
-		return nic.iface if nic.iface else ''
+	def selected_action_display(self, selection: Nic) -> str:
+		return selection.iface if selection.iface else ''
 
-	def handle_action(self, action: str, entry: Optional[Nic], data: list[Nic]) -> list[Nic]:
+	def handle_action(self, action: str, entry: Nic | None, data: list[Nic]) -> list[Nic]:
 		if action == self._actions[0]:  # add
 			iface = self._select_iface(data)
 			if iface:
@@ -45,7 +45,7 @@ class ManualNetworkConfig(ListManager):
 
 		return data
 
-	def _select_iface(self, data: list[Nic]) -> Optional[str]:
+	def _select_iface(self, data: list[Nic]) -> str | None:
 		all_ifaces = list_interfaces().values()
 		existing_ifaces = [d.iface for d in data]
 		available = set(all_ifaces) - set(existing_ifaces)
@@ -80,9 +80,9 @@ class ManualNetworkConfig(ListManager):
 		header: str,
 		allow_skip: bool,
 		multi: bool,
-		preset: Optional[str] = None
-	) -> Optional[str]:
-		def validator(ip: str) -> Optional[str]:
+		preset: str | None = None
+	) -> str | None:
+		def validator(ip: str) -> str | None:
 			if multi:
 				ips = ip.split(' ')
 			else:
@@ -166,7 +166,7 @@ class ManualNetworkConfig(ListManager):
 			return Nic(iface=iface_name)
 
 
-def ask_to_configure_network(preset: Optional[NetworkConfiguration]) -> Optional[NetworkConfiguration]:
+def ask_to_configure_network(preset: NetworkConfiguration | None) -> NetworkConfiguration | None:
 	"""
 	Configure the network on the newly installed system
 	"""

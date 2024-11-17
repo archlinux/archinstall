@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -40,7 +40,7 @@ class DesktopProfile(Profile):
 		]
 
 	@property
-	def default_greeter_type(self) -> Optional[GreeterType]:
+	def default_greeter_type(self) -> GreeterType | None:
 		combined_greeters: dict[GreeterType, int] = {}
 		for profile in self.current_selection:
 			if profile.default_greeter_type:
@@ -56,7 +56,7 @@ class DesktopProfile(Profile):
 		for profile in self.current_selection:
 			profile.do_on_select()
 
-	def do_on_select(self) -> Optional[SelectResult]:
+	def do_on_select(self) -> SelectResult | None:
 		items = [
 			MenuItem(
 				p.name,

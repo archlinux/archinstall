@@ -6,7 +6,6 @@ import urllib.parse
 import urllib.request
 from importlib import metadata
 from pathlib import Path
-from typing import Optional
 
 from .output import error, info, warn
 from .storage import storage
@@ -46,7 +45,7 @@ def _localize_path(path: Path) -> Path:
 		return path
 
 
-def _import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[str]:
+def _import_via_path(path: Path, namespace: str | None = None) -> str | None:
 	if not namespace:
 		namespace = os.path.basename(path)
 
@@ -75,7 +74,7 @@ def _import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[st
 	return namespace
 
 
-def _find_nth(haystack: list[str], needle: str, n: int) -> Optional[int]:
+def _find_nth(haystack: list[str], needle: str, n: int) -> int | None:
 	indices = [idx for idx, elem in enumerate(haystack) if elem == needle]
 	if n <= len(indices):
 		return indices[n - 1]
@@ -83,7 +82,7 @@ def _find_nth(haystack: list[str], needle: str, n: int) -> Optional[int]:
 
 
 def load_plugin(path: Path) -> None:
-	namespace: Optional[str] = None
+	namespace: str | None = None
 	parsed_url = urllib.parse.urlparse(str(path))
 	info(f"Loading plugin from url {parsed_url}")
 

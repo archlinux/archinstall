@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pathlib
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from ..locale import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration
@@ -45,7 +45,7 @@ def ask_ntp(preset: bool = True) -> bool:
 			raise ValueError('Unhandled return type')
 
 
-def ask_hostname(preset: Optional[str] = None) -> Optional[str]:
+def ask_hostname(preset: str | None = None) -> str | None:
 	result = EditMenu(
 		str(_('Hostname')),
 		alignment=Alignment.CENTER,
@@ -65,7 +65,7 @@ def ask_hostname(preset: Optional[str] = None) -> Optional[str]:
 			raise ValueError('Unhandled result type')
 
 
-def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
+def ask_for_a_timezone(preset: str | None = None) -> str | None:
 	default = 'UTC'
 	timezones = list_timezones()
 
@@ -91,7 +91,7 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 			return result.get_value()
 
 
-def ask_for_audio_selection(preset: Optional[AudioConfiguration] = None) -> Optional[AudioConfiguration]:
+def ask_for_audio_selection(preset: AudioConfiguration | None = None) -> AudioConfiguration | None:
 	items = [MenuItem(a.value, value=a) for a in Audio]
 	group = MenuItemGroup(items)
 
@@ -114,7 +114,7 @@ def ask_for_audio_selection(preset: Optional[AudioConfiguration] = None) -> Opti
 			raise ValueError('Unhandled result type')
 
 
-def select_language(preset: Optional[str] = None) -> Optional[str]:
+def select_language(preset: str | None = None) -> str | None:
 	from ..locale.locale_menu import select_kb_layout
 
 	# We'll raise an exception in an upcoming version.
@@ -165,7 +165,7 @@ def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
 	header += str(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.')) + '\n'
 	header += str(_('Write additional packages to install (space separated, leave blank to skip)'))
 
-	def validator(value: str) -> Optional[str]:
+	def validator(value: str) -> str | None:
 		packages = value.split() if value else []
 
 		if len(packages) == 0:
@@ -204,7 +204,7 @@ def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
 			return packages.split(' ')
 
 
-def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[int]:
+def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 	max_recommended = 5
 
 	header = str(_('This option enables the number of parallel downloads that can occur during package downloads')) + '\n'
@@ -212,7 +212,7 @@ def add_number_of_parallel_downloads(preset: Optional[int] = None) -> Optional[i
 	header += str(_(' - Maximum recommended value : {} ( Allows {} parallel downloads at a time )')).format(max_recommended, max_recommended) + '\n'
 	header += str(_(' - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n'))
 
-	def validator(s: str) -> Optional[str]:
+	def validator(s: str) -> str | None:
 		try:
 			value = int(s)
 			if value >= 0:

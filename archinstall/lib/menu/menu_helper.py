@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from archinstall.lib.output import FormattedOutput
 
@@ -10,8 +10,8 @@ from archinstall.tui import (
 class MenuHelper:
 	@staticmethod
 	def create_table(
-		data: Optional[list[Any]] = None,
-		table_data: Optional[tuple[list[Any], str]] = None,
+		data: list[Any] | None = None,
+		table_data: tuple[list[Any], str] | None = None,
 	) -> tuple[MenuItemGroup, str]:
 		if data is not None:
 			table_text = FormattedOutput.as_table(data)

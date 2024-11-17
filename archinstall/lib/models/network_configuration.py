@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from ..profile import ProfileConfiguration
 
@@ -27,10 +27,10 @@ class NicType(Enum):
 
 @dataclass
 class Nic:
-	iface: Optional[str] = None
-	ip: Optional[str] = None
+	iface: str | None = None
+	ip: str | None = None
 	dhcp: bool = True
-	gateway: Optional[str] = None
+	gateway: str | None = None
 	dns: list[str] = field(default_factory=list)
 
 	def table_data(self) -> dict[str, Any]:
@@ -102,7 +102,7 @@ class NetworkConfiguration:
 		return config
 
 	@staticmethod
-	def parse_arg(config: dict[str, Any]) -> Optional[NetworkConfiguration]:
+	def parse_arg(config: dict[str, Any]) -> NetworkConfiguration | None:
 		nic_type = config.get('type', None)
 		if not nic_type:
 			return None
@@ -123,7 +123,7 @@ class NetworkConfiguration:
 	def install_network_config(
 		self,
 		installation: Any,
-		profile_config: Optional[ProfileConfiguration] = None
+		profile_config: ProfileConfiguration | None = None
 	) -> None:
 		match self.type:
 			case NicType.ISO:

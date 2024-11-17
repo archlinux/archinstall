@@ -134,7 +134,6 @@ max-line-length = 220
 disable = [
     "C",
     "R",
-    "arguments-renamed",
     "attribute-defined-outside-init",
     "bad-indentation",
     "bare-except",
@@ -193,9 +192,7 @@ select = [
 ]
 
 ignore = [
-    "E701",     # multiple-statements-on-one-line-colon
     "E722",     # bare-except
-    "F401",     # unused-import
     "PLW2901",  # redefined-loop-name
     "UP006",    # non-pep585-annotation
     "UP007",    # non-pep604-annotation
@@ -210,3 +207,6 @@ ignore = [
 
 [tool.ruff.lint.mccabe]
 max-complexity = 40
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # unused-import

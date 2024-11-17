@@ -7,7 +7,7 @@ import select
 import signal
 import random
 from types import FrameType
-from typing import Union, Any, Optional
+from typing import Union, Any
 from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -29,11 +29,11 @@ class DownloadTimer:
 				The download timeout in seconds. The DownloadTimeout exception
 				will be raised in the context after this many seconds.
 		'''
-		self.time: Optional[float] = None
-		self.start_time: Optional[float] = None
+		self.time: float | None = None
+		self.start_time: float | None = None
 		self.timeout = timeout
 		self.previous_handler = None
-		self.previous_timer: Optional[int] = None
+		self.previous_timer: int | None = None
 
 	def raise_timeout(self, signl: int, frame: FrameType | None) -> None:
 		'''
@@ -120,7 +120,7 @@ def enrich_iface_types(interfaces: Union[dict[str, Any], list[str]]) -> dict[str
 	return result
 
 
-def fetch_data_from_url(url: str, params: Optional[dict[str, str]] = None) -> str:
+def fetch_data_from_url(url: str, params: dict[str, str] | None = None) -> str:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE

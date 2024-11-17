@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 
 from ..output import FormattedOutput
 from ..general import secret
@@ -14,11 +14,11 @@ if TYPE_CHECKING:
 
 def get_password(
 	text: str,
-	header: Optional[str] = None,
+	header: str | None = None,
 	allow_skip: bool = False,
-	preset: Optional[str] = None
-) -> Optional[str]:
-	failure: Optional[str] = None
+	preset: str | None = None
+) -> str | None:
+	failure: str | None = None
 
 	while True:
 		user_hdr = None
@@ -63,12 +63,12 @@ def get_password(
 
 def prompt_dir(
 	text: str,
-	header: Optional[str] = None,
+	header: str | None = None,
 	validate: bool = True,
 	allow_skip: bool = False,
-	preset: Optional[str] = None
-) -> Optional[Path]:
-	def validate_path(path: str) -> Optional[str]:
+	preset: str | None = None
+) -> Path | None:
+	def validate_path(path: str) -> str | None:
 		dest_path = Path(path)
 
 		if dest_path.exists() and dest_path.is_dir():
@@ -107,7 +107,7 @@ def is_subpath(first: Path, second: Path) -> bool:
 		return False
 
 
-def format_cols(items: list[str], header: Optional[str] = None) -> str:
+def format_cols(items: list[str], header: str | None = None) -> str:
 	if header:
 		text = f'{header}:\n'
 	else:

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys
 import curses
 import dataclasses
@@ -9,7 +11,7 @@ from collections.abc import Callable
 from curses.textpad import Textbox
 from dataclasses import dataclass
 from types import FrameType, TracebackType
-from typing import Any, Optional, TYPE_CHECKING, Literal
+from typing import Any, TYPE_CHECKING, Literal
 
 from .help import Help
 from .menu_item import MenuItem, MenuItemGroup
@@ -93,7 +95,7 @@ class AbstractCurses(metaclass=ABCMeta):
 
 	def get_header_entries(
 		self,
-		header: Optional[str],
+		header: str | None,
 		offset: int = 0
 	) -> list[ViewportEntry]:
 		cur_row = 0
@@ -125,7 +127,7 @@ class AbstractViewport:
 		max_width: int,
 		max_height: int,
 		frame: FrameProperties,
-		scroll_pct: Optional[int] = None
+		scroll_pct: int | None = None
 	) -> list[ViewportEntry]:
 		if not entries:
 			return []
@@ -164,7 +166,7 @@ class AbstractViewport:
 	def _get_right_frame(
 		self,
 		dim: _FrameDim,
-		scroll_percentage: Optional[int] = None
+		scroll_percentage: int | None = None
 	) -> list[ViewportEntry]:
 		right_frame = {}
 		scroll_height = int(dim.height * scroll_percentage // 100) if scroll_percentage else 0
@@ -189,7 +191,7 @@ class AbstractViewport:
 		dim: _FrameDim,
 		h_bar: str,
 		frame: FrameProperties,
-		scroll_percentage: Optional[int] = None
+		scroll_percentage: int | None = None
 	) -> ViewportEntry:
 		top = self._replace_str(h_bar, 1, f' {frame.header} ') if frame.header else h_bar
 
@@ -204,7 +206,7 @@ class AbstractViewport:
 		self,
 		dim: _FrameDim,
 		h_bar: str,
-		scroll_pct: Optional[int] = None
+		scroll_pct: int | None = None
 	) -> ViewportEntry:
 		if scroll_pct is None:
 			bottom = Chars.Lower_left + h_bar + Chars.Lower_right
@@ -293,7 +295,7 @@ class EditViewport(AbstractViewport):
 		edit_height: int,
 		x_start: int,
 		y_start: int,
-		process_key: Callable[[int], Optional[int]],
+		process_key: Callable[[int], int | None],
 		frame: FrameProperties,
 		alignment: Alignment = Alignment.CENTER,
 		hide_input: bool = False
@@ -312,9 +314,9 @@ class EditViewport(AbstractViewport):
 		self._alignment = alignment
 		self._hide_input = hide_input
 
-		self._main_win: Optional['curses._CursesWindow'] = None
-		self._edit_win: Optional['curses._CursesWindow'] = None
-		self._textbox: Optional[Textbox] = None
+		self._main_win: 'curses._CursesWindow | None' = None
+		self._edit_win: 'curses._CursesWindow | None' = None
+		self._textbox: Textbox | None = None
 
 		self._init_wins()
 
@@ -366,7 +368,7 @@ class EditViewport(AbstractViewport):
 			self._main_win.erase()
 			self._main_win.refresh()
 
-	def edit(self, default_text: Optional[str] = None) -> None:
+	def edit(self, default_text: str | None = None) -> None:
 		assert self._edit_win and self._main_win
 
 		self._edit_win.erase()
@@ -387,8 +389,8 @@ class EditViewport(AbstractViewport):
 class ViewportState:
 	cur_pos: int
 	displayed_entries: list[ViewportEntry]
-	scroll_pct: Optional[int]
-	scroll_pos: Optional[int] = 0
+	scroll_pct: int | None
+	scroll_pos: int | None = 0
 
 	def offset(self) -> int:
 		return min([entry.row for entry in self.displayed_entries], default=0)
@@ -409,7 +411,7 @@ class Viewport(AbstractViewport):
 		x_start: int,
 		y_start: int,
 		enable_scroll: bool = False,
-		frame: Optional[FrameProperties] = None,
+		frame: FrameProperties | None = None,
 		alignment: Alignment = Alignment.LEFT
 	):
 		super().__init__()
@@ -426,7 +428,7 @@ class Viewport(AbstractViewport):
 		self._main_win.nodelay(False)
 		self._main_win.standout()
 
-		self._state: Optional[ViewportState] = None
+		self._state: ViewportState | None = None
 
 	def getch(self) -> int:
 		return self._main_win.getch()
@@ -439,7 +441,7 @@ class Viewport(AbstractViewport):
 		self,
 		lines: list[ViewportEntry],
 		cur_pos: int = 0,
-		scroll_pos: Optional[int] = None
+		scroll_pos: int | None = None
 	) -> None:
 		self._state = self._get_viewport_state(lines, cur_pos, scroll_pos)
 		visible_entries = self._adjust_entries_row(self._state.displayed_entries)
@@ -478,7 +480,7 @@ class Viewport(AbstractViewport):
 		self, total: int,
 		available_rows: int,
 		scroll_pos: int
-	) -> Optional[int]:
+	) -> int | None:
 		if total <= available_rows:
 			return None
 
@@ -493,7 +495,7 @@ class Viewport(AbstractViewport):
 		self,
 		entries: list[ViewportEntry],
 		cur_pos: int,
-		scroll_pos: Optional[int] = 0
+		scroll_pos: int | None = 0
 	) -> ViewportState:
 		if not entries:
 			return ViewportState(cur_pos, [], 0)
@@ -539,7 +541,7 @@ class Viewport(AbstractViewport):
 		entries: list[ViewportEntry],
 		cur_pos: int,
 		screen_rows: int,
-		scroll_pos: Optional[int],
+		scroll_pos: int | None,
 		total_rows: int
 	) -> list[ViewportEntry]:
 		if scroll_pos is not None:
@@ -595,13 +597,13 @@ class EditMenu(AbstractCurses):
 		self,
 		title: str,
 		edit_width: int = 50,
-		header: Optional[str] = None,
-		validator: Optional[Callable[[str], Optional[str]]] = None,
+		header: str | None = None,
+		validator: Callable[[str], str | None] | None = None,
 		allow_skip: bool = False,
 		allow_reset: bool = False,
-		reset_warning_msg: Optional[str] = None,
+		reset_warning_msg: str | None = None,
 		alignment: Alignment = Alignment.CENTER,
-		default_text: Optional[str] = None,
+		default_text: str | None = None,
 		hide_input: bool = False
 	):
 		super().__init__()
@@ -625,14 +627,14 @@ class EditMenu(AbstractCurses):
 		title = f'* {title}' if not self._allow_skip else title
 		self._frame = FrameProperties(title, FrameStyle.MAX)
 
-		self._help_vp: Optional[Viewport] = None
-		self._header_vp: Optional[Viewport] = None
-		self._input_vp: Optional[EditViewport] = None
-		self._error_vp: Optional[Viewport] = None
+		self._help_vp: Viewport | None = None
+		self._header_vp: Viewport | None = None
+		self._input_vp: EditViewport | None = None
+		self._error_vp: Viewport | None = None
 
 		self._init_viewports()
 
-		self._last_state: Optional[Result] = None
+		self._last_state: Result | None = None
 		self._help_active = False
 		self._real_input = ""
 
@@ -683,7 +685,7 @@ class EditMenu(AbstractCurses):
 		if self._error_vp:
 			self._error_vp.erase()
 
-	def _get_input_text(self) -> Optional[str]:
+	def _get_input_text(self) -> str | None:
 		assert self._input_vp
 		assert self._error_vp
 
@@ -737,7 +739,7 @@ class EditMenu(AbstractCurses):
 
 		return self._last_state
 
-	def _process_edit_key(self, key: int) -> Optional[int]:
+	def _process_edit_key(self, key: int) -> int | None:
 		key_handles = MenuKeys.from_ord(key)
 
 		if self._help_active:
@@ -806,16 +808,16 @@ class SelectMenu(AbstractCurses):
 		alignment: Alignment = Alignment.LEFT,
 		columns: int = 1,
 		column_spacing: int = 10,
-		header: Optional[str] = None,
-		frame: Optional[FrameProperties] = None,
+		header: str | None = None,
+		frame: FrameProperties | None = None,
 		cursor_char: str = '>',
 		search_enabled: bool = True,
 		allow_skip: bool = False,
 		allow_reset: bool = False,
-		reset_warning_msg: Optional[str] = None,
+		reset_warning_msg: str | None = None,
 		preview_style: PreviewStyle = PreviewStyle.NONE,
 		preview_size: float | Literal['auto'] = 0.2,
-		preview_frame: Optional[FrameProperties] = None,
+		preview_frame: FrameProperties | None = None,
 	):
 		super().__init__()
 
@@ -850,16 +852,16 @@ class SelectMenu(AbstractCurses):
 
 		self._row_entries: list[list[MenuCell]] = []
 		self._prev_scroll_pos: int = 0
-		self._cur_pos: Optional[int] = None
+		self._cur_pos: int | None = None
 
 		self._visible_entries: list[ViewportEntry] = []
 		self._max_height, self._max_width = Tui.t().max_yx
 
-		self._help_vp: Optional[Viewport] = None
-		self._header_vp: Optional[Viewport] = None
-		self._footer_vp: Optional[Viewport] = None
-		self._menu_vp: Optional[Viewport] = None
-		self._preview_vp: Optional[Viewport] = None
+		self._help_vp: Viewport | None = None
+		self._header_vp: Viewport | None = None
+		self._footer_vp: Viewport | None = None
+		self._menu_vp: Viewport | None = None
+		self._preview_vp: Viewport | None = None
 
 		self._init_viewports(preview_size)
 
@@ -1216,9 +1218,7 @@ class SelectMenu(AbstractCurses):
 		else:
 			return False
 
-		return True
-
-	def _process_input_key(self, key: int) -> Optional[Result]:
+	def _process_input_key(self, key: int) -> Result | None:
 		key_handles = MenuKeys.from_ord(key)
 
 		if self._help_active:
@@ -1356,7 +1356,7 @@ class SelectMenu(AbstractCurses):
 
 
 class Tui:
-	_t: Optional['Tui'] = None
+	_t: Tui | None = None
 
 	def __enter__(self) -> None:
 		if Tui._t is None:
@@ -1424,7 +1424,7 @@ class Tui:
 		text: str,
 		row: int = 0,
 		col: int = 0,
-		endl: Optional[str] = '\n',
+		endl: str | None = '\n',
 		clear_screen: bool = False
 	) -> None:
 		if Tui._t is None:
