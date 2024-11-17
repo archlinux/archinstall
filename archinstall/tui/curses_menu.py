@@ -636,7 +636,7 @@ class EditMenu(AbstractCurses):
 
 		self._last_state: Result | None = None
 		self._help_active = False
-		self._real_input = ""
+		self._real_input = default_text or ""
 
 	def _init_viewports(self) -> None:
 		y_offset = 0
