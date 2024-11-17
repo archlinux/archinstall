@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 
 from ..hardware import SysInfo, GfxDriver
 from ..models.bootloader import Bootloader
@@ -50,7 +50,7 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 			return result.get_values()
 
 
-def ask_for_bootloader(preset: Optional[Bootloader]) -> Optional[Bootloader]:
+def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
 	# Systemd is UEFI only
 	if not SysInfo.has_uefi():
 		options = [Bootloader.Grub, Bootloader.Limine]
@@ -106,7 +106,7 @@ def ask_for_uki(preset: bool = True) -> bool:
 			raise ValueError('Unhandled result type')
 
 
-def select_driver(options: list[GfxDriver] = [], preset: Optional[GfxDriver] = None) -> Optional[GfxDriver]:
+def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None) -> GfxDriver | None:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from archinstall.default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class ProfileMenu(AbstractSubMenu):
 	def __init__(
 		self,
-		preset: Optional[ProfileConfiguration] = None
+		preset: ProfileConfiguration | None = None
 	):
 		if preset:
 			self._preset = preset
@@ -64,7 +64,7 @@ class ProfileMenu(AbstractSubMenu):
 			)
 		]
 
-	def run(self) -> Optional[ProfileConfiguration]:
+	def run(self) -> ProfileConfiguration | None:
 		super().run()
 
 		if self._data_store.get('profile', None):
@@ -76,7 +76,7 @@ class ProfileMenu(AbstractSubMenu):
 
 		return None
 
-	def _select_profile(self, preset: Optional[Profile]) -> Optional[Profile]:
+	def _select_profile(self, preset: Profile | None) -> Profile | None:
 		profile = select_profile(preset)
 
 		if profile is not None:
@@ -99,9 +99,9 @@ class ProfileMenu(AbstractSubMenu):
 
 		return profile
 
-	def _select_gfx_driver(self, preset: Optional[GfxDriver] = None) -> Optional[GfxDriver]:
+	def _select_gfx_driver(self, preset: GfxDriver | None = None) -> GfxDriver | None:
 		driver = preset
-		profile: Optional[Profile] = self._item_group.find_by_key('profile').value
+		profile: Profile | None = self._item_group.find_by_key('profile').value
 
 		if profile:
 			if profile.is_graphic_driver_supported():
@@ -130,20 +130,20 @@ class ProfileMenu(AbstractSubMenu):
 
 		return driver
 
-	def _prev_gfx(self, item: MenuItem) -> Optional[str]:
+	def _prev_gfx(self, item: MenuItem) -> str | None:
 		if item.value:
 			driver = item.get_value().value
 			packages = item.get_value().packages_text()
 			return f'Driver: {driver}\n{packages}'
 		return None
 
-	def _prev_greeter(self, item: MenuItem) -> Optional[str]:
+	def _prev_greeter(self, item: MenuItem) -> str | None:
 		if item.value:
 			return f'{_("Greeter")}: {item.value.value}'
 		return None
 
-	def _preview_profile(self, item: MenuItem) -> Optional[str]:
-		profile: Optional[Profile] = item.value
+	def _preview_profile(self, item: MenuItem) -> str | None:
+		profile: Profile | None = item.value
 		text = ''
 
 		if profile:
@@ -161,14 +161,14 @@ class ProfileMenu(AbstractSubMenu):
 
 
 def select_greeter(
-	profile: Optional[Profile] = None,
-	preset: Optional[GreeterType] = None
-) -> Optional[GreeterType]:
+	profile: Profile | None = None,
+	preset: GreeterType | None = None
+) -> GreeterType | None:
 	if not profile or profile.is_greeter_supported():
 		items = [MenuItem(greeter.value, value=greeter) for greeter in GreeterType]
 		group = MenuItemGroup(items, sort_items=True)
 
-		default: Optional[GreeterType] = None
+		default: GreeterType | None = None
 		if preset is not None:
 			default = preset
 		elif profile is not None:
@@ -196,10 +196,10 @@ def select_greeter(
 
 
 def select_profile(
-	current_profile: Optional[Profile] = None,
-	header: Optional[str] = None,
+	current_profile: Profile | None = None,
+	header: str | None = None,
 	allow_reset: bool = True,
-) -> Optional[Profile]:
+) -> Profile | None:
 	from archinstall.lib.profile.profiles_handler import profile_handler
 	top_level_profiles = profile_handler.get_top_level_profiles()
 

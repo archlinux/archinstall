@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from ..output import error
 from ..output import unicode_ljust
@@ -19,14 +19,14 @@ class Selector:
 	def __init__(
 		self,
 		description: str,
-		func: Optional[Callable[[Any], Any]] = None,
-		display_func: Optional[Callable] = None,
-		default: Optional[Any] = None,
+		func: Callable[[Any], Any] | None = None,
+		display_func: Callable | None = None,
+		default: Any | None = None,
 		enabled: bool = False,
 		dependencies: list[str] = [],
 		dependencies_not: list[str] = [],
-		exec_func: Optional[Callable] = None,
-		preview_func: Optional[Callable] = None,
+		exec_func: Callable | None = None,
+		preview_func: Callable | None = None,
 		mandatory: bool = False,
 		no_store: bool = False
 	):
@@ -117,7 +117,7 @@ class Selector:
 
 		return f'{description} {current}'
 
-	def set_current_selection(self, current: Optional[Any]) -> None:
+	def set_current_selection(self, current: Any | None) -> None:
 		self.current_selection = current
 
 	def has_selection(self) -> bool:
@@ -152,7 +152,7 @@ class AbstractMenu:
 		data_store: dict[str, Any],
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
-		reset_warning: Optional[str] = None
+		reset_warning: str | None = None
 	):
 		self._menu_item_group = item_group
 		self._data_store = data_store
@@ -211,7 +211,7 @@ class AbstractMenu:
 		for item in self._menu_item_group.items:
 			item.enabled = False
 
-	def run(self) -> Optional[Any]:
+	def run(self) -> Any | None:
 		self._sync_all_from_ds()
 
 		while True:
