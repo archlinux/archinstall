@@ -1341,3 +1341,197 @@ msgstr "(Standard)"
 
 msgid "Press Ctrl+h for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Option auswählen, um Sway Zugriff auf deine Hardware zu geben"
+
+msgid "Seat access"
+msgstr ""
+
+#, fuzzy
+msgid "Mountpoint"
+msgstr "Einhängeort: "
+
+msgid "HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Geben Sie ein Verschlüsselungspasswort ein (leer lassen um Verschlüsselung zu deaktivieren): "
+
+#, fuzzy
+msgid "Disk encryption password"
+msgstr "Verschlüsselungspasswort"
+
+#, fuzzy
+msgid "Partition - New"
+msgstr "Partition"
+
+#, fuzzy
+msgid "Filesystem"
+msgstr "Dateisystem ändern"
+
+msgid "Invalid size"
+msgstr ""
+
+#, fuzzy
+msgid "Start (default: sector {}): "
+msgstr "Bitte geben Sie den Startsektor ein (Standard: {}): "
+
+#, fuzzy
+msgid "End (default: {}): "
+msgstr "Bitte geben Sie den Startsektor ein (Standard: {}): "
+
+#, fuzzy
+msgid "Subvolume name"
+msgstr "Subvolume name "
+
+#, fuzzy
+msgid "Disk configuration type"
+msgstr "Laufwerkskonfiguration"
+
+msgid "Root mount directory"
+msgstr ""
+
+#, fuzzy
+msgid "Select language"
+msgstr "Lokale Sprache"
+
+#, fuzzy
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Schreiben Sie zusätzliche Pakete die installiert werden sollen (mit einem Leerzeichen getrennt, zum Überspringen leer lassen): "
+
+msgid "Invalid download number"
+msgstr ""
+
+msgid "Number downloads"
+msgstr ""
+
+#, fuzzy
+msgid "The username you entered is invalid"
+msgstr "Der eingegebene Benutzername ist ungültig. Erneut versuchen"
+
+#, fuzzy
+msgid "Username"
+msgstr "Benutzername: "
+
+#, fuzzy
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Soll {} ein Superuser sein (sudo)?"
+
+#, fuzzy
+msgid "Interfaces"
+msgstr "Verbindung hinzufügen"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr ""
+
+msgid "Modes"
+msgstr ""
+
+msgid "IP address"
+msgstr ""
+
+#, fuzzy
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Bitte geben Sie das Gateway (Router) IP-Adresse ein (leer lassen für keines): "
+
+msgid "Gateway address"
+msgstr ""
+
+#, fuzzy
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Bitte geben Sie die DNS-Server ein (mit Leerzeichen getrennt oder leer lassen für keinen Server): "
+
+#, fuzzy
+msgid "DNS servers"
+msgstr "Kein Audioserver"
+
+#, fuzzy
+msgid "Configure interfaces"
+msgstr "{} Schnittstellen konfiguriert"
+
+#, fuzzy
+msgid "Kernel"
+msgstr "Kernel"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+#, fuzzy
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Der proprietäre Nvidia-Treiber wird von Sway nicht unterstützt. Es ist wahrscheinlich, dass Fehler auftreten werden, trotzdem fortfahren?"
+
+#, fuzzy
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Der proprietäre Nvidia-Treiber wird von Sway nicht unterstützt. Es ist wahrscheinlich, dass Fehler auftreten werden, trotzdem fortfahren?"
+
+#, fuzzy
+msgid "Main profile"
+msgstr "Profil bearbeiten"
+
+#, fuzzy
+msgid "Confirm password"
+msgstr "Passwort ändern"
+
+msgid "The confirmation password did not match, please try again"
+msgstr ""
+
+#, fuzzy
+msgid "Not a valid directory"
+msgstr "Ordner existiert nicht: {}"
+
+#, fuzzy
+msgid "Would you like to continue?"
+msgstr "Möchten sie btrfs Komprimierung verwenden?"
+
+msgid "Directory"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr ""
+"Geben Sie einen Ordner an, in dem die Konfiguration(en) gespeichert werden sollen (TAB zum vervollständigen)\n"
+"Ordner: "
+
+#, fuzzy
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr ""
+"Möchten Sie {} Konfigurationsdatei(en) in folgendem Ordner speichern?\n"
+"\n"
+"{}"
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+#, fuzzy
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Bitte melden Sie das Problem mit der erstellten Datei auf https://github.com/archlinux/archinstall/issues"
+
+#, fuzzy
+msgid "Mirror name"
+msgstr "Spiegelserver-Region"
+
+msgid "Url"
+msgstr ""
+
+#, fuzzy
+msgid "Select signature check"
+msgstr "Signaturprüfungs-Option auswählen"
+
+#, fuzzy
+msgid "Select execution mode"
+msgstr "Wählen Sie einen Ausführmodus"
+
+msgid "Press ? for help"
+msgstr ""
