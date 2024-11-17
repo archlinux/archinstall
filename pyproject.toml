@@ -134,7 +134,6 @@ max-line-length = 220
 disable = [
     "C",
     "R",
-    "arguments-renamed",
     "attribute-defined-outside-init",
     "bad-indentation",
     "bare-except",

@@ -28,8 +28,8 @@ class UserList(ListManager):
 		]
 		super().__init__(prompt, lusers, [self._actions[0]], self._actions[1:])
 
-	def selected_action_display(self, user: User) -> str:
-		return user.username
+	def selected_action_display(self, selection: User) -> str:
+		return selection.username
 
 	def handle_action(self, action: str, entry: User | None, data: list[User]) -> list[User]:
 		if action == self._actions[0]:  # add
