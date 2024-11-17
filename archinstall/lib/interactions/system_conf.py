@@ -99,7 +99,8 @@ def ask_for_uki(preset: bool = True) -> bool:
 	).run()
 
 	match result.type_:
-		case ResultType.Skip: return preset
+		case ResultType.Skip:
+			return preset
 		case ResultType.Selection:
 			return result.item() == MenuItem.yes()
 		case ResultType.Reset:
@@ -172,7 +173,8 @@ def ask_for_swap(preset: bool = True) -> bool:
 	).run()
 
 	match result.type_:
-		case ResultType.Skip: return preset
+		case ResultType.Skip:
+			return preset
 		case ResultType.Selection:
 			return result.item() == MenuItem.yes()
 		case ResultType.Reset:

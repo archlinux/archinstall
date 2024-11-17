@@ -233,8 +233,10 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 	).run()
 
 	match result.type_:
-		case ResultType.Reset: return None
-		case ResultType.Skip: return preset
+		case ResultType.Reset:
+			return None
+		case ResultType.Skip:
+			return preset
 		case ResultType.Selection:
 			return result.get_value()
 
@@ -269,8 +271,10 @@ def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 		).run()
 
 		match result.type_:
-			case ResultType.Reset: return None
-			case ResultType.Skip: return preset
+			case ResultType.Reset:
+				return None
+			case ResultType.Skip:
+				return preset
 			case ResultType.Selection:
 				return result.get_value()
 
@@ -301,8 +305,10 @@ def select_partitions_to_encrypt(
 		).run()
 
 		match result.type_:
-			case ResultType.Reset: return []
-			case ResultType.Skip: return preset
+			case ResultType.Reset:
+				return []
+			case ResultType.Skip:
+				return preset
 			case ResultType.Selection:
 				partitions = result.get_values()
 				return partitions
@@ -327,8 +333,10 @@ def select_lvm_vols_to_encrypt(
 		).run()
 
 		match result.type_:
-			case ResultType.Reset: return []
-			case ResultType.Skip: return preset
+			case ResultType.Reset:
+				return []
+			case ResultType.Skip:
+				return preset
 			case ResultType.Selection:
 				volumes = result.get_values()
 				return volumes
