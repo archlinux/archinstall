@@ -1247,3 +1247,156 @@ msgstr ""
 
 msgid "Press Ctrl+h for help"
 msgstr ""
+
+msgid "Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Seat access"
+msgstr ""
+
+msgid "Mountpoint"
+msgstr ""
+
+msgid "HSM"
+msgstr ""
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr ""
+
+msgid "Disk encryption password"
+msgstr ""
+
+msgid "Partition - New"
+msgstr ""
+
+msgid "Filesystem"
+msgstr ""
+
+msgid "Invalid size"
+msgstr ""
+
+msgid "Start (default: sector {}): "
+msgstr ""
+
+msgid "End (default: {}): "
+msgstr ""
+
+msgid "Subvolume name"
+msgstr ""
+
+msgid "Disk configuration type"
+msgstr ""
+
+msgid "Root mount directory"
+msgstr ""
+
+msgid "Select language"
+msgstr ""
+
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr ""
+
+msgid "Invalid download number"
+msgstr ""
+
+msgid "Number downloads"
+msgstr ""
+
+msgid "The username you entered is invalid"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr ""
+
+msgid "Interfaces"
+msgstr ""
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr ""
+
+msgid "Modes"
+msgstr ""
+
+msgid "IP address"
+msgstr ""
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr ""
+
+msgid "Gateway address"
+msgstr ""
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr ""
+
+msgid "DNS servers"
+msgstr ""
+
+msgid "Configure interfaces"
+msgstr ""
+
+msgid "Kernel"
+msgstr ""
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr ""
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+msgid "Main profile"
+msgstr ""
+
+msgid "Confirm password"
+msgstr ""
+
+msgid "The confirmation password did not match, please try again"
+msgstr ""
+
+msgid "Not a valid directory"
+msgstr ""
+
+msgid "Would you like to continue?"
+msgstr ""
+
+msgid "Directory"
+msgstr ""
+
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr ""
+
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr ""
+
+msgid "Mirror name"
+msgstr ""
+
+msgid "Url"
+msgstr ""
+
+msgid "Select signature check"
+msgstr ""
+
+msgid "Select execution mode"
+msgstr ""
+
+msgid "Press ? for help"
+msgstr ""

@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.8.6"
+__version__ = "3.0.0"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the
