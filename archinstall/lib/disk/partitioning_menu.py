@@ -236,23 +236,28 @@ class PartitioningList(ListManager):
 	) -> Size | None:
 		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', text, re.I)
 
-		if match:
-			str_value, unit = match.groups()
+		if not match:
+			return None
 
-			if unit == '%' and start:
-				available = total_size - start
-				value = int(available.value * (int(str_value) / 100))
-				unit = available.unit.name
-			else:
-				value = int(str_value)
+		str_value, unit = match.groups()
 
-			if unit and unit not in Unit.get_all_units():
-				return None
+		if unit == '%' and start:
+			available = total_size - start
+			value = int(available.value * (int(str_value) / 100))
+			unit = available.unit.name
+		else:
+			value = int(str_value)
 
-			unit = Unit[unit] if unit else Unit.sectors
-			return Size(value, unit, sector_size)
+		if unit and unit not in Unit.get_all_units():
+			return None
 
-		return None
+		unit = Unit[unit] if unit else Unit.sectors
+		size = Size(value, unit, sector_size)
+
+		if start and size <= start:
+			return None
+
+		return size
 
 	def _enter_size(
 		self,
