@@ -7,7 +7,7 @@ import time
 import uuid
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING, Literal
+from typing import Any, TYPE_CHECKING, Literal
 
 from parted import (
 	Disk, Geometry, FileSystem,
@@ -138,8 +138,8 @@ class DeviceHandler:
 	def _determine_fs_type(
 		self,
 		partition: Partition,
-		lsblk_info: Optional[LsblkInfo] = None
-	) -> Optional[FilesystemType]:
+		lsblk_info: LsblkInfo | None = None
+	) -> FilesystemType | None:
 		try:
 			if partition.fileSystem:
 				return FilesystemType(partition.fileSystem.type)
@@ -151,17 +151,17 @@ class DeviceHandler:
 
 		return None
 
-	def get_device(self, path: Path) -> Optional[BDevice]:
+	def get_device(self, path: Path) -> BDevice | None:
 		return self._devices.get(path, None)
 
-	def get_device_by_partition_path(self, partition_path: Path) -> Optional[BDevice]:
+	def get_device_by_partition_path(self, partition_path: Path) -> BDevice | None:
 		partition = self.find_partition(partition_path)
 		if partition:
 			device: Device = partition.disk.device
 			return self.get_device(Path(device.path))
 		return None
 
-	def find_partition(self, path: Path) -> Optional[_PartitionInfo]:
+	def find_partition(self, path: Path) -> _PartitionInfo | None:
 		for device in self._devices.values():
 			part = next(filter(lambda x: str(x.path) == str(path), device.partition_infos), None)
 			if part is not None:
@@ -172,7 +172,7 @@ class DeviceHandler:
 		lsblk = get_lsblk_info(dev_path)
 		return Path(f'/dev/{lsblk.pkname}')
 
-	def get_unique_path_for_device(self, dev_path: Path) -> Optional[Path]:
+	def get_unique_path_for_device(self, dev_path: Path) -> Path | None:
 		paths = Path('/dev/disk/by-id').glob('*')
 		linked_targets = {p.resolve(): p for p in paths}
 		linked_wwn_targets = {
@@ -188,14 +188,14 @@ class DeviceHandler:
 
 		return None
 
-	def get_uuid_for_path(self, path: Path) -> Optional[str]:
+	def get_uuid_for_path(self, path: Path) -> str | None:
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None
 
 	def get_btrfs_info(
 		self,
 		dev_path: Path,
-		lsblk_info: Optional[LsblkInfo] = None
+		lsblk_info: LsblkInfo | None = None
 	) -> list[_BtrfsSubvolumeInfo]:
 		if not lsblk_info:
 			lsblk_info = get_lsblk_info(dev_path)
@@ -286,7 +286,7 @@ class DeviceHandler:
 	def encrypt(
 		self,
 		dev_path: Path,
-		mapper_name: Optional[str],
+		mapper_name: str | None,
 		enc_password: str,
 		lock_after_create: bool = True
 	) -> Luks2:
@@ -312,7 +312,7 @@ class DeviceHandler:
 	def format_encrypted(
 		self,
 		dev_path: Path,
-		mapper_name: Optional[str],
+		mapper_name: str | None,
 		fs_type: FilesystemType,
 		enc_conf: DiskEncryption
 	) -> None:
@@ -339,7 +339,7 @@ class DeviceHandler:
 		self,
 		cmd: str,
 		info_type: Literal['lv', 'vg', 'pvseg']
-	) -> Optional[Any]:
+	) -> Any | None:
 		raw_info = SysCommand(cmd).decode().split('\n')
 
 		# for whatever reason the output sometimes contains
@@ -377,14 +377,14 @@ class DeviceHandler:
 
 		return None
 
-	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Optional[Any]:
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Any | None:
 		while True:
 			try:
 				return self._lvm_info(cmd, info_type)
 			except ValueError:
 				time.sleep(3)
 
-	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
+	def lvm_vol_info(self, lv_name: str) -> LvmVolumeInfo | None:
 		cmd = (
 			'lvs --reportformat json '
 			'--unit B '
@@ -393,7 +393,7 @@ class DeviceHandler:
 
 		return self._lvm_info_with_retry(cmd, 'lv')
 
-	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
+	def lvm_group_info(self, vg_name: str) -> LvmGroupInfo | None:
 		cmd = (
 			'vgs --reportformat json '
 			'--unit B '
@@ -403,7 +403,7 @@ class DeviceHandler:
 
 		return self._lvm_info_with_retry(cmd, 'vg')
 
-	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> Optional[LvmPVInfo]:
+	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> LvmPVInfo | None:
 		cmd = (
 			'pvs '
 			'--segments -o+lv_name,vg_name '
@@ -457,7 +457,7 @@ class DeviceHandler:
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
-	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Optional[Size] = None) -> None:
+	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Size | None = None) -> None:
 		if offset is not None:
 			length = volume.length - offset
 		else:
@@ -593,7 +593,7 @@ class DeviceHandler:
 	def create_btrfs_volumes(
 		self,
 		part_mod: PartitionModification,
-		enc_conf: Optional['DiskEncryption'] = None
+		enc_conf: 'DiskEncryption | None' = None
 	) -> None:
 		info(f'Creating subvolumes: {part_mod.safe_dev_path}')
 
@@ -663,7 +663,7 @@ class DeviceHandler:
 	def partition(
 		self,
 		modification: DeviceModification,
-		partition_table: Optional[PartitionTable] = None
+		partition_table: PartitionTable | None = None
 	) -> None:
 		"""
 		Create a partition table on the block device and create all partitions.
@@ -701,7 +701,7 @@ class DeviceHandler:
 		self,
 		dev_path: Path,
 		target_mountpoint: Path,
-		mount_fs: Optional[str] = None,
+		mount_fs: str | None = None,
 		create_target_mountpoint: bool = True,
 		options: list[str] = []
 	) -> None:
@@ -777,7 +777,7 @@ class DeviceHandler:
 
 		return device_mods
 
-	def partprobe(self, path: Optional[Path] = None) -> None:
+	def partprobe(self, path: Path | None = None) -> None:
 		if path is not None:
 			command = f'partprobe {path}'
 		else:
