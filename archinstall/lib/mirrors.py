@@ -1,23 +1,18 @@
-import time
 import json
+import time
 import urllib.parse
-from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, TYPE_CHECKING
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
+
+from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
 from .menu import AbstractSubMenu, ListManager
+from .models.mirrors import MirrorStatusEntryV3, MirrorStatusListV3
 from .networking import fetch_data_from_url
 from .output import FormattedOutput, debug
 from .storage import storage
-from .models.mirrors import MirrorStatusListV3, MirrorStatusEntryV3
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	EditMenu
-)
-
 
 if TYPE_CHECKING:
 	_: Any

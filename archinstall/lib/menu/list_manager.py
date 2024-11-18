@@ -1,11 +1,9 @@
 import copy
-from typing import Any, TYPE_CHECKING
-from ..output import FormattedOutput
+from typing import TYPE_CHECKING, Any
 
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	Alignment, ResultType
-)
+from archinstall.tui import Alignment, MenuItem, MenuItemGroup, ResultType, SelectMenu
+
+from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any

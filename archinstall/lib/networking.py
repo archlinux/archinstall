@@ -1,21 +1,20 @@
 import os
+import random
+import select
+import signal
 import socket
 import ssl
 import struct
 import time
-import select
-import signal
-import random
 from types import FrameType
 from typing import Any
 from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-from .exceptions import SysCallError, DownloadTimeout
-from .output import error, info
+from .exceptions import DownloadTimeout, SysCallError
+from .output import debug, error, info
 from .pacman import Pacman
-from .output import debug
 
 
 class DownloadTimer:

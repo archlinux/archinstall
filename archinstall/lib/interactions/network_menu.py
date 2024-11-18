@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from ..models.network_configuration import NetworkConfiguration, NicType, Nic
+from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
-from ..networking import list_interfaces
 from ..menu import ListManager
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	EditMenu
-)
+from ..models.network_configuration import NetworkConfiguration, Nic, NicType
+from ..networking import list_interfaces
 
 if TYPE_CHECKING:
 	_: Any
