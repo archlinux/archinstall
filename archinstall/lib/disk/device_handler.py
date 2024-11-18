@@ -5,8 +5,9 @@ import os
 import logging
 import time
 import uuid
+from collections.abc import Iterable
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
+from typing import Any, Optional, TYPE_CHECKING, Literal
 
 from parted import (
 	Disk, Geometry, FileSystem,
@@ -37,11 +38,11 @@ class DeviceHandler:
 	_TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs')
 
 	def __init__(self) -> None:
-		self._devices: Dict[Path, BDevice] = {}
+		self._devices: dict[Path, BDevice] = {}
 		self.load_devices()
 
 	@property
-	def devices(self) -> List[BDevice]:
+	def devices(self) -> list[BDevice]:
 		return list(self._devices.values())
 
 	def load_devices(self) -> None:
@@ -195,11 +196,11 @@ class DeviceHandler:
 		self,
 		dev_path: Path,
 		lsblk_info: Optional[LsblkInfo] = None
-	) -> List[_BtrfsSubvolumeInfo]:
+	) -> list[_BtrfsSubvolumeInfo]:
 		if not lsblk_info:
 			lsblk_info = get_lsblk_info(dev_path)
 
-		subvol_infos: List[_BtrfsSubvolumeInfo] = []
+		subvol_infos: list[_BtrfsSubvolumeInfo] = []
 
 		if not lsblk_info.mountpoint:
 			self.mount(dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
@@ -247,7 +248,7 @@ class DeviceHandler:
 		self,
 		fs_type: FilesystemType,
 		path: Path,
-		additional_parted_options: List[str] = []
+		additional_parted_options: list[str] = []
 	) -> None:
 		mkfs_type = fs_type.value
 		options = []
@@ -561,8 +562,8 @@ class DeviceHandler:
 	def create_lvm_btrfs_subvolumes(
 		self,
 		path: Path,
-		btrfs_subvols: List[SubvolumeModification],
-		mount_options: List[str]
+		btrfs_subvols: list[SubvolumeModification],
+		mount_options: list[str]
 	) -> None:
 		info(f'Creating subvolumes: {path}')
 
@@ -702,7 +703,7 @@ class DeviceHandler:
 		target_mountpoint: Path,
 		mount_fs: Optional[str] = None,
 		create_target_mountpoint: bool = True,
-		options: List[str] = []
+		options: list[str] = []
 	) -> None:
 		if create_target_mountpoint and not target_mountpoint.exists():
 			target_mountpoint.mkdir(parents=True, exist_ok=True)
@@ -750,8 +751,8 @@ class DeviceHandler:
 			debug(f'Unmounting mountpoint: {path}')
 			SysCommand(cmd + [str(path)])
 
-	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> List[DeviceModification]:
-		part_mods: Dict[Path, List[PartitionModification]] = {}
+	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> list[DeviceModification]:
+		part_mods: dict[Path, list[PartitionModification]] = {}
 
 		for device in self.devices:
 			for part_info in device.partition_infos:
@@ -769,7 +770,7 @@ class DeviceHandler:
 						part_mods[path].append(part_mod)
 						break
 
-		device_mods: List[DeviceModification] = []
+		device_mods: list[DeviceModification] = []
 		for device_path, mods in part_mods.items():
 			device_mod = DeviceModification(self._devices[device_path], False, mods)
 			device_mods.append(device_mod)
