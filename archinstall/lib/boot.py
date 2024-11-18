@@ -1,5 +1,5 @@
 import time
-from typing import Iterator, Optional
+from collections.abc import Iterator
 from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
@@ -11,7 +11,7 @@ class Boot:
 	def __init__(self, installation: Installer):
 		self.instance = installation
 		self.container_name = 'archinstall'
-		self.session: Optional[SysCommandWorker] = None
+		self.session: SysCommandWorker | None = None
 		self.ready = False
 
 	def __enter__(self) -> 'Boot':
@@ -53,7 +53,7 @@ class Boot:
 			)
 
 		shutdown = None
-		shutdown_exit_code: Optional[int] = -1
+		shutdown_exit_code: int | None = -1
 
 		try:
 			shutdown = SysCommand(f'systemd-run --machine={self.container_name} --pty shutdown now')

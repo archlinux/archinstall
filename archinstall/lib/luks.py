@@ -4,7 +4,6 @@ import shlex
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, List
 
 from . import disk
 from .general import SysCommand, generate_password, SysCommandWorker
@@ -16,19 +15,32 @@ from .storage import storage
 @dataclass
 class Luks2:
 	luks_dev_path: Path
-	mapper_name: Optional[str] = None
-	password: Optional[str] = None
-	key_file: Optional[Path] = None
+	mapper_name: str | None = None
+	password: str | None = None
+	key_file: Path | None = None
 	auto_unmount: bool = False
 
 	# will be set internally after unlocking the device
-	_mapper_dev: Optional[Path] = None
+	_mapper_dev: Path | None = None
 
 	@property
-	def mapper_dev(self) -> Optional[Path]:
+	def mapper_dev(self) -> Path | None:
 		if self.mapper_name:
 			return Path(f'/dev/mapper/{self.mapper_name}')
 		return None
+
+	def isLuks(self) -> bool:
+		try:
+			SysCommand(f'cryptsetup isLuks {self.luks_dev_path}')
+			return True
+		except SysCallError:
+			return False
+
+	def erase(self) -> None:
+		debug(f'Erasing luks partition: {self.luks_dev_path}')
+		worker = SysCommandWorker(f'cryptsetup erase {self.luks_dev_path}')
+		worker.poll()
+		worker.write(b'YES\n', line_ending=False)
 
 	def __post_init__(self) -> None:
 		if self.luks_dev_path is None:
@@ -58,7 +70,7 @@ class Luks2:
 		key_size: int = 512,
 		hash_type: str = 'sha512',
 		iter_time: int = 10000,
-		key_file: Optional[Path] = None
+		key_file: Path | None = None
 	) -> Path:
 		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
@@ -130,7 +142,7 @@ class Luks2:
 	def is_unlocked(self) -> bool:
 		return self.mapper_name is not None and Path(f'/dev/mapper/{self.mapper_name}').exists()
 
-	def unlock(self, key_file: Optional[Path] = None) -> None:
+	def unlock(self, key_file: Path | None = None) -> None:
 		"""
 		Unlocks the luks device, an optional key file location for unlocking can be specified,
 		otherwise a default location for the key file will be used.
@@ -240,7 +252,7 @@ class Luks2:
 		self,
 		crypttab_path: Path,
 		key_file: Path,
-		options: List[str]
+		options: list[str]
 	) -> None:
 		debug(f'Adding crypttab entry for key {key_file}')
 

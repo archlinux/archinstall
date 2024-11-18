@@ -1393,6 +1393,187 @@ msgstr ""
 msgid "Press Ctrl+h for help"
 msgstr ""
 
+msgid "Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Seat access"
+msgstr ""
+
+#, fuzzy
+msgid "Mountpoint"
+msgstr "Aankoppelpunt toekennen aan partitie"
+
+msgid "HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Voer een versleutelwachtwoord in voor (laat leeg om niet te versleutelen): "
+
+#, fuzzy
+msgid "Disk encryption password"
+msgstr "Versleutelwachtwoord instellen"
+
+#, fuzzy
+msgid "Partition - New"
+msgstr "Configuratie vastleggen"
+
+msgid "Filesystem"
+msgstr ""
+
+msgid "Invalid size"
+msgstr ""
+
+#, fuzzy
+msgid "Start (default: sector {}): "
+msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+
+#, fuzzy
+msgid "End (default: {}): "
+msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+
+#, fuzzy
+msgid "Subvolume name"
+msgstr "Subvolumenaam "
+
+#, fuzzy
+msgid "Disk configuration type"
+msgstr "Geen configuratie"
+
+msgid "Root mount directory"
+msgstr ""
+
+#, fuzzy
+msgid "Select language"
+msgstr "Taal"
+
+#, fuzzy
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Typ de namen van te installeren pakketten (spatiegescheiden - laat leeg om over te slaan): "
+
+msgid "Invalid download number"
+msgstr ""
+
+msgid "Number downloads"
+msgstr ""
+
+msgid "The username you entered is invalid"
+msgstr ""
+
+#, fuzzy
+msgid "Username"
+msgstr "Gebruikersnaam: "
+
+#, fuzzy
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Moet {} gebruiker een beheerder (sudoer) worden?"
+
+#, fuzzy
+msgid "Interfaces"
+msgstr "Gebruiker verwijderen"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr ""
+
+msgid "Modes"
+msgstr ""
+
+msgid "IP address"
+msgstr ""
+
+#, fuzzy
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Voer uw eigen gateway-adres (router-ip-adres) in of laag leeg om over te slaan: "
+
+msgid "Gateway address"
+msgstr ""
+
+#, fuzzy
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Voer uw eigen dns-servers in (spatiegescheiden - laat leeg om over te slaan): "
+
+#, fuzzy
+msgid "DNS servers"
+msgstr "Kies een audioserver"
+
+#, fuzzy
+msgid "Configure interfaces"
+msgstr "Gebruiker verwijderen"
+
+#, fuzzy
+msgid "Kernel"
+msgstr "Kernels"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr ""
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Main profile"
+msgstr "Profiel"
+
+#, fuzzy
+msgid "Confirm password"
+msgstr "Wachtwoord wijzigen"
+
+msgid "The confirmation password did not match, please try again"
+msgstr ""
+
+#, fuzzy
+msgid "Not a valid directory"
+msgstr "Ongeldige map: {}"
+
+#, fuzzy
+msgid "Would you like to continue?"
+msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
+
+msgid "Directory"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "Voer de naam in van de map waarin de configuratie(s) moet(en) worden vastgelegd: "
+
+#, fuzzy
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Configuratie vastleggen"
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+#, fuzzy
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Meld dit voorval (inclusief het logboek) op https://github.com/archlinux/archinstall/issues"
+
+#, fuzzy
+msgid "Mirror name"
+msgstr "Spiegelserverregio"
+
+msgid "Url"
+msgstr ""
+
+#, fuzzy
+msgid "Select signature check"
+msgstr "Kies een schijfindeling"
+
+#, fuzzy
+msgid "Select execution mode"
+msgstr "Kies een actie voor '{}'"
+
+msgid "Press ? for help"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

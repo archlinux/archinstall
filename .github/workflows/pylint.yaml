@@ -1,7 +1,7 @@
 on: [ push, pull_request ]
-name: flake8 linting (3 ignores)
+name: Pylint linting
 jobs:
-    flake8:
+    pylint:
         runs-on: ubuntu-latest
         container:
             image: archlinux/archlinux:latest
@@ -14,10 +14,9 @@ jobs:
                 pacman --noconfirm -Syyu
                 pacman --noconfirm -Sy python-pip python-pyparted python-simple-term-menu pkgconfig gcc
             - run: pip install --break-system-packages --upgrade pip
-            # this will install the exact version of flake8 that is in the pyproject.toml file
-            - name: Install archinstall dependencies
+            - name: Install Pylint and Pylint plug-ins
               run: pip install --break-system-packages .[dev]
             - run: python --version
-            - run: flake8 --version
-            - name: Lint with flake8
-              run: flake8
+            - run: pylint --version
+            - name: Lint with Pylint
+              run: pylint .

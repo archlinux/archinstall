@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import signal
-import sys
 import time
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING, List, Dict, Set
+from typing import Any, TYPE_CHECKING
 
+from ..interactions.general_conf import ask_abort
 from .device_handler import device_handler
 from .device_model import (
 	DiskLayoutConfiguration, DiskLayoutType, PartitionTable,
@@ -15,8 +14,11 @@ from .device_model import (
 )
 from ..hardware import SysInfo
 from ..luks import Luks2
-from ..menu import Menu
 from ..output import debug, info
+from archinstall.tui import (
+	Tui
+)
+
 
 if TYPE_CHECKING:
 	_: Any
@@ -26,7 +28,7 @@ class FilesystemHandler:
 	def __init__(
 		self,
 		disk_config: DiskLayoutConfiguration,
-		enc_conf: Optional[DiskEncryption] = None
+		enc_conf: DiskEncryption | None = None
 	):
 		self._disk_config = disk_config
 		self._enc_config = enc_conf
@@ -44,12 +46,8 @@ class FilesystemHandler:
 
 		device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
 
-		# Issue a final warning before we continue with something un-revertable.
-		# We mention the drive one last time, and count from 5 to 0.
-		print(str(_(' ! Formatting {} in ')).format(device_paths))
-
 		if show_countdown:
-			self._do_countdown()
+			self._final_warning(device_paths)
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
@@ -87,7 +85,7 @@ class FilesystemHandler:
 
 	def _format_partitions(
 		self,
-		partitions: List[PartitionModification],
+		partitions: list[PartitionModification],
 		device_path: Path
 	) -> None:
 		"""
@@ -121,7 +119,7 @@ class FilesystemHandler:
 			part_mod.partuuid = lsblk_info.partuuid
 			part_mod.uuid = lsblk_info.uuid
 
-	def _validate_partitions(self, partitions: List[PartitionModification]) -> None:
+	def _validate_partitions(self, partitions: list[PartitionModification]) -> None:
 		checks = {
 			# verify that all partitions have a path set (which implies that they have been created)
 			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
@@ -184,7 +182,7 @@ class FilesystemHandler:
 	def _setup_lvm(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: Dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {}
 	) -> None:
 		self._lvm_create_pvs(lvm_config, enc_mods)
 
@@ -231,7 +229,7 @@ class FilesystemHandler:
 	def _format_lvm_vols(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_vols: Dict[LvmVolume, Luks2] = {}
+		enc_vols: dict[LvmVolume, Luks2] = {}
 	) -> None:
 		for vol in lvm_config.get_all_volumes():
 			if enc_vol := enc_vols.get(vol, None):
@@ -251,9 +249,9 @@ class FilesystemHandler:
 	def _lvm_create_pvs(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: Dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {}
 	) -> None:
-		pv_paths: Set[Path] = set()
+		pv_paths: set[Path] = set()
 
 		for vg in lvm_config.vol_groups:
 			pv_paths |= self._get_all_pv_dev_paths(vg.pvs, enc_mods)
@@ -262,10 +260,10 @@ class FilesystemHandler:
 
 	def _get_all_pv_dev_paths(
 		self,
-		pvs: List[PartitionModification],
-		enc_mods: Dict[PartitionModification, Luks2] = {}
-	) -> Set[Path]:
-		pv_paths: Set[Path] = set()
+		pvs: list[PartitionModification],
+		enc_mods: dict[PartitionModification, Luks2] = {}
+	) -> set[Path]:
+		pv_paths: set[Path] = set()
 
 		for pv in pvs:
 			if enc_pv := enc_mods.get(pv, None):
@@ -281,8 +279,8 @@ class FilesystemHandler:
 		lvm_config: LvmConfiguration,
 		enc_config: DiskEncryption,
 		lock_after_create: bool = True
-	) -> Dict[LvmVolume, Luks2]:
-		enc_vols: Dict[LvmVolume, Luks2] = {}
+	) -> dict[LvmVolume, Luks2]:
+		enc_vols: dict[LvmVolume, Luks2] = {}
 
 		for vol in lvm_config.get_all_volumes():
 			if vol in enc_config.lvm_volumes:
@@ -301,8 +299,8 @@ class FilesystemHandler:
 		self,
 		enc_config: DiskEncryption,
 		lock_after_create: bool = True
-	) -> Dict[PartitionModification, Luks2]:
-		enc_mods: Dict[PartitionModification, Luks2] = {}
+	) -> dict[PartitionModification, Luks2]:
+		enc_mods: dict[PartitionModification, Luks2] = {}
 
 		for mod in self._disk_config.device_modifications:
 			partitions = mod.partitions
@@ -339,40 +337,19 @@ class FilesystemHandler:
 				Size(256, Unit.MiB, SectorSize.default())
 			)
 
-	def _do_countdown(self) -> bool:
-		SIG_TRIGGER = False
+	def _final_warning(self, device_paths: str) -> bool:
+		# Issue a final warning before we continue with something un-revertable.
+		# We mention the drive one last time, and count from 5 to 0.
+		out = str(_(' ! Formatting {} in ')).format(device_paths)
+		Tui.print(out, row=0, endl='', clear_screen=True)
 
-		def kill_handler(sig: int, frame: Any) -> None:
-			print()
-			exit(0)
-
-		def sig_handler(sig: int, frame: Any) -> None:
-			signal.signal(signal.SIGINT, kill_handler)
-
-		original_sigint_handler = signal.getsignal(signal.SIGINT)
-		signal.signal(signal.SIGINT, sig_handler)
-
-		for i in range(5, 0, -1):
-			print(f"{i}", end='')
-
-			for x in range(4):
-				sys.stdout.flush()
+		try:
+			countdown = '\n5...4...3...2...1'
+			for c in countdown:
+				Tui.print(c, row=0, endl='')
 				time.sleep(0.25)
-				print(".", end='')
-
-			if SIG_TRIGGER:
-				prompt = _('Do you really want to abort?')
-				choice = Menu(prompt, Menu.yes_no(), skip=False).run()
-				if choice.value == Menu.yes():
-					exit(0)
-
-				if SIG_TRIGGER is False:
-					sys.stdin.read()
-
-				SIG_TRIGGER = False
-				signal.signal(signal.SIGINT, sig_handler)
-
-		print()
-		signal.signal(signal.SIGINT, original_sigint_handler)
+		except KeyboardInterrupt:
+			with Tui():
+				ask_abort()
 
 		return True

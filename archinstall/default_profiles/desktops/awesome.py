@@ -32,7 +32,7 @@ class AwesomeProfile(XorgProfile):
 		super().install(install_session)
 
 		# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.
-		with open(f"{install_session.target}/etc/xdg/awesome/rc.lua", 'r') as fh:
+		with open(f"{install_session.target}/etc/xdg/awesome/rc.lua") as fh:
 			awesome_lua = fh.read()
 
 		# Replace xterm with alacritty for a smoother experience.
@@ -45,7 +45,7 @@ class AwesomeProfile(XorgProfile):
 
 		# TODO: check if we selected a greeter,
 		# but for now, awesome is intended to run without one.
-		with open(f"{install_session.target}/etc/X11/xinit/xinitrc", 'r') as xinitrc:
+		with open(f"{install_session.target}/etc/X11/xinit/xinitrc") as xinitrc:
 			xinitrc_data = xinitrc.read()
 
 		for line in xinitrc_data.split('\n'):

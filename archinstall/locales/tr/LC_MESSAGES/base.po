@@ -188,7 +188,7 @@ msgid "Select keyboard layout"
 msgstr "Klavye düzeni seçin"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Paketleri indirmek için bölgelerden birini seçin" 
+msgstr "Paketleri indirmek için bölgelerden birini seçin"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "Kullanmak ve yapılandırmak için bir veya daha fazla disk seçin"
@@ -1328,4 +1328,197 @@ msgid " (default)"
 msgstr "(varsayılan)"
 
 msgid "Press Ctrl+h for help"
+msgstr " Ctrl+h tuşlarına basarak yardım alabilirsiniz."
+
+#, fuzzy
+msgid "Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Sway'in donanımınıza erişmesine izin vermek için bir seçenek belirleyin"
+
+msgid "Seat access"
+msgstr ""
+
+#, fuzzy
+msgid "Mountpoint"
+msgstr "Bağlantı noktası: "
+
+msgid "HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Disk şifreleme parolası girin (şifreleme olmaması için boş bırakın): "
+
+# Şifreleme şifresi bana bir tık garip geldi, o yüzden parolayla değiştirdim
+#, fuzzy
+msgid "Disk encryption password"
+msgstr "Şifreleme parolası"
+
+#, fuzzy
+msgid "Partition - New"
+msgstr "Disk bölümü"
+
+#, fuzzy
+msgid "Filesystem"
+msgstr "Dosya sistemini değiştir"
+
+msgid "Invalid size"
+msgstr ""
+
+#, fuzzy
+msgid "Start (default: sector {}): "
+msgstr "Başlangıç girin (varsayılan: sektör {}): "
+
+#, fuzzy
+msgid "End (default: {}): "
+msgstr "Bitiş girin (varsayılan: {}): "
+
+#, fuzzy
+msgid "Subvolume name"
+msgstr "Alt disk bölümü ismi "
+
+#, fuzzy
+msgid "Disk configuration type"
+msgstr "Disk yapılandırması"
+
+msgid "Root mount directory"
+msgstr ""
+
+#, fuzzy
+msgid "Select language"
+msgstr "Yerel ayar dili"
+
+#, fuzzy
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Kurulacak ek paketleri yazınız (paketleri boşlukla ayırın, geçmek için boş bırakın): "
+
+msgid "Invalid download number"
+msgstr ""
+
+msgid "Number downloads"
+msgstr ""
+
+#, fuzzy
+msgid "The username you entered is invalid"
+msgstr "Girdiğiniz kullanıcı adı geçersiz. Tekrar deneyin"
+
+#, fuzzy
+msgid "Username"
+msgstr "Kullanıcı Adı : "
+
+#, fuzzy
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "{} bir süper kullanıcı (sudoer) olmalı mı?"
+
+#, fuzzy
+msgid "Interfaces"
+msgstr "Arayüz ekle"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr ""
+
+msgid "Modes"
+msgstr ""
+
+msgid "IP address"
+msgstr ""
+
+#, fuzzy
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Ağ geçidi (yönlendirici) IP adresini girin ya da yoksa veya kullanılmayacak ise boş bırakın: "
+
+msgid "Gateway address"
+msgstr ""
+
+#, fuzzy
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "DNS sunucularını girin (boşlukla ayrılmış, yoksa veya kullanılmayacak ise boş bırakın): "
+
+#, fuzzy
+msgid "DNS servers"
+msgstr "Ses sunucusu yok"
+
+#, fuzzy
+msgid "Configure interfaces"
+msgstr "Yapılandırılmış {} arayüzler"
+
+#, fuzzy
+msgid "Kernel"
+msgstr "Çekirdekler (kernels)"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+#, fuzzy
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Tescilli Nvidia sürücüsü Sway tarafından desteklenmiyor. Sorunlarla karşılaşmanız muhtemeldir, bu sizin için uygun mu?"
+
+#, fuzzy
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Tescilli Nvidia sürücüsü Sway tarafından desteklenmiyor. Sorunlarla karşılaşmanız muhtemeldir, bu sizin için uygun mu?"
+
+#, fuzzy
+msgid "Main profile"
+msgstr "Profil düzenle"
+
+#, fuzzy
+msgid "Confirm password"
+msgstr "Şifre değiştir"
+
+msgid "The confirmation password did not match, please try again"
+msgstr ""
+
+#, fuzzy
+msgid "Not a valid directory"
+msgstr "Geçerli bir dizin değil: {}"
+
+#, fuzzy
+msgid "Would you like to continue?"
+msgstr "BTRFS sıkıştırmasını kullanmak ister misiniz?"
+
+msgid "Directory"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr ""
+"Kaydedilecek yapılandırma(lar) için bir dizin girin (sekme tamamlama etkin)\n"
+"Dizini kaydet: "
+
+#, fuzzy
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "{} konfigürasyon dosya(lar)ını gösterilen konuma kaydetmek ister miydiniz?"
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+#, fuzzy
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Lütfen bu sorunu (ve dosyayı) https://github.com/archlinux/archinstall/issues adresinde belirtin"
+
+#, fuzzy
+msgid "Mirror name"
+msgstr "İndirme sunucusu bölgesi"
+
+msgid "Url"
+msgstr ""
+
+#, fuzzy
+msgid "Select signature check"
+msgstr "İmza kontrolü seçeneğini seçin"
+
+#, fuzzy
+msgid "Select execution mode"
+msgstr "Bir çalıştırma modu seçin"
+
+#, fuzzy
+msgid "Press ? for help"
 msgstr " Ctrl+h tuşlarına basarak yardım alabilirsiniz."

@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import sys
 from enum import Enum, auto
-from typing import List, Optional, Any, Dict, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
-from ..lib.utils.util import format_cols
 from ..lib.storage import storage
 
 if TYPE_CHECKING:
@@ -53,9 +52,9 @@ class Profile:
 		name: str,
 		profile_type: ProfileType,
 		description: str = '',
-		current_selection: List[Profile] = [],
-		packages: List[str] = [],
-		services: List[str] = [],
+		current_selection: list[Profile] = [],
+		packages: list[str] = [],
+		services: list[str] = [],
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
 		advanced: bool = False
@@ -63,13 +62,13 @@ class Profile:
 		self.name = name
 		self.description = description
 		self.profile_type = profile_type
-		self.custom_settings: Dict[str, Any] = {}
+		self.custom_settings: dict[str, Any] = {}
 		self.advanced = advanced
 
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
 
-		# self.gfx_driver: Optional[str] = None
+		# self.gfx_driver: str | None = None
 
 		self.current_selection = current_selection
 		self._packages = packages
@@ -79,7 +78,7 @@ class Profile:
 		self.custom_enabled = False
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		"""
 		Returns a list of packages that should be installed when
 		this profile is among the chosen ones
@@ -87,7 +86,7 @@ class Profile:
 		return self._packages
 
 	@property
-	def services(self) -> List[str]:
+	def services(self) -> list[str]:
 		"""
 		Returns a list of services that should be enabled when
 		this profile is among the chosen ones
@@ -95,7 +94,7 @@ class Profile:
 		return self._services
 
 	@property
-	def default_greeter_type(self) -> Optional[GreeterType]:
+	def default_greeter_type(self) -> GreeterType | None:
 		"""
 		Setting a default greeter type for a desktop profile
 		"""
@@ -120,19 +119,19 @@ class Profile:
 		are needed
 		"""
 
-	def json(self) -> Dict:
+	def json(self) -> dict[str, Any]:
 		"""
 		Returns a json representation of the profile
 		"""
 		return {}
 
-	def do_on_select(self) -> SelectResult:
+	def do_on_select(self) -> SelectResult | None:
 		"""
 		Hook that will be called when a profile is selected
 		"""
 		return SelectResult.NewSelection
 
-	def set_custom_settings(self, settings: Dict[str, Any]) -> None:
+	def set_custom_settings(self, settings: dict[str, Any]) -> None:
 		"""
 		Set the custom settings for the profile.
 		This is also called when the settings are parsed from the config
@@ -140,7 +139,7 @@ class Profile:
 		"""
 		self.custom_settings = settings
 
-	def current_selection_names(self) -> List[str]:
+	def current_selection_names(self) -> list[str]:
 		if self.current_selection:
 			return [s.name for s in self.current_selection]
 		return []
@@ -181,30 +180,26 @@ class Profile:
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
-	def preview_text(self) -> Optional[str]:
+	def preview_text(self) -> str | None:
 		"""
 		Override this method to provide a preview text for the profile
 		"""
 		return self.packages_text()
 
-	def packages_text(self, include_sub_packages: bool = False) -> Optional[str]:
-		header = str(_('Installed packages'))
-
-		text = ''
-		packages = []
+	def packages_text(self, include_sub_packages: bool = False) -> str:
+		packages = set()
 
 		if self.packages:
-			packages = self.packages
+			packages = set(self.packages)
 
 		if include_sub_packages:
-			for p in self.current_selection:
-				if p.packages:
-					packages += p.packages
+			for sub_profile in self.current_selection:
+				if sub_profile.packages:
+					packages.update(sub_profile.packages)
 
-		text += format_cols(sorted(set(packages)))
+		text = str(_('Installed packages')) + ':\n'
 
-		if text:
-			text = f'{header}: \n{text}'
-			return text
+		for pkg in sorted(packages):
+			text += f'\t- {pkg}\n'
 
-		return None
+		return text

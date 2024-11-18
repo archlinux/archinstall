@@ -1,9 +1,12 @@
 from enum import Enum
-from typing import List, Optional, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any
 
-from archinstall.default_profiles.profile import ProfileType, GreeterType
+from archinstall.default_profiles.profile import ProfileType, GreeterType, SelectResult
 from archinstall.default_profiles.xorg import XorgProfile
-from archinstall.lib.menu import Menu
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, ResultType, Alignment
+)
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -22,7 +25,7 @@ class HyprlandProfile(XorgProfile):
 		self.custom_settings = {'seat_access': None}
 
 	@property
-	def packages(self) -> List[str]:
+	def packages(self) -> list[str]:
 		return [
 			"hyprland",
 			"dunst",
@@ -38,31 +41,41 @@ class HyprlandProfile(XorgProfile):
 		]
 
 	@property
-	def default_greeter_type(self) -> Optional[GreeterType]:
+	def default_greeter_type(self) -> GreeterType | None:
 		return GreeterType.Sddm
 
 	@property
-	def services(self) -> List[str]:
+	def services(self) -> list[str]:
 		if pref := self.custom_settings.get('seat_access', None):
 			return [pref]
 		return []
 
 	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
-		title = str(_('Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
-		title += str(_('\n\nChoose an option to give Hyprland access to your hardware'))
+		header = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		header += '\n' + str(_('Choose an option to give Sway access to your hardware')) + '\n'
 
-		options = [e.value for e in SeatAccess]
-		default = None
+		items = [MenuItem(s.value, value=s) for s in SeatAccess]
+		group = MenuItemGroup(items, sort_items=True)
 
-		if seat := self.custom_settings.get('seat_access', None):
-			default = seat
+		default = self.custom_settings.get('seat_access', None)
+		group.set_default_by_value(default)
 
-		choice = Menu(title, options, skip=False, preset_values=default).run()
-		self.custom_settings['seat_access'] = choice.single_value
+		result = SelectMenu(
+			group,
+			header=header,
+			allow_skip=False,
+			frame=FrameProperties.min(str(_('Seat access'))),
+			alignment=Alignment.CENTER
+		).run()
 
-	def do_on_select(self):
+		if result.type_ == ResultType.Selection:
+			if result.item() is not None:
+				self.custom_settings['seat_access'] = result.get_value()
+
+	def do_on_select(self) -> SelectResult | None:
 		self._ask_seat_access()
+		return None
 
 	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)

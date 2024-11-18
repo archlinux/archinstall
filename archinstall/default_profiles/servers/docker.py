@@ -1,4 +1,4 @@
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import archinstall
 
@@ -25,7 +25,7 @@ class DockerProfile(Profile):
 		return ['docker']
 
 	def post_install(self, install_session: 'Installer') -> None:
-		users: Union[User, list[User]] = archinstall.arguments.get('!users', [])
+		users: User | list[User] = archinstall.arguments.get('!users', [])
 		if not isinstance(users, list):
 			users = [users]
 

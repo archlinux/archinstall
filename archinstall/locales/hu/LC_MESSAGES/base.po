@@ -1314,3 +1314,156 @@ msgstr " (alapértelmezett)"
 
 msgid "Press Ctrl+h for help"
 msgstr "CTRL+h → a súgó megnyitásához"
+
+msgid "Choose an option to give Sway access to your hardware"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Sway számára a hardverekhez való hozzáférést"
+
+msgid "Seat access"
+msgstr "Hozzáférés a munkaállomáshoz"
+
+msgid "Mountpoint"
+msgstr "Csatolási pont"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Adjon meg egy jelszót a lemez titkosításához (hagyja üresen, ha nem akarja titkosítani)"
+
+msgid "Disk encryption password"
+msgstr "Lemeztitkosítási jelszó"
+
+msgid "Partition - New"
+msgstr "Partíció - új"
+
+msgid "Filesystem"
+msgstr "Fájlrendszer"
+
+msgid "Invalid size"
+msgstr "Érvénytelen méret"
+
+msgid "Start (default: sector {}): "
+msgstr "Kezdőpont megadása (alapértelmezett: {} szektor): "
+
+msgid "End (default: {}): "
+msgstr "Végpont megadása (alapértelmezett: {}): "
+
+msgid "Subvolume name"
+msgstr "Alkötet neve"
+
+msgid "Disk configuration type"
+msgstr "Lemezkonfiguráció-típus"
+
+msgid "Root mount directory"
+msgstr "Root csatolási könyvtár"
+
+msgid "Select language"
+msgstr "Nyelv kiválasztása"
+
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Írjon be további csomagneveket a telepítéshez (szóközzel elválasztva; hagyja üresen a kihagyáshoz)"
+
+msgid "Invalid download number"
+msgstr "Érvénytelen letöltésszám"
+
+msgid "Number downloads"
+msgstr "Letöltésszám"
+
+msgid "The username you entered is invalid"
+msgstr "A megadott felhasználónév érvénytelen"
+
+msgid "Username"
+msgstr "Felhasználónév"
+
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "A(z) „{}” nevű felhasználónak rendszergazdának (sudoer) kell lennie?\n"
+
+msgid "Interfaces"
+msgstr "Csatolók"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "Meg kell adnia egy érvényes IP-címet az IP-cím-konfigurációs módban"
+
+msgid "Modes"
+msgstr "Módok"
+
+msgid "IP address"
+msgstr "IP-cím"
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Adja meg az átjáró (elosztó) IP-címét (hagyja üresen, ha nincs ilyen)"
+
+msgid "Gateway address"
+msgstr "Átjárócím"
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Adja meg a DNS-kiszolgálókat (szóközzel elválasztva; hagyja üresen, ha nincsenek ilyenek)"
+
+msgid "DNS servers"
+msgstr "DNS-kiszolgálók"
+
+msgid "Configure interfaces"
+msgstr "Csatolók konfigurálása"
+
+msgid "Kernel"
+msgstr "Kernel"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "Az UEFI nem észlelhető, és egyes beállítások le vannak tiltva"
+
+msgid "Info"
+msgstr "Információ"
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "A Sway nem támogatja az Nvidia saját fejlesztésű, zárt illesztőprogramját."
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Valószínű, hogy problémákba fog ütközni, rendben van ez így?"
+
+msgid "Main profile"
+msgstr "Fő profil"
+
+msgid "Confirm password"
+msgstr "Jelszó megerősítése"
+
+msgid "The confirmation password did not match, please try again"
+msgstr "A megerősítéshez használt jelszó nem egyezik meg, próbálja újra"
+
+msgid "Not a valid directory"
+msgstr "Érvénytelen könyvtár"
+
+msgid "Would you like to continue?"
+msgstr "Szeretné folytatni?"
+
+msgid "Directory"
+msgstr "Könyvtár"
+
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "Adjon meg egy könyvtárat a mentendő konfiguráció(k) számára (a tabulátoros kiegészítés engedélyezve van)"
+
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Szeretné elmenteni a konfigurációs fájlt a következő helyre?:{}"
+
+msgid "Enabled"
+msgstr "Engedélyezve"
+
+msgid "Disabled"
+msgstr "Letiltva"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Jelentse ezt a problémát (a naplófájllal együtt) itt: https://github.com/archlinux/archinstall/issues"
+
+msgid "Mirror name"
+msgstr "Tükörnév"
+
+msgid "Url"
+msgstr "Webcím"
+
+msgid "Select signature check"
+msgstr "Aláírásellenőrzés kiválasztása"
+
+msgid "Select execution mode"
+msgstr "Végrehajtási mód kiválasztása"
+
+msgid "Press ? for help"
+msgstr "? → a súgó megnyitásához"

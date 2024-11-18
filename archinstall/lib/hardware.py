@@ -2,13 +2,12 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
-from typing import Optional, Dict, List, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any
 
 from .exceptions import SysCallError
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
 from .output import debug
-from .utils.util import format_cols
 
 if TYPE_CHECKING:
 	_: Any
@@ -34,7 +33,7 @@ class CpuVendor(Enum):
 			case _:
 				return False
 
-	def get_ucode(self) -> Optional[Path]:
+	def get_ucode(self) -> Path | None:
 		if self._has_microcode():
 			return Path(self.value + '-ucode.img')
 		return None
@@ -78,12 +77,15 @@ class GfxDriver(Enum):
 				return False
 
 	def packages_text(self) -> str:
-		text = str(_('Installed packages')) + ':\n'
 		pkg_names = [p.value for p in self.gfx_packages()]
-		text += format_cols(sorted(pkg_names))
+		text = str(_('Installed packages')) + ':\n'
+
+		for p in sorted(pkg_names):
+			text += f'\t- {p}\n'
+
 		return text
 
-	def gfx_packages(self) -> List[GfxPackage]:
+	def gfx_packages(self) -> list[GfxPackage]:
 		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
 
 		match self:
@@ -146,12 +148,12 @@ class _SysInfo:
 		pass
 
 	@cached_property
-	def cpu_info(self) -> Dict[str, str]:
+	def cpu_info(self) -> dict[str, str]:
 		"""
 		Returns system cpu information
 		"""
 		cpu_info_path = Path("/proc/cpuinfo")
-		cpu: Dict[str, str] = {}
+		cpu: dict[str, str] = {}
 
 		with cpu_info_path.open() as file:
 			for line in file:
@@ -162,12 +164,12 @@ class _SysInfo:
 		return cpu
 
 	@cached_property
-	def mem_info(self) -> Dict[str, int]:
+	def mem_info(self) -> dict[str, int]:
 		"""
 		Returns system memory information
 		"""
 		mem_info_path = Path("/proc/meminfo")
-		mem_info: Dict[str, int] = {}
+		mem_info: dict[str, int] = {}
 
 		with mem_info_path.open() as file:
 			for line in file:
@@ -181,12 +183,12 @@ class _SysInfo:
 		return self.mem_info[key]
 
 	@cached_property
-	def loaded_modules(self) -> List[str]:
+	def loaded_modules(self) -> list[str]:
 		"""
 		Returns loaded kernel modules
 		"""
 		modules_path = Path('/proc/modules')
-		modules: List[str] = []
+		modules: list[str] = []
 
 		with modules_path.open() as file:
 			for line in file:
@@ -210,8 +212,8 @@ class SysInfo:
 		return os.path.isdir('/sys/firmware/efi')
 
 	@staticmethod
-	def _graphics_devices() -> Dict[str, str]:
-		cards: Dict[str, str] = {}
+	def _graphics_devices() -> dict[str, str]:
+		cards: dict[str, str] = {}
 		for line in SysCommand("lspci"):
 			if b' VGA ' in line or b' 3D ' in line:
 				_, identifier = line.split(b': ', 1)
@@ -231,13 +233,13 @@ class SysInfo:
 		return any('intel' in x.lower() for x in SysInfo._graphics_devices())
 
 	@staticmethod
-	def cpu_vendor() -> Optional[CpuVendor]:
+	def cpu_vendor() -> CpuVendor | None:
 		if vendor := _sys_info.cpu_info.get('vendor_id'):
 			return CpuVendor.get_vendor(vendor)
 		return None
 
 	@staticmethod
-	def cpu_model() -> Optional[str]:
+	def cpu_model() -> str | None:
 		return _sys_info.cpu_info.get('model name', None)
 
 	@staticmethod
@@ -263,7 +265,7 @@ class SysInfo:
 		return _sys_info.mem_info_by_key('MemTotal')
 
 	@staticmethod
-	def virtualization() -> Optional[str]:
+	def virtualization() -> str | None:
 		try:
 			return str(SysCommand("systemd-detect-virt")).strip('\r\n')
 		except SysCallError as err:

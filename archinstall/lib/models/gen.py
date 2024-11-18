@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Any
+from typing import Any
 
 
 @dataclass
@@ -7,7 +7,7 @@ class VersionDef:
 	version_string: str
 
 	@classmethod
-	def parse_version(cls) -> List[str]:
+	def parse_version(cls) -> list[str]:
 		if '.' in cls.version_string:
 			versions = cls.version_string.split('.')
 		else:
@@ -20,7 +20,7 @@ class VersionDef:
 		return self.parse_version()[0]
 
 	@classmethod
-	def minor(cls) -> Optional[str]:
+	def minor(cls) -> str | None:
 		versions = cls.parse_version()
 		if len(versions) >= 2:
 			return versions[1]
@@ -28,7 +28,7 @@ class VersionDef:
 		return None
 
 	@classmethod
-	def patch(cls) -> Optional[str]:
+	def patch(cls) -> str | None:
 		versions = cls.parse_version()
 		if '-' in versions[-1]:
 			_, patch_version = versions[-1].split('-', 1)
@@ -74,21 +74,21 @@ class PackageSearchResult:
 	installed_size: int
 	build_date: str
 	last_update: str
-	flag_date: Optional[str]
-	maintainers: List[str]
+	flag_date: str | None
+	maintainers: list[str]
 	packager: str
-	groups: List[str]
-	licenses: List[str]
-	conflicts: List[str]
-	provides: List[str]
-	replaces: List[str]
-	depends: List[str]
-	optdepends: List[str]
-	makedepends: List[str]
-	checkdepends: List[str]
+	groups: list[str]
+	licenses: list[str]
+	conflicts: list[str]
+	provides: list[str]
+	replaces: list[str]
+	depends: list[str]
+	optdepends: list[str]
+	makedepends: list[str]
+	checkdepends: list[str]
 
 	@staticmethod
-	def from_json(data: Dict[str, Any]) -> 'PackageSearchResult':
+	def from_json(data: dict[str, Any]) -> 'PackageSearchResult':
 		return PackageSearchResult(**data)
 
 	@property
@@ -109,10 +109,10 @@ class PackageSearch:
 	valid: bool
 	num_pages: int
 	page: int
-	results: List[PackageSearchResult]
+	results: list[PackageSearchResult]
 
 	@staticmethod
-	def from_json(data: Dict[str, Any]) -> 'PackageSearch':
+	def from_json(data: dict[str, Any]) -> 'PackageSearch':
 		results = [PackageSearchResult.from_json(r) for r in data['results']]
 
 		return PackageSearch(
@@ -156,5 +156,5 @@ class LocalPackage:
 	def __eq__(self, other) -> bool:
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other) -> bool:
+	def __lt__(self, other: 'LocalPackage') -> bool:
 		return self.pkg_version < other.pkg_version

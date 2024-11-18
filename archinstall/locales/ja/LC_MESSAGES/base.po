@@ -609,10 +609,10 @@ msgid "Continue"
 msgstr "続行"
 
 msgid "yes"
-msgstr "はい"
+msgstr "yes"
 
 msgid "no"
-msgstr "いいえ"
+msgstr "no"
 
 msgid "set: {}"
 msgstr "セット: {}"
@@ -1299,10 +1299,10 @@ msgid "LUKS on LVM"
 msgstr "LVM 上の LUKS"
 
 msgid "Yes"
-msgstr "はい"
+msgstr "Yes"
 
 msgid "No"
-msgstr "いいえ"
+msgstr "No"
 
 msgid "Archinstall help"
 msgstr "Archinstall ヘルプ"
@@ -1312,3 +1312,156 @@ msgstr " (デフォルト)"
 
 msgid "Press Ctrl+h for help"
 msgstr "Ctrl+H でヘルプを表示"
+
+msgid "Choose an option to give Sway access to your hardware"
+msgstr "Sway にハードウェアへのアクセスを許可するオプションを選択"
+
+msgid "Seat access"
+msgstr "シートアクセス"
+
+msgid "Mountpoint"
+msgstr "マウントポイント"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "ディスクの暗号化パスワードを入力（暗号化しない場合は無記入）"
+
+msgid "Disk encryption password"
+msgstr "ディスク暗号化パスワード"
+
+msgid "Partition - New"
+msgstr "パーティション - 新規"
+
+msgid "Filesystem"
+msgstr "ファイルシステム"
+
+msgid "Invalid size"
+msgstr "無効なサイズ"
+
+msgid "Start (default: sector {}): "
+msgstr "開始値（デフォルト: セクター {}): "
+
+msgid "End (default: {}): "
+msgstr "終了値（デフォルト: {}): "
+
+msgid "Subvolume name"
+msgstr "サブボリューム名"
+
+msgid "Disk configuration type"
+msgstr "ディスク設定のタイプ"
+
+msgid "Root mount directory"
+msgstr "ルートマウントディレクトリ"
+
+msgid "Select language"
+msgstr "言語を選択"
+
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "追加でインストールするパッケージを書く（スペースで区切る。無記入でスキップ）"
+
+msgid "Invalid download number"
+msgstr "ダウンロード数が無効です"
+
+msgid "Number downloads"
+msgstr "ダウンロード数"
+
+msgid "The username you entered is invalid"
+msgstr "入力したユーザー名は無効です"
+
+msgid "Username"
+msgstr "ユーザー名"
+
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "\"{}\" はスーパーユーザーに昇格しますか（sudo）？\n"
+
+msgid "Interfaces"
+msgstr "インターフェイス"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "IP設定モードで有効なIPを入力する必要があります"
+
+msgid "Modes"
+msgstr "モード"
+
+msgid "IP address"
+msgstr "IPアドレス"
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "ゲートウェイ（ルーター）の IP アドレスを入力。無い場合は無記入"
+
+msgid "Gateway address"
+msgstr "ゲートウェイアドレス"
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "DNS サーバーをスペースで区切って入力（無い場合は無記入）"
+
+msgid "DNS servers"
+msgstr "DNSサーバー"
+
+msgid "Configure interfaces"
+msgstr "インターフェースを設定"
+
+msgid "Kernel"
+msgstr "カーネル"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "UEFIが検出されず、一部のオプションが無効になります"
+
+msgid "Info"
+msgstr "情報"
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "プロプライエタリの Nvidia ドライバーは Sway ではサポートされていません。"
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "問題が発生する可能性が高いですが、よろしいですか？"
+
+msgid "Main profile"
+msgstr "メインプロファイル"
+
+msgid "Confirm password"
+msgstr "パスワードを確認"
+
+msgid "The confirmation password did not match, please try again"
+msgstr "確認のパスワードが一致しませんでした。もう一度試してください"
+
+msgid "Not a valid directory"
+msgstr "有効なディレクトリではありません"
+
+msgid "Would you like to continue?"
+msgstr "続行しますか？"
+
+msgid "Directory"
+msgstr "ディレクトリ"
+
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "設定を保存するディレクトリを入力（Tab で補完可能）"
+
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "設定ファイルを次の場所に保存しますか？ {}"
+
+msgid "Enabled"
+msgstr "有効"
+
+msgid "Disabled"
+msgstr "無効"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "この問題（およびファイル）を https://github.com/archlinux/archinstall/issues に送信してください"
+
+msgid "Mirror name"
+msgstr "ミラーの名前"
+
+msgid "Url"
+msgstr "URL"
+
+msgid "Select signature check"
+msgstr "署名チェックを選択"
+
+msgid "Select execution mode"
+msgstr "実行モードを選択"
+
+msgid "Press ? for help"
+msgstr "? を押すとヘルプを表示"

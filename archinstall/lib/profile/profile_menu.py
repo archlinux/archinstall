@@ -1,12 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional, Dict
+from typing import TYPE_CHECKING, Any
 
 from archinstall.default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
-from ..menu import Menu, MenuSelectionType, AbstractSubMenu, Selector
+from ..menu import AbstractSubMenu
 from ..interactions.system_conf import select_driver
 from ..hardware import GfxDriver
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, Alignment, ResultType,
+	Orientation
+)
 
 if TYPE_CHECKING:
 	_: Any
@@ -15,108 +21,129 @@ if TYPE_CHECKING:
 class ProfileMenu(AbstractSubMenu):
 	def __init__(
 		self,
-		data_store: Dict[str, Any],
-		preset: Optional[ProfileConfiguration] = None
+		preset: ProfileConfiguration | None = None
 	):
 		if preset:
 			self._preset = preset
 		else:
 			self._preset = ProfileConfiguration()
 
-		super().__init__(data_store=data_store)
+		self._data_store: dict[str, Any] = {}
 
-	def setup_selection_menu_options(self) -> None:
-		self._menu_options['profile'] = Selector(
-			_('Type'),
-			lambda x: self._select_profile(x),
-			display_func=lambda x: x.name if x else None,
-			preview_func=self._preview_profile,
-			default=self._preset.profile,
-			enabled=True
-		)
+		menu_optioons = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)
 
-		self._menu_options['gfx_driver'] = Selector(
-			_('Graphics driver'),
-			lambda preset: self._select_gfx_driver(preset),
-			display_func=lambda x: x.value if x else None,
-			dependencies=['profile'],
-			preview_func=self._preview_gfx,
-			default=self._preset.gfx_driver if self._preset.profile and self._preset.profile.is_graphic_driver_supported() else None,
-			enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False
-		)
+		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
 
-		self._menu_options['greeter'] = Selector(
-			_('Greeter'),
-			lambda preset: select_greeter(self._menu_options['profile'].current_selection, preset),
-			display_func=lambda x: x.value if x else None,
-			dependencies=['profile'],
-			default=self._preset.greeter if self._preset.profile and self._preset.profile.is_greeter_supported() else None,
-			enabled=self._preset.profile.is_greeter_supported() if self._preset.profile else False
-		)
+	def _define_menu_options(self) -> list[MenuItem]:
+		return [
+			MenuItem(
+				text=str(_('Type')),
+				action=lambda x: self._select_profile(x),
+				value=self._preset.profile,
+				preview_action=self._preview_profile,
+				key='profile'
+			),
+			MenuItem(
+				text=str(_('Graphics driver')),
+				action=lambda x: self._select_gfx_driver(x),
+				value=self._preset.gfx_driver if self._preset.profile and self._preset.profile.is_graphic_driver_supported() else None,
+				preview_action=self._prev_gfx,
+				enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False,
+				dependencies=['profile'],
+				key='gfx_driver',
+			),
+			MenuItem(
+				text=str(_('Greeter')),
+				action=lambda x: select_greeter(preset=x),
+				value=self._preset.greeter if self._preset.profile and self._preset.profile.is_greeter_supported() else None,
+				enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False,
+				preview_action=self._prev_greeter,
+				dependencies=['profile'],
+				key='greeter',
+			)
+		]
 
-	def run(self, allow_reset: bool = True) -> Optional[ProfileConfiguration]:
-		super().run(allow_reset=allow_reset)
+	def run(self) -> ProfileConfiguration | None:
+		super().run()
 
 		if self._data_store.get('profile', None):
 			return ProfileConfiguration(
-				self._menu_options['profile'].current_selection,
-				self._menu_options['gfx_driver'].current_selection,
-				self._menu_options['greeter'].current_selection
+				self._data_store.get('profile', None),
+				self._data_store.get('gfx_driver', None),
+				self._data_store.get('greeter', None),
 			)
 
 		return None
 
-	def _select_profile(self, preset: Optional[Profile]) -> Optional[Profile]:
+	def _select_profile(self, preset: Profile | None) -> Profile | None:
 		profile = select_profile(preset)
 
 		if profile is not None:
 			if not profile.is_graphic_driver_supported():
-				self._menu_options['gfx_driver'].set_enabled(False)
-				self._menu_options['gfx_driver'].set_current_selection(None)
+				self._item_group.find_by_key('gfx_driver').enabled = False
+				self._item_group.find_by_key('gfx_driver').value = None
 			else:
-				self._menu_options['gfx_driver'].set_enabled(True)
-				self._menu_options['gfx_driver'].set_current_selection(GfxDriver.AllOpenSource)
+				self._item_group.find_by_key('gfx_driver').enabled = True
+				self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
 
 			if not profile.is_greeter_supported():
-				self._menu_options['greeter'].set_enabled(False)
-				self._menu_options['greeter'].set_current_selection(None)
+				self._item_group.find_by_key('greeter').enabled = False
+				self._item_group.find_by_key('greeter').value = None
 			else:
-				self._menu_options['greeter'].set_enabled(True)
-				self._menu_options['greeter'].set_current_selection(profile.default_greeter_type)
+				self._item_group.find_by_key('greeter').enabled = True
+				self._item_group.find_by_key('greeter').value = profile.default_greeter_type
 		else:
-			self._menu_options['gfx_driver'].set_current_selection(None)
-			self._menu_options['greeter'].set_current_selection(None)
+			self._item_group.find_by_key('gfx_driver').value = None
+			self._item_group.find_by_key('greeter').value = None
 
 		return profile
 
-	def _select_gfx_driver(self, preset: Optional[GfxDriver] = None) -> Optional[GfxDriver]:
+	def _select_gfx_driver(self, preset: GfxDriver | None = None) -> GfxDriver | None:
 		driver = preset
-		profile: Optional[Profile] = self._menu_options['profile'].current_selection
+		profile: Profile | None = self._item_group.find_by_key('profile').value
 
 		if profile:
 			if profile.is_graphic_driver_supported():
-				driver = select_driver(current_value=preset)
+				driver = select_driver(preset=preset)
 
 			if driver and 'Sway' in profile.current_selection_names():
 				if driver.is_nvidia():
-					prompt = str(_('The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?'))
-					choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
+					header = str(_('The proprietary Nvidia driver is not supported by Sway.')) + '\n'
+					header += str(_('It is likely that you will run into issues, are you okay with that?')) + '\n'
 
-					if choice.value == Menu.no():
-						return None
+					group = MenuItemGroup.yes_no()
+					group.focus_item = MenuItem.no()
+					group.default_item = MenuItem.no()
+
+					result = SelectMenu(
+						group,
+						header=header,
+						allow_skip=False,
+						columns=2,
+						orientation=Orientation.HORIZONTAL,
+						alignment=Alignment.CENTER
+					).run()
+
+					if result.item() == MenuItem.no():
+						return preset
 
 		return driver
 
-	def _preview_gfx(self) -> Optional[str]:
-		driver: Optional[GfxDriver] = self._menu_options['gfx_driver'].current_selection
-
-		if driver:
-			return driver.packages_text()
-
+	def _prev_gfx(self, item: MenuItem) -> str | None:
+		if item.value:
+			driver = item.get_value().value
+			packages = item.get_value().packages_text()
+			return f'Driver: {driver}\n{packages}'
 		return None
 
-	def _preview_profile(self) -> Optional[str]:
-		profile: Optional[Profile] = self._menu_options['profile'].current_selection
+	def _prev_greeter(self, item: MenuItem) -> str | None:
+		if item.value:
+			return f'{_("Greeter")}: {item.value.value}'
+		return None
+
+	def _preview_profile(self, item: MenuItem) -> str | None:
+		profile: Profile | None = item.value
 		text = ''
 
 		if profile:
@@ -134,70 +161,75 @@ class ProfileMenu(AbstractSubMenu):
 
 
 def select_greeter(
-	profile: Optional[Profile] = None,
-	preset: Optional[GreeterType] = None
-) -> Optional[GreeterType]:
+	profile: Profile | None = None,
+	preset: GreeterType | None = None
+) -> GreeterType | None:
 	if not profile or profile.is_greeter_supported():
-		title = str(_('Please chose which greeter to install'))
-		greeter_options = [greeter.value for greeter in GreeterType]
+		items = [MenuItem(greeter.value, value=greeter) for greeter in GreeterType]
+		group = MenuItemGroup(items, sort_items=True)
 
-		default: Optional[GreeterType] = None
-
+		default: GreeterType | None = None
 		if preset is not None:
 			default = preset
 		elif profile is not None:
 			default_greeter = profile.default_greeter_type
 			default = default_greeter if default_greeter else None
 
-		choice = Menu(
-			title,
-			greeter_options,
-			skip=True,
-			default_option=default.value if default else None
+		group.set_default_by_value(default)
+
+		result = SelectMenu(
+			group,
+			allow_skip=True,
+			frame=FrameProperties.min(str(_('Greeter'))),
+			alignment=Alignment.CENTER
 		).run()
 
-		match choice.type_:
-			case MenuSelectionType.Skip:
-				return default
-
-		return GreeterType(choice.single_value)
+		match result.type_:
+			case ResultType.Skip:
+				return preset
+			case ResultType.Selection:
+				return result.get_value()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
 
 	return None
 
 
 def select_profile(
-	current_profile: Optional[Profile] = None,
-	title: Optional[str] = None,
+	current_profile: Profile | None = None,
+	header: str | None = None,
 	allow_reset: bool = True,
-	multi: bool = False
-) -> Optional[Profile]:
+) -> Profile | None:
 	from archinstall.lib.profile.profiles_handler import profile_handler
 	top_level_profiles = profile_handler.get_top_level_profiles()
 
-	display_title = title
-	if not display_title:
-		display_title = str(_('This is a list of pre-programmed default_profiles'))
+	if header is None:
+		header = str(_('This is a list of pre-programmed default_profiles')) + '\n'
 
-	choice = profile_handler.select_profile(
-		top_level_profiles,
-		current_profile=current_profile,
-		title=display_title,
+	items = [MenuItem(p.name, value=p) for p in top_level_profiles]
+	group = MenuItemGroup(items, sort_items=True)
+	group.set_selected_by_value(current_profile)
+
+	result = SelectMenu(
+		group,
+		header=header,
 		allow_reset=allow_reset,
-		multi=multi
-	)
+		allow_skip=True,
+		alignment=Alignment.CENTER,
+		frame=FrameProperties.min(str(_('Main profile')))
+	).run()
 
-	match choice.type_:
-		case MenuSelectionType.Selection:
-			profile_selection: Profile = choice.single_value
+	match result.type_:
+		case ResultType.Reset:
+			return None
+		case ResultType.Skip:
+			return current_profile
+		case ResultType.Selection:
+			profile_selection: Profile = result.get_value()
 			select_result = profile_selection.do_on_select()
 
 			if not select_result:
-				return select_profile(
-					current_profile=current_profile,
-					title=title,
-					allow_reset=allow_reset,
-					multi=multi
-				)
+				return None
 
 			# we're going to reset the currently selected profile(s) to avoid
 			# any stale data laying around
@@ -212,7 +244,5 @@ def select_profile(
 					pass
 
 			return current_profile
-		case MenuSelectionType.Reset:
-			return None
-		case MenuSelectionType.Skip:
-			return current_profile
+
+	return None

@@ -5,8 +5,9 @@ import os
 import logging
 import time
 import uuid
+from collections.abc import Iterable
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING, Literal, Iterable
+from typing import Any, TYPE_CHECKING, Literal
 
 from parted import (
 	Disk, Geometry, FileSystem,
@@ -33,15 +34,15 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class DeviceHandler(object):
+class DeviceHandler:
 	_TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs')
 
 	def __init__(self) -> None:
-		self._devices: Dict[Path, BDevice] = {}
+		self._devices: dict[Path, BDevice] = {}
 		self.load_devices()
 
 	@property
-	def devices(self) -> List[BDevice]:
+	def devices(self) -> list[BDevice]:
 		return list(self._devices.values())
 
 	def load_devices(self) -> None:
@@ -137,8 +138,8 @@ class DeviceHandler(object):
 	def _determine_fs_type(
 		self,
 		partition: Partition,
-		lsblk_info: Optional[LsblkInfo] = None
-	) -> Optional[FilesystemType]:
+		lsblk_info: LsblkInfo | None = None
+	) -> FilesystemType | None:
 		try:
 			if partition.fileSystem:
 				return FilesystemType(partition.fileSystem.type)
@@ -150,17 +151,17 @@ class DeviceHandler(object):
 
 		return None
 
-	def get_device(self, path: Path) -> Optional[BDevice]:
+	def get_device(self, path: Path) -> BDevice | None:
 		return self._devices.get(path, None)
 
-	def get_device_by_partition_path(self, partition_path: Path) -> Optional[BDevice]:
+	def get_device_by_partition_path(self, partition_path: Path) -> BDevice | None:
 		partition = self.find_partition(partition_path)
 		if partition:
 			device: Device = partition.disk.device
 			return self.get_device(Path(device.path))
 		return None
 
-	def find_partition(self, path: Path) -> Optional[_PartitionInfo]:
+	def find_partition(self, path: Path) -> _PartitionInfo | None:
 		for device in self._devices.values():
 			part = next(filter(lambda x: str(x.path) == str(path), device.partition_infos), None)
 			if part is not None:
@@ -171,11 +172,13 @@ class DeviceHandler(object):
 		lsblk = get_lsblk_info(dev_path)
 		return Path(f'/dev/{lsblk.pkname}')
 
-	def get_unique_path_for_device(self, dev_path: Path) -> Optional[Path]:
+	def get_unique_path_for_device(self, dev_path: Path) -> Path | None:
 		paths = Path('/dev/disk/by-id').glob('*')
 		linked_targets = {p.resolve(): p for p in paths}
-		linked_wwn_targets = {p: linked_targets[p] for p in linked_targets
-			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
+		linked_wwn_targets = {
+			p: linked_targets[p] for p in linked_targets
+			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')
+		}
 
 		if dev_path in linked_wwn_targets:
 			return linked_wwn_targets[dev_path]
@@ -185,19 +188,19 @@ class DeviceHandler(object):
 
 		return None
 
-	def get_uuid_for_path(self, path: Path) -> Optional[str]:
+	def get_uuid_for_path(self, path: Path) -> str | None:
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None
 
 	def get_btrfs_info(
 		self,
 		dev_path: Path,
-		lsblk_info: Optional[LsblkInfo] = None
-	) -> List[_BtrfsSubvolumeInfo]:
+		lsblk_info: LsblkInfo | None = None
+	) -> list[_BtrfsSubvolumeInfo]:
 		if not lsblk_info:
 			lsblk_info = get_lsblk_info(dev_path)
 
-		subvol_infos: List[_BtrfsSubvolumeInfo] = []
+		subvol_infos: list[_BtrfsSubvolumeInfo] = []
 
 		if not lsblk_info.mountpoint:
 			self.mount(dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
@@ -217,13 +220,20 @@ class DeviceHandler(object):
 			debug(f'Failed to read btrfs subvolume information: {err}')
 			return subvol_infos
 
+		# It is assumed that lsblk will contain the fields as
+		# "mountpoints": ["/mnt/archinstall/log", "/mnt/archinstall/home", "/mnt/archinstall", ...]
+		# "fsroots": ["/@log", "/@home", "/@"...]
+		# we'll thereby map the fsroot, which are the mounted filesystem roots
+		# to the corresponding mountpoints
+		btrfs_subvol_info = dict(zip(lsblk_info.fsroots, lsblk_info.mountpoints))
+
 		try:
 			# ID 256 gen 16 top level 5 path @
 			for line in result.splitlines():
 				# expected output format:
 				# ID 257 gen 8 top level 5 path @home
 				name = Path(line.split(' ')[-1])
-				sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
+				sub_vol_mountpoint = btrfs_subvol_info.get(name, None)
 				subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
 		except json.decoder.JSONDecodeError as err:
 			error(f"Could not decode lsblk JSON: {result}")
@@ -238,7 +248,7 @@ class DeviceHandler(object):
 		self,
 		fs_type: FilesystemType,
 		path: Path,
-		additional_parted_options: List[str] = []
+		additional_parted_options: list[str] = []
 	) -> None:
 		mkfs_type = fs_type.value
 		options = []
@@ -276,7 +286,7 @@ class DeviceHandler(object):
 	def encrypt(
 		self,
 		dev_path: Path,
-		mapper_name: Optional[str],
+		mapper_name: str | None,
 		enc_password: str,
 		lock_after_create: bool = True
 	) -> Luks2:
@@ -302,7 +312,7 @@ class DeviceHandler(object):
 	def format_encrypted(
 		self,
 		dev_path: Path,
-		mapper_name: Optional[str],
+		mapper_name: str | None,
 		fs_type: FilesystemType,
 		enc_conf: DiskEncryption
 	) -> None:
@@ -329,7 +339,7 @@ class DeviceHandler(object):
 		self,
 		cmd: str,
 		info_type: Literal['lv', 'vg', 'pvseg']
-	) -> Optional[Any]:
+	) -> Any | None:
 		raw_info = SysCommand(cmd).decode().split('\n')
 
 		# for whatever reason the output sometimes contains
@@ -367,18 +377,14 @@ class DeviceHandler(object):
 
 		return None
 
-	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Optional[Any]:
-		attempts = 3
-
-		for attempt_nr in range(attempts):
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Any | None:
+		while True:
 			try:
 				return self._lvm_info(cmd, info_type)
 			except ValueError:
-				time.sleep(attempt_nr + 1)
+				time.sleep(3)
 
-		raise ValueError(f'Failed to fetch {info_type} information')
-
-	def lvm_vol_info(self, lv_name: str) -> Optional[LvmVolumeInfo]:
+	def lvm_vol_info(self, lv_name: str) -> LvmVolumeInfo | None:
 		cmd = (
 			'lvs --reportformat json '
 			'--unit B '
@@ -387,7 +393,7 @@ class DeviceHandler(object):
 
 		return self._lvm_info_with_retry(cmd, 'lv')
 
-	def lvm_group_info(self, vg_name: str) -> Optional[LvmGroupInfo]:
+	def lvm_group_info(self, vg_name: str) -> LvmGroupInfo | None:
 		cmd = (
 			'vgs --reportformat json '
 			'--unit B '
@@ -397,7 +403,7 @@ class DeviceHandler(object):
 
 		return self._lvm_info_with_retry(cmd, 'vg')
 
-	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> Optional[LvmPVInfo]:
+	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> LvmPVInfo | None:
 		cmd = (
 			'pvs '
 			'--segments -o+lv_name,vg_name '
@@ -451,7 +457,7 @@ class DeviceHandler(object):
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
-	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Optional[Size] = None) -> None:
+	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Size | None = None) -> None:
 		if offset is not None:
 			length = volume.length - offset
 		else:
@@ -556,8 +562,8 @@ class DeviceHandler(object):
 	def create_lvm_btrfs_subvolumes(
 		self,
 		path: Path,
-		btrfs_subvols: List[SubvolumeModification],
-		mount_options: List[str]
+		btrfs_subvols: list[SubvolumeModification],
+		mount_options: list[str]
 	) -> None:
 		info(f'Creating subvolumes: {path}')
 
@@ -587,7 +593,7 @@ class DeviceHandler(object):
 	def create_btrfs_volumes(
 		self,
 		part_mod: PartitionModification,
-		enc_conf: Optional['DiskEncryption'] = None
+		enc_conf: 'DiskEncryption | None' = None
 	) -> None:
 		info(f'Creating subvolumes: {part_mod.safe_dev_path}')
 
@@ -657,7 +663,7 @@ class DeviceHandler(object):
 	def partition(
 		self,
 		modification: DeviceModification,
-		partition_table: Optional[PartitionTable] = None
+		partition_table: PartitionTable | None = None
 	) -> None:
 		"""
 		Create a partition table on the block device and create all partitions.
@@ -695,9 +701,9 @@ class DeviceHandler(object):
 		self,
 		dev_path: Path,
 		target_mountpoint: Path,
-		mount_fs: Optional[str] = None,
+		mount_fs: str | None = None,
 		create_target_mountpoint: bool = True,
-		options: List[str] = []
+		options: list[str] = []
 	) -> None:
 		if create_target_mountpoint and not target_mountpoint.exists():
 			target_mountpoint.mkdir(parents=True, exist_ok=True)
@@ -745,8 +751,8 @@ class DeviceHandler(object):
 			debug(f'Unmounting mountpoint: {path}')
 			SysCommand(cmd + [str(path)])
 
-	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> List[DeviceModification]:
-		part_mods: Dict[Path, List[PartitionModification]] = {}
+	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> list[DeviceModification]:
+		part_mods: dict[Path, list[PartitionModification]] = {}
 
 		for device in self.devices:
 			for part_info in device.partition_infos:
@@ -764,14 +770,14 @@ class DeviceHandler(object):
 						part_mods[path].append(part_mod)
 						break
 
-		device_mods: List[DeviceModification] = []
+		device_mods: list[DeviceModification] = []
 		for device_path, mods in part_mods.items():
 			device_mod = DeviceModification(self._devices[device_path], False, mods)
 			device_mods.append(device_mod)
 
 		return device_mods
 
-	def partprobe(self, path: Optional[Path] = None) -> None:
+	def partprobe(self, path: Path | None = None) -> None:
 		if path is not None:
 			command = f'partprobe {path}'
 		else:
@@ -803,6 +809,10 @@ class DeviceHandler(object):
 		"""
 		info(f'Wiping partitions and metadata: {block_device.device_info.path}')
 		for partition in block_device.partition_infos:
+			luks = Luks2(partition.path)
+			if luks.isLuks():
+				luks.erase()
+
 			self._wipe(partition.path)
 
 		self._wipe(block_device.device_info.path)

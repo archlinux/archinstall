@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Self, Optional, List, TYPE_CHECKING
-from typing import Callable
+from typing import Any, TYPE_CHECKING
+from typing import ClassVar
 
 from ..lib.output import unicode_ljust
 
@@ -11,55 +14,65 @@ if TYPE_CHECKING:
 @dataclass
 class MenuItem:
 	text: str
-	value: Optional[Any] = None
-	action: Optional[Callable[[Any], Any]] = None
+	value: Any | None = None
+	action: Callable[[Any], Any] | None = None
 	enabled: bool = True
 	mandatory: bool = False
-	dependencies: List[Self] = field(default_factory=list)
-	dependencies_not: List[Self] = field(default_factory=list)
-	display_action: Optional[Callable[[Any], str]] = None
-	preview_action: Optional[Callable[[Any], Optional[str]]] = None
-	key: Optional[Any] = None
+	dependencies: list[str | Callable[[], bool]] = field(default_factory=list)
+	dependencies_not: list[str] = field(default_factory=list)
+	display_action: Callable[[Any], str] | None = None
+	preview_action: Callable[[Any], str | None] | None = None
+	key: str | None = None
+
+	_yes: ClassVar[MenuItem | None] = None
+	_no: ClassVar[MenuItem | None] = None
+
+	def get_value(self) -> Any:
+		assert self.value is not None
+		return self.value
 
 	@classmethod
-	def default_yes(cls) -> Self:
-		return cls(str(_('Yes')))
+	def yes(cls) -> 'MenuItem':
+		if cls._yes is None:
+			cls._yes = cls(str(_('Yes')), value=True)
+
+		return cls._yes
 
 	@classmethod
-	def default_no(cls) -> Self:
-		return cls(str(_('No')))
+	def no(cls) -> 'MenuItem':
+		if cls._no is None:
+			cls._no = cls(str(_('No')), value=True)
+
+		return cls._no
 
 	def is_empty(self) -> bool:
 		return self.text == '' or self.text is None
 
-	def get_text(self, spacing: int = 0, suffix: str = '') -> str:
-		if self.is_empty():
-			return ''
-
-		value_text = ''
-
-		if self.display_action:
-			value_text = self.display_action(self.value)
+	def has_value(self) -> bool:
+		if self.value is None:
+			return False
+		elif isinstance(self.value, list) and len(self.value) == 0:
+			return False
+		elif isinstance(self.value, dict) and len(self.value) == 0:
+			return False
 		else:
-			if self.value is not None:
-				value_text = str(self.value)
+			return True
 
-		if value_text:
-			spacing += 2
-			text = unicode_ljust(str(self.text), spacing, ' ')
-		else:
-			text = self.text
+	def get_display_value(self) -> str | None:
+		if self.display_action is not None:
+			return self.display_action(self.value)
 
-		return f'{text} {value_text}{suffix}'.rstrip(' ')
+		return None
 
 
 @dataclass
 class MenuItemGroup:
-	menu_items: List[MenuItem]
-	focus_item: Optional[MenuItem] = None
-	default_item: Optional[MenuItem] = None
-	selected_items: List[MenuItem] = field(default_factory=list)
-	sort_items: bool = True
+	menu_items: list[MenuItem]
+	focus_item: MenuItem | None = None
+	default_item: MenuItem | None = None
+	selected_items: list[MenuItem] = field(default_factory=list)
+	sort_items: bool = False
+	checkmarks: bool = False
 
 	_filter_pattern: str = ''
 
@@ -79,18 +92,58 @@ class MenuItemGroup:
 		if self.focus_item not in self.menu_items:
 			raise ValueError('Selected item not in menu')
 
+	def find_by_key(self, key: str) -> MenuItem:
+		for item in self.menu_items:
+			if item.key == key:
+				return item
+
+		raise ValueError(f'No key found for: {key}')
+
 	@staticmethod
-	def default_confirm() -> 'MenuItemGroup':
+	def yes_no() -> 'MenuItemGroup':
 		return MenuItemGroup(
-			[MenuItem.default_yes(), MenuItem.default_no()],
-			sort_items=False
+			[MenuItem.yes(), MenuItem.no()],
+			sort_items=True
 		)
 
-	def index_of(self, item) -> int:
+	def set_preview_for_all(self, action: Callable[[Any], str | None]) -> None:
+		for item in self.items:
+			item.preview_action = action
+
+	def set_focus_by_value(self, value: Any) -> None:
+		for item in self.menu_items:
+			if item.value == value:
+				self.focus_item = item
+				break
+
+	def set_default_by_value(self, value: Any) -> None:
+		for item in self.menu_items:
+			if item.value == value:
+				self.default_item = item
+				break
+
+	def set_selected_by_value(self, values: Any | list[Any] | None) -> None:
+		if values is None:
+			return
+
+		if not isinstance(values, list):
+			values = [values]
+
+		for item in self.menu_items:
+			if item.value in values:
+				self.selected_items.append(item)
+
+		if values:
+			self.set_focus_by_value(values[0])
+
+	def index_of(self, item: MenuItem) -> int:
 		return self.items.index(item)
 
 	def index_focus(self) -> int:
-		return self.index_of(self.focus_item)
+		if self.focus_item:
+			return self.index_of(self.focus_item)
+
+		raise ValueError('No focus item set')
 
 	def index_last(self) -> int:
 		return self.index_of(self.items[-1])
@@ -106,16 +159,51 @@ class MenuItemGroup:
 	def max_width(self) -> int:
 		# use the menu_items not the items here otherwise the preview
 		# will get resized all the time when a filter is applied
+		return max([len(self.get_item_text(item)) for item in self.menu_items])
+
+	def _max_item_width(self) -> int:
 		return max([len(item.text) for item in self.menu_items])
 
+	def get_item_text(self, item: MenuItem) -> str:
+		if item.is_empty():
+			return ''
+
+		max_width = self._max_item_width()
+		display_text = item.get_display_value()
+		default_text = self._default_suffix(item)
+
+		text = unicode_ljust(str(item.text), max_width, ' ')
+		spacing = ' ' * 4
+
+		if display_text:
+			text = f'{text}{spacing}{display_text}'
+		elif self.checkmarks:
+			from .types import Chars
+
+			if item.has_value():
+				if item.get_value() is not False:
+					text = f'{text}{spacing}{Chars.Check}'
+			else:
+				text = item.text
+
+		if default_text:
+			text = f'{text} {default_text}'
+
+		return text.rstrip(' ')
+
+	def _default_suffix(self, item: MenuItem) -> str:
+		if self.default_item == item:
+			return str(_(' (default)'))
+		return ''
+
 	@property
-	def items(self) -> List[MenuItem]:
+	def items(self) -> list[MenuItem]:
 		f = self._filter_pattern.lower()
 		items = filter(lambda item: item.is_empty() or f in item.text.lower(), self.menu_items)
 		return list(items)
 
 	@property
-	def filter_pattern(self):
+	def filter_pattern(self) -> str:
 		return self._filter_pattern
 
 	def set_filter_pattern(self, pattern: str) -> None:
@@ -161,7 +249,7 @@ class MenuItemGroup:
 		else:
 			return item == self.focus_item
 
-	def _first(self, items: List[MenuItem], ignore_empty: bool) -> Optional[MenuItem]:
+	def _first(self, items: list[MenuItem], ignore_empty: bool) -> MenuItem | None:
 		for item in items:
 			if not ignore_empty:
 				return item
@@ -171,10 +259,10 @@ class MenuItemGroup:
 
 		return None
 
-	def get_first_item(self, ignore_empty: bool = True) -> Optional[MenuItem]:
+	def get_first_item(self, ignore_empty: bool = True) -> MenuItem | None:
 		return self._first(self.items, ignore_empty)
 
-	def get_last_item(self, ignore_empty: bool = True) -> Optional[MenuItem]:
+	def get_last_item(self, ignore_empty: bool = True) -> MenuItem | None:
 		items = self.items
 		rev_items = list(reversed(items))
 		return self._first(rev_items, ignore_empty)
@@ -229,19 +317,21 @@ class MenuItemGroup:
 			return max(spaces)
 		return 0
 
-	def verify_item_enabled(self, item: MenuItem) -> bool:
+	def should_enable_item(self, item: MenuItem) -> bool:
 		if not item.enabled:
 			return False
 
-		if item in self.menu_items:
-			for dep in item.dependencies:
-				if not self.verify_item_enabled(dep):
+		for dep in item.dependencies:
+			if isinstance(dep, str):
+				item = self.find_by_key(dep)
+				if not item.value or not self.should_enable_item(item):
 					return False
+			else:
+				return dep()
 
-			for dep in item.dependencies_not:
-				if dep.value is not None:
-					return False
+		for dep_not in item.dependencies_not:
+			item = self.find_by_key(dep_not)
+			if item.value is not None:
+				return False
 
-			return True
-
-		return False
+		return True

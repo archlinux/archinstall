@@ -283,7 +283,7 @@ msgid "Audio"
 msgstr "Audio"
 
 msgid "Kernels"
-msgstr "Kernels"
+msgstr "Núcleos"
 
 msgid "Additional packages"
 msgstr "Paquetes adicionales"
@@ -339,7 +339,7 @@ msgid "Abort"
 msgstr "Abortar"
 
 msgid "Hostname"
-msgstr "Nombre del host"
+msgstr "Nombre de host"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "No configurado, no disponible a menos que se configure manualmente"
@@ -524,7 +524,7 @@ msgid "The password you are using seems to be weak,"
 msgstr "La contraseña que está utilizando parece ser débil,"
 
 msgid "are you sure you want to use it?"
-msgstr "¿Estás seguro de que quieres usarlo?"
+msgstr "¿Está seguro de querer usarlo?"
 
 msgid "Optional repositories"
 msgstr "Repositorios opcionales"
@@ -536,7 +536,7 @@ msgid "Missing configurations:\n"
 msgstr "Configuraciones que faltan:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Se debe especificar una contraseña de root o al menos 1 superusuario"
+msgstr "Debe especificar una contraseña de root o al menos 1 superusuario"
 
 msgid "Manage superuser accounts: "
 msgstr "Administrar cuentas de superusuario: "
@@ -752,7 +752,7 @@ msgid "Bus-type"
 msgstr "Tipo de bus"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "Se debe especificar una contraseña de root o al menos 1 usuario con privilegios sudo"
+msgstr "Debe especificar una contraseña de root o al menos 1 usuario con privilegios sudo"
 
 msgid "Enter username (leave blank to skip): "
 msgstr "Ingrese el nombre de usuario (déjelo en blanco para omitir): "
@@ -984,7 +984,7 @@ msgid "Password"
 msgstr "Contraseña"
 
 msgid "All settings will be reset, are you sure?"
-msgstr "Todos los ajustes se restablecerán, ¿estás seguro?"
+msgstr "Todos los ajustes se restablecerán, ¿está seguro?"
 
 msgid "Back"
 msgstr "Regresar"
@@ -1026,14 +1026,14 @@ msgid "Should this profile be enabled for installation?"
 msgstr "¿Debería habilitarse este perfil para la instalación?"
 
 msgid "Create your own"
-msgstr "Crea tu propio"
+msgstr "Crear tu propio"
 
 msgid ""
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
 "\n"
-"Seleccione un controlador de gráficos o déjelo en blanco para instalar todos los controladores de código abierto"
+"Seleccione un controlador de gráficos o deje en blanco para instalar todos los controladores de código abierto"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Sway necesita acceso a sus dispositivos de hardware (teclado, mouse, etc.)"
@@ -1133,7 +1133,7 @@ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [1 a {}, o 0 para deshabilitar]"
 
 msgid "Locales"
-msgstr "Lugares"
+msgstr "Localidades"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Usar NetworkManager (necesario para configurar internet gráficamente en GNOME y KDE)"
@@ -1312,6 +1312,160 @@ msgstr " (predeterminado)"
 
 msgid "Press Ctrl+h for help"
 msgstr "Presione Ctrl+h para obtener ayuda"
+
+msgid "Choose an option to give Sway access to your hardware"
+msgstr "Elija una opción para darle a Sway acceso a su hardware"
+
+#, fuzzy
+msgid "Seat access"
+msgstr "Acceso al asiento"
+
+msgid "Mountpoint"
+msgstr "Punto de montaje"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Ingrese la contraseña de cifrado del disco (deje en blanco si no desea cifrar)"
+
+msgid "Disk encryption password"
+msgstr "Contraseña de cifrado de disco"
+
+msgid "Partition - New"
+msgstr "Partición - Nueva"
+
+msgid "Filesystem"
+msgstr "Sistema de archivos"
+
+msgid "Invalid size"
+msgstr "Tamaño no válido"
+
+msgid "Start (default: sector {}): "
+msgstr "Inicio (predeterminado: sector {}): "
+
+msgid "End (default: {}): "
+msgstr "Fin (predeterminado: {}):"
+
+msgid "Subvolume name"
+msgstr "Nombre del subvolumen"
+
+msgid "Disk configuration type"
+msgstr "Tipo de configuración del disco"
+
+msgid "Root mount directory"
+msgstr "Directorio de montaje raíz"
+
+msgid "Select language"
+msgstr "Seleccionar idioma"
+
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Escriba paquetes adicionales para instalar (separados por espacios, déjelo en blanco para omitir)"
+
+msgid "Invalid download number"
+msgstr "Número de descarga no válido"
+
+msgid "Number downloads"
+msgstr "Número de descargas"
+
+msgid "The username you entered is invalid"
+msgstr "El nombre de usuario ingresado no es válido"
+
+msgid "Username"
+msgstr "Nombre de usuario"
+
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "¿\"{}\" debería ser un superusuario (sudo)?\n"
+
+msgid "Interfaces"
+msgstr "Interfaces"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "Debe ingresar una IP válida en el modo de configuración de IP"
+
+msgid "Modes"
+msgstr "Modos"
+
+msgid "IP address"
+msgstr "Dirección IP"
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Ingrese la dirección IP de su puerta de enlace (enrutador) (deje en blanco si no hay ninguna)"
+
+msgid "Gateway address"
+msgstr "Dirección de puerta de enlace"
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Ingrese sus servidores DNS separados por espacios (deje en blanco si no hay ninguno)"
+
+msgid "DNS servers"
+msgstr "Servidores DNS"
+
+msgid "Configure interfaces"
+msgstr "Configurar interfaces"
+
+msgid "Kernel"
+msgstr "Núcleo"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "No se detecta UEFI y algunas opciones están deshabilitadas"
+
+msgid "Info"
+msgstr "Info"
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "El controlador propietario de Nvidia no es compatible con Sway."
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Es probable que tengas problemas. ¿Te parece bien?"
+
+msgid "Main profile"
+msgstr "Perfil principal"
+
+msgid "Confirm password"
+msgstr "Confirmar contraseña"
+
+msgid "The confirmation password did not match, please try again"
+msgstr "La confirmación de la contraseña no coincide, por favor intente nuevamente"
+
+msgid "Not a valid directory"
+msgstr "No es un directorio válido"
+
+msgid "Would you like to continue?"
+msgstr "¿Quiere continuar?"
+
+msgid "Directory"
+msgstr "Directorio"
+
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "Ingrese un directorio para guardar las configuraciones (autocompletado de tabulación habilitado)"
+
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "¿Desea guardar los archivos de configuración en {}?"
+
+msgid "Enabled"
+msgstr "Habilitado"
+
+msgid "Disabled"
+msgstr "Deshabilitado"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Envíe este problema (y archivo) a https://github.com/archlinux/archinstall/issues"
+
+msgid "Mirror name"
+msgstr "Nombre del espejo"
+
+msgid "Url"
+msgstr "Url"
+
+msgid "Select signature check"
+msgstr "Seleccionar verificación de firma"
+
+msgid "Select execution mode"
+msgstr "Seleccionar modo de ejecución"
+
+msgid "Press ? for help"
+msgstr "Presione ? para obtener ayuda"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"

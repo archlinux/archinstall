@@ -2,18 +2,25 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, List, Optional, Tuple
+from typing import Any, TYPE_CHECKING
 from dataclasses import dataclass
 
+from ..utils.util import prompt_dir
 from .device_model import (
 	PartitionModification, FilesystemType, BDevice,
 	Size, Unit, PartitionType, PartitionFlag,
 	ModificationStatus, DeviceGeometry, SectorSize, BtrfsMountOption
 )
 from ..hardware import SysInfo
-from ..menu import Menu, ListManager, MenuSelection, TextInput
-from ..output import FormattedOutput, warn
+from ..menu import ListManager
+from ..output import FormattedOutput
 from .subvolume_menu import SubvolumeMenu
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, Alignment, EditMenu,
+	Orientation, ResultType
+)
 
 if TYPE_CHECKING:
 	_: Any
@@ -26,10 +33,7 @@ class DefaultFreeSector:
 
 
 class PartitioningList(ListManager):
-	"""
-	subclass of ListManager for the managing of user accounts
-	"""
-	def __init__(self, prompt: str, device: BDevice, device_partitions: List[PartitionModification]):
+	def __init__(self, prompt: str, device: BDevice, device_partitions: list[PartitionModification]):
 		self._device = device
 		self._actions = {
 			'create_new_partition': str(_('Create a new partition')),
@@ -48,10 +52,13 @@ class PartitioningList(ListManager):
 		display_actions = list(self._actions.values())
 		super().__init__(prompt, device_partitions, display_actions[:2], display_actions[3:])
 
-	def selected_action_display(self, partition: PartitionModification) -> str:
-		return str(_('Partition'))
+	def selected_action_display(self, selection: PartitionModification) -> str:
+		if selection.status == ModificationStatus.Create:
+			return str(_('Partition - New'))
+		else:
+			return str(selection.dev_path)
 
-	def filter_options(self, selection: PartitionModification, options: List[str]) -> List[str]:
+	def filter_options(self, selection: PartitionModification, options: list[str]) -> list[str]:
 		not_filter = []
 
 		# only display formatting if the partition exists already
@@ -86,9 +93,9 @@ class PartitioningList(ListManager):
 	def handle_action(
 		self,
 		action: str,
-		entry: Optional[PartitionModification],
-		data: List[PartitionModification]
-	) -> List[PartitionModification]:
+		entry: PartitionModification | None,
+		data: list[PartitionModification]
+	) -> list[PartitionModification]:
 		action_key = [k for k, v in self._actions.items() if v == action][0]
 
 		match action_key:
@@ -100,8 +107,7 @@ class PartitioningList(ListManager):
 				if len(new_partitions) > 0:
 					data = new_partitions
 			case 'remove_added_partitions':
-				choice = self._reset_confirmation()
-				if choice.value == Menu.yes():
+				if self._reset_confirmation():
 					data = [part for part in data if part.is_exists_or_modify()]
 			case 'assign_mountpoint' if entry:
 				entry.mountpoint = self._prompt_mountpoint()
@@ -136,8 +142,8 @@ class PartitioningList(ListManager):
 	def _delete_partition(
 		self,
 		entry: PartitionModification,
-		data: List[PartitionModification]
-	) -> List[PartitionModification]:
+		data: list[PartitionModification]
+	) -> list[PartitionModification]:
 		if entry.is_exists_or_modify():
 			entry.status = ModificationStatus.Delete
 			return data
@@ -169,7 +175,7 @@ class PartitioningList(ListManager):
 
 	def _set_btrfs_subvolumes(self, partition: PartitionModification) -> None:
 		partition.btrfs_subvols = SubvolumeMenu(
-			_("Manage btrfs subvolumes for current partition"),
+			str(_("Manage btrfs subvolumes for current partition")),
 			partition.btrfs_subvols
 		).run()
 
@@ -185,7 +191,7 @@ class PartitioningList(ListManager):
 		# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
 		# it's safe to change the filesystem for this partition.
 		if partition.fs_type == FilesystemType.Crypto_luks:
-			prompt = str(_('This partition is currently encrypted, to format it a filesystem has to be specified'))
+			prompt = str(_('This partition is currently encrypted, to format it a filesystem has to be specified')) + '\n'
 			fs_type = self._prompt_partition_fs_type(prompt)
 			partition.fs_type = fs_type
 
@@ -195,75 +201,103 @@ class PartitioningList(ListManager):
 	def _prompt_mountpoint(self) -> Path:
 		header = str(_('Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')) + '\n'
 		header += str(_('If mountpoint /boot is set, then the partition will also be marked as bootable.')) + '\n'
-		prompt = str(_('Mountpoint: '))
+		prompt = str(_('Mountpoint'))
 
-		print(header)
-
-		while True:
-			value = TextInput(prompt).run().strip()
-
-			if value:
-				mountpoint = Path(value)
-				break
+		mountpoint = prompt_dir(prompt, header, allow_skip=False)
+		assert mountpoint
 
 		return mountpoint
 
-	def _prompt_partition_fs_type(self, prompt: str = '') -> FilesystemType:
-		options = {fs.value: fs for fs in FilesystemType if fs != FilesystemType.Crypto_luks}
+	def _prompt_partition_fs_type(self, prompt: str | None = None) -> FilesystemType:
+		fs_types = filter(lambda fs: fs != FilesystemType.Crypto_luks, FilesystemType)
+		items = [MenuItem(fs.value, value=fs) for fs in fs_types]
+		group = MenuItemGroup(items, sort_items=False)
 
-		prompt = prompt + '\n' + str(_('Enter a desired filesystem type for the partition'))
-		choice = Menu(prompt, options, sort=False, skip=False).run()
-		return options[choice.single_value]
+		result = SelectMenu(
+			group,
+			header=prompt,
+			alignment=Alignment.CENTER,
+			frame=FrameProperties.min(str(_('Filesystem'))),
+			allow_skip=False
+		).run()
+
+		match result.type_:
+			case ResultType.Selection:
+				return result.get_value()
+			case _:
+				raise ValueError('Unhandled result type')
 
 	def _validate_value(
 		self,
 		sector_size: SectorSize,
 		total_size: Size,
 		text: str,
-		start: Optional[Size]
-	) -> Optional[Size]:
+		start: Size | None
+	) -> Size | None:
 		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', text, re.I)
 
-		if match:
-			str_value, unit = match.groups()
+		if not match:
+			return None
 
-			if unit == '%' and start:
-				available = total_size - start
-				value = int(available.value * (int(str_value) / 100))
-				unit = available.unit.name
-			else:
-				value = int(str_value)
+		str_value, unit = match.groups()
 
-			if unit and unit not in Unit.get_all_units():
-				return None
+		if unit == '%' and start:
+			available = total_size - start
+			value = int(available.value * (int(str_value) / 100))
+			unit = available.unit.name
+		else:
+			value = int(str_value)
 
-			unit = Unit[unit] if unit else Unit.sectors
-			return Size(value, unit, sector_size)
+		if unit and unit not in Unit.get_all_units():
+			return None
 
-		return None
+		unit = Unit[unit] if unit else Unit.sectors
+		size = Size(value, unit, sector_size)
+
+		if start and size <= start:
+			return None
+
+		return size
 
 	def _enter_size(
 		self,
 		sector_size: SectorSize,
 		total_size: Size,
-		prompt: str,
+		text: str,
+		header: str,
 		default: Size,
-		start: Optional[Size],
+		start: Size | None,
 	) -> Size:
-		while True:
-			value = TextInput(prompt).run().strip()
-			size: Optional[Size] = None
-			if not value:
+		def validate(value: str) -> str | None:
+			size = self._validate_value(sector_size, total_size, value, start)
+			if not size:
+				return str(_('Invalid size'))
+			return None
+
+		result = EditMenu(
+			text,
+			header=f'{header}\b',
+			allow_skip=True,
+			validator=validate
+		).input()
+
+		size: Size | None = None
+
+		match result.type_:
+			case ResultType.Skip:
 				size = default
-			else:
-				size = self._validate_value(sector_size, total_size, value, start)
+			case ResultType.Selection:
+				value = result.text()
 
-			if size:
-				return size
+				if value:
+					size = self._validate_value(sector_size, total_size, value, start)
+				else:
+					size = default
 
-			warn(f'Invalid value: {value}')
+		assert size
+		return size
 
-	def _prompt_size(self) -> Tuple[Size, Size]:
+	def _prompt_size(self) -> tuple[Size, Size]:
 		device_info = self._device.device_info
 
 		text = str(_('Current free sectors on device {}:')).format(device_info.path) + '\n\n'
@@ -276,7 +310,6 @@ class PartitioningList(ListManager):
 		prompt += str(_('Total: {} / {}')).format(total_sectors, total_bytes) + '\n\n'
 		prompt += str(_('All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB...')) + '\n'
 		prompt += str(_('If no unit is provided, the value is interpreted as sectors')) + '\n'
-		print(prompt)
 
 		default_free_sector = self._find_default_free_space()
 
@@ -287,15 +320,18 @@ class PartitioningList(ListManager):
 			)
 
 		# prompt until a valid start sector was entered
-		start_prompt = str(_('Enter start (default: sector {}): ')).format(default_free_sector.start.value)
+		start_text = str(_('Start (default: sector {}): ')).format(default_free_sector.start.value)
 
 		start_size = self._enter_size(
 			device_info.sector_size,
 			device_info.total_size,
-			start_prompt,
+			start_text,
+			prompt,
 			default_free_sector.start,
 			None
 		)
+
+		prompt += f'\nStart: {start_size.as_text()}\n'
 
 		if start_size.value == default_free_sector.start.value and default_free_sector.end.value != 0:
 			end_size = default_free_sector.end
@@ -303,22 +339,24 @@ class PartitioningList(ListManager):
 			end_size = device_info.total_size
 
 		# prompt until valid end sector was entered
-		end_prompt = str(_('Enter end (default: {}): ')).format(end_size.as_text())
+		end_text = str(_('End (default: {}): ')).format(end_size.as_text())
+
 		end_size = self._enter_size(
 			device_info.sector_size,
 			device_info.total_size,
-			end_prompt,
+			end_text,
+			prompt,
 			end_size,
 			start_size
 		)
 
 		return start_size, end_size
 
-	def _find_default_free_space(self) -> Optional[DefaultFreeSector]:
+	def _find_default_free_space(self) -> DefaultFreeSector | None:
 		device_info = self._device.device_info
 
-		largest_free_area: Optional[DeviceGeometry] = None
-		largest_deleted_area: Optional[PartitionModification] = None
+		largest_free_area: DeviceGeometry | None = None
+		largest_deleted_area: PartitionModification | None = None
 
 		if len(device_info.free_space_regions) > 0:
 			largest_free_area = max(device_info.free_space_regions, key=lambda r: r.get_length())
@@ -358,9 +396,6 @@ class PartitioningList(ListManager):
 		start_size, end_size = self._prompt_size()
 		length = end_size - start_size
 
-		# new line for the next prompt
-		print()
-
 		mountpoint = None
 		if fs_type != FilesystemType.Btrfs:
 			mountpoint = self._prompt_mountpoint()
@@ -381,17 +416,26 @@ class PartitioningList(ListManager):
 
 		return partition
 
-	def _reset_confirmation(self) -> MenuSelection:
-		prompt = str(_('This will remove all newly added partitions, continue?'))
-		choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
-		return choice
+	def _reset_confirmation(self) -> bool:
+		prompt = str(_('This will remove all newly added partitions, continue?')) + '\n'
 
-	def _suggest_partition_layout(self, data: List[PartitionModification]) -> List[PartitionModification]:
+		result = SelectMenu(
+			MenuItemGroup.yes_no(),
+			header=prompt,
+			alignment=Alignment.CENTER,
+			orientation=Orientation.HORIZONTAL,
+			columns=2,
+			reset_warning_msg=prompt,
+			allow_skip=False
+		).run()
+
+		return result.item() == MenuItem.yes()
+
+	def _suggest_partition_layout(self, data: list[PartitionModification]) -> list[PartitionModification]:
 		# if modifications have been done already, inform the user
 		# that this operation will erase those modifications
 		if any([not entry.exists() for entry in data]):
-			choice = self._reset_confirmation()
-			if choice.value == Menu.no():
+			if not self._reset_confirmation():
 				return []
 
 		from ..interactions.disk_conf import suggest_single_disk_layout
@@ -403,8 +447,8 @@ class PartitioningList(ListManager):
 def manual_partitioning(
 	device: BDevice,
 	prompt: str = '',
-	preset: List[PartitionModification] = []
-) -> List[PartitionModification]:
+	preset: list[PartitionModification] = []
+) -> list[PartitionModification]:
 	if not prompt:
 		prompt = str(_('Partition management: {}')).format(device.device_info.path) + '\n'
 		prompt += str(_('Total length: {}')).format(device.device_info.total_size.format_size(Unit.MiB))
@@ -421,7 +465,7 @@ def manual_partitioning(
 		manual_preset = preset
 
 	menu_list = PartitioningList(prompt, device, manual_preset)
-	partitions: List[PartitionModification] = menu_list.run()
+	partitions: list[PartitionModification] = menu_list.run()
 
 	if menu_list.is_last_choice_cancel():
 		return preset

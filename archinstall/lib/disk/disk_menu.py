@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Any, TYPE_CHECKING, List
+from typing import Any, TYPE_CHECKING
 
 from . import DiskLayoutConfiguration, DiskLayoutType
 from .device_model import LvmConfiguration
@@ -7,11 +7,12 @@ from ..disk import (
 )
 from ..interactions import select_disk_config
 from ..interactions.disk_conf import select_lvm_config
-from ..menu import (
-	Selector,
-	AbstractSubMenu
-)
 from ..output import FormattedOutput
+from ..menu import AbstractSubMenu
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem
+)
 
 if TYPE_CHECKING:
 	_: Any
@@ -20,40 +21,41 @@ if TYPE_CHECKING:
 class DiskLayoutConfigurationMenu(AbstractSubMenu):
 	def __init__(
 		self,
-		disk_layout_config: Optional[DiskLayoutConfiguration],
-		data_store: Dict[str, Any],
+		disk_layout_config: DiskLayoutConfiguration | None,
 		advanced: bool = False
 	):
 		self._disk_layout_config = disk_layout_config
 		self._advanced = advanced
+		self._data_store: dict[str, Any] = {}
 
-		super().__init__(data_store=data_store, preview_size=0.5)
+		menu_optioons = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
 
-	def setup_selection_menu_options(self) -> None:
-		self._menu_options['disk_config'] = \
-			Selector(
-				_('Partitioning'),
-				lambda x: self._select_disk_layout_config(x),
-				display_func=lambda x: self._display_disk_layout(x),
-				preview_func=self._prev_disk_layouts,
-				default=self._disk_layout_config,
-				enabled=True
-			)
-		self._menu_options['lvm_config'] = \
-			Selector(
-				f'{_('LVM - Logical Volume Management')} (BETA)',
-				lambda x: self._select_lvm_config(x),
-				display_func=lambda x: self.defined_text if x else '',
-				preview_func=self._prev_lvm_config,
-				default=self._disk_layout_config.lvm_config if self._disk_layout_config else None,
+		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
+
+	def _define_menu_options(self) -> list[MenuItem]:
+		return [
+			MenuItem(
+				text=str(_('Partitioning')),
+				action=lambda x: self._select_disk_layout_config(x),
+				value=self._disk_layout_config,
+				preview_action=self._prev_disk_layouts,
+				key='disk_config'
+			),
+			MenuItem(
+				text='LVM (BETA)',
+				action=lambda x: self._select_lvm_config(x),
+				value=self._disk_layout_config.lvm_config if self._disk_layout_config else None,
+				preview_action=self._prev_lvm_config,
 				dependencies=[self._check_dep_lvm],
-				enabled=True
-			)
+				key='lvm_config'
+			),
+		]
 
-	def run(self, allow_reset: bool = True) -> Optional[DiskLayoutConfiguration]:
-		super().run(allow_reset=allow_reset)
+	def run(self) -> DiskLayoutConfiguration | None:
+		super().run()
 
-		disk_layout_config: Optional[DiskLayoutConfiguration] = self._data_store.get('disk_config', None)
+		disk_layout_config: DiskLayoutConfiguration | None = self._data_store.get('disk_config', None)
 
 		if disk_layout_config:
 			disk_layout_config.lvm_config = self._data_store.get('lvm_config', None)
@@ -61,7 +63,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		return disk_layout_config
 
 	def _check_dep_lvm(self) -> bool:
-		disk_layout_conf: Optional[DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+		disk_layout_conf: DiskLayoutConfiguration | None = self._menu_item_group.find_by_key('disk_config').value
 
 		if disk_layout_conf and disk_layout_conf.config_type == DiskLayoutType.Default:
 			return True
@@ -70,71 +72,77 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 	def _select_disk_layout_config(
 		self,
-		preset: Optional[DiskLayoutConfiguration]
-	) -> Optional[DiskLayoutConfiguration]:
+		preset: DiskLayoutConfiguration | None
+	) -> DiskLayoutConfiguration | None:
 		disk_config = select_disk_config(preset, advanced_option=self._advanced)
 
 		if disk_config != preset:
-			self._menu_options['lvm_config'].set_current_selection(None)
+			self._menu_item_group.find_by_key('lvm_config').value = None
 
 		return disk_config
 
-	def _select_lvm_config(self, preset: Optional[LvmConfiguration]) -> Optional[LvmConfiguration]:
-		disk_config: Optional[DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+	def _select_lvm_config(self, preset: LvmConfiguration | None) -> LvmConfiguration | None:
+		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
+
 		if disk_config:
 			return select_lvm_config(disk_config, preset=preset)
+
 		return preset
 
-	def _display_disk_layout(self, current_value: Optional[DiskLayoutConfiguration] = None) -> str:
-		if current_value:
-			return current_value.config_type.display_msg()
-		return ''
+	def _prev_disk_layouts(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
 
-	def _prev_disk_layouts(self) -> Optional[str]:
-		disk_layout_conf: Optional[DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+		disk_layout_conf: DiskLayoutConfiguration = item.get_value()
 
-		if disk_layout_conf:
-			device_mods: List[DeviceModification] = \
-				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
+		if disk_layout_conf.config_type == DiskLayoutType.Pre_mount:
+			msg = str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg()) + '\n'
+			msg += str(_('Mountpoint')) + ': ' + str(disk_layout_conf.mountpoint)
+			return msg
 
-			if device_mods:
-				output_partition = '{}: {}\n'.format(str(_('Configuration')), disk_layout_conf.config_type.display_msg())
-				output_btrfs = ''
+		device_mods: list[DeviceModification] = \
+			list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
 
-				for mod in device_mods:
-					# create partition table
-					partition_table = FormattedOutput.as_table(mod.partitions)
+		if device_mods:
+			output_partition = '{}: {}\n'.format(str(_('Configuration')), disk_layout_conf.config_type.display_msg())
+			output_btrfs = ''
 
-					output_partition += f'{mod.device_path}: {mod.device.device_info.model}\n'
-					output_partition += partition_table + '\n'
+			for mod in device_mods:
+				# create partition table
+				partition_table = FormattedOutput.as_table(mod.partitions)
 
-					# create btrfs table
-					btrfs_partitions = list(
-						filter(lambda p: len(p.btrfs_subvols) > 0, mod.partitions)
-					)
-					for partition in btrfs_partitions:
-						output_btrfs += FormattedOutput.as_table(partition.btrfs_subvols) + '\n'
+				output_partition += f'{mod.device_path}: {mod.device.device_info.model}\n'
+				output_partition += partition_table + '\n'
 
-				output = output_partition + output_btrfs
-				return output.rstrip()
+				# create btrfs table
+				btrfs_partitions = list(
+					filter(lambda p: len(p.btrfs_subvols) > 0, mod.partitions)
+				)
+				for partition in btrfs_partitions:
+					output_btrfs += FormattedOutput.as_table(partition.btrfs_subvols) + '\n'
+
+			output = output_partition + output_btrfs
+			return output.rstrip()
 
 		return None
 
-	def _prev_lvm_config(self) -> Optional[str]:
-		lvm_config: Optional[LvmConfiguration] = self._menu_options['lvm_config'].current_selection
+	def _prev_lvm_config(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
 
-		if lvm_config:
-			output = '{}: {}\n'.format(str(_('Configuration')), lvm_config.config_type.display_msg())
+		lvm_config: LvmConfiguration = item.value
 
-			for vol_gp in lvm_config.vol_groups:
-				pv_table = FormattedOutput.as_table(vol_gp.pvs)
-				output += '{}:\n{}'.format(str(_('Physical volumes')), pv_table)
+		output = '{}: {}\n'.format(str(_('Configuration')), lvm_config.config_type.display_msg())
 
-				output += f'\nVolume Group: {vol_gp.name}'
+		for vol_gp in lvm_config.vol_groups:
+			pv_table = FormattedOutput.as_table(vol_gp.pvs)
+			output += '{}:\n{}'.format(str(_('Physical volumes')), pv_table)
 
-				lvm_volumes = FormattedOutput.as_table(vol_gp.volumes)
-				output += '\n\n{}:\n{}'.format(str(_('Volumes')), lvm_volumes)
+			output += f'\nVolume Group: {vol_gp.name}'
 
-				return output
+			lvm_volumes = FormattedOutput.as_table(vol_gp.volumes)
+			output += '\n\n{}:\n{}'.format(str(_('Volumes')), lvm_volumes)
+
+			return output
 
 		return None

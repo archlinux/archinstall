@@ -5,13 +5,13 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 
-def process_docstring(app, what, name, obj, options, lines) -> None:
+def process_docstring(app, what, name, obj, options, lines) -> None:  # type: ignore[no-untyped-def]
 	spaces_pat = re.compile(r"( {8})")
 	ll = [spaces_pat.sub("    ", line) for line in lines]
 	lines[:] = ll
 
 
-def setup(app) -> None:
+def setup(app) -> None:  # type: ignore[no-untyped-def]
 	app.connect('autodoc-process-docstring', process_docstring)
 
 
@@ -110,7 +110,7 @@ htmlhelp_basename = 'archinstalldoc'
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "archinstall", u"archinstall Documentation", [u"Anton Hvornum"], 1)]
+man_pages = [("index", "archinstall", "archinstall Documentation", ["Anton Hvornum"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -122,5 +122,5 @@ man_pages = [("index", "archinstall", u"archinstall Documentation", [u"Anton Hvo
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-	("index", "archinstall", u"archinstall Documentation", u"Anton Hvornum", "archinstall", "Simple and minimal HTTP server."),
+	("index", "archinstall", "archinstall Documentation", "Anton Hvornum", "archinstall", "Simple and minimal HTTP server."),
 ]

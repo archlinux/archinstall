@@ -1,7 +1,7 @@
 import dataclasses
 import json
 import ssl
-from typing import Dict, Any, Tuple, List
+from typing import Any
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -15,7 +15,7 @@ BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
 BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/'
 
 
-def _make_request(url: str, params: Dict) -> Any:
+def _make_request(url: str, params: dict[str, str]) -> Any:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -26,7 +26,7 @@ def _make_request(url: str, params: Dict) -> Any:
 	return urlopen(full_url, context=ssl_context)
 
 
-def group_search(name: str) -> List[PackageSearchResult]:
+def group_search(name: str) -> list[PackageSearchResult]:
 	# TODO UPSTREAM: Implement /json/ for the groups search
 	try:
 		response = _make_request(BASE_GROUP_URL, {'name': name})
@@ -59,7 +59,7 @@ def package_search(package: str) -> PackageSearch:
 	return PackageSearch.from_json(json_data)
 
 
-def find_package(package: str) -> List[PackageSearchResult]:
+def find_package(package: str) -> list[PackageSearchResult]:
 	data = package_search(package)
 	results = []
 
@@ -77,7 +77,7 @@ def find_package(package: str) -> List[PackageSearchResult]:
 	return results
 
 
-def find_packages(*names: str) -> Dict[str, Any]:
+def find_packages(*names: str) -> dict[str, Any]:
 	"""
 	This function returns the search results for many packages.
 	The function itself is rather slow, so consider not sending to
@@ -91,7 +91,7 @@ def find_packages(*names: str) -> Dict[str, Any]:
 	return result
 
 
-def validate_package_list(packages: list) -> Tuple[list, list]:
+def validate_package_list(packages: list[str]) -> tuple[list[str], list[str]]:
 	"""
 	Validates a list of given packages.
 	return: Tuple of lists containing valid packavges in the first and invalid
@@ -113,4 +113,4 @@ def installed_package(package: str) -> LocalPackage:
 	except SysCallError:
 		pass
 
-	return LocalPackage({field.name: package_info.get(field.name) for field in dataclasses.fields(LocalPackage)})  # type: ignore
+	return LocalPackage({field.name: package_info.get(field.name) for field in dataclasses.fields(LocalPackage)})  # type: ignore  # pylint: disable=no-value-for-parameter

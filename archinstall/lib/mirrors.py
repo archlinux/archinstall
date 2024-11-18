@@ -1,14 +1,23 @@
+import time
 import json
-import pathlib
+import urllib.parse
+from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Any, List, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
-from .menu import AbstractSubMenu, Selector, MenuSelectionType, Menu, ListManager, TextInput
+from .menu import AbstractSubMenu, ListManager
 from .networking import fetch_data_from_url
-from .output import warn, FormattedOutput
+from .output import FormattedOutput, debug
 from .storage import storage
 from .models.mirrors import MirrorStatusListV3, MirrorStatusEntryV3
+
+from archinstall.tui import (
+	MenuItemGroup, MenuItem, SelectMenu,
+	FrameProperties, Alignment, ResultType,
+	EditMenu
+)
+
 
 if TYPE_CHECKING:
 	_: Any
@@ -32,7 +41,7 @@ class CustomMirror:
 	sign_check: SignCheck
 	sign_option: SignOption
 
-	def table_data(self) -> Dict[str, str]:
+	def table_data(self) -> dict[str, str]:
 		return {
 			'Name': self.name,
 			'Url': self.url,
@@ -40,7 +49,7 @@ class CustomMirror:
 			'Sign options': self.sign_option.value
 		}
 
-	def json(self) -> Dict[str, str]:
+	def json(self) -> dict[str, str]:
 		return {
 			'name': self.name,
 			'url': self.url,
@@ -49,7 +58,7 @@ class CustomMirror:
 		}
 
 	@classmethod
-	def parse_args(cls, args: List[Dict[str, str]]) -> List['CustomMirror']:
+	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomMirror']:
 		configs = []
 		for arg in args:
 			configs.append(
@@ -66,14 +75,14 @@ class CustomMirror:
 
 @dataclass
 class MirrorConfiguration:
-	mirror_regions: Dict[str, List[str]] = field(default_factory=dict)
-	custom_mirrors: List[CustomMirror] = field(default_factory=list)
+	mirror_regions: dict[str, list[MirrorStatusEntryV3]] = field(default_factory=dict)
+	custom_mirrors: list[CustomMirror] = field(default_factory=list)
 
 	@property
 	def regions(self) -> str:
 		return ', '.join(self.mirror_regions.keys())
 
-	def json(self) -> Dict[str, Any]:
+	def json(self) -> dict[str, Any]:
 		return {
 			'mirror_regions': self.mirror_regions,
 			'custom_mirrors': [c.json() for c in self.custom_mirrors]
@@ -84,7 +93,7 @@ class MirrorConfiguration:
 
 		for region, mirrors in self.mirror_regions.items():
 			for mirror in mirrors:
-				config += f'\n\n## {region}\nServer = {mirror}\n'
+				config += f'\n\n## {region}\nServer = {mirror.url}$repo/os/$arch\n'
 
 		for cm in self.custom_mirrors:
 			config += f'\n\n## {cm.name}\nServer = {cm.url}\n'
@@ -102,7 +111,7 @@ class MirrorConfiguration:
 		return config
 
 	@classmethod
-	def parse_args(cls, args: Dict[str, Any]) -> 'MirrorConfiguration':
+	def parse_args(cls, args: dict[str, Any]) -> 'MirrorConfiguration':
 		config = MirrorConfiguration()
 
 		if 'mirror_regions' in args:
@@ -115,23 +124,28 @@ class MirrorConfiguration:
 
 
 class CustomMirrorList(ListManager):
-	def __init__(self, prompt: str, custom_mirrors: List[CustomMirror]):
+	def __init__(self, custom_mirrors: list[CustomMirror]):
 		self._actions = [
 			str(_('Add a custom mirror')),
 			str(_('Change custom mirror')),
 			str(_('Delete custom mirror'))
 		]
-		super().__init__(prompt, custom_mirrors, [self._actions[0]], self._actions[1:])
+		super().__init__(
+			'',
+			custom_mirrors,
+			[self._actions[0]],
+			self._actions[1:]
+		)
 
-	def selected_action_display(self, mirror: CustomMirror) -> str:
-		return mirror.name
+	def selected_action_display(self, selection: CustomMirror) -> str:
+		return selection.name
 
 	def handle_action(
 		self,
 		action: str,
-		entry: Optional[CustomMirror],
-		data: List[CustomMirror]
-	) -> List[CustomMirror]:
+		entry: CustomMirror | None,
+		data: list[CustomMirror]
+	) -> list[CustomMirror]:
 		if action == self._actions[0]:  # add
 			new_mirror = self._add_custom_mirror()
 			if new_mirror is not None:
@@ -147,153 +161,225 @@ class CustomMirrorList(ListManager):
 
 		return data
 
-	def _add_custom_mirror(self, mirror: Optional[CustomMirror] = None) -> Optional[CustomMirror]:
-		prompt = '\n\n' + str(_('Enter name (leave blank to skip): '))
-		existing_name = mirror.name if mirror else ''
+	def _add_custom_mirror(self, preset: CustomMirror | None = None) -> CustomMirror | None:
+		edit_result = EditMenu(
+			str(_('Mirror name')),
+			alignment=Alignment.CENTER,
+			allow_skip=True,
+			default_text=preset.name if preset else None
+		).input()
 
-		while True:
-			name = TextInput(prompt, existing_name).run()
-			if not name:
-				return mirror
-			break
+		match edit_result.type_:
+			case ResultType.Selection:
+				name = edit_result.text()
+			case ResultType.Skip:
+				return preset
+			case _:
+				raise ValueError('Unhandled return type')
 
-		prompt = '\n' + str(_('Enter url (leave blank to skip): '))
-		existing_url = mirror.url if mirror else ''
+		header = f'{_("Name")}: {name}'
 
-		while True:
-			url = TextInput(prompt, existing_url).run()
-			if not url:
-				return mirror
-			break
+		edit_result = EditMenu(
+			str(_('Url')),
+			header=header,
+			alignment=Alignment.CENTER,
+			allow_skip=True,
+			default_text=preset.url if preset else None
+		).input()
 
-		sign_check_choice = Menu(
-			str(_('Select signature check option')),
-			[s.value for s in SignCheck],
-			skip=False,
-			clear_screen=False,
-			preset_values=mirror.sign_check.value if mirror else None
+		match edit_result.type_:
+			case ResultType.Selection:
+				url = edit_result.text()
+			case ResultType.Skip:
+				return preset
+			case _:
+				raise ValueError('Unhandled return type')
+
+		header += f'\n{_("Url")}: {url}\n'
+		prompt = f'{header}\n' + str(_('Select signature check'))
+
+		sign_chk_items = [MenuItem(s.value, value=s.value) for s in SignCheck]
+		group = MenuItemGroup(sign_chk_items, sort_items=False)
+
+		if preset is not None:
+			group.set_selected_by_value(preset.sign_check.value)
+
+		result = SelectMenu(
+			group,
+			header=prompt,
+			alignment=Alignment.CENTER,
+			allow_skip=False
 		).run()
 
-		sign_option_choice = Menu(
-			str(_('Select signature option')),
-			[s.value for s in SignOption],
-			skip=False,
-			clear_screen=False,
-			preset_values=mirror.sign_option.value if mirror else None
+		match result.type_:
+			case ResultType.Selection:
+				sign_check = SignCheck(result.get_value())
+			case _:
+				raise ValueError('Unhandled return type')
+
+		header += f'{_("Signature check")}: {sign_check.value}\n'
+		prompt = f'{header}\n' + 'Select signature option'
+
+		sign_opt_items = [MenuItem(s.value, value=s.value) for s in SignOption]
+		group = MenuItemGroup(sign_opt_items, sort_items=False)
+
+		if preset is not None:
+			group.set_selected_by_value(preset.sign_option.value)
+
+		result = SelectMenu(
+			group,
+			header=prompt,
+			alignment=Alignment.CENTER,
+			allow_skip=False
 		).run()
 
-		return CustomMirror(
-			name,
-			url,
-			SignCheck(sign_check_choice.single_value),
-			SignOption(sign_option_choice.single_value)
-		)
+		match result.type_:
+			case ResultType.Selection:
+				sign_opt = SignOption(result.get_value())
+			case _:
+				raise ValueError('Unhandled return type')
+
+		return CustomMirror(name, url, sign_check, sign_opt)
 
 
 class MirrorMenu(AbstractSubMenu):
 	def __init__(
 		self,
-		data_store: Dict[str, Any],
-		preset: Optional[MirrorConfiguration] = None
+		preset: MirrorConfiguration | None = None
 	):
 		if preset:
-			self._preset = preset
+			self._mirror_config = preset
 		else:
-			self._preset = MirrorConfiguration()
+			self._mirror_config = MirrorConfiguration()
 
-		super().__init__(data_store=data_store)
+		self._data_store: dict[str, Any] = {}
 
-	def setup_selection_menu_options(self) -> None:
-		self._menu_options['mirror_regions'] = \
-			Selector(
-				_('Mirror region'),
-				lambda preset: select_mirror_regions(preset),
-				display_func=lambda x: ', '.join(x.keys()) if x else '',
-				default=self._preset.mirror_regions,
-				enabled=True)
-		self._menu_options['custom_mirrors'] = \
-			Selector(
-				_('Custom mirrors'),
-				lambda preset: select_custom_mirror(preset=preset),
-				display_func=lambda x: str(_('Defined')) if x else '',
-				preview_func=self._prev_custom_mirror,
-				default=self._preset.custom_mirrors,
-				enabled=True
+		menu_optioons = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)
+
+		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
+
+	def _define_menu_options(self) -> list[MenuItem]:
+		return [
+			MenuItem(
+				text=str(_('Mirror region')),
+				action=lambda x: select_mirror_regions(x),
+				value=self._mirror_config.mirror_regions,
+				preview_action=self._prev_regions,
+				key='mirror_regions'
+			),
+			MenuItem(
+				text=str(_('Custom mirrors')),
+				action=lambda x: select_custom_mirror(x),
+				value=self._mirror_config.custom_mirrors,
+				preview_action=self._prev_custom_mirror,
+				key='custom_mirrors'
 			)
+		]
 
-	def _prev_custom_mirror(self) -> Optional[str]:
-		selector = self._menu_options['custom_mirrors']
+	def _prev_regions(self, item: MenuItem) -> str | None:
+		mirrors: dict[str, list[MirrorStatusEntryV3]] = item.get_value()
 
-		if selector.has_selection():
-			custom_mirrors: List[CustomMirror] = selector.current_selection  # type: ignore
-			output = FormattedOutput.as_table(custom_mirrors)
-			return output.strip()
+		output = ''
+		for name, status_list in mirrors.items():
+			output += f'{name}\n'
+			output += '-' * len(name) + '\n'
 
-		return None
+			for entry in status_list:
+				output += f'{entry.url}\n'
 
-	def run(self, allow_reset: bool = True) -> Optional[MirrorConfiguration]:
-		super().run(allow_reset=allow_reset)
+			output += '\n'
 
-		if self._data_store.get('mirror_regions', None) or self._data_store.get('custom_mirrors', None):
-			return MirrorConfiguration(
-				mirror_regions=self._data_store['mirror_regions'],
-				custom_mirrors=self._data_store['custom_mirrors'],
-			)
+		return output
 
-		return None
+	def _prev_custom_mirror(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
+
+		custom_mirrors: list[CustomMirror] = item.value
+		output = FormattedOutput.as_table(custom_mirrors)
+		return output.strip()
+
+	def run(self) -> MirrorConfiguration:
+		super().run()
+
+		if not self._data_store:
+			return MirrorConfiguration()
+
+		return MirrorConfiguration(
+			mirror_regions=self._data_store.get('mirror_regions', None),
+			custom_mirrors=self._data_store.get('custom_mirrors', None),
+		)
 
 
-def select_mirror_regions(preset_values: Dict[str, List[str]] = {}) -> Dict[str, List[str]]:
-	"""
-	Asks the user to select a mirror or region
-	Usually this is combined with :ref:`archinstall.list_mirrors`.
+def select_mirror_regions(preset: dict[str, list[MirrorStatusEntryV3]]) -> dict[str, list[MirrorStatusEntryV3]]:
+	mirrors: dict[str, list[MirrorStatusEntryV3]] | None = list_mirrors_from_remote()
 
-	:return: The dictionary information about a mirror/region.
-	:rtype: dict
-	"""
-	if preset_values is None:
-		preselected = None
-	else:
-		preselected = list(preset_values.keys())
+	if not mirrors:
+		mirrors = list_mirrors_from_local()
 
-	mirrors = list_mirrors()
+	items = [MenuItem(name, value=(name, mirrors)) for name, mirrors in mirrors.items()]
+	group = MenuItemGroup(items, sort_items=True)
 
-	choice = Menu(
-		_('Select one of the regions to download packages from'),
-		list(mirrors.keys()),
-		preset_values=preselected,
+	preset_values = [(name, mirror) for name, mirror in preset.items()]
+	group.set_selected_by_value(preset_values)
+
+	result = SelectMenu(
+		group,
+		alignment=Alignment.CENTER,
+		frame=FrameProperties.min(str(_('Mirror regions'))),
+		allow_reset=True,
+		allow_skip=True,
 		multi=True,
-		allow_reset=True
 	).run()
 
-	match choice.type_:
-		case MenuSelectionType.Reset:
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
 			return {}
-		case MenuSelectionType.Skip:
-			return preset_values
-		case MenuSelectionType.Selection:
-			return {
-				selected: [
-					f"{mirror.url}$repo/os/$arch" for mirror in sort_mirrors_by_performance(mirrors[selected])
-				] for selected in choice.multi_value
-			}
-
-	return {}
+		case ResultType.Selection:
+			selected_mirrors: list[tuple[str, list[MirrorStatusEntryV3]]] = result.get_values()
+			return {name: mirror for name, mirror in selected_mirrors}
 
 
-def select_custom_mirror(prompt: str = '', preset: List[CustomMirror] = []) -> list[CustomMirror]:
-	custom_mirrors = CustomMirrorList(prompt, preset).run()
+def select_custom_mirror(preset: list[CustomMirror] = []):
+	custom_mirrors = CustomMirrorList(preset).run()
 	return custom_mirrors
 
 
-def sort_mirrors_by_performance(mirror_list: List[MirrorStatusEntryV3]) -> List[MirrorStatusEntryV3]:
+def list_mirrors_from_remote() -> dict[str, list[MirrorStatusEntryV3]] | None:
+	if not storage['arguments']['offline']:
+		url = "https://archlinux.org/mirrors/status/json/"
+		attempts = 3
+
+		for attempt_nr in range(attempts):
+			try:
+				mirrorlist = fetch_data_from_url(url)
+				return _parse_remote_mirror_list(mirrorlist)
+			except Exception as e:
+				debug(f'Error while fetching mirror list: {e}')
+				time.sleep(attempt_nr + 1)
+
+		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
+
+	return None
+
+
+def list_mirrors_from_local() -> dict[str, list[MirrorStatusEntryV3]]:
+	with Path('/etc/pacman.d/mirrorlist').open('r') as fp:
+		mirrorlist = fp.read()
+		return _parse_locale_mirrors(mirrorlist)
+
+
+def _sort_mirrors_by_performance(mirror_list: list[MirrorStatusEntryV3]) -> list[MirrorStatusEntryV3]:
 	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
 
 
-def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
+def _parse_remote_mirror_list(mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
 	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
 
-	sorting_placeholder: Dict[str, List[MirrorStatusEntryV3]] = {}
+	sorting_placeholder: dict[str, list[MirrorStatusEntryV3]] = {}
 
 	for mirror in mirror_status.urls:
 		# We filter out mirrors that have bad criteria values
@@ -315,7 +401,7 @@ def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
 		if mirror.url.startswith('http'):
 			sorting_placeholder.setdefault(mirror.country, []).append(mirror)
 
-	sorted_by_regions: Dict[str, List[MirrorStatusEntryV3]] = dict({
+	sorted_by_regions: dict[str, list[MirrorStatusEntryV3]] = dict({
 		region: unsorted_mirrors
 		for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])
 	})
@@ -323,18 +409,41 @@ def _parse_mirror_list(mirrorlist: str) -> Dict[str, List[MirrorStatusEntryV3]]:
 	return sorted_by_regions
 
 
-def list_mirrors() -> Dict[str, List[MirrorStatusEntryV3]]:
-	regions: Dict[str, List[MirrorStatusEntryV3]] = {}
+def _parse_locale_mirrors(mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
+	lines = mirrorlist.splitlines()
 
-	if storage['arguments']['offline']:
-		with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fp:
-			mirrorlist = fp.read()
-	else:
-		url = "https://archlinux.org/mirrors/status/json/"
-		try:
-			mirrorlist = fetch_data_from_url(url)
-		except ValueError as err:
-			warn(f'Could not fetch an active mirror-list: {err}')
-			return regions
+	# remove empty lines
+	lines = [line for line in lines if line]
 
-	return _parse_mirror_list(mirrorlist)
+	mirror_list: dict[str, list[MirrorStatusEntryV3]] = {}
+
+	current_region = ''
+	for idx, line in enumerate(lines):
+		line = line.strip()
+
+		if line.lower().startswith('server'):
+			if not current_region:
+				for i in range(idx - 1, 0, -1):
+					if lines[i].startswith('##'):
+						current_region = lines[i].replace('#', '').strip()
+						mirror_list.setdefault(current_region, [])
+						break
+
+			url = line.removeprefix('Server = ')
+			mirror_entry = MirrorStatusEntryV3(
+				url=url.rstrip('$repo/os/$arch'),
+				protocol=urllib.parse.urlparse(url).scheme,
+				active=True,
+				country=current_region or 'Worldwide',
+				# The following values are normally populated by
+				# archlinux.org mirror-list endpoint, and can't be known
+				# from just the local mirror-list file.
+				country_code='WW',
+				isos=True,
+				ipv4=True,
+				ipv6=True,
+				details='Locally defined mirror',
+			)
+			mirror_list[current_region].append(mirror_entry)
+
+	return mirror_list

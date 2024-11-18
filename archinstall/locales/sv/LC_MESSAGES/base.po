@@ -1313,3 +1313,156 @@ msgstr " (standard)"
 
 msgid "Press Ctrl+h for help"
 msgstr "Tryck på Ctrl+h för hjälp"
+
+msgid "Choose an option to give Sway access to your hardware"
+msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+
+msgid "Seat access"
+msgstr "Åtkomst av sitshantering"
+
+msgid "Mountpoint"
+msgstr "Monteringspunkt"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Mata in ett disk-krypteringslösenord (lämna blankt för att hoppa över kryptering)"
+
+msgid "Disk encryption password"
+msgstr "Diskkrypteringslösenord"
+
+msgid "Partition - New"
+msgstr "Partition - Ny"
+
+msgid "Filesystem"
+msgstr "Filsystem"
+
+msgid "Invalid size"
+msgstr "Ogiltig storlek"
+
+msgid "Start (default: sector {}): "
+msgstr "Start (standard: sektor {}):"
+
+msgid "End (default: {}): "
+msgstr "Slut (standard: {}):"
+
+msgid "Subvolume name"
+msgstr "Subvolymens namn"
+
+msgid "Disk configuration type"
+msgstr "Diskkonfigurationstyp"
+
+msgid "Root mount directory"
+msgstr "Rootmonteringskatalog"
+
+msgid "Select language"
+msgstr "Välj språk"
+
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Skriv in ytterligare paket som skall installeras (separerade med mellanslag, lämna tomt för att skippa):"
+
+msgid "Invalid download number"
+msgstr "Ogiltigt nedladdningsnummer"
+
+msgid "Number downloads"
+msgstr "Antal nedladdningar"
+
+msgid "The username you entered is invalid"
+msgstr "Användarnamnet du angav är ogiltigt"
+
+msgid "Username"
+msgstr "Användarnamn "
+
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Ska \"{}\" vara en superanvändare (sudo)?\n"
+
+msgid "Interfaces"
+msgstr "Gränssnitt"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "Du måste ange en giltig IP i IP-konfigurationsläge"
+
+msgid "Modes"
+msgstr "Lägen"
+
+msgid "IP address"
+msgstr "IP-adress"
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Mata in IP-adress till gateway (router) eller lämna tomt för inget"
+
+msgid "Gateway address"
+msgstr "Gateway adress"
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Mata in DNS-servrar (separerade med mellanslag, lämna tomt för inget)"
+
+msgid "DNS servers"
+msgstr "DNS-servrar"
+
+msgid "Configure interfaces"
+msgstr "Konfigurera gränssnitt"
+
+msgid "Kernel"
+msgstr "Kärna"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "UEFI identifierades inte och vissa alternativ är inaktiverade"
+
+msgid "Info"
+msgstr "Information"
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Den proprietära Nvidia-drivrutinen stöds inte av Sway."
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Det är troligt att du kommer att stöta på problem, är du okej med det?"
+
+msgid "Main profile"
+msgstr "Huvudprofil"
+
+msgid "Confirm password"
+msgstr "Bekräfta lösenord"
+
+msgid "The confirmation password did not match, please try again"
+msgstr "Bekräftelselösenordet matchade inte, försök igen"
+
+msgid "Not a valid directory"
+msgstr "Inte en giltig katalog"
+
+msgid "Would you like to continue?"
+msgstr "Vill du fortsätta?"
+
+msgid "Directory"
+msgstr "Katalog"
+
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "Ange en katalog för konfigurationen/konfigurationerna som ska sparas (komplettering av flikar aktiverad)"
+
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Vill du spara konfigurationsfil(er) till {}?"
+
+msgid "Enabled"
+msgstr "Aktiverad"
+
+msgid "Disabled"
+msgstr "Inaktiverad"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Vänligen skicka in detta problem (och fil) till https://github.com/archlinux/archinstall/issues"
+
+msgid "Mirror name"
+msgstr "Spegelnamn"
+
+msgid "Url"
+msgstr "Webbadress"
+
+msgid "Select signature check"
+msgstr "Välj signaturkontroll"
+
+msgid "Select execution mode"
+msgstr "Välj exekveringsläge"
+
+msgid "Press ? for help"
+msgstr "Tryck på ?för hjälp"

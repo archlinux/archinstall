@@ -1,0 +1,1509 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Aindriú Mac Giolla Eoin <aindriu80@gmail.com>\n"
+"Language-Team: \n"
+"Language: ga\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] Cruthaíodh logchomhad anseo: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Cuir isteach an tsaincheist seo (agus an comhad) chuig https://github.com/archlinux/archinstall/issues"
+
+msgid "Do you really want to abort?"
+msgstr "Ar mhaith leat tobscoir?"
+
+msgid "And one more time for verification: "
+msgstr "Agus uair amháin eile le haghaidh fíoraithe: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "Ar mhaith leat úsáid a bhaint as babhtáil ar zram?"
+
+msgid "Desired hostname for the installation: "
+msgstr "An t-óstainm inmhianaithe don suiteáil: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Ainm úsáideora le haghaidh sár-úsáideoir riachtanach le pribhléidí sudo: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Aon úsáideoirí breise le suiteáil (fág bán gan aon úsáideoir): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Ar cheart don úsáideoir seo a bheith ina shár-úsáideoir (sudoer)?"
+
+msgid "Select a timezone"
+msgstr "Roghnaigh crios ama"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Ar mhaith leat GRUB a úsáid mar bootloader in ionad systemd-boot?"
+
+msgid "Choose a bootloader"
+msgstr "Roghnaigh lódálaí tosaithe"
+
+msgid "Choose an audio server"
+msgstr "Roghnaigh freastalaí fuaime"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Ní shuiteáiltear ach pacáistí cosúil le pacáistí bonn, base-devel, linux, linux-firmware, efibootmgr agus próifíl roghnach."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "Más mian leat brabhsálaí gréasáin, mar firefox nó cróimiam, is féidir leat é a shonrú sa leid seo a leanas."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Scríobh pacáistí breise le suiteáil (spás scartha, fág bán le scipeáil): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Cóipeáil cumraíocht líonra ISO chuig an suiteáil"
+
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "Úsáid NetworkManager (riachtanach chun an t-idirlíon a chumrú go grafach i GNOME agus KDE)"
+
+msgid "Select one network interface to configure"
+msgstr "Roghnaigh comhéadan líonra amháin le chumrú"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "Roghnaigh an mód a chumrú le haghaidh \"{}\" nó scipeáil chun an mód réamhshocraithe \"{}\" a úsáid"
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Cuir isteach an IP agus an subnet do {} (mar shampla: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Cuir isteach do sheoladh IP geata (ródaire) nó fág bán é: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "Cuir isteach do fhreastalaithe DNS (spás scartha, folamh gan aon cheann): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "Roghnaigh cén córas comhaid ar cheart do do phríomh-dheighilt a úsáid"
+
+msgid "Current partition layout"
+msgstr "Leagan amach na críochdheighilte reatha"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"Roghnaigh cad atá le déanamh leis\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Cuir isteach cineál córais comhaid atá ag teastáil don deighilt"
+
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Cuir isteach an suíomh tosaithe (in aonaid dheighilte: s, GB, %, etc. ; réamhshocrú: {}): "
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Cuir isteach an suíomh deiridh (in aonaid dheighilte: s, GB, %, etc.; ex: {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} tá deighiltí ciúáilte, bainfidh sé seo iad, an bhfuil tú cinnte?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"Roghnaigh de réir innéacs cé na deighiltí atá le scriosadh"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"Roghnaigh de réir innéacs cén deighilt a ghairfidh tú"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Tá mount-pointí críochdheighilte i gcoibhneas leis an taobh istigh den suiteáil, bheadh ​​an tosaithe / tosaithe mar shampla."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "Roghnaigh cá háit ar cheart an deighilt a shuiteáil (fág bán chun an pointe sléibhe a bhaint): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"Roghnaigh an deighilt le masc le haghaidh formáidithe"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"Roghnaigh an deighilt lena mharcáil mar chriptithe"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"Roghnaigh an deighilt atá le marcáil mar bootable"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"Roghnaigh an deighilt chun córas comhaid a shocrú air"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Cuir isteach cineál córais comhad atá ag teastáil don deighilt: "
+
+msgid "Archinstall language"
+msgstr "Teanga Archinstall"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "Scrios gach tiomántán roghnaithe agus bain úsáid as leagan amach deighilte réamhshocraithe is fearr iarrachta"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "Roghnaigh cad atá le déanamh le gach tiomántán aonair (agus úsáid deighilte ina dhiaidh sin)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "Roghnaigh cad is mian leat a dhéanamh leis na feistí bloc roghnaithe"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "Is liosta é seo de phróifílí réamhchláraithe, b'fhéidir go n-éascódh siad rudaí cosúil le timpeallachtaí deisce a shuiteáil"
+
+msgid "Select keyboard layout"
+msgstr "Roghnaigh leagan amach an mhéarchláir"
+
+msgid "Select one of the regions to download packages from"
+msgstr "Roghnaigh ceann de na réigiúin chun pacáistí a íoslódáil uaidh"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "Roghnaigh tiomántán crua amháin nó níos mó le húsáid agus cumraigh"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Chun an chomhoiriúnacht is fearr le do chrua-earraí AMD, b'fhéidir gur mhaith leat na roghanna uile foinse oscailte nó AMD / ATI a úsáid."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Chun an chomhoiriúnacht is fearr le do chrua-earraí Intel, b'fhéidir gur mhaith leat na roghanna uile foinse oscailte nó Intel a úsáid.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Chun an comhoiriúnacht is fearr le do chrua-earraí Nvidia, b'fhéidir gur mhaith leat an tiománaí dílseánaigh Nvidia a úsáid.\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh tiománaí grafaicí nó fág bán é chun gach tiománaí foinse oscailte a shuiteáil"
+
+msgid "All open-source (default)"
+msgstr "Gach foinse oscailte (réamhshocraithe)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "Roghnaigh cé na heithneanna le húsáid nó fág bán don réamhshocrú \"{}\""
+
+msgid "Choose which locale language to use"
+msgstr "Roghnaigh cén teanga logánta is cóir a úsáid"
+
+msgid "Choose which locale encoding to use"
+msgstr "Roghnaigh cén ionchódú locale is cóir a úsáid"
+
+msgid "Select one of the values shown below: "
+msgstr "Roghnaigh ceann amháin de na luachanna a thaispeántar thíos: "
+
+msgid "Select one or more of the options below: "
+msgstr "Roghnaigh ceann amháin nó níos mó de na roghanna thíos: "
+
+msgid "Adding partition...."
+msgstr "Deighilt á cur leis...."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "Ní mór duit cineál bailí fs-type a chur isteach chun leanúint ar aghaidh. Féach man parted le haghaidh cineálacha fs-type bailí."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "Earráid: Mar thoradh ar liostú próifílí ar URL \"{}\" bhí:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "Earráid: Níorbh fhéidir an toradh \"{}\" a dhíchódú mar JSON:"
+
+msgid "Keyboard layout"
+msgstr "Leagan amach méarchlár"
+
+msgid "Mirror region"
+msgstr "Réigiún scáthán"
+
+msgid "Locale language"
+msgstr "Teanga logánta"
+
+msgid "Locale encoding"
+msgstr "Ionchódú locale"
+
+msgid "Drive(s)"
+msgstr "Tiomántán(í)"
+
+msgid "Disk layout"
+msgstr "Leagan amach diosca"
+
+msgid "Encryption password"
+msgstr "Pasfhocal criptithe"
+
+msgid "Swap"
+msgstr "Babhtáil"
+
+msgid "Bootloader"
+msgstr "Lódálaí Tosaithe"
+
+msgid "Root password"
+msgstr "Pasfhocal Root"
+
+msgid "Superuser account"
+msgstr "Cuntas sár-úsáideoir"
+
+msgid "User account"
+msgstr "Cuntas úsáideora"
+
+msgid "Profile"
+msgstr "Próifíl"
+
+msgid "Audio"
+msgstr "Fuaime"
+
+msgid "Kernels"
+msgstr "Eithne"
+
+msgid "Additional packages"
+msgstr "Pacáistí breise"
+
+msgid "Network configuration"
+msgstr "Cumraíocht líonra"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Sioncronú ama uathoibríoch (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "Suiteáil ({} config(s) in easnamh)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"Shocraigh tú an rogha tiomántán crua a scipeáil\n"
+"agus úsáidfidh sé cibé tiomántán atá gléasta ag {} (turgnamhach)\n"
+"RABHADH: Ní seiceálfaidh Archinstall oiriúnacht an tsocraithe seo\n"
+"Ar mhaith leat leanúint ar aghaidh?"
+
+msgid "Re-using partition instance: {}"
+msgstr "Mar shampla deighilte a athúsáid: {}"
+
+msgid "Create a new partition"
+msgstr "Cruthaigh deighilt nua"
+
+msgid "Delete a partition"
+msgstr "Scrios deighilt"
+
+msgid "Clear/Delete all partitions"
+msgstr "Glan/Scrios gach Deighiltí"
+
+msgid "Assign mount-point for a partition"
+msgstr "Sann mount-point le haghaidh críochdheighilte"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "Marcáil/Dímharcáil deighilt atá le formáidiú (síolraigh na sonraí)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "Marcáil/Dímharcáil críochdheighilt mar atá criptithe"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "Marcáil/Dímharcáil críochdheighilt mar bootable (uathoibríoch le haghaidh /boot)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "Socraigh córas comhaid atá ag teastáil le haghaidh críochdheighilte"
+
+msgid "Abort"
+msgstr "Tobscoir"
+
+msgid "Hostname"
+msgstr "Óstainm"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "Gan a bheith cumraithe, níl sé ar fáil mura socraítear é de láimh"
+
+msgid "Timezone"
+msgstr "Crios ama"
+
+msgid "Set/Modify the below options"
+msgstr "Socraigh/Athraigh na roghanna thíos"
+
+msgid "Install"
+msgstr "Suiteáil"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"Úsáid ESC chun scipeáil\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "Mol leagan amach na críochdheighilte"
+
+msgid "Enter a password: "
+msgstr "Iontráil pasfhocal: "
+
+msgid "Enter a encryption password for {}"
+msgstr "Cuir isteach pasfhocal criptithe le haghaidh {}"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "Cuir isteach pasfhocal criptithe diosca (fág bán gan aon chriptiú): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Cruthaigh sár-úsáideoir riachtanach le pribhléidí sudo: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "Cuir isteach pasfhocal fréimhe (fág bán chun an fhréamh a dhíchumasú): "
+
+msgid "Password for user \"{}\": "
+msgstr "Pasfhocal don úsáideoir \"{}\": "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "Ag fíorú go bhfuil pacáistí breise ann (seans go dtógfaidh sé seo cúpla soicind)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Ar mhaith leat sioncrónú ama uathoibríoch (NTP) a úsáid leis na freastalaithe réamhshocraithe ama?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"D’fhéadfadh go mbeadh am crua-earraí agus céimeanna eile iarchumraíochta ag teastáil le go n-oibreoidh NTP.\n"
+"Le haghaidh tuilleadh eolais, seiceáil le do thoil an vicí Arch"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "Cuir isteach ainm úsáideora chun úsáideoir breise a chruthú (fág bán chun scipeáil): "
+
+msgid "Use ESC to skip\n"
+msgstr "Úsáid ESC chun scipeáil\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+"Roghnaigh rud ón liosta, agus roghnaigh ceann de na gníomhartha atá ar fáil chun é a fhorghníomhú"
+
+msgid "Cancel"
+msgstr "Cealaigh"
+
+msgid "Confirm and exit"
+msgstr "Deimhnigh agus scoir"
+
+msgid "Add"
+msgstr "Cuir"
+
+msgid "Copy"
+msgstr "Cóip"
+
+msgid "Edit"
+msgstr "Cuir in eagar"
+
+msgid "Delete"
+msgstr "Scrios"
+
+msgid "Select an action for '{}'"
+msgstr "Roghnaigh gníomh le haghaidh '{}'"
+
+msgid "Copy to new key:"
+msgstr "Cóipeáil chuig eochair nua:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "Cineál nic anaithnid: {}. Is iad na luachanna féideartha ná {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"Seo é do chumraíocht roghnaithe:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Tá PacmanName ag rith cheana féin, ag fanacht 10 nóiméad ar a mhéad chun é a fhoirceannadh."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Níor imigh an glas pacmannach a bhí ann cheana. Glan suas aon seisiúin PacmanName atá ann cheana féin le do thoil roimh úsáid a bhaint as archinstall."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "Roghnaigh na stórtha breise roghnacha le cumasú"
+
+msgid "Add a user"
+msgstr "Cuir úsáideoir leis"
+
+msgid "Change password"
+msgstr "Athraigh pasfhocal"
+
+msgid "Promote/Demote user"
+msgstr "Úsáideoir a chur chun cinn/a dhíspeagadh"
+
+msgid "Delete User"
+msgstr "Scrios Úsáideoir"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"Sainmhínigh úsáideoir nua\n"
+
+msgid "User Name : "
+msgstr "Ainm Úsáideora: "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "Ar cheart go mbeadh {} ina shár-úsáideoir (sudoer)?"
+
+msgid "Define users with sudo privilege: "
+msgstr "Sainmhínigh úsáideoirí a bhfuil pribhléid sudo acu: "
+
+msgid "No network configuration"
+msgstr "Gan cumraíocht líonra"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "Socraigh fo-imleabhair atá ag teastáil ar dheighilt btrfs"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"Roghnaigh cén deighilt ar cheart fo-imleabhair a shocrú"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "Bainistigh fo-imleabhair btrfs don deighilt reatha"
+
+msgid "No configuration"
+msgstr "Gan cumraíocht"
+
+msgid "Save user configuration"
+msgstr "Sábháil cumraíocht úsáideora"
+
+msgid "Save user credentials"
+msgstr "Sábháil dintiúir úsáideora"
+
+msgid "Save disk layout"
+msgstr "Sábháil leagan amach diosca"
+
+msgid "Save all"
+msgstr "Sábháil go léir"
+
+msgid "Choose which configuration to save"
+msgstr "Roghnaigh cén chumraíocht atá le sábháil"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "Cuir isteach eolaire don chumraíocht(s) atá le sábháil: "
+
+msgid "Not a valid directory: {}"
+msgstr "Ní eolaire bailí é: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "Is cosúil go bhfuil an pasfhocal atá in úsáid agat lag,"
+
+msgid "are you sure you want to use it?"
+msgstr "an bhfuil tú cinnte gur mhaith leat é a úsáid?"
+
+msgid "Optional repositories"
+msgstr "Taisclanna roghnacha"
+
+msgid "Save configuration"
+msgstr "Sábháil cumraíocht"
+
+msgid "Missing configurations:\n"
+msgstr "Cumraíochtaí in easnamh:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "Ní mór fréimhe pasfhocal nó ar a laghad 1 shár-úsáideoir a shonrú"
+
+msgid "Manage superuser accounts: "
+msgstr "Bainistigh cuntais sár-úsáideoirí: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "Bainistigh gnáthchuntais úsáideora: "
+
+msgid " Subvolume :{:16}"
+msgstr " Fo-imleabhar :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " suite ar {:16}"
+
+msgid " with option {}"
+msgstr " le rogha {}"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+"Líon isteach na luachanna atá ag teastáil le haghaidh fo-imleabhar nua\n"
+
+msgid "Subvolume name "
+msgstr "Ainm fo-imleabhar "
+
+msgid "Subvolume mountpoint"
+msgstr "Pointe sléibhe subvolume"
+
+msgid "Subvolume options"
+msgstr "Roghanna subvolume"
+
+msgid "Save"
+msgstr "Sábháil"
+
+msgid "Subvolume name :"
+msgstr "Ainm fo-imleabhar :"
+
+msgid "Select a mount point :"
+msgstr "Roghnaigh pointe gléasta :"
+
+msgid "Select the desired subvolume options "
+msgstr "Roghnaigh na roghanna subvolume atá ag teastáil "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "Sainmhínigh úsáideoirí a bhfuil pribhléid sudo acu, de réir ainm úsáideora: "
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] Cruthaíodh logchomhad anseo: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Ar mhaith leat fo-imleabhair BTRFS a úsáid le struchtúr réamhshocraithe?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "Ar mhaith leat comhbhrú BTRFS a úsáid?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Ar mhaith leat críochdheighilt ar leith a chruthú don /home?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Níl an acmhainn íosta ag na tiomántáin roghnaithe le haghaidh moladh uathoibríoch\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "Toilleadh íosta le haghaidh /deighilt baile: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Toilleadh íosta do dheighilt Arch Linux: {}GB"
+
+msgid "Continue"
+msgstr "Lean ort"
+
+msgid "yes"
+msgstr "tá"
+
+msgid "no"
+msgstr "níl"
+
+msgid "set: {}"
+msgstr "socrú: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "Ní mór liosta a bheith i socrú cumraíochta láimhe"
+
+msgid "No iface specified for manual configuration"
+msgstr "Níl iface sonraithe do chumraíocht láimhe"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "Teastaíonn seoladh IP ó chumraíocht láimhe nic gan DHCP uathoibríoch"
+
+msgid "Add interface"
+msgstr "Cuir comhéadan leis"
+
+msgid "Edit interface"
+msgstr "Cuir comhéadan in eagar"
+
+msgid "Delete interface"
+msgstr "Scrios comhéadan"
+
+msgid "Select interface to add"
+msgstr "Roghnaigh comhéadan le cur leis"
+
+msgid "Manual configuration"
+msgstr "Cumraíocht láimhe"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "Marcáil/Dímharcáil deighilt mar chomhbhrúite (btrfs amháin)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "Is cosúil go bhfuil an pasfhocal atá in úsáid agat lag, an bhfuil tú cinnte gur mhaith leat é a úsáid?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "Soláthraíonn sé rogha timpeallachtaí deisce agus bainisteoirí fuinneog tíleála, e.g. gnome, kde, smacht"
+
+msgid "Select your desired desktop environment"
+msgstr "Roghnaigh do thimpeallacht deisce atá ag teastáil"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Suiteáil an-bhunúsach a ligeann duit Arch Linux a shaincheapadh mar is cuí leat."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "Soláthraíonn sé rogha de phacáistí freastalaí éagsúla le suiteáil agus le cumasú, m.sh. httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "Roghnaigh cé na freastalaithe atá le suiteáil, mura bhfuil ann dóibh, déanfar suiteáil íosta"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "Suiteáil córas íosta chomh maith le tiománaithe xorg agus grafaicí."
+
+msgid "Press Enter to continue."
+msgstr "Brúigh Enter chun leanúint ar aghaidh."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "Ar mhaith leat an tsuiteáil nuachruthaithe a chrosadh agus cumraíocht iar-shuiteála a dhéanamh?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "An bhfuil tú cinnte gur mhaith leat an socrú seo a athshocrú?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "Roghnaigh tiomántán crua amháin nó níos mó le húsáid agus cumraigh\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "Athshocróidh aon athruithe ar an socrú reatha leagan amach an diosca!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "Má athshocraíonn tú an rogha tiomántán crua athshocróidh sé seo leagan amach reatha an diosca freisin. An bhfuil tú cinnte?"
+
+msgid "Save and exit"
+msgstr "Sábháil agus scoir"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"ina bhfuil deighiltí ciúáilte, bainfidh sé seo iad, an bhfuil tú cinnte?"
+
+msgid "No audio server"
+msgstr "Gan freastalaí fuaime"
+
+msgid "(default)"
+msgstr "(réamhshocraithe)"
+
+msgid "Use ESC to skip"
+msgstr "Úsáid ESC chun scipeáil"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"Úsáid CTRL+C chun an rogha reatha a athshocrú\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "Cóipeáil chuig: "
+
+msgid "Edit: "
+msgstr "Cuir: "
+
+msgid "Key: "
+msgstr "Eochair: "
+
+msgid "Edit {}: "
+msgstr "Cuir {} in eagar: "
+
+msgid "Add: "
+msgstr "Cuir leis: "
+
+msgid "Value: "
+msgstr "Luach: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "Is féidir leat scipeáil tiomántán agus deighilt a roghnú agus úsáid a bhaint as cibé socrú tiomántán atá suite ag /mnt (turgnamhach)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Roghnaigh ceann amháin de na dioscaí nó scipeáil agus úsáid / mnt mar réamhshocrú"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Roghnaigh na deighiltí atá le marcáil le haghaidh formáidithe:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Úsáid HSM chun tiomántán criptithe a dhíghlasáil"
+
+msgid "Device"
+msgstr "Gléas"
+
+msgid "Size"
+msgstr "Méid"
+
+msgid "Free space"
+msgstr "Spás saor in aisce"
+
+msgid "Bus-type"
+msgstr "Cineál bus"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Ní mór focal faire fréimhe nó 1 úsáideoir ar a laghad a bhfuil pribhléidí sudo aige a shonrú"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Cuir isteach ainm úsáideora (fág bán chun scipeáil): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "Tá an t-ainm úsáideora a d'iontráil tú neamhbhailí. Bain triail eile as"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Ar cheart \"{}\" a bheith ina shár-úsáideoir (sudo)?"
+
+msgid "Select which partitions to encrypt"
+msgstr "Roghnaigh na deighiltí atá le criptiú"
+
+msgid "very weak"
+msgstr "an-lag"
+
+msgid "weak"
+msgstr "lag"
+
+msgid "moderate"
+msgstr "measartha"
+
+msgid "strong"
+msgstr "láidir"
+
+msgid "Add subvolume"
+msgstr "Cuir fo-imleabhar leis"
+
+msgid "Edit subvolume"
+msgstr "Cuir fo-imleabhar in eagar"
+
+msgid "Delete subvolume"
+msgstr "Scrios fo-imleabhar"
+
+msgid "Configured {} interfaces"
+msgstr "Comhéadain {} cumraithe"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "Cumasaíonn an rogha seo líon na n-íoslódálacha comhthreomhara is féidir a dhéanamh le linn na suiteála"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {})\n"
+"Note:"
+msgstr ""
+"Cuir isteach líon na n-íoslódálacha comhthreomhara atá le cumasú.\n"
+" (Iontráil luach idir 1 agus {})\n"
+"Nóta:"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Uasluach   : {} ( Ligeann sé seo do {} íoslódálacha comhthreomhara, ceadaíonn sé {} íoslódálacha ag an am céanna )"
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - Íosluach   : 1 (Ceadaítear 1 íoslódáil chomhthreomhar, ceadaíonn sé 2 íosluchtú ag an am)"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - Díchumasaigh / Réamhshocrú: 0 (Díchumasaigh íoslódáil comhthreomhar, ní cheadaítear ach 1 íoslódáil ag an am)"
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "Ionchur neamhbhailí! Bain triail eile as le hionchur bailí [1 go {max_downloads}, nó 0 le díchumasú]"
+
+msgid "Parallel Downloads"
+msgstr "Comhuaineach íosluchtuithe"
+
+msgid "ESC to skip"
+msgstr "ESC a scipeáil"
+
+msgid "CTRL+C to reset"
+msgstr "CTRL+C le hathshocrú"
+
+msgid "TAB to select"
+msgstr "Tab le roghnú"
+
+msgid "[Default value: 0] > "
+msgstr "[Luach réamhshocraithe: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Chun an t-aistriúchán seo a úsáid, suiteáil cló de láimh a thacaíonn leis an teanga."
+
+msgid "The font should be stored as {}"
+msgstr "Ba cheart an cló a stóráil mar {}"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Éilíonn Archinstall pribhléidí fréimhe chun é a rith. Féach --help le haghaidh tuilleadh."
+
+msgid "Select an execution mode"
+msgstr "Roghnaigh modh forghníomhaithe"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Ní féidir próifíl a fháil ón url sonraithe: {}"
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Caithfidh ainm uathúil a bheith ag próifílí, ach aimsíodh sainmhínithe próifíle le hainm dúblach: {}"
+
+msgid "Select one or more devices to use and configure"
+msgstr "Roghnaigh gléas amháin nó níos mó le húsáid agus cumraigh"
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Má athshocraíonn tú an rogha gléis athshocróidh sé seo leagan amach reatha an diosca freisin. An bhfuil tú cinnte?"
+
+msgid "Existing Partitions"
+msgstr "Deighiltí Láithreacha"
+
+msgid "Select a partitioning option"
+msgstr "Roghnaigh rogha deighilte"
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Cuir isteach eolaire fréamhacha na ngléasanna gléasta: "
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Toilleadh íosta le haghaidh /deighilt baile: {}GiB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Toilleadh íosta do dheighilt Arch Linux: {}GiB"
+
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Seo liosta de profiles_bck réamhchláraithe, seans go mbeidh sé níos fusa rudaí cosúil le timpeallachtaí deisce a shuiteáil"
+
+msgid "Current profile selection"
+msgstr "Roghnú próifíle reatha"
+
+msgid "Remove all newly added partitions"
+msgstr "Bain gach deighilt nua-chur leis"
+
+msgid "Assign mountpoint"
+msgstr "Sann pointe sléibhe"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Marcáil/Dímharcáil le formáidiú (síolraigh na sonraí)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Marcáil/Dímharcáil mar bootable"
+
+msgid "Change filesystem"
+msgstr "Athraigh córas comhaid"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Marcáil/Dímharcáil mar chomhbhrúite"
+
+msgid "Set subvolumes"
+msgstr "Socraigh fo-imleabhair"
+
+msgid "Delete partition"
+msgstr "Scrios an deighilt"
+
+msgid "Partition"
+msgstr "Deighiltí"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Tá an deighilt seo criptithe faoi láthair, chun é a fhormáid ní mór córas comhaid a shonrú"
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Tá na pointí gléasta deighilte i gcoibhneas leis an taobh istigh den suiteáil, bheadh ​​an tosaithe mar shampla."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr "Má tá mountpoint /boot socraithe, ansin marcálfar an deighilt mar bootable freisin."
+
+msgid "Mountpoint: "
+msgstr "Mountpoint: "
+
+msgid "Current free sectors on device {}:"
+msgstr "Earnálacha saor in aisce faoi láthair ar ghléas {}:"
+
+msgid "Total sectors: {}"
+msgstr "Earnálacha iomlána: {}"
+
+msgid "Enter the start sector (default: {}): "
+msgstr "Cuir isteach an earnáil tosaithe (réamhshocrú: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Cuir isteach earnáil deiridh na críochdheighilte (céatadán nó blocuimhir, réamhshocrú: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Bainfidh sé seo gach deighilt nua-chur leis, leanúint ar aghaidh?"
+
+msgid "Partition management: {}"
+msgstr "Bainistíocht críochdheighilte: {}"
+
+msgid "Total length: {}"
+msgstr "Fad iomlán: {}"
+
+msgid "Encryption type"
+msgstr "Cineál criptithe"
+
+msgid "Partitions"
+msgstr "Deighiltí"
+
+msgid "No HSM devices available"
+msgstr "Níl aon ghléas HSM ar fáil"
+
+msgid "Partitions to be encrypted"
+msgstr "Deighiltí le bheith criptithe"
+
+msgid "Select disk encryption option"
+msgstr "Roghnaigh rogha criptithe diosca"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Roghnaigh gléas FIDO2 le húsáid le haghaidh HSM"
+
+msgid "Use a best-effort default partition layout"
+msgstr "Bain úsáid as leagan amach deighilte réamhshocraithe is fearr-iarracht"
+
+msgid "Manual Partitioning"
+msgstr "Deighilt láimhe"
+
+msgid "Pre-mounted configuration"
+msgstr "Cumraíocht réamhshuiteáilte"
+
+msgid "Unknown"
+msgstr "Anaithnid"
+
+msgid "Partition encryption"
+msgstr "Criptiú críochdheighilte"
+
+msgid " ! Formatting {} in "
+msgstr " ! Formáidiú {} in "
+
+msgid "← Back"
+msgstr "← Ar ais"
+
+msgid "Disk encryption"
+msgstr "Criptiú diosca"
+
+msgid "Configuration"
+msgstr "Cumraíocht"
+
+msgid "Password"
+msgstr "Pasfhocal"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "Athshocrófar gach socrú, an bhfuil tú cinnte?"
+
+msgid "Back"
+msgstr "Ar ais"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "Roghnaigh cé acu beannaí le suiteáil do na próifílí roghnaithe: {}"
+
+msgid "Environment type: {}"
+msgstr "Cineál timpeallachta: {}"
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr "Níl an tiománaí dílseánaigh Nvidia tacaithe ag Sway. Is dócha go mbeidh fadhbanna agat, an bhfuil tú ceart go leor leis sin?"
+
+msgid "Installed packages"
+msgstr "Pacáistí suiteáilte"
+
+msgid "Add profile"
+msgstr "Cuir próifíl leis"
+
+msgid "Edit profile"
+msgstr "Cuir próifíl in eagar"
+
+msgid "Delete profile"
+msgstr "Scrios próifíl"
+
+msgid "Profile name: "
+msgstr "Ainm próifíle: "
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Tá an t-ainm próifíle a d'iontráil tú in úsáid cheana féin. Bain triail eile as"
+
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Pacáistí atá le suiteáil leis an bpróifíl seo (spás scartha, fág bán le scipeáil): "
+
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Seirbhísí atá le cumasú leis an bpróifíl seo (spás scartha, fág bán chun scipeáil): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "Ar cheart an phróifíl seo a chumasú le haghaidh suiteáil?"
+
+msgid "Create your own"
+msgstr "Cruthaigh do chuid féin"
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"Roghnaigh tiománaí grafaicí nó fág bán é chun gach tiománaí foinse oscailte a shuiteáil"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Teastaíonn rochtain ó Sway ar do shuíochán (bailiúchán de ghléasanna crua-earraí i.e. méarchlár, luch, srl)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh rogha chun rochtain a thabhairt do Sway ar do chrua-earraí"
+
+msgid "Graphics driver"
+msgstr "Tiománaí grafaicí"
+
+msgid "Greeter"
+msgstr "Beannóir"
+
+msgid "Please chose which greeter to install"
+msgstr "Roghnaigh cé acu beannaitheoir atá le suiteáil"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "Seo liosta de default_profiles réamhchláraithe"
+
+msgid "Disk configuration"
+msgstr "Cumraíocht diosca"
+
+msgid "Profiles"
+msgstr "Próifílí"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "Eolaire féideartha a aimsiú chun comhaid cumraíochta a shábháil ..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Roghnaigh eolaire (nó eolairí) chun comhaid cumraíochta a shábháil"
+
+msgid "Add a custom mirror"
+msgstr "Cuir scáthán saincheaptha leis"
+
+msgid "Change custom mirror"
+msgstr "Athraigh scáthán saincheaptha"
+
+msgid "Delete custom mirror"
+msgstr "Scrios scáthán saincheaptha"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "Iontráil ainm (fág bán chun scipeáil): "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "Cuir isteach url (fág bán chun scipeáil): "
+
+msgid "Select signature check option"
+msgstr "Roghnaigh an rogha seiceála sínithe"
+
+msgid "Select signature option"
+msgstr "Roghnaigh an rogha sínithe"
+
+msgid "Custom mirrors"
+msgstr "Scátháin saincheaptha"
+
+msgid "Defined"
+msgstr "Sainithe"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Sábháil cumraíocht úsáideora (leagan amach diosca san áireamh)"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+"Iontráil eolaire don chumraíocht(s) atá le sábháil (cumasaíodh comhlánú an táb)\n"
+"Sábháil eolaire: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"Ar mhaith leat {} comhad cumraíochta a shábháil sa suíomh seo a leanas?\n"
+"\n"
+"{}"
+
+msgid "Saving {} configuration files to {}"
+msgstr "{} comhad cumraíochta á sábháil go {}"
+
+msgid "Mirrors"
+msgstr "Scátháin"
+
+msgid "Mirror regions"
+msgstr "Réigiúin scátháin"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Uasluach   : {} ( Ligeann sé seo {} íoslódálacha comhthreomhara, ceadaítear {max_downloads+1} íosluchtú ag an am céanna )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Ionchur neamhbhailí! Bain triail eile as le hionchur bailí [1 go {}, nó 0 le díchumasú]"
+
+msgid "Locales"
+msgstr "Áitiúlachtaí"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Úsáid NetworkManager (riachtanach chun an t-idirlíon a chumrú go grafach i GNOME agus KDE)"
+
+msgid "Total: {} / {}"
+msgstr "Iomlán: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr "Is féidir gach luach a iontráladh a iarmhír le haonad: B, KB, KiB, MB, MiB..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Mura gcuirtear aonad ar fáil, léirmhínítear an luach mar earnálacha"
+
+msgid "Enter start (default: sector {}): "
+msgstr "Cuir isteach tús (réamhshocrú: earnáil {}): "
+
+msgid "Enter end (default: {}): "
+msgstr "Cuir isteach an deireadh (réamhshocraithe: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "Ní féidir gléasanna fido2 a chinneadh. An bhfuil libfido2 suiteáilte?"
+
+msgid "Path"
+msgstr "Cosán"
+
+msgid "Manufacturer"
+msgstr "Monaróir"
+
+msgid "Product"
+msgstr "Táirge"
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Cumraíocht neamhbhailí: {error}"
+
+msgid "Type"
+msgstr "Cineál"
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Cumasaíonn an rogha seo líon na n-íoslódálacha comhthreomhara is féidir a dhéanamh le linn íoslódálacha pacáiste"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Cuir isteach líon na n-íoslódálacha comhthreomhara atá le cumasú.\n"
+"\n"
+"Nóta:\n"
+
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Uasluach molta : {} ( Ceadaítear {} íoslódálacha comhthreomhara ag an am céanna )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Díchumasaigh / Réamhshocrú: 0 (Díchumasaigh íoslódáil comhthreomhar, ní cheadaítear ach 1 íoslódáil ag an am)\n"
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Ionchur neamhbhailí! Bain triail eile as le hionchur bailí [nó 0 le díchumasú]"
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Teastaíonn rochtain ar do shuíochán ó Hyprland (bailiúchán de ghléasanna crua-earraí, i.e. méarchlár, luch, srl)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh rogha chun rochtain a thabhairt do Hyprland ar do chrua-earraí"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Is féidir gach luach a iontráladh a iarmhír le haonad: %, B, KB, KiB, MB, MiB..."
+
+msgid "Would you like to use unified kernel images?"
+msgstr "Ar mhaith leat íomhánna eithne aontaithe a úsáid?"
+
+msgid "Unified kernel images"
+msgstr "Íomhánna eithne aontaithe"
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Ag fanacht le sioncronú ama (timedatectl show) le cur i gcrích."
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Níl an sioncrónú ama críochnaithe, agus tú ag fanacht - seiceáil na doiciméid le haghaidh réitigh oibre: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Gan bacadh le feithimh le haghaidh sioncronaithe ama uathoibríoch (féadfaidh sé seo fadhbanna a chruthú má bhíonn an t-am as sioncronaithe le linn na suiteála)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Ag fanacht le sioncronú eochairfháinne Arch Linux (archlinux-keyring-wkd-sync) a chur i gcrích."
+
+msgid "Selected profiles: "
+msgstr "Próifílí roghnaithe: "
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Níl an sioncrónú ama críochnaithe, agus tú ag fanacht - seiceáil na doiciméid le haghaidh réitigh oibre: https://archinstall.readthedocs.io/"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "Marcáil/Dímharcáil mar bhó nodata"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Ar mhaith leat comhbhrú a úsáid nó CoW a dhíchumasú?"
+
+msgid "Use compression"
+msgstr "Bain úsáid as comhbhrú"
+
+msgid "Disable Copy-on-Write"
+msgstr "Díchumasaigh Cóipeáil-ar-Scríobh"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Soláthraíonn sé rogha timpeallachtaí deisce agus bainisteoirí fuinneog tíleála, e.g. GNOME, Plasma KDE, Sway"
+
+msgid "Configuration type: {}"
+msgstr "Cineál cumraíochta: {}"
+
+msgid "LVM configuration type"
+msgstr "Cineál cumraíochta LVM"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "Ní thacaítear le criptiú diosca LVM le níos mó ná 2 dheighilt faoi láthair"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "Úsáid NetworkManager (riachtanach chun an t-idirlíon a chumrú go grafach i GNOME agus KDE Plasma)"
+
+msgid "Select a LVM option"
+msgstr "Roghnaigh rogha LVM"
+
+msgid "Partitioning"
+msgstr "Deighilt"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Bainistíocht Toirt Loighciúil (LVM)"
+
+msgid "Physical volumes"
+msgstr "Toirteanna fisiceacha"
+
+msgid "Volumes"
+msgstr "Imleabhair"
+
+msgid "LVM volumes"
+msgstr "Toirteanna LVM"
+
+msgid "LVM volumes to be encrypted"
+msgstr "Toirteanna LVM le criptiú"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "Roghnaigh cé na méideanna LVM atá le criptiú"
+
+msgid "Default layout"
+msgstr "Leagan amach réamhshocraithe"
+
+msgid "No Encryption"
+msgstr "Gan Criptiú"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM ar LUKS"
+
+msgid "LUKS on LVM"
+msgstr "LUKS ar LVM"
+
+msgid "Yes"
+msgstr "Tá"
+
+msgid "No"
+msgstr "Níl"
+
+msgid "Archinstall help"
+msgstr "Cabhair Archinstall"
+
+msgid " (default)"
+msgstr " (réamhshocraithe)"
+
+msgid "Press Ctrl+h for help"
+msgstr "Brúigh Ctrl+h chun cabhair a fháil"
+
+#, fuzzy
+msgid "Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh rogha chun rochtain a thabhairt do Sway ar do chrua-earraí"
+
+msgid "Seat access"
+msgstr ""
+
+#, fuzzy
+msgid "Mountpoint"
+msgstr "Mountpoint: "
+
+msgid "HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Cuir isteach pasfhocal criptithe diosca (fág bán gan aon chriptiú): "
+
+#, fuzzy
+msgid "Disk encryption password"
+msgstr "Pasfhocal criptithe"
+
+#, fuzzy
+msgid "Partition - New"
+msgstr "Deighiltí"
+
+#, fuzzy
+msgid "Filesystem"
+msgstr "Athraigh córas comhaid"
+
+msgid "Invalid size"
+msgstr ""
+
+#, fuzzy
+msgid "Start (default: sector {}): "
+msgstr "Cuir isteach tús (réamhshocrú: earnáil {}): "
+
+#, fuzzy
+msgid "End (default: {}): "
+msgstr "Cuir isteach an deireadh (réamhshocraithe: {}): "
+
+#, fuzzy
+msgid "Subvolume name"
+msgstr "Ainm fo-imleabhar "
+
+#, fuzzy
+msgid "Disk configuration type"
+msgstr "Cumraíocht diosca"
+
+msgid "Root mount directory"
+msgstr ""
+
+#, fuzzy
+msgid "Select language"
+msgstr "Teanga logánta"
+
+#, fuzzy
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Scríobh pacáistí breise le suiteáil (spás scartha, fág bán le scipeáil): "
+
+msgid "Invalid download number"
+msgstr ""
+
+msgid "Number downloads"
+msgstr ""
+
+#, fuzzy
+msgid "The username you entered is invalid"
+msgstr "Tá an t-ainm úsáideora a d'iontráil tú neamhbhailí. Bain triail eile as"
+
+#, fuzzy
+msgid "Username"
+msgstr "Ainm Úsáideora: "
+
+#, fuzzy
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Ar cheart \"{}\" a bheith ina shár-úsáideoir (sudo)?"
+
+#, fuzzy
+msgid "Interfaces"
+msgstr "Cuir comhéadan leis"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr ""
+
+msgid "Modes"
+msgstr ""
+
+msgid "IP address"
+msgstr ""
+
+#, fuzzy
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Cuir isteach do sheoladh IP geata (ródaire) nó fág bán é: "
+
+msgid "Gateway address"
+msgstr ""
+
+#, fuzzy
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Cuir isteach do fhreastalaithe DNS (spás scartha, folamh gan aon cheann): "
+
+#, fuzzy
+msgid "DNS servers"
+msgstr "Gan freastalaí fuaime"
+
+#, fuzzy
+msgid "Configure interfaces"
+msgstr "Comhéadain {} cumraithe"
+
+#, fuzzy
+msgid "Kernel"
+msgstr "Eithne"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+#, fuzzy
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Níl an tiománaí dílseánaigh Nvidia tacaithe ag Sway. Is dócha go mbeidh fadhbanna agat, an bhfuil tú ceart go leor leis sin?"
+
+#, fuzzy
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Níl an tiománaí dílseánaigh Nvidia tacaithe ag Sway. Is dócha go mbeidh fadhbanna agat, an bhfuil tú ceart go leor leis sin?"
+
+#, fuzzy
+msgid "Main profile"
+msgstr "Cuir próifíl in eagar"
+
+#, fuzzy
+msgid "Confirm password"
+msgstr "Athraigh pasfhocal"
+
+msgid "The confirmation password did not match, please try again"
+msgstr ""
+
+#, fuzzy
+msgid "Not a valid directory"
+msgstr "Ní eolaire bailí é: {}"
+
+#, fuzzy
+msgid "Would you like to continue?"
+msgstr "Ar mhaith leat comhbhrú BTRFS a úsáid?"
+
+msgid "Directory"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr ""
+"Iontráil eolaire don chumraíocht(s) atá le sábháil (cumasaíodh comhlánú an táb)\n"
+"Sábháil eolaire: "
+
+#, fuzzy
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr ""
+"Ar mhaith leat {} comhad cumraíochta a shábháil sa suíomh seo a leanas?\n"
+"\n"
+"{}"
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+#, fuzzy
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Cuir isteach an tsaincheist seo (agus an comhad) chuig https://github.com/archlinux/archinstall/issues"
+
+#, fuzzy
+msgid "Mirror name"
+msgstr "Réigiún scáthán"
+
+msgid "Url"
+msgstr ""
+
+#, fuzzy
+msgid "Select signature check"
+msgstr "Roghnaigh an rogha seiceála sínithe"
+
+#, fuzzy
+msgid "Select execution mode"
+msgstr "Roghnaigh modh forghníomhaithe"
+
+#, fuzzy
+msgid "Press ? for help"
+msgstr "Brúigh Ctrl+h chun cabhair a fháil"
