@@ -112,10 +112,11 @@ def parse_unspecified_argument_list(unknowns: list, multiple: bool = False, err:
 		--argument   (boolean as default)
 	the optional parameters to the function alter a bit its behaviour:
 	* multiple allows multivalued arguments, each value separated by whitespace. They're returned as a list
-	* error. If set any non correctly specified argument-value pair to raise an exception. Else, simply notifies the existence of a problem and continues processing.
+	* error. If set any non correctly specified argument-value pair to raise an exception. Else, simply notifies the
+	existence of a problem and continues processing.
 
-	To a certain extent, multiple and error are incompatible. In fact, the only error this routine can catch, as of now, is the event
-	argument value value ...
+	To a certain extent, multiple and error are incompatible. In fact, the only error this routine can catch, as of now,
+	is the event argument value value ...
 	which isn't am error if multiple is specified
 	"""
 	tmp_list = [arg for arg in unknowns if arg != "="]  # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
@@ -174,14 +175,17 @@ def get_arguments() -> dict[str, Any]:
 	Is done on following steps:
 	0) we create a dict to store the arguments and their values
 	1) preprocess.
-		We take those arguments which use JSON files, and read them into the argument dict. So each first level entry becomes a argument on it's own right
+		We take those arguments which use JSON files, and read them into the argument dict. So each first level entry
+		becomes a argument on it's own right
 	2) Load.
-		We convert the predefined argument list directly into the dict via the vars() function. Non specified arguments are loaded with value None or false if they are booleans (action="store_true").
-		The name is chosen according to argparse conventions. See above (the first text is used as argument name, but underscore substitutes dash)
-		We then load all the undefined arguments. In this case the names are taken as written.
+		We convert the predefined argument list directly into the dict via the vars() function. Non specified arguments
+		are loaded with value None or false if they are booleans (action="store_true"). The name is chosen according to
+		argparse conventions. See above (the first text is used as argument name, but underscore substitutes dash). We
+		then load all the undefined arguments. In this case the names are taken as written.
 		Important. This way explicit command line arguments take precedence over configuration files.
 	3) Amend
-		Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments dictionary
+		Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this
+		ougth to be left to changes anywhere else in the code, not in the arguments dictionary
 	"""
 	config: dict[str, Any] = {}
 	args, unknowns = parser.parse_known_args()

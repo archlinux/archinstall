@@ -113,4 +113,6 @@ def installed_package(package: str) -> LocalPackage:
 	except SysCallError:
 		pass
 
-	return LocalPackage({field.name: package_info.get(field.name) for field in dataclasses.fields(LocalPackage)})  # type: ignore  # pylint: disable=no-value-for-parameter
+	return LocalPackage(  # pylint: disable=no-value-for-parameter
+		{field.name: package_info.get(field.name) for field in dataclasses.fields(LocalPackage)}  # type: ignore
+	)

@@ -44,8 +44,14 @@ class PipewireProfile(Profile):
 			install_session.arch_chroot(f'chown -R {user.username}:{user.username} /home/{user.username}')
 
 			# symlink in the correct pipewire systemd items
-			install_session.arch_chroot(f'ln -s /usr/lib/systemd/user/pipewire-pulse.service /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.service', run_as=user.username)
-			install_session.arch_chroot(f'ln -s /usr/lib/systemd/user/pipewire-pulse.socket /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.socket', run_as=user.username)
+			install_session.arch_chroot(
+				f'ln -s /usr/lib/systemd/user/pipewire-pulse.service /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.service',
+				run_as=user.username
+			)
+			install_session.arch_chroot(
+				f'ln -s /usr/lib/systemd/user/pipewire-pulse.socket /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.socket',
+				run_as=user.username
+			)
 
 	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)

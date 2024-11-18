@@ -386,7 +386,8 @@ def _parse_remote_mirror_list(mirrorlist: str) -> dict[str, list[MirrorStatusEnt
 		if any([
 			mirror.active is False,  # Disabled by mirror-list admins
 			mirror.last_sync is None,  # Has not synced recently
-			# mirror.score (error rate) over time reported from backend: https://github.com/archlinux/archweb/blob/31333d3516c91db9a2f2d12260bd61656c011fd1/mirrors/utils.py#L111C22-L111C66
+			# mirror.score (error rate) over time reported from backend:
+			# https://github.com/archlinux/archweb/blob/31333d3516c91db9a2f2d12260bd61656c011fd1/mirrors/utils.py#L111C22-L111C66
 			(mirror.score is None or mirror.score >= 100),
 		]):
 			continue
