@@ -6,8 +6,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING, Any
-from typing import Union
+from typing import TYPE_CHECKING, Any
 
 import parted
 from parted import Disk, Geometry, Partition
@@ -41,10 +40,10 @@ class DiskLayoutType(Enum):
 class DiskLayoutConfiguration:
 	config_type: DiskLayoutType
 	device_modifications: list[DeviceModification] = field(default_factory=list)
-	lvm_config: Optional[LvmConfiguration] = None
+	lvm_config: LvmConfiguration | None = None
 
 	# used for pre-mounted config
-	mountpoint: Optional[Path] = None
+	mountpoint: Path | None = None
 
 	def json(self) -> dict[str, Any]:
 		if self.config_type == DiskLayoutType.Pre_mount:
@@ -64,7 +63,7 @@ class DiskLayoutConfiguration:
 			return config
 
 	@classmethod
-	def parse_arg(cls, disk_config: dict[str, Any]) -> Optional[DiskLayoutConfiguration]:
+	def parse_arg(cls, disk_config: dict[str, Any]) -> DiskLayoutConfiguration | None:
 		from .device_handler import device_handler
 
 		device_modifications: list[DeviceModification] = []
@@ -238,7 +237,7 @@ class Size:
 	def convert(
 		self,
 		target_unit: Unit,
-		sector_size: Optional[SectorSize] = None
+		sector_size: SectorSize | None = None
 	) -> Size:
 		if target_unit == Unit.sectors and sector_size is None:
 			raise ValueError('If target has unit sector, a sector size must be provided')
@@ -266,7 +265,7 @@ class Size:
 	def format_size(
 		self,
 		target_unit: Unit,
-		sector_size: Optional[SectorSize] = None,
+		sector_size: SectorSize | None = None,
 		include_unit: bool = True
 	) -> str:
 		target_size = self.convert(target_unit, sector_size)
@@ -333,7 +332,7 @@ class BtrfsMountOption(Enum):
 @dataclass
 class _BtrfsSubvolumeInfo:
 	name: Path
-	mountpoint: Optional[Path]
+	mountpoint: Path | None
 
 
 @dataclass
@@ -341,14 +340,14 @@ class _PartitionInfo:
 	partition: Partition
 	name: str
 	type: PartitionType
-	fs_type: Optional[FilesystemType]
+	fs_type: FilesystemType | None
 	path: Path
 	start: Size
 	length: Size
 	flags: list[PartitionFlag]
-	partn: Optional[int]
-	partuuid: Optional[str]
-	uuid: Optional[str]
+	partn: int | None
+	partuuid: str | None
+	uuid: str | None
 	disk: Disk
 	mountpoints: list[Path]
 	btrfs_subvol_infos: list[_BtrfsSubvolumeInfo] = field(default_factory=list)
@@ -381,10 +380,10 @@ class _PartitionInfo:
 	def from_partition(
 		cls,
 		partition: Partition,
-		fs_type: Optional[FilesystemType],
-		partn: Optional[int],
-		partuuid: Optional[str],
-		uuid: Optional[str],
+		fs_type: FilesystemType | None,
+		partn: int | None,
+		partuuid: str | None,
+		uuid: str | None,
 		mountpoints: list[Path],
 		btrfs_subvol_infos: list[_BtrfsSubvolumeInfo] = []
 	) -> _PartitionInfo:
@@ -473,7 +472,7 @@ class _DeviceInfo:
 @dataclass
 class SubvolumeModification:
 	name: Path
-	mountpoint: Optional[Path] = None
+	mountpoint: Path | None = None
 
 	@classmethod
 	def from_existing_subvol_info(cls, info: _BtrfsSubvolumeInfo) -> SubvolumeModification:
@@ -572,7 +571,7 @@ class PartitionType(Enum):
 			debug(f'Partition code not supported: {code}')
 			return PartitionType._Unknown
 
-	def get_partition_code(self) -> Optional[int]:
+	def get_partition_code(self) -> int | None:
 		if self == PartitionType.Primary:
 			return parted.PARTITION_NORMAL
 		elif self == PartitionType.Boot:
@@ -623,7 +622,7 @@ class FilesystemType(Enum):
 				return self.value
 
 	@property
-	def installation_pkg(self) -> Optional[str]:
+	def installation_pkg(self) -> str | None:
 		match self:
 			case FilesystemType.Btrfs:
 				return 'btrfs-progs'
@@ -635,7 +634,7 @@ class FilesystemType(Enum):
 				return None
 
 	@property
-	def installation_module(self) -> Optional[str]:
+	def installation_module(self) -> str | None:
 		match self:
 			case FilesystemType.Btrfs:
 				return 'btrfs'
@@ -643,7 +642,7 @@ class FilesystemType(Enum):
 				return None
 
 	@property
-	def installation_binary(self) -> Optional[str]:
+	def installation_binary(self) -> str | None:
 		match self:
 			case FilesystemType.Btrfs:
 				return '/usr/bin/btrfs'
@@ -651,7 +650,7 @@ class FilesystemType(Enum):
 				return None
 
 	@property
-	def installation_hooks(self) -> Optional[str]:
+	def installation_hooks(self) -> str | None:
 		match self:
 			case FilesystemType.Btrfs:
 				return 'btrfs'
@@ -672,17 +671,17 @@ class PartitionModification:
 	type: PartitionType
 	start: Size
 	length: Size
-	fs_type: Optional[FilesystemType] = None
-	mountpoint: Optional[Path] = None
+	fs_type: FilesystemType | None = None
+	mountpoint: Path | None = None
 	mount_options: list[str] = field(default_factory=list)
 	flags: list[PartitionFlag] = field(default_factory=list)
 	btrfs_subvols: list[SubvolumeModification] = field(default_factory=list)
 
 	# only set if the device was created or exists
-	dev_path: Optional[Path] = None
-	partn: Optional[int] = None
-	partuuid: Optional[str] = None
-	uuid: Optional[str] = None
+	dev_path: Path | None = None
+	partn: int | None = None
+	partuuid: str | None = None
+	uuid: str | None = None
 
 	_efi_indicator_flags = (PartitionFlag.Boot, PartitionFlag.ESP)
 	_boot_indicator_flags = (PartitionFlag.Boot, PartitionFlag.XBOOTLDR)
@@ -798,7 +797,7 @@ class PartitionModification:
 		return self.status in [ModificationStatus.Create, ModificationStatus.Modify]
 
 	@property
-	def mapper_name(self) -> Optional[str]:
+	def mapper_name(self) -> str | None:
 		if self.dev_path:
 			return f'{storage.get("ENC_IDENTIFIER", "ai")}{self.dev_path.name}'
 		return None
@@ -913,14 +912,14 @@ class LvmVolume:
 	name: str
 	fs_type: FilesystemType
 	length: Size
-	mountpoint: Optional[Path]
+	mountpoint: Path | None
 	mount_options: list[str] = field(default_factory=list)
 	btrfs_subvols: list[SubvolumeModification] = field(default_factory=list)
 
 	# volume group name
-	vg_name: Optional[str] = None
+	vg_name: str | None = None
 	# mapper device path /dev/<vg>/<vol>
-	dev_path: Optional[Path] = None
+	dev_path: Path | None = None
 
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
@@ -937,7 +936,7 @@ class LvmVolume:
 		return ''
 
 	@property
-	def mapper_name(self) -> Optional[str]:
+	def mapper_name(self) -> str | None:
 		if self.dev_path:
 			return f'{storage.get("ENC_IDENTIFIER", "ai")}{self.safe_dev_path.name}'
 		return None
@@ -1100,7 +1099,7 @@ class LvmConfiguration:
 
 		return volumes
 
-	def get_root_volume(self) -> Optional[LvmVolume]:
+	def get_root_volume(self) -> LvmVolume | None:
 		for vg in self.vol_groups:
 			filtered = next(filter(lambda x: x.is_root(), vg.volumes), None)
 			if filtered:
@@ -1131,14 +1130,14 @@ class DeviceModification:
 	def add_partition(self, partition: PartitionModification) -> None:
 		self.partitions.append(partition)
 
-	def get_efi_partition(self) -> Optional[PartitionModification]:
+	def get_efi_partition(self) -> PartitionModification | None:
 		"""
 		Similar to get_boot_partition() but excludes XBOOTLDR partitions from it's candidates.
 		"""
 		filtered = filter(lambda x: x.is_efi() and x.mountpoint, self.partitions)
 		return next(filtered, None)
 
-	def get_boot_partition(self) -> Optional[PartitionModification]:
+	def get_boot_partition(self) -> PartitionModification | None:
 		"""
 		Returns the first partition marked as XBOOTLDR (PARTTYPE id of bc13c2ff-...) or Boot and has a mountpoint.
 		Only returns XBOOTLDR if separate EFI is detected using self.get_efi_partition()
@@ -1153,7 +1152,7 @@ class DeviceModification:
 			filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
 			return next(filtered, None)
 
-	def get_root_partition(self) -> Optional[PartitionModification]:
+	def get_root_partition(self) -> PartitionModification | None:
 		filtered = filter(lambda x: x.is_root(), self.partitions)
 		return next(filtered, None)
 
@@ -1201,7 +1200,7 @@ class DiskEncryption:
 	encryption_password: str = ''
 	partitions: list[PartitionModification] = field(default_factory=list)
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
-	hsm_device: Optional[Fido2Device] = None
+	hsm_device: Fido2Device | None = None
 
 	def __post_init__(self) -> None:
 		if self.encryption_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks] and not self.partitions:
@@ -1249,7 +1248,7 @@ class DiskEncryption:
 		disk_config: DiskLayoutConfiguration,
 		disk_encryption: dict[str, Any],
 		password: str = ''
-	) -> Optional['DiskEncryption']:
+	) -> 'DiskEncryption | None':
 		if not cls.validate_enc(disk_config):
 			return None
 
@@ -1363,7 +1362,7 @@ class LsblkOutput(BaseModel):
 
 
 def _fetch_lsblk_info(
-	dev_path: Optional[Union[Path, str]] = None,
+	dev_path: Path | str | None = None,
 	reverse: bool = False,
 	full_dev_path: bool = False
 ) -> list[LsblkInfo]:
@@ -1401,7 +1400,7 @@ def _fetch_lsblk_info(
 
 
 def get_lsblk_info(
-	dev_path: Union[Path, str],
+	dev_path: Path | str,
 	reverse: bool = False,
 	full_dev_path: bool = False
 ) -> LsblkInfo:
@@ -1416,9 +1415,9 @@ def get_all_lsblk_info() -> list[LsblkInfo]:
 
 
 def find_lsblk_info(
-	dev_path: Union[Path, str],
+	dev_path: Path | str,
 	info: list[LsblkInfo]
-) -> Optional[LsblkInfo]:
+) -> LsblkInfo | None:
 	if isinstance(dev_path, str):
 		dev_path = Path(dev_path)
 
