@@ -1,25 +1,15 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from . import LvmConfiguration, LvmVolume
-from ..disk import (
-	DeviceModification,
-	DiskLayoutConfiguration,
-	PartitionModification,
-	DiskEncryption,
-	EncryptionType
-)
+from archinstall.lib.menu.menu_helper import MenuHelper
+from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
+
+from ..disk import DeviceModification, DiskEncryption, DiskLayoutConfiguration, EncryptionType, PartitionModification
 from ..menu import AbstractSubMenu
-from .fido import Fido2Device, Fido2
 from ..output import FormattedOutput
 from ..utils.util import get_password
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType
-)
-from archinstall.lib.menu.menu_helper import MenuHelper
-
+from . import LvmConfiguration, LvmVolume
+from .fido import Fido2, Fido2Device
 
 if TYPE_CHECKING:
 	_: Any

@@ -3,10 +3,10 @@ from __future__ import annotations
 import getpass
 from pathlib import Path
 
-from .device_model import Fido2Device
+from ..exceptions import SysCallError
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
 from ..output import error, info
-from ..exceptions import SysCallError
+from .device_model import Fido2Device
 
 
 class Fido2:

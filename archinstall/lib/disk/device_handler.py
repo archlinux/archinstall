@@ -1,34 +1,47 @@
 from __future__ import annotations
 
 import json
-import os
 import logging
+import os
 import time
 import uuid
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
-from parted import (
-	Disk, Geometry, FileSystem,
-	PartitionException, DiskException, IOException,
-	getDevice, getAllDevices, newDisk, freshDisk, Partition, Device
-)
-
-from .device_model import (
-	DeviceModification, PartitionModification,
-	BDevice, _DeviceInfo, _PartitionInfo,
-	FilesystemType, Unit, PartitionTable,
-	ModificationStatus, get_lsblk_info, find_lsblk_info, LsblkInfo,
-	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
-	SectorSize, LvmVolumeInfo, LvmPVInfo, SubvolumeModification, BtrfsMountOption
-)
+from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
 from ..exceptions import DiskError, UnknownFilesystemFormat
-from ..general import SysCommand, SysCallError, JSON, SysCommandWorker
+from ..general import JSON, SysCallError, SysCommand, SysCommandWorker
 from ..luks import Luks2
-from ..output import debug, error, info, warn, log
+from ..output import debug, error, info, log, warn
 from ..utils.util import is_subpath
+from .device_model import (
+	BDevice,
+	BtrfsMountOption,
+	DeviceModification,
+	DiskEncryption,
+	FilesystemType,
+	LsblkInfo,
+	LvmGroupInfo,
+	LvmPVInfo,
+	LvmVolume,
+	LvmVolumeGroup,
+	LvmVolumeInfo,
+	ModificationStatus,
+	PartitionModification,
+	PartitionTable,
+	SectorSize,
+	Size,
+	SubvolumeModification,
+	Unit,
+	_BtrfsSubvolumeInfo,
+	_DeviceInfo,
+	_PartitionInfo,
+	find_lsblk_info,
+	get_all_lsblk_info,
+	get_lsblk_info,
+)
 
 if TYPE_CHECKING:
 	_: Any
