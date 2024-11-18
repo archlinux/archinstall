@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Union, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 from enum import Enum
 
 if TYPE_CHECKING:
@@ -148,8 +148,8 @@ class User:
 	@classmethod
 	def parse_arguments(
 		cls,
-		config_users: Union[list[dict[str, str]], dict[str, str]],
-		config_superusers: Union[list[dict[str, str]], dict[str, str]]
+		config_users: list[dict[str, str]] | dict[str, str],
+		config_superusers: list[dict[str, str]] | dict[str, str]
 	) -> list['User']:
 		users = []
 

@@ -8,7 +8,7 @@ import time
 from collections.abc import Callable
 from pathlib import Path
 from types import TracebackType
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING
 
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
@@ -610,7 +610,7 @@ class Installer:
 		# fstrim is owned by util-linux, a dependency of both base and systemd.
 		self.enable_service("fstrim.timer")
 
-	def enable_service(self, services: Union[str, list[str]]) -> None:
+	def enable_service(self, services: str | list[str]) -> None:
 		if isinstance(services, str):
 			services = [services]
 
@@ -1473,7 +1473,7 @@ Exec = /bin/sh -c "{hook_command}"
 			case Bootloader.Limine:
 				self._add_limine_bootloader(boot_partition, efi_partition, root)
 
-	def add_additional_packages(self, packages: Union[str, list[str]]) -> None:
+	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
 
 	def enable_sudo(self, entity: str, group: bool = False):
@@ -1506,7 +1506,7 @@ Exec = /bin/sh -c "{hook_command}"
 		# Guarantees sudoer conf file recommended perms
 		os.chmod(Path(rule_file_name), 0o440)
 
-	def create_users(self, users: Union[User, list[User]]) -> None:
+	def create_users(self, users: User | list[User]) -> None:
 		if not isinstance(users, list):
 			users = [users]
 

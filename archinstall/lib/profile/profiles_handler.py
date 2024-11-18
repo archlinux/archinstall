@@ -8,7 +8,7 @@ from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 from ...default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
@@ -138,7 +138,7 @@ class ProfileHandler:
 	def _local_mac_addresses(self) -> list[str]:
 		return list(list_interfaces())
 
-	def add_custom_profiles(self, profiles: Union[Profile, list[Profile]]) -> None:
+	def add_custom_profiles(self, profiles: Profile | list[Profile]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -147,7 +147,7 @@ class ProfileHandler:
 
 		self._verify_unique_profile_names(self.profiles)
 
-	def remove_custom_profiles(self, profiles: Union[Profile, list[Profile]]) -> None:
+	def remove_custom_profiles(self, profiles: Profile | list[Profile]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
