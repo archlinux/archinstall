@@ -1,18 +1,14 @@
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from . import DiskLayoutConfiguration, DiskLayoutType
-from .device_model import LvmConfiguration
-from ..disk import (
-	DeviceModification
-)
+from archinstall.tui import MenuItem, MenuItemGroup
+
+from ..disk import DeviceModification
 from ..interactions import select_disk_config
 from ..interactions.disk_conf import select_lvm_config
-from ..output import FormattedOutput
 from ..menu import AbstractSubMenu
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem
-)
+from ..output import FormattedOutput
+from . import DiskLayoutConfiguration, DiskLayoutType
+from .device_model import LvmConfiguration
 
 if TYPE_CHECKING:
 	_: Any

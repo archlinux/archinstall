@@ -1,26 +1,30 @@
 from __future__ import annotations
 
 import re
-from pathlib import Path
-from typing import Any, TYPE_CHECKING
 from dataclasses import dataclass
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
-from ..utils.util import prompt_dir
-from .device_model import (
-	PartitionModification, FilesystemType, BDevice,
-	Size, Unit, PartitionType, PartitionFlag,
-	ModificationStatus, DeviceGeometry, SectorSize, BtrfsMountOption
-)
+from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
+
 from ..hardware import SysInfo
 from ..menu import ListManager
 from ..output import FormattedOutput
-from .subvolume_menu import SubvolumeMenu
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, EditMenu,
-	Orientation, ResultType
+from ..utils.util import prompt_dir
+from .device_model import (
+	BDevice,
+	BtrfsMountOption,
+	DeviceGeometry,
+	FilesystemType,
+	ModificationStatus,
+	PartitionFlag,
+	PartitionModification,
+	PartitionType,
+	SectorSize,
+	Size,
+	Unit,
 )
+from .subvolume_menu import SubvolumeMenu
 
 if TYPE_CHECKING:
 	_: Any

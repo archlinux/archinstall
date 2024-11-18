@@ -1,13 +1,11 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from .device_model import SubvolumeModification
+from archinstall.tui import Alignment, EditMenu, ResultType
+
 from ..menu import ListManager
 from ..utils.util import prompt_dir
-
-from archinstall.tui import (
-	Alignment, EditMenu, ResultType
-)
+from .device_model import SubvolumeModification
 
 if TYPE_CHECKING:
 	_: Any
