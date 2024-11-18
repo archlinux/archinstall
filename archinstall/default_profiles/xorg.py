@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from archinstall.default_profiles.profile import Profile, ProfileType
 

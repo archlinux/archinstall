@@ -2,9 +2,9 @@ from pathlib import Path
 
 import archinstall
 from archinstall import debug
-from archinstall.lib.installer import Installer
-from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib import disk
+from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.installer import Installer
 from archinstall.tui import Tui
 
 
