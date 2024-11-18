@@ -5,7 +5,6 @@ from typing import Any
 
 from .menu_item import MenuItem
 
-
 SCROLL_INTERVAL = 10
 
 

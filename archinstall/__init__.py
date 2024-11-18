@@ -1,43 +1,39 @@
 """Arch Linux installer - guided, templates etc."""
+import curses
 import importlib
 import os
 import sys
 import time
-import curses
 import traceback
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from .lib import disk
-from .lib import models
-from .lib import packages
-from .lib import exceptions
-from .lib import luks
-from .lib import locale
-from .lib import mirrors
-from .lib import networking
-from .lib import profile
-from .lib import interactions
 from . import default_profiles
-
-from .lib.hardware import SysInfo, GfxDriver
-from .lib.installer import Installer, accessibility_tools_in_use
-from .lib.output import FormattedOutput, log, error, debug, warn, info
-from .lib.pacman import Pacman
-from .lib.storage import storage
-from .lib.global_menu import GlobalMenu
+from .lib import disk, exceptions, interactions, locale, luks, mirrors, models, networking, packages, profile
 from .lib.boot import Boot
-from .lib.translationhandler import TranslationHandler, Language, DeferredTranslation
-from .lib.plugins import plugins, load_plugin
 from .lib.configuration import ConfigurationOutput
-from .tui import Tui
-
 from .lib.general import (
-	generate_password, locate_binary, clear_vt100_escape_codes,
-	JSON, UNSAFE_JSON, SysCommandWorker, SysCommand,
-	run_custom_user_commands, json_stream_to_structure, secret
+	JSON,
+	UNSAFE_JSON,
+	SysCommand,
+	SysCommandWorker,
+	clear_vt100_escape_codes,
+	generate_password,
+	json_stream_to_structure,
+	locate_binary,
+	run_custom_user_commands,
+	secret,
 )
+from .lib.global_menu import GlobalMenu
+from .lib.hardware import GfxDriver, SysInfo
+from .lib.installer import Installer, accessibility_tools_in_use
+from .lib.output import FormattedOutput, debug, error, info, log, warn
+from .lib.pacman import Pacman
+from .lib.plugins import load_plugin, plugins
+from .lib.storage import storage
+from .lib.translationhandler import DeferredTranslation, Language, TranslationHandler
+from .tui import Tui
 
 if TYPE_CHECKING:
 	_: Any
