@@ -16,7 +16,7 @@ Patch releases will be done against their own branches, branched from stable tag
 ## Discussions
 
 Currently, questions, bugs and suggestions should be reported through [GitHub issue tracker](https://github.com/archlinux/archinstall/issues).<br>
-For less formal discussions there is also an [archinstall Discord server](https://discord.gg/cqXU88y).
+For less formal discussions there is also an [archinstall Discord server](https://discord.gg/aDeMffrxNg).
 
 ## Coding convention
 
