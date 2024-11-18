@@ -609,10 +609,10 @@ msgid "Continue"
 msgstr "続行"
 
 msgid "yes"
-msgstr "はい"
+msgstr "yes"
 
 msgid "no"
-msgstr "いいえ"
+msgstr "no"
 
 msgid "set: {}"
 msgstr "セット: {}"
@@ -1299,10 +1299,10 @@ msgid "LUKS on LVM"
 msgstr "LVM 上の LUKS"
 
 msgid "Yes"
-msgstr "はい"
+msgstr "Yes"
 
 msgid "No"
-msgstr "いいえ"
+msgstr "No"
 
 msgid "Archinstall help"
 msgstr "Archinstall ヘルプ"
