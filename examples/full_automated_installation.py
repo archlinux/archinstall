@@ -1,11 +1,7 @@
 from pathlib import Path
 
-from archinstall import Installer
-from archinstall import profile
+from archinstall import Installer, disk, models, profile
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall import disk
-from archinstall import models
-
 
 # we're creating a new ext4 filesystem installation
 fs_type = disk.FilesystemType('ext4')

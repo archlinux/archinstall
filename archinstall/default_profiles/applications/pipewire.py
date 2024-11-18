@@ -1,7 +1,6 @@
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import archinstall
-
 from archinstall.default_profiles.profile import Profile, ProfileType
 from archinstall.lib.models import User
 
