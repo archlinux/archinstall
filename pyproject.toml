@@ -128,7 +128,7 @@ py-version = "3.11"
 recursive = true
 
 [tool.pylint.format]
-max-line-length = 220
+max-line-length = 160
 
 [tool.pylint."messages control"]
 disable = [
@@ -163,7 +163,7 @@ additional-builtins = ["_"]
 [tool.ruff]
 target-version = "py311"
 builtins = ["_"]
-line-length = 220
+line-length = 160
 
 [tool.ruff.lint]
 select = [
