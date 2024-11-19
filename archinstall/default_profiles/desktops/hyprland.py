@@ -44,7 +44,7 @@ class HyprlandProfile(XorgProfile):
 	@property
 	def services(self) -> list[str]:
 		if pref := self.custom_settings.get('seat_access', None):
-			return [pref]
+			return [pref.value]
 		return []
 
 	def _ask_seat_access(self) -> None:
