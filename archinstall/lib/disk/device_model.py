@@ -585,11 +585,15 @@ class PartitionFlag(Enum):
 	ESP = parted.PARTITION_ESP
 
 
-# class PartitionGUIDs(Enum):
-# 	"""
-# 	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
-# 	"""
-# 	XBOOTLDR = 'bc13c2ff-59e6-4262-a352-b275fd6f7172'
+class PartitionGUID(Enum):
+	"""
+	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
+	"""
+	LINUX_ROOT_X86_64 = "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709"
+
+	@property
+	def bytes(self) -> bytes:
+		return uuid.UUID(self.value).bytes
 
 
 class FilesystemType(Enum):
