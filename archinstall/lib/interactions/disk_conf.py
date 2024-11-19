@@ -266,10 +266,12 @@ def select_mount_options() -> list[str]:
 		columns=2,
 		orientation=Orientation.HORIZONTAL,
 		search_enabled=False,
-		allow_skip=False
+		allow_skip=True
 	).run()
 
 	match result.type_:
+		case ResultType.Skip:
+			return []
 		case ResultType.Selection:
 			return [result.get_value()]
 		case _:
