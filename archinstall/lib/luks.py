@@ -53,9 +53,6 @@ class Luks2:
 		if self.auto_unmount:
 			self.lock()
 
-	def _default_key_file(self) -> Path:
-		return Path(f'/tmp/{self.luks_dev_path.name}.disk_pw')
-
 	def _password_bytes(self) -> bytes:
 		if not self.password:
 			raise ValueError('Password for luks2 device was not specified')
@@ -64,6 +61,17 @@ class Luks2:
 			return self.password
 		else:
 			return bytes(self.password, 'UTF-8')
+
+	def _get_key_file(self, key_file: Path | None = None) -> Path:
+		if key_file:
+			return key_file
+
+		if self.key_file:
+			return self.key_file
+
+		default_key_file = Path(f'/tmp/{self.luks_dev_path.name}.disk_pw')
+		default_key_file.write_bytes(self._password_bytes())
+		return default_key_file
 
 	def encrypt(
 		self,
@@ -74,16 +82,7 @@ class Luks2:
 	) -> Path:
 		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
-		byte_password = self._password_bytes()
-
-		if not key_file:
-			if self.key_file:
-				key_file = self.key_file
-			else:
-				key_file = self._default_key_file()
-
-				with open(key_file, 'wb') as fh:
-					fh.write(byte_password)
+		key_file = self._get_key_file(key_file)
 
 		cryptsetup_args = shlex.join([
 			'/usr/bin/cryptsetup',
@@ -155,16 +154,7 @@ class Luks2:
 		if not self.mapper_name:
 			raise ValueError('mapper name missing')
 
-		byte_password = self._password_bytes()
-
-		if not key_file:
-			if self.key_file:
-				key_file = self.key_file
-			else:
-				key_file = self._default_key_file()
-
-				with open(key_file, 'wb') as fh:
-					fh.write(byte_password)
+		key_file = self._get_key_file(key_file)
 
 		wait_timer = time.time()
 		while Path(self.luks_dev_path).exists() is False and time.time() - wait_timer < 10:
