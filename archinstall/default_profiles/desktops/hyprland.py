@@ -1,6 +1,6 @@
-from enum import Enum
 from typing import TYPE_CHECKING, Any
 
+from archinstall.default_profiles.desktops import SeatAccess
 from archinstall.default_profiles.profile import GreeterType, ProfileType, SelectResult
 from archinstall.default_profiles.xorg import XorgProfile
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
@@ -8,11 +8,6 @@ from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup,
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 	_: Any
-
-
-class SeatAccess(Enum):
-	seatd = 'seatd'
-	polkit = 'polkit'
 
 
 class HyprlandProfile(XorgProfile):
@@ -44,7 +39,7 @@ class HyprlandProfile(XorgProfile):
 	@property
 	def services(self) -> list[str]:
 		if pref := self.custom_settings.get('seat_access', None):
-			return [pref.value]
+			return [pref]
 		return []
 
 	def _ask_seat_access(self) -> None:
@@ -68,7 +63,7 @@ class HyprlandProfile(XorgProfile):
 
 		if result.type_ == ResultType.Selection:
 			if result.item() is not None:
-				self.custom_settings['seat_access'] = result.get_value()
+				self.custom_settings['seat_access'] = result.get_value().value
 
 	def do_on_select(self) -> SelectResult | None:
 		self._ask_seat_access()

@@ -120,8 +120,12 @@ class ProfileHandler:
 				info('No profile definition found: {}'.format(', '.join(invalid_sub_profiles)))
 
 		custom_settings = profile_config.get('custom_settings', {})
-		profile.set_custom_settings(custom_settings)
 		profile.current_selection = valid_sub_profiles
+
+		for sub_profile in valid_sub_profiles:
+			sub_profile_settings = custom_settings.get(sub_profile.name, {})
+			if sub_profile_settings:
+				sub_profile.custom_settings = sub_profile_settings
 
 		return profile
 
