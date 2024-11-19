@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import importlib.util
-import sys
 import inspect
+import sys
 from collections import Counter
 from functools import cached_property
 from pathlib import Path
@@ -10,13 +10,12 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import TYPE_CHECKING, Any
 
-from ...default_profiles.profile import Profile, GreeterType
-from .profile_model import ProfileConfiguration
+from ...default_profiles.profile import GreeterType, Profile
 from ..hardware import GfxDriver
-from ..networking import list_interfaces, fetch_data_from_url
-from ..output import error, debug, info
+from ..networking import fetch_data_from_url, list_interfaces
+from ..output import debug, error, info
 from ..storage import storage
-
+from .profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
 	from ..installer import Installer

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from typing import Any, TYPE_CHECKING
 from enum import Enum
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	_: Any

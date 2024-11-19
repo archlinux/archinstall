@@ -3,11 +3,10 @@ import os
 import sys
 import unicodedata
 from collections.abc import Callable
-from enum import Enum
-
-from pathlib import Path
-from typing import Any, TYPE_CHECKING
 from dataclasses import asdict, is_dataclass
+from enum import Enum
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from .storage import storage
 

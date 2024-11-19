@@ -1,21 +1,17 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
+from archinstall.lib.menu.menu_helper import MenuHelper
+from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
 
 from .. import disk
 from ..disk.device_model import BtrfsMountOption
 from ..hardware import SysInfo
 from ..output import FormattedOutput, debug
-from ..utils.util import prompt_dir
 from ..storage import storage
-
-from archinstall.lib.menu.menu_helper import MenuHelper
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	Orientation
-)
+from ..utils.util import prompt_dir
 
 if TYPE_CHECKING:
 	_: Any

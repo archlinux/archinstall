@@ -1,11 +1,12 @@
-from pydantic import BaseModel, field_validator, model_validator
 import datetime
 import http.client
 import urllib.error
 import urllib.parse
 import urllib.request
 
-from ..networking import ping, DownloadTimer
+from pydantic import BaseModel, field_validator, model_validator
+
+from ..networking import DownloadTimer, ping
 from ..output import debug
 
 

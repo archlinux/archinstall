@@ -8,25 +8,24 @@ import time
 from collections.abc import Callable
 from pathlib import Path
 from types import TracebackType
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from . import disk
-from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
+from archinstall.tui.curses_menu import Tui
+
+from . import disk, pacman
+from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from .general import SysCommand
 from .hardware import SysInfo
-from .locale import LocaleConfiguration
-from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
+from .locale import LocaleConfiguration, verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import MirrorConfiguration
 from .models.bootloader import Bootloader
 from .models.network_configuration import Nic
 from .models.users import User
-from .output import log, error, info, warn, debug
-from . import pacman
+from .output import debug, error, info, log, warn
 from .pacman import Pacman
 from .plugins import plugins
 from .storage import storage
-from archinstall.tui.curses_menu import Tui
 
 if TYPE_CHECKING:
 	_: Any

@@ -2,29 +2,28 @@ from __future__ import annotations
 
 import json
 import os
+import pathlib
+import re
 import secrets
 import shlex
-import subprocess
 import stat
 import string
+import subprocess
 import sys
 import time
-import re
-import urllib.parse
-from urllib.request import Request, urlopen
 import urllib.error
-import pathlib
+import urllib.parse
 from collections.abc import Callable, Iterator
-from datetime import datetime, date
+from datetime import date, datetime
 from enum import Enum
-from typing import Any, TYPE_CHECKING
-from select import epoll, EPOLLIN, EPOLLHUP
+from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
+from typing import TYPE_CHECKING, Any
+from urllib.request import Request, urlopen
 
 from .exceptions import RequirementError, SysCallError
 from .output import debug, error, info
 from .storage import storage
-
 
 if TYPE_CHECKING:
 	from .installer import Installer

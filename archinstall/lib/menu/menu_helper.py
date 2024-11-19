@@ -1,10 +1,7 @@
 from typing import Any
 
 from archinstall.lib.output import FormattedOutput
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem
-)
+from archinstall.tui import MenuItem, MenuItemGroup
 
 
 class MenuHelper:

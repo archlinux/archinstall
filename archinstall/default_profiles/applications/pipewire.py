@@ -2,10 +2,10 @@ from typing import TYPE_CHECKING, Any
 
 import archinstall
 from archinstall.default_profiles.profile import Profile, ProfileType
-from archinstall.lib.models import User
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
+	from archinstall.lib.models import User
 	_: Any
 
 

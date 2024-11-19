@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 from .exceptions import SysCallError
 from .general import SysCommand
-from .networking import list_interfaces, enrich_iface_types
+from .networking import enrich_iface_types, list_interfaces
 from .output import debug
 
 if TYPE_CHECKING:

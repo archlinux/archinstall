@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import pathlib
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
+from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu, Tui
 
 from ..locale import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration
@@ -9,11 +11,6 @@ from ..output import warn
 from ..packages.packages import validate_package_list
 from ..storage import storage
 from ..translationhandler import Language
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	EditMenu, Orientation, Tui
-)
 
 if TYPE_CHECKING:
 	_: Any

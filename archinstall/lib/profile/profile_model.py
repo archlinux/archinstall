@@ -3,8 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
+from archinstall.default_profiles.profile import GreeterType, Profile
+
 from ..hardware import GfxDriver
-from archinstall.default_profiles.profile import Profile, GreeterType
 
 if TYPE_CHECKING:
 	_: Any

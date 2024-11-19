@@ -1,20 +1,16 @@
-import os
 import json
-import stat
+import os
 import readline
+import stat
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from .storage import storage
+from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu, Tui
+
 from .general import JSON, UNSAFE_JSON
 from .output import debug, warn
+from .storage import storage
 from .utils.util import prompt_dir
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	PreviewStyle, Orientation, Tui
-)
 
 if TYPE_CHECKING:
 	_: Any
