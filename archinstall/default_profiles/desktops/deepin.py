@@ -1,10 +1,5 @@
-from typing import TYPE_CHECKING, Any
-
 from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
-
-if TYPE_CHECKING:
-	_: Any
 
 
 class DeepinProfile(XorgProfile):

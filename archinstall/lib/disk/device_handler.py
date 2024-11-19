@@ -7,7 +7,7 @@ import time
 import uuid
 from collections.abc import Iterable
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Literal
+from typing import Any, Literal
 
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
@@ -42,9 +42,6 @@ from .device_model import (
 	get_all_lsblk_info,
 	get_lsblk_info,
 )
-
-if TYPE_CHECKING:
-	_: Any
 
 
 class DeviceHandler:

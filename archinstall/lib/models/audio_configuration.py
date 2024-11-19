@@ -1,13 +1,10 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from ...default_profiles.applications.pipewire import PipewireProfile
 from ..hardware import SysInfo
 from ..output import info
-
-if TYPE_CHECKING:
-	_: Any
 
 
 @dataclass
