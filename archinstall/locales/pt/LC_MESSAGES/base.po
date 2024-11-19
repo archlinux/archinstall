@@ -7,7 +7,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
-"Language-Team: Portuguese\n"
+"Language-Team: Portuguese <hugokarvalho@hotmail.com>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -625,7 +625,7 @@ msgid "Manual configuration setting must be a list"
 msgstr "A definição da configuração manual deve ser uma lista"
 
 msgid "No iface specified for manual configuration"
-msgstr "Nenhum iface especificado para configuração manual"
+msgstr "Nenhuma iface especificada para configuração manual"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr "A configuração manual de NIC sem DHCP automático requer um endereço IP"
@@ -673,7 +673,7 @@ msgid "Press Enter to continue."
 msgstr "Prima Enter para continuar."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Pretende fazer chroot para a nova instalação e realizar configuração pós-instalação?"
+msgstr "Gostaria de fazer chroot na instalação recém-criada e executar a configuração pós-instalação?"
 
 msgid "Are you sure you want to reset this setting?"
 msgstr "Tem a certeza que pretende repor esta configuração?"
@@ -1318,210 +1318,155 @@ msgstr " (predefinição)"
 msgid "Press Ctrl+h for help"
 msgstr "Prima Ctrl+h para obter ajuda"
 
-#, fuzzy
 msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Selecionar uma opção para permitir o acesso do Sway ao seu hardware"
+msgstr "Escolha uma opção para dar ao Sway acesso ao seu hardware"
 
 msgid "Seat access"
-msgstr ""
+msgstr "Acesso à estação de trabalho"
 
-#, fuzzy
 msgid "Mountpoint"
-msgstr "Ponto de montagem: "
+msgstr "Ponto de montagem"
 
 msgid "HSM"
-msgstr ""
+msgstr "HSM"
 
-#, fuzzy
 msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr "Introduzir palavra-passe de encriptação do disco (deixar em branco para nenhuma encriptação): "
+msgstr "Introduzir a palavra-passe de encriptação do disco (deixar em branco para não haver encriptação)"
 
-#, fuzzy
 msgid "Disk encryption password"
-msgstr "Palavra-passe de encriptação"
+msgstr "Palavra-passe de encriptação do disco"
 
-#, fuzzy
 msgid "Partition - New"
-msgstr "Partição"
+msgstr "Partição - Nova"
 
-#, fuzzy
 msgid "Filesystem"
-msgstr "Alterar sistema de ficheiros"
+msgstr "Sistema de ficheiros"
 
 msgid "Invalid size"
-msgstr ""
+msgstr "Tamanho inválido"
 
-#, fuzzy
 msgid "Start (default: sector {}): "
-msgstr "Inserir o início (predefinido: sector {}): "
+msgstr "Início (predefinido: sector {}): "
 
-#, fuzzy
 msgid "End (default: {}): "
-msgstr "Inserir o fim (predefinido: {}): "
+msgstr "Fim (predefinido: {}): "
 
-#, fuzzy
 msgid "Subvolume name"
-msgstr "Nome do subvolume "
+msgstr "Nome do subvolume"
 
-#, fuzzy
 msgid "Disk configuration type"
-msgstr "Configuração do disco"
+msgstr "Tipo de configuração do disco"
 
 msgid "Root mount directory"
-msgstr ""
+msgstr "Diretório de montagem root"
 
-#, fuzzy
 msgid "Select language"
-msgstr "Idioma de localização"
+msgstr "Selecionar idioma"
 
-#, fuzzy
 msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "Inserir pacotes adicionais a instalar (separados por espaço, deixar em branco para ignorar): "
+msgstr "Escreva pacotes adicionais a instalar (separados por espaços, deixe em branco para ignorar)"
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "Número de transferência inválido"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "Número de transferências"
 
-#, fuzzy
 msgid "The username you entered is invalid"
-msgstr "O nome de utilizador que introduziu é inválido. Tente novamente"
+msgstr "O nome de utilizador introduzido é inválido"
 
-#, fuzzy
 msgid "Username"
-msgstr "Nome de utilizador : "
+msgstr "Nome de utilizador"
 
-#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "\"{}\" deve ser um superutilizador (sudo)?"
+msgstr "Deverá \"{}\" ser um superutilizador (sudo)?\n"
 
-#, fuzzy
 msgid "Interfaces"
-msgstr "Adicionar interface"
+msgstr "Interfaces"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "É necessário introduzir um IP válido no modo IP-config"
 
 msgid "Modes"
-msgstr ""
+msgstr "Modos"
 
 msgid "IP address"
-msgstr ""
+msgstr "Endereço de IP"
 
-#, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
-msgstr "Inserir o seu IP de gateway (router) ou deixe em branco para nenhum: "
+msgstr "Introduzir o endereço IP do gateway (router) (deixar em branco para nenhum)"
 
 msgid "Gateway address"
-msgstr ""
+msgstr "Endereço do gateway"
 
-#, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr "Inserir os servidores DNS (separados por espaço, deixe em branco para nenhum): "
+msgstr "Introduzir os servidores DNS separados por espaços (deixe em branco para nenhum)"
 
-#, fuzzy
 msgid "DNS servers"
-msgstr "Sem servidor de áudio"
+msgstr "Servidores de DNS"
 
-#, fuzzy
 msgid "Configure interfaces"
-msgstr "{} interfaces configuradas"
+msgstr "Configurar interfaces"
 
-#, fuzzy
 msgid "Kernel"
-msgstr "Kernels"
+msgstr "Kernel"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "A UEFI não foi detetada e algumas opções estão desativadas"
 
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
-#, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "O controlador proprietário Nvidia não é suportado pelo Sway. É provável que encontre problemas. Está de acordo com isso?"
+msgstr "O controlador proprietário Nvidia não é suportado pelo Sway."
 
-#, fuzzy
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "O controlador proprietário Nvidia não é suportado pelo Sway. É provável que encontre problemas. Está de acordo com isso?"
+msgstr "É provável que se depare com problemas. Está de acordo com isso?"
 
-#, fuzzy
 msgid "Main profile"
-msgstr "Editar perfil"
+msgstr "Perfil principal"
 
-#, fuzzy
 msgid "Confirm password"
-msgstr "Alterar a palavra-passe"
+msgstr "Confirmar palavra-passe"
 
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "A palavra-passe de confirmação não coincide, tente novamente"
 
-#, fuzzy
 msgid "Not a valid directory"
-msgstr "Não é um diretório válido: {}"
+msgstr "Não é um diretório válido"
 
-#, fuzzy
 msgid "Would you like to continue?"
-msgstr "Gostaria de usar a compressão BTRFS?"
+msgstr "Gostaria de continuar?"
 
 msgid "Directory"
-msgstr ""
+msgstr "Diretório"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr ""
-"Insira um diretório para a(s) configuração(ões) a guardar (preenchimento automático com a tecla tab ativado): \n"
-"Guardar diretório: "
+msgstr "Introduzir um diretório para a(s) configuração(ões) a guardar (preenchimento com a tecla Tab ativado)"
 
-#, fuzzy
 msgid "Do you want to save the configuration file(s) to {}?"
-msgstr ""
-"Pretende guardar o(s) ficheiro(s) de configuração de {} na seguinte localização?\n"
-"\n"
-"{}"
+msgstr "Pretende guardar o(s) ficheiro(s) de configuração em {}?"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Ativado"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Desativado"
 
-#, fuzzy
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Submeta este problema (e ficheiro) para https://github.com/archlinux/archinstall/issues"
+msgstr "Submeta este problema (e ficheiro) para https://github.com/archlinux/archinstall/issues"
 
-#, fuzzy
 msgid "Mirror name"
-msgstr "Região do espelho"
+msgstr "Nome do espelho"
 
 msgid "Url"
-msgstr ""
+msgstr "URL"
 
-#, fuzzy
 msgid "Select signature check"
-msgstr "Selecionar a opção de verificação da assinatura"
+msgstr "Selecionar verificação de assinatura"
 
-#, fuzzy
 msgid "Select execution mode"
-msgstr "Selecionar um modo de execução"
+msgstr "Selecionar modo de execução"
 
-#, fuzzy
 msgid "Press ? for help"
-msgstr "Prima Ctrl+h para obter ajuda"
-
-#~ msgid "Add :"
-#~ msgstr "Adicionar :"
-
-#~ msgid "Value :"
-#~ msgstr "Valor :"
-
-#~ msgid "Key :"
-#~ msgstr "Chave :"
-
-#, python-brace-format
-#~ msgid "Edit {origkey} :"
-#~ msgstr "Editar {origkey} :"
+msgstr "Prima ? para obter ajuda"
