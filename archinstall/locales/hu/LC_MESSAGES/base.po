@@ -24,7 +24,7 @@ msgid "And one more time for verification: "
 msgstr "És még egyszer az ellenőrzéshez: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "Biztosan cserehelyet akar használni a zram-on?"
+msgstr "Biztosan cserehelyet akar használni a zRam-on?"
 
 msgid "Desired hostname for the installation: "
 msgstr "A kiszolgáló neve a telepítéshez: "
@@ -1095,7 +1095,7 @@ msgid "Select signature option"
 msgstr "Válasszon ki egy aláírásbeállítást"
 
 msgid "Custom mirrors"
-msgstr "Egyedi tükrök"
+msgstr "Egyéni tükrök"
 
 msgid "Defined"
 msgstr "Meghatározott"
