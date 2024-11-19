@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
 
 import archinstall
 from archinstall import SysInfo, debug, info
@@ -12,10 +11,6 @@ from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui import Tui
-
-if TYPE_CHECKING:
-	_: Any
-
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")

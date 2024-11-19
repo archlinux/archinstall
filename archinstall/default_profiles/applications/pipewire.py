@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import archinstall
 from archinstall.default_profiles.profile import Profile, ProfileType
@@ -6,7 +6,6 @@ from archinstall.default_profiles.profile import Profile, ProfileType
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 	from archinstall.lib.models import User
-	_: Any
 
 
 class PipewireProfile(Profile):
