@@ -28,6 +28,7 @@ from .device_model import (
 	LvmVolumeGroup,
 	LvmVolumeInfo,
 	ModificationStatus,
+	PartitionFlag,
 	PartitionGUID,
 	PartitionModification,
 	PartitionTable,
@@ -543,8 +544,11 @@ class DeviceHandler:
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
-		if disk.type == PartitionTable.GPT.value and part_mod.is_root():
-			partition.type_uuid = PartitionGUID.LINUX_ROOT_X86_64.bytes
+		if disk.type == PartitionTable.GPT.value:
+			if part_mod.is_root():
+				partition.type_uuid = PartitionGUID.LINUX_ROOT_X86_64.bytes
+			elif PartitionFlag.LINUX_HOME not in part_mod.flags and part_mod.is_home():
+				partition.setFlag(PartitionFlag.LINUX_HOME.flag_id)
 
 		# the partition has a path now that it has been added
 		part_mod.dev_path = Path(partition.path)

@@ -411,6 +411,10 @@ def suggest_single_disk_layout(
 		home_start = root_partition.start + root_partition.length
 		home_length = available_space - home_start
 
+		flags = []
+		if using_gpt:
+			flags.append(disk.PartitionFlag.LINUX_HOME)
+
 		home_partition = disk.PartitionModification(
 			status=disk.ModificationStatus.Create,
 			type=disk.PartitionType.Primary,
@@ -418,7 +422,8 @@ def suggest_single_disk_layout(
 			length=home_length,
 			mountpoint=Path('/home'),
 			fs_type=filesystem_type,
-			mount_options=mount_options
+			mount_options=mount_options,
+			flags=flags
 		)
 		device_modification.add_partition(home_partition)
 
@@ -514,8 +519,10 @@ def suggest_multi_disk_layout(
 	home_start = home_align_buffer
 	home_length = home_device.device_info.total_size - home_start
 
+	flags = []
 	if using_gpt:
 		home_length -= home_align_buffer
+		flags.append(disk.PartitionFlag.LINUX_HOME)
 
 	# add home partition to home device
 	home_partition = disk.PartitionModification(
@@ -526,6 +533,7 @@ def suggest_multi_disk_layout(
 		mountpoint=Path('/home'),
 		mount_options=mount_options,
 		fs_type=filesystem_type,
+		flags=flags
 	)
 	home_device_modification.add_partition(home_partition)
 
