@@ -111,6 +111,11 @@ class DiskLayoutConfiguration:
 			device_partitions: list[PartitionModification] = []
 
 			for partition in entry.get('partitions', []):
+				flags = [
+					flag for f in partition.get('flags', [])
+					if (flag := PartitionFlag.from_string(f))
+				]
+
 				device_partition = PartitionModification(
 					status=ModificationStatus(partition['status']),
 					fs_type=FilesystemType(partition['fs_type']) if partition.get('fs_type') else None,
@@ -120,7 +125,7 @@ class DiskLayoutConfiguration:
 					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
 					dev_path=Path(partition['dev_path']) if partition['dev_path'] else None,
 					type=PartitionType(partition['type']),
-					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
+					flags=flags,
 					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', [])),
 				)
 				# special 'invisible attr to internally identify the part mod
@@ -388,7 +393,7 @@ class _PartitionInfo:
 		btrfs_subvol_infos: list[_BtrfsSubvolumeInfo] = []
 	) -> _PartitionInfo:
 		partition_type = PartitionType.get_type_from_code(partition.type)
-		flags = [f for f in PartitionFlag if partition.getFlag(f.value)]
+		flags = [f for f in PartitionFlag if partition.getFlag(f.flag_id)]
 
 		start = Size(
 			partition.geometry.start,
@@ -579,10 +584,31 @@ class PartitionType(Enum):
 		return None
 
 
-class PartitionFlag(Enum):
+@dataclass(frozen=True)
+class PartitionFlagDataMixin:
+	flag_id: int
+	alias: str | None = None
+
+
+class PartitionFlag(PartitionFlagDataMixin, Enum):
 	Boot = parted.PARTITION_BOOT
-	XBOOTLDR = parted.PARTITION_BLS_BOOT  # Note: parted calls this bls_boot
+	XBOOTLDR = parted.PARTITION_BLS_BOOT, "bls_boot"
 	ESP = parted.PARTITION_ESP
+
+	@property
+	def description(self) -> str:
+		return self.alias or self.name.lower()
+
+	@classmethod
+	def from_string(cls, s: str) -> PartitionFlag | None:
+		s = s.lower()
+
+		for partition_flag in cls:
+			if s in (partition_flag.name.lower(), partition_flag.alias):
+				return partition_flag
+
+		debug(f'Partition flag not supported: {s}')
+		return None
 
 
 class PartitionGUID(Enum):
@@ -829,7 +855,7 @@ class PartitionModification:
 			'fs_type': self.fs_type.value if self.fs_type else None,
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
-			'flags': [f.name for f in self.flags],
+			'flags': [f.description for f in self.flags],
 			'dev_path': str(self.dev_path) if self.dev_path else None,
 			'btrfs': [vol.json() for vol in self.btrfs_subvols]
 		}
@@ -848,7 +874,7 @@ class PartitionModification:
 			'FS type': self.fs_type.value if self.fs_type else 'Unknown',
 			'Mountpoint': self.mountpoint if self.mountpoint else '',
 			'Mount options': ', '.join(self.mount_options),
-			'Flags': ', '.join([f.name for f in self.flags]),
+			'Flags': ', '.join([f.description for f in self.flags]),
 		}
 
 		if self.btrfs_subvols:

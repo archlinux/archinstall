@@ -102,7 +102,7 @@ FAT32
 	{
 		"btrfs": [],
 		"flags": [
-		   "Boot"
+		   "boot"
 		],
 		"fs_type": "fat32",
 		"length": {

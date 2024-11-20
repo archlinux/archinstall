@@ -15,7 +15,7 @@
                     {
                         "btrfs": [],
                         "flags": [
-                            "Boot"
+                            "boot"
                         ],
                         "fs_type": "fat32",
                         "size": {
