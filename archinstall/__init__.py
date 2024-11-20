@@ -54,7 +54,7 @@ debug(f"Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_
 debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-debug(f"Disk states before installing: {disk.disk_layouts()}")
+debug(f"Disk states before installing:\n{disk.disk_layouts()}")
 
 parser = ArgumentParser()
 

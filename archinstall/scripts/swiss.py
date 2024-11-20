@@ -228,7 +228,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode) -> None:
 				except:
 					pass
 
-		debug(f"Disk states after installing: {disk.disk_layouts()}")
+		debug(f"Disk states after installing:\n{disk.disk_layouts()}")
 
 
 def swiss() -> None:
