@@ -532,7 +532,7 @@ class DeviceHandler:
 		)
 
 		for flag in part_mod.flags:
-			partition.setFlag(flag.value)
+			partition.setFlag(flag.flag_id)
 
 		debug(f'\tType: {part_mod.type.value}')
 		debug(f'\tFilesystem: {part_mod.safe_fs_type.value}')
