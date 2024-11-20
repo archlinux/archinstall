@@ -594,6 +594,7 @@ class PartitionFlag(PartitionFlagDataMixin, Enum):
 	Boot = parted.PARTITION_BOOT
 	XBOOTLDR = parted.PARTITION_BLS_BOOT, "bls_boot"
 	ESP = parted.PARTITION_ESP
+	LINUX_HOME = parted.PARTITION_LINUX_HOME, "linux-home"
 
 	@property
 	def description(self) -> str:
@@ -813,6 +814,12 @@ class PartitionModification:
 					return True
 
 		return False
+
+	def is_home(self) -> bool:
+		return (
+			self.mountpoint == Path('/home')
+			or PartitionFlag.LINUX_HOME in self.flags
+		)
 
 	def is_modify(self) -> bool:
 		return self.status == ModificationStatus.Modify
