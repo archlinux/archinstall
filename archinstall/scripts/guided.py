@@ -73,7 +73,7 @@ def perform_installation(mountpoint: Path) -> None:
 			testing=enable_testing,
 			multilib=enable_multilib,
 			mkinitcpio=run_mkinitcpio,
-			hostname=archinstall.arguments.get('hostname', 'archlinux'),
+			hostname=archinstall.arguments.get('hostname'),
 			locale_config=locale_config
 		)
 
