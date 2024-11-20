@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import math
 import uuid
 from dataclasses import dataclass, field
@@ -14,7 +13,7 @@ from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_v
 
 from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
-from ..output import debug, error
+from ..output import debug
 from ..storage import storage
 
 if TYPE_CHECKING:
@@ -1402,7 +1401,7 @@ def _fetch_lsblk_info(
 	dev_path: Path | str | None = None,
 	reverse: bool = False,
 	full_dev_path: bool = False
-) -> list[LsblkInfo]:
+) -> LsblkOutput:
 	cmd = ['lsblk', '--json', '--bytes', '--output', ','.join(LsblkInfo.fields())]
 
 	if reverse:
@@ -1427,13 +1426,8 @@ def _fetch_lsblk_info(
 
 		raise err
 
-	try:
-		data = json.loads(worker.output(remove_cr=False))
-	except json.decoder.JSONDecodeError as err:
-		error(f"Could not decode lsblk JSON:\n{worker.output().decode().rstrip()}")
-		raise err
-
-	return LsblkOutput(**data).blockdevices
+	output = worker.output(remove_cr=False)
+	return LsblkOutput.parse_raw(output)
 
 
 def get_lsblk_info(
@@ -1441,13 +1435,19 @@ def get_lsblk_info(
 	reverse: bool = False,
 	full_dev_path: bool = False
 ) -> LsblkInfo:
-	if infos := _fetch_lsblk_info(dev_path, reverse=reverse, full_dev_path=full_dev_path):
-		return infos[0]
+	infos = _fetch_lsblk_info(dev_path, reverse=reverse, full_dev_path=full_dev_path)
+
+	if infos.blockdevices:
+		return infos.blockdevices[0]
 
 	raise DiskError(f'lsblk failed to retrieve information for "{dev_path}"')
 
 
 def get_all_lsblk_info() -> list[LsblkInfo]:
+	return _fetch_lsblk_info().blockdevices
+
+
+def get_lsblk_output() -> LsblkOutput:
 	return _fetch_lsblk_info()
 
 

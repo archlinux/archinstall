@@ -11,7 +11,7 @@ from typing import Any, Literal
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
 from ..exceptions import DiskError, UnknownFilesystemFormat
-from ..general import JSON, SysCallError, SysCommand, SysCommandWorker
+from ..general import SysCallError, SysCommand, SysCommandWorker
 from ..luks import Luks2
 from ..output import debug, error, info, log, warn
 from ..utils.util import is_subpath
@@ -42,6 +42,7 @@ from .device_model import (
 	find_lsblk_info,
 	get_all_lsblk_info,
 	get_lsblk_info,
+	get_lsblk_output,
 )
 
 
@@ -843,11 +844,9 @@ device_handler = DeviceHandler()
 
 def disk_layouts() -> str:
 	try:
-		lsblk_info = get_all_lsblk_info()
-		return json.dumps(lsblk_info, indent=4, sort_keys=True, cls=JSON)
+		lsblk_output = get_lsblk_output()
 	except SysCallError as err:
 		warn(f"Could not return disk layouts: {err}")
 		return ''
-	except json.decoder.JSONDecodeError as err:
-		warn(f"Could not return disk layouts: {err}")
-		return ''
+
+	return lsblk_output.model_dump_json(indent=4)

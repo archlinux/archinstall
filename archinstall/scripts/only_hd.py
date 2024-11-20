@@ -50,7 +50,7 @@ def perform_installation(mountpoint: Path) -> None:
 			target.parent.mkdir(parents=True)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	debug(f"Disk states after installing: {disk.disk_layouts()}")
+	debug(f"Disk states after installing:\n{disk.disk_layouts()}")
 
 
 def only_hd() -> None:

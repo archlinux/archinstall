@@ -154,7 +154,7 @@ def perform_installation(mountpoint: Path) -> None:
 				except:
 					pass
 
-	debug(f"Disk states after installing: {disk.disk_layouts()}")
+	debug(f"Disk states after installing:\n{disk.disk_layouts()}")
 
 
 def _guided() -> None:
