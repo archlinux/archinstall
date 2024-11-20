@@ -1036,7 +1036,7 @@ msgstr ""
 "グラフィックドライバーを選択。無記入ですべてのオープンソースドライバーをインストール"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway はシート（キーボード、マウスなどハードウェアデバイスの集合）にアクセスする必要があります"
+msgstr "Sway はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
 
 msgid ""
 "\n"
@@ -1194,7 +1194,7 @@ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "無効な入力です！有効な入力でやり直してください（無効にする場合は 0）"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Hyprland はあなたのシート（キーボード、マウスなどのハードウェアデバイスの集合）にアクセスする必要があります"
+msgstr "Hyprland はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
 
 msgid ""
 "\n"
@@ -1317,7 +1317,7 @@ msgid "Choose an option to give Sway access to your hardware"
 msgstr "Sway にハードウェアへのアクセスを許可するオプションを選択"
 
 msgid "Seat access"
-msgstr "シートアクセス"
+msgstr "Seat アクセス"
 
 msgid "Mountpoint"
 msgstr "マウントポイント"
