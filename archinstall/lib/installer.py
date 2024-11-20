@@ -821,7 +821,7 @@ class Installer:
 		testing: bool = False,
 		multilib: bool = False,
 		mkinitcpio: bool = True,
-		hostname: str = 'archinstall',
+		hostname: str | None = None,
 		locale_config: LocaleConfiguration = LocaleConfiguration.default()
 	):
 		if self._disk_config.lvm_config:
@@ -874,7 +874,9 @@ class Installer:
 		# os.remove(f'{self.target}/etc/localtime')
 		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
 		# sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
-		self.set_hostname(hostname)
+		if hostname:
+			self.set_hostname(hostname)
+
 		self.set_locale(locale_config)
 		self.set_keyboard_language(locale_config.kb_layout)
 
