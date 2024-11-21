@@ -284,9 +284,9 @@ def process_root_partition_size(total_size: disk.Size, sector_size: disk.SectorS
 	if total_device_size.value > 500:
 		# maximum size
 		return disk.Size(value=50, unit=disk.Unit.GiB, sector_size=sector_size)
-	elif total_device_size.value < 200:
+	elif total_device_size.value < 320:
 		# minimum size
-		return disk.Size(value=20, unit=disk.Unit.GiB, sector_size=sector_size)
+		return disk.Size(value=32, unit=disk.Unit.GiB, sector_size=sector_size)
 	else:
 		# 10% of total size
 		length = total_device_size.value // 10
@@ -305,7 +305,7 @@ def suggest_single_disk_layout(
 	sector_size = device.device_info.sector_size
 	total_size = device.device_info.total_size
 	available_space = total_size
-	min_size_to_allow_home_part = disk.Size(40, disk.Unit.GiB, sector_size)
+	min_size_to_allow_home_part = disk.Size(64, disk.Unit.GiB, sector_size)
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?')) + '\n'
@@ -443,7 +443,7 @@ def suggest_multi_disk_layout(
 	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/
 	min_home_partition_size = disk.Size(40, disk.Unit.GiB, disk.SectorSize.default())
 	# rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
-	desired_root_partition_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
+	desired_root_partition_size = disk.Size(32, disk.Unit.GiB, disk.SectorSize.default())
 	mount_options = []
 
 	if not filesystem_type:
