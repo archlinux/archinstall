@@ -590,7 +590,7 @@ class PartitionFlagDataMixin:
 
 
 class PartitionFlag(PartitionFlagDataMixin, Enum):
-	Boot = parted.PARTITION_BOOT
+	BOOT = parted.PARTITION_BOOT
 	XBOOTLDR = parted.PARTITION_BLS_BOOT, "bls_boot"
 	ESP = parted.PARTITION_ESP
 	LINUX_HOME = parted.PARTITION_LINUX_HOME, "linux-home"
@@ -713,8 +713,8 @@ class PartitionModification:
 	partuuid: str | None = None
 	uuid: str | None = None
 
-	_efi_indicator_flags = (PartitionFlag.Boot, PartitionFlag.ESP)
-	_boot_indicator_flags = (PartitionFlag.Boot, PartitionFlag.XBOOTLDR)
+	_efi_indicator_flags = (PartitionFlag.BOOT, PartitionFlag.ESP)
+	_boot_indicator_flags = (PartitionFlag.BOOT, PartitionFlag.XBOOTLDR)
 
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func

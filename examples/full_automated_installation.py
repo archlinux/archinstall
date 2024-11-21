@@ -24,7 +24,7 @@ boot_partition = disk.PartitionModification(
 	length=disk.Size(512, disk.Unit.MiB, device.device_info.sector_size),
 	mountpoint=Path('/boot'),
 	fs_type=disk.FilesystemType.Fat32,
-	flags=[disk.PartitionFlag.Boot]
+	flags=[disk.PartitionFlag.BOOT]
 )
 device_modification.add_partition(boot_partition)
 

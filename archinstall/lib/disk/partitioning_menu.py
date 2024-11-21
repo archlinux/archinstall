@@ -116,13 +116,13 @@ class PartitioningList(ListManager):
 			case 'assign_mountpoint' if entry:
 				entry.mountpoint = self._prompt_mountpoint()
 				if entry.mountpoint == Path('/boot'):
-					entry.set_flag(PartitionFlag.Boot)
+					entry.set_flag(PartitionFlag.BOOT)
 					if SysInfo.has_uefi():
 						entry.set_flag(PartitionFlag.ESP)
 			case 'mark_formatting' if entry:
 				self._prompt_formatting(entry)
 			case 'mark_bootable' if entry:
-				entry.invert_flag(PartitionFlag.Boot)
+				entry.invert_flag(PartitionFlag.BOOT)
 				if SysInfo.has_uefi():
 					entry.invert_flag(PartitionFlag.ESP)
 			case 'set_filesystem' if entry:
@@ -414,7 +414,7 @@ class PartitioningList(ListManager):
 		)
 
 		if partition.mountpoint == Path('/boot'):
-			partition.set_flag(PartitionFlag.Boot)
+			partition.set_flag(PartitionFlag.BOOT)
 			if SysInfo.has_uefi():
 				partition.set_flag(PartitionFlag.ESP)
 
