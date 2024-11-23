@@ -146,6 +146,11 @@ class PartitionTable(Enum):
 	MBR = 'msdos'
 
 
+class Units(Enum):
+	BINARY = 'binary'
+	DECIMAL = 'decimal'
+
+
 class Unit(Enum):
 	B = 1  # byte
 	kB = 1000 ** 1  # kilobyte
@@ -175,6 +180,10 @@ class Unit(Enum):
 	@staticmethod
 	def get_si_units() -> list[Unit]:
 		return [u for u in Unit if 'i' not in u.name and u.name != 'sectors']
+
+	@staticmethod
+	def get_binary_units() -> list[Unit]:
+		return [u for u in Unit if 'i' in u.name or u.name == 'B']
 
 
 @dataclass
@@ -278,8 +287,32 @@ class Size:
 			return f'{target_size.value} {target_unit.name}'
 		return f'{target_size.value}'
 
-	def format_highest(self, include_unit: bool = True) -> str:
+	def binary_unit_highest(self, include_unit: bool = True) -> str:
+		binary_units = Unit.get_binary_units()
+
+		size = float(self._normalize())
+		unit = Unit.KiB
+		base_value = unit.value
+
+		for binary_unit in binary_units:
+			unit = binary_unit
+			if size < base_value:
+				break
+			size /= base_value
+
+		formatted_size = f"{size:.1f}"
+
+		if formatted_size.endswith('.0'):
+			formatted_size = formatted_size[:-2]
+
+		if not include_unit:
+			return formatted_size
+
+		return f'{formatted_size} {unit.name}'
+
+	def si_unit_highest(self, include_unit: bool = True) -> str:
 		si_units = Unit.get_si_units()
+
 		all_si_values = [self.convert(si) for si in si_units]
 		filtered = filter(lambda x: x.value >= 1, all_si_values)
 
@@ -290,6 +323,12 @@ class Size:
 		if include_unit:
 			return f'{si_value.value} {si_value.unit.name}'
 		return f'{si_value.value}'
+
+	def format_highest(self, include_unit: bool = True, units: Units = Units.BINARY) -> str:
+		if units == Units.BINARY:
+			return self.binary_unit_highest(include_unit)
+		else:
+			return self.si_unit_highest(include_unit)
 
 	def _normalize(self) -> int:
 		"""
