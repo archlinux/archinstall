@@ -1,6 +1,6 @@
 import importlib
-import sys
 import pathlib
+import sys
 
 # Load .git version before the builtin version
 if pathlib.Path('./archinstall/__init__.py').absolute().exists():

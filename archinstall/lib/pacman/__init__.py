@@ -1,16 +1,16 @@
-from pathlib import Path
-import time
 import re
+import time
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Union
+from pathlib import Path
 from shutil import copy2
+from typing import TYPE_CHECKING, Any
 
-from ..general import SysCommand
-from ..output import warn, error, info
-from .repo import Repo
-from .config import Config
 from ..exceptions import RequirementError
+from ..general import SysCommand
+from ..output import error, info, warn
 from ..plugins import plugins
+from .config import Config
+from .repo import Repo
 
 if TYPE_CHECKING:
 	_: Any
@@ -68,7 +68,7 @@ class Pacman:
 		)
 		self.synced = True
 
-	def strap(self, packages: Union[str, list[str]]) -> None:
+	def strap(self, packages: str | list[str]) -> None:
 		self.sync()
 		if isinstance(packages, str):
 			packages = [packages]

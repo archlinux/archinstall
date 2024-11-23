@@ -3,21 +3,15 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import SysInfo, info, debug
-from archinstall.lib import models
-from archinstall.lib import disk
-from archinstall.lib import locale
-from archinstall.lib.models import AudioConfiguration
-from archinstall.lib.profile.profiles_handler import profile_handler
+from archinstall import SysInfo, debug, info
+from archinstall.lib import disk, locale, models
+from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
-from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.interactions.general_conf import ask_chroot
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	Tui
-)
+from archinstall.lib.models import AudioConfiguration
+from archinstall.lib.profile.profiles_handler import profile_handler
+from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu, Tui
 
 if TYPE_CHECKING:
 	_: Any
@@ -234,7 +228,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode) -> None:
 				except:
 					pass
 
-		debug(f"Disk states after installing: {disk.disk_layouts()}")
+		debug(f"Disk states after installing:\n{disk.disk_layouts()}")
 
 
 def swiss() -> None:

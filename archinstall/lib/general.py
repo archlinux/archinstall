@@ -2,29 +2,28 @@ from __future__ import annotations
 
 import json
 import os
+import pathlib
+import re
 import secrets
 import shlex
-import subprocess
 import stat
 import string
+import subprocess
 import sys
 import time
-import re
-import urllib.parse
-from urllib.request import Request, urlopen
 import urllib.error
-import pathlib
+import urllib.parse
 from collections.abc import Callable, Iterator
-from datetime import datetime, date
+from datetime import date, datetime
 from enum import Enum
-from typing import Any, Union, TYPE_CHECKING
-from select import epoll, EPOLLIN, EPOLLHUP
+from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
+from typing import TYPE_CHECKING, Any
+from urllib.request import Request, urlopen
 
 from .exceptions import RequirementError, SysCallError
 from .output import debug, error, info
 from .storage import storage
-
 
 if TYPE_CHECKING:
 	from .installer import Installer
@@ -41,7 +40,7 @@ def locate_binary(name: str) -> str:
 	raise RequirementError(f"Binary {name} does not exist.")
 
 
-def clear_vt100_escape_codes(data: Union[bytes, str]) -> Union[bytes, str]:
+def clear_vt100_escape_codes(data: bytes | str) -> bytes | str:
 	# https://stackoverflow.com/a/43627833/929999
 	vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
 	if isinstance(data, bytes):
@@ -103,7 +102,7 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 class SysCommandWorker:
 	def __init__(
 		self,
-		cmd: Union[str, list[str]],
+		cmd: str | list[str],
 		callbacks: dict[str, Any] | None = None,
 		peek_output: bool | None = False,
 		environment_vars: dict[str, Any] | None = None,
@@ -235,7 +234,7 @@ class SysCommandWorker:
 		# Safety check to ensure 0 < pos < len(tracelog)
 		self._trace_log_pos = min(max(0, pos), len(self._trace_log))
 
-	def peak(self, output: Union[str, bytes]) -> bool:
+	def peak(self, output: str | bytes) -> bool:
 		if self.peek_output:
 			if isinstance(output, bytes):
 				try:
@@ -347,7 +346,7 @@ class SysCommandWorker:
 class SysCommand:
 	def __init__(
 		self,
-		cmd: Union[str, list[str]],
+		cmd: str | list[str],
 		callbacks: dict[str, Callable[[Any], Any]] = {},
 		start_callback: Callable[[Any], Any] | None = None,
 		peek_output: bool | None = False,
@@ -397,7 +396,7 @@ class SysCommand:
 	def __repr__(self, *args: list[Any], **kwargs: dict[str, Any]) -> str:
 		return self.decode('UTF-8', errors='backslashreplace') or ''
 
-	def __json__(self) -> dict[str, Union[str, bool, list[str], dict[str, Any], bool | None, dict[str, Any] | None]]:
+	def __json__(self) -> dict[str, str | bool | list[str] | dict[str, Any] | None]:
 		return {
 			'cmd': self.cmd,
 			'callbacks': self._callbacks,

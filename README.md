@@ -8,7 +8,7 @@
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium)*.
 
-* archinstall [discord](https://discord.gg/cqXU88y) server
+* archinstall [discord](https://discord.gg/aDeMffrxNg) server
 * archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
 * archinstall [#archinstall@irc.libera.chat](irc://#archinstall@irc.libera.chat:6697)
 * archinstall [documentation](https://archinstall.archlinux.page/)
@@ -59,7 +59,7 @@ archinstall --config <path to user config file or URL> --creds <path to user cre
 # Help or Issues
 
 If you come across any issues, kindly submit your issue here on Github or post your query in the
-[discord](https://discord.gg/cqXU88y) help channel.
+[discord](https://discord.gg/aDeMffrxNg) help channel.
 
 When submitting an issue, please:
 * Provide the stacktrace of the output if applicable

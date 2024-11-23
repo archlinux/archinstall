@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from enum import Enum, auto
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ..lib.storage import storage
 

@@ -1,13 +1,11 @@
-from typing import Union, Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import archinstall
-
 from archinstall.default_profiles.profile import Profile, ProfileType
-from archinstall.lib.models import User
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
-	_: Any
+	from archinstall.lib.models import User
 
 
 class PipewireProfile(Profile):
@@ -27,7 +25,11 @@ class PipewireProfile(Profile):
 		]
 
 	def _enable_pipewire_for_all(self, install_session: 'Installer') -> None:
-		users: Union[User, list[User]] = archinstall.arguments.get('!users', [])
+		users: User | list[User] | None = archinstall.arguments.get('!users', None)
+
+		if users is None:
+			return
+
 		if not isinstance(users, list):
 			users = [users]
 
@@ -40,8 +42,14 @@ class PipewireProfile(Profile):
 			install_session.arch_chroot(f'chown -R {user.username}:{user.username} /home/{user.username}')
 
 			# symlink in the correct pipewire systemd items
-			install_session.arch_chroot(f'ln -s /usr/lib/systemd/user/pipewire-pulse.service /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.service', run_as=user.username)
-			install_session.arch_chroot(f'ln -s /usr/lib/systemd/user/pipewire-pulse.socket /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.socket', run_as=user.username)
+			install_session.arch_chroot(
+				f'ln -s /usr/lib/systemd/user/pipewire-pulse.service /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.service',
+				run_as=user.username
+			)
+			install_session.arch_chroot(
+				f'ln -s /usr/lib/systemd/user/pipewire-pulse.socket /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.socket',
+				run_as=user.username
+			)
 
 	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)

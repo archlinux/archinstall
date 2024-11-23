@@ -1,37 +1,39 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
+from archinstall.tui import MenuItem, MenuItemGroup
 
 from . import disk
+from .configuration import save_config
 from .general import secret
 from .hardware import SysInfo
+from .interactions import (
+	add_number_of_parallel_downloads,
+	ask_additional_packages_to_install,
+	ask_for_a_timezone,
+	ask_for_additional_users,
+	ask_for_audio_selection,
+	ask_for_bootloader,
+	ask_for_swap,
+	ask_for_uki,
+	ask_hostname,
+	ask_ntp,
+	ask_to_configure_network,
+	select_additional_repositories,
+	select_kernel,
+)
 from .locale.locale_menu import LocaleConfiguration, LocaleMenu
 from .menu import AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
 from .models import NetworkConfiguration, NicType
-from .models.bootloader import Bootloader
 from .models.audio_configuration import AudioConfiguration
+from .models.bootloader import Bootloader
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
-from .interactions import ask_for_additional_users
-from .interactions import (
-	ask_for_audio_selection, ask_for_swap,
-	ask_for_bootloader, ask_for_uki, ask_hostname,
-	add_number_of_parallel_downloads, select_kernel,
-	ask_additional_packages_to_install, select_additional_repositories,
-	ask_for_a_timezone, ask_ntp, ask_to_configure_network
-)
-from .utils.util import get_password
-from .utils.util import format_cols
-from .configuration import save_config
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem
-)
-
-
 from .translationhandler import Language, TranslationHandler
+from .utils.util import format_cols, get_password
 
 if TYPE_CHECKING:
 	_: Any

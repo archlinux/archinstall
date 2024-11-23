@@ -1,23 +1,16 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
 
 import archinstall
-from archinstall import info, debug
-from archinstall import SysInfo
-from archinstall.lib import locale
-from archinstall.lib import disk
-from archinstall.lib.global_menu import GlobalMenu
+from archinstall import SysInfo, debug, info
+from archinstall.lib import disk, locale
 from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
+from archinstall.lib.interactions.general_conf import ask_chroot
 from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.lib.interactions.general_conf import ask_chroot
 from archinstall.tui import Tui
-
-if TYPE_CHECKING:
-	_: Any
-
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -80,7 +73,7 @@ def perform_installation(mountpoint: Path) -> None:
 			testing=enable_testing,
 			multilib=enable_multilib,
 			mkinitcpio=run_mkinitcpio,
-			hostname=archinstall.arguments.get('hostname', 'archlinux'),
+			hostname=archinstall.arguments.get('hostname'),
 			locale_config=locale_config
 		)
 
@@ -161,7 +154,7 @@ def perform_installation(mountpoint: Path) -> None:
 				except:
 					pass
 
-	debug(f"Disk states after installing: {disk.disk_layouts()}")
+	debug(f"Disk states after installing:\n{disk.disk_layouts()}")
 
 
 def guided() -> None:

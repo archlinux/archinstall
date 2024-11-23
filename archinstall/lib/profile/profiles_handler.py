@@ -1,22 +1,21 @@
 from __future__ import annotations
 
 import importlib.util
-import sys
 import inspect
+import sys
 from collections import Counter
 from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
-from ...default_profiles.profile import Profile, GreeterType
-from .profile_model import ProfileConfiguration
+from ...default_profiles.profile import GreeterType, Profile
 from ..hardware import GfxDriver
-from ..networking import list_interfaces, fetch_data_from_url
-from ..output import error, debug, info
+from ..networking import fetch_data_from_url, list_interfaces
+from ..output import debug, error, info
 from ..storage import storage
-
+from .profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
 	from ..installer import Installer
@@ -121,8 +120,12 @@ class ProfileHandler:
 				info('No profile definition found: {}'.format(', '.join(invalid_sub_profiles)))
 
 		custom_settings = profile_config.get('custom_settings', {})
-		profile.set_custom_settings(custom_settings)
 		profile.current_selection = valid_sub_profiles
+
+		for sub_profile in valid_sub_profiles:
+			sub_profile_settings = custom_settings.get(sub_profile.name, {})
+			if sub_profile_settings:
+				sub_profile.custom_settings = sub_profile_settings
 
 		return profile
 
@@ -138,7 +141,7 @@ class ProfileHandler:
 	def _local_mac_addresses(self) -> list[str]:
 		return list(list_interfaces())
 
-	def add_custom_profiles(self, profiles: Union[Profile, list[Profile]]) -> None:
+	def add_custom_profiles(self, profiles: Profile | list[Profile]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -147,7 +150,7 @@ class ProfileHandler:
 
 		self._verify_unique_profile_names(self.profiles)
 
-	def remove_custom_profiles(self, profiles: Union[Profile, list[Profile]]) -> None:
+	def remove_custom_profiles(self, profiles: Profile | list[Profile]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 

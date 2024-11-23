@@ -1,29 +1,27 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
+from archinstall.lib.menu.menu_helper import MenuHelper
+from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu
 
 from .. import disk
 from ..disk.device_model import BtrfsMountOption
 from ..hardware import SysInfo
 from ..output import FormattedOutput, debug
-from ..utils.util import prompt_dir
 from ..storage import storage
-
-from archinstall.lib.menu.menu_helper import MenuHelper
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	Orientation
-)
+from ..utils.util import prompt_dir
 
 if TYPE_CHECKING:
 	_: Any
 
 
 def select_devices(preset: list[disk.BDevice] | None = []) -> list[disk.BDevice]:
-	def _preview_device_selection(selection: disk._DeviceInfo) -> str | None:
-		dev = disk.device_handler.get_device(selection.path)
+	def _preview_device_selection(item: MenuItem) -> str | None:
+		device: disk._DeviceInfo = item.get_value()
+		dev = disk.device_handler.get_device(device.path)
+
 		if dev and dev.partition_infos:
 			return FormattedOutput.as_table(dev.partition_infos)
 		return None
@@ -37,12 +35,17 @@ def select_devices(preset: list[disk.BDevice] | None = []) -> list[disk.BDevice]
 
 	group, header = MenuHelper.create_table(data=options)
 	group.set_selected_by_value(presets)
+	group.set_preview_for_all(_preview_device_selection)
+
 	result = SelectMenu(
 		group,
 		header=header,
 		alignment=Alignment.CENTER,
 		search_enabled=False,
-		multi=True
+		multi=True,
+		preview_style=PreviewStyle.BOTTOM,
+		preview_size='auto',
+		preview_frame=FrameProperties.max('Partitions')
 	).run()
 
 	match result.type_:
@@ -207,7 +210,7 @@ def select_lvm_config(
 
 
 def _boot_partition(sector_size: disk.SectorSize, using_gpt: bool) -> disk.PartitionModification:
-	flags = [disk.PartitionFlag.Boot]
+	flags = [disk.PartitionFlag.BOOT]
 	size = disk.Size(1, disk.Unit.GiB, sector_size)
 	if using_gpt:
 		start = disk.Size(1, disk.Unit.MiB, sector_size)
@@ -270,10 +273,12 @@ def select_mount_options() -> list[str]:
 		columns=2,
 		orientation=Orientation.HORIZONTAL,
 		search_enabled=False,
-		allow_skip=False
+		allow_skip=True
 	).run()
 
 	match result.type_:
+		case ResultType.Skip:
+			return []
 		case ResultType.Selection:
 			return [result.get_value()]
 		case _:
@@ -286,9 +291,9 @@ def process_root_partition_size(total_size: disk.Size, sector_size: disk.SectorS
 	if total_device_size.value > 500:
 		# maximum size
 		return disk.Size(value=50, unit=disk.Unit.GiB, sector_size=sector_size)
-	elif total_device_size.value < 200:
+	elif total_device_size.value < 320:
 		# minimum size
-		return disk.Size(value=20, unit=disk.Unit.GiB, sector_size=sector_size)
+		return disk.Size(value=32, unit=disk.Unit.GiB, sector_size=sector_size)
 	else:
 		# 10% of total size
 		length = total_device_size.value // 10
@@ -307,7 +312,7 @@ def suggest_single_disk_layout(
 	sector_size = device.device_info.sector_size
 	total_size = device.device_info.total_size
 	available_space = total_size
-	min_size_to_allow_home_part = disk.Size(40, disk.Unit.GiB, sector_size)
+	min_size_to_allow_home_part = disk.Size(64, disk.Unit.GiB, sector_size)
 
 	if filesystem_type == disk.FilesystemType.Btrfs:
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?')) + '\n'
@@ -413,6 +418,10 @@ def suggest_single_disk_layout(
 		home_start = root_partition.start + root_partition.length
 		home_length = available_space - home_start
 
+		flags = []
+		if using_gpt:
+			flags.append(disk.PartitionFlag.LINUX_HOME)
+
 		home_partition = disk.PartitionModification(
 			status=disk.ModificationStatus.Create,
 			type=disk.PartitionType.Primary,
@@ -420,7 +429,8 @@ def suggest_single_disk_layout(
 			length=home_length,
 			mountpoint=Path('/home'),
 			fs_type=filesystem_type,
-			mount_options=mount_options
+			mount_options=mount_options,
+			flags=flags
 		)
 		device_modification.add_partition(home_partition)
 
@@ -440,7 +450,7 @@ def suggest_multi_disk_layout(
 	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/
 	min_home_partition_size = disk.Size(40, disk.Unit.GiB, disk.SectorSize.default())
 	# rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
-	desired_root_partition_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
+	desired_root_partition_size = disk.Size(32, disk.Unit.GiB, disk.SectorSize.default())
 	mount_options = []
 
 	if not filesystem_type:
@@ -516,8 +526,10 @@ def suggest_multi_disk_layout(
 	home_start = home_align_buffer
 	home_length = home_device.device_info.total_size - home_start
 
+	flags = []
 	if using_gpt:
 		home_length -= home_align_buffer
+		flags.append(disk.PartitionFlag.LINUX_HOME)
 
 	# add home partition to home device
 	home_partition = disk.PartitionModification(
@@ -528,6 +540,7 @@ def suggest_multi_disk_layout(
 		mountpoint=Path('/home'),
 		mount_options=mount_options,
 		fs_type=filesystem_type,
+		flags=flags
 	)
 	home_device_modification.add_partition(home_partition)
 

@@ -3,11 +3,10 @@ import os
 import sys
 import unicodedata
 from collections.abc import Callable
-from enum import Enum
-
-from pathlib import Path
-from typing import Union, Any, TYPE_CHECKING
 from dataclasses import asdict, is_dataclass
+from enum import Enum
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from .storage import storage
 
@@ -21,7 +20,7 @@ class FormattedOutput:
 	def _get_values(
 		cls,
 		o: 'DataclassInstance',
-		class_formatter: Union[str, Callable] | None = None,
+		class_formatter: str | Callable | None = None,
 		filter_list: list[str] = []
 	) -> dict[str, Any]:
 		"""
@@ -53,7 +52,7 @@ class FormattedOutput:
 	def as_table(
 		cls,
 		obj: list[Any],
-		class_formatter: Union[str, Callable] | None = None,
+		class_formatter: str | Callable | None = None,
 		filter_list: list[str] = [],
 		capitalize: bool = False
 	) -> str:

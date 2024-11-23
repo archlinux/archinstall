@@ -1,10 +1,5 @@
-from typing import Any, TYPE_CHECKING
-
-from archinstall.default_profiles.profile import ProfileType, GreeterType
+from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
-
-if TYPE_CHECKING:
-	_: Any
 
 
 class LxqtProfile(XorgProfile):

@@ -1,48 +1,43 @@
 from .device_handler import device_handler, disk_layouts
-from .fido import Fido2
-from .filesystem import FilesystemHandler
-from .subvolume_menu import SubvolumeMenu
-from .partitioning_menu import (
-	manual_partitioning,
-	PartitioningList
-)
 from .device_model import (
-	_DeviceInfo,
 	BDevice,
-	DiskLayoutType,
-	DiskLayoutConfiguration,
-	LvmLayoutType,
-	LvmConfiguration,
-	LvmVolumeGroup,
-	LvmVolume,
-	LvmVolumeStatus,
-	PartitionTable,
-	Unit,
-	Size,
-	SectorSize,
-	SubvolumeModification,
 	DeviceGeometry,
-	PartitionType,
-	PartitionFlag,
-	FilesystemType,
-	ModificationStatus,
-	PartitionModification,
 	DeviceModification,
-	EncryptionType,
 	DiskEncryption,
+	DiskLayoutConfiguration,
+	DiskLayoutType,
+	EncryptionType,
 	Fido2Device,
+	FilesystemType,
 	LsblkInfo,
-	CleanType,
-	get_lsblk_info,
+	LvmConfiguration,
+	LvmLayoutType,
+	LvmVolume,
+	LvmVolumeGroup,
+	LvmVolumeStatus,
+	ModificationStatus,
+	PartitionFlag,
+	PartitionModification,
+	PartitionTable,
+	PartitionType,
+	SectorSize,
+	Size,
+	SubvolumeModification,
+	Unit,
+	_DeviceInfo,
 	get_all_lsblk_info,
 	get_lsblk_by_mountpoint,
+	get_lsblk_info,
 )
+from .disk_menu import DiskLayoutConfigurationMenu
 from .encryption_menu import (
-	select_encryption_type,
+	DiskEncryptionMenu,
 	select_encrypted_password,
+	select_encryption_type,
 	select_hsm,
 	select_partitions_to_encrypt,
-	DiskEncryptionMenu,
 )
-
-from .disk_menu import DiskLayoutConfigurationMenu
+from .fido import Fido2
+from .filesystem import FilesystemHandler
+from .partitioning_menu import PartitioningList, manual_partitioning
+from .subvolume_menu import SubvolumeMenu

@@ -1,14 +1,13 @@
 from __future__ import annotations
 
+import gettext
 import json
 import os
-import gettext
 from dataclasses import dataclass
-
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from .output import error, debug
+from .output import debug, error
 
 if TYPE_CHECKING:
 	_: Any

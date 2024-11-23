@@ -2,17 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from archinstall.default_profiles.profile import Profile, GreeterType
-from .profile_model import ProfileConfiguration
-from ..menu import AbstractSubMenu
-from ..interactions.system_conf import select_driver
-from ..hardware import GfxDriver
+from archinstall.default_profiles.profile import GreeterType, Profile
+from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
 
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	Orientation
-)
+from ..hardware import GfxDriver
+from ..interactions.system_conf import select_driver
+from ..menu import AbstractSubMenu
+from .profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
 	_: Any

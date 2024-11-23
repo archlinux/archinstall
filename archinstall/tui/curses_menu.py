@@ -1,27 +1,37 @@
 from __future__ import annotations
 
-import sys
 import curses
-import dataclasses
 import curses.panel
+import dataclasses
 import os
 import signal
+import sys
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable
 from curses.textpad import Textbox
 from dataclasses import dataclass
 from types import FrameType, TracebackType
-from typing import Any, TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
+from ..lib.output import debug
 from .help import Help
 from .menu_item import MenuItem, MenuItemGroup
 from .types import (
-	Result, ResultType, ViewportEntry,
-	STYLE, FrameProperties, FrameStyle, Alignment,
-	Chars, MenuKeys, Orientation, PreviewStyle,
-	MenuCell, _FrameDim, SCROLL_INTERVAL
+	SCROLL_INTERVAL,
+	STYLE,
+	Alignment,
+	Chars,
+	FrameProperties,
+	FrameStyle,
+	MenuCell,
+	MenuKeys,
+	Orientation,
+	PreviewStyle,
+	Result,
+	ResultType,
+	ViewportEntry,
+	_FrameDim,
 )
-from ..lib.output import debug
 
 if TYPE_CHECKING:
 	_: Any
@@ -636,7 +646,7 @@ class EditMenu(AbstractCurses):
 
 		self._last_state: Result | None = None
 		self._help_active = False
-		self._real_input = ""
+		self._real_input = default_text or ""
 
 	def _init_viewports(self) -> None:
 		y_offset = 0

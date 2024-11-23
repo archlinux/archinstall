@@ -1,19 +1,13 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import info, debug
-from archinstall import Installer, ConfigurationOutput
+from archinstall import ConfigurationOutput, Installer, debug, info
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall.lib.interactions import suggest_single_disk_layout, select_devices
+from archinstall.lib import disk
+from archinstall.lib.interactions import select_devices, suggest_single_disk_layout
 from archinstall.lib.models import Bootloader, User
 from archinstall.lib.profile import ProfileConfiguration, profile_handler
-from archinstall.lib import disk
 from archinstall.tui import Tui
-
-if TYPE_CHECKING:
-	_: Any
-
 
 info("Minimal only supports:")
 info(" * Being installed to a single disk")

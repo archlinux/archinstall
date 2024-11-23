@@ -3,7 +3,7 @@ count = True
 # Several of the following could be autofixed or improved by running the code through psf/black
 ignore = E722,W191,W503
 max-complexity = 40
-max-line-length = 220
+max-line-length = 160
 show-source = True
 statistics = True
 builtins = _

@@ -1,26 +1,30 @@
 from __future__ import annotations
 
 import re
-from pathlib import Path
-from typing import Any, TYPE_CHECKING
 from dataclasses import dataclass
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
-from ..utils.util import prompt_dir
-from .device_model import (
-	PartitionModification, FilesystemType, BDevice,
-	Size, Unit, PartitionType, PartitionFlag,
-	ModificationStatus, DeviceGeometry, SectorSize, BtrfsMountOption
-)
+from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
+
 from ..hardware import SysInfo
 from ..menu import ListManager
 from ..output import FormattedOutput
-from .subvolume_menu import SubvolumeMenu
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, EditMenu,
-	Orientation, ResultType
+from ..utils.util import prompt_dir
+from .device_model import (
+	BDevice,
+	BtrfsMountOption,
+	DeviceGeometry,
+	FilesystemType,
+	ModificationStatus,
+	PartitionFlag,
+	PartitionModification,
+	PartitionType,
+	SectorSize,
+	Size,
+	Unit,
 )
+from .subvolume_menu import SubvolumeMenu
 
 if TYPE_CHECKING:
 	_: Any
@@ -112,13 +116,13 @@ class PartitioningList(ListManager):
 			case 'assign_mountpoint' if entry:
 				entry.mountpoint = self._prompt_mountpoint()
 				if entry.mountpoint == Path('/boot'):
-					entry.set_flag(PartitionFlag.Boot)
+					entry.set_flag(PartitionFlag.BOOT)
 					if SysInfo.has_uefi():
 						entry.set_flag(PartitionFlag.ESP)
 			case 'mark_formatting' if entry:
 				self._prompt_formatting(entry)
 			case 'mark_bootable' if entry:
-				entry.invert_flag(PartitionFlag.Boot)
+				entry.invert_flag(PartitionFlag.BOOT)
 				if SysInfo.has_uefi():
 					entry.invert_flag(PartitionFlag.ESP)
 			case 'set_filesystem' if entry:
@@ -236,23 +240,28 @@ class PartitioningList(ListManager):
 	) -> Size | None:
 		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', text, re.I)
 
-		if match:
-			str_value, unit = match.groups()
+		if not match:
+			return None
 
-			if unit == '%' and start:
-				available = total_size - start
-				value = int(available.value * (int(str_value) / 100))
-				unit = available.unit.name
-			else:
-				value = int(str_value)
+		str_value, unit = match.groups()
 
-			if unit and unit not in Unit.get_all_units():
-				return None
+		if unit == '%' and start:
+			available = total_size - start
+			value = int(available.value * (int(str_value) / 100))
+			unit = available.unit.name
+		else:
+			value = int(str_value)
 
-			unit = Unit[unit] if unit else Unit.sectors
-			return Size(value, unit, sector_size)
+		if unit and unit not in Unit.get_all_units():
+			return None
 
-		return None
+		unit = Unit[unit] if unit else Unit.sectors
+		size = Size(value, unit, sector_size)
+
+		if start and size <= start:
+			return None
+
+		return size
 
 	def _enter_size(
 		self,
@@ -277,12 +286,17 @@ class PartitioningList(ListManager):
 		).input()
 
 		size: Size | None = None
-		value = result.text()
 
-		if value is None:
-			size = default
-		else:
-			size = self._validate_value(sector_size, total_size, value, start)
+		match result.type_:
+			case ResultType.Skip:
+				size = default
+			case ResultType.Selection:
+				value = result.text()
+
+				if value:
+					size = self._validate_value(sector_size, total_size, value, start)
+				else:
+					size = default
 
 		assert size
 		return size
@@ -400,7 +414,7 @@ class PartitioningList(ListManager):
 		)
 
 		if partition.mountpoint == Path('/boot'):
-			partition.set_flag(PartitionFlag.Boot)
+			partition.set_flag(PartitionFlag.BOOT)
 			if SysInfo.has_uefi():
 				partition.set_flag(PartitionFlag.ESP)
 

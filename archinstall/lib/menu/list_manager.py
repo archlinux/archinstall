@@ -1,11 +1,9 @@
 import copy
-from typing import Any, TYPE_CHECKING
-from ..output import FormattedOutput
+from typing import TYPE_CHECKING, Any
 
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	Alignment, ResultType
-)
+from archinstall.tui import Alignment, MenuItem, MenuItemGroup, ResultType, SelectMenu
+
+from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any
@@ -63,9 +61,10 @@ class ListManager:
 			# this will return a dictionary with the key as the menu entry to be displayed
 			# and the value is the original value from the self._data container
 			data_formatted = self.reformat(self._data)
-			options, header = self._prepare_selection(data_formatted)
+			options = self._prepare_selection(data_formatted)
+			header = self._get_header(data_formatted)
 
-			items = [MenuItem(o, value=o) for o in options]
+			items = [MenuItem(o[0], value=o[1]) for o in options]
 			group = MenuItemGroup(items, sort_items=False)
 
 			result = SelectMenu(
@@ -97,23 +96,24 @@ class ListManager:
 		else:
 			return self._data
 
-	def _prepare_selection(self, data_formatted: dict[str, Any]) -> tuple[list[str], str]:
+	def _get_header(self, data_formatted: dict[str, Any]) -> str:
+		table_header = [key for key, val in data_formatted.items() if val is None]
+		header = '\n'.join(table_header)
+		return header
+
+	def _prepare_selection(self, data_formatted: dict[str, Any]) -> list[tuple[str, Any]]:
 		# header rows are mapped to None so make sure
 		# to exclude those from the selectable data
-		options: list[str] = [key for key, val in data_formatted.items() if val is not None]
-		header = ''
+		options = [(key, val) for key, val in data_formatted.items() if val is not None]
 
 		if len(options) > 0:
-			table_header = [key for key, val in data_formatted.items() if val is None]
-			header = '\n'.join(table_header)
+			options.append((self._separator, None))
 
-		if len(options) > 0:
-			options.append(self._separator)
+		additional_options = self._base_actions + self._terminate_actions
+		for o in additional_options:
+			options.append((o, o))
 
-		options += self._base_actions
-		options += self._terminate_actions
-
-		return options, header
+		return options
 
 	def _run_actions_on_entry(self, entry: Any) -> None:
 		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]

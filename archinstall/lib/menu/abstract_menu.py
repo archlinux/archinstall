@@ -1,15 +1,11 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from ..output import error
-from ..output import unicode_ljust
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	PreviewStyle, FrameProperties, FrameStyle,
-	ResultType, Chars, Tui
-)
+from archinstall.tui import Chars, FrameProperties, FrameStyle, MenuItem, MenuItemGroup, PreviewStyle, ResultType, SelectMenu, Tui
+
+from ..output import error, unicode_ljust
 
 if TYPE_CHECKING:
 	_: Any

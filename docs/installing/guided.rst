@@ -70,7 +70,7 @@ The contents of :code:`https://domain.lan/config.json`:
                        {
                            "btrfs": [],
                            "flags": [
-                               "Boot"
+                               "boot"
                            ],
                            "fs_type": "fat32",
                            "length": {

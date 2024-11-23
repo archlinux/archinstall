@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import pathlib
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
+from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu, Tui
 
 from ..locale import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration
@@ -9,11 +11,6 @@ from ..output import warn
 from ..packages.packages import validate_package_list
 from ..storage import storage
 from ..translationhandler import Language
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	EditMenu, Orientation, Tui
-)
 
 if TYPE_CHECKING:
 	_: Any
@@ -21,7 +18,10 @@ if TYPE_CHECKING:
 
 def ask_ntp(preset: bool = True) -> bool:
 	header = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n')) + '\n'
-	header += str(_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki')) + '\n'
+	header += str(_(
+		'Hardware time and other post-configuration steps might be required in order for NTP to work.\n'
+		'For more information, please check the Arch wiki'
+	)) + '\n'
 
 	preset_val = MenuItem.yes() if preset else MenuItem.no()
 	group = MenuItemGroup.yes_no()

@@ -1313,197 +1313,155 @@ msgstr " (predeterminat)"
 msgid "Press Ctrl+h for help"
 msgstr "Polseu Ctrl+h per ajuda"
 
-#, fuzzy
 msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Escolliu una opció per permetre que Sway accedeixi al vostre hardware"
+msgstr "Escolliu una opció per permetre que Sway accedeixi al vostre hardware"
 
 msgid "Seat access"
-msgstr ""
+msgstr "Accés al seient"
 
-#, fuzzy
 msgid "Mountpoint"
-msgstr "Punt de muntatge: "
+msgstr "Punt de muntatge"
 
 msgid "HSM"
-msgstr ""
+msgstr "HSM"
 
-#, fuzzy
 msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr "Introduïu la contrasenya de xifrat de disc (deixeu-ho en blanc per a no xifrar): "
+msgstr "Introduïu la contrasenya del xifrat de disc (deixeu-ho en blanc per a no xifrar)"
 
-#, fuzzy
 msgid "Disk encryption password"
-msgstr "Contrasenya de xifrat"
+msgstr "Contrasenya del xifrat del disc"
 
-#, fuzzy
 msgid "Partition - New"
-msgstr "Partició"
+msgstr "Partició - Nova"
 
-#, fuzzy
 msgid "Filesystem"
-msgstr "Canviar el sistema de fitxers"
+msgstr "Sistema de fitxers"
 
 msgid "Invalid size"
-msgstr ""
+msgstr "Mida invàlida"
 
-#, fuzzy
 msgid "Start (default: sector {}): "
-msgstr "Introduïu l'inici (per defecte: sector {}): "
+msgstr "Inici (per defecte: sector {}): "
 
-#, fuzzy
 msgid "End (default: {}): "
-msgstr "Introduïu el final (per defecte: {}): "
+msgstr "Final (per defecte: {}): "
 
-#, fuzzy
 msgid "Subvolume name"
-msgstr "Nom del subvolum "
+msgstr "Nom del subvolum"
 
-#, fuzzy
 msgid "Disk configuration type"
-msgstr "Configuració del disc"
+msgstr "Tipus de configuració del disc"
 
 msgid "Root mount directory"
-msgstr ""
+msgstr "Directori de muntatge arrel"
 
-#, fuzzy
 msgid "Select language"
-msgstr "Idioma local"
+msgstr "Seleccioneu l'idioma"
 
-#, fuzzy
 msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "Escriviu paquets addicionals a instal·lar (separats per espais, deixeu-ho en blanc per saltar aquest pas): "
+msgstr "Escriviu paquets addicionals per instal·lar (separats per espais; deixeu-ho en blanc per saltar aquest pas):"
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "Número de descàrrega invàlid"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "Número de descàrregues"
 
-#, fuzzy
 msgid "The username you entered is invalid"
-msgstr "El nom d'usuari introduït no és vàlid. Intenteu-ho de nou"
+msgstr "El nom d'usuari introduït no és vàlid"
 
-#, fuzzy
 msgid "Username"
-msgstr "Nom d'usuari: "
+msgstr "Nom d'usuari"
 
-#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "Cal que \"{}\" sigui un superusuari (sudo)?"
+msgstr "Cal que \"{}\" sigui superusuari (sudo)?\n"
 
-#, fuzzy
 msgid "Interfaces"
-msgstr "Afegir interfície"
+msgstr "Interfícies"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "Necessiteu introduir una IP vàlida al mode de configuració d'IP"
 
 msgid "Modes"
-msgstr ""
+msgstr "Modes"
 
 msgid "IP address"
-msgstr ""
+msgstr "Adreça IP"
 
-#, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
-msgstr "Introduïu la IP de la porta d'enllaç (router) o deixeu-ho en blanc per a no utilitzar-ne cap: "
+msgstr "Introduïu la IP de la porta d'enllaç (router). Deixeu-ho en blanc per a no utilitzar-ne cap."
 
 msgid "Gateway address"
-msgstr ""
+msgstr "Adreça de la porta d'enllaç"
 
-#, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr "Introduïu els vostres servidors DNS (separats per espais o deixeu-ho en blanc per a cap): "
+msgstr "Introduïu els vostres servidors DNS (separats per espais; deixeu-ho en blanc per a cap)"
 
-#, fuzzy
 msgid "DNS servers"
-msgstr "Sense servidor d'àudio"
+msgstr "Servidors DNS"
 
-#, fuzzy
 msgid "Configure interfaces"
-msgstr "{} interfícies configurades"
+msgstr "Configurar interfícies"
 
-#, fuzzy
 msgid "Kernel"
-msgstr "Kernels"
+msgstr "Nuclis"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "S'han desactivat algunes opcions perquè no s'ha detectat UEFI"
 
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
-#, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "El controlador propietari d'Nvidia no és compatible amb sway. És possible que experimenteu problemes. Voleu continuar?"
+msgstr "El controlador propietari Nvidia no és compatible amb Sway."
 
-#, fuzzy
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "El controlador propietari d'Nvidia no és compatible amb sway. És possible que experimenteu problemes. Voleu continuar?"
+msgstr "És possible que experimenteu problemes. Voleu continuar?"
 
-#, fuzzy
 msgid "Main profile"
-msgstr "Editar perfil"
+msgstr "Perfil principal"
 
-#, fuzzy
 msgid "Confirm password"
-msgstr "Canviar contrasenya"
+msgstr "Confirmar contrasenya"
 
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "La confirmació de la contrasenya no coincideix, si us plau torneu-ho a intentar"
 
-#, fuzzy
 msgid "Not a valid directory"
-msgstr "Directori invàlid: {}"
+msgstr "Directori invàlid"
 
-#, fuzzy
 msgid "Would you like to continue?"
-msgstr "Us agradaria utilitzar la compressió BTRFS?"
+msgstr "Voleu continuar?"
 
 msgid "Directory"
-msgstr ""
+msgstr "Directori"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr ""
-"Introduïu un directori on guardar les configuracions (compleció amb TAB activada)\n"
-"Directori d'emmagatzematge: "
+msgstr "Introduïu un directori on guardar les configuracions (compleció amb TAB activada)"
 
-#, fuzzy
 msgid "Do you want to save the configuration file(s) to {}?"
-msgstr ""
-"Voleu guardar {} fitxer(s) de configuració a la següent ubicació?\n"
-"\n"
-"{}"
+msgstr "Voleu guardar el(s) fitxer(s) de configuració a {}?"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Activat"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Desactivat"
 
-#, fuzzy
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Si us plau envieu aquest problema (i fitxer) a https://github.com/archlinux/archinstall/issues"
+msgstr "Si us plau, envieu aquest problema (i fitxer) a https://github.com/archlinux/archinstall/issues"
 
-#, fuzzy
 msgid "Mirror name"
-msgstr "Regió del servidor"
+msgstr "Nom del mirall"
 
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
-#, fuzzy
 msgid "Select signature check"
-msgstr "Seleccioneu la opció de verificació de firma"
+msgstr "Seleccionar verificació de signatura"
 
-#, fuzzy
 msgid "Select execution mode"
-msgstr "Seleccioneu un mode d'execució"
+msgstr "Seleccionar mode d'execució"
 
-#, fuzzy
 msgid "Press ? for help"
-msgstr "Polseu Ctrl+h per ajuda"
+msgstr "Polseu ? per accedir a l'ajuda"

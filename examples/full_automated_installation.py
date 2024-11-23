@@ -1,11 +1,7 @@
 from pathlib import Path
 
-from archinstall import Installer
-from archinstall import profile
+from archinstall import Installer, disk, models, profile
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall import disk
-from archinstall import models
-
 
 # we're creating a new ext4 filesystem installation
 fs_type = disk.FilesystemType('ext4')
@@ -28,7 +24,7 @@ boot_partition = disk.PartitionModification(
 	length=disk.Size(512, disk.Unit.MiB, device.device_info.sector_size),
 	mountpoint=Path('/boot'),
 	fs_type=disk.FilesystemType.Fat32,
-	flags=[disk.PartitionFlag.Boot]
+	flags=[disk.PartitionFlag.BOOT]
 )
 device_modification.add_partition(boot_partition)
 

@@ -1,18 +1,14 @@
 from __future__ import annotations
 
 import re
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from ..utils.util import get_password
+from archinstall.tui import Alignment, EditMenu, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
+
+from ..general import secret
 from ..menu import ListManager
 from ..models.users import User
-from ..general import secret
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	Alignment, EditMenu, Orientation,
-	ResultType
-)
+from ..utils.util import get_password
 
 if TYPE_CHECKING:
 	_: Any

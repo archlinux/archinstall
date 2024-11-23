@@ -69,8 +69,8 @@ After running ``python -m archinstall test_installer`` it should print something
                    start=Size(value=2048, unit=<Unit.sectors: 'sectors'>, sector_size=SectorSize(value=512, unit=<Unit.B: 1>)),
                    length=Size(value=535822336, unit=<Unit.B: 1>, sector_size=SectorSize(value=512, unit=<Unit.B: 1>)),
                    flags=[
-                       <PartitionFlag.Boot: 1>,
-                       <PartitionFlag.ESP: 18>
+                       <PartitionFlag.BOOT: flag_id=1, alias=None>,
+                       <PartitionFlag.ESP: flag_id=18, alias=None>
                    ],
                    partn=1,
                    partuuid='a26be943-c193-41f4-9930-9341cf5f6b19',

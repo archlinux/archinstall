@@ -1,19 +1,16 @@
 from pathlib import Path
 
 import archinstall
-from archinstall import info, debug
-from archinstall import SysInfo
-from archinstall.lib import locale
-from archinstall.lib import disk
-from archinstall.lib.global_menu import GlobalMenu
+from archinstall import SysInfo, debug, info
+from archinstall.lib import disk, locale
 from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
+from archinstall.lib.interactions.general_conf import ask_chroot
 from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.lib.interactions.general_conf import ask_chroot
 from archinstall.tui import Tui
-
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -157,7 +154,7 @@ def perform_installation(mountpoint: Path) -> None:
 				except:
 					pass
 
-	debug(f"Disk states after installing: {disk.disk_layouts()}")
+	debug(f"Disk states after installing:\n{disk.disk_layouts()}")
 
 
 def _guided() -> None:

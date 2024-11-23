@@ -2,9 +2,9 @@ from pathlib import Path
 
 import archinstall
 from archinstall import debug
-from archinstall.lib.installer import Installer
-from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib import disk
+from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.installer import Installer
 from archinstall.tui import Tui
 
 
@@ -50,7 +50,7 @@ def perform_installation(mountpoint: Path) -> None:
 			target.parent.mkdir(parents=True)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	debug(f"Disk states after installing: {disk.disk_layouts()}")
+	debug(f"Disk states after installing:\n{disk.disk_layouts()}")
 
 
 def only_hd() -> None:

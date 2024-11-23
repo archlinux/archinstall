@@ -2,23 +2,30 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from ..interactions.general_conf import ask_abort
-from .device_handler import device_handler
-from .device_model import (
-	DiskLayoutConfiguration, DiskLayoutType, PartitionTable,
-	FilesystemType, DiskEncryption, LvmVolumeGroup,
-	Size, Unit, SectorSize, PartitionModification, EncryptionType,
-	LvmVolume, LvmConfiguration
-)
+from archinstall.tui import Tui
+
 from ..hardware import SysInfo
+from ..interactions.general_conf import ask_abort
 from ..luks import Luks2
 from ..output import debug, info
-from archinstall.tui import (
-	Tui
+from .device_handler import device_handler
+from .device_model import (
+	DiskEncryption,
+	DiskLayoutConfiguration,
+	DiskLayoutType,
+	EncryptionType,
+	FilesystemType,
+	LvmConfiguration,
+	LvmVolume,
+	LvmVolumeGroup,
+	PartitionModification,
+	PartitionTable,
+	SectorSize,
+	Size,
+	Unit,
 )
-
 
 if TYPE_CHECKING:
 	_: Any

@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from ..hardware import SysInfo, GfxDriver
+from archinstall.tui import Alignment, FrameProperties, FrameStyle, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu
+
+from ..hardware import GfxDriver, SysInfo
 from ..models.bootloader import Bootloader
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, Orientation, PreviewStyle
-)
 
 if TYPE_CHECKING:
 	_: Any

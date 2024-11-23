@@ -1,12 +1,10 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from ..output import FormattedOutput
+from archinstall.tui import Alignment, EditMenu
+
 from ..general import secret
-
-from archinstall.tui import (
-	Alignment, EditMenu
-)
+from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any

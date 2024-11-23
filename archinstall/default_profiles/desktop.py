@@ -1,13 +1,9 @@
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
+from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult, GreeterType
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, ResultType, PreviewStyle
-)
+from archinstall.tui import FrameProperties, MenuItem, MenuItemGroup, PreviewStyle, ResultType, SelectMenu
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

@@ -8,25 +8,24 @@ import time
 from collections.abc import Callable
 from pathlib import Path
 from types import TracebackType
-from typing import Any, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any
 
-from . import disk
-from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
+from archinstall.tui.curses_menu import Tui
+
+from . import disk, pacman
+from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from .general import SysCommand
 from .hardware import SysInfo
-from .locale import LocaleConfiguration
-from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
+from .locale import LocaleConfiguration, verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import MirrorConfiguration
 from .models.bootloader import Bootloader
 from .models.network_configuration import Nic
 from .models.users import User
-from .output import log, error, info, warn, debug
-from . import pacman
+from .output import debug, error, info, log, warn
 from .pacman import Pacman
 from .plugins import plugins
 from .storage import storage
-from archinstall.tui.curses_menu import Tui
 
 if TYPE_CHECKING:
 	_: Any
@@ -114,7 +113,8 @@ class Installer:
 			raise exc_val
 
 		if not (missing_steps := self.post_install_check()):
-			log(f'Installation completed without any errors.\nLog files temporarily available at {storage["LOG_PATH"]}.\nYou may reboot when ready.\n', fg='green')
+			msg = f'Installation completed without any errors.\nLog files temporarily available at {storage["LOG_PATH"]}.\nYou may reboot when ready.\n'
+			log(msg, fg='green')
 			self.sync_log_to_install_medium()
 			return True
 		else:
@@ -610,7 +610,7 @@ class Installer:
 		# fstrim is owned by util-linux, a dependency of both base and systemd.
 		self.enable_service("fstrim.timer")
 
-	def enable_service(self, services: Union[str, list[str]]) -> None:
+	def enable_service(self, services: str | list[str]) -> None:
 		if isinstance(services, str):
 			services = [services]
 
@@ -821,7 +821,7 @@ class Installer:
 		testing: bool = False,
 		multilib: bool = False,
 		mkinitcpio: bool = True,
-		hostname: str = 'archinstall',
+		hostname: str | None = None,
 		locale_config: LocaleConfiguration = LocaleConfiguration.default()
 	):
 		if self._disk_config.lvm_config:
@@ -874,7 +874,9 @@ class Installer:
 		# os.remove(f'{self.target}/etc/localtime')
 		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
 		# sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
-		self.set_hostname(hostname)
+		if hostname:
+			self.set_hostname(hostname)
+
 		self.set_locale(locale_config)
 		self.set_keyboard_language(locale_config.kb_layout)
 
@@ -1473,7 +1475,7 @@ Exec = /bin/sh -c "{hook_command}"
 			case Bootloader.Limine:
 				self._add_limine_bootloader(boot_partition, efi_partition, root)
 
-	def add_additional_packages(self, packages: Union[str, list[str]]) -> None:
+	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
 
 	def enable_sudo(self, entity: str, group: bool = False):
@@ -1506,7 +1508,7 @@ Exec = /bin/sh -c "{hook_command}"
 		# Guarantees sudoer conf file recommended perms
 		os.chmod(Path(rule_file_name), 0o440)
 
-	def create_users(self, users: Union[User, list[User]]) -> None:
+	def create_users(self, users: User | list[User]) -> None:
 		if not isinstance(users, list):
 			users = [users]
 
