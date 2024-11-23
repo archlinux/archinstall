@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from archinstall.lib.menu.menu_helper import MenuHelper
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
+from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu
 
 from .. import disk
 from ..disk.device_model import BtrfsMountOption
@@ -18,8 +18,10 @@ if TYPE_CHECKING:
 
 
 def select_devices(preset: list[disk.BDevice] | None = []) -> list[disk.BDevice]:
-	def _preview_device_selection(selection: disk._DeviceInfo) -> str | None:
-		dev = disk.device_handler.get_device(selection.path)
+	def _preview_device_selection(item: MenuItem) -> str | None:
+		device: disk._DeviceInfo = item.get_value()
+		dev = disk.device_handler.get_device(device.path)
+
 		if dev and dev.partition_infos:
 			return FormattedOutput.as_table(dev.partition_infos)
 		return None
@@ -33,12 +35,17 @@ def select_devices(preset: list[disk.BDevice] | None = []) -> list[disk.BDevice]
 
 	group, header = MenuHelper.create_table(data=options)
 	group.set_selected_by_value(presets)
+	group.set_preview_for_all(_preview_device_selection)
+
 	result = SelectMenu(
 		group,
 		header=header,
 		alignment=Alignment.CENTER,
 		search_enabled=False,
-		multi=True
+		multi=True,
+		preview_style=PreviewStyle.BOTTOM,
+		preview_size='auto',
+		preview_frame=FrameProperties.max('Partitions')
 	).run()
 
 	match result.type_:
