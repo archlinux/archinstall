@@ -49,9 +49,6 @@ repos:
     rev: v0.7.4
     hooks:
       - id: ruff
-        # args: [
-        #   'check --select I --fix'
-        # ]
   - repo: local
     hooks:
       - id: pylint
