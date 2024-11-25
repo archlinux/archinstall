@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from archinstall.tui import Alignment, EditMenu, ResultType
 
@@ -8,7 +8,11 @@ from ..utils.util import prompt_dir
 from .device_model import SubvolumeModification
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class SubvolumeMenu(ListManager):

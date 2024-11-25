@@ -34,7 +34,9 @@ from .types import (
 )
 
 if TYPE_CHECKING:
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class AbstractCurses(metaclass=ABCMeta):

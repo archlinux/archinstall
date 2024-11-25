@@ -7,7 +7,11 @@ from ..menu import AbstractSubMenu
 from .utils import get_kb_layout, list_keyboard_languages, list_locales, set_kb_layout
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 @dataclass

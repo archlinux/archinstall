@@ -36,7 +36,9 @@ from .lib.translationhandler import DeferredTranslation, Language, TranslationHa
 from .tui import Tui
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	_: Callable[[str], DeferredTranslation]
 
 
 __version__ = "3.0.1"

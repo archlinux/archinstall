@@ -6,7 +6,11 @@ from archinstall.tui import Alignment, MenuItem, MenuItemGroup, ResultType, Sele
 from ..output import FormattedOutput
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ListManager:

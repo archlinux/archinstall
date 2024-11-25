@@ -18,8 +18,13 @@ from ..storage import storage
 from .profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
 	from ..installer import Installer
-	_: Any
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ProfileHandler:
