@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
@@ -6,8 +6,12 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui import FrameProperties, MenuItem, MenuItemGroup, PreviewStyle, ResultType, SelectMenu
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
 	from archinstall.lib.installer import Installer
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ServerProfile(Profile):

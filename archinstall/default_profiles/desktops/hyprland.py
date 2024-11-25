@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from archinstall.default_profiles.desktops import SeatAccess
 from archinstall.default_profiles.profile import GreeterType, ProfileType, SelectResult
@@ -6,8 +6,12 @@ from archinstall.default_profiles.xorg import XorgProfile
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
 	from archinstall.lib.installer import Installer
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class HyprlandProfile(XorgProfile):

@@ -7,7 +7,11 @@ from typing import TYPE_CHECKING, Any
 from ..profile import ProfileConfiguration
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class NicType(Enum):

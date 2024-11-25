@@ -8,7 +8,9 @@ from archinstall.tui import Chars, FrameProperties, FrameStyle, MenuItem, MenuIt
 from ..output import error, unicode_ljust
 
 if TYPE_CHECKING:
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class Selector:

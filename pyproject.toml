@@ -86,12 +86,12 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-module = "archinstall.default_profiles.applications.*"
+module = "archinstall.default_profiles.*"
 disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
-module = "archinstall.default_profiles.servers.*"
-disallow_any_explicit = true
+module = "archinstall.default_profiles.profile"
+disallow_any_explicit = false
 
 [[tool.mypy.overrides]]
 module = "archinstall.examples.*"

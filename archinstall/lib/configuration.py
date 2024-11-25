@@ -13,7 +13,11 @@ from .storage import storage
 from .utils.util import prompt_dir
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ConfigurationOutput:
