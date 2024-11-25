@@ -1,3 +1,5 @@
+from typing import override
+
 from archinstall.default_profiles.profile import Profile, ProfileType
 
 
@@ -9,9 +11,11 @@ class LighttpdProfile(Profile):
 		)
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return ['lighttpd']
 
 	@property
+	@override
 	def services(self) -> list[str]:
 		return ['lighttpd']

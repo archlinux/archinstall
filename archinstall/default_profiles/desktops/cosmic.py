@@ -1,3 +1,5 @@
+from typing import override
+
 from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
 
@@ -7,11 +9,13 @@ class CosmicProfile(XorgProfile):
 		super().__init__('cosmic-epoch', ProfileType.DesktopEnv, description='', advanced=True)
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return [
 			"cosmic",
 		]
 
 	@property
+	@override
 	def default_greeter_type(self) -> GreeterType | None:
 		return GreeterType.CosmicSession

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.tui import Alignment, EditMenu, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
 
@@ -28,9 +28,11 @@ class UserList(ListManager):
 		]
 		super().__init__(prompt, lusers, [self._actions[0]], self._actions[1:])
 
+	@override
 	def selected_action_display(self, selection: User) -> str:
 		return selection.username
 
+	@override
 	def handle_action(self, action: str, entry: User | None, data: list[User]) -> list[User]:
 		if action == self._actions[0]:  # add
 			new_user = self._add_user()
