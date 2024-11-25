@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
@@ -26,9 +26,11 @@ class ManualNetworkConfig(ListManager):
 		]
 		super().__init__(prompt, preset, [self._actions[0]], self._actions[1:])
 
+	@override
 	def selected_action_display(self, selection: Nic) -> str:
 		return selection.iface if selection.iface else ''
 
+	@override
 	def handle_action(self, action: str, entry: Nic | None, data: list[Nic]) -> list[Nic]:
 		if action == self._actions[0]:  # add
 			iface = self._select_iface(data)

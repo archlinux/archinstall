@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
@@ -104,6 +104,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			return True
 		return False
 
+	@override
 	def run(self) -> DiskEncryption | None:
 		super().run()
 

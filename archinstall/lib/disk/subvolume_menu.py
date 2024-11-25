@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.tui import Alignment, EditMenu, ResultType
 
@@ -24,6 +24,7 @@ class SubvolumeMenu(ListManager):
 		]
 		super().__init__(prompt, btrfs_subvols, [self._actions[0]], self._actions[1:])
 
+	@override
 	def selected_action_display(self, selection: SubvolumeModification) -> str:
 		return str(selection.name)
 
@@ -56,6 +57,7 @@ class SubvolumeMenu(ListManager):
 
 		return SubvolumeModification(Path(name), path)
 
+	@override
 	def handle_action(
 		self,
 		action: str,

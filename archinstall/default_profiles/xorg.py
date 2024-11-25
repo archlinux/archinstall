@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType
 
@@ -26,6 +26,7 @@ class XorgProfile(Profile):
 			advanced=advanced
 		)
 
+	@override
 	def preview_text(self) -> str | None:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
 		if packages := self.packages_text():
@@ -34,6 +35,7 @@ class XorgProfile(Profile):
 		return text
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return [
 			'xorg-server'

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
@@ -108,6 +108,7 @@ class LocaleMenu(AbstractSubMenu):
 		)
 		return temp_locale.preview()
 
+	@override
 	def run(self) -> LocaleConfiguration:
 		super().run()
 

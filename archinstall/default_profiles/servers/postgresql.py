@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType
 
@@ -15,12 +15,15 @@ class PostgresqlProfile(Profile):
 		)
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return ['postgresql']
 
 	@property
+	@override
 	def services(self) -> list[str]:
 		return ['postgresql']
 
+	@override
 	def post_install(self, install_session: 'Installer') -> None:
 		install_session.arch_chroot("initdb -D /var/lib/postgres/data", run_as='postgres')

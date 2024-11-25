@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
@@ -23,6 +23,7 @@ class ServerProfile(Profile):
 			current_selection=current_value
 		)
 
+	@override
 	def do_on_select(self) -> SelectResult | None:
 		items = [
 			MenuItem(
@@ -55,10 +56,12 @@ class ServerProfile(Profile):
 			case ResultType.Reset:
 				return SelectResult.ResetCurrent
 
+	@override
 	def post_install(self, install_session: 'Installer') -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
 
+	@override
 	def install(self, install_session: 'Installer') -> None:
 		server_info = self.current_selection_names()
 		details = ', '.join(server_info)

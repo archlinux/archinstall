@@ -11,7 +11,7 @@ from collections.abc import Callable
 from curses.textpad import Textbox
 from dataclasses import dataclass
 from types import FrameType, TracebackType
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Any, Literal, override
 
 from ..lib.output import debug
 from .help import Help
@@ -684,6 +684,7 @@ class EditMenu(AbstractCurses):
 		self._clear_all()
 		return result
 
+	@override
 	def resize_win(self) -> None:
 		self._draw()
 
@@ -726,6 +727,7 @@ class EditMenu(AbstractCurses):
 			self._input_vp.update()
 			self._input_vp.edit(default_text=self._default_text)
 
+	@override
 	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		try:
 			self._draw()
@@ -889,6 +891,7 @@ class SelectMenu(AbstractCurses):
 		self._clear_all()
 		return result
 
+	@override
 	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		self._draw()
 
@@ -909,6 +912,7 @@ class SelectMenu(AbstractCurses):
 				else:
 					return self.kickoff(win)
 
+	@override
 	def resize_win(self) -> None:
 		self._draw()
 
