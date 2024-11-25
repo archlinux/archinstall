@@ -206,3 +206,6 @@ class DeferredTranslation:
 	def install(cls) -> None:
 		import builtins
 		builtins._ = cls  # type: ignore
+
+
+translation_handler = TranslationHandler()
