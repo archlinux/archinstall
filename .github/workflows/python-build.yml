@@ -17,7 +17,7 @@ jobs:
           pacman-key --init
           pacman --noconfirm -Sy archlinux-keyring
           pacman --noconfirm -Syyu
-          pacman --noconfirm -Sy python-pip python-pydantic python-pyparted python-simple-term-menu pkgconfig gcc
+          pacman --noconfirm -Sy python-pip python-pydantic python-pyparted pkgconfig gcc
       - name: Install build dependencies
         run: |
           python -m pip install --break-system-packages --upgrade pip
