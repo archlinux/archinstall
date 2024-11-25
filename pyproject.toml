@@ -202,7 +202,6 @@ select = [
 ignore = [
     "E722",     # bare-except
     "PLW2901",  # redefined-loop-name
-    "UP027",    # unpacked-list-comprehension
     "UP028",    # yield-in-for-loop
     "UP031",    # printf-string-formatting
     "UP032",    # f-string
