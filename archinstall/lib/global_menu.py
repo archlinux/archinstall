@@ -36,7 +36,11 @@ from .translationhandler import Language, TranslationHandler
 from .utils.util import format_cols, get_password
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class GlobalMenu(AbstractMenu):

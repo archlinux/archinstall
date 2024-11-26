@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, override
 
 from archinstall.tui import Alignment, EditMenu, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
 
@@ -11,7 +11,11 @@ from ..models.users import User
 from ..utils.util import get_password
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class UserList(ListManager):
@@ -30,9 +34,11 @@ class UserList(ListManager):
 			prompt
 		)
 
+	@override
 	def selected_action_display(self, selection: User) -> str:
 		return selection.username
 
+	@override
 	def handle_action(self, action: str, entry: User | None, data: list[User]) -> list[User]:
 		if action == self._actions[0]:  # add
 			new_user = self._add_user()

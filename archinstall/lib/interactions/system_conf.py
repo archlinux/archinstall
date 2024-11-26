@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from archinstall.tui import Alignment, FrameProperties, FrameStyle, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu
 
@@ -8,7 +8,11 @@ from ..hardware import GfxDriver, SysInfo
 from ..models.bootloader import Bootloader
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 def select_kernel(preset: list[str] = []) -> list[str]:

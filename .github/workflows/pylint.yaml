@@ -12,7 +12,7 @@ jobs:
                 pacman-key --init
                 pacman --noconfirm -Sy archlinux-keyring
                 pacman --noconfirm -Syyu
-                pacman --noconfirm -Sy python-pip python-pyparted python-simple-term-menu pkgconfig gcc
+                pacman --noconfirm -Sy python-pip python-pyparted pkgconfig gcc
             - run: pip install --break-system-packages --upgrade pip
             - name: Install Pylint and Pylint plug-ins
               run: pip install --break-system-packages .[dev]

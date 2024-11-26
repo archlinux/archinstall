@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
@@ -6,8 +6,12 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui import FrameProperties, MenuItem, MenuItemGroup, PreviewStyle, ResultType, SelectMenu
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
 	from archinstall.lib.installer import Installer
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ServerProfile(Profile):
@@ -19,6 +23,7 @@ class ServerProfile(Profile):
 			current_selection=current_value
 		)
 
+	@override
 	def do_on_select(self) -> SelectResult | None:
 		items = [
 			MenuItem(
@@ -51,10 +56,12 @@ class ServerProfile(Profile):
 			case ResultType.Reset:
 				return SelectResult.ResetCurrent
 
+	@override
 	def post_install(self, install_session: 'Installer') -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
 
+	@override
 	def install(self, install_session: 'Installer') -> None:
 		server_info = self.current_selection_names()
 		details = ', '.join(server_info)

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, override
 
 from archinstall.tui import Alignment, EditMenu, ResultType
 
@@ -8,7 +8,11 @@ from ..utils.util import prompt_dir
 from .device_model import SubvolumeModification
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class SubvolumeMenu(ListManager):
@@ -30,6 +34,7 @@ class SubvolumeMenu(ListManager):
 			prompt
 		)
 
+	@override
 	def selected_action_display(self, selection: SubvolumeModification) -> str:
 		return str(selection.name)
 
@@ -62,6 +67,7 @@ class SubvolumeMenu(ListManager):
 
 		return SubvolumeModification(Path(name), path)
 
+	@override
 	def handle_action(
 		self,
 		action: str,

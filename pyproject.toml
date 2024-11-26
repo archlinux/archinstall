@@ -11,10 +11,10 @@ authors = [
 ]
 license = {text = "GPL-3.0-only"}
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 keywords = ["linux", "arch", "archinstall", "installer"]
 classifiers = [
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
@@ -63,7 +63,7 @@ include-package-data = true
 archinstall = "archinstall"
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 files = "."
 exclude = "^build/"
 check_untyped_defs = true
@@ -86,12 +86,12 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-module = "archinstall.default_profiles.applications.*"
+module = "archinstall.default_profiles.*"
 disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
-module = "archinstall.default_profiles.servers.*"
-disallow_any_explicit = true
+module = "archinstall.default_profiles.profile"
+disallow_any_explicit = false
 
 [[tool.mypy.overrides]]
 module = "archinstall.examples.*"
@@ -131,7 +131,7 @@ ignore-paths = [
 ]
 load-plugins = ["pylint_pydantic"]
 persistent = false
-py-version = "3.11"
+py-version = "3.12"
 recursive = true
 
 [tool.pylint.format]
@@ -168,7 +168,7 @@ score = false
 additional-builtins = ["_"]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 builtins = ["_"]
 line-length = 160
 
@@ -202,7 +202,6 @@ select = [
 ignore = [
     "E722",     # bare-except
     "PLW2901",  # redefined-loop-name
-    "UP027",    # unpacked-list-comprehension
     "UP028",    # yield-in-for-loop
     "UP031",    # printf-string-formatting
     "UP032",    # f-string

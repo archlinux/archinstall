@@ -36,10 +36,12 @@ from .lib.translationhandler import DeferredTranslation, Language, TranslationHa
 from .tui import Tui
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	_: Callable[[str], DeferredTranslation]
 
 
-__version__ = "3.0.0"
+__version__ = "3.0.1"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the

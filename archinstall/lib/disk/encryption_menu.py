@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
@@ -12,7 +12,11 @@ from . import LvmConfiguration, LvmVolume
 from .fido import Fido2, Fido2Device
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class DiskEncryptionMenu(AbstractSubMenu):
@@ -100,6 +104,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			return True
 		return False
 
+	@override
 	def run(self) -> DiskEncryption | None:
 		super().run()
 

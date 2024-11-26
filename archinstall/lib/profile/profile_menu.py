@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from archinstall.default_profiles.profile import GreeterType, Profile
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
@@ -11,7 +11,11 @@ from ..menu import AbstractSubMenu
 from .profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ProfileMenu(AbstractSubMenu):
@@ -60,6 +64,7 @@ class ProfileMenu(AbstractSubMenu):
 			)
 		]
 
+	@override
 	def run(self) -> ProfileConfiguration | None:
 		super().run()
 
