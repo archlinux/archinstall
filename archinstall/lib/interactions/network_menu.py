@@ -20,7 +20,13 @@ class ManualNetworkConfig(ListManager):
 			str(_('Edit interface')),
 			str(_('Delete interface'))
 		]
-		super().__init__(prompt, preset, [self._actions[0]], self._actions[1:])
+
+		super().__init__(
+			preset,
+			[self._actions[0]],
+			self._actions[1:],
+			prompt
+		)
 
 	def selected_action_display(self, selection: Nic) -> str:
 		return selection.iface if selection.iface else ''

@@ -125,11 +125,12 @@ class CustomMirrorList(ListManager):
 			str(_('Change custom mirror')),
 			str(_('Delete custom mirror'))
 		]
+
 		super().__init__(
-			'',
 			custom_mirrors,
 			[self._actions[0]],
-			self._actions[1:]
+			self._actions[1:],
+			''
 		)
 
 	def selected_action_display(self, selection: CustomMirror) -> str:

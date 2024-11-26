@@ -54,7 +54,12 @@ class PartitioningList(ListManager):
 		}
 
 		display_actions = list(self._actions.values())
-		super().__init__(prompt, device_partitions, display_actions[:2], display_actions[3:])
+		super().__init__(
+			device_partitions,
+			display_actions[:2],
+			display_actions[3:],
+			prompt
+		)
 
 	def selected_action_display(self, selection: PartitionModification) -> str:
 		if selection.status == ModificationStatus.Create:
@@ -179,8 +184,8 @@ class PartitioningList(ListManager):
 
 	def _set_btrfs_subvolumes(self, partition: PartitionModification) -> None:
 		partition.btrfs_subvols = SubvolumeMenu(
-			str(_("Manage btrfs subvolumes for current partition")),
-			partition.btrfs_subvols
+			partition.btrfs_subvols,
+			None
 		).run()
 
 	def _prompt_formatting(self, partition: PartitionModification) -> None:
