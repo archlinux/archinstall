@@ -42,7 +42,7 @@ class Fido2:
 				error('fido2 support is most likely not installed')
 				raise ValueError('HSM devices can not be detected, is libfido2 installed?')
 
-			fido_devices: str = clear_vt100_escape_codes(ret)  # type: ignore
+			fido_devices: str = clear_vt100_escape_codes(ret)  # type: ignore[assignment]
 
 			manufacturer_pos = 0
 			product_pos = 0
