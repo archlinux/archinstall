@@ -16,13 +16,23 @@ if TYPE_CHECKING:
 
 
 class SubvolumeMenu(ListManager):
-	def __init__(self, prompt: str, btrfs_subvols: list[SubvolumeModification]):
+	def __init__(
+		self,
+		btrfs_subvols: list[SubvolumeModification],
+		prompt: str | None = None
+	):
 		self._actions = [
 			str(_('Add subvolume')),
 			str(_('Edit subvolume')),
 			str(_('Delete subvolume'))
 		]
-		super().__init__(prompt, btrfs_subvols, [self._actions[0]], self._actions[1:])
+
+		super().__init__(
+			btrfs_subvols,
+			[self._actions[0]],
+			self._actions[1:],
+			prompt
+		)
 
 	@override
 	def selected_action_display(self, selection: SubvolumeModification) -> str:

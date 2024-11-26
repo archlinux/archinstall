@@ -16,10 +16,10 @@ if TYPE_CHECKING:
 class ListManager:
 	def __init__(
 		self,
-		prompt: str,
 		entries: list[Any],
 		base_actions: list[str],
-		sub_menu_actions: list[str]
+		sub_menu_actions: list[str],
+		prompt: str | None = None
 	):
 		"""
 		:param prompt:  Text which will appear at the header
@@ -38,8 +38,7 @@ class ListManager:
 		self._original_data = copy.deepcopy(entries)
 		self._data = copy.deepcopy(entries)
 
-		explainer = str(_('\n Choose an object from the list, and select one of the available actions for it to execute'))
-		self._prompt = prompt if prompt else explainer
+		self._prompt: str | None = prompt
 
 		self._separator = ''
 		self._confirm_action = str(_('Confirm and exit'))
@@ -66,7 +65,11 @@ class ListManager:
 			# and the value is the original value from the self._data container
 			data_formatted = self.reformat(self._data)
 			options = self._prepare_selection(data_formatted)
+
 			header = self._get_header(data_formatted)
+
+			if self._prompt is not None:
+				header = f'{self._prompt}\n\n{header}'
 
 			items = [MenuItem(o[0], value=o[1]) for o in options]
 			group = MenuItemGroup(items, sort_items=False)
@@ -76,7 +79,7 @@ class ListManager:
 				header=header,
 				search_enabled=False,
 				allow_skip=False,
-				alignment=Alignment.CENTER,
+				alignment=Alignment.CENTER
 			).run()
 
 			match result.type_:
@@ -149,16 +152,19 @@ class ListManager:
 		Default implementation of the table to be displayed.
 		Override if any custom formatting is needed
 		"""
-		table = FormattedOutput.as_table(data)
-		rows = table.split('\n')
+		display_data: dict[str, Any | None] = {}
 
-		# these are the header rows of the table and do not map to any User obviously
-		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
-		# the selectable rows so the header has to be aligned
-		display_data: dict[str, Any | None] = {f'{rows[0]}': None, f'{rows[1]}': None}
+		if data:
+			table = FormattedOutput.as_table(data)
+			rows = table.split('\n')
 
-		for row, entry in zip(rows[2:], data):
-			display_data[row] = entry
+			# these are the header rows of the table and do not map to any User obviously
+			# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
+			# the selectable rows so the header has to be aligned
+			display_data = {f'{rows[0]}': None, f'{rows[1]}': None}
+
+			for row, entry in zip(rows[2:], data):
+				display_data[row] = entry
 
 		return display_data
 

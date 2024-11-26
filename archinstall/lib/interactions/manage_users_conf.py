@@ -26,7 +26,13 @@ class UserList(ListManager):
 			str(_('Promote/Demote user')),
 			str(_('Delete User'))
 		]
-		super().__init__(prompt, lusers, [self._actions[0]], self._actions[1:])
+
+		super().__init__(
+			lusers,
+			[self._actions[0]],
+			self._actions[1:],
+			prompt
+		)
 
 	@override
 	def selected_action_display(self, selection: User) -> str:
