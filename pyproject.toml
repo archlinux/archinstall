@@ -36,6 +36,7 @@ dev = [
     "ruff==0.8.0",
     "pylint==3.3.1",
     "pylint-pydantic==0.3.2",
+    "pytest==6.2.5",
 ]
 doc = ["sphinx"]
 
@@ -115,6 +116,10 @@ module = "archinstall.tui.*"
 warn_unreachable = false
 
 [[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
 module = [
     "parted",
 ]
@@ -123,6 +128,11 @@ ignore_missing_imports = true
 [tool.bandit]
 targets = ["archinstall"]
 exclude = ["/tests"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "-s"
+testpaths = ["tests"]
 
 [tool.pylint.main]
 ignore-paths = [

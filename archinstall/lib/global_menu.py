@@ -32,7 +32,7 @@ from .models.bootloader import Bootloader
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
-from .translationhandler import Language, TranslationHandler
+from .translationhandler import Language, translation_handler
 from .utils.util import format_cols, get_password
 
 if TYPE_CHECKING:
@@ -46,10 +46,9 @@ if TYPE_CHECKING:
 class GlobalMenu(AbstractMenu):
 	def __init__(self, data_store: dict[str, Any]):
 		self._data_store = data_store
-		self._translation_handler = TranslationHandler()
 
 		if 'archinstall-language' not in data_store:
-			data_store['archinstall-language'] = self._translation_handler.get_language_by_abbr('en')
+			data_store['archinstall-language'] = translation_handler.get_language_by_abbr('en')
 
 		menu_optioons = self._get_menu_options(data_store)
 		self._item_group = MenuItemGroup(
@@ -263,8 +262,8 @@ class GlobalMenu(AbstractMenu):
 
 	def _select_archinstall_language(self, preset: Language) -> Language:
 		from .interactions.general_conf import select_archinstall_language
-		language = select_archinstall_language(self._translation_handler.translated_languages, preset)
-		self._translation_handler.activate(language)
+		language = select_archinstall_language(translation_handler.translated_languages, preset)
+		translation_handler.activate(language)
 
 		self._upate_lang_text()
 
