@@ -15,7 +15,7 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import translation_handler
 
 
-def test_default_args(monkeypatch):
+def test_default_args(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr('sys.argv', ['archinstall'])
     handler = ArchConfigHandler()
     args = handler.args
