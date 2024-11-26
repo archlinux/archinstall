@@ -2,6 +2,7 @@ import copy
 from typing import TYPE_CHECKING, Any
 
 from archinstall.tui import Alignment, MenuItem, MenuItemGroup, ResultType, SelectMenu
+
 from ..output import FormattedOutput
 
 if TYPE_CHECKING:
