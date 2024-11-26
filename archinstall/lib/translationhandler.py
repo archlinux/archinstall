@@ -111,7 +111,7 @@ class TranslationHandler:
 		"""
 		# this is a very naughty way of retrieving the data but
 		# there's no alternative method exposed unfortunately
-		catalog = translation._catalog  # type: ignore
+		catalog = translation._catalog  # type: ignore[attr-defined]
 		messages = {k: v for k, v in catalog.items() if k and v}
 		return len(messages)
 
@@ -205,7 +205,7 @@ class DeferredTranslation:
 	@classmethod
 	def install(cls) -> None:
 		import builtins
-		builtins._ = cls  # type: ignore
+		builtins._ = cls  # type: ignore[attr-defined]
 
 
 translation_handler = TranslationHandler()

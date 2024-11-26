@@ -394,7 +394,7 @@ class EditViewport(AbstractViewport):
 			self._textbox = curses.textpad.Textbox(self._edit_win)
 			self._main_win.refresh()
 
-		self._textbox.edit(self.process_key)  # type: ignore
+		self._textbox.edit(self.process_key)  # type: ignore[arg-type]
 
 
 @dataclass
@@ -1481,8 +1481,8 @@ class Tui:
 			return Tui.t()._main_loop(component)
 
 	def _sig_win_resize(self, signum: int, frame: FrameType | None) -> None:
-		if hasattr(self, '_component') and self._component is not None:  # pylint: disable=E1101
-			self._component.resize_win()  # pylint: disable=E1101
+		if hasattr(self, '_component') and self._component is not None:  # pylint: disable=no-member
+			self._component.resize_win()  # pylint: disable=no-member
 
 	def _main_loop(self, component: AbstractCurses) -> Result:
 		self._screen.refresh()

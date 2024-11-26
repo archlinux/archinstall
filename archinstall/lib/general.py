@@ -156,7 +156,7 @@ class SysCommandWorker:
 		lines = filter(None, self._trace_log[self._trace_log_pos:last_line].splitlines())
 		for line in lines:
 			if self.remove_vt100_escape_codes_from_lines:
-				line = clear_vt100_escape_codes(line)  # type: ignore
+				line = clear_vt100_escape_codes(line)  # type: ignore[assignment]
 
 			yield line + b'\n'
 
