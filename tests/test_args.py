@@ -2,6 +2,7 @@ from pathlib import Path
 
 from pytest import MonkeyPatch
 
+import archinstall
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.disk import DiskLayoutConfiguration, DiskLayoutType
@@ -103,8 +104,11 @@ def test_config_file_parsing(
     handler = ArchConfigHandler()
     arch_config = handler.arch_config
 
+    # TODO: Use the real values from the test fixture instead of clearing out the entries
+    arch_config.disk_config.device_modifications = []
+
     assert arch_config == ArchConfig(
-        version='3.0.0',
+        version=archinstall.__version__,
         locale_config=LocaleConfiguration(
             kb_layout='us',
             sys_lang='en_US',

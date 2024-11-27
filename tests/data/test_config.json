@@ -11,12 +11,16 @@
                 "partitions": [
                     {
                         "btrfs": [],
+                        "dev_path": null,
                         "flags": [
                             "boot"
                         ],
                         "fs_type": "fat32",
                         "size": {
-                            "sector_size": null,
+                            "sector_size": {
+                                "unit": "B",
+                                "value": 512
+                            },
                             "unit": "MiB",
                             "value": 512
                         },
@@ -24,7 +28,10 @@
                         "mountpoint": "/boot",
                         "obj_id": "2c3fa2d5-2c79-4fab-86ec-22d0ea1543c0",
                         "start": {
-                            "sector_size": null,
+                            "sector_size": {
+                                "unit": "B",
+                                "value": 512
+                            },
                             "unit": "MiB",
                             "value": 1
                         },
@@ -33,10 +40,14 @@
                     },
                     {
                         "btrfs": [],
+                        "dev_path": null,
                         "flags": [],
                         "fs_type": "ext4",
                         "size": {
-                            "sector_size": null,
+                            "sector_size": {
+                                "unit": "B",
+                                "value": 512
+                            },
                             "unit": "GiB",
                             "value": 20
                         },
@@ -44,7 +55,10 @@
                         "mountpoint": "/",
                         "obj_id": "3e7018a0-363b-4d05-ab83-8e82d13db208",
                         "start": {
-                            "sector_size": null,
+                            "sector_size": {
+                                "unit": "B",
+                                "value": 512
+                            },
                             "unit": "MiB",
                             "value": 513
                         },
@@ -53,18 +67,25 @@
                     },
                     {
                         "btrfs": [],
+                        "dev_path": null,
                         "flags": [],
                         "fs_type": "ext4",
                         "size": {
-                            "sector_size": null,
-                            "unit": "Percent",
+                            "sector_size": {
+                                "unit": "B",
+                                "value": 512
+                            },
+                            "unit": "GiB",
                             "value": 100
                         },
                         "mount_options": [],
                         "mountpoint": "/home",
                         "obj_id": "ce58b139-f041-4a06-94da-1f8bad775d3f",
                         "start": {
-                            "sector_size": null,
+                            "sector_size": {
+                                "unit": "B",
+                                "value": 512
+                            },
                             "unit": "GiB",
                             "value": 20
                         },
