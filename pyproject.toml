@@ -222,7 +222,6 @@ ignore = [
     "E722",     # bare-except
     "PLW2901",  # redefined-loop-name
     "RUF005",   # collection-literal-concatenation
-    "RUF010",   # explicit-f-string-type-conversion
     "RUF012",   # mutable-class-default
     "RUF015",   # unnecessary-iterable-allocation-for-first-element
     "RUF039",   # unraw-re-pattern
