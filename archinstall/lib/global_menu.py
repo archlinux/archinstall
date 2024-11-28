@@ -310,7 +310,7 @@ class GlobalMenu(AbstractMenu):
 			if network_config.type == NicType.MANUAL:
 				output = FormattedOutput.as_table(network_config.nics)
 			else:
-				output = f'{str(_('Network configuration'))}:\n{network_config.type.display_msg()}'
+				output = f'{_('Network configuration')}:\n{network_config.type.display_msg()}'
 
 			return output
 		return None
@@ -363,7 +363,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_uki(self, item: MenuItem) -> str | None:
 		if item.value is not None:
-			output = f'{str(_('Unified kernel images'))}: '
+			output = f'{_('Unified kernel images')}: '
 			output += str(_('Enabled')) if item.value else str(_('Disabled'))
 			return output
 		return None

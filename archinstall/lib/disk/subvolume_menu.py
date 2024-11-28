@@ -54,7 +54,7 @@ class SubvolumeMenu(ListManager):
 			case ResultType.Reset:
 				raise ValueError('Unhandled result type')
 
-		header = f"{str(_('Subvolume name'))}: {name}\n"
+		header = f"{_('Subvolume name')}: {name}\n"
 
 		path = prompt_dir(
 			str(_("Subvolume mountpoint")),
