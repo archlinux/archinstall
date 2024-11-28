@@ -1,10 +1,10 @@
 import dataclasses
 import json
 import ssl
-from typing import Any
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
+from urllib.response import addinfourl
 
 from ..exceptions import PackageError, SysCallError
 from ..models.gen import LocalPackage, PackageSearch, PackageSearchResult
@@ -15,7 +15,7 @@ BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
 BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/'
 
 
-def _make_request(url: str, params: dict[str, str]) -> Any:
+def _make_request(url: str, params: dict[str, str]) -> addinfourl:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -77,7 +77,7 @@ def find_package(package: str) -> list[PackageSearchResult]:
 	return results
 
 
-def find_packages(*names: str) -> dict[str, Any]:
+def find_packages(*names: str) -> dict[str, PackageSearchResult]:
 	"""
 	This function returns the search results for many packages.
 	The function itself is rather slow, so consider not sending to

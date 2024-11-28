@@ -6,7 +6,7 @@ import os
 import time
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Literal
+from typing import Literal, overload
 
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
@@ -351,7 +351,7 @@ class DeviceHandler:
 		self,
 		cmd: str,
 		info_type: Literal['lv', 'vg', 'pvseg']
-	) -> Any | None:
+	) -> LvmVolumeInfo | LvmGroupInfo | LvmPVInfo | None:
 		raw_info = SysCommand(cmd).decode().split('\n')
 
 		# for whatever reason the output sometimes contains
@@ -389,7 +389,23 @@ class DeviceHandler:
 
 		return None
 
-	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Any | None:
+	@overload
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv']) -> LvmVolumeInfo | None:
+		...
+
+	@overload
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['vg']) -> LvmGroupInfo | None:
+		...
+
+	@overload
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['pvseg']) -> LvmPVInfo | None:
+		...
+
+	def _lvm_info_with_retry(
+		self,
+		cmd: str,
+		info_type: Literal['lv', 'vg', 'pvseg']
+	) -> LvmVolumeInfo | LvmGroupInfo | LvmPVInfo | None:
 		while True:
 			try:
 				return self._lvm_info(cmd, info_type)

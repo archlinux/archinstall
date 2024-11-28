@@ -108,6 +108,14 @@ warn_return_any = false
 warn_unreachable = false
 
 [[tool.mypy.overrides]]
+module = "archinstall.lib.packages"
+disallow_any_explicit = true
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.utils"
+disallow_any_explicit = true
+
+[[tool.mypy.overrides]]
 module = "archinstall.scripts.*"
 warn_unreachable = false
 

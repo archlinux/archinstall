@@ -59,7 +59,7 @@ class TranslationHandler:
 		languages = []
 
 		for short_form in defined_languages:
-			mapping_entry: dict[str, Any] = next(filter(lambda x: x['abbr'] == short_form, mappings))
+			mapping_entry: dict[str, str] = next(filter(lambda x: x['abbr'] == short_form, mappings))
 			abbr = mapping_entry['abbr']
 			lang = mapping_entry['lang']
 			translated_lang = mapping_entry.get('translated_lang', None)
@@ -95,7 +95,7 @@ class TranslationHandler:
 		except Exception:
 			error(f'Unable to set font {font}')
 
-	def _load_language_mappings(self) -> list[dict[str, Any]]:
+	def _load_language_mappings(self) -> list[dict[str, str]]:
 		"""
 		Load the mapping table of all known languages
 		"""

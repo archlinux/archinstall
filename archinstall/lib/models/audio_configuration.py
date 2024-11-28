@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 from ...default_profiles.applications.pipewire import PipewireProfile
 from ..hardware import SysInfo
+from ..installer import Installer
 from ..output import info
 
 
@@ -18,20 +18,20 @@ class Audio(Enum):
 class AudioConfiguration:
 	audio: Audio
 
-	def json(self) -> dict[str, Any]:
+	def json(self) -> dict[str, str]:
 		return {
 			'audio': self.audio.value
 		}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'AudioConfiguration':
+	def parse_arg(arg: dict[str, str]) -> 'AudioConfiguration':
 		return AudioConfiguration(
 			Audio(arg['audio'])
 		)
 
 	def install_audio_config(
 		self,
-		installation: Any
+		installation: Installer
 	) -> None:
 		info(f'Installing audio server: {self.audio.name}')
 
