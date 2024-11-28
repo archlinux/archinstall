@@ -210,6 +210,7 @@ select = [
     "PLE",    # Pylint errors
     "PLW",    # Pylint warnings
     "RSE",    # flake8-raise
+    "RUF",    # Ruff-specific rules
     "SLOT",   # flake8-slot
     "T10",    # flake8-debugger
     "UP",     # pyupgrade
@@ -220,6 +221,11 @@ select = [
 ignore = [
     "E722",     # bare-except
     "PLW2901",  # redefined-loop-name
+    "RUF005",   # collection-literal-concatenation
+    "RUF010",   # explicit-f-string-type-conversion
+    "RUF012",   # mutable-class-default
+    "RUF015",   # unnecessary-iterable-allocation-for-first-element
+    "RUF039",   # unraw-re-pattern
     "UP028",    # yield-in-for-loop
     "UP031",    # printf-string-formatting
     "UP032",    # f-string
