@@ -7,6 +7,16 @@ jobs:
             image: archlinux/archlinux:latest
         steps:
             - uses: actions/checkout@v4
-            - run: pacman --noconfirm -Syu ruff
+            - name: Prepare arch
+              run: |
+                pacman-key --init
+                pacman --noconfirm -Sy archlinux-keyring
+                pacman --noconfirm -Syyu
+                pacman --noconfirm -Sy python-pip python-pyparted pkgconfig gcc
+            - run: pip install --break-system-packages --upgrade pip
+            - name: Install ruff
+              run: pip install --break-system-packages .[dev]
+            - run: python --version
+            - run: ruff --version
             - name: Lint with ruff
               run: ruff check
