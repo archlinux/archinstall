@@ -59,7 +59,8 @@ class SubvolumeMenu(ListManager):
 		path = prompt_dir(
 			str(_("Subvolume mountpoint")),
 			header=header,
-			allow_skip=True
+			allow_skip=True,
+			validate=False
 		)
 
 		if not path:
