@@ -124,10 +124,6 @@ module = "archinstall.tui.*"
 warn_unreachable = false
 
 [[tool.mypy.overrides]]
-module = "tests.*"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
 module = [
     "parted",
 ]
