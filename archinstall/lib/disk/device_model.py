@@ -430,7 +430,7 @@ class _PartitionInfo:
 		fs_type: FilesystemType | None,
 		partn: int | None,
 		partuuid: str | None,
-		uuid: str | None,
+		uuid: str | None,  # pylint: disable=redefined-outer-name
 		mountpoints: list[Path],
 		btrfs_subvol_infos: list[_BtrfsSubvolumeInfo] = []
 	) -> _PartitionInfo:

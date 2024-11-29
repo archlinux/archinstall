@@ -170,7 +170,6 @@ disable = [
     "protected-access",
     "raise-missing-from",
     "redefined-builtin",
-    "redefined-outer-name",
     "unnecessary-lambda",
     "unreachable",
     "unspecified-encoding",

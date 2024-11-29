@@ -191,8 +191,8 @@ def ping(hostname, timeout=5) -> int:
 				if icmp_type == 0 and response[-len(random_identifier):] == random_identifier:
 					latency = round((time.time() - started) * 1000)
 					break
-		except OSError as error:
-			debug(f"Error: {error}")
+		except OSError as e:
+			debug(f"Error: {e}")
 			break
 
 	icmp_socket.close()
