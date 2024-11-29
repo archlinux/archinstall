@@ -8,7 +8,6 @@ from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup,
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
-	from archinstall.lib.installer import Installer
 	from archinstall.lib.translationhandler import DeferredTranslation
 
 	_: Callable[[str], DeferredTranslation]
@@ -76,7 +75,3 @@ class HyprlandProfile(XorgProfile):
 	def do_on_select(self) -> SelectResult | None:
 		self._ask_seat_access()
 		return None
-
-	@override
-	def install(self, install_session: 'Installer') -> None:
-		super().install(install_session)

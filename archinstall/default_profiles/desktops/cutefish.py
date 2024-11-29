@@ -1,10 +1,7 @@
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
-
-if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
 
 
 class CutefishProfile(XorgProfile):
@@ -23,7 +20,3 @@ class CutefishProfile(XorgProfile):
 	@override
 	def default_greeter_type(self) -> GreeterType | None:
 		return GreeterType.Sddm
-
-	@override
-	def install(self, install_session: 'Installer') -> None:
-		super().install(install_session)
