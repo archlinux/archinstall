@@ -91,10 +91,6 @@ module = "archinstall.default_profiles.*"
 disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
-module = "archinstall.default_profiles.profile"
-disallow_any_explicit = false
-
-[[tool.mypy.overrides]]
 module = "archinstall.examples.*"
 disallow_any_explicit = true
 
