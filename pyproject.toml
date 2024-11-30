@@ -165,7 +165,6 @@ disable = [
     "fixme",
     "protected-access",
     "raise-missing-from",
-    "redefined-builtin",
     "unnecessary-lambda",
     "unreachable",
     "unspecified-encoding",
