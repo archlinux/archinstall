@@ -176,7 +176,6 @@ disable = [
     "unspecified-encoding",
     "unused-argument",
     "unused-variable",
-    "useless-parent-delegation",
 ]
 
 [tool.pylint.refactoring]
