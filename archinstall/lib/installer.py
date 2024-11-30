@@ -732,9 +732,9 @@ class Installer:
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}', peek_output=True)
 			return True
-		except SysCallError as error:
-			if error.worker:
-				log(error.worker._trace_log.decode())
+		except SysCallError as e:
+			if e.worker:
+				log(e.worker._trace_log.decode())
 			return False
 
 	def _get_microcode(self) -> Path | None:
