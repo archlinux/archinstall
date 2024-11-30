@@ -160,7 +160,6 @@ disable = [
     "bare-except",
     "broad-exception-caught",
     "cell-var-from-loop",
-    "comparison-with-callable",
     "dangerous-default-value",
     "fixme",
     "protected-access",
