@@ -237,7 +237,7 @@ def _stylize_output(
 	code_list = []
 
 	if text == '' and reset:
-		return '\x1b[%sm' % '0'
+		return '\x1b[0m'
 
 	code_list.append(foreground[str(fg)])
 
