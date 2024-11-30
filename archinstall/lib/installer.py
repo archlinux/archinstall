@@ -1494,7 +1494,7 @@ Exec = /bin/sh -c "{hook_command}"
 
 		# We count how many files are there already so we know which number to prefix the file with
 		num_of_rules_already = len(os.listdir(sudoers_dir))
-		file_num_str = "{:02d}".format(num_of_rules_already)  # We want 00_user1, 01_user2, etc
+		file_num_str = f"{num_of_rules_already:02d}"  # We want 00_user1, 01_user2, etc
 
 		# Guarantees that entity str does not contain invalid characters for a linux file name:
 		# \ / : * ? " < > |
