@@ -5,7 +5,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, NotRequired, TypedDict
+from typing import TYPE_CHECKING, NotRequired, TypedDict, override
 
 import parted
 from parted import Disk, Geometry, Partition
@@ -376,9 +376,11 @@ class Size:
 	def __le__(self, other: Size) -> bool:
 		return self._normalize() <= other._normalize()
 
+	@override
 	def __eq__(self, other) -> bool:
 		return self._normalize() == other._normalize()
 
+	@override
 	def __ne__(self, other) -> bool:
 		return self._normalize() != other._normalize()
 
@@ -624,6 +626,7 @@ class BDevice:
 	device_info: _DeviceInfo
 	partition_infos: list[_PartitionInfo]
 
+	@override
 	def __hash__(self) -> int:
 		return hash(self.disk.device.path)
 
@@ -807,6 +810,7 @@ class PartitionModification:
 		if self.fs_type is None and self.status == ModificationStatus.Modify:
 			raise ValueError('FS type must not be empty on modifications with status type modify')
 
+	@override
 	def __hash__(self) -> int:
 		return hash(self._obj_id)
 
@@ -1059,6 +1063,7 @@ class LvmVolume:
 		if not hasattr(self, '_obj_id'):
 			self._obj_id = uuid.uuid4()
 
+	@override
 	def __hash__(self) -> int:
 		return hash(self._obj_id)
 

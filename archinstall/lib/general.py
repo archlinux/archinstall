@@ -18,7 +18,7 @@ from datetime import date, datetime
 from enum import Enum
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 from urllib.request import Request, urlopen
 
 from .exceptions import RequirementError, SysCallError
@@ -86,6 +86,7 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	A safe JSON encoder that will omit private information in dicts (starting with !)
 	"""
 
+	@override
 	def encode(self, o: Any) -> str:
 		return super().encode(jsonify(o))
 
@@ -95,6 +96,7 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	UNSAFE_JSON will call/encode and keep private information in dicts (starting with !)
 	"""
 
+	@override
 	def encode(self, o: Any) -> str:
 		return super().encode(jsonify(o, safe=False))
 
@@ -162,10 +164,12 @@ class SysCommandWorker:
 
 		self._trace_log_pos = last_line
 
+	@override
 	def __repr__(self) -> str:
 		self.make_sure_we_are_executing()
 		return str(self._trace_log)
 
+	@override
 	def __str__(self) -> str:
 		try:
 			return self._trace_log.decode('utf-8')
@@ -393,6 +397,7 @@ class SysCommand:
 		else:
 			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
 
+	@override
 	def __repr__(self, *args: list[Any], **kwargs: dict[str, Any]) -> str:
 		return self.decode('UTF-8', errors='backslashreplace') or ''
 

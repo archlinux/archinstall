@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -17,6 +17,7 @@ class PasswordStrength(Enum):
 	STRONG = 'strong'
 
 	@property
+	@override
 	def value(self) -> str:  # pylint: disable=invalid-overridden-method
 		match self:
 			case PasswordStrength.VERY_WEAK:

@@ -5,7 +5,7 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from .output import debug, error
 
@@ -180,6 +180,7 @@ class DeferredTranslation:
 	def __len__(self) -> int:
 		return len(self.message)
 
+	@override
 	def __str__(self) -> str:
 		translate = _
 		if translate is DeferredTranslation:
