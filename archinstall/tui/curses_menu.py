@@ -794,7 +794,7 @@ class EditMenu(AbstractCurses):
 				self._real_input += chr(key)
 				if self._hide_input:
 					key = 42
-			except:
+			except Exception:
 				pass
 
 		return key

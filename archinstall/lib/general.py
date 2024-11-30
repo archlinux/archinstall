@@ -186,7 +186,7 @@ class SysCommandWorker:
 		if self.child_fd:
 			try:
 				os.close(self.child_fd)
-			except:
+			except Exception:
 				pass
 
 		if self.peek_output:
