@@ -27,7 +27,7 @@ class XorgProfile(Profile):
 		)
 
 	@override
-	def preview_text(self) -> str | None:
+	def preview_text(self) -> str:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
 		if packages := self.packages_text():
 			text += f'\n{packages}'

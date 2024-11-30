@@ -126,7 +126,7 @@ class AbstractViewport:
 	def __init__(self) -> None:
 		pass
 
-	def add_str(self, screen: Any, row: int, col: int, text: str, color: STYLE) -> None:
+	def add_str(self, screen: 'curses._CursesWindow', row: int, col: int, text: str, color: STYLE) -> None:
 		try:
 			screen.addstr(row, col, text, Tui.t().get_color(color))
 		except curses.error:
@@ -1383,7 +1383,7 @@ class Tui:
 		self.stop()
 
 	@property
-	def screen(self) -> Any:
+	def screen(self) -> 'curses._CursesWindow':
 		return self._screen
 
 	@staticmethod

@@ -69,7 +69,7 @@ class LocaleMenu(AbstractSubMenu):
 		locale_conf: LocaleConfiguration
 	):
 		self._locale_conf = locale_conf
-		self._data_store: dict[str, Any] = {}
+		self._data_store: dict[str, str] = {}
 		menu_optioons = self._define_menu_options()
 
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
