@@ -413,9 +413,9 @@ class GlobalMenu(AbstractMenu):
 			output += str(_('Password')) + f': {secret(enc_config.encryption_password)}\n'
 
 			if enc_config.partitions:
-				output += 'Partitions: {} selected'.format(len(enc_config.partitions)) + '\n'
+				output += f'Partitions: {len(enc_config.partitions)} selected\n'
 			elif enc_config.lvm_volumes:
-				output += 'LVM volumes: {} selected'.format(len(enc_config.lvm_volumes)) + '\n'
+				output += f'LVM volumes: {len(enc_config.lvm_volumes)} selected\n'
 
 			if enc_config.hsm_device:
 				output += f'HSM: {enc_config.hsm_device.manufacturer}'

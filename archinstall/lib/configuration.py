@@ -219,7 +219,7 @@ def save_config(config: dict[str, Any]) -> None:
 			if result.item() == MenuItem.no():
 				return
 
-	debug("Saving configuration files to {}".format(dest_path.absolute()))
+	debug(f"Saving configuration files to {dest_path.absolute()}")
 
 	match save_option:
 		case "user_config":

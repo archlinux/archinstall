@@ -221,7 +221,6 @@ ignore = [
     "RUF039",   # unraw-re-pattern
     "UP028",    # yield-in-for-loop
     "UP031",    # printf-string-formatting
-    "UP032",    # f-string
     "UP037",    # quoted-annotation
     "W191",     # tab-indentation
 ]
