@@ -149,6 +149,7 @@ py-version = "3.12"
 recursive = true
 
 [tool.pylint.format]
+indent-string = '\t'
 max-line-length = 160
 
 [tool.pylint."messages control"]
@@ -156,7 +157,6 @@ disable = [
     "C",
     "R",
     "attribute-defined-outside-init",
-    "bad-indentation",
     "bare-except",
     "broad-exception-caught",
     "cell-var-from-loop",
