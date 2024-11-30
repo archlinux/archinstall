@@ -105,7 +105,7 @@ def test_config_file_parsing(
     arch_config = handler.arch_config
 
     # TODO: Use the real values from the test fixture instead of clearing out the entries
-    arch_config.disk_config.device_modifications = []
+    arch_config.disk_config.device_modifications = []  # type: ignore[union-attr]
 
     assert arch_config == ArchConfig(
         version=archinstall.__version__,
