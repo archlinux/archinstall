@@ -1175,7 +1175,7 @@ class SelectMenu(AbstractCurses):
 		items = self._get_visible_items()
 		entries = []
 
-		for row_idx, item in enumerate(items):
+		for item in items:
 			item_text = ''
 
 			if self._multi and not item.is_empty():

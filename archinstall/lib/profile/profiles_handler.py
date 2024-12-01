@@ -278,7 +278,7 @@ class ProfileHandler:
 		Load all default_profiles defined in a module
 		"""
 		profiles = []
-		for k, v in module.__dict__.items():
+		for v in module.__dict__.values():
 			if isinstance(v, type) and v.__module__ == module.__name__:
 				bases = inspect.getmro(v)
 
