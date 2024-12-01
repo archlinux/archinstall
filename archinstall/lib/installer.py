@@ -361,7 +361,7 @@ class Installer:
 		subvolumes: list[disk.SubvolumeModification],
 		mount_options: list[str] = []
 	) -> None:
-		for subvol in subvolumes:
+		for subvol in sorted(subvolumes, key=lambda x: x.relative_mountpoint):
 			mountpoint = self.target / subvol.relative_mountpoint
 			mount_options = mount_options + [f'subvol={subvol.name}']
 			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)

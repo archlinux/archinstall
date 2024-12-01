@@ -599,12 +599,12 @@ class DeviceHandler:
 
 		self.mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 
-		for sub_vol in btrfs_subvols:
+		for sub_vol in sorted(btrfs_subvols, key=lambda x: x.name):
 			debug(f'Creating subvolume: {sub_vol.name}')
 
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
-			SysCommand(f"btrfs subvolume create {subvol_path}")
+			SysCommand(f"btrfs subvolume create -p {subvol_path}")
 
 			if BtrfsMountOption.nodatacow.value in mount_options:
 				try:
@@ -653,12 +653,12 @@ class DeviceHandler:
 			options=part_mod.mount_options
 		)
 
-		for sub_vol in part_mod.btrfs_subvols:
+		for sub_vol in sorted(part_mod.btrfs_subvols, key=lambda x: x.name):
 			debug(f'Creating subvolume: {sub_vol.name}')
 
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
-			SysCommand(f"btrfs subvolume create {subvol_path}")
+			SysCommand(f"btrfs subvolume create -p {subvol_path}")
 
 		self.umount(dev_path)
 
