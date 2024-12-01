@@ -13,6 +13,7 @@ class CutefishProfile(XorgProfile):
 	def packages(self) -> list[str]:
 		return [
 			"cutefish",
+			"kwin",
 			"noto-fonts"
 		]
 
