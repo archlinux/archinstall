@@ -52,7 +52,7 @@ class Help:
 	selection = HelpGroup(
 		group_id=HelpTextGroupId.SELECTION,
 		group_entries=[
-			HelpText('Skip selction (if available)', ['Esc']),
+			HelpText('Skip selection (if available)', ['Esc']),
 			HelpText('Reset selection (if available)', ['Ctrl+c']),
 			HelpText('Select on single select', ['Enter']),
 			HelpText('Select on select', ['Space', 'Tab']),
