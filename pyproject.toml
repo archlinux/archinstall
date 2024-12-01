@@ -160,7 +160,6 @@ disable = [
     "fixme",
     "protected-access",
     "raise-missing-from",
-    "unreachable",
     "unspecified-encoding",
     "unused-argument",
 ]
