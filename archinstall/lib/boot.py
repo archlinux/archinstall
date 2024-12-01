@@ -80,8 +80,7 @@ class Boot:
 
 	def __iter__(self) -> Iterator[bytes]:
 		if self.session:
-			for value in self.session:
-				yield value
+			yield from self.session
 
 	def __contains__(self, key: bytes) -> bool:
 		if self.session is None:
