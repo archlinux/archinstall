@@ -596,10 +596,6 @@ class Viewport(AbstractViewport):
 
 		return modified
 
-	def _replace_str(self, text: str, index: int = 0, replacement: str = '') -> str:
-		len_replace = len(replacement)
-		return f'{text[:index]}{replacement}{text[index + len_replace:]}'
-
 	def _unique_rows(self, entries: list[ViewportEntry]) -> int:
 		return len(set([e.row for e in entries]))
 

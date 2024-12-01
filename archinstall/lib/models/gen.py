@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, override
 
 
 @dataclass
@@ -39,6 +39,7 @@ class PackageSearchResult:
 	def pkg_version(self) -> str:
 		return self.pkgver
 
+	@override
 	def __eq__(self, other) -> bool:
 		return self.pkg_version == other.pkg_version
 
@@ -97,6 +98,7 @@ class LocalPackage:
 	def pkg_version(self) -> str:
 		return self.version
 
+	@override
 	def __eq__(self, other) -> bool:
 		return self.pkg_version == other.pkg_version
 
