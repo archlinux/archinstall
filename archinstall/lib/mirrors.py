@@ -265,14 +265,14 @@ class MirrorMenu(AbstractSubMenu):
 		return [
 			MenuItem(
 				text=str(_('Mirror region')),
-				action=lambda x: select_mirror_regions(x),
+				action=select_mirror_regions,
 				value=self._mirror_config.mirror_regions,
 				preview_action=self._prev_regions,
 				key='mirror_regions'
 			),
 			MenuItem(
 				text=str(_('Custom mirrors')),
-				action=lambda x: select_custom_mirror(x),
+				action=select_custom_mirror,
 				value=self._mirror_config.custom_mirrors,
 				preview_action=self._prev_custom_mirror,
 				key='custom_mirrors'

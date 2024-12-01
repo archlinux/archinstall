@@ -157,17 +157,17 @@ def save_config(config: dict[str, Any]) -> None:
 		MenuItem(
 			str(_("Save user configuration (including disk layout)")),
 			value="user_config",
-			preview_action=lambda x: preview(x)
+			preview_action=preview
 		),
 		MenuItem(
 			str(_("Save user credentials")),
 			value="user_creds",
-			preview_action=lambda x: preview(x)
+			preview_action=preview
 		),
 		MenuItem(
 			str(_("Save all")),
 			value="all",
-			preview_action=lambda x: preview(x)
+			preview_action=preview
 		)
 	]
 

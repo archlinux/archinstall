@@ -65,7 +65,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			),
 			MenuItem(
 				text=str(_('LVM volumes')),
-				action=lambda x: self._select_lvm_vols(x),
+				action=self._select_lvm_vols,
 				value=self._preset.lvm_volumes,
 				dependencies=[self._check_dep_lvm_vols],
 				preview_action=self._preview,
@@ -73,7 +73,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			),
 			MenuItem(
 				text=str(_('HSM')),
-				action=lambda x: select_hsm(x),
+				action=select_hsm,
 				value=self._preset.hsm_device,
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._preview,

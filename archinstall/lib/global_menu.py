@@ -63,32 +63,32 @@ class GlobalMenu(AbstractMenu):
 		return [
 			MenuItem(
 				text=str(_('Archinstall language')),
-				action=lambda x: self._select_archinstall_language(x),
+				action=self._select_archinstall_language,
 				display_action=lambda x: x.display_name if x else '',
 				key='archinstall-language'
 			),
 			MenuItem(
 				text=str(_('Locales')),
-				action=lambda x: self._locale_selection(x),
+				action=self._locale_selection,
 				preview_action=self._prev_locale,
 				key='locale_config'
 			),
 			MenuItem(
 				text=str(_('Mirrors')),
-				action=lambda x: self._mirror_configuration(x),
+				action=self._mirror_configuration,
 				preview_action=self._prev_mirror_config,
 				key='mirror_config'
 			),
 			MenuItem(
 				text=str(_('Disk configuration')),
-				action=lambda x: self._select_disk_config(x),
+				action=self._select_disk_config,
 				preview_action=self._prev_disk_config,
 				mandatory=True,
 				key='disk_config'
 			),
 			MenuItem(
 				text=str(_('Disk encryption')),
-				action=lambda x: self._disk_encryption(x),
+				action=self._disk_encryption,
 				preview_action=self._prev_disk_encryption,
 				key='disk_encryption',
 				dependencies=['disk_config']
@@ -96,14 +96,14 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Swap')),
 				value=True,
-				action=lambda x: ask_for_swap(x),
+				action=ask_for_swap,
 				preview_action=self._prev_swap,
 				key='swap',
 			),
 			MenuItem(
 				text=str(_('Bootloader')),
 				value=Bootloader.get_default(),
-				action=lambda x: self._select_bootloader(x),
+				action=self._select_bootloader,
 				preview_action=self._prev_bootloader,
 				mandatory=True,
 				key='bootloader',
@@ -111,87 +111,87 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Unified kernel images')),
 				value=False,
-				action=lambda x: ask_for_uki(x),
+				action=ask_for_uki,
 				preview_action=self._prev_uki,
 				key='uki',
 			),
 			MenuItem(
 				text=str(_('Hostname')),
 				value='archlinux',
-				action=lambda x: ask_hostname(x),
+				action=ask_hostname,
 				preview_action=self._prev_hostname,
 				key='hostname',
 			),
 			MenuItem(
 				text=str(_('Root password')),
-				action=lambda x: self._set_root_password(x),
+				action=self._set_root_password,
 				preview_action=self._prev_root_pwd,
 				key='!root-password',
 			),
 			MenuItem(
 				text=str(_('User account')),
-				action=lambda x: self._create_user_account(x),
+				action=self._create_user_account,
 				preview_action=self._prev_users,
 				key='!users'
 			),
 			MenuItem(
 				text=str(_('Profile')),
-				action=lambda x: self._select_profile(x),
+				action=self._select_profile,
 				preview_action=self._prev_profile,
 				key='profile_config'
 			),
 			MenuItem(
 				text=str(_('Audio')),
-				action=lambda x: ask_for_audio_selection(x),
+				action=ask_for_audio_selection,
 				preview_action=self._prev_audio,
 				key='audio_config'
 			),
 			MenuItem(
 				text=str(_('Kernels')),
 				value=['linux'],
-				action=lambda x: select_kernel(x),
+				action=select_kernel,
 				preview_action=self._prev_kernel,
 				mandatory=True,
 				key='kernels'
 			),
 			MenuItem(
 				text=str(_('Network configuration')),
-				action=lambda x: ask_to_configure_network(x),
+				action=ask_to_configure_network,
 				value={},
 				preview_action=self._prev_network_config,
 				key='network_config'
 			),
 			MenuItem(
 				text=str(_('Parallel Downloads')),
-				action=lambda x: add_number_of_parallel_downloads(x),
+				action=add_number_of_parallel_downloads,
 				value=0,
 				preview_action=self._prev_parallel_dw,
 				key='parallel downloads'
 			),
 			MenuItem(
 				text=str(_('Additional packages')),
-				action=lambda x: ask_additional_packages_to_install(x),
+				action=ask_additional_packages_to_install,
 				value=[],
 				preview_action=self._prev_additional_pkgs,
 				key='packages'
 			),
 			MenuItem(
 				text=str(_('Optional repositories')),
-				action=lambda x: select_additional_repositories(x),
+				action=select_additional_repositories,
 				value=[],
 				preview_action=self._prev_additional_repos,
 				key='additional-repositories'
 			),
 			MenuItem(
 				text=str(_('Timezone')),
-				action=lambda x: ask_for_a_timezone(x),
+				action=ask_for_a_timezone,
 				value='UTC',
 				preview_action=self._prev_tz,
 				key='timezone'
 			),
 			MenuItem(
 				text=str(_('Automatic time sync (NTP)')),
-				action=lambda x: ask_ntp(x),
+				action=ask_ntp,
 				value=True,
 				preview_action=self._prev_ntp,
 				key='ntp'
