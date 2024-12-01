@@ -181,7 +181,7 @@ def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
 		# Verify packages that were given
 		out = str(_("Verifying that additional packages exist (this might take a few seconds)"))
 		Tui.print(out, 0)
-		valid, invalid = validate_package_list(packages)
+		_valid, invalid = validate_package_list(packages)
 
 		if invalid:
 			return f'{_("Some packages could not be found in the repository")}: {invalid}'

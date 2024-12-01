@@ -77,7 +77,7 @@ def get_hw_addr(ifname: str) -> str:
 def list_interfaces(skip_loopback: bool = True) -> dict[str, str]:
 	interfaces = {}
 
-	for index, iface in socket.if_nameindex():
+	for _index, iface in socket.if_nameindex():
 		if skip_loopback and iface == "lo":
 			continue
 
@@ -183,7 +183,7 @@ def ping(hostname, timeout=5) -> int:
 	# for a ICMP response or exit with no latency
 	while latency == -1 and time.time() - started < timeout:
 		try:
-			for fileno, event in watchdog.poll(0.1):
+			for _fileno, _event in watchdog.poll(0.1):
 				response, _ = icmp_socket.recvfrom(1024)
 				icmp_type = struct.unpack('!B', response[20:21])[0]
 

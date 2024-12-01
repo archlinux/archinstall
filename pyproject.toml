@@ -164,7 +164,6 @@ disable = [
     "unreachable",
     "unspecified-encoding",
     "unused-argument",
-    "unused-variable",
 ]
 
 [tool.pylint.refactoring]
