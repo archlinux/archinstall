@@ -400,15 +400,6 @@ class SysCommand:
 	def __repr__(self, *args: list[Any], **kwargs: dict[str, Any]) -> str:
 		return self.decode('UTF-8', errors='backslashreplace') or ''
 
-	def __json__(self) -> dict[str, str | bool | list[str] | dict[str, Any] | None]:
-		return {
-			'cmd': self.cmd,
-			'callbacks': self._callbacks,
-			'peak': self.peek_output,
-			'environment_vars': self.environment_vars,
-			'session': self.session is not None
-		}
-
 	def create_session(self) -> bool:
 		"""
 		Initiates a :ref:`SysCommandWorker` session in this class ``.session``.
