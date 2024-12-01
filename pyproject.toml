@@ -206,6 +206,10 @@ select = [
 
 ignore = [
     "E722",     # bare-except
+    "PLC0415",  # import-outside-top-level
+    "PLC1901",  # compare-to-empty-string
+    "PLW1514",  # unspecified-encoding
+    "PLW1641",  # eq-without-hash
     "PLW2901",  # redefined-loop-name
     "RUF005",   # collection-literal-concatenation
     "RUF012",   # mutable-class-default
