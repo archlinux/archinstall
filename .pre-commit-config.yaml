@@ -1,4 +1,4 @@
-default_stages: ['commit']
+default_stages: ['pre-commit']
 repos:
   - repo: https://github.com/pycqa/autoflake
     rev: v2.3.1
