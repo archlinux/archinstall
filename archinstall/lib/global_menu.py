@@ -50,7 +50,7 @@ class GlobalMenu(AbstractMenu):
 		if 'archinstall-language' not in data_store:
 			data_store['archinstall-language'] = translation_handler.get_language_by_abbr('en')
 
-		menu_optioons = self._get_menu_options(data_store)
+		menu_optioons = self._get_menu_options()
 		self._item_group = MenuItemGroup(
 			menu_optioons,
 			sort_items=False,
@@ -59,7 +59,7 @@ class GlobalMenu(AbstractMenu):
 
 		super().__init__(self._item_group, data_store)
 
-	def _get_menu_options(self, data_store: dict[str, Any]) -> list[MenuItem]:
+	def _get_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Archinstall language')),
@@ -274,7 +274,7 @@ class GlobalMenu(AbstractMenu):
 		The options for the global menu are generated with a static text;
 		each entry of the menu needs to be updated with the new translation
 		"""
-		new_options = self._get_menu_options(self._data_store)
+		new_options = self._get_menu_options()
 
 		for o in new_options:
 			if o.key is not None:
