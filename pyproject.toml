@@ -153,7 +153,6 @@ disable = [
     "C",
     "R",
     "attribute-defined-outside-init",
-    "bare-except",
     "broad-exception-caught",
     "cell-var-from-loop",
     "dangerous-default-value",
@@ -204,7 +203,6 @@ select = [
 ]
 
 ignore = [
-    "E722",     # bare-except
     "PLC0415",  # import-outside-top-level
     "PLC1901",  # compare-to-empty-string
     "PLW1514",  # unspecified-encoding

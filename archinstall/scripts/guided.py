@@ -151,7 +151,7 @@ def perform_installation(mountpoint: Path) -> None:
 			if chroot:
 				try:
 					installation.drop_to_shell()
-				except:
+				except Exception:
 					pass
 
 	debug(f"Disk states after installing:\n{disk.disk_layouts()}")
