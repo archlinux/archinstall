@@ -11,7 +11,7 @@ from collections.abc import Callable
 from curses.textpad import Textbox
 from dataclasses import dataclass
 from types import FrameType, TracebackType
-from typing import TYPE_CHECKING, Any, Literal, override
+from typing import TYPE_CHECKING, Literal, override
 
 from ..lib.output import debug
 from .help import Help
@@ -73,7 +73,7 @@ class AbstractCurses(metaclass=ABCMeta):
 			frame=FrameProperties.min(str(_('Archinstall help')))
 		)
 
-	def _confirm_interrupt(self, screen: Any, warning: str) -> bool:
+	def _confirm_interrupt(self, warning: str) -> bool:
 		while True:
 			result = SelectMenu(
 				MenuItemGroup.yes_no(),
@@ -802,7 +802,7 @@ class EditMenu(AbstractCurses):
 	def _handle_interrupt(self) -> bool:
 		if self._allow_reset:
 			if self._interrupt_warning:
-				return self._confirm_interrupt(self._input_vp, self._interrupt_warning)
+				return self._confirm_interrupt(self._interrupt_warning)
 		else:
 			return False
 
@@ -1226,7 +1226,7 @@ class SelectMenu(AbstractCurses):
 
 	def _handle_interrupt(self) -> bool:
 		if self._allow_reset and self._interrupt_warning:
-			return self._confirm_interrupt(self._menu_vp, self._interrupt_warning)
+			return self._confirm_interrupt(self._interrupt_warning)
 		else:
 			return False
 
