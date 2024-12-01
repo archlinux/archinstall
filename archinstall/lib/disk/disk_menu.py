@@ -37,14 +37,14 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		return [
 			MenuItem(
 				text=str(_('Partitioning')),
-				action=lambda x: self._select_disk_layout_config(x),
+				action=self._select_disk_layout_config,
 				value=self._disk_layout_config,
 				preview_action=self._prev_disk_layouts,
 				key='disk_config'
 			),
 			MenuItem(
 				text='LVM (BETA)',
-				action=lambda x: self._select_lvm_config(x),
+				action=self._select_lvm_config,
 				value=self._disk_layout_config.lvm_config if self._disk_layout_config else None,
 				preview_action=self._prev_lvm_config,
 				dependencies=[self._check_dep_lvm],
