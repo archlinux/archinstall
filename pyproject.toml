@@ -211,7 +211,6 @@ ignore = [
     "RUF012",   # mutable-class-default
     "RUF015",   # unnecessary-iterable-allocation-for-first-element
     "RUF039",   # unraw-re-pattern
-    "UP028",    # yield-in-for-loop
     "UP037",    # quoted-annotation
     "W191",     # tab-indentation
 ]

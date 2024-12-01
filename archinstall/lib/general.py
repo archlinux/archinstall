@@ -383,8 +383,7 @@ class SysCommand:
 
 	def __iter__(self, *args: list[Any], **kwargs: dict[str, Any]) -> Iterator[bytes]:
 		if self.session:
-			for line in self.session:
-				yield line
+			yield from self.session
 
 	def __getitem__(self, key: slice) -> bytes | None:
 		if not self.session:
