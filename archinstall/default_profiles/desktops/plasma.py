@@ -14,11 +14,10 @@ class PlasmaProfile(XorgProfile):
 		return [
 			"plasma-meta",
 			"konsole",
-			"kwrite",
+			"kate",
 			"dolphin",
 			"ark",
-			"plasma-workspace",
-			"egl-wayland"
+			"plasma-workspace"
 		]
 
 	@property
