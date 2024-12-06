@@ -1554,7 +1554,7 @@ def _fetch_lsblk_info(
 		raise err
 
 	output = worker.output(remove_cr=False)
-	return LsblkOutput.parse_raw(output)
+	return LsblkOutput.model_validate_json(output)
 
 
 def get_lsblk_info(
