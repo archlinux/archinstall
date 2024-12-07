@@ -1,18 +1,17 @@
-import json
 import datetime
 import http.client
+import json
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
-import time
-
-from pathlib import Path
 from dataclasses import dataclass
-from pydantic import BaseModel, field_validator, model_validator
+from pathlib import Path
 from typing import Any
 
-from ..networking import fetch_data_from_url
-from ..networking import DownloadTimer, ping
+from pydantic import BaseModel, field_validator, model_validator
+
+from ..networking import DownloadTimer, fetch_data_from_url, ping
 from ..output import debug
 from ..storage import storage
 
@@ -200,7 +199,7 @@ class MirrorListHandler:
 		region_list = mappings[region]
 		return sorted(region_list, key=lambda mirror: (mirror.score, mirror.speed))
 
-	def _parse_remote_mirror_list(cls, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
+	def _parse_remote_mirror_list(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
 		mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
 
 		sorting_placeholder: dict[str, list[MirrorStatusEntryV3]] = {}
@@ -233,7 +232,7 @@ class MirrorListHandler:
 
 		return sorted_by_regions
 
-	def _parse_locale_mirrors(cls, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
+	def _parse_locale_mirrors(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
 		lines = mirrorlist.splitlines()
 
 		# remove empty lines
