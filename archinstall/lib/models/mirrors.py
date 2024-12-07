@@ -7,7 +7,6 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 from pydantic import BaseModel, field_validator, model_validator
 
@@ -95,7 +94,7 @@ class MirrorStatusEntryV3(BaseModel):
 		return self._latency
 
 	@field_validator('score', mode='before')
-	def validate_score(cls, value: int) -> int | None:
+	def validate_score(self, value: int) -> int | None:
 		if value is not None:
 			value = round(value)
 			debug(f"    score: {value}")
@@ -135,7 +134,7 @@ class MirrorRegion:
 	name: str
 	urls: list[str]
 
-	def json(self) -> dict[str, Any]:
+	def json(self) -> dict[str, list[str]]:
 		return {self.name: self.urls}
 
 	def __eq__(self, other: object) -> bool:

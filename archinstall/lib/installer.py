@@ -485,7 +485,7 @@ class Installer:
 			local_pacman_conf = Path('/etc/pacman.conf')
 			local_mirrorlist_conf = Path('/etc/pacman.d/mirrorlist')
 
-		mirrorlist_config = mirror_config.mirrorlist_config(sorted=True)
+		mirrorlist_config = mirror_config.mirrorlist_config(speed_sort=True)
 		pacman_config = mirror_config.pacman_config()
 
 		if pacman_config:

@@ -85,13 +85,13 @@ class MirrorConfiguration:
 			'custom_mirrors': [c.json() for c in self.custom_mirrors]
 		}
 
-	def mirrorlist_config(self, sorted: bool = True) -> str:
+	def mirrorlist_config(self, speed_sort: bool = True) -> str:
 		config = ''
 
 		for mirror_region in self.mirror_regions:
 			sorted_stati = mirror_list_handler.get_status_by_region(
 				mirror_region.name,
-				speed_sort=True
+				speed_sort=speed_sort
 			)
 
 			config += f'\n\n## {mirror_region.name}\n'
