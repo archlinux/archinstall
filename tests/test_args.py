@@ -141,7 +141,7 @@ def test_config_file_parsing(
 			greeter=GreeterType.Lightdm
 		),
 		mirror_config=MirrorConfiguration(
-			mirror_regions={},
+			mirror_regions=[],
 			custom_mirrors=[]
 		),
 		network_config=NetworkConfiguration(
