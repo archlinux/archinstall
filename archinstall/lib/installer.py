@@ -526,8 +526,7 @@ class Installer:
 				fp.write(f'{entry}\n')
 
 	def set_hostname(self, hostname: str) -> None:
-		with open(f'{self.target}/etc/hostname', 'w') as fh:
-			fh.write(hostname + '\n')
+		(self.target / 'etc/hostname').write_text(hostname + '\n')
 
 	def set_locale(self, locale_config: LocaleConfiguration) -> bool:
 		modifier = ''
