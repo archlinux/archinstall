@@ -1481,15 +1481,15 @@ Exec = /bin/sh -c "{hook_command}"
 	def enable_sudo(self, entity: str, group: bool = False):
 		info(f'Enabling sudo permissions for {entity}')
 
-		sudoers_dir = f"{self.target}/etc/sudoers.d"
+		sudoers_dir = self.target / "etc/sudoers.d"
 
 		# Creates directory if not exists
-		if not (sudoers_path := Path(sudoers_dir)).exists():
-			sudoers_path.mkdir(parents=True)
+		if not sudoers_dir.exists():
+			sudoers_dir.mkdir(parents=True)
 			# Guarantees sudoer confs directory recommended perms
-			os.chmod(sudoers_dir, 0o440)
+			sudoers_dir.chmod(0o440)
 			# Appends a reference to the sudoers file, because if we are here sudoers.d did not exist yet
-			with open(f'{self.target}/etc/sudoers', 'a') as sudoers:
+			with open(self.target / 'etc/sudoers', 'a') as sudoers:
 				sudoers.write('@includedir /etc/sudoers.d\n')
 
 		# We count how many files are there already so we know which number to prefix the file with
@@ -1500,13 +1500,13 @@ Exec = /bin/sh -c "{hook_command}"
 		# \ / : * ? " < > |
 		safe_entity_file_name = re.sub(r'(\\|\/|:|\*|\?|"|<|>|\|)', '', entity)
 
-		rule_file_name = f"{sudoers_dir}/{file_num_str}_{safe_entity_file_name}"
+		rule_file = sudoers_dir / f"{file_num_str}_{safe_entity_file_name}"
 
-		with open(rule_file_name, 'a') as sudoers:
+		with rule_file.open('a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
 
 		# Guarantees sudoer conf file recommended perms
-		os.chmod(Path(rule_file_name), 0o440)
+		rule_file.chmod(0o440)
 
 	def create_users(self, users: User | list[User]) -> None:
 		if not isinstance(users, list):
