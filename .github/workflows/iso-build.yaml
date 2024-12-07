@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pwd
-      - run: find .
+      - run: echo "Building for $GITHUB_ACTOR"
       - run: cat /etc/os-release
       - run: pacman-key --init
       - run: pacman --noconfirm -Sy archlinux-keyring
@@ -37,3 +37,10 @@ jobs:
         with:
           name: Arch Live ISO
           path: /tmp/archlive/out/*.iso
+  call-workflow-qemu-test:
+    name: call qemu testbench
+    needs: build
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/qemu-tests.yaml
