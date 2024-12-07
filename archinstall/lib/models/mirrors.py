@@ -93,8 +93,9 @@ class MirrorStatusEntryV3(BaseModel):
 
 		return self._latency
 
+	@classmethod
 	@field_validator('score', mode='before')
-	def validate_score(self, value: int) -> int | None:
+	def validate_score(cls, value: int) -> int | None:
 		if value is not None:
 			value = round(value)
 			debug(f"    score: {value}")
