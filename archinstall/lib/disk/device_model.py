@@ -435,7 +435,7 @@ class _PartitionInfo:
 			'Start': self.start.format_size(Unit.sectors, self.sector_size, include_unit=False),
 			'End': end.format_size(Unit.sectors, self.sector_size, include_unit=False),
 			'Size': self.length.format_highest(),
-			'Flags': ', '.join([f.name for f in self.flags])
+			'Flags': ', '.join([f.description for f in self.flags])
 		}
 
 		if self.btrfs_subvol_infos:
@@ -1554,7 +1554,7 @@ def _fetch_lsblk_info(
 		raise err
 
 	output = worker.output(remove_cr=False)
-	return LsblkOutput.parse_raw(output)
+	return LsblkOutput.model_validate_json(output)
 
 
 def get_lsblk_info(
