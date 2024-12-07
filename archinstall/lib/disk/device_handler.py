@@ -239,17 +239,13 @@ class DeviceHandler:
 		# to the corresponding mountpoints
 		btrfs_subvol_info = dict(zip(lsblk_info.fsroots, lsblk_info.mountpoints))
 
-		try:
-			# ID 256 gen 16 top level 5 path @
-			for line in result.splitlines():
-				# expected output format:
-				# ID 257 gen 8 top level 5 path @home
-				name = Path(line.split(' ')[-1])
-				sub_vol_mountpoint = btrfs_subvol_info.get(name, None)
-				subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
-		except json.decoder.JSONDecodeError as err:
-			error(f"Could not decode lsblk JSON: {result}")
-			raise err
+		# ID 256 gen 16 top level 5 path @
+		for line in result.splitlines():
+			# expected output format:
+			# ID 257 gen 8 top level 5 path @home
+			name = Path(line.split(' ')[-1])
+			sub_vol_mountpoint = btrfs_subvol_info.get(name, None)
+			subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
 
 		if not lsblk_info.mountpoint:
 			self.umount(dev_path)
