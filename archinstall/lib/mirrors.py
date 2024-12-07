@@ -1,18 +1,12 @@
-import json
-import time
-import urllib.parse
 from dataclasses import dataclass, field
 from enum import Enum
-from pathlib import Path
 from typing import TYPE_CHECKING, Any, override
 
 from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
 from .menu import AbstractSubMenu, ListManager
-from .models.mirrors import MirrorStatusEntryV3, MirrorStatusListV3
-from .networking import fetch_data_from_url
-from .output import FormattedOutput, debug
-from .storage import storage
+from .models.mirrors import MirrorRegion, mirror_list_handler
+from .output import FormattedOutput
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -74,25 +68,36 @@ class CustomMirror:
 
 @dataclass
 class MirrorConfiguration:
-	mirror_regions: dict[str, list[MirrorStatusEntryV3]] = field(default_factory=dict)
+	mirror_regions: list[MirrorRegion] = field(default_factory=list)
 	custom_mirrors: list[CustomMirror] = field(default_factory=list)
 
 	@property
 	def regions(self) -> str:
-		return ', '.join(self.mirror_regions.keys())
+		return ', '.join([m.name for m in self.mirror_regions])
 
 	def json(self) -> dict[str, Any]:
+		regions = {}
+		for m in self.mirror_regions:
+			regions.update(m.json())
+
 		return {
-			'mirror_regions': self.mirror_regions,
+			'mirror_regions': regions,
 			'custom_mirrors': [c.json() for c in self.custom_mirrors]
 		}
 
-	def mirrorlist_config(self) -> str:
+	def mirrorlist_config(self, sorted: bool = True) -> str:
 		config = ''
 
-		for region, mirrors in self.mirror_regions.items():
-			for mirror in mirrors:
-				config += f'\n\n## {region}\nServer = {mirror.url}$repo/os/$arch\n'
+		for mirror_region in self.mirror_regions:
+			sorted_stati = mirror_list_handler.get_status_by_region(
+				mirror_region.name,
+				speed_sort=True
+			)
+
+			config += f'\n\n## {mirror_region.name}\n'
+
+			for status in sorted_stati:
+				config += f'Server = {status.server_url}\n'
 
 		for cm in self.custom_mirrors:
 			config += f'\n\n## {cm.name}\nServer = {cm.url}\n'
@@ -114,7 +119,8 @@ class MirrorConfiguration:
 		config = MirrorConfiguration()
 
 		if 'mirror_regions' in args:
-			config.mirror_regions = args['mirror_regions']
+			for region, urls in args['mirror_regions'].items():
+				config.mirror_regions.append(MirrorRegion(region, urls))
 
 		if 'custom_mirrors' in args:
 			config.custom_mirrors = CustomMirror.parse_args(args['custom_mirrors'])
@@ -280,15 +286,14 @@ class MirrorMenu(AbstractSubMenu):
 		]
 
 	def _prev_regions(self, item: MenuItem) -> str | None:
-		mirrors: dict[str, list[MirrorStatusEntryV3]] = item.get_value()
+		regions: list[MirrorRegion] = item.get_value()
 
 		output = ''
-		for name, status_list in mirrors.items():
-			output += f'{name}\n'
-			output += '-' * len(name) + '\n'
+		for region in regions:
+			output += f'{region.name}\n'
 
-			for entry in status_list:
-				output += f'{entry.url}\n'
+			for url in region.urls:
+				output += f' - {url}\n'
 
 			output += '\n'
 
@@ -315,17 +320,16 @@ class MirrorMenu(AbstractSubMenu):
 		)
 
 
-def select_mirror_regions(preset: dict[str, list[MirrorStatusEntryV3]]) -> dict[str, list[MirrorStatusEntryV3]]:
-	mirrors: dict[str, list[MirrorStatusEntryV3]] | None = list_mirrors_from_remote()
+def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
+	mirror_list_handler.load_mirrors()
 
-	if not mirrors:
-		mirrors = list_mirrors_from_local()
+	available_regions = mirror_list_handler.get_mirror_regions()
+	preset_regions = [region for region in available_regions if region in preset]
 
-	items = [MenuItem(name, value=(name, mirrors)) for name, mirrors in mirrors.items()]
+	items = [MenuItem(region.name, value=region) for region in available_regions]
 	group = MenuItemGroup(items, sort_items=True)
 
-	preset_values = [(name, mirror) for name, mirror in preset.items()]
-	group.set_selected_by_value(preset_values)
+	group.set_selected_by_value(preset_regions)
 
 	result = SelectMenu(
 		group,
@@ -338,116 +342,14 @@ def select_mirror_regions(preset: dict[str, list[MirrorStatusEntryV3]]) -> dict[
 
 	match result.type_:
 		case ResultType.Skip:
-			return preset
+			return preset_regions
 		case ResultType.Reset:
-			return {}
+			return []
 		case ResultType.Selection:
-			selected_mirrors: list[tuple[str, list[MirrorStatusEntryV3]]] = result.get_values()
-			return {name: mirror for name, mirror in selected_mirrors}
+			selected_mirrors: list[MirrorRegion] = result.get_values()
+			return selected_mirrors
 
 
 def select_custom_mirror(preset: list[CustomMirror] = []):
 	custom_mirrors = CustomMirrorList(preset).run()
 	return custom_mirrors
-
-
-def list_mirrors_from_remote() -> dict[str, list[MirrorStatusEntryV3]] | None:
-	if not storage['arguments']['offline']:
-		url = "https://archlinux.org/mirrors/status/json/"
-		attempts = 3
-
-		for attempt_nr in range(attempts):
-			try:
-				mirrorlist = fetch_data_from_url(url)
-				return _parse_remote_mirror_list(mirrorlist)
-			except Exception as e:
-				debug(f'Error while fetching mirror list: {e}')
-				time.sleep(attempt_nr + 1)
-
-		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
-
-	return None
-
-
-def list_mirrors_from_local() -> dict[str, list[MirrorStatusEntryV3]]:
-	with Path('/etc/pacman.d/mirrorlist').open('r') as fp:
-		mirrorlist = fp.read()
-		return _parse_locale_mirrors(mirrorlist)
-
-
-def _sort_mirrors_by_performance(mirror_list: list[MirrorStatusEntryV3]) -> list[MirrorStatusEntryV3]:
-	return sorted(mirror_list, key=lambda mirror: (mirror.score, mirror.speed))
-
-
-def _parse_remote_mirror_list(mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
-	mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
-
-	sorting_placeholder: dict[str, list[MirrorStatusEntryV3]] = {}
-
-	for mirror in mirror_status.urls:
-		# We filter out mirrors that have bad criteria values
-		if any([
-			mirror.active is False,  # Disabled by mirror-list admins
-			mirror.last_sync is None,  # Has not synced recently
-			# mirror.score (error rate) over time reported from backend:
-			# https://github.com/archlinux/archweb/blob/31333d3516c91db9a2f2d12260bd61656c011fd1/mirrors/utils.py#L111C22-L111C66
-			(mirror.score is None or mirror.score >= 100),
-		]):
-			continue
-
-		if mirror.country == "":
-			# TODO: This should be removed once RFC!29 is merged and completed
-			# Until then, there are mirrors which lacks data in the backend
-			# and there is no way of knowing where they're located.
-			# So we have to assume world-wide
-			mirror.country = "Worldwide"
-
-		if mirror.url.startswith('http'):
-			sorting_placeholder.setdefault(mirror.country, []).append(mirror)
-
-	sorted_by_regions: dict[str, list[MirrorStatusEntryV3]] = dict({
-		region: unsorted_mirrors
-		for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])
-	})
-
-	return sorted_by_regions
-
-
-def _parse_locale_mirrors(mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
-	lines = mirrorlist.splitlines()
-
-	# remove empty lines
-	lines = [line for line in lines if line]
-
-	mirror_list: dict[str, list[MirrorStatusEntryV3]] = {}
-
-	current_region = ''
-	for idx, line in enumerate(lines):
-		line = line.strip()
-
-		if line.lower().startswith('server'):
-			if not current_region:
-				for i in range(idx - 1, 0, -1):
-					if lines[i].startswith('##'):
-						current_region = lines[i].replace('#', '').strip()
-						mirror_list.setdefault(current_region, [])
-						break
-
-			url = line.removeprefix('Server = ')
-			mirror_entry = MirrorStatusEntryV3(
-				url=url.rstrip('$repo/os/$arch'),
-				protocol=urllib.parse.urlparse(url).scheme,
-				active=True,
-				country=current_region or 'Worldwide',
-				# The following values are normally populated by
-				# archlinux.org mirror-list endpoint, and can't be known
-				# from just the local mirror-list file.
-				country_code='WW',
-				isos=True,
-				ipv4=True,
-				ipv6=True,
-				details='Locally defined mirror',
-			)
-			mirror_list[current_region].append(mirror_entry)
-
-	return mirror_list

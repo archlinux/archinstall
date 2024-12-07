@@ -1,13 +1,20 @@
+import json
 import datetime
 import http.client
 import urllib.error
 import urllib.parse
 import urllib.request
+import time
 
+from pathlib import Path
+from dataclasses import dataclass
 from pydantic import BaseModel, field_validator, model_validator
+from typing import Any
 
+from ..networking import fetch_data_from_url
 from ..networking import DownloadTimer, ping
 from ..output import debug
+from ..storage import storage
 
 
 class MirrorStatusEntryV3(BaseModel):
@@ -122,3 +129,148 @@ class MirrorStatusListV3(BaseModel):
 			return data
 
 		raise ValueError("MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/")
+
+
+@dataclass
+class MirrorRegion:
+	name: str
+	urls: list[str]
+
+	def json(self) -> dict[str, Any]:
+		return {self.name: self.urls}
+
+	def __eq__(self, other: object) -> bool:
+		if not isinstance(other, MirrorRegion):
+			return NotImplemented
+		return self.name == other.name
+
+
+class MirrorListHandler:
+	def __init__(self) -> None:
+		self._status_mappings: dict[str, list[MirrorStatusEntryV3]] | None = None
+
+	def _mappings(self) -> dict[str, list[MirrorStatusEntryV3]]:
+		if self._status_mappings is None:
+			self.load_mirrors()
+
+		assert self._status_mappings is not None
+		return self._status_mappings
+
+	def get_mirror_regions(self) -> list[MirrorRegion]:
+		available_mirrors = []
+		mappings = self._mappings()
+
+		for region_name, status_entry in mappings.items():
+			urls = [entry.server_url for entry in status_entry]
+			region = MirrorRegion(region_name, urls)
+			available_mirrors.append(region)
+
+		return available_mirrors
+
+	def load_mirrors(self) -> None:
+		if storage['arguments']['offline']:
+			self.load_local_mirrors()
+		else:
+			if not self.load_remote_mirrors():
+				self.load_local_mirrors()
+
+	def load_remote_mirrors(self) -> bool:
+		url = "https://archlinux.org/mirrors/status/json/"
+		attempts = 3
+
+		for attempt_nr in range(attempts):
+			try:
+				mirrorlist = fetch_data_from_url(url)
+				self._status_mappings = self._parse_remote_mirror_list(mirrorlist)
+				return True
+			except Exception as e:
+				debug(f'Error while fetching mirror list: {e}')
+				time.sleep(attempt_nr + 1)
+
+		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
+		return False
+
+	def load_local_mirrors(self) -> None:
+		with Path('/etc/pacman.d/mirrorlist').open('r') as fp:
+			mirrorlist = fp.read()
+			self._status_mappings = self._parse_locale_mirrors(mirrorlist)
+
+	def get_status_by_region(self, region: str, speed_sort: bool) -> list[MirrorStatusEntryV3]:
+		mappings = self._mappings()
+		region_list = mappings[region]
+		return sorted(region_list, key=lambda mirror: (mirror.score, mirror.speed))
+
+	def _parse_remote_mirror_list(cls, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
+		mirror_status = MirrorStatusListV3(**json.loads(mirrorlist))
+
+		sorting_placeholder: dict[str, list[MirrorStatusEntryV3]] = {}
+
+		for mirror in mirror_status.urls:
+			# We filter out mirrors that have bad criteria values
+			if any([
+				mirror.active is False,  # Disabled by mirror-list admins
+				mirror.last_sync is None,  # Has not synced recently
+				# mirror.score (error rate) over time reported from backend:
+				# https://github.com/archlinux/archweb/blob/31333d3516c91db9a2f2d12260bd61656c011fd1/mirrors/utils.py#L111C22-L111C66
+				(mirror.score is None or mirror.score >= 100),
+			]):
+				continue
+
+			if mirror.country == "":
+				# TODO: This should be removed once RFC!29 is merged and completed
+				# Until then, there are mirrors which lacks data in the backend
+				# and there is no way of knowing where they're located.
+				# So we have to assume world-wide
+				mirror.country = "Worldwide"
+
+			if mirror.url.startswith('http'):
+				sorting_placeholder.setdefault(mirror.country, []).append(mirror)
+
+		sorted_by_regions: dict[str, list[MirrorStatusEntryV3]] = dict({
+			region: unsorted_mirrors
+			for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])
+		})
+
+		return sorted_by_regions
+
+	def _parse_locale_mirrors(cls, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
+		lines = mirrorlist.splitlines()
+
+		# remove empty lines
+		lines = [line for line in lines if line]
+
+		mirror_list: dict[str, list[MirrorStatusEntryV3]] = {}
+
+		current_region = ''
+		for idx, line in enumerate(lines):
+			line = line.strip()
+
+			if line.lower().startswith('server'):
+				if not current_region:
+					for i in range(idx - 1, 0, -1):
+						if lines[i].startswith('##'):
+							current_region = lines[i].replace('#', '').strip()
+							mirror_list.setdefault(current_region, [])
+							break
+
+				url = line.removeprefix('Server = ')
+				mirror_entry = MirrorStatusEntryV3(
+					url=url.rstrip('$repo/os/$arch'),
+					protocol=urllib.parse.urlparse(url).scheme,
+					active=True,
+					country=current_region or 'Worldwide',
+					# The following values are normally populated by
+					# archlinux.org mirror-list endpoint, and can't be known
+					# from just the local mirror-list file.
+					country_code='WW',
+					isos=True,
+					ipv4=True,
+					ipv6=True,
+					details='Locally defined mirror',
+				)
+				mirror_list[current_region].append(mirror_entry)
+
+		return mirror_list
+
+
+mirror_list_handler = MirrorListHandler()
