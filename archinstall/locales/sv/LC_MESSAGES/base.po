@@ -133,7 +133,7 @@ msgstr "Välj vart du vill montera partitionen (lämna tomt för att ta bort mon
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"

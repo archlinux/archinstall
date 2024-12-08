@@ -132,7 +132,7 @@ msgstr "Roghnaigh cá háit ar cheart an deighilt a shuiteáil (fág bán chun a
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
