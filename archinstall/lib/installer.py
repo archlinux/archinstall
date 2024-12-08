@@ -478,27 +478,21 @@ class Installer:
 				if result := plugin.on_mirrors(mirror_config):
 					mirror_config = result
 
-		if on_target:
-			local_pacman_conf = Path(f'{self.target}/etc/pacman.conf')
-			local_mirrorlist_conf = Path(f'{self.target}/etc/pacman.d/mirrorlist')
-		else:
-			local_pacman_conf = Path('/etc/pacman.conf')
-			local_mirrorlist_conf = Path('/etc/pacman.d/mirrorlist')
-
 		mirrorlist_config = mirror_config.mirrorlist_config(speed_sort=True)
 		pacman_config = mirror_config.pacman_config()
+
+		root = self.target if on_target else Path('/')
 
 		if pacman_config:
 			debug(f'Pacman config: {pacman_config}')
 
-			with local_pacman_conf.open('a') as fp:
+			with open(root / 'etc/pacman.conf', 'a') as fp:
 				fp.write(pacman_config)
 
 		if mirrorlist_config:
 			debug(f'Mirrorlist: {mirrorlist_config}')
 
-			with local_mirrorlist_conf.open('w') as fp:
-				fp.write(mirrorlist_config)
+			(root / 'etc/pacman.d/mirrorlist').write_text(mirrorlist_config)
 
 	def genfstab(self, flags: str = '-pU') -> None:
 		fstab_path = self.target / "etc" / "fstab"
