@@ -132,7 +132,7 @@ msgstr "パーティションをマウントする場所を選択（無記入で
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
