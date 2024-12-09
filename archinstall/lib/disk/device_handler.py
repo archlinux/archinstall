@@ -222,9 +222,12 @@ class DeviceHandler:
 			# "mountpoint": "/mnt/archinstall/.snapshots"
 			# "mountpoints": ["/mnt/archinstall/.snapshots", "/mnt/archinstall/home", ..]
 			# so we'll determine the minimum common path and assume that's the root
-			path_strings = [str(m) for m in lsblk_info.mountpoints]
-			common_prefix = os.path.commonprefix(path_strings)
-			mountpoint = Path(common_prefix)
+			try:
+				common_path = os.path.commonpath(lsblk_info.mountpoints)
+			except ValueError:
+				return subvol_infos
+
+			mountpoint = Path(common_path)
 
 		try:
 			result = SysCommand(f'btrfs subvolume list {mountpoint}').decode()
