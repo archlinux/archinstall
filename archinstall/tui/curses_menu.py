@@ -91,7 +91,7 @@ class AbstractCurses(metaclass=ABCMeta):
 			return False
 
 	def help_entry(self) -> ViewportEntry:
-		return ViewportEntry(str(_('Press ? for help')), 0, 0, STYLE.NORMAL)
+		return ViewportEntry(str(_('Press Ctrl+h for help')), 0, 0, STYLE.NORMAL)
 
 	def _show_help(self) -> None:
 		if not self._help_window:
