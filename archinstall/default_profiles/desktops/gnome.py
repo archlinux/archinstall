@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class GnomeProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Gnome', ProfileType.DesktopEnv, description='')
+		super().__init__('GNOME', ProfileType.DesktopEnv, description='')
 
 	@property
 	@override
