@@ -132,7 +132,7 @@ msgstr "பகிர்வை எங்கு ஏற்ற வேண்டும
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
