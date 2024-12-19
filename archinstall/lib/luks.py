@@ -19,9 +19,6 @@ class Luks2:
 	key_file: Path | None = None
 	auto_unmount: bool = False
 
-	# will be set internally after unlocking the device
-	_mapper_dev: Path | None = None
-
 	@property
 	def mapper_dev(self) -> Path | None:
 		if self.mapper_name:
@@ -171,8 +168,6 @@ class Luks2:
 			# And close it if possible.
 			debug(f"Closing crypt device {child.name}")
 			SysCommand(f"cryptsetup close {child.name}")
-
-		self._mapper_dev = None
 
 	def create_keyfile(self, target_path: Path, override: bool = False) -> None:
 		"""
