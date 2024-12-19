@@ -9,7 +9,6 @@ from . import disk
 from .exceptions import DiskError, SysCallError
 from .general import SysCommand, SysCommandWorker, generate_password
 from .output import debug, info
-from .storage import storage
 
 
 @dataclass
@@ -100,30 +99,12 @@ class Luks2:
 
 		debug(f'cryptsetup format: {cryptsetup_args}')
 
-		# Retry formatting the volume because archinstall can some times be too quick
-		# which generates a "Device /dev/sdX does not exist or access denied." between
-		# setting up partitions and us trying to encrypt it.
-		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS'] + 1):
-			try:
-				result = SysCommand(cryptsetup_args).decode()
-				debug(f'cryptsetup luksFormat output: {result}')
-				break
-			except SysCallError as err:
-				time.sleep(storage['DISK_TIMEOUTS'])
+		try:
+			result = SysCommand(cryptsetup_args).decode()
+		except SysCallError as err:
+			raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {err}')
 
-				if retry_attempt != storage['DISK_RETRY_ATTEMPTS']:
-					continue
-
-				if err.exit_code == 1:
-					info(f'luks2 partition currently in use: {self.luks_dev_path}')
-					info('Attempting to unmount, crypt-close and trying encryption again')
-
-					self.lock()
-					# Then try again to set up the crypt-device
-					result = SysCommand(cryptsetup_args).decode()
-					debug(f'cryptsetup luksFormat output: {result}')
-				else:
-					raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {err}')
+		debug(f'cryptsetup luksFormat output: {result}')
 
 		self.key_file = key_file
 
