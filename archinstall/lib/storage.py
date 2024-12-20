@@ -13,5 +13,4 @@ storage: dict[str, Any] = {
 	'LOG_PATH': Path('/var/log/archinstall'),
 	'LOG_FILE': Path('install.log'),
 	'MOUNT_POINT': Path('/mnt/archinstall'),
-	'ENC_IDENTIFIER': 'ainst',
 }

@@ -24,6 +24,9 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
+ENC_IDENTIFIER = 'ainst'
+
+
 class DiskLayoutType(Enum):
 	Default = 'default_layout'
 	Manual = 'manual_partitioning'
@@ -919,7 +922,7 @@ class PartitionModification:
 	@property
 	def mapper_name(self) -> str | None:
 		if self.dev_path:
-			return f'{storage.get("ENC_IDENTIFIER", "ai")}{self.dev_path.name}'
+			return f'{ENC_IDENTIFIER}{self.dev_path.name}'
 		return None
 
 	def set_flag(self, flag: PartitionFlag) -> None:
@@ -1076,7 +1079,7 @@ class LvmVolume:
 	@property
 	def mapper_name(self) -> str | None:
 		if self.dev_path:
-			return f'{storage.get("ENC_IDENTIFIER", "ai")}{self.safe_dev_path.name}'
+			return f'{ENC_IDENTIFIER}{self.safe_dev_path.name}'
 		return None
 
 	@property
