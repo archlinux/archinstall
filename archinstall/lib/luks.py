@@ -208,7 +208,7 @@ class Luks2:
 		debug(f'Adding additional key-file {key_file}')
 
 		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
-		worker = SysCommandWorker(command, environment_vars={'LC_ALL': 'C'})
+		worker = SysCommandWorker(command)
 		pw_injected = False
 
 		while worker.is_alive():
