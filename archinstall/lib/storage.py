@@ -14,6 +14,4 @@ storage: dict[str, Any] = {
 	'LOG_FILE': Path('install.log'),
 	'MOUNT_POINT': Path('/mnt/archinstall'),
 	'ENC_IDENTIFIER': 'ainst',
-	'CMD_LOCALE': {'LC_ALL': 'C'},  # default locale for execution commands. Can be overridden with set_cmd_locale()
-	'CMD_LOCALE_DEFAULT': {'LC_ALL': 'C'},  # should be the same as the former. Not be used except in reset_cmd_locale()
 }

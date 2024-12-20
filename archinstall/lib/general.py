@@ -107,13 +107,12 @@ class SysCommandWorker:
 		cmd: str | list[str],
 		callbacks: dict[str, Any] | None = None,
 		peek_output: bool | None = False,
-		environment_vars: dict[str, Any] | None = None,
+		environment_vars: dict[str, str] | None = None,
 		logfile: None = None,
 		working_directory: str | None = './',
 		remove_vt100_escape_codes_from_lines: bool = True
 	):
 		callbacks = callbacks or {}
-		environment_vars = environment_vars or {}
 
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
@@ -126,7 +125,10 @@ class SysCommandWorker:
 		self.callbacks = callbacks
 		self.peek_output = peek_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overridden
-		self.environment_vars = {**storage.get('CMD_LOCALE', {}), **environment_vars}
+		self.environment_vars = {'LC_ALL': 'C'}
+		if environment_vars:
+			self.environment_vars.update(environment_vars)
+
 		self.logfile = logfile
 		self.working_directory = working_directory
 
@@ -353,7 +355,7 @@ class SysCommand:
 		callbacks: dict[str, Callable[[Any], Any]] = {},
 		start_callback: Callable[[Any], Any] | None = None,
 		peek_output: bool | None = False,
-		environment_vars: dict[str, Any] | None = None,
+		environment_vars: dict[str, str] | None = None,
 		working_directory: str | None = './',
 		remove_vt100_escape_codes_from_lines: bool = True):
 
