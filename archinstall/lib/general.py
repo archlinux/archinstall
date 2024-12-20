@@ -321,10 +321,6 @@ class SysCommandWorker:
 			except (PermissionError, FileNotFoundError):
 				# If history_logfile does not exist, ignore the error
 				pass
-			except Exception as e:
-				exception_type = type(e).__name__
-				error(f"Unexpected {exception_type} occurred in {self.cmd}: {e}")
-				raise e
 
 			if storage.get('arguments', {}).get('debug'):
 				debug(f"Executing: {self.cmd}")
