@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Any
 
 storage: dict[str, Any] = {
-	'PROFILE': Path(__file__).parent.parent.joinpath('default_profiles'),
 	'LOG_PATH': Path('/var/log/archinstall'),
 	'LOG_FILE': Path('install.log'),
 	'MOUNT_POINT': Path('/mnt/archinstall'),
