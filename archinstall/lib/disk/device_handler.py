@@ -109,11 +109,8 @@ class DeviceHandler:
 				partition_infos.append(
 					_PartitionInfo.from_partition(
 						partition,
+						lsblk_info,
 						fs_type,
-						lsblk_info.partn,
-						lsblk_info.partuuid,
-						lsblk_info.uuid,
-						lsblk_info.mountpoints,
 						subvol_infos
 					)
 				)

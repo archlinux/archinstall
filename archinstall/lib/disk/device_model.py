@@ -450,11 +450,8 @@ class _PartitionInfo:
 	def from_partition(
 		cls,
 		partition: Partition,
+		lsblk_info: LsblkInfo,
 		fs_type: FilesystemType | None,
-		partn: int | None,
-		partuuid: str | None,
-		uuid: str | None,  # pylint: disable=redefined-outer-name
-		mountpoints: list[Path],
 		btrfs_subvol_infos: list[_BtrfsSubvolumeInfo] = []
 	) -> _PartitionInfo:
 		partition_type = PartitionType.get_type_from_code(partition.type)
@@ -481,11 +478,11 @@ class _PartitionInfo:
 			start=start,
 			length=length,
 			flags=flags,
-			partn=partn,
-			partuuid=partuuid,
-			uuid=uuid,
+			partn=lsblk_info.partn,
+			partuuid=lsblk_info.partuuid,
+			uuid=lsblk_info.uuid,
 			disk=partition.disk,
-			mountpoints=mountpoints,
+			mountpoints=lsblk_info.mountpoints,
 			btrfs_subvol_infos=btrfs_subvol_infos
 		)
 
