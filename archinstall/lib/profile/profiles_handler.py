@@ -14,7 +14,6 @@ from ...default_profiles.profile import GreeterType, Profile
 from ..hardware import GfxDriver
 from ..networking import fetch_data_from_url, list_interfaces
 from ..output import debug, error, info
-from ..storage import storage
 from .profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
@@ -29,7 +28,6 @@ if TYPE_CHECKING:
 
 class ProfileHandler:
 	def __init__(self) -> None:
-		self._profiles_path: Path = storage['PROFILE']
 		self._profiles: list[Profile] | None = None
 
 		# special variable to keep track of a profile url configuration
@@ -346,8 +344,9 @@ class ProfileHandler:
 		"""
 		Search the profile path for profile definitions
 		"""
+		profiles_path = Path(__file__).parents[2] / 'default_profiles'
 		profiles = []
-		for file in self._profiles_path.glob('**/*.py'):
+		for file in profiles_path.glob('**/*.py'):
 			# ignore the abstract default_profiles class
 			if 'profile.py' in file.name:
 				continue
