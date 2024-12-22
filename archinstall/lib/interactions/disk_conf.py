@@ -148,7 +148,7 @@ def select_disk_config(
 
 				mods = disk.device_handler.detect_pre_mounted_mods(path)
 
-				storage['MOUNT_POINT'] = path
+				storage['arguments']['mount_point'] = path
 
 				return disk.DiskLayoutConfiguration(
 					config_type=disk.DiskLayoutType.Pre_mount,

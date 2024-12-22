@@ -77,7 +77,7 @@ def define_arguments() -> None:
 	parser.add_argument("--dry-run", "--dry_run", action="store_true",
 						help="Generates a configuration file and then exits instead of performing an installation")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
-	parser.add_argument("--mount-point", "--mount_point", nargs="?", type=str,
+	parser.add_argument("--mount-point", "--mount_point", default=Path("/mnt/archinstall"), nargs="?", type=Path,
 						help="Define an alternate mount point for installation")
 	parser.add_argument("--skip-ntp", action="store_true", help="Disables NTP checks during installation", default=False)
 	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
@@ -266,8 +266,6 @@ def load_config() -> None:
 
 def post_process_arguments(args: dict[str, Any]) -> None:
 	storage['arguments'] = args
-	if mountpoint := args.get('mount_point', None):
-		storage['MOUNT_POINT'] = Path(mountpoint)
 
 	if args.get('debug', False):
 		warn(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!")
