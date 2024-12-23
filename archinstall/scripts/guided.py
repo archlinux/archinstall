@@ -180,7 +180,7 @@ def guided() -> None:
 	)
 
 	fs_handler.perform_filesystem_operations()
-	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+	perform_installation(archinstall.arguments.get('mount_point', Path('/mnt')))
 
 
 guided()

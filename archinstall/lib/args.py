@@ -272,9 +272,6 @@ class ArchConfigHandler:
 		if args.config is None:
 			args.silent = False
 
-		if args.mount_point is not None:
-			storage['MOUNT_POINT'] = Path(args.mount_point)
-
 		if args.debug:
 			warn(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!")
 

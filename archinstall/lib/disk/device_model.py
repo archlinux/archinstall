@@ -99,7 +99,7 @@ class DiskLayoutConfiguration:
 			mods = device_handler.detect_pre_mounted_mods(path)
 			device_modifications.extend(mods)
 
-			storage['MOUNT_POINT'] = path
+			storage['arguments']['mount_point'] = path
 
 			config.mountpoint = path
 
