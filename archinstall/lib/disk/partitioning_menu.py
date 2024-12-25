@@ -95,6 +95,7 @@ class PartitioningList(ListManager):
 			'assign_mountpoint': str(_('Assign mountpoint')),
 			'mark_formatting': str(_('Mark/Unmark to be formatted (wipes data)')),
 			'mark_bootable': str(_('Mark/Unmark as bootable')),
+			'mark_xbootldr': str(_('Mark/Unmark as XBOOTLDR')),
 			'set_filesystem': str(_('Change filesystem')),
 			'btrfs_mark_compressed': str(_('Mark/Unmark as compressed')),  # btrfs only
 			'btrfs_mark_nodatacow': str(_('Mark/Unmark as nodatacow')),  # btrfs only
@@ -239,6 +240,7 @@ class PartitioningList(ListManager):
 				not_filter += [
 					self._actions['set_filesystem'],
 					self._actions['mark_bootable'],
+					self._actions['mark_xbootldr'],
 					self._actions['btrfs_mark_compressed'],
 					self._actions['btrfs_mark_nodatacow'],
 					self._actions['btrfs_set_subvolumes']
@@ -296,6 +298,8 @@ class PartitioningList(ListManager):
 					partition.invert_flag(PartitionFlag.BOOT)
 					if self._using_gpt:
 						partition.invert_flag(PartitionFlag.ESP)
+				case 'mark_xbootldr':
+					partition.invert_flag(PartitionFlag.XBOOTLDR)
 				case 'set_filesystem':
 					fs_type = self._prompt_partition_fs_type()
 					if fs_type:
