@@ -45,7 +45,7 @@ class CpuVendor(Enum):
 
 class GfxPackage(Enum):
 	IntelMediaDriver = 'intel-media-driver'
-	Mesa = "mesa"
+	Mesa = 'mesa'
 	VulkanNouveau = 'vulkan-nouveau'
 	NvidiaDkms = 'nvidia-dkms'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
@@ -93,7 +93,7 @@ class GfxDriver(Enum):
 					GfxPackage.Mesa,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanRadeon,
-					GfxPackage.VulkanNouveau
+					GfxPackage.VulkanNouveau,
 					GfxPackage.VulkanIntel,
 					GfxPackage.Xf86VideoVmware
 				]
