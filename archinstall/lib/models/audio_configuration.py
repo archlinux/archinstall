@@ -34,7 +34,7 @@ class AudioConfiguration:
 		installation: Installer
 	) -> None:
 		info(f'Installing audio server: {self.audio.name}')
-		
+
 		match self.audio:
 			case Audio.Pipewire:
 				PipewireProfile().install(installation)
