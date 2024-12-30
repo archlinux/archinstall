@@ -7,7 +7,6 @@ from ..installer import Installer
 from ..output import info
 
 
-@dataclass
 class Audio(Enum):
 	NoAudio = 'No audio server'
 	Pipewire = 'pipewire'
