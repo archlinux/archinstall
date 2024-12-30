@@ -34,13 +34,15 @@ class AudioConfiguration:
 		installation: Installer
 	) -> None:
 		info(f'Installing audio server: {self.audio.name}')
-
+		
 		match self.audio:
 			case Audio.Pipewire:
 				PipewireProfile().install(installation)
 			case Audio.Pulseaudio:
 				installation.add_additional_packages("pulseaudio")
-
+			case Audio.NoAudio:
+				pass
+				
 		if self.audio != Audio.NoAudio:
 			if SysInfo.requires_sof_fw():
 				installation.add_additional_packages('sof-firmware')
