@@ -13,20 +13,24 @@ class PlasmaProfile(XorgProfile):
 	def packages(self) -> list[str]:
 		return [
 			"ark",
+			"bluedevil",
+			"breeze-gtk",
 			"dolphin",
+			"firefox",
 			"gwenview",
 			"kate",
 			"kcalc",
 			"kde-gtk-config",
 			"konsole",
+			"okular",
 			"plasma-desktop",
-			"bluedevil",
 			"plasma-nm",
-			"power-profiles-daemon",
 			"plasma-pa",
-			"breeze-gtk",
+			"plasma-systemmonitor",
+			"power-profiles-daemon",
 			"sddm-kcm",
-			"spectacle"
+			"spectacle",
+			"vlc"
 		]
 
 	@property
