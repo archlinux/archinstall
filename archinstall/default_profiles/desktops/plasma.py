@@ -14,7 +14,6 @@ class PlasmaProfile(XorgProfile):
 		return [
 			"ark",
 			"dolphin",
-			"firefox",
 			"gwenview",
 			"kate",
 			"kcalc",
@@ -27,8 +26,7 @@ class PlasmaProfile(XorgProfile):
 			"plasma-pa",
 			"breeze-gtk",
 			"sddm-kcm",
-			"spectacle",
-			"vlc"
+			"spectacle"
 		]
 
 	@property
