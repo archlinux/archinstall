@@ -90,11 +90,11 @@ class GfxDriver(Enum):
 		match self:
 			case GfxDriver.AllOpenSource:
 				packages += [
-					GfxPackage.Mesa,
 					GfxPackage.IntelMediaDriver,
-					GfxPackage.VulkanRadeon,
-					GfxPackage.VulkanNouveau,
+					GfxPackage.Mesa,
 					GfxPackage.VulkanIntel,
+					GfxPackage.VulkanNouveau,
+					GfxPackage.VulkanRadeon,
 					GfxPackage.Xf86VideoVmware
 				]
 			case GfxDriver.AmdOpenSource:
@@ -104,8 +104,8 @@ class GfxDriver(Enum):
 				]
 			case GfxDriver.IntelOpenSource:
 				packages += [
-					GfxPackage.Mesa,
 					GfxPackage.IntelMediaDriver,
+					GfxPackage.Mesa,
 					GfxPackage.VulkanIntel
 				]
 			case GfxDriver.NvidiaOpenKernel:
