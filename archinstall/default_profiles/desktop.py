@@ -28,6 +28,8 @@ class DesktopProfile(Profile):
 	@override
 	def packages(self) -> list[str]:
 		return [
+			'gst-plugin-libcamera',
+			'libcamera',
 			'nano',
 			'vim',
 			'openssh',
