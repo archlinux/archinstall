@@ -48,7 +48,7 @@ class GfxPackage(Enum):
 	Mesa = "mesa"
 	NvidiaDkms = 'nvidia-dkms'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
-        NvidiaUtils = 'nvidia-utils'
+    NvidiaUtils = 'nvidia-utils'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	VulkanNouveau = 'vulkan-nouveau'
@@ -101,7 +101,7 @@ class GfxDriver(Enum):
 			case GfxDriver.NvidiaOpenKernel:
 				packages += [
 					GfxPackage.NvidiaOpenDkms,
-                                        GfxPackage.NvidiaUtils
+                    GfxPackage.NvidiaUtils
 				]
 			case GfxDriver.NvidiaOpenSource:
 				packages += [
