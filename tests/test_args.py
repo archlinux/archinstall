@@ -161,7 +161,7 @@ def test_config_file_parsing(
 		),
 		bootloader=Bootloader.Systemd,
 		uki=False,
-		audio_config=AudioConfiguration(Audio.Pipewire),
+		audio_config=AudioConfiguration(Audio.PIPEWIRE),
 		hostname='archy',
 		kernels=['linux-zen'],
 		ntp=True,

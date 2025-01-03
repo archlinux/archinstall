@@ -8,9 +8,9 @@ from ..output import info
 
 
 class Audio(Enum):
-	NoAudio = 'No audio server'
-	Pipewire = 'pipewire'
-	Pulseaudio = 'pulseaudio'
+	NO_AUDIO = 'No audio server'
+	PIPEWIRE = 'pipewire'
+	PULSEAUDIO = 'pulseaudio'
 
 
 @dataclass
@@ -35,12 +35,12 @@ class AudioConfiguration:
 		info(f'Installing audio server: {self.audio.name}')
 
 		match self.audio:
-			case Audio.Pipewire:
+			case Audio.PIPEWIRE:
 				PipewireProfile().install(installation)
-			case Audio.Pulseaudio:
+			case Audio.PULSEAUDIO:
 				installation.add_additional_packages("pulseaudio")
 
-		if self.audio != Audio.NoAudio:
+		if self.audio != Audio.NO_AUDIO:
 			if SysInfo.requires_sof_fw():
 				installation.add_additional_packages('sof-firmware')
 
