@@ -33,16 +33,13 @@ class SwayProfile(XorgProfile):
 		return [
 			"sway",
 			"swaybg",
-			"swaylock",
-			"swayidle",
-			"waybar",
-			"dmenu",
+			"wmenu",
 			"brightnessctl",
 			"grim",
-			"slurp",
-			"pavucontrol",
 			"foot",
-			"xorg-xwayland"
+			"xorg-xwayland",
+			"xdg-desktop-portal-gtk",
+			"xdg-desktop-portal-wlr"
 		] + additional
 
 	@property
