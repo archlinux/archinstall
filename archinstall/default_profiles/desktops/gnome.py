@@ -12,6 +12,7 @@ class GnomeProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
+			'file-roller',
 			'gnome-shell',
 			'gnome-control-center',
 			'gvfs-mtp',
