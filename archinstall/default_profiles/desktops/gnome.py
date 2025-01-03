@@ -13,7 +13,7 @@ class GnomeProfile(XorgProfile):
 	def packages(self) -> list[str]:
 		return [
 			'eog',
-			'evince,
+			'evince',
 			'firefox',
 			'gedit',
 			'gnome-shell',
