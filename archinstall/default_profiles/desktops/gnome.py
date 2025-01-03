@@ -18,7 +18,7 @@ class GnomeProfile(XorgProfile):
 			'gnome-control-center',
 			'gvfs-mtp',
 			'nautilus',
-			'power-profiles-daemon'
+			'power-profiles-daemon
 		]
 
 	@property
