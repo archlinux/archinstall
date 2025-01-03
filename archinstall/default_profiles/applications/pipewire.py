@@ -19,6 +19,7 @@ class PipewireProfile(Profile):
 			'pipewire',
 			'pipewire-alsa',
 			'pipewire-jack',
+			'pipewire-libcamera',
 			'pipewire-pulse',
 			'gst-plugin-pipewire',
 			'libpulse',
