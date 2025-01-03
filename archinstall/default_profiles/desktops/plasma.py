@@ -12,12 +12,25 @@ class PlasmaProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"plasma-meta",
-			"konsole",
-			"kate",
-			"dolphin",
 			"ark",
-			"plasma-workspace"
+			"bluedevil",
+			"breeze-gtk",
+			"dolphin",
+			"firefox",
+			"gwenview",
+			"kate",
+			"kcalc",
+			"kde-gtk-config",
+			"konsole",
+			"okular",
+			"plasma-desktop",
+			"plasma-nm",
+			"plasma-pa",
+			"plasma-systemmonitor",
+			"power-profiles-daemon",
+			"sddm-kcm",
+			"spectacle",
+                        "vlc"
 		]
 
 	@property

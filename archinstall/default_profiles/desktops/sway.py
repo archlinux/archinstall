@@ -35,12 +35,9 @@ class SwayProfile(XorgProfile):
 			"swaybg",
 			"swaylock",
 			"swayidle",
-			"waybar",
-			"dmenu",
+			"wmenu",
 			"brightnessctl",
 			"grim",
-			"slurp",
-			"pavucontrol",
 			"foot",
 			"xorg-xwayland"
 		] + additional
