@@ -130,7 +130,7 @@ msgstr ""
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 
 msgid ""

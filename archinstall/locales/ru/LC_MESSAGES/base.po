@@ -133,7 +133,7 @@ msgstr "Выберите куда монтировать раздел (оста�
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
