@@ -12,17 +12,11 @@ class GnomeProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			'eog',
-			'evince',
-			'firefox',
-			'gedit',
 			'gnome-shell',
-			'gnome-calculator',
 			'gnome-control-center',
 			'gvfs-mtp',
 			'nautilus',
-			'power-profiles-daemon',
-			'showtime'
+			'power-profiles-daemon'
 		]
 
 	@property
