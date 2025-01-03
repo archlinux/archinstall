@@ -1,5 +1,4 @@
 import json
-import os
 import readline
 import stat
 from pathlib import Path
@@ -117,14 +116,14 @@ class ConfigurationOutput:
 		if self._is_valid_path(dest_path):
 			target = dest_path / self._user_config_file
 			target.write_text(self.user_config_to_json())
-			os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+			target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save_user_creds(self, dest_path: Path) -> None:
 		if self._is_valid_path(dest_path):
 			if user_creds := self.user_credentials_to_json():
 				target = dest_path / self._user_creds_file
 				target.write_text(user_creds)
-				os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+				target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save(self, dest_path: Path | None = None) -> None:
 		dest_path = dest_path or self._default_save_path
