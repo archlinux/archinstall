@@ -14,6 +14,7 @@ class GnomeProfile(XorgProfile):
 		return [
 			'file-roller',
 			'gnome-shell',
+			'gnome-console',
 			'gnome-control-center',
 			'gvfs-mtp',
 			'nautilus',
