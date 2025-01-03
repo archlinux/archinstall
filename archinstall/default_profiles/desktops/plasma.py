@@ -30,7 +30,7 @@ class PlasmaProfile(XorgProfile):
 			"power-profiles-daemon",
 			"sddm-kcm",
 			"spectacle",
-                        "vlc"
+            "vlc"
 		]
 
 	@property
