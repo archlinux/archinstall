@@ -33,8 +33,6 @@ class SwayProfile(XorgProfile):
 		return [
 			"sway",
 			"swaybg",
-			"swaylock",
-			"swayidle",
 			"wmenu",
 			"brightnessctl",
 			"grim",
