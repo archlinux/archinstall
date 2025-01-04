@@ -907,11 +907,18 @@ class PartitionModification:
 	def is_modify(self) -> bool:
 		return self.status == ModificationStatus.Modify
 
+	def is_delete(self) -> bool:
+		return self.status == ModificationStatus.Delete
+
 	def exists(self) -> bool:
 		return self.status == ModificationStatus.Exist
 
 	def is_exists_or_modify(self) -> bool:
-		return self.status in [ModificationStatus.Exist, ModificationStatus.Modify]
+		return self.status in [
+			ModificationStatus.Exist,
+			ModificationStatus.Delete,
+			ModificationStatus.Modify
+		]
 
 	def is_create_or_modify(self) -> bool:
 		return self.status in [ModificationStatus.Create, ModificationStatus.Modify]
