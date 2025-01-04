@@ -267,10 +267,10 @@ def load_config() -> None:
 def post_process_arguments(args: dict[str, Any]) -> None:
 	storage['arguments'] = args
 
-	if args.get('debug', False):
+	if args.get('debug'):
 		warn(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!")
 
-	if args.get('plugin', None):
+	if args.get('plugin'):
 		path = args['plugin']
 		load_plugin(path)
 
@@ -317,7 +317,7 @@ def main() -> None:
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
-	if not arguments.get('skip_version_check', False):
+	if not arguments.get('skip_version_check'):
 		_check_new_version()
 
 	script = arguments.get('script', None)
