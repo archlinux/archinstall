@@ -45,7 +45,7 @@ class CpuVendor(Enum):
 
 class GfxPackage(Enum):
 	IntelMediaDriver = 'intel-media-driver'
-	Mesa = "mesa"
+	Mesa = 'mesa'
 	NvidiaDkms = 'nvidia-dkms'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
     NvidiaUtils = 'nvidia-utils'
@@ -58,6 +58,7 @@ class GfxPackage(Enum):
 
 
 class GfxDriver(Enum):
+	AllOpenSource = 'All open-source'
 	AmdOpenSource = 'AMD / ATI (open-source)'
 	IntelOpenSource = 'Intel (open-source)'
 	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
@@ -87,6 +88,15 @@ class GfxDriver(Enum):
 		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
 
 		match self:
+		    case GfxDriver.AllOpenSource:
+				packages += [
+					GfxPackage.Mesa,
+					GfxPackage.IntelMediaDriver,
+					GfxPackage.VulkanIntel,
+					GfxPackage.VulkanRadeon,
+					GfxPackage.VulkanNouveau,
+					GfxPackage.Xf86VideoVmware
+				]
 			case GfxDriver.AmdOpenSource:
 				packages += [
 					GfxPackage.Mesa,
