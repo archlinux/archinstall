@@ -61,7 +61,7 @@ class GfxDriver(Enum):
 	AmdOpenSource = 'AMD / ATI (open-source)'
 	IntelOpenSource = 'Intel (open-source)'
 	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
-	NvidiaOpenSource = 'Nvidia (open-source nouveau driver for older GPUs, GeForce 600-)'
+	NvidiaOpenSource = 'Nvidia (open-source Nouveau driver (recommended for older Nvidia GPUs (below GeForce 600))'
 	NvidiaProprietary = 'Nvidia (proprietary)'
 	VMOpenSource = 'VMware / VirtualBox (open-source)'
 
