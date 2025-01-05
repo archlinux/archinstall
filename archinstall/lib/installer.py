@@ -147,11 +147,11 @@ class Installer:
 		if not storage['arguments'].get('skip_ntp', False):
 			info(_('Waiting for time sync (timedatectl show) to complete.'))
 
-			_started_wait = time.time()
-			_notified = False
+			started_wait = time.time()
+			notified = False
 			while True:
-				if not _notified and time.time() - _started_wait > 5:
-					_notified = True
+				if not notified and time.time() - started_wait > 5:
+					notified = True
 					warn(
 						_("Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
 

@@ -48,8 +48,8 @@ class MirrorStatusEntryV3(BaseModel):
 			elif self._speedtest_retries < 1:
 				self._speedtest_retries = 1
 
-			_retry = 0
-			while _retry < self._speedtest_retries and self._speed is None:
+			retry = 0
+			while retry < self._speedtest_retries and self._speed is None:
 				debug(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
 				req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
 
@@ -71,7 +71,7 @@ class MirrorStatusEntryV3(BaseModel):
 					debug(f"    speed: <undetermined> ({error}), skip")
 					self._speed = 0
 
-				_retry += 1
+				retry += 1
 
 			if self._speed is None:
 				self._speed = 0
@@ -103,8 +103,8 @@ class MirrorStatusEntryV3(BaseModel):
 
 	@model_validator(mode='after')
 	def debug_output(self, validation_info) -> 'MirrorStatusEntryV3':
-		self._hostname, *_port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
-		self._port = int(_port[0]) if _port and len(_port) >= 1 else None
+		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
+		self._port = int(port[0]) if port and len(port) >= 1 else None
 
 		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {round(self.score)}" if self.score else ''))
 		return self
