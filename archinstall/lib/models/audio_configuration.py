@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum, auto
 
 from ...default_profiles.applications.pipewire import PipewireProfile
 from ..hardware import SysInfo
@@ -7,10 +7,10 @@ from ..installer import Installer
 from ..output import info
 
 
-class Audio(Enum):
+class Audio(StrEnum):
 	NO_AUDIO = 'No audio server'
-	PIPEWIRE = 'pipewire'
-	PULSEAUDIO = 'pulseaudio'
+	PIPEWIRE = auto()
+	PULSEAUDIO = auto()
 
 
 @dataclass
