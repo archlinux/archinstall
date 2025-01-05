@@ -51,7 +51,6 @@ class GfxPackage(Enum):
     NvidiaUtils = 'nvidia-utils'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
-	VulkanNouveau = 'vulkan-nouveau'
 	Xf86VideoVmware = 'xf86-video-vmware'
 	XorgServer = 'xorg-server'
 	XorgXinit = 'xorg-xinit'
@@ -62,7 +61,7 @@ class GfxDriver(Enum):
 	AmdOpenSource = 'AMD / ATI (open-source)'
 	IntelOpenSource = 'Intel (open-source)'
 	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
-	NvidiaOpenSource = 'Nvidia (open-source Nouveau driver, recommended for older GPUs, below GeForce 600)'
+	NvidiaOpenSource = 'Nvidia (open-source Nouveau driver)'
 	NvidiaProprietary = 'Nvidia (proprietary)'
 	VMOpenSource = 'VMware / VirtualBox (open-source)'
 
@@ -94,7 +93,6 @@ class GfxDriver(Enum):
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel,
 					GfxPackage.VulkanRadeon,
-					GfxPackage.VulkanNouveau,
 					GfxPackage.Xf86VideoVmware
 				]
 			case GfxDriver.AmdOpenSource:
@@ -115,8 +113,7 @@ class GfxDriver(Enum):
 				]
 			case GfxDriver.NvidiaOpenSource:
 				packages += [
-					GfxPackage.Mesa,
-					GfxPackage.VulkanNouveau
+					GfxPackage.Mesa
 				]
 			case GfxDriver.NvidiaProprietary:
 				packages += [
