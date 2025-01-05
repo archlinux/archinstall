@@ -24,6 +24,8 @@ class HyprlandProfile(XorgProfile):
 	def packages(self) -> list[str]:
 		return [
 			"hyprland",
+			"hyprutils",
+			"hyprland-qtutils",
 			"dunst",
 			"kitty",
 			"dolphin",
