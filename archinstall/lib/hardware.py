@@ -48,7 +48,7 @@ class GfxPackage(Enum):
 	Mesa = 'mesa'
 	NvidiaDkms = 'nvidia-dkms'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
-NvidiaUtils= 'nvidia-utils'
+    NvidiaUtils = 'nvidia-utils'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	Xf86VideoVmware = 'xf86-video-vmware'
