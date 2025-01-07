@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_v
 
 from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
+from ..hardware import SysInfo
 from ..output import debug
 from ..storage import storage
 
@@ -147,6 +148,41 @@ class DiskLayoutConfiguration:
 
 			device_modification.partitions = device_partitions
 			device_modifications.append(device_modification)
+
+		using_gpt = SysInfo.has_uefi()
+
+		for dev_mod in device_modifications:
+			partitions = sorted(dev_mod.partitions, key=lambda p: p.start)
+
+			for i, current_partition in enumerate(partitions[1:], start=1):
+				previous_partition = partitions[i - 1]
+				if (
+					current_partition.status == ModificationStatus.Create
+					and current_partition.start < previous_partition.end
+				):
+					raise ValueError('Partitions overlap')
+
+			partitions = [
+				part_mod for part_mod in dev_mod.partitions
+				if part_mod.status == ModificationStatus.Create
+			]
+
+			if not partitions:
+				continue
+
+			for part in partitions:
+				if (
+					part.start != part.start.align()
+					or part.length != part.length.align()
+				):
+					raise ValueError('Partition is misaligned')
+
+			total_size = dev_mod.device.device_info.total_size
+
+			if using_gpt and partitions[-1].end > total_size.gpt_end():
+				raise ValueError('Partition overlaps backup GPT header')
+			elif partitions[-1].end > total_size.align():
+				raise ValueError('Partition too large for device')
 
 		# Parse LVM configuration from settings
 		if (lvm_arg := disk_config.get('lvm_config', None)) is not None:
@@ -354,6 +390,14 @@ class Size:
 			return self.binary_unit_highest(include_unit)
 		else:
 			return self.si_unit_highest(include_unit)
+
+	def align(self) -> Size:
+		align_norm = Size(1, Unit.MiB, self.sector_size)._normalize()
+		src_norm = self._normalize()
+		return self - Size(abs(src_norm % align_norm), Unit.B, self.sector_size)
+
+	def gpt_end(self) -> Size:
+		return self - Size(33, Unit.sectors, self.sector_size)
 
 	def _normalize(self) -> int:
 		"""
@@ -907,11 +951,18 @@ class PartitionModification:
 	def is_modify(self) -> bool:
 		return self.status == ModificationStatus.Modify
 
+	def is_delete(self) -> bool:
+		return self.status == ModificationStatus.Delete
+
 	def exists(self) -> bool:
 		return self.status == ModificationStatus.Exist
 
 	def is_exists_or_modify(self) -> bool:
-		return self.status in [ModificationStatus.Exist, ModificationStatus.Modify]
+		return self.status in [
+			ModificationStatus.Exist,
+			ModificationStatus.Delete,
+			ModificationStatus.Modify
+		]
 
 	def is_create_or_modify(self) -> bool:
 		return self.status in [ModificationStatus.Create, ModificationStatus.Modify]
