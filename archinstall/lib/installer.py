@@ -836,13 +836,13 @@ class Installer:
 		pacman_conf = pacman.Config(self.target)
 		if multilib:
 			info("The multilib flag is set. This system will be installed with the multilib repository enabled.")
-			pacman_conf.enable(pacman.Repo.Multilib)
+			pacman_conf.enable(pacman.Repo.MULTILIB)
 		else:
 			info("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
 
 		if testing:
 			info("The testing flag is set. This system will be installed with testing repositories enabled.")
-			pacman_conf.enable(pacman.Repo.Testing)
+			pacman_conf.enable(pacman.Repo.TESTING)
 		else:
 			info("The testing flag is not set. This system will be installed without testing repositories enabled.")
 
