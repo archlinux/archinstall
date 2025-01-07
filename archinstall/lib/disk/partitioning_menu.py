@@ -105,7 +105,9 @@ class PartitioningList(ListManager):
 		end = self._device.device_info.total_size
 
 		if self._using_gpt:
-			end -= self._buffer
+			end = end.gpt_end()
+
+		end = end.align()
 
 		# Reorder device_partitions to move all deleted partitions to the top
 		device_partitions.sort(key=lambda p: p.is_delete(), reverse=True)

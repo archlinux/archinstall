@@ -355,6 +355,14 @@ class Size:
 		else:
 			return self.si_unit_highest(include_unit)
 
+	def align(self) -> Size:
+		align_norm = Size(1, Unit.MiB, self.sector_size)._normalize()
+		src_norm = self._normalize()
+		return self - Size(abs(src_norm % align_norm), Unit.B, self.sector_size)
+
+	def gpt_end(self) -> Size:
+		return self - Size(33, Unit.sectors, self.sector_size)
+
 	def _normalize(self) -> int:
 		"""
 		will normalize the value of the unit to Byte
