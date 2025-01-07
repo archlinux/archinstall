@@ -49,7 +49,7 @@
                                 "value": 512
                             },
                             "unit": "GiB",
-                            "value": 20
+                            "value": 32
                         },
                         "mount_options": [],
                         "mountpoint": "/",
@@ -76,7 +76,7 @@
                                 "value": 512
                             },
                             "unit": "GiB",
-                            "value": 100
+                            "value": 32
                         },
                         "mount_options": [],
                         "mountpoint": "/home",
@@ -86,8 +86,8 @@
                                 "unit": "B",
                                 "value": 512
                             },
-                            "unit": "GiB",
-                            "value": 20
+                            "unit": "MiB",
+                            "value": 33281
                         },
                         "status": "create",
                         "type": "primary"
