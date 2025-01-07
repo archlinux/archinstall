@@ -274,7 +274,11 @@ def post_process_arguments(args: dict[str, Any]) -> None:
 		path = args['plugin']
 		load_plugin(path)
 
-	load_config()
+	try:
+		load_config()
+	except ValueError as err:
+		warn(str(err))
+		exit(1)
 
 
 define_arguments()
