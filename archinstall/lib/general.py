@@ -112,8 +112,6 @@ class SysCommandWorker:
 		working_directory: str | None = './',
 		remove_vt100_escape_codes_from_lines: bool = True
 	):
-		callbacks = callbacks or {}
-
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
 
@@ -122,7 +120,7 @@ class SysCommandWorker:
 				cmd[0] = locate_binary(cmd[0])
 
 		self.cmd = cmd
-		self.callbacks = callbacks
+		self.callbacks = callbacks or {}
 		self.peek_output = peek_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overridden
 		self.environment_vars = {'LC_ALL': 'C'}
