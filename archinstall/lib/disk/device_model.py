@@ -152,36 +152,48 @@ class DiskLayoutConfiguration:
 		using_gpt = SysInfo.has_uefi()
 
 		for dev_mod in device_modifications:
-			partitions = sorted(dev_mod.partitions, key=lambda p: p.start)
+			dev_mod.partitions.sort(key=lambda p: (not p.is_delete(), p.start))
 
-			for i, current_partition in enumerate(partitions[1:], start=1):
-				previous_partition = partitions[i - 1]
+			non_delete_partitions = [
+				part_mod for part_mod in dev_mod.partitions
+				if not part_mod.is_delete()
+			]
+
+			if not non_delete_partitions:
+				continue
+
+			first = non_delete_partitions[0]
+			if first.status == ModificationStatus.Create and not first.start.is_valid_start():
+				raise ValueError('First partition must start at no less than 1 MiB')
+
+			for i, current_partition in enumerate(non_delete_partitions[1:], start=1):
+				previous_partition = non_delete_partitions[i - 1]
 				if (
 					current_partition.status == ModificationStatus.Create
 					and current_partition.start < previous_partition.end
 				):
 					raise ValueError('Partitions overlap')
 
-			partitions = [
-				part_mod for part_mod in dev_mod.partitions
+			create_partitions = [
+				part_mod for part_mod in non_delete_partitions
 				if part_mod.status == ModificationStatus.Create
 			]
 
-			if not partitions:
+			if not create_partitions:
 				continue
 
-			for part in partitions:
+			for part in create_partitions:
 				if (
 					part.start != part.start.align()
 					or part.length != part.length.align()
 				):
 					raise ValueError('Partition is misaligned')
 
+			last = create_partitions[-1]
 			total_size = dev_mod.device.device_info.total_size
-
-			if using_gpt and partitions[-1].end > total_size.gpt_end():
+			if using_gpt and last.end > total_size.gpt_end():
 				raise ValueError('Partition overlaps backup GPT header')
-			elif partitions[-1].end > total_size.align():
+			elif last.end > total_size.align():
 				raise ValueError('Partition too large for device')
 
 		# Parse LVM configuration from settings
@@ -390,6 +402,9 @@ class Size:
 			return self.binary_unit_highest(include_unit)
 		else:
 			return self.si_unit_highest(include_unit)
+
+	def is_valid_start(self) -> bool:
+		return self >= Size(1, Unit.MiB, self.sector_size)
 
 	def align(self) -> Size:
 		align_norm = Size(1, Unit.MiB, self.sector_size)._normalize()
