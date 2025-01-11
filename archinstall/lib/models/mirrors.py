@@ -61,7 +61,7 @@ class MirrorStatusEntryV3(BaseModel):
 					self._speed = size / timer.time
 					debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
 				# Do not retry error
-				except (urllib.error.URLError, ) as error:
+				except urllib.error.URLError as error:
 					debug(f"    speed: <undetermined> ({error}), skip")
 					self._speed = 0
 				# Do retry error

@@ -114,8 +114,8 @@ class AbstractCurses(metaclass=ABCMeta):
 		full_header = []
 
 		if header:
-			for header in header.split('\n'):
-				full_header += [ViewportEntry(header, cur_row, offset, STYLE.NORMAL)]
+			for line in header.split('\n'):
+				full_header += [ViewportEntry(line, cur_row, offset, STYLE.NORMAL)]
 				cur_row += 1
 
 		return full_header
