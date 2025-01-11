@@ -254,7 +254,7 @@ class MirrorListHandler:
 
 				url = line.removeprefix('Server = ')
 				mirror_entry = MirrorStatusEntryV3(
-					url=url.rstrip('$repo/os/$arch'),
+					url=url.removesuffix('$repo/os/$arch'),
 					protocol=urllib.parse.urlparse(url).scheme,
 					active=True,
 					country=current_region or 'Worldwide',
