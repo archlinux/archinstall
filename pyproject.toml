@@ -96,12 +96,15 @@ disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.*"
-disallow_any_generics = false
-disallow_any_unimported = false
 disallow_incomplete_defs = false
 disallow_untyped_defs = false
 warn_return_any = false
 warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.disk.*"
+# 'Any' imports are allowed because pyparted doesn't have type hints
+disallow_any_unimported = false
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.packages"

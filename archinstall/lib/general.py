@@ -477,7 +477,7 @@ def run_custom_user_commands(commands: list[str], installation: Installer) -> No
 		os.unlink(chroot_path)
 
 
-def json_stream_to_structure(configuration_identifier: str, stream: str, target: dict) -> bool:
+def json_stream_to_structure(configuration_identifier: str, stream: str, target: dict[str, Any]) -> bool:
 	"""
 	Load a JSON encoded dictionary from a stream and merge it into an existing dictionary.
 	A stream can be a filepath, a URL or a raw JSON string.
