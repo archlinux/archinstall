@@ -95,7 +95,7 @@ class MirrorStatusEntryV3(BaseModel):
 
 	@classmethod
 	@field_validator('score', mode='before')
-	def validate_score(cls, value: int) -> int | None:
+	def validate_score(cls, value: float) -> int | None:
 		if value is not None:
 			value = round(value)
 			debug(f"    score: {value}")
@@ -107,7 +107,7 @@ class MirrorStatusEntryV3(BaseModel):
 		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(port[0]) if port and len(port) >= 1 else None
 
-		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {round(self.score)}" if self.score else ''))
+		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {self.score}" if self.score else ''))
 		return self
 
 
