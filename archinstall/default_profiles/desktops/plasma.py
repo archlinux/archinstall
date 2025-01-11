@@ -21,7 +21,6 @@ class PlasmaProfile(XorgProfile):
 			"plasma-desktop",
 			"plasma-nm",
 			"plasma-pa",
-			"power-profiles-daemon",
 			"sddm-kcm"
 		]
 
