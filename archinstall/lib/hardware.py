@@ -88,7 +88,7 @@ class GfxDriver(Enum):
 
 		match self:
 		    case GfxDriver.AllOpenSource:
-				packages += [
+			packages += [
 					GfxPackage.Mesa,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel,
