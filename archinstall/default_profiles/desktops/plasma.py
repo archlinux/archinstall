@@ -22,8 +22,7 @@ class PlasmaProfile(XorgProfile):
 			"plasma-nm",
 			"plasma-pa",
 			"power-profiles-daemon",
-			"sddm-kcm",
-			"spectacle"
+			"sddm-kcm"
 		]
 
 	@property
