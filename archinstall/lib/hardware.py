@@ -87,7 +87,7 @@ class GfxDriver(Enum):
 		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
 
 		match self:
-		    case GfxDriver.AllOpenSource:
+            case GfxDriver.AllOpenSource:
 			    packages += [
 					GfxPackage.Mesa,
 					GfxPackage.IntelMediaDriver,
@@ -95,7 +95,7 @@ class GfxDriver(Enum):
 					GfxPackage.VulkanRadeon,
 					GfxPackage.Xf86VideoVmware
 				]
-			case GfxDriver.AmdOpenSource:
+            case GfxDriver.AmdOpenSource:
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.VulkanRadeon
