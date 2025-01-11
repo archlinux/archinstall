@@ -126,11 +126,11 @@ class ConfigurationOutput:
 				target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save(self, dest_path: Path | None = None) -> None:
-		dest_path = dest_path or self._default_save_path
+		save_path = dest_path or self._default_save_path
 
-		if self._is_valid_path(dest_path):
-			self.save_user_config(dest_path)
-			self.save_user_creds(dest_path)
+		if self._is_valid_path(save_path):
+			self.save_user_config(save_path)
+			self.save_user_creds(save_path)
 
 
 def save_config(config: dict[str, Any]) -> None:
