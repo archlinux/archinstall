@@ -20,7 +20,7 @@ class FormattedOutput:
 	def _get_values(
 		cls,
 		o: 'DataclassInstance',
-		class_formatter: str | Callable | None = None,
+		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = []
 	) -> dict[str, Any]:
 		"""
@@ -52,7 +52,7 @@ class FormattedOutput:
 	def as_table(
 		cls,
 		obj: list[Any],
-		class_formatter: str | Callable | None = None,
+		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = [],
 		capitalize: bool = False
 	) -> str:

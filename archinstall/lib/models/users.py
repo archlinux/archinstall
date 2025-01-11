@@ -140,7 +140,7 @@ class User:
 		return users
 
 	@classmethod
-	def _parse_backwards_compatible(cls, config_users: dict, sudo: bool) -> list['User']:
+	def _parse_backwards_compatible(cls, config_users: dict[str, dict[str, str]], sudo: bool) -> list['User']:
 		if len(config_users.keys()) > 0:
 			username = list(config_users.keys())[0]
 			password = config_users[username]['!password']
@@ -153,8 +153,8 @@ class User:
 	@classmethod
 	def parse_arguments(
 		cls,
-		config_users: list[dict[str, str]] | dict[str, str],
-		config_superusers: list[dict[str, str]] | dict[str, str]
+		config_users: list[dict[str, str]] | dict[str, dict[str, str]],
+		config_superusers: list[dict[str, str]] | dict[str, dict[str, str]]
 	) -> list['User']:
 		users = []
 

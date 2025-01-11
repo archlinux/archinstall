@@ -439,11 +439,17 @@ class Size:
 		return self._normalize() <= other._normalize()
 
 	@override
-	def __eq__(self, other) -> bool:
+	def __eq__(self, other: object) -> bool:
+		if not isinstance(other, Size):
+			return NotImplemented
+
 		return self._normalize() == other._normalize()
 
 	@override
-	def __ne__(self, other) -> bool:
+	def __ne__(self, other: object) -> bool:
+		if not isinstance(other, Size):
+			return NotImplemented
+
 		return self._normalize() != other._normalize()
 
 	def __gt__(self, other: Size) -> bool:

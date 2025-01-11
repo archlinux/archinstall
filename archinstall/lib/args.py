@@ -326,7 +326,7 @@ class ArchConfigHandler:
 
 		return path.read_text()
 
-	def _cleanup_config(self, config: Namespace | dict) -> dict[str, Any]:
+	def _cleanup_config(self, config: Namespace | dict[str, Any]) -> dict[str, Any]:
 		clean_args = {}
 		for key, val in config.items():
 			if isinstance(val, dict):
