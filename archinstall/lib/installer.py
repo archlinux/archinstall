@@ -242,7 +242,7 @@ class Installer:
 				break
 
 		for mod in sorted_device_mods:
-			not_pv_part_mods = list(filter(lambda x: x not in pvs, mod.partitions))
+			not_pv_part_mods = [p for p in mod.partitions if p not in pvs]
 
 			# partitions have to mounted in the right order on btrfs the mountpoint will
 			# be empty as the actual subvolumes are getting mounted instead so we'll use
