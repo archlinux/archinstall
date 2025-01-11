@@ -363,8 +363,8 @@ class Installer:
 	) -> None:
 		for subvol in sorted(subvolumes, key=lambda x: x.relative_mountpoint):
 			mountpoint = self.target / subvol.relative_mountpoint
-			mount_options = mount_options + [f'subvol={subvol.name}']
-			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
+			options = mount_options + [f'subvol={subvol.name}']
+			disk.device_handler.mount(dev_path, mountpoint, options=options)
 
 	def generate_key_files(self) -> None:
 		match self._disk_encryption.encryption_type:
