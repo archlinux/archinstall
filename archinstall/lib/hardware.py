@@ -44,19 +44,13 @@ class CpuVendor(Enum):
 
 
 class GfxPackage(Enum):
-	Dkms = 'dkms'
 	IntelMediaDriver = 'intel-media-driver'
-	LibvaIntelDriver = 'libva-intel-driver'
-	LibvaMesaDriver = 'libva-mesa-driver'
-	Mesa = "mesa"
+	Mesa = 'mesa'
 	NvidiaDkms = 'nvidia-dkms'
-	NvidiaOpen = 'nvidia-open'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
+    NvidiaUtils = 'nvidia-utils'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
-	Xf86VideoAmdgpu = "xf86-video-amdgpu"
-	Xf86VideoAti = "xf86-video-ati"
-	Xf86VideoNouveau = 'xf86-video-nouveau'
 	Xf86VideoVmware = 'xf86-video-vmware'
 	XorgServer = 'xorg-server'
 	XorgXinit = 'xorg-xinit'
@@ -93,50 +87,37 @@ class GfxDriver(Enum):
 		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
 
 		match self:
-			case GfxDriver.AllOpenSource:
+		    case GfxDriver.AllOpenSource:
 				packages += [
 					GfxPackage.Mesa,
-					GfxPackage.Xf86VideoAmdgpu,
-					GfxPackage.Xf86VideoAti,
-					GfxPackage.Xf86VideoNouveau,
-					GfxPackage.Xf86VideoVmware,
-					GfxPackage.LibvaMesaDriver,
-					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
+					GfxPackage.VulkanIntel,
 					GfxPackage.VulkanRadeon,
-					GfxPackage.VulkanIntel
+					GfxPackage.Xf86VideoVmware
 				]
 			case GfxDriver.AmdOpenSource:
 				packages += [
 					GfxPackage.Mesa,
-					GfxPackage.Xf86VideoAmdgpu,
-					GfxPackage.Xf86VideoAti,
-					GfxPackage.LibvaMesaDriver,
 					GfxPackage.VulkanRadeon
 				]
 			case GfxDriver.IntelOpenSource:
 				packages += [
 					GfxPackage.Mesa,
-					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel
 				]
 			case GfxDriver.NvidiaOpenKernel:
 				packages += [
-					GfxPackage.NvidiaOpen,
-					GfxPackage.Dkms,
-					GfxPackage.NvidiaOpenDkms
+					GfxPackage.NvidiaOpenDkms,
+                    GfxPackage.NvidiaUtils
 				]
 			case GfxDriver.NvidiaOpenSource:
 				packages += [
-					GfxPackage.Mesa,
-					GfxPackage.Xf86VideoNouveau,
-					GfxPackage.LibvaMesaDriver
+					GfxPackage.Mesa
 				]
 			case GfxDriver.NvidiaProprietary:
 				packages += [
-					GfxPackage.NvidiaDkms,
-					GfxPackage.Dkms,
+					GfxPackage.NvidiaDkms
 				]
 			case GfxDriver.VMOpenSource:
 				packages += [
