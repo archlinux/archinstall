@@ -68,15 +68,4 @@ squash commits when the pull request is merged.
 Maintainer:
 * Anton Hvornum ([@Torxed](https://github.com/Torxed))
 
-At present the current contributors are (alphabetically):
-* Anton Hvornum ([@Torxed](https://github.com/Torxed))
-* Borislav Kosharov ([@nikibobi](https://github.com/nikibobi))
-* demostanis ([@demostanis](https://github.com/demostanis))
-* Dylan Taylor ([@dylanmtaylor](https://github.com/dylanmtaylor))
-* Giancarlo Razzolini (@[grazzolini](https://github.com/grazzolini))
-* Jerker Bengtsson ([@jaybent](https://github.com/jaybent))
-* j-james ([@j-james](https://github.com/j-james))
-* Ninchester ([@ninchester](https://github.com/ninchester))
-* nullrequest ([@advaithm](https://github.com/advaithm))
-* Philipp Schaffrath ([@phisch](https://github.com/phisch))
-* Varun Madiath ([@vamega](https://github.com/vamega))
+[Contributors](https://github.com/archlinux/archinstall/graphs/contributors)
