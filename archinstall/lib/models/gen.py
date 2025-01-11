@@ -40,7 +40,10 @@ class PackageSearchResult:
 		return self.pkgver
 
 	@override
-	def __eq__(self, other) -> bool:
+	def __eq__(self, other: object) -> bool:
+		if not isinstance(other, PackageSearchResult):
+			return NotImplemented
+
 		return self.pkg_version == other.pkg_version
 
 	def __lt__(self, other: 'PackageSearchResult') -> bool:
@@ -99,7 +102,10 @@ class LocalPackage:
 		return self.version
 
 	@override
-	def __eq__(self, other) -> bool:
+	def __eq__(self, other: object) -> bool:
+		if not isinstance(other, LocalPackage):
+			return NotImplemented
+
 		return self.pkg_version == other.pkg_version
 
 	def __lt__(self, other: 'LocalPackage') -> bool:

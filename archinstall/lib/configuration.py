@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 class ConfigurationOutput:
-	def __init__(self, config: dict):
+	def __init__(self, config: dict[str, Any]):
 		"""
 		Configuration output handler to parse the existing configuration data structure and prepare for output on the
 		console and for saving it to configuration files

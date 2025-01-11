@@ -33,7 +33,7 @@ dev = [
     "mypy==1.14.1",
     "flake8==7.1.1",
     "pre-commit==4.0.1",
-    "ruff==0.9.0",
+    "ruff==0.9.1",
     "pylint==3.3.3",
     "pylint-pydantic==0.3.5",
     "pytest==8.3.4",
@@ -96,12 +96,15 @@ disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.*"
-disallow_any_generics = false
-disallow_any_unimported = false
 disallow_incomplete_defs = false
 disallow_untyped_defs = false
 warn_return_any = false
 warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.disk.*"
+# 'Any' imports are allowed because pyparted doesn't have type hints
+disallow_any_unimported = false
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.packages"

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import pathlib
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu, Tui
@@ -243,7 +243,7 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 		case ResultType.Selection:
 			downloads: int = int(result.text())
 
-	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
+	pacman_conf_path = Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
 		pacman_conf = f.read().split("\n")
 
