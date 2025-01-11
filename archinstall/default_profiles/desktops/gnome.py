@@ -15,7 +15,6 @@ class GnomeProfile(XorgProfile):
 			'gnome-shell',
 			'gnome-console',
 			'gnome-control-center',
-			'gvfs-mtp',
 			'nautilus'
 		]
 
