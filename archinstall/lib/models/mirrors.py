@@ -38,7 +38,7 @@ class MirrorStatusEntryV3(BaseModel):
 
 	@property
 	def server_url(self) -> str:
-		return f'{self.url}/$repo/os/$arch'
+		return f'{self.url}$repo/os/$arch'
 
 	@property
 	def speed(self) -> float:
