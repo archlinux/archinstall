@@ -207,7 +207,6 @@ select = [
 ]
 
 ignore = [
-    "B005",     # strip-with-multi-characters
     "B006",     # mutable-argument-default
     "B008",     # function-call-in-default-argument
     "B010",     # set-attr-with-constant
