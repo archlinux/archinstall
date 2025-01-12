@@ -37,9 +37,7 @@ class SwayProfile(XorgProfile):
 			"brightnessctl",
 			"grim",
 			"foot",
-			"xorg-xwayland",
-			"xdg-desktop-portal-gtk",
-			"xdg-desktop-portal-wlr"
+			"xorg-xwayland"
 		] + additional
 
 	@property
