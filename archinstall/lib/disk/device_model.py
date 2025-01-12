@@ -142,8 +142,8 @@ class DiskLayoutConfiguration:
 					flags=flags,
 					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', [])),
 				)
-				# special 'invisible attr to internally identify the part mod
-				setattr(device_partition, '_obj_id', partition['obj_id'])
+				# special 'invisible' attr to internally identify the part mod
+				device_partition._obj_id = partition['obj_id']
 				device_partitions.append(device_partition)
 
 			device_modification.partitions = device_partitions
@@ -867,7 +867,7 @@ class PartitionModification:
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
-			self._obj_id = uuid.uuid4()
+			self._obj_id: uuid.UUID | str = uuid.uuid4()
 
 		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
@@ -1133,7 +1133,7 @@ class LvmVolume:
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
-			self._obj_id = uuid.uuid4()
+			self._obj_id: uuid.UUID | str = uuid.uuid4()
 
 	@override
 	def __hash__(self) -> int:
@@ -1193,7 +1193,7 @@ class LvmVolume:
 			btrfs_subvols=SubvolumeModification.parse_args(arg.get('btrfs', []))
 		)
 
-		setattr(volume, '_obj_id', arg['obj_id'])
+		volume._obj_id = arg['obj_id']
 
 		return volume
 

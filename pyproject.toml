@@ -209,7 +209,6 @@ select = [
 ignore = [
     "B006",     # mutable-argument-default
     "B008",     # function-call-in-default-argument
-    "B010",     # set-attr-with-constant
     "B904",     # raise-without-from-inside-except
     "B905",     # zip-without-explicit-strict
     "PLC0415",  # import-outside-top-level
