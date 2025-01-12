@@ -163,20 +163,20 @@ class DiskLayoutConfiguration:
 				continue
 
 			first = non_delete_partitions[0]
-			if first.status == ModificationStatus.Create and not first.start.is_valid_start():
+			if first.status == ModificationStatus.CREATE and not first.start.is_valid_start():
 				raise ValueError('First partition must start at no less than 1 MiB')
 
 			for i, current_partition in enumerate(non_delete_partitions[1:], start=1):
 				previous_partition = non_delete_partitions[i - 1]
 				if (
-					current_partition.status == ModificationStatus.Create
+					current_partition.status == ModificationStatus.CREATE
 					and current_partition.start < previous_partition.end
 				):
 					raise ValueError('Partitions overlap')
 
 			create_partitions = [
 				part_mod for part_mod in non_delete_partitions
-				if part_mod.status == ModificationStatus.Create
+				if part_mod.status == ModificationStatus.CREATE
 			]
 
 			if not create_partitions:
@@ -823,10 +823,10 @@ class FilesystemType(Enum):
 
 
 class ModificationStatus(Enum):
-	Exist = 'existing'
-	Modify = 'modify'
-	Delete = 'delete'
-	Create = 'create'
+	EXIST = 'existing'
+	MODIFY = 'modify'
+	DELETE = 'delete'
+	CREATE = 'create'
 
 
 class _PartitionModificationSerialization(TypedDict):
@@ -872,7 +872,7 @@ class PartitionModification:
 		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
 
-		if self.fs_type is None and self.status == ModificationStatus.Modify:
+		if self.fs_type is None and self.status == ModificationStatus.MODIFY:
 			raise ValueError('FS type must not be empty on modifications with status type modify')
 
 	@override
@@ -915,7 +915,7 @@ class PartitionModification:
 			subvol_mods = []
 
 		return PartitionModification(
-			status=ModificationStatus.Exist,
+			status=ModificationStatus.EXIST,
 			type=partition_info.type,
 			start=partition_info.start,
 			length=partition_info.length,
@@ -970,23 +970,23 @@ class PartitionModification:
 		)
 
 	def is_modify(self) -> bool:
-		return self.status == ModificationStatus.Modify
+		return self.status == ModificationStatus.MODIFY
 
 	def is_delete(self) -> bool:
-		return self.status == ModificationStatus.Delete
+		return self.status == ModificationStatus.DELETE
 
 	def exists(self) -> bool:
-		return self.status == ModificationStatus.Exist
+		return self.status == ModificationStatus.EXIST
 
 	def is_exists_or_modify(self) -> bool:
 		return self.status in [
-			ModificationStatus.Exist,
-			ModificationStatus.Delete,
-			ModificationStatus.Modify
+			ModificationStatus.EXIST,
+			ModificationStatus.DELETE,
+			ModificationStatus.MODIFY
 		]
 
 	def is_create_or_modify(self) -> bool:
-		return self.status in [ModificationStatus.Create, ModificationStatus.Modify]
+		return self.status in [ModificationStatus.CREATE, ModificationStatus.MODIFY]
 
 	@property
 	def mapper_name(self) -> str | None:

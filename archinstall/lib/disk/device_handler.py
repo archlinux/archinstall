@@ -508,7 +508,7 @@ class DeviceHandler:
 	) -> None:
 		# when we require a delete and the partition to be (re)created
 		# already exists then we have to delete it first
-		if requires_delete and part_mod.status in [ModificationStatus.Modify, ModificationStatus.Delete]:
+		if requires_delete and part_mod.status in [ModificationStatus.MODIFY, ModificationStatus.DELETE]:
 			info(f'Delete existing partition: {part_mod.safe_dev_path}')
 			part_info = self.find_partition(part_mod.safe_dev_path)
 
@@ -517,7 +517,7 @@ class DeviceHandler:
 
 			disk.deletePartition(part_info.partition)
 
-		if part_mod.status == ModificationStatus.Delete:
+		if part_mod.status == ModificationStatus.DELETE:
 			return
 
 		start_sector = part_mod.start.convert(
