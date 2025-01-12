@@ -39,8 +39,8 @@ class Help:
 	navigation = HelpGroup(
 		group_id=HelpTextGroupId.NAVIGATION,
 		group_entries=[
-			HelpText('Scroll up', ['Ctrl+↑']),
-			HelpText('Scroll down', ['Ctrl+↓']),
+			HelpText('Preview scroll up', ['PgUp']),
+			HelpText('Preview scroll down', ['PgDown']),
 			HelpText('Move up', ['k', '↑']),
 			HelpText('Move down', ['j', '↓']),
 			HelpText('Move right', ['l', '→']),
