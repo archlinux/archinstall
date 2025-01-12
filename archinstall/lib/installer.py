@@ -242,7 +242,7 @@ class Installer:
 				break
 
 		for mod in sorted_device_mods:
-			not_pv_part_mods = list(filter(lambda x: x not in pvs, mod.partitions))
+			not_pv_part_mods = [p for p in mod.partitions if p not in pvs]
 
 			# partitions have to mounted in the right order on btrfs the mountpoint will
 			# be empty as the actual subvolumes are getting mounted instead so we'll use
@@ -363,8 +363,8 @@ class Installer:
 	) -> None:
 		for subvol in sorted(subvolumes, key=lambda x: x.relative_mountpoint):
 			mountpoint = self.target / subvol.relative_mountpoint
-			mount_options = mount_options + [f'subvol={subvol.name}']
-			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
+			options = mount_options + [f'subvol={subvol.name}']
+			disk.device_handler.mount(dev_path, mountpoint, options=options)
 
 	def generate_key_files(self) -> None:
 		match self._disk_encryption.encryption_type:
@@ -1159,7 +1159,7 @@ class Installer:
 		config = grub_default.read_text()
 
 		kernel_parameters = ' '.join(self._get_kernel_params(root, False, False))
-		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, 1)
+		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, count=1)
 
 		grub_default.write_text(config)
 
@@ -1633,7 +1633,7 @@ Exec = /bin/sh -c "{hook_command}"
 		last_execution_time = SysCommand(
 			f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}",
 			environment_vars={'SYSTEMD_COLORS': '0'}
-		).decode().lstrip('ActiveEnterTimestamp=')
+		).decode().removeprefix('ActiveEnterTimestamp=')
 
 		if not last_execution_time:
 			return None

@@ -49,7 +49,7 @@ class FilesystemHandler:
 			debug('Disk layout configuration is set to pre-mount, not performing any operations')
 			return
 
-		device_mods = list(filter(lambda x: len(x.partitions) > 0, self._disk_config.device_modifications))
+		device_mods = [d for d in self._disk_config.device_modifications if d.partitions]
 
 		if not device_mods:
 			debug('No modifications required')

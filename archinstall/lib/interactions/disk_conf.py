@@ -462,7 +462,7 @@ def suggest_multi_disk_layout(
 		filesystem_type = select_main_filesystem_format(advanced_options)
 
 	# find proper disk for /home
-	possible_devices = list(filter(lambda x: x.device_info.total_size >= min_home_partition_size, devices))
+	possible_devices = [d for d in devices if d.device_info.total_size >= min_home_partition_size]
 	home_device = max(possible_devices, key=lambda d: d.device_info.total_size) if possible_devices else None
 
 	# find proper device for /root

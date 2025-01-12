@@ -180,6 +180,7 @@ line-length = 160
 [tool.ruff.lint]
 select = [
     "ASYNC",  # flake8-async
+    "B",      # flake8-bugbear
     "C90",    # mccabe
     "DTZ",    # flake8-datetimez
     "E",      # pycodestyle errors
@@ -206,6 +207,12 @@ select = [
 ]
 
 ignore = [
+    "B005",     # strip-with-multi-characters
+    "B006",     # mutable-argument-default
+    "B008",     # function-call-in-default-argument
+    "B010",     # set-attr-with-constant
+    "B904",     # raise-without-from-inside-except
+    "B905",     # zip-without-explicit-strict
     "PLC0415",  # import-outside-top-level
     "PLC1901",  # compare-to-empty-string
     "PLW1514",  # unspecified-encoding
