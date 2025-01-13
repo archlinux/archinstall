@@ -12,14 +12,9 @@ class I3wmProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
+			'alacritty',
 			'i3-wm',
-			'i3lock',
 			'i3status',
-			'i3blocks',
-			'xss-lock',
-			'xterm',
-			'lightdm-gtk-greeter',
-			'lightdm',
 			'dmenu'
 		]
 
