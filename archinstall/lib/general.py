@@ -115,9 +115,8 @@ class SysCommandWorker:
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
 
-		if cmd:
-			if cmd[0][0] != '/' and cmd[0][:2] != './':  # Path() does not work well
-				cmd[0] = locate_binary(cmd[0])
+		if cmd and not cmd[0].startswith(('/', './')):  # Path() does not work well
+			cmd[0] = locate_binary(cmd[0])
 
 		self.cmd = cmd
 		self.callbacks = callbacks or {}
