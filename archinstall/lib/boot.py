@@ -26,7 +26,7 @@ class Boot:
 			# '-P' or --console=pipe  could help us not having to do a bunch
 			# of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
 			self.session = SysCommandWorker([
-				'/usr/bin/systemd-nspawn',
+				'systemd-nspawn',
 				'-D', str(self.instance.target),
 				'--timezone=off',
 				'-b',

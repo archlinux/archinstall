@@ -81,7 +81,7 @@ class Luks2:
 		key_file = self._get_key_file(key_file)
 
 		cryptsetup_args = shlex.join([
-			'/usr/bin/cryptsetup',
+			'cryptsetup',
 			'--batch-mode',
 			'--verbose',
 			'--type', 'luks2',
@@ -108,7 +108,7 @@ class Luks2:
 		return key_file
 
 	def _get_luks_uuid(self) -> str:
-		command = f'/usr/bin/cryptsetup luksUUID {self.luks_dev_path}'
+		command = f'cryptsetup luksUUID {self.luks_dev_path}'
 
 		try:
 			return SysCommand(command).decode()
@@ -139,7 +139,7 @@ class Luks2:
 			time.sleep(0.025)
 
 		result = SysCommand(
-			'/usr/bin/cryptsetup open '
+			'cryptsetup open '
 			f'{self.luks_dev_path} '
 			f'{self.mapper_name} '
 			f'--key-file {key_file} '
@@ -202,7 +202,7 @@ class Luks2:
 	def _add_key(self, key_file: Path) -> None:
 		debug(f'Adding additional key-file {key_file}')
 
-		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
+		command = f'cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
 		worker = SysCommandWorker(command)
 		pw_injected = False
 
