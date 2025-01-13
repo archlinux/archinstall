@@ -12,8 +12,9 @@ class CinnamonProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"cinnamon",
-			"gnome-console"
+			'cinnamon',
+			'gvfs-mtp',
+			'gnome-console'
 		]
 
 	@property
