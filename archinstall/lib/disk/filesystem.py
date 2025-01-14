@@ -73,6 +73,8 @@ class FilesystemHandler:
 		for mod in device_mods:
 			device_handler.partition(mod, partition_table=partition_table)
 
+		device_handler.udev_sync()
+
 		if self._disk_config.lvm_config:
 			for mod in device_mods:
 				if boot_part := mod.get_boot_partition():
