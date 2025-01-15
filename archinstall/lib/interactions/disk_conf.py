@@ -618,7 +618,7 @@ def suggest_lvm_layout(
 	root_vol_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
 	home_vol_size = total_vol_available - root_vol_size
 
-	lvm_vol_group = disk.LvmVolumeGroup(vg_grp_name, pvs=other_part, )
+	lvm_vol_group = disk.LvmVolumeGroup(vg_grp_name, pvs=other_part)
 
 	root_vol = disk.LvmVolume(
 		status=disk.LvmVolumeStatus.Create,
