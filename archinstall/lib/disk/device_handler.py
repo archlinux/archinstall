@@ -850,6 +850,22 @@ class DeviceHandler:
 		except SysCallError as err:
 			debug(f'Failed to synchronize with udev: {err}')
 
+	def _check_btrfs_tools(self) -> bool:
+		"""Verify if btrfs-progs tools are available in the system"""
+		try:
+			SysCommand(['which', 'btrfs'])
+			return True
+		except SysCallError:
+			raise DiskError("btrfs-progs not found. Please install btrfs-progs package.")
+
+	def _ensure_mountpoint_available(self, mountpoint: Path) -> None:
+		"""Ensure the mountpoint is available by unmounting if necessary"""
+		if mountpoint.exists():
+			try:
+				self.umount(mountpoint, recursive=True)
+			except Exception as e:
+				debug(f'Failed to unmount existing mountpoint {mountpoint}: {str(e)}')
+
 
 device_handler = DeviceHandler()
 

@@ -9,7 +9,9 @@ from archinstall.tui import Tui
 from ..hardware import SysInfo
 from ..interactions.general_conf import ask_abort
 from ..luks import Luks2
-from ..output import debug, info
+from ..output import debug, info, error
+from ..exceptions import DiskError, SysCallError
+from archinstall.lib.sys_command import SysCommand, SysCommandWorker
 from .device_handler import device_handler
 from .device_model import (
 	DiskEncryption,
@@ -94,7 +96,7 @@ class FilesystemHandler:
 
 				for part_mod in mod.partitions:
 					if part_mod.fs_type == FilesystemType.Btrfs:
-						device_handler.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
+						self.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
 
 	def _format_partitions(
 		self,
@@ -366,3 +368,62 @@ class FilesystemHandler:
 				ask_abort()
 
 		return True
+
+	def create_btrfs_volumes(self, part_mod: PartitionModification, enc_conf: 'DiskEncryption | None' = None) -> None:
+		try:
+			debug(f'Creating BTRFS volumes: {part_mod.safe_dev_path}')
+			
+			# Primeiro, verificar ferramentas BTRFS
+			self._check_btrfs_tools()
+			
+			# Garantir que o ponto de montagem está disponível
+			self._ensure_mountpoint_available(self._TMP_BTRFS_MOUNT)
+			
+			# Criar diretório de montagem
+			self._TMP_BTRFS_MOUNT.mkdir(parents=True, exist_ok=True)
+			
+			# Verificar dispositivo criptografado
+			dev_path = part_mod.safe_dev_path
+			luks_handler = None
+			
+			if enc_conf and part_mod in enc_conf.partitions:
+				if not part_mod.mapper_name:
+					raise ValueError('No device path specified for encrypted partition')
+				luks_handler = self.unlock_luks2_dev(
+					dev_path,
+					part_mod.mapper_name,
+					enc_conf.encryption_password
+				)
+				dev_path = luks_handler.mapper_dev
+				if not dev_path:
+					raise DiskError('Failed to unlock LUKS device')
+
+			try:
+				self.mount(
+					dev_path,
+					self._TMP_BTRFS_MOUNT,
+					create_target_mountpoint=True,
+					options=part_mod.mount_options
+				)
+				
+				for sub_vol in sorted(part_mod.btrfs_subvols, key=lambda x: x.name):
+					subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
+					debug(f'Creating subvolume: {subvol_path}')
+					
+					try:
+						SysCommand(f"btrfs subvolume create -p {subvol_path}")
+					except SysCallError as e:
+						raise DiskError(f'Failed to create subvolume {subvol_path}: {str(e)}')
+						
+			finally:
+				try:
+					self.umount(dev_path)
+				except Exception as e:
+					debug(f'Failed to unmount {dev_path}: {str(e)}')
+				
+				if luks_handler and luks_handler.mapper_dev:
+					luks_handler.lock()
+					
+		except Exception as e:
+			error(f'Failed during BTRFS volume creation: {str(e)}')
+			raise
