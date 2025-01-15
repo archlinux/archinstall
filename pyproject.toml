@@ -182,6 +182,7 @@ select = [
     "ASYNC",  # flake8-async
     "B",      # flake8-bugbear
     "C90",    # mccabe
+    "COM",    # flake8-commas
     "DTZ",    # flake8-datetimez
     "E",      # pycodestyle errors
     "EXE",    # flake8-executable
@@ -211,6 +212,7 @@ ignore = [
     "B008",     # function-call-in-default-argument
     "B904",     # raise-without-from-inside-except
     "B905",     # zip-without-explicit-strict
+    "COM812",   # missing-trailing-comma
     "PLC0415",  # import-outside-top-level
     "PLC1901",  # compare-to-empty-string
     "PLW1514",  # unspecified-encoding
