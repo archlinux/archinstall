@@ -470,7 +470,7 @@ class PartitioningList(ListManager):
 		fs_type = self._prompt_partition_fs_type()
 
 		mountpoint = None
-		if fs_type != FilesystemType.Btrfs:
+		if fs_type not in (FilesystemType.Btrfs, FilesystemType.LinuxSwap):
 			mountpoint = self._prompt_mountpoint()
 
 		partition = PartitionModification(
@@ -486,6 +486,8 @@ class PartitioningList(ListManager):
 			partition.set_flag(PartitionFlag.BOOT)
 			if self._using_gpt:
 				partition.set_flag(PartitionFlag.ESP)
+		elif partition.is_swap():
+			partition.set_flag(PartitionFlag.SWAP)
 
 		return partition
 
