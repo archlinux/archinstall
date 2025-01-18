@@ -151,6 +151,8 @@ class DeviceHandler:
 	) -> FilesystemType | None:
 		try:
 			if partition.fileSystem:
+				if partition.fileSystem.type == FilesystemType.LinuxSwap.parted_value:
+					return FilesystemType.LinuxSwap
 				return FilesystemType(partition.fileSystem.type)
 			elif lsblk_info is not None:
 				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
@@ -259,6 +261,7 @@ class DeviceHandler:
 		additional_parted_options: list[str] = []
 	) -> None:
 		mkfs_type = fs_type.value
+		command = None
 		options = []
 
 		match fs_type:
@@ -277,10 +280,15 @@ class DeviceHandler:
 				options.append('--fast')
 			case FilesystemType.Reiserfs:
 				pass
+			case FilesystemType.LinuxSwap:
+				command = "mkswap"
 			case _:
 				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
 
-		cmd = [f'mkfs.{mkfs_type}', *options, *additional_parted_options, str(path)]
+		if not command:
+			command = f'mkfs.{mkfs_type}'
+
+		cmd = [command, *options, *additional_parted_options, str(path)]
 
 		debug('Formatting filesystem:', ' '.join(cmd))
 
@@ -536,7 +544,8 @@ class DeviceHandler:
 			length=length_sector.value
 		)
 
-		filesystem = FileSystem(type=part_mod.safe_fs_type.value, geometry=geometry)
+		fs_value = part_mod.safe_fs_type.parted_value
+		filesystem = FileSystem(type=fs_value, geometry=geometry)
 
 		partition = Partition(
 			disk=disk,
@@ -549,7 +558,7 @@ class DeviceHandler:
 			partition.setFlag(flag.flag_id)
 
 		debug(f'\tType: {part_mod.type.value}')
-		debug(f'\tFilesystem: {part_mod.safe_fs_type.value}')
+		debug(f'\tFilesystem: {fs_value}')
 		debug(f'\tGeometry: {start_sector.value} start sector, {length_sector.value} length')
 
 		try:
@@ -722,6 +731,13 @@ class DeviceHandler:
 			self._setup_partition(part_mod, modification.device, disk, requires_delete=requires_delete)
 
 		disk.commit()
+
+	@staticmethod
+	def swapon(path: Path) -> None:
+		try:
+			SysCommand(['swapon', str(path)])
+		except SysCallError as err:
+			raise DiskError(f'Could not enable swap {path}:\n{err.message}')
 
 	def mount(
 		self,
