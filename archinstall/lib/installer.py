@@ -740,6 +740,38 @@ class Installer:
 				return vendor.get_ucode()
 		return None
 
+	def _prepare_fs_type(
+		self,
+		fs_type: disk.FilesystemType,
+		mountpoint: Path | None
+	) -> None:
+		if (pkg := fs_type.installation_pkg) is not None:
+			self._base_packages.append(pkg)
+		if (module := fs_type.installation_module) is not None:
+			self._modules.append(module)
+		if (binary := fs_type.installation_binary) is not None:
+			self._binaries.append(binary)
+
+		# https://github.com/archlinux/archinstall/issues/1837
+		if fs_type.fs_type_mount == 'btrfs':
+			self._disable_fstrim = True
+
+		# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
+		if fs_type.fs_type_mount == 'ntfs3' and mountpoint == self.target:
+			if 'fsck' in self._hooks:
+				self._hooks.remove('fsck')
+
+	def _prepare_encrypt(self, before: str = 'filesystems') -> None:
+		if self._disk_encryption.hsm_device:
+			# Required by mkinitcpio to add support for fido2-device options
+			self.pacman.strap('libfido2')
+
+			if 'sd-encrypt' not in self._hooks:
+				self._hooks.insert(self._hooks.index(before), 'sd-encrypt')
+		else:
+			if 'encrypt' not in self._hooks:
+				self._hooks.insert(self._hooks.index(before), 'encrypt')
+
 	def _handle_partition_installation(self) -> None:
 		pvs = []
 		if self._disk_config.lvm_config:
@@ -750,32 +782,10 @@ class Installer:
 				if part in pvs or part.fs_type is None:
 					continue
 
-				if (pkg := part.fs_type.installation_pkg) is not None:
-					self._base_packages.append(pkg)
-				if (module := part.fs_type.installation_module) is not None:
-					self._modules.append(module)
-				if (binary := part.fs_type.installation_binary) is not None:
-					self._binaries.append(binary)
-
-				# https://github.com/archlinux/archinstall/issues/1837
-				if part.fs_type.fs_type_mount == 'btrfs':
-					self._disable_fstrim = True
-
-				# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-				if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
-					if 'fsck' in self._hooks:
-						self._hooks.remove('fsck')
+				self._prepare_fs_type(part.fs_type, part.mountpoint)
 
 				if part in self._disk_encryption.partitions:
-					if self._disk_encryption.hsm_device:
-						# Required by mkinitcpio to add support for fido2-device options
-						self.pacman.strap('libfido2')
-
-						if 'sd-encrypt' not in self._hooks:
-							self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
-					else:
-						if 'encrypt' not in self._hooks:
-							self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
+					self._prepare_encrypt()
 
 	def _handle_lvm_installation(self) -> None:
 		if not self._disk_config.lvm_config:
@@ -787,31 +797,10 @@ class Installer:
 		for vg in self._disk_config.lvm_config.vol_groups:
 			for vol in vg.volumes:
 				if vol.fs_type is not None:
-					if (pkg := vol.fs_type.installation_pkg) is not None:
-						self._base_packages.append(pkg)
-					if (module := vol.fs_type.installation_module) is not None:
-						self._modules.append(module)
-					if (binary := vol.fs_type.installation_binary) is not None:
-						self._binaries.append(binary)
-
-					if vol.fs_type.fs_type_mount == 'btrfs':
-						self._disable_fstrim = True
-
-					# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-					if vol.fs_type.fs_type_mount == 'ntfs3' and vol.mountpoint == self.target:
-						if 'fsck' in self._hooks:
-							self._hooks.remove('fsck')
+					self._prepare_fs_type(vol.fs_type, vol.mountpoint)
 
 		if self._disk_encryption.encryption_type in [disk.EncryptionType.LvmOnLuks, disk.EncryptionType.LuksOnLvm]:
-			if self._disk_encryption.hsm_device:
-				# Required by mkinitcpio to add support for fido2-device options
-				self.pacman.strap('libfido2')
-
-				if 'sd-encrypt' not in self._hooks:
-					self._hooks.insert(self._hooks.index('lvm2'), 'sd-encrypt')
-			else:
-				if 'encrypt' not in self._hooks:
-					self._hooks.insert(self._hooks.index('lvm2'), 'encrypt')
+			self._prepare_encrypt('lvm2')
 
 	def minimal_installation(
 		self,
