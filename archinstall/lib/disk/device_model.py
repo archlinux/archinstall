@@ -766,7 +766,6 @@ class FilesystemType(Enum):
 	Fat16 = 'fat16'
 	Fat32 = 'fat32'
 	Ntfs = 'ntfs'
-	Reiserfs = 'reiserfs'
 	Xfs = 'xfs'
 	LinuxSwap = 'linux-swap'
 
