@@ -278,8 +278,6 @@ class DeviceHandler:
 			case FilesystemType.Ntfs:
 				# Skip zeroing and bad sector check
 				options.append('--fast')
-			case FilesystemType.Reiserfs:
-				pass
 			case FilesystemType.LinuxSwap:
 				command = "mkswap"
 			case _:
