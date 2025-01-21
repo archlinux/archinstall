@@ -45,10 +45,10 @@ class MenuKeys(Enum):
 	BACKSPACE = frozenset({127, 263})
 	# Help view: ctrl+h
 	HELP = frozenset({8})
-	# Scroll up: CTRL+up
-	SCROLL_UP = frozenset({581})
-	# Scroll down: CTRL+down
-	SCROLL_DOWN = frozenset({540})
+	# Scroll up: PGUP
+	SCROLL_UP = frozenset({339})
+	# Scroll down: PGDOWN
+	SCROLL_DOWN = frozenset({338})
 
 	@classmethod
 	def from_ord(cls, key: int) -> list['MenuKeys']:
