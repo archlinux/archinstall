@@ -322,8 +322,11 @@ class MirrorMenu(AbstractSubMenu):
 
 def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
 	mirror_list_handler.load_mirrors()
-
 	available_regions = mirror_list_handler.get_mirror_regions()
+
+	if not available_regions:
+		return []
+
 	preset_regions = [region for region in available_regions if region in preset]
 
 	items = [MenuItem(region.name, value=region) for region in available_regions]
