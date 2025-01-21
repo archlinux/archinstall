@@ -1,5 +1,5 @@
 on: [ push, pull_request ]
-name: flake8 linting (3 ignores)
+name: flake8 linting
 jobs:
     flake8:
         runs-on: ubuntu-latest
@@ -12,7 +12,7 @@ jobs:
                 pacman-key --init
                 pacman --noconfirm -Sy archlinux-keyring
                 pacman --noconfirm -Syyu
-                pacman --noconfirm -Sy python-pip python-pyparted python-simple-term-menu pkgconfig gcc
+                pacman --noconfirm -Sy python-pip python-pyparted pkgconfig gcc
             - run: pip install --break-system-packages --upgrade pip
             # this will install the exact version of flake8 that is in the pyproject.toml file
             - name: Install archinstall dependencies

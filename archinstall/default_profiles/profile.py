@@ -2,13 +2,18 @@ from __future__ import annotations
 
 import sys
 from enum import Enum, auto
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ..lib.storage import storage
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
 	from ..lib.installer import Installer
-	_: Any
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ProfileType(Enum):
@@ -62,7 +67,7 @@ class Profile:
 		self.name = name
 		self.description = description
 		self.profile_type = profile_type
-		self.custom_settings: dict[str, Any] = {}
+		self.custom_settings: dict[str, str | None] = {}
 		self.advanced = advanced
 
 		self._support_gfx_driver = support_gfx_driver
@@ -119,7 +124,7 @@ class Profile:
 		are needed
 		"""
 
-	def json(self) -> dict[str, Any]:
+	def json(self) -> dict[str, str]:
 		"""
 		Returns a json representation of the profile
 		"""
@@ -131,7 +136,7 @@ class Profile:
 		"""
 		return SelectResult.NewSelection
 
-	def set_custom_settings(self, settings: dict[str, Any]) -> None:
+	def set_custom_settings(self, settings: dict[str, str | None]) -> None:
 		"""
 		Set the custom settings for the profile.
 		This is also called when the settings are parsed from the config
@@ -180,7 +185,7 @@ class Profile:
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
-	def preview_text(self) -> str | None:
+	def preview_text(self) -> str:
 		"""
 		Override this method to provide a preview text for the profile
 		"""

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
@@ -12,7 +12,11 @@ from . import LvmConfiguration, LvmVolume
 from .fido import Fido2, Fido2Device
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class DiskEncryptionMenu(AbstractSubMenu):
@@ -61,7 +65,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			),
 			MenuItem(
 				text=str(_('LVM volumes')),
-				action=lambda x: self._select_lvm_vols(x),
+				action=self._select_lvm_vols,
 				value=self._preset.lvm_volumes,
 				dependencies=[self._check_dep_lvm_vols],
 				preview_action=self._preview,
@@ -69,7 +73,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			),
 			MenuItem(
 				text=str(_('HSM')),
-				action=lambda x: select_hsm(x),
+				action=select_hsm,
 				value=self._preset.hsm_device,
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._preview,
@@ -100,6 +104,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			return True
 		return False
 
+	@override
 	def run(self) -> DiskEncryption | None:
 		super().run()
 
@@ -279,10 +284,13 @@ def select_partitions_to_encrypt(
 
 	# do not allow encrypting the boot partition
 	for mod in modification:
-		partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), mod.partitions))
+		partitions += [
+			p for p in mod.partitions
+			if p.mountpoint != Path('/boot') and not p.is_swap()
+		]
 
 	# do not allow encrypting existing partitions that are not marked as wipe
-	avail_partitions = list(filter(lambda x: not x.exists(), partitions))
+	avail_partitions = [p for p in partitions if not p.exists()]
 
 	if avail_partitions:
 		group, header = MenuHelper.create_table(data=avail_partitions)

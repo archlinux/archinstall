@@ -39,8 +39,8 @@ class Help:
 	navigation = HelpGroup(
 		group_id=HelpTextGroupId.NAVIGATION,
 		group_entries=[
-			HelpText('Scroll up', ['Ctrl+↑']),
-			HelpText('Scroll down', ['Ctrl+↓']),
+			HelpText('Preview scroll up', ['PgUp']),
+			HelpText('Preview scroll down', ['PgDown']),
 			HelpText('Move up', ['k', '↑']),
 			HelpText('Move down', ['j', '↓']),
 			HelpText('Move right', ['l', '→']),
@@ -52,7 +52,7 @@ class Help:
 	selection = HelpGroup(
 		group_id=HelpTextGroupId.SELECTION,
 		group_entries=[
-			HelpText('Skip selction (if available)', ['Esc']),
+			HelpText('Skip selection (if available)', ['Esc']),
 			HelpText('Reset selection (if available)', ['Ctrl+c']),
 			HelpText('Select on single select', ['Enter']),
 			HelpText('Select on select', ['Space', 'Tab']),
@@ -76,12 +76,12 @@ class Help:
 		max_desc_width = max([help.get_desc_width() for help in help_texts])
 		max_key_width = max([help.get_key_width() for help in help_texts])
 
-		for help in help_texts:
-			help_output += f'{help.group_id.value}\n'
+		for help_group in help_texts:
+			help_output += f'{help_group.group_id.value}\n'
 			divider_len = max_desc_width + max_key_width
 			help_output += '-' * divider_len + '\n'
 
-			for entry in help.group_entries:
+			for entry in help_group.group_entries:
 				help_output += (
 					entry.description.ljust(max_desc_width, ' ')
 					+ ', '.join(entry.keys) + '\n'

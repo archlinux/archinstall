@@ -1,9 +1,13 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class PasswordStrength(Enum):
@@ -13,6 +17,7 @@ class PasswordStrength(Enum):
 	STRONG = 'strong'
 
 	@property
+	@override
 	def value(self) -> str:  # pylint: disable=invalid-overridden-method
 		match self:
 			case PasswordStrength.VERY_WEAK:
@@ -135,7 +140,7 @@ class User:
 		return users
 
 	@classmethod
-	def _parse_backwards_compatible(cls, config_users: dict, sudo: bool) -> list['User']:
+	def _parse_backwards_compatible(cls, config_users: dict[str, dict[str, str]], sudo: bool) -> list['User']:
 		if len(config_users.keys()) > 0:
 			username = list(config_users.keys())[0]
 			password = config_users[username]['!password']
@@ -148,8 +153,8 @@ class User:
 	@classmethod
 	def parse_arguments(
 		cls,
-		config_users: list[dict[str, str]] | dict[str, str],
-		config_superusers: list[dict[str, str]] | dict[str, str]
+		config_users: list[dict[str, str]] | dict[str, dict[str, str]],
+		config_superusers: list[dict[str, str]] | dict[str, dict[str, str]]
 	) -> list['User']:
 		users = []
 

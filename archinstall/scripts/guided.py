@@ -151,7 +151,7 @@ def perform_installation(mountpoint: Path) -> None:
 			if chroot:
 				try:
 					installation.drop_to_shell()
-				except:
+				except Exception:
 					pass
 
 	debug(f"Disk states after installing:\n{disk.disk_layouts()}")
@@ -180,7 +180,7 @@ def guided() -> None:
 	)
 
 	fs_handler.perform_filesystem_operations()
-	perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))
+	perform_installation(archinstall.arguments.get('mount_point', Path('/mnt')))
 
 
 guided()

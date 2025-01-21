@@ -11,15 +11,15 @@ authors = [
 ]
 license = {text = "GPL-3.0-only"}
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 keywords = ["linux", "arch", "archinstall", "installer"]
 classifiers = [
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
     "pyparted @ https://github.com//dcantrell/pyparted/archive/v3.13.0.tar.gz#sha512=26819e28d73420937874f52fda03eb50ab1b136574ea9867a69d46ae4976d38c4f26a2697fa70597eed90dd78a5ea209bafcc3227a17a7a5d63cff6d107c2b11",
-    "pydantic==2.10.1"
+    "pydantic==2.10.5"
 ]
 
 [project.urls]
@@ -30,12 +30,13 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.13.0",
+    "mypy==1.14.1",
     "flake8==7.1.1",
-    "pre-commit==4.0.1",
-    "ruff==0.8.0",
-    "pylint==3.3.1",
-    "pylint-pydantic==0.3.2",
+    "pre-commit==4.1.0",
+    "ruff==0.9.2",
+    "pylint==3.3.3",
+    "pylint-pydantic==0.3.5",
+    "pytest==8.3.4",
 ]
 doc = ["sphinx"]
 
@@ -63,7 +64,7 @@ include-package-data = true
 archinstall = "archinstall"
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 files = "."
 exclude = "^build/"
 check_untyped_defs = true
@@ -86,11 +87,7 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-module = "archinstall.default_profiles.applications.*"
-disallow_any_explicit = true
-
-[[tool.mypy.overrides]]
-module = "archinstall.default_profiles.servers.*"
+module = "archinstall.default_profiles.*"
 disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
@@ -99,12 +96,23 @@ disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.*"
-disallow_any_generics = false
-disallow_any_unimported = false
 disallow_incomplete_defs = false
 disallow_untyped_defs = false
 warn_return_any = false
 warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.disk.*"
+# 'Any' imports are allowed because pyparted doesn't have type hints
+disallow_any_unimported = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.packages"
+disallow_any_explicit = true
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.utils"
+disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.scripts.*"
@@ -124,6 +132,11 @@ ignore_missing_imports = true
 targets = ["archinstall"]
 exclude = ["/tests"]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "-s"
+testpaths = ["tests"]
+
 [tool.pylint.main]
 ignore-paths = [
     "^build/",
@@ -131,10 +144,11 @@ ignore-paths = [
 ]
 load-plugins = ["pylint_pydantic"]
 persistent = false
-py-version = "3.11"
+py-version = "3.12"
 recursive = true
 
 [tool.pylint.format]
+indent-string = '\t'
 max-line-length = 160
 
 [tool.pylint."messages control"]
@@ -142,23 +156,14 @@ disable = [
     "C",
     "R",
     "attribute-defined-outside-init",
-    "bad-indentation",
-    "bare-except",
     "broad-exception-caught",
     "cell-var-from-loop",
-    "comparison-with-callable",
     "dangerous-default-value",
     "fixme",
     "protected-access",
     "raise-missing-from",
-    "redefined-builtin",
-    "redefined-outer-name",
-    "unnecessary-lambda",
-    "unreachable",
     "unspecified-encoding",
     "unused-argument",
-    "unused-variable",
-    "useless-parent-delegation",
 ]
 
 [tool.pylint.refactoring]
@@ -168,14 +173,16 @@ score = false
 additional-builtins = ["_"]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 builtins = ["_"]
 line-length = 160
 
 [tool.ruff.lint]
 select = [
     "ASYNC",  # flake8-async
+    "B",      # flake8-bugbear
     "C90",    # mccabe
+    "COM",    # flake8-commas
     "DTZ",    # flake8-datetimez
     "E",      # pycodestyle errors
     "EXE",    # flake8-executable
@@ -192,6 +199,7 @@ select = [
     "PLE",    # Pylint errors
     "PLW",    # Pylint warnings
     "RSE",    # flake8-raise
+    "RUF",    # Ruff-specific rules
     "SLOT",   # flake8-slot
     "T10",    # flake8-debugger
     "UP",     # pyupgrade
@@ -200,12 +208,20 @@ select = [
 ]
 
 ignore = [
-    "E722",     # bare-except
+    "B006",     # mutable-argument-default
+    "B008",     # function-call-in-default-argument
+    "B904",     # raise-without-from-inside-except
+    "B905",     # zip-without-explicit-strict
+    "COM812",   # missing-trailing-comma
+    "PLC0415",  # import-outside-top-level
+    "PLC1901",  # compare-to-empty-string
+    "PLW1514",  # unspecified-encoding
+    "PLW1641",  # eq-without-hash
     "PLW2901",  # redefined-loop-name
-    "UP027",    # unpacked-list-comprehension
-    "UP028",    # yield-in-for-loop
-    "UP031",    # printf-string-formatting
-    "UP032",    # f-string
+    "RUF005",   # collection-literal-concatenation
+    "RUF015",   # unnecessary-iterable-allocation-for-first-element
+    "RUF039",   # unraw-re-pattern
+    "RUF051",   # if-key-in-dict-del
     "UP037",    # quoted-annotation
     "W191",     # tab-indentation
 ]

@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import StrEnum, auto
 
 
-class Repo(Enum):
-	Multilib = "multilib"
-	Testing = "testing"
+class Repo(StrEnum):
+	MULTILIB = auto()
+	TESTING = auto()

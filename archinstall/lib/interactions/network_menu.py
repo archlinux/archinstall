@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, override
 
 from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
@@ -10,7 +10,11 @@ from ..models.network_configuration import NetworkConfiguration, Nic, NicType
 from ..networking import list_interfaces
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ManualNetworkConfig(ListManager):
@@ -20,11 +24,19 @@ class ManualNetworkConfig(ListManager):
 			str(_('Edit interface')),
 			str(_('Delete interface'))
 		]
-		super().__init__(prompt, preset, [self._actions[0]], self._actions[1:])
 
+		super().__init__(
+			preset,
+			[self._actions[0]],
+			self._actions[1:],
+			prompt
+		)
+
+	@override
 	def selected_action_display(self, selection: Nic) -> str:
 		return selection.iface if selection.iface else ''
 
+	@override
 	def handle_action(self, action: str, entry: Nic | None, data: list[Nic]) -> list[Nic]:
 		if action == self._actions[0]:  # add
 			iface = self._select_iface(data)

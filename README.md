@@ -9,8 +9,8 @@ Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/
 The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium)*.
 
 * archinstall [discord](https://discord.gg/aDeMffrxNg) server
-* archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
-* archinstall [#archinstall@irc.libera.chat](irc://#archinstall@irc.libera.chat:6697)
+* archinstall [#archinstall:matrix.org](https://matrix.to/#/#archinstall:matrix.org) Matrix channel
+* archinstall [#archinstall@irc.libera.chat:6697](https://web.libera.chat/?channel=#archinstall)
 * archinstall [documentation](https://archinstall.archlinux.page/)
 
 # Installation & Usage

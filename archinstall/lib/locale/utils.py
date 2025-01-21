@@ -48,7 +48,7 @@ def get_kb_layout() -> str:
 			"localectl --no-pager status",
 			environment_vars={'SYSTEMD_COLORS': '0'}
 		).decode().splitlines()
-	except:
+	except Exception:
 		return ""
 
 	vcline = ""

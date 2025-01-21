@@ -18,13 +18,13 @@ class Config:
 		if not self.repos:
 			return
 
-		if Repo.Testing in self.repos:
-			if Repo.Multilib in self.repos:
-				repos_pattern = f'({Repo.Multilib.value}|.+-{Repo.Testing.value})'
+		if Repo.TESTING in self.repos:
+			if Repo.MULTILIB in self.repos:
+				repos_pattern = f'({Repo.MULTILIB}|.+-{Repo.TESTING})'
 			else:
-				repos_pattern = f'(?!{Repo.Multilib.value}).+-{Repo.Testing.value}'
+				repos_pattern = f'(?!{Repo.MULTILIB}).+-{Repo.TESTING}'
 		else:
-			repos_pattern = Repo.Multilib.value
+			repos_pattern = Repo.MULTILIB
 
 		pattern = re.compile(rf"^#\s*\[{repos_pattern}\]$")
 

@@ -32,14 +32,16 @@ from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
 from .lib.plugins import load_plugin, plugins
 from .lib.storage import storage
-from .lib.translationhandler import DeferredTranslation, Language, TranslationHandler
+from .lib.translationhandler import DeferredTranslation, Language, translation_handler
 from .tui import Tui
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	_: Callable[[str], DeferredTranslation]
 
 
-__version__ = "3.0.0"
+__version__ = "3.0.1"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the
@@ -75,7 +77,7 @@ def define_arguments() -> None:
 	parser.add_argument("--dry-run", "--dry_run", action="store_true",
 						help="Generates a configuration file and then exits instead of performing an installation")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
-	parser.add_argument("--mount-point", "--mount_point", nargs="?", type=str,
+	parser.add_argument("--mount-point", "--mount_point", default=Path("/mnt/archinstall"), nargs="?", type=Path,
 						help="Define an alternate mount point for installation")
 	parser.add_argument("--skip-ntp", action="store_true", help="Disables NTP checks during installation", default=False)
 	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
@@ -222,7 +224,7 @@ def load_config() -> None:
 	arguments['locale_config'] = locale.LocaleConfiguration.parse_arg(arguments)
 
 	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
-		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
+		arguments['archinstall-language'] = translation_handler.get_language_by_name(archinstall_lang)
 
 	if disk_config := arguments.get('disk_config', {}):
 		arguments['disk_config'] = disk.DiskLayoutConfiguration.parse_arg(disk_config)
@@ -262,19 +264,21 @@ def load_config() -> None:
 		)
 
 
-def post_process_arguments(arguments: dict[str, Any]) -> None:
-	storage['arguments'] = arguments
-	if mountpoint := arguments.get('mount_point', None):
-		storage['MOUNT_POINT'] = Path(mountpoint)
+def post_process_arguments(args: dict[str, Any]) -> None:
+	storage['arguments'] = args
 
-	if arguments.get('debug', False):
+	if args.get('debug'):
 		warn(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!")
 
-	if arguments.get('plugin', None):
-		path = arguments['plugin']
+	if args.get('plugin'):
+		path = args['plugin']
 		load_plugin(path)
 
-	load_config()
+	try:
+		load_config()
+	except ValueError as err:
+		warn(str(err))
+		exit(1)
 
 
 define_arguments()
@@ -317,7 +321,7 @@ def main() -> None:
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
-	if not arguments.get('skip_version_check', False):
+	if not arguments.get('skip_version_check'):
 		_check_new_version()
 
 	script = arguments.get('script', None)

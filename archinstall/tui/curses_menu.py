@@ -11,7 +11,7 @@ from collections.abc import Callable
 from curses.textpad import Textbox
 from dataclasses import dataclass
 from types import FrameType, TracebackType
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Literal, override
 
 from ..lib.output import debug
 from .help import Help
@@ -34,7 +34,9 @@ from .types import (
 )
 
 if TYPE_CHECKING:
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class AbstractCurses(metaclass=ABCMeta):
@@ -71,7 +73,7 @@ class AbstractCurses(metaclass=ABCMeta):
 			frame=FrameProperties.min(str(_('Archinstall help')))
 		)
 
-	def _confirm_interrupt(self, screen: Any, warning: str) -> bool:
+	def _confirm_interrupt(self, warning: str) -> bool:
 		while True:
 			result = SelectMenu(
 				MenuItemGroup.yes_no(),
@@ -89,7 +91,7 @@ class AbstractCurses(metaclass=ABCMeta):
 			return False
 
 	def help_entry(self) -> ViewportEntry:
-		return ViewportEntry(str(_('Press ? for help')), 0, 0, STYLE.NORMAL)
+		return ViewportEntry(str(_('Press Ctrl+h for help')), 0, 0, STYLE.NORMAL)
 
 	def _show_help(self) -> None:
 		if not self._help_window:
@@ -112,8 +114,8 @@ class AbstractCurses(metaclass=ABCMeta):
 		full_header = []
 
 		if header:
-			for header in header.split('\n'):
-				full_header += [ViewportEntry(header, cur_row, offset, STYLE.NORMAL)]
+			for line in header.split('\n'):
+				full_header += [ViewportEntry(line, cur_row, offset, STYLE.NORMAL)]
 				cur_row += 1
 
 		return full_header
@@ -124,7 +126,7 @@ class AbstractViewport:
 	def __init__(self) -> None:
 		pass
 
-	def add_str(self, screen: Any, row: int, col: int, text: str, color: STYLE) -> None:
+	def add_str(self, screen: 'curses._CursesWindow', row: int, col: int, text: str, color: STYLE) -> None:
 		try:
 			screen.addstr(row, col, text, Tui.t().get_color(color))
 		except curses.error:
@@ -392,7 +394,7 @@ class EditViewport(AbstractViewport):
 			self._textbox = curses.textpad.Textbox(self._edit_win)
 			self._main_win.refresh()
 
-		self._textbox.edit(self.process_key)  # type: ignore
+		self._textbox.edit(self.process_key)  # type: ignore[arg-type]
 
 
 @dataclass
@@ -594,10 +596,6 @@ class Viewport(AbstractViewport):
 
 		return modified
 
-	def _replace_str(self, text: str, index: int = 0, replacement: str = '') -> str:
-		len_replace = len(replacement)
-		return f'{text[:index]}{replacement}{text[index + len_replace:]}'
-
 	def _unique_rows(self, entries: list[ViewportEntry]) -> int:
 		return len(set([e.row for e in entries]))
 
@@ -682,6 +680,7 @@ class EditMenu(AbstractCurses):
 		self._clear_all()
 		return result
 
+	@override
 	def resize_win(self) -> None:
 		self._draw()
 
@@ -724,6 +723,7 @@ class EditMenu(AbstractCurses):
 			self._input_vp.update()
 			self._input_vp.edit(default_text=self._default_text)
 
+	@override
 	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		try:
 			self._draw()
@@ -794,7 +794,7 @@ class EditMenu(AbstractCurses):
 				self._real_input += chr(key)
 				if self._hide_input:
 					key = 42
-			except:
+			except Exception:
 				pass
 
 		return key
@@ -802,7 +802,7 @@ class EditMenu(AbstractCurses):
 	def _handle_interrupt(self) -> bool:
 		if self._allow_reset:
 			if self._interrupt_warning:
-				return self._confirm_interrupt(self._input_vp, self._interrupt_warning)
+				return self._confirm_interrupt(self._interrupt_warning)
 		else:
 			return False
 
@@ -849,7 +849,7 @@ class SelectMenu(AbstractCurses):
 		self._interrupt_warning = reset_warning_msg
 		self._header = header
 
-		header_offset = self._get_header_offset()
+		header_offset = self._get_header_offset(header)
 		self._headers = self.get_header_entries(header, offset=header_offset)
 
 		if self._interrupt_warning is None:
@@ -875,11 +875,19 @@ class SelectMenu(AbstractCurses):
 
 		self._init_viewports(preview_size)
 
-	def _get_header_offset(self) -> int:
-		# any changes here will impact the list manager table view
-		offset = len(self._cursor_char) + 1
-		if self._multi:
-			offset += 3
+	def _get_header_offset(self, header: str | None) -> int:
+		# WARNING: any changes here will impact the list manager table view
+		if self._orientation == Orientation.HORIZONTAL:
+			return 0
+
+		lines = header.split('\n') if header else []
+		table_header = [line for line in lines if '|' in line]
+		longest_header = len(table_header[0]) if table_header else 0
+		longest_entry = self._item_group.max_width
+
+		delta = abs(longest_header - longest_entry)
+		offset = delta + 3  # 3 because it seems to align it...
+
 		return offset
 
 	def run(self) -> Result:
@@ -887,6 +895,7 @@ class SelectMenu(AbstractCurses):
 		self._clear_all()
 		return result
 
+	@override
 	def kickoff(self, win: 'curses._CursesWindow') -> Result:
 		self._draw()
 
@@ -907,6 +916,7 @@ class SelectMenu(AbstractCurses):
 				else:
 					return self.kickoff(win)
 
+	@override
 	def resize_win(self) -> None:
 		self._draw()
 
@@ -1173,7 +1183,7 @@ class SelectMenu(AbstractCurses):
 		items = self._get_visible_items()
 		entries = []
 
-		for row_idx, item in enumerate(items):
+		for item in items:
 			item_text = ''
 
 			if self._multi and not item.is_empty():
@@ -1224,7 +1234,7 @@ class SelectMenu(AbstractCurses):
 
 	def _handle_interrupt(self) -> bool:
 		if self._allow_reset and self._interrupt_warning:
-			return self._confirm_interrupt(self._menu_vp, self._interrupt_warning)
+			return self._confirm_interrupt(self._interrupt_warning)
 		else:
 			return False
 
@@ -1377,7 +1387,7 @@ class Tui:
 		self.stop()
 
 	@property
-	def screen(self) -> Any:
+	def screen(self) -> 'curses._CursesWindow':
 		return self._screen
 
 	@staticmethod
@@ -1475,8 +1485,8 @@ class Tui:
 			return Tui.t()._main_loop(component)
 
 	def _sig_win_resize(self, signum: int, frame: FrameType | None) -> None:
-		if hasattr(self, '_component') and self._component is not None:  # pylint: disable=E1101
-			self._component.resize_win()  # pylint: disable=E1101
+		if hasattr(self, '_component') and self._component is not None:  # pylint: disable=no-member
+			self._component.resize_win()  # pylint: disable=no-member
 
 	def _main_loop(self, component: AbstractCurses) -> Result:
 		self._screen.refresh()

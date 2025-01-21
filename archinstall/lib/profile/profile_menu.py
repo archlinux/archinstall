@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from archinstall.default_profiles.profile import GreeterType, Profile
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
@@ -11,7 +11,11 @@ from ..menu import AbstractSubMenu
 from .profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ProfileMenu(AbstractSubMenu):
@@ -35,14 +39,14 @@ class ProfileMenu(AbstractSubMenu):
 		return [
 			MenuItem(
 				text=str(_('Type')),
-				action=lambda x: self._select_profile(x),
+				action=self._select_profile,
 				value=self._preset.profile,
 				preview_action=self._preview_profile,
 				key='profile'
 			),
 			MenuItem(
 				text=str(_('Graphics driver')),
-				action=lambda x: self._select_gfx_driver(x),
+				action=self._select_gfx_driver,
 				value=self._preset.gfx_driver if self._preset.profile and self._preset.profile.is_graphic_driver_supported() else None,
 				preview_action=self._prev_gfx,
 				enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False,
@@ -60,6 +64,7 @@ class ProfileMenu(AbstractSubMenu):
 			)
 		]
 
+	@override
 	def run(self) -> ProfileConfiguration | None:
 		super().run()
 

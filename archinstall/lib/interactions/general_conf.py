@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import pathlib
-from typing import TYPE_CHECKING, Any
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu, Tui
 
@@ -13,7 +13,11 @@ from ..storage import storage
 from ..translationhandler import Language
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 def ask_ntp(preset: bool = True) -> bool:
@@ -177,7 +181,7 @@ def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
 		# Verify packages that were given
 		out = str(_("Verifying that additional packages exist (this might take a few seconds)"))
 		Tui.print(out, 0)
-		valid, invalid = validate_package_list(packages)
+		_valid, invalid = validate_package_list(packages)
 
 		if invalid:
 			return f'{_("Some packages could not be found in the repository")}: {invalid}'
@@ -239,7 +243,7 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 		case ResultType.Selection:
 			downloads: int = int(result.text())
 
-	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
+	pacman_conf_path = Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
 		pacman_conf = f.read().split("\n")
 

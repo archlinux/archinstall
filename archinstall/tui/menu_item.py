@@ -7,7 +7,9 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from ..lib.output import unicode_ljust
 
 if TYPE_CHECKING:
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 @dataclass

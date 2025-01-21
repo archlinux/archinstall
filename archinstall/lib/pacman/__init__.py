@@ -45,7 +45,7 @@ class Pacman:
 
 		return SysCommand(f'{default_cmd} {args}')
 
-	def ask(self, error_message: str, bail_message: str, func: Callable, *args, **kwargs) -> None:
+	def ask(self, error_message: str, bail_message: str, func: Callable, *args, **kwargs) -> None:  # type: ignore[type-arg]
 		while True:
 			try:
 				func(*args, **kwargs)
@@ -64,7 +64,7 @@ class Pacman:
 			'Could not sync mirrors',
 			self.run,
 			'-Syy',
-			default_cmd='/usr/bin/pacman'
+			default_cmd='pacman'
 		)
 		self.synced = True
 
@@ -84,6 +84,6 @@ class Pacman:
 			'Could not strap in packages',
 			'Pacstrap failed. See /var/log/archinstall/install.log or above message for error details',
 			SysCommand,
-			f'/usr/bin/pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm',
+			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm',
 			peek_output=True
 		)

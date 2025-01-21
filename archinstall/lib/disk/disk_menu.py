@@ -1,8 +1,7 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from archinstall.tui import MenuItem, MenuItemGroup
 
-from ..disk import DeviceModification
 from ..interactions import select_disk_config
 from ..interactions.disk_conf import select_lvm_config
 from ..menu import AbstractSubMenu
@@ -11,7 +10,11 @@ from . import DiskLayoutConfiguration, DiskLayoutType
 from .device_model import LvmConfiguration
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class DiskLayoutConfigurationMenu(AbstractSubMenu):
@@ -33,14 +36,14 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		return [
 			MenuItem(
 				text=str(_('Partitioning')),
-				action=lambda x: self._select_disk_layout_config(x),
+				action=self._select_disk_layout_config,
 				value=self._disk_layout_config,
 				preview_action=self._prev_disk_layouts,
 				key='disk_config'
 			),
 			MenuItem(
 				text='LVM (BETA)',
-				action=lambda x: self._select_lvm_config(x),
+				action=self._select_lvm_config,
 				value=self._disk_layout_config.lvm_config if self._disk_layout_config else None,
 				preview_action=self._prev_lvm_config,
 				dependencies=[self._check_dep_lvm],
@@ -48,6 +51,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 			),
 		]
 
+	@override
 	def run(self) -> DiskLayoutConfiguration | None:
 		super().run()
 
@@ -96,8 +100,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 			msg += str(_('Mountpoint')) + ': ' + str(disk_layout_conf.mountpoint)
 			return msg
 
-		device_mods: list[DeviceModification] = \
-			list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
+		device_mods = [d for d in disk_layout_conf.device_modifications if d.partitions]
 
 		if device_mods:
 			output_partition = '{}: {}\n'.format(str(_('Configuration')), disk_layout_conf.config_type.display_msg())
@@ -111,9 +114,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 				output_partition += partition_table + '\n'
 
 				# create btrfs table
-				btrfs_partitions = list(
-					filter(lambda p: len(p.btrfs_subvols) > 0, mod.partitions)
-				)
+				btrfs_partitions = [p for p in mod.partitions if p.btrfs_subvols]
 				for partition in btrfs_partitions:
 					output_btrfs += FormattedOutput.as_table(partition.btrfs_subvols) + '\n'
 

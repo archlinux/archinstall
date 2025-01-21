@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
@@ -12,6 +12,7 @@ class AwesomeProfile(XorgProfile):
 		super().__init__('Awesome', ProfileType.WindowMgr, description='')
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return super().packages + [
 			'awesome',
@@ -27,6 +28,7 @@ class AwesomeProfile(XorgProfile):
 			'xsel',
 		]
 
+	@override
 	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)
 

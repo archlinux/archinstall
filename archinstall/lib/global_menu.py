@@ -32,22 +32,25 @@ from .models.bootloader import Bootloader
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
-from .translationhandler import Language, TranslationHandler
+from .translationhandler import Language, translation_handler
 from .utils.util import format_cols, get_password
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class GlobalMenu(AbstractMenu):
 	def __init__(self, data_store: dict[str, Any]):
 		self._data_store = data_store
-		self._translation_handler = TranslationHandler()
 
 		if 'archinstall-language' not in data_store:
-			data_store['archinstall-language'] = self._translation_handler.get_language_by_abbr('en')
+			data_store['archinstall-language'] = translation_handler.get_language_by_abbr('en')
 
-		menu_optioons = self._get_menu_options(data_store)
+		menu_optioons = self._get_menu_options()
 		self._item_group = MenuItemGroup(
 			menu_optioons,
 			sort_items=False,
@@ -56,36 +59,36 @@ class GlobalMenu(AbstractMenu):
 
 		super().__init__(self._item_group, data_store)
 
-	def _get_menu_options(self, data_store: dict[str, Any]) -> list[MenuItem]:
+	def _get_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Archinstall language')),
-				action=lambda x: self._select_archinstall_language(x),
+				action=self._select_archinstall_language,
 				display_action=lambda x: x.display_name if x else '',
 				key='archinstall-language'
 			),
 			MenuItem(
 				text=str(_('Locales')),
-				action=lambda x: self._locale_selection(x),
+				action=self._locale_selection,
 				preview_action=self._prev_locale,
 				key='locale_config'
 			),
 			MenuItem(
 				text=str(_('Mirrors')),
-				action=lambda x: self._mirror_configuration(x),
+				action=self._mirror_configuration,
 				preview_action=self._prev_mirror_config,
 				key='mirror_config'
 			),
 			MenuItem(
 				text=str(_('Disk configuration')),
-				action=lambda x: self._select_disk_config(x),
+				action=self._select_disk_config,
 				preview_action=self._prev_disk_config,
 				mandatory=True,
 				key='disk_config'
 			),
 			MenuItem(
 				text=str(_('Disk encryption')),
-				action=lambda x: self._disk_encryption(x),
+				action=self._disk_encryption,
 				preview_action=self._prev_disk_encryption,
 				key='disk_encryption',
 				dependencies=['disk_config']
@@ -93,14 +96,14 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Swap')),
 				value=True,
-				action=lambda x: ask_for_swap(x),
+				action=ask_for_swap,
 				preview_action=self._prev_swap,
 				key='swap',
 			),
 			MenuItem(
 				text=str(_('Bootloader')),
 				value=Bootloader.get_default(),
-				action=lambda x: self._select_bootloader(x),
+				action=self._select_bootloader,
 				preview_action=self._prev_bootloader,
 				mandatory=True,
 				key='bootloader',
@@ -108,87 +111,87 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Unified kernel images')),
 				value=False,
-				action=lambda x: ask_for_uki(x),
+				action=ask_for_uki,
 				preview_action=self._prev_uki,
 				key='uki',
 			),
 			MenuItem(
 				text=str(_('Hostname')),
 				value='archlinux',
-				action=lambda x: ask_hostname(x),
+				action=ask_hostname,
 				preview_action=self._prev_hostname,
 				key='hostname',
 			),
 			MenuItem(
 				text=str(_('Root password')),
-				action=lambda x: self._set_root_password(x),
+				action=self._set_root_password,
 				preview_action=self._prev_root_pwd,
 				key='!root-password',
 			),
 			MenuItem(
 				text=str(_('User account')),
-				action=lambda x: self._create_user_account(x),
+				action=self._create_user_account,
 				preview_action=self._prev_users,
 				key='!users'
 			),
 			MenuItem(
 				text=str(_('Profile')),
-				action=lambda x: self._select_profile(x),
+				action=self._select_profile,
 				preview_action=self._prev_profile,
 				key='profile_config'
 			),
 			MenuItem(
 				text=str(_('Audio')),
-				action=lambda x: ask_for_audio_selection(x),
+				action=ask_for_audio_selection,
 				preview_action=self._prev_audio,
 				key='audio_config'
 			),
 			MenuItem(
 				text=str(_('Kernels')),
 				value=['linux'],
-				action=lambda x: select_kernel(x),
+				action=select_kernel,
 				preview_action=self._prev_kernel,
 				mandatory=True,
 				key='kernels'
 			),
 			MenuItem(
 				text=str(_('Network configuration')),
-				action=lambda x: ask_to_configure_network(x),
+				action=ask_to_configure_network,
 				value={},
 				preview_action=self._prev_network_config,
 				key='network_config'
 			),
 			MenuItem(
 				text=str(_('Parallel Downloads')),
-				action=lambda x: add_number_of_parallel_downloads(x),
+				action=add_number_of_parallel_downloads,
 				value=0,
 				preview_action=self._prev_parallel_dw,
 				key='parallel downloads'
 			),
 			MenuItem(
 				text=str(_('Additional packages')),
-				action=lambda x: ask_additional_packages_to_install(x),
+				action=ask_additional_packages_to_install,
 				value=[],
 				preview_action=self._prev_additional_pkgs,
 				key='packages'
 			),
 			MenuItem(
 				text=str(_('Optional repositories')),
-				action=lambda x: select_additional_repositories(x),
+				action=select_additional_repositories,
 				value=[],
 				preview_action=self._prev_additional_repos,
 				key='additional-repositories'
 			),
 			MenuItem(
 				text=str(_('Timezone')),
-				action=lambda x: ask_for_a_timezone(x),
+				action=ask_for_a_timezone,
 				value='UTC',
 				preview_action=self._prev_tz,
 				key='timezone'
 			),
 			MenuItem(
 				text=str(_('Automatic time sync (NTP)')),
-				action=lambda x: ask_ntp(x),
+				action=ask_ntp,
 				value=True,
 				preview_action=self._prev_ntp,
 				key='ntp'
@@ -259,8 +262,8 @@ class GlobalMenu(AbstractMenu):
 
 	def _select_archinstall_language(self, preset: Language) -> Language:
 		from .interactions.general_conf import select_archinstall_language
-		language = select_archinstall_language(self._translation_handler.translated_languages, preset)
-		self._translation_handler.activate(language)
+		language = select_archinstall_language(translation_handler.translated_languages, preset)
+		translation_handler.activate(language)
 
 		self._upate_lang_text()
 
@@ -271,7 +274,7 @@ class GlobalMenu(AbstractMenu):
 		The options for the global menu are generated with a static text;
 		each entry of the menu needs to be updated with the new translation
 		"""
-		new_options = self._get_menu_options(self._data_store)
+		new_options = self._get_menu_options()
 
 		for o in new_options:
 			if o.key is not None:
@@ -307,7 +310,7 @@ class GlobalMenu(AbstractMenu):
 			if network_config.type == NicType.MANUAL:
 				output = FormattedOutput.as_table(network_config.nics)
 			else:
-				output = f'{str(_('Network configuration'))}:\n{network_config.type.display_msg()}'
+				output = f'{_('Network configuration')}:\n{network_config.type.display_msg()}'
 
 			return output
 		return None
@@ -360,7 +363,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_uki(self, item: MenuItem) -> str | None:
 		if item.value is not None:
-			output = f'{str(_('Unified kernel images'))}: '
+			output = f'{_('Unified kernel images')}: '
 			output += str(_('Enabled')) if item.value else str(_('Disabled'))
 			return output
 		return None
@@ -410,9 +413,9 @@ class GlobalMenu(AbstractMenu):
 			output += str(_('Password')) + f': {secret(enc_config.encryption_password)}\n'
 
 			if enc_config.partitions:
-				output += 'Partitions: {} selected'.format(len(enc_config.partitions)) + '\n'
+				output += f'Partitions: {len(enc_config.partitions)} selected\n'
 			elif enc_config.lvm_volumes:
-				output += 'LVM volumes: {} selected'.format(len(enc_config.lvm_volumes)) + '\n'
+				output += f'LVM volumes: {len(enc_config.lvm_volumes)} selected\n'
 
 			if enc_config.hsm_device:
 				output += f'HSM: {enc_config.hsm_device.manufacturer}'

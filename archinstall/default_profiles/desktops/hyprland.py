@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.desktops import SeatAccess
 from archinstall.default_profiles.profile import GreeterType, ProfileType, SelectResult
@@ -6,8 +6,11 @@ from archinstall.default_profiles.xorg import XorgProfile
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
 if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class HyprlandProfile(XorgProfile):
@@ -17,6 +20,7 @@ class HyprlandProfile(XorgProfile):
 		self.custom_settings = {'seat_access': None}
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return [
 			"hyprland",
@@ -33,10 +37,12 @@ class HyprlandProfile(XorgProfile):
 		]
 
 	@property
+	@override
 	def default_greeter_type(self) -> GreeterType | None:
 		return GreeterType.Sddm
 
 	@property
+	@override
 	def services(self) -> list[str]:
 		if pref := self.custom_settings.get('seat_access', None):
 			return [pref]
@@ -65,9 +71,7 @@ class HyprlandProfile(XorgProfile):
 			if result.item() is not None:
 				self.custom_settings['seat_access'] = result.get_value().value
 
+	@override
 	def do_on_select(self) -> SelectResult | None:
 		self._ask_seat_access()
 		return None
-
-	def install(self, install_session: 'Installer') -> None:
-		super().install(install_session)
