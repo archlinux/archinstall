@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-__version__ = "3.0.1"
+__version__ = "3.0.2"
 storage['__version__'] = __version__
 
 # add the custom _ as a builtin, it can now be used anywhere in the
