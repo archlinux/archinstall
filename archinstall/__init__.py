@@ -90,7 +90,7 @@ def define_arguments() -> None:
 						help="Skip the version check when running archinstall")
 
 
-if 'sphinx' not in sys.modules:
+if 'sphinx' not in sys.modules and 'pylint' not in sys.modules:
 	if '--help' in sys.argv or '-h' in sys.argv:
 		define_arguments()
 		parser.print_help()
