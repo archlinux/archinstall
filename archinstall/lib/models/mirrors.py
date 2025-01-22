@@ -29,7 +29,7 @@ class MirrorStatusEntryV3(BaseModel):
 	duration_avg: float | None = None
 	duration_stddev: float | None = None
 	completion_pct: float | None = None
-	score: int | None = None
+	score: float | None = None
 	_latency: float | None = None
 	_speed: float | None = None
 	_hostname: str | None = None
