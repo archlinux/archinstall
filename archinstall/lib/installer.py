@@ -772,36 +772,6 @@ class Installer:
 			if 'encrypt' not in self._hooks:
 				self._hooks.insert(self._hooks.index(before), 'encrypt')
 
-	def _handle_partition_installation(self) -> None:
-		pvs = []
-		if self._disk_config.lvm_config:
-			pvs = self._disk_config.lvm_config.get_all_pvs()
-
-		for mod in self._disk_config.device_modifications:
-			for part in mod.partitions:
-				if part in pvs or part.fs_type is None:
-					continue
-
-				self._prepare_fs_type(part.fs_type, part.mountpoint)
-
-				if part in self._disk_encryption.partitions:
-					self._prepare_encrypt()
-
-	def _handle_lvm_installation(self) -> None:
-		if not self._disk_config.lvm_config:
-			return
-
-		self.add_additional_packages('lvm2')
-		self._hooks.insert(self._hooks.index('filesystems') - 1, 'lvm2')
-
-		for vg in self._disk_config.lvm_config.vol_groups:
-			for vol in vg.volumes:
-				if vol.fs_type is not None:
-					self._prepare_fs_type(vol.fs_type, vol.mountpoint)
-
-		if self._disk_encryption.encryption_type in [disk.EncryptionType.LvmOnLuks, disk.EncryptionType.LuksOnLvm]:
-			self._prepare_encrypt('lvm2')
-
 	def minimal_installation(
 		self,
 		testing: bool = False,
@@ -811,9 +781,28 @@ class Installer:
 		locale_config: LocaleConfiguration = LocaleConfiguration.default()
 	):
 		if self._disk_config.lvm_config:
-			self._handle_lvm_installation()
+			lvm = 'lvm2'
+			self.add_additional_packages(lvm)
+			self._hooks.insert(self._hooks.index('filesystems') - 1, lvm)
+
+			for vg in self._disk_config.lvm_config.vol_groups:
+				for vol in vg.volumes:
+					if vol.fs_type is not None:
+						self._prepare_fs_type(vol.fs_type, vol.mountpoint)
+
+			types = (disk.EncryptionType.LvmOnLuks, disk.EncryptionType.LuksOnLvm)
+			if self._disk_encryption.encryption_type in types:
+				self._prepare_encrypt(lvm)
 		else:
-			self._handle_partition_installation()
+			for mod in self._disk_config.device_modifications:
+				for part in mod.partitions:
+					if part.fs_type is None:
+						continue
+
+					self._prepare_fs_type(part.fs_type, part.mountpoint)
+
+					if part in self._disk_encryption.partitions:
+						self._prepare_encrypt()
 
 		if not SysInfo.has_uefi():
 			self._base_packages.append('grub')
