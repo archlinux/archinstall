@@ -39,7 +39,7 @@ class MirrorStatusEntryV3(BaseModel):
 	duration_avg: float | None = None
 	duration_stddev: float | None = None
 	completion_pct: float | None = None
-	score: int | None = None
+	score: float | None = None
 	_latency: float | None = None
 	_speed: float | None = None
 	_hostname: str | None = None
@@ -105,7 +105,7 @@ class MirrorStatusEntryV3(BaseModel):
 
 	@classmethod
 	@field_validator('score', mode='before')
-	def validate_score(cls, value: int) -> int | None:
+	def validate_score(cls, value: float) -> int | None:
 		if value is not None:
 			value = round(value)
 			debug(f"    score: {value}")
@@ -117,7 +117,7 @@ class MirrorStatusEntryV3(BaseModel):
 		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(port[0]) if port and len(port) >= 1 else None
 
-		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {round(self.score)}" if self.score else ''))
+		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {self.score}" if self.score else ''))
 		return self
 
 
@@ -155,7 +155,11 @@ class MirrorRegion:
 
 
 class MirrorListHandler:
-	def __init__(self) -> None:
+	def __init__(
+		self,
+		local_mirrorlist: Path = Path('/etc/pacman.d/mirrorlist'),
+	) -> None:
+		self._local_mirrorlist = local_mirrorlist
 		self._status_mappings: dict[str, list[MirrorStatusEntryV3]] | None = None
 
 	def _mappings(self) -> dict[str, list[MirrorStatusEntryV3]]:
@@ -201,7 +205,7 @@ class MirrorListHandler:
 		return False
 
 	def load_local_mirrors(self) -> None:
-		with Path('/etc/pacman.d/mirrorlist').open('r') as fp:
+		with self._local_mirrorlist.open('r') as fp:
 			mirrorlist = fp.read()
 			self._status_mappings = self._parse_locale_mirrors(mirrorlist)
 
@@ -247,23 +251,26 @@ class MirrorListHandler:
 		lines = mirrorlist.splitlines()
 
 		# remove empty lines
-		lines = [line for line in lines if line]
+		# lines = [line for line in lines if line]
 
 		mirror_list: dict[str, list[MirrorStatusEntryV3]] = {}
 
 		current_region = ''
-		for idx, line in enumerate(lines):
+
+		for line in lines:
 			line = line.strip()
 
-			if line.lower().startswith('server'):
+			if line.startswith('## '):
+				current_region = line.replace('## ', '').strip()
+				mirror_list.setdefault(current_region, [])
+
+			if line.startswith('Server = '):
 				if not current_region:
-					for i in range(idx - 1, 0, -1):
-						if lines[i].startswith('##'):
-							current_region = lines[i].replace('#', '').strip()
-							mirror_list.setdefault(current_region, [])
-							break
+					current_region = 'Local'
+					mirror_list.setdefault(current_region, [])
 
 				url = line.removeprefix('Server = ')
+
 				mirror_entry = MirrorStatusEntryV3(
 					url=url.removesuffix('$repo/os/$arch'),
 					protocol=urllib.parse.urlparse(url).scheme,
@@ -278,6 +285,7 @@ class MirrorListHandler:
 					ipv6=True,
 					details='Locally defined mirror',
 				)
+
 				mirror_list[current_region].append(mirror_entry)
 
 		return mirror_list

@@ -728,6 +728,7 @@ class PartitionFlag(PartitionFlagDataMixin, Enum):
 	XBOOTLDR = parted.PARTITION_BLS_BOOT, "bls_boot"
 	ESP = parted.PARTITION_ESP
 	LINUX_HOME = parted.PARTITION_LINUX_HOME, "linux-home"
+	SWAP = parted.PARTITION_SWAP
 
 	@property
 	def description(self) -> str:
@@ -765,8 +766,8 @@ class FilesystemType(Enum):
 	Fat16 = 'fat16'
 	Fat32 = 'fat32'
 	Ntfs = 'ntfs'
-	Reiserfs = 'reiserfs'
 	Xfs = 'xfs'
+	LinuxSwap = 'linux-swap'
 
 	# this is not a FS known to parted, so be careful
 	# with the usage from this enum
@@ -784,6 +785,10 @@ class FilesystemType(Enum):
 				return 'vfat'
 			case _:
 				return self.value
+
+	@property
+	def parted_value(self) -> str:
+		return self.value + '(v1)' if self == FilesystemType.LinuxSwap else self.value
 
 	@property
 	def installation_pkg(self) -> str | None:
@@ -968,6 +973,9 @@ class PartitionModification:
 			self.mountpoint == Path('/home')
 			or PartitionFlag.LINUX_HOME in self.flags
 		)
+
+	def is_swap(self) -> bool:
+		return self.fs_type == FilesystemType.LinuxSwap
 
 	def is_modify(self) -> bool:
 		return self.status == ModificationStatus.Modify

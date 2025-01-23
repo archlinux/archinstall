@@ -49,7 +49,8 @@ def select_devices(preset: list[disk.BDevice] | None = []) -> list[disk.BDevice]
 		multi=True,
 		preview_style=PreviewStyle.BOTTOM,
 		preview_size='auto',
-		preview_frame=FrameProperties.max('Partitions')
+		preview_frame=FrameProperties.max('Partitions'),
+		allow_skip=True
 	).run()
 
 	match result.type_:
@@ -143,8 +144,10 @@ def select_disk_config(
 				output = 'You will use whatever drive-setup is mounted at the specified directory\n'
 				output += "WARNING: Archinstall won't check the suitability of this setup\n"
 
-				path = prompt_dir(str(_('Root mount directory')), output, allow_skip=False)
-				assert path is not None
+				path = prompt_dir(str(_('Root mount directory')), output, allow_skip=True)
+
+				if path is None:
+					return None
 
 				mods = disk.device_handler.detect_pre_mounted_mods(path)
 
@@ -618,7 +621,7 @@ def suggest_lvm_layout(
 	root_vol_size = disk.Size(20, disk.Unit.GiB, disk.SectorSize.default())
 	home_vol_size = total_vol_available - root_vol_size
 
-	lvm_vol_group = disk.LvmVolumeGroup(vg_grp_name, pvs=other_part, )
+	lvm_vol_group = disk.LvmVolumeGroup(vg_grp_name, pvs=other_part)
 
 	root_vol = disk.LvmVolume(
 		status=disk.LvmVolumeStatus.Create,

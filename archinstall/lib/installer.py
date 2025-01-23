@@ -316,17 +316,21 @@ class Installer:
 		}
 
 	def _mount_partition(self, part_mod: disk.PartitionModification) -> None:
+		if not part_mod.dev_path:
+			return
+
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
-		if part_mod.mountpoint and part_mod.dev_path:
+		if part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
 			disk.device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
-
-		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.dev_path:
+		elif part_mod.fs_type == disk.FilesystemType.Btrfs:
 			self._mount_btrfs_subvol(
 				part_mod.dev_path,
 				part_mod.btrfs_subvols,
 				part_mod.mount_options
 			)
+		elif part_mod.is_swap():
+			disk.device_handler.swapon(part_mod.dev_path)
 
 	def _mount_lvm_vol(self, volume: disk.LvmVolume) -> None:
 		if volume.fs_type != disk.FilesystemType.Btrfs:
@@ -737,78 +741,37 @@ class Installer:
 				return vendor.get_ucode()
 		return None
 
-	def _handle_partition_installation(self) -> None:
-		pvs = []
-		if self._disk_config.lvm_config:
-			pvs = self._disk_config.lvm_config.get_all_pvs()
+	def _prepare_fs_type(
+		self,
+		fs_type: disk.FilesystemType,
+		mountpoint: Path | None
+	) -> None:
+		if (pkg := fs_type.installation_pkg) is not None:
+			self._base_packages.append(pkg)
+		if (module := fs_type.installation_module) is not None:
+			self._modules.append(module)
+		if (binary := fs_type.installation_binary) is not None:
+			self._binaries.append(binary)
 
-		for mod in self._disk_config.device_modifications:
-			for part in mod.partitions:
-				if part in pvs or part.fs_type is None:
-					continue
+		# https://github.com/archlinux/archinstall/issues/1837
+		if fs_type.fs_type_mount == 'btrfs':
+			self._disable_fstrim = True
 
-				if (pkg := part.fs_type.installation_pkg) is not None:
-					self._base_packages.append(pkg)
-				if (module := part.fs_type.installation_module) is not None:
-					self._modules.append(module)
-				if (binary := part.fs_type.installation_binary) is not None:
-					self._binaries.append(binary)
+		# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
+		if fs_type.fs_type_mount == 'ntfs3' and mountpoint == self.target:
+			if 'fsck' in self._hooks:
+				self._hooks.remove('fsck')
 
-				# https://github.com/archlinux/archinstall/issues/1837
-				if part.fs_type.fs_type_mount == 'btrfs':
-					self._disable_fstrim = True
+	def _prepare_encrypt(self, before: str = 'filesystems') -> None:
+		if self._disk_encryption.hsm_device:
+			# Required by mkinitcpio to add support for fido2-device options
+			self.pacman.strap('libfido2')
 
-				# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-				if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
-					if 'fsck' in self._hooks:
-						self._hooks.remove('fsck')
-
-				if part in self._disk_encryption.partitions:
-					if self._disk_encryption.hsm_device:
-						# Required by mkinitcpio to add support for fido2-device options
-						self.pacman.strap('libfido2')
-
-						if 'sd-encrypt' not in self._hooks:
-							self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
-					else:
-						if 'encrypt' not in self._hooks:
-							self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
-
-	def _handle_lvm_installation(self) -> None:
-		if not self._disk_config.lvm_config:
-			return
-
-		self.add_additional_packages('lvm2')
-		self._hooks.insert(self._hooks.index('filesystems') - 1, 'lvm2')
-
-		for vg in self._disk_config.lvm_config.vol_groups:
-			for vol in vg.volumes:
-				if vol.fs_type is not None:
-					if (pkg := vol.fs_type.installation_pkg) is not None:
-						self._base_packages.append(pkg)
-					if (module := vol.fs_type.installation_module) is not None:
-						self._modules.append(module)
-					if (binary := vol.fs_type.installation_binary) is not None:
-						self._binaries.append(binary)
-
-					if vol.fs_type.fs_type_mount == 'btrfs':
-						self._disable_fstrim = True
-
-					# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-					if vol.fs_type.fs_type_mount == 'ntfs3' and vol.mountpoint == self.target:
-						if 'fsck' in self._hooks:
-							self._hooks.remove('fsck')
-
-		if self._disk_encryption.encryption_type in [disk.EncryptionType.LvmOnLuks, disk.EncryptionType.LuksOnLvm]:
-			if self._disk_encryption.hsm_device:
-				# Required by mkinitcpio to add support for fido2-device options
-				self.pacman.strap('libfido2')
-
-				if 'sd-encrypt' not in self._hooks:
-					self._hooks.insert(self._hooks.index('lvm2'), 'sd-encrypt')
-			else:
-				if 'encrypt' not in self._hooks:
-					self._hooks.insert(self._hooks.index('lvm2'), 'encrypt')
+			if 'sd-encrypt' not in self._hooks:
+				self._hooks.insert(self._hooks.index(before), 'sd-encrypt')
+		else:
+			if 'encrypt' not in self._hooks:
+				self._hooks.insert(self._hooks.index(before), 'encrypt')
 
 	def minimal_installation(
 		self,
@@ -819,9 +782,28 @@ class Installer:
 		locale_config: LocaleConfiguration | None = LocaleConfiguration.default()
 	):
 		if self._disk_config.lvm_config:
-			self._handle_lvm_installation()
+			lvm = 'lvm2'
+			self.add_additional_packages(lvm)
+			self._hooks.insert(self._hooks.index('filesystems') - 1, lvm)
+
+			for vg in self._disk_config.lvm_config.vol_groups:
+				for vol in vg.volumes:
+					if vol.fs_type is not None:
+						self._prepare_fs_type(vol.fs_type, vol.mountpoint)
+
+			types = (disk.EncryptionType.LvmOnLuks, disk.EncryptionType.LuksOnLvm)
+			if self._disk_encryption.encryption_type in types:
+				self._prepare_encrypt(lvm)
 		else:
-			self._handle_partition_installation()
+			for mod in self._disk_config.device_modifications:
+				for part in mod.partitions:
+					if part.fs_type is None:
+						continue
+
+					self._prepare_fs_type(part.fs_type, part.mountpoint)
+
+					if part in self._disk_encryption.partitions:
+						self._prepare_encrypt()
 
 		if not SysInfo.has_uefi():
 			self._base_packages.append('grub')

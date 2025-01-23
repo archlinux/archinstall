@@ -58,7 +58,7 @@ debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
 debug(f"Disk states before installing:\n{disk.disk_layouts()}")
 
 
-if 'sphinx' not in sys.modules:
+if 'sphinx' not in sys.modules and 'pylint' not in sys.modules:
 	if '--help' in sys.argv or '-h' in sys.argv:
 		arch_config_handler.print_help()
 		exit(0)
