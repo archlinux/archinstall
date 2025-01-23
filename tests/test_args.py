@@ -7,7 +7,7 @@ from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.disk import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.hardware import GfxDriver
-from archinstall.lib.locale import LocaleConfiguration
+from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.mirrors import MirrorConfiguration
 from archinstall.lib.models import Audio, AudioConfiguration, Bootloader, NetworkConfiguration, User
 from archinstall.lib.models.network_configuration import Nic, NicType
@@ -102,7 +102,7 @@ def test_config_file_parsing(
 	])
 
 	handler = ArchConfigHandler()
-	arch_config = handler.arch_config
+	arch_config = handler.config
 
 	# TODO: Use the real values from the test fixture instead of clearing out the entries
 	arch_config.disk_config.device_modifications = []  # type: ignore[union-attr]
@@ -171,5 +171,8 @@ def test_config_file_parsing(
 		timezone='UTC',
 		additional_repositories=["testing"],
 		_users=[User(username='user_name', password='user_pwd', sudo=True)],
-		_disk_encryption=None
+		_disk_encryption=None,
+		services=['sevice_1', 'service_2'],
+		_root_password='super_pwd',
+		custom_commands=["echo 'Hello, World!'"]
 	)

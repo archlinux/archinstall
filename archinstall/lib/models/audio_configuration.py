@@ -1,9 +1,9 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum, auto
 
 from ...default_profiles.applications.pipewire import PipewireProfile
 from ..hardware import SysInfo
-from ..installer import Installer
 from ..output import info
 
 
@@ -30,7 +30,7 @@ class AudioConfiguration:
 
 	def install_audio_config(
 		self,
-		installation: Installer
+		installation: 'Installer'
 	) -> None:
 		info(f'Installing audio server: {self.audio.name}')
 

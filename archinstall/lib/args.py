@@ -11,14 +11,15 @@ from urllib.request import Request, urlopen
 from pydantic.dataclasses import dataclass as p_dataclass
 
 from .disk import DiskEncryption, DiskLayoutConfiguration
-from .locale import LocaleConfiguration
+from .models.locale import LocaleConfiguration
 from .mirrors import MirrorConfiguration
 from .models import AudioConfiguration, Bootloader, NetworkConfiguration, User
 from .output import error, warn
 from .plugins import load_plugin
-from .profile import ProfileConfiguration
+from .models.profile_model import ProfileConfiguration
 from .storage import storage
 from .translationhandler import Language, translation_handler
+from importlib.metadata import version
 
 
 @p_dataclass
@@ -30,7 +31,7 @@ class Arguments:
 	silent: bool = False
 	dry_run: bool = False
 	script: str = 'guided'
-	mount_point: Path | None = Path('/mnt')
+	mountpoint: Path = Path('/mnt')
 	skip_ntp: bool = False
 	debug: bool = False
 	offline: bool = False
@@ -42,7 +43,7 @@ class Arguments:
 
 @dataclass
 class ArchConfig:
-	version: str = field(default_factory=lambda: storage['__version__'])
+	version: str = field(default_factory=lambda: version('archinstall'))
 	locale_config: LocaleConfiguration | None = None
 	archinstall_language: Language = field(default_factory=lambda: translation_handler.get_language_by_abbr('en'))
 	disk_config: DiskLayoutConfiguration | None = None
@@ -60,10 +61,13 @@ class ArchConfig:
 	swap: bool = True
 	timezone: str = 'UTC'
 	additional_repositories: list[str] = field(default_factory=list)
+	services: list[str] = field(default_factory=list)
+	custom_commands: list[str] = field(default_factory=list)
 
 	# Special fields that should be handle with care due to security implications
 	_users: list[User] = field(default_factory=list)
 	_disk_encryption: DiskEncryption | None = None
+	_root_password: str | None = None
 
 	@classmethod
 	def from_config(cls, args_config: dict[str, Any]) -> 'ArchConfig':
@@ -130,6 +134,15 @@ class ArchConfig:
 		if additional_repositories := args_config.get('additional-repositories', []):
 			arch_config.additional_repositories = additional_repositories
 
+		if services := args_config.get('services', []):
+			arch_config.services = services
+
+		if root_password := args_config.get('root_password', None):
+			arch_config._root_password = root_password
+
+		if custom_commands := args_config.get('custom_commands', []):
+			arch_config.custom_commands = custom_commands
+
 		return arch_config
 
 
@@ -139,11 +152,11 @@ class ArchConfigHandler:
 		self._args: Arguments = self._parse_args()
 
 		config = self._parse_config()
-		self._arch_config = ArchConfig.from_config(config)
+		self._config = ArchConfig.from_config(config)
 
 	@property
-	def arch_config(self) -> ArchConfig:
-		return self._arch_config
+	def config(self) -> ArchConfig:
+		return self._config
 
 	@property
 	def args(self) -> Arguments:
@@ -159,7 +172,7 @@ class ArchConfigHandler:
 			"--version",
 			action="version",
 			default=False,
-			version="%(prog)s " + storage['__version__']
+			version="%(prog)s " + version('archinstall')
 		)
 		parser.add_argument(
 			"--config",
@@ -336,3 +349,6 @@ class ArchConfigHandler:
 				clean_args[key] = val
 
 		return clean_args
+
+
+arch_config_handler = ArchConfigHandler()

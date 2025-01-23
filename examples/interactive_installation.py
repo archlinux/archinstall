@@ -28,7 +28,7 @@ def ask_user_questions() -> None:
 		global_menu = GlobalMenu(data_store=archinstall.arguments)
 
 		if not archinstall.arguments.get('advanced', False):
-			global_menu.set_enabled('parallel downloads', False)
+			global_menu.set_enabled('parallel_downloads', False)
 
 		global_menu.run()
 

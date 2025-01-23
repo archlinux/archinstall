@@ -16,7 +16,8 @@ from . import disk, pacman
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from .general import SysCommand
 from .hardware import SysInfo
-from .locale import LocaleConfiguration, verify_keyboard_layout, verify_x11_keyboard_layout
+from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
+from .models.locale import LocaleConfiguration
 from .luks import Luks2
 from .mirrors import MirrorConfiguration
 from .models.bootloader import Bootloader
@@ -815,7 +816,7 @@ class Installer:
 		multilib: bool = False,
 		mkinitcpio: bool = True,
 		hostname: str | None = None,
-		locale_config: LocaleConfiguration = LocaleConfiguration.default()
+		locale_config: LocaleConfiguration | None = LocaleConfiguration.default()
 	):
 		if self._disk_config.lvm_config:
 			self._handle_lvm_installation()
@@ -870,8 +871,9 @@ class Installer:
 		if hostname:
 			self.set_hostname(hostname)
 
-		self.set_locale(locale_config)
-		self.set_keyboard_language(locale_config.kb_layout)
+		if locale_config:
+			self.set_locale(locale_config)
+			self.set_keyboard_language(locale_config.kb_layout)
 
 		# TODO: Use python functions for this
 		SysCommand(f'arch-chroot {self.target} chmod 700 /root')

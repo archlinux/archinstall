@@ -8,7 +8,7 @@ from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup,
 from ..hardware import GfxDriver
 from ..interactions.system_conf import select_driver
 from ..menu import AbstractSubMenu
-from .profile_model import ProfileConfiguration
+from ..models.profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

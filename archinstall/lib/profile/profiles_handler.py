@@ -14,7 +14,7 @@ from ...default_profiles.profile import GreeterType, Profile
 from ..hardware import GfxDriver
 from ..networking import fetch_data_from_url, list_interfaces
 from ..output import debug, error, info
-from .profile_model import ProfileConfiguration
+from ..models.profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

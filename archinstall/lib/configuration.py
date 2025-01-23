@@ -4,12 +4,17 @@ import stat
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu, Tui
+from archinstall.tui import (
+	Alignment, FrameProperties, MenuItem,
+	MenuItemGroup, Orientation, PreviewStyle,
+	ResultType, SelectMenu, Tui
+)
 
 from .general import JSON, UNSAFE_JSON
 from .output import debug, warn
 from .storage import storage
 from .utils.util import prompt_dir
+from .args import ArchConfig
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -20,7 +25,7 @@ if TYPE_CHECKING:
 
 
 class ConfigurationOutput:
-	def __init__(self, config: dict[str, Any]):
+	def __init__(self, config: ArchConfig):
 		"""
 		Configuration output handler to parse the existing configuration data structure and prepare for output on the
 		console and for saving it to configuration files

@@ -23,7 +23,8 @@ from .interactions import (
 	select_additional_repositories,
 	select_kernel,
 )
-from .locale.locale_menu import LocaleConfiguration, LocaleMenu
+from .locale.locale_menu import LocaleMenu
+from .models.locale import LocaleConfiguration
 from .menu import AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
 from .models import NetworkConfiguration, NicType
@@ -34,6 +35,7 @@ from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
 from .translationhandler import Language, translation_handler
 from .utils.util import format_cols, get_password
+from .args import ArchConfig
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -44,20 +46,16 @@ if TYPE_CHECKING:
 
 
 class GlobalMenu(AbstractMenu):
-	def __init__(self, data_store: dict[str, Any]):
-		self._data_store = data_store
-
-		if 'archinstall-language' not in data_store:
-			data_store['archinstall-language'] = translation_handler.get_language_by_abbr('en')
-
+	def __init__(self, arch_config: ArchConfig) -> None:
 		menu_optioons = self._get_menu_options()
+
 		self._item_group = MenuItemGroup(
 			menu_optioons,
 			sort_items=False,
 			checkmarks=True
 		)
 
-		super().__init__(self._item_group, data_store)
+		super().__init__(self._item_group, config=arch_config)
 
 	def _get_menu_options(self) -> list[MenuItem]:
 		return [
@@ -65,7 +63,7 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Archinstall language')),
 				action=self._select_archinstall_language,
 				display_action=lambda x: x.display_name if x else '',
-				key='archinstall-language'
+				key='archinstall_language'
 			),
 			MenuItem(
 				text=str(_('Locales')),
@@ -90,8 +88,8 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Disk encryption')),
 				action=self._disk_encryption,
 				preview_action=self._prev_disk_encryption,
-				key='disk_encryption',
-				dependencies=['disk_config']
+				dependencies=['disk_config'],
+				key='_disk_encryption'
 			),
 			MenuItem(
 				text=str(_('Swap')),
@@ -126,13 +124,13 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Root password')),
 				action=self._set_root_password,
 				preview_action=self._prev_root_pwd,
-				key='!root-password',
+				key='_root_password',
 			),
 			MenuItem(
 				text=str(_('User account')),
 				action=self._create_user_account,
 				preview_action=self._prev_users,
-				key='!users'
+				key='_users'
 			),
 			MenuItem(
 				text=str(_('Profile')),
@@ -166,7 +164,7 @@ class GlobalMenu(AbstractMenu):
 				action=add_number_of_parallel_downloads,
 				value=0,
 				preview_action=self._prev_parallel_dw,
-				key='parallel downloads'
+				key='parallel_downloads'
 			),
 			MenuItem(
 				text=str(_('Additional packages')),
@@ -180,7 +178,7 @@ class GlobalMenu(AbstractMenu):
 				action=select_additional_repositories,
 				value=[],
 				preview_action=self._prev_additional_repos,
-				key='additional-repositories'
+				key='additional_repositories'
 			),
 			MenuItem(
 				text=str(_('Timezone')),
@@ -201,18 +199,15 @@ class GlobalMenu(AbstractMenu):
 			),
 			MenuItem(
 				text=str(_('Save configuration')),
-				action=lambda x: self._safe_config(),
-				key='save_config'
+				action=lambda x: self._safe_config()
 			),
 			MenuItem(
 				text=str(_('Install')),
-				preview_action=self._prev_install_invalid_config,
-				key='install'
+				preview_action=self._prev_install_invalid_config
 			),
 			MenuItem(
 				text=str(_('Abort')),
-				action=lambda x: exit(1),
-				key='abort'
+				action=lambda x: exit(1)
 			)
 		]
 
