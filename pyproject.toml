@@ -115,10 +115,6 @@ module = "archinstall.lib.utils"
 disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
-module = "archinstall.scripts.*"
-warn_unreachable = false
-
-[[tool.mypy.overrides]]
 module = "archinstall.tui.*"
 warn_unreachable = false
 
