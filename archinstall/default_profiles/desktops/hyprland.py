@@ -50,8 +50,8 @@ class HyprlandProfile(XorgProfile):
 
 	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
-		header = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
-		header += '\n' + str(_('Choose an option to give Sway access to your hardware')) + '\n'
+		header = str(_('Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		header += '\n' + str(_('Choose an option to give Hyprland access to your hardware')) + '\n'
 
 		items = [MenuItem(s.value, value=s) for s in SeatAccess]
 		group = MenuItemGroup(items, sort_items=True)
