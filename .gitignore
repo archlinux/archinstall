@@ -23,6 +23,8 @@ SAFETY_LOCK
 **/**.qcow2
 **/**.log
 **/**.fd
+**/**.cast
+**/**.pid
 /test*.py
 **/archiso
 /guided.py
