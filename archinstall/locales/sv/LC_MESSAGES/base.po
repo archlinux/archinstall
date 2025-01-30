@@ -1466,3 +1466,53 @@ msgstr "Välj exekveringsläge"
 
 msgid "Press ? for help"
 msgstr "Tryck på ?för hjälp"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Välj ett alternativ för att ge Hyprland åtkomst till din hårdvara"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Valfria repositories"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Välj signaturkontroll"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Aktuella fria sektorer på enheten {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Total: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Slut (standard: {}):"
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Enhet"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Användarnamn "
+
+msgid "The specified configuration will be applied"
+msgstr ""

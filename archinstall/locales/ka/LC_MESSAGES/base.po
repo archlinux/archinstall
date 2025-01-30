@@ -1507,3 +1507,53 @@ msgstr "აირჩიეთ შესრულების რეჟიმი"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Hyperland-ს თქვენს აპარატურასთან წვდომა მისცეთ"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "არასავალდებულო რეპოზიტორიები"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "აირჩიეთ ხელმოწერის შემოწმების პარამეტრი"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "ამჟამად თავისუფალი სექტორები მოწყობილობაზე {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "სულ: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "შეიყვანეთ ბოლო სექტორი (ნაგულისხმევი: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "მოწყობილობა"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "მომხმარებლის სახელი : "
+
+msgid "The specified configuration will be applied"
+msgstr ""

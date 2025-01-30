@@ -1465,3 +1465,53 @@ msgstr "実行モードを選択"
 
 msgid "Press ? for help"
 msgstr "? を押すとヘルプを表示"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Hyprland にハードウェアへのアクセスを許可するオプションを選択"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "オプションのリポジトリ"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "署名チェックを選択"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "デバイス {} の現在の空きセクター:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "全体: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "終了値（デフォルト: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "デバイス"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "ユーザー名"
+
+msgid "The specified configuration will be applied"
+msgstr ""

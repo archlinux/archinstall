@@ -1467,3 +1467,53 @@ msgstr "Végrehajtási mód kiválasztása"
 
 msgid "Press ? for help"
 msgstr "? → a súgó megnyitásához"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Válasszon ki egy beállítást, hogy engedélyezze a Hyprland számára a hardverekhez való hozzáférést"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Nem kötelező tárolók"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Aláírásellenőrzés kiválasztása"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Jelenlegi szabad szektorok a(z) {} eszközön:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Összesen: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Végpont megadása (alapértelmezett: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Eszköz"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Felhasználónév"
+
+msgid "The specified configuration will be applied"
+msgstr ""

@@ -1469,3 +1469,53 @@ msgstr "Bir çalıştırma modu seçin"
 
 msgid "Press ? for help"
 msgstr "Yardım için ? tuşuna basın"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Hyprland’e donanımınıza erişim izni vermek için bir seçenek belirleyin"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "İsteğe bağlı depolar"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "İmza kontrolü seçeneğini seçin"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "{} cihazındaki mevcut boş sektörler:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Toplam: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Bitiş (varsayılan: {}):"
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Cihaz"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Kullanıcı Adı"
+
+msgid "The specified configuration will be applied"
+msgstr ""

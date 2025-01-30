@@ -1507,3 +1507,53 @@ msgstr "Roghnaigh modh forghníomhaithe"
 #, fuzzy
 msgid "Press ? for help"
 msgstr "Brúigh Ctrl+h chun cabhair a fháil"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh rogha chun rochtain a thabhairt do Hyprland ar do chrua-earraí"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Taisclanna roghnacha"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Roghnaigh an rogha seiceála sínithe"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Earnálacha saor in aisce faoi láthair ar ghléas {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Iomlán: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Cuir isteach an deireadh (réamhshocraithe: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Gléas"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Ainm Úsáideora: "
+
+msgid "The specified configuration will be applied"
+msgstr ""
