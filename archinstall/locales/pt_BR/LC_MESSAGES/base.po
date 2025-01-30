@@ -1517,5 +1517,55 @@ msgstr "Selecione um modo de execução"
 msgid "Press ? for help"
 msgstr "Pressione Ctrl+h para ajuda"
 
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Selecione uma opção para permitir o acesso do Hyprland ao seu hardware"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Repositórios opcionais"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Selecione uma opção de verificação de assinatura"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Setores livres no dispositivo {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Total: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Digite fim (padrão: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Dispositivo"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Nome de usuário : "
+
+msgid "The specified configuration will be applied"
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

@@ -1533,3 +1533,53 @@ msgstr "נא לבחור מצב הפעלה"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"‫נא לבחור אפשרות כדי לתת ל־Hyprland גישה לחומרה שלך"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "מאגרי רשות"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "בחירת אפשרות בדיקת חתימות"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "כמות המקטעים (סקטורים) הפנויים כרגע בכונן {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "סך הכול: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "נא למלא סוף (ברירת מחדל: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "התקן"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "שם משתמש : "
+
+msgid "The specified configuration will be applied"
+msgstr ""

@@ -1508,3 +1508,53 @@ msgstr "Выберите режим выполнения"
 #, fuzzy
 msgid "Press ? for help"
 msgstr "Нажмите Ctrl+h для справки"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Выберите опцию, чтобы предоставить Hyprland доступ к вашему оборудованию"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Дополнительные репозитории"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Выбрать вариант проверки подписи"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Текущие свободные секторы на устройстве {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Весь размер: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Введите конец (по умолчанию: сектор {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Устройство"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Имя пользователя: "
+
+msgid "The specified configuration will be applied"
+msgstr ""

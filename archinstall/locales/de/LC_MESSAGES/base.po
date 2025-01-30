@@ -1535,3 +1535,53 @@ msgstr "Wählen Sie einen Ausführmodus"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Option auswählen, um Hyprland Zugriff auf deine Hardware zu geben"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Zus. Repositories"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Signaturprüfungs-Option auswählen"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Aktuell freie Sektoren auf dem Gerät {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Gesamtlänge: {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Bitte geben Sie den Startsektor ein (Standard: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Gerät"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Benutzername: "
+
+msgid "The specified configuration will be applied"
+msgstr ""

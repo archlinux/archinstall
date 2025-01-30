@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Se ha creado un archivo de registro aquí: {} {}"
@@ -1345,7 +1345,7 @@ msgid "Start (default: sector {}): "
 msgstr "Inicio (predeterminado: sector {}): "
 
 msgid "End (default: {}): "
-msgstr "Fin (predeterminado: {}):"
+msgstr "Fin (predeterminado: {}): "
 
 msgid "Subvolume name"
 msgstr "Nombre del subvolumen"
@@ -1466,6 +1466,45 @@ msgstr "Seleccionar modo de ejecución"
 
 msgid "Press ? for help"
 msgstr "Presione ? para obtener ayuda"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Elija una opción para darle a Hyprland acceso a su hardware"
+
+msgid "Additional repositories"
+msgstr "Repositorios adicionales"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Intercambio en zram"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Signature check"
+msgstr "Comprobación de firma"
+
+msgid "Selected free space segment on device {}:"
+msgstr "Segmento de espacio libre seleccionado en el dispositivo {}:"
+
+msgid "Size: {} / {}"
+msgstr "Tamaño: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "Tamaño (predeterminado: {}):"
+
+msgid "HSM device"
+msgstr "Dispositivo HSM"
+
+msgid "Some packages could not be found in the repository"
+msgstr "No se pudieron encontrar algunos paquetes en el repositorio"
+
+msgid "User"
+msgstr "Usuario"
+
+msgid "The specified configuration will be applied"
+msgstr "Se aplicará la configuración especificada."
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"

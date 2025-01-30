@@ -1457,3 +1457,53 @@ msgstr "Zvolte způsob provedení"
 
 msgid "Press ? for help"
 msgstr "Stiskněte ? pro nápovědu"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Vyberte možnost jak zpřístupnit pro Hyprland váš hardware"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Volitelné repozitáře"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Zvolit kontrolu podpisu"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Momentálně volné sektory na zařízení {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Celkem: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Konec (výchozí: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Zařízení"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Uživatelské jméno"
+
+msgid "The specified configuration will be applied"
+msgstr ""
