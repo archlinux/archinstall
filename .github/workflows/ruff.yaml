@@ -3,20 +3,6 @@ name: ruff linting
 jobs:
     ruff:
         runs-on: ubuntu-latest
-        container:
-            image: archlinux/archlinux:latest
         steps:
             - uses: actions/checkout@v4
-            - name: Prepare arch
-              run: |
-                pacman-key --init
-                pacman --noconfirm -Sy archlinux-keyring
-                pacman --noconfirm -Syyu
-                pacman --noconfirm -Sy python-pip python-pyparted pkgconfig gcc
-            - run: pip install --break-system-packages --upgrade pip
-            - name: Install ruff
-              run: pip install --break-system-packages .[dev]
-            - run: python --version
-            - run: ruff --version
-            - name: Lint with ruff
-              run: ruff check
+            - uses: astral-sh/ruff-action@v3
