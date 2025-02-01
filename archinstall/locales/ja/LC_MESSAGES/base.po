@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ここにログファイルが作成されました: {} {}"
@@ -1466,52 +1466,41 @@ msgstr "実行モードを選択"
 msgid "Press ? for help"
 msgstr "? を押すとヘルプを表示"
 
-#, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Hyprland にハードウェアへのアクセスを許可するオプションを選択"
+msgstr "Hyprland にハードウェアへのアクセスを許可するオプションを選択"
 
-#, fuzzy
 msgid "Additional repositories"
-msgstr "オプションのリポジトリ"
+msgstr "追加のリポジトリ"
 
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "zram のスワップ"
 
 msgid "Name"
-msgstr ""
+msgstr "名前"
 
-#, fuzzy
 msgid "Signature check"
-msgstr "署名チェックを選択"
+msgstr "署名チェック"
 
-#, fuzzy
 msgid "Selected free space segment on device {}:"
-msgstr "デバイス {} の現在の空きセクター:"
+msgstr "デバイス {} の選択された空きスペースセグメント:"
 
-#, fuzzy
 msgid "Size: {} / {}"
-msgstr "全体: {} / {}"
+msgstr "サイズ: {} / {}"
 
-#, fuzzy
 msgid "Size (default: {}): "
-msgstr "終了値（デフォルト: {}): "
+msgstr "サイズ (デフォルト: {}): "
 
-#, fuzzy
 msgid "HSM device"
-msgstr "デバイス"
+msgstr "HSM デバイス"
 
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "リポジトリ内にいくつかのパッケージが見つかりませんでした"
 
-#, fuzzy
 msgid "User"
-msgstr "ユーザー名"
+msgstr "ユーザー"
 
 msgid "The specified configuration will be applied"
-msgstr ""
+msgstr "指定された設定が適用されます"
