@@ -12,17 +12,9 @@ class CinnamonProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"cinnamon",
-			"system-config-printer",
-			"gnome-keyring",
-			"gnome-terminal",
-			"blueman",
-			"bluez-utils",
-			"engrampa",
-			"gnome-screenshot",
-			"gvfs-smb",
-			"xed",
-			"xdg-user-dirs-gtk"
+			'cinnamon',
+			'gvfs-mtp',
+			'gnome-console'
 		]
 
 	@property
