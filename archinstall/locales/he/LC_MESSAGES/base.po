@@ -132,7 +132,7 @@ msgstr "נא לבחור להיכן לעגן את המחיצה (להשאיר רי
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "‫{}‬‬\n"
 "\n"

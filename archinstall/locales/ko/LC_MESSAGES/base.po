@@ -132,7 +132,7 @@ msgstr "파티션을 마운트할 위치를 선택하세요 (마운트 포인트
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"

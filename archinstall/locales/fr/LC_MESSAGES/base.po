@@ -132,7 +132,7 @@ msgstr "Sélectionner où monter la partition (laisser vide pour supprimer le po
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
