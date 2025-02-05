@@ -15,13 +15,23 @@ class LxqtProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"lxqt",
-			"breeze-icons",
-			"oxygen-icons",
-			"xdg-utils",
-			"ttf-freefont",
-			"leafpad",
-			"slock"
+            'gvfs',
+            'gvfs-mtp',
+            'kwin',
+			'lxqt-admin',
+            'lxqt-archiver',
+            'lxqt-config',
+            'lxqt-notificationd',
+            'lxqt-panel',
+            'lxqt-policykit',
+            'lxqt-powermanagement',
+            'lxqt-qtplugin',
+            'lxqt-runner',
+            'lxqt-session',
+            'lxqt-wayland-session',
+            'pcmanfm-qt',
+            'qterminal',
+            'xdg-desktop-portal-lxqt'
 		]
 
 	@property

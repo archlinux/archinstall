@@ -12,8 +12,11 @@ class GnomeProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			'gnome',
-			'gnome-tweaks'
+			'gnome-shell',
+			'gnome-console',
+			'gnome-control-center',
+			'gvfs-mtp',
+			'nautilus'
 		]
 
 	@property
