@@ -137,7 +137,7 @@ msgstr "حدد مكان تحميل القسم (اتركه فارغاً لإزا�
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
