@@ -1509,3 +1509,53 @@ msgstr "செயல்படுத்தும் பயன்முறைய�
 #, fuzzy
 msgid "Press ? for help"
 msgstr "உதவிக்கு Ctrl+h ஐ அழுத்தவும்"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"உங்கள் வன்பொருளுக்கு Hypland அணுகலை வழங்குவதற்கான விருப்பத்தைத் தேர்வு செய்யவும்"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "விருப்ப களஞ்சியங்கள்"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "கையொப்ப சரிபார்ப்பு விருப்பத்தைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "{} சாதனத்தில் தற்போதைய இலவசப் பிரிவுகள்:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "மொத்தம்: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "முடிவை உள்ளிடவும் (இயல்பு: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "சாதனம்"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "பயனர் பெயர்: "
+
+msgid "The specified configuration will be applied"
+msgstr ""

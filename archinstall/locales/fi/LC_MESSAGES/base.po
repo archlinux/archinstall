@@ -1521,3 +1521,53 @@ msgstr "Valitse suoritustila"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valitse asetus antaaksesi Hyprlandille pääsyn laitteistoosi"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Valinnaiset arkistot"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Valitse allekirjoituksen tarkistusvaihtoehto"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Laitteen nykyiset vapaat sektorit {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Yhteensä: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Anna loppu (oletus:  {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Laite"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Käyttäjänimi : "
+
+msgid "The specified configuration will be applied"
+msgstr ""

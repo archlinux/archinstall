@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] A naplófájl itt jött létre: {} {}"
@@ -51,7 +51,7 @@ msgid "Choose an audio server"
 msgstr "Válasszon ki egy hangkiszolgálót"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok kerülnek telepítésre."
+msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok lesznek telepítve."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő prompt-ban adhatja meg."
@@ -456,7 +456,7 @@ msgid "Add a user"
 msgstr "Felhasználó hozzáadása"
 
 msgid "Change password"
-msgstr "Jelszó megváltoztatása"
+msgstr "Jelszó módosítása"
 
 msgid "Promote/Demote user"
 msgstr "Felhasználó előléptetése/lefokozása"
@@ -986,7 +986,7 @@ msgid "Password"
 msgstr "Jelszó"
 
 msgid "All settings will be reset, are you sure?"
-msgstr "Az összes beállítás visszaállításra kerül az alapértelmezettre, biztos benne?"
+msgstr "Az összes beállítás vissza lesz állítva az alapértelmezettre, biztos benne?"
 
 msgid "Back"
 msgstr "Vissza"
@@ -1077,7 +1077,7 @@ msgid "Add a custom mirror"
 msgstr "Egyéni tükör hozzáadása"
 
 msgid "Change custom mirror"
-msgstr "Egyéni tükör megváltoztatása"
+msgstr "Egyéni tükör módosítása"
 
 msgid "Delete custom mirror"
 msgstr "Egyéni tükör törlése"
@@ -1467,3 +1467,42 @@ msgstr "Végrehajtási mód kiválasztása"
 
 msgid "Press ? for help"
 msgstr "? → a súgó megnyitásához"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Hyprland számára a hardverekhez való hozzáférést"
+
+msgid "Additional repositories"
+msgstr "Nem kötelező tárolók"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Swap a zram fölött"
+
+msgid "Name"
+msgstr "Név"
+
+msgid "Signature check"
+msgstr "Aláírás-ellenőrzés"
+
+msgid "Selected free space segment on device {}:"
+msgstr "A kiválasztott szabad szakaszok a(z) {} eszközön:"
+
+msgid "Size: {} / {}"
+msgstr "Méret: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "Méret (alapértelmezett: {}): "
+
+msgid "HSM device"
+msgstr "HSM-eszköz"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Néhány csomag nem található a tárolóban"
+
+msgid "User"
+msgstr "Felhasználó"
+
+msgid "The specified configuration will be applied"
+msgstr "A megadott konfiguráció lesz alkalmazva"

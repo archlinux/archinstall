@@ -1407,3 +1407,42 @@ msgstr "एक समयक्षेत्र चुनें"
 
 msgid "Press ? for help"
 msgstr ""
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+
+msgid "Additional repositories"
+msgstr ""
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Signature check"
+msgstr ""
+
+msgid "Selected free space segment on device {}:"
+msgstr ""
+
+msgid "Size: {} / {}"
+msgstr ""
+
+msgid "Size (default: {}): "
+msgstr ""
+
+msgid "HSM device"
+msgstr ""
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "The specified configuration will be applied"
+msgstr ""

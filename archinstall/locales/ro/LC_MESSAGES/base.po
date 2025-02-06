@@ -1527,3 +1527,53 @@ msgstr "Selectați un mod de execuție"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Colecții de pachete opționale"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Selectați opțiunea pentru verificarea semnăturii"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Sectoarele libere curente de pe dispozitiv {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Total: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Introduceți final (predefinit: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Discpozitiv"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Nume utilizator : "
+
+msgid "The specified configuration will be applied"
+msgstr ""

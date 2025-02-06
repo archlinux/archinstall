@@ -1538,3 +1538,53 @@ msgstr "選擇執行模式"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"選擇一個選項以提供 Sway 對您硬件的訪問權限"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "可選目錄"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "選擇硬盤加密選項"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "目前 {} 設備上的可用區塊："
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "總長度：{}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "輸入起始區塊（默認：{}）："
+
+#, fuzzy
+msgid "HSM device"
+msgstr "裝置"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "用戶名："
+
+msgid "The specified configuration will be applied"
+msgstr ""

@@ -1559,3 +1559,47 @@ msgstr "Оберіть дію для \"{}\""
 
 msgid "Press ? for help"
 msgstr ""
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Необов'язкові репозиторії"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Оберіть параметр шифрування диска"
+
+msgid "Selected free space segment on device {}:"
+msgstr ""
+
+msgid "Size: {} / {}"
+msgstr ""
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Введіть початковий сектор (відсоток або номер блоку, за замовчуванням: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Пристрій"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Ім'я користувача : "
+
+msgid "The specified configuration will be applied"
+msgstr ""
