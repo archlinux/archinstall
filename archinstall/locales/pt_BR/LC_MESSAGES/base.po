@@ -5,12 +5,13 @@
 #  Diogo Silva <github.com/Diogo-ss>
 #  Mário Victor Ribeiro Silva <github.com/ComicShrimp>
 #  Rafael Fontenelle <rafaelff@gnome.org>, 2023.
+#  Luis Antonio <github.com/ruisuantonio>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: archinstall\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2025-02-06 23:14-0300\n"
-"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
+"Last-Translator: Luis Antonio <github.com/ruisuantonio>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
@@ -1493,7 +1494,7 @@ msgid "NTP"
 msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr "Swap na zram"
+msgstr "Swap em zram"
 
 msgid "Name"
 msgstr "Nome"
