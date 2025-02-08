@@ -33,7 +33,7 @@ dev = [
     "mypy==1.15.0",
     "flake8==7.1.1",
     "pre-commit==4.1.0",
-    "ruff==0.9.4",
+    "ruff==0.9.5",
     "pylint==3.3.4",
     "pylint-pydantic==0.3.5",
     "pytest==8.3.4",
