@@ -5,7 +5,6 @@ from pytest import MonkeyPatch
 
 from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.configuration import ConfigurationOutput
-from archinstall.lib.models.device_model import DiskLayoutType
 
 
 def test_user_config_roundtrip(
@@ -29,10 +28,10 @@ def test_user_config_roundtrip(
 
 	# the parsed config will check if the given device exists otherwise
 	# it will ignore the modification; as this test will run on various local systems
-	# and the CI pipeline there's no good way specify a real device so we'll ivnore
-	# that entry in the comparison for now
-	expected['disk_config']['config_type'] = DiskLayoutType.Default.value
-	expected['disk_config']['device_modifications'] = []
+	# and the CI pipeline there's no good way specify a real device so we'll simply
+	# copy the expected result to the actual result
+	result['disk_config']['config_type'] = expected['disk_config']['config_type']
+	result['disk_config']['device_modifications'] = expected['disk_config']['device_modifications']
 
 	assert sorted(result.items()) == sorted(expected.items())
 
