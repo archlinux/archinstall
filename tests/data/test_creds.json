@@ -4,7 +4,7 @@
         {
             "!password": "user_pwd",
             "sudo": true,
-            "username": "user_name",
+            "username": "user_name"
         }
     ]
 }

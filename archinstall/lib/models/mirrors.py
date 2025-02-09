@@ -5,16 +5,14 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
+from enum import Enum
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, field_validator, model_validator
 
 from ..networking import DownloadTimer, fetch_data_from_url, ping
 from ..output import debug
-
-from enum import Enum
-from typing import TYPE_CHECKING, Any
-
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -396,8 +394,9 @@ class MirrorConfiguration:
 	def parse_args(cls, args: dict[str, Any]) -> 'MirrorConfiguration':
 		config = MirrorConfiguration()
 
-		if 'mirror_regions' in args:
-			for region, urls in args['mirror_regions'].items():
+		mirror_regions = args.get('mirror_regions', [])
+		if mirror_regions:
+			for region, urls in mirror_regions.items():
 				config.mirror_regions.append(MirrorRegion(region, urls))
 
 		if 'custom_mirrors' in args:

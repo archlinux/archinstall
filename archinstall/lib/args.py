@@ -4,22 +4,22 @@ import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 from urllib.request import Request, urlopen
 
 from pydantic.dataclasses import dataclass as p_dataclass
 
-from .disk import DiskEncryption, DiskLayoutConfiguration
-from .models.locale import LocaleConfiguration
-from .mirrors import MirrorConfiguration
-from .models import AudioConfiguration, Bootloader, NetworkConfiguration, User
-from .output import error, warn
-from .plugins import load_plugin
-from .models.profile_model import ProfileConfiguration
-from .storage import storage
-from .translationhandler import Language, translation_handler
-from importlib.metadata import version
+from archinstall.lib.mirrors import MirrorConfiguration
+from archinstall.lib.models import AudioConfiguration, Bootloader, NetworkConfiguration, User
+from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration
+from archinstall.lib.models.locale import LocaleConfiguration
+from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.output import error, warn
+from archinstall.lib.plugins import load_plugin
+from archinstall.lib.storage import storage
+from archinstall.lib.translationhandler import Language, translation_handler
 
 
 @p_dataclass
@@ -39,6 +39,7 @@ class Arguments:
 	plugin: str | None = None
 	skip_version_check: bool = False
 	advanced: bool = False
+	verbose: bool = False
 
 
 @dataclass
@@ -65,9 +66,58 @@ class ArchConfig:
 	custom_commands: list[str] = field(default_factory=list)
 
 	# Special fields that should be handle with care due to security implications
-	_users: list[User] = field(default_factory=list)
-	_disk_encryption: DiskEncryption | None = None
-	_root_password: str | None = None
+	users: list[User] = field(default_factory=list)
+	disk_encryption: DiskEncryption | None = None
+	root_password: str | None = None
+
+	def unsafe_json(self) -> dict[str, Any]:
+		config = {
+			'!users': [user.json() for user in self.users],
+			'!root-password': self.root_password,
+		}
+
+		if self.disk_encryption:
+			config['encryption_password'] = self.disk_encryption.encryption_password
+
+		return config
+
+	def safe_json(self) -> dict[str, Any]:
+		config = {
+			'version': self.version,
+			'archinstall-language': self.archinstall_language.json(),
+			'hostname': self.hostname,
+			'kernels': self.kernels,
+			'ntp': self.ntp,
+			'packages': self.packages,
+			'parallel_downloads': self.parallel_downloads,
+			'swap': self.swap,
+			'timezone': self.timezone,
+			'additional-repositories': self.additional_repositories,
+			'services': self.services,
+			'custom_commands': self.custom_commands,
+			'bootloader': self.bootloader.json(),
+			'audio_config': self.audio_config.json() if self.audio_config else None,
+		}
+
+		if self.locale_config:
+			config['locale_config'] = self.locale_config.json()
+
+		if self.disk_config:
+			config['disk_config'] = self.disk_config.json()
+
+		if self.disk_encryption:
+			config['disk_encryption'] = self.disk_encryption.json()
+
+		if self.profile_config:
+			config['profile_config'] = self.profile_config.json()
+
+		if self.mirror_config:
+			config['mirror_config'] = self.mirror_config.json()
+
+		if self.network_config:
+			config['network_config'] = self.network_config.json()
+
+		return config
 
 	@classmethod
 	def from_config(cls, args_config: dict[str, Any]) -> 'ArchConfig':
@@ -93,7 +143,7 @@ class ArchConfig:
 		users = args_config.get('!users', None)
 		superusers = args_config.get('!superusers', None)
 		if users is not None or superusers is not None:
-			arch_config._users = User.parse_arguments(users, superusers)
+			arch_config.users = User.parse_arguments(users, superusers)
 
 		if bootloader_config := args_config.get('bootloader', None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config)
@@ -105,7 +155,7 @@ class ArchConfig:
 			arch_config.audio_config = AudioConfiguration.parse_arg(audio_config)
 
 		if args_config.get('disk_encryption', None) is not None and arch_config.disk_config is not None:
-			arch_config._disk_encryption = DiskEncryption.parse_arg(
+			arch_config.disk_encryption = DiskEncryption.parse_arg(
 				arch_config.disk_config,
 				args_config['disk_encryption'],
 				args_config.get('encryption_password', '')
@@ -137,8 +187,8 @@ class ArchConfig:
 		if services := args_config.get('services', []):
 			arch_config.services = services
 
-		if root_password := args_config.get('root_password', None):
-			arch_config._root_password = root_password
+		if root_password := args_config.get('!root-password', None):
+			arch_config.root_password = root_password
 
 		if custom_commands := args_config.get('custom_commands', []):
 			arch_config.custom_commands = custom_commands
@@ -273,6 +323,12 @@ class ArchConfigHandler:
 			default=False,
 			help="Enabled advanced options"
 		)
+		parser.add_argument(
+			"--verbose",
+			action="store_true",
+			default=False,
+			help="Enabled verbose options"
+		)
 
 		return parser
 
@@ -351,4 +407,4 @@ class ArchConfigHandler:
 		return clean_args
 
 
-arch_config_handler = ArchConfigHandler()
+arch_config_handler: ArchConfigHandler = ArchConfigHandler()

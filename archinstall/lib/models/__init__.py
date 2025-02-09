@@ -1,8 +1,35 @@
 from .audio_configuration import Audio, AudioConfiguration
 from .bootloader import Bootloader
+from .device_model import (
+	BDevice,
+	DeviceGeometry,
+	DeviceModification,
+	DiskEncryption,
+	DiskLayoutConfiguration,
+	DiskLayoutType,
+	EncryptionType,
+	Fido2Device,
+	FilesystemType,
+	LsblkInfo,
+	LvmConfiguration,
+	LvmLayoutType,
+	LvmVolume,
+	LvmVolumeGroup,
+	LvmVolumeStatus,
+	ModificationStatus,
+	PartitionFlag,
+	PartitionModification,
+	PartitionTable,
+	PartitionType,
+	SectorSize,
+	Size,
+	SubvolumeModification,
+	Unit,
+	_DeviceInfo,
+)
 from .gen import LocalPackage, PackageSearch, PackageSearchResult
-from .network_configuration import NetworkConfiguration, Nic, NicType
-from .users import PasswordStrength, User
 from .locale import LocaleConfiguration
 from .mirrors import CustomMirror, MirrorConfiguration, MirrorRegion
+from .network_configuration import NetworkConfiguration, Nic, NicType
 from .profile_model import ProfileConfiguration
+from .users import PasswordStrength, User

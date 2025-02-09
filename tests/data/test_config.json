@@ -108,7 +108,8 @@
       "sys_lang": "en_US"
     },
     "mirror_config": {
-      "mirror-regions": {
+      "custom_mirrors": [],
+      "mirror_regions": {
         "Australia": [
           "http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch"
         ]
@@ -156,5 +157,5 @@
     ],
     "swap": false,
     "timezone": "UTC",
-    "version": "2.8.6"
+    "version": "3.0.2"
 }

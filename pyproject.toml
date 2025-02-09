@@ -107,6 +107,11 @@ module = "archinstall.lib.disk.*"
 disallow_any_unimported = false
 
 [[tool.mypy.overrides]]
+module = "archinstall.lib.models.*"
+# 'Any' imports are allowed because pyparted doesn't have type hints
+disallow_any_unimported = false
+
+[[tool.mypy.overrides]]
 module = "archinstall.lib.packages"
 disallow_any_explicit = true
 

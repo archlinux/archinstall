@@ -1,4 +1,5 @@
 """Arch Linux installer - guided, templates etc."""
+
 import curses
 import importlib
 import os
@@ -9,33 +10,15 @@ from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from . import default_profiles
-from .lib import disk, exceptions, interactions, locale, luks, mirrors, models, networking, packages, profile
-from .lib.boot import Boot
-from .lib.configuration import ConfigurationOutput
-from .lib.general import (
-	JSON,
-	UNSAFE_JSON,
-	SysCommand,
-	SysCommandWorker,
-	clear_vt100_escape_codes,
-	generate_password,
-	json_stream_to_structure,
-	locate_binary,
-	run_custom_user_commands,
-	secret,
-)
-from .lib.global_menu import GlobalMenu
-from .lib.hardware import GfxDriver, SysInfo
-from .lib.installer import Installer, accessibility_tools_in_use
+from archinstall.lib.args import arch_config_handler
+from archinstall.lib.disk.utils import disk_layouts
+
+from .lib.hardware import SysInfo
 from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
 from .lib.plugins import load_plugin, plugins
-from .lib.storage import storage
 from .lib.translationhandler import DeferredTranslation, Language, translation_handler
 from .tui import Tui
-from archinstall.lib.args import arch_config_handler
-
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -55,7 +38,7 @@ debug(f"Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_
 debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-debug(f"Disk states before installing:\n{disk.disk_layouts()}")
+debug(f"Disk states before installing:\n{disk_layouts()}")
 
 
 if 'sphinx' not in sys.modules and 'pylint' not in sys.modules:
@@ -106,9 +89,6 @@ def main() -> None:
 		_check_new_version()
 
 	script = arch_config_handler.args.script
-
-	if script is None:
-		print('No script to run provided')
 
 	mod_name = f'archinstall.scripts.{script}'
 	# by loading the module we'll automatically run the script

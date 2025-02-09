@@ -1,11 +1,10 @@
-from typing import TYPE_CHECKING, Any, override
+from typing import TYPE_CHECKING, override
 
 from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
 from .menu import AbstractSubMenu, ListManager
-from .models.mirrors import MirrorRegion, mirror_list_handler
+from .models.mirrors import CustomMirror, MirrorConfiguration, MirrorRegion, SignCheck, SignOption, mirror_list_handler
 from .output import FormattedOutput
-from .models.mirrors import CustomMirror, MirrorConfiguration, SignCheck, SignOption
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -146,8 +145,6 @@ class MirrorMenu(AbstractSubMenu):
 			self._mirror_config = preset
 		else:
 			self._mirror_config = MirrorConfiguration()
-
-		self._data_store: dict[str, Any] = {}
 
 		menu_optioons = self._define_menu_options()
 		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)

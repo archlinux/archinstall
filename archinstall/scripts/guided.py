@@ -1,17 +1,24 @@
 from pathlib import Path
 
-import archinstall
-from archinstall import SysInfo, debug, info, error
-from archinstall.lib import disk
+from archinstall import SysInfo
+from archinstall.lib.args import ArchConfig, arch_config_handler
 from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.disk.filesystem import FilesystemHandler
+from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.global_menu import GlobalMenu
-from archinstall.lib.installer import Installer
+from archinstall.lib.installer import Installer, accessibility_tools_in_use
 from archinstall.lib.interactions.general_conf import ask_chroot
 from archinstall.lib.models import AudioConfiguration, Bootloader
+from archinstall.lib.models.device_model import (
+	DiskLayoutConfiguration,
+	DiskLayoutType,
+	EncryptionType,
+)
 from archinstall.lib.models.network_configuration import NetworkConfiguration
+from archinstall.lib.output import debug, error, info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui import Tui
-from archinstall.lib.args import arch_config_handler
 
 
 def ask_user_questions() -> None:
@@ -38,37 +45,38 @@ def perform_installation(mountpoint: Path) -> None:
 	"""
 	info('Starting installation...')
 
-	if not arch_config_handler.config.disk_config:
+	config: ArchConfig = arch_config_handler.config
+
+	if not config.disk_config:
 		error("No disk configuration provided")
 		return
 
-	disk_config: disk.DiskLayoutConfiguration = arch_config_handler.config.disk_config
-
 	# Retrieve list of additional repositories and set boolean values appropriately
-	enable_testing = 'testing' in arch_config_handler.config.additional_repositories
-	enable_multilib = 'multilib' in arch_config_handler.config.additional_repositories
-	run_mkinitcpio = not arch_config_handler.config.uki
-	locale_config = arch_config_handler.config.locale_config
-	disk_encryption = arch_config_handler.config._disk_encryption
+	disk_config: DiskLayoutConfiguration = config.disk_config
+	enable_testing = 'testing' in config.additional_repositories
+	enable_multilib = 'multilib' in config.additional_repositories
+	run_mkinitcpio = not config.uki
+	locale_config = config.locale_config
+	disk_encryption = config.disk_encryption
 
 	with Installer(
 		mountpoint,
 		disk_config,
 		disk_encryption=disk_encryption,
-		kernels=arch_config_handler.config.kernels
+		kernels=config.kernels
 	) as installation:
 		# Mount all the drives to the desired mountpoint
-		if disk_config.config_type != disk.DiskLayoutType.Pre_mount:
+		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
 
 		installation.sanity_check()
 
-		if disk_config.config_type != disk.DiskLayoutType.Pre_mount:
-			if disk_encryption and disk_encryption.encryption_type != disk.EncryptionType.NoEncryption:
+		if disk_config.config_type != DiskLayoutType.Pre_mount:
+			if disk_encryption and disk_encryption.encryption_type != EncryptionType.NoEncryption:
 				# generate encryption key files for the mounted luks devices
 				installation.generate_key_files()
 
-		if mirror_config := arch_config_handler.config.mirror_config:
+		if mirror_config := config.mirror_config:
 			installation.set_mirrors(mirror_config, on_target=False)
 
 		installation.minimal_installation(
@@ -79,68 +87,65 @@ def perform_installation(mountpoint: Path) -> None:
 			locale_config=locale_config
 		)
 
-		if mirror_config := arch_config_handler.config.mirror_config:
+		if mirror_config := config.mirror_config:
 			installation.set_mirrors(mirror_config, on_target=True)
 
-		if arch_config_handler.config.swap:
+		if config.swap:
 			installation.setup_swap('zram')
 
-		if arch_config_handler.config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
+		if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
 			installation.add_additional_packages("grub")
 
-		installation.add_bootloader(
-			arch_config_handler.config.bootloader,
-			arch_config_handler.config.uki,
-		)
+		installation.add_bootloader(config.bootloader, config.uki)
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
-		network_config: NetworkConfiguration | None = arch_config_handler.config.network_config
+		network_config: NetworkConfiguration | None = config.network_config
 
 		if network_config:
 			network_config.install_network_config(
 				installation,
-				arch_config_handler.config.profile_config
+				config.profile_config
 			)
 
-		if users := arch_config_handler.config._users:
+		if users := config.users:
 			installation.create_users(users)
 
-		audio_config: AudioConfiguration | None = arch_config_handler.config.audio_config
+		audio_config: AudioConfiguration | None = config.audio_config
 		if audio_config:
 			audio_config.install_audio_config(installation)
 		else:
 			info("No audio server will be installed")
 
-		if arch_config_handler.config.packages and arch_config_handler.config.packages[0] != '':
-			installation.add_additional_packages(arch_config_handler.config.packages)
+		if config.packages and config.packages[0] != '':
+			installation.add_additional_packages(config.packages)
 
-		if profile_config := arch_config_handler.config.profile_config:
+		if profile_config := config.profile_config:
 			profile_handler.install_profile_config(installation, profile_config)
 
-		if timezone := arch_config_handler.config.timezone:
+		if timezone := config.timezone:
 			installation.set_timezone(timezone)
 
-		if arch_config_handler.config.ntp:
+		if config.ntp:
 			installation.activate_time_synchronization()
 
-		if archinstall.accessibility_tools_in_use():
+		if accessibility_tools_in_use():
 			installation.enable_espeakup()
 
-		if (root_pw := arch_config_handler.config._root_password) and len(root_pw):
+		if (root_pw := config.root_password) and len(root_pw):
 			installation.user_set_pw('root', root_pw)
 
-		if (profile_config := arch_config_handler.config.profile_config) and profile_config.profile:
+		if (profile_config := config.profile_config) and profile_config.profile:
 			profile_config.profile.post_install(installation)
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
-		if servies := arch_config_handler.config.services:
+		if servies := config.services:
 			installation.enable_service(servies)
 
 		# If the user provided custom commands to be run post-installation, execute them now.
-		if cc := arch_config_handler.config.custom_commands:
-			archinstall.run_custom_user_commands(cc, installation)
+		if cc := config.custom_commands:
+			run_custom_user_commands(cc, installation)
 
 		installation.genfstab()
 
@@ -156,7 +161,7 @@ def perform_installation(mountpoint: Path) -> None:
 				except Exception:
 					pass
 
-	debug(f"Disk states after installing:\n{disk.disk_layouts()}")
+	debug(f"Disk states after installing:\n{disk_layouts()}")
 
 
 def guided() -> None:
@@ -177,12 +182,13 @@ def guided() -> None:
 				guided()
 
 	if arch_config_handler.config.disk_config:
-		fs_handler = disk.FilesystemHandler(
+		fs_handler = FilesystemHandler(
 			arch_config_handler.config.disk_config,
-			arch_config_handler.config._disk_encryption
+			arch_config_handler.config.disk_encryption
 		)
 
-	fs_handler.perform_filesystem_operations()
+		fs_handler.perform_filesystem_operations()
+
 	perform_installation(arch_config_handler.args.mountpoint)
 
 

@@ -44,7 +44,7 @@ class AbstractMenu:
 			Tui.print("Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
-		self._sync_all_to_config()
+		self.sync_all_to_config()
 
 	def _sync_from_config(self) -> None:
 		for item in self._menu_item_group.menu_items:
@@ -53,7 +53,7 @@ class AbstractMenu:
 				if config_value is not None:
 					item.value = config_value
 
-	def _sync_all_to_config(self) -> None:
+	def sync_all_to_config(self) -> None:
 		for item in self._menu_item_group.menu_items:
 			if item.key:
 				setattr(self._config, item.key, item.value)
@@ -103,7 +103,7 @@ class AbstractMenu:
 				case ResultType.Reset:
 					return None
 
-		self._sync_all_to_config()
+		self.sync_all_to_config()
 		return None
 
 
