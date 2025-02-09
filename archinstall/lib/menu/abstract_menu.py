@@ -13,6 +13,9 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
+CONFIG_KEY = '__config__'
+
+
 class AbstractMenu:
 	def __init__(
 		self,
@@ -48,7 +51,7 @@ class AbstractMenu:
 
 	def _sync_from_config(self) -> None:
 		for item in self._menu_item_group.menu_items:
-			if item.key is not None:
+			if item.key is not None and item.key != CONFIG_KEY:
 				config_value = getattr(self._config, item.key)
 				if config_value is not None:
 					item.value = config_value
@@ -59,7 +62,7 @@ class AbstractMenu:
 				setattr(self._config, item.key, item.value)
 
 	def _sync(self, item: MenuItem) -> None:
-		if not item.key:
+		if not item.key or item.key == CONFIG_KEY:
 			return
 
 		config_value = getattr(self._config, item.key)
@@ -70,11 +73,15 @@ class AbstractMenu:
 			setattr(self._config, item.key, item.value)
 
 	def set_enabled(self, key: str, enabled: bool) -> None:
-		if (item := self._menu_item_group.find_by_key(key)) is not None:
-			item.enabled = enabled
-			return None
+		# the __config__ is associated with multiple items
+		found = False
+		for item in self._menu_item_group.items:
+			if item.key == key:
+				item.enabled = enabled
+				found = True
 
-		raise ValueError(f'No selector found: {key}')
+		if not found:
+			raise ValueError(f'No selector found: {key}')
 
 	def disable_all(self) -> None:
 		for item in self._menu_item_group.items:

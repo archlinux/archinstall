@@ -202,15 +202,18 @@ class GlobalMenu(AbstractMenu):
 			),
 			MenuItem(
 				text=str(_('Save configuration')),
-				action=lambda x: self._safe_config()
+				action=lambda x: self._safe_config(),
+				key='__config__'
 			),
 			MenuItem(
 				text=str(_('Install')),
-				preview_action=self._prev_install_invalid_config
+				preview_action=self._prev_install_invalid_config,
+				key='__config__'
 			),
 			MenuItem(
 				text=str(_('Abort')),
-				action=lambda x: exit(1)
+				action=lambda x: exit(1),
+				key='__config__'
 			)
 		]
 
