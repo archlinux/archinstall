@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] En logg-fil har skapats här: {} {}"
@@ -449,7 +449,7 @@ msgid "Pre-existing pacman lock never exited. Please clean up any existing pacma
 msgstr "Existerande pacman-lås avslutades aldrig. Vänligen rensa upp föregående körningar av pacman-sessioner innan du använder archinstall."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Välj vilka frivilliga repositories som ska aktiveras"
+msgstr "Välj vilka frivilliga arkiv som ska aktiveras"
 
 msgid "Add a user"
 msgstr "Lägg till användare"
@@ -525,10 +525,10 @@ msgid "The password you are using seems to be weak,"
 msgstr "Lösenordet du angav verkar svagt,"
 
 msgid "are you sure you want to use it?"
-msgstr "Är du säker på att du vill använda det?"
+msgstr "är du säker på att du vill använda det?"
 
 msgid "Optional repositories"
-msgstr "Valfria repositories"
+msgstr "Valfria arkiv"
 
 msgid "Save configuration"
 msgstr "Spara konfiguration"
@@ -1342,10 +1342,10 @@ msgid "Invalid size"
 msgstr "Ogiltig storlek"
 
 msgid "Start (default: sector {}): "
-msgstr "Start (standard: sektor {}):"
+msgstr "Start (standard: sektor {}): "
 
 msgid "End (default: {}): "
-msgstr "Slut (standard: {}):"
+msgstr "Slut (standard: {}): "
 
 msgid "Subvolume name"
 msgstr "Subvolymens namn"
@@ -1372,7 +1372,7 @@ msgid "The username you entered is invalid"
 msgstr "Användarnamnet du angav är ogiltigt"
 
 msgid "Username"
-msgstr "Användarnamn "
+msgstr "Användarnamn"
 
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Ska \"{}\" vara en superanvändare (sudo)?\n"
@@ -1467,52 +1467,41 @@ msgstr "Välj exekveringsläge"
 msgid "Press ? for help"
 msgstr "Tryck på ?för hjälp"
 
-#, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Välj ett alternativ för att ge Hyprland åtkomst till din hårdvara"
+msgstr "Välj ett alternativ för att ge Hyprland åtkomst till din hårdvara"
 
-#, fuzzy
 msgid "Additional repositories"
-msgstr "Valfria repositories"
+msgstr "Ytterligare arkiv"
 
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "Swap på zram"
 
 msgid "Name"
-msgstr ""
+msgstr "Namn"
 
-#, fuzzy
 msgid "Signature check"
-msgstr "Välj signaturkontroll"
+msgstr "Signaturkontroll"
 
-#, fuzzy
 msgid "Selected free space segment on device {}:"
-msgstr "Aktuella fria sektorer på enheten {}:"
+msgstr "Valt ledigt utrymmessegment på enheten {}:"
 
-#, fuzzy
 msgid "Size: {} / {}"
-msgstr "Total: {} / {}"
+msgstr "Storlek: {} / {}"
 
-#, fuzzy
 msgid "Size (default: {}): "
-msgstr "Slut (standard: {}):"
+msgstr "Storlek (standard: {}): "
 
-#, fuzzy
 msgid "HSM device"
-msgstr "Enhet"
+msgstr "HSM-enhet"
 
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "Vissa paket kunde inte hittas i arkivet"
 
-#, fuzzy
 msgid "User"
-msgstr "Användarnamn "
+msgstr "Användare"
 
 msgid "The specified configuration will be applied"
-msgstr ""
+msgstr "Den angivna konfigurationen kommer att tillämpas"
