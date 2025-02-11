@@ -1,4 +1,3 @@
-from .locale_menu import LocaleConfiguration
 from .utils import (
 	list_keyboard_languages,
 	list_locales,

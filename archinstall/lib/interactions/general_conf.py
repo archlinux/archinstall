@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING
 
 from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu, Tui
 
+from ..args import arch_config_handler
 from ..locale import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration
 from ..output import warn
 from ..packages.packages import validate_package_list
-from ..storage import storage
 from ..translationhandler import Language
 
 if TYPE_CHECKING:
@@ -175,7 +175,7 @@ def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
 		if len(packages) == 0:
 			return None
 
-		if storage['arguments']['offline'] or storage['arguments']['no_pkg_lookups']:
+		if arch_config_handler.args.offline or arch_config_handler.args.no_pkg_lookups:
 			return None
 
 		# Verify packages that were given

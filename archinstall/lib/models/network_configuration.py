@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
-from ..profile import ProfileConfiguration
+from ..models.profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

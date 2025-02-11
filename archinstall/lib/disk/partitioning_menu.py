@@ -4,13 +4,7 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
-from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
-
-from ..hardware import SysInfo
-from ..menu import ListManager
-from ..output import FormattedOutput
-from ..utils.util import prompt_dir
-from .device_model import (
+from archinstall.lib.models.device_model import (
 	BDevice,
 	BtrfsMountOption,
 	FilesystemType,
@@ -22,6 +16,12 @@ from .device_model import (
 	Size,
 	Unit,
 )
+from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
+
+from ..hardware import SysInfo
+from ..menu import ListManager
+from ..output import FormattedOutput
+from ..utils.util import prompt_dir
 from .subvolume_menu import SubvolumeMenu
 
 if TYPE_CHECKING:

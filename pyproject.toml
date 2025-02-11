@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-dynamic = ["version"]
+version = "3.0.2"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -44,7 +44,6 @@ doc = ["sphinx"]
 archinstall = "archinstall:run_as_a_module"
 
 [tool.setuptools.dynamic]
-version = {attr = "archinstall.__version__"}
 readme = {file = ["README.rst", "USAGE.rst"]}
 
 [tool.setuptools]
@@ -103,6 +102,11 @@ warn_unreachable = false
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.disk.*"
+# 'Any' imports are allowed because pyparted doesn't have type hints
+disallow_any_unimported = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.models.*"
 # 'Any' imports are allowed because pyparted doesn't have type hints
 disallow_any_unimported = false
 

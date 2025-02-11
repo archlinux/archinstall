@@ -4,10 +4,11 @@ import getpass
 from pathlib import Path
 from typing import ClassVar
 
+from archinstall.lib.models.device_model import Fido2Device
+
 from ..exceptions import SysCallError
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
 from ..output import error, info
-from .device_model import Fido2Device
 
 
 class Fido2:

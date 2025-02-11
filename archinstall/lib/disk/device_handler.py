@@ -13,9 +13,7 @@ from parted import Device, Disk, DiskException, FileSystem, Geometry, IOExceptio
 from ..exceptions import DiskError, UnknownFilesystemFormat
 from ..general import SysCallError, SysCommand, SysCommandWorker
 from ..luks import Luks2
-from ..output import debug, error, info, log, warn
-from ..utils.util import is_subpath
-from .device_model import (
+from ..models.device_model import (
 	BDevice,
 	BtrfsMountOption,
 	DeviceModification,
@@ -39,10 +37,13 @@ from .device_model import (
 	_BtrfsSubvolumeInfo,
 	_DeviceInfo,
 	_PartitionInfo,
+)
+from ..output import debug, error, info, log
+from ..utils.util import is_subpath
+from .utils import (
 	find_lsblk_info,
 	get_all_lsblk_info,
 	get_lsblk_info,
-	get_lsblk_output,
 )
 
 
@@ -866,13 +867,3 @@ class DeviceHandler:
 
 
 device_handler = DeviceHandler()
-
-
-def disk_layouts() -> str:
-	try:
-		lsblk_output = get_lsblk_output()
-	except SysCallError as err:
-		warn(f"Could not return disk layouts: {err}")
-		return ''
-
-	return lsblk_output.model_dump_json(indent=4)

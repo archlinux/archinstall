@@ -9,9 +9,7 @@ from archinstall.tui import Tui
 from ..hardware import SysInfo
 from ..interactions.general_conf import ask_abort
 from ..luks import Luks2
-from ..output import debug, info
-from .device_handler import device_handler
-from .device_model import (
+from ..models.device_model import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
 	DiskLayoutType,
@@ -26,6 +24,8 @@ from .device_model import (
 	Size,
 	Unit,
 )
+from ..output import debug, info
+from .device_handler import device_handler
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

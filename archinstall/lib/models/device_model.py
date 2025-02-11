@@ -11,11 +11,8 @@ import parted
 from parted import Disk, Geometry, Partition
 from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_validator
 
-from ..exceptions import DiskError, SysCallError
-from ..general import SysCommand
 from ..hardware import SysInfo
 from ..output import debug
-from ..storage import storage
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -78,7 +75,7 @@ class DiskLayoutConfiguration:
 
 	@classmethod
 	def parse_arg(cls, disk_config: _DiskLayoutConfigurationSerialization) -> DiskLayoutConfiguration | None:
-		from .device_handler import device_handler
+		from archinstall.lib.disk.device_handler import device_handler
 
 		device_modifications: list[DeviceModification] = []
 		config_type = disk_config.get('config_type', None)
@@ -99,8 +96,6 @@ class DiskLayoutConfiguration:
 
 			mods = device_handler.detect_pre_mounted_mods(path)
 			device_modifications.extend(mods)
-
-			storage['arguments']['mount_point'] = path
 
 			config.mountpoint = path
 
@@ -1598,96 +1593,3 @@ class LsblkInfo(BaseModel):
 			for name, field in cls.model_fields.items()
 			if name != 'children'
 		]
-
-
-class LsblkOutput(BaseModel):
-	blockdevices: list[LsblkInfo]
-
-
-def _fetch_lsblk_info(
-	dev_path: Path | str | None = None,
-	reverse: bool = False,
-	full_dev_path: bool = False
-) -> LsblkOutput:
-	cmd = ['lsblk', '--json', '--bytes', '--output', ','.join(LsblkInfo.fields())]
-
-	if reverse:
-		cmd.append('--inverse')
-
-	if full_dev_path:
-		cmd.append('--paths')
-
-	if dev_path:
-		cmd.append(str(dev_path))
-
-	try:
-		worker = SysCommand(cmd)
-	except SysCallError as err:
-		# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
-		if err.worker:
-			err_str = err.worker.decode()
-			debug(f'Error calling lsblk: {err_str}')
-
-		if dev_path:
-			raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
-
-		raise err
-
-	output = worker.output(remove_cr=False)
-	return LsblkOutput.model_validate_json(output)
-
-
-def get_lsblk_info(
-	dev_path: Path | str,
-	reverse: bool = False,
-	full_dev_path: bool = False
-) -> LsblkInfo:
-	infos = _fetch_lsblk_info(dev_path, reverse=reverse, full_dev_path=full_dev_path)
-
-	if infos.blockdevices:
-		return infos.blockdevices[0]
-
-	raise DiskError(f'lsblk failed to retrieve information for "{dev_path}"')
-
-
-def get_all_lsblk_info() -> list[LsblkInfo]:
-	return _fetch_lsblk_info().blockdevices
-
-
-def get_lsblk_output() -> LsblkOutput:
-	return _fetch_lsblk_info()
-
-
-def find_lsblk_info(
-	dev_path: Path | str,
-	info: list[LsblkInfo]
-) -> LsblkInfo | None:
-	if isinstance(dev_path, str):
-		dev_path = Path(dev_path)
-
-	for lsblk_info in info:
-		if lsblk_info.path == dev_path:
-			return lsblk_info
-
-	return None
-
-
-def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> list[LsblkInfo]:
-	def _check(infos: list[LsblkInfo]) -> list[LsblkInfo]:
-		devices = []
-		for entry in infos:
-			if as_prefix:
-				matches = [m for m in entry.mountpoints if str(m).startswith(str(mountpoint))]
-				if matches:
-					devices += [entry]
-			elif mountpoint in entry.mountpoints:
-				devices += [entry]
-
-			if len(entry.children) > 0:
-				if len(match := _check(entry.children)) > 0:
-					devices += match
-
-		return devices
-
-	all_info = get_all_lsblk_info()
-	return _check(all_info)

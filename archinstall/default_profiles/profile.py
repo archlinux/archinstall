@@ -4,8 +4,6 @@ import sys
 from enum import Enum, auto
 from typing import TYPE_CHECKING
 
-from ..lib.storage import storage
-
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
@@ -110,7 +108,8 @@ class Profile:
 		Used to control if the Profile() should be visible or not in different contexts.
 		Returns True if --advanced is given on a Profile(advanced=True) instance.
 		"""
-		return self.advanced is False or storage['arguments'].get('advanced', False) is True
+		from archinstall.lib.args import arch_config_handler
+		return self.advanced is False or arch_config_handler.args.advanced is True
 
 	def install(self, install_session: 'Installer') -> None:
 		"""
