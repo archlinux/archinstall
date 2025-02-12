@@ -132,7 +132,7 @@ msgstr "Pilih tempat untuk memasang partisi (biarkan kosong untuk menghapus moun
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
