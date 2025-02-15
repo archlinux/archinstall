@@ -105,7 +105,8 @@ class GfxDriver(Enum):
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanRadeon,
-					GfxPackage.VulkanIntel
+					GfxPackage.VulkanIntel,
+					GfxPackage.VulkanVirtio
 				]
 			case GfxDriver.AmdOpenSource:
 				packages += [
