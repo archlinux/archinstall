@@ -54,6 +54,7 @@ class GfxPackage(Enum):
 	NvidiaOpenDkms = 'nvidia-open-dkms'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
+	VulkanVirtio = 'vulkan-virtio'
 	Xf86VideoAmdgpu = "xf86-video-amdgpu"
 	Xf86VideoAti = "xf86-video-ati"
 	Xf86VideoNouveau = 'xf86-video-nouveau'
@@ -69,7 +70,7 @@ class GfxDriver(Enum):
 	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
 	NvidiaOpenSource = 'Nvidia (open-source nouveau driver)'
 	NvidiaProprietary = 'Nvidia (proprietary)'
-	VMOpenSource = 'VMware / VirtualBox (open-source)'
+	VMOpenSource = 'Qemu / VMware / VirtualBox (open-source)'
 
 	def is_nvidia(self) -> bool:
 		match self:
@@ -141,7 +142,8 @@ class GfxDriver(Enum):
 			case GfxDriver.VMOpenSource:
 				packages += [
 					GfxPackage.Mesa,
-					GfxPackage.Xf86VideoVmware
+					GfxPackage.Xf86VideoVmware,
+					GfxPackage.VulkanVirtio
 				]
 
 		return packages
