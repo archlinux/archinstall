@@ -31,7 +31,7 @@ Source = "https://github.com/archlinux/archinstall"
 log = ["systemd_python==235"]
 dev = [
     "mypy==1.15.0",
-    "flake8==7.1.1",
+    "flake8==7.1.2",
     "pre-commit==4.1.0",
     "ruff==0.9.6",
     "pylint==3.3.4",
