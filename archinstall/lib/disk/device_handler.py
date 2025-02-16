@@ -561,6 +561,8 @@ class DeviceHandler:
 
 		try:
 			disk.addPartition(partition=partition, constraint=disk.device.optimalAlignedConstraint)
+
+			disk.commit()
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
