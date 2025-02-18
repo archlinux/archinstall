@@ -71,6 +71,10 @@ def prompt_dir(
 	preset: str | None = None
 ) -> Path | None:
 	def validate_path(path: str) -> str | None:
+		# Allows the use of '/boot/efi', as well as other mount points such as /mnt/<dirname>/
+		if path != '/':
+			r_index = path.rindex('/')
+			path = path[0:r_index]
 		dest_path = Path(path)
 
 		if dest_path.exists() and dest_path.is_dir():

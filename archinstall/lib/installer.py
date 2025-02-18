@@ -1165,14 +1165,14 @@ class Installer:
 			self.pacman.strap('efibootmgr')  # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			boot_dir_arg = []
-			if boot_partition.mountpoint and boot_partition.mountpoint != boot_dir:
+			# if boot_partition is in /boot, then no need to append, as grub files go in /boot 
+			if boot_partition.mountpoint and boot_partition.mountpoint != boot_dir and not boot_partition.mountpoint.startswith('/boot'):
 				boot_dir_arg.append(f'--boot-directory={boot_partition.mountpoint}')
 				boot_dir = boot_partition.mountpoint
-
+			# removing the boot_dir_arg as not needed when running in chroot
 			add_options = [
 				'--target=x86_64-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
-				*boot_dir_arg,
 				'--bootloader-id=GRUB',
 				'--removable'
 			]
