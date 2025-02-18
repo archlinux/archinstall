@@ -1147,10 +1147,10 @@ msgid "If no unit is provided, the value is interpreted as sectors"
 msgstr "若没有指定单位，则值被作为扇区块号"
 
 msgid "Enter start (default: sector {}): "
-msgstr "输入起始扇区位置（默认：扇区 {}）： "
+msgstr "输入起始扇区位置（默认：扇区 {}）："
 
 msgid "Enter end (default: {}): "
-msgstr "输入末尾扇区位置（默认：{}）： "
+msgstr "输入末尾扇区位置（默认：{}）："
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
 msgstr "无法确定 fido2 设备。libfido2 是否已安装？"
@@ -1184,7 +1184,7 @@ msgstr ""
 "提示：\n"
 
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - 最大推荐值：{}（每次同时允许 {} 个并行下载）"
+msgstr "- 最大推荐值：{}（每次同时允许 {} 个并行下载）"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
 msgstr " - 禁用/默认值：0（禁用并行下载，同时只允许 1 个下载）\n"
@@ -1207,369 +1207,299 @@ msgstr ""
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "所有输入的值都可以后缀一个单位：%、B、KB、KiB、MB、MiB……"
 
-#, fuzzy
 msgid "Would you like to use unified kernel images?"
-msgstr "您想在 zram 上使用交换分区（swap）吗？"
+msgstr "您想使用统一内核映像吗？"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "统一内核映像（UKI）"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "等待时间同步（timedatectl show）完成。"
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "时间同步未完成，请在等待时查阅文档以获知对策： https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "跳过等待自动时间同步（如果安装期间时间不同步，可能会导致问题）"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "正在等待 Arch Linux 密钥环同步（archlinux-keyring-wkd-sync）完成。"
 
-#, fuzzy
 msgid "Selected profiles: "
-msgstr "删除配置文件"
+msgstr "已选配置文件："
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "时间同步未完成，请在等待时查阅文档以获知对策： https://archinstall.readthedocs.io/"
 
-#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr "将分区标记/取消标记为可引导"
+msgstr "标记/取消标记为 nodatacow"
 
-#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "您想使用 BTRFS 压缩吗？"
+msgstr "您想使用压缩还是禁用写时复制？"
 
 msgid "Use compression"
-msgstr ""
+msgstr "使用压缩"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "禁用写时复制"
 
-#, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "提供一系列桌面环境和平铺窗口管理器供选择，例如 gnome、kde、sway"
+msgstr "提供一个桌面环境和平铺窗口管理器的选集，例如 GNOME、KDE Plasma、Sway"
 
-#, fuzzy
 msgid "Configuration type: {}"
-msgstr "配置"
+msgstr "配置类型：{}"
 
-#, fuzzy
 msgid "LVM configuration type"
-msgstr "无配置"
+msgstr "LVM 配置类型"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "当前不支持超过 2 个分区的 LVM 磁盘加密"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置互联网所必需）"
+msgstr "使用 NetworkManager（在 GNOME 和 KDE Plasma 中以图形方式配置互联网所必需）"
 
-#, fuzzy
 msgid "Select a LVM option"
-msgstr "选择时区"
+msgstr "选择一个 LVM 选项"
 
-#, fuzzy
 msgid "Partitioning"
 msgstr "分区"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "逻辑卷管理（LVM）"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "物理卷"
 
 msgid "Volumes"
-msgstr ""
+msgstr "卷"
 
-#, fuzzy
 msgid "LVM volumes"
-msgstr "设置子卷"
+msgstr "LVM 卷"
 
-#, fuzzy
 msgid "LVM volumes to be encrypted"
-msgstr "要加密的分区"
+msgstr "要加密的 LVM 卷"
 
-#, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr "选择要加密的分区"
+msgstr "选择要加密的 LVM 卷"
 
-#, fuzzy
 msgid "Default layout"
-msgstr "磁盘布局"
+msgstr "默认布局"
 
-#, fuzzy
 msgid "No Encryption"
-msgstr "加密类型"
+msgstr "不加密"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LUKS 上的 LVM"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LVM 上的 LUKS"
 
-#, fuzzy
 msgid "Yes"
 msgstr "是"
 
 msgid "No"
-msgstr ""
+msgstr "否"
 
-#, fuzzy
 msgid "Archinstall help"
-msgstr "Archinstall 语言"
+msgstr "Archinstall 帮助"
 
-#, fuzzy
 msgid " (default)"
 msgstr "（默认）"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "按 Ctrl+h 以获取帮助"
 
-#, fuzzy
 msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"选择一个选项来给 Sway 提供对您硬件的访问权限"
+msgstr "选择一个选项来给 Sway 提供对您硬件的访问权限"
 
 msgid "Seat access"
-msgstr ""
+msgstr "Seat 访问"
 
-#, fuzzy
 msgid "Mountpoint"
-msgstr "挂载点："
+msgstr "挂载点"
 
 msgid "HSM"
-msgstr ""
+msgstr "HSM"
 
-#, fuzzy
 msgid "Enter disk encryption password (leave blank for no encryption)"
 msgstr "输入磁盘加密密码（留空则不加密）："
 
-#, fuzzy
 msgid "Disk encryption password"
-msgstr "加密密码"
+msgstr "磁盘加密密码"
 
-#, fuzzy
 msgid "Partition - New"
-msgstr "分区"
+msgstr "分区 - 新"
 
-#, fuzzy
 msgid "Filesystem"
-msgstr "更改文件系统"
+msgstr "文件系统"
 
 msgid "Invalid size"
-msgstr ""
+msgstr "无效的大小"
 
-#, fuzzy
 msgid "Start (default: sector {}): "
-msgstr "输入起始扇区位置（默认：扇区 {}）： "
+msgstr "起始位置（默认：扇区 {}）："
 
-#, fuzzy
 msgid "End (default: {}): "
-msgstr "输入末尾扇区位置（默认：{}）： "
+msgstr "末尾位置（默认：{}）："
 
-#, fuzzy
 msgid "Subvolume name"
-msgstr "子卷名称 "
+msgstr "子卷名称"
 
-#, fuzzy
 msgid "Disk configuration type"
-msgstr "磁盘配置"
+msgstr "磁盘配置类型"
 
 msgid "Root mount directory"
-msgstr ""
+msgstr "根挂载目录"
 
-#, fuzzy
 msgid "Select language"
-msgstr "语言环境"
+msgstr "选择语言"
 
-#, fuzzy
 msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "输入要安装的其他软件包（空格分隔，留空以跳过）："
+msgstr "输入要安装的其他软件包（空格分隔，留空以跳过）"
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "无效的并行下载数"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "并行下载数"
 
-#, fuzzy
 msgid "The username you entered is invalid"
-msgstr "您输入的用户名无效。请重试"
+msgstr "您输入的用户名无效"
 
-#, fuzzy
 msgid "Username"
-msgstr "用户名："
+msgstr "用户名"
 
-#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "是否将“{}”设置为超级用户（sudo）？"
+msgstr "是否将“{}”设置为超级用户（sudo）？\n"
 
-#, fuzzy
 msgid "Interfaces"
-msgstr "添加接口"
+msgstr "接口"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "您需要在 IP-config 模式下输入一个有效的 IP"
 
 msgid "Modes"
-msgstr ""
+msgstr "模式"
 
 msgid "IP address"
-msgstr ""
+msgstr "IP 地址"
 
-#, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
-msgstr "请输入您的网关（路由器）IP 地址，如果没有请留空："
+msgstr "请输入您的网关（路由器）IP 地址（没有请留空）"
 
 msgid "Gateway address"
-msgstr ""
+msgstr "网关地址"
 
-#, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr "请输入您的 DNS 服务器地址（以空格分隔，如果没有请留空）："
+msgstr "请输入您的 DNS 服务器地址，以空格分隔（没有请留空）"
 
-#, fuzzy
 msgid "DNS servers"
-msgstr "没有音频服务器"
+msgstr "DNS 服务器"
 
-#, fuzzy
 msgid "Configure interfaces"
-msgstr "已配置 {} 个接口"
+msgstr "配置接口"
 
-#, fuzzy
 msgid "Kernel"
 msgstr "内核"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "未检测到 UEFI，某些选项已被禁用"
 
 msgid "Info"
-msgstr ""
+msgstr "信息"
 
-#, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "Sway 不支持 Nvidia 的专有驱动。您可能会遇到问题，您确定要继续吗？"
+msgstr "Sway 不支持 Nvidia 的专有驱动。"
 
-#, fuzzy
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "Sway 不支持 Nvidia 的专有驱动。您可能会遇到问题，您确定要继续吗？"
+msgstr "您可能会遇到问题，确定要继续吗？"
 
-#, fuzzy
 msgid "Main profile"
-msgstr "编辑配置文件"
+msgstr "主要配置文件"
 
-#, fuzzy
 msgid "Confirm password"
-msgstr "修改密码"
+msgstr "确认密码"
 
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "确认密码不匹配，请重试"
 
-#, fuzzy
 msgid "Not a valid directory"
-msgstr "不是有效的目录：{}"
+msgstr "不是一个有效目录"
 
-#, fuzzy
 msgid "Would you like to continue?"
-msgstr "您想使用 BTRFS 压缩吗？"
+msgstr "您想继续吗？"
 
 msgid "Directory"
-msgstr ""
+msgstr "目录"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr ""
-"输入要保存配置的目录（可按 TAB 补全）\n"
-"保存目录："
+msgstr "输入一个要保存配置的目录（可按 TAB 补全）"
 
-#, fuzzy
 msgid "Do you want to save the configuration file(s) to {}?"
-msgstr ""
-"您想将 {} 个配置文件保存在以下位置吗？\n"
-"\n"
-"{}"
+msgstr "您想将配置文件保存到 {} 吗？"
 
 msgid "Enabled"
-msgstr ""
+msgstr "已启用"
 
 msgid "Disabled"
-msgstr ""
+msgstr "已禁用"
 
-#, fuzzy
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    请将此问题（和文件）提交到 https://github.com/archlinux/archinstall/issues"
+msgstr "请将此问题（和文件）提交到 https://github.com/archlinux/archinstall/issues"
 
-#, fuzzy
 msgid "Mirror name"
-msgstr "镜像区域"
+msgstr "镜像名称"
 
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
-#, fuzzy
 msgid "Select signature check"
-msgstr "选择签名检查选项"
+msgstr "选择签名检查"
 
-#, fuzzy
 msgid "Select execution mode"
 msgstr "选择执行模式"
 
 msgid "Press ? for help"
-msgstr ""
+msgstr "按 ? 获取帮助"
 
-#, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"选择一个选项来给 Hyprland 提供对您硬件的访问权限"
+msgstr "选择一个选项来给 Hyprland 提供对您硬件的访问权限"
 
-#, fuzzy
 msgid "Additional repositories"
-msgstr "可选仓库"
+msgstr "附加仓库"
 
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "zram 上的 swap"
 
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
-#, fuzzy
 msgid "Signature check"
-msgstr "选择签名检查选项"
+msgstr "签名检查"
 
-#, fuzzy
 msgid "Selected free space segment on device {}:"
-msgstr "设备 {} 上当前可用的扇区："
+msgstr "设备 {} 上已选的可用扇区："
 
-#, fuzzy
 msgid "Size: {} / {}"
-msgstr "总长度：{} / {}"
+msgstr "总大小：{} / {}"
 
-#, fuzzy
 msgid "Size (default: {}): "
-msgstr "输入末尾扇区位置（默认：{}）： "
+msgstr "大小（默认：{}）："
 
-#, fuzzy
 msgid "HSM device"
-msgstr "设备"
+msgstr "硬件安全模块设备"
 
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "某些软件包在仓库中未找到"
 
-#, fuzzy
 msgid "User"
-msgstr "用户名："
+msgstr "用户"
 
 msgid "The specified configuration will be applied"
-msgstr ""
+msgstr "指定的配置将被应用"

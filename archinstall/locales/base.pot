@@ -634,8 +634,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Provides a selection of desktop environments and tiling window managers, e."
-"g. gnome, kde, sway"
+"Provides a selection of desktop environments and tiling window managers, "
+"e.g. gnome, kde, sway"
 msgstr ""
 
 msgid "Select your desired desktop environment"
@@ -1278,8 +1278,8 @@ msgid "Disable Copy-on-Write"
 msgstr ""
 
 msgid ""
-"Provides a selection of desktop environments and tiling window managers, e."
-"g. GNOME, KDE Plasma, Sway"
+"Provides a selection of desktop environments and tiling window managers, "
+"e.g. GNOME, KDE Plasma, Sway"
 msgstr ""
 
 msgid "Configuration type: {}"
