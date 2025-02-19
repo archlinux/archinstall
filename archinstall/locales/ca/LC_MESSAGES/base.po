@@ -132,7 +132,7 @@ msgstr "Seleccioneu a on muntar la partició (deixeu-ho en blanc per a eliminar 
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
