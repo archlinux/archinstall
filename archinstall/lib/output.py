@@ -322,7 +322,7 @@ def log(
 
 	Journald.log(text, level=level)
 
-	if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
+	if level != logging.DEBUG:
 		from archinstall.tui import Tui
 		Tui.print(text)
 

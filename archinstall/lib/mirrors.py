@@ -1,11 +1,9 @@
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import TYPE_CHECKING, Any, override
+from typing import TYPE_CHECKING, override
 
 from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
 
 from .menu import AbstractSubMenu, ListManager
-from .models.mirrors import MirrorRegion, mirror_list_handler
+from .models.mirrors import CustomMirror, MirrorConfiguration, MirrorRegion, SignCheck, SignOption, mirror_list_handler
 from .output import FormattedOutput
 
 if TYPE_CHECKING:
@@ -14,118 +12,6 @@ if TYPE_CHECKING:
 	from archinstall.lib.translationhandler import DeferredTranslation
 
 	_: Callable[[str], DeferredTranslation]
-
-
-class SignCheck(Enum):
-	Never = 'Never'
-	Optional = 'Optional'
-	Required = 'Required'
-
-
-class SignOption(Enum):
-	TrustedOnly = 'TrustedOnly'
-	TrustAll = 'TrustAll'
-
-
-@dataclass
-class CustomMirror:
-	name: str
-	url: str
-	sign_check: SignCheck
-	sign_option: SignOption
-
-	def table_data(self) -> dict[str, str]:
-		return {
-			'Name': self.name,
-			'Url': self.url,
-			'Sign check': self.sign_check.value,
-			'Sign options': self.sign_option.value
-		}
-
-	def json(self) -> dict[str, str]:
-		return {
-			'name': self.name,
-			'url': self.url,
-			'sign_check': self.sign_check.value,
-			'sign_option': self.sign_option.value
-		}
-
-	@classmethod
-	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomMirror']:
-		configs = []
-		for arg in args:
-			configs.append(
-				CustomMirror(
-					arg['name'],
-					arg['url'],
-					SignCheck(arg['sign_check']),
-					SignOption(arg['sign_option'])
-				)
-			)
-
-		return configs
-
-
-@dataclass
-class MirrorConfiguration:
-	mirror_regions: list[MirrorRegion] = field(default_factory=list)
-	custom_mirrors: list[CustomMirror] = field(default_factory=list)
-
-	@property
-	def regions(self) -> str:
-		return ', '.join([m.name for m in self.mirror_regions])
-
-	def json(self) -> dict[str, Any]:
-		regions = {}
-		for m in self.mirror_regions:
-			regions.update(m.json())
-
-		return {
-			'mirror_regions': regions,
-			'custom_mirrors': [c.json() for c in self.custom_mirrors]
-		}
-
-	def mirrorlist_config(self, speed_sort: bool = True) -> str:
-		config = ''
-
-		for mirror_region in self.mirror_regions:
-			sorted_stati = mirror_list_handler.get_status_by_region(
-				mirror_region.name,
-				speed_sort=speed_sort
-			)
-
-			config += f'\n\n## {mirror_region.name}\n'
-
-			for status in sorted_stati:
-				config += f'Server = {status.server_url}\n'
-
-		for cm in self.custom_mirrors:
-			config += f'\n\n## {cm.name}\nServer = {cm.url}\n'
-
-		return config
-
-	def pacman_config(self) -> str:
-		config = ''
-
-		for mirror in self.custom_mirrors:
-			config += f'\n\n[{mirror.name}]\n'
-			config += f'SigLevel = {mirror.sign_check.value} {mirror.sign_option.value}\n'
-			config += f'Server = {mirror.url}\n'
-
-		return config
-
-	@classmethod
-	def parse_args(cls, args: dict[str, Any]) -> 'MirrorConfiguration':
-		config = MirrorConfiguration()
-
-		if 'mirror_regions' in args:
-			for region, urls in args['mirror_regions'].items():
-				config.mirror_regions.append(MirrorRegion(region, urls))
-
-		if 'custom_mirrors' in args:
-			config.custom_mirrors = CustomMirror.parse_args(args['custom_mirrors'])
-
-		return config
 
 
 class CustomMirrorList(ListManager):
@@ -260,12 +146,14 @@ class MirrorMenu(AbstractSubMenu):
 		else:
 			self._mirror_config = MirrorConfiguration()
 
-		self._data_store: dict[str, Any] = {}
-
 		menu_optioons = self._define_menu_options()
 		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)
 
-		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
+		super().__init__(
+			self._item_group,
+			config=self._mirror_config,
+			allow_reset=True
+		)
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
@@ -310,14 +198,7 @@ class MirrorMenu(AbstractSubMenu):
 	@override
 	def run(self) -> MirrorConfiguration:
 		super().run()
-
-		if not self._data_store:
-			return MirrorConfiguration()
-
-		return MirrorConfiguration(
-			mirror_regions=self._data_store.get('mirror_regions', None),
-			custom_mirrors=self._data_store.get('custom_mirrors', None),
-		)
+		return self._mirror_config
 
 
 def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:

@@ -2,16 +2,14 @@ from pathlib import Path
 
 from pytest import MonkeyPatch
 
-import archinstall
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
-from archinstall.lib.disk import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.hardware import GfxDriver
-from archinstall.lib.locale import LocaleConfiguration
-from archinstall.lib.mirrors import MirrorConfiguration
-from archinstall.lib.models import Audio, AudioConfiguration, Bootloader, NetworkConfiguration, User
+from archinstall.lib.mirrors import MirrorConfiguration, MirrorRegion
+from archinstall.lib.models import Audio, AudioConfiguration, Bootloader, DiskLayoutConfiguration, DiskLayoutType, NetworkConfiguration, User
+from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.network_configuration import Nic, NicType
-from archinstall.lib.profile.profile_model import ProfileConfiguration
+from archinstall.lib.models.profile_model import ProfileConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import translation_handler
 
@@ -27,7 +25,7 @@ def test_default_args(monkeypatch: MonkeyPatch) -> None:
 		silent=False,
 		dry_run=False,
 		script='guided',
-		mount_point=Path('/mnt'),
+		mountpoint=Path('/mnt'),
 		skip_ntp=False,
 		debug=False,
 		offline=False,
@@ -77,7 +75,7 @@ def test_correct_parsing_args(
 		silent=True,
 		dry_run=True,
 		script='execution_script',
-		mount_point=Path('/tmp'),
+		mountpoint=Path('/mnt'),
 		skip_ntp=True,
 		debug=True,
 		offline=True,
@@ -102,13 +100,13 @@ def test_config_file_parsing(
 	])
 
 	handler = ArchConfigHandler()
-	arch_config = handler.arch_config
+	arch_config = handler.config
 
 	# TODO: Use the real values from the test fixture instead of clearing out the entries
 	arch_config.disk_config.device_modifications = []  # type: ignore[union-attr]
 
 	assert arch_config == ArchConfig(
-		version=archinstall.__version__,
+		version='3.0.2',
 		locale_config=LocaleConfiguration(
 			kb_layout='us',
 			sys_lang='en_US',
@@ -141,7 +139,12 @@ def test_config_file_parsing(
 			greeter=GreeterType.Lightdm
 		),
 		mirror_config=MirrorConfiguration(
-			mirror_regions=[],
+			mirror_regions=[
+				MirrorRegion(
+					name='Australia',
+					urls=['http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch']
+				)
+			],
 			custom_mirrors=[]
 		),
 		network_config=NetworkConfiguration(
@@ -170,6 +173,9 @@ def test_config_file_parsing(
 		swap=False,
 		timezone='UTC',
 		additional_repositories=["testing"],
-		_users=[User(username='user_name', password='user_pwd', sudo=True)],
-		_disk_encryption=None
+		users=[User(username='user_name', password='user_pwd', sudo=True)],
+		disk_encryption=None,
+		services=['service_1', 'service_2'],
+		root_password='super_pwd',
+		custom_commands=["echo 'Hello, World!'"]
 	)
