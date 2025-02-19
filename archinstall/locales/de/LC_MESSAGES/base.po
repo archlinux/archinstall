@@ -1340,7 +1340,7 @@ msgid " (default)"
 msgstr "(Standard)"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "Drücke Strg+h für Hilfe"
 
 #, fuzzy
 msgid "Choose an option to give Sway access to your hardware"
@@ -1369,14 +1369,14 @@ msgstr "Verschlüsselungspasswort"
 
 #, fuzzy
 msgid "Partition - New"
-msgstr "Partition"
+msgstr "Partition - Neu"
 
 #, fuzzy
 msgid "Filesystem"
 msgstr "Dateisystem ändern"
 
 msgid "Invalid size"
-msgstr ""
+msgstr "Ungültige Größe"
 
 #, fuzzy
 msgid "Start (default: sector {}): "
@@ -1434,7 +1434,7 @@ msgid "Modes"
 msgstr ""
 
 msgid "IP address"
-msgstr ""
+msgstr "IP-Adresse"
 
 #, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
@@ -1479,10 +1479,10 @@ msgstr "Profil bearbeiten"
 
 #, fuzzy
 msgid "Confirm password"
-msgstr "Passwort ändern"
+msgstr "Passwort bestätigen"
 
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "Das Passwort stimmt nicht überein, bitte versuche es erneut"
 
 #, fuzzy
 msgid "Not a valid directory"
@@ -1534,7 +1534,7 @@ msgid "Select execution mode"
 msgstr "Wählen Sie einen Ausführmodus"
 
 msgid "Press ? for help"
-msgstr ""
+msgstr "Drücke ? für Hilfe"
 
 #, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
