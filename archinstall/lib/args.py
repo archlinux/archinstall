@@ -82,7 +82,7 @@ class ArchConfig:
 		return config
 
 	def safe_json(self) -> dict[str, Any]:
-		config = {
+		config: Any = {
 			'version': self.version,
 			'archinstall-language': self.archinstall_language.json(),
 			'hostname': self.hostname,
