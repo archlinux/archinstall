@@ -16,6 +16,10 @@ def test_user_config_roundtrip(
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
+	# the version is retrieved dynamically from an installed archinstall package
+	# as there is no version present in the test environment we'll set it manually
+	arch_config.version = '3.0.2'
+
 	config_output = ConfigurationOutput(arch_config)
 
 	test_out_dir = Path('/tmp/')
