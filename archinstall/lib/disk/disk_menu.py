@@ -120,6 +120,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 				partition_table = FormattedOutput.as_table(mod.partitions)
 
 				output_partition += f'{mod.device_path}: {mod.device.device_info.model}\n'
+				output_partition += '{}: {}\n'.format(str(_('Wipe')), mod.wipe)
 				output_partition += partition_table + '\n'
 
 				# create btrfs table
