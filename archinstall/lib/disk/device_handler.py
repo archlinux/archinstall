@@ -706,7 +706,7 @@ class DeviceHandler:
 			if partition_table is None:
 				raise ValueError('Modification is marked as wipe but no partitioning table was provided')
 
-			if partition_table.MBR and len(modification.partitions) > 3:
+			if partition_table.is_mbr() and len(modification.partitions) > 3:
 				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
 
 		# WARNING: the entire device will be wiped and all data lost
