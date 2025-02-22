@@ -202,6 +202,9 @@ class PartitionTable(Enum):
 	GPT = 'gpt'
 	MBR = 'msdos'
 
+	def is_mbr(self) -> bool:
+		return self == PartitionTable.MBR
+
 
 class Units(Enum):
 	BINARY = 'binary'
