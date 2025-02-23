@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 from enum import StrEnum, auto
+from typing import TYPE_CHECKING
 
-from ...default_profiles.applications.pipewire import PipewireProfile
 from ..hardware import SysInfo
-from ..installer import Installer
 from ..output import info
+
+if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
 
 
 class Audio(StrEnum):
@@ -30,9 +32,11 @@ class AudioConfiguration:
 
 	def install_audio_config(
 		self,
-		installation: Installer
+		installation: 'Installer'
 	) -> None:
 		info(f'Installing audio server: {self.audio.name}')
+
+		from ...default_profiles.applications.pipewire import PipewireProfile
 
 		match self.audio:
 			case Audio.PIPEWIRE:

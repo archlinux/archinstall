@@ -10,16 +10,33 @@ from pathlib import Path
 from types import TracebackType
 from typing import TYPE_CHECKING, Any
 
+from archinstall.lib.disk.device_handler import device_handler
+from archinstall.lib.disk.fido import Fido2
+from archinstall.lib.disk.utils import get_lsblk_by_mountpoint, get_lsblk_info
+from archinstall.lib.models.device_model import (
+	DiskEncryption,
+	DiskLayoutConfiguration,
+	EncryptionType,
+	FilesystemType,
+	LvmVolume,
+	PartitionModification,
+	SectorSize,
+	Size,
+	SubvolumeModification,
+	Unit,
+)
 from archinstall.tui.curses_menu import Tui
 
-from . import disk, pacman
+from . import pacman
+from .args import arch_config_handler
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from .general import SysCommand
 from .hardware import SysInfo
-from .locale import LocaleConfiguration, verify_keyboard_layout, verify_x11_keyboard_layout
+from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import MirrorConfiguration
 from .models.bootloader import Bootloader
+from .models.locale import LocaleConfiguration
 from .models.network_configuration import Nic
 from .models.users import User
 from .output import debug, error, info, log, warn
@@ -45,8 +62,8 @@ class Installer:
 	def __init__(
 		self,
 		target: Path,
-		disk_config: disk.DiskLayoutConfiguration,
-		disk_encryption: disk.DiskEncryption | None = None,
+		disk_config: DiskLayoutConfiguration,
+		disk_encryption: DiskEncryption | None = None,
 		base_packages: list[str] = [],
 		kernels: list[str] | None = None
 	):
@@ -58,7 +75,7 @@ class Installer:
 		self.kernels = kernels or ['linux']
 		self._disk_config = disk_config
 
-		self._disk_encryption = disk_encryption or disk.DiskEncryption(disk.EncryptionType.NoEncryption)
+		self._disk_encryption = disk_encryption or DiskEncryption(EncryptionType.NoEncryption)
 		self.target: Path = target
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
@@ -94,7 +111,7 @@ class Installer:
 		self._zram_enabled = False
 		self._disable_fstrim = False
 
-		self.pacman = Pacman(self.target, storage['arguments'].get('silent', False))
+		self.pacman = Pacman(self.target, arch_config_handler.args.silent)
 
 	def __enter__(self) -> 'Installer':
 		return self
@@ -144,7 +161,7 @@ class Installer:
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
 
-		if not storage['arguments'].get('skip_ntp', False):
+		if not arch_config_handler.args.skip_ntp:
 			info(_('Waiting for time sync (timedatectl show) to complete.'))
 
 			started_wait = time.time()
@@ -189,10 +206,10 @@ class Installer:
 		NOTE: this function should be run AFTER running the mount_ordered_layout function
 		"""
 		boot_mount = self.target / 'boot'
-		lsblk_info = disk.get_lsblk_by_mountpoint(boot_mount)
+		lsblk_info = get_lsblk_by_mountpoint(boot_mount)
 
 		if len(lsblk_info) > 0:
-			if lsblk_info[0].size < disk.Size(200, disk.Unit.MiB, disk.SectorSize.default()):
+			if lsblk_info[0].size < Size(200, Unit.MiB, SectorSize.default()):
 				raise DiskError(
 					f'The boot partition mounted at {boot_mount} is not large enough to install a boot loader. '
 					f'Please resize it to at least 200MiB and re-run the installation.'
@@ -208,15 +225,15 @@ class Installer:
 		luks_handlers: dict[Any, Luks2] = {}
 
 		match self._disk_encryption.encryption_type:
-			case disk.EncryptionType.NoEncryption:
+			case EncryptionType.NoEncryption:
 				self._mount_lvm_layout()
-			case disk.EncryptionType.Luks:
+			case EncryptionType.Luks:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
-			case disk.EncryptionType.LvmOnLuks:
+			case EncryptionType.LvmOnLuks:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
 				self._import_lvm()
 				self._mount_lvm_layout(luks_handlers)
-			case disk.EncryptionType.LuksOnLvm:
+			case EncryptionType.LuksOnLvm:
 				self._import_lvm()
 				luks_handlers = self._prepare_luks_lvm(self._disk_encryption.lvm_volumes)
 				self._mount_lvm_layout(luks_handlers)
@@ -275,10 +292,10 @@ class Installer:
 
 	def _prepare_luks_partitions(
 		self,
-		partitions: list[disk.PartitionModification]
-	) -> dict[disk.PartitionModification, Luks2]:
+		partitions: list[PartitionModification]
+	) -> dict[PartitionModification, Luks2]:
 		return {
-			part_mod: disk.device_handler.unlock_luks2_dev(
+			part_mod: device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
 				part_mod.mapper_name,
 				self._disk_encryption.encryption_password
@@ -295,17 +312,17 @@ class Installer:
 			return
 
 		for vg in lvm_config.vol_groups:
-			disk.device_handler.lvm_import_vg(vg)
+			device_handler.lvm_import_vg(vg)
 
 			for vol in vg.volumes:
-				disk.device_handler.lvm_vol_change(vol, True)
+				device_handler.lvm_vol_change(vol, True)
 
 	def _prepare_luks_lvm(
 		self,
-		lvm_volumes: list[disk.LvmVolume]
-	) -> dict[disk.LvmVolume, Luks2]:
+		lvm_volumes: list[LvmVolume]
+	) -> dict[LvmVolume, Luks2]:
 		return {
-			vol: disk.device_handler.unlock_luks2_dev(
+			vol: device_handler.unlock_luks2_dev(
 				vol.dev_path,
 				vol.mapper_name,
 				self._disk_encryption.encryption_password
@@ -314,69 +331,69 @@ class Installer:
 			if vol.mapper_name and vol.dev_path
 		}
 
-	def _mount_partition(self, part_mod: disk.PartitionModification) -> None:
+	def _mount_partition(self, part_mod: PartitionModification) -> None:
 		if not part_mod.dev_path:
 			return
 
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
-			disk.device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
-		elif part_mod.fs_type == disk.FilesystemType.Btrfs:
+			device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
+		elif part_mod.fs_type == FilesystemType.Btrfs:
 			self._mount_btrfs_subvol(
 				part_mod.dev_path,
 				part_mod.btrfs_subvols,
 				part_mod.mount_options
 			)
 		elif part_mod.is_swap():
-			disk.device_handler.swapon(part_mod.dev_path)
+			device_handler.swapon(part_mod.dev_path)
 
-	def _mount_lvm_vol(self, volume: disk.LvmVolume) -> None:
-		if volume.fs_type != disk.FilesystemType.Btrfs:
+	def _mount_lvm_vol(self, volume: LvmVolume) -> None:
+		if volume.fs_type != FilesystemType.Btrfs:
 			if volume.mountpoint and volume.dev_path:
 				target = self.target / volume.relative_mountpoint
-				disk.device_handler.mount(volume.dev_path, target, options=volume.mount_options)
+				device_handler.mount(volume.dev_path, target, options=volume.mount_options)
 
-		if volume.fs_type == disk.FilesystemType.Btrfs and volume.dev_path:
+		if volume.fs_type == FilesystemType.Btrfs and volume.dev_path:
 			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols, volume.mount_options)
 
-	def _mount_luks_partition(self, part_mod: disk.PartitionModification, luks_handler: Luks2) -> None:
+	def _mount_luks_partition(self, part_mod: PartitionModification, luks_handler: Luks2) -> None:
 		if not luks_handler.mapper_dev:
 			return None
 
-		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.btrfs_subvols:
+		if part_mod.fs_type == FilesystemType.Btrfs and part_mod.btrfs_subvols:
 			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
 		elif part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
-			disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+			device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
-	def _mount_luks_volume(self, volume: disk.LvmVolume, luks_handler: Luks2) -> None:
-		if volume.fs_type != disk.FilesystemType.Btrfs:
+	def _mount_luks_volume(self, volume: LvmVolume, luks_handler: Luks2) -> None:
+		if volume.fs_type != FilesystemType.Btrfs:
 			if volume.mountpoint and luks_handler.mapper_dev:
 				target = self.target / volume.relative_mountpoint
-				disk.device_handler.mount(luks_handler.mapper_dev, target, options=volume.mount_options)
+				device_handler.mount(luks_handler.mapper_dev, target, options=volume.mount_options)
 
-		if volume.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
+		if volume.fs_type == FilesystemType.Btrfs and luks_handler.mapper_dev:
 			self._mount_btrfs_subvol(luks_handler.mapper_dev, volume.btrfs_subvols, volume.mount_options)
 
 	def _mount_btrfs_subvol(
 		self,
 		dev_path: Path,
-		subvolumes: list[disk.SubvolumeModification],
+		subvolumes: list[SubvolumeModification],
 		mount_options: list[str] = []
 	) -> None:
 		for subvol in sorted(subvolumes, key=lambda x: x.relative_mountpoint):
 			mountpoint = self.target / subvol.relative_mountpoint
 			options = mount_options + [f'subvol={subvol.name}']
-			disk.device_handler.mount(dev_path, mountpoint, options=options)
+			device_handler.mount(dev_path, mountpoint, options=options)
 
 	def generate_key_files(self) -> None:
 		match self._disk_encryption.encryption_type:
-			case disk.EncryptionType.Luks:
+			case EncryptionType.Luks:
 				self._generate_key_files_partitions()
-			case disk.EncryptionType.LuksOnLvm:
+			case EncryptionType.LuksOnLvm:
 				self._generate_key_file_lvm_volumes()
-			case disk.EncryptionType.LvmOnLuks:
+			case EncryptionType.LvmOnLuks:
 				# currently LvmOnLuks only supports a single
 				# partitioning layout (boot + partition)
 				# so we won't need any keyfile generation atm
@@ -398,7 +415,7 @@ class Installer:
 
 			if part_mod.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
-					disk.Fido2.fido2_enroll(
+					Fido2.fido2_enroll(
 						self._disk_encryption.hsm_device,
 						part_mod.safe_dev_path,
 						self._disk_encryption.encryption_password
@@ -420,7 +437,7 @@ class Installer:
 
 			if vol.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
-					disk.Fido2.fido2_enroll(
+					Fido2.fido2_enroll(
 						self._disk_encryption.hsm_device,
 						vol.safe_dev_path,
 						self._disk_encryption.encryption_password
@@ -742,7 +759,7 @@ class Installer:
 
 	def _prepare_fs_type(
 		self,
-		fs_type: disk.FilesystemType,
+		fs_type: FilesystemType,
 		mountpoint: Path | None
 	) -> None:
 		if (pkg := fs_type.installation_pkg) is not None:
@@ -778,7 +795,7 @@ class Installer:
 		multilib: bool = False,
 		mkinitcpio: bool = True,
 		hostname: str | None = None,
-		locale_config: LocaleConfiguration = LocaleConfiguration.default()
+		locale_config: LocaleConfiguration | None = LocaleConfiguration.default()
 	):
 		if self._disk_config.lvm_config:
 			lvm = 'lvm2'
@@ -790,7 +807,7 @@ class Installer:
 					if vol.fs_type is not None:
 						self._prepare_fs_type(vol.fs_type, vol.mountpoint)
 
-			types = (disk.EncryptionType.LvmOnLuks, disk.EncryptionType.LuksOnLvm)
+			types = (EncryptionType.LvmOnLuks, EncryptionType.LuksOnLvm)
 			if self._disk_encryption.encryption_type in types:
 				self._prepare_encrypt(lvm)
 		else:
@@ -852,8 +869,9 @@ class Installer:
 		if hostname:
 			self.set_hostname(hostname)
 
-		self.set_locale(locale_config)
-		self.set_keyboard_language(locale_config.kb_layout)
+		if locale_config:
+			self.set_locale(locale_config)
+			self.set_keyboard_language(locale_config.kb_layout)
 
 		# TODO: Use python functions for this
 		SysCommand(f'arch-chroot {self.target} chmod 700 /root')
@@ -889,19 +907,19 @@ class Installer:
 		else:
 			raise ValueError("Archinstall currently only supports setting up swap on zram")
 
-	def _get_efi_partition(self) -> disk.PartitionModification | None:
+	def _get_efi_partition(self) -> PartitionModification | None:
 		for layout in self._disk_config.device_modifications:
 			if partition := layout.get_efi_partition():
 				return partition
 		return None
 
-	def _get_boot_partition(self) -> disk.PartitionModification | None:
+	def _get_boot_partition(self) -> PartitionModification | None:
 		for layout in self._disk_config.device_modifications:
 			if boot := layout.get_boot_partition():
 				return boot
 		return None
 
-	def _get_root(self) -> disk.PartitionModification | disk.LvmVolume | None:
+	def _get_root(self) -> PartitionModification | LvmVolume | None:
 		if self._disk_config.lvm_config:
 			return self._disk_config.lvm_config.get_root_volume()
 		else:
@@ -911,7 +929,7 @@ class Installer:
 		return None
 
 	def _get_luks_uuid_from_mapper_dev(self, mapper_dev_path: Path) -> str:
-		lsblk_info = disk.get_lsblk_info(mapper_dev_path, reverse=True, full_dev_path=True)
+		lsblk_info = get_lsblk_info(mapper_dev_path, reverse=True, full_dev_path=True)
 
 		if not lsblk_info.children or not lsblk_info.children[0].uuid:
 			raise ValueError('Unable to determine UUID of luks superblock')
@@ -920,7 +938,7 @@ class Installer:
 
 	def _get_kernel_params_partition(
 		self,
-		root_partition: disk.PartitionModification,
+		root_partition: PartitionModification,
 		id_root: bool = True,
 		partuuid: bool = True
 	) -> list[str]:
@@ -958,16 +976,16 @@ class Installer:
 
 	def _get_kernel_params_lvm(
 		self,
-		lvm: disk.LvmVolume
+		lvm: LvmVolume
 	) -> list[str]:
 		kernel_parameters = []
 
 		match self._disk_encryption.encryption_type:
-			case disk.EncryptionType.LvmOnLuks:
+			case EncryptionType.LvmOnLuks:
 				if not lvm.vg_name:
 					raise ValueError(f'Unable to determine VG name for {lvm.name}')
 
-				pv_seg_info = disk.device_handler.lvm_pvseg_info(lvm.vg_name, lvm.name)
+				pv_seg_info = device_handler.lvm_pvseg_info(lvm.vg_name, lvm.name)
 
 				if not pv_seg_info:
 					raise ValueError(f'Unable to determine PV segment info for {lvm.vg_name}/{lvm.name}')
@@ -980,7 +998,7 @@ class Installer:
 				else:
 					debug(f'LvmOnLuks, encrypted root partition, identifying by UUID: {uuid}')
 					kernel_parameters.append(f'cryptdevice=UUID={uuid}:cryptlvm root={lvm.safe_dev_path}')
-			case disk.EncryptionType.LuksOnLvm:
+			case EncryptionType.LuksOnLvm:
 				uuid = self._get_luks_uuid_from_mapper_dev(lvm.mapper_path)
 
 				if self._disk_encryption.hsm_device:
@@ -989,7 +1007,7 @@ class Installer:
 				else:
 					debug(f'LuksOnLvm, encrypted root partition, identifying by UUID: {uuid}')
 					kernel_parameters.append(f'cryptdevice=UUID={uuid}:root root=/dev/mapper/root')
-			case disk.EncryptionType.NoEncryption:
+			case EncryptionType.NoEncryption:
 				debug(f'Identifying root lvm by mapper device: {lvm.dev_path}')
 				kernel_parameters.append(f'root={lvm.safe_dev_path}')
 
@@ -997,13 +1015,13 @@ class Installer:
 
 	def _get_kernel_params(
 		self,
-		root: disk.PartitionModification | disk.LvmVolume,
+		root: PartitionModification | LvmVolume,
 		id_root: bool = True,
 		partuuid: bool = True
 	) -> list[str]:
 		kernel_parameters = []
 
-		if isinstance(root, disk.LvmVolume):
+		if isinstance(root, LvmVolume):
 			kernel_parameters = self._get_kernel_params_lvm(root)
 		else:
 			kernel_parameters = self._get_kernel_params_partition(root, id_root, partuuid)
@@ -1030,9 +1048,9 @@ class Installer:
 
 	def _add_systemd_bootloader(
 		self,
-		boot_partition: disk.PartitionModification,
-		root: disk.PartitionModification | disk.LvmVolume,
-		efi_partition: disk.PartitionModification | None,
+		boot_partition: PartitionModification,
+		root: PartitionModification | LvmVolume,
+		efi_partition: PartitionModification | None,
 		uki_enabled: bool = False
 	) -> None:
 		debug('Installing systemd bootloader')
@@ -1129,9 +1147,9 @@ class Installer:
 
 	def _add_grub_bootloader(
 		self,
-		boot_partition: disk.PartitionModification,
-		root: disk.PartitionModification | disk.LvmVolume,
-		efi_partition: disk.PartitionModification | None
+		boot_partition: PartitionModification,
+		root: PartitionModification | LvmVolume,
+		efi_partition: PartitionModification | None
 	) -> None:
 		debug('Installing grub bootloader')
 
@@ -1189,7 +1207,7 @@ class Installer:
 		else:
 			info(f"GRUB boot partition: {boot_partition.dev_path}")
 
-			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+			parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
 			add_options = [
 				'--target=i386-pc',
@@ -1214,9 +1232,9 @@ class Installer:
 
 	def _add_limine_bootloader(
 		self,
-		boot_partition: disk.PartitionModification,
-		efi_partition: disk.PartitionModification | None,
-		root: disk.PartitionModification | disk.LvmVolume
+		boot_partition: PartitionModification,
+		efi_partition: PartitionModification | None,
+		root: PartitionModification | LvmVolume
 	) -> None:
 		debug('Installing limine bootloader')
 
@@ -1249,16 +1267,16 @@ class Installer:
 				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
 			)
 		else:
-			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+			parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
-			if unique_path := disk.device_handler.get_unique_path_for_device(parent_dev_path):
+			if unique_path := device_handler.get_unique_path_for_device(parent_dev_path):
 				parent_dev_path = unique_path
 
 			try:
 				# The `limine-bios.sys` file contains stage 3 code.
 				shutil.copy(limine_path / 'limine-bios.sys', self.target / 'boot')
 
-				# `limine bios-install` deploys the stage 1 and 2 to the disk.
+				# `limine bios-install` deploys the stage 1 and 2 to the
 				SysCommand(f'arch-chroot {self.target} limine bios-install {parent_dev_path}', peek_output=True)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine on {parent_dev_path}: {err}')
@@ -1308,8 +1326,8 @@ Exec = /bin/sh -c "{hook_command}"
 
 	def _add_efistub_bootloader(
 		self,
-		boot_partition: disk.PartitionModification,
-		root: disk.PartitionModification | disk.LvmVolume,
+		boot_partition: PartitionModification,
+		root: PartitionModification | LvmVolume,
 		uki_enabled: bool = False
 	) -> None:
 		debug('Installing efistub bootloader')
@@ -1336,7 +1354,7 @@ Exec = /bin/sh -c "{hook_command}"
 			loader = '/EFI/Linux/arch-{kernel}.efi'
 			cmdline = []
 
-		parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+		parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
 		cmd_template = (
 			'efibootmgr',
@@ -1358,8 +1376,8 @@ Exec = /bin/sh -c "{hook_command}"
 
 	def _config_uki(
 		self,
-		root: disk.PartitionModification | disk.LvmVolume,
-		efi_partition: disk.PartitionModification | None
+		root: PartitionModification | LvmVolume,
+		efi_partition: PartitionModification | None
 	) -> None:
 		if not efi_partition or not efi_partition.mountpoint:
 			raise ValueError(f'Could not detect ESP at mountpoint {self.target}')

@@ -4,14 +4,22 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from enum import Enum
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, field_validator, model_validator
 
 from ..networking import DownloadTimer, fetch_data_from_url, ping
 from ..output import debug
-from ..storage import storage
+
+if TYPE_CHECKING:
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class MirrorStatusEntryV3(BaseModel):
@@ -171,7 +179,8 @@ class MirrorListHandler:
 		return available_mirrors
 
 	def load_mirrors(self) -> None:
-		if storage['arguments']['offline']:
+		from ..args import arch_config_handler
+		if arch_config_handler.args.offline:
 			self.load_local_mirrors()
 		else:
 			if not self.load_remote_mirrors():
@@ -281,3 +290,116 @@ class MirrorListHandler:
 
 
 mirror_list_handler = MirrorListHandler()
+
+
+class SignCheck(Enum):
+	Never = 'Never'
+	Optional = 'Optional'
+	Required = 'Required'
+
+
+class SignOption(Enum):
+	TrustedOnly = 'TrustedOnly'
+	TrustAll = 'TrustAll'
+
+
+@dataclass
+class CustomMirror:
+	name: str
+	url: str
+	sign_check: SignCheck
+	sign_option: SignOption
+
+	def table_data(self) -> dict[str, str]:
+		return {
+			'Name': self.name,
+			'Url': self.url,
+			'Sign check': self.sign_check.value,
+			'Sign options': self.sign_option.value
+		}
+
+	def json(self) -> dict[str, str]:
+		return {
+			'name': self.name,
+			'url': self.url,
+			'sign_check': self.sign_check.value,
+			'sign_option': self.sign_option.value
+		}
+
+	@classmethod
+	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomMirror']:
+		configs = []
+		for arg in args:
+			configs.append(
+				CustomMirror(
+					arg['name'],
+					arg['url'],
+					SignCheck(arg['sign_check']),
+					SignOption(arg['sign_option'])
+				)
+			)
+
+		return configs
+
+
+@dataclass
+class MirrorConfiguration:
+	mirror_regions: list[MirrorRegion] = field(default_factory=list)
+	custom_mirrors: list[CustomMirror] = field(default_factory=list)
+
+	@property
+	def regions(self) -> str:
+		return ', '.join([m.name for m in self.mirror_regions])
+
+	def json(self) -> dict[str, Any]:
+		regions = {}
+		for m in self.mirror_regions:
+			regions.update(m.json())
+
+		return {
+			'mirror_regions': regions,
+			'custom_mirrors': [c.json() for c in self.custom_mirrors]
+		}
+
+	def mirrorlist_config(self, speed_sort: bool = True) -> str:
+		config = ''
+
+		for mirror_region in self.mirror_regions:
+			sorted_stati = mirror_list_handler.get_status_by_region(
+				mirror_region.name,
+				speed_sort=speed_sort
+			)
+
+			config += f'\n\n## {mirror_region.name}\n'
+
+			for status in sorted_stati:
+				config += f'Server = {status.server_url}\n'
+
+		for cm in self.custom_mirrors:
+			config += f'\n\n## {cm.name}\nServer = {cm.url}\n'
+
+		return config
+
+	def pacman_config(self) -> str:
+		config = ''
+
+		for mirror in self.custom_mirrors:
+			config += f'\n\n[{mirror.name}]\n'
+			config += f'SigLevel = {mirror.sign_check.value} {mirror.sign_option.value}\n'
+			config += f'Server = {mirror.url}\n'
+
+		return config
+
+	@classmethod
+	def parse_args(cls, args: dict[str, Any]) -> 'MirrorConfiguration':
+		config = MirrorConfiguration()
+
+		mirror_regions = args.get('mirror_regions', [])
+		if mirror_regions:
+			for region, urls in mirror_regions.items():
+				config.mirror_regions.append(MirrorRegion(region, urls))
+
+		if 'custom_mirrors' in args:
+			config.custom_mirrors = CustomMirror.parse_args(args['custom_mirrors'])
+
+		return config

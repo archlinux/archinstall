@@ -319,8 +319,7 @@ class SysCommandWorker:
 				# If history_logfile does not exist, ignore the error
 				pass
 
-			if storage.get('arguments', {}).get('debug'):
-				debug(f"Executing: {self.cmd}")
+			debug(f"Executing: {" ".join(self.cmd)}")
 
 			try:
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})

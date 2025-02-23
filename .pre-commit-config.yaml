@@ -29,7 +29,7 @@ repos:
     - id: check-ast  # Simply check whether files parse as valid python
     - id: check-docstring-first  # Checks for a common error of placing code before the docstring
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
+    rev: 7.1.2
     hooks:
     - id: flake8
       args: [--config=.flake8]
@@ -47,7 +47,7 @@ repos:
         - pydantic-settings
         - pytest
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.5
+    rev: v0.9.7
     hooks:
       - id: ruff
   - repo: local

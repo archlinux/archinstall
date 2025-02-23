@@ -3,6 +3,7 @@
     "archinstall-language": "English",
     "audio_config": {"audio": "pipewire"},
     "bootloader": "Systemd-boot",
+    "services": ["service_1", "service_2"],
     "disk_config": {
         "config_type": "default_layout",
         "device_modifications": [
@@ -107,7 +108,8 @@
       "sys_lang": "en_US"
     },
     "mirror_config": {
-      "mirror-regions": {
+      "custom_mirrors": [],
+      "mirror_regions": {
         "Australia": [
           "http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch"
         ]
@@ -150,7 +152,10 @@
             "main": "Desktop"
         }
     },
+    "custom_commands": [
+        "echo 'Hello, World!'"
+    ],
     "swap": false,
     "timezone": "UTC",
-    "version": "2.8.6"
+    "version": "3.0.2"
 }

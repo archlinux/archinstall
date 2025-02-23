@@ -1,21 +1,24 @@
 from pathlib import Path
 
-import archinstall
-from archinstall import debug
-from archinstall.lib import disk
+from archinstall.lib.args import ArchConfig, arch_config_handler
 from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.disk.filesystem import FilesystemHandler
+from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
+from archinstall.lib.models.device_model import DiskLayoutConfiguration
+from archinstall.lib.output import debug, error
 from archinstall.tui import Tui
 
 
 def ask_user_questions() -> None:
 	with Tui():
-		global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+		global_menu = GlobalMenu(arch_config_handler.config)
 		global_menu.disable_all()
 
 		global_menu.set_enabled('archinstall-language', True)
-		global_menu.set_enabled('disk_config', True)
-		global_menu.set_enabled('disk_encryption', True)
+		global_menu.set_enabled('_disk_config', True)
+		global_menu.set_enabled('_disk_encryption', True)
 		global_menu.set_enabled('swap', True)
 		global_menu.set_enabled('save_config', True)
 		global_menu.set_enabled('install', True)
@@ -30,18 +33,24 @@ def perform_installation(mountpoint: Path) -> None:
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
-	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
+	config: ArchConfig = arch_config_handler.config
+
+	if not config.disk_config:
+		error("No disk configuration provided")
+		return
+
+	disk_config: DiskLayoutConfiguration = config.disk_config
+	disk_encryption = config.disk_encryption
 
 	with Installer(
 		mountpoint,
 		disk_config,
 		disk_encryption=disk_encryption,
-		kernels=archinstall.arguments.get('kernels', ['linux'])
+		kernels=config.kernels
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.arguments.get('disk_config'):
+		if disk_config:
 			installation.mount_ordered_layout()
 
 		# to generate a fstab directory holder. Avoids an error on exit and at the same time checks the procedure
@@ -50,33 +59,35 @@ def perform_installation(mountpoint: Path) -> None:
 			target.parent.mkdir(parents=True)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	debug(f"Disk states after installing:\n{disk.disk_layouts()}")
+	debug(f"Disk states after installing:\n{disk_layouts()}")
 
 
 def _only_hd() -> None:
-	if not archinstall.arguments.get('silent'):
+	if not arch_config_handler.args.silent:
 		ask_user_questions()
 
-	config = ConfigurationOutput(archinstall.arguments)
+	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
 	config.save()
 
-	if archinstall.arguments.get('dry_run'):
+	if arch_config_handler.args.dry_run:
 		exit(0)
 
-	if not archinstall.arguments.get('silent'):
+	if not arch_config_handler.args.silent:
 		with Tui():
 			if not config.confirm_config():
 				debug('Installation aborted')
 				_only_hd()
 
-	fs_handler = disk.FilesystemHandler(
-		archinstall.arguments['disk_config'],
-		archinstall.arguments.get('disk_encryption', None)
-	)
+	if arch_config_handler.config.disk_config:
+		fs_handler = FilesystemHandler(
+			arch_config_handler.config.disk_config,
+			arch_config_handler.config.disk_encryption
+		)
 
-	fs_handler.perform_filesystem_operations()
-	perform_installation(archinstall.arguments.get('mount_point', Path('/mnt')))
+		fs_handler.perform_filesystem_operations()
+
+	perform_installation(arch_config_handler.args.mountpoint)
 
 
 _only_hd()

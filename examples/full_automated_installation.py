@@ -1,39 +1,58 @@
 from pathlib import Path
 
-from archinstall import Installer, disk, models, profile
 from archinstall.default_profiles.minimal import MinimalProfile
+from archinstall.lib.disk.device_handler import device_handler
+from archinstall.lib.disk.filesystem import FilesystemHandler
+from archinstall.lib.installer import Installer
+from archinstall.lib.models.device_model import (
+	DeviceModification,
+	DiskEncryption,
+	DiskLayoutConfiguration,
+	DiskLayoutType,
+	EncryptionType,
+	FilesystemType,
+	ModificationStatus,
+	PartitionFlag,
+	PartitionModification,
+	PartitionType,
+	Size,
+	Unit,
+)
+from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.models.users import User
+from archinstall.lib.profile import profile_handler
 
 # we're creating a new ext4 filesystem installation
-fs_type = disk.FilesystemType('ext4')
+fs_type = FilesystemType('ext4')
 device_path = Path('/dev/sda')
 
 # get the physical disk device
-device = disk.device_handler.get_device(device_path)
+device = device_handler.get_device(device_path)
 
 if not device:
 	raise ValueError('No device found for given path')
 
 # create a new modification for the specific device
-device_modification = disk.DeviceModification(device, wipe=True)
+device_modification = DeviceModification(device, wipe=True)
 
 # create a new boot partition
-boot_partition = disk.PartitionModification(
-	status=disk.ModificationStatus.Create,
-	type=disk.PartitionType.Primary,
-	start=disk.Size(1, disk.Unit.MiB, device.device_info.sector_size),
-	length=disk.Size(512, disk.Unit.MiB, device.device_info.sector_size),
+boot_partition = PartitionModification(
+	status=ModificationStatus.Create,
+	type=PartitionType.Primary,
+	start=Size(1, Unit.MiB, device.device_info.sector_size),
+	length=Size(512, Unit.MiB, device.device_info.sector_size),
 	mountpoint=Path('/boot'),
-	fs_type=disk.FilesystemType.Fat32,
-	flags=[disk.PartitionFlag.BOOT]
+	fs_type=FilesystemType.Fat32,
+	flags=[PartitionFlag.BOOT]
 )
 device_modification.add_partition(boot_partition)
 
 # create a root partition
-root_partition = disk.PartitionModification(
-	status=disk.ModificationStatus.Create,
-	type=disk.PartitionType.Primary,
-	start=disk.Size(513, disk.Unit.MiB, device.device_info.sector_size),
-	length=disk.Size(20, disk.Unit.GiB, device.device_info.sector_size),
+root_partition = PartitionModification(
+	status=ModificationStatus.Create,
+	type=PartitionType.Primary,
+	start=Size(513, Unit.MiB, device.device_info.sector_size),
+	length=Size(20, Unit.GiB, device.device_info.sector_size),
 	mountpoint=None,
 	fs_type=fs_type,
 	mount_options=[],
@@ -44,9 +63,9 @@ start_home = root_partition.length
 length_home = device.device_info.total_size - start_home
 
 # create a new home partition
-home_partition = disk.PartitionModification(
-	status=disk.ModificationStatus.Create,
-	type=disk.PartitionType.Primary,
+home_partition = PartitionModification(
+	status=ModificationStatus.Create,
+	type=PartitionType.Primary,
 	start=start_home,
 	length=length_home,
 	mountpoint=Path('/home'),
@@ -55,21 +74,21 @@ home_partition = disk.PartitionModification(
 )
 device_modification.add_partition(home_partition)
 
-disk_config = disk.DiskLayoutConfiguration(
-	config_type=disk.DiskLayoutType.Default,
+disk_config = DiskLayoutConfiguration(
+	config_type=DiskLayoutType.Default,
 	device_modifications=[device_modification]
 )
 
 # disk encryption configuration (Optional)
-disk_encryption = disk.DiskEncryption(
+disk_encryption = DiskEncryption(
 	encryption_password="enc_password",
-	encryption_type=disk.EncryptionType.Luks,
+	encryption_type=EncryptionType.Luks,
 	partitions=[home_partition],
 	hsm_device=None
 )
 
 # initiate file handler with the disk config and the optional disk encryption config
-fs_handler = disk.FilesystemHandler(disk_config, disk_encryption)
+fs_handler = FilesystemHandler(disk_config, disk_encryption)
 
 # perform all file operations
 # WARNING: this will potentially format the filesystem and delete all data
@@ -89,8 +108,8 @@ with Installer(
 
 # Optionally, install a profile of choice.
 # In this case, we install a minimal profile that is empty
-profile_config = profile.ProfileConfiguration(MinimalProfile())
-profile.profile_handler.install_profile_config(installation, profile_config)
+profile_config = ProfileConfiguration(MinimalProfile())
+profile_handler.install_profile_config(installation, profile_config)
 
-user = models.User('archinstall', 'password', True)
+user = User('archinstall', 'password', True)
 installation.create_users(user)

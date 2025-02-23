@@ -15,7 +15,7 @@ class ProfileConfiguration:
 	greeter: GreeterType | None = None
 
 	def json(self) -> dict[str, Any]:
-		from .profiles_handler import profile_handler
+		from ..profile.profiles_handler import profile_handler
 		return {
 			'profile': profile_handler.to_json(self.profile),
 			'gfx_driver': self.gfx_driver.value if self.gfx_driver else None,
@@ -24,8 +24,7 @@ class ProfileConfiguration:
 
 	@classmethod
 	def parse_arg(cls, arg: dict[str, Any]) -> 'ProfileConfiguration':
-		from .profiles_handler import profile_handler
-
+		from ..profile.profiles_handler import profile_handler
 		profile = profile_handler.parse_profile_config(arg['profile'])
 		greeter = arg.get('greeter', None)
 		gfx_driver = arg.get('gfx_driver', None)

@@ -1466,52 +1466,41 @@ msgstr "Seleccionar mode d'execució"
 msgid "Press ? for help"
 msgstr "Polseu ? per accedir a l'ajuda"
 
-#, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Escolliu una opció per permetre a Hyprland l'accés al vostre hardware"
+msgstr "Escolliu una opció per permetre a Hyprland l'accés al vostre maquinari"
 
-#, fuzzy
 msgid "Additional repositories"
-msgstr "Repositoris opcionals"
+msgstr "Repositoris addicionals"
 
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "Swap a zram"
 
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
-#, fuzzy
 msgid "Signature check"
-msgstr "Seleccionar verificació de signatura"
+msgstr "Verificació de signatura"
 
-#, fuzzy
 msgid "Selected free space segment on device {}:"
-msgstr "Sectors lliures actuals al dispositiu {}:"
+msgstr "Segment d'espai lliure seleccionat al dispositiu {}:"
 
-#, fuzzy
 msgid "Size: {} / {}"
-msgstr "Total: {} / {}"
+msgstr "Mida: {} / {}"
 
-#, fuzzy
 msgid "Size (default: {}): "
-msgstr "Final (per defecte: {}): "
+msgstr "Mida (per defecte: {}): "
 
-#, fuzzy
 msgid "HSM device"
-msgstr "Dispositiu"
+msgstr "Dispositiu HSM"
 
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "Alguns paquets no s'han trobat al repositori"
 
-#, fuzzy
 msgid "User"
-msgstr "Nom d'usuari"
+msgstr "Usuari"
 
 msgid "The specified configuration will be applied"
-msgstr ""
+msgstr "S'aplicarà la configuració especificada"
