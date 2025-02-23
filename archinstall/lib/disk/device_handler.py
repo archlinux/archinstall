@@ -627,7 +627,7 @@ class DeviceHandler:
 	def create_btrfs_volumes(
 		self,
 		part_mod: PartitionModification,
-		enc_conf: 'DiskEncryption | None' = None
+		enc_conf: DiskEncryption | None = None
 	) -> None:
 		info(f'Creating subvolumes: {part_mod.safe_dev_path}')
 
