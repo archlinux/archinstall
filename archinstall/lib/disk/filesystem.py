@@ -18,7 +18,6 @@ from ..models.device_model import (
 	LvmVolume,
 	LvmVolumeGroup,
 	PartitionModification,
-	PartitionTable,
 	SectorSize,
 	Size,
 	Unit,
@@ -61,14 +60,13 @@ class FilesystemHandler:
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
-		partition_table = PartitionTable.default()
 
 		# make sure all devices are unmounted
 		for mod in device_mods:
 			device_handler.umount_all_existing(mod.device_path)
 
 		for mod in device_mods:
-			device_handler.partition(mod, partition_table=partition_table)
+			device_handler.partition(mod)
 
 		device_handler.udev_sync()
 

@@ -30,7 +30,6 @@ from archinstall.lib.models.device_model import (
 from archinstall.lib.output import debug
 from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu
 
-from ..hardware import SysInfo
 from ..output import FormattedOutput
 from ..utils.util import prompt_dir
 
@@ -354,7 +353,7 @@ def suggest_single_disk_layout(
 
 	device_modification = DeviceModification(device, wipe=True)
 
-	using_gpt = SysInfo.has_uefi()
+	using_gpt = device_handler.partition_table.is_gpt()
 
 	if using_gpt:
 		available_space = available_space.gpt_end()
@@ -515,7 +514,7 @@ def suggest_multi_disk_layout(
 	root_device_sector_size = root_device_modification.device.device_info.sector_size
 	home_device_sector_size = home_device_modification.device.device_info.sector_size
 
-	using_gpt = SysInfo.has_uefi()
+	using_gpt = device_handler.partition_table.is_gpt()
 
 	# add boot partition to the root device
 	boot_partition = _boot_partition(root_device_sector_size, using_gpt)

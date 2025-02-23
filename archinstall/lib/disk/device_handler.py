@@ -52,11 +52,16 @@ class DeviceHandler:
 
 	def __init__(self) -> None:
 		self._devices: dict[Path, BDevice] = {}
+		self._partition_table = PartitionTable.default()
 		self.load_devices()
 
 	@property
 	def devices(self) -> list[BDevice]:
 		return list(self._devices.values())
+
+	@property
+	def partition_table(self) -> PartitionTable:
+		return self._partition_table
 
 	def load_devices(self) -> None:
 		block_devices = {}
@@ -86,7 +91,7 @@ class DeviceHandler:
 				if dev_lsblk_info.pttype:
 					disk = newDisk(device)
 				else:
-					disk = freshDisk(device, PartitionTable.GPT.value)
+					disk = freshDisk(device, self.partition_table.value)
 			except DiskException as err:
 				debug(f'Unable to get disk from {device.path}: {err}')
 				continue
@@ -702,18 +707,15 @@ class DeviceHandler:
 		"""
 		Create a partition table on the block device and create all partitions.
 		"""
-		if modification.wipe:
-			if partition_table is None:
-				raise ValueError('Modification is marked as wipe but no partitioning table was provided')
-
-			if partition_table.is_mbr() and len(modification.partitions) > 3:
-				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
+		partition_table = partition_table or self.partition_table
 
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
+			if partition_table.is_mbr() and len(modification.partitions) > 3:
+				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
+
 			self.wipe_dev(modification.device)
-			part_table = partition_table.value if partition_table else None
-			disk = freshDisk(modification.device.disk.device, part_table)
+			disk = freshDisk(modification.device.disk.device, partition_table.value)
 		else:
 			info(f'Use existing device: {modification.device_path}')
 			disk = modification.device.disk
