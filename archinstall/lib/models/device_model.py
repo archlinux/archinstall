@@ -205,6 +205,10 @@ class PartitionTable(Enum):
 	def is_mbr(self) -> bool:
 		return self == PartitionTable.MBR
 
+	@classmethod
+	def default(cls) -> PartitionTable:
+		return cls.GPT if SysInfo.has_uefi() else cls.MBR
+
 
 class Units(Enum):
 	BINARY = 'binary'
