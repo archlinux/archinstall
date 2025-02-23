@@ -144,8 +144,6 @@ class DiskLayoutConfiguration:
 			device_modification.partitions = device_partitions
 			device_modifications.append(device_modification)
 
-		using_gpt = SysInfo.has_uefi()
-
 		for dev_mod in device_modifications:
 			dev_mod.partitions.sort(key=lambda p: (not p.is_delete(), p.start))
 
@@ -186,8 +184,9 @@ class DiskLayoutConfiguration:
 
 			last = create_partitions[-1]
 			total_size = dev_mod.device.device_info.total_size
-			if using_gpt and last.end > total_size.gpt_end():
-				raise ValueError('Partition overlaps backup GPT header')
+			if dev_mod.using_gpt(device_handler.partition_table):
+				if last.end > total_size.gpt_end():
+					raise ValueError('Partition overlaps backup GPT header')
 			elif last.end > total_size.align():
 				raise ValueError('Partition too large for device')
 
@@ -201,6 +200,9 @@ class DiskLayoutConfiguration:
 class PartitionTable(Enum):
 	GPT = 'gpt'
 	MBR = 'msdos'
+
+	def is_gpt(self) -> bool:
+		return self == PartitionTable.GPT
 
 	def is_mbr(self) -> bool:
 		return self == PartitionTable.MBR
@@ -1358,6 +1360,12 @@ class DeviceModification:
 	@property
 	def device_path(self) -> Path:
 		return self.device.device_info.path
+
+	def using_gpt(self, partition_table: PartitionTable) -> bool:
+		if self.wipe:
+			return partition_table.is_gpt()
+
+		return self.device.disk.type == PartitionTable.GPT.value
 
 	def add_partition(self, partition: PartitionModification) -> None:
 		self.partitions.append(partition)
