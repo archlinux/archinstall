@@ -33,7 +33,7 @@ from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
 from .translationhandler import Language, translation_handler
-from .utils.util import format_cols, get_password
+from .utils.util import get_password
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -317,7 +317,8 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_additional_pkgs(self, item: MenuItem) -> str | None:
 		if item.value:
-			return format_cols(item.value, None)
+			output = '\n'.join(sorted(item.value))
+			return output
 		return None
 
 	def _prev_additional_repos(self, item: MenuItem) -> str | None:

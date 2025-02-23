@@ -3,13 +3,14 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu, Tui
+from archinstall.lib.models.gen import Repository
+from archinstall.lib.packages import list_available_packages
+from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu, Tui
 
 from ..locale import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration
+from ..models.gen import AvailablePackage
 from ..output import warn
-from ..packages.packages import validate_package_list
-from ..storage import storage
 from ..translationhandler import Language
 
 if TYPE_CHECKING:
@@ -163,40 +164,48 @@ def select_archinstall_language(languages: list[Language], preset: Language) -> 
 			raise ValueError('Language selection not handled')
 
 
-def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
+def ask_additional_packages_to_install(
+	preset: list[str] = [],
+	repositories: set[Repository] = set()
+) -> list[str]:
+	Tui.print('Loading packages...', clear_screen=True)
+
+	repositories |= {Repository.Core, Repository.Extra}
+	packages = list_available_packages(tuple(repositories))
+
 	# Additional packages (with some light weight error handling for invalid package names)
 	header = str(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.')) + '\n'
 	header += str(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.')) + '\n'
-	header += str(_('Write additional packages to install (space separated, leave blank to skip)'))
+	header += str(_('Write additional packages to install (space separated, leave blank to skip)')) + '\n'
 
-	def validator(value: str) -> str | None:
-		packages = value.split() if value else []
+	# there are over 15k packages so this needs to be quick
+	preset_packages = []
+	for p in preset:
+		if p in packages:
+			preset_packages.append(packages[p])
 
-		if len(packages) == 0:
-			return None
+	items = [
+		MenuItem(
+			name,
+			value=pkg,
+			preview_action=lambda x: x.value.info()
+		) for name,
+		pkg in packages.items()
+	]
+	group = MenuItemGroup(items, sort_items=True)
+	group.set_selected_by_value(preset_packages)
 
-		if storage['arguments']['offline'] or storage['arguments']['no_pkg_lookups']:
-			return None
-
-		# Verify packages that were given
-		out = str(_("Verifying that additional packages exist (this might take a few seconds)"))
-		Tui.print(out, 0)
-		_valid, invalid = validate_package_list(packages)
-
-		if invalid:
-			return f'{_("Some packages could not be found in the repository")}: {invalid}'
-
-		return None
-
-	result = EditMenu(
-		str(_('Additional packages')),
-		alignment=Alignment.CENTER,
-		allow_skip=True,
+	result = SelectMenu(
+		group,
+		header=header,
+		alignment=Alignment.LEFT,
 		allow_reset=True,
-		edit_width=100,
-		validator=validator,
-		default_text=' '.join(preset)
-	).input()
+		allow_skip=True,
+		multi=True,
+		preview_frame=FrameProperties.max('Package info'),
+		preview_style=PreviewStyle.RIGHT,
+		preview_size='auto'
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -204,8 +213,8 @@ def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
 		case ResultType.Reset:
 			return []
 		case ResultType.Selection:
-			packages = result.text()
-			return packages.split(' ')
+			selected_pacakges: list[AvailablePackage] = result.get_values()
+			return [pkg.name for pkg in selected_pacakges]
 
 
 def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
