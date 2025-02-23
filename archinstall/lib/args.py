@@ -44,7 +44,7 @@ class Arguments:
 
 @dataclass
 class ArchConfig:
-	version: str = field(default_factory=lambda: version('archinstall'))
+	version: str | None = None
 	locale_config: LocaleConfiguration | None = None
 	archinstall_language: Language = field(default_factory=lambda: translation_handler.get_language_by_abbr('en'))
 	disk_config: DiskLayoutConfiguration | None = None
@@ -82,7 +82,7 @@ class ArchConfig:
 		return config
 
 	def safe_json(self) -> dict[str, Any]:
-		config = {
+		config: Any = {
 			'version': self.version,
 			'archinstall-language': self.archinstall_language.json(),
 			'hostname': self.hostname,
@@ -215,6 +215,12 @@ class ArchConfigHandler:
 	def print_help(self) -> None:
 		self._parser.print_help()
 
+	def _get_version(self) -> str:
+		try:
+			return version('archinstall')
+		except Exception:
+			return 'Archinstall version not found'
+
 	def _define_arguments(self) -> ArgumentParser:
 		parser = ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 		parser.add_argument(
@@ -222,7 +228,7 @@ class ArchConfigHandler:
 			"--version",
 			action="version",
 			default=False,
-			version="%(prog)s " + version('archinstall')
+			version="%(prog)s " + self._get_version()
 		)
 		parser.add_argument(
 			"--config",

@@ -102,6 +102,10 @@ def test_config_file_parsing(
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
+	# the version is retrieved dynamically from an installed archinstall package
+	# as there is no version present in the test environment we'll set it manually
+	arch_config.version = '3.0.2'
+
 	# TODO: Use the real values from the test fixture instead of clearing out the entries
 	arch_config.disk_config.device_modifications = []  # type: ignore[union-attr]
 
