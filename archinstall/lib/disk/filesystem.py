@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 from archinstall.tui import Tui
 
-from ..hardware import SysInfo
 from ..interactions.general_conf import ask_abort
 from ..luks import Luks2
 from ..models.device_model import (
@@ -62,9 +61,7 @@ class FilesystemHandler:
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
-		partition_table = PartitionTable.GPT
-		if SysInfo.has_uefi() is False:
-			partition_table = PartitionTable.MBR
+		partition_table = PartitionTable.default()
 
 		# make sure all devices are unmounted
 		for mod in device_mods:
