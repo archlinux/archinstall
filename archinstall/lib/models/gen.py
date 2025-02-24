@@ -1,5 +1,31 @@
 from dataclasses import dataclass
+from enum import Enum
+from functools import cached_property
 from typing import Any, override
+
+from pydantic import BaseModel
+
+
+class Repository(Enum):
+	Core = 'core'
+	Extra = 'extra'
+	Multilib = 'multilib'
+	Testing = 'testing'
+
+	def get_repository_list(self) -> list[str]:
+		match self:
+			case Repository.Core:
+				return [Repository.Core.value]
+			case Repository.Extra:
+				return [Repository.Extra.value]
+			case Repository.Multilib:
+				return [Repository.Multilib.value]
+			case Repository.Testing:
+				return [
+					'core-testing',
+					'extra-testing',
+					'multilib-testing'
+				]
 
 
 @dataclass
@@ -73,9 +99,9 @@ class PackageSearch:
 		)
 
 
-@dataclass
-class LocalPackage:
+class LocalPackage(BaseModel):
 	name: str
+	repository: str
 	version: str
 	description: str
 	architecture: str
@@ -97,16 +123,46 @@ class LocalPackage:
 	validated_by: str
 	provides: str
 
-	@property
-	def pkg_version(self) -> str:
-		return self.version
-
 	@override
 	def __eq__(self, other: object) -> bool:
 		if not isinstance(other, LocalPackage):
 			return NotImplemented
 
-		return self.pkg_version == other.pkg_version
+		return self.version == other.version
 
 	def __lt__(self, other: 'LocalPackage') -> bool:
-		return self.pkg_version < other.pkg_version
+		return self.version < other.version
+
+
+class AvailablePackage(BaseModel):
+	name: str
+	architecture: str
+	build_date: str
+	depends_on: str
+	description: str
+	download_size: str
+	groups: str
+	installed_size: str
+	licenses: str
+	optional_deps: str
+	packager: str
+	provides: str
+	replaces: str
+	repository: str
+	url: str
+	validated_by: str
+	version: str
+
+	@cached_property
+	def longest_key(self) -> int:
+		return max(len(key) for key in self.dict().keys())
+
+	# return all package info line by line
+	def info(self) -> str:
+		output = ''
+		for key, value in self.dict().items():
+			key = key.replace('_', ' ').capitalize()
+			key = key.ljust(self.longest_key)
+			output += f'{key} : {value}\n'
+
+		return output

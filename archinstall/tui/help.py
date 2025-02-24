@@ -1,5 +1,12 @@
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import TYPE_CHECKING
+
+from archinstall.lib.translationhandler import DeferredTranslation
+
+if TYPE_CHECKING:
+	_: Callable[[str], DeferredTranslation]
 
 
 class HelpTextGroupId(Enum):
@@ -28,52 +35,70 @@ class HelpGroup:
 
 
 class Help:
-	general = HelpGroup(
-		group_id=HelpTextGroupId.GENERAL,
-		group_entries=[
-			HelpText('Show help', ['Ctrl+h']),
-			HelpText('Exit help', ['Esc']),
-		]
-	)
+	# the groups needs to be classmethods not static methods
+	# because they rely on the DeferredTranslation setup first;
+	# if they are static methods, they will be called before the
+	# translation setup is done
 
-	navigation = HelpGroup(
-		group_id=HelpTextGroupId.NAVIGATION,
-		group_entries=[
-			HelpText('Preview scroll up', ['PgUp']),
-			HelpText('Preview scroll down', ['PgDown']),
-			HelpText('Move up', ['k', '↑']),
-			HelpText('Move down', ['j', '↓']),
-			HelpText('Move right', ['l', '→']),
-			HelpText('Move left', ['h', '←']),
-			HelpText('Jump to entry', ['1..9'])
-		]
-	)
+	@staticmethod
+	def general() -> HelpGroup:
+		return HelpGroup(
+			group_id=HelpTextGroupId.GENERAL,
+			group_entries=[
+				HelpText(str(_('Show help')), ['Ctrl+h']),
+				HelpText(str(_('Exit help')), ['Esc']),
+			]
+		)
 
-	selection = HelpGroup(
-		group_id=HelpTextGroupId.SELECTION,
-		group_entries=[
-			HelpText('Skip selection (if available)', ['Esc']),
-			HelpText('Reset selection (if available)', ['Ctrl+c']),
-			HelpText('Select on single select', ['Enter']),
-			HelpText('Select on select', ['Space', 'Tab']),
-			HelpText('Reset', ['Ctrl-C']),
-			HelpText('Skip selection menu', ['Esc']),
-		]
-	)
+	@staticmethod
+	def navigation() -> HelpGroup:
+		return HelpGroup(
+			group_id=HelpTextGroupId.NAVIGATION,
+			group_entries=[
+				HelpText(str(_('Preview scroll up')), ['PgUp']),
+				HelpText(str(_('Preview scroll down')), ['PgDown']),
+				HelpText(str(_('Move up')), ['k', '↑']),
+				HelpText(str(_('Move down')), ['j', '↓']),
+				HelpText(str(_('Move right')), ['l', '→']),
+				HelpText(str(_('Move left')), ['h', '←']),
+				HelpText(str(_('Jump to entry')), ['1..9'])
+			]
+		)
 
-	search = HelpGroup(
-		group_id=HelpTextGroupId.SEARCH,
-		group_entries=[
-			HelpText('Start search mode', ['/']),
-			HelpText('Exit search mode', ['Esc']),
-		]
-	)
+	@staticmethod
+	def selection() -> HelpGroup:
+		return HelpGroup(
+			group_id=HelpTextGroupId.SELECTION,
+			group_entries=[
+				HelpText(str(_('Skip selection (if available)')), ['Esc']),
+				HelpText(str(_('Reset selection (if available)')), ['Ctrl+c']),
+				HelpText(str(_('Select on single select')), ['Enter']),
+				HelpText(str(_('Select on multi select')), ['Space', 'Tab']),
+				HelpText(str(_('Reset')), ['Ctrl-C']),
+				HelpText(str(_('Skip selection menu')), ['Esc']),
+			]
+		)
+
+	@staticmethod
+	def search() -> HelpGroup:
+		return HelpGroup(
+			group_id=HelpTextGroupId.SEARCH,
+			group_entries=[
+				HelpText(str(_('Start search mode')), ['/']),
+				HelpText(str(_('Exit search mode')), ['Esc']),
+			]
+		)
 
 	@staticmethod
 	def get_help_text() -> str:
 		help_output = ''
-		help_texts = [Help.general, Help.navigation, Help.selection, Help.search]
-		max_desc_width = max([help.get_desc_width() for help in help_texts])
+		help_texts = [
+			Help.general(),
+			Help.navigation(),
+			Help.selection(),
+			Help.search(),
+		]
+		max_desc_width = max([help.get_desc_width() for help in help_texts]) + 2
 		max_key_width = max([help.get_key_width() for help in help_texts])
 
 		for help_group in help_texts:

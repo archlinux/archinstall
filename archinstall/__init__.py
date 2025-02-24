@@ -56,16 +56,17 @@ def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
 	plugins[f.__name__] = f
 
 
-def _check_new_version() -> None:
-	info("Checking version...")
-
+def _fetch_arch_db() -> None:
+	info("Fetching Arch Linux package database...")
 	try:
 		Pacman.run("-Sy")
 	except Exception as e:
-		debug(f'Failed to perform version check: {e}')
-		info('Arch Linux mirrors are not reachable. Please check your internet connection')
+		debug(f'Failed to sync Arch Linux package database: {e}')
 		exit(1)
 
+
+def _check_new_version() -> None:
+	info("Checking version...")
 	upgrade = None
 
 	try:
@@ -85,8 +86,11 @@ def main() -> None:
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
-	if not arch_config_handler.args.skip_version_check:
-		_check_new_version()
+	if not arch_config_handler.args.offline:
+		_fetch_arch_db()
+
+		if not arch_config_handler.args.skip_version_check:
+			_check_new_version()
 
 	script = arch_config_handler.args.script
 
