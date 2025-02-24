@@ -116,9 +116,8 @@ def _manual_partitioning(
 		if not mod:
 			mod = DeviceModification(device, wipe=False)
 
-		if partitions := manual_partitioning(device, preset=mod.partitions):
-			mod.partitions = partitions
-			modifications.append(mod)
+		if device_mod := manual_partitioning(mod, device_handler.partition_table):
+			modifications.append(device_mod)
 
 	return modifications
 
