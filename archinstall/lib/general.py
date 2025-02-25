@@ -319,8 +319,6 @@ class SysCommandWorker:
 				# If history_logfile does not exist, ignore the error
 				pass
 
-			debug(f"Executing: {" ".join(self.cmd)}")
-
 			try:
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
 			except FileNotFoundError:
