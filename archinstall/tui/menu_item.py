@@ -197,8 +197,8 @@ class MenuItemGroup:
 
 	@cached_property
 	def items(self) -> list[MenuItem]:
-		_filter = self._filter_pattern.lower()
-		items = filter(lambda item: item.is_empty() or _filter in item.text.lower(), self.menu_items)
+		pattern = self._filter_pattern.lower()
+		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self.menu_items)
 		return list(items)
 
 	@property
