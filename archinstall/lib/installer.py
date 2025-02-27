@@ -1311,8 +1311,8 @@ Exec = /bin/sh -c "{hook_command}"
 			for variant in ('', '-fallback'):
 				entry = [
 					'protocol: linux',
-					f'kernel_path: boot():/vmlinuz-{kernel}',
-					f'kernel_cmdline: {kernel_params}',
+					f'path: boot():/vmlinuz-{kernel}',
+					f'cmdline: {kernel_params}',
 					f'module_path: boot():/initramfs-{kernel}{variant}.img',
 				]
 
