@@ -821,9 +821,6 @@ class Installer:
 					if part in self._disk_encryption.partitions:
 						self._prepare_encrypt()
 
-		if not SysInfo.has_uefi():
-			self._base_packages.append('grub')
-
 		if ucode := self._get_microcode():
 			(self.target / 'boot' / ucode).unlink(missing_ok=True)
 			self._base_packages.append(ucode.stem)
@@ -1153,7 +1150,7 @@ class Installer:
 	) -> None:
 		debug('Installing grub bootloader')
 
-		self.pacman.strap('grub')  # no need?
+		self.pacman.strap('grub')
 
 		grub_default = self.target / 'etc/default/grub'
 		config = grub_default.read_text()
