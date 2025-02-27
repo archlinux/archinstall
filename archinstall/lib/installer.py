@@ -1234,7 +1234,8 @@ class Installer:
 		self,
 		boot_partition: PartitionModification,
 		efi_partition: PartitionModification | None,
-		root: PartitionModification | LvmVolume
+		root: PartitionModification | LvmVolume,
+		uki_enabled: bool = False
 	) -> None:
 		debug('Installing limine bootloader')
 
@@ -1309,12 +1310,19 @@ Exec = /bin/sh -c "{hook_command}"
 
 		for kernel in self.kernels:
 			for variant in ('', '-fallback'):
-				entry = [
-					'protocol: linux',
-					f'kernel_path: boot():/vmlinuz-{kernel}',
-					f'kernel_cmdline: {kernel_params}',
-					f'module_path: boot():/initramfs-{kernel}{variant}.img',
-				]
+				if uki_enabled:
+					entry = [
+						'protocol: efi',
+						f'path: boot():/EFI/Linux/arch-{kernel}.efi',
+						f'cmdline: {kernel_params}',
+					]
+				else:
+					entry = [
+						'protocol: linux',
+						f'path: boot():/vmlinuz-{kernel}',
+						f'cmdline: {kernel_params}',
+						f'module_path: boot():/initramfs-{kernel}{variant}.img',
+					]
 
 				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
 				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
@@ -1466,7 +1474,7 @@ Exec = /bin/sh -c "{hook_command}"
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:
-				self._add_limine_bootloader(boot_partition, efi_partition, root)
+				self._add_limine_bootloader(boot_partition, efi_partition, root, uki_enabled)
 
 	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
