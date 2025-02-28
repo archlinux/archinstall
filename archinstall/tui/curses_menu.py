@@ -1216,7 +1216,7 @@ class SelectMenu(AbstractCurses):
 
 		return None
 
-	def _focus_item(self, direction: Literal['next' | 'prev' | 'first' | 'last']) -> None:
+	def _focus_item(self, direction: Literal['next', 'prev', 'first', 'last']) -> None:
 		# reset the preview scroll as the newly focused item
 		# may have a different preview row count and it'll blow up
 		self._prev_scroll_pos = 0
