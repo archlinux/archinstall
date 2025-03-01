@@ -7,7 +7,7 @@ import urllib.request
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from pydantic import BaseModel, field_validator, model_validator
 
@@ -146,6 +146,7 @@ class MirrorRegion:
 	def json(self) -> dict[str, list[str]]:
 		return {self.name: self.urls}
 
+	@override
 	def __eq__(self, other: object) -> bool:
 		if not isinstance(other, MirrorRegion):
 			return NotImplemented
