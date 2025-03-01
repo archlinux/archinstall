@@ -112,6 +112,7 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Unified kernel images')),
 				value=False,
+				enabled=SysInfo.has_uefi(),
 				action=ask_for_uki,
 				preview_action=self._prev_uki,
 				key='uki',
