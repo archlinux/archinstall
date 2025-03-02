@@ -115,7 +115,7 @@ class User:
 		# if it's every going to be used
 		return []
 
-	def json(self) -> dict[str, Any]:
+	def json(self) -> dict[str, str | bool]:
 		return {
 			'username': self.username,
 			'!password': self.password,

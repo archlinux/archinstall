@@ -8,7 +8,7 @@ import time
 import traceback
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
