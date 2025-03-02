@@ -45,7 +45,9 @@ from .plugins import plugins
 from .storage import storage
 
 if TYPE_CHECKING:
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -80,7 +82,7 @@ class Installer:
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
-		self.helper_flags: dict[str, Any] = {'base': False, 'bootloader': None}
+		self.helper_flags: dict[str, str | bool | None] = {'base': False, 'bootloader': None}
 
 		for kernel in self.kernels:
 			self._base_packages.append(kernel)
@@ -162,23 +164,21 @@ class Installer:
 		"""
 
 		if not arch_config_handler.args.skip_ntp:
-			info(_('Waiting for time sync (timedatectl show) to complete.'))
+			info(str(_('Waiting for time sync (timedatectl show) to complete.')))
 
 			started_wait = time.time()
 			notified = False
 			while True:
 				if not notified and time.time() - started_wait > 5:
 					notified = True
-					warn(
-						_("Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
+					warn(str(_("Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/")))
 
 				time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
 				if time_val and time_val.strip() == 'yes':
 					break
 				time.sleep(1)
 		else:
-			info(
-				_('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
+			info(str(_('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)')))
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
@@ -188,7 +188,7 @@ class Installer:
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 		# 	time.sleep(1)
 
-		info(_('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.'))
+		info(str(_('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')))
 		# Wait for the timer to kick in
 		while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
 			time.sleep(1)
