@@ -387,7 +387,7 @@ class EditViewport(AbstractViewport):
 		# if this gets initialized multiple times it will be an overlay
 		# and ENTER has to be pressed multiple times to accept
 		if not self._textbox:
-			self._textbox = curses.textpad.Textbox(self._edit_win)
+			self._textbox = Textbox(self._edit_win)
 			self._main_win.refresh()
 
 		self._textbox.edit(self.process_key)  # type: ignore[arg-type]
@@ -1217,7 +1217,7 @@ class SelectMenu(AbstractCurses):
 
 		return None
 
-	def _focus_item(self, direction: Literal['next' | 'prev' | 'first' | 'last']) -> None:
+	def _focus_item(self, direction: Literal['next', 'prev', 'first', 'last']) -> None:
 		# reset the preview scroll as the newly focused item
 		# may have a different preview row count and it'll blow up
 		self._prev_scroll_pos = 0

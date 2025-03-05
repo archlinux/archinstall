@@ -46,7 +46,9 @@ from .plugins import plugins
 from .storage import storage
 
 if TYPE_CHECKING:
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -81,7 +83,7 @@ class Installer:
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
-		self.helper_flags: dict[str, Any] = {'base': False, 'bootloader': None}
+		self.helper_flags: dict[str, str | bool | None] = {'base': False, 'bootloader': None}
 
 		for kernel in self.kernels:
 			self._base_packages.append(kernel)
@@ -163,23 +165,21 @@ class Installer:
 		"""
 
 		if not arch_config_handler.args.skip_ntp:
-			info(_('Waiting for time sync (timedatectl show) to complete.'))
+			info(str(_('Waiting for time sync (timedatectl show) to complete.')))
 
 			started_wait = time.time()
 			notified = False
 			while True:
 				if not notified and time.time() - started_wait > 5:
 					notified = True
-					warn(
-						_("Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
+					warn(str(_("Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/")))
 
 				time_val = SysCommand('timedatectl show --property=NTPSynchronized --value').decode()
 				if time_val and time_val.strip() == 'yes':
 					break
 				time.sleep(1)
 		else:
-			info(
-				_('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
+			info(str(_('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)')))
 
 		info('Waiting for automatic mirror selection (reflector) to complete.')
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
@@ -189,7 +189,7 @@ class Installer:
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 		# 	time.sleep(1)
 
-		info(_('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.'))
+		info(str(_('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')))
 		# Wait for the timer to kick in
 		while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
 			time.sleep(1)
@@ -832,9 +832,6 @@ class Installer:
 					if part in self._disk_encryption.partitions:
 						self._prepare_encrypt()
 
-		if not SysInfo.has_uefi():
-			self._base_packages.append('grub')
-
 		if ucode := self._get_microcode():
 			(self.target / 'boot' / ucode).unlink(missing_ok=True)
 			self._base_packages.append(ucode.stem)
@@ -1154,7 +1151,7 @@ class Installer:
 	) -> None:
 		debug('Installing grub bootloader')
 
-		self.pacman.strap('grub')  # no need?
+		self.pacman.strap('grub')
 
 		grub_default = self.target / 'etc/default/grub'
 		config = grub_default.read_text()
@@ -1235,7 +1232,8 @@ class Installer:
 		self,
 		boot_partition: PartitionModification,
 		efi_partition: PartitionModification | None,
-		root: PartitionModification | LvmVolume
+		root: PartitionModification | LvmVolume,
+		uki_enabled: bool = False
 	) -> None:
 		debug('Installing limine bootloader')
 
@@ -1310,12 +1308,19 @@ Exec = /bin/sh -c "{hook_command}"
 
 		for kernel in self.kernels:
 			for variant in ('', '-fallback'):
-				entry = [
-					'protocol: linux',
-					f'kernel_path: boot():/vmlinuz-{kernel}',
-					f'kernel_cmdline: {kernel_params}',
-					f'module_path: boot():/initramfs-{kernel}{variant}.img',
-				]
+				if uki_enabled:
+					entry = [
+						'protocol: efi',
+						f'path: boot():/EFI/Linux/arch-{kernel}.efi',
+						f'cmdline: {kernel_params}',
+					]
+				else:
+					entry = [
+						'protocol: linux',
+						f'path: boot():/vmlinuz-{kernel}',
+						f'cmdline: {kernel_params}',
+						f'module_path: boot():/initramfs-{kernel}{variant}.img',
+					]
 
 				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
 				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
@@ -1467,7 +1472,7 @@ Exec = /bin/sh -c "{hook_command}"
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:
-				self._add_limine_bootloader(boot_partition, efi_partition, root)
+				self._add_limine_bootloader(boot_partition, efi_partition, root, uki_enabled)
 
 	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
