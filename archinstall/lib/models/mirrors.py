@@ -1,17 +1,16 @@
 import datetime
 import http.client
-import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from enum import Enum
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, field_validator, model_validator
 
-from ..networking import DownloadTimer, fetch_data_from_url, ping
+from ..models.gen import Repository
+from ..networking import DownloadTimer, ping
 from ..output import debug
 
 if TYPE_CHECKING:
@@ -152,146 +151,6 @@ class MirrorRegion:
 		return self.name == other.name
 
 
-class MirrorListHandler:
-	def __init__(
-		self,
-		local_mirrorlist: Path = Path('/etc/pacman.d/mirrorlist'),
-	) -> None:
-		self._local_mirrorlist = local_mirrorlist
-		self._status_mappings: dict[str, list[MirrorStatusEntryV3]] | None = None
-
-	def _mappings(self) -> dict[str, list[MirrorStatusEntryV3]]:
-		if self._status_mappings is None:
-			self.load_mirrors()
-
-		assert self._status_mappings is not None
-		return self._status_mappings
-
-	def get_mirror_regions(self) -> list[MirrorRegion]:
-		available_mirrors = []
-		mappings = self._mappings()
-
-		for region_name, status_entry in mappings.items():
-			urls = [entry.server_url for entry in status_entry]
-			region = MirrorRegion(region_name, urls)
-			available_mirrors.append(region)
-
-		return available_mirrors
-
-	def load_mirrors(self) -> None:
-		from ..args import arch_config_handler
-		if arch_config_handler.args.offline:
-			self.load_local_mirrors()
-		else:
-			if not self.load_remote_mirrors():
-				self.load_local_mirrors()
-
-	def load_remote_mirrors(self) -> bool:
-		url = "https://archlinux.org/mirrors/status/json/"
-		attempts = 3
-
-		for attempt_nr in range(attempts):
-			try:
-				mirrorlist = fetch_data_from_url(url)
-				self._status_mappings = self._parse_remote_mirror_list(mirrorlist)
-				return True
-			except Exception as e:
-				debug(f'Error while fetching mirror list: {e}')
-				time.sleep(attempt_nr + 1)
-
-		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
-		return False
-
-	def load_local_mirrors(self) -> None:
-		with self._local_mirrorlist.open('r') as fp:
-			mirrorlist = fp.read()
-			self._status_mappings = self._parse_locale_mirrors(mirrorlist)
-
-	def get_status_by_region(self, region: str, speed_sort: bool) -> list[MirrorStatusEntryV3]:
-		mappings = self._mappings()
-		region_list = mappings[region]
-		return sorted(region_list, key=lambda mirror: (mirror.score, mirror.speed))
-
-	def _parse_remote_mirror_list(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
-		mirror_status = MirrorStatusListV3.model_validate_json(mirrorlist)
-
-		sorting_placeholder: dict[str, list[MirrorStatusEntryV3]] = {}
-
-		for mirror in mirror_status.urls:
-			# We filter out mirrors that have bad criteria values
-			if any([
-				mirror.active is False,  # Disabled by mirror-list admins
-				mirror.last_sync is None,  # Has not synced recently
-				# mirror.score (error rate) over time reported from backend:
-				# https://github.com/archlinux/archweb/blob/31333d3516c91db9a2f2d12260bd61656c011fd1/mirrors/utils.py#L111C22-L111C66
-				(mirror.score is None or mirror.score >= 100),
-			]):
-				continue
-
-			if mirror.country == "":
-				# TODO: This should be removed once RFC!29 is merged and completed
-				# Until then, there are mirrors which lacks data in the backend
-				# and there is no way of knowing where they're located.
-				# So we have to assume world-wide
-				mirror.country = "Worldwide"
-
-			if mirror.url.startswith('http'):
-				sorting_placeholder.setdefault(mirror.country, []).append(mirror)
-
-		sorted_by_regions: dict[str, list[MirrorStatusEntryV3]] = dict({
-			region: unsorted_mirrors
-			for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])
-		})
-
-		return sorted_by_regions
-
-	def _parse_locale_mirrors(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
-		lines = mirrorlist.splitlines()
-
-		# remove empty lines
-		# lines = [line for line in lines if line]
-
-		mirror_list: dict[str, list[MirrorStatusEntryV3]] = {}
-
-		current_region = ''
-
-		for line in lines:
-			line = line.strip()
-
-			if line.startswith('## '):
-				current_region = line.replace('## ', '').strip()
-				mirror_list.setdefault(current_region, [])
-
-			if line.startswith('Server = '):
-				if not current_region:
-					current_region = 'Local'
-					mirror_list.setdefault(current_region, [])
-
-				url = line.removeprefix('Server = ')
-
-				mirror_entry = MirrorStatusEntryV3(
-					url=url.removesuffix('$repo/os/$arch'),
-					protocol=urllib.parse.urlparse(url).scheme,
-					active=True,
-					country=current_region or 'Worldwide',
-					# The following values are normally populated by
-					# archlinux.org mirror-list endpoint, and can't be known
-					# from just the local mirror-list file.
-					country_code='WW',
-					isos=True,
-					ipv4=True,
-					ipv6=True,
-					details='Locally defined mirror',
-				)
-
-				mirror_list[current_region].append(mirror_entry)
-
-		return mirror_list
-
-
-mirror_list_handler = MirrorListHandler()
-
-
 class SignCheck(Enum):
 	Never = 'Never'
 	Optional = 'Optional'
@@ -304,7 +163,7 @@ class SignOption(Enum):
 
 
 @dataclass
-class CustomMirror:
+class CustomRepository:
 	name: str
 	url: str
 	sign_check: SignCheck
@@ -327,11 +186,11 @@ class CustomMirror:
 		}
 
 	@classmethod
-	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomMirror']:
+	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomRepository']:
 		configs = []
 		for arg in args:
 			configs.append(
-				CustomMirror(
+				CustomRepository(
 					arg['name'],
 					arg['url'],
 					SignCheck(arg['sign_check']),
@@ -343,13 +202,40 @@ class CustomMirror:
 
 
 @dataclass
+class CustomServer:
+	url: str
+
+	def table_data(self) -> dict[str, str]:
+		return {'Url': self.url}
+
+	def json(self) -> dict[str, str]:
+		return {'url': self.url}
+
+	@classmethod
+	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomServer']:
+		configs = []
+		for arg in args:
+			configs.append(
+				CustomServer(arg['url'])
+			)
+
+		return configs
+
+
+@dataclass
 class MirrorConfiguration:
 	mirror_regions: list[MirrorRegion] = field(default_factory=list)
-	custom_mirrors: list[CustomMirror] = field(default_factory=list)
+	custom_servers: list[CustomServer] = field(default_factory=list)
+	optional_repositories: list[Repository] = field(default_factory=list)
+	custom_repositories: list[CustomRepository] = field(default_factory=list)
 
 	@property
-	def regions(self) -> str:
-		return ', '.join([m.name for m in self.mirror_regions])
+	def region_names(self) -> str:
+		return '\n'.join([m.name for m in self.mirror_regions])
+
+	@property
+	def custom_server_urls(self) -> str:
+		return '\n'.join([s.url for s in self.custom_servers])
 
 	def json(self) -> dict[str, Any]:
 		regions = {}
@@ -358,10 +244,22 @@ class MirrorConfiguration:
 
 		return {
 			'mirror_regions': regions,
-			'custom_mirrors': [c.json() for c in self.custom_mirrors]
+			'custom_servers': self.custom_servers,
+			'optional_repositories': [r.value for r in self.optional_repositories],
+			'custom_repositories': [c.json() for c in self.custom_repositories]
 		}
 
-	def mirrorlist_config(self, speed_sort: bool = True) -> str:
+	def custom_servers_config(self) -> str:
+		config = '## Custom Servers\n'
+
+		for server in self.custom_servers:
+			config += f'Server = {server.url}\n'
+
+		return config.strip()
+
+	def regions_config(self, speed_sort: bool = True) -> str:
+		from ..mirrors import mirror_list_handler
+
 		config = ''
 
 		for mirror_region in self.mirror_regions:
@@ -375,23 +273,24 @@ class MirrorConfiguration:
 			for status in sorted_stati:
 				config += f'Server = {status.server_url}\n'
 
-		for cm in self.custom_mirrors:
-			config += f'\n\n## {cm.name}\nServer = {cm.url}\n'
-
 		return config
 
-	def pacman_config(self) -> str:
+	def repositories_config(self) -> str:
 		config = ''
 
-		for mirror in self.custom_mirrors:
-			config += f'\n\n[{mirror.name}]\n'
-			config += f'SigLevel = {mirror.sign_check.value} {mirror.sign_option.value}\n'
-			config += f'Server = {mirror.url}\n'
+		for repo in self.custom_repositories:
+			config += f'\n\n[{repo.name}]\n'
+			config += f'SigLevel = {repo.sign_check.value} {repo.sign_option.value}\n'
+			config += f'Server = {repo.url}\n'
 
 		return config
 
 	@classmethod
-	def parse_args(cls, args: dict[str, Any]) -> 'MirrorConfiguration':
+	def parse_args(
+		cls,
+		args: dict[str, Any],
+		backwards_compatible_repo: list[Repository] = []
+	) -> 'MirrorConfiguration':
 		config = MirrorConfiguration()
 
 		mirror_regions = args.get('mirror_regions', [])
@@ -399,7 +298,21 @@ class MirrorConfiguration:
 			for region, urls in mirror_regions.items():
 				config.mirror_regions.append(MirrorRegion(region, urls))
 
+		if args.get('custom_servers', []):
+			config.custom_servers = CustomServer.parse_args(args['custom_servers'])
+
+		# backwards compatibility with the new custom_repository
 		if 'custom_mirrors' in args:
-			config.custom_mirrors = CustomMirror.parse_args(args['custom_mirrors'])
+			config.custom_repositories = CustomRepository.parse_args(args['custom_mirrors'])
+		if 'custom_repositories' in args:
+			config.custom_repositories = CustomRepository.parse_args(args['custom_repositories'])
+
+		if 'optional_repositories' in args:
+			config.optional_repositories = [Repository(r) for r in args['optional_repositories']]
+
+		if backwards_compatible_repo:
+			for r in backwards_compatible_repo:
+				if r not in config.optional_repositories:
+					config.optional_repositories.append(r)
 
 		return config

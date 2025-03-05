@@ -14,6 +14,11 @@ def creds_fixture() -> Path:
 
 
 @pytest.fixture(scope='session')
+def mirror_backwards_config() -> Path:
+	return Path(__file__).parent / 'data' / 'test_config_mirror_backwards.json'
+
+
+@pytest.fixture(scope='session')
 def mirrorlist_no_country_fixture() -> Path:
 	return Path(__file__).parent / 'data' / 'mirrorlists' / 'test_no_country'
 

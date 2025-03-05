@@ -23,7 +23,6 @@ from .interactions import (
 	ask_hostname,
 	ask_ntp,
 	ask_to_configure_network,
-	select_additional_repositories,
 	select_kernel,
 )
 from .locale.locale_menu import LocaleMenu
@@ -75,7 +74,7 @@ class GlobalMenu(AbstractMenu):
 				key='locale_config'
 			),
 			MenuItem(
-				text=str(_('Mirrors')),
+				text=str(_('Mirrors and repositories')),
 				action=self._mirror_configuration,
 				preview_action=self._prev_mirror_config,
 				key='mirror_config'
@@ -175,13 +174,6 @@ class GlobalMenu(AbstractMenu):
 				value=[],
 				preview_action=self._prev_additional_pkgs,
 				key='packages'
-			),
-			MenuItem(
-				text=str(_('Optional repositories')),
-				action=select_additional_repositories,
-				value=[],
-				preview_action=self._prev_additional_repos,
-				key='additional_repositories'
 			),
 			MenuItem(
 				text=str(_('Timezone')),
@@ -321,12 +313,6 @@ class GlobalMenu(AbstractMenu):
 		if item.value:
 			output = '\n'.join(sorted(item.value))
 			return output
-		return None
-
-	def _prev_additional_repos(self, item: MenuItem) -> str | None:
-		if item.value:
-			repos = ', '.join(item.value)
-			return f'{_("Additional repositories")}: {repos}'
 		return None
 
 	def _prev_tz(self, item: MenuItem) -> str | None:
@@ -545,10 +531,27 @@ class GlobalMenu(AbstractMenu):
 		mirror_config: MirrorConfiguration = item.value
 
 		output = ''
-		if mirror_config.regions:
-			output += '{}: {}\n\n'.format(str(_('Mirror regions')), mirror_config.regions)
-		if mirror_config.custom_mirrors:
-			table = FormattedOutput.as_table(mirror_config.custom_mirrors)
-			output += '{}\n{}'.format(str(_('Custom mirrors')), table)
+		if mirror_config.mirror_regions:
+			title = str(_('Selected mirror regions'))
+			divider = '-' * len(title)
+			regions = mirror_config.region_names
+			output += f'{title}\n{divider}\n{regions}\n\n'
+
+		if mirror_config.custom_servers:
+			title = str(_('Custom servers'))
+			divider = '-' * len(title)
+			servers = mirror_config.custom_server_urls
+			output += f'{title}\n{divider}\n{servers}\n\n'
+
+		if mirror_config.optional_repositories:
+			title = str(_('Optional repositories'))
+			divider = '-' * len(title)
+			repos = ', '.join([r.value for r in mirror_config.optional_repositories])
+			output += f'{title}\n{divider}\n{repos}\n\n'
+
+		if mirror_config.custom_repositories:
+			title = str(_('Custom repositories'))
+			table = FormattedOutput.as_table(mirror_config.custom_repositories)
+			output += f'{title}:\n\n{table}'
 
 		return output.strip()

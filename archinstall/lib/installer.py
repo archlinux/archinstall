@@ -25,6 +25,7 @@ from archinstall.lib.models.device_model import (
 	SubvolumeModification,
 	Unit,
 )
+from archinstall.lib.models.gen import Repository
 from archinstall.tui.curses_menu import Tui
 
 from . import pacman
@@ -482,7 +483,11 @@ class Installer:
 	def post_install_check(self, *args: str, **kwargs: str) -> list[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
-	def set_mirrors(self, mirror_config: MirrorConfiguration, on_target: bool = False) -> None:
+	def set_mirrors(
+		self,
+		mirror_config: MirrorConfiguration,
+		on_target: bool = False
+	) -> None:
 		"""
 		Set the mirror configuration for the installation.
 
@@ -492,28 +497,35 @@ class Installer:
 		:on_target: Whether to set the mirrors on the target system or the live system.
 		:param on_target: bool
 		"""
-		debug('Setting mirrors')
+		debug('Setting mirrors on ' + ('target' if on_target else 'live system'))
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mirrors'):
 				if result := plugin.on_mirrors(mirror_config):
 					mirror_config = result
 
-		mirrorlist_config = mirror_config.mirrorlist_config(speed_sort=True)
-		pacman_config = mirror_config.pacman_config()
-
 		root = self.target if on_target else Path('/')
+		mirrorlist_config = (root / 'etc/pacman.d/mirrorlist')
+		pacman_config = root / 'etc/pacman.conf'
 
-		if pacman_config:
-			debug(f'Pacman config: {pacman_config}')
+		repositories_config = mirror_config.repositories_config()
+		if repositories_config:
+			debug(f'Pacman config: {repositories_config}')
 
-			with open(root / 'etc/pacman.conf', 'a') as fp:
-				fp.write(pacman_config)
+			with open(pacman_config, 'a') as fp:
+				fp.write(repositories_config)
 
-		if mirrorlist_config:
-			debug(f'Mirrorlist: {mirrorlist_config}')
+		regions_config = mirror_config.regions_config(speed_sort=True)
+		if regions_config:
+			debug(f'Mirrorlist:\n{regions_config}')
+			mirrorlist_config.write_text(regions_config)
 
-			(root / 'etc/pacman.d/mirrorlist').write_text(mirrorlist_config)
+		custom_servers = mirror_config.custom_servers_config()
+		if custom_servers:
+			debug(f'Custom servers:\n{custom_servers}')
+
+			content = mirrorlist_config.read_text()
+			mirrorlist_config.write_text(f'{custom_servers}\n\n{content}')
 
 	def genfstab(self, flags: str = '-pU') -> None:
 		fstab_path = self.target / "etc" / "fstab"
@@ -791,8 +803,7 @@ class Installer:
 
 	def minimal_installation(
 		self,
-		testing: bool = False,
-		multilib: bool = False,
+		optional_repositories: list[Repository] = [],
 		mkinitcpio: bool = True,
 		hostname: str | None = None,
 		locale_config: LocaleConfiguration | None = LocaleConfiguration.default()
@@ -830,21 +841,11 @@ class Installer:
 		else:
 			debug('Archinstall will not install any ucode.')
 
-		# Determine whether to enable multilib/testing repositories before running pacstrap if testing flag is set.
+		debug(f'Optional respotories: {optional_repositories}')
+
 		# This action takes place on the host system as pacstrap copies over package repository lists.
 		pacman_conf = pacman.Config(self.target)
-		if multilib:
-			info("The multilib flag is set. This system will be installed with the multilib repository enabled.")
-			pacman_conf.enable(pacman.Repo.MULTILIB)
-		else:
-			info("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
-
-		if testing:
-			info("The testing flag is set. This system will be installed with testing repositories enabled.")
-			pacman_conf.enable(pacman.Repo.TESTING)
-		else:
-			info("The testing flag is not set. This system will be installed without testing repositories enabled.")
-
+		pacman_conf.enable(optional_repositories)
 		pacman_conf.apply()
 
 		self.pacman.strap(self._base_packages)

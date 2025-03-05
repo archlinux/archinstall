@@ -27,9 +27,9 @@ from .device_model import (
 	Unit,
 	_DeviceInfo,
 )
-from .gen import LocalPackage, PackageSearch, PackageSearchResult
+from .gen import LocalPackage, PackageSearch, PackageSearchResult, Repository
 from .locale import LocaleConfiguration
-from .mirrors import CustomMirror, MirrorConfiguration, MirrorRegion
+from .mirrors import CustomRepository, MirrorConfiguration, MirrorRegion
 from .network_configuration import NetworkConfiguration, Nic, NicType
 from .profile_model import ProfileConfiguration
 from .users import PasswordStrength, User
