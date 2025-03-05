@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Disk Configuration &mdash; python-archinstall v2.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=387c4177"></script>
+        <script src="../../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            python-archinstall
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Running Archinstall</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installing/guided.html">Guided installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting help</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../help/known_issues.html">Known Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../help/report_bug.html">Report Issues &amp; Bugs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../help/discord.html">Discord</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Archinstall as a library</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installing/python.html">Python library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/python.html">Python module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../archinstall/plugins.html">Python Plugins</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../archinstall/Installer.html">archinstall.Installer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">python-archinstall</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Disk Configuration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="disk-configuration">
+<span id="disk-config"></span><h1>Disk Configuration<a class="headerlink" href="#disk-configuration" title="Link to this heading"></a></h1>
+<p>There are only three modes in the <code class="docutils literal notranslate"><span class="pre">disk_config</span></code> option. They are described in more detail below.</p>
+<section id="leave-as-is">
+<h2>“Leave as is”<a class="headerlink" href="#leave-as-is" title="Link to this heading"></a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;config_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pre_mounted_config&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/mnt/archinstall&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This mode will not perform any partitioning what so ever.
+Instead it relies on what’s mounted manually by the user under <code class="docutils literal notranslate"><span class="pre">/mnt/archinstall</span></code>.</p>
+<p>Given the following disk example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/mnt/archinstall    (/dev/sda2)
+     ├── boot       (/dev/sda1)
+     └── home       (/dev/sda3)
+</pre></div>
+</div>
+<p>Running <code class="docutils literal notranslate"><span class="pre">archinstall</span> <span class="pre">--conf</span> <span class="pre">your.json</span> <span class="pre">--silent</span></code> where the above JSON is configured. The disk will be left alone — and a working system will be installed to the above folders and mountpoints will be translated into the installed system.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some disk layouts can be too complicated to detect, such as RAID setups. Please do report those setups on the <a class="reference external" href="https://github.com/archlinux/archinstall">Issue Tracker</a> so we can support them.</p>
+</div>
+</section>
+<section id="best-effort">
+<h2>Best Effort<a class="headerlink" href="#best-effort" title="Link to this heading"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This mode will wipe data!</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that this options is similar to the manual partitioning but is generated through the menu system! And the best effort layout might deviate slightly from some wiki guidelines in order to facilitate some optional configurations at a later stage.</p>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;disk_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;config_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;default_layout&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;device_modifications&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;device&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/dev/sda&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;wipe&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;partitions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This mode will attempt to configure a sane default layout on the selected disks.
+Based on the chosen filesystem, and potential optional settings for said filesystem — different default layouts will be provided.</p>
+</section>
+<section id="manual-partitioning">
+<h2>Manual Partitioning<a class="headerlink" href="#manual-partitioning" title="Link to this heading"></a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">     </span><span class="nt">&quot;disk_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;config_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;manual_partitioning&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;device_modifications&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;filesystem struct&quot;</span>
+<span class="w">         </span><span class="p">]</span>
+<span class="w">     </span><span class="p">}</span>
+<span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Manual partitioning is the most complex one of the three. It offers you near endless flexibility of how to partition your disk. It integrates against <a class="reference external" href="https://github.com/dcantrell/pyparted">pyparted</a> and some control logic in <code class="docutils literal notranslate"><span class="pre">archinstall</span></code> that deals with creating things like subvolumes and compression.</p>
+<p>Sizes are by default <code class="docutils literal notranslate"><span class="pre">sector</span></code> units, but other units are supported.</p>
+<p>The options supplied to <code class="docutils literal notranslate"><span class="pre">manual_partitioning</span></code> are dictionary definitions, where the following parameters must exist:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">JSON options</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 15.0%" />
+<col style="width: 65.0%" />
+<col style="width: 5.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Value(s)</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>device</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Which block-device to format</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>partitions</p></td>
+<td><p>[ {key: val} ]</p></td>
+<td><p>The data describing the change/addition in a partition</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-even"><td><p>wipe</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>clear the disk before adding any partitions</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+<p>Each partition definition heavily relies on what filesystem is used.
+Below follow two of the more common filesystems, anything else will best be described by running <code class="docutils literal notranslate"><span class="pre">archinstall</span></code> to generate a desired configuration for the desired filesystem type — and copy the relevant parts for permanent configurations.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Important to note that the units and positions in the examples below — are highly user specific!</p>
+</div>
+<section id="fat32">
+<h3>FAT32<a class="headerlink" href="#fat32" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;btrfs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">        </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">           </span><span class="s2">&quot;boot&quot;</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;fs_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fat32&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;length&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">99982592</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;mount_options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">        </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/boot&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;obj_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;369f31a8-2781-4d6b-96e7-75680552b7c9&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span>
+<span class="w">           </span><span class="p">},</span>
+<span class="w">           </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sectors&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">34</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;create&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;primary&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Boot</span></code> flag will make <code class="docutils literal notranslate"><span class="pre">archinstall</span></code> automatically set the correct ESP partition GUID if the system is booted with <code class="docutils literal notranslate"><span class="pre">EFI</span></code> support. The GUID will then be set to <code class="docutils literal notranslate"><span class="pre">C12A7328-F81F-11D2-BA4B-00A0C93EC93B</span></code>.</p>
+</div>
+</section>
+<section id="ext4">
+<h3>EXT4<a class="headerlink" href="#ext4" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="w">     </span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;btrfs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">   </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">   </span><span class="nt">&quot;fs_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ext4&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;length&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">15805127360</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;mount_options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">   </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;obj_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3e75d045-21a4-429d-897e-8ec19a006e8b&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16106127360</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MB&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">301</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;create&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;primary&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="btrfs">
+<h3>BTRFS<a class="headerlink" href="#btrfs" title="Link to this heading"></a></h3>
+<p>The BTRFS filesystem is inherently more complicated, thus the options are a bit more involved.
+This example contains both subvolumes and compression.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">&quot;mountpoint&quot;:</span> <span class="pre">null</span></code> is used for the overall partition, and instead individual subvolumes have mountpoints set.</p>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;btrfs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">       </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="p">},</span>
+<span class="w">       </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@home&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="p">},</span>
+<span class="w">       </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/log&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@log&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="p">},</span>
+<span class="w">       </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/cache/pacman/pkg&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@pkg&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="p">},</span>
+<span class="w">       </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/.snapshots&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@.snapshots&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="p">}</span>
+<span class="w">   </span><span class="p">],</span>
+<span class="w">   </span><span class="nt">&quot;dev_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">   </span><span class="nt">&quot;fs_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btrfs&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;mount_options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">       </span><span class="s2">&quot;compress=zstd&quot;</span>
+<span class="w">   </span><span class="p">],</span>
+<span class="w">   </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;obj_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;d712357f-97cc-40f8-a095-24ff244d4539&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span>
+<span class="w">       </span><span class="p">},</span>
+<span class="w">       </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">15568207872</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span>
+<span class="w">       </span><span class="p">},</span>
+<span class="w">       </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MiB&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">513</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;create&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;primary&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Anton Hvornum.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

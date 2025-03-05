@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Known Issues &mdash; python-archinstall v2.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=387c4177"></script>
+        <script src="../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Report Issues &amp; Bugs" href="report_bug.html" />
+    <link rel="prev" title="Guided installation" href="../installing/guided.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            python-archinstall
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Running Archinstall</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installing/guided.html">Guided installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting help</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Known Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#waiting-for-time-sync-2144">Waiting for time sync #2144</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#missing-nvidia-proprietary-driver-2002">Missing Nvidia Proprietary Driver #2002</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arm-32bit-and-other-cpu-types-error-out-1686-2185">ARM, 32bit and other CPU types error out #1686, #2185</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#keyring-is-out-of-date-2213">Keyring is out of date #2213</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aur-packages">AUR packages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="report_bug.html">Report Issues &amp; Bugs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="discord.html">Discord</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Archinstall as a library</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installing/python.html">Python library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/python.html">Python module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../archinstall/plugins.html">Python Plugins</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../archinstall/Installer.html">archinstall.Installer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">python-archinstall</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Known Issues</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="known-issues">
+<span id="help-known-issues"></span><h1>Known Issues<a class="headerlink" href="#known-issues" title="Link to this heading"></a></h1>
+<p>Some issues are out of the <a class="reference external" href="https://github.com/archlinux/archinstall/">archinstall</a> projects scope, and the ones we know of are listed below.</p>
+<section id="waiting-for-time-sync-2144">
+<span id="waiting-for-time-sync"></span><h2>Waiting for time sync <a class="reference external" href="https://github.com/archlinux/archinstall/issues/2144">#2144</a><a class="headerlink" href="#waiting-for-time-sync-2144" title="Link to this heading"></a></h2>
+<p>The usual root cause of this is the network topology.
+More specifically <a class="reference external" href="https://github.com/archlinux/archinstall/blob/e6344f93f7e476d05bbcd642f2ed91fdde545870/archinstall/lib/installer.py#L136">timedatectl show</a> cannot perform a proper time sync against the default servers.</p>
+<p>Restarting <code class="docutils literal notranslate"><span class="pre">systemd-timesyncd.service</span></code> might work but most often you need to configure <code class="docutils literal notranslate"><span class="pre">/etc/systemd/timesyncd.conf</span></code> to match your network design.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you know your time is correct on the machine, you can run <code class="docutils literal notranslate"><span class="pre">archinstall</span> <span class="pre">--skip-ntp</span></code> to ignore time sync.</p>
+</div>
+</section>
+<section id="missing-nvidia-proprietary-driver-2002">
+<h2>Missing Nvidia Proprietary Driver <a class="reference external" href="https://github.com/archlinux/archinstall/issues/2002">#2002</a><a class="headerlink" href="#missing-nvidia-proprietary-driver-2002" title="Link to this heading"></a></h2>
+<p>In some instances, the nvidia driver might not have all the necessary packages installed.
+This is due to the kernel selection and/or hardware setups requiring additional packages to work properly.</p>
+<p>A common workaround is to install the package <a class="reference external" href="https://archlinux.org/packages/core/x86_64/linux-headers/">linux-headers</a> and <a class="reference external" href="https://archlinux.org/packages/extra/x86_64/nvidia-dkms/">nvidia-dkms</a></p>
+</section>
+<section id="arm-32bit-and-other-cpu-types-error-out-1686-2185">
+<h2>ARM, 32bit and other CPU types error out <a class="reference external" href="https://github.com/archlinux/archinstall/issues/1686">#1686</a>, <a class="reference external" href="https://github.com/archlinux/archinstall/issues/2185">#2185</a><a class="headerlink" href="#arm-32bit-and-other-cpu-types-error-out-1686-2185" title="Link to this heading"></a></h2>
+<p>This is a bit of a catch-all known issue.
+Officially <a class="reference external" href="https://wiki.archlinux.org/title/Frequently_asked_questions#What_architectures_does_Arch_support?">x86_64</a> is only supported by Arch Linux.
+Hence little effort have been put into supporting other platforms.</p>
+<p>In theory, other architectures should work but small quirks might arise.</p>
+<p>PR’s are welcome but please be respectful of the delays in merging.
+Other fixes, issues or features will be prioritized for the above reasons.</p>
+</section>
+<section id="keyring-is-out-of-date-2213">
+<h2>Keyring is out of date <a class="reference external" href="https://github.com/archlinux/archinstall/issues/2213">#2213</a><a class="headerlink" href="#keyring-is-out-of-date-2213" title="Link to this heading"></a></h2>
+<p>Missing key-issues tend to be that the <a class="reference external" href="https://archlinux.org/packages/core/any/archlinux-keyring/">archlinux-keyring</a> package is out of date, usually as a result of an outdated ISO.
+There is an attempt from upstream to fix this issue, and it’s the <a class="reference external" href="https://gitlab.archlinux.org/archlinux/archlinux-keyring/-/blob/7e672dad10652a80d1cc575d75cdb46442cd7f96/wkd_sync/archlinux-keyring-wkd-sync.service.in">archlinux-keyring-wkd-sync.service</a></p>
+<p>The service starts almost immediately during boot, and if network is not configured in time — the service will fail.
+Subsequently the <code class="docutils literal notranslate"><span class="pre">archinstall</span></code> run might operate on a old keyring despite there being an update service for this.</p>
+<p>There is really no way to reliably over time work around this issue in <code class="docutils literal notranslate"><span class="pre">archinstall</span></code>.
+Instead, efforts to the upstream service should be considered the way forward. And/or keys not expiring between a sane amount of ISO’s.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The issue can happen on new ISO’s too even as little as a few days after release, as some keys might expire right after the keyring is <em>“burnt in”</em> to the ISO.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Another common issue relating to the network not being configured, is that time might not be set correctly - resulting in the keyring not being able to update. See <a class="reference internal" href="#waiting-for-time-sync"><span class="std std-ref">Waiting for time sync #2144</span></a>.</p>
+</div>
+</section>
+<section id="aur-packages">
+<h2>AUR packages<a class="headerlink" href="#aur-packages" title="Link to this heading"></a></h2>
+<p>This is also a catch-all issue.
+<a class="reference external" href="https://wiki.archlinux.org/title/Arch_User_Repository#Updating_packages">AUR is unsupported</a>, and until that changes we cannot use AUR packages to solve feature requests in <code class="docutils literal notranslate"><span class="pre">archinstall</span></code>.</p>
+<p>This means that feature requests like supporting filesystems such as <a class="reference external" href="https://aur.archlinux.org/packages/zfs-linux">ZFS</a> can not be added, and issues cannot be solved by using AUR packages either.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>But in spirit of giving the community options, <code class="docutils literal notranslate"><span class="pre">archinstall</span></code> supports <a class="reference internal" href="../archinstall/plugins.html#archinstall-plugins"><span class="std std-ref">Python Plugins</span></a>, which means you can run <code class="docutils literal notranslate"><span class="pre">archinstall</span> <span class="pre">--plugin</span> <span class="pre">&lt;url&gt;</span></code> and source an AUR plugin.</p>
+<p><a class="reference external" href="https://github.com/torxed/archinstall-aur">torxed/archinstall-aur</a> is a reference implementation for plugins:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>archinstall<span class="w"> </span>--plugin<span class="w"> </span>https://archlinux.life/aur-plugin
+</pre></div>
+</div>
+<p><a class="reference external" href="https://github.com/phisch/archinstall-aur">phisch/archinstall-aur</a> is another alternative:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>archinstall<span class="w"> </span>--plugin<span class="w"> </span>https://raw.githubusercontent.com/phisch/archinstall-aur/master/archinstall-aur.py
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This will allow for unsupported usage of AUR during installation.</p>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../installing/guided.html" class="btn btn-neutral float-left" title="Guided installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="report_bug.html" class="btn btn-neutral float-right" title="Report Issues &amp; Bugs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Anton Hvornum.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
