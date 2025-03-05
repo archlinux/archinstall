@@ -231,14 +231,14 @@ class MirrorMenu(AbstractSubMenu):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=str(_('Select a mirror region')),
+				text=str(_('Select regions')),
 				action=select_mirror_regions,
 				value=self._mirror_config.mirror_regions,
 				preview_action=self._prev_regions,
 				key='mirror_regions'
 			),
 			MenuItem(
-				text=str(_('Add custom mirror servers')),
+				text=str(_('Add custom servers')),
 				action=add_custom_mirror_servers,
 				value=self._mirror_config.custom_servers,
 				preview_action=self._prev_custom_servers,
@@ -252,7 +252,7 @@ class MirrorMenu(AbstractSubMenu):
 				key='optional_repositories'
 			),
 			MenuItem(
-				text=str(_('Custom mirror repository')),
+				text=str(_('Add custom repository')),
 				action=select_custom_mirror,
 				value=self._mirror_config.custom_repositories,
 				preview_action=self._prev_custom_mirror,

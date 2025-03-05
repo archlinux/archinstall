@@ -750,12 +750,13 @@ class SelectMenu(AbstractCurses):
 			return 0
 
 		lines = header.split('\n') if header else []
-		table_header = [line for line in lines if '|' in line]
+		table_header = [line for line in lines if '-' in line]
+
 		longest_header = len(table_header[0]) if table_header else 0
 		longest_entry = self._item_group.get_max_width()
 
-		delta = abs(longest_header - longest_entry)
-		offset = delta + 3  # 3 because it seems to align it...
+		delta = longest_header - longest_entry
+		offset = delta + 2  # 2 because it seems to align it...
 
 		return offset
 
