@@ -13,7 +13,6 @@ from .general_conf import (
 	ask_for_audio_selection,
 	ask_hostname,
 	ask_ntp,
-	select_additional_repositories,
 	select_archinstall_language,
 )
 from .manage_users_conf import UserList, ask_for_additional_users

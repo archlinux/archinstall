@@ -10,7 +10,6 @@ from ..general import SysCommand
 from ..output import error, info, warn
 from ..plugins import plugins
 from .config import Config
-from .repo import Repo
 
 if TYPE_CHECKING:
 	from archinstall.lib.translationhandler import DeferredTranslation

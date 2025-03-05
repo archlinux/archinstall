@@ -51,13 +51,11 @@ def perform_installation(mountpoint: Path) -> None:
 		error("No disk configuration provided")
 		return
 
-	# Retrieve list of additional repositories and set boolean values appropriately
 	disk_config: DiskLayoutConfiguration = config.disk_config
-	enable_testing = 'testing' in config.additional_repositories
-	enable_multilib = 'multilib' in config.additional_repositories
 	run_mkinitcpio = not config.uki
 	locale_config = config.locale_config
 	disk_encryption = config.disk_encryption
+	optional_repositories = config.mirror_config.optional_repositories if config.mirror_config else []
 
 	with Installer(
 		mountpoint,
@@ -80,8 +78,7 @@ def perform_installation(mountpoint: Path) -> None:
 			installation.set_mirrors(mirror_config, on_target=False)
 
 		installation.minimal_installation(
-			testing=enable_testing,
-			multilib=enable_multilib,
+			optional_repositories=optional_repositories,
 			mkinitcpio=run_mkinitcpio,
 			hostname=arch_config_handler.config.hostname,
 			locale_config=locale_config

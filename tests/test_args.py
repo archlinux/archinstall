@@ -5,9 +5,10 @@ from pytest import MonkeyPatch
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
-from archinstall.lib.mirrors import MirrorConfiguration, MirrorRegion
-from archinstall.lib.models import Audio, AudioConfiguration, Bootloader, DiskLayoutConfiguration, DiskLayoutType, NetworkConfiguration, User
+from archinstall.lib.mirrors import CustomRepository, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
+from archinstall.lib.models import Audio, AudioConfiguration, Bootloader, DiskLayoutConfiguration, DiskLayoutType, NetworkConfiguration, Repository, User
 from archinstall.lib.models.locale import LocaleConfiguration
+from archinstall.lib.models.mirrors import CustomServer
 from archinstall.lib.models.network_configuration import Nic, NicType
 from archinstall.lib.models.profile_model import ProfileConfiguration
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -149,7 +150,16 @@ def test_config_file_parsing(
 					urls=['http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch']
 				)
 			],
-			custom_mirrors=[]
+			custom_servers=[CustomServer('https://mymirror.com/$repo/os/$arch')],
+			optional_repositories=[Repository.Testing],
+			custom_repositories=[
+				CustomRepository(
+					name='myrepo',
+					url='https://myrepo.com/$repo/os/$arch',
+					sign_check=SignCheck.Required,
+					sign_option=SignOption.TrustAll
+				)
+			]
 		),
 		network_config=NetworkConfiguration(
 			type=NicType.MANUAL,
@@ -176,10 +186,42 @@ def test_config_file_parsing(
 		parallel_downloads=66,
 		swap=False,
 		timezone='UTC',
-		additional_repositories=["testing"],
 		users=[User(username='user_name', password='user_pwd', sudo=True)],
 		disk_encryption=None,
 		services=['service_1', 'service_2'],
 		root_password='super_pwd',
 		custom_commands=["echo 'Hello, World!'"]
+	)
+
+
+def test_mirror_backwards_config_file_parsing(
+	monkeypatch: MonkeyPatch,
+	mirror_backwards_config: Path,
+) -> None:
+	monkeypatch.setattr('sys.argv', [
+		'archinstall',
+		'--config',
+		str(mirror_backwards_config),
+	])
+
+	handler = ArchConfigHandler()
+	arch_config = handler.config
+
+	assert arch_config.mirror_config == MirrorConfiguration(
+		mirror_regions=[
+			MirrorRegion(
+				name='Australia',
+				urls=['http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch']
+			)
+		],
+		custom_servers=[],
+		optional_repositories=[Repository.Testing],
+		custom_repositories=[
+			CustomRepository(
+				name='my_mirror',
+				url='example.com',
+				sign_check=SignCheck.Optional,
+				sign_option=SignOption.TrustedOnly
+			)
+		]
 	)

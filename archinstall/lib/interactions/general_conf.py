@@ -168,7 +168,7 @@ def ask_additional_packages_to_install(
 	preset: list[str] = [],
 	repositories: set[Repository] = set()
 ) -> list[str]:
-	Tui.print('Loading packages...', clear_screen=True)
+	Tui.print(str(_('Loading packages...')), clear_screen=True)
 
 	repositories |= {Repository.Core, Repository.Extra}
 	packages = list_available_packages(tuple(repositories))
@@ -264,37 +264,6 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 				fwrite.write(f"{line}\n")
 
 	return downloads
-
-
-def select_additional_repositories(preset: list[str]) -> list[str]:
-	"""
-	Allows the user to select additional repositories (multilib, and testing) if desired.
-
-	:return: The string as a selected repository
-	:rtype: string
-	"""
-
-	repositories = ["multilib", "testing"]
-	items = [MenuItem(r, value=r) for r in repositories]
-	group = MenuItemGroup(items, sort_items=True)
-	group.set_selected_by_value(preset)
-
-	result = SelectMenu(
-		group,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min('Additional repositories'),
-		allow_reset=True,
-		allow_skip=True,
-		multi=True
-	).run()
-
-	match result.type_:
-		case ResultType.Skip:
-			return preset
-		case ResultType.Reset:
-			return []
-		case ResultType.Selection:
-			return result.get_values()
 
 
 def ask_chroot() -> bool:
