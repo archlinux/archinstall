@@ -9,13 +9,17 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] כאן נוצר קובץ היומן: {} {}"
 
-msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    נא להגיש דיווח על הבעיה הזאת (ואת הקובץ) דרך https://github.com/archlinux/archinstall/issues"
+msgid ""
+"    Please submit this issue (and file) to https://github.com/archlinux/"
+"archinstall/issues"
+msgstr ""
+"    נא להגיש דיווח על הבעיה הזאת (ואת הקובץ) דרך https://github.com/archlinux/"
+"archinstall/issues"
 
 msgid "Do you really want to abort?"
 msgstr "לבטל את התהליך?"
@@ -50,26 +54,38 @@ msgstr "נא לבחור מנהל טעינה"
 msgid "Choose an audio server"
 msgstr "נא לבחור שרת שמע"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "רק חבילות כגוןbase,‏ base-devel,‏ linux,‏ linux-firmware,‏ efibootmgr וחבילות פרופיל כרשות מותקנות."
+msgid ""
+"Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and "
+"optional profile packages are installed."
+msgstr ""
+"רק חבילות כגוןbase,‏ base-devel,‏ linux,‏ linux-firmware,‏ efibootmgr וחבילות "
+"פרופיל כרשות מותקנות."
 
-msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgid ""
+"If you desire a web browser, such as firefox or chromium, you may specify it "
+"in the following prompt."
 msgstr "כדי שיותקן דפדפן כגון firefox או chromium אפשר לציין זאת בבקשה הבאה."
 
-msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgid ""
+"Write additional packages to install (space separated, leave blank to skip): "
 msgstr "נא לכתוב חבילות נוספות להתקנה (להפריד ברווחים, להשאיר ריק כדי לדלג): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "העתקת הגדרות הרשת מה־ISO להתקנה"
 
-msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "להשתמש ב־NetworkManager (חיוני להגדרת האינטרנט עם כלים חזותיים ב־GNOME וב־KDE)"
+msgid ""
+"Use NetworkManager (necessary for configuring internet graphically in GNOME "
+"and KDE)"
+msgstr ""
+"להשתמש ב־NetworkManager (חיוני להגדרת האינטרנט עם כלים חזותיים ב־GNOME וב־KDE)"
 
 msgid "Select one network interface to configure"
 msgstr "נא לבחור מנשק רשת להגדרה"
 
-msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "נא לבחור איזה מצב להגדרה עבור „{}“ או לדלג כדי להשתמש במצב ברירת המחדל „{}“"
+msgid ""
+"Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr ""
+"נא לבחור איזה מצב להגדרה עבור „{}“ או לדלג כדי להשתמש במצב ברירת המחדל „{}“"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "נא למלא IP ורשת־משנה (סאבנט) עבור {} (למשל: 192.168.0.5/24): "
@@ -96,8 +112,10 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "נא לציין את סוג מערכת הקבצים הרצויה במחיצה"
 
-msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "נא למלא את מיקום ההתחלה (ביחידות של parted‏: s,‏ GB, %, וכו׳ ; ברירת מחדל: {}): "
+msgid ""
+"Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
+"נא למלא את מיקום ההתחלה (ביחידות של parted‏: s,‏ GB, %, וכו׳ ; ברירת מחדל: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr "נא למלא את מיקום הסוף (ביחידות של parted‏: s,‏ GB, %, וכו׳ ; למשל: {}): "
@@ -123,8 +141,12 @@ msgstr ""
 "\n"
 "‫בחירה לפי מפתח אילו מחיצות לעגן ואיפה"
 
-msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * נקודות העגינה של המחיצה הן יחסיות למערכת ההתקנה, מחיצת הטעינה למשל תהיה ‎/boot."
+msgid ""
+" * Partition mount-points are relative to inside the installation, the boot "
+"would be /boot as an example."
+msgstr ""
+" * נקודות העגינה של המחיצה הן יחסיות למערכת ההתקנה, מחיצת הטעינה למשל תהיה ‎/"
+"boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr "נא לבחור להיכן לעגן את המחיצה (להשאיר ריק כדי להסיר את נקודת העגינה): "
@@ -172,16 +194,23 @@ msgid "Archinstall language"
 msgstr "השפה של Archinstall"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "למחוק את כל הכוננים הנבחרים ולהשתמש בפריסת מחיצות כברירת מחדל על בסיס מאמץ מיטבי"
+msgstr ""
+"למחוק את כל הכוננים הנבחרים ולהשתמש בפריסת מחיצות כברירת מחדל על בסיס מאמץ "
+"מיטבי"
 
-msgid "Select what to do with each individual drive (followed by partition usage)"
+msgid ""
+"Select what to do with each individual drive (followed by partition usage)"
 msgstr "לבחור מה לעשות עם כל כונן בנפרד (עם אופן השימוש במחיצה בסוף)"
 
 msgid "Select what you wish to do with the selected block devices"
 msgstr "נא לבחור מה לעשות עם התקני הבלוק הנבחרים"
 
-msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "זאת רשימה של פרופילים שנכתבו מראש, הם עשויים להקל על התקנת דברים כמו סביבות שולחן עבודה"
+msgid ""
+"This is a list of pre-programmed profiles, they might make it easier to "
+"install things like desktop environments"
+msgstr ""
+"זאת רשימה של פרופילים שנכתבו מראש, הם עשויים להקל על התקנת דברים כמו סביבות "
+"שולחן עבודה"
 
 msgid "Select keyboard layout"
 msgstr "נא לבחור פריסת מקלדת"
@@ -192,14 +221,26 @@ msgstr "נא לבחור את אחר מהאזורים להוריד ממנו חב�
 msgid "Select one or more hard drives to use and configure"
 msgstr "נא לבחור כונן קשיח אחד או יותר לשימוש והגדרה"
 
-msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "לתאימות המיטבית עם חומרת ה־AMD שלך, כדאי להשתמש או באפשרות של קוד פתוח לחלוטין או ב־AMD / ATI."
+msgid ""
+"For the best compatibility with your AMD hardware, you may want to use either "
+"the all open-source or AMD / ATI options."
+msgstr ""
+"לתאימות המיטבית עם חומרת ה־AMD שלך, כדאי להשתמש או באפשרות של קוד פתוח לחלוטין "
+"או ב־AMD / ATI."
 
-msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "לתאימות המיטבית עם חומרת האינטל שלך, כדאי להשתמש או באפשרות של קוד פתוח לחלוטין או באינטל.‬\n"
+msgid ""
+"For the best compatibility with your Intel hardware, you may want to use "
+"either the all open-source or Intel options.\n"
+msgstr ""
+"לתאימות המיטבית עם חומרת האינטל שלך, כדאי להשתמש או באפשרות של קוד פתוח "
+"לחלוטין או באינטל.‬\n"
 
-msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "לתאימות המיטבית עם חומרת ה־Nvidia שלך, כדאי להשתמש במנהל ההתקן הקנייני של Nvidia.‬\n"
+msgid ""
+"For the best compatibility with your Nvidia hardware, you may want to use the "
+"Nvidia proprietary driver.\n"
+msgstr ""
+"לתאימות המיטבית עם חומרת ה־Nvidia שלך, כדאי להשתמש במנהל ההתקן הקנייני של "
+"Nvidia.‬\n"
 
 msgid ""
 "\n"
@@ -231,8 +272,12 @@ msgstr "יש לבחור באפשרות אחת או יותר מאלו שלהלן:
 msgid "Adding partition...."
 msgstr "נוספת מחיצה…"
 
-msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "יש למלא סוג מערכת קבצים תקפה כדי להמשיך. ניתן לעיין ב־`man parted` לקבלת רשימת סוגי מערכת הקבצים התקפות."
+msgid ""
+"You need to enter a valid fs-type in order to continue. See `man parted` for "
+"valid fs-type's."
+msgstr ""
+"יש למלא סוג מערכת קבצים תקפה כדי להמשיך. ניתן לעיין ב־`man parted` לקבלת רשימת "
+"סוגי מערכת הקבצים התקפות."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
 msgstr "שגיאה: הצגת הפרופילים בכתובת „{}“ הניבה:"
@@ -387,11 +432,14 @@ msgstr "סיסמה למשתמש „{}“: "
 msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "מתבצע וידוא שחבילות נוספות קיימות (יכול לקחת כמה שניות)"
 
-msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgid ""
+"Would you like to use automatic time synchronization (NTP) with the default "
+"time servers?\n"
 msgstr "להשתמש בסנכרון שעון אוטומטי (NTP) מול שרתי התזמון כברירת מחדל?‬\n"
 
 msgid ""
-"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"Hardware time and other post-configuration steps might be required in order "
+"for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
 "שעון חומרה וצעדים נוספים לאחר ההתקנה כנראה יהיו נחוצים כדי שה־NTP יעבוד.‬\n"
@@ -405,7 +453,8 @@ msgstr "יש להשתמש ב־ESC כדי לדלג‬\n"
 
 msgid ""
 "\n"
-" Choose an object from the list, and select one of the available actions for it to execute"
+" Choose an object from the list, and select one of the available actions for "
+"it to execute"
 msgstr ""
 "\n"
 "‫נא לבחור עצם מהרשימה ולבחור באחת מהאפשרויות הזמינות עבורו כדי להפעיל אותו"
@@ -444,11 +493,16 @@ msgstr ""
 "\n"
 "‫זאת ההגדרה שבחרת:"
 
-msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgid ""
+"Pacman is already running, waiting maximum 10 minutes for it to terminate."
 msgstr "‫Pacman כבר פועל, נמתין למשך 10 דקות לכל היותר עד לסיומו."
 
-msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "נעילת ה־pacman הקודמת מעולם לא נסגרה. נא לנקות הפעלות קיימות של pacman בטרם הפעלת archinstall."
+msgid ""
+"Pre-existing pacman lock never exited. Please clean up any existing pacman "
+"sessions before using archinstall."
+msgstr ""
+"נעילת ה־pacman הקודמת מעולם לא נסגרה. נא לנקות הפעלות קיימות של pacman בטרם "
+"הפעלת archinstall."
 
 msgid "Choose which optional additional repositories to enable"
 msgstr "נא לבחור אילו מאגרים נוספים להפעיל כרשות"
@@ -541,7 +595,8 @@ msgstr ""
 "‬\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "יש לציין או סיסמה למשתמש העליון (root) או לפחות משתמש אחד עם הרשאות על (sudo)"
+msgstr ""
+"יש לציין או סיסמה למשתמש העליון (root) או לפחות משתמש אחד עם הרשאות על (sudo)"
 
 msgid "Manage superuser accounts: "
 msgstr "ניהול משתמשים עם הרשאות על: "
@@ -601,7 +656,9 @@ msgstr "להשתמש בדחיסה של BTRFS?"
 msgid "Would you like to create a separate partition for /home?"
 msgstr "ליצור מחיצה נפרדת ל־‎/home?"
 
-msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgid ""
+"The selected drives do not have the minimum capacity required for an automatic "
+"suggestion\n"
 msgstr "לכוננים הנבחרים אין את הקיבולת המזערית הנחוצה להצעות אוטומטיות\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
@@ -649,22 +706,31 @@ msgstr "הגדרה ידנית"
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr "סימון/ביטול סימון מחיצה כדחוסה (btrfs בלבד)"
 
-msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgid ""
+"The password you are using seems to be weak, are you sure you want to use it?"
 msgstr "נראה שהסיסמה שבחרת חלשה, בכל זאת להשתמש בה?"
 
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgid ""
+"Provides a selection of desktop environments and tiling window managers, e.g. "
+"gnome, kde, sway"
 msgstr "מספק מבחר סביבות שולחן עבודה ומנהלי ריצוף חלונות, למשל: gnome,‏ kde,‏ sway"
 
 msgid "Select your desired desktop environment"
 msgstr "נא לבחור את סביבת שולחן העבודה הרצויה לך"
 
-msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgid ""
+"A very basic installation that allows you to customize Arch Linux as you see "
+"fit."
 msgstr "התקנה בסיסית מאוד שמאפשרת לך להתאים את Arch Linux בדיוק לדרך שנוחה לך."
 
-msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgid ""
+"Provides a selection of various server packages to install and enable, e.g. "
+"httpd, nginx, mariadb"
 msgstr "מספק מבחר חבילות שרת להתקנה ולהפעלה, למשל: httpd,‏ nginx,‏ mariadb"
 
-msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgid ""
+"Choose which servers to install, if none then a minimal installation will be "
+"done"
 msgstr "נא לבחור אילו שרתים להתקין, אם אין אז תבוצע התקנה מזערית"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
@@ -673,8 +739,12 @@ msgstr "מתקין מערכת מזערית בנוסף ל־xorg ולמנהלי ה
 msgid "Press Enter to continue."
 msgstr "נא ללחוץ על Enter כדי להמשיך."
 
-msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "האם להיכנס להתקנה החדשה שיצרת עם chroot (העמסת סביבה) לביצוע הגדרות שלאחר התקנה?"
+msgid ""
+"Would you like to chroot into the newly created installation and perform post-"
+"installation configuration?"
+msgstr ""
+"האם להיכנס להתקנה החדשה שיצרת עם chroot (העמסת סביבה) לביצוע הגדרות שלאחר "
+"התקנה?"
 
 msgid "Are you sure you want to reset this setting?"
 msgstr "לאפס את ההגדרה הזאת?"
@@ -685,7 +755,9 @@ msgstr "נא לבחור כונן אחד או או יותר לשימוש ולהג
 msgid "Any modifications to the existing setting will reset the disk layout!"
 msgstr "כל שינוי שהוא להגדרה הקיימת יאפס את פריסת הכוננים!"
 
-msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgid ""
+"If you reset the harddrive selection this will also reset the current disk "
+"layout. Are you sure?"
 msgstr "איפוס בחירת הכוננים יאפס גם את פריסת הכוננים הנוכחית. להמשיך?"
 
 msgid "Save and exit"
@@ -734,8 +806,12 @@ msgstr "הוספה: "
 msgid "Value: "
 msgstr "ערך: "
 
-msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "אפשר לדלג על בחירת כונן וחלוקה למחיצות ולהשתמש בתצורת הכוננים שמעוגנת תחת ‎/mnt כפי שהיא (ניסיוני)"
+msgid ""
+"You can skip selecting a drive and partitioning and use whatever drive-setup "
+"is mounted at /mnt (experimental)"
+msgstr ""
+"אפשר לדלג על בחירת כונן וחלוקה למחיצות ולהשתמש בתצורת הכוננים שמעוגנת תחת ‎/mnt "
+"כפי שהיא (ניסיוני)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "נא לבחור אחד מהכוננים או לדלג ולהשתמש ב־‎/mnt כברירת מחדל"
@@ -758,8 +834,10 @@ msgstr "מקום פנוי"
 msgid "Bus-type"
 msgstr "סוג אפיק"
 
-msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "יש לציין או סיסמה למשתמש העליון (root) או לפחות משתמש אחד עם הרשאות על (sudo)"
+msgid ""
+"Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr ""
+"יש לציין או סיסמה למשתמש העליון (root) או לפחות משתמש אחד עם הרשאות על (sudo)"
 
 msgid "Enter username (leave blank to skip): "
 msgstr "נא למלא שם משתמש (להשאיר ריק כדי לדלג): "
@@ -797,7 +875,9 @@ msgstr "מחיקת תת־כרך"
 msgid "Configured {} interfaces"
 msgstr "הוגדרו {} מנשקים"
 
-msgid "This option enables the number of parallel downloads that can occur during installation"
+msgid ""
+"This option enables the number of parallel downloads that can occur during "
+"installation"
 msgstr "האפשרות הזאת מאפשרת מספר הורדות במקביל שיכולות להתרחש במהלך התקנה"
 
 msgid ""
@@ -809,17 +889,25 @@ msgstr ""
 "‫ (אמור להיות ערך בין 1 ל־{})‬\n"
 "‫הערה:"
 
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgid ""
+" - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at "
+"a time )"
 msgstr " - ערך מרבי   : {} ( מאפשר {} הורדות במקביל, מאפשר {} הורדות בבת אחת )"
 
-msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgid ""
+" - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a "
+"time )"
 msgstr " - ערך מזערי   : 1 ( מאפשר כל הורדות במקביל, מאפשר שתי הורדות בו־זמנית )"
 
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgid ""
+" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download "
+"at a time )"
 msgstr " - השבתה/ברירת מחדל : 0 ( השבתת הורדה במקביל, מאפשר הורדה אחת בבת אחת )"
 
 #, python-brace-format
-msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgid ""
+"Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to "
+"disable]"
 msgstr "קלט שגוי! נא לנסות שוב עם קלט תקין [1 עד {max_downloads}, או 0 להשבתה]"
 
 msgid "Parallel Downloads"
@@ -837,14 +925,17 @@ msgstr "TAB לבחירה"
 msgid "[Default value: 0] > "
 msgstr "[ערך ברירת מחדל: 0] > "
 
-msgid "To be able to use this translation, please install a font manually that supports the language."
+msgid ""
+"To be able to use this translation, please install a font manually that "
+"supports the language."
 msgstr "כדי להשתמש בתרגום הזה, נא להתקין את הגופן שתומך בשפה הזאת ידנית."
 
 msgid "The font should be stored as {}"
 msgstr "יש לאחסן את הגופן בתור {}"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr "‫Archinstall דורש הרשאות עליונות (root) כדי לעלות. ‎--help לקבלת מידע נוסף."
+msgstr ""
+"‫Archinstall דורש הרשאות עליונות (root) כדי לעלות. ‎--help לקבלת מידע נוסף."
 
 msgid "Select an execution mode"
 msgstr "נא לבחור מצב הפעלה"
@@ -852,13 +943,19 @@ msgstr "נא לבחור מצב הפעלה"
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "לא ניתן למשוך את הפרופיל מהכתובת שצוינה: {}"
 
-msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr "השמות של הפרופילים חייבים להיות יחודיים, אך נמצאו הגדרות פרופילים עם שמות כפולים: {}"
+msgid ""
+"Profiles must have unique name, but profile definitions with duplicate name "
+"found: {}"
+msgstr ""
+"השמות של הפרופילים חייבים להיות יחודיים, אך נמצאו הגדרות פרופילים עם שמות "
+"כפולים: {}"
 
 msgid "Select one or more devices to use and configure"
 msgstr "נא לבחור התקן או יותר לשימוש ולהגדרה"
 
-msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgid ""
+"If you reset the device selection this will also reset the current disk "
+"layout. Are you sure?"
 msgstr "איפוס בחירת ההתקנים יאפס גם את פריסת הכוננים הנוכחית. להמשיך?"
 
 msgid "Existing Partitions"
@@ -876,8 +973,12 @@ msgstr "קיבולת מזערית למחיצת ‎/home: {} ג״ב\n"
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "קיבולת מזערית למחיצת Arch Linux: {} ג״ב"
 
-msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "זאת רשימה של פרופילי גיבוי שנכתבו מראש, הם עשויים להקל על התקנת דברים כמו סביבות שולחן עבודה"
+msgid ""
+"This is a list of pre-programmed profiles_bck, they might make it easier to "
+"install things like desktop environments"
+msgstr ""
+"זאת רשימה של פרופילי גיבוי שנכתבו מראש, הם עשויים להקל על התקנת דברים כמו "
+"סביבות שולחן עבודה"
 
 msgid "Current profile selection"
 msgstr "בחירת הפרופיל הנוכחי"
@@ -909,13 +1010,19 @@ msgstr "מחיקת מחיצה"
 msgid "Partition"
 msgstr "מחיצה"
 
-msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgid ""
+"This partition is currently encrypted, to format it a filesystem has to be "
+"specified"
 msgstr "המחיצה הזאת מוצפנת כרגע, כדי לפרמט אותה צריך להגדיר מערכת קבצים"
 
-msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr "נקודות העגינה של המחיצה הן יחסיות למערכת ההתקנה, מחיצת הטעינה למשל תהיה ‎/boot."
+msgid ""
+"Partition mount-points are relative to inside the installation, the boot would "
+"be /boot as an example."
+msgstr ""
+"נקודות העגינה של המחיצה הן יחסיות למערכת ההתקנה, מחיצת הטעינה למשל תהיה ‎/boot."
 
-msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgid ""
+"If mountpoint /boot is set, then the partition will also be marked as bootable."
 msgstr "אם מוגדרת נקודת עגינה על ‎/boot, אז המחיצה תסומן כזמינה לטעינה."
 
 msgid "Mountpoint: "
@@ -930,8 +1037,11 @@ msgstr "סך כל המקטעים (סקטורים): {}"
 msgid "Enter the start sector (default: {}): "
 msgstr "נא למלא את מקטע (סקטור) ההתחלה (ברירת מחדל: {}): "
 
-msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "נא למלא את מקטע (סקטור) הסוף של המחיצה (אחוז או מספר בלוק, ברירת מחדל: {}): "
+msgid ""
+"Enter the end sector of the partition (percentage or block number, default: "
+"{}): "
+msgstr ""
+"נא למלא את מקטע (סקטור) הסוף של המחיצה (אחוז או מספר בלוק, ברירת מחדל: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "הפעולה הזאת תסיר את המחיצות שנוספו, להמשיך?"
@@ -1002,8 +1112,12 @@ msgstr "נא לבחור את מערכת קבלת הפנים לפרופילים �
 msgid "Environment type: {}"
 msgstr "סוג סביבה: {}"
 
-msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr "ב־Sway אין תמיכה במנהל ההתקן של Nvidia. כנראה שזה יוביל לבעיות, זה בסדר מבחינתך?"
+msgid ""
+"The proprietary Nvidia driver is not supported by Sway. It is likely that you "
+"will run into issues, are you okay with that?"
+msgstr ""
+"ב־Sway אין תמיכה במנהל ההתקן של Nvidia. כנראה שזה יוביל לבעיות, זה בסדר "
+"מבחינתך?"
 
 msgid "Installed packages"
 msgstr "חבילות מותקנות"
@@ -1023,11 +1137,17 @@ msgstr "שם הפרופיל: "
 msgid "The profile name you entered is already in use. Try again"
 msgstr "שם הפרופיל שמילאת כבר קיים. נא לנסות שוב"
 
-msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "חבילות להתקנה עם הפרופיל הזה (להפריד ברווחים, ריק יוביל לדילוג על השלב הזה): "
+msgid ""
+"Packages to be install with this profile (space separated, leave blank to "
+"skip): "
+msgstr ""
+"חבילות להתקנה עם הפרופיל הזה (להפריד ברווחים, ריק יוביל לדילוג על השלב הזה): "
 
-msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "שירותים להפעלה עם הפרופיל הזה (להפריד ברווחים, ריק יוביל לדילוג על השלב הזה): "
+msgid ""
+"Services to be enabled with this profile (space separated, leave blank to "
+"skip): "
+msgstr ""
+"שירותים להפעלה עם הפרופיל הזה (להפריד ברווחים, ריק יוביל לדילוג על השלב הזה): "
 
 msgid "Should this profile be enabled for installation?"
 msgstr "להפעיל את הפרופיל הזה להתקנה?"
@@ -1042,7 +1162,9 @@ msgstr ""
 "\n"
 "‫נא לבחור מנהל התקן גרפי או להשאיר ריק כדי להתקין את מנהל ההתקן שכולו בקוד פתוח"
 
-msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgid ""
+"Sway needs access to your seat (collection of hardware devices i.e. keyboard, "
+"mouse, etc)"
 msgstr "‫Sway צריך גישה למושב (אוסף של התקני חומרה כמו למשל מקלדת, עכבר וכו׳) שלך"
 
 msgid ""
@@ -1109,7 +1231,8 @@ msgid "Save user configuration (including disk layout)"
 msgstr "שמירת הגדרות משתמש (כולל פריסת כוננים)"
 
 msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Enter a directory for the configuration(s) to be saved (tab completion "
+"enabled)\n"
 "Save directory: "
 msgstr ""
 "נא למלא תיקייה לשמירת ההגדרות (אפשר להשלים עם tab)\n"
@@ -1134,8 +1257,12 @@ msgstr "אתרי מראה"
 msgid "Mirror regions"
 msgstr "אזורי אתרי מראה"
 
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - ערך מרבי   : {} ( מאפשר {} הורדות במקביל, מאפשר {max_downloads+1} הורדות במקביל )"
+msgid ""
+" - Maximum value   : {} ( Allows {} parallel downloads, allows "
+"{max_downloads+1} downloads at a time )"
+msgstr ""
+" - ערך מרבי   : {} ( מאפשר {} הורדות במקביל, מאפשר {max_downloads+1} הורדות "
+"במקביל )"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "קלט שגוי! נא לנסות שוב עם קלט תקין [1 עד {}, או 0 להשבתה]"
@@ -1143,7 +1270,9 @@ msgstr "קלט שגוי! נא לנסות שוב עם קלט תקין [1 עד {},
 msgid "Locales"
 msgstr "הגדרות אזוריות"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid ""
+"Use NetworkManager (necessary to configure internet graphically in GNOME and "
+"KDE)"
 msgstr "להשתמש ב־NetworkManager (נחוץ להגדרת האינטרנט באופן גרפי ב־GNOME וב־KDE)"
 
 msgid "Total: {} / {}"
@@ -1180,7 +1309,9 @@ msgstr "הגדרה שגויה: {error}"
 msgid "Type"
 msgstr "סוג"
 
-msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgid ""
+"This option enables the number of parallel downloads that can occur during "
+"package downloads"
 msgstr "אפשרות זו מאפשרת כמה הורדות במקביל לטובת הורדות של חבילות"
 
 msgid ""
@@ -1192,17 +1323,25 @@ msgstr ""
 "\n"
 "‫הערה:‬\n"
 
-msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgid ""
+" - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - הערך המרבי המומלץ: {} ( מאפשר {} הורדות במקביל בכל עת )"
 
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - השבתה/ברירת מחדל : 0 ( משבית הורדות מקביליות, מאפשר רק הורדה אחת כל פעם )‬\n"
+msgid ""
+" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download "
+"at a time )\n"
+msgstr ""
+" - השבתה/ברירת מחדל : 0 ( משבית הורדות מקביליות, מאפשר רק הורדה אחת כל פעם )‬\n"
 
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "קלט שגוי! נא לנסות שוב עם קלט תקין [או 0 להשבתה]"
 
-msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "‫Hyprland צריך גישה למושב שלך (seat - אוסף של התקני חומרה, כלומר מקלדת, עכבר וכו׳)"
+msgid ""
+"Hyprland needs access to your seat (collection of hardware devices i.e. "
+"keyboard, mouse, etc)"
+msgstr ""
+"‫Hyprland צריך גישה למושב שלך (seat - אוסף של התקני חומרה, כלומר מקלדת, עכבר "
+"וכו׳)"
 
 msgid ""
 "\n"
@@ -1225,361 +1364,317 @@ msgstr "דמויות ליבה אחודות"
 msgid "Waiting for time sync (timedatectl show) to complete."
 msgstr "בהמתנה להשלמת סנכרון השעון (timedatectl show)."
 
-msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "סנכרון זמן לא מסתיים, בזמן ההמתנה - כדאי לחפש צורות לעקוף את זה במסמכים: https://archinstall.readthedocs.io/‎"
+msgid ""
+"Time syncronization not completing, while you wait - check the docs for "
+"workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+"סנכרון זמן לא מסתיים, בזמן ההמתנה - כדאי לחפש צורות לעקוף את זה במסמכים: "
+"https://archinstall.readthedocs.io/‎"
 
-msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr "לדלג על המתנה לסנכרון השעון אוטומטית (יכול לגרום לבעיות אם השעה לא מסונכרנת במהלך ההתקנה)"
+msgid ""
+"Skipping waiting for automatic time sync (this can cause issues if time is out "
+"of sync during installation)"
+msgstr ""
+"לדלג על המתנה לסנכרון השעון אוטומטית (יכול לגרום לבעיות אם השעה לא מסונכרנת "
+"במהלך ההתקנה)"
 
-msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr "בהמתנה לסיום סנכרון מחזיק מפתחות של Arch Linux‏ (archlinux-keyring-wkd-sync)."
+msgid ""
+"Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr ""
+"בהמתנה לסיום סנכרון מחזיק מפתחות של Arch Linux‏ (archlinux-keyring-wkd-sync)."
 
-#, fuzzy
 msgid "Selected profiles: "
-msgstr "מחיקת פרופיל"
+msgstr "פרופילים נבחרים: "
 
-#, fuzzy
-msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "סנכרון זמן לא מסתיים, בזמן ההמתנה - כדאי לחפש צורות לעקוף את זה במסמכים: https://archinstall.readthedocs.io/‎"
+msgid ""
+"Time synchronization not completing, while you wait - check the docs for "
+"workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+"סנכרון זמן לא מסתיים, בזמן ההמתנה - אפשר לחפש צורות לעקוף את זה במסמכים: "
+"https://archinstall.readthedocs.io/‎"
 
-#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr "סימון/ביטול סימון כזמין לטעינה"
+msgstr "סימון/ביטול סימון כ־nodatacow"
 
-#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "להשתמש בדחיסה של BTRFS?"
+msgstr "להשתמש בדחיסה או להשבית את CoW?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "להשתמש בדחיסה"
 
 msgid "Disable Copy-on-Write"
+msgstr "השבתת העתקה בעת כתיבה"
+
+msgid ""
+"Provides a selection of desktop environments and tiling window managers, e.g. "
+"GNOME, KDE Plasma, Sway"
 msgstr ""
+"מספק מבחר סביבות שולחן עבודה ומנהלי ריצוף חלונות, למשל: GNOME,‏ KDE פלזמה, Sway"
 
-#, fuzzy
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "מספק מבחר סביבות שולחן עבודה ומנהלי ריצוף חלונות, למשל: gnome,‏ kde,‏ sway"
-
-#, fuzzy
 msgid "Configuration type: {}"
-msgstr "הגדרות"
+msgstr "סוג הגדרה: {}"
 
-#, fuzzy
 msgid "LVM configuration type"
-msgstr "אין הגדרה"
+msgstr "סוג הגדרת LVM"
 
-msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgid ""
+"LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "הצפנת כונן LVM עם יותר משתי מחיצות אינה נתמכת כרגע"
+
+msgid ""
+"Use NetworkManager (necessary to configure internet graphically in GNOME and "
+"KDE Plasma)"
 msgstr ""
+"להשתמש ב־NetworkManager (נחוץ להגדרת האינטרנט באופן גרפי ב־GNOME וב־KDE פלזמה)"
 
-#, fuzzy
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "להשתמש ב־NetworkManager (נחוץ להגדרת האינטרנט באופן גרפי ב־GNOME וב־KDE)"
-
-#, fuzzy
 msgid "Select a LVM option"
-msgstr "בחירת אזור זמן"
+msgstr "בחירת אפשרות LVM"
 
-#, fuzzy
 msgid "Partitioning"
-msgstr "מחיצה"
+msgstr "חלוקה למחיצות"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "ניהול כרכים לוגיים (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "כרכים פיזיים"
 
 msgid "Volumes"
-msgstr ""
+msgstr "כרכים"
 
-#, fuzzy
 msgid "LVM volumes"
-msgstr "הגדרת תת־כרכים"
+msgstr "כרכי LVM"
 
-#, fuzzy
 msgid "LVM volumes to be encrypted"
-msgstr "מחיצות להצפנה"
+msgstr "כרכי LVM להצפנה"
 
-#, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr "נא לבחור איזו מחיצה להצפין"
+msgstr "נא לבחור אילו כרכי LVM להצפין"
 
-#, fuzzy
 msgid "Default layout"
-msgstr "פריסת כוננים"
+msgstr "פריסת ברירת מחדל"
 
-#, fuzzy
 msgid "No Encryption"
-msgstr "סוג הצפנה"
+msgstr "אין הצפנה"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM על גבי LUKS"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS על גבי LVM"
 
-#, fuzzy
 msgid "Yes"
 msgstr "כן"
 
 msgid "No"
-msgstr ""
+msgstr "לא"
 
-#, fuzzy
 msgid "Archinstall help"
-msgstr "השפה של Archinstall"
+msgstr "העזרה של Archinstall"
 
-#, fuzzy
 msgid " (default)"
-msgstr "(ברירת מחדל)"
+msgstr " (ברירת מחדל)"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "לחיצה על Ctrl+h תפנה לעזרה"
 
-#, fuzzy
 msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"‫נא לבחור אפשרות לתת ל־Sway גישה לחומרה שלך"
+msgstr "נא לבחור אפשרות לתת ל־Sway גישה לחומרה שלך"
 
 msgid "Seat access"
-msgstr ""
+msgstr "גישה למושב"
 
-#, fuzzy
 msgid "Mountpoint"
-msgstr "נקודת עגינה: "
+msgstr "נקודת עגינה"
 
 msgid "HSM"
-msgstr ""
+msgstr "HSM"
 
-#, fuzzy
 msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr "נא למלא סיסמה להצפנת הכונן (להשאיר ריק כדי לא להגדיר הצפנה): "
+msgstr "נא למלא סיסמה להצפנת הכונן (להשאיר ריק כדי לא להגדיר הצפנה)"
 
-#, fuzzy
 msgid "Disk encryption password"
-msgstr "סיסמת הצפנה"
+msgstr "סיסמת הצפנת כונן"
 
-#, fuzzy
 msgid "Partition - New"
-msgstr "מחיצה"
+msgstr "מחיצה - חדשה"
 
-#, fuzzy
 msgid "Filesystem"
-msgstr "החלפת מערכת קבצים"
+msgstr "מערכת קבצים"
 
 msgid "Invalid size"
-msgstr ""
+msgstr "גודל שגוי"
 
-#, fuzzy
 msgid "Start (default: sector {}): "
-msgstr "נא למלא התחלה (ברירת מחדל: סקטור {}): "
+msgstr "התחלה (ברירת מחדל: סקטור {}): "
 
-#, fuzzy
 msgid "End (default: {}): "
-msgstr "נא למלא סוף (ברירת מחדל: {}): "
+msgstr "סוף (ברירת מחדל: {}): "
 
-#, fuzzy
 msgid "Subvolume name"
-msgstr "שם תת־כרך "
+msgstr "שם תת־כרך"
 
-#, fuzzy
 msgid "Disk configuration type"
-msgstr "הגדרת כונן"
+msgstr "סוג הגדרת כונן"
 
 msgid "Root mount directory"
-msgstr ""
+msgstr "תיקיית עגינת שורש"
 
-#, fuzzy
 msgid "Select language"
-msgstr "שפת ההגדרה האזורית"
+msgstr "בחירת שפה"
 
-#, fuzzy
-msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "נא לכתוב חבילות נוספות להתקנה (להפריד ברווחים, להשאיר ריק כדי לדלג): "
+msgid ""
+"Write additional packages to install (space separated, leave blank to skip)"
+msgstr "נא לכתוב חבילות נוספות להתקנה (להפריד ברווחים, להשאיר ריק כדי לדלג)"
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "מספר ההורדה שגוי"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "מספר ההורדות"
 
-#, fuzzy
 msgid "The username you entered is invalid"
-msgstr "שם המשתמש שמילאת שגוי. נא לנסות שוב"
+msgstr "שם המשתמש שמילאת שגוי"
 
-#, fuzzy
 msgid "Username"
-msgstr "שם משתמש : "
+msgstr "שם משתמש"
 
-#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "האם ל־„{}“ אמורות להיות הרשאות על (sudo)?"
+msgstr "האם ל־„{}“ אמורות להיות הרשאות על (sudo)?\n"
 
-#, fuzzy
 msgid "Interfaces"
-msgstr "הוספת מנשק"
+msgstr "מנשקים"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "יש למלא כתובת IP תקפה במצב הגדרות IP"
 
 msgid "Modes"
-msgstr ""
+msgstr "מצבים"
 
 msgid "IP address"
-msgstr ""
+msgstr "כתובת IP"
 
-#, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
-msgstr "נא למלא את כתובת ה־IP של שער הגישה (ראוטר) או להשאיר ריק כדי לא להגדיר: "
+msgstr "נא למלא את כתובת ה־IP של שער הגישה (ראוטר - או להשאיר ריק כדי לא להגדיר)"
 
 msgid "Gateway address"
-msgstr ""
+msgstr "כתובת שער גישה"
 
-#, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr "נא למלא את שרתי ה־DNS שלך (להפריד ברווחים, להשאיר ריק אם אין): "
+msgstr "נא למלא את שרתי ה־DNS שלך (להפריד ברווחים, להשאיר ריק אם אין)"
 
-#, fuzzy
 msgid "DNS servers"
-msgstr "אין שרת שמע"
+msgstr "שרתי DNS"
 
-#, fuzzy
 msgid "Configure interfaces"
-msgstr "הוגדרו {} מנשקים"
+msgstr "הגדרת מנשקים"
 
-#, fuzzy
 msgid "Kernel"
-msgstr "ליבות"
+msgstr "ליבה"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "לא זוהה UEFI וחלק מהאפשרויות מושבתות"
 
 msgid "Info"
-msgstr ""
+msgstr "פרטים"
 
-#, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "ב־Sway אין תמיכה במנהל ההתקן של Nvidia. כנראה שזה יוביל לבעיות, זה בסדר מבחינתך?"
+msgstr "ב־Sway אין תמיכה במנהל ההתקן הקנייני של Nvidia."
 
-#, fuzzy
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "ב־Sway אין תמיכה במנהל ההתקן של Nvidia. כנראה שזה יוביל לבעיות, זה בסדר מבחינתך?"
+msgstr "כנראה שזה יוביל לבעיות, זה בסדר מבחינתך?"
 
-#, fuzzy
 msgid "Main profile"
-msgstr "עריכת פרופיל"
+msgstr "פרופיל ראשי"
 
-#, fuzzy
 msgid "Confirm password"
-msgstr "החלפת סיסמה"
+msgstr "אישור סיסמה"
 
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "סיסמת האישור לא תואמת, נא לנסות שוב"
 
-#, fuzzy
 msgid "Not a valid directory"
-msgstr "אינה תיקייה תקפה: {}"
+msgstr "אינה תיקייה תקפה"
 
-#, fuzzy
 msgid "Would you like to continue?"
-msgstr "להשתמש בדחיסה של BTRFS?"
+msgstr "להמשיך?"
 
 msgid "Directory"
-msgstr ""
+msgstr "תיקייה"
 
-#, fuzzy
-msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr ""
-"נא למלא תיקייה לשמירת ההגדרות (אפשר להשלים עם tab)\n"
-"‬\n"
-"‫תיקיית השמירה: "
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "נא למלא תיקייה לשמירת ההגדרות (אפשר להשלים עם tab)"
 
-#, fuzzy
 msgid "Do you want to save the configuration file(s) to {}?"
-msgstr ""
-"לשמור את {} קובצי ההגדרות בתיקייה הבאה?‬\n"
-"\n"
-"‫{}"
+msgstr "לשמור את קובצי ההגדרות אל {}?"
 
 msgid "Enabled"
-msgstr ""
+msgstr "פעיל"
 
 msgid "Disabled"
+msgstr "מושבת"
+
+msgid ""
+"Please submit this issue (and file) to https://github.com/archlinux/"
+"archinstall/issues"
 msgstr ""
+"נא להגיש דיווח על הבעיה הזאת (ואת הקובץ) דרך https://github.com/archlinux/"
+"archinstall/issues"
 
-#, fuzzy
-msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    נא להגיש דיווח על הבעיה הזאת (ואת הקובץ) דרך https://github.com/archlinux/archinstall/issues"
-
-#, fuzzy
 msgid "Mirror name"
-msgstr "אזור אתר מראה"
+msgstr "שם אתר המראה"
 
 msgid "Url"
-msgstr ""
+msgstr "כתובת"
 
-#, fuzzy
 msgid "Select signature check"
-msgstr "בחירת אפשרות בדיקת חתימות"
+msgstr "בחירת בדיקת חתימות"
 
-#, fuzzy
 msgid "Select execution mode"
-msgstr "נא לבחור מצב הפעלה"
+msgstr "בחירת מצב הפעלה"
 
 msgid "Press ? for help"
-msgstr ""
+msgstr "נא ללחוץ על ? לעזרה"
 
-#, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"‫נא לבחור אפשרות כדי לתת ל־Hyprland גישה לחומרה שלך"
+msgstr "נא לבחור אפשרות כדי לתת ל־Hyprland גישה לחומרה שלך"
 
-#, fuzzy
 msgid "Additional repositories"
-msgstr "מאגרי רשות"
+msgstr "מאגרים נוספים"
 
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "החלפה ב־zram"
 
 msgid "Name"
-msgstr ""
+msgstr "שם"
 
-#, fuzzy
 msgid "Signature check"
-msgstr "בחירת אפשרות בדיקת חתימות"
+msgstr "בדיקת חתימות"
 
-#, fuzzy
 msgid "Selected free space segment on device {}:"
-msgstr "כמות המקטעים (סקטורים) הפנויים כרגע בכונן {}:"
+msgstr "כמות המקטעים (הסגמנטים) הנבחרים בכונן {}:"
 
-#, fuzzy
 msgid "Size: {} / {}"
-msgstr "סך הכול: {} / {}"
+msgstr "גודל: {} / {}"
 
-#, fuzzy
 msgid "Size (default: {}): "
-msgstr "נא למלא סוף (ברירת מחדל: {}): "
+msgstr "גודל (ברירת מחדל: {}): "
 
-#, fuzzy
 msgid "HSM device"
-msgstr "התקן"
+msgstr "התקן HSM"
 
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "חלק מהחבילות לא נמצאו במאגר"
 
-#, fuzzy
 msgid "User"
-msgstr "שם משתמש : "
+msgstr "משתמש"
 
 msgid "The specified configuration will be applied"
-msgstr ""
+msgstr "ההגדרות שצוינו תחולנה"
