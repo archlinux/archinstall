@@ -1,5 +1,5 @@
 import time
-import urllib
+import urllib.parse
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
