@@ -299,7 +299,7 @@ class MirrorConfiguration:
 			for region, urls in mirror_regions.items():
 				config.mirror_regions.append(MirrorRegion(region, urls))
 
-		if args.get('custom_servers', []):
+		if args.get('custom_servers'):
 			config.custom_servers = CustomServer.parse_args(args['custom_servers'])
 
 		# backwards compatibility with the new custom_repository
