@@ -838,7 +838,7 @@ class Installer:
 		else:
 			debug('Archinstall will not install any ucode.')
 
-		debug(f'Optional respotories: {optional_repositories}')
+		debug(f'Optional repositories: {optional_repositories}')
 
 		# This action takes place on the host system as pacstrap copies over package repository lists.
 		pacman_conf = pacman.Config(self.target)
