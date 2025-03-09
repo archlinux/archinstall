@@ -1,8 +1,10 @@
 from typing import TYPE_CHECKING, override
 
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, ResultType
 
-from ..menu import AbstractSubMenu
+from ..menu.abstract_menu import AbstractSubMenu
 from ..models.locale import LocaleConfiguration
 from .utils import list_keyboard_languages, list_locales, set_kb_layout
 

@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from archinstall.tui import Tui
+from archinstall.tui.curses_menu import Tui
 
 from ..interactions.general_conf import ask_abort
 from ..luks import Luks2

@@ -1,7 +1,8 @@
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from archinstall.tui import Alignment, EditMenu
+from archinstall.tui.curses_menu import EditMenu
+from archinstall.tui.types import Alignment
 
 from ..general import secret
 from ..output import FormattedOutput

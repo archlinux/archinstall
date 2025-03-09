@@ -18,7 +18,7 @@ from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
 from .lib.plugins import load_plugin, plugins
 from .lib.translationhandler import DeferredTranslation, Language, translation_handler
-from .tui import Tui
+from .tui.curses_menu import Tui
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

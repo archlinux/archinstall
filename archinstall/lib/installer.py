@@ -28,20 +28,20 @@ from archinstall.lib.models.device_model import (
 from archinstall.lib.models.gen import Repository
 from archinstall.tui.curses_menu import Tui
 
-from . import pacman
 from .args import arch_config_handler
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from .general import SysCommand
 from .hardware import SysInfo
-from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
+from .locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
-from .mirrors import MirrorConfiguration
 from .models.bootloader import Bootloader
 from .models.locale import LocaleConfiguration
+from .models.mirrors import MirrorConfiguration
 from .models.network_configuration import Nic
 from .models.users import User
 from .output import debug, error, info, log, warn
 from .pacman import Pacman
+from .pacman.config import Config
 from .plugins import plugins
 from .storage import storage
 
@@ -841,7 +841,7 @@ class Installer:
 		debug(f'Optional repositories: {optional_repositories}')
 
 		# This action takes place on the host system as pacstrap copies over package repository lists.
-		pacman_conf = pacman.Config(self.target)
+		pacman_conf = Config(self.target)
 		pacman_conf.enable(optional_repositories)
 		pacman_conf.apply()
 

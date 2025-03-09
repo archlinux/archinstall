@@ -17,9 +17,11 @@ from archinstall.lib.models.device_model import (
 	Size,
 	Unit,
 )
-from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
+from archinstall.tui.curses_menu import EditMenu, SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, Orientation, ResultType
 
-from ..menu import ListManager
+from ..menu.list_manager import ListManager
 from ..output import FormattedOutput
 from ..utils.util import prompt_dir
 from .subvolume_menu import SubvolumeMenu

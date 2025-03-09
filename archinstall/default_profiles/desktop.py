@@ -3,7 +3,9 @@ from typing import TYPE_CHECKING, override
 from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.tui import FrameProperties, MenuItem, MenuItemGroup, PreviewStyle, ResultType, SelectMenu
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import FrameProperties, PreviewStyle, ResultType
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

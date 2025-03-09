@@ -4,7 +4,9 @@ import stat
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu, Tui
+from archinstall.tui.curses_menu import SelectMenu, Tui
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle, ResultType
 
 from .args import ArchConfig
 from .general import JSON, UNSAFE_JSON

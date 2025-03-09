@@ -4,7 +4,7 @@ from archinstall.default_profiles.profile import Profile, ProfileType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
-	from archinstall.lib.models import User
+	from archinstall.lib.models.users import User
 
 
 class PipewireProfile(Profile):
