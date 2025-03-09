@@ -2,11 +2,10 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, override
 
 from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType, LvmConfiguration
-from archinstall.tui import MenuItem, MenuItemGroup
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
-from ..interactions import select_disk_config
-from ..interactions.disk_conf import select_lvm_config
-from ..menu import AbstractSubMenu
+from ..interactions.disk_conf import select_disk_config, select_lvm_config
+from ..menu.abstract_menu import AbstractSubMenu
 from ..output import FormattedOutput
 
 if TYPE_CHECKING:

@@ -3,7 +3,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from archinstall.tui import Chars, FrameProperties, FrameStyle, MenuItem, MenuItemGroup, PreviewStyle, ResultType, SelectMenu, Tui
+from archinstall.tui.curses_menu import SelectMenu, Tui
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle, ResultType
 
 from ..output import error
 

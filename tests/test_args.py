@@ -5,12 +5,15 @@ from pytest import MonkeyPatch
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
-from archinstall.lib.mirrors import CustomRepository, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
-from archinstall.lib.models import Audio, AudioConfiguration, Bootloader, DiskLayoutConfiguration, DiskLayoutType, NetworkConfiguration, Repository, User
+from archinstall.lib.models.audio_configuration import Audio, AudioConfiguration
+from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType
+from archinstall.lib.models.gen import Repository
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import CustomServer
-from archinstall.lib.models.network_configuration import Nic, NicType
+from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
+from archinstall.lib.models.network_configuration import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.models.users import User
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import translation_handler
 

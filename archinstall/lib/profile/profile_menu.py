@@ -3,11 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import GreeterType, Profile
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, Orientation, ResultType
 
 from ..hardware import GfxDriver
 from ..interactions.system_conf import select_driver
-from ..menu import AbstractSubMenu
+from ..menu.abstract_menu import AbstractSubMenu
 from ..models.profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:

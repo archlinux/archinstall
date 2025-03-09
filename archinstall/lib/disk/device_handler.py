@@ -10,8 +10,8 @@ from typing import Literal, overload
 
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
-from ..exceptions import DiskError, UnknownFilesystemFormat
-from ..general import SysCallError, SysCommand, SysCommandWorker
+from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
+from ..general import SysCommand, SysCommandWorker
 from ..luks import Luks2
 from ..models.device_model import (
 	BDevice,

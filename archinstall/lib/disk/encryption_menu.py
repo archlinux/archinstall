@@ -11,12 +11,15 @@ from archinstall.lib.models.device_model import (
 	LvmVolume,
 	PartitionModification,
 )
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, ResultType
 
-from ..menu import AbstractSubMenu
+from ..menu.abstract_menu import AbstractSubMenu
+from ..models.device_model import Fido2Device
 from ..output import FormattedOutput
 from ..utils.util import get_password
-from .fido import Fido2, Fido2Device
+from .fido import Fido2
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

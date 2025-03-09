@@ -28,7 +28,9 @@ from archinstall.lib.models.device_model import (
 	_DeviceInfo,
 )
 from archinstall.lib.output import debug
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, PreviewStyle, ResultType, SelectMenu
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle, ResultType
 
 from ..output import FormattedOutput
 from ..utils.util import prompt_dir
