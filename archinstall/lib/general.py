@@ -28,6 +28,10 @@ from .storage import storage
 if TYPE_CHECKING:
 	from .installer import Installer
 
+# https://stackoverflow.com/a/43627833/929999
+_VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
+_VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
+
 
 def generate_password(length: int = 64) -> str:
 	haystack = string.printable  # digits, ascii_letters, punctuation (!"#$[] etc) and whitespace
@@ -41,11 +45,9 @@ def locate_binary(name: str) -> str:
 
 
 def clear_vt100_escape_codes(data: bytes | str) -> bytes | str:
-	# https://stackoverflow.com/a/43627833/929999
-	vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
 	if isinstance(data, bytes):
-		return re.sub(vt100_escape_regex.encode(), b'', data)
-	return re.sub(vt100_escape_regex, '', data)
+		return re.sub(_VT100_ESCAPE_REGEX_BYTES, b'', data)
+	return re.sub(_VT100_ESCAPE_REGEX, '', data)
 
 
 def jsonify(obj: Any, safe: bool = True) -> Any:
