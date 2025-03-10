@@ -139,6 +139,11 @@ def list_available_packages(
 	return packages
 
 
+@lru_cache(maxsize=128)
+def _normalize_key_name(key: str) -> str:
+	return key.strip().lower().replace(' ', '_')
+
+
 def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 	package_meta: list[str],
 	cls: type[PackageType]
@@ -148,7 +153,7 @@ def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 	for line in package_meta:
 		if ':' in line:
 			key, value = line.split(':', 1)
-			key = key.strip().lower().replace(' ', '_')
+			key = _normalize_key_name(key)
 			package[key] = value.strip()
 
 	return cls.model_validate(package)
