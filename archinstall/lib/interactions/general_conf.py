@@ -177,8 +177,7 @@ def ask_additional_packages_to_install(
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	header = str(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.')) + '\n'
-	header += str(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.')) + '\n'
-	header += str(_('Write additional packages to install (space separated, leave blank to skip)')) + '\n'
+	header += str(_('Select any packages from the below list that should be installed additionally')) + '\n'
 
 	# there are over 15k packages so this needs to be quick
 	preset_packages = []
