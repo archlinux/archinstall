@@ -5,6 +5,7 @@ import unicodedata
 from collections.abc import Callable
 from dataclasses import asdict, is_dataclass
 from enum import Enum
+from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -327,9 +328,14 @@ def log(
 		Tui.print(text)
 
 
+@lru_cache(maxsize=128)
+def _is_wide_character(char: str) -> bool:
+	return unicodedata.east_asian_width(char) in 'FW'
+
+
 def _count_wchars(string: str) -> int:
 	"Count the total number of wide characters contained in a string"
-	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
+	return sum(_is_wide_character(c) for c in string)
 
 
 def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
