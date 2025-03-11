@@ -7,8 +7,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, override
 
-from .output import debug, error
-
 if TYPE_CHECKING:
 	_: Any
 
@@ -83,17 +81,6 @@ class TranslationHandler:
 				raise FileNotFoundError(f"Could not locate language file for '{lang}': {err}")
 
 		return languages
-
-	def _set_font(self, font: str) -> None:
-		"""
-		Set the provided font as the new terminal font
-		"""
-		from .general import SysCommand
-		try:
-			debug(f'Setting font: {font}')
-			SysCommand(f'setfont {font}')
-		except Exception:
-			error(f'Unable to set font {font}')
 
 	def _load_language_mappings(self) -> list[dict[str, str]]:
 		"""
