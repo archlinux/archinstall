@@ -205,7 +205,7 @@ class SysCommandWorker:
 			raise SysCallError(
 				f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self)[-500:]}",
 				self.exit_code,
-				worker=self
+				worker_log=self._trace_log
 			)
 
 	def is_alive(self) -> bool:
