@@ -44,9 +44,11 @@ def locate_binary(name: str) -> str:
 	raise RequirementError(f"Binary {name} does not exist.")
 
 
-def clear_vt100_escape_codes(data: bytes | str) -> bytes | str:
-	if isinstance(data, bytes):
-		return re.sub(_VT100_ESCAPE_REGEX_BYTES, b'', data)
+def clear_vt100_escape_codes(data: bytes) -> bytes:
+	return re.sub(_VT100_ESCAPE_REGEX_BYTES, b'', data)
+
+
+def clear_vt100_escape_codes_from_str(data: str) -> str:
 	return re.sub(_VT100_ESCAPE_REGEX, '', data)
 
 
@@ -159,7 +161,7 @@ class SysCommandWorker:
 		lines = filter(None, self._trace_log[self._trace_log_pos:last_line].splitlines())
 		for line in lines:
 			if self.remove_vt100_escape_codes_from_lines:
-				line = clear_vt100_escape_codes(line)  # type: ignore[assignment]
+				line = clear_vt100_escape_codes(line)
 
 			yield line + b'\n'
 
