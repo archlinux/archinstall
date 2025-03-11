@@ -32,9 +32,8 @@ def _fetch_lsblk_info(
 		worker = SysCommand(cmd)
 	except SysCallError as err:
 		# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
-		if err.worker:
-			err_str = err.worker.decode()
-			debug(f'Error calling lsblk: {err_str}')
+		if err.worker_log:
+			debug(f'Error calling lsblk: {err.worker_log.decode()}')
 
 		if dev_path:
 			raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
