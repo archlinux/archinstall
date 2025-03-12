@@ -6,5 +6,5 @@ max-line-length = 160
 show-source = True
 statistics = True
 builtins = _
-per-file-ignores = __init__.py:E128,F401
+per-file-ignores = __init__.py:F401
 exclude = .git,__pycache__,build,docs,actions-runner
