@@ -119,3 +119,23 @@ def run_as_a_module() -> None:
 
 			warn(text)
 			exit(1)
+
+
+__all__ = [
+	'DeferredTranslation',
+	'FormattedOutput',
+	'Language',
+	'Pacman',
+	'SysInfo',
+	'Tui',
+	'arch_config_handler',
+	'debug',
+	'disk_layouts',
+	'error',
+	'info',
+	'load_plugin',
+	'log',
+	'plugin',
+	'translation_handler',
+	'warn',
+]
