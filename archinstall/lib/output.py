@@ -4,6 +4,7 @@ import sys
 import unicodedata
 from collections.abc import Callable
 from dataclasses import asdict, is_dataclass
+from datetime import UTC, datetime
 from enum import Enum
 from functools import lru_cache
 from pathlib import Path
@@ -264,6 +265,11 @@ def info(
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
+def _timestamp() -> str:
+	now = datetime.now(tz=UTC)
+	return now.strftime('%Y-%m-%d %H:%M:%S')
+
+
 def debug(
 	*msgs: str,
 	level: int = logging.DEBUG,
@@ -319,7 +325,10 @@ def log(
 	log_file: Path = storage['LOG_PATH'] / storage['LOG_FILE']
 
 	with log_file.open('a') as fp:
-		fp.write(f"{orig_string}\n")
+		ts = _timestamp()
+		level_name = logging.getLevelName(level)
+		out = f"[{ts}] - {level_name} - {orig_string}\n"
+		fp.write(out)
 
 	Journald.log(text, level=level)
 
