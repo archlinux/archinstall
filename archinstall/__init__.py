@@ -1,13 +1,10 @@
 """Arch Linux installer - guided, templates etc."""
 
-import curses
 import importlib
 import os
 import sys
 import time
 import traceback
-from argparse import ArgumentParser, Namespace
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from archinstall.lib.args import arch_config_handler
