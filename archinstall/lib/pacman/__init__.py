@@ -86,3 +86,9 @@ class Pacman:
 			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm',
 			peek_output=True
 		)
+
+
+__all__ = [
+	'Config',
+	'Pacman',
+]
