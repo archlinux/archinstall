@@ -69,6 +69,15 @@ exclude = "^build/"
 disallow_any_explicit = false
 disallow_any_expr = false
 disallow_any_unimported = true
+enable_error_code = [
+    "explicit-override",
+    "mutable-override",
+    "redundant-expr",
+    "redundant-self",
+    "truthy-iterable",
+    "unimported-reveal",
+    "unused-awaitable",
+]
 strict = true
 strict_bytes = true
 warn_unreachable = true
