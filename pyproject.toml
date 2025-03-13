@@ -71,6 +71,7 @@ disallow_any_expr = false
 disallow_any_unimported = true
 enable_error_code = [
     "explicit-override",
+    "ignore-without-code",
     "mutable-override",
     "redundant-expr",
     "redundant-self",
@@ -192,6 +193,7 @@ select = [
     "ICN",    # flake8-import-conventions
     "ISC",    # flake8-implicit-str-concat
     "LOG",    # flake8-logging
+    "PGH",    # pygrep-hooks
     "PIE",    # flake8-pie
     "PLC",    # Pylint conventions
     "PLE",    # Pylint errors
