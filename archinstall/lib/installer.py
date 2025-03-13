@@ -59,10 +59,6 @@ __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "l
 __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
 
 
-def accessibility_tools_in_use() -> bool:
-	return os.system('systemctl is-active --quiet espeakup.service') == 0
-
-
 class Installer:
 	def __init__(
 		self,
@@ -1711,3 +1707,21 @@ class Installer:
 			f'systemctl show --no-pager -p SubState --value {service_name}',
 			environment_vars={'SYSTEMD_COLORS': '0'}
 		).decode()
+
+
+def accessibility_tools_in_use() -> bool:
+	return os.system('systemctl is-active --quiet espeakup.service') == 0
+
+
+def run_custom_user_commands(commands: list[str], installation: Installer) -> None:
+	for index, command in enumerate(commands):
+		script_path = f"/var/tmp/user-command.{index}.sh"
+		chroot_path = f"{installation.target}/{script_path}"
+
+		info(f'Executing custom command "{command}" ...')
+		with open(chroot_path, "w") as user_script:
+			user_script.write(command)
+
+		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
+
+		os.unlink(chroot_path)
