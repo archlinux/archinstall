@@ -5,9 +5,8 @@ from archinstall.lib.args import ArchConfig, arch_config_handler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
-from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.global_menu import GlobalMenu
-from archinstall.lib.installer import Installer, accessibility_tools_in_use
+from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import ask_chroot
 from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.device_model import (
