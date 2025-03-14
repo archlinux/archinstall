@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, override
 
 from pydantic import BaseModel, field_validator, model_validator
 
-from ..models.gen import Repository
+from ..models.packages import Repository
 from ..networking import DownloadTimer, ping
 from ..output import debug
 

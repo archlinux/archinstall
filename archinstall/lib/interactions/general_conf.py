@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from archinstall.lib.models.gen import Repository
+from archinstall.lib.models.packages import Repository
 from archinstall.lib.packages.packages import list_available_packages
 from archinstall.tui.curses_menu import EditMenu, SelectMenu, Tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -11,7 +11,7 @@ from archinstall.tui.types import Alignment, FrameProperties, Orientation, Previ
 
 from ..locale.utils import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration
-from ..models.gen import AvailablePackage
+from ..models.packages import AvailablePackage
 from ..output import warn
 from ..translationhandler import Language
 

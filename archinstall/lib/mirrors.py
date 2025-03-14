@@ -9,7 +9,6 @@ from archinstall.tui.types import Alignment, FrameProperties, ResultType
 
 from .menu.abstract_menu import AbstractSubMenu
 from .menu.list_manager import ListManager
-from .models.gen import Repository
 from .models.mirrors import (
 	CustomRepository,
 	CustomServer,
@@ -20,6 +19,7 @@ from .models.mirrors import (
 	SignCheck,
 	SignOption,
 )
+from .models.packages import Repository
 from .networking import fetch_data_from_url
 from .output import FormattedOutput, debug
 
