@@ -1244,6 +1244,9 @@ class Installer:
 		limine_path = self.target / 'usr' / 'share' / 'limine'
 		hook_command = None
 
+		boot_limine_path = self.target / 'boot' / 'limine'
+		boot_limine_path.mkdir(parents=True, exist_ok=True)
+
 		if SysInfo.has_uefi():
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
@@ -1273,7 +1276,7 @@ class Installer:
 
 			try:
 				# The `limine-bios.sys` file contains stage 3 code.
-				shutil.copy(limine_path / 'limine-bios.sys', self.target / 'boot')
+				shutil.copy(limine_path / 'limine-bios.sys', boot_limine_path)
 
 				# `limine bios-install` deploys the stage 1 and 2 to the
 				SysCommand(f'arch-chroot {self.target} limine bios-install {parent_dev_path}', peek_output=True)
@@ -1282,7 +1285,7 @@ class Installer:
 
 			hook_command = (
 				f'/usr/bin/limine bios-install {parent_dev_path}'
-				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/'
+				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'
 			)
 
 		hook_contents = f'''[Trigger]
@@ -1325,7 +1328,7 @@ Exec = /bin/sh -c "{hook_command}"
 				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
 				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
 
-		config_path = self.target / 'boot' / 'limine.conf'
+		config_path = boot_limine_path / 'limine.conf'
 		config_path.write_text(config_contents)
 
 		self.helper_flags['bootloader'] = "limine"
