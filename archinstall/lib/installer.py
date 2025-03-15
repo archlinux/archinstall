@@ -1242,6 +1242,7 @@ class Installer:
 		info(f"Limine boot partition: {boot_partition.dev_path}")
 
 		limine_path = self.target / 'usr' / 'share' / 'limine'
+		config_path = None
 		hook_command = None
 
 		if SysInfo.has_uefi():
@@ -1261,11 +1262,18 @@ class Installer:
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
+			config_path = efi_dir_path / 'limine.conf'
+
 			hook_command = (
 				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/'
 				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
 			)
 		else:
+			boot_limine_path = self.target / 'boot' / 'limine'
+			boot_limine_path.mkdir(parents=True, exist_ok=True)
+
+			config_path = boot_limine_path / 'limine.conf'
+
 			parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
 			if unique_path := device_handler.get_unique_path_for_device(parent_dev_path):
@@ -1273,7 +1281,7 @@ class Installer:
 
 			try:
 				# The `limine-bios.sys` file contains stage 3 code.
-				shutil.copy(limine_path / 'limine-bios.sys', self.target / 'boot')
+				shutil.copy(limine_path / 'limine-bios.sys', boot_limine_path)
 
 				# `limine bios-install` deploys the stage 1 and 2 to the
 				SysCommand(f'arch-chroot {self.target} limine bios-install {parent_dev_path}', peek_output=True)
@@ -1282,7 +1290,7 @@ class Installer:
 
 			hook_command = (
 				f'/usr/bin/limine bios-install {parent_dev_path}'
-				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/'
+				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'
 			)
 
 		hook_contents = f'''[Trigger]
@@ -1325,7 +1333,6 @@ Exec = /bin/sh -c "{hook_command}"
 				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
 				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
 
-		config_path = self.target / 'boot' / 'limine.conf'
 		config_path.write_text(config_contents)
 
 		self.helper_flags['bootloader'] = "limine"
