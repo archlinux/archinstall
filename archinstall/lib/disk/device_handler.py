@@ -277,7 +277,7 @@ class DeviceHandler:
 			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
 				# Force create
 				options.append('-F')
-			case FilesystemType.Fat16 | FilesystemType.Fat32:
+			case FilesystemType.Fat12 | FilesystemType.Fat16 | FilesystemType.Fat32:
 				mkfs_type = 'fat'
 				# Set FAT size
 				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
