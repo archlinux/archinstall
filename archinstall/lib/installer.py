@@ -1306,6 +1306,10 @@ Exec = /bin/sh -c "{hook_command}"
 		kernel_params = ' '.join(self._get_kernel_params(root))
 		config_contents = 'timeout: 5\n'
 
+		path_root = 'boot()'
+		if efi_partition and boot_partition != efi_partition:
+			path_root = f'uuid({boot_partition.partuuid})'
+
 		for kernel in self.kernels:
 			for variant in ('', '-fallback'):
 				if uki_enabled:
@@ -1317,9 +1321,9 @@ Exec = /bin/sh -c "{hook_command}"
 				else:
 					entry = [
 						'protocol: linux',
-						f'path: boot():/vmlinuz-{kernel}',
+						f'path: {path_root}:/vmlinuz-{kernel}',
 						f'cmdline: {kernel_params}',
-						f'module_path: boot():/initramfs-{kernel}{variant}.img',
+						f'module_path: {path_root}:/initramfs-{kernel}{variant}.img',
 					]
 
 				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
