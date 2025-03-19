@@ -1235,7 +1235,7 @@ class Installer:
 		root: PartitionModification | LvmVolume,
 		uki_enabled: bool = False
 	) -> None:
-		debug('Installing limine bootloader')
+		debug('Installing Limine bootloader')
 
 		self.pacman.strap('limine')
 
@@ -1246,6 +1246,8 @@ class Installer:
 		hook_command = None
 
 		if SysInfo.has_uefi():
+			self.pacman.strap('efibootmgr')
+
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
 			elif not efi_partition.mountpoint:
@@ -1254,7 +1256,7 @@ class Installer:
 			info(f"Limine EFI partition: {efi_partition.dev_path}")
 
 			try:
-				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'BOOT'
+				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'limine'
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
@@ -1265,9 +1267,40 @@ class Installer:
 			config_path = efi_dir_path / 'limine.conf'
 
 			hook_command = (
-				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/'
-				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
+				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/limine/'
+				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/limine/'
 			)
+
+			# Create EFI boot menu entry for Limine.
+			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+
+			try:
+				with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
+					efi_bitness = fw_platform_size.read().strip()
+			except Exception as err:
+				error(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
+
+			loader_path = None
+			if efi_bitness == '64':
+				loader_path = '/EFI/limine/BOOTX64.EFI'
+			elif efi_bitness == '32':
+				loader_path = '/EFI/limine/BOOTIA32.EFI'
+			else:
+				error('EFI bitness is neither 32 nor 64 bits')
+
+			try:
+				SysCommand(
+					'efibootmgr'
+					' --create'
+					f' --disk {parent_dev_path}'
+					f' --part {efi_partition.partn}'
+					' --label "Arch Linux Limine Bootloader"'
+					f' --loader {loader_path}'
+					' --unicode'
+					' --verbose'
+				)
+			except Exception as err:
+				error(f'SysCommand for efibootmgr failed: {err}')
 		else:
 			boot_limine_path = self.target / 'boot' / 'limine'
 			boot_limine_path.mkdir(parents=True, exist_ok=True)
