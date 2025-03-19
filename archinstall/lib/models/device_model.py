@@ -128,6 +128,7 @@ class DiskLayoutConfiguration:
 				device_partition = PartitionModification(
 					status=ModificationStatus(partition['status']),
 					fs_type=FilesystemType(partition['fs_type']) if partition.get('fs_type') else None,
+					type_uuid=partition['type_uuid'] if partition['type_uuid'] else None,
 					start=Size.parse_args(partition['start']),
 					length=Size.parse_args(partition['size']),
 					mount_options=partition['mount_options'],
@@ -480,6 +481,7 @@ class _PartitionInfo:
 	name: str
 	type: PartitionType
 	fs_type: FilesystemType | None
+	type_uuid: str | None
 	path: Path
 	start: Size
 	length: Size
@@ -543,6 +545,7 @@ class _PartitionInfo:
 			name=partition.get_name(),
 			type=partition_type,
 			fs_type=fs_type,
+			type_uuid=lsblk_info.parttype,
 			path=Path(partition.path),
 			start=start,
 			length=length,
@@ -755,6 +758,7 @@ class PartitionGUID(Enum):
 	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 	"""
 	LINUX_ROOT_X86_64 = "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709"
+	ESP = "C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
 
 	@property
 	def bytes(self) -> bytes:
@@ -846,6 +850,7 @@ class _PartitionModificationSerialization(TypedDict):
 	start: _SizeSerialization
 	size: _SizeSerialization
 	fs_type: str | None
+	type_uuid: str | None
 	mountpoint: str | None
 	mount_options: list[str]
 	flags: list[str]
@@ -860,6 +865,7 @@ class PartitionModification:
 	start: Size
 	length: Size
 	fs_type: FilesystemType | None = None
+	type_uuid: str | None = None
 	mountpoint: Path | None = None
 	mount_options: list[str] = field(default_factory=list)
 	flags: list[PartitionFlag] = field(default_factory=list)
@@ -930,6 +936,7 @@ class PartitionModification:
 			start=partition_info.start,
 			length=partition_info.length,
 			fs_type=partition_info.fs_type,
+			type_uuid=partition_info.type_uuid,
 			dev_path=partition_info.path,
 			partn=partition_info.partn,
 			partuuid=partition_info.partuuid,
@@ -1032,6 +1039,7 @@ class PartitionModification:
 			'start': self.start.json(),
 			'size': self.length.json(),
 			'fs_type': self.fs_type.value if self.fs_type else None,
+			'type_uuid': str(self.type_uuid) if self.type_uuid else None,
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.description for f in self.flags],

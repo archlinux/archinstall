@@ -10,6 +10,7 @@ from archinstall.lib.models.device_model import (
 	FilesystemType,
 	ModificationStatus,
 	PartitionFlag,
+	PartitionGUID,
 	PartitionModification,
 	PartitionTable,
 	PartitionType,
@@ -290,8 +291,8 @@ class PartitioningList(ListManager):
 					partition.mountpoint = self._prompt_mountpoint()
 					if partition.mountpoint == Path('/boot'):
 						partition.set_flag(PartitionFlag.BOOT)
-						if self._using_gpt:
-							partition.set_flag(PartitionFlag.ESP)
+					if self._using_gpt and partition.type_uuid == PartitionGUID.ESP.bytes:
+						partition.set_flag(PartitionFlag.ESP)
 				case 'mark_formatting':
 					self._prompt_formatting(partition)
 				case 'mark_bootable':
@@ -517,9 +518,9 @@ class PartitioningList(ListManager):
 
 		if partition.mountpoint == Path('/boot'):
 			partition.set_flag(PartitionFlag.BOOT)
-			if self._using_gpt:
-				partition.set_flag(PartitionFlag.ESP)
-		elif partition.is_swap():
+		if self._using_gpt and partition.type_uuid == PartitionGUID.ESP.bytes:
+			partition.set_flag(PartitionFlag.ESP)
+		if partition.is_swap():
 			partition.set_flag(PartitionFlag.SWAP)
 
 		return partition
