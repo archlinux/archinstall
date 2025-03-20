@@ -8,6 +8,7 @@ from archinstall.lib.models.device_model import Fido2Device
 
 from ..exceptions import SysCallError
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes_from_str
+from ..models.users import Password
 from ..output import error, info
 
 
@@ -74,7 +75,7 @@ class Fido2:
 		cls,
 		hsm_device: Fido2Device,
 		dev_path: Path,
-		password: str
+		password: Password
 	) -> None:
 		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {dev_path}", peek_output=True)
 		pw_inputted = False
@@ -83,7 +84,7 @@ class Fido2:
 		while worker.is_alive():
 			if pw_inputted is False:
 				if bytes(f"please enter current passphrase for disk {dev_path}", 'UTF-8') in worker._trace_log.lower():
-					worker.write(bytes(password, 'UTF-8'))
+					worker.write(bytes(password.plaintext, 'UTF-8'))
 					pw_inputted = True
 			elif pin_inputted is False:
 				if bytes("please enter security token pin", 'UTF-8') in worker._trace_log.lower():

@@ -514,8 +514,3 @@ def json_stream_to_structure(configuration_identifier: str, stream: str, target:
 		return False
 	target.update(structure)
 	return True
-
-
-def secret(x: str) -> str:
-	""" return * with len equal to to the input string """
-	return '*' * len(x)

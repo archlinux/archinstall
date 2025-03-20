@@ -9,7 +9,6 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
 from .args import ArchConfig
 from .configuration import save_config
-from .general import secret
 from .hardware import SysInfo
 from .interactions.general_conf import (
 	add_number_of_parallel_downloads,
@@ -31,7 +30,7 @@ from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
 from .models.network_configuration import NetworkConfiguration, NicType
 from .models.profile_model import ProfileConfiguration
-from .models.users import User
+from .models.users import Password, User
 from .output import FormattedOutput
 from .translationhandler import Language, translation_handler
 from .utils.util import get_password
@@ -125,7 +124,7 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Root password')),
 				action=self._set_root_password,
 				preview_action=self._prev_root_pwd,
-				key='root_password',
+				key='root_enc_password',
 			),
 			MenuItem(
 				text=str(_('User account')),
@@ -223,7 +222,7 @@ class GlobalMenu(AbstractMenu):
 			return item.has_value()
 
 		def has_superuser() -> bool:
-			item = self._item_group.find_by_key('!users')
+			item = self._item_group.find_by_key('users')
 
 			if item.has_value():
 				users = item.value
@@ -234,8 +233,8 @@ class GlobalMenu(AbstractMenu):
 		missing = set()
 
 		for item in self._item_group.items:
-			if item.key in ['!root-password', '!users']:
-				if not check('!root-password') and not has_superuser():
+			if item.key in ['root_enc_password', 'users']:
+				if not check('root_enc_password') and not has_superuser():
 					missing.add(
 						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))
 					)
@@ -363,7 +362,8 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_root_pwd(self, item: MenuItem) -> str | None:
 		if item.value is not None:
-			return f'{_("Root password")}: {secret(item.value)}'
+			password: Password = item.value
+			return f'{_("Root password")}: {password.hidden()}'
 		return None
 
 	def _prev_audio(self, item: MenuItem) -> str | None:
@@ -398,7 +398,9 @@ class GlobalMenu(AbstractMenu):
 		if enc_config:
 			enc_type = EncryptionType.type_to_text(enc_config.encryption_type)
 			output = str(_('Encryption type')) + f': {enc_type}\n'
-			output += str(_('Password')) + f': {secret(enc_config.encryption_password)}\n'
+
+			if enc_config.encryption_password:
+				output += str(_('Password')) + f': {enc_config.encryption_password.hidden()}\n'
 
 			if enc_config.partitions:
 				output += f'Partitions: {len(enc_config.partitions)} selected\n'
@@ -481,7 +483,7 @@ class GlobalMenu(AbstractMenu):
 
 		return None
 
-	def _set_root_password(self, preset: str | None = None) -> str | None:
+	def _set_root_password(self, preset: str | None = None) -> Password | None:
 		password = get_password(text=str(_('Root password')), allow_skip=True)
 		return password
 
