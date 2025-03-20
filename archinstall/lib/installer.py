@@ -1058,12 +1058,17 @@ class Installer:
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
 
+		if not efi_partition:
+			raise ValueError('Could not detect EFI system partition')
+		elif not efi_partition.mountpoint:
+			raise ValueError('EFI system partition is not mounted')
+
 		# TODO: Ideally we would want to check if another config
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
 		bootctl_options = []
 
-		if efi_partition and boot_partition != efi_partition:
+		if boot_partition != efi_partition:
 			bootctl_options.append(f'--esp-path={efi_partition.mountpoint}')
 			bootctl_options.append(f'--boot-path={boot_partition.mountpoint}')
 
@@ -1074,14 +1079,11 @@ class Installer:
 			# Fallback, try creating the boot loader without touching the EFI variables
 			SysCommand(f"arch-chroot {self.target} bootctl --no-variables {' '.join(bootctl_options)} install")
 
-		# Ensure that the $BOOT/loader/ directory exists before we try to create files in it.
-		#
-		# As mentioned in https://github.com/archlinux/archinstall/pull/1859 - we store the
-		# loader entries in $BOOT/loader/ rather than $ESP/loader/
-		# The current reasoning being that $BOOT works in both use cases as well
-		# as being tied to the current installation. This may change.
-		loader_dir = self.target / 'boot/loader'
-		loader_dir.mkdir(parents=True, exist_ok=True)
+		# Loader configuration is stored in ESP/loader:
+		# https://man.archlinux.org/man/loader.conf.5
+		loader_conf = self.target / efi_partition.relative_mountpoint / 'loader/loader.conf'
+		# Ensure that the ESP/loader/ directory exists before trying to create a file in it
+		loader_conf.parent.mkdir(parents=True, exist_ok=True)
 
 		default_kernel = self.kernels[0]
 		if uki_enabled:
@@ -1093,8 +1095,6 @@ class Installer:
 		default = f'default {default_entry}'
 
 		# Modify or create a loader.conf
-		loader_conf = loader_dir / 'loader.conf'
-
 		try:
 			loader_data = loader_conf.read_text().splitlines()
 		except FileNotFoundError:
@@ -1115,8 +1115,10 @@ class Installer:
 		if uki_enabled:
 			return
 
-		# Ensure that the $BOOT/loader/entries/ directory exists before we try to create files in it
-		entries_dir = loader_dir / 'entries'
+		# Loader entries are stored in $BOOT/loader:
+		# https://uapi-group.org/specifications/specs/boot_loader_specification/#mount-points
+		entries_dir = self.target / boot_partition.relative_mountpoint / 'loader/entries'
+		# Ensure that the $BOOT/loader/entries/ directory exists before trying to create files in it
 		entries_dir.mkdir(parents=True, exist_ok=True)
 
 		comments = (
