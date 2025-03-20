@@ -1,7 +1,7 @@
 import shlex
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, NotRequired, TypedDict, override
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -104,6 +104,18 @@ class PasswordStrength(Enum):
 		return PasswordStrength.VERY_WEAK
 
 
+_UserSerialization = TypedDict(
+	'_UserSerialization',
+	{
+		'username': str,
+		'!password': NotRequired[str],
+		'sudo': bool,
+		'groups': list[str],
+		'enc_password': str | None
+	}
+)
+
+
 class Password:
 	def __init__(
 		self,
@@ -163,6 +175,7 @@ class User:
 	sudo: bool
 	groups: list[str] = field(default_factory=list)
 
+	@override
 	def __str__(self) -> str:
 		# safety overwrite to make sure password is not leaked
 		return f'User({self.username=}, {self.sudo=}, {self.groups=})'
@@ -175,7 +188,7 @@ class User:
 			'groups': self.groups
 		}
 
-	def json(self) -> dict[str, str | bool | list[str] | None]:
+	def json(self) -> _UserSerialization:
 		return {
 			'username': self.username,
 			'enc_password': self.password.enc_password,
@@ -186,7 +199,7 @@ class User:
 	@classmethod
 	def parse_arguments(
 		cls,
-		args: list[dict[str, str | bool | list[str]]]
+		args: list[_UserSerialization]
 	) -> list['User']:
 		users: list[User] = []
 
@@ -196,15 +209,6 @@ class User:
 			groups = entry.get('groups', [])
 			plaintext = entry.get('!password')
 			enc_password = entry.get('enc_password')
-
-			if not isinstance(username, str):
-				raise ValueError('username must be a string')
-			if not isinstance(groups, list):
-				raise ValueError('groups must be a list')
-			if plaintext and not isinstance(plaintext, str):
-				raise ValueError('password must be a string')
-			if enc_password and not isinstance(enc_password, str):
-				raise ValueError('encryption password must be a string')
 
 			# DEPRECATED: backwards compatibility
 			if plaintext:

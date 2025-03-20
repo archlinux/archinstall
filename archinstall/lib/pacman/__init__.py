@@ -1,9 +1,7 @@
-import re
 import time
 from collections.abc import Callable
 from pathlib import Path
-from shutil import copy2
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ..exceptions import RequirementError
 from ..general import SysCommand
@@ -88,3 +86,9 @@ class Pacman:
 			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm',
 			peek_output=True
 		)
+
+
+__all__ = [
+	'Config',
+	'Pacman',
+]

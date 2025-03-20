@@ -1063,12 +1063,17 @@ class Installer:
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
 
+		if not efi_partition:
+			raise ValueError('Could not detect EFI system partition')
+		elif not efi_partition.mountpoint:
+			raise ValueError('EFI system partition is not mounted')
+
 		# TODO: Ideally we would want to check if another config
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
 		bootctl_options = []
 
-		if efi_partition and boot_partition != efi_partition:
+		if boot_partition != efi_partition:
 			bootctl_options.append(f'--esp-path={efi_partition.mountpoint}')
 			bootctl_options.append(f'--boot-path={boot_partition.mountpoint}')
 
@@ -1079,14 +1084,11 @@ class Installer:
 			# Fallback, try creating the boot loader without touching the EFI variables
 			SysCommand(f"arch-chroot {self.target} bootctl --no-variables {' '.join(bootctl_options)} install")
 
-		# Ensure that the $BOOT/loader/ directory exists before we try to create files in it.
-		#
-		# As mentioned in https://github.com/archlinux/archinstall/pull/1859 - we store the
-		# loader entries in $BOOT/loader/ rather than $ESP/loader/
-		# The current reasoning being that $BOOT works in both use cases as well
-		# as being tied to the current installation. This may change.
-		loader_dir = self.target / 'boot/loader'
-		loader_dir.mkdir(parents=True, exist_ok=True)
+		# Loader configuration is stored in ESP/loader:
+		# https://man.archlinux.org/man/loader.conf.5
+		loader_conf = self.target / efi_partition.relative_mountpoint / 'loader/loader.conf'
+		# Ensure that the ESP/loader/ directory exists before trying to create a file in it
+		loader_conf.parent.mkdir(parents=True, exist_ok=True)
 
 		default_kernel = self.kernels[0]
 		if uki_enabled:
@@ -1098,8 +1100,6 @@ class Installer:
 		default = f'default {default_entry}'
 
 		# Modify or create a loader.conf
-		loader_conf = loader_dir / 'loader.conf'
-
 		try:
 			loader_data = loader_conf.read_text().splitlines()
 		except FileNotFoundError:
@@ -1120,8 +1120,10 @@ class Installer:
 		if uki_enabled:
 			return
 
-		# Ensure that the $BOOT/loader/entries/ directory exists before we try to create files in it
-		entries_dir = loader_dir / 'entries'
+		# Loader entries are stored in $BOOT/loader:
+		# https://uapi-group.org/specifications/specs/boot_loader_specification/#mount-points
+		entries_dir = self.target / boot_partition.relative_mountpoint / 'loader/entries'
+		# Ensure that the $BOOT/loader/entries/ directory exists before trying to create files in it
 		entries_dir.mkdir(parents=True, exist_ok=True)
 
 		comments = (
@@ -1240,16 +1242,19 @@ class Installer:
 		root: PartitionModification | LvmVolume,
 		uki_enabled: bool = False
 	) -> None:
-		debug('Installing limine bootloader')
+		debug('Installing Limine bootloader')
 
 		self.pacman.strap('limine')
 
 		info(f"Limine boot partition: {boot_partition.dev_path}")
 
 		limine_path = self.target / 'usr' / 'share' / 'limine'
+		config_path = None
 		hook_command = None
 
 		if SysInfo.has_uefi():
+			self.pacman.strap('efibootmgr')
+
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
 			elif not efi_partition.mountpoint:
@@ -1258,7 +1263,7 @@ class Installer:
 			info(f"Limine EFI partition: {efi_partition.dev_path}")
 
 			try:
-				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'BOOT'
+				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'limine'
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
@@ -1266,11 +1271,49 @@ class Installer:
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
+			config_path = efi_dir_path / 'limine.conf'
+
 			hook_command = (
-				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/BOOT/'
-				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/BOOT/'
+				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/limine/'
+				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/limine/'
 			)
+
+			# Create EFI boot menu entry for Limine.
+			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+
+			try:
+				with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
+					efi_bitness = fw_platform_size.read().strip()
+			except Exception as err:
+				error(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
+
+			loader_path = None
+			if efi_bitness == '64':
+				loader_path = '/EFI/limine/BOOTX64.EFI'
+			elif efi_bitness == '32':
+				loader_path = '/EFI/limine/BOOTIA32.EFI'
+			else:
+				error('EFI bitness is neither 32 nor 64 bits')
+
+			try:
+				SysCommand(
+					'efibootmgr'
+					' --create'
+					f' --disk {parent_dev_path}'
+					f' --part {efi_partition.partn}'
+					' --label "Arch Linux Limine Bootloader"'
+					f' --loader {loader_path}'
+					' --unicode'
+					' --verbose'
+				)
+			except Exception as err:
+				error(f'SysCommand for efibootmgr failed: {err}')
 		else:
+			boot_limine_path = self.target / 'boot' / 'limine'
+			boot_limine_path.mkdir(parents=True, exist_ok=True)
+
+			config_path = boot_limine_path / 'limine.conf'
+
 			parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
 			if unique_path := device_handler.get_unique_path_for_device(parent_dev_path):
@@ -1278,7 +1321,7 @@ class Installer:
 
 			try:
 				# The `limine-bios.sys` file contains stage 3 code.
-				shutil.copy(limine_path / 'limine-bios.sys', self.target / 'boot')
+				shutil.copy(limine_path / 'limine-bios.sys', boot_limine_path)
 
 				# `limine bios-install` deploys the stage 1 and 2 to the
 				SysCommand(f'arch-chroot {self.target} limine bios-install {parent_dev_path}', peek_output=True)
@@ -1287,7 +1330,7 @@ class Installer:
 
 			hook_command = (
 				f'/usr/bin/limine bios-install {parent_dev_path}'
-				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/'
+				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'
 			)
 
 		hook_contents = f'''[Trigger]
@@ -1330,7 +1373,6 @@ Exec = /bin/sh -c "{hook_command}"
 				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
 				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
 
-		config_path = self.target / 'boot' / 'limine.conf'
 		config_path.write_text(config_contents)
 
 		self._helper_flags['bootloader'] = "limine"
