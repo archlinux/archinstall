@@ -80,7 +80,7 @@ class ArchConfig:
 		}
 
 		if self.disk_encryption and self.disk_encryption.encryption_password:
-			config['encryption_password'] = self.disk_encryption.encryption_password.enc_password
+			config['encryption_password'] = self.disk_encryption.encryption_password.plaintext
 
 		return config
 
@@ -169,7 +169,7 @@ class ArchConfig:
 			arch_config.disk_encryption = DiskEncryption.parse_arg(
 				arch_config.disk_config,
 				args_config['disk_encryption'],
-				Password(enc_password=args_config.get('encryption_password', ''))
+				Password(plaintext=args_config.get('encryption_password', ''))
 			)
 
 		if hostname := args_config.get('hostname', ''):
