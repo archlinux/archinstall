@@ -1577,6 +1577,49 @@ msgstr "'{}' کے لیے ایک عمل منتخب کریں"
 msgid "Press ? for help"
 msgstr ""
 
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "اضافی ریپوزٹریز"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+msgid "Selected free space segment on device {}:"
+msgstr ""
+
+msgid "Size: {} / {}"
+msgstr ""
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "اسٹارٹ سیکٹر درج کریں (فیصد یا بلاک نمبر، ڈیفالٹ: {}):"
+
+msgid "HSM device"
+msgstr ""
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "صارف کا نام:"
+
+msgid "The specified configuration will be applied"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "شامل:"
 

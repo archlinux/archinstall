@@ -1552,3 +1552,53 @@ msgstr "Valige täitmisrežiim"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valige valik, et anda Sway'le juurdepääs teie riistvarale"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Valikulised repositooriumid"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Valige allkirja kontrollimise võimalus"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Praegused vabad sektorid seadmes {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Kogupikkus: {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Sisestage algussektor (vaikimisi: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Seade"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Kasutajanimi : "
+
+msgid "The specified configuration will be applied"
+msgstr ""

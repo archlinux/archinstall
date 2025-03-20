@@ -3,10 +3,12 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, override
 
-from archinstall.tui import Alignment, EditMenu, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
+from archinstall.tui.curses_menu import EditMenu, SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, Orientation, ResultType
 
 from ..general import secret
-from ..menu import ListManager
+from ..menu.list_manager import ListManager
 from ..models.users import User
 from ..utils.util import get_password
 

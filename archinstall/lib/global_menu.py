@@ -1,39 +1,40 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
-from archinstall.tui import MenuItem, MenuItemGroup
+from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
+from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
+from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
-from . import disk
+from .args import ArchConfig
 from .configuration import save_config
 from .general import secret
 from .hardware import SysInfo
-from .interactions import (
+from .interactions.general_conf import (
 	add_number_of_parallel_downloads,
 	ask_additional_packages_to_install,
 	ask_for_a_timezone,
-	ask_for_additional_users,
 	ask_for_audio_selection,
-	ask_for_bootloader,
-	ask_for_swap,
-	ask_for_uki,
 	ask_hostname,
 	ask_ntp,
-	ask_to_configure_network,
-	select_additional_repositories,
-	select_kernel,
 )
-from .locale.locale_menu import LocaleConfiguration, LocaleMenu
-from .menu import AbstractMenu
-from .mirrors import MirrorConfiguration, MirrorMenu
-from .models import NetworkConfiguration, NicType
+from .interactions.manage_users_conf import ask_for_additional_users
+from .interactions.network_menu import ask_to_configure_network
+from .interactions.system_conf import ask_for_bootloader, ask_for_swap, ask_for_uki, select_kernel
+from .locale.locale_menu import LocaleMenu
+from .menu.abstract_menu import AbstractMenu
+from .mirrors import MirrorMenu
 from .models.audio_configuration import AudioConfiguration
 from .models.bootloader import Bootloader
+from .models.locale import LocaleConfiguration
+from .models.mirrors import MirrorConfiguration
+from .models.network_configuration import NetworkConfiguration, NicType
+from .models.profile_model import ProfileConfiguration
 from .models.users import User
 from .output import FormattedOutput
-from .profile.profile_menu import ProfileConfiguration
 from .translationhandler import Language, translation_handler
-from .utils.util import format_cols, get_password
+from .utils.util import get_password
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -44,20 +45,17 @@ if TYPE_CHECKING:
 
 
 class GlobalMenu(AbstractMenu):
-	def __init__(self, data_store: dict[str, Any]):
-		self._data_store = data_store
-
-		if 'archinstall-language' not in data_store:
-			data_store['archinstall-language'] = translation_handler.get_language_by_abbr('en')
-
+	def __init__(self, arch_config: ArchConfig) -> None:
+		self._arch_config = arch_config
 		menu_optioons = self._get_menu_options()
+
 		self._item_group = MenuItemGroup(
 			menu_optioons,
 			sort_items=False,
 			checkmarks=True
 		)
 
-		super().__init__(self._item_group, data_store)
+		super().__init__(self._item_group, config=arch_config)
 
 	def _get_menu_options(self) -> list[MenuItem]:
 		return [
@@ -65,7 +63,7 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Archinstall language')),
 				action=self._select_archinstall_language,
 				display_action=lambda x: x.display_name if x else '',
-				key='archinstall-language'
+				key='archinstall_language'
 			),
 			MenuItem(
 				text=str(_('Locales')),
@@ -74,7 +72,7 @@ class GlobalMenu(AbstractMenu):
 				key='locale_config'
 			),
 			MenuItem(
-				text=str(_('Mirrors')),
+				text=str(_('Mirrors and repositories')),
 				action=self._mirror_configuration,
 				preview_action=self._prev_mirror_config,
 				key='mirror_config'
@@ -90,8 +88,8 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Disk encryption')),
 				action=self._disk_encryption,
 				preview_action=self._prev_disk_encryption,
-				key='disk_encryption',
-				dependencies=['disk_config']
+				dependencies=['disk_config'],
+				key='disk_encryption'
 			),
 			MenuItem(
 				text=str(_('Swap')),
@@ -111,6 +109,7 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Unified kernel images')),
 				value=False,
+				enabled=SysInfo.has_uefi(),
 				action=ask_for_uki,
 				preview_action=self._prev_uki,
 				key='uki',
@@ -126,13 +125,13 @@ class GlobalMenu(AbstractMenu):
 				text=str(_('Root password')),
 				action=self._set_root_password,
 				preview_action=self._prev_root_pwd,
-				key='!root-password',
+				key='root_password',
 			),
 			MenuItem(
 				text=str(_('User account')),
 				action=self._create_user_account,
 				preview_action=self._prev_users,
-				key='!users'
+				key='users'
 			),
 			MenuItem(
 				text=str(_('Profile')),
@@ -166,7 +165,7 @@ class GlobalMenu(AbstractMenu):
 				action=add_number_of_parallel_downloads,
 				value=0,
 				preview_action=self._prev_parallel_dw,
-				key='parallel downloads'
+				key='parallel_downloads'
 			),
 			MenuItem(
 				text=str(_('Additional packages')),
@@ -174,13 +173,6 @@ class GlobalMenu(AbstractMenu):
 				value=[],
 				preview_action=self._prev_additional_pkgs,
 				key='packages'
-			),
-			MenuItem(
-				text=str(_('Optional repositories')),
-				action=select_additional_repositories,
-				value=[],
-				preview_action=self._prev_additional_repos,
-				key='additional-repositories'
 			),
 			MenuItem(
 				text=str(_('Timezone')),
@@ -202,27 +194,28 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Save configuration')),
 				action=lambda x: self._safe_config(),
-				key='save_config'
+				key='__config__'
 			),
 			MenuItem(
 				text=str(_('Install')),
 				preview_action=self._prev_install_invalid_config,
-				key='install'
+				key='__config__'
 			),
 			MenuItem(
 				text=str(_('Abort')),
 				action=lambda x: exit(1),
-				key='abort'
+				key='__config__'
 			)
 		]
 
 	def _safe_config(self) -> None:
-		data: dict[str, Any] = {}
-		for item in self._item_group.items:
-			if item.key is not None:
-				data[item.key] = item.value
+		# data: dict[str, Any] = {}
+		# for item in self._item_group.items:
+		# 	if item.key is not None:
+		# 		data[item.key] = item.value
 
-		save_config(data)
+		self.sync_all_to_config()
+		save_config(self._arch_config)
 
 	def _missing_configs(self) -> list[str]:
 		def check(s) -> bool:
@@ -280,17 +273,17 @@ class GlobalMenu(AbstractMenu):
 			if o.key is not None:
 				self._item_group.find_by_key(o.key).text = o.text
 
-	def _disk_encryption(self, preset: disk.DiskEncryption | None) -> disk.DiskEncryption | None:
-		disk_config: disk.DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
+	def _disk_encryption(self, preset: DiskEncryption | None) -> DiskEncryption | None:
+		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
 
 		if not disk_config:
 			# this should not happen as the encryption menu has the disk_config as dependency
 			raise ValueError('No disk layout specified')
 
-		if not disk.DiskEncryption.validate_enc(disk_config):
+		if not DiskEncryption.validate_enc(disk_config):
 			return None
 
-		disk_encryption = disk.DiskEncryptionMenu(disk_config, preset=preset).run()
+		disk_encryption = DiskEncryptionMenu(disk_config, preset=preset).run()
 		return disk_encryption
 
 	def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration:
@@ -317,13 +310,8 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_additional_pkgs(self, item: MenuItem) -> str | None:
 		if item.value:
-			return format_cols(item.value, None)
-		return None
-
-	def _prev_additional_repos(self, item: MenuItem) -> str | None:
-		if item.value:
-			repos = ', '.join(item.value)
-			return f'{_("Additional repositories")}: {repos}'
+			output = '\n'.join(sorted(item.value))
+			return output
 		return None
 
 	def _prev_tz(self, item: MenuItem) -> str | None:
@@ -339,12 +327,12 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_disk_config(self, item: MenuItem) -> str | None:
-		disk_layout_conf: disk.DiskLayoutConfiguration | None = item.value
+		disk_layout_conf: DiskLayoutConfiguration | None = item.value
 
 		if disk_layout_conf:
 			output = str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg()) + '\n'
 
-			if disk_layout_conf.config_type == disk.DiskLayoutType.Pre_mount:
+			if disk_layout_conf.config_type == DiskLayoutType.Pre_mount:
 				output += str(_('Mountpoint')) + ': ' + str(disk_layout_conf.mountpoint)
 
 			if disk_layout_conf.lvm_config:
@@ -401,14 +389,14 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_disk_encryption(self, item: MenuItem) -> str | None:
-		disk_config: disk.DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
-		enc_config: disk.DiskEncryption | None = item.value
+		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
+		enc_config: DiskEncryption | None = item.value
 
-		if disk_config and not disk.DiskEncryption.validate_enc(disk_config):
+		if disk_config and not DiskEncryption.validate_enc(disk_config):
 			return str(_('LVM disk encryption with more than 2 partitions is currently not supported'))
 
 		if enc_config:
-			enc_type = disk.EncryptionType.type_to_text(enc_config.encryption_type)
+			enc_type = EncryptionType.type_to_text(enc_config.encryption_type)
 			output = str(_('Encryption type')) + f': {enc_type}\n'
 			output += str(_('Password')) + f': {secret(enc_config.encryption_password)}\n'
 
@@ -436,7 +424,7 @@ class GlobalMenu(AbstractMenu):
 			shim if necessary.
 		"""
 		bootloader = self._item_group.find_by_key('bootloader').value
-		boot_partition: disk.PartitionModification | None = None
+		boot_partition: PartitionModification | None = None
 
 		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
@@ -449,7 +437,7 @@ class GlobalMenu(AbstractMenu):
 			return "Boot partition not found"
 
 		if bootloader == Bootloader.Limine:
-			if boot_partition.fs_type != disk.FilesystemType.Fat32:
+			if boot_partition.fs_type != FilesystemType.Fat32:
 				return "Limine does not support booting from filesystems other than FAT32"
 
 		return None
@@ -499,9 +487,9 @@ class GlobalMenu(AbstractMenu):
 
 	def _select_disk_config(
 		self,
-		preset: disk.DiskLayoutConfiguration | None = None
-	) -> disk.DiskLayoutConfiguration | None:
-		disk_config = disk.DiskLayoutConfigurationMenu(preset).run()
+		preset: DiskLayoutConfiguration | None = None
+	) -> DiskLayoutConfiguration | None:
+		disk_config = DiskLayoutConfigurationMenu(preset).run()
 
 		if disk_config != preset:
 			self._menu_item_group.find_by_key('disk_encryption').value = None
@@ -542,10 +530,27 @@ class GlobalMenu(AbstractMenu):
 		mirror_config: MirrorConfiguration = item.value
 
 		output = ''
-		if mirror_config.regions:
-			output += '{}: {}\n\n'.format(str(_('Mirror regions')), mirror_config.regions)
-		if mirror_config.custom_mirrors:
-			table = FormattedOutput.as_table(mirror_config.custom_mirrors)
-			output += '{}\n{}'.format(str(_('Custom mirrors')), table)
+		if mirror_config.mirror_regions:
+			title = str(_('Selected mirror regions'))
+			divider = '-' * len(title)
+			regions = mirror_config.region_names
+			output += f'{title}\n{divider}\n{regions}\n\n'
+
+		if mirror_config.custom_servers:
+			title = str(_('Custom servers'))
+			divider = '-' * len(title)
+			servers = mirror_config.custom_server_urls
+			output += f'{title}\n{divider}\n{servers}\n\n'
+
+		if mirror_config.optional_repositories:
+			title = str(_('Optional repositories'))
+			divider = '-' * len(title)
+			repos = ', '.join([r.value for r in mirror_config.optional_repositories])
+			output += f'{title}\n{divider}\n{repos}\n\n'
+
+		if mirror_config.custom_repositories:
+			title = str(_('Custom repositories'))
+			table = FormattedOutput.as_table(mirror_config.custom_repositories)
+			output += f'{title}:\n\n{table}'
 
 		return output.strip()

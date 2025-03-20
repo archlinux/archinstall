@@ -7,10 +7,10 @@ Before starting a new language translation be aware that a font for that languag
 available on the ISO.
 
 Fonts that are using a different character set than Latin will not be displayed correctly. If those languages
-want to be selected than a proper font has to be set manually in the console.
+want to be selected, then a proper font has to be set manually in the console.
 
 All available console fonts can be found in `/usr/share/kbd/consolefonts` and they
-can be set with `setfont LatGrkCyr-8x16`
+can be set with `setfont LatGrkCyr-8x16`.
 
 ## Adding new languages
 
@@ -34,7 +34,7 @@ translation is provided for a language then this is the text that is going to be
 
 ## Perform translations
 
-To perform translations for a language this file can be edited manually or the neat `poedit` can be used (https://poedit.net/).
+To perform translations for a language, the file `base.po` can be edited manually, or the neat `poedit` can be used (https://poedit.net/).
 If editing the file manually, write the translation in the `msgstr` part
 
 ```

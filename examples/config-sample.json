@@ -1,133 +1,148 @@
 {
-    "__separator__": null,
-    "config_version": "2.8.6",
-    "additional-repositories": [],
-    "archinstall-language": "English",
-    "audio_config": {"audio": "pipewire"},
-    "bootloader": "Systemd-boot",
-    "debug": false,
-    "disk_config": {
-        "config_type": "default_layout",
-        "device_modifications": [
-            {
-                "device": "/dev/sda",
-                "partitions": [
-                    {
-                        "btrfs": [],
-                        "flags": [
-                            "boot"
-                        ],
-                        "fs_type": "fat32",
-                        "size": {
-                            "sector_size": null,
-                            "unit": "MiB",
-                            "value": 512
-                        },
-                        "mount_options": [],
-                        "mountpoint": "/boot",
-                        "obj_id": "2c3fa2d5-2c79-4fab-86ec-22d0ea1543c0",
-                        "start": {
-                            "sector_size": null,
-                            "unit": "MiB",
-                            "value": 1
-                        },
-                        "status": "create",
-                        "type": "primary"
-                    },
-                    {
-                        "btrfs": [],
-                        "flags": [],
-                        "fs_type": "ext4",
-                        "size": {
-                            "sector_size": null,
-                            "unit": "GiB",
-                            "value": 20
-                        },
-                        "mount_options": [],
-                        "mountpoint": "/",
-                        "obj_id": "3e7018a0-363b-4d05-ab83-8e82d13db208",
-                        "start": {
-                            "sector_size": null,
-                            "unit": "MiB",
-                            "value": 513
-                        },
-                        "status": "create",
-                        "type": "primary"
-                    },
-                    {
-                        "btrfs": [],
-                        "flags": [],
-                        "fs_type": "ext4",
-                        "size": {
-                            "sector_size": null,
-                            "unit": "Percent",
-                            "value": 100
-                        },
-                        "mount_options": [],
-                        "mountpoint": "/home",
-                        "obj_id": "ce58b139-f041-4a06-94da-1f8bad775d3f",
-                        "start": {
-                            "sector_size": null,
-                            "unit": "GiB",
-                            "value": 20
-                        },
-                        "status": "create",
-                        "type": "primary"
-                    }
-                ],
-                "wipe": true
-            }
-        ]
-    },
-    "hostname": "archlinux",
-    "kernels": [
-        "linux"
-    ],
-    "locale_config": {
-      "kb_layout": "us",
-      "sys_enc": "UTF-8",
-      "sys_lang": "en_US"
-    },
-    "mirror_config": {
-      "mirror-regions": {
-        "Australia": [
-          "http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch"
-        ]
+  "archinstall-language": "English",
+  "audio_config": {
+    "audio": "pipewire"
+  },
+  "bootloader": "Systemd-boot",
+  "debug": false,
+  "disk_config": {
+    "config_type": "default_layout",
+    "device_modifications": [
+      {
+        "device": "/dev/sda",
+        "partitions": [
+          {
+            "btrfs": [],
+            "flags": [
+              "boot"
+            ],
+            "fs_type": "fat32",
+            "size": {
+              "sector_size": null,
+              "unit": "MiB",
+              "value": 512
+            },
+            "mount_options": [],
+            "mountpoint": "/boot",
+            "obj_id": "2c3fa2d5-2c79-4fab-86ec-22d0ea1543c0",
+            "start": {
+              "sector_size": null,
+              "unit": "MiB",
+              "value": 1
+            },
+            "status": "create",
+            "type": "primary"
+          },
+          {
+            "btrfs": [],
+            "flags": [],
+            "fs_type": "ext4",
+            "size": {
+              "sector_size": null,
+              "unit": "GiB",
+              "value": 20
+            },
+            "mount_options": [],
+            "mountpoint": "/",
+            "obj_id": "3e7018a0-363b-4d05-ab83-8e82d13db208",
+            "start": {
+              "sector_size": null,
+              "unit": "MiB",
+              "value": 513
+            },
+            "status": "create",
+            "type": "primary"
+          },
+          {
+            "btrfs": [],
+            "flags": [],
+            "fs_type": "ext4",
+            "size": {
+              "sector_size": null,
+              "unit": "Percent",
+              "value": 100
+            },
+            "mount_options": [],
+            "mountpoint": "/home",
+            "obj_id": "ce58b139-f041-4a06-94da-1f8bad775d3f",
+            "start": {
+              "sector_size": null,
+              "unit": "GiB",
+              "value": 20
+            },
+            "status": "create",
+            "type": "primary"
+          }
+        ],
+        "wipe": true
       }
-    },
-    "network_config": {
-      "type": "manual",
-      "nics": [
-        {
-          "iface": "eno1",
-          "ip": "192.168.1.15/24",
-          "dhcp": true,
-          "gateway": "192.168.1.1",
-          "dns": [
-              "192.168.1.1",
-              "9.9.9.9"
-          ]
-        }
+    ]
+  },
+  "hostname": "archlinux",
+  "kernels": [
+    "linux"
+  ],
+  "locale_config": {
+    "kb_layout": "us",
+    "sys_enc": "UTF-8",
+    "sys_lang": "en_US"
+  },
+  "mirror_config": {
+    "custom_servers": [
+      {
+        "url": "https://mymirror.com/$repo/os/$arch"
+      }
+    ],
+    "mirror_regions": {
+      "Australia": [
+        "http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch"
       ]
     },
-    "no_pkg_lookups": false,
-    "ntp": true,
-    "offline": false,
-    "packages": [],
-    "parallel downloads": 0,
-    "profile_config": {
-        "gfx_driver": "All open-source (default)",
-        "greeter": "sddm",
-        "profile": {
-            "details": [
-                "KDE Plasma"
-            ],
-            "main": "Desktop"
-        }
-    },
-    "script": "guided",
-    "silent": false,
-    "swap": true,
-    "timezone": "UTC",
-    "version": "2.8.6"
+    "optional_repositories": [
+      "testing"
+    ],
+    "custom_repositories": [
+      {
+        "name": "myrepo",
+        "url": "https://myrepo.com/$repo/os/$arch",
+        "sign_check": "Required",
+        "sign_option": "TrustAll"
+      }
+    ]
+  },
+  "network_config": {
+    "type": "manual",
+    "nics": [
+      {
+        "iface": "eno1",
+        "ip": "192.168.1.15/24",
+        "dhcp": true,
+        "gateway": "192.168.1.1",
+        "dns": [
+          "192.168.1.1",
+          "9.9.9.9"
+        ]
+      }
+    ]
+  },
+  "no_pkg_lookups": false,
+  "ntp": true,
+  "offline": false,
+  "packages": [],
+  "parallel downloads": 0,
+  "profile_config": {
+    "gfx_driver": "All open-source (default)",
+    "greeter": "sddm",
+    "profile": {
+      "details": [
+        "KDE Plasma"
+      ],
+      "main": "Desktop"
+    }
+  },
+  "script": "guided",
+  "silent": false,
+  "swap": true,
+  "timezone": "UTC",
+  "version": "2.8.6"
 }

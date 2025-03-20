@@ -15,7 +15,7 @@ class Bootloader(Enum):
 
 	def has_uki_support(self) -> bool:
 		match self:
-			case Bootloader.Efistub | Bootloader.Systemd:
+			case Bootloader.Efistub | Bootloader.Limine | Bootloader.Systemd:
 				return True
 			case _:
 				return False

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import pathlib
 import re
 import secrets
 import shlex
@@ -16,6 +15,7 @@ import urllib.parse
 from collections.abc import Callable, Iterator
 from datetime import date, datetime
 from enum import Enum
+from pathlib import Path
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
 from typing import TYPE_CHECKING, Any, override
@@ -27,6 +27,10 @@ from .storage import storage
 
 if TYPE_CHECKING:
 	from .installer import Installer
+
+# https://stackoverflow.com/a/43627833/929999
+_VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
+_VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
 
 
 def generate_password(length: int = 64) -> str:
@@ -40,12 +44,12 @@ def locate_binary(name: str) -> str:
 	raise RequirementError(f"Binary {name} does not exist.")
 
 
-def clear_vt100_escape_codes(data: bytes | str) -> bytes | str:
-	# https://stackoverflow.com/a/43627833/929999
-	vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
-	if isinstance(data, bytes):
-		return re.sub(vt100_escape_regex.encode(), b'', data)
-	return re.sub(vt100_escape_regex, '', data)
+def clear_vt100_escape_codes(data: bytes) -> bytes:
+	return re.sub(_VT100_ESCAPE_REGEX_BYTES, b'', data)
+
+
+def clear_vt100_escape_codes_from_str(data: str) -> str:
+	return re.sub(_VT100_ESCAPE_REGEX, '', data)
 
 
 def jsonify(obj: Any, safe: bool = True) -> Any:
@@ -73,7 +77,7 @@ def jsonify(obj: Any, safe: bool = True) -> Any:
 		return obj.isoformat()
 	if isinstance(obj, list | set | tuple):
 		return [jsonify(item, safe) for item in obj]
-	if isinstance(obj, pathlib.Path):
+	if isinstance(obj, Path):
 		return str(obj)
 	if hasattr(obj, "__dict__"):
 		return vars(obj)
@@ -112,17 +116,14 @@ class SysCommandWorker:
 		working_directory: str | None = './',
 		remove_vt100_escape_codes_from_lines: bool = True
 	):
-		callbacks = callbacks or {}
-
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
 
-		if cmd:
-			if cmd[0][0] != '/' and cmd[0][:2] != './':  # pathlib.Path does not work well
-				cmd[0] = locate_binary(cmd[0])
+		if cmd and not cmd[0].startswith(('/', './')):  # Path() does not work well
+			cmd[0] = locate_binary(cmd[0])
 
 		self.cmd = cmd
-		self.callbacks = callbacks
+		self.callbacks = callbacks or {}
 		self.peek_output = peek_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overridden
 		self.environment_vars = {'LC_ALL': 'C'}
@@ -160,7 +161,7 @@ class SysCommandWorker:
 		lines = filter(None, self._trace_log[self._trace_log_pos:last_line].splitlines())
 		for line in lines:
 			if self.remove_vt100_escape_codes_from_lines:
-				line = clear_vt100_escape_codes(line)  # type: ignore[assignment]
+				line = clear_vt100_escape_codes(line)
 
 			yield line + b'\n'
 
@@ -204,7 +205,7 @@ class SysCommandWorker:
 			raise SysCallError(
 				f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self)[-500:]}",
 				self.exit_code,
-				worker=self
+				worker_log=self._trace_log
 			)
 
 	def is_alive(self) -> bool:
@@ -247,7 +248,7 @@ class SysCommandWorker:
 				except UnicodeDecodeError:
 					return False
 
-			peak_logfile = pathlib.Path(f"{storage['LOG_PATH']}/cmd_output.txt")
+			peak_logfile = Path(f"{storage['LOG_PATH']}/cmd_output.txt")
 
 			change_perm = False
 			if peak_logfile.exists() is False:
@@ -306,7 +307,7 @@ class SysCommandWorker:
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
-			history_logfile = pathlib.Path(f"{storage['LOG_PATH']}/cmd_history.txt")
+			history_logfile = Path(f"{storage['LOG_PATH']}/cmd_history.txt")
 
 			change_perm = False
 			if history_logfile.exists() is False:
@@ -321,9 +322,6 @@ class SysCommandWorker:
 			except (PermissionError, FileNotFoundError):
 				# If history_logfile does not exist, ignore the error
 				pass
-
-			if storage.get('arguments', {}).get('debug'):
-				debug(f"Executing: {self.cmd}")
 
 			try:
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
@@ -460,7 +458,7 @@ class SysCommand:
 
 def _pid_exists(pid: int) -> bool:
 	try:
-		return any(subprocess.check_output(['/usr/bin/ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
+		return any(subprocess.check_output(['ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
 		return False
 
@@ -479,7 +477,7 @@ def run_custom_user_commands(commands: list[str], installation: Installer) -> No
 		os.unlink(chroot_path)
 
 
-def json_stream_to_structure(configuration_identifier: str, stream: str, target: dict) -> bool:
+def json_stream_to_structure(configuration_identifier: str, stream: str, target: dict[str, Any]) -> bool:
 	"""
 	Load a JSON encoded dictionary from a stream and merge it into an existing dictionary.
 	A stream can be a filepath, a URL or a raw JSON string.
@@ -498,7 +496,7 @@ def json_stream_to_structure(configuration_identifier: str, stream: str, target:
 			return False
 
 	# Try using the stream as a filepath that should be read
-	if raw is None and (path := pathlib.Path(stream)).exists():
+	if raw is None and (path := Path(stream)).exists():
 		try:
 			raw = path.read_text()
 		except Exception as err:

@@ -1,14 +1,12 @@
-from typing import TYPE_CHECKING, Any, override
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, override
 
-from archinstall.tui import MenuItem, MenuItemGroup
+from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType, LvmConfiguration
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
-from ..disk import DeviceModification
-from ..interactions import select_disk_config
-from ..interactions.disk_conf import select_lvm_config
-from ..menu import AbstractSubMenu
+from ..interactions.disk_conf import select_disk_config, select_lvm_config
+from ..menu.abstract_menu import AbstractSubMenu
 from ..output import FormattedOutput
-from . import DiskLayoutConfiguration, DiskLayoutType
-from .device_model import LvmConfiguration
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -18,34 +16,44 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
+@dataclass
+class DiskMenuConfig:
+	disk_config: DiskLayoutConfiguration | None
+	lvm_config: LvmConfiguration | None
+
+
 class DiskLayoutConfigurationMenu(AbstractSubMenu):
-	def __init__(
-		self,
-		disk_layout_config: DiskLayoutConfiguration | None,
-		advanced: bool = False
-	):
-		self._disk_layout_config = disk_layout_config
-		self._advanced = advanced
-		self._data_store: dict[str, Any] = {}
+	def __init__(self, disk_layout_config: DiskLayoutConfiguration | None):
+		if not disk_layout_config:
+			self._disk_menu_config = DiskMenuConfig(disk_config=None, lvm_config=None)
+		else:
+			self._disk_menu_config = DiskMenuConfig(
+				disk_config=disk_layout_config,
+				lvm_config=disk_layout_config.lvm_config
+			)
 
 		menu_optioons = self._define_menu_options()
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
 
-		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
+		super().__init__(
+			self._item_group,
+			self._disk_menu_config,
+			allow_reset=True
+		)
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Partitioning')),
 				action=self._select_disk_layout_config,
-				value=self._disk_layout_config,
+				value=self._disk_menu_config.disk_config,
 				preview_action=self._prev_disk_layouts,
 				key='disk_config'
 			),
 			MenuItem(
 				text='LVM (BETA)',
 				action=self._select_lvm_config,
-				value=self._disk_layout_config.lvm_config if self._disk_layout_config else None,
+				value=self._disk_menu_config.lvm_config,
 				preview_action=self._prev_lvm_config,
 				dependencies=[self._check_dep_lvm],
 				key='lvm_config'
@@ -56,12 +64,11 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 	def run(self) -> DiskLayoutConfiguration | None:
 		super().run()
 
-		disk_layout_config: DiskLayoutConfiguration | None = self._data_store.get('disk_config', None)
+		if self._disk_menu_config.disk_config:
+			self._disk_menu_config.disk_config.lvm_config = self._disk_menu_config.lvm_config
+			return self._disk_menu_config.disk_config
 
-		if disk_layout_config:
-			disk_layout_config.lvm_config = self._data_store.get('lvm_config', None)
-
-		return disk_layout_config
+		return None
 
 	def _check_dep_lvm(self) -> bool:
 		disk_layout_conf: DiskLayoutConfiguration | None = self._menu_item_group.find_by_key('disk_config').value
@@ -75,7 +82,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		self,
 		preset: DiskLayoutConfiguration | None
 	) -> DiskLayoutConfiguration | None:
-		disk_config = select_disk_config(preset, advanced_option=self._advanced)
+		disk_config = select_disk_config(preset)
 
 		if disk_config != preset:
 			self._menu_item_group.find_by_key('lvm_config').value = None
@@ -101,8 +108,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 			msg += str(_('Mountpoint')) + ': ' + str(disk_layout_conf.mountpoint)
 			return msg
 
-		device_mods: list[DeviceModification] = \
-			list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
+		device_mods = [d for d in disk_layout_conf.device_modifications if d.partitions]
 
 		if device_mods:
 			output_partition = '{}: {}\n'.format(str(_('Configuration')), disk_layout_conf.config_type.display_msg())
@@ -113,12 +119,11 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 				partition_table = FormattedOutput.as_table(mod.partitions)
 
 				output_partition += f'{mod.device_path}: {mod.device.device_info.model}\n'
+				output_partition += '{}: {}\n'.format(str(_('Wipe')), mod.wipe)
 				output_partition += partition_table + '\n'
 
 				# create btrfs table
-				btrfs_partitions = list(
-					filter(lambda p: len(p.btrfs_subvols) > 0, mod.partitions)
-				)
+				btrfs_partitions = [p for p in mod.partitions if p.btrfs_subvols]
 				for partition in btrfs_partitions:
 					output_btrfs += FormattedOutput.as_table(partition.btrfs_subvols) + '\n'
 

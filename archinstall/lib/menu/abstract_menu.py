@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Self
 
-from archinstall.tui import Chars, FrameProperties, FrameStyle, MenuItem, MenuItemGroup, PreviewStyle, ResultType, SelectMenu, Tui
+from archinstall.tui.curses_menu import SelectMenu, Tui
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle, ResultType
 
 from ..output import error
 
@@ -13,26 +15,29 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
+CONFIG_KEY = '__config__'
+
+
 class AbstractMenu:
 	def __init__(
 		self,
 		item_group: MenuItemGroup,
-		data_store: dict[str, Any],
+		config: Any,
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
 		reset_warning: str | None = None
 	):
 		self._menu_item_group = item_group
-		self._data_store = data_store
+		self._config = config
 		self.auto_cursor = auto_cursor
 		self._allow_reset = allow_reset
 		self._reset_warning = reset_warning
 
 		self.is_context_mgr = False
 
-		self._sync_all_from_ds()
+		self._sync_from_config()
 
-	def __enter__(self, *args: Any, **kwargs: Any) -> AbstractMenu:
+	def __enter__(self, *args: Any, **kwargs: Any) -> Self:
 		self.is_context_mgr = True
 		return self
 
@@ -44,43 +49,48 @@ class AbstractMenu:
 			Tui.print("Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
-		self._sync_all_to_ds()
+		self.sync_all_to_config()
 
-	def _sync_all_from_ds(self) -> None:
+	def _sync_from_config(self) -> None:
 		for item in self._menu_item_group.menu_items:
-			if item.key is not None:
-				if (store_value := self._data_store.get(item.key, None)) is not None:
-					item.value = store_value
+			if item.key is not None and item.key != CONFIG_KEY:
+				config_value = getattr(self._config, item.key)
+				if config_value is not None:
+					item.value = config_value
 
-	def _sync_all_to_ds(self) -> None:
+	def sync_all_to_config(self) -> None:
 		for item in self._menu_item_group.menu_items:
 			if item.key:
-				self._data_store[item.key] = item.value
+				setattr(self._config, item.key, item.value)
 
 	def _sync(self, item: MenuItem) -> None:
-		if not item.key:
+		if not item.key or item.key == CONFIG_KEY:
 			return
 
-		store_value = self._data_store.get(item.key, None)
+		config_value = getattr(self._config, item.key)
 
-		if store_value is not None:
-			item.value = store_value
+		if config_value is not None:
+			item.value = config_value
 		elif item.value is not None:
-			self._data_store[item.key] = item.value
+			setattr(self._config, item.key, item.value)
 
 	def set_enabled(self, key: str, enabled: bool) -> None:
-		if (item := self._menu_item_group.find_by_key(key)) is not None:
-			item.enabled = enabled
-			return None
+		# the __config__ is associated with multiple items
+		found = False
+		for item in self._menu_item_group.items:
+			if item.key == key:
+				item.enabled = enabled
+				found = True
 
-		raise ValueError(f'No selector found: {key}')
+		if not found:
+			raise ValueError(f'No selector found: {key}')
 
 	def disable_all(self) -> None:
 		for item in self._menu_item_group.items:
 			item.enabled = False
 
 	def run(self) -> Any | None:
-		self._sync_all_from_ds()
+		self._sync_from_config()
 
 		while True:
 			result = SelectMenu(
@@ -100,10 +110,9 @@ class AbstractMenu:
 					if item.action is None:
 						break
 				case ResultType.Reset:
-					self._data_store = {}
 					return None
 
-		self._sync_all_to_ds()
+		self.sync_all_to_config()
 		return None
 
 
@@ -111,7 +120,7 @@ class AbstractSubMenu(AbstractMenu):
 	def __init__(
 		self,
 		item_group: MenuItemGroup,
-		data_store: dict[str, Any],
+		config: Any,
 		auto_cursor: bool = True,
 		allow_reset: bool = False
 	):
@@ -120,7 +129,7 @@ class AbstractSubMenu(AbstractMenu):
 
 		super().__init__(
 			item_group,
-			data_store=data_store,
+			config=config,
 			auto_cursor=auto_cursor,
 			allow_reset=allow_reset
 		)

@@ -1,7 +1,9 @@
 import copy
 from typing import TYPE_CHECKING, Any
 
-from archinstall.tui import Alignment, MenuItem, MenuItemGroup, ResultType, SelectMenu
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, ResultType
 
 from ..output import FormattedOutput
 

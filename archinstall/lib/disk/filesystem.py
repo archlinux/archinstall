@@ -4,14 +4,11 @@ import time
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from archinstall.tui import Tui
+from archinstall.tui.curses_menu import Tui
 
-from ..hardware import SysInfo
 from ..interactions.general_conf import ask_abort
 from ..luks import Luks2
-from ..output import debug, info
-from .device_handler import device_handler
-from .device_model import (
+from ..models.device_model import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
 	DiskLayoutType,
@@ -21,11 +18,12 @@ from .device_model import (
 	LvmVolume,
 	LvmVolumeGroup,
 	PartitionModification,
-	PartitionTable,
 	SectorSize,
 	Size,
 	Unit,
 )
+from ..output import debug, info
+from .device_handler import device_handler
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -49,7 +47,7 @@ class FilesystemHandler:
 			debug('Disk layout configuration is set to pre-mount, not performing any operations')
 			return
 
-		device_mods = list(filter(lambda x: len(x.partitions) > 0, self._disk_config.device_modifications))
+		device_mods = [d for d in self._disk_config.device_modifications if d.partitions]
 
 		if not device_mods:
 			debug('No modifications required')
@@ -62,16 +60,15 @@ class FilesystemHandler:
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
-		partition_table = PartitionTable.GPT
-		if SysInfo.has_uefi() is False:
-			partition_table = PartitionTable.MBR
 
 		# make sure all devices are unmounted
 		for mod in device_mods:
 			device_handler.umount_all_existing(mod.device_path)
 
 		for mod in device_mods:
-			device_handler.partition(mod, partition_table=partition_table)
+			device_handler.partition(mod)
+
+		device_handler.udev_sync()
 
 		if self._disk_config.lvm_config:
 			for mod in device_mods:
@@ -355,7 +352,7 @@ class FilesystemHandler:
 		Tui.print(out, row=0, endl='', clear_screen=True)
 
 		try:
-			countdown = '\n5...4...3...2...1'
+			countdown = '\n5...4...3...2...1\n'
 			for c in countdown:
 				Tui.print(c, row=0, endl='')
 				time.sleep(0.25)

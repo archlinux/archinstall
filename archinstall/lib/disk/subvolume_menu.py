@@ -1,11 +1,12 @@
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
-from archinstall.tui import Alignment, EditMenu, ResultType
+from archinstall.lib.models.device_model import SubvolumeModification
+from archinstall.tui.curses_menu import EditMenu
+from archinstall.tui.types import Alignment, ResultType
 
-from ..menu import ListManager
+from ..menu.list_manager import ListManager
 from ..utils.util import prompt_dir
-from .device_model import SubvolumeModification
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

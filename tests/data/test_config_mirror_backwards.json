@@ -1,0 +1,18 @@
+{
+    "additional-repositories": ["testing"],
+    "mirror_config": {
+        "custom_mirrors": [
+            {
+                "name": "my_mirror",
+                "sign_check": "Optional",
+                "sign_option": "TrustedOnly",
+                "url": "example.com"
+            }
+        ],
+        "mirror_regions": {
+            "Australia": [
+          "http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch"
+            ]
+        }
+    }
+}

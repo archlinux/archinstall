@@ -1571,3 +1571,52 @@ msgstr "Επιλέξτε μία ενέργεια για '{}'"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Προαιρετικά αποθετήρια"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Επιλέξτε διεπαφή προς προσθήκη"
+
+msgid "Selected free space segment on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Σύνολο: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Συσκευή"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Όνομα Χρήστη : "
+
+msgid "The specified configuration will be applied"
+msgstr ""

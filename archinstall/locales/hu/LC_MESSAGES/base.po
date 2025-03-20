@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] A naplófájl itt jött létre: {} {}"
@@ -51,10 +51,10 @@ msgid "Choose an audio server"
 msgstr "Válasszon ki egy hangkiszolgálót"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok kerülnek telepítésre."
+msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok lesznek telepítve."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő prompt-ban adhatja meg."
+msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő promptban adhatja meg."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Írjon be további csomagneveket a telepítéshez (szóközzel elválasztva; hagyja üresen a kihagyáshoz): "
@@ -124,7 +124,7 @@ msgstr ""
 "Index alapján válassza ki, hogy melyik partíciót hová szeretné csatolni"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * A partíció csatolási pontjai a telepítésen belülre vonatkoznak, a „boot” pédául „/boot” lesz."
+msgstr " * A partíció csatolási pontjai a telepítésen belülre vonatkoznak, a „boot” például „/boot” lesz."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr "Válassza ki, hogy hová szeretné csatolni a partíciót (hagyja üresen a csatolási pont eltávolításához): "
@@ -303,7 +303,7 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"Úgy döntött, hogy kihagyja a merevlemez kiválasztását\n"
+"Ön úgy döntött, hogy kihagyja a merevlemez kiválasztását\n"
 "és azt a meghajtóbeállítást fogja használni, amely a(z) {} helyen van csatolva (kísérleti)\n"
 "FIGYELMEZTETÉS: Az Archinstall nem ellenőrzi ennek a beállításnak a megfelelőségét\n"
 "Biztosan folytatni akarja?"
@@ -456,7 +456,7 @@ msgid "Add a user"
 msgstr "Felhasználó hozzáadása"
 
 msgid "Change password"
-msgstr "Jelszó megváltoztatása"
+msgstr "Jelszó módosítása"
 
 msgid "Promote/Demote user"
 msgstr "Felhasználó előléptetése/lefokozása"
@@ -484,7 +484,7 @@ msgid "No network configuration"
 msgstr "Nincs hálózati konfiguráció"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Állítsa be egy BTRFS-partíció alköteteteit"
+msgstr "Állítsa be egy BTRFS-partíció alköteteit"
 
 msgid ""
 "{}\n"
@@ -908,7 +908,7 @@ msgid "This partition is currently encrypted, to format it a filesystem has to b
 msgstr "Ez a partíció jelenleg titkosított, a formázásához meg kell adni egy fájlrendszert"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr "A partíció csatolási pontok a telepítésen belülre vonatkoznak, a „boot” pédául „/boot” lesz."
+msgstr "A partíció csatolási pontok a telepítésen belülre vonatkoznak, a „boot” például „/boot” lesz."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
 msgstr "Ha a „/boot” csatolási pont be van állítva, akkor a partíció is rendszerbetöltőnek lesz megjelölve."
@@ -986,7 +986,7 @@ msgid "Password"
 msgstr "Jelszó"
 
 msgid "All settings will be reset, are you sure?"
-msgstr "Az összes beállítás visszaállításra kerül az alapértelmezettre, biztos benne?"
+msgstr "Az összes beállítás vissza lesz állítva az alapértelmezettre, biztos benne?"
 
 msgid "Back"
 msgstr "Vissza"
@@ -1077,7 +1077,7 @@ msgid "Add a custom mirror"
 msgstr "Egyéni tükör hozzáadása"
 
 msgid "Change custom mirror"
-msgstr "Egyéni tükör megváltoztatása"
+msgstr "Egyéni tükör módosítása"
 
 msgid "Delete custom mirror"
 msgstr "Egyéni tükör törlése"
@@ -1144,7 +1144,7 @@ msgid "Total: {} / {}"
 msgstr "Összesen: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr "Az öszes beírt értéket mértékegységekkel kell ellátni: B, KB, KiB, MB, MiB…"
+msgstr "Az összes beírt értéket mértékegységekkel kell ellátni: B, KB, KiB, MB, MiB…"
 
 msgid "If no unit is provided, the value is interpreted as sectors"
 msgstr "Ha nincs mértékegység megadva, akkor az értéket szektorokként értelmezi"
@@ -1265,7 +1265,7 @@ msgid "Select a LVM option"
 msgstr "Válasszon ki egy LVM-beállítást"
 
 msgid "Partitioning"
-msgstr "Partícionálás"
+msgstr "Particionálás"
 
 msgid "Logical Volume Management (LVM)"
 msgstr "Logikai kötetkezelő (LVM)"
@@ -1467,3 +1467,42 @@ msgstr "Végrehajtási mód kiválasztása"
 
 msgid "Press ? for help"
 msgstr "? → a súgó megnyitásához"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Hyprland számára a hardverekhez való hozzáférést"
+
+msgid "Additional repositories"
+msgstr "Nem kötelező tárolók"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Swap a zram fölött"
+
+msgid "Name"
+msgstr "Név"
+
+msgid "Signature check"
+msgstr "Aláírás-ellenőrzés"
+
+msgid "Selected free space segment on device {}:"
+msgstr "A kiválasztott szabad szakaszok a(z) {} eszközön:"
+
+msgid "Size: {} / {}"
+msgstr "Méret: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "Méret (alapértelmezett: {}): "
+
+msgid "HSM device"
+msgstr "HSM-eszköz"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Néhány csomag nem található a tárolóban"
+
+msgid "User"
+msgstr "Felhasználó"
+
+msgid "The specified configuration will be applied"
+msgstr "A megadott konfiguráció lesz alkalmazva"

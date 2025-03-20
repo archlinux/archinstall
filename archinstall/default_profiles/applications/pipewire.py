@@ -1,11 +1,10 @@
 from typing import TYPE_CHECKING, override
 
-import archinstall
 from archinstall.default_profiles.profile import Profile, ProfileType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
-	from archinstall.lib.models import User
+	from archinstall.lib.models.users import User
 
 
 class PipewireProfile(Profile):
@@ -26,13 +25,11 @@ class PipewireProfile(Profile):
 		]
 
 	def _enable_pipewire_for_all(self, install_session: 'Installer') -> None:
-		users: User | list[User] | None = archinstall.arguments.get('!users', None)
+		from archinstall.lib.args import arch_config_handler
+		users: list[User] | None = arch_config_handler.config.users
 
 		if users is None:
 			return
-
-		if not isinstance(users, list):
-			users = [users]
 
 		for user in users:
 			# Create the full path for enabling the pipewire systemd items

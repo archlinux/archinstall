@@ -2,20 +2,18 @@ from __future__ import annotations
 
 import curses
 import curses.panel
-import dataclasses
 import os
 import signal
 import sys
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable
 from curses.textpad import Textbox
-from dataclasses import dataclass
 from types import FrameType, TracebackType
 from typing import TYPE_CHECKING, Literal, override
 
 from ..lib.output import debug
 from .help import Help
-from .menu_item import MenuItem, MenuItemGroup
+from .menu_item import MenuItem, MenuItemGroup, MenuItemsState
 from .types import (
 	SCROLL_INTERVAL,
 	STYLE,
@@ -23,7 +21,6 @@ from .types import (
 	Chars,
 	FrameProperties,
 	FrameStyle,
-	MenuCell,
 	MenuKeys,
 	Orientation,
 	PreviewStyle,
@@ -114,14 +111,13 @@ class AbstractCurses(metaclass=ABCMeta):
 		full_header = []
 
 		if header:
-			for header in header.split('\n'):
-				full_header += [ViewportEntry(header, cur_row, offset, STYLE.NORMAL)]
+			for line in header.split('\n'):
+				full_header += [ViewportEntry(line, cur_row, offset, STYLE.NORMAL)]
 				cur_row += 1
 
 		return full_header
 
 
-@dataclass
 class AbstractViewport:
 	def __init__(self) -> None:
 		pass
@@ -391,30 +387,12 @@ class EditViewport(AbstractViewport):
 		# if this gets initialized multiple times it will be an overlay
 		# and ENTER has to be pressed multiple times to accept
 		if not self._textbox:
-			self._textbox = curses.textpad.Textbox(self._edit_win)
+			self._textbox = Textbox(self._edit_win)
 			self._main_win.refresh()
 
 		self._textbox.edit(self.process_key)  # type: ignore[arg-type]
 
 
-@dataclass
-class ViewportState:
-	cur_pos: int
-	displayed_entries: list[ViewportEntry]
-	scroll_pct: int | None
-	scroll_pos: int | None = 0
-
-	def offset(self) -> int:
-		return min([entry.row for entry in self.displayed_entries], default=0)
-
-	def get_rows(self) -> list[int]:
-		rows = set()
-		for entry in self.displayed_entries:
-			rows.add(entry.row)
-		return list(rows)
-
-
-@dataclass
 class Viewport(AbstractViewport):
 	def __init__(
 		self,
@@ -440,8 +418,6 @@ class Viewport(AbstractViewport):
 		self._main_win.nodelay(False)
 		self._main_win.standout()
 
-		self._state: ViewportState | None = None
-
 	def getch(self) -> int:
 		return self._main_win.getch()
 
@@ -451,12 +427,13 @@ class Viewport(AbstractViewport):
 
 	def update(
 		self,
-		lines: list[ViewportEntry],
+		entries: list[ViewportEntry],
 		cur_pos: int = 0,
 		scroll_pos: int | None = None
 	) -> None:
-		self._state = self._get_viewport_state(lines, cur_pos, scroll_pos)
-		visible_entries = self._adjust_entries_row(self._state.displayed_entries)
+		# self._state = self._get_viewport_state(lines, cur_pos, scroll_pos)
+		# visible_entries = self._adjust_entries_row(self._state.displayed_entries)
+		visible_entries = entries
 
 		if self._frame:
 			visible_entries = self.add_frame(
@@ -464,7 +441,7 @@ class Viewport(AbstractViewport):
 				self.width,
 				self.height,
 				frame=self._frame,
-				scroll_pct=self._state.scroll_pct
+				scroll_pct=scroll_pos
 			)
 
 		x_offset = 0
@@ -483,121 +460,6 @@ class Viewport(AbstractViewport):
 			)
 
 		self._main_win.refresh()
-
-	def _get_available_screen_rows(self) -> int:
-		y_offset = 3 if self._frame else 0
-		return self.height - y_offset
-
-	def _calc_scroll_percent(
-		self, total: int,
-		available_rows: int,
-		scroll_pos: int
-	) -> int | None:
-		if total <= available_rows:
-			return None
-
-		percentage = int(scroll_pos / total * 100)
-
-		if percentage + SCROLL_INTERVAL > 100:
-			percentage = 100
-
-		return percentage
-
-	def _get_viewport_state(
-		self,
-		entries: list[ViewportEntry],
-		cur_pos: int,
-		scroll_pos: int | None = 0
-	) -> ViewportState:
-		if not entries:
-			return ViewportState(cur_pos, [], 0)
-
-		# we will be checking if the cursor pos is in the same window
-		# of rows as the previous selection, in that case we can keep
-		# the currently shown entries to prevent weird moving in long lists
-		if self._state is not None and scroll_pos is None:
-			rows = self._state.get_rows()
-
-			if cur_pos in rows:
-				same_row_entries = [entry for entry in entries if entry.row in rows]
-				return ViewportState(
-					cur_pos,
-					same_row_entries,
-					self._state.scroll_pct
-				)
-
-		total_rows = max([e.row for e in entries]) + 1  # rows start with 0 so add 1 for the count
-		screen_rows = self._get_available_screen_rows()
-		visible_entries = self._get_visible_entries(
-			entries,
-			cur_pos,
-			screen_rows,
-			scroll_pos,
-			total_rows
-		)
-
-		if scroll_pos is not None:
-			percentage = self._calc_scroll_percent(total_rows, screen_rows, scroll_pos)
-		else:
-			percentage = None
-
-		return ViewportState(
-			cur_pos,
-			visible_entries,
-			percentage,
-			scroll_pos
-		)
-
-	def _get_visible_entries(
-		self,
-		entries: list[ViewportEntry],
-		cur_pos: int,
-		screen_rows: int,
-		scroll_pos: int | None,
-		total_rows: int
-	) -> list[ViewportEntry]:
-		if scroll_pos is not None:
-			if total_rows <= screen_rows:
-				start = 0
-				end = total_rows
-			else:
-				start = scroll_pos
-				end = scroll_pos + screen_rows
-		else:
-			if total_rows <= screen_rows:
-				start = 0
-				end = total_rows
-			else:
-				if self._state is None:
-					if cur_pos < screen_rows:
-						start = 0
-						end = screen_rows
-					else:
-						start = cur_pos - screen_rows + 1
-						end = cur_pos + 1
-				else:
-					if cur_pos < self._state.cur_pos:
-						start = cur_pos
-						end = cur_pos + screen_rows
-					else:
-						start = cur_pos - screen_rows + 1
-						end = cur_pos + 1
-
-		return [entry for entry in entries if start <= entry.row < end]
-
-	def _adjust_entries_row(self, entries: list[ViewportEntry]) -> list[ViewportEntry]:
-		assert self._state is not None
-		modified = []
-
-		for entry in entries:
-			mod = dataclasses.replace(entry)
-			mod.row = entry.row - self._state.offset()
-			modified.append(mod)
-
-		return modified
-
-	def _unique_rows(self, entries: list[ViewportEntry]) -> int:
-		return len(set([e.row for e in entries]))
 
 
 class EditMenu(AbstractCurses):
@@ -849,7 +711,8 @@ class SelectMenu(AbstractCurses):
 		self._interrupt_warning = reset_warning_msg
 		self._header = header
 
-		header_offset = self._get_header_offset()
+		header_offset = self._get_header_offset(header)
+
 		self._headers = self.get_header_entries(header, offset=header_offset)
 
 		if self._interrupt_warning is None:
@@ -860,9 +723,7 @@ class SelectMenu(AbstractCurses):
 		else:
 			self._horizontal_cols = 1
 
-		self._row_entries: list[list[MenuCell]] = []
 		self._prev_scroll_pos: int = 0
-		self._cur_pos: int | None = None
 
 		self._visible_entries: list[ViewportEntry] = []
 		self._max_height, self._max_width = Tui.t().max_yx
@@ -875,11 +736,28 @@ class SelectMenu(AbstractCurses):
 
 		self._init_viewports(preview_size)
 
-	def _get_header_offset(self) -> int:
-		# any changes here will impact the list manager table view
-		offset = len(self._cursor_char) + 1
-		if self._multi:
-			offset += 3
+		assert self._menu_vp is not None
+		self._items_state: MenuItemsState = MenuItemsState(
+			self._item_group,
+			total_cols=self._horizontal_cols,
+			total_rows=self._menu_vp.height,
+			with_frame=self._frame is not None
+		)
+
+	def _get_header_offset(self, header: str | None) -> int:
+		# WARNING: any changes here will impact the list manager table view
+		if self._orientation == Orientation.HORIZONTAL:
+			return 0
+
+		lines = header.split('\n') if header else []
+		table_header = [line for line in lines if '-' in line]
+
+		longest_header = len(table_header[0]) if table_header else 0
+		longest_entry = self._item_group.get_max_width()
+
+		delta = longest_header - longest_entry
+		offset = delta + 2  # 2 because it seems to align it...
+
 		return offset
 
 	def run(self) -> Result:
@@ -1042,7 +920,7 @@ class SelectMenu(AbstractCurses):
 		if preview_size == 'auto':
 			match self._preview_style:
 				case PreviewStyle.RIGHT:
-					menu_width = self._item_group.max_width + 5
+					menu_width = self._item_group.get_max_width() + 5
 					if self._multi:
 						menu_width += 5
 					prev_size = self._max_width - menu_width
@@ -1066,8 +944,8 @@ class SelectMenu(AbstractCurses):
 	def _draw(self) -> None:
 		footer_entries = self._footer_entries()
 
-		vp_entries = self._get_row_entries()
-		self._cur_pos = self._get_cursor_pos()
+		items = self._items_state.get_view_items()
+		vp_entries = self._item_to_vp_entry(items)
 
 		if self._help_vp:
 			self._update_viewport(self._help_vp, [self.help_entry()])
@@ -1076,11 +954,7 @@ class SelectMenu(AbstractCurses):
 			self._update_viewport(self._header_vp, self._headers)
 
 		if self._menu_vp:
-			self._update_viewport(
-				self._menu_vp,
-				vp_entries,
-				cur_pos=self._cur_pos
-			)
+			self._update_viewport(self._menu_vp, vp_entries)
 
 		if vp_entries:
 			self._update_preview()
@@ -1101,21 +975,8 @@ class SelectMenu(AbstractCurses):
 		else:
 			viewport.update([])
 
-	def _get_cursor_pos(self) -> int:
-		for idx, cells in enumerate(self._row_entries):
-			for cell in cells:
-				if self._item_group.focus_item == cell.item:
-					return idx
-		return 0
-
-	def _get_visible_items(self) -> list[MenuItem]:
-		return [it for it in self._item_group.items if self._item_group.should_enable_item(it)]
-
-	def _list_to_cols(self, items: list[MenuItem], cols: int) -> list[list[MenuItem]]:
-		return [items[i:i + cols] for i in range(0, len(items), cols)]
-
-	def _get_col_widths(self) -> list[int]:
-		cols_widths = self._calc_col_widths(self._row_entries, self._horizontal_cols)
+	def _get_col_widths(self, items: list[list[MenuItem]]) -> list[int]:
+		cols_widths = self._calc_col_widths(items, self._horizontal_cols)
 		return [col_width + len(self._cursor_char) + self._item_distance() for col_width in cols_widths]
 
 	def _item_distance(self) -> int:
@@ -1124,68 +985,56 @@ class SelectMenu(AbstractCurses):
 		else:
 			return self._column_spacing
 
-	def _get_row_entries(self) -> list[ViewportEntry]:
-		cells = self._assemble_menu_cells()
+	def _item_to_vp_entry(self, items: list[list[MenuItem]]) -> list[ViewportEntry]:
 		entries = []
+		cols_widths = self._get_col_widths(items)
 
-		self._row_entries = [cells[x:x + self._horizontal_cols] for x in range(0, len(cells), self._horizontal_cols)]
-		cols_widths = self._get_col_widths()
-
-		for row_idx, row in enumerate(self._row_entries):
+		for row_idx, row in enumerate(items):
 			cur_pos = len(self._cursor_char)
 
 			for col_idx, cell in enumerate(row):
 				cur_text = ''
 				style = STYLE.NORMAL
 
-				if cell.item == self._item_group.focus_item:
+				if cell == self._item_group.focus_item:
 					cur_text = self._cursor_char
 					style = STYLE.MENU_STYLE
 
 				entries += [ViewportEntry(cur_text, row_idx, cur_pos - len(self._cursor_char), STYLE.CURSOR_STYLE)]
 
-				entries += [ViewportEntry(cell.text, row_idx, cur_pos, style)]
-				cur_pos += len(cell.text)
+				menu_item_text = self._menu_item_text(cell)
+				entries += [ViewportEntry(menu_item_text, row_idx, cur_pos, style)]
+				cur_pos += len(menu_item_text)
 
 				if col_idx < len(row) - 1:
-					spacer_len = cols_widths[col_idx] - len(cell.text)
+					spacer_len = cols_widths[col_idx] - len(menu_item_text)
 					entries += [ViewportEntry(' ' * spacer_len, row_idx, cur_pos, STYLE.NORMAL)]
 					cur_pos += spacer_len
 
 		return entries
 
-	def _calc_col_widths(
-		self,
-		row_chunks: list[list[MenuCell]],
-		cols: int
-	) -> list[int]:
+	def _calc_col_widths(self, rows: list[list[MenuItem]], columns: int) -> list[int]:
 		col_widths = []
-		for col in range(cols):
+
+		for row in rows:
 			col_entries = []
-			for row in row_chunks:
-				if col < len(row):
-					col_entries += [len(row[col].text)]
+			for column in range(columns):
+				if column < len(row):
+					col_entries += [len(row[column].text)]
 
 			if col_entries:
-				col_widths += [max(col_entries) if col_entries else 0]
+				col_widths += [max(col_entries)]
 
 		return col_widths
 
-	def _assemble_menu_cells(self) -> list[MenuCell]:
-		items = self._get_visible_items()
-		entries = []
+	def _menu_item_text(self, item: MenuItem) -> str:
+		item_text = ''
 
-		for item in items:
-			item_text = ''
+		if self._multi and not item.is_empty():
+			item_text += self._multi_prefix(item)
 
-			if self._multi and not item.is_empty():
-				item_text += self._multi_prefix(item)
-
-			item_text += self._item_group.get_item_text(item)
-
-			entries += [MenuCell(item, item_text)]
-
-		return entries
+		item_text += self._item_group.get_item_text(item)
+		return item_text
 
 	def _update_preview(self) -> None:
 		if not self._preview_vp:
@@ -1206,15 +1055,64 @@ class SelectMenu(AbstractCurses):
 		preview_text = action_text.split('\n')
 		entries = [ViewportEntry(e, idx, 0, STYLE.NORMAL) for idx, e in enumerate(preview_text)]
 
-		self._calc_prev_scroll_pos(entries)
+		total_prev_rows = max([e.row for e in entries]) + 1  # rows start with 0 and we need the count
+		available_rows = self._preview_vp.height - 2  # for the preview frame
 
-		self._preview_vp.update(entries, scroll_pos=self._prev_scroll_pos)
+		self._calc_prev_scroll_pos(entries, total_prev_rows)
+		prev_entries = self._get_scroll_win_prev_entries(entries, total_prev_rows, available_rows)
+		scroll_pct = self._get_scroll_pct(total_prev_rows, available_rows)
 
-	def _calc_prev_scroll_pos(self, entries: list[ViewportEntry]) -> None:
-		total_rows = max([e.row for e in entries]) + 1  # rows start with 0 and we need the count
+		self._preview_vp.update(prev_entries, scroll_pos=scroll_pct)
 
-		if self._prev_scroll_pos >= total_rows:
-			self._prev_scroll_pos = total_rows - 2
+	def _get_scroll_pct(
+		self,
+		total_prev_rows: int,
+		available_rows: int
+	) -> int | None:
+		assert self._preview_vp is not None
+
+		if total_prev_rows <= available_rows:
+			return None
+
+		pct = int(self._prev_scroll_pos / total_prev_rows * 100)
+
+		if pct + SCROLL_INTERVAL > 100:
+			pct = 100
+
+		if pct < 0:
+			pct = 0
+
+		return pct
+
+	def _get_scroll_win_prev_entries(
+		self,
+		entries: list[ViewportEntry],
+		total_prev_rows: int,
+		available_rows: int
+	) -> list[ViewportEntry]:
+		assert self._preview_vp is not None
+
+		start_row = self._prev_scroll_pos
+		end_row = start_row + available_rows
+
+		if end_row > total_prev_rows:
+			end_row = total_prev_rows
+
+		prev_entries = [e for e in entries if start_row <= e.row < end_row]
+
+		# normalize the rows
+		for e in prev_entries:
+			e.row -= start_row
+
+		return prev_entries
+
+	def _calc_prev_scroll_pos(
+		self,
+		entries: list[ViewportEntry],
+		total_prev_rows: int
+	) -> None:
+		if self._prev_scroll_pos >= total_prev_rows:
+			self._prev_scroll_pos = total_prev_rows - 2
 		elif self._prev_scroll_pos < 0:
 			self._prev_scroll_pos = 0
 
@@ -1286,12 +1184,14 @@ class SelectMenu(AbstractCurses):
 							return Result(ResultType.Selection, self._item_group.focus_item)
 
 					return None
-			case MenuKeys.MENU_UP | MenuKeys.MENU_DOWN | MenuKeys.MENU_LEFT | MenuKeys.MENU_RIGHT:
-				self._focus_item(handle)
+			case MenuKeys.MENU_DOWN | MenuKeys.MENU_RIGHT:
+				self._focus_item('next')
+			case MenuKeys.MENU_UP | MenuKeys.MENU_LEFT:
+				self._focus_item('prev')
 			case MenuKeys.MENU_START:
-				self._item_group.focus_first()
+				self._focus_item('first')
 			case MenuKeys.MENU_END:
-				self._item_group.focus_last()
+				self._focus_item('last')
 			case MenuKeys.MULTI_SELECT:
 				if self._multi:
 					self._item_group.select_current_item()
@@ -1307,7 +1207,7 @@ class SelectMenu(AbstractCurses):
 					if self._allow_skip:
 						return Result(ResultType.Skip, None)
 			case MenuKeys.NUM_KEYS:
-				self._item_group.set_focus_item_index(key - 49)
+				self._item_group.focus_index(key - 49)
 			case MenuKeys.SCROLL_DOWN:
 				self._prev_scroll_pos += SCROLL_INTERVAL
 			case MenuKeys.SCROLL_UP:
@@ -1315,56 +1215,22 @@ class SelectMenu(AbstractCurses):
 			case _:
 				pass
 
-		self._draw()
 		return None
 
-	def _focus_item(self, key: MenuKeys) -> None:
-		focus_item = self._item_group.focus_item
-		next_row = 0
-		next_col = 0
+	def _focus_item(self, direction: Literal['next', 'prev', 'first', 'last']) -> None:
+		# reset the preview scroll as the newly focused item
+		# may have a different preview row count and it'll blow up
+		self._prev_scroll_pos = 0
 
-		for row_idx, row in enumerate(self._row_entries):
-			for col_idx, cell in enumerate(row):
-				if cell.item == focus_item:
-					match key:
-						case MenuKeys.MENU_UP:
-							next_row = row_idx - 1
-							next_col = col_idx
-
-							if next_row < 0:
-								next_row = len(self._row_entries) - 1
-							if next_col >= len(self._row_entries[next_row]):
-								next_col = len(self._row_entries[next_row]) - 1
-						case MenuKeys.MENU_DOWN:
-							next_row = row_idx + 1
-							next_col = col_idx
-
-							if next_row >= len(self._row_entries):
-								next_row = 0
-							if next_col >= len(self._row_entries[next_row]):
-								next_col = len(self._row_entries[next_row]) - 1
-						case MenuKeys.MENU_RIGHT:
-							next_col = col_idx + 1
-							next_row = row_idx
-
-							if next_col >= len(self._row_entries[row_idx]):
-								next_col = 0
-								next_row = 0 if next_row == (len(self._row_entries) - 1) else next_row + 1
-						case MenuKeys.MENU_LEFT:
-							next_col = col_idx - 1
-							next_row = row_idx
-
-							if next_col < 0:
-								next_row = len(self._row_entries) - 1 if next_row == 0 else next_row - 1
-								next_col = len(self._row_entries[next_row]) - 1
-
-		if next_row < len(self._row_entries):
-			row = self._row_entries[next_row]
-			if next_col < len(row):
-				self._item_group.focus_item = row[next_col].item
-
-		if self._item_group.focus_item and self._item_group.focus_item.is_empty():
-			self._focus_item(key)
+		match direction:
+			case 'next':
+				self._item_group.focus_next()
+			case 'prev':
+				self._item_group.focus_prev()
+			case 'first':
+				self._item_group.focus_first()
+			case 'last':
+				self._item_group.focus_last()
 
 
 class Tui:
@@ -1439,10 +1305,10 @@ class Tui:
 		endl: str | None = '\n',
 		clear_screen: bool = False
 	) -> None:
-		if Tui._t is None:
-			if clear_screen:
-				os.system('clear')
+		if clear_screen:
+			os.system('clear')
 
+		if Tui._t is None:
 			print(text, end=endl)
 			sys.stdout.flush()
 

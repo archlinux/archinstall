@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Soubor protokolu byl vytvořen zde: {} {}"
@@ -1457,3 +1457,42 @@ msgstr "Zvolte způsob provedení"
 
 msgid "Press ? for help"
 msgstr "Stiskněte ? pro nápovědu"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Vyberte možnost jak zpřístupnit pro Hyprland váš hardware"
+
+msgid "Additional repositories"
+msgstr "Dodatečné repozitáře"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Swap na zram"
+
+msgid "Name"
+msgstr "Jméno"
+
+msgid "Signature check"
+msgstr "Kontrola podpisu"
+
+msgid "Selected free space segment on device {}:"
+msgstr "Vybrané volné sektory na zařízení {}:"
+
+msgid "Size: {} / {}"
+msgstr "Velikost: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "Velikost (výchozí: {}): "
+
+msgid "HSM device"
+msgstr "HSM zařízení"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Některé balíčky nemohly být nalezeny v repozitáři"
+
+msgid "User"
+msgstr "Uživatel"
+
+msgid "The specified configuration will be applied"
+msgstr "Bude použita zvolená konfigurace"

@@ -6,8 +6,8 @@ import socket
 import ssl
 import struct
 import time
-from types import FrameType
-from typing import Any
+from types import FrameType, TracebackType
+from typing import Any, Self
 from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -40,7 +40,7 @@ class DownloadTimer:
 		'''
 		raise DownloadTimeout(f'Download timed out after {self.timeout} second(s).')
 
-	def __enter__(self):
+	def __enter__(self) -> Self:
 		if self.timeout > 0:
 			self.previous_handler = signal.signal(signal.SIGALRM, self.raise_timeout)  # type: ignore[assignment]
 			self.previous_timer = signal.alarm(self.timeout)
@@ -48,7 +48,7 @@ class DownloadTimer:
 		self.start_time = time.time()
 		return self
 
-	def __exit__(self, typ, value, traceback) -> None:
+	def __exit__(self, typ: type[BaseException] | None, value: BaseException | None, traceback: TracebackType | None) -> None:
 		if self.start_time:
 			time_delta = time.time() - self.start_time
 			signal.alarm(0)
@@ -164,7 +164,7 @@ def build_icmp(payload: bytes) -> bytes:
 	return struct.pack('!BBHHH', 8, 0, checksum, 0, 1) + payload
 
 
-def ping(hostname, timeout=5) -> int:
+def ping(hostname, timeout: int = 5) -> int:
 	watchdog = select.epoll()
 	started = time.time()
 	random_identifier = f'archinstall-{random.randint(1000, 9999)}'.encode()

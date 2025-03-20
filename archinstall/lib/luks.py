@@ -5,7 +5,8 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import disk
+from archinstall.lib.disk.utils import get_lsblk_info
+
 from .exceptions import DiskError, SysCallError
 from .general import SysCommand, SysCommandWorker, generate_password
 from .output import debug, info
@@ -81,7 +82,7 @@ class Luks2:
 		key_file = self._get_key_file(key_file)
 
 		cryptsetup_args = shlex.join([
-			'/usr/bin/cryptsetup',
+			'cryptsetup',
 			'--batch-mode',
 			'--verbose',
 			'--type', 'luks2',
@@ -108,7 +109,7 @@ class Luks2:
 		return key_file
 
 	def _get_luks_uuid(self) -> str:
-		command = f'/usr/bin/cryptsetup luksUUID {self.luks_dev_path}'
+		command = f'cryptsetup luksUUID {self.luks_dev_path}'
 
 		try:
 			return SysCommand(command).decode()
@@ -139,7 +140,7 @@ class Luks2:
 			time.sleep(0.025)
 
 		result = SysCommand(
-			'/usr/bin/cryptsetup open '
+			'cryptsetup open '
 			f'{self.luks_dev_path} '
 			f'{self.mapper_name} '
 			f'--key-file {key_file} '
@@ -152,18 +153,19 @@ class Luks2:
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
 	def lock(self) -> None:
-		disk.device_handler.umount(self.luks_dev_path)
+		from archinstall.lib.disk.device_handler import device_handler
+		device_handler.umount(self.luks_dev_path)
 
 		# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 		# For instance: /dev/sda
-		lsblk_info = disk.get_lsblk_info(self.luks_dev_path)
+		lsblk_info = get_lsblk_info(self.luks_dev_path)
 
 		# For each child (sub-partition/sub-device)
 		for child in lsblk_info.children:
 			# Unmount the child location
 			for mountpoint in child.mountpoints:
 				debug(f'Unmounting {mountpoint}')
-				disk.device_handler.umount(mountpoint, recursive=True)
+				device_handler.umount(mountpoint, recursive=True)
 
 			# And close it if possible.
 			debug(f"Closing crypt device {child.name}")
@@ -202,7 +204,7 @@ class Luks2:
 	def _add_key(self, key_file: Path) -> None:
 		debug(f'Adding additional key-file {key_file}')
 
-		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
+		command = f'cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
 		worker = SysCommandWorker(command)
 		pw_injected = False
 

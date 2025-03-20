@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, override
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import GreeterType, Profile
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, Orientation, ResultType, SelectMenu
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, Orientation, ResultType
 
 from ..hardware import GfxDriver
 from ..interactions.system_conf import select_driver
-from ..menu import AbstractSubMenu
-from .profile_model import ProfileConfiguration
+from ..menu.abstract_menu import AbstractSubMenu
+from ..models.profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -24,40 +26,42 @@ class ProfileMenu(AbstractSubMenu):
 		preset: ProfileConfiguration | None = None
 	):
 		if preset:
-			self._preset = preset
+			self._profile_config = preset
 		else:
-			self._preset = ProfileConfiguration()
-
-		self._data_store: dict[str, Any] = {}
+			self._profile_config = ProfileConfiguration()
 
 		menu_optioons = self._define_menu_options()
 		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)
 
-		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
+		super().__init__(
+			self._item_group,
+			self._profile_config,
+			allow_reset=True
+		)
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=str(_('Type')),
 				action=self._select_profile,
-				value=self._preset.profile,
+				value=self._profile_config.profile,
 				preview_action=self._preview_profile,
 				key='profile'
 			),
 			MenuItem(
 				text=str(_('Graphics driver')),
 				action=self._select_gfx_driver,
-				value=self._preset.gfx_driver if self._preset.profile and self._preset.profile.is_graphic_driver_supported() else None,
+				value=self._profile_config.gfx_driver if self._profile_config.profile and self._profile_config.profile.is_graphic_driver_supported() else None,
 				preview_action=self._prev_gfx,
-				enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False,
+				enabled=self._profile_config.profile.is_graphic_driver_supported() if self._profile_config.profile else False,
 				dependencies=['profile'],
 				key='gfx_driver',
 			),
 			MenuItem(
 				text=str(_('Greeter')),
 				action=lambda x: select_greeter(preset=x),
-				value=self._preset.greeter if self._preset.profile and self._preset.profile.is_greeter_supported() else None,
-				enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False,
+				value=self._profile_config.greeter if self._profile_config.profile and self._profile_config.profile.is_greeter_supported() else None,
+				enabled=self._profile_config.profile.is_graphic_driver_supported() if self._profile_config.profile else False,
 				preview_action=self._prev_greeter,
 				dependencies=['profile'],
 				key='greeter',
@@ -67,15 +71,7 @@ class ProfileMenu(AbstractSubMenu):
 	@override
 	def run(self) -> ProfileConfiguration | None:
 		super().run()
-
-		if self._data_store.get('profile', None):
-			return ProfileConfiguration(
-				self._data_store.get('profile', None),
-				self._data_store.get('gfx_driver', None),
-				self._data_store.get('greeter', None),
-			)
-
-		return None
+		return self._profile_config
 
 	def _select_profile(self, preset: Profile | None) -> Profile | None:
 		profile = select_profile(preset)

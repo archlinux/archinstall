@@ -2,16 +2,18 @@ from pathlib import Path
 
 from pytest import MonkeyPatch
 
-import archinstall
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
-from archinstall.lib.disk import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.hardware import GfxDriver
-from archinstall.lib.locale import LocaleConfiguration
-from archinstall.lib.mirrors import MirrorConfiguration
-from archinstall.lib.models import Audio, AudioConfiguration, Bootloader, NetworkConfiguration, User
-from archinstall.lib.models.network_configuration import Nic, NicType
-from archinstall.lib.profile.profile_model import ProfileConfiguration
+from archinstall.lib.models.audio_configuration import Audio, AudioConfiguration
+from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType
+from archinstall.lib.models.gen import Repository
+from archinstall.lib.models.locale import LocaleConfiguration
+from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
+from archinstall.lib.models.network_configuration import NetworkConfiguration, Nic, NicType
+from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.models.users import User
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import translation_handler
 
@@ -27,7 +29,7 @@ def test_default_args(monkeypatch: MonkeyPatch) -> None:
 		silent=False,
 		dry_run=False,
 		script='guided',
-		mount_point=Path('/mnt'),
+		mountpoint=Path('/mnt'),
 		skip_ntp=False,
 		debug=False,
 		offline=False,
@@ -77,7 +79,7 @@ def test_correct_parsing_args(
 		silent=True,
 		dry_run=True,
 		script='execution_script',
-		mount_point=Path('/tmp'),
+		mountpoint=Path('/mnt'),
 		skip_ntp=True,
 		debug=True,
 		offline=True,
@@ -102,13 +104,17 @@ def test_config_file_parsing(
 	])
 
 	handler = ArchConfigHandler()
-	arch_config = handler.arch_config
+	arch_config = handler.config
+
+	# the version is retrieved dynamically from an installed archinstall package
+	# as there is no version present in the test environment we'll set it manually
+	arch_config.version = '3.0.2'
 
 	# TODO: Use the real values from the test fixture instead of clearing out the entries
 	arch_config.disk_config.device_modifications = []  # type: ignore[union-attr]
 
 	assert arch_config == ArchConfig(
-		version=archinstall.__version__,
+		version='3.0.2',
 		locale_config=LocaleConfiguration(
 			kb_layout='us',
 			sys_lang='en_US',
@@ -141,8 +147,22 @@ def test_config_file_parsing(
 			greeter=GreeterType.Lightdm
 		),
 		mirror_config=MirrorConfiguration(
-			mirror_regions=[],
-			custom_mirrors=[]
+			mirror_regions=[
+				MirrorRegion(
+					name='Australia',
+					urls=['http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch']
+				)
+			],
+			custom_servers=[CustomServer('https://mymirror.com/$repo/os/$arch')],
+			optional_repositories=[Repository.Testing],
+			custom_repositories=[
+				CustomRepository(
+					name='myrepo',
+					url='https://myrepo.com/$repo/os/$arch',
+					sign_check=SignCheck.Required,
+					sign_option=SignOption.TrustAll
+				)
+			]
 		),
 		network_config=NetworkConfiguration(
 			type=NicType.MANUAL,
@@ -169,7 +189,42 @@ def test_config_file_parsing(
 		parallel_downloads=66,
 		swap=False,
 		timezone='UTC',
-		additional_repositories=["testing"],
-		_users=[User(username='user_name', password='user_pwd', sudo=True)],
-		_disk_encryption=None
+		users=[User(username='user_name', password='user_pwd', sudo=True)],
+		disk_encryption=None,
+		services=['service_1', 'service_2'],
+		root_password='super_pwd',
+		custom_commands=["echo 'Hello, World!'"]
+	)
+
+
+def test_mirror_backwards_config_file_parsing(
+	monkeypatch: MonkeyPatch,
+	mirror_backwards_config: Path,
+) -> None:
+	monkeypatch.setattr('sys.argv', [
+		'archinstall',
+		'--config',
+		str(mirror_backwards_config),
+	])
+
+	handler = ArchConfigHandler()
+	arch_config = handler.config
+
+	assert arch_config.mirror_config == MirrorConfiguration(
+		mirror_regions=[
+			MirrorRegion(
+				name='Australia',
+				urls=['http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch']
+			)
+		],
+		custom_servers=[],
+		optional_repositories=[Repository.Testing],
+		custom_repositories=[
+			CustomRepository(
+				name='my_mirror',
+				url='example.com',
+				sign_check=SignCheck.Optional,
+				sign_option=SignOption.TrustedOnly
+			)
+		]
 	)
