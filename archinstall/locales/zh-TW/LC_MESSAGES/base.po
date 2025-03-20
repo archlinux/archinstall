@@ -13,7 +13,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] 日誌文件已在此處建立：{} {}"
+msgstr "[!] 記錄檔已在此處建立：{} {}"
 
 msgid ""
 "    Please submit this issue (and file) to https://github.com/archlinux/archin"
