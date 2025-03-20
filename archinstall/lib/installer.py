@@ -1607,7 +1607,7 @@ Exec = /bin/sh -c "{hook_command}"
 
 		echo = shlex.join(['echo', f'{user.username}:{enc_password}'])
 		sh = shlex.join(['sh', '-c', echo])
-		chpasswd = "chpasswd --encrypted --crypt-method YESCRYPT"
+		chpasswd = 'chpasswd --encrypted --crypt-method YESCRYPT'
 
 		try:
 			SysCommand(f"arch-chroot {self.target} " + sh[:-1] + f" | {chpasswd}'")
