@@ -12,6 +12,7 @@ from parted import Disk, Geometry, Partition
 from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_validator
 
 from ..hardware import SysInfo
+from ..models.users import Password
 from ..output import debug
 
 if TYPE_CHECKING:
@@ -1444,7 +1445,7 @@ class _DiskEncryptionSerialization(TypedDict):
 @dataclass
 class DiskEncryption:
 	encryption_type: EncryptionType = EncryptionType.NoEncryption
-	encryption_password: str = ''
+	encryption_password: Password | None = None
 	partitions: list[PartitionModification] = field(default_factory=list)
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
 	hsm_device: Fido2Device | None = None
@@ -1494,12 +1495,12 @@ class DiskEncryption:
 		cls,
 		disk_config: DiskLayoutConfiguration,
 		disk_encryption: _DiskEncryptionSerialization,
-		password: str = ''
+		password: Password | None = None
 	) -> 'DiskEncryption | None':
 		if not cls.validate_enc(disk_config):
 			return None
 
-		if len(password) < 1:
+		if not password:
 			return None
 
 		enc_partitions = []

@@ -1,9 +1,11 @@
 {
-    "!users": [
+    "users": [
         {
             "sudo": true,
-            "username": "archinstall"
+            "username": "archinstall",
+            "enc_password": "password_hash"
+
         }
     ],
-    "encryption_password": "..."
+    "root_enc_password": "password_hash"
 }

@@ -19,7 +19,7 @@ from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.models.profile_model import ProfileConfiguration
-from archinstall.lib.models.users import User
+from archinstall.lib.models.users import Password, User
 from archinstall.lib.output import error, warn
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.storage import storage
@@ -71,16 +71,16 @@ class ArchConfig:
 	# Special fields that should be handle with care due to security implications
 	users: list[User] = field(default_factory=list)
 	disk_encryption: DiskEncryption | None = None
-	root_password: str | None = None
+	root_enc_password: Password | None = None
 
 	def unsafe_json(self) -> dict[str, Any]:
 		config = {
-			'!users': [user.json() for user in self.users],
-			'!root-password': self.root_password,
+			'users': [user.json() for user in self.users],
+			'root_enc_password': self.root_enc_password.enc_password if self.root_enc_password else None,
 		}
 
-		if self.disk_encryption:
-			config['encryption_password'] = self.disk_encryption.encryption_password
+		if self.disk_encryption and self.disk_encryption.encryption_password:
+			config['encryption_password'] = self.disk_encryption.encryption_password.enc_password
 
 		return config
 
@@ -149,10 +149,12 @@ class ArchConfig:
 		if net_config := args_config.get('network_config', None):
 			arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
 
-		users = args_config.get('!users', None)
-		superusers = args_config.get('!superusers', None)
-		if users is not None or superusers is not None:
-			arch_config.users = User.parse_arguments(users, superusers)
+		# DEPRECATED: backwards copatibility
+		if users := args_config.get('!users', None):
+			arch_config.users = User.parse_arguments(users)
+
+		if users := args_config.get('users', None):
+			arch_config.users = User.parse_arguments(users)
 
 		if bootloader_config := args_config.get('bootloader', None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config)
@@ -167,7 +169,7 @@ class ArchConfig:
 			arch_config.disk_encryption = DiskEncryption.parse_arg(
 				arch_config.disk_config,
 				args_config['disk_encryption'],
-				args_config.get('encryption_password', '')
+				Password(enc_password=args_config.get('encryption_password', ''))
 			)
 
 		if hostname := args_config.get('hostname', ''):
@@ -193,8 +195,12 @@ class ArchConfig:
 		if services := args_config.get('services', []):
 			arch_config.services = services
 
+		# DEPRECATED: backwards compatibility
 		if root_password := args_config.get('!root-password', None):
-			arch_config.root_password = root_password
+			arch_config.root_enc_password = Password(plaintext=root_password)
+
+		if enc_password := args_config.get('root_enc_password', None):
+			arch_config.root_enc_password = Password(enc_password=enc_password)
 
 		if custom_commands := args_config.get('custom_commands', []):
 			arch_config.custom_commands = custom_commands

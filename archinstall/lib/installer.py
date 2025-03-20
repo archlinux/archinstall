@@ -83,7 +83,10 @@ class Installer:
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
-		self.helper_flags: dict[str, str | bool | None] = {'base': False, 'bootloader': None}
+		self._helper_flags: dict[str, str | bool | None] = {
+			'base': False,
+			'bootloader': None
+		}
 
 		for kernel in self.kernels:
 			self._base_packages.append(kernel)
@@ -416,11 +419,12 @@ class Installer:
 
 			if part_mod.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
-					Fido2.fido2_enroll(
-						self._disk_encryption.hsm_device,
-						part_mod.safe_dev_path,
-						self._disk_encryption.encryption_password
-					)
+					if self._disk_encryption.encryption_password:
+						Fido2.fido2_enroll(
+							self._disk_encryption.hsm_device,
+							part_mod.safe_dev_path,
+							self._disk_encryption.encryption_password
+						)
 
 	def _generate_key_file_lvm_volumes(self) -> None:
 		for vol in self._disk_encryption.lvm_volumes:
@@ -438,16 +442,17 @@ class Installer:
 
 			if vol.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
-					Fido2.fido2_enroll(
-						self._disk_encryption.hsm_device,
-						vol.safe_dev_path,
-						self._disk_encryption.encryption_password
-					)
+					if self._disk_encryption.encryption_password:
+						Fido2.fido2_enroll(
+							self._disk_encryption.hsm_device,
+							vol.safe_dev_path,
+							self._disk_encryption.encryption_password
+						)
 
 	def sync_log_to_install_medium(self) -> bool:
 		# Copy over the install log (if there is one) to the install medium if
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
-		if self.helper_flags.get('base-strapped', False) is True:
+		if self._helper_flags.get('base-strapped', False) is True:
 			if filename := storage.get('LOG_FILE', None):
 				absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
 
@@ -481,7 +486,7 @@ class Installer:
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
 	def post_install_check(self, *args: str, **kwargs: str) -> list[str]:
-		return [step for step, flag in self.helper_flags.items() if flag is False]
+		return [step for step, flag in self._helper_flags.items() if flag is False]
 
 	def set_mirrors(
 		self,
@@ -689,7 +694,7 @@ class Installer:
 
 				if enable_services:
 					# If we haven't installed the base yet (function called pre-maturely)
-					if self.helper_flags.get('base', False) is False:
+					if self._helper_flags.get('base', False) is False:
 						self._base_packages.append('iwd')
 
 						# This function will be called after minimal_installation()
@@ -718,7 +723,7 @@ class Installer:
 
 			if enable_services:
 				# If we haven't installed the base yet (function called pre-maturely)
-				if self.helper_flags.get('base', False) is False:
+				if self._helper_flags.get('base', False) is False:
 
 					def post_install_enable_networkd_resolved(*args: str, **kwargs: str) -> None:
 						self.enable_service(['systemd-networkd', 'systemd-resolved'])
@@ -846,7 +851,7 @@ class Installer:
 		pacman_conf.apply()
 
 		self.pacman.strap(self._base_packages)
-		self.helper_flags['base-strapped'] = True
+		self._helper_flags['base-strapped'] = True
 
 		pacman_conf.persist()
 
@@ -877,7 +882,7 @@ class Installer:
 		if mkinitcpio and not self.mkinitcpio(['-P']):
 			error('Error generating initramfs (continuing anyway)')
 
-		self.helper_flags['base'] = True
+		self._helper_flags['base'] = True
 
 		# Run registered post-install hooks
 		for function in self.post_base_install:
@@ -1141,7 +1146,7 @@ class Installer:
 				entry_conf = entries_dir / name
 				entry_conf.write_text('\n'.join(entry) + '\n')
 
-		self.helper_flags['bootloader'] = 'systemd'
+		self._helper_flags['bootloader'] = 'systemd'
 
 	def _add_grub_bootloader(
 		self,
@@ -1226,7 +1231,7 @@ class Installer:
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
 
-		self.helper_flags['bootloader'] = "grub"
+		self._helper_flags['bootloader'] = "grub"
 
 	def _add_limine_bootloader(
 		self,
@@ -1328,7 +1333,7 @@ Exec = /bin/sh -c "{hook_command}"
 		config_path = self.target / 'boot' / 'limine.conf'
 		config_path.write_text(config_contents)
 
-		self.helper_flags['bootloader'] = "limine"
+		self._helper_flags['bootloader'] = "limine"
 
 	def _add_efistub_bootloader(
 		self,
@@ -1378,7 +1383,7 @@ Exec = /bin/sh -c "{hook_command}"
 			cmd = [arg.format(kernel=kernel) for arg in cmd_template]
 			SysCommand(cmd)
 
-		self.helper_flags['bootloader'] = "efistub"
+		self._helper_flags['bootloader'] = "efistub"
 
 	def _config_uki(
 		self,
@@ -1512,12 +1517,9 @@ Exec = /bin/sh -c "{hook_command}"
 			users = [users]
 
 		for user in users:
-			self.user_create(user.username, user.password, user.groups, user.sudo)
+			self._create_user(user)
 
-	def user_create(self, user: str, password: str | None = None, groups: list[str] | None = None, sudo: bool = False) -> None:
-		if groups is None:
-			groups = []
-
+	def _create_user(self, user: User) -> None:
 		# This plugin hook allows for the plugin to handle the creation of the user.
 		# Password and Group management is still handled by user_create()
 		handled_by_plugin = False
@@ -1527,9 +1529,17 @@ Exec = /bin/sh -c "{hook_command}"
 					handled_by_plugin = result
 
 		if not handled_by_plugin:
-			info(f'Creating user {user}')
+			info(f'Creating user {user.username}')
+
+			cmd = f'arch-chroot {self.target} useradd'
+
+			if user.sudo:
+				cmd += ' -G wheel'
+
+			cmd += f' {user.username}'
+
 			try:
-				SysCommand(f'arch-chroot {self.target} useradd -m -G wheel {user}')
+				SysCommand(cmd)
 			except SysCallError as err:
 				raise SystemError(f"Could not create user inside installation: {err}")
 
@@ -1538,29 +1548,27 @@ Exec = /bin/sh -c "{hook_command}"
 				if result := plugin.on_user_created(self, user):
 					handled_by_plugin = result
 
-		if password:
-			self.user_set_pw(user, password)
+		if user.password:
+			self.set_user_password(user)
 
-		if groups:
-			for group in groups:
-				SysCommand(f'arch-chroot {self.target} gpasswd -a {user} {group}')
+		for group in user.groups:
+			SysCommand(f'arch-chroot {self.target} gpasswd -a {user.username} {group}')
 
-		if sudo and self.enable_sudo(user):
-			self.helper_flags['user'] = True
+	def set_user_password(self, user: User) -> bool:
+		info(f'Setting password for {user.username}')
 
-	def user_set_pw(self, user: str, password: str) -> bool:
-		info(f'Setting password for {user}')
+		enc_password = user.password.enc_password if user.password else None
 
-		if user == 'root':
-			# This means the root account isn't locked/disabled with * in /etc/passwd
-			self.helper_flags['user'] = True
+		if not enc_password:
+			debug('User password is empty')
+			return False
 
-		combo = f'{user}:{password}'
-		echo = shlex.join(['echo', combo])
+		echo = shlex.join(['echo', f'{user.username}:{enc_password}'])
 		sh = shlex.join(['sh', '-c', echo])
+		chpasswd = "chpasswd --encrypted --crypt-method YESCRYPT"
 
 		try:
-			SysCommand(f"arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
+			SysCommand(f"arch-chroot {self.target} " + sh[:-1] + f" | {chpasswd}'")
 			return True
 		except SysCallError:
 			return False
