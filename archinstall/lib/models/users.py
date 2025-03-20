@@ -163,6 +163,10 @@ class User:
 	sudo: bool
 	groups: list[str] = field(default_factory=list)
 
+	def __str__(self) -> str:
+		# safety overwrite to make sure password is not leaked
+		return f'User({self.username=}, {self.sudo=}, {self.groups=})'
+
 	def table_data(self) -> dict[str, str | bool | list[str]]:
 		return {
 			'username': self.username,
@@ -197,9 +201,9 @@ class User:
 				raise ValueError('username must be a string')
 			if not isinstance(groups, list):
 				raise ValueError('groups must be a list')
-			if not isinstance(plaintext, str):
+			if plaintext and not isinstance(plaintext, str):
 				raise ValueError('password must be a string')
-			if not isinstance(enc_password, str):
+			if enc_password and not isinstance(enc_password, str):
 				raise ValueError('encryption password must be a string')
 
 			# DEPRECATED: backwards compatibility
