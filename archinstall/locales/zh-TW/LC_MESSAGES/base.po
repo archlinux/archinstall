@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-21 06:03+0800\n"
+"PO-Revision-Date: 2025-03-21 18:21+0800\n"
 "Last-Translator: neko0xff <chzang55@gmail.com>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
@@ -28,7 +28,7 @@ msgid "And one more time for verification: "
 msgstr "請再輸入一次以進行驗證："
 
 msgid "Would you like to use swap on zram?"
-msgstr "您想在 zram 上使用交換分割區（swap）嗎？"
+msgstr "您想在 zram 上使用置換分割區（swap）嗎？"
 
 msgid "Desired hostname for the installation: "
 msgstr "請輸入安裝後預期使用的主機名稱（hostname）："
@@ -69,7 +69,7 @@ msgid ""
 msgstr "請輸入您要安裝的其它套件（以空格分隔，留空以跳過）："
 
 msgid "Copy ISO network configuration to installation"
-msgstr "將 ISO 中的網路設置複製到安裝中"
+msgstr "將 ISO檔中的網路組態設置複製到安裝環境中"
 
 msgid ""
 "Use NetworkManager (necessary for configuring internet graphically in GNOME an"
@@ -87,7 +87,7 @@ msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "請輸入 {} 的 IP 和子網路（例如：192.168.0.5/24）："
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "請輸入您的網關（路由器）IP 地址或留空以跳過："
+msgstr "請輸入您的閘道器（路由器）IP 地址或留空以跳過："
 
 msgid "Enter your DNS servers (space separated, blank for none): "
 msgstr "請輸入您的 DNS 伺服器（以空格分隔，留空以跳過）："
@@ -205,7 +205,7 @@ msgid "Select keyboard layout"
 msgstr "選擇鍵盤配置"
 
 msgid "Select one of the regions to download packages from"
-msgstr "請選擇一個地區以下載軟體套件"
+msgstr "請選擇一個地區進行下載軟體套件包"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "選擇要使用和設定的硬碟（可多選）"
@@ -241,7 +241,7 @@ msgstr ""
 "選擇圖形驅動程式或留空以直接安裝開源驅動程式"
 
 msgid "All open-source (default)"
-msgstr "全部開源（預設）"
+msgstr "全部使用開源驅動程式（預設）"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "選擇要使用的内核或留空以使用預設值“{}”"
@@ -269,16 +269,16 @@ msgstr ""
 "有關有效的檔案系統類型，請參閱 `man parted`。"
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "錯誤：在 URL “{}” 上列出設定檔案時出錯："
+msgstr "錯誤：在 URL\"{}\"上列出設定檔案時出錯："
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr "錯誤：無法將“{}”結果解碼為 JSON："
+msgstr "錯誤：無法將\"{}\"結果解碼為 JSON："
 
 msgid "Keyboard layout"
 msgstr "鍵盤配置"
 
 msgid "Mirror region"
-msgstr "鏡像區域"
+msgstr "鏡像伺服器位置"
 
 msgid "Locale language"
 msgstr "區域語言"
@@ -296,7 +296,7 @@ msgid "Encryption password"
 msgstr "加密密碼"
 
 msgid "Swap"
-msgstr "交換空間"
+msgstr "置換空間"
 
 msgid "Bootloader"
 msgstr "開機引導程式"
@@ -323,7 +323,7 @@ msgid "Additional packages"
 msgstr "額外套件"
 
 msgid "Network configuration"
-msgstr "網路設置"
+msgstr "網路組態設置"
 
 msgid "Automatic time sync (NTP)"
 msgstr "自動同步時間 (NTP)"
@@ -512,10 +512,10 @@ msgstr ""
 "定義一個新使用者\n"
 
 msgid "User Name : "
-msgstr "用戶名："
+msgstr "使用者名稱："
 
 msgid "Should {} be a superuser (sudoer)?"
-msgstr "是否將{}設置为超級使用者（sudoer）？"
+msgstr "是否將{}設置為超級使用者（sudoer）？"
 
 msgid "Define users with sudo privilege: "
 msgstr "定義具有 sudo 權限的使用者："
@@ -539,10 +539,10 @@ msgid "Manage btrfs subvolumes for current partition"
 msgstr "管理當前分割區的 btrfs 子卷"
 
 msgid "No configuration"
-msgstr "無配置"
+msgstr "無組態配置"
 
 msgid "Save user configuration"
-msgstr "保存使用者配置"
+msgstr "保存使用者組態配置"
 
 msgid "Save user credentials"
 msgstr "保存使用者憑證"
@@ -630,7 +630,7 @@ msgid "[!] A log file has been created here: {}"
 msgstr "[!] 日誌文件已在此處創建：{}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "您想使用具有默認結構的 BTRFS 子卷嗎？"
+msgstr "您想使用具有預設結構的 BTRFS 子卷嗎？"
 
 msgid "Would you like to use BTRFS compression?"
 msgstr "您想使用 BTRFS 壓縮嗎？"
@@ -703,7 +703,7 @@ msgstr "選擇您想要的桌面環境"
 msgid ""
 "A very basic installation that allows you to customize Arch Linux as you see f"
 "it."
-msgstr "一個非常基本的安裝，允許您根據需要自定義 Arch Linux。"
+msgstr "一個非常基本的安裝，允許您根據需要自行定義 Arch Linux。"
 
 msgid ""
 "Provides a selection of various server packages to install and enable, e.g. ht"
@@ -713,10 +713,10 @@ msgstr "提供一系列可供安裝和啟用的伺服器套件，例如 httpd、
 msgid ""
 "Choose which servers to install, if none then a minimal installation will be d"
 "one"
-msgstr "選擇要安裝的顯示伺服器，如果沒有，則進行最小安裝"
+msgstr "選擇要安裝的伺服器，如果沒有，則將進行最小化安裝"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr "安裝最小系統以及 xorg 和圖形驅動程式。"
+msgstr "安裝最小化系統以及 xorg 和圖形驅動程式。"
 
 msgid "Press Enter to continue."
 msgstr "按 Enter 以繼續。"
@@ -754,7 +754,7 @@ msgid "No audio server"
 msgstr "沒有音訊伺服器"
 
 msgid "(default)"
-msgstr "（默認）"
+msgstr "（預設）"
 
 msgid "Use ESC to skip"
 msgstr "按 ESC 鍵以跳過"
@@ -788,7 +788,7 @@ msgid ""
 msgstr "您可以跳過選擇硬碟和分割區並使用任一掛載在 /mnt 的硬碟設置（實驗性）"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "選擇一個硬碟或跳過並使用 /mnt 作為默認值"
+msgstr "選取其中一個磁碟或跳過，並使用 /mnt 作為預設值"
 
 msgid "Select which partitions to mark for formatting:"
 msgstr "選擇要標記為格式化的分割區："
@@ -859,7 +859,7 @@ msgid ""
 " (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
-"輸入要啟用的並行下載數。\n"
+"輸入要啟用的平行下載數。\n"
 "  （輸入一個 1 到 {max_downloads} 之間的值）\n"
 "提示："
 
@@ -867,17 +867,17 @@ msgstr ""
 msgid ""
 " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at"
 " a time )"
-msgstr "  - 最小值：1（允許 1 个並行下載，同時允許 2 个下載）"
+msgstr "  - 最小值：1（允許 1 个平行下載，同時允許 2 個下載）"
 
 msgid ""
 " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a t"
 "ime )"
-msgstr "  - 最小值：1（允許 1 个並行下載，同時允許 2 个下載）"
+msgstr "  - 最小值：1（允許 1 個平行下載，同時允許 2 個下載）"
 
 msgid ""
 " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download"
 " at a time )"
-msgstr "  - 禁用/默認：0（禁用並行下載，同時只允許 1 个下載）"
+msgstr "  - 停用/預設：0（預設平行下載，同時只允許 1 個下載）"
 
 #, python-brace-format
 msgid ""
@@ -898,7 +898,7 @@ msgid "TAB to select"
 msgstr "按 TAB 以選擇"
 
 msgid "[Default value: 0] > "
-msgstr "[默認值: 0] > "
+msgstr "[預設值: 0] > "
 
 msgid ""
 "To be able to use this translation, please install a font manually that suppor"
@@ -1005,12 +1005,12 @@ msgid "Total sectors: {}"
 msgstr "總區塊數：{}"
 
 msgid "Enter the start sector (default: {}): "
-msgstr "輸入起始區塊（默認：{}）："
+msgstr "輸入起始區塊（預設：{}）："
 
 msgid ""
 "Enter the end sector of the partition (percentage or block number, default: {}"
 "): "
-msgstr "輸入分割區的结束區塊（以百分比或區塊編號表示，默認：{}）："
+msgstr "輸入分割區的結束區塊（以百分比或區塊編號表示，預設：{}）："
 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "這將刪除所有新增的分割區，是否繼續？"
@@ -1046,7 +1046,7 @@ msgid "Manual Partitioning"
 msgstr "手動分割"
 
 msgid "Pre-mounted configuration"
-msgstr "預掛載配置"
+msgstr "預先掛載組態配置"
 
 msgid "Unknown"
 msgstr "未知"
@@ -1087,7 +1087,7 @@ msgid ""
 msgstr "Sway 不支持 Nvidia 的官方驅動。您可能會遇到一些問題，您確定要繼續嗎？"
 
 msgid "Installed packages"
-msgstr "已安裝的套件"
+msgstr "已安裝的套件包"
 
 msgid "Add profile"
 msgstr "新增配置文件"
@@ -1140,7 +1140,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"選擇一個選項以提供 Sway 對您硬件的訪問權限"
+"選擇一個選項，讓 Sway 可以存取您的硬體"
 
 msgid "Graphics driver"
 msgstr "圖形驅動程式"
@@ -1152,7 +1152,7 @@ msgid "Please chose which greeter to install"
 msgstr "請選擇要安裝的登錄管理器"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr "這是預設的默認配置文件列表"
+msgstr "這是預設的預設配置文件列表"
 
 msgid "Disk configuration"
 msgstr "硬碟配置"
@@ -1584,64 +1584,49 @@ msgid "Url"
 msgstr "URL"
 
 msgid "Select signature check"
-msgstr "選擇硬碟加密選項"
+msgstr "選擇簽章核對"
 
 msgid "Select execution mode"
 msgstr "選擇執行模式"
 
 msgid "Press ? for help"
-<<<<<<< HEAD
 msgstr "按 ? 尋求協助"
-=======
-msgstr ""
 
-#, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"選擇一個選項以提供 Sway 對您硬件的訪問權限"
+msgstr "選擇一個選項，讓 Hyprland 能存取您的硬體"
 
-#, fuzzy
 msgid "Additional repositories"
-msgstr "可選目錄"
+msgstr "加入額外的套件庫"
 
 msgid "NTP"
-msgstr ""
+msgstr "網路時間協定(NTP)"
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "在 zram 上進行交換"
 
 msgid "Name"
-msgstr ""
+msgstr "名稱"
 
-#, fuzzy
 msgid "Signature check"
-msgstr "選擇硬盤加密選項"
+msgstr "簽章檢查"
 
-#, fuzzy
 msgid "Selected free space segment on device {}:"
-msgstr "目前 {} 設備上的可用區塊："
+msgstr "已選取裝置 {} 上的可用空間區段："
 
-#, fuzzy
 msgid "Size: {} / {}"
-msgstr "總長度：{}"
+msgstr "總長度：{}/{}"
 
-#, fuzzy
 msgid "Size (default: {}): "
-msgstr "輸入起始區塊（默認：{}）："
+msgstr "輸入起始區塊（預設：{}）："
 
-#, fuzzy
 msgid "HSM device"
-msgstr "裝置"
+msgstr "HSM 裝置"
 
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "某些套件無法在套件庫中找到"
 
-#, fuzzy
 msgid "User"
-msgstr "用戶名："
+msgstr "使用者"
 
 msgid "The specified configuration will be applied"
-msgstr ""
->>>>>>> 931f47a037d7456adf9e9de9452b6b59c39a7b7a
+msgstr "指定的組態設定將會套用"
