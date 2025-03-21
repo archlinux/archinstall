@@ -4,6 +4,7 @@ import re
 import shlex
 import shutil
 import subprocess
+import textwrap
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -1044,6 +1045,36 @@ class Installer:
 
 		return kernel_parameters
 
+	def _create_bls_entries(
+		self,
+		boot_partition: PartitionModification,
+		root: PartitionModification | LvmVolume,
+		entry_name: str
+	) -> None:
+		# Loader entries are stored in $BOOT/loader:
+		# https://uapi-group.org/specifications/specs/boot_loader_specification/#mount-points
+		entries_dir = self.target / boot_partition.relative_mountpoint / 'loader/entries'
+		# Ensure that the $BOOT/loader/entries/ directory exists before trying to create files in it
+		entries_dir.mkdir(parents=True, exist_ok=True)
+
+		entry_template = textwrap.dedent(
+			f"""\
+			# Created by: archinstall
+			# Created on: {self.init_time}
+			title   Arch Linux ({{kernel}}{{variant}})
+			linux   /vmlinuz-{{kernel}}
+			initrd  /initramfs-{{kernel}}{{variant}}.img
+			options {" ".join(self._get_kernel_params(root))}
+			"""
+		)
+
+		for kernel in self.kernels:
+			for variant in ("", "-fallback"):
+				# Setup the loader entry
+				name = entry_name.format(kernel=kernel, variant=variant)
+				entry_conf = entries_dir / name
+				entry_conf.write_text(entry_template.format(kernel=kernel, variant=variant))
+
 	def _add_systemd_bootloader(
 		self,
 		boot_partition: PartitionModification,
@@ -1091,6 +1122,7 @@ class Installer:
 		else:
 			entry_name = self.init_time + '_{kernel}{variant}.conf'
 			default_entry = entry_name.format(kernel=default_kernel, variant='')
+			self._create_bls_entries(boot_partition, root, entry_name)
 
 		default = f'default {default_entry}'
 
@@ -1111,37 +1143,6 @@ class Installer:
 					loader_data[index] = line.removeprefix('#')
 
 		loader_conf.write_text('\n'.join(loader_data) + '\n')
-
-		if uki_enabled:
-			return
-
-		# Loader entries are stored in $BOOT/loader:
-		# https://uapi-group.org/specifications/specs/boot_loader_specification/#mount-points
-		entries_dir = self.target / boot_partition.relative_mountpoint / 'loader/entries'
-		# Ensure that the $BOOT/loader/entries/ directory exists before trying to create files in it
-		entries_dir.mkdir(parents=True, exist_ok=True)
-
-		comments = (
-			'# Created by: archinstall',
-			f'# Created on: {self.init_time}'
-		)
-
-		options = 'options ' + ' '.join(self._get_kernel_params(root))
-
-		for kernel in self.kernels:
-			for variant in ("", "-fallback"):
-				# Setup the loader entry
-				entry = [
-					*comments,
-					f'title   Arch Linux ({kernel}{variant})',
-					f'linux   /vmlinuz-{kernel}',
-					f'initrd  /initramfs-{kernel}{variant}.img',
-					options,
-				]
-
-				name = entry_name.format(kernel=kernel, variant=variant)
-				entry_conf = entries_dir / name
-				entry_conf.write_text('\n'.join(entry) + '\n')
 
 		self.helper_flags['bootloader'] = 'systemd'
 
