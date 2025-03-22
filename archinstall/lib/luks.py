@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import shlex
-import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -134,10 +133,6 @@ class Luks2:
 			raise ValueError('mapper name missing')
 
 		key_file = self._get_key_file(key_file)
-
-		wait_timer = time.time()
-		while Path(self.luks_dev_path).exists() is False and time.time() - wait_timer < 10:
-			time.sleep(0.025)
 
 		result = SysCommand(
 			'cryptsetup open '
