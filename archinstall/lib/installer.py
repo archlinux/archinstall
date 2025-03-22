@@ -8,6 +8,7 @@ import textwrap
 import time
 from collections.abc import Callable
 from pathlib import Path
+from subprocess import CalledProcessError
 from types import TracebackType
 from typing import TYPE_CHECKING, Any
 
@@ -31,7 +32,7 @@ from archinstall.tui.curses_menu import Tui
 
 from .args import arch_config_handler
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
-from .general import SysCommand
+from .general import SysCommand, run
 from .hardware import SysInfo
 from .locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
@@ -1605,14 +1606,12 @@ class Installer:
 			# This means the root account isn't locked/disabled with * in /etc/passwd
 			self.helper_flags['user'] = True
 
-		combo = f'{user}:{password}'
-		echo = shlex.join(['echo', combo])
-		sh = shlex.join(['sh', '-c', echo])
+		cmd = ['arch-chroot', str(self.target), 'chpasswd']
 
 		try:
-			SysCommand(f"arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
+			run(cmd, input_data=f'{user}:{password}'.encode())
 			return True
-		except SysCallError:
+		except CalledProcessError:
 			return False
 
 	def user_set_shell(self, user: str, shell: str) -> bool:
