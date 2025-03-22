@@ -4,9 +4,11 @@ import re
 import shlex
 import shutil
 import subprocess
+import textwrap
 import time
 from collections.abc import Callable
 from pathlib import Path
+from subprocess import CalledProcessError
 from types import TracebackType
 from typing import TYPE_CHECKING, Any
 
@@ -1049,6 +1051,36 @@ class Installer:
 
 		return kernel_parameters
 
+	def _create_bls_entries(
+		self,
+		boot_partition: PartitionModification,
+		root: PartitionModification | LvmVolume,
+		entry_name: str
+	) -> None:
+		# Loader entries are stored in $BOOT/loader:
+		# https://uapi-group.org/specifications/specs/boot_loader_specification/#mount-points
+		entries_dir = self.target / boot_partition.relative_mountpoint / 'loader/entries'
+		# Ensure that the $BOOT/loader/entries/ directory exists before trying to create files in it
+		entries_dir.mkdir(parents=True, exist_ok=True)
+
+		entry_template = textwrap.dedent(
+			f"""\
+			# Created by: archinstall
+			# Created on: {self.init_time}
+			title   Arch Linux ({{kernel}}{{variant}})
+			linux   /vmlinuz-{{kernel}}
+			initrd  /initramfs-{{kernel}}{{variant}}.img
+			options {" ".join(self._get_kernel_params(root))}
+			"""
+		)
+
+		for kernel in self.kernels:
+			for variant in ("", "-fallback"):
+				# Setup the loader entry
+				name = entry_name.format(kernel=kernel, variant=variant)
+				entry_conf = entries_dir / name
+				entry_conf.write_text(entry_template.format(kernel=kernel, variant=variant))
+
 	def _add_systemd_bootloader(
 		self,
 		boot_partition: PartitionModification,
@@ -1096,6 +1128,7 @@ class Installer:
 		else:
 			entry_name = self.init_time + '_{kernel}{variant}.conf'
 			default_entry = entry_name.format(kernel=default_kernel, variant='')
+			self._create_bls_entries(boot_partition, root, entry_name)
 
 		default = f'default {default_entry}'
 
@@ -1116,37 +1149,6 @@ class Installer:
 					loader_data[index] = line.removeprefix('#')
 
 		loader_conf.write_text('\n'.join(loader_data) + '\n')
-
-		if uki_enabled:
-			return
-
-		# Loader entries are stored in $BOOT/loader:
-		# https://uapi-group.org/specifications/specs/boot_loader_specification/#mount-points
-		entries_dir = self.target / boot_partition.relative_mountpoint / 'loader/entries'
-		# Ensure that the $BOOT/loader/entries/ directory exists before trying to create files in it
-		entries_dir.mkdir(parents=True, exist_ok=True)
-
-		comments = (
-			'# Created by: archinstall',
-			f'# Created on: {self.init_time}'
-		)
-
-		options = 'options ' + ' '.join(self._get_kernel_params(root))
-
-		for kernel in self.kernels:
-			for variant in ("", "-fallback"):
-				# Setup the loader entry
-				entry = [
-					*comments,
-					f'title   Arch Linux ({kernel}{variant})',
-					f'linux   /vmlinuz-{kernel}',
-					f'initrd  /initramfs-{kernel}{variant}.img',
-					options,
-				]
-
-				name = entry_name.format(kernel=kernel, variant=variant)
-				entry_conf = entries_dir / name
-				entry_conf.write_text('\n'.join(entry) + '\n')
 
 		self._helper_flags['bootloader'] = 'systemd'
 
@@ -1333,17 +1335,20 @@ class Installer:
 				f' && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'
 			)
 
-		hook_contents = f'''[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = limine
+		hook_contents = textwrap.dedent(
+			f'''\
+			[Trigger]
+			Operation = Install
+			Operation = Upgrade
+			Type = Package
+			Target = limine
 
-[Action]
-Description = Deploying Limine after upgrade...
-When = PostTransaction
-Exec = /bin/sh -c "{hook_command}"
-'''
+			[Action]
+			Description = Deploying Limine after upgrade...
+			When = PostTransaction
+			Exec = /bin/sh -c "{hook_command}"
+			'''
+		)
 
 		hooks_dir = self.target / 'etc' / 'pacman.d' / 'hooks'
 		hooks_dir.mkdir(parents=True, exist_ok=True)
@@ -1353,6 +1358,10 @@ Exec = /bin/sh -c "{hook_command}"
 
 		kernel_params = ' '.join(self._get_kernel_params(root))
 		config_contents = 'timeout: 5\n'
+
+		path_root = 'boot()'
+		if efi_partition and boot_partition != efi_partition:
+			path_root = f'uuid({boot_partition.partuuid})'
 
 		for kernel in self.kernels:
 			for variant in ('', '-fallback'):
@@ -1365,9 +1374,9 @@ Exec = /bin/sh -c "{hook_command}"
 				else:
 					entry = [
 						'protocol: linux',
-						f'path: boot():/vmlinuz-{kernel}',
+						f'path: {path_root}:/vmlinuz-{kernel}',
 						f'cmdline: {kernel_params}',
-						f'module_path: boot():/initramfs-{kernel}{variant}.img',
+						f'module_path: {path_root}:/initramfs-{kernel}{variant}.img',
 					]
 
 				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
@@ -1612,7 +1621,7 @@ Exec = /bin/sh -c "{hook_command}"
 		try:
 			SysCommand(f"arch-chroot {self.target} " + sh[:-1] + f" | {chpasswd}'")
 			return True
-		except SysCallError:
+		except CalledProcessError:
 			return False
 
 	def user_set_shell(self, user: str, shell: str) -> bool:

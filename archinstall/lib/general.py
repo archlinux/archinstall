@@ -307,21 +307,7 @@ class SysCommandWorker:
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
-			history_logfile = Path(f"{storage['LOG_PATH']}/cmd_history.txt")
-
-			change_perm = False
-			if history_logfile.exists() is False:
-				change_perm = True
-
-			try:
-				with history_logfile.open("a") as cmd_log:
-					cmd_log.write(f"{time.time()} {self.cmd}\n")
-
-				if change_perm:
-					history_logfile.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
-			except (PermissionError, FileNotFoundError):
-				# If history_logfile does not exist, ignore the error
-				pass
+			_log_cmd(self.cmd)
 
 			try:
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
@@ -454,6 +440,39 @@ class SysCommand:
 		if self.session:
 			return self.session._trace_log
 		return None
+
+
+def _log_cmd(cmd: list[str]) -> None:
+	history_logfile = Path(f"{storage['LOG_PATH']}/cmd_history.txt")
+
+	change_perm = False
+	if history_logfile.exists() is False:
+		change_perm = True
+
+	try:
+		with history_logfile.open("a") as cmd_log:
+			cmd_log.write(f"{time.time()} {cmd}\n")
+
+		if change_perm:
+			history_logfile.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+	except (PermissionError, FileNotFoundError):
+		# If history_logfile does not exist, ignore the error
+		pass
+
+
+def run(
+	cmd: list[str],
+	input_data: bytes | None = None,
+) -> subprocess.CompletedProcess[bytes]:
+	_log_cmd(cmd)
+
+	return subprocess.run(
+		cmd,
+		input=input_data,
+		stdout=subprocess.PIPE,
+		stderr=subprocess.STDOUT,
+		check=True
+	)
 
 
 def _pid_exists(pid: int) -> bool:

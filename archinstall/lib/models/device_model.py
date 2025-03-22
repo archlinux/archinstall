@@ -768,6 +768,7 @@ class FilesystemType(Enum):
 	Ext3 = 'ext3'
 	Ext4 = 'ext4'
 	F2fs = 'f2fs'
+	Fat12 = 'fat12'
 	Fat16 = 'fat16'
 	Fat32 = 'fat32'
 	Ntfs = 'ntfs'
@@ -953,7 +954,11 @@ class PartitionModification:
 	def is_efi(self) -> bool:
 		return (
 			any(set(self.flags) & set(self._efi_indicator_flags))
-			and self.fs_type == FilesystemType.Fat32
+			and (
+				self.fs_type == FilesystemType.Fat12
+				or self.fs_type == FilesystemType.Fat16
+				or self.fs_type == FilesystemType.Fat32
+			)
 			and PartitionFlag.XBOOTLDR not in self.flags
 		)
 

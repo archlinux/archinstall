@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import shlex
-import time
 from dataclasses import dataclass
 from pathlib import Path
+from subprocess import CalledProcessError
 
 from archinstall.lib.disk.utils import get_lsblk_info
 
 from .exceptions import DiskError, SysCallError
-from .general import SysCommand, SysCommandWorker, generate_password
+from .general import SysCommand, SysCommandWorker, generate_password, run
 from .models.users import Password
 from .output import debug, info
 
@@ -60,16 +60,16 @@ class Luks2:
 		else:
 			return bytes(self.password.plaintext, 'UTF-8')
 
-	def _get_key_file(self, key_file: Path | None = None) -> Path:
+	def _get_passphrase_args(
+		self,
+		key_file: Path | None = None
+	) -> tuple[list[str], bytes | None]:
+		key_file = key_file or self.key_file
+
 		if key_file:
-			return key_file
+			return ['--key-file', str(key_file)], None
 
-		if self.key_file:
-			return self.key_file
-
-		default_key_file = Path(f'/tmp/{self.luks_dev_path.name}.disk_pw')
-		default_key_file.write_bytes(self._password_bytes())
-		return default_key_file
+		return [], self._password_bytes()
 
 	def encrypt(
 		self,
@@ -77,12 +77,12 @@ class Luks2:
 		hash_type: str = 'sha512',
 		iter_time: int = 10000,
 		key_file: Path | None = None
-	) -> Path:
+	) -> Path | None:
 		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
-		key_file = self._get_key_file(key_file)
+		key_file_arg, passphrase = self._get_passphrase_args(key_file)
 
-		cryptsetup_args = shlex.join([
+		cmd = [
 			'cryptsetup',
 			'--batch-mode',
 			'--verbose',
@@ -91,19 +91,20 @@ class Luks2:
 			'--hash', hash_type,
 			'--key-size', str(key_size),
 			'--iter-time', str(iter_time),
-			'--key-file', str(key_file),
+			*key_file_arg,
 			'--use-urandom',
-			'luksFormat', str(self.luks_dev_path),
-		])
+			'luksFormat', str(self.luks_dev_path)
+		]
 
-		debug(f'cryptsetup format: {cryptsetup_args}')
+		debug(f'cryptsetup format: {shlex.join(cmd)}')
 
 		try:
-			result = SysCommand(cryptsetup_args).decode()
-		except SysCallError as err:
-			raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {err}')
+			result = run(cmd, input_data=passphrase)
+		except CalledProcessError as err:
+			output = err.stdout.decode().rstrip()
+			raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {output}')
 
-		debug(f'cryptsetup luksFormat output: {result}')
+		debug(f'cryptsetup luksFormat output: {result.stdout.decode().rstrip()}')
 
 		self.key_file = key_file
 
@@ -134,21 +135,19 @@ class Luks2:
 		if not self.mapper_name:
 			raise ValueError('mapper name missing')
 
-		key_file = self._get_key_file(key_file)
+		key_file_arg, passphrase = self._get_passphrase_args(key_file)
 
-		wait_timer = time.time()
-		while Path(self.luks_dev_path).exists() is False and time.time() - wait_timer < 10:
-			time.sleep(0.025)
+		cmd = [
+			'cryptsetup', 'open',
+			str(self.luks_dev_path),
+			str(self.mapper_name),
+			*key_file_arg,
+			'--type', 'luks2'
+		]
 
-		result = SysCommand(
-			'cryptsetup open '
-			f'{self.luks_dev_path} '
-			f'{self.mapper_name} '
-			f'--key-file {key_file} '
-			f'--type luks2'
-		).decode()
+		result = run(cmd, input_data=passphrase)
 
-		debug(f'cryptsetup open output: {result}')
+		debug(f'cryptsetup open output: {result.stdout.decode().rstrip()}')
 
 		if not self.mapper_dev or not self.mapper_dev.is_symlink():
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')

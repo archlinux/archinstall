@@ -393,7 +393,7 @@ class PartitioningList(ListManager):
 		header += str(_('If mountpoint /boot is set, then the partition will also be marked as bootable.')) + '\n'
 		prompt = str(_('Mountpoint'))
 
-		mountpoint = prompt_dir(prompt, header, allow_skip=False)
+		mountpoint = prompt_dir(prompt, header, validate=False, allow_skip=False)
 		assert mountpoint
 
 		return mountpoint
