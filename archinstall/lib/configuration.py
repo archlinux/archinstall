@@ -105,12 +105,13 @@ class ConfigurationOutput:
 			target.write_text(self.user_credentials_to_json())
 			target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save(self, dest_path: Path | None = None) -> None:
+	def save(self, dest_path: Path | None = None, creds: bool = False) -> None:
 		save_path = dest_path or self._default_save_path
 
 		if self._is_valid_path(save_path):
 			self.save_user_config(save_path)
-			self.save_user_creds(save_path)
+			if creds:
+				self.save_user_creds(save_path)
 
 
 def save_config(config: ArchConfig) -> None:
@@ -206,4 +207,4 @@ def save_config(config: ArchConfig) -> None:
 		case "user_creds":
 			config_output.save_user_creds(dest_path)
 		case "all":
-			config_output.save(dest_path)
+			config_output.save(dest_path, creds=True)

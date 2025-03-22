@@ -60,7 +60,7 @@ def test_creds_roundtrip(
 	test_out_dir = Path('/tmp/')
 	test_out_file = test_out_dir / config_output.user_credentials_file
 
-	config_output.save(test_out_dir)
+	config_output.save(test_out_dir, creds=True)
 
 	result = json.loads(test_out_file.read_text())
 	expected = json.loads(creds_fixture.read_text())
