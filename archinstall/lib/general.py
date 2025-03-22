@@ -460,9 +460,19 @@ def _log_cmd(cmd: list[str]) -> None:
 		pass
 
 
-def run(cmd: list[str], input_data: bytes | None = None) -> None:
+def run(
+	cmd: list[str],
+	input_data: bytes | None = None,
+) -> subprocess.CompletedProcess[bytes]:
 	_log_cmd(cmd)
-	subprocess.run(cmd, input=input_data, check=True)
+
+	return subprocess.run(
+		cmd,
+		input=input_data,
+		stdout=subprocess.PIPE,
+		stderr=subprocess.STDOUT,
+		check=True
+	)
 
 
 def _pid_exists(pid: int) -> bool:
