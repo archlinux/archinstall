@@ -21,8 +21,8 @@ jobs:
       image: archlinux/archlinux:latest
       options: --privileged
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
       - name: Install pre-dependencies
         run: |
           pacman -Sy --noconfirm tree git python-pyparted python-setuptools python-sphinx python-sphinx_rtd_theme python-build python-installer python-wheel
@@ -30,7 +30,7 @@ jobs:
         run: |
           sphinx-build docs _build
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         if: ${{ github.event_name != 'pull_request' }}
         with:
           publish_branch: gh-pages
