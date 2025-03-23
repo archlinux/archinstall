@@ -7,12 +7,13 @@ from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.installer import Installer
-from archinstall.lib.models import Bootloader, User
+from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device_model import DiskLayoutConfiguration
 from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.models.users import Password, User
 from archinstall.lib.output import debug, error, info
-from archinstall.lib.profile import profile_handler
+from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui import Tui
 
 
@@ -52,7 +53,7 @@ def perform_installation(mountpoint: Path) -> None:
 			profile_config = ProfileConfiguration(MinimalProfile())
 			profile_handler.install_profile_config(installation, profile_config)
 
-			user = User('devel', 'devel', False)
+			user = User('devel', Password(plaintext='devel'), False)
 			installation.create_users(user)
 
 	# Once this is done, we output some useful information to the user

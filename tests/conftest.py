@@ -14,8 +14,13 @@ def creds_fixture() -> Path:
 
 
 @pytest.fixture(scope='session')
-def mirror_backwards_config() -> Path:
-	return Path(__file__).parent / 'data' / 'test_config_mirror_backwards.json'
+def deprecated_creds_config() -> Path:
+	return Path(__file__).parent / 'data' / 'test_deprecated_creds_config.json'
+
+
+@pytest.fixture(scope='session')
+def deprecated_mirror_config() -> Path:
+	return Path(__file__).parent / 'data' / 'test_deprecated_mirror_config.json'
 
 
 @pytest.fixture(scope='session')

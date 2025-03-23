@@ -16,6 +16,7 @@ from archinstall.lib.models.device_model import (
 	EncryptionType,
 )
 from archinstall.lib.models.network_configuration import NetworkConfiguration
+from archinstall.lib.models.users import User
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui import Tui
 
@@ -128,8 +129,9 @@ def perform_installation(mountpoint: Path) -> None:
 		if accessibility_tools_in_use():
 			installation.enable_espeakup()
 
-		if (root_pw := config.root_password) and len(root_pw):
-			installation.user_set_pw('root', root_pw)
+		if root_pw := config.root_enc_password:
+			root_user = User('root', root_pw, False)
+			installation.set_user_password(root_user)
 
 		if (profile_config := config.profile_config) and profile_config.profile:
 			profile_config.profile.post_install(installation)

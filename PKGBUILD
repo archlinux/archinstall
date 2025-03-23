@@ -22,6 +22,7 @@ depends=(
   'pciutils'
   'procps-ng'
   'python'
+  'python-bcrypt'
   'python-pydantic'
   'python-pyparted'
   'systemd'
