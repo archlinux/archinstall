@@ -32,7 +32,7 @@ from archinstall.tui.curses_menu import Tui
 
 from .args import arch_config_handler
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
-from .general import SysCommand
+from .general import SysCommand, run
 from .hardware import SysInfo
 from .locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
@@ -1614,12 +1614,11 @@ class Installer:
 			debug('User password is empty')
 			return False
 
-		echo = shlex.join(['echo', f'{user.username}:{enc_password}'])
-		sh = shlex.join(['sh', '-c', echo])
-		chpasswd = 'chpasswd --encrypted --crypt-method YESCRYPT'
+		input_data = f'{user.username}:{enc_password}'.encode()
+		cmd = ['arch-chroot', str(self.target), 'chpasswd --encrypted']
 
 		try:
-			SysCommand(f"arch-chroot {self.target} " + sh[:-1] + f" | {chpasswd}'")
+			run(cmd, input_data=input_data)
 			return True
 		except CalledProcessError:
 			return False

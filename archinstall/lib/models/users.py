@@ -1,7 +1,8 @@
-import shlex
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, NotRequired, TypedDict, override
+
+import bcrypt
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -157,15 +158,8 @@ class Password:
 			return '*' * 8
 
 	def _encrypt(self, plaintext: str) -> str:
-		from ..general import SysCommand
-
-		echo = shlex.join(['echo', plaintext])
-		sh = shlex.join(['sh', '-c', echo])
-
-		cmd = sh[:-1] + " | mkpasswd --method=yescrypt --stdin'"
-		yescrypt_hash = SysCommand(cmd).decode()
-
-		return yescrypt_hash
+		bcrypt_hash = bcrypt.hashpw(plaintext.encode(), bcrypt.gensalt())
+		return bcrypt_hash.decode()
 
 
 @dataclass
