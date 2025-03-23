@@ -1608,12 +1608,13 @@ class Installer:
 			return False
 
 		input_data = f'{user.username}:{enc_password}'.encode()
-		cmd = ['arch-chroot', str(self.target), 'chpasswd --encrypted']
+		cmd = ['arch-chroot', str(self.target), 'chpasswd', '--encrypted']
 
 		try:
 			run(cmd, input_data=input_data)
 			return True
-		except CalledProcessError:
+		except CalledProcessError as err:
+			debug(f'Error setting user password: {err}')
 			return False
 
 	def user_set_shell(self, user: str, shell: str) -> bool:
