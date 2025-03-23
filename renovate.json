@@ -4,6 +4,7 @@
     "config:base",
     "helpers:pinGitHubActionDigests"
   ],
+  "configMigration": true,
   "pre-commit": {
     "enabled": true
   },
