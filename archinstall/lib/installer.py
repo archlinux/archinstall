@@ -1582,15 +1582,8 @@ class Installer:
 		if not handled_by_plugin:
 			info(f'Creating user {user.username}')
 
-			cmd = f'arch-chroot {self.target} useradd'
-
-			if user.sudo:
-				cmd += ' -G wheel'
-
-			cmd += f' {user.username}'
-
 			try:
-				SysCommand(cmd)
+				SysCommand(f'arch-chroot {self.target} useradd -m -G wheel {user.username}')
 			except SysCallError as err:
 				raise SystemError(f"Could not create user inside installation: {err}")
 
