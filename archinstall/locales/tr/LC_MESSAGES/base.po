@@ -80,7 +80,6 @@ msgstr "Ağ geçidi (yönlendirici) IP adresini girin ya da yoksa veya kullanıl
 
 msgid "Enter your DNS servers (space separated, blank for none): "
 msgstr "DNS sunucularını girin (boşlukla ayrılmış, yoksa veya kullanılmayacak ise boş bırakın): "
-
 msgid "Select which filesystem your main partition should use"
 msgstr "Ana diskinizde kullanılması gereken dosya sistemini seçin"
 
@@ -861,6 +860,9 @@ msgstr "Aygıt seçimini sıfırlarsanız, bu aynı zamanda geçerli disk düzen
 msgid "Existing Partitions"
 msgstr "Mevcut Bölmeler"
 
+msgid "Partitioning"
+msgstr "Disk bölümleme"
+
 msgid "Select a partitioning option"
 msgstr "Bir bölümleme seçeneği belirleyin"
 
@@ -966,6 +968,15 @@ msgstr "Manuel yapılandırma"
 
 msgid "Pre-mounted configuration"
 msgstr "Önceden mount edilmiş (bağlanmış) konfigürasyon"
+
+msgid "Desktop"
+msgstr "Masaüstü"
+
+msgid "Server"
+msgstr "Sunucu"
+
+msgid "Minimal"
+msgstr "Hafif"
 
 msgid "Unknown"
 msgstr "Bilinmeyen"
@@ -1485,7 +1496,7 @@ msgid "NTP"
 msgstr ""
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "zram üzerinde takas alanı"
 
 msgid "Name"
 msgstr ""
@@ -1519,3 +1530,4 @@ msgstr "Kullanıcı Adı"
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
