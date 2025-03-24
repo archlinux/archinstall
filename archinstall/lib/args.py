@@ -60,7 +60,7 @@ class ArchConfig:
 	audio_config: AudioConfiguration | None = None
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: ['linux'])
-	ntp: bool = False
+	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
 	swap: bool = True
@@ -176,8 +176,7 @@ class ArchConfig:
 		if kernels := args_config.get('kernels', []):
 			arch_config.kernels = kernels
 
-		if ntp := args_config.get('ntp', False):
-			arch_config.ntp = ntp
+		arch_config.ntp = args_config.get('ntp', True)
 
 		if packages := args_config.get('packages', []):
 			arch_config.packages = packages
