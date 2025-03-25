@@ -48,12 +48,13 @@ class GfxPackage(Enum):
 	IntelMediaDriver = 'intel-media-driver'
 	LibvaIntelDriver = 'libva-intel-driver'
 	LibvaMesaDriver = 'libva-mesa-driver'
+	LibvaNvidiaDriver = 'libva-nvidia-driver'
 	Mesa = "mesa"
 	NvidiaDkms = 'nvidia-dkms'
-	NvidiaOpen = 'nvidia-open'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
+	VulkanNouveau = 'vulkan-nouveau'
 	Xf86VideoAmdgpu = "xf86-video-amdgpu"
 	Xf86VideoAti = "xf86-video-ati"
 	Xf86VideoNouveau = 'xf86-video-nouveau'
@@ -104,7 +105,8 @@ class GfxDriver(Enum):
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanRadeon,
-					GfxPackage.VulkanIntel
+					GfxPackage.VulkanIntel,
+					GfxPackage.VulkanNouveau
 				]
 			case GfxDriver.AmdOpenSource:
 				packages += [
@@ -123,20 +125,22 @@ class GfxDriver(Enum):
 				]
 			case GfxDriver.NvidiaOpenKernel:
 				packages += [
-					GfxPackage.NvidiaOpen,
+					GfxPackage.NvidiaOpenDkms,
 					GfxPackage.Dkms,
-					GfxPackage.NvidiaOpenDkms
+					GfxPackage.LibvaNvidiaDriver
 				]
 			case GfxDriver.NvidiaOpenSource:
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoNouveau,
-					GfxPackage.LibvaMesaDriver
+					GfxPackage.LibvaMesaDriver,
+					GfxPackage.VulkanNouveau
 				]
 			case GfxDriver.NvidiaProprietary:
 				packages += [
 					GfxPackage.NvidiaDkms,
 					GfxPackage.Dkms,
+					GfxPackage.LibvaNvidiaDriver
 				]
 			case GfxDriver.VMOpenSource:
 				packages += [
