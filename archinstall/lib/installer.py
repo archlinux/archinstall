@@ -27,7 +27,7 @@ from archinstall.lib.models.device_model import (
 	SubvolumeModification,
 	Unit,
 )
-from archinstall.lib.models.gen import Repository
+from archinstall.lib.models.packages import Repository
 from archinstall.tui.curses_menu import Tui
 
 from .args import arch_config_handler
