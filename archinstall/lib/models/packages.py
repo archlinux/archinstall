@@ -155,12 +155,12 @@ class AvailablePackage(BaseModel):
 
 	@cached_property
 	def longest_key(self) -> int:
-		return max(len(key) for key in self.dict().keys())
+		return max(len(key) for key in self.model_dump().keys())
 
 	# return all package info line by line
 	def info(self) -> str:
 		output = ''
-		for key, value in self.dict().items():
+		for key, value in self.model_dump().items():
 			key = key.replace('_', ' ').capitalize()
 			key = key.ljust(self.longest_key)
 			output += f'{key} : {value}\n'

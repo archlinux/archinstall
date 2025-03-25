@@ -70,6 +70,7 @@ disallow_any_explicit = false
 disallow_any_expr = false
 disallow_any_unimported = true
 enable_error_code = [
+    "deprecated",
     "explicit-override",
     "ignore-without-code",
     "mutable-override",
