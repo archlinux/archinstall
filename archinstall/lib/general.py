@@ -16,14 +16,11 @@ from enum import Enum
 from pathlib import Path
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
-from typing import TYPE_CHECKING, Any, override
+from typing import Any, override
 
 from .exceptions import RequirementError, SysCallError
-from .output import debug, error, info
+from .output import debug, error
 from .storage import storage
-
-if TYPE_CHECKING:
-	from .installer import Installer
 
 # https://stackoverflow.com/a/43627833/929999
 _VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
@@ -477,20 +474,6 @@ def _pid_exists(pid: int) -> bool:
 		return any(subprocess.check_output(['ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
 		return False
-
-
-def run_custom_user_commands(commands: list[str], installation: Installer) -> None:
-	for index, command in enumerate(commands):
-		script_path = f"/var/tmp/user-command.{index}.sh"
-		chroot_path = f"{installation.target}/{script_path}"
-
-		info(f'Executing custom command "{command}" ...')
-		with open(chroot_path, "w") as user_script:
-			user_script.write(command)
-
-		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
-
-		os.unlink(chroot_path)
 
 
 def secret(x: str) -> str:
