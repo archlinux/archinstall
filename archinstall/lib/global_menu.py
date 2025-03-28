@@ -438,7 +438,7 @@ class GlobalMenu(AbstractMenu):
 
 		if bootloader == Bootloader.Limine:
 			if boot_partition.fs_type != FilesystemType.Fat32:
-				return "Limine does not support booting from filesystems other than FAT32"
+				return "Limine does not support booting without a FAT boot partition"
 
 		return None
 
