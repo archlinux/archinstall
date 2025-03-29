@@ -964,8 +964,9 @@ class PartitionModification:
 	def is_boot(self) -> bool:
 		"""
 		Returns True if any of the boot indicator flags are found in self.flags
+		or if the partition is mounted on /boot
 		"""
-		return any(set(self.flags) & set(self._boot_indicator_flags))
+		return any(set(self.flags) & set(self._boot_indicator_flags)) or Path('/boot') == self.mountpoint
 
 	def is_root(self) -> bool:
 		if self.mountpoint is not None:
