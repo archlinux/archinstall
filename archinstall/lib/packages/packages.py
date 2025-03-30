@@ -125,7 +125,7 @@ def list_available_packages(
 	current_package: list[str] = []
 	filtered_repos = [name for repo in repositories for name in repo.get_repository_list()]
 
-	for line in Pacman.run('-S --info'):
+	for line in Pacman.run('-Sy --info'):
 		dec_line = line.decode().strip()
 		current_package.append(dec_line)
 
