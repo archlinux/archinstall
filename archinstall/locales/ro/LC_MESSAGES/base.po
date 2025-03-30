@@ -1577,3 +1577,137 @@ msgstr "Nume utilizator : "
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marchează/Demarchează ca bootabil"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Pachete Adiționale"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Schimbă oglinda customizată"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Șterge oglinda customizată"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Regiune de oglindire"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Schimbă oglinda customizată"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Șterge oglinda customizată"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Selectați opțiunea pentru semnătură"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Regiuni oglinzi"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Colecții de pachete opționale"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Regiuni oglinzi"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Oglinzi customizate"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Colecții de pachete opționale"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Selectați opțiunea pentru verificarea semnăturii"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Selectați un fus orar"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Selectați un mod de execuție"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""

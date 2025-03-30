@@ -1516,6 +1516,140 @@ msgstr "Nom d'utilisateur"
 msgid "The specified configuration will be applied"
 msgstr ""
 
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marquer/Démarquer comme amorçable"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Paquets supplémentaires"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Ajouter un miroir personnalisé"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Changer le miroir personnalisé"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Supprimer le miroir personnalisé"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Nom du miroir"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Ajouter un miroir personnalisé"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Changer le miroir personnalisé"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Supprimer le miroir personnalisé"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Sélectionner l'option de signature"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Ajouter un miroir personnalisé"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Ajouter un miroir personnalisé"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Régions miroir"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Dépôts supplémentaires"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Régions miroir"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Miroirs personnalisés"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Dépôts supplémentaires"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Sélectionner la vérification de la signature"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Sélectionner un fuseau horaire"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Sélectionner le mode d'exécution"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Modifier {origkey} :"
