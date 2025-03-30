@@ -1547,3 +1547,118 @@ msgstr ""
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr ""
+
+msgid "Loading packages..."
+msgstr ""
+
+msgid ""
+"Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+msgid "Add a custom repository"
+msgstr ""
+
+msgid "Change custom repository"
+msgstr ""
+
+msgid "Delete custom repository"
+msgstr ""
+
+msgid "Repository name"
+msgstr ""
+
+msgid "Add a custom server"
+msgstr ""
+
+msgid "Change custom server"
+msgstr ""
+
+msgid "Delete custom server"
+msgstr ""
+
+msgid "Server url"
+msgstr ""
+
+msgid "Select regions"
+msgstr ""
+
+msgid "Add custom servers"
+msgstr ""
+
+msgid "Add custom repository"
+msgstr ""
+
+msgid "Loading mirror regions..."
+msgstr ""
+
+msgid "Mirrors and repositories"
+msgstr ""
+
+msgid "Selected mirror regions"
+msgstr ""
+
+msgid "Custom servers"
+msgstr ""
+
+msgid "Custom repositories"
+msgstr ""
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+msgid "Select on single select"
+msgstr ""
+
+msgid "Select on multi select"
+msgstr ""
+
+msgid "Reset"
+msgstr ""
+
+msgid "Skip selection menu"
+msgstr ""
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""

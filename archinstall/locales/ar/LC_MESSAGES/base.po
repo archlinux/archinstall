@@ -1521,3 +1521,137 @@ msgstr "اسم المستخدم"
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "وضع او إلغاء علامة قابل للإقلاع"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "الباقات الإضافية"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "إضافة مرآة مخصصة"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "تغيير المرآة المخصصة"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "حذف المرآة المخصصة"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "اسم المرآة"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "إضافة مرآة مخصصة"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "تغيير المرآة المخصصة"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "حذف المرآة المخصصة"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "حدد خيار التوقيع"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "إضافة مرآة مخصصة"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "إضافة مرآة مخصصة"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "مناطق المرايا"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "المستودعات الاختيارية"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "مناطق المرايا"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "مرايا مخصصة"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "المستودعات الاختيارية"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "حدد خيار التحقق من التوقيع"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "حدِّد منطقة زمنية"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "حدد وضع التنفيذ"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""

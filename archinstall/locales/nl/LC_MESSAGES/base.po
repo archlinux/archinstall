@@ -1617,6 +1617,138 @@ msgstr "Gebruikersnaam: "
 msgid "The specified configuration will be applied"
 msgstr ""
 
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Partitie (de)markeren voor versleuteling"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Aanvullende pakketten"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Gebruiker toevoegen"
+
+msgid "Change custom repository"
+msgstr ""
+
+msgid "Delete custom repository"
+msgstr ""
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Spiegelserverregio"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Gebruiker toevoegen"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Kies een audioserver"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Gebruiker verwijderen"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Kies een schijfindeling"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Gebruiker toevoegen"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Gebruiker toevoegen"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Spiegelserverregio"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Aanvullende pakketbronnen"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Spiegelserverregio"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Kies een audioserver"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Aanvullende pakketbronnen"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Kies een schijfindeling"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Kies een tijdzone"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Kies een actie voor '{}'"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

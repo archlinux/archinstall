@@ -1559,3 +1559,137 @@ msgstr "பயனர் பெயர்: "
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "துவக்கக்கூடியதாகக் குறி/குறிநீக்கு"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "கூடுதல் தொகுப்புகள்"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "தனிப்பயன் கண்ணாடியைச் சேர்க்கவும்"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "தனிப்பயன் கண்ணாடியை மாற்றவும்"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "தனிப்பயன் கண்ணாடியை நீக்கு"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "மிரர் பிராந்தியம்"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "தனிப்பயன் கண்ணாடியைச் சேர்க்கவும்"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "தனிப்பயன் கண்ணாடியை மாற்றவும்"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "தனிப்பயன் கண்ணாடியை நீக்கு"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "கையெழுத்து விருப்பத்தைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "தனிப்பயன் கண்ணாடியைச் சேர்க்கவும்"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "தனிப்பயன் கண்ணாடியைச் சேர்க்கவும்"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "கண்ணாடிப் பகுதிகள்"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "விருப்ப களஞ்சியங்கள்"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "கண்ணாடிப் பகுதிகள்"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "தனிப்பயன் கண்ணாடிகள்"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "விருப்ப களஞ்சியங்கள்"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "கையொப்ப சரிபார்ப்பு விருப்பத்தைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "நேர மண்டலத்தைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "செயல்படுத்தும் பயன்முறையைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
