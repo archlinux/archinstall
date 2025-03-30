@@ -223,7 +223,7 @@ class GlobalMenu(AbstractMenu):
 			return item.has_value()
 
 		def has_superuser() -> bool:
-			item = self._item_group.find_by_key('!users')
+			item = self._item_group.find_by_key('users')
 
 			if item.has_value():
 				users = item.value
@@ -234,8 +234,8 @@ class GlobalMenu(AbstractMenu):
 		missing = set()
 
 		for item in self._item_group.items:
-			if item.key in ['!root-password', '!users']:
-				if not check('!root-password') and not has_superuser():
+			if item.key in ['root_password', 'users']:
+				if not check('root_password') and not has_superuser():
 					missing.add(
 						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))
 					)
