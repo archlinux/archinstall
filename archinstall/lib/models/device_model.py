@@ -11,11 +11,8 @@ import parted
 from parted import Disk, Geometry, Partition
 from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_validator
 
-from ..exceptions import DiskError, SysCallError
-from ..general import SysCommand
 from ..hardware import SysInfo
 from ..output import debug
-from ..storage import storage
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -78,7 +75,7 @@ class DiskLayoutConfiguration:
 
 	@classmethod
 	def parse_arg(cls, disk_config: _DiskLayoutConfigurationSerialization) -> DiskLayoutConfiguration | None:
-		from .device_handler import device_handler
+		from archinstall.lib.disk.device_handler import device_handler
 
 		device_modifications: list[DeviceModification] = []
 		config_type = disk_config.get('config_type', None)
@@ -99,8 +96,6 @@ class DiskLayoutConfiguration:
 
 			mods = device_handler.detect_pre_mounted_mods(path)
 			device_modifications.extend(mods)
-
-			storage['arguments']['mount_point'] = path
 
 			config.mountpoint = path
 
@@ -149,8 +144,6 @@ class DiskLayoutConfiguration:
 			device_modification.partitions = device_partitions
 			device_modifications.append(device_modification)
 
-		using_gpt = SysInfo.has_uefi()
-
 		for dev_mod in device_modifications:
 			dev_mod.partitions.sort(key=lambda p: (not p.is_delete(), p.start))
 
@@ -191,8 +184,9 @@ class DiskLayoutConfiguration:
 
 			last = create_partitions[-1]
 			total_size = dev_mod.device.device_info.total_size
-			if using_gpt and last.end > total_size.gpt_end():
-				raise ValueError('Partition overlaps backup GPT header')
+			if dev_mod.using_gpt(device_handler.partition_table):
+				if last.end > total_size.gpt_end():
+					raise ValueError('Partition overlaps backup GPT header')
 			elif last.end > total_size.align():
 				raise ValueError('Partition too large for device')
 
@@ -206,6 +200,16 @@ class DiskLayoutConfiguration:
 class PartitionTable(Enum):
 	GPT = 'gpt'
 	MBR = 'msdos'
+
+	def is_gpt(self) -> bool:
+		return self == PartitionTable.GPT
+
+	def is_mbr(self) -> bool:
+		return self == PartitionTable.MBR
+
+	@classmethod
+	def default(cls) -> PartitionTable:
+		return cls.GPT if SysInfo.has_uefi() else cls.MBR
 
 
 class Units(Enum):
@@ -763,6 +767,7 @@ class FilesystemType(Enum):
 	Ext3 = 'ext3'
 	Ext4 = 'ext4'
 	F2fs = 'f2fs'
+	Fat12 = 'fat12'
 	Fat16 = 'fat16'
 	Fat32 = 'fat32'
 	Ntfs = 'ntfs'
@@ -948,15 +953,20 @@ class PartitionModification:
 	def is_efi(self) -> bool:
 		return (
 			any(set(self.flags) & set(self._efi_indicator_flags))
-			and self.fs_type == FilesystemType.Fat32
+			and (
+				self.fs_type == FilesystemType.Fat12
+				or self.fs_type == FilesystemType.Fat16
+				or self.fs_type == FilesystemType.Fat32
+			)
 			and PartitionFlag.XBOOTLDR not in self.flags
 		)
 
 	def is_boot(self) -> bool:
 		"""
 		Returns True if any of the boot indicator flags are found in self.flags
+		or if the partition is mounted on /boot
 		"""
-		return any(set(self.flags) & set(self._boot_indicator_flags))
+		return any(set(self.flags) & set(self._boot_indicator_flags)) or Path('/boot') == self.mountpoint
 
 	def is_root(self) -> bool:
 		if self.mountpoint is not None:
@@ -1357,6 +1367,12 @@ class DeviceModification:
 	def device_path(self) -> Path:
 		return self.device.device_info.path
 
+	def using_gpt(self, partition_table: PartitionTable) -> bool:
+		if self.wipe:
+			return partition_table.is_gpt()
+
+		return self.device.disk.type == PartitionTable.GPT.value
+
 	def add_partition(self, partition: PartitionModification) -> None:
 		self.partitions.append(partition)
 
@@ -1598,96 +1614,3 @@ class LsblkInfo(BaseModel):
 			for name, field in cls.model_fields.items()
 			if name != 'children'
 		]
-
-
-class LsblkOutput(BaseModel):
-	blockdevices: list[LsblkInfo]
-
-
-def _fetch_lsblk_info(
-	dev_path: Path | str | None = None,
-	reverse: bool = False,
-	full_dev_path: bool = False
-) -> LsblkOutput:
-	cmd = ['lsblk', '--json', '--bytes', '--output', ','.join(LsblkInfo.fields())]
-
-	if reverse:
-		cmd.append('--inverse')
-
-	if full_dev_path:
-		cmd.append('--paths')
-
-	if dev_path:
-		cmd.append(str(dev_path))
-
-	try:
-		worker = SysCommand(cmd)
-	except SysCallError as err:
-		# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
-		if err.worker:
-			err_str = err.worker.decode()
-			debug(f'Error calling lsblk: {err_str}')
-
-		if dev_path:
-			raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
-
-		raise err
-
-	output = worker.output(remove_cr=False)
-	return LsblkOutput.model_validate_json(output)
-
-
-def get_lsblk_info(
-	dev_path: Path | str,
-	reverse: bool = False,
-	full_dev_path: bool = False
-) -> LsblkInfo:
-	infos = _fetch_lsblk_info(dev_path, reverse=reverse, full_dev_path=full_dev_path)
-
-	if infos.blockdevices:
-		return infos.blockdevices[0]
-
-	raise DiskError(f'lsblk failed to retrieve information for "{dev_path}"')
-
-
-def get_all_lsblk_info() -> list[LsblkInfo]:
-	return _fetch_lsblk_info().blockdevices
-
-
-def get_lsblk_output() -> LsblkOutput:
-	return _fetch_lsblk_info()
-
-
-def find_lsblk_info(
-	dev_path: Path | str,
-	info: list[LsblkInfo]
-) -> LsblkInfo | None:
-	if isinstance(dev_path, str):
-		dev_path = Path(dev_path)
-
-	for lsblk_info in info:
-		if lsblk_info.path == dev_path:
-			return lsblk_info
-
-	return None
-
-
-def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> list[LsblkInfo]:
-	def _check(infos: list[LsblkInfo]) -> list[LsblkInfo]:
-		devices = []
-		for entry in infos:
-			if as_prefix:
-				matches = [m for m in entry.mountpoints if str(m).startswith(str(mountpoint))]
-				if matches:
-					devices += [entry]
-			elif mountpoint in entry.mountpoints:
-				devices += [entry]
-
-			if len(entry.children) > 0:
-				if len(match := _check(entry.children)) > 0:
-					devices += match
-
-		return devices
-
-	all_info = get_all_lsblk_info()
-	return _check(all_info)

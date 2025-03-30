@@ -10,23 +10,21 @@ import string
 import subprocess
 import sys
 import time
-import urllib.error
-import urllib.parse
 from collections.abc import Callable, Iterator
 from datetime import date, datetime
 from enum import Enum
 from pathlib import Path
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
-from typing import TYPE_CHECKING, Any, override
-from urllib.request import Request, urlopen
+from typing import Any, override
 
 from .exceptions import RequirementError, SysCallError
-from .output import debug, error, info
+from .output import debug, error
 from .storage import storage
 
-if TYPE_CHECKING:
-	from .installer import Installer
+# https://stackoverflow.com/a/43627833/929999
+_VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
+_VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
 
 
 def generate_password(length: int = 64) -> str:
@@ -40,12 +38,12 @@ def locate_binary(name: str) -> str:
 	raise RequirementError(f"Binary {name} does not exist.")
 
 
-def clear_vt100_escape_codes(data: bytes | str) -> bytes | str:
-	# https://stackoverflow.com/a/43627833/929999
-	vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
-	if isinstance(data, bytes):
-		return re.sub(vt100_escape_regex.encode(), b'', data)
-	return re.sub(vt100_escape_regex, '', data)
+def clear_vt100_escape_codes(data: bytes) -> bytes:
+	return re.sub(_VT100_ESCAPE_REGEX_BYTES, b'', data)
+
+
+def clear_vt100_escape_codes_from_str(data: str) -> str:
+	return re.sub(_VT100_ESCAPE_REGEX, '', data)
 
 
 def jsonify(obj: Any, safe: bool = True) -> Any:
@@ -157,7 +155,7 @@ class SysCommandWorker:
 		lines = filter(None, self._trace_log[self._trace_log_pos:last_line].splitlines())
 		for line in lines:
 			if self.remove_vt100_escape_codes_from_lines:
-				line = clear_vt100_escape_codes(line)  # type: ignore[assignment]
+				line = clear_vt100_escape_codes(line)
 
 			yield line + b'\n'
 
@@ -201,7 +199,7 @@ class SysCommandWorker:
 			raise SysCallError(
 				f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self)[-500:]}",
 				self.exit_code,
-				worker=self
+				worker_log=self._trace_log
 			)
 
 	def is_alive(self) -> bool:
@@ -303,24 +301,7 @@ class SysCommandWorker:
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
-			history_logfile = Path(f"{storage['LOG_PATH']}/cmd_history.txt")
-
-			change_perm = False
-			if history_logfile.exists() is False:
-				change_perm = True
-
-			try:
-				with history_logfile.open("a") as cmd_log:
-					cmd_log.write(f"{time.time()} {self.cmd}\n")
-
-				if change_perm:
-					history_logfile.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
-			except (PermissionError, FileNotFoundError):
-				# If history_logfile does not exist, ignore the error
-				pass
-
-			if storage.get('arguments', {}).get('debug'):
-				debug(f"Executing: {self.cmd}")
+			_log_cmd(self.cmd)
 
 			try:
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
@@ -455,64 +436,44 @@ class SysCommand:
 		return None
 
 
+def _log_cmd(cmd: list[str]) -> None:
+	history_logfile = Path(f"{storage['LOG_PATH']}/cmd_history.txt")
+
+	change_perm = False
+	if history_logfile.exists() is False:
+		change_perm = True
+
+	try:
+		with history_logfile.open("a") as cmd_log:
+			cmd_log.write(f"{time.time()} {cmd}\n")
+
+		if change_perm:
+			history_logfile.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+	except (PermissionError, FileNotFoundError):
+		# If history_logfile does not exist, ignore the error
+		pass
+
+
+def run(
+	cmd: list[str],
+	input_data: bytes | None = None,
+) -> subprocess.CompletedProcess[bytes]:
+	_log_cmd(cmd)
+
+	return subprocess.run(
+		cmd,
+		input=input_data,
+		stdout=subprocess.PIPE,
+		stderr=subprocess.STDOUT,
+		check=True
+	)
+
+
 def _pid_exists(pid: int) -> bool:
 	try:
 		return any(subprocess.check_output(['ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
 		return False
-
-
-def run_custom_user_commands(commands: list[str], installation: Installer) -> None:
-	for index, command in enumerate(commands):
-		script_path = f"/var/tmp/user-command.{index}.sh"
-		chroot_path = f"{installation.target}/{script_path}"
-
-		info(f'Executing custom command "{command}" ...')
-		with open(chroot_path, "w") as user_script:
-			user_script.write(command)
-
-		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
-
-		os.unlink(chroot_path)
-
-
-def json_stream_to_structure(configuration_identifier: str, stream: str, target: dict[str, Any]) -> bool:
-	"""
-	Load a JSON encoded dictionary from a stream and merge it into an existing dictionary.
-	A stream can be a filepath, a URL or a raw JSON string.
-	Returns True if the operation succeeded, False otherwise.
-	+configuration_identifier is just a parameter to get meaningful, but not so long messages
-	"""
-
-	raw: str | None = None
-	# Try using the stream as a URL that should be grabbed
-	if urllib.parse.urlparse(stream).scheme:
-		try:
-			with urlopen(Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
-				raw = response.read()
-		except urllib.error.HTTPError as err:
-			error(f"Could not fetch JSON from {stream} as {configuration_identifier}: {err}")
-			return False
-
-	# Try using the stream as a filepath that should be read
-	if raw is None and (path := Path(stream)).exists():
-		try:
-			raw = path.read_text()
-		except Exception as err:
-			error(f"Could not read file {stream} as {configuration_identifier}: {err}")
-			return False
-
-	try:
-		# We use `or` to try the stream as raw JSON to be parsed
-		structure = json.loads(raw or stream)
-	except Exception as err:
-		error(f"{configuration_identifier} contains an invalid JSON format: {err}")
-		return False
-	if not isinstance(structure, dict):
-		error(f"{stream} passed as {configuration_identifier} is not a JSON encoded dictionary")
-		return False
-	target.update(structure)
-	return True
 
 
 def secret(x: str) -> str:

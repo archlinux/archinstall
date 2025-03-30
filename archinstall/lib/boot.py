@@ -17,7 +17,7 @@ class Boot:
 
 	def __enter__(self) -> 'Boot':
 		if (existing_session := storage.get('active_boot', None)) and existing_session.instance != self.instance:
-			raise KeyError("Archinstall only supports booting up one instance, and a active session is already active and it is not this one.")
+			raise KeyError("Archinstall only supports booting up one instance and another session is already active.")
 
 		if existing_session:
 			self.session = existing_session.session

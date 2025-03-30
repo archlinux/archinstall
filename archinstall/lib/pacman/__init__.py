@@ -1,19 +1,18 @@
-import re
 import time
 from collections.abc import Callable
 from pathlib import Path
-from shutil import copy2
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ..exceptions import RequirementError
 from ..general import SysCommand
 from ..output import error, info, warn
 from ..plugins import plugins
 from .config import Config
-from .repo import Repo
 
 if TYPE_CHECKING:
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class Pacman:
@@ -33,14 +32,14 @@ class Pacman:
 		pacman_db_lock = Path('/var/lib/pacman/db.lck')
 
 		if pacman_db_lock.exists():
-			warn(_('Pacman is already running, waiting maximum 10 minutes for it to terminate.'))
+			warn(str(_('Pacman is already running, waiting maximum 10 minutes for it to terminate.')))
 
 		started = time.time()
 		while pacman_db_lock.exists():
 			time.sleep(0.25)
 
 			if time.time() - started > (60 * 10):
-				error(_('Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall.'))
+				error(str(_('Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall.')))
 				exit(1)
 
 		return SysCommand(f'{default_cmd} {args}')
@@ -87,3 +86,9 @@ class Pacman:
 			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm',
 			peek_output=True
 		)
+
+
+__all__ = [
+	'Config',
+	'Pacman',
+]

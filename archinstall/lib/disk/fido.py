@@ -4,10 +4,11 @@ import getpass
 from pathlib import Path
 from typing import ClassVar
 
+from archinstall.lib.models.device_model import Fido2Device
+
 from ..exceptions import SysCallError
-from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
+from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes_from_str
 from ..output import error, info
-from .device_model import Fido2Device
 
 
 class Fido2:
@@ -43,7 +44,7 @@ class Fido2:
 				error('fido2 support is most likely not installed')
 				raise ValueError('HSM devices can not be detected, is libfido2 installed?')
 
-			fido_devices: str = clear_vt100_escape_codes(ret)  # type: ignore[assignment]
+			fido_devices = clear_vt100_escape_codes_from_str(ret)
 
 			manufacturer_pos = 0
 			product_pos = 0

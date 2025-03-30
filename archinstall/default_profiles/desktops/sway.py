@@ -3,7 +3,9 @@ from typing import TYPE_CHECKING, override
 from archinstall.default_profiles.desktops import SeatAccess
 from archinstall.default_profiles.profile import GreeterType, ProfileType, SelectResult
 from archinstall.default_profiles.xorg import XorgProfile
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, ResultType
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

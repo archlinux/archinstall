@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from archinstall.lib.models.mirrors import MirrorListHandler
+from archinstall.lib.mirrors import MirrorListHandler
 
 
 def test_mirrorlist_no_country(mirrorlist_no_country_fixture: Path) -> None:

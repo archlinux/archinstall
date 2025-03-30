@@ -14,7 +14,6 @@ packages=(
 	python-build
 	python-setuptools
 	python-wheel
-	python-simple-term-menu
 	python-pyparted
 )
 

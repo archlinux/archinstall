@@ -1,10 +1,12 @@
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, override
+from typing import TYPE_CHECKING, override
 
-from archinstall.tui import Alignment, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, ResultType
 
-from ..menu import AbstractSubMenu
-from .utils import get_kb_layout, list_keyboard_languages, list_locales, set_kb_layout
+from ..menu.abstract_menu import AbstractSubMenu
+from ..models.locale import LocaleConfiguration
+from .utils import list_keyboard_languages, list_locales, set_kb_layout
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -14,66 +16,20 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-@dataclass
-class LocaleConfiguration:
-	kb_layout: str
-	sys_lang: str
-	sys_enc: str
-
-	@staticmethod
-	def default() -> 'LocaleConfiguration':
-		layout = get_kb_layout()
-		if layout == "":
-			return LocaleConfiguration('us', 'en_US', 'UTF-8')
-		return LocaleConfiguration(layout, 'en_US', 'UTF-8')
-
-	def json(self) -> dict[str, str]:
-		return {
-			'kb_layout': self.kb_layout,
-			'sys_lang': self.sys_lang,
-			'sys_enc': self.sys_enc
-		}
-
-	def preview(self) -> str:
-		output = '{}: {}\n'.format(str(_('Keyboard layout')), self.kb_layout)
-		output += '{}: {}\n'.format(str(_('Locale language')), self.sys_lang)
-		output += '{}: {}'.format(str(_('Locale encoding')), self.sys_enc)
-		return output
-
-	@classmethod
-	def _load_config(cls, config: 'LocaleConfiguration', args: dict[str, Any]) -> 'LocaleConfiguration':
-		if 'sys_lang' in args:
-			config.sys_lang = args['sys_lang']
-		if 'sys_enc' in args:
-			config.sys_enc = args['sys_enc']
-		if 'kb_layout' in args:
-			config.kb_layout = args['kb_layout']
-
-		return config
-
-	@classmethod
-	def parse_arg(cls, args: dict[str, Any]) -> 'LocaleConfiguration':
-		default = cls.default()
-
-		if 'locale_config' in args:
-			default = cls._load_config(default, args['locale_config'])
-		else:
-			default = cls._load_config(default, args)
-
-		return default
-
-
 class LocaleMenu(AbstractSubMenu):
 	def __init__(
 		self,
 		locale_conf: LocaleConfiguration
 	):
 		self._locale_conf = locale_conf
-		self._data_store: dict[str, str] = {}
 		menu_optioons = self._define_menu_options()
 
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
-		super().__init__(self._item_group, data_store=self._data_store, allow_reset=True)
+		super().__init__(
+			self._item_group,
+			config=self._locale_conf,
+			allow_reset=True
+		)
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
@@ -82,44 +38,36 @@ class LocaleMenu(AbstractSubMenu):
 				action=self._select_kb_layout,
 				value=self._locale_conf.kb_layout,
 				preview_action=self._prev_locale,
-				key='keyboard-layout'
+				key='kb_layout'
 			),
 			MenuItem(
 				text=str(_('Locale language')),
 				action=select_locale_lang,
 				value=self._locale_conf.sys_lang,
 				preview_action=self._prev_locale,
-				key='sys-language'
+				key='sys_lang'
 			),
 			MenuItem(
 				text=str(_('Locale encoding')),
 				action=select_locale_enc,
 				value=self._locale_conf.sys_enc,
 				preview_action=self._prev_locale,
-				key='sys-encoding'
+				key='sys_enc'
 			)
 		]
 
 	def _prev_locale(self, item: MenuItem) -> str | None:
 		temp_locale = LocaleConfiguration(
-			self._menu_item_group.find_by_key('keyboard-layout').get_value(),
-			self._menu_item_group.find_by_key('sys-language').get_value(),
-			self._menu_item_group.find_by_key('sys-encoding').get_value(),
+			self._menu_item_group.find_by_key('kb_layout').get_value(),
+			self._menu_item_group.find_by_key('sys_lang').get_value(),
+			self._menu_item_group.find_by_key('sys_enc').get_value(),
 		)
 		return temp_locale.preview()
 
 	@override
 	def run(self) -> LocaleConfiguration:
 		super().run()
-
-		if not self._data_store:
-			return LocaleConfiguration.default()
-
-		return LocaleConfiguration(
-			self._data_store['keyboard-layout'],
-			self._data_store['sys-language'],
-			self._data_store['sys-encoding']
-		)
+		return self._locale_conf
 
 	def _select_kb_layout(self, preset: str | None) -> str | None:
 		kb_lang = select_kb_layout(preset)

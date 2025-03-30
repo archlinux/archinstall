@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ここにログファイルが作成されました: {} {}"
@@ -1465,3 +1465,42 @@ msgstr "実行モードを選択"
 
 msgid "Press ? for help"
 msgstr "? を押すとヘルプを表示"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Hyprland にハードウェアへのアクセスを許可するオプションを選択"
+
+msgid "Additional repositories"
+msgstr "追加のリポジトリ"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "zram のスワップ"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Signature check"
+msgstr "署名チェック"
+
+msgid "Selected free space segment on device {}:"
+msgstr "デバイス {} の選択された空きスペースセグメント:"
+
+msgid "Size: {} / {}"
+msgstr "サイズ: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "サイズ (デフォルト: {}): "
+
+msgid "HSM device"
+msgstr "HSM デバイス"
+
+msgid "Some packages could not be found in the repository"
+msgstr "リポジトリ内にいくつかのパッケージが見つかりませんでした"
+
+msgid "User"
+msgstr "ユーザー"
+
+msgid "The specified configuration will be applied"
+msgstr "指定された設定が適用されます"

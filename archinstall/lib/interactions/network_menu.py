@@ -3,9 +3,11 @@ from __future__ import annotations
 import ipaddress
 from typing import TYPE_CHECKING, override
 
-from archinstall.tui import Alignment, EditMenu, FrameProperties, MenuItem, MenuItemGroup, ResultType, SelectMenu
+from archinstall.tui.curses_menu import EditMenu, SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.types import Alignment, FrameProperties, ResultType
 
-from ..menu import ListManager
+from ..menu.list_manager import ListManager
 from ..models.network_configuration import NetworkConfiguration, Nic, NicType
 from ..networking import list_interfaces
 

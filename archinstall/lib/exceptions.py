@@ -1,9 +1,3 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-	from .general import SysCommandWorker
-
-
 class RequirementError(Exception):
 	pass
 
@@ -17,11 +11,11 @@ class UnknownFilesystemFormat(Exception):
 
 
 class SysCallError(Exception):
-	def __init__(self, message: str, exit_code: int | None = None, worker: 'SysCommandWorker | None' = None) -> None:
+	def __init__(self, message: str, exit_code: int | None = None, worker_log: bytes = b'') -> None:
 		super().__init__(message)
 		self.message = message
 		self.exit_code = exit_code
-		self.worker = worker
+		self.worker_log = worker_log
 
 
 class HardwareIncompatibilityError(Exception):

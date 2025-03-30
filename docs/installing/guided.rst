@@ -54,163 +54,166 @@ The contents of :code:`https://domain.lan/config.json`:
 .. code-block:: json
 
    {
-       "__separator__": null,
-       "additional-repositories": [],
-       "archinstall-language": "English",
-       "audio_config": null,
-       "bootloader": "Systemd-boot",
-       "config_version": "2.6.0",
-       "debug": false,
-       "disk_config": {
-           "config_type": "manual_partitioning",
-           "device_modifications": [
-               {
-                   "device": "/dev/sda",
-                   "partitions": [
-                       {
-                           "btrfs": [],
-                           "flags": [
-                               "boot"
-                           ],
-                           "fs_type": "fat32",
-                           "length": {
-                               "sector_size": null,
-                               "total_size": null,
-                               "unit": "B",
-                               "value": 99982592
-                           },
-                           "mount_options": [],
-                           "mountpoint": "/boot",
-                           "obj_id": "369f31a8-2781-4d6b-96e7-75680552b7c9",
-                           "start": {
-                               "sector_size": {
-                                   "sector_size": null,
-                                   "total_size": null,
-                                   "unit": "B",
-                                   "value": 512
-                               },
-                               "total_size": null,
-                               "unit": "sectors",
-                               "value": 34
-                           },
-                           "status": "create",
-                           "type": "primary"
-                       },
-                       {
-                           "btrfs": [],
-                           "flags": [],
-                           "fs_type": "fat32",
-                           "length": {
-                               "sector_size": null,
-                               "total_size": null,
-                               "unit": "B",
-                               "value": 100000000
-                           },
-                           "mount_options": [],
-                           "mountpoint": "/efi",
-                           "obj_id": "13cf2c96-8b0f-4ade-abaa-c530be589aad",
-                           "start": {
-                               "sector_size": {
-                                   "sector_size": null,
-                                   "total_size": null,
-                                   "unit": "B",
-                                   "value": 512
-                               },
-                               "total_size": {
-                                   "sector_size": null,
-                                   "total_size": null,
-                                   "unit": "B",
-                                   "value": 16106127360
-                               },
-                               "unit": "MB",
-                               "value": 100
-                           },
-                           "status": "create",
-                           "type": "primary"
-                       },
-                       {
-                           "btrfs": [],
-                           "flags": [],
-                           "fs_type": "ext4",
-                           "length": {
-                               "sector_size": null,
-                               "total_size": null,
-                               "unit": "B",
-                               "value": 15805127360
-                           },
-                           "mount_options": [],
-                           "mountpoint": "/",
-                           "obj_id": "3e75d045-21a4-429d-897e-8ec19a006e8b",
-                           "start": {
-                               "sector_size": {
-                                   "sector_size": null,
-                                   "total_size": null,
-                                   "unit": "B",
-                                   "value": 512
-                               },
-                               "total_size": {
-                                   "sector_size": null,
-                                   "total_size": null,
-                                   "unit": "B",
-                                   "value": 16106127360
-                               },
-                               "unit": "MB",
-                               "value": 301
-                           },
-                           "status": "create",
-                           "type": "primary"
-                       }
-                   ],
-                   "wipe": false
-               }
-           ]
-       },
-       "disk_encryption": {
-           "encryption_type": "luks",
+     "additional-repositories": [],
+     "archinstall-language": "English",
+     "audio_config": null,
+     "bootloader": "Systemd-boot",
+     "debug": false,
+     "disk_config": {
+       "config_type": "manual_partitioning",
+       "device_modifications": [
+         {
+           "device": "/dev/sda",
            "partitions": [
-               "3e75d045-21a4-429d-897e-8ec19a006e8b"
-           ]
-       },
-       "hostname": "archlinux",
-       "kernels": [
-           "linux"
+             {
+               "btrfs": [],
+               "flags": [
+                 "boot"
+               ],
+               "fs_type": "fat32",
+               "length": {
+                 "sector_size": null,
+                 "total_size": null,
+                 "unit": "B",
+                 "value": 99982592
+               },
+               "mount_options": [],
+               "mountpoint": "/boot",
+               "obj_id": "369f31a8-2781-4d6b-96e7-75680552b7c9",
+               "start": {
+                 "sector_size": {
+                   "sector_size": null,
+                   "total_size": null,
+                   "unit": "B",
+                   "value": 512
+                 },
+                 "total_size": null,
+                 "unit": "sectors",
+                 "value": 34
+               },
+               "status": "create",
+               "type": "primary"
+             },
+             {
+               "btrfs": [],
+               "flags": [],
+               "fs_type": "fat32",
+               "length": {
+                 "sector_size": null,
+                 "total_size": null,
+                 "unit": "B",
+                 "value": 100000000
+               },
+               "mount_options": [],
+               "mountpoint": "/efi",
+               "obj_id": "13cf2c96-8b0f-4ade-abaa-c530be589aad",
+               "start": {
+                 "sector_size": {
+                   "sector_size": null,
+                   "total_size": null,
+                   "unit": "B",
+                   "value": 512
+                 },
+                 "total_size": {
+                   "sector_size": null,
+                   "total_size": null,
+                   "unit": "B",
+                   "value": 16106127360
+                 },
+                 "unit": "MB",
+                 "value": 100
+               },
+               "status": "create",
+               "type": "primary"
+             },
+             {
+               "btrfs": [],
+               "flags": [],
+               "fs_type": "ext4",
+               "length": {
+                 "sector_size": null,
+                 "total_size": null,
+                 "unit": "B",
+                 "value": 15805127360
+               },
+               "mount_options": [],
+               "mountpoint": "/",
+               "obj_id": "3e75d045-21a4-429d-897e-8ec19a006e8b",
+               "start": {
+                 "sector_size": {
+                   "sector_size": null,
+                   "total_size": null,
+                   "unit": "B",
+                   "value": 512
+                 },
+                 "total_size": {
+                   "sector_size": null,
+                   "total_size": null,
+                   "unit": "B",
+                   "value": 16106127360
+                 },
+                 "unit": "MB",
+                 "value": 301
+               },
+               "status": "create",
+               "type": "primary"
+             }
+           ],
+           "wipe": false
+         }
+       ]
+     },
+     "disk_encryption": {
+       "encryption_type": "luks",
+       "partitions": [
+         "3e75d045-21a4-429d-897e-8ec19a006e8b"
+       ]
+     },
+     "hostname": "archlinux",
+     "kernels": [
+       "linux"
+     ],
+     "locale_config": {
+       "kb_layout": "us",
+       "sys_enc": "UTF-8",
+       "sys_lang": "en_US"
+     },
+     "mirror_config": {
+       "custom_servers": [
+         {
+           "url": "https://mymirror.com/$repo/os/$arch"
+         }
        ],
-       "locale_config": {
-           "kb_layout": "us",
-           "sys_enc": "UTF-8",
-           "sys_lang": "en_US"
+       "mirror_regions": {
+         "Australia": [
+           "http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch"
+         ]
        },
-       "mirror_config": {
-           "custom_mirrors": [],
-           "mirror_regions": {
-               "Sweden": [
-                   "https://mirror.osbeck.com/archlinux/$repo/os/$arch",
-                   "https://mirror.bahnhof.net/pub/archlinux/$repo/os/$arch",
-                   "https://ftp.myrveln.se/pub/linux/archlinux/$repo/os/$arch",
-                   "https://ftp.lysator.liu.se/pub/archlinux/$repo/os/$arch",
-                   "https://ftp.ludd.ltu.se/mirrors/archlinux/$repo/os/$arch",
-                   "https://ftp.acc.umu.se/mirror/archlinux/$repo/os/$arch",
-                   "http://mirror.bahnhof.net/pub/archlinux/$repo/os/$arch",
-                   "http://ftpmirror.infania.net/mirror/archlinux/$repo/os/$arch",
-                   "http://ftp.myrveln.se/pub/linux/archlinux/$repo/os/$arch",
-                   "http://ftp.lysator.liu.se/pub/archlinux/$repo/os/$arch",
-                   "http://ftp.acc.umu.se/mirror/archlinux/$repo/os/$arch"
-               ]
-           }
-       },
-       "network_config": {},
-       "no_pkg_lookups": false,
-       "ntp": true,
-       "offline": false,
-       "packages": [],
-       "parallel downloads": 0,
-       "profile_config": null,
-       "save_config": null,
-       "script": "guided",
-       "silent": false,
-       "swap": true,
-       "timezone": "UTC",
-       "version": "2.6.0"
+       "optional_repositories": [
+         "testing"
+       ],
+       "custom_repositories": [
+         {
+           "name": "myrepo",
+           "url": "https://myrepo.com/$repo/os/$arch",
+           "sign_check": "Required",
+           "sign_option": "TrustAll"
+         }
+       ]
+     },
+     "network_config": {},
+     "no_pkg_lookups": false,
+     "ntp": true,
+     "offline": false,
+     "packages": [],
+     "parallel downloads": 0,
+     "profile_config": null,
+     "save_config": null,
+     "script": "guided",
+     "silent": false,
+     "swap": true,
+     "timezone": "UTC",
+     "version": "2.6.0"
    }
 
 ``--config`` options
@@ -247,7 +250,7 @@ Below is an example of how to set the root password and below that are descripti
         "!root-password" : "SecretSanta2022"
     }
 
-.. list-table:: --creds options
+.. list-table:: ``--creds`` options
    :widths: 25 25 40 10
    :header-rows: 1
 
@@ -255,15 +258,15 @@ Below is an example of how to set the root password and below that are descripti
      - Values
      - Description
      - Required
-   * - !encryption-password
+   * - ``!encryption-password``
      - ``str``
      - Password to encrypt disk, not encrypted if password not provided
      - No
-   * - !root-password
+   * - ``!root-password``
      - ``str``
      - The root account password
      - No
-   * - !users
+   * - ``!users``
      - .. code-block:: json
 
           {
@@ -281,7 +284,7 @@ Below is an example of how to set the root password and below that are descripti
 
 .. note::
 
-   The key's start with ``!`` because internal log functions will mask any keys starting with explamation from logs and unrestricted configurations.
+   The keys start with ``!`` because internal log functions will mask any keys starting with exclamation marks from logs and unrestricted configurations.
 
 .. _scripts: https://github.com/archlinux/archinstall/tree/master/archinstall/scripts
 .. _Guided Installer: https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py

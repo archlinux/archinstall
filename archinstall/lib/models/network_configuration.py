@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, NotRequired, TypedDict
 
-from ..profile import ProfileConfiguration
+from ..models.profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
+	from archinstall.lib.installer import Installer
 	from archinstall.lib.translationhandler import DeferredTranslation
 
 	_: Callable[[str], DeferredTranslation]
@@ -29,6 +30,14 @@ class NicType(Enum):
 				return str(_('Manual configuration'))
 
 
+class _NicSerialization(TypedDict):
+	iface: str | None
+	ip: str | None
+	dhcp: bool
+	gateway: str | None
+	dns: list[str]
+
+
 @dataclass
 class Nic:
 	iface: str | None = None
@@ -37,7 +46,7 @@ class Nic:
 	gateway: str | None = None
 	dns: list[str] = field(default_factory=list)
 
-	def table_data(self) -> dict[str, Any]:
+	def table_data(self) -> dict[str, str | bool | list[str]]:
 		return {
 			'iface': self.iface if self.iface else '',
 			'ip': self.ip if self.ip else '',
@@ -46,7 +55,7 @@ class Nic:
 			'dns': self.dns
 		}
 
-	def json(self) -> dict[str, Any]:
+	def json(self) -> _NicSerialization:
 		return {
 			'iface': self.iface,
 			'ip': self.ip,
@@ -56,7 +65,7 @@ class Nic:
 		}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> Nic:
+	def parse_arg(arg: _NicSerialization) -> Nic:
 		return Nic(
 			iface=arg.get('iface', None),
 			ip=arg.get('ip', None),
@@ -93,20 +102,25 @@ class Nic:
 		return config_str
 
 
+class _NetworkConfigurationSerialization(TypedDict):
+	type: str
+	nics: NotRequired[list[_NicSerialization]]
+
+
 @dataclass
 class NetworkConfiguration:
 	type: NicType
 	nics: list[Nic] = field(default_factory=list)
 
-	def json(self) -> dict[str, Any]:
-		config: dict[str, Any] = {'type': self.type.value}
+	def json(self) -> _NetworkConfigurationSerialization:
+		config: _NetworkConfigurationSerialization = {'type': self.type.value}
 		if self.nics:
 			config['nics'] = [n.json() for n in self.nics]
 
 		return config
 
 	@staticmethod
-	def parse_arg(config: dict[str, Any]) -> NetworkConfiguration | None:
+	def parse_arg(config: _NetworkConfigurationSerialization) -> NetworkConfiguration | None:
 		nic_type = config.get('type', None)
 		if not nic_type:
 			return None
@@ -126,7 +140,7 @@ class NetworkConfiguration:
 
 	def install_network_config(
 		self,
-		installation: Any,
+		installation: Installer,
 		profile_config: ProfileConfiguration | None = None
 	) -> None:
 		match self.type:

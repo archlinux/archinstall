@@ -8,13 +8,13 @@ from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from ...default_profiles.profile import GreeterType, Profile
 from ..hardware import GfxDriver
+from ..models.profile_model import ProfileConfiguration
 from ..networking import fetch_data_from_url, list_interfaces
 from ..output import debug, error, info
-from .profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -26,6 +26,13 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
+class ProfileSerialization(TypedDict):
+	main: NotRequired[str]
+	details: NotRequired[list[str]]
+	custom_settings: NotRequired[dict[str, dict[str, str | None]]]
+	path: NotRequired[str]
+
+
 class ProfileHandler:
 	def __init__(self) -> None:
 		self._profiles: list[Profile] | None = None
@@ -33,13 +40,13 @@ class ProfileHandler:
 		# special variable to keep track of a profile url configuration
 		# it is merely used to be able to export the path again when a user
 		# wants to save the configuration
-		self._url_path = None
+		self._url_path: str | None = None
 
-	def to_json(self, profile: Profile | None) -> dict[str, Any]:
+	def to_json(self, profile: Profile | None) -> ProfileSerialization:
 		"""
 		Serialize the selected profile setting to JSON
 		"""
-		data: dict[str, Any] = {}
+		data: ProfileSerialization = {}
 
 		if profile is not None:
 			data = {
@@ -53,7 +60,7 @@ class ProfileHandler:
 
 		return data
 
-	def parse_profile_config(self, profile_config: dict[str, Any]) -> Profile | None:
+	def parse_profile_config(self, profile_config: ProfileSerialization) -> Profile | None:
 		"""
 		Deserialize JSON configuration for profile
 		"""
@@ -161,7 +168,7 @@ class ProfileHandler:
 		self._profiles = [p for p in self.profiles if p.name not in remove_names]
 
 	def get_profile_by_name(self, name: str) -> Profile | None:
-		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore
+		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore[arg-type, union-attr]
 
 	def get_top_level_profiles(self) -> list[Profile]:
 		return [p for p in self.profiles if p.is_top_level_profile()]

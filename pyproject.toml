@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-dynamic = ["version"]
+version = "3.0.2"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -19,7 +19,7 @@ classifiers = [
 ]
 dependencies = [
     "pyparted @ https://github.com//dcantrell/pyparted/archive/v3.13.0.tar.gz#sha512=26819e28d73420937874f52fda03eb50ab1b136574ea9867a69d46ae4976d38c4f26a2697fa70597eed90dd78a5ea209bafcc3227a17a7a5d63cff6d107c2b11",
-    "pydantic==2.10.5"
+    "pydantic==2.11.1"
 ]
 
 [project.urls]
@@ -30,13 +30,13 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.14.1",
-    "flake8==7.1.1",
-    "pre-commit==4.1.0",
-    "ruff==0.9.2",
-    "pylint==3.3.3",
+    "mypy==1.15.0",
+    "flake8==7.2.0",
+    "pre-commit==4.2.0",
+    "ruff==0.11.2",
+    "pylint==3.3.6",
     "pylint-pydantic==0.3.5",
-    "pytest==8.3.4",
+    "pytest==8.3.5",
 ]
 doc = ["sphinx"]
 
@@ -44,7 +44,6 @@ doc = ["sphinx"]
 archinstall = "archinstall:run_as_a_module"
 
 [tool.setuptools.dynamic]
-version = {attr = "archinstall.__version__"}
 readme = {file = ["README.rst", "USAGE.rst"]}
 
 [tool.setuptools]
@@ -67,24 +66,23 @@ archinstall = "archinstall"
 python_version = "3.12"
 files = "."
 exclude = "^build/"
-check_untyped_defs = true
 disallow_any_explicit = false
 disallow_any_expr = false
-disallow_any_generics = true
 disallow_any_unimported = true
-disallow_incomplete_defs = true
-disallow_subclassing_any = true
-disallow_untyped_calls = true
-disallow_untyped_decorators = true
-disallow_untyped_defs = true
-extra_checks = true
-strict = false
-strict_equality = true
-warn_redundant_casts = true
-warn_return_any = true
+enable_error_code = [
+    "deprecated",
+    "explicit-override",
+    "ignore-without-code",
+    "mutable-override",
+    "redundant-expr",
+    "redundant-self",
+    "truthy-iterable",
+    "unimported-reveal",
+    "unused-awaitable",
+]
+strict = true
+strict_bytes = true
 warn_unreachable = true
-warn_unused_configs = true
-warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.default_profiles.*"
@@ -107,16 +105,17 @@ module = "archinstall.lib.disk.*"
 disallow_any_unimported = false
 
 [[tool.mypy.overrides]]
+module = "archinstall.lib.models.*"
+# 'Any' imports are allowed because pyparted doesn't have type hints
+disallow_any_unimported = false
+
+[[tool.mypy.overrides]]
 module = "archinstall.lib.packages"
 disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.utils"
 disallow_any_explicit = true
-
-[[tool.mypy.overrides]]
-module = "archinstall.scripts.*"
-warn_unreachable = false
 
 [[tool.mypy.overrides]]
 module = "archinstall.tui.*"
@@ -171,6 +170,7 @@ score = false
 
 [tool.pylint.variables]
 additional-builtins = ["_"]
+init-import = true
 
 [tool.ruff]
 target-version = "py312"
@@ -194,10 +194,12 @@ select = [
     "ICN",    # flake8-import-conventions
     "ISC",    # flake8-implicit-str-concat
     "LOG",    # flake8-logging
+    "PGH",    # pygrep-hooks
     "PIE",    # flake8-pie
     "PLC",    # Pylint conventions
     "PLE",    # Pylint errors
     "PLW",    # Pylint warnings
+    "PYI",    # flake8-pyi
     "RSE",    # flake8-raise
     "RUF",    # Ruff-specific rules
     "SLOT",   # flake8-slot
@@ -218,6 +220,7 @@ ignore = [
     "PLW1514",  # unspecified-encoding
     "PLW1641",  # eq-without-hash
     "PLW2901",  # redefined-loop-name
+    "PYI036",   # bad-exit-annotation
     "RUF005",   # collection-literal-concatenation
     "RUF015",   # unnecessary-iterable-allocation-for-first-element
     "RUF039",   # unraw-re-pattern
@@ -228,6 +231,3 @@ ignore = [
 
 [tool.ruff.lint.mccabe]
 max-complexity = 40
-
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]  # unused-import

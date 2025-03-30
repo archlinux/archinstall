@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Any, override
+from typing import TYPE_CHECKING, TypedDict, override
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -103,6 +103,9 @@ class PasswordStrength(Enum):
 		return PasswordStrength.VERY_WEAK
 
 
+_UserSerialization = TypedDict('_UserSerialization', {'username': str, '!password': str, 'sudo': bool})
+
+
 @dataclass
 class User:
 	username: str
@@ -115,7 +118,7 @@ class User:
 		# if it's every going to be used
 		return []
 
-	def json(self) -> dict[str, Any]:
+	def json(self) -> _UserSerialization:
 		return {
 			'username': self.username,
 			'!password': self.password,
@@ -123,7 +126,7 @@ class User:
 		}
 
 	@classmethod
-	def _parse(cls, config_users: list[dict[str, Any]]) -> list['User']:
+	def _parse(cls, config_users: list[_UserSerialization]) -> list['User']:
 		users = []
 
 		for entry in config_users:
@@ -153,8 +156,8 @@ class User:
 	@classmethod
 	def parse_arguments(
 		cls,
-		config_users: list[dict[str, str]] | dict[str, dict[str, str]],
-		config_superusers: list[dict[str, str]] | dict[str, dict[str, str]]
+		config_users: list[_UserSerialization] | dict[str, dict[str, str]],
+		config_superusers: dict[str, dict[str, str]] | None
 	) -> list['User']:
 		users = []
 

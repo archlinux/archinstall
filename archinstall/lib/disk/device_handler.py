@@ -10,12 +10,10 @@ from typing import Literal, overload
 
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
-from ..exceptions import DiskError, UnknownFilesystemFormat
-from ..general import SysCallError, SysCommand, SysCommandWorker
+from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
+from ..general import SysCommand, SysCommandWorker
 from ..luks import Luks2
-from ..output import debug, error, info, log, warn
-from ..utils.util import is_subpath
-from .device_model import (
+from ..models.device_model import (
 	BDevice,
 	BtrfsMountOption,
 	DeviceModification,
@@ -39,10 +37,13 @@ from .device_model import (
 	_BtrfsSubvolumeInfo,
 	_DeviceInfo,
 	_PartitionInfo,
+)
+from ..output import debug, error, info, log
+from ..utils.util import is_subpath
+from .utils import (
 	find_lsblk_info,
 	get_all_lsblk_info,
 	get_lsblk_info,
-	get_lsblk_output,
 )
 
 
@@ -51,11 +52,16 @@ class DeviceHandler:
 
 	def __init__(self) -> None:
 		self._devices: dict[Path, BDevice] = {}
+		self._partition_table = PartitionTable.default()
 		self.load_devices()
 
 	@property
 	def devices(self) -> list[BDevice]:
 		return list(self._devices.values())
+
+	@property
+	def partition_table(self) -> PartitionTable:
+		return self._partition_table
 
 	def load_devices(self) -> None:
 		block_devices = {}
@@ -85,7 +91,7 @@ class DeviceHandler:
 				if dev_lsblk_info.pttype:
 					disk = newDisk(device)
 				else:
-					disk = freshDisk(device, PartitionTable.GPT.value)
+					disk = freshDisk(device, self.partition_table.value)
 			except DiskException as err:
 				debug(f'Unable to get disk from {device.path}: {err}')
 				continue
@@ -271,7 +277,7 @@ class DeviceHandler:
 			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
 				# Force create
 				options.append('-F')
-			case FilesystemType.Fat16 | FilesystemType.Fat32:
+			case FilesystemType.Fat12 | FilesystemType.Fat16 | FilesystemType.Fat32:
 				mkfs_type = 'fat'
 				# Set FAT size
 				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
@@ -312,6 +318,8 @@ class DeviceHandler:
 
 		key_file = luks_handler.encrypt()
 
+		self.udev_sync()
+
 		luks_handler.unlock(key_file=key_file)
 
 		if not luks_handler.mapper_dev:
@@ -337,6 +345,8 @@ class DeviceHandler:
 		)
 
 		key_file = luks_handler.encrypt()
+
+		self.udev_sync()
 
 		luks_handler.unlock(key_file=key_file)
 
@@ -588,7 +598,7 @@ class DeviceHandler:
 			debug(f'Unable to determine new uuid: {path}\n{lsblk_info}')
 			raise DiskError(f'Unable to determine new uuid: {path}')
 
-		debug(f'partition information found: {lsblk_info.json()}')
+		debug(f'partition information found: {lsblk_info.model_dump_json()}')
 
 		return lsblk_info
 
@@ -626,7 +636,7 @@ class DeviceHandler:
 	def create_btrfs_volumes(
 		self,
 		part_mod: PartitionModification,
-		enc_conf: 'DiskEncryption | None' = None
+		enc_conf: DiskEncryption | None = None
 	) -> None:
 		info(f'Creating subvolumes: {part_mod.safe_dev_path}')
 
@@ -701,18 +711,15 @@ class DeviceHandler:
 		"""
 		Create a partition table on the block device and create all partitions.
 		"""
-		if modification.wipe:
-			if partition_table is None:
-				raise ValueError('Modification is marked as wipe but no partitioning table was provided')
-
-			if partition_table.MBR and len(modification.partitions) > 3:
-				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
+		partition_table = partition_table or self.partition_table
 
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
+			if partition_table.is_mbr() and len(modification.partitions) > 3:
+				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
+
 			self.wipe_dev(modification.device)
-			part_table = partition_table.value if partition_table else None
-			disk = freshDisk(modification.device.disk.device, part_table)
+			disk = freshDisk(modification.device.disk.device, partition_table.value)
 		else:
 			info(f'Use existing device: {modification.device_path}')
 			disk = modification.device.disk
@@ -848,6 +855,7 @@ class DeviceHandler:
 		auto-discovery tools don't recognize anything here.
 		"""
 		info(f'Wiping partitions and metadata: {block_device.device_info.path}')
+
 		for partition in block_device.partition_infos:
 			luks = Luks2(partition.path)
 			if luks.isLuks():
@@ -866,13 +874,3 @@ class DeviceHandler:
 
 
 device_handler = DeviceHandler()
-
-
-def disk_layouts() -> str:
-	try:
-		lsblk_output = get_lsblk_output()
-	except SysCallError as err:
-		warn(f"Could not return disk layouts: {err}")
-		return ''
-
-	return lsblk_output.model_dump_json(indent=4)

@@ -4,7 +4,9 @@ import sys
 import unicodedata
 from collections.abc import Callable
 from dataclasses import asdict, is_dataclass
+from datetime import UTC, datetime
 from enum import Enum
+from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -263,6 +265,11 @@ def info(
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
+def _timestamp() -> str:
+	now = datetime.now(tz=UTC)
+	return now.strftime('%Y-%m-%d %H:%M:%S')
+
+
 def debug(
 	*msgs: str,
 	level: int = logging.DEBUG,
@@ -318,18 +325,26 @@ def log(
 	log_file: Path = storage['LOG_PATH'] / storage['LOG_FILE']
 
 	with log_file.open('a') as fp:
-		fp.write(f"{orig_string}\n")
+		ts = _timestamp()
+		level_name = logging.getLevelName(level)
+		out = f"[{ts}] - {level_name} - {orig_string}\n"
+		fp.write(out)
 
 	Journald.log(text, level=level)
 
-	if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
-		from archinstall.tui import Tui
+	if level != logging.DEBUG:
+		from archinstall.tui.curses_menu import Tui
 		Tui.print(text)
+
+
+@lru_cache(maxsize=128)
+def _is_wide_character(char: str) -> bool:
+	return unicodedata.east_asian_width(char) in 'FW'
 
 
 def _count_wchars(string: str) -> int:
 	"Count the total number of wide characters contained in a string"
-	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
+	return sum(_is_wide_character(c) for c in string)
 
 
 def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
