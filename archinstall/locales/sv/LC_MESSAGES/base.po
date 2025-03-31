@@ -1507,135 +1507,115 @@ msgid "The specified configuration will be applied"
 msgstr "Den angivna konfigurationen kommer att tillämpas"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Rensa"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Markera/avmarkera som bootbar"
+msgstr "Markera/avmarkera som XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "Extra paket"
+msgstr "Laddar paket..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Välj alla paket från listan nedan som ska installeras ytterligare"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Lägg till en anpassad spegel"
+msgstr "Lägg till en anpassat arkiv"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Ändra anpassad spegel"
+msgstr "Ändra anpassat arkiv"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Ta bort anpassad spegel"
+msgstr "Ta bort anpassat arkiv"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Spegelnamn"
+msgstr "Arkivnamn"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "Lägg till en anpassad spegel"
+msgstr "Lägg till en anpassad server"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "Ändra anpassad spegel"
+msgstr "Ändra anpassad server"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "Ta bort anpassad spegel"
+msgstr "Ta bort anpassad server"
 
 msgid "Server url"
-msgstr ""
+msgstr "Server url"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "Välj signaturalternativ"
+msgstr "Välj regioner"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "Lägg till en anpassad spegel"
+msgstr "Lägg till en anpassade servrar"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Lägg till en anpassad spegel"
+msgstr "Lägg till ett anpassat arkiv"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "Spegelregioner"
+msgstr "Laddar spegelregioner..."
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Valfria arkiv"
+msgstr "Speglar och arkiv"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "Spegelregioner"
+msgstr "Valda spegelregioner"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "Anpassade speglar"
+msgstr "Anpassade servrar"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "Valfria arkiv"
+msgstr "Anpassade arkiv"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Endast ASCII-tecken stöds"
 
 msgid "Show help"
-msgstr ""
+msgstr "Visa hjälp"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Avsluta hjälpen"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Förhandsgranska rulla uppåt"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Förhandsgranska rulla nedåt"
 
 msgid "Move up"
-msgstr ""
+msgstr "Flytta upp"
 
 msgid "Move down"
-msgstr ""
+msgstr "Flytta ned"
 
 msgid "Move right"
-msgstr ""
+msgstr "Flytta höger"
 
 msgid "Move left"
-msgstr ""
+msgstr "Flytta vänster"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Hoppa till posten"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Hoppa över valet (om tillgängligt)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Återställ val (om tillgängligt)"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "Välj signaturkontroll"
+msgstr "Välj på enstaka val"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "Välj en tidszon"
+msgstr "Välj på flerval"
 
 msgid "Reset"
-msgstr ""
+msgstr "Återställ"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "Välj exekveringsläge"
+msgstr "Hoppa över valmenyn"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Starta sökläge"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Avsluta sökläge"
