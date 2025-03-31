@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python module &mdash; python-archinstall v2.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=387c4177"></script>
+        <script src="../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Python Plugins" href="../archinstall/plugins.html" />
+    <link rel="prev" title="Python library" href="../installing/python.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            python-archinstall
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Running Archinstall</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installing/guided.html">Guided installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting help</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../help/known_issues.html">Known Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../help/report_bug.html">Report Issues &amp; Bugs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../help/discord.html">Discord</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Archinstall as a library</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installing/python.html">Python library</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pre-requisites">Pre-requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-script">Creating a script</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../archinstall/plugins.html">Python Plugins</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../archinstall/Installer.html">archinstall.Installer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">python-archinstall</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Python module</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="python-module">
+<span id="examples-python"></span><h1>Python module<a class="headerlink" href="#python-module" title="Link to this heading"></a></h1>
+<p>Archinstall supports running in <a class="reference external" href="https://docs.python.org/3/library/__main__.html">module mode</a>.
+The way the library is invoked in module mode is limited to executing scripts under the <a class="reference external" href="https://github.com/archlinux/archinstall/tree/master/archinstall/scripts">scripts</a> folder.</p>
+<p>It’s therefore important to place any script or profile you wish to invoke in the examples folder prior to building and installing.</p>
+<section id="pre-requisites">
+<h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading"></a></h2>
+<p>We’ll assume you’ve followed the <a class="reference internal" href="../installing/python.html#installing-python-manual"><span class="std std-ref">Install using source code</span></a> method.
+Before actually installing the library, you will need to place your custom installer-scripts under <a class="reference external" href="https://github.com/archlinux/archinstall/tree/master/archinstall/scripts">scripts</a> as a python file.</p>
+<p>More on how you create these in the next section.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is subject to change in the future as this method is currently a bit stiff. The script path will become a parameter. But for now, this is by design.</p>
+</div>
+</section>
+<section id="creating-a-script">
+<h2>Creating a script<a class="headerlink" href="#creating-a-script" title="Link to this heading"></a></h2>
+<p>Lets create a <cite>test_installer</cite> - installer as an example. This is assuming that the folder <cite>./archinstall</cite> is a git-clone of the main repo.
+We begin by creating “<a class="reference external" href="https://github.com/archlinux/archinstall/tree/master/archinstall/scripts">scripts</a><code class="code docutils literal notranslate"><span class="pre">/test_installer.py</span></code>”. The placement here is important later.</p>
+<p>This script can now already be called using <code class="code docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">archinstall</span> <span class="pre">test_installer</span></code> after a successful installation of the library itself.
+But the script won’t do much. So we’ll do something simple like list all the hard drives as an example.</p>
+<p>To do this, we’ll begin by importing <code class="code docutils literal notranslate"><span class="pre">archinstall</span></code> in our “<a class="reference external" href="https://github.com/archlinux/archinstall/tree/master/archinstall/scripts">scripts</a><code class="code docutils literal notranslate"><span class="pre">/test_installer.py</span></code>” and call a function whtin <code class="docutils literal notranslate"><span class="pre">archinstall</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">archinstall</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">archinstall</span><span class="o">.</span><span class="n">disk</span><span class="o">.</span><span class="n">device_handler</span><span class="o">.</span><span class="n">devices</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, go ahead and reference the <a class="reference internal" href="../installing/python.html#installing-python-manual"><span class="std std-ref">Install using source code</span></a> installation method.
+After running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">archinstall</span> <span class="pre">test_installer</span></code> it should print something that looks like:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[
+    BDevice(
+        disk=&lt;parted.disk.Disk object at 0x7fbe17156050&gt;,
+        device_info=_DeviceInfo(
+            model=&#39;PC801 NVMe SK hynix 512GB&#39;,
+            path=PosixPath(&#39;/dev/nvme0n1&#39;),
+            type=&#39;nvme&#39;,
+            total_size=Size(value=512110190592, unit=&lt;Unit.B: 1&gt;,
+            sector_size=SectorSize(value=512, unit=&lt;Unit.B: 1&gt;)),
+            free_space_regions=[
+                &lt;archinstall.lib.disk.device_model.DeviceGeometry object at 0x7fbe166c4250&gt;,
+                &lt;archinstall.lib.disk.device_model.DeviceGeometry object at 0x7fbe166c4c50&gt;,
+                &lt;archinstall.lib.disk.device_model.DeviceGeometry object at 0x7fbe166c4a10&gt;],
+            sector_size=SectorSize(value=512, unit=&lt;Unit.B: 1&gt;),
+            read_only=False,
+            dirty=False
+        ),
+        partition_infos=[
+            _PartitionInfo(
+                partition=&lt;parted.partition.Partition object at 0x7fbe166c4a90&gt;,
+                name=&#39;primary&#39;,
+                type=&lt;PartitionType.Primary: &#39;primary&#39;&gt;,
+                fs_type=&lt;FilesystemType.Fat32: &#39;fat32&#39;&gt;,
+                path=&#39;/dev/nvme0n1p1&#39;,
+                start=Size(value=2048, unit=&lt;Unit.sectors: &#39;sectors&#39;&gt;, sector_size=SectorSize(value=512, unit=&lt;Unit.B: 1&gt;)),
+                length=Size(value=535822336, unit=&lt;Unit.B: 1&gt;, sector_size=SectorSize(value=512, unit=&lt;Unit.B: 1&gt;)),
+                flags=[
+                    &lt;PartitionFlag.BOOT: flag_id=1, alias=None&gt;,
+                    &lt;PartitionFlag.ESP: flag_id=18, alias=None&gt;
+                ],
+                partn=1,
+                partuuid=&#39;a26be943-c193-41f4-9930-9341cf5f6b19&#39;,
+                uuid=&#39;6EE9-2C00&#39;,
+                disk=&lt;parted.disk.Disk object at 0x7fbe17156050&gt;,
+                mountpoints=[
+                    PosixPath(&#39;/boot&#39;)
+                ],
+                btrfs_subvol_infos=[]
+            ),
+            _PartitionInfo(...)
+        ]
+    )
+]
+</pre></div>
+</div>
+<p>That means your script is in the right place, and <code class="docutils literal notranslate"><span class="pre">archinstall</span></code> is working as intended.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Most calls, including the one above requires <a class="reference external" href="https://en.wikipedia.org/wiki/Superuser">root</a> privileges.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../installing/python.html" class="btn btn-neutral float-left" title="Python library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../archinstall/plugins.html" class="btn btn-neutral float-right" title="Python Plugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Anton Hvornum.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
