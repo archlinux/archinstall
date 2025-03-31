@@ -1,5 +1,6 @@
 import glob
 import os
+import platform
 import re
 import shlex
 import shutil
@@ -1186,7 +1187,7 @@ class Installer:
 				boot_dir = boot_partition.mountpoint
 
 			add_options = [
-				'--target=x86_64-efi',
+				f'--target={platform.machine()}-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
 				*boot_dir_arg,
 				'--bootloader-id=GRUB',
