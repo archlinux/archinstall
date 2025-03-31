@@ -8,6 +8,7 @@ from urllib.response import addinfourl
 
 from ..exceptions import PackageError, SysCallError
 from ..models.packages import AvailablePackage, LocalPackage, PackageSearch, PackageSearchResult, Repository
+from ..output import debug
 from ..pacman import Pacman
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
@@ -125,7 +126,12 @@ def list_available_packages(
 	current_package: list[str] = []
 	filtered_repos = [name for repo in repositories for name in repo.get_repository_list()]
 
-	for line in Pacman.run('-Sy --info'):
+	try:
+		Pacman.run("-Sy")
+	except Exception as e:
+		debug(f'Failed to sync Arch Linux package database: {e}')
+
+	for line in Pacman.run('-S --info'):
 		dec_line = line.decode().strip()
 		current_package.append(dec_line)
 
