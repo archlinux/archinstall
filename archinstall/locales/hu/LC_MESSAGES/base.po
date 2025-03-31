@@ -1313,7 +1313,7 @@ msgid " (default)"
 msgstr " (alapértelmezett)"
 
 msgid "Press Ctrl+h for help"
-msgstr "CTRL+h → a súgó megnyitásához"
+msgstr "CTRL+h → a súgó megjelenítéséhez"
 
 msgid "Choose an option to give Sway access to your hardware"
 msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Sway számára a hardverekhez való hozzáférést"
@@ -1466,7 +1466,7 @@ msgid "Select execution mode"
 msgstr "Végrehajtási mód kiválasztása"
 
 msgid "Press ? for help"
-msgstr "? → a súgó megnyitásához"
+msgstr "? → a súgó megjelenítéséhez"
 
 msgid "Choose an option to give Hyprland access to your hardware"
 msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Hyprland számára a hardverekhez való hozzáférést"
@@ -1508,135 +1508,115 @@ msgid "The specified configuration will be applied"
 msgstr "A megadott konfiguráció lesz alkalmazva"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Törlés"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Megjelölés/elvetés mint rendszerindító"
+msgstr "Megjelölés/elvetés mint XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "További csomagok"
+msgstr "Csomagok betöltése…"
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Válassza ki az alábbi listából azokat a csomagokat, amelyeket hozzá akar adni a telepítéshez"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Egyéni tükör hozzáadása"
+msgstr "Egyéni tároló hozzáadása"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Egyéni tükör módosítása"
+msgstr "Egyéni tároló módosítása"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Egyéni tükör törlése"
+msgstr "Egyéni tároló törlése"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Tükörnév"
+msgstr "Tároló neve"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "Egyéni tükör hozzáadása"
+msgstr "Egyéni kiszolgáló hozzáadása"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "Egyéni tükör módosítása"
+msgstr "Egyéni kiszolgáló módosítása"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "Egyéni tükör törlése"
+msgstr "Egyéni kiszolgáló törlése"
 
 msgid "Server url"
-msgstr ""
+msgstr "Kiszolgáló webcíme"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "Válasszon ki egy aláírásbeállítást"
+msgstr "Régiók kiválasztása"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "Egyéni tükör hozzáadása"
+msgstr "Egyéni kiszolgálók hozzáadása"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Egyéni tükör hozzáadása"
+msgstr "Egyéni tároló hozzáadása"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "Tükörrégiók"
+msgstr "Tükörrégiók betöltése…"
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Nem kötelező tárolók"
+msgstr "Tükrök és tárolók"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "Tükörrégiók"
+msgstr "Kiválasztott tükörrégiók"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "Egyéni tükrök"
+msgstr "Egyéni kiszolgálók"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "Nem kötelező tárolók"
+msgstr "Egyéni tárolók"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Csak ASCII karakterek támogatottak"
 
 msgid "Show help"
-msgstr ""
+msgstr "Súgó megjelenítése"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Kilépés a súgóból"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Előnézet felfelé görgetése"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Előnézet lefelé görgetése"
 
 msgid "Move up"
-msgstr ""
+msgstr "Felfelé léptetés"
 
 msgid "Move down"
-msgstr ""
+msgstr "Lefelé léptetés"
 
 msgid "Move right"
-msgstr ""
+msgstr "Jobbra léptetés"
 
 msgid "Move left"
-msgstr ""
+msgstr "Balra léptetés"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Ugrás a bejegyzésre"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Kiválasztás kihagyása (ha elérhető)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Kiválasztás visszaállítása (ha elérhető)"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "Aláírásellenőrzés kiválasztása"
+msgstr "Egyetlen elem kiválasztása"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "Időzóna kiválasztása"
+msgstr "Több elem kiválasztása"
 
 msgid "Reset"
-msgstr ""
+msgstr "Visszaállítás"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "Végrehajtási mód kiválasztása"
+msgstr "Kiválasztási menü kihagyása"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Keresési mód indítása"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Kilépés a keresési módból"
