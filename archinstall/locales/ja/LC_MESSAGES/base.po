@@ -1504,3 +1504,137 @@ msgstr "ユーザー"
 
 msgid "The specified configuration will be applied"
 msgstr "指定された設定が適用されます"
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "ブータブルとしてマーク/マーク解除"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "追加パッケージ"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "カスタムミラーを追加"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "カスタムミラーを変更"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "カスタムミラーを削除"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "ミラーの名前"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "カスタムミラーを追加"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "カスタムミラーを変更"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "カスタムミラーを削除"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "署名オプションを選択"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "カスタムミラーを追加"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "カスタムミラーを追加"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "ミラーの地域"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "オプションのリポジトリ"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "ミラーの地域"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "カスタムミラー"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "オプションのリポジトリ"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "署名チェックを選択"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "タイムゾーンを選択"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "実行モードを選択"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""

@@ -1506,3 +1506,137 @@ msgstr "Felhasználó"
 
 msgid "The specified configuration will be applied"
 msgstr "A megadott konfiguráció lesz alkalmazva"
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Megjelölés/elvetés mint rendszerindító"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "További csomagok"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Egyéni tükör hozzáadása"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Egyéni tükör módosítása"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Egyéni tükör törlése"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Tükörnév"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Egyéni tükör hozzáadása"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Egyéni tükör módosítása"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Egyéni tükör törlése"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Válasszon ki egy aláírásbeállítást"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Egyéni tükör hozzáadása"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Egyéni tükör hozzáadása"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Tükörrégiók"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Nem kötelező tárolók"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Tükörrégiók"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Egyéni tükrök"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Nem kötelező tárolók"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Aláírásellenőrzés kiválasztása"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Időzóna kiválasztása"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Végrehajtási mód kiválasztása"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""

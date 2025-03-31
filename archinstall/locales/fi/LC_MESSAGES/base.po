@@ -1571,3 +1571,137 @@ msgstr "Käyttäjänimi : "
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Merkitse/poista käynnistyvä"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Lisäpaketit"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Lisää mukautettu peilipaikka"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Vaihda mukautettu peilipaikka"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Poista mukautettu peilipaikka"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Pakettivarasto"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Lisää mukautettu peilipaikka"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Vaihda mukautettu peilipaikka"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Poista mukautettu peilipaikka"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Valitse allekirjoituksen asetus"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Lisää mukautettu peilipaikka"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Lisää mukautettu peilipaikka"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Peilipaikan maa"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Valinnaiset arkistot"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Peilipaikan maa"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Mukautetut peilipaikat"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Valinnaiset arkistot"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Valitse allekirjoituksen tarkistusvaihtoehto"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Valitse aikavyöhyke"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Valitse suoritustila"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""

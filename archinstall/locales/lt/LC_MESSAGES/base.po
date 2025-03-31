@@ -1461,3 +1461,129 @@ msgstr "Vartotojo vardas :"
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr ""
+
+msgid "Loading packages..."
+msgstr ""
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Pridėti savo 'custom mirror'"
+
+msgid "Change custom repository"
+msgstr ""
+
+msgid "Delete custom repository"
+msgstr ""
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Pagrindinio kompiuterio vardas"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Pridėti savo 'custom mirror'"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Išrinkite garso serverį"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Pašalinti vartotoją"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Išrinkite laiko zona"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Pridėti savo 'custom mirror'"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Pridėti savo 'custom mirror'"
+
+msgid "Loading mirror regions..."
+msgstr ""
+
+msgid "Mirrors and repositories"
+msgstr ""
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Pašalinti profilį"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Bė garso serverio"
+
+msgid "Custom repositories"
+msgstr ""
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+msgid "Select on single select"
+msgstr ""
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Išrinkite laiko zona"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Išrinkite laiko zona"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
