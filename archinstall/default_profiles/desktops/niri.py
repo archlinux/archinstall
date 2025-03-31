@@ -15,33 +15,34 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class HyprlandProfile(XorgProfile):
+class SwayProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Hyprland', ProfileType.DesktopEnv, description='an independent tiling Wayland compositor written in C++')
+		super().__init__(
+			'Niri'
+			ProfileType.WindowMgr,
+			description='a scrollable tiling Wayland compositor.'
+		)
 
 		self.custom_settings = {'seat_access': None}
 
 	@property
 	@override
 	def packages(self) -> list[str]:
+		additional = []
+		if seat := self.custom_settings.get('seat_access', None):
+			additional = [seat]
+
 		return [
-			"hyprland",
-			"dunst",
-			"kitty",
-			"dolphin",
-			"wofi",
-			"xdg-desktop-portal-hyprland",
-			"qt5-wayland",
-			"qt6-wayland",
-			"polkit-kde-agent",
-			"grim",
-			"slurp",
-		]
+			"alacritty",
+			"fuzzel",
+			"xorg-xwayland",
+			"xdg-desktop-portal-gnome"
+		] + additional
 
 	@property
 	@override
 	def default_greeter_type(self) -> GreeterType | None:
-		return GreeterType.Sddm
+		return GreeterType.Lightdm
 
 	@property
 	@override
@@ -52,8 +53,8 @@ class HyprlandProfile(XorgProfile):
 
 	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
-		header = str(_('Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
-		header += '\n' + str(_('Choose an option to give Hyprland access to your hardware')) + '\n'
+		header = str(_('niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		header += '\n' + str(_('Choose an option to give niri access to your hardware')) + '\n'
 
 		items = [MenuItem(s.value, value=s) for s in SeatAccess]
 		group = MenuItemGroup(items, sort_items=True)
