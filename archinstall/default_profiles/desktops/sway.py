@@ -20,7 +20,7 @@ class SwayProfile(XorgProfile):
 		super().__init__(
 			'Sway',
 			ProfileType.WindowMgr,
-			description=''
+			description='a compositor for Wayland designed to be fully compatible with i3'
 		)
 
 		self.custom_settings = {'seat_access': None}

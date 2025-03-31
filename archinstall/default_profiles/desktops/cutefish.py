@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class CutefishProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Cutefish', ProfileType.DesktopEnv, description='')
+		super().__init__('Cutefish', ProfileType.DesktopEnv, description='simple to use, beautiful, and retain the classic PC interactive design')
 
 	@property
 	@override

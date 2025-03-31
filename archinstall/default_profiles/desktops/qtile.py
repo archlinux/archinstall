@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class QtileProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Qtile', ProfileType.WindowMgr, description='')
+		super().__init__('Qtile', ProfileType.WindowMgr, description='a full-featured, hackable tiling window manager written in Python.')
 
 	@property
 	@override

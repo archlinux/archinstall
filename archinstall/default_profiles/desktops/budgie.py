@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class BudgieProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Budgie', ProfileType.DesktopEnv, description='')
+		super().__init__('Budgie', ProfileType.DesktopEnv, description='a familiar, modern desktop environment')
 
 	@property
 	@override

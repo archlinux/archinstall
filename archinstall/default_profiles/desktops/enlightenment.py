@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class EnlighenmentProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Enlightenment', ProfileType.WindowMgr, description='')
+		super().__init__('Enlightenment', ProfileType.WindowMgr, description='Compositor and Minimal Desktop for Linux')
 
 	@property
 	@override
