@@ -1506,135 +1506,118 @@ msgid "The specified configuration will be applied"
 msgstr "指定された設定が適用されます"
 
 msgid "Wipe"
-msgstr ""
+msgstr "ワイプ"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "ブータブルとしてマーク/マーク解除"
+msgstr "XBOOTLDR としてマーク/マーク解除"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "追加パッケージ"
+msgstr "パッケージを読み込んでいます..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "追加でインストールする必要があるパッケージをリストから選択してください"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "カスタムミラーを追加"
+msgstr "カスタムリポジトリを追加"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "カスタムミラーを変更"
+msgstr "カスタムリポジトリを変更"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "カスタムミラーを削除"
+msgstr "カスタムリポジトリを削除"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "ミラーの名前"
+msgstr "リポジトリの名前"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "カスタムミラーを追加"
+msgstr "カスタムサーバーを追加"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "カスタムミラーを変更"
+msgstr "カスタムサーバーを変更"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "カスタムミラーを削除"
+msgstr "カスタムサーバーを削除"
 
 msgid "Server url"
-msgstr ""
+msgstr "サーバー URL"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "署名オプションを選択"
+msgstr "地域を選択"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "カスタムミラーを追加"
+msgstr "カスタムサーバーを追加"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "カスタムミラーを追加"
+msgstr "カスタムリポジトリを追加"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "ミラーの地域"
+msgstr "ミラーの地域を読み込んでいます..."
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "オプションのリポジトリ"
+msgstr "ミラーとリポジトリ"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "ミラーの地域"
+msgstr "選択されたミラーの地域"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "カスタムミラー"
+msgstr "カスタムサーバー"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "オプションのリポジトリ"
+msgstr "カスタムリポジトリ"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "ASCII 文字のみサポートされます"
 
 msgid "Show help"
-msgstr ""
+msgstr "ヘルプを表示"
 
 msgid "Exit help"
-msgstr ""
+msgstr "ヘルプを終了"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "プレビューを上にスクロール"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "プレビューを下にスクロール"
 
 msgid "Move up"
-msgstr ""
+msgstr "上に移動"
 
 msgid "Move down"
-msgstr ""
+msgstr "下に移動"
 
 msgid "Move right"
-msgstr ""
+msgstr "右に移動"
 
 msgid "Move left"
-msgstr ""
+msgstr "左に移動"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "エントリーへジャンプ"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "選択をスキップ（利用可能な場合）"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "選択をリセット（利用可能な場合）"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "署名チェックを選択"
+msgstr "単一で選択"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "タイムゾーンを選択"
+msgstr "複数で選択"
 
 msgid "Reset"
-msgstr ""
+msgstr "リセット"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "実行モードを選択"
+msgstr "選択メニューをスキップ"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "検索モードを開始"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "検索モードを終了"
+
+msgid "Package group:"
+msgstr "パッケージグループ:"
