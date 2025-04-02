@@ -70,7 +70,7 @@ class DesktopProfile(Profile):
 			) for p in profile_handler.get_desktop_profiles()
 		]
 
-		group = MenuItemGroup(items, sort_items=True)
+		group = MenuItemGroup(items, sort_items=True, sort_case_sensitive=False)
 		group.set_selected_by_value(self.current_selection)
 
 		result = SelectMenu(

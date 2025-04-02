@@ -74,13 +74,19 @@ class MenuItemGroup:
 		focus_item: MenuItem | None = None,
 		default_item: MenuItem | None = None,
 		sort_items: bool = False,
+		sort_case_sensitive: bool = True,
 		checkmarks: bool = False
 	) -> None:
 		if len(menu_items) < 1:
 			raise ValueError('Menu must have at least one item')
 
 		if sort_items:
-			menu_items = sorted(menu_items, key=lambda x: x.text)
+			if sort_case_sensitive:
+				menu_items = sorted(menu_items, key=lambda x: x.text)
+			else:
+				from archinstall.lib.output import debug
+				debug('???')
+				menu_items = sorted(menu_items, key=lambda x: x.text.lower())
 
 		if not focus_item:
 			focus_item = menu_items[0]
