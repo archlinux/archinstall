@@ -84,8 +84,6 @@ class MenuItemGroup:
 			if sort_case_sensitive:
 				menu_items = sorted(menu_items, key=lambda x: x.text)
 			else:
-				from archinstall.lib.output import debug
-				debug('???')
 				menu_items = sorted(menu_items, key=lambda x: x.text.lower())
 
 		if not focus_item:
