@@ -15,12 +15,12 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class SwayProfile(XorgProfile):
+class LabwcProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__(
 			'Labwc'
 			ProfileType.WindowMgr,
-			description='stacking wayland compositor with look and feel from openbox'
+			description=''
 		)
 
 		self.custom_settings = {'seat_access': None}

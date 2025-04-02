@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class MateProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Mate', ProfileType.DesktopEnv, description='the continuation of GNOME 2')
+		super().__init__('Mate', ProfileType.DesktopEnv, description='')
 
 	@property
 	@override

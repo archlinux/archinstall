@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class BspwmProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Bspwm', ProfileType.WindowMgr, description='a tiling window manager that represents windows as the leaves of a full binary tree')
+		super().__init__('Bspwm', ProfileType.WindowMgr, description='')
 
 	@property
 	@override

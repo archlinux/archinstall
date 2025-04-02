@@ -15,12 +15,12 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class SwayProfile(XorgProfile):
+class riverProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__(
-			'Niri'
+			'river'
 			ProfileType.WindowMgr,
-			description='a scrollable tiling Wayland compositor.'
+			description=''
 		)
 
 		self.custom_settings = {'seat_access': None}
@@ -51,7 +51,7 @@ class SwayProfile(XorgProfile):
 
 	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
-		header = str(_('niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		header = str(_('river needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
 		header += '\n' + str(_('Choose an option to give niri access to your hardware')) + '\n'
 
 		items = [MenuItem(s.value, value=s) for s in SeatAccess]

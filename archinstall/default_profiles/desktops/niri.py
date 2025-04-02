@@ -15,12 +15,12 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class SwayProfile(XorgProfile):
+class NiriProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__(
 			'Niri'
 			ProfileType.WindowMgr,
-			description='a scrollable tiling Wayland compositor.'
+			description=''
 		)
 
 		self.custom_settings = {'seat_access': None}

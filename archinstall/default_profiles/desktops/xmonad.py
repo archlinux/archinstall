@@ -4,9 +4,9 @@ from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
 
 
-class I3wmProfile(XorgProfile):
+class xmonadProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Xmonad', ProfileType.WindowMgr, description='a dynamically tiling X11 window manager that is written and configured in Haskell')
+		super().__init__('Xmonad', ProfileType.WindowMgr, description='')
 
 	@property
 	@override

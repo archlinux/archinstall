@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class DeepinProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Deepin', ProfileType.DesktopEnv, description='beautiful, easy-to-use, safe and stable desktop')
+		super().__init__('Deepin', ProfileType.DesktopEnv, description='')
 
 	@property
 	@override
