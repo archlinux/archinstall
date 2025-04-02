@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 class HyprlandProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Hyprland', ProfileType.DesktopEnv, description='an independent tiling Wayland compositor written in C++')
+		super().__init__('Hyprland', ProfileType.DesktopEnv, description='')
 
 		self.custom_settings = {'seat_access': None}
 

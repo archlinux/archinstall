@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class riverProfile(XorgProfile):
+class RiverProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__(
 			'river'
