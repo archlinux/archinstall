@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class NiriProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__(
-			'Niri'
+			'Niri',
 			ProfileType.WindowMgr,
 			description=''
 		)

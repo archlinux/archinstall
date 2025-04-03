@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class RiverProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__(
-			'river'
+			'river',
 			ProfileType.WindowMgr,
 			description=''
 		)

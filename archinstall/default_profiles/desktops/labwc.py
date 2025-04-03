@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class LabwcProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__(
-			'Labwc'
+			'Labwc',
 			ProfileType.WindowMgr,
 			description=''
 		)
