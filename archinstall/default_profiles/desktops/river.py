@@ -23,14 +23,12 @@ class RiverProfile(XorgProfile):
 			description=''
 		)
 
-		self.custom_settings = {'seat_access': None}
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		additional = []
-		if seat := self.custom_settings.get('seat_access', None):
-			additional = [seat]
+
 
 		return [
 			"foot",
