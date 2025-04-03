@@ -13,6 +13,8 @@ class riverProfile(XorgProfile):
 	def packages(self) -> list[str]:
 		return [
 			'foot',
+			'xdg-desktop-portal-wlr',
+			'river'
 		]
 
 	@property
