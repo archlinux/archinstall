@@ -89,6 +89,9 @@ class AbstractMenu:
 		for item in self._menu_item_group.items:
 			item.enabled = False
 
+	def _is_config_valid(self) -> bool:
+		return True
+
 	def run(self) -> Any | None:
 		self._sync_from_config()
 
@@ -108,6 +111,8 @@ class AbstractMenu:
 					item: MenuItem = result.item()
 
 					if item.action is None:
+						if not self._is_config_valid():
+							continue
 						break
 				case ResultType.Reset:
 					return None

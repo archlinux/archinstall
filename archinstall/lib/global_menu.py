@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
@@ -245,6 +245,7 @@ class GlobalMenu(AbstractMenu):
 
 		return list(missing)
 
+	@override
 	def _is_config_valid(self) -> bool:
 		"""
 		Checks the validity of the current configuration.
