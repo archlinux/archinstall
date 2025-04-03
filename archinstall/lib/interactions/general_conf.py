@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, assert_never
 
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.packages.packages import list_available_packages
@@ -263,6 +263,8 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 			return 0
 		case ResultType.Selection:
 			downloads: int = int(result.text())
+		case _:
+			assert_never(result.type_)
 
 	pacman_conf_path = Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
