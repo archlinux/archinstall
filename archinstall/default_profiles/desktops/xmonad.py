@@ -4,7 +4,7 @@ from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
 
 
-class xmonadProfile(XorgProfile):
+class XmonadProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__('Xmonad', ProfileType.WindowMgr, description='')
 
@@ -16,8 +16,6 @@ class xmonadProfile(XorgProfile):
 			'xmonad-contrib',
 			'xmonad-extra',
 			'xterm',
-			'lightdm-gtk-greeter',
-			'lightdm',
 			'dmenu'
 		]
 
