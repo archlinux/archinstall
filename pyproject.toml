@@ -74,6 +74,7 @@ enable_error_code = [
     "explicit-override",
     "ignore-without-code",
     "mutable-override",
+    "possibly-undefined",
     "redundant-expr",
     "redundant-self",
     "truthy-iterable",
