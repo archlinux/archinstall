@@ -34,7 +34,6 @@ class LabwcProfile(XorgProfile):
 
 		return [
 			"alacritty",
-			"xorg-xwayland"
 		] + additional
 
 	@property

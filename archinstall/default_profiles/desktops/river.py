@@ -4,7 +4,7 @@ from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
 
 
-class riverProfile(XorgProfile):
+class RiverProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__('River', ProfileType.WindowMgr, description='')
 

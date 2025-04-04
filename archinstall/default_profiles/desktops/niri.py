@@ -35,7 +35,12 @@ class NiriProfile(XorgProfile):
 		return [
 			"alacritty",
 			"fuzzel",
+			"mako",
 			"xorg-xwayland",
+			"waybar",
+			"swaybg",
+			"swayidle",
+			"swaylock",
 			"xdg-desktop-portal-gnome"
 		] + additional
 
