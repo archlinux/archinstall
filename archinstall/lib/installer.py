@@ -1,5 +1,6 @@
 import glob
 import os
+import platform
 import re
 import shlex
 import shutil
@@ -1186,7 +1187,7 @@ class Installer:
 				boot_dir = boot_partition.mountpoint
 
 			add_options = [
-				'--target=x86_64-efi',
+				f'--target={platform.machine()}-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
 				*boot_dir_arg,
 				'--bootloader-id=GRUB',
@@ -1255,8 +1256,21 @@ class Installer:
 
 			info(f"Limine EFI partition: {efi_partition.dev_path}")
 
+			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+			is_target_usb = SysCommand(
+				f'udevadm info --no-pager --query=property --property=ID_BUS --value --name={parent_dev_path}'
+			).decode() == 'usb'
+
 			try:
-				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'limine'
+				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
+				efi_dir_path_target = efi_partition.mountpoint / 'EFI'
+				if is_target_usb:
+					efi_dir_path = efi_dir_path / 'BOOT'
+					efi_dir_path_target = efi_dir_path_target / 'BOOT'
+				else:
+					efi_dir_path = efi_dir_path / 'limine'
+					efi_dir_path_target = efi_dir_path_target / 'limine'
+
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
@@ -1267,40 +1281,38 @@ class Installer:
 			config_path = efi_dir_path / 'limine.conf'
 
 			hook_command = (
-				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/limine/'
-				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/limine/'
+				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_dir_path_target}/'
+				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_dir_path_target}/'
 			)
 
-			# Create EFI boot menu entry for Limine.
-			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+			if not is_target_usb:
+				# Create EFI boot menu entry for Limine.
+				try:
+					with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
+						efi_bitness = fw_platform_size.read().strip()
+				except Exception as err:
+					raise OSError(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
 
-			try:
-				with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
-					efi_bitness = fw_platform_size.read().strip()
-			except Exception as err:
-				error(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
+				if efi_bitness == '64':
+					loader_path = '/EFI/limine/BOOTX64.EFI'
+				elif efi_bitness == '32':
+					loader_path = '/EFI/limine/BOOTIA32.EFI'
+				else:
+					raise ValueError(f'EFI bitness is neither 32 nor 64 bits. Found "{efi_bitness}".')
 
-			loader_path = None
-			if efi_bitness == '64':
-				loader_path = '/EFI/limine/BOOTX64.EFI'
-			elif efi_bitness == '32':
-				loader_path = '/EFI/limine/BOOTIA32.EFI'
-			else:
-				error('EFI bitness is neither 32 nor 64 bits')
-
-			try:
-				SysCommand(
-					'efibootmgr'
-					' --create'
-					f' --disk {parent_dev_path}'
-					f' --part {efi_partition.partn}'
-					' --label "Arch Linux Limine Bootloader"'
-					f' --loader {loader_path}'
-					' --unicode'
-					' --verbose'
-				)
-			except Exception as err:
-				error(f'SysCommand for efibootmgr failed: {err}')
+				try:
+					SysCommand(
+						'efibootmgr'
+						' --create'
+						f' --disk {parent_dev_path}'
+						f' --part {efi_partition.partn}'
+						' --label "Arch Linux Limine Bootloader"'
+						f' --loader {loader_path}'
+						' --unicode'
+						' --verbose'
+					)
+				except Exception as err:
+					raise ValueError(f'SysCommand for efibootmgr failed: {err}')
 		else:
 			boot_limine_path = self.target / 'boot' / 'limine'
 			boot_limine_path.mkdir(parents=True, exist_ok=True)
