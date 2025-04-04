@@ -50,6 +50,9 @@ repos:
     rev: v0.11.3
     hooks:
       - id: ruff
+        args: ["check", "--select", "I", "--fix"]
+        fail_fast: true
+      - id: ruff
   - repo: local
     hooks:
       - id: pylint
