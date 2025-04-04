@@ -1265,7 +1265,7 @@ msgid "Select a LVM option"
 msgstr "Bir LVM seçeneği belirleyin"
 
 msgid "Partitioning"
-msgstr "Bölümleme"
+msgstr "Disk bölümleme"
 
 msgid "Logical Volume Management (LVM)"
 msgstr "Mantıksal Hacim Yönetimi (LVM)"
@@ -1485,7 +1485,7 @@ msgid "NTP"
 msgstr ""
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "zram üzerinde takas alanı"
 
 msgid "Name"
 msgstr ""
@@ -1519,3 +1519,144 @@ msgstr "Kullanıcı Adı"
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Önyüklenebilir olarak işaretle/işareti kaldır"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Ek paketler"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Özel indirme sunucusu ekleyin"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Özel indirme sunucusunu değiştirin"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Özel indirme sunucusunu silin"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "İndirme sunucusu adı"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Özel indirme sunucusu ekleyin"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Özel indirme sunucusunu değiştirin"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Özel indirme sunucusunu silin"
+
+#, fuzzy
+msgid "Server url"
+msgstr "Sunucu"
+
+#, fuzzy
+msgid "Select regions"
+msgstr "İmza seçeneğini seçin"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Özel indirme sunucusu ekleyin"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Özel indirme sunucusu ekleyin"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Ayna sunucusu bölgesi"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "İsteğe bağlı depolar"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Ayna sunucusu bölgesi"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Kişisel depo aynası"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "İsteğe bağlı depolar"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "İmza kontrolü seçeneğini seçin"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Bir zaman dilimi seçin"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Bir çalıştırma modu seçin"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#~ msgid "Desktop"
+#~ msgstr "Masaüstü"
+
+#~ msgid "Minimal"
+#~ msgstr "Hafif"

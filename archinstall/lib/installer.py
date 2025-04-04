@@ -1,5 +1,6 @@
 import glob
 import os
+import platform
 import re
 import shlex
 import shutil
@@ -27,7 +28,7 @@ from archinstall.lib.models.device_model import (
 	SubvolumeModification,
 	Unit,
 )
-from archinstall.lib.models.gen import Repository
+from archinstall.lib.models.packages import Repository
 from archinstall.tui.curses_menu import Tui
 
 from .args import arch_config_handler
@@ -57,10 +58,6 @@ __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "l
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
-
-
-def accessibility_tools_in_use() -> bool:
-	return os.system('systemctl is-active --quiet espeakup.service') == 0
 
 
 class Installer:
@@ -589,6 +586,7 @@ class Installer:
 		# in the first column of the entry; check for both cases.
 		entry_re = re.compile(rf'#{lang}(\.{encoding})?{modifier} {encoding}')
 
+		lang_value = None
 		for index, line in enumerate(locale_gen_lines):
 			if entry_re.match(line):
 				uncommented_line = line.removeprefix('#')
@@ -596,7 +594,8 @@ class Installer:
 				locale_gen.write_text(''.join(locale_gen_lines))
 				lang_value = uncommented_line.split()[0]
 				break
-		else:
+
+		if lang_value is None:
 			error(f"Invalid locale: language '{locale_config.sys_lang}', encoding '{locale_config.sys_enc}'")
 			return False
 
@@ -1195,7 +1194,7 @@ class Installer:
 				boot_dir = boot_partition.mountpoint
 
 			add_options = [
-				'--target=x86_64-efi',
+				f'--target={platform.machine()}-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
 				*boot_dir_arg,
 				'--bootloader-id=GRUB',
@@ -1264,8 +1263,21 @@ class Installer:
 
 			info(f"Limine EFI partition: {efi_partition.dev_path}")
 
+			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+			is_target_usb = SysCommand(
+				f'udevadm info --no-pager --query=property --property=ID_BUS --value --name={parent_dev_path}'
+			).decode() == 'usb'
+
 			try:
-				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'limine'
+				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
+				efi_dir_path_target = efi_partition.mountpoint / 'EFI'
+				if is_target_usb:
+					efi_dir_path = efi_dir_path / 'BOOT'
+					efi_dir_path_target = efi_dir_path_target / 'BOOT'
+				else:
+					efi_dir_path = efi_dir_path / 'limine'
+					efi_dir_path_target = efi_dir_path_target / 'limine'
+
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
@@ -1276,40 +1288,38 @@ class Installer:
 			config_path = efi_dir_path / 'limine.conf'
 
 			hook_command = (
-				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/limine/'
-				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/limine/'
+				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_dir_path_target}/'
+				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_dir_path_target}/'
 			)
 
-			# Create EFI boot menu entry for Limine.
-			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+			if not is_target_usb:
+				# Create EFI boot menu entry for Limine.
+				try:
+					with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
+						efi_bitness = fw_platform_size.read().strip()
+				except Exception as err:
+					raise OSError(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
 
-			try:
-				with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
-					efi_bitness = fw_platform_size.read().strip()
-			except Exception as err:
-				error(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
+				if efi_bitness == '64':
+					loader_path = '/EFI/limine/BOOTX64.EFI'
+				elif efi_bitness == '32':
+					loader_path = '/EFI/limine/BOOTIA32.EFI'
+				else:
+					raise ValueError(f'EFI bitness is neither 32 nor 64 bits. Found "{efi_bitness}".')
 
-			loader_path = None
-			if efi_bitness == '64':
-				loader_path = '/EFI/limine/BOOTX64.EFI'
-			elif efi_bitness == '32':
-				loader_path = '/EFI/limine/BOOTIA32.EFI'
-			else:
-				error('EFI bitness is neither 32 nor 64 bits')
-
-			try:
-				SysCommand(
-					'efibootmgr'
-					' --create'
-					f' --disk {parent_dev_path}'
-					f' --part {efi_partition.partn}'
-					' --label "Arch Linux Limine Bootloader"'
-					f' --loader {loader_path}'
-					' --unicode'
-					' --verbose'
-				)
-			except Exception as err:
-				error(f'SysCommand for efibootmgr failed: {err}')
+				try:
+					SysCommand(
+						'efibootmgr'
+						' --create'
+						f' --disk {parent_dev_path}'
+						f' --part {efi_partition.partn}'
+						' --label "Arch Linux Limine Bootloader"'
+						f' --loader {loader_path}'
+						' --unicode'
+						' --verbose'
+					)
+				except Exception as err:
+					raise ValueError(f'SysCommand for efibootmgr failed: {err}')
 		else:
 			boot_limine_path = self.target / 'boot' / 'limine'
 			boot_limine_path.mkdir(parents=True, exist_ok=True)
@@ -1582,8 +1592,15 @@ class Installer:
 		if not handled_by_plugin:
 			info(f'Creating user {user.username}')
 
+			cmd = f'arch-chroot {self.target} useradd -m'
+
+			if user.sudo:
+				cmd += ' -G wheel'
+
+			cmd += f' {user.username}'
+
 			try:
-				SysCommand(f'arch-chroot {self.target} useradd -m -G wheel {user.username}')
+				SysCommand(cmd)
 			except SysCallError as err:
 				raise SystemError(f"Could not create user inside installation: {err}")
 
@@ -1706,3 +1723,21 @@ class Installer:
 			f'systemctl show --no-pager -p SubState --value {service_name}',
 			environment_vars={'SYSTEMD_COLORS': '0'}
 		).decode()
+
+
+def accessibility_tools_in_use() -> bool:
+	return os.system('systemctl is-active --quiet espeakup.service') == 0
+
+
+def run_custom_user_commands(commands: list[str], installation: Installer) -> None:
+	for index, command in enumerate(commands):
+		script_path = f"/var/tmp/user-command.{index}.sh"
+		chroot_path = f"{installation.target}/{script_path}"
+
+		info(f'Executing custom command "{command}" ...')
+		with open(chroot_path, "w") as user_script:
+			user_script.write(command)
+
+		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
+
+		os.unlink(chroot_path)

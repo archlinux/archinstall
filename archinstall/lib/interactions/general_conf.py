@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, assert_never
 
-from archinstall.lib.models.gen import Repository
+from archinstall.lib.models.packages import Repository
 from archinstall.lib.packages.packages import list_available_packages
 from archinstall.tui.curses_menu import EditMenu, SelectMenu, Tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -11,7 +11,7 @@ from archinstall.tui.types import Alignment, FrameProperties, Orientation, Previ
 
 from ..locale.utils import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration
-from ..models.gen import AvailablePackage
+from ..models.packages import AvailablePackage, PackageGroup
 from ..output import warn
 from ..translationhandler import Language
 
@@ -174,30 +174,41 @@ def ask_additional_packages_to_install(
 
 	repositories |= {Repository.Core, Repository.Extra}
 	packages = list_available_packages(tuple(repositories))
+	package_groups = PackageGroup.from_available_packages(packages)
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	header = str(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.')) + '\n'
 	header += str(_('Select any packages from the below list that should be installed additionally')) + '\n'
 
 	# there are over 15k packages so this needs to be quick
-	preset_packages = []
+	preset_packages: list[AvailablePackage | PackageGroup] = []
 	for p in preset:
 		if p in packages:
 			preset_packages.append(packages[p])
+		elif p in package_groups:
+			preset_packages.append(package_groups[p])
 
 	items = [
 		MenuItem(
 			name,
 			value=pkg,
 			preview_action=lambda x: x.value.info()
-		) for name,
-		pkg in packages.items()
+		) for name, pkg in packages.items()
 	]
-	group = MenuItemGroup(items, sort_items=True)
-	group.set_selected_by_value(preset_packages)
+
+	items += [
+		MenuItem(
+			name,
+			value=group,
+			preview_action=lambda x: x.value.info()
+		) for name, group in package_groups.items()
+	]
+
+	menu_group = MenuItemGroup(items, sort_items=True)
+	menu_group.set_selected_by_value(preset_packages)
 
 	result = SelectMenu(
-		group,
+		menu_group,
 		header=header,
 		alignment=Alignment.LEFT,
 		allow_reset=True,
@@ -214,7 +225,7 @@ def ask_additional_packages_to_install(
 		case ResultType.Reset:
 			return []
 		case ResultType.Selection:
-			selected_pacakges: list[AvailablePackage] = result.get_values()
+			selected_pacakges: list[AvailablePackage | PackageGroup] = result.get_values()
 			return [pkg.name for pkg in selected_pacakges]
 
 
@@ -252,6 +263,8 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 			return 0
 		case ResultType.Selection:
 			downloads: int = int(result.text())
+		case _:
+			assert_never(result.type_)
 
 	pacman_conf_path = Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:

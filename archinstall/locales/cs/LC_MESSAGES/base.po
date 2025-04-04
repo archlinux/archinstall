@@ -1496,3 +1496,137 @@ msgstr "Uživatel"
 
 msgid "The specified configuration will be applied"
 msgstr "Bude použita zvolená konfigurace"
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Označit/Odznačit jako zaváděcí"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Dodatečné balíčky"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Přidat vlastní zrcadlo"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Změnit vlastní zrcadla"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Smazat vlastní zrcadla"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Jméno zrcadla"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Přidat vlastní zrcadlo"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Změnit vlastní zrcadla"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Smazat vlastní zrcadla"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Zvolit možnost podpisu"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Přidat vlastní zrcadlo"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Přidat vlastní zrcadlo"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Oblasti zrcadel"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Volitelné repozitáře"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Oblasti zrcadel"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Vlastní zrcadla"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Volitelné repozitáře"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Zvolit kontrolu podpisu"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Zvolte časovou zónu"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Zvolte způsob provedení"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""

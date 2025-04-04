@@ -10,23 +10,17 @@ import string
 import subprocess
 import sys
 import time
-import urllib.error
-import urllib.parse
 from collections.abc import Callable, Iterator
 from datetime import date, datetime
 from enum import Enum
 from pathlib import Path
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
-from typing import TYPE_CHECKING, Any, override
-from urllib.request import Request, urlopen
+from typing import Any, override
 
 from .exceptions import RequirementError, SysCallError
-from .output import debug, error, info
+from .output import debug, error
 from .storage import storage
-
-if TYPE_CHECKING:
-	from .installer import Installer
 
 # https://stackoverflow.com/a/43627833/929999
 _VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
@@ -480,56 +474,3 @@ def _pid_exists(pid: int) -> bool:
 		return any(subprocess.check_output(['ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
 		return False
-
-
-def run_custom_user_commands(commands: list[str], installation: Installer) -> None:
-	for index, command in enumerate(commands):
-		script_path = f"/var/tmp/user-command.{index}.sh"
-		chroot_path = f"{installation.target}/{script_path}"
-
-		info(f'Executing custom command "{command}" ...')
-		with open(chroot_path, "w") as user_script:
-			user_script.write(command)
-
-		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
-
-		os.unlink(chroot_path)
-
-
-def json_stream_to_structure(configuration_identifier: str, stream: str, target: dict[str, Any]) -> bool:
-	"""
-	Load a JSON encoded dictionary from a stream and merge it into an existing dictionary.
-	A stream can be a filepath, a URL or a raw JSON string.
-	Returns True if the operation succeeded, False otherwise.
-	+configuration_identifier is just a parameter to get meaningful, but not so long messages
-	"""
-
-	raw: str | None = None
-	# Try using the stream as a URL that should be grabbed
-	if urllib.parse.urlparse(stream).scheme:
-		try:
-			with urlopen(Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
-				raw = response.read()
-		except urllib.error.HTTPError as err:
-			error(f"Could not fetch JSON from {stream} as {configuration_identifier}: {err}")
-			return False
-
-	# Try using the stream as a filepath that should be read
-	if raw is None and (path := Path(stream)).exists():
-		try:
-			raw = path.read_text()
-		except Exception as err:
-			error(f"Could not read file {stream} as {configuration_identifier}: {err}")
-			return False
-
-	try:
-		# We use `or` to try the stream as raw JSON to be parsed
-		structure = json.loads(raw or stream)
-	except Exception as err:
-		error(f"{configuration_identifier} contains an invalid JSON format: {err}")
-		return False
-	if not isinstance(structure, dict):
-		error(f"{stream} passed as {configuration_identifier} is not a JSON encoded dictionary")
-		return False
-	target.update(structure)
-	return True

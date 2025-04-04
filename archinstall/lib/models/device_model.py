@@ -872,9 +872,6 @@ class PartitionModification:
 	partuuid: str | None = None
 	uuid: str | None = None
 
-	_efi_indicator_flags = (PartitionFlag.BOOT, PartitionFlag.ESP)
-	_boot_indicator_flags = (PartitionFlag.BOOT, PartitionFlag.XBOOTLDR)
-
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
@@ -952,25 +949,16 @@ class PartitionModification:
 		raise ValueError('Mountpoint is not specified')
 
 	def is_efi(self) -> bool:
-		return (
-			any(set(self.flags) & set(self._efi_indicator_flags))
-			and (
-				self.fs_type == FilesystemType.Fat12
-				or self.fs_type == FilesystemType.Fat16
-				or self.fs_type == FilesystemType.Fat32
-			)
-			and PartitionFlag.XBOOTLDR not in self.flags
-		)
+		return PartitionFlag.ESP in self.flags
 
 	def is_boot(self) -> bool:
-		"""
-		Returns True if any of the boot indicator flags are found in self.flags
-		"""
-		return any(set(self.flags) & set(self._boot_indicator_flags))
+		if self.mountpoint is not None:
+			return self.mountpoint == Path('/boot')
+		return False
 
 	def is_root(self) -> bool:
 		if self.mountpoint is not None:
-			return Path('/') == self.mountpoint
+			return self.mountpoint == Path('/')
 		else:
 			for subvol in self.btrfs_subvols:
 				if subvol.is_root():
@@ -979,10 +967,9 @@ class PartitionModification:
 		return False
 
 	def is_home(self) -> bool:
-		return (
-			self.mountpoint == Path('/home')
-			or PartitionFlag.LINUX_HOME in self.flags
-		)
+		if self.mountpoint is not None:
+			return self.mountpoint == Path('/home')
+		return False
 
 	def is_swap(self) -> bool:
 		return self.fs_type == FilesystemType.LinuxSwap
@@ -1377,26 +1364,12 @@ class DeviceModification:
 		self.partitions.append(partition)
 
 	def get_efi_partition(self) -> PartitionModification | None:
-		"""
-		Similar to get_boot_partition() but excludes XBOOTLDR partitions from it's candidates.
-		"""
 		filtered = filter(lambda x: x.is_efi() and x.mountpoint, self.partitions)
 		return next(filtered, None)
 
 	def get_boot_partition(self) -> PartitionModification | None:
-		"""
-		Returns the first partition marked as XBOOTLDR (PARTTYPE id of bc13c2ff-...) or Boot and has a mountpoint.
-		Only returns XBOOTLDR if separate EFI is detected using self.get_efi_partition()
-		Will return None if no suitable partition is found.
-		"""
-		if efi_partition := self.get_efi_partition():
-			filtered = filter(lambda x: x.is_boot() and x != efi_partition and x.mountpoint, self.partitions)
-			if boot_partition := next(filtered, None):
-				return boot_partition
-			return efi_partition
-		else:
-			filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
-			return next(filtered, None)
+		filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
+		return next(filtered, None)
 
 	def get_root_partition(self) -> PartitionModification | None:
 		filtered = filter(lambda x: x.is_root(), self.partitions)

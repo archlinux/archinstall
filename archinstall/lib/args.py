@@ -14,10 +14,10 @@ from pydantic.dataclasses import dataclass as p_dataclass
 from archinstall.lib.models.audio_configuration import AudioConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration
-from archinstall.lib.models.gen import Repository
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network_configuration import NetworkConfiguration
+from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.profile_model import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.output import error, warn
@@ -60,7 +60,7 @@ class ArchConfig:
 	audio_config: AudioConfiguration | None = None
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: ['linux'])
-	ntp: bool = False
+	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
 	swap: bool = True
@@ -178,8 +178,7 @@ class ArchConfig:
 		if kernels := args_config.get('kernels', []):
 			arch_config.kernels = kernels
 
-		if ntp := args_config.get('ntp', False):
-			arch_config.ntp = ntp
+		arch_config.ntp = args_config.get('ntp', True)
 
 		if packages := args_config.get('packages', []):
 			arch_config.packages = packages

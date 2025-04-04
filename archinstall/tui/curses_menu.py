@@ -7,6 +7,7 @@ import signal
 import sys
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable
+from curses.ascii import isprint
 from curses.textpad import Textbox
 from types import FrameType, TracebackType
 from typing import TYPE_CHECKING, Literal, override
@@ -45,7 +46,7 @@ class AbstractCurses(metaclass=ABCMeta):
 		pass
 
 	@abstractmethod
-	def kickoff(self, win: 'curses._CursesWindow') -> Result:
+	def kickoff(self, win: curses.window) -> Result:
 		pass
 
 	def clear_all(self) -> None:
@@ -122,7 +123,7 @@ class AbstractViewport:
 	def __init__(self) -> None:
 		pass
 
-	def add_str(self, screen: 'curses._CursesWindow', row: int, col: int, text: str, color: STYLE) -> None:
+	def add_str(self, screen: curses.window, row: int, col: int, text: str, color: STYLE) -> None:
 		try:
 			screen.addstr(row, col, text, Tui.t().get_color(color))
 		except curses.error:
@@ -317,13 +318,13 @@ class EditViewport(AbstractViewport):
 		self._edit_height = edit_height
 		self.x_start = x_start
 		self.y_start = y_start
-		self.process_key = process_key
+		self._process_key_cb = process_key
 		self._frame = frame
 		self._alignment = alignment
 		self._hide_input = hide_input
 
-		self._main_win: 'curses._CursesWindow | None' = None
-		self._edit_win: 'curses._CursesWindow | None' = None
+		self._main_win: curses.window | None = None
+		self._edit_win: curses.window | None = None
 		self._textbox: Textbox | None = None
 
 		self._init_wins()
@@ -390,7 +391,7 @@ class EditViewport(AbstractViewport):
 			self._textbox = Textbox(self._edit_win)
 			self._main_win.refresh()
 
-		self._textbox.edit(self.process_key)  # type: ignore[arg-type]
+		self._textbox.edit(self._process_key_cb)  # type: ignore[arg-type]
 
 
 class Viewport(AbstractViewport):
@@ -500,7 +501,10 @@ class EditMenu(AbstractCurses):
 		self._help_vp: Viewport | None = None
 		self._header_vp: Viewport | None = None
 		self._input_vp: EditViewport | None = None
-		self._error_vp: Viewport | None = None
+		self._info_vp: Viewport | None = None
+
+		self._set_default_info = True
+		self._only_ascii_text = ViewportEntry(str(_('Only ASCII characters are supported')), 0, 0, STYLE.NORMAL)
 
 		self._init_viewports()
 
@@ -532,7 +536,7 @@ class EditMenu(AbstractCurses):
 		)
 
 		y_offset += 3
-		self._error_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
+		self._info_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
 
 	def input(self) -> Result:
 		result = Tui.run(self)
@@ -553,12 +557,12 @@ class EditMenu(AbstractCurses):
 			self._header_vp.erase()
 		if self._input_vp:
 			self._input_vp.erase()
-		if self._error_vp:
-			self._error_vp.erase()
+		if self._info_vp:
+			self._info_vp.erase()
 
 	def _get_input_text(self) -> str | None:
 		assert self._input_vp
-		assert self._error_vp
+		assert self._info_vp
 
 		text = self._real_input
 
@@ -568,7 +572,8 @@ class EditMenu(AbstractCurses):
 			if (err := self._validator(text)) is not None:
 				self.clear_all()
 				entry = ViewportEntry(err, 0, 0, STYLE.ERROR)
-				self._error_vp.update([entry], 0)
+				self._info_vp.update([entry], 0)
+				self._set_default_info = False
 				self._real_input = ''
 				return None
 
@@ -583,10 +588,14 @@ class EditMenu(AbstractCurses):
 
 		if self._input_vp:
 			self._input_vp.update()
+
+			if self._set_default_info and self._info_vp:
+				self._info_vp.update([self._only_ascii_text], 0)
+
 			self._input_vp.edit(default_text=self._default_text)
 
 	@override
-	def kickoff(self, win: 'curses._CursesWindow') -> Result:
+	def kickoff(self, win: curses.window) -> Result:
 		try:
 			self._draw()
 		except KeyboardInterrupt:
@@ -648,14 +657,16 @@ class EditMenu(AbstractCurses):
 					if len(self._real_input) > 0:
 						self._real_input = self._real_input[:-1]
 				case _:
+					if isprint(key):
+						self._real_input += chr(key)
+						if self._hide_input:
+							key = 42
+		else:
+			try:
+				if isprint(key):
 					self._real_input += chr(key)
 					if self._hide_input:
 						key = 42
-		else:
-			try:
-				self._real_input += chr(key)
-				if self._hide_input:
-					key = 42
 			except Exception:
 				pass
 
@@ -766,7 +777,7 @@ class SelectMenu(AbstractCurses):
 		return result
 
 	@override
-	def kickoff(self, win: 'curses._CursesWindow') -> Result:
+	def kickoff(self, win: curses.window) -> Result:
 		self._draw()
 
 		while True:
@@ -1245,7 +1256,7 @@ class Tui:
 		self.stop()
 
 	@property
-	def screen(self) -> 'curses._CursesWindow':
+	def screen(self) -> curses.window:
 		return self._screen
 
 	@staticmethod

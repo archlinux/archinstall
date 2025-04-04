@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
@@ -244,6 +244,7 @@ class GlobalMenu(AbstractMenu):
 
 		return list(missing)
 
+	@override
 	def _is_config_valid(self) -> bool:
 		"""
 		Checks the validity of the current configuration.
@@ -426,21 +427,40 @@ class GlobalMenu(AbstractMenu):
 			shim if necessary.
 		"""
 		bootloader = self._item_group.find_by_key('bootloader').value
+		root_partition: PartitionModification | None = None
 		boot_partition: PartitionModification | None = None
+		efi_partition: PartitionModification | None = None
 
 		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
+				if root_partition := layout.get_root_partition():
+					break
+			for layout in disk_config.device_modifications:
 				if boot_partition := layout.get_boot_partition():
 					break
+			if SysInfo.has_uefi():
+				for layout in disk_config.device_modifications:
+					if efi_partition := layout.get_efi_partition():
+						break
 		else:
 			return "No disk layout selected"
+
+		if root_partition is None:
+			return "Root partition not found"
 
 		if boot_partition is None:
 			return "Boot partition not found"
 
+		if SysInfo.has_uefi():
+			if efi_partition is None:
+				return "EFI system partition (ESP) not found"
+
+			if efi_partition.fs_type not in [FilesystemType.Fat12, FilesystemType.Fat16, FilesystemType.Fat32]:
+				return "ESP must be formatted as a FAT filesystem"
+
 		if bootloader == Bootloader.Limine:
-			if boot_partition.fs_type != FilesystemType.Fat32:
-				return "Limine does not support booting from filesystems other than FAT32"
+			if boot_partition.fs_type not in [FilesystemType.Fat12, FilesystemType.Fat16, FilesystemType.Fat32]:
+				return "Limine does not support booting with a non-FAT boot partition"
 
 		return None
 

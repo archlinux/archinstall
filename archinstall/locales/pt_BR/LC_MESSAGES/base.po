@@ -1524,5 +1524,139 @@ msgstr "Usuário"
 msgid "The specified configuration will be applied"
 msgstr "A configuração especificada vai ser aplicada"
 
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marcar/desmarcar como inicializável"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Pacotes adicionais"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Adicionar mirror personalizado"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Alterar mirror personalizado"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Excluir mirror personalizado"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Região do mirror"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Adicionar mirror personalizado"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Alterar mirror personalizado"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Excluir mirror personalizado"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Selecione uma opção de assinatura"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Adicionar mirror personalizado"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Adicionar mirror personalizado"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Regiões dos mirrors"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Repositórios opcionais"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Regiões dos mirrors"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Mirrors personalizados"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Repositórios opcionais"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Selecione uma opção de verificação de assinatura"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Selecione um fuso horário"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Selecione um modo de execução"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

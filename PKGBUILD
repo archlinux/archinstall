@@ -4,7 +4,7 @@
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname=archinstall
-pkgver=3.0.2
+pkgver=3.0.4
 pkgrel=1
 pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)
@@ -41,6 +41,7 @@ makedepends=(
 )
 optdepends=(
   'python-systemd: Adds journald logging'
+  'materia-gtk-theme: theming for GTK-based desktop environments'
 )
 provides=(python-archinstall archinstall)
 conflicts=(python-archinstall archinstall-git)

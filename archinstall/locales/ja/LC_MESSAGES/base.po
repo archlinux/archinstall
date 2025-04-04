@@ -1504,3 +1504,120 @@ msgstr "ユーザー"
 
 msgid "The specified configuration will be applied"
 msgstr "指定された設定が適用されます"
+
+msgid "Wipe"
+msgstr "ワイプ"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "XBOOTLDR としてマーク/マーク解除"
+
+msgid "Loading packages..."
+msgstr "パッケージを読み込んでいます..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "追加でインストールする必要があるパッケージをリストから選択してください"
+
+msgid "Add a custom repository"
+msgstr "カスタムリポジトリを追加"
+
+msgid "Change custom repository"
+msgstr "カスタムリポジトリを変更"
+
+msgid "Delete custom repository"
+msgstr "カスタムリポジトリを削除"
+
+msgid "Repository name"
+msgstr "リポジトリの名前"
+
+msgid "Add a custom server"
+msgstr "カスタムサーバーを追加"
+
+msgid "Change custom server"
+msgstr "カスタムサーバーを変更"
+
+msgid "Delete custom server"
+msgstr "カスタムサーバーを削除"
+
+msgid "Server url"
+msgstr "サーバー URL"
+
+msgid "Select regions"
+msgstr "地域を選択"
+
+msgid "Add custom servers"
+msgstr "カスタムサーバーを追加"
+
+msgid "Add custom repository"
+msgstr "カスタムリポジトリを追加"
+
+msgid "Loading mirror regions..."
+msgstr "ミラーの地域を読み込んでいます..."
+
+msgid "Mirrors and repositories"
+msgstr "ミラーとリポジトリ"
+
+msgid "Selected mirror regions"
+msgstr "選択されたミラーの地域"
+
+msgid "Custom servers"
+msgstr "カスタムサーバー"
+
+msgid "Custom repositories"
+msgstr "カスタムリポジトリ"
+
+msgid "Only ASCII characters are supported"
+msgstr "ASCII 文字のみサポートされます"
+
+msgid "Show help"
+msgstr "ヘルプを表示"
+
+msgid "Exit help"
+msgstr "ヘルプを終了"
+
+msgid "Preview scroll up"
+msgstr "プレビューを上にスクロール"
+
+msgid "Preview scroll down"
+msgstr "プレビューを下にスクロール"
+
+msgid "Move up"
+msgstr "上に移動"
+
+msgid "Move down"
+msgstr "下に移動"
+
+msgid "Move right"
+msgstr "右に移動"
+
+msgid "Move left"
+msgstr "左に移動"
+
+msgid "Jump to entry"
+msgstr "エントリーへジャンプ"
+
+msgid "Skip selection (if available)"
+msgstr "選択をスキップ（利用可能な場合）"
+
+msgid "Reset selection (if available)"
+msgstr "選択をリセット（利用可能な場合）"
+
+msgid "Select on single select"
+msgstr "単一で選択"
+
+msgid "Select on multi select"
+msgstr "複数で選択"
+
+msgid "Reset"
+msgstr "リセット"
+
+msgid "Skip selection menu"
+msgstr "選択メニューをスキップ"
+
+msgid "Start search mode"
+msgstr "検索モードを開始"
+
+msgid "Exit search mode"
+msgstr "検索モードを終了"
+
+msgid "Package group:"
+msgstr "パッケージグループ:"
