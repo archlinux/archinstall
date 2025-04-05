@@ -232,11 +232,9 @@ def select_lvm_config(
 def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModification:
 	flags = [PartitionFlag.BOOT]
 	size = Size(1, Unit.GiB, sector_size)
+	start = Size(1, Unit.MiB, sector_size)
 	if using_gpt:
-		start = Size(1, Unit.MiB, sector_size)
 		flags.append(PartitionFlag.ESP)
-	else:
-		start = Size(3, Unit.MiB, sector_size)
 
 	# boot partition
 	return PartitionModification(
@@ -362,15 +360,6 @@ def suggest_single_disk_layout(
 	available_space = available_space.align()
 
 	# Used for reference: https://wiki.archlinux.org/title/partitioning
-	# 2 MiB is unallocated for GRUB on BIOS. Potentially unneeded for other bootloaders?
-
-	# TODO: On BIOS, /boot partition is only needed if the drive will
-	# be encrypted, otherwise it is not recommended. We should probably
-	# add a check for whether the drive will be encrypted or not.
-
-	# Increase the UEFI partition if UEFI is detected.
-	# Also re-align the start to 1MiB since we don't need the first sectors
-	# like we do in MBR layouts where the boot loader is installed traditionally.
 
 	boot_partition = _boot_partition(sector_size, using_gpt)
 	device_modification.add_partition(boot_partition)
