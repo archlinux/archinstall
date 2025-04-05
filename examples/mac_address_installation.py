@@ -1,7 +1,7 @@
 import time
 
 from archinstall.lib.output import info
-from archinstall.lib.profile import profile_handler
+from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.storage import storage
 from archinstall.tui import Tui
 

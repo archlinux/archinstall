@@ -13,7 +13,7 @@ from archinstall.lib.models.mirrors import CustomRepository, CustomServer, Mirro
 from archinstall.lib.models.network_configuration import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.profile_model import ProfileConfiguration
-from archinstall.lib.models.users import User
+from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import translation_handler
 
@@ -189,22 +189,29 @@ def test_config_file_parsing(
 		parallel_downloads=66,
 		swap=False,
 		timezone='UTC',
-		users=[User(username='user_name', password='user_pwd', sudo=True)],
+		users=[
+			User(
+				username='user_name',
+				password=Password(enc_password='password_hash'),
+				sudo=True,
+				groups=['wheel']
+			)
+		],
 		disk_encryption=None,
 		services=['service_1', 'service_2'],
-		root_password='super_pwd',
+		root_enc_password=Password(enc_password='password_hash'),
 		custom_commands=["echo 'Hello, World!'"]
 	)
 
 
-def test_mirror_backwards_config_file_parsing(
+def test_deprecated_mirror_config_parsing(
 	monkeypatch: MonkeyPatch,
-	mirror_backwards_config: Path,
+	deprecated_mirror_config: Path,
 ) -> None:
 	monkeypatch.setattr('sys.argv', [
 		'archinstall',
 		'--config',
-		str(mirror_backwards_config),
+		str(deprecated_mirror_config),
 	])
 
 	handler = ArchConfigHandler()
@@ -228,3 +235,28 @@ def test_mirror_backwards_config_file_parsing(
 			)
 		]
 	)
+
+
+def test_deprecated_creds_config_parsing(
+	monkeypatch: MonkeyPatch,
+	deprecated_creds_config: Path,
+) -> None:
+	monkeypatch.setattr('sys.argv', [
+		'archinstall',
+		'--creds',
+		str(deprecated_creds_config),
+	])
+
+	handler = ArchConfigHandler()
+	arch_config = handler.config
+
+	assert arch_config.root_enc_password == Password(plaintext='rootPwd')
+
+	assert arch_config.users == [
+		User(
+			username='user_name',
+			password=Password(plaintext='userPwd'),
+			sudo=True,
+			groups=['wheel']
+		)
+	]

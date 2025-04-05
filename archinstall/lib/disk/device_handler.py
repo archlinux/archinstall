@@ -38,6 +38,7 @@ from ..models.device_model import (
 	_DeviceInfo,
 	_PartitionInfo,
 )
+from ..models.users import Password
 from ..output import debug, error, info, log
 from ..utils.util import is_subpath
 from .utils import (
@@ -307,7 +308,7 @@ class DeviceHandler:
 		self,
 		dev_path: Path,
 		mapper_name: str | None,
-		enc_password: str,
+		enc_password: Password | None,
 		lock_after_create: bool = True
 	) -> Luks2:
 		luks_handler = Luks2(
@@ -338,6 +339,9 @@ class DeviceHandler:
 		fs_type: FilesystemType,
 		enc_conf: DiskEncryption
 	) -> None:
+		if not enc_conf.encryption_password:
+			raise ValueError('No encryption password provided')
+
 		luks_handler = Luks2(
 			dev_path,
 			mapper_name=mapper_name,
@@ -678,7 +682,12 @@ class DeviceHandler:
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
 			luks_handler.lock()
 
-	def unlock_luks2_dev(self, dev_path: Path, mapper_name: str, enc_password: str) -> Luks2:
+	def unlock_luks2_dev(
+		self,
+		dev_path: Path,
+		mapper_name: str,
+		enc_password: Password | None
+	) -> Luks2:
 		luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
 
 		if not luks_handler.is_unlocked():

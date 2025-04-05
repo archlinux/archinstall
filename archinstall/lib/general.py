@@ -474,8 +474,3 @@ def _pid_exists(pid: int) -> bool:
 		return any(subprocess.check_output(['ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
 		return False
-
-
-def secret(x: str) -> str:
-	""" return * with len equal to to the input string """
-	return '*' * len(x)

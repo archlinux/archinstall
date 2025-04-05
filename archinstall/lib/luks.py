@@ -9,6 +9,7 @@ from archinstall.lib.disk.utils import get_lsblk_info
 
 from .exceptions import DiskError, SysCallError
 from .general import SysCommand, SysCommandWorker, generate_password, run
+from .models.users import Password
 from .output import debug, info
 
 
@@ -16,7 +17,7 @@ from .output import debug, info
 class Luks2:
 	luks_dev_path: Path
 	mapper_name: str | None = None
-	password: str | None = None
+	password: Password | None = None
 	key_file: Path | None = None
 	auto_unmount: bool = False
 
@@ -57,7 +58,7 @@ class Luks2:
 		if isinstance(self.password, bytes):
 			return self.password
 		else:
-			return bytes(self.password, 'UTF-8')
+			return bytes(self.password.plaintext, 'UTF-8')
 
 	def _get_passphrase_args(
 		self,

@@ -247,7 +247,7 @@ Below is an example of how to set the root password and below that are descripti
 .. code-block:: json
 
     {
-        "!root-password" : "SecretSanta2022"
+        "root_enc_password" : "SecretSanta2022"
     }
 
 .. list-table:: ``--creds`` options
@@ -262,16 +262,16 @@ Below is an example of how to set the root password and below that are descripti
      - ``str``
      - Password to encrypt disk, not encrypted if password not provided
      - No
-   * - ``!root-password``
+   * - ``root_enc_password``
      - ``str``
      - The root account password
      - No
-   * - ``!users``
+   * - ``users``
      - .. code-block:: json
 
           {
               "username": "<USERNAME>",
-              "!password": "<PASSWORD>",
+              "enc_password": "<PASSWORD_HASH>",
               "sudo": false
           }
      - List of regular user credentials, see configuration for reference
@@ -280,11 +280,9 @@ Below is an example of how to set the root password and below that are descripti
 
 .. note::
 
-   ``!users`` is optional only if ``!root-password`` was set. ``!users`` will be enforced otherwise and the minimum amount of users with sudo privileges required will be set to 1.
+   ``users`` is optional only if ``root_enc_password`` was set. ``users`` will be enforced otherwise and the minimum amount of users with sudo privileges required will be set to 1.
 
 .. note::
-
-   The keys start with ``!`` because internal log functions will mask any keys starting with exclamation marks from logs and unrestricted configurations.
 
 .. _scripts: https://github.com/archlinux/archinstall/tree/master/archinstall/scripts
 .. _Guided Installer: https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py
