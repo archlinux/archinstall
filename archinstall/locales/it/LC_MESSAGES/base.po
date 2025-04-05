@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2025-02-18\n"
-"PO-Revision-Date: 2025-03-17 20:01+0100\n"
+"PO-Revision-Date: 2025-04-05 00:02+0200\n"
 "Last-Translator: Van Matten\n"
 "Language-Team: \n"
 "Language: it\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "2nd-Last-Translator: Alessio Cuccovillo <alessio.cuccovillo.dev@gmail.com>\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Un file di log è stato creato qui: {} {}"
@@ -122,7 +122,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleziona per indice dove montare quale partizione"
+"Seleziona per indice quale partizione montare dove"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr " * I punti di montaggio della partizione sono relativi all'interno dell'installazione, per esempio l'avvio sarebbe /boot."
@@ -821,7 +821,7 @@ msgid "Parallel Downloads"
 msgstr "Download paralleli"
 
 msgid "ESC to skip"
-msgstr "Usa ESC per saltare"
+msgstr "ESC per saltare"
 
 msgid "CTRL+C to reset"
 msgstr "CTRL+C per resettare"
@@ -872,7 +872,7 @@ msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Capacità minima per la partizione Arch Linux: {}GiB"
 
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "Questo è un elenco di profili preprogrammati, che potrebbero semplificare l'installazione di elementi come gli ambienti desktop"
+msgstr "Questo è un elenco di profili pre-programmati, che potrebbero semplificare l'installazione di elementi come gli ambienti desktop"
 
 msgid "Current profile selection"
 msgstr "Selezione profilo corrente"
@@ -1516,135 +1516,116 @@ msgid "The specified configuration will be applied"
 msgstr "La configurazione specificata verrà applicata"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Cancella"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Contrassegna/Deseleziona come avviabile"
+msgstr "Contrassegna/Deseleziona come XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "Pacchetti aggiuntivi"
+msgstr "Caricamento pacchetti in corso..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Seleziona dalla lista sotto i pacchetti da installare"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Aggiungi un mirror personalizzato"
+msgstr "Aggiungi una repository personalizzata"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Cambia mirror personalizzato"
+msgstr "Cambia repository personalizzata"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Elimina mirror personalizzato"
+msgstr "Elimina repository personalizzata"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Nome mirror"
+msgstr "Nome repository"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "Aggiungi un mirror personalizzato"
+msgstr "Aggiungi un server personalizzato"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "Cambia mirror personalizzato"
+msgstr "Cambia server personalizzato"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "Elimina mirror personalizzato"
+msgstr "Elimina server personalizzato"
 
 msgid "Server url"
-msgstr ""
+msgstr "URL server"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "Seleziona opzioni di firma"
+msgstr "Seleziona regioni"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "Aggiungi un mirror personalizzato"
+msgstr "Aggiungi server personalizzati"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Aggiungi un mirror personalizzato"
+msgstr "Aggiungi repository personalizzate"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "Regione dei mirror"
+msgstr "Caricamento regioni dei mirror in corso..."
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Repository opzionali"
+msgstr "Mirror e repository"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "Regione dei mirror"
+msgstr "Regioni dei mirror selezionate"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "Mirror personalizzati"
+msgstr "Server personalizzati"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "Repository opzionali"
+msgstr "Repository personalizzate"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Sono supportati solo caratteri ASCII"
 
 msgid "Show help"
-msgstr ""
+msgstr "Mostra aiuto"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Chiudi aiuto"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Anteprima scorrimento vero l'alto"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Anteprima scorrimento vero il basso"
 
 msgid "Move up"
-msgstr ""
+msgstr "Muovi su"
 
 msgid "Move down"
-msgstr ""
+msgstr "Muovi giù"
 
 msgid "Move right"
-msgstr ""
+msgstr "Muovi a destra"
 
 msgid "Move left"
-msgstr ""
+msgstr "Muovi a sinistra"
 
+#, fuzzy
 msgid "Jump to entry"
-msgstr ""
+msgstr "Vai al successivo"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Salta selezione (se disponibile)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Ripristina selezione (se disponibile)"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "Seleziona controllo della firma"
+msgstr "Seleziona con selezione singola"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "Seleziona un fuso orario"
+msgstr "Seleziona con selezione multipla"
 
 msgid "Reset"
-msgstr ""
+msgstr "Ripristina"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "Seleziona una modalità d’esecuzione"
+msgstr "Salta menu di selezione"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Avvia modalità ricerca"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Chiudi modalità ricerca"
