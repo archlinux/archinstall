@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class BspwmProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Bspwm', ProfileType.WindowMgr, description='')
+		super().__init__('Bspwm', ProfileType.WindowMgr)
 
 	@property
 	@override

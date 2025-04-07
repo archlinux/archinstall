@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class CinnamonProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Cinnamon', ProfileType.DesktopEnv, description='')
+		super().__init__('Cinnamon', ProfileType.DesktopEnv)
 
 	@property
 	@override

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class TailoredProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('52-54-00-12-34-56', ProfileType.Tailored, description='')
+		super().__init__('52-54-00-12-34-56', ProfileType.Tailored)
 
 	@property
 	@override

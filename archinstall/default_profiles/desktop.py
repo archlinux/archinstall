@@ -8,12 +8,7 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.types import FrameProperties, PreviewStyle, ResultType
 
 if TYPE_CHECKING:
-	from collections.abc import Callable
-
 	from archinstall.lib.installer import Installer
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class DesktopProfile(Profile):
@@ -21,7 +16,6 @@ class DesktopProfile(Profile):
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
-			description=str(_('Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway')),
 			current_selection=current_selection,
 			support_greeter=True
 		)

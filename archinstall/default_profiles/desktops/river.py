@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class RiverProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('River', ProfileType.WindowMgr, description='')
+		super().__init__('River', ProfileType.WindowMgr)
 
 	@property
 	@override

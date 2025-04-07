@@ -20,7 +20,6 @@ class NiriProfile(XorgProfile):
 		super().__init__(
 			'Niri',
 			ProfileType.WindowMgr,
-			description=''
 		)
 
 		self.custom_settings = {'seat_access': None}

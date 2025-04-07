@@ -20,7 +20,6 @@ class SwayProfile(XorgProfile):
 		super().__init__(
 			'Sway',
 			ProfileType.WindowMgr,
-			description=''
 		)
 
 		self.custom_settings = {'seat_access': None}

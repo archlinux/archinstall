@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class XmonadProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Xmonad', ProfileType.WindowMgr, description='')
+		super().__init__('Xmonad', ProfileType.WindowMgr)
 
 	@property
 	@override
