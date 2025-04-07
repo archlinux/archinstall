@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 class HyprlandProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Hyprland', ProfileType.DesktopEnv, description='')
+		super().__init__('Hyprland', ProfileType.DesktopEnv)
 
 		self.custom_settings = {'seat_access': None}
 
@@ -35,7 +35,7 @@ class HyprlandProfile(XorgProfile):
 			"qt6-wayland",
 			"polkit-kde-agent",
 			"grim",
-			"slurp"
+			"slurp",
 		]
 
 	@property

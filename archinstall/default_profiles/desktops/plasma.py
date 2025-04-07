@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class PlasmaProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('KDE Plasma', ProfileType.DesktopEnv, description='')
+		super().__init__('KDE Plasma', ProfileType.DesktopEnv)
 
 	@property
 	@override

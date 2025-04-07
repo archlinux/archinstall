@@ -213,7 +213,12 @@ class ArchConfigHandler:
 		self._args: Arguments = self._parse_args()
 
 		config = self._parse_config()
-		self._config = ArchConfig.from_config(config)
+
+		try:
+			self._config = ArchConfig.from_config(config)
+		except ValueError as err:
+			warn(str(err))
+			exit(1)
 
 	@property
 	def config(self) -> ArchConfig:

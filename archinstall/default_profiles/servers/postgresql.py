@@ -11,7 +11,6 @@ class PostgresqlProfile(Profile):
 		super().__init__(
 			'Postgresql',
 			ProfileType.ServerType,
-			''
 		)
 
 	@property

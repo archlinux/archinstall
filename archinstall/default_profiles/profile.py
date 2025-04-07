@@ -54,7 +54,6 @@ class Profile:
 		self,
 		name: str,
 		profile_type: ProfileType,
-		description: str = '',
 		current_selection: list[Profile] = [],
 		packages: list[str] = [],
 		services: list[str] = [],
@@ -63,7 +62,6 @@ class Profile:
 		advanced: bool = False
 	) -> None:
 		self.name = name
-		self.description = description
 		self.profile_type = profile_type
 		self.custom_settings: dict[str, str | None] = {}
 		self.advanced = advanced
