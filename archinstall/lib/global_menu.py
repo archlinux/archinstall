@@ -23,7 +23,7 @@ from .interactions.manage_users_conf import ask_for_additional_users
 from .interactions.network_menu import ask_to_configure_network
 from .interactions.system_conf import ask_for_bootloader, ask_for_swap, ask_for_uki, select_kernel
 from .locale.locale_menu import LocaleMenu
-from .menu.abstract_menu import AbstractMenu
+from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
 from .mirrors import MirrorMenu
 from .models.audio_configuration import AudioConfiguration
 from .models.bootloader import Bootloader
@@ -194,17 +194,17 @@ class GlobalMenu(AbstractMenu):
 			MenuItem(
 				text=str(_('Save configuration')),
 				action=lambda x: self._safe_config(),
-				key='__config__'
+				key=f'{CONFIG_KEY}_save'
 			),
 			MenuItem(
 				text=str(_('Install')),
 				preview_action=self._prev_install_invalid_config,
-				key='__config__'
+				key=f'{CONFIG_KEY}_install'
 			),
 			MenuItem(
 				text=str(_('Abort')),
 				action=lambda x: exit(1),
-				key='__config__'
+				key=f'{CONFIG_KEY}_abort'
 			)
 		]
 
@@ -259,11 +259,11 @@ class GlobalMenu(AbstractMenu):
 		language = select_archinstall_language(translation_handler.translated_languages, preset)
 		translation_handler.activate(language)
 
-		self._upate_lang_text()
+		self._update_lang_text()
 
 		return language
 
-	def _upate_lang_text(self) -> None:
+	def _update_lang_text(self) -> None:
 		"""
 		The options for the global menu are generated with a static text;
 		each entry of the menu needs to be updated with the new translation
