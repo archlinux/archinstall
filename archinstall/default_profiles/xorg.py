@@ -15,13 +15,11 @@ class XorgProfile(Profile):
 		self,
 		name: str = 'Xorg',
 		profile_type: ProfileType = ProfileType.Xorg,
-		description: str = str(_('Installs a minimal system as well as xorg and graphics drivers.')),
 		advanced: bool = False
 	):
 		super().__init__(
 			name,
 			profile_type,
-			description=description,
 			support_gfx_driver=True,
 			advanced=advanced
 		)

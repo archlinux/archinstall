@@ -9,7 +9,6 @@ class WayfireProfile(XorgProfile):
 		super().__init__(
 			"Wayfire",
 			ProfileType.WindowMgr,
-			description="Wayfire is a 3D Wayland compositor",
 		)
 
 	@property

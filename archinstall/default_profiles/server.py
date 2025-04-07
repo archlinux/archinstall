@@ -8,12 +8,7 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.types import FrameProperties, PreviewStyle, ResultType
 
 if TYPE_CHECKING:
-	from collections.abc import Callable
-
 	from archinstall.lib.installer import Installer
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class ServerProfile(Profile):
@@ -21,7 +16,6 @@ class ServerProfile(Profile):
 		super().__init__(
 			'Server',
 			ProfileType.Server,
-			description=str(_('Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb')),
 			current_selection=current_value
 		)
 

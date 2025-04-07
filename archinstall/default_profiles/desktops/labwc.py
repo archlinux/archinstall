@@ -20,7 +20,6 @@ class LabwcProfile(XorgProfile):
 		super().__init__(
 			'Labwc',
 			ProfileType.WindowMgr,
-			description=''
 		)
 
 		self.custom_settings = {'seat_access': None}
