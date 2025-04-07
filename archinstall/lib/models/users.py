@@ -1,10 +1,8 @@
-import ctypes
-import ctypes.util
-import os
 from dataclasses import dataclass, field
 from enum import Enum
-from functools import cached_property
 from typing import TYPE_CHECKING, NotRequired, TypedDict, override
+
+from ..crypt import crypt_yescrypt
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -126,7 +124,7 @@ class Password:
 		enc_password: str | None = None
 	):
 		if plaintext:
-			enc_password = self._gen_yescrypt_hash(plaintext)
+			enc_password = crypt_yescrypt(plaintext)
 
 		if not plaintext and not enc_password:
 			raise ValueError('Either plaintext or enc_password must be provided')
@@ -141,7 +139,7 @@ class Password:
 	@plaintext.setter
 	def plaintext(self, value: str):
 		self._plaintext = value
-		self.enc_password = self._gen_yescrypt_hash(value)
+		self.enc_password = crypt_yescrypt(value)
 
 	@override
 	def __eq__(self, other: object) -> bool:
@@ -158,39 +156,6 @@ class Password:
 			return '*' * len(self._plaintext)
 		else:
 			return '*' * 8
-
-	@cached_property
-	def _libcrypt(self):
-		libc = ctypes.CDLL("libcrypt.so")
-
-		libc.crypt.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
-		libc.crypt.restype = ctypes.c_char_p
-
-		libc.crypt_gensalt.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_void_p, ctypes.c_size_t]
-		libc.crypt_gensalt.restype = ctypes.c_char_p
-
-		return libc
-
-	def _gen_yescrypt_salt(self) -> bytes:
-		salt_prefix = b'$y$'
-		rounds = 9
-		entropy = os.urandom(64)
-
-		salt = self._libcrypt.crypt_gensalt(salt_prefix, rounds, entropy, 64)
-		return salt
-
-	def _gen_yescrypt_hash(self, plaintext: str) -> str:
-		"""
-		Generation of the yescrypt hash was used from mkpasswd included
-		in the whois package which seems to be one of the few tools
-		that actually provides the functionality
-		https://github.com/rfc1036/whois/blob/next/mkpasswd.c
-		"""
-		enc_plaintext = plaintext.encode('UTF-8')
-		salt = self._gen_yescrypt_salt()
-
-		yescrypt_hash = self._libcrypt.crypt(enc_plaintext, salt)
-		return yescrypt_hash.decode('UTF-8')
 
 
 @dataclass
