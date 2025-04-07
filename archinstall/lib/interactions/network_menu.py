@@ -126,7 +126,7 @@ class ManualNetworkConfig(ListManager):
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
 
-		header = str(_('Select which mode to configure for "{}" or skip to use default mode "{}"').format(iface_name, default_mode)) + '\n'
+		header = str(_('Select which mode to configure for "{}"').format(iface_name)) + '\n'
 		items = [MenuItem(m, value=m) for m in modes]
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_default_by_value(default_mode)
