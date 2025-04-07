@@ -1711,3 +1711,32 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Marchează/Demarchează ca bootabil"
+
+msgid "Package group:"
+msgstr ""

@@ -1693,3 +1693,32 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "ஸ்வேக்கு உங்கள் இருக்கைக்கான அணுகல் தேவை (வன்பொருள் சாதனங்களின் சேகரிப்பு அதாவது விசைப்பலகை, சுட்டி போன்றவை)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"உங்கள் வன்பொருளுக்கான அணுகலை வழங்குவதற்கான விருப்பத்தைத் தேர்வுசெய்யவும்"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "ஸ்வேக்கு உங்கள் இருக்கைக்கான அணுகல் தேவை (வன்பொருள் சாதனங்களின் சேகரிப்பு அதாவது விசைப்பலகை, சுட்டி போன்றவை)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"உங்கள் வன்பொருளுக்கான அணுகலை வழங்குவதற்கான விருப்பத்தைத் தேர்வுசெய்யவும்"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "துவக்கக்கூடியதாகக் குறி/குறிநீக்கு"
+
+msgid "Package group:"
+msgstr ""

@@ -1619,5 +1619,25 @@ msgstr "検索モードを開始"
 msgid "Exit search mode"
 msgstr "検索モードを終了"
 
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Sway にハードウェアへのアクセスを許可するオプションを選択"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Sway にハードウェアへのアクセスを許可するオプションを選択"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "ブータブルとしてマーク/マーク解除"
+
 msgid "Package group:"
 msgstr "パッケージグループ:"

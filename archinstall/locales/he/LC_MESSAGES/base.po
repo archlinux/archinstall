@@ -1646,3 +1646,26 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "‫Sway צריך גישה למושב (אוסף של התקני חומרה כמו למשל מקלדת, עכבר וכו׳) שלך"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "נא לבחור אפשרות לתת ל־Sway גישה לחומרה שלך"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "‫Sway צריך גישה למושב (אוסף של התקני חומרה כמו למשל מקלדת, עכבר וכו׳) שלך"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "נא לבחור אפשרות לתת ל־Sway גישה לחומרה שלך"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "סימון/ביטול סימון כזמין לטעינה"
+
+msgid "Package group:"
+msgstr ""

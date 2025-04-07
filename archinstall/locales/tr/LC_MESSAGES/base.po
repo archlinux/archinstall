@@ -1655,6 +1655,29 @@ msgstr ""
 msgid "Exit search mode"
 msgstr ""
 
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway'in seat'e erişmesi gerekir (klavye, fare vb. donanım aygıtlarının tanınması)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Sway'e donanımınıza erişim izni vermek için bir seçenek belirleyin"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway'in seat'e erişmesi gerekir (klavye, fare vb. donanım aygıtlarının tanınması)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Sway'e donanımınıza erişim izni vermek için bir seçenek belirleyin"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Önyüklenebilir olarak işaretle/işareti kaldır"
+
+msgid "Package group:"
+msgstr ""
+
 #~ msgid "Desktop"
 #~ msgstr "Masaüstü"
 

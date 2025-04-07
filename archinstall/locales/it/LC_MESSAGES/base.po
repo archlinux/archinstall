@@ -1629,3 +1629,26 @@ msgstr "Avvia modalità ricerca"
 
 msgid "Exit search mode"
 msgstr "Chiudi modalità ricerca"
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway ha bisogno dell’accesso al tuo posto (insieme di dispositivi hardware, ad esempio tastiera, mouse, ecc.)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Scegli un’opzione per concedere a Sway l’accesso al tuo hardware"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway ha bisogno dell’accesso al tuo posto (insieme di dispositivi hardware, ad esempio tastiera, mouse, ecc.)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Scegli un’opzione per concedere a Sway l’accesso al tuo hardware"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Contrassegna/Deseleziona come avviabile"
+
+msgid "Package group:"
+msgstr ""

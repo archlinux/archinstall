@@ -1691,3 +1691,32 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway-ს თქვენს სამუშაო ადგილთან (აპარატურასთან, როგორიცაა კლავიატურა, თაგუნა და ა.შ>) წვდომა სჭირდება"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Sway-ს თქვენს აპარატურასთან წვდომა მისცეთ"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway-ს თქვენს სამუშაო ადგილთან (აპარატურასთან, როგორიცაა კლავიატურა, თაგუნა და ა.შ>) წვდომა სჭირდება"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Sway-ს თქვენს აპარატურასთან წვდომა მისცეთ"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "ჩატვირთვადი ალმის დაყენება/მოხსნა"
+
+msgid "Package group:"
+msgstr ""
