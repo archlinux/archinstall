@@ -19,8 +19,8 @@ depends=(
   'e2fsprogs'
   'glibc'
   'kbd'
-  libcrypt.so
-  libxcrypt
+  'libcrypt.so'
+  'libxcrypt'
   'pciutils'
   'procps-ng'
   'python'
