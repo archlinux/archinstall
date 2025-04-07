@@ -27,21 +27,23 @@ if TYPE_CHECKING:
 # project to mark strings as translatable with _('translate me')
 DeferredTranslation.install()
 
-# Log various information about hardware before starting the installation. This might assist in troubleshooting
-debug(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}")
-debug(f"Processor model detected: {SysInfo.cpu_model()}")
-debug(f"Memory statistics: {SysInfo.mem_available()} available out of {SysInfo.mem_total()} total installed")
-debug(f"Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_vm()}")
-debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
-
-# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-debug(f"Disk states before installing:\n{disk_layouts()}")
-
 
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles_bck and other things.
 def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
 	plugins[f.__name__] = f
+
+
+def _log_sys_info() -> None:
+	# Log various information about hardware before starting the installation. This might assist in troubleshooting
+	debug(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}")
+	debug(f"Processor model detected: {SysInfo.cpu_model()}")
+	debug(f"Memory statistics: {SysInfo.mem_available()} available out of {SysInfo.mem_total()} total installed")
+	debug(f"Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_vm()}")
+	debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
+
+	# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
+	debug(f"Disk states before installing:\n{disk_layouts()}")
 
 
 def _fetch_arch_db() -> None:
@@ -81,6 +83,8 @@ def main() -> int:
 	if os.getuid() != 0:
 		print(_("Archinstall requires root privileges to run. See --help for more."))
 		return 1
+
+	_log_sys_info()
 
 	if not arch_config_handler.args.offline:
 		_fetch_arch_db()
