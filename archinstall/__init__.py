@@ -38,15 +38,6 @@ debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
 debug(f"Disk states before installing:\n{disk_layouts()}")
 
 
-if 'sphinx' not in sys.modules and 'pylint' not in sys.modules:
-	if '--help' in sys.argv or '-h' in sys.argv:
-		arch_config_handler.print_help()
-		exit(0)
-	if os.getuid() != 0:
-		print(_("Archinstall requires root privileges to run. See --help for more."))
-		exit(1)
-
-
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles_bck and other things.
 def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
@@ -77,12 +68,20 @@ def _check_new_version() -> None:
 		time.sleep(3)
 
 
-def main() -> None:
+def main() -> int:
 	"""
 	This can either be run as the compiled and installed application: python setup.py install
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
+	if '--help' in sys.argv or '-h' in sys.argv:
+		arch_config_handler.print_help()
+		return 0
+
+	if os.getuid() != 0:
+		print(_("Archinstall requires root privileges to run. See --help for more."))
+		return 1
+
 	if not arch_config_handler.args.offline:
 		_fetch_arch_db()
 
@@ -95,12 +94,15 @@ def main() -> None:
 	# by loading the module we'll automatically run the script
 	importlib.import_module(mod_name)
 
+	return 0
+
 
 def run_as_a_module() -> None:
+	rc = 0
 	exc = None
 
 	try:
-		main()
+		rc = main()
 	except Exception as e:
 		exc = e
 	finally:
@@ -118,7 +120,9 @@ def run_as_a_module() -> None:
 			)
 
 			warn(text)
-			exit(1)
+			rc = 1
+
+		exit(rc)
 
 
 __all__ = [
