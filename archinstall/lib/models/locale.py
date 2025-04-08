@@ -21,8 +21,8 @@ class LocaleConfiguration:
 	def default() -> 'LocaleConfiguration':
 		layout = get_kb_layout()
 		if layout == "":
-			return LocaleConfiguration('us', 'en_US', 'UTF-8')
-		return LocaleConfiguration(layout, 'en_US', 'UTF-8')
+			layout = 'us'
+		return LocaleConfiguration(layout, 'en_US.UTF-8', 'UTF-8')
 
 	def json(self) -> dict[str, str]:
 		return {
