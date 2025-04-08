@@ -81,9 +81,10 @@ class AbstractMenu:
 		is_config_key = key == CONFIG_KEY
 
 		for item in self._menu_item_group.items:
-			if item.key == key or (is_config_key and key.startswith(CONFIG_KEY)):
-				item.enabled = enabled
-				found = True
+			if item.key:
+				if item.key == key or (is_config_key and item.key.startswith(CONFIG_KEY)):
+					item.enabled = enabled
+					found = True
 
 		if not found:
 			raise ValueError(f'No selector found: {key}')
