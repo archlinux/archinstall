@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2025-02-18\n"
-"PO-Revision-Date: 2025-04-05 00:02+0200\n"
+"PO-Revision-Date: 2025-04-08 22:25+0200\n"
 "Last-Translator: Van Matten\n"
 "Language-Team: \n"
 "Language: it\n"
@@ -650,7 +650,7 @@ msgstr "La password che stai utilizzando sembra essere debole, sei sicuro di vol
 
 #, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Fornisce una selezione di ambienti desktop e gestori di finestre tile, per esempio GNOME, KDE, Sway"
+msgstr "Fornisce una selezione di ambienti desktop e gestori di finestre tile, per esempio gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
 msgstr "Seleziona l'ambiente desktop desiderato"
@@ -1319,7 +1319,6 @@ msgstr "Premi CTRL+H per aiuto"
 msgid "Choose an option to give Sway access to your hardware"
 msgstr "Scegli un’opzione per concedere a Sway l’accesso al tuo hardware"
 
-#, fuzzy
 msgid "Seat access"
 msgstr "Accesso al posto"
 
@@ -1630,25 +1629,21 @@ msgstr "Avvia modalità ricerca"
 msgid "Exit search mode"
 msgstr "Chiudi modalità ricerca"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway ha bisogno dell’accesso al tuo posto (insieme di dispositivi hardware, ad esempio tastiera, mouse, ecc.)"
+msgstr "labwc ha bisogno dell’accesso al tuo posto (insieme di dispositivi hardware, ad esempio tastiera, mouse, ecc.)"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Scegli un’opzione per concedere a Sway l’accesso al tuo hardware"
+msgstr "Scegli un’opzione per concedere a labwc l’accesso al tuo hardware"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway ha bisogno dell’accesso al tuo posto (insieme di dispositivi hardware, ad esempio tastiera, mouse, ecc.)"
+msgstr "niri ha bisogno dell’accesso al tuo posto (insieme di dispositivi hardware, ad esempio tastiera, mouse, ecc.)"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Scegli un’opzione per concedere a Sway l’accesso al tuo hardware"
+msgstr "Scegli un’opzione per concedere a niri l’accesso al tuo hardware"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Contrassegna/Deseleziona come ESP"
 
 #, fuzzy
-msgid "Mark/Unmark as ESP"
-msgstr "Contrassegna/Deseleziona come avviabile"
-
 msgid "Package group:"
-msgstr ""
+msgstr "Gruppo pacchetto:"
