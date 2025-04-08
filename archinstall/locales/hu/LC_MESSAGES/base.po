@@ -1621,25 +1621,20 @@ msgstr "Keresési mód indítása"
 msgid "Exit search mode"
 msgstr "Kilépés a keresési módból"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "A Swaynek hozzáférésre van szüksége (olyan hardvereszközök gyűjteményéhez mint például a billentyűzet, az egér, stb.)"
+msgstr "A Labwc-nek hozzáférésre van szüksége az Ön munkamenetéhez (olyan hardvereszközök gyűjteményéhez, mint például a billentyűzet, az egér, stb.)"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Sway számára a hardverekhez való hozzáférést"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Labwc számára a hardverekhez való hozzáférést"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "A Swaynek hozzáférésre van szüksége (olyan hardvereszközök gyűjteményéhez mint például a billentyűzet, az egér, stb.)"
+msgstr "A Nirinek hozzáférésre van szüksége az Ön munkamenetéhez (olyan hardvereszközök gyűjteményéhez, mint például a billentyűzet, az egér, stb.)"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Sway számára a hardverekhez való hozzáférést"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Niri számára a hardverekhez való hozzáférést"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "Megjelölés/elvetés mint rendszerindító"
+msgstr "Megjelölés/elvetés mint EFI-rendszerpartíció (ESP)"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Csomagcsoport:"
