@@ -29,7 +29,7 @@ _VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
 
 def generate_password(length: int = 64) -> str:
 	haystack = string.printable  # digits, ascii_letters, punctuation (!"#$[] etc) and whitespace
-	return ''.join(secrets.choice(haystack) for i in range(length))
+	return ''.join(secrets.choice(haystack) for _ in range(length))
 
 
 def locate_binary(name: str) -> str:
