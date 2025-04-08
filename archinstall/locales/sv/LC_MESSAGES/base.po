@@ -1619,3 +1619,26 @@ msgstr "Starta sökläge"
 
 msgid "Exit search mode"
 msgstr "Avsluta sökläge"
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Markera/avmarkera som bootbar"
+
+msgid "Package group:"
+msgstr ""

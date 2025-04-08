@@ -1749,6 +1749,25 @@ msgstr ""
 msgid "Exit search mode"
 msgstr ""
 
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Partitie (de)markeren voor versleuteling"
+
+msgid "Package group:"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

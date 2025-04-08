@@ -1637,3 +1637,26 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway 需要访问您的 seat（硬件设备的集合，例如键盘、鼠标等）"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "选择一个选项来给 Sway 提供对您硬件的访问权限"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway 需要访问您的 seat（硬件设备的集合，例如键盘、鼠标等）"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "选择一个选项来给 Sway 提供对您硬件的访问权限"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "将分区标记/取消标记为可引导"
+
+msgid "Package group:"
+msgstr ""

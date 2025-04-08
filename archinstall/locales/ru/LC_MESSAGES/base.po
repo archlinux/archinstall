@@ -1639,3 +1639,26 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway необходим доступ к вашему компьютеру (набор аппаратных устройств, т.е. клавиатура, мышь и т.д.)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Выберите опцию, чтобы предоставить Sway доступ к вашему оборудованию"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway необходим доступ к вашему компьютеру (набор аппаратных устройств, т.е. клавиатура, мышь и т.д.)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Выберите опцию, чтобы предоставить Sway доступ к вашему оборудованию"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Пометить/снять пометку как загрузочный"
+
+msgid "Package group:"
+msgstr ""

@@ -1763,6 +1763,35 @@ msgstr ""
 msgid "Exit search mode"
 msgstr ""
 
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway potrzebuje dostępu do twojego stanowia (sprzętu, np. klawiatury, myszki)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Wybierz by nadać Sway dostęp do twojego sprzętu"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway potrzebuje dostępu do twojego stanowia (sprzętu, np. klawiatury, myszki)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Wybierz by nadać Sway dostęp do twojego sprzętu"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Zaznacz/Odznacz jako bootowalne"
+
+msgid "Package group:"
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
 
