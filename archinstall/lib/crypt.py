@@ -1,5 +1,4 @@
 import ctypes
-import ctypes.util
 from pathlib import Path
 
 from .output import debug
