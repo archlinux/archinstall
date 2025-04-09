@@ -5,7 +5,7 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Any, override
+from typing import TYPE_CHECKING, Any, TypedDict, override
 
 from pydantic import BaseModel, field_validator, model_validator
 
@@ -163,6 +163,13 @@ class SignOption(Enum):
 	TrustAll = 'TrustAll'
 
 
+class _CustomRepositorySerialization(TypedDict):
+	name: str
+	url: str
+	sign_check: str
+	sign_option: str
+
+
 @dataclass
 class CustomRepository:
 	name: str
@@ -178,7 +185,7 @@ class CustomRepository:
 			'Sign options': self.sign_option.value
 		}
 
-	def json(self) -> dict[str, str]:
+	def json(self) -> _CustomRepositorySerialization:
 		return {
 			'name': self.name,
 			'url': self.url,
@@ -223,6 +230,13 @@ class CustomServer:
 		return configs
 
 
+class _MirrorConfigurationSerialization(TypedDict):
+	mirror_regions: dict[str, list[str]]
+	custom_servers: list[CustomServer]
+	optional_repositories: list[str]
+	custom_repositories: list[_CustomRepositorySerialization]
+
+
 @dataclass
 class MirrorConfiguration:
 	mirror_regions: list[MirrorRegion] = field(default_factory=list)
@@ -238,7 +252,7 @@ class MirrorConfiguration:
 	def custom_server_urls(self) -> str:
 		return '\n'.join([s.url for s in self.custom_servers])
 
-	def json(self) -> dict[str, Any]:
+	def json(self) -> _MirrorConfigurationSerialization:
 		regions = {}
 		for m in self.mirror_regions:
 			regions.update(m.json())
