@@ -55,7 +55,7 @@ class DesktopProfile(Profile):
 			profile.do_on_select()
 
 	@override
-	def do_on_select(self) -> SelectResult | None:
+	def do_on_select(self) -> SelectResult:
 		items = [
 			MenuItem(
 				p.name,
