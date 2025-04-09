@@ -7,7 +7,7 @@ import ssl
 import struct
 import time
 from types import FrameType, TracebackType
-from typing import Any, Self
+from typing import Self
 from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -99,7 +99,7 @@ def update_keyring() -> bool:
 	return False
 
 
-def enrich_iface_types(interfaces: dict[str, Any] | list[str]) -> dict[str, str]:
+def enrich_iface_types(interfaces: list[str]) -> dict[str, str]:
 	result = {}
 
 	for iface in interfaces:
