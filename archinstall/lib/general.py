@@ -10,7 +10,7 @@ import string
 import subprocess
 import sys
 import time
-from collections.abc import Callable, Iterator
+from collections.abc import Iterator
 from datetime import date, datetime
 from enum import Enum
 from pathlib import Path
@@ -103,10 +103,8 @@ class SysCommandWorker:
 	def __init__(
 		self,
 		cmd: str | list[str],
-		callbacks: dict[str, Any] | None = None,
 		peek_output: bool | None = False,
 		environment_vars: dict[str, str] | None = None,
-		logfile: None = None,
 		working_directory: str | None = './',
 		remove_vt100_escape_codes_from_lines: bool = True
 	):
@@ -117,14 +115,12 @@ class SysCommandWorker:
 			cmd[0] = locate_binary(cmd[0])
 
 		self.cmd = cmd
-		self.callbacks = callbacks or {}
 		self.peek_output = peek_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overridden
 		self.environment_vars = {'LC_ALL': 'C'}
 		if environment_vars:
 			self.environment_vars.update(environment_vars)
 
-		self.logfile = logfile
 		self.working_directory = working_directory
 
 		self.exit_code: int | None = None
@@ -326,16 +322,10 @@ class SysCommand:
 	def __init__(
 		self,
 		cmd: str | list[str],
-		callbacks: dict[str, Callable[[Any], Any]] = {},
-		start_callback: Callable[[Any], Any] | None = None,
 		peek_output: bool | None = False,
 		environment_vars: dict[str, str] | None = None,
 		working_directory: str | None = './',
 		remove_vt100_escape_codes_from_lines: bool = True):
-
-		self._callbacks = callbacks.copy()
-		if start_callback:
-			self._callbacks['on_start'] = start_callback
 
 		self.cmd = cmd
 		self.peek_output = peek_output
@@ -386,7 +376,6 @@ class SysCommand:
 
 		with SysCommandWorker(
 			self.cmd,
-			callbacks=self._callbacks,
 			peek_output=self.peek_output,
 			environment_vars=self.environment_vars,
 			remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines,
