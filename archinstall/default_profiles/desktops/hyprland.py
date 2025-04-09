@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.desktops import SeatAccess
-from archinstall.default_profiles.profile import GreeterType, ProfileType, SelectResult
+from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -40,7 +40,7 @@ class HyprlandProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Sddm
 
 	@property
@@ -74,6 +74,6 @@ class HyprlandProfile(XorgProfile):
 				self.custom_settings['seat_access'] = result.get_value().value
 
 	@override
-	def do_on_select(self) -> SelectResult | None:
+	def do_on_select(self) -> None:
 		self._ask_seat_access()
 		return None
