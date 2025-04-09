@@ -46,7 +46,7 @@ def clear_vt100_escape_codes_from_str(data: str) -> str:
 	return re.sub(_VT100_ESCAPE_REGEX, '', data)
 
 
-def jsonify(obj: Any, safe: bool = True) -> Any:
+def jsonify(obj: object, safe: bool = True) -> object:
 	"""
 	Converts objects into json.dumps() compatible nested dictionaries.
 	Setting safe to True skips dictionary keys starting with a bang (!)
@@ -85,7 +85,7 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 
 	@override
-	def encode(self, o: Any) -> str:
+	def encode(self, o: object) -> str:
 		return super().encode(jsonify(o))
 
 
@@ -95,7 +95,7 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 
 	@override
-	def encode(self, o: Any) -> str:
+	def encode(self, o: object) -> str:
 		return super().encode(jsonify(o, safe=False))
 
 

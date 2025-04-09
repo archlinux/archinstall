@@ -38,7 +38,7 @@ class LocaleConfiguration:
 		return output
 
 	@classmethod
-	def _load_config(cls, config: 'LocaleConfiguration', args: dict[str, Any]) -> 'LocaleConfiguration':
+	def _load_config(cls, config: 'LocaleConfiguration', args: dict[str, str]) -> 'LocaleConfiguration':
 		if 'sys_lang' in args:
 			config.sys_lang = args['sys_lang']
 		if 'sys_enc' in args:
