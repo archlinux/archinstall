@@ -1,8 +1,8 @@
 {
-    "root_enc_password": "password_hash",
-    "users": [
+    "!root-password": "rootPwd",
+    "!users": [
         {
-            "enc_password": "password_hash",
+            "!password": "userPwd",
             "sudo": true,
             "username": "user_name",
             "groups": ["wheel"]

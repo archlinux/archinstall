@@ -1754,3 +1754,30 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
+
+msgid "Package group:"
+msgstr ""

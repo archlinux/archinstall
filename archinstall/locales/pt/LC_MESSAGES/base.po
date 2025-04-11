@@ -1654,3 +1654,26 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Escolha uma opção para dar ao Sway acesso ao seu hardware"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Escolha uma opção para dar ao Sway acesso ao seu hardware"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Marcar/Desmarcar como partição de arranque"
+
+msgid "Package group:"
+msgstr ""

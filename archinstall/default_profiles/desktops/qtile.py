@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class QtileProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Qtile', ProfileType.WindowMgr, description='')
+		super().__init__('Qtile', ProfileType.WindowMgr)
 
 	@property
 	@override
@@ -18,5 +18,5 @@ class QtileProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Lightdm

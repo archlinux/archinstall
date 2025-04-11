@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Dmitriy Moroz <dmitriy@moroz.cc>\n"
+"Last-Translator: TSEPLNK <nyuxmumryk@ukr.net>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -1072,22 +1072,22 @@ msgstr ""
 "Оберіть графічний драйвер або залиште поле пустим, щоб установити всі драйвери з відкритим вихідним кодом"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Sway потребує доступ до вашого обладнання"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
-msgstr ""
+msgstr "Надайте Sway доступ до вашого обладнання"
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "Графічні драйвери"
 
 msgid "Greeter"
-msgstr ""
+msgstr "Дисплейний менеджер"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "Виберіть, який дисплейний менеджер встановлювати"
 
 msgid "This is a list of pre-programmed default_profiles"
 msgstr ""
@@ -1101,7 +1101,7 @@ msgid "Profiles"
 msgstr "Профіль"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "Пошук можливих тек для збереження файлів конфігурації ..."
 
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
@@ -1112,10 +1112,10 @@ msgid "Add a custom mirror"
 msgstr "Додати користувача"
 
 msgid "Change custom mirror"
-msgstr ""
+msgstr "Змінити власне дзеркало"
 
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "Змінити власне дзеркало"
 
 #, fuzzy
 msgid "Enter name (leave blank to skip): "
@@ -1134,10 +1134,10 @@ msgid "Select signature option"
 msgstr "Оберіть параметр шифрування диска"
 
 msgid "Custom mirrors"
-msgstr ""
+msgstr "Власні дзеркала"
 
 msgid "Defined"
-msgstr ""
+msgstr "Задано"
 
 #, fuzzy
 msgid "Save user configuration (including disk layout)"
@@ -1153,7 +1153,7 @@ msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
 "\n"
 "{}"
-msgstr ""
+msgstr "Чи хочете ви зберегти {} файл(и) конфігурацій до задоного місця?\n"
 
 #, fuzzy
 msgid "Saving {} configuration files to {}"
@@ -1175,20 +1175,20 @@ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Некоректне введення! Повторіть спробу з валідним введенням [від 1 до {} або 0 для вимкнення]"
 
 msgid "Locales"
-msgstr ""
+msgstr "Локалізації"
 
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Використовувати NetworkManager (необхідний для графічного налаштування Інтернету в GNOME та KDE)"
 
 msgid "Total: {} / {}"
-msgstr ""
+msgstr "Загалом: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "До всіх заданих значень можна дописати суфікс одиниці виміру: B, KB, KiB, MB, MiB..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Якщо немає жодного суфіксу, значення вважається сектором"
 
 #, fuzzy
 msgid "Enter start (default: sector {}): "
@@ -1202,13 +1202,13 @@ msgid "Unable to determine fido2 devices. Is libfido2 installed?"
 msgstr ""
 
 msgid "Path"
-msgstr ""
+msgstr "Шлях"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "Виробник"
 
 msgid "Product"
-msgstr ""
+msgstr "Модель"
 
 #, fuzzy, python-brace-format
 msgid "Invalid configuration: {error}"
@@ -1244,13 +1244,13 @@ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Некоректне введення! Повторіть спробу з валідним введенням [від 1 до {} або 0 для вимкнення]"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Hyprland потребує доступу до інформації про ваше обладнання (клавіатура, миша, так далі)"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Hyprland access to your hardware"
-msgstr ""
+msgstr "Надайте Hyprland доступ до вашого обладнання"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr ""
@@ -1734,4 +1734,23 @@ msgid "Start search mode"
 msgstr ""
 
 msgid "Exit search mode"
+msgstr ""
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Позначити/зняти позначку розділу як стисненого (лише btrfs)"
+
+msgid "Package group:"
 msgstr ""

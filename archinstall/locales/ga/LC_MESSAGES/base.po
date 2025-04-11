@@ -1557,3 +1557,166 @@ msgstr "Ainm Úsáideora: "
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marcáil/Dímharcáil mar bootable"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Pacáistí breise"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Cuir scáthán saincheaptha leis"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Athraigh scáthán saincheaptha"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Scrios scáthán saincheaptha"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Réigiún scáthán"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Cuir scáthán saincheaptha leis"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Athraigh scáthán saincheaptha"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Scrios scáthán saincheaptha"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Roghnaigh an rogha sínithe"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Cuir scáthán saincheaptha leis"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Cuir scáthán saincheaptha leis"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Réigiúin scátháin"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Taisclanna roghnacha"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Réigiúin scátháin"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Scátháin saincheaptha"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Taisclanna roghnacha"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Roghnaigh an rogha seiceála sínithe"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Roghnaigh crios ama"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Roghnaigh modh forghníomhaithe"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Teastaíonn rochtain ó Sway ar do shuíochán (bailiúchán de ghléasanna crua-earraí i.e. méarchlár, luch, srl)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh rogha chun rochtain a thabhairt do Sway ar do chrua-earraí"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Teastaíonn rochtain ó Sway ar do shuíochán (bailiúchán de ghléasanna crua-earraí i.e. méarchlár, luch, srl)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh rogha chun rochtain a thabhairt do Sway ar do chrua-earraí"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Marcáil/Dímharcáil mar bootable"
+
+msgid "Package group:"
+msgstr ""

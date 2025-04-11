@@ -7,7 +7,6 @@ from archinstall.tui.curses_menu import EditMenu, SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.types import Alignment, Orientation, ResultType
 
-from ..general import secret
 from ..menu.list_manager import ListManager
 from ..models.users import User
 from ..utils.util import get_password
@@ -91,7 +90,7 @@ class UserList(ListManager):
 		if not password:
 			return None
 
-		header += f'{_("Password")}: {secret(password)}\n\n'
+		header += f'{_("Password")}: {password.hidden()}\n\n'
 		header += str(_('Should "{}" be a superuser (sudo)?\n')).format(username)
 
 		group = MenuItemGroup.yes_no()

@@ -1705,3 +1705,32 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway tarvitsee pääsyn istuntoon (kokoelma laitteistoja, kuten näppäimistö, hiiri jne.)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valitse asetus antaaksesi Swaylle pääsyn laitteistoosi"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway tarvitsee pääsyn istuntoon (kokoelma laitteistoja, kuten näppäimistö, hiiri jne.)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valitse asetus antaaksesi Swaylle pääsyn laitteistoosi"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Merkitse/poista käynnistyvä"
+
+msgid "Package group:"
+msgstr ""

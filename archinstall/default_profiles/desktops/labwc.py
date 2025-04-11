@@ -15,10 +15,10 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class SwayProfile(XorgProfile):
+class LabwcProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__(
-			'Sway',
+			'Labwc',
 			ProfileType.WindowMgr,
 		)
 
@@ -32,18 +32,8 @@ class SwayProfile(XorgProfile):
 			additional = [seat]
 
 		return [
-			"sway",
-			"swaybg",
-			"swaylock",
-			"swayidle",
-			"waybar",
-			"dmenu",
-			"brightnessctl",
-			"grim",
-			"slurp",
-			"pavucontrol",
-			"foot",
-			"xorg-xwayland"
+			"alacritty",
+			"labwc",
 		] + additional
 
 	@property
@@ -60,8 +50,8 @@ class SwayProfile(XorgProfile):
 
 	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
-		header = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
-		header += '\n' + str(_('Choose an option to give Sway access to your hardware')) + '\n'
+		header = str(_('labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		header += '\n' + str(_('Choose an option to give labwc access to your hardware')) + '\n'
 
 		items = [MenuItem(s.value, value=s) for s in SeatAccess]
 		group = MenuItemGroup(items, sort_items=True)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, assert_never, override
 
 from archinstall.tui.curses_menu import EditMenu, SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -126,7 +126,7 @@ class ManualNetworkConfig(ListManager):
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
 
-		header = str(_('Select which mode to configure for "{}" or skip to use default mode "{}"').format(iface_name, default_mode)) + '\n'
+		header = str(_('Select which mode to configure for "{}"').format(iface_name)) + '\n'
 		items = [MenuItem(m, value=m) for m in modes]
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_default_by_value(default_mode)
@@ -144,6 +144,10 @@ class ManualNetworkConfig(ListManager):
 				mode = result.get_value()
 			case ResultType.Reset:
 				raise ValueError('Unhandled result type')
+			case ResultType.Skip:
+				raise ValueError('The mode menu should not be skippable')
+			case _:
+				assert_never(result.type_)
 
 		if mode == 'IP (static)':
 			header = str(_('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(iface_name)) + '\n'

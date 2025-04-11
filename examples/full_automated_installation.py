@@ -19,8 +19,8 @@ from archinstall.lib.models.device_model import (
 	Unit,
 )
 from archinstall.lib.models.profile_model import ProfileConfiguration
-from archinstall.lib.models.users import User
-from archinstall.lib.profile import profile_handler
+from archinstall.lib.models.users import Password, User
+from archinstall.lib.profile.profiles_handler import profile_handler
 
 # we're creating a new ext4 filesystem installation
 fs_type = FilesystemType('ext4')
@@ -81,7 +81,7 @@ disk_config = DiskLayoutConfiguration(
 
 # disk encryption configuration (Optional)
 disk_encryption = DiskEncryption(
-	encryption_password="enc_password",
+	encryption_password=Password(plaintext="enc_password"),
 	encryption_type=EncryptionType.Luks,
 	partitions=[home_partition],
 	hsm_device=None
@@ -111,5 +111,5 @@ with Installer(
 profile_config = ProfileConfiguration(MinimalProfile())
 profile_handler.install_profile_config(installation, profile_config)
 
-user = User('archinstall', 'password', True)
+user = User('archinstall', Password(plaintext='password'), True)
 installation.create_users(user)

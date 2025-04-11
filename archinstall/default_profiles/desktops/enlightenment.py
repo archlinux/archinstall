@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class EnlighenmentProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Enlightenment', ProfileType.WindowMgr, description='')
+		super().__init__('Enlightenment', ProfileType.WindowMgr)
 
 	@property
 	@override
@@ -18,5 +18,5 @@ class EnlighenmentProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Lightdm

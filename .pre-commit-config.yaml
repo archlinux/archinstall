@@ -47,8 +47,11 @@ repos:
         - pydantic-settings
         - pytest
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.3
+    rev: v0.11.4
     hooks:
+      - id: ruff
+        args: ["check", "--select", "I", "--fix"]
+        fail_fast: true
       - id: ruff
   - repo: local
     hooks:

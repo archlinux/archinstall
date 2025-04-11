@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import curses
-import curses.panel
 import os
 import signal
 import sys
@@ -46,7 +45,7 @@ class AbstractCurses(metaclass=ABCMeta):
 		pass
 
 	@abstractmethod
-	def kickoff(self, win: 'curses._CursesWindow') -> Result:
+	def kickoff(self, win: curses.window) -> Result:
 		pass
 
 	def clear_all(self) -> None:
@@ -123,7 +122,7 @@ class AbstractViewport:
 	def __init__(self) -> None:
 		pass
 
-	def add_str(self, screen: 'curses._CursesWindow', row: int, col: int, text: str, color: STYLE) -> None:
+	def add_str(self, screen: curses.window, row: int, col: int, text: str, color: STYLE) -> None:
 		try:
 			screen.addstr(row, col, text, Tui.t().get_color(color))
 		except curses.error:
@@ -323,8 +322,8 @@ class EditViewport(AbstractViewport):
 		self._alignment = alignment
 		self._hide_input = hide_input
 
-		self._main_win: 'curses._CursesWindow | None' = None
-		self._edit_win: 'curses._CursesWindow | None' = None
+		self._main_win: curses.window | None = None
+		self._edit_win: curses.window | None = None
 		self._textbox: Textbox | None = None
 
 		self._init_wins()
@@ -595,7 +594,7 @@ class EditMenu(AbstractCurses):
 			self._input_vp.edit(default_text=self._default_text)
 
 	@override
-	def kickoff(self, win: 'curses._CursesWindow') -> Result:
+	def kickoff(self, win: curses.window) -> Result:
 		try:
 			self._draw()
 		except KeyboardInterrupt:
@@ -777,7 +776,7 @@ class SelectMenu(AbstractCurses):
 		return result
 
 	@override
-	def kickoff(self, win: 'curses._CursesWindow') -> Result:
+	def kickoff(self, win: curses.window) -> Result:
 		self._draw()
 
 		while True:
@@ -1256,7 +1255,7 @@ class Tui:
 		self.stop()
 
 	@property
-	def screen(self) -> 'curses._CursesWindow':
+	def screen(self) -> curses.window:
 		return self._screen
 
 	@staticmethod

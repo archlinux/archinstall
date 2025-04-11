@@ -53,7 +53,7 @@ class AbstractMenu:
 
 	def _sync_from_config(self) -> None:
 		for item in self._menu_item_group.menu_items:
-			if item.key is not None and item.key != CONFIG_KEY:
+			if item.key is not None and not item.key.startswith(CONFIG_KEY):
 				config_value = getattr(self._config, item.key)
 				if config_value is not None:
 					item.value = config_value
@@ -64,7 +64,7 @@ class AbstractMenu:
 				setattr(self._config, item.key, item.value)
 
 	def _sync(self, item: MenuItem) -> None:
-		if not item.key or item.key == CONFIG_KEY:
+		if not item.key or item.key.startswith(CONFIG_KEY):
 			return
 
 		config_value = getattr(self._config, item.key)
@@ -77,10 +77,14 @@ class AbstractMenu:
 	def set_enabled(self, key: str, enabled: bool) -> None:
 		# the __config__ is associated with multiple items
 		found = False
+
+		is_config_key = key == CONFIG_KEY
+
 		for item in self._menu_item_group.items:
-			if item.key == key:
-				item.enabled = enabled
-				found = True
+			if item.key:
+				if item.key == key or (is_config_key and item.key.startswith(CONFIG_KEY)):
+					item.enabled = enabled
+					found = True
 
 		if not found:
 			raise ValueError(f'No selector found: {key}')

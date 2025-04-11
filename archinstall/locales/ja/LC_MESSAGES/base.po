@@ -1619,5 +1619,23 @@ msgstr "検索モードを開始"
 msgid "Exit search mode"
 msgstr "検索モードを終了"
 
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "labwc はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "labwc にハードウェアへのアクセスを許可するオプションを選択"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "niri はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "niri にハードウェアへのアクセスを許可するオプションを選択"
+
+msgid "Mark/Unmark as ESP"
+msgstr "ESP としてマーク/マーク解除"
+
 msgid "Package group:"
 msgstr "パッケージグループ:"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr "「{}」に設定するモードを選択"

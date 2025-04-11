@@ -9,7 +9,6 @@ class WayfireProfile(XorgProfile):
 		super().__init__(
 			"Wayfire",
 			ProfileType.WindowMgr,
-			description="Wayfire is a 3D Wayland compositor",
 		)
 
 	@property
@@ -19,5 +18,5 @@ class WayfireProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Lightdm

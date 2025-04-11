@@ -1650,6 +1650,29 @@ msgstr ""
 msgid "Exit search mode"
 msgstr ""
 
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway a besoin d'accéder à votre espace (ensemble de périphériques matériels : clavier, souris, etc.)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Choisir une option pour permettre à Sway d'accéder à votre matériel"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway a besoin d'accéder à votre espace (ensemble de périphériques matériels : clavier, souris, etc.)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Choisir une option pour permettre à Sway d'accéder à votre matériel"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Marquer/Démarquer comme amorçable"
+
+msgid "Package group:"
+msgstr ""
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Modifier {origkey} :"

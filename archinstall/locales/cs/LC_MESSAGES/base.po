@@ -1630,3 +1630,26 @@ msgstr ""
 
 msgid "Exit search mode"
 msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway vyžaduje přístup k vašemu sezení (soubor zařízení jako např. klávesnice, myš, atd.)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Vyberte možnost jak zpřístupnit pro Sway váš hardware"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway vyžaduje přístup k vašemu sezení (soubor zařízení jako např. klávesnice, myš, atd.)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Vyberte možnost jak zpřístupnit pro Sway váš hardware"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Označit/Odznačit jako zaváděcí"
+
+msgid "Package group:"
+msgstr ""
