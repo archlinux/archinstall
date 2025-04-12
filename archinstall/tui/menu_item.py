@@ -21,7 +21,6 @@ class MenuItem:
 	enabled: bool = True
 	mandatory: bool = False
 	dependencies: list[str | Callable[[], bool]] = field(default_factory=list)
-	dependencies_not: list[str] = field(default_factory=list)
 	display_action: Callable[[Any], str] | None = None
 	preview_action: Callable[[Any], str | None] | None = None
 	key: str | None = None
@@ -349,11 +348,6 @@ class MenuItemGroup:
 					return False
 			else:
 				return dep()
-
-		for dep_not in item.dependencies_not:
-			item = self.find_by_key(dep_not)
-			if item.value is not None:
-				return False
 
 		return True
 
