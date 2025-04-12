@@ -4,7 +4,8 @@ from typing import TYPE_CHECKING
 
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, FrameProperties, FrameStyle, Orientation, PreviewStyle, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties, FrameStyle, Orientation, PreviewStyle
 
 from ..hardware import GfxDriver, SysInfo
 from ..models.bootloader import Bootloader

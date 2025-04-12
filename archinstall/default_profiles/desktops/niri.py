@@ -5,7 +5,8 @@ from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, FrameProperties, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

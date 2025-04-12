@@ -7,7 +7,8 @@ from archinstall.lib.models.packages import Repository
 from archinstall.lib.packages.packages import list_available_packages
 from archinstall.tui.curses_menu import EditMenu, SelectMenu, Tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle
 
 from ..locale.utils import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration

@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING, assert_never, override
 
 from archinstall.tui.curses_menu import EditMenu, SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, FrameProperties, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties
 
 from ..menu.list_manager import ListManager
 from ..models.network_configuration import NetworkConfiguration, Nic, NicType

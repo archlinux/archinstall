@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Literal, override
 from ..lib.output import debug
 from .help import Help
 from .menu_item import MenuItem, MenuItemGroup, MenuItemsState
+from .result import Result, ResultType
 from .types import (
 	SCROLL_INTERVAL,
 	STYLE,
@@ -24,8 +25,6 @@ from .types import (
 	MenuKeys,
 	Orientation,
 	PreviewStyle,
-	Result,
-	ResultType,
 	ViewportEntry,
 	_FrameDim,
 )

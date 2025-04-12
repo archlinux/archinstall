@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING, override
 from archinstall.default_profiles.profile import GreeterType, Profile
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, FrameProperties, Orientation, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties, Orientation
 
 from ..hardware import GfxDriver
 from ..interactions.system_conf import select_driver
