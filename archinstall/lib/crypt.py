@@ -106,7 +106,7 @@ def encrypt(password: Password, data: str) -> str:
 	encoded_token = base64.urlsafe_b64encode(token).decode('utf-8')
 	encoded_salt = base64.urlsafe_b64encode(salt).decode('utf-8')
 
-	return f'$2ai${encoded_salt}${encoded_token}'
+	return f'$argon2id${encoded_salt}${encoded_token}'
 
 
 def decrypt(data: str, password: Password):
@@ -114,7 +114,7 @@ def decrypt(data: str, password: Password):
 	salt = base64.urlsafe_b64decode(encoded_salt)
 	token = base64.urlsafe_b64decode(encoded_token)
 
-	if algo != '2ai':
+	if algo != 'argon2id':
 		raise ValueError(f'Unsupported algorithm {algo!r}')
 
 	f = _get_fernet(salt, password)
