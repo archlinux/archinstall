@@ -9,10 +9,12 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle, ResultType
 
 from .args import ArchConfig
+from .crypt import encrypt
 from .general import JSON, UNSAFE_JSON
+from .models.users import Password
 from .output import debug, warn
 from .storage import storage
-from .utils.util import prompt_dir
+from .utils.util import get_password, prompt_dir
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -99,19 +101,33 @@ class ConfigurationOutput:
 			target.write_text(self.user_config_to_json())
 			target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save_user_creds(self, dest_path: Path) -> None:
+	def save_user_creds(
+		self,
+		dest_path: Path,
+		password: Password | None = None
+	) -> None:
+		data = self.user_credentials_to_json()
+
+		if password:
+			data = encrypt(password, data)
+
 		if self._is_valid_path(dest_path):
 			target = dest_path / self._user_creds_file
-			target.write_text(self.user_credentials_to_json())
+			target.write_text(data)
 			target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save(self, dest_path: Path | None = None, creds: bool = False) -> None:
+	def save(
+		self,
+		dest_path: Path | None = None,
+		creds: bool = False,
+		password: Password | None = None
+	) -> None:
 		save_path = dest_path or self._default_save_path
 
 		if self._is_valid_path(save_path):
 			self.save_user_config(save_path)
 			if creds:
-				self.save_user_creds(save_path)
+				self.save_user_creds(save_path, password=password)
 
 
 def save_config(config: ArchConfig) -> None:
@@ -201,10 +217,33 @@ def save_config(config: ArchConfig) -> None:
 
 	debug(f"Saving configuration files to {dest_path.absolute()}")
 
+	header = str(_('Do you want to encrypt the user_credentials.json file?'))
+
+	group = MenuItemGroup.yes_no()
+	group.focus_item = MenuItem.no()
+
+	result = SelectMenu(
+		group,
+		header=header,
+		allow_skip=False,
+		alignment=Alignment.CENTER,
+		columns=2,
+		orientation=Orientation.HORIZONTAL
+	).run()
+
+	password: Password | None = None
+	match result.type_:
+		case ResultType.Selection:
+			if result.item() == MenuItem.yes():
+				password = get_password(
+					text=str(_('Credentials file encryption password')),
+					allow_skip=True
+				)
+
 	match save_option:
 		case "user_config":
 			config_output.save_user_config(dest_path)
 		case "user_creds":
-			config_output.save_user_creds(dest_path)
+			config_output.save_user_creds(dest_path, password=password)
 		case "all":
-			config_output.save(dest_path, creds=True)
+			config_output.save(dest_path, creds=True, password=password)

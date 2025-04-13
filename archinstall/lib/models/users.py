@@ -2,8 +2,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, NotRequired, TypedDict, override
 
-from ..crypt import crypt_yescrypt
-
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
@@ -124,7 +122,7 @@ class Password:
 		enc_password: str | None = None
 	):
 		if plaintext:
-			enc_password = crypt_yescrypt(plaintext)
+			enc_password = self._encrypt(plaintext)
 
 		if not plaintext and not enc_password:
 			raise ValueError('Either plaintext or enc_password must be provided')
@@ -139,7 +137,7 @@ class Password:
 	@plaintext.setter
 	def plaintext(self, value: str):
 		self._plaintext = value
-		self.enc_password = crypt_yescrypt(value)
+		self.enc_password = self._encrypt(value)
 
 	@override
 	def __eq__(self, other: object) -> bool:
@@ -150,6 +148,10 @@ class Password:
 			return self._plaintext == other._plaintext
 
 		return self.enc_password == other.enc_password
+
+	def _encrypt(self, plaintext: str) -> str:
+		from ..crypt import crypt_yescrypt
+		return crypt_yescrypt(plaintext)
 
 	def hidden(self) -> str:
 		if self._plaintext:
