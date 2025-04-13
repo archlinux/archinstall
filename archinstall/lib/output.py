@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from .storage import storage
-from .unicode import unicode_ljust, unicode_rjust
+from .utils.unicode import unicode_ljust, unicode_rjust
 
 if TYPE_CHECKING:
 	from _typeshed import DataclassInstance
