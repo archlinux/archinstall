@@ -5,7 +5,8 @@ from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import FrameProperties, PreviewStyle, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import FrameProperties, PreviewStyle
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
