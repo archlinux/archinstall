@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, ClassVar
 
-from ..lib.output import unicode_ljust
+from ..lib.utils.unicode import unicode_ljust
 
 if TYPE_CHECKING:
 	from archinstall.lib.translationhandler import DeferredTranslation
