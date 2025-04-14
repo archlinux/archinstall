@@ -17,33 +17,36 @@ The installer also doubles as a python library to install Arch Linux and manage 
 
 # Installation & Usage
 
-## Install 
+## How to install
 
 - Using pacman
     ```shell
     sudo pacman -S archinstall
     ```
+
 - Using pip
     ```shell 
    pip install --upgrade archinstall
     ```
-Alternative ways to install are `git clone` the repository.
 
+- Using this repository from git
+    ```shell
+    git clone https://github.com/archlinux/archinstall.git
+    ```
+    
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
 
-### if using installed
+### Running `archinstall`
 
-Assuming you are on an Arch Linux live-ISO or installed via `pip`:
-```shell
-archinstall
-```
-
-### if using `git`
-
-```shell
+- If you're on an Arch Linux live ISO or installed archinstall via `pip`:
+    ```shell
+    archinstall
+    ```
+- If you're running from the git repository (e.g., cloned from GitHub), use:
+    ```shell
     # cd archinstall-git
     # python -m archinstall
-```
+    ```
 
 #### Advanced
 Some additional options that most users do not need are hidden behind the `--advanced` flag.
@@ -54,7 +57,7 @@ Some additional options that most users do not need are hidden behind the `--adv
 the `user_configuration.json` contains all general installation configuration, whereas the `user_credentials.json`
 contains the sensitive user configuration such as user password, root password, and encryption password.
 
-### ⚙️ An Example File
+### ⚙️ An Example configuration files
 
 - 📝 [User Configuration File](https://github.com/archlinux/archinstall/blob/master/examples/config-sample.json)  
   An example of the user configuration file.
@@ -103,13 +106,16 @@ All available console fonts can be found in `/usr/share/kbd/consolefonts` and se
 
 # Scripting your own installation
 
-> **To create your own ISO with this script in it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on creating your own ISO.
+> [!NOTE]
+> **To create your own ISO with this script in it**:Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on creating your own ISO.
 
 ## Scripting interactive installation
 
 There are some examples in the `examples/` directory that should serve as a starting point.
 
-### The following is a small example of how to script your own *interactive* installation
+### The following is a small example 
+
+This example will teach you how to write your own *Interactive* installation scripts!
 
 ```python
 from pathlib import Path
@@ -244,9 +250,12 @@ It will go through everything from packaging, building and running *(with qemu)*
 # FAQ
 
 ## Keyring out-of-date
-- For a description of the problem see https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 and discussion in issue https://github.com/archlinux/archinstall/issues/2213.
+### For a description of the problem 
+See https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 and discussion in issue https://github.com/archlinux/archinstall/issues/2213.
 
-- For a quick fix the below command will install the latest keyrings
+### For a quick fix the below command 
+
+- This will install the latest keyrings!
    ```shell
    pacman -Sy archlinux-keyring
    ```
