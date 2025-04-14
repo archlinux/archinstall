@@ -29,7 +29,7 @@ The installer also doubles as a python library to install Arch Linux and manage 
    pip install --upgrade archinstall
     ```
 
-- Using this repository from git
+- Using this repository(git)
     ```shell
     git clone https://github.com/archlinux/archinstall.git
     ```
@@ -107,7 +107,8 @@ All available console fonts can be found in `/usr/share/kbd/consolefonts` and se
 # Scripting your own installation
 
 > [!NOTE]
-> **To create your own ISO with this script in it**:Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on creating your own ISO.
+> **To create your own ISO with this script in it**:
+> Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on creating your own ISO.
 
 ## Scripting interactive installation
 
@@ -251,11 +252,13 @@ It will go through everything from packaging, building and running *(with qemu)*
 
 ## Keyring out-of-date
 ### For a description of the problem 
+
 See https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 and discussion in issue https://github.com/archlinux/archinstall/issues/2213.
 
 ### For a quick fix the below command 
 
-- This will install the latest keyrings!
+This will install the latest keyrings!
+
    ```shell
    pacman -Sy archlinux-keyring
    ```
