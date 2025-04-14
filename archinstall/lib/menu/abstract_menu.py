@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING, Any, Self
 
 from archinstall.tui.curses_menu import SelectMenu, Tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle
 
 from ..output import error
 

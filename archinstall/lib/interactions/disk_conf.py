@@ -30,7 +30,8 @@ from archinstall.lib.models.device_model import (
 from archinstall.lib.output import debug
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle
 
 from ..output import FormattedOutput
 from ..utils.util import prompt_dir

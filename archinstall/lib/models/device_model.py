@@ -417,7 +417,7 @@ class Size:
 		return self - Size(abs(src_norm % align_norm), Unit.B, self.sector_size)
 
 	def gpt_end(self) -> Size:
-		return self - Size(33, Unit.sectors, self.sector_size)
+		return self - Size(1, Unit.MiB, self.sector_size)
 
 	def _normalize(self) -> int:
 		"""
