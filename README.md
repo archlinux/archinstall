@@ -165,7 +165,7 @@ with Installer(
     installation.create_users(user)
 ```
 
-### This installer will perform the following actions
+#### This installer will perform the following actions
 
 - Prompt the user to
     * configure the disk partitioning
@@ -212,11 +212,7 @@ There's also a [Building and Testing](https://github.com/archlinux/archinstall/w
 If you want to test a commit, branch, or bleeding edge release from the repository using the standard Arch Linux Live ISO image,
 replace the archinstall version with a newer one and execute the subsequent steps defined below.
 
-* Note: When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow running a re-installation or upgrade of the installer. In case one runs into this issue, any of the following can be used
-   * Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
-   * The boot parameter `copytoram=y` (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) can be specified which will copy the root filesystem to tmpfs.*
-
-### Tips
+### Steps
 1. You need a working network connection
 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
    *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
@@ -227,6 +223,12 @@ replace the archinstall version with a newer one and execute the subsequent step
 6. To run the source code, there are 2 different options:
     - Run a specific branch version from source directly using `python -m archinstall`, in most cases this will work just fine, the rare case it will not work is if the source has introduced any new dependencies that are not installed yet
     - Installing the branch version with `pip install --break-system-packages .` and `archinstall`
+
+## Booting from a Live USB
+
+When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow running a re-installation or upgrade of the installer. In case one runs into this issue, any of the following can be used
+   * Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
+   * The boot parameter `copytoram=y` (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) can be specified which will copy the root filesystem to tmpfs.*
 
 ## Without a Live ISO Image
 
