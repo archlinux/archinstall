@@ -11,7 +11,6 @@ from archinstall.tui.types import Alignment, FrameProperties, Orientation, Previ
 from .args import ArchConfig
 from .crypt import encrypt
 from .general import JSON, UNSAFE_JSON
-from .models.users import Password
 from .output import debug, warn
 from .storage import storage
 from .utils.util import get_password, prompt_dir
@@ -104,7 +103,7 @@ class ConfigurationOutput:
 	def save_user_creds(
 		self,
 		dest_path: Path,
-		password: Password | None = None
+		password: str | None = None
 	) -> None:
 		data = self.user_credentials_to_json()
 
@@ -120,7 +119,7 @@ class ConfigurationOutput:
 		self,
 		dest_path: Path | None = None,
 		creds: bool = False,
-		password: Password | None = None
+		password: str | None = None
 	) -> None:
 		save_path = dest_path or self._default_save_path
 
@@ -231,7 +230,7 @@ def save_config(config: ArchConfig) -> None:
 		orientation=Orientation.HORIZONTAL
 	).run()
 
-	password: Password | None = None
+	enc_password: str | None = None
 	match result.type_:
 		case ResultType.Selection:
 			if result.item() == MenuItem.yes():
@@ -240,10 +239,13 @@ def save_config(config: ArchConfig) -> None:
 					allow_skip=True
 				)
 
+				if password:
+					enc_password = password.plaintext
+
 	match save_option:
 		case "user_config":
 			config_output.save_user_config(dest_path)
 		case "user_creds":
-			config_output.save_user_creds(dest_path, password=password)
+			config_output.save_user_creds(dest_path, password=enc_password)
 		case "all":
-			config_output.save(dest_path, creds=True, password=password)
+			config_output.save(dest_path, creds=True, password=enc_password)

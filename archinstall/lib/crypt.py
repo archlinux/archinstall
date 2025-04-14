@@ -6,7 +6,6 @@ from pathlib import Path
 from cryptography.fernet import Fernet, InvalidToken
 from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
 
-from .models.users import Password
 from .output import debug
 
 libcrypt = ctypes.CDLL("libcrypt.so")
@@ -77,7 +76,7 @@ def crypt_yescrypt(plaintext: str) -> str:
 	return crypt_hash.decode('utf-8')
 
 
-def _get_fernet(salt: bytes, password: Password) -> Fernet:
+def _get_fernet(salt: bytes, password: str) -> Fernet:
 	# https://cryptography.io/en/latest/hazmat/primitives/key-derivation-functions/#argon2id
 	kdf = Argon2id(
 		salt=salt,
@@ -91,14 +90,14 @@ def _get_fernet(salt: bytes, password: Password) -> Fernet:
 
 	key = base64.urlsafe_b64encode(
 		kdf.derive(
-			password.plaintext.encode('utf-8')
+			password.encode('utf-8')
 		)
 	)
 
 	return Fernet(key)
 
 
-def encrypt(password: Password, data: str) -> str:
+def encrypt(password: str, data: str) -> str:
 	salt = os.urandom(16)
 	f = _get_fernet(salt, password)
 	token = f.encrypt(data.encode('utf-8'))
@@ -109,7 +108,7 @@ def encrypt(password: Password, data: str) -> str:
 	return f'$argon2id${encoded_salt}${encoded_token}'
 
 
-def decrypt(data: str, password: Password):
+def decrypt(data: str, password: str):
 	_, algo, encoded_salt, encoded_token = data.split('$')
 	salt = base64.urlsafe_b64decode(encoded_salt)
 	token = base64.urlsafe_b64decode(encoded_token)

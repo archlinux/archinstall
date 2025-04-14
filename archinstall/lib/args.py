@@ -426,8 +426,7 @@ class ArchConfigHandler:
 		if creds_data.startswith('$'):  # encrypted data
 			if self._args.creds_decryption_key is not None:
 				try:
-					password = Password(plaintext=self._args.creds_decryption_key)
-					creds_data = decrypt(creds_data, password)
+					creds_data = decrypt(creds_data, self._args.creds_decryption_key)
 					return json.loads(creds_data)
 				except ValueError as err:
 					if 'Invalid password' in str(err):
@@ -454,7 +453,7 @@ class ArchConfigHandler:
 							return None
 
 						try:
-							creds_data = decrypt(creds_data, decryption_pwd)
+							creds_data = decrypt(creds_data, decryption_pwd.plaintext)
 							break
 						except ValueError as err:
 							if 'Invalid password' in str(err):
