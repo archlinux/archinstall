@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from archinstall import SysInfo
@@ -7,7 +8,7 @@ from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
-from archinstall.lib.interactions.general_conf import ask_chroot
+from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
 from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.device_model import (
 	DiskLayoutConfiguration,
@@ -147,19 +148,24 @@ def perform_installation(mountpoint: Path) -> None:
 
 		installation.genfstab()
 
-		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
+		debug(f"Disk states after installing:\n{disk_layouts()}")
 
 		if not arch_config_handler.args.silent:
 			with Tui():
-				chroot = ask_chroot()
+				action = ask_post_installation()
 
-			if chroot:
-				try:
-					installation.drop_to_shell()
-				except Exception:
+			match action:
+				case PostInstallationAction.EXIT:
 					pass
+				case PostInstallationAction.REBOOT:
+					os.system('reboot')
+				case PostInstallationAction.CHROOT:
+					try:
+						installation.drop_to_shell()
+					except Exception:
+						pass
 
-	debug(f"Disk states after installing:\n{disk_layouts()}")
+		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 
 def guided() -> None:
@@ -189,5 +195,21 @@ def guided() -> None:
 
 	perform_installation(arch_config_handler.args.mountpoint)
 
+
+with Tui():
+	tmp = ask_post_installation()
+
+	match tmp:
+		case PostInstallationAction.EXIT:
+			pass
+		case PostInstallationAction.REBOOT:
+			os.system('reboot')
+		case PostInstallationAction.CHROOT:
+			# try:
+			# 	installation.drop_to_shell()
+			# except Exception:
+			pass
+
+	info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 guided()

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, assert_never
 
@@ -22,6 +23,12 @@ if TYPE_CHECKING:
 	from archinstall.lib.translationhandler import DeferredTranslation
 
 	_: Callable[[str], DeferredTranslation]
+
+
+class PostInstallationAction(Enum):
+	EXIT = str(_('Exit archinstall'))
+	REBOOT = str(_('Reboot system'))
+	CHROOT = str(_('chroot into installation for post-installation configurations'))
 
 
 def ask_ntp(preset: bool = True) -> bool:
@@ -281,19 +288,25 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 	return downloads
 
 
-def ask_chroot() -> bool:
-	prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?')) + '\n'
-	group = MenuItemGroup.yes_no()
+def ask_post_installation() -> PostInstallationAction:
+	header = str(_('Installation completed')) + '\n\n'
+	header += str(_('What would you like to do next?')) + '\n'
+
+	items = [MenuItem(action.value, value=action) for action in PostInstallationAction]
+	group = MenuItemGroup(items)
 
 	result = SelectMenu(
 		group,
-		header=prompt,
+		header=header,
+		allow_skip=False,
 		alignment=Alignment.CENTER,
-		columns=2,
-		orientation=Orientation.HORIZONTAL,
 	).run()
 
-	return result.item() == MenuItem.yes()
+	match result.type_:
+		case ResultType.Selection:
+			return result.get_value()
+		case _:
+			raise ValueError('Post installation action not handled')
 
 
 def ask_abort() -> None:
