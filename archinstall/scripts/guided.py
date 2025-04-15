@@ -165,8 +165,6 @@ def perform_installation(mountpoint: Path) -> None:
 					except Exception:
 						pass
 
-		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
-
 
 def guided() -> None:
 	if not arch_config_handler.args.silent:
@@ -195,21 +193,5 @@ def guided() -> None:
 
 	perform_installation(arch_config_handler.args.mountpoint)
 
-
-with Tui():
-	tmp = ask_post_installation()
-
-	match tmp:
-		case PostInstallationAction.EXIT:
-			pass
-		case PostInstallationAction.REBOOT:
-			os.system('reboot')
-		case PostInstallationAction.CHROOT:
-			# try:
-			# 	installation.drop_to_shell()
-			# except Exception:
-			pass
-
-	info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 guided()

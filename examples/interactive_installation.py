@@ -164,8 +164,6 @@ def perform_installation(mountpoint: Path) -> None:
 					except Exception:
 						pass
 
-		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
-
 
 def guided() -> None:
 	if not arch_config_handler.args.silent:
