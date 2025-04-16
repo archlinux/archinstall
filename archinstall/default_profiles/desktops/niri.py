@@ -33,6 +33,7 @@ class NiriProfile(XorgProfile):
 			additional = [seat]
 
 		return [
+			"niri",
 			"alacritty",
 			"fuzzel",
 			"mako",
