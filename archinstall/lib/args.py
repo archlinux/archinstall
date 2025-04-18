@@ -1,16 +1,18 @@
 import argparse
 import json
+import os
 import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
 from importlib.metadata import version
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.request import Request, urlopen
 
 from pydantic.dataclasses import dataclass as p_dataclass
 
+from archinstall.lib.crypt import decrypt
 from archinstall.lib.models.audio_configuration import AudioConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration
@@ -20,10 +22,19 @@ from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.profile_model import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
-from archinstall.lib.output import error, warn
+from archinstall.lib.output import debug, error, warn
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.storage import storage
 from archinstall.lib.translationhandler import Language, translation_handler
+from archinstall.lib.utils.util import get_password
+from archinstall.tui.curses_menu import Tui
+
+if TYPE_CHECKING:
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 @p_dataclass
@@ -32,6 +43,7 @@ class Arguments:
 	config_url: str | None = None
 	creds: Path | None = None
 	creds_url: str | None = None
+	creds_decryption_key: str | None = None
 	silent: bool = False
 	dry_run: bool = False
 	script: str = 'guided'
@@ -275,6 +287,13 @@ class ArchConfigHandler:
 			help="Url to a JSON credentials configuration file"
 		)
 		parser.add_argument(
+			"--creds-decryption-key",
+			type=str,
+			nargs="?",
+			default=None,
+			help="Decryption key for credentials file"
+		)
+		parser.add_argument(
 			"--silent",
 			action="store_true",
 			default=False,
@@ -370,6 +389,10 @@ class ArchConfigHandler:
 			plugin_path = Path(args.plugin)
 			load_plugin(plugin_path)
 
+		if args.creds_decryption_key is None:
+			if os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY'):
+				args.creds_decryption_key = os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY')
+
 		return args
 
 	def _parse_config(self) -> dict[str, Any]:
@@ -391,11 +414,56 @@ class ArchConfigHandler:
 			creds_data = self._fetch_from_url(self._args.creds_url)
 
 		if creds_data is not None:
-			config.update(json.loads(creds_data))
+			json_data = self._process_creds_data(creds_data)
+			if json_data is not None:
+				config.update(json_data)
 
 		config = self._cleanup_config(config)
 
 		return config
+
+	def _process_creds_data(self, creds_data: str) -> dict[str, Any] | None:
+		if creds_data.startswith('$'):  # encrypted data
+			if self._args.creds_decryption_key is not None:
+				try:
+					creds_data = decrypt(creds_data, self._args.creds_decryption_key)
+					return json.loads(creds_data)
+				except ValueError as err:
+					if 'Invalid password' in str(err):
+						error(str(_('Incorrect credentials file decryption password')))
+						exit(1)
+					else:
+						debug(f'Error decrypting credentials file: {err}')
+						raise err from err
+			else:
+				incorrect_password = False
+
+				with Tui():
+					while True:
+						header = str(_('Incorrect password')) if incorrect_password else None
+
+						decryption_pwd = get_password(
+							text=str(_('Credentials file decryption password')),
+							header=header,
+							allow_skip=False,
+							skip_confirmation=True
+						)
+
+						if not decryption_pwd:
+							return None
+
+						try:
+							creds_data = decrypt(creds_data, decryption_pwd.plaintext)
+							break
+						except ValueError as err:
+							if 'Invalid password' in str(err):
+								debug('Incorrect credentials file decryption password')
+								incorrect_password = True
+							else:
+								debug(f'Error decrypting credentials file: {err}')
+								raise err from err
+
+		return json.loads(creds_data)
 
 	def _fetch_from_url(self, url: str) -> str:
 		if urllib.parse.urlparse(url).scheme:

@@ -19,7 +19,8 @@ def get_password(
 	text: str,
 	header: str | None = None,
 	allow_skip: bool = False,
-	preset: str | None = None
+	preset: str | None = None,
+	skip_confirmation: bool = False
 ) -> Password | None:
 	failure: str | None = None
 
@@ -43,6 +44,9 @@ def get_password(
 			return None
 
 		password = Password(plaintext=result.text())
+
+		if skip_confirmation:
+			return password
 
 		if header is not None:
 			confirmation_header = f'{header}{_("Password")}: {password.hidden()}\n'
