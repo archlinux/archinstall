@@ -62,7 +62,7 @@ class HyprlandProfile(XorgProfile):
 		default = self.custom_settings.get('seat_access', None)
 		group.set_default_by_value(default)
 
-		result = SelectMenu(
+		result = SelectMenu[SeatAccess](
 			group,
 			header=header,
 			allow_skip=False,

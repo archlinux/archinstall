@@ -46,7 +46,7 @@ if TYPE_CHECKING:
 
 def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 	def _preview_device_selection(item: MenuItem) -> str | None:
-		device: _DeviceInfo = item.get_value()
+		device = item.get_value()
 		dev = device_handler.get_device(device.path)
 
 		if dev and dev.partition_infos:
@@ -64,7 +64,7 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 	group.set_selected_by_value(presets)
 	group.set_preview_for_all(_preview_device_selection)
 
-	result = SelectMenu(
+	result = SelectMenu[_DeviceInfo](
 		group,
 		header=header,
 		alignment=Alignment.CENTER,
@@ -82,7 +82,7 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			selected_device_info: list[_DeviceInfo] = result.get_values()
+			selected_device_info = result.get_values()
 			selected_devices = []
 
 			for device in devices:
@@ -140,7 +140,7 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 	if preset:
 		group.set_selected_by_value(preset.config_type.display_msg())
 
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
@@ -210,7 +210,7 @@ def select_lvm_config(
 	group = MenuItemGroup(items)
 	group.set_focus_by_value(preset_value)
 
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		allow_reset=True,
 		allow_skip=True,
@@ -261,7 +261,7 @@ def select_main_filesystem_format() -> FilesystemType:
 		items.append(MenuItem('ntfs', value=FilesystemType.Ntfs))
 
 	group = MenuItemGroup(items, sort_items=False)
-	result = SelectMenu(
+	result = SelectMenu[FilesystemType](
 		group,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min('Filesystem'),
@@ -285,7 +285,7 @@ def select_mount_options() -> list[str]:
 		MenuItem(disable_cow, value=BtrfsMountOption.nodatacow.value),
 	]
 	group = MenuItemGroup(items, sort_items=False)
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		header=prompt,
 		alignment=Alignment.CENTER,
@@ -336,7 +336,7 @@ def suggest_single_disk_layout(
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?')) + '\n'
 		group = MenuItemGroup.yes_no()
 		group.set_focus_by_value(MenuItem.yes().value)
-		result = SelectMenu(
+		result = SelectMenu[bool](
 			group,
 			header=prompt,
 			alignment=Alignment.CENTER,
@@ -578,7 +578,7 @@ def suggest_lvm_layout(
 		group = MenuItemGroup.yes_no()
 		group.set_focus_by_value(MenuItem.yes().value)
 
-		result = SelectMenu(
+		result = SelectMenu[bool](
 			group,
 			header=prompt,
 			search_enabled=False,

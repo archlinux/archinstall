@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class LocaleMenu(AbstractSubMenu):
+class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 	def __init__(
 		self,
 		locale_conf: LocaleConfiguration
@@ -85,7 +85,7 @@ def select_locale_lang(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Locale language'))),
@@ -109,7 +109,7 @@ def select_locale_enc(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Locale encoding'))),
@@ -141,7 +141,7 @@ def select_kb_layout(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=False)
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Keyboard layout'))),

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 CONFIG_KEY = '__config__'
 
 
-class AbstractMenu:
+class AbstractMenu[ValueT]:
 	def __init__(
 		self,
 		item_group: MenuItemGroup,
@@ -97,11 +97,11 @@ class AbstractMenu:
 	def _is_config_valid(self) -> bool:
 		return True
 
-	def run(self) -> Any | None:
+	def run(self) -> ValueT | None:
 		self._sync_from_config()
 
 		while True:
-			result = SelectMenu(
+			result = SelectMenu[ValueT](
 				self._menu_item_group,
 				allow_skip=False,
 				allow_reset=self._allow_reset,
@@ -126,7 +126,7 @@ class AbstractMenu:
 		return None
 
 
-class AbstractSubMenu(AbstractMenu):
+class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):
 	def __init__(
 		self,
 		item_group: MenuItemGroup,

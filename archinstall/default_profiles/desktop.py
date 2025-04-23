@@ -68,7 +68,7 @@ class DesktopProfile(Profile):
 		group = MenuItemGroup(items, sort_items=True, sort_case_sensitive=False)
 		group.set_selected_by_value(self.current_selection)
 
-		result = SelectMenu(
+		result = SelectMenu[Profile](
 			group,
 			multi=True,
 			allow_reset=True,

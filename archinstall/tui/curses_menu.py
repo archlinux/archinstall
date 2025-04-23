@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class AbstractCurses(metaclass=ABCMeta):
+class AbstractCurses[ValueT](metaclass=ABCMeta):
 	def __init__(self) -> None:
 		self._help_window = self._set_help_viewport()
 
@@ -44,7 +44,7 @@ class AbstractCurses(metaclass=ABCMeta):
 		pass
 
 	@abstractmethod
-	def kickoff(self, win: curses.window) -> Result:
+	def kickoff(self, win: curses.window) -> Result[ValueT]:
 		pass
 
 	def clear_all(self) -> None:
@@ -71,7 +71,7 @@ class AbstractCurses(metaclass=ABCMeta):
 
 	def _confirm_interrupt(self, warning: str) -> bool:
 		while True:
-			result = SelectMenu(
+			result = SelectMenu[bool](
 				MenuItemGroup.yes_no(),
 				header=warning,
 				alignment=Alignment.CENTER,
@@ -461,7 +461,7 @@ class Viewport(AbstractViewport):
 		self._main_win.refresh()
 
 
-class EditMenu(AbstractCurses):
+class EditMenu[ValueT](AbstractCurses[ValueT]):
 	def __init__(
 		self,
 		title: str,
@@ -506,7 +506,7 @@ class EditMenu(AbstractCurses):
 
 		self._init_viewports()
 
-		self._last_state: Result | None = None
+		self._last_state: Result[ValueT] | None = None
 		self._help_active = False
 		self._real_input = default_text or ""
 
@@ -536,7 +536,7 @@ class EditMenu(AbstractCurses):
 		y_offset += 3
 		self._info_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
 
-	def input(self) -> Result:
+	def input(self) -> Result[ValueT]:
 		result = Tui.run(self)
 
 		assert not result.has_item() or isinstance(result.text(), str)
@@ -593,7 +593,7 @@ class EditMenu(AbstractCurses):
 			self._input_vp.edit(default_text=self._default_text)
 
 	@override
-	def kickoff(self, win: curses.window) -> Result:
+	def kickoff(self, win: curses.window) -> Result[ValueT]:
 		try:
 			self._draw()
 		except KeyboardInterrupt:
@@ -680,7 +680,7 @@ class EditMenu(AbstractCurses):
 		return True
 
 
-class SelectMenu(AbstractCurses):
+class SelectMenu[ValueT](AbstractCurses[ValueT]):
 	def __init__(
 		self,
 		group: MenuItemGroup,
@@ -769,13 +769,13 @@ class SelectMenu(AbstractCurses):
 
 		return offset
 
-	def run(self) -> Result:
+	def run(self) -> Result[ValueT]:
 		result = Tui.run(self)
 		self._clear_all()
 		return result
 
 	@override
-	def kickoff(self, win: curses.window) -> Result:
+	def kickoff(self, win: curses.window) -> Result[ValueT]:
 		self._draw()
 
 		while True:
@@ -1137,7 +1137,7 @@ class SelectMenu(AbstractCurses):
 		else:
 			return False
 
-	def _process_input_key(self, key: int) -> Result | None:
+	def _process_input_key(self, key: int) -> Result[ValueT] | None:
 		key_handles = MenuKeys.from_ord(key)
 
 		if self._help_active:
@@ -1339,7 +1339,7 @@ class Tui:
 		return self._screen.getmaxyx()
 
 	@staticmethod
-	def run(component: AbstractCurses) -> Result:
+	def run[ValueT](component: AbstractCurses[ValueT]) -> Result[ValueT]:
 		if Tui._t is None:
 			tui = Tui().init()
 			tui.screen.clear()
@@ -1355,7 +1355,7 @@ class Tui:
 		if hasattr(self, '_component') and self._component is not None:  # pylint: disable=no-member
 			self._component.resize_win()  # pylint: disable=no-member
 
-	def _main_loop(self, component: AbstractCurses) -> Result:
+	def _main_loop[ValueT](self, component: AbstractCurses[ValueT]) -> Result[ValueT]:
 		self._screen.refresh()
 		return component.kickoff(self._screen)
 
