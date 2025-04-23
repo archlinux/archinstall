@@ -147,7 +147,7 @@ msgstr "請選擇掛載磁碟分割區的位置 (若留空，則直接移除掛�
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"

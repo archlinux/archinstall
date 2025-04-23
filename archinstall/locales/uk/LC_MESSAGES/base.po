@@ -132,7 +132,7 @@ msgstr "Оберіть місце монтування розділу (зали�
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"

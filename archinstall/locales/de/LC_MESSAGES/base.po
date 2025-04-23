@@ -132,7 +132,7 @@ msgstr "Bitte geben Sie an wo die Partition eingehängt werden soll (leer lassen
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
