@@ -244,7 +244,7 @@ msgid "Keyboard layout"
 msgstr "键盘布局"
 
 msgid "Mirror region"
-msgstr "镜像地区"
+msgstr "镜像源地区"
 
 msgid "Locale language"
 msgstr "语言环境"
@@ -1071,13 +1071,13 @@ msgid "Select directory (or directories) for saving configuration files"
 msgstr "选择一个或多个目录保存配置文件"
 
 msgid "Add a custom mirror"
-msgstr "添加自定义镜像站"
+msgstr "添加自定义镜像源"
 
 msgid "Change custom mirror"
-msgstr "更改自定义镜像站"
+msgstr "更改自定义镜像源"
 
 msgid "Delete custom mirror"
-msgstr "删除自定义镜像站"
+msgstr "删除自定义镜像源"
 
 msgid "Enter name (leave blank to skip): "
 msgstr "输入用户名（留空跳过）："
@@ -1092,7 +1092,7 @@ msgid "Select signature option"
 msgstr "选择签名选项"
 
 msgid "Custom mirrors"
-msgstr "自定义镜像站"
+msgstr "自定义镜像源"
 
 msgid "Defined"
 msgstr "已定义"
@@ -1120,10 +1120,10 @@ msgid "Saving {} configuration files to {}"
 msgstr "正在将 {} 配置文件保存到 {}"
 
 msgid "Mirrors"
-msgstr "镜像"
+msgstr "镜像源"
 
 msgid "Mirror regions"
-msgstr "镜像地区"
+msgstr "镜像源地区"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
 msgstr " - 最大值：{}（允许 {} 个并行下载，每次允许 {max_downloads+1} 个下载）"
@@ -1451,7 +1451,7 @@ msgid "Please submit this issue (and file) to https://github.com/archlinux/archi
 msgstr "请将此问题（和文件）提交到 https://github.com/archlinux/archinstall/issues"
 
 msgid "Mirror name"
-msgstr "镜像名称"
+msgstr "镜像源名称"
 
 msgid "Url"
 msgstr "URL"
@@ -1550,13 +1550,13 @@ msgid "Add custom repository"
 msgstr "添加自定义仓库"
 
 msgid "Loading mirror regions..."
-msgstr "加载镜像站地区"
+msgstr "加载镜像源地区"
 
 msgid "Mirrors and repositories"
-msgstr "镜像站与仓库"
+msgstr "镜像源与仓库"
 
 msgid "Selected mirror regions"
-msgstr "已选的镜像站地区"
+msgstr "已选的镜像源地区"
 
 msgid "Custom servers"
 msgstr "自定义服务器"
@@ -1610,7 +1610,7 @@ msgid "Reset"
 msgstr "重置"
 
 msgid "Skip selection menu"
-msgstr "选择执行模式"
+msgstr "跳过选区菜单"
 
 msgid "Start search mode"
 msgstr "开始搜索模式"
@@ -1636,25 +1636,20 @@ msgstr "标记/取消标记为 ESP"
 msgid "Package group:"
 msgstr "软件包组："
 
-#, fuzzy
 msgid "Exit archinstall"
-msgstr "Archinstall 帮助"
+msgstr "退出 archinstall"
 
-#, fuzzy
 msgid "Reboot system"
-msgstr "文件系统"
+msgstr "重启系统"
 
-#, fuzzy
 msgid "chroot into installation for post-installation configurations"
-msgstr "您是否想要 chroot 到新创建的系统内以进行安装后的配置？"
+msgstr "为了安装后的配置，chroot 进安装好的系统内"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "安装已完成"
 
-#, fuzzy
 msgid "What would you like to do next?"
-msgstr "您想继续吗？"
+msgstr "您接下来想做什么？"
 
-#, fuzzy
 msgid "Select which mode to configure for \"{}\""
-msgstr "选择要为“{}”配置的模式或跳过以使用默认模式“{}”"
+msgstr "选择要为“{}”配置的模式"
