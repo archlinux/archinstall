@@ -23,11 +23,6 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-# add the custom _ as a builtin, it can now be used anywhere in the
-# project to mark strings as translatable with _('translate me')
-DeferredTranslation.install()
-
-
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles_bck and other things.
 def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]

@@ -34,6 +34,7 @@ depends=(
   'ntfs-3g'
 )
 makedepends=(
+  'python-cryptography'
   'python-setuptools'
   'python-sphinx'
   'python-build'
