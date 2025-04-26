@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guided installation &mdash; python-archinstall v2.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=387c4177"></script>
+        <script src="../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Known Issues" href="../help/known_issues.html" />
+    <link rel="prev" title="archinstall Documentation" href="../index.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            python-archinstall
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Running Archinstall</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Guided installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-guided-installation">Running the guided installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config"><code class="docutils literal notranslate"><span class="pre">--config</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-usage">Example usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#config-options"><code class="docutils literal notranslate"><span class="pre">--config</span></code> options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#options-for-creds">Options for <code class="docutils literal notranslate"><span class="pre">--creds</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting help</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../help/known_issues.html">Known Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../help/report_bug.html">Report Issues &amp; Bugs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../help/discord.html">Discord</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Archinstall as a library</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Python library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/python.html">Python module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../archinstall/plugins.html">Python Plugins</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../archinstall/Installer.html">archinstall.Installer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">python-archinstall</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Guided installation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guided-installation">
+<span id="guided"></span><h1>Guided installation<a class="headerlink" href="#guided-installation" title="Link to this heading"></a></h1>
+<p>Archinstall ships with a pre-programmed <a class="reference external" href="https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py">Guided Installer</a> guiding you through the mandatory steps as well as some optional configurations that can be done.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Other pre-programmed scripts can be invoked by executing <code class="code docutils literal notranslate"><span class="pre">archinstall</span> <span class="pre">&lt;script&gt;</span></code> <em>(without .py)</em>. To see a complete list of scripts, run <code class="code docutils literal notranslate"><span class="pre">archinstall</span> <span class="pre">--script</span> <span class="pre">list</span></code> or check the source code <a class="reference external" href="https://github.com/archlinux/archinstall/tree/master/archinstall/scripts">scripts</a> directory.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It’s recommended to run <code class="docutils literal notranslate"><span class="pre">archinstall</span></code> from the official Arch Linux ISO.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The installer will not configure WiFi before the installation begins. You need to read up on <a class="reference external" href="https://wiki.archlinux.org/index.php/Network_configuration">Arch Linux networking</a> before you continue.</p>
+</div>
+<section id="running-the-guided-installation">
+<h2>Running the guided installation<a class="headerlink" href="#running-the-guided-installation" title="Link to this heading"></a></h2>
+<p>To start the installer, run the following in the latest Arch Linux ISO:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>archinstall
+</pre></div>
+</div>
+<p>Since the <a class="reference external" href="https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py">Guided Installer</a> is the default script, this is the equivalent of running <code class="code docutils literal notranslate"><span class="pre">archinstall</span> <span class="pre">guided</span></code></p>
+<p>The guided installation also supports installing with pre-configured answers to all the guided steps. This can be a quick and convenient way to re-run one or several installations.</p>
+<p>There are two configuration files, both are optional.</p>
+</section>
+<section id="config">
+<h2><code class="docutils literal notranslate"><span class="pre">--config</span></code><a class="headerlink" href="#config" title="Link to this heading"></a></h2>
+<p>This parameter takes a local or remote <code class="code docutils literal notranslate"><span class="pre">.json</span></code> file as argument and contains the overall configuration and menu answers for the guided installer.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can always get the latest options for this file with <code class="docutils literal notranslate"><span class="pre">archinstall</span> <span class="pre">--dry-run</span></code>, this executes the guided installer in a safe mode where no permanent actions will be taken on your system but simulate a run and save the configuration to disk.</p>
+</div>
+<section id="example-usage">
+<h3>Example usage<a class="headerlink" href="#example-usage" title="Link to this heading"></a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>archinstall<span class="w"> </span>--config<span class="w"> </span>https://domain.lan/config.json
+</pre></div>
+</div>
+<p>The contents of <code class="code docutils literal notranslate"><span class="pre">https://domain.lan/config.json</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;additional-repositories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;archinstall-language&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;English&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;audio_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;bootloader&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Systemd-boot&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;debug&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;disk_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;config_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;manual_partitioning&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;device_modifications&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;device&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/dev/sda&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;partitions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;btrfs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="s2">&quot;boot&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;fs_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fat32&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;length&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">99982592</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;mount_options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/boot&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;obj_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;369f31a8-2781-4d6b-96e7-75680552b7c9&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sectors&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">34</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;create&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;primary&quot;</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;btrfs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;fs_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fat32&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;length&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100000000</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;mount_options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/efi&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;obj_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;13cf2c96-8b0f-4ade-abaa-c530be589aad&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16106127360</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MB&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;create&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;primary&quot;</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;btrfs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;fs_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ext4&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;length&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">15805127360</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;mount_options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;obj_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3e75d045-21a4-429d-897e-8ec19a006e8b&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;sector_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;total_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16106127360</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MB&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">301</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;create&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;primary&quot;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;wipe&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;disk_encryption&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;encryption_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;luks&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;partitions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">&quot;3e75d045-21a4-429d-897e-8ec19a006e8b&quot;</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;archlinux&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;kernels&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;linux&quot;</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;locale_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;kb_layout&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;us&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sys_enc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sys_lang&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;en_US&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;mirror_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;custom_servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://mymirror.com/$repo/os/$arch&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;mirror_regions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;Australia&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch&quot;</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;optional_repositories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">&quot;testing&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;custom_repositories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myrepo&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://myrepo.com/$repo/os/$arch&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sign_check&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Required&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sign_option&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TrustAll&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;network_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">  </span><span class="nt">&quot;no_pkg_lookups&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ntp&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;offline&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;packages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;parallel downloads&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;profile_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;save_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;script&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;guided&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;silent&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;swap&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timezone&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTC&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.6.0&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="config-options">
+<h3><code class="docutils literal notranslate"><span class="pre">--config</span></code> options<a class="headerlink" href="#config-options" title="Link to this heading"></a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>All key and value entries must conform to the JSON standard. Below is human readable examples with links, effectively breaking the syntax. Adapt the descriptions below to suit your needs and the JSON format.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Scroll to the right in the table to see required options.</p>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">JSON options</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 40.0%" />
+<col style="width: 40.0%" />
+<col style="width: 5.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Value(s)</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>additional-repositories</p></td>
+<td><p>[ <a class="reference external" href="https://wiki.archlinux.org/title/Official_repositories#multilib">multilib</a>, <a class="reference external" href="https://wiki.archlinux.org/title/Official_repositories#Testing_repositories">testing</a> ]</p></td>
+<td><p>Enables one or more of the testing and multilib repositories before proceeding with installation</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>archinstall-language</p></td>
+<td><p><a class="reference external" href="https://github.com/archlinux/archinstall/blob/master/archinstall/locales/languages.json">lang</a></p></td>
+<td><p>Sets the TUI language used <em>(make sure to use the ``lang`` value not the ``abbr``)</em></p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>audio_config</p></td>
+<td><p><a class="reference external" href="https://wiki.archlinux.org/title/PipeWire">pipewire</a>, <a class="reference external" href="https://wiki.archlinux.org/title/PulseAudio">pulseaudio</a></p></td>
+<td><p>Audioserver to be installed</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>bootloader</p></td>
+<td><p><a class="reference external" href="https://wiki.archlinux.org/title/Systemd-boot">Systemd-boot</a>, <a class="reference external" href="https://wiki.archlinux.org/title/GRUB">grub</a></p></td>
+<td><p>Bootloader to be installed <em>(grub being mandatory on BIOS machines)</em></p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>debug</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>Enables debug output</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>disk_config</p></td>
+<td><p><em>Read more under</em> <a class="reference internal" href="../cli_parameters/config/disk_config.html#disk-config"><span class="std std-ref">Disk Configuration</span></a></p></td>
+<td><p>Contains the desired disk setup to be used during installation</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>disk_encryption</p></td>
+<td><p><em>Read more about under</em> <a class="reference internal" href="../cli_parameters/config/disk_encryption.html#disk-encryption"><span class="std std-ref">Disk Encryption</span></a></p></td>
+<td><p>Parameters for disk encryption applied on top of <code class="docutils literal notranslate"><span class="pre">disk_config</span></code></p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>hostname</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>A string defining your machines hostname on the network <em>(defaults to ``archinstall``)</em></p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>kernels</p></td>
+<td><p>[ <a class="reference external" href="https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels">linux</a>, <a class="reference external" href="https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels">linux-hardened</a>, <a class="reference external" href="https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels">linux-lts</a>, <a class="reference external" href="https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels">linux-rt</a>, <a class="reference external" href="https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels">linux-rt-lts</a>, <a class="reference external" href="https://wiki.archlinux.org/title/Kernel#Officially_supported_kernels">linux-zen</a> ]</p></td>
+<td><p>Defines which kernels should be installed and setup in the boot loader options</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>custom-commands</p></td>
+<td><p><em>Read more under</em> <a class="reference internal" href="../cli_parameters/config/custom_commands.html#custom-commands"><span class="std std-ref">Custom Commands</span></a></p></td>
+<td><p>Custom commands that will be run post-install chrooted inside the installed system</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>locale_config</p></td>
+<td><p>{kb_layout: <a class="reference external" href="https://wiki.archlinux.org/title/Linux_console/Keyboard_configuration">lang</a>, sys_enc: <a class="reference external" href="https://wiki.archlinux.org/title/Locale">Character encoding</a>, sys_lang: <a class="reference external" href="https://wiki.archlinux.org/title/Locale">locale</a>}</p></td>
+<td><p>Defines the keyboard key map, system encoding and system locale</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>mirror_config</p></td>
+<td><p>{custom_mirrors: [ <a class="reference external" href="https://">https://</a>… ], mirror_regions: { “Worldwide”: [ “<a class="reference external" href="https://geo.mirror.pkgbuild.com/$repo/os/$arch">https://geo.mirror.pkgbuild.com/$repo/os/$arch</a>” ] } }</p></td>
+<td><p>Sets various mirrors <em>(defaults to ISO’s ``/etc/pacman.d/mirrors`` if not defined)</em></p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>network_config</p></td>
+<td><p><em>`see options under Network Configuration`</em></p></td>
+<td><p>Sets which type of <em>(if any)</em> network configuration should be used</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>no_pkg_lookups</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>Disabled package checking against <a class="reference external" href="https://archlinux.org/packages/">https://archlinux.org/packages/</a></p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>ntp</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>enables or disables <a class="reference external" href="https://wiki.archlinux.org/title/Network_Time_Protocol_daemon">NTP</a> during installation</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>offline</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>enables or disables certain online checks such as mirror reachability etc</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>packages</p></td>
+<td><p>[ &lt;package1&gt;, &lt;package2&gt;, … ]</p></td>
+<td><p>A list of packages to install during installation</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>parallel downloads</p></td>
+<td><p>0-∞</p></td>
+<td><p>sets a given number of parallel downloads to be used by <a class="reference external" href="https://wiki.archlinux.org/title/Pacman#Enabling_parallel_downloads">pacman</a></p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>profile_config</p></td>
+<td><p><em>`read more under the profiles section`</em></p></td>
+<td><p>Installs a given profile if defined</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>script</p></td>
+<td><p><a class="reference external" href="https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py">guided</a> <em>(default)</em>, <a class="reference external" href="https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/minimal.py">minimal</a>, <a class="reference external" href="https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/only_hdd.py">only_hdd</a>, <a class="reference external" href="https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/unattended.py">unattended</a></p></td>
+<td><p>When used to autorun an installation, this sets which script to autorun with</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>silent</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>disables or enables user questions using the TUI</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>swap</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>enables or disables swap</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>timezone</p></td>
+<td><p><a class="reference external" href="https://wiki.archlinux.org/title/System_time#Time_zone">timezone</a></p></td>
+<td><p>sets a timezone for the installed system</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If no entries are found in <code class="docutils literal notranslate"><span class="pre">disk_config</span></code>, archinstall guided installation will use whatever is mounted currently under <code class="docutils literal notranslate"><span class="pre">/mnt/archinstall</span></code> without performing any disk operations.</p>
+</div>
+</section>
+</section>
+<section id="options-for-creds">
+<h2>Options for <code class="docutils literal notranslate"><span class="pre">--creds</span></code><a class="headerlink" href="#options-for-creds" title="Link to this heading"></a></h2>
+<p>Creds is a separate configuration file to separate normal options from more sensitive data like passwords.
+Below is an example of how to set the root password and below that are description of other values that can be set.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;root_enc_password&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SecretSanta2022&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">--creds</span></code> options</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 40.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">!encryption-password</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Password to encrypt disk, not encrypted if password not provided</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">root_enc_password</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>The root account password</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">users</span></code></p></td>
+<td><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;USERNAME&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;enc_password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;PASSWORD_HASH&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sudo&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+<td><p>List of regular user credentials, see configuration for reference</p></td>
+<td><p>Maybe</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">users</span></code> is optional only if <code class="docutils literal notranslate"><span class="pre">root_enc_password</span></code> was set. <code class="docutils literal notranslate"><span class="pre">users</span></code> will be enforced otherwise and the minimum amount of users with sudo privileges required will be set to 1.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="archinstall Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../help/known_issues.html" class="btn btn-neutral float-right" title="Known Issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Anton Hvornum.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
