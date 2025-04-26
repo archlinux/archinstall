@@ -20,11 +20,11 @@ jobs:
           pacman --noconfirm -Sy python-uv python-setuptools python-pip
       - name: Remove existing archinstall (if any)
         run: 
-          uv pip uninstall archinstall --break-system-packages
+          uv pip uninstall archinstall --break-system-packages --system
       - name: Build archinstall
         run: uv build --no-build-isolation --wheel
       - name: Install archinstall
-        run: uv pip install dist/*.whl
+        run: uv pip install dist/*.whl --break-system-packages --system
       - name: Run archinstall
         run: |
           python -V
