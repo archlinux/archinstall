@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class Xfce4Profile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Xfce4', ProfileType.DesktopEnv, description='')
+		super().__init__('Xfce4', ProfileType.DesktopEnv)
 
 	@property
 	@override
@@ -21,5 +21,5 @@ class Xfce4Profile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Lightdm

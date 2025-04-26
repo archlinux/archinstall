@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from archinstall.tui.curses_menu import EditMenu
 from archinstall.tui.types import Alignment
 
-from ..general import secret
+from ..models.users import Password
 from ..output import FormattedOutput
 
 if TYPE_CHECKING:
@@ -20,7 +20,7 @@ def get_password(
 	header: str | None = None,
 	allow_skip: bool = False,
 	preset: str | None = None
-) -> str | None:
+) -> Password | None:
 	failure: str | None = None
 
 	while True:
@@ -42,13 +42,12 @@ def get_password(
 		if allow_skip and not result.has_item():
 			return None
 
-		password = result.text()
-		hidden = secret(password)
+		password = Password(plaintext=result.text())
 
 		if header is not None:
-			confirmation_header = f'{header}{_("Password")}: {hidden}\n'
+			confirmation_header = f'{header}{_("Password")}: {password.hidden()}\n'
 		else:
-			confirmation_header = f'{_("Password")}: {hidden}\n'
+			confirmation_header = f'{_("Password")}: {password.hidden()}\n'
 
 		result = EditMenu(
 			str(_('Confirm password')),
@@ -58,7 +57,7 @@ def get_password(
 			hide_input=True
 		).input()
 
-		if password == result.text():
+		if password._plaintext == result.text():
 			return password
 
 		failure = str(_('The confirmation password did not match, please try again'))

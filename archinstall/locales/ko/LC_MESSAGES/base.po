@@ -1606,3 +1606,154 @@ msgstr "사용자명 : "
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "파티션을 압축된 것으로 표시/표시 해제(btrfs만 해당)"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "추가 패키지"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "사용자 추가"
+
+msgid "Change custom repository"
+msgstr ""
+
+msgid "Delete custom repository"
+msgstr ""
+
+#, fuzzy
+msgid "Repository name"
+msgstr "미러 위치"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "사용자 추가"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "오디오 서버를 선택하세요"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "사용자 제거"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "추가할 인터페이스 선택"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "사용자 추가"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "사용자 추가"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "미러 위치"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "선택적 저장소"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "미러 위치"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "오디오 서버가 없습니다"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "선택적 저장소"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "추가할 인터페이스 선택"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "시간대를 선택하세요"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "'{}' 에 대한 작업 선택"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "파티션을 압축된 것으로 표시/표시 해제(btrfs만 해당)"
+
+msgid "Package group:"
+msgstr ""

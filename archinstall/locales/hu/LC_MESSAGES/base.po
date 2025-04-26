@@ -1313,7 +1313,7 @@ msgid " (default)"
 msgstr " (alapértelmezett)"
 
 msgid "Press Ctrl+h for help"
-msgstr "CTRL+h → a súgó megnyitásához"
+msgstr "CTRL+h → a súgó megjelenítéséhez"
 
 msgid "Choose an option to give Sway access to your hardware"
 msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Sway számára a hardverekhez való hozzáférést"
@@ -1466,7 +1466,7 @@ msgid "Select execution mode"
 msgstr "Végrehajtási mód kiválasztása"
 
 msgid "Press ? for help"
-msgstr "? → a súgó megnyitásához"
+msgstr "? → a súgó megjelenítéséhez"
 
 msgid "Choose an option to give Hyprland access to your hardware"
 msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Hyprland számára a hardverekhez való hozzáférést"
@@ -1506,3 +1506,135 @@ msgstr "Felhasználó"
 
 msgid "The specified configuration will be applied"
 msgstr "A megadott konfiguráció lesz alkalmazva"
+
+msgid "Wipe"
+msgstr "Törlés"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Megjelölés/elvetés mint XBOOTLDR"
+
+msgid "Loading packages..."
+msgstr "Csomagok betöltése…"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Válassza ki az alábbi listából azokat a csomagokat, amelyeket hozzá akar adni a telepítéshez"
+
+msgid "Add a custom repository"
+msgstr "Egyéni tároló hozzáadása"
+
+msgid "Change custom repository"
+msgstr "Egyéni tároló módosítása"
+
+msgid "Delete custom repository"
+msgstr "Egyéni tároló törlése"
+
+msgid "Repository name"
+msgstr "Tároló neve"
+
+msgid "Add a custom server"
+msgstr "Egyéni kiszolgáló hozzáadása"
+
+msgid "Change custom server"
+msgstr "Egyéni kiszolgáló módosítása"
+
+msgid "Delete custom server"
+msgstr "Egyéni kiszolgáló törlése"
+
+msgid "Server url"
+msgstr "Kiszolgáló webcíme"
+
+msgid "Select regions"
+msgstr "Régiók kiválasztása"
+
+msgid "Add custom servers"
+msgstr "Egyéni kiszolgálók hozzáadása"
+
+msgid "Add custom repository"
+msgstr "Egyéni tároló hozzáadása"
+
+msgid "Loading mirror regions..."
+msgstr "Tükörrégiók betöltése…"
+
+msgid "Mirrors and repositories"
+msgstr "Tükrök és tárolók"
+
+msgid "Selected mirror regions"
+msgstr "Kiválasztott tükörrégiók"
+
+msgid "Custom servers"
+msgstr "Egyéni kiszolgálók"
+
+msgid "Custom repositories"
+msgstr "Egyéni tárolók"
+
+msgid "Only ASCII characters are supported"
+msgstr "Csak ASCII karakterek támogatottak"
+
+msgid "Show help"
+msgstr "Súgó megjelenítése"
+
+msgid "Exit help"
+msgstr "Kilépés a súgóból"
+
+msgid "Preview scroll up"
+msgstr "Előnézet felfelé görgetése"
+
+msgid "Preview scroll down"
+msgstr "Előnézet lefelé görgetése"
+
+msgid "Move up"
+msgstr "Felfelé léptetés"
+
+msgid "Move down"
+msgstr "Lefelé léptetés"
+
+msgid "Move right"
+msgstr "Jobbra léptetés"
+
+msgid "Move left"
+msgstr "Balra léptetés"
+
+msgid "Jump to entry"
+msgstr "Ugrás a bejegyzésre"
+
+msgid "Skip selection (if available)"
+msgstr "Kiválasztás kihagyása (ha elérhető)"
+
+msgid "Reset selection (if available)"
+msgstr "Kiválasztás visszaállítása (ha elérhető)"
+
+msgid "Select on single select"
+msgstr "Egyetlen elem kiválasztása"
+
+msgid "Select on multi select"
+msgstr "Több elem kiválasztása"
+
+msgid "Reset"
+msgstr "Visszaállítás"
+
+msgid "Skip selection menu"
+msgstr "Kiválasztási menü kihagyása"
+
+msgid "Start search mode"
+msgstr "Keresési mód indítása"
+
+msgid "Exit search mode"
+msgstr "Kilépés a keresési módból"
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "A Labwc-nek hozzáférésre van szüksége az Ön munkamenetéhez (olyan hardvereszközök gyűjteményéhez, mint például a billentyűzet, az egér, stb.)"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Labwc számára a hardverekhez való hozzáférést"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "A Nirinek hozzáférésre van szüksége az Ön munkamenetéhez (olyan hardvereszközök gyűjteményéhez, mint például a billentyűzet, az egér, stb.)"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Niri számára a hardverekhez való hozzáférést"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Megjelölés/elvetés mint EFI-rendszerpartíció (ESP)"
+
+msgid "Package group:"
+msgstr "Csomagcsoport:"

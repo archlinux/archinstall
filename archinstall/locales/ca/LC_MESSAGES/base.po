@@ -1504,3 +1504,160 @@ msgstr "Usuari"
 
 msgid "The specified configuration will be applied"
 msgstr "S'aplicarà la configuració especificada"
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marcar/Desmarcar com a arranc"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Paquets addicionals"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Afegir un mirall personalitzat"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Canviar mirall personalitzat"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Eliminar mirall personalitzat"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Nom del mirall"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Afegir un mirall personalitzat"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Canviar mirall personalitzat"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Eliminar mirall personalitzat"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Seleccioneu la opció de firma"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Afegir un mirall personalitzat"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Afegir un mirall personalitzat"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Regions dels miralls"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Repositoris opcionals"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Regions dels miralls"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Miralls personalitzats"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Repositoris opcionals"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Seleccionar verificació de signatura"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Seleccioneu una franja horària"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Seleccionar mode d'execució"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway necessita accés als vostres dispositius de hardware (teclat, ratolí, etc)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Escolliu una opció per permetre que Sway accedeixi al vostre hardware"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway necessita accés als vostres dispositius de hardware (teclat, ratolí, etc)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Escolliu una opció per permetre que Sway accedeixi al vostre hardware"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Marcar/Desmarcar com a arranc"
+
+msgid "Package group:"
+msgstr ""

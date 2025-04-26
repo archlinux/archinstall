@@ -13,10 +13,12 @@ from archinstall.lib.models.device_model import (
 )
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, FrameProperties, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties
 
 from ..menu.abstract_menu import AbstractSubMenu
 from ..models.device_model import Fido2Device
+from ..models.users import Password
 from ..output import FormattedOutput
 from ..utils.util import get_password
 from .fido import Fido2
@@ -122,7 +124,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		super().run()
 
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
-		enc_password: str | None = self._item_group.find_by_key('encryption_password').value
+		enc_password: Password | None = self._item_group.find_by_key('encryption_password').value
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_volumes').value
 
@@ -183,8 +185,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		enc_pwd = self._item_group.find_by_key('encryption_password').value
 
 		if enc_pwd:
-			pwd_text = '*' * len(enc_pwd)
-			return f'{_("Encryption password")}: {pwd_text}'
+			return f'{_("Encryption password")}: {enc_pwd.hidden()}'
 
 		return None
 
@@ -249,7 +250,7 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 			return result.get_value()
 
 
-def select_encrypted_password() -> str | None:
+def select_encrypted_password() -> Password | None:
 	header = str(_('Enter disk encryption password (leave blank for no encryption)')) + '\n'
 	password = get_password(
 		text=str(_('Disk encryption password')),

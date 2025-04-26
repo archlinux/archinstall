@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from archinstall import SysInfo
@@ -7,7 +8,7 @@ from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
-from archinstall.lib.interactions.general_conf import ask_chroot
+from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
 from archinstall.lib.models import AudioConfiguration, Bootloader
 from archinstall.lib.models.device_model import (
 	DiskLayoutConfiguration,
@@ -15,6 +16,7 @@ from archinstall.lib.models.device_model import (
 	EncryptionType,
 )
 from archinstall.lib.models.network_configuration import NetworkConfiguration
+from archinstall.lib.models.users import User
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui import Tui
@@ -128,8 +130,9 @@ def perform_installation(mountpoint: Path) -> None:
 		if accessibility_tools_in_use():
 			installation.enable_espeakup()
 
-		if (root_pw := config.root_password) and len(root_pw):
-			installation.user_set_pw('root', root_pw)
+		if root_pw := config.root_enc_password:
+			root_user = User('root', root_pw, False)
+			installation.set_user_password(root_user)
 
 		if (profile_config := config.profile_config) and profile_config.profile:
 			profile_config.profile.post_install(installation)
@@ -145,19 +148,22 @@ def perform_installation(mountpoint: Path) -> None:
 
 		installation.genfstab()
 
-		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
+		debug(f"Disk states after installing:\n{disk_layouts()}")
 
 		if not arch_config_handler.args.silent:
 			with Tui():
-				chroot = ask_chroot()
+				action = ask_post_installation()
 
-			if chroot:
-				try:
-					installation.drop_to_shell()
-				except Exception:
+			match action:
+				case PostInstallationAction.EXIT:
 					pass
-
-	debug(f"Disk states after installing:\n{disk_layouts()}")
+				case PostInstallationAction.REBOOT:
+					os.system('reboot')
+				case PostInstallationAction.CHROOT:
+					try:
+						installation.drop_to_shell()
+					except Exception:
+						pass
 
 
 def guided() -> None:

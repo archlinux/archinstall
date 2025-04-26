@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, assert_never, override
 
 from archinstall.lib.models.device_model import SubvolumeModification
 from archinstall.tui.curses_menu import EditMenu
-from archinstall.tui.types import Alignment, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment
 
 from ..menu.list_manager import ListManager
 from ..utils.util import prompt_dir
@@ -54,6 +55,8 @@ class SubvolumeMenu(ListManager):
 				name = result.text()
 			case ResultType.Reset:
 				raise ValueError('Unhandled result type')
+			case _:
+				assert_never(result.type_)
 
 		header = f"{_('Subvolume name')}: {name}\n"
 

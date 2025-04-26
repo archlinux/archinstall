@@ -1,9 +1,16 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
-from typing import Any, override
+from typing import TYPE_CHECKING, Any, override
 
 from pydantic import BaseModel
+
+if TYPE_CHECKING:
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class Repository(Enum):
@@ -165,4 +172,38 @@ class AvailablePackage(BaseModel):
 			key = key.ljust(self.longest_key)
 			output += f'{key} : {value}\n'
 
+		return output
+
+
+@dataclass
+class PackageGroup:
+	name: str
+	packages: list[str] = field(default_factory=list)
+
+	@classmethod
+	def from_available_packages(
+		cls,
+		packages: dict[str, AvailablePackage]
+	) -> dict[str, 'PackageGroup']:
+		pkg_groups: dict[str, 'PackageGroup'] = {}
+
+		for pkg in packages.values():
+			if 'None' in pkg.groups:
+				continue
+
+			groups = pkg.groups.split(' ')
+
+			for group in groups:
+				# same group names have multiple spaces in between
+				if len(group) == 0:
+					continue
+
+				pkg_groups.setdefault(group, PackageGroup(group))
+				pkg_groups[group].packages.append(pkg.name)
+
+		return pkg_groups
+
+	def info(self) -> str:
+		output = str(_('Package group:')) + '\n  - '
+		output += '\n  - '.join(self.packages)
 		return output

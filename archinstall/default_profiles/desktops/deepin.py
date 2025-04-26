@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class DeepinProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Deepin', ProfileType.DesktopEnv, description='')
+		super().__init__('Deepin', ProfileType.DesktopEnv)
 
 	@property
 	@override
@@ -19,5 +19,5 @@ class DeepinProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Lightdm

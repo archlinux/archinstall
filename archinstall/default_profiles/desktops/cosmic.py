@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class CosmicProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('cosmic-epoch', ProfileType.DesktopEnv, description='', advanced=True)
+		super().__init__('cosmic-epoch', ProfileType.DesktopEnv, advanced=True)
 
 	@property
 	@override
@@ -17,5 +17,5 @@ class CosmicProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.CosmicSession

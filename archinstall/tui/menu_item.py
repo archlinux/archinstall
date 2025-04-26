@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, ClassVar
 
-from ..lib.output import unicode_ljust
+from ..lib.utils.unicode import unicode_ljust
 
 if TYPE_CHECKING:
 	from archinstall.lib.translationhandler import DeferredTranslation
@@ -74,13 +74,17 @@ class MenuItemGroup:
 		focus_item: MenuItem | None = None,
 		default_item: MenuItem | None = None,
 		sort_items: bool = False,
+		sort_case_sensitive: bool = True,
 		checkmarks: bool = False
 	) -> None:
 		if len(menu_items) < 1:
 			raise ValueError('Menu must have at least one item')
 
 		if sort_items:
-			menu_items = sorted(menu_items, key=lambda x: x.text)
+			if sort_case_sensitive:
+				menu_items = sorted(menu_items, key=lambda x: x.text)
+			else:
+				menu_items = sorted(menu_items, key=lambda x: x.text.lower())
 
 		if not focus_item:
 			focus_item = menu_items[0]
@@ -89,7 +93,7 @@ class MenuItemGroup:
 			raise ValueError('Selected item not in menu')
 
 		self.menu_items: list[MenuItem] = menu_items
-		self.focus_item: MenuItem = focus_item
+		self.focus_item: MenuItem | None = focus_item
 		self.selected_items: list[MenuItem] = []
 		self.default_item: MenuItem | None = default_item
 
@@ -146,7 +150,14 @@ class MenuItemGroup:
 
 	def index_focus(self) -> int | None:
 		if self.focus_item and self.items:
-			return self.items.index(self.focus_item)
+			try:
+				return self.items.index(self.focus_item)
+			except ValueError:
+				# on large menus (15k+) when filtering very quickly
+				# the index search is too slow while the items are reduced
+				# by the filter and it will blow up as it cannot find the
+				# focus item
+				pass
 
 		return None
 
@@ -227,6 +238,8 @@ class MenuItemGroup:
 		if len(self.items) > 0:
 			if self.focus_item not in self.items:
 				self.focus_first()
+		else:
+			self.focus_item = None
 
 	def is_item_selected(self, item: MenuItem) -> bool:
 		return item in self.selected_items
@@ -261,21 +274,24 @@ class MenuItemGroup:
 			self.focus_item = last_item
 
 	def focus_prev(self, skip_empty: bool = True) -> None:
-		assert self.focus_item is not None
+		# e.g. when filter shows no items
+		if self.focus_item is None:
+			return
+
 		item = self._find_next_selectable_item(self.items, self.focus_item, -1)
 
 		if item is not None:
 			self.focus_item = item
 
 	def focus_next(self, skip_not_enabled: bool = True) -> None:
-		assert self.focus_item is not None
+		# e.g. when filter shows no items
+		if self.focus_item is None:
+			return
+
 		item = self._find_next_selectable_item(self.items, self.focus_item, 1)
 
 		if item is not None:
 			self.focus_item = item
-
-	def get_focus_index(self) -> int:
-		return self.items.index(self.focus_item)
 
 	def _find_next_selectable_item(
 		self,

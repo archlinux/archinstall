@@ -5,15 +5,11 @@ from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import FrameProperties, PreviewStyle, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import FrameProperties, PreviewStyle
 
 if TYPE_CHECKING:
-	from collections.abc import Callable
-
 	from archinstall.lib.installer import Installer
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class DesktopProfile(Profile):
@@ -21,7 +17,6 @@ class DesktopProfile(Profile):
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
-			description=str(_('Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway')),
 			current_selection=current_selection,
 			support_greeter=True
 		)
@@ -61,7 +56,7 @@ class DesktopProfile(Profile):
 			profile.do_on_select()
 
 	@override
-	def do_on_select(self) -> SelectResult | None:
+	def do_on_select(self) -> SelectResult:
 		items = [
 			MenuItem(
 				p.name,
@@ -70,7 +65,7 @@ class DesktopProfile(Profile):
 			) for p in profile_handler.get_desktop_profiles()
 		]
 
-		group = MenuItemGroup(items, sort_items=True)
+		group = MenuItemGroup(items, sort_items=True, sort_case_sensitive=False)
 		group.set_selected_by_value(self.current_selection)
 
 		result = SelectMenu(

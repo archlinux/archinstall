@@ -1629,6 +1629,169 @@ msgstr "Nazwa użytkownika : "
 msgid "The specified configuration will be applied"
 msgstr ""
 
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Zaznacz/Odznacz jako bootowalne"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Dodatkowe pakiety"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Dodaj użytkownika"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Ustaw własny mirror"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Usuń własny mirror"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Region serwerów lustrzanych"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Dodaj użytkownika"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Ustaw własny mirror"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Usuń własny mirror"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Wybierz układ dysku"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Dodaj użytkownika"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Dodaj użytkownika"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Region serwerów lustrzanych"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Opcjonalne repozytoria"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Region serwerów lustrzanych"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Własny mirror"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Opcjonalne repozytoria"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Wybierz układ dysku"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Wybierz strefę czasową"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Wybierz akcję dla '{}'"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway potrzebuje dostępu do twojego stanowia (sprzętu, np. klawiatury, myszki)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Wybierz by nadać Sway dostęp do twojego sprzętu"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway potrzebuje dostępu do twojego stanowia (sprzętu, np. klawiatury, myszki)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Wybierz by nadać Sway dostęp do twojego sprzętu"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Zaznacz/Odznacz jako bootowalne"
+
+msgid "Package group:"
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
 

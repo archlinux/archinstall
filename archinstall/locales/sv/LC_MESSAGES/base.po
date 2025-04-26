@@ -1505,3 +1505,140 @@ msgstr "Användare"
 
 msgid "The specified configuration will be applied"
 msgstr "Den angivna konfigurationen kommer att tillämpas"
+
+msgid "Wipe"
+msgstr "Rensa"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Markera/avmarkera som XBOOTLDR"
+
+msgid "Loading packages..."
+msgstr "Laddar paket..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Välj alla paket från listan nedan som ska installeras ytterligare"
+
+msgid "Add a custom repository"
+msgstr "Lägg till en anpassat arkiv"
+
+msgid "Change custom repository"
+msgstr "Ändra anpassat arkiv"
+
+msgid "Delete custom repository"
+msgstr "Ta bort anpassat arkiv"
+
+msgid "Repository name"
+msgstr "Arkivnamn"
+
+msgid "Add a custom server"
+msgstr "Lägg till en anpassad server"
+
+msgid "Change custom server"
+msgstr "Ändra anpassad server"
+
+msgid "Delete custom server"
+msgstr "Ta bort anpassad server"
+
+msgid "Server url"
+msgstr "Server url"
+
+msgid "Select regions"
+msgstr "Välj regioner"
+
+msgid "Add custom servers"
+msgstr "Lägg till en anpassade servrar"
+
+msgid "Add custom repository"
+msgstr "Lägg till ett anpassat arkiv"
+
+msgid "Loading mirror regions..."
+msgstr "Laddar spegelregioner..."
+
+msgid "Mirrors and repositories"
+msgstr "Speglar och arkiv"
+
+msgid "Selected mirror regions"
+msgstr "Valda spegelregioner"
+
+msgid "Custom servers"
+msgstr "Anpassade servrar"
+
+msgid "Custom repositories"
+msgstr "Anpassade arkiv"
+
+msgid "Only ASCII characters are supported"
+msgstr "Endast ASCII-tecken stöds"
+
+msgid "Show help"
+msgstr "Visa hjälp"
+
+msgid "Exit help"
+msgstr "Avsluta hjälpen"
+
+msgid "Preview scroll up"
+msgstr "Förhandsgranska rulla uppåt"
+
+msgid "Preview scroll down"
+msgstr "Förhandsgranska rulla nedåt"
+
+msgid "Move up"
+msgstr "Flytta upp"
+
+msgid "Move down"
+msgstr "Flytta ned"
+
+msgid "Move right"
+msgstr "Flytta höger"
+
+msgid "Move left"
+msgstr "Flytta vänster"
+
+msgid "Jump to entry"
+msgstr "Hoppa till posten"
+
+msgid "Skip selection (if available)"
+msgstr "Hoppa över valet (om tillgängligt)"
+
+msgid "Reset selection (if available)"
+msgstr "Återställ val (om tillgängligt)"
+
+msgid "Select on single select"
+msgstr "Välj på enstaka val"
+
+msgid "Select on multi select"
+msgstr "Välj på flerval"
+
+msgid "Reset"
+msgstr "Återställ"
+
+msgid "Skip selection menu"
+msgstr "Hoppa över valmenyn"
+
+msgid "Start search mode"
+msgstr "Starta sökläge"
+
+msgid "Exit search mode"
+msgstr "Avsluta sökläge"
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Markera/avmarkera som bootbar"
+
+msgid "Package group:"
+msgstr ""

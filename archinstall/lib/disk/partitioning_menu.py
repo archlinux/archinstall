@@ -19,7 +19,8 @@ from archinstall.lib.models.device_model import (
 )
 from archinstall.tui.curses_menu import EditMenu, SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, FrameProperties, Orientation, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties, Orientation
 
 from ..menu.list_manager import ListManager
 from ..output import FormattedOutput
@@ -95,13 +96,19 @@ class PartitioningList(ListManager):
 			'assign_mountpoint': str(_('Assign mountpoint')),
 			'mark_formatting': str(_('Mark/Unmark to be formatted (wipes data)')),
 			'mark_bootable': str(_('Mark/Unmark as bootable')),
-			'mark_xbootldr': str(_('Mark/Unmark as XBOOTLDR')),
+		}
+		if self._using_gpt:
+			self._actions.update({
+				'mark_esp': str(_('Mark/Unmark as ESP')),
+				'mark_xbootldr': str(_('Mark/Unmark as XBOOTLDR'))
+			})
+		self._actions.update({
 			'set_filesystem': str(_('Change filesystem')),
 			'btrfs_mark_compressed': str(_('Mark/Unmark as compressed')),  # btrfs only
 			'btrfs_mark_nodatacow': str(_('Mark/Unmark as nodatacow')),  # btrfs only
 			'btrfs_set_subvolumes': str(_('Set subvolumes')),  # btrfs only
 			'delete_partition': str(_('Delete partition'))
-		}
+		})
 
 		device_partitions = []
 
@@ -239,8 +246,14 @@ class PartitioningList(ListManager):
 				#     how do we know it was the original one?
 				not_filter += [
 					self._actions['set_filesystem'],
-					self._actions['mark_bootable'],
-					self._actions['mark_xbootldr'],
+					self._actions['mark_bootable']
+				]
+				if self._using_gpt:
+					not_filter += [
+						self._actions['mark_esp'],
+						self._actions['mark_xbootldr']
+					]
+				not_filter += [
 					self._actions['btrfs_mark_compressed'],
 					self._actions['btrfs_mark_nodatacow'],
 					self._actions['btrfs_set_subvolumes']
@@ -287,23 +300,46 @@ class PartitioningList(ListManager):
 			action_key = [k for k, v in self._actions.items() if v == action][0]
 			match action_key:
 				case 'assign_mountpoint':
-					partition.mountpoint = self._prompt_mountpoint()
-					if partition.mountpoint == Path('/boot'):
-						partition.set_flag(PartitionFlag.BOOT)
-						if self._using_gpt:
-							partition.set_flag(PartitionFlag.ESP)
+					new_mountpoint = self._prompt_mountpoint()
+					if not partition.is_swap():
+						if partition.is_home():
+							partition.invert_flag(PartitionFlag.LINUX_HOME)
+						partition.mountpoint = new_mountpoint
+						if partition.is_root():
+							partition.flags = []
+						if partition.is_boot():
+							partition.flags = []
+							partition.set_flag(PartitionFlag.BOOT)
+							if self._using_gpt:
+								partition.set_flag(PartitionFlag.ESP)
+						if partition.is_home():
+							partition.flags = []
+							partition.set_flag(PartitionFlag.LINUX_HOME)
 				case 'mark_formatting':
 					self._prompt_formatting(partition)
 				case 'mark_bootable':
-					partition.invert_flag(PartitionFlag.BOOT)
-					if self._using_gpt:
+					if not partition.is_swap():
+						partition.invert_flag(PartitionFlag.BOOT)
+				case 'mark_esp':
+					if not partition.is_root() and not partition.is_home() and not partition.is_swap():
+						if PartitionFlag.XBOOTLDR in partition.flags:
+							partition.invert_flag(PartitionFlag.XBOOTLDR)
 						partition.invert_flag(PartitionFlag.ESP)
 				case 'mark_xbootldr':
-					partition.invert_flag(PartitionFlag.XBOOTLDR)
+					if not partition.is_root() and not partition.is_home() and not partition.is_swap():
+						if PartitionFlag.ESP in partition.flags:
+							partition.invert_flag(PartitionFlag.ESP)
+						partition.invert_flag(PartitionFlag.XBOOTLDR)
 				case 'set_filesystem':
 					fs_type = self._prompt_partition_fs_type()
 					if fs_type:
+						if partition.is_swap():
+							partition.invert_flag(PartitionFlag.SWAP)
 						partition.fs_type = fs_type
+						if partition.is_swap():
+							partition.mountpoint = None
+							partition.flags = []
+							partition.set_flag(PartitionFlag.SWAP)
 						# btrfs subvolumes will define mountpoints
 						if fs_type == FilesystemType.Btrfs:
 							partition.mountpoint = None
@@ -390,7 +426,6 @@ class PartitioningList(ListManager):
 
 	def _prompt_mountpoint(self) -> Path:
 		header = str(_('Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')) + '\n'
-		header += str(_('If mountpoint /boot is set, then the partition will also be marked as bootable.')) + '\n'
 		prompt = str(_('Mountpoint'))
 
 		mountpoint = prompt_dir(prompt, header, validate=False, allow_skip=False)
@@ -520,6 +555,8 @@ class PartitioningList(ListManager):
 			if self._using_gpt:
 				partition.set_flag(PartitionFlag.ESP)
 		elif partition.is_swap():
+			partition.mountpoint = None
+			partition.flags = []
 			partition.set_flag(PartitionFlag.SWAP)
 
 		return partition

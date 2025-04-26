@@ -119,7 +119,6 @@
 # 		super().__init__(
 # 			'Custom',
 # 			ProfileType.Custom,
-# 			description=str(_('Create your own'))
 # 		)
 #
 # 	def json(self) -> Dict[str, Any]:

@@ -1557,3 +1557,166 @@ msgstr "მომხმარებლის სახელი : "
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "ჩატვირთვადი ალმის დაყენება/მოხსნა"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "დამატებითი პაკეტები"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "მორგებული სარკის დამატება"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "მორგებული სარკის შეცვლა"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "მორგებული სარკის წაშლა"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "სარკის რეგიონი"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "მორგებული სარკის დამატება"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "მორგებული სარკის შეცვლა"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "მორგებული სარკის წაშლა"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "აირჩიეთ ხელმოწერის პარამეტრი"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "მორგებული სარკის დამატება"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "მორგებული სარკის დამატება"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "სარკის რეგიონები"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "არასავალდებულო რეპოზიტორიები"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "სარკის რეგიონები"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "მორგებული სარკეები"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "არასავალდებულო რეპოზიტორიები"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "აირჩიეთ ხელმოწერის შემოწმების პარამეტრი"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "აირჩიეთ დროის სარტყელი"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "აირჩიეთ შესრულების რეჟიმი"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway-ს თქვენს სამუშაო ადგილთან (აპარატურასთან, როგორიცაა კლავიატურა, თაგუნა და ა.შ>) წვდომა სჭირდება"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Sway-ს თქვენს აპარატურასთან წვდომა მისცეთ"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway-ს თქვენს სამუშაო ადგილთან (აპარატურასთან, როგორიცაა კლავიატურა, თაგუნა და ა.შ>) წვდომა სჭირდება"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Sway-ს თქვენს აპარატურასთან წვდომა მისცეთ"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "ჩატვირთვადი ალმის დაყენება/მოხსნა"
+
+msgid "Package group:"
+msgstr ""

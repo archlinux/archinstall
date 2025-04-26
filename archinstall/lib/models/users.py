@@ -1,6 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, TypedDict, override
+from typing import TYPE_CHECKING, NotRequired, TypedDict, override
+
+from ..crypt import crypt_yescrypt
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -103,72 +105,117 @@ class PasswordStrength(Enum):
 		return PasswordStrength.VERY_WEAK
 
 
-_UserSerialization = TypedDict('_UserSerialization', {'username': str, '!password': str, 'sudo': bool})
+_UserSerialization = TypedDict(
+	'_UserSerialization',
+	{
+		'username': str,
+		'!password': NotRequired[str],
+		'sudo': bool,
+		'groups': list[str],
+		'enc_password': str | None
+	}
+)
+
+
+class Password:
+	def __init__(
+		self,
+		plaintext: str = '',
+		enc_password: str | None = None
+	):
+		if plaintext:
+			enc_password = crypt_yescrypt(plaintext)
+
+		if not plaintext and not enc_password:
+			raise ValueError('Either plaintext or enc_password must be provided')
+
+		self._plaintext = plaintext
+		self.enc_password = enc_password
+
+	@property
+	def plaintext(self) -> str:
+		return self._plaintext
+
+	@plaintext.setter
+	def plaintext(self, value: str):
+		self._plaintext = value
+		self.enc_password = crypt_yescrypt(value)
+
+	@override
+	def __eq__(self, other: object) -> bool:
+		if not isinstance(other, Password):
+			return NotImplemented
+
+		if self._plaintext and other._plaintext:
+			return self._plaintext == other._plaintext
+
+		return self.enc_password == other.enc_password
+
+	def hidden(self) -> str:
+		if self._plaintext:
+			return '*' * len(self._plaintext)
+		else:
+			return '*' * 8
 
 
 @dataclass
 class User:
 	username: str
-	password: str
+	password: Password
 	sudo: bool
+	groups: list[str] = field(default_factory=list)
 
-	@property
-	def groups(self) -> list[str]:
-		# this property should be transferred into a class attr instead
-		# if it's every going to be used
-		return []
+	@override
+	def __str__(self) -> str:
+		# safety overwrite to make sure password is not leaked
+		return f'User({self.username=}, {self.sudo=}, {self.groups=})'
+
+	def table_data(self) -> dict[str, str | bool | list[str]]:
+		return {
+			'username': self.username,
+			'password': self.password.hidden(),
+			'sudo': self.sudo,
+			'groups': self.groups
+		}
 
 	def json(self) -> _UserSerialization:
 		return {
 			'username': self.username,
-			'!password': self.password,
-			'sudo': self.sudo
+			'enc_password': self.password.enc_password,
+			'sudo': self.sudo,
+			'groups': self.groups
 		}
-
-	@classmethod
-	def _parse(cls, config_users: list[_UserSerialization]) -> list['User']:
-		users = []
-
-		for entry in config_users:
-			username = entry.get('username', None)
-			password = entry.get('!password', '')
-			sudo = entry.get('sudo', False)
-
-			if username is None:
-				continue
-
-			user = User(username, password, sudo)
-			users.append(user)
-
-		return users
-
-	@classmethod
-	def _parse_backwards_compatible(cls, config_users: dict[str, dict[str, str]], sudo: bool) -> list['User']:
-		if len(config_users.keys()) > 0:
-			username = list(config_users.keys())[0]
-			password = config_users[username]['!password']
-
-			if password:
-				return [User(username, password, sudo)]
-
-		return []
 
 	@classmethod
 	def parse_arguments(
 		cls,
-		config_users: list[_UserSerialization] | dict[str, dict[str, str]],
-		config_superusers: dict[str, dict[str, str]] | None
+		args: list[_UserSerialization]
 	) -> list['User']:
-		users = []
+		users: list[User] = []
 
-		# backwards compatibility
-		if isinstance(config_users, dict):
-			users += cls._parse_backwards_compatible(config_users, False)
-		else:
-			users += cls._parse(config_users)
+		for entry in args:
+			username = entry.get('username')
+			password: Password | None = None
+			groups = entry.get('groups', [])
+			plaintext = entry.get('!password')
+			enc_password = entry.get('enc_password')
 
-		# backwards compatibility
-		if isinstance(config_superusers, dict):
-			users += cls._parse_backwards_compatible(config_superusers, True)
+			# DEPRECATED: backwards compatibility
+			if plaintext:
+				password = Password(plaintext=plaintext)
+			elif enc_password:
+				password = Password(enc_password=enc_password)
+
+			if username is None or password is None:
+				continue
+
+			user = User(
+				username=username,
+				password=password,
+				sudo=entry.get('sudo', False) is True,
+				groups=groups
+			)
+
+			users.append(user)
 
 		return users

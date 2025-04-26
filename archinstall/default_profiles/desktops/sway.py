@@ -1,11 +1,12 @@
 from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.desktops import SeatAccess
-from archinstall.default_profiles.profile import GreeterType, ProfileType, SelectResult
+from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, FrameProperties, ResultType
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -20,7 +21,6 @@ class SwayProfile(XorgProfile):
 		super().__init__(
 			'Sway',
 			ProfileType.WindowMgr,
-			description=''
 		)
 
 		self.custom_settings = {'seat_access': None}
@@ -49,7 +49,7 @@ class SwayProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Lightdm
 
 	@property
@@ -83,6 +83,6 @@ class SwayProfile(XorgProfile):
 				self.custom_settings['seat_access'] = result.get_value().value
 
 	@override
-	def do_on_select(self) -> SelectResult | None:
+	def do_on_select(self) -> None:
 		self._ask_seat_access()
 		return None

@@ -1620,3 +1620,164 @@ msgstr "Όνομα Χρήστη : "
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Περαιτέρω πακέτα"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Προσθήκη custom mirror"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Αλλαγή custom mirror"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Διαγραφή custom mirror"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Προσθήκη custom mirror"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Αλλαγή custom mirror"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Διαγραφή custom mirror"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Επιλέξτε διεπαφή προς προσθήκη"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Προσθήκη custom mirror"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Προσθήκη custom mirror"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Προαιρετικά αποθετήρια"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Κανένας διακομιστής ήχου"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Προαιρετικά αποθετήρια"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Επιλέξτε διεπαφή προς προσθήκη"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Επιλέξτε μία ζώνη ώρας"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Επιλέξτε μία ενέργεια για '{}'"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
+
+msgid "Package group:"
+msgstr ""

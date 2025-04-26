@@ -1602,3 +1602,166 @@ msgstr "Kasutajanimi : "
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Märgistada/mittemärgistada käivitatavak"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Täiendavad paketid"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Lisa kohandatud peegel"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Muuda kohandatud peeglit"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Kustuta kohandadtud peeglit"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Peegelregioon"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Lisa kohandatud peegel"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Muuda kohandatud peeglit"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Kustuta kohandadtud peeglit"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Valige allkirja valik"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Lisa kohandatud peegel"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Lisa kohandatud peegel"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Peegel regioonid"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Valikulised repositooriumid"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Peegel regioonid"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Kohandatud peegel"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Valikulised repositooriumid"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Valige allkirja kontrollimise võimalus"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Vali ajatsoon"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Valige täitmisrežiim"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway vajab juurdepääsu teie seatile (riistvaraseadmete kogum, st klaviatuur, hiir jne."
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valige valik, et anda Sway'le juurdepääs teie riistvarale"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway vajab juurdepääsu teie seatile (riistvaraseadmete kogum, st klaviatuur, hiir jne."
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valige valik, et anda Sway'le juurdepääs teie riistvarale"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Märgistada/mittemärgistada käivitatavak"
+
+msgid "Package group:"
+msgstr ""

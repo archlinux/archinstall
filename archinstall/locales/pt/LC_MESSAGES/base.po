@@ -1520,3 +1520,160 @@ msgstr "Nome de utilizador"
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marcar/Desmarcar como partição de arranque"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Pacotes adicionais"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Adicionar um espelho personalizado"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Alterar espelho personalizado"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Eliminar espelho personalizado"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Nome do espelho"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Adicionar um espelho personalizado"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Alterar espelho personalizado"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Eliminar espelho personalizado"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Selecionar a opção de assinatura"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Adicionar um espelho personalizado"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Adicionar um espelho personalizado"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Regiões dos espelhos"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Repositórios opcionais"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Regiões dos espelhos"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Espelhos personalizados"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Repositórios opcionais"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Selecionar verificação de assinatura"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Selecionar um fuso horário"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Selecionar modo de execução"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Escolha uma opção para dar ao Sway acesso ao seu hardware"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Escolha uma opção para dar ao Sway acesso ao seu hardware"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Marcar/Desmarcar como partição de arranque"
+
+msgid "Package group:"
+msgstr ""

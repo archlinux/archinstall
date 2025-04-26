@@ -4,19 +4,20 @@ from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
 
 
-class CutefishProfile(XorgProfile):
+class RiverProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Cutefish', ProfileType.DesktopEnv)
+		super().__init__('River', ProfileType.WindowMgr)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"cutefish",
-			"noto-fonts"
+			'foot',
+			'xdg-desktop-portal-wlr',
+			'river'
 		]
 
 	@property
 	@override
 	def default_greeter_type(self) -> GreeterType:
-		return GreeterType.Sddm
+		return GreeterType.Lightdm

@@ -6,13 +6,13 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class BudgieProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Budgie', ProfileType.DesktopEnv, description='')
+		super().__init__('Budgie', ProfileType.DesktopEnv)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"arc-gtk-theme",
+			"materia-gtk-theme",
 			"budgie",
 			"mate-terminal",
 			"nemo",
@@ -21,5 +21,5 @@ class BudgieProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.LightdmSlick

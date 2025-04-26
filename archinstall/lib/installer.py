@@ -1,5 +1,6 @@
 import glob
 import os
+import platform
 import re
 import shlex
 import shutil
@@ -81,7 +82,10 @@ class Installer:
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
-		self.helper_flags: dict[str, str | bool | None] = {'base': False, 'bootloader': None}
+		self._helper_flags: dict[str, str | bool | None] = {
+			'base': False,
+			'bootloader': None
+		}
 
 		for kernel in self.kernels:
 			self._base_packages.append(kernel)
@@ -414,11 +418,12 @@ class Installer:
 
 			if part_mod.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
-					Fido2.fido2_enroll(
-						self._disk_encryption.hsm_device,
-						part_mod.safe_dev_path,
-						self._disk_encryption.encryption_password
-					)
+					if self._disk_encryption.encryption_password:
+						Fido2.fido2_enroll(
+							self._disk_encryption.hsm_device,
+							part_mod.safe_dev_path,
+							self._disk_encryption.encryption_password
+						)
 
 	def _generate_key_file_lvm_volumes(self) -> None:
 		for vol in self._disk_encryption.lvm_volumes:
@@ -436,16 +441,17 @@ class Installer:
 
 			if vol.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
-					Fido2.fido2_enroll(
-						self._disk_encryption.hsm_device,
-						vol.safe_dev_path,
-						self._disk_encryption.encryption_password
-					)
+					if self._disk_encryption.encryption_password:
+						Fido2.fido2_enroll(
+							self._disk_encryption.hsm_device,
+							vol.safe_dev_path,
+							self._disk_encryption.encryption_password
+						)
 
 	def sync_log_to_install_medium(self) -> bool:
 		# Copy over the install log (if there is one) to the install medium if
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
-		if self.helper_flags.get('base-strapped', False) is True:
+		if self._helper_flags.get('base-strapped', False) is True:
 			if filename := storage.get('LOG_FILE', None):
 				absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
 
@@ -479,7 +485,7 @@ class Installer:
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
 	def post_install_check(self, *args: str, **kwargs: str) -> list[str]:
-		return [step for step, flag in self.helper_flags.items() if flag is False]
+		return [step for step, flag in self._helper_flags.items() if flag is False]
 
 	def set_mirrors(
 		self,
@@ -580,6 +586,7 @@ class Installer:
 		# in the first column of the entry; check for both cases.
 		entry_re = re.compile(rf'#{lang}(\.{encoding})?{modifier} {encoding}')
 
+		lang_value = None
 		for index, line in enumerate(locale_gen_lines):
 			if entry_re.match(line):
 				uncommented_line = line.removeprefix('#')
@@ -587,7 +594,8 @@ class Installer:
 				locale_gen.write_text(''.join(locale_gen_lines))
 				lang_value = uncommented_line.split()[0]
 				break
-		else:
+
+		if lang_value is None:
 			error(f"Invalid locale: language '{locale_config.sys_lang}', encoding '{locale_config.sys_enc}'")
 			return False
 
@@ -687,7 +695,7 @@ class Installer:
 
 				if enable_services:
 					# If we haven't installed the base yet (function called pre-maturely)
-					if self.helper_flags.get('base', False) is False:
+					if self._helper_flags.get('base', False) is False:
 						self._base_packages.append('iwd')
 
 						# This function will be called after minimal_installation()
@@ -716,7 +724,7 @@ class Installer:
 
 			if enable_services:
 				# If we haven't installed the base yet (function called pre-maturely)
-				if self.helper_flags.get('base', False) is False:
+				if self._helper_flags.get('base', False) is False:
 
 					def post_install_enable_networkd_resolved(*args: str, **kwargs: str) -> None:
 						self.enable_service(['systemd-networkd', 'systemd-resolved'])
@@ -844,7 +852,7 @@ class Installer:
 		pacman_conf.apply()
 
 		self.pacman.strap(self._base_packages)
-		self.helper_flags['base-strapped'] = True
+		self._helper_flags['base-strapped'] = True
 
 		pacman_conf.persist()
 
@@ -875,7 +883,7 @@ class Installer:
 		if mkinitcpio and not self.mkinitcpio(['-P']):
 			error('Error generating initramfs (continuing anyway)')
 
-		self.helper_flags['base'] = True
+		self._helper_flags['base'] = True
 
 		# Run registered post-install hooks
 		for function in self.post_base_install:
@@ -1141,7 +1149,7 @@ class Installer:
 
 		loader_conf.write_text('\n'.join(loader_data) + '\n')
 
-		self.helper_flags['bootloader'] = 'systemd'
+		self._helper_flags['bootloader'] = 'systemd'
 
 	def _add_grub_bootloader(
 		self,
@@ -1186,7 +1194,7 @@ class Installer:
 				boot_dir = boot_partition.mountpoint
 
 			add_options = [
-				'--target=x86_64-efi',
+				f'--target={platform.machine()}-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
 				*boot_dir_arg,
 				'--bootloader-id=GRUB',
@@ -1226,7 +1234,7 @@ class Installer:
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
 
-		self.helper_flags['bootloader'] = "grub"
+		self._helper_flags['bootloader'] = "grub"
 
 	def _add_limine_bootloader(
 		self,
@@ -1255,8 +1263,21 @@ class Installer:
 
 			info(f"Limine EFI partition: {efi_partition.dev_path}")
 
+			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+			is_target_usb = SysCommand(
+				f'udevadm info --no-pager --query=property --property=ID_BUS --value --name={parent_dev_path}'
+			).decode() == 'usb'
+
 			try:
-				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'limine'
+				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
+				efi_dir_path_target = efi_partition.mountpoint / 'EFI'
+				if is_target_usb:
+					efi_dir_path = efi_dir_path / 'BOOT'
+					efi_dir_path_target = efi_dir_path_target / 'BOOT'
+				else:
+					efi_dir_path = efi_dir_path / 'limine'
+					efi_dir_path_target = efi_dir_path_target / 'limine'
+
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
@@ -1267,40 +1288,38 @@ class Installer:
 			config_path = efi_dir_path / 'limine.conf'
 
 			hook_command = (
-				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_partition.mountpoint}/EFI/limine/'
-				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_partition.mountpoint}/EFI/limine/'
+				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_dir_path_target}/'
+				f' && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_dir_path_target}/'
 			)
 
-			# Create EFI boot menu entry for Limine.
-			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+			if not is_target_usb:
+				# Create EFI boot menu entry for Limine.
+				try:
+					with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
+						efi_bitness = fw_platform_size.read().strip()
+				except Exception as err:
+					raise OSError(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
 
-			try:
-				with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
-					efi_bitness = fw_platform_size.read().strip()
-			except Exception as err:
-				error(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
+				if efi_bitness == '64':
+					loader_path = '/EFI/limine/BOOTX64.EFI'
+				elif efi_bitness == '32':
+					loader_path = '/EFI/limine/BOOTIA32.EFI'
+				else:
+					raise ValueError(f'EFI bitness is neither 32 nor 64 bits. Found "{efi_bitness}".')
 
-			loader_path = None
-			if efi_bitness == '64':
-				loader_path = '/EFI/limine/BOOTX64.EFI'
-			elif efi_bitness == '32':
-				loader_path = '/EFI/limine/BOOTIA32.EFI'
-			else:
-				error('EFI bitness is neither 32 nor 64 bits')
-
-			try:
-				SysCommand(
-					'efibootmgr'
-					' --create'
-					f' --disk {parent_dev_path}'
-					f' --part {efi_partition.partn}'
-					' --label "Arch Linux Limine Bootloader"'
-					f' --loader {loader_path}'
-					' --unicode'
-					' --verbose'
-				)
-			except Exception as err:
-				error(f'SysCommand for efibootmgr failed: {err}')
+				try:
+					SysCommand(
+						'efibootmgr'
+						' --create'
+						f' --disk {parent_dev_path}'
+						f' --part {efi_partition.partn}'
+						' --label "Arch Linux Limine Bootloader"'
+						f' --loader {loader_path}'
+						' --unicode'
+						' --verbose'
+					)
+				except Exception as err:
+					raise ValueError(f'SysCommand for efibootmgr failed: {err}')
 		else:
 			boot_limine_path = self.target / 'boot' / 'limine'
 			boot_limine_path.mkdir(parents=True, exist_ok=True)
@@ -1375,7 +1394,7 @@ class Installer:
 
 		config_path.write_text(config_contents)
 
-		self.helper_flags['bootloader'] = "limine"
+		self._helper_flags['bootloader'] = "limine"
 
 	def _add_efistub_bootloader(
 		self,
@@ -1425,7 +1444,7 @@ class Installer:
 			cmd = [arg.format(kernel=kernel) for arg in cmd_template]
 			SysCommand(cmd)
 
-		self.helper_flags['bootloader'] = "efistub"
+		self._helper_flags['bootloader'] = "efistub"
 
 	def _config_uki(
 		self,
@@ -1559,12 +1578,9 @@ class Installer:
 			users = [users]
 
 		for user in users:
-			self.user_create(user.username, user.password, user.groups, user.sudo)
+			self._create_user(user)
 
-	def user_create(self, user: str, password: str | None = None, groups: list[str] | None = None, sudo: bool = False) -> None:
-		if groups is None:
-			groups = []
-
+	def _create_user(self, user: User) -> None:
 		# This plugin hook allows for the plugin to handle the creation of the user.
 		# Password and Group management is still handled by user_create()
 		handled_by_plugin = False
@@ -1574,14 +1590,14 @@ class Installer:
 					handled_by_plugin = result
 
 		if not handled_by_plugin:
-			info(f'Creating user {user}')
+			info(f'Creating user {user.username}')
 
 			cmd = f'arch-chroot {self.target} useradd -m'
 
-			if sudo:
+			if user.sudo:
 				cmd += ' -G wheel'
 
-			cmd += f' {user}'
+			cmd += f' {user.username}'
 
 			try:
 				SysCommand(cmd)
@@ -1593,29 +1609,29 @@ class Installer:
 				if result := plugin.on_user_created(self, user):
 					handled_by_plugin = result
 
-		if password:
-			self.user_set_pw(user, password)
+		if user.password:
+			self.set_user_password(user)
 
-		if groups:
-			for group in groups:
-				SysCommand(f'arch-chroot {self.target} gpasswd -a {user} {group}')
+		for group in user.groups:
+			SysCommand(f'arch-chroot {self.target} gpasswd -a {user.username} {group}')
 
-		if sudo and self.enable_sudo(user):
-			self.helper_flags['user'] = True
+	def set_user_password(self, user: User) -> bool:
+		info(f'Setting password for {user.username}')
 
-	def user_set_pw(self, user: str, password: str) -> bool:
-		info(f'Setting password for {user}')
+		enc_password = user.password.enc_password if user.password else None
 
-		if user == 'root':
-			# This means the root account isn't locked/disabled with * in /etc/passwd
-			self.helper_flags['user'] = True
+		if not enc_password:
+			debug('User password is empty')
+			return False
 
-		cmd = ['arch-chroot', str(self.target), 'chpasswd']
+		input_data = f'{user.username}:{enc_password}'.encode()
+		cmd = ['arch-chroot', str(self.target), 'chpasswd', '--encrypted']
 
 		try:
-			run(cmd, input_data=f'{user}:{password}'.encode())
+			run(cmd, input_data=input_data)
 			return True
-		except CalledProcessError:
+		except CalledProcessError as err:
+			debug(f'Error setting user password: {err}')
 			return False
 
 	def user_set_shell(self, user: str, shell: str) -> bool:

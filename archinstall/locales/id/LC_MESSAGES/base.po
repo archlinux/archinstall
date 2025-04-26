@@ -1605,3 +1605,154 @@ msgstr "Nama Pengguna : "
 
 msgid "The specified configuration will be applied"
 msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Paket tambahan"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Tambahkan pengguna"
+
+msgid "Change custom repository"
+msgstr ""
+
+msgid "Delete custom repository"
+msgstr ""
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Wilayah mirror"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Tambahkan pengguna"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Pilih server audio"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Hapus pengguna"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Pilih interface untuk ditambahkan"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Tambahkan pengguna"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Tambahkan pengguna"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Wilayah mirror"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Repositori opsional"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Wilayah mirror"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Tidak ada server audio"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Repositori opsional"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Pilih interface untuk ditambahkan"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Pilih zona waktu"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Pilih tindakan untuk '{}'"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
+
+msgid "Package group:"
+msgstr ""

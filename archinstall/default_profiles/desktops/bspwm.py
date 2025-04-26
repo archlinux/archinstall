@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class BspwmProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Bspwm', ProfileType.WindowMgr, description='')
+		super().__init__('Bspwm', ProfileType.WindowMgr)
 
 	@property
 	@override
@@ -22,5 +22,5 @@ class BspwmProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Lightdm

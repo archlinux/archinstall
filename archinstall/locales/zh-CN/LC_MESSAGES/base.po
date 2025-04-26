@@ -1503,3 +1503,160 @@ msgstr "用户"
 
 msgid "The specified configuration will be applied"
 msgstr "指定的配置将被应用"
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "将分区标记/取消标记为可引导"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "附加软件包"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "添加自定义镜像"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "更改自定义镜像"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "删除自定义镜像"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "镜像名称"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "添加自定义镜像"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "更改自定义镜像"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "删除自定义镜像"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "选择签名选项"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "添加自定义镜像"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "添加自定义镜像"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "镜像区域"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "可选仓库"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "镜像区域"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "自定义镜像"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "可选仓库"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "选择签名检查"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "选择时区"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "选择执行模式"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway 需要访问您的 seat（硬件设备的集合，例如键盘、鼠标等）"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "选择一个选项来给 Sway 提供对您硬件的访问权限"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway 需要访问您的 seat（硬件设备的集合，例如键盘、鼠标等）"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "选择一个选项来给 Sway 提供对您硬件的访问权限"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "将分区标记/取消标记为可引导"
+
+msgid "Package group:"
+msgstr ""

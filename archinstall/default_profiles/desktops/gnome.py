@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class GnomeProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('GNOME', ProfileType.DesktopEnv, description='')
+		super().__init__('GNOME', ProfileType.DesktopEnv)
 
 	@property
 	@override
@@ -18,5 +18,5 @@ class GnomeProfile(XorgProfile):
 
 	@property
 	@override
-	def default_greeter_type(self) -> GreeterType | None:
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Gdm
