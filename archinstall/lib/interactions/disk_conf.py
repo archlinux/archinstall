@@ -417,8 +417,7 @@ def suggest_single_disk_layout(
 			SubvolumeModification(Path('@'), Path('/')),
 			SubvolumeModification(Path('@home'), Path('/home')),
 			SubvolumeModification(Path('@log'), Path('/var/log')),
-			SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
-			SubvolumeModification(Path('@.snapshots'), Path('/.snapshots'))
+			SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg'))
 		]
 		root_partition.btrfs_subvols = subvolumes
 	elif using_home_partition:
@@ -596,8 +595,7 @@ def suggest_lvm_layout(
 			SubvolumeModification(Path('@'), Path('/')),
 			SubvolumeModification(Path('@home'), Path('/home')),
 			SubvolumeModification(Path('@log'), Path('/var/log')),
-			SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
-			SubvolumeModification(Path('@.snapshots'), Path('/.snapshots')),
+			SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg'))
 		]
 
 		home_volume = False
