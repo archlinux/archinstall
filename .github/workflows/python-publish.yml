@@ -24,10 +24,7 @@ jobs:
           pip install build twine
       - name: Build archinstall
         run: |
-          python -m build . --wheel
+          uv build --no-build-isolation --wheel
       - name: Publish archinstall to PyPi
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
-          twine upload dist/*
+          uv publish --trusted-publishing always
