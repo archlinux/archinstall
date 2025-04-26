@@ -18,16 +18,15 @@ jobs:
         uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # v5
         with:
           python-version: '3.x'
-      - name: Install dependencies
+      - name: Prepare arch
         run: |
-          python -m pip install --upgrade pip
-          pip install build twine
+          pacman-key --init
+          pacman --noconfirm -Sy archlinux-keyring
+          pacman --noconfirm -Syyu
+          pacman --noconfirm -Sy python-uv python-setuptools python-pip
       - name: Build archinstall
         run: |
-          python -m build . --wheel
+          uv build --no-build-isolation --wheel
       - name: Publish archinstall to PyPi
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
-          twine upload dist/*
+          uv publish --trusted-publishing always
