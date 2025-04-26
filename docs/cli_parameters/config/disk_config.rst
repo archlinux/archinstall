@@ -200,10 +200,6 @@ This example contains both subvolumes and compression.
           {
               "mountpoint": "/var/cache/pacman/pkg",
               "name": "@pkg",
-          },
-          {
-              "mountpoint": "/.snapshots",
-              "name": "@.snapshots",
           }
       ],
       "dev_path": null,
