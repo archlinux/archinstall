@@ -1492,7 +1492,7 @@ msgid "Size: {} / {}"
 msgstr "Tamaño: {} / {}"
 
 msgid "Size (default: {}): "
-msgstr "Tamaño (predeterminado: {}):"
+msgstr "Tamaño (predeterminado: {}): "
 
 msgid "HSM device"
 msgstr "Dispositivo HSM"
@@ -1504,93 +1504,76 @@ msgid "User"
 msgstr "Usuario"
 
 msgid "The specified configuration will be applied"
-msgstr "Se aplicará la configuración especificada."
+msgstr "Se aplicará la configuración especificada"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Borrar"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Marcar/Desmarcar como arrancable"
+msgstr "Marcar/Desmarcar como XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "Paquetes adicionales"
+msgstr "Cargando paquetes..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Seleccione cualquier paquete de la lista a continuación que deba instalarse adicionalmente"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Agregar un espejo personalizado"
+msgstr "Agregar un repositorio personalizado"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Cambiar espejo personalizado"
+msgstr "Cambiar el repositorio personalizado"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Eliminar espejo personalizado"
+msgstr "Eliminar repositorio personalizado"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Nombre del espejo"
+msgstr "Nombre del repositorio"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "Agregar un espejo personalizado"
+msgstr "Agregar un servidor personalizado"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "Cambiar espejo personalizado"
+msgstr "Cambiar servidor personalizado"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "Eliminar espejo personalizado"
+msgstr "Eliminar servidor personalizado"
 
 msgid "Server url"
-msgstr ""
+msgstr "URL del servidor"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "Seleccione la opción de firma"
+msgstr "Seleccione regiones"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "Agregar un espejo personalizado"
+msgstr "Agregar servidores personalizados"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Agregar un espejo personalizado"
+msgstr "Agregar repositorio personalizado"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "Regiones de espejos"
+msgstr "Cargando regiones espejo..."
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Repositorios opcionales"
+msgstr "Espejos y repositorios"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "Regiones de espejos"
+msgstr "Regiones de espejo seleccionadas"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "Espejos personalizados"
+msgstr "Servidores personalizados"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "Repositorios opcionales"
+msgstr "Repositorios personalizados"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Sólo se admiten caracteres ASCII"
 
 msgid "Show help"
-msgstr ""
+msgstr "Mostrar ayuda"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Ayuda para salir"
 
 msgid "Preview scroll up"
 msgstr ""
@@ -1599,69 +1582,79 @@ msgid "Preview scroll down"
 msgstr ""
 
 msgid "Move up"
-msgstr ""
+msgstr "Subir"
 
 msgid "Move down"
-msgstr ""
+msgstr "Bajar"
 
 msgid "Move right"
-msgstr ""
+msgstr "Mover a la derecha"
 
 msgid "Move left"
-msgstr ""
+msgstr "Mover a la izquierda"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Saltar a la entrada"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Saltar selección (si está disponible)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Restablecer selección (si está disponible)"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "Seleccionar verificación de firma"
+msgstr "Seleccionar en selección única"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "Seleccione una zona horaria"
+msgstr "Seleccionar en selección múltiple"
 
 msgid "Reset"
-msgstr ""
+msgstr "Restablecer"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "Seleccionar modo de ejecución"
+msgstr "Saltar el menú de selección"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Iniciar modo de búsqueda"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Salir del modo de búsqueda"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway necesita acceso a sus dispositivos de hardware (teclado, mouse, etc.)"
+msgstr "labwc necesita acceso a su asiento (colección de dispositivos de hardware, es decir, teclado, ratón, etc.)"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Elija una opción para darle a Sway acceso a su hardware"
+msgstr "Elija una opción para darle a labwc acceso a su hardware"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway necesita acceso a sus dispositivos de hardware (teclado, mouse, etc.)"
+msgstr "niri necesita acceso a su asiento (colección de dispositivos de hardware, es decir, teclado, ratón, etc.)"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Elija una opción para darle a Sway acceso a su hardware"
+msgstr "Elija una opción para darle a niri acceso a su hardware"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "Marcar/Desmarcar como arrancable"
+msgstr "Marcar/Desmarcar como ESP"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Grupo de paquetes:"
+
+msgid "Exit archinstall"
+msgstr "Salir de archinstall"
+
+msgid "Reboot system"
+msgstr "Reiniciar el sistema"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "chroot en la instalación para configuraciones posteriores a la instalación"
+
+msgid "Installation completed"
+msgstr "Instalación completada"
+
+msgid "What would you like to do next?"
+msgstr "¿Qué le gustaría hacer a continuación?"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr "Seleccione qué modo configurar para \"{}\""
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
