@@ -17,16 +17,14 @@ jobs:
           pacman-key --init
           pacman --noconfirm -Sy archlinux-keyring
           pacman --noconfirm -Syyu
-          pacman --noconfirm -Sy python-pip python-pydantic python-pyparted pkgconfig gcc
-      - name: Install build dependencies
-        run: |
-          python -m pip install --break-system-packages --upgrade pip
-          pip install --break-system-packages --upgrade build twine wheel setuptools installer
-          pip uninstall archinstall -y --break-system-packages
+          pacman --noconfirm -Sy python-uv python-setuptools python-pip
+      - name: Remove existing archinstall (if any)
+        run: 
+          uv pip uninstall archinstall --break-system-packages
       - name: Build archinstall
-        run: python -m build --wheel --no-isolation
+        run: uv build --no-build-isolation --wheel
       - name: Install archinstall
-        run: python -m installer dist/*.whl
+        run: uv pip install dist/*.whl
       - name: Run archinstall
         run: |
           python -V
