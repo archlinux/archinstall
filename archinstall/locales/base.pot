@@ -1684,3 +1684,21 @@ msgstr ""
 
 msgid "Package group:"
 msgstr ""
+
+msgid "Exit archinstall"
+msgstr ""
+
+msgid "Reboot system"
+msgstr ""
+
+msgid "chroot into installation for post-installation configurations"
+msgstr ""
+
+msgid "Installation completed"
+msgstr ""
+
+msgid "What would you like to do next?"
+msgstr ""
+
+msgid "Select which mode to configure for \"{}\""
+msgstr ""
