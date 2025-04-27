@@ -69,7 +69,7 @@ class ConfigurationOutput:
 			group.focus_item = MenuItem.yes()
 			group.set_preview_for_all(lambda x: self.user_config_to_json())
 
-			result = SelectMenu(
+			result = SelectMenu[bool](
 				group,
 				header=header,
 				alignment=Alignment.CENTER,
@@ -168,7 +168,7 @@ def save_config(config: ArchConfig) -> None:
 	]
 
 	group = MenuItemGroup(items)
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		allow_skip=True,
 		preview_frame=FrameProperties.max(str(_('Configuration'))),

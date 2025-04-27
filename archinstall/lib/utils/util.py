@@ -31,7 +31,7 @@ def get_password(
 		elif header is not None:
 			user_hdr = header
 
-		result = EditMenu(
+		result = EditMenu[str](
 			text,
 			header=user_hdr,
 			alignment=Alignment.CENTER,
@@ -53,7 +53,7 @@ def get_password(
 		else:
 			confirmation_header = f'{_("Password")}: {password.hidden()}\n'
 
-		result = EditMenu(
+		result = EditMenu[str](
 			str(_('Confirm password')),
 			header=confirmation_header,
 			alignment=Alignment.CENTER,
@@ -87,7 +87,7 @@ def prompt_dir(
 	else:
 		validate_func = None
 
-	result = EditMenu(
+	result = EditMenu[str](
 		text,
 		header=header,
 		alignment=Alignment.CENTER,

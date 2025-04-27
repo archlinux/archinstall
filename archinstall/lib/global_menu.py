@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class GlobalMenu(AbstractMenu):
+class GlobalMenu(AbstractMenu[None]):
 	def __init__(self, arch_config: ArchConfig) -> None:
 		self._arch_config = arch_config
 		menu_optioons = self._get_menu_options()

@@ -77,7 +77,7 @@ class DiskSegment:
 		return data
 
 
-class PartitioningList(ListManager):
+class PartitioningList(ListManager[DiskSegment]):
 	def __init__(
 		self,
 		device_mod: DeviceModification,
@@ -438,7 +438,7 @@ class PartitioningList(ListManager):
 		items = [MenuItem(fs.value, value=fs) for fs in fs_types]
 		group = MenuItemGroup(items, sort_items=False)
 
-		result = SelectMenu(
+		result = SelectMenu[FilesystemType](
 			group,
 			header=prompt,
 			alignment=Alignment.CENTER,
@@ -509,7 +509,7 @@ class PartitioningList(ListManager):
 
 		title = str(_('Size (default: {}): ')).format(max_size.format_highest())
 
-		result = EditMenu(
+		result = EditMenu[str](
 			title,
 			header=f'{prompt}\b',
 			allow_skip=True,
@@ -564,7 +564,7 @@ class PartitioningList(ListManager):
 	def _reset_confirmation(self) -> bool:
 		prompt = str(_('This will remove all newly added partitions, continue?')) + '\n'
 
-		result = SelectMenu(
+		result = SelectMenu[bool](
 			MenuItemGroup.yes_no(),
 			header=prompt,
 			alignment=Alignment.CENTER,

@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class ManualNetworkConfig(ListManager):
+class ManualNetworkConfig(ListManager[Nic]):
 	def __init__(self, prompt: str, preset: list[Nic]):
 		self._actions = [
 			str(_('Add interface')),
@@ -70,7 +70,7 @@ class ManualNetworkConfig(ListManager):
 		items = [MenuItem(i, value=i) for i in available]
 		group = MenuItemGroup(items, sort_items=True)
 
-		result = SelectMenu(
+		result = SelectMenu[str](
 			group,
 			alignment=Alignment.CENTER,
 			frame=FrameProperties.min(str(_('Interfaces'))),
@@ -106,7 +106,7 @@ class ManualNetworkConfig(ListManager):
 			except ValueError:
 				return str(_('You need to enter a valid IP in IP-config mode'))
 
-		result = EditMenu(
+		result = EditMenu[str](
 			title,
 			header=header,
 			validator=validator,
@@ -132,7 +132,7 @@ class ManualNetworkConfig(ListManager):
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_default_by_value(default_mode)
 
-		result = SelectMenu(
+		result = SelectMenu[str](
 			group,
 			header=header,
 			allow_skip=False,
@@ -192,7 +192,7 @@ def ask_to_configure_network(preset: NetworkConfiguration | None) -> NetworkConf
 	if preset:
 		group.set_selected_by_value(preset.type)
 
-	result = SelectMenu(
+	result = SelectMenu[NetworkConfiguration](
 		group,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Network configuration'))),

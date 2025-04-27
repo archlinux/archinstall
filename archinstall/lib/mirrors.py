@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class CustomMirrorRepositoriesList(ListManager):
+class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 	def __init__(self, custom_repositories: list[CustomRepository]):
 		self._actions = [
 			str(_('Add a custom repository')),
@@ -74,7 +74,7 @@ class CustomMirrorRepositoriesList(ListManager):
 		return data
 
 	def _add_custom_repository(self, preset: CustomRepository | None = None) -> CustomRepository | None:
-		edit_result = EditMenu(
+		edit_result = EditMenu[str](
 			str(_('Repository name')),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
@@ -91,7 +91,7 @@ class CustomMirrorRepositoriesList(ListManager):
 
 		header = f'{_("Name")}: {name}'
 
-		edit_result = EditMenu(
+		edit_result = EditMenu[str](
 			str(_('Url')),
 			header=header,
 			alignment=Alignment.CENTER,
@@ -116,7 +116,7 @@ class CustomMirrorRepositoriesList(ListManager):
 		if preset is not None:
 			group.set_selected_by_value(preset.sign_check.value)
 
-		result = SelectMenu(
+		result = SelectMenu[SignCheck](
 			group,
 			header=prompt,
 			alignment=Alignment.CENTER,
@@ -154,7 +154,7 @@ class CustomMirrorRepositoriesList(ListManager):
 		return CustomRepository(name, url, sign_check, sign_opt)
 
 
-class CustomMirrorServersList(ListManager):
+class CustomMirrorServersList(ListManager[CustomServer]):
 	def __init__(self, custom_servers: list[CustomServer]):
 		self._actions = [
 			str(_('Add a custom server')),
@@ -196,7 +196,7 @@ class CustomMirrorServersList(ListManager):
 		return data
 
 	def _add_custom_server(self, preset: CustomServer | None = None) -> CustomServer | None:
-		edit_result = EditMenu(
+		edit_result = EditMenu[str](
 			str(_('Server url')),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
@@ -213,7 +213,7 @@ class CustomMirrorServersList(ListManager):
 		return None
 
 
-class MirrorMenu(AbstractSubMenu):
+class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 	def __init__(
 		self,
 		preset: MirrorConfiguration | None = None
@@ -265,7 +265,7 @@ class MirrorMenu(AbstractSubMenu):
 		]
 
 	def _prev_regions(self, item: MenuItem) -> str | None:
-		regions: list[MirrorRegion] = item.get_value()
+		regions = item.get_value()
 
 		output = ''
 		for region in regions:
@@ -323,7 +323,7 @@ def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
 
 	group.set_selected_by_value(preset_regions)
 
-	result = SelectMenu(
+	result = SelectMenu[MirrorRegion](
 		group,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Mirror regions'))),
@@ -338,7 +338,7 @@ def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
 		case ResultType.Reset:
 			return []
 		case ResultType.Selection:
-			selected_mirrors: list[MirrorRegion] = result.get_values()
+			selected_mirrors = result.get_values()
 			return selected_mirrors
 
 
@@ -365,7 +365,7 @@ def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_selected_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[Repository](
 		group,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min('Additional repositories'),

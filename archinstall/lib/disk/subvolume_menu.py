@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class SubvolumeMenu(ListManager):
+class SubvolumeMenu(ListManager[SubvolumeModification]):
 	def __init__(
 		self,
 		btrfs_subvols: list[SubvolumeModification],
@@ -41,7 +41,7 @@ class SubvolumeMenu(ListManager):
 		return str(selection.name)
 
 	def _add_subvolume(self, preset: SubvolumeModification | None = None) -> SubvolumeModification | None:
-		result = EditMenu(
+		result = EditMenu[str](
 			str(_('Subvolume name')),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
