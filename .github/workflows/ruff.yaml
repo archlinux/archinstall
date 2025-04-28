@@ -5,4 +5,4 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-            - uses: astral-sh/ruff-action@9828f49eb4cadf267b40eaa330295c412c68c1f9  # v3.2.2
+            - uses: astral-sh/ruff-action@c6bea5606c33b5d04902374392d9233464b90660  # v3.3.0

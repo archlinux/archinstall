@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from pytest import MonkeyPatch
@@ -26,6 +27,8 @@ def test_default_args(monkeypatch: MonkeyPatch) -> None:
 		config=None,
 		config_url=None,
 		creds=None,
+		creds_url=None,
+		creds_decryption_key=None,
 		silent=False,
 		dry_run=False,
 		script='guided',
@@ -258,5 +261,53 @@ def test_deprecated_creds_config_parsing(
 			password=Password(plaintext='userPwd'),
 			sudo=True,
 			groups=['wheel']
+		)
+	]
+
+
+def test_encrypted_creds_with_arg(
+	monkeypatch: MonkeyPatch,
+	encrypted_creds_fixture: Path,
+) -> None:
+	monkeypatch.setattr('sys.argv', [
+		'archinstall',
+		'--creds', str(encrypted_creds_fixture),
+		'--creds-decryption-key', 'master'
+	])
+
+	handler = ArchConfigHandler()
+	arch_config = handler.config
+
+	assert arch_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
+	assert arch_config.users == [
+		User(
+			username='t',
+			password=Password(enc_password='$y$j9T$3KxMigAEnjtzbjalhLewE.$gmuoQtc9RNY/PmO/GxHHYvkZNO86Eeftg1Oc7L.QSO/'),
+			sudo=True,
+			groups=[]
+		)
+	]
+
+
+def test_encrypted_creds_with_env_var(
+	monkeypatch: MonkeyPatch,
+	encrypted_creds_fixture: Path,
+) -> None:
+	os.environ['ARCHINSTALL_CREDS_DECRYPTION_KEY'] = 'master'
+	monkeypatch.setattr('sys.argv', [
+		'archinstall',
+		'--creds', str(encrypted_creds_fixture),
+	])
+
+	handler = ArchConfigHandler()
+	arch_config = handler.config
+
+	assert arch_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
+	assert arch_config.users == [
+		User(
+			username='t',
+			password=Password(enc_password='$y$j9T$3KxMigAEnjtzbjalhLewE.$gmuoQtc9RNY/PmO/GxHHYvkZNO86Eeftg1Oc7L.QSO/'),
+			sudo=True,
+			groups=[]
 		)
 	]

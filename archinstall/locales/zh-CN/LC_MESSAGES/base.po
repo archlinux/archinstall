@@ -30,7 +30,7 @@ msgid "Desired hostname for the installation: "
 msgstr "请输入安装后期望使用的主机名（hostname）："
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "请输入需要超级用户的用户名（sudo 权限）："
+msgstr "请输入需要超级用户（sudo 权限）的用户名："
 
 msgid "Any additional users to install (leave blank for no users): "
 msgstr "请输入要安装的其他用户（留空表示不安装其他用户）："
@@ -187,7 +187,7 @@ msgid "Select keyboard layout"
 msgstr "选择键盘布局"
 
 msgid "Select one of the regions to download packages from"
-msgstr "选择一个要从中下载软件包的区域"
+msgstr "选择一个要从中下载软件包的地区"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "选择要使用和配置的硬盘驱动器（可多选）"
@@ -244,7 +244,7 @@ msgid "Keyboard layout"
 msgstr "键盘布局"
 
 msgid "Mirror region"
-msgstr "镜像区域"
+msgstr "镜像源地区"
 
 msgid "Locale language"
 msgstr "语言环境"
@@ -1071,13 +1071,13 @@ msgid "Select directory (or directories) for saving configuration files"
 msgstr "选择一个或多个目录保存配置文件"
 
 msgid "Add a custom mirror"
-msgstr "添加自定义镜像"
+msgstr "添加自定义镜像源"
 
 msgid "Change custom mirror"
-msgstr "更改自定义镜像"
+msgstr "更改自定义镜像源"
 
 msgid "Delete custom mirror"
-msgstr "删除自定义镜像"
+msgstr "删除自定义镜像源"
 
 msgid "Enter name (leave blank to skip): "
 msgstr "输入用户名（留空跳过）："
@@ -1092,7 +1092,7 @@ msgid "Select signature option"
 msgstr "选择签名选项"
 
 msgid "Custom mirrors"
-msgstr "自定义镜像"
+msgstr "自定义镜像源"
 
 msgid "Defined"
 msgstr "已定义"
@@ -1120,10 +1120,10 @@ msgid "Saving {} configuration files to {}"
 msgstr "正在将 {} 配置文件保存到 {}"
 
 msgid "Mirrors"
-msgstr "镜像"
+msgstr "镜像源"
 
 msgid "Mirror regions"
-msgstr "镜像区域"
+msgstr "镜像源地区"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
 msgstr " - 最大值：{}（允许 {} 个并行下载，每次允许 {max_downloads+1} 个下载）"
@@ -1135,7 +1135,7 @@ msgid "Locales"
 msgstr "区域设置"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置互联网所必需）"
+msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形界面配置互联网所必需）"
 
 msgid "Total: {} / {}"
 msgstr "总长度：{} / {}"
@@ -1451,10 +1451,10 @@ msgid "Please submit this issue (and file) to https://github.com/archlinux/archi
 msgstr "请将此问题（和文件）提交到 https://github.com/archlinux/archinstall/issues"
 
 msgid "Mirror name"
-msgstr "镜像名称"
+msgstr "镜像源名称"
 
 msgid "Url"
-msgstr "Url"
+msgstr "URL"
 
 msgid "Select signature check"
 msgstr "选择签名检查"
@@ -1505,158 +1505,151 @@ msgid "The specified configuration will be applied"
 msgstr "指定的配置将被应用"
 
 msgid "Wipe"
-msgstr ""
+msgstr "擦除"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "将分区标记/取消标记为可引导"
+msgstr "标记/取消标记为 XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "附加软件包"
+msgstr "加载软件包"
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "在下方列表选择应当额外安装的任何软件包"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "添加自定义镜像"
+msgstr "添加一个自定义仓库"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "更改自定义镜像"
+msgstr "更改自定义仓库"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "删除自定义镜像"
+msgstr "删除自定义仓库"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "镜像名称"
+msgstr "仓库名称"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "添加自定义镜像"
+msgstr "添加一个自定义服务器"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "更改自定义镜像"
+msgstr "更改自定义服务器"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "删除自定义镜像"
+msgstr "删除自定义服务器"
 
 msgid "Server url"
-msgstr ""
+msgstr "服务器 URL"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "选择签名选项"
+msgstr "选择地区"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "添加自定义镜像"
+msgstr "添加自定义服务器"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "添加自定义镜像"
+msgstr "添加自定义仓库"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "镜像区域"
+msgstr "加载镜像源地区"
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "可选仓库"
+msgstr "镜像源与仓库"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "镜像区域"
+msgstr "已选的镜像源地区"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "自定义镜像"
+msgstr "自定义服务器"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "可选仓库"
+msgstr "自定义仓库"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "仅 ASCII 字符受支持"
 
 msgid "Show help"
-msgstr ""
+msgstr "显示帮助"
 
 msgid "Exit help"
-msgstr ""
+msgstr "退出帮助"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "预览向上滚动"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "预览向下滚动"
 
 msgid "Move up"
-msgstr ""
+msgstr "上移"
 
 msgid "Move down"
-msgstr ""
+msgstr "下移"
 
 msgid "Move right"
-msgstr ""
+msgstr "右移"
 
 msgid "Move left"
-msgstr ""
+msgstr "左移"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "跳转到条目"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "跳过选区（若可用）"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "重置选区（若可用）"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "选择签名检查"
+msgstr "选择单项"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "选择时区"
+msgstr "选择多项"
 
 msgid "Reset"
-msgstr ""
+msgstr "重置"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "选择执行模式"
+msgstr "跳过选区菜单"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "开始搜索模式"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "退出搜索模式"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway 需要访问您的 seat（硬件设备的集合，例如键盘、鼠标等）"
+msgstr "labwc 需要访问您的 seat（硬件设备的集合，例如键盘、鼠标等）"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "选择一个选项来给 Sway 提供对您硬件的访问权限"
+msgstr "选择一个选项来给 labwc 提供对您硬件的访问权限"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway 需要访问您的 seat（硬件设备的集合，例如键盘、鼠标等）"
+msgstr "niri 需要访问您的 seat（硬件设备的集合，例如键盘、鼠标等）"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "选择一个选项来给 Sway 提供对您硬件的访问权限"
+msgstr "选择一个选项来给 niri 提供对您硬件的访问权限"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "将分区标记/取消标记为可引导"
+msgstr "标记/取消标记为 ESP"
 
 msgid "Package group:"
-msgstr ""
+msgstr "软件包组："
+
+msgid "Exit archinstall"
+msgstr "退出 archinstall"
+
+msgid "Reboot system"
+msgstr "重启系统"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "为了安装后的配置，chroot 进安装好的系统内"
+
+msgid "Installation completed"
+msgstr "安装已完成"
+
+msgid "What would you like to do next?"
+msgstr "您接下来想做什么？"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr "选择要为“{}”配置的模式"

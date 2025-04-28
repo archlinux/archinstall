@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class ProfileMenu(AbstractSubMenu):
+class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 	def __init__(
 		self,
 		preset: ProfileConfiguration | None = None
@@ -114,7 +114,7 @@ class ProfileMenu(AbstractSubMenu):
 					group.focus_item = MenuItem.no()
 					group.default_item = MenuItem.no()
 
-					result = SelectMenu(
+					result = SelectMenu[bool](
 						group,
 						header=header,
 						allow_skip=False,
@@ -175,7 +175,7 @@ def select_greeter(
 
 		group.set_default_by_value(default)
 
-		result = SelectMenu(
+		result = SelectMenu[GreeterType](
 			group,
 			allow_skip=True,
 			frame=FrameProperties.min(str(_('Greeter'))),
@@ -208,7 +208,7 @@ def select_profile(
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_selected_by_value(current_profile)
 
-	result = SelectMenu(
+	result = SelectMenu[Profile](
 		group,
 		header=header,
 		allow_reset=allow_reset,
@@ -223,7 +223,7 @@ def select_profile(
 		case ResultType.Skip:
 			return current_profile
 		case ResultType.Selection:
-			profile_selection: Profile = result.get_value()
+			profile_selection = result.get_value()
 			select_result = profile_selection.do_on_select()
 
 			if not select_result:

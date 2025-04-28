@@ -22,7 +22,7 @@ class DiskMenuConfig:
 	lvm_config: LvmConfiguration | None
 
 
-class DiskLayoutConfigurationMenu(AbstractSubMenu):
+class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 	def __init__(self, disk_layout_config: DiskLayoutConfiguration | None):
 		if not disk_layout_config:
 			self._disk_menu_config = DiskMenuConfig(disk_config=None, lvm_config=None)
@@ -101,7 +101,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		if not item.value:
 			return None
 
-		disk_layout_conf: DiskLayoutConfiguration = item.get_value()
+		disk_layout_conf = item.get_value()
 
 		if disk_layout_conf.config_type == DiskLayoutType.Pre_mount:
 			msg = str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg()) + '\n'

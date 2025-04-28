@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import builtins
 import gettext
 import json
 import os
@@ -190,10 +191,7 @@ class DeferredTranslation:
 	def format(self, *args) -> str:
 		return self.message.format(*args)
 
-	@classmethod
-	def install(cls) -> None:
-		import builtins
-		builtins._ = cls  # type: ignore[attr-defined]
 
+builtins._ = DeferredTranslation  # type: ignore[attr-defined]
 
 translation_handler = TranslationHandler()

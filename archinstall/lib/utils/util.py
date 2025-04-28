@@ -19,7 +19,8 @@ def get_password(
 	text: str,
 	header: str | None = None,
 	allow_skip: bool = False,
-	preset: str | None = None
+	preset: str | None = None,
+	skip_confirmation: bool = False
 ) -> Password | None:
 	failure: str | None = None
 
@@ -30,7 +31,7 @@ def get_password(
 		elif header is not None:
 			user_hdr = header
 
-		result = EditMenu(
+		result = EditMenu[str](
 			text,
 			header=user_hdr,
 			alignment=Alignment.CENTER,
@@ -44,12 +45,15 @@ def get_password(
 
 		password = Password(plaintext=result.text())
 
+		if skip_confirmation:
+			return password
+
 		if header is not None:
 			confirmation_header = f'{header}{_("Password")}: {password.hidden()}\n'
 		else:
 			confirmation_header = f'{_("Password")}: {password.hidden()}\n'
 
-		result = EditMenu(
+		result = EditMenu[str](
 			str(_('Confirm password')),
 			header=confirmation_header,
 			alignment=Alignment.CENTER,
@@ -83,7 +87,7 @@ def prompt_dir(
 	else:
 		validate_func = None
 
-	result = EditMenu(
+	result = EditMenu[str](
 		text,
 		header=header,
 		alignment=Alignment.CENTER,

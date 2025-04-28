@@ -33,7 +33,7 @@ class ServerProfile(Profile):
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_selected_by_value(self.current_selection)
 
-		result = SelectMenu(
+		result = SelectMenu[Profile](
 			group,
 			allow_reset=True,
 			allow_skip=True,

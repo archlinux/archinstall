@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Any
 
 from .menu_item import MenuItem
 
@@ -12,17 +11,17 @@ class ResultType(Enum):
 
 
 @dataclass
-class Result:
+class Result[ValueT]:
 	type_: ResultType
 	_item: MenuItem | list[MenuItem] | str | None
 
 	def has_item(self) -> bool:
 		return self._item is not None
 
-	def get_value(self) -> Any:
-		return self.item().get_value()
+	def get_value(self) -> ValueT:
+		return self.item().get_value()  # type: ignore[no-any-return]
 
-	def get_values(self) -> list[Any]:
+	def get_values(self) -> list[ValueT]:
 		return [i.get_value() for i in self.items()]
 
 	def item(self) -> MenuItem:

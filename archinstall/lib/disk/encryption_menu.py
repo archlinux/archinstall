@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class DiskEncryptionMenu(AbstractSubMenu):
+class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def __init__(
 		self,
 		disk_config: DiskLayoutConfiguration,
@@ -233,7 +233,7 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 	group = MenuItemGroup(items)
 	group.set_focus_by_value(preset_value)
 
-	result = SelectMenu(
+	result = SelectMenu[EncryptionType](
 		group,
 		allow_skip=True,
 		allow_reset=True,
@@ -272,7 +272,7 @@ def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 	if fido_devices:
 		group = MenuHelper(data=fido_devices).create_menu_group()
 
-		result = SelectMenu(
+		result = SelectMenu[Fido2Device](
 			group,
 			header=header,
 			alignment=Alignment.CENTER,
@@ -310,7 +310,7 @@ def select_partitions_to_encrypt(
 		group = MenuHelper(data=avail_partitions).create_menu_group()
 		group.set_selected_by_value(preset)
 
-		result = SelectMenu(
+		result = SelectMenu[PartitionModification](
 			group,
 			alignment=Alignment.CENTER,
 			multi=True,
@@ -338,7 +338,7 @@ def select_lvm_vols_to_encrypt(
 	if volumes:
 		group = MenuHelper(data=volumes).create_menu_group()
 
-		result = SelectMenu(
+		result = SelectMenu[LvmVolume](
 			group,
 			alignment=Alignment.CENTER,
 			multi=True

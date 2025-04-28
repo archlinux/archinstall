@@ -42,7 +42,7 @@ def ask_ntp(preset: bool = True) -> bool:
 	group = MenuItemGroup.yes_no()
 	group.focus_item = preset_val
 
-	result = SelectMenu(
+	result = SelectMenu[bool](
 		group,
 		header=header,
 		allow_skip=True,
@@ -61,7 +61,7 @@ def ask_ntp(preset: bool = True) -> bool:
 
 
 def ask_hostname(preset: str | None = None) -> str | None:
-	result = EditMenu(
+	result = EditMenu[str](
 		str(_('Hostname')),
 		alignment=Alignment.CENTER,
 		allow_skip=True,
@@ -89,7 +89,7 @@ def ask_for_a_timezone(preset: str | None = None) -> str | None:
 	group.set_selected_by_value(preset)
 	group.set_default_by_value(default)
 
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		allow_reset=True,
 		allow_skip=True,
@@ -113,7 +113,7 @@ def ask_for_audio_selection(preset: AudioConfiguration | None = None) -> AudioCo
 	if preset:
 		group.set_focus_by_value(preset.audio)
 
-	result = SelectMenu(
+	result = SelectMenu[Audio](
 		group,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
@@ -156,7 +156,7 @@ def select_archinstall_language(languages: list[Language], preset: Language) -> 
 	title += 'All available fonts can be found in "/usr/share/kbd/consolefonts"\n'
 	title += 'e.g. setfont LatGrkCyr-8x16 (to display latin/greek/cyrillic characters)\n'
 
-	result = SelectMenu(
+	result = SelectMenu[Language](
 		group,
 		header=title,
 		allow_skip=True,
@@ -215,7 +215,7 @@ def ask_additional_packages_to_install(
 	menu_group = MenuItemGroup(items, sort_items=True)
 	menu_group.set_selected_by_value(preset_packages)
 
-	result = SelectMenu(
+	result = SelectMenu[AvailablePackage | PackageGroup](
 		menu_group,
 		header=header,
 		alignment=Alignment.LEFT,
@@ -233,7 +233,7 @@ def ask_additional_packages_to_install(
 		case ResultType.Reset:
 			return []
 		case ResultType.Selection:
-			selected_pacakges: list[AvailablePackage | PackageGroup] = result.get_values()
+			selected_pacakges = result.get_values()
 			return [pkg.name for pkg in selected_pacakges]
 
 
@@ -255,7 +255,7 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 
 		return str(_('Invalid download number'))
 
-	result = EditMenu(
+	result = EditMenu[str](
 		str(_('Number downloads')),
 		header=header,
 		allow_skip=True,
@@ -295,7 +295,7 @@ def ask_post_installation() -> PostInstallationAction:
 	items = [MenuItem(action.value, value=action) for action in PostInstallationAction]
 	group = MenuItemGroup(items)
 
-	result = SelectMenu(
+	result = SelectMenu[PostInstallationAction](
 		group,
 		header=header,
 		allow_skip=False,
@@ -313,7 +313,7 @@ def ask_abort() -> None:
 	prompt = str(_('Do you really want to abort?')) + '\n'
 	group = MenuItemGroup.yes_no()
 
-	result = SelectMenu(
+	result = SelectMenu[bool](
 		group,
 		header=prompt,
 		allow_skip=False,

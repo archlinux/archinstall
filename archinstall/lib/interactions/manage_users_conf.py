@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class UserList(ListManager):
+class UserList(ListManager[User]):
 	def __init__(self, prompt: str, lusers: list[User]):
 		self._actions = [
 			str(_('Add a user')),
@@ -70,7 +70,7 @@ class UserList(ListManager):
 		return str(_("The username you entered is invalid"))
 
 	def _add_user(self) -> User | None:
-		editResult = EditMenu(
+		editResult = EditMenu[str](
 			str(_('Username')),
 			allow_skip=True,
 			validator=self._check_for_correct_username
@@ -97,7 +97,7 @@ class UserList(ListManager):
 		group = MenuItemGroup.yes_no()
 		group.focus_item = MenuItem.yes()
 
-		result = SelectMenu(
+		result = SelectMenu[bool](
 			group,
 			header=header,
 			alignment=Alignment.CENTER,

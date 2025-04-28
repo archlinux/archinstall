@@ -1,5 +1,5 @@
 import copy
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, cast
 
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.tui.curses_menu import SelectMenu
@@ -15,10 +15,10 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-class ListManager:
+class ListManager[ValueT]:
 	def __init__(
 		self,
-		entries: list[Any],
+		entries: list[ValueT],
 		base_actions: list[str],
 		sub_menu_actions: list[str],
 		prompt: str | None = None
@@ -50,10 +50,10 @@ class ListManager:
 		self._base_actions = base_actions
 		self._sub_menu_actions = sub_menu_actions
 
-		self._last_choice: str | None = None
+		self._last_choice: ValueT | str | None = None
 
 	@property
-	def last_choice(self) -> str | None:
+	def last_choice(self) -> ValueT | str | None:
 		return self._last_choice
 
 	def is_last_choice_cancel(self) -> bool:
@@ -61,7 +61,7 @@ class ListManager:
 			return self._last_choice == self._cancel_action
 		return False
 
-	def run(self) -> list[Any]:
+	def run(self) -> list[ValueT]:
 		additional_options = self._base_actions + self._terminate_actions
 
 		while True:
@@ -76,7 +76,7 @@ class ListManager:
 
 			prompt = None
 
-			result = SelectMenu(
+			result = SelectMenu[ValueT | str](
 				group,
 				header=prompt,
 				search_enabled=False,
@@ -91,11 +91,14 @@ class ListManager:
 					raise ValueError('Unhandled return type')
 
 			if value in self._base_actions:
+				value = cast(str, value)
 				self._data = self.handle_action(value, None, self._data)
 			elif value in self._terminate_actions:
 				break
 			else:  # an entry of the existing selection was chosen
 				selected_entry = result.get_value()
+				selected_entry = cast(ValueT, selected_entry)
+
 				self._run_actions_on_entry(selected_entry)
 
 		self._last_choice = value
@@ -105,7 +108,7 @@ class ListManager:
 		else:
 			return self._data
 
-	def _run_actions_on_entry(self, entry: Any) -> None:
+	def _run_actions_on_entry(self, entry: ValueT) -> None:
 		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]
 
 		items = [MenuItem(o, value=o) for o in options]
@@ -113,7 +116,7 @@ class ListManager:
 
 		header = f'{self.selected_action_display(entry)}\n'
 
-		result = SelectMenu(
+		result = SelectMenu[str](
 			group,
 			header=header,
 			search_enabled=False,
@@ -130,21 +133,21 @@ class ListManager:
 		if value != self._cancel_action:
 			self._data = self.handle_action(value, entry, self._data)
 
-	def selected_action_display(self, selection: Any) -> str:
+	def selected_action_display(self, selection: ValueT) -> str:
 		"""
 		this will return the value to be displayed in the
 		"Select an action for '{}'" string
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def handle_action(self, action: Any, entry: Any | None, data: list[Any]) -> list[Any]:
+	def handle_action(self, action: str, entry: ValueT | None, data: list[ValueT]) -> list[ValueT]:
 		"""
 		this function is called when a base action or
 		a specific action for an entry is triggered
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def filter_options(self, selection: Any, options: list[str]) -> list[str]:
+	def filter_options(self, selection: ValueT, options: list[str]) -> list[str]:
 		"""
 		filter which actions to show for an specific selection
 		"""
