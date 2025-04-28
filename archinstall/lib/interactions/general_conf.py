@@ -172,7 +172,7 @@ def ask_additional_packages_to_install(
 ) -> list[str]:
 	Tui.print(str(_('Loading packages...')), clear_screen=True)
 
-	repositories |= {Repository.Core, Repository.Extra}
+	repositories |= {Repository.Core, Repository.Extra, Repository.Multilib}
 	packages = list_available_packages(tuple(repositories))
 
 	# Additional packages (with some light weight error handling for invalid package names)
