@@ -41,7 +41,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 		return str(selection.name)
 
 	def _add_subvolume(self, preset: SubvolumeModification | None = None) -> SubvolumeModification | None:
-		result = EditMenu[str](
+		result = EditMenu(
 			str(_('Subvolume name')),
 			alignment=Alignment.CENTER,
 			allow_skip=True,

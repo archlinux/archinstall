@@ -106,7 +106,7 @@ class ManualNetworkConfig(ListManager[Nic]):
 			except ValueError:
 				return str(_('You need to enter a valid IP in IP-config mode'))
 
-		result = EditMenu[str](
+		result = EditMenu(
 			title,
 			header=header,
 			validator=validator,
