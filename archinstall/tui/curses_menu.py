@@ -455,7 +455,7 @@ class Viewport(AbstractViewport):
 		self._main_win.refresh()
 
 
-class EditMenu[ValueT](AbstractCurses[ValueT]):
+class EditMenu(AbstractCurses[str]):
 	def __init__(
 		self,
 		title: str,
@@ -504,7 +504,7 @@ class EditMenu[ValueT](AbstractCurses[ValueT]):
 
 		self._init_viewports()
 
-		self._last_state: Result[ValueT] | None = None
+		self._last_state: Result[str] | None = None
 		self._help_active = False
 		self._real_input = default_text or ""
 
@@ -534,7 +534,7 @@ class EditMenu[ValueT](AbstractCurses[ValueT]):
 		y_offset += 3
 		self._info_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
 
-	def input(self) -> Result[ValueT]:
+	def input(self) -> Result[str]:
 		result = Tui.run(self)
 
 		assert not result.has_item() or isinstance(result.text(), str)
@@ -591,7 +591,7 @@ class EditMenu[ValueT](AbstractCurses[ValueT]):
 			self._input_vp.edit(default_text=self._default_text)
 
 	@override
-	def kickoff(self, win: curses.window) -> Result[ValueT]:
+	def kickoff(self, win: curses.window) -> Result[str]:
 		try:
 			self._draw()
 		except KeyboardInterrupt:

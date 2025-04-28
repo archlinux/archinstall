@@ -74,7 +74,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 		return data
 
 	def _add_custom_repository(self, preset: CustomRepository | None = None) -> CustomRepository | None:
-		edit_result = EditMenu[str](
+		edit_result = EditMenu(
 			str(_('Repository name')),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
@@ -91,7 +91,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 
 		header = f'{_("Name")}: {name}'
 
-		edit_result = EditMenu[str](
+		edit_result = EditMenu(
 			str(_('Url')),
 			header=header,
 			alignment=Alignment.CENTER,
@@ -196,7 +196,7 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 		return data
 
 	def _add_custom_server(self, preset: CustomServer | None = None) -> CustomServer | None:
-		edit_result = EditMenu[str](
+		edit_result = EditMenu(
 			str(_('Server url')),
 			alignment=Alignment.CENTER,
 			allow_skip=True,

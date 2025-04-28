@@ -70,7 +70,7 @@ class UserList(ListManager[User]):
 		return str(_("The username you entered is invalid"))
 
 	def _add_user(self) -> User | None:
-		editResult = EditMenu[str](
+		editResult = EditMenu(
 			str(_('Username')),
 			allow_skip=True,
 			validator=self._check_for_correct_username
