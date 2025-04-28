@@ -53,14 +53,14 @@ class AbstractMenu[ValueT]:
 		self.sync_all_to_config()
 
 	def _sync_from_config(self) -> None:
-		for item in self._menu_item_group.menu_items:
+		for item in self._menu_item_group._menu_items:
 			if item.key is not None and not item.key.startswith(CONFIG_KEY):
 				config_value = getattr(self._config, item.key)
 				if config_value is not None:
 					item.value = config_value
 
 	def sync_all_to_config(self) -> None:
-		for item in self._menu_item_group.menu_items:
+		for item in self._menu_item_group._menu_items:
 			if item.key:
 				setattr(self._config, item.key, item.value)
 
@@ -135,7 +135,7 @@ class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):
 		allow_reset: bool = False
 	):
 		back_text = f'{Chars.Right_arrow} ' + str(_('Back'))
-		item_group.menu_items.append(MenuItem(text=back_text))
+		item_group.add_item(MenuItem(text=back_text))
 
 		super().__init__(
 			item_group,
