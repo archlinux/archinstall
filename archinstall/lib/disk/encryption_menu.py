@@ -262,7 +262,7 @@ def select_encrypted_password() -> Password | None:
 
 
 def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
-	header = str(_('Select a FIDO2 device to use for HSM'))
+	header = str(_('Select a FIDO2 device to use for HSM')) + '\n'
 
 	try:
 		fido_devices = Fido2.get_fido2_devices()
@@ -270,13 +270,13 @@ def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 		return None
 
 	if fido_devices:
-		group, table_header = MenuHelper.create_table(data=fido_devices)
-		header = f'{header}\n\n{table_header}'
+		group = MenuHelper(data=fido_devices).create_menu_group()
 
 		result = SelectMenu(
 			group,
 			header=header,
 			alignment=Alignment.CENTER,
+			allow_skip=True
 		).run()
 
 		match result.type_:
@@ -307,13 +307,14 @@ def select_partitions_to_encrypt(
 	avail_partitions = [p for p in partitions if not p.exists()]
 
 	if avail_partitions:
-		group, header = MenuHelper.create_table(data=avail_partitions)
+		group = MenuHelper(data=avail_partitions).create_menu_group()
+		group.set_selected_by_value(preset)
 
 		result = SelectMenu(
 			group,
-			header=header,
 			alignment=Alignment.CENTER,
-			multi=True
+			multi=True,
+			allow_skip=True
 		).run()
 
 		match result.type_:
@@ -335,11 +336,10 @@ def select_lvm_vols_to_encrypt(
 	volumes: list[LvmVolume] = lvm_config.get_all_volumes()
 
 	if volumes:
-		group, header = MenuHelper.create_table(data=volumes)
+		group = MenuHelper(data=volumes).create_menu_group()
 
 		result = SelectMenu(
 			group,
-			header=header,
 			alignment=Alignment.CENTER,
 			multi=True
 		).run()

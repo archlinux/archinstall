@@ -60,13 +60,12 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 	options = [d.device_info for d in devices]
 	presets = [p.device_info for p in preset]
 
-	group, header = MenuHelper.create_table(data=options)
+	group = MenuHelper(options).create_menu_group()
 	group.set_selected_by_value(presets)
 	group.set_preview_for_all(_preview_device_selection)
 
 	result = SelectMenu(
 		group,
-		header=header,
 		alignment=Alignment.CENTER,
 		search_enabled=False,
 		multi=True,
