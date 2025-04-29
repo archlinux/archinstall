@@ -1,17 +1,13 @@
 from pathlib import Path
 
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall.lib.args import ArchConfig, arch_config_handler
+from archinstall.lib.args import arch_config_handler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.installer import Installer
 from archinstall.lib.models import Bootloader
-from archinstall.lib.models.device_model import (
-	DiskLayoutConfiguration,
-)
-from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.models.profile_model import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.output import debug, error, info
@@ -20,13 +16,13 @@ from archinstall.tui import Tui
 
 
 def perform_installation(mountpoint: Path) -> None:
-	config: ArchConfig = arch_config_handler.config
+	config = arch_config_handler.config
 
 	if not config.disk_config:
 		error("No disk configuration provided")
 		return
 
-	disk_config: DiskLayoutConfiguration = config.disk_config
+	disk_config = config.disk_config
 	disk_encryption = config.disk_encryption
 
 	with Installer(
@@ -41,7 +37,7 @@ def perform_installation(mountpoint: Path) -> None:
 			installation.set_hostname('minimal-arch')
 			installation.add_bootloader(Bootloader.Systemd)
 
-			network_config: NetworkConfiguration | None = config.network_config
+			network_config = config.network_config
 
 			if network_config:
 				network_config.install_network_config(

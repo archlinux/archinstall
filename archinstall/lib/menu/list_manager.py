@@ -40,7 +40,7 @@ class ListManager[ValueT]:
 		self._original_data = copy.deepcopy(entries)
 		self._data = copy.deepcopy(entries)
 
-		self._prompt: str | None = prompt
+		self._prompt = prompt
 
 		self._separator = ''
 		self._confirm_action = str(_('Confirm and exit'))

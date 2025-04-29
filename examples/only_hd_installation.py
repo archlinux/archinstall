@@ -1,12 +1,11 @@
 from pathlib import Path
 
-from archinstall.lib.args import ArchConfig, arch_config_handler
+from archinstall.lib.args import arch_config_handler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
-from archinstall.lib.models.device_model import DiskLayoutConfiguration
 from archinstall.lib.output import debug, error
 from archinstall.tui import Tui
 
@@ -31,13 +30,13 @@ def perform_installation(mountpoint: Path) -> None:
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	config: ArchConfig = arch_config_handler.config
+	config = arch_config_handler.config
 
 	if not config.disk_config:
 		error("No disk configuration provided")
 		return
 
-	disk_config: DiskLayoutConfiguration = config.disk_config
+	disk_config = config.disk_config
 	disk_encryption = config.disk_encryption
 
 	with Installer(
