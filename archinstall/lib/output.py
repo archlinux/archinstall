@@ -321,7 +321,7 @@ def log(
 	if _supports_color():
 		text = _stylize_output(text, fg, bg, reset, font)
 
-	log_file: Path = storage['LOG_PATH'] / storage['LOG_FILE']
+	log_file = storage['LOG_PATH'] / storage['LOG_FILE']
 
 	with log_file.open('a') as fp:
 		ts = _timestamp()
