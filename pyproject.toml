@@ -19,7 +19,7 @@ classifiers = [
 ]
 dependencies = [
     "pyparted @ https://github.com//dcantrell/pyparted/archive/v3.13.0.tar.gz#sha512=26819e28d73420937874f52fda03eb50ab1b136574ea9867a69d46ae4976d38c4f26a2697fa70597eed90dd78a5ea209bafcc3227a17a7a5d63cff6d107c2b11",
-    "pydantic==2.11.3",
+    "pydantic==2.11.4",
     "cryptography>=44.0.2",
 ]
 
