@@ -39,6 +39,7 @@ repos:
     hooks:
     - id: mypy
       args: [
+        '--show-traceback',
         '--config-file=pyproject.toml'
       ]
       fail_fast: true
