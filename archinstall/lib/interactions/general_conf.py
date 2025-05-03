@@ -178,9 +178,14 @@ def ask_additional_packages_to_install(
 	preset: list[str] = [],
 	repositories: set[Repository] = set()
 ) -> list[str]:
-	Tui.print(str(_('Loading packages...')), clear_screen=True)
-
 	repositories |= {Repository.Core, Repository.Extra}
+
+	respos_text = ', '.join([r.value for r in repositories])
+	output = str(_('Repositories: {}')).format(respos_text) + '\n'
+
+	output += str(_('Loading packages...'))
+	Tui.print(output, clear_screen=True)
+
 	packages = list_available_packages(tuple(repositories))
 	package_groups = PackageGroup.from_available_packages(packages)
 

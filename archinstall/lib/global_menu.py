@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, override
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
 from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
+from archinstall.lib.packages import list_available_packages
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
 from .args import ArchConfig
@@ -29,9 +30,11 @@ from .models.bootloader import Bootloader
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
 from .models.network_configuration import NetworkConfiguration, NicType
+from .models.packages import Repository
 from .models.profile_model import ProfileConfiguration
 from .models.users import Password, User
 from .output import FormattedOutput
+from .pacman.config import PacmanConfig
 from .translationhandler import Language, translation_handler
 from .utils.util import get_password
 
@@ -168,7 +171,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=str(_('Additional packages')),
-				action=ask_additional_packages_to_install,
+				action=self._select_additional_packages,
 				value=[],
 				preview_action=self._prev_additional_pkgs,
 				key='packages'
@@ -536,6 +539,20 @@ class GlobalMenu(AbstractMenu[None]):
 		profile_config = ProfileMenu(preset=current_profile).run()
 		return profile_config
 
+	def _select_additional_packages(self, preset: list[str]) -> list[str]:
+		config: MirrorConfiguration | None = self._item_group.find_by_key('mirror_config').value
+
+		repositories: set[Repository] = set()
+		if config:
+			repositories = set(config.optional_repositories)
+
+		packages = ask_additional_packages_to_install(
+			preset,
+			repositories=repositories
+		)
+
+		return packages
+
 	def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
 		preset = [] if preset is None else preset
 		users = ask_for_additional_users(defined_users=preset)
@@ -543,6 +560,17 @@ class GlobalMenu(AbstractMenu[None]):
 
 	def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
 		mirror_configuration = MirrorMenu(preset=preset).run()
+
+		if mirror_configuration:
+			if mirror_configuration.optional_repositories:
+				# reset the package list cache in case the repository selection has changed
+				list_available_packages.cache_clear()
+
+				# enable the repositories in the config
+				pacman_config = PacmanConfig(None)
+				pacman_config.enable(mirror_configuration.optional_repositories)
+				pacman_config.apply()
+
 		return mirror_configuration
 
 	def _prev_mirror_config(self, item: MenuItem) -> str | None:

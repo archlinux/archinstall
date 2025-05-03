@@ -44,7 +44,7 @@ from .models.network_configuration import Nic
 from .models.users import User
 from .output import debug, error, info, log, warn
 from .pacman import Pacman
-from .pacman.config import Config
+from .pacman.config import PacmanConfig
 from .plugins import plugins
 from .storage import storage
 
@@ -847,7 +847,7 @@ class Installer:
 		debug(f'Optional repositories: {optional_repositories}')
 
 		# This action takes place on the host system as pacstrap copies over package repository lists.
-		pacman_conf = Config(self.target)
+		pacman_conf = PacmanConfig(self.target)
 		pacman_conf.enable(optional_repositories)
 		pacman_conf.apply()
 
