@@ -1756,3 +1756,45 @@ msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Bahasa Archinstall"
+
+msgid "Reboot system"
+msgstr ""
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Apakah Anda ingin melakukan chroot ke instalasi yang baru dibuat dan melakukan konfigurasi pasca-instalasi?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Pilih mode mana yang akan dikonfigurasi untuk \"{}\" atau lewati untuk menggunakan mode default \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Kata sandi enkripsi"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Kata sandi root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Kata sandi enkripsi"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Simpan konfigurasi"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Kata sandi enkripsi"

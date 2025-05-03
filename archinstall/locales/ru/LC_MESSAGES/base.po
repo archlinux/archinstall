@@ -1662,3 +1662,46 @@ msgstr "Пометить/снять пометку как загрузочный
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Справка Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Файловая система"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Хотите ли вы использовать chroot в новой созданной установке и выполнить настройку после установки?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Вы хотите продолжить?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Выберите режим для конфигурации \"{}\" или пропустите, чтобы использовать режим по умолчанию \"{}\"."
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Пароль шифрования диска"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Пароль root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Пароль шифрования диска"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Хотите ли вы сохранить файл(ы) конфигурации в {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Пароль шифрования диска"
