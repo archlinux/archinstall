@@ -7,7 +7,7 @@ from ..exceptions import RequirementError
 from ..general import SysCommand
 from ..output import error, info, warn
 from ..plugins import plugins
-from .config import Config
+from .config import PacmanConfig
 
 if TYPE_CHECKING:
 	from archinstall.lib.translationhandler import DeferredTranslation
@@ -89,6 +89,6 @@ class Pacman:
 
 
 __all__ = [
-	'Config',
 	'Pacman',
+	'PacmanConfig',
 ]
