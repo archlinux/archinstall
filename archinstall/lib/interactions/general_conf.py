@@ -61,7 +61,7 @@ def ask_ntp(preset: bool = True) -> bool:
 
 
 def ask_hostname(preset: str | None = None) -> str | None:
-	result = EditMenu[str](
+	result = EditMenu(
 		str(_('Hostname')),
 		alignment=Alignment.CENTER,
 		allow_skip=True,
@@ -260,7 +260,7 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 
 		return str(_('Invalid download number'))
 
-	result = EditMenu[str](
+	result = EditMenu(
 		str(_('Number downloads')),
 		header=header,
 		allow_skip=True,

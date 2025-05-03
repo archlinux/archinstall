@@ -2,20 +2,18 @@ import os
 from pathlib import Path
 
 from archinstall import SysInfo, debug, error, info
-from archinstall.lib.args import ArchConfig, arch_config_handler
+from archinstall.lib.args import arch_config_handler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
-from archinstall.lib.models import AudioConfiguration, Bootloader
+from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device_model import (
-	DiskLayoutConfiguration,
 	DiskLayoutType,
 	EncryptionType,
 )
-from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.models.users import User
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui import Tui
@@ -45,13 +43,13 @@ def perform_installation(mountpoint: Path) -> None:
 	"""
 	info('Starting installation...')
 
-	config: ArchConfig = arch_config_handler.config
+	config = arch_config_handler.config
 
 	if not config.disk_config:
 		error("No disk configuration provided")
 		return
 
-	disk_config: DiskLayoutConfiguration = config.disk_config
+	disk_config = config.disk_config
 	run_mkinitcpio = not config.uki
 	locale_config = config.locale_config
 	disk_encryption = config.disk_encryption
@@ -97,7 +95,7 @@ def perform_installation(mountpoint: Path) -> None:
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
-		network_config: NetworkConfiguration | None = config.network_config
+		network_config = config.network_config
 
 		if network_config:
 			network_config.install_network_config(
@@ -108,7 +106,7 @@ def perform_installation(mountpoint: Path) -> None:
 		if users := config.users:
 			installation.create_users(users)
 
-		audio_config: AudioConfiguration | None = config.audio_config
+		audio_config = config.audio_config
 		if audio_config:
 			audio_config.install_audio_config(installation)
 		else:

@@ -1,12 +1,11 @@
 import copy
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, cast
 
+from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment
-
-from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -41,7 +40,7 @@ class ListManager[ValueT]:
 		self._original_data = copy.deepcopy(entries)
 		self._data = copy.deepcopy(entries)
 
-		self._prompt: str | None = prompt
+		self._prompt = prompt
 
 		self._separator = ''
 		self._confirm_action = str(_('Confirm and exit'))
@@ -63,23 +62,23 @@ class ListManager[ValueT]:
 		return False
 
 	def run(self) -> list[ValueT]:
+		additional_options = self._base_actions + self._terminate_actions
+
 		while True:
-			# this will return a dictionary with the key as the menu entry to be displayed
-			# and the value is the original value from the self._data container
-			data_formatted = self.reformat(self._data)
-			options = self._prepare_selection(data_formatted)
+			group = MenuHelper(
+				data=self._data,
+				additional_options=additional_options
+			).create_menu_group()
 
-			header = self._get_header(data_formatted)
-
+			prompt = None
 			if self._prompt is not None:
-				header = f'{self._prompt}\n\n{header}'
+				prompt = f'{self._prompt}\n\n'
 
-			items = [MenuItem(o[0], value=o[1]) for o in options]
-			group = MenuItemGroup(items, sort_items=False)
+			prompt = None
 
 			result = SelectMenu[ValueT | str](
 				group,
-				header=header,
+				header=prompt,
 				search_enabled=False,
 				allow_skip=False,
 				alignment=Alignment.CENTER
@@ -109,25 +108,6 @@ class ListManager[ValueT]:
 		else:
 			return self._data
 
-	def _get_header(self, data_formatted: dict[str, Any]) -> str:
-		table_header = [key for key, val in data_formatted.items() if val is None]
-		header = '\n'.join(table_header)
-		return header
-
-	def _prepare_selection(self, data_formatted: dict[str, Any]) -> list[tuple[str, str | ValueT]]:
-		# header rows are mapped to None so make sure
-		# to exclude those from the selectable data
-		options = [(key, val) for key, val in data_formatted.items() if val is not None]
-
-		if len(options) > 0:
-			options.append((self._separator, None))
-
-		additional_options = self._base_actions + self._terminate_actions
-		for o in additional_options:
-			options.append((o, o))
-
-		return options
-
 	def _run_actions_on_entry(self, entry: ValueT) -> None:
 		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]
 
@@ -152,27 +132,6 @@ class ListManager[ValueT]:
 
 		if value != self._cancel_action:
 			self._data = self.handle_action(value, entry, self._data)
-
-	def reformat(self, data: list[Any]) -> dict[str, Any | None]:
-		"""
-		Default implementation of the table to be displayed.
-		Override if any custom formatting is needed
-		"""
-		display_data: dict[str, Any | None] = {}
-
-		if data:
-			table = FormattedOutput.as_table(data)
-			rows = table.split('\n')
-
-			# these are the header rows of the table and do not map to any User obviously
-			# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
-			# the selectable rows so the header has to be aligned
-			display_data = {f'{rows[0]}': None, f'{rows[1]}': None}
-
-			for row, entry in zip(rows[2:], data):
-				display_data[row] = entry
-
-		return display_data
 
 	def selected_action_display(self, selection: ValueT) -> str:
 		"""

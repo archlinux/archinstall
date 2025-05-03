@@ -509,7 +509,7 @@ class PartitioningList(ListManager[DiskSegment]):
 
 		title = str(_('Size (default: {}): ')).format(max_size.format_highest())
 
-		result = EditMenu[str](
+		result = EditMenu(
 			title,
 			header=f'{prompt}\b',
 			allow_skip=True,

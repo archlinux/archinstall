@@ -101,18 +101,12 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 		entries += [ViewportEntry(f'   {e}   ', idx + 1, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
 		self._help_window.update(entries, 0)
 
-	def get_header_entries(
-		self,
-		header: str | None,
-		offset: int = 0
-	) -> list[ViewportEntry]:
-		cur_row = 0
+	def get_header_entries(self, header: str) -> list[ViewportEntry]:
 		full_header = []
+		rows = header.split('\n')
 
-		if header:
-			for line in header.split('\n'):
-				full_header += [ViewportEntry(line, cur_row, offset, STYLE.NORMAL)]
-				cur_row += 1
+		for cur_row, line in enumerate(rows):
+			full_header += [ViewportEntry(line, cur_row, 0, STYLE.NORMAL)]
 
 		return full_header
 
@@ -461,7 +455,7 @@ class Viewport(AbstractViewport):
 		self._main_win.refresh()
 
 
-class EditMenu[ValueT](AbstractCurses[ValueT]):
+class EditMenu(AbstractCurses[str]):
 	def __init__(
 		self,
 		title: str,
@@ -480,11 +474,15 @@ class EditMenu[ValueT](AbstractCurses[ValueT]):
 		self._max_height, self._max_width = Tui.t().max_yx
 
 		self._header = header
+
+		self._header_entries = []
+		if header:
+			self._header_entries = self.get_header_entries(header)
+
 		self._validator = validator
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
 		self._interrupt_warning = reset_warning_msg
-		self._headers = self.get_header_entries(header, offset=0)
 		self._alignment = alignment
 		self._edit_width = edit_width
 		self._default_text = default_text
@@ -506,7 +504,7 @@ class EditMenu[ValueT](AbstractCurses[ValueT]):
 
 		self._init_viewports()
 
-		self._last_state: Result[ValueT] | None = None
+		self._last_state: Result[str] | None = None
 		self._help_active = False
 		self._real_input = default_text or ""
 
@@ -516,8 +514,8 @@ class EditMenu[ValueT](AbstractCurses[ValueT]):
 		self._help_vp = Viewport(self._max_width, 2, 0, y_offset)
 		y_offset += 2
 
-		if self._headers:
-			header_height = len(self._headers)
+		if self._header_entries:
+			header_height = len(self._header_entries)
 			self._header_vp = Viewport(self._max_width, header_height, 0, y_offset, alignment=self._alignment)
 			y_offset += header_height
 
@@ -536,7 +534,7 @@ class EditMenu[ValueT](AbstractCurses[ValueT]):
 		y_offset += 3
 		self._info_vp = Viewport(self._max_width, 1, 0, y_offset, alignment=self._alignment)
 
-	def input(self) -> Result[ValueT]:
+	def input(self) -> Result[str]:
 		result = Tui.run(self)
 
 		assert not result.has_item() or isinstance(result.text(), str)
@@ -581,8 +579,8 @@ class EditMenu[ValueT](AbstractCurses[ValueT]):
 		if self._help_vp:
 			self._help_vp.update([self.help_entry()], 0)
 
-		if self._headers and self._header_vp:
-			self._header_vp.update(self._headers, 0)
+		if self._header_entries and self._header_vp:
+			self._header_vp.update(self._header_entries, 0)
 
 		if self._input_vp:
 			self._input_vp.update()
@@ -593,7 +591,7 @@ class EditMenu[ValueT](AbstractCurses[ValueT]):
 			self._input_vp.edit(default_text=self._default_text)
 
 	@override
-	def kickoff(self, win: curses.window) -> Result[ValueT]:
+	def kickoff(self, win: curses.window) -> Result[str]:
 		try:
 			self._draw()
 		except KeyboardInterrupt:
@@ -720,9 +718,9 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		self._interrupt_warning = reset_warning_msg
 		self._header = header
 
-		header_offset = self._get_header_offset(header)
-
-		self._headers = self.get_header_entries(header, offset=header_offset)
+		self._header_entries = []
+		if header:
+			self._header_entries = self.get_header_entries(header)
 
 		if self._interrupt_warning is None:
 			self._interrupt_warning = str(_('Are you sure you want to reset this setting?')) + '\n'
@@ -752,22 +750,6 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 			total_rows=self._menu_vp.height,
 			with_frame=self._frame is not None
 		)
-
-	def _get_header_offset(self, header: str | None) -> int:
-		# WARNING: any changes here will impact the list manager table view
-		if self._orientation == Orientation.HORIZONTAL:
-			return 0
-
-		lines = header.split('\n') if header else []
-		table_header = [line for line in lines if '-' in line]
-
-		longest_header = len(table_header[0]) if table_header else 0
-		longest_entry = self._item_group.get_max_width()
-
-		delta = longest_header - longest_entry
-		offset = delta + 2  # 2 because it seems to align it...
-
-		return offset
 
 	def run(self) -> Result[ValueT]:
 		result = Tui.run(self)
@@ -827,8 +809,8 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		self._help_vp = Viewport(self._max_width, 2, 0, y_offset)
 		y_offset += 2
 
-		if self._headers:
-			header_height = len(self._headers)
+		if self._header_entries:
+			header_height = len(self._header_entries)
 			self._header_vp = Viewport(
 				self._max_width,
 				header_height,
@@ -960,7 +942,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 			self._update_viewport(self._help_vp, [self.help_entry()])
 
 		if self._header_vp:
-			self._update_viewport(self._header_vp, self._headers)
+			self._update_viewport(self._header_vp, self._header_entries)
 
 		if self._menu_vp:
 			self._update_viewport(self._menu_vp, vp_entries)
@@ -1126,7 +1108,9 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 			self._prev_scroll_pos = 0
 
 	def _multi_prefix(self, item: MenuItem) -> str:
-		if self._item_group.is_item_selected(item):
+		if item.read_only:
+			return '    '
+		elif self._item_group.is_item_selected(item):
 			return '[x] '
 		else:
 			return '[ ] '
