@@ -1647,3 +1647,46 @@ msgstr "Contrassegna/Deseleziona come ESP"
 #, fuzzy
 msgid "Package group:"
 msgstr "Gruppo pacchetto:"
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Aiuto di Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Filesystem"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Vorresti eseguire il chroot nell'installazione appena creata e fare la configurazione post-installazione?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Vorresti continuare?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Seleziona la modalità da configurare per \"{}\" o salta per utilizzare la modalità predefinita \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Password di crittografia del disco"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Password di root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Password di crittografia del disco"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Vuoi salvare i file di configurazione in {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Password di crittografia del disco"

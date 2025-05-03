@@ -1754,3 +1754,45 @@ msgstr "Позначити/зняти позначку розділу як ст�
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Мова Archinstall"
+
+msgid "Reboot system"
+msgstr ""
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Бажаєте підключитися використовуючи chroot до новоствореної інсталяції та виконати додаткову конфігурацію після інсталяції?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Бажаєте використовувати стиснення BTRFS?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Виберіть, режим для налаштування \"{}\" або пропустіть, щоб використовувати режим за замовчуванням \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Пароль шифрування"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Пароль root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Пароль шифрування"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Зберегти конфігурацію"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Пароль шифрування"

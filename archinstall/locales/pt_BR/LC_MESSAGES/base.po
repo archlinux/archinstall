@@ -1681,5 +1681,48 @@ msgstr "Marcar/desmarcar como inicializável"
 msgid "Package group:"
 msgstr ""
 
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Ajuda do archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Sistema de arquivos"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Deseja fazer chroot para a nova instalação e realizar configurações pós-instalação?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Deseja continuar?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Selecione qual modo configurar para \"{}\" ou pule para usar o modo padrão \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Senha de encriptação do disco"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Senha de root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Senha de encriptação do disco"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Você deseja salvar arquivo(s) de configuração para {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Senha de encriptação do disco"
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

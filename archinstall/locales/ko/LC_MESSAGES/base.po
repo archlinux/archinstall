@@ -1757,3 +1757,45 @@ msgstr "파티션을 압축된 것으로 표시/표시 해제(btrfs만 해당)"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall 언어"
+
+msgid "Reboot system"
+msgstr ""
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "새로 생성된 설치로 chroot 하고 설치 후 구성을 수행하시겠습니까?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "BTRFS 압축을 사용하시겠습니까?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "\"{}\" 에 대해 구성할 모드를 선택하거나 기본 모드 \"{}\" 을(를) 사용하도록 건너뛰세요"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "비밀번호 암호화"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "루트 비밀번호"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "비밀번호 암호화"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "구성 저장"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "비밀번호 암호화"

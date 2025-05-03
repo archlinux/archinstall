@@ -1642,3 +1642,46 @@ msgstr "Markera/avmarkera som bootbar"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall hjälp"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Filsystem"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Vill du hoppa in i det nyligen installerade systemet och utföra förändringar? (skriv 'exit' när du är klart)"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Vill du fortsätta?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Välj vilket läge att konfigurera för \"{}\" eller använd standardläge \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Diskkrypteringslösenord"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root-lösenord"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Diskkrypteringslösenord"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Vill du spara konfigurationsfil(er) till {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Diskkrypteringslösenord"
