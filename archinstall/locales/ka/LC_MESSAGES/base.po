@@ -1720,3 +1720,53 @@ msgstr "ჩატვირთვადი ალმის დაყენებ�
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall-ის დახმარება"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "ფაილური სისტემის შეცვლა"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "გნებავთ chroot ახალ დაყენებულ სისტემაში და დაყენების შემდეგი კონფიგურაციის გაშვება?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "გნებავთ BTRFS-ის შეკუმშვის გამოყენება?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "აირჩიეთ მოსარგები რეჟიმი \"{}\"-სთვის ან გამოტოვეთ ნაგულისხმევი რეჟიმის \"{}\" გამოსაყენებლად"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "დაშიფვრის პაროლი"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root-ის პაროლი"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "დაშიფვრის პაროლი"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"გნებავთ, შეინახოთ {} კონფიგურაციის ფაილები შემდეგ მისამართზე?\n"
+"\n"
+"{}"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "დაშიფვრის პაროლი"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "სარკის რეგიონი"

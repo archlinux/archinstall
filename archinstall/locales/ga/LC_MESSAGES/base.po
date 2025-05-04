@@ -1720,3 +1720,53 @@ msgstr "Marcáil/Dímharcáil mar bootable"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Cabhair Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Athraigh córas comhaid"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Ar mhaith leat an tsuiteáil nuachruthaithe a chrosadh agus cumraíocht iar-shuiteála a dhéanamh?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Ar mhaith leat comhbhrú BTRFS a úsáid?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Roghnaigh an mód a chumrú le haghaidh \"{}\" nó scipeáil chun an mód réamhshocraithe \"{}\" a úsáid"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Pasfhocal criptithe"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Pasfhocal Root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Pasfhocal criptithe"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"Ar mhaith leat {} comhad cumraíochta a shábháil sa suíomh seo a leanas?\n"
+"\n"
+"{}"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Pasfhocal criptithe"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Réigiún scáthán"

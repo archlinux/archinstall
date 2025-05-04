@@ -1656,6 +1656,30 @@ msgstr "¿Qué le gustaría hacer a continuación?"
 msgid "Select which mode to configure for \"{}\""
 msgstr "Seleccione qué modo configurar para \"{}\""
 
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Contraseña de cifrado de disco"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Contraseña de root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Contraseña de cifrado de disco"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "¿Desea guardar los archivos de configuración en {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Contraseña de cifrado de disco"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Nombre del repositorio"
+
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
 

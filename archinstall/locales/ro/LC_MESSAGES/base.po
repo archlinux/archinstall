@@ -1740,3 +1740,53 @@ msgstr "Marchează/Demarchează ca bootabil"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Limba pentru Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Schimbă sistemul de fișiere"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Doriți să folosiți modul chroot pentru a intra în noua instalare și pentru a efectua configurații de post-instalare?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Selectați modul de configurare pentru \"{}\" sau folosiți modul predefinit \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Parola de criptare"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Parola pentru root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Parola de criptare"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"Doriți să salvați fișierele de configurare {} în această locație?\n"
+"\n"
+"{]"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Parola de criptare"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Regiune de oglindire"

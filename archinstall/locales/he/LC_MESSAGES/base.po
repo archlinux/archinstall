@@ -1669,3 +1669,50 @@ msgstr "סימון/ביטול סימון כזמין לטעינה"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "העזרה של Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "מערכת קבצים"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "האם להיכנס להתקנה החדשה שיצרת עם chroot (העמסת סביבה) לביצוע הגדרות שלאחר התקנה?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "להמשיך?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "נא לבחור איזה מצב להגדרה עבור „{}“ או לדלג כדי להשתמש במצב ברירת המחדל „{}“"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "סיסמת הצפנת כונן"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "סיסמת root (משתמש עליון)"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "סיסמת הצפנת כונן"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "לשמור את קובצי ההגדרות אל {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "סיסמת הצפנת כונן"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "שם אתר המראה"

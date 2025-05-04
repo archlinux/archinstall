@@ -1771,6 +1771,51 @@ msgstr "انکرپٹڈ کرنے کے لیے پارٹیشن کو مارک​​ /
 msgid "Package group:"
 msgstr ""
 
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "آرچ انسٹال کے لیے زبان"
+
+msgid "Reboot system"
+msgstr ""
+
+msgid "chroot into installation for post-installation configurations"
+msgstr ""
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "کیا آپ زی ریم پر سواپ استعمال کرنا چاہیں گے؟"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "منتخب کریں کہ کون سا موڈ \"{}\" کے لیے کنفیگر کرنا ہے یا ڈیفالٹ موڈ \"{}\" استعمال کرنے کے لیےخالی چھوڑ دیں۔"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "انکرپشن پاس ورڈ سیٹ کریں"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "روٹ پاس ورڈ"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "انکرپشن پاس ورڈ سیٹ کریں"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "ترتیب کو محفوظ کریں"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "انکرپشن پاس ورڈ سیٹ کریں"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "متبادل علاقہ"
+
 #~ msgid "Add :"
 #~ msgstr "شامل:"
 

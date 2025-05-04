@@ -1792,6 +1792,56 @@ msgstr "Zaznacz/Odznacz jako bootowalne"
 msgid "Package group:"
 msgstr ""
 
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Język archinstall-a"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Zmień system plików"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Czy chcesz zchrootować do nowej instalacji i przeprowadzić dodatkową konfigurację?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Czy chcesz użyć kompresji BTRFS?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Wybierz który tryb ma być skonfigurowany dla \"{}\" lub pomiń, aby użyć trybu domyślnego \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Hasło szyfrujące"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Hasło roota"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Hasło szyfrujące"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"Czy chcesz zapisać plik(i) konfiguracji {} w podanej lokalizacji?\n"
+"\n"
+"{}"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Hasło szyfrujące"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Region serwerów lustrzanych"
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
 

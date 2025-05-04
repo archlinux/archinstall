@@ -1678,3 +1678,50 @@ msgstr "وضع او إلغاء علامة قابل للإقلاع"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "مساعدة Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "نظام الملفات"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "هل ترغب في الانتقال (chroot) إلى التثبيت الذي تم إنشاؤه حديثاً وإجراء تهيئة ما بعد التثبيت؟"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "هل ترغب في الاستمرار؟"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "حدد الوضع المراد تهيئته لـ\"{}\" أو تخطى لاستخدام الوضع الافتراضي \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "كلمة سر التشفير"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "كلمة مرور الجذر"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "كلمة سر التشفير"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "هل تريد حفظ ملف (ملفات) الضبط إلى {} ؟"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "كلمة سر التشفير"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "اسم المرآة"
