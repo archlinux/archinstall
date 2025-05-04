@@ -45,7 +45,6 @@ repos:
       fail_fast: true
       additional_dependencies:
         - pydantic
-        - pydantic-settings
         - pytest
         - cryptography
   - repo: https://github.com/astral-sh/ruff-pre-commit
