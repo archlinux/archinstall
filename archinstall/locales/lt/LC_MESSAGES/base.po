@@ -1605,3 +1605,42 @@ msgstr ""
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall liežuvis"
+
+msgid "Reboot system"
+msgstr ""
+
+msgid "chroot into installation for post-installation configurations"
+msgstr ""
+
+msgid "Installation completed"
+msgstr ""
+
+msgid "What would you like to do next?"
+msgstr ""
+
+msgid "Select which mode to configure for \"{}\""
+msgstr ""
+
+msgid "Incorrect credentials file decryption password"
+msgstr ""
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root Slaptažodis"
+
+msgid "Credentials file decryption password"
+msgstr ""
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+
+msgid "Credentials file encryption password"
+msgstr ""
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Pagrindinio kompiuterio vardas"

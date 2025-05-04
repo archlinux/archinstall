@@ -1734,3 +1734,53 @@ msgstr "Merkitse/poista käynnistyvä"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall kieli"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Vaihda tiedostojärjestelmä"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Haluatko chroot:in uuteen asennukseen ja suorittaa asennuksen jälkeiset asetukset?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Haluatko käyttää BTRFS-pakkausta?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Valitse, mikä tila määritetään \"{}\", tai ohita ja käytä \"{}\" oletusta."
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Salauksen salasana"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root salasana"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Salauksen salasana"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"Haluatko tallentaa {} asetustiedostoa seuraavaan paikkaan?\n"
+"\n"
+"{}"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Salauksen salasana"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Pakettivarasto"

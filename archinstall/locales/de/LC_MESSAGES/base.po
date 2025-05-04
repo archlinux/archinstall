@@ -1748,3 +1748,53 @@ msgstr "Als bootbar makieren bzw. nicht makieren"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Sprache für Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Dateisystem ändern"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Möchten Sie in das neu installierte System über chroot zugreifen um noch weitere, manuelle Konfigurationen vorzunehmen?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Möchten sie btrfs Komprimierung verwenden?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Bitte wählen Sie einen Modus zur Konfiguration von \"{}\" aus oder überspringen, um mit dem voreingestellten Modus \"{}\" fortzufahren"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Verschlüsselungspasswort"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root-Passwort"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Verschlüsselungspasswort"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"Möchten Sie {} Konfigurationsdatei(en) in folgendem Ordner speichern?\n"
+"\n"
+"{}"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Verschlüsselungspasswort"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Spiegelserver-Region"

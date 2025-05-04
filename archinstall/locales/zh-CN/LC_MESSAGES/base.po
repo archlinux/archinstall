@@ -1653,3 +1653,27 @@ msgstr "您接下来想做什么？"
 
 msgid "Select which mode to configure for \"{}\""
 msgstr "选择要为“{}”配置的模式"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "磁盘加密密码"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root 密码"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "磁盘加密密码"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "您想将配置文件保存到 {} 吗？"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "磁盘加密密码"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "仓库名称"

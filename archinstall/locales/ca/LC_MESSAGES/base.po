@@ -1661,3 +1661,50 @@ msgstr "Marcar/Desmarcar com a arranc"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Ajuda d'Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Sistema de fitxers"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Us agradaria accedir a la instal·lació acabada de crear i realitzar la configuració posterior a la instal·lació?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Voleu continuar?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Seleccioneu quin mode configurar per a \"{}\" o ometeu per a usar el mode predeterminat \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Contrasenya del xifrat del disc"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Contrasenya de root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Contrasenya del xifrat del disc"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Voleu guardar el(s) fitxer(s) de configuració a {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Contrasenya del xifrat del disc"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Nom del mirall"

@@ -1678,6 +1678,56 @@ msgstr "Önyüklenebilir olarak işaretle/işareti kaldır"
 msgid "Package group:"
 msgstr ""
 
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall yardım"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Dosya Sistemi"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Yeni oluşturulan kuruluma chroot ile girmek ve kurulum sonrası yapılandırmayı gerçekleştirmek ister misiniz?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Devam etmek ister misiniz?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "\"{}\"i yapılandırmak için bir yöntem seçin ya da varsayılan yöntemi \"{}\" kullanmak için atlayın"
+
+# Şifreleme şifresi bana bir tık garip geldi, o yüzden parolayla değiştirdim
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Disk şifreleme parolası"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root (kök) şifresi"
+
+# Şifreleme şifresi bana bir tık garip geldi, o yüzden parolayla değiştirdim
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Disk şifreleme parolası"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Yapılandırma dosya(lar)ını {}'a kaydetmek istiyor musunuz?"
+
+# Şifreleme şifresi bana bir tık garip geldi, o yüzden parolayla değiştirdim
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Disk şifreleme parolası"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "İndirme sunucusu adı"
+
 #~ msgid "Desktop"
 #~ msgstr "Masaüstü"
 

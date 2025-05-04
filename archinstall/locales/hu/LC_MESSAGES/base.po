@@ -1638,3 +1638,50 @@ msgstr "Megjelölés/elvetés mint EFI-rendszerpartíció (ESP)"
 
 msgid "Package group:"
 msgstr "Csomagcsoport:"
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall súgó"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Fájlrendszer"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Szeretne chroot-olni az újonnan létrehozott telepítésbe, és elvégezni a telepítés utáni konfigurációt?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Szeretné folytatni?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) „{}” számára, vagy hagyja ki ezt a lépést az alapértelmezett „{}” mód használatához"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Lemeztitkosítási jelszó"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root-jelszó"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Lemeztitkosítási jelszó"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Szeretné elmenteni a konfigurációs fájlt a következő helyre?:{}"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Lemeztitkosítási jelszó"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Tároló neve"

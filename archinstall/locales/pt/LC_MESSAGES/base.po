@@ -1677,3 +1677,50 @@ msgstr "Marcar/Desmarcar como partição de arranque"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Ajuda do Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Sistema de ficheiros"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Gostaria de fazer chroot na instalação recém-criada e executar a configuração pós-instalação?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Gostaria de continuar?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Selecionar qual o modo a configurar para \"{}\" ou ignorar para usar o modo predefinido \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Palavra-passe de encriptação do disco"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Palavra-passe do root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Palavra-passe de encriptação do disco"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Pretende guardar o(s) ficheiro(s) de configuração em {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Palavra-passe de encriptação do disco"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Nome do espelho"

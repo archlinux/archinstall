@@ -1768,6 +1768,51 @@ msgstr "Partitie (de)markeren voor versleuteling"
 msgid "Package group:"
 msgstr ""
 
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall-taal"
+
+msgid "Reboot system"
+msgstr ""
+
+msgid "chroot into installation for post-installation configurations"
+msgstr ""
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Geef aan welke modus moet worden gebruikt bij ‘{}’ of sla over om de standaardmodus (‘{}’) te gebruiken"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Versleutelwachtwoord instellen"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Rootwachtwoord"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Versleutelwachtwoord instellen"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Configuratie vastleggen"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Versleutelwachtwoord instellen"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Spiegelserverregio"
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

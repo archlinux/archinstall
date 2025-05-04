@@ -1781,3 +1781,50 @@ msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
 
 msgid "Package group:"
 msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Γλώσσα archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Αλλαγή συστήματος αρχείων"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Θα θέλατε να κάνετε chroot εντός της καινούργιας εγκατάστασης για περαιτέρω διαμόρφωση;"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Επιλέξτε ποιο mode να διαμορφωθεί για το \"{}\" ή παραλείψτε για να χρησιμοποιηθεί το default mode \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Κωδικός κρυπτογράφησης"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Κωδικός root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Κωδικός κρυπτογράφησης"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Αποθήκευση διαμόρφωσης"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Κωδικός κρυπτογράφησης"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Περιοχή mirror"
