@@ -44,7 +44,6 @@ makedepends=(
 )
 optdepends=(
   'python-systemd: Adds journald logging'
-  'materia-gtk-theme: theming for GTK-based desktop environments'
 )
 provides=(python-archinstall archinstall)
 conflicts=(python-archinstall archinstall-git)
