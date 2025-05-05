@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CalledProcessError
 
-from archinstall.lib.disk.utils import get_lsblk_info
+from archinstall.lib.disk.utils import get_lsblk_info, umount
 
 from .exceptions import DiskError, SysCallError
 from .general import SysCommand, SysCommandWorker, generate_password, run
@@ -153,8 +153,7 @@ class Luks2:
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
 	def lock(self) -> None:
-		from archinstall.lib.disk.device_handler import device_handler
-		device_handler.umount(self.luks_dev_path)
+		umount(self.luks_dev_path)
 
 		# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 		# For instance: /dev/sda
@@ -165,7 +164,7 @@ class Luks2:
 			# Unmount the child location
 			for mountpoint in child.mountpoints:
 				debug(f'Unmounting {mountpoint}')
-				device_handler.umount(mountpoint, recursive=True)
+				umount(mountpoint, recursive=True)
 
 			# And close it if possible.
 			debug(f"Closing crypt device {child.name}")

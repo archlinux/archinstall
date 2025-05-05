@@ -108,3 +108,21 @@ def disk_layouts() -> str:
 		return ''
 
 	return lsblk_output.model_dump_json(indent=4)
+
+
+def umount(mountpoint: Path, recursive: bool = False) -> None:
+	lsblk_info = get_lsblk_info(mountpoint)
+
+	if not lsblk_info.mountpoints:
+		return
+
+	debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
+
+	cmd = ['umount']
+
+	if recursive:
+		cmd.append('-R')
+
+	for path in lsblk_info.mountpoints:
+		debug(f'Unmounting mountpoint: {path}')
+		SysCommand(cmd + [str(path)])
