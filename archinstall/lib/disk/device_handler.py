@@ -45,6 +45,7 @@ from .utils import (
 	find_lsblk_info,
 	get_all_lsblk_info,
 	get_lsblk_info,
+	umount,
 )
 
 
@@ -257,7 +258,7 @@ class DeviceHandler:
 			subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
 
 		if not lsblk_info.mountpoint:
-			self.umount(dev_path)
+			umount(dev_path)
 
 		return subvol_infos
 
@@ -635,7 +636,7 @@ class DeviceHandler:
 				except SysCallError as err:
 					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
 
-		self.umount(path)
+		umount(path)
 
 	def create_btrfs_volumes(
 		self,
@@ -677,7 +678,7 @@ class DeviceHandler:
 
 			SysCommand(f"btrfs subvolume create -p {subvol_path}")
 
-		self.umount(dev_path)
+		umount(dev_path)
 
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
 			luks_handler.lock()
@@ -710,7 +711,7 @@ class DeviceHandler:
 			if partition.fs_type == FilesystemType.Crypto_luks:
 				Luks2(partition.path).lock()
 			else:
-				self.umount(partition.path, recursive=True)
+				umount(partition.path, recursive=True)
 
 	def partition(
 		self,
@@ -789,23 +790,6 @@ class DeviceHandler:
 			SysCommand(command)
 		except SysCallError as err:
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
-
-	def umount(self, mountpoint: Path, recursive: bool = False) -> None:
-		lsblk_info = get_lsblk_info(mountpoint)
-
-		if not lsblk_info.mountpoints:
-			return
-
-		debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
-
-		cmd = ['umount']
-
-		if recursive:
-			cmd.append('-R')
-
-		for path in lsblk_info.mountpoints:
-			debug(f'Unmounting mountpoint: {path}')
-			SysCommand(cmd + [str(path)])
 
 	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> list[DeviceModification]:
 		part_mods: dict[Path, list[PartitionModification]] = {}
