@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] A naplófájl itt jött létre: {} {}"
@@ -1639,49 +1639,38 @@ msgstr "Megjelölés/elvetés mint EFI-rendszerpartíció (ESP)"
 msgid "Package group:"
 msgstr "Csomagcsoport:"
 
-#, fuzzy
 msgid "Exit archinstall"
-msgstr "Archinstall súgó"
+msgstr "Kilépés az Archinstallból"
 
-#, fuzzy
 msgid "Reboot system"
-msgstr "Fájlrendszer"
+msgstr "Rendszer újraindítása"
 
-#, fuzzy
 msgid "chroot into installation for post-installation configurations"
-msgstr "Szeretne chroot-olni az újonnan létrehozott telepítésbe, és elvégezni a telepítés utáni konfigurációt?"
+msgstr "Belépés a telepített rendszer gyökerébe (chroot) a telepítés utáni konfigurációk elvégzéséhez"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "A telepítés sikeresen befejeződött"
 
-#, fuzzy
 msgid "What would you like to do next?"
-msgstr "Szeretné folytatni?"
+msgstr "Mit szeretne tenni?"
 
-#, fuzzy
 msgid "Select which mode to configure for \"{}\""
-msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) „{}” számára, vagy hagyja ki ezt a lépést az alapértelmezett „{}” mód használatához"
+msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) „{}” számára"
 
-#, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr "Lemeztitkosítási jelszó"
+msgstr "Helytelen a hitelesítőadat-fájl visszafejtési jelszava"
 
-#, fuzzy
 msgid "Incorrect password"
-msgstr "Root-jelszó"
+msgstr "Helytelen jelszó"
 
-#, fuzzy
 msgid "Credentials file decryption password"
-msgstr "Lemeztitkosítási jelszó"
+msgstr "A hitelesítőadat-fájl visszafejtési jelszava"
 
-#, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Szeretné elmenteni a konfigurációs fájlt a következő helyre?:{}"
+msgstr "Szeretné titkosítani a user_credentials.json fájlt?"
 
-#, fuzzy
 msgid "Credentials file encryption password"
-msgstr "Lemeztitkosítási jelszó"
+msgstr "A hitelesítőadat-fájl titkosítási jelszava"
 
-#, fuzzy
 msgid "Repositories: {}"
-msgstr "Tároló neve"
+msgstr "Tárolók: {}"
