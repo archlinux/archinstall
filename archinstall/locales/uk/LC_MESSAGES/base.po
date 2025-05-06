@@ -97,10 +97,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Введіть бажаний тип файлової системи для розділу"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "Введіть початкове місце (в одиницях parted: s, GB, %, тощо; за замовчуванням: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "Введіть кінцеве місце (в одиницях parted: s, GB, %, тощо; наприклад: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} містить розділи в черзі, це видалить їх, ви впевнені?"
@@ -811,9 +811,9 @@ msgstr " - Мінімальне значення   : 1 ( дозволяє 1 па
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Вимкнути/Типово : 0 ( Вимикає паралельне завантаження, дозволяє лише 1 завантаження за раз )"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Некоректне введення! Повторіть спробу з валідним введенням [від 1 до {} або 0 для вимкнення]"
+msgstr "Некоректне введення! Повторіть спробу з правильним введенням [від 1 до {max_downloads}, або 0 для вимкнення]"
 
 msgid "Parallel Downloads"
 msgstr "Паралельні Завантаження"
@@ -837,120 +837,103 @@ msgid "The font should be stored as {}"
 msgstr "Шрифт слід зберігати як {}"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall потребує привілегії суперкористувача (Root). Скористайтеся --help для отримання додаткової інформації."
 
 msgid "Select an execution mode"
 msgstr "Виберіть режим виконання"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "Не вдалося отримати профіль з вказаного URL: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "Профілі повинні мати унікальні назви, але виявлено дублікати назв профілів: {}"
 
-#, fuzzy
 msgid "Select one or more devices to use and configure"
 msgstr "Оберіть один або кілька жорстких дисків для використання та налаштування"
 
-#, fuzzy
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
 msgstr "Якщо ви скинете вибір жорсткого диска, це також скине поточну схему розмітки диска. Ви впевнені?"
 
 msgid "Existing Partitions"
 msgstr "Існуючі розділи"
 
-#, fuzzy
 msgid "Select a partitioning option"
-msgstr "Оберіть параметр шифрування диска"
+msgstr "Оберіть існуючу опцію"
 
-#, fuzzy
 msgid "Enter the root directory of the mounted devices: "
-msgstr "Введіть каталог для конфігурацій, які потрібно зберегти: "
+msgstr "Введіть кореневий каталог змонтованих пристроїв: "
 
-#, fuzzy
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Мінімальна ємність для розділу /home: {} Гб\n"
 
-#, fuzzy
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Мінімальна ємність для розділу Arch Linux: {} Гб"
 
-#, fuzzy
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
 msgstr "Це список попередньо запрограмованих профілів, вони можуть спростити встановлення таких речей, як середовища робочого столу"
 
-#, fuzzy
 msgid "Current profile selection"
-msgstr "Поточна схема розмітки розділу"
+msgstr "Поточний вибір профілів"
 
-#, fuzzy
 msgid "Remove all newly added partitions"
-msgstr "Створіть новий розділ"
+msgstr "Прибрати всі новостворені розділи"
 
-#, fuzzy
 msgid "Assign mountpoint"
 msgstr "Призначити точку монтування для розділу"
 
-#, fuzzy
 msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Позначити/зняти позначку з розділу для форматування (видалить дані)"
 
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "Позначити/Зняти позначку завантажувального розділу"
 
 msgid "Change filesystem"
-msgstr ""
+msgstr "Змінити файлову систему"
 
-#, fuzzy
 msgid "Mark/Unmark as compressed"
 msgstr "Позначити/зняти позначку розділу як стисненого (лише btrfs)"
 
-#, fuzzy
 msgid "Set subvolumes"
-msgstr "Видалити підтом"
+msgstr "Налаштувати підтоми"
 
-#, fuzzy
 msgid "Delete partition"
 msgstr "Видалити розділ"
 
-#, fuzzy
 msgid "Partition"
-msgstr "Розділи"
+msgstr "Розділ"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "Цей розділ наразі зашифрований. Щоб його відформатувати, потрібно вказати файлову систему"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " Точки монтування розділів відносяться до внутрішньої інсталяції, наприклад, завантажувач буде знаходитись в /boot."
+msgstr "Точки монтування розділів відносяться до внутрішньої інсталяції, наприклад, завантажувач буде знаходитись в /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "Якщо вказано точку монтування /boot, цей розділ також буде позначено як завантажувальний."
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "Точка монтування: "
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "Вільні сектора на {}:"
 
 msgid "Total sectors: {}"
 msgstr "Сектори: {}"
 
-#, fuzzy
 msgid "Enter the start sector (default: {}): "
 msgstr "Введіть початковий сектор (відсоток або номер блоку, за замовчуванням: {}): "
 
-#, fuzzy
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
 msgstr "Введіть кінцевий сектор розділу (відсоток або номер блоку, наприклад: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "Це видалить усі щойно додані розділи, продовжити?"
 
 msgid "Partition management: {}"
-msgstr ""
+msgstr "Управління розділами: {}"
 
 msgid "Total length: {}"
-msgstr ""
+msgstr "Загальна довжина: {}"
 
 msgid "Encryption type"
 msgstr "Тип шифрування"
@@ -970,37 +953,32 @@ msgstr "Оберіть параметр шифрування диска"
 msgid "Select a FIDO2 device to use for HSM"
 msgstr "Оберіть пристрій FIDO2 для використання для HSM"
 
-#, fuzzy
 msgid "Use a best-effort default partition layout"
-msgstr "Стерти усі вибрані диски та використовувати отпимальну схему розмітки розділів за замовчуванням"
+msgstr "Використовувати отпимальну схему розмітки розділів за замовчуванням"
 
-#, fuzzy
 msgid "Manual Partitioning"
-msgstr "Розділи"
+msgstr "Ручна розмітка розділів"
 
-#, fuzzy
 msgid "Pre-mounted configuration"
-msgstr "Конфігурація відсутня"
+msgstr "Попередньо змонтована конфігурація"
 
 msgid "Unknown"
-msgstr ""
+msgstr "Невідомо"
 
 msgid "Partition encryption"
 msgstr "Шифрування розділу"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! Форматування {} в "
 
-#, fuzzy
 msgid "← Back"
-msgstr "Назад"
+msgstr "← Назад"
 
 msgid "Disk encryption"
-msgstr "Disk encryption"
+msgstr "Шифрування диску"
 
-#, fuzzy
 msgid "Configuration"
-msgstr "Конфігурація відсутня"
+msgstr "Конфігурація"
 
 msgid "Password"
 msgstr "Пароль"
@@ -1012,24 +990,22 @@ msgid "Back"
 msgstr "Назад"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "Будь ласка, виберіть, який вітальник встановити для обраних профілів: {}"
 
 msgid "Environment type: {}"
-msgstr ""
+msgstr "Тип середовища: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "Пропрієтарні драйвера Nvidia не підтримуються Sway. Існує ймовірність виникнення проблем. Продовжити попри це?"
 
-#, fuzzy
 msgid "Installed packages"
-msgstr "Додаткові пакунки"
+msgstr "Встановленні пакуни"
 
 msgid "Add profile"
 msgstr "Додайте профіль"
 
-#, fuzzy
 msgid "Edit profile"
-msgstr "Профіль"
+msgstr "Налаштувати профіль"
 
 msgid "Delete profile"
 msgstr "Видалити профіль"
@@ -1038,7 +1014,7 @@ msgid "Profile name: "
 msgstr "Назва профілю: "
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr "Введене вами ім'я користувача вже використовується. Спробуйте знов."
+msgstr "Введене вами ім'я користувача вже використовується. Спробуйте знов"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
 msgstr "Напишіть додаткові пакети для інсталяції (розділені пробілами, залиште порожнім, щоб пропустити): "
@@ -1047,10 +1023,10 @@ msgid "Services to be enabled with this profile (space separated, leave blank to
 msgstr "Напишіть сервіси що увімкнути з цим профілем (розділені пробілами, залиште порожнім, щоб пропустити): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "Чи повинен цей профіль бути увімкненим для встановлення?"
 
 msgid "Create your own"
-msgstr ""
+msgstr "Створіть свій власний"
 
 msgid ""
 "\n"
@@ -1150,9 +1126,8 @@ msgstr "Дзеркала"
 msgid "Mirror regions"
 msgstr "Регіони дзеркал"
 
-#, fuzzy
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Максимальне значення   : {} ( Дозволяє {} паралельних завантажень, дозволяє {} завантажень за раз )"
+msgstr " - Максимальне значення   : {} ( Дозволяє {} паралельних завантажень, дозволяє {max_downloads+1} завантажень за раз )"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Некоректне введення! Повторіть спробу з валідним введенням [від 1 до {} або 0 для вимкнення]"
@@ -1179,7 +1154,7 @@ msgid "Enter end (default: {}): "
 msgstr "Введіть початковий сектор (відсоток або номер блоку, за замовчуванням: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "Неможливо визначити пристрої fido2. Чи встановлено libfido2?"
 
 msgid "Path"
 msgstr "Шлях"
@@ -1195,7 +1170,7 @@ msgid "Invalid configuration: {error}"
 msgstr "Неправильна конфігурація: {error}"
 
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
 msgstr "Цей параметр вмикає кількість паралельних завантажень, які можуть відбуватися під час встановлення"
@@ -1231,31 +1206,31 @@ msgstr ""
 "Надайте Hyprland доступ до вашого обладнання"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Усі введені значення повинні мати суфікс з виміром: %, B, KB, KiB, MB, MiB..."
 
 msgid "Would you like to use unified kernel images?"
 msgstr "Ви бажаєте використовувати об'єднані (уніфіковані) образи ядра?"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "Об'єднані (уніфіковані) образи ядра"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "Очікування на синхронізацію часу (timedatactl show) для продовження."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Синхронізація часу не закінчується, поки ви чекаєте - перевірте документацію для можливих рішень: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "Пропуск очікування автоматичної синхронізації часу (це може спричинити проблеми, якщо час буде невірно синхронізований під час встановлення)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "Очікування на синхронізацію ключів Arch Linux (archlinux-keyring-wkd-sync)."
 
 msgid "Selected profiles: "
-msgstr "Вибрані профілі:"
+msgstr "Вибрані профілі: "
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Синхронізація часу не закінчується, поки ви чекаєте - перевірте документацію для можливих рішень: https://archinstall.readthedocs.io/"
 
 msgid "Mark/Unmark as nodatacow"
 msgstr "Позначити/зняти позначку nodatacow"
@@ -1264,10 +1239,10 @@ msgid "Would you like to use compression or disable CoW?"
 msgstr "Бажаєте ввімкнути стиснення або вимкнути CoW?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Використовувати стиснення"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Вимкнути Copy-on-Write"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Надає вибір середовищ робочого столу та тайлінгових диспетчерів вікон, наприклад GNOME, KDE Plasma, Sway"
@@ -1279,7 +1254,7 @@ msgid "LVM configuration type"
 msgstr "Тип конфігурації LVM"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "Шифрування диска за допомогою LVM з більше ніж двома розділами наразі не підтримується"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
 msgstr "Використовувати NetworkManager (необхідний для графічного налаштування Інтернету в GNOME та KDE Plasma)"
@@ -1291,13 +1266,13 @@ msgid "Partitioning"
 msgstr "Розподіл"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Logical Volume Management (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "Фізичні томи"
 
 msgid "Volumes"
-msgstr ""
+msgstr "Томи"
 
 msgid "LVM volumes"
 msgstr "LVM розділи"
@@ -1315,13 +1290,13 @@ msgid "No Encryption"
 msgstr "Без шифрування"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM на LUKS"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS на LVM"
 
 msgid "Yes"
 msgstr "Так"
@@ -1336,19 +1311,19 @@ msgid " (default)"
 msgstr " (типово)"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "Натисніть Ctrl+h для допомоги"
 
 msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
+msgstr "Оберіть опцію для надання Sway доступ до вашого обладнання"
 
 msgid "Seat access"
-msgstr ""
+msgstr "Доступ до місця"
 
 msgid "Mountpoint"
 msgstr "Точка монтування"
 
 msgid "HSM"
-msgstr ""
+msgstr "HSM"
 
 msgid "Enter disk encryption password (leave blank for no encryption)"
 msgstr "Введіть пароль шифрування диска (залиште порожнім, щоб шифрування не було):"
@@ -1387,13 +1362,13 @@ msgid "Write additional packages to install (space separated, leave blank to ski
 msgstr "Напишіть додаткові пакети для інсталяції (розділені пробілами, залиште порожнім, щоб пропустити):"
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "Невірна кількість завантажень"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "Кількість завантажень"
 
 msgid "The username you entered is invalid"
-msgstr "Введене вами ім'я користувача недійсне."
+msgstr "Введене вами ім'я користувача недійсне"
 
 msgid "Username"
 msgstr "Ім'я користувача"
@@ -1405,19 +1380,19 @@ msgid "Interfaces"
 msgstr "Інтерфейси"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "Ви повинні ввести правильний IP-адрес в режимі конфігурації IP"
 
 msgid "Modes"
-msgstr ""
+msgstr "Режими"
 
 msgid "IP address"
-msgstr ""
+msgstr "IP-адреса"
 
 msgid "Enter your gateway (router) IP address (leave blank for none)"
 msgstr "Введіть IP-адресу свого шлюзу (маршрутизатора) або залиште поле порожнім, якщо немає:"
 
 msgid "Gateway address"
-msgstr ""
+msgstr "Адреса шлюзу"
 
 msgid "Enter your DNS servers with space separated (leave blank for none)"
 msgstr "Введіть ваші DNS-сервери (розділені пробілами, залиште порожнім якщо їх немає):"
@@ -1432,16 +1407,16 @@ msgid "Kernel"
 msgstr "Ядра"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "UEFI не виявлено, деякі параметри вимкнено"
 
 msgid "Info"
-msgstr ""
+msgstr "Інформація"
 
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr ""
+msgstr "Пропрієтарні драйвера Nvidia не підтримуються Sway."
 
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "Існує ймовірність виникнення проблем. Продовжити попри це?"
 
 msgid "Main profile"
 msgstr "Головний профіль"
@@ -1450,7 +1425,7 @@ msgid "Confirm password"
 msgstr "Підтвердити пароль"
 
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "Паролі не співпадають, спробуйте знову"
 
 msgid "Not a valid directory"
 msgstr "Недійсний каталог"
@@ -1489,10 +1464,10 @@ msgid "Select execution mode"
 msgstr "Оберіть режим роботи"
 
 msgid "Press ? for help"
-msgstr ""
+msgstr "Натисніть ? для допомоги"
 
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
+msgstr "Надайте Hyprland доступ до вашого обладнання"
 
 msgid "Additional repositories"
 msgstr "Додаткові репозиторії"
@@ -1510,10 +1485,10 @@ msgid "Signature check"
 msgstr "Перевірка підпису шифрування"
 
 msgid "Selected free space segment on device {}:"
-msgstr ""
+msgstr "Обраний сегмент вільного місця на пристрої {}:"
 
 msgid "Size: {} / {}"
-msgstr ""
+msgstr "Розмір: {} / {}"
 
 msgid "Size (default: {}): "
 msgstr "Розмір (типово: {}): "
@@ -1522,16 +1497,16 @@ msgid "HSM device"
 msgstr "Пристрій HSM"
 
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "Деякі пакети можуть бути не знайдені в репозиторії"
 
 msgid "User"
 msgstr "Ім'я користувача"
 
 msgid "The specified configuration will be applied"
-msgstr ""
+msgstr "Обрана конфігурація буде використана"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Стерти"
 
 msgid "Mark/Unmark as XBOOTLDR"
 msgstr "Позначити / Зняти позначку XBOOTLDR"
@@ -1540,16 +1515,16 @@ msgid "Loading packages..."
 msgstr "Завантажування пакетів..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Виберіть будь-які пакети зі списку, які мають бути встановлені додатково"
 
 msgid "Add a custom repository"
 msgstr "Додати користувацький репозиторій"
 
 msgid "Change custom repository"
-msgstr ""
+msgstr "Змінити користувацький репозиторій"
 
 msgid "Delete custom repository"
-msgstr ""
+msgstr "Видалити користувацький репозиторій"
 
 msgid "Repository name"
 msgstr "Назва репозиторію"
@@ -1594,37 +1569,37 @@ msgid "Only ASCII characters are supported"
 msgstr "Підтримуються лише ASCII символи"
 
 msgid "Show help"
-msgstr ""
+msgstr "Показати допомогу"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Вийти з допомоги"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Прокрутка перегляду догори"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Прокрутка перегляду вниз"
 
 msgid "Move up"
-msgstr ""
+msgstr "Перейти догори"
 
 msgid "Move down"
-msgstr ""
+msgstr "Перейти вниз"
 
 msgid "Move right"
-msgstr ""
+msgstr "Повернути праворуч"
 
 msgid "Move left"
-msgstr ""
+msgstr "Повернути ліворуч"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Перейти до елемента"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Пропустити вибір (якщо можливо)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Скинути вибір (якщо можливо)"
 
 msgid "Select on single select"
 msgstr "Вибір при одиночному виборі"
@@ -1633,43 +1608,43 @@ msgid "Select on multi select"
 msgstr "Вибір при множинному виборі"
 
 msgid "Reset"
-msgstr ""
+msgstr "Скинути"
 
 msgid "Skip selection menu"
 msgstr "Пропустити меню вибору"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Запустити режим пошуку"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Вийти з режиму пошуку"
 
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "labwc потребує доступ до вашого місця (набору апаратних пристроїв, таких як клавіатура, миша тощо)"
 
 msgid "Choose an option to give labwc access to your hardware"
-msgstr ""
+msgstr "Оберіть опцію для надання labwc доступу до вашого обладнання"
 
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "niri потребує доступ до вашого місця (набору апаратних пристроїв, таких як клавіатура, миша тощо)"
 
 msgid "Choose an option to give niri access to your hardware"
-msgstr ""
+msgstr "Оберіть опцію для надання niri доступу до вашого обладнання"
 
 msgid "Mark/Unmark as ESP"
 msgstr "Позначити/зняти позначку ESP розділу"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Група пакетів:"
 
 msgid "Exit archinstall"
 msgstr "Покинути Archinstall"
 
 msgid "Reboot system"
-msgstr ""
+msgstr "Перезавантажити систему"
 
 msgid "chroot into installation for post-installation configurations"
-msgstr "бажаєте підключитися використовуючи chroot до новоствореної інсталяції та виконати додаткову конфігурацію після інсталяції?"
+msgstr "бажаєте підключитися використовуючи chroot до новоствореної інсталяції та виконати додаткову конфігурацію після інсталяції"
 
 msgid "Installation completed"
 msgstr "Встановлення завершено"
@@ -1690,7 +1665,7 @@ msgid "Credentials file decryption password"
 msgstr "Пароль розшифрування файлу облікових даних"
 
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Чи бажаєте зашифрувати user_credintials.json"
+msgstr "Чи бажаєте зашифрувати user_credintials.json?"
 
 msgid "Credentials file encryption password"
 msgstr "Пароль розшифрування файлу облікових даних"
