@@ -108,7 +108,7 @@ def perform_installation(mountpoint: Path) -> None:
 
 		audio_config = config.audio_config
 		if audio_config:
-			audio_config.install_audio_config(installation)
+			installation.install_audio_config(audio_config, users)
 		else:
 			info("No audio server will be installed")
 
