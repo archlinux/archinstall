@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] S'ha creat un fitxer de registre aquí: {} {}"
@@ -1506,205 +1506,169 @@ msgid "The specified configuration will be applied"
 msgstr "S'aplicarà la configuració especificada"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Esborrat complet"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Marcar/Desmarcar com a arranc"
+msgstr "Marcar/Desmarcar com XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "Paquets addicionals"
+msgstr "Carregant paquets..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Seleccioneu qualsevol paquet de la llista de sota a incloure a la instal·lació"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Afegir un mirall personalitzat"
+msgstr "Afegir un repositori personalitzat"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Canviar mirall personalitzat"
+msgstr "Canviar repositori personalitzat"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Eliminar mirall personalitzat"
+msgstr "Eliminar repositori personalitzat"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Nom del mirall"
+msgstr "Nom del repositori"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "Afegir un mirall personalitzat"
+msgstr "Afegir un servidor personalitzat"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "Canviar mirall personalitzat"
+msgstr "Canviar servidor personalitzat"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "Eliminar mirall personalitzat"
+msgstr "Eliminar servidor personalitzat"
 
 msgid "Server url"
-msgstr ""
+msgstr "URL del servidor"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "Seleccioneu la opció de firma"
+msgstr "Seleccioneu regions"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "Afegir un mirall personalitzat"
+msgstr "Afegir servidors personalitzats"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Afegir un mirall personalitzat"
+msgstr "Afegir un repositori personalitzat"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "Regions dels miralls"
+msgstr "Carregant regions dels miralls..."
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Repositoris opcionals"
+msgstr "Miralls i repositoris"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "Regions dels miralls"
+msgstr "Regions de miralls seleccionades"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "Miralls personalitzats"
+msgstr "Servidors personalitzats"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "Repositoris opcionals"
+msgstr "Repositoris personalitzats"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Només es suporten caràcters ASCII"
 
 msgid "Show help"
-msgstr ""
+msgstr "Mostrar l'ajuda"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Sortir de l'ajuda"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Previsualització amunt"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Previsualització avall"
 
 msgid "Move up"
-msgstr ""
+msgstr "Mou amunt"
 
 msgid "Move down"
-msgstr ""
+msgstr "Mou avall"
 
 msgid "Move right"
-msgstr ""
+msgstr "Mou a la dreta"
 
 msgid "Move left"
-msgstr ""
+msgstr "Mou a l'esquerra"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Saltar cap a un registre"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Saltar la selecció (si està disponible)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Reiniciar la selecció (si està disponible)"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "Seleccionar verificació de signatura"
+msgstr "Selecció única"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "Seleccioneu una franja horària"
+msgstr "Selecció múltiple"
 
 msgid "Reset"
-msgstr ""
+msgstr "Reiniciar"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "Seleccionar mode d'execució"
+msgstr "Saltar el menú de selecció"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Iniciar el mode de cerca"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Sortir del mode de cerca"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway necessita accés als vostres dispositius de hardware (teclat, ratolí, etc)"
+msgstr "labwc necessita accés al vostre seient (gestor de dispositius de maquinari, com ara teclat, ratolí, etc)"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Escolliu una opció per permetre que Sway accedeixi al vostre hardware"
+msgstr "Escolliu una opció per permetre que labwc accedeixi al vostre hardware"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway necessita accés als vostres dispositius de hardware (teclat, ratolí, etc)"
+msgstr "niri necessita accés al vostre seient (gestor de dispositius de maquinari, com ara teclat, ratolí, etc)"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Escolliu una opció per permetre que Sway accedeixi al vostre hardware"
+msgstr "Escolliu una opció per permetre que niri accedeixi al vostre hardware"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "Marcar/Desmarcar com a arranc"
+msgstr "Marcar/Desmarcar com a ESP"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Group de paquets:"
 
-#, fuzzy
 msgid "Exit archinstall"
-msgstr "Ajuda d'Archinstall"
+msgstr "Sortir d'Archinstall"
 
-#, fuzzy
 msgid "Reboot system"
-msgstr "Sistema de fitxers"
+msgstr "Reiniciar el sistema"
 
-#, fuzzy
 msgid "chroot into installation for post-installation configurations"
-msgstr "Us agradaria accedir a la instal·lació acabada de crear i realitzar la configuració posterior a la instal·lació?"
+msgstr "feu chroot a la instal·lació per a configuracions posteriors"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Instal·lació completa"
 
-#, fuzzy
 msgid "What would you like to do next?"
-msgstr "Voleu continuar?"
+msgstr "Què voleu fer a continuació?"
 
-#, fuzzy
 msgid "Select which mode to configure for \"{}\""
-msgstr "Seleccioneu quin mode configurar per a \"{}\" o ometeu per a usar el mode predeterminat \"{}\""
+msgstr "Seleccioneu quin mode cal configurar per a \"{}\""
 
-#, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr "Contrasenya del xifrat del disc"
+msgstr "Contrasenya de desencriptació incorrecta pel fitxer de credencials"
 
-#, fuzzy
 msgid "Incorrect password"
-msgstr "Contrasenya de root"
+msgstr "Contrasenya incorrecta"
 
-#, fuzzy
 msgid "Credentials file decryption password"
-msgstr "Contrasenya del xifrat del disc"
+msgstr "Contrasenya de desencriptació del fitxer de credencials"
 
-#, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Voleu guardar el(s) fitxer(s) de configuració a {}?"
+msgstr "Voleu encriptar el fitxer user_credentials.json?"
 
-#, fuzzy
 msgid "Credentials file encryption password"
-msgstr "Contrasenya del xifrat del disc"
+msgstr "Contrasenya d'encriptació del fitxer de credencials"
 
-#, fuzzy
 msgid "Repositories: {}"
-msgstr "Nom del mirall"
+msgstr "Repositoris: {}"
