@@ -88,7 +88,7 @@ class FilesystemHandler:
 				)
 
 				for part_mod in mod.partitions:
-					if part_mod.fs_type == FilesystemType.Btrfs:
+					if part_mod.fs_type == FilesystemType.Btrfs and part_mod.is_create_or_modify():
 						device_handler.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
 
 	def _format_partitions(
