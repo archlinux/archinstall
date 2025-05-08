@@ -24,7 +24,7 @@ msgid "And one more time for verification: "
 msgstr "І ще раз для перевірки: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "Ви бажаєте використовувати підкачку на zram?"
+msgstr "Бажаєте використовувати підкачку на zram?"
 
 msgid "Desired hostname for the installation: "
 msgstr "Бажане ім'я хоста для встановлення: "
@@ -951,7 +951,7 @@ msgid "Select disk encryption option"
 msgstr "Оберіть параметр шифрування диска"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr "Оберіть пристрій FIDO2 для використання для HSM"
+msgstr "Оберіть пристрій FIDO2 для використання HSM"
 
 msgid "Use a best-effort default partition layout"
 msgstr "Використовувати отпимальну схему розмітки розділів за замовчуванням"
@@ -1275,13 +1275,13 @@ msgid "Volumes"
 msgstr "Томи"
 
 msgid "LVM volumes"
-msgstr "LVM розділи"
+msgstr "Томи LVM"
 
 msgid "LVM volumes to be encrypted"
-msgstr "LVM розділи, які потрібно зашифрувати"
+msgstr "Томи LVM, які потрібно зашифрувати"
 
 msgid "Select which LVM volumes to encrypt"
-msgstr "Виберіть розділи LVM для шифрування"
+msgstr "Виберіть томи LVM для шифрування"
 
 msgid "Default layout"
 msgstr "Типова структура"
