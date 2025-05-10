@@ -37,6 +37,7 @@ from .general import SysCommand, run
 from .hardware import SysInfo
 from .locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
+from .models.audio_configuration import Audio, AudioConfiguration
 from .models.bootloader import Bootloader
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
@@ -1723,6 +1724,51 @@ class Installer:
 			f'systemctl show --no-pager -p SubState --value {service_name}',
 			environment_vars={'SYSTEMD_COLORS': '0'}
 		).decode()
+
+	def _enable_pipewire_for_all(self, users: list[User]) -> None:
+		for user in users:
+			# Create the full path for enabling the pipewire systemd items
+			service_dir = self.target / "home" / user.username / ".config" / "systemd" / "user" / "default.target.wants"
+			service_dir.mkdir(parents=True, exist_ok=True)
+
+			# Set ownership of the entire user catalogue
+			self.arch_chroot(f'chown -R {user.username}:{user.username} /home/{user.username}')
+
+			# symlink in the correct pipewire systemd items
+			self.arch_chroot(
+				f'ln -sf /usr/lib/systemd/user/pipewire-pulse.service /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.service',
+				run_as=user.username
+			)
+			self.arch_chroot(
+				f'ln -sf /usr/lib/systemd/user/pipewire-pulse.socket /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.socket',
+				run_as=user.username
+			)
+
+	def install_audio_config(self, audio_config: AudioConfiguration, users: list[User] | None) -> None:
+		info(f'Installing audio server: {audio_config.audio.name}')
+
+		match audio_config.audio:
+			case Audio.PIPEWIRE:
+				self.add_additional_packages([
+					'pipewire',
+					'pipewire-alsa',
+					'pipewire-jack',
+					'pipewire-pulse',
+					'gst-plugin-pipewire',
+					'libpulse',
+					'wireplumber',
+				])
+				if users is not None:
+					self._enable_pipewire_for_all(users)
+			case Audio.PULSEAUDIO:
+				self.add_additional_packages("pulseaudio")
+
+		if audio_config.audio != Audio.NO_AUDIO:
+			if SysInfo.requires_sof_fw():
+				self.add_additional_packages('sof-firmware')
+
+			if SysInfo.requires_alsa_fw():
+				self.add_additional_packages('alsa-firmware')
 
 
 def accessibility_tools_in_use() -> bool:

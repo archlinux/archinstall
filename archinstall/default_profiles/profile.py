@@ -28,7 +28,6 @@ class ProfileType(Enum):
 	CustomType = 'CustomType'
 	# special things
 	Tailored = 'Tailored'
-	Application = 'Application'
 
 
 class GreeterType(Enum):
