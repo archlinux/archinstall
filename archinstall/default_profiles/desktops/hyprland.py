@@ -29,6 +29,7 @@ class HyprlandProfile(XorgProfile):
 			"hyprland",
 			"dunst",
 			"kitty",
+			"uwsm",
 			"dolphin",
 			"wofi",
 			"xdg-desktop-portal-hyprland",
