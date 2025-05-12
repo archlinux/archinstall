@@ -470,7 +470,7 @@ class ArchConfigHandler:
 			try:
 				req = Request(url, headers={'User-Agent': 'ArchInstall'})
 				with urlopen(req) as resp:
-					return resp.read()
+					return resp.read().decode('utf-8')
 			except urllib.error.HTTPError as err:
 				error(f"Could not fetch JSON from {url}: {err}")
 		else:
