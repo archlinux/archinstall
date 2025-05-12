@@ -3,13 +3,13 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: walken <walken@centrum.cz>\n"
+"Last-Translator: Martin Kozák <martin.kozak@outlook.cz>\n"
 "Language-Team: \n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Soubor protokolu byl vytvořen zde: {} {}"
@@ -1498,205 +1498,169 @@ msgid "The specified configuration will be applied"
 msgstr "Bude použita zvolená konfigurace"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Vymazat"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Označit/Odznačit jako zaváděcí"
+msgstr "Označit/Odznačit jako XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "Dodatečné balíčky"
+msgstr "Načítání balíčků..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Vyberte balíčky z níže uvedeného seznamu, které by měly být dodatečně nainstalovány"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Přidat vlastní zrcadlo"
+msgstr "Přidat vlastní repozitář"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Změnit vlastní zrcadla"
+msgstr "Změnit vlastní repozitář"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Smazat vlastní zrcadla"
+msgstr "Smazat vlastní repozitář"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Jméno zrcadla"
+msgstr "Jméno repozitáře"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "Přidat vlastní zrcadlo"
+msgstr "Přidat vlastní server"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "Změnit vlastní zrcadla"
+msgstr "Změnit vlastní server"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "Smazat vlastní zrcadla"
+msgstr "Smazat vlastní server"
 
 msgid "Server url"
-msgstr ""
+msgstr "URL serveru"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "Zvolit možnost podpisu"
+msgstr "Vyberte regiony"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "Přidat vlastní zrcadlo"
+msgstr "Přidat vlastní servery"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Přidat vlastní zrcadlo"
+msgstr "Přidat vlastní repozitář"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "Oblasti zrcadel"
+msgstr "Načítání oblastí zrcadel..."
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Volitelné repozitáře"
+msgstr "Zrcadla a repozitáře"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "Oblasti zrcadel"
+msgstr "Vybrané oblasti zrcadel"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "Vlastní zrcadla"
+msgstr "Vlastní servery"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "Volitelné repozitáře"
+msgstr "Vlastní repozitáře"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Jsou podporovány pouze ASCII znaky"
 
 msgid "Show help"
-msgstr ""
+msgstr "Zobrazit nápovědu"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Opustit nápovědu"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Posunout náhled dolů"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Posunout náhled dolů"
 
 msgid "Move up"
-msgstr ""
+msgstr "Posunout nahoru"
 
 msgid "Move down"
-msgstr ""
+msgstr "Posunout dolů"
 
 msgid "Move right"
-msgstr ""
+msgstr "Posunout doprava"
 
 msgid "Move left"
-msgstr ""
+msgstr "Posunout doleva"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Přejít na položku"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Přeskočit výběr (je-li dostupné)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Zrušit výběr (je-li dostupné)"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "Zvolit kontrolu podpisu"
+msgstr "Výběr jedné možnosti"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "Zvolte časovou zónu"
+msgstr "Výběr více možností"
 
 msgid "Reset"
-msgstr ""
+msgstr "Zrušit"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "Zvolte způsob provedení"
+msgstr "Přeskočit výběr"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Spustit režim vyhledávání"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Opustit režim vyhledávání"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway vyžaduje přístup k vašemu sezení (soubor zařízení jako např. klávesnice, myš, atd.)"
+msgstr "labwc vyžaduje přístup k vašemu sezení (soubor zařízení jako např. klávesnice, myš, atd.)"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Vyberte možnost jak zpřístupnit pro Sway váš hardware"
+msgstr "Vyberte možnost jak zpřístupnit pro labwc váš hardware"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway vyžaduje přístup k vašemu sezení (soubor zařízení jako např. klávesnice, myš, atd.)"
+msgstr "niri vyžaduje přístup k vašemu sezení (soubor zařízení jako např. klávesnice, myš, atd.)"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Vyberte možnost jak zpřístupnit pro Sway váš hardware"
+msgstr "Vyberte možnost jak zpřístupnit pro niri váš hardware"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "Označit/Odznačit jako zaváděcí"
+msgstr "Označit/Odznačit jako ESP"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Skupina balíčků:"
 
-#, fuzzy
 msgid "Exit archinstall"
-msgstr "Nápověda pro Archinstall"
+msgstr "Ukončit archinstall"
 
-#, fuzzy
 msgid "Reboot system"
-msgstr "Souborový systém"
+msgstr "Restartovat systém"
 
-#, fuzzy
 msgid "chroot into installation for post-installation configurations"
-msgstr "Přejete si vstoupit skrze chroot do své nově vytvořené instalace a provést závěrečnou konfiguraci?"
+msgstr "Vstoupit skrze chroot do své nově vytvořené instalace a provést závěrečnou konfiguraci"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Instalace dokončena"
 
-#, fuzzy
 msgid "What would you like to do next?"
-msgstr "Přejete si pokračovat?"
+msgstr "Co si přejete udělat dál?"
 
-#, fuzzy
 msgid "Select which mode to configure for \"{}\""
-msgstr "Zvolte který režim má být nastaven pro \"{}\" nebo přeskočte pro použití výchozího režimu \"{}\""
+msgstr "Zvolte který režim má být nastaven pro \"{}\""
 
-#, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr "Heslo pro šifrování disku"
+msgstr "Neplatné heslo pro dešifrování souboru s přihlašovacími údaji"
 
-#, fuzzy
 msgid "Incorrect password"
-msgstr "Heslo správce (root)"
+msgstr "Neplatné heslo"
 
-#, fuzzy
 msgid "Credentials file decryption password"
-msgstr "Heslo pro šifrování disku"
+msgstr "Heslo pro dešifrování souboru s přihlašovacími údaji"
 
-#, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Chcete uložit konfigurační soubor(y) do {}?"
+msgstr "Chcete zašifrovat soubor user_credentials.json?"
 
-#, fuzzy
 msgid "Credentials file encryption password"
-msgstr "Heslo pro šifrování disku"
+msgstr "Heslo pro zašifrování souboru s přihlašovacími údaji"
 
-#, fuzzy
 msgid "Repositories: {}"
-msgstr "Jméno zrcadla"
+msgstr "Repozitáře: {}"
