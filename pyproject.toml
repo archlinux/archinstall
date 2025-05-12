@@ -179,6 +179,9 @@ target-version = "py312"
 builtins = ["_"]
 line-length = 160
 
+[tool.ruff.format]
+indent-style = "tab"
+
 [tool.ruff.lint]
 select = [
     "ASYNC",  # flake8-async
