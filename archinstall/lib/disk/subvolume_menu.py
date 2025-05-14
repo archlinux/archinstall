@@ -1,27 +1,42 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, assert_never, override
 
-from .device_model import SubvolumeModification
-from ..menu import ListManager
+from archinstall.lib.models.device_model import SubvolumeModification
+from archinstall.tui.curses_menu import EditMenu
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment
+
+from ..menu.list_manager import ListManager
 from ..utils.util import prompt_dir
 
-from archinstall.tui import (
-	Alignment, EditMenu, ResultType
-)
-
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
-class SubvolumeMenu(ListManager):
-	def __init__(self, prompt: str, btrfs_subvols: list[SubvolumeModification]):
+class SubvolumeMenu(ListManager[SubvolumeModification]):
+	def __init__(
+		self,
+		btrfs_subvols: list[SubvolumeModification],
+		prompt: str | None = None
+	):
 		self._actions = [
 			str(_('Add subvolume')),
 			str(_('Edit subvolume')),
 			str(_('Delete subvolume'))
 		]
-		super().__init__(prompt, btrfs_subvols, [self._actions[0]], self._actions[1:])
 
+		super().__init__(
+			btrfs_subvols,
+			[self._actions[0]],
+			self._actions[1:],
+			prompt
+		)
+
+	@override
 	def selected_action_display(self, selection: SubvolumeModification) -> str:
 		return str(selection.name)
 
@@ -40,13 +55,16 @@ class SubvolumeMenu(ListManager):
 				name = result.text()
 			case ResultType.Reset:
 				raise ValueError('Unhandled result type')
+			case _:
+				assert_never(result.type_)
 
-		header = f"{str(_('Subvolume name'))}: {name}\n"
+		header = f"{_('Subvolume name')}: {name}\n"
 
 		path = prompt_dir(
 			str(_("Subvolume mountpoint")),
 			header=header,
-			allow_skip=True
+			allow_skip=True,
+			validate=False
 		)
 
 		if not path:
@@ -54,6 +72,7 @@ class SubvolumeMenu(ListManager):
 
 		return SubvolumeModification(Path(name), path)
 
+	@override
 	def handle_action(
 		self,
 		action: str,

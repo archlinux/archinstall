@@ -1509,3 +1509,266 @@ msgstr "செயல்படுத்தும் பயன்முறைய�
 #, fuzzy
 msgid "Press ? for help"
 msgstr "உதவிக்கு Ctrl+h ஐ அழுத்தவும்"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"உங்கள் வன்பொருளுக்கு Hypland அணுகலை வழங்குவதற்கான விருப்பத்தைத் தேர்வு செய்யவும்"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "விருப்ப களஞ்சியங்கள்"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "கையொப்ப சரிபார்ப்பு விருப்பத்தைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "{} சாதனத்தில் தற்போதைய இலவசப் பிரிவுகள்:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "மொத்தம்: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "முடிவை உள்ளிடவும் (இயல்பு: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "சாதனம்"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "பயனர் பெயர்: "
+
+msgid "The specified configuration will be applied"
+msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "துவக்கக்கூடியதாகக் குறி/குறிநீக்கு"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "கூடுதல் தொகுப்புகள்"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "தனிப்பயன் கண்ணாடியைச் சேர்க்கவும்"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "தனிப்பயன் கண்ணாடியை மாற்றவும்"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "தனிப்பயன் கண்ணாடியை நீக்கு"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "மிரர் பிராந்தியம்"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "தனிப்பயன் கண்ணாடியைச் சேர்க்கவும்"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "தனிப்பயன் கண்ணாடியை மாற்றவும்"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "தனிப்பயன் கண்ணாடியை நீக்கு"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "கையெழுத்து விருப்பத்தைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "தனிப்பயன் கண்ணாடியைச் சேர்க்கவும்"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "தனிப்பயன் கண்ணாடியைச் சேர்க்கவும்"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "கண்ணாடிப் பகுதிகள்"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "விருப்ப களஞ்சியங்கள்"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "கண்ணாடிப் பகுதிகள்"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "தனிப்பயன் கண்ணாடிகள்"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "விருப்ப களஞ்சியங்கள்"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "கையொப்ப சரிபார்ப்பு விருப்பத்தைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "நேர மண்டலத்தைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "செயல்படுத்தும் பயன்முறையைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "ஸ்வேக்கு உங்கள் இருக்கைக்கான அணுகல் தேவை (வன்பொருள் சாதனங்களின் சேகரிப்பு அதாவது விசைப்பலகை, சுட்டி போன்றவை)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"உங்கள் வன்பொருளுக்கான அணுகலை வழங்குவதற்கான விருப்பத்தைத் தேர்வுசெய்யவும்"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "ஸ்வேக்கு உங்கள் இருக்கைக்கான அணுகல் தேவை (வன்பொருள் சாதனங்களின் சேகரிப்பு அதாவது விசைப்பலகை, சுட்டி போன்றவை)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"உங்கள் வன்பொருளுக்கான அணுகலை வழங்குவதற்கான விருப்பத்தைத் தேர்வுசெய்யவும்"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "துவக்கக்கூடியதாகக் குறி/குறிநீக்கு"
+
+msgid "Package group:"
+msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall உதவி"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "கோப்பு முறைமையை மாற்றவும்"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "புதிதாக உருவாக்கப்பட்ட நிறுவலில் chroot செய்து, நிறுவலுக்குப் பிந்தைய உள்ளமைவைச் செய்ய விரும்புகிறீர்களா?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "BTRFS சுருக்கத்தைப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "எந்த பயன்முறையை \"{}\" உள்ளமைக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும் அல்லது இயல்புநிலை பயன்முறை \"{}\" ஐப் பயன்படுத்த தவிர்க்கவும்"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "குறியாக்கம் கடவுச்சொல்"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "ரூட் கடவுச்சொல்"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "குறியாக்கம் கடவுச்சொல்"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"பின்வரும் இடத்தில் {} உள்ளமைவுக் கோப்பை(களை) சேமிக்க விரும்புகிறீர்களா?\n"
+"\n"
+"{}"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "குறியாக்கம் கடவுச்சொல்"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "மிரர் பிராந்தியம்"

@@ -1,4 +1,4 @@
-default_stages: ['commit']
+default_stages: ['pre-commit']
 repos:
   - repo: https://github.com/pycqa/autoflake
     rev: v2.3.1
@@ -29,25 +29,30 @@ repos:
     - id: check-ast  # Simply check whether files parse as valid python
     - id: check-docstring-first  # Checks for a common error of placing code before the docstring
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
+    rev: 7.2.0
     hooks:
     - id: flake8
       args: [--config=.flake8]
       fail_fast: true
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.15.0
     hooks:
     - id: mypy
       args: [
+        '--show-traceback',
         '--config-file=pyproject.toml'
       ]
       fail_fast: true
       additional_dependencies:
         - pydantic
-        - pydantic-settings
+        - pytest
+        - cryptography
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.4
+    rev: v0.11.9
     hooks:
+      - id: ruff
+        args: ["check", "--select", "I", "--fix"]
+        fail_fast: true
       - id: ruff
   - repo: local
     hooks:

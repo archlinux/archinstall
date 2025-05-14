@@ -1507,3 +1507,266 @@ msgstr "აირჩიეთ შესრულების რეჟიმი"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Hyperland-ს თქვენს აპარატურასთან წვდომა მისცეთ"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "არასავალდებულო რეპოზიტორიები"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "აირჩიეთ ხელმოწერის შემოწმების პარამეტრი"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "ამჟამად თავისუფალი სექტორები მოწყობილობაზე {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "სულ: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "შეიყვანეთ ბოლო სექტორი (ნაგულისხმევი: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "მოწყობილობა"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "მომხმარებლის სახელი : "
+
+msgid "The specified configuration will be applied"
+msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "ჩატვირთვადი ალმის დაყენება/მოხსნა"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "დამატებითი პაკეტები"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "მორგებული სარკის დამატება"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "მორგებული სარკის შეცვლა"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "მორგებული სარკის წაშლა"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "სარკის რეგიონი"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "მორგებული სარკის დამატება"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "მორგებული სარკის შეცვლა"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "მორგებული სარკის წაშლა"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "აირჩიეთ ხელმოწერის პარამეტრი"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "მორგებული სარკის დამატება"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "მორგებული სარკის დამატება"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "სარკის რეგიონები"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "არასავალდებულო რეპოზიტორიები"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "სარკის რეგიონები"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "მორგებული სარკეები"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "არასავალდებულო რეპოზიტორიები"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "აირჩიეთ ხელმოწერის შემოწმების პარამეტრი"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "აირჩიეთ დროის სარტყელი"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "აირჩიეთ შესრულების რეჟიმი"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway-ს თქვენს სამუშაო ადგილთან (აპარატურასთან, როგორიცაა კლავიატურა, თაგუნა და ა.შ>) წვდომა სჭირდება"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Sway-ს თქვენს აპარატურასთან წვდომა მისცეთ"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway-ს თქვენს სამუშაო ადგილთან (აპარატურასთან, როგორიცაა კლავიატურა, თაგუნა და ა.შ>) წვდომა სჭირდება"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ ეს პარამეტრი, რომ Sway-ს თქვენს აპარატურასთან წვდომა მისცეთ"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "ჩატვირთვადი ალმის დაყენება/მოხსნა"
+
+msgid "Package group:"
+msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall-ის დახმარება"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "ფაილური სისტემის შეცვლა"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "გნებავთ chroot ახალ დაყენებულ სისტემაში და დაყენების შემდეგი კონფიგურაციის გაშვება?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "გნებავთ BTRFS-ის შეკუმშვის გამოყენება?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "აირჩიეთ მოსარგები რეჟიმი \"{}\"-სთვის ან გამოტოვეთ ნაგულისხმევი რეჟიმის \"{}\" გამოსაყენებლად"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "დაშიფვრის პაროლი"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root-ის პაროლი"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "დაშიფვრის პაროლი"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"გნებავთ, შეინახოთ {} კონფიგურაციის ფაილები შემდეგ მისამართზე?\n"
+"\n"
+"{}"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "დაშიფვრის პაროლი"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "სარკის რეგიონი"

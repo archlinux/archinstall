@@ -1,22 +1,19 @@
-from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, override
 
-from archinstall.default_profiles.profile import ProfileType, GreeterType, SelectResult
+from archinstall.default_profiles.desktops import SeatAccess
+from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType
-)
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties
 
 if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
-	_: Any
+	from collections.abc import Callable
 
+	from archinstall.lib.translationhandler import DeferredTranslation
 
-class SeatAccess(Enum):
-	seatd = 'seatd'
-	polkit = 'polkit'
+	_: Callable[[str], DeferredTranslation]
 
 
 class SwayProfile(XorgProfile):
@@ -24,12 +21,12 @@ class SwayProfile(XorgProfile):
 		super().__init__(
 			'Sway',
 			ProfileType.WindowMgr,
-			description=''
 		)
 
 		self.custom_settings = {'seat_access': None}
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		additional = []
 		if seat := self.custom_settings.get('seat_access', None):
@@ -41,7 +38,7 @@ class SwayProfile(XorgProfile):
 			"swaylock",
 			"swayidle",
 			"waybar",
-			"dmenu",
+			"wmenu",
 			"brightnessctl",
 			"grim",
 			"slurp",
@@ -51,10 +48,12 @@ class SwayProfile(XorgProfile):
 		] + additional
 
 	@property
-	def default_greeter_type(self) -> GreeterType | None:
+	@override
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Lightdm
 
 	@property
+	@override
 	def services(self) -> list[str]:
 		if pref := self.custom_settings.get('seat_access', None):
 			return [pref]
@@ -71,7 +70,7 @@ class SwayProfile(XorgProfile):
 		default = self.custom_settings.get('seat_access', None)
 		group.set_default_by_value(default)
 
-		result = SelectMenu(
+		result = SelectMenu[SeatAccess](
 			group,
 			header=header,
 			allow_skip=False,
@@ -81,11 +80,9 @@ class SwayProfile(XorgProfile):
 
 		if result.type_ == ResultType.Selection:
 			if result.item() is not None:
-				self.custom_settings['seat_access'] = result.get_value()
+				self.custom_settings['seat_access'] = result.get_value().value
 
-	def do_on_select(self) -> SelectResult | None:
+	@override
+	def do_on_select(self) -> None:
 		self._ask_seat_access()
 		return None
-
-	def install(self, install_session: 'Installer') -> None:
-		super().install(install_session)

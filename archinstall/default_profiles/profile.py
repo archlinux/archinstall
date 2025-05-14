@@ -2,13 +2,16 @@ from __future__ import annotations
 
 import sys
 from enum import Enum, auto
-from typing import Any, TYPE_CHECKING
-
-from ..lib.storage import storage
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
 	from ..lib.installer import Installer
-	_: Any
+
+	_: Callable[[str], DeferredTranslation]
 
 
 class ProfileType(Enum):
@@ -51,7 +54,6 @@ class Profile:
 		self,
 		name: str,
 		profile_type: ProfileType,
-		description: str = '',
 		current_selection: list[Profile] = [],
 		packages: list[str] = [],
 		services: list[str] = [],
@@ -60,9 +62,8 @@ class Profile:
 		advanced: bool = False
 	) -> None:
 		self.name = name
-		self.description = description
 		self.profile_type = profile_type
-		self.custom_settings: dict[str, Any] = {}
+		self.custom_settings: dict[str, str | None] = {}
 		self.advanced = advanced
 
 		self._support_gfx_driver = support_gfx_driver
@@ -105,7 +106,8 @@ class Profile:
 		Used to control if the Profile() should be visible or not in different contexts.
 		Returns True if --advanced is given on a Profile(advanced=True) instance.
 		"""
-		return self.advanced is False or storage['arguments'].get('advanced', False) is True
+		from archinstall.lib.args import arch_config_handler
+		return self.advanced is False or arch_config_handler.args.advanced is True
 
 	def install(self, install_session: 'Installer') -> None:
 		"""
@@ -119,7 +121,7 @@ class Profile:
 		are needed
 		"""
 
-	def json(self) -> dict[str, Any]:
+	def json(self) -> dict[str, str]:
 		"""
 		Returns a json representation of the profile
 		"""
@@ -131,7 +133,7 @@ class Profile:
 		"""
 		return SelectResult.NewSelection
 
-	def set_custom_settings(self, settings: dict[str, Any]) -> None:
+	def set_custom_settings(self, settings: dict[str, str | None]) -> None:
 		"""
 		Set the custom settings for the profile.
 		This is also called when the settings are parsed from the config
@@ -180,7 +182,7 @@ class Profile:
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
-	def preview_text(self) -> str | None:
+	def preview_text(self) -> str:
 		"""
 		Override this method to provide a preview text for the profile
 		"""

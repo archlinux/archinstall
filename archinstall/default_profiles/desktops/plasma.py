@@ -1,28 +1,26 @@
-from typing import Any, TYPE_CHECKING
+from typing import override
 
-from archinstall.default_profiles.profile import ProfileType, GreeterType
+from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
-
-if TYPE_CHECKING:
-	_: Any
 
 
 class PlasmaProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('KDE Plasma', ProfileType.DesktopEnv, description='')
+		super().__init__('KDE Plasma', ProfileType.DesktopEnv)
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return [
 			"plasma-meta",
 			"konsole",
-			"kwrite",
+			"kate",
 			"dolphin",
 			"ark",
-			"plasma-workspace",
-			"egl-wayland"
+			"plasma-workspace"
 		]
 
 	@property
-	def default_greeter_type(self) -> GreeterType | None:
+	@override
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Sddm

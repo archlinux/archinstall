@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Se ha creado un archivo de registro aquí: {} {}"
@@ -1345,7 +1345,7 @@ msgid "Start (default: sector {}): "
 msgstr "Inicio (predeterminado: sector {}): "
 
 msgid "End (default: {}): "
-msgstr "Fin (predeterminado: {}):"
+msgstr "Fin (predeterminado: {}): "
 
 msgid "Subvolume name"
 msgstr "Nombre del subvolumen"
@@ -1466,6 +1466,219 @@ msgstr "Seleccionar modo de ejecución"
 
 msgid "Press ? for help"
 msgstr "Presione ? para obtener ayuda"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Elija una opción para darle a Hyprland acceso a su hardware"
+
+msgid "Additional repositories"
+msgstr "Repositorios adicionales"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Intercambio en zram"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Signature check"
+msgstr "Comprobación de firma"
+
+msgid "Selected free space segment on device {}:"
+msgstr "Segmento de espacio libre seleccionado en el dispositivo {}:"
+
+msgid "Size: {} / {}"
+msgstr "Tamaño: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "Tamaño (predeterminado: {}): "
+
+msgid "HSM device"
+msgstr "Dispositivo HSM"
+
+msgid "Some packages could not be found in the repository"
+msgstr "No se pudieron encontrar algunos paquetes en el repositorio"
+
+msgid "User"
+msgstr "Usuario"
+
+msgid "The specified configuration will be applied"
+msgstr "Se aplicará la configuración especificada"
+
+msgid "Wipe"
+msgstr "Borrar"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marcar/Desmarcar como XBOOTLDR"
+
+msgid "Loading packages..."
+msgstr "Cargando paquetes..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Seleccione cualquier paquete de la lista a continuación que deba instalarse adicionalmente"
+
+msgid "Add a custom repository"
+msgstr "Agregar un repositorio personalizado"
+
+msgid "Change custom repository"
+msgstr "Cambiar el repositorio personalizado"
+
+msgid "Delete custom repository"
+msgstr "Eliminar repositorio personalizado"
+
+msgid "Repository name"
+msgstr "Nombre del repositorio"
+
+msgid "Add a custom server"
+msgstr "Agregar un servidor personalizado"
+
+msgid "Change custom server"
+msgstr "Cambiar servidor personalizado"
+
+msgid "Delete custom server"
+msgstr "Eliminar servidor personalizado"
+
+msgid "Server url"
+msgstr "URL del servidor"
+
+msgid "Select regions"
+msgstr "Seleccione regiones"
+
+msgid "Add custom servers"
+msgstr "Agregar servidores personalizados"
+
+msgid "Add custom repository"
+msgstr "Agregar repositorio personalizado"
+
+msgid "Loading mirror regions..."
+msgstr "Cargando regiones espejo..."
+
+msgid "Mirrors and repositories"
+msgstr "Espejos y repositorios"
+
+msgid "Selected mirror regions"
+msgstr "Regiones de espejo seleccionadas"
+
+msgid "Custom servers"
+msgstr "Servidores personalizados"
+
+msgid "Custom repositories"
+msgstr "Repositorios personalizados"
+
+msgid "Only ASCII characters are supported"
+msgstr "Sólo se admiten caracteres ASCII"
+
+msgid "Show help"
+msgstr "Mostrar ayuda"
+
+msgid "Exit help"
+msgstr "Ayuda para salir"
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr "Subir"
+
+msgid "Move down"
+msgstr "Bajar"
+
+msgid "Move right"
+msgstr "Mover a la derecha"
+
+msgid "Move left"
+msgstr "Mover a la izquierda"
+
+msgid "Jump to entry"
+msgstr "Saltar a la entrada"
+
+msgid "Skip selection (if available)"
+msgstr "Saltar selección (si está disponible)"
+
+msgid "Reset selection (if available)"
+msgstr "Restablecer selección (si está disponible)"
+
+msgid "Select on single select"
+msgstr "Seleccionar en selección única"
+
+msgid "Select on multi select"
+msgstr "Seleccionar en selección múltiple"
+
+msgid "Reset"
+msgstr "Restablecer"
+
+msgid "Skip selection menu"
+msgstr "Saltar el menú de selección"
+
+msgid "Start search mode"
+msgstr "Iniciar modo de búsqueda"
+
+msgid "Exit search mode"
+msgstr "Salir del modo de búsqueda"
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "labwc necesita acceso a su asiento (colección de dispositivos de hardware, es decir, teclado, ratón, etc.)"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Elija una opción para darle a labwc acceso a su hardware"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "niri necesita acceso a su asiento (colección de dispositivos de hardware, es decir, teclado, ratón, etc.)"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Elija una opción para darle a niri acceso a su hardware"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Marcar/Desmarcar como ESP"
+
+msgid "Package group:"
+msgstr "Grupo de paquetes:"
+
+msgid "Exit archinstall"
+msgstr "Salir de archinstall"
+
+msgid "Reboot system"
+msgstr "Reiniciar el sistema"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "chroot en la instalación para configuraciones posteriores a la instalación"
+
+msgid "Installation completed"
+msgstr "Instalación completada"
+
+msgid "What would you like to do next?"
+msgstr "¿Qué le gustaría hacer a continuación?"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr "Seleccione qué modo configurar para \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Contraseña de cifrado de disco"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Contraseña de root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Contraseña de cifrado de disco"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "¿Desea guardar los archivos de configuración en {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Contraseña de cifrado de disco"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Nombre del repositorio"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"

@@ -1,13 +1,10 @@
-from typing import Any, TYPE_CHECKING
-
-import archinstall
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType
-from archinstall.lib.models import User
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
-	_: Any
+	from archinstall.lib.models.users import User
 
 
 class PipewireProfile(Profile):
@@ -15,6 +12,7 @@ class PipewireProfile(Profile):
 		super().__init__('Pipewire', ProfileType.Application)
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return [
 			'pipewire',
@@ -27,13 +25,11 @@ class PipewireProfile(Profile):
 		]
 
 	def _enable_pipewire_for_all(self, install_session: 'Installer') -> None:
-		users: User | list[User] | None = archinstall.arguments.get('!users', None)
+		from archinstall.lib.args import arch_config_handler
+		users: list[User] | None = arch_config_handler.config.users
 
 		if users is None:
 			return
-
-		if not isinstance(users, list):
-			users = [users]
 
 		for user in users:
 			# Create the full path for enabling the pipewire systemd items
@@ -44,9 +40,16 @@ class PipewireProfile(Profile):
 			install_session.arch_chroot(f'chown -R {user.username}:{user.username} /home/{user.username}')
 
 			# symlink in the correct pipewire systemd items
-			install_session.arch_chroot(f'ln -s /usr/lib/systemd/user/pipewire-pulse.service /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.service', run_as=user.username)
-			install_session.arch_chroot(f'ln -s /usr/lib/systemd/user/pipewire-pulse.socket /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.socket', run_as=user.username)
+			install_session.arch_chroot(
+				f'ln -sf /usr/lib/systemd/user/pipewire-pulse.service /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.service',
+				run_as=user.username
+			)
+			install_session.arch_chroot(
+				f'ln -sf /usr/lib/systemd/user/pipewire-pulse.socket /home/{user.username}/.config/systemd/user/default.target.wants/pipewire-pulse.socket',
+				run_as=user.username
+			)
 
+	@override
 	def install(self, install_session: 'Installer') -> None:
 		super().install(install_session)
 		install_session.add_additional_packages(self.packages)

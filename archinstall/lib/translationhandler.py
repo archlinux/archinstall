@@ -1,14 +1,12 @@
 from __future__ import annotations
 
+import builtins
+import gettext
 import json
 import os
-import gettext
 from dataclasses import dataclass
-
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
-
-from .output import error, debug
+from typing import TYPE_CHECKING, Any, override
 
 if TYPE_CHECKING:
 	_: Any
@@ -60,7 +58,7 @@ class TranslationHandler:
 		languages = []
 
 		for short_form in defined_languages:
-			mapping_entry: dict[str, Any] = next(filter(lambda x: x['abbr'] == short_form, mappings))
+			mapping_entry: dict[str, str] = next(filter(lambda x: x['abbr'] == short_form, mappings))
 			abbr = mapping_entry['abbr']
 			lang = mapping_entry['lang']
 			translated_lang = mapping_entry.get('translated_lang', None)
@@ -85,18 +83,7 @@ class TranslationHandler:
 
 		return languages
 
-	def _set_font(self, font: str) -> None:
-		"""
-		Set the provided font as the new terminal font
-		"""
-		from .general import SysCommand
-		try:
-			debug(f'Setting font: {font}')
-			SysCommand(f'setfont {font}')
-		except Exception:
-			error(f'Unable to set font {font}')
-
-	def _load_language_mappings(self) -> list[dict[str, Any]]:
+	def _load_language_mappings(self) -> list[dict[str, str]]:
 		"""
 		Load the mapping table of all known languages
 		"""
@@ -112,7 +99,7 @@ class TranslationHandler:
 		"""
 		# this is a very naughty way of retrieving the data but
 		# there's no alternative method exposed unfortunately
-		catalog = translation._catalog  # type: ignore
+		catalog = translation._catalog  # type: ignore[attr-defined]
 		messages = {k: v for k, v in catalog.items() if k and v}
 		return len(messages)
 
@@ -181,6 +168,7 @@ class DeferredTranslation:
 	def __len__(self) -> int:
 		return len(self.message)
 
+	@override
 	def __str__(self) -> str:
 		translate = _
 		if translate is DeferredTranslation:
@@ -203,7 +191,7 @@ class DeferredTranslation:
 	def format(self, *args) -> str:
 		return self.message.format(*args)
 
-	@classmethod
-	def install(cls) -> None:
-		import builtins
-		builtins._ = cls  # type: ignore
+
+builtins._ = DeferredTranslation  # type: ignore[attr-defined]
+
+translation_handler = TranslationHandler()

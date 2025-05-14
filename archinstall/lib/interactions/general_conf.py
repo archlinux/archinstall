@@ -1,33 +1,48 @@
 from __future__ import annotations
 
-import pathlib
-from typing import Any, TYPE_CHECKING
+from enum import Enum
+from pathlib import Path
+from typing import TYPE_CHECKING, assert_never
 
-from ..locale import list_timezones
+from archinstall.lib.models.packages import Repository
+from archinstall.lib.packages.packages import list_available_packages
+from archinstall.tui.curses_menu import EditMenu, SelectMenu, Tui
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle
+
+from ..locale.utils import list_timezones
 from ..models.audio_configuration import Audio, AudioConfiguration
+from ..models.packages import AvailablePackage, PackageGroup
 from ..output import warn
-from ..packages.packages import validate_package_list
-from ..storage import storage
 from ..translationhandler import Language
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	EditMenu, Orientation, Tui
-)
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
+
+
+class PostInstallationAction(Enum):
+	EXIT = str(_('Exit archinstall'))
+	REBOOT = str(_('Reboot system'))
+	CHROOT = str(_('chroot into installation for post-installation configurations'))
 
 
 def ask_ntp(preset: bool = True) -> bool:
 	header = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n')) + '\n'
-	header += str(_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki')) + '\n'
+	header += str(_(
+		'Hardware time and other post-configuration steps might be required in order for NTP to work.\n'
+		'For more information, please check the Arch wiki'
+	)) + '\n'
 
 	preset_val = MenuItem.yes() if preset else MenuItem.no()
 	group = MenuItemGroup.yes_no()
 	group.focus_item = preset_val
 
-	result = SelectMenu(
+	result = SelectMenu[bool](
 		group,
 		header=header,
 		allow_skip=True,
@@ -74,7 +89,7 @@ def ask_for_a_timezone(preset: str | None = None) -> str | None:
 	group.set_selected_by_value(preset)
 	group.set_default_by_value(default)
 
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		allow_reset=True,
 		allow_skip=True,
@@ -98,7 +113,7 @@ def ask_for_audio_selection(preset: AudioConfiguration | None = None) -> AudioCo
 	if preset:
 		group.set_focus_by_value(preset.audio)
 
-	result = SelectMenu(
+	result = SelectMenu[Audio](
 		group,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
@@ -141,7 +156,7 @@ def select_archinstall_language(languages: list[Language], preset: Language) -> 
 	title += 'All available fonts can be found in "/usr/share/kbd/consolefonts"\n'
 	title += 'e.g. setfont LatGrkCyr-8x16 (to display latin/greek/cyrillic characters)\n'
 
-	result = SelectMenu(
+	result = SelectMenu[Language](
 		group,
 		header=title,
 		allow_skip=True,
@@ -159,40 +174,63 @@ def select_archinstall_language(languages: list[Language], preset: Language) -> 
 			raise ValueError('Language selection not handled')
 
 
-def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
+def ask_additional_packages_to_install(
+	preset: list[str] = [],
+	repositories: set[Repository] = set()
+) -> list[str]:
+	repositories |= {Repository.Core, Repository.Extra}
+
+	respos_text = ', '.join([r.value for r in repositories])
+	output = str(_('Repositories: {}')).format(respos_text) + '\n'
+
+	output += str(_('Loading packages...'))
+	Tui.print(output, clear_screen=True)
+
+	packages = list_available_packages(tuple(repositories))
+	package_groups = PackageGroup.from_available_packages(packages)
+
 	# Additional packages (with some light weight error handling for invalid package names)
 	header = str(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.')) + '\n'
-	header += str(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.')) + '\n'
-	header += str(_('Write additional packages to install (space separated, leave blank to skip)'))
+	header += str(_('Select any packages from the below list that should be installed additionally')) + '\n'
 
-	def validator(value: str) -> str | None:
-		packages = value.split() if value else []
+	# there are over 15k packages so this needs to be quick
+	preset_packages: list[AvailablePackage | PackageGroup] = []
+	for p in preset:
+		if p in packages:
+			preset_packages.append(packages[p])
+		elif p in package_groups:
+			preset_packages.append(package_groups[p])
 
-		if len(packages) == 0:
-			return None
+	items = [
+		MenuItem(
+			name,
+			value=pkg,
+			preview_action=lambda x: x.value.info()
+		) for name, pkg in packages.items()
+	]
 
-		if storage['arguments']['offline'] or storage['arguments']['no_pkg_lookups']:
-			return None
+	items += [
+		MenuItem(
+			name,
+			value=group,
+			preview_action=lambda x: x.value.info()
+		) for name, group in package_groups.items()
+	]
 
-		# Verify packages that were given
-		out = str(_("Verifying that additional packages exist (this might take a few seconds)"))
-		Tui.print(out, 0)
-		valid, invalid = validate_package_list(packages)
+	menu_group = MenuItemGroup(items, sort_items=True)
+	menu_group.set_selected_by_value(preset_packages)
 
-		if invalid:
-			return f'{_("Some packages could not be found in the repository")}: {invalid}'
-
-		return None
-
-	result = EditMenu(
-		str(_('Additional packages')),
-		alignment=Alignment.CENTER,
-		allow_skip=True,
+	result = SelectMenu[AvailablePackage | PackageGroup](
+		menu_group,
+		header=header,
+		alignment=Alignment.LEFT,
 		allow_reset=True,
-		edit_width=100,
-		validator=validator,
-		default_text=' '.join(preset)
-	).input()
+		allow_skip=True,
+		multi=True,
+		preview_frame=FrameProperties.max('Package info'),
+		preview_style=PreviewStyle.RIGHT,
+		preview_size='auto'
+	).run()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -200,8 +238,8 @@ def ask_additional_packages_to_install(preset: list[str] = []) -> list[str]:
 		case ResultType.Reset:
 			return []
 		case ResultType.Selection:
-			packages = result.text()
-			return packages.split(' ')
+			selected_pacakges = result.get_values()
+			return [pkg.name for pkg in selected_pacakges]
 
 
 def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
@@ -238,8 +276,10 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 			return 0
 		case ResultType.Selection:
 			downloads: int = int(result.text())
+		case _:
+			assert_never(result.type_)
 
-	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
+	pacman_conf_path = Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
 		pacman_conf = f.read().split("\n")
 
@@ -253,57 +293,32 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 	return downloads
 
 
-def select_additional_repositories(preset: list[str]) -> list[str]:
-	"""
-	Allows the user to select additional repositories (multilib, and testing) if desired.
+def ask_post_installation() -> PostInstallationAction:
+	header = str(_('Installation completed')) + '\n\n'
+	header += str(_('What would you like to do next?')) + '\n'
 
-	:return: The string as a selected repository
-	:rtype: string
-	"""
+	items = [MenuItem(action.value, value=action) for action in PostInstallationAction]
+	group = MenuItemGroup(items)
 
-	repositories = ["multilib", "testing"]
-	items = [MenuItem(r, value=r) for r in repositories]
-	group = MenuItemGroup(items, sort_items=True)
-	group.set_selected_by_value(preset)
-
-	result = SelectMenu(
+	result = SelectMenu[PostInstallationAction](
 		group,
+		header=header,
+		allow_skip=False,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min('Additional repositories'),
-		allow_reset=True,
-		allow_skip=True,
-		multi=True
 	).run()
 
 	match result.type_:
-		case ResultType.Skip:
-			return preset
-		case ResultType.Reset:
-			return []
 		case ResultType.Selection:
-			return result.get_values()
-
-
-def ask_chroot() -> bool:
-	prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?')) + '\n'
-	group = MenuItemGroup.yes_no()
-
-	result = SelectMenu(
-		group,
-		header=prompt,
-		alignment=Alignment.CENTER,
-		columns=2,
-		orientation=Orientation.HORIZONTAL,
-	).run()
-
-	return result.item() == MenuItem.yes()
+			return result.get_value()
+		case _:
+			raise ValueError('Post installation action not handled')
 
 
 def ask_abort() -> None:
 	prompt = str(_('Do you really want to abort?')) + '\n'
 	group = MenuItemGroup.yes_no()
 
-	result = SelectMenu(
+	result = SelectMenu[bool](
 		group,
 		header=prompt,
 		allow_skip=False,

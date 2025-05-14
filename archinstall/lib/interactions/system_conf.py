@@ -1,18 +1,21 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from ..hardware import SysInfo, GfxDriver
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties, FrameStyle, Orientation, PreviewStyle
+
+from ..hardware import GfxDriver, SysInfo
 from ..models.bootloader import Bootloader
 
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, FrameStyle, Alignment,
-	ResultType, Orientation, PreviewStyle
-)
-
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
 def select_kernel(preset: list[str] = []) -> list[str]:
@@ -32,7 +35,7 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 	group.set_focus_by_value(default_kernel)
 	group.set_selected_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		allow_skip=True,
 		allow_reset=True,
@@ -66,7 +69,7 @@ def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
 	group.set_default_by_value(default)
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[Bootloader](
 		group,
 		header=header,
 		alignment=Alignment.CENTER,
@@ -89,7 +92,7 @@ def ask_for_uki(preset: bool = True) -> bool:
 	group = MenuItemGroup.yes_no()
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[bool](
 		group,
 		header=prompt,
 		columns=2,
@@ -133,7 +136,7 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 	if SysInfo.has_nvidia_graphics():
 		header += str(_('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'))
 
-	result = SelectMenu(
+	result = SelectMenu[GfxDriver](
 		group,
 		header=header,
 		allow_skip=True,
@@ -163,7 +166,7 @@ def ask_for_swap(preset: bool = True) -> bool:
 	group = MenuItemGroup.yes_no()
 	group.set_focus_by_value(default_item)
 
-	result = SelectMenu(
+	result = SelectMenu[bool](
 		group,
 		header=prompt,
 		columns=2,

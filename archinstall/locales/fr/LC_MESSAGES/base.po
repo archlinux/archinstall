@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-09-02 20:50+0200\n"
+"PO-Revision-Date: 2025-04-11 23:02+0200\n"
 "Last-Translator: Roxfr <roxfr@outlook.fr>\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Un fichier journal a été créé ici : {} {}"
@@ -1308,205 +1308,381 @@ msgid "Archinstall help"
 msgstr "Aide pour Archinstall"
 
 msgid " (default)"
-msgstr " (défaut)"
+msgstr " (par défaut)"
 
 msgid "Press Ctrl+h for help"
 msgstr "Appuyer sur Ctrl+h pour obtenir de l'aide"
 
-#, fuzzy
 msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Choisir une option pour permettre à Sway d'accéder à votre matériel"
+msgstr "Choisir une option pour permettre à Sway d'accéder à votre matériel"
 
 msgid "Seat access"
-msgstr ""
+msgstr "Accès au siège"
 
-#, fuzzy
 msgid "Mountpoint"
-msgstr "Point de montage : "
+msgstr "Point de montage"
 
 msgid "HSM"
-msgstr ""
+msgstr "Gestion hiérarchique du stockage (HSM)"
 
-#, fuzzy
 msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr "Entrer le mot de passe de chiffrement du disque (laisser vide pour aucun chiffrement) : "
+msgstr "Entrer le mot de passe de chiffrement du disque (laisser vide pour aucun chiffrement)"
 
-#, fuzzy
 msgid "Disk encryption password"
-msgstr "Mot de passe de chiffrement"
+msgstr "Mot de passe de chiffrement du disque"
 
-#, fuzzy
 msgid "Partition - New"
-msgstr "Partition"
+msgstr "Partition - Nouvelle"
 
-#, fuzzy
 msgid "Filesystem"
-msgstr "Changer le système de fichiers"
+msgstr "Système de fichiers"
 
 msgid "Invalid size"
-msgstr ""
+msgstr "Taille invalide"
 
-#, fuzzy
 msgid "Start (default: sector {}): "
-msgstr "Saisir le secteur de début (par défaut : secteur {}) : "
+msgstr "Démarrer (par défaut : secteur {}): "
 
-#, fuzzy
 msgid "End (default: {}): "
-msgstr "Saisir le secteur de fin (par défaut : secteur {}) : "
+msgstr "Fin (par défaut : {}): "
 
-#, fuzzy
 msgid "Subvolume name"
-msgstr "Nom du sous-volume "
+msgstr "Nom du sous-volume"
 
-#, fuzzy
 msgid "Disk configuration type"
-msgstr "Configuration du disque"
+msgstr "Type de configuration du disque"
 
 msgid "Root mount directory"
-msgstr ""
+msgstr "Répertoire de montage racine"
 
-#, fuzzy
 msgid "Select language"
-msgstr "Langue locale"
+msgstr "Sélectionner la langue"
 
-#, fuzzy
 msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "Saisir les paquets supplémentaires à installer (séparés par des espaces, vide pour ignorer) : "
+msgstr "Écrire les paquets supplémentaires à installer (séparés par des espaces, laisser vide pour ignorer)"
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "Numéro de téléchargement invalide"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "Nombre de téléchargements"
 
-#, fuzzy
 msgid "The username you entered is invalid"
-msgstr "Le nom d'utilisateur que vous avez saisi n'est pas valide. Réessayer"
+msgstr "Le nom d'utilisateur que vous avez saisi est invalide"
 
-#, fuzzy
 msgid "Username"
-msgstr "Nom d'utilisateur : "
+msgstr "Nom d'utilisateur"
 
-#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "\"{}\" devrait-il être un superutilisateur (sudo) ?"
+msgstr "Le \"{}\" doit-il être un superutilisateur (sudo) ?\n"
 
-#, fuzzy
 msgid "Interfaces"
-msgstr "Ajouter une interface"
+msgstr "Interfaces"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "Vous devez entrer une adresse IP valide en mode IP-config"
 
 msgid "Modes"
-msgstr ""
+msgstr "Modes"
 
 msgid "IP address"
-msgstr ""
+msgstr "Adresse IP"
 
-#, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
-msgstr "Entrer l'adresse IP de votre passerelle (routeur) ou laisser vide pour aucune : "
+msgstr "Entrer l'adresse IP de votre passerelle (routeur) (laisser vide pour aucun)"
 
 msgid "Gateway address"
-msgstr ""
+msgstr "Adresse de passerelle"
 
-#, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr "Entrer vos serveurs DNS (séparés par des espaces, vide pour aucun) : "
+msgstr "Entrer vos serveurs DNS séparés par des espaces (laisser vide pour aucun)"
 
-#, fuzzy
 msgid "DNS servers"
-msgstr "Pas de serveur audio"
+msgstr "Serveurs DNS"
 
-#, fuzzy
 msgid "Configure interfaces"
-msgstr "Interfaces {} configurées"
+msgstr "Configurer les interfaces"
 
-#, fuzzy
 msgid "Kernel"
-msgstr "Noyaux"
+msgstr "Noyau"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "L'UEFI n'est pas détecté et certaines options sont désactivées"
 
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
-#, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "Le pilote Nvidia propriétaire n'est pas pris en charge par Sway. Il est probable que vous rencontriez des problèmes, êtes-vous d'accord avec cela ?"
+msgstr "Le pilote propriétaire Nvidia n'est pas supporté par Sway."
 
-#, fuzzy
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "Le pilote Nvidia propriétaire n'est pas pris en charge par Sway. Il est probable que vous rencontriez des problèmes, êtes-vous d'accord avec cela ?"
+msgstr "Il est probable que vous rencontriez des problèmes, êtes-vous d'accord avec cela ?"
 
-#, fuzzy
 msgid "Main profile"
-msgstr "Editer le profil"
+msgstr "Profil principal"
 
-#, fuzzy
 msgid "Confirm password"
-msgstr "Changer le mot de passe"
+msgstr "Confirmer le mot de passe"
 
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "Le mot de passe de confirmation ne correspond pas, veuillez réessayer"
 
-#, fuzzy
 msgid "Not a valid directory"
-msgstr "Répertoire non valide : {}"
+msgstr "Ce n'est pas un répertoire valide"
 
-#, fuzzy
 msgid "Would you like to continue?"
-msgstr "Souhaitez-vous utiliser la compression BTRFS ?"
+msgstr "Voulez-vous continuer ?"
 
 msgid "Directory"
-msgstr ""
+msgstr "Répertoire"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr ""
-"Saisir un répertoire pour la/les configuration(s) à enregistrer (complétion par tabulation activée)\n"
-"Entrer le nom du répertoire de sauvegarde : "
+msgstr "Entrer un répertoire pour que la(les) configuration(s) soit(ent) enregistrée(s) (complétion par tabulation activée)"
 
-#, fuzzy
 msgid "Do you want to save the configuration file(s) to {}?"
-msgstr ""
-"Voulez-vous enregistrer {} fichier(s) de configuration à l'emplacement suivant ?\n"
-"\n"
-"{}"
+msgstr "Voulez-vous enregistrer le(s) fichier(s) de configuration dans {} ?"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Activé"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Désactivé"
 
-#, fuzzy
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Veuillez soumettre ce problème (et le fichier) à https://github.com/archlinux/archinstall/issues"
+msgstr "Veuillez soumettre ce problème (et ce fichier) à https://github.com/archlinux/archinstall/issues"
 
-#, fuzzy
 msgid "Mirror name"
-msgstr "Région miroir"
+msgstr "Nom du miroir"
 
 msgid "Url"
+msgstr "Url"
+
+msgid "Select signature check"
+msgstr "Sélectionner la vérification de la signature"
+
+msgid "Select execution mode"
+msgstr "Sélectionner le mode d'exécution"
+
+msgid "Press ? for help"
+msgstr "Appuyer sur ? pour l'aide"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Choisir une option pour donner à Hyprland l'accès à votre matériel"
+
+msgid "Additional repositories"
+msgstr "Dépôts supplémentaires"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Swap sur zram"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Signature check"
+msgstr "Vérification de la signature"
+
+msgid "Selected free space segment on device {}:"
+msgstr "Segment d’espace libre sélectionné sur le périphérique {} :"
+
+msgid "Size: {} / {}"
+msgstr "Taille : {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "Taille (par défaut : {}): "
+
+msgid "HSM device"
+msgstr "Périphérique HSM"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Certains paquets sont introuvables dans le dépôt"
+
+msgid "User"
+msgstr "Utilisateur"
+
+msgid "The specified configuration will be applied"
+msgstr "La configuration spécifiée sera appliquée"
+
+msgid "Wipe"
+msgstr "Effacer"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marquer/Démarquer comme XBOOTLDR"
+
+msgid "Loading packages..."
+msgstr "Chargement des paquets..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Sélectionner les paquets à installer en supplément dans la liste ci-dessous"
+
+msgid "Add a custom repository"
+msgstr "Ajouter un dépôt personnalisé"
+
+msgid "Change custom repository"
+msgstr "Modifier le dépôt personnalisé"
+
+msgid "Delete custom repository"
+msgstr "Supprimer le dépôt personnalisé"
+
+msgid "Repository name"
+msgstr "Nom du dépôt"
+
+msgid "Add a custom server"
+msgstr "Ajouter un serveur personnalisé"
+
+msgid "Change custom server"
+msgstr "Modifier le serveur personnalisé"
+
+msgid "Delete custom server"
+msgstr "Supprimer le serveur personnalisé"
+
+msgid "Server url"
+msgstr "URL du serveur"
+
+msgid "Select regions"
+msgstr "Sélectionner des régions"
+
+msgid "Add custom servers"
+msgstr "Ajouter des serveurs personnalisés"
+
+msgid "Add custom repository"
+msgstr "Ajouter un dépôt personnalisé"
+
+msgid "Loading mirror regions..."
+msgstr "Chargement des régions des miroirs..."
+
+msgid "Mirrors and repositories"
+msgstr "Miroirs et dépôts"
+
+msgid "Selected mirror regions"
+msgstr "Régions de miroirs sélectionnées"
+
+msgid "Custom servers"
+msgstr "Serveurs personnalisés"
+
+msgid "Custom repositories"
+msgstr "Dépôts personnalisés"
+
+msgid "Only ASCII characters are supported"
+msgstr "Seuls les caractères ASCII sont pris en charge"
+
+msgid "Show help"
+msgstr "Afficher l'aide"
+
+msgid "Exit help"
+msgstr "Quitter l’aide"
+
+msgid "Preview scroll up"
+msgstr "Faire défiler l’aperçu vers le haut"
+
+msgid "Preview scroll down"
+msgstr "Faire défiler l’aperçu vers le bas"
+
+msgid "Move up"
+msgstr "Déplacer vers le haut"
+
+msgid "Move down"
+msgstr "Déplacer vers le bas"
+
+msgid "Move right"
+msgstr "Déplacer vers la droite"
+
+msgid "Move left"
+msgstr "Déplacer vers la gauche"
+
+msgid "Jump to entry"
+msgstr "Aller à l’entrée"
+
+msgid "Skip selection (if available)"
+msgstr "Passer la sélection (si disponible)"
+
+msgid "Reset selection (if available)"
+msgstr "Réinitialiser la sélection (si disponible)"
+
+msgid "Select on single select"
+msgstr "Sélectionner sur sélection unique"
+
+msgid "Select on multi select"
+msgstr "Sélectionner sur sélection multiple"
+
+msgid "Reset"
+msgstr "Réinitialiser"
+
+msgid "Skip selection menu"
+msgstr "Passer le menu de sélection"
+
+msgid "Start search mode"
+msgstr "Démarrer le mode de recherche"
+
+msgid "Exit search mode"
+msgstr "Quitter le mode de recherche"
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "labwc a besoin d’accéder à votre siège (ensemble d’appareils matériels, c’est-à-dire clavier, souris, etc.)"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Choisir une option pour donner à labwc l’accès à votre matériel"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "niri a besoin d’accéder à vos périphériques (ensemble d’appareils matériels, c’est-à-dire clavier, souris, etc.)"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Choisir une option pour donner à niri l’accès à votre matériel"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Marquer/Démarquer comme ESP"
+
+msgid "Package group:"
+msgstr "Groupe de paquets :"
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Aide pour Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Système de fichiers"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Souhaitez-vous chrooter dans l'installation nouvellement créée et effectuer la configuration post-installation ?"
+
+msgid "Installation completed"
 msgstr ""
 
 #, fuzzy
-msgid "Select signature check"
-msgstr "Sélectionner l'option de vérification de signature"
+msgid "What would you like to do next?"
+msgstr "Voulez-vous continuer ?"
 
 #, fuzzy
-msgid "Select execution mode"
-msgstr "Sélectionner un mode d'exécution"
+msgid "Select which mode to configure for \"{}\""
+msgstr "Sélectionner le mode à configurer pour \"{}\" ou ignorer pour utiliser le mode par défaut \"{}\""
 
 #, fuzzy
-msgid "Press ? for help"
-msgstr "Appuyer sur Ctrl+h pour obtenir de l'aide"
+msgid "Incorrect credentials file decryption password"
+msgstr "Mot de passe de chiffrement du disque"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Mot de passe root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Mot de passe de chiffrement du disque"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Voulez-vous enregistrer le(s) fichier(s) de configuration dans {} ?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Mot de passe de chiffrement du disque"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Nom du dépôt"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

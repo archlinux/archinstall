@@ -1,0 +1,182 @@
+{
+  "archinstall-language": "English",
+  "audio_config": {
+    "audio": "pipewire"
+  },
+  "bootloader": "Systemd-boot",
+  "services": [
+    "service_1",
+    "service_2"
+  ],
+  "disk_config": {
+    "config_type": "default_layout",
+    "device_modifications": [
+      {
+        "device": "/dev/sda",
+        "partitions": [
+          {
+            "btrfs": [],
+            "dev_path": null,
+            "flags": [
+              "boot"
+            ],
+            "fs_type": "fat32",
+            "size": {
+              "sector_size": {
+                "unit": "B",
+                "value": 512
+              },
+              "unit": "MiB",
+              "value": 512
+            },
+            "mount_options": [],
+            "mountpoint": "/boot",
+            "obj_id": "2c3fa2d5-2c79-4fab-86ec-22d0ea1543c0",
+            "start": {
+              "sector_size": {
+                "unit": "B",
+                "value": 512
+              },
+              "unit": "MiB",
+              "value": 1
+            },
+            "status": "create",
+            "type": "primary"
+          },
+          {
+            "btrfs": [],
+            "dev_path": null,
+            "flags": [],
+            "fs_type": "ext4",
+            "size": {
+              "sector_size": {
+                "unit": "B",
+                "value": 512
+              },
+              "unit": "GiB",
+              "value": 32
+            },
+            "mount_options": [],
+            "mountpoint": "/",
+            "obj_id": "3e7018a0-363b-4d05-ab83-8e82d13db208",
+            "start": {
+              "sector_size": {
+                "unit": "B",
+                "value": 512
+              },
+              "unit": "MiB",
+              "value": 513
+            },
+            "status": "create",
+            "type": "primary"
+          },
+          {
+            "btrfs": [],
+            "dev_path": null,
+            "flags": [],
+            "fs_type": "ext4",
+            "size": {
+              "sector_size": {
+                "unit": "B",
+                "value": 512
+              },
+              "unit": "GiB",
+              "value": 32
+            },
+            "mount_options": [],
+            "mountpoint": "/home",
+            "obj_id": "ce58b139-f041-4a06-94da-1f8bad775d3f",
+            "start": {
+              "sector_size": {
+                "unit": "B",
+                "value": 512
+              },
+              "unit": "MiB",
+              "value": 33281
+            },
+            "status": "create",
+            "type": "primary"
+          }
+        ],
+        "wipe": true
+      }
+    ]
+  },
+  "hostname": "archy",
+  "kernels": [
+    "linux-zen"
+  ],
+  "locale_config": {
+    "kb_layout": "us",
+    "sys_enc": "UTF-8",
+    "sys_lang": "en_US"
+  },
+  "mirror_config": {
+    "custom_servers": [
+        {
+          "url": "https://mymirror.com/$repo/os/$arch"
+        }
+    ],
+    "mirror_regions": {
+      "Australia": [
+        "http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch"
+      ]
+    },
+    "optional_repositories": [
+      "testing"
+    ],
+    "custom_repositories": [
+      {
+        "name": "myrepo",
+        "url": "https://myrepo.com/$repo/os/$arch",
+        "sign_check": "Required",
+        "sign_option": "TrustAll"
+      }
+    ]
+  },
+  "network_config": {
+    "type": "manual",
+    "nics": [
+      {
+        "iface": "eno1",
+        "ip": "192.168.1.15/24",
+        "dhcp": true,
+        "gateway": "192.168.1.1",
+        "dns": [
+          "192.168.1.1",
+          "9.9.9.9"
+        ]
+      }
+    ]
+  },
+  "ntp": true,
+  "packages": [
+    "firefox"
+  ],
+  "parallel_downloads": 66,
+  "profile_config": {
+    "gfx_driver": "All open-source",
+    "greeter": "lightdm-gtk-greeter",
+    "profile": {
+      "custom_settings": {
+        "Hyprland": {
+          "seat_access": "polkit"
+        },
+        "Sway": {
+          "seat_access": "seatd"
+        }
+      },
+      "details": [
+        "Sway",
+        "Hyprland"
+      ],
+      "main": "Desktop"
+    }
+  },
+  "custom_commands": [
+    "echo 'Hello, World!'"
+  ],
+  "swap": false,
+  "timezone": "UTC",
+  "version": "3.0.2"
+}

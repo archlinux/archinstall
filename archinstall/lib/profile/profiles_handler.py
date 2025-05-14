@@ -1,43 +1,52 @@
 from __future__ import annotations
 
 import importlib.util
-import sys
 import inspect
+import sys
 from collections import Counter
 from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, NotRequired, TypedDict
 
-from ...default_profiles.profile import Profile, GreeterType
-from .profile_model import ProfileConfiguration
+from ...default_profiles.profile import GreeterType, Profile
 from ..hardware import GfxDriver
-from ..networking import list_interfaces, fetch_data_from_url
-from ..output import error, debug, info
-from ..storage import storage
-
+from ..models.profile_model import ProfileConfiguration
+from ..networking import fetch_data_from_url, list_interfaces
+from ..output import debug, error, info
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
 	from ..installer import Installer
-	_: Any
+
+	_: Callable[[str], DeferredTranslation]
+
+
+class ProfileSerialization(TypedDict):
+	main: NotRequired[str]
+	details: NotRequired[list[str]]
+	custom_settings: NotRequired[dict[str, dict[str, str | None]]]
+	path: NotRequired[str]
 
 
 class ProfileHandler:
 	def __init__(self) -> None:
-		self._profiles_path: Path = storage['PROFILE']
 		self._profiles: list[Profile] | None = None
 
 		# special variable to keep track of a profile url configuration
 		# it is merely used to be able to export the path again when a user
 		# wants to save the configuration
-		self._url_path = None
+		self._url_path: str | None = None
 
-	def to_json(self, profile: Profile | None) -> dict[str, Any]:
+	def to_json(self, profile: Profile | None) -> ProfileSerialization:
 		"""
 		Serialize the selected profile setting to JSON
 		"""
-		data: dict[str, Any] = {}
+		data: ProfileSerialization = {}
 
 		if profile is not None:
 			data = {
@@ -51,7 +60,7 @@ class ProfileHandler:
 
 		return data
 
-	def parse_profile_config(self, profile_config: dict[str, Any]) -> Profile | None:
+	def parse_profile_config(self, profile_config: ProfileSerialization) -> Profile | None:
 		"""
 		Deserialize JSON configuration for profile
 		"""
@@ -121,8 +130,12 @@ class ProfileHandler:
 				info('No profile definition found: {}'.format(', '.join(invalid_sub_profiles)))
 
 		custom_settings = profile_config.get('custom_settings', {})
-		profile.set_custom_settings(custom_settings)
 		profile.current_selection = valid_sub_profiles
+
+		for sub_profile in valid_sub_profiles:
+			sub_profile_settings = custom_settings.get(sub_profile.name, {})
+			if sub_profile_settings:
+				sub_profile.custom_settings = sub_profile_settings
 
 		return profile
 
@@ -155,24 +168,23 @@ class ProfileHandler:
 		self._profiles = [p for p in self.profiles if p.name not in remove_names]
 
 	def get_profile_by_name(self, name: str) -> Profile | None:
-		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore
+		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore[arg-type, union-attr]
 
 	def get_top_level_profiles(self) -> list[Profile]:
-		return list(filter(lambda x: x.is_top_level_profile(), self.profiles))
+		return [p for p in self.profiles if p.is_top_level_profile()]
 
 	def get_server_profiles(self) -> list[Profile]:
-		return list(filter(lambda x: x.is_server_type_profile(), self.profiles))
+		return [p for p in self.profiles if p.is_server_type_profile()]
 
 	def get_desktop_profiles(self) -> list[Profile]:
-		return list(filter(lambda x: x.is_desktop_type_profile(), self.profiles))
+		return [p for p in self.profiles if p.is_desktop_type_profile()]
 
 	def get_custom_profiles(self) -> list[Profile]:
-		return list(filter(lambda x: x.is_custom_type_profile(), self.profiles))
+		return [p for p in self.profiles if p.is_custom_type_profile()]
 
 	def get_mac_addr_profiles(self) -> list[Profile]:
-		tailored = list(filter(lambda x: x.is_tailored(), self.profiles))
-		match_mac_addr_profiles = list(filter(lambda x: x.name in self._local_mac_addresses, tailored))
-		return match_mac_addr_profiles
+		tailored = [p for p in self.profiles if p.is_tailored()]
+		return [t for t in tailored if t.name in self._local_mac_addresses]
 
 	def install_greeter(self, install_session: 'Installer', greeter: GreeterType) -> None:
 		packages = []
@@ -270,7 +282,7 @@ class ProfileHandler:
 		Load all default_profiles defined in a module
 		"""
 		profiles = []
-		for k, v in module.__dict__.items():
+		for v in module.__dict__.values():
 			if isinstance(v, type) and v.__module__ == module.__name__:
 				bases = inspect.getmro(v)
 
@@ -290,7 +302,7 @@ class ProfileHandler:
 		that the provided list contains only default_profiles with unique names
 		"""
 		counter = Counter([p.name for p in profiles])
-		duplicates = list(filter(lambda x: x[1] != 1, counter.items()))
+		duplicates = [x for x in counter.items() if x[1] != 1]
 
 		if len(duplicates) > 0:
 			err = str(_('Profiles must have unique name, but profile definitions with duplicate name found: {}')).format(duplicates[0][0])
@@ -338,8 +350,9 @@ class ProfileHandler:
 		"""
 		Search the profile path for profile definitions
 		"""
+		profiles_path = Path(__file__).parents[2] / 'default_profiles'
 		profiles = []
-		for file in self._profiles_path.glob('**/*.py'):
+		for file in profiles_path.glob('**/*.py'):
 			# ignore the abstract default_profiles class
 			if 'profile.py' in file.name:
 				continue

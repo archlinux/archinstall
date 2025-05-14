@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType
 
@@ -14,12 +14,15 @@ class MariadbProfile(Profile):
 		)
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return ['mariadb']
 
 	@property
+	@override
 	def services(self) -> list[str]:
 		return ['mariadb']
 
+	@override
 	def post_install(self, install_session: 'Installer') -> None:
 		install_session.arch_chroot('mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql')

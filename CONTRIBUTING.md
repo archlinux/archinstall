@@ -16,7 +16,7 @@ Patch releases will be done against their own branches, branched from stable tag
 ## Discussions
 
 Currently, questions, bugs and suggestions should be reported through [GitHub issue tracker](https://github.com/archlinux/archinstall/issues).<br>
-For less formal discussions there is also an [archinstall Discord server](https://discord.gg/cqXU88y).
+For less formal discussions there is also an [archinstall Discord server](https://discord.gg/aDeMffrxNg).
 
 ## Coding convention
 
@@ -27,7 +27,7 @@ The exceptions to PEP8 are:
 * Archinstall uses [tabs instead of spaces](https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces) simply to make it
   easier for non-IDE developers to navigate the code *(Tab display-width should be equal to 4 spaces)*. Exception to the
   rule are comments that need fine-tuned indentation for documentation purposes.
-* [Line length](https://www.python.org/dev/peps/pep-0008/#maximum-line-length) a maximum line length is enforced via flake8 with 220 characters
+* [Line length](https://www.python.org/dev/peps/pep-0008/#maximum-line-length) a maximum line length is enforced via flake8 with 160 characters
 * Archinstall should always be saved with **Unix-formatted line endings** and no other platform-specific formats.
 * [String quotes](https://www.python.org/dev/peps/pep-0008/#string-quotes) follow PEP8, the exception being when
   creating formatted strings, double-quoted strings are *preferred* but not required on the outer edges *(
@@ -68,15 +68,4 @@ squash commits when the pull request is merged.
 Maintainer:
 * Anton Hvornum ([@Torxed](https://github.com/Torxed))
 
-At present the current contributors are (alphabetically):
-* Anton Hvornum ([@Torxed](https://github.com/Torxed))
-* Borislav Kosharov ([@nikibobi](https://github.com/nikibobi))
-* demostanis ([@demostanis](https://github.com/demostanis))
-* Dylan Taylor ([@dylanmtaylor](https://github.com/dylanmtaylor))
-* Giancarlo Razzolini (@[grazzolini](https://github.com/grazzolini))
-* Jerker Bengtsson ([@jaybent](https://github.com/jaybent))
-* j-james ([@j-james](https://github.com/j-james))
-* Ninchester ([@ninchester](https://github.com/ninchester))
-* nullrequest ([@advaithm](https://github.com/advaithm))
-* Philipp Schaffrath ([@phisch](https://github.com/phisch))
-* Varun Madiath ([@vamega](https://github.com/vamega))
+[Contributors](https://github.com/archlinux/archinstall/graphs/contributors)

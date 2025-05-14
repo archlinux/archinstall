@@ -102,7 +102,7 @@ FAT32
 	{
 		"btrfs": [],
 		"flags": [
-		   "Boot"
+		   "boot"
 		],
 		"fs_type": "fat32",
 		"length": {
@@ -200,10 +200,6 @@ This example contains both subvolumes and compression.
           {
               "mountpoint": "/var/cache/pacman/pkg",
               "name": "@pkg",
-          },
-          {
-              "mountpoint": "/.snapshots",
-              "name": "@.snapshots",
           }
       ],
       "dev_path": null,

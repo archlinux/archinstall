@@ -1,0 +1,11 @@
+{
+    "!root-password": "rootPwd",
+    "!users": [
+        {
+            "!password": "userPwd",
+            "sudo": true,
+            "username": "user_name",
+            "groups": ["wheel"]
+        }
+    ]
+}

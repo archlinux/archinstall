@@ -1,0 +1,11 @@
+{
+    "root_enc_password": "password_hash",
+    "users": [
+        {
+            "enc_password": "password_hash",
+            "sudo": true,
+            "username": "user_name",
+            "groups": ["wheel"]
+        }
+    ]
+}

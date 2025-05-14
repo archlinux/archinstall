@@ -1507,3 +1507,266 @@ msgstr "Roghnaigh modh forghníomhaithe"
 #, fuzzy
 msgid "Press ? for help"
 msgstr "Brúigh Ctrl+h chun cabhair a fháil"
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh rogha chun rochtain a thabhairt do Hyprland ar do chrua-earraí"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Taisclanna roghnacha"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Roghnaigh an rogha seiceála sínithe"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Earnálacha saor in aisce faoi láthair ar ghléas {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Iomlán: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Cuir isteach an deireadh (réamhshocraithe: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Gléas"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Ainm Úsáideora: "
+
+msgid "The specified configuration will be applied"
+msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marcáil/Dímharcáil mar bootable"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Pacáistí breise"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Cuir scáthán saincheaptha leis"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Athraigh scáthán saincheaptha"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Scrios scáthán saincheaptha"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Réigiún scáthán"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Cuir scáthán saincheaptha leis"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Athraigh scáthán saincheaptha"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Scrios scáthán saincheaptha"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Roghnaigh an rogha sínithe"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Cuir scáthán saincheaptha leis"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Cuir scáthán saincheaptha leis"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Réigiúin scátháin"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Taisclanna roghnacha"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Réigiúin scátháin"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Scátháin saincheaptha"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Taisclanna roghnacha"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Roghnaigh an rogha seiceála sínithe"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Roghnaigh crios ama"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Roghnaigh modh forghníomhaithe"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Teastaíonn rochtain ó Sway ar do shuíochán (bailiúchán de ghléasanna crua-earraí i.e. méarchlár, luch, srl)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh rogha chun rochtain a thabhairt do Sway ar do chrua-earraí"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Teastaíonn rochtain ó Sway ar do shuíochán (bailiúchán de ghléasanna crua-earraí i.e. méarchlár, luch, srl)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Roghnaigh rogha chun rochtain a thabhairt do Sway ar do chrua-earraí"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Marcáil/Dímharcáil mar bootable"
+
+msgid "Package group:"
+msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Cabhair Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Athraigh córas comhaid"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Ar mhaith leat an tsuiteáil nuachruthaithe a chrosadh agus cumraíocht iar-shuiteála a dhéanamh?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Ar mhaith leat comhbhrú BTRFS a úsáid?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Roghnaigh an mód a chumrú le haghaidh \"{}\" nó scipeáil chun an mód réamhshocraithe \"{}\" a úsáid"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Pasfhocal criptithe"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Pasfhocal Root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Pasfhocal criptithe"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"Ar mhaith leat {} comhad cumraíochta a shábháil sa suíomh seo a leanas?\n"
+"\n"
+"{}"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Pasfhocal criptithe"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Réigiún scáthán"

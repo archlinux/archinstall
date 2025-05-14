@@ -1527,3 +1527,266 @@ msgstr "Selectați un mod de execuție"
 
 msgid "Press ? for help"
 msgstr ""
+
+#, fuzzy
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Colecții de pachete opționale"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Selectați opțiunea pentru verificarea semnăturii"
+
+#, fuzzy
+msgid "Selected free space segment on device {}:"
+msgstr "Sectoarele libere curente de pe dispozitiv {}:"
+
+#, fuzzy
+msgid "Size: {} / {}"
+msgstr "Total: {} / {}"
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Introduceți final (predefinit: {}): "
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Discpozitiv"
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Nume utilizator : "
+
+msgid "The specified configuration will be applied"
+msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marchează/Demarchează ca bootabil"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Pachete Adiționale"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Schimbă oglinda customizată"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Șterge oglinda customizată"
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Regiune de oglindire"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Schimbă oglinda customizată"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Șterge oglinda customizată"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Selectați opțiunea pentru semnătură"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Regiuni oglinzi"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Colecții de pachete opționale"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Regiuni oglinzi"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Oglinzi customizate"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Colecții de pachete opționale"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Selectați opțiunea pentru verificarea semnăturii"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Selectați un fus orar"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Selectați un mod de execuție"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Marchează/Demarchează ca bootabil"
+
+msgid "Package group:"
+msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Limba pentru Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Schimbă sistemul de fișiere"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Doriți să folosiți modul chroot pentru a intra în noua instalare și pentru a efectua configurații de post-instalare?"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Selectați modul de configurare pentru \"{}\" sau folosiți modul predefinit \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Parola de criptare"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Parola pentru root"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Parola de criptare"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"Doriți să salvați fișierele de configurare {} în această locație?\n"
+"\n"
+"{]"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Parola de criptare"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Regiune de oglindire"

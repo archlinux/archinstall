@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] En logg-fil har skapats här: {} {}"
@@ -449,7 +449,7 @@ msgid "Pre-existing pacman lock never exited. Please clean up any existing pacma
 msgstr "Existerande pacman-lås avslutades aldrig. Vänligen rensa upp föregående körningar av pacman-sessioner innan du använder archinstall."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Välj vilka frivilliga repositories som ska aktiveras"
+msgstr "Välj vilka frivilliga arkiv som ska aktiveras"
 
 msgid "Add a user"
 msgstr "Lägg till användare"
@@ -525,10 +525,10 @@ msgid "The password you are using seems to be weak,"
 msgstr "Lösenordet du angav verkar svagt,"
 
 msgid "are you sure you want to use it?"
-msgstr "Är du säker på att du vill använda det?"
+msgstr "är du säker på att du vill använda det?"
 
 msgid "Optional repositories"
-msgstr "Valfria repositories"
+msgstr "Valfria arkiv"
 
 msgid "Save configuration"
 msgstr "Spara konfiguration"
@@ -1342,10 +1342,10 @@ msgid "Invalid size"
 msgstr "Ogiltig storlek"
 
 msgid "Start (default: sector {}): "
-msgstr "Start (standard: sektor {}):"
+msgstr "Start (standard: sektor {}): "
 
 msgid "End (default: {}): "
-msgstr "Slut (standard: {}):"
+msgstr "Slut (standard: {}): "
 
 msgid "Subvolume name"
 msgstr "Subvolymens namn"
@@ -1372,7 +1372,7 @@ msgid "The username you entered is invalid"
 msgstr "Användarnamnet du angav är ogiltigt"
 
 msgid "Username"
-msgstr "Användarnamn "
+msgstr "Användarnamn"
 
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Ska \"{}\" vara en superanvändare (sudo)?\n"
@@ -1466,3 +1466,226 @@ msgstr "Välj exekveringsläge"
 
 msgid "Press ? for help"
 msgstr "Tryck på ?för hjälp"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Välj ett alternativ för att ge Hyprland åtkomst till din hårdvara"
+
+msgid "Additional repositories"
+msgstr "Ytterligare arkiv"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Swap på zram"
+
+msgid "Name"
+msgstr "Namn"
+
+msgid "Signature check"
+msgstr "Signaturkontroll"
+
+msgid "Selected free space segment on device {}:"
+msgstr "Valt ledigt utrymmessegment på enheten {}:"
+
+msgid "Size: {} / {}"
+msgstr "Storlek: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "Storlek (standard: {}): "
+
+msgid "HSM device"
+msgstr "HSM-enhet"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Vissa paket kunde inte hittas i arkivet"
+
+msgid "User"
+msgstr "Användare"
+
+msgid "The specified configuration will be applied"
+msgstr "Den angivna konfigurationen kommer att tillämpas"
+
+msgid "Wipe"
+msgstr "Rensa"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Markera/avmarkera som XBOOTLDR"
+
+msgid "Loading packages..."
+msgstr "Laddar paket..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Välj alla paket från listan nedan som ska installeras ytterligare"
+
+msgid "Add a custom repository"
+msgstr "Lägg till en anpassat arkiv"
+
+msgid "Change custom repository"
+msgstr "Ändra anpassat arkiv"
+
+msgid "Delete custom repository"
+msgstr "Ta bort anpassat arkiv"
+
+msgid "Repository name"
+msgstr "Arkivnamn"
+
+msgid "Add a custom server"
+msgstr "Lägg till en anpassad server"
+
+msgid "Change custom server"
+msgstr "Ändra anpassad server"
+
+msgid "Delete custom server"
+msgstr "Ta bort anpassad server"
+
+msgid "Server url"
+msgstr "Server url"
+
+msgid "Select regions"
+msgstr "Välj regioner"
+
+msgid "Add custom servers"
+msgstr "Lägg till en anpassade servrar"
+
+msgid "Add custom repository"
+msgstr "Lägg till ett anpassat arkiv"
+
+msgid "Loading mirror regions..."
+msgstr "Laddar spegelregioner..."
+
+msgid "Mirrors and repositories"
+msgstr "Speglar och arkiv"
+
+msgid "Selected mirror regions"
+msgstr "Valda spegelregioner"
+
+msgid "Custom servers"
+msgstr "Anpassade servrar"
+
+msgid "Custom repositories"
+msgstr "Anpassade arkiv"
+
+msgid "Only ASCII characters are supported"
+msgstr "Endast ASCII-tecken stöds"
+
+msgid "Show help"
+msgstr "Visa hjälp"
+
+msgid "Exit help"
+msgstr "Avsluta hjälpen"
+
+msgid "Preview scroll up"
+msgstr "Förhandsgranska rulla uppåt"
+
+msgid "Preview scroll down"
+msgstr "Förhandsgranska rulla nedåt"
+
+msgid "Move up"
+msgstr "Flytta upp"
+
+msgid "Move down"
+msgstr "Flytta ned"
+
+msgid "Move right"
+msgstr "Flytta höger"
+
+msgid "Move left"
+msgstr "Flytta vänster"
+
+msgid "Jump to entry"
+msgstr "Hoppa till posten"
+
+msgid "Skip selection (if available)"
+msgstr "Hoppa över valet (om tillgängligt)"
+
+msgid "Reset selection (if available)"
+msgstr "Återställ val (om tillgängligt)"
+
+msgid "Select on single select"
+msgstr "Välj på enstaka val"
+
+msgid "Select on multi select"
+msgstr "Välj på flerval"
+
+msgid "Reset"
+msgstr "Återställ"
+
+msgid "Skip selection menu"
+msgstr "Hoppa över valmenyn"
+
+msgid "Start search mode"
+msgstr "Starta sökläge"
+
+msgid "Exit search mode"
+msgstr "Avsluta sökläge"
+
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+
+#, fuzzy
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+
+#, fuzzy
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Markera/avmarkera som bootbar"
+
+msgid "Package group:"
+msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall hjälp"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Filsystem"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Vill du hoppa in i det nyligen installerade systemet och utföra förändringar? (skriv 'exit' när du är klart)"
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Vill du fortsätta?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Välj vilket läge att konfigurera för \"{}\" eller använd standardläge \"{}\""
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Diskkrypteringslösenord"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Root-lösenord"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Diskkrypteringslösenord"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Vill du spara konfigurationsfil(er) till {}?"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Diskkrypteringslösenord"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Arkivnamn"

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] A naplófájl itt jött létre: {} {}"
@@ -24,7 +24,7 @@ msgid "And one more time for verification: "
 msgstr "És még egyszer az ellenőrzéshez: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "Biztosan cserehelyet akar használni a zram-on?"
+msgstr "Biztosan cserehelyet akar használni a zRam-on?"
 
 msgid "Desired hostname for the installation: "
 msgstr "A kiszolgáló neve a telepítéshez: "
@@ -51,10 +51,10 @@ msgid "Choose an audio server"
 msgstr "Válasszon ki egy hangkiszolgálót"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok kerülnek telepítésre."
+msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok lesznek telepítve."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő prompt-ban adhatja meg."
+msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő promptban adhatja meg."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Írjon be további csomagneveket a telepítéshez (szóközzel elválasztva; hagyja üresen a kihagyáshoz): "
@@ -124,7 +124,7 @@ msgstr ""
 "Index alapján válassza ki, hogy melyik partíciót hová szeretné csatolni"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * A partíció csatolási pontjai a telepítésen belülre vonatkoznak, a „boot” pédául „/boot” lesz."
+msgstr " * A partíció csatolási pontjai a telepítésen belülre vonatkoznak, a „boot” például „/boot” lesz."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr "Válassza ki, hogy hová szeretné csatolni a partíciót (hagyja üresen a csatolási pont eltávolításához): "
@@ -303,7 +303,7 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"Úgy döntött, hogy kihagyja a merevlemez kiválasztását\n"
+"Ön úgy döntött, hogy kihagyja a merevlemez kiválasztását\n"
 "és azt a meghajtóbeállítást fogja használni, amely a(z) {} helyen van csatolva (kísérleti)\n"
 "FIGYELMEZTETÉS: Az Archinstall nem ellenőrzi ennek a beállításnak a megfelelőségét\n"
 "Biztosan folytatni akarja?"
@@ -456,7 +456,7 @@ msgid "Add a user"
 msgstr "Felhasználó hozzáadása"
 
 msgid "Change password"
-msgstr "Jelszó megváltoztatása"
+msgstr "Jelszó módosítása"
 
 msgid "Promote/Demote user"
 msgstr "Felhasználó előléptetése/lefokozása"
@@ -484,7 +484,7 @@ msgid "No network configuration"
 msgstr "Nincs hálózati konfiguráció"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Állítsa be egy BTRFS-partíció alköteteteit"
+msgstr "Állítsa be egy BTRFS-partíció alköteteit"
 
 msgid ""
 "{}\n"
@@ -908,7 +908,7 @@ msgid "This partition is currently encrypted, to format it a filesystem has to b
 msgstr "Ez a partíció jelenleg titkosított, a formázásához meg kell adni egy fájlrendszert"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr "A partíció csatolási pontok a telepítésen belülre vonatkoznak, a „boot” pédául „/boot” lesz."
+msgstr "A partíció csatolási pontok a telepítésen belülre vonatkoznak, a „boot” például „/boot” lesz."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
 msgstr "Ha a „/boot” csatolási pont be van állítva, akkor a partíció is rendszerbetöltőnek lesz megjelölve."
@@ -986,7 +986,7 @@ msgid "Password"
 msgstr "Jelszó"
 
 msgid "All settings will be reset, are you sure?"
-msgstr "Az összes beállítás visszaállításra kerül az alapértelmezettre, biztos benne?"
+msgstr "Az összes beállítás vissza lesz állítva az alapértelmezettre, biztos benne?"
 
 msgid "Back"
 msgstr "Vissza"
@@ -1077,7 +1077,7 @@ msgid "Add a custom mirror"
 msgstr "Egyéni tükör hozzáadása"
 
 msgid "Change custom mirror"
-msgstr "Egyéni tükör megváltoztatása"
+msgstr "Egyéni tükör módosítása"
 
 msgid "Delete custom mirror"
 msgstr "Egyéni tükör törlése"
@@ -1095,7 +1095,7 @@ msgid "Select signature option"
 msgstr "Válasszon ki egy aláírásbeállítást"
 
 msgid "Custom mirrors"
-msgstr "Egyedi tükrök"
+msgstr "Egyéni tükrök"
 
 msgid "Defined"
 msgstr "Meghatározott"
@@ -1144,7 +1144,7 @@ msgid "Total: {} / {}"
 msgstr "Összesen: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr "Az öszes beírt értéket mértékegységekkel kell ellátni: B, KB, KiB, MB, MiB…"
+msgstr "Az összes beírt értéket mértékegységekkel kell ellátni: B, KB, KiB, MB, MiB…"
 
 msgid "If no unit is provided, the value is interpreted as sectors"
 msgstr "Ha nincs mértékegység megadva, akkor az értéket szektorokként értelmezi"
@@ -1265,7 +1265,7 @@ msgid "Select a LVM option"
 msgstr "Válasszon ki egy LVM-beállítást"
 
 msgid "Partitioning"
-msgstr "Partícionálás"
+msgstr "Particionálás"
 
 msgid "Logical Volume Management (LVM)"
 msgstr "Logikai kötetkezelő (LVM)"
@@ -1313,7 +1313,7 @@ msgid " (default)"
 msgstr " (alapértelmezett)"
 
 msgid "Press Ctrl+h for help"
-msgstr "CTRL+h → a súgó megnyitásához"
+msgstr "CTRL+h → a súgó megjelenítéséhez"
 
 msgid "Choose an option to give Sway access to your hardware"
 msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Sway számára a hardverekhez való hozzáférést"
@@ -1466,4 +1466,211 @@ msgid "Select execution mode"
 msgstr "Végrehajtási mód kiválasztása"
 
 msgid "Press ? for help"
-msgstr "? → a súgó megnyitásához"
+msgstr "? → a súgó megjelenítéséhez"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Hyprland számára a hardverekhez való hozzáférést"
+
+msgid "Additional repositories"
+msgstr "Nem kötelező tárolók"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Swap a zram fölött"
+
+msgid "Name"
+msgstr "Név"
+
+msgid "Signature check"
+msgstr "Aláírás-ellenőrzés"
+
+msgid "Selected free space segment on device {}:"
+msgstr "A kiválasztott szabad szakaszok a(z) {} eszközön:"
+
+msgid "Size: {} / {}"
+msgstr "Méret: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "Méret (alapértelmezett: {}): "
+
+msgid "HSM device"
+msgstr "HSM-eszköz"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Néhány csomag nem található a tárolóban"
+
+msgid "User"
+msgstr "Felhasználó"
+
+msgid "The specified configuration will be applied"
+msgstr "A megadott konfiguráció lesz alkalmazva"
+
+msgid "Wipe"
+msgstr "Törlés"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Megjelölés/elvetés mint XBOOTLDR"
+
+msgid "Loading packages..."
+msgstr "Csomagok betöltése…"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Válassza ki az alábbi listából azokat a csomagokat, amelyeket hozzá akar adni a telepítéshez"
+
+msgid "Add a custom repository"
+msgstr "Egyéni tároló hozzáadása"
+
+msgid "Change custom repository"
+msgstr "Egyéni tároló módosítása"
+
+msgid "Delete custom repository"
+msgstr "Egyéni tároló törlése"
+
+msgid "Repository name"
+msgstr "Tároló neve"
+
+msgid "Add a custom server"
+msgstr "Egyéni kiszolgáló hozzáadása"
+
+msgid "Change custom server"
+msgstr "Egyéni kiszolgáló módosítása"
+
+msgid "Delete custom server"
+msgstr "Egyéni kiszolgáló törlése"
+
+msgid "Server url"
+msgstr "Kiszolgáló webcíme"
+
+msgid "Select regions"
+msgstr "Régiók kiválasztása"
+
+msgid "Add custom servers"
+msgstr "Egyéni kiszolgálók hozzáadása"
+
+msgid "Add custom repository"
+msgstr "Egyéni tároló hozzáadása"
+
+msgid "Loading mirror regions..."
+msgstr "Tükörrégiók betöltése…"
+
+msgid "Mirrors and repositories"
+msgstr "Tükrök és tárolók"
+
+msgid "Selected mirror regions"
+msgstr "Kiválasztott tükörrégiók"
+
+msgid "Custom servers"
+msgstr "Egyéni kiszolgálók"
+
+msgid "Custom repositories"
+msgstr "Egyéni tárolók"
+
+msgid "Only ASCII characters are supported"
+msgstr "Csak ASCII karakterek támogatottak"
+
+msgid "Show help"
+msgstr "Súgó megjelenítése"
+
+msgid "Exit help"
+msgstr "Kilépés a súgóból"
+
+msgid "Preview scroll up"
+msgstr "Előnézet felfelé görgetése"
+
+msgid "Preview scroll down"
+msgstr "Előnézet lefelé görgetése"
+
+msgid "Move up"
+msgstr "Felfelé léptetés"
+
+msgid "Move down"
+msgstr "Lefelé léptetés"
+
+msgid "Move right"
+msgstr "Jobbra léptetés"
+
+msgid "Move left"
+msgstr "Balra léptetés"
+
+msgid "Jump to entry"
+msgstr "Ugrás a bejegyzésre"
+
+msgid "Skip selection (if available)"
+msgstr "Kiválasztás kihagyása (ha elérhető)"
+
+msgid "Reset selection (if available)"
+msgstr "Kiválasztás visszaállítása (ha elérhető)"
+
+msgid "Select on single select"
+msgstr "Egyetlen elem kiválasztása"
+
+msgid "Select on multi select"
+msgstr "Több elem kiválasztása"
+
+msgid "Reset"
+msgstr "Visszaállítás"
+
+msgid "Skip selection menu"
+msgstr "Kiválasztási menü kihagyása"
+
+msgid "Start search mode"
+msgstr "Keresési mód indítása"
+
+msgid "Exit search mode"
+msgstr "Kilépés a keresési módból"
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "A Labwc-nek hozzáférésre van szüksége az Ön munkamenetéhez (olyan hardvereszközök gyűjteményéhez, mint például a billentyűzet, az egér, stb.)"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Labwc számára a hardverekhez való hozzáférést"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "A Nirinek hozzáférésre van szüksége az Ön munkamenetéhez (olyan hardvereszközök gyűjteményéhez, mint például a billentyűzet, az egér, stb.)"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Niri számára a hardverekhez való hozzáférést"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Megjelölés/elvetés mint EFI-rendszerpartíció (ESP)"
+
+msgid "Package group:"
+msgstr "Csomagcsoport:"
+
+msgid "Exit archinstall"
+msgstr "Kilépés az Archinstallból"
+
+msgid "Reboot system"
+msgstr "Rendszer újraindítása"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "Belépés a telepített rendszer gyökerébe (chroot) a telepítés utáni konfigurációk elvégzéséhez"
+
+msgid "Installation completed"
+msgstr "A telepítés sikeresen befejeződött"
+
+msgid "What would you like to do next?"
+msgstr "Mit szeretne tenni?"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) „{}” számára"
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Helytelen a hitelesítőadat-fájl visszafejtési jelszava"
+
+msgid "Incorrect password"
+msgstr "Helytelen jelszó"
+
+msgid "Credentials file decryption password"
+msgstr "A hitelesítőadat-fájl visszafejtési jelszava"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Szeretné titkosítani a user_credentials.json fájlt?"
+
+msgid "Credentials file encryption password"
+msgstr "A hitelesítőadat-fájl titkosítási jelszava"
+
+msgid "Repositories: {}"
+msgstr "Tárolók: {}"

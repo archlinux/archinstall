@@ -1,170 +1,44 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Self
+
+from archinstall.tui.curses_menu import SelectMenu, Tui
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle
 
 from ..output import error
-from ..output import unicode_ljust
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	PreviewStyle, FrameProperties, FrameStyle,
-	ResultType, Chars, Tui
-)
 
 if TYPE_CHECKING:
-	_: Any
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
-class Selector:
-	def __init__(
-		self,
-		description: str,
-		func: Callable[[Any], Any] | None = None,
-		display_func: Callable | None = None,
-		default: Any | None = None,
-		enabled: bool = False,
-		dependencies: list[str] = [],
-		dependencies_not: list[str] = [],
-		exec_func: Callable | None = None,
-		preview_func: Callable | None = None,
-		mandatory: bool = False,
-		no_store: bool = False
-	):
-		"""
-		Create a new menu selection entry
-
-		:param description: Text that will be displayed as the menu entry
-		:type description: str
-
-		:param func: Function that is called when the menu entry is selected
-		:type func: Callable
-
-		:param display_func: After specifying a setting for a menu item it is displayed
-		on the right side of the item as is; with this function one can modify the entry
-		to be displayed; e.g. when specifying a password one can display **** instead
-		:type display_func: Callable
-
-		:param default: Default value for this menu entry
-		:type default: Any
-
-		:param enabled: Specify if this menu entry should be displayed
-		:type enabled: bool
-
-		:param dependencies: Specify dependencies for this menu entry; if the dependencies
-		are not set yet, then this item is not displayed; e.g. disk_layout depends on selectiong
-		harddrive(s) first
-		:type dependencies: list
-
-		:param dependencies_not: These are the exclusive options; the menu item will only be
-		displayed if non of the entries in the list have been specified
-		:type dependencies_not: list
-
-		:param exec_func: A function with the name and the result of the selection as input parameter and which returns boolean.
-		Can be used for any action deemed necessary after selection. If it returns True, exits the menu loop, if False,
-		menu returns to the selection screen. If not specified it is assumed the return is False
-		:type exec_func: Callable
-
-		:param preview_func: A callable which invokws a preview screen
-		:type preview_func: Callable
-
-		:param mandatory: A boolean which determines that the field is mandatory, i.e. menu can not be exited if it is not set
-		:type mandatory: bool
-
-		:param no_store: A boolean which determines that the field should or shouldn't be stored in the data storage
-		:type no_store: bool
-		"""
-		self._display_func = display_func
-		self._no_store = no_store
-
-		self.description = description
-		self.func = func
-		self.current_selection = default
-		self.enabled = enabled
-		self.dependencies = dependencies
-		self.dependencies_not = dependencies_not
-		self.exec_func = exec_func
-		self.preview_func = preview_func
-		self.mandatory = mandatory
-		self.default = default
-
-	def do_store(self) -> bool:
-		return self._no_store is False
-
-	def set_enabled(self, status: bool = True) -> None:
-		self.enabled = status
-
-	def update_description(self, description: str) -> None:
-		self.description = description
-
-	def menu_text(self, padding: int = 0) -> str:
-		if self.description == '':  # special menu option for __separator__
-			return ''
-
-		current = ''
-
-		if self._display_func:
-			current = self._display_func(self.current_selection)
-		else:
-			if self.current_selection is not None:
-				current = str(self.current_selection)
-
-		if current:
-			padding += 5
-			description = unicode_ljust(str(self.description), padding, ' ')
-		else:
-			description = self.description
-			current = ''
-
-		return f'{description} {current}'
-
-	def set_current_selection(self, current: Any | None) -> None:
-		self.current_selection = current
-
-	def has_selection(self) -> bool:
-		if not self.current_selection:
-			return False
-		return True
-
-	def get_selection(self) -> Any:
-		return self.current_selection
-
-	def is_empty(self) -> bool:
-		if self.current_selection is None:
-			return True
-		elif isinstance(self.current_selection, str | list | dict) and len(self.current_selection) == 0:
-			return True
-		return False
-
-	def is_enabled(self) -> bool:
-		return self.enabled
-
-	def is_mandatory(self) -> bool:
-		return self.mandatory
-
-	def set_mandatory(self, value: bool) -> None:
-		self.mandatory = value
+CONFIG_KEY = '__config__'
 
 
-class AbstractMenu:
+class AbstractMenu[ValueT]:
 	def __init__(
 		self,
 		item_group: MenuItemGroup,
-		data_store: dict[str, Any],
+		config: Any,
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
 		reset_warning: str | None = None
 	):
 		self._menu_item_group = item_group
-		self._data_store = data_store
+		self._config = config
 		self.auto_cursor = auto_cursor
 		self._allow_reset = allow_reset
 		self._reset_warning = reset_warning
 
 		self.is_context_mgr = False
 
-		self._sync_all_from_ds()
+		self._sync_from_config()
 
-	def __enter__(self, *args: Any, **kwargs: Any) -> AbstractMenu:
+	def __enter__(self, *args: Any, **kwargs: Any) -> Self:
 		self.is_context_mgr = True
 		return self
 
@@ -176,46 +50,58 @@ class AbstractMenu:
 			Tui.print("Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
-		self._sync_all_to_ds()
+		self.sync_all_to_config()
 
-	def _sync_all_from_ds(self) -> None:
-		for item in self._menu_item_group.menu_items:
-			if item.key is not None:
-				if (store_value := self._data_store.get(item.key, None)) is not None:
-					item.value = store_value
+	def _sync_from_config(self) -> None:
+		for item in self._menu_item_group._menu_items:
+			if item.key is not None and not item.key.startswith(CONFIG_KEY):
+				config_value = getattr(self._config, item.key)
+				if config_value is not None:
+					item.value = config_value
 
-	def _sync_all_to_ds(self) -> None:
-		for item in self._menu_item_group.menu_items:
+	def sync_all_to_config(self) -> None:
+		for item in self._menu_item_group._menu_items:
 			if item.key:
-				self._data_store[item.key] = item.value
+				setattr(self._config, item.key, item.value)
 
 	def _sync(self, item: MenuItem) -> None:
-		if not item.key:
+		if not item.key or item.key.startswith(CONFIG_KEY):
 			return
 
-		store_value = self._data_store.get(item.key, None)
+		config_value = getattr(self._config, item.key)
 
-		if store_value is not None:
-			item.value = store_value
+		if config_value is not None:
+			item.value = config_value
 		elif item.value is not None:
-			self._data_store[item.key] = item.value
+			setattr(self._config, item.key, item.value)
 
 	def set_enabled(self, key: str, enabled: bool) -> None:
-		if (item := self._menu_item_group.find_by_key(key)) is not None:
-			item.enabled = enabled
-			return None
+		# the __config__ is associated with multiple items
+		found = False
 
-		raise ValueError(f'No selector found: {key}')
+		is_config_key = key == CONFIG_KEY
+
+		for item in self._menu_item_group.items:
+			if item.key:
+				if item.key == key or (is_config_key and item.key.startswith(CONFIG_KEY)):
+					item.enabled = enabled
+					found = True
+
+		if not found:
+			raise ValueError(f'No selector found: {key}')
 
 	def disable_all(self) -> None:
 		for item in self._menu_item_group.items:
 			item.enabled = False
 
-	def run(self) -> Any | None:
-		self._sync_all_from_ds()
+	def _is_config_valid(self) -> bool:
+		return True
+
+	def run(self) -> ValueT | None:
+		self._sync_from_config()
 
 		while True:
-			result = SelectMenu(
+			result = SelectMenu[ValueT](
 				self._menu_item_group,
 				allow_skip=False,
 				allow_reset=self._allow_reset,
@@ -230,29 +116,30 @@ class AbstractMenu:
 					item: MenuItem = result.item()
 
 					if item.action is None:
+						if not self._is_config_valid():
+							continue
 						break
 				case ResultType.Reset:
-					self._data_store = {}
 					return None
 
-		self._sync_all_to_ds()
+		self.sync_all_to_config()
 		return None
 
 
-class AbstractSubMenu(AbstractMenu):
+class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):
 	def __init__(
 		self,
 		item_group: MenuItemGroup,
-		data_store: dict[str, Any],
+		config: Any,
 		auto_cursor: bool = True,
 		allow_reset: bool = False
 	):
 		back_text = f'{Chars.Right_arrow} ' + str(_('Back'))
-		item_group.menu_items.append(MenuItem(text=back_text))
+		item_group.add_item(MenuItem(text=back_text))
 
 		super().__init__(
 			item_group,
-			data_store=data_store,
+			config=config,
 			auto_cursor=auto_cursor,
 			allow_reset=allow_reset
 		)

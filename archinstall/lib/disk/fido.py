@@ -2,16 +2,19 @@ from __future__ import annotations
 
 import getpass
 from pathlib import Path
+from typing import ClassVar
 
-from .device_model import Fido2Device
-from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
-from ..output import error, info
+from archinstall.lib.models.device_model import Fido2Device
+
 from ..exceptions import SysCallError
+from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes_from_str
+from ..models.users import Password
+from ..output import error, info
 
 
 class Fido2:
 	_loaded: bool = False
-	_fido2_devices: list[Fido2Device] = []
+	_fido2_devices: ClassVar[list[Fido2Device]] = []
 
 	@classmethod
 	def get_fido2_devices(cls, reload: bool = False) -> list[Fido2Device]:
@@ -42,7 +45,7 @@ class Fido2:
 				error('fido2 support is most likely not installed')
 				raise ValueError('HSM devices can not be detected, is libfido2 installed?')
 
-			fido_devices: str = clear_vt100_escape_codes(ret)  # type: ignore
+			fido_devices = clear_vt100_escape_codes_from_str(ret)
 
 			manufacturer_pos = 0
 			product_pos = 0
@@ -72,7 +75,7 @@ class Fido2:
 		cls,
 		hsm_device: Fido2Device,
 		dev_path: Path,
-		password: str
+		password: Password
 	) -> None:
 		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {dev_path}", peek_output=True)
 		pw_inputted = False
@@ -81,7 +84,7 @@ class Fido2:
 		while worker.is_alive():
 			if pw_inputted is False:
 				if bytes(f"please enter current passphrase for disk {dev_path}", 'UTF-8') in worker._trace_log.lower():
-					worker.write(bytes(password, 'UTF-8'))
+					worker.write(bytes(password.plaintext, 'UTF-8'))
 					pw_inputted = True
 			elif pin_inputted is False:
 				if bytes("please enter security token pin", 'UTF-8') in worker._trace_log.lower():

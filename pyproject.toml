@@ -4,22 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-dynamic = ["version"]
+version = "3.0.4"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
 license = {text = "GPL-3.0-only"}
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 keywords = ["linux", "arch", "archinstall", "installer"]
 classifiers = [
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
     "pyparted @ https://github.com//dcantrell/pyparted/archive/v3.13.0.tar.gz#sha512=26819e28d73420937874f52fda03eb50ab1b136574ea9867a69d46ae4976d38c4f26a2697fa70597eed90dd78a5ea209bafcc3227a17a7a5d63cff6d107c2b11",
-    "pydantic==2.9.2"
+    "pydantic==2.11.4",
+    "cryptography>=44.0.2",
 ]
 
 [project.urls]
@@ -30,12 +31,13 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.13.0",
-    "flake8==7.1.1",
-    "pre-commit==4.0.1",
-    "ruff==0.7.4",
-    "pylint==3.3.1",
-    "pylint-pydantic==0.3.2",
+    "mypy==1.15.0",
+    "flake8==7.2.0",
+    "pre-commit==4.2.0",
+    "ruff==0.11.9",
+    "pylint==3.3.7",
+    "pylint-pydantic==0.3.5",
+    "pytest==8.3.5",
 ]
 doc = ["sphinx"]
 
@@ -43,7 +45,6 @@ doc = ["sphinx"]
 archinstall = "archinstall:run_as_a_module"
 
 [tool.setuptools.dynamic]
-version = {attr = "archinstall.__version__"}
 readme = {file = ["README.rst", "USAGE.rst"]}
 
 [tool.setuptools]
@@ -63,45 +64,60 @@ include-package-data = true
 archinstall = "archinstall"
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 files = "."
 exclude = "^build/"
-check_untyped_defs = true
 disallow_any_explicit = false
 disallow_any_expr = false
-disallow_any_generics = true
 disallow_any_unimported = true
-disallow_incomplete_defs = true
-disallow_subclassing_any = true
-disallow_untyped_calls = true
-disallow_untyped_decorators = true
-disallow_untyped_defs = true
-extra_checks = true
-strict = false
-strict_equality = true
-warn_redundant_casts = true
-warn_return_any = true
+enable_error_code = [
+    "deprecated",
+    "explicit-override",
+    "ignore-without-code",
+    "mutable-override",
+    "possibly-undefined",
+    "redundant-expr",
+    "redundant-self",
+    "truthy-iterable",
+    "unimported-reveal",
+    "unused-awaitable",
+]
+strict = true
+strict_bytes = true
 warn_unreachable = true
-warn_unused_configs = true
-warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "archinstall.default_profiles.*"
+disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.examples.*"
 disallow_any_explicit = true
-follow_imports = "silent"
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.*"
-disallow_any_generics = false
-disallow_any_unimported = false
 disallow_incomplete_defs = false
 disallow_untyped_defs = false
 warn_return_any = false
 warn_unreachable = false
 
 [[tool.mypy.overrides]]
-module = "archinstall.scripts.*"
-warn_unreachable = false
+module = "archinstall.lib.disk.*"
+# 'Any' imports are allowed because pyparted doesn't have type hints
+disallow_any_unimported = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.models.*"
+# 'Any' imports are allowed because pyparted doesn't have type hints
+disallow_any_unimported = false
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.packages"
+disallow_any_explicit = true
+
+[[tool.mypy.overrides]]
+module = "archinstall.lib.utils"
+disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.tui.*"
@@ -117,6 +133,11 @@ ignore_missing_imports = true
 targets = ["archinstall"]
 exclude = ["/tests"]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "-s"
+testpaths = ["tests"]
+
 [tool.pylint.main]
 ignore-paths = [
     "^build/",
@@ -124,34 +145,26 @@ ignore-paths = [
 ]
 load-plugins = ["pylint_pydantic"]
 persistent = false
-py-version = "3.11"
+py-version = "3.12"
 recursive = true
 
 [tool.pylint.format]
-max-line-length = 220
+indent-string = '\t'
+max-line-length = 160
 
 [tool.pylint."messages control"]
 disable = [
     "C",
     "R",
     "attribute-defined-outside-init",
-    "bad-indentation",
-    "bare-except",
     "broad-exception-caught",
     "cell-var-from-loop",
-    "comparison-with-callable",
     "dangerous-default-value",
     "fixme",
     "protected-access",
     "raise-missing-from",
-    "redefined-builtin",
-    "redefined-outer-name",
-    "unnecessary-lambda",
-    "unreachable",
     "unspecified-encoding",
     "unused-argument",
-    "unused-variable",
-    "useless-parent-delegation",
 ]
 
 [tool.pylint.refactoring]
@@ -159,16 +172,22 @@ score = false
 
 [tool.pylint.variables]
 additional-builtins = ["_"]
+init-import = true
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 builtins = ["_"]
-line-length = 220
+line-length = 160
+
+[tool.ruff.format]
+indent-style = "tab"
 
 [tool.ruff.lint]
 select = [
     "ASYNC",  # flake8-async
+    "B",      # flake8-bugbear
     "C90",    # mccabe
+    "COM",    # flake8-commas
     "DTZ",    # flake8-datetimez
     "E",      # pycodestyle errors
     "EXE",    # flake8-executable
@@ -176,14 +195,18 @@ select = [
     "FA",     # flake8-future-annotations
     "FLY",    # flynt
     "G",      # flake8-logging-format
+    "I",      # isort
     "ICN",    # flake8-import-conventions
     "ISC",    # flake8-implicit-str-concat
     "LOG",    # flake8-logging
+    "PGH",    # pygrep-hooks
     "PIE",    # flake8-pie
     "PLC",    # Pylint conventions
     "PLE",    # Pylint errors
     "PLW",    # Pylint warnings
+    "PYI",    # flake8-pyi
     "RSE",    # flake8-raise
+    "RUF",    # Ruff-specific rules
     "SLOT",   # flake8-slot
     "T10",    # flake8-debugger
     "UP",     # pyupgrade
@@ -192,18 +215,25 @@ select = [
 ]
 
 ignore = [
-    "E722",     # bare-except
+    "B006",     # mutable-argument-default
+    "B008",     # function-call-in-default-argument
+    "B904",     # raise-without-from-inside-except
+    "B905",     # zip-without-explicit-strict
+    "B909",     # loop-iterator-mutation
+    "COM812",   # missing-trailing-comma
+    "PLC0415",  # import-outside-top-level
+    "PLC1901",  # compare-to-empty-string
+    "PLW1514",  # unspecified-encoding
+    "PLW1641",  # eq-without-hash
     "PLW2901",  # redefined-loop-name
-    "UP027",    # unpacked-list-comprehension
-    "UP028",    # yield-in-for-loop
-    "UP031",    # printf-string-formatting
-    "UP032",    # f-string
+    "PYI036",   # bad-exit-annotation
+    "RUF005",   # collection-literal-concatenation
+    "RUF015",   # unnecessary-iterable-allocation-for-first-element
+    "RUF039",   # unraw-re-pattern
+    "RUF051",   # if-key-in-dict-del
     "UP037",    # quoted-annotation
     "W191",     # tab-indentation
 ]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 40
-
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]  # unused-import

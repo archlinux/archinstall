@@ -1,34 +1,45 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, assert_never, override
 
-from ..models.network_configuration import NetworkConfiguration, NicType, Nic
+from archinstall.tui.curses_menu import EditMenu, SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties
 
+from ..menu.list_manager import ListManager
+from ..models.network_configuration import NetworkConfiguration, Nic, NicType
 from ..networking import list_interfaces
-from ..menu import ListManager
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, Alignment, ResultType,
-	EditMenu
-)
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
-class ManualNetworkConfig(ListManager):
+class ManualNetworkConfig(ListManager[Nic]):
 	def __init__(self, prompt: str, preset: list[Nic]):
 		self._actions = [
 			str(_('Add interface')),
 			str(_('Edit interface')),
 			str(_('Delete interface'))
 		]
-		super().__init__(prompt, preset, [self._actions[0]], self._actions[1:])
 
+		super().__init__(
+			preset,
+			[self._actions[0]],
+			self._actions[1:],
+			prompt
+		)
+
+	@override
 	def selected_action_display(self, selection: Nic) -> str:
 		return selection.iface if selection.iface else ''
 
+	@override
 	def handle_action(self, action: str, entry: Nic | None, data: list[Nic]) -> list[Nic]:
 		if action == self._actions[0]:  # add
 			iface = self._select_iface(data)
@@ -59,7 +70,7 @@ class ManualNetworkConfig(ListManager):
 		items = [MenuItem(i, value=i) for i in available]
 		group = MenuItemGroup(items, sort_items=True)
 
-		result = SelectMenu(
+		result = SelectMenu[str](
 			group,
 			alignment=Alignment.CENTER,
 			frame=FrameProperties.min(str(_('Interfaces'))),
@@ -116,12 +127,12 @@ class ManualNetworkConfig(ListManager):
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
 
-		header = str(_('Select which mode to configure for "{}" or skip to use default mode "{}"').format(iface_name, default_mode)) + '\n'
+		header = str(_('Select which mode to configure for "{}"').format(iface_name)) + '\n'
 		items = [MenuItem(m, value=m) for m in modes]
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_default_by_value(default_mode)
 
-		result = SelectMenu(
+		result = SelectMenu[str](
 			group,
 			header=header,
 			allow_skip=False,
@@ -134,6 +145,10 @@ class ManualNetworkConfig(ListManager):
 				mode = result.get_value()
 			case ResultType.Reset:
 				raise ValueError('Unhandled result type')
+			case ResultType.Skip:
+				raise ValueError('The mode menu should not be skippable')
+			case _:
+				assert_never(result.type_)
 
 		if mode == 'IP (static)':
 			header = str(_('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(iface_name)) + '\n'
@@ -177,7 +192,7 @@ def ask_to_configure_network(preset: NetworkConfiguration | None) -> NetworkConf
 	if preset:
 		group.set_selected_by_value(preset.type)
 
-	result = SelectMenu(
+	result = SelectMenu[NetworkConfiguration](
 		group,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(str(_('Network configuration'))),

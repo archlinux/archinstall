@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ここにログファイルが作成されました: {} {}"
@@ -1036,7 +1036,7 @@ msgstr ""
 "グラフィックドライバーを選択。無記入ですべてのオープンソースドライバーをインストール"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway はシート（キーボード、マウスなどハードウェアデバイスの集合）にアクセスする必要があります"
+msgstr "Sway はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
 
 msgid ""
 "\n"
@@ -1194,7 +1194,7 @@ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "無効な入力です！有効な入力でやり直してください（無効にする場合は 0）"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Hyprland はあなたのシート（キーボード、マウスなどのハードウェアデバイスの集合）にアクセスする必要があります"
+msgstr "Hyprland はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
 
 msgid ""
 "\n"
@@ -1317,7 +1317,7 @@ msgid "Choose an option to give Sway access to your hardware"
 msgstr "Sway にハードウェアへのアクセスを許可するオプションを選択"
 
 msgid "Seat access"
-msgstr "シートアクセス"
+msgstr "Seat アクセス"
 
 msgid "Mountpoint"
 msgstr "マウントポイント"
@@ -1465,3 +1465,210 @@ msgstr "実行モードを選択"
 
 msgid "Press ? for help"
 msgstr "? を押すとヘルプを表示"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Hyprland にハードウェアへのアクセスを許可するオプションを選択"
+
+msgid "Additional repositories"
+msgstr "追加のリポジトリ"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "zram のスワップ"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Signature check"
+msgstr "署名チェック"
+
+msgid "Selected free space segment on device {}:"
+msgstr "デバイス {} の選択された空きスペースセグメント:"
+
+msgid "Size: {} / {}"
+msgstr "サイズ: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "サイズ (デフォルト: {}): "
+
+msgid "HSM device"
+msgstr "HSM デバイス"
+
+msgid "Some packages could not be found in the repository"
+msgstr "リポジトリ内にいくつかのパッケージが見つかりませんでした"
+
+msgid "User"
+msgstr "ユーザー"
+
+msgid "The specified configuration will be applied"
+msgstr "指定された設定が適用されます"
+
+msgid "Wipe"
+msgstr "ワイプ"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "XBOOTLDR としてマーク/マーク解除"
+
+msgid "Loading packages..."
+msgstr "パッケージを読み込んでいます..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "追加でインストールする必要があるパッケージをリストから選択してください"
+
+msgid "Add a custom repository"
+msgstr "カスタムリポジトリを追加"
+
+msgid "Change custom repository"
+msgstr "カスタムリポジトリを変更"
+
+msgid "Delete custom repository"
+msgstr "カスタムリポジトリを削除"
+
+msgid "Repository name"
+msgstr "リポジトリの名前"
+
+msgid "Add a custom server"
+msgstr "カスタムサーバーを追加"
+
+msgid "Change custom server"
+msgstr "カスタムサーバーを変更"
+
+msgid "Delete custom server"
+msgstr "カスタムサーバーを削除"
+
+msgid "Server url"
+msgstr "サーバー URL"
+
+msgid "Select regions"
+msgstr "地域を選択"
+
+msgid "Add custom servers"
+msgstr "カスタムサーバーを追加"
+
+msgid "Add custom repository"
+msgstr "カスタムリポジトリを追加"
+
+msgid "Loading mirror regions..."
+msgstr "ミラーの地域を読み込んでいます..."
+
+msgid "Mirrors and repositories"
+msgstr "ミラーとリポジトリ"
+
+msgid "Selected mirror regions"
+msgstr "選択されたミラーの地域"
+
+msgid "Custom servers"
+msgstr "カスタムサーバー"
+
+msgid "Custom repositories"
+msgstr "カスタムリポジトリ"
+
+msgid "Only ASCII characters are supported"
+msgstr "ASCII 文字のみサポートされます"
+
+msgid "Show help"
+msgstr "ヘルプを表示"
+
+msgid "Exit help"
+msgstr "ヘルプを終了"
+
+msgid "Preview scroll up"
+msgstr "プレビューを上にスクロール"
+
+msgid "Preview scroll down"
+msgstr "プレビューを下にスクロール"
+
+msgid "Move up"
+msgstr "上に移動"
+
+msgid "Move down"
+msgstr "下に移動"
+
+msgid "Move right"
+msgstr "右に移動"
+
+msgid "Move left"
+msgstr "左に移動"
+
+msgid "Jump to entry"
+msgstr "エントリーへジャンプ"
+
+msgid "Skip selection (if available)"
+msgstr "選択をスキップ（利用可能な場合）"
+
+msgid "Reset selection (if available)"
+msgstr "選択をリセット（利用可能な場合）"
+
+msgid "Select on single select"
+msgstr "単一で選択"
+
+msgid "Select on multi select"
+msgstr "複数で選択"
+
+msgid "Reset"
+msgstr "リセット"
+
+msgid "Skip selection menu"
+msgstr "選択メニューをスキップ"
+
+msgid "Start search mode"
+msgstr "検索モードを開始"
+
+msgid "Exit search mode"
+msgstr "検索モードを終了"
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "labwc はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "labwc にハードウェアへのアクセスを許可するオプションを選択"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "niri はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "niri にハードウェアへのアクセスを許可するオプションを選択"
+
+msgid "Mark/Unmark as ESP"
+msgstr "ESP としてマーク/マーク解除"
+
+msgid "Package group:"
+msgstr "パッケージグループ:"
+
+msgid "Exit archinstall"
+msgstr "archinstall を終了"
+
+msgid "Reboot system"
+msgstr "システムを再起動"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "インストール後の設定を行うためインストールディレクトリに chroot する"
+
+msgid "Installation completed"
+msgstr "インストール完了"
+
+msgid "What would you like to do next?"
+msgstr "次は何をしますか？"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr "「{}」に設定するモードを選択"
+
+msgid "Incorrect credentials file decryption password"
+msgstr "認証情報ファイルの復号化パスワードが正しくありません"
+
+msgid "Incorrect password"
+msgstr "パスワードが間違っています"
+
+msgid "Credentials file decryption password"
+msgstr "認証情報ファイルの復号化パスワード"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "user_credentials.json ファイルを暗号化しますか？"
+
+msgid "Credentials file encryption password"
+msgstr "認証情報ファイルの暗号化パスワード"
+
+msgid "Repositories: {}"
+msgstr "リポジトリ: {}"

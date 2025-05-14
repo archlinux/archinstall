@@ -1,17 +1,15 @@
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
+from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.default_profiles.profile import ProfileType, Profile, SelectResult
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, ResultType, PreviewStyle
-)
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import FrameProperties, PreviewStyle
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
-	_: Any
 
 
 class ServerProfile(Profile):
@@ -19,11 +17,11 @@ class ServerProfile(Profile):
 		super().__init__(
 			'Server',
 			ProfileType.Server,
-			description=str(_('Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb')),
 			current_selection=current_value
 		)
 
-	def do_on_select(self) -> SelectResult | None:
+	@override
+	def do_on_select(self) -> SelectResult:
 		items = [
 			MenuItem(
 				p.name,
@@ -35,7 +33,7 @@ class ServerProfile(Profile):
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_selected_by_value(self.current_selection)
 
-		result = SelectMenu(
+		result = SelectMenu[Profile](
 			group,
 			allow_reset=True,
 			allow_skip=True,
@@ -55,10 +53,12 @@ class ServerProfile(Profile):
 			case ResultType.Reset:
 				return SelectResult.ResetCurrent
 
+	@override
 	def post_install(self, install_session: 'Installer') -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
 
+	@override
 	def install(self, install_session: 'Installer') -> None:
 		server_info = self.current_selection_names()
 		details = ', '.join(server_info)

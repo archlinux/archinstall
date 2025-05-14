@@ -1,37 +1,52 @@
 from __future__ import annotations
 
 import json
-import os
 import logging
+import os
 import time
-import uuid
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Literal
+from typing import Literal, overload
 
-from parted import (
-	Disk, Geometry, FileSystem,
-	PartitionException, DiskException, IOException,
-	getDevice, getAllDevices, newDisk, freshDisk, Partition, Device
-)
+from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
-from .device_model import (
-	DeviceModification, PartitionModification,
-	BDevice, _DeviceInfo, _PartitionInfo,
-	FilesystemType, Unit, PartitionTable,
-	ModificationStatus, get_lsblk_info, find_lsblk_info, LsblkInfo,
-	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption, LvmVolumeGroup, LvmVolume, Size, LvmGroupInfo,
-	SectorSize, LvmVolumeInfo, LvmPVInfo, SubvolumeModification, BtrfsMountOption
-)
-
-from ..exceptions import DiskError, UnknownFilesystemFormat
-from ..general import SysCommand, SysCallError, JSON, SysCommandWorker
+from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
+from ..general import SysCommand, SysCommandWorker
 from ..luks import Luks2
-from ..output import debug, error, info, warn, log
+from ..models.device_model import (
+	BDevice,
+	BtrfsMountOption,
+	DeviceModification,
+	DiskEncryption,
+	FilesystemType,
+	LsblkInfo,
+	LvmGroupInfo,
+	LvmPVInfo,
+	LvmVolume,
+	LvmVolumeGroup,
+	LvmVolumeInfo,
+	ModificationStatus,
+	PartitionFlag,
+	PartitionGUID,
+	PartitionModification,
+	PartitionTable,
+	SectorSize,
+	Size,
+	SubvolumeModification,
+	Unit,
+	_BtrfsSubvolumeInfo,
+	_DeviceInfo,
+	_PartitionInfo,
+)
+from ..models.users import Password
+from ..output import debug, error, info, log
 from ..utils.util import is_subpath
-
-if TYPE_CHECKING:
-	_: Any
+from .utils import (
+	find_lsblk_info,
+	get_all_lsblk_info,
+	get_lsblk_info,
+	umount,
+)
 
 
 class DeviceHandler:
@@ -39,11 +54,16 @@ class DeviceHandler:
 
 	def __init__(self) -> None:
 		self._devices: dict[Path, BDevice] = {}
+		self._partition_table = PartitionTable.default()
 		self.load_devices()
 
 	@property
 	def devices(self) -> list[BDevice]:
 		return list(self._devices.values())
+
+	@property
+	def partition_table(self) -> PartitionTable:
+		return self._partition_table
 
 	def load_devices(self) -> None:
 		block_devices = {}
@@ -73,7 +93,7 @@ class DeviceHandler:
 				if dev_lsblk_info.pttype:
 					disk = newDisk(device)
 				else:
-					disk = freshDisk(device, PartitionTable.GPT.value)
+					disk = freshDisk(device, self.partition_table.value)
 			except DiskException as err:
 				debug(f'Unable to get disk from {device.path}: {err}')
 				continue
@@ -97,11 +117,8 @@ class DeviceHandler:
 				partition_infos.append(
 					_PartitionInfo.from_partition(
 						partition,
+						lsblk_info,
 						fs_type,
-						lsblk_info.partn,
-						lsblk_info.partuuid,
-						lsblk_info.uuid,
-						lsblk_info.mountpoints,
 						subvol_infos
 					)
 				)
@@ -142,6 +159,8 @@ class DeviceHandler:
 	) -> FilesystemType | None:
 		try:
 			if partition.fileSystem:
+				if partition.fileSystem.type == FilesystemType.LinuxSwap.parted_value:
+					return FilesystemType.LinuxSwap
 				return FilesystemType(partition.fileSystem.type)
 			elif lsblk_info is not None:
 				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
@@ -207,12 +226,15 @@ class DeviceHandler:
 			mountpoint = self._TMP_BTRFS_MOUNT
 		else:
 			# when multiple subvolumes are mounted then the lsblk output may look like
-			# "mountpoint": "/mnt/archinstall/.snapshots"
-			# "mountpoints": ["/mnt/archinstall/.snapshots", "/mnt/archinstall/home", ..]
+			# "mountpoint": "/mnt/archinstall/var/log"
+			# "mountpoints": ["/mnt/archinstall/var/log", "/mnt/archinstall/home", ..]
 			# so we'll determine the minimum common path and assume that's the root
-			path_strings = [str(m) for m in lsblk_info.mountpoints]
-			common_prefix = os.path.commonprefix(path_strings)
-			mountpoint = Path(common_prefix)
+			try:
+				common_path = os.path.commonpath(lsblk_info.mountpoints)
+			except ValueError:
+				return subvol_infos
+
+			mountpoint = Path(common_path)
 
 		try:
 			result = SysCommand(f'btrfs subvolume list {mountpoint}').decode()
@@ -227,20 +249,16 @@ class DeviceHandler:
 		# to the corresponding mountpoints
 		btrfs_subvol_info = dict(zip(lsblk_info.fsroots, lsblk_info.mountpoints))
 
-		try:
-			# ID 256 gen 16 top level 5 path @
-			for line in result.splitlines():
-				# expected output format:
-				# ID 257 gen 8 top level 5 path @home
-				name = Path(line.split(' ')[-1])
-				sub_vol_mountpoint = btrfs_subvol_info.get(name, None)
-				subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
-		except json.decoder.JSONDecodeError as err:
-			error(f"Could not decode lsblk JSON: {result}")
-			raise err
+		# ID 256 gen 16 top level 5 path @
+		for line in result.splitlines():
+			# expected output format:
+			# ID 257 gen 8 top level 5 path @home
+			name = Path(line.split(' ')[-1])
+			sub_vol_mountpoint = btrfs_subvol_info.get('/' / name, None)
+			subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
 
 		if not lsblk_info.mountpoint:
-			self.umount(dev_path)
+			umount(dev_path)
 
 		return subvol_infos
 
@@ -251,6 +269,7 @@ class DeviceHandler:
 		additional_parted_options: list[str] = []
 	) -> None:
 		mkfs_type = fs_type.value
+		command = None
 		options = []
 
 		match fs_type:
@@ -260,19 +279,22 @@ class DeviceHandler:
 			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
 				# Force create
 				options.append('-F')
-			case FilesystemType.Fat16 | FilesystemType.Fat32:
+			case FilesystemType.Fat12 | FilesystemType.Fat16 | FilesystemType.Fat32:
 				mkfs_type = 'fat'
 				# Set FAT size
 				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
 			case FilesystemType.Ntfs:
 				# Skip zeroing and bad sector check
 				options.append('--fast')
-			case FilesystemType.Reiserfs:
-				pass
+			case FilesystemType.LinuxSwap:
+				command = "mkswap"
 			case _:
 				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
 
-		cmd = [f'mkfs.{mkfs_type}', *options, *additional_parted_options, str(path)]
+		if not command:
+			command = f'mkfs.{mkfs_type}'
+
+		cmd = [command, *options, *additional_parted_options, str(path)]
 
 		debug('Formatting filesystem:', ' '.join(cmd))
 
@@ -287,7 +309,7 @@ class DeviceHandler:
 		self,
 		dev_path: Path,
 		mapper_name: str | None,
-		enc_password: str,
+		enc_password: Password | None,
 		lock_after_create: bool = True
 	) -> Luks2:
 		luks_handler = Luks2(
@@ -297,6 +319,8 @@ class DeviceHandler:
 		)
 
 		key_file = luks_handler.encrypt()
+
+		self.udev_sync()
 
 		luks_handler.unlock(key_file=key_file)
 
@@ -316,6 +340,9 @@ class DeviceHandler:
 		fs_type: FilesystemType,
 		enc_conf: DiskEncryption
 	) -> None:
+		if not enc_conf.encryption_password:
+			raise ValueError('No encryption password provided')
+
 		luks_handler = Luks2(
 			dev_path,
 			mapper_name=mapper_name,
@@ -323,6 +350,8 @@ class DeviceHandler:
 		)
 
 		key_file = luks_handler.encrypt()
+
+		self.udev_sync()
 
 		luks_handler.unlock(key_file=key_file)
 
@@ -339,7 +368,7 @@ class DeviceHandler:
 		self,
 		cmd: str,
 		info_type: Literal['lv', 'vg', 'pvseg']
-	) -> Any | None:
+	) -> LvmVolumeInfo | LvmGroupInfo | LvmPVInfo | None:
 		raw_info = SysCommand(cmd).decode().split('\n')
 
 		# for whatever reason the output sometimes contains
@@ -377,7 +406,23 @@ class DeviceHandler:
 
 		return None
 
-	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv', 'vg', 'pvseg']) -> Any | None:
+	@overload
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv']) -> LvmVolumeInfo | None:
+		...
+
+	@overload
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['vg']) -> LvmGroupInfo | None:
+		...
+
+	@overload
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['pvseg']) -> LvmPVInfo | None:
+		...
+
+	def _lvm_info_with_retry(
+		self,
+		cmd: str,
+		info_type: Literal['lv', 'vg', 'pvseg']
+	) -> LvmVolumeInfo | LvmGroupInfo | LvmPVInfo | None:
 		while True:
 			try:
 				return self._lvm_info(cmd, info_type)
@@ -512,7 +557,8 @@ class DeviceHandler:
 			length=length_sector.value
 		)
 
-		filesystem = FileSystem(type=part_mod.safe_fs_type.value, geometry=geometry)
+		fs_value = part_mod.safe_fs_type.parted_value
+		filesystem = FileSystem(type=fs_value, geometry=geometry)
 
 		partition = Partition(
 			disk=disk,
@@ -522,10 +568,10 @@ class DeviceHandler:
 		)
 
 		for flag in part_mod.flags:
-			partition.setFlag(flag.value)
+			partition.setFlag(flag.flag_id)
 
 		debug(f'\tType: {part_mod.type.value}')
-		debug(f'\tFilesystem: {part_mod.safe_fs_type.value}')
+		debug(f'\tFilesystem: {fs_value}')
 		debug(f'\tGeometry: {start_sector.value} start sector, {length_sector.value} length')
 
 		try:
@@ -533,9 +579,11 @@ class DeviceHandler:
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
-		if disk.type == PartitionTable.GPT.value and part_mod.is_root():
-			linux_root_x86_64 = "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709"
-			partition.type_uuid = uuid.UUID(linux_root_x86_64).bytes
+		if disk.type == PartitionTable.GPT.value:
+			if part_mod.is_root():
+				partition.type_uuid = PartitionGUID.LINUX_ROOT_X86_64.bytes
+			elif PartitionFlag.LINUX_HOME not in part_mod.flags and part_mod.is_home():
+				partition.setFlag(PartitionFlag.LINUX_HOME.flag_id)
 
 		# the partition has a path now that it has been added
 		part_mod.dev_path = Path(partition.path)
@@ -555,7 +603,7 @@ class DeviceHandler:
 			debug(f'Unable to determine new uuid: {path}\n{lsblk_info}')
 			raise DiskError(f'Unable to determine new uuid: {path}')
 
-		debug(f'partition information found: {lsblk_info.json()}')
+		debug(f'partition information found: {lsblk_info.model_dump_json()}')
 
 		return lsblk_info
 
@@ -569,12 +617,12 @@ class DeviceHandler:
 
 		self.mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 
-		for sub_vol in btrfs_subvols:
+		for sub_vol in sorted(btrfs_subvols, key=lambda x: x.name):
 			debug(f'Creating subvolume: {sub_vol.name}')
 
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
-			SysCommand(f"btrfs subvolume create {subvol_path}")
+			SysCommand(f"btrfs subvolume create -p {subvol_path}")
 
 			if BtrfsMountOption.nodatacow.value in mount_options:
 				try:
@@ -588,12 +636,12 @@ class DeviceHandler:
 				except SysCallError as err:
 					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
 
-		self.umount(path)
+		umount(path)
 
 	def create_btrfs_volumes(
 		self,
 		part_mod: PartitionModification,
-		enc_conf: 'DiskEncryption | None' = None
+		enc_conf: DiskEncryption | None = None
 	) -> None:
 		info(f'Creating subvolumes: {part_mod.safe_dev_path}')
 
@@ -623,19 +671,24 @@ class DeviceHandler:
 			options=part_mod.mount_options
 		)
 
-		for sub_vol in part_mod.btrfs_subvols:
+		for sub_vol in sorted(part_mod.btrfs_subvols, key=lambda x: x.name):
 			debug(f'Creating subvolume: {sub_vol.name}')
 
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
-			SysCommand(f"btrfs subvolume create {subvol_path}")
+			SysCommand(f"btrfs subvolume create -p {subvol_path}")
 
-		self.umount(dev_path)
+		umount(dev_path)
 
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
 			luks_handler.lock()
 
-	def unlock_luks2_dev(self, dev_path: Path, mapper_name: str, enc_password: str) -> Luks2:
+	def unlock_luks2_dev(
+		self,
+		dev_path: Path,
+		mapper_name: str,
+		enc_password: Password | None
+	) -> Luks2:
 		luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
 
 		if not luks_handler.is_unlocked():
@@ -658,7 +711,7 @@ class DeviceHandler:
 			if partition.fs_type == FilesystemType.Crypto_luks:
 				Luks2(partition.path).lock()
 			else:
-				self.umount(partition.path, recursive=True)
+				umount(partition.path, recursive=True)
 
 	def partition(
 		self,
@@ -668,18 +721,15 @@ class DeviceHandler:
 		"""
 		Create a partition table on the block device and create all partitions.
 		"""
-		if modification.wipe:
-			if partition_table is None:
-				raise ValueError('Modification is marked as wipe but no partitioning table was provided')
-
-			if partition_table.MBR and len(modification.partitions) > 3:
-				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
+		partition_table = partition_table or self.partition_table
 
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
+			if partition_table.is_mbr() and len(modification.partitions) > 3:
+				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
+
 			self.wipe_dev(modification.device)
-			part_table = partition_table.value if partition_table else None
-			disk = freshDisk(modification.device.disk.device, part_table)
+			disk = freshDisk(modification.device.disk.device, partition_table.value)
 		else:
 			info(f'Use existing device: {modification.device_path}')
 			disk = modification.device.disk
@@ -696,6 +746,13 @@ class DeviceHandler:
 			self._setup_partition(part_mod, modification.device, disk, requires_delete=requires_delete)
 
 		disk.commit()
+
+	@staticmethod
+	def swapon(path: Path) -> None:
+		try:
+			SysCommand(['swapon', str(path)])
+		except SysCallError as err:
+			raise DiskError(f'Could not enable swap {path}:\n{err.message}')
 
 	def mount(
 		self,
@@ -733,23 +790,6 @@ class DeviceHandler:
 			SysCommand(command)
 		except SysCallError as err:
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
-
-	def umount(self, mountpoint: Path, recursive: bool = False) -> None:
-		lsblk_info = get_lsblk_info(mountpoint)
-
-		if not lsblk_info.mountpoints:
-			return
-
-		debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
-
-		cmd = ['umount']
-
-		if recursive:
-			cmd.append('-R')
-
-		for path in lsblk_info.mountpoints:
-			debug(f'Unmounting mountpoint: {path}')
-			SysCommand(cmd + [str(path)])
 
 	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> list[DeviceModification]:
 		part_mods: dict[Path, list[PartitionModification]] = {}
@@ -808,6 +848,7 @@ class DeviceHandler:
 		auto-discovery tools don't recognize anything here.
 		"""
 		info(f'Wiping partitions and metadata: {block_device.device_info.path}')
+
 		for partition in block_device.partition_infos:
 			luks = Luks2(partition.path)
 			if luks.isLuks():
@@ -826,15 +867,3 @@ class DeviceHandler:
 
 
 device_handler = DeviceHandler()
-
-
-def disk_layouts() -> str:
-	try:
-		lsblk_info = get_all_lsblk_info()
-		return json.dumps(lsblk_info, indent=4, sort_keys=True, cls=JSON)
-	except SysCallError as err:
-		warn(f"Could not return disk layouts: {err}")
-		return ''
-	except json.decoder.JSONDecodeError as err:
-		warn(f"Could not return disk layouts: {err}")
-		return ''

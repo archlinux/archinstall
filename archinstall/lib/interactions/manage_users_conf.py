@@ -1,24 +1,26 @@
 from __future__ import annotations
 
 import re
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
-from ..utils.util import get_password
-from ..menu import ListManager
+from archinstall.tui.curses_menu import EditMenu, SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, Orientation
+
+from ..menu.list_manager import ListManager
 from ..models.users import User
-from ..general import secret
-
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	Alignment, EditMenu, Orientation,
-	ResultType
-)
+from ..utils.util import get_password
 
 if TYPE_CHECKING:
-	_: Any
+	from collections.abc import Callable
+
+	from archinstall.lib.translationhandler import DeferredTranslation
+
+	_: Callable[[str], DeferredTranslation]
 
 
-class UserList(ListManager):
+class UserList(ListManager[User]):
 	def __init__(self, prompt: str, lusers: list[User]):
 		self._actions = [
 			str(_('Add a user')),
@@ -26,11 +28,19 @@ class UserList(ListManager):
 			str(_('Promote/Demote user')),
 			str(_('Delete User'))
 		]
-		super().__init__(prompt, lusers, [self._actions[0]], self._actions[1:])
 
+		super().__init__(
+			lusers,
+			[self._actions[0]],
+			self._actions[1:],
+			prompt
+		)
+
+	@override
 	def selected_action_display(self, selection: User) -> str:
 		return selection.username
 
+	@override
 	def handle_action(self, action: str, entry: User | None, data: list[User]) -> list[User]:
 		if action == self._actions[0]:  # add
 			new_user = self._add_user()
@@ -81,13 +91,13 @@ class UserList(ListManager):
 		if not password:
 			return None
 
-		header += f'{_("Password")}: {secret(password)}\n\n'
+		header += f'{_("Password")}: {password.hidden()}\n\n'
 		header += str(_('Should "{}" be a superuser (sudo)?\n')).format(username)
 
 		group = MenuItemGroup.yes_no()
 		group.focus_item = MenuItem.yes()
 
-		result = SelectMenu(
+		result = SelectMenu[bool](
 			group,
 			header=header,
 			alignment=Alignment.CENTER,

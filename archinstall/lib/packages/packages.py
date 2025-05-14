@@ -1,13 +1,14 @@
-import dataclasses
 import json
 import ssl
-from typing import Any
+from functools import lru_cache
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
+from urllib.response import addinfourl
 
 from ..exceptions import PackageError, SysCallError
-from ..models.gen import PackageSearch, PackageSearchResult, LocalPackage
+from ..models.packages import AvailablePackage, LocalPackage, PackageSearch, PackageSearchResult, Repository
+from ..output import debug
 from ..pacman import Pacman
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
@@ -15,7 +16,7 @@ BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
 BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/'
 
 
-def _make_request(url: str, params: dict[str, str]) -> Any:
+def _make_request(url: str, params: dict[str, str]) -> addinfourl:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -77,7 +78,7 @@ def find_package(package: str) -> list[PackageSearchResult]:
 	return results
 
 
-def find_packages(*names: str) -> dict[str, Any]:
+def find_packages(*names: str) -> dict[str, PackageSearchResult]:
 	"""
 	This function returns the search results for many packages.
 	The function itself is rather slow, so consider not sending to
@@ -103,14 +104,62 @@ def validate_package_list(packages: list[str]) -> tuple[list[str], list[str]]:
 	return list(valid_packages), list(invalid_packages)
 
 
-def installed_package(package: str) -> LocalPackage:
-	package_info = {}
+def installed_package(package: str) -> LocalPackage | None:
+	package_info = []
 	try:
-		for line in Pacman.run(f"-Q --info {package}"):
-			if b':' in line:
-				key, value = line.decode().split(':', 1)
-				package_info[key.strip().lower().replace(' ', '_')] = value.strip()
+		package_info = Pacman.run(f'-Q --info {package}').decode().split('\n')
+		return _parse_package_output(package_info, LocalPackage)
 	except SysCallError:
 		pass
 
-	return LocalPackage({field.name: package_info.get(field.name) for field in dataclasses.fields(LocalPackage)})  # type: ignore  # pylint: disable=no-value-for-parameter
+	return None
+
+
+@lru_cache
+def list_available_packages(
+	repositories: tuple[Repository]
+) -> dict[str, AvailablePackage]:
+	"""
+	Returns a list of all available packages in the database
+	"""
+	packages: dict[str, AvailablePackage] = {}
+	current_package: list[str] = []
+	filtered_repos = [name for repo in repositories for name in repo.get_repository_list()]
+
+	try:
+		Pacman.run("-Sy")
+	except Exception as e:
+		debug(f'Failed to sync Arch Linux package database: {e}')
+
+	for line in Pacman.run('-S --info'):
+		dec_line = line.decode().strip()
+		current_package.append(dec_line)
+
+		if dec_line.startswith('Validated'):
+			if current_package:
+				avail_pkg = _parse_package_output(current_package, AvailablePackage)
+				if avail_pkg.repository in filtered_repos:
+					packages[avail_pkg.name] = avail_pkg
+				current_package = []
+
+	return packages
+
+
+@lru_cache(maxsize=128)
+def _normalize_key_name(key: str) -> str:
+	return key.strip().lower().replace(' ', '_')
+
+
+def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
+	package_meta: list[str],
+	cls: type[PackageType]
+) -> PackageType:
+	package = {}
+
+	for line in package_meta:
+		if ':' in line:
+			key, value = line.split(':', 1)
+			key = _normalize_key_name(key)
+			package[key] = value.strip()
+
+	return cls.model_validate(package)

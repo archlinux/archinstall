@@ -8,9 +8,9 @@
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium)*.
 
-* archinstall [discord](https://discord.gg/cqXU88y) server
-* archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
-* archinstall [#archinstall@irc.libera.chat](irc://#archinstall@irc.libera.chat:6697)
+* archinstall [discord](https://discord.gg/aDeMffrxNg) server
+* archinstall [#archinstall:matrix.org](https://matrix.to/#/#archinstall:matrix.org) Matrix channel
+* archinstall [#archinstall@irc.libera.chat:6697](https://web.libera.chat/?channel=#archinstall)
 * archinstall [documentation](https://archinstall.archlinux.page/)
 
 # Installation & Usage
@@ -56,10 +56,22 @@ To load the configuration file into `archinstall` run the following command
 archinstall --config <path to user config file or URL> --creds <path to user credentials config file or URL>
 ```
 
+### Credentials configuration file encryption
+By default all user account credentials are hashed with `yescrypt` and only the hash is stored in the saved `user_credentials.json` file.
+This is not possible for disk encryption password which needs to be stored in plaintext to be able to apply it.
+
+However, when selecting to save configuration files, `archinstall` will prompt for the option to encrypt the `user_credentials.json` file content.
+A prompt will require to enter a encryption password to encrypt the file. When providing an encrypted `user_configuration.json` as a argument with `--creds <user_credentials.json>`
+there are multiple ways to provide the decryption key:
+* Provide the decryption key via the command line argument `--creds-decryption-key <password>`
+* Store the encryption key in the environment variable `ARCHINSTALL_CREDS_DECRYPTION_KEY` which will be read automatically
+* If none of the above is provided a prompt will be shown to enter the decryption key manually
+
+
 # Help or Issues
 
 If you come across any issues, kindly submit your issue here on Github or post your query in the
-[discord](https://discord.gg/cqXU88y) help channel.
+[discord](https://discord.gg/aDeMffrxNg) help channel.
 
 When submitting an issue, please:
 * Provide the stacktrace of the output if applicable

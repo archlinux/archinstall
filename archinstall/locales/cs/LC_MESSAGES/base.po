@@ -3,13 +3,13 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: walken <walken@centrum.cz>\n"
+"Last-Translator: Martin Kozák <martin.kozak@outlook.cz>\n"
 "Language-Team: \n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Soubor protokolu byl vytvořen zde: {} {}"
@@ -1303,198 +1303,364 @@ msgid " (default)"
 msgstr " (výchozí)"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "Stiskněte Ctrl+h pro nápovědu"
 
-#, fuzzy
 msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Vyberte možnost jak zpřístupnit pro Sway váš hardware"
+msgstr "Vyberte možnost jak zpřístupnit pro Sway váš hardware"
 
 msgid "Seat access"
-msgstr ""
+msgstr "Přístup k sezení"
 
-#, fuzzy
 msgid "Mountpoint"
-msgstr "Přípojný bod: "
+msgstr "Přípojný bod"
 
 msgid "HSM"
-msgstr ""
+msgstr "HSM"
 
-#, fuzzy
 msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr "Zadejte šifrovací heslo celého disku (ponechte prázdné pro nepoužití šifrování): "
+msgstr "Zadejte heslo pro zašifrování disku (ponechte prázdné pro nepoužití šifrování)"
 
-#, fuzzy
 msgid "Disk encryption password"
-msgstr "Šifrovací heslo"
+msgstr "Heslo pro šifrování disku"
 
-#, fuzzy
 msgid "Partition - New"
-msgstr "Diskový oddíl"
+msgstr "Diskový oddíl - Nový"
 
-#, fuzzy
 msgid "Filesystem"
-msgstr "Změnit souborový systém"
+msgstr "Souborový systém"
 
 msgid "Invalid size"
-msgstr ""
+msgstr "Neplatná velikost"
 
-#, fuzzy
 msgid "Start (default: sector {}): "
-msgstr "Zadejte počátek (výchozí: sektor {}): "
+msgstr "Počátek (výchozí: sektor {}): "
 
-#, fuzzy
 msgid "End (default: {}): "
-msgstr "Zadejte konec (výchozí: {}): "
+msgstr "Konec (výchozí: {}): "
 
-#, fuzzy
 msgid "Subvolume name"
-msgstr "Název podsvazku "
+msgstr "Název podsvazku"
 
-#, fuzzy
 msgid "Disk configuration type"
-msgstr "Konfigurace disku"
+msgstr "Typ konfigurace disku"
 
 msgid "Root mount directory"
-msgstr ""
+msgstr "Kořenový adresář pro připojení"
 
-#, fuzzy
 msgid "Select language"
-msgstr "Místní jazyk"
+msgstr "Vyberte jazyk"
 
-#, fuzzy
 msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "Zadejte další balíčky k instalaci (oddělené mezerou, ponechte prázdné k přeskočení): "
+msgstr "Zadejte další balíčky k instalaci (oddělené mezerou, ponechte prázdné k přeskočení)"
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "Neplatný počet stahování"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "Počet stahování"
 
-#, fuzzy
 msgid "The username you entered is invalid"
-msgstr "Zadané uživatelské jméno není platné. Zkuste to znovu"
+msgstr "Zadané uživatelské jméno není platné"
 
-#, fuzzy
 msgid "Username"
-msgstr "Uživatelské jméno: "
+msgstr "Uživatelské jméno"
 
-#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "Má být \"{}\" superuživatelem (sudoer)?"
+msgstr "Má být \"{}\" superuživatelem (sudoer)?\n"
 
-#, fuzzy
 msgid "Interfaces"
-msgstr "Přidat rozhraní"
+msgstr "Rozhraní"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "Musíte zadat platnou IP adresu"
 
 msgid "Modes"
-msgstr ""
+msgstr "Režimy"
 
 msgid "IP address"
-msgstr ""
+msgstr "IP adresa"
 
-#, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
-msgstr "Zadejte IP vaší brány (routeru) nebo ponechte prázdné pro žádnou: "
+msgstr "Zadejte IP vaší brány (routeru) nebo ponechte prázdné pro žádnou"
 
 msgid "Gateway address"
-msgstr ""
+msgstr "Adresa brány"
 
-#, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr "Zadejte vaše DNS servery (oddělené mezerou, ponechte prázdné pro žádné): "
+msgstr "Zadejte vaše DNS servery (oddělené mezerou, ponechte prázdné pro žádné):"
 
-#, fuzzy
 msgid "DNS servers"
-msgstr "Žádný audio server"
+msgstr "DNS servery"
 
-#, fuzzy
 msgid "Configure interfaces"
-msgstr "Nakonfigurováno {} rozhraní"
+msgstr "Nakonfigurujte rozhraní"
 
-#, fuzzy
 msgid "Kernel"
-msgstr "Jádra"
+msgstr "Jádro"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "UEFI nebylo nalezeno a některé možnosti jsou vypnuty"
 
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
-#, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "Sway nepodporuje proprietární ovladač Nvidia. Pravděpodobně narazíte na problémy, přejete si pokračovat?"
+msgstr "Sway nepodporuje proprietární ovladač Nvidia."
 
-#, fuzzy
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "Sway nepodporuje proprietární ovladač Nvidia. Pravděpodobně narazíte na problémy, přejete si pokračovat?"
+msgstr "Pravděpodobně narazíte na problémy, přejete si pokračovat?"
 
-#, fuzzy
 msgid "Main profile"
-msgstr "Změnit profil"
+msgstr "Hlavní profil"
 
-#, fuzzy
 msgid "Confirm password"
-msgstr "Změnit heslo"
+msgstr "Potvrdit heslo"
 
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "Potvrzovací heslo se neshoduje, zkuste to prosím znovu"
 
-#, fuzzy
 msgid "Not a valid directory"
-msgstr "Adresář není validní: {}"
+msgstr "Adresář není validní"
 
-#, fuzzy
 msgid "Would you like to continue?"
-msgstr "Přejete si použít BTRFS kompresi?"
+msgstr "Přejete si pokračovat?"
 
 msgid "Directory"
-msgstr ""
+msgstr "Adresář"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr ""
-"Zadejte adresář pro uložení konfigurace (konfigurací). Doplňování pomocí tab je zapnuto\n"
-"Adresář pro uložení: "
+msgstr "Zadejte adresář pro uložení konfigurace (doplňování pomocí tab je zapnuto)"
 
-#, fuzzy
 msgid "Do you want to save the configuration file(s) to {}?"
-msgstr ""
-"Chcete uložit {} konfiguračních souborů do následujícího umístění?\n"
-"\n"
-"{}"
+msgstr "Chcete uložit konfigurační soubor(y) do {}?"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Povoleno"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Zakázáno"
 
-#, fuzzy
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Prosím, informujte nás o této chybě (spolu se souborem) na https://github.com/archlinux/archinstall/issues"
+msgstr "Prosím, informujte nás o této chybě (spolu se souborem) na https://github.com/archlinux/archinstall/issues"
 
-#, fuzzy
 msgid "Mirror name"
-msgstr "Oblast zrcadla"
+msgstr "Jméno zrcadla"
 
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
-#, fuzzy
 msgid "Select signature check"
-msgstr "Zvolit možnost kontroly podpisu"
+msgstr "Zvolit kontrolu podpisu"
 
-#, fuzzy
 msgid "Select execution mode"
 msgstr "Zvolte způsob provedení"
 
 msgid "Press ? for help"
-msgstr ""
+msgstr "Stiskněte ? pro nápovědu"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Vyberte možnost jak zpřístupnit pro Hyprland váš hardware"
+
+msgid "Additional repositories"
+msgstr "Dodatečné repozitáře"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Swap na zram"
+
+msgid "Name"
+msgstr "Jméno"
+
+msgid "Signature check"
+msgstr "Kontrola podpisu"
+
+msgid "Selected free space segment on device {}:"
+msgstr "Vybrané volné sektory na zařízení {}:"
+
+msgid "Size: {} / {}"
+msgstr "Velikost: {} / {}"
+
+msgid "Size (default: {}): "
+msgstr "Velikost (výchozí: {}): "
+
+msgid "HSM device"
+msgstr "HSM zařízení"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Některé balíčky nemohly být nalezeny v repozitáři"
+
+msgid "User"
+msgstr "Uživatel"
+
+msgid "The specified configuration will be applied"
+msgstr "Bude použita zvolená konfigurace"
+
+msgid "Wipe"
+msgstr "Vymazat"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Označit/Odznačit jako XBOOTLDR"
+
+msgid "Loading packages..."
+msgstr "Načítání balíčků..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Vyberte balíčky z níže uvedeného seznamu, které by měly být dodatečně nainstalovány"
+
+msgid "Add a custom repository"
+msgstr "Přidat vlastní repozitář"
+
+msgid "Change custom repository"
+msgstr "Změnit vlastní repozitář"
+
+msgid "Delete custom repository"
+msgstr "Smazat vlastní repozitář"
+
+msgid "Repository name"
+msgstr "Jméno repozitáře"
+
+msgid "Add a custom server"
+msgstr "Přidat vlastní server"
+
+msgid "Change custom server"
+msgstr "Změnit vlastní server"
+
+msgid "Delete custom server"
+msgstr "Smazat vlastní server"
+
+msgid "Server url"
+msgstr "URL serveru"
+
+msgid "Select regions"
+msgstr "Vyberte regiony"
+
+msgid "Add custom servers"
+msgstr "Přidat vlastní servery"
+
+msgid "Add custom repository"
+msgstr "Přidat vlastní repozitář"
+
+msgid "Loading mirror regions..."
+msgstr "Načítání oblastí zrcadel..."
+
+msgid "Mirrors and repositories"
+msgstr "Zrcadla a repozitáře"
+
+msgid "Selected mirror regions"
+msgstr "Vybrané oblasti zrcadel"
+
+msgid "Custom servers"
+msgstr "Vlastní servery"
+
+msgid "Custom repositories"
+msgstr "Vlastní repozitáře"
+
+msgid "Only ASCII characters are supported"
+msgstr "Jsou podporovány pouze ASCII znaky"
+
+msgid "Show help"
+msgstr "Zobrazit nápovědu"
+
+msgid "Exit help"
+msgstr "Opustit nápovědu"
+
+msgid "Preview scroll up"
+msgstr "Posunout náhled dolů"
+
+msgid "Preview scroll down"
+msgstr "Posunout náhled dolů"
+
+msgid "Move up"
+msgstr "Posunout nahoru"
+
+msgid "Move down"
+msgstr "Posunout dolů"
+
+msgid "Move right"
+msgstr "Posunout doprava"
+
+msgid "Move left"
+msgstr "Posunout doleva"
+
+msgid "Jump to entry"
+msgstr "Přejít na položku"
+
+msgid "Skip selection (if available)"
+msgstr "Přeskočit výběr (je-li dostupné)"
+
+msgid "Reset selection (if available)"
+msgstr "Zrušit výběr (je-li dostupné)"
+
+msgid "Select on single select"
+msgstr "Výběr jedné možnosti"
+
+msgid "Select on multi select"
+msgstr "Výběr více možností"
+
+msgid "Reset"
+msgstr "Zrušit"
+
+msgid "Skip selection menu"
+msgstr "Přeskočit výběr"
+
+msgid "Start search mode"
+msgstr "Spustit režim vyhledávání"
+
+msgid "Exit search mode"
+msgstr "Opustit režim vyhledávání"
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "labwc vyžaduje přístup k vašemu sezení (soubor zařízení jako např. klávesnice, myš, atd.)"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Vyberte možnost jak zpřístupnit pro labwc váš hardware"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "niri vyžaduje přístup k vašemu sezení (soubor zařízení jako např. klávesnice, myš, atd.)"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Vyberte možnost jak zpřístupnit pro niri váš hardware"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Označit/Odznačit jako ESP"
+
+msgid "Package group:"
+msgstr "Skupina balíčků:"
+
+msgid "Exit archinstall"
+msgstr "Ukončit archinstall"
+
+msgid "Reboot system"
+msgstr "Restartovat systém"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "Vstoupit skrze chroot do své nově vytvořené instalace a provést závěrečnou konfiguraci"
+
+msgid "Installation completed"
+msgstr "Instalace dokončena"
+
+msgid "What would you like to do next?"
+msgstr "Co si přejete udělat dál?"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr "Zvolte který režim má být nastaven pro \"{}\""
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Neplatné heslo pro dešifrování souboru s přihlašovacími údaji"
+
+msgid "Incorrect password"
+msgstr "Neplatné heslo"
+
+msgid "Credentials file decryption password"
+msgstr "Heslo pro dešifrování souboru s přihlašovacími údaji"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Chcete zašifrovat soubor user_credentials.json?"
+
+msgid "Credentials file encryption password"
+msgstr "Heslo pro zašifrování souboru s přihlašovacími údaji"
+
+msgid "Repositories: {}"
+msgstr "Repozitáře: {}"

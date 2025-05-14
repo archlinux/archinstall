@@ -1,5 +1,6 @@
 import time
 from collections.abc import Iterator
+
 from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
@@ -16,7 +17,7 @@ class Boot:
 
 	def __enter__(self) -> 'Boot':
 		if (existing_session := storage.get('active_boot', None)) and existing_session.instance != self.instance:
-			raise KeyError("Archinstall only supports booting up one instance, and a active session is already active and it is not this one.")
+			raise KeyError("Archinstall only supports booting up one instance and another session is already active.")
 
 		if existing_session:
 			self.session = existing_session.session
@@ -25,7 +26,7 @@ class Boot:
 			# '-P' or --console=pipe  could help us not having to do a bunch
 			# of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
 			self.session = SysCommandWorker([
-				'/usr/bin/systemd-nspawn',
+				'systemd-nspawn',
 				'-D', str(self.instance.target),
 				'--timezone=off',
 				'-b',
@@ -79,8 +80,7 @@ class Boot:
 
 	def __iter__(self) -> Iterator[bytes]:
 		if self.session:
-			for value in self.session:
-				yield value
+			yield from self.session
 
 	def __contains__(self, key: bytes) -> bool:
 		if self.session is None:

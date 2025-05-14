@@ -1,10 +1,6 @@
 import curses
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Any
-
-from .menu_item import MenuItem
-
 
 SCROLL_INTERVAL = 10
 
@@ -19,37 +15,37 @@ class STYLE(Enum):
 
 class MenuKeys(Enum):
 	# latin keys
-	STD_KEYS = set(range(32, 127))
+	STD_KEYS = frozenset(range(32, 127))
 	# numbers
-	NUM_KEYS = set(range(49, 58))
+	NUM_KEYS = frozenset(range(49, 58))
 	# Menu up: up, k
-	MENU_UP = {259, 107}
+	MENU_UP = frozenset({259, 107})
 	# Menu down: down, j
-	MENU_DOWN = {258, 106}
+	MENU_DOWN = frozenset({258, 106})
 	# Menu left: left, h
-	MENU_LEFT = {260, 104}
+	MENU_LEFT = frozenset({260, 104})
 	# Menu right: right, l
-	MENU_RIGHT = {261, 108}
+	MENU_RIGHT = frozenset({261, 108})
 	# Menu start: home CTRL-a
-	MENU_START = {262, 1}
+	MENU_START = frozenset({262, 1})
 	# Menu end: end CTRL-e
-	MENU_END = {360, 5}
+	MENU_END = frozenset({360, 5})
 	# Enter
-	ACCEPT = {10}
+	ACCEPT = frozenset({10})
 	# Selection: space, tab
-	MULTI_SELECT = {32, 9}
+	MULTI_SELECT = frozenset({32, 9})
 	# Search: /
-	ENABLE_SEARCH = {47}
+	ENABLE_SEARCH = frozenset({47})
 	# ESC
-	ESC = {27}
+	ESC = frozenset({27})
 	# BACKSPACE (search)
-	BACKSPACE = {127, 263}
-	# Help view: ?
-	HELP = {63}
-	# Scroll up: CTRL+up, CTRL+k
-	SCROLL_UP = {581}
-	# Scroll down: CTRL+down, CTRL+j
-	SCROLL_DOWN = {540}
+	BACKSPACE = frozenset({127, 263})
+	# Help view: ctrl+h
+	HELP = frozenset({8})
+	# Scroll up: PGUP
+	SCROLL_UP = frozenset({339})
+	# Scroll down: PGDOWN
+	SCROLL_DOWN = frozenset({338})
 
 	@classmethod
 	def from_ord(cls, key: int) -> list['MenuKeys']:
@@ -95,21 +91,9 @@ class FrameProperties:
 		)
 
 
-class ResultType(Enum):
-	Selection = auto()
-	Skip = auto()
-	Reset = auto()
-
-
 class Orientation(Enum):
 	VERTICAL = auto()
 	HORIZONTAL = auto()
-
-
-@dataclass
-class MenuCell:
-	item: MenuItem
-	text: str
 
 
 class PreviewStyle(Enum):
@@ -134,33 +118,6 @@ class Chars:
 	Check = "+"
 	Cross = "x"
 	Right_arrow = "←"
-
-
-@dataclass
-class Result:
-	type_: ResultType
-	_item: MenuItem | list[MenuItem] | str | None
-
-	def has_item(self) -> bool:
-		return self._item is not None
-
-	def get_value(self) -> Any:
-		return self.item().get_value()
-
-	def get_values(self) -> list[Any]:
-		return [i.get_value() for i in self.items()]
-
-	def item(self) -> MenuItem:
-		assert self._item is not None and isinstance(self._item, MenuItem)
-		return self._item
-
-	def items(self) -> list[MenuItem]:
-		assert self._item is not None and isinstance(self._item, list)
-		return self._item
-
-	def text(self) -> str:
-		assert self._item is not None and isinstance(self._item, str)
-		return self._item
 
 
 @dataclass

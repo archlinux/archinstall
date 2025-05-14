@@ -1,15 +1,15 @@
 import logging
 import os
 import sys
-import unicodedata
 from collections.abc import Callable
-from enum import Enum
-
-from pathlib import Path
-from typing import Any, TYPE_CHECKING
 from dataclasses import asdict, is_dataclass
+from datetime import UTC, datetime
+from enum import Enum
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from .storage import storage
+from .utils.unicode import unicode_ljust, unicode_rjust
 
 if TYPE_CHECKING:
 	from _typeshed import DataclassInstance
@@ -21,7 +21,7 @@ class FormattedOutput:
 	def _get_values(
 		cls,
 		o: 'DataclassInstance',
-		class_formatter: str | Callable | None = None,
+		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = []
 	) -> dict[str, Any]:
 		"""
@@ -53,7 +53,7 @@ class FormattedOutput:
 	def as_table(
 		cls,
 		obj: list[Any],
-		class_formatter: str | Callable | None = None,
+		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = [],
 		capitalize: bool = False
 	) -> str:
@@ -134,7 +134,7 @@ class Journald:
 	@staticmethod
 	def log(message: str, level: int = logging.DEBUG) -> None:
 		try:
-			import systemd.journal  # type: ignore
+			import systemd.journal  # type: ignore[import-not-found]
 		except ModuleNotFoundError:
 			return None
 
@@ -238,7 +238,7 @@ def _stylize_output(
 	code_list = []
 
 	if text == '' and reset:
-		return '\x1b[%sm' % '0'
+		return '\x1b[0m'
 
 	code_list.append(foreground[str(fg)])
 
@@ -262,6 +262,11 @@ def info(
 	font: list[Font] = []
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
+
+
+def _timestamp() -> str:
+	now = datetime.now(tz=UTC)
+	return now.strftime('%Y-%m-%d %H:%M:%S')
 
 
 def debug(
@@ -316,46 +321,16 @@ def log(
 	if _supports_color():
 		text = _stylize_output(text, fg, bg, reset, font)
 
-	log_file: Path = storage['LOG_PATH'] / storage['LOG_FILE']
+	log_file = storage['LOG_PATH'] / storage['LOG_FILE']
 
 	with log_file.open('a') as fp:
-		fp.write(f"{orig_string}\n")
+		ts = _timestamp()
+		level_name = logging.getLevelName(level)
+		out = f"[{ts}] - {level_name} - {orig_string}\n"
+		fp.write(out)
 
 	Journald.log(text, level=level)
 
-	if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
-		from archinstall.tui import Tui
+	if level != logging.DEBUG:
+		from archinstall.tui.curses_menu import Tui
 		Tui.print(text)
-
-
-def _count_wchars(string: str) -> int:
-	"Count the total number of wide characters contained in a string"
-	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
-
-
-def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
-	"""Return a left-justified unicode string of length width.
-	>>> unicode_ljust('Hello', 15, '*')
-	'Hello**********'
-	>>> unicode_ljust('你好', 15, '*')
-	'你好***********'
-	>>> unicode_ljust('안녕하세요', 15, '*')
-	'안녕하세요*****'
-	>>> unicode_ljust('こんにちは', 15, '*')
-	'こんにちは*****'
-	"""
-	return string.ljust(width - _count_wchars(string), fillbyte)
-
-
-def unicode_rjust(string: str, width: int, fillbyte: str = ' ') -> str:
-	"""Return a right-justified unicode string of length width.
-	>>> unicode_rjust('Hello', 15, '*')
-	'**********Hello'
-	>>> unicode_rjust('你好', 15, '*')
-	'***********你好'
-	>>> unicode_rjust('안녕하세요', 15, '*')
-	'*****안녕하세요'
-	>>> unicode_rjust('こんにちは', 15, '*')
-	'*****こんにちは'
-	"""
-	return string.rjust(width - _count_wchars(string), fillbyte)

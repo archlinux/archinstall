@@ -1,35 +1,35 @@
-from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, override
 
-from archinstall.default_profiles.profile import ProfileType, GreeterType, SelectResult
+from archinstall.default_profiles.desktops import SeatAccess
+from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
-from archinstall.tui import (
-	MenuItemGroup, MenuItem, SelectMenu,
-	FrameProperties, ResultType, Alignment
-)
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties
 
 if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
-	_: Any
+	from collections.abc import Callable
 
+	from archinstall.lib.translationhandler import DeferredTranslation
 
-class SeatAccess(Enum):
-	seatd = 'seatd'
-	polkit = 'polkit'
+	_: Callable[[str], DeferredTranslation]
 
 
 class HyprlandProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Hyprland', ProfileType.DesktopEnv, description='')
+		super().__init__('Hyprland', ProfileType.DesktopEnv)
 
 		self.custom_settings = {'seat_access': None}
 
 	@property
+	@override
 	def packages(self) -> list[str]:
 		return [
 			"hyprland",
 			"dunst",
 			"kitty",
+			"uwsm",
 			"dolphin",
 			"wofi",
 			"xdg-desktop-portal-hyprland",
@@ -37,14 +37,16 @@ class HyprlandProfile(XorgProfile):
 			"qt6-wayland",
 			"polkit-kde-agent",
 			"grim",
-			"slurp"
+			"slurp",
 		]
 
 	@property
-	def default_greeter_type(self) -> GreeterType | None:
+	@override
+	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Sddm
 
 	@property
+	@override
 	def services(self) -> list[str]:
 		if pref := self.custom_settings.get('seat_access', None):
 			return [pref]
@@ -52,8 +54,8 @@ class HyprlandProfile(XorgProfile):
 
 	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
-		header = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
-		header += '\n' + str(_('Choose an option to give Sway access to your hardware')) + '\n'
+		header = str(_('Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		header += '\n' + str(_('Choose an option to give Hyprland access to your hardware')) + '\n'
 
 		items = [MenuItem(s.value, value=s) for s in SeatAccess]
 		group = MenuItemGroup(items, sort_items=True)
@@ -61,7 +63,7 @@ class HyprlandProfile(XorgProfile):
 		default = self.custom_settings.get('seat_access', None)
 		group.set_default_by_value(default)
 
-		result = SelectMenu(
+		result = SelectMenu[SeatAccess](
 			group,
 			header=header,
 			allow_skip=False,
@@ -71,11 +73,9 @@ class HyprlandProfile(XorgProfile):
 
 		if result.type_ == ResultType.Selection:
 			if result.item() is not None:
-				self.custom_settings['seat_access'] = result.get_value()
+				self.custom_settings['seat_access'] = result.get_value().value
 
-	def do_on_select(self) -> SelectResult | None:
+	@override
+	def do_on_select(self) -> None:
 		self._ask_seat_access()
 		return None
-
-	def install(self, install_session: 'Installer') -> None:
-		super().install(install_session)

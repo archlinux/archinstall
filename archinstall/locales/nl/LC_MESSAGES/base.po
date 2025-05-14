@@ -1574,6 +1574,245 @@ msgstr "Kies een actie voor '{}'"
 msgid "Press ? for help"
 msgstr ""
 
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr ""
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Aanvullende pakketbronnen"
+
+msgid "NTP"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Kies een schijfindeling"
+
+msgid "Selected free space segment on device {}:"
+msgstr ""
+
+msgid "Size: {} / {}"
+msgstr ""
+
+#, fuzzy
+msgid "Size (default: {}): "
+msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+
+msgid "HSM device"
+msgstr ""
+
+msgid "Some packages could not be found in the repository"
+msgstr ""
+
+#, fuzzy
+msgid "User"
+msgstr "Gebruikersnaam: "
+
+msgid "The specified configuration will be applied"
+msgstr ""
+
+msgid "Wipe"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Partitie (de)markeren voor versleuteling"
+
+#, fuzzy
+msgid "Loading packages..."
+msgstr "Aanvullende pakketten"
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Gebruiker toevoegen"
+
+msgid "Change custom repository"
+msgstr ""
+
+msgid "Delete custom repository"
+msgstr ""
+
+#, fuzzy
+msgid "Repository name"
+msgstr "Spiegelserverregio"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Gebruiker toevoegen"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Kies een audioserver"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Gebruiker verwijderen"
+
+msgid "Server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Kies een schijfindeling"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Gebruiker toevoegen"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Gebruiker toevoegen"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Spiegelserverregio"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Aanvullende pakketbronnen"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Spiegelserverregio"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Kies een audioserver"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Aanvullende pakketbronnen"
+
+msgid "Only ASCII characters are supported"
+msgstr ""
+
+msgid "Show help"
+msgstr ""
+
+msgid "Exit help"
+msgstr ""
+
+msgid "Preview scroll up"
+msgstr ""
+
+msgid "Preview scroll down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move right"
+msgstr ""
+
+msgid "Move left"
+msgstr ""
+
+msgid "Jump to entry"
+msgstr ""
+
+msgid "Skip selection (if available)"
+msgstr ""
+
+msgid "Reset selection (if available)"
+msgstr ""
+
+#, fuzzy
+msgid "Select on single select"
+msgstr "Kies een schijfindeling"
+
+#, fuzzy
+msgid "Select on multi select"
+msgstr "Kies een tijdzone"
+
+msgid "Reset"
+msgstr ""
+
+#, fuzzy
+msgid "Skip selection menu"
+msgstr "Kies een actie voor '{}'"
+
+msgid "Start search mode"
+msgstr ""
+
+msgid "Exit search mode"
+msgstr ""
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr ""
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Partitie (de)markeren voor versleuteling"
+
+msgid "Package group:"
+msgstr ""
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Archinstall-taal"
+
+msgid "Reboot system"
+msgstr ""
+
+msgid "chroot into installation for post-installation configurations"
+msgstr ""
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
+
+#, fuzzy
+msgid "Select which mode to configure for \"{}\""
+msgstr "Geef aan welke modus moet worden gebruikt bij ‘{}’ of sla over om de standaardmodus (‘{}’) te gebruiken"
+
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Versleutelwachtwoord instellen"
+
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Rootwachtwoord"
+
+#, fuzzy
+msgid "Credentials file decryption password"
+msgstr "Versleutelwachtwoord instellen"
+
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Configuratie vastleggen"
+
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Versleutelwachtwoord instellen"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Spiegelserverregio"
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

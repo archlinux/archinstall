@@ -1,27 +1,25 @@
 from __future__ import annotations
 
 import shlex
-import time
 from dataclasses import dataclass
 from pathlib import Path
+from subprocess import CalledProcessError
 
-from . import disk
-from .general import SysCommand, generate_password, SysCommandWorker
-from .output import info, debug
-from .exceptions import SysCallError, DiskError
-from .storage import storage
+from archinstall.lib.disk.utils import get_lsblk_info, umount
+
+from .exceptions import DiskError, SysCallError
+from .general import SysCommand, SysCommandWorker, generate_password, run
+from .models.users import Password
+from .output import debug, info
 
 
 @dataclass
 class Luks2:
 	luks_dev_path: Path
 	mapper_name: str | None = None
-	password: str | None = None
+	password: Password | None = None
 	key_file: Path | None = None
 	auto_unmount: bool = False
-
-	# will be set internally after unlocking the device
-	_mapper_dev: Path | None = None
 
 	@property
 	def mapper_dev(self) -> Path | None:
@@ -53,9 +51,6 @@ class Luks2:
 		if self.auto_unmount:
 			self.lock()
 
-	def _default_key_file(self) -> Path:
-		return Path(f'/tmp/{self.luks_dev_path.name}.disk_pw')
-
 	def _password_bytes(self) -> bytes:
 		if not self.password:
 			raise ValueError('Password for luks2 device was not specified')
@@ -63,7 +58,18 @@ class Luks2:
 		if isinstance(self.password, bytes):
 			return self.password
 		else:
-			return bytes(self.password, 'UTF-8')
+			return bytes(self.password.plaintext, 'UTF-8')
+
+	def _get_passphrase_args(
+		self,
+		key_file: Path | None = None
+	) -> tuple[list[str], bytes | None]:
+		key_file = key_file or self.key_file
+
+		if key_file:
+			return ['--key-file', str(key_file)], None
+
+		return [], self._password_bytes()
 
 	def encrypt(
 		self,
@@ -71,22 +77,13 @@ class Luks2:
 		hash_type: str = 'sha512',
 		iter_time: int = 10000,
 		key_file: Path | None = None
-	) -> Path:
+	) -> Path | None:
 		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
-		byte_password = self._password_bytes()
+		key_file_arg, passphrase = self._get_passphrase_args(key_file)
 
-		if not key_file:
-			if self.key_file:
-				key_file = self.key_file
-			else:
-				key_file = self._default_key_file()
-
-				with open(key_file, 'wb') as fh:
-					fh.write(byte_password)
-
-		cryptsetup_args = shlex.join([
-			'/usr/bin/cryptsetup',
+		cmd = [
+			'cryptsetup',
 			'--batch-mode',
 			'--verbose',
 			'--type', 'luks2',
@@ -94,44 +91,27 @@ class Luks2:
 			'--hash', hash_type,
 			'--key-size', str(key_size),
 			'--iter-time', str(iter_time),
-			'--key-file', str(key_file),
+			*key_file_arg,
 			'--use-urandom',
-			'luksFormat', str(self.luks_dev_path),
-		])
+			'luksFormat', str(self.luks_dev_path)
+		]
 
-		debug(f'cryptsetup format: {cryptsetup_args}')
+		debug(f'cryptsetup format: {shlex.join(cmd)}')
 
-		# Retry formatting the volume because archinstall can some times be too quick
-		# which generates a "Device /dev/sdX does not exist or access denied." between
-		# setting up partitions and us trying to encrypt it.
-		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS'] + 1):
-			try:
-				result = SysCommand(cryptsetup_args).decode()
-				debug(f'cryptsetup luksFormat output: {result}')
-				break
-			except SysCallError as err:
-				time.sleep(storage['DISK_TIMEOUTS'])
+		try:
+			result = run(cmd, input_data=passphrase)
+		except CalledProcessError as err:
+			output = err.stdout.decode().rstrip()
+			raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {output}')
 
-				if retry_attempt != storage['DISK_RETRY_ATTEMPTS']:
-					continue
-
-				if err.exit_code == 1:
-					info(f'luks2 partition currently in use: {self.luks_dev_path}')
-					info('Attempting to unmount, crypt-close and trying encryption again')
-
-					self.lock()
-					# Then try again to set up the crypt-device
-					result = SysCommand(cryptsetup_args).decode()
-					debug(f'cryptsetup luksFormat output: {result}')
-				else:
-					raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {err}')
+		debug(f'cryptsetup luksFormat output: {result.stdout.decode().rstrip()}')
 
 		self.key_file = key_file
 
 		return key_file
 
 	def _get_luks_uuid(self) -> str:
-		command = f'/usr/bin/cryptsetup luksUUID {self.luks_dev_path}'
+		command = f'cryptsetup luksUUID {self.luks_dev_path}'
 
 		try:
 			return SysCommand(command).decode()
@@ -155,53 +135,40 @@ class Luks2:
 		if not self.mapper_name:
 			raise ValueError('mapper name missing')
 
-		byte_password = self._password_bytes()
+		key_file_arg, passphrase = self._get_passphrase_args(key_file)
 
-		if not key_file:
-			if self.key_file:
-				key_file = self.key_file
-			else:
-				key_file = self._default_key_file()
+		cmd = [
+			'cryptsetup', 'open',
+			str(self.luks_dev_path),
+			str(self.mapper_name),
+			*key_file_arg,
+			'--type', 'luks2'
+		]
 
-				with open(key_file, 'wb') as fh:
-					fh.write(byte_password)
+		result = run(cmd, input_data=passphrase)
 
-		wait_timer = time.time()
-		while Path(self.luks_dev_path).exists() is False and time.time() - wait_timer < 10:
-			time.sleep(0.025)
-
-		result = SysCommand(
-			'/usr/bin/cryptsetup open '
-			f'{self.luks_dev_path} '
-			f'{self.mapper_name} '
-			f'--key-file {key_file} '
-			f'--type luks2'
-		).decode()
-
-		debug(f'cryptsetup open output: {result}')
+		debug(f'cryptsetup open output: {result.stdout.decode().rstrip()}')
 
 		if not self.mapper_dev or not self.mapper_dev.is_symlink():
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
 	def lock(self) -> None:
-		disk.device_handler.umount(self.luks_dev_path)
+		umount(self.luks_dev_path)
 
 		# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 		# For instance: /dev/sda
-		lsblk_info = disk.get_lsblk_info(self.luks_dev_path)
+		lsblk_info = get_lsblk_info(self.luks_dev_path)
 
 		# For each child (sub-partition/sub-device)
 		for child in lsblk_info.children:
 			# Unmount the child location
 			for mountpoint in child.mountpoints:
 				debug(f'Unmounting {mountpoint}')
-				disk.device_handler.umount(mountpoint, recursive=True)
+				umount(mountpoint, recursive=True)
 
 			# And close it if possible.
 			debug(f"Closing crypt device {child.name}")
 			SysCommand(f"cryptsetup close {child.name}")
-
-		self._mapper_dev = None
 
 	def create_keyfile(self, target_path: Path, override: bool = False) -> None:
 		"""
@@ -236,8 +203,8 @@ class Luks2:
 	def _add_key(self, key_file: Path) -> None:
 		debug(f'Adding additional key-file {key_file}')
 
-		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
-		worker = SysCommandWorker(command, environment_vars={'LC_ALL': 'C'})
+		command = f'cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
+		worker = SysCommandWorker(command)
 		pw_injected = False
 
 		while worker.is_alive():
