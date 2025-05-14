@@ -2,16 +2,16 @@ msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Yahan aik log file bana di gai hay: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Bra'h meharbani is issue (aur file) ko https://github.com/archlinux/archinstall/issues par submit karain"
+msgstr "    brah e meharbani is issue (aur file) ko https://github.com/archlinux/archinstall/issues par submit krein"
 
 msgid "Do you really want to abort?"
-msgstr "Kia aap sach mein ye'h band karna chahtay hain?"
+msgstr "Kia aap sach mein yeh band karna chahtay hein?"
 
 msgid "And one more time for verification: "
 msgstr "Aik dafa aur bra'ay tasdeeq"
 
 msgid "Would you like to use swap on zram?"
-msgstr "Kia aap zram par swap istimal karna chahtay hain?"
+msgstr "Kia aap zram par swap istimal karna chahtay hein?"
 
 msgid "Desired hostname for the installation: "
 msgstr "Matlooba hostname is installation kay liay: "
@@ -23,13 +23,13 @@ msgid "Any additional users to install (leave blank for no users): "
 msgstr "Azafi sar'feen install kay liay (khali chod dain agar koi sar'feen nahi): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Kia ye'h sarif superuser (sudoer) hona chahiye?"
+msgstr "Kia yeh sarif superuser (sudoer) hona chahiye?"
 
 msgid "Select a timezone"
-msgstr "Aik timezone ka intikhan"
+msgstr "Aik timezone ka intikhab krein"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Kia aap GRUB ko bootloader kay taur par istimal karna chahtay hain, systemd-boot ki jaga'h?"
+msgstr "Kia aap GRUB ko bootloader kay taur par istimal karna chahtay hein, systemd-boot ki jaga'h?"
 
 msgid "Choose a bootloader"
 msgstr "Aik bootloader ka intikhab"
@@ -38,59 +38,59 @@ msgid "Choose an audio server"
 msgstr "Aik awaz kay server ka intikhab"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Sirf packages jaisa ke'h base, base-devel, linux, linux-firmware, efibootmgr aur ikhti'ari profile packages hi install hain."
+msgstr "Sirf packages jaisa ke'h base, base-devel, linux, linux-firmware, efibootmgr aur ikhti'ari profile packages hi install hein."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Agar aap web browser chahtay hain, jaise firefox ya chromium, to aap foori taur par kar saktay hain."
+msgstr "Agar aap web browser chahtay hein, jaise firefox ya chromium, to aap foori taur par kar saktay hein."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Azafi packages jo install karnay hain (space se alag karain, khali chod de'n agar kuch nahi): "
+msgstr "Azafi packages jo install karnay hein (space se alag krein, khali chod de'n agar kuch nahi): "
 
 msgid "Copy ISO network configuration to installation"
-msgstr "ISO network tarte'b ko installation par copy karain"
+msgstr "ISO network tarteb ko installation par copy krein"
 
 msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "NetworkManager ist'imal karain (GNOME aur KDE mein internet ko graphically tarte'b karnay kay liay zaruri)"
+msgstr "NetworkManager istimal krein (GNOME aur KDE mein internet ko graphically tarteb karnay kay liay zaruri)"
 
 msgid "Select one network interface to configure"
-msgstr "Tarte'b karnay kay liay aik network interface ka intikhab karain"
+msgstr "tarteb karnay kay liay aik network interface ka intikhab krein"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "intikhab karain ke'h \"{}\" kay liay kon sa mode tarte'b karna hay ya default mode \"{}\" istimal karnay kay liay skip karain"
+msgstr "intikhab krein ke'h \"{}\" kay liay kon sa mode tarteb karna hay ya default mode \"{}\" istimal karnay kay liay skip krein"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "IP aur subnet {} kay liay dar'j karain (masal kay taur par: 192.168.0.5/24): "
+msgstr "IP aur subnet {} kay liay dar'j krein (masal kay taur par: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "A'pnay gateway (router) IP address dar'j karain ya kuch nahi chodain: "
+msgstr "A'pnay gateway (router) IP address dar'j krein ya kuch nahi chodain: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "A'pnay DNS servers dar'j karain (space se alag, khali chodain agar koi nahi): "
+msgstr "A'pnay DNS servers dar'j krein (space se alag, khali chodain agar koi nahi): "
 
 msgid "Select which filesystem your main partition should use"
-msgstr "Marka'zi partition kay liay kon sa filesystem ist'imal karna chahtay hain intikhab karain"
+msgstr "Marka'zi partition kay liay kon sa filesystem istimal karna chahtay hein intikhab krein"
 
 msgid "Current partition layout"
-msgstr "Halia'h partition ki tarte'b "
+msgstr "Halia'h partition ki tarteb "
 
 msgid ""
 "Select what to do with\n"
 "{}"
 msgstr ""
-"Is kay sath kia karna hay, intikhab karain\n"
+"Is kay sath kia karna hay, intikhab krein\n"
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
-msgstr "Matlooba filesystem ki type partition kay liay dar'j karain"
+msgstr "Matlooba filesystem ki type partition kay liay dar'j krein"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Shroa'at dar'j karain (parted aka'ion me'n: s, GB, %, etc. ; default: {}): "
+msgstr "Shroa'at dar'j krein (parted aka'ion me'n: s, GB, %, etc. ; default: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "A'akhrat dar'j karain (parted aka'ion me'n: s, GB, %, etc. ; masal: {}): "
+msgstr "A'akhrat dar'j krein (parted aka'ion me'n: s, GB, %, etc. ; masal: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "{} me'n partitions hayn, ye'h mita day ga, aap sach mein ye'h karna chahtay hain?"
+msgstr "{} me'n partitions hayn, yeh mita day ga, aap sach mein yeh karna chahtay hein?"
 
 msgid ""
 "{}\n"
@@ -99,7 +99,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Index kay mutabi'q partitions ko hazif karain, intikhab karain"
+"Index kay mutabi'q partitions ko hazif krein, intikhab krein"
 
 msgid ""
 "{}\n"
@@ -108,13 +108,13 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Index kay mutabi'q partition ko kahan mount krna hay, intikhab karain"
+"Index kay mutabi'q partition ko kahan mount krna hay, intikhab krein"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Partition mount-points installation kay andar nisbatan hain, boot /boot ki masal hogi."
+msgstr " * Partition mount-points installation kay andar nisbatan hein, boot /boot ki masal hogi."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "intikhab karain, partition ko kahan mount karna hay (khali chodain agar mount point hata'na hay): "
+msgstr "intikhab krein, partition ko kahan mount karna hay (khali chodain agar mount point hata'na hay): "
 
 msgid ""
 "{}\n"
@@ -123,7 +123,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Kis partition ko format karnay kay liay mask karna hay, intikhab karain"
+"Kis partition ko format karnay kay liay mask karna hay, intikhab krein"
 
 msgid ""
 "{}\n"
@@ -132,7 +132,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Kis partition ko encrypt karna hay, intikhab karain"
+"Kis partition ko encrypt karna hay, intikhab krein"
 
 msgid ""
 "{}\n"
@@ -141,7 +141,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Kis partition ko bootable karna hay, intikhab karain"
+"Kis partition ko bootable karna hay, intikhab krein"
 msgid ""
 "{}\n"
 "\n"
@@ -149,43 +149,43 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Kis partition par filesystem karna hay, intikhab karain"
+"Kis partition par filesystem karna hay, intikhab krein"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Matlooba filesystem ki type partition kay liay dar'j karain: "
+msgstr "Matlooba filesystem ki type partition kay liay dar'j krein: "
 
 msgid "Archinstall language"
 msgstr "Archinstall ki zuban"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Tamam muntkhab drives ko mita kar aik best-effort default partition layout ist'imal karain"
+msgstr "Tamam muntkh'b drives ko mita kar aik best-effort default partition layout istimal krein"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Har infaradi drive kay sath kia karna hay (partition usage kay sath), intikhab karain"
+msgstr "Har infaradi drive kay sath kia karna hay (partition usage kay sath), intikhab krein"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Muntkh'b block devices kay sath kia karna chahtay hain, intikhab karain"
+msgstr "Muntkh'b block devices kay sath kia karna chahtay hein, intikhab krein"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "Ye'h pre-programmed profiles kia fe'hrist hay, ye'h asan bnati hain install karnay mein jaisa ke'h desktop environments"
+msgstr "yeh pre-programmed profiles kia fe'hrist hay, yeh asan bnati hein install karnay mein jaisa ke'h desktop environments"
 
 msgid "Select keyboard layout"
 msgstr "Keyboard kay layout ka intikhab"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Aik jaga'h kay intikhab karain, packages ko download karnay kay liay"
+msgstr "Aik jaga'h kay intikhab krein, packages ko download karnay kay liay"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr "Aik yah zi'ada hard drives ka intikhab karain istimal aur tarte'b karain"
+msgstr "Aik yah ziada hard drives ka intikhab krein istimal aur tarteb krein"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "AMD hardware ki achi mutab'qat kay liay, aap ya to tamam open-source ya AMD / ATI options ka istimal karna chahtay hain."
+msgstr "AMD hardware ki achi mutab'qat kay liay, aap ya to tamam open-source ya AMD / ATI options ka istimal karna chahtay hein."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Intel hardware ki achi mutab'qat kay liay, aap ya to tamam open-source ya Intel options ka istimal karna chahtay hain.\n"
+msgstr "Intel hardware ki achi mutab'qat kay liay, aap ya to tamam open-source ya Intel options ka istimal karna chahtay hein.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Nvidia hardware ki achi mutab'qat kay liay, aap ya to tamam Nvidia malki'ati driver istimal karna chahtay hain.\n"
+msgstr "Nvidia hardware ki achi mutab'qat kay liay, aap ya to tamam Nvidia malki'ati driver istimal karna chahtay hein.\n"
 
 msgid ""
 "\n"
@@ -194,31 +194,31 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"I'ntkhab karain aik graphics driver ya khali chodain tamam open-source drivers install karnay kay liay"
+"Intkhab krein aik graphics driver ya khali chodain tamam open-source drivers install karnay kay liay"
 
 msgid "All open-source (default)"
 msgstr "Tamam open-source (default)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "I'ntkhab karain konsi kernels ko istimal karna hay ya default kay liay khali chodain \"{}\""
+msgstr "intkhab krein konsi kernels ko istimal karna hay ya default kay liay khali chodain \"{}\""
 
 msgid "Choose which locale language to use"
-msgstr "I'ntkhab karain konsi locale zuban ko istimal karna hay"
+msgstr "intkhab krein konsi locale zuban ko istimal karna hay"
 
 msgid "Choose which locale encoding to use"
-msgstr "I'ntkhab karain konsi locale encoding ko istimal karna hay"
+msgstr "intkhab krein konsi locale encoding ko istimal karna hay"
 
 msgid "Select one of the values shown below: "
-msgstr "I'ntkhab karain neeche diye gaye options mein se ek ka: "
+msgstr "intkhab krein neeche diye gaye options mein se ek ka: "
 
 msgid "Select one or more of the options below: "
-msgstr "I'ntkhab karain neeche diye gaye options mein se ek ya zi'ada ka: "
+msgstr "intkhab krein neeche diye gaye options mein se ek ya ziada ka: "
 
 msgid "Adding partition...."
-msgstr "Partition sham'l ho rhi hay...."
+msgstr "Partition shamil ho rhi hay...."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "aap ko dar'st fs-type dar'j karna hoga jari rakhne kay liay. `man parted` dekhain valid fs-type's kay liay."
+msgstr "aap ko dar'st fs-type dar'j karna hoga jari rakhne kay liay. `man parted` dekhein valid fs-type's kay liay."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
 msgstr "Galti: URL \"{}\" par profiles ki fe'hrist banane mein:"
@@ -275,24 +275,24 @@ msgid "Additional packages"
 msgstr "Azafi packages"
 
 msgid "Network configuration"
-msgstr "Network ki tarte'b"
+msgstr "Network ki tarteb"
 
 msgid "Automatic time sync (NTP)"
 msgstr "Automatic time ki muta'bqat paze'ri (NTP)"
 
 msgid "Install ({} config(s) missing)"
-msgstr "Install ({} tarte'b mo'jod nahi)"
+msgstr "Install ({} tarteb mo'jod nahi)"
 
 msgid ""
 "You decided to skip harddrive selection\n"
-"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"And will use whatever drive-setup is mounted at {} (experimental)\n"
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"aap nay harddrive ka intikhab karna chod nay ka faisla kia.\n"
-"aur jo drive setup {} (tajurbati) par mount kia gia hay, iska istimal karain gay\n"
+"Aap nay harddrive ka intikhab karna chod nay ka faisla kia.\n"
+"Aur jo drive setup {} (tajurbati) par mount kia gia hay, iska istimal krein gay\n"
 "Intba'h: Archinstall is setup ki muta'bqat ki janch nahi karay ga\n"
-"Kia aap jari rakhna chahtay hain?"
+"Kia aap jari rakhna chahtay hein?"
 
 msgid "Re-using partition instance: {}"
 msgstr "Partition ka du'bara istimal: {}"
@@ -307,34 +307,34 @@ msgid "Clear/Delete all partitions"
 msgstr "Tamam partition ko kha'rij/mata'en"
 
 msgid "Assign mount-point for a partition"
-msgstr "Aik partition kay liay mount-point assign karain"
+msgstr "Aik partition kay liay mount-point assign krein"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "Partition ko format karne ke liay mark/unmark kare (data ko mitadega)"
+msgstr "Partition ko format karne ke liay mark/unmark kre (data ko mitadega)"
 
 msgid "Mark/Unmark a partition as encrypted"
-msgstr "Encrypt karne k liay partition ko mark/unmark karain"
+msgstr "Encrypt karne k liay partition ko mark/unmark krein"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Partition ko bootable kay liay mark/unmark karain (automatic /boot hay)"
+msgstr "Partition ko bootable kay liay mark/unmark krein (automatic /boot hay)"
 
 msgid "Set desired filesystem for a partition"
-msgstr "Aik partition kay liay Matlooba filesystem darj karain"
+msgstr "Aik partition kay liay Matlooba filesystem darj krein"
 
 msgid "Abort"
-msgstr "Khatam karain"
+msgstr "Khatam krein"
 
 msgid "Hostname"
 msgstr "Hostname"
 
 msgid "Not configured, unavailable unless setup manually"
-msgstr "tarte'b shuda'h nahi, na dast'yab hay jab tak manually set na kia jaye"
+msgstr "tarteb shuda'h nahi, na dast'yab hay jab tak manually set na kia jaye"
 
 msgid "Timezone"
 msgstr "Timezone"
 
 msgid "Set/Modify the below options"
-msgstr "Zail kay ikhtiarat ko set/tarmim karain"
+msgstr "Zail kay ikhtiarat ko set/tarmim krein"
 
 msgid "Install"
 msgstr "Install"
@@ -343,65 +343,65 @@ msgid ""
 "Use ESC to skip\n"
 "\n"
 msgstr ""
-"Chodnay kay liay ESC ka istimal karain"
+"Chodnay kay liay ESC ka istimal krein"
 "\n"
 msgid "Suggest partition layout"
-msgstr "Partition ka layout tajwiz karain"
+msgstr "Partition ka layout tajwiz krein"
 
 msgid "Enter a password: "
-msgstr "Password darj karain: "
+msgstr "Password darj krein: "
 
 msgid "Enter a encryption password for {}"
-msgstr "Encryption ka password {} kay liay darj karain"
+msgstr "Encryption ka password {} kay liay darj krein"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Disk encryption ka password darj karain (encryption na karnay kay liay khali chodain): "
+msgstr "Disk encryption ka password darj krein (encryption na karnay kay liay khali chodain): "
 
 msgid "Create a required super-user with sudo privileges: "
 msgstr "Sudo kay mara'at kay sath super-user banaye'n: "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "Root ka password darj karain (root ko disable karnay kay liay khali chodain): "
+msgstr "Root ka password darj krein (root ko disable karnay kay liay khali chodain): "
 
 msgid "Password for user \"{}\": "
 msgstr "\"{}\" sarif kay liay password: "
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
-msgstr "Is baat ki tasdeeq ho rhi hay kay azafi package Mand hain (is mein kuch second lag saktay hain)"
+msgstr "Is baat ki tasdeeq ho rhi hay kay azafi package Mand hein (is mein kuch second lag saktay hein)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Kia Aap time ki automatic muta'bqat (NTP) default time servers kay sath istimal karna chahtay hain?\n"
+msgstr "Kia Aap time ki automatic muta'bqat (NTP) default time servers kay sath istimal karna chahtay hein?\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
-"NTP kay kam karnay kay liay hardware ka time aur dosri tertebe'n zrori ho sakti hain"
-"Mazeed ma'ulomat kay liay, Arch wiki check karain"
+"NTP kay kam karnay kay liay hardware ka time aur dosri tertebe'n zarori ho sakti hein"
+"Mazeed ma'ulomat kay liay, Arch wiki check krein"
 msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "Azafi sarif banany kay liay username darj karain (chodnay kay liay khali chodain): "
+msgstr "Azafi sarif banany kay liay username darj krein (chodnay kay liay khali chodain): "
 
 msgid "Use ESC to skip\n"
-msgstr "ESC ka istimal karain chodnay kay liay\n"
+msgstr "ESC ka istimal krein chodnay kay liay\n"
 
 msgid ""
 "\n"
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-"Kisi aik cheez ko fe'hrist say muntkhab karain, aur us kay liay m'ojud actions me'n se aik ko execute karain"
+"Kisi aik cheez ko fe'hrist say muntkh'b krein, aur us kay liay m'ojud actions me'n se aik ko execute krein"
 
 msgid "Cancel"
-msgstr "Manso'kh karain"
+msgstr "Manso'kh krein"
 
 msgid "Confirm and exit"
-msgstr "Tasdeeq karain aur bahir niklain"
+msgstr "Tasdeeq krein aur bahir niklain"
 
 msgid "Add"
 msgstr "Shamil"
 
 msgid "Copy"
-msgstr "Copy karain"
+msgstr "Copy krein"
 
 msgid "Edit"
 msgstr "tarmim"
@@ -410,47 +410,49 @@ msgid "Delete"
 msgstr "hazif"
 
 msgid "Select an action for '{}'"
-msgstr "'{}' kay liay aik action muntkhab karain"
+msgstr "'{}' kay liay aik action muntkh'b krein"
 
 msgid "Copy to new key:"
-msgstr "Aik na'i key ko copy karain"
+msgstr "Aik na'i key ko copy krein"
 
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "Na mau'lom nic type: {}. Mumkin values hain {}"
+msgstr "Na mau'lom nic type: {}. Mumkin values hein {}"
 
 msgid ""
 "\n"
 "This is your chosen configuration:"
 msgstr ""
 "\n"
-"Ye'h aapki muntkhab terateb hain:"
+"Yeh aapki muntkh'b terateb hein:"
+
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
 msgstr "Pacman pehlay hi chal rha hay, maximum 10 minutes intizar hay k woh khatam ho jay."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Pehlay say m'ojud pacman lock khatam nahi huwa. Brah'e mehrbani archinstall ka istimal karnay say pehle kisi bhi m'ojude'h pacman session ko saaf karain."
+msgstr "Pehlay say m'ojud pacman lock khatam nahi huwa. Brah'e mehrbani archinstall ka istimal karnay say pehle kisi bhi m'ojude'h pacman session ko saaf krein."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Konsi ikhtiari azafi repositories ko enable karna chahtay hain, muntkhab karain"
+msgstr "Konsi ikhtiari azafi repositories ko enable karna chahtay hein, muntkh'b krein"
 
 msgid "Add a user"
-msgstr "Aik sarif sham'il karain"
+msgstr "Aik sarif sham'il krein"
 
 msgid "Change password"
 msgstr "Password badlain"
 
 msgid "Promote/Demote user"
-msgstr "sarif ko promote/demote karain"
+msgstr "sarif ko promote/demote krein"
 
 msgid "Delete User"
-msgstr "sarif hazif karain"
+msgstr "sarif hazif krein"
 
 msgid ""
 "\n"
 "Define a new user\n"
 msgstr ""
 "\n"
-"Aik na'y sarif ki wazah't karain"
+"Aik na'y sarif ki wazah't krein"
+
 msgid "User Name : "
 msgstr "sarif ka nam: "
 
@@ -458,13 +460,13 @@ msgid "Should {} be a superuser (sudoer)?"
 msgstr "Kia {} aik superuser (sudoer) hona chahiye?"
 
 msgid "Define users with sudo privilege: "
-msgstr "sar'feen sudo mara'at kay sath hain wazah't karain: "
+msgstr "sar'feen sudo mara'at kay sath hein wazah't krein: "
 
 msgid "No network configuration"
 msgstr "Network ki configuration nahi hay"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Btrfs partition par matlooba subvolumes set karain"
+msgstr "Btrfs partition par matlooba subvolumes set krein"
 
 msgid ""
 "{}\n"
@@ -473,30 +475,31 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Jis artition par subvolumes set karna chahtay hayn, muntkhab karain"
+"Jis artition par subvolumes set karna chahtay hayn, muntkh'b krein"
+
 msgid "Manage btrfs subvolumes for current partition"
-msgstr "Halia partition kay liay btrfs subvolumes ko manage karain"
+msgstr "Halia partition kay liay btrfs subvolumes ko manage krein"
 
 msgid "No configuration"
-msgstr "Koi tarte'b nahi"
+msgstr "Koi tarteb nahi"
 
 msgid "Save user configuration"
-msgstr "sarif ki tarte'b mahfoz karain"
+msgstr "sarif ki tarteb mahfoz krein"
 
 msgid "Save user credentials"
-msgstr "sarif ki asnaa'd mahfoz karain"
+msgstr "sarif ki asnaa'd mahfoz krein"
 
 msgid "Save disk layout"
-msgstr "Disk layout mahfoz karain"
+msgstr "Disk layout mahfoz krein"
 
 msgid "Save all"
-msgstr "Tamam mahfoz karain"
+msgstr "Tamam mahfoz krein"
 
 msgid "Choose which configuration to save"
-msgstr "Konsi tarte'b mahfoz karni hay, muntkhab karain"
+msgstr "Konsi tarteb mahfoz karni hay, muntkh'b krein"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "Aik directory darj karain tarte'b(on) ko mahfoz karnay kay liay: "
+msgstr "Aik directory darj krein tarteb(on) ko mahfoz karnay kay liay: "
 
 msgid "Not a valid directory: {}"
 msgstr "Aik valid directory nahi: {}"
@@ -505,25 +508,25 @@ msgid "The password you are using seems to be weak,"
 msgstr "Password aapkay istimal main hay kamzor lag raha hay,"
 
 msgid "are you sure you want to use it?"
-msgstr "Kia aap pur yaqeen hain isay istimal karnay par?"
+msgstr "Kia aap pur yaqeen hein isay istimal karnay par?"
 
 msgid "Optional repositories"
 msgstr "ikhtiari repositories"
 
 msgid "Save configuration"
-msgstr "Tarte'bat mahfoz karain"
+msgstr "tartebat mahfoz krein"
 
 msgid "Missing configurations:\n"
-msgstr "Gum shuda'h tarte'bat:\n"
+msgstr "Gum shuda'h tartebat:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
 msgstr "Root password ya kam az kam 1 superuser ki wazah't zaruri hay"
 
 msgid "Manage superuser accounts: "
-msgstr "superuser kay accounts ko manage karain: "
+msgstr "superuser kay accounts ko manage krein: "
 
 msgid "Manage ordinary user accounts: "
-msgstr "A'am sarif kay accounts ko manage karain: "
+msgstr "A'am sarif kay accounts ko manage krein: "
 
 msgid " Subvolume :{:16}"
 msgstr " subvolume :{:16}"
@@ -539,7 +542,7 @@ msgid ""
 " Fill the desired values for a new subvolume \n"
 msgstr ""
 "\n"
-" Aik na'y subvolume kay liay matlooba values ko bharhain \n"
+" Aik na'y subvolume kay liay matlooba values ko bharhein \n"
 
 msgid "Subvolume name "
 msgstr "Subvolume ka nam "
@@ -557,25 +560,25 @@ msgid "Subvolume name :"
 msgstr "Subvolume ka nam :"
 
 msgid "Select a mount point :"
-msgstr "Aik mount point muntkhab karain :"
+msgstr "Aik mount point muntkh'b krein :"
 
 msgid "Select the desired subvolume options "
-msgstr "Matlooba subvolume options ka in'tkhab karain "
+msgstr "Matlooba subvolume options ka in'tkhab krein "
 
 msgid "Define users with sudo privilege, by username: "
-msgstr "Sar'feen sudo mara'at kay sath hain wazah't karain, username kay sath: "
+msgstr "Sar'feen sudo mara'at kay sath hein wazah't krein, username kay sath: "
 
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Aik log file yahan bana di hay: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Kia aap BTRFS subvolumes ko default dha'nchay kay sath istimal karna chahtay hain?"
+msgstr "Kia aap BTRFS subvolumes ko default dha'nchay kay sath istimal karna chahtay hein?"
 
 msgid "Would you like to use BTRFS compression?"
-msgstr "Kia  aap BTRFS compression ko istimal karna chahtay hain?"
+msgstr "Kia  aap BTRFS compression ko istimal karna chahtay hein?"
 
 msgid "Would you like to create a separate partition for /home?"
-msgstr "Kia aap /home kay liay aik alag partition bana'n chahtay hain?"
+msgstr "Kia aap /home kay liay aik alag partition bana'n chahtay hein?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
 msgstr "Matlooba drives kay pass minimum capacity nahi hay, jo kudkar tajwiz kay liay chahiye\n"
@@ -587,7 +590,7 @@ msgid "Minimum capacity for Arch Linux partition: {}GB"
 msgstr "Arch Linux partition kay liay minimum capacity: {}GB"
 
 msgid "Continue"
-msgstr "Jari rakhain"
+msgstr "Jari rakhein"
 
 msgid "yes"
 msgstr "haan"
@@ -599,80 +602,80 @@ msgid "set: {}"
 msgstr "rakhna: {}"
 
 msgid "Manual configuration setting must be a list"
-msgstr "Manual tarte'b ki setting ki aik list honi chahiye"
+msgstr "Manual tarteb ki setting ki aik list honi chahiye"
 
 msgid "No iface specified for manual configuration"
-msgstr "Manual tarte'b kay liay muntkhab iface nahi hay"
+msgstr "Manual tarteb kay liay muntkh'b iface nahi hay"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr "Bagir auto DHCP kay manual nic tarte'b kay liay IP address zaruri hay"
+msgstr "Bagir auto DHCP kay manual nic tarteb kay liay IP address zaruri hay"
 
 msgid "Add interface"
-msgstr "Interface shamil karain"
+msgstr "Interface shamil krein"
 
 msgid "Edit interface"
-msgstr "Interface edit karain"
+msgstr "Interface edit krein"
 
 msgid "Delete interface"
-msgstr "Interface delete karain"
+msgstr "Interface delete krein"
 
 msgid "Select interface to add"
-msgstr "Interface shamil karnay kay liay muntkhab karain"
+msgstr "Interface shamil karnay kay liay muntkh'b krein"
 
 msgid "Manual configuration"
-msgstr "Manual tarte'b"
+msgstr "Manual tarteb"
 
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Partition ko compress karnay kay liay mark/unmark karain (sirf btrfs)"
+msgstr "Partition ko compress karnay kay liay mark/unmark krein (sirf btrfs)"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "aapka dia gia password kamzor lag raha hay, aap isko istimal kay liay par yaqeen hain?"
+msgstr "aapka dia gia password kamzor lag raha hay, aap isko istimal kay liay par yaqeen hein?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Desktop environments aur tiling window managers ki selection muhayya karain, jaisay kay gnome, kde, sway"
+msgstr "Desktop environments aur tiling window managers ki selection muhayya krein, jaisay kay gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr "Apnay muntkhab desktop environment ka intikhab"
+msgstr "Apnay muntkh'b desktop environment ka intikhab"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
 msgstr "Aik nihay't bunyadi installation, jo Arch Linux ko aapki zarorat"
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Mukhtalif server packages ki selection muhayya karain, jaisay kay httpd, nginx, mariadb"
+msgstr "Mukhtalif server packages ki selection muhayya krein, jaisay kay httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Konsay servers ko install karna chahiye intkhab karain, agar koi nahi to aik minimal installation hoga"
+msgstr "Konsay servers ko install karna chahiye intkhab krein, agar koi nahi to aik minimal installation hoga"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Aik minimal system install ho ga aur sath sath xorg aur graphics drivers bhi."
 
 msgid "Press Enter to continue."
-msgstr "Enter duba kar jari rakhain"
+msgstr "Enter duba kar jari rakhein"
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Kia aap aik nayi installation main chroot aur post-installation configuration tarte'b karna chahtay hain?"
+msgstr "Kia aap aik nayi installation main chroot aur post-installation configuration tarteb karna chahtay hein?"
 
 msgid "Are you sure you want to reset this setting?"
-msgstr "Is tarte'd ko reset karnay kay liay kia aap pur yaqeen hain?"
+msgstr "Is tarte'd ko reset karnay kay liay kia aap pur yaqeen hein?"
 
 msgid "Select one or more hard drives to use and configure\n"
-msgstr "Aik ya ziada hard drive muntkhab karain istimal aur tarte'b kay liay\n"
+msgstr "Aik ya ziada hard drive muntkh'b krein istimal aur tarteb kay liay\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
 msgstr "Tay shuda setting main koi rado badal disk layout ko reset kar day gi!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Agar aap muntikhab hardrive ko reset kartay hain tu yeh mojoda disk layout bhi reset karay gi, aap pur yaqeen hain?"
+msgstr "Agar aap muntikhab hardrive ko reset kartay hein tu yeh mojoda disk layout bhi reset karay gi, aap pur yaqeen hein?"
 
 msgid "Save and exit"
 msgstr "Mahfoz aur nikalain"
 
 msgid ""
 "{}\n"
-"contains queued partitions, this will remove those, are you sure?"
+"Contains queued partitions, this will remove those, are you sure?"
 msgstr ""
 "{}\n"
-"qatar main lagi partitions hain, is say wo khatam ho jay gi, aap pur yaqeen hain?"
+"Qatar main lagi partitions hein, is say wo khatam ho jay gi, aap pur yaqeen hein?"
 
 msgid "No audio server"
 msgstr "audio server nahi"
@@ -681,17 +684,17 @@ msgid "(default)"
 msgstr "(default)"
 
 msgid "Use ESC to skip"
-msgstr "ESC ka istimal karain chodnay kay liay"
+msgstr "ESC ka istimal krein chodnay kay liay"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
-"Mojoda tarteb ko reset kay liay CTRL+C ka istimal karain\n"
+"Mojoda tarteb ko reset kay liay CTRL+C ka istimal krein\n"
 "\n"
 
 msgid "Copy to: "
-msgstr "par copy karain: "
+msgstr "par copy krein: "
 
 msgid "Edit: "
 msgstr "Edit: "
@@ -709,16 +712,16 @@ msgid "Value: "
 msgstr "Value: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Drive kay intikhab aur partitioning ko chodnay aur jo bhi drive-setup /mnt mojod hai ko istimal karain (experimental)"
+msgstr "Drive kay intikhab aur partitioning ko chodnay aur jo bhi drive-setup /mnt mojod hai ko istimal krein (experimental)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Aik disk muntkhab karain ya chodnay aur /mnt ko default kay tor par istimal karain"
+msgstr "Aik disk muntkh'b krein ya chodnay aur /mnt ko default kay tor par istimal krein"
 
 msgid "Select which partitions to mark for formatting:"
-msgstr "Mark karain format kay liay konsay partitions ka intikhab: "
+msgstr "Mark krein format kay liay konsay partitions ka intikhab: "
 
 msgid "Use HSM to unlock encrypted drive"
-msgstr "Encrypted drive ko unlock kay liay HSM ka istimal karain"
+msgstr "Encrypted drive ko unlock kay liay HSM ka istimal krein"
 
 msgid "Device"
 msgstr "Device"
@@ -739,7 +742,7 @@ msgid "Enter username (leave blank to skip): "
 msgstr "Username daalain (chodnay kay liay khali chodain): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr "Darj shuda username galat hai, dubara koshish karain"
+msgstr "Darj shuda username galat hai, dubara koshish krein"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Kia \"{}\" superuser (sudo) hai?"
@@ -760,19 +763,19 @@ msgid "strong"
 msgstr "mazboot"
 
 msgid "Add subvolume"
-msgstr "Subvolume shamil karain"
+msgstr "Subvolume shamil krein"
 
 msgid "Edit subvolume"
-msgstr "Subvolume ko edit karain"
+msgstr "Subvolume ko edit krein"
 
 msgid "Delete subvolume"
-msgstr "Subvolume ko delete karain"
+msgstr "Subvolume ko delete krein"
 
 msgid "Configured {} interfaces"
 msgstr "Tateb shuda {} interfaces"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Yeh option installation kay duran parallel download ki number ko enable karta hai"
+msgstr "yeh option installation kay duran parallel download ki number ko enable karta hai"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
@@ -784,561 +787,534 @@ msgstr ""
 "Yaa daasht:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr " - Maximum value   : {} ()"
+msgstr " - Maximum value   : {} ( {} Parallel downloads ki ajazat, {} downloads ki aik waqat main ajazat hai )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr " - Minimum value   : 1 ( 1 Parallel download ki ajazat, 2 downloads ki aik waqat main ajazat hai )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr " - Disable/Default : 0 ( Parallel download ko disable krnay kay liay, sirf 1 download ki aik waqat main ajazat hai )"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "Darj shuda galat hai! Dubara koshish krein sahi darj kar nay ki [1 say {max_downloads}, ya 0 disable kay liay]"
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Parallel Downloads"
 
 msgid "ESC to skip"
-msgstr ""
+msgstr "Skip kay liay ESC"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "Reset kay liay CTRL+C"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "Select kay liay TAB"
 
 msgid "[Default value: 0] > "
-msgstr ""
+msgstr "[Default value: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
+msgstr "Is translation ko istimal kay liay, brah e meharbani aik font manuallly install krein jo is zuban ko suppport krta ho."
 
 msgid "The font should be stored as {}"
-msgstr ""
+msgstr "Font is trah {} store hona chahiya"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall ko chalanay kay liay root hona zarori hai. ziada kay liay --help daykhein."
 
 msgid "Select an execution mode"
-msgstr ""
+msgstr "Excution mode ko select krein"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "muntkh'b url: {} say profile hasil krna mumkin nahi"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "Profiles ka munfirad hona zarori hai, lakin profile ki tareef duhray namoo kay sath mili hai: {}"
 
 msgid "Select one or more devices to use and configure"
-msgstr ""
+msgstr "Aik yah ziada devices ka intikhab krein istimal aur tarteb krein"
 
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr ""
+msgstr "Agar aap muntikhab device ko reset kartay hein tu yeh mojoda disk layout bhi reset ho ga, aap pur yaqeen hein?"
 
 msgid "Existing Partitions"
-msgstr ""
+msgstr "Pehlay say m'ojud partitions"
 
 msgid "Select a partitioning option"
-msgstr ""
+msgstr "Aik ikhti'ari partion ka intikhab krein"
 
 msgid "Enter the root directory of the mounted devices: "
-msgstr ""
+msgstr "Mounted devices kay liay root directory ko darj krein"
 
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr ""
+msgstr "/home partition kay liay Minimum capacity: {}GiB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr ""
+msgstr "Arch linux partion kay liay Minimum capacity: {}GiB"
 
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr ""
+msgstr "yeh pre-programmed profiles_bck ki fe'hrist hay, in say desktop environment jaisi cheezon ko install karnay main madad milti hai"
 
 msgid "Current profile selection"
-msgstr ""
+msgstr "mojoda profile selection"
 
 msgid "Remove all newly added partitions"
-msgstr ""
+msgstr "Nai shamil ki gai tamam partitions remove krein"
 
 msgid "Assign mountpoint"
-msgstr ""
+msgstr "Mountpoint assign krein"
 
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr ""
+msgstr "Format (data hazaf) karnay kay liay mark/unmark krein"
 
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "Bootable bananay kay liay mark/unmark krein"
 
 msgid "Change filesystem"
-msgstr ""
+msgstr "Filesystem badlain"
 
 msgid "Mark/Unmark as compressed"
-msgstr ""
+msgstr "Compress kay liay mark/unmark krein"
 
 msgid "Set subvolumes"
-msgstr ""
+msgstr "subvolumes darj krein"
 
 msgid "Delete partition"
-msgstr ""
+msgstr "Partition hazif krein"
 
 msgid "Partition"
-msgstr ""
+msgstr "Partition"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "yeh partition mojoda tor par encrypt hai, filesystem ka intkhab zarori hai is ko format karnay kay liay"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr ""
+msgstr "Prtition kay mount points installation kay andar relative hein, masal kay tor par /boot boot kay liay hai."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "Agar /boot muntkh'b hua, to partition bootable kay liay bhi mark ho gi."
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "Mountpoint: "
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "mojoda khali sector is device par {}:"
 
 msgid "Total sectors: {}"
-msgstr ""
+msgstr "Tamam mojoda sectors: {}"
 
 msgid "Enter the start sector (default: {}): "
-msgstr ""
+msgstr "Sector ki shroa'at dar'j krein (default: {}): "
 
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr ""
+msgstr "Partition kay a'akhri sector ki dar'j krein (fisad ya block ka number, default: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "yeh nai shamil ki gai tamam partitions remove karay ga, jari rakhein?"
 
 msgid "Partition management: {}"
-msgstr ""
+msgstr "Partiotion ki management: {}"
 
 msgid "Total length: {}"
-msgstr ""
+msgstr "Total length: {}"
 
 msgid "Encryption type"
-msgstr ""
+msgstr "Encryption ki type"
 
 msgid "Partitions"
-msgstr ""
+msgstr "Partitons"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "Koi HSM device mojod nahi"
 
 msgid "Partitions to be encrypted"
-msgstr ""
+msgstr "Partition ki encryption ho gi"
 
 msgid "Select disk encryption option"
-msgstr ""
+msgstr "Disk ki encryption ka ikhti'ar select krein"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "HSM kay liay aik FIDO2 device ko select krein"
 
 msgid "Use a best-effort default partition layout"
-msgstr ""
+msgstr "Mumkina best-effort default partition ka layout istimal krein"
 
 msgid "Manual Partitioning"
-msgstr ""
+msgstr "Manual Partitioning"
 
 msgid "Pre-mounted configuration"
-msgstr ""
+msgstr "Pre-mounted tarteb"
 
 msgid "Unknown"
-msgstr ""
+msgstr "Maloom nahi"
 
 msgid "Partition encryption"
-msgstr ""
+msgstr "Partition ki encryption"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! formatting {} main"
 
 msgid " Back"
-msgstr ""
+msgstr " Back"
 
 msgid "Disk encryption"
-msgstr ""
+msgstr "Desk ki encryption"
 
 msgid "Configuration"
-msgstr ""
+msgstr "tarteb"
 
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 msgid "All settings will be reset, are you sure?"
-msgstr ""
+msgstr "Tamam tarteb reset ho jay gi, kia aap pur yaqeen hein"
 
 msgid "Back"
-msgstr ""
+msgstr "Back"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "brah e meharbani muntkh'b profile kay liay greeter ko install kay liay select krein: {}"
 
 msgid "Environment type: {}"
-msgstr ""
+msgstr "Environment ki type: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "Sway Nvidia kay proprietary driver ko support nahi karta. Buhat imkan hai k'eh aap ko issues hongay, Kia aap pur yaqeen hein?"
 
 msgid "Installed packages"
-msgstr ""
+msgstr "Installed packages"
 
 msgid "Add profile"
-msgstr ""
+msgstr "Profile shamil krein"
 
 msgid "Edit profile"
-msgstr ""
+msgstr "Profile ko edit krein"
 
 msgid "Delete profile"
-msgstr ""
+msgstr "Profile ko hazif krein"
 
 msgid "Profile name: "
-msgstr ""
+msgstr "Profile ka naam: "
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr ""
+msgstr "Aap ka darj karda profile ka naam pehlay say mojod hai, dubara koshish krein"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr ""
+msgstr "Is profile kay sath install honay walay packages (space se alag krein, khali chod de'n agar kuch nahi): "
 
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr ""
+msgstr "Is profile kay sath enable honay wali services (space se alag krein, khali chod de'n agar kuch nahi): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "Kia is profile ko enable karna hai installation kay liay?"
 
 msgid "Create your own"
-msgstr ""
+msgstr "Khud ki bana'en"
 
 msgid ""
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
+"\n"
+"Aik graphic driver ka intkh'b ya kahli chod de'n tamam open-source driver ko install kay liay"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Sway kay liay access zarori hai (hardware devices ki fe'hrst jaisa ke'h keyboard, mouse, etc)"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Sway ko apnay hardware tak rasai kay liay aik ka intkh'ab krein"
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "Graphic driver"
 
 msgid "Greeter"
-msgstr ""
+msgstr "Greeter"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "Kis greeter ko install karna hai muntkh'b krein"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "yeh f'ehrist hai pre-programmed default_profiles ki"
 
 msgid "Disk configuration"
-msgstr ""
+msgstr "Disk ki tart'b"
 
 msgid "Profiles"
-msgstr ""
+msgstr "Profiles"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "tarteb ki files ko save karnay kay liay mumkina directories ki talash"
 
 msgid "Select directory (or directories) for saving configuration files"
-msgstr ""
+msgstr "tarteb ki files ko save karnay directory (ya directories) ko select krein"
 
 msgid "Add a custom mirror"
-msgstr ""
+msgstr "Custom mirror ko shamil krein"
 
 msgid "Change custom mirror"
-msgstr ""
+msgstr "Custom mirror ko change krein"
 
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "Custom mirror ko hazif krein"
 
 msgid "Enter name (leave blank to skip): "
-msgstr ""
+msgstr "Naam darj krein (khali chod de'n agar kuch nahi): "
 
 msgid "Enter url (leave blank to skip): "
-msgstr ""
+msgstr "Url ko darj krein (khali chod de'n agar kuch nahi): "
 
 msgid "Select signature check option"
-msgstr ""
+msgstr "Signature kay check karnay kay liay ikhtiar ko select krein"
 
 msgid "Select signature option"
-msgstr ""
+msgstr "Signature kay ikhtiar ko select krein"
 
 msgid "Custom mirrors"
-msgstr ""
+msgstr "Custom mirrors"
 
 msgid "Defined"
-msgstr ""
+msgstr "Tareef karda"
 
 msgid "Save user configuration (including disk layout)"
-msgstr ""
+msgstr "Saraf ki tarteb save krein (disk layout kay sath)"
 
 msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
+"Tarteb ko save karnay kay liay directory darj krein (pora karnay kay liay tab dubain)\n"
+"Save kay liay directory: "
 
 msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
 "\n"
 "{}"
 msgstr ""
+"Kia aap mutloba jaga tarteb filon {} ko save karna chahtay hein?\n"
+"\n"
+"{}"
+
 
 msgid "Saving {} configuration files to {}"
-msgstr ""
+msgstr "{} Tarteb ki filon {} par save kia ja rha hai"
 
 msgid "Mirrors"
-msgstr ""
+msgstr "Mirrors"
 
 msgid "Mirror regions"
-msgstr ""
+msgstr "Mirrors ka ilaqa"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr " - Maximum value   : {} ( {} Parallel downloads ki ajazat, {max_downloads+1} downloads ki aik waqat main ajazat hai )"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr ""
+msgstr "Darj shuda galat hai! Dubara koshish krein sahi darj kar nay ki [1 say {}, ya 0 disable kay liay]"
 
 msgid "Locales"
-msgstr ""
+msgstr "Locales"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr ""
+msgstr "NetworkManager ka istmal (GNOME or KDE main graphically internet ka tayun krnay kay liay zarori hai)"
 
 msgid "Total: {} / {}"
-msgstr ""
+msgstr "Tamam: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Tamam darj shuda miqdaron say pehlay aik unit: B, KB, KiB, MB, MiB..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Agar unit na darj hua, tu miqdar ko sector taswar kia jayga"
 
 msgid "Enter start (default: sector {}): "
-msgstr ""
+msgstr "Shroa'at dar'j krein (default: sector {}): "
 
 msgid "Enter end (default: {}): "
-msgstr ""
+msgstr "A'akhrat dar'j krein (default: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "FIDO2 devices ka tayun nahi ho rha hai. Kia libfido2 install hai?"
 
 msgid "Path"
-msgstr ""
+msgstr "Path"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "Manufacturer"
 
 msgid "Product"
-msgstr ""
+msgstr "Product"
 
 #, python-brace-format
 msgid "Invalid configuration: {error}"
-msgstr ""
+msgstr "Darj shuda tarteb galat hai: {error}"
 
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr ""
+msgstr "Package download kay doran parallel downloads kay number ko qabil karnay kay liay ikhtiar krein"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 "\n"
 "Note:\n"
 msgstr ""
+"Parallel downloads kay number ko darj krein qabil karnay kay liay.\n"
+"\n"
+"Note:\n"
 
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr ""
+msgstr " - Maximum safarish karda value   : {} ( {} downloads ki aik waqat main ajazat hai )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr ""
+msgstr " - Disable/Default : 0 ( Parallel download ko disable krnay kay liay, sirf 1 download ki aik waqat main ajazat hai )"
 
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr ""
+msgstr "Darj shuda galat hai! Dubara koshish krein sahi darj kar nay ki [ya 0 disable kay liay]"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Hyperland kay liay access zarori hai (hardware devices ki fe'hrst jaisa ke'h keyboard, mouse, etc)"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Hyprland access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Hyperland ko apnay hardware tak rasai kay liay aik ka intkh'ab krein"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Tamam darj shuda miqdaron say pehlay aik unit: B, KB, KiB, MB, MiB..."
 
 msgid "Would you like to use unified kernel images?"
-msgstr ""
+msgstr "Kia aap unified kernel images kay istmal ko pasand krein gay?"
 
 msgid "Unified kernel images"
-msgstr ""
+msgstr "Unified kernel images"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
+msgstr "Time sync (timedatectl show) kay mukamal honay ka intzar hai."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Aap kay intzar kartay huay time ki syncroniztion pori nhi hui, docs ko check krein: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
+msgstr "Khud kar time sync kay intzar ko khatam krein (yeh issue bana sakta hai installation kay duran agar time sync say out hota hai)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+msgstr "Arch Linux keyring sync (archlinux-keyring-wkd-sync) kay mukamal honay ka intzar hai."
 
 msgid "Selected profiles: "
-msgstr ""
+msgstr "Muntkhab Profiles: "
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
+msgstr "Aap kay intzar kartay huay time ki syncroniztion pori nhi hui, docs ko check krein: https://archinstall.readthedocs.io/"
 
 msgid "Mark/Unmark as nodatacow"
-msgstr ""
+msgstr "Nodatacow kay mark/unmark krein"
 
 msgid "Would you like to use compression or disable CoW?"
-msgstr ""
+msgstr "Kia aap compression kay istmal ya CoW ko disable karna chahtay hein?"
 
 msgid "Use compression"
-msgstr ""
+msgstr "Compression ka istmal"
 
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Copy-on-Write ko disable krein"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr ""
+msgstr "Yeh desktop environments or tiling window managers ki feharist daita hai jaisa kay GNOME, KDE Plasma, Sway"
 
 #, fuzzy
 msgid "Configuration type: {}"
-msgstr "کوئی کنفیگریشن نہیں"
+msgstr "Tarteb ki type: {}"
 
 #, fuzzy
 msgid "LVM configuration type"
-msgstr "کوئی کنفیگریشن نہیں"
+msgstr "LVM tarteb ki type"
 
 msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+msgstr "2 ya ziada partition wali LVM disk encryption ko mojoda tor par support nahi hai"
 
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "نیٹ ورک مینجر کا استعمال کریں (GNOME اور KDE میں انٹرنیٹ کو گرافیکلی ترتیب دینے کے لیے ضروری ہے)"
+msgstr "NetworkManager ka istmal (GNOME or KDE main graphically internet ka tayun krnay kay liay zarori hai)"
 
 #, fuzzy
 msgid "Select a LVM option"
-msgstr "ٹائم زون کا انتخاب کریں"
+msgstr "Aik LVM ikhtiar ko select krein"
 
 #, fuzzy
 msgid "Partitioning"
-msgstr "ترتیب کو محفوظ کریں"
+msgstr "Partitioning"
 
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Logical Volume Management (LVM)"
 
 msgid "Physical volumes"
-msgstr ""
+msgstr "Physical volumes"
 
 msgid "Volumes"
-msgstr ""
+msgstr "Volumes"
 
 #, fuzzy
 msgid "LVM volumes"
-msgstr "صارف کو حذف کریں"
+msgstr "LVM volumes"
 
 #, fuzzy
 msgid "LVM volumes to be encrypted"
-msgstr "منتخب کریں کہ کس پارٹیشن کو انکرپٹڈ یا خفیہ رکھنا ہے"
+msgstr "LVM volumes ko encrypt krna"
 
 #, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr "منتخب کریں کہ کس پارٹیشن کو انکرپٹڈ یا خفیہ رکھنا ہے"
+msgstr "Konsay LVM volume ko encrypt krna hai select krein"
 
 #, fuzzy
 msgid "Default layout"
-msgstr "ڈسک لے آؤٹ کو محفوظ کریں"
+msgstr "Default layout"
 
 #, fuzzy
 msgid "No Encryption"
-msgstr "انکرپشن پاس ورڈ سیٹ کریں"
+msgstr "Koi encryption nahi"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LUKS par LVM"
 
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LVM par LUKS"
 
 msgid "Yes"
-msgstr ""
+msgstr "Haan"
 
 msgid "No"
-msgstr ""
+msgstr "Nahi"
 
 #, fuzzy
 msgid "Archinstall help"
-msgstr "آرچ انسٹال کے لیے زبان"
+msgstr "Archinstall ki madad"
 
 msgid " (default)"
-msgstr ""
+msgstr " (default)"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
-
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr ""
+msgstr "Madad kay liay Ctrl+h dubaen"
 
 msgid "Default layout"
-msgstr ""
+msgstr "Default layout"
 
 msgid "No Encryption"
-msgstr ""
+msgstr "No Encryption"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
-msgid "LVM on LUKS"
-msgstr ""
-
-msgid "LUKS on LVM"
-msgstr ""
-
-msgid "Partitioning"
-msgstr ""
-
-msgid "Logical Volume Management (LVM)"
-msgstr ""
-
-msgid "Physical volumes"
-msgstr ""
-
-msgid "Volumes"
-msgstr ""
-
-msgid "LVM volumes"
-msgstr ""
-
-msgid "LVM volumes to be encrypted"
-msgstr ""
-
-msgid "Select which LVM volumes to encrypt"
-msgstr ""
-
-msgid "Select a LVM option"
-msgstr ""
-
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr ""
-
-msgid "Configuration type: {}"
-msgstr ""
-
-msgid "LVM configuration type"
-msgstr ""
-
-msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
