@@ -379,7 +379,7 @@ class ArchConfigHandler:
 
 		# amend the parameters (check internal consistency)
 		# Installation can't be silent if config is not passed
-		if args.config is None:
+		if args.config is None and args.config_url is None:
 			args.silent = False
 
 		if args.debug:
