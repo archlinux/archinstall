@@ -13,22 +13,22 @@ if TYPE_CHECKING:
 class XorgProfile(Profile):
 	def __init__(
 		self,
-		name: str = 'Xorg',
+		name: str = "Xorg",
 		profile_type: ProfileType = ProfileType.Xorg,
-		advanced: bool = False
+		advanced: bool = False,
 	):
 		super().__init__(
 			name,
 			profile_type,
 			support_gfx_driver=True,
-			advanced=advanced
+			advanced=advanced,
 		)
 
 	@override
 	def preview_text(self) -> str:
-		text = str(_('Environment type: {}')).format(self.profile_type.value)
+		text = str(_("Environment type: {}")).format(self.profile_type.value)
 		if packages := self.packages_text():
-			text += f'\n{packages}'
+			text += f"\n{packages}"
 
 		return text
 
@@ -36,5 +36,5 @@ class XorgProfile(Profile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			'xorg-server'
+			"xorg-server",
 		]

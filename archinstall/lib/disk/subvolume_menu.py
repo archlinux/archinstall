@@ -21,19 +21,19 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 	def __init__(
 		self,
 		btrfs_subvols: list[SubvolumeModification],
-		prompt: str | None = None
+		prompt: str | None = None,
 	):
 		self._actions = [
-			str(_('Add subvolume')),
-			str(_('Edit subvolume')),
-			str(_('Delete subvolume'))
+			str(_("Add subvolume")),
+			str(_("Edit subvolume")),
+			str(_("Delete subvolume")),
 		]
 
 		super().__init__(
 			btrfs_subvols,
 			[self._actions[0]],
 			self._actions[1:],
-			prompt
+			prompt,
 		)
 
 	@override
@@ -42,10 +42,10 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 
 	def _add_subvolume(self, preset: SubvolumeModification | None = None) -> SubvolumeModification | None:
 		result = EditMenu(
-			str(_('Subvolume name')),
+			str(_("Subvolume name")),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
-			default_text=str(preset.name) if preset else None
+			default_text=str(preset.name) if preset else None,
 		).input()
 
 		match result.type_:
@@ -54,7 +54,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 			case ResultType.Selection:
 				name = result.text()
 			case ResultType.Reset:
-				raise ValueError('Unhandled result type')
+				raise ValueError("Unhandled result type")
 			case _:
 				assert_never(result.type_)
 
@@ -64,7 +64,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 			str(_("Subvolume mountpoint")),
 			header=header,
 			allow_skip=True,
-			validate=False
+			validate=False,
 		)
 
 		if not path:
@@ -77,7 +77,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 		self,
 		action: str,
 		entry: SubvolumeModification | None,
-		data: list[SubvolumeModification]
+		data: list[SubvolumeModification],
 	) -> list[SubvolumeModification]:
 		if action == self._actions[0]:  # add
 			new_subvolume = self._add_subvolume()

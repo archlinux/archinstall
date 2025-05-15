@@ -31,7 +31,7 @@ def ask_user_questions() -> None:
 		global_menu = GlobalMenu(arch_config_handler.config)
 
 		if not arch_config_handler.args.advanced:
-			global_menu.set_enabled('parallel_downloads', False)
+			global_menu.set_enabled("parallel_downloads", False)
 
 		global_menu.run()
 
@@ -42,7 +42,7 @@ def perform_installation(mountpoint: Path) -> None:
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	info('Starting installation...')
+	info("Starting installation...")
 
 	config = arch_config_handler.config
 
@@ -60,7 +60,7 @@ def perform_installation(mountpoint: Path) -> None:
 		mountpoint,
 		disk_config,
 		disk_encryption=disk_encryption,
-		kernels=config.kernels
+		kernels=config.kernels,
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
@@ -80,14 +80,14 @@ def perform_installation(mountpoint: Path) -> None:
 			optional_repositories=optional_repositories,
 			mkinitcpio=run_mkinitcpio,
 			hostname=arch_config_handler.config.hostname,
-			locale_config=locale_config
+			locale_config=locale_config,
 		)
 
 		if mirror_config := config.mirror_config:
 			installation.set_mirrors(mirror_config, on_target=True)
 
 		if config.swap:
-			installation.setup_swap('zram')
+			installation.setup_swap("zram")
 
 		if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
 			installation.add_additional_packages("grub")
@@ -101,7 +101,7 @@ def perform_installation(mountpoint: Path) -> None:
 		if network_config:
 			network_config.install_network_config(
 				installation,
-				config.profile_config
+				config.profile_config,
 			)
 
 		if users := config.users:
@@ -113,7 +113,7 @@ def perform_installation(mountpoint: Path) -> None:
 		else:
 			info("No audio server will be installed")
 
-		if config.packages and config.packages[0] != '':
+		if config.packages and config.packages[0] != "":
 			installation.add_additional_packages(config.packages)
 
 		if profile_config := config.profile_config:
@@ -129,7 +129,7 @@ def perform_installation(mountpoint: Path) -> None:
 			installation.enable_espeakup()
 
 		if root_pw := config.root_enc_password:
-			root_user = User('root', root_pw, False)
+			root_user = User("root", root_pw, False)
 			installation.set_user_password(root_user)
 
 		if (profile_config := config.profile_config) and profile_config.profile:
@@ -156,7 +156,7 @@ def perform_installation(mountpoint: Path) -> None:
 				case PostInstallationAction.EXIT:
 					pass
 				case PostInstallationAction.REBOOT:
-					os.system('reboot')
+					os.system("reboot")
 				case PostInstallationAction.CHROOT:
 					try:
 						installation.drop_to_shell()
@@ -178,13 +178,13 @@ def guided() -> None:
 	if not arch_config_handler.args.silent:
 		with Tui():
 			if not config.confirm_config():
-				debug('Installation aborted')
+				debug("Installation aborted")
 				guided()
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(
 			arch_config_handler.config.disk_config,
-			arch_config_handler.config.disk_encryption
+			arch_config_handler.config.disk_encryption,
 		)
 
 		fs_handler.perform_filesystem_operations()

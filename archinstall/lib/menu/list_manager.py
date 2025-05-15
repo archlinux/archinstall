@@ -21,7 +21,7 @@ class ListManager[ValueT]:
 		entries: list[ValueT],
 		base_actions: list[str],
 		sub_menu_actions: list[str],
-		prompt: str | None = None
+		prompt: str | None = None,
 	):
 		"""
 		:param prompt:  Text which will appear at the header
@@ -42,9 +42,9 @@ class ListManager[ValueT]:
 
 		self._prompt = prompt
 
-		self._separator = ''
-		self._confirm_action = str(_('Confirm and exit'))
-		self._cancel_action = str(_('Cancel'))
+		self._separator = ""
+		self._confirm_action = str(_("Confirm and exit"))
+		self._cancel_action = str(_("Cancel"))
 
 		self._terminate_actions = [self._confirm_action, self._cancel_action]
 		self._base_actions = base_actions
@@ -67,12 +67,12 @@ class ListManager[ValueT]:
 		while True:
 			group = MenuHelper(
 				data=self._data,
-				additional_options=additional_options
+				additional_options=additional_options,
 			).create_menu_group()
 
 			prompt = None
 			if self._prompt is not None:
-				prompt = f'{self._prompt}\n\n'
+				prompt = f"{self._prompt}\n\n"
 
 			prompt = None
 
@@ -81,14 +81,14 @@ class ListManager[ValueT]:
 				header=prompt,
 				search_enabled=False,
 				allow_skip=False,
-				alignment=Alignment.CENTER
+				alignment=Alignment.CENTER,
 			).run()
 
 			match result.type_:
 				case ResultType.Selection:
 					value = result.get_value()
 				case _:
-					raise ValueError('Unhandled return type')
+					raise ValueError("Unhandled return type")
 
 			if value in self._base_actions:
 				value = cast(str, value)
@@ -114,21 +114,21 @@ class ListManager[ValueT]:
 		items = [MenuItem(o, value=o) for o in options]
 		group = MenuItemGroup(items, sort_items=False)
 
-		header = f'{self.selected_action_display(entry)}\n'
+		header = f"{self.selected_action_display(entry)}\n"
 
 		result = SelectMenu[str](
 			group,
 			header=header,
 			search_enabled=False,
 			allow_skip=False,
-			alignment=Alignment.CENTER
+			alignment=Alignment.CENTER,
 		).run()
 
 		match result.type_:
 			case ResultType.Selection:
 				value = result.get_value()
 			case _:
-				raise ValueError('Unhandled return type')
+				raise ValueError("Unhandled return type")
 
 		if value != self._cancel_action:
 			self._data = self.handle_action(value, entry, self._data)
@@ -138,14 +138,14 @@ class ListManager[ValueT]:
 		this will return the value to be displayed in the
 		"Select an action for '{}'" string
 		"""
-		raise NotImplementedError('Please implement me in the child class')
+		raise NotImplementedError("Please implement me in the child class")
 
 	def handle_action(self, action: str, entry: ValueT | None, data: list[ValueT]) -> list[ValueT]:
 		"""
 		this function is called when a base action or
 		a specific action for an entry is triggered
 		"""
-		raise NotImplementedError('Please implement me in the child class')
+		raise NotImplementedError("Please implement me in the child class")
 
 	def filter_options(self, selection: ValueT, options: list[str]) -> list[str]:
 		"""

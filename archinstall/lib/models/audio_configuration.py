@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class Audio(StrEnum):
-	NO_AUDIO = 'No audio server'
+	NO_AUDIO = "No audio server"
 	PIPEWIRE = auto()
 	PULSEAUDIO = auto()
 
@@ -21,20 +21,20 @@ class AudioConfiguration:
 
 	def json(self) -> dict[str, str]:
 		return {
-			'audio': self.audio.value
+			"audio": self.audio.value,
 		}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, str]) -> 'AudioConfiguration':
+	def parse_arg(arg: dict[str, str]) -> "AudioConfiguration":
 		return AudioConfiguration(
-			Audio(arg['audio'])
+			Audio(arg["audio"]),
 		)
 
 	def install_audio_config(
 		self,
-		installation: 'Installer'
+		installation: "Installer",
 	) -> None:
-		info(f'Installing audio server: {self.audio.name}')
+		info(f"Installing audio server: {self.audio.name}")
 
 		from ...default_profiles.applications.pipewire import PipewireProfile
 
@@ -46,7 +46,7 @@ class AudioConfiguration:
 
 		if self.audio != Audio.NO_AUDIO:
 			if SysInfo.requires_sof_fw():
-				installation.add_additional_packages('sof-firmware')
+				installation.add_additional_packages("sof-firmware")
 
 			if SysInfo.requires_alsa_fw():
-				installation.add_additional_packages('alsa-firmware')
+				installation.add_additional_packages("alsa-firmware")

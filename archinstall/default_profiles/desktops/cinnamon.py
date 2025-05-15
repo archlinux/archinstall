@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class CinnamonProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Cinnamon', ProfileType.DesktopEnv)
+		super().__init__("Cinnamon", ProfileType.DesktopEnv)
 
 	@property
 	@override
@@ -22,7 +22,7 @@ class CinnamonProfile(XorgProfile):
 			"gnome-screenshot",
 			"gvfs-smb",
 			"xed",
-			"xdg-user-dirs-gtk"
+			"xdg-user-dirs-gtk",
 		]
 
 	@property
