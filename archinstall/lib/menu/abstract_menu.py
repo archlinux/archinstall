@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 	_: Callable[[str], DeferredTranslation]
 
 
-CONFIG_KEY = '__config__'
+CONFIG_KEY = "__config__"
 
 
 class AbstractMenu[ValueT]:
@@ -26,7 +26,7 @@ class AbstractMenu[ValueT]:
 		config: Any,
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
-		reset_warning: str | None = None
+		reset_warning: str | None = None,
 	):
 		self._menu_item_group = item_group
 		self._config = config
@@ -88,7 +88,7 @@ class AbstractMenu[ValueT]:
 					found = True
 
 		if not found:
-			raise ValueError(f'No selector found: {key}')
+			raise ValueError(f"No selector found: {key}")
 
 	def disable_all(self) -> None:
 		for item in self._menu_item_group.items:
@@ -107,8 +107,8 @@ class AbstractMenu[ValueT]:
 				allow_reset=self._allow_reset,
 				reset_warning_msg=self._reset_warning,
 				preview_style=PreviewStyle.RIGHT,
-				preview_size='auto',
-				preview_frame=FrameProperties('Info', FrameStyle.MAX),
+				preview_size="auto",
+				preview_frame=FrameProperties("Info", FrameStyle.MAX),
 			).run()
 
 			match result.type_:
@@ -132,14 +132,14 @@ class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):
 		item_group: MenuItemGroup,
 		config: Any,
 		auto_cursor: bool = True,
-		allow_reset: bool = False
+		allow_reset: bool = False,
 	):
-		back_text = f'{Chars.Right_arrow} ' + str(_('Back'))
+		back_text = f"{Chars.Right_arrow} " + str(_("Back"))
 		item_group.add_item(MenuItem(text=back_text))
 
 		super().__init__(
 			item_group,
 			config=config,
 			auto_cursor=auto_cursor,
-			allow_reset=allow_reset
+			allow_reset=allow_reset,
 		)

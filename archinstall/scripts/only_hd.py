@@ -15,11 +15,11 @@ def ask_user_questions() -> None:
 		global_menu = GlobalMenu(arch_config_handler.config)
 		global_menu.disable_all()
 
-		global_menu.set_enabled('archinstall_language', True)
-		global_menu.set_enabled('disk_config', True)
-		global_menu.set_enabled('disk_encryption', True)
-		global_menu.set_enabled('swap', True)
-		global_menu.set_enabled('__config__', True)
+		global_menu.set_enabled("archinstall_language", True)
+		global_menu.set_enabled("disk_config", True)
+		global_menu.set_enabled("disk_encryption", True)
+		global_menu.set_enabled("swap", True)
+		global_menu.set_enabled("__config__", True)
 
 		global_menu.run()
 
@@ -43,7 +43,7 @@ def perform_installation(mountpoint: Path) -> None:
 		mountpoint,
 		disk_config,
 		disk_encryption=disk_encryption,
-		kernels=config.kernels
+		kernels=config.kernels,
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
@@ -73,13 +73,13 @@ def _only_hd() -> None:
 	if not arch_config_handler.args.silent:
 		with Tui():
 			if not config.confirm_config():
-				debug('Installation aborted')
+				debug("Installation aborted")
 				_only_hd()
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(
 			arch_config_handler.config.disk_config,
-			arch_config_handler.config.disk_encryption
+			arch_config_handler.config.disk_encryption,
 		)
 
 		fs_handler.perform_filesystem_operations()

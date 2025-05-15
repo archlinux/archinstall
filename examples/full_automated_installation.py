@@ -23,14 +23,14 @@ from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler
 
 # we're creating a new ext4 filesystem installation
-fs_type = FilesystemType('ext4')
-device_path = Path('/dev/sda')
+fs_type = FilesystemType("ext4")
+device_path = Path("/dev/sda")
 
 # get the physical disk device
 device = device_handler.get_device(device_path)
 
 if not device:
-	raise ValueError('No device found for given path')
+	raise ValueError("No device found for given path")
 
 # create a new modification for the specific device
 device_modification = DeviceModification(device, wipe=True)
@@ -41,9 +41,9 @@ boot_partition = PartitionModification(
 	type=PartitionType.Primary,
 	start=Size(1, Unit.MiB, device.device_info.sector_size),
 	length=Size(512, Unit.MiB, device.device_info.sector_size),
-	mountpoint=Path('/boot'),
+	mountpoint=Path("/boot"),
 	fs_type=FilesystemType.Fat32,
-	flags=[PartitionFlag.BOOT]
+	flags=[PartitionFlag.BOOT],
 )
 device_modification.add_partition(boot_partition)
 
@@ -68,15 +68,15 @@ home_partition = PartitionModification(
 	type=PartitionType.Primary,
 	start=start_home,
 	length=length_home,
-	mountpoint=Path('/home'),
+	mountpoint=Path("/home"),
 	fs_type=fs_type,
-	mount_options=[]
+	mount_options=[],
 )
 device_modification.add_partition(home_partition)
 
 disk_config = DiskLayoutConfiguration(
 	config_type=DiskLayoutType.Default,
-	device_modifications=[device_modification]
+	device_modifications=[device_modification],
 )
 
 # disk encryption configuration (Optional)
@@ -84,7 +84,7 @@ disk_encryption = DiskEncryption(
 	encryption_password=Password(plaintext="enc_password"),
 	encryption_type=EncryptionType.Luks,
 	partitions=[home_partition],
-	hsm_device=None
+	hsm_device=None,
 )
 
 # initiate file handler with the disk config and the optional disk encryption config
@@ -94,22 +94,22 @@ fs_handler = FilesystemHandler(disk_config, disk_encryption)
 # WARNING: this will potentially format the filesystem and delete all data
 fs_handler.perform_filesystem_operations(show_countdown=False)
 
-mountpoint = Path('/tmp')
+mountpoint = Path("/tmp")
 
 with Installer(
 	mountpoint,
 	disk_config,
 	disk_encryption=disk_encryption,
-	kernels=['linux']
+	kernels=["linux"],
 ) as installation:
 	installation.mount_ordered_layout()
-	installation.minimal_installation(hostname='minimal-arch')
-	installation.add_additional_packages(['nano', 'wget', 'git'])
+	installation.minimal_installation(hostname="minimal-arch")
+	installation.add_additional_packages(["nano", "wget", "git"])
 
 # Optionally, install a profile of choice.
 # In this case, we install a minimal profile that is empty
 profile_config = ProfileConfiguration(MinimalProfile())
 profile_handler.install_profile_config(installation, profile_config)
 
-user = User('archinstall', Password(plaintext='password'), True)
+user = User("archinstall", Password(plaintext="password"), True)
 installation.create_users(user)

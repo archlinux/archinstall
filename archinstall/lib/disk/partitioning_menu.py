@@ -49,9 +49,9 @@ class FreeSpace:
 		Called for displaying data in table format
 		"""
 		return {
-			'Start': self.start.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
-			'End': self.end.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
-			'Size': self.length.format_highest(),
+			"Start": self.start.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
+			"End": self.end.format_size(Unit.sectors, self.start.sector_size, include_unit=False),
+			"Size": self.length.format_highest(),
 		}
 
 
@@ -73,7 +73,7 @@ class DiskSegment:
 			length=self.segment.length,
 		)
 		data = part_mod.table_data()
-		data.update({'Status': 'free', 'Type': '', 'FS type': ''})
+		data.update({"Status": "free", "Type": "", "FS type": ""})
 		return data
 
 
@@ -81,7 +81,7 @@ class PartitioningList(ListManager[DiskSegment]):
 	def __init__(
 		self,
 		device_mod: DeviceModification,
-		partition_table: PartitionTable
+		partition_table: PartitionTable,
 	) -> None:
 		device = device_mod.device
 
@@ -91,24 +91,28 @@ class PartitioningList(ListManager[DiskSegment]):
 		self._using_gpt = device_mod.using_gpt(partition_table)
 
 		self._actions = {
-			'suggest_partition_layout': str(_('Suggest partition layout')),
-			'remove_added_partitions': str(_('Remove all newly added partitions')),
-			'assign_mountpoint': str(_('Assign mountpoint')),
-			'mark_formatting': str(_('Mark/Unmark to be formatted (wipes data)')),
-			'mark_bootable': str(_('Mark/Unmark as bootable')),
+			"suggest_partition_layout": str(_("Suggest partition layout")),
+			"remove_added_partitions": str(_("Remove all newly added partitions")),
+			"assign_mountpoint": str(_("Assign mountpoint")),
+			"mark_formatting": str(_("Mark/Unmark to be formatted (wipes data)")),
+			"mark_bootable": str(_("Mark/Unmark as bootable")),
 		}
 		if self._using_gpt:
-			self._actions.update({
-				'mark_esp': str(_('Mark/Unmark as ESP')),
-				'mark_xbootldr': str(_('Mark/Unmark as XBOOTLDR'))
-			})
-		self._actions.update({
-			'set_filesystem': str(_('Change filesystem')),
-			'btrfs_mark_compressed': str(_('Mark/Unmark as compressed')),  # btrfs only
-			'btrfs_mark_nodatacow': str(_('Mark/Unmark as nodatacow')),  # btrfs only
-			'btrfs_set_subvolumes': str(_('Set subvolumes')),  # btrfs only
-			'delete_partition': str(_('Delete partition'))
-		})
+			self._actions.update(
+				{
+					"mark_esp": str(_("Mark/Unmark as ESP")),
+					"mark_xbootldr": str(_("Mark/Unmark as XBOOTLDR")),
+				}
+			)
+		self._actions.update(
+			{
+				"set_filesystem": str(_("Change filesystem")),
+				"btrfs_mark_compressed": str(_("Mark/Unmark as compressed")),  # btrfs only
+				"btrfs_mark_nodatacow": str(_("Mark/Unmark as nodatacow")),  # btrfs only
+				"btrfs_set_subvolumes": str(_("Set subvolumes")),  # btrfs only
+				"delete_partition": str(_("Delete partition")),
+			}
+		)
 
 		device_partitions = []
 
@@ -116,25 +120,25 @@ class PartitioningList(ListManager[DiskSegment]):
 			# we'll display the existing partitions of the device
 			for partition in device.partition_infos:
 				device_partitions.append(
-					PartitionModification.from_existing_partition(partition)
+					PartitionModification.from_existing_partition(partition),
 				)
 		else:
 			device_partitions = device_mod.partitions
 
-		prompt = str(_('Partition management: {}')).format(device.device_info.path) + '\n'
-		prompt += str(_('Total length: {}')).format(device.device_info.total_size.format_size(Unit.MiB))
-		self._info = prompt + '\n'
+		prompt = str(_("Partition management: {}")).format(device.device_info.path) + "\n"
+		prompt += str(_("Total length: {}")).format(device.device_info.total_size.format_size(Unit.MiB))
+		self._info = prompt + "\n"
 
 		display_actions = list(self._actions.values())
 		super().__init__(
 			self.as_segments(device_partitions),
 			display_actions[:1],
 			display_actions[2:],
-			self._info + self.wipe_str()
+			self._info + self.wipe_str(),
 		)
 
 	def wipe_str(self) -> str:
-		return '{}: {}'.format(str(_('Wipe')), self._wipe)
+		return "{}: {}".format(str(_("Wipe")), self._wipe)
 
 	def as_segments(self, device_partitions: list[PartitionModification]) -> list[DiskSegment]:
 		end = self._device.device_info.total_size
@@ -157,9 +161,9 @@ class PartitioningList(ListManager[DiskSegment]):
 			return segments
 
 		first_part_index, first_partition = next(
-			(i, disk_segment) for i, disk_segment in enumerate(segments)
-			if isinstance(disk_segment.segment, PartitionModification)
-			and not disk_segment.segment.is_delete()
+			(i, disk_segment)
+			for i, disk_segment in enumerate(segments)
+			if isinstance(disk_segment.segment, PartitionModification) and not disk_segment.segment.is_delete()
 		)
 
 		prev_partition = first_partition
@@ -193,10 +197,7 @@ class PartitioningList(ListManager[DiskSegment]):
 
 	@staticmethod
 	def get_part_mods(disk_segments: list[DiskSegment]) -> list[PartitionModification]:
-		return [
-			s.segment for s in disk_segments
-			if isinstance(s.segment, PartitionModification)
-		]
+		return [s.segment for s in disk_segments if isinstance(s.segment, PartitionModification)]
 
 	def get_device_mod(self) -> DeviceModification:
 		disk_segments = super().run()
@@ -207,7 +208,7 @@ class PartitioningList(ListManager[DiskSegment]):
 	def _run_actions_on_entry(self, entry: DiskSegment) -> None:
 		# Do not create a menu when the segment is free space
 		if isinstance(entry.segment, FreeSpace):
-			self._data = self.handle_action('', entry, self._data)
+			self._data = self.handle_action("", entry, self._data)
 		else:
 			super()._run_actions_on_entry(entry)
 
@@ -215,18 +216,18 @@ class PartitioningList(ListManager[DiskSegment]):
 	def selected_action_display(self, selection: DiskSegment) -> str:
 		if isinstance(selection.segment, PartitionModification):
 			if selection.segment.status == ModificationStatus.Create:
-				return str(_('Partition - New'))
+				return str(_("Partition - New"))
 			elif selection.segment.is_delete() and selection.segment.dev_path:
-				title = str(_('Partition')) + '\n\n'
-				title += 'status: delete\n'
-				title += f'device: {selection.segment.dev_path}\n'
+				title = str(_("Partition")) + "\n\n"
+				title += "status: delete\n"
+				title += f"device: {selection.segment.dev_path}\n"
 				for part in self._device.partition_infos:
 					if part.path == selection.segment.dev_path:
 						if part.partuuid:
-							title += f'partuuid: {part.partuuid}'
+							title += f"partuuid: {part.partuuid}"
 				return title
 			return str(selection.segment.dev_path)
-		return ''
+		return ""
 
 	@override
 	def filter_options(self, selection: DiskSegment, options: list[str]) -> list[str]:
@@ -237,7 +238,7 @@ class PartitioningList(ListManager[DiskSegment]):
 				not_filter = list(self._actions.values())
 			# only display formatting if the partition exists already
 			elif not selection.segment.exists():
-				not_filter += [self._actions['mark_formatting']]
+				not_filter += [self._actions["mark_formatting"]]
 			else:
 				# only allow options if the existing partition
 				# was marked as formatting, otherwise we run into issues where
@@ -245,29 +246,29 @@ class PartitioningList(ListManager[DiskSegment]):
 				# 2. Switch back to old filesystem -> should unmark wipe now, but
 				#     how do we know it was the original one?
 				not_filter += [
-					self._actions['set_filesystem'],
-					self._actions['mark_bootable']
+					self._actions["set_filesystem"],
+					self._actions["mark_bootable"],
 				]
 				if self._using_gpt:
 					not_filter += [
-						self._actions['mark_esp'],
-						self._actions['mark_xbootldr']
+						self._actions["mark_esp"],
+						self._actions["mark_xbootldr"],
 					]
 				not_filter += [
-					self._actions['btrfs_mark_compressed'],
-					self._actions['btrfs_mark_nodatacow'],
-					self._actions['btrfs_set_subvolumes']
+					self._actions["btrfs_mark_compressed"],
+					self._actions["btrfs_mark_nodatacow"],
+					self._actions["btrfs_set_subvolumes"],
 				]
 
 			# non btrfs partitions shouldn't get btrfs options
 			if selection.segment.fs_type != FilesystemType.Btrfs:
 				not_filter += [
-					self._actions['btrfs_mark_compressed'],
-					self._actions['btrfs_mark_nodatacow'],
-					self._actions['btrfs_set_subvolumes']
+					self._actions["btrfs_mark_compressed"],
+					self._actions["btrfs_mark_nodatacow"],
+					self._actions["btrfs_set_subvolumes"],
 				]
 			else:
-				not_filter += [self._actions['assign_mountpoint']]
+				not_filter += [self._actions["assign_mountpoint"]]
 
 		return [o for o in options if o not in not_filter]
 
@@ -276,30 +277,26 @@ class PartitioningList(ListManager[DiskSegment]):
 		self,
 		action: str,
 		entry: DiskSegment | None,
-		data: list[DiskSegment]
+		data: list[DiskSegment],
 	) -> list[DiskSegment]:
 		if not entry:
 			action_key = [k for k, v in self._actions.items() if v == action][0]
 			match action_key:
-				case 'suggest_partition_layout':
+				case "suggest_partition_layout":
 					part_mods = self.get_part_mods(data)
 					device_mod = self._suggest_partition_layout(part_mods)
 					if device_mod and device_mod.partitions:
 						data = self.as_segments(device_mod.partitions)
 						self._wipe = device_mod.wipe
 						self._prompt = self._info + self.wipe_str()
-				case 'remove_added_partitions':
+				case "remove_added_partitions":
 					if self._reset_confirmation():
-						data = [
-							s for s in data
-							if isinstance(s.segment, PartitionModification)
-							and s.segment.is_exists_or_modify()
-						]
+						data = [s for s in data if isinstance(s.segment, PartitionModification) and s.segment.is_exists_or_modify()]
 		elif isinstance(entry.segment, PartitionModification):
 			partition = entry.segment
 			action_key = [k for k, v in self._actions.items() if v == action][0]
 			match action_key:
-				case 'assign_mountpoint':
+				case "assign_mountpoint":
 					new_mountpoint = self._prompt_mountpoint()
 					if not partition.is_swap():
 						if partition.is_home():
@@ -315,22 +312,22 @@ class PartitioningList(ListManager[DiskSegment]):
 						if partition.is_home():
 							partition.flags = []
 							partition.set_flag(PartitionFlag.LINUX_HOME)
-				case 'mark_formatting':
+				case "mark_formatting":
 					self._prompt_formatting(partition)
-				case 'mark_bootable':
+				case "mark_bootable":
 					if not partition.is_swap():
 						partition.invert_flag(PartitionFlag.BOOT)
-				case 'mark_esp':
+				case "mark_esp":
 					if not partition.is_root() and not partition.is_home() and not partition.is_swap():
 						if PartitionFlag.XBOOTLDR in partition.flags:
 							partition.invert_flag(PartitionFlag.XBOOTLDR)
 						partition.invert_flag(PartitionFlag.ESP)
-				case 'mark_xbootldr':
+				case "mark_xbootldr":
 					if not partition.is_root() and not partition.is_home() and not partition.is_swap():
 						if PartitionFlag.ESP in partition.flags:
 							partition.invert_flag(PartitionFlag.ESP)
 						partition.invert_flag(PartitionFlag.XBOOTLDR)
-				case 'set_filesystem':
+				case "set_filesystem":
 					fs_type = self._prompt_partition_fs_type()
 					if fs_type:
 						if partition.is_swap():
@@ -343,13 +340,13 @@ class PartitioningList(ListManager[DiskSegment]):
 						# btrfs subvolumes will define mountpoints
 						if fs_type == FilesystemType.Btrfs:
 							partition.mountpoint = None
-				case 'btrfs_mark_compressed':
+				case "btrfs_mark_compressed":
 					self._toggle_mount_option(partition, BtrfsMountOption.compress)
-				case 'btrfs_mark_nodatacow':
+				case "btrfs_mark_nodatacow":
 					self._toggle_mount_option(partition, BtrfsMountOption.nodatacow)
-				case 'btrfs_set_subvolumes':
+				case "btrfs_set_subvolumes":
 					self._set_btrfs_subvolumes(partition)
-				case 'delete_partition':
+				case "delete_partition":
 					data = self._delete_partition(partition, data)
 		else:
 			part_mods = self.get_part_mods(data)
@@ -362,47 +359,35 @@ class PartitioningList(ListManager[DiskSegment]):
 	def _delete_partition(
 		self,
 		entry: PartitionModification,
-		data: list[DiskSegment]
+		data: list[DiskSegment],
 	) -> list[DiskSegment]:
 		if entry.is_exists_or_modify():
 			entry.status = ModificationStatus.Delete
 			part_mods = self.get_part_mods(data)
 		else:
-			part_mods = [
-				d.segment for d in data
-				if isinstance(d.segment, PartitionModification)
-				and d.segment != entry
-			]
+			part_mods = [d.segment for d in data if isinstance(d.segment, PartitionModification) and d.segment != entry]
 
 		return self.as_segments(part_mods)
 
 	def _toggle_mount_option(
 		self,
 		partition: PartitionModification,
-		option: BtrfsMountOption
+		option: BtrfsMountOption,
 	) -> None:
 		if option.value not in partition.mount_options:
 			if option == BtrfsMountOption.compress:
-				partition.mount_options = [
-					o for o in partition.mount_options
-					if o != BtrfsMountOption.nodatacow.value
-				]
+				partition.mount_options = [o for o in partition.mount_options if o != BtrfsMountOption.nodatacow.value]
 
-			partition.mount_options = [
-				o for o in partition.mount_options
-				if not o.startswith(BtrfsMountOption.compress.name)
-			]
+			partition.mount_options = [o for o in partition.mount_options if not o.startswith(BtrfsMountOption.compress.name)]
 
 			partition.mount_options.append(option.value)
 		else:
-			partition.mount_options = [
-				o for o in partition.mount_options if o != option.value
-			]
+			partition.mount_options = [o for o in partition.mount_options if o != option.value]
 
 	def _set_btrfs_subvolumes(self, partition: PartitionModification) -> None:
 		partition.btrfs_subvols = SubvolumeMenu(
 			partition.btrfs_subvols,
-			None
+			None,
 		).run()
 
 	def _prompt_formatting(self, partition: PartitionModification) -> None:
@@ -417,7 +402,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
 		# it's safe to change the filesystem for this partition.
 		if partition.fs_type == FilesystemType.Crypto_luks:
-			prompt = str(_('This partition is currently encrypted, to format it a filesystem has to be specified')) + '\n'
+			prompt = str(_("This partition is currently encrypted, to format it a filesystem has to be specified")) + "\n"
 			fs_type = self._prompt_partition_fs_type(prompt)
 			partition.fs_type = fs_type
 
@@ -425,8 +410,8 @@ class PartitioningList(ListManager[DiskSegment]):
 				partition.mountpoint = None
 
 	def _prompt_mountpoint(self) -> Path:
-		header = str(_('Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')) + '\n'
-		prompt = str(_('Mountpoint'))
+		header = str(_("Partition mount-points are relative to inside the installation, the boot would be /boot as an example.")) + "\n"
+		prompt = str(_("Mountpoint"))
 
 		mountpoint = prompt_dir(prompt, header, validate=False, allow_skip=False)
 		assert mountpoint
@@ -442,30 +427,30 @@ class PartitioningList(ListManager[DiskSegment]):
 			group,
 			header=prompt,
 			alignment=Alignment.CENTER,
-			frame=FrameProperties.min(str(_('Filesystem'))),
-			allow_skip=False
+			frame=FrameProperties.min(str(_("Filesystem"))),
+			allow_skip=False,
 		).run()
 
 		match result.type_:
 			case ResultType.Selection:
 				return result.get_value()
 			case _:
-				raise ValueError('Unhandled result type')
+				raise ValueError("Unhandled result type")
 
 	def _validate_value(
 		self,
 		sector_size: SectorSize,
 		max_size: Size,
-		text: str
+		text: str,
 	) -> Size | None:
-		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', text, re.I)
+		match = re.match(r"([0-9]+)([a-zA-Z|%]*)", text, re.I)
 
 		if not match:
 			return None
 
 		str_value, unit = match.groups()
 
-		if unit == '%':
+		if unit == "%":
 			value = int(max_size.value * (int(str_value) / 100))
 			unit = max_size.unit.name
 		else:
@@ -488,32 +473,32 @@ class PartitioningList(ListManager[DiskSegment]):
 		def validate(value: str) -> str | None:
 			size = self._validate_value(sector_size, max_size, value)
 			if not size:
-				return str(_('Invalid size'))
+				return str(_("Invalid size"))
 			return None
 
 		device_info = self._device.device_info
 		sector_size = device_info.sector_size
 
-		text = str(_('Selected free space segment on device {}:')).format(device_info.path) + '\n\n'
+		text = str(_("Selected free space segment on device {}:")).format(device_info.path) + "\n\n"
 		free_space_table = FormattedOutput.as_table([free_space])
-		prompt = text + free_space_table + '\n'
+		prompt = text + free_space_table + "\n"
 
 		max_sectors = free_space.length.format_size(Unit.sectors, sector_size)
 		max_bytes = free_space.length.format_size(Unit.B)
 
-		prompt += str(_('Size: {} / {}')).format(max_sectors, max_bytes) + '\n\n'
-		prompt += str(_('All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB...')) + '\n'
-		prompt += str(_('If no unit is provided, the value is interpreted as sectors')) + '\n'
+		prompt += str(_("Size: {} / {}")).format(max_sectors, max_bytes) + "\n\n"
+		prompt += str(_("All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB...")) + "\n"
+		prompt += str(_("If no unit is provided, the value is interpreted as sectors")) + "\n"
 
 		max_size = free_space.length
 
-		title = str(_('Size (default: {}): ')).format(max_size.format_highest())
+		title = str(_("Size (default: {}): ")).format(max_size.format_highest())
 
 		result = EditMenu(
 			title,
-			header=f'{prompt}\b',
+			header=f"{prompt}\b",
 			allow_skip=True,
-			validator=validate
+			validator=validate,
 		).input()
 
 		size: Size | None = None
@@ -547,10 +532,10 @@ class PartitioningList(ListManager[DiskSegment]):
 			start=free_space.start,
 			length=length,
 			fs_type=fs_type,
-			mountpoint=mountpoint
+			mountpoint=mountpoint,
 		)
 
-		if partition.mountpoint == Path('/boot'):
+		if partition.mountpoint == Path("/boot"):
 			partition.set_flag(PartitionFlag.BOOT)
 			if self._using_gpt:
 				partition.set_flag(PartitionFlag.ESP)
@@ -562,7 +547,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		return partition
 
 	def _reset_confirmation(self) -> bool:
-		prompt = str(_('This will remove all newly added partitions, continue?')) + '\n'
+		prompt = str(_("This will remove all newly added partitions, continue?")) + "\n"
 
 		result = SelectMenu[bool](
 			MenuItemGroup.yes_no(),
@@ -571,14 +556,14 @@ class PartitioningList(ListManager[DiskSegment]):
 			orientation=Orientation.HORIZONTAL,
 			columns=2,
 			reset_warning_msg=prompt,
-			allow_skip=False
+			allow_skip=False,
 		).run()
 
 		return result.item() == MenuItem.yes()
 
 	def _suggest_partition_layout(
 		self,
-		data: list[PartitionModification]
+		data: list[PartitionModification],
 	) -> DeviceModification | None:
 		# if modifications have been done already, inform the user
 		# that this operation will erase those modifications
@@ -593,7 +578,7 @@ class PartitioningList(ListManager[DiskSegment]):
 
 def manual_partitioning(
 	device_mod: DeviceModification,
-	partition_table: PartitionTable
+	partition_table: PartitionTable,
 ) -> DeviceModification | None:
 	menu_list = PartitioningList(device_mod, partition_table)
 	mod = menu_list.get_device_mod()

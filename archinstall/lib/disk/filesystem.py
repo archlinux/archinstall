@@ -37,23 +37,23 @@ class FilesystemHandler:
 	def __init__(
 		self,
 		disk_config: DiskLayoutConfiguration,
-		enc_conf: DiskEncryption | None = None
+		enc_conf: DiskEncryption | None = None,
 	):
 		self._disk_config = disk_config
 		self._enc_config = enc_conf
 
 	def perform_filesystem_operations(self, show_countdown: bool = True) -> None:
 		if self._disk_config.config_type == DiskLayoutType.Pre_mount:
-			debug('Disk layout configuration is set to pre-mount, not performing any operations')
+			debug("Disk layout configuration is set to pre-mount, not performing any operations")
 			return
 
 		device_mods = [d for d in self._disk_config.device_modifications if d.partitions]
 
 		if not device_mods:
-			debug('No modifications required')
+			debug("No modifications required")
 			return
 
-		device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
+		device_paths = ", ".join([str(mod.device.device_info.path) for mod in device_mods])
 
 		if show_countdown:
 			self._final_warning(device_paths)
@@ -73,10 +73,10 @@ class FilesystemHandler:
 		if self._disk_config.lvm_config:
 			for mod in device_mods:
 				if boot_part := mod.get_boot_partition():
-					debug(f'Formatting boot partition: {boot_part.dev_path}')
+					debug(f"Formatting boot partition: {boot_part.dev_path}")
 					self._format_partitions(
 						[boot_part],
-						mod.device_path
+						mod.device_path,
 					)
 
 			self.perform_lvm_operations()
@@ -84,7 +84,7 @@ class FilesystemHandler:
 			for mod in device_mods:
 				self._format_partitions(
 					mod.partitions,
-					mod.device_path
+					mod.device_path,
 				)
 
 				for part_mod in mod.partitions:
@@ -94,7 +94,7 @@ class FilesystemHandler:
 	def _format_partitions(
 		self,
 		partitions: list[PartitionModification],
-		device_path: Path
+		device_path: Path,
 	) -> None:
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
@@ -113,7 +113,7 @@ class FilesystemHandler:
 					part_mod.safe_dev_path,
 					part_mod.mapper_name,
 					part_mod.safe_fs_type,
-					self._enc_config
+					self._enc_config,
 				)
 			else:
 				device_handler.format(part_mod.safe_fs_type, part_mod.safe_dev_path)
@@ -130,12 +130,11 @@ class FilesystemHandler:
 	def _validate_partitions(self, partitions: list[PartitionModification]) -> None:
 		checks = {
 			# verify that all partitions have a path set (which implies that they have been created)
-			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
+			lambda x: x.dev_path is None: ValueError("When formatting, all partitions must have a path set"),
 			# crypto luks is not a valid file system type
-			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError(
-				'Crypto luks cannot be set as a filesystem type'),
+			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError("Crypto luks cannot be set as a filesystem type"),
 			# file system type must be set
-			lambda x: x.fs_type is None: ValueError('File system type must be set for modification')
+			lambda x: x.fs_type is None: ValueError("File system type must be set for modification"),
 		}
 
 		for check, exc in checks.items():
@@ -144,7 +143,7 @@ class FilesystemHandler:
 				raise exc
 
 	def perform_lvm_operations(self) -> None:
-		info('Setting up LVM config...')
+		info("Setting up LVM config...")
 
 		if not self._disk_config.lvm_config:
 			return
@@ -152,7 +151,7 @@ class FilesystemHandler:
 		if self._enc_config:
 			self._setup_lvm_encrypted(
 				self._disk_config.lvm_config,
-				self._enc_config
+				self._enc_config,
 			)
 		else:
 			self._setup_lvm(self._disk_config.lvm_config)
@@ -190,7 +189,7 @@ class FilesystemHandler:
 	def _setup_lvm(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {},
 	) -> None:
 		self._lvm_create_pvs(lvm_config, enc_mods)
 
@@ -203,7 +202,7 @@ class FilesystemHandler:
 			vg_info = device_handler.lvm_group_info(vg.name)
 
 			if not vg_info:
-				raise ValueError('Unable to fetch VG info')
+				raise ValueError("Unable to fetch VG info")
 
 			# the actual available LVM Group size will be smaller than the
 			# total PVs size due to reserved metadata storage etc.
@@ -221,11 +220,11 @@ class FilesystemHandler:
 			for lv in vg.volumes:
 				offset = max_vol_offset if lv == max_vol else None
 
-				debug(f'vg: {vg.name}, vol: {lv.name}, offset: {offset}')
+				debug(f"vg: {vg.name}, vol: {lv.name}, offset: {offset}")
 				device_handler.lvm_vol_create(vg.name, lv, offset)
 
 				while True:
-					debug('Fetching LVM volume info')
+					debug("Fetching LVM volume info")
 					lv_info = device_handler.lvm_vol_info(lv.name)
 					if lv_info is not None:
 						break
@@ -237,12 +236,12 @@ class FilesystemHandler:
 	def _format_lvm_vols(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_vols: dict[LvmVolume, Luks2] = {}
+		enc_vols: dict[LvmVolume, Luks2] = {},
 	) -> None:
 		for vol in lvm_config.get_all_volumes():
 			if enc_vol := enc_vols.get(vol, None):
 				if not enc_vol.mapper_dev:
-					raise ValueError('No mapper device defined')
+					raise ValueError("No mapper device defined")
 				path = enc_vol.mapper_dev
 			else:
 				path = vol.safe_dev_path
@@ -257,7 +256,7 @@ class FilesystemHandler:
 	def _lvm_create_pvs(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {},
 	) -> None:
 		pv_paths: set[Path] = set()
 
@@ -269,7 +268,7 @@ class FilesystemHandler:
 	def _get_all_pv_dev_paths(
 		self,
 		pvs: list[PartitionModification],
-		enc_mods: dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {},
 	) -> set[Path]:
 		pv_paths: set[Path] = set()
 
@@ -286,7 +285,7 @@ class FilesystemHandler:
 		self,
 		lvm_config: LvmConfiguration,
 		enc_config: DiskEncryption,
-		lock_after_create: bool = True
+		lock_after_create: bool = True,
 	) -> dict[LvmVolume, Luks2]:
 		enc_vols: dict[LvmVolume, Luks2] = {}
 
@@ -296,7 +295,7 @@ class FilesystemHandler:
 					vol.safe_dev_path,
 					vol.mapper_name,
 					enc_config.encryption_password,
-					lock_after_create
+					lock_after_create,
 				)
 
 				enc_vols[vol] = luks_handler
@@ -306,7 +305,7 @@ class FilesystemHandler:
 	def _encrypt_partitions(
 		self,
 		enc_config: DiskEncryption,
-		lock_after_create: bool = True
+		lock_after_create: bool = True,
 	) -> dict[PartitionModification, Luks2]:
 		enc_mods: dict[PartitionModification, Luks2] = {}
 
@@ -326,7 +325,7 @@ class FilesystemHandler:
 						part_mod.safe_dev_path,
 						part_mod.mapper_name,
 						enc_config.encryption_password,
-						lock_after_create=lock_after_create
+						lock_after_create=lock_after_create,
 					)
 
 					enc_mods[part_mod] = luks_handler
@@ -342,19 +341,19 @@ class FilesystemHandler:
 
 			device_handler.lvm_vol_reduce(
 				largest_vol.safe_dev_path,
-				Size(256, Unit.MiB, SectorSize.default())
+				Size(256, Unit.MiB, SectorSize.default()),
 			)
 
 	def _final_warning(self, device_paths: str) -> bool:
 		# Issue a final warning before we continue with something un-revertable.
 		# We mention the drive one last time, and count from 5 to 0.
-		out = str(_(' ! Formatting {} in ')).format(device_paths)
-		Tui.print(out, row=0, endl='', clear_screen=True)
+		out = str(_(" ! Formatting {} in ")).format(device_paths)
+		Tui.print(out, row=0, endl="", clear_screen=True)
 
 		try:
-			countdown = '\n5...4...3...2...1\n'
+			countdown = "\n5...4...3...2...1\n"
 			for c in countdown:
-				Tui.print(c, row=0, endl='')
+				Tui.print(c, row=0, endl="")
 				time.sleep(0.25)
 		except KeyboardInterrupt:
 			with Tui():

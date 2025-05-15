@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class BudgieProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Budgie', ProfileType.DesktopEnv)
+		super().__init__("Budgie", ProfileType.DesktopEnv)
 
 	@property
 	@override
@@ -16,7 +16,7 @@ class BudgieProfile(XorgProfile):
 			"budgie",
 			"mate-terminal",
 			"nemo",
-			"papirus-icon-theme"
+			"papirus-icon-theme",
 		]
 
 	@property

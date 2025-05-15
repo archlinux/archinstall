@@ -9,6 +9,6 @@ from pathlib import Path
 from typing import Any
 
 storage: dict[str, Any] = {
-	'LOG_PATH': Path('/var/log/archinstall'),
-	'LOG_FILE': Path('install.log'),
+	"LOG_PATH": Path("/var/log/archinstall"),
+	"LOG_FILE": Path("install.log"),
 }

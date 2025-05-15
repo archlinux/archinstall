@@ -35,21 +35,21 @@ class MenuItem:
 		return self.value
 
 	@classmethod
-	def yes(cls) -> 'MenuItem':
+	def yes(cls) -> "MenuItem":
 		if cls._yes is None:
-			cls._yes = cls(str(_('Yes')), value=True)
+			cls._yes = cls(str(_("Yes")), value=True)
 
 		return cls._yes
 
 	@classmethod
-	def no(cls) -> 'MenuItem':
+	def no(cls) -> "MenuItem":
 		if cls._no is None:
-			cls._no = cls(str(_('No')), value=True)
+			cls._no = cls(str(_("No")), value=True)
 
 		return cls._no
 
 	def is_empty(self) -> bool:
-		return self.text == '' or self.text is None
+		return self.text == "" or self.text is None
 
 	def has_value(self) -> bool:
 		if self.value is None:
@@ -76,10 +76,10 @@ class MenuItemGroup:
 		default_item: MenuItem | None = None,
 		sort_items: bool = False,
 		sort_case_sensitive: bool = True,
-		checkmarks: bool = False
+		checkmarks: bool = False,
 	) -> None:
 		if len(menu_items) < 1:
-			raise ValueError('Menu must have at least one item')
+			raise ValueError("Menu must have at least one item")
 
 		if sort_items:
 			if sort_case_sensitive:
@@ -87,7 +87,7 @@ class MenuItemGroup:
 			else:
 				menu_items = sorted(menu_items, key=lambda x: x.text.lower())
 
-		self._filter_pattern: str = ''
+		self._filter_pattern: str = ""
 		self._checkmarks: bool = checkmarks
 
 		self._menu_items: list[MenuItem] = menu_items
@@ -99,27 +99,27 @@ class MenuItemGroup:
 			self.focus_first()
 
 		if self.focus_item not in self.items:
-			raise ValueError(f'Selected item not in menu: {focus_item}')
+			raise ValueError(f"Selected item not in menu: {focus_item}")
 
 	def add_item(self, item: MenuItem) -> None:
 		self._menu_items.append(item)
-		delattr(self, 'items')  # resetting the cache
+		delattr(self, "items")  # resetting the cache
 
 	def find_by_key(self, key: str) -> MenuItem:
 		for item in self._menu_items:
 			if item.key == key:
 				return item
 
-		raise ValueError(f'No key found for: {key}')
+		raise ValueError(f"No key found for: {key}")
 
 	def get_enabled_items(self) -> list[MenuItem]:
 		return [it for it in self.items if self.is_enabled(it)]
 
 	@staticmethod
-	def yes_no() -> 'MenuItemGroup':
+	def yes_no() -> "MenuItemGroup":
 		return MenuItemGroup(
 			[MenuItem.yes(), MenuItem.no()],
-			sort_items=True
+			sort_items=True,
 		)
 
 	def set_preview_for_all(self, action: Callable[[Any], str | None]) -> None:
@@ -180,35 +180,35 @@ class MenuItemGroup:
 
 	def get_item_text(self, item: MenuItem) -> str:
 		if item.is_empty():
-			return ''
+			return ""
 
 		max_width = self._max_items_text_width
 		display_text = item.get_display_value()
 		default_text = self._default_suffix(item)
 
-		text = unicode_ljust(str(item.text), max_width, ' ')
-		spacing = ' ' * 4
+		text = unicode_ljust(str(item.text), max_width, " ")
+		spacing = " " * 4
 
 		if display_text:
-			text = f'{text}{spacing}{display_text}'
+			text = f"{text}{spacing}{display_text}"
 		elif self._checkmarks:
 			from .types import Chars
 
 			if item.has_value():
 				if item.get_value() is not False:
-					text = f'{text}{spacing}{Chars.Check}'
+					text = f"{text}{spacing}{Chars.Check}"
 			else:
 				text = item.text
 
 		if default_text:
-			text = f'{text} {default_text}'
+			text = f"{text} {default_text}"
 
-		return text.rstrip(' ')
+		return text.rstrip(" ")
 
 	def _default_suffix(self, item: MenuItem) -> str:
 		if self.default_item == item:
-			return str(_(' (default)'))
-		return ''
+			return str(_(" (default)"))
+		return ""
 
 	@cached_property
 	def items(self) -> list[MenuItem]:
@@ -222,21 +222,21 @@ class MenuItemGroup:
 		return self._filter_pattern
 
 	def has_filter(self) -> bool:
-		return self._filter_pattern != ''
+		return self._filter_pattern != ""
 
 	def set_filter_pattern(self, pattern: str) -> None:
 		self._filter_pattern = pattern
-		delattr(self, 'items')  # resetting the cache
+		delattr(self, "items")  # resetting the cache
 		self._reload_focus_item()
 
 	def append_filter(self, pattern: str) -> None:
 		self._filter_pattern += pattern
-		delattr(self, 'items')  # resetting the cache
+		delattr(self, "items")  # resetting the cache
 		self._reload_focus_item()
 
 	def reduce_filter(self) -> None:
 		self._filter_pattern = self._filter_pattern[:-1]
-		delattr(self, 'items')  # resetting the cache
+		delattr(self, "items")  # resetting the cache
 		self._reload_focus_item()
 
 	def _reload_focus_item(self) -> None:
@@ -302,7 +302,7 @@ class MenuItemGroup:
 		self,
 		items: list[MenuItem],
 		start_item: MenuItem,
-		direction: int
+		direction: int,
 	) -> MenuItem | None:
 		start_index = self.items.index(start_item)
 		n = len(items)
@@ -362,7 +362,7 @@ class MenuItemsState:
 		item_group: MenuItemGroup,
 		total_cols: int,
 		total_rows: int,
-		with_frame: bool
+		with_frame: bool,
 	) -> None:
 		self._item_group = item_group
 		self._total_cols = total_cols
@@ -390,11 +390,7 @@ class MenuItemsState:
 
 		start, end = 0, 0
 
-		if (
-			len(self._view_items) == 0
-			or self._prev_row_idx == -1
-			or self._item_group.has_filter()
-		):  # initial setup or filter
+		if len(self._view_items) == 0 or self._prev_row_idx == -1 or self._item_group.has_filter():  # initial setup or filter
 			if focus_row_idx < self._total_rows:
 				start = 0
 				end = self._total_rows
@@ -434,14 +430,14 @@ class MenuItemsState:
 		self,
 		items: list[MenuItem],
 		start_row: int,
-		total_rows: int
+		total_rows: int,
 	) -> list[list[MenuItem]]:
 		groups: list[list[MenuItem]] = []
 		nr_items = self._total_cols * min(total_rows, len(items))
 
 		for x in range(start_row, nr_items, self._total_cols):
 			groups.append(
-				items[x:x + self._total_cols]
+				items[x : x + self._total_cols],
 			)
 
 		return groups

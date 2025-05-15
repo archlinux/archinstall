@@ -46,8 +46,8 @@ class Arguments:
 	creds_decryption_key: str | None = None
 	silent: bool = False
 	dry_run: bool = False
-	script: str = 'guided'
-	mountpoint: Path = Path('/mnt')
+	script: str = "guided"
+	mountpoint: Path = Path("/mnt")
 	skip_ntp: bool = False
 	debug: bool = False
 	offline: bool = False
@@ -62,7 +62,7 @@ class Arguments:
 class ArchConfig:
 	version: str | None = None
 	locale_config: LocaleConfiguration | None = None
-	archinstall_language: Language = field(default_factory=lambda: translation_handler.get_language_by_abbr('en'))
+	archinstall_language: Language = field(default_factory=lambda: translation_handler.get_language_by_abbr("en"))
 	disk_config: DiskLayoutConfiguration | None = None
 	profile_config: ProfileConfiguration | None = None
 	mirror_config: MirrorConfiguration | None = None
@@ -70,13 +70,13 @@ class ArchConfig:
 	bootloader: Bootloader = field(default=Bootloader.get_default())
 	uki: bool = False
 	audio_config: AudioConfiguration | None = None
-	hostname: str = 'archlinux'
-	kernels: list[str] = field(default_factory=lambda: ['linux'])
+	hostname: str = "archlinux"
+	kernels: list[str] = field(default_factory=lambda: ["linux"])
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
 	swap: bool = True
-	timezone: str = 'UTC'
+	timezone: str = "UTC"
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
 
@@ -87,133 +87,133 @@ class ArchConfig:
 
 	def unsafe_json(self) -> dict[str, Any]:
 		config = {
-			'users': [user.json() for user in self.users],
-			'root_enc_password': self.root_enc_password.enc_password if self.root_enc_password else None,
+			"users": [user.json() for user in self.users],
+			"root_enc_password": self.root_enc_password.enc_password if self.root_enc_password else None,
 		}
 
 		if self.disk_encryption and self.disk_encryption.encryption_password:
-			config['encryption_password'] = self.disk_encryption.encryption_password.plaintext
+			config["encryption_password"] = self.disk_encryption.encryption_password.plaintext
 
 		return config
 
 	def safe_json(self) -> dict[str, Any]:
 		config: Any = {
-			'version': self.version,
-			'archinstall-language': self.archinstall_language.json(),
-			'hostname': self.hostname,
-			'kernels': self.kernels,
-			'ntp': self.ntp,
-			'packages': self.packages,
-			'parallel_downloads': self.parallel_downloads,
-			'swap': self.swap,
-			'timezone': self.timezone,
-			'services': self.services,
-			'custom_commands': self.custom_commands,
-			'bootloader': self.bootloader.json(),
-			'audio_config': self.audio_config.json() if self.audio_config else None,
+			"version": self.version,
+			"archinstall-language": self.archinstall_language.json(),
+			"hostname": self.hostname,
+			"kernels": self.kernels,
+			"ntp": self.ntp,
+			"packages": self.packages,
+			"parallel_downloads": self.parallel_downloads,
+			"swap": self.swap,
+			"timezone": self.timezone,
+			"services": self.services,
+			"custom_commands": self.custom_commands,
+			"bootloader": self.bootloader.json(),
+			"audio_config": self.audio_config.json() if self.audio_config else None,
 		}
 
 		if self.locale_config:
-			config['locale_config'] = self.locale_config.json()
+			config["locale_config"] = self.locale_config.json()
 
 		if self.disk_config:
-			config['disk_config'] = self.disk_config.json()
+			config["disk_config"] = self.disk_config.json()
 
 		if self.disk_encryption:
-			config['disk_encryption'] = self.disk_encryption.json()
+			config["disk_encryption"] = self.disk_encryption.json()
 
 		if self.profile_config:
-			config['profile_config'] = self.profile_config.json()
+			config["profile_config"] = self.profile_config.json()
 
 		if self.mirror_config:
-			config['mirror_config'] = self.mirror_config.json()
+			config["mirror_config"] = self.mirror_config.json()
 
 		if self.network_config:
-			config['network_config'] = self.network_config.json()
+			config["network_config"] = self.network_config.json()
 
 		return config
 
 	@classmethod
-	def from_config(cls, args_config: dict[str, Any]) -> 'ArchConfig':
+	def from_config(cls, args_config: dict[str, Any]) -> "ArchConfig":
 		arch_config = ArchConfig()
 
 		arch_config.locale_config = LocaleConfiguration.parse_arg(args_config)
 
-		if archinstall_lang := args_config.get('archinstall-language', None):
+		if archinstall_lang := args_config.get("archinstall-language", None):
 			arch_config.archinstall_language = translation_handler.get_language_by_name(archinstall_lang)
 
-		if disk_config := args_config.get('disk_config', {}):
+		if disk_config := args_config.get("disk_config", {}):
 			arch_config.disk_config = DiskLayoutConfiguration.parse_arg(disk_config)
 
-		if profile_config := args_config.get('profile_config', None):
+		if profile_config := args_config.get("profile_config", None):
 			arch_config.profile_config = ProfileConfiguration.parse_arg(profile_config)
 
-		if mirror_config := args_config.get('mirror_config', None):
+		if mirror_config := args_config.get("mirror_config", None):
 			backwards_compatible_repo = []
-			if additional_repositories := args_config.get('additional-repositories', []):
+			if additional_repositories := args_config.get("additional-repositories", []):
 				backwards_compatible_repo = [Repository(r) for r in additional_repositories]
 
 			arch_config.mirror_config = MirrorConfiguration.parse_args(
 				mirror_config,
-				backwards_compatible_repo
+				backwards_compatible_repo,
 			)
 
-		if net_config := args_config.get('network_config', None):
+		if net_config := args_config.get("network_config", None):
 			arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
 
 		# DEPRECATED: backwards copatibility
-		if users := args_config.get('!users', None):
+		if users := args_config.get("!users", None):
 			arch_config.users = User.parse_arguments(users)
 
-		if users := args_config.get('users', None):
+		if users := args_config.get("users", None):
 			arch_config.users = User.parse_arguments(users)
 
-		if bootloader_config := args_config.get('bootloader', None):
+		if bootloader_config := args_config.get("bootloader", None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config)
 
-		if args_config.get('uki') and not arch_config.bootloader.has_uki_support():
+		if args_config.get("uki") and not arch_config.bootloader.has_uki_support():
 			arch_config.uki = False
 
-		if audio_config := args_config.get('audio_config', None):
+		if audio_config := args_config.get("audio_config", None):
 			arch_config.audio_config = AudioConfiguration.parse_arg(audio_config)
 
-		if args_config.get('disk_encryption', None) is not None and arch_config.disk_config is not None:
+		if args_config.get("disk_encryption", None) is not None and arch_config.disk_config is not None:
 			arch_config.disk_encryption = DiskEncryption.parse_arg(
 				arch_config.disk_config,
-				args_config['disk_encryption'],
-				Password(plaintext=args_config.get('encryption_password', ''))
+				args_config["disk_encryption"],
+				Password(plaintext=args_config.get("encryption_password", "")),
 			)
 
-		if hostname := args_config.get('hostname', ''):
+		if hostname := args_config.get("hostname", ""):
 			arch_config.hostname = hostname
 
-		if kernels := args_config.get('kernels', []):
+		if kernels := args_config.get("kernels", []):
 			arch_config.kernels = kernels
 
-		arch_config.ntp = args_config.get('ntp', True)
+		arch_config.ntp = args_config.get("ntp", True)
 
-		if packages := args_config.get('packages', []):
+		if packages := args_config.get("packages", []):
 			arch_config.packages = packages
 
-		if parallel_downloads := args_config.get('parallel_downloads', 0):
+		if parallel_downloads := args_config.get("parallel_downloads", 0):
 			arch_config.parallel_downloads = parallel_downloads
 
-		arch_config.swap = args_config.get('swap', True)
+		arch_config.swap = args_config.get("swap", True)
 
-		if timezone := args_config.get('timezone', 'UTC'):
+		if timezone := args_config.get("timezone", "UTC"):
 			arch_config.timezone = timezone
 
-		if services := args_config.get('services', []):
+		if services := args_config.get("services", []):
 			arch_config.services = services
 
 		# DEPRECATED: backwards compatibility
-		if root_password := args_config.get('!root-password', None):
+		if root_password := args_config.get("!root-password", None):
 			arch_config.root_enc_password = Password(plaintext=root_password)
 
-		if enc_password := args_config.get('root_enc_password', None):
+		if enc_password := args_config.get("root_enc_password", None):
 			arch_config.root_enc_password = Password(enc_password=enc_password)
 
-		if custom_commands := args_config.get('custom_commands', []):
+		if custom_commands := args_config.get("custom_commands", []):
 			arch_config.custom_commands = custom_commands
 
 		return arch_config
@@ -245,9 +245,9 @@ class ArchConfigHandler:
 
 	def _get_version(self) -> str:
 		try:
-			return version('archinstall')
+			return version("archinstall")
 		except Exception:
-			return 'Archinstall version not found'
+			return "Archinstall version not found"
 
 	def _define_arguments(self) -> ArgumentParser:
 		parser = ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -256,119 +256,119 @@ class ArchConfigHandler:
 			"--version",
 			action="version",
 			default=False,
-			version="%(prog)s " + self._get_version()
+			version="%(prog)s " + self._get_version(),
 		)
 		parser.add_argument(
 			"--config",
 			type=Path,
 			nargs="?",
 			default=None,
-			help="JSON configuration file"
+			help="JSON configuration file",
 		)
 		parser.add_argument(
 			"--config-url",
 			type=str,
 			nargs="?",
 			default=None,
-			help="Url to a JSON configuration file"
+			help="Url to a JSON configuration file",
 		)
 		parser.add_argument(
 			"--creds",
 			type=Path,
 			nargs="?",
 			default=None,
-			help="JSON credentials configuration file"
+			help="JSON credentials configuration file",
 		)
 		parser.add_argument(
 			"--creds-url",
 			type=str,
 			nargs="?",
 			default=None,
-			help="Url to a JSON credentials configuration file"
+			help="Url to a JSON credentials configuration file",
 		)
 		parser.add_argument(
 			"--creds-decryption-key",
 			type=str,
 			nargs="?",
 			default=None,
-			help="Decryption key for credentials file"
+			help="Decryption key for credentials file",
 		)
 		parser.add_argument(
 			"--silent",
 			action="store_true",
 			default=False,
-			help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored"
+			help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored",
 		)
 		parser.add_argument(
 			"--dry-run",
 			"--dry_run",
 			action="store_true",
 			default=False,
-			help="Generates a configuration file and then exits instead of performing an installation"
+			help="Generates a configuration file and then exits instead of performing an installation",
 		)
 		parser.add_argument(
 			"--script",
 			default="guided",
 			nargs="?",
 			help="Script to run for installation",
-			type=str
+			type=str,
 		)
 		parser.add_argument(
 			"--mount-point",
 			"--mount_point",
 			type=Path,
 			nargs="?",
-			default=Path('/mnt'),
-			help="Define an alternate mount point for installation"
+			default=Path("/mnt"),
+			help="Define an alternate mount point for installation",
 		)
 		parser.add_argument(
 			"--skip-ntp",
 			action="store_true",
 			help="Disables NTP checks during installation",
-			default=False
+			default=False,
 		)
 		parser.add_argument(
 			"--debug",
 			action="store_true",
 			default=False,
-			help="Adds debug info into the log"
+			help="Adds debug info into the log",
 		)
 		parser.add_argument(
 			"--offline",
 			action="store_true",
 			default=False,
-			help="Disabled online upstream services such as package search and key-ring auto update."
+			help="Disabled online upstream services such as package search and key-ring auto update.",
 		)
 		parser.add_argument(
 			"--no-pkg-lookups",
 			action="store_true",
 			default=False,
-			help="Disabled package validation specifically prior to starting installation."
+			help="Disabled package validation specifically prior to starting installation.",
 		)
 		parser.add_argument(
 			"--plugin",
 			nargs="?",
 			type=str,
 			default=None,
-			help='File path to a plugin to load'
+			help="File path to a plugin to load",
 		)
 		parser.add_argument(
 			"--skip-version-check",
 			action="store_true",
 			default=False,
-			help="Skip the version check when running archinstall"
+			help="Skip the version check when running archinstall",
 		)
 		parser.add_argument(
 			"--advanced",
 			action="store_true",
 			default=False,
-			help="Enabled advanced options"
+			help="Enabled advanced options",
 		)
 		parser.add_argument(
 			"--verbose",
 			action="store_true",
 			default=False,
-			help="Enabled verbose options"
+			help="Enabled verbose options",
 		)
 
 		return parser
@@ -390,8 +390,8 @@ class ArchConfigHandler:
 			load_plugin(plugin_path)
 
 		if args.creds_decryption_key is None:
-			if os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY'):
-				args.creds_decryption_key = os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY')
+			if os.environ.get("ARCHINSTALL_CREDS_DECRYPTION_KEY"):
+				args.creds_decryption_key = os.environ.get("ARCHINSTALL_CREDS_DECRYPTION_KEY")
 
 		return args
 
@@ -423,30 +423,30 @@ class ArchConfigHandler:
 		return config
 
 	def _process_creds_data(self, creds_data: str) -> dict[str, Any] | None:
-		if creds_data.startswith('$'):  # encrypted data
+		if creds_data.startswith("$"):  # encrypted data
 			if self._args.creds_decryption_key is not None:
 				try:
 					creds_data = decrypt(creds_data, self._args.creds_decryption_key)
 					return json.loads(creds_data)
 				except ValueError as err:
-					if 'Invalid password' in str(err):
-						error(str(_('Incorrect credentials file decryption password')))
+					if "Invalid password" in str(err):
+						error(str(_("Incorrect credentials file decryption password")))
 						exit(1)
 					else:
-						debug(f'Error decrypting credentials file: {err}')
+						debug(f"Error decrypting credentials file: {err}")
 						raise err from err
 			else:
 				incorrect_password = False
 
 				with Tui():
 					while True:
-						header = str(_('Incorrect password')) if incorrect_password else None
+						header = str(_("Incorrect password")) if incorrect_password else None
 
 						decryption_pwd = get_password(
-							text=str(_('Credentials file decryption password')),
+							text=str(_("Credentials file decryption password")),
 							header=header,
 							allow_skip=False,
-							skip_confirmation=True
+							skip_confirmation=True,
 						)
 
 						if not decryption_pwd:
@@ -456,11 +456,11 @@ class ArchConfigHandler:
 							creds_data = decrypt(creds_data, decryption_pwd.plaintext)
 							break
 						except ValueError as err:
-							if 'Invalid password' in str(err):
-								debug('Incorrect credentials file decryption password')
+							if "Invalid password" in str(err):
+								debug("Incorrect credentials file decryption password")
 								incorrect_password = True
 							else:
-								debug(f'Error decrypting credentials file: {err}')
+								debug(f"Error decrypting credentials file: {err}")
 								raise err from err
 
 		return json.loads(creds_data)
@@ -468,13 +468,13 @@ class ArchConfigHandler:
 	def _fetch_from_url(self, url: str) -> str:
 		if urllib.parse.urlparse(url).scheme:
 			try:
-				req = Request(url, headers={'User-Agent': 'ArchInstall'})
+				req = Request(url, headers={"User-Agent": "ArchInstall"})
 				with urlopen(req) as resp:
-					return resp.read().decode('utf-8')
+					return resp.read().decode("utf-8")
 			except urllib.error.HTTPError as err:
 				error(f"Could not fetch JSON from {url}: {err}")
 		else:
-			error('Not a valid url')
+			error("Not a valid url")
 
 		exit(1)
 

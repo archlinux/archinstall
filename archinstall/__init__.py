@@ -46,7 +46,7 @@ def _fetch_arch_db() -> None:
 	try:
 		Pacman.run("-Sy")
 	except Exception as e:
-		debug(f'Failed to sync Arch Linux package database: {e}')
+		debug(f"Failed to sync Arch Linux package database: {e}")
 		exit(1)
 
 
@@ -57,10 +57,10 @@ def _check_new_version() -> None:
 	try:
 		upgrade = Pacman.run("-Qu archinstall").decode()
 	except Exception as e:
-		debug(f'Failed determine pacman version: {e}')
+		debug(f"Failed determine pacman version: {e}")
 
 	if upgrade:
-		text = f'New version available: {upgrade}'
+		text = f"New version available: {upgrade}"
 		info(text)
 		time.sleep(3)
 
@@ -71,7 +71,7 @@ def main() -> int:
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
-	if '--help' in sys.argv or '-h' in sys.argv:
+	if "--help" in sys.argv or "-h" in sys.argv:
 		arch_config_handler.print_help()
 		return 0
 
@@ -89,7 +89,7 @@ def main() -> int:
 
 	script = arch_config_handler.args.script
 
-	mod_name = f'archinstall.scripts.{script}'
+	mod_name = f"archinstall.scripts.{script}"
 	# by loading the module we'll automatically run the script
 	importlib.import_module(mod_name)
 
@@ -109,13 +109,13 @@ def run_as_a_module() -> None:
 		Tui.shutdown()
 
 		if exc:
-			err = ''.join(traceback.format_exception(exc))
+			err = "".join(traceback.format_exception(exc))
 			error(err)
 
 			text = (
-				'Archinstall experienced the above error. If you think this is a bug, please report it to\n'
+				"Archinstall experienced the above error. If you think this is a bug, please report it to\n"
 				'https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".\n\n'
-				'Hint: To extract the log from a live ISO \ncurl -F\'file=@/var/log/archinstall/install.log\' https://0x0.st\n'
+				"Hint: To extract the log from a live ISO \ncurl -F'file=@/var/log/archinstall/install.log' https://0x0.st\n"
 			)
 
 			warn(text)
@@ -125,20 +125,20 @@ def run_as_a_module() -> None:
 
 
 __all__ = [
-	'DeferredTranslation',
-	'FormattedOutput',
-	'Language',
-	'Pacman',
-	'SysInfo',
-	'Tui',
-	'arch_config_handler',
-	'debug',
-	'disk_layouts',
-	'error',
-	'info',
-	'load_plugin',
-	'log',
-	'plugin',
-	'translation_handler',
-	'warn',
+	"DeferredTranslation",
+	"FormattedOutput",
+	"Language",
+	"Pacman",
+	"SysInfo",
+	"Tui",
+	"arch_config_handler",
+	"debug",
+	"disk_layouts",
+	"error",
+	"info",
+	"load_plugin",
+	"log",
+	"plugin",
+	"translation_handler",
+	"warn",
 ]

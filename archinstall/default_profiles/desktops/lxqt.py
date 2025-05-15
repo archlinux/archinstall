@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class LxqtProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Lxqt', ProfileType.DesktopEnv)
+		super().__init__("Lxqt", ProfileType.DesktopEnv)
 
 	# NOTE: SDDM is the only officially supported greeter for LXQt, so unlike other DEs, lightdm is not used here.
 	# LXQt works with lightdm, but since this is not supported, we will not default to this.
@@ -21,7 +21,7 @@ class LxqtProfile(XorgProfile):
 			"xdg-utils",
 			"ttf-freefont",
 			"leafpad",
-			"slock"
+			"slock",
 		]
 
 	@property

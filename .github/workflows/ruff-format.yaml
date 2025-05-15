@@ -1,0 +1,12 @@
+on: [ push, pull_request ]
+name: ruff check formatting
+jobs:
+  ruff_format_check:
+    runs-on: ubuntu-latest
+    container:
+        image: archlinux/archlinux:latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: astral-sh/ruff-action@84f83ecf9e1e15d26b7984c7ec9cf73d39ffc946  # v3.3.1
+      - run: ruff check --select=COM812 --fix
+      - run: ruff format --diff

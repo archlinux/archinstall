@@ -15,26 +15,26 @@ if TYPE_CHECKING:
 class DesktopProfile(Profile):
 	def __init__(self, current_selection: list[Profile] = []) -> None:
 		super().__init__(
-			'Desktop',
+			"Desktop",
 			ProfileType.Desktop,
 			current_selection=current_selection,
-			support_greeter=True
+			support_greeter=True,
 		)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			'nano',
-			'vim',
-			'openssh',
-			'htop',
-			'wget',
-			'iwd',
-			'wireless_tools',
-			'wpa_supplicant',
-			'smartmontools',
-			'xdg-utils'
+			"nano",
+			"vim",
+			"openssh",
+			"htop",
+			"wget",
+			"iwd",
+			"wireless_tools",
+			"wpa_supplicant",
+			"smartmontools",
+			"xdg-utils",
 		]
 
 	@property
@@ -61,8 +61,9 @@ class DesktopProfile(Profile):
 			MenuItem(
 				p.name,
 				value=p,
-				preview_action=lambda x: x.value.preview_text()
-			) for p in profile_handler.get_desktop_profiles()
+				preview_action=lambda x: x.value.preview_text(),
+			)
+			for p in profile_handler.get_desktop_profiles()
 		]
 
 		group = MenuItemGroup(items, sort_items=True, sort_case_sensitive=False)
@@ -74,8 +75,8 @@ class DesktopProfile(Profile):
 			allow_reset=True,
 			allow_skip=True,
 			preview_style=PreviewStyle.RIGHT,
-			preview_size='auto',
-			preview_frame=FrameProperties.max('Info')
+			preview_size="auto",
+			preview_frame=FrameProperties.max("Info"),
 		).run()
 
 		match result.type_:
@@ -89,17 +90,17 @@ class DesktopProfile(Profile):
 				return SelectResult.ResetCurrent
 
 	@override
-	def post_install(self, install_session: 'Installer') -> None:
+	def post_install(self, install_session: "Installer") -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
 
 	@override
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: "Installer") -> None:
 		# Install common packages for all desktop environments
 		install_session.add_additional_packages(self.packages)
 
 		for profile in self.current_selection:
-			info(f'Installing profile {profile.name}...')
+			info(f"Installing profile {profile.name}...")
 
 			install_session.add_additional_packages(profile.packages)
 			install_session.enable_service(profile.services)

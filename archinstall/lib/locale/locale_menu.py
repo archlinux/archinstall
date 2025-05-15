@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 	def __init__(
 		self,
-		locale_conf: LocaleConfiguration
+		locale_conf: LocaleConfiguration,
 	):
 		self._locale_conf = locale_conf
 		menu_optioons = self._define_menu_options()
@@ -29,39 +29,39 @@ class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 		super().__init__(
 			self._item_group,
 			config=self._locale_conf,
-			allow_reset=True
+			allow_reset=True,
 		)
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=str(_('Keyboard layout')),
+				text=str(_("Keyboard layout")),
 				action=self._select_kb_layout,
 				value=self._locale_conf.kb_layout,
 				preview_action=self._prev_locale,
-				key='kb_layout'
+				key="kb_layout",
 			),
 			MenuItem(
-				text=str(_('Locale language')),
+				text=str(_("Locale language")),
 				action=select_locale_lang,
 				value=self._locale_conf.sys_lang,
 				preview_action=self._prev_locale,
-				key='sys_lang'
+				key="sys_lang",
 			),
 			MenuItem(
-				text=str(_('Locale encoding')),
+				text=str(_("Locale encoding")),
 				action=select_locale_enc,
 				value=self._locale_conf.sys_enc,
 				preview_action=self._prev_locale,
-				key='sys_enc'
-			)
+				key="sys_enc",
+			),
 		]
 
 	def _prev_locale(self, item: MenuItem) -> str | None:
 		temp_locale = LocaleConfiguration(
-			self._menu_item_group.find_by_key('kb_layout').get_value(),
-			self._menu_item_group.find_by_key('sys_lang').get_value(),
-			self._menu_item_group.find_by_key('sys_enc').get_value(),
+			self._menu_item_group.find_by_key("kb_layout").get_value(),
+			self._menu_item_group.find_by_key("sys_lang").get_value(),
+			self._menu_item_group.find_by_key("sys_enc").get_value(),
 		)
 		return temp_locale.preview()
 
@@ -88,7 +88,7 @@ def select_locale_lang(preset: str | None = None) -> str | None:
 	result = SelectMenu[str](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_('Locale language'))),
+		frame=FrameProperties.min(str(_("Locale language"))),
 		allow_skip=True,
 	).run()
 
@@ -98,7 +98,7 @@ def select_locale_lang(preset: str | None = None) -> str | None:
 		case ResultType.Skip:
 			return preset
 		case _:
-			raise ValueError('Unhandled return type')
+			raise ValueError("Unhandled return type")
 
 
 def select_locale_enc(preset: str | None = None) -> str | None:
@@ -112,7 +112,7 @@ def select_locale_enc(preset: str | None = None) -> str | None:
 	result = SelectMenu[str](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_('Locale encoding'))),
+		frame=FrameProperties.min(str(_("Locale encoding"))),
 		allow_skip=True,
 	).run()
 
@@ -122,7 +122,7 @@ def select_locale_enc(preset: str | None = None) -> str | None:
 		case ResultType.Skip:
 			return preset
 		case _:
-			raise ValueError('Unhandled return type')
+			raise ValueError("Unhandled return type")
 
 
 def select_kb_layout(preset: str | None = None) -> str | None:
@@ -144,7 +144,7 @@ def select_kb_layout(preset: str | None = None) -> str | None:
 	result = SelectMenu[str](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_('Keyboard layout'))),
+		frame=FrameProperties.min(str(_("Keyboard layout"))),
 		allow_skip=True,
 	).run()
 
@@ -154,6 +154,6 @@ def select_kb_layout(preset: str | None = None) -> str | None:
 		case ResultType.Skip:
 			return preset
 		case _:
-			raise ValueError('Unhandled return type')
+			raise ValueError("Unhandled return type")
 
 	return None

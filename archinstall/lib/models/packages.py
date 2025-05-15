@@ -14,10 +14,10 @@ if TYPE_CHECKING:
 
 
 class Repository(Enum):
-	Core = 'core'
-	Extra = 'extra'
-	Multilib = 'multilib'
-	Testing = 'testing'
+	Core = "core"
+	Extra = "extra"
+	Multilib = "multilib"
+	Testing = "testing"
 
 	def get_repository_list(self) -> list[str]:
 		match self:
@@ -29,9 +29,9 @@ class Repository(Enum):
 				return [Repository.Multilib.value]
 			case Repository.Testing:
 				return [
-					'core-testing',
-					'extra-testing',
-					'multilib-testing'
+					"core-testing",
+					"extra-testing",
+					"multilib-testing",
 				]
 
 
@@ -65,7 +65,7 @@ class PackageSearchResult:
 	checkdepends: list[str]
 
 	@staticmethod
-	def from_json(data: dict[str, Any]) -> 'PackageSearchResult':
+	def from_json(data: dict[str, Any]) -> "PackageSearchResult":
 		return PackageSearchResult(**data)
 
 	@property
@@ -79,7 +79,7 @@ class PackageSearchResult:
 
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other: 'PackageSearchResult') -> bool:
+	def __lt__(self, other: "PackageSearchResult") -> bool:
 		return self.pkg_version < other.pkg_version
 
 
@@ -93,16 +93,16 @@ class PackageSearch:
 	results: list[PackageSearchResult]
 
 	@staticmethod
-	def from_json(data: dict[str, Any]) -> 'PackageSearch':
-		results = [PackageSearchResult.from_json(r) for r in data['results']]
+	def from_json(data: dict[str, Any]) -> "PackageSearch":
+		results = [PackageSearchResult.from_json(r) for r in data["results"]]
 
 		return PackageSearch(
-			version=data['version'],
-			limit=data['limit'],
-			valid=data['valid'],
-			num_pages=data['num_pages'],
-			page=data['page'],
-			results=results
+			version=data["version"],
+			limit=data["limit"],
+			valid=data["valid"],
+			num_pages=data["num_pages"],
+			page=data["page"],
+			results=results,
 		)
 
 
@@ -137,7 +137,7 @@ class LocalPackage(BaseModel):
 
 		return self.version == other.version
 
-	def __lt__(self, other: 'LocalPackage') -> bool:
+	def __lt__(self, other: "LocalPackage") -> bool:
 		return self.version < other.version
 
 
@@ -166,11 +166,11 @@ class AvailablePackage(BaseModel):
 
 	# return all package info line by line
 	def info(self) -> str:
-		output = ''
+		output = ""
 		for key, value in self.model_dump().items():
-			key = key.replace('_', ' ').capitalize()
+			key = key.replace("_", " ").capitalize()
 			key = key.ljust(self.longest_key)
-			output += f'{key} : {value}\n'
+			output += f"{key} : {value}\n"
 
 		return output
 
@@ -183,15 +183,15 @@ class PackageGroup:
 	@classmethod
 	def from_available_packages(
 		cls,
-		packages: dict[str, AvailablePackage]
-	) -> dict[str, 'PackageGroup']:
-		pkg_groups: dict[str, 'PackageGroup'] = {}
+		packages: dict[str, AvailablePackage],
+	) -> dict[str, "PackageGroup"]:
+		pkg_groups: dict[str, "PackageGroup"] = {}
 
 		for pkg in packages.values():
-			if 'None' in pkg.groups:
+			if "None" in pkg.groups:
 				continue
 
-			groups = pkg.groups.split(' ')
+			groups = pkg.groups.split(" ")
 
 			for group in groups:
 				# same group names have multiple spaces in between
@@ -204,6 +204,6 @@ class PackageGroup:
 		return pkg_groups
 
 	def info(self) -> str:
-		output = str(_('Package group:')) + '\n  - '
-		output += '\n  - '.join(self.packages)
+		output = str(_("Package group:")) + "\n  - "
+		output += "\n  - ".join(self.packages)
 		return output

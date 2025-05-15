@@ -20,14 +20,14 @@ def get_password(
 	header: str | None = None,
 	allow_skip: bool = False,
 	preset: str | None = None,
-	skip_confirmation: bool = False
+	skip_confirmation: bool = False,
 ) -> Password | None:
 	failure: str | None = None
 
 	while True:
 		user_hdr = None
 		if failure is not None:
-			user_hdr = f'{header}\n{failure}\n'
+			user_hdr = f"{header}\n{failure}\n"
 		elif header is not None:
 			user_hdr = header
 
@@ -37,7 +37,7 @@ def get_password(
 			alignment=Alignment.CENTER,
 			allow_skip=allow_skip,
 			default_text=preset,
-			hide_input=True
+			hide_input=True,
 		).input()
 
 		if allow_skip and not result.has_item():
@@ -49,22 +49,22 @@ def get_password(
 			return password
 
 		if header is not None:
-			confirmation_header = f'{header}{_("Password")}: {password.hidden()}\n'
+			confirmation_header = f"{header}{_('Password')}: {password.hidden()}\n"
 		else:
-			confirmation_header = f'{_("Password")}: {password.hidden()}\n'
+			confirmation_header = f"{_('Password')}: {password.hidden()}\n"
 
 		result = EditMenu(
-			str(_('Confirm password')),
+			str(_("Confirm password")),
 			header=confirmation_header,
 			alignment=Alignment.CENTER,
 			allow_skip=False,
-			hide_input=True
+			hide_input=True,
 		).input()
 
 		if password._plaintext == result.text():
 			return password
 
-		failure = str(_('The confirmation password did not match, please try again'))
+		failure = str(_("The confirmation password did not match, please try again"))
 
 
 def prompt_dir(
@@ -72,7 +72,7 @@ def prompt_dir(
 	header: str | None = None,
 	validate: bool = True,
 	allow_skip: bool = False,
-	preset: str | None = None
+	preset: str | None = None,
 ) -> Path | None:
 	def validate_path(path: str) -> str | None:
 		dest_path = Path(path)
@@ -80,7 +80,7 @@ def prompt_dir(
 		if dest_path.exists() and dest_path.is_dir():
 			return None
 
-		return str(_('Not a valid directory'))
+		return str(_("Not a valid directory"))
 
 	if validate:
 		validate_func = validate_path
@@ -93,7 +93,7 @@ def prompt_dir(
 		alignment=Alignment.CENTER,
 		allow_skip=allow_skip,
 		validator=validate_func,
-		default_text=preset
+		default_text=preset,
 	).input()
 
 	if allow_skip and not result.has_item():
@@ -115,9 +115,9 @@ def is_subpath(first: Path, second: Path) -> bool:
 
 def format_cols(items: list[str], header: str | None = None) -> str:
 	if header:
-		text = f'{header}:\n'
+		text = f"{header}:\n"
 	else:
-		text = ''
+		text = ""
 
 	nr_items = len(items)
 	if nr_items <= 4:
@@ -131,5 +131,5 @@ def format_cols(items: list[str], header: str | None = None) -> str:
 
 	text += FormattedOutput.as_columns(items, col)
 	# remove whitespaces on each row
-	text = '\n'.join([t.strip() for t in text.split('\n')])
+	text = "\n".join([t.strip() for t in text.split("\n")])
 	return text

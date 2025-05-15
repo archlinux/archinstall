@@ -18,16 +18,17 @@ from .pacman import Pacman
 
 
 class DownloadTimer:
-	'''
+	"""
 	Context manager for timing downloads with timeouts.
-	'''
+	"""
+
 	def __init__(self, timeout: int = 5):
-		'''
+		"""
 		Args:
 			timeout:
 				The download timeout in seconds. The DownloadTimeout exception
 				will be raised in the context after this many seconds.
-		'''
+		"""
 		self.time: float | None = None
 		self.start_time: float | None = None
 		self.timeout = timeout
@@ -35,10 +36,10 @@ class DownloadTimer:
 		self.previous_timer: int | None = None
 
 	def raise_timeout(self, signl: int, frame: FrameType | None) -> None:
-		'''
+		"""
 		Raise the DownloadTimeout exception.
-		'''
-		raise DownloadTimeout(f'Download timed out after {self.timeout} second(s).')
+		"""
+		raise DownloadTimeout(f"Download timed out after {self.timeout} second(s).")
 
 	def __enter__(self) -> Self:
 		if self.timeout > 0:
@@ -69,9 +70,10 @@ class DownloadTimer:
 
 def get_hw_addr(ifname: str) -> str:
 	import fcntl
+
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	ret = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
-	return ':'.join(f'{b:02x}' for b in ret[18:24])
+	ret = fcntl.ioctl(s.fileno(), 0x8927, struct.pack("256s", bytes(ifname, "utf-8")[:15]))
+	return ":".join(f"{b:02x}" for b in ret[18:24])
 
 
 def list_interfaces(skip_loopback: bool = True) -> dict[str, str]:
@@ -81,7 +83,7 @@ def list_interfaces(skip_loopback: bool = True) -> dict[str, str]:
 		if skip_loopback and iface == "lo":
 			continue
 
-		mac = get_hw_addr(iface).replace(':', '-').lower()
+		mac = get_hw_addr(iface).replace(":", "-").lower()
 		interfaces[mac] = iface
 
 	return interfaces
@@ -104,17 +106,17 @@ def enrich_iface_types(interfaces: list[str]) -> dict[str, str]:
 
 	for iface in interfaces:
 		if os.path.isdir(f"/sys/class/net/{iface}/bridge/"):
-			result[iface] = 'BRIDGE'
+			result[iface] = "BRIDGE"
 		elif os.path.isfile(f"/sys/class/net/{iface}/tun_flags"):
 			# ethtool -i {iface}
-			result[iface] = 'TUN/TAP'
+			result[iface] = "TUN/TAP"
 		elif os.path.isdir(f"/sys/class/net/{iface}/device"):
 			if os.path.isdir(f"/sys/class/net/{iface}/wireless/"):
-				result[iface] = 'WIRELESS'
+				result[iface] = "WIRELESS"
 			else:
-				result[iface] = 'PHYSICAL'
+				result[iface] = "PHYSICAL"
 		else:
-			result[iface] = 'UNKNOWN'
+			result[iface] = "UNKNOWN"
 
 	return result
 
@@ -126,28 +128,25 @@ def fetch_data_from_url(url: str, params: dict[str, str] | None = None) -> str:
 
 	if params is not None:
 		encoded = urlencode(params)
-		full_url = f'{url}?{encoded}'
+		full_url = f"{url}?{encoded}"
 	else:
 		full_url = url
 
 	try:
 		response = urlopen(full_url, context=ssl_context)
-		data = response.read().decode('UTF-8')
+		data = response.read().decode("UTF-8")
 		return data
 	except URLError as e:
-		raise ValueError(f'Unable to fetch data from url: {url}\n{e}')
+		raise ValueError(f"Unable to fetch data from url: {url}\n{e}")
 	except Exception as e:
-		raise ValueError(f'Unexpected error when parsing response: {e}')
+		raise ValueError(f"Unexpected error when parsing response: {e}")
 
 
 def calc_checksum(icmp_packet: bytes) -> int:
 	# Calculate the ICMP checksum
 	checksum = 0
 	for i in range(0, len(icmp_packet), 2):
-		checksum += (icmp_packet[i] << 8) + (
-			struct.unpack('B', icmp_packet[i + 1:i + 2])[0]
-			if len(icmp_packet[i + 1:i + 2]) else 0
-		)
+		checksum += (icmp_packet[i] << 8) + (struct.unpack("B", icmp_packet[i + 1 : i + 2])[0] if len(icmp_packet[i + 1 : i + 2]) else 0)
 
 	checksum = (checksum >> 16) + (checksum & 0xFFFF)
 	checksum = ~checksum & 0xFFFF
@@ -157,17 +156,17 @@ def calc_checksum(icmp_packet: bytes) -> int:
 
 def build_icmp(payload: bytes) -> bytes:
 	# Define the ICMP Echo Request packet
-	icmp_packet = struct.pack('!BBHHH', 8, 0, 0, 0, 1) + payload
+	icmp_packet = struct.pack("!BBHHH", 8, 0, 0, 0, 1) + payload
 
 	checksum = calc_checksum(icmp_packet)
 
-	return struct.pack('!BBHHH', 8, 0, checksum, 0, 1) + payload
+	return struct.pack("!BBHHH", 8, 0, checksum, 0, 1) + payload
 
 
 def ping(hostname, timeout: int = 5) -> int:
 	watchdog = select.epoll()
 	started = time.time()
-	random_identifier = f'archinstall-{random.randint(1000, 9999)}'.encode()
+	random_identifier = f"archinstall-{random.randint(1000, 9999)}".encode()
 
 	# Create a raw socket (requires root, which should be fine on archiso)
 	icmp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
@@ -185,10 +184,10 @@ def ping(hostname, timeout: int = 5) -> int:
 		try:
 			for _fileno, _event in watchdog.poll(0.1):
 				response, _ = icmp_socket.recvfrom(1024)
-				icmp_type = struct.unpack('!B', response[20:21])[0]
+				icmp_type = struct.unpack("!B", response[20:21])[0]
 
 				# Check if it's an Echo Reply (ICMP type 0)
-				if icmp_type == 0 and response[-len(random_identifier):] == random_identifier:
+				if icmp_type == 0 and response[-len(random_identifier) :] == random_identifier:
 					latency = round((time.time() - started) * 1000)
 					break
 		except OSError as e:

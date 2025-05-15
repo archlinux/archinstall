@@ -6,7 +6,7 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class Xfce4Profile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__('Xfce4', ProfileType.DesktopEnv)
+		super().__init__("Xfce4", ProfileType.DesktopEnv)
 
 	@property
 	@override
@@ -16,7 +16,7 @@ class Xfce4Profile(XorgProfile):
 			"xfce4-goodies",
 			"pavucontrol",
 			"gvfs",
-			"xarchiver"
+			"xarchiver",
 		]
 
 	@property
