@@ -38,6 +38,7 @@ def perform_installation(mountpoint: Path) -> None:
 
 	disk_config = config.disk_config
 	disk_encryption = config.disk_encryption
+	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
 
 	with Installer(
 		mountpoint,
