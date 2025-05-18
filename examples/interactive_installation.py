@@ -55,6 +55,8 @@ def perform_installation(mountpoint: Path) -> None:
 	disk_encryption = config.disk_encryption
 	optional_repositories = config.mirror_config.optional_repositories if config.mirror_config else []
 
+	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
+
 	with Installer(
 		mountpoint,
 		disk_config,
