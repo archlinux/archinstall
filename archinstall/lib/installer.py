@@ -1564,8 +1564,8 @@ class Installer:
 	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
 
-	def enable_sudo(self, entity: str, group: bool = False):
-		info(f"Enabling sudo permissions for {entity}")
+	def enable_sudo(self, user: User, group: bool = False):
+		info(f"Enabling sudo permissions for {user.username}")
 
 		sudoers_dir = self.target / "etc/sudoers.d"
 
@@ -1582,14 +1582,14 @@ class Installer:
 		num_of_rules_already = len(os.listdir(sudoers_dir))
 		file_num_str = f"{num_of_rules_already:02d}"  # We want 00_user1, 01_user2, etc
 
-		# Guarantees that entity str does not contain invalid characters for a linux file name:
+		# Guarantees that username str does not contain invalid characters for a linux file name:
 		# \ / : * ? " < > |
-		safe_entity_file_name = re.sub(r'(\\|\/|:|\*|\?|"|<|>|\|)', "", entity)
+		safe_username_file_name = re.sub(r'(\\|\/|:|\*|\?|"|<|>|\|)', "", user.username)
 
-		rule_file = sudoers_dir / f"{file_num_str}_{safe_entity_file_name}"
+		rule_file = sudoers_dir / f"{file_num_str}_{safe_username_file_name}"
 
 		with rule_file.open("a") as sudoers:
-			sudoers.write(f"{'%' if group else ''}{entity} ALL=(ALL) ALL\n")
+			sudoers.write(f"{'%' if group else ''}{user.username} ALL=(ALL) ALL\n")
 
 		# Guarantees sudoer conf file recommended perms
 		rule_file.chmod(0o440)
@@ -1635,6 +1635,9 @@ class Installer:
 
 		for group in user.groups:
 			SysCommand(f"arch-chroot {self.target} gpasswd -a {user.username} {group}")
+
+		if user.sudo:
+			self.enable_sudo(user)
 
 	def set_user_password(self, user: User) -> bool:
 		info(f"Setting password for {user.username}")
