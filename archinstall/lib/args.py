@@ -314,8 +314,7 @@ class ArchConfigHandler:
 			type=str,
 		)
 		parser.add_argument(
-			"--mount-point",
-			"--mount_point",
+			"--mountpoint",
 			type=Path,
 			nargs="?",
 			default=Path("/mnt"),
