@@ -16,7 +16,11 @@ class PlasmaProfile(XorgProfile):
 			"konsole",
 			"kate",
 			"dolphin",
+			"dolphin-plugins",
+			"flatpak-kcm",
+			"kcmutils",
 			"ark",
+			"kf6",
 			"plasma-workspace",
 		]
 
