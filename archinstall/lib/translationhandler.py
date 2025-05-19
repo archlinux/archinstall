@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import builtins
 import gettext
 import json
 import os
@@ -190,6 +191,9 @@ class _DeferredTranslation:
 
 def tr(message: str) -> str:
 	return str(_DeferredTranslation(message))
+
+
+builtins._ = _DeferredTranslation  # type: ignore[attr-defined]
 
 
 translation_handler = TranslationHandler()
