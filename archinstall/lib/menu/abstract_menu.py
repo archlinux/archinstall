@@ -1,20 +1,14 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Self
+from typing import Any, Self
 
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu, Tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle
 
 from ..output import error
-
-if TYPE_CHECKING:
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
-
 
 CONFIG_KEY = "__config__"
 
@@ -134,7 +128,7 @@ class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
 	):
-		back_text = f"{Chars.Right_arrow} " + str(_("Back"))
+		back_text = f"{Chars.Right_arrow} " + tr("Back")
 		item_group.add_item(MenuItem(text=back_text))
 
 		super().__init__(

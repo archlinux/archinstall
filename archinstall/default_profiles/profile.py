@@ -4,14 +4,10 @@ import sys
 from enum import Enum, auto
 from typing import TYPE_CHECKING
 
+from archinstall.lib.translationhandler import tr
+
 if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
 	from ..lib.installer import Installer
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class ProfileType(Enum):
@@ -200,7 +196,7 @@ class Profile:
 				if sub_profile.packages:
 					packages.update(sub_profile.packages)
 
-		text = str(_("Installed packages")) + ":\n"
+		text = tr("Installed packages") + ":\n"
 
 		for pkg in sorted(packages):
 			text += f"\t- {pkg}\n"

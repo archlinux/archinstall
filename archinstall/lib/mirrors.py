@@ -1,8 +1,9 @@
 import time
 import urllib.parse
 from pathlib import Path
-from typing import TYPE_CHECKING, override
+from typing import override
 
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import EditMenu, SelectMenu, Tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -24,20 +25,13 @@ from .models.packages import Repository
 from .networking import fetch_data_from_url
 from .output import FormattedOutput, debug
 
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
-
 
 class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 	def __init__(self, custom_repositories: list[CustomRepository]):
 		self._actions = [
-			str(_("Add a custom repository")),
-			str(_("Change custom repository")),
-			str(_("Delete custom repository")),
+			tr("Add a custom repository"),
+			tr("Change custom repository"),
+			tr("Delete custom repository"),
 		]
 
 		super().__init__(
@@ -75,7 +69,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 
 	def _add_custom_repository(self, preset: CustomRepository | None = None) -> CustomRepository | None:
 		edit_result = EditMenu(
-			str(_("Repository name")),
+			tr("Repository name"),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
 			default_text=preset.name if preset else None,
@@ -89,10 +83,10 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			case _:
 				raise ValueError("Unhandled return type")
 
-		header = f"{_('Name')}: {name}"
+		header = f"{tr('Name')}: {name}"
 
 		edit_result = EditMenu(
-			str(_("Url")),
+			tr("Url"),
 			header=header,
 			alignment=Alignment.CENTER,
 			allow_skip=True,
@@ -107,8 +101,8 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			case _:
 				raise ValueError("Unhandled return type")
 
-		header += f"\n{_('Url')}: {url}\n"
-		prompt = f"{header}\n" + str(_("Select signature check"))
+		header += f"\n{tr('Url')}: {url}\n"
+		prompt = f"{header}\n" + tr("Select signature check")
 
 		sign_chk_items = [MenuItem(s.value, value=s.value) for s in SignCheck]
 		group = MenuItemGroup(sign_chk_items, sort_items=False)
@@ -129,7 +123,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			case _:
 				raise ValueError("Unhandled return type")
 
-		header += f"{_('Signature check')}: {sign_check.value}\n"
+		header += f"{tr('Signature check')}: {sign_check.value}\n"
 		prompt = f"{header}\n" + "Select signature option"
 
 		sign_opt_items = [MenuItem(s.value, value=s.value) for s in SignOption]
@@ -157,9 +151,9 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 class CustomMirrorServersList(ListManager[CustomServer]):
 	def __init__(self, custom_servers: list[CustomServer]):
 		self._actions = [
-			str(_("Add a custom server")),
-			str(_("Change custom server")),
-			str(_("Delete custom server")),
+			tr("Add a custom server"),
+			tr("Change custom server"),
+			tr("Delete custom server"),
 		]
 
 		super().__init__(
@@ -197,7 +191,7 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 
 	def _add_custom_server(self, preset: CustomServer | None = None) -> CustomServer | None:
 		edit_result = EditMenu(
-			str(_("Server url")),
+			tr("Server url"),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
 			default_text=preset.url if preset else None,
@@ -235,28 +229,28 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=str(_("Select regions")),
+				text=tr("Select regions"),
 				action=select_mirror_regions,
 				value=self._mirror_config.mirror_regions,
 				preview_action=self._prev_regions,
 				key="mirror_regions",
 			),
 			MenuItem(
-				text=str(_("Add custom servers")),
+				text=tr("Add custom servers"),
 				action=add_custom_mirror_servers,
 				value=self._mirror_config.custom_servers,
 				preview_action=self._prev_custom_servers,
 				key="custom_servers",
 			),
 			MenuItem(
-				text=str(_("Optional repositories")),
+				text=tr("Optional repositories"),
 				action=select_optional_repositories,
 				value=[],
 				preview_action=self._prev_additional_repos,
 				key="optional_repositories",
 			),
 			MenuItem(
-				text=str(_("Add custom repository")),
+				text=tr("Add custom repository"),
 				action=select_custom_mirror,
 				value=self._mirror_config.custom_repositories,
 				preview_action=self._prev_custom_mirror,
@@ -282,7 +276,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 		if item.value:
 			repositories: list[Repository] = item.value
 			repos = ", ".join([repo.value for repo in repositories])
-			return f"{_('Additional repositories')}: {repos}"
+			return f"{tr('Additional repositories')}: {repos}"
 		return None
 
 	def _prev_custom_mirror(self, item: MenuItem) -> str | None:
@@ -308,7 +302,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 
 
 def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
-	Tui.print(str(_("Loading mirror regions...")), clear_screen=True)
+	Tui.print(tr("Loading mirror regions..."), clear_screen=True)
 
 	mirror_list_handler.load_mirrors()
 	available_regions = mirror_list_handler.get_mirror_regions()
@@ -326,7 +320,7 @@ def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
 	result = SelectMenu[MirrorRegion](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_("Mirror regions"))),
+		frame=FrameProperties.min(tr("Mirror regions")),
 		allow_reset=True,
 		allow_skip=True,
 		multi=True,

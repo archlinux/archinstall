@@ -5,7 +5,6 @@ import os
 import sys
 import time
 import traceback
-from typing import TYPE_CHECKING
 
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
@@ -14,13 +13,8 @@ from .lib.hardware import SysInfo
 from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
 from .lib.plugins import load_plugin, plugins
-from .lib.translationhandler import DeferredTranslation, Language, translation_handler
+from .lib.translationhandler import Language, tr, translation_handler
 from .tui.curses_menu import Tui
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	_: Callable[[str], DeferredTranslation]
 
 
 # @archinstall.plugin decorator hook to programmatically add
@@ -76,7 +70,7 @@ def main() -> int:
 		return 0
 
 	if os.getuid() != 0:
-		print(_("Archinstall requires root privileges to run. See --help for more."))
+		print(tr("Archinstall requires root privileges to run. See --help for more."))
 		return 1
 
 	_log_sys_info()
@@ -125,7 +119,6 @@ def run_as_a_module() -> None:
 
 
 __all__ = [
-	"DeferredTranslation",
 	"FormattedOutput",
 	"Language",
 	"Pacman",

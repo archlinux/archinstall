@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from archinstall.default_profiles.profile import GreeterType, Profile
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -12,13 +13,6 @@ from ..hardware import GfxDriver
 from ..interactions.system_conf import select_driver
 from ..menu.abstract_menu import AbstractSubMenu
 from ..models.profile_model import ProfileConfiguration
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
@@ -43,14 +37,14 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=str(_("Type")),
+				text=tr("Type"),
 				action=self._select_profile,
 				value=self._profile_config.profile,
 				preview_action=self._preview_profile,
 				key="profile",
 			),
 			MenuItem(
-				text=str(_("Graphics driver")),
+				text=tr("Graphics driver"),
 				action=self._select_gfx_driver,
 				value=self._profile_config.gfx_driver if self._profile_config.profile and self._profile_config.profile.is_graphic_driver_supported() else None,
 				preview_action=self._prev_gfx,
@@ -59,7 +53,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				key="gfx_driver",
 			),
 			MenuItem(
-				text=str(_("Greeter")),
+				text=tr("Greeter"),
 				action=lambda x: select_greeter(preset=x),
 				value=self._profile_config.greeter if self._profile_config.profile and self._profile_config.profile.is_greeter_supported() else None,
 				enabled=self._profile_config.profile.is_graphic_driver_supported() if self._profile_config.profile else False,
@@ -107,8 +101,8 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 
 			if driver and "Sway" in profile.current_selection_names():
 				if driver.is_nvidia():
-					header = str(_("The proprietary Nvidia driver is not supported by Sway.")) + "\n"
-					header += str(_("It is likely that you will run into issues, are you okay with that?")) + "\n"
+					header = tr("The proprietary Nvidia driver is not supported by Sway.") + "\n"
+					header += tr("It is likely that you will run into issues, are you okay with that?") + "\n"
 
 					group = MenuItemGroup.yes_no()
 					group.focus_item = MenuItem.no()
@@ -137,7 +131,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 
 	def _prev_greeter(self, item: MenuItem) -> str | None:
 		if item.value:
-			return f"{_('Greeter')}: {item.value.value}"
+			return f"{tr('Greeter')}: {item.value.value}"
 		return None
 
 	def _preview_profile(self, item: MenuItem) -> str | None:
@@ -146,7 +140,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 
 		if profile:
 			if (sub_profiles := profile.current_selection) is not None:
-				text += str(_("Selected profiles: "))
+				text += tr("Selected profiles: ")
 				text += ", ".join([p.name for p in sub_profiles]) + "\n"
 
 			if packages := profile.packages_text(include_sub_packages=True):
@@ -178,7 +172,7 @@ def select_greeter(
 		result = SelectMenu[GreeterType](
 			group,
 			allow_skip=True,
-			frame=FrameProperties.min(str(_("Greeter"))),
+			frame=FrameProperties.min(tr("Greeter")),
 			alignment=Alignment.CENTER,
 		).run()
 
@@ -203,7 +197,7 @@ def select_profile(
 	top_level_profiles = profile_handler.get_top_level_profiles()
 
 	if header is None:
-		header = str(_("This is a list of pre-programmed default_profiles")) + "\n"
+		header = tr("This is a list of pre-programmed default_profiles") + "\n"
 
 	items = [MenuItem(p.name, value=p) for p in top_level_profiles]
 	group = MenuItemGroup(items, sort_items=True)
@@ -215,7 +209,7 @@ def select_profile(
 		allow_reset=allow_reset,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_("Main profile"))),
+		frame=FrameProperties.min(tr("Main profile")),
 	).run()
 
 	match result.type_:

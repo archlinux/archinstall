@@ -1,19 +1,13 @@
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from archinstall.default_profiles.desktops import SeatAccess
 from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment, FrameProperties
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class HyprlandProfile(XorgProfile):
@@ -54,8 +48,8 @@ class HyprlandProfile(XorgProfile):
 
 	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
-		header = str(_("Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"))
-		header += "\n" + str(_("Choose an option to give Hyprland access to your hardware")) + "\n"
+		header = tr("Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)")
+		header += "\n" + tr("Choose an option to give Hyprland access to your hardware") + "\n"
 
 		items = [MenuItem(s.value, value=s) for s in SeatAccess]
 		group = MenuItemGroup(items, sort_items=True)
@@ -67,7 +61,7 @@ class HyprlandProfile(XorgProfile):
 			group,
 			header=header,
 			allow_skip=False,
-			frame=FrameProperties.min(str(_("Seat access"))),
+			frame=FrameProperties.min(tr("Seat access")),
 			alignment=Alignment.CENTER,
 		).run()
 

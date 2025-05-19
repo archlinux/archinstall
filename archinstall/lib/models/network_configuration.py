@@ -4,15 +4,12 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
+from archinstall.lib.translationhandler import tr
+
 from ..models.profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
-	from collections.abc import Callable
-
 	from archinstall.lib.installer import Installer
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class NicType(Enum):
@@ -23,11 +20,11 @@ class NicType(Enum):
 	def display_msg(self) -> str:
 		match self:
 			case NicType.ISO:
-				return str(_("Copy ISO network configuration to installation"))
+				return tr("Copy ISO network configuration to installation")
 			case NicType.NM:
-				return str(_("Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"))
+				return tr("Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)")
 			case NicType.MANUAL:
-				return str(_("Manual configuration"))
+				return tr("Manual configuration")
 
 
 class _NicSerialization(TypedDict):

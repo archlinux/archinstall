@@ -3,14 +3,11 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import Any, ClassVar
+
+from archinstall.lib.translationhandler import tr
 
 from ..lib.utils.unicode import unicode_ljust
-
-if TYPE_CHECKING:
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 @dataclass
@@ -37,14 +34,14 @@ class MenuItem:
 	@classmethod
 	def yes(cls) -> "MenuItem":
 		if cls._yes is None:
-			cls._yes = cls(str(_("Yes")), value=True)
+			cls._yes = cls(tr("Yes"), value=True)
 
 		return cls._yes
 
 	@classmethod
 	def no(cls) -> "MenuItem":
 		if cls._no is None:
-			cls._no = cls(str(_("No")), value=True)
+			cls._no = cls(tr("No"), value=True)
 
 		return cls._no
 
@@ -207,7 +204,7 @@ class MenuItemGroup:
 
 	def _default_suffix(self, item: MenuItem) -> str:
 		if self.default_item == item:
-			return str(_(" (default)"))
+			return tr(" (default)")
 		return ""
 
 	@cached_property

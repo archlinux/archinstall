@@ -1,5 +1,6 @@
-from typing import TYPE_CHECKING, override
+from typing import override
 
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -8,13 +9,6 @@ from archinstall.tui.types import Alignment, FrameProperties
 from ..menu.abstract_menu import AbstractSubMenu
 from ..models.locale import LocaleConfiguration
 from .utils import list_keyboard_languages, list_locales, set_kb_layout
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
@@ -35,21 +29,21 @@ class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=str(_("Keyboard layout")),
+				text=tr("Keyboard layout"),
 				action=self._select_kb_layout,
 				value=self._locale_conf.kb_layout,
 				preview_action=self._prev_locale,
 				key="kb_layout",
 			),
 			MenuItem(
-				text=str(_("Locale language")),
+				text=tr("Locale language"),
 				action=select_locale_lang,
 				value=self._locale_conf.sys_lang,
 				preview_action=self._prev_locale,
 				key="sys_lang",
 			),
 			MenuItem(
-				text=str(_("Locale encoding")),
+				text=tr("Locale encoding"),
 				action=select_locale_enc,
 				value=self._locale_conf.sys_enc,
 				preview_action=self._prev_locale,
@@ -88,7 +82,7 @@ def select_locale_lang(preset: str | None = None) -> str | None:
 	result = SelectMenu[str](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_("Locale language"))),
+		frame=FrameProperties.min(tr("Locale language")),
 		allow_skip=True,
 	).run()
 
@@ -112,7 +106,7 @@ def select_locale_enc(preset: str | None = None) -> str | None:
 	result = SelectMenu[str](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_("Locale encoding"))),
+		frame=FrameProperties.min(tr("Locale encoding")),
 		allow_skip=True,
 	).run()
 
@@ -144,7 +138,7 @@ def select_kb_layout(preset: str | None = None) -> str | None:
 	result = SelectMenu[str](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_("Keyboard layout"))),
+		frame=FrameProperties.min(tr("Keyboard layout")),
 		allow_skip=True,
 	).run()
 

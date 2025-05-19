@@ -5,23 +5,17 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, NotRequired, TypedDict, override
+from typing import NotRequired, TypedDict, override
 
 import parted
 from parted import Disk, Geometry, Partition
 from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_validator
 
+from archinstall.lib.translationhandler import tr
+
 from ..hardware import SysInfo
 from ..models.users import Password
 from ..output import debug
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
-
 
 ENC_IDENTIFIER = "ainst"
 
@@ -34,11 +28,11 @@ class DiskLayoutType(Enum):
 	def display_msg(self) -> str:
 		match self:
 			case DiskLayoutType.Default:
-				return str(_("Use a best-effort default partition layout"))
+				return tr("Use a best-effort default partition layout")
 			case DiskLayoutType.Manual:
-				return str(_("Manual Partitioning"))
+				return tr("Manual Partitioning")
 			case DiskLayoutType.Pre_mount:
-				return str(_("Pre-mounted configuration"))
+				return tr("Pre-mounted configuration")
 
 
 class _DiskLayoutConfigurationSerialization(TypedDict):
@@ -488,7 +482,7 @@ class _PartitionInfo:
 		part_info = {
 			"Name": self.name,
 			"Type": self.type.value,
-			"Filesystem": self.fs_type.value if self.fs_type else str(_("Unknown")),
+			"Filesystem": self.fs_type.value if self.fs_type else tr("Unknown"),
 			"Path": str(self.path),
 			"Start": self.start.format_size(Unit.sectors, self.sector_size, include_unit=False),
 			"End": end.format_size(Unit.sectors, self.sector_size, include_unit=False),
@@ -1044,7 +1038,7 @@ class LvmLayoutType(Enum):
 	def display_msg(self) -> str:
 		match self:
 			case LvmLayoutType.Default:
-				return str(_("Default layout"))
+				return tr("Default layout")
 			# case LvmLayoutType.Manual:
 			# 	return str(_('Manual configuration'))
 
@@ -1381,10 +1375,10 @@ class EncryptionType(Enum):
 	@classmethod
 	def _encryption_type_mapper(cls) -> dict[str, "EncryptionType"]:
 		return {
-			str(_("No Encryption")): EncryptionType.NoEncryption,
-			str(_("LUKS")): EncryptionType.Luks,
-			str(_("LVM on LUKS")): EncryptionType.LvmOnLuks,
-			str(_("LUKS on LVM")): EncryptionType.LuksOnLvm,
+			tr("No Encryption"): EncryptionType.NoEncryption,
+			tr("LUKS"): EncryptionType.Luks,
+			tr("LVM on LUKS"): EncryptionType.LvmOnLuks,
+			tr("LUKS on LVM"): EncryptionType.LuksOnLvm,
 		}
 
 	@classmethod
