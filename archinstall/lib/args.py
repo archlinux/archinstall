@@ -42,6 +42,7 @@ class Arguments:
 	script: str = "guided"
 	mountpoint: Path = Path("/mnt")
 	skip_ntp: bool = False
+	skip_wkd: bool = False
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
