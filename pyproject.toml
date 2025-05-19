@@ -171,12 +171,10 @@ disable = [
 score = false
 
 [tool.pylint.variables]
-additional-builtins = ["_"]
 init-import = true
 
 [tool.ruff]
 target-version = "py312"
-builtins = ["_"]
 line-length = 160
 
 [tool.ruff.format]
