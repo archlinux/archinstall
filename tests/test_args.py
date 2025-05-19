@@ -64,6 +64,7 @@ def test_correct_parsing_args(
 			"--mountpoint",
 			"/tmp",
 			"--skip-ntp",
+			"--skip-wkd",
 			"--debug",
 			"--offline",
 			"--no-pkg-lookups",
