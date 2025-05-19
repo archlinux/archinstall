@@ -48,7 +48,7 @@ To fix this, try the following:
 
    .. code-block:: console
 
-         > error: celt: signature from "Anton Hvornum (Torxed) <torxed@archlinux.org>" is unknown trust
+         > error: archinstall: signature from "Anton Hvornum (Torxed) <torxed@archlinux.org>" is unknown trust
          > :: File /var/cache/pacman/pkg/archinstall-1.2.3-4-x86_64.pkg.tar.xz is corrupted (invalid or corrupted package (PGP signature)).
          > Do you want to delete it? [Y/n] 
 
