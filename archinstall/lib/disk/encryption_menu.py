@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.models.device_model import (
@@ -11,6 +11,7 @@ from archinstall.lib.models.device_model import (
 	LvmVolume,
 	PartitionModification,
 )
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -22,13 +23,6 @@ from ..models.users import Password
 from ..output import FormattedOutput
 from ..utils.util import get_password
 from .fido import Fido2
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
@@ -56,14 +50,14 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=str(_("Encryption type")),
+				text=tr("Encryption type"),
 				action=lambda x: select_encryption_type(self._disk_config, x),
 				value=self._enc_config.encryption_type,
 				preview_action=self._preview,
 				key="encryption_type",
 			),
 			MenuItem(
-				text=str(_("Encryption password")),
+				text=tr("Encryption password"),
 				action=lambda x: select_encrypted_password(),
 				value=self._enc_config.encryption_password,
 				dependencies=[self._check_dep_enc_type],
@@ -71,7 +65,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				key="encryption_password",
 			),
 			MenuItem(
-				text=str(_("Partitions")),
+				text=tr("Partitions"),
 				action=lambda x: select_partitions_to_encrypt(self._disk_config.device_modifications, x),
 				value=self._enc_config.partitions,
 				dependencies=[self._check_dep_partitions],
@@ -79,7 +73,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				key="partitions",
 			),
 			MenuItem(
-				text=str(_("LVM volumes")),
+				text=tr("LVM volumes"),
 				action=self._select_lvm_vols,
 				value=self._enc_config.lvm_volumes,
 				dependencies=[self._check_dep_lvm_vols],
@@ -87,7 +81,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				key="lvm_volumes",
 			),
 			MenuItem(
-				text=str(_("HSM")),
+				text=tr("HSM"),
 				action=select_hsm,
 				value=self._enc_config.hsm_device,
 				dependencies=[self._check_dep_enc_type],
@@ -177,7 +171,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		if enc_type:
 			enc_text = EncryptionType.type_to_text(enc_type)
-			return f"{_('Encryption type')}: {enc_text}"
+			return f"{tr('Encryption type')}: {enc_text}"
 
 		return None
 
@@ -185,7 +179,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		enc_pwd = self._item_group.find_by_key("encryption_password").value
 
 		if enc_pwd:
-			return f"{_('Encryption password')}: {enc_pwd.hidden()}"
+			return f"{tr('Encryption password')}: {enc_pwd.hidden()}"
 
 		return None
 
@@ -193,7 +187,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		partitions: list[PartitionModification] | None = self._item_group.find_by_key("partitions").value
 
 		if partitions:
-			output = str(_("Partitions to be encrypted")) + "\n"
+			output = tr("Partitions to be encrypted") + "\n"
 			output += FormattedOutput.as_table(partitions)
 			return output.rstrip()
 
@@ -203,7 +197,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		volumes: list[PartitionModification] | None = self._item_group.find_by_key("lvm_volumes").value
 
 		if volumes:
-			output = str(_("LVM volumes to be encrypted")) + "\n"
+			output = tr("LVM volumes to be encrypted") + "\n"
 			output += FormattedOutput.as_table(volumes)
 			return output.rstrip()
 
@@ -217,7 +211,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		output = str(fido_device.path)
 		output += f" ({fido_device.manufacturer}, {fido_device.product})"
-		return f"{_('HSM device')}: {output}"
+		return f"{tr('HSM device')}: {output}"
 
 
 def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: EncryptionType) -> EncryptionType | None:
@@ -238,7 +232,7 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 		allow_skip=True,
 		allow_reset=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_("Encryption type"))),
+		frame=FrameProperties.min(tr("Encryption type")),
 	).run()
 
 	match result.type_:
@@ -251,9 +245,9 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 
 
 def select_encrypted_password() -> Password | None:
-	header = str(_("Enter disk encryption password (leave blank for no encryption)")) + "\n"
+	header = tr("Enter disk encryption password (leave blank for no encryption)") + "\n"
 	password = get_password(
-		text=str(_("Disk encryption password")),
+		text=tr("Disk encryption password"),
 		header=header,
 		allow_skip=True,
 	)
@@ -262,7 +256,7 @@ def select_encrypted_password() -> Password | None:
 
 
 def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
-	header = str(_("Select a FIDO2 device to use for HSM")) + "\n"
+	header = tr("Select a FIDO2 device to use for HSM") + "\n"
 
 	try:
 		fido_devices = Fido2.get_fido2_devices()

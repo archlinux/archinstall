@@ -1,18 +1,12 @@
 import copy
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 from archinstall.lib.menu.menu_helper import MenuHelper
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class ListManager[ValueT]:
@@ -43,8 +37,8 @@ class ListManager[ValueT]:
 		self._prompt = prompt
 
 		self._separator = ""
-		self._confirm_action = str(_("Confirm and exit"))
-		self._cancel_action = str(_("Cancel"))
+		self._confirm_action = tr("Confirm and exit")
+		self._cancel_action = tr("Cancel")
 
 		self._terminate_actions = [self._confirm_action, self._cancel_action]
 		self._base_actions = base_actions

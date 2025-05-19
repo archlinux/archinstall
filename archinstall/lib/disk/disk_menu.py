@@ -1,19 +1,13 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType, LvmConfiguration
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
 from ..interactions.disk_conf import select_disk_config, select_lvm_config
 from ..menu.abstract_menu import AbstractSubMenu
 from ..output import FormattedOutput
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 @dataclass
@@ -44,7 +38,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=str(_("Partitioning")),
+				text=tr("Partitioning"),
 				action=self._select_disk_layout_config,
 				value=self._disk_menu_config.disk_config,
 				preview_action=self._prev_disk_layouts,
@@ -104,14 +98,14 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 		disk_layout_conf = item.get_value()
 
 		if disk_layout_conf.config_type == DiskLayoutType.Pre_mount:
-			msg = str(_("Configuration type: {}")).format(disk_layout_conf.config_type.display_msg()) + "\n"
-			msg += str(_("Mountpoint")) + ": " + str(disk_layout_conf.mountpoint)
+			msg = tr("Configuration type: {}").format(disk_layout_conf.config_type.display_msg()) + "\n"
+			msg += tr("Mountpoint") + ": " + str(disk_layout_conf.mountpoint)
 			return msg
 
 		device_mods = [d for d in disk_layout_conf.device_modifications if d.partitions]
 
 		if device_mods:
-			output_partition = "{}: {}\n".format(str(_("Configuration")), disk_layout_conf.config_type.display_msg())
+			output_partition = "{}: {}\n".format(tr("Configuration"), disk_layout_conf.config_type.display_msg())
 			output_btrfs = ""
 
 			for mod in device_mods:
@@ -119,7 +113,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 				partition_table = FormattedOutput.as_table(mod.partitions)
 
 				output_partition += f"{mod.device_path}: {mod.device.device_info.model}\n"
-				output_partition += "{}: {}\n".format(str(_("Wipe")), mod.wipe)
+				output_partition += "{}: {}\n".format(tr("Wipe"), mod.wipe)
 				output_partition += partition_table + "\n"
 
 				# create btrfs table
@@ -138,16 +132,16 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 
 		lvm_config: LvmConfiguration = item.value
 
-		output = "{}: {}\n".format(str(_("Configuration")), lvm_config.config_type.display_msg())
+		output = "{}: {}\n".format(tr("Configuration"), lvm_config.config_type.display_msg())
 
 		for vol_gp in lvm_config.vol_groups:
 			pv_table = FormattedOutput.as_table(vol_gp.pvs)
-			output += "{}:\n{}".format(str(_("Physical volumes")), pv_table)
+			output += "{}:\n{}".format(tr("Physical volumes"), pv_table)
 
 			output += f"\nVolume Group: {vol_gp.name}"
 
 			lvm_volumes = FormattedOutput.as_table(vol_gp.volumes)
-			output += "\n\n{}:\n{}".format(str(_("Volumes")), lvm_volumes)
+			output += "\n\n{}:\n{}".format(tr("Volumes"), lvm_volumes)
 
 			return output
 

@@ -11,7 +11,7 @@ from collections.abc import Callable
 from pathlib import Path
 from subprocess import CalledProcessError
 from types import TracebackType
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.fido import Fido2
@@ -29,6 +29,7 @@ from archinstall.lib.models.device_model import (
 	Unit,
 )
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import Tui
 
 from .args import arch_config_handler
@@ -47,11 +48,6 @@ from .pacman import Pacman
 from .pacman.config import PacmanConfig
 from .plugins import plugins
 from .storage import storage
-
-if TYPE_CHECKING:
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -139,8 +135,8 @@ class Installer:
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
 			log_file = os.path.join(storage["LOG_PATH"], storage["LOG_FILE"])
-			Tui.print(str(_("[!] A log file has been created here: {}").format(log_file)))
-			Tui.print(str(_("Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")))
+			Tui.print(str(tr("[!] A log file has been created here: {}").format(log_file)))
+			Tui.print(tr("Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
 			raise exc_val
 
 		if not (missing_steps := self.post_install_check()):
@@ -176,21 +172,21 @@ class Installer:
 		"""
 
 		if not arch_config_handler.args.skip_ntp:
-			info(str(_("Waiting for time sync (timedatectl show) to complete.")))
+			info(tr("Waiting for time sync (timedatectl show) to complete."))
 
 			started_wait = time.time()
 			notified = False
 			while True:
 				if not notified and time.time() - started_wait > 5:
 					notified = True
-					warn(str(_("Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/")))
+					warn(tr("Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"))
 
 				time_val = SysCommand("timedatectl show --property=NTPSynchronized --value").decode()
 				if time_val and time_val.strip() == "yes":
 					break
 				time.sleep(1)
 		else:
-			info(str(_("Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)")))
+			info(tr("Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"))
 
 		info("Waiting for automatic mirror selection (reflector) to complete.")
 		while self._service_state("reflector") not in ("dead", "failed", "exited"):
@@ -200,7 +196,7 @@ class Installer:
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 		# 	time.sleep(1)
 
-		info(str(_("Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.")))
+		info(tr("Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."))
 		# Wait for the timer to kick in
 		while self._service_started("archlinux-keyring-wkd-sync.timer") is None:
 			time.sleep(1)

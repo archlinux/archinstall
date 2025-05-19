@@ -1,16 +1,11 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, override
+from typing import Any, override
 
 from pydantic import BaseModel
 
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
+from archinstall.lib.translationhandler import tr
 
 
 class Repository(Enum):
@@ -204,6 +199,6 @@ class PackageGroup:
 		return pkg_groups
 
 	def info(self) -> str:
-		output = str(_("Package group:")) + "\n  - "
+		output = tr("Package group:") + "\n  - "
 		output += "\n  - ".join(self.packages)
 		return output

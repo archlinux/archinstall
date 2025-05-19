@@ -1,12 +1,7 @@
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING
 
-from archinstall.lib.translationhandler import DeferredTranslation
-
-if TYPE_CHECKING:
-	_: Callable[[str], DeferredTranslation]
+from archinstall.lib.translationhandler import tr
 
 
 class HelpTextGroupId(Enum):
@@ -45,8 +40,8 @@ class Help:
 		return HelpGroup(
 			group_id=HelpTextGroupId.GENERAL,
 			group_entries=[
-				HelpText(str(_("Show help")), ["Ctrl+h"]),
-				HelpText(str(_("Exit help")), ["Esc"]),
+				HelpText(tr("Show help"), ["Ctrl+h"]),
+				HelpText(tr("Exit help"), ["Esc"]),
 			],
 		)
 
@@ -55,13 +50,13 @@ class Help:
 		return HelpGroup(
 			group_id=HelpTextGroupId.NAVIGATION,
 			group_entries=[
-				HelpText(str(_("Preview scroll up")), ["PgUp"]),
-				HelpText(str(_("Preview scroll down")), ["PgDown"]),
-				HelpText(str(_("Move up")), ["k", "↑"]),
-				HelpText(str(_("Move down")), ["j", "↓"]),
-				HelpText(str(_("Move right")), ["l", "→"]),
-				HelpText(str(_("Move left")), ["h", "←"]),
-				HelpText(str(_("Jump to entry")), ["1..9"]),
+				HelpText(tr("Preview scroll up"), ["PgUp"]),
+				HelpText(tr("Preview scroll down"), ["PgDown"]),
+				HelpText(tr("Move up"), ["k", "↑"]),
+				HelpText(tr("Move down"), ["j", "↓"]),
+				HelpText(tr("Move right"), ["l", "→"]),
+				HelpText(tr("Move left"), ["h", "←"]),
+				HelpText(tr("Jump to entry"), ["1..9"]),
 			],
 		)
 
@@ -70,12 +65,12 @@ class Help:
 		return HelpGroup(
 			group_id=HelpTextGroupId.SELECTION,
 			group_entries=[
-				HelpText(str(_("Skip selection (if available)")), ["Esc"]),
-				HelpText(str(_("Reset selection (if available)")), ["Ctrl+c"]),
-				HelpText(str(_("Select on single select")), ["Enter"]),
-				HelpText(str(_("Select on multi select")), ["Space", "Tab"]),
-				HelpText(str(_("Reset")), ["Ctrl-C"]),
-				HelpText(str(_("Skip selection menu")), ["Esc"]),
+				HelpText(tr("Skip selection (if available)"), ["Esc"]),
+				HelpText(tr("Reset selection (if available)"), ["Ctrl+c"]),
+				HelpText(tr("Select on single select"), ["Enter"]),
+				HelpText(tr("Select on multi select"), ["Space", "Tab"]),
+				HelpText(tr("Reset"), ["Ctrl-C"]),
+				HelpText(tr("Skip selection menu"), ["Esc"]),
 			],
 		)
 
@@ -84,8 +79,8 @@ class Help:
 		return HelpGroup(
 			group_id=HelpTextGroupId.SEARCH,
 			group_entries=[
-				HelpText(str(_("Start search mode")), ["/"]),
-				HelpText(str(_("Exit search mode")), ["Esc"]),
+				HelpText(tr("Start search mode"), ["/"]),
+				HelpText(tr("Exit search mode"), ["Esc"]),
 			],
 		)
 

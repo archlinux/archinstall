@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING
 
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import Tui
 
 from ..interactions.general_conf import ask_abort
@@ -24,13 +24,6 @@ from ..models.device_model import (
 )
 from ..output import debug, info
 from .device_handler import device_handler
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class FilesystemHandler:
@@ -347,7 +340,7 @@ class FilesystemHandler:
 	def _final_warning(self, device_paths: str) -> bool:
 		# Issue a final warning before we continue with something un-revertable.
 		# We mention the drive one last time, and count from 5 to 0.
-		out = str(_(" ! Formatting {} in ")).format(device_paths)
+		out = tr(" ! Formatting {} in ").format(device_paths)
 		Tui.print(out, row=0, endl="", clear_screen=True)
 
 		try:

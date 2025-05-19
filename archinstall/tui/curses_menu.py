@@ -9,7 +9,9 @@ from collections.abc import Callable
 from curses.ascii import isprint
 from curses.textpad import Textbox
 from types import FrameType, TracebackType
-from typing import TYPE_CHECKING, Literal, override
+from typing import Literal, override
+
+from archinstall.lib.translationhandler import tr
 
 from ..lib.output import debug
 from .help import Help
@@ -28,11 +30,6 @@ from .types import (
 	ViewportEntry,
 	_FrameDim,
 )
-
-if TYPE_CHECKING:
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class AbstractCurses[ValueT](metaclass=ABCMeta):
@@ -66,7 +63,7 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 			height,
 			x_start,
 			int((max_height / 2) - height / 2),
-			frame=FrameProperties.min(str(_("Archinstall help"))),
+			frame=FrameProperties.min(tr("Archinstall help")),
 		)
 
 	def _confirm_interrupt(self, warning: str) -> bool:
@@ -87,7 +84,7 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 			return False
 
 	def help_entry(self) -> ViewportEntry:
-		return ViewportEntry(str(_("Press Ctrl+h for help")), 0, 0, STYLE.NORMAL)
+		return ViewportEntry(tr("Press Ctrl+h for help"), 0, 0, STYLE.NORMAL)
 
 	def _show_help(self) -> None:
 		if not self._help_window:
@@ -489,7 +486,7 @@ class EditMenu(AbstractCurses[str]):
 		self._hide_input = hide_input
 
 		if self._interrupt_warning is None:
-			self._interrupt_warning = str(_("Are you sure you want to reset this setting?")) + "\n"
+			self._interrupt_warning = tr("Are you sure you want to reset this setting?") + "\n"
 
 		title = f"* {title}" if not self._allow_skip else title
 		self._frame = FrameProperties(title, FrameStyle.MAX)
@@ -500,7 +497,7 @@ class EditMenu(AbstractCurses[str]):
 		self._info_vp: Viewport | None = None
 
 		self._set_default_info = True
-		self._only_ascii_text = ViewportEntry(str(_("Only ASCII characters are supported")), 0, 0, STYLE.NORMAL)
+		self._only_ascii_text = ViewportEntry(tr("Only ASCII characters are supported"), 0, 0, STYLE.NORMAL)
 
 		self._init_viewports()
 
@@ -726,7 +723,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 			self._header_entries = self.get_header_entries(header)
 
 		if self._interrupt_warning is None:
-			self._interrupt_warning = str(_("Are you sure you want to reset this setting?")) + "\n"
+			self._interrupt_warning = tr("Are you sure you want to reset this setting?") + "\n"
 
 		if self._orientation == Orientation.HORIZONTAL:
 			self._horizontal_cols = columns

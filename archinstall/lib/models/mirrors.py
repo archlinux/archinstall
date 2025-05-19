@@ -5,20 +5,13 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Any, TypedDict, override
+from typing import Any, TypedDict, override
 
 from pydantic import BaseModel, field_validator, model_validator
 
 from ..models.packages import Repository
 from ..networking import DownloadTimer, ping
 from ..output import debug
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class MirrorStatusEntryV3(BaseModel):

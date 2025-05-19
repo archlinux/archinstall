@@ -2,19 +2,12 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from .exceptions import SysCallError
 from .general import SysCommand
 from .networking import enrich_iface_types, list_interfaces
 from .output import debug
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
+from .translationhandler import tr
 
 
 class CpuVendor(Enum):
@@ -81,7 +74,7 @@ class GfxDriver(Enum):
 
 	def packages_text(self) -> str:
 		pkg_names = [p.value for p in self.gfx_packages()]
-		text = str(_("Installed packages")) + ":\n"
+		text = tr("Installed packages") + ":\n"
 
 		for p in sorted(pkg_names):
 			text += f"\t- {p}\n"

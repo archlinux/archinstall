@@ -1,15 +1,10 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, NotRequired, TypedDict, override
+from typing import NotRequired, TypedDict, override
+
+from archinstall.lib.translationhandler import tr
 
 from ..crypt import crypt_yescrypt
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class PasswordStrength(Enum):
@@ -23,13 +18,13 @@ class PasswordStrength(Enum):
 	def value(self) -> str:  # pylint: disable=invalid-overridden-method
 		match self:
 			case PasswordStrength.VERY_WEAK:
-				return str(_("very weak"))
+				return tr("very weak")
 			case PasswordStrength.WEAK:
-				return str(_("weak"))
+				return tr("weak")
 			case PasswordStrength.MODERATE:
-				return str(_("moderate"))
+				return tr("moderate")
 			case PasswordStrength.STRONG:
-				return str(_("strong"))
+				return tr("strong")
 
 	def color(self) -> str:
 		match self:
