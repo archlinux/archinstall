@@ -196,14 +196,15 @@ class Installer:
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 		# 	time.sleep(1)
 
-		info(tr("Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."))
-		# Wait for the timer to kick in
-		while self._service_started("archlinux-keyring-wkd-sync.timer") is None:
-			time.sleep(1)
+		if not arch_config_handler.args.skip_wkd:
+			info(tr("Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."))
+			# Wait for the timer to kick in
+			while self._service_started("archlinux-keyring-wkd-sync.timer") is None:
+				time.sleep(1)
 
-		# Wait for the service to enter a finished state
-		while self._service_state("archlinux-keyring-wkd-sync.service") not in ("dead", "failed", "exited"):
-			time.sleep(1)
+			# Wait for the service to enter a finished state
+			while self._service_state("archlinux-keyring-wkd-sync.service") not in ("dead", "failed", "exited"):
+				time.sleep(1)
 
 	def _verify_boot_part(self) -> None:
 		"""

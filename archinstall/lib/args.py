@@ -320,6 +320,12 @@ class ArchConfigHandler:
 			default=False,
 		)
 		parser.add_argument(
+			"--skip-wkd",
+			action="store_true",
+			help="Disables NTP checks during installation",
+			default=False,
+		)
+		parser.add_argument(
 			"--debug",
 			action="store_true",
 			default=False,
