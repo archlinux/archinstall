@@ -108,7 +108,7 @@ def encrypt(password: str, data: str) -> str:
 	return f"$argon2id${encoded_salt}${encoded_token}"
 
 
-def decrypt(data: str, password: str):
+def decrypt(data: str, password: str) -> str:
 	_, algo, encoded_salt, encoded_token = data.split("$")
 	salt = base64.urlsafe_b64decode(encoded_salt)
 	token = base64.urlsafe_b64decode(encoded_token)

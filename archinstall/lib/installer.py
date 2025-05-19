@@ -1513,7 +1513,7 @@ class Installer:
 		if not self.mkinitcpio(["-P"]):
 			error("Error generating initramfs (continuing anyway)")
 
-	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False):
+	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False) -> None:
 		"""
 		Adds a bootloader to the installation instance.
 		Archinstall supports one of three types:
@@ -1530,7 +1530,7 @@ class Installer:
 				# Allow plugins to override the boot-loader handling.
 				# This allows for bot configuring and installing bootloaders.
 				if plugin.on_add_bootloader(self):
-					return True
+					return
 
 		efi_partition = self._get_efi_partition()
 		boot_partition = self._get_boot_partition()
@@ -1560,7 +1560,7 @@ class Installer:
 	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
 
-	def enable_sudo(self, user: User, group: bool = False):
+	def enable_sudo(self, user: User, group: bool = False) -> None:
 		info(f"Enabling sudo permissions for {user.username}")
 
 		sudoers_dir = self.target / "etc/sudoers.d"

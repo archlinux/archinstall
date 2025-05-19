@@ -132,7 +132,7 @@ class Password:
 		return self._plaintext
 
 	@plaintext.setter
-	def plaintext(self, value: str):
+	def plaintext(self, value: str) -> None:
 		self._plaintext = value
 		self.enc_password = crypt_yescrypt(value)
 

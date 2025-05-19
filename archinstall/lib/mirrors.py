@@ -336,12 +336,12 @@ def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
 			return selected_mirrors
 
 
-def add_custom_mirror_servers(preset: list[CustomServer] = []):
+def add_custom_mirror_servers(preset: list[CustomServer] = []) -> list[CustomServer]:
 	custom_mirrors = CustomMirrorServersList(preset).run()
 	return custom_mirrors
 
 
-def select_custom_mirror(preset: list[CustomRepository] = []):
+def select_custom_mirror(preset: list[CustomRepository] = []) -> list[CustomRepository]:
 	custom_mirrors = CustomMirrorRepositoriesList(preset).run()
 	return custom_mirrors
 
