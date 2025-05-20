@@ -6,10 +6,7 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, override
-
-if TYPE_CHECKING:
-	_: Any
+from typing import override
 
 
 @dataclass
@@ -136,6 +133,7 @@ class TranslationHandler:
 		"""
 		Set the provided language as the current translation
 		"""
+		# The install() call has the side effect of assigning GNUTranslations.gettext to builtins._
 		language.translation.install()
 
 	def _get_locales_dir(self) -> Path:
@@ -170,10 +168,12 @@ class _DeferredTranslation:
 
 	@override
 	def __str__(self) -> str:
-		translate = _
-		if translate is _DeferredTranslation:
+		if builtins._ is _DeferredTranslation:  # type: ignore[attr-defined]
 			return self.message
-		return translate(self.message)
+
+		# builtins._ is changed from _DeferredTranslation to GNUTranslations.gettext after
+		# Language.activate() is called
+		return builtins._(self.message)  # type: ignore[attr-defined]
 
 	def __lt__(self, other) -> bool:
 		return self.message < other
