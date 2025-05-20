@@ -19,6 +19,39 @@ Restarting ``systemd-timesyncd.service`` might work but most often you need to c
 
    If you know your time is correct on the machine, you can run ``archinstall --skip-ntp`` to ignore time sync.
 
+Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete. `#2679`_
+------------------------------
+
+The ``archlinux-keyring-wkd-sync.service`` or ``archlinux-keyring-wkd-sync.timer`` can hang "indefinitely" some times.
+This is usually due to an inability to reach the key servers, or a slow connection towards key servers.
+
+The script ``/usr/bin/archlinux-keyring-wkd-sync`` can be run manually, to verify if it's executing slowly or not.
+
+If ``systemctl show --property=ActiveEnterTimestamp --no-pager archlinux-keyring-wkd-sync.timer`` shows nothing, it means the built-in sync never finished. Likewise ``systemctl show --no-pager -p SubState --value archlinux-keyring-wkd-sync.service`` most likely shows ``dead``, which means the service never completed.
+
+To fix this, try the following:
+
+.. code-block:: console
+
+      # killall gpg-agent
+      # rm -rf /etc/pacman.d/gnupg
+      # pacman-key --init 
+      # pacman-key --populate
+      # pacman -Sy archlinux-keyring
+      # systemctl restart archlinux-keyring-wkd-sync.timer
+
+.. note::
+
+   If you know the ISO is the latest, and that you have valid GPG keys, try ``archinstall --skip-wkd`` to ignore waiting for the sync.
+
+   If you skip WKD sync, you might end up with:
+
+   .. code-block:: console
+
+         > error: archinstall: signature from "Anton Hvornum (Torxed) <torxed@archlinux.org>" is unknown trust
+         > :: File /var/cache/pacman/pkg/archinstall-1.2.3-4-x86_64.pkg.tar.xz is corrupted (invalid or corrupted package (PGP signature)).
+         > Do you want to delete it? [Y/n] 
+
 Missing Nvidia Proprietary Driver `#2002`_
 ------------------------------------------
 
@@ -87,11 +120,12 @@ This means that feature requests like supporting filesystems such as `ZFS`_ can 
 
       This will allow for unsupported usage of AUR during installation.
 
-.. _#2213: https://github.com/archlinux/archinstall/issues/2213
-.. _#2185: https://github.com/archlinux/archinstall/issues/2185
-.. _#2144: https://github.com/archlinux/archinstall/issues/2144
-.. _#2002: https://github.com/archlinux/archinstall/issues/2002
 .. _#1686: https://github.com/archlinux/archinstall/issues/1686
+.. _#2002: https://github.com/archlinux/archinstall/issues/2002
+.. _#2144: https://github.com/archlinux/archinstall/issues/2144
+.. _#2185: https://github.com/archlinux/archinstall/issues/2185
+.. _#2213: https://github.com/archlinux/archinstall/issues/2213
+.. _#2679: https://github.com/archlinux/archinstall/issues/2679
 .. _linux-headers: https://archlinux.org/packages/core/x86_64/linux-headers/
 .. _nvidia-dkms: https://archlinux.org/packages/extra/x86_64/nvidia-dkms/
 .. _x86_64: https://wiki.archlinux.org/title/Frequently_asked_questions#What_architectures_does_Arch_support?

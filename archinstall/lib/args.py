@@ -42,6 +42,7 @@ class Arguments:
 	script: str = "guided"
 	mountpoint: Path = Path("/mnt")
 	skip_ntp: bool = False
+	skip_wkd: bool = False
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
@@ -317,6 +318,12 @@ class ArchConfigHandler:
 			"--skip-ntp",
 			action="store_true",
 			help="Disables NTP checks during installation",
+			default=False,
+		)
+		parser.add_argument(
+			"--skip-wkd",
+			action="store_true",
+			help="Disables checking if archlinux keyring wkd sync is complete.",
 			default=False,
 		)
 		parser.add_argument(
