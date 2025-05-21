@@ -3,9 +3,10 @@
 
 name: Upload archinstall to PyPi
 
-on:
-  release:
-    types: [ published ]
+# on:
+#   release:
+#     types: [ published ]
+on: [ push, pull_request ]
 
 jobs:
   deploy:
@@ -26,6 +27,7 @@ jobs:
           pacman --noconfirm -Sy archlinux-keyring
           pacman --noconfirm -Syyu
           pacman --noconfirm -Sy python-uv python-setuptools python-pip
+          pacman --noconfirm -Sy python-pyparted python-pydantic
       - name: Build archinstall
         run: |
           uv build --no-build-isolation --wheel
