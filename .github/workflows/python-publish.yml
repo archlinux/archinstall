@@ -3,11 +3,9 @@
 
 name: Upload archinstall to PyPi
 
-# on:
-#   release:
-#     types: [ published ]
-
-on: [ push, pull_request ]
+on:
+  release:
+    types: [ published ]
 
 jobs:
   deploy:
