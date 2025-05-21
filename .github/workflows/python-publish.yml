@@ -13,6 +13,9 @@ jobs:
   deploy:
 
     runs-on: ubuntu-latest
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
     container:
       image: archlinux/archlinux:latest
       options: --privileged
