@@ -28,5 +28,9 @@ jobs:
           pacman --noconfirm -Syyu
           pacman --noconfirm -Sy python-uv python-setuptools python-pip
           pacman --noconfirm -Sy python-pyparted python-pydantic
+      - name: Build archinstall
+        run: |
           uv build --no-build-isolation --wheel
+      - name: Publish archinstall to PyPi
+        run: |
           uv publish --trusted-publishing always
