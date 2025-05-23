@@ -258,10 +258,12 @@ class MirrorConfiguration:
 		}
 
 	def custom_servers_config(self) -> str:
-		config = "## Custom Servers\n"
+		config = ""
 
-		for server in self.custom_servers:
-			config += f"Server = {server.url}\n"
+		if self.custom_servers:
+			config += "## Custom Servers\n"
+			for server in self.custom_servers:
+				config += f"Server = {server.url}\n"
 
 		return config.strip()
 
