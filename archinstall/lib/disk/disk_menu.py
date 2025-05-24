@@ -124,12 +124,12 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 		return preset
 
 	def _select_btrfs_snapshots(self, preset: SnapshotConfig | None) -> SnapshotConfig | None:
-		snapshot_type = preset.snapshot_type if preset else None
+		preset_type = preset.snapshot_type if preset else None
 
 		group = MenuItemGroup.from_enum(
 			SnapshotType,
 			sort_items=True,
-			preset=snapshot_type,
+			preset=preset_type,
 		)
 
 		result = SelectMenu[SnapshotType](

@@ -40,6 +40,7 @@ class _DiskLayoutConfigurationSerialization(TypedDict):
 	device_modifications: NotRequired[list[_DeviceModificationSerialization]]
 	lvm_config: NotRequired[_LvmConfigurationSerialization]
 	mountpoint: NotRequired[str]
+	btrfs_options: NotRequired[_BtrfsOptionsSerialization]
 
 
 @dataclass
@@ -1328,11 +1329,11 @@ class LvmConfiguration:
 
 
 class _BtrfsOptionsSerialization(TypedDict):
-	snapshot_config: _SnapshotConfigSerialization
+	snapshot_config: _SnapshotConfigSerialization | None
 
 
 class _SnapshotConfigSerialization(TypedDict):
-	enabled: bool
+	type: str
 
 
 class SnapshotType(Enum):
