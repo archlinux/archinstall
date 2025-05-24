@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from enum import Enum
 from functools import cached_property
-from typing import Any, ClassVar
+from typing import Any, ClassVar, TypeVar
 
 from archinstall.lib.translationhandler import tr
 
 from ..lib.utils.unicode import unicode_ljust
+
+E = TypeVar("E", bound=Enum)
 
 
 @dataclass
@@ -118,6 +121,20 @@ class MenuItemGroup:
 			[MenuItem.yes(), MenuItem.no()],
 			sort_items=True,
 		)
+
+	@staticmethod
+	def from_enum(
+		enum_cls: E,
+		sort_items: bool = False,
+		preset: E | None = None,
+	) -> "MenuItemGroup":
+		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
+		group = MenuItemGroup(items, sort_items=False)
+
+		if E is not None:
+			group.set_selected_by_value(preset)
+
+		return group
 
 	def set_preview_for_all(self, action: Callable[[Any], str | None]) -> None:
 		for item in self.items:

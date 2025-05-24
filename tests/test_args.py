@@ -8,7 +8,7 @@ from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
 from archinstall.lib.models.audio_configuration import Audio, AudioConfiguration
 from archinstall.lib.models.bootloader import Bootloader
-from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType
+from archinstall.lib.models.device_model import BtrfsOptions, DiskLayoutConfiguration, DiskLayoutType, SnapshotConfig, SnapshotType
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
 from archinstall.lib.models.network_configuration import NetworkConfiguration, Nic, NicType
@@ -138,6 +138,9 @@ def test_config_file_parsing(
 			device_modifications=[],
 			lvm_config=None,
 			mountpoint=None,
+			btrfs_options=BtrfsOptions(
+				snapshot_config=SnapshotConfig(SnapshotType.Snapper),
+			),
 		),
 		profile_config=ProfileConfiguration(
 			profile=profile_handler.parse_profile_config(

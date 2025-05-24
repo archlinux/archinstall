@@ -141,6 +141,13 @@ def perform_installation(mountpoint: Path) -> None:
 		if servies := config.services:
 			installation.enable_service(servies)
 
+		if disk_config.is_default_btrfs():
+			btrfs_options = disk_config.btrfs_options
+			snapshot_config = btrfs_options.snapshot_config if btrfs_options else None
+			snapshot_type = snapshot_config.snapshot_type if snapshot_config else None
+			if snapshot_type:
+				installation.setup_btrfs_snapshot(snapshot_type, config.bootloader)
+
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if cc := config.custom_commands:
 			run_custom_user_commands(cc, installation)

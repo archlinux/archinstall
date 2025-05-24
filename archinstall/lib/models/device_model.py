@@ -47,6 +47,7 @@ class DiskLayoutConfiguration:
 	config_type: DiskLayoutType
 	device_modifications: list[DeviceModification] = field(default_factory=list)
 	lvm_config: LvmConfiguration | None = None
+	btrfs_options: BtrfsOptions | None = None
 
 	# used for pre-mounted config
 	mountpoint: Path | None = None
@@ -65,6 +66,9 @@ class DiskLayoutConfiguration:
 
 			if self.lvm_config:
 				config["lvm_config"] = self.lvm_config.json()
+
+			if self.btrfs_options:
+				config["btrfs_options"] = self.btrfs_options.json()
 
 			return config
 
@@ -174,7 +178,21 @@ class DiskLayoutConfiguration:
 		if (lvm_arg := disk_config.get("lvm_config", None)) is not None:
 			config.lvm_config = LvmConfiguration.parse_arg(lvm_arg, config)
 
+		if config.is_default_btrfs():
+			if (btrfs_arg := disk_config.get("btrfs_options", None)) is not None:
+				config.btrfs_options = BtrfsOptions.parse_arg(btrfs_arg)
+
 		return config
+
+	def is_default_btrfs(self) -> bool:
+		if self.config_type == DiskLayoutType.Default:
+			for mod in self.device_modifications:
+				for part in mod.partitions:
+					if part.is_create_or_modify():
+						if part.fs_type == FilesystemType.Btrfs:
+							return True
+
+		return False
 
 
 class PartitionTable(Enum):
@@ -1309,13 +1327,46 @@ class LvmConfiguration:
 		return None
 
 
-# def get_lv_crypt_uuid(self, lv: LvmVolume, encryption: EncryptionType) -> str:
-# 	"""
-# 	Find the LUKS superblock UUID for the device that
-# 	contains the given logical volume
-# 	"""
-# 	for vg in self.vol_groups:
-# 		if vg.contains_lv(lv):
+class _BtrfsOptionsSerialization(TypedDict):
+	snapshot_config: _SnapshotConfigSerialization
+
+
+class _SnapshotConfigSerialization(TypedDict):
+	enabled: bool
+
+
+class SnapshotType(Enum):
+	Snapper = "Snapper"
+	Timeshift = "Timeshift"
+
+
+@dataclass
+class SnapshotConfig:
+	snapshot_type: SnapshotType
+
+	def json(self) -> _SnapshotConfigSerialization:
+		return {"type": self.snapshot_type.value}
+
+	@staticmethod
+	def parse_args(args: _SnapshotConfigSerialization) -> SnapshotConfig | None:
+		return SnapshotConfig(SnapshotType(args["type"]))
+
+
+@dataclass
+class BtrfsOptions:
+	snapshot_config: SnapshotConfig | None
+
+	def json(self) -> _BtrfsOptionsSerialization:
+		return {"snapshot_config": self.snapshot_config.json() if self.snapshot_config else None}
+
+	@staticmethod
+	def parse_arg(arg: _BtrfsOptionsSerialization) -> BtrfsOptions | None:
+		snapshot_args = arg.get("snapshot_config")
+		if snapshot_args:
+			snapshot_config = SnapshotConfig.parse_args(snapshot_args)
+			return BtrfsOptions(snapshot_config)
+
+		return None
 
 
 class _DeviceModificationSerialization(TypedDict):
