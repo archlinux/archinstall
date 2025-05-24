@@ -6,15 +6,15 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class DeepinProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__("Deepin", ProfileType.DesktopEnv)
+		super().__init__('Deepin', ProfileType.DesktopEnv)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"deepin",
-			"deepin-terminal",
-			"deepin-editor",
+			'deepin',
+			'deepin-terminal',
+			'deepin-editor',
 		]
 
 	@property

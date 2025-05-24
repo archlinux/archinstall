@@ -4,7 +4,7 @@ from functools import lru_cache
 
 @lru_cache(maxsize=128)
 def _is_wide_character(char: str) -> bool:
-	return unicodedata.east_asian_width(char) in "FW"
+	return unicodedata.east_asian_width(char) in 'FW'
 
 
 def _count_wchars(string: str) -> int:
@@ -12,7 +12,7 @@ def _count_wchars(string: str) -> int:
 	return sum(_is_wide_character(c) for c in string)
 
 
-def unicode_ljust(string: str, width: int, fillbyte: str = " ") -> str:
+def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
 	"""Return a left-justified unicode string of length width.
 	>>> unicode_ljust('Hello', 15, '*')
 	'Hello**********'
@@ -26,7 +26,7 @@ def unicode_ljust(string: str, width: int, fillbyte: str = " ") -> str:
 	return string.ljust(width - _count_wchars(string), fillbyte)
 
 
-def unicode_rjust(string: str, width: int, fillbyte: str = " ") -> str:
+def unicode_rjust(string: str, width: int, fillbyte: str = ' ') -> str:
 	"""Return a right-justified unicode string of length width.
 	>>> unicode_rjust('Hello', 15, '*')
 	'**********Hello'

@@ -46,13 +46,13 @@ class ProfileHandler:
 
 		if profile is not None:
 			data = {
-				"main": profile.name,
-				"details": [profile.name for profile in profile.current_selection],
-				"custom_settings": {profile.name: profile.custom_settings for profile in profile.current_selection},
+				'main': profile.name,
+				'details': [profile.name for profile in profile.current_selection],
+				'custom_settings': {profile.name: profile.custom_settings for profile in profile.current_selection},
 			}
 
 		if self._url_path is not None:
-			data["path"] = self._url_path
+			data['path'] = self._url_path
 
 		return data
 
@@ -66,7 +66,7 @@ class ProfileHandler:
 		# load all the default_profiles from url and custom
 		# so that we can then apply whatever was specified
 		# in the main/detail sections
-		if url_path := profile_config.get("path", None):
+		if url_path := profile_config.get('path', None):
 			self._url_path = url_path
 			local_path = Path(url_path)
 
@@ -100,7 +100,7 @@ class ProfileHandler:
 		# 	if custom_profile := self.get_profile_by_name('Custom'):
 		# 		custom_profile.set_current_selection(custom_types)
 
-		if main := profile_config.get("main", None):
+		if main := profile_config.get('main', None):
 			profile = self.get_profile_by_name(main) if main else None
 
 		if not profile:
@@ -108,14 +108,14 @@ class ProfileHandler:
 
 		valid_sub_profiles: list[Profile] = []
 		invalid_sub_profiles: list[str] = []
-		details: list[str] = profile_config.get("details", [])
+		details: list[str] = profile_config.get('details', [])
 
 		if details:
 			for detail in filter(None, details):
 				# [2024-04-19] TODO: Backwards compatibility after naming change: https://github.com/archlinux/archinstall/pull/2421
 				#                    'Kde' is deprecated, remove this block in a future version
-				if detail == "Kde":
-					detail = "KDE Plasma"
+				if detail == 'Kde':
+					detail = 'KDE Plasma'
 
 				if sub_profile := self.get_profile_by_name(detail):
 					valid_sub_profiles.append(sub_profile)
@@ -123,9 +123,9 @@ class ProfileHandler:
 					invalid_sub_profiles.append(detail)
 
 			if invalid_sub_profiles:
-				info("No profile definition found: {}".format(", ".join(invalid_sub_profiles)))
+				info('No profile definition found: {}'.format(', '.join(invalid_sub_profiles)))
 
-		custom_settings = profile_config.get("custom_settings", {})
+		custom_settings = profile_config.get('custom_settings', {})
 		profile.current_selection = valid_sub_profiles
 
 		for sub_profile in valid_sub_profiles:
@@ -182,28 +182,28 @@ class ProfileHandler:
 		tailored = [p for p in self.profiles if p.is_tailored()]
 		return [t for t in tailored if t.name in self._local_mac_addresses]
 
-	def install_greeter(self, install_session: "Installer", greeter: GreeterType) -> None:
+	def install_greeter(self, install_session: 'Installer', greeter: GreeterType) -> None:
 		packages = []
 		service = None
 
 		match greeter:
 			case GreeterType.LightdmSlick:
-				packages = ["lightdm", "lightdm-slick-greeter"]
-				service = ["lightdm"]
+				packages = ['lightdm', 'lightdm-slick-greeter']
+				service = ['lightdm']
 			case GreeterType.Lightdm:
-				packages = ["lightdm", "lightdm-gtk-greeter"]
-				service = ["lightdm"]
+				packages = ['lightdm', 'lightdm-gtk-greeter']
+				service = ['lightdm']
 			case GreeterType.Sddm:
-				packages = ["sddm"]
-				service = ["sddm"]
+				packages = ['sddm']
+				service = ['sddm']
 			case GreeterType.Gdm:
-				packages = ["gdm"]
-				service = ["gdm"]
+				packages = ['gdm']
+				service = ['gdm']
 			case GreeterType.Ly:
-				packages = ["ly"]
-				service = ["ly"]
+				packages = ['ly']
+				service = ['ly']
 			case GreeterType.CosmicSession:
-				packages = ["cosmic-greeter"]
+				packages = ['cosmic-greeter']
 
 		if packages:
 			install_session.add_additional_packages(packages)
@@ -212,35 +212,35 @@ class ProfileHandler:
 
 		# slick-greeter requires a config change
 		if greeter == GreeterType.LightdmSlick:
-			path = install_session.target.joinpath("etc/lightdm/lightdm.conf")
+			path = install_session.target.joinpath('etc/lightdm/lightdm.conf')
 			with open(path) as file:
 				filedata = file.read()
 
-			filedata = filedata.replace("#greeter-session=example-gtk-gnome", "greeter-session=lightdm-slick-greeter")
+			filedata = filedata.replace('#greeter-session=example-gtk-gnome', 'greeter-session=lightdm-slick-greeter')
 
-			with open(path, "w") as file:
+			with open(path, 'w') as file:
 				file.write(filedata)
 
-	def install_gfx_driver(self, install_session: "Installer", driver: GfxDriver) -> None:
-		debug(f"Installing GFX driver: {driver.value}")
+	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
+		debug(f'Installing GFX driver: {driver.value}')
 
 		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
-			headers = [f"{kernel}-headers" for kernel in install_session.kernels]
+			headers = [f'{kernel}-headers' for kernel in install_session.kernels]
 			# Fixes https://github.com/archlinux/archinstall/issues/585
 			install_session.add_additional_packages(headers)
 		elif driver in [GfxDriver.AllOpenSource, GfxDriver.AmdOpenSource]:
 			# The order of these two are important if amdgpu is installed #808
-			install_session.remove_mod("amdgpu")
-			install_session.remove_mod("radeon")
+			install_session.remove_mod('amdgpu')
+			install_session.remove_mod('radeon')
 
-			install_session.append_mod("amdgpu")
-			install_session.append_mod("radeon")
+			install_session.append_mod('amdgpu')
+			install_session.append_mod('radeon')
 
 		driver_pkgs = driver.gfx_packages()
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
 
-	def install_profile_config(self, install_session: "Installer", profile_config: ProfileConfiguration) -> None:
+	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration) -> None:
 		profile = profile_config.profile
 
 		if not profile:
@@ -260,9 +260,9 @@ class ProfileHandler:
 		"""
 		try:
 			data = fetch_data_from_url(url)
-			b_data = bytes(data, "utf-8")
+			b_data = bytes(data, 'utf-8')
 
-			with NamedTemporaryFile(delete=False, suffix=".py") as fp:
+			with NamedTemporaryFile(delete=False, suffix='.py') as fp:
 				fp.write(b_data)
 				filepath = Path(fp.name)
 
@@ -270,7 +270,7 @@ class ProfileHandler:
 			self.remove_custom_profiles(profiles)
 			self.add_custom_profiles(profiles)
 		except ValueError:
-			err = tr("Unable to fetch profile from specified url: {}").format(url)
+			err = tr('Unable to fetch profile from specified url: {}').format(url)
 			error(err)
 
 	def _load_profile_class(self, module: ModuleType) -> list[Profile]:
@@ -288,7 +288,7 @@ class ProfileHandler:
 						if isinstance(cls_, Profile):
 							profiles.append(cls_)
 					except Exception:
-						debug(f"Cannot import {module}, it does not appear to be a Profile class")
+						debug(f'Cannot import {module}, it does not appear to be a Profile class')
 
 		return profiles
 
@@ -301,7 +301,7 @@ class ProfileHandler:
 		duplicates = [x for x in counter.items() if x[1] != 1]
 
 		if len(duplicates) > 0:
-			err = tr("Profiles must have unique name, but profile definitions with duplicate name found: {}").format(duplicates[0][0])
+			err = tr('Profiles must have unique name, but profile definitions with duplicate name found: {}').format(duplicates[0][0])
 			error(err)
 			sys.exit(1)
 
@@ -312,7 +312,7 @@ class ProfileHandler:
 		"""
 		with open(file) as fp:
 			for line in fp.readlines():
-				if "__packages__" in line:
+				if '__packages__' in line:
 					return True
 		return False
 
@@ -321,15 +321,15 @@ class ProfileHandler:
 		Process a file for profile definitions
 		"""
 		if self._is_legacy(file):
-			info(f"Cannot import {file} because it is no longer supported, please use the new profile format")
+			info(f'Cannot import {file} because it is no longer supported, please use the new profile format')
 			return []
 
 		if not file.is_file():
-			info(f"Cannot find profile file {file}")
+			info(f'Cannot find profile file {file}')
 			return []
 
 		name = file.name.removesuffix(file.suffix)
-		debug(f"Importing profile: {file}")
+		debug(f'Importing profile: {file}')
 
 		try:
 			if spec := importlib.util.spec_from_file_location(name, file):
@@ -338,7 +338,7 @@ class ProfileHandler:
 					spec.loader.exec_module(imported)
 					return self._load_profile_class(imported)
 		except Exception as e:
-			error(f"Unable to parse file {file}: {e}")
+			error(f'Unable to parse file {file}: {e}')
 
 		return []
 
@@ -346,11 +346,11 @@ class ProfileHandler:
 		"""
 		Search the profile path for profile definitions
 		"""
-		profiles_path = Path(__file__).parents[2] / "default_profiles"
+		profiles_path = Path(__file__).parents[2] / 'default_profiles'
 		profiles = []
-		for file in profiles_path.glob("**/*.py"):
+		for file in profiles_path.glob('**/*.py'):
 			# ignore the abstract default_profiles class
-			if "profile.py" in file.name:
+			if 'profile.py' in file.name:
 				continue
 			profiles += self._process_profile_file(file)
 

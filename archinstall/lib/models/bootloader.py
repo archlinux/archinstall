@@ -8,10 +8,10 @@ from ..output import warn
 
 
 class Bootloader(Enum):
-	Systemd = "Systemd-boot"
-	Grub = "Grub"
-	Efistub = "Efistub"
-	Limine = "Limine"
+	Systemd = 'Systemd-boot'
+	Grub = 'Grub'
+	Efistub = 'Efistub'
+	Limine = 'Limine'
 
 	def has_uki_support(self) -> bool:
 		match self:
@@ -40,7 +40,7 @@ class Bootloader(Enum):
 		bootloader = bootloader.capitalize()
 
 		if bootloader not in cls.values():
-			values = ", ".join(cls.values())
+			values = ', '.join(cls.values())
 			warn(f'Invalid bootloader value "{bootloader}". Allowed values: {values}')
 			sys.exit(1)
 		return Bootloader(bootloader)

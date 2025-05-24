@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class SeatAccess(Enum):
-	seatd = "seatd"
-	polkit = "polkit"
+	seatd = 'seatd'
+	polkit = 'polkit'
