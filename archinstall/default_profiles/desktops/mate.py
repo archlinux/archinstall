@@ -6,14 +6,14 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class MateProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__("Mate", ProfileType.DesktopEnv)
+		super().__init__('Mate', ProfileType.DesktopEnv)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"mate",
-			"mate-extra",
+			'mate',
+			'mate-extra',
 		]
 
 	@property

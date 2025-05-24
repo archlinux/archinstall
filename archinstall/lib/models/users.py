@@ -8,37 +8,37 @@ from ..crypt import crypt_yescrypt
 
 
 class PasswordStrength(Enum):
-	VERY_WEAK = "very weak"
-	WEAK = "weak"
-	MODERATE = "moderate"
-	STRONG = "strong"
+	VERY_WEAK = 'very weak'
+	WEAK = 'weak'
+	MODERATE = 'moderate'
+	STRONG = 'strong'
 
 	@property
 	@override
 	def value(self) -> str:  # pylint: disable=invalid-overridden-method
 		match self:
 			case PasswordStrength.VERY_WEAK:
-				return tr("very weak")
+				return tr('very weak')
 			case PasswordStrength.WEAK:
-				return tr("weak")
+				return tr('weak')
 			case PasswordStrength.MODERATE:
-				return tr("moderate")
+				return tr('moderate')
 			case PasswordStrength.STRONG:
-				return tr("strong")
+				return tr('strong')
 
 	def color(self) -> str:
 		match self:
 			case PasswordStrength.VERY_WEAK:
-				return "red"
+				return 'red'
 			case PasswordStrength.WEAK:
-				return "red"
+				return 'red'
 			case PasswordStrength.MODERATE:
-				return "yellow"
+				return 'yellow'
 			case PasswordStrength.STRONG:
-				return "green"
+				return 'green'
 
 	@classmethod
-	def strength(cls, password: str) -> "PasswordStrength":
+	def strength(cls, password: str) -> 'PasswordStrength':
 		digit = any(character.isdigit() for character in password)
 		upper = any(character.isupper() for character in password)
 		lower = any(character.islower() for character in password)
@@ -53,7 +53,7 @@ class PasswordStrength(Enum):
 		lower: bool,
 		symbol: bool,
 		length: int,
-	) -> "PasswordStrength":
+	) -> 'PasswordStrength':
 		# suggested evaluation
 		# https://github.com/archlinux/archinstall/issues/1304#issuecomment-1146768163
 		if digit and upper and lower and symbol:
@@ -101,13 +101,13 @@ class PasswordStrength(Enum):
 
 
 _UserSerialization = TypedDict(
-	"_UserSerialization",
+	'_UserSerialization',
 	{
-		"username": str,
-		"!password": NotRequired[str],
-		"sudo": bool,
-		"groups": list[str],
-		"enc_password": str | None,
+		'username': str,
+		'!password': NotRequired[str],
+		'sudo': bool,
+		'groups': list[str],
+		'enc_password': str | None,
 	},
 )
 
@@ -115,14 +115,14 @@ _UserSerialization = TypedDict(
 class Password:
 	def __init__(
 		self,
-		plaintext: str = "",
+		plaintext: str = '',
 		enc_password: str | None = None,
 	):
 		if plaintext:
 			enc_password = crypt_yescrypt(plaintext)
 
 		if not plaintext and not enc_password:
-			raise ValueError("Either plaintext or enc_password must be provided")
+			raise ValueError('Either plaintext or enc_password must be provided')
 
 		self._plaintext = plaintext
 		self.enc_password = enc_password
@@ -148,9 +148,9 @@ class Password:
 
 	def hidden(self) -> str:
 		if self._plaintext:
-			return "*" * len(self._plaintext)
+			return '*' * len(self._plaintext)
 		else:
-			return "*" * 8
+			return '*' * 8
 
 
 @dataclass
@@ -163,37 +163,37 @@ class User:
 	@override
 	def __str__(self) -> str:
 		# safety overwrite to make sure password is not leaked
-		return f"User({self.username=}, {self.sudo=}, {self.groups=})"
+		return f'User({self.username=}, {self.sudo=}, {self.groups=})'
 
 	def table_data(self) -> dict[str, str | bool | list[str]]:
 		return {
-			"username": self.username,
-			"password": self.password.hidden(),
-			"sudo": self.sudo,
-			"groups": self.groups,
+			'username': self.username,
+			'password': self.password.hidden(),
+			'sudo': self.sudo,
+			'groups': self.groups,
 		}
 
 	def json(self) -> _UserSerialization:
 		return {
-			"username": self.username,
-			"enc_password": self.password.enc_password,
-			"sudo": self.sudo,
-			"groups": self.groups,
+			'username': self.username,
+			'enc_password': self.password.enc_password,
+			'sudo': self.sudo,
+			'groups': self.groups,
 		}
 
 	@classmethod
 	def parse_arguments(
 		cls,
 		args: list[_UserSerialization],
-	) -> list["User"]:
+	) -> list['User']:
 		users: list[User] = []
 
 		for entry in args:
-			username = entry.get("username")
+			username = entry.get('username')
 			password: Password | None = None
-			groups = entry.get("groups", [])
-			plaintext = entry.get("!password")
-			enc_password = entry.get("enc_password")
+			groups = entry.get('groups', [])
+			plaintext = entry.get('!password')
+			enc_password = entry.get('enc_password')
 
 			# DEPRECATED: backwards compatibility
 			if plaintext:
@@ -207,7 +207,7 @@ class User:
 			user = User(
 				username=username,
 				password=password,
-				sudo=entry.get("sudo", False) is True,
+				sudo=entry.get('sudo', False) is True,
 				groups=groups,
 			)
 

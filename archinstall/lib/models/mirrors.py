@@ -38,7 +38,7 @@ class MirrorStatusEntryV3(BaseModel):
 
 	@property
 	def server_url(self) -> str:
-		return f"{self.url}$repo/os/$arch"
+		return f'{self.url}$repo/os/$arch'
 
 	@property
 	def speed(self) -> float:
@@ -50,8 +50,8 @@ class MirrorStatusEntryV3(BaseModel):
 
 			retry = 0
 			while retry < self._speedtest_retries and self._speed is None:
-				debug(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
-				req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
+				debug(f'Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db')
+				req = urllib.request.Request(url=f'{self.url}core/os/x86_64/core.db')
 
 				try:
 					with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
@@ -59,17 +59,17 @@ class MirrorStatusEntryV3(BaseModel):
 
 					assert timer.time is not None
 					self._speed = size / timer.time
-					debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
+					debug(f'    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
 				# Do not retry error
 				except urllib.error.URLError as error:
-					debug(f"    speed: <undetermined> ({error}), skip")
+					debug(f'    speed: <undetermined> ({error}), skip')
 					self._speed = 0
 				# Do retry error
 				except (http.client.IncompleteRead, ConnectionResetError) as error:
-					debug(f"    speed: <undetermined> ({error}), retry")
+					debug(f'    speed: <undetermined> ({error}), retry')
 				# Catch all
 				except Exception as error:
-					debug(f"    speed: <undetermined> ({error}), skip")
+					debug(f'    speed: <undetermined> ({error}), skip')
 					self._speed = 0
 
 				retry += 1
@@ -87,27 +87,27 @@ class MirrorStatusEntryV3(BaseModel):
 		We do this because some hosts blocks ICMP so we'll have to rely on .speed() instead which is slower.
 		"""
 		if self._latency is None:
-			debug(f"Checking latency for {self.url}")
+			debug(f'Checking latency for {self.url}')
 			self._latency = ping(self._hostname, timeout=2)
-			debug(f"  latency: {self._latency}")
+			debug(f'  latency: {self._latency}')
 
 		return self._latency
 
 	@classmethod
-	@field_validator("score", mode="before")
+	@field_validator('score', mode='before')
 	def validate_score(cls, value: float) -> int | None:
 		if value is not None:
 			value = round(value)
-			debug(f"    score: {value}")
+			debug(f'    score: {value}')
 
 		return value
 
-	@model_validator(mode="after")
-	def debug_output(self, validation_info) -> "MirrorStatusEntryV3":
-		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(":", 1)
+	@model_validator(mode='after')
+	def debug_output(self, validation_info) -> 'MirrorStatusEntryV3':
+		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(port[0]) if port and len(port) >= 1 else None
 
-		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {self.score}" if self.score else ""))
+		debug(f'Loaded mirror {self._hostname}' + (f' with current score of {self.score}' if self.score else ''))
 		return self
 
 
@@ -118,16 +118,16 @@ class MirrorStatusListV3(BaseModel):
 	urls: list[MirrorStatusEntryV3]
 	version: int
 
-	@model_validator(mode="before")
+	@model_validator(mode='before')
 	@classmethod
 	def check_model(
 		cls,
 		data: dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]],
 	) -> dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]:
-		if data.get("version") == 3:
+		if data.get('version') == 3:
 			return data
 
-		raise ValueError("MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/")
+		raise ValueError('MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/')
 
 
 @dataclass
@@ -146,14 +146,14 @@ class MirrorRegion:
 
 
 class SignCheck(Enum):
-	Never = "Never"
-	Optional = "Optional"
-	Required = "Required"
+	Never = 'Never'
+	Optional = 'Optional'
+	Required = 'Required'
 
 
 class SignOption(Enum):
-	TrustedOnly = "TrustedOnly"
-	TrustAll = "TrustAll"
+	TrustedOnly = 'TrustedOnly'
+	TrustAll = 'TrustAll'
 
 
 class _CustomRepositorySerialization(TypedDict):
@@ -172,30 +172,30 @@ class CustomRepository:
 
 	def table_data(self) -> dict[str, str]:
 		return {
-			"Name": self.name,
-			"Url": self.url,
-			"Sign check": self.sign_check.value,
-			"Sign options": self.sign_option.value,
+			'Name': self.name,
+			'Url': self.url,
+			'Sign check': self.sign_check.value,
+			'Sign options': self.sign_option.value,
 		}
 
 	def json(self) -> _CustomRepositorySerialization:
 		return {
-			"name": self.name,
-			"url": self.url,
-			"sign_check": self.sign_check.value,
-			"sign_option": self.sign_option.value,
+			'name': self.name,
+			'url': self.url,
+			'sign_check': self.sign_check.value,
+			'sign_option': self.sign_option.value,
 		}
 
 	@classmethod
-	def parse_args(cls, args: list[dict[str, str]]) -> list["CustomRepository"]:
+	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomRepository']:
 		configs = []
 		for arg in args:
 			configs.append(
 				CustomRepository(
-					arg["name"],
-					arg["url"],
-					SignCheck(arg["sign_check"]),
-					SignOption(arg["sign_option"]),
+					arg['name'],
+					arg['url'],
+					SignCheck(arg['sign_check']),
+					SignOption(arg['sign_option']),
 				),
 			)
 
@@ -207,17 +207,17 @@ class CustomServer:
 	url: str
 
 	def table_data(self) -> dict[str, str]:
-		return {"Url": self.url}
+		return {'Url': self.url}
 
 	def json(self) -> dict[str, str]:
-		return {"url": self.url}
+		return {'url': self.url}
 
 	@classmethod
-	def parse_args(cls, args: list[dict[str, str]]) -> list["CustomServer"]:
+	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomServer']:
 		configs = []
 		for arg in args:
 			configs.append(
-				CustomServer(arg["url"]),
+				CustomServer(arg['url']),
 			)
 
 		return configs
@@ -239,11 +239,11 @@ class MirrorConfiguration:
 
 	@property
 	def region_names(self) -> str:
-		return "\n".join([m.name for m in self.mirror_regions])
+		return '\n'.join([m.name for m in self.mirror_regions])
 
 	@property
 	def custom_server_urls(self) -> str:
-		return "\n".join([s.url for s in self.custom_servers])
+		return '\n'.join([s.url for s in self.custom_servers])
 
 	def json(self) -> _MirrorConfigurationSerialization:
 		regions = {}
@@ -251,26 +251,26 @@ class MirrorConfiguration:
 			regions.update(m.json())
 
 		return {
-			"mirror_regions": regions,
-			"custom_servers": self.custom_servers,
-			"optional_repositories": [r.value for r in self.optional_repositories],
-			"custom_repositories": [c.json() for c in self.custom_repositories],
+			'mirror_regions': regions,
+			'custom_servers': self.custom_servers,
+			'optional_repositories': [r.value for r in self.optional_repositories],
+			'custom_repositories': [c.json() for c in self.custom_repositories],
 		}
 
 	def custom_servers_config(self) -> str:
-		config = ""
+		config = ''
 
 		if self.custom_servers:
-			config += "## Custom Servers\n"
+			config += '## Custom Servers\n'
 			for server in self.custom_servers:
-				config += f"Server = {server.url}\n"
+				config += f'Server = {server.url}\n'
 
 		return config.strip()
 
 	def regions_config(self, speed_sort: bool = True) -> str:
 		from ..mirrors import mirror_list_handler
 
-		config = ""
+		config = ''
 
 		for mirror_region in self.mirror_regions:
 			sorted_stati = mirror_list_handler.get_status_by_region(
@@ -278,20 +278,20 @@ class MirrorConfiguration:
 				speed_sort=speed_sort,
 			)
 
-			config += f"\n\n## {mirror_region.name}\n"
+			config += f'\n\n## {mirror_region.name}\n'
 
 			for status in sorted_stati:
-				config += f"Server = {status.server_url}\n"
+				config += f'Server = {status.server_url}\n'
 
 		return config
 
 	def repositories_config(self) -> str:
-		config = ""
+		config = ''
 
 		for repo in self.custom_repositories:
-			config += f"\n\n[{repo.name}]\n"
-			config += f"SigLevel = {repo.sign_check.value} {repo.sign_option.value}\n"
-			config += f"Server = {repo.url}\n"
+			config += f'\n\n[{repo.name}]\n'
+			config += f'SigLevel = {repo.sign_check.value} {repo.sign_option.value}\n'
+			config += f'Server = {repo.url}\n'
 
 		return config
 
@@ -300,25 +300,25 @@ class MirrorConfiguration:
 		cls,
 		args: dict[str, Any],
 		backwards_compatible_repo: list[Repository] = [],
-	) -> "MirrorConfiguration":
+	) -> 'MirrorConfiguration':
 		config = MirrorConfiguration()
 
-		mirror_regions = args.get("mirror_regions", [])
+		mirror_regions = args.get('mirror_regions', [])
 		if mirror_regions:
 			for region, urls in mirror_regions.items():
 				config.mirror_regions.append(MirrorRegion(region, urls))
 
-		if args.get("custom_servers"):
-			config.custom_servers = CustomServer.parse_args(args["custom_servers"])
+		if args.get('custom_servers'):
+			config.custom_servers = CustomServer.parse_args(args['custom_servers'])
 
 		# backwards compatibility with the new custom_repository
-		if "custom_mirrors" in args:
-			config.custom_repositories = CustomRepository.parse_args(args["custom_mirrors"])
-		if "custom_repositories" in args:
-			config.custom_repositories = CustomRepository.parse_args(args["custom_repositories"])
+		if 'custom_mirrors' in args:
+			config.custom_repositories = CustomRepository.parse_args(args['custom_mirrors'])
+		if 'custom_repositories' in args:
+			config.custom_repositories = CustomRepository.parse_args(args['custom_repositories'])
 
-		if "optional_repositories" in args:
-			config.optional_repositories = [Repository(r) for r in args["optional_repositories"]]
+		if 'optional_repositories' in args:
+			config.optional_repositories = [Repository(r) for r in args['optional_repositories']]
 
 		if backwards_compatible_repo:
 			for r in backwards_compatible_repo:

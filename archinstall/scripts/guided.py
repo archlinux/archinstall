@@ -31,7 +31,7 @@ def ask_user_questions() -> None:
 		global_menu = GlobalMenu(arch_config_handler.config)
 
 		if not arch_config_handler.args.advanced:
-			global_menu.set_enabled("parallel_downloads", False)
+			global_menu.set_enabled('parallel_downloads', False)
 
 		global_menu.run()
 
@@ -42,12 +42,12 @@ def perform_installation(mountpoint: Path) -> None:
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	info("Starting installation...")
+	info('Starting installation...')
 
 	config = arch_config_handler.config
 
 	if not config.disk_config:
-		error("No disk configuration provided")
+		error('No disk configuration provided')
 		return
 
 	disk_config = config.disk_config
@@ -88,10 +88,10 @@ def perform_installation(mountpoint: Path) -> None:
 			installation.set_mirrors(mirror_config, on_target=True)
 
 		if config.swap:
-			installation.setup_swap("zram")
+			installation.setup_swap('zram')
 
 		if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
-			installation.add_additional_packages("grub")
+			installation.add_additional_packages('grub')
 
 		installation.add_bootloader(config.bootloader, config.uki)
 
@@ -112,9 +112,9 @@ def perform_installation(mountpoint: Path) -> None:
 		if audio_config:
 			audio_config.install_audio_config(installation)
 		else:
-			info("No audio server will be installed")
+			info('No audio server will be installed')
 
-		if config.packages and config.packages[0] != "":
+		if config.packages and config.packages[0] != '':
 			installation.add_additional_packages(config.packages)
 
 		if profile_config := config.profile_config:
@@ -130,7 +130,7 @@ def perform_installation(mountpoint: Path) -> None:
 			installation.enable_espeakup()
 
 		if root_pw := config.root_enc_password:
-			root_user = User("root", root_pw, False)
+			root_user = User('root', root_pw, False)
 			installation.set_user_password(root_user)
 
 		if (profile_config := config.profile_config) and profile_config.profile:
@@ -147,7 +147,7 @@ def perform_installation(mountpoint: Path) -> None:
 
 		installation.genfstab()
 
-		debug(f"Disk states after installing:\n{disk_layouts()}")
+		debug(f'Disk states after installing:\n{disk_layouts()}')
 
 		if not arch_config_handler.args.silent:
 			with Tui():
@@ -157,7 +157,7 @@ def perform_installation(mountpoint: Path) -> None:
 				case PostInstallationAction.EXIT:
 					pass
 				case PostInstallationAction.REBOOT:
-					os.system("reboot")
+					os.system('reboot')
 				case PostInstallationAction.CHROOT:
 					try:
 						installation.drop_to_shell()
@@ -179,7 +179,7 @@ def guided() -> None:
 	if not arch_config_handler.args.silent:
 		with Tui():
 			if not config.confirm_config():
-				debug("Installation aborted")
+				debug('Installation aborted')
 				guided()
 
 	if arch_config_handler.config.disk_config:

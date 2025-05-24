@@ -20,7 +20,7 @@ def get_password(
 	while True:
 		user_hdr = None
 		if failure is not None:
-			user_hdr = f"{header}\n{failure}\n"
+			user_hdr = f'{header}\n{failure}\n'
 		elif header is not None:
 			user_hdr = header
 
@@ -42,12 +42,12 @@ def get_password(
 			return password
 
 		if header is not None:
-			confirmation_header = f"{header}{tr('Password')}: {password.hidden()}\n"
+			confirmation_header = f'{header}{tr("Password")}: {password.hidden()}\n'
 		else:
-			confirmation_header = f"{tr('Password')}: {password.hidden()}\n"
+			confirmation_header = f'{tr("Password")}: {password.hidden()}\n'
 
 		result = EditMenu(
-			tr("Confirm password"),
+			tr('Confirm password'),
 			header=confirmation_header,
 			alignment=Alignment.CENTER,
 			allow_skip=False,
@@ -57,7 +57,7 @@ def get_password(
 		if password._plaintext == result.text():
 			return password
 
-		failure = tr("The confirmation password did not match, please try again")
+		failure = tr('The confirmation password did not match, please try again')
 
 
 def prompt_dir(
@@ -73,7 +73,7 @@ def prompt_dir(
 		if dest_path.exists() and dest_path.is_dir():
 			return None
 
-		return tr("Not a valid directory")
+		return tr('Not a valid directory')
 
 	if validate:
 		validate_func = validate_path
@@ -108,9 +108,9 @@ def is_subpath(first: Path, second: Path) -> bool:
 
 def format_cols(items: list[str], header: str | None = None) -> str:
 	if header:
-		text = f"{header}:\n"
+		text = f'{header}:\n'
 	else:
-		text = ""
+		text = ''
 
 	nr_items = len(items)
 	if nr_items <= 4:
@@ -124,5 +124,5 @@ def format_cols(items: list[str], header: str | None = None) -> str:
 
 	text += FormattedOutput.as_columns(items, col)
 	# remove whitespaces on each row
-	text = "\n".join([t.strip() for t in text.split("\n")])
+	text = '\n'.join([t.strip() for t in text.split('\n')])
 	return text

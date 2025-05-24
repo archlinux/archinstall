@@ -2,17 +2,17 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath('..'))
 
 
 def process_docstring(app, what, name, obj, options, lines) -> None:  # type: ignore[no-untyped-def]
-	spaces_pat = re.compile(r"( {8})")
-	ll = [spaces_pat.sub("    ", line) for line in lines]
+	spaces_pat = re.compile(r'( {8})')
+	ll = [spaces_pat.sub('    ', line) for line in lines]
 	lines[:] = ll
 
 
 def setup(app) -> None:  # type: ignore[no-untyped-def]
-	app.connect("autodoc-process-docstring", process_docstring)
+	app.connect('autodoc-process-docstring', process_docstring)
 
 
 # Configuration file for the Sphinx documentation builder.
@@ -34,33 +34,33 @@ def setup(app) -> None:  # type: ignore[no-untyped-def]
 
 # -- Project information -----------------------------------------------------
 
-project = "python-archinstall"
-copyright = "2022, Anton Hvornum"
-author = "Anton Hvornum"
+project = 'python-archinstall'
+copyright = '2022, Anton Hvornum'
+author = 'Anton Hvornum'
 
 # The full version, including alpha/beta/rc tags
-release = "v2.3.0"
+release = 'v2.3.0'
 
 # -- General configuration ---------------------------------------------------
 
-master_doc = "index"
+master_doc = 'index'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-	"sphinx.ext.autodoc",
-	"sphinx.ext.inheritance_diagram",
-	"sphinx.ext.todo",
-	"sphinx_rtd_theme",
+	'sphinx.ext.autodoc',
+	'sphinx.ext.inheritance_diagram',
+	'sphinx.ext.todo',
+	'sphinx_rtd_theme',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ["_templates"]
+templates_path = ['_templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -68,14 +68,14 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # a list of builtin themes.
 #
 # html_theme = 'alabaster'
-html_theme = "sphinx_rtd_theme"
+html_theme = 'sphinx_rtd_theme'
 
-html_logo = "_static/logo.png"
+html_logo = '_static/logo.png'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+html_static_path = ['_static']
 
 # If false, no module index is generated.
 html_domain_indices = True
@@ -104,13 +104,13 @@ html_show_sourcelink = False
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "archinstalldoc"
+htmlhelp_basename = 'archinstalldoc'
 
 # -- Options for manual page output --------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "archinstall", "archinstall Documentation", ["Anton Hvornum"], 1)]
+man_pages = [('index', 'archinstall', 'archinstall Documentation', ['Anton Hvornum'], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -122,5 +122,5 @@ man_pages = [("index", "archinstall", "archinstall Documentation", ["Anton Hvorn
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-	("index", "archinstall", "archinstall Documentation", "Anton Hvornum", "archinstall", "Simple and minimal HTTP server."),
+	('index', 'archinstall', 'archinstall Documentation', 'Anton Hvornum', 'archinstall', 'Simple and minimal HTTP server.'),
 ]

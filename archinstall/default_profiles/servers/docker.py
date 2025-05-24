@@ -9,23 +9,23 @@ if TYPE_CHECKING:
 class DockerProfile(Profile):
 	def __init__(self) -> None:
 		super().__init__(
-			"Docker",
+			'Docker',
 			ProfileType.ServerType,
 		)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return ["docker"]
+		return ['docker']
 
 	@property
 	@override
 	def services(self) -> list[str]:
-		return ["docker"]
+		return ['docker']
 
 	@override
-	def post_install(self, install_session: "Installer") -> None:
+	def post_install(self, install_session: 'Installer') -> None:
 		from archinstall.lib.args import arch_config_handler
 
 		for user in arch_config_handler.config.users:
-			install_session.arch_chroot(f"usermod -a -G docker {user.username}")
+			install_session.arch_chroot(f'usermod -a -G docker {user.username}')

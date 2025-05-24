@@ -6,14 +6,14 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class CutefishProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__("Cutefish", ProfileType.DesktopEnv)
+		super().__init__('Cutefish', ProfileType.DesktopEnv)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"cutefish",
-			"noto-fonts",
+			'cutefish',
+			'noto-fonts',
 		]
 
 	@property

@@ -18,9 +18,9 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 		prompt: str | None = None,
 	):
 		self._actions = [
-			tr("Add subvolume"),
-			tr("Edit subvolume"),
-			tr("Delete subvolume"),
+			tr('Add subvolume'),
+			tr('Edit subvolume'),
+			tr('Delete subvolume'),
 		]
 
 		super().__init__(
@@ -36,7 +36,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 
 	def _add_subvolume(self, preset: SubvolumeModification | None = None) -> SubvolumeModification | None:
 		result = EditMenu(
-			tr("Subvolume name"),
+			tr('Subvolume name'),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
 			default_text=str(preset.name) if preset else None,
@@ -48,14 +48,14 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 			case ResultType.Selection:
 				name = result.text()
 			case ResultType.Reset:
-				raise ValueError("Unhandled result type")
+				raise ValueError('Unhandled result type')
 			case _:
 				assert_never(result.type_)
 
-		header = f"{tr('Subvolume name')}: {name}\n"
+		header = f'{tr("Subvolume name")}: {name}\n'
 
 		path = prompt_dir(
-			tr("Subvolume mountpoint"),
+			tr('Subvolume mountpoint'),
 			header=header,
 			allow_skip=True,
 			validate=False,

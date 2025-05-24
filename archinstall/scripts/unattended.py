@@ -11,10 +11,10 @@ for p in profile_handler.get_mac_addr_profiles():
 	# that fits the requirements for this machine specifically).
 	info(f'Found a tailored profile for this machine called: "{p.name}"')
 
-	print("Starting install in:")
+	print('Starting install in:')
 	for i in range(10, 0, -1):
-		Tui.print(f"{i}...")
+		Tui.print(f'{i}...')
 		time.sleep(1)
 
-	install_session = storage["installation_session"]
+	install_session = storage['installation_session']
 	p.install(install_session)

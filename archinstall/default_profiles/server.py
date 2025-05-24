@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class ServerProfile(Profile):
 	def __init__(self, current_value: list[Profile] = []):
 		super().__init__(
-			"Server",
+			'Server',
 			ProfileType.Server,
 			current_selection=current_value,
 		)
@@ -39,8 +39,8 @@ class ServerProfile(Profile):
 			allow_reset=True,
 			allow_skip=True,
 			preview_style=PreviewStyle.RIGHT,
-			preview_size="auto",
-			preview_frame=FrameProperties.max("Info"),
+			preview_size='auto',
+			preview_frame=FrameProperties.max('Info'),
 			multi=True,
 		).run()
 
@@ -55,20 +55,20 @@ class ServerProfile(Profile):
 				return SelectResult.ResetCurrent
 
 	@override
-	def post_install(self, install_session: "Installer") -> None:
+	def post_install(self, install_session: 'Installer') -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
 
 	@override
-	def install(self, install_session: "Installer") -> None:
+	def install(self, install_session: 'Installer') -> None:
 		server_info = self.current_selection_names()
-		details = ", ".join(server_info)
-		info(f"Now installing the selected servers: {details}")
+		details = ', '.join(server_info)
+		info(f'Now installing the selected servers: {details}')
 
 		for server in self.current_selection:
-			info(f"Installing {server.name}...")
+			info(f'Installing {server.name}...')
 			install_session.add_additional_packages(server.packages)
 			install_session.enable_service(server.services)
 			server.install(install_session)
 
-		info("If your selections included multiple servers with the same port, you may have to reconfigure them.")
+		info('If your selections included multiple servers with the same port, you may have to reconfigure them.')
