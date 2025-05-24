@@ -29,16 +29,16 @@ from .output import FormattedOutput, debug
 class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 	def __init__(self, custom_repositories: list[CustomRepository]):
 		self._actions = [
-			tr("Add a custom repository"),
-			tr("Change custom repository"),
-			tr("Delete custom repository"),
+			tr('Add a custom repository'),
+			tr('Change custom repository'),
+			tr('Delete custom repository'),
 		]
 
 		super().__init__(
 			custom_repositories,
 			[self._actions[0]],
 			self._actions[1:],
-			"",
+			'',
 		)
 
 	@override
@@ -69,7 +69,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 
 	def _add_custom_repository(self, preset: CustomRepository | None = None) -> CustomRepository | None:
 		edit_result = EditMenu(
-			tr("Repository name"),
+			tr('Repository name'),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
 			default_text=preset.name if preset else None,
@@ -81,12 +81,12 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			case ResultType.Skip:
 				return preset
 			case _:
-				raise ValueError("Unhandled return type")
+				raise ValueError('Unhandled return type')
 
-		header = f"{tr('Name')}: {name}"
+		header = f'{tr("Name")}: {name}'
 
 		edit_result = EditMenu(
-			tr("Url"),
+			tr('Url'),
 			header=header,
 			alignment=Alignment.CENTER,
 			allow_skip=True,
@@ -99,10 +99,10 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			case ResultType.Skip:
 				return preset
 			case _:
-				raise ValueError("Unhandled return type")
+				raise ValueError('Unhandled return type')
 
-		header += f"\n{tr('Url')}: {url}\n"
-		prompt = f"{header}\n" + tr("Select signature check")
+		header += f'\n{tr("Url")}: {url}\n'
+		prompt = f'{header}\n' + tr('Select signature check')
 
 		sign_chk_items = [MenuItem(s.value, value=s.value) for s in SignCheck]
 		group = MenuItemGroup(sign_chk_items, sort_items=False)
@@ -121,10 +121,10 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			case ResultType.Selection:
 				sign_check = SignCheck(result.get_value())
 			case _:
-				raise ValueError("Unhandled return type")
+				raise ValueError('Unhandled return type')
 
-		header += f"{tr('Signature check')}: {sign_check.value}\n"
-		prompt = f"{header}\n" + "Select signature option"
+		header += f'{tr("Signature check")}: {sign_check.value}\n'
+		prompt = f'{header}\n' + 'Select signature option'
 
 		sign_opt_items = [MenuItem(s.value, value=s.value) for s in SignOption]
 		group = MenuItemGroup(sign_opt_items, sort_items=False)
@@ -143,7 +143,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			case ResultType.Selection:
 				sign_opt = SignOption(result.get_value())
 			case _:
-				raise ValueError("Unhandled return type")
+				raise ValueError('Unhandled return type')
 
 		return CustomRepository(name, url, sign_check, sign_opt)
 
@@ -151,16 +151,16 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 class CustomMirrorServersList(ListManager[CustomServer]):
 	def __init__(self, custom_servers: list[CustomServer]):
 		self._actions = [
-			tr("Add a custom server"),
-			tr("Change custom server"),
-			tr("Delete custom server"),
+			tr('Add a custom server'),
+			tr('Change custom server'),
+			tr('Delete custom server'),
 		]
 
 		super().__init__(
 			custom_servers,
 			[self._actions[0]],
 			self._actions[1:],
-			"",
+			'',
 		)
 
 	@override
@@ -191,7 +191,7 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 
 	def _add_custom_server(self, preset: CustomServer | None = None) -> CustomServer | None:
 		edit_result = EditMenu(
-			tr("Server url"),
+			tr('Server url'),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
 			default_text=preset.url if preset else None,
@@ -229,54 +229,54 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=tr("Select regions"),
+				text=tr('Select regions'),
 				action=select_mirror_regions,
 				value=self._mirror_config.mirror_regions,
 				preview_action=self._prev_regions,
-				key="mirror_regions",
+				key='mirror_regions',
 			),
 			MenuItem(
-				text=tr("Add custom servers"),
+				text=tr('Add custom servers'),
 				action=add_custom_mirror_servers,
 				value=self._mirror_config.custom_servers,
 				preview_action=self._prev_custom_servers,
-				key="custom_servers",
+				key='custom_servers',
 			),
 			MenuItem(
-				text=tr("Optional repositories"),
+				text=tr('Optional repositories'),
 				action=select_optional_repositories,
 				value=[],
 				preview_action=self._prev_additional_repos,
-				key="optional_repositories",
+				key='optional_repositories',
 			),
 			MenuItem(
-				text=tr("Add custom repository"),
+				text=tr('Add custom repository'),
 				action=select_custom_mirror,
 				value=self._mirror_config.custom_repositories,
 				preview_action=self._prev_custom_mirror,
-				key="custom_repositories",
+				key='custom_repositories',
 			),
 		]
 
 	def _prev_regions(self, item: MenuItem) -> str | None:
 		regions = item.get_value()
 
-		output = ""
+		output = ''
 		for region in regions:
-			output += f"{region.name}\n"
+			output += f'{region.name}\n'
 
 			for url in region.urls:
-				output += f" - {url}\n"
+				output += f' - {url}\n'
 
-			output += "\n"
+			output += '\n'
 
 		return output
 
 	def _prev_additional_repos(self, item: MenuItem) -> str | None:
 		if item.value:
 			repositories: list[Repository] = item.value
-			repos = ", ".join([repo.value for repo in repositories])
-			return f"{tr('Additional repositories')}: {repos}"
+			repos = ', '.join([repo.value for repo in repositories])
+			return f'{tr("Additional repositories")}: {repos}'
 		return None
 
 	def _prev_custom_mirror(self, item: MenuItem) -> str | None:
@@ -292,7 +292,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 			return None
 
 		custom_servers: list[CustomServer] = item.value
-		output = "\n".join([server.url for server in custom_servers])
+		output = '\n'.join([server.url for server in custom_servers])
 		return output.strip()
 
 	@override
@@ -302,7 +302,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 
 
 def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
-	Tui.print(tr("Loading mirror regions..."), clear_screen=True)
+	Tui.print(tr('Loading mirror regions...'), clear_screen=True)
 
 	mirror_list_handler.load_mirrors()
 	available_regions = mirror_list_handler.get_mirror_regions()
@@ -320,7 +320,7 @@ def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
 	result = SelectMenu[MirrorRegion](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr("Mirror regions")),
+		frame=FrameProperties.min(tr('Mirror regions')),
 		allow_reset=True,
 		allow_skip=True,
 		multi=True,
@@ -362,7 +362,7 @@ def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
 	result = SelectMenu[Repository](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min("Additional repositories"),
+		frame=FrameProperties.min('Additional repositories'),
 		allow_reset=True,
 		allow_skip=True,
 		multi=True,
@@ -380,7 +380,7 @@ def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
 class MirrorListHandler:
 	def __init__(
 		self,
-		local_mirrorlist: Path = Path("/etc/pacman.d/mirrorlist"),
+		local_mirrorlist: Path = Path('/etc/pacman.d/mirrorlist'),
 	) -> None:
 		self._local_mirrorlist = local_mirrorlist
 		self._status_mappings: dict[str, list[MirrorStatusEntryV3]] | None = None
@@ -413,7 +413,7 @@ class MirrorListHandler:
 				self.load_local_mirrors()
 
 	def load_remote_mirrors(self) -> bool:
-		url = "https://archlinux.org/mirrors/status/json/"
+		url = 'https://archlinux.org/mirrors/status/json/'
 		attempts = 3
 
 		for attempt_nr in range(attempts):
@@ -422,14 +422,14 @@ class MirrorListHandler:
 				self._status_mappings = self._parse_remote_mirror_list(mirrorlist)
 				return True
 			except Exception as e:
-				debug(f"Error while fetching mirror list: {e}")
+				debug(f'Error while fetching mirror list: {e}')
 				time.sleep(attempt_nr + 1)
 
-		debug("Unable to fetch mirror list remotely, falling back to local mirror list")
+		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
 		return False
 
 	def load_local_mirrors(self) -> None:
-		with self._local_mirrorlist.open("r") as fp:
+		with self._local_mirrorlist.open('r') as fp:
 			mirrorlist = fp.read()
 			self._status_mappings = self._parse_locale_mirrors(mirrorlist)
 
@@ -456,14 +456,14 @@ class MirrorListHandler:
 			):
 				continue
 
-			if mirror.country == "":
+			if mirror.country == '':
 				# TODO: This should be removed once RFC!29 is merged and completed
 				# Until then, there are mirrors which lacks data in the backend
 				# and there is no way of knowing where they're located.
 				# So we have to assume world-wide
-				mirror.country = "Worldwide"
+				mirror.country = 'Worldwide'
 
-			if mirror.url.startswith("http"):
+			if mirror.url.startswith('http'):
 				sorting_placeholder.setdefault(mirror.country, []).append(mirror)
 
 		sorted_by_regions: dict[str, list[MirrorStatusEntryV3]] = dict(
@@ -480,35 +480,35 @@ class MirrorListHandler:
 
 		mirror_list: dict[str, list[MirrorStatusEntryV3]] = {}
 
-		current_region = ""
+		current_region = ''
 
 		for line in lines:
 			line = line.strip()
 
-			if line.startswith("## "):
-				current_region = line.replace("## ", "").strip()
+			if line.startswith('## '):
+				current_region = line.replace('## ', '').strip()
 				mirror_list.setdefault(current_region, [])
 
-			if line.startswith("Server = "):
+			if line.startswith('Server = '):
 				if not current_region:
-					current_region = "Local"
+					current_region = 'Local'
 					mirror_list.setdefault(current_region, [])
 
-				url = line.removeprefix("Server = ")
+				url = line.removeprefix('Server = ')
 
 				mirror_entry = MirrorStatusEntryV3(
-					url=url.removesuffix("$repo/os/$arch"),
+					url=url.removesuffix('$repo/os/$arch'),
 					protocol=urllib.parse.urlparse(url).scheme,
 					active=True,
-					country=current_region or "Worldwide",
+					country=current_region or 'Worldwide',
 					# The following values are normally populated by
 					# archlinux.org mirror-list endpoint, and can't be known
 					# from just the local mirror-list file.
-					country_code="WW",
+					country_code='WW',
 					isos=True,
 					ipv4=True,
 					ipv6=True,
-					details="Locally defined mirror",
+					details='Locally defined mirror',
 				)
 
 				mirror_list[current_region].append(mirror_entry)

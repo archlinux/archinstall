@@ -10,7 +10,7 @@ class MenuHelper:
 		data: list[Any],
 		additional_options: list[str] = [],
 	) -> None:
-		self._separator = ""
+		self._separator = ''
 		self._data = data
 		self._additional_options = additional_options
 
@@ -39,10 +39,10 @@ class MenuHelper:
 
 		if data:
 			table = FormattedOutput.as_table(data)
-			rows = table.split("\n")
+			rows = table.split('\n')
 
 			# these are the header rows of the table
-			display_data = {f"{rows[0]}": None, f"{rows[1]}": None}
+			display_data = {f'{rows[0]}': None, f'{rows[1]}': None}
 
 			for row, entry in zip(rows[2:], data):
 				display_data[row] = entry

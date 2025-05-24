@@ -6,16 +6,16 @@ from archinstall.default_profiles.profile import Profile, ProfileType
 class LighttpdProfile(Profile):
 	def __init__(self) -> None:
 		super().__init__(
-			"Lighttpd",
+			'Lighttpd',
 			ProfileType.ServerType,
 		)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return ["lighttpd"]
+		return ['lighttpd']
 
 	@property
 	@override
 	def services(self) -> list[str]:
-		return ["lighttpd"]
+		return ['lighttpd']

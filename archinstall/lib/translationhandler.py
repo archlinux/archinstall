@@ -20,7 +20,7 @@ class Language:
 	@property
 	def display_name(self) -> str:
 		name = self.name_en
-		return f"{name} ({self.translation_percent}%)"
+		return f'{name} ({self.translation_percent}%)'
 
 	def is_match(self, lang_or_translated_lang: str) -> bool:
 		if self.name_en == lang_or_translated_lang:
@@ -35,8 +35,8 @@ class Language:
 
 class TranslationHandler:
 	def __init__(self) -> None:
-		self._base_pot = "base.pot"
-		self._languages = "languages.json"
+		self._base_pot = 'base.pot'
+		self._languages = 'languages.json'
 
 		self._total_messages = self._get_total_active_messages()
 		self._translated_languages = self._get_translations()
@@ -55,17 +55,17 @@ class TranslationHandler:
 		languages = []
 
 		for short_form in defined_languages:
-			mapping_entry: dict[str, str] = next(filter(lambda x: x["abbr"] == short_form, mappings))
-			abbr = mapping_entry["abbr"]
-			lang = mapping_entry["lang"]
-			translated_lang = mapping_entry.get("translated_lang", None)
+			mapping_entry: dict[str, str] = next(filter(lambda x: x['abbr'] == short_form, mappings))
+			abbr = mapping_entry['abbr']
+			lang = mapping_entry['lang']
+			translated_lang = mapping_entry.get('translated_lang', None)
 
 			try:
 				# get a translation for a specific language
-				translation = gettext.translation("base", localedir=self._get_locales_dir(), languages=(abbr, lang))
+				translation = gettext.translation('base', localedir=self._get_locales_dir(), languages=(abbr, lang))
 
 				# calculate the percentage of total translated text to total number of messages
-				if abbr == "en":
+				if abbr == 'en':
 					percent = 100
 				else:
 					num_translations = self._get_catalog_size(translation)
@@ -105,9 +105,9 @@ class TranslationHandler:
 		Get total messages that could be translated
 		"""
 		locales = self._get_locales_dir()
-		with open(f"{locales}/{self._base_pot}") as fp:
+		with open(f'{locales}/{self._base_pot}') as fp:
 			lines = fp.readlines()
-			msgid_lines = [line for line in lines if "msgid" in line]
+			msgid_lines = [line for line in lines if 'msgid' in line]
 
 		return len(msgid_lines) - 1  # don't count the first line which contains the metadata
 
@@ -118,7 +118,7 @@ class TranslationHandler:
 		try:
 			return next(filter(lambda x: x.name_en == name, self._translated_languages))
 		except Exception:
-			raise ValueError(f"No language with name found: {name}")
+			raise ValueError(f'No language with name found: {name}')
 
 	def get_language_by_abbr(self, abbr: str) -> Language:
 		"""
@@ -141,7 +141,7 @@ class TranslationHandler:
 		Get the locales directory path
 		"""
 		cur_path = Path(__file__).parent.parent
-		locales_dir = Path.joinpath(cur_path, "locales")
+		locales_dir = Path.joinpath(cur_path, 'locales')
 		return locales_dir
 
 	def _provided_translations(self) -> list[str]:
@@ -153,7 +153,7 @@ class TranslationHandler:
 
 		translation_files = []
 		for filename in filenames:
-			if len(filename) == 2 or filename in ["pt_BR", "zh-CN", "zh-TW"]:
+			if len(filename) == 2 or filename in ['pt_BR', 'zh-CN', 'zh-TW']:
 				translation_files.append(filename)
 
 		return translation_files

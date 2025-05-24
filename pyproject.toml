@@ -179,6 +179,8 @@ line-length = 160
 
 [tool.ruff.format]
 indent-style = "tab"
+quote-style = "single"
+docstring-code-format = true
 
 [tool.ruff.lint]
 select = [

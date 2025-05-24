@@ -19,7 +19,7 @@ def perform_installation(mountpoint: Path) -> None:
 	config = arch_config_handler.config
 
 	if not config.disk_config:
-		error("No disk configuration provided")
+		error('No disk configuration provided')
 		return
 
 	disk_config = config.disk_config
@@ -35,7 +35,7 @@ def perform_installation(mountpoint: Path) -> None:
 		# Strap in the base system, add a boot loader and configure
 		# some other minor details as specified by this profile and user.
 		if installation.minimal_installation():
-			installation.set_hostname("minimal-arch")
+			installation.set_hostname('minimal-arch')
 			installation.add_bootloader(Bootloader.Systemd)
 
 			network_config = config.network_config
@@ -46,19 +46,19 @@ def perform_installation(mountpoint: Path) -> None:
 					config.profile_config,
 				)
 
-			installation.add_additional_packages(["nano", "wget", "git"])
+			installation.add_additional_packages(['nano', 'wget', 'git'])
 
 			profile_config = ProfileConfiguration(MinimalProfile())
 			profile_handler.install_profile_config(installation, profile_config)
 
-			user = User("devel", Password(plaintext="devel"), False)
+			user = User('devel', Password(plaintext='devel'), False)
 			installation.create_users(user)
 
 	# Once this is done, we output some useful information to the user
 	# And the installation is complete.
-	info("There are two new accounts in your installation after reboot:")
-	info(" * root (password: airoot)")
-	info(" * devel (password: devel)")
+	info('There are two new accounts in your installation after reboot:')
+	info(' * root (password: airoot)')
+	info(' * devel (password: devel)')
 
 
 def _minimal() -> None:
@@ -82,7 +82,7 @@ def _minimal() -> None:
 	if not arch_config_handler.args.silent:
 		with Tui():
 			if not config.confirm_config():
-				debug("Installation aborted")
+				debug('Installation aborted')
 				_minimal()
 
 	if arch_config_handler.config.disk_config:

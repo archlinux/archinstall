@@ -17,13 +17,13 @@ def _fetch_lsblk_info(
 	reverse: bool = False,
 	full_dev_path: bool = False,
 ) -> LsblkOutput:
-	cmd = ["lsblk", "--json", "--bytes", "--output", ",".join(LsblkInfo.fields())]
+	cmd = ['lsblk', '--json', '--bytes', '--output', ','.join(LsblkInfo.fields())]
 
 	if reverse:
-		cmd.append("--inverse")
+		cmd.append('--inverse')
 
 	if full_dev_path:
-		cmd.append("--paths")
+		cmd.append('--paths')
 
 	if dev_path:
 		cmd.append(str(dev_path))
@@ -33,7 +33,7 @@ def _fetch_lsblk_info(
 	except SysCallError as err:
 		# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
 		if err.worker_log:
-			debug(f"Error calling lsblk: {err.worker_log.decode()}")
+			debug(f'Error calling lsblk: {err.worker_log.decode()}')
 
 		if dev_path:
 			raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
@@ -104,8 +104,8 @@ def disk_layouts() -> str:
 	try:
 		lsblk_output = get_lsblk_output()
 	except SysCallError as err:
-		warn(f"Could not return disk layouts: {err}")
-		return ""
+		warn(f'Could not return disk layouts: {err}')
+		return ''
 
 	return lsblk_output.model_dump_json(indent=4)
 
@@ -116,13 +116,13 @@ def umount(mountpoint: Path, recursive: bool = False) -> None:
 	if not lsblk_info.mountpoints:
 		return
 
-	debug(f"Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}")
+	debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
 
-	cmd = ["umount"]
+	cmd = ['umount']
 
 	if recursive:
-		cmd.append("-R")
+		cmd.append('-R')
 
 	for path in lsblk_info.mountpoints:
-		debug(f"Unmounting mountpoint: {path}")
+		debug(f'Unmounting mountpoint: {path}')
 		SysCommand(cmd + [str(path)])

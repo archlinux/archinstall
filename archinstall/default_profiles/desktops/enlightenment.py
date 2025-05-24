@@ -6,14 +6,14 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class EnlighenmentProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__("Enlightenment", ProfileType.WindowMgr)
+		super().__init__('Enlightenment', ProfileType.WindowMgr)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"enlightenment",
-			"terminology",
+			'enlightenment',
+			'terminology',
 		]
 
 	@property
