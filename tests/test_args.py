@@ -138,9 +138,6 @@ def test_config_file_parsing(
 			device_modifications=[],
 			lvm_config=None,
 			mountpoint=None,
-			btrfs_options=BtrfsOptions(
-				snapshot_config=SnapshotConfig(SnapshotType.Snapper),
-			),
 		),
 		profile_config=ProfileConfiguration(
 			profile=profile_handler.parse_profile_config(
@@ -218,6 +215,43 @@ def test_config_file_parsing(
 		services=['service_1', 'service_2'],
 		root_enc_password=Password(enc_password='password_hash'),
 		custom_commands=["echo 'Hello, World!'"],
+	)
+
+
+def test_btrfs_config_file_parsing(
+	monkeypatch: MonkeyPatch,
+	config_fixture: Path,
+	btrfs_config_fixture: Path,
+) -> None:
+	monkeypatch.setattr(
+		'sys.argv',
+		[
+			'archinstall',
+			'--config',
+			str(btrfs_config_fixture),
+		],
+	)
+
+	handler = ArchConfigHandler()
+	arch_config = handler.config
+
+	# the version is retrieved dynamically from an installed archinstall package
+	# as there is no version present in the test environment we'll set it manually
+	arch_config.version = '3.0.2'
+
+	# TODO: Use the real values from the test fixture instead of clearing out the entries
+	arch_config.disk_config.device_modifications = []  # type: ignore[union-attr]
+
+	assert arch_config.disk_config == DiskLayoutConfiguration(
+		config_type=DiskLayoutType.Default,
+		device_modifications=[],
+		lvm_config=None,
+		mountpoint=None,
+		btrfs_options=BtrfsOptions(
+			snapshot_config=SnapshotConfig(
+				SnapshotType.Timeshift,
+			),
+		),
 	)
 
 
