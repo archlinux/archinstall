@@ -1,9 +1,19 @@
 from dataclasses import dataclass
 from typing import override
 
-from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType, LvmConfiguration
+from archinstall.lib.models.device_model import (
+	BtrfsOptions,
+	DiskLayoutConfiguration,
+	DiskLayoutType,
+	LvmConfiguration,
+	SnapshotConfig,
+	SnapshotType,
+)
 from archinstall.lib.translationhandler import tr
+from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties
 
 from ..interactions.disk_conf import select_disk_config, select_lvm_config
 from ..menu.abstract_menu import AbstractSubMenu
@@ -14,16 +24,24 @@ from ..output import FormattedOutput
 class DiskMenuConfig:
 	disk_config: DiskLayoutConfiguration | None
 	lvm_config: LvmConfiguration | None
+	btrfs_snapshot_config: SnapshotConfig | None
 
 
 class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 	def __init__(self, disk_layout_config: DiskLayoutConfiguration | None):
 		if not disk_layout_config:
-			self._disk_menu_config = DiskMenuConfig(disk_config=None, lvm_config=None)
+			self._disk_menu_config = DiskMenuConfig(
+				disk_config=None,
+				lvm_config=None,
+				btrfs_snapshot_config=None,
+			)
 		else:
+			snapshot_config = disk_layout_config.btrfs_options.snapshot_config if disk_layout_config.btrfs_options else None
+
 			self._disk_menu_config = DiskMenuConfig(
 				disk_config=disk_layout_config,
 				lvm_config=disk_layout_config.lvm_config,
+				btrfs_snapshot_config=snapshot_config,
 			)
 
 		menu_optioons = self._define_menu_options()
@@ -52,6 +70,14 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 				dependencies=[self._check_dep_lvm],
 				key='lvm_config',
 			),
+			MenuItem(
+				text='Btrfs snapshots',
+				action=self._select_btrfs_snapshots,
+				value=self._disk_menu_config.btrfs_snapshot_config,
+				preview_action=self._prev_btrfs_snapshots,
+				dependencies=[self._check_dep_btrfs],
+				key='btrfs_snapshot_config',
+			),
 		]
 
 	@override
@@ -60,6 +86,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 
 		if self._disk_menu_config.disk_config:
 			self._disk_menu_config.disk_config.lvm_config = self._disk_menu_config.lvm_config
+			self._disk_menu_config.disk_config.btrfs_options = BtrfsOptions(snapshot_config=self._disk_menu_config.btrfs_snapshot_config)
 			return self._disk_menu_config.disk_config
 
 		return None
@@ -72,10 +99,15 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 
 		return False
 
-	def _select_disk_layout_config(
-		self,
-		preset: DiskLayoutConfiguration | None,
-	) -> DiskLayoutConfiguration | None:
+	def _check_dep_btrfs(self) -> bool:
+		disk_layout_conf: DiskLayoutConfiguration | None = self._menu_item_group.find_by_key('disk_config').value
+
+		if disk_layout_conf:
+			return disk_layout_conf.is_default_btrfs()
+
+		return False
+
+	def _select_disk_layout_config(self, preset: DiskLayoutConfiguration | None) -> DiskLayoutConfiguration | None:
 		disk_config = select_disk_config(preset)
 
 		if disk_config != preset:
@@ -90,6 +122,38 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 			return select_lvm_config(disk_config, preset=preset)
 
 		return preset
+
+	def _select_btrfs_snapshots(self, preset: SnapshotConfig | None) -> SnapshotConfig | None:
+		preset_type = preset.snapshot_type if preset else None
+
+		group = MenuItemGroup.from_enum(
+			SnapshotType,
+			sort_items=True,
+			preset=preset_type,
+		)
+
+		result = SelectMenu[SnapshotType](
+			group,
+			allow_reset=True,
+			allow_skip=True,
+			frame=FrameProperties.min(tr('Snapshot type')),
+			alignment=Alignment.CENTER,
+		).run()
+
+		snapshot_type: SnapshotType | None = None
+
+		match result.type_:
+			case ResultType.Skip:
+				return preset
+			case ResultType.Reset:
+				return None
+			case ResultType.Selection:
+				snapshot_type = result.get_value()
+
+		if not snapshot_type:
+			return None
+
+		return SnapshotConfig(snapshot_type=snapshot_type)
 
 	def _prev_disk_layouts(self, item: MenuItem) -> str | None:
 		if not item.value:
@@ -146,3 +210,10 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 			return output
 
 		return None
+
+	def _prev_btrfs_snapshots(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
+
+		snapshot_config: SnapshotConfig = item.value
+		return tr('Snapshot type: {}').format(snapshot_config.snapshot_type.value)

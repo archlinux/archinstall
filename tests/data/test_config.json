@@ -10,6 +10,11 @@
   ],
   "disk_config": {
     "config_type": "default_layout",
+    "btrfs_options": {
+      "snapshot_config": {
+        "type": "Snapper"
+      }
+    },
     "device_modifications": [
       {
         "device": "/dev/sda",
