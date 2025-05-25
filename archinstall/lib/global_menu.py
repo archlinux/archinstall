@@ -335,6 +335,11 @@ class GlobalMenu(AbstractMenu[None]):
 			if disk_layout_conf.lvm_config:
 				output += '{}: {}'.format(tr('LVM configuration type'), disk_layout_conf.lvm_config.config_type.display_msg())
 
+			if disk_layout_conf.btrfs_options:
+				btrfs_options = disk_layout_conf.btrfs_options
+				if btrfs_options.snapshot_config:
+					output += tr('Btrfs snapshot type: {}').format(btrfs_options.snapshot_config.snapshot_type.value)
+
 			return output
 
 		return None

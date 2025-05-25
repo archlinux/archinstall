@@ -25,6 +25,7 @@ from archinstall.lib.models.device_model import (
 	PartitionModification,
 	SectorSize,
 	Size,
+	SnapshotType,
 	SubvolumeModification,
 	Unit,
 )
@@ -908,6 +909,51 @@ class Installer:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_install'):
 				plugin.on_install(self)
+
+	def setup_btrfs_snapshot(
+		self,
+		snapshot_type: SnapshotType,
+		bootloader: Bootloader | None = None,
+	) -> None:
+		if snapshot_type == SnapshotType.Snapper:
+			debug('Setting up Btrfs snapper')
+			self.pacman.strap('snapper')
+
+			snapper: dict[str, str] = {
+				'root': '/',
+				'home': '/home',
+			}
+
+			for config_name, mountpoint in snapper.items():
+				command = [
+					'arch-chroot',
+					str(self.target),
+					'snapper',
+					'--no-dbus',
+					'-c',
+					config_name,
+					'create-config',
+					mountpoint,
+				]
+
+				try:
+					SysCommand(command, peek_output=True)
+				except SysCallError as err:
+					raise DiskError(f'Could not setup Btrfs snapper: {err}')
+
+			self.enable_service('snapper-timeline.timer')
+			self.enable_service('snapper-cleanup.timer')
+		elif snapshot_type == SnapshotType.Timeshift:
+			debug('Setting up Btrfs timeshift')
+
+			self.pacman.strap('cronie')
+			self.pacman.strap('timeshift')
+
+			self.enable_service('cronie.service')
+
+			if bootloader and bootloader == Bootloader.Grub:
+				self.pacman.strap('grub-btrfs')
+				self.enable_service('grub-btrfs.service')
 
 	def setup_swap(self, kind: str = 'zram') -> None:
 		if kind == 'zram':

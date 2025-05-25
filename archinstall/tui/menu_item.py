@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from enum import Enum
 from functools import cached_property
 from typing import Any, ClassVar
 
@@ -118,6 +119,20 @@ class MenuItemGroup:
 			[MenuItem.yes(), MenuItem.no()],
 			sort_items=True,
 		)
+
+	@staticmethod
+	def from_enum(
+		enum_cls: type[Enum],
+		sort_items: bool = False,
+		preset: Enum | None = None,
+	) -> 'MenuItemGroup':
+		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
+		group = MenuItemGroup(items, sort_items=False)
+
+		if preset is not None:
+			group.set_selected_by_value(preset)
+
+		return group
 
 	def set_preview_for_all(self, action: Callable[[Any], str | None]) -> None:
 		for item in self.items:
