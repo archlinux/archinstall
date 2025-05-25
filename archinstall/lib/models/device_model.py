@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import NotRequired, TypedDict, override
+from uuid import UUID
 
 import parted
 from parted import Disk, Geometry, Partition
@@ -871,6 +872,8 @@ class PartitionModification:
 	partuuid: str | None = None
 	uuid: str | None = None
 
+	_obj_id: UUID | str = field(init=False)
+
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
@@ -1133,6 +1136,8 @@ class LvmVolume:
 	vg_name: str | None = None
 	# mapper device path /dev/<vg>/<vol>
 	dev_path: Path | None = None
+
+	_obj_id: uuid.UUID | str = field(init=False)
 
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
