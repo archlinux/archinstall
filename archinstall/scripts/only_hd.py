@@ -17,7 +17,6 @@ def ask_user_questions() -> None:
 
 		global_menu.set_enabled('archinstall_language', True)
 		global_menu.set_enabled('disk_config', True)
-		global_menu.set_enabled('disk_encryption', True)
 		global_menu.set_enabled('swap', True)
 		global_menu.set_enabled('__config__', True)
 
@@ -37,13 +36,11 @@ def perform_installation(mountpoint: Path) -> None:
 		return
 
 	disk_config = config.disk_config
-	disk_encryption = config.disk_encryption
 	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
 
 	with Installer(
 		mountpoint,
 		disk_config,
-		disk_encryption=disk_encryption,
 		kernels=config.kernels,
 	) as installation:
 		# Mount all the drives to the desired mountpoint
@@ -78,11 +75,7 @@ def _only_hd() -> None:
 				_only_hd()
 
 	if arch_config_handler.config.disk_config:
-		fs_handler = FilesystemHandler(
-			arch_config_handler.config.disk_config,
-			arch_config_handler.config.disk_encryption,
-		)
-
+		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
 	perform_installation(arch_config_handler.args.mountpoint)

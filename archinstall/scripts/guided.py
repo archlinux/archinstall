@@ -53,14 +53,12 @@ def perform_installation(mountpoint: Path) -> None:
 	disk_config = config.disk_config
 	run_mkinitcpio = not config.uki
 	locale_config = config.locale_config
-	disk_encryption = config.disk_encryption
 	optional_repositories = config.mirror_config.optional_repositories if config.mirror_config else []
 	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
 
 	with Installer(
 		mountpoint,
 		disk_config,
-		disk_encryption=disk_encryption,
 		kernels=config.kernels,
 	) as installation:
 		# Mount all the drives to the desired mountpoint
@@ -70,7 +68,7 @@ def perform_installation(mountpoint: Path) -> None:
 		installation.sanity_check()
 
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
-			if disk_encryption and disk_encryption.encryption_type != EncryptionType.NoEncryption:
+			if disk_config.disk_encryption and disk_config.disk_encryption.encryption_type != EncryptionType.NoEncryption:
 				# generate encryption key files for the mounted luks devices
 				installation.generate_key_files()
 
@@ -190,11 +188,7 @@ def guided() -> None:
 				guided()
 
 	if arch_config_handler.config.disk_config:
-		fs_handler = FilesystemHandler(
-			arch_config_handler.config.disk_config,
-			arch_config_handler.config.disk_encryption,
-		)
-
+		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
 	perform_installation(arch_config_handler.args.mountpoint)

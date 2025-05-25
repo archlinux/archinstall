@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import override
 
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
-from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
-from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
+from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
 from archinstall.lib.packages import list_available_packages
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
@@ -78,13 +77,6 @@ class GlobalMenu(AbstractMenu[None]):
 				preview_action=self._prev_disk_config,
 				mandatory=True,
 				key='disk_config',
-			),
-			MenuItem(
-				text=tr('Disk encryption'),
-				action=self._disk_encryption,
-				preview_action=self._prev_disk_encryption,
-				dependencies=['disk_config'],
-				key='disk_encryption',
 			),
 			MenuItem(
 				text=tr('Swap'),
@@ -270,19 +262,6 @@ class GlobalMenu(AbstractMenu[None]):
 			if o.key is not None:
 				self._item_group.find_by_key(o.key).text = o.text
 
-	def _disk_encryption(self, preset: DiskEncryption | None) -> DiskEncryption | None:
-		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
-
-		if not disk_config:
-			# this should not happen as the encryption menu has the disk_config as dependency
-			raise ValueError('No disk layout specified')
-
-		if not DiskEncryption.validate_enc(disk_config):
-			return None
-
-		disk_encryption = DiskEncryptionMenu(disk_config, preset=preset).run()
-		return disk_encryption
-
 	def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration:
 		locale_config = LocaleMenu(preset).run()
 		return locale_config
@@ -334,6 +313,9 @@ class GlobalMenu(AbstractMenu[None]):
 
 			if disk_layout_conf.lvm_config:
 				output += '{}: {}'.format(tr('LVM configuration type'), disk_layout_conf.lvm_config.config_type.display_msg())
+
+			if disk_layout_conf.disk_encryption:
+				output += tr('Disk encryption') + ': ' + EncryptionType.type_to_text(disk_layout_conf.disk_encryption.encryption_type)
 
 			if disk_layout_conf.btrfs_options:
 				btrfs_options = disk_layout_conf.btrfs_options
@@ -389,32 +371,6 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_bootloader(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			return f'{tr("Bootloader")}: {item.value.value}'
-		return None
-
-	def _prev_disk_encryption(self, item: MenuItem) -> str | None:
-		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
-		enc_config: DiskEncryption | None = item.value
-
-		if disk_config and not DiskEncryption.validate_enc(disk_config):
-			return tr('LVM disk encryption with more than 2 partitions is currently not supported')
-
-		if enc_config:
-			enc_type = EncryptionType.type_to_text(enc_config.encryption_type)
-			output = tr('Encryption type') + f': {enc_type}\n'
-
-			if enc_config.encryption_password:
-				output += tr('Password') + f': {enc_config.encryption_password.hidden()}\n'
-
-			if enc_config.partitions:
-				output += f'Partitions: {len(enc_config.partitions)} selected\n'
-			elif enc_config.lvm_volumes:
-				output += f'LVM volumes: {len(enc_config.lvm_volumes)} selected\n'
-
-			if enc_config.hsm_device:
-				output += f'HSM: {enc_config.hsm_device.manufacturer}'
-
-			return output
-
 		return None
 
 	def _validate_bootloader(self) -> str | None:
@@ -514,9 +470,6 @@ class GlobalMenu(AbstractMenu[None]):
 		preset: DiskLayoutConfiguration | None = None,
 	) -> DiskLayoutConfiguration | None:
 		disk_config = DiskLayoutConfigurationMenu(preset).run()
-
-		if disk_config != preset:
-			self._menu_item_group.find_by_key('disk_encryption').value = None
 
 		return disk_config
 

@@ -41,6 +41,7 @@ class _DiskLayoutConfigurationSerialization(TypedDict):
 	lvm_config: NotRequired[_LvmConfigurationSerialization]
 	mountpoint: NotRequired[str]
 	btrfs_options: NotRequired[_BtrfsOptionsSerialization]
+	disk_encryption: NotRequired[_DiskEncryptionSerialization]
 
 
 @dataclass
@@ -48,6 +49,7 @@ class DiskLayoutConfiguration:
 	config_type: DiskLayoutType
 	device_modifications: list[DeviceModification] = field(default_factory=list)
 	lvm_config: LvmConfiguration | None = None
+	disk_encryption: DiskEncryption | None = None
 	btrfs_options: BtrfsOptions | None = None
 
 	# used for pre-mounted config
@@ -68,13 +70,21 @@ class DiskLayoutConfiguration:
 			if self.lvm_config:
 				config['lvm_config'] = self.lvm_config.json()
 
+			if self.disk_encryption:
+				config['disk_encryption'] = self.disk_encryption.json()
+
 			if self.btrfs_options:
 				config['btrfs_options'] = self.btrfs_options.json()
 
 			return config
 
 	@classmethod
-	def parse_arg(cls, disk_config: _DiskLayoutConfigurationSerialization) -> DiskLayoutConfiguration | None:
+	def parse_arg(
+		cls,
+		disk_config: _DiskLayoutConfigurationSerialization,
+		enc_password: Password | None = None,
+		disk_encryption: _DiskEncryptionSerialization | None = None,
+	) -> DiskLayoutConfiguration | None:
 		from archinstall.lib.disk.device_handler import device_handler
 
 		device_modifications: list[DeviceModification] = []
@@ -178,6 +188,9 @@ class DiskLayoutConfiguration:
 		# Parse LVM configuration from settings
 		if (lvm_arg := disk_config.get('lvm_config', None)) is not None:
 			config.lvm_config = LvmConfiguration.parse_arg(lvm_arg, config)
+
+		if (enc_config := disk_config.get('disk_encryption', None)) is not None:
+			config.disk_encryption = DiskEncryption.parse_arg(config, enc_config, enc_password)
 
 		if config.is_default_btrfs():
 			if (btrfs_arg := disk_config.get('btrfs_options', None)) is not None:

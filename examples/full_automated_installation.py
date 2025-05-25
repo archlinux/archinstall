@@ -87,8 +87,10 @@ disk_encryption = DiskEncryption(
 	hsm_device=None,
 )
 
+disk_config.disk_encryption = disk_encryption
+
 # initiate file handler with the disk config and the optional disk encryption config
-fs_handler = FilesystemHandler(disk_config, disk_encryption)
+fs_handler = FilesystemHandler(disk_config)
 
 # perform all file operations
 # WARNING: this will potentially format the filesystem and delete all data
@@ -99,7 +101,6 @@ mountpoint = Path('/tmp')
 with Installer(
 	mountpoint,
 	disk_config,
-	disk_encryption=disk_encryption,
 	kernels=['linux'],
 ) as installation:
 	installation.mount_ordered_layout()
