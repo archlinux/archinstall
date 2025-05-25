@@ -4,7 +4,6 @@ from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
-from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.installer import Installer
 from archinstall.lib.models import Bootloader
@@ -23,13 +22,11 @@ def perform_installation(mountpoint: Path) -> None:
 		return
 
 	disk_config = config.disk_config
-	disk_encryption = config.disk_encryption
 	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
 
 	with Installer(
 		mountpoint,
 		disk_config,
-		disk_encryption=disk_encryption,
 		kernels=config.kernels,
 	) as installation:
 		# Strap in the base system, add a boot loader and configure
@@ -64,13 +61,7 @@ def perform_installation(mountpoint: Path) -> None:
 def _minimal() -> None:
 	with Tui():
 		disk_config = DiskLayoutConfigurationMenu(disk_layout_config=None).run()
-
-		disk_encryption = None
-		if disk_config:
-			disk_encryption = DiskEncryptionMenu(disk_config).run()
-
 		arch_config_handler.config.disk_config = disk_config
-		arch_config_handler.config.disk_encryption = disk_encryption
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
@@ -86,11 +77,7 @@ def _minimal() -> None:
 				_minimal()
 
 	if arch_config_handler.config.disk_config:
-		fs_handler = FilesystemHandler(
-			arch_config_handler.config.disk_config,
-			arch_config_handler.config.disk_encryption,
-		)
-
+		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
 	perform_installation(arch_config_handler.args.mountpoint)

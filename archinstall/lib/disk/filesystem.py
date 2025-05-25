@@ -27,13 +27,9 @@ from .device_handler import device_handler
 
 
 class FilesystemHandler:
-	def __init__(
-		self,
-		disk_config: DiskLayoutConfiguration,
-		enc_conf: DiskEncryption | None = None,
-	):
+	def __init__(self, disk_config: DiskLayoutConfiguration):
 		self._disk_config = disk_config
-		self._enc_config = enc_conf
+		self._enc_config = disk_config.disk_encryption
 
 	def perform_filesystem_operations(self, show_countdown: bool = True) -> None:
 		if self._disk_config.config_type == DiskLayoutType.Pre_mount:

@@ -76,7 +76,6 @@ class ArchConfig:
 
 	# Special fields that should be handle with care due to security implications
 	users: list[User] = field(default_factory=list)
-	disk_encryption: DiskEncryption | None = None
 	root_enc_password: Password | None = None
 
 	def unsafe_json(self) -> dict[str, Any]:
@@ -85,8 +84,10 @@ class ArchConfig:
 			'root_enc_password': self.root_enc_password.enc_password if self.root_enc_password else None,
 		}
 
-		if self.disk_encryption and self.disk_encryption.encryption_password:
-			config['encryption_password'] = self.disk_encryption.encryption_password.plaintext
+		if self.disk_config:
+			disk_encryption = self.disk_config.disk_encryption
+			if disk_encryption and disk_encryption.encryption_password:
+				config['encryption_password'] = disk_encryption.encryption_password.plaintext
 
 		return config
 
@@ -113,9 +114,6 @@ class ArchConfig:
 		if self.disk_config:
 			config['disk_config'] = self.disk_config.json()
 
-		if self.disk_encryption:
-			config['disk_encryption'] = self.disk_encryption.json()
-
 		if self.profile_config:
 			config['profile_config'] = self.profile_config.json()
 
@@ -137,7 +135,23 @@ class ArchConfig:
 			arch_config.archinstall_language = translation_handler.get_language_by_name(archinstall_lang)
 
 		if disk_config := args_config.get('disk_config', {}):
-			arch_config.disk_config = DiskLayoutConfiguration.parse_arg(disk_config)
+			enc_password = args_config.get('encryption_password', '')
+			password = Password(plaintext=enc_password) if enc_password else None
+			arch_config.disk_config = DiskLayoutConfiguration.parse_arg(disk_config, password)
+
+			# DEPRECATED
+			# backwards compatibility for main level disk_encryption entry
+			disk_encryption: DiskEncryption | None = None
+
+			if args_config.get('disk_encryption', None) is not None and arch_config.disk_config is not None:
+				disk_encryption = DiskEncryption.parse_arg(
+					arch_config.disk_config,
+					args_config['disk_encryption'],
+					Password(plaintext=args_config.get('encryption_password', '')),
+				)
+
+				if disk_encryption:
+					arch_config.disk_config.disk_encryption = disk_encryption
 
 		if profile_config := args_config.get('profile_config', None):
 			arch_config.profile_config = ProfileConfiguration.parse_arg(profile_config)
@@ -170,13 +184,6 @@ class ArchConfig:
 
 		if audio_config := args_config.get('audio_config', None):
 			arch_config.audio_config = AudioConfiguration.parse_arg(audio_config)
-
-		if args_config.get('disk_encryption', None) is not None and arch_config.disk_config is not None:
-			arch_config.disk_encryption = DiskEncryption.parse_arg(
-				arch_config.disk_config,
-				args_config['disk_encryption'],
-				Password(plaintext=args_config.get('encryption_password', '')),
-			)
 
 		if hostname := args_config.get('hostname', ''):
 			arch_config.hostname = hostname

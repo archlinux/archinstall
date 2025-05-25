@@ -211,7 +211,6 @@ def test_config_file_parsing(
 				groups=['wheel'],
 			),
 		],
-		disk_encryption=None,
 		services=['service_1', 'service_2'],
 		root_enc_password=Password(enc_password='password_hash'),
 		custom_commands=["echo 'Hello, World!'"],
