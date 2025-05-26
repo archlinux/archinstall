@@ -1505,15 +1505,19 @@ class DiskEncryption:
 		return obj
 
 	@classmethod
-	def validate_enc(cls, disk_config: DiskLayoutConfiguration) -> bool:
+	def validate_enc(
+		cls,
+		modifications: list[DeviceModification],
+		lvm_config: LvmConfiguration | None = None,
+	) -> bool:
 		partitions = []
 
-		for mod in disk_config.device_modifications:
+		for mod in modifications:
 			for part in mod.partitions:
 				partitions.append(part)
 
 		if len(partitions) > 2:  # assume one boot and at least 2 additional
-			if disk_config.lvm_config:
+			if lvm_config:
 				return False
 
 		return True
@@ -1525,7 +1529,7 @@ class DiskEncryption:
 		disk_encryption: _DiskEncryptionSerialization,
 		password: Password | None = None,
 	) -> 'DiskEncryption | None':
-		if not cls.validate_enc(disk_config):
+		if not cls.validate_enc(disk_config.device_modifications, disk_config.lvm_config):
 			return None
 
 		if not password:

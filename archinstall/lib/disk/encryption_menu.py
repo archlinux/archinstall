@@ -5,7 +5,6 @@ from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.models.device_model import (
 	DeviceModification,
 	DiskEncryption,
-	DiskLayoutConfiguration,
 	EncryptionType,
 	LvmConfiguration,
 	LvmVolume,
@@ -28,7 +27,8 @@ from .fido import Fido2
 class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def __init__(
 		self,
-		disk_config: DiskLayoutConfiguration,
+		device_modifications: list[DeviceModification],
+		lvm_config: LvmConfiguration | None = None,
 		preset: DiskEncryption | None = None,
 	):
 		if preset:
@@ -36,7 +36,8 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		else:
 			self._enc_config = DiskEncryption()
 
-		self._disk_config = disk_config
+		self._device_modifications = device_modifications
+		self._lvm_config = lvm_config
 
 		menu_optioons = self._define_menu_options()
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
@@ -51,7 +52,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		return [
 			MenuItem(
 				text=tr('Encryption type'),
-				action=lambda x: select_encryption_type(self._disk_config, x),
+				action=lambda x: select_encryption_type(self._device_modifications, self._lvm_config, x),
 				value=self._enc_config.encryption_type,
 				preview_action=self._preview,
 				key='encryption_type',
@@ -66,7 +67,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			),
 			MenuItem(
 				text=tr('Partitions'),
-				action=lambda x: select_partitions_to_encrypt(self._disk_config.device_modifications, x),
+				action=lambda x: select_partitions_to_encrypt(self._device_modifications, x),
 				value=self._enc_config.partitions,
 				dependencies=[self._check_dep_partitions],
 				preview_action=self._preview,
@@ -91,8 +92,8 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		]
 
 	def _select_lvm_vols(self, preset: list[LvmVolume]) -> list[LvmVolume]:
-		if self._disk_config.lvm_config:
-			return select_lvm_vols_to_encrypt(self._disk_config.lvm_config, preset=preset)
+		if self._lvm_config:
+			return select_lvm_vols_to_encrypt(self._lvm_config, preset=preset)
 		return []
 
 	def _check_dep_enc_type(self) -> bool:
@@ -214,14 +215,22 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		return f'{tr("HSM device")}: {output}'
 
 
-def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: EncryptionType) -> EncryptionType | None:
+def select_encryption_type(
+	device_modifications: list[DeviceModification],
+	lvm_config: LvmConfiguration | None = None,
+	preset: EncryptionType | None = None,
+) -> EncryptionType | None:
 	options: list[EncryptionType] = []
-	preset_value = EncryptionType.type_to_text(preset)
 
-	if disk_config.lvm_config:
+	if lvm_config:
 		options = [EncryptionType.LvmOnLuks, EncryptionType.LuksOnLvm]
 	else:
 		options = [EncryptionType.Luks]
+
+	if not preset:
+		preset = options[0]
+
+	preset_value = EncryptionType.type_to_text(preset)
 
 	items = [MenuItem(EncryptionType.type_to_text(o), value=o) for o in options]
 	group = MenuItemGroup(items)

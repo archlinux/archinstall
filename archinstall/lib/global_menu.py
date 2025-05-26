@@ -312,15 +312,15 @@ class GlobalMenu(AbstractMenu[None]):
 				output += tr('Mountpoint') + ': ' + str(disk_layout_conf.mountpoint)
 
 			if disk_layout_conf.lvm_config:
-				output += '{}: {}'.format(tr('LVM configuration type'), disk_layout_conf.lvm_config.config_type.display_msg())
+				output += '{}: {}'.format(tr('LVM configuration type'), disk_layout_conf.lvm_config.config_type.display_msg()) + '\n'
 
 			if disk_layout_conf.disk_encryption:
-				output += tr('Disk encryption') + ': ' + EncryptionType.type_to_text(disk_layout_conf.disk_encryption.encryption_type)
+				output += tr('Disk encryption') + ': ' + EncryptionType.type_to_text(disk_layout_conf.disk_encryption.encryption_type) + '\n'
 
 			if disk_layout_conf.btrfs_options:
 				btrfs_options = disk_layout_conf.btrfs_options
 				if btrfs_options.snapshot_config:
-					output += tr('Btrfs snapshot type: {}').format(btrfs_options.snapshot_config.snapshot_type.value)
+					output += tr('Btrfs snapshot type: {}').format(btrfs_options.snapshot_config.snapshot_type.value) + '\n'
 
 			return output
 
