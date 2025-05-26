@@ -78,7 +78,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 			),
 			MenuItem(
 				text=tr('Disk encryption'),
-				action=self._disk_encryption,
+				action=self._select_disk_encryption,
 				preview_action=self._prev_disk_encryption,
 				dependencies=['disk_config'],
 				key='disk_encryption',
@@ -121,17 +121,20 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 
 		return False
 
-	def _disk_encryption(self, preset: DiskEncryption | None) -> DiskEncryption | None:
+	def _select_disk_encryption(self, preset: DiskEncryption | None) -> DiskEncryption | None:
 		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
+		lvm_config: LvmConfiguration | None = self._item_group.find_by_key('lvm_config').value
 
 		if not disk_config:
-			# this should not happen as the encryption menu has the disk_config as dependency
-			raise ValueError('No disk layout specified')
+			return preset
 
-		if not DiskEncryption.validate_enc(disk_config):
+		modifications = disk_config.device_modifications
+
+		if not DiskEncryption.validate_enc(modifications, lvm_config):
 			return None
 
-		disk_encryption = DiskEncryptionMenu(disk_config, preset=preset).run()
+		disk_encryption = DiskEncryptionMenu(modifications, lvm_config=lvm_config, preset=preset).run()
+
 		return disk_encryption
 
 	def _select_disk_layout_config(self, preset: DiskLayoutConfiguration | None) -> DiskLayoutConfiguration | None:
@@ -146,10 +149,15 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 	def _select_lvm_config(self, preset: LvmConfiguration | None) -> LvmConfiguration | None:
 		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
 
-		if disk_config:
-			return select_lvm_config(disk_config, preset=preset)
+		if not disk_config:
+			return preset
 
-		return preset
+		lvm_config = select_lvm_config(disk_config, preset=preset)
+
+		if lvm_config != preset:
+			self._menu_item_group.find_by_key('disk_encryption').value = None
+
+		return lvm_config
 
 	def _select_btrfs_snapshots(self, preset: SnapshotConfig | None) -> SnapshotConfig | None:
 		preset_type = preset.snapshot_type if preset else None
@@ -250,7 +258,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
 		enc_config: DiskEncryption | None = item.value
 
-		if disk_config and not DiskEncryption.validate_enc(disk_config):
+		if disk_config and not DiskEncryption.validate_enc(disk_config.device_modifications, disk_config.lvm_config):
 			return tr('LVM disk encryption with more than 2 partitions is currently not supported')
 
 		if enc_config:
