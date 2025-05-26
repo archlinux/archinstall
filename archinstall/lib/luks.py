@@ -126,7 +126,7 @@ class Luks2:
 			raise err
 
 	def is_unlocked(self) -> bool:
-		return self.mapper_name is not None and Path(f'/dev/mapper/{self.mapper_name}').exists()
+		return (mapper_dev := self.mapper_dev) is not None and mapper_dev.is_symlink()
 
 	def unlock(self, key_file: Path | None = None) -> None:
 		"""
@@ -157,7 +157,7 @@ class Luks2:
 
 		debug(f'cryptsetup open output: {result.stdout.decode().rstrip()}')
 
-		if not self.mapper_dev or not self.mapper_dev.is_symlink():
+		if not self.is_unlocked():
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
 	def lock(self) -> None:
