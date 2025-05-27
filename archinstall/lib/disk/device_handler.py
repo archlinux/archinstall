@@ -674,9 +674,6 @@ class DeviceHandler:
 		if not luks_handler.is_unlocked():
 			luks_handler.unlock()
 
-		if not luks_handler.is_unlocked():
-			raise DiskError(f'Failed to unlock luks2 device: {dev_path}')
-
 		return luks_handler
 
 	def umount_all_existing(self, device_path: Path) -> None:
