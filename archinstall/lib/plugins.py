@@ -24,7 +24,7 @@ for plugin_definition in metadata.entry_points().select(group='archinstall.plugi
 	except Exception as err:
 		error(
 			f'Error: {err}',
-			f"The above error was detected when loading the plugin: {plugin_definition}"
+			f'The above error was detected when loading the plugin: {plugin_definition}',
 		)
 
 
@@ -37,7 +37,7 @@ def _localize_path(path: Path) -> Path:
 	if url.scheme and url.scheme in ('https', 'http'):
 		converted_path = Path(f'/tmp/{path.stem}_{hashlib.md5(os.urandom(12)).hexdigest()}.py')
 
-		with open(converted_path, "w") as temp_file:
+		with open(converted_path, 'w') as temp_file:
 			temp_file.write(urllib.request.urlopen(url.geturl()).read().decode('utf-8'))
 
 		return converted_path
@@ -63,7 +63,7 @@ def _import_via_path(path: Path, namespace: str | None = None) -> str | None:
 	except Exception as err:
 		error(
 			f'Error: {err}',
-			f"The above error was detected when loading the plugin: {path}"
+			f'The above error was detected when loading the plugin: {path}',
 		)
 
 		try:
@@ -84,7 +84,7 @@ def _find_nth(haystack: list[str], needle: str, n: int) -> int | None:
 def load_plugin(path: Path) -> None:
 	namespace: str | None = None
 	parsed_url = urllib.parse.urlparse(str(path))
-	info(f"Loading plugin from url {parsed_url}")
+	info(f'Loading plugin from url {parsed_url}')
 
 	# The Profile was not a direct match on a remote URL
 	if not parsed_url.scheme:
@@ -99,21 +99,21 @@ def load_plugin(path: Path) -> None:
 		# Version dependency via __archinstall__version__ variable (if present) in the plugin
 		# Any errors in version inconsistency will be handled through normal error handling if not defined.
 		if hasattr(sys.modules[namespace], '__archinstall__version__'):
-			archinstall_major_and_minor_version = float(storage['__version__'][:_find_nth(storage['__version__'], '.', 2)])
+			archinstall_major_and_minor_version = float(storage['__version__'][: _find_nth(storage['__version__'], '.', 2)])
 
 			if sys.modules[namespace].__archinstall__version__ < archinstall_major_and_minor_version:
-				error(f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.")
+				error(f'Plugin {sys.modules[namespace]} does not support the current Archinstall version.')
 
 		# Locate the plugin entry-point called Plugin()
 		# This in accordance with the entry_points() from setup.cfg above
 		if hasattr(sys.modules[namespace], 'Plugin'):
 			try:
 				plugins[namespace] = sys.modules[namespace].Plugin()
-				info(f"Plugin {plugins[namespace]} has been loaded.")
+				info(f'Plugin {plugins[namespace]} has been loaded.')
 			except Exception as err:
 				error(
 					f'Error: {err}',
-					f"The above error was detected when initiating the plugin: {path}"
+					f'The above error was detected when initiating the plugin: {path}',
 				)
 		else:
 			warn(f"Plugin '{path}' is missing a valid entry-point or is corrupt.")

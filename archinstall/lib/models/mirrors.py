@@ -5,20 +5,13 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Any, TypedDict, override
+from typing import Any, TypedDict, override
 
 from pydantic import BaseModel, field_validator, model_validator
 
 from ..models.packages import Repository
 from ..networking import DownloadTimer, ping
 from ..output import debug
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class MirrorStatusEntryV3(BaseModel):
@@ -57,8 +50,8 @@ class MirrorStatusEntryV3(BaseModel):
 
 			retry = 0
 			while retry < self._speedtest_retries and self._speed is None:
-				debug(f"Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db")
-				req = urllib.request.Request(url=f"{self.url}core/os/x86_64/core.db")
+				debug(f'Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db')
+				req = urllib.request.Request(url=f'{self.url}core/os/x86_64/core.db')
 
 				try:
 					with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
@@ -66,17 +59,17 @@ class MirrorStatusEntryV3(BaseModel):
 
 					assert timer.time is not None
 					self._speed = size / timer.time
-					debug(f"    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)")
+					debug(f'    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
 				# Do not retry error
 				except urllib.error.URLError as error:
-					debug(f"    speed: <undetermined> ({error}), skip")
+					debug(f'    speed: <undetermined> ({error}), skip')
 					self._speed = 0
 				# Do retry error
 				except (http.client.IncompleteRead, ConnectionResetError) as error:
-					debug(f"    speed: <undetermined> ({error}), retry")
+					debug(f'    speed: <undetermined> ({error}), retry')
 				# Catch all
 				except Exception as error:
-					debug(f"    speed: <undetermined> ({error}), skip")
+					debug(f'    speed: <undetermined> ({error}), skip')
 					self._speed = 0
 
 				retry += 1
@@ -94,9 +87,9 @@ class MirrorStatusEntryV3(BaseModel):
 		We do this because some hosts blocks ICMP so we'll have to rely on .speed() instead which is slower.
 		"""
 		if self._latency is None:
-			debug(f"Checking latency for {self.url}")
+			debug(f'Checking latency for {self.url}')
 			self._latency = ping(self._hostname, timeout=2)
-			debug(f"  latency: {self._latency}")
+			debug(f'  latency: {self._latency}')
 
 		return self._latency
 
@@ -105,7 +98,7 @@ class MirrorStatusEntryV3(BaseModel):
 	def validate_score(cls, value: float) -> int | None:
 		if value is not None:
 			value = round(value)
-			debug(f"    score: {value}")
+			debug(f'    score: {value}')
 
 		return value
 
@@ -114,7 +107,7 @@ class MirrorStatusEntryV3(BaseModel):
 		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(port[0]) if port and len(port) >= 1 else None
 
-		debug(f"Loaded mirror {self._hostname}" + (f" with current score of {self.score}" if self.score else ''))
+		debug(f'Loaded mirror {self._hostname}' + (f' with current score of {self.score}' if self.score else ''))
 		return self
 
 
@@ -129,12 +122,12 @@ class MirrorStatusListV3(BaseModel):
 	@classmethod
 	def check_model(
 		cls,
-		data: dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]
+		data: dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]],
 	) -> dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]:
 		if data.get('version') == 3:
 			return data
 
-		raise ValueError("MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/")
+		raise ValueError('MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/')
 
 
 @dataclass
@@ -182,7 +175,7 @@ class CustomRepository:
 			'Name': self.name,
 			'Url': self.url,
 			'Sign check': self.sign_check.value,
-			'Sign options': self.sign_option.value
+			'Sign options': self.sign_option.value,
 		}
 
 	def json(self) -> _CustomRepositorySerialization:
@@ -190,7 +183,7 @@ class CustomRepository:
 			'name': self.name,
 			'url': self.url,
 			'sign_check': self.sign_check.value,
-			'sign_option': self.sign_option.value
+			'sign_option': self.sign_option.value,
 		}
 
 	@classmethod
@@ -202,8 +195,8 @@ class CustomRepository:
 					arg['name'],
 					arg['url'],
 					SignCheck(arg['sign_check']),
-					SignOption(arg['sign_option'])
-				)
+					SignOption(arg['sign_option']),
+				),
 			)
 
 		return configs
@@ -224,7 +217,7 @@ class CustomServer:
 		configs = []
 		for arg in args:
 			configs.append(
-				CustomServer(arg['url'])
+				CustomServer(arg['url']),
 			)
 
 		return configs
@@ -261,14 +254,16 @@ class MirrorConfiguration:
 			'mirror_regions': regions,
 			'custom_servers': self.custom_servers,
 			'optional_repositories': [r.value for r in self.optional_repositories],
-			'custom_repositories': [c.json() for c in self.custom_repositories]
+			'custom_repositories': [c.json() for c in self.custom_repositories],
 		}
 
 	def custom_servers_config(self) -> str:
-		config = '## Custom Servers\n'
+		config = ''
 
-		for server in self.custom_servers:
-			config += f'Server = {server.url}\n'
+		if self.custom_servers:
+			config += '## Custom Servers\n'
+			for server in self.custom_servers:
+				config += f'Server = {server.url}\n'
 
 		return config.strip()
 
@@ -280,7 +275,7 @@ class MirrorConfiguration:
 		for mirror_region in self.mirror_regions:
 			sorted_stati = mirror_list_handler.get_status_by_region(
 				mirror_region.name,
-				speed_sort=speed_sort
+				speed_sort=speed_sort,
 			)
 
 			config += f'\n\n## {mirror_region.name}\n'
@@ -304,7 +299,7 @@ class MirrorConfiguration:
 	def parse_args(
 		cls,
 		args: dict[str, Any],
-		backwards_compatible_repo: list[Repository] = []
+		backwards_compatible_repo: list[Repository] = [],
 	) -> 'MirrorConfiguration':
 		config = MirrorConfiguration()
 

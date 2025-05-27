@@ -13,7 +13,7 @@ class GnomeProfile(XorgProfile):
 	def packages(self) -> list[str]:
 		return [
 			'gnome',
-			'gnome-tweaks'
+			'gnome-tweaks',
 		]
 
 	@property

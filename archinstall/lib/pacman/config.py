@@ -7,10 +7,10 @@ from ..models.packages import Repository
 
 class PacmanConfig:
 	def __init__(self, target: Path | None):
-		self._config_path = Path("/etc") / "pacman.conf"
+		self._config_path = Path('/etc') / 'pacman.conf'
 
 		if target:
-			self._config_remote_path = target / "etc" / "pacman.conf"
+			self._config_remote_path = target / 'etc' / 'pacman.conf'
 
 		self._repositories: list[Repository] = []
 

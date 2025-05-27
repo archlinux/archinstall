@@ -9,7 +9,9 @@ from collections.abc import Callable
 from curses.ascii import isprint
 from curses.textpad import Textbox
 from types import FrameType, TracebackType
-from typing import TYPE_CHECKING, Literal, override
+from typing import Literal, override
+
+from archinstall.lib.translationhandler import tr
 
 from ..lib.output import debug
 from .help import Help
@@ -28,11 +30,6 @@ from .types import (
 	ViewportEntry,
 	_FrameDim,
 )
-
-if TYPE_CHECKING:
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class AbstractCurses[ValueT](metaclass=ABCMeta):
@@ -66,7 +63,7 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 			height,
 			x_start,
 			int((max_height / 2) - height / 2),
-			frame=FrameProperties.min(str(_('Archinstall help')))
+			frame=FrameProperties.min(tr('Archinstall help')),
 		)
 
 	def _confirm_interrupt(self, warning: str) -> bool:
@@ -76,7 +73,7 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 				header=warning,
 				alignment=Alignment.CENTER,
 				columns=2,
-				orientation=Orientation.HORIZONTAL
+				orientation=Orientation.HORIZONTAL,
 			).run()
 
 			match result.type_:
@@ -87,7 +84,7 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 			return False
 
 	def help_entry(self) -> ViewportEntry:
-		return ViewportEntry(str(_('Press Ctrl+h for help')), 0, 0, STYLE.NORMAL)
+		return ViewportEntry(tr('Press Ctrl+h for help'), 0, 0, STYLE.NORMAL)
 
 	def _show_help(self) -> None:
 		if not self._help_window:
@@ -128,7 +125,7 @@ class AbstractViewport:
 		max_width: int,
 		max_height: int,
 		frame: FrameProperties,
-		scroll_pct: int | None = None
+		scroll_pct: int | None = None,
 	) -> list[ViewportEntry]:
 		if not entries:
 			return []
@@ -154,7 +151,7 @@ class AbstractViewport:
 			top_ve,
 			bottom_ve,
 			*frame_border,
-			*entries
+			*entries,
 		]
 
 		return framed_entries
@@ -167,7 +164,7 @@ class AbstractViewport:
 	def _get_right_frame(
 		self,
 		dim: _FrameDim,
-		scroll_percentage: int | None = None
+		scroll_percentage: int | None = None,
 	) -> list[ViewportEntry]:
 		right_frame = {}
 		scroll_height = int(dim.height * scroll_percentage // 100) if scroll_percentage else 0
@@ -192,7 +189,7 @@ class AbstractViewport:
 		dim: _FrameDim,
 		h_bar: str,
 		frame: FrameProperties,
-		scroll_percentage: int | None = None
+		scroll_percentage: int | None = None,
 	) -> ViewportEntry:
 		top = self._replace_str(h_bar, 1, f' {frame.header} ') if frame.header else h_bar
 
@@ -207,7 +204,7 @@ class AbstractViewport:
 		self,
 		dim: _FrameDim,
 		h_bar: str,
-		scroll_pct: int | None = None
+		scroll_pct: int | None = None,
 	) -> ViewportEntry:
 		if scroll_pct is None:
 			bottom = Chars.Lower_left + h_bar + Chars.Lower_right
@@ -221,7 +218,7 @@ class AbstractViewport:
 		entries: list[ViewportEntry],
 		max_width: int,
 		max_height: int,
-		frame: FrameProperties
+		frame: FrameProperties,
 	) -> _FrameDim:
 		rows = self._assemble_entries(entries).split('\n')
 		header_len = len(frame.header) if frame.header else 0
@@ -250,7 +247,7 @@ class AbstractViewport:
 	def _adjust_entries(
 		self,
 		entries: list[ViewportEntry],
-		frame_dim: _FrameDim
+		frame_dim: _FrameDim,
 	) -> list[ViewportEntry]:
 		for entry in entries:
 			# top row frame offset
@@ -271,7 +268,7 @@ class AbstractViewport:
 
 	def _replace_str(self, text: str, index: int = 0, replacement: str = '') -> str:
 		len_replace = len(replacement)
-		return f'{text[:index]}{replacement}{text[index + len_replace:]}'
+		return f'{text[:index]}{replacement}{text[index + len_replace :]}'
 
 	def _assemble_entries(self, entries: list[ViewportEntry]) -> str:
 		if not entries:
@@ -299,7 +296,7 @@ class EditViewport(AbstractViewport):
 		process_key: Callable[[int], int | None],
 		frame: FrameProperties,
 		alignment: Alignment = Alignment.CENTER,
-		hide_input: bool = False
+		hide_input: bool = False,
 	) -> None:
 		super().__init__()
 
@@ -333,7 +330,7 @@ class EditViewport(AbstractViewport):
 			1,
 			self._edit_width - 2,
 			self.y_start + 1,
-			self.x_start + x_offset + 1
+			self.x_start + x_offset + 1,
 		)
 
 	def update(self) -> None:
@@ -346,7 +343,7 @@ class EditViewport(AbstractViewport):
 			[ViewportEntry('', 0, 0, STYLE.NORMAL)],
 			self._edit_width,
 			3,
-			frame=self._frame
+			frame=self._frame,
 		)
 
 		x_offset = 0
@@ -359,7 +356,7 @@ class EditViewport(AbstractViewport):
 				row.row,
 				row.col + x_offset,
 				row.text,
-				row.style
+				row.style,
 			)
 
 		self._main_win.refresh()
@@ -395,7 +392,7 @@ class Viewport(AbstractViewport):
 		y_start: int,
 		enable_scroll: bool = False,
 		frame: FrameProperties | None = None,
-		alignment: Alignment = Alignment.LEFT
+		alignment: Alignment = Alignment.LEFT,
 	):
 		super().__init__()
 
@@ -422,7 +419,7 @@ class Viewport(AbstractViewport):
 		self,
 		entries: list[ViewportEntry],
 		cur_pos: int = 0,
-		scroll_pos: int | None = None
+		scroll_pos: int | None = None,
 	) -> None:
 		# self._state = self._get_viewport_state(lines, cur_pos, scroll_pos)
 		# visible_entries = self._adjust_entries_row(self._state.displayed_entries)
@@ -434,7 +431,7 @@ class Viewport(AbstractViewport):
 				self.width,
 				self.height,
 				frame=self._frame,
-				scroll_pct=scroll_pos
+				scroll_pct=scroll_pos,
 			)
 
 		x_offset = 0
@@ -449,7 +446,7 @@ class Viewport(AbstractViewport):
 				entry.row,
 				entry.col + x_offset,
 				entry.text,
-				entry.style
+				entry.style,
 			)
 
 		self._main_win.refresh()
@@ -467,7 +464,7 @@ class EditMenu(AbstractCurses[str]):
 		reset_warning_msg: str | None = None,
 		alignment: Alignment = Alignment.CENTER,
 		default_text: str | None = None,
-		hide_input: bool = False
+		hide_input: bool = False,
 	):
 		super().__init__()
 
@@ -489,7 +486,7 @@ class EditMenu(AbstractCurses[str]):
 		self._hide_input = hide_input
 
 		if self._interrupt_warning is None:
-			self._interrupt_warning = str(_('Are you sure you want to reset this setting?')) + '\n'
+			self._interrupt_warning = tr('Are you sure you want to reset this setting?') + '\n'
 
 		title = f'* {title}' if not self._allow_skip else title
 		self._frame = FrameProperties(title, FrameStyle.MAX)
@@ -500,13 +497,13 @@ class EditMenu(AbstractCurses[str]):
 		self._info_vp: Viewport | None = None
 
 		self._set_default_info = True
-		self._only_ascii_text = ViewportEntry(str(_('Only ASCII characters are supported')), 0, 0, STYLE.NORMAL)
+		self._only_ascii_text = ViewportEntry(tr('Only ASCII characters are supported'), 0, 0, STYLE.NORMAL)
 
 		self._init_viewports()
 
 		self._last_state: Result[str] | None = None
 		self._help_active = False
-		self._real_input = default_text or ""
+		self._real_input = default_text or ''
 
 	def _init_viewports(self) -> None:
 		y_offset = 0
@@ -528,7 +525,7 @@ class EditMenu(AbstractCurses[str]):
 			self._process_edit_key,
 			frame=self._frame,
 			alignment=self._alignment,
-			hide_input=self._hide_input
+			hide_input=self._hide_input,
 		)
 
 		y_offset += 3
@@ -726,7 +723,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 			self._header_entries = self.get_header_entries(header)
 
 		if self._interrupt_warning is None:
-			self._interrupt_warning = str(_('Are you sure you want to reset this setting?')) + '\n'
+			self._interrupt_warning = tr('Are you sure you want to reset this setting?') + '\n'
 
 		if self._orientation == Orientation.HORIZONTAL:
 			self._horizontal_cols = columns
@@ -751,7 +748,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 			self._item_group,
 			total_cols=self._horizontal_cols,
 			total_rows=self._menu_vp.height,
-			with_frame=self._frame is not None
+			with_frame=self._frame is not None,
 		)
 
 	def run(self) -> Result[ValueT]:
@@ -819,7 +816,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 				header_height,
 				0,
 				y_offset,
-				alignment=self._alignment
+				alignment=self._alignment,
 			)
 			y_offset += header_height
 
@@ -837,14 +834,14 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 					0,
 					y_offset,
 					frame=self._frame,
-					alignment=self._alignment
+					alignment=self._alignment,
 				)
 				self._preview_vp = Viewport(
 					self._max_width,
 					prev_size,
 					0,
 					menu_height + y_offset,
-					frame=self._preview_frame
+					frame=self._preview_frame,
 				)
 			case PreviewStyle.RIGHT:
 				menu_width = self._max_width - prev_size
@@ -855,7 +852,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 					0,
 					y_offset,
 					frame=self._frame,
-					alignment=self._alignment
+					alignment=self._alignment,
 				)
 				self._preview_vp = Viewport(
 					prev_size,
@@ -863,7 +860,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 					menu_width,
 					y_offset,
 					frame=self._preview_frame,
-					alignment=self._alignment
+					alignment=self._alignment,
 				)
 			case PreviewStyle.TOP:
 				menu_height = available_height - prev_size
@@ -874,7 +871,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 					0,
 					prev_size + y_offset,
 					frame=self._frame,
-					alignment=self._alignment
+					alignment=self._alignment,
 				)
 				self._preview_vp = Viewport(
 					self._max_width,
@@ -882,7 +879,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 					0,
 					y_offset,
 					frame=self._preview_frame,
-					alignment=self._alignment
+					alignment=self._alignment,
 				)
 			case PreviewStyle.NONE:
 				self._menu_vp = Viewport(
@@ -891,20 +888,20 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 					0,
 					y_offset,
 					frame=self._frame,
-					alignment=self._alignment
+					alignment=self._alignment,
 				)
 
 		self._footer_vp = Viewport(
 			self._max_width,
 			footer_height,
 			0,
-			self._max_height - footer_height
+			self._max_height - footer_height,
 		)
 
 	def _determine_prev_size(
 		self,
 		preview_size: float | Literal['auto'],
-		offset: int = 0
+		offset: int = 0,
 	) -> int:
 		if not isinstance(preview_size, float) and preview_size != 'auto':
 			raise ValueError('preview size must be a float or "auto"')
@@ -962,7 +959,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		self,
 		viewport: Viewport,
 		entries: list[ViewportEntry],
-		cur_pos: int = 0
+		cur_pos: int = 0,
 	) -> None:
 		if entries:
 			viewport.update(entries, cur_pos=cur_pos)
@@ -1061,7 +1058,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 	def _get_scroll_pct(
 		self,
 		total_prev_rows: int,
-		available_rows: int
+		available_rows: int,
 	) -> int | None:
 		assert self._preview_vp is not None
 
@@ -1082,7 +1079,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		self,
 		entries: list[ViewportEntry],
 		total_prev_rows: int,
-		available_rows: int
+		available_rows: int,
 	) -> list[ViewportEntry]:
 		assert self._preview_vp is not None
 
@@ -1103,7 +1100,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 	def _calc_prev_scroll_pos(
 		self,
 		entries: list[ViewportEntry],
-		total_prev_rows: int
+		total_prev_rows: int,
 	) -> None:
 		if self._prev_scroll_pos >= total_prev_rows:
 			self._prev_scroll_pos = total_prev_rows - 2
@@ -1299,7 +1296,7 @@ class Tui:
 		row: int = 0,
 		col: int = 0,
 		endl: str | None = '\n',
-		clear_screen: bool = False
+		clear_screen: bool = False,
 	) -> None:
 		if clear_screen:
 			os.system('clear')
@@ -1347,7 +1344,7 @@ class Tui:
 		return component.kickoff(self._screen)
 
 	def _reset_terminal(self) -> None:
-		os.system("reset")
+		os.system('reset')
 
 	def _set_up_colors(self) -> None:
 		curses.init_pair(STYLE.NORMAL.value, curses.COLOR_WHITE, curses.COLOR_BLACK)

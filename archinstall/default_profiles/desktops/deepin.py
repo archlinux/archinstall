@@ -12,9 +12,9 @@ class DeepinProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"deepin",
-			"deepin-terminal",
-			"deepin-editor"
+			'deepin',
+			'deepin-terminal',
+			'deepin-editor',
 		]
 
 	@property

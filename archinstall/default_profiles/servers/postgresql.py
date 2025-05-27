@@ -25,4 +25,4 @@ class PostgresqlProfile(Profile):
 
 	@override
 	def post_install(self, install_session: 'Installer') -> None:
-		install_session.arch_chroot("initdb -D /var/lib/postgres/data", run_as='postgres')
+		install_session.arch_chroot('initdb -D /var/lib/postgres/data', run_as='postgres')

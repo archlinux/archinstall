@@ -1,20 +1,14 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Self
+from typing import Any, Self
 
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu, Tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle
 
 from ..output import error
-
-if TYPE_CHECKING:
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
-
 
 CONFIG_KEY = '__config__'
 
@@ -26,7 +20,7 @@ class AbstractMenu[ValueT]:
 		config: Any,
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
-		reset_warning: str | None = None
+		reset_warning: str | None = None,
 	):
 		self._menu_item_group = item_group
 		self._config = config
@@ -47,7 +41,7 @@ class AbstractMenu[ValueT]:
 		# TODO: skip processing when it comes from a planified exit
 		if len(args) >= 2 and args[1]:
 			error(args[1])
-			Tui.print("Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
+			Tui.print('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')
 			raise args[1]
 
 		self.sync_all_to_config()
@@ -132,14 +126,14 @@ class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):
 		item_group: MenuItemGroup,
 		config: Any,
 		auto_cursor: bool = True,
-		allow_reset: bool = False
+		allow_reset: bool = False,
 	):
-		back_text = f'{Chars.Right_arrow} ' + str(_('Back'))
+		back_text = f'{Chars.Right_arrow} ' + tr('Back')
 		item_group.add_item(MenuItem(text=back_text))
 
 		super().__init__(
 			item_group,
 			config=config,
 			auto_cursor=auto_cursor,
-			allow_reset=allow_reset
+			allow_reset=allow_reset,
 		)

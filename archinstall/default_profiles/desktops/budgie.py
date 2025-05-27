@@ -12,11 +12,11 @@ class BudgieProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"materia-gtk-theme",
-			"budgie",
-			"mate-terminal",
-			"nemo",
-			"papirus-icon-theme"
+			'materia-gtk-theme',
+			'budgie',
+			'mate-terminal',
+			'nemo',
+			'papirus-icon-theme',
 		]
 
 	@property

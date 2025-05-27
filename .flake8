@@ -1,9 +1,8 @@
 [flake8]
 count = True
-ignore = W191,W503
+ignore = W191,W503,E704,E203
 max-complexity = 40
 max-line-length = 160
 show-source = True
 statistics = True
-builtins = _
 exclude = .git,__pycache__,build,docs,actions-runner

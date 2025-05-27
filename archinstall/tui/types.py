@@ -106,18 +106,18 @@ class PreviewStyle(Enum):
 # https://www.compart.com/en/unicode/search?q=box+drawings#characters
 # https://en.wikipedia.org/wiki/Box-drawing_characters
 class Chars:
-	Horizontal = "─"
-	Vertical = "│"
-	Upper_left = "┌"
-	Upper_right = "┐"
-	Lower_left = "└"
-	Lower_right = "┘"
-	Block = "█"
-	Triangle_up = "▲"
-	Triangle_down = "▼"
-	Check = "+"
-	Cross = "x"
-	Right_arrow = "←"
+	Horizontal = '─'
+	Vertical = '│'
+	Upper_left = '┌'
+	Upper_right = '┐'
+	Lower_left = '└'
+	Lower_right = '┘'
+	Block = '█'
+	Triangle_up = '▲'
+	Triangle_down = '▼'
+	Check = '+'
+	Cross = 'x'
+	Right_arrow = '←'
 
 
 @dataclass

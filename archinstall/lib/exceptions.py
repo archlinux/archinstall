@@ -35,6 +35,6 @@ class Deprecated(Exception):
 
 
 class DownloadTimeout(Exception):
-	'''
+	"""
 	Download timeout exception raised by DownloadTimer.
-	'''
+	"""

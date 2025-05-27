@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "3.0.4"
+version = "3.0.6"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -18,8 +18,8 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
-    "pyparted @ https://github.com//dcantrell/pyparted/archive/v3.13.0.tar.gz#sha512=26819e28d73420937874f52fda03eb50ab1b136574ea9867a69d46ae4976d38c4f26a2697fa70597eed90dd78a5ea209bafcc3227a17a7a5d63cff6d107c2b11",
-    "pydantic==2.11.4",
+    "pyparted>=3.13.0",
+    "pydantic==2.11.5",
     "cryptography>=44.0.2",
 ]
 
@@ -34,7 +34,7 @@ dev = [
     "mypy==1.15.0",
     "flake8==7.2.0",
     "pre-commit==4.2.0",
-    "ruff==0.11.9",
+    "ruff==0.11.11",
     "pylint==3.3.7",
     "pylint-pydantic==0.3.5",
     "pytest==8.3.5",
@@ -171,16 +171,16 @@ disable = [
 score = false
 
 [tool.pylint.variables]
-additional-builtins = ["_"]
 init-import = true
 
 [tool.ruff]
 target-version = "py312"
-builtins = ["_"]
 line-length = 160
 
 [tool.ruff.format]
 indent-style = "tab"
+quote-style = "single"
+docstring-code-format = true
 
 [tool.ruff.lint]
 select = [

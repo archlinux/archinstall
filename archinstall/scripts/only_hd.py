@@ -17,7 +17,6 @@ def ask_user_questions() -> None:
 
 		global_menu.set_enabled('archinstall_language', True)
 		global_menu.set_enabled('disk_config', True)
-		global_menu.set_enabled('disk_encryption', True)
 		global_menu.set_enabled('swap', True)
 		global_menu.set_enabled('__config__', True)
 
@@ -33,17 +32,16 @@ def perform_installation(mountpoint: Path) -> None:
 	config = arch_config_handler.config
 
 	if not config.disk_config:
-		error("No disk configuration provided")
+		error('No disk configuration provided')
 		return
 
 	disk_config = config.disk_config
-	disk_encryption = config.disk_encryption
+	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
 
 	with Installer(
 		mountpoint,
 		disk_config,
-		disk_encryption=disk_encryption,
-		kernels=config.kernels
+		kernels=config.kernels,
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
@@ -51,12 +49,12 @@ def perform_installation(mountpoint: Path) -> None:
 			installation.mount_ordered_layout()
 
 		# to generate a fstab directory holder. Avoids an error on exit and at the same time checks the procedure
-		target = Path(f"{mountpoint}/etc/fstab")
+		target = Path(f'{mountpoint}/etc/fstab')
 		if not target.parent.exists():
 			target.parent.mkdir(parents=True)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	debug(f"Disk states after installing:\n{disk_layouts()}")
+	debug(f'Disk states after installing:\n{disk_layouts()}')
 
 
 def _only_hd() -> None:
@@ -77,11 +75,7 @@ def _only_hd() -> None:
 				_only_hd()
 
 	if arch_config_handler.config.disk_config:
-		fs_handler = FilesystemHandler(
-			arch_config_handler.config.disk_config,
-			arch_config_handler.config.disk_encryption
-		)
-
+		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
 	perform_installation(arch_config_handler.args.mountpoint)

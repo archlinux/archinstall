@@ -16,13 +16,12 @@ if TYPE_CHECKING:
 
 
 class FormattedOutput:
-
 	@classmethod
 	def _get_values(
 		cls,
 		o: 'DataclassInstance',
 		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
-		filter_list: list[str] = []
+		filter_list: list[str] = [],
 	) -> dict[str, Any]:
 		"""
 		the original values returned a dataclass as dict thru the call to some specific methods
@@ -55,9 +54,9 @@ class FormattedOutput:
 		obj: list[Any],
 		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = [],
-		capitalize: bool = False
+		capitalize: bool = False,
 	) -> str:
-		""" variant of as_table (subtly different code) which has two additional parameters
+		"""variant of as_table (subtly different code) which has two additional parameters
 		filter which is a list of fields which will be shon
 		class_formatter a special method to format the outgoing data
 
@@ -121,7 +120,7 @@ class FormattedOutput:
 		output = ''
 
 		for i in range(0, len(entries), cols):
-			chunks.append(entries[i:i + cols])
+			chunks.append(entries[i : i + cols])
 
 		for row in chunks:
 			out_fmt = '{: <30} ' * len(row)
@@ -139,7 +138,7 @@ class Journald:
 			return None
 
 		log_adapter = logging.getLogger('archinstall')
-		log_fmt = logging.Formatter("[%(levelname)s]: %(message)s")
+		log_fmt = logging.Formatter('[%(levelname)s]: %(message)s')
 		log_ch = systemd.journal.JournalHandler()
 		log_ch.setFormatter(log_fmt)
 		log_adapter.addHandler(log_ch)
@@ -224,13 +223,13 @@ def _stylize_output(
 		'magenta': '5',
 		'cyan': '6',
 		'white': '7',
-		'teal': '8;5;109',      # Extended 256-bit colors (not always supported)
-		'orange': '8;5;208',    # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+		'teal': '8;5;109',  # Extended 256-bit colors (not always supported)
+		'orange': '8;5;208',  # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
 		'darkorange': '8;5;202',
 		'gray': '8;5;246',
 		'grey': '8;5;246',
 		'darkgray': '8;5;240',
-		'lightgray': '8;5;256'
+		'lightgray': '8;5;256',
 	}
 
 	foreground = {key: f'3{colors[key]}' for key in colors}
@@ -259,7 +258,7 @@ def info(
 	fg: str = 'white',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -275,7 +274,7 @@ def debug(
 	fg: str = 'white',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -286,7 +285,7 @@ def error(
 	fg: str = 'red',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -297,7 +296,7 @@ def warn(
 	fg: str = 'yellow',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -308,7 +307,7 @@ def log(
 	fg: str = 'white',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
 	# leave this check here as we need to setup the logging
 	# right from the beginning when the modules are loaded
@@ -326,11 +325,12 @@ def log(
 	with log_file.open('a') as fp:
 		ts = _timestamp()
 		level_name = logging.getLevelName(level)
-		out = f"[{ts}] - {level_name} - {orig_string}\n"
+		out = f'[{ts}] - {level_name} - {orig_string}\n'
 		fp.write(out)
 
 	Journald.log(text, level=level)
 
 	if level != logging.DEBUG:
 		from archinstall.tui.curses_menu import Tui
+
 		Tui.print(text)

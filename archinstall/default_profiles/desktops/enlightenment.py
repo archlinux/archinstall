@@ -12,8 +12,8 @@ class EnlighenmentProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"enlightenment",
-			"terminology"
+			'enlightenment',
+			'terminology',
 		]
 
 	@property

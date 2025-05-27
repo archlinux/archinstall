@@ -10,7 +10,7 @@ class MariadbProfile(Profile):
 	def __init__(self) -> None:
 		super().__init__(
 			'Mariadb',
-			ProfileType.ServerType
+			ProfileType.ServerType,
 		)
 
 	@property

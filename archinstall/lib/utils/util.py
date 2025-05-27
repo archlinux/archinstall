@@ -1,18 +1,11 @@
 from pathlib import Path
-from typing import TYPE_CHECKING
 
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import EditMenu
 from archinstall.tui.types import Alignment
 
 from ..models.users import Password
 from ..output import FormattedOutput
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 def get_password(
@@ -20,7 +13,7 @@ def get_password(
 	header: str | None = None,
 	allow_skip: bool = False,
 	preset: str | None = None,
-	skip_confirmation: bool = False
+	skip_confirmation: bool = False,
 ) -> Password | None:
 	failure: str | None = None
 
@@ -37,7 +30,7 @@ def get_password(
 			alignment=Alignment.CENTER,
 			allow_skip=allow_skip,
 			default_text=preset,
-			hide_input=True
+			hide_input=True,
 		).input()
 
 		if allow_skip and not result.has_item():
@@ -49,22 +42,22 @@ def get_password(
 			return password
 
 		if header is not None:
-			confirmation_header = f'{header}{_("Password")}: {password.hidden()}\n'
+			confirmation_header = f'{header}{tr("Password")}: {password.hidden()}\n'
 		else:
-			confirmation_header = f'{_("Password")}: {password.hidden()}\n'
+			confirmation_header = f'{tr("Password")}: {password.hidden()}\n'
 
 		result = EditMenu(
-			str(_('Confirm password')),
+			tr('Confirm password'),
 			header=confirmation_header,
 			alignment=Alignment.CENTER,
 			allow_skip=False,
-			hide_input=True
+			hide_input=True,
 		).input()
 
 		if password._plaintext == result.text():
 			return password
 
-		failure = str(_('The confirmation password did not match, please try again'))
+		failure = tr('The confirmation password did not match, please try again')
 
 
 def prompt_dir(
@@ -72,7 +65,7 @@ def prompt_dir(
 	header: str | None = None,
 	validate: bool = True,
 	allow_skip: bool = False,
-	preset: str | None = None
+	preset: str | None = None,
 ) -> Path | None:
 	def validate_path(path: str) -> str | None:
 		dest_path = Path(path)
@@ -80,7 +73,7 @@ def prompt_dir(
 		if dest_path.exists() and dest_path.is_dir():
 			return None
 
-		return str(_('Not a valid directory'))
+		return tr('Not a valid directory')
 
 	if validate:
 		validate_func = validate_path
@@ -93,7 +86,7 @@ def prompt_dir(
 		alignment=Alignment.CENTER,
 		allow_skip=allow_skip,
 		validator=validate_func,
-		default_text=preset
+		default_text=preset,
 	).input()
 
 	if allow_skip and not result.has_item():

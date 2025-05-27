@@ -11,19 +11,20 @@ jobs:
   deploy:
 
     runs-on: ubuntu-latest
-
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
+    container:
+      image: archlinux/archlinux:latest
+      options: --privileged
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
-        with:
-          python-version: '3.x'
       - name: Prepare arch
         run: |
           pacman-key --init
           pacman --noconfirm -Sy archlinux-keyring
           pacman --noconfirm -Syyu
-          pacman --noconfirm -Sy python-uv python-setuptools python-pip
+          pacman --noconfirm -Sy python python-uv python-setuptools python-pip python-pyparted python-pydantic
       - name: Build archinstall
         run: |
           uv build --no-build-isolation --wheel

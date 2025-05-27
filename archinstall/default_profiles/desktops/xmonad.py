@@ -16,7 +16,7 @@ class XmonadProfile(XorgProfile):
 			'xmonad-contrib',
 			'xmonad-extra',
 			'xterm',
-			'dmenu'
+			'dmenu',
 		]
 
 	@property

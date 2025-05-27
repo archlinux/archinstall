@@ -7,7 +7,7 @@ class TomcatProfile(Profile):
 	def __init__(self) -> None:
 		super().__init__(
 			'Tomcat',
-			ProfileType.ServerType
+			ProfileType.ServerType,
 		)
 
 	@property

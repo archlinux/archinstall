@@ -6,6 +6,7 @@
 #  Mário Victor Ribeiro Silva <github.com/ComicShrimp>
 #  Rafael Fontenelle <rafaelff@gnome.org>, 2023.
 #  Luis Antonio <github.com/ruisuantonio>, 2025.
+#  Luiz Felipe <github.com/LuizWT>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: archinstall\n"
@@ -1327,7 +1328,7 @@ msgid "Choose an option to give Sway access to your hardware"
 msgstr "Selecione uma opção para permitir o acesso do Sway ao seu hardware"
 
 msgid "Seat access"
-msgstr ""
+msgstr "Acesso ao seat"
 
 msgid "Mountpoint"
 msgstr "Ponto de montagem"
@@ -1348,7 +1349,7 @@ msgid "Filesystem"
 msgstr "Sistema de arquivos"
 
 msgid "Invalid size"
-msgstr ""
+msgstr "Tamanho inválido"
 
 msgid "Start (default: sector {}): "
 msgstr "Início (padrão: setor {}): "
@@ -1387,11 +1388,9 @@ msgstr "Nome de usuário"
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "\"{}\" deve ser um superusuário (sudo)?\n"
 
-#, fuzzy
 msgid "Interfaces"
-msgstr "Adicionar interface"
+msgstr "Interfaces"
 
-#, fuzzy
 msgid "You need to enter a valid IP in IP-config mode"
 msgstr "Você precisa fornecer um IP válido no modo IP-config"
 
@@ -1413,14 +1412,12 @@ msgstr "Digite os servidores DNS, separados por espaço, (deixe em branco para n
 msgid "DNS servers"
 msgstr "Servidores DNS"
 
-#, fuzzy
 msgid "Configure interfaces"
-msgstr "{} interfaces configuradas"
+msgstr "Configurar interfaces"
 
 msgid "Kernel"
 msgstr "Kernel"
 
-#, fuzzy
 msgid "UEFI is not detected and some options are disabled"
 msgstr "UEFI não foi detectado e algumas opções estão desabilitadas"
 
@@ -1439,9 +1436,8 @@ msgstr "Perfil principal"
 msgid "Confirm password"
 msgstr "Confirmar senha"
 
-#, fuzzy
 msgid "The confirmation password did not match, please try again"
-msgstr "A senha de confirmação não correspondeu a anterior, tente novamente"
+msgstr "A senha de confirmação não correspondeu, por favor tente novamente"
 
 msgid "Not a valid directory"
 msgstr "Não é um diretório válido"
@@ -1467,12 +1463,11 @@ msgstr "Desabilitado"
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
 msgstr "Por favor, envie este problema (e o arquivo) para: https://github.com/archlinux/archinstall/issues"
 
-#, fuzzy
 msgid "Mirror name"
-msgstr "Região do mirror"
+msgstr "Nome do Mirror"
 
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
 msgid "Select signature check"
 msgstr "Selecione uma opção de verificação de assinatura"
@@ -1483,9 +1478,8 @@ msgstr "Selecione um modo de execução"
 msgid "Press ? for help"
 msgstr "Pressione ? para ajuda"
 
-#, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr "Selecione uma opção para permitir o Hyprland acessar o seu hardware"
+msgstr "Selecione uma opção para permitir que Hyprland acesse seu hardware"
 
 msgid "Additional repositories"
 msgstr "Repositórios adicionais"
@@ -1499,12 +1493,11 @@ msgstr "Swap em zram"
 msgid "Name"
 msgstr "Nome"
 
-#, fuzzy
 msgid "Signature check"
-msgstr "Selecione uma opção de verificação de assinatura"
+msgstr "Verificação de assinatura"
 
 msgid "Selected free space segment on device {}:"
-msgstr "Segmentos de espaço livre no dispositivo {}:"
+msgstr "Segmento de espaço livre selecionado no dispositivo {}:"
 
 msgid "Size: {} / {}"
 msgstr "Tamanho: {} / {}"
@@ -1525,208 +1518,172 @@ msgid "The specified configuration will be applied"
 msgstr "A configuração especificada vai ser aplicada"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Apagar"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Marcar/desmarcar como inicializável"
+msgstr "Marcar/Desmarcar como XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "Pacotes adicionais"
+msgstr "Carregando pacotes..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Selecione na lista abaixo os pacotes que devem ser instalados adicionalmente"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Adicionar mirror personalizado"
+msgstr "Adicionar repositório personalizado"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Alterar mirror personalizado"
+msgstr "Alterar repositório personalizado"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Excluir mirror personalizado"
+msgstr "Remover repositório personalizado"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Região do mirror"
+msgstr "Nome do repositório"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "Adicionar mirror personalizado"
+msgstr "Adicionar servidor personalizado"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "Alterar mirror personalizado"
+msgstr "Alterar servidor personalizado"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "Excluir mirror personalizado"
+msgstr "Remover servidor personalizado"
 
 msgid "Server url"
-msgstr ""
+msgstr "URL do servidor"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "Selecione uma opção de assinatura"
+msgstr "Selecionar regiões"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "Adicionar mirror personalizado"
+msgstr "Adicionar servidores personalizados"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Adicionar mirror personalizado"
+msgstr "Adicionar repositório personalizado"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "Regiões dos mirrors"
+msgstr "Carregando regiões dos mirrors..."
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Repositórios opcionais"
+msgstr "Mirrors e repositórios"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "Regiões dos mirrors"
+msgstr "Regiões dos mirrors selecionadas"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "Mirrors personalizados"
+msgstr "Servidores personalizados"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "Repositórios opcionais"
+msgstr "Repositórios personalizados"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Apenas caracteres ASCII são suportados"
 
 msgid "Show help"
-msgstr ""
+msgstr "Mostrar ajuda"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Sair da ajuda"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Rolar visualização para cima"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Rolar visualização para baixo"
 
 msgid "Move up"
-msgstr ""
+msgstr "Mover para cima"
 
 msgid "Move down"
-msgstr ""
+msgstr "Mover para baixo"
 
 msgid "Move right"
-msgstr ""
+msgstr "Mover para a direita"
 
 msgid "Move left"
-msgstr ""
+msgstr "Mover para a esquerda"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Ir para entrada"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Pular seleção (se disponível)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Redefinir seleção (se disponível)"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "Selecione uma opção de verificação de assinatura"
+msgstr "Selecionar em escolha única"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "Selecione um fuso horário"
+msgstr "Selecionar em múltipla escolha"
 
 msgid "Reset"
-msgstr ""
+msgstr "Redefinir"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "Selecione um modo de execução"
+msgstr "Pular menu de seleção"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Iniciar modo de busca"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Sair do modo de busca"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "O Sway precisa de acesso ao seu seat (conjunto de dispositivos de hardware, como teclado, mouse, etc)"
+msgstr "O labwc precisa de acesso ao seu seat (conjunto de dispositivos de hardware, como teclado, mouse etc.)"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Selecione uma opção para permitir o acesso do Sway ao seu hardware"
+msgstr "Escolha uma opção para conceder ao labwc acesso ao seu hardware"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "O Sway precisa de acesso ao seu seat (conjunto de dispositivos de hardware, como teclado, mouse, etc)"
+msgstr "O niri precisa de acesso ao seu seat (conjunto de dispositivos de hardware, como teclado, mouse etc.)"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Selecione uma opção para permitir o acesso do Sway ao seu hardware"
+msgstr "Escolha uma opção para conceder ao niri acesso ao seu hardware"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "Marcar/desmarcar como inicializável"
+msgstr "Marcar/Desmarcar como ESP"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Grupo de pacotes:"
 
-#, fuzzy
 msgid "Exit archinstall"
-msgstr "Ajuda do archinstall"
+msgstr "Sair do archinstall"
 
-#, fuzzy
 msgid "Reboot system"
-msgstr "Sistema de arquivos"
+msgstr "Reiniciar o sistema"
 
-#, fuzzy
 msgid "chroot into installation for post-installation configurations"
-msgstr "Deseja fazer chroot para a nova instalação e realizar configurações pós-instalação?"
+msgstr "Entrar em chroot na instalação para configurações pós-instalação"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Instalação concluída"
 
-#, fuzzy
 msgid "What would you like to do next?"
-msgstr "Deseja continuar?"
+msgstr "O que você gostaria de fazer a seguir?"
 
-#, fuzzy
 msgid "Select which mode to configure for \"{}\""
-msgstr "Selecione qual modo configurar para \"{}\" ou pule para usar o modo padrão \"{}\""
+msgstr "Selecione qual modo configurar para \"{}\""
 
-#, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr "Senha de encriptação do disco"
+msgstr "Senha incorreta para descriptografar o arquivo de credenciais"
 
-#, fuzzy
 msgid "Incorrect password"
-msgstr "Senha de root"
+msgstr "Senha incorreta"
 
-#, fuzzy
 msgid "Credentials file decryption password"
-msgstr "Senha de encriptação do disco"
+msgstr "Senha para descriptografar o arquivo de credenciais"
 
-#, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Você deseja salvar arquivo(s) de configuração para {}?"
+msgstr "Você deseja criptografar o arquivo user_credentials.json?"
 
-#, fuzzy
 msgid "Credentials file encryption password"
-msgstr "Senha de encriptação do disco"
+msgstr "Senha para criptografar o arquivo de credenciais"
 
-#, fuzzy
 msgid "Repositories: {}"
-msgstr "Região do mirror"
+msgstr "Repositórios: {}"
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

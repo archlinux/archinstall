@@ -39,10 +39,10 @@ def test_user_config_roundtrip(
 
 	assert json.dumps(
 		result['mirror_config'],
-		sort_keys=True
+		sort_keys=True,
 	) == json.dumps(
 		expected['mirror_config'],
-		sort_keys=True
+		sort_keys=True,
 	)
 
 

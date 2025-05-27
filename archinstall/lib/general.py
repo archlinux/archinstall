@@ -35,7 +35,7 @@ def generate_password(length: int = 64) -> str:
 def locate_binary(name: str) -> str:
 	if path := which(name):
 		return path
-	raise RequirementError(f"Binary {name} does not exist.")
+	raise RequirementError(f'Binary {name} does not exist.')
 
 
 def clear_vt100_escape_codes(data: bytes) -> bytes:
@@ -57,8 +57,7 @@ def jsonify(obj: object, safe: bool = True) -> object:
 		return {
 			key: jsonify(value, safe)
 			for key, value in obj.items()
-			if isinstance(key, compatible_types)
-			and not (isinstance(key, str) and key.startswith("!") and safe)
+			if isinstance(key, compatible_types) and not (isinstance(key, str) and key.startswith('!') and safe)
 		}
 	if isinstance(obj, Enum):
 		return obj.value
@@ -73,7 +72,7 @@ def jsonify(obj: object, safe: bool = True) -> object:
 		return [jsonify(item, safe) for item in obj]
 	if isinstance(obj, Path):
 		return str(obj)
-	if hasattr(obj, "__dict__"):
+	if hasattr(obj, '__dict__'):
 		return vars(obj)
 
 	return obj
@@ -106,7 +105,7 @@ class SysCommandWorker:
 		peek_output: bool | None = False,
 		environment_vars: dict[str, str] | None = None,
 		working_directory: str | None = './',
-		remove_vt100_escape_codes_from_lines: bool = True
+		remove_vt100_escape_codes_from_lines: bool = True,
 	):
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
@@ -148,7 +147,7 @@ class SysCommandWorker:
 
 	def __iter__(self, *args: str, **kwargs: dict[str, Any]) -> Iterator[bytes]:
 		last_line = self._trace_log.rfind(b'\n')
-		lines = filter(None, self._trace_log[self._trace_log_pos:last_line].splitlines())
+		lines = filter(None, self._trace_log[self._trace_log_pos : last_line].splitlines())
 		for line in lines:
 			if self.remove_vt100_escape_codes_from_lines:
 				line = clear_vt100_escape_codes(line)
@@ -185,7 +184,7 @@ class SysCommandWorker:
 		if self.peek_output:
 			# To make sure any peaked output didn't leave us hanging
 			# on the same line we were on.
-			sys.stdout.write("\n")
+			sys.stdout.write('\n')
 			sys.stdout.flush()
 
 		if len(args) >= 2 and args[1]:
@@ -193,9 +192,9 @@ class SysCommandWorker:
 
 		if self.exit_code != 0:
 			raise SysCallError(
-				f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self)[-500:]}",
+				f'{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self)[-500:]}',
 				self.exit_code,
-				worker_log=self._trace_log
+				worker_log=self._trace_log,
 			)
 
 	def is_alive(self) -> bool:
@@ -238,13 +237,13 @@ class SysCommandWorker:
 				except UnicodeDecodeError:
 					return False
 
-			peak_logfile = Path(f"{storage['LOG_PATH']}/cmd_output.txt")
+			peak_logfile = Path(f'{storage["LOG_PATH"]}/cmd_output.txt')
 
 			change_perm = False
 			if peak_logfile.exists() is False:
 				change_perm = True
 
-			with peak_logfile.open("a") as peek_output_log:
+			with peak_logfile.open('a') as peek_output_log:
 				peek_output_log.write(str(output))
 
 			if change_perm:
@@ -302,7 +301,7 @@ class SysCommandWorker:
 			try:
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
 			except FileNotFoundError:
-				error(f"{self.cmd[0]} does not exist.")
+				error(f'{self.cmd[0]} does not exist.')
 				self.exit_code = 1
 				return False
 		else:
@@ -325,8 +324,8 @@ class SysCommand:
 		peek_output: bool | None = False,
 		environment_vars: dict[str, str] | None = None,
 		working_directory: str | None = './',
-		remove_vt100_escape_codes_from_lines: bool = True):
-
+		remove_vt100_escape_codes_from_lines: bool = True,
+	):
 		self.cmd = cmd
 		self.peek_output = peek_output
 		self.environment_vars = environment_vars
@@ -352,7 +351,7 @@ class SysCommand:
 
 	def __getitem__(self, key: slice) -> bytes | None:
 		if not self.session:
-			raise KeyError("SysCommand() does not have an active session.")
+			raise KeyError('SysCommand() does not have an active session.')
 		elif type(key) is slice:
 			start = key.start or 0
 			end = key.stop or len(self.session._trace_log)
@@ -379,8 +378,8 @@ class SysCommand:
 			peek_output=self.peek_output,
 			environment_vars=self.environment_vars,
 			remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines,
-			working_directory=self.working_directory) as session:
-
+			working_directory=self.working_directory,
+		) as session:
 			self.session = session
 
 			while not self.session.ended:
@@ -426,15 +425,15 @@ class SysCommand:
 
 
 def _log_cmd(cmd: list[str]) -> None:
-	history_logfile = Path(f"{storage['LOG_PATH']}/cmd_history.txt")
+	history_logfile = Path(f'{storage["LOG_PATH"]}/cmd_history.txt')
 
 	change_perm = False
 	if history_logfile.exists() is False:
 		change_perm = True
 
 	try:
-		with history_logfile.open("a") as cmd_log:
-			cmd_log.write(f"{time.time()} {cmd}\n")
+		with history_logfile.open('a') as cmd_log:
+			cmd_log.write(f'{time.time()} {cmd}\n')
 
 		if change_perm:
 			history_logfile.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
@@ -454,7 +453,7 @@ def run(
 		input=input_data,
 		stdout=subprocess.PIPE,
 		stderr=subprocess.STDOUT,
-		check=True
+		check=True,
 	)
 
 

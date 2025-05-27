@@ -1,16 +1,16 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.models.device_model import (
 	DeviceModification,
 	DiskEncryption,
-	DiskLayoutConfiguration,
 	EncryptionType,
 	LvmConfiguration,
 	LvmVolume,
 	PartitionModification,
 )
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -23,26 +23,21 @@ from ..output import FormattedOutput
 from ..utils.util import get_password
 from .fido import Fido2
 
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
-
 
 class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def __init__(
 		self,
-		disk_config: DiskLayoutConfiguration,
-		preset: DiskEncryption | None = None
+		device_modifications: list[DeviceModification],
+		lvm_config: LvmConfiguration | None = None,
+		preset: DiskEncryption | None = None,
 	):
 		if preset:
 			self._enc_config = preset
 		else:
 			self._enc_config = DiskEncryption()
 
-		self._disk_config = disk_config
+		self._device_modifications = device_modifications
+		self._lvm_config = lvm_config
 
 		menu_optioons = self._define_menu_options()
 		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
@@ -50,55 +45,55 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		super().__init__(
 			self._item_group,
 			self._enc_config,
-			allow_reset=True
+			allow_reset=True,
 		)
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=str(_('Encryption type')),
-				action=lambda x: select_encryption_type(self._disk_config, x),
+				text=tr('Encryption type'),
+				action=lambda x: select_encryption_type(self._device_modifications, self._lvm_config, x),
 				value=self._enc_config.encryption_type,
 				preview_action=self._preview,
-				key='encryption_type'
+				key='encryption_type',
 			),
 			MenuItem(
-				text=str(_('Encryption password')),
+				text=tr('Encryption password'),
 				action=lambda x: select_encrypted_password(),
 				value=self._enc_config.encryption_password,
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._preview,
-				key='encryption_password'
+				key='encryption_password',
 			),
 			MenuItem(
-				text=str(_('Partitions')),
-				action=lambda x: select_partitions_to_encrypt(self._disk_config.device_modifications, x),
+				text=tr('Partitions'),
+				action=lambda x: select_partitions_to_encrypt(self._device_modifications, x),
 				value=self._enc_config.partitions,
 				dependencies=[self._check_dep_partitions],
 				preview_action=self._preview,
-				key='partitions'
+				key='partitions',
 			),
 			MenuItem(
-				text=str(_('LVM volumes')),
+				text=tr('LVM volumes'),
 				action=self._select_lvm_vols,
 				value=self._enc_config.lvm_volumes,
 				dependencies=[self._check_dep_lvm_vols],
 				preview_action=self._preview,
-				key='lvm_volumes'
+				key='lvm_volumes',
 			),
 			MenuItem(
-				text=str(_('HSM')),
+				text=tr('HSM'),
 				action=select_hsm,
 				value=self._enc_config.hsm_device,
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._preview,
-				key='hsm_device'
+				key='hsm_device',
 			),
 		]
 
 	def _select_lvm_vols(self, preset: list[LvmVolume]) -> list[LvmVolume]:
-		if self._disk_config.lvm_config:
-			return select_lvm_vols_to_encrypt(self._disk_config.lvm_config, preset=preset)
+		if self._lvm_config:
+			return select_lvm_vols_to_encrypt(self._lvm_config, preset=preset)
 		return []
 
 	def _check_dep_enc_type(self) -> bool:
@@ -144,7 +139,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				encryption_type=enc_type,
 				partitions=enc_partitions,
 				lvm_volumes=enc_lvm_vols,
-				hsm_device=self._enc_config.hsm_device
+				hsm_device=self._enc_config.hsm_device,
 			)
 
 		return None
@@ -177,7 +172,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		if enc_type:
 			enc_text = EncryptionType.type_to_text(enc_type)
-			return f'{_("Encryption type")}: {enc_text}'
+			return f'{tr("Encryption type")}: {enc_text}'
 
 		return None
 
@@ -185,7 +180,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		enc_pwd = self._item_group.find_by_key('encryption_password').value
 
 		if enc_pwd:
-			return f'{_("Encryption password")}: {enc_pwd.hidden()}'
+			return f'{tr("Encryption password")}: {enc_pwd.hidden()}'
 
 		return None
 
@@ -193,7 +188,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		partitions: list[PartitionModification] | None = self._item_group.find_by_key('partitions').value
 
 		if partitions:
-			output = str(_('Partitions to be encrypted')) + '\n'
+			output = tr('Partitions to be encrypted') + '\n'
 			output += FormattedOutput.as_table(partitions)
 			return output.rstrip()
 
@@ -203,7 +198,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		volumes: list[PartitionModification] | None = self._item_group.find_by_key('lvm_volumes').value
 
 		if volumes:
-			output = str(_('LVM volumes to be encrypted')) + '\n'
+			output = tr('LVM volumes to be encrypted') + '\n'
 			output += FormattedOutput.as_table(volumes)
 			return output.rstrip()
 
@@ -217,17 +212,25 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		output = str(fido_device.path)
 		output += f' ({fido_device.manufacturer}, {fido_device.product})'
-		return f'{_("HSM device")}: {output}'
+		return f'{tr("HSM device")}: {output}'
 
 
-def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: EncryptionType) -> EncryptionType | None:
+def select_encryption_type(
+	device_modifications: list[DeviceModification],
+	lvm_config: LvmConfiguration | None = None,
+	preset: EncryptionType | None = None,
+) -> EncryptionType | None:
 	options: list[EncryptionType] = []
-	preset_value = EncryptionType.type_to_text(preset)
 
-	if disk_config.lvm_config:
+	if lvm_config:
 		options = [EncryptionType.LvmOnLuks, EncryptionType.LuksOnLvm]
 	else:
 		options = [EncryptionType.Luks]
+
+	if not preset:
+		preset = options[0]
+
+	preset_value = EncryptionType.type_to_text(preset)
 
 	items = [MenuItem(EncryptionType.type_to_text(o), value=o) for o in options]
 	group = MenuItemGroup(items)
@@ -238,7 +241,7 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 		allow_skip=True,
 		allow_reset=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_('Encryption type')))
+		frame=FrameProperties.min(tr('Encryption type')),
 	).run()
 
 	match result.type_:
@@ -251,18 +254,18 @@ def select_encryption_type(disk_config: DiskLayoutConfiguration, preset: Encrypt
 
 
 def select_encrypted_password() -> Password | None:
-	header = str(_('Enter disk encryption password (leave blank for no encryption)')) + '\n'
+	header = tr('Enter disk encryption password (leave blank for no encryption)') + '\n'
 	password = get_password(
-		text=str(_('Disk encryption password')),
+		text=tr('Disk encryption password'),
 		header=header,
-		allow_skip=True
+		allow_skip=True,
 	)
 
 	return password
 
 
 def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
-	header = str(_('Select a FIDO2 device to use for HSM')) + '\n'
+	header = tr('Select a FIDO2 device to use for HSM') + '\n'
 
 	try:
 		fido_devices = Fido2.get_fido2_devices()
@@ -276,7 +279,7 @@ def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 			group,
 			header=header,
 			alignment=Alignment.CENTER,
-			allow_skip=True
+			allow_skip=True,
 		).run()
 
 		match result.type_:
@@ -292,16 +295,13 @@ def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 
 def select_partitions_to_encrypt(
 	modification: list[DeviceModification],
-	preset: list[PartitionModification]
+	preset: list[PartitionModification],
 ) -> list[PartitionModification]:
 	partitions: list[PartitionModification] = []
 
 	# do not allow encrypting the boot partition
 	for mod in modification:
-		partitions += [
-			p for p in mod.partitions
-			if p.mountpoint != Path('/boot') and not p.is_swap()
-		]
+		partitions += [p for p in mod.partitions if p.mountpoint != Path('/boot') and not p.is_swap()]
 
 	# do not allow encrypting existing partitions that are not marked as wipe
 	avail_partitions = [p for p in partitions if not p.exists()]
@@ -314,7 +314,7 @@ def select_partitions_to_encrypt(
 			group,
 			alignment=Alignment.CENTER,
 			multi=True,
-			allow_skip=True
+			allow_skip=True,
 		).run()
 
 		match result.type_:
@@ -331,7 +331,7 @@ def select_partitions_to_encrypt(
 
 def select_lvm_vols_to_encrypt(
 	lvm_config: LvmConfiguration,
-	preset: list[LvmVolume]
+	preset: list[LvmVolume],
 ) -> list[LvmVolume]:
 	volumes: list[LvmVolume] = lvm_config.get_all_volumes()
 
@@ -341,7 +341,7 @@ def select_lvm_vols_to_encrypt(
 		result = SelectMenu[LvmVolume](
 			group,
 			alignment=Alignment.CENTER,
-			multi=True
+			multi=True,
 		).run()
 
 		match result.type_:

@@ -8,7 +8,7 @@ class MenuHelper:
 	def __init__(
 		self,
 		data: list[Any],
-		additional_options: list[str] = []
+		additional_options: list[str] = [],
 	) -> None:
 		self._separator = ''
 		self._data = data
