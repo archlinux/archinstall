@@ -82,6 +82,7 @@ enable_error_code = [
     "unimported-reveal",
     "unused-awaitable",
 ]
+show_traceback = true
 strict = true
 strict_bytes = true
 warn_unreachable = true
