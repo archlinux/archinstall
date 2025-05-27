@@ -6,6 +6,7 @@
 #  Mário Victor Ribeiro Silva <github.com/ComicShrimp>
 #  Rafael Fontenelle <rafaelff@gnome.org>, 2023.
 #  Luis Antonio <github.com/ruisuantonio>, 2025.
+#  Luiz Felipe <github.com/LuizWT>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: archinstall\n"
