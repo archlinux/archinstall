@@ -390,7 +390,6 @@ class Viewport(AbstractViewport):
 		height: int,
 		x_start: int,
 		y_start: int,
-		enable_scroll: bool = False,
 		frame: FrameProperties | None = None,
 		alignment: Alignment = Alignment.LEFT,
 	):
@@ -400,7 +399,6 @@ class Viewport(AbstractViewport):
 		self.height = height
 		self.x_start = x_start
 		self.y_start = y_start
-		self._enable_scroll = enable_scroll
 		self._frame = frame
 		self._alignment = alignment
 
@@ -1080,7 +1078,11 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 	) -> list[ViewportEntry]:
 		assert self._preview_vp is not None
 
-		start_row = self._prev_scroll_pos
+		if total_prev_rows <= available_rows:
+			start_row = 0
+		else:
+			start_row = self._prev_scroll_pos
+
 		end_row = start_row + available_rows
 
 		if end_row > total_prev_rows:
