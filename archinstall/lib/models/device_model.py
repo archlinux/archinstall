@@ -890,7 +890,7 @@ class PartitionModification:
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
-			self._obj_id: uuid.UUID | str = uuid.uuid4()
+			self._obj_id = uuid.uuid4()
 
 		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
@@ -1157,7 +1157,7 @@ class LvmVolume:
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
-			self._obj_id: uuid.UUID | str = uuid.uuid4()
+			self._obj_id = uuid.uuid4()
 
 	@override
 	def __hash__(self) -> int:
