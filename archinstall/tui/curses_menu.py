@@ -637,9 +637,6 @@ class EditMenu(AbstractCurses[str]):
 					self._show_help()
 					return None
 				case MenuKeys.ESC:
-					if self._help_active:
-						self._help_active = False
-						self._draw()
 					if self._allow_skip:
 						self._last_state = Result(ResultType.Skip, None)
 						key = 7
@@ -744,7 +741,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		self._init_viewports(preview_size)
 
 		assert self._menu_vp is not None
-		self._items_state: MenuItemsState = MenuItemsState(
+		self._items_state: MenuItemsState = MenuItemsState(  # type: ignore[unreachable]
 			self._item_group,
 			total_cols=self._horizontal_cols,
 			total_rows=self._menu_vp.height,
