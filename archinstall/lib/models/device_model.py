@@ -1010,6 +1010,8 @@ class PartitionModification:
 
 	@property
 	def mapper_name(self) -> str | None:
+		if self.is_root():
+			return 'root'
 		if self.is_home():
 			return 'home'
 		if self.dev_path:
