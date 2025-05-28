@@ -46,7 +46,7 @@ class FormattedOutput:
 		elif is_dataclass(o):
 			return asdict(o)
 		else:
-			return o.__dict__
+			return o.__dict__  # type: ignore[unreachable]
 
 	@classmethod
 	def as_table(

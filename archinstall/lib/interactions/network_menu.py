@@ -186,7 +186,7 @@ def ask_to_configure_network(preset: NetworkConfiguration | None) -> NetworkConf
 	if preset:
 		group.set_selected_by_value(preset.type)
 
-	result = SelectMenu[NetworkConfiguration](
+	result = SelectMenu[NicType](
 		group,
 		alignment=Alignment.CENTER,
 		frame=FrameProperties.min(tr('Network configuration')),

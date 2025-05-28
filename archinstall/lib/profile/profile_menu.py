@@ -237,5 +237,3 @@ def select_profile(
 					pass
 
 			return current_profile
-
-	return None
