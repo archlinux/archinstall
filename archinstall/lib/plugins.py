@@ -45,7 +45,7 @@ def _localize_path(path: Path) -> Path:
 		return path
 
 
-def _import_via_path(path: Path, namespace: str | None = None) -> str | None:
+def _import_via_path(path: Path, namespace: str | None = None) -> str:
 	if not namespace:
 		namespace = os.path.basename(path)
 

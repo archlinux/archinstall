@@ -51,7 +51,7 @@ class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 			),
 		]
 
-	def _prev_locale(self, item: MenuItem) -> str | None:
+	def _prev_locale(self, item: MenuItem) -> str:
 		temp_locale = LocaleConfiguration(
 			self._menu_item_group.find_by_key('kb_layout').get_value(),
 			self._menu_item_group.find_by_key('sys_lang').get_value(),

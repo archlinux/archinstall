@@ -104,7 +104,7 @@ class SysCommandWorker:
 		cmd: str | list[str],
 		peek_output: bool | None = False,
 		environment_vars: dict[str, str] | None = None,
-		working_directory: str | None = './',
+		working_directory: str = './',
 		remove_vt100_escape_codes_from_lines: bool = True,
 	):
 		if isinstance(cmd, str):
@@ -323,7 +323,7 @@ class SysCommand:
 		cmd: str | list[str],
 		peek_output: bool | None = False,
 		environment_vars: dict[str, str] | None = None,
-		working_directory: str | None = './',
+		working_directory: str = './',
 		remove_vt100_escape_codes_from_lines: bool = True,
 	):
 		self.cmd = cmd
@@ -349,7 +349,7 @@ class SysCommand:
 		if self.session:
 			yield from self.session
 
-	def __getitem__(self, key: slice) -> bytes | None:
+	def __getitem__(self, key: slice) -> bytes:
 		if not self.session:
 			raise KeyError('SysCommand() does not have an active session.')
 		elif type(key) is slice:

@@ -1294,7 +1294,7 @@ class Tui:
 		text: str,
 		row: int = 0,
 		col: int = 0,
-		endl: str | None = '\n',
+		endl: str = '\n',
 		clear_screen: bool = False,
 	) -> None:
 		if clear_screen:
