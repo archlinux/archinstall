@@ -1369,7 +1369,7 @@ class SnapshotConfig:
 		return {'type': self.snapshot_type.value}
 
 	@staticmethod
-	def parse_args(args: _SnapshotConfigSerialization) -> SnapshotConfig | None:
+	def parse_args(args: _SnapshotConfigSerialization) -> SnapshotConfig:
 		return SnapshotConfig(SnapshotType(args['type']))
 
 

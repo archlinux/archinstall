@@ -258,7 +258,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 			),
 		]
 
-	def _prev_regions(self, item: MenuItem) -> str | None:
+	def _prev_regions(self, item: MenuItem) -> str:
 		regions = item.get_value()
 
 		output = ''
@@ -438,7 +438,7 @@ class MirrorListHandler:
 		region_list = mappings[region]
 		return sorted(region_list, key=lambda mirror: (mirror.score, mirror.speed))
 
-	def _parse_remote_mirror_list(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
+	def _parse_remote_mirror_list(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
 		mirror_status = MirrorStatusListV3.model_validate_json(mirrorlist)
 
 		sorting_placeholder: dict[str, list[MirrorStatusEntryV3]] = {}
@@ -472,7 +472,7 @@ class MirrorListHandler:
 
 		return sorted_by_regions
 
-	def _parse_locale_mirrors(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]] | None:
+	def _parse_locale_mirrors(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
 		lines = mirrorlist.splitlines()
 
 		# remove empty lines
