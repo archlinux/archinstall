@@ -176,20 +176,13 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 			alignment=Alignment.CENTER,
 		).run()
 
-		snapshot_type: SnapshotType | None = None
-
 		match result.type_:
 			case ResultType.Skip:
 				return preset
 			case ResultType.Reset:
 				return None
 			case ResultType.Selection:
-				snapshot_type = result.get_value()
-
-		if not snapshot_type:
-			return None
-
-		return SnapshotConfig(snapshot_type=snapshot_type)
+				return SnapshotConfig(snapshot_type=result.get_value())
 
 	def _prev_disk_layouts(self, item: MenuItem) -> str | None:
 		if not item.value:

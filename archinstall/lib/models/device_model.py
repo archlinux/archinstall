@@ -1490,9 +1490,8 @@ class DiskEncryption:
 	def should_generate_encryption_file(self, dev: PartitionModification | LvmVolume) -> bool:
 		if isinstance(dev, PartitionModification):
 			return dev in self.partitions and dev.mountpoint != Path('/')
-		elif isinstance(dev, LvmVolume):
+		else:
 			return dev in self.lvm_volumes and dev.mountpoint != Path('/')
-		return False
 
 	def json(self) -> _DiskEncryptionSerialization:
 		obj: _DiskEncryptionSerialization = {

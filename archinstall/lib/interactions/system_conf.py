@@ -174,5 +174,3 @@ def ask_for_swap(preset: bool = True) -> bool:
 			return result.item() == MenuItem.yes()
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
-
-	return preset

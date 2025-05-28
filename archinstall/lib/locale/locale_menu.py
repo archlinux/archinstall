@@ -149,5 +149,3 @@ def select_kb_layout(preset: str | None = None) -> str | None:
 			return preset
 		case _:
 			raise ValueError('Unhandled return type')
-
-	return None

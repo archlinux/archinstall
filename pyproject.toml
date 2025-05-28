@@ -100,7 +100,6 @@ module = "archinstall.lib.*"
 disallow_incomplete_defs = false
 disallow_untyped_defs = false
 warn_return_any = false
-warn_unreachable = false
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.disk.*"
