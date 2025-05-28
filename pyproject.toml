@@ -78,6 +78,7 @@ enable_error_code = [
     "possibly-undefined",
     "redundant-expr",
     "redundant-self",
+    "truthy-bool",
     "truthy-iterable",
     "unimported-reveal",
     "unused-awaitable",

@@ -45,8 +45,7 @@ def perform_installation(mountpoint: Path) -> None:
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		if disk_config:
-			installation.mount_ordered_layout()
+		installation.mount_ordered_layout()
 
 		# to generate a fstab directory holder. Avoids an error on exit and at the same time checks the procedure
 		target = Path(f'{mountpoint}/etc/fstab')

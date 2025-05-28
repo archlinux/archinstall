@@ -511,18 +511,17 @@ class GlobalMenu(AbstractMenu[None]):
 		users = ask_for_additional_users(defined_users=preset)
 		return users
 
-	def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
+	def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration:
 		mirror_configuration = MirrorMenu(preset=preset).run()
 
-		if mirror_configuration:
-			if mirror_configuration.optional_repositories:
-				# reset the package list cache in case the repository selection has changed
-				list_available_packages.cache_clear()
+		if mirror_configuration.optional_repositories:
+			# reset the package list cache in case the repository selection has changed
+			list_available_packages.cache_clear()
 
-				# enable the repositories in the config
-				pacman_config = PacmanConfig(None)
-				pacman_config.enable(mirror_configuration.optional_repositories)
-				pacman_config.apply()
+			# enable the repositories in the config
+			pacman_config = PacmanConfig(None)
+			pacman_config.enable(mirror_configuration.optional_repositories)
+			pacman_config.apply()
 
 		return mirror_configuration
 
