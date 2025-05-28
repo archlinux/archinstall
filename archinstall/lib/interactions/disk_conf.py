@@ -311,6 +311,18 @@ def process_root_partition_size(total_size: Size, sector_size: SectorSize) -> Si
 		return Size(value=length, unit=Unit.GiB, sector_size=sector_size)
 
 
+def get_default_btrfs_subvols() -> list[SubvolumeModification]:
+	# https://btrfs.wiki.kernel.org/index.php/FAQ
+	# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
+	# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
+	return [
+		SubvolumeModification(Path('@'), Path('/')),
+		SubvolumeModification(Path('@home'), Path('/home')),
+		SubvolumeModification(Path('@log'), Path('/var/log')),
+		SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
+	]
+
+
 def suggest_single_disk_layout(
 	device: BDevice,
 	filesystem_type: FilesystemType | None = None,
@@ -398,16 +410,7 @@ def suggest_single_disk_layout(
 	device_modification.add_partition(root_partition)
 
 	if using_subvolumes:
-		# https://btrfs.wiki.kernel.org/index.php/FAQ
-		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
-		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
-		subvolumes = [
-			SubvolumeModification(Path('@'), Path('/')),
-			SubvolumeModification(Path('@home'), Path('/home')),
-			SubvolumeModification(Path('@log'), Path('/var/log')),
-			SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
-		]
-		root_partition.btrfs_subvols = subvolumes
+		root_partition.btrfs_subvols = get_default_btrfs_subvols()
 	elif using_home_partition:
 		# If we don't want to use subvolumes,
 		# But we want to be able to reuse data between re-installs..
@@ -579,13 +582,7 @@ def suggest_lvm_layout(
 		mount_options = select_mount_options()
 
 	if using_subvolumes:
-		btrfs_subvols = [
-			SubvolumeModification(Path('@'), Path('/')),
-			SubvolumeModification(Path('@home'), Path('/home')),
-			SubvolumeModification(Path('@log'), Path('/var/log')),
-			SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
-		]
-
+		btrfs_subvols = get_default_btrfs_subvols()
 		home_volume = False
 
 	boot_part: PartitionModification | None = None
