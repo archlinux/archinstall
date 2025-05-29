@@ -85,7 +85,6 @@ enable_error_code = [
 ]
 show_traceback = true
 strict = true
-strict_bytes = true
 warn_unreachable = true
 
 [[tool.mypy.overrides]]
