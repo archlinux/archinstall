@@ -105,7 +105,7 @@ All available console fonts can be found in `/usr/share/kbd/consolefonts` and se
 ## Scripting interactive installation
 
 For an example of a fully scripted, interactive installation please refer to the example
-[interactive_installation.py](https://github.com/archlinux/archinstall/blob/master/examples/interactive_installation.py)
+[interactive_installation.py](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py)
 
 
 > **To create your own ISO with this script in it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on creating your own ISO.
