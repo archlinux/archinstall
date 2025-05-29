@@ -78,6 +78,9 @@ class UserList(ListManager[User]):
 			case _:
 				raise ValueError('Unhandled result type')
 
+		if not username:
+			return None
+
 		header = f'{tr("Username")}: {username}\n'
 
 		password = get_password(tr('Password'), header=header, allow_skip=True)
