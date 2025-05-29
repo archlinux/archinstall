@@ -13,7 +13,6 @@ from typing import Literal, override
 
 from archinstall.lib.translationhandler import tr
 
-from ..lib.output import debug
 from .help import Help
 from .menu_item import MenuItem, MenuItemGroup, MenuItemsState
 from .result import Result, ResultType
@@ -87,10 +86,6 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 		return ViewportEntry(tr('Press Ctrl+h for help'), 0, 0, STYLE.NORMAL)
 
 	def _show_help(self) -> None:
-		if not self._help_window:
-			debug('no help window set')
-			return
-
 		help_text = Help.get_help_text()
 		lines = help_text.split('\n')
 

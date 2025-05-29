@@ -1012,7 +1012,7 @@ class Installer:
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
 			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 
-			if self._disk_encryption and self._disk_encryption.hsm_device:
+			if self._disk_encryption.hsm_device:
 				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
 				# Note: UUID must be used, not PARTUUID for sd-encrypt to work
 				kernel_parameters.append(f'rd.luks.name={root_partition.uuid}=root')
@@ -1672,8 +1672,7 @@ class Installer:
 				if result := plugin.on_user_created(self, user):
 					handled_by_plugin = result
 
-		if user.password:
-			self.set_user_password(user)
+		self.set_user_password(user)
 
 		for group in user.groups:
 			SysCommand(f'arch-chroot {self.target} gpasswd -a {user.username} {group}')
@@ -1684,7 +1683,7 @@ class Installer:
 	def set_user_password(self, user: User) -> bool:
 		info(f'Setting password for {user.username}')
 
-		enc_password = user.password.enc_password if user.password else None
+		enc_password = user.password.enc_password
 
 		if not enc_password:
 			debug('User password is empty')
