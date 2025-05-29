@@ -464,7 +464,10 @@ class PartitioningList(ListManager[DiskSegment]):
 		return size
 
 	def _prompt_size(self, free_space: FreeSpace) -> Size:
-		def validate(value: str) -> str | None:
+		def validate(value: str | None) -> str | None:
+			if not value:
+				return None
+
 			size = self._validate_value(sector_size, max_size, value)
 			if not size:
 				return tr('Invalid size')

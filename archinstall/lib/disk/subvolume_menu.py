@@ -35,11 +35,17 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 		return str(selection.name)
 
 	def _add_subvolume(self, preset: SubvolumeModification | None = None) -> SubvolumeModification | None:
+		def validate(value: str | None) -> str | None:
+			if value:
+				return None
+			return tr('Value cannot be empty')
+
 		result = EditMenu(
 			tr('Subvolume name'),
 			alignment=Alignment.CENTER,
 			allow_skip=True,
 			default_text=str(preset.name) if preset else None,
+			validator=validate,
 		).input()
 
 		match result.type_:
@@ -58,11 +64,12 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 			tr('Subvolume mountpoint'),
 			header=header,
 			allow_skip=True,
-			validate=False,
+			validate=True,
+			must_exist=False,
 		)
 
 		if not path:
-			return None
+			return preset
 
 		return SubvolumeModification(Path(name), path)
 
@@ -81,7 +88,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 				# was created we'll replace the existing one
 				data = [d for d in data if d.name != new_subvolume.name]
 				data += [new_subvolume]
-		elif entry is not None:
+		elif entry is not None:  # edit
 			if action == self._actions[1]:  # edit subvolume
 				new_subvolume = self._add_subvolume(entry)
 

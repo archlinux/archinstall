@@ -451,7 +451,7 @@ class EditMenu(AbstractCurses[str]):
 		title: str,
 		edit_width: int = 50,
 		header: str | None = None,
-		validator: Callable[[str], str | None] | None = None,
+		validator: Callable[[str | None], str | None] | None = None,
 		allow_skip: bool = False,
 		allow_reset: bool = False,
 		reset_warning_msg: str | None = None,
@@ -554,7 +554,7 @@ class EditMenu(AbstractCurses[str]):
 
 		self.clear_all()
 
-		if text and self._validator:
+		if self._validator:
 			if (err := self._validator(text)) is not None:
 				self.clear_all()
 				entry = ViewportEntry(err, 0, 0, STYLE.ERROR)
