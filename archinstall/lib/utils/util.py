@@ -2,6 +2,7 @@ from pathlib import Path
 
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import EditMenu
+from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment
 
 from ..models.users import Password
@@ -64,14 +65,19 @@ def prompt_dir(
 	text: str,
 	header: str | None = None,
 	validate: bool = True,
+	must_exist: bool = True,
 	allow_skip: bool = False,
 	preset: str | None = None,
 ) -> Path | None:
-	def validate_path(path: str) -> str | None:
-		dest_path = Path(path)
+	def validate_path(path: str | None) -> str | None:
+		if path:
+			dest_path = Path(path)
 
-		if dest_path.exists() and dest_path.is_dir():
-			return None
+			if must_exist:
+				if dest_path.exists() and dest_path.is_dir():
+					return None
+			else:
+				return None
 
 		return tr('Not a valid directory')
 
@@ -89,10 +95,15 @@ def prompt_dir(
 		default_text=preset,
 	).input()
 
-	if allow_skip and not result.has_item():
-		return None
+	match result.type_:
+		case ResultType.Skip:
+			return None
+		case ResultType.Selection:
+			if not result.text():
+				return None
+			return Path(result.text())
 
-	return Path(result.text())
+	return None
 
 
 def is_subpath(first: Path, second: Path) -> bool:

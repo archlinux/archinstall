@@ -247,13 +247,14 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 	header += tr(' - Maximum recommended value : {} ( Allows {} parallel downloads at a time )').format(max_recommended, max_recommended) + '\n'
 	header += tr(' - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n')
 
-	def validator(s: str) -> str | None:
-		try:
-			value = int(s)
-			if value >= 0:
-				return None
-		except Exception:
-			pass
+	def validator(s: str | None) -> str | None:
+		if s is not None:
+			try:
+				value = int(s)
+				if value >= 0:
+					return None
+			except Exception:
+				pass
 
 		return tr('Invalid download number')
 
