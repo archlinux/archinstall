@@ -71,8 +71,7 @@ class NiriProfile(XorgProfile):
 		).run()
 
 		if result.type_ == ResultType.Selection:
-			if result.item() is not None:
-				self.custom_settings['seat_access'] = result.get_value().value
+			self.custom_settings['seat_access'] = result.get_value().value
 
 	@override
 	def do_on_select(self) -> None:
