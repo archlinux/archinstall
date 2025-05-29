@@ -92,8 +92,6 @@ class Installer:
 
 		self.post_base_install: list[Callable] = []  # type: ignore[type-arg]
 
-		# TODO: Figure out which one of these two we'll use.. But currently we're mixing them..
-		storage['session'] = self
 		storage['installation_session'] = self
 
 		self._modules: list[str] = []

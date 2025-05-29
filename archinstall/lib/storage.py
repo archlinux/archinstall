@@ -6,9 +6,21 @@
 #
 # And Keeping this in dict ensures that variables are shared across imports.
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, NotRequired, TypedDict
 
-storage: dict[str, Any] = {
-	'LOG_PATH': Path('/var/log/archinstall'),
+if TYPE_CHECKING:
+	from archinstall.lib.boot import Boot
+	from archinstall.lib.installer import Installer
+
+
+class _StorageDict(TypedDict):
+	LOG_FILE: Path
+	LOG_PATH: Path
+	active_boot: NotRequired['Boot | None']
+	installation_session: NotRequired['Installer']
+
+
+storage: _StorageDict = {
 	'LOG_FILE': Path('install.log'),
+	'LOG_PATH': Path('/var/log/archinstall'),
 }
