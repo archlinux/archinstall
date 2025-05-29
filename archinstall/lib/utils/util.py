@@ -33,8 +33,9 @@ def get_password(
 			hide_input=True,
 		).input()
 
-		if allow_skip and not result.has_item():
-			return None
+		if allow_skip:
+			if not result.has_item() or not result.text():
+				return None
 
 		password = Password(plaintext=result.text())
 
