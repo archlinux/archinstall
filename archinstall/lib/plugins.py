@@ -7,8 +7,8 @@ import urllib.request
 from importlib import metadata
 from pathlib import Path
 
+from .args import arch_config_handler
 from .output import error, info, warn
-from .storage import storage
 
 plugins = {}
 
@@ -74,13 +74,6 @@ def _import_via_path(path: Path, namespace: str | None = None) -> str | None:
 	return namespace
 
 
-def _find_nth(haystack: list[str], needle: str, n: int) -> int | None:
-	indices = [idx for idx, elem in enumerate(haystack) if elem == needle]
-	if n <= len(indices):
-		return indices[n - 1]
-	return None
-
-
 def load_plugin(path: Path) -> None:
 	namespace: str | None = None
 	parsed_url = urllib.parse.urlparse(str(path))
@@ -98,10 +91,12 @@ def load_plugin(path: Path) -> None:
 	if namespace and namespace in sys.modules:
 		# Version dependency via __archinstall__version__ variable (if present) in the plugin
 		# Any errors in version inconsistency will be handled through normal error handling if not defined.
-		if hasattr(sys.modules[namespace], '__archinstall__version__'):
-			archinstall_major_and_minor_version = float(storage['__version__'][: _find_nth(storage['__version__'], '.', 2)])
+		version = arch_config_handler.config.version
 
-			if sys.modules[namespace].__archinstall__version__ < archinstall_major_and_minor_version:
+		if version is not None:
+			version_major_and_minor = version.rsplit('.', 1)[0]
+
+			if sys.modules[namespace].__archinstall__version__ < float(version_major_and_minor):
 				error(f'Plugin {sys.modules[namespace]} does not support the current Archinstall version.')
 
 		# Locate the plugin entry-point called Plugin()
