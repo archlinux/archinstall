@@ -705,10 +705,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		self._interrupt_warning = reset_warning_msg
 		self._header = header
 
-		# TODO: Remove the inline annotation after upgrading to mypy 1.16.0
-		# The inline annotation is needed to avoid a crash in 1.15.0:
-		#  RuntimeError: Partial type "<partial list[?]>" cannot be checked with "issubtype()"
-		self._header_entries: list[ViewportEntry] = []
+		self._header_entries = []
 		if header:
 			self._header_entries = self.get_header_entries(header)
 
