@@ -5,7 +5,6 @@
 #   (4. Added the ~/.config directory as an additional option for future reasons)
 #
 # And Keeping this in dict ensures that variables are shared across imports.
-from pathlib import Path
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 if TYPE_CHECKING:
@@ -14,13 +13,8 @@ if TYPE_CHECKING:
 
 
 class _StorageDict(TypedDict):
-	LOG_FILE: Path
-	LOG_PATH: Path
 	active_boot: NotRequired['Boot | None']
 	installation_session: NotRequired['Installer']
 
 
-storage: _StorageDict = {
-	'LOG_FILE': Path('install.log'),
-	'LOG_PATH': Path('/var/log/archinstall'),
-}
+storage: _StorageDict = {}

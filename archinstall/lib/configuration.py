@@ -12,8 +12,7 @@ from archinstall.tui.types import Alignment, FrameProperties, Orientation, Previ
 from .args import ArchConfig
 from .crypt import encrypt
 from .general import JSON, UNSAFE_JSON
-from .output import debug, warn
-from .storage import storage
+from .output import debug, logger, warn
 from .utils.util import get_password, prompt_dir
 
 
@@ -29,7 +28,7 @@ class ConfigurationOutput:
 		"""
 
 		self._config = config
-		self._default_save_path = storage.get('LOG_PATH', Path('.'))
+		self._default_save_path = logger.directory
 		self._user_config_file = Path('user_configuration.json')
 		self._user_creds_file = Path('user_credentials.json')
 

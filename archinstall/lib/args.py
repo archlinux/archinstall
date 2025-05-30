@@ -22,9 +22,8 @@ from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.profile_model import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
-from archinstall.lib.output import debug, error, warn
+from archinstall.lib.output import debug, error, logger, warn
 from archinstall.lib.plugins import load_plugin
-from archinstall.lib.storage import storage
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.utils.util import get_password
 from archinstall.tui.curses_menu import Tui
@@ -389,7 +388,7 @@ class ArchConfigHandler:
 			args.silent = False
 
 		if args.debug:
-			warn(f'Warning: --debug mode will write certain credentials to {storage["LOG_PATH"]}/{storage["LOG_FILE"]}!')
+			warn(f'Warning: --debug mode will write certain credentials to {logger.path}!')
 
 		if args.plugin:
 			plugin_path = Path(args.plugin)
