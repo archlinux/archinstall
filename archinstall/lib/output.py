@@ -8,7 +8,6 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from .storage import storage
 from .utils.unicode import unicode_ljust, unicode_rjust
 
 if TYPE_CHECKING:
@@ -147,30 +146,46 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-def _check_log_permissions() -> None:
-	filename = storage.get('LOG_FILE', None)
-	log_dir = storage.get('LOG_PATH', Path('./'))
+class Logger:
+	def __init__(self, path: Path = Path('/var/log/archinstall')) -> None:
+		self._path = path
 
-	if not filename:
-		raise ValueError('No log file name defined')
+	@property
+	def path(self) -> Path:
+		return self._path / 'install.log'
 
-	log_file = log_dir / filename
+	@property
+	def directory(self) -> Path:
+		return self._path
 
-	try:
-		log_dir.mkdir(exist_ok=True, parents=True)
-		log_file.touch(exist_ok=True)
+	def _check_permissions(self) -> None:
+		log_file = self.path
 
-		with log_file.open('a') as fp:
-			fp.write('')
-	except PermissionError:
-		# Fallback to creating the log file in the current folder
-		fallback_dir = Path('./').absolute()
-		fallback_log_file = fallback_dir / filename
+		try:
+			self._path.mkdir(exist_ok=True, parents=True)
+			log_file.touch(exist_ok=True)
 
-		fallback_log_file.touch(exist_ok=True)
+			with log_file.open('a') as f:
+				f.write('')
+		except PermissionError:
+			# Fallback to creating the log file in the current folder
+			logger._path = Path('./').absolute()
 
-		storage['LOG_PATH'] = fallback_dir
-		warn(f'Not enough permission to place log file at {log_file}, creating it in {fallback_log_file} instead')
+			warn(
+				f'Not enough permission to place log file at {log_file},',
+				'creating it in {logger.path} instead'
+			)
+
+	def log(self, level: int, content: str) -> None:
+		self._check_permissions()
+
+		with self.path.open('a') as f:
+			ts = _timestamp()
+			level_name = logging.getLevelName(level)
+			f.write(f'[{ts}] - {level_name} - {content}\n')
+
+
+logger = Logger()
 
 
 def _supports_color() -> bool:
@@ -309,24 +324,14 @@ def log(
 	reset: bool = False,
 	font: list[Font] = [],
 ) -> None:
-	# leave this check here as we need to setup the logging
-	# right from the beginning when the modules are loaded
-	_check_log_permissions()
+	text = ' '.join([str(x) for x in msgs])
 
-	text = orig_string = ' '.join([str(x) for x in msgs])
+	logger.log(level, text)
 
 	# Attempt to colorize the output if supported
 	# Insert default colors and override with **kwargs
 	if _supports_color():
 		text = _stylize_output(text, fg, bg, reset, font)
-
-	log_file = storage['LOG_PATH'] / storage['LOG_FILE']
-
-	with log_file.open('a') as fp:
-		ts = _timestamp()
-		level_name = logging.getLevelName(level)
-		out = f'[{ts}] - {level_name} - {orig_string}\n'
-		fp.write(out)
 
 	Journald.log(text, level=level)
 

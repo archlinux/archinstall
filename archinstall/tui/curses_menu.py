@@ -21,13 +21,13 @@ from .types import (
 	STYLE,
 	Alignment,
 	Chars,
+	FrameDim,
 	FrameProperties,
 	FrameStyle,
 	MenuKeys,
 	Orientation,
 	PreviewStyle,
 	ViewportEntry,
-	_FrameDim,
 )
 
 
@@ -158,7 +158,7 @@ class AbstractViewport:
 
 	def _get_right_frame(
 		self,
-		dim: _FrameDim,
+		dim: FrameDim,
 		scroll_percentage: int | None = None,
 	) -> list[ViewportEntry]:
 		right_frame = {}
@@ -181,7 +181,7 @@ class AbstractViewport:
 
 	def _get_top(
 		self,
-		dim: _FrameDim,
+		dim: FrameDim,
 		h_bar: str,
 		frame: FrameProperties,
 		scroll_percentage: int | None = None,
@@ -197,7 +197,7 @@ class AbstractViewport:
 
 	def _get_bottom(
 		self,
-		dim: _FrameDim,
+		dim: FrameDim,
 		h_bar: str,
 		scroll_pct: int | None = None,
 	) -> ViewportEntry:
@@ -214,7 +214,7 @@ class AbstractViewport:
 		max_width: int,
 		max_height: int,
 		frame: FrameProperties,
-	) -> _FrameDim:
+	) -> FrameDim:
 		rows = self._assemble_entries(entries).split('\n')
 		header_len = len(frame.header) if frame.header else 0
 		header_len += 3  # for header padding
@@ -237,12 +237,12 @@ class AbstractViewport:
 			frame_end = max_width
 			frame_height = max_height - 1
 
-		return _FrameDim(frame_start, frame_end, frame_height)
+		return FrameDim(frame_start, frame_end, frame_height)
 
 	def _adjust_entries(
 		self,
 		entries: list[ViewportEntry],
-		frame_dim: _FrameDim,
+		frame_dim: FrameDim,
 	) -> list[ViewportEntry]:
 		for entry in entries:
 			# top row frame offset
@@ -705,10 +705,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		self._interrupt_warning = reset_warning_msg
 		self._header = header
 
-		# TODO: Remove the inline annotation after upgrading to mypy 1.16.0
-		# The inline annotation is needed to avoid a crash in 1.15.0:
-		#  RuntimeError: Partial type "<partial list[?]>" cannot be checked with "issubtype()"
-		self._header_entries: list[ViewportEntry] = []
+		self._header_entries = []
 		if header:
 			self._header_entries = self.get_header_entries(header)
 

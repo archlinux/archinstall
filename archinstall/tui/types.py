@@ -134,7 +134,7 @@ class Alignment(Enum):
 
 
 @dataclass
-class _FrameDim:
+class FrameDim:
 	x_start: int
 	x_end: int
 	height: int
