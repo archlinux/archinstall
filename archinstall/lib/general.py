@@ -19,8 +19,7 @@ from shutil import which
 from typing import Any, override
 
 from .exceptions import RequirementError, SysCallError
-from .output import debug, error
-from .storage import storage
+from .output import debug, error, logger
 
 # https://stackoverflow.com/a/43627833/929999
 _VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
@@ -415,7 +414,7 @@ class SysCommand:
 
 
 def _append_log(file: str, content: str) -> None:
-	path = Path(f'{storage["LOG_PATH"]}/{file}')
+	path = logger.directory / file
 
 	change_perm = not path.exists()
 
