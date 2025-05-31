@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=67.5"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,7 +9,7 @@ description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
-license = {text = "GPL-3.0-only"}
+license = "GPL-3.0-only"
 readme = "README.md"
 requires-python = ">=3.12"
 keywords = ["linux", "arch", "archinstall", "installer"]
