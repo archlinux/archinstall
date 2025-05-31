@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Self
+from typing import Any
 
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu, Tui
+from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle
-
-from ..output import error
 
 CONFIG_KEY = '__config__'
 
@@ -28,23 +26,7 @@ class AbstractMenu[ValueT]:
 		self._allow_reset = allow_reset
 		self._reset_warning = reset_warning
 
-		self.is_context_mgr = False
-
 		self._sync_from_config()
-
-	def __enter__(self, *args: Any, **kwargs: Any) -> Self:
-		self.is_context_mgr = True
-		return self
-
-	def __exit__(self, *args: Any, **kwargs: Any) -> None:
-		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
-		# TODO: skip processing when it comes from a planified exit
-		if len(args) >= 2 and args[1]:
-			error(args[1])
-			Tui.print('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')
-			raise args[1]
-
-		self.sync_all_to_config()
 
 	def _sync_from_config(self) -> None:
 		for item in self._menu_item_group._menu_items:
