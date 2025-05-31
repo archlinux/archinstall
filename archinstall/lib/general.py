@@ -324,16 +324,6 @@ class SysCommand:
 		self.session: SysCommandWorker | None = None
 		self.create_session()
 
-	def __enter__(self) -> SysCommandWorker | None:
-		return self.session
-
-	def __exit__(self, *args: str, **kwargs: dict[str, Any]) -> None:
-		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
-		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
-
-		if len(args) >= 2 and args[1]:
-			error(args[1])
-
 	def __iter__(self, *args: list[Any], **kwargs: dict[str, Any]) -> Iterator[bytes]:
 		if self.session:
 			yield from self.session
