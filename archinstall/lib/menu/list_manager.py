@@ -19,7 +19,7 @@ class ListManager[ValueT]:
 	):
 		"""
 		:param prompt:  Text which will appear at the header
-		type param: string | DeferredTranslation
+		type param: string
 
 		:param entries: list/dict of option to be shown / manipulated
 		type param: list

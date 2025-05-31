@@ -163,9 +163,6 @@ class _DeferredTranslation:
 	def __init__(self, message: str):
 		self.message = message
 
-	def __len__(self) -> int:
-		return len(self.message)
-
 	@override
 	def __str__(self) -> str:
 		if builtins._ is _DeferredTranslation:  # type: ignore[attr-defined]
@@ -174,19 +171,6 @@ class _DeferredTranslation:
 		# builtins._ is changed from _DeferredTranslation to GNUTranslations.gettext after
 		# Language.activate() is called
 		return builtins._(self.message)  # type: ignore[attr-defined]
-
-	def __lt__(self, other) -> bool:
-		return self.message < other
-
-	def __gt__(self, other) -> bool:
-		return self.message > other
-
-	def __add__(self, other) -> _DeferredTranslation:
-		if isinstance(other, str):
-			other = _DeferredTranslation(other)
-
-		concat = self.message + other.message
-		return _DeferredTranslation(concat)
 
 
 def tr(message: str) -> str:
