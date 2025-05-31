@@ -19,7 +19,6 @@ class Luks2:
 	mapper_name: str | None = None
 	password: Password | None = None
 	key_file: Path | None = None
-	auto_unmount: bool = False
 
 	@property
 	def mapper_dev(self) -> Path | None:
@@ -43,13 +42,6 @@ class Luks2:
 	def __post_init__(self) -> None:
 		if self.luks_dev_path is None:
 			raise ValueError('Partition must have a path set')
-
-	def __enter__(self) -> None:
-		self.unlock(self.key_file)
-
-	def __exit__(self, *args: str, **kwargs: str) -> None:
-		if self.auto_unmount:
-			self.lock()
 
 	def _password_bytes(self) -> bytes:
 		if not self.password:
