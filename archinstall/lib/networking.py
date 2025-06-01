@@ -49,7 +49,7 @@ class DownloadTimer:
 		self.start_time = time.time()
 		return self
 
-	def __exit__(self, typ: type[BaseException] | None, value: BaseException | None, traceback: TracebackType | None) -> None:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		if self.start_time:
 			time_delta = time.time() - self.start_time
 			signal.alarm(0)

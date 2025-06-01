@@ -4,6 +4,7 @@ import shlex
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CalledProcessError
+from types import TracebackType
 
 from archinstall.lib.disk.utils import get_lsblk_info, umount
 
@@ -47,7 +48,7 @@ class Luks2:
 	def __enter__(self) -> None:
 		self.unlock(self.key_file)
 
-	def __exit__(self, *args: str, **kwargs: str) -> None:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		if self.auto_unmount:
 			self.lock()
 

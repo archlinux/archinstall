@@ -124,9 +124,9 @@ class Installer:
 	def __enter__(self) -> 'Installer':
 		return self
 
-	def __exit__(self, exc_type: type[BaseException] | None, exc_val, exc_tb: TracebackType | None) -> bool:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> bool | None:
 		if exc_type is not None:
-			error(exc_val)
+			error(str(exc_value))
 
 			self.sync_log_to_install_medium()
 
@@ -134,7 +134,9 @@ class Installer:
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
 			Tui.print(str(tr('[!] A log file has been created here: {}').format(logger.path)))
 			Tui.print(tr('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues'))
-			raise exc_val
+
+			# Return None to propagate the exception
+			return None
 
 		if not (missing_steps := self.post_install_check()):
 			msg = f'Installation completed without any errors.\nLog files temporarily available at {logger.directory}.\nYou may reboot when ready.\n'

@@ -1225,7 +1225,7 @@ class Tui:
 			tui = self.init()
 			Tui._t = tui
 
-	def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, tb: TracebackType | None) -> None:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		self.stop()
 
 	@property

@@ -225,7 +225,6 @@ ignore = [
     "PLW1514",  # unspecified-encoding
     "PLW1641",  # eq-without-hash
     "PLW2901",  # redefined-loop-name
-    "PYI036",   # bad-exit-annotation
     "RUF005",   # collection-literal-concatenation
     "RUF015",   # unnecessary-iterable-allocation-for-first-element
     "RUF039",   # unraw-re-pattern
