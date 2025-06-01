@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from types import TracebackType
 from typing import Any, Self
 
 from archinstall.lib.translationhandler import tr
@@ -36,13 +37,15 @@ class AbstractMenu[ValueT]:
 		self.is_context_mgr = True
 		return self
 
-	def __exit__(self, *args: Any, **kwargs: Any) -> None:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		# TODO: skip processing when it comes from a planified exit
-		if len(args) >= 2 and args[1]:
-			error(args[1])
+		if exc_type is not None:
+			error(str(exc_value))
 			Tui.print('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')
-			raise args[1]
+
+			# Return None to propagate the exception
+			return None
 
 		self.sync_all_to_config()
 
