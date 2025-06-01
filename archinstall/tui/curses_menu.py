@@ -288,7 +288,7 @@ class EditViewport(AbstractViewport):
 		edit_height: int,
 		x_start: int,
 		y_start: int,
-		process_key: Callable[[int], int | None],
+		process_key: Callable[[int], int],
 		frame: FrameProperties,
 		alignment: Alignment = Alignment.CENTER,
 		hide_input: bool = False,
@@ -375,7 +375,7 @@ class EditViewport(AbstractViewport):
 			self._textbox = Textbox(self._edit_win)
 			self._main_win.refresh()
 
-		self._textbox.edit(self._process_key_cb)  # type: ignore[arg-type]
+		self._textbox.edit(self._process_key_cb)
 
 
 class Viewport(AbstractViewport):
@@ -606,7 +606,7 @@ class EditMenu(AbstractCurses[str]):
 
 		return self._last_state
 
-	def _process_edit_key(self, key: int) -> int | None:
+	def _process_edit_key(self, key: int) -> int:
 		key_handles = MenuKeys.from_ord(key)
 
 		if self._help_active:
@@ -614,7 +614,7 @@ class EditMenu(AbstractCurses[str]):
 				self._help_active = False
 				self.clear_help_win()
 				return 7
-			return None
+			return 0
 
 		# remove standard keys from the list of key handles
 		key_handles = [key for key in key_handles if key != MenuKeys.STD_KEYS]
@@ -628,7 +628,7 @@ class EditMenu(AbstractCurses[str]):
 					self._clear_all()
 					self._help_active = True
 					self._show_help()
-					return None
+					return 0
 				case MenuKeys.ESC:
 					if self._allow_skip:
 						self._last_state = Result(ResultType.Skip, None)
