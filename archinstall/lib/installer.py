@@ -138,6 +138,8 @@ class Installer:
 			# Return None to propagate the exception
 			return None
 
+		self.sync()
+
 		if not (missing_steps := self.post_install_check()):
 			msg = f'Installation completed without any errors.\nLog files temporarily available at {logger.directory}.\nYou may reboot when ready.\n'
 			log(msg, fg='green')
@@ -154,6 +156,10 @@ class Installer:
 
 			self.sync_log_to_install_medium()
 			return False
+
+	def sync(self) -> None:
+		info(tr('Syncing the system...'))
+		SysCommand('sync')
 
 	def remove_mod(self, mod: str) -> None:
 		if mod in self._modules:
