@@ -356,6 +356,11 @@ class EditViewport(AbstractViewport):
 
 		self._main_win.refresh()
 
+	def textbox_value(self) -> str:
+		if not self._textbox:
+			return ''
+		return self._textbox.gather().strip()
+
 	def erase(self) -> None:
 		if self._main_win:
 			self._main_win.erase()
@@ -496,6 +501,8 @@ class EditMenu(AbstractCurses[str]):
 
 		self._last_state: Result[str] | None = None
 		self._help_active = False
+
+		self._current_text = default_text or ''
 		self._real_input = default_text or ''
 
 	def _init_viewports(self) -> None:
@@ -578,7 +585,7 @@ class EditMenu(AbstractCurses[str]):
 			if self._set_default_info and self._info_vp:
 				self._info_vp.update([self._only_ascii_text], 0)
 
-			self._input_vp.edit(default_text=self._default_text)
+			self._input_vp.edit(default_text=self._current_text)
 
 	@override
 	def kickoff(self, win: curses.window) -> Result[str]:
@@ -625,6 +632,8 @@ class EditMenu(AbstractCurses[str]):
 
 			match special_key:
 				case MenuKeys.HELP:
+					assert self._input_vp
+					self._current_text = self._input_vp.textbox_value()
 					self._clear_all()
 					self._help_active = True
 					self._show_help()
