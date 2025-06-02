@@ -620,7 +620,7 @@ class EditMenu(AbstractCurses[str]):
 			if MenuKeys.ESC in key_handles:
 				self._help_active = False
 				self.clear_help_win()
-				return 7  # ESC
+				return 7
 			return 0
 
 		# remove standard keys from the list of key handles
