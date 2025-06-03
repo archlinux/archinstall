@@ -127,7 +127,7 @@ class MenuItemGroup:
 		preset: Enum | None = None,
 	) -> 'MenuItemGroup':
 		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
-		group = MenuItemGroup(items, sort_items=False)
+		group = MenuItemGroup(items, sort_items=sort_items)
 
 		if preset is not None:
 			group.set_selected_by_value(preset)
