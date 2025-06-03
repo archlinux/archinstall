@@ -140,7 +140,7 @@ class AbstractViewport:
 
 		# adjust the original rows and cols of the entries as
 		# they need to be shrunk by 1 to make space for the frame
-		entries = self._adjust_entries(entries, dim)
+		entries = self._adjust_entries(entries)
 
 		framed_entries = [
 			top_ve,
@@ -242,7 +242,6 @@ class AbstractViewport:
 	def _adjust_entries(
 		self,
 		entries: list[ViewportEntry],
-		frame_dim: FrameDim,
 	) -> list[ViewportEntry]:
 		for entry in entries:
 			# top row frame offset

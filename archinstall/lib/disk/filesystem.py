@@ -63,18 +63,12 @@ class FilesystemHandler:
 			for mod in device_mods:
 				if boot_part := mod.get_boot_partition():
 					debug(f'Formatting boot partition: {boot_part.dev_path}')
-					self._format_partitions(
-						[boot_part],
-						mod.device_path,
-					)
+					self._format_partitions([boot_part])
 
 			self.perform_lvm_operations()
 		else:
 			for mod in device_mods:
-				self._format_partitions(
-					mod.partitions,
-					mod.device_path,
-				)
+				self._format_partitions(mod.partitions)
 
 				for part_mod in mod.partitions:
 					if part_mod.fs_type == FilesystemType.Btrfs and part_mod.is_create_or_modify():
@@ -83,7 +77,6 @@ class FilesystemHandler:
 	def _format_partitions(
 		self,
 		partitions: list[PartitionModification],
-		device_path: Path,
 	) -> None:
 		"""
 		Format can be given an overriding path, for instance /dev/null to test

@@ -103,7 +103,7 @@ class MirrorStatusEntryV3(BaseModel):
 		return value
 
 	@model_validator(mode='after')
-	def debug_output(self, validation_info) -> 'MirrorStatusEntryV3':
+	def debug_output(self) -> 'MirrorStatusEntryV3':
 		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(port[0]) if port and len(port) >= 1 else None
 
