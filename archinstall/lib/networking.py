@@ -163,7 +163,7 @@ def build_icmp(payload: bytes) -> bytes:
 	return struct.pack('!BBHHH', 8, 0, checksum, 0, 1) + payload
 
 
-def ping(hostname, timeout: int = 5) -> int:
+def ping(hostname: str, timeout: int = 5) -> int:
 	watchdog = select.epoll()
 	started = time.time()
 	random_identifier = f'archinstall-{random.randint(1000, 9999)}'.encode()

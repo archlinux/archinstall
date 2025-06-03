@@ -88,6 +88,7 @@ class MirrorStatusEntryV3(BaseModel):
 		"""
 		if self._latency is None:
 			debug(f'Checking latency for {self.url}')
+			assert self._hostname is not None
 			self._latency = ping(self._hostname, timeout=2)
 			debug(f'  latency: {self._latency}')
 
