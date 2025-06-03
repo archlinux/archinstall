@@ -84,7 +84,6 @@ class DiskLayoutConfiguration:
 		cls,
 		disk_config: _DiskLayoutConfigurationSerialization,
 		enc_password: Password | None = None,
-		disk_encryption: _DiskEncryptionSerialization | None = None,
 	) -> DiskLayoutConfiguration | None:
 		from archinstall.lib.disk.device_handler import device_handler
 
