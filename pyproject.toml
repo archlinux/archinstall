@@ -97,8 +97,6 @@ disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.*"
-disallow_incomplete_defs = false
-disallow_untyped_defs = false
 warn_return_any = false
 
 [[tool.mypy.overrides]]
@@ -118,9 +116,6 @@ disallow_any_explicit = true
 [[tool.mypy.overrides]]
 module = "archinstall.lib.utils"
 disallow_any_explicit = true
-
-[[tool.mypy.overrides]]
-module = "archinstall.tui.*"
 
 [[tool.mypy.overrides]]
 module = [

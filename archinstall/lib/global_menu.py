@@ -205,7 +205,7 @@ class GlobalMenu(AbstractMenu[None]):
 		save_config(self._arch_config)
 
 	def _missing_configs(self) -> list[str]:
-		def check(s) -> bool:
+		def check(s: str) -> bool:
 			item = self._item_group.find_by_key(s)
 			return item.has_value()
 
@@ -227,6 +227,7 @@ class GlobalMenu(AbstractMenu[None]):
 						tr('Either root-password or at least 1 user with sudo privileges must be specified'),
 					)
 			elif item.mandatory:
+				assert item.key is not None
 				if not check(item.key):
 					missing.add(item.text)
 
@@ -486,7 +487,7 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return bootloader
 
-	def _select_profile(self, current_profile: ProfileConfiguration | None):
+	def _select_profile(self, current_profile: ProfileConfiguration | None) -> ProfileConfiguration | None:
 		from .profile.profile_menu import ProfileMenu
 
 		profile_config = ProfileMenu(preset=current_profile).run()

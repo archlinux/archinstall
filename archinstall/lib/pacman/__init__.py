@@ -39,7 +39,7 @@ class Pacman:
 
 		return SysCommand(f'{default_cmd} {args}')
 
-	def ask(self, error_message: str, bail_message: str, func: Callable, *args, **kwargs) -> None:  # type: ignore[type-arg]
+	def ask(self, error_message: str, bail_message: str, func: Callable, *args, **kwargs) -> None:  # type: ignore[no-untyped-def, type-arg]
 		while True:
 			try:
 				func(*args, **kwargs)
