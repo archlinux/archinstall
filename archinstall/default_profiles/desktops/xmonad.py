@@ -14,7 +14,7 @@ class XmonadProfile(XorgProfile):
 		return [
 			'xmonad',
 			'xmonad-contrib',
-			'xmonad-extra',
+			'xmonad-extras',
 			'xterm',
 			'dmenu',
 		]
