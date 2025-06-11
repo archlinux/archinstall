@@ -94,8 +94,8 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 		]
 
 	@override
-	def run(self) -> DiskLayoutConfiguration | None:
-		super().run()
+	def run(self, additional_title: str | None = None) -> DiskLayoutConfiguration | None:
+		super().run(additional_title=additional_title)
 
 		if self._disk_menu_config.disk_config:
 			self._disk_menu_config.disk_config.lvm_config = self._disk_menu_config.lvm_config

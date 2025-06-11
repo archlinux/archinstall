@@ -8,6 +8,7 @@ import traceback
 
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.packages.packages import check_package_upgrade
 
 from .lib.hardware import SysInfo
 from .lib.output import FormattedOutput, debug, error, info, log, warn
@@ -53,15 +54,15 @@ def _check_new_version() -> None:
 	info('Checking version...')
 	upgrade = None
 
-	try:
-		upgrade = Pacman.run('-Qu archinstall').decode()
-	except Exception as e:
-		debug(f'Failed determine pacman version: {e}')
+	upgrade = check_package_upgrade('archinstall')
 
-	if upgrade:
-		text = f'New version available: {upgrade}'
-		info(text)
-		time.sleep(3)
+	if upgrade is None:
+		debug('No archinstall upgrades found')
+		return None
+
+	text = tr('New version available') + f': {upgrade}'
+	info(text)
+	time.sleep(3)
 
 
 def main() -> int:
