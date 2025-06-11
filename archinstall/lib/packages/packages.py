@@ -120,7 +120,7 @@ def check_package_upgrade(package: str) -> str | None:
 		upgrade = Pacman.run(f'-Qu {package}').decode()
 		return upgrade
 	except SysCallError:
-		pass
+		debug(f'Failed to check for package upgrades: {package}')
 
 	return None
 
