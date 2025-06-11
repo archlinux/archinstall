@@ -31,6 +31,7 @@ def perform_installation(mountpoint: Path) -> None:
 	) as installation:
 		# Strap in the base system, add a boot loader and configure
 		# some other minor details as specified by this profile and user.
+		installation.mount_ordered_layout()
 		installation.minimal_installation()
 		installation.set_hostname('minimal-arch')
 		installation.add_bootloader(Bootloader.Systemd)
