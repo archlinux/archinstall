@@ -182,10 +182,14 @@ def guided() -> None:
 		exit(0)
 
 	if not arch_config_handler.args.silent:
+		aborted = False
 		with Tui():
 			if not config.confirm_config():
 				debug('Installation aborted')
-				guided()
+				aborted = True
+
+		if aborted:
+			return guided()
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
