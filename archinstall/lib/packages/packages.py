@@ -105,12 +105,22 @@ def validate_package_list(packages: list[str]) -> tuple[list[str], list[str]]:
 
 
 def installed_package(package: str) -> LocalPackage | None:
-	package_info = []
 	try:
 		package_info = Pacman.run(f'-Q --info {package}').decode().split('\n')
 		return _parse_package_output(package_info, LocalPackage)
 	except SysCallError:
 		pass
+
+	return None
+
+
+@lru_cache
+def check_package_upgrade(package: str) -> str | None:
+	try:
+		upgrade = Pacman.run(f'-Qu {package}').decode()
+		return upgrade
+	except SysCallError:
+		debug(f'Failed to check for package upgrades: {package}')
 
 	return None
 

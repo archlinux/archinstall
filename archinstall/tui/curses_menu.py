@@ -82,8 +82,8 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 
 			return False
 
-	def help_entry(self) -> ViewportEntry:
-		return ViewportEntry(tr('Press Ctrl+h for help'), 0, 0, STYLE.NORMAL)
+	def help_text(self) -> str:
+		return tr('Press Ctrl+h for help')
 
 	def _show_help(self) -> None:
 		help_text = Help.get_help_text()
@@ -488,7 +488,7 @@ class EditMenu(AbstractCurses[str]):
 		title = f'* {title}' if not self._allow_skip else title
 		self._frame = FrameProperties(title, FrameStyle.MAX)
 
-		self._help_vp: Viewport | None = None
+		self._title_vp: Viewport | None = None
 		self._header_vp: Viewport | None = None
 		self._input_vp: EditViewport | None = None
 		self._info_vp: Viewport | None = None
@@ -507,7 +507,7 @@ class EditMenu(AbstractCurses[str]):
 	def _init_viewports(self) -> None:
 		y_offset = 0
 
-		self._help_vp = Viewport(self._max_width, 2, 0, y_offset)
+		self._title_vp = Viewport(self._max_width, 2, 0, y_offset)
 		y_offset += 2
 
 		if self._header_entries:
@@ -543,8 +543,8 @@ class EditMenu(AbstractCurses[str]):
 		self._draw()
 
 	def _clear_all(self) -> None:
-		if self._help_vp:
-			self._help_vp.erase()
+		if self._title_vp:
+			self._title_vp.erase()
 		if self._header_vp:
 			self._header_vp.erase()
 		if self._input_vp:
@@ -572,8 +572,10 @@ class EditMenu(AbstractCurses[str]):
 		return text
 
 	def _draw(self) -> None:
-		if self._help_vp:
-			self._help_vp.update([self.help_entry()], 0)
+		if self._title_vp:
+			help_text = self.help_text()
+			help_entry = ViewportEntry(help_text, 0, 0, STYLE.NORMAL)
+			self._title_vp.update([help_entry], 0)
 
 		if self._header_entries and self._header_vp:
 			self._header_vp.update(self._header_entries, 0)
@@ -692,6 +694,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		preview_style: PreviewStyle = PreviewStyle.NONE,
 		preview_size: float | Literal['auto'] = 0.2,
 		preview_frame: FrameProperties | None = None,
+		additional_title: str | None = None,
 	):
 		super().__init__()
 
@@ -712,6 +715,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		self._frame = frame
 		self._interrupt_warning = reset_warning_msg
 		self._header = header
+		self._additional_title = additional_title
 
 		self._header_entries = []
 		if header:
@@ -730,7 +734,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		self._visible_entries: list[ViewportEntry] = []
 		self._max_height, self._max_width = Tui.t().max_yx
 
-		self._help_vp: Viewport | None = None
+		self._title_vp: Viewport | None = None
 		self._header_vp: Viewport | None = None
 		self._footer_vp: Viewport | None = None
 		self._menu_vp: Viewport | None = None
@@ -787,8 +791,8 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 			self._preview_vp.erase()
 		if self._footer_vp:
 			self._footer_vp.erase()
-		if self._help_vp:
-			self._help_vp.erase()
+		if self._title_vp:
+			self._title_vp.erase()
 
 	def _footer_entries(self) -> list[ViewportEntry]:
 		if self._active_search:
@@ -801,7 +805,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		footer_height = 2  # possible filter at the bottom
 		y_offset = 0
 
-		self._help_vp = Viewport(self._max_width, 2, 0, y_offset)
+		self._title_vp = Viewport(self._max_width, 2, 0, y_offset)
 		y_offset += 2
 
 		if self._header_entries:
@@ -933,8 +937,15 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 		items = self._items_state.get_view_items()
 		vp_entries = self._item_to_vp_entry(items)
 
-		if self._help_vp:
-			self._update_viewport(self._help_vp, [self.help_entry()])
+		if self._title_vp:
+			title_text = self.help_text()
+
+			if self._additional_title is not None:
+				title_text += f' {self._additional_title}'
+
+			title_vp_entry = ViewportEntry(title_text, 0, 0, STYLE.NORMAL)
+
+			self._update_viewport(self._title_vp, [title_vp_entry])
 
 		if self._header_vp:
 			self._update_viewport(self._header_vp, self._header_entries)

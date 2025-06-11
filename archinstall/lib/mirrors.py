@@ -296,8 +296,8 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 		return output.strip()
 
 	@override
-	def run(self) -> MirrorConfiguration:
-		super().run()
+	def run(self, additional_title: str | None = None) -> MirrorConfiguration:
+		super().run(additional_title=additional_title)
 		return self._mirror_config
 
 

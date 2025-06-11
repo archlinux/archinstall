@@ -94,7 +94,10 @@ class AbstractMenu[ValueT]:
 	def _is_config_valid(self) -> bool:
 		return True
 
-	def run(self) -> ValueT | None:
+	def run(
+		self,
+		additional_title: str | None = None,
+	) -> ValueT | None:
 		self._sync_from_config()
 
 		while True:
@@ -106,6 +109,7 @@ class AbstractMenu[ValueT]:
 				preview_style=PreviewStyle.RIGHT,
 				preview_size='auto',
 				preview_frame=FrameProperties('Info', FrameStyle.MAX),
+				additional_title=additional_title,
 			).run()
 
 			match result.type_:
