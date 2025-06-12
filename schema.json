@@ -83,7 +83,7 @@
             "type": "object",
             "properties": {
                 "type": "string",
-                "nics": [
+                "nics": {
                     "type": "array",
                     "items": {
                         "iface": "string",
@@ -97,7 +97,7 @@
                                 "type": "string"
                             }
                         }
-                    ]
+                    }
                 }
             }
         },
@@ -175,7 +175,7 @@
                 "description": "Graphics Drivers to install if a desktop profile is used, ignored otherwise.",
                 "type": "string",
                 "enum": [
-                    "VMware / VirtualBox (open-source)",
+                    "VirtualBox (open-source)",
                     "Intel (open-source)",
                     "AMD / ATI (open-source)",
                     "All open-source (default)",
@@ -222,7 +222,7 @@
             ]
         },
         {
-            "required": [
+            "required": {
                 "!users": {
                     "description": "User account",
                     "type": "object",
@@ -232,7 +232,7 @@
                         "sudo": "boolean"
                     }
                 }
-            ]
+            }
         }
     ]
 }
