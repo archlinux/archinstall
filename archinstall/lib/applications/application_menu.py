@@ -45,8 +45,10 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 
 	def _prev_bluetooth(self, item: MenuItem) -> str | None:
 		if item.value is not None:
-			output = 'Bluetooth '
-			output += tr('Enabled') if item.value else tr('Disabled')
+			bluetooth_config: BluetoothConfiguration = item.value
+
+			output = 'Bluetooth: '
+			output += tr('Enabled') if bluetooth_config.enabled else tr('Disabled')
 			return output
 		return None
 

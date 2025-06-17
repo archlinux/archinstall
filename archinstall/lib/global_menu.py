@@ -139,7 +139,7 @@ class GlobalMenu(AbstractMenu[None]):
 				action=self._select_applications,
 				value=[],
 				preview_action=self._prev_applications,
-				key='app_config',
+				key='application_config',
 			),
 			MenuItem(
 				text=tr('Kernels'),
