@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import time
 from pathlib import Path
 
@@ -195,7 +196,15 @@ class FilesystemHandler:
 			desired_size = sum([vol.length for vol in vg.volumes], Size(0, Unit.B, SectorSize.default()))
 
 			delta = desired_size - avail_size
-			max_vol_offset = delta.convert(Unit.B)
+			delta_bytes = delta.convert(Unit.B)
+
+			# Round the offset up to the next physical extent (PE, 4 MiB by default)
+			# to ensure lvcreate`s internal rounding doesn`t consume space reserved
+			# for subsequent logical volumes.
+			pe_bytes = Size(4, Unit.MiB, SectorSize.default()).convert(Unit.B)
+			pe_count = math.ceil(delta_bytes.value / pe_bytes.value)
+			rounded_offset = pe_count * pe_bytes.value
+			max_vol_offset = Size(rounded_offset, Unit.B, SectorSize.default())
 
 			max_vol = max(vg.volumes, key=lambda x: x.length)
 
