@@ -3,10 +3,12 @@ from __future__ import annotations
 from typing import override
 
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
+from archinstall.lib.models.application import ApplicationConfiguration
 from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
 from archinstall.lib.packages import list_available_packages
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
+from .applications.application_menu import ApplicationMenu
 from .args import ArchConfig
 from .configuration import save_config
 from .hardware import SysInfo
@@ -133,6 +135,13 @@ class GlobalMenu(AbstractMenu[None]):
 				key='audio_config',
 			),
 			MenuItem(
+				text=tr('Applications'),
+				action=self._select_applications,
+				value=[],
+				preview_action=self._prev_applications,
+				key='app_config',
+			),
+			MenuItem(
 				text=tr('Kernels'),
 				value=['linux'],
 				action=select_kernel,
@@ -252,6 +261,10 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return language
 
+	def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
+		app_config = ApplicationMenu(preset).run()
+		return app_config
+
 	def _update_lang_text(self) -> None:
 		"""
 		The options for the global menu are generated with a static text;
@@ -289,6 +302,19 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value:
 			output = '\n'.join(sorted(item.value))
 			return output
+		return None
+
+	def _prev_applications(self, item: MenuItem) -> str | None:
+		if item.value:
+			app_config: ApplicationConfiguration = item.value
+			output = ''
+
+			if app_config.bluetooth_config:
+				output += f'{tr("Bluetooth")}: '
+				output += tr('Enabled') if app_config.bluetooth_config.enabled else tr('Disabled') + '\n'
+
+			return output
+
 		return None
 
 	def _prev_tz(self, item: MenuItem) -> str | None:

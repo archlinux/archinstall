@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from archinstall import SysInfo
+from archinstall.lib.applications.application_handler import application_handler
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
@@ -126,6 +127,9 @@ def perform_installation(mountpoint: Path) -> None:
 
 		if profile_config := config.profile_config:
 			profile_handler.install_profile_config(installation, profile_config)
+
+		if app_config := config.application_config:
+			application_handler.install_applications(installation, app_config)
 
 		if timezone := config.timezone:
 			installation.set_timezone(timezone)

@@ -6,6 +6,7 @@ from pytest import MonkeyPatch
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
+from archinstall.lib.models.application import ApplicationConfiguration, BluetoothConfiguration
 from archinstall.lib.models.audio_configuration import Audio, AudioConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType
@@ -127,6 +128,9 @@ def test_config_file_parsing(
 
 	assert arch_config == ArchConfig(
 		version='3.0.2',
+		application_config=ApplicationConfiguration(
+			bluetooth_config=BluetoothConfiguration(enabled=True),
+		),
 		locale_config=LocaleConfiguration(
 			kb_layout='us',
 			sys_lang='en_US',
