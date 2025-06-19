@@ -1,11 +1,12 @@
 from typing import override
 
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
-from archinstall.lib.models.application import ApplicationConfiguration, BluetoothConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.types import Alignment, Orientation
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment, FrameProperties, Orientation
 
 
 class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
@@ -41,6 +42,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				preview_action=self._prev_bluetooth,
 				key='bluetooth_config',
 			),
+			MenuItem(
+				text=tr('Audio'),
+				action=select_audio,
+				preview_action=self._prev_audio,
+				key='audio_config',
+			),
 		]
 
 	def _prev_bluetooth(self, item: MenuItem) -> str | None:
@@ -50,6 +57,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 			output = 'Bluetooth: '
 			output += tr('Enabled') if bluetooth_config.enabled else tr('Disabled')
 			return output
+		return None
+
+	def _prev_audio(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			config: AudioConfiguration = item.value
+			return f'{tr("Audio")}: {config.audio.value}'
 		return None
 
 
@@ -74,3 +87,26 @@ def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfigur
 	enabled = result.item() == MenuItem.yes()
 
 	return BluetoothConfiguration(enabled)
+
+
+def select_audio(preset: AudioConfiguration | None = None) -> AudioConfiguration | None:
+	items = [MenuItem(a.value, value=a) for a in Audio]
+	group = MenuItemGroup(items)
+
+	if preset:
+		group.set_focus_by_value(preset.audio)
+
+	result = SelectMenu[Audio](
+		group,
+		allow_skip=True,
+		alignment=Alignment.CENTER,
+		frame=FrameProperties.min(tr('Audio')),
+	).run()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return AudioConfiguration(audio=result.get_value())
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')

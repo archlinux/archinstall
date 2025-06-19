@@ -3,6 +3,9 @@
   "app_config": {
       "bluetooth_config": {
           "enabled": true
+      },
+      "audio_config": {
+          "audio": "pipewire"
       }
   },
   "audio_config": {

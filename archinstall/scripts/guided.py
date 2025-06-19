@@ -116,19 +116,13 @@ def perform_installation(mountpoint: Path) -> None:
 		if users := config.users:
 			installation.create_users(users)
 
-		audio_config = config.audio_config
-		if audio_config:
-			audio_config.install_audio_config(installation)
-		else:
-			info('No audio server will be installed')
-
 		if config.packages and config.packages[0] != '':
 			installation.add_additional_packages(config.packages)
 
 		if profile_config := config.profile_config:
 			profile_handler.install_profile_config(installation, profile_config)
 
-		if app_config := config.application_config:
+		if app_config := config.app_config:
 			application_handler.install_applications(installation, app_config)
 
 		if timezone := config.timezone:

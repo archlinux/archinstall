@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 
 
-class Bluetooth:
+class BluetoothApp:
 	@property
 	def packages(self) -> list[str]:
 		return [

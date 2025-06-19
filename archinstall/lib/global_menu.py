@@ -16,7 +16,6 @@ from .interactions.general_conf import (
 	add_number_of_parallel_downloads,
 	ask_additional_packages_to_install,
 	ask_for_a_timezone,
-	ask_for_audio_selection,
 	ask_hostname,
 	ask_ntp,
 )
@@ -26,7 +25,6 @@ from .interactions.system_conf import ask_for_bootloader, ask_for_swap, ask_for_
 from .locale.locale_menu import LocaleMenu
 from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
 from .mirrors import MirrorMenu
-from .models.audio_configuration import AudioConfiguration
 from .models.bootloader import Bootloader
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
@@ -127,12 +125,6 @@ class GlobalMenu(AbstractMenu[None]):
 				action=self._select_profile,
 				preview_action=self._prev_profile,
 				key='profile_config',
-			),
-			MenuItem(
-				text=tr('Audio'),
-				action=ask_for_audio_selection,
-				preview_action=self._prev_audio,
-				key='audio_config',
 			),
 			MenuItem(
 				text=tr('Applications'),
@@ -311,7 +303,13 @@ class GlobalMenu(AbstractMenu[None]):
 
 			if app_config.bluetooth_config:
 				output += f'{tr("Bluetooth")}: '
-				output += tr('Enabled') if app_config.bluetooth_config.enabled else tr('Disabled') + '\n'
+				output += tr('Enabled') if app_config.bluetooth_config.enabled else tr('Disabled')
+				output += '\n'
+
+			if app_config.audio_config:
+				audio_config = app_config.audio_config
+				output += f'{tr("Audio")}: {audio_config.audio.value}'
+				output += '\n'
 
 			return output
 
@@ -376,12 +374,6 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value is not None:
 			password: Password = item.value
 			return f'{tr("Root password")}: {password.hidden()}'
-		return None
-
-	def _prev_audio(self, item: MenuItem) -> str | None:
-		if item.value is not None:
-			config: AudioConfiguration = item.value
-			return f'{tr("Audio")}: {config.audio.value}'
 		return None
 
 	def _prev_parallel_dw(self, item: MenuItem) -> str | None:
