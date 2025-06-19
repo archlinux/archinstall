@@ -81,6 +81,12 @@ def main() -> int:
 
 	_log_sys_info()
 
+	if not arch_config_handler.args.offline:
+		_fetch_arch_db()
+
+		if not arch_config_handler.args.skip_version_check:
+			_check_new_version()
+
 	script = arch_config_handler.get_script()
 
 	mod_name = f'archinstall.scripts.{script}'
