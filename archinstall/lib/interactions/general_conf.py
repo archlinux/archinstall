@@ -13,7 +13,6 @@ from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle
 
 from ..locale.utils import list_timezones
-from ..models.audio_configuration import Audio, AudioConfiguration
 from ..models.packages import AvailablePackage, PackageGroup
 from ..output import warn
 from ..translationhandler import Language
@@ -100,29 +99,6 @@ def ask_for_a_timezone(preset: str | None = None) -> str | None:
 			return default
 		case ResultType.Selection:
 			return result.get_value()
-
-
-def ask_for_audio_selection(preset: AudioConfiguration | None = None) -> AudioConfiguration | None:
-	items = [MenuItem(a.value, value=a) for a in Audio]
-	group = MenuItemGroup(items)
-
-	if preset:
-		group.set_focus_by_value(preset.audio)
-
-	result = SelectMenu[Audio](
-		group,
-		allow_skip=True,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Audio')),
-	).run()
-
-	match result.type_:
-		case ResultType.Skip:
-			return preset
-		case ResultType.Selection:
-			return AudioConfiguration(audio=result.get_value())
-		case ResultType.Reset:
-			raise ValueError('Unhandled result type')
 
 
 def select_language(preset: str | None = None) -> str | None:

@@ -14,7 +14,6 @@ from pydantic.dataclasses import dataclass as p_dataclass
 
 from archinstall.lib.crypt import decrypt
 from archinstall.lib.models.application import ApplicationConfiguration
-from archinstall.lib.models.audio_configuration import AudioConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
@@ -63,8 +62,7 @@ class ArchConfig:
 	network_config: NetworkConfiguration | None = None
 	bootloader: Bootloader = field(default=Bootloader.get_default())
 	uki: bool = False
-	audio_config: AudioConfiguration | None = None
-	application_config: ApplicationConfiguration | None = None
+	app_config: ApplicationConfiguration | None = None
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: ['linux'])
 	ntp: bool = True
@@ -106,8 +104,7 @@ class ArchConfig:
 			'services': self.services,
 			'custom_commands': self.custom_commands,
 			'bootloader': self.bootloader.json(),
-			'audio_config': self.audio_config.json() if self.audio_config else None,
-			'app_config': self.application_config.json() if self.application_config else None,
+			'app_config': self.app_config.json() if self.app_config else None,
 		}
 
 		if self.locale_config:
@@ -184,11 +181,12 @@ class ArchConfig:
 		if args_config.get('uki') and not arch_config.bootloader.has_uki_support():
 			arch_config.uki = False
 
-		if audio_config := args_config.get('audio_config', None):
-			arch_config.audio_config = AudioConfiguration.parse_arg(audio_config)
+		# deprecated: backwards compatibility
+		audio_config_args = args_config.get('audio_config', None)
+		app_config_args = args_config.get('app_config', None)
 
-		if app_config := args_config.get('app_config', None):
-			arch_config.application_config = ApplicationConfiguration.parse_arg(app_config)
+		if audio_config_args is not None or app_config_args is not None:
+			arch_config.app_config = ApplicationConfiguration.parse_arg(app_config_args, audio_config_args)
 
 		if hostname := args_config.get('hostname', ''):
 			arch_config.hostname = hostname
