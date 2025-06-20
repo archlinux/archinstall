@@ -87,7 +87,7 @@ def main() -> int:
 		if not arch_config_handler.args.skip_version_check:
 			_check_new_version()
 
-	script = arch_config_handler.args.script
+	script = arch_config_handler.get_script()
 
 	mod_name = f'archinstall.scripts.{script}'
 	# by loading the module we'll automatically run the script

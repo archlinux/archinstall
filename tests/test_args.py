@@ -31,7 +31,7 @@ def test_default_args(monkeypatch: MonkeyPatch) -> None:
 		creds_decryption_key=None,
 		silent=False,
 		dry_run=False,
-		script='guided',
+		script=None,
 		mountpoint=Path('/mnt'),
 		skip_ntp=False,
 		skip_wkd=False,
@@ -127,6 +127,7 @@ def test_config_file_parsing(
 
 	assert arch_config == ArchConfig(
 		version='3.0.2',
+		script='test_script',
 		app_config=ApplicationConfiguration(
 			bluetooth_config=BluetoothConfiguration(enabled=True),
 			audio_config=AudioConfiguration(audio=Audio.PIPEWIRE),

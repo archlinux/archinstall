@@ -38,7 +38,7 @@ class Arguments:
 	creds_decryption_key: str | None = None
 	silent: bool = False
 	dry_run: bool = False
-	script: str = 'guided'
+	script: str | None = None
 	mountpoint: Path = Path('/mnt')
 	skip_ntp: bool = False
 	skip_wkd: bool = False
@@ -54,6 +54,7 @@ class Arguments:
 @dataclass
 class ArchConfig:
 	version: str | None = None
+	script: str | None = None
 	locale_config: LocaleConfiguration | None = None
 	archinstall_language: Language = field(default_factory=lambda: translation_handler.get_language_by_abbr('en'))
 	disk_config: DiskLayoutConfiguration | None = None
@@ -93,6 +94,7 @@ class ArchConfig:
 	def safe_json(self) -> dict[str, Any]:
 		config: Any = {
 			'version': self.version,
+			'script': self.script,
 			'archinstall-language': self.archinstall_language.json(),
 			'hostname': self.hostname,
 			'kernels': self.kernels,
@@ -129,6 +131,9 @@ class ArchConfig:
 		arch_config = ArchConfig()
 
 		arch_config.locale_config = LocaleConfiguration.parse_arg(args_config)
+
+		if script := args_config.get('script', None):
+			arch_config.script = script
 
 		if archinstall_lang := args_config.get('archinstall-language', None):
 			arch_config.archinstall_language = translation_handler.get_language_by_name(archinstall_lang)
@@ -244,6 +249,15 @@ class ArchConfigHandler:
 	def args(self) -> Arguments:
 		return self._args
 
+	def get_script(self) -> str:
+		if script := self.args.script:
+			return script
+
+		if script := self.config.script:
+			return script
+
+		return 'guided'
+
 	def print_help(self) -> None:
 		self._parser.print_help()
 
@@ -312,7 +326,6 @@ class ArchConfigHandler:
 		)
 		parser.add_argument(
 			'--script',
-			default='guided',
 			nargs='?',
 			help='Script to run for installation',
 			type=str,
