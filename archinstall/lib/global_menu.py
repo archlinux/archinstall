@@ -3,10 +3,12 @@ from __future__ import annotations
 from typing import override
 
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
+from archinstall.lib.models.application import ApplicationConfiguration
 from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
 from archinstall.lib.packages import list_available_packages
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
+from .applications.application_menu import ApplicationMenu
 from .args import ArchConfig
 from .configuration import save_config
 from .hardware import SysInfo
@@ -14,7 +16,6 @@ from .interactions.general_conf import (
 	add_number_of_parallel_downloads,
 	ask_additional_packages_to_install,
 	ask_for_a_timezone,
-	ask_for_audio_selection,
 	ask_hostname,
 	ask_ntp,
 )
@@ -24,7 +25,6 @@ from .interactions.system_conf import ask_for_bootloader, ask_for_swap, ask_for_
 from .locale.locale_menu import LocaleMenu
 from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
 from .mirrors import MirrorMenu
-from .models.audio_configuration import AudioConfiguration
 from .models.bootloader import Bootloader
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
@@ -127,10 +127,11 @@ class GlobalMenu(AbstractMenu[None]):
 				key='profile_config',
 			),
 			MenuItem(
-				text=tr('Audio'),
-				action=ask_for_audio_selection,
-				preview_action=self._prev_audio,
-				key='audio_config',
+				text=tr('Applications'),
+				action=self._select_applications,
+				value=[],
+				preview_action=self._prev_applications,
+				key='application_config',
 			),
 			MenuItem(
 				text=tr('Kernels'),
@@ -252,6 +253,10 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return language
 
+	def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
+		app_config = ApplicationMenu(preset).run()
+		return app_config
+
 	def _update_lang_text(self) -> None:
 		"""
 		The options for the global menu are generated with a static text;
@@ -289,6 +294,25 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value:
 			output = '\n'.join(sorted(item.value))
 			return output
+		return None
+
+	def _prev_applications(self, item: MenuItem) -> str | None:
+		if item.value:
+			app_config: ApplicationConfiguration = item.value
+			output = ''
+
+			if app_config.bluetooth_config:
+				output += f'{tr("Bluetooth")}: '
+				output += tr('Enabled') if app_config.bluetooth_config.enabled else tr('Disabled')
+				output += '\n'
+
+			if app_config.audio_config:
+				audio_config = app_config.audio_config
+				output += f'{tr("Audio")}: {audio_config.audio.value}'
+				output += '\n'
+
+			return output
+
 		return None
 
 	def _prev_tz(self, item: MenuItem) -> str | None:
@@ -350,12 +374,6 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value is not None:
 			password: Password = item.value
 			return f'{tr("Root password")}: {password.hidden()}'
-		return None
-
-	def _prev_audio(self, item: MenuItem) -> str | None:
-		if item.value is not None:
-			config: AudioConfiguration = item.value
-			return f'{tr("Audio")}: {config.audio.value}'
 		return None
 
 	def _prev_parallel_dw(self, item: MenuItem) -> str | None:

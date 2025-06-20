@@ -34,6 +34,11 @@ def deprecated_mirror_config() -> Path:
 
 
 @pytest.fixture(scope='session')
+def deprecated_audio_config() -> Path:
+	return Path(__file__).parent / 'data' / 'test_deprecated_audio_config.json'
+
+
+@pytest.fixture(scope='session')
 def mirrorlist_no_country_fixture() -> Path:
 	return Path(__file__).parent / 'data' / 'mirrorlists' / 'test_no_country'
 

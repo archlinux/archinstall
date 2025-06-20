@@ -16,8 +16,6 @@ class CinnamonProfile(XorgProfile):
 			'system-config-printer',
 			'gnome-keyring',
 			'gnome-terminal',
-			'blueman',
-			'bluez-utils',
 			'engrampa',
 			'gnome-screenshot',
 			'gvfs-smb',
