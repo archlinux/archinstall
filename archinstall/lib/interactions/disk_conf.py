@@ -92,6 +92,7 @@ def get_default_partition_layout(
 		device_modification = suggest_single_disk_layout(
 			devices[0],
 			filesystem_type=filesystem_type,
+			prompt_btrfs_structure=False,
 		)
 		return [device_modification]
 	else:
@@ -327,6 +328,7 @@ def suggest_single_disk_layout(
 	device: BDevice,
 	filesystem_type: FilesystemType | None = None,
 	separate_home: bool | None = None,
+	prompt_btrfs_structure: bool = True,
 ) -> DeviceModification:
 	if not filesystem_type:
 		filesystem_type = select_main_filesystem_format()
@@ -337,19 +339,23 @@ def suggest_single_disk_layout(
 	min_size_to_allow_home_part = Size(64, Unit.GiB, sector_size)
 
 	if filesystem_type == FilesystemType.Btrfs:
-		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
-		group = MenuItemGroup.yes_no()
-		group.set_focus_by_value(MenuItem.yes().value)
-		result = SelectMenu[bool](
-			group,
-			header=prompt,
-			alignment=Alignment.CENTER,
-			columns=2,
-			orientation=Orientation.HORIZONTAL,
-			allow_skip=False,
-		).run()
+		if prompt_btrfs_structure:
+			prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
+			group = MenuItemGroup.yes_no()
+			group.set_focus_by_value(MenuItem.yes().value)
+			result = SelectMenu[bool](
+				group,
+				header=prompt,
+				alignment=Alignment.CENTER,
+				columns=2,
+				orientation=Orientation.HORIZONTAL,
+				allow_skip=False,
+			).run()
 
-		using_subvolumes = result.item() == MenuItem.yes()
+			using_subvolumes = result.item() == MenuItem.yes()
+		else:
+			using_subvolumes = True
+
 		mount_options = select_mount_options()
 	else:
 		using_subvolumes = False
