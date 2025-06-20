@@ -1,5 +1,6 @@
 {
   "archinstall-language": "English",
+  "script": "test_script",
   "audio_config": {
     "audio": "pipewire"
   },
