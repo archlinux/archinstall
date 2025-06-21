@@ -26,16 +26,17 @@ Creating a script
 Lets create a `test_installer` - installer as an example. This is assuming that the folder `./archinstall` is a git-clone of the main repo.
 We begin by creating "`scripts`_:code:`/test_installer.py`". The placement here is important later.
 
-This script can now already be called using :code:`python -m archinstall test_installer` after a successful installation of the library itself.
+This script can now already be called using :code:`python -m archinstall --script test_installer` after a successful installation of the library itself.
 But the script won't do much. So we'll do something simple like list all the hard drives as an example.
 
 To do this, we'll begin by importing :code:`archinstall` in our "`scripts`_:code:`/test_installer.py`" and call a function whtin ``archinstall``.
 
 .. code-block:: python
 
-    import archinstall
+    from archinstall.lib.disk.device_handler import device_handler
+    from pprint import pprint
 
-    print(archinstall.disk.device_handler.devices)
+    pprint(device_handler.devices)
 
 Now, go ahead and reference the :ref:`installing.python.manual` installation method.
 After running ``python -m archinstall test_installer`` it should print something that looks like:
