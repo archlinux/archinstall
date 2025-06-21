@@ -12,6 +12,7 @@ class BluetoothApp:
 		return [
 			'bluez',
 			'bluez-utils',
+			'bluez-deprecated-tools',
 		]
 
 	@property
