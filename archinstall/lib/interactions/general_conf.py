@@ -161,7 +161,20 @@ def ask_additional_packages_to_install(
 	package_groups = PackageGroup.from_available_packages(packages)
 
 	# Additional packages (with some light weight error handling for invalid package names)
-	header = tr('Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed.') + '\n'
+	header = tr(
+		'Only packages such as '
+		'base, '
+		'base-devel, '
+		'linux, '
+		'linux-firmware-amdgpu, '
+		'linux-firmware-atheros, '
+		'linux-firmware-broadcom, '
+		'linux-firmware-intel, '
+		'linux-firmware-mediatek, '
+		'linux-firmware-nvidia, '
+		'linux-firmware-other, '
+		'efibootmgr '
+		'and optional profile packages are installed.') + '\n'
 	header += tr('Select any packages from the below list that should be installed additionally') + '\n'
 
 	# there are over 15k packages so this needs to be quick
