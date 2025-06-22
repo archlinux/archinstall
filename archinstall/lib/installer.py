@@ -1174,10 +1174,13 @@ class Installer:
 
 		# Install the boot loader
 		try:
-			SysCommand(f'arch-chroot {self.target} bootctl {" ".join(bootctl_options)} install')
+			# Force EFI variables since bootctl detects arch-chroot
+			# as a container environemnt since v257 and skips them silently.
+			# https://github.com/systemd/systemd/issues/36174
+			SysCommand(f"arch-chroot {self.target} bootctl --variables=yes {' '.join(bootctl_options)} install")
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'arch-chroot {self.target} bootctl --no-variables {" ".join(bootctl_options)} install')
+			SysCommand(f"arch-chroot {self.target} bootctl --variables=no {' '.join(bootctl_options)} install")
 
 		# Loader configuration is stored in ESP/loader:
 		# https://man.archlinux.org/man/loader.conf.5
