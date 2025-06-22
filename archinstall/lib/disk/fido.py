@@ -40,10 +40,10 @@ class Fido2:
 		# down moving the cursor in the menu
 		if not cls._loaded or reload:
 			try:
-				ret = SysCommand("systemd-cryptenroll --fido2-device=list").decode()
+				ret = SysCommand('systemd-cryptenroll --fido2-device=list').decode()
 			except SysCallError:
-				error("fido2 support is most likely not installed")
-				raise ValueError("HSM devices can not be detected, is libfido2 installed?")
+				error('fido2 support is most likely not installed')
+				raise ValueError('HSM devices can not be detected, is libfido2 installed?')
 
 			fido_devices = clear_vt100_escape_codes_from_str(ret)
 
@@ -51,10 +51,10 @@ class Fido2:
 			product_pos = 0
 			devices = []
 
-			for line in fido_devices.split("\r\n"):
-				if "/dev" not in line:
-					manufacturer_pos = line.find("MANUFACTURER")
-					product_pos = line.find("PRODUCT")
+			for line in fido_devices.split('\r\n'):
+				if '/dev' not in line:
+					manufacturer_pos = line.find('MANUFACTURER')
+					product_pos = line.find('PRODUCT')
 					continue
 
 				path = line[:manufacturer_pos].rstrip()
@@ -77,18 +77,18 @@ class Fido2:
 		dev_path: Path,
 		password: Password,
 	) -> None:
-		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {dev_path}", peek_output=True)
+		worker = SysCommandWorker(f'systemd-cryptenroll --fido2-device={hsm_device.path} {dev_path}', peek_output=True)
 		pw_inputted = False
 		pin_inputted = False
 
 		while worker.is_alive():
 			if pw_inputted is False:
-				if bytes(f"please enter current passphrase for disk {dev_path}", "UTF-8") in worker._trace_log.lower():
-					worker.write(bytes(password.plaintext, "UTF-8"))
+				if bytes(f'please enter current passphrase for disk {dev_path}', 'UTF-8') in worker._trace_log.lower():
+					worker.write(bytes(password.plaintext, 'UTF-8'))
 					pw_inputted = True
 			elif pin_inputted is False:
-				if bytes("please enter security token pin", "UTF-8") in worker._trace_log.lower():
-					worker.write(bytes(getpass.getpass(" "), "UTF-8"))
+				if bytes('please enter security token pin', 'UTF-8') in worker._trace_log.lower():
+					worker.write(bytes(getpass.getpass(' '), 'UTF-8'))
 					pin_inputted = True
 
-				info("You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds")
+				info('You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds')

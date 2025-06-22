@@ -37,35 +37,35 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
-				text=tr("Type"),
+				text=tr('Type'),
 				action=self._select_profile,
 				value=self._profile_config.profile,
 				preview_action=self._preview_profile,
-				key="profile",
+				key='profile',
 			),
 			MenuItem(
-				text=tr("Graphics driver"),
+				text=tr('Graphics driver'),
 				action=self._select_gfx_driver,
 				value=self._profile_config.gfx_driver if self._profile_config.profile and self._profile_config.profile.is_graphic_driver_supported() else None,
 				preview_action=self._prev_gfx,
 				enabled=self._profile_config.profile.is_graphic_driver_supported() if self._profile_config.profile else False,
-				dependencies=["profile"],
-				key="gfx_driver",
+				dependencies=['profile'],
+				key='gfx_driver',
 			),
 			MenuItem(
-				text=tr("Greeter"),
+				text=tr('Greeter'),
 				action=lambda x: select_greeter(preset=x),
 				value=self._profile_config.greeter if self._profile_config.profile and self._profile_config.profile.is_greeter_supported() else None,
 				enabled=self._profile_config.profile.is_graphic_driver_supported() if self._profile_config.profile else False,
 				preview_action=self._prev_greeter,
-				dependencies=["profile"],
-				key="greeter",
+				dependencies=['profile'],
+				key='greeter',
 			),
 		]
 
 	@override
-	def run(self) -> ProfileConfiguration | None:
-		super().run()
+	def run(self, additional_title: str | None = None) -> ProfileConfiguration | None:
+		super().run(additional_title=additional_title)
 		return self._profile_config
 
 	def _select_profile(self, preset: Profile | None) -> Profile | None:
@@ -73,36 +73,36 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 
 		if profile is not None:
 			if not profile.is_graphic_driver_supported():
-				self._item_group.find_by_key("gfx_driver").enabled = False
-				self._item_group.find_by_key("gfx_driver").value = None
+				self._item_group.find_by_key('gfx_driver').enabled = False
+				self._item_group.find_by_key('gfx_driver').value = None
 			else:
-				self._item_group.find_by_key("gfx_driver").enabled = True
-				self._item_group.find_by_key("gfx_driver").value = GfxDriver.AllOpenSource
+				self._item_group.find_by_key('gfx_driver').enabled = True
+				self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
 
 			if not profile.is_greeter_supported():
-				self._item_group.find_by_key("greeter").enabled = False
-				self._item_group.find_by_key("greeter").value = None
+				self._item_group.find_by_key('greeter').enabled = False
+				self._item_group.find_by_key('greeter').value = None
 			else:
-				self._item_group.find_by_key("greeter").enabled = True
-				self._item_group.find_by_key("greeter").value = profile.default_greeter_type
+				self._item_group.find_by_key('greeter').enabled = True
+				self._item_group.find_by_key('greeter').value = profile.default_greeter_type
 		else:
-			self._item_group.find_by_key("gfx_driver").value = None
-			self._item_group.find_by_key("greeter").value = None
+			self._item_group.find_by_key('gfx_driver').value = None
+			self._item_group.find_by_key('greeter').value = None
 
 		return profile
 
 	def _select_gfx_driver(self, preset: GfxDriver | None = None) -> GfxDriver | None:
 		driver = preset
-		profile: Profile | None = self._item_group.find_by_key("profile").value
+		profile: Profile | None = self._item_group.find_by_key('profile').value
 
 		if profile:
 			if profile.is_graphic_driver_supported():
 				driver = select_driver(preset=preset)
 
-			if driver and "Sway" in profile.current_selection_names():
+			if driver and 'Sway' in profile.current_selection_names():
 				if driver.is_nvidia():
-					header = tr("The proprietary Nvidia driver is not supported by Sway.") + "\n"
-					header += tr("It is likely that you will run into issues, are you okay with that?") + "\n"
+					header = tr('The proprietary Nvidia driver is not supported by Sway.') + '\n'
+					header += tr('It is likely that you will run into issues, are you okay with that?') + '\n'
 
 					group = MenuItemGroup.yes_no()
 					group.focus_item = MenuItem.no()
@@ -126,25 +126,25 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		if item.value:
 			driver = item.get_value().value
 			packages = item.get_value().packages_text()
-			return f"Driver: {driver}\n{packages}"
+			return f'Driver: {driver}\n{packages}'
 		return None
 
 	def _prev_greeter(self, item: MenuItem) -> str | None:
 		if item.value:
-			return f"{tr('Greeter')}: {item.value.value}"
+			return f'{tr("Greeter")}: {item.value.value}'
 		return None
 
 	def _preview_profile(self, item: MenuItem) -> str | None:
 		profile: Profile | None = item.value
-		text = ""
+		text = ''
 
 		if profile:
 			if (sub_profiles := profile.current_selection) is not None:
-				text += tr("Selected profiles: ")
-				text += ", ".join([p.name for p in sub_profiles]) + "\n"
+				text += tr('Selected profiles: ')
+				text += ', '.join([p.name for p in sub_profiles]) + '\n'
 
 			if packages := profile.packages_text(include_sub_packages=True):
-				text += f"{packages}"
+				text += f'{packages}'
 
 			if text:
 				return text
@@ -172,7 +172,7 @@ def select_greeter(
 		result = SelectMenu[GreeterType](
 			group,
 			allow_skip=True,
-			frame=FrameProperties.min(tr("Greeter")),
+			frame=FrameProperties.min(tr('Greeter')),
 			alignment=Alignment.CENTER,
 		).run()
 
@@ -182,7 +182,7 @@ def select_greeter(
 			case ResultType.Selection:
 				return result.get_value()
 			case ResultType.Reset:
-				raise ValueError("Unhandled result type")
+				raise ValueError('Unhandled result type')
 
 	return None
 
@@ -197,7 +197,7 @@ def select_profile(
 	top_level_profiles = profile_handler.get_top_level_profiles()
 
 	if header is None:
-		header = tr("This is a list of pre-programmed default_profiles") + "\n"
+		header = tr('This is a list of pre-programmed default_profiles') + '\n'
 
 	items = [MenuItem(p.name, value=p) for p in top_level_profiles]
 	group = MenuItemGroup(items, sort_items=True)
@@ -209,7 +209,7 @@ def select_profile(
 		allow_reset=allow_reset,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr("Main profile")),
+		frame=FrameProperties.min(tr('Main profile')),
 	).run()
 
 	match result.type_:
@@ -237,5 +237,3 @@ def select_profile(
 					pass
 
 			return current_profile
-
-	return None

@@ -9,20 +9,20 @@ if TYPE_CHECKING:
 class PostgresqlProfile(Profile):
 	def __init__(self) -> None:
 		super().__init__(
-			"Postgresql",
+			'Postgresql',
 			ProfileType.ServerType,
 		)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return ["postgresql"]
+		return ['postgresql']
 
 	@property
 	@override
 	def services(self) -> list[str]:
-		return ["postgresql"]
+		return ['postgresql']
 
 	@override
-	def post_install(self, install_session: "Installer") -> None:
-		install_session.arch_chroot("initdb -D /var/lib/postgres/data", run_as="postgres")
+	def post_install(self, install_session: 'Installer') -> None:
+		install_session.arch_chroot('initdb -D /var/lib/postgres/data', run_as='postgres')

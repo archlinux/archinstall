@@ -6,17 +6,17 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class BudgieProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__("Budgie", ProfileType.DesktopEnv)
+		super().__init__('Budgie', ProfileType.DesktopEnv)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"materia-gtk-theme",
-			"budgie",
-			"mate-terminal",
-			"nemo",
-			"papirus-icon-theme",
+			'materia-gtk-theme',
+			'budgie',
+			'mate-terminal',
+			'nemo',
+			'papirus-icon-theme',
 		]
 
 	@property

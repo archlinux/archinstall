@@ -63,8 +63,8 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 		search_enabled=False,
 		multi=True,
 		preview_style=PreviewStyle.BOTTOM,
-		preview_size="auto",
-		preview_frame=FrameProperties.max("Partitions"),
+		preview_size='auto',
+		preview_frame=FrameProperties.max('Partitions'),
 		allow_skip=True,
 	).run()
 
@@ -136,7 +136,7 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 		group,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr("Disk configuration type")),
+		frame=FrameProperties.min(tr('Disk configuration type')),
 		allow_reset=True,
 	).run()
 
@@ -149,10 +149,10 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 			selection = result.get_value()
 
 			if selection == pre_mount_mode:
-				output = "You will use whatever drive-setup is mounted at the specified directory\n"
+				output = 'You will use whatever drive-setup is mounted at the specified directory\n'
 				output += "WARNING: Archinstall won't check the suitability of this setup\n"
 
-				path = prompt_dir(tr("Root mount directory"), output, allow_skip=True)
+				path = prompt_dir(tr('Root mount directory'), output, allow_skip=True)
 
 				if path is None:
 					return None
@@ -206,7 +206,7 @@ def select_lvm_config(
 		group,
 		allow_reset=True,
 		allow_skip=True,
-		frame=FrameProperties.min(tr("LVM configuration type")),
+		frame=FrameProperties.min(tr('LVM configuration type')),
 		alignment=Alignment.CENTER,
 	).run()
 
@@ -235,7 +235,7 @@ def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModifi
 		type=PartitionType.Primary,
 		start=start,
 		length=size,
-		mountpoint=Path("/boot"),
+		mountpoint=Path('/boot'),
 		fs_type=FilesystemType.Fat32,
 		flags=flags,
 	)
@@ -243,20 +243,20 @@ def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModifi
 
 def select_main_filesystem_format() -> FilesystemType:
 	items = [
-		MenuItem("btrfs", value=FilesystemType.Btrfs),
-		MenuItem("ext4", value=FilesystemType.Ext4),
-		MenuItem("xfs", value=FilesystemType.Xfs),
-		MenuItem("f2fs", value=FilesystemType.F2fs),
+		MenuItem('btrfs', value=FilesystemType.Btrfs),
+		MenuItem('ext4', value=FilesystemType.Ext4),
+		MenuItem('xfs', value=FilesystemType.Xfs),
+		MenuItem('f2fs', value=FilesystemType.F2fs),
 	]
 
 	if arch_config_handler.args.advanced:
-		items.append(MenuItem("ntfs", value=FilesystemType.Ntfs))
+		items.append(MenuItem('ntfs', value=FilesystemType.Ntfs))
 
 	group = MenuItemGroup(items, sort_items=False)
 	result = SelectMenu[FilesystemType](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min("Filesystem"),
+		frame=FrameProperties.min('Filesystem'),
 		allow_skip=False,
 	).run()
 
@@ -264,13 +264,13 @@ def select_main_filesystem_format() -> FilesystemType:
 		case ResultType.Selection:
 			return result.get_value()
 		case _:
-			raise ValueError("Unhandled result type")
+			raise ValueError('Unhandled result type')
 
 
 def select_mount_options() -> list[str]:
-	prompt = tr("Would you like to use compression or disable CoW?") + "\n"
-	compression = tr("Use compression")
-	disable_cow = tr("Disable Copy-on-Write")
+	prompt = tr('Would you like to use compression or disable CoW?') + '\n'
+	compression = tr('Use compression')
+	disable_cow = tr('Disable Copy-on-Write')
 
 	items = [
 		MenuItem(compression, value=BtrfsMountOption.compress.value),
@@ -293,7 +293,7 @@ def select_mount_options() -> list[str]:
 		case ResultType.Selection:
 			return [result.get_value()]
 		case _:
-			raise ValueError("Unhandled result type")
+			raise ValueError('Unhandled result type')
 
 
 def process_root_partition_size(total_size: Size, sector_size: SectorSize) -> Size:
@@ -311,6 +311,18 @@ def process_root_partition_size(total_size: Size, sector_size: SectorSize) -> Si
 		return Size(value=length, unit=Unit.GiB, sector_size=sector_size)
 
 
+def get_default_btrfs_subvols() -> list[SubvolumeModification]:
+	# https://btrfs.wiki.kernel.org/index.php/FAQ
+	# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
+	# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
+	return [
+		SubvolumeModification(Path('@'), Path('/')),
+		SubvolumeModification(Path('@home'), Path('/home')),
+		SubvolumeModification(Path('@log'), Path('/var/log')),
+		SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
+	]
+
+
 def suggest_single_disk_layout(
 	device: BDevice,
 	filesystem_type: FilesystemType | None = None,
@@ -325,7 +337,7 @@ def suggest_single_disk_layout(
 	min_size_to_allow_home_part = Size(64, Unit.GiB, sector_size)
 
 	if filesystem_type == FilesystemType.Btrfs:
-		prompt = tr("Would you like to use BTRFS subvolumes with a default structure?") + "\n"
+		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
 		group = MenuItemGroup.yes_no()
 		group.set_focus_by_value(MenuItem.yes().value)
 		result = SelectMenu[bool](
@@ -362,7 +374,7 @@ def suggest_single_disk_layout(
 	elif separate_home:
 		using_home_partition = True
 	else:
-		prompt = tr("Would you like to create a separate partition for /home?") + "\n"
+		prompt = tr('Would you like to create a separate partition for /home?') + '\n'
 		group = MenuItemGroup.yes_no()
 		group.set_focus_by_value(MenuItem.yes().value)
 		result = SelectMenu(
@@ -390,7 +402,7 @@ def suggest_single_disk_layout(
 		type=PartitionType.Primary,
 		start=root_start,
 		length=root_length,
-		mountpoint=Path("/") if not using_subvolumes else None,
+		mountpoint=Path('/') if not using_subvolumes else None,
 		fs_type=filesystem_type,
 		mount_options=mount_options,
 	)
@@ -398,16 +410,7 @@ def suggest_single_disk_layout(
 	device_modification.add_partition(root_partition)
 
 	if using_subvolumes:
-		# https://btrfs.wiki.kernel.org/index.php/FAQ
-		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
-		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
-		subvolumes = [
-			SubvolumeModification(Path("@"), Path("/")),
-			SubvolumeModification(Path("@home"), Path("/home")),
-			SubvolumeModification(Path("@log"), Path("/var/log")),
-			SubvolumeModification(Path("@pkg"), Path("/var/cache/pacman/pkg")),
-		]
-		root_partition.btrfs_subvols = subvolumes
+		root_partition.btrfs_subvols = get_default_btrfs_subvols()
 	elif using_home_partition:
 		# If we don't want to use subvolumes,
 		# But we want to be able to reuse data between re-installs..
@@ -424,7 +427,7 @@ def suggest_single_disk_layout(
 			type=PartitionType.Primary,
 			start=home_start,
 			length=home_length,
-			mountpoint=Path("/home"),
+			mountpoint=Path('/home'),
 			fs_type=filesystem_type,
 			mount_options=mount_options,
 			flags=flags,
@@ -467,11 +470,11 @@ def suggest_multi_disk_layout(
 	root_device: BDevice | None = sorted_delta[0][0]
 
 	if home_device is None or root_device is None:
-		text = tr("The selected drives do not have the minimum capacity required for an automatic suggestion\n")
-		text += tr("Minimum capacity for /home partition: {}GiB\n").format(min_home_partition_size.format_size(Unit.GiB))
-		text += tr("Minimum capacity for Arch Linux partition: {}GiB").format(desired_root_partition_size.format_size(Unit.GiB))
+		text = tr('The selected drives do not have the minimum capacity required for an automatic suggestion\n')
+		text += tr('Minimum capacity for /home partition: {}GiB\n').format(min_home_partition_size.format_size(Unit.GiB))
+		text += tr('Minimum capacity for Arch Linux partition: {}GiB').format(desired_root_partition_size.format_size(Unit.GiB))
 
-		items = [MenuItem(tr("Continue"))]
+		items = [MenuItem(tr('Continue'))]
 		group = MenuItemGroup(items)
 		SelectMenu(group).run()
 
@@ -480,11 +483,11 @@ def suggest_multi_disk_layout(
 	if filesystem_type == FilesystemType.Btrfs:
 		mount_options = select_mount_options()
 
-	device_paths = ", ".join([str(d.device_info.path) for d in devices])
+	device_paths = ', '.join([str(d.device_info.path) for d in devices])
 
-	debug(f"Suggesting multi-disk-layout for devices: {device_paths}")
-	debug(f"/root: {root_device.device_info.path}")
-	debug(f"/home: {home_device.device_info.path}")
+	debug(f'Suggesting multi-disk-layout for devices: {device_paths}')
+	debug(f'/root: {root_device.device_info.path}')
+	debug(f'/home: {home_device.device_info.path}')
 
 	root_device_modification = DeviceModification(root_device, wipe=True)
 	home_device_modification = DeviceModification(home_device, wipe=True)
@@ -512,7 +515,7 @@ def suggest_multi_disk_layout(
 		type=PartitionType.Primary,
 		start=root_start,
 		length=root_length,
-		mountpoint=Path("/"),
+		mountpoint=Path('/'),
 		mount_options=mount_options,
 		fs_type=filesystem_type,
 	)
@@ -534,7 +537,7 @@ def suggest_multi_disk_layout(
 		type=PartitionType.Primary,
 		start=home_start,
 		length=home_length,
-		mountpoint=Path("/home"),
+		mountpoint=Path('/home'),
 		mount_options=mount_options,
 		fs_type=filesystem_type,
 		flags=flags,
@@ -547,10 +550,10 @@ def suggest_multi_disk_layout(
 def suggest_lvm_layout(
 	disk_config: DiskLayoutConfiguration,
 	filesystem_type: FilesystemType | None = None,
-	vg_grp_name: str = "ArchinstallVg",
+	vg_grp_name: str = 'ArchinstallVg',
 ) -> LvmConfiguration:
 	if disk_config.config_type != DiskLayoutType.Default:
-		raise ValueError("LVM suggested volumes are only available for default partitioning")
+		raise ValueError('LVM suggested volumes are only available for default partitioning')
 
 	using_subvolumes = False
 	btrfs_subvols = []
@@ -561,7 +564,7 @@ def suggest_lvm_layout(
 		filesystem_type = select_main_filesystem_format()
 
 	if filesystem_type == FilesystemType.Btrfs:
-		prompt = tr("Would you like to use BTRFS subvolumes with a default structure?") + "\n"
+		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
 		group = MenuItemGroup.yes_no()
 		group.set_focus_by_value(MenuItem.yes().value)
 
@@ -579,13 +582,7 @@ def suggest_lvm_layout(
 		mount_options = select_mount_options()
 
 	if using_subvolumes:
-		btrfs_subvols = [
-			SubvolumeModification(Path("@"), Path("/")),
-			SubvolumeModification(Path("@home"), Path("/home")),
-			SubvolumeModification(Path("@log"), Path("/var/log")),
-			SubvolumeModification(Path("@pkg"), Path("/var/cache/pacman/pkg")),
-		]
-
+		btrfs_subvols = get_default_btrfs_subvols()
 		home_volume = False
 
 	boot_part: PartitionModification | None = None
@@ -599,7 +596,7 @@ def suggest_lvm_layout(
 				other_part.append(part)
 
 	if not boot_part:
-		raise ValueError("Unable to find boot partition in partition modifications")
+		raise ValueError('Unable to find boot partition in partition modifications')
 
 	total_vol_available = sum(
 		[p.length for p in other_part],
@@ -612,10 +609,10 @@ def suggest_lvm_layout(
 
 	root_vol = LvmVolume(
 		status=LvmVolumeStatus.Create,
-		name="root",
+		name='root',
 		fs_type=filesystem_type,
 		length=root_vol_size,
-		mountpoint=Path("/"),
+		mountpoint=Path('/'),
 		btrfs_subvols=btrfs_subvols,
 		mount_options=mount_options,
 	)
@@ -625,10 +622,10 @@ def suggest_lvm_layout(
 	if home_volume:
 		home_vol = LvmVolume(
 			status=LvmVolumeStatus.Create,
-			name="home",
+			name='home',
 			fs_type=filesystem_type,
 			length=home_vol_size,
-			mountpoint=Path("/home"),
+			mountpoint=Path('/home'),
 		)
 
 		lvm_vol_group.volumes.append(home_vol)

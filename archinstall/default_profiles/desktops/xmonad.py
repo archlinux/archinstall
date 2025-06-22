@@ -6,17 +6,17 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class XmonadProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__("Xmonad", ProfileType.WindowMgr)
+		super().__init__('Xmonad', ProfileType.WindowMgr)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"xmonad",
-			"xmonad-contrib",
-			"xmonad-extra",
-			"xterm",
-			"dmenu",
+			'xmonad',
+			'xmonad-contrib',
+			'xmonad-extras',
+			'xterm',
+			'dmenu',
 		]
 
 	@property

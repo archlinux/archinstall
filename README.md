@@ -104,67 +104,9 @@ All available console fonts can be found in `/usr/share/kbd/consolefonts` and se
 
 ## Scripting interactive installation
 
-There are some examples in the `examples/` directory that should serve as a starting point.
+For an example of a fully scripted, interactive installation please refer to the example
+[interactive_installation.py](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py)
 
-The following is a small example of how to script your own *interactive* installation:
-
-```python
-from pathlib import Path
-
-from archinstall import Installer, ProfileConfiguration, profile_handler, User
-from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall.lib.disk.device_model import FilesystemType
-from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
-from archinstall.lib.disk.filesystem import FilesystemHandler
-from archinstall.lib.interactions.disk_conf import select_disk_config
-
-fs_type = FilesystemType('ext4')
-
-# Select a device to use for the installation
-disk_config = select_disk_config()
-
-# Optional: ask for disk encryption configuration
-data_store = {}
-disk_encryption = DiskEncryptionMenu(disk_config.device_modifications, data_store).run()
-
-# initiate file handler with the disk config and the optional disk encryption config
-fs_handler = FilesystemHandler(disk_config, disk_encryption)
-
-# perform all file operations
-# WARNING: this will potentially format the filesystem and delete all data
-fs_handler.perform_filesystem_operations()
-
-mountpoint = Path('/tmp')
-
-with Installer(
-        mountpoint,
-        disk_config,
-        disk_encryption=disk_encryption,
-        kernels=['linux']
-) as installation:
-    installation.mount_ordered_layout()
-    installation.minimal_installation(hostname='minimal-arch')
-    installation.add_additional_packages(['nano', 'wget', 'git'])
-
-    # Optionally, install a profile of choice.
-    # In this case, we install a minimal profile that is empty
-    profile_config = ProfileConfiguration(MinimalProfile())
-    profile_handler.install_profile_config(installation, profile_config)
-
-    user = User('archinstall', 'password', True)
-    installation.create_users(user)
-```
-
-This installer will perform the following actions:
-
-* Prompt the user to configure the disk partitioning
-* Prompt the user to setup disk encryption
-* Create a file handler instance for the configured disk and the optional disk encryption
-* Perform the disk operations (WARNING: this will potentially format the disks and erase all data)
-* Install a basic instance of Arch Linux *(base base-devel linux linux-firmware btrfs-progs efibootmgr)*
-* Install and configures a bootloader to partition 0 on UEFI. On BIOS, it sets the root to partition 0.
-* Install additional packages *(nano, wget, git)*
-* Create a new user
 
 > **To create your own ISO with this script in it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on creating your own ISO.
 
@@ -226,7 +168,7 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # losetup --partscan --show --find ./testimage.img
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
-    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
+    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd 
 
 This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>

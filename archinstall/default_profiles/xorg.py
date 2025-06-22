@@ -7,7 +7,7 @@ from archinstall.lib.translationhandler import tr
 class XorgProfile(Profile):
 	def __init__(
 		self,
-		name: str = "Xorg",
+		name: str = 'Xorg',
 		profile_type: ProfileType = ProfileType.Xorg,
 		advanced: bool = False,
 	):
@@ -20,9 +20,9 @@ class XorgProfile(Profile):
 
 	@override
 	def preview_text(self) -> str:
-		text = tr("Environment type: {}").format(self.profile_type.value)
+		text = tr('Environment type: {}').format(self.profile_type.value)
 		if packages := self.packages_text():
-			text += f"\n{packages}"
+			text += f'\n{packages}'
 
 		return text
 
@@ -30,5 +30,5 @@ class XorgProfile(Profile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"xorg-server",
+			'xorg-server',
 		]

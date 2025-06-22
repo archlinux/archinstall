@@ -12,8 +12,7 @@ from archinstall.tui.types import Alignment, FrameProperties, Orientation, Previ
 from .args import ArchConfig
 from .crypt import encrypt
 from .general import JSON, UNSAFE_JSON
-from .output import debug, warn
-from .storage import storage
+from .output import debug, logger, warn
 from .utils.util import get_password, prompt_dir
 
 
@@ -29,9 +28,9 @@ class ConfigurationOutput:
 		"""
 
 		self._config = config
-		self._default_save_path = storage.get("LOG_PATH", Path("."))
-		self._user_config_file = Path("user_configuration.json")
-		self._user_creds_file = Path("user_credentials.json")
+		self._default_save_path = logger.directory
+		self._user_config_file = Path('user_configuration.json')
+		self._user_creds_file = Path('user_credentials.json')
 
 	@property
 	def user_configuration_file(self) -> Path:
@@ -50,12 +49,12 @@ class ConfigurationOutput:
 		return json.dumps(out, indent=4, sort_keys=True, cls=UNSAFE_JSON)
 
 	def write_debug(self) -> None:
-		debug(" -- Chosen configuration --")
+		debug(' -- Chosen configuration --')
 		debug(self.user_config_to_json())
 
 	def confirm_config(self) -> bool:
-		header = f"{tr('The specified configuration will be applied')}. "
-		header += tr("Would you like to continue?") + "\n"
+		header = f'{tr("The specified configuration will be applied")}. '
+		header += tr('Would you like to continue?') + '\n'
 
 		with Tui():
 			group = MenuItemGroup.yes_no()
@@ -69,9 +68,9 @@ class ConfigurationOutput:
 				columns=2,
 				orientation=Orientation.HORIZONTAL,
 				allow_skip=False,
-				preview_size="auto",
+				preview_size='auto',
 				preview_style=PreviewStyle.BOTTOM,
-				preview_frame=FrameProperties.max(tr("Configuration")),
+				preview_frame=FrameProperties.max(tr('Configuration')),
 			).run()
 
 			if result.item() != MenuItem.yes():
@@ -83,8 +82,8 @@ class ConfigurationOutput:
 		dest_path_ok = dest_path.exists() and dest_path.is_dir()
 		if not dest_path_ok:
 			warn(
-				f"Destination directory {dest_path.resolve()} does not exist or is not a directory\n.",
-				"Configuration files can not be saved",
+				f'Destination directory {dest_path.resolve()} does not exist or is not a directory\n.',
+				'Configuration files can not be saved',
 			)
 		return dest_path_ok
 
@@ -126,36 +125,36 @@ class ConfigurationOutput:
 def save_config(config: ArchConfig) -> None:
 	def preview(item: MenuItem) -> str | None:
 		match item.value:
-			case "user_config":
+			case 'user_config':
 				serialized = config_output.user_config_to_json()
-				return f"{config_output.user_configuration_file}\n{serialized}"
-			case "user_creds":
+				return f'{config_output.user_configuration_file}\n{serialized}'
+			case 'user_creds':
 				if maybe_serial := config_output.user_credentials_to_json():
-					return f"{config_output.user_credentials_file}\n{maybe_serial}"
-				return tr("No configuration")
-			case "all":
+					return f'{config_output.user_credentials_file}\n{maybe_serial}'
+				return tr('No configuration')
+			case 'all':
 				output = [str(config_output.user_configuration_file)]
 				config_output.user_credentials_to_json()
 				output.append(str(config_output.user_credentials_file))
-				return "\n".join(output)
+				return '\n'.join(output)
 		return None
 
 	config_output = ConfigurationOutput(config)
 
 	items = [
 		MenuItem(
-			tr("Save user configuration (including disk layout)"),
-			value="user_config",
+			tr('Save user configuration (including disk layout)'),
+			value='user_config',
 			preview_action=preview,
 		),
 		MenuItem(
-			tr("Save user credentials"),
-			value="user_creds",
+			tr('Save user credentials'),
+			value='user_creds',
 			preview_action=preview,
 		),
 		MenuItem(
-			tr("Save all"),
-			value="all",
+			tr('Save all'),
+			value='all',
 			preview_action=preview,
 		),
 	]
@@ -164,8 +163,8 @@ def save_config(config: ArchConfig) -> None:
 	result = SelectMenu[str](
 		group,
 		allow_skip=True,
-		preview_frame=FrameProperties.max(tr("Configuration")),
-		preview_size="auto",
+		preview_frame=FrameProperties.max(tr('Configuration')),
+		preview_size='auto',
 		preview_style=PreviewStyle.RIGHT,
 	).run()
 
@@ -175,21 +174,21 @@ def save_config(config: ArchConfig) -> None:
 		case ResultType.Selection:
 			save_option = result.get_value()
 		case _:
-			raise ValueError("Unhandled return type")
+			raise ValueError('Unhandled return type')
 
-	readline.set_completer_delims("\t\n=")
-	readline.parse_and_bind("tab: complete")
+	readline.set_completer_delims('\t\n=')
+	readline.parse_and_bind('tab: complete')
 
 	dest_path = prompt_dir(
-		tr("Directory"),
-		tr("Enter a directory for the configuration(s) to be saved (tab completion enabled)") + "\n",
+		tr('Directory'),
+		tr('Enter a directory for the configuration(s) to be saved (tab completion enabled)') + '\n',
 		allow_skip=True,
 	)
 
 	if not dest_path:
 		return
 
-	header = tr("Do you want to save the configuration file(s) to {}?").format(dest_path)
+	header = tr('Do you want to save the configuration file(s) to {}?').format(dest_path)
 
 	group = MenuItemGroup.yes_no()
 	group.focus_item = MenuItem.yes()
@@ -208,9 +207,9 @@ def save_config(config: ArchConfig) -> None:
 			if result.item() == MenuItem.no():
 				return
 
-	debug(f"Saving configuration files to {dest_path.absolute()}")
+	debug(f'Saving configuration files to {dest_path.absolute()}')
 
-	header = tr("Do you want to encrypt the user_credentials.json file?")
+	header = tr('Do you want to encrypt the user_credentials.json file?')
 
 	group = MenuItemGroup.yes_no()
 	group.focus_item = MenuItem.no()
@@ -229,7 +228,7 @@ def save_config(config: ArchConfig) -> None:
 		case ResultType.Selection:
 			if result.item() == MenuItem.yes():
 				password = get_password(
-					text=tr("Credentials file encryption password"),
+					text=tr('Credentials file encryption password'),
 					allow_skip=True,
 				)
 
@@ -237,9 +236,9 @@ def save_config(config: ArchConfig) -> None:
 					enc_password = password.plaintext
 
 	match save_option:
-		case "user_config":
+		case 'user_config':
 			config_output.save_user_config(dest_path)
-		case "user_creds":
+		case 'user_creds':
 			config_output.save_user_creds(dest_path, password=enc_password)
-		case "all":
+		case 'all':
 			config_output.save(dest_path, creds=True, password=enc_password)

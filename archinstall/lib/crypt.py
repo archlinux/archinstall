@@ -8,7 +8,7 @@ from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
 
 from .output import debug
 
-libcrypt = ctypes.CDLL("libcrypt.so")
+libcrypt = ctypes.CDLL('libcrypt.so')
 
 libcrypt.crypt.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
 libcrypt.crypt.restype = ctypes.c_char_p
@@ -16,19 +16,19 @@ libcrypt.crypt.restype = ctypes.c_char_p
 libcrypt.crypt_gensalt.argtypes = [ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p, ctypes.c_int]
 libcrypt.crypt_gensalt.restype = ctypes.c_char_p
 
-LOGIN_DEFS = Path("/etc/login.defs")
+LOGIN_DEFS = Path('/etc/login.defs')
 
 
 def _search_login_defs(key: str) -> str | None:
 	defs = LOGIN_DEFS.read_text()
-	for line in defs.split("\n"):
+	for line in defs.split('\n'):
 		line = line.strip()
 
-		if line.startswith("#"):
+		if line.startswith('#'):
 			continue
 
 		if line.startswith(key):
-			value = line.split(" ")[1]
+			value = line.split(' ')[1]
 			return value
 
 	return None
@@ -36,12 +36,12 @@ def _search_login_defs(key: str) -> str | None:
 
 def crypt_gen_salt(prefix: str | bytes, rounds: int) -> bytes:
 	if isinstance(prefix, str):
-		prefix = prefix.encode("utf-8")
+		prefix = prefix.encode('utf-8')
 
 	setting = libcrypt.crypt_gensalt(prefix, rounds, None, 0)
 
 	if setting is None:
-		raise ValueError(f"crypt_gensalt() returned NULL for prefix {prefix!r} and rounds {rounds}")
+		raise ValueError(f'crypt_gensalt() returned NULL for prefix {prefix!r} and rounds {rounds}')
 
 	return setting
 
@@ -53,7 +53,7 @@ def crypt_yescrypt(plaintext: str) -> str:
 	shows that the hashing rounds are determined from YESCRYPT_COST_FACTOR in /etc/login.defs
 	If no value was specified (or commented out) a default of 5 is choosen
 	"""
-	value = _search_login_defs("YESCRYPT_COST_FACTOR")
+	value = _search_login_defs('YESCRYPT_COST_FACTOR')
 	if value is not None:
 		rounds = int(value)
 		if rounds < 3:
@@ -63,17 +63,17 @@ def crypt_yescrypt(plaintext: str) -> str:
 	else:
 		rounds = 5
 
-	debug(f"Creating yescrypt hash with rounds {rounds}")
+	debug(f'Creating yescrypt hash with rounds {rounds}')
 
-	enc_plaintext = plaintext.encode("utf-8")
-	salt = crypt_gen_salt("$y$", rounds)
+	enc_plaintext = plaintext.encode('utf-8')
+	salt = crypt_gen_salt('$y$', rounds)
 
 	crypt_hash = libcrypt.crypt(enc_plaintext, salt)
 
 	if crypt_hash is None:
-		raise ValueError("crypt() returned NULL")
+		raise ValueError('crypt() returned NULL')
 
-	return crypt_hash.decode("utf-8")
+	return crypt_hash.decode('utf-8')
 
 
 def _get_fernet(salt: bytes, password: str) -> Fernet:
@@ -90,7 +90,7 @@ def _get_fernet(salt: bytes, password: str) -> Fernet:
 
 	key = base64.urlsafe_b64encode(
 		kdf.derive(
-			password.encode("utf-8"),
+			password.encode('utf-8'),
 		),
 	)
 
@@ -100,26 +100,26 @@ def _get_fernet(salt: bytes, password: str) -> Fernet:
 def encrypt(password: str, data: str) -> str:
 	salt = os.urandom(16)
 	f = _get_fernet(salt, password)
-	token = f.encrypt(data.encode("utf-8"))
+	token = f.encrypt(data.encode('utf-8'))
 
-	encoded_token = base64.urlsafe_b64encode(token).decode("utf-8")
-	encoded_salt = base64.urlsafe_b64encode(salt).decode("utf-8")
+	encoded_token = base64.urlsafe_b64encode(token).decode('utf-8')
+	encoded_salt = base64.urlsafe_b64encode(salt).decode('utf-8')
 
-	return f"$argon2id${encoded_salt}${encoded_token}"
+	return f'$argon2id${encoded_salt}${encoded_token}'
 
 
-def decrypt(data: str, password: str):
-	_, algo, encoded_salt, encoded_token = data.split("$")
+def decrypt(data: str, password: str) -> str:
+	_, algo, encoded_salt, encoded_token = data.split('$')
 	salt = base64.urlsafe_b64decode(encoded_salt)
 	token = base64.urlsafe_b64decode(encoded_token)
 
-	if algo != "argon2id":
-		raise ValueError(f"Unsupported algorithm {algo!r}")
+	if algo != 'argon2id':
+		raise ValueError(f'Unsupported algorithm {algo!r}')
 
 	f = _get_fernet(salt, password)
 	try:
 		decrypted = f.decrypt(token)
 	except InvalidToken:
-		raise ValueError("Invalid password")
+		raise ValueError('Invalid password')
 
-	return decrypted.decode("utf-8")
+	return decrypted.decode('utf-8')

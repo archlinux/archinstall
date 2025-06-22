@@ -5,10 +5,10 @@ from archinstall.lib.translationhandler import tr
 
 
 class HelpTextGroupId(Enum):
-	GENERAL = "General"
-	NAVIGATION = "Navigation"
-	SELECTION = "Selection"
-	SEARCH = "Search"
+	GENERAL = 'General'
+	NAVIGATION = 'Navigation'
+	SELECTION = 'Selection'
+	SEARCH = 'Search'
 
 
 @dataclass
@@ -26,7 +26,7 @@ class HelpGroup:
 		return max([len(e.description) for e in self.group_entries])
 
 	def get_key_width(self) -> int:
-		return max([len(", ".join(e.keys)) for e in self.group_entries])
+		return max([len(', '.join(e.keys)) for e in self.group_entries])
 
 
 class Help:
@@ -40,8 +40,8 @@ class Help:
 		return HelpGroup(
 			group_id=HelpTextGroupId.GENERAL,
 			group_entries=[
-				HelpText(tr("Show help"), ["Ctrl+h"]),
-				HelpText(tr("Exit help"), ["Esc"]),
+				HelpText(tr('Show help'), ['Ctrl+h']),
+				HelpText(tr('Exit help'), ['Esc']),
 			],
 		)
 
@@ -50,13 +50,13 @@ class Help:
 		return HelpGroup(
 			group_id=HelpTextGroupId.NAVIGATION,
 			group_entries=[
-				HelpText(tr("Preview scroll up"), ["PgUp"]),
-				HelpText(tr("Preview scroll down"), ["PgDown"]),
-				HelpText(tr("Move up"), ["k", "↑"]),
-				HelpText(tr("Move down"), ["j", "↓"]),
-				HelpText(tr("Move right"), ["l", "→"]),
-				HelpText(tr("Move left"), ["h", "←"]),
-				HelpText(tr("Jump to entry"), ["1..9"]),
+				HelpText(tr('Preview scroll up'), ['PgUp']),
+				HelpText(tr('Preview scroll down'), ['PgDown']),
+				HelpText(tr('Move up'), ['k', '↑']),
+				HelpText(tr('Move down'), ['j', '↓']),
+				HelpText(tr('Move right'), ['l', '→']),
+				HelpText(tr('Move left'), ['h', '←']),
+				HelpText(tr('Jump to entry'), ['1..9']),
 			],
 		)
 
@@ -65,12 +65,12 @@ class Help:
 		return HelpGroup(
 			group_id=HelpTextGroupId.SELECTION,
 			group_entries=[
-				HelpText(tr("Skip selection (if available)"), ["Esc"]),
-				HelpText(tr("Reset selection (if available)"), ["Ctrl+c"]),
-				HelpText(tr("Select on single select"), ["Enter"]),
-				HelpText(tr("Select on multi select"), ["Space", "Tab"]),
-				HelpText(tr("Reset"), ["Ctrl-C"]),
-				HelpText(tr("Skip selection menu"), ["Esc"]),
+				HelpText(tr('Skip selection (if available)'), ['Esc']),
+				HelpText(tr('Reset selection (if available)'), ['Ctrl+c']),
+				HelpText(tr('Select on single select'), ['Enter']),
+				HelpText(tr('Select on multi select'), ['Space', 'Tab']),
+				HelpText(tr('Reset'), ['Ctrl-C']),
+				HelpText(tr('Skip selection menu'), ['Esc']),
 			],
 		)
 
@@ -79,14 +79,14 @@ class Help:
 		return HelpGroup(
 			group_id=HelpTextGroupId.SEARCH,
 			group_entries=[
-				HelpText(tr("Start search mode"), ["/"]),
-				HelpText(tr("Exit search mode"), ["Esc"]),
+				HelpText(tr('Start search mode'), ['/']),
+				HelpText(tr('Exit search mode'), ['Esc']),
 			],
 		)
 
 	@staticmethod
 	def get_help_text() -> str:
-		help_output = ""
+		help_output = ''
 		help_texts = [
 			Help.general(),
 			Help.navigation(),
@@ -97,13 +97,13 @@ class Help:
 		max_key_width = max([help.get_key_width() for help in help_texts])
 
 		for help_group in help_texts:
-			help_output += f"{help_group.group_id.value}\n"
+			help_output += f'{help_group.group_id.value}\n'
 			divider_len = max_desc_width + max_key_width
-			help_output += "-" * divider_len + "\n"
+			help_output += '-' * divider_len + '\n'
 
 			for entry in help_group.group_entries:
-				help_output += entry.description.ljust(max_desc_width, " ") + ", ".join(entry.keys) + "\n"
+				help_output += entry.description.ljust(max_desc_width, ' ') + ', '.join(entry.keys) + '\n'
 
-			help_output += "\n"
+			help_output += '\n'
 
 		return help_output

@@ -11,9 +11,9 @@ from ..models.packages import AvailablePackage, LocalPackage, PackageSearch, Pac
 from ..output import debug
 from ..pacman import Pacman
 
-BASE_URL_PKG_SEARCH = "https://archlinux.org/packages/search/json/"
+BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
-BASE_GROUP_URL = "https://archlinux.org/groups/search/json/"
+BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/'
 
 
 def _make_request(url: str, params: dict[str, str]) -> addinfourl:
@@ -22,7 +22,7 @@ def _make_request(url: str, params: dict[str, str]) -> addinfourl:
 	ssl_context.verify_mode = ssl.CERT_NONE
 
 	encoded = urlencode(params)
-	full_url = f"{url}?{encoded}"
+	full_url = f'{url}?{encoded}'
 
 	return urlopen(full_url, context=ssl_context)
 
@@ -30,7 +30,7 @@ def _make_request(url: str, params: dict[str, str]) -> addinfourl:
 def group_search(name: str) -> list[PackageSearchResult]:
 	# TODO UPSTREAM: Implement /json/ for the groups search
 	try:
-		response = _make_request(BASE_GROUP_URL, {"name": name})
+		response = _make_request(BASE_GROUP_URL, {'name': name})
 	except HTTPError as err:
 		if err.code == 404:
 			return []
@@ -38,9 +38,9 @@ def group_search(name: str) -> list[PackageSearchResult]:
 			raise err
 
 	# Just to be sure some code didn't slip through the exception
-	data = response.read().decode("utf-8")
+	data = response.read().decode('utf-8')
 
-	return [PackageSearchResult(**package) for package in json.loads(data)["results"]]
+	return [PackageSearchResult(**package) for package in json.loads(data)['results']]
 
 
 def package_search(package: str) -> PackageSearch:
@@ -50,12 +50,12 @@ def package_search(package: str) -> PackageSearch:
 	"""
 	# TODO UPSTREAM: Implement bulk search, either support name=X&name=Y or split on space (%20 or ' ')
 	# TODO: utilize pacman cache first, upstream second.
-	response = _make_request(BASE_URL_PKG_SEARCH, {"name": package})
+	response = _make_request(BASE_URL_PKG_SEARCH, {'name': package})
 
 	if response.code != 200:
-		raise PackageError(f"Could not locate package: [{response.code}] {response}")
+		raise PackageError(f'Could not locate package: [{response.code}] {response}')
 
-	data = response.read().decode("UTF-8")
+	data = response.read().decode('UTF-8')
 	json_data = json.loads(data)
 	return PackageSearch.from_json(json_data)
 
@@ -105,12 +105,22 @@ def validate_package_list(packages: list[str]) -> tuple[list[str], list[str]]:
 
 
 def installed_package(package: str) -> LocalPackage | None:
-	package_info = []
 	try:
-		package_info = Pacman.run(f"-Q --info {package}").decode().split("\n")
+		package_info = Pacman.run(f'-Q --info {package}').decode().split('\n')
 		return _parse_package_output(package_info, LocalPackage)
 	except SysCallError:
 		pass
+
+	return None
+
+
+@lru_cache
+def check_package_upgrade(package: str) -> str | None:
+	try:
+		upgrade = Pacman.run(f'-Qu {package}').decode()
+		return upgrade
+	except SysCallError:
+		debug(f'Failed to check for package upgrades: {package}')
 
 	return None
 
@@ -127,15 +137,15 @@ def list_available_packages(
 	filtered_repos = [name for repo in repositories for name in repo.get_repository_list()]
 
 	try:
-		Pacman.run("-Sy")
+		Pacman.run('-Sy')
 	except Exception as e:
-		debug(f"Failed to sync Arch Linux package database: {e}")
+		debug(f'Failed to sync Arch Linux package database: {e}')
 
-	for line in Pacman.run("-S --info"):
+	for line in Pacman.run('-S --info'):
 		dec_line = line.decode().strip()
 		current_package.append(dec_line)
 
-		if dec_line.startswith("Validated"):
+		if dec_line.startswith('Validated'):
 			if current_package:
 				avail_pkg = _parse_package_output(current_package, AvailablePackage)
 				if avail_pkg.repository in filtered_repos:
@@ -147,7 +157,7 @@ def list_available_packages(
 
 @lru_cache(maxsize=128)
 def _normalize_key_name(key: str) -> str:
-	return key.strip().lower().replace(" ", "_")
+	return key.strip().lower().replace(' ', '_')
 
 
 def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
@@ -157,8 +167,8 @@ def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 	package = {}
 
 	for line in package_meta:
-		if ":" in line:
-			key, value = line.split(":", 1)
+		if ':' in line:
+			key, value = line.split(':', 1)
 			key = _normalize_key_name(key)
 			package[key] = value.strip()
 

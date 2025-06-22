@@ -1,16 +1,14 @@
-from typing import Any
-
 from archinstall.lib.output import FormattedOutput
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
 
-class MenuHelper:
+class MenuHelper[ValueT]:
 	def __init__(
 		self,
-		data: list[Any],
+		data: list[ValueT],
 		additional_options: list[str] = [],
 	) -> None:
-		self._separator = ""
+		self._separator = ''
 		self._data = data
 		self._additional_options = additional_options
 
@@ -30,19 +28,15 @@ class MenuHelper:
 
 		return group
 
-	def _get_table_header(self, data_formatted: dict[str, Any]) -> list[str]:
-		table_header = [key for key, val in data_formatted.items() if val is None]
-		return table_header
-
-	def _table_to_data_mapping(self, data: list[Any]) -> dict[str, Any | None]:
-		display_data: dict[str, Any | None] = {}
+	def _table_to_data_mapping(self, data: list[ValueT]) -> dict[str, ValueT | str | None]:
+		display_data: dict[str, ValueT | str | None] = {}
 
 		if data:
 			table = FormattedOutput.as_table(data)
-			rows = table.split("\n")
+			rows = table.split('\n')
 
 			# these are the header rows of the table
-			display_data = {f"{rows[0]}": None, f"{rows[1]}": None}
+			display_data = {f'{rows[0]}': None, f'{rows[1]}': None}
 
 			for row, entry in zip(rows[2:], data):
 				display_data[row] = entry

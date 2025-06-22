@@ -1,15 +1,16 @@
 # Maintainer: David Runge <dvzrv@archlinux.org>
 # Maintainer: Giancarlo Razzolini <grazzolini@archlinux.org>
+# Maintainer: Anton Hvornum <torxed@archlinux.org>
 # Contributor: Anton Hvornum <anton@hvornum.se>
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname=archinstall
-pkgver=3.0.5
+pkgver=3.0.8
 pkgrel=1
 pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)
 url="https://github.com/archlinux/archinstall"
-license=(GPL3)
+license=(GPL-3.0-only)
 depends=(
   'arch-install-scripts'
   'btrfs-progs'
@@ -24,6 +25,7 @@ depends=(
   'pciutils'
   'procps-ng'
   'python'
+  'python-cryptography'
   'python-pydantic'
   'python-pyparted'
   'systemd'
@@ -34,13 +36,15 @@ depends=(
   'ntfs-3g'
 )
 makedepends=(
-  'python-cryptography'
-  'python-setuptools'
-  'python-sphinx'
   'python-build'
   'python-installer'
+  'python-setuptools'
+  'python-sphinx'
   'python-wheel'
   'python-sphinx_rtd_theme'
+  'python-pylint'
+  'python-pylint-pydantic'
+  'ruff'
 )
 optdepends=(
   'python-systemd: Adds journald logging'
@@ -54,19 +58,17 @@ source=(
 )
 sha512sums=()
 b2sums=()
-validpgpkeys=('256F73CEEFC6705C6BBAB20E5FBBB32941E3740A') # Anton Hvornum (Torxed) <anton@hvornum.se>
+validpgpkeys=('8AA2213C8464C82D879C8127D4B58E897A929F2E') # torxed@archlinux.org
+
+check() {
+  cd $pkgname-$pkgver
+  ruff check
+}
 
 pkgver() {
   cd $pkgname-$pkgver
 
   awk '$1 ~ /^__version__/ {gsub("\"", ""); print $3}' archinstall/__init__.py
-}
-
-prepare() {
-  cd $pkgname-$pkgver
-
-  # use real directories for examples and profiles, as symlinks do not work
-  rm -fv $pkgname/{examples,profiles}
 }
 
 build() {

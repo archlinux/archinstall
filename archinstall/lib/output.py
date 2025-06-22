@@ -8,7 +8,6 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from .storage import storage
 from .utils.unicode import unicode_ljust, unicode_rjust
 
 if TYPE_CHECKING:
@@ -19,7 +18,7 @@ class FormattedOutput:
 	@classmethod
 	def _get_values(
 		cls,
-		o: "DataclassInstance",
+		o: 'DataclassInstance',
 		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = [],
 	) -> dict[str, Any]:
@@ -38,15 +37,15 @@ class FormattedOutput:
 				func = getattr(o, class_formatter)
 				return func(filter_list)
 
-			raise ValueError("Unsupported formatting call")
-		elif hasattr(o, "table_data"):
+			raise ValueError('Unsupported formatting call')
+		elif hasattr(o, 'table_data'):
 			return o.table_data()
-		elif hasattr(o, "json"):
+		elif hasattr(o, 'json'):
 			return o.json()
 		elif is_dataclass(o):
 			return asdict(o)
 		else:
-			return o.__dict__
+			return o.__dict__  # type: ignore[unreachable]
 
 	@classmethod
 	def as_table(
@@ -78,36 +77,36 @@ class FormattedOutput:
 			filter_list = list(column_width.keys())
 
 		# create the header lines
-		output = ""
+		output = ''
 		key_list = []
 		for key in filter_list:
 			width = column_width[key]
-			key = key.replace("!", "").replace("_", " ")
+			key = key.replace('!', '').replace('_', ' ')
 
 			if capitalize:
 				key = key.capitalize()
 
 			key_list.append(unicode_ljust(key, width))
 
-		output += " | ".join(key_list) + "\n"
-		output += "-" * len(output) + "\n"
+		output += ' | '.join(key_list) + '\n'
+		output += '-' * len(output) + '\n'
 
 		# create the data lines
 		for record in raw_data:
 			obj_data = []
 			for key in filter_list:
 				width = column_width.get(key, len(key))
-				value = record.get(key, "")
+				value = record.get(key, '')
 
-				if "!" in key:
-					value = "*" * len(value)
+				if '!' in key:
+					value = '*' * len(value)
 
 				if isinstance(value, int | float) or (isinstance(value, str) and value.isnumeric()):
 					obj_data.append(unicode_rjust(str(value), width))
 				else:
 					obj_data.append(unicode_ljust(str(value), width))
 
-			output += " | ".join(obj_data) + "\n"
+			output += ' | '.join(obj_data) + '\n'
 
 		return output
 
@@ -117,14 +116,14 @@ class FormattedOutput:
 		Will format a list into a given number of columns
 		"""
 		chunks = []
-		output = ""
+		output = ''
 
 		for i in range(0, len(entries), cols):
 			chunks.append(entries[i : i + cols])
 
 		for row in chunks:
-			out_fmt = "{: <30} " * len(row)
-			output += out_fmt.format(*row) + "\n"
+			out_fmt = '{: <30} ' * len(row)
+			output += out_fmt.format(*row) + '\n'
 
 		return output
 
@@ -137,8 +136,8 @@ class Journald:
 		except ModuleNotFoundError:
 			return None
 
-		log_adapter = logging.getLogger("archinstall")
-		log_fmt = logging.Formatter("[%(levelname)s]: %(message)s")
+		log_adapter = logging.getLogger('archinstall')
+		log_fmt = logging.Formatter('[%(levelname)s]: %(message)s')
 		log_ch = systemd.journal.JournalHandler()
 		log_ch.setFormatter(log_fmt)
 		log_adapter.addHandler(log_ch)
@@ -147,30 +146,46 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-def _check_log_permissions() -> None:
-	filename = storage.get("LOG_FILE", None)
-	log_dir = storage.get("LOG_PATH", Path("./"))
+class Logger:
+	def __init__(self, path: Path = Path('/var/log/archinstall')) -> None:
+		self._path = path
 
-	if not filename:
-		raise ValueError("No log file name defined")
+	@property
+	def path(self) -> Path:
+		return self._path / 'install.log'
 
-	log_file = log_dir / filename
+	@property
+	def directory(self) -> Path:
+		return self._path
 
-	try:
-		log_dir.mkdir(exist_ok=True, parents=True)
-		log_file.touch(exist_ok=True)
+	def _check_permissions(self) -> None:
+		log_file = self.path
 
-		with log_file.open("a") as fp:
-			fp.write("")
-	except PermissionError:
-		# Fallback to creating the log file in the current folder
-		fallback_dir = Path("./").absolute()
-		fallback_log_file = fallback_dir / filename
+		try:
+			self._path.mkdir(exist_ok=True, parents=True)
+			log_file.touch(exist_ok=True)
 
-		fallback_log_file.touch(exist_ok=True)
+			with log_file.open('a') as f:
+				f.write('')
+		except PermissionError:
+			# Fallback to creating the log file in the current folder
+			logger._path = Path('./').absolute()
 
-		storage["LOG_PATH"] = fallback_dir
-		warn(f"Not enough permission to place log file at {log_file}, creating it in {fallback_log_file} instead")
+			warn(
+				f'Not enough permission to place log file at {log_file},',
+				'creating it in {logger.path} instead'
+			)
+
+	def log(self, level: int, content: str) -> None:
+		self._check_permissions()
+
+		with self.path.open('a') as f:
+			ts = _timestamp()
+			level_name = logging.getLevelName(level)
+			f.write(f'[{ts}] - {level_name} - {content}\n')
+
+
+logger = Logger()
 
 
 def _supports_color() -> bool:
@@ -183,20 +198,20 @@ def _supports_color() -> bool:
 	Return True if the running system's terminal supports color,
 	and False otherwise.
 	"""
-	supported_platform = sys.platform != "win32" or "ANSICON" in os.environ
+	supported_platform = sys.platform != 'win32' or 'ANSICON' in os.environ
 
 	# isatty is not always implemented, #6223.
-	is_a_tty = hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
+	is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
 	return supported_platform and is_a_tty
 
 
 class Font(Enum):
-	bold = "1"
-	italic = "3"
-	underscore = "4"
-	blink = "5"
-	reverse = "7"
-	conceal = "8"
+	bold = '1'
+	italic = '3'
+	underscore = '4'
+	blink = '5'
+	reverse = '7'
+	conceal = '8'
 
 
 def _stylize_output(
@@ -215,29 +230,29 @@ def _stylize_output(
 	Adds styling to a text given a set of color arguments.
 	"""
 	colors = {
-		"black": "0",
-		"red": "1",
-		"green": "2",
-		"yellow": "3",
-		"blue": "4",
-		"magenta": "5",
-		"cyan": "6",
-		"white": "7",
-		"teal": "8;5;109",  # Extended 256-bit colors (not always supported)
-		"orange": "8;5;208",  # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
-		"darkorange": "8;5;202",
-		"gray": "8;5;246",
-		"grey": "8;5;246",
-		"darkgray": "8;5;240",
-		"lightgray": "8;5;256",
+		'black': '0',
+		'red': '1',
+		'green': '2',
+		'yellow': '3',
+		'blue': '4',
+		'magenta': '5',
+		'cyan': '6',
+		'white': '7',
+		'teal': '8;5;109',  # Extended 256-bit colors (not always supported)
+		'orange': '8;5;208',  # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+		'darkorange': '8;5;202',
+		'gray': '8;5;246',
+		'grey': '8;5;246',
+		'darkgray': '8;5;240',
+		'lightgray': '8;5;256',
 	}
 
-	foreground = {key: f"3{colors[key]}" for key in colors}
-	background = {key: f"4{colors[key]}" for key in colors}
+	foreground = {key: f'3{colors[key]}' for key in colors}
+	background = {key: f'4{colors[key]}' for key in colors}
 	code_list = []
 
-	if text == "" and reset:
-		return "\x1b[0m"
+	if text == '' and reset:
+		return '\x1b[0m'
 
 	code_list.append(foreground[str(fg)])
 
@@ -247,15 +262,15 @@ def _stylize_output(
 	for o in font:
 		code_list.append(o.value)
 
-	ansi = ";".join(code_list)
+	ansi = ';'.join(code_list)
 
-	return f"\033[{ansi}m{text}\033[0m"
+	return f'\033[{ansi}m{text}\033[0m'
 
 
 def info(
 	*msgs: str,
 	level: int = logging.INFO,
-	fg: str = "white",
+	fg: str = 'white',
 	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = [],
@@ -265,13 +280,13 @@ def info(
 
 def _timestamp() -> str:
 	now = datetime.now(tz=UTC)
-	return now.strftime("%Y-%m-%d %H:%M:%S")
+	return now.strftime('%Y-%m-%d %H:%M:%S')
 
 
 def debug(
 	*msgs: str,
 	level: int = logging.DEBUG,
-	fg: str = "white",
+	fg: str = 'white',
 	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = [],
@@ -282,7 +297,7 @@ def debug(
 def error(
 	*msgs: str,
 	level: int = logging.ERROR,
-	fg: str = "red",
+	fg: str = 'red',
 	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = [],
@@ -293,7 +308,7 @@ def error(
 def warn(
 	*msgs: str,
 	level: int = logging.WARNING,
-	fg: str = "yellow",
+	fg: str = 'yellow',
 	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = [],
@@ -304,29 +319,19 @@ def warn(
 def log(
 	*msgs: str,
 	level: int = logging.INFO,
-	fg: str = "white",
+	fg: str = 'white',
 	bg: str | None = None,
 	reset: bool = False,
 	font: list[Font] = [],
 ) -> None:
-	# leave this check here as we need to setup the logging
-	# right from the beginning when the modules are loaded
-	_check_log_permissions()
+	text = ' '.join([str(x) for x in msgs])
 
-	text = orig_string = " ".join([str(x) for x in msgs])
+	logger.log(level, text)
 
 	# Attempt to colorize the output if supported
 	# Insert default colors and override with **kwargs
 	if _supports_color():
 		text = _stylize_output(text, fg, bg, reset, font)
-
-	log_file = storage["LOG_PATH"] / storage["LOG_FILE"]
-
-	with log_file.open("a") as fp:
-		ts = _timestamp()
-		level_name = logging.getLevelName(level)
-		out = f"[{ts}] - {level_name} - {orig_string}\n"
-		fp.write(out)
 
 	Journald.log(text, level=level)
 

@@ -48,7 +48,7 @@ class MenuKeys(Enum):
 	SCROLL_DOWN = frozenset({338})
 
 	@classmethod
-	def from_ord(cls, key: int) -> list["MenuKeys"]:
+	def from_ord(cls, key: int) -> list['MenuKeys']:
 		matches = []
 
 		for group in MenuKeys:
@@ -60,7 +60,7 @@ class MenuKeys(Enum):
 	@classmethod
 	def decode(cls, key: int) -> str:
 		byte_str = curses.keyname(key)
-		return byte_str.decode("utf-8")
+		return byte_str.decode('utf-8')
 
 
 class FrameStyle(Enum):
@@ -75,7 +75,7 @@ class FrameProperties:
 	h_frame_style: FrameStyle = FrameStyle.MAX
 
 	@classmethod
-	def max(cls, header: str) -> "FrameProperties":
+	def max(cls, header: str) -> 'FrameProperties':
 		return FrameProperties(
 			header,
 			FrameStyle.MAX,
@@ -83,7 +83,7 @@ class FrameProperties:
 		)
 
 	@classmethod
-	def min(cls, header: str) -> "FrameProperties":
+	def min(cls, header: str) -> 'FrameProperties':
 		return FrameProperties(
 			header,
 			FrameStyle.MIN,
@@ -106,18 +106,18 @@ class PreviewStyle(Enum):
 # https://www.compart.com/en/unicode/search?q=box+drawings#characters
 # https://en.wikipedia.org/wiki/Box-drawing_characters
 class Chars:
-	Horizontal = "─"
-	Vertical = "│"
-	Upper_left = "┌"
-	Upper_right = "┐"
-	Lower_left = "└"
-	Lower_right = "┘"
-	Block = "█"
-	Triangle_up = "▲"
-	Triangle_down = "▼"
-	Check = "+"
-	Cross = "x"
-	Right_arrow = "←"
+	Horizontal = '─'
+	Vertical = '│'
+	Upper_left = '┌'
+	Upper_right = '┐'
+	Lower_left = '└'
+	Lower_right = '┘'
+	Block = '█'
+	Triangle_up = '▲'
+	Triangle_down = '▼'
+	Check = '+'
+	Cross = 'x'
+	Right_arrow = '←'
 
 
 @dataclass
@@ -134,7 +134,7 @@ class Alignment(Enum):
 
 
 @dataclass
-class _FrameDim:
+class FrameDim:
 	x_start: int
 	x_end: int
 	height: int

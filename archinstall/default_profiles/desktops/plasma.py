@@ -6,18 +6,18 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 class PlasmaProfile(XorgProfile):
 	def __init__(self) -> None:
-		super().__init__("KDE Plasma", ProfileType.DesktopEnv)
+		super().__init__('KDE Plasma', ProfileType.DesktopEnv)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"plasma-meta",
-			"konsole",
-			"kate",
-			"dolphin",
-			"ark",
-			"plasma-workspace",
+			'plasma-meta',
+			'konsole',
+			'kate',
+			'dolphin',
+			'ark',
+			'plasma-workspace',
 		]
 
 	@property
