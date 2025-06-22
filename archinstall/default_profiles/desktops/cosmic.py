@@ -12,8 +12,8 @@ class CosmicProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"cosmic",
-			"xdg-user-dirs",
+			'cosmic',
+			'xdg-user-dirs',
 		]
 
 	@property
