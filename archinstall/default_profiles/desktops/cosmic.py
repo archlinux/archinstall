@@ -19,4 +19,4 @@ class CosmicProfile(XorgProfile):
 	@property
 	@override
 	def default_greeter_type(self) -> GreeterType:
-		return GreeterType.CosmicGreeter
+		return GreeterType.CosmicSession
