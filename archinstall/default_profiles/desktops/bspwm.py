@@ -17,7 +17,7 @@ class BspwmProfile(XorgProfile):
 			'sxhkd',
 			'dmenu',
 			'xdo',
-			'rxvt-unicode'
+			'rxvt-unicode',
 		]
 
 	@property

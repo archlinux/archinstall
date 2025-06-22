@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import math
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING
 
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import Tui
 
 from ..interactions.general_conf import ask_abort
@@ -25,22 +26,11 @@ from ..models.device_model import (
 from ..output import debug, info
 from .device_handler import device_handler
 
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
-
 
 class FilesystemHandler:
-	def __init__(
-		self,
-		disk_config: DiskLayoutConfiguration,
-		enc_conf: DiskEncryption | None = None
-	):
+	def __init__(self, disk_config: DiskLayoutConfiguration):
 		self._disk_config = disk_config
-		self._enc_config = enc_conf
+		self._enc_config = disk_config.disk_encryption
 
 	def perform_filesystem_operations(self, show_countdown: bool = True) -> None:
 		if self._disk_config.config_type == DiskLayoutType.Pre_mount:
@@ -74,27 +64,20 @@ class FilesystemHandler:
 			for mod in device_mods:
 				if boot_part := mod.get_boot_partition():
 					debug(f'Formatting boot partition: {boot_part.dev_path}')
-					self._format_partitions(
-						[boot_part],
-						mod.device_path
-					)
+					self._format_partitions([boot_part])
 
 			self.perform_lvm_operations()
 		else:
 			for mod in device_mods:
-				self._format_partitions(
-					mod.partitions,
-					mod.device_path
-				)
+				self._format_partitions(mod.partitions)
 
 				for part_mod in mod.partitions:
-					if part_mod.fs_type == FilesystemType.Btrfs:
+					if part_mod.fs_type == FilesystemType.Btrfs and part_mod.is_create_or_modify():
 						device_handler.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
 
 	def _format_partitions(
 		self,
 		partitions: list[PartitionModification],
-		device_path: Path
 	) -> None:
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
@@ -113,7 +96,7 @@ class FilesystemHandler:
 					part_mod.safe_dev_path,
 					part_mod.mapper_name,
 					part_mod.safe_fs_type,
-					self._enc_config
+					self._enc_config,
 				)
 			else:
 				device_handler.format(part_mod.safe_fs_type, part_mod.safe_dev_path)
@@ -132,10 +115,9 @@ class FilesystemHandler:
 			# verify that all partitions have a path set (which implies that they have been created)
 			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
 			# crypto luks is not a valid file system type
-			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError(
-				'Crypto luks cannot be set as a filesystem type'),
+			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError('Crypto luks cannot be set as a filesystem type'),
 			# file system type must be set
-			lambda x: x.fs_type is None: ValueError('File system type must be set for modification')
+			lambda x: x.fs_type is None: ValueError('File system type must be set for modification'),
 		}
 
 		for check, exc in checks.items():
@@ -152,7 +134,7 @@ class FilesystemHandler:
 		if self._enc_config:
 			self._setup_lvm_encrypted(
 				self._disk_config.lvm_config,
-				self._enc_config
+				self._enc_config,
 			)
 		else:
 			self._setup_lvm(self._disk_config.lvm_config)
@@ -190,7 +172,7 @@ class FilesystemHandler:
 	def _setup_lvm(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {},
 	) -> None:
 		self._lvm_create_pvs(lvm_config, enc_mods)
 
@@ -214,7 +196,15 @@ class FilesystemHandler:
 			desired_size = sum([vol.length for vol in vg.volumes], Size(0, Unit.B, SectorSize.default()))
 
 			delta = desired_size - avail_size
-			max_vol_offset = delta.convert(Unit.B)
+			delta_bytes = delta.convert(Unit.B)
+
+			# Round the offset up to the next physical extent (PE, 4 MiB by default)
+			# to ensure lvcreate`s internal rounding doesn`t consume space reserved
+			# for subsequent logical volumes.
+			pe_bytes = Size(4, Unit.MiB, SectorSize.default()).convert(Unit.B)
+			pe_count = math.ceil(delta_bytes.value / pe_bytes.value)
+			rounded_offset = pe_count * pe_bytes.value
+			max_vol_offset = Size(rounded_offset, Unit.B, SectorSize.default())
 
 			max_vol = max(vg.volumes, key=lambda x: x.length)
 
@@ -237,7 +227,7 @@ class FilesystemHandler:
 	def _format_lvm_vols(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_vols: dict[LvmVolume, Luks2] = {}
+		enc_vols: dict[LvmVolume, Luks2] = {},
 	) -> None:
 		for vol in lvm_config.get_all_volumes():
 			if enc_vol := enc_vols.get(vol, None):
@@ -257,7 +247,7 @@ class FilesystemHandler:
 	def _lvm_create_pvs(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {},
 	) -> None:
 		pv_paths: set[Path] = set()
 
@@ -269,7 +259,7 @@ class FilesystemHandler:
 	def _get_all_pv_dev_paths(
 		self,
 		pvs: list[PartitionModification],
-		enc_mods: dict[PartitionModification, Luks2] = {}
+		enc_mods: dict[PartitionModification, Luks2] = {},
 	) -> set[Path]:
 		pv_paths: set[Path] = set()
 
@@ -286,7 +276,7 @@ class FilesystemHandler:
 		self,
 		lvm_config: LvmConfiguration,
 		enc_config: DiskEncryption,
-		lock_after_create: bool = True
+		lock_after_create: bool = True,
 	) -> dict[LvmVolume, Luks2]:
 		enc_vols: dict[LvmVolume, Luks2] = {}
 
@@ -296,7 +286,7 @@ class FilesystemHandler:
 					vol.safe_dev_path,
 					vol.mapper_name,
 					enc_config.encryption_password,
-					lock_after_create
+					lock_after_create,
 				)
 
 				enc_vols[vol] = luks_handler
@@ -306,7 +296,7 @@ class FilesystemHandler:
 	def _encrypt_partitions(
 		self,
 		enc_config: DiskEncryption,
-		lock_after_create: bool = True
+		lock_after_create: bool = True,
 	) -> dict[PartitionModification, Luks2]:
 		enc_mods: dict[PartitionModification, Luks2] = {}
 
@@ -326,7 +316,7 @@ class FilesystemHandler:
 						part_mod.safe_dev_path,
 						part_mod.mapper_name,
 						enc_config.encryption_password,
-						lock_after_create=lock_after_create
+						lock_after_create=lock_after_create,
 					)
 
 					enc_mods[part_mod] = luks_handler
@@ -342,13 +332,13 @@ class FilesystemHandler:
 
 			device_handler.lvm_vol_reduce(
 				largest_vol.safe_dev_path,
-				Size(256, Unit.MiB, SectorSize.default())
+				Size(256, Unit.MiB, SectorSize.default()),
 			)
 
 	def _final_warning(self, device_paths: str) -> bool:
 		# Issue a final warning before we continue with something un-revertable.
 		# We mention the drive one last time, and count from 5 to 0.
-		out = str(_(' ! Formatting {} in ')).format(device_paths)
+		out = tr(' ! Formatting {} in ').format(device_paths)
 		Tui.print(out, row=0, endl='', clear_screen=True)
 
 		try:

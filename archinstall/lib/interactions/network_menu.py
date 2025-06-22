@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import TYPE_CHECKING, assert_never, override
+from typing import assert_never, override
 
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import EditMenu, SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -12,27 +13,20 @@ from ..menu.list_manager import ListManager
 from ..models.network_configuration import NetworkConfiguration, Nic, NicType
 from ..networking import list_interfaces
 
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
-
 
 class ManualNetworkConfig(ListManager[Nic]):
 	def __init__(self, prompt: str, preset: list[Nic]):
 		self._actions = [
-			str(_('Add interface')),
-			str(_('Edit interface')),
-			str(_('Delete interface'))
+			tr('Add interface'),
+			tr('Edit interface'),
+			tr('Delete interface'),
 		]
 
 		super().__init__(
 			preset,
 			[self._actions[0]],
 			self._actions[1:],
-			prompt
+			prompt,
 		)
 
 	@override
@@ -73,8 +67,8 @@ class ManualNetworkConfig(ListManager[Nic]):
 		result = SelectMenu[str](
 			group,
 			alignment=Alignment.CENTER,
-			frame=FrameProperties.min(str(_('Interfaces'))),
-			allow_skip=True
+			frame=FrameProperties.min(tr('Interfaces')),
+			allow_skip=True,
 		).run()
 
 		match result.type_:
@@ -91,9 +85,14 @@ class ManualNetworkConfig(ListManager[Nic]):
 		header: str,
 		allow_skip: bool,
 		multi: bool,
-		preset: str | None = None
+		preset: str | None = None,
 	) -> str | None:
-		def validator(ip: str) -> str | None:
+		def validator(ip: str | None) -> str | None:
+			failure = tr('You need to enter a valid IP in IP-config mode')
+
+			if not ip:
+				return failure
+
 			if multi:
 				ips = ip.split(' ')
 			else:
@@ -104,14 +103,14 @@ class ManualNetworkConfig(ListManager[Nic]):
 					ipaddress.ip_interface(ip)
 				return None
 			except ValueError:
-				return str(_('You need to enter a valid IP in IP-config mode'))
+				return failure
 
 		result = EditMenu(
 			title,
 			header=header,
 			validator=validator,
 			allow_skip=allow_skip,
-			default_text=preset
+			default_text=preset,
 		).input()
 
 		match result.type_:
@@ -127,7 +126,7 @@ class ManualNetworkConfig(ListManager[Nic]):
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
 
-		header = str(_('Select which mode to configure for "{}"').format(iface_name)) + '\n'
+		header = tr('Select which mode to configure for "{}"').format(iface_name) + '\n'
 		items = [MenuItem(m, value=m) for m in modes]
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_default_by_value(default_mode)
@@ -137,7 +136,7 @@ class ManualNetworkConfig(ListManager[Nic]):
 			header=header,
 			allow_skip=False,
 			alignment=Alignment.CENTER,
-			frame=FrameProperties.min(str(_('Modes')))
+			frame=FrameProperties.min(tr('Modes')),
 		).run()
 
 		match result.type_:
@@ -151,24 +150,24 @@ class ManualNetworkConfig(ListManager[Nic]):
 				assert_never(result.type_)
 
 		if mode == 'IP (static)':
-			header = str(_('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(iface_name)) + '\n'
-			ip = self._get_ip_address(str(_('IP address')), header, False, False)
+			header = tr('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(iface_name) + '\n'
+			ip = self._get_ip_address(tr('IP address'), header, False, False)
 
-			header = str(_('Enter your gateway (router) IP address (leave blank for none)')) + '\n'
-			gateway = self._get_ip_address(str(_('Gateway address')), header, True, False)
+			header = tr('Enter your gateway (router) IP address (leave blank for none)') + '\n'
+			gateway = self._get_ip_address(tr('Gateway address'), header, True, False)
 
 			if edit_nic.dns:
 				display_dns = ' '.join(edit_nic.dns)
 			else:
 				display_dns = None
 
-			header = str(_('Enter your DNS servers with space separated (leave blank for none)')) + '\n'
+			header = tr('Enter your DNS servers with space separated (leave blank for none)') + '\n'
 			dns_servers = self._get_ip_address(
-				str(_('DNS servers')),
+				tr('DNS servers'),
 				header,
 				True,
 				True,
-				display_dns
+				display_dns,
 			)
 
 			dns = []
@@ -192,12 +191,12 @@ def ask_to_configure_network(preset: NetworkConfiguration | None) -> NetworkConf
 	if preset:
 		group.set_selected_by_value(preset.type)
 
-	result = SelectMenu[NetworkConfiguration](
+	result = SelectMenu[NicType](
 		group,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_('Network configuration'))),
+		frame=FrameProperties.min(tr('Network configuration')),
 		allow_reset=True,
-		allow_skip=True
+		allow_skip=True,
 	).run()
 
 	match result.type_:
@@ -215,7 +214,7 @@ def ask_to_configure_network(preset: NetworkConfiguration | None) -> NetworkConf
 					return NetworkConfiguration(NicType.NM)
 				case NicType.MANUAL:
 					preset_nics = preset.nics if preset else []
-					nics = ManualNetworkConfig(str(_('Configure interfaces')), preset_nics).run()
+					nics = ManualNetworkConfig(tr('Configure interfaces'), preset_nics).run()
 
 					if nics:
 						return NetworkConfiguration(NicType.MANUAL, nics)

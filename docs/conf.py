@@ -6,8 +6,8 @@ sys.path.insert(0, os.path.abspath('..'))
 
 
 def process_docstring(app, what, name, obj, options, lines) -> None:  # type: ignore[no-untyped-def]
-	spaces_pat = re.compile(r"( {8})")
-	ll = [spaces_pat.sub("    ", line) for line in lines]
+	spaces_pat = re.compile(r'( {8})')
+	ll = [spaces_pat.sub('    ', line) for line in lines]
 	lines[:] = ll
 
 
@@ -51,7 +51,7 @@ extensions = [
 	'sphinx.ext.autodoc',
 	'sphinx.ext.inheritance_diagram',
 	'sphinx.ext.todo',
-	'sphinx_rtd_theme'
+	'sphinx_rtd_theme',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -70,7 +70,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # html_theme = 'alabaster'
 html_theme = 'sphinx_rtd_theme'
 
-html_logo = "_static/logo.png"
+html_logo = '_static/logo.png'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -110,7 +110,7 @@ htmlhelp_basename = 'archinstalldoc'
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "archinstall", "archinstall Documentation", ["Anton Hvornum"], 1)]
+man_pages = [('index', 'archinstall', 'archinstall Documentation', ['Anton Hvornum'], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -122,5 +122,5 @@ man_pages = [("index", "archinstall", "archinstall Documentation", ["Anton Hvorn
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-	("index", "archinstall", "archinstall Documentation", "Anton Hvornum", "archinstall", "Simple and minimal HTTP server."),
+	('index', 'archinstall', 'archinstall Documentation', 'Anton Hvornum', 'archinstall', 'Simple and minimal HTTP server.'),
 ]

@@ -43,7 +43,7 @@ boot_partition = PartitionModification(
 	length=Size(512, Unit.MiB, device.device_info.sector_size),
 	mountpoint=Path('/boot'),
 	fs_type=FilesystemType.Fat32,
-	flags=[PartitionFlag.BOOT]
+	flags=[PartitionFlag.BOOT],
 )
 device_modification.add_partition(boot_partition)
 
@@ -70,25 +70,27 @@ home_partition = PartitionModification(
 	length=length_home,
 	mountpoint=Path('/home'),
 	fs_type=fs_type,
-	mount_options=[]
+	mount_options=[],
 )
 device_modification.add_partition(home_partition)
 
 disk_config = DiskLayoutConfiguration(
 	config_type=DiskLayoutType.Default,
-	device_modifications=[device_modification]
+	device_modifications=[device_modification],
 )
 
 # disk encryption configuration (Optional)
 disk_encryption = DiskEncryption(
-	encryption_password=Password(plaintext="enc_password"),
+	encryption_password=Password(plaintext='enc_password'),
 	encryption_type=EncryptionType.Luks,
 	partitions=[home_partition],
-	hsm_device=None
+	hsm_device=None,
 )
 
+disk_config.disk_encryption = disk_encryption
+
 # initiate file handler with the disk config and the optional disk encryption config
-fs_handler = FilesystemHandler(disk_config, disk_encryption)
+fs_handler = FilesystemHandler(disk_config)
 
 # perform all file operations
 # WARNING: this will potentially format the filesystem and delete all data
@@ -99,8 +101,7 @@ mountpoint = Path('/tmp')
 with Installer(
 	mountpoint,
 	disk_config,
-	disk_encryption=disk_encryption,
-	kernels=['linux']
+	kernels=['linux'],
 ) as installation:
 	installation.mount_ordered_layout()
 	installation.minimal_installation(hostname='minimal-arch')

@@ -2,15 +2,13 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from enum import Enum
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import Any, ClassVar
+
+from archinstall.lib.translationhandler import tr
 
 from ..lib.utils.unicode import unicode_ljust
-
-if TYPE_CHECKING:
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 @dataclass
@@ -37,14 +35,14 @@ class MenuItem:
 	@classmethod
 	def yes(cls) -> 'MenuItem':
 		if cls._yes is None:
-			cls._yes = cls(str(_('Yes')), value=True)
+			cls._yes = cls(tr('Yes'), value=True)
 
 		return cls._yes
 
 	@classmethod
 	def no(cls) -> 'MenuItem':
 		if cls._no is None:
-			cls._no = cls(str(_('No')), value=True)
+			cls._no = cls(tr('No'), value=True)
 
 		return cls._no
 
@@ -76,7 +74,7 @@ class MenuItemGroup:
 		default_item: MenuItem | None = None,
 		sort_items: bool = False,
 		sort_case_sensitive: bool = True,
-		checkmarks: bool = False
+		checkmarks: bool = False,
 	) -> None:
 		if len(menu_items) < 1:
 			raise ValueError('Menu must have at least one item')
@@ -119,8 +117,22 @@ class MenuItemGroup:
 	def yes_no() -> 'MenuItemGroup':
 		return MenuItemGroup(
 			[MenuItem.yes(), MenuItem.no()],
-			sort_items=True
+			sort_items=True,
 		)
+
+	@staticmethod
+	def from_enum(
+		enum_cls: type[Enum],
+		sort_items: bool = False,
+		preset: Enum | None = None,
+	) -> 'MenuItemGroup':
+		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
+		group = MenuItemGroup(items, sort_items=sort_items)
+
+		if preset is not None:
+			group.set_selected_by_value(preset)
+
+		return group
 
 	def set_preview_for_all(self, action: Callable[[Any], str | None]) -> None:
 		for item in self.items:
@@ -207,7 +219,7 @@ class MenuItemGroup:
 
 	def _default_suffix(self, item: MenuItem) -> str:
 		if self.default_item == item:
-			return str(_(' (default)'))
+			return tr(' (default)')
 		return ''
 
 	@cached_property
@@ -302,7 +314,7 @@ class MenuItemGroup:
 		self,
 		items: list[MenuItem],
 		start_item: MenuItem,
-		direction: int
+		direction: int,
 	) -> MenuItem | None:
 		start_index = self.items.index(start_item)
 		n = len(items)
@@ -362,7 +374,7 @@ class MenuItemsState:
 		item_group: MenuItemGroup,
 		total_cols: int,
 		total_rows: int,
-		with_frame: bool
+		with_frame: bool,
 	) -> None:
 		self._item_group = item_group
 		self._total_cols = total_cols
@@ -390,11 +402,7 @@ class MenuItemsState:
 
 		start, end = 0, 0
 
-		if (
-			len(self._view_items) == 0
-			or self._prev_row_idx == -1
-			or self._item_group.has_filter()
-		):  # initial setup or filter
+		if len(self._view_items) == 0 or self._prev_row_idx == -1 or self._item_group.has_filter():  # initial setup or filter
 			if focus_row_idx < self._total_rows:
 				start = 0
 				end = self._total_rows
@@ -434,14 +442,14 @@ class MenuItemsState:
 		self,
 		items: list[MenuItem],
 		start_row: int,
-		total_rows: int
+		total_rows: int,
 	) -> list[list[MenuItem]]:
 		groups: list[list[MenuItem]] = []
 		nr_items = self._total_cols * min(total_rows, len(items))
 
 		for x in range(start_row, nr_items, self._total_cols):
 			groups.append(
-				items[x:x + self._total_cols]
+				items[x : x + self._total_cols],
 			)
 
 		return groups

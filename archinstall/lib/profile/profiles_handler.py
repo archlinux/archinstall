@@ -10,6 +10,8 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
+from archinstall.lib.translationhandler import tr
+
 from ...default_profiles.profile import GreeterType, Profile
 from ..hardware import GfxDriver
 from ..models.profile_model import ProfileConfiguration
@@ -17,13 +19,7 @@ from ..networking import fetch_data_from_url, list_interfaces
 from ..output import debug, error, info
 
 if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
 	from ..installer import Installer
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class ProfileSerialization(TypedDict):
@@ -52,7 +48,7 @@ class ProfileHandler:
 			data = {
 				'main': profile.name,
 				'details': [profile.name for profile in profile.current_selection],
-				'custom_settings': {profile.name: profile.custom_settings for profile in profile.current_selection}
+				'custom_settings': {profile.name: profile.custom_settings for profile in profile.current_selection},
 			}
 
 		if self._url_path is not None:
@@ -274,7 +270,7 @@ class ProfileHandler:
 			self.remove_custom_profiles(profiles)
 			self.add_custom_profiles(profiles)
 		except ValueError:
-			err = str(_('Unable to fetch profile from specified url: {}')).format(url)
+			err = tr('Unable to fetch profile from specified url: {}').format(url)
 			error(err)
 
 	def _load_profile_class(self, module: ModuleType) -> list[Profile]:
@@ -305,7 +301,7 @@ class ProfileHandler:
 		duplicates = [x for x in counter.items() if x[1] != 1]
 
 		if len(duplicates) > 0:
-			err = str(_('Profiles must have unique name, but profile definitions with duplicate name found: {}')).format(duplicates[0][0])
+			err = tr('Profiles must have unique name, but profile definitions with duplicate name found: {}').format(duplicates[0][0])
 			error(err)
 			sys.exit(1)
 

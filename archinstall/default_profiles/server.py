@@ -17,7 +17,7 @@ class ServerProfile(Profile):
 		super().__init__(
 			'Server',
 			ProfileType.Server,
-			current_selection=current_value
+			current_selection=current_value,
 		)
 
 	@override
@@ -26,8 +26,9 @@ class ServerProfile(Profile):
 			MenuItem(
 				p.name,
 				value=p,
-				preview_action=lambda x: x.value.preview_text()
-			) for p in profile_handler.get_server_profiles()
+				preview_action=lambda x: x.value.preview_text(),
+			)
+			for p in profile_handler.get_server_profiles()
 		]
 
 		group = MenuItemGroup(items, sort_items=True)
@@ -40,7 +41,7 @@ class ServerProfile(Profile):
 			preview_style=PreviewStyle.RIGHT,
 			preview_size='auto',
 			preview_frame=FrameProperties.max('Info'),
-			multi=True
+			multi=True,
 		).run()
 
 		match result.type_:

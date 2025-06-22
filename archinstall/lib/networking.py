@@ -18,16 +18,17 @@ from .pacman import Pacman
 
 
 class DownloadTimer:
-	'''
+	"""
 	Context manager for timing downloads with timeouts.
-	'''
+	"""
+
 	def __init__(self, timeout: int = 5):
-		'''
+		"""
 		Args:
 			timeout:
 				The download timeout in seconds. The DownloadTimeout exception
 				will be raised in the context after this many seconds.
-		'''
+		"""
 		self.time: float | None = None
 		self.start_time: float | None = None
 		self.timeout = timeout
@@ -35,9 +36,9 @@ class DownloadTimer:
 		self.previous_timer: int | None = None
 
 	def raise_timeout(self, signl: int, frame: FrameType | None) -> None:
-		'''
+		"""
 		Raise the DownloadTimeout exception.
-		'''
+		"""
 		raise DownloadTimeout(f'Download timed out after {self.timeout} second(s).')
 
 	def __enter__(self) -> Self:
@@ -48,7 +49,7 @@ class DownloadTimer:
 		self.start_time = time.time()
 		return self
 
-	def __exit__(self, typ: type[BaseException] | None, value: BaseException | None, traceback: TracebackType | None) -> None:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		if self.start_time:
 			time_delta = time.time() - self.start_time
 			signal.alarm(0)
@@ -69,6 +70,7 @@ class DownloadTimer:
 
 def get_hw_addr(ifname: str) -> str:
 	import fcntl
+
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	ret = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
 	return ':'.join(f'{b:02x}' for b in ret[18:24])
@@ -78,7 +80,7 @@ def list_interfaces(skip_loopback: bool = True) -> dict[str, str]:
 	interfaces = {}
 
 	for _index, iface in socket.if_nameindex():
-		if skip_loopback and iface == "lo":
+		if skip_loopback and iface == 'lo':
 			continue
 
 		mac = get_hw_addr(iface).replace(':', '-').lower()
@@ -88,9 +90,9 @@ def list_interfaces(skip_loopback: bool = True) -> dict[str, str]:
 
 
 def update_keyring() -> bool:
-	info("Updating archlinux-keyring ...")
+	info('Updating archlinux-keyring ...')
 	try:
-		Pacman.run("-Sy --noconfirm archlinux-keyring")
+		Pacman.run('-Sy --noconfirm archlinux-keyring')
 		return True
 	except SysCallError:
 		if os.geteuid() != 0:
@@ -103,13 +105,13 @@ def enrich_iface_types(interfaces: list[str]) -> dict[str, str]:
 	result = {}
 
 	for iface in interfaces:
-		if os.path.isdir(f"/sys/class/net/{iface}/bridge/"):
+		if os.path.isdir(f'/sys/class/net/{iface}/bridge/'):
 			result[iface] = 'BRIDGE'
-		elif os.path.isfile(f"/sys/class/net/{iface}/tun_flags"):
+		elif os.path.isfile(f'/sys/class/net/{iface}/tun_flags'):
 			# ethtool -i {iface}
 			result[iface] = 'TUN/TAP'
-		elif os.path.isdir(f"/sys/class/net/{iface}/device"):
-			if os.path.isdir(f"/sys/class/net/{iface}/wireless/"):
+		elif os.path.isdir(f'/sys/class/net/{iface}/device'):
+			if os.path.isdir(f'/sys/class/net/{iface}/wireless/'):
 				result[iface] = 'WIRELESS'
 			else:
 				result[iface] = 'PHYSICAL'
@@ -144,10 +146,7 @@ def calc_checksum(icmp_packet: bytes) -> int:
 	# Calculate the ICMP checksum
 	checksum = 0
 	for i in range(0, len(icmp_packet), 2):
-		checksum += (icmp_packet[i] << 8) + (
-			struct.unpack('B', icmp_packet[i + 1:i + 2])[0]
-			if len(icmp_packet[i + 1:i + 2]) else 0
-		)
+		checksum += (icmp_packet[i] << 8) + (struct.unpack('B', icmp_packet[i + 1 : i + 2])[0] if len(icmp_packet[i + 1 : i + 2]) else 0)
 
 	checksum = (checksum >> 16) + (checksum & 0xFFFF)
 	checksum = ~checksum & 0xFFFF
@@ -164,7 +163,7 @@ def build_icmp(payload: bytes) -> bytes:
 	return struct.pack('!BBHHH', 8, 0, checksum, 0, 1) + payload
 
 
-def ping(hostname, timeout: int = 5) -> int:
+def ping(hostname: str, timeout: int = 5) -> int:
 	watchdog = select.epoll()
 	started = time.time()
 	random_identifier = f'archinstall-{random.randint(1000, 9999)}'.encode()
@@ -188,11 +187,11 @@ def ping(hostname, timeout: int = 5) -> int:
 				icmp_type = struct.unpack('!B', response[20:21])[0]
 
 				# Check if it's an Echo Reply (ICMP type 0)
-				if icmp_type == 0 and response[-len(random_identifier):] == random_identifier:
+				if icmp_type == 0 and response[-len(random_identifier) :] == random_identifier:
 					latency = round((time.time() - started) * 1000)
 					break
 		except OSError as e:
-			debug(f"Error: {e}")
+			debug(f'Error: {e}')
 			break
 
 	icmp_socket.close()

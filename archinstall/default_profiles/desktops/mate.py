@@ -12,8 +12,8 @@ class MateProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"mate",
-			"mate-extra"
+			'mate',
+			'mate-extra',
 		]
 
 	@property

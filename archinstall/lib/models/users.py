@@ -1,15 +1,10 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, NotRequired, TypedDict, override
+from typing import NotRequired, TypedDict, override
+
+from archinstall.lib.translationhandler import tr
 
 from ..crypt import crypt_yescrypt
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class PasswordStrength(Enum):
@@ -23,13 +18,13 @@ class PasswordStrength(Enum):
 	def value(self) -> str:  # pylint: disable=invalid-overridden-method
 		match self:
 			case PasswordStrength.VERY_WEAK:
-				return str(_('very weak'))
+				return tr('very weak')
 			case PasswordStrength.WEAK:
-				return str(_('weak'))
+				return tr('weak')
 			case PasswordStrength.MODERATE:
-				return str(_('moderate'))
+				return tr('moderate')
 			case PasswordStrength.STRONG:
-				return str(_('strong'))
+				return tr('strong')
 
 	def color(self) -> str:
 		match self:
@@ -57,7 +52,7 @@ class PasswordStrength(Enum):
 		upper: bool,
 		lower: bool,
 		symbol: bool,
-		length: int
+		length: int,
 	) -> 'PasswordStrength':
 		# suggested evaluation
 		# https://github.com/archlinux/archinstall/issues/1304#issuecomment-1146768163
@@ -112,8 +107,8 @@ _UserSerialization = TypedDict(
 		'!password': NotRequired[str],
 		'sudo': bool,
 		'groups': list[str],
-		'enc_password': str | None
-	}
+		'enc_password': str | None,
+	},
 )
 
 
@@ -121,7 +116,7 @@ class Password:
 	def __init__(
 		self,
 		plaintext: str = '',
-		enc_password: str | None = None
+		enc_password: str | None = None,
 	):
 		if plaintext:
 			enc_password = crypt_yescrypt(plaintext)
@@ -137,7 +132,7 @@ class Password:
 		return self._plaintext
 
 	@plaintext.setter
-	def plaintext(self, value: str):
+	def plaintext(self, value: str) -> None:
 		self._plaintext = value
 		self.enc_password = crypt_yescrypt(value)
 
@@ -175,7 +170,7 @@ class User:
 			'username': self.username,
 			'password': self.password.hidden(),
 			'sudo': self.sudo,
-			'groups': self.groups
+			'groups': self.groups,
 		}
 
 	def json(self) -> _UserSerialization:
@@ -183,13 +178,13 @@ class User:
 			'username': self.username,
 			'enc_password': self.password.enc_password,
 			'sudo': self.sudo,
-			'groups': self.groups
+			'groups': self.groups,
 		}
 
 	@classmethod
 	def parse_arguments(
 		cls,
-		args: list[_UserSerialization]
+		args: list[_UserSerialization],
 	) -> list['User']:
 		users: list[User] = []
 
@@ -213,7 +208,7 @@ class User:
 				username=username,
 				password=password,
 				sudo=entry.get('sudo', False) is True,
-				groups=groups
+				groups=groups,
 			)
 
 			users.append(user)

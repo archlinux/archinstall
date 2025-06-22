@@ -4,14 +4,10 @@ import sys
 from enum import Enum, auto
 from typing import TYPE_CHECKING
 
+from archinstall.lib.translationhandler import tr
+
 if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
 	from ..lib.installer import Installer
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class ProfileType(Enum):
@@ -40,7 +36,7 @@ class GreeterType(Enum):
 
 	# .. todo:: Remove when we un-hide cosmic behind --advanced
 	if '--advanced' in sys.argv:
-		CosmicSession = "cosmic-greeter"
+		CosmicSession = 'cosmic-greeter'
 
 
 class SelectResult(Enum):
@@ -59,7 +55,7 @@ class Profile:
 		services: list[str] = [],
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
-		advanced: bool = False
+		advanced: bool = False,
 	) -> None:
 		self.name = name
 		self.profile_type = profile_type
@@ -107,6 +103,7 @@ class Profile:
 		Returns True if --advanced is given on a Profile(advanced=True) instance.
 		"""
 		from archinstall.lib.args import arch_config_handler
+
 		return self.advanced is False or arch_config_handler.args.advanced is True
 
 	def install(self, install_session: 'Installer') -> None:
@@ -199,7 +196,7 @@ class Profile:
 				if sub_profile.packages:
 					packages.update(sub_profile.packages)
 
-		text = str(_('Installed packages')) + ':\n'
+		text = tr('Installed packages') + ':\n'
 
 		for pkg in sorted(packages):
 			text += f'\t- {pkg}\n'

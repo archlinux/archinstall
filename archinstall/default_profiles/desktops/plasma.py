@@ -12,12 +12,12 @@ class PlasmaProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"plasma-meta",
-			"konsole",
-			"kate",
-			"dolphin",
-			"ark",
-			"plasma-workspace"
+			'plasma-meta',
+			'konsole',
+			'kate',
+			'dolphin',
+			'ark',
+			'plasma-workspace',
 		]
 
 	@property

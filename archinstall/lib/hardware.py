@@ -2,19 +2,12 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from .exceptions import SysCallError
 from .general import SysCommand
 from .networking import enrich_iface_types, list_interfaces
 from .output import debug
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
+from .translationhandler import tr
 
 
 class CpuVendor(Enum):
@@ -49,16 +42,15 @@ class GfxPackage(Enum):
 	LibvaIntelDriver = 'libva-intel-driver'
 	LibvaMesaDriver = 'libva-mesa-driver'
 	LibvaNvidiaDriver = 'libva-nvidia-driver'
-	Mesa = "mesa"
+	Mesa = 'mesa'
 	NvidiaDkms = 'nvidia-dkms'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	VulkanNouveau = 'vulkan-nouveau'
-	Xf86VideoAmdgpu = "xf86-video-amdgpu"
-	Xf86VideoAti = "xf86-video-ati"
+	Xf86VideoAmdgpu = 'xf86-video-amdgpu'
+	Xf86VideoAti = 'xf86-video-ati'
 	Xf86VideoNouveau = 'xf86-video-nouveau'
-	Xf86VideoVmware = 'xf86-video-vmware'
 	XorgServer = 'xorg-server'
 	XorgXinit = 'xorg-xinit'
 
@@ -70,20 +62,18 @@ class GfxDriver(Enum):
 	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
 	NvidiaOpenSource = 'Nvidia (open-source nouveau driver)'
 	NvidiaProprietary = 'Nvidia (proprietary)'
-	VMOpenSource = 'VMware / VirtualBox (open-source)'
+	VMOpenSource = 'VirtualBox (open-source)'
 
 	def is_nvidia(self) -> bool:
 		match self:
-			case GfxDriver.NvidiaProprietary | \
-				GfxDriver.NvidiaOpenSource | \
-				GfxDriver.NvidiaOpenKernel:
+			case GfxDriver.NvidiaProprietary | GfxDriver.NvidiaOpenSource | GfxDriver.NvidiaOpenKernel:
 				return True
 			case _:
 				return False
 
 	def packages_text(self) -> str:
 		pkg_names = [p.value for p in self.gfx_packages()]
-		text = str(_('Installed packages')) + ':\n'
+		text = tr('Installed packages') + ':\n'
 
 		for p in sorted(pkg_names):
 			text += f'\t- {p}\n'
@@ -100,13 +90,12 @@ class GfxDriver(Enum):
 					GfxPackage.Xf86VideoAmdgpu,
 					GfxPackage.Xf86VideoAti,
 					GfxPackage.Xf86VideoNouveau,
-					GfxPackage.Xf86VideoVmware,
 					GfxPackage.LibvaMesaDriver,
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanRadeon,
 					GfxPackage.VulkanIntel,
-					GfxPackage.VulkanNouveau
+					GfxPackage.VulkanNouveau,
 				]
 			case GfxDriver.AmdOpenSource:
 				packages += [
@@ -114,38 +103,37 @@ class GfxDriver(Enum):
 					GfxPackage.Xf86VideoAmdgpu,
 					GfxPackage.Xf86VideoAti,
 					GfxPackage.LibvaMesaDriver,
-					GfxPackage.VulkanRadeon
+					GfxPackage.VulkanRadeon,
 				]
 			case GfxDriver.IntelOpenSource:
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
-					GfxPackage.VulkanIntel
+					GfxPackage.VulkanIntel,
 				]
 			case GfxDriver.NvidiaOpenKernel:
 				packages += [
 					GfxPackage.NvidiaOpenDkms,
 					GfxPackage.Dkms,
-					GfxPackage.LibvaNvidiaDriver
+					GfxPackage.LibvaNvidiaDriver,
 				]
 			case GfxDriver.NvidiaOpenSource:
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoNouveau,
 					GfxPackage.LibvaMesaDriver,
-					GfxPackage.VulkanNouveau
+					GfxPackage.VulkanNouveau,
 				]
 			case GfxDriver.NvidiaProprietary:
 				packages += [
 					GfxPackage.NvidiaDkms,
 					GfxPackage.Dkms,
-					GfxPackage.LibvaNvidiaDriver
+					GfxPackage.LibvaNvidiaDriver,
 				]
 			case GfxDriver.VMOpenSource:
 				packages += [
 					GfxPackage.Mesa,
-					GfxPackage.Xf86VideoVmware
 				]
 
 		return packages
@@ -160,13 +148,13 @@ class _SysInfo:
 		"""
 		Returns system cpu information
 		"""
-		cpu_info_path = Path("/proc/cpuinfo")
+		cpu_info_path = Path('/proc/cpuinfo')
 		cpu: dict[str, str] = {}
 
 		with cpu_info_path.open() as file:
 			for line in file:
 				if line := line.strip():
-					key, value = line.split(":", maxsplit=1)
+					key, value = line.split(':', maxsplit=1)
 					cpu[key.strip()] = value.strip()
 
 		return cpu
@@ -176,7 +164,7 @@ class _SysInfo:
 		"""
 		Returns system memory information
 		"""
-		mem_info_path = Path("/proc/meminfo")
+		mem_info_path = Path('/proc/meminfo')
 		mem_info: dict[str, int] = {}
 
 		with mem_info_path.open() as file:
@@ -222,7 +210,7 @@ class SysInfo:
 	@staticmethod
 	def _graphics_devices() -> dict[str, str]:
 		cards: dict[str, str] = {}
-		for line in SysCommand("lspci"):
+		for line in SysCommand('lspci'):
 			if b' VGA ' in line or b' 3D ' in line:
 				_, identifier = line.split(b': ', 1)
 				cards[identifier.strip().decode('UTF-8')] = str(line)
@@ -252,12 +240,12 @@ class SysInfo:
 
 	@staticmethod
 	def sys_vendor() -> str:
-		with open("/sys/devices/virtual/dmi/id/sys_vendor") as vendor:
+		with open('/sys/devices/virtual/dmi/id/sys_vendor') as vendor:
 			return vendor.read().strip()
 
 	@staticmethod
 	def product_name() -> str:
-		with open("/sys/devices/virtual/dmi/id/product_name") as product:
+		with open('/sys/devices/virtual/dmi/id/product_name') as product:
 			return product.read().strip()
 
 	@staticmethod
@@ -275,19 +263,19 @@ class SysInfo:
 	@staticmethod
 	def virtualization() -> str | None:
 		try:
-			return str(SysCommand("systemd-detect-virt")).strip('\r\n')
+			return str(SysCommand('systemd-detect-virt')).strip('\r\n')
 		except SysCallError as err:
-			debug(f"Could not detect virtual system: {err}")
+			debug(f'Could not detect virtual system: {err}')
 
 		return None
 
 	@staticmethod
 	def is_vm() -> bool:
 		try:
-			result = SysCommand("systemd-detect-virt")
-			return b"none" not in b"".join(result).lower()
+			result = SysCommand('systemd-detect-virt')
+			return b'none' not in b''.join(result).lower()
 		except SysCallError as err:
-			debug(f"System is not running in a VM: {err}")
+			debug(f'System is not running in a VM: {err}')
 
 		return False
 
@@ -319,7 +307,7 @@ class SysInfo:
 			'snd_mixart',
 			'snd_mona',
 			'snd_pcxhr',
-			'snd_vx_lib'
+			'snd_vx_lib',
 		)
 
 		for loaded_module in _sys_info.loaded_modules:

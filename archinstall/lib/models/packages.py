@@ -1,16 +1,11 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, override
+from typing import Any, override
 
 from pydantic import BaseModel
 
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
+from archinstall.lib.translationhandler import tr
 
 
 class Repository(Enum):
@@ -31,7 +26,7 @@ class Repository(Enum):
 				return [
 					'core-testing',
 					'extra-testing',
-					'multilib-testing'
+					'multilib-testing',
 				]
 
 
@@ -102,7 +97,7 @@ class PackageSearch:
 			valid=data['valid'],
 			num_pages=data['num_pages'],
 			page=data['page'],
-			results=results
+			results=results,
 		)
 
 
@@ -183,7 +178,7 @@ class PackageGroup:
 	@classmethod
 	def from_available_packages(
 		cls,
-		packages: dict[str, AvailablePackage]
+		packages: dict[str, AvailablePackage],
 	) -> dict[str, 'PackageGroup']:
 		pkg_groups: dict[str, 'PackageGroup'] = {}
 
@@ -204,6 +199,6 @@ class PackageGroup:
 		return pkg_groups
 
 	def info(self) -> str:
-		output = str(_('Package group:')) + '\n  - '
+		output = tr('Package group:') + '\n  - '
 		output += '\n  - '.join(self.packages)
 		return output

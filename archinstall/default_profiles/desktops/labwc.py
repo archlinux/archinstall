@@ -1,19 +1,13 @@
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from archinstall.default_profiles.desktops import SeatAccess
 from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment, FrameProperties
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class LabwcProfile(XorgProfile):
@@ -33,8 +27,8 @@ class LabwcProfile(XorgProfile):
 			additional = [seat]
 
 		return [
-			"alacritty",
-			"labwc",
+			'alacritty',
+			'labwc',
 		] + additional
 
 	@property
@@ -51,8 +45,8 @@ class LabwcProfile(XorgProfile):
 
 	def _ask_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
-		header = str(_('labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
-		header += '\n' + str(_('Choose an option to give labwc access to your hardware')) + '\n'
+		header = tr('labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)')
+		header += '\n' + tr('Choose an option to give labwc access to your hardware') + '\n'
 
 		items = [MenuItem(s.value, value=s) for s in SeatAccess]
 		group = MenuItemGroup(items, sort_items=True)
@@ -64,13 +58,12 @@ class LabwcProfile(XorgProfile):
 			group,
 			header=header,
 			allow_skip=False,
-			frame=FrameProperties.min(str(_('Seat access'))),
-			alignment=Alignment.CENTER
+			frame=FrameProperties.min(tr('Seat access')),
+			alignment=Alignment.CENTER,
 		).run()
 
 		if result.type_ == ResultType.Selection:
-			if result.item() is not None:
-				self.custom_settings['seat_access'] = result.get_value().value
+			self.custom_settings['seat_access'] = result.get_value().value
 
 	@override
 	def do_on_select(self) -> None:

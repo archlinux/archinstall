@@ -12,7 +12,7 @@ class CosmicProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"cosmic",
+			'cosmic',
 		]
 
 	@property

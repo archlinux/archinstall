@@ -18,7 +18,7 @@ class DesktopProfile(Profile):
 			'Desktop',
 			ProfileType.Desktop,
 			current_selection=current_selection,
-			support_greeter=True
+			support_greeter=True,
 		)
 
 	@property
@@ -34,7 +34,7 @@ class DesktopProfile(Profile):
 			'wireless_tools',
 			'wpa_supplicant',
 			'smartmontools',
-			'xdg-utils'
+			'xdg-utils',
 		]
 
 	@property
@@ -61,8 +61,9 @@ class DesktopProfile(Profile):
 			MenuItem(
 				p.name,
 				value=p,
-				preview_action=lambda x: x.value.preview_text()
-			) for p in profile_handler.get_desktop_profiles()
+				preview_action=lambda x: x.value.preview_text(),
+			)
+			for p in profile_handler.get_desktop_profiles()
 		]
 
 		group = MenuItemGroup(items, sort_items=True, sort_case_sensitive=False)
@@ -75,7 +76,7 @@ class DesktopProfile(Profile):
 			allow_skip=True,
 			preview_style=PreviewStyle.RIGHT,
 			preview_size='auto',
-			preview_frame=FrameProperties.max('Info')
+			preview_frame=FrameProperties.max('Info'),
 		).run()
 
 		match result.type_:

@@ -8,7 +8,7 @@ from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
 
 from .output import debug
 
-libcrypt = ctypes.CDLL("libcrypt.so")
+libcrypt = ctypes.CDLL('libcrypt.so')
 
 libcrypt.crypt.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
 libcrypt.crypt.restype = ctypes.c_char_p
@@ -90,8 +90,8 @@ def _get_fernet(salt: bytes, password: str) -> Fernet:
 
 	key = base64.urlsafe_b64encode(
 		kdf.derive(
-			password.encode('utf-8')
-		)
+			password.encode('utf-8'),
+		),
 	)
 
 	return Fernet(key)
@@ -108,7 +108,7 @@ def encrypt(password: str, data: str) -> str:
 	return f'$argon2id${encoded_salt}${encoded_token}'
 
 
-def decrypt(data: str, password: str):
+def decrypt(data: str, password: str) -> str:
 	_, algo, encoded_salt, encoded_token = data.split('$')
 	salt = base64.urlsafe_b64decode(encoded_salt)
 	token = base64.urlsafe_b64decode(encoded_token)

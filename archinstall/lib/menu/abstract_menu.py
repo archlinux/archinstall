@@ -1,20 +1,15 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Self
+from types import TracebackType
+from typing import Any, Self
 
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu, Tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle
 
 from ..output import error
-
-if TYPE_CHECKING:
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
-
 
 CONFIG_KEY = '__config__'
 
@@ -26,7 +21,7 @@ class AbstractMenu[ValueT]:
 		config: Any,
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
-		reset_warning: str | None = None
+		reset_warning: str | None = None,
 	):
 		self._menu_item_group = item_group
 		self._config = config
@@ -42,13 +37,15 @@ class AbstractMenu[ValueT]:
 		self.is_context_mgr = True
 		return self
 
-	def __exit__(self, *args: Any, **kwargs: Any) -> None:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		# TODO: skip processing when it comes from a planified exit
-		if len(args) >= 2 and args[1]:
-			error(args[1])
-			Tui.print("Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
-			raise args[1]
+		if exc_type is not None:
+			error(str(exc_value))
+			Tui.print('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')
+
+			# Return None to propagate the exception
+			return None
 
 		self.sync_all_to_config()
 
@@ -97,7 +94,10 @@ class AbstractMenu[ValueT]:
 	def _is_config_valid(self) -> bool:
 		return True
 
-	def run(self) -> ValueT | None:
+	def run(
+		self,
+		additional_title: str | None = None,
+	) -> ValueT | None:
 		self._sync_from_config()
 
 		while True:
@@ -109,6 +109,7 @@ class AbstractMenu[ValueT]:
 				preview_style=PreviewStyle.RIGHT,
 				preview_size='auto',
 				preview_frame=FrameProperties('Info', FrameStyle.MAX),
+				additional_title=additional_title,
 			).run()
 
 			match result.type_:
@@ -132,14 +133,14 @@ class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):
 		item_group: MenuItemGroup,
 		config: Any,
 		auto_cursor: bool = True,
-		allow_reset: bool = False
+		allow_reset: bool = False,
 	):
-		back_text = f'{Chars.Right_arrow} ' + str(_('Back'))
+		back_text = f'{Chars.Right_arrow} ' + tr('Back')
 		item_group.add_item(MenuItem(text=back_text))
 
 		super().__init__(
 			item_group,
 			config=config,
 			auto_cursor=auto_cursor,
-			allow_reset=allow_reset
+			allow_reset=allow_reset,
 		)

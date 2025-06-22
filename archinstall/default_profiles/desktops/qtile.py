@@ -13,7 +13,7 @@ class QtileProfile(XorgProfile):
 	def packages(self) -> list[str]:
 		return [
 			'qtile',
-			'alacritty'
+			'alacritty',
 		]
 
 	@property

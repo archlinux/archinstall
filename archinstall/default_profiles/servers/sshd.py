@@ -7,7 +7,7 @@ class SshdProfile(Profile):
 	def __init__(self) -> None:
 		super().__init__(
 			'sshd',
-			ProfileType.ServerType
+			ProfileType.ServerType,
 		)
 
 	@property

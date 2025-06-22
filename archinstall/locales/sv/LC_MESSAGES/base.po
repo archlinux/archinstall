@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] En logg-fil har skapats här: {} {}"
@@ -1620,72 +1620,56 @@ msgstr "Starta sökläge"
 msgid "Exit search mode"
 msgstr "Avsluta sökläge"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+msgstr "labwc behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+msgstr "Välj ett alternativ för att ge labwc åtkomst till din hårdvara"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+msgstr "niri behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+msgstr "Välj ett alternativ för att ge niri åtkomst till din hårdvara"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "Markera/avmarkera som bootbar"
+msgstr "Markera/avmarkera som ESP"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Paketgrupp:"
 
-#, fuzzy
 msgid "Exit archinstall"
-msgstr "Archinstall hjälp"
+msgstr "Avsluta archinstall"
 
-#, fuzzy
 msgid "Reboot system"
-msgstr "Filsystem"
+msgstr "Starta om systemet"
 
-#, fuzzy
 msgid "chroot into installation for post-installation configurations"
-msgstr "Vill du hoppa in i det nyligen installerade systemet och utföra förändringar? (skriv 'exit' när du är klart)"
+msgstr "chroot in i installationen för efterinstallationskonfigurationer"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Installationen slutförd"
 
-#, fuzzy
 msgid "What would you like to do next?"
-msgstr "Vill du fortsätta?"
+msgstr "Vad vill du göra härnäst?"
 
-#, fuzzy
 msgid "Select which mode to configure for \"{}\""
-msgstr "Välj vilket läge att konfigurera för \"{}\" eller använd standardläge \"{}\""
+msgstr "Välj vilket läge att konfigurera för \"{}\""
 
-#, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr "Diskkrypteringslösenord"
+msgstr "Felaktigt lösenord för autentiseringsfilens dekrypteringslösenord"
 
-#, fuzzy
 msgid "Incorrect password"
-msgstr "Root-lösenord"
+msgstr "Felaktigt lösenord"
 
-#, fuzzy
 msgid "Credentials file decryption password"
-msgstr "Diskkrypteringslösenord"
+msgstr "Dekrypteringslösenord för autentiseringsfil"
 
-#, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Vill du spara konfigurationsfil(er) till {}?"
+msgstr "Vill du kryptera user_credentials.json filen?"
 
-#, fuzzy
 msgid "Credentials file encryption password"
-msgstr "Diskkrypteringslösenord"
+msgstr "Krypteringslösenord för autentiseringsfil"
 
-#, fuzzy
 msgid "Repositories: {}"
-msgstr "Arkivnamn"
+msgstr "Arkiv: {}"

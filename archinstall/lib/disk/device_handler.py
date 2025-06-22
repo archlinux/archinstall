@@ -119,8 +119,8 @@ class DeviceHandler:
 						partition,
 						lsblk_info,
 						fs_type,
-						subvol_infos
-					)
+						subvol_infos,
+					),
 				)
 
 			block_device = BDevice(disk, device_info, partition_infos)
@@ -155,7 +155,7 @@ class DeviceHandler:
 	def _determine_fs_type(
 		self,
 		partition: Partition,
-		lsblk_info: LsblkInfo | None = None
+		lsblk_info: LsblkInfo | None = None,
 	) -> FilesystemType | None:
 		try:
 			if partition.fileSystem:
@@ -194,10 +194,7 @@ class DeviceHandler:
 	def get_unique_path_for_device(self, dev_path: Path) -> Path | None:
 		paths = Path('/dev/disk/by-id').glob('*')
 		linked_targets = {p.resolve(): p for p in paths}
-		linked_wwn_targets = {
-			p: linked_targets[p] for p in linked_targets
-			if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')
-		}
+		linked_wwn_targets = {p: linked_targets[p] for p in linked_targets if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
 
 		if dev_path in linked_wwn_targets:
 			return linked_wwn_targets[dev_path]
@@ -214,7 +211,7 @@ class DeviceHandler:
 	def get_btrfs_info(
 		self,
 		dev_path: Path,
-		lsblk_info: LsblkInfo | None = None
+		lsblk_info: LsblkInfo | None = None,
 	) -> list[_BtrfsSubvolumeInfo]:
 		if not lsblk_info:
 			lsblk_info = get_lsblk_info(dev_path)
@@ -266,7 +263,7 @@ class DeviceHandler:
 		self,
 		fs_type: FilesystemType,
 		path: Path,
-		additional_parted_options: list[str] = []
+		additional_parted_options: list[str] = [],
 	) -> None:
 		mkfs_type = fs_type.value
 		command = None
@@ -287,7 +284,7 @@ class DeviceHandler:
 				# Skip zeroing and bad sector check
 				options.append('--fast')
 			case FilesystemType.LinuxSwap:
-				command = "mkswap"
+				command = 'mkswap'
 			case _:
 				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
 
@@ -310,12 +307,12 @@ class DeviceHandler:
 		dev_path: Path,
 		mapper_name: str | None,
 		enc_password: Password | None,
-		lock_after_create: bool = True
+		lock_after_create: bool = True,
 	) -> Luks2:
 		luks_handler = Luks2(
 			dev_path,
 			mapper_name=mapper_name,
-			password=enc_password
+			password=enc_password,
 		)
 
 		key_file = luks_handler.encrypt()
@@ -338,7 +335,7 @@ class DeviceHandler:
 		dev_path: Path,
 		mapper_name: str | None,
 		fs_type: FilesystemType,
-		enc_conf: DiskEncryption
+		enc_conf: DiskEncryption,
 	) -> None:
 		if not enc_conf.encryption_password:
 			raise ValueError('No encryption password provided')
@@ -346,7 +343,7 @@ class DeviceHandler:
 		luks_handler = Luks2(
 			dev_path,
 			mapper_name=mapper_name,
-			password=enc_conf.encryption_password
+			password=enc_conf.encryption_password,
 		)
 
 		key_file = luks_handler.encrypt()
@@ -367,7 +364,7 @@ class DeviceHandler:
 	def _lvm_info(
 		self,
 		cmd: str,
-		info_type: Literal['lv', 'vg', 'pvseg']
+		info_type: Literal['lv', 'vg', 'pvseg'],
 	) -> LvmVolumeInfo | LvmGroupInfo | LvmPVInfo | None:
 		raw_info = SysCommand(cmd).decode().split('\n')
 
@@ -396,32 +393,29 @@ class DeviceHandler:
 					return LvmVolumeInfo(
 						lv_name=entry['lv_name'],
 						vg_name=entry['vg_name'],
-						lv_size=Size(int(entry['lv_size'][:-1]), Unit.B, SectorSize.default())
+						lv_size=Size(int(entry['lv_size'][:-1]), Unit.B, SectorSize.default()),
 					)
 				case 'vg':
 					return LvmGroupInfo(
 						vg_uuid=entry['vg_uuid'],
-						vg_size=Size(int(entry['vg_size'][:-1]), Unit.B, SectorSize.default())
+						vg_size=Size(int(entry['vg_size'][:-1]), Unit.B, SectorSize.default()),
 					)
 
 		return None
 
 	@overload
-	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv']) -> LvmVolumeInfo | None:
-		...
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['lv']) -> LvmVolumeInfo | None: ...
 
 	@overload
-	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['vg']) -> LvmGroupInfo | None:
-		...
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['vg']) -> LvmGroupInfo | None: ...
 
 	@overload
-	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['pvseg']) -> LvmPVInfo | None:
-		...
+	def _lvm_info_with_retry(self, cmd: str, info_type: Literal['pvseg']) -> LvmPVInfo | None: ...
 
 	def _lvm_info_with_retry(
 		self,
 		cmd: str,
-		info_type: Literal['lv', 'vg', 'pvseg']
+		info_type: Literal['lv', 'vg', 'pvseg'],
 	) -> LvmVolumeInfo | LvmGroupInfo | LvmPVInfo | None:
 		while True:
 			try:
@@ -430,31 +424,17 @@ class DeviceHandler:
 				time.sleep(3)
 
 	def lvm_vol_info(self, lv_name: str) -> LvmVolumeInfo | None:
-		cmd = (
-			'lvs --reportformat json '
-			'--unit B '
-			f'-S lv_name={lv_name}'
-		)
+		cmd = f'lvs --reportformat json --unit B -S lv_name={lv_name}'
 
 		return self._lvm_info_with_retry(cmd, 'lv')
 
 	def lvm_group_info(self, vg_name: str) -> LvmGroupInfo | None:
-		cmd = (
-			'vgs --reportformat json '
-			'--unit B '
-			'-o vg_name,vg_uuid,vg_size '
-			f'-S vg_name={vg_name}'
-		)
+		cmd = f'vgs --reportformat json --unit B -o vg_name,vg_uuid,vg_size -S vg_name={vg_name}'
 
 		return self._lvm_info_with_retry(cmd, 'vg')
 
 	def lvm_pvseg_info(self, vg_name: str, lv_name: str) -> LvmPVInfo | None:
-		cmd = (
-			'pvs '
-			'--segments -o+lv_name,vg_name '
-			f'-S vg_name={vg_name},lv_name={lv_name} '
-			'--reportformat json '
-		)
+		cmd = f'pvs --segments -o+lv_name,vg_name -S vg_name={vg_name},lv_name={lv_name} --reportformat json '
 
 		return self._lvm_info_with_retry(cmd, 'pvseg')
 
@@ -525,7 +505,7 @@ class DeviceHandler:
 		part_mod: PartitionModification,
 		block_device: BDevice,
 		disk: Disk,
-		requires_delete: bool
+		requires_delete: bool,
 	) -> None:
 		# when we require a delete and the partition to be (re)created
 		# already exists then we have to delete it first
@@ -543,18 +523,18 @@ class DeviceHandler:
 
 		start_sector = part_mod.start.convert(
 			Unit.sectors,
-			block_device.device_info.sector_size
+			block_device.device_info.sector_size,
 		)
 
 		length_sector = part_mod.length.convert(
 			Unit.sectors,
-			block_device.device_info.sector_size
+			block_device.device_info.sector_size,
 		)
 
 		geometry = Geometry(
 			device=block_device.disk.device,
 			start=start_sector.value,
-			length=length_sector.value
+			length=length_sector.value,
 		)
 
 		fs_value = part_mod.safe_fs_type.parted_value
@@ -564,7 +544,7 @@ class DeviceHandler:
 			disk=disk,
 			type=part_mod.type.get_partition_code(),
 			fs=filesystem,
-			geometry=geometry
+			geometry=geometry,
 		)
 
 		for flag in part_mod.flags:
@@ -611,7 +591,7 @@ class DeviceHandler:
 		self,
 		path: Path,
 		btrfs_subvols: list[SubvolumeModification],
-		mount_options: list[str]
+		mount_options: list[str],
 	) -> None:
 		info(f'Creating subvolumes: {path}')
 
@@ -622,7 +602,7 @@ class DeviceHandler:
 
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
-			SysCommand(f"btrfs subvolume create -p {subvol_path}")
+			SysCommand(f'btrfs subvolume create -p {subvol_path}')
 
 			if BtrfsMountOption.nodatacow.value in mount_options:
 				try:
@@ -641,7 +621,7 @@ class DeviceHandler:
 	def create_btrfs_volumes(
 		self,
 		part_mod: PartitionModification,
-		enc_conf: DiskEncryption | None = None
+		enc_conf: DiskEncryption | None = None,
 	) -> None:
 		info(f'Creating subvolumes: {part_mod.safe_dev_path}')
 
@@ -653,7 +633,7 @@ class DeviceHandler:
 			luks_handler = self.unlock_luks2_dev(
 				part_mod.safe_dev_path,
 				part_mod.mapper_name,
-				enc_conf.encryption_password
+				enc_conf.encryption_password,
 			)
 
 			if not luks_handler.mapper_dev:
@@ -668,7 +648,7 @@ class DeviceHandler:
 			dev_path,
 			self._TMP_BTRFS_MOUNT,
 			create_target_mountpoint=True,
-			options=part_mod.mount_options
+			options=part_mod.mount_options,
 		)
 
 		for sub_vol in sorted(part_mod.btrfs_subvols, key=lambda x: x.name):
@@ -676,7 +656,7 @@ class DeviceHandler:
 
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
-			SysCommand(f"btrfs subvolume create -p {subvol_path}")
+			SysCommand(f'btrfs subvolume create -p {subvol_path}')
 
 		umount(dev_path)
 
@@ -687,15 +667,12 @@ class DeviceHandler:
 		self,
 		dev_path: Path,
 		mapper_name: str,
-		enc_password: Password | None
+		enc_password: Password | None,
 	) -> Luks2:
 		luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
 
 		if not luks_handler.is_unlocked():
 			luks_handler.unlock()
-
-		if not luks_handler.is_unlocked():
-			raise DiskError(f'Failed to unlock luks2 device: {dev_path}')
 
 		return luks_handler
 
@@ -716,7 +693,7 @@ class DeviceHandler:
 	def partition(
 		self,
 		modification: DeviceModification,
-		partition_table: PartitionTable | None = None
+		partition_table: PartitionTable | None = None,
 	) -> None:
 		"""
 		Create a partition table on the block device and create all partitions.
@@ -760,7 +737,7 @@ class DeviceHandler:
 		target_mountpoint: Path,
 		mount_fs: str | None = None,
 		create_target_mountpoint: bool = True,
-		options: list[str] = []
+		options: list[str] = [],
 	) -> None:
 		if create_target_mountpoint and not target_mountpoint.exists():
 			target_mountpoint.mkdir(parents=True, exist_ok=True)
@@ -828,7 +805,7 @@ class DeviceHandler:
 			SysCommand(command)
 		except SysCallError as err:
 			if 'have been written, but we have been unable to inform the kernel of the change' in str(err):
-				log(f"Partprobe was not able to inform the kernel of the new disk state (ignoring error): {err}", fg="gray", level=logging.INFO)
+				log(f'Partprobe was not able to inform the kernel of the new disk state (ignoring error): {err}', fg='gray', level=logging.INFO)
 			else:
 				error(f'"{command}" failed to run (continuing anyway): {err}')
 

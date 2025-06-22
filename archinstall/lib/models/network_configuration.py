@@ -4,30 +4,27 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
+from archinstall.lib.translationhandler import tr
+
 from ..models.profile_model import ProfileConfiguration
 
 if TYPE_CHECKING:
-	from collections.abc import Callable
-
 	from archinstall.lib.installer import Installer
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 class NicType(Enum):
-	ISO = "iso"
-	NM = "nm"
-	MANUAL = "manual"
+	ISO = 'iso'
+	NM = 'nm'
+	MANUAL = 'manual'
 
 	def display_msg(self) -> str:
 		match self:
 			case NicType.ISO:
-				return str(_('Copy ISO network configuration to installation'))
+				return tr('Copy ISO network configuration to installation')
 			case NicType.NM:
-				return str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)'))
+				return tr('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)')
 			case NicType.MANUAL:
-				return str(_('Manual configuration'))
+				return tr('Manual configuration')
 
 
 class _NicSerialization(TypedDict):
@@ -52,7 +49,7 @@ class Nic:
 			'ip': self.ip if self.ip else '',
 			'dhcp': self.dhcp,
 			'gateway': self.gateway if self.gateway else '',
-			'dns': self.dns
+			'dns': self.dns,
 		}
 
 	def json(self) -> _NicSerialization:
@@ -61,7 +58,7 @@ class Nic:
 			'ip': self.ip,
 			'dhcp': self.dhcp,
 			'gateway': self.gateway,
-			'dns': self.dns
+			'dns': self.dns,
 		}
 
 	@staticmethod
@@ -141,18 +138,18 @@ class NetworkConfiguration:
 	def install_network_config(
 		self,
 		installation: Installer,
-		profile_config: ProfileConfiguration | None = None
+		profile_config: ProfileConfiguration | None = None,
 	) -> None:
 		match self.type:
 			case NicType.ISO:
 				installation.copy_iso_network_config(
-					enable_services=True  # Sources the ISO network configuration to the install medium.
+					enable_services=True,  # Sources the ISO network configuration to the install medium.
 				)
 			case NicType.NM:
-				installation.add_additional_packages(["networkmanager"])
+				installation.add_additional_packages(['networkmanager'])
 				if profile_config and profile_config.profile:
 					if profile_config.profile.is_desktop_profile():
-						installation.add_additional_packages(["network-manager-applet"])
+						installation.add_additional_packages(['network-manager-applet'])
 				installation.enable_service('NetworkManager.service')
 			case NicType.MANUAL:
 				for nic in self.nics:

@@ -53,7 +53,7 @@ def package_search(package: str) -> PackageSearch:
 	response = _make_request(BASE_URL_PKG_SEARCH, {'name': package})
 
 	if response.code != 200:
-		raise PackageError(f"Could not locate package: [{response.code}] {response}")
+		raise PackageError(f'Could not locate package: [{response.code}] {response}')
 
 	data = response.read().decode('UTF-8')
 	json_data = json.loads(data)
@@ -105,7 +105,6 @@ def validate_package_list(packages: list[str]) -> tuple[list[str], list[str]]:
 
 
 def installed_package(package: str) -> LocalPackage | None:
-	package_info = []
 	try:
 		package_info = Pacman.run(f'-Q --info {package}').decode().split('\n')
 		return _parse_package_output(package_info, LocalPackage)
@@ -116,8 +115,19 @@ def installed_package(package: str) -> LocalPackage | None:
 
 
 @lru_cache
+def check_package_upgrade(package: str) -> str | None:
+	try:
+		upgrade = Pacman.run(f'-Qu {package}').decode()
+		return upgrade
+	except SysCallError:
+		debug(f'Failed to check for package upgrades: {package}')
+
+	return None
+
+
+@lru_cache
 def list_available_packages(
-	repositories: tuple[Repository]
+	repositories: tuple[Repository],
 ) -> dict[str, AvailablePackage]:
 	"""
 	Returns a list of all available packages in the database
@@ -127,7 +137,7 @@ def list_available_packages(
 	filtered_repos = [name for repo in repositories for name in repo.get_repository_list()]
 
 	try:
-		Pacman.run("-Sy")
+		Pacman.run('-Sy')
 	except Exception as e:
 		debug(f'Failed to sync Arch Linux package database: {e}')
 
@@ -152,7 +162,7 @@ def _normalize_key_name(key: str) -> str:
 
 def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 	package_meta: list[str],
-	cls: type[PackageType]
+	cls: type[PackageType],
 ) -> PackageType:
 	package = {}
 

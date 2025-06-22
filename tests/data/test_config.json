@@ -1,5 +1,14 @@
 {
   "archinstall-language": "English",
+  "script": "test_script",
+  "app_config": {
+      "bluetooth_config": {
+          "enabled": true
+      },
+      "audio_config": {
+          "audio": "pipewire"
+      }
+  },
   "audio_config": {
     "audio": "pipewire"
   },
@@ -10,6 +19,11 @@
   ],
   "disk_config": {
     "config_type": "default_layout",
+    "btrfs_options": {
+      "snapshot_config": {
+        "type": "Snapper"
+      }
+    },
     "device_modifications": [
       {
         "device": "/dev/sda",

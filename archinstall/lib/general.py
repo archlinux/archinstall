@@ -16,11 +16,11 @@ from enum import Enum
 from pathlib import Path
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
+from types import TracebackType
 from typing import Any, override
 
 from .exceptions import RequirementError, SysCallError
-from .output import debug, error
-from .storage import storage
+from .output import debug, error, logger
 
 # https://stackoverflow.com/a/43627833/929999
 _VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
@@ -35,7 +35,7 @@ def generate_password(length: int = 64) -> str:
 def locate_binary(name: str) -> str:
 	if path := which(name):
 		return path
-	raise RequirementError(f"Binary {name} does not exist.")
+	raise RequirementError(f'Binary {name} does not exist.')
 
 
 def clear_vt100_escape_codes(data: bytes) -> bytes:
@@ -57,8 +57,7 @@ def jsonify(obj: object, safe: bool = True) -> object:
 		return {
 			key: jsonify(value, safe)
 			for key, value in obj.items()
-			if isinstance(key, compatible_types)
-			and not (isinstance(key, str) and key.startswith("!") and safe)
+			if isinstance(key, compatible_types) and not (isinstance(key, str) and key.startswith('!') and safe)
 		}
 	if isinstance(obj, Enum):
 		return obj.value
@@ -73,7 +72,7 @@ def jsonify(obj: object, safe: bool = True) -> object:
 		return [jsonify(item, safe) for item in obj]
 	if isinstance(obj, Path):
 		return str(obj)
-	if hasattr(obj, "__dict__"):
+	if hasattr(obj, '__dict__'):
 		return vars(obj)
 
 	return obj
@@ -105,8 +104,8 @@ class SysCommandWorker:
 		cmd: str | list[str],
 		peek_output: bool | None = False,
 		environment_vars: dict[str, str] | None = None,
-		working_directory: str | None = './',
-		remove_vt100_escape_codes_from_lines: bool = True
+		working_directory: str = './',
+		remove_vt100_escape_codes_from_lines: bool = True,
 	):
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
@@ -148,7 +147,7 @@ class SysCommandWorker:
 
 	def __iter__(self, *args: str, **kwargs: dict[str, Any]) -> Iterator[bytes]:
 		last_line = self._trace_log.rfind(b'\n')
-		lines = filter(None, self._trace_log[self._trace_log_pos:last_line].splitlines())
+		lines = filter(None, self._trace_log[self._trace_log_pos : last_line].splitlines())
 		for line in lines:
 			if self.remove_vt100_escape_codes_from_lines:
 				line = clear_vt100_escape_codes(line)
@@ -172,7 +171,7 @@ class SysCommandWorker:
 	def __enter__(self) -> 'SysCommandWorker':
 		return self
 
-	def __exit__(self, *args: str) -> None:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
@@ -185,17 +184,17 @@ class SysCommandWorker:
 		if self.peek_output:
 			# To make sure any peaked output didn't leave us hanging
 			# on the same line we were on.
-			sys.stdout.write("\n")
+			sys.stdout.write('\n')
 			sys.stdout.flush()
 
-		if len(args) >= 2 and args[1]:
-			debug(args[1])
+		if exc_type is not None:
+			debug(str(exc_value))
 
 		if self.exit_code != 0:
 			raise SysCallError(
-				f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self)[-500:]}",
+				f'{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self)[-500:]}',
 				self.exit_code,
-				worker_log=self._trace_log
+				worker_log=self._trace_log,
 			)
 
 	def is_alive(self) -> bool:
@@ -238,19 +237,9 @@ class SysCommandWorker:
 				except UnicodeDecodeError:
 					return False
 
-			peak_logfile = Path(f"{storage['LOG_PATH']}/cmd_output.txt")
+			_cmd_output(output)
 
-			change_perm = False
-			if peak_logfile.exists() is False:
-				change_perm = True
-
-			with peak_logfile.open("a") as peek_output_log:
-				peek_output_log.write(str(output))
-
-			if change_perm:
-				peak_logfile.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
-
-			sys.stdout.write(str(output))
+			sys.stdout.write(output)
 			sys.stdout.flush()
 
 		return True
@@ -297,12 +286,12 @@ class SysCommandWorker:
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
-			_log_cmd(self.cmd)
+			_cmd_history(self.cmd)
 
 			try:
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
 			except FileNotFoundError:
-				error(f"{self.cmd[0]} does not exist.")
+				error(f'{self.cmd[0]} does not exist.')
 				self.exit_code = 1
 				return False
 		else:
@@ -324,9 +313,9 @@ class SysCommand:
 		cmd: str | list[str],
 		peek_output: bool | None = False,
 		environment_vars: dict[str, str] | None = None,
-		working_directory: str | None = './',
-		remove_vt100_escape_codes_from_lines: bool = True):
-
+		working_directory: str = './',
+		remove_vt100_escape_codes_from_lines: bool = True,
+	):
 		self.cmd = cmd
 		self.peek_output = peek_output
 		self.environment_vars = environment_vars
@@ -339,20 +328,20 @@ class SysCommand:
 	def __enter__(self) -> SysCommandWorker | None:
 		return self.session
 
-	def __exit__(self, *args: str, **kwargs: dict[str, Any]) -> None:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
-		if len(args) >= 2 and args[1]:
-			error(args[1])
+		if exc_type is not None:
+			error(str(exc_value))
 
 	def __iter__(self, *args: list[Any], **kwargs: dict[str, Any]) -> Iterator[bytes]:
 		if self.session:
 			yield from self.session
 
-	def __getitem__(self, key: slice) -> bytes | None:
+	def __getitem__(self, key: slice) -> bytes:
 		if not self.session:
-			raise KeyError("SysCommand() does not have an active session.")
+			raise KeyError('SysCommand() does not have an active session.')
 		elif type(key) is slice:
 			start = key.start or 0
 			end = key.stop or len(self.session._trace_log)
@@ -379,8 +368,8 @@ class SysCommand:
 			peek_output=self.peek_output,
 			environment_vars=self.environment_vars,
 			remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines,
-			working_directory=self.working_directory) as session:
-
+			working_directory=self.working_directory,
+		) as session:
 			self.session = session
 
 			while not self.session.ended:
@@ -425,36 +414,43 @@ class SysCommand:
 		return None
 
 
-def _log_cmd(cmd: list[str]) -> None:
-	history_logfile = Path(f"{storage['LOG_PATH']}/cmd_history.txt")
+def _append_log(file: str, content: str) -> None:
+	path = logger.directory / file
 
-	change_perm = False
-	if history_logfile.exists() is False:
-		change_perm = True
+	change_perm = not path.exists()
 
 	try:
-		with history_logfile.open("a") as cmd_log:
-			cmd_log.write(f"{time.time()} {cmd}\n")
+		with path.open('a') as f:
+			f.write(content)
 
 		if change_perm:
-			history_logfile.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+			path.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 	except (PermissionError, FileNotFoundError):
-		# If history_logfile does not exist, ignore the error
+		# If the file does not exist, ignore the error
 		pass
+
+
+def _cmd_history(cmd: list[str]) -> None:
+	content = f'{time.time()} {cmd}\n'
+	_append_log('cmd_history.txt', content)
+
+
+def _cmd_output(output: str) -> None:
+	_append_log('cmd_output.txt', output)
 
 
 def run(
 	cmd: list[str],
 	input_data: bytes | None = None,
 ) -> subprocess.CompletedProcess[bytes]:
-	_log_cmd(cmd)
+	_cmd_history(cmd)
 
 	return subprocess.run(
 		cmd,
 		input=input_data,
 		stdout=subprocess.PIPE,
 		stderr=subprocess.STDOUT,
-		check=True
+		check=True,
 	)
 
 

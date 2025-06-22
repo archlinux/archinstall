@@ -9,6 +9,11 @@ def config_fixture() -> Path:
 
 
 @pytest.fixture(scope='session')
+def btrfs_config_fixture() -> Path:
+	return Path(__file__).parent / 'data' / 'test_config_btrfs.json'
+
+
+@pytest.fixture(scope='session')
 def creds_fixture() -> Path:
 	return Path(__file__).parent / 'data' / 'test_creds.json'
 
@@ -26,6 +31,11 @@ def deprecated_creds_config() -> Path:
 @pytest.fixture(scope='session')
 def deprecated_mirror_config() -> Path:
 	return Path(__file__).parent / 'data' / 'test_deprecated_mirror_config.json'
+
+
+@pytest.fixture(scope='session')
+def deprecated_audio_config() -> Path:
+	return Path(__file__).parent / 'data' / 'test_deprecated_audio_config.json'
 
 
 @pytest.fixture(scope='session')
