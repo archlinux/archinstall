@@ -51,8 +51,8 @@ msgstr "Kies een opstartlader"
 msgid "Choose an audio server"
 msgstr "Kies een audioserver"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Er worden alleen basispakketten geïnstalleerd, zoals base, base-devel, linux, linux-firmware, efibootmgr en profielpakketten (optioneel)."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "Er worden alleen basispakketten geïnstalleerd, zoals base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr en profielpakketten (optioneel)."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Als u een webbrowser wenst, zoals Firefox of Chromium, dan kunt u dit handmatig aangeven."

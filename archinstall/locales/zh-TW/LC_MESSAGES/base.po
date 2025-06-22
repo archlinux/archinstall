@@ -51,8 +51,8 @@ msgstr "選擇開機引導程式"
 msgid "Choose an audio server"
 msgstr "請選擇音效伺服器"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "僅安裝基本套件，如 base、base-devel、linux、linux-firmware、efibootmgr 和選擇性的軟體設定套件包。"
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "僅安裝基本套件，如 base、base-devel、linux、linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other、efibootmgr 和選擇性的軟體設定套件包。"
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "如果您需要網頁瀏覽器，例如 firefox 或 chromium，你可以在下面的提示字元中進行指定。"
