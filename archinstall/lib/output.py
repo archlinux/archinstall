@@ -8,7 +8,6 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from .storage import storage
 from .utils.unicode import unicode_ljust, unicode_rjust
 
 if TYPE_CHECKING:
@@ -16,13 +15,12 @@ if TYPE_CHECKING:
 
 
 class FormattedOutput:
-
 	@classmethod
 	def _get_values(
 		cls,
 		o: 'DataclassInstance',
 		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
-		filter_list: list[str] = []
+		filter_list: list[str] = [],
 	) -> dict[str, Any]:
 		"""
 		the original values returned a dataclass as dict thru the call to some specific methods
@@ -47,7 +45,7 @@ class FormattedOutput:
 		elif is_dataclass(o):
 			return asdict(o)
 		else:
-			return o.__dict__
+			return o.__dict__  # type: ignore[unreachable]
 
 	@classmethod
 	def as_table(
@@ -55,9 +53,9 @@ class FormattedOutput:
 		obj: list[Any],
 		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = [],
-		capitalize: bool = False
+		capitalize: bool = False,
 	) -> str:
-		""" variant of as_table (subtly different code) which has two additional parameters
+		"""variant of as_table (subtly different code) which has two additional parameters
 		filter which is a list of fields which will be shon
 		class_formatter a special method to format the outgoing data
 
@@ -121,7 +119,7 @@ class FormattedOutput:
 		output = ''
 
 		for i in range(0, len(entries), cols):
-			chunks.append(entries[i:i + cols])
+			chunks.append(entries[i : i + cols])
 
 		for row in chunks:
 			out_fmt = '{: <30} ' * len(row)
@@ -139,7 +137,7 @@ class Journald:
 			return None
 
 		log_adapter = logging.getLogger('archinstall')
-		log_fmt = logging.Formatter("[%(levelname)s]: %(message)s")
+		log_fmt = logging.Formatter('[%(levelname)s]: %(message)s')
 		log_ch = systemd.journal.JournalHandler()
 		log_ch.setFormatter(log_fmt)
 		log_adapter.addHandler(log_ch)
@@ -148,30 +146,46 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-def _check_log_permissions() -> None:
-	filename = storage.get('LOG_FILE', None)
-	log_dir = storage.get('LOG_PATH', Path('./'))
+class Logger:
+	def __init__(self, path: Path = Path('/var/log/archinstall')) -> None:
+		self._path = path
 
-	if not filename:
-		raise ValueError('No log file name defined')
+	@property
+	def path(self) -> Path:
+		return self._path / 'install.log'
 
-	log_file = log_dir / filename
+	@property
+	def directory(self) -> Path:
+		return self._path
 
-	try:
-		log_dir.mkdir(exist_ok=True, parents=True)
-		log_file.touch(exist_ok=True)
+	def _check_permissions(self) -> None:
+		log_file = self.path
 
-		with log_file.open('a') as fp:
-			fp.write('')
-	except PermissionError:
-		# Fallback to creating the log file in the current folder
-		fallback_dir = Path('./').absolute()
-		fallback_log_file = fallback_dir / filename
+		try:
+			self._path.mkdir(exist_ok=True, parents=True)
+			log_file.touch(exist_ok=True)
 
-		fallback_log_file.touch(exist_ok=True)
+			with log_file.open('a') as f:
+				f.write('')
+		except PermissionError:
+			# Fallback to creating the log file in the current folder
+			logger._path = Path('./').absolute()
 
-		storage['LOG_PATH'] = fallback_dir
-		warn(f'Not enough permission to place log file at {log_file}, creating it in {fallback_log_file} instead')
+			warn(
+				f'Not enough permission to place log file at {log_file},',
+				'creating it in {logger.path} instead'
+			)
+
+	def log(self, level: int, content: str) -> None:
+		self._check_permissions()
+
+		with self.path.open('a') as f:
+			ts = _timestamp()
+			level_name = logging.getLevelName(level)
+			f.write(f'[{ts}] - {level_name} - {content}\n')
+
+
+logger = Logger()
 
 
 def _supports_color() -> bool:
@@ -224,13 +238,13 @@ def _stylize_output(
 		'magenta': '5',
 		'cyan': '6',
 		'white': '7',
-		'teal': '8;5;109',      # Extended 256-bit colors (not always supported)
-		'orange': '8;5;208',    # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+		'teal': '8;5;109',  # Extended 256-bit colors (not always supported)
+		'orange': '8;5;208',  # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
 		'darkorange': '8;5;202',
 		'gray': '8;5;246',
 		'grey': '8;5;246',
 		'darkgray': '8;5;240',
-		'lightgray': '8;5;256'
+		'lightgray': '8;5;256',
 	}
 
 	foreground = {key: f'3{colors[key]}' for key in colors}
@@ -259,7 +273,7 @@ def info(
 	fg: str = 'white',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -275,7 +289,7 @@ def debug(
 	fg: str = 'white',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -286,7 +300,7 @@ def error(
 	fg: str = 'red',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -297,7 +311,7 @@ def warn(
 	fg: str = 'yellow',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
@@ -308,29 +322,20 @@ def log(
 	fg: str = 'white',
 	bg: str | None = None,
 	reset: bool = False,
-	font: list[Font] = []
+	font: list[Font] = [],
 ) -> None:
-	# leave this check here as we need to setup the logging
-	# right from the beginning when the modules are loaded
-	_check_log_permissions()
+	text = ' '.join([str(x) for x in msgs])
 
-	text = orig_string = ' '.join([str(x) for x in msgs])
+	logger.log(level, text)
 
 	# Attempt to colorize the output if supported
 	# Insert default colors and override with **kwargs
 	if _supports_color():
 		text = _stylize_output(text, fg, bg, reset, font)
 
-	log_file: Path = storage['LOG_PATH'] / storage['LOG_FILE']
-
-	with log_file.open('a') as fp:
-		ts = _timestamp()
-		level_name = logging.getLevelName(level)
-		out = f"[{ts}] - {level_name} - {orig_string}\n"
-		fp.write(out)
-
 	Journald.log(text, level=level)
 
 	if level != logging.DEBUG:
 		from archinstall.tui.curses_menu import Tui
+
 		Tui.print(text)

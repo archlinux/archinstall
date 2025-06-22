@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-02-18\n"
-"PO-Revision-Date: 2025-04-08 22:25+0200\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2025-05-04 21:57+0200\n"
 "Last-Translator: Van Matten\n"
 "Language-Team: \n"
 "Language: it\n"
@@ -11,6 +11,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "2nd-Last-Translator: Alessio Cuccovillo <alessio.cuccovillo.dev@gmail.com>\n"
 "X-Generator: Poedit 3.6\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Poedit-SearchPath-0: base.pot\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Un file di log è stato creato qui: {} {}"
@@ -911,10 +913,10 @@ msgid "Partition mount-points are relative to inside the installation, the boot 
 msgstr "I punti di montaggio della partizione sono relativi all'interno dell'installazione, l'avvio sarebbe per esempio /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr "Se è impostato mountpoint /boot, anche la partizione sarà contrassegnata come avviabile."
+msgstr "Se il mountpoint /boot è impostato, anche la partizione sarà contrassegnata come avviabile."
 
 msgid "Mountpoint: "
-msgstr "Punto di montaggio: "
+msgstr "Punto di mount: "
 
 msgid "Current free sectors on device {}:"
 msgstr "Settori attualmente liberi sul dispositivo {}:"
@@ -1322,9 +1324,8 @@ msgstr "Scegli un’opzione per concedere a Sway l’accesso al tuo hardware"
 msgid "Seat access"
 msgstr "Accesso al posto"
 
-#, fuzzy
 msgid "Mountpoint"
-msgstr "Punto di montaggio"
+msgstr "Punto di mount"
 
 msgid "HSM"
 msgstr "HSM"
@@ -1368,7 +1369,7 @@ msgstr "Scrivi i pacchetti aggiuntivi da installare (separati da spazi, lascia v
 
 #, fuzzy
 msgid "Invalid download number"
-msgstr "Numero di download non validi"
+msgstr "Numero di download non valido"
 
 #, fuzzy
 msgid "Number downloads"
@@ -1647,3 +1648,40 @@ msgstr "Contrassegna/Deseleziona come ESP"
 #, fuzzy
 msgid "Package group:"
 msgstr "Gruppo pacchetto:"
+
+msgid "Exit archinstall"
+msgstr "Esci da archinstall"
+
+msgid "Reboot system"
+msgstr "Riavvia il sistema"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "chroot nell'installazione per la configurazione post-installazione"
+
+msgid "Installation completed"
+msgstr "Installazione completata"
+
+msgid "What would you like to do next?"
+msgstr "Cosa vorresti fare dopo?"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr "Seleziona la modalità da configurare per \"{}\""
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Password di decrittazione del file delle credenziali errata"
+
+msgid "Incorrect password"
+msgstr "Password errata"
+
+msgid "Credentials file decryption password"
+msgstr "Password di decrittazione del file delle credenziali"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Vuoi criptare il file di user_credentials.json?"
+
+msgid "Credentials file encryption password"
+msgstr "Password di crittazione del file delle credenziali"
+
+#, fuzzy
+msgid "Repositories: {}"
+msgstr "Nome repository"

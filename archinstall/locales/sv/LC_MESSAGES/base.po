@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] En logg-fil har skapats här: {} {}"
@@ -1620,25 +1620,56 @@ msgstr "Starta sökläge"
 msgid "Exit search mode"
 msgstr "Avsluta sökläge"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+msgstr "labwc behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+msgstr "Välj ett alternativ för att ge labwc åtkomst till din hårdvara"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+msgstr "niri behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+msgstr "Välj ett alternativ för att ge niri åtkomst till din hårdvara"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "Markera/avmarkera som bootbar"
+msgstr "Markera/avmarkera som ESP"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Paketgrupp:"
+
+msgid "Exit archinstall"
+msgstr "Avsluta archinstall"
+
+msgid "Reboot system"
+msgstr "Starta om systemet"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "chroot in i installationen för efterinstallationskonfigurationer"
+
+msgid "Installation completed"
+msgstr "Installationen slutförd"
+
+msgid "What would you like to do next?"
+msgstr "Vad vill du göra härnäst?"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr "Välj vilket läge att konfigurera för \"{}\""
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Felaktigt lösenord för autentiseringsfilens dekrypteringslösenord"
+
+msgid "Incorrect password"
+msgstr "Felaktigt lösenord"
+
+msgid "Credentials file decryption password"
+msgstr "Dekrypteringslösenord för autentiseringsfil"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Vill du kryptera user_credentials.json filen?"
+
+msgid "Credentials file encryption password"
+msgstr "Krypteringslösenord för autentiseringsfil"
+
+msgid "Repositories: {}"
+msgstr "Arkiv: {}"

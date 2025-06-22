@@ -1,4 +1,9 @@
-from .audio_configuration import Audio, AudioConfiguration
+from .application import (
+	ApplicationConfiguration,
+	Audio,
+	AudioConfiguration,
+	BluetoothConfiguration,
+)
 from .bootloader import Bootloader
 from .device_model import (
 	BDevice,
@@ -35,9 +40,11 @@ from .profile_model import ProfileConfiguration
 from .users import PasswordStrength, User
 
 __all__ = [
+	'ApplicationConfiguration',
 	'Audio',
 	'AudioConfiguration',
 	'BDevice',
+	'BluetoothConfiguration',
 	'Bootloader',
 	'CustomRepository',
 	'DeviceGeometry',

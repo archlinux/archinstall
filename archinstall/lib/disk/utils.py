@@ -15,7 +15,7 @@ class LsblkOutput(BaseModel):
 def _fetch_lsblk_info(
 	dev_path: Path | str | None = None,
 	reverse: bool = False,
-	full_dev_path: bool = False
+	full_dev_path: bool = False,
 ) -> LsblkOutput:
 	cmd = ['lsblk', '--json', '--bytes', '--output', ','.join(LsblkInfo.fields())]
 
@@ -47,7 +47,7 @@ def _fetch_lsblk_info(
 def get_lsblk_info(
 	dev_path: Path | str,
 	reverse: bool = False,
-	full_dev_path: bool = False
+	full_dev_path: bool = False,
 ) -> LsblkInfo:
 	infos = _fetch_lsblk_info(dev_path, reverse=reverse, full_dev_path=full_dev_path)
 
@@ -67,7 +67,7 @@ def get_lsblk_output() -> LsblkOutput:
 
 def find_lsblk_info(
 	dev_path: Path | str,
-	info: list[LsblkInfo]
+	info: list[LsblkInfo],
 ) -> LsblkInfo | None:
 	if isinstance(dev_path, str):
 		dev_path = Path(dev_path)
@@ -104,7 +104,25 @@ def disk_layouts() -> str:
 	try:
 		lsblk_output = get_lsblk_output()
 	except SysCallError as err:
-		warn(f"Could not return disk layouts: {err}")
+		warn(f'Could not return disk layouts: {err}')
 		return ''
 
 	return lsblk_output.model_dump_json(indent=4)
+
+
+def umount(mountpoint: Path, recursive: bool = False) -> None:
+	lsblk_info = get_lsblk_info(mountpoint)
+
+	if not lsblk_info.mountpoints:
+		return
+
+	debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
+
+	cmd = ['umount']
+
+	if recursive:
+		cmd.append('-R')
+
+	for path in lsblk_info.mountpoints:
+		debug(f'Unmounting mountpoint: {path}')
+		SysCommand(cmd + [str(path)])

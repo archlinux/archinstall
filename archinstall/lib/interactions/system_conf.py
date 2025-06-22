@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
+from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -9,13 +8,6 @@ from archinstall.tui.types import Alignment, FrameProperties, FrameStyle, Orient
 
 from ..hardware import GfxDriver, SysInfo
 from ..models.bootloader import Bootloader
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 def select_kernel(preset: list[str] = []) -> list[str]:
@@ -25,8 +17,8 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 	:return: The string as a selected kernel
 	:rtype: string
 	"""
-	kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
-	default_kernel = "linux"
+	kernels = ['linux', 'linux-lts', 'linux-zen', 'linux-hardened']
+	default_kernel = 'linux'
 
 	items = [MenuItem(k, value=k) for k in kernels]
 
@@ -35,13 +27,13 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 	group.set_focus_by_value(default_kernel)
 	group.set_selected_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[str](
 		group,
 		allow_skip=True,
 		allow_reset=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_('Kernel'))),
-		multi=True
+		frame=FrameProperties.min(tr('Kernel')),
+		multi=True,
 	).run()
 
 	match result.type_:
@@ -58,7 +50,7 @@ def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
 	if not SysInfo.has_uefi():
 		options = [Bootloader.Grub, Bootloader.Limine]
 		default = Bootloader.Grub
-		header = str(_('UEFI is not detected and some options are disabled'))
+		header = tr('UEFI is not detected and some options are disabled')
 	else:
 		options = [b for b in Bootloader]
 		default = Bootloader.Systemd
@@ -69,12 +61,12 @@ def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
 	group.set_default_by_value(default)
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[Bootloader](
 		group,
 		header=header,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(str(_('Bootloader'))),
-		allow_skip=True
+		frame=FrameProperties.min(tr('Bootloader')),
+		allow_skip=True,
 	).run()
 
 	match result.type_:
@@ -87,18 +79,18 @@ def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
 
 
 def ask_for_uki(preset: bool = True) -> bool:
-	prompt = str(_('Would you like to use unified kernel images?')) + '\n'
+	prompt = tr('Would you like to use unified kernel images?') + '\n'
 
 	group = MenuItemGroup.yes_no()
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu(
+	result = SelectMenu[bool](
 		group,
 		header=prompt,
 		columns=2,
 		orientation=Orientation.HORIZONTAL,
 		alignment=Alignment.CENTER,
-		allow_skip=True
+		allow_skip=True,
 	).run()
 
 	match result.type_:
@@ -130,20 +122,20 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 
 	header = ''
 	if SysInfo.has_amd_graphics():
-		header += str(_('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.')) + '\n'
+		header += tr('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.') + '\n'
 	if SysInfo.has_intel_graphics():
-		header += str(_('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n'))
+		header += tr('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n')
 	if SysInfo.has_nvidia_graphics():
-		header += str(_('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'))
+		header += tr('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n')
 
-	result = SelectMenu(
+	result = SelectMenu[GfxDriver](
 		group,
 		header=header,
 		allow_skip=True,
 		allow_reset=True,
 		preview_size='auto',
 		preview_style=PreviewStyle.BOTTOM,
-		preview_frame=FrameProperties(str(_('Info')), h_frame_style=FrameStyle.MIN)
+		preview_frame=FrameProperties(tr('Info'), h_frame_style=FrameStyle.MIN),
 	).run()
 
 	match result.type_:
@@ -161,18 +153,18 @@ def ask_for_swap(preset: bool = True) -> bool:
 	else:
 		default_item = MenuItem.no()
 
-	prompt = str(_('Would you like to use swap on zram?')) + '\n'
+	prompt = tr('Would you like to use swap on zram?') + '\n'
 
 	group = MenuItemGroup.yes_no()
 	group.set_focus_by_value(default_item)
 
-	result = SelectMenu(
+	result = SelectMenu[bool](
 		group,
 		header=prompt,
 		columns=2,
 		orientation=Orientation.HORIZONTAL,
 		alignment=Alignment.CENTER,
-		allow_skip=True
+		allow_skip=True,
 	).run()
 
 	match result.type_:
@@ -182,5 +174,3 @@ def ask_for_swap(preset: bool = True) -> bool:
 			return result.item() == MenuItem.yes()
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
-
-	return preset

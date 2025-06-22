@@ -14,7 +14,7 @@ class RiverProfile(XorgProfile):
 		return [
 			'foot',
 			'xdg-desktop-portal-wlr',
-			'river'
+			'river',
 		]
 
 	@property

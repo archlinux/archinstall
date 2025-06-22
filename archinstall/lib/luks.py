@@ -4,8 +4,9 @@ import shlex
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CalledProcessError
+from types import TracebackType
 
-from archinstall.lib.disk.utils import get_lsblk_info
+from archinstall.lib.disk.utils import get_lsblk_info, umount
 
 from .exceptions import DiskError, SysCallError
 from .general import SysCommand, SysCommandWorker, generate_password, run
@@ -47,7 +48,7 @@ class Luks2:
 	def __enter__(self) -> None:
 		self.unlock(self.key_file)
 
-	def __exit__(self, *args: str, **kwargs: str) -> None:
+	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		if self.auto_unmount:
 			self.lock()
 
@@ -62,7 +63,7 @@ class Luks2:
 
 	def _get_passphrase_args(
 		self,
-		key_file: Path | None = None
+		key_file: Path | None = None,
 	) -> tuple[list[str], bytes | None]:
 		key_file = key_file or self.key_file
 
@@ -76,7 +77,7 @@ class Luks2:
 		key_size: int = 512,
 		hash_type: str = 'sha512',
 		iter_time: int = 10000,
-		key_file: Path | None = None
+		key_file: Path | None = None,
 	) -> Path | None:
 		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
@@ -86,14 +87,20 @@ class Luks2:
 			'cryptsetup',
 			'--batch-mode',
 			'--verbose',
-			'--type', 'luks2',
-			'--pbkdf', 'argon2id',
-			'--hash', hash_type,
-			'--key-size', str(key_size),
-			'--iter-time', str(iter_time),
+			'--type',
+			'luks2',
+			'--pbkdf',
+			'argon2id',
+			'--hash',
+			hash_type,
+			'--key-size',
+			str(key_size),
+			'--iter-time',
+			str(iter_time),
 			*key_file_arg,
 			'--use-urandom',
-			'luksFormat', str(self.luks_dev_path)
+			'luksFormat',
+			str(self.luks_dev_path),
 		]
 
 		debug(f'cryptsetup format: {shlex.join(cmd)}')
@@ -120,7 +127,7 @@ class Luks2:
 			raise err
 
 	def is_unlocked(self) -> bool:
-		return self.mapper_name is not None and Path(f'/dev/mapper/{self.mapper_name}').exists()
+		return (mapper_dev := self.mapper_dev) is not None and mapper_dev.is_symlink()
 
 	def unlock(self, key_file: Path | None = None) -> None:
 		"""
@@ -138,23 +145,24 @@ class Luks2:
 		key_file_arg, passphrase = self._get_passphrase_args(key_file)
 
 		cmd = [
-			'cryptsetup', 'open',
+			'cryptsetup',
+			'open',
 			str(self.luks_dev_path),
 			str(self.mapper_name),
 			*key_file_arg,
-			'--type', 'luks2'
+			'--type',
+			'luks2',
 		]
 
 		result = run(cmd, input_data=passphrase)
 
 		debug(f'cryptsetup open output: {result.stdout.decode().rstrip()}')
 
-		if not self.mapper_dev or not self.mapper_dev.is_symlink():
+		if not self.is_unlocked():
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
 	def lock(self) -> None:
-		from archinstall.lib.disk.device_handler import device_handler
-		device_handler.umount(self.luks_dev_path)
+		umount(self.luks_dev_path)
 
 		# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 		# For instance: /dev/sda
@@ -165,11 +173,11 @@ class Luks2:
 			# Unmount the child location
 			for mountpoint in child.mountpoints:
 				debug(f'Unmounting {mountpoint}')
-				device_handler.umount(mountpoint, recursive=True)
+				umount(mountpoint, recursive=True)
 
 			# And close it if possible.
-			debug(f"Closing crypt device {child.name}")
-			SysCommand(f"cryptsetup close {child.name}")
+			debug(f'Closing crypt device {child.name}')
+			SysCommand(f'cryptsetup close {child.name}')
 
 	def create_keyfile(self, target_path: Path, override: bool = False) -> None:
 		"""
@@ -199,7 +207,7 @@ class Luks2:
 		key_file.chmod(0o400)
 
 		self._add_key(key_file)
-		self._crypttab(crypttab_path, kf_path, options=["luks", "key-slot=1"])
+		self._crypttab(crypttab_path, kf_path, options=['luks', 'key-slot=1'])
 
 	def _add_key(self, key_file: Path) -> None:
 		debug(f'Adding additional key-file {key_file}')
@@ -220,12 +228,12 @@ class Luks2:
 		self,
 		crypttab_path: Path,
 		key_file: Path,
-		options: list[str]
+		options: list[str],
 	) -> None:
 		debug(f'Adding crypttab entry for key {key_file}')
 
 		with open(crypttab_path, 'a') as crypttab:
 			opt = ','.join(options)
 			uuid = self._get_luks_uuid()
-			row = f"{self.mapper_name} UUID={uuid} {key_file} {opt}\n"
+			row = f'{self.mapper_name} UUID={uuid} {key_file} {opt}\n'
 			crypttab.write(row)

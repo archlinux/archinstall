@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ここにログファイルが作成されました: {} {}"
@@ -1637,5 +1637,38 @@ msgstr "ESP としてマーク/マーク解除"
 msgid "Package group:"
 msgstr "パッケージグループ:"
 
+msgid "Exit archinstall"
+msgstr "archinstall を終了"
+
+msgid "Reboot system"
+msgstr "システムを再起動"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "インストール後の設定を行うためインストールディレクトリに chroot する"
+
+msgid "Installation completed"
+msgstr "インストール完了"
+
+msgid "What would you like to do next?"
+msgstr "次は何をしますか？"
+
 msgid "Select which mode to configure for \"{}\""
 msgstr "「{}」に設定するモードを選択"
+
+msgid "Incorrect credentials file decryption password"
+msgstr "認証情報ファイルの復号化パスワードが正しくありません"
+
+msgid "Incorrect password"
+msgstr "パスワードが間違っています"
+
+msgid "Credentials file decryption password"
+msgstr "認証情報ファイルの復号化パスワード"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "user_credentials.json ファイルを暗号化しますか？"
+
+msgid "Credentials file encryption password"
+msgstr "認証情報ファイルの暗号化パスワード"
+
+msgid "Repositories: {}"
+msgstr "リポジトリ: {}"

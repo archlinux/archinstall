@@ -2,15 +2,13 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from enum import Enum
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import Any, ClassVar
+
+from archinstall.lib.translationhandler import tr
 
 from ..lib.utils.unicode import unicode_ljust
-
-if TYPE_CHECKING:
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 @dataclass
@@ -19,6 +17,7 @@ class MenuItem:
 	value: Any | None = None
 	action: Callable[[Any], Any] | None = None
 	enabled: bool = True
+	read_only: bool = False
 	mandatory: bool = False
 	dependencies: list[str | Callable[[], bool]] = field(default_factory=list)
 	dependencies_not: list[str] = field(default_factory=list)
@@ -36,14 +35,14 @@ class MenuItem:
 	@classmethod
 	def yes(cls) -> 'MenuItem':
 		if cls._yes is None:
-			cls._yes = cls(str(_('Yes')), value=True)
+			cls._yes = cls(tr('Yes'), value=True)
 
 		return cls._yes
 
 	@classmethod
 	def no(cls) -> 'MenuItem':
 		if cls._no is None:
-			cls._no = cls(str(_('No')), value=True)
+			cls._no = cls(tr('No'), value=True)
 
 		return cls._no
 
@@ -75,7 +74,7 @@ class MenuItemGroup:
 		default_item: MenuItem | None = None,
 		sort_items: bool = False,
 		sort_case_sensitive: bool = True,
-		checkmarks: bool = False
+		checkmarks: bool = False,
 	) -> None:
 		if len(menu_items) < 1:
 			raise ValueError('Menu must have at least one item')
@@ -86,23 +85,26 @@ class MenuItemGroup:
 			else:
 				menu_items = sorted(menu_items, key=lambda x: x.text.lower())
 
-		if not focus_item:
-			focus_item = menu_items[0]
+		self._filter_pattern: str = ''
+		self._checkmarks: bool = checkmarks
 
-		if focus_item not in menu_items:
-			raise ValueError('Selected item not in menu')
-
-		self.menu_items: list[MenuItem] = menu_items
+		self._menu_items: list[MenuItem] = menu_items
 		self.focus_item: MenuItem | None = focus_item
 		self.selected_items: list[MenuItem] = []
 		self.default_item: MenuItem | None = default_item
 
-		self._checkmarks: bool = checkmarks
+		if not focus_item:
+			self.focus_first()
 
-		self._filter_pattern: str = ''
+		if self.focus_item not in self.items:
+			raise ValueError(f'Selected item not in menu: {focus_item}')
+
+	def add_item(self, item: MenuItem) -> None:
+		self._menu_items.append(item)
+		delattr(self, 'items')  # resetting the cache
 
 	def find_by_key(self, key: str) -> MenuItem:
-		for item in self.menu_items:
+		for item in self._menu_items:
 			if item.key == key:
 				return item
 
@@ -115,21 +117,35 @@ class MenuItemGroup:
 	def yes_no() -> 'MenuItemGroup':
 		return MenuItemGroup(
 			[MenuItem.yes(), MenuItem.no()],
-			sort_items=True
+			sort_items=True,
 		)
+
+	@staticmethod
+	def from_enum(
+		enum_cls: type[Enum],
+		sort_items: bool = False,
+		preset: Enum | None = None,
+	) -> 'MenuItemGroup':
+		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
+		group = MenuItemGroup(items, sort_items=sort_items)
+
+		if preset is not None:
+			group.set_selected_by_value(preset)
+
+		return group
 
 	def set_preview_for_all(self, action: Callable[[Any], str | None]) -> None:
 		for item in self.items:
 			item.preview_action = action
 
 	def set_focus_by_value(self, value: Any) -> None:
-		for item in self.menu_items:
+		for item in self._menu_items:
 			if item.value == value:
 				self.focus_item = item
 				break
 
 	def set_default_by_value(self, value: Any) -> None:
-		for item in self.menu_items:
+		for item in self._menu_items:
 			if item.value == value:
 				self.default_item = item
 				break
@@ -141,7 +157,7 @@ class MenuItemGroup:
 		if not isinstance(values, list):
 			values = [values]
 
-		for item in self.menu_items:
+		for item in self._menu_items:
 			if item.value in values:
 				self.selected_items.append(item)
 
@@ -168,11 +184,11 @@ class MenuItemGroup:
 	def get_max_width(self) -> int:
 		# use the menu_items not the items here otherwise the preview
 		# will get resized all the time when a filter is applied
-		return max([len(self.get_item_text(item)) for item in self.menu_items])
+		return max([len(self.get_item_text(item)) for item in self._menu_items])
 
 	@cached_property
 	def _max_items_text_width(self) -> int:
-		return max([len(item.text) for item in self.menu_items])
+		return max([len(item.text) for item in self._menu_items])
 
 	def get_item_text(self, item: MenuItem) -> str:
 		if item.is_empty():
@@ -203,14 +219,15 @@ class MenuItemGroup:
 
 	def _default_suffix(self, item: MenuItem) -> str:
 		if self.default_item == item:
-			return str(_(' (default)'))
+			return tr(' (default)')
 		return ''
 
 	@cached_property
 	def items(self) -> list[MenuItem]:
 		pattern = self._filter_pattern.lower()
-		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self.menu_items)
-		return list(items)
+		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self._menu_items)
+		l_items = list(items)
+		return l_items
 
 	@property
 	def filter_pattern(self) -> str:
@@ -297,31 +314,22 @@ class MenuItemGroup:
 		self,
 		items: list[MenuItem],
 		start_item: MenuItem,
-		direction: int
+		direction: int,
 	) -> MenuItem | None:
-		index = self.items.index(start_item)
+		start_index = self.items.index(start_item)
+		n = len(items)
 
-		start = index + direction
-		end = 0
+		current_index = start_index
+		for _ in range(n):
+			current_index = (current_index + direction) % n
 
-		if direction == 1:
-			end = len(items) + index
-		elif direction == -1:
-			if index == 0:
-				end = len(items) * direction
-			else:
-				end = index * direction
-
-		for idx in range(start, end, direction):
-			idx = idx % len(items)
-
-			if self._is_selectable(items[idx]):
-				return items[idx]
+			if self._is_selectable(items[current_index]):
+				return items[current_index]
 
 		return None
 
 	def is_mandatory_fulfilled(self) -> bool:
-		for item in self.menu_items:
+		for item in self._menu_items:
 			if item.mandatory and not item.value:
 				return False
 		return True
@@ -334,6 +342,8 @@ class MenuItemGroup:
 
 	def _is_selectable(self, item: MenuItem) -> bool:
 		if item.is_empty():
+			return False
+		elif item.read_only:
 			return False
 
 		return self.is_enabled(item)
@@ -364,7 +374,7 @@ class MenuItemsState:
 		item_group: MenuItemGroup,
 		total_cols: int,
 		total_rows: int,
-		with_frame: bool
+		with_frame: bool,
 	) -> None:
 		self._item_group = item_group
 		self._total_cols = total_cols
@@ -392,11 +402,7 @@ class MenuItemsState:
 
 		start, end = 0, 0
 
-		if (
-			len(self._view_items) == 0
-			or self._prev_row_idx == -1
-			or self._item_group.has_filter()
-		):  # initial setup or filter
+		if len(self._view_items) == 0 or self._prev_row_idx == -1 or self._item_group.has_filter():  # initial setup or filter
 			if focus_row_idx < self._total_rows:
 				start = 0
 				end = self._total_rows
@@ -436,14 +442,14 @@ class MenuItemsState:
 		self,
 		items: list[MenuItem],
 		start_row: int,
-		total_rows: int
+		total_rows: int,
 	) -> list[list[MenuItem]]:
 		groups: list[list[MenuItem]] = []
 		nr_items = self._total_cols * min(total_rows, len(items))
 
 		for x in range(start_row, nr_items, self._total_cols):
 			groups.append(
-				items[x:x + self._total_cols]
+				items[x : x + self._total_cols],
 			)
 
 		return groups

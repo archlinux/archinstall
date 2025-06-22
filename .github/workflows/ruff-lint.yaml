@@ -1,8 +1,8 @@
 on: [ push, pull_request ]
-name: ruff linting
+name: ruff check linting
 jobs:
     ruff:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-            - uses: astral-sh/ruff-action@9828f49eb4cadf267b40eaa330295c412c68c1f9  # v3.2.2
+            - uses: astral-sh/ruff-action@eaf0ecdd668ceea36159ff9d91882c9795d89b49  # v3.4.0

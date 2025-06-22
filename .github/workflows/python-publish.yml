@@ -1,4 +1,4 @@
-# This workflow will upload a Python Package using Twine when a release is created
+# This workflow will upload a Python Package when a release is created
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
 name: Upload archinstall to PyPi
@@ -11,23 +11,23 @@ jobs:
   deploy:
 
     runs-on: ubuntu-latest
-
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
+    container:
+      image: archlinux/archlinux:latest
+      options: --privileged
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      - name: Set up Python
-        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # v5
-        with:
-          python-version: '3.x'
-      - name: Install dependencies
+      - name: Prepare arch
         run: |
-          python -m pip install --upgrade pip
-          pip install build twine
+          pacman-key --init
+          pacman --noconfirm -Sy archlinux-keyring
+          pacman --noconfirm -Syyu
+          pacman --noconfirm -Sy python python-uv python-setuptools python-pip python-pyparted python-pydantic
       - name: Build archinstall
         run: |
-          python -m build . --wheel
+          uv build --no-build-isolation --wheel
       - name: Publish archinstall to PyPi
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
-          twine upload dist/*
+          uv publish --trusted-publishing always

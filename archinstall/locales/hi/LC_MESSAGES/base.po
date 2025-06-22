@@ -1582,3 +1582,40 @@ msgstr ""
 
 msgid "Package group:"
 msgstr ""
+
+msgid "Exit archinstall"
+msgstr ""
+
+msgid "Reboot system"
+msgstr ""
+
+msgid "chroot into installation for post-installation configurations"
+msgstr ""
+
+msgid "Installation completed"
+msgstr ""
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "क्या आप swap के लिए zram इस्तेमाल करना चाहेंगे?"
+
+msgid "Select which mode to configure for \"{}\""
+msgstr ""
+
+msgid "Incorrect credentials file decryption password"
+msgstr ""
+
+msgid "Incorrect password"
+msgstr ""
+
+msgid "Credentials file decryption password"
+msgstr ""
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+
+msgid "Credentials file encryption password"
+msgstr ""
+
+msgid "Repositories: {}"
+msgstr ""

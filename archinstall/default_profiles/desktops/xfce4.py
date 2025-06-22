@@ -12,11 +12,11 @@ class Xfce4Profile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			"xfce4",
-			"xfce4-goodies",
-			"pavucontrol",
-			"gvfs",
-			"xarchiver"
+			'xfce4',
+			'xfce4-goodies',
+			'pavucontrol',
+			'gvfs',
+			'xarchiver',
 		]
 
 	@property

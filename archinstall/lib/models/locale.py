@@ -1,14 +1,9 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import Any
+
+from archinstall.lib.translationhandler import tr
 
 from ..locale.utils import get_kb_layout
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from archinstall.lib.translationhandler import DeferredTranslation
-
-	_: Callable[[str], DeferredTranslation]
 
 
 @dataclass
@@ -20,7 +15,7 @@ class LocaleConfiguration:
 	@staticmethod
 	def default() -> 'LocaleConfiguration':
 		layout = get_kb_layout()
-		if layout == "":
+		if layout == '':
 			layout = 'us'
 		return LocaleConfiguration(layout, 'en_US.UTF-8', 'UTF-8')
 
@@ -28,13 +23,13 @@ class LocaleConfiguration:
 		return {
 			'kb_layout': self.kb_layout,
 			'sys_lang': self.sys_lang,
-			'sys_enc': self.sys_enc
+			'sys_enc': self.sys_enc,
 		}
 
 	def preview(self) -> str:
-		output = '{}: {}\n'.format(str(_('Keyboard layout')), self.kb_layout)
-		output += '{}: {}\n'.format(str(_('Locale language')), self.sys_lang)
-		output += '{}: {}'.format(str(_('Locale encoding')), self.sys_enc)
+		output = '{}: {}\n'.format(tr('Keyboard layout'), self.kb_layout)
+		output += '{}: {}\n'.format(tr('Locale language'), self.sys_lang)
+		output += '{}: {}'.format(tr('Locale encoding'), self.sys_enc)
 		return output
 
 	@classmethod

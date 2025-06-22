@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
@@ -11,7 +12,8 @@ from urllib.request import Request, urlopen
 
 from pydantic.dataclasses import dataclass as p_dataclass
 
-from archinstall.lib.models.audio_configuration import AudioConfiguration
+from archinstall.lib.crypt import decrypt
+from archinstall.lib.models.application import ApplicationConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
@@ -20,10 +22,11 @@ from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.profile_model import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
-from archinstall.lib.output import error, warn
+from archinstall.lib.output import debug, error, logger, warn
 from archinstall.lib.plugins import load_plugin
-from archinstall.lib.storage import storage
-from archinstall.lib.translationhandler import Language, translation_handler
+from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.lib.utils.util import get_password
+from archinstall.tui.curses_menu import Tui
 
 
 @p_dataclass
@@ -32,11 +35,13 @@ class Arguments:
 	config_url: str | None = None
 	creds: Path | None = None
 	creds_url: str | None = None
+	creds_decryption_key: str | None = None
 	silent: bool = False
 	dry_run: bool = False
-	script: str = 'guided'
+	script: str | None = None
 	mountpoint: Path = Path('/mnt')
 	skip_ntp: bool = False
+	skip_wkd: bool = False
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
@@ -49,6 +54,7 @@ class Arguments:
 @dataclass
 class ArchConfig:
 	version: str | None = None
+	script: str | None = None
 	locale_config: LocaleConfiguration | None = None
 	archinstall_language: Language = field(default_factory=lambda: translation_handler.get_language_by_abbr('en'))
 	disk_config: DiskLayoutConfiguration | None = None
@@ -57,7 +63,7 @@ class ArchConfig:
 	network_config: NetworkConfiguration | None = None
 	bootloader: Bootloader = field(default=Bootloader.get_default())
 	uki: bool = False
-	audio_config: AudioConfiguration | None = None
+	app_config: ApplicationConfiguration | None = None
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: ['linux'])
 	ntp: bool = True
@@ -70,7 +76,6 @@ class ArchConfig:
 
 	# Special fields that should be handle with care due to security implications
 	users: list[User] = field(default_factory=list)
-	disk_encryption: DiskEncryption | None = None
 	root_enc_password: Password | None = None
 
 	def unsafe_json(self) -> dict[str, Any]:
@@ -79,14 +84,17 @@ class ArchConfig:
 			'root_enc_password': self.root_enc_password.enc_password if self.root_enc_password else None,
 		}
 
-		if self.disk_encryption and self.disk_encryption.encryption_password:
-			config['encryption_password'] = self.disk_encryption.encryption_password.plaintext
+		if self.disk_config:
+			disk_encryption = self.disk_config.disk_encryption
+			if disk_encryption and disk_encryption.encryption_password:
+				config['encryption_password'] = disk_encryption.encryption_password.plaintext
 
 		return config
 
 	def safe_json(self) -> dict[str, Any]:
 		config: Any = {
 			'version': self.version,
+			'script': self.script,
 			'archinstall-language': self.archinstall_language.json(),
 			'hostname': self.hostname,
 			'kernels': self.kernels,
@@ -98,7 +106,7 @@ class ArchConfig:
 			'services': self.services,
 			'custom_commands': self.custom_commands,
 			'bootloader': self.bootloader.json(),
-			'audio_config': self.audio_config.json() if self.audio_config else None,
+			'app_config': self.app_config.json() if self.app_config else None,
 		}
 
 		if self.locale_config:
@@ -106,9 +114,6 @@ class ArchConfig:
 
 		if self.disk_config:
 			config['disk_config'] = self.disk_config.json()
-
-		if self.disk_encryption:
-			config['disk_encryption'] = self.disk_encryption.json()
 
 		if self.profile_config:
 			config['profile_config'] = self.profile_config.json()
@@ -127,11 +132,30 @@ class ArchConfig:
 
 		arch_config.locale_config = LocaleConfiguration.parse_arg(args_config)
 
+		if script := args_config.get('script', None):
+			arch_config.script = script
+
 		if archinstall_lang := args_config.get('archinstall-language', None):
 			arch_config.archinstall_language = translation_handler.get_language_by_name(archinstall_lang)
 
 		if disk_config := args_config.get('disk_config', {}):
-			arch_config.disk_config = DiskLayoutConfiguration.parse_arg(disk_config)
+			enc_password = args_config.get('encryption_password', '')
+			password = Password(plaintext=enc_password) if enc_password else None
+			arch_config.disk_config = DiskLayoutConfiguration.parse_arg(disk_config, password)
+
+			# DEPRECATED
+			# backwards compatibility for main level disk_encryption entry
+			disk_encryption: DiskEncryption | None = None
+
+			if args_config.get('disk_encryption', None) is not None and arch_config.disk_config is not None:
+				disk_encryption = DiskEncryption.parse_arg(
+					arch_config.disk_config,
+					args_config['disk_encryption'],
+					Password(plaintext=args_config.get('encryption_password', '')),
+				)
+
+				if disk_encryption:
+					arch_config.disk_config.disk_encryption = disk_encryption
 
 		if profile_config := args_config.get('profile_config', None):
 			arch_config.profile_config = ProfileConfiguration.parse_arg(profile_config)
@@ -143,7 +167,7 @@ class ArchConfig:
 
 			arch_config.mirror_config = MirrorConfiguration.parse_args(
 				mirror_config,
-				backwards_compatible_repo
+				backwards_compatible_repo,
 			)
 
 		if net_config := args_config.get('network_config', None):
@@ -162,15 +186,12 @@ class ArchConfig:
 		if args_config.get('uki') and not arch_config.bootloader.has_uki_support():
 			arch_config.uki = False
 
-		if audio_config := args_config.get('audio_config', None):
-			arch_config.audio_config = AudioConfiguration.parse_arg(audio_config)
+		# deprecated: backwards compatibility
+		audio_config_args = args_config.get('audio_config', None)
+		app_config_args = args_config.get('app_config', None)
 
-		if args_config.get('disk_encryption', None) is not None and arch_config.disk_config is not None:
-			arch_config.disk_encryption = DiskEncryption.parse_arg(
-				arch_config.disk_config,
-				args_config['disk_encryption'],
-				Password(plaintext=args_config.get('encryption_password', ''))
-			)
+		if audio_config_args is not None or app_config_args is not None:
+			arch_config.app_config = ApplicationConfiguration.parse_arg(app_config_args, audio_config_args)
 
 		if hostname := args_config.get('hostname', ''):
 			arch_config.hostname = hostname
@@ -228,6 +249,15 @@ class ArchConfigHandler:
 	def args(self) -> Arguments:
 		return self._args
 
+	def get_script(self) -> str:
+		if script := self.args.script:
+			return script
+
+		if script := self.config.script:
+			return script
+
+		return 'guided'
+
 	def print_help(self) -> None:
 		self._parser.print_help()
 
@@ -240,116 +270,127 @@ class ArchConfigHandler:
 	def _define_arguments(self) -> ArgumentParser:
 		parser = ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 		parser.add_argument(
-			"-v",
-			"--version",
-			action="version",
+			'-v',
+			'--version',
+			action='version',
 			default=False,
-			version="%(prog)s " + self._get_version()
+			version='%(prog)s ' + self._get_version(),
 		)
 		parser.add_argument(
-			"--config",
+			'--config',
 			type=Path,
-			nargs="?",
+			nargs='?',
 			default=None,
-			help="JSON configuration file"
+			help='JSON configuration file',
 		)
 		parser.add_argument(
-			"--config-url",
+			'--config-url',
 			type=str,
-			nargs="?",
+			nargs='?',
 			default=None,
-			help="Url to a JSON configuration file"
+			help='Url to a JSON configuration file',
 		)
 		parser.add_argument(
-			"--creds",
+			'--creds',
 			type=Path,
-			nargs="?",
+			nargs='?',
 			default=None,
-			help="JSON credentials configuration file"
+			help='JSON credentials configuration file',
 		)
 		parser.add_argument(
-			"--creds-url",
+			'--creds-url',
 			type=str,
-			nargs="?",
+			nargs='?',
 			default=None,
-			help="Url to a JSON credentials configuration file"
+			help='Url to a JSON credentials configuration file',
 		)
 		parser.add_argument(
-			"--silent",
-			action="store_true",
+			'--creds-decryption-key',
+			type=str,
+			nargs='?',
+			default=None,
+			help='Decryption key for credentials file',
+		)
+		parser.add_argument(
+			'--silent',
+			action='store_true',
 			default=False,
-			help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored"
+			help='WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored',
 		)
 		parser.add_argument(
-			"--dry-run",
-			"--dry_run",
-			action="store_true",
+			'--dry-run',
+			'--dry_run',
+			action='store_true',
 			default=False,
-			help="Generates a configuration file and then exits instead of performing an installation"
+			help='Generates a configuration file and then exits instead of performing an installation',
 		)
 		parser.add_argument(
-			"--script",
-			default="guided",
-			nargs="?",
-			help="Script to run for installation",
-			type=str
+			'--script',
+			nargs='?',
+			help='Script to run for installation',
+			type=str,
 		)
 		parser.add_argument(
-			"--mount-point",
-			"--mount_point",
+			'--mountpoint',
 			type=Path,
-			nargs="?",
+			nargs='?',
 			default=Path('/mnt'),
-			help="Define an alternate mount point for installation"
+			help='Define an alternate mount point for installation',
 		)
 		parser.add_argument(
-			"--skip-ntp",
-			action="store_true",
-			help="Disables NTP checks during installation",
-			default=False
-		)
-		parser.add_argument(
-			"--debug",
-			action="store_true",
+			'--skip-ntp',
+			action='store_true',
+			help='Disables NTP checks during installation',
 			default=False,
-			help="Adds debug info into the log"
 		)
 		parser.add_argument(
-			"--offline",
-			action="store_true",
+			'--skip-wkd',
+			action='store_true',
+			help='Disables checking if archlinux keyring wkd sync is complete.',
 			default=False,
-			help="Disabled online upstream services such as package search and key-ring auto update."
 		)
 		parser.add_argument(
-			"--no-pkg-lookups",
-			action="store_true",
+			'--debug',
+			action='store_true',
 			default=False,
-			help="Disabled package validation specifically prior to starting installation."
+			help='Adds debug info into the log',
 		)
 		parser.add_argument(
-			"--plugin",
-			nargs="?",
+			'--offline',
+			action='store_true',
+			default=False,
+			help='Disabled online upstream services such as package search and key-ring auto update.',
+		)
+		parser.add_argument(
+			'--no-pkg-lookups',
+			action='store_true',
+			default=False,
+			help='Disabled package validation specifically prior to starting installation.',
+		)
+		parser.add_argument(
+			'--plugin',
+			nargs='?',
 			type=str,
 			default=None,
-			help='File path to a plugin to load'
+			help='File path to a plugin to load',
 		)
 		parser.add_argument(
-			"--skip-version-check",
-			action="store_true",
+			'--skip-version-check',
+			action='store_true',
 			default=False,
-			help="Skip the version check when running archinstall"
+			help='Skip the version check when running archinstall',
 		)
 		parser.add_argument(
-			"--advanced",
-			action="store_true",
+			'--advanced',
+			action='store_true',
 			default=False,
-			help="Enabled advanced options"
+			help='Enabled advanced options',
 		)
 		parser.add_argument(
-			"--verbose",
-			action="store_true",
+			'--verbose',
+			action='store_true',
 			default=False,
-			help="Enabled verbose options"
+			help='Enabled verbose options',
 		)
 
 		return parser
@@ -360,15 +401,19 @@ class ArchConfigHandler:
 
 		# amend the parameters (check internal consistency)
 		# Installation can't be silent if config is not passed
-		if args.config is None:
+		if args.config is None and args.config_url is None:
 			args.silent = False
 
 		if args.debug:
-			warn(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!")
+			warn(f'Warning: --debug mode will write certain credentials to {logger.path}!')
 
 		if args.plugin:
 			plugin_path = Path(args.plugin)
 			load_plugin(plugin_path)
+
+		if args.creds_decryption_key is None:
+			if os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY'):
+				args.creds_decryption_key = os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY')
 
 		return args
 
@@ -391,20 +436,65 @@ class ArchConfigHandler:
 			creds_data = self._fetch_from_url(self._args.creds_url)
 
 		if creds_data is not None:
-			config.update(json.loads(creds_data))
+			json_data = self._process_creds_data(creds_data)
+			if json_data is not None:
+				config.update(json_data)
 
 		config = self._cleanup_config(config)
 
 		return config
+
+	def _process_creds_data(self, creds_data: str) -> dict[str, Any] | None:
+		if creds_data.startswith('$'):  # encrypted data
+			if self._args.creds_decryption_key is not None:
+				try:
+					creds_data = decrypt(creds_data, self._args.creds_decryption_key)
+					return json.loads(creds_data)
+				except ValueError as err:
+					if 'Invalid password' in str(err):
+						error(tr('Incorrect credentials file decryption password'))
+						exit(1)
+					else:
+						debug(f'Error decrypting credentials file: {err}')
+						raise err from err
+			else:
+				incorrect_password = False
+
+				with Tui():
+					while True:
+						header = tr('Incorrect password') if incorrect_password else None
+
+						decryption_pwd = get_password(
+							text=tr('Credentials file decryption password'),
+							header=header,
+							allow_skip=False,
+							skip_confirmation=True,
+						)
+
+						if not decryption_pwd:
+							return None
+
+						try:
+							creds_data = decrypt(creds_data, decryption_pwd.plaintext)
+							break
+						except ValueError as err:
+							if 'Invalid password' in str(err):
+								debug('Incorrect credentials file decryption password')
+								incorrect_password = True
+							else:
+								debug(f'Error decrypting credentials file: {err}')
+								raise err from err
+
+		return json.loads(creds_data)
 
 	def _fetch_from_url(self, url: str) -> str:
 		if urllib.parse.urlparse(url).scheme:
 			try:
 				req = Request(url, headers={'User-Agent': 'ArchInstall'})
 				with urlopen(req) as resp:
-					return resp.read()
+					return resp.read().decode('utf-8')
 			except urllib.error.HTTPError as err:
-				error(f"Could not fetch JSON from {url}: {err}")
+				error(f'Could not fetch JSON from {url}: {err}')
 		else:
 			error('Not a valid url')
 
@@ -412,7 +502,7 @@ class ArchConfigHandler:
 
 	def _read_file(self, path: Path) -> str:
 		if not path.exists():
-			error(f"Could not find file {path}")
+			error(f'Could not find file {path}')
 			exit(1)
 
 		return path.read_text()
