@@ -1174,7 +1174,7 @@ class Installer:
 
 		# TODO: This is a temporary workaround to deal with https://github.com/archlinux/archinstall/pull/3396#issuecomment-2996862019
 		# the systemd_version check can be removed once `--variables=BOOL` is merged into systemd.
-		systemd_version = int(self.pacman.run("-Q systemd").trace_log.split(b" ")[1][:3].decode())
+		systemd_version = int(self.pacman.run('-Q systemd').trace_log.split(b' ')[1][:3].decode())
 		# Install the boot loader
 		try:
 			# Force EFI variables since bootctl detects arch-chroot
