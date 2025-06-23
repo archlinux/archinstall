@@ -1177,7 +1177,7 @@ class Installer:
 		if pacman_q_systemd := self.pacman.run('-Q systemd').trace_log:
 			systemd_version = int(pacman_q_systemd.split(b' ')[1][:3].decode())
 		else:
-			systemd_version = 257 # This works as a safety workaround for this hot-fix
+			systemd_version = 257  # This works as a safety workaround for this hot-fix
 
 		# Install the boot loader
 		try:
