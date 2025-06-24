@@ -171,10 +171,7 @@ class Logger:
 			# Fallback to creating the log file in the current folder
 			logger._path = Path('./').absolute()
 
-			warn(
-				f'Not enough permission to place log file at {log_file},',
-				'creating it in {logger.path} instead'
-			)
+			warn(f'Not enough permission to place log file at {log_file}, creating it in {logger.path} instead')
 
 	def log(self, level: int, content: str) -> None:
 		self._check_permissions()
