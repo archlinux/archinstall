@@ -8,5 +8,4 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: astral-sh/ruff-action@eaf0ecdd668ceea36159ff9d91882c9795d89b49  # v3.4.0
-      - run: ruff check --select=COM812 --fix
       - run: ruff format --diff
