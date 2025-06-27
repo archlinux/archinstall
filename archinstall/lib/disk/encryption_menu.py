@@ -384,8 +384,8 @@ def select_iteration_time(preset: int | None = None) -> int | None:
 
 	def validate_iter_time(value: str | None) -> str | None:
 		if not value:
-			return tr('Iteration time cannot be empty')
-		
+			return None
+
 		try:
 			iter_time = int(value)
 			if iter_time < 100:
@@ -404,7 +404,7 @@ def select_iteration_time(preset: int | None = None) -> int | None:
 		default_text=str(preset) if preset else str(DEFAULT_ITER_TIME),
 		validator=validate_iter_time,
 	).input()
-	
+
 	match result.type_:
 		case ResultType.Skip:
 			return preset
