@@ -163,7 +163,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		if (enc_pwd := self._prev_password()) is not None:
 			output += f'\n{enc_pwd}'
 
-		if (iter_time := self._prev_iter_time()) is not None:
+		if (enc_type := self._prev_type()) is not None and enc_type != EncryptionType.NoEncryption and (iter_time := self._prev_iter_time()) is not None:
 			output += f'\n{iter_time}'
 
 		if (fido_device := self._prev_hsm()) is not None:
