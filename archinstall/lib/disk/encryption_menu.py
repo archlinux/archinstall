@@ -230,7 +230,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def _prev_iter_time(self) -> str | None:
 		iter_time = self._item_group.find_by_key('iter_time').value
 
-		if iter_time and iter_time != DEFAULT_ITER_TIME:
+		if iter_time:
 			return f'{tr("Iteration time")}: {iter_time}ms'
 
 		return None
