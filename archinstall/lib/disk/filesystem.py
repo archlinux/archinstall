@@ -287,6 +287,7 @@ class FilesystemHandler:
 					vol.mapper_name,
 					enc_config.encryption_password,
 					lock_after_create,
+					iter_time=enc_config.iter_time,
 				)
 
 				enc_vols[vol] = luks_handler
@@ -317,6 +318,7 @@ class FilesystemHandler:
 						part_mod.mapper_name,
 						enc_config.encryption_password,
 						lock_after_create=lock_after_create,
+						iter_time=enc_config.iter_time,
 					)
 
 					enc_mods[part_mod] = luks_handler
