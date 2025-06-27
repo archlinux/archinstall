@@ -67,7 +67,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			),
 			MenuItem(
 				text=tr('Iteration time'),
-				action=lambda x: select_iteration_time(x),
+				action=select_iteration_time,
 				value=self._enc_config.iter_time,
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._preview,

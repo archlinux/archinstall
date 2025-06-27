@@ -21,6 +21,7 @@ from ..output import debug
 ENC_IDENTIFIER = 'ainst'
 DEFAULT_ITER_TIME = 10000
 
+
 class DiskLayoutType(Enum):
 	Default = 'default_layout'
 	Manual = 'manual_partitioning'
