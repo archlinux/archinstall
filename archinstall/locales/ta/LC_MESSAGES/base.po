@@ -50,8 +50,8 @@ msgstr "துவக்க ஏற்றியைத் தேர்ந்தெ�
 msgid "Choose an audio server"
 msgstr "ஆடியோ சர்வரை தேர்வு செய்யவும்"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "தொகுப்பு Base, base-devel, linux, linux-firmware, efibootmgr மற்றும் விருப்ப சுயவிவர தொகுப்புகள் போன்ற தொகுப்புகள் மட்டுமே நிறுவப்பட்டுள்ளன."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "தொகுப்பு Base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr மற்றும் விருப்ப சுயவிவர தொகுப்புகள் போன்ற தொகுப்புகள் மட்டுமே நிறுவப்பட்டுள்ளன."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "நீங்கள் பயர்பாக்ஸ் அல்லது குரோமியம் போன்ற இணைய உலாவியை விரும்பினால், அதை பின்வரும் வரியில் குறிப்பிடலாம்."
