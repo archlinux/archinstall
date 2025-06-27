@@ -1615,7 +1615,7 @@ class LsblkInfo(BaseModel):
 	fsver: str | None
 	fsavail: int | None
 	fsuse_percentage: str | None = Field(alias='fsuse%')
-	type: str
+	type: str | None  # may be None for strange behavior with md devices
 	mountpoint: Path | None
 	mountpoints: list[Path]
 	fsroots: list[Path]
