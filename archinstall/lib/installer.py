@@ -1172,15 +1172,28 @@ class Installer:
 			bootctl_options.append(f'--esp-path={efi_partition.mountpoint}')
 			bootctl_options.append(f'--boot-path={boot_partition.mountpoint}')
 
+		# TODO: This is a temporary workaround to deal with https://github.com/archlinux/archinstall/pull/3396#issuecomment-2996862019
+		# the systemd_version check can be removed once `--variables=BOOL` is merged into systemd.
+		if pacman_q_systemd := self.pacman.run('-Q systemd').trace_log:
+			systemd_version = int(pacman_q_systemd.split(b' ')[1][:3].decode())
+		else:
+			systemd_version = 257  # This works as a safety workaround for this hot-fix
+
 		# Install the boot loader
 		try:
 			# Force EFI variables since bootctl detects arch-chroot
 			# as a container environemnt since v257 and skips them silently.
 			# https://github.com/systemd/systemd/issues/36174
-			SysCommand(f'arch-chroot {self.target} bootctl --variables=yes {" ".join(bootctl_options)} install')
+			if systemd_version >= 258:
+				SysCommand(f'arch-chroot {self.target} bootctl --variables=yes {" ".join(bootctl_options)} install')
+			else:
+				SysCommand(f'arch-chroot {self.target} bootctl {" ".join(bootctl_options)} install')
 		except SysCallError:
-			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'arch-chroot {self.target} bootctl --variables=no {" ".join(bootctl_options)} install')
+			if systemd_version >= 258:
+				# Fallback, try creating the boot loader without touching the EFI variables
+				SysCommand(f'arch-chroot {self.target} bootctl --variables=no {" ".join(bootctl_options)} install')
+			else:
+				SysCommand(f'arch-chroot {self.target} bootctl --no-variables {" ".join(bootctl_options)} install')
 
 		# Loader configuration is stored in ESP/loader:
 		# https://man.archlinux.org/man/loader.conf.5
