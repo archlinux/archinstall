@@ -11,7 +11,7 @@ from archinstall.lib.models.device_model import (
 	PartitionModification,
 )
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.curses_menu import EditMenu, SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment, FrameProperties
@@ -396,29 +396,21 @@ def select_iteration_time(preset: int | None = None) -> int | None:
 		except ValueError:
 			return tr('Please enter a valid number')
 
-	try:
-		from archinstall.tui.curses_menu import EditMenu
-		from archinstall.tui.result import ResultType
-		from archinstall.tui.types import Alignment
-		
-		result = EditMenu(
-			tr('Iteration time (ms)'),
-			header=header,
-			alignment=Alignment.CENTER,
-			allow_skip=True,
-			default_text=str(preset) if preset else str(DEFAULT_ITER_TIME),
-			validator=validate_iter_time,
-		).input()
-		
-		match result.type_:
-			case ResultType.Skip:
+	result = EditMenu(
+		tr('Iteration time (ms)'),
+		header=header,
+		alignment=Alignment.CENTER,
+		allow_skip=True,
+		default_text=str(preset) if preset else str(DEFAULT_ITER_TIME),
+		validator=validate_iter_time,
+	).input()
+	
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			if not result.text():
 				return preset
-			case ResultType.Selection:
-				if not result.text():
-					return preset
-				return int(result.text())
-			case ResultType.Reset:
-				return None
-	except ImportError:
-		# Fallback for non-interactive mode
-		return preset or DEFAULT_ITER_TIME
+			return int(result.text())
+		case ResultType.Reset:
+			return None
