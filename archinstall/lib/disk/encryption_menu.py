@@ -398,7 +398,7 @@ def select_iteration_time(preset: int | None = None) -> int | None:
 			return tr('Please enter a valid number')
 
 	result = EditMenu(
-		tr('Iteration time (ms)'),
+		tr('Iteration time'),
 		header=header,
 		alignment=Alignment.CENTER,
 		allow_skip=True,
