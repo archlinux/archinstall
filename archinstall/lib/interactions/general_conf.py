@@ -61,7 +61,6 @@ def ask_hostname(preset: str | None = None) -> str | None:
 		alignment=Alignment.CENTER,
 		allow_skip=True,
 		default_text=preset,
-		validator=lambda x: x if len(x) > 0 else tr('Hostname cannot be empty'),
 	).input()
 
 	match result.type_:
