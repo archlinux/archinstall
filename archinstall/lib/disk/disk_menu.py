@@ -3,6 +3,7 @@ from typing import override
 
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
 from archinstall.lib.models.device_model import (
+	DEFAULT_ITER_TIME,
 	BtrfsOptions,
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -260,6 +261,9 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 
 			if enc_config.encryption_password:
 				output += tr('Password') + f': {enc_config.encryption_password.hidden()}\n'
+
+			if enc_type != EncryptionType.NoEncryption:
+				output += tr('Iteration time') + f': {enc_config.iter_time or DEFAULT_ITER_TIME}ms\n'
 
 			if enc_config.partitions:
 				output += f'Partitions: {len(enc_config.partitions)} selected\n'
