@@ -256,8 +256,8 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 			return tr('LVM disk encryption with more than 2 partitions is currently not supported')
 
 		if enc_config:
-			enc_type = EncryptionType.type_to_text(enc_config.encryption_type)
-			output = tr('Encryption type') + f': {enc_type}\n'
+			enc_type = enc_config.encryption_type
+			output = tr('Encryption type') + f': {EncryptionType.type_to_text(enc_type)}\n'
 
 			if enc_config.encryption_password:
 				output += tr('Password') + f': {enc_config.encryption_password.hidden()}\n'
