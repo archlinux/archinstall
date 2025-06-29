@@ -6,6 +6,7 @@ from archinstall.lib.applications.application_handler import application_handler
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.authentication.authentication_handler import auth_handler
 from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
@@ -73,6 +74,9 @@ def perform_installation(mountpoint: Path) -> None:
 	) as installation:
 		# if profile_config := config.profile_config:
 		# 	profile_handler.install_profile_config(installation, profile_config)
+
+		# if config.auth_config:
+		# 	auth_handler.setup_auth(installation, config.auth_config, config.users, config.profile_config)
 
 		# exit(0)
 
@@ -206,9 +210,9 @@ def guided() -> None:
 		if aborted:
 			return guided()
 
-	# if arch_config_handler.config.disk_config:
-	# 	fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
-	# 	fs_handler.perform_filesystem_operations()
+	if arch_config_handler.config.disk_config:
+		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
+		fs_handler.perform_filesystem_operations()
 
 	perform_installation(arch_config_handler.args.mountpoint)
 

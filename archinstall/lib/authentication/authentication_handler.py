@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 class AuthenticationHandler:
 	def __init__(self) -> None:
-		self._u2f_auth_file = Path('/etc/u2f_mappings')
+		self._u2f_auth_file = Path('etc/u2f_mappings')
 
 	def setup_auth(
 		self,
@@ -25,7 +25,7 @@ class AuthenticationHandler:
 		users: list['User'] | None = None,
 		profile_config: ProfileConfiguration | None = None,
 	) -> None:
-		if auth_config.u2f_config:
+		if auth_config.u2f_config and users is not None:
 			self._setup_u2f_login(install_session, auth_config.u2f_config, users, profile_config)
 
 	def _setup_u2f_login(
@@ -123,6 +123,8 @@ class AuthenticationHandler:
 	def _configure_u2f_mapping(self, install_session: 'Installer', u2f_config: U2FLoginConfiguration, users: list[User]) -> None:
 		debug(f'Setting up U2F login: {u2f_config.u2f_login_method.value}')
 
+		install_session.pacman.strap('pam-u2f')
+
 		Tui.print(tr(f'Setting up U2F login: {u2f_config.u2f_login_method.value}'))
 
 		# https://developers.yubico.com/pam-u2f/
@@ -137,12 +139,11 @@ class AuthenticationHandler:
 			Tui.print(tr('Setting up U2F device for user: {}').format(user.username))
 			Tui.print(tr('You may need to enter the PIN and then touch your U2F device to register it'))
 
-			worker = SysCommandWorker(f'pamu2fcfg -u {user.username}', peek_output=True)
+			worker = SysCommandWorker(f'arch-chroot {install_session.target} pamu2fcfg -u {user.username}', peek_output=True)
 			pin_inputted = False
 
 			while worker.is_alive():
 				if pin_inputted is False:
-					debug(worker._trace_log)
 					if bytes('enter pin for', 'UTF-8') in worker._trace_log.lower():
 						worker.write(bytes(getpass.getpass(''), 'UTF-8'))
 						pin_inputted = True

@@ -53,7 +53,7 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		if item.value is not None:
 			u2f_config: U2FLoginConfiguration = item.value
 
-			login_method = u2f_config.u2f_login_method.display_value() if u2f_config.u2f_login_method else tr('Not set')
+			login_method = u2f_config.u2f_login_method.display_value()
 			output = tr('U2F login method: ') + login_method
 
 			output += '\n'
@@ -89,7 +89,7 @@ def setup_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | No
 			group.focus_item = MenuItem.no()
 			header = tr('Enable passwordless sudo?')
 
-			result = SelectMenu[bool](
+			result_sudo = SelectMenu[bool](
 				group,
 				header=header,
 				alignment=Alignment.CENTER,
@@ -98,7 +98,7 @@ def setup_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | No
 				allow_skip=True,
 			).run()
 
-			passwordless_sudo = result.item() == MenuItem.yes()
+			passwordless_sudo = result_sudo.item() == MenuItem.yes()
 
 			return U2FLoginConfiguration(
 				u2f_login_method=u2f_method,

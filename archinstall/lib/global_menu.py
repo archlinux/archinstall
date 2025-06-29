@@ -316,7 +316,7 @@ class GlobalMenu(AbstractMenu[None]):
 
 			if auth_config.u2f_config:
 				u2f_config = auth_config.u2f_config
-				login_method = u2f_config.u2f_login_method.display_value() if u2f_config.u2f_login_method else tr('Not set')
+				login_method = u2f_config.u2f_login_method.display_value()
 				output = tr('U2F login method: ') + login_method
 
 				output += '\n'

@@ -5,13 +5,13 @@ from typing import Any, NotRequired, TypedDict
 from archinstall.lib.translationhandler import tr
 
 
-class AuthConfigSerialization(TypedDict):
-	u2f_login_method: NotRequired[str]
-	enable_sudo: bool
+class U2FLoginConfigSerialization(TypedDict):
+	u2f_login_method: str
+	passwordless_sudo: bool
 
 
 class AuthenticationSerialization(TypedDict):
-	auth_config: NotRequired[AuthConfigSerialization]
+	u2f_config: NotRequired[U2FLoginConfigSerialization]
 
 
 class U2FLoginMethod(Enum):
@@ -30,22 +30,23 @@ class U2FLoginMethod(Enum):
 
 @dataclass
 class U2FLoginConfiguration:
-	u2f_login_method: U2FLoginMethod | None = None
+	u2f_login_method: U2FLoginMethod
 	passwordless_sudo: bool = False
 
-	def json(self) -> AuthConfigSerialization:
-		config: AuthConfigSerialization = {
-			'u2f_login_method': self.u2f_login_method.value if self.u2f_login_method else None,
+	def json(self) -> U2FLoginConfigSerialization:
+		return {
+			'u2f_login_method': self.u2f_login_method.value,
 			'passwordless_sudo': self.passwordless_sudo,
 		}
-		return config
 
-	def parse_arg(args: dict[str, Any]) -> 'U2FLoginConfiguration':
-		u2f_config = U2FLoginConfiguration()
+	@staticmethod
+	def parse_arg(args: dict[str, Any]) -> 'U2FLoginConfiguration' | None:
 		u2f_login_method = args.get('u2f_login_method')
 
 		if u2f_login_method is None:
 			return None
+
+		u2f_config = U2FLoginConfiguration(u2f_login_method=U2FLoginMethod(u2f_login_method))
 
 		u2f_config.u2f_login_method = U2FLoginMethod(u2f_login_method)
 
