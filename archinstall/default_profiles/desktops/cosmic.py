@@ -13,6 +13,7 @@ class CosmicProfile(XorgProfile):
 	def packages(self) -> list[str]:
 		return [
 			'cosmic',
+			'xdg-user-dirs',
 		]
 
 	@property

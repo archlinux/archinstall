@@ -72,7 +72,7 @@ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{
 msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) „{}” számára, vagy hagyja ki ezt a lépést az alapértelmezett „{}” mód használatához"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Adja meg az IP-címét és az alhálózatát (például: 192.168.0.5/24) ehhez: {}: "
+msgstr "Adja meg az IP-címét és az alhálózatát (például: 192.168.0.5/24) a következőhöz: {}: "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr "Adja meg az átjáró (elosztó) IP-címét (hagyja üresen, ha nincs ilyen): "
@@ -367,7 +367,7 @@ msgid "Enter a password: "
 msgstr "Adjon meg egy jelszót: "
 
 msgid "Enter a encryption password for {}"
-msgstr "Adjon meg egy titkosítási jelszót ehhez: {}"
+msgstr "Adjon meg egy titkosítási jelszót a következőhöz: {}"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "Adjon meg egy jelszót a lemez titkosításához (hagyja üresen, ha nem akarja titkosítani): "
@@ -550,7 +550,7 @@ msgid " Subvolume :{:16}"
 msgstr " Alkötet :{:16}"
 
 msgid " mounted at {:16}"
-msgstr " csatolva ehhez {:16}"
+msgstr " csatolva a következőhöz: {:16}"
 
 msgid " with option {}"
 msgstr " a következő beállítással: {}"
