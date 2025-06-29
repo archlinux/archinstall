@@ -7,6 +7,7 @@ from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
 from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration
+from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.models.locale import LocaleConfiguration
@@ -131,6 +132,12 @@ def test_config_file_parsing(
 		app_config=ApplicationConfiguration(
 			bluetooth_config=BluetoothConfiguration(enabled=True),
 			audio_config=AudioConfiguration(audio=Audio.PIPEWIRE),
+		),
+		auth_config=AuthenticationConfiguration(
+			u2f_config=U2FLoginConfiguration(
+				u2f_login_method=U2FLoginMethod.Passwordless,
+				passwordless_sudo=True,
+			),
 		),
 		locale_config=LocaleConfiguration(
 			kb_layout='us',

@@ -268,7 +268,7 @@ def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 	header = tr('Select a FIDO2 device to use for HSM') + '\n'
 
 	try:
-		fido_devices = Fido2.get_fido2_devices()
+		fido_devices = Fido2.get_cryptenroll_devices()
 	except ValueError:
 		return None
 
