@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from archinstall.lib.general import SysCommandWorker
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
-from archinstall.lib.models.profile_model import ProfileConfiguration
 from archinstall.lib.models.users import User
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
@@ -23,26 +22,23 @@ class AuthenticationHandler:
 		install_session: 'Installer',
 		auth_config: AuthenticationConfiguration,
 		users: list['User'] | None = None,
-		profile_config: ProfileConfiguration | None = None,
 	) -> None:
 		if auth_config.u2f_config and users is not None:
-			self._setup_u2f_login(install_session, auth_config.u2f_config, users, profile_config)
+			self._setup_u2f_login(install_session, auth_config.u2f_config, users)
 
 	def _setup_u2f_login(
 		self,
 		install_session: 'Installer',
 		u2f_config: U2FLoginConfiguration,
 		users: list[User],
-		profile_config: ProfileConfiguration | None = None,
 	) -> None:
 		self._configure_u2f_mapping(install_session, u2f_config, users)
-		self._update_pam_config(install_session, u2f_config, profile_config)
+		self._update_pam_config(install_session, u2f_config)
 
 	def _update_pam_config(
 		self,
 		install_session: 'Installer',
 		u2f_config: U2FLoginConfiguration,
-		profile_config: ProfileConfiguration | None = None,
 	) -> None:
 		match u2f_config.u2f_login_method:
 			case U2FLoginMethod.Passwordless:
@@ -62,43 +58,6 @@ class AuthenticationHandler:
 			self._add_u2f_entry(sudo_config, config_entry)
 
 		self._add_u2f_entry(sys_login, config_entry)
-
-		# if profile_config and profile_config.profile:
-		# 	if profile_config.greeter is not None:
-		# 		self._setup_greeter_config(
-		# 			install_session,
-		# 			config_entry,
-		# 			profile_config.greeter,
-		# 		)
-		#
-		# 	if profile_config.profile.is_desktop_profile():
-		# 		desktop_profile: DesktopProfile  = profile_config.profile
-		# 	else:
-		# 		self._add_u2f_entry(sys_login, config_entry)
-		# else:
-		# 	self._add_u2f_entry(sys_login, config_entry)
-
-	# def _setup_greeter_config(
-	# 	self,
-	# 	install_session: 'Installer',
-	# 	config_entry: str,
-	# 	greeter_type: GreeterType,
-	# ) -> None:
-	# 	match greeter_type:
-	# 		case GreeterType.Lightdm:
-	# 			pass
-	# 		case GreeterType.LightdmSlick:
-	# 			pass
-	# 		case GreeterType.Sddm:
-	# 			sddm_config = install_session.target / 'etc/pam.d/sddm'
-	# 			self._add_u2f_entry(sys_login, config_entry)
-	# 		case GreeterType.Gdm:
-	# 			sddm_config = install_session.target / 'etc/pam.d/gdm-password'
-	# 			self._add_u2f_entry(sys_login, config_entry)
-	# 		case GreeterType.Ly:
-	# 			pass
-	# 		case GreeterType.CosmicSession:
-	# 			pass
 
 	def _add_u2f_entry(self, file: Path, entry: str) -> None:
 		if not file.exists():

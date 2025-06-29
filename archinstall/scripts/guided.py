@@ -72,14 +72,6 @@ def perform_installation(mountpoint: Path) -> None:
 		disk_config,
 		kernels=config.kernels,
 	) as installation:
-		# if profile_config := config.profile_config:
-		# 	profile_handler.install_profile_config(installation, profile_config)
-
-		# if config.auth_config:
-		# 	auth_handler.setup_auth(installation, config.auth_config, config.users, config.profile_config)
-
-		# exit(0)
-
 		# Mount all the drives to the desired mountpoint
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
@@ -126,7 +118,7 @@ def perform_installation(mountpoint: Path) -> None:
 			installation.create_users(users)
 
 		if config.auth_config:
-			auth_handler.setup_auth(installation, config.auth_config, config.users, config.profile_config)
+			auth_handler.setup_auth(installation, config.auth_config, config.users)
 
 		if config.packages and config.packages[0] != '':
 			installation.add_additional_packages(config.packages)
