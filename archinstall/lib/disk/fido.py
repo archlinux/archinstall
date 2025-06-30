@@ -13,11 +13,39 @@ from ..output import error, info
 
 
 class Fido2:
-	_loaded: bool = False
-	_fido2_devices: ClassVar[list[Fido2Device]] = []
+	_loaded_cryptsetup: bool = False
+	_loaded_u2f: bool = False
+	_cryptenroll_devices: ClassVar[list[Fido2Device]] = []
+	_u2f_devices: ClassVar[list[Fido2Device]] = []
 
 	@classmethod
-	def get_fido2_devices(cls, reload: bool = False) -> list[Fido2Device]:
+	def get_fido2_devices(cls) -> list[Fido2Device]:
+		"""
+		fido2-tool output example:
+
+		/dev/hidraw4: vendor=0x1050, product=0x0407 (Yubico YubiKey OTP+FIDO+CCID)
+		"""
+
+		if not cls._loaded_u2f:
+			cls._loaded_u2f = True
+			try:
+				ret = SysCommand('fido2-token -L').decode()
+			except SysCallError as e:
+				error(f'failed to read fido2 devices: {e}')
+				return []
+
+			fido_devices = clear_vt100_escape_codes_from_str(ret)
+
+			for line in fido_devices.split('\r\n'):
+				path, details = line.replace(',', '').split(':', maxsplit=1)
+				_, product, manufacturer = details.strip().split(' ', maxsplit=2)
+
+				cls._u2f_devices.append(Fido2Device(Path(path.strip()), manufacturer.strip(), product.strip().split('=')[1]))
+
+		return cls._u2f_devices
+
+	@classmethod
+	def get_cryptenroll_devices(cls, reload: bool = False) -> list[Fido2Device]:
 		"""
 		Uses systemd-cryptenroll to list the FIDO2 devices
 		connected that supports FIDO2.
@@ -38,7 +66,7 @@ class Fido2:
 
 		# to prevent continuous reloading which will slow
 		# down moving the cursor in the menu
-		if not cls._loaded or reload:
+		if not cls._loaded_cryptsetup or reload:
 			try:
 				ret = SysCommand('systemd-cryptenroll --fido2-device=list').decode()
 			except SysCallError:
@@ -65,10 +93,10 @@ class Fido2:
 					Fido2Device(Path(path), manufacturer, product),
 				)
 
-			cls._loaded = True
-			cls._fido2_devices = devices
+			cls._loaded_cryptsetup = True
+			cls._cryptenroll_devices = devices
 
-		return cls._fido2_devices
+		return cls._cryptenroll_devices
 
 	@classmethod
 	def fido2_enroll(
