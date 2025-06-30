@@ -14,6 +14,7 @@ from pydantic.dataclasses import dataclass as p_dataclass
 
 from archinstall.lib.crypt import decrypt
 from archinstall.lib.models.application import ApplicationConfiguration
+from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
@@ -64,6 +65,7 @@ class ArchConfig:
 	bootloader: Bootloader = field(default=Bootloader.get_default())
 	uki: bool = False
 	app_config: ApplicationConfiguration | None = None
+	auth_config: AuthenticationConfiguration | None = None
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: ['linux'])
 	ntp: bool = True
@@ -107,6 +109,7 @@ class ArchConfig:
 			'custom_commands': self.custom_commands,
 			'bootloader': self.bootloader.json(),
 			'app_config': self.app_config.json() if self.app_config else None,
+			'auth_config': self.auth_config.json() if self.auth_config else None,
 		}
 
 		if self.locale_config:
@@ -192,6 +195,9 @@ class ArchConfig:
 
 		if audio_config_args is not None or app_config_args is not None:
 			arch_config.app_config = ApplicationConfiguration.parse_arg(app_config_args, audio_config_args)
+
+		if auth_config_args := args_config.get('auth_config', None):
+			arch_config.auth_config = AuthenticationConfiguration.parse_arg(auth_config_args)
 
 		if hostname := args_config.get('hostname', ''):
 			arch_config.hostname = hostname
