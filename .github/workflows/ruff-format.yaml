@@ -3,8 +3,6 @@ name: ruff check formatting
 jobs:
   ruff_format_check:
     runs-on: ubuntu-latest
-    container:
-        image: archlinux/archlinux:latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: astral-sh/ruff-action@eaf0ecdd668ceea36159ff9d91882c9795d89b49  # v3.4.0
