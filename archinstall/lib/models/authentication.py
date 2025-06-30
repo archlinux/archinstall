@@ -40,7 +40,7 @@ class U2FLoginConfiguration:
 		}
 
 	@staticmethod
-	def parse_arg(args: dict[str, Any]) -> 'U2FLoginConfiguration | None':
+	def parse_arg(args: U2FLoginConfigSerialization) -> 'U2FLoginConfiguration | None':
 		u2f_login_method = args.get('u2f_login_method')
 
 		if u2f_login_method is None:
