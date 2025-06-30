@@ -14,6 +14,7 @@ from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCommandWorker
 from ..luks import Luks2
 from ..models.device_model import (
+	DEFAULT_ITER_TIME,
 	BDevice,
 	BtrfsMountOption,
 	DeviceModification,
@@ -308,6 +309,7 @@ class DeviceHandler:
 		mapper_name: str | None,
 		enc_password: Password | None,
 		lock_after_create: bool = True,
+		iter_time: int = DEFAULT_ITER_TIME,
 	) -> Luks2:
 		luks_handler = Luks2(
 			dev_path,
@@ -315,7 +317,7 @@ class DeviceHandler:
 			password=enc_password,
 		)
 
-		key_file = luks_handler.encrypt()
+		key_file = luks_handler.encrypt(iter_time=iter_time)
 
 		self.udev_sync()
 
@@ -346,7 +348,7 @@ class DeviceHandler:
 			password=enc_conf.encryption_password,
 		)
 
-		key_file = luks_handler.encrypt()
+		key_file = luks_handler.encrypt(iter_time=enc_conf.iter_time)
 
 		self.udev_sync()
 

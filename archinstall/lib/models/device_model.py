@@ -19,6 +19,7 @@ from ..models.users import Password
 from ..output import debug
 
 ENC_IDENTIFIER = 'ainst'
+DEFAULT_ITER_TIME = 10000
 
 
 class DiskLayoutType(Enum):
@@ -1471,6 +1472,7 @@ class _DiskEncryptionSerialization(TypedDict):
 	partitions: list[str]
 	lvm_volumes: list[str]
 	hsm_device: NotRequired[_Fido2DeviceSerialization]
+	iter_time: NotRequired[int]
 
 
 @dataclass
@@ -1480,6 +1482,7 @@ class DiskEncryption:
 	partitions: list[PartitionModification] = field(default_factory=list)
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
 	hsm_device: Fido2Device | None = None
+	iter_time: int = DEFAULT_ITER_TIME
 
 	def __post_init__(self) -> None:
 		if self.encryption_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks] and not self.partitions:
@@ -1503,6 +1506,9 @@ class DiskEncryption:
 
 		if self.hsm_device:
 			obj['hsm_device'] = self.hsm_device.json()
+
+		if self.iter_time != DEFAULT_ITER_TIME:  # Only include if not default
+			obj['iter_time'] = self.iter_time
 
 		return obj
 
@@ -1558,6 +1564,9 @@ class DiskEncryption:
 
 		if hsm := disk_encryption.get('hsm_device', None):
 			enc.hsm_device = Fido2Device.parse_arg(hsm)
+
+		if iter_time := disk_encryption.get('iter_time', None):
+			enc.iter_time = iter_time
 
 		return enc
 
