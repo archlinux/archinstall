@@ -12,7 +12,7 @@ from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
-from archinstall.lib.models.network_configuration import NetworkConfiguration, Nic, NicType
+from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.profile_model import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
