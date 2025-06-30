@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from archinstall.lib.translationhandler import tr
 
-from ..models.profile_model import ProfileConfiguration
+from ..models.profile import ProfileConfiguration
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

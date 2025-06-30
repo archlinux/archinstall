@@ -14,7 +14,7 @@ from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
 from archinstall.lib.models.network_configuration import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.packages import Repository
-from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import translation_handler
