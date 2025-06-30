@@ -11,10 +11,15 @@ class MateProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		packages = [
 			'mate',
 			'mate-extra',
 		]
+
+		if self.accessibility:
+			packages.append('orca')
+
+		return packages
 
 	@property
 	@override

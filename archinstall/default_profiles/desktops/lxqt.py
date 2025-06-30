@@ -14,7 +14,7 @@ class LxqtProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		packages = [
 			'lxqt',
 			'breeze-icons',
 			'oxygen-icons',
@@ -23,6 +23,11 @@ class LxqtProfile(XorgProfile):
 			'leafpad',
 			'slock',
 		]
+
+		if self.accessibility:
+			packages.append('orca')
+
+		return packages
 
 	@property
 	@override

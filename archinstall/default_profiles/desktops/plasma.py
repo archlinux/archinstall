@@ -11,7 +11,7 @@ class PlasmaProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		packages = [
 			'plasma-meta',
 			'konsole',
 			'kate',
@@ -19,6 +19,11 @@ class PlasmaProfile(XorgProfile):
 			'ark',
 			'plasma-workspace',
 		]
+
+		if self.accessibility:
+			packages.append('orca')
+
+		return packages
 
 	@property
 	@override

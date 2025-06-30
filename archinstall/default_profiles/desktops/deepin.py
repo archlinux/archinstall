@@ -11,11 +11,16 @@ class DeepinProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		packages = [
 			'deepin',
 			'deepin-terminal',
 			'deepin-editor',
 		]
+
+		if self.accessibility:
+			packages.append('orca')
+
+		return packages
 
 	@property
 	@override
