@@ -1,0 +1,24 @@
+on: [ push, pull_request ]
+name: Pyright type checking
+jobs:
+    pyright:
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux/archlinux:latest
+        steps:
+            - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+            - name: Prepare arch
+              run: |
+                pacman-key --init
+                pacman --noconfirm -Sy archlinux-keyring
+                pacman --noconfirm -Syyu
+                pacman --noconfirm -Sy python-pip python-pyparted pkgconfig gcc nodejs npm
+            - run: pip install --break-system-packages --upgrade pip
+            - name: Install Python dependencies
+              run: pip install --break-system-packages .[dev]
+            - name: Install Node.js dependencies
+              run: npm install
+            - name: Display Pyright version
+              run: npx --no -- pyright --version
+            - name: Run Pyright
+              run: npx --no -- pyright
