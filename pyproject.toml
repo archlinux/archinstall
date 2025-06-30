@@ -136,6 +136,7 @@ testpaths = ["tests"]
 ignore-paths = [
     "^build/",
     "^docs/",
+    "^node_modules/",
 ]
 load-plugins = ["pylint_pydantic"]
 persistent = false
@@ -230,3 +231,34 @@ ignore = [
 
 [tool.ruff.lint.mccabe]
 max-complexity = 40
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    "build/",
+]
+reportArgumentType = false
+reportAttributeAccessIssue = false
+reportMatchNotExhaustive = false
+reportMissingTypeStubs = false
+reportPrivateUsage = false
+reportTypedDictNotRequiredAccess = false
+reportUnknownArgumentType = false
+reportUnknownLambdaType = false
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportUnnecessaryComparison = false
+
+# Additional flags that are not included in strict mode
+deprecateTypingAliases = true
+reportImplicitOverride = true
+reportImportCycles = false
+reportPropertyTypeMismatch = true
+reportShadowedImports = true
+strictDictionaryInference = true
+strictListInference = true
+strictSetInference = true
