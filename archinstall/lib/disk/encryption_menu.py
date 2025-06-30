@@ -11,13 +11,13 @@ from archinstall.lib.models.device import (
 	PartitionModification,
 )
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.curses_menu import EditMenu, SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment, FrameProperties
 
 from ..menu.abstract_menu import AbstractSubMenu
-from ..models.device import Fido2Device
+from ..models.device import DEFAULT_ITER_TIME, Fido2Device
 from ..models.users import Password
 from ..output import FormattedOutput
 from ..utils.util import get_password
@@ -64,6 +64,14 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._preview,
 				key='encryption_password',
+			),
+			MenuItem(
+				text=tr('Iteration time'),
+				action=select_iteration_time,
+				value=self._enc_config.iter_time,
+				dependencies=[self._check_dep_enc_type],
+				preview_action=self._preview,
+				key='iter_time',
 			),
 			MenuItem(
 				text=tr('Partitions'),
@@ -120,6 +128,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		enc_password: Password | None = self._item_group.find_by_key('encryption_password').value
+		iter_time: int | None = self._item_group.find_by_key('iter_time').value
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_volumes').value
 
@@ -140,6 +149,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				partitions=enc_partitions,
 				lvm_volumes=enc_lvm_vols,
 				hsm_device=self._enc_config.hsm_device,
+				iter_time=iter_time or DEFAULT_ITER_TIME,
 			)
 
 		return None
@@ -152,6 +162,9 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		if (enc_pwd := self._prev_password()) is not None:
 			output += f'\n{enc_pwd}'
+
+		if (iter_time := self._prev_iter_time()) is not None:
+			output += f'\n{iter_time}'
 
 		if (fido_device := self._prev_hsm()) is not None:
 			output += f'\n{fido_device}'
@@ -214,6 +227,15 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		output += f' ({fido_device.manufacturer}, {fido_device.product})'
 		return f'{tr("HSM device")}: {output}'
 
+	def _prev_iter_time(self) -> str | None:
+		iter_time = self._item_group.find_by_key('iter_time').value
+		enc_type = self._item_group.find_by_key('encryption_type').value
+
+		if iter_time and enc_type != EncryptionType.NoEncryption:
+			return f'{tr("Iteration time")}: {iter_time}ms'
+
+		return None
+
 
 def select_encryption_type(
 	device_modifications: list[DeviceModification],
@@ -268,7 +290,7 @@ def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 	header = tr('Select a FIDO2 device to use for HSM') + '\n'
 
 	try:
-		fido_devices = Fido2.get_fido2_devices()
+		fido_devices = Fido2.get_cryptenroll_devices()
 	except ValueError:
 		return None
 
@@ -354,3 +376,42 @@ def select_lvm_vols_to_encrypt(
 				return volumes
 
 	return []
+
+
+def select_iteration_time(preset: int | None = None) -> int | None:
+	header = tr('Enter iteration time for LUKS encryption (in milliseconds)') + '\n'
+	header += tr('Higher values increase security but slow down boot time') + '\n'
+	header += tr(f'Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000') + '\n'
+
+	def validate_iter_time(value: str | None) -> str | None:
+		if not value:
+			return None
+
+		try:
+			iter_time = int(value)
+			if iter_time < 100:
+				return tr('Iteration time must be at least 100ms')
+			if iter_time > 120000:
+				return tr('Iteration time must be at most 120000ms')
+			return None
+		except ValueError:
+			return tr('Please enter a valid number')
+
+	result = EditMenu(
+		tr('Iteration time'),
+		header=header,
+		alignment=Alignment.CENTER,
+		allow_skip=True,
+		default_text=str(preset) if preset else str(DEFAULT_ITER_TIME),
+		validator=validate_iter_time,
+	).input()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			if not result.text():
+				return preset
+			return int(result.text())
+		case ResultType.Reset:
+			return None

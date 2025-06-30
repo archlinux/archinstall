@@ -84,9 +84,14 @@ def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfigur
 		allow_skip=True,
 	).run()
 
-	enabled = result.item() == MenuItem.yes()
-
-	return BluetoothConfiguration(enabled)
+	match result.type_:
+		case ResultType.Selection:
+			enabled = result.item() == MenuItem.yes()
+			return BluetoothConfiguration(enabled)
+		case ResultType.Skip:
+			return preset
+		case _:
+			raise ValueError('Unhandled result type')
 
 
 def select_audio(preset: AudioConfiguration | None = None) -> AudioConfiguration | None:

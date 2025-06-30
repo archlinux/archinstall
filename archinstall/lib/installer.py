@@ -1506,7 +1506,7 @@ class Installer:
 
 		parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
-		cmd_template = (
+		cmd_template = [
 			'efibootmgr',
 			'--create',
 			'--disk',
@@ -1520,7 +1520,7 @@ class Installer:
 			'--unicode',
 			*cmdline,
 			'--verbose',
-		)
+		]
 
 		for kernel in self.kernels:
 			# Setup the firmware entry

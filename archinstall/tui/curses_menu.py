@@ -566,7 +566,10 @@ class EditMenu(AbstractCurses[str]):
 				entry = ViewportEntry(err, 0, 0, STYLE.ERROR)
 				self._info_vp.update([entry], 0)
 				self._set_default_info = False
-				self._real_input = ''
+
+				if self._hide_input:
+					self._real_input = ''
+
 				return None
 
 		return text
@@ -586,7 +589,7 @@ class EditMenu(AbstractCurses[str]):
 			if self._set_default_info and self._info_vp:
 				self._info_vp.update([self._only_ascii_text], 0)
 
-			self._input_vp.edit(default_text=self._current_text)
+			self._input_vp.edit(default_text=self._real_input)
 
 	@override
 	def kickoff(self, win: curses.window) -> Result[str]:
