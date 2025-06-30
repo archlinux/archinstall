@@ -14,9 +14,6 @@ if TYPE_CHECKING:
 
 
 class AuthenticationHandler:
-	def __init__(self) -> None:
-		self._u2f_auth_file = Path('etc/u2f_mappings')
-
 	def setup_auth(
 		self,
 		install_session: 'Installer',
