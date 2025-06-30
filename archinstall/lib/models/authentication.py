@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, NotRequired, Optional, TypedDict
+from typing import Any, NotRequired, TypedDict
 
 from archinstall.lib.translationhandler import tr
 
@@ -40,7 +40,7 @@ class U2FLoginConfiguration:
 		}
 
 	@staticmethod
-	def parse_arg(args: dict[str, Any]) -> Optional['U2FLoginConfiguration']:
+	def parse_arg(args: dict[str, Any]) -> 'U2FLoginConfiguration | None':
 		u2f_login_method = args.get('u2f_login_method')
 
 		if u2f_login_method is None:
