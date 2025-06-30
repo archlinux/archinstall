@@ -8,7 +8,7 @@ from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
 from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration
 from archinstall.lib.models.bootloader import Bootloader
-from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType
+from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
 from archinstall.lib.models.network_configuration import NetworkConfiguration, Nic, NicType

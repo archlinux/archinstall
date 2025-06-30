@@ -15,7 +15,7 @@ from pydantic.dataclasses import dataclass as p_dataclass
 from archinstall.lib.crypt import decrypt
 from archinstall.lib.models.application import ApplicationConfiguration
 from archinstall.lib.models.bootloader import Bootloader
-from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration
+from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network_configuration import NetworkConfiguration
