@@ -38,7 +38,7 @@ class Fido2:
 
 			for line in fido_devices.split('\r\n'):
 				path, details = line.replace(',', '').split(':', maxsplit=1)
-				vendor, product, manufacturer = details.strip().split(' ', maxsplit=2)
+				_, product, manufacturer = details.strip().split(' ', maxsplit=2)
 
 				cls._u2f_devices.append(Fido2Device(Path(path.strip()), manufacturer.strip(), product.strip().split('=')[1]))
 
