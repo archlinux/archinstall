@@ -7,7 +7,7 @@ from subprocess import CalledProcessError
 from types import TracebackType
 
 from archinstall.lib.disk.utils import get_lsblk_info, umount
-from archinstall.lib.models.device_model import DEFAULT_ITER_TIME
+from archinstall.lib.models.device import DEFAULT_ITER_TIME
 
 from .exceptions import DiskError, SysCallError
 from .general import SysCommand, SysCommandWorker, generate_password, run

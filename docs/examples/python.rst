@@ -53,9 +53,9 @@ After running ``python -m archinstall test_installer`` it should print something
                total_size=Size(value=512110190592, unit=<Unit.B: 1>,
                sector_size=SectorSize(value=512, unit=<Unit.B: 1>)),
                free_space_regions=[
-                   <archinstall.lib.disk.device_model.DeviceGeometry object at 0x7fbe166c4250>,
-                   <archinstall.lib.disk.device_model.DeviceGeometry object at 0x7fbe166c4c50>,
-                   <archinstall.lib.disk.device_model.DeviceGeometry object at 0x7fbe166c4a10>],
+                   <archinstall.lib.disk.device.DeviceGeometry object at 0x7fbe166c4250>,
+                   <archinstall.lib.disk.device.DeviceGeometry object at 0x7fbe166c4c50>,
+                   <archinstall.lib.disk.device.DeviceGeometry object at 0x7fbe166c4a10>],
                sector_size=SectorSize(value=512, unit=<Unit.B: 1>),
                read_only=False,
                dirty=False

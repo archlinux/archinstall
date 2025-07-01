@@ -5,7 +5,7 @@ from .application import (
 	BluetoothConfiguration,
 )
 from .bootloader import Bootloader
-from .device_model import (
+from .device import (
 	BDevice,
 	DeviceGeometry,
 	DeviceModification,
