@@ -32,7 +32,7 @@ from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
 from .models.network_configuration import NetworkConfiguration, NicType
 from .models.packages import Repository
-from .models.profile_model import ProfileConfiguration
+from .models.profile import ProfileConfiguration
 from .models.users import Password, User
 from .output import FormattedOutput
 from .pacman.config import PacmanConfig
