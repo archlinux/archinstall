@@ -42,7 +42,7 @@ from .luks import Luks2
 from .models.bootloader import Bootloader
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
-from .models.network_configuration import Nic
+from .models.network import Nic
 from .models.users import User
 from .output import debug, error, info, log, logger, warn
 from .pacman import Pacman
