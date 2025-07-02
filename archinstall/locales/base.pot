@@ -971,9 +971,6 @@ msgstr ""
 msgid "Default: 10000ms, Recommended range: 1000-60000"
 msgstr ""
 
-msgid "Iteration time"
-msgstr ""
-
 msgid "Iteration time cannot be empty"
 msgstr ""
 
