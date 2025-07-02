@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-05-04 21:57+0200\n"
+"PO-Revision-Date: 2025-07-02 21:31+0200\n"
 "Last-Translator: Van Matten\n"
 "Language-Team: \n"
 "Language: it\n"
@@ -75,7 +75,7 @@ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{
 msgstr "Seleziona la modalità da configurare per \"{}\" o salta per utilizzare la modalità predefinita \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Immetti l'IP e la sottorete per {} (esempio: 192.168.0.5/24): "
+msgstr "Inserisci l'IP e la sottorete per {} (esempio: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr "Inserisci l'indirizzo IP del tuo gateway (router) o lascia vuoto per nessuno: "
@@ -97,7 +97,7 @@ msgstr ""
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
-msgstr "Immetti un tipo di filesystem desiderato per la partizione"
+msgstr "Inserisci un tipo di filesystem desiderato per la partizione"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
 msgstr "Inserisci la posizione iniziale (in unità separate: s, GB, %, ecc.; impostazione predefinita: {}): "
@@ -169,7 +169,7 @@ msgstr ""
 "Seleziona su quale partizione impostare un filesystem"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Immetti un tipo di filesystem desiderato per la partizione: "
+msgstr "Inserisci un tipo di filesystem desiderato per la partizione: "
 
 msgid "Archinstall language"
 msgstr "Lingua di Archinstall"
@@ -518,7 +518,7 @@ msgid "Choose which configuration to save"
 msgstr "Scegli quale configurazione salvare"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "Immetti una directory per le configurazioni da salvare: "
+msgstr "Inserisci una directory per le configurazioni da salvare: "
 
 msgid "Not a valid directory: {}"
 msgstr "Directory non valida: {}"
@@ -650,9 +650,8 @@ msgstr "Seleziona/Deseleziona una partizione come compressa (solo btrfs)"
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
 msgstr "La password che stai utilizzando sembra essere debole, sei sicuro di volerla usare?"
 
-#, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Fornisce una selezione di ambienti desktop e gestori di finestre tile, per esempio gnome, kde, sway"
+msgstr "Fornisce una selezione di ambienti desktop e gestori di finestre, per esempio gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
 msgstr "Seleziona l'ambiente desktop desiderato"
@@ -865,7 +864,7 @@ msgid "Select a partitioning option"
 msgstr "Selezione opzione di partizionamento"
 
 msgid "Enter the root directory of the mounted devices: "
-msgstr "Inserisci la directory principale del dispositivo montato: "
+msgstr "Inserisci la directory principale dei dispositivi montati: "
 
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Capacità minima per la partizione /home: {}GiB\n"
@@ -941,6 +940,30 @@ msgstr "Lunghezza totale: {}"
 
 msgid "Encryption type"
 msgstr "Tipo di crittografia"
+
+msgid "Iteration time"
+msgstr "Tempo di iterazione"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "Inserisci il tempo di iterazione per la crittografia LUKS (in millisecondi)"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "Valori alti aumentano la sicurezza ma rallentano l'avvio"
+
+msgid "Default: 10000ms, Recommended range: 1000-60000"
+msgstr "Predefinito: 10000 ms, Intervallo consigliato: 1000-60000"
+
+msgid "Iteration time cannot be empty"
+msgstr "Il tempo di iterazione non può essere vuoto"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "Il tempo di iterazione deve essere almeno 100 ms"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "Il tempo di iterazione deve essere al massimo 120000 ms"
+
+msgid "Please enter a valid number"
+msgstr "Inserisci un numero valido"
 
 msgid "Partitions"
 msgstr "Partizioni"
@@ -1109,7 +1132,7 @@ msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
-"Immetti una directory per le configurazioni da salvare: (completamento col tasto tab abilitato)\n"
+"Inserisci una directory per le configurazioni da salvare: (completamento col tasto tab abilitato)\n"
 "Directory di salvataggio:  "
 
 msgid ""
@@ -1248,9 +1271,8 @@ msgstr "Usa la compressione"
 msgid "Disable Copy-on-Write"
 msgstr "Disabilita Copy-on-Write"
 
-#, fuzzy
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Fornisce una selezione di ambienti desktop e gestori di finestre tile, per esempio GNOME, KDE Plasma, Sway"
+msgstr "Fornisce una selezione di ambienti desktop e gestori di finestre, per esempio GNOME, KDE Plasma, Sway"
 
 msgid "Configuration type: {}"
 msgstr "Tipo configurazione: {}"
@@ -1357,9 +1379,8 @@ msgstr "Nome del sottovolume"
 msgid "Disk configuration type"
 msgstr "Tipo configurazione disco"
 
-#, fuzzy
 msgid "Root mount directory"
-msgstr "Cartella montata di root"
+msgstr "Cartella di montaggio di root"
 
 msgid "Select language"
 msgstr "Seleziona lingua"
@@ -1367,11 +1388,9 @@ msgstr "Seleziona lingua"
 msgid "Write additional packages to install (space separated, leave blank to skip)"
 msgstr "Scrivi i pacchetti aggiuntivi da installare (separati da spazi, lascia vuoto per saltare)"
 
-#, fuzzy
 msgid "Invalid download number"
 msgstr "Numero di download non valido"
 
-#, fuzzy
 msgid "Number downloads"
 msgstr "Numero di download"
 
@@ -1408,9 +1427,8 @@ msgstr "Inserisci i tuoi server DNS (separati da spazi, vuoto per nessuno)"
 msgid "DNS servers"
 msgstr "Server DNS"
 
-#, fuzzy
 msgid "Configure interfaces"
-msgstr "Configura interfacce"
+msgstr "Configurazione interfacce"
 
 msgid "Kernel"
 msgstr "Kernel"
@@ -1446,7 +1464,7 @@ msgid "Directory"
 msgstr "Cartella"
 
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr "Immetti una cartella dove salvare le configurazioni (completamento col tasto tab abilitato)"
+msgstr "Inserisci una cartella dove salvare le configurazioni (completamento col tasto tab abilitato)"
 
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Vuoi salvare i file di configurazione in {}?"
@@ -1493,9 +1511,8 @@ msgstr "Nome"
 msgid "Signature check"
 msgstr "Controllo della firma"
 
-#, fuzzy
 msgid "Selected free space segment on device {}:"
-msgstr "Spazio libero del segmento selezionato sul dispositivo {}:"
+msgstr "Segmento di spazio libero selezionato sul dispositivo {}:"
 
 msgid "Size: {} / {}"
 msgstr "Dimensione: {} / {}"
@@ -1602,9 +1619,8 @@ msgstr "Muovi a destra"
 msgid "Move left"
 msgstr "Muovi a sinistra"
 
-#, fuzzy
 msgid "Jump to entry"
-msgstr "Vai al successivo"
+msgstr "Vai alla voce"
 
 msgid "Skip selection (if available)"
 msgstr "Salta selezione (se disponibile)"
@@ -1645,9 +1661,8 @@ msgstr "Scegli un’opzione per concedere a niri l’accesso al tuo hardware"
 msgid "Mark/Unmark as ESP"
 msgstr "Contrassegna/Deseleziona come ESP"
 
-#, fuzzy
 msgid "Package group:"
-msgstr "Gruppo pacchetto:"
+msgstr "Gruppo di pacchetti:"
 
 msgid "Exit archinstall"
 msgstr "Esci da archinstall"
@@ -1682,6 +1697,5 @@ msgstr "Vuoi criptare il file di user_credentials.json?"
 msgid "Credentials file encryption password"
 msgstr "Password di crittazione del file delle credenziali"
 
-#, fuzzy
 msgid "Repositories: {}"
-msgstr "Nome repository"
+msgstr "Repository: {}"
