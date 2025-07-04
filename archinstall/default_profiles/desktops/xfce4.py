@@ -11,13 +11,18 @@ class Xfce4Profile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		packages = [
 			'xfce4',
 			'xfce4-goodies',
 			'pavucontrol',
 			'gvfs',
 			'xarchiver',
 		]
+
+		if self.accessibility:
+			packages.append('orca')
+
+		return packages
 
 	@property
 	@override

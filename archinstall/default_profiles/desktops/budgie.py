@@ -11,13 +11,18 @@ class BudgieProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		packages = [
 			'materia-gtk-theme',
 			'budgie',
 			'mate-terminal',
 			'nemo',
 			'papirus-icon-theme',
 		]
+
+		if self.accessibility:
+			packages.append('orca')
+
+		return packages
 
 	@property
 	@override

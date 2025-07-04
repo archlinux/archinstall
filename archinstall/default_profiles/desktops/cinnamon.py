@@ -11,7 +11,7 @@ class CinnamonProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		packages = [
 			'cinnamon',
 			'system-config-printer',
 			'gnome-keyring',
@@ -22,6 +22,11 @@ class CinnamonProfile(XorgProfile):
 			'xed',
 			'xdg-user-dirs-gtk',
 		]
+
+		if self.accessibility:
+			packages.append('orca')
+
+		return packages
 
 	@property
 	@override

@@ -11,10 +11,15 @@ class GnomeProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		packages = [
 			'gnome',
 			'gnome-tweaks',
 		]
+
+		if self.accessibility:
+			packages.append('orca')
+
+		return packages
 
 	@property
 	@override
