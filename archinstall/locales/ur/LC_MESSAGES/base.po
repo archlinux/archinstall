@@ -37,8 +37,8 @@ msgstr "Bootloader ka intkhab"
 msgid "Choose an audio server"
 msgstr "Audio server ka intkhab"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Sirf packages jaisa ke'h base, base-devel, linux, linux-firmware, efibootmgr aur ikhti'ari profile packages hi install hein."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "Sirf packages jaisa ke'h base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr aur ikhti'ari profile packages hi install hein."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Agar aap web browser chahtay hein, jaise firefox ya chromium, to aap foori taur par kar saktay hein."
