@@ -100,8 +100,8 @@ class PasswordStrength(Enum):
 		return PasswordStrength.VERY_WEAK
 
 
-_UserSerialization = TypedDict(
-	'_UserSerialization',
+UserSerialization = TypedDict(
+	'UserSerialization',
 	{
 		'username': str,
 		'!password': NotRequired[str],
@@ -173,7 +173,7 @@ class User:
 			'groups': self.groups,
 		}
 
-	def json(self) -> _UserSerialization:
+	def json(self) -> UserSerialization:
 		return {
 			'username': self.username,
 			'enc_password': self.password.enc_password,
@@ -184,7 +184,7 @@ class User:
 	@classmethod
 	def parse_arguments(
 		cls,
-		args: list[_UserSerialization],
+		args: list[UserSerialization],
 	) -> list['User']:
 		users: list[User] = []
 
