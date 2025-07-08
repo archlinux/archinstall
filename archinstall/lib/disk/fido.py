@@ -36,7 +36,10 @@ class Fido2:
 
 			fido_devices = clear_vt100_escape_codes_from_str(ret)
 
-			for line in fido_devices.split('\r\n'):
+			if not fido_devices:
+				return []
+
+			for line in fido_devices.splitlines():
 				path, details = line.replace(',', '').split(':', maxsplit=1)
 				_, product, manufacturer = details.strip().split(' ', maxsplit=2)
 
