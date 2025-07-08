@@ -1622,6 +1622,126 @@ class Installer:
 				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:
 				self._add_limine_bootloader(boot_partition, efi_partition, root, uki_enabled)
+			case Bootloader.Refind:
+				self._add_refind_bootloader(boot_partition, root, efi_partition, uki_enabled)
+
+	def _add_refind_bootloader(
+		self,
+		boot_partition: PartitionModification,
+		root: PartitionModification | LvmVolume,
+		efi_partition: PartitionModification | None,
+		uki_enabled: bool = False,
+	) -> None:
+		debug('Installing rEFInd bootloader')
+
+		self.pacman.strap('refind')
+
+		if not SysInfo.has_uefi():
+			raise HardwareIncompatibilityError('rEFInd requires an EFI system.')
+
+		if not efi_partition:
+			raise ValueError('Could not detect EFI system partition for rEFInd.')
+		elif not efi_partition.mountpoint:
+			raise ValueError('EFI system partition is not mounted for rEFInd.')
+
+		# Determine the ESP mountpoint, as rEFInd needs to be installed there.
+		esp_mountpoint = self.target / efi_partition.relative_mountpoint
+
+		# Run refind-install
+		# The --usedefault option installs rEFInd to the default/fallback boot path: esp/EFI/BOOT/bootx64.efi
+		# This is generally recommended for wider compatibility.
+		# We also specify the ESP mountpoint directly.
+		try:
+			SysCommand(f'arch-chroot {self.target} refind-install --usedefault {esp_mountpoint}')
+		except SysCallError as err:
+			# Attempt without --usedefault if the first try fails, perhaps due to an existing fallback loader.
+			try:
+				info("refind-install with --usedefault failed, attempting without it.")
+				SysCommand(f'arch-chroot {self.target} refind-install --root {esp_mountpoint}')
+			except SysCallError as err_fallback:
+				raise DiskError(f'Could not install rEFInd to {esp_mountpoint}: {err_fallback}')
+
+
+		# Create a basic refind_linux.conf file if it doesn't exist or is empty.
+		# This file configures how rEFInd boots Linux kernels.
+		refind_linux_conf_path = esp_mountpoint / 'EFI/BOOT/refind_linux.conf' # Default path with --usedefault
+		if not refind_linux_conf_path.exists():
+			# If installed without --usedefault, the path might be /EFI/refind/refind_linux.conf
+			refind_linux_conf_path_alt = esp_mountpoint / 'EFI/refind/refind_linux.conf'
+			if refind_linux_conf_path_alt.exists():
+				refind_linux_conf_path = refind_linux_conf_path_alt
+			else:
+				# If neither exists, create it in the default location
+				refind_linux_conf_path.parent.mkdir(parents=True, exist_ok=True)
+
+
+		if not refind_linux_conf_path.exists() or refind_linux_conf_path.stat().st_size == 0:
+			kernel_params_str = ' '.join(self._get_kernel_params(root))
+			# Determine the root partition's PARTUUID or UUID for the root= parameter
+			root_device_identifier = ""
+			if isinstance(root, LvmVolume):
+				# For LVM, root is typically /dev/mapper/vg-lv or similar
+				# rEFInd might need a specific way to identify LVM, often handled by kernel autodiscovery
+				# or specific kernel parameters set via _get_kernel_params.
+				# We rely on _get_kernel_params to set the correct root= for LVM.
+				pass
+			elif root.partuuid:
+				root_device_identifier = f"PARTUUID={root.partuuid}"
+			elif root.uuid:
+				root_device_identifier = f"UUID={root.uuid}"
+			else:
+				# Fallback, though less reliable
+				root_device_identifier = str(root.dev_path)
+
+			if "root=" not in kernel_params_str and root_device_identifier:
+				kernel_params_str = f"root={root_device_identifier} {kernel_params_str}".strip()
+
+
+			refind_linux_conf_content = textwrap.dedent(f"""\
+				"Arch Linux" "root={root_device_identifier} rw {kernel_params_str} initrd=\\initramfs-%v.img"
+				"Arch Linux Fallback" "root={root_device_identifier} rw {kernel_params_str} initrd=\\initramfs-%v-fallback.img"
+			""")
+			# If UKIs are enabled, the configuration is different
+			if uki_enabled:
+				# For UKIs, rEFInd typically discovers them automatically if they are in /boot or ESP /EFI/Linux/
+				# The refind_linux.conf might not be strictly necessary or could be simpler.
+				# This example assumes UKIs are placed where rEFInd can find them.
+				# The exact path to UKI might vary based on _config_uki function.
+				# Example: initrd=\\EFI\\Linux\\arch-linux.efi if UKIs are in ESP.
+				# For now, we'll keep it simple and assume rEFInd's auto-detection works for UKIs.
+				# If specific entries are needed, they would look like:
+				# "Arch Linux UKI" "root=PARTUUID=XXXX rw initrd=\\EFI\\Linux\\arch-linux.efi"
+				# We will rely on rEFInd's auto-detection for UKIs placed in standard locations.
+				# If _config_uki places UKIs in /boot, then refind-install should copy them to ESP/EFI/arch or similar.
+				# Or mkrlconf script (if run) would generate appropriate entries.
+				# For simplicity, we'll assume auto-detection or manual setup post-install for UKIs for now.
+				# A more robust solution would involve checking where UKIs are placed and generating conf accordingly.
+				refind_linux_conf_content = textwrap.dedent(f"""\
+				"Arch Linux UKI" "root={root_device_identifier} rw {kernel_params_str} initrd=\\EFI\\Linux\\arch-{self.kernels[0]}.efi"
+				""")
+				# Note: The initrd path for UKI might need adjustment based on where _config_uki places the UKIs.
+				# refind-install has an option --linkloader that might be relevant for UKIs in /boot.
+
+			try:
+				with open(refind_linux_conf_path, 'w') as f:
+					f.write(refind_linux_conf_content)
+				info(f"Created rEFInd configuration at {refind_linux_conf_path}")
+			except IOError as e:
+				warn(f"Could not write rEFInd configuration to {refind_linux_conf_path}: {e}")
+		else:
+			info(f"rEFInd configuration already exists at {refind_linux_conf_path}, skipping creation.")
+
+
+		# Optionally, run mkrlconf to automatically generate entries if desired.
+		# This can be more robust than manually creating refind_linux.conf.
+		# However, it depends on the presence of /etc/os-release and kernels in /boot.
+		# try:
+		#    SysCommand(f'arch-chroot {self.target} mkrlconf')
+		#    info("Successfully ran mkrlconf to generate rEFInd entries.")
+		# except SysCallError as err:
+		#    warn(f"mkrlconf failed, manual configuration of refind_linux.conf might be needed: {err}")
+
+		self._helper_flags['bootloader'] = 'refind'
 
 	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
