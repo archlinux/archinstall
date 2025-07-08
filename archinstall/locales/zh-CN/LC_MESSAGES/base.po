@@ -50,8 +50,8 @@ msgstr "选择引导加载程序"
 msgid "Choose an audio server"
 msgstr "请选择一个音频服务器（audio server）"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "仅安装基本软件包（base）、基本开发软件包（base-devel）、Linux 内核（linux）、Linux 固件（linux-firmware）、efibootmgr 和可选的配置文件软件包（profile packages）。"
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "仅安装基本软件包（base）、基本开发软件包（base-devel）、Linux 内核（linux）、Linux 固件（linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other）、efibootmgr 和可选的配置文件软件包（profile packages）。"
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "如果您需要一个网络浏览器，例如 firefox 或 chromium，您可以在下面的提示中指定它。"
