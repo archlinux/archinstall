@@ -956,6 +956,7 @@ class Installer:
 
 			if bootloader and bootloader == Bootloader.Grub:
 				self.pacman.strap('grub-btrfs')
+				self.pacman.strap('inotify-tools')
 				self.enable_service('grub-btrfsd.service')
 
 	def setup_swap(self, kind: str = 'zram') -> None:
