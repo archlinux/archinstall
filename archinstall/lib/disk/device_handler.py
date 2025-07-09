@@ -13,7 +13,7 @@ from parted import Device, Disk, DiskException, FileSystem, Geometry, IOExceptio
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCommandWorker
 from ..luks import Luks2
-from ..models.device_model import (
+from ..models.device import (
 	DEFAULT_ITER_TIME,
 	BDevice,
 	BtrfsMountOption,

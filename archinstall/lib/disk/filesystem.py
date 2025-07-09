@@ -9,7 +9,7 @@ from archinstall.tui.curses_menu import Tui
 
 from ..interactions.general_conf import ask_abort
 from ..luks import Luks2
-from ..models.device_model import (
+from ..models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
 	DiskLayoutType,
