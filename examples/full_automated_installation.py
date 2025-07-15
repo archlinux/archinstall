@@ -18,7 +18,7 @@ from archinstall.lib.models.device import (
 	Size,
 	Unit,
 )
-from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler
 

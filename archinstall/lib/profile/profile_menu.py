@@ -12,7 +12,7 @@ from archinstall.tui.types import Alignment, FrameProperties, Orientation
 from ..hardware import GfxDriver
 from ..interactions.system_conf import select_driver
 from ..menu.abstract_menu import AbstractSubMenu
-from ..models.profile_model import ProfileConfiguration
+from ..models.profile import ProfileConfiguration
 
 
 class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
