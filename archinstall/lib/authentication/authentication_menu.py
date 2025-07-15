@@ -35,19 +35,12 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		return [
 			MenuItem(
 				text=tr('U2F login setup'),
-				action=setup_u2f_login,
+				action=select_u2f_login,
 				value=self._auth_config.u2f_config,
 				preview_action=self._prev_u2f_login,
-				dependencies=[self._depends_on_u2f],
 				key='u2f_config',
 			),
 		]
-
-	def _depends_on_u2f(self) -> bool:
-		devices = Fido2.get_fido2_devices()
-		if not devices:
-			return False
-		return True
 
 	def _prev_u2f_login(self, item: MenuItem) -> str | None:
 		if item.value is not None:
@@ -60,10 +53,19 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 			output += tr('Passwordless sudo: ') + (tr('Enabled') if u2f_config.passwordless_sudo else tr('Disabled'))
 
 			return output
+
+		devices = Fido2.get_fido2_devices()
+		if not devices:
+			return tr('No U2F devices found')
+
 		return None
 
 
-def setup_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | None:
+def select_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | None:
+	devices = Fido2.get_fido2_devices()
+	if not devices:
+		return None
+
 	items = []
 	for method in U2FLoginMethod:
 		items.append(MenuItem(method.display_value(), value=method))
