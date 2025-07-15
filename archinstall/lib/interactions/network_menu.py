@@ -10,7 +10,7 @@ from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment, FrameProperties
 
 from ..menu.list_manager import ListManager
-from ..models.network_configuration import NetworkConfiguration, Nic, NicType
+from ..models.network import NetworkConfiguration, Nic, NicType
 from ..networking import list_interfaces
 
 
