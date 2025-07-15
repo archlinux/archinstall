@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from archinstall.lib.disk.device_handler import device_handler
-from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType
+from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
 
 root_mount_dir = Path('/mnt/archinstall')
 

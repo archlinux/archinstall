@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import override
 
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
-from archinstall.lib.models.device_model import (
+from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
 	BtrfsOptions,
 	DiskEncryption,

@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from typing import override
 
-from archinstall.lib.models.device_model import (
+from archinstall.lib.models.device import (
 	BtrfsMountOption,
 	DeviceModification,
 	FilesystemType,
