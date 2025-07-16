@@ -164,7 +164,7 @@ class ProfileHandler:
 		self._profiles = [p for p in self.profiles if p.name not in remove_names]
 
 	def get_profile_by_name(self, name: str) -> Profile | None:
-		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore[arg-type, union-attr]
+		return next(filter(lambda x: x.name == name, self.profiles), None)
 
 	def get_top_level_profiles(self) -> list[Profile]:
 		return [p for p in self.profiles if p.is_top_level_profile()]
