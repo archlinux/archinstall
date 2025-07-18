@@ -23,6 +23,8 @@ from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
+from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.output import debug, error, logger, warn
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
@@ -78,13 +80,14 @@ class ArchConfig:
 
 	# Special fields that should be handle with care due to security implications
 	users: list[User] = field(default_factory=list)
-	root_enc_password: Password | None = None
 
 	def unsafe_json(self) -> dict[str, Any]:
-		config = {
+		config: dict[str, list[UserSerialization] | str | None] = {
 			'users': [user.json() for user in self.users],
-			'root_enc_password': self.root_enc_password.enc_password if self.root_enc_password else None,
 		}
+
+		if self.auth_config and self.auth_config.root_enc_password:
+			config['root_enc_password'] = self.auth_config.root_enc_password.enc_password
 
 		if self.disk_config:
 			disk_encryption = self.disk_config.disk_encryption
@@ -222,11 +225,17 @@ class ArchConfig:
 			arch_config.services = services
 
 		# DEPRECATED: backwards compatibility
+		root_password = None
 		if root_password := args_config.get('!root-password', None):
-			arch_config.root_enc_password = Password(plaintext=root_password)
+			root_password = Password(plaintext=root_password)
 
 		if enc_password := args_config.get('root_enc_password', None):
-			arch_config.root_enc_password = Password(enc_password=enc_password)
+			root_password = Password(enc_password=enc_password)
+
+		if root_password is not None:
+			if arch_config.auth_config is None:
+				arch_config.auth_config = AuthenticationConfiguration()
+			arch_config.auth_config.root_enc_password = root_password
 
 		if custom_commands := args_config.get('custom_commands', []):
 			arch_config.custom_commands = custom_commands

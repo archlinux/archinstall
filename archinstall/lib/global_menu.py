@@ -34,10 +34,11 @@ from .models.network_configuration import NetworkConfiguration, NicType
 from .models.packages import Repository
 from .models.profile import ProfileConfiguration
 from .models.users import Password, User
+from .models.profile_model import ProfileConfiguration
+from .models.users import User
 from .output import FormattedOutput
 from .pacman.config import PacmanConfig
 from .translationhandler import Language, tr, translation_handler
-from .utils.util import get_password
 
 
 class GlobalMenu(AbstractMenu[None]):
@@ -111,15 +112,8 @@ class GlobalMenu(AbstractMenu[None]):
 				key='hostname',
 			),
 			MenuItem(
-				text=tr('Root password'),
-				action=self._set_root_password,
-				preview_action=self._prev_root_pwd,
-				key='root_enc_password',
-			),
-			MenuItem(
 				text=tr('Authentication'),
 				action=self._select_authentication,
-				value=[],
 				preview_action=self._prev_authentication,
 				key='auth_config',
 			),
@@ -230,13 +224,16 @@ class GlobalMenu(AbstractMenu[None]):
 
 		missing = set()
 
+		item: MenuItem = self._item_group.find_by_key('auth_config')
+		auth_config: AuthenticationConfiguration | None = item.value
+
+		if (auth_config is None or auth_config.root_enc_password is None) and not has_superuser():
+			missing.add(
+				tr('Either root-password or at least 1 user with sudo privileges must be specified'),
+			)
+
 		for item in self._item_group.items:
-			if item.key in ['root_enc_password', 'users']:
-				if not check('root_enc_password') and not has_superuser():
-					missing.add(
-						tr('Either root-password or at least 1 user with sudo privileges must be specified'),
-					)
-			elif item.mandatory:
+			if item.mandatory:
 				assert item.key is not None
 				if not check(item.key):
 					missing.add(item.text)
@@ -313,6 +310,9 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value:
 			auth_config: AuthenticationConfiguration = item.value
 			output = ''
+
+			if auth_config.root_enc_password:
+				output += f'{tr("Root password")}: {auth_config.root_enc_password.hidden()}\n'
 
 			if auth_config.u2f_config:
 				u2f_config = auth_config.u2f_config
@@ -398,12 +398,6 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_hostname(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			return f'{tr("Hostname")}: {item.value}'
-		return None
-
-	def _prev_root_pwd(self, item: MenuItem) -> str | None:
-		if item.value is not None:
-			password: Password = item.value
-			return f'{tr("Root password")}: {password.hidden()}'
 		return None
 
 	def _prev_parallel_dw(self, item: MenuItem) -> str | None:
@@ -509,10 +503,6 @@ class GlobalMenu(AbstractMenu[None]):
 			return output
 
 		return None
-
-	def _set_root_password(self, preset: str | None = None) -> Password | None:
-		password = get_password(text=tr('Root password'), allow_skip=True)
-		return password
 
 	def _select_disk_config(
 		self,
