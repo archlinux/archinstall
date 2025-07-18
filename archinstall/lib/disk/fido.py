@@ -30,7 +30,7 @@ class Fido2:
 			cls._loaded_u2f = True
 			try:
 				ret = SysCommand('fido2-token -L').decode()
-			except SysCallError as e:
+			except Exception as e:
 				error(f'failed to read fido2 devices: {e}')
 				return []
 
