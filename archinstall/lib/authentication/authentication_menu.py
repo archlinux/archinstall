@@ -3,7 +3,9 @@ from typing import override
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
+from archinstall.lib.models.users import Password
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.util import get_password
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -34,6 +36,12 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
+				text=tr('Root password'),
+				action=select_root_password,
+				preview_action=self._prev_root_pwd,
+				key='root_enc_password',
+			),
+			MenuItem(
 				text=tr('U2F login setup'),
 				action=select_u2f_login,
 				value=self._auth_config.u2f_config,
@@ -41,6 +49,18 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 				key='u2f_config',
 			),
 		]
+
+	def _prev_root_pwd(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			password: Password = item.value
+			return f'{tr("Root password")}: {password.hidden()}'
+		return None
+
+	def _depends_on_u2f(self) -> bool:
+		devices = Fido2.get_fido2_devices()
+		if not devices:
+			return False
+		return True
 
 	def _prev_u2f_login(self, item: MenuItem) -> str | None:
 		if item.value is not None:
@@ -59,6 +79,11 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 			return tr('No U2F devices found')
 
 		return None
+
+
+def select_root_password(preset: str | None = None) -> Password | None:
+	password = get_password(text=tr('Root password'), allow_skip=True)
+	return password
 
 
 def select_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | None:
