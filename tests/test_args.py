@@ -134,7 +134,6 @@ def test_config_file_parsing(
 			audio_config=AudioConfiguration(audio=Audio.PIPEWIRE),
 		),
 		auth_config=AuthenticationConfiguration(
-			root_enc_password=Password(enc_password='password_hash'),
 			u2f_config=U2FLoginConfiguration(
 				u2f_login_method=U2FLoginMethod.Passwordless,
 				passwordless_sudo=True,
@@ -224,6 +223,7 @@ def test_config_file_parsing(
 			),
 		],
 		services=['service_1', 'service_2'],
+		root_enc_password=Password(enc_password='password_hash'),
 		custom_commands=["echo 'Hello, World!'"],
 	)
 
@@ -280,8 +280,7 @@ def test_deprecated_creds_config_parsing(
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
-	assert arch_config.auth_config is not None
-	assert arch_config.auth_config.root_enc_password == Password(plaintext='rootPwd')
+	assert arch_config.root_enc_password == Password(plaintext='rootPwd')
 
 	assert arch_config.users == [
 		User(
@@ -332,8 +331,7 @@ def test_encrypted_creds_with_arg(
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
-	assert arch_config.auth_config is not None
-	assert arch_config.auth_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
+	assert arch_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
 	assert arch_config.users == [
 		User(
 			username='t',
@@ -361,8 +359,7 @@ def test_encrypted_creds_with_env_var(
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
-	assert arch_config.auth_config is not None
-	assert arch_config.auth_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
+	assert arch_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
 	assert arch_config.users == [
 		User(
 			username='t',

@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, NotRequired, TypedDict
 
-from archinstall.lib.models.users import Password
 from archinstall.lib.translationhandler import tr
 
 
@@ -59,7 +58,6 @@ class U2FLoginConfiguration:
 
 @dataclass
 class AuthenticationConfiguration:
-	root_enc_password: Password | None = None
 	u2f_config: U2FLoginConfiguration | None = None
 
 	@staticmethod
@@ -68,9 +66,6 @@ class AuthenticationConfiguration:
 
 		if (u2f_config := args.get('u2f_config')) is not None:
 			auth_config.u2f_config = U2FLoginConfiguration.parse_arg(u2f_config)
-
-		if enc_password := args.get('root_enc_password'):
-			auth_config.root_enc_password = Password(enc_password=enc_password)
 
 		return auth_config
 

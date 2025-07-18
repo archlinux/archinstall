@@ -138,8 +138,8 @@ def perform_installation(mountpoint: Path) -> None:
 		if accessibility_tools_in_use():
 			installation.enable_espeakup()
 
-		if config.auth_config and config.auth_config.root_enc_password:
-			root_user = User('root', config.auth_config.root_enc_password, False)
+		if root_pw := config.root_enc_password:
+			root_user = User('root', root_pw, False)
 			installation.set_user_password(root_user)
 
 		if (profile_config := config.profile_config) and profile_config.profile:
