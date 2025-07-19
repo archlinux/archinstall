@@ -63,7 +63,7 @@ class ArchConfig:
 	profile_config: ProfileConfiguration | None = None
 	mirror_config: MirrorConfiguration | None = None
 	network_config: NetworkConfiguration | None = None
-	bootloader: Bootloader | None = field(default=Bootloader.get_default())
+	bootloader: Bootloader | None = None
 	uki: bool = False
 	app_config: ApplicationConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
