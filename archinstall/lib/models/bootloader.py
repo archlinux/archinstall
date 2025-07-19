@@ -29,6 +29,10 @@ class Bootloader(Enum):
 
 	@classmethod
 	def get_default(cls) -> None | Bootloader:
+		from ..args import arch_config_handler
+
+		if arch_config_handler.args.skip_boot:
+			return None
 		elif SysInfo.has_uefi():
 			return Bootloader.Systemd
 		else:
