@@ -188,7 +188,7 @@ class ArchConfig:
 		if bootloader_config := args_config.get('bootloader', None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config)
 
-		if args_config.get('uki') and not arch_config.bootloader and not arch_config.bootloader.has_uki_support():
+		if args_config.get('uki') and (arch_config.bootloader is None or not arch_config.bootloader.has_uki_support():
 			arch_config.uki = False
 
 		# deprecated: backwards compatibility
