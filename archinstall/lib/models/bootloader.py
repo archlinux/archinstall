@@ -3,7 +3,6 @@ from __future__ import annotations
 import sys
 from enum import Enum
 
-from ..args import arch_config_handler
 from ..hardware import SysInfo
 from ..output import warn
 
@@ -30,6 +29,8 @@ class Bootloader(Enum):
 
 	@classmethod
 	def get_default(cls) -> None | Bootloader:
+		from ..args import arch_config_handler
+		
 		if arch_config_handler.args.skip_boot:
 			return None
 		elif SysInfo.has_uefi():
