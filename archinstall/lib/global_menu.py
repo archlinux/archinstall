@@ -91,7 +91,7 @@ class GlobalMenu(AbstractMenu[None]):
 				value=Bootloader.get_default(),
 				action=self._select_bootloader,
 				preview_action=self._prev_bootloader,
-				mandatory=False if arch_config_handler.config.skip_boot else True,
+				mandatory=False if arch_config_handler.args.skip_boot else True,
 				key='bootloader',
 			),
 			MenuItem(
