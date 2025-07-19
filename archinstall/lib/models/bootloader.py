@@ -5,6 +5,7 @@ from enum import Enum
 
 from ..hardware import SysInfo
 from ..output import warn
+from ..args import arch_config_handler
 
 
 class Bootloader(Enum):
@@ -29,7 +30,9 @@ class Bootloader(Enum):
 
 	@classmethod
 	def get_default(cls) -> Bootloader:
-		if SysInfo.has_uefi():
+		if arch_config_handler.config.skip_boot:
+			return None
+		elif SysInfo.has_uefi():
 			return Bootloader.Systemd
 		else:
 			return Bootloader.Grub

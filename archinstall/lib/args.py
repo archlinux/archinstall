@@ -43,6 +43,7 @@ class Arguments:
 	mountpoint: Path = Path('/mnt')
 	skip_ntp: bool = False
 	skip_wkd: bool = False
+	skip_boot :bool = False
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
@@ -360,6 +361,12 @@ class ArchConfigHandler:
 			'--skip-wkd',
 			action='store_true',
 			help='Disables checking if archlinux keyring wkd sync is complete.',
+			default=False,
+		)
+		parser.add_argument(
+			'--skip-boot',
+			action='store_true',
+			help='Disables installation of a boot loader (note: only use this when problems arise with the boot loader step).',
 			default=False,
 		)
 		parser.add_argument(

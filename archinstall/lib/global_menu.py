@@ -10,7 +10,7 @@ from archinstall.lib.packages import list_available_packages
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
 from .applications.application_menu import ApplicationMenu
-from .args import ArchConfig
+from .args import ArchConfig, arch_config_handler
 from .authentication.authentication_menu import AuthenticationMenu
 from .configuration import save_config
 from .hardware import SysInfo
@@ -91,7 +91,7 @@ class GlobalMenu(AbstractMenu[None]):
 				value=Bootloader.get_default(),
 				action=self._select_bootloader,
 				preview_action=self._prev_bootloader,
-				mandatory=True,
+				mandatory=False if arch_config_handler.config.skip_boot else True,
 				key='bootloader',
 			),
 			MenuItem(
