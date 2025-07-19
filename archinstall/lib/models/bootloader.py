@@ -3,9 +3,9 @@ from __future__ import annotations
 import sys
 from enum import Enum
 
+from ..args import arch_config_handler
 from ..hardware import SysInfo
 from ..output import warn
-from ..args import arch_config_handler
 
 
 class Bootloader(Enum):
@@ -29,8 +29,8 @@ class Bootloader(Enum):
 		return [e.value for e in Bootloader]
 
 	@classmethod
-	def get_default(cls) -> Bootloader:
-		if arch_config_handler.config.skip_boot:
+	def get_default(cls) -> None | Bootloader:
+		if arch_config_handler.args.skip_boot:
 			return None
 		elif SysInfo.has_uefi():
 			return Bootloader.Systemd

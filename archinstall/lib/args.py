@@ -43,7 +43,7 @@ class Arguments:
 	mountpoint: Path = Path('/mnt')
 	skip_ntp: bool = False
 	skip_wkd: bool = False
-	skip_boot :bool = False
+	skip_boot: bool = False
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
@@ -109,7 +109,7 @@ class ArchConfig:
 			'timezone': self.timezone,
 			'services': self.services,
 			'custom_commands': self.custom_commands,
-			'bootloader': self.bootloader.json(),
+			'bootloader': self.bootloader.json() if self.bootloader else None,
 			'app_config': self.app_config.json() if self.app_config else None,
 			'auth_config': self.auth_config.json() if self.auth_config else None,
 		}
@@ -188,7 +188,7 @@ class ArchConfig:
 		if bootloader_config := args_config.get('bootloader', None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config)
 
-		if args_config.get('uki') and not arch_config.bootloader.has_uki_support():
+		if args_config.get('uki') and not arch_config.bootloader and not arch_config.bootloader.has_uki_support():
 			arch_config.uki = False
 
 		# deprecated: backwards compatibility
