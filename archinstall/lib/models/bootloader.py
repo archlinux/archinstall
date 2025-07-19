@@ -28,8 +28,12 @@ class Bootloader(Enum):
 		return [e.value for e in Bootloader]
 
 	@classmethod
-	def get_default(cls) -> Bootloader:
-		if SysInfo.has_uefi():
+	def get_default(cls) -> None | Bootloader:
+		from ..args import arch_config_handler
+
+		if arch_config_handler.args.skip_boot:
+			return None
+		elif SysInfo.has_uefi():
 			return Bootloader.Systemd
 		else:
 			return Bootloader.Grub
