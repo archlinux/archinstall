@@ -1,8 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, NotRequired, TypedDict
 
-from archinstall.lib.models.users import Password
+from archinstall.lib.models.users import Password, User
 from archinstall.lib.translationhandler import tr
 
 
@@ -60,6 +60,7 @@ class U2FLoginConfiguration:
 @dataclass
 class AuthenticationConfiguration:
 	root_enc_password: Password | None = None
+	users: list[User] = field(default_factory=list)
 	u2f_config: U2FLoginConfiguration | None = None
 
 	@staticmethod
