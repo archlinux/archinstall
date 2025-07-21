@@ -30,7 +30,7 @@ from .mirrors import MirrorMenu
 from .models.bootloader import Bootloader
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
-from .models.network_configuration import NetworkConfiguration, NicType
+from .models.network import NetworkConfiguration, NicType
 from .models.packages import Repository
 from .models.profile import ProfileConfiguration
 from .models.users import User

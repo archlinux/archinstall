@@ -19,7 +19,7 @@ from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
-from archinstall.lib.models.network_configuration import NetworkConfiguration
+from archinstall.lib.models.network import NetworkConfiguration
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User, UserSerialization
