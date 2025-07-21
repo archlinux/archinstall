@@ -33,8 +33,6 @@ from .models.mirrors import MirrorConfiguration
 from .models.network import NetworkConfiguration, NicType
 from .models.packages import Repository
 from .models.profile import ProfileConfiguration
-from .models.users import Password, User
-from .models.profile_model import ProfileConfiguration
 from .models.users import User
 from .output import FormattedOutput
 from .pacman.config import PacmanConfig
