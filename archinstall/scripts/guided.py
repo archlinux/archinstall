@@ -114,11 +114,10 @@ def perform_installation(mountpoint: Path) -> None:
 				config.profile_config,
 			)
 
-		if users := config.users:
-			installation.create_users(users)
-
-		if config.auth_config and config.users:
-			auth_handler.setup_auth(installation, config.auth_config, config.users, config.hostname)
+		if config.auth_config:
+			if config.auth_config.users:
+				installation.create_users(config.auth_config.users)
+				auth_handler.setup_auth(installation, config.auth_config, config.hostname)
 
 		if config.packages and config.packages[0] != '':
 			installation.add_additional_packages(config.packages)
