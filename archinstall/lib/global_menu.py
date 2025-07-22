@@ -53,7 +53,7 @@ class GlobalMenu(AbstractMenu[None]):
 		super().__init__(self._item_group, config=arch_config)
 
 	def _get_menu_options(self) -> list[MenuItem]:
-		return [
+		menu_options = [
 			MenuItem(
 				text=tr('Archinstall language'),
 				action=self._select_archinstall_language,
@@ -91,7 +91,7 @@ class GlobalMenu(AbstractMenu[None]):
 				value=Bootloader.get_default(),
 				action=self._select_bootloader,
 				preview_action=self._prev_bootloader,
-				mandatory=False if arch_config_handler.args.skip_boot else True,
+				mandatory=True,
 				key='bootloader',
 			),
 			MenuItem(
@@ -196,6 +196,14 @@ class GlobalMenu(AbstractMenu[None]):
 				key=f'{CONFIG_KEY}_abort',
 			),
 		]
+
+		if arch_config_handler.args.skip_boot:
+			for index, item in enumerate(menu_options):
+				if item.text == tr('Bootloader'):
+					menu_options.pop(index)
+					break
+
+		return menu_options
 
 	def _safe_config(self) -> None:
 		# data: dict[str, Any] = {}
