@@ -26,7 +26,9 @@ class Bootloader(Enum):
 
 	@staticmethod
 	def values() -> list[str]:
-		return [e.value for e in Bootloader]
+		from ..args import arch_config_handler
+
+		return [e.value for e in Bootloader if e != Bootloader.NO_BOOTLOADER or arch_config_handler.args.skip_boot]
 
 	@classmethod
 	def get_default(cls) -> None | Bootloader:
