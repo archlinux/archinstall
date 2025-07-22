@@ -433,7 +433,13 @@ class GlobalMenu(AbstractMenu[None]):
 		XXX: The caller is responsible for wrapping the string with the translation
 			shim if necessary.
 		"""
-		bootloader = self._item_group.find_by_key('bootloader').value
+		if arch_config_handler.args.skip_boot:
+			# We only need to do this if statement if we hide
+			# the bootloader from the menu system, otherwise
+			# find_by_key() will be able to find it.
+			bootloader = Bootloader.NO_BOOTLOADER
+		else:
+			bootloader = self._item_group.find_by_key('bootloader').value
 		root_partition: PartitionModification | None = None
 		boot_partition: PartitionModification | None = None
 		efi_partition: PartitionModification | None = None
