@@ -437,7 +437,7 @@ class GlobalMenu(AbstractMenu[None]):
 		root_partition: PartitionModification | None = None
 		boot_partition: PartitionModification | None = None
 		efi_partition: PartitionModification | None = None
-		
+
 		if arch_config_handler.args.skip_boot:
 			# We only need to do this if statement if we hide
 			# the bootloader from the menu system, otherwise
