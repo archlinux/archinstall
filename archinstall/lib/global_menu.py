@@ -21,7 +21,6 @@ from .interactions.general_conf import (
 	ask_hostname,
 	ask_ntp,
 )
-from .interactions.manage_users_conf import ask_for_additional_users
 from .interactions.network_menu import ask_to_configure_network
 from .interactions.system_conf import ask_for_bootloader, ask_for_swap, ask_for_uki, select_kernel
 from .locale.locale_menu import LocaleMenu
@@ -33,7 +32,6 @@ from .models.mirrors import MirrorConfiguration
 from .models.network import NetworkConfiguration, NicType
 from .models.packages import Repository
 from .models.profile import ProfileConfiguration
-from .models.users import User
 from .output import FormattedOutput
 from .pacman.config import PacmanConfig
 from .translationhandler import Language, tr, translation_handler
@@ -114,12 +112,6 @@ class GlobalMenu(AbstractMenu[None]):
 				action=self._select_authentication,
 				preview_action=self._prev_authentication,
 				key='auth_config',
-			),
-			MenuItem(
-				text=tr('User account'),
-				action=self._create_user_account,
-				preview_action=self._prev_users,
-				key='users',
 			),
 			MenuItem(
 				text=tr('Profile'),
@@ -207,23 +199,19 @@ class GlobalMenu(AbstractMenu[None]):
 		save_config(self._arch_config)
 
 	def _missing_configs(self) -> list[str]:
+		item: MenuItem = self._item_group.find_by_key('auth_config')
+		auth_config: AuthenticationConfiguration | None = item.value
+
 		def check(s: str) -> bool:
 			item = self._item_group.find_by_key(s)
 			return item.has_value()
 
 		def has_superuser() -> bool:
-			item = self._item_group.find_by_key('users')
-
-			if item.has_value():
-				users = item.value
-				if users:
-					return any([u.sudo for u in users])
+			if auth_config and auth_config.users:
+				return any([u.sudo for u in auth_config.users])
 			return False
 
 		missing = set()
-
-		item: MenuItem = self._item_group.find_by_key('auth_config')
-		auth_config: AuthenticationConfiguration | None = item.value
 
 		if (auth_config is None or auth_config.root_enc_password is None) and not has_superuser():
 			missing.add(
@@ -311,6 +299,9 @@ class GlobalMenu(AbstractMenu[None]):
 
 			if auth_config.root_enc_password:
 				output += f'{tr("Root password")}: {auth_config.root_enc_password.hidden()}\n'
+
+			if auth_config.users:
+				output += FormattedOutput.as_table(auth_config.users) + '\n'
 
 			if auth_config.u2f_config:
 				u2f_config = auth_config.u2f_config
@@ -475,13 +466,6 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return None
 
-	def _prev_users(self, item: MenuItem) -> str | None:
-		users: list[User] | None = item.value
-
-		if users:
-			return FormattedOutput.as_table(users)
-		return None
-
 	def _prev_profile(self, item: MenuItem) -> str | None:
 		profile_config: ProfileConfiguration | None = item.value
 
@@ -542,11 +526,6 @@ class GlobalMenu(AbstractMenu[None]):
 		)
 
 		return packages
-
-	def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
-		preset = [] if preset is None else preset
-		users = ask_for_additional_users(defined_users=preset)
-		return users
 
 	def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration:
 		mirror_configuration = MirrorMenu(preset=preset).run()

@@ -1,9 +1,11 @@
 from typing import override
 
 from archinstall.lib.disk.fido import Fido2
+from archinstall.lib.interactions.manage_users_conf import ask_for_additional_users
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
-from archinstall.lib.models.users import Password
+from archinstall.lib.models.users import Password, User
+from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
 from archinstall.lib.utils.util import get_password
 from archinstall.tui.curses_menu import SelectMenu
@@ -42,6 +44,12 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 				key='root_enc_password',
 			),
 			MenuItem(
+				text=tr('User account'),
+				action=self._create_user_account,
+				preview_action=self._prev_users,
+				key='users',
+			),
+			MenuItem(
 				text=tr('U2F login setup'),
 				action=select_u2f_login,
 				value=self._auth_config.u2f_config,
@@ -49,6 +57,18 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 				key='u2f_config',
 			),
 		]
+
+	def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
+		preset = [] if preset is None else preset
+		users = ask_for_additional_users(defined_users=preset)
+		return users
+
+	def _prev_users(self, item: MenuItem) -> str | None:
+		users: list[User] | None = item.value
+
+		if users:
+			return FormattedOutput.as_table(users)
+		return None
 
 	def _prev_root_pwd(self, item: MenuItem) -> str | None:
 		if item.value is not None:

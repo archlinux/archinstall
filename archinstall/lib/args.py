@@ -76,16 +76,15 @@ class ArchConfig:
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
 
-	# Special fields that should be handle with care due to security implications
-	users: list[User] = field(default_factory=list)
-
 	def unsafe_json(self) -> dict[str, Any]:
-		config: dict[str, list[UserSerialization] | str | None] = {
-			'users': [user.json() for user in self.users],
-		}
+		config: dict[str, list[UserSerialization] | str | None] = {}
 
-		if self.auth_config and self.auth_config.root_enc_password:
-			config['root_enc_password'] = self.auth_config.root_enc_password.enc_password
+		if self.auth_config:
+			if self.auth_config.users:
+				config['users'] = [user.json() for user in self.auth_config.users]
+
+			if self.auth_config.root_enc_password:
+				config['root_enc_password'] = self.auth_config.root_enc_password.enc_password
 
 		if self.disk_config:
 			disk_encryption = self.disk_config.disk_encryption
@@ -177,13 +176,6 @@ class ArchConfig:
 		if net_config := args_config.get('network_config', None):
 			arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
 
-		# DEPRECATED: backwards copatibility
-		if users := args_config.get('!users', None):
-			arch_config.users = User.parse_arguments(users)
-
-		if users := args_config.get('users', None):
-			arch_config.users = User.parse_arguments(users)
-
 		if bootloader_config := args_config.get('bootloader', None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config)
 
@@ -234,6 +226,19 @@ class ArchConfig:
 			if arch_config.auth_config is None:
 				arch_config.auth_config = AuthenticationConfiguration()
 			arch_config.auth_config.root_enc_password = root_password
+
+		# DEPRECATED: backwards copatibility
+		users: list[User] = []
+		if args_users := args_config.get('!users', None):
+			users = User.parse_arguments(args_users)
+
+		if args_users := args_config.get('users', None):
+			users = User.parse_arguments(args_users)
+
+		if users:
+			if arch_config.auth_config is None:
+				arch_config.auth_config = AuthenticationConfiguration()
+			arch_config.auth_config.users = users
 
 		if custom_commands := args_config.get('custom_commands', []):
 			arch_config.custom_commands = custom_commands
