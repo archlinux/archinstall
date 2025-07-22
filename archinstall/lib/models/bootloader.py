@@ -8,6 +8,7 @@ from ..output import warn
 
 
 class Bootloader(Enum):
+	NO_BOOTLOADER = 'No bootloader server'
 	Systemd = 'Systemd-boot'
 	Grub = 'Grub'
 	Efistub = 'Efistub'
@@ -32,7 +33,7 @@ class Bootloader(Enum):
 		from ..args import arch_config_handler
 
 		if arch_config_handler.args.skip_boot:
-			return None
+			return Bootloader.NO_BOOTLOADER
 		elif SysInfo.has_uefi():
 			return Bootloader.Systemd
 		else:

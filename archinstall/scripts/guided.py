@@ -99,7 +99,7 @@ def perform_installation(mountpoint: Path) -> None:
 		if config.swap:
 			installation.setup_swap('zram')
 
-		if config.bootloader:
+		if config.bootloader and config.bootloader not Bootloader.NO_BOOTLOADER:
 			if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
 				installation.add_additional_packages('grub')
 
