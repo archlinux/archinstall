@@ -8,7 +8,7 @@ from ..output import warn
 
 
 class Bootloader(Enum):
-	NO_BOOTLOADER = 'No bootloader server'
+	NO_BOOTLOADER = 'No bootloader'
 	Systemd = 'Systemd-boot'
 	Grub = 'Grub'
 	Efistub = 'Efistub'
