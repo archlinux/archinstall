@@ -10,7 +10,7 @@ from archinstall.lib.packages import list_available_packages
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
 from .applications.application_menu import ApplicationMenu
-from .args import ArchConfig, arch_config_handler
+from .args import ArchConfig
 from .authentication.authentication_menu import AuthenticationMenu
 from .configuration import save_config
 from .hardware import SysInfo
@@ -196,12 +196,6 @@ class GlobalMenu(AbstractMenu[None]):
 				key=f'{CONFIG_KEY}_abort',
 			),
 		]
-
-		if arch_config_handler.args.skip_boot:
-			for index, item in enumerate(menu_options):
-				if item.text == tr('Bootloader'):
-					menu_options.pop(index)
-					break
 
 		return menu_options
 
@@ -438,13 +432,7 @@ class GlobalMenu(AbstractMenu[None]):
 		boot_partition: PartitionModification | None = None
 		efi_partition: PartitionModification | None = None
 
-		if arch_config_handler.args.skip_boot:
-			# We only need to do this if statement if we hide
-			# the bootloader from the menu system, otherwise
-			# find_by_key() will be able to find it.
-			bootloader = Bootloader.NO_BOOTLOADER
-		else:
-			bootloader = self._item_group.find_by_key('bootloader').value
+		bootloader = self._item_group.find_by_key('bootloader').value
 
 		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
