@@ -8,6 +8,7 @@ from ..output import warn
 
 
 class Bootloader(Enum):
+	NO_BOOTLOADER = 'No bootloader'
 	Systemd = 'Systemd-boot'
 	Grub = 'Grub'
 	Efistub = 'Efistub'
@@ -25,11 +26,17 @@ class Bootloader(Enum):
 
 	@staticmethod
 	def values() -> list[str]:
-		return [e.value for e in Bootloader]
+		from ..args import arch_config_handler
+
+		return [e.value for e in Bootloader if e != Bootloader.NO_BOOTLOADER or arch_config_handler.args.skip_boot is True]
 
 	@classmethod
-	def get_default(cls) -> Bootloader:
-		if SysInfo.has_uefi():
+	def get_default(cls) -> None | Bootloader:
+		from ..args import arch_config_handler
+
+		if arch_config_handler.args.skip_boot:
+			return Bootloader.NO_BOOTLOADER
+		elif SysInfo.has_uefi():
 			return Bootloader.Systemd
 		else:
 			return Bootloader.Grub

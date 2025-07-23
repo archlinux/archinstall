@@ -99,10 +99,11 @@ def perform_installation(mountpoint: Path) -> None:
 		if config.swap:
 			installation.setup_swap('zram')
 
-		if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
-			installation.add_additional_packages('grub')
+		if config.bootloader and config.bootloader != Bootloader.NO_BOOTLOADER:
+			if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
+				installation.add_additional_packages('grub')
 
-		installation.add_bootloader(config.bootloader, config.uki)
+			installation.add_bootloader(config.bootloader, config.uki)
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config

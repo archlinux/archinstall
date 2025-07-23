@@ -43,6 +43,7 @@ class Arguments:
 	mountpoint: Path = Path('/mnt')
 	skip_ntp: bool = False
 	skip_wkd: bool = False
+	skip_boot: bool = False
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
@@ -62,7 +63,7 @@ class ArchConfig:
 	profile_config: ProfileConfiguration | None = None
 	mirror_config: MirrorConfiguration | None = None
 	network_config: NetworkConfiguration | None = None
-	bootloader: Bootloader = field(default=Bootloader.get_default())
+	bootloader: Bootloader | None = None
 	uki: bool = False
 	app_config: ApplicationConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
@@ -107,7 +108,7 @@ class ArchConfig:
 			'timezone': self.timezone,
 			'services': self.services,
 			'custom_commands': self.custom_commands,
-			'bootloader': self.bootloader.json(),
+			'bootloader': self.bootloader.json() if self.bootloader else None,
 			'app_config': self.app_config.json() if self.app_config else None,
 			'auth_config': self.auth_config.json() if self.auth_config else None,
 		}
@@ -179,7 +180,7 @@ class ArchConfig:
 		if bootloader_config := args_config.get('bootloader', None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config)
 
-		if args_config.get('uki') and not arch_config.bootloader.has_uki_support():
+		if args_config.get('uki') and (arch_config.bootloader is None or not arch_config.bootloader.has_uki_support()):
 			arch_config.uki = False
 
 		# deprecated: backwards compatibility
@@ -365,6 +366,12 @@ class ArchConfigHandler:
 			'--skip-wkd',
 			action='store_true',
 			help='Disables checking if archlinux keyring wkd sync is complete.',
+			default=False,
+		)
+		parser.add_argument(
+			'--skip-boot',
+			action='store_true',
+			help='Disables installation of a boot loader (note: only use this when problems arise with the boot loader step).',
 			default=False,
 		)
 		parser.add_argument(

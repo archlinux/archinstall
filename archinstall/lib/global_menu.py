@@ -51,7 +51,7 @@ class GlobalMenu(AbstractMenu[None]):
 		super().__init__(self._item_group, config=arch_config)
 
 	def _get_menu_options(self) -> list[MenuItem]:
-		return [
+		menu_options = [
 			MenuItem(
 				text=tr('Archinstall language'),
 				action=self._select_archinstall_language,
@@ -188,6 +188,8 @@ class GlobalMenu(AbstractMenu[None]):
 				key=f'{CONFIG_KEY}_abort',
 			),
 		]
+
+		return menu_options
 
 	def _safe_config(self) -> None:
 		# data: dict[str, Any] = {}
@@ -416,10 +418,12 @@ class GlobalMenu(AbstractMenu[None]):
 		XXX: The caller is responsible for wrapping the string with the translation
 			shim if necessary.
 		"""
-		bootloader = self._item_group.find_by_key('bootloader').value
+		bootloader: Bootloader | None = None
 		root_partition: PartitionModification | None = None
 		boot_partition: PartitionModification | None = None
 		efi_partition: PartitionModification | None = None
+
+		bootloader = self._item_group.find_by_key('bootloader').value
 
 		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
