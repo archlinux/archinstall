@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import override
 
 from archinstall.lib.menu.menu_helper import MenuHelper
-from archinstall.lib.models.device_model import (
+from archinstall.lib.models.device import (
 	DeviceModification,
 	DiskEncryption,
 	EncryptionType,
@@ -17,7 +17,7 @@ from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment, FrameProperties
 
 from ..menu.abstract_menu import AbstractSubMenu
-from ..models.device_model import DEFAULT_ITER_TIME, Fido2Device
+from ..models.device import DEFAULT_ITER_TIME, Fido2Device
 from ..models.users import Password
 from ..output import FormattedOutput
 from ..utils.util import get_password

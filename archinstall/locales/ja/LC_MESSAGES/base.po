@@ -938,6 +938,30 @@ msgstr "全体のサイズ: {}"
 msgid "Encryption type"
 msgstr "暗号化のタイプ"
 
+msgid "Iteration time"
+msgstr "反復時間"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "LUKS 暗号化のイテレーション時間（ミリ秒単位）を入力"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "値を大きくするとセキュリティは向上しますが、起動時間が遅くなります"
+
+msgid "Default: 10000ms, Recommended range: 1000-60000"
+msgstr "デフォルト: 10000ms, 推奨範囲: 1000-60000"
+
+msgid "Iteration time cannot be empty"
+msgstr "イテレーション時間は空にできません"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "イテレーション時間は最低 100ms にしてください"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "イテレーション時間は最大 120000ms にしてください"
+
+msgid "Please enter a valid number"
+msgstr "有効な数字を入力してください"
+
 msgid "Partitions"
 msgstr "パーティション"
 

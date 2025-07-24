@@ -4,7 +4,7 @@ import getpass
 from pathlib import Path
 from typing import ClassVar
 
-from archinstall.lib.models.device_model import Fido2Device
+from archinstall.lib.models.device import Fido2Device
 
 from ..exceptions import SysCallError
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes_from_str
@@ -30,13 +30,16 @@ class Fido2:
 			cls._loaded_u2f = True
 			try:
 				ret = SysCommand('fido2-token -L').decode()
-			except SysCallError as e:
+			except Exception as e:
 				error(f'failed to read fido2 devices: {e}')
 				return []
 
 			fido_devices = clear_vt100_escape_codes_from_str(ret)
 
-			for line in fido_devices.split('\r\n'):
+			if not fido_devices:
+				return []
+
+			for line in fido_devices.splitlines():
 				path, details = line.replace(',', '').split(':', maxsplit=1)
 				_, product, manufacturer = details.strip().split(' ', maxsplit=2)
 

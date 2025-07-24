@@ -16,13 +16,13 @@ from archinstall.lib.crypt import decrypt
 from archinstall.lib.models.application import ApplicationConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader
-from archinstall.lib.models.device_model import DiskEncryption, DiskLayoutConfiguration
+from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
-from archinstall.lib.models.network_configuration import NetworkConfiguration
+from archinstall.lib.models.network import NetworkConfiguration
 from archinstall.lib.models.packages import Repository
-from archinstall.lib.models.profile_model import ProfileConfiguration
-from archinstall.lib.models.users import Password, User
+from archinstall.lib.models.profile import ProfileConfiguration
+from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.output import debug, error, logger, warn
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
@@ -43,6 +43,7 @@ class Arguments:
 	mountpoint: Path = Path('/mnt')
 	skip_ntp: bool = False
 	skip_wkd: bool = False
+	skip_boot: bool = False
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
@@ -62,7 +63,7 @@ class ArchConfig:
 	profile_config: ProfileConfiguration | None = None
 	mirror_config: MirrorConfiguration | None = None
 	network_config: NetworkConfiguration | None = None
-	bootloader: Bootloader = field(default=Bootloader.get_default())
+	bootloader: Bootloader | None = None
 	uki: bool = False
 	app_config: ApplicationConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
@@ -76,15 +77,15 @@ class ArchConfig:
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
 
-	# Special fields that should be handle with care due to security implications
-	users: list[User] = field(default_factory=list)
-	root_enc_password: Password | None = None
-
 	def unsafe_json(self) -> dict[str, Any]:
-		config = {
-			'users': [user.json() for user in self.users],
-			'root_enc_password': self.root_enc_password.enc_password if self.root_enc_password else None,
-		}
+		config: dict[str, list[UserSerialization] | str | None] = {}
+
+		if self.auth_config:
+			if self.auth_config.users:
+				config['users'] = [user.json() for user in self.auth_config.users]
+
+			if self.auth_config.root_enc_password:
+				config['root_enc_password'] = self.auth_config.root_enc_password.enc_password
 
 		if self.disk_config:
 			disk_encryption = self.disk_config.disk_encryption
@@ -107,7 +108,7 @@ class ArchConfig:
 			'timezone': self.timezone,
 			'services': self.services,
 			'custom_commands': self.custom_commands,
-			'bootloader': self.bootloader.json(),
+			'bootloader': self.bootloader.json() if self.bootloader else None,
 			'app_config': self.app_config.json() if self.app_config else None,
 			'auth_config': self.auth_config.json() if self.auth_config else None,
 		}
@@ -176,17 +177,10 @@ class ArchConfig:
 		if net_config := args_config.get('network_config', None):
 			arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
 
-		# DEPRECATED: backwards copatibility
-		if users := args_config.get('!users', None):
-			arch_config.users = User.parse_arguments(users)
-
-		if users := args_config.get('users', None):
-			arch_config.users = User.parse_arguments(users)
-
 		if bootloader_config := args_config.get('bootloader', None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config)
 
-		if args_config.get('uki') and not arch_config.bootloader.has_uki_support():
+		if args_config.get('uki') and (arch_config.bootloader is None or not arch_config.bootloader.has_uki_support()):
 			arch_config.uki = False
 
 		# deprecated: backwards compatibility
@@ -222,11 +216,30 @@ class ArchConfig:
 			arch_config.services = services
 
 		# DEPRECATED: backwards compatibility
+		root_password = None
 		if root_password := args_config.get('!root-password', None):
-			arch_config.root_enc_password = Password(plaintext=root_password)
+			root_password = Password(plaintext=root_password)
 
 		if enc_password := args_config.get('root_enc_password', None):
-			arch_config.root_enc_password = Password(enc_password=enc_password)
+			root_password = Password(enc_password=enc_password)
+
+		if root_password is not None:
+			if arch_config.auth_config is None:
+				arch_config.auth_config = AuthenticationConfiguration()
+			arch_config.auth_config.root_enc_password = root_password
+
+		# DEPRECATED: backwards copatibility
+		users: list[User] = []
+		if args_users := args_config.get('!users', None):
+			users = User.parse_arguments(args_users)
+
+		if args_users := args_config.get('users', None):
+			users = User.parse_arguments(args_users)
+
+		if users:
+			if arch_config.auth_config is None:
+				arch_config.auth_config = AuthenticationConfiguration()
+			arch_config.auth_config.users = users
 
 		if custom_commands := args_config.get('custom_commands', []):
 			arch_config.custom_commands = custom_commands
@@ -353,6 +366,12 @@ class ArchConfigHandler:
 			'--skip-wkd',
 			action='store_true',
 			help='Disables checking if archlinux keyring wkd sync is complete.',
+			default=False,
+		)
+		parser.add_argument(
+			'--skip-boot',
+			action='store_true',
+			help='Disables installation of a boot loader (note: only use this when problems arise with the boot loader step).',
 			default=False,
 		)
 		parser.add_argument(

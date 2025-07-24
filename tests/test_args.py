@@ -9,12 +9,12 @@ from archinstall.lib.hardware import GfxDriver
 from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.bootloader import Bootloader
-from archinstall.lib.models.device_model import DiskLayoutConfiguration, DiskLayoutType
+from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
-from archinstall.lib.models.network_configuration import NetworkConfiguration, Nic, NicType
+from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.packages import Repository
-from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import translation_handler
@@ -36,6 +36,7 @@ def test_default_args(monkeypatch: MonkeyPatch) -> None:
 		mountpoint=Path('/mnt'),
 		skip_ntp=False,
 		skip_wkd=False,
+		skip_boot=False,
 		debug=False,
 		offline=False,
 		no_pkg_lookups=False,
@@ -66,6 +67,7 @@ def test_correct_parsing_args(
 			'/tmp',
 			'--skip-ntp',
 			'--skip-wkd',
+			'--skip-boot',
 			'--debug',
 			'--offline',
 			'--no-pkg-lookups',
@@ -91,6 +93,7 @@ def test_correct_parsing_args(
 		mountpoint=Path('/tmp'),
 		skip_ntp=True,
 		skip_wkd=True,
+		skip_boot=True,
 		debug=True,
 		offline=True,
 		no_pkg_lookups=True,
@@ -134,6 +137,15 @@ def test_config_file_parsing(
 			audio_config=AudioConfiguration(audio=Audio.PIPEWIRE),
 		),
 		auth_config=AuthenticationConfiguration(
+			root_enc_password=Password(enc_password='password_hash'),
+			users=[
+				User(
+					username='user_name',
+					password=Password(enc_password='password_hash'),
+					sudo=True,
+					groups=['wheel'],
+				),
+			],
 			u2f_config=U2FLoginConfiguration(
 				u2f_login_method=U2FLoginMethod.Passwordless,
 				passwordless_sudo=True,
@@ -214,16 +226,7 @@ def test_config_file_parsing(
 		parallel_downloads=66,
 		swap=False,
 		timezone='UTC',
-		users=[
-			User(
-				username='user_name',
-				password=Password(enc_password='password_hash'),
-				sudo=True,
-				groups=['wheel'],
-			),
-		],
 		services=['service_1', 'service_2'],
-		root_enc_password=Password(enc_password='password_hash'),
 		custom_commands=["echo 'Hello, World!'"],
 	)
 
@@ -280,9 +283,10 @@ def test_deprecated_creds_config_parsing(
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
-	assert arch_config.root_enc_password == Password(plaintext='rootPwd')
+	assert arch_config.auth_config is not None
+	assert arch_config.auth_config.root_enc_password == Password(plaintext='rootPwd')
 
-	assert arch_config.users == [
+	assert arch_config.auth_config.users == [
 		User(
 			username='user_name',
 			password=Password(plaintext='userPwd'),
@@ -331,8 +335,9 @@ def test_encrypted_creds_with_arg(
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
-	assert arch_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
-	assert arch_config.users == [
+	assert arch_config.auth_config is not None
+	assert arch_config.auth_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
+	assert arch_config.auth_config.users == [
 		User(
 			username='t',
 			password=Password(enc_password='$y$j9T$3KxMigAEnjtzbjalhLewE.$gmuoQtc9RNY/PmO/GxHHYvkZNO86Eeftg1Oc7L.QSO/'),
@@ -359,8 +364,9 @@ def test_encrypted_creds_with_env_var(
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
-	assert arch_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
-	assert arch_config.users == [
+	assert arch_config.auth_config is not None
+	assert arch_config.auth_config.root_enc_password == Password(enc_password='$y$j9T$FWCInXmSsS.8KV4i7O50H.$Hb6/g.Sw1ry888iXgkVgc93YNuVk/Rw94knDKdPVQw7')
+	assert arch_config.auth_config.users == [
 		User(
 			username='t',
 			password=Password(enc_password='$y$j9T$3KxMigAEnjtzbjalhLewE.$gmuoQtc9RNY/PmO/GxHHYvkZNO86Eeftg1Oc7L.QSO/'),

@@ -1,9 +1,13 @@
 from typing import override
 
 from archinstall.lib.disk.fido import Fido2
+from archinstall.lib.interactions.manage_users_conf import ask_for_additional_users
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
+from archinstall.lib.models.users import Password, User
+from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.util import get_password
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -34,14 +38,43 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
+				text=tr('Root password'),
+				action=select_root_password,
+				preview_action=self._prev_root_pwd,
+				key='root_enc_password',
+			),
+			MenuItem(
+				text=tr('User account'),
+				action=self._create_user_account,
+				preview_action=self._prev_users,
+				key='users',
+			),
+			MenuItem(
 				text=tr('U2F login setup'),
-				action=setup_u2f_login,
+				action=select_u2f_login,
 				value=self._auth_config.u2f_config,
 				preview_action=self._prev_u2f_login,
-				dependencies=[self._depends_on_u2f],
 				key='u2f_config',
 			),
 		]
+
+	def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
+		preset = [] if preset is None else preset
+		users = ask_for_additional_users(defined_users=preset)
+		return users
+
+	def _prev_users(self, item: MenuItem) -> str | None:
+		users: list[User] | None = item.value
+
+		if users:
+			return FormattedOutput.as_table(users)
+		return None
+
+	def _prev_root_pwd(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			password: Password = item.value
+			return f'{tr("Root password")}: {password.hidden()}'
+		return None
 
 	def _depends_on_u2f(self) -> bool:
 		devices = Fido2.get_fido2_devices()
@@ -60,10 +93,24 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 			output += tr('Passwordless sudo: ') + (tr('Enabled') if u2f_config.passwordless_sudo else tr('Disabled'))
 
 			return output
+
+		devices = Fido2.get_fido2_devices()
+		if not devices:
+			return tr('No U2F devices found')
+
 		return None
 
 
-def setup_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | None:
+def select_root_password(preset: str | None = None) -> Password | None:
+	password = get_password(text=tr('Root password'), allow_skip=True)
+	return password
+
+
+def select_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | None:
+	devices = Fido2.get_fido2_devices()
+	if not devices:
+		return None
+
 	items = []
 	for method in U2FLoginMethod:
 		items.append(MenuItem(method.display_value(), value=method))

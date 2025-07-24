@@ -14,7 +14,7 @@ from archinstall.lib.translationhandler import tr
 
 from ...default_profiles.profile import GreeterType, Profile
 from ..hardware import GfxDriver
-from ..models.profile_model import ProfileConfiguration
+from ..models.profile import ProfileConfiguration
 from ..networking import fetch_data_from_url, list_interfaces
 from ..output import debug, error, info
 
@@ -164,7 +164,7 @@ class ProfileHandler:
 		self._profiles = [p for p in self.profiles if p.name not in remove_names]
 
 	def get_profile_by_name(self, name: str) -> Profile | None:
-		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore[arg-type, union-attr]
+		return next(filter(lambda x: x.name == name, self.profiles), None)
 
 	def get_top_level_profiles(self) -> list[Profile]:
 		return [p for p in self.profiles if p.is_top_level_profile()]

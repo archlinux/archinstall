@@ -4,7 +4,7 @@ from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.installer import Installer
-from archinstall.lib.models.device_model import (
+from archinstall.lib.models.device import (
 	DeviceModification,
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -18,7 +18,7 @@ from archinstall.lib.models.device_model import (
 	Size,
 	Unit,
 )
-from archinstall.lib.models.profile_model import ProfileConfiguration
+from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler
 

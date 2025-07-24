@@ -12,7 +12,7 @@ from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
 from archinstall.lib.models import Bootloader
-from archinstall.lib.models.device_model import (
+from archinstall.lib.models.device import (
 	DiskLayoutType,
 	EncryptionType,
 )
@@ -99,10 +99,11 @@ def perform_installation(mountpoint: Path) -> None:
 		if config.swap:
 			installation.setup_swap('zram')
 
-		if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
-			installation.add_additional_packages('grub')
+		if config.bootloader and config.bootloader != Bootloader.NO_BOOTLOADER:
+			if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
+				installation.add_additional_packages('grub')
 
-		installation.add_bootloader(config.bootloader, config.uki)
+			installation.add_bootloader(config.bootloader, config.uki)
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
@@ -114,11 +115,10 @@ def perform_installation(mountpoint: Path) -> None:
 				config.profile_config,
 			)
 
-		if users := config.users:
-			installation.create_users(users)
-
-		if config.auth_config and config.users:
-			auth_handler.setup_auth(installation, config.auth_config, config.users, config.hostname)
+		if config.auth_config:
+			if config.auth_config.users:
+				installation.create_users(config.auth_config.users)
+				auth_handler.setup_auth(installation, config.auth_config, config.hostname)
 
 		if config.packages and config.packages[0] != '':
 			installation.add_additional_packages(config.packages)
@@ -138,8 +138,8 @@ def perform_installation(mountpoint: Path) -> None:
 		if accessibility_tools_in_use():
 			installation.enable_espeakup()
 
-		if root_pw := config.root_enc_password:
-			root_user = User('root', root_pw, False)
+		if config.auth_config and config.auth_config.root_enc_password:
+			root_user = User('root', config.auth_config.root_enc_password, False)
 			installation.set_user_password(root_user)
 
 		if (profile_config := config.profile_config) and profile_config.profile:

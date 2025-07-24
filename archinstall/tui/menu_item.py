@@ -196,6 +196,7 @@ class MenuItemGroup:
 
 		max_width = self._max_items_text_width
 		display_text = item.get_display_value()
+
 		default_text = self._default_suffix(item)
 
 		text = unicode_ljust(str(item.text), max_width, ' ')

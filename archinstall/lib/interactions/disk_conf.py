@@ -4,7 +4,7 @@ from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.partitioning_menu import manual_partitioning
 from archinstall.lib.menu.menu_helper import MenuHelper
-from archinstall.lib.models.device_model import (
+from archinstall.lib.models.device import (
 	BDevice,
 	BtrfsMountOption,
 	DeviceModification,
