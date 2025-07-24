@@ -36,7 +36,12 @@ There are two configuration files, both are optional.
 ``--config``
 ------------
 
-This parameter takes a local or remote :code:`.json` file as argument and contains the overall configuration and menu answers for the guided installer.
+This parameter takes a local :code:`.json` file as argument and contains the overall configuration and menu answers for the guided installer.
+
+``--config-url``
+------------
+
+This parameter takes a remote :code:`.json` file as argument and contains the overall configuration and menu answers for the guided installer.
 
 .. note::
 
