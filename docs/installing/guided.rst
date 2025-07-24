@@ -52,7 +52,11 @@ Example usage
 
 .. code-block:: sh
 
-    archinstall --config https://domain.lan/config.json
+    archinstall --config config.json
+
+.. code-block:: sh
+
+    archinstall --config-url https://domain.lan/config.json
 
 The contents of :code:`https://domain.lan/config.json`:
 
