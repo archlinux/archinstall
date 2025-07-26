@@ -51,8 +51,8 @@ msgstr "Välj en boot-loader"
 msgid "Choose an audio server"
 msgstr "Välj en ljud-server"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Enbart paket som base, base-devel, linux, linux-firmware, efibootmgr och självvalda paket är installerade."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "Enbart paket som base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr och självvalda paket är installerade."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Om du önskar en webbläsare, exempelvis firefox eller chromium, bör du skriva in dom i följande fält."

@@ -55,8 +55,8 @@ msgstr "اختر مُحمّل الإقلاع"
 msgid "Choose an audio server"
 msgstr "اختر خادِم صوتيات"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "فقط الحزم مثل base وbase-devel وlinux وlinux-firmware وefibootmgr و حِزم مِلف اختيارية سوف تُثَبَّت."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "فقط الحزم مثل base وbase-devel وlinux وlinux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other وefibootmgr و حِزم مِلف اختيارية سوف تُثَبَّت."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "إذا كنت ترغب في متصفح الويب ، مثل Firefox أو chromium، فيمكنك تحديده في موضِع الكتابة التالي."
