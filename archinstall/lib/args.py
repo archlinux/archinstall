@@ -256,6 +256,7 @@ class ArchConfigHandler:
 
 		try:
 			self._config = ArchConfig.from_config(config)
+			self._config.version = self._get_version()
 		except ValueError as err:
 			warn(str(err))
 			exit(1)
