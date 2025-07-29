@@ -24,12 +24,6 @@ class Bootloader(Enum):
 	def json(self) -> str:
 		return self.value
 
-	@staticmethod
-	def values() -> list[str]:
-		from ..args import arch_config_handler
-
-		return [e.value for e in Bootloader if e != Bootloader.NO_BOOTLOADER or arch_config_handler.args.skip_boot is True]
-
 	@classmethod
 	def get_default(cls) -> Bootloader:
 		from ..args import arch_config_handler
@@ -42,12 +36,15 @@ class Bootloader(Enum):
 			return Bootloader.Grub
 
 	@classmethod
-	def from_arg(cls, bootloader: str) -> Bootloader:
+	def from_arg(cls, bootloader: str, skip_boot: bool) -> Bootloader:
 		# to support old configuration files
 		bootloader = bootloader.capitalize()
 
-		if bootloader not in cls.values():
-			values = ', '.join(cls.values())
+		bootloader_options = [e.value for e in Bootloader if e != Bootloader.NO_BOOTLOADER or skip_boot is True]
+
+		if bootloader not in bootloader_options:
+			values = ', '.join(bootloader_options)
 			warn(f'Invalid bootloader value "{bootloader}". Allowed values: {values}')
 			sys.exit(1)
+
 		return Bootloader(bootloader)

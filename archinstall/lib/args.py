@@ -131,7 +131,7 @@ class ArchConfig:
 		return config
 
 	@classmethod
-	def from_config(cls, args_config: dict[str, Any]) -> 'ArchConfig':
+	def from_config(cls, args_config: dict[str, Any], args: Arguments) -> 'ArchConfig':
 		arch_config = ArchConfig()
 
 		arch_config.locale_config = LocaleConfiguration.parse_arg(args_config)
@@ -178,7 +178,7 @@ class ArchConfig:
 			arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
 
 		if bootloader_config := args_config.get('bootloader', None):
-			arch_config.bootloader = Bootloader.from_arg(bootloader_config)
+			arch_config.bootloader = Bootloader.from_arg(bootloader_config, args.skip_boot)
 
 		if args_config.get('uki') and (arch_config.bootloader is None or not arch_config.bootloader.has_uki_support()):
 			arch_config.uki = False
@@ -250,12 +250,13 @@ class ArchConfig:
 class ArchConfigHandler:
 	def __init__(self) -> None:
 		self._parser: ArgumentParser = self._define_arguments()
-		self._args: Arguments = self._parse_args()
+		args: Arguments = self._parse_args()
+		self._args = args
 
 		config = self._parse_config()
 
 		try:
-			self._config = ArchConfig.from_config(config)
+			self._config = ArchConfig.from_config(config, args)
 			self._config.version = self._get_version()
 		except ValueError as err:
 			warn(str(err))
