@@ -123,11 +123,11 @@ def perform_installation(mountpoint: Path) -> None:
 		if config.packages and config.packages[0] != '':
 			installation.add_additional_packages(config.packages)
 
-		if profile_config := config.profile_config:
-			profile_handler.install_profile_config(installation, profile_config)
-
 		if app_config := config.app_config:
 			application_handler.install_applications(installation, app_config)
+
+		if profile_config := config.profile_config:
+			profile_handler.install_profile_config(installation, profile_config)
 
 		if timezone := config.timezone:
 			installation.set_timezone(timezone)
