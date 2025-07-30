@@ -940,6 +940,30 @@ msgstr "முழு நீளம்: {}"
 msgid "Encryption type"
 msgstr "குறியாக்க வகை"
 
+msgid "Iteration time"
+msgstr ""
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr ""
+
+msgid "Higher values increase security but slow down boot time"
+msgstr ""
+
+msgid "Default: 10000ms, Recommended range: 1000-60000"
+msgstr ""
+
+msgid "Iteration time cannot be empty"
+msgstr ""
+
+msgid "Iteration time must be at least 100ms"
+msgstr ""
+
+msgid "Iteration time must be at most 120000ms"
+msgstr ""
+
+msgid "Please enter a valid number"
+msgstr ""
+
 msgid "Partitions"
 msgstr "பகிர்வுகள்"
 
