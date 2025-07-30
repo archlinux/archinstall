@@ -18,7 +18,7 @@ msgid "    Please submit this issue (and file) to https://github.com/archlinux/a
 msgstr "    Jelentse ezt a problémát (a naplófájllal együtt) itt: https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr "Valóban megszakítja?"
+msgstr "Biztosan megszakítja?"
 
 msgid "And one more time for verification: "
 msgstr "És még egyszer az ellenőrzéshez: "
@@ -69,7 +69,7 @@ msgid "Select one network interface to configure"
 msgstr "Válasszon ki egy hálózati csatolót a konfiguráláshoz"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) „{}” számára, vagy hagyja ki ezt a lépést az alapértelmezett „{}” mód használatához"
+msgstr "Válassza ki a konfigurálandó módot a következőhöz: „{}”, vagy hagyja ki ezt a lépést az alapértelmezett „{}” mód használatához"
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Adja meg az IP-címét és az alhálózatát (például: 192.168.0.5/24) a következőhöz: {}: "
@@ -121,13 +121,13 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Index alapján válassza ki, hogy melyik partíciót hová szeretné csatolni"
+"Index alapján válassza ki, hogy melyik partíció hová legyen csatolva"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr " * A partíció csatolási pontjai a telepítésen belülre vonatkoznak, a „boot” például „/boot” lesz."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Válassza ki, hogy hová szeretné csatolni a partíciót (hagyja üresen a csatolási pont eltávolításához): "
+msgstr "Válassza ki, hogy hová legyen csatolva a partíció (hagyja üresen a csatolási pont eltávolításához): "
 
 msgid ""
 "{}\n"
@@ -136,7 +136,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Válassza ki, hogy melyik partíciót szeretné formázásra megjelölni"
+"Válassza ki a formázásra megjelölendő partíció(ka)t"
 
 msgid ""
 "{}\n"
@@ -145,7 +145,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Válassza ki, hogy melyik partíciót szeretné titkosítottként megjelölni"
+"Válassza ki a titkosításra megjelölendő partíció(ka)t"
 
 msgid ""
 "{}\n"
@@ -154,7 +154,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Válassza ki, hogy melyik partíciót szeretné rendszerbetöltőként megjelölni"
+"Válassza ki a rendszerbetöltőként megjelölendő partíciót"
 
 msgid ""
 "{}\n"
@@ -163,7 +163,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Válassza ki, hogy melyik partícióra kívánja a fájlrendszert beállítani"
+"Válassza ki, hogy melyik partícióra legyen beállítva a fájlrendszer"
 
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Adja meg a partíció fájlrendszertípusát: "
@@ -450,7 +450,7 @@ msgid "Pre-existing pacman lock never exited. Please clean up any existing pacma
 msgstr "A már meglévő pacman-zár soha nem lép ki. Az Archinstall használata előtt tisztítsa meg a meglévő pacman-munkameneteket."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Válassza ki, hogy mely további nem kötelező tárolókat kívánja engedélyezni"
+msgstr "Válassza ki a további (nem kötelező) engedélyezendő tárolókat"
 
 msgid "Add a user"
 msgstr "Felhasználó hozzáadása"
@@ -493,7 +493,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Válassza ki, hogy melyik partícióra kívánja beállítani az alköteteket"
+"Válassza ki, hogy melyik partícióra legyenek beállítva az alkötetek"
 
 msgid "Manage btrfs subvolumes for current partition"
 msgstr "A jelenlegi partíció BTRFS-alköteteinek kezelése"
@@ -662,7 +662,7 @@ msgid "Provides a selection of various server packages to install and enable, e.
 msgstr "Különböző kiszolgálócsomagok széles választékát kínálja a telepítéshez és az engedélyezéshez, pl. httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Válassza ki, hogy mely kiszolgálókat kívánja telepíteni, ha egyiket sem, akkor minimális telepítés történik"
+msgstr "Válassza ki, hogy mely kiszolgálók legyenek telepítve, ha egyiket sem választja ki, akkor minimális telepítés történik"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Telepít egy minimális rendszert, valamint a xorg és a grafikus illesztőprogramokat."
@@ -736,7 +736,7 @@ msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "Válassza ki az egyik lemezt, vagy hagyja ki ezt a lépést és használja az „/mnt” csatolási pontot alapértelmezettként"
 
 msgid "Select which partitions to mark for formatting:"
-msgstr "Válassza ki, hogy mely partíciókat szeretné formázásra megjelölni:"
+msgstr "Válassza ki a formázásra megjelölendő partíciókat:"
 
 msgid "Use HSM to unlock encrypted drive"
 msgstr "HSM használata a titkosított meghajtó feloldásához"
@@ -766,7 +766,7 @@ msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "A(z) „{}” nevű felhasználónak rendszergazdának (sudoer) kell lennie?"
 
 msgid "Select which partitions to encrypt"
-msgstr "Válassza ki mely partíciókat szeretné titkosítani"
+msgstr "Válassza ki a titkosítandó partíciókat"
 
 msgid "very weak"
 msgstr "nagyon gyenge"
@@ -941,28 +941,28 @@ msgid "Encryption type"
 msgstr "Titkosítástípus"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Iterációs idő"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Adja meg az iterációs időt a LUKS-titkosításhoz (ms-ben)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "A nagyobb értékek növelik a biztonságot, de lassítják a rendszerindítást"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Alapértelmezett: 10 000 ms, ajánlott tartomány: 1 000 - 60 000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Az iterációs idő nem lehet üres"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Az iterációs időnek legalább 100 ms-nak kell lennie"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Az iterációs idő legfeljebb 120 000 ms lehet"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Adjon meg egy érvényes számot"
 
 msgid "Partitions"
 msgstr "Partíciók"
@@ -1016,7 +1016,7 @@ msgid "Back"
 msgstr "Vissza"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr "Válassza ki, hogy melyik bejelentkezési segédet szeretné telepíteni a kiválasztott profilokhoz: {}"
+msgstr "Válassza ki a telepítendő bejelentkezési segédet a kiválasztott profilokhoz: {}"
 
 msgid "Environment type: {}"
 msgstr "Környezet típusa: {}"
@@ -1080,7 +1080,7 @@ msgid "Greeter"
 msgstr "Bejelentkezési segéd"
 
 msgid "Please chose which greeter to install"
-msgstr "Válassza ki, hogy melyik bejelentkezési segédet szeretné telepíteni"
+msgstr "Válassza ki a telepítendő bejelentkezési segédet"
 
 msgid "This is a list of pre-programmed default_profiles"
 msgstr "Ez az előre programozott „default_profiles” listája"
@@ -1262,7 +1262,7 @@ msgid "Mark/Unmark as nodatacow"
 msgstr "Megjelölés/elvetés mint „nodatacow”"
 
 msgid "Would you like to use compression or disable CoW?"
-msgstr "Szeretne tömörítést használni, vagy letiltani az adatmásolást íráskor?"
+msgstr "Szeretne tömörítést használni vagy letiltani az adatmásolást íráskor?"
 
 msgid "Use compression"
 msgstr "Tömörítés használata"
@@ -1376,7 +1376,7 @@ msgid "Subvolume name"
 msgstr "Alkötet neve"
 
 msgid "Disk configuration type"
-msgstr "Lemezkonfiguráció-típus"
+msgstr "Lemezkonfiguráció típusa"
 
 msgid "Root mount directory"
 msgstr "Root csatolási könyvtár"
@@ -1466,7 +1466,7 @@ msgid "Enter a directory for the configuration(s) to be saved (tab completion en
 msgstr "Adjon meg egy könyvtárat a mentendő konfiguráció(k) számára (a tabulátoros kiegészítés engedélyezve van)"
 
 msgid "Do you want to save the configuration file(s) to {}?"
-msgstr "Szeretné elmenteni a konfigurációs fájlt a következő helyre?:{}"
+msgstr "Szeretné elmenteni a konfigurációs fájl(oka)t a következő helyre: {}?"
 
 msgid "Enabled"
 msgstr "Engedélyezve"
@@ -1496,7 +1496,7 @@ msgid "Choose an option to give Hyprland access to your hardware"
 msgstr "Válasszon ki egy beállítást, hogy engedélyezze a Hyprland számára a hardverekhez való hozzáférést"
 
 msgid "Additional repositories"
-msgstr "Nem kötelező tárolók"
+msgstr "További tárolók"
 
 msgid "NTP"
 msgstr "NTP"
@@ -1679,7 +1679,7 @@ msgid "What would you like to do next?"
 msgstr "Mit szeretne tenni?"
 
 msgid "Select which mode to configure for \"{}\""
-msgstr "Válassza ki, hogy melyik módot szeretné beállítani a(z) „{}” számára"
+msgstr "Válassza ki a konfigurálandó módot a következőhöz: „{}”"
 
 msgid "Incorrect credentials file decryption password"
 msgstr "Helytelen a hitelesítőadat-fájl visszafejtési jelszava"
