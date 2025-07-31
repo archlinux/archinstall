@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Foi criado um ficheiro de registo aqui: {} {}"
@@ -943,28 +943,28 @@ msgid "Encryption type"
 msgstr "Tipo de encriptação"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Tempo de iteração"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Insira o tempo de iteração para a encriptação LUKS (em milissegundos)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Valores mais altos aumentam a segurança, mas diminuem o tempo de arranque"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Predefinido: 10000 ms, intervalo recomendado: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "O tempo de iteração não pode estar em branco"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "O tempo de iteração deve ser de pelo menos 100 ms"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "O tempo de iteração deve ser, no máximo, 120000 ms"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Insira um número válido"
 
 msgid "Partitions"
 msgstr "Partições"
@@ -1495,256 +1495,209 @@ msgstr "Selecionar modo de execução"
 msgid "Press ? for help"
 msgstr "Prima ? para obter ajuda"
 
-#, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Selecionar uma opção para permitir o acesso do Hyprland ao seu hardware"
+msgstr "Selecionar uma opção para permitir que o Hyprland aceda ao seu hardware"
 
-#, fuzzy
 msgid "Additional repositories"
-msgstr "Repositórios opcionais"
+msgstr "Repositórios adicionais"
 
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "Swap em zram"
 
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
-#, fuzzy
 msgid "Signature check"
-msgstr "Selecionar verificação de assinatura"
+msgstr "Verificação de assinatura"
 
-#, fuzzy
 msgid "Selected free space segment on device {}:"
-msgstr "Atuais setores livres no dispositivo {}:"
+msgstr "Segmento de espaço livre selecionado no dispositivo {}:"
 
-#, fuzzy
 msgid "Size: {} / {}"
-msgstr "Total: {} / {}"
+msgstr "Tamanho: {} / {}"
 
-#, fuzzy
 msgid "Size (default: {}): "
-msgstr "Fim (predefinido: {}): "
+msgstr "Tamanho (predefinido: {}): "
 
-#, fuzzy
 msgid "HSM device"
-msgstr "Dispositivo"
+msgstr "Dispositivo HSM"
 
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "Alguns pacotes não foram encontrados no repositório"
 
-#, fuzzy
 msgid "User"
-msgstr "Nome de utilizador"
+msgstr "Utilizador"
 
 msgid "The specified configuration will be applied"
-msgstr ""
+msgstr "A configuração especificada vai ser aplicada"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Apagar"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Marcar/Desmarcar como partição de arranque"
+msgstr "Marcar/Desmarcar como XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "Pacotes adicionais"
+msgstr "A carregar pacotes..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Selecionar na lista abaixo os pacotes que devem ser instalados adicionalmente"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Adicionar um espelho personalizado"
+msgstr "Adicionar um repositório personalizado"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Alterar espelho personalizado"
+msgstr "Alterar repositório personalizado"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Eliminar espelho personalizado"
+msgstr "Eliminar repositório personalizado"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Nome do espelho"
+msgstr "Nome do repositório"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "Adicionar um espelho personalizado"
+msgstr "Adicionar um servidor personalizado"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "Alterar espelho personalizado"
+msgstr "Alterar servidor personalizado"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "Eliminar espelho personalizado"
+msgstr "Eliminar servidor personalizado"
 
 msgid "Server url"
-msgstr ""
+msgstr "URL do servidor"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "Selecionar a opção de assinatura"
+msgstr "Selecionar regiões"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "Adicionar um espelho personalizado"
+msgstr "Adicionar servidores personalizados"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Adicionar um espelho personalizado"
+msgstr "Adicionar repositório personalizado"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "Regiões dos espelhos"
+msgstr "A carregar regiões dos espelhos..."
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Repositórios opcionais"
+msgstr "Espelhos e repositórios"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "Regiões dos espelhos"
+msgstr "Regiões de espelhos selecionadas"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "Espelhos personalizados"
+msgstr "Servidores personalizados"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "Repositórios opcionais"
+msgstr "Repositórios personalizados"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Apenas caracteres ASCII são suportados"
 
 msgid "Show help"
-msgstr ""
+msgstr "Mostrar ajuda"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Sair da ajuda"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Rolar visualização para cima"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Rolar visualização para baixo"
 
 msgid "Move up"
-msgstr ""
+msgstr "Mover para cima"
 
 msgid "Move down"
-msgstr ""
+msgstr "Mover para baixo"
 
 msgid "Move right"
-msgstr ""
+msgstr "Mover para a direita"
 
 msgid "Move left"
-msgstr ""
+msgstr "Mover para a esquerda"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Ir para entrada"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Ignorar seleção (se disponível)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Repor seleção (se disponível)"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "Selecionar verificação de assinatura"
+msgstr "Selecionar em escolha única"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "Selecionar um fuso horário"
+msgstr "Selecionar em múltipla escolha"
 
 msgid "Reset"
-msgstr ""
+msgstr "Repor"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "Selecionar modo de execução"
+msgstr "Ignorar menu de seleção"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Iniciar modo de pesquisa"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Sair do modo de pesquisa"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
+msgstr "O labwc precisa de acesso ao seu seat (conjunto de dispositivos de hardware, como teclado, rato etc.)"
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Escolha uma opção para dar ao Sway acesso ao seu hardware"
+msgstr "Escolha uma opção para conceder ao labwc acesso ao seu hardware"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "O Sway precisa de acesso ao seu \"seat\" (conjunto de dispositivos de hardware, como o teclado, o rato, etc)"
+msgstr "O niri precisa de acesso ao seu seat (conjunto de dispositivos de hardware, como teclado, rato etc.)"
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Escolha uma opção para dar ao Sway acesso ao seu hardware"
+msgstr "Escolha uma opção para conceder ao niri acesso ao seu hardware"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "Marcar/Desmarcar como partição de arranque"
+msgstr "Marcar/Desmarcar como ESP"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Grupo de pacotes:"
 
-#, fuzzy
 msgid "Exit archinstall"
-msgstr "Ajuda do Archinstall"
+msgstr "Sair do archinstall"
 
-#, fuzzy
 msgid "Reboot system"
-msgstr "Sistema de ficheiros"
+msgstr "Reiniciar sistema"
 
-#, fuzzy
 msgid "chroot into installation for post-installation configurations"
-msgstr "Gostaria de fazer chroot na instalação recém-criada e executar a configuração pós-instalação?"
+msgstr "Entrar em chroot na instalação para configurações pós-instalação"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Instalação concluída"
 
-#, fuzzy
 msgid "What would you like to do next?"
-msgstr "Gostaria de continuar?"
+msgstr "O que gostaria de fazer a seguir?"
 
-#, fuzzy
 msgid "Select which mode to configure for \"{}\""
-msgstr "Selecionar qual o modo a configurar para \"{}\" ou ignorar para usar o modo predefinido \"{}\""
+msgstr "Selecione qual modo configurar para \"{}\""
 
-#, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr "Palavra-passe de encriptação do disco"
+msgstr "Palavra-passe incorreta para desencriptar o ficheiro de credenciais"
 
-#, fuzzy
 msgid "Incorrect password"
-msgstr "Palavra-passe do root"
+msgstr "Palavra-passe incorreta"
 
-#, fuzzy
 msgid "Credentials file decryption password"
-msgstr "Palavra-passe de encriptação do disco"
+msgstr "Palavra-passe para desencriptar o ficheiro de credenciais"
 
-#, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Pretende guardar o(s) ficheiro(s) de configuração em {}?"
+msgstr "Pretende desencriptar o ficheiro user_credentials.json?"
 
-#, fuzzy
 msgid "Credentials file encryption password"
-msgstr "Palavra-passe de encriptação do disco"
+msgstr "Palavra-passe de encriptação do ficheiro de credenciais"
 
-#, fuzzy
 msgid "Repositories: {}"
-msgstr "Nome do espelho"
+msgstr "Repositórios: {}"
