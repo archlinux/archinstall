@@ -944,7 +944,7 @@ msgid "Iteration time"
 msgstr "Iterációs idő"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr "Adja meg az iterációs időt a LUKS-titkosításhoz (ms-ben)"
+msgstr "Adja meg az iterációs időt a LUKS-titkosításhoz (ezredmásodpercben)"
 
 msgid "Higher values increase security but slow down boot time"
 msgstr "A nagyobb értékek növelik a biztonságot, de lassítják a rendszerindítást"
@@ -956,7 +956,7 @@ msgid "Iteration time cannot be empty"
 msgstr "Az iterációs idő nem lehet üres"
 
 msgid "Iteration time must be at least 100ms"
-msgstr "Az iterációs időnek legalább 100 ms-nak kell lennie"
+msgstr "Az iterációs időnek legalább 100 ms-nek kell lennie"
 
 msgid "Iteration time must be at most 120000ms"
 msgstr "Az iterációs idő legfeljebb 120 000 ms lehet"
