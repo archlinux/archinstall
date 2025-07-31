@@ -50,8 +50,8 @@ msgstr "Selectați un bootloader"
 msgid "Choose an audio server"
 msgstr "Selectați un server audio"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, egibootmgr și cele opționale de profil sunt instalate."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Dacă doriți un browser, precum firefox sau chromium, puteți să-l specificați în promptul următor."

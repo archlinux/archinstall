@@ -50,8 +50,8 @@ msgstr "נא לבחור מנהל טעינה"
 msgid "Choose an audio server"
 msgstr "נא לבחור שרת שמע"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "רק חבילות כגוןbase,‏ base-devel,‏ linux,‏ linux-firmware,‏ efibootmgr וחבילות פרופיל כרשות מותקנות."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "רק חבילות כגוןbase,‏ base-devel,‏ linux,‏ linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other,‏ efibootmgr וחבילות פרופיל כרשות מותקנות."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "כדי שיותקן דפדפן כגון firefox או chromium אפשר לציין זאת בבקשה הבאה."
