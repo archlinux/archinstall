@@ -1530,6 +1530,75 @@ class Installer:
 
 		self._helper_flags['bootloader'] = 'efistub'
 
+	def _add_refind_bootloader(
+		self,
+		boot_partition: PartitionModification,
+		efi_partition: PartitionModification | None,
+		root: PartitionModification | LvmVolume,
+		uki_enabled: bool = False,
+	) -> None:
+		debug('Installing rEFInd bootloader')
+
+		self.pacman.strap('refind')
+
+		if not SysInfo.has_uefi():
+			raise HardwareIncompatibilityError
+
+		if not efi_partition:
+			raise ValueError('Could not detect EFI system partition')
+		elif not efi_partition.mountpoint:
+			raise ValueError('EFI system partition is not mounted')
+
+		info(f'rEFInd EFI partition: {efi_partition.dev_path}')
+
+		try:
+			SysCommand(f'arch-chroot {self.target} refind-install')
+		except SysCallError as err:
+			raise DiskError(f'Could not install rEFInd to {self.target}{efi_partition.mountpoint}: {err}')
+
+		if not boot_partition.mountpoint:
+			raise ValueError("Boot partition is not mounted, cannot write rEFInd config")
+
+		config_path = self.target / boot_partition.mountpoint.relative_to('/') / 'refind_linux.conf'
+		config_contents = []
+
+		kernel_params = ' '.join(self._get_kernel_params(root))
+
+		for kernel in self.kernels:
+			for variant in ('', '-fallback'):
+				if uki_enabled:
+					entry = f'"Arch Linux ({kernel}{variant}) UKI" "{kernel_params}"'
+				else:
+					initrd_path = f'initrd=\\initramfs-{kernel}{variant}.img'
+					entry = f'"Arch Linux ({kernel}{variant})" "{kernel_params} {initrd_path}"'
+
+				config_contents.append(entry)
+
+		config_path.write_text('\n'.join(config_contents) + '\n')
+
+		hook_contents = textwrap.dedent(
+			'''\
+			[Trigger]
+			Operation = Install
+			Operation = Upgrade
+			Type = Package
+			Target = refind
+
+			[Action]
+			Description = Updating rEFInd on ESP
+			When = PostTransaction
+			Exec = /usr/bin/refind-install
+			'''
+		)
+
+		hooks_dir = self.target / 'etc' / 'pacman.d' / 'hooks'
+		hooks_dir.mkdir(parents=True, exist_ok=True)
+
+		hook_path = hooks_dir / '99-refind.hook'
+		hook_path.write_text(hook_contents)
+
+		self._helper_flags['bootloader'] = 'refind'
+
 	def _config_uki(
 		self,
 		root: PartitionModification | LvmVolume,
@@ -1583,11 +1652,12 @@ class Installer:
 	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False) -> None:
 		"""
 		Adds a bootloader to the installation instance.
-		Archinstall supports one of three types:
+		Archinstall supports one of five types:
 		* systemd-bootctl
 		* grub
 		* limine (beta)
 		* efistub (beta)
+		* refnd (beta)
 
 		:param bootloader: Type of bootloader to be added
 		"""
@@ -1623,6 +1693,8 @@ class Installer:
 				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:
 				self._add_limine_bootloader(boot_partition, efi_partition, root, uki_enabled)
+			case Bootloader.Refind:
+				self._add_refind_bootloader(boot_partition, efi_partition, root, uki_enabled)
 
 	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
