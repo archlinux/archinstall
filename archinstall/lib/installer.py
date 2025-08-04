@@ -1557,7 +1557,7 @@ class Installer:
 			raise DiskError(f'Could not install rEFInd to {self.target}{efi_partition.mountpoint}: {err}')
 
 		if not boot_partition.mountpoint:
-			raise ValueError("Boot partition is not mounted, cannot write rEFInd config")
+			raise ValueError('Boot partition is not mounted, cannot write rEFInd config')
 
 		config_path = self.target / boot_partition.mountpoint.relative_to('/') / 'refind_linux.conf'
 		config_contents = []
@@ -1577,7 +1577,7 @@ class Installer:
 		config_path.write_text('\n'.join(config_contents) + '\n')
 
 		hook_contents = textwrap.dedent(
-			'''\
+			"""\
 			[Trigger]
 			Operation = Install
 			Operation = Upgrade
@@ -1588,7 +1588,7 @@ class Installer:
 			Description = Updating rEFInd on ESP
 			When = PostTransaction
 			Exec = /usr/bin/refind-install
-			'''
+			"""
 		)
 
 		hooks_dir = self.target / 'etc' / 'pacman.d' / 'hooks'
