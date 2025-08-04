@@ -120,14 +120,14 @@ def perform_installation(mountpoint: Path) -> None:
 				installation.create_users(config.auth_config.users)
 				auth_handler.setup_auth(installation, config.auth_config, config.hostname)
 
-		if config.packages and config.packages[0] != '':
-			installation.add_additional_packages(config.packages)
-
 		if app_config := config.app_config:
 			application_handler.install_applications(installation, app_config)
 
 		if profile_config := config.profile_config:
 			profile_handler.install_profile_config(installation, profile_config)
+
+		if config.packages and config.packages[0] != '':
+			installation.add_additional_packages(config.packages)
 
 		if timezone := config.timezone:
 			installation.set_timezone(timezone)
