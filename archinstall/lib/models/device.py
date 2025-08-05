@@ -317,10 +317,6 @@ class Size:
 	unit: Unit
 	sector_size: SectorSize
 
-	def __post_init__(self) -> None:
-		if not isinstance(self.sector_size, SectorSize):
-			raise ValueError('sector size must be of type SectorSize')
-
 	def json(self) -> _SizeSerialization:
 		return {
 			'value': self.value,
@@ -352,7 +348,9 @@ class Size:
 			norm = self._normalize()
 			return Size(norm, Unit.B, self.sector_size).convert(target_unit, sector_size)
 		else:
-			if target_unit == Unit.sectors and sector_size is not None:
+			if target_unit == Unit.sectors:
+				assert sector_size is not None
+
 				norm = self._normalize()
 				sectors = math.ceil(norm / sector_size.value)
 				return Size(sectors, Unit.sectors, sector_size)
