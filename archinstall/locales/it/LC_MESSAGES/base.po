@@ -196,13 +196,13 @@ msgid "Select one or more hard drives to use and configure"
 msgstr "Seleziona uno o più dischi rigidi da utilizzare e configurare"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Per la migliore compatibilità con l'hardware AMD, potresti voler utilizzare tutte le opzioni open source o AMD / ATI."
+msgstr "Per la migliore compatibilità con il tuo hardware AMD, potresti voler utilizzare tutte le opzioni open source o AMD / ATI."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Per la migliore compatibilità con l'hardware Intel, potresti voler utilizzare tutte le opzioni open source o Intel.\n"
+msgstr "Per la migliore compatibilità con il tuo hardware Intel, potresti voler utilizzare tutte le opzioni open source o Intel.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Per la migliore compatibilità con l'hardware Nvidia, potresti voler utilizzare il driver proprietario Nvidia.\n"
+msgstr "Per la migliore compatibilità con il tuo hardware Nvidia, potresti voler utilizzare il driver proprietario Nvidia.\n"
 
 msgid ""
 "\n"
