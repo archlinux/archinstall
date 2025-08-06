@@ -127,7 +127,7 @@ def check_package_upgrade(package: str) -> str | None:
 
 @lru_cache
 def list_available_packages(
-	repositories: tuple[Repository],
+	repositories: tuple[Repository, ...],
 ) -> dict[str, AvailablePackage]:
 	"""
 	Returns a list of all available packages in the database
