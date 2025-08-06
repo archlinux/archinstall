@@ -46,7 +46,7 @@ msgid "Choose an audio server"
 msgstr ""
 
 msgid ""
-"Only packages such as base, base-devel, linux, linux-firmware, efibootmgr "
+"Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr "
 "and optional profile packages are installed."
 msgstr ""
 

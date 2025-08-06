@@ -50,8 +50,8 @@ msgstr "Choisir un chargeur de démarrage"
 msgid "Choose an audio server"
 msgstr "Choisir un serveur audio"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Seuls les paquets tels que base, base-devel, linux, linux-firmware, efibootmgr et les paquets de profil optionnels sont installés."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "Seuls les paquets tels que base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr et les paquets de profil optionnels sont installés."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si vous désirez un navigateur Web, tel que firefox ou chrome, vous pouvez le spécifier dans l'invite suivante."

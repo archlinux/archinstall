@@ -50,8 +50,8 @@ msgstr "Trieu un gestor d'arranc"
 msgid "Choose an audio server"
 msgstr "Trieu un servidor d'àudio"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Només s'instal·laran paquets com base, base-devel, linux, linux-firmware, efibootmgr i altres paquets de perfil opcionals."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "Només s'instal·laran paquets com base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr i altres paquets de perfil opcionals."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si desitgeu un navegador web, com ara firefox o chromium, ho podeu especificar al proper missatge."

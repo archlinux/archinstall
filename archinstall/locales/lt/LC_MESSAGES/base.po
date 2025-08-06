@@ -50,8 +50,8 @@ msgstr "Išrinkite paleidyklė"
 msgid "Choose an audio server"
 msgstr "Išrinkite garso serverį"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Tiktai paketai tokie kaip: base, base-devel, linux, linux-firmware, efibootmgr ir neprivalomi paketai bus įdegtį."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "Tiktai paketai tokie kaip: base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr ir neprivalomi paketai bus įdegtį."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr ""

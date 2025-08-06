@@ -50,8 +50,8 @@ msgstr "Vali buudilaadija"
 msgid "Choose an audio server"
 msgstr "Vali audio server"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Paigaldatakse ainult sellised paketid nagu base, base-devel, linux, linux-firmware, efibootmgr ja valikulised profiilipaketid."
+msgid "Only packages such as base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr and optional profile packages are installed."
+msgstr "Paigaldatakse ainult sellised paketid nagu base, base-devel, linux, linux-firmware-amdgpu, linux-firmware-atheros, linux-firmware-broadcom, linux-firmware-intel, linux-firmware-mediatek, linux-firmware-nvidia, linux-firmware-other, efibootmgr ja valikulised profiilipaketid."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Kui soovite veebibrauserit, näiteks firefox või chromium, saate selle määrata järgmises viipas."
