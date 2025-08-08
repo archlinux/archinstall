@@ -939,28 +939,28 @@ msgid "Encryption type"
 msgstr "Tipus de xifrat"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Temps d'iteració"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Introduïu el temps d'iteració per al xifrat LUKS (en mil·lisegons)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Un valor més alt incrementarà la seguretat però endarrerirà el temps d'arrancada"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Per defecte: 10000ms, Rang recomanat: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "El temps d'iteració no pot ser buit"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "El temps d'iteració ha de ser d'un mínim de 100ms"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "El temps d'iteració ha de ser d'un màxim de 120000ms"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Si us plau, introduïu un número vàlid"
 
 msgid "Partitions"
 msgstr "Particions"
