@@ -28,31 +28,31 @@ msgid "    Please submit this issue (and file) to https://github.com/archlinux/a
 msgstr "    Por favor, envie este problema (e o arquivo) para: https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr "Você realmente quer abortar?"
+msgstr "Tem certeza de que deseja abortar?"
 
 msgid "And one more time for verification: "
-msgstr "Adicione mais uma vez para verificação: "
+msgstr "Digite novamente para confirmação: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "Gostaria de usar swap em zram?"
+msgstr "Deseja usar zram como swap?"
 
 msgid "Desired hostname for the installation: "
 msgstr "Nome do computador (hostname) desejado para a instalação: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "Nome de usuário requerido para superusuário com privilégios sudo: "
+msgstr "Nome de usuário para a conta administrativa (sudo): "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "Algum usuário adicional para criar (deixe em branco para nenhum): "
+msgstr "Criar usuários adicionais (deixe em branco para nenhum): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Este usuário deve ser um superusuário? (sudoer)?"
+msgstr "Este usuário deve ter previlégios de administrador? (sudo)?"
 
 msgid "Select a timezone"
-msgstr "Selecione um fuso horário"
+msgstr "Selecione o fuso horário"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Prefere usar o GRUB como bootloader ao invés do systemd-boot?"
+msgstr "Deseja usar o GRUB como bootloader em vez do systemd-boot?"
 
 msgid "Choose a bootloader"
 msgstr "Escolha um bootloader"
@@ -64,7 +64,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Se deseja um navegador web, como firefox ou chromium, pode especificá-lo no próximo prompt."
+msgstr "Se quiser um navegador web, como Firefox ou Chromium, especifique-o no próximo prompt."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Digite pacotes adicionais para instalar (separados por espaço, deixe em branco para pular): "
@@ -197,19 +197,19 @@ msgid "Select keyboard layout"
 msgstr "Selecione o layout de teclado"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Selecione uma das regiões de onde baixar os pacotes"
+msgstr "Selecione uma das regiões para baixar os pacotes"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "Selecione um ou mais discos rígidos para usar e configurar"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Para melhor compatibilidade com o seu hardware AMD, talvez queira usar a opção de drivers completamente open-source ou as opções da AMD / ATI."
+msgstr "Para melhor compatibilidade com seu hardware AMD, recomenda-se usar a opção totalmente open source ou as opções AMD / ATI."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Para melhor compatibilidade com o seu hardware Intel, talvez queira usar a opção de drivers completamente open-source ou as opções da Intel.\n"
+msgstr "Para melhor compatibilidade com seu hardware Intel, recomenda-se usar a opção totalmente open source ou as opções Intel.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Para melhor compatibilidade com o seu hardware Nvidia, talvez queira usar o driver proprietário da Nvidia.\n"
+msgstr "Para melhor compatibilidade com seu hardware Nvidia, recomenda-se usar o driver proprietário da Nvidia.\n"
 
 msgid ""
 "\n"
