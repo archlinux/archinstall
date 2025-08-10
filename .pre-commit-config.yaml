@@ -11,7 +11,7 @@ repos:
         # run the linter
       - id: ruff
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
     # general hooks:
     - id: check-added-large-files  # Prevent giant files from being committed
