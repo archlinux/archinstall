@@ -4,5 +4,5 @@ jobs:
     ruff:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+            - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
             - uses: astral-sh/ruff-action@0c50076f12c38c3d0115b7b519b54a91cb9cf0ad  # v3.5.0
