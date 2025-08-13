@@ -30,6 +30,7 @@ from archinstall.lib.models.device import (
 	Unit,
 )
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.packages import installed_package
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import Tui
 
@@ -1175,22 +1176,24 @@ class Installer:
 
 		# TODO: This is a temporary workaround to deal with https://github.com/archlinux/archinstall/pull/3396#issuecomment-2996862019
 		# the systemd_version check can be removed once `--variables=BOOL` is merged into systemd.
-		if pacman_q_systemd := self.pacman.run('-Q systemd').trace_log:
-			systemd_version = int(pacman_q_systemd.split(b' ')[1][:3].decode())
-		else:
-			systemd_version = 257  # This works as a safety workaround for this hot-fix
+		systemd_pkg = installed_package('systemd')
 
-		# Install the boot loader
+		# keep the version as a str as it can be something like 257.8-2
+		if systemd_pkg is not None:
+			systemd_version = systemd_pkg.version
+		else:
+			systemd_version = '257'  # This works as a safety workaround for this hot-fix
+
 		try:
 			# Force EFI variables since bootctl detects arch-chroot
 			# as a container environemnt since v257 and skips them silently.
 			# https://github.com/systemd/systemd/issues/36174
-			if systemd_version >= 258:
+			if systemd_version >= '258':
 				SysCommand(f'arch-chroot {self.target} bootctl --variables=yes {" ".join(bootctl_options)} install')
 			else:
 				SysCommand(f'arch-chroot {self.target} bootctl {" ".join(bootctl_options)} install')
 		except SysCallError:
-			if systemd_version >= 258:
+			if systemd_version >= '258':
 				# Fallback, try creating the boot loader without touching the EFI variables
 				SysCommand(f'arch-chroot {self.target} bootctl --variables=no {" ".join(bootctl_options)} install')
 			else:
