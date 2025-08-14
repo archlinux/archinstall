@@ -118,7 +118,7 @@ def installed_package(package: str) -> LocalPackage | None:
 def check_package_upgrade(package: str) -> str | None:
 	try:
 		for line in Pacman.run(f'-Qu {package}'):
-			return line.decode()
+			return line.decode().strip()
 	except SysCallError:
 		debug(f'Failed to check for package upgrades: {package}')
 
