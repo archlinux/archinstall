@@ -70,7 +70,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 				key='disk_config',
 			),
 			MenuItem(
-				text='LVM (BETA)',
+				text='LVM',
 				action=self._select_lvm_config,
 				value=self._disk_menu_config.lvm_config,
 				preview_action=self._prev_lvm_config,
