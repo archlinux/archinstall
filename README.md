@@ -115,14 +115,6 @@ For an example of a fully scripted, interactive installation please refer to the
 For an example of a fully scripted, automated installation please refer to the example
 [full_automated_installation.py](https://github.com/archlinux/archinstall/blob/master/examples/full_automated_installation.py)
 
-## Unattended installation based on MAC address
-
-Archinstall comes with an [unattended](https://github.com/archlinux/archinstall/blob/master/examples/mac_address_installation.py)
-example which will look for a matching profile for the machine it is being run on, based on any local MAC address.
-For instance, if the machine the code is executed on has the MAC address `52:54:00:12:34:56` it will look for a profile called
-[52-54-00-12-34-56.py](https://github.com/archlinux/archinstall/blob/master/archinstall/default_profiles/tailored.py).
-If it's found, the unattended installation will begin and source that profile as its installation procedure.
-
 # Profiles
 
 `archinstall` comes with a set of pre-configured profiles available for selection during the installation process.
