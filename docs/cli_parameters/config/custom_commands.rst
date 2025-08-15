@@ -11,7 +11,7 @@ The option takes a list of arguments, an example is:
 .. code-block:: json
 
    {
-       "custom-commands": [
+       "custom_commands": [
            "hostname new-hostname"
        ]
    }
