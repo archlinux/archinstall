@@ -274,6 +274,9 @@ class MenuItemGroup:
 		self.focus_item = enabled[index]
 
 	def focus_first(self) -> None:
+		if len(self.items) == 0:
+			return
+
 		first_item: MenuItem | None = self.items[0]
 
 		if first_item and not self._is_selectable(first_item):
@@ -283,6 +286,9 @@ class MenuItemGroup:
 			self.focus_item = first_item
 
 	def focus_last(self) -> None:
+		if len(self.items) == 0:
+			return
+
 		last_item: MenuItem | None = self.items[-1]
 
 		if last_item and not self._is_selectable(last_item):
