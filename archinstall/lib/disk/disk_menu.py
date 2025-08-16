@@ -118,7 +118,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 		disk_layout_conf: DiskLayoutConfiguration | None = self._menu_item_group.find_by_key('disk_config').value
 
 		if disk_layout_conf:
-			return disk_layout_conf.is_default_btrfs()
+			return disk_layout_conf.has_default_btrfs_vols()
 
 		return False
 
