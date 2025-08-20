@@ -939,28 +939,28 @@ msgid "Encryption type"
 msgstr "Тип шифрування"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Час ітерації"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Введіть час ітерації для шифрування LUKS (в мілісекундах)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Вищі числа збільшують безпеку, але замідлюють час запуску"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Стандартно: 10000мс, Рекомендований діапазон - 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Час ітерації не може бути порожнім"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Час ітерації має бути щонайменше 100мс"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Час ітерації має бути не більше 120000мс"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Будь ласка, введіть дійсне число"
 
 msgid "Partitions"
 msgstr "Розділи"
