@@ -945,7 +945,7 @@ msgid "Enter iteration time for LUKS encryption (in milliseconds)"
 msgstr "Введіть час ітерації для шифрування LUKS (в мілісекундах)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr "Вищі числа збільшують безпеку, але замідлюють час запуску"
+msgstr "Вищі значення підвищують безпеку, але сповільнюють час запуску системи"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
 msgstr "Стандартно: 10000мс, Рекомендований діапазон - 1000-60000"
