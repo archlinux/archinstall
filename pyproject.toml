@@ -259,6 +259,3 @@ reportImplicitOverride = true
 reportImportCycles = false
 reportPropertyTypeMismatch = true
 reportShadowedImports = true
-strictDictionaryInference = true
-strictListInference = true
-strictSetInference = true
