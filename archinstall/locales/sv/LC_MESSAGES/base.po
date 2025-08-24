@@ -940,28 +940,28 @@ msgid "Encryption type"
 msgstr "Krypteringstyp"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Iterationstid"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Ange iterationstid för LUKS-kryptering (i millisekunder)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Högre värde ökar säkerheten men fördröjer uppstartstiden"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Standard: 10000ms, Rekommenderat intervall: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Iterationstiden kan inte vara tom"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Iterationstiden måste vara minst 100 ms"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Iterationstiden får vara högst 120000 ms"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Var vänlig ange ett giltigt nummer"
 
 msgid "Partitions"
 msgstr "Partitioner"
