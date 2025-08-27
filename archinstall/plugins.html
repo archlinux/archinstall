@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Plugins &mdash; python-archinstall v2.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=387c4177"></script>
+        <script src="../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="archinstall.Installer" href="Installer.html" />
+    <link rel="prev" title="Python module" href="../examples/python.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            python-archinstall
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Running Archinstall</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installing/guided.html">Guided installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting help</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../help/known_issues.html">Known Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../help/report_bug.html">Report Issues &amp; Bugs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../help/discord.html">Discord</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Archinstall as a library</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installing/python.html">Python library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/python.html">Python module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python Plugins</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#plugin-parameter"><code class="docutils literal notranslate"><span class="pre">--plugin</span></code> parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plugin-discovery">Plugin Discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-s-supported">What’s supported?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-does-it-work">How does it work?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-your-own">Writing your own?</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Installer.html">archinstall.Installer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">python-archinstall</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Python Plugins</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="python-plugins">
+<span id="archinstall-plugins"></span><h1>Python Plugins<a class="headerlink" href="#python-plugins" title="Link to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">archinstall</span></code> supports plugins via two methods.</p>
+<p>First method is directly via the <code class="docutils literal notranslate"><span class="pre">--plugin</span></code> parameter when running as a CLI tool. This will load a specific plugin locally or remotely via a path.</p>
+<p>The second method is via Python’s built in <a class="reference external" href="https://packaging.python.org/en/latest/specifications/entry-points/">plugin discovery</a> using <a class="reference external" href="https://docs.python.org/3/library/importlib.metadata.html#entry-points">entry points</a> categorized as <code class="docutils literal notranslate"><span class="pre">archinstall.plugin</span></code>.</p>
+<section id="plugin-parameter">
+<h2><code class="docutils literal notranslate"><span class="pre">--plugin</span></code> parameter<a class="headerlink" href="#plugin-parameter" title="Link to this heading"></a></h2>
+<p>The parameter has the benefit of being stored in the <code class="docutils literal notranslate"><span class="pre">--conf</span></code> state, meaning when re-running an installation — the plugin will automatically be loaded.
+It’s limitation is that it requires an initial path to be known and written and be cumbersome.</p>
+</section>
+<section id="plugin-discovery">
+<h2>Plugin Discovery<a class="headerlink" href="#plugin-discovery" title="Link to this heading"></a></h2>
+<p>This method allows for multiple plugins to be loaded with the drawback that they have to be installed beforehand on the system running <code class="docutils literal notranslate"><span class="pre">archinstall</span></code>.
+This mainly targets those who build their own ISO’s and package specific setups for their needs.</p>
+</section>
+<section id="what-s-supported">
+<h2>What’s supported?<a class="headerlink" href="#what-s-supported" title="Link to this heading"></a></h2>
+<p>Currently the documentation for this is scarse. Until that is resolved, the best way to find supported features is to search the source code for <a class="reference external" href="https://github.com/search?q=repo%3Aarchlinux%2Farchinstall+%22plugin.on_%22&amp;type=code">plugin.on_</a> as this will give a clear indication of which calls are made to plugins.</p>
+</section>
+<section id="how-does-it-work">
+<h2>How does it work?<a class="headerlink" href="#how-does-it-work" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">archinstall</span></code> plugins use a discovery-driven approach where plugins are queried for certain functions.
+As an example, if a plugin has the following function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">on_pacstrap</span><span class="p">(</span><span class="o">*</span><span class="n">packages</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>The function <code class="code docutils literal notranslate"><span class="pre">archinstall.Pacman().strap([&quot;some</span> <span class="pre">packages&quot;])</span></code> is hardcoded to iterate plugins and look for <code class="code docutils literal notranslate"><span class="pre">on_pacstrap</span></code> in the plugin.
+If the function exists, <code class="code docutils literal notranslate"><span class="pre">.strap()</span></code> will call the plugin’s function and replace the initial package list with the result from the plugin.</p>
+<p>The best way to document these calls is currently undecided, as it’s hard to document this behavior dynamically.</p>
+</section>
+<section id="writing-your-own">
+<h2>Writing your own?<a class="headerlink" href="#writing-your-own" title="Link to this heading"></a></h2>
+<p>The simplest way currently is to look at a reference implementation or the community. Two of these are:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/torxed/archinstall-aur">torxed/archinstall-aur</a></p></li>
+<li><p><a class="reference external" href="https://github.com/phisch/archinstall-aur">phisch/archinstall-aur</a></p></li>
+</ul>
+<p>And search for <a class="reference external" href="https://github.com/search?q=repo%3Aarchlinux%2Farchinstall+%22plugin.on_%22&amp;type=code">plugin.on_</a> in the code base to find what <code class="docutils literal notranslate"><span class="pre">archinstall</span></code> will look for. PR’s are welcome to widen the support for this.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../examples/python.html" class="btn btn-neutral float-left" title="Python module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Installer.html" class="btn btn-neutral float-right" title="archinstall.Installer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Anton Hvornum.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
