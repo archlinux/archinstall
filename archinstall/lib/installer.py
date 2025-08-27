@@ -957,6 +957,7 @@ class Installer:
 			if bootloader and bootloader == Bootloader.Grub:
 				self.pacman.strap('grub-btrfs')
 				self.pacman.strap('inotify-tools')
+				self._configure_grub_btrfsd()
 				self.enable_service('grub-btrfsd.service')
 
 	def setup_swap(self, kind: str = 'zram') -> None:
@@ -996,6 +997,27 @@ class Installer:
 				if root := mod.get_root_partition():
 					return root
 		return None
+
+	def _configure_grub_btrfsd(self) -> None:
+		# See https://github.com/Antynea/grub-btrfs?tab=readme-ov-file#-using-timeshift-with-systemd
+		debug('Configuring grub-btrfsd service')
+
+		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
+		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
+		systemd_dir.mkdir(parents=True, exist_ok=True)
+
+		override_conf = systemd_dir / 'override.conf'
+
+		config_content = textwrap.dedent(
+			"""
+			[Service]
+			ExecStart=
+			ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
+			"""
+		)
+
+		override_conf.write_text(config_content)
+		override_conf.chmod(0o644)
 
 	def _get_luks_uuid_from_mapper_dev(self, mapper_dev_path: Path) -> str:
 		lsblk_info = get_lsblk_info(mapper_dev_path, reverse=True, full_dev_path=True)
