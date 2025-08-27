@@ -193,19 +193,20 @@ class DiskLayoutConfiguration:
 		if (enc_config := disk_config.get('disk_encryption', None)) is not None:
 			config.disk_encryption = DiskEncryption.parse_arg(config, enc_config, enc_password)
 
-		if config.is_default_btrfs():
+		if config.has_default_btrfs_vols():
 			if (btrfs_arg := disk_config.get('btrfs_options', None)) is not None:
 				config.btrfs_options = BtrfsOptions.parse_arg(btrfs_arg)
 
 		return config
 
-	def is_default_btrfs(self) -> bool:
+	def has_default_btrfs_vols(self) -> bool:
 		if self.config_type == DiskLayoutType.Default:
 			for mod in self.device_modifications:
 				for part in mod.partitions:
 					if part.is_create_or_modify():
 						if part.fs_type == FilesystemType.Btrfs:
-							return True
+							if len(part.btrfs_subvols) > 0:
+								return True
 
 		return False
 
