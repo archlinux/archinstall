@@ -120,8 +120,8 @@ def installed_package(package: str) -> LocalPackage | None:
 @lru_cache
 def check_package_upgrade(package: str) -> str | None:
 	try:
-		upgrade = Pacman.run(f'-Qu {package}').decode()
-		return upgrade
+		for line in Pacman.run(f'-Qu {package}'):
+			return line.decode().strip()
 	except SysCallError:
 		debug(f'Failed to check for package upgrades: {package}')
 
