@@ -8,8 +8,8 @@
 # Arch Installer
 [![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
-Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
-The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium)*.
+Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) o‘rnatuvchisi o‘ziga xos yondashuv bilan.  
+O‘rnatuvchi shuningdek, Arch Linux’ni o‘rnatish va o‘rnatilgan tizim ichidagi xizmatlar, paketlar hamda boshqa narsalarni boshqarish uchun Python kutubxonasi sifatida ham xizmat qiladi *(odatda live medium’dan)*.
 
 * archinstall [discord](https://discord.gg/aDeMffrxNg) сервери
 * archinstall [#archinstall:matrix.org](https://matrix.to/#/#archinstall:matrix.org) Matrix канали
