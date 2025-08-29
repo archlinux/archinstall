@@ -2,7 +2,7 @@
 <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 
 <!-- Language Switcher -->
-[🇬🇧 English](README_EN.md) | [🇷🇺 Русский](README_RU.md) | [🇺🇿 O'zbekcha](README_UZ.md)
+[🇬🇧 English](README.md) | [🇷🇺 Русский](README.ru.md) | [🇺🇿 O'zbekcha](README.uz.md)
 
 <!-- </div> -->
 # Arch Installer
