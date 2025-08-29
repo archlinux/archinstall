@@ -1,6 +1,9 @@
 <!-- <div align="center"> -->
 <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 
+<!-- Language Switcher -->
+[🇬🇧 English](README_EN.md) | [🇷🇺 Русский](README_RU.md) | [🇺🇿 O'zbekcha](README_UZ.md)
+
 <!-- </div> -->
 # Arch Installer
 [![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
