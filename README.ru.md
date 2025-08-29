@@ -19,7 +19,7 @@
 # Установка и использование
 ```shell
 sudo pacman -S archinstall
-
+```
 Альтернативные способы установки: клонировать репозиторий через `git clone` или использовать `pip install --upgrade archinstall`.
 
 ## Запуск [навигационного](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) установщика
