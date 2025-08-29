@@ -9,7 +9,7 @@
 [![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
 Простой и удобный [установщик Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) с дополнительными возможностями.  
-Установщик также может использоваться как **Python-библиотека** для установки Arch Linux и управления сервисами, пакетами и другими элементами внутри установленной системы *(обычно из live-среды)*.
+Установщик также может использоваться как Python-библиотека для установки Arch Linux и управления сервисами, пакетами и другими элементами внутри установленной системы *(обычно из live-среды)*.
 
 * archinstall [discord](https://discord.gg/aDeMffrxNg) сервер
 * archinstall [#archinstall:matrix.org](https://matrix.to/#/#archinstall:matrix.org) канал Matrix
