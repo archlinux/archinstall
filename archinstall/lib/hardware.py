@@ -244,7 +244,7 @@ class SysInfo:
 			with open('/sys/devices/virtual/dmi/id/sys_vendor') as vendor:
 				return vendor.read().strip()
 		except FileNotFoundError:
-			return "undefined"
+			return None
 
 	@staticmethod
 	def product_name() -> str:
@@ -252,7 +252,7 @@ class SysInfo:
 			with open('/sys/devices/virtual/dmi/id/product_name') as product:
 				return product.read().strip()
 		except FileNotFoundError:
-			return "undefined"
+			return None
 
 	@staticmethod
 	def mem_available() -> int:
