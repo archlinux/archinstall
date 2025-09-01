@@ -239,7 +239,7 @@ class SysInfo:
 		return _sys_info.cpu_info.get('model name', None)
 
 	@staticmethod
-	def sys_vendor() -> str:
+	def sys_vendor() -> str | None:
 		try:
 			with open('/sys/devices/virtual/dmi/id/sys_vendor') as vendor:
 				return vendor.read().strip()
@@ -247,7 +247,7 @@ class SysInfo:
 			return None
 
 	@staticmethod
-	def product_name() -> str:
+	def product_name() -> str | None:
 		try:
 			with open('/sys/devices/virtual/dmi/id/product_name') as product:
 				return product.read().strip()
