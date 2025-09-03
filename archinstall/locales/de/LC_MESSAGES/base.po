@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.6\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Eine Logdatei wurde hier erstellt: {} {}"
@@ -939,28 +939,28 @@ msgid "Encryption type"
 msgstr "Verschlüsselungstyp"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Entschlüsselungsdauer"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Geben Sie die Entschlüsselungsdauer für LUKS in Millisekunden an"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Höhere Werte verbessern die Sicherheit, verlangsamen aber den Systemstart"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Standard: 10000 ms, Empfohlen: 1000 ms - 60000 ms"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Die angegebene Entschlüsselungsdauer darf nicht leer sein"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Die Entschlüsselungsdauer muss mindestens 100 ms betragen"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Die Entschlüsselungsdauer darf maximal 120000 ms betragen"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Bitte geben Sie eine gültige Zahl ein"
 
 msgid "Partitions"
 msgstr "Partitionen"
@@ -1374,14 +1374,14 @@ msgstr ""
 "Option auswählen, um Sway Zugriff auf deine Hardware zu geben"
 
 msgid "Seat access"
-msgstr ""
+msgstr "Seat-Zugriff"
 
 #, fuzzy
 msgid "Mountpoint"
 msgstr "Einhängeort: "
 
 msgid "HSM"
-msgstr ""
+msgstr "HSM"
 
 #, fuzzy
 msgid "Enter disk encryption password (leave blank for no encryption)"
@@ -1419,7 +1419,7 @@ msgid "Disk configuration type"
 msgstr "Laufwerkskonfiguration"
 
 msgid "Root mount directory"
-msgstr ""
+msgstr "Einhängeverzeichnis der Root-Partition"
 
 #, fuzzy
 msgid "Select language"
@@ -1430,10 +1430,10 @@ msgid "Write additional packages to install (space separated, leave blank to ski
 msgstr "Schreiben Sie zusätzliche Pakete die installiert werden sollen (mit einem Leerzeichen getrennt, zum Überspringen leer lassen): "
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "Ungültige Anzahl an Downloads"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "Anzahl der Downloads"
 
 #, fuzzy
 msgid "The username you entered is invalid"
@@ -1452,10 +1452,10 @@ msgid "Interfaces"
 msgstr "Verbindung hinzufügen"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "Sie müssen im IP-Konfigurationsmodus eine gültige IP-Adresse eingeben"
 
 msgid "Modes"
-msgstr ""
+msgstr "Modi"
 
 msgid "IP address"
 msgstr "IP-Adresse"
@@ -1465,7 +1465,7 @@ msgid "Enter your gateway (router) IP address (leave blank for none)"
 msgstr "Bitte geben Sie das Gateway (Router) IP-Adresse ein (leer lassen für keines): "
 
 msgid "Gateway address"
-msgstr ""
+msgstr "Gateway-Adresse"
 
 #, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
@@ -1484,10 +1484,10 @@ msgid "Kernel"
 msgstr "Kernel"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "UEFI wurde nicht erkannt. Einige Optionen wurden deaktiviert"
 
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
@@ -1517,7 +1517,7 @@ msgid "Would you like to continue?"
 msgstr "Möchten sie btrfs Komprimierung verwenden?"
 
 msgid "Directory"
-msgstr ""
+msgstr "Verzeichnis"
 
 #, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
@@ -1533,10 +1533,10 @@ msgstr ""
 "{}"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Aktiviert"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Deaktiviert"
 
 #, fuzzy
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
@@ -1547,7 +1547,7 @@ msgid "Mirror name"
 msgstr "Spiegelserver-Region"
 
 msgid "Url"
-msgstr ""
+msgstr "URL"
 
 #, fuzzy
 msgid "Select signature check"
@@ -1572,13 +1572,13 @@ msgid "Additional repositories"
 msgstr "Zus. Repositories"
 
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr ""
+msgstr "Swap auf zram"
 
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #, fuzzy
 msgid "Signature check"
@@ -1601,17 +1601,17 @@ msgid "HSM device"
 msgstr "Gerät"
 
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "Einige Pakete konnten nicht in den Repositorien gefunden werden"
 
 #, fuzzy
 msgid "User"
 msgstr "Benutzername: "
 
 msgid "The specified configuration will be applied"
-msgstr ""
+msgstr "Die festgelegte Konfiguration wird angewendet"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Löschen"
 
 #, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
@@ -1622,7 +1622,7 @@ msgid "Loading packages..."
 msgstr "Zusätzliche Pakete"
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
+msgstr "Wählen Sie Pakete aus, die Sie zusätzlich installieren möchten"
 
 #, fuzzy
 msgid "Add a custom repository"
@@ -1653,7 +1653,7 @@ msgid "Delete custom server"
 msgstr "Benutzerdefinierten Spiegelserver löschen"
 
 msgid "Server url"
-msgstr ""
+msgstr "Server-URL"
 
 #, fuzzy
 msgid "Select regions"
@@ -1688,40 +1688,40 @@ msgid "Custom repositories"
 msgstr "Zus. Repositories"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Es werden nur ASCII-Zeichen unterstützt"
 
 msgid "Show help"
-msgstr ""
+msgstr "Hilfe anzeigen"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Hilfe beenden"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Vorschau nach oben scrollen"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Vorschau nach unten scrollen"
 
 msgid "Move up"
-msgstr ""
+msgstr "Nach oben bewegen"
 
 msgid "Move down"
-msgstr ""
+msgstr "Nach unten bewegen"
 
 msgid "Move right"
-msgstr ""
+msgstr "Nach rechts bewegen"
 
 msgid "Move left"
-msgstr ""
+msgstr "Nach links bewegen"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Zum Eintrag springen"
 
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Auswahl überspringen (Falls verfügbar)"
 
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Auswahl zurücksetzen (Falls verfügbar)"
 
 #, fuzzy
 msgid "Select on single select"
@@ -1732,17 +1732,17 @@ msgid "Select on multi select"
 msgstr "Bitte wählen Sie eine Zeitzone aus"
 
 msgid "Reset"
-msgstr ""
+msgstr "Zurücksetzen"
 
 #, fuzzy
 msgid "Skip selection menu"
 msgstr "Wählen Sie einen Ausführmodus"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Suchmodus starten:"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Suchmodus beenden"
 
 #, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
@@ -1771,7 +1771,7 @@ msgid "Mark/Unmark as ESP"
 msgstr "Als bootbar makieren bzw. nicht makieren"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Paketgruppe:"
 
 #, fuzzy
 msgid "Exit archinstall"
@@ -1786,7 +1786,7 @@ msgid "chroot into installation for post-installation configurations"
 msgstr "Möchten Sie in das neu installierte System über chroot zugreifen um noch weitere, manuelle Konfigurationen vorzunehmen?"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Installation abgeschlossen"
 
 #, fuzzy
 msgid "What would you like to do next?"
