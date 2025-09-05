@@ -1848,3 +1848,18 @@ msgstr ""
 msgid ""
 "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr ""
+
+msgid "Never"
+msgstr ""
+
+msgid "Optional"
+msgstr ""
+
+msgid "Required"
+msgstr ""
+
+msgid "Window Manager"
+msgstr ""
+
+msgid "Desktop Environment"
+msgstr ""

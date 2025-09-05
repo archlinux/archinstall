@@ -19,8 +19,8 @@ class ProfileType(Enum):
 	Custom = 'Custom'
 	# detailed selection default_profiles
 	ServerType = 'ServerType'
-	WindowMgr = 'Window Manager'
-	DesktopEnv = 'Desktop Environment'
+	WindowMgr = tr('Window Manager')
+	DesktopEnv = tr('Desktop Environment')
 	CustomType = 'CustomType'
 	# special things
 	Tailored = 'Tailored'

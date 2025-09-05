@@ -13,6 +13,8 @@ from ..models.packages import Repository
 from ..networking import DownloadTimer, ping
 from ..output import debug
 
+from archinstall.lib.translationhandler import tr
+
 
 class MirrorStatusEntryV3(BaseModel):
 	url: str
@@ -147,9 +149,9 @@ class MirrorRegion:
 
 
 class SignCheck(Enum):
-	Never = 'Never'
-	Optional = 'Optional'
-	Required = 'Required'
+	Never = tr('Never')
+	Optional = tr('Optional')
+	Required = tr('Required')
 
 
 class SignOption(Enum):

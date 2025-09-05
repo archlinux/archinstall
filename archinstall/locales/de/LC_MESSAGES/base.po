@@ -1275,7 +1275,7 @@ msgid "Would you like to use compression or disable CoW?"
 msgstr "Möchten Sie Komprimierung verwenden oder CoW deaktivieren?"
 
 msgid "Use compression"
-msgstr "Kompriemirung verwenden"
+msgstr "Komprimierung verwenden"
 
 msgid "Disable Copy-on-Write"
 msgstr "Copy-on-Write deaktivieren"
@@ -1739,7 +1739,7 @@ msgid "Applications"
 msgstr "Anwendungen"
 
 msgid "U2F login method: "
-msgstr "U2F-Login-Methode"
+msgstr "U2F-Login-Methode: "
 
 msgid "Passwordless sudo: "
 msgstr "Sudo ohne Passwort: "
@@ -1800,3 +1800,18 @@ msgstr "Richte U2F-Gerät für den Benutzer {} ein"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Sie müssen möglicherweise Ihre PIN eingeben und danach Ihr U2F-Gerät berühren, um es zu registrieren"
+
+msgid "Never"
+msgstr "Nie"
+
+msgid "Optional"
+msgstr "Optional"
+
+msgid "Required"
+msgstr "Benötigt"
+
+msgid "Window Manager"
+msgstr "Fenstermanager"
+
+msgid "Desktop Environment"
+msgstr "Desktopumgebung"
