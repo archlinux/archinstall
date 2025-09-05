@@ -37,7 +37,7 @@ dev = [
     "ruff==0.12.11",
     "pylint==3.3.8",
     "pylint-pydantic==0.3.5",
-    "pytest==8.4.1",
+    "pytest==8.4.2",
 ]
 doc = ["sphinx"]
 
