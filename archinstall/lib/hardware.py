@@ -56,13 +56,13 @@ class GfxPackage(Enum):
 
 
 class GfxDriver(Enum):
-	AllOpenSource = 'All open-source'
-	AmdOpenSource = 'AMD / ATI (open-source)'
-	IntelOpenSource = 'Intel (open-source)'
-	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
-	NvidiaOpenSource = 'Nvidia (open-source nouveau driver)'
-	NvidiaProprietary = 'Nvidia (proprietary)'
-	VMOpenSource = 'VirtualBox (open-source)'
+	AllOpenSource = tr('All open-source')
+	AmdOpenSource = tr('AMD / ATI (open-source)')
+	IntelOpenSource = tr('Intel (open-source)')
+	NvidiaOpenKernel = tr('Nvidia (open kernel module for newer GPUs, Turing+)')
+	NvidiaOpenSource = tr('Nvidia (open-source nouveau driver)')
+	NvidiaProprietary = tr('Nvidia (proprietary)')
+	VMOpenSource = tr('VirtualBox (open-source)')
 
 	def is_nvidia(self) -> bool:
 		match self:

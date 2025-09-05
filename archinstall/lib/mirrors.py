@@ -124,7 +124,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 				raise ValueError('Unhandled return type')
 
 		header += f'{tr("Signature check")}: {sign_check.value}\n'
-		prompt = f'{header}\n' + 'Select signature option'
+		prompt = f'{header}\n' + tr('Select signature option')
 
 		sign_opt_items = [MenuItem(s.value, value=s.value) for s in SignOption]
 		group = MenuItemGroup(sign_opt_items, sort_items=False)
