@@ -164,7 +164,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Bitte wählen Sie aus, auf welcher Partition ein Dateisystem erstelt werden soll"
+"Bitte wählen Sie aus, auf welcher Partition ein Dateisystem erstellt werden soll"
 
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Bitte geben Sie einen gewünschten Dateisystemtyp für die Partition ein: "
@@ -212,7 +212,7 @@ msgstr ""
 "Bitte wählen Sie einen Grafikkartentreiber aus oder leer lassen, um alle quelloffenen Treiber zu installieren"
 
 msgid "All open-source (default)"
-msgstr "Alle Quelloffene (Standard)"
+msgstr "Alle quelloffene (Standard)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "Bitte wählen Sie welche Kernel benutzt werden sollen oder leer lassen für Standard \"{}\""
@@ -483,7 +483,7 @@ msgid "No network configuration"
 msgstr "Keine Netzwerkkonfiguration"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Bitte wählen Sie subvolumes für die Btrfs Partition"
+msgstr "Bitte wählen Sie Subvolumen für die Btrfs-Partition"
 
 msgid ""
 "{}\n"
@@ -495,7 +495,7 @@ msgstr ""
 "Bitte wählen Sie, auf welcher Partition Subvolumes eingerichtet werden sollen"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr "Bearbeiten von Btrfs subvolumes für die aktuelle Partition"
+msgstr "Bearbeiten von Btrfs-Subvolumen für die aktuelle Partition"
 
 msgid "No configuration"
 msgstr "Keine Konfiguration"
@@ -562,19 +562,19 @@ msgstr ""
 " Geben Sie die gewünschten Werte für ein neues Subvolume an \n"
 
 msgid "Subvolume name "
-msgstr "Subvolume name "
+msgstr "Subvolume-Name "
 
 msgid "Subvolume mountpoint"
-msgstr "Subvolume Einhängeort"
+msgstr "Subvolume-Einhängeort"
 
 msgid "Subvolume options"
-msgstr "Subvolume Optionen"
+msgstr "Subvolume-Optionen"
 
 msgid "Save"
 msgstr "Speichern"
 
 msgid "Subvolume name :"
-msgstr "Subvolume name:"
+msgstr "Subvolume-Name:"
 
 msgid "Select a mount point :"
 msgstr "Bitte wählen Sie einen Einhängeort aus:"
@@ -590,10 +590,10 @@ msgid "[!] A log file has been created here: {}"
 msgstr "[!] Eine Logdatei wurde hier erstellt: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Möchten Sie btrfs Subvolumen mit vorgebener Struktur verwenden?"
+msgstr "Möchten Sie Btrfs-Subvolumen mit vorgegebener Struktur verwenden?"
 
 msgid "Would you like to use BTRFS compression?"
-msgstr "Möchten sie btrfs Komprimierung verwenden?"
+msgstr "Möchten sie Btrfs-Komprimierung verwenden?"
 
 msgid "Would you like to create a separate partition for /home?"
 msgstr "Möchten Sie eine separate Partition für /home erstellen?"
@@ -626,7 +626,7 @@ msgid "No iface specified for manual configuration"
 msgstr "Keine Verbindung angegeben für eine manuelle Konfiguration"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr "Manuelle Konfiguration für Netzwerverbindung mit keinem auto DHCP benötigt eine IP Addresse"
+msgstr "Manuelle Konfiguration für Netzwerkverbindung ohne automatisches DHCP benötigt eine IP Addresse"
 
 msgid "Add interface"
 msgstr "Verbindung hinzufügen"
@@ -644,13 +644,13 @@ msgid "Manual configuration"
 msgstr "Manuelle Konfiguration"
 
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Partition als komprimiert makieren bzw. nicht komprimiert makieren (nur btrfs)"
+msgstr "Partition als komprimiert markieren bzw. nicht komprimiert markieren (nur Btrfs)"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
 msgstr "Das gewählte Passwort ist schwach, möchten Sie trotzdem fortfahren?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Auswahl von Desktopumgebungen und tiling Fenstermanagern, z.B. gnome, kde, sway"
+msgstr "Auswahl von Desktopumgebungen und kachelnden Fenstermanagern, z.B. GNOME, KDE, Sway"
 
 msgid "Select your desired desktop environment"
 msgstr "Wählen Sie ihre gewünschte Desktopumgebung aus"
@@ -793,7 +793,7 @@ msgid "Configured {} interfaces"
 msgstr "{} Schnittstellen konfiguriert"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Diese Option setzt die Nummer an parallelen Downloads, die während der Installtion durchgeführt werden"
+msgstr "Diese Option setzt die Nummer an parallelen Downloads, die während der Installation durchgeführt werden"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
@@ -801,7 +801,7 @@ msgid ""
 "Note:"
 msgstr ""
 "Geben Sie die Nummer an parallelen Downloads an.\n"
-" (Wert zwischen 1 und {max_downloads})\n"
+" (Wert zwischen 1 und {})\n"
 "Achtung:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
@@ -846,7 +846,7 @@ msgstr "Wählen Sie einen Ausführmodus"
 
 #, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
-msgstr "Konnte Profil nicht von der angegebenen URL fetchen: {}"
+msgstr "Konnte Profil nicht von der angegebenen URL holen: {}"
 
 #, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
@@ -888,16 +888,16 @@ msgid "Assign mountpoint"
 msgstr "Einhängeort für Partition zuweisen"
 
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr "Markieren bzw. nicht makieren zum formatieren (alle Daten werden gelöscht)"
+msgstr "Markieren bzw. nicht markieren zum formatieren (alle Daten werden gelöscht)"
 
 msgid "Mark/Unmark as bootable"
-msgstr "Als bootbar makieren bzw. nicht makieren"
+msgstr "Als bootbar markieren bzw. nicht markieren"
 
 msgid "Change filesystem"
 msgstr "Dateisystem ändern"
 
 msgid "Mark/Unmark as compressed"
-msgstr "Als komprimiert makieren bzw. als nicht komprimiert makieren"
+msgstr "Als komprimiert markieren bzw. als nicht komprimiert markieren"
 
 msgid "Set subvolumes"
 msgstr "Subvolumes setzen"
@@ -1068,7 +1068,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Bitte wählen sie einen Grafiktreiber aus oder leer lassen um alle Quelloffenen Treiber zu installieren"
+"Bitte wählen sie einen Grafiktreiber aus oder leer lassen um alle quelloffenen Treiber zu installieren"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Sway benötigt Zugriff auf ihren Seat (Sammlung von Hardwaregeräten wie Tastatur, Maus, usw.)"
@@ -1251,22 +1251,22 @@ msgid "Unified kernel images"
 msgstr "Vereinigte Kernel-Images"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr "Warte auf fertigstellung Zeitsynchronisierung (timedatectl show)."
+msgstr "Warte auf Fertigstellung der Zeitsynchronisierung (timedatectl show)."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "Zeitsynchronisierung wird nicht fertig, während du wartest, lies dir die Dokumentation für Umgehungen dieses Fehlers durch: https://archinstall.readthedocs.io/"
+msgstr "Zeitsynchronisierung wird nicht fertig. Während Sie warten, lesen Sie die Dokumentation für Umgehungen dieses Fehlers durch: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr "Überspringe warten auf die Automatische Zeitsynchronisierung (dies kann Fehler verursachen, wenn die Zeit während der Installation nicht synchronisiert ist.)"
+msgstr "Überspringe das Warten auf die automatische Zeitsynchronisierung (dies kann Fehler verursachen, wenn die Zeit während der Installation nicht synchronisiert ist.)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr "Warte auf Arch Linux keyring synchronisation (archlinux-keyring-wkd-sync)."
+msgstr "Warte auf die Synchronisierung des Arch Linux-Keyrings (archlinux-keyring-wkd-sync)."
 
 msgid "Selected profiles: "
 msgstr "Ausgewählte Profile: "
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "Zeitsynchronisierung wird nicht fertig, während du wartest, lies dir die Dokumentation für Umgehungen dieses Fehlers durch: https://archinstall.readthedocs.io/"
+msgstr "Die Zeitsynchronisierung wird nicht fertig. während Sie warten, lesen Sie die Dokumentation für Umgehungen dieses Fehlers durch: https://archinstall.readthedocs.io/"
 
 msgid "Mark/Unmark as nodatacow"
 msgstr "Als nodatacow markieren bzw. nicht markieren"
@@ -1746,7 +1746,7 @@ msgstr "Sudo ohne Passwort: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr "Brtfs-Snapshot-Typ: {}"
+msgstr "Btrfs-Snapshot-Typ: {}"
 
 msgid "Syncing the system..."
 msgstr "Synchronisiere das System..."
