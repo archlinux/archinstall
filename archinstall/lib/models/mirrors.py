@@ -9,11 +9,11 @@ from typing import Any, TypedDict, override
 
 from pydantic import BaseModel, field_validator, model_validator
 
+from archinstall.lib.translationhandler import tr
+
 from ..models.packages import Repository
 from ..networking import DownloadTimer, ping
 from ..output import debug
-
-from archinstall.lib.translationhandler import tr
 
 
 class MirrorStatusEntryV3(BaseModel):
