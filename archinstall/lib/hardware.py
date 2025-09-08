@@ -239,14 +239,20 @@ class SysInfo:
 		return _sys_info.cpu_info.get('model name', None)
 
 	@staticmethod
-	def sys_vendor() -> str:
-		with open('/sys/devices/virtual/dmi/id/sys_vendor') as vendor:
-			return vendor.read().strip()
+	def sys_vendor() -> str | None:
+		try:
+			with open('/sys/devices/virtual/dmi/id/sys_vendor') as vendor:
+				return vendor.read().strip()
+		except FileNotFoundError:
+			return None
 
 	@staticmethod
-	def product_name() -> str:
-		with open('/sys/devices/virtual/dmi/id/product_name') as product:
-			return product.read().strip()
+	def product_name() -> str | None:
+		try:
+			with open('/sys/devices/virtual/dmi/id/product_name') as product:
+				return product.read().strip()
+		except FileNotFoundError:
+			return None
 
 	@staticmethod
 	def mem_available() -> int:
