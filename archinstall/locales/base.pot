@@ -1808,27 +1808,6 @@ msgstr ""
 msgid "Snapshot type: {}"
 msgstr ""
 
-msgid "All open-source"
-msgstr ""
-
-msgid "AMD / ATI (open-source)"
-msgstr ""
-
-msgid "Intel (open-source)"
-msgstr ""
-
-msgid "Nvidia (open kernel module for newer GPUs, Turing+)"
-msgstr ""
-
-msgid "Nvidia (open-source nouveau driver)"
-msgstr ""
-
-msgid "Nvidia (proprietary)"
-msgstr ""
-
-msgid "VirtualBox (open-source)"
-msgstr ""
-
 msgid "U2F login setup"
 msgstr ""
 
@@ -1847,19 +1826,4 @@ msgstr ""
 
 msgid ""
 "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
-
-msgid "Never"
-msgstr ""
-
-msgid "Optional"
-msgstr ""
-
-msgid "Required"
-msgstr ""
-
-msgid "Window Manager"
-msgstr ""
-
-msgid "Desktop Environment"
 msgstr ""

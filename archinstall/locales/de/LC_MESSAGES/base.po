@@ -1761,27 +1761,6 @@ msgstr "Snapshot-Typ"
 msgid "Snapshot type: {}"
 msgstr "Snapshot-Typ: {}"
 
-msgid "All open-source"
-msgstr "Alle quelloffene"
-
-msgid "AMD / ATI (open-source)"
-msgstr "AMD / ATI (quelloffen)"
-
-msgid "Intel (open-source)"
-msgstr "Intel (quelloffen)"
-
-msgid "Nvidia (open kernel module for newer GPUs, Turing+)"
-msgstr "Nvidia (offene Kernelmodule für neuere GPUs, Turing+)"
-
-msgid "Nvidia (open-source nouveau driver)"
-msgstr "Nvidia (quelloffener nouveau-Treiber)"
-
-msgid "Nvidia (proprietary)"
-msgstr "Nvidia (proprietär)"
-
-msgid "VirtualBox (open-source)"
-msgstr "VirtualBox (quelloffen)"
-
 msgid "U2F login setup"
 msgstr "U2F Login-Einrichtung"
 
@@ -1801,17 +1780,38 @@ msgstr "Richte U2F-Gerät für den Benutzer {} ein"
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Sie müssen möglicherweise Ihre PIN eingeben und danach Ihr U2F-Gerät berühren, um es zu registrieren"
 
-msgid "Never"
-msgstr "Nie"
+#~ msgid "All open-source"
+#~ msgstr "Alle quelloffene"
 
-msgid "Optional"
-msgstr "Optional"
+#~ msgid "AMD / ATI (open-source)"
+#~ msgstr "AMD / ATI (quelloffen)"
 
-msgid "Required"
-msgstr "Benötigt"
+#~ msgid "Intel (open-source)"
+#~ msgstr "Intel (quelloffen)"
 
-msgid "Window Manager"
-msgstr "Fenstermanager"
+#~ msgid "Nvidia (open kernel module for newer GPUs, Turing+)"
+#~ msgstr "Nvidia (offene Kernelmodule für neuere GPUs, Turing+)"
 
-msgid "Desktop Environment"
-msgstr "Desktopumgebung"
+#~ msgid "Nvidia (open-source nouveau driver)"
+#~ msgstr "Nvidia (quelloffener nouveau-Treiber)"
+
+#~ msgid "Nvidia (proprietary)"
+#~ msgstr "Nvidia (proprietär)"
+
+#~ msgid "VirtualBox (open-source)"
+#~ msgstr "VirtualBox (quelloffen)"
+
+#~ msgid "Never"
+#~ msgstr "Nie"
+
+#~ msgid "Optional"
+#~ msgstr "Optional"
+
+#~ msgid "Required"
+#~ msgstr "Benötigt"
+
+#~ msgid "Window Manager"
+#~ msgstr "Fenstermanager"
+
+#~ msgid "Desktop Environment"
+#~ msgstr "Desktopumgebung"

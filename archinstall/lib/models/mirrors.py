@@ -9,8 +9,6 @@ from typing import Any, TypedDict, override
 
 from pydantic import BaseModel, field_validator, model_validator
 
-from archinstall.lib.translationhandler import tr
-
 from ..models.packages import Repository
 from ..networking import DownloadTimer, ping
 from ..output import debug
@@ -149,9 +147,9 @@ class MirrorRegion:
 
 
 class SignCheck(Enum):
-	Never = tr('Never')
-	Optional = tr('Optional')
-	Required = tr('Required')
+	Never = 'Never'
+	Optional = 'Optional'
+	Required = 'Required'
 
 
 class SignOption(Enum):

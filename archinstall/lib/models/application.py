@@ -2,15 +2,13 @@ from dataclasses import dataclass
 from enum import StrEnum, auto
 from typing import Any, NotRequired, TypedDict
 
-from archinstall.lib.translationhandler import tr
-
 
 class BluetoothConfigSerialization(TypedDict):
 	enabled: bool
 
 
 class Audio(StrEnum):
-	NO_AUDIO = tr('No audio server')
+	NO_AUDIO = 'No audio server'
 	PIPEWIRE = auto()
 	PULSEAUDIO = auto()
 
