@@ -145,7 +145,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Sélectionner la partition à marquer comme chiffrée"
+"Sélectionner la partition à marquer comme encrypté"
 
 msgid ""
 "{}\n"
@@ -327,7 +327,7 @@ msgid "Mark/Unmark a partition to be formatted (wipes data)"
 msgstr "Marquer/Démarquer une partition à formater (efface les données)"
 
 msgid "Mark/Unmark a partition as encrypted"
-msgstr "Marquer/Démarquer une partition comme chiffrée"
+msgstr "Marquer/Démarquer une partition comme encrypté"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
 msgstr "Marquer/Démarquer une partition comme amorçable (automatique pour /boot)"
@@ -467,7 +467,7 @@ msgid ""
 "Define a new user\n"
 msgstr ""
 "\n"
-"Définir un nouvel utilisateur\n"
+"Définir un nouveau utilisateur\n"
 
 msgid "User Name : "
 msgstr "Nom d'utilisateur : "
@@ -660,7 +660,7 @@ msgid "Provides a selection of various server packages to install and enable, e.
 msgstr "Fournit une sélection de divers paquets de serveur à installer et à activer, par ex. httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Choisir les serveurs à installer, s'il n'y en a pas, une installation minimale sera effectuée"
+msgstr "Choisir les serveurs à installer, s'il n'y en a pas, alors une installation minimale sera effectuée"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Installe un système minimal ainsi que les pilotes graphiques et xorg."
@@ -755,7 +755,7 @@ msgid "Either root-password or at least 1 user with sudo privileges must be spec
 msgstr "Le mot de passe root ou au moins 1 utilisateur avec des privilèges sudo doit être spécifié"
 
 msgid "Enter username (leave blank to skip): "
-msgstr "Entrer le nom d'utilisateur (laisser vide pour passer) : "
+msgstr "Entrer le nom d'utilisateur (laisser vide pour ignorer) : "
 
 msgid "The username you entered is invalid. Try again"
 msgstr "Le nom d'utilisateur que vous avez saisi n'est pas valide. Réessayer"
@@ -764,7 +764,7 @@ msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "\"{}\" devrait-il être un superutilisateur (sudo) ?"
 
 msgid "Select which partitions to encrypt"
-msgstr "Sélectionner les partitions à chiffrer"
+msgstr "Sélectionner les partitions à encrypter"
 
 msgid "very weak"
 msgstr "très faible"
@@ -834,10 +834,10 @@ msgid "To be able to use this translation, please install a font manually that s
 msgstr "Pour pouvoir utiliser cette traduction, veuillez installer manuellement une police prenant en charge la langue."
 
 msgid "The font should be stored as {}"
-msgstr "La police doit être stockée sous {}"
+msgstr "La police d'écriture doit être stockée sous {}"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr "Archinstall nécessite des privilèges root pour s'exécuter. Voir l'aide pour plus d'informations (--help)."
+msgstr "Archinstall nécessite des privilèges root pour s'exécuter. Voir --help pour plus d'informations."
 
 msgid "Select an execution mode"
 msgstr "Sélectionner un mode d'exécution"
@@ -903,7 +903,7 @@ msgid "Partition"
 msgstr "Partition"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr "Cette partition est actuellement chiffrée, pour la formater, un système de fichiers doit être spécifié"
+msgstr "Cette partition est actuellement encrypté, pour la formater, un système de fichiers doit être spécifié"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr "Les points de montage de partition sont relatifs à l'intérieur de l'installation, le démarrage serait /boot par exemple."
@@ -933,7 +933,7 @@ msgid "Partition management: {}"
 msgstr "Gestion des partitions : {}"
 
 msgid "Total length: {}"
-msgstr "Total (taille) : {}"
+msgstr "Taille total : {}"
 
 msgid "Encryption type"
 msgstr "Type de chiffrement"
@@ -945,22 +945,22 @@ msgid "Enter iteration time for LUKS encryption (in milliseconds)"
 msgstr ""
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Des valeurs plus grandes peuvent agrandir la sécurité, mais peuvent ralentir le temps de démarrage"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Par défaut: 10000ms, range recommandé: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Le temps d'itération ne peut pas être vide"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Le temps d'itération doit être d'au moins 100 ms"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Le temps d'itération doit être au maximum 120000 ms"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "S'il vous plaît entrez un nombre valide"
 
 msgid "Partitions"
 msgstr "Partitions"
@@ -969,7 +969,7 @@ msgid "No HSM devices available"
 msgstr "Aucun périphérique HSM disponible"
 
 msgid "Partitions to be encrypted"
-msgstr "Partitions à chiffrer"
+msgstr "Partitions à encrypter"
 
 msgid "Select disk encryption option"
 msgstr "Sélectionner l'option de chiffrement du disque"
@@ -1029,7 +1029,7 @@ msgid "Add profile"
 msgstr "Ajouter un profil"
 
 msgid "Edit profile"
-msgstr "Editer le profil"
+msgstr "Modifier le profil"
 
 msgid "Delete profile"
 msgstr "Supprimer le profil"
@@ -1239,7 +1239,7 @@ msgid "Unified kernel images"
 msgstr "Images du noyau unifiées"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr "En attente de la fin de la synchronisation de l'heure (timedatectl show)."
+msgstr "En attente de la fin de la synchronisation de l'heure (timedatectl show) de finir."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "La synchronisation de l'heure ne se termine pas, veuillez consulter la documentation afin de trouver des solutions de contournement : https://archinstall.readthedocs.io/"
@@ -1248,7 +1248,7 @@ msgid "Skipping waiting for automatic time sync (this can cause issues if time i
 msgstr "Ignorer l'attente de la synchronisation automatique de l'heure (cela peut entraîner des problèmes si l'heure n'est pas synchronisée lors de l'installation)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr "En attente de la fin de la synchronisation du trousseau de clés d'Arch Linux (archlinux-keyring-wkd-sync)."
+msgstr "En attente de la fin de la synchronisation du trousseau de clés d'Arch Linux (archlinux-keyring-wkd-sync) de finir."
 
 msgid "Selected profiles: "
 msgstr "Profils sélectionnés : "
@@ -1302,10 +1302,10 @@ msgid "LVM volumes"
 msgstr "Volumes LVM"
 
 msgid "LVM volumes to be encrypted"
-msgstr "Volumes LVM à chiffrer"
+msgstr "Volumes LVM à encrypter"
 
 msgid "Select which LVM volumes to encrypt"
-msgstr "Sélectionner les volumes LVM à chiffrer"
+msgstr "Sélectionner les volumes LVM à encrypter"
 
 msgid "Default layout"
 msgstr "Disposition par défaut"
@@ -1488,7 +1488,7 @@ msgid "Select execution mode"
 msgstr "Sélectionner le mode d'exécution"
 
 msgid "Press ? for help"
-msgstr "Appuyer sur ? pour l'aide"
+msgstr "Appuyer sur ? pour obtenir de l'aide"
 
 msgid "Choose an option to give Hyprland access to your hardware"
 msgstr "Choisir une option pour donner à Hyprland l'accès à votre matériel"
@@ -1575,7 +1575,7 @@ msgid "Add custom repository"
 msgstr "Ajouter un dépôt personnalisé"
 
 msgid "Loading mirror regions..."
-msgstr "Chargement des régions des miroirs..."
+msgstr "Chargement des régions miroirs..."
 
 msgid "Mirrors and repositories"
 msgstr "Miroirs et dépôts"
@@ -1593,7 +1593,7 @@ msgid "Only ASCII characters are supported"
 msgstr "Seuls les caractères ASCII sont pris en charge"
 
 msgid "Show help"
-msgstr "Afficher l'aide"
+msgstr "Afficher de l'aide"
 
 msgid "Exit help"
 msgstr "Quitter l’aide"
@@ -1620,7 +1620,7 @@ msgid "Jump to entry"
 msgstr "Aller à l’entrée"
 
 msgid "Skip selection (if available)"
-msgstr "Passer la sélection (si disponible)"
+msgstr "Ignorer la sélection (si disponible)"
 
 msgid "Reset selection (if available)"
 msgstr "Réinitialiser la sélection (si disponible)"
@@ -1667,14 +1667,14 @@ msgstr "Sortir d'Archinstall"
 
 #, fuzzy
 msgid "Reboot system"
-msgstr "Système de fichiers"
+msgstr "Redémarrer le système"
 
 #, fuzzy
 msgid "chroot into installation for post-installation configurations"
 msgstr "Souhaitez-vous chrooter dans l'installation nouvellement créée et effectuer la configuration post-installation ?"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Installation complétée"
 
 #, fuzzy
 msgid "What would you like to do next?"
@@ -1686,7 +1686,7 @@ msgstr "Sélectionner le mode à configurer pour \"{}\" ou ignorer pour utiliser
 
 #, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr "Mot de passe de chiffrement du disque"
+msgstr "Mot de passe de déchiffrement du disque"
 
 #, fuzzy
 msgid "Incorrect password"
@@ -1694,7 +1694,7 @@ msgstr "Mot de passe incorrect"
 
 #, fuzzy
 msgid "Credentials file decryption password"
-msgstr "Mot de passe de chiffrement du disque"
+msgstr "Mot de passe de déchiffrement du disque"
 
 #, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
@@ -1702,7 +1702,7 @@ msgstr "Voulez-vous enregistrer le(s) fichier(s) de configuration dans {} ?"
 
 #, fuzzy
 msgid "Credentials file encryption password"
-msgstr "Mot de passe de chiffrement du disque"
+msgstr "Mot de passe de l'encryption du disque"
 
 #, fuzzy
 msgid "Repositories: {}"
