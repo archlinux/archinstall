@@ -1356,7 +1356,7 @@ msgid "Disk encryption password"
 msgstr "Mot de passe de chiffrement du disque"
 
 msgid "Partition - New"
-msgstr "Partition - Nouvelle"
+msgstr "Partition - Nouveau"
 
 msgid "Filesystem"
 msgstr "Système de fichiers"
@@ -1473,7 +1473,7 @@ msgid "Disabled"
 msgstr "Désactivé"
 
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "Veuillez soumettre ce problème (et ce fichier) à https://github.com/archlinux/archinstall/issues"
+msgstr "Veuillez soumettre ce problème (et fichier) à https://github.com/archlinux/archinstall/issues"
 
 msgid "Mirror name"
 msgstr "Nom du miroir"
@@ -1663,7 +1663,7 @@ msgstr "Groupe de paquets :"
 
 #, fuzzy
 msgid "Exit archinstall"
-msgstr "Aide pour Archinstall"
+msgstr "Sortir d'Archinstall"
 
 #, fuzzy
 msgid "Reboot system"
@@ -1690,7 +1690,7 @@ msgstr "Mot de passe de chiffrement du disque"
 
 #, fuzzy
 msgid "Incorrect password"
-msgstr "Mot de passe root"
+msgstr "Mot de passe incorrect"
 
 #, fuzzy
 msgid "Credentials file decryption password"
