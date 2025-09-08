@@ -483,7 +483,7 @@ msgid "No network configuration"
 msgstr "Keine Netzwerkkonfiguration"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Bitte wählen Sie Subvolumen für die Btrfs-Partition"
+msgstr "Bitte wählen Sie Subvolumes für die Btrfs-Partition"
 
 msgid ""
 "{}\n"
@@ -495,7 +495,7 @@ msgstr ""
 "Bitte wählen Sie, auf welcher Partition Subvolumes eingerichtet werden sollen"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr "Bearbeiten von Btrfs-Subvolumen für die aktuelle Partition"
+msgstr "Bearbeiten von Btrfs-Subvolumes für die aktuelle Partition"
 
 msgid "No configuration"
 msgstr "Keine Konfiguration"
@@ -580,7 +580,7 @@ msgid "Select a mount point :"
 msgstr "Bitte wählen Sie einen Einhängeort aus:"
 
 msgid "Select the desired subvolume options "
-msgstr "Wählen Sie die gewünschten Optionen für das Subvolumen "
+msgstr "Wählen Sie die gewünschten Optionen für das Subvolume "
 
 msgid "Define users with sudo privilege, by username: "
 msgstr "Geben Sie Benutzer mit sudo Privilegien an: "
@@ -590,7 +590,7 @@ msgid "[!] A log file has been created here: {}"
 msgstr "[!] Eine Logdatei wurde hier erstellt: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Möchten Sie Btrfs-Subvolumen mit vorgegebener Struktur verwenden?"
+msgstr "Möchten Sie Btrfs-Subvolumes mit vorgegebener Struktur verwenden?"
 
 msgid "Would you like to use BTRFS compression?"
 msgstr "Möchten sie Btrfs-Komprimierung verwenden?"
@@ -1060,7 +1060,7 @@ msgid "Should this profile be enabled for installation?"
 msgstr "Soll dieses Profil für die Installation aktiviert werden?"
 
 msgid "Create your own"
-msgstr "Erstelle ein eigenes"
+msgstr "Erstellen Sie ein Eigenes"
 
 msgid ""
 "\n"
@@ -1309,13 +1309,13 @@ msgid "Physical volumes"
 msgstr "Physisches Volumen"
 
 msgid "Volumes"
-msgstr "Volumen"
+msgstr "Volumes"
 
 msgid "LVM volumes"
 msgstr "LVM-Volumes"
 
 msgid "LVM volumes to be encrypted"
-msgstr "Partitionen, die verschlüsselt werden sollen"
+msgstr "LVM-Volumes, die verschlüsselt werden sollen"
 
 msgid "Select which LVM volumes to encrypt"
 msgstr "Bitte wählen Sie aus, welche LVM-Volumes verschlüsselt werden sollen"
@@ -1551,7 +1551,7 @@ msgid "Wipe"
 msgstr "Löschen"
 
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Als XBOOTLDR  markieren bzw. nicht markieren"
+msgstr "Als XBOOTLDR markieren bzw. nicht markieren"
 
 msgid "Loading packages..."
 msgstr "Lade Pakete..."
