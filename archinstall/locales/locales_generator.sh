@@ -40,7 +40,7 @@ fi
 lang=${1}
 
 # Update the base file containing all translatable strings
-find . -type f -iname "*.py" | xargs xgettext --join-existing --no-location --omit-header -d base -o locales/base.pot
+find . -type f -iname "*.py" | xargs xgettext --join-existing --no-location --omit-header --keyword='tr' -d base -o locales/base.pot
 
 case "${lang}" in
 	"all") generate_all;;
