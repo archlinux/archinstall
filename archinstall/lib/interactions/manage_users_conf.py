@@ -7,10 +7,10 @@ from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import EditMenu, SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, Orientation
+from archinstall.tui.types import Alignment, FrameProperties, Orientation
 
 from ..menu.list_manager import ListManager
-from ..models.users import User
+from ..models.users import User, StorageMechanism, HomedConfiguration
 from ..utils.util import get_password
 
 
@@ -111,8 +111,55 @@ class UserList(ListManager[User]):
 			case _:
 				raise ValueError('Unhandled result type')
 
-		return User(username, password, sudo)
+		homed_configuration = self._configure_homed()
 
+		return User(username, password, sudo, homed_configuration)
+
+
+	def _configure_homed(self) -> HomedConfiguration | None:
+		header = str(tr('Should the user use systemd-homed?\n'))
+
+		group = MenuItemGroup.yes_no()
+		group.focus_item = MenuItem.no()
+
+		result = SelectMenu[bool](
+			group,
+			header=header,
+			alignment=Alignment.CENTER,
+			columns=2,
+			orientation=Orientation.HORIZONTAL,
+			search_enabled=False,
+			allow_skip=False,
+		).run()
+
+		match result.type_:
+			case ResultType.Selection:
+				if result.item() != MenuItem.yes():
+					return None
+			case _:
+				raise ValueError('Unhandled result type')
+
+		items = [
+			MenuItem('Directory', value=StorageMechanism.DIRECTORY),
+			MenuItem('LUKS', value=StorageMechanism.LUKS),
+			MenuItem('fscrypt', value=StorageMechanism.FSCRYPT),
+		]
+
+		group = MenuItemGroup(items, sort_items=False)
+		result = SelectMenu[StorageMechanism](
+			group,
+			alignment=Alignment.CENTER,
+			frame=FrameProperties.min('Filesystem'),
+			allow_skip=False,
+		).run()
+
+		match result.type_:
+			case ResultType.Selection:
+				return HomedConfiguration(result.get_value())
+			case _:
+				raise ValueError('Unhandled result type')
+
+		return None
 
 def ask_for_additional_users(prompt: str = '', defined_users: list[User] = []) -> list[User]:
 	users = UserList(prompt, defined_users).run()

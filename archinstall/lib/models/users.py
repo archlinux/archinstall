@@ -100,12 +100,28 @@ class PasswordStrength(Enum):
 		return PasswordStrength.VERY_WEAK
 
 
+
+class StorageMechanism:
+	DIRECTORY = 'directory'
+	LUKS = 'luks'
+	FSCRYPT = 'fscrypt'
+
+
+class HomedConfiguration:
+	def __init__(
+		self,
+		storage_mechanism: StorageMechanism,
+	):
+		self.storage_mechanism = storage_mechanism
+
+
 UserSerialization = TypedDict(
 	'UserSerialization',
 	{
 		'username': str,
 		'!password': NotRequired[str],
 		'sudo': bool,
+		'homed': HomedConfiguration | None,
 		'groups': list[str],
 		'enc_password': str | None,
 	},
@@ -158,18 +174,20 @@ class User:
 	username: str
 	password: Password
 	sudo: bool
+	homed: HomedConfiguration | None = None
 	groups: list[str] = field(default_factory=list)
 
 	@override
 	def __str__(self) -> str:
 		# safety overwrite to make sure password is not leaked
-		return f'User({self.username=}, {self.sudo=}, {self.groups=})'
+		return f'User({self.username=}, {self.sudo=}, {self.homed=}, {self.groups=})'
 
-	def table_data(self) -> dict[str, str | bool | list[str]]:
+	def table_data(self) -> dict[str, str | bool | StorageMechanism | list[str]]:
 		return {
 			'username': self.username,
 			'password': self.password.hidden(),
 			'sudo': self.sudo,
+			'homed': self.homed.storage_mechanism if self.homed else False,
 			'groups': self.groups,
 		}
 
@@ -178,6 +196,7 @@ class User:
 			'username': self.username,
 			'enc_password': self.password.enc_password,
 			'sudo': self.sudo,
+			'homed': self.homed,
 			'groups': self.groups,
 		}
 
@@ -208,6 +227,7 @@ class User:
 				username=username,
 				password=password,
 				sudo=entry.get('sudo', False) is True,
+				homed=entry.get('homed', None),
 				groups=groups,
 			)
 
