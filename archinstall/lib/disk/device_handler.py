@@ -271,12 +271,15 @@ class DeviceHandler:
 		options = []
 
 		match fs_type:
-			case FilesystemType.Btrfs | FilesystemType.F2fs | FilesystemType.Xfs:
+			case FilesystemType.Btrfs | FilesystemType.Xfs:
 				# Force overwrite
 				options.append('-f')
+			case  FilesystemType.F2fs:
+				# Force overwrite and enable encrypt
+				options.extend(('-f', '-O', 'encrypt'))
 			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
-				# Force create
-				options.append('-F')
+				# Force create and enable encrypt
+				options.extend(('-F', '-O', 'encrypt'))
 			case FilesystemType.Fat12 | FilesystemType.Fat16 | FilesystemType.Fat32:
 				mkfs_type = 'fat'
 				# Set FAT size
