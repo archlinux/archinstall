@@ -20,7 +20,7 @@ classifiers = [
 dependencies = [
     "pyparted>=3.13.0",
     "pydantic==2.11.9",
-    "cryptography>=44.0.2",
+    "cryptography>=45.0.7",
 ]
 
 [project.urls]
