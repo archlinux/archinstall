@@ -271,9 +271,12 @@ class DeviceHandler:
 		options = []
 
 		match fs_type:
-			case FilesystemType.Btrfs | FilesystemType.F2fs | FilesystemType.Xfs:
+			case FilesystemType.Btrfs | FilesystemType.Xfs:
 				# Force overwrite
 				options.append('-f')
+			case FilesystemType.F2fs:
+				options.append('-f')
+				options.extend(('-O', 'extra_attr'))
 			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
 				# Force create
 				options.append('-F')
@@ -814,8 +817,8 @@ class DeviceHandler:
 	def _wipe(self, dev_path: Path) -> None:
 		"""
 		Wipe a device (partition or otherwise) of meta-data, be it file system, LVM, etc.
-		@param dev_path:    Device path of the partition to be wiped.
-		@type dev_path:     str
+		@param dev_path:	Device path of the partition to be wiped.
+		@type dev_path:		str
 		"""
 		with open(dev_path, 'wb') as p:
 			p.write(bytearray(1024))
