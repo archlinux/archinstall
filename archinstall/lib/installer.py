@@ -36,7 +36,7 @@ from archinstall.tui.curses_menu import Tui
 
 from .args import arch_config_handler
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
-from .general import SysCommand, run
+from .general import SysCommand, SysCommandWorker, run
 from .hardware import SysInfo
 from .locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
@@ -1701,27 +1701,48 @@ class Installer:
 		if not handled_by_plugin:
 			info(f'Creating user {user.username}')
 
-			cmd = f'arch-chroot {self.target} useradd -m'
+			if user.homed is not None:
+				self.enable_service('systemd-homed')
 
-			if user.sudo:
-				cmd += ' -G wheel'
+				homed_groups = []
+				if user.sudo:
+					homed_groups.append('wheel')
+				homed_groups.extend(user.groups)
 
-			cmd += f' {user.username}'
+				cmd = f'homectl create --enforce-password-policy=no'
+				cmd += f' --member-of {",".join(homed_groups)}' if homed_groups else ''
+				cmd += f' --storage {user.homed.storage_mechanism}'
+				cmd += f' {user.username}'
 
-			try:
-				SysCommand(cmd)
-			except SysCallError as err:
-				raise SystemError(f'Could not create user inside installation: {err}')
+				from .boot import Boot
+
+				with Boot(self) as session:
+					worker = session.SysCommandWorker(cmd.split(" "))
+					while worker.is_alive():
+						worker.write(bytes(f'{user.password.plaintext}\n', 'UTF-8'), line_ending=False)
+			else:
+				cmd = f'arch-chroot {self.target} useradd -m'
+
+				if user.sudo:
+					cmd += ' -G wheel'
+
+				cmd += f' {user.username}'
+
+				try:
+					SysCommand(cmd)
+				except SysCallError as err:
+					raise SystemError(f'Could not create user inside installation: {err}')
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_user_created'):
 				if result := plugin.on_user_created(self, user):
 					handled_by_plugin = result
 
-		self.set_user_password(user)
+		if user.homed is None:
+			self.set_user_password(user)
 
-		for group in user.groups:
-			SysCommand(f'arch-chroot {self.target} gpasswd -a {user.username} {group}')
+			for group in user.groups:
+				SysCommand(f'arch-chroot {self.target} gpasswd -a {user.username} {group}')
 
 		if user.sudo:
 			self.enable_sudo(user)
