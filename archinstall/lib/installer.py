@@ -667,7 +667,7 @@ class Installer:
 			info(f'Enabling service {service}')
 
 			try:
-				self.arch_chroot(f'systemctl enable {service}')
+				SysCommand(f'systemctl --root={self.target} enable {service}')
 			except SysCallError as err:
 				raise ServiceException(f'Unable to start service {service}: {err}')
 
