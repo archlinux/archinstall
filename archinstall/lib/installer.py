@@ -554,7 +554,9 @@ class Installer:
 		info(f'Updating {fstab_path}')
 
 		try:
-			gen_fstab = SysCommand(f'genfstab {flags} {self.target}').output()
+			# note f flag for filter preventing host system mounts see issue #3599 
+			# this was causing issue to do arch to arch install without using ISO good for devs
+			gen_fstab = SysCommand(f'genfstab {flags} -f {self.target} {self.target}').output()
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
@@ -782,7 +784,9 @@ class Installer:
 			mkinit.write(content)
 
 		try:
-			SysCommand(f'arch-chroot {self.target} mkinitcpio {" ".join(flags)}', peek_output=True)
+			# avoid broken pipe errors by not peeking output
+			info('Running mkinitscpio quietly...')
+			SysCommand(f'arch-chroot {self.target} mkinitcpio {" ".join(flags)}')
 			return True
 		except SysCallError as e:
 			if e.worker_log:
