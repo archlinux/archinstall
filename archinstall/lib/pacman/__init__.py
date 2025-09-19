@@ -73,12 +73,12 @@ class Pacman:
 					packages = result
 
 		info(f'Installing packages: {packages}')
-
+		# note needed flag to avoid re-installs and save bandwidth for user and mirror providers
 		self.ask(
 			'Could not strap in packages',
 			'Pacstrap failed. See /var/log/archinstall/install.log or above message for error details',
 			SysCommand,
-			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm',
+			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm --needed',
 			peek_output=True,
 		)
 
