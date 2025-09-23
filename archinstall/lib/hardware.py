@@ -43,7 +43,9 @@ class GfxPackage(Enum):
 	LibvaMesaDriver = 'libva-mesa-driver'
 	LibvaNvidiaDriver = 'libva-nvidia-driver'
 	Mesa = 'mesa'
+	Nvidia = 'nvidia'
 	NvidiaDkms = 'nvidia-dkms'
+	NvidiaOpen = 'nvidia-open'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
@@ -59,9 +61,11 @@ class GfxDriver(Enum):
 	AllOpenSource = 'All open-source'
 	AmdOpenSource = 'AMD / ATI (open-source)'
 	IntelOpenSource = 'Intel (open-source)'
-	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
+	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+, for default kernel)'
+	NvidiaOpenKernelDkms = 'Nvidia (open kernel module for newer GPUs, Turing+, dkms - for custom kernels)'
 	NvidiaOpenSource = 'Nvidia (open-source nouveau driver)'
-	NvidiaProprietary = 'Nvidia (proprietary)'
+	NvidiaProprietary = 'Nvidia (proprietary, for default kernel)'
+	NvidiaProprietaryDkms = 'Nvidia (proprietary, dkms - for custom kernels)'
 	VMOpenSource = 'VirtualBox (open-source)'
 
 	def is_nvidia(self) -> bool:
@@ -114,6 +118,11 @@ class GfxDriver(Enum):
 				]
 			case GfxDriver.NvidiaOpenKernel:
 				packages += [
+					GfxPackage.NvidiaOpen,
+					GfxPackage.LibvaNvidiaDriver,
+				]
+			case GfxDriver.NvidiaOpenKernelDkms:
+				packages += [
 					GfxPackage.NvidiaOpenDkms,
 					GfxPackage.Dkms,
 					GfxPackage.LibvaNvidiaDriver,
@@ -126,6 +135,11 @@ class GfxDriver(Enum):
 					GfxPackage.VulkanNouveau,
 				]
 			case GfxDriver.NvidiaProprietary:
+				packages += [
+					GfxPackage.Nvidia,
+					GfxPackage.LibvaNvidiaDriver,
+				]
+			case GfxDriver.NvidiaProprietaryDkms:
 				packages += [
 					GfxPackage.NvidiaDkms,
 					GfxPackage.Dkms,
