@@ -76,6 +76,7 @@ msgstr "حدِّد واجهة شبكة واحدة للإعداد"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "حدد الوضع المراد تهيئته لـ\"{}\" أو تخطى لاستخدام الوضع الافتراضي \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "أدخِل الIP مع تجزئة الشبكة لـ{} (على سبيل المثال: 192.168.0.5/24): "
 
@@ -587,6 +588,7 @@ msgstr "حدد خيارات وحدة التخزين الفرعية المطلو�
 msgid "Define users with sudo privilege, by username: "
 msgstr "تحديد المستخدمين الذين لديهم امتياز sudo، حسب اسم المستخدم: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] تم إنشاء ملف سجل هنا: {}"
 
@@ -848,9 +850,11 @@ msgstr "يتطلب أرشِنستال Archinstall امتيازات الجذر ل
 msgid "Select an execution mode"
 msgstr "تحديد وضع التنفيذ"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "تعذر جلب ملف التعريف من عنوان url المحدد: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "يجب أن يكون لملفات التعريف (profile) اسم فريد، ولكن تم العثور على تعريفات ملفات التعريف (profile) ذات أسماء مكررة: {}"
 
@@ -869,9 +873,11 @@ msgstr "حدد خيار التقسيم"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "أدخل دليل الجذر للأجهزة المثبتة:  "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "الحد الأدنى لسعة القسم /home: {} جيجا بايت GiB \n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "الحد الأدنى لسعة قسم آرش لينكس (Arch Linux): {} جيجا بايت (GiB)"
 
@@ -935,9 +941,11 @@ msgstr "أدخل قطاع نهاية القسم (النسبة المئوية أ�
 msgid "This will remove all newly added partitions, continue?"
 msgstr "سيؤدي ذلك إلى إزالة جميع الأقسام المضافة حديثاً، متابعة؟"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "إدارة التقسيم: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "الطول الإجمالي: {}"
 
@@ -998,6 +1006,7 @@ msgstr "غير معروف"
 msgid "Partition encryption"
 msgstr "تشفير التقسيم"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! تهيئة {} في "
 
@@ -1022,6 +1031,7 @@ msgstr "رجوع"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "يرجى اختيار المُرحِّب الذي سيتم تثبيته للملفات الشخصية المختارة: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "نوع البيئة: {}"
 
@@ -1214,6 +1224,7 @@ msgstr ""
 "\n"
 "ملاحظة:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - الحد الأقصى للقيمة الموصى بها: {} (يسمح بـ {} تنزيلات متوازية في المرة الواحدة)"
 
@@ -1277,6 +1288,7 @@ msgstr "تعطيل النسخ عند الكتابة"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "يوفر مجموعة مختارة من بيئات سطح المكتب ومديري نوافذ التجانب، مثل Gnome و KDE و Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "نوع الإعداد: {}"
 
@@ -1403,6 +1415,7 @@ msgstr "اسم المستخدم الذي أدخلته غير صالح."
 msgid "Username"
 msgstr "اسم المستخدم"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "هل يجب أن يكون \"{}\" مستخدمًا خارقًا (sudo)؟\n"
 
@@ -1469,6 +1482,7 @@ msgstr "دليل"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "أدخل دليلا للتكوين (التكوينات) المراد حفظها (مُكِّن الإكمال بـtab)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "هل تريد حفظ ملف (ملفات) الضبط إلى {} ؟"
 
@@ -1520,15 +1534,15 @@ msgstr ""
 msgid "Signature check"
 msgstr "حدد خيار التحقق من التوقيع"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "القطاعات الخالية الحالية على الجهاز {}:"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size: {} / {}"
 msgstr "الإجمالي: {} / {}"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size (default: {}): "
 msgstr "النهاية (افتراضي: {}): "
 
@@ -1722,7 +1736,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr "هل ترغب في الاستمرار؟"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "حدد الوضع المراد تهيئته لـ\"{}\" أو تخطى لاستخدام الوضع الافتراضي \"{}\""
 
@@ -1746,6 +1760,73 @@ msgstr "هل تريد حفظ ملف (ملفات) الضبط إلى {} ؟"
 msgid "Credentials file encryption password"
 msgstr "كلمة سر التشفير"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "اسم المرآة"
+
+#, fuzzy
+msgid "New version available"
+msgstr "لا توجد أجهزة HSM متوفرة"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "كلمة المرور"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "هل ترغب في الاستمرار؟"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "نوع البيئة: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "أدخل كلمة مرور: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "اختر جهاز FIDO2 لاستخدامه في HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
