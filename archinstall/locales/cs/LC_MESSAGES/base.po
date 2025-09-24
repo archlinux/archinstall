@@ -71,6 +71,7 @@ msgstr "Zvolte síťové rozhraní ke konfiguraci"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Zvolte který režim má být nastaven pro \"{}\" nebo přeskočte pro použití výchozího režimu \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Zadejte IP a podsíť pro {} (např. 192.168.0.5/24) "
 
@@ -578,6 +579,7 @@ msgstr "Zvolte požadované přepínače podsvazku "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Specifikace uživatelů s oprávněními sudo, pomocí uživatelského jména: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Soubor s protokoly byl uložen zde: {}"
 
@@ -834,9 +836,11 @@ msgstr "Archinstall vyžaduje ke spuštění oprávnění správce (root). Použ
 msgid "Select an execution mode"
 msgstr "Zvolte způsob provedení"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Nepodařilo se získat profil ze zadané url: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Profily musí mít unikátní jméno. Následující duplicity byly nalezeny: {}"
 
@@ -855,9 +859,11 @@ msgstr "Zvolte možnosti rozdělení disku"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Zadejte kořenový adresář připojených zařízení: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Minimální kapacita pro oddíl /home: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Minimální kapacita pro oddíl s Arch Linux: {}GiB"
 
@@ -921,9 +927,11 @@ msgstr "Zadejte koncový sektor oddílu (procenta nebo číslo bloku, výchozí:
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Tímto smažete všechny nově vytvořené oddíly, přejete si pokračovat?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Správa diskových oddílů: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Celková délka: {}"
 
@@ -984,6 +992,7 @@ msgstr "Neznámý"
 msgid "Partition encryption"
 msgstr "Šifrování diskového oddílu"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Formátuji {} na "
 
@@ -1008,6 +1017,7 @@ msgstr "Zpět"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Prosím vyberte přihlašovací obrazovku k instalaci pro vybraný profil: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Typ prostředí: {}"
 
@@ -1200,6 +1210,7 @@ msgstr ""
 "\n"
 "Poznámka:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Maximální doporučená hodnota  : {} (Povolí {} paralelních stahování naráz )"
 
@@ -1263,6 +1274,7 @@ msgstr "Zakázat Copy-on-Write"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Nabízí výběr desktopových prostředí a dlaždicových správců oken, např. GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Typ konfigurace: {}"
 
@@ -1389,6 +1401,7 @@ msgstr "Zadané uživatelské jméno není platné"
 msgid "Username"
 msgstr "Uživatelské jméno"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Má být \"{}\" superuživatelem (sudoer)?\n"
 
@@ -1455,6 +1468,7 @@ msgstr "Adresář"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Zadejte adresář pro uložení konfigurace (doplňování pomocí tab je zapnuto)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Chcete uložit konfigurační soubor(y) do {}?"
 
@@ -1500,12 +1514,15 @@ msgstr "Jméno"
 msgid "Signature check"
 msgstr "Kontrola podpisu"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Vybrané volné sektory na zařízení {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Velikost: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Velikost (výchozí: {}): "
 
@@ -1668,6 +1685,7 @@ msgstr "Instalace dokončena"
 msgid "What would you like to do next?"
 msgstr "Co si přejete udělat dál?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Zvolte který režim má být nastaven pro \"{}\""
 
@@ -1686,5 +1704,73 @@ msgstr "Chcete zašifrovat soubor user_credentials.json?"
 msgid "Credentials file encryption password"
 msgstr "Heslo pro zašifrování souboru s přihlašovacími údaji"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Repozitáře: {}"
+
+#, fuzzy
+msgid "New version available"
+msgstr "Žádné HSM zařízení není dostupné"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Heslo"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Přejete si pokračovat?"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Typ prostředí: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Zadejte heslo: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Vyberte FIDO2 zařízení abyste mohli používat HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""

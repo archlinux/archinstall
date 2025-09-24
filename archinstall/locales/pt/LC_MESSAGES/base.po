@@ -75,6 +75,7 @@ msgstr "Selecionar uma interface de rede para configurar"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Selecionar qual o modo a configurar para \"{}\" ou ignorar para usar o modo predefinido \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Inserir o IP e sub-rede para {} (exemplo: 192.168.0.5/24): "
 
@@ -588,6 +589,7 @@ msgstr "Selecionar as opções desejadas do subvolume "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Definir utilizadores com privilégio sudo, por nome de utilizador: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Um ficheiro de registo foi criado aqui: {}"
 
@@ -846,9 +848,11 @@ msgstr "O archinstall requer privilégios root para ser executado. Ver --help pa
 msgid "Select an execution mode"
 msgstr "Selecionar um modo de execução"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Não foi possível obter o perfil a partir do URL especificado: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Os perfis devem ter nomes únicos, mas foram encontradas definições de perfil com nomes duplicados: {}"
 
@@ -867,9 +871,11 @@ msgstr "Selecionar uma opção de particionamento"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Inserir o diretório root dos dispositivos montados: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Capacidade mínima para partição /home : {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Capacidade mínima para a partição do Arch Linux: {}GiB"
 
@@ -933,9 +939,11 @@ msgstr "Inserir o setor final da partição (percentagem ou número de bloco, pr
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Isto irá remover todas as partições recém adicionadas, continuar?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Gestão de partições: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Tamanho total: {}"
 
@@ -996,6 +1004,7 @@ msgstr "Desconhecido"
 msgid "Partition encryption"
 msgstr "Encriptação de partições"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! A formatar {} em "
 
@@ -1020,6 +1029,7 @@ msgstr "Voltar"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Escolher qual a interface gráfica de início de sessão a instalar para os perfis escolhidos: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Tipo de ambiente: {}"
 
@@ -1213,6 +1223,7 @@ msgstr ""
 "\n"
 "Nota:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Valor máximo recomendado : {} ( Permite {} transferências paralelas de cada vez )"
 
@@ -1276,6 +1287,7 @@ msgstr "Desativar Copy-on-Write"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Disponibiliza uma seleção de ambientes gráficos e gestores de janelas em mosaico, por exemplo, GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Tipo de configuração: {}"
 
@@ -1402,6 +1414,7 @@ msgstr "O nome de utilizador introduzido é inválido"
 msgid "Username"
 msgstr "Nome de utilizador"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Deverá \"{}\" ser um superutilizador (sudo)?\n"
 
@@ -1468,6 +1481,7 @@ msgstr "Diretório"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Introduzir um diretório para a(s) configuração(ões) a guardar (preenchimento com a tecla Tab ativado)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Pretende guardar o(s) ficheiro(s) de configuração em {}?"
 
@@ -1513,12 +1527,15 @@ msgstr "Nome"
 msgid "Signature check"
 msgstr "Verificação de assinatura"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Segmento de espaço livre selecionado no dispositivo {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Tamanho: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Tamanho (predefinido: {}): "
 
@@ -1681,6 +1698,7 @@ msgstr "Instalação concluída"
 msgid "What would you like to do next?"
 msgstr "O que gostaria de fazer a seguir?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Selecione qual modo configurar para \"{}\""
 
@@ -1699,5 +1717,74 @@ msgstr "Pretende desencriptar o ficheiro user_credentials.json?"
 msgid "Credentials file encryption password"
 msgstr "Palavra-passe de encriptação do ficheiro de credenciais"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Repositórios: {}"
+
+#, fuzzy
+msgid "New version available"
+msgstr "Nenhum dispositivo HSM disponível"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Palavra-passe"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Gostaria de continuar?"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+#, fuzzy
+msgid "Value cannot be empty"
+msgstr "O tempo de iteração não pode estar em branco"
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tipo de ambiente: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Introduzir uma palavra-passe: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Selecionar um dispositivo FIDO2 para usar como HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""

@@ -71,6 +71,7 @@ msgstr "נא לבחור מנשק רשת להגדרה"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "נא לבחור איזה מצב להגדרה עבור „{}“ או לדלג כדי להשתמש במצב ברירת המחדל „{}“"
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "נא למלא IP ורשת־משנה (סאבנט) עבור {} (למשל: 192.168.0.5/24): "
 
@@ -589,6 +590,7 @@ msgstr "נא לבחור את אפשרויות התת־כרך הרצויות "
 msgid "Define users with sudo privilege, by username: "
 msgstr "הגדרת משתמשים עם הרשאת על (sudo), לפי שם משתמש: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] כאן נוצר קובץ יומן: {}"
 
@@ -849,9 +851,11 @@ msgstr "‫Archinstall דורש הרשאות עליונות (root) כדי לעל
 msgid "Select an execution mode"
 msgstr "נא לבחור מצב הפעלה"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "לא ניתן למשוך את הפרופיל מהכתובת שצוינה: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "השמות של הפרופילים חייבים להיות יחודיים, אך נמצאו הגדרות פרופילים עם שמות כפולים: {}"
 
@@ -870,9 +874,11 @@ msgstr "נא לבחור אפשרויות מחיצות"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "נא למלא את תיקיית השורש של ההתקנים המעוגנים: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "קיבולת מזערית למחיצת ‎/home: {} ג״ב\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "קיבולת מזערית למחיצת Arch Linux: {} ג״ב"
 
@@ -936,9 +942,11 @@ msgstr "נא למלא את מקטע (סקטור) הסוף של המחיצה (א�
 msgid "This will remove all newly added partitions, continue?"
 msgstr "הפעולה הזאת תסיר את המחיצות שנוספו, להמשיך?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "ניהול מחיצות: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "אורך כולל: {}"
 
@@ -999,6 +1007,7 @@ msgstr "לא ידוע"
 msgid "Partition encryption"
 msgstr "הצפנת מחיצה"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! {} מפורמט תחת "
 
@@ -1023,6 +1032,7 @@ msgstr "חזרה"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "נא לבחור את מערכת קבלת הפנים לפרופילים הנבחרים: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "סוג סביבה: {}"
 
@@ -1216,6 +1226,7 @@ msgstr ""
 "\n"
 "‫הערה:‬\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - הערך המרבי המומלץ: {} ( מאפשר {} הורדות במקביל בכל עת )"
 
@@ -1279,6 +1290,7 @@ msgstr "השבתת העתקה בעת כתיבה"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "מספק מבחר סביבות שולחן עבודה ומנהלי ריצוף חלונות, למשל: GNOME,‏ KDE פלזמה, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "סוג הגדרה: {}"
 
@@ -1405,6 +1417,7 @@ msgstr "שם המשתמש שמילאת שגוי"
 msgid "Username"
 msgstr "שם משתמש"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "האם ל־„{}“ אמורות להיות הרשאות על (sudo)?\n"
 
@@ -1471,6 +1484,7 @@ msgstr "תיקייה"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "נא למלא תיקייה לשמירת ההגדרות (אפשר להשלים עם tab)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "לשמור את קובצי ההגדרות אל {}?"
 
@@ -1516,12 +1530,15 @@ msgstr "שם"
 msgid "Signature check"
 msgstr "בדיקת חתימות"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "כמות המקטעים (הסגמנטים) הנבחרים בכונן {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "גודל: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "גודל (ברירת מחדל: {}): "
 
@@ -1713,7 +1730,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr "להמשיך?"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "נא לבחור איזה מצב להגדרה עבור „{}“ או לדלג כדי להשתמש במצב ברירת המחדל „{}“"
 
@@ -1737,6 +1754,73 @@ msgstr "לשמור את קובצי ההגדרות אל {}?"
 msgid "Credentials file encryption password"
 msgstr "סיסמת הצפנת כונן"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "שם אתר המראה"
+
+#, fuzzy
+msgid "New version available"
+msgstr "אין התקני HSM זמינים"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "סיסמה"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "להמשיך?"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "סוג סביבה: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "נא למלא סיסמה: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "נא לבחור את התקן ה־FIDO2 לשימוש עבור HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
