@@ -61,16 +61,16 @@ class GfxDriver(Enum):
 	AllOpenSource = 'All open-source'
 	AmdOpenSource = 'AMD / ATI (open-source)'
 	IntelOpenSource = 'Intel (open-source)'
-	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+, for default kernel)'
-	NvidiaOpenKernelDkms = 'Nvidia (open kernel module for newer GPUs, Turing+, dkms - for custom kernels)'
+	NvidiaOpenKernelNonDkms = 'Nvidia (open kernel module for newer GPUs, Turing+, for default kernel)'
+	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+, dkms - for custom kernels)'
 	NvidiaOpenSource = 'Nvidia (open-source nouveau driver)'
-	NvidiaProprietary = 'Nvidia (proprietary, for default kernel)'
-	NvidiaProprietaryDkms = 'Nvidia (proprietary, dkms - for custom kernels)'
+	NvidiaProprietaryNonDkms = 'Nvidia (proprietary, for default kernel)'
+	NvidiaProprietary = 'Nvidia (proprietary, dkms - for custom kernels)'
 	VMOpenSource = 'VirtualBox (open-source)'
 
 	def is_nvidia(self) -> bool:
 		match self:
-			case GfxDriver.NvidiaProprietary | GfxDriver.NvidiaOpenSource | GfxDriver.NvidiaOpenKernel:
+			case GfxDriver.NvidiaProprietary | GfxDriver.NvidiaOpenSource | GfxDriver.NvidiaOpenKernel | GfxDriver.NvidiaProprietaryNonDkms | Nvidia.OpenKernelNonDkms:
 				return True
 			case _:
 				return False
@@ -116,12 +116,12 @@ class GfxDriver(Enum):
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel,
 				]
-			case GfxDriver.NvidiaOpenKernel:
+			case GfxDriver.NvidiaOpenKernelNonDkms:
 				packages += [
 					GfxPackage.NvidiaOpen,
 					GfxPackage.LibvaNvidiaDriver,
 				]
-			case GfxDriver.NvidiaOpenKernelDkms:
+			case GfxDriver.NvidiaOpenKernel:
 				packages += [
 					GfxPackage.NvidiaOpenDkms,
 					GfxPackage.Dkms,
@@ -134,12 +134,12 @@ class GfxDriver(Enum):
 					GfxPackage.LibvaMesaDriver,
 					GfxPackage.VulkanNouveau,
 				]
-			case GfxDriver.NvidiaProprietary:
+			case GfxDriver.NvidiaProprietaryNonDkms:
 				packages += [
 					GfxPackage.Nvidia,
 					GfxPackage.LibvaNvidiaDriver,
 				]
-			case GfxDriver.NvidiaProprietaryDkms:
+			case GfxDriver.NvidiaProprietary:
 				packages += [
 					GfxPackage.NvidiaDkms,
 					GfxPackage.Dkms,
