@@ -72,6 +72,7 @@ msgstr "Выберите один сетевой интерфейс для на�
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Выберите режим для конфигурации \"{}\" или пропустите, чтобы использовать режим по умолчанию \"{}\"."
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Введите IP-адрес и подсеть для {} (пример: 192.168.0.5/24): "
 
@@ -585,6 +586,7 @@ msgstr "Выберите нужные параметры подтома "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Определите пользователей с привилегией sudo по имени пользователя: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Здесь был создан файл журнала: {}"
 
@@ -843,9 +845,11 @@ msgstr "Для запуска Archinstall требуются привилеги�
 msgid "Select an execution mode"
 msgstr "Выберите режим выполнения"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Невозможно получить профиль из указанного url: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Профили должны иметь уникальное имя, но найдены определения профиля с дублирующимся именем: {}"
 
@@ -864,9 +868,11 @@ msgstr "Выберите вариант разбивки на разделы"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Введите корневой каталог смонтированных устройств: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Минимальный размер раздела /home: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Минимальный размер раздела Arch Linux: {}GiB"
 
@@ -930,9 +936,11 @@ msgstr "Введите конечный сектор раздела (проце�
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Это приведет к удалению всех вновь добавленных разделов, продолжить?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Управление разделом: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Весь размер: {}"
 
@@ -993,6 +1001,7 @@ msgstr "Неизвестно"
 msgid "Partition encryption"
 msgstr "Шифрование раздела"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Форматирование {} в "
 
@@ -1017,6 +1026,7 @@ msgstr "Назад"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Пожалуйста, выберите, какой экран приветствия установить для выбранных профилей: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Тип окружения рабочего стола: {}"
 
@@ -1209,6 +1219,7 @@ msgstr ""
 "\n"
 "Примечание:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Максимальное рекомендуемое значение: {} ( Позволяет {} параллельных загрузок одновременно )"
 
@@ -1272,6 +1283,7 @@ msgstr "Отключить копирование при записи (CoW)"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Предоставляет выбор окружений рабочего стола и тайловых оконных менеджеров, например, GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Тип конфигурации: {}"
 
@@ -1398,6 +1410,7 @@ msgstr "Введенное вами имя пользователя недейс
 msgid "Username"
 msgstr "Имя пользователя"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Должен ли \"{}\" быть суперпользователем (sudo)?\n"
 
@@ -1464,6 +1477,7 @@ msgstr "Каталог"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Введите каталог для сохранения конфигурации (-ций) (включено заполнение вкладок)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Хотите ли вы сохранить файл(ы) конфигурации в {}?"
 
@@ -1509,12 +1523,15 @@ msgstr "Имя"
 msgid "Signature check"
 msgstr "Проверка подписи"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Выбранный сегмент свободного пространства на устройстве {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Размер: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Размер (по умолчанию: {}): "
 
@@ -1706,7 +1723,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr "Вы хотите продолжить?"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Выберите режим для конфигурации \"{}\" или пропустите, чтобы использовать режим по умолчанию \"{}\"."
 
@@ -1730,6 +1747,73 @@ msgstr "Хотите ли вы сохранить файл(ы) конфигур�
 msgid "Credentials file encryption password"
 msgstr "Пароль шифрования диска"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "Название зеркала"
+
+#, fuzzy
+msgid "New version available"
+msgstr "Нет доступных устройств HSM"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Пароль"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Вы хотите продолжить?"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Тип окружения рабочего стола: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Введите пароль: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Выберите устройство FIDO2 для использования в качестве HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""

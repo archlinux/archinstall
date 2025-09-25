@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "3.0.9"
+version = "3.0.11"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -19,8 +19,8 @@ classifiers = [
 ]
 dependencies = [
     "pyparted>=3.13.0",
-    "pydantic==2.11.7",
-    "cryptography>=44.0.2",
+    "pydantic==2.11.9",
+    "cryptography>=45.0.7",
 ]
 
 [project.urls]
@@ -31,13 +31,13 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.17.1",
+    "mypy==1.18.2",
     "flake8==7.3.0",
     "pre-commit==4.3.0",
-    "ruff==0.12.10",
+    "ruff==0.13.1",
     "pylint==3.3.8",
     "pylint-pydantic==0.3.5",
-    "pytest==8.4.1",
+    "pytest==8.4.2",
 ]
 doc = ["sphinx"]
 

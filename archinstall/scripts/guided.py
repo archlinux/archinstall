@@ -150,7 +150,7 @@ def perform_installation(mountpoint: Path) -> None:
 		if servies := config.services:
 			installation.enable_service(servies)
 
-		if disk_config.is_default_btrfs():
+		if disk_config.has_default_btrfs_vols():
 			btrfs_options = disk_config.btrfs_options
 			snapshot_config = btrfs_options.snapshot_config if btrfs_options else None
 			snapshot_type = snapshot_config.snapshot_type if snapshot_config else None

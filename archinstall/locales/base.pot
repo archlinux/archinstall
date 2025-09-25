@@ -74,6 +74,7 @@ msgid ""
 "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr ""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr ""
 
@@ -567,6 +568,7 @@ msgstr ""
 msgid "Define users with sudo privilege, by username: "
 msgstr ""
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr ""
 
@@ -849,9 +851,11 @@ msgstr ""
 msgid "Select an execution mode"
 msgstr ""
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr ""
 
+#, python-brace-format
 msgid ""
 "Profiles must have unique name, but profile definitions with duplicate name "
 "found: {}"
@@ -874,9 +878,11 @@ msgstr ""
 msgid "Enter the root directory of the mounted devices: "
 msgstr ""
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr ""
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr ""
 
@@ -950,9 +956,11 @@ msgstr ""
 msgid "This will remove all newly added partitions, continue?"
 msgstr ""
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr ""
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr ""
 
@@ -1013,6 +1021,7 @@ msgstr ""
 msgid "Partition encryption"
 msgstr ""
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr ""
 
@@ -1037,6 +1046,7 @@ msgstr ""
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr ""
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr ""
 
@@ -1231,6 +1241,7 @@ msgid ""
 "Note:\n"
 msgstr ""
 
+#, python-brace-format
 msgid ""
 " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr ""
@@ -1306,6 +1317,7 @@ msgid ""
 "e.g. GNOME, KDE Plasma, Sway"
 msgstr ""
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr ""
 
@@ -1436,6 +1448,7 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr ""
 
@@ -1504,6 +1517,7 @@ msgid ""
 "enabled)"
 msgstr ""
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr ""
 
@@ -1551,12 +1565,15 @@ msgstr ""
 msgid "Signature check"
 msgstr ""
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr ""
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr ""
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr ""
 
@@ -1724,6 +1741,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr ""
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr ""
 
@@ -1742,5 +1760,70 @@ msgstr ""
 msgid "Credentials file encryption password"
 msgstr ""
 
+#, python-brace-format
 msgid "Repositories: {}"
+msgstr ""
+
+msgid "New version available"
+msgstr ""
+
+msgid "Passwordless login"
+msgstr ""
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+msgid "Would you like to configure Bluetooth?"
+msgstr ""
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr ""
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+msgid "Enable passwordless sudo?"
+msgstr ""
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr ""
+
+msgid ""
+"You may need to enter the PIN and then touch your U2F device to register it"
 msgstr ""

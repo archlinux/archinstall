@@ -71,6 +71,7 @@ msgstr "Επιλέξτε μία διεπαφή δικτύου για διαμό�
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Επιλέξτε ποιο mode να διαμορφωθεί για το \"{}\" ή παραλείψτε για να χρησιμοποιηθεί το default mode \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Εισάγετε την IP και το υποδίκτυο για το {} (παράδειγμα: 192.168.0.5/24): "
 
@@ -584,6 +585,7 @@ msgstr "Επιλέξτε τις επιθυμητές επιλογές υποόγ
 msgid "Define users with sudo privilege, by username: "
 msgstr "Καθορίστε τους χρήστες με δικαιώματα sudo, μέσω όνομα χρήστη: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Ένα αρχείο ιστορικού έχει δημιουργηθεί εδώ: {}"
 
@@ -844,9 +846,11 @@ msgstr "Το Archinstall απαιτεί δικαιώματα υπερχρήστ�
 msgid "Select an execution mode"
 msgstr "Επιλέξτε μία ενέργεια για '{}'"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Αδύνατη η λήψη προφίλ από το συγκεκριμένο url: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Τα προφίλ πρέπει να έχουν μοναδικό όνομα, αλλά βρέθηκαν ορισμοί προφίλ με διπλό όνομα: {}"
 
@@ -870,11 +874,11 @@ msgstr "Διαγραφή διαμέρισης"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση /home: {}GB\n"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση Arch Linux: {}GB"
 
@@ -950,9 +954,11 @@ msgstr "Εισάγετε τον end sector της διαμέρισης (ποσο
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Αυτή η ενέργεια θα αφαιρέσει τις νέες διαμερίσεις, συνέχεια;"
 
+#, fuzzy, python-brace-format
 msgid "Partition management: {}"
 msgstr "Διαχείριση διαμέρισης"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr ""
 
@@ -1018,6 +1024,7 @@ msgstr "Άγνωστο"
 msgid "Partition encryption"
 msgstr "Κρυπτογράφηση διαμέρισης"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Μορφοποίηση {} σε "
 
@@ -1045,6 +1052,7 @@ msgstr "Πίσω"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr ""
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr ""
 
@@ -1258,7 +1266,7 @@ msgstr ""
 " (Εισάγετε μία τιμή από 1 μέχρι {})\n"
 "Σημείωση:"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
 
@@ -1330,7 +1338,7 @@ msgstr ""
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Παρέχει μία επιλογή από περιβάλλοντα επιφάνειας εργασίας και διαχειριστές tiling παραθύρων, π.χ. gnome, kde, sway"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Καμία διαμόρφωση"
 
@@ -1486,7 +1494,7 @@ msgstr "Το όνομα χρήστη που εισάγατε δεν είναι �
 msgid "Username"
 msgstr "Όνομα Χρήστη : "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Θα έπρεπε ο \"{}\" να είναι υπερχρήστης (sudo);"
 
@@ -1564,7 +1572,7 @@ msgstr ""
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Αποθήκευση διαμόρφωσης"
 
@@ -1620,14 +1628,15 @@ msgstr ""
 msgid "Signature check"
 msgstr "Επιλέξτε διεπαφή προς προσθήκη"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr ""
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Σύνολο: {} / {}"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
 
@@ -1825,7 +1834,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Επιλέξτε ποιο mode να διαμορφωθεί για το \"{}\" ή παραλείψτε για να χρησιμοποιηθεί το default mode \"{}\""
 
@@ -1849,6 +1858,73 @@ msgstr "Αποθήκευση διαμόρφωσης"
 msgid "Credentials file encryption password"
 msgstr "Κωδικός κρυπτογράφησης"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid "New version available"
+msgstr "Καμία διαθέσιμη συσκευή HSM"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Κωδικός root"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Καμία διαμόρφωση"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Εισάγετε κωδικό: "
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr ""
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
