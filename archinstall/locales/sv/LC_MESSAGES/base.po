@@ -1717,70 +1717,65 @@ msgstr "Krypteringslösenord för autentiseringsfil"
 msgid "Repositories: {}"
 msgstr "Arkiv: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "Inga HSM-enheter tillgängliga"
+msgstr "Ny version tillgänglig"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Lösenord"
+msgstr "Lösenordslös inloggning"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Andra faktorsinloggning"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Vill du fortsätta?"
+msgstr "Vill du konfigurera Bluetooth?"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Autentisering"
 
 msgid "Applications"
-msgstr ""
+msgstr "Program"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "U2F-inloggningsmetod: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Lösenordslös sudo: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Btrfs-ögonblicksavbildstyp: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Synkroniserar systemet..."
 
-#, fuzzy
 msgid "Value cannot be empty"
-msgstr "Iterationstiden kan inte vara tom"
+msgstr "Värdet kan inte vara tomt"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Ögonblicksavbildstyp"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Miljötyp: {}"
+msgstr "Ögonblicksavbildstyp: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Ställ in U2F-inloggning"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Inga U2F-enheter hittades"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "U2F-inloggningsmetod"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Mata in ett lösenord: "
+msgstr "Aktivera lösenordslös sudo?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Välj en FIDO2-enhet att använda för HSM"
+msgstr "Konfigurerar U2F-enhet för användare: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "Du kan behöva ange PIN-koden och sedan trycka på din U2F-enhet för att registrera den"
