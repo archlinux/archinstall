@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: summoner <summoner@vivaldi.net>\n"
+"Last-Translator: summoner <summoner@disroot.org>\n"
 "Language-Team: \n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
@@ -27,10 +27,10 @@ msgid "Would you like to use swap on zram?"
 msgstr "Biztosan cserehelyet akar használni a zRam-on?"
 
 msgid "Desired hostname for the installation: "
-msgstr "A kiszolgáló neve a telepítéshez: "
+msgstr "Gép neve a telepítéshez: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "A rendszergazda felhasználó neve a számítógép használatához szükséges „sudo” jogosultságokkal: "
+msgstr "A rendszergazda felhasználóneve a számítógép használatához szükséges „sudo” jogosultságokkal: "
 
 msgid "Any additional users to install (leave blank for no users): "
 msgstr "További felhasználók hozzáadása a telepítéshez (hagyja üresen, ha nem akar több felhasználót hozzáadni): "
@@ -340,7 +340,7 @@ msgid "Abort"
 msgstr "Megszakítás"
 
 msgid "Hostname"
-msgstr "Kiszolgálónév"
+msgstr "Gép neve"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "Nincs konfigurálva, nem érhető el, kivéve, ha kézzel állítja be"
@@ -470,7 +470,7 @@ msgid ""
 "Define a new user\n"
 msgstr ""
 "\n"
-"Új felhasználó definiálása\n"
+"Új felhasználó meghatározása\n"
 
 msgid "User Name : "
 msgstr "Felhasználónév : "
@@ -506,7 +506,7 @@ msgid "Save user configuration"
 msgstr "Felhasználói konfiguráció mentése"
 
 msgid "Save user credentials"
-msgstr "Felhasználói hitelesítő adatok mentése"
+msgstr "Felhasználói hitelesítési adatok mentése"
 
 msgid "Save disk layout"
 msgstr "Lemezelrendezés mentése"
@@ -1700,7 +1700,7 @@ msgid "Select which mode to configure for \"{}\""
 msgstr "Válassza ki a konfigurálandó módot a következőhöz: „{}”"
 
 msgid "Incorrect credentials file decryption password"
-msgstr "Helytelen a hitelesítőadat-fájl visszafejtési jelszava"
+msgstr "Helytelen a jelszó a hitelesítési adatok fájljának visszafejtéséhez"
 
 msgid "Incorrect password"
 msgstr "Helytelen jelszó"
@@ -1718,70 +1718,65 @@ msgstr "A hitelesítőadat-fájl titkosítási jelszava"
 msgid "Repositories: {}"
 msgstr "Tárolók: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "Nem állnak rendelkezésre HSM-eszközök"
+msgstr "Új verzió érhető el"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Jelszó"
+msgstr "Jelszó nélküli bejelentkezés"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Második lépcsős bejelentkezés"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Szeretné folytatni?"
+msgstr "Szeretné konfigurálni a Bluetooth-t?"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Hitelesítés"
 
 msgid "Applications"
-msgstr ""
+msgstr "Alkalmazások"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "U2F bejelentkezési eljárás: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Jelszó nélküli sudo: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "BTRFS-pillanatkép típusa: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Rendszer szinkronizálása…"
 
-#, fuzzy
 msgid "Value cannot be empty"
-msgstr "Az iterációs idő nem lehet üres"
+msgstr "Az érték nem lehet üres"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Pillanatkép típusa"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Környezet típusa: {}"
+msgstr "Pillanatkép típusa: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "U2F bejelentkezés beállítása"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Nem található U2F-eszköz"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "U2F bejelentkezési eljárás"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Adjon meg egy jelszót: "
+msgstr "Engedélyezi a jelszó nélküli sudo-t?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Válassza ki a HSM-hez használandó FIDO2-eszközt"
+msgstr "U2F-eszköz beállítása a következő felhasználónak: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "Lehet, hogy meg kell adnia a PIN-kódot, majd ki kell választania az U2F-eszközt a regisztrációhoz"
