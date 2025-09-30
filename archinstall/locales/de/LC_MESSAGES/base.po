@@ -406,7 +406,7 @@ msgid ""
 "Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-"Bitte wählen Sie ein Objekt aus der Liste aus und wählen Sie eine der verfügbaren Aktionen aus, die ausgeführt werden sollen"
+"Bitte wählen Sie ein Objekt aus der Liste und eine Aktion, die Sie ausführen möchten."
 
 msgid "Cancel"
 msgstr "Abbrechen"
