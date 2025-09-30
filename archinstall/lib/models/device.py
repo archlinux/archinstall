@@ -1077,9 +1077,9 @@ class LvmLayoutType(Enum):
 	def display_msg(self) -> str:
 		match self:
 			case LvmLayoutType.Default:
-				return tr('Default layout')
+				return tr('Default layout (root volume + seperate home volume)')
 			case LvmLayoutType.NoHome:
-				return tr('No home volume (root only)')
+				return tr('No home layout (root volume only)')
 			# case LvmLayoutType.Manual:
 			# 	return str(_('Manual configuration'))
 
