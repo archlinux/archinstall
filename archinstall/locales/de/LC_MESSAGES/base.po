@@ -483,7 +483,7 @@ msgid "No network configuration"
 msgstr "Keine Netzwerkkonfiguration"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Wählen Sie Subvolumes für die Btrfs-Partition"
+msgstr "Wählen Sie das gewünschte Subvolumes für die Btrfs-Partition"
 
 msgid ""
 "{}\n"
