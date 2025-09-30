@@ -113,7 +113,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Wählen Sie anhand vom Index aus, welche Partitionen gelöscht werden sollen"
+"Bitte wählen Sie anhand vom Index aus, welche Partitionen gelöscht werden sollen"
 
 msgid ""
 "{}\n"
@@ -122,7 +122,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Wählen Sie anhand vom Index aus, welche Partitionen wo eingehängt werden sollen"
+"Bitte wählen Sie anhand vom Index aus, welche Partitionen wo eingehängt werden sollen"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr " * Die Einhängeorte sind relativ zur Installation, boot würde beispielsweise /boot entsprechen."
@@ -179,7 +179,7 @@ msgid "Select what to do with each individual drive (followed by partition usage
 msgstr "Bitte geben Sie individuell an, was mit jedem Laufwerk geschehen soll"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Bitte wählen Sie was mit den ausgewählten Geräten machen wollen"
+msgstr "Wählen Sie aus, was Sie mit den ausgewählten Blockgeräten tun möchten"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Dies ist eine Auflistung vorprogrammierter Profile, die es einfacher ermöglichen, Dinge wie Desktop-Umgebungen zu installieren"
@@ -194,13 +194,13 @@ msgid "Select one or more hard drives to use and configure"
 msgstr "Bitte wählen Sie ein oder mehrere Laufwerk(e) aus, die konfiguriert und verwendet werden sollen"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Für die beste Kompatibilität mit ihrer AMD Hardware, sollten Sie womöglich die quelloffenen oder andernfalls AMD/ATI-Optionen verwenden."
+msgstr "Für die beste Kompatibilität mit Ihrer AMD Hardware, sollten Sie womöglich die quelloffenen oder andernfalls AMD/ATI-Optionen verwenden."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Für die beste Kompatibilität mit ihrer Intel Hardware, sollten Sie womöglich die quelloffenen oder andernfalls Intel-Optionen verwenden.\n"
+msgstr "Für die beste Kompatibilität mit Ihrer Intel Hardware, sollten Sie womöglich die quelloffenen oder andernfalls Intel-Optionen verwenden.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Für die beste Kompatibilität mit ihrer Nvidia-Hardware, sollten Sie den proprietären Nvidia-Treiber verwenden.\n"
+msgstr "Für die beste Kompatibilität mit Ihrer Nvidia-Hardware, sollten Sie den proprietären Nvidia-Treiber verwenden.\n"
 
 msgid ""
 "\n"
@@ -212,7 +212,7 @@ msgstr ""
 "Bitte wählen Sie einen Grafikkartentreiber aus oder leer lassen, um alle quelloffenen Treiber zu installieren"
 
 msgid "All open-source (default)"
-msgstr "Alle quelloffene (Standard)"
+msgstr "Alle quelloffenen (Standard)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "Bitte wählen Sie welche Kernel benutzt werden sollen oder leer lassen für Standard \"{}\""
@@ -293,7 +293,7 @@ msgid "Network configuration"
 msgstr "Netzwerkkonfiguration"
 
 msgid "Automatic time sync (NTP)"
-msgstr "Autom. Zeitsynchronisierung (NTP)"
+msgstr "Automatische Zeitsynchronisierung (NTP)"
 
 msgid "Install ({} config(s) missing)"
 msgstr "Installieren ({} Konfiguration(en) ausständig)"
@@ -406,7 +406,7 @@ msgid ""
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-" Wählen Sie ein Objekt aus der Liste aus und wählen Sie anschließend eine Aktion zum ausführen dafür aus"
+"Bitte wählen Sie ein Objekt aus der Liste und wählen Sie dann eine Aktion dafür aus"
 
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -440,7 +440,7 @@ msgid ""
 "This is your chosen configuration:"
 msgstr ""
 "\n"
-"Dies ist ihre gewählte Konfiguration:"
+"Dies ist Ihre gewählte Konfiguration:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
 msgstr "Pacman läuft bereits, warten für maximal 10 Minuten auf Beendigung."
@@ -504,7 +504,7 @@ msgid "Save user configuration"
 msgstr "Benutzerkonfiguration speichern"
 
 msgid "Save user credentials"
-msgstr "Benutzeranmeldedaten speichern"
+msgstr "Benutzeranmeldeinformationen speichern"
 
 msgid "Save disk layout"
 msgstr "Laufwerklayout speichern"
@@ -519,7 +519,7 @@ msgid "Enter a directory for the configuration(s) to be saved: "
 msgstr "Geben Sie einen Ordner an, in dem Konfigurationen gespeichert werden sollen: "
 
 msgid "Not a valid directory: {}"
-msgstr "Ordner existiert nicht: {}"
+msgstr "Kein gültiger Ordner: {}"
 
 msgid "The password you are using seems to be weak,"
 msgstr "Das gewählte Passwort ist schwach,"
@@ -653,7 +653,7 @@ msgid "Provides a selection of desktop environments and tiling window managers, 
 msgstr "Auswahl von Desktopumgebungen und kachelnden Fenstermanagern, z.B. GNOME, KDE, Sway"
 
 msgid "Select your desired desktop environment"
-msgstr "Wählen Sie ihre gewünschte Desktopumgebung aus"
+msgstr "Wählen Sie Ihre gewünschte Desktopumgebung aus"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
 msgstr "Eine sehr minimale Installation, welche es erlaubt Arch Linux selber nach eigenen Wünschen anzupassen."
@@ -821,7 +821,7 @@ msgid "Parallel Downloads"
 msgstr "Parallele Downloads"
 
 msgid "ESC to skip"
-msgstr "ESC zum Überspringen"
+msgstr "Drücken Sie ESC, um zu überspringen"
 
 msgid "CTRL+C to reset"
 msgstr "Strg+C zum zurücksetzen"
@@ -1080,7 +1080,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Option auswählen, um Sway Zugriff auf deine Hardware zu geben"
+"Option auswählen, um Sway Zugriff auf Ihre Hardware zu geben"
 
 msgid "Graphics driver"
 msgstr "Grafiktreiber"
@@ -1239,7 +1239,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Eine Option auswählen, um Hyprland Zugriff auf deine Hardware zu geben"
+"Eine Option auswählen, um Hyprland Zugriff auf Ihre Hardware zu geben"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "Alle eingegebenen Werte können mit einer Einheit angegeben werden: %, B, KB, KiB, MB, MiB..."
@@ -1351,7 +1351,7 @@ msgid "Press Ctrl+h for help"
 msgstr "Drücken Sie Strg+h, für Hilfe"
 
 msgid "Choose an option to give Sway access to your hardware"
-msgstr "Eine Option auswählen, um Sway Zugriff auf deine Hardware zu geben"
+msgstr "Eine Option auswählen, um Sway Zugriff auf Ihre Hardware zu geben"
 
 msgid "Seat access"
 msgstr "Seat-Zugriff"
@@ -1665,13 +1665,13 @@ msgid "labwc needs access to your seat (collection of hardware devices i.e. keyb
 msgstr "labwc benötigt Zugriff auf ihren Seat (Sammlung von Hardwaregeräten wie Tastatur, Maus, usw.)"
 
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Option auswählen, um labwc Zugriff auf deine Hardware zu geben"
+msgstr "Option auswählen, um labwc Zugriff auf Ihre Hardware zu geben"
 
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "niri benötigt Zugriff auf ihren Seat (Sammlung von Hardwaregeräten wie Tastatur, Maus, usw.)"
 
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Option auswählen, um niri Zugriff auf deine Hardware zu geben"
+msgstr "Option auswählen, um niri Zugriff auf Ihre Hardware zu geben"
 
 msgid "Mark/Unmark as ESP"
 msgstr "Als ESP markieren bzw. nicht markieren"
