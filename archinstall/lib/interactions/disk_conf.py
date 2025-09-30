@@ -605,7 +605,7 @@ def suggest_lvm_layout(
 		[p.length for p in other_part],
 		Size(0, Unit.B, SectorSize.default()),
 	)
-	root_vol_size = Size(20, Unit.GiB, SectorSize.default())
+	root_vol_size = Size(20, Unit.GiB, SectorSize.default()) if home_volume else total_vol_available
 	home_vol_size = total_vol_available - root_vol_size
 
 	lvm_vol_group = LvmVolumeGroup(vg_grp_name, pvs=other_part)
