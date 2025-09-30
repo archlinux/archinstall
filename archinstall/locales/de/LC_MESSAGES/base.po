@@ -458,7 +458,7 @@ msgid "Change password"
 msgstr "Passwort ändern"
 
 msgid "Promote/Demote user"
-msgstr "Benutzerkonto Berechtigen/Einschränken"
+msgstr "Benutzerkonto berechtigen/einschränken"
 
 msgid "Delete User"
 msgstr "Benutzerkonto löschen"
@@ -593,7 +593,7 @@ msgid "Would you like to use BTRFS subvolumes with a default structure?"
 msgstr "Möchten Sie Btrfs-Subvolumes mit vorgegebener Struktur verwenden?"
 
 msgid "Would you like to use BTRFS compression?"
-msgstr "Möchten sie Btrfs-Komprimierung verwenden?"
+msgstr "Möchten Sie Btrfs-Komprimierung verwenden?"
 
 msgid "Would you like to create a separate partition for /home?"
 msgstr "Möchten Sie eine separate Partition für /home erstellen?"
@@ -668,7 +668,7 @@ msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Installiert ein minimales System inklusive Xorg und Grafiktreibern."
 
 msgid "Press Enter to continue."
-msgstr "Drücken sie Enter um fortzufahren."
+msgstr "Drücken Sie Enter, um fortzufahren."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
 msgstr "Möchten Sie in das neu installierte System über chroot zugreifen um noch weitere, manuelle Konfigurationen vorzunehmen?"
@@ -680,7 +680,7 @@ msgid "Select one or more hard drives to use and configure\n"
 msgstr "Bitte wählen Sie ein oder mehrere Laufwerk(e) aus, die konfiguriert und verwendet werden sollen\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Modifikationen zur momentanen Konfiguration führen zu einem Löschen der Laufwerkskonfiguration!"
+msgstr "Änderungen an der aktuellen Konfiguration führen zum Löschen der Laufwerkskonfiguration!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
 msgstr "Wenn Sie die Laufwerkskonfiguration ändern, dann wird das Laufwerkslayout zurückgesetzt. Sind Sie sicher?"
@@ -702,13 +702,13 @@ msgid "(default)"
 msgstr "(Standard)"
 
 msgid "Use ESC to skip"
-msgstr "ESC drücken um zu überspringen"
+msgstr "Drücken Sie ESC, um zu überspringen"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
-"Strg+C drücken um die aktuelle Auswahl zurückzusetzen\n"
+"Drücken Sie Strg+C, um die aktuelle Auswahl zurückzusetzen\n"
 "\n"
 
 msgid "Copy to: "
@@ -1348,7 +1348,7 @@ msgid " (default)"
 msgstr " (Standard)"
 
 msgid "Press Ctrl+h for help"
-msgstr "Drücken Sie Strg+h für Hilfe"
+msgstr "Drücken Sie Strg+h, für Hilfe"
 
 msgid "Choose an option to give Sway access to your hardware"
 msgstr "Eine Option auswählen, um Sway Zugriff auf deine Hardware zu geben"
