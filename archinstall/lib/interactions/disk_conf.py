@@ -554,7 +554,7 @@ def suggest_lvm_layout(
 	disk_config: DiskLayoutConfiguration,
 	filesystem_type: FilesystemType | None = None,
 	vg_grp_name: str = 'ArchinstallVg',
-    home_volume: bool = True
+	home_volume: bool = True
 ) -> LvmConfiguration:
 	if disk_config.config_type != DiskLayoutType.Default:
 		raise ValueError('LVM suggested volumes are only available for default partitioning')
