@@ -558,7 +558,6 @@ def suggest_lvm_layout(
 ) -> LvmConfiguration:
 	if disk_config.config_type != DiskLayoutType.Default:
 		raise ValueError('LVM suggested volumes are only available for default partitioning')
-    # TODO: default config without home
 
 	using_subvolumes = False
 	btrfs_subvols = []
