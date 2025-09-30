@@ -403,10 +403,10 @@ msgstr "ESC um zu überspringen\n"
 
 msgid ""
 "\n"
-" Choose an object from the list, and select one of the available actions for it to execute"
+"Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-"Bitte wählen Sie ein Objekt aus der Liste und wählen Sie dann eine Aktion dafür aus"
+"Bitte wählen Sie ein Objekt aus der Liste aus und wählen Sie eine der verfügbaren Aktionen aus, die ausgeführt werden sollen"
 
 msgid "Cancel"
 msgstr "Abbrechen"
