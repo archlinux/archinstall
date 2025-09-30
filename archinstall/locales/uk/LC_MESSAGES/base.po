@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: TSEPLNK <nyuxmumryk@ukr.net>\n"
+"Last-Translator: TSEPLNK\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgid "Would you like to use swap on zram?"
 msgstr "Бажаєте використовувати підкачку на zram?"
 
 msgid "Desired hostname for the installation: "
-msgstr "Бажане ім'я хоста для встановлення: "
+msgstr "Бажане ім'я хоста: "
 
 msgid "Username for required superuser with sudo privileges: "
 msgstr "Ім’я користувача для необхідного суперкористувача з правами sudo: "
@@ -98,7 +98,7 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Введіть бажаний тип файлової системи для розділу"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Введіть початкове місце (в одиницях parted: s, GB, %, тощо; за замовчуванням: {}): "
+msgstr "Введіть початкове місце (у розділених одиницях: s, GB, %, тощо; за замовчуванням: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr "Введіть кінцеве місце (в одиницях parted: s, GB, %, тощо; наприклад: {}): "
@@ -1218,9 +1218,9 @@ msgstr ""
 "\n"
 "Примітка:\n"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Максимальне значення   : {} ( Дозволяє {} паралельних завантажень, дозволяє {} завантажень за раз )"
+msgstr " - Максимальне рекомендоване значення : {} ( Дозволяє {} паралельних завантажень за раз )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
 msgstr " - Вимкнути/Типово : 0 ( Вимикає паралельне завантаження, дозволяє лише 1 завантаження за раз )\n"
@@ -1435,7 +1435,7 @@ msgid "Enter your DNS servers with space separated (leave blank for none)"
 msgstr "Введіть ваші DNS-сервери (розділені пробілами, залиште порожнім якщо їх немає):"
 
 msgid "DNS servers"
-msgstr "DNS - сервера"
+msgstr "DNS- сервера"
 
 msgid "Configure interfaces"
 msgstr "Налаштування інтерфейсів"
@@ -1685,7 +1685,7 @@ msgid "Reboot system"
 msgstr "Перезавантажити систему"
 
 msgid "chroot into installation for post-installation configurations"
-msgstr "бажаєте підключитися використовуючи chroot до новоствореної інсталяції та виконати додаткову конфігурацію після інсталяції"
+msgstr "бажаєте підключитися використовуючи chroot до новоствореної інсталяції та виконати додаткову конфігурацію"
 
 msgid "Installation completed"
 msgstr "Встановлення завершено"
@@ -1716,70 +1716,65 @@ msgstr "Пароль розшифрування файлу облікових д
 msgid "Repositories: {}"
 msgstr "Репоиторії: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "Немає доступних пристроїв HSM"
+msgstr "Доступна нова версія"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Пароль"
+msgstr "Вхід без паролю"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Другий фактор входу"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Бажаєте продовжити?"
+msgstr "Бажаєте налаштувати Bluetooth?"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Автентифікація"
 
 msgid "Applications"
-msgstr ""
+msgstr "Додатки"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "Метод входу для пристрою двофакторної автентифікації: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Sudo без паролю: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Тип знімку Btrfs: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Синхронізація системи..."
 
-#, fuzzy
 msgid "Value cannot be empty"
-msgstr "Час ітерації не може бути порожнім"
+msgstr "Значення не може бути пустим"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Тип знімку"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Тип середовища: {}"
+msgstr "Тип знімку: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Налаштування входу з пристроєм двофакторної авторизації"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Не знайдено жодного пристрою двофакторної автентифікації"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "Метод входу для пристрою двофакторної автентифікації"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Введіть пароль: "
+msgstr "Увімкнути sudo без паролю?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Оберіть пристрій FIDO2 для використання HSM"
+msgstr "Налаштування пристроя двофакторної автентифікації для користувача: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "Ви повинні написати PIN та потім торкнутися вашого пристрою двофакторної авторизації, щоб зареєструвати його"
