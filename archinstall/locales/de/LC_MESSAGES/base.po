@@ -433,7 +433,7 @@ msgid "Copy to new key:"
 msgstr "Kopieren zum neuen Schlüssel:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "Nicht erkannter Netzwerinterfacecontroller: {}. Erlaubte Werte {}"
+msgstr "Nicht erkannter Netzwerkinterfacecontroller: {}. Erlaubte Werte {}"
 
 msgid ""
 "\n"
