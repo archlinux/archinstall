@@ -179,7 +179,7 @@ msgid "Select what to do with each individual drive (followed by partition usage
 msgstr "Bitte geben Sie individuell an, was mit jedem Laufwerk geschehen soll"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Wählen Sie aus, was Sie mit den ausgewählten Blockgeräten tun möchten"
+msgstr "Bitte wählen Sie aus, was Sie mit den ausgewählten Blockgeräten tun möchten"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Dies ist eine Auflistung vorprogrammierter Profile, die es einfacher ermöglichen, Dinge wie Desktop-Umgebungen zu installieren"
