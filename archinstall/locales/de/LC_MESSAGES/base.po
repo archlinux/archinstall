@@ -915,7 +915,7 @@ msgid "Partition mount-points are relative to inside the installation, the boot 
 msgstr "Die Einhängeorte sind relativ zur Installation, boot würde beispielsweise /boot entsprechen."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr "Wenn der Einhängeort auf /boot gesetzt ist, wird die Partition ebenfalls als bootbar makiert."
+msgstr "Wenn der Einhängeort auf /boot gesetzt ist, wird die Partition ebenfalls als bootbar markiert."
 
 msgid "Mountpoint: "
 msgstr "Einhängeort: "
