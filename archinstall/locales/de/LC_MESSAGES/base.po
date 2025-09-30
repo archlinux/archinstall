@@ -680,7 +680,7 @@ msgid "Select one or more hard drives to use and configure\n"
 msgstr "Bitte wählen Sie ein oder mehrere Laufwerk(e) aus, die konfiguriert und verwendet werden sollen\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Änderungen an der aktuellen Konfiguration führen zum Löschen der Laufwerkskonfiguration!"
+msgstr "Jede Änderung der bestehenden Einstellung führt zu einer Zurücksetzung des Datenträgerlayouts!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
 msgstr "Wenn Sie die Laufwerkskonfiguration ändern, dann wird das Laufwerkslayout zurückgesetzt. Sind Sie sicher?"
