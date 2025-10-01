@@ -13,10 +13,11 @@ class Bootloader(Enum):
 	Grub = 'Grub'
 	Efistub = 'Efistub'
 	Limine = 'Limine'
+	Refind = 'rEFInd'
 
 	def has_uki_support(self) -> bool:
 		match self:
-			case Bootloader.Efistub | Bootloader.Limine | Bootloader.Systemd:
+			case Bootloader.Efistub | Bootloader.Limine | Bootloader.Systemd | Bootloader.Refind:
 				return True
 			case _:
 				return False
