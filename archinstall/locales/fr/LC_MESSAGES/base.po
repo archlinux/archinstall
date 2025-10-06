@@ -1727,71 +1727,71 @@ msgstr "Nom du dépôt"
 
 #, fuzzy
 msgid "New version available"
-msgstr "Aucun périphérique HSM disponible"
+msgstr "Nouvelle version disponible"
 
 #, fuzzy
 msgid "Passwordless login"
-msgstr "Mot de passe"
+msgstr "Connexion sans mot de passe"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Connexion à deux facteurs"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
 #, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Voulez-vous continuer ?"
+msgstr "Voulez-vous configurer le Bluetooth ?"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Authentification"
 
 msgid "Applications"
-msgstr ""
+msgstr "Applications"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "Méthode	de connexion U2F : "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Sudo sans mot de passe : "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Type de	snapshot Btrfs : {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Synchronisation du système..."
 
 #, fuzzy
 msgid "Value cannot be empty"
-msgstr "Le temps d'itération ne peut pas être vide"
+msgstr "La valeur ne peut pas être vide"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Type de snapshot"
 
 #, fuzzy, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Type d'environnement : {}"
+msgstr "Type de snapshot : {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Configuration de la connexion U2F"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Pas de périphériques U2F trouvés"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "Méthode de connexion U2F"
 
 #, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Entrer un mot de passe : "
+msgstr "Activer sudo sans mot de passe ?"
 
 #, fuzzy, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Sélectionner un périphérique FIDO2 à utiliser pour HSM"
+msgstr "Configuration du périphérique U2F pour l'utilisateur : {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "Vous devez peut-être entrer le code PIN, puis toucher votre périphérique U2F pour l'enregistrer"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
