@@ -1,0 +1,1794 @@
+# O'zbek tili tarjimasi - Arch Install
+# Copyright (C) 2025 Arch Install Contributors
+# This file is distributed under the same license as the archinstall package.
+# Muhammadyoqub <ymuhammadyoqub2007@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: archinstall\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-07 12:00+0500\n"
+"PO-Revision-Date: 2025-10-07 12:00+0500\n"
+"Last-Translator: Muhammadyoqub <ymuhammadyoqub2007@gmail.com>\n"
+"Language-Team: Uzbek\n"
+"Language: uz\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] Log fayl bu yerda yaratildi: {} {}"
+
+#, fuzzy
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Iltimos, ushbu muammo (va fayl) haqida https://github.com/archlinux/archinstall/issues manziliga xabar bering"
+
+msgid "Do you really want to abort?"
+msgstr "Haqiqatan ham to'xtatmoqchimisiz?"
+
+msgid "And one more time for verification: "
+msgstr "Tekshirish uchun yana bir marta kiriting: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "Zram'da swap'dan foydalanmoqchimisiz?"
+
+msgid "Desired hostname for the installation: "
+msgstr "O'rnatish uchun host nomini kiriting: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Sudo imtiyozlariga ega superuser uchun foydalanuvchi nomi: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Qo'shimcha foydalanuvchilar (kerak bo'lmasa, bo'sh qoldiring): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Ushbu foydalanuvchi superuser (sudoer) bo'lishi kerakmi?"
+
+msgid "Select a timezone"
+msgstr "Vaqt mintaqasini tanlang"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Systemd-boot o'rniga GRUB bootloader'idan foydalanmoqchimisiz?"
+
+msgid "Choose a bootloader"
+msgstr "Bootloader'ni tanlang"
+
+msgid "Choose an audio server"
+msgstr "Audio serverni tanlang"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Faqat base, base-devel, linux, linux-firmware, efibootmgr va ixtiyoriy profil paketlari o'rnatiladi."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "Agar Firefox yoki Chromium kabi veb-brauzer kerak bo'lsa, uni keyingi qadamda belgilashingiz mumkin."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Qo'shimcha paketlarni probel bilan ajratib yozing (o'tkazib yuborish uchun bo'sh qoldiring): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "ISO tarmoq konfiguratsiyasini o'rnatishga nusxalash"
+
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "NetworkManager'dan foydalanish (GNOME va KDE'da internetni grafik interfeysda sozlash uchun zarur)"
+
+msgid "Select one network interface to configure"
+msgstr "Sozlash uchun bitta tarmoq interfeysini tanlang"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "\"{}\" uchun qaysi rejimni sozlashni tanlang yoki standart \"{}\" rejimini ishlatish uchun o'tkazib yuboring"
+
+#, python-brace-format
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "{} uchun IP va quyi tarmoqni kiriting (masalan: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Shlyuz (router) IP manzilini kiriting yoki bo'sh qoldiring: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "DNS serverlarni kiriting (probel bilan ajrating, kerakmas bo'lsa bo'sh qoldiring): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "Asosiy bo'lim uchun fayl tizimini tanlang"
+
+msgid "Current partition layout"
+msgstr "Joriy bo'limlar sxemasi"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"Nima qilishni tanlang\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Bo'lim uchun kerakli fayl tizimi turini kiriting"
+
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Boshlang'ich joylashuvni kiriting (birliklar: s, GB, %, va hk.; standart: {}): "
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Tugash joylashuvini kiriting (birliklar: s, GB, %, va hk.; masalan: {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} navbatga qo'yilgan bo'limlarni o'z ichiga oladi. Bu amallar bekor qilinadi, ishonchingiz komilmi?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"O'chiriladigan bo'limlarni indeks bo'yicha tanlang"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"Qaysi bo'limni qayerga biriktirishni indeks bo'yicha tanlang"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Bo'limlarni biriktirish nuqtalari o'rnatilayotgan tizimga nisbatan olinadi, masalan, /boot."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "Bo'limni biriktirish nuqtasini tanlang (o'chirish uchun bo'sh qoldiring): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"Formatlanadigan bo'limni tanlang"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"Shifrlanadigan bo'limni tanlang"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"Yuklanuvchi (bootable) deb belgilash uchun bo'limni tanlang"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"Qaysi bo'limga fayl tizimi o'rnatishni tanlang"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Bo'lim uchun kerakli fayl tizimi turini kiriting: "
+
+msgid "Archinstall language"
+msgstr "Archinstall tili"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "Barcha tanlangan disklarni tozalash va tavsiya etilgan standart bo'limlar sxemasini qo'llash"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "Har bir disk bilan nima qilishni tanlang (so'ngra bo'limlardan foydalanish)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "Tanlangan blokli qurilmalar bilan nima qilmoqchi ekaningizni tanlang"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "Bu oldindan dasturlashtirilgan profillar ro'yxati. Ular ish stoli muhitlari kabi narsalarni o'rnatishni osonlashtirishi mumkin"
+
+msgid "Select keyboard layout"
+msgstr "Klaviatura tartibini tanlang"
+
+msgid "Select one of the regions to download packages from"
+msgstr "Paketlarni yuklab olish uchun hududlardan birini tanlang"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "Foydalanish va sozlash uchun bir yoki bir nechta qattiq diskni tanlang"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "AMD qurilmangiz bilan eng yaxshi moslik uchun to'liq ochiq kodli yoki AMD/ATI variantlaridan birini tanlashingiz tavsiya etiladi."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Intel qurilmangiz bilan eng yaxshi moslik uchun to'liq ochiq kodli yoki Intel variantlaridan birini tanlashingiz tavsiya etiladi.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Nvidia qurilmangiz bilan eng yaxshi moslik uchun Nvidia'ning mulkiy drayveridan foydalanishingiz tavsiya etiladi.\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Grafik drayverni tanlang yoki barcha ochiq kodli drayverlarni o'rnatish uchun bo'sh qoldiring"
+
+msgid "All open-source (default)"
+msgstr "Barcha ochiq kodli (standart)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "Qaysi yadrolardan foydalanishni tanlang yoki standart \"{}\" uchun bo'sh qoldiring"
+
+msgid "Choose which locale language to use"
+msgstr "Lokal tilini tanlang"
+
+msgid "Choose which locale encoding to use"
+msgstr "Lokal kodlashni tanlang"
+
+msgid "Select one of the values shown below: "
+msgstr "Quyida ko'rsatilgan qiymatlardan birini tanlang: "
+
+msgid "Select one or more of the options below: "
+msgstr "Quyidagi variantlardan birini yoki bir nechtasini tanlang: "
+
+msgid "Adding partition...."
+msgstr "Bo'lim qo'shilmoqda..."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "Davom etish uchun to'g'ri fayl tizimi turini (fs-type) kiritishingiz kerak. Mavjud turlar uchun `man parted` buyrug'iga qarang."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "Xato: \"{}\" URL manzilidagi profillar ro'yxatini olishda xatolik yuz berdi:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "Xato: \"{}\" natijasini JSON formatida o'qib bo'lmadi:"
+
+msgid "Keyboard layout"
+msgstr "Klaviatura tartibi"
+
+msgid "Mirror region"
+msgstr "Ko'zgu hududi"
+
+msgid "Locale language"
+msgstr "Lokal tili"
+
+msgid "Locale encoding"
+msgstr "Lokal kodlash"
+
+msgid "Drive(s)"
+msgstr "Disk(lar)"
+
+msgid "Disk layout"
+msgstr "Disk sxemasi"
+
+msgid "Encryption password"
+msgstr "Shifrlash paroli"
+
+msgid "Swap"
+msgstr "Swap"
+
+msgid "Bootloader"
+msgstr "Bootloader"
+
+msgid "Root password"
+msgstr "Root paroli"
+
+msgid "Superuser account"
+msgstr "Superuser hisobi"
+
+msgid "User account"
+msgstr "Foydalanuvchi hisobi"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Kernels"
+msgstr "Yadrolar"
+
+msgid "Additional packages"
+msgstr "Qo'shimcha paketlar"
+
+msgid "Network configuration"
+msgstr "Tarmoq konfiguratsiyasi"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Vaqtni avtomatik sinxronlash (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "O'rnatish ({} ta konfiguratsiya yetishmayapti)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"Siz qattiq disk tanlashni o'tkazib yubordingiz\n"
+"va {} manziliga biriktirilgan mavjud disk sozlamalaridan foydalanasiz (eksperimental)\n"
+"DIQQAT: Archinstall bu sozlamaning mosligini tekshirmaydi.\n"
+"Davom etishni xohlaysizmi?"
+
+msgid "Re-using partition instance: {}"
+msgstr "Mavjud bo'limdan qayta foydalanish: {}"
+
+msgid "Create a new partition"
+msgstr "Yangi bo'lim yaratish"
+
+msgid "Delete a partition"
+msgstr "Bo'limni o'chirish"
+
+msgid "Clear/Delete all partitions"
+msgstr "Barcha bo'limlarni tozalash/o'chirish"
+
+msgid "Assign mount-point for a partition"
+msgstr "Bo'lim uchun biriktirish nuqtasini belgilash"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "Bo'limni formatlash uchun belgilash/bekor qilish (ma'lumotlarni o'chiradi)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "Bo'limni shifrlangan deb belgilash/bekor qilish"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "Bo'limni yuklanuvchi deb belgilash/bekor qilish (/boot uchun avtomatik)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "Bo'lim uchun fayl tizimini o'rnatish"
+
+msgid "Abort"
+msgstr "To'xtatish"
+
+msgid "Hostname"
+msgstr "Host nomi"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "Sozlanmagan, qo'lda sozlanmaguncha mavjud emas"
+
+msgid "Timezone"
+msgstr "Vaqt mintaqasi"
+
+msgid "Set/Modify the below options"
+msgstr "Quyidagi parametrlarni o'rnatish/o'zgartirish"
+
+msgid "Install"
+msgstr "O'rnatish"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"O'tkazib yuborish uchun ESC tugmasini bosing\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "Bo'limlar sxemasini taklif qilish"
+
+msgid "Enter a password: "
+msgstr "Parolni kiriting: "
+
+msgid "Enter a encryption password for {}"
+msgstr "{} uchun shifrlash parolini kiriting"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "Diskni shifrlash parolini kiriting (shifrlash kerak bo'lmasa, bo'sh qoldiring): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Sudo imtiyozlariga ega superuser yarating: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "Root parolini kiriting (root hisobini o'chirish uchun bo'sh qoldiring): "
+
+msgid "Password for user \"{}\": "
+msgstr "\"{}\" foydalanuvchisining paroli: "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "Qo'shimcha paketlar mavjudligi tekshirilmoqda (bu bir necha soniya vaqt olishi mumkin)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Standart vaqt serverlari yordamida vaqtni avtomatik sinxronlashdan (NTP) foydalanmoqchimisiz?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"NTP to'g'ri ishlashi uchun qurilma vaqtini va boshqa qo'shimcha sozlamalarni to'g'rilash talab qilinishi mumkin.\n"
+"Batafsil ma'lumot uchun Arch Wiki'ga qarang"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "Qo'shimcha foydalanuvchi yaratish uchun nom kiriting (o'tkazib yuborish uchun bo'sh qoldiring): "
+
+msgid "Use ESC to skip\n"
+msgstr "O'tkazib yuborish uchun ESC tugmasini bosing\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+" Ro'yxatdan obyektni tanlang va u uchun mavjud amallardan birini bajaring"
+
+msgid "Cancel"
+msgstr "Bekor qilish"
+
+msgid "Confirm and exit"
+msgstr "Tasdiqlash va chiqish"
+
+msgid "Add"
+msgstr "Qo'shish"
+
+msgid "Copy"
+msgstr "Nusxalash"
+
+msgid "Edit"
+msgstr "Tahrirlash"
+
+msgid "Delete"
+msgstr "O'chirish"
+
+msgid "Select an action for '{}'"
+msgstr "'{}' uchun amalni tanlang"
+
+msgid "Copy to new key:"
+msgstr "Yangi kalitga nusxalash:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "Noma'lum tarmoq kartasi turi: {}. Mumkin bo'lgan qiymatlar: {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"Siz tanlagan konfiguratsiya:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman allaqachon ishlamoqda. To'xtashi uchun maksimal 10 daqiqa kutiladi."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Oldindan mavjud bo'lgan pacman qulfi olib tashlanmadi. Archinstall'dan foydalanishdan oldin barcha pacman sessiyalarini tozalang."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "Qo'shimcha (ixtiyoriy) repozitoriylardan qaysilarini yoqishni tanlang"
+
+msgid "Add a user"
+msgstr "Foydalanuvchi qo'shish"
+
+msgid "Change password"
+msgstr "Parolni o'zgartirish"
+
+msgid "Promote/Demote user"
+msgstr "Foydalanuvchi maqomini o'zgartirish"
+
+msgid "Delete User"
+msgstr "Foydalanuvchini o'chirish"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"Yangi foydalanuvchini belgilash\n"
+
+msgid "User Name : "
+msgstr "Foydalanuvchi nomi: "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "{} superuser (sudoer) bo'lishi kerakmi?"
+
+msgid "Define users with sudo privilege: "
+msgstr "Sudo imtiyoziga ega foydalanuvchilarni belgilang: "
+
+msgid "No network configuration"
+msgstr "Tarmoq konfiguratsiyasi yo'q"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "Btrfs bo'limida kerakli subvolume'larni o'rnatish"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"Qaysi bo'limda subvolume'lar o'rnatishni tanlang"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "Joriy bo'lim uchun btrfs subvolume'larini boshqarish"
+
+msgid "No configuration"
+msgstr "Konfiguratsiya yo'q"
+
+msgid "Save user configuration"
+msgstr "Foydalanuvchi konfiguratsiyasini saqlash"
+
+msgid "Save user credentials"
+msgstr "Foydalanuvchi hisob ma'lumotlarini saqlash"
+
+msgid "Save disk layout"
+msgstr "Disk sxemasini saqlash"
+
+msgid "Save all"
+msgstr "Barchasini saqlash"
+
+msgid "Choose which configuration to save"
+msgstr "Qaysi konfiguratsiyani saqlashni tanlang"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "Konfiguratsiya(lar) saqlanadigan katalogni kiriting: "
+
+msgid "Not a valid directory: {}"
+msgstr "Yaroqsiz katalog: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "Siz kiritgan parol zaif ko'rinadi,"
+
+msgid "are you sure you want to use it?"
+msgstr "shunda ham uni ishlatmoqchimisiz?"
+
+msgid "Optional repositories"
+msgstr "Ixtiyoriy repozitoriylar"
+
+msgid "Save configuration"
+msgstr "Konfiguratsiyani saqlash"
+
+msgid "Missing configurations:\n"
+msgstr "Yetishmayotgan konfiguratsiyalar:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "Root paroli yoki kamida 1 ta superuser ko'rsatilishi shart"
+
+msgid "Manage superuser accounts: "
+msgstr "Superuser hisoblarini boshqarish: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "Oddiy foydalanuvchi hisoblarini boshqarish: "
+
+msgid " Subvolume :{:16}"
+msgstr " Subvolume :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " biriktirildi: {:16}"
+
+msgid " with option {}"
+msgstr " {} parametri bilan"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+" Yangi subvolume uchun kerakli qiymatlarni to'ldiring \n"
+
+msgid "Subvolume name "
+msgstr "Subvolume nomi "
+
+msgid "Subvolume mountpoint"
+msgstr "Subvolume biriktirish nuqtasi"
+
+msgid "Subvolume options"
+msgstr "Subvolume parametrlari"
+
+msgid "Save"
+msgstr "Saqlash"
+
+msgid "Subvolume name :"
+msgstr "Subvolume nomi:"
+
+msgid "Select a mount point :"
+msgstr "Biriktirish nuqtasini tanlang:"
+
+msgid "Select the desired subvolume options "
+msgstr "Kerakli subvolume parametrlarini tanlang "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "Sudo imtiyoziga ega foydalanuvchilarni nomi bo'yicha belgilang: "
+
+#, python-brace-format
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] Log fayl bu yerda yaratildi: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "BTRFS subvolume'larini standart struktura bilan ishlatmoqchimisiz?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "BTRFS siqishdan foydalanmoqchimisiz?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "/home uchun alohida bo'lim yaratmoqchimisiz?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Tanlangan disklar avtomatik taklif uchun minimal sig'imga ega emas\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "/home bo'limi uchun minimal sig'im: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Arch Linux bo'limi uchun minimal sig'im: {}GB"
+
+msgid "Continue"
+msgstr "Davom etish"
+
+msgid "yes"
+msgstr "ha"
+
+msgid "no"
+msgstr "yo'q"
+
+msgid "set: {}"
+msgstr "o'rnatildi: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "Qo'lda konfiguratsiya sozlamasi ro'yxat shaklida bo'lishi kerak"
+
+msgid "No iface specified for manual configuration"
+msgstr "Qo'lda sozlash uchun interfeys ko'rsatilmagan"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "Avtomatik DHCP'siz tarmoq kartasini qo'lda sozlash uchun IP manzil talab qilinadi"
+
+msgid "Add interface"
+msgstr "Interfeys qo'shish"
+
+msgid "Edit interface"
+msgstr "Interfeysni tahrirlash"
+
+msgid "Delete interface"
+msgstr "Interfeysni o'chirish"
+
+msgid "Select interface to add"
+msgstr "Qo'shish uchun interfeysni tanlang"
+
+msgid "Manual configuration"
+msgstr "Qo'lda sozlash"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "Bo'limni siqilgan deb belgilash/bekor qilish (faqat btrfs)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "Siz kiritgan parol zaif ko'rinadi. Shunda ham uni ishlatmoqchimisiz?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "Ish stoli muhitlari va oyna menejerlari tanlovi (masalan, GNOME, KDE, Sway)."
+
+msgid "Select your desired desktop environment"
+msgstr "Kerakli ish stoli muhitini tanlang"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Arch Linux'ni o'z xohishingizga ko'ra moslashtirish imkonini beruvchi asosiy o'rnatish."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "O'rnatish va yoqish uchun turli server paketlari tanlovi (masalan, httpd, nginx, mariadb)."
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "Qaysi serverlarni o'rnatishni tanlang, agar tanlanmasa, minimal o'rnatish amalga oshiriladi"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "Minimal tizim hamda Xorg va grafik drayverlarni o'rnatadi."
+
+msgid "Press Enter to continue."
+msgstr "Davom etish uchun Enter tugmasini bosing."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "Yangi yaratilgan tizimga chroot qilib, o'rnatishdan keyingi sozlamalarni bajarmoqchimisiz?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Haqiqatan ham bu sozlamani bekor qilmoqchimisiz?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "Foydalanish va sozlash uchun bir yoki bir nechta qattiq diskni tanlang\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "Joriy sozlamalarga kiritilgan har qanday o'zgartirish disk sxemasini bekor qiladi!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "Agar disk tanlovini o'zgartirsangiz, joriy disk sxemasi ham bekor qilinadi. Ishonchingiz komilmi?"
+
+msgid "Save and exit"
+msgstr "Saqlash va chiqish"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"navbatga qo'yilgan bo'limlarni o'z ichiga oladi. Bu amallar bekor qilinadi, ishonchingiz komilmi?"
+
+msgid "No audio server"
+msgstr "Audio server yo'q"
+
+msgid "(default)"
+msgstr "(standart)"
+
+msgid "Use ESC to skip"
+msgstr "O'tkazib yuborish uchun ESC tugmasini bosing"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"Joriy tanlovni bekor qilish uchun CTRL+C tugmasini bosing\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "Nusxalash:"
+
+msgid "Edit: "
+msgstr "Tahrirlash:"
+
+msgid "Key: "
+msgstr "Kalit:"
+
+msgid "Edit {}: "
+msgstr "{} tahrirlash:"
+
+msgid "Add: "
+msgstr "Qo'shish:"
+
+msgid "Value: "
+msgstr "Qiymat:"
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "Disk tanlash va bo'limlashni o'tkazib yuborib, /mnt manziliga biriktirilgan mavjud disk sozlamasidan foydalanishingiz mumkin (eksperimental)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Disklardan birini tanlang yoki o'tkazib yuborib, /mnt'dan standart sifatida foydalaning"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Formatlash uchun qaysi bo'limlarni belgilashni tanlang:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Shifrlangan diskni ochish uchun HSM'dan foydalanish"
+
+msgid "Device"
+msgstr "Qurilma"
+
+msgid "Size"
+msgstr "Hajm"
+
+msgid "Free space"
+msgstr "Bo'sh joy"
+
+msgid "Bus-type"
+msgstr "Shina turi"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Root paroli yoki sudo imtiyoziga ega kamida 1 ta foydalanuvchi ko'rsatilishi shart"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Foydalanuvchi nomini kiriting (o'tkazib yuborish uchun bo'sh qoldiring): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "Siz kiritgan foydalanuvchi nomi yaroqsiz. Qayta urining."
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "\"{}\" superuser (sudo) bo'lishi kerakmi?"
+
+msgid "Select which partitions to encrypt"
+msgstr "Qaysi bo'limlarni shifrlashni tanlang"
+
+msgid "very weak"
+msgstr "juda zaif"
+
+msgid "weak"
+msgstr "zaif"
+
+msgid "moderate"
+msgstr "o'rtacha"
+
+msgid "strong"
+msgstr "kuchli"
+
+msgid "Add subvolume"
+msgstr "Subvolume qo'shish"
+
+msgid "Edit subvolume"
+msgstr "Subvolume'ni tahrirlash"
+
+msgid "Delete subvolume"
+msgstr "Subvolume'ni o'chirish"
+
+msgid "Configured {} interfaces"
+msgstr "{} ta interfeys sozlandi"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "Bu parametr o'rnatish vaqtida bir vaqtning o'zida nechta yuklab olish mumkinligini belgilaydi"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {})\n"
+"Note:"
+msgstr ""
+"Parallel yuklab olishlar sonini kiriting.\n"
+" (1 dan {} gacha qiymat kiriting)\n"
+"Eslatma:"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Maksimal qiymat: {} ({} ta parallel yuklab olishga, bir vaqtda {} ta yuklab olishga ruxsat beradi)"
+
+#, fuzzy
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - Minimal qiymat: 1 (1 ta parallel yuklab olishga, bir vaqtda 2 ta yuklab olishga ruxsat beradi)"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - O'chirish/Standart: 0 (Parallel yuklab olishni o'chiradi, bir vaqtda faqat 1 ta yuklab olishga ruxsat beradi)"
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "Yaroqsiz qiymat! Qayta urining [1 dan {max_downloads} gacha yoki o'chirish uchun 0]"
+
+msgid "Parallel Downloads"
+msgstr "Parallel yuklab olishlar"
+
+msgid "ESC to skip"
+msgstr "ESC - O'tkazib yuborish"
+
+msgid "CTRL+C to reset"
+msgstr "CTRL+C - Bekor qilish"
+
+msgid "TAB to select"
+msgstr "TAB - Tanlash"
+
+msgid "[Default value: 0] > "
+msgstr "[Standart qiymat: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Ushbu tarjimadan foydalanish uchun tilni qo'llab-quvvatlaydigan shriftni qo'lda o'rnating."
+
+msgid "The font should be stored as {}"
+msgstr "Shrift {} sifatida saqlanishi kerak"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall'ni ishga tushirish uchun root huquqlari talab qilinadi. Batafsil ma'lumot uchun --help'ga qarang."
+
+msgid "Select an execution mode"
+msgstr "Bajarish rejimini tanlang"
+
+#, python-brace-format
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Ko'rsatilgan URL'dan profilni olib bo'lmadi: {}"
+
+#, python-brace-format
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Profillar noyob nomga ega bo'lishi kerak, lekin bir xil nomli profillar topildi: {}"
+
+msgid "Select one or more devices to use and configure"
+msgstr "Foydalanish va sozlash uchun bir yoki bir nechta qurilmani tanlang"
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Agar qurilma tanlovini o'zgartirsangiz, joriy disk sxemasi ham bekor qilinadi. Ishonchingiz komilmi?"
+
+msgid "Existing Partitions"
+msgstr "Mavjud bo'limlar"
+
+msgid "Select a partitioning option"
+msgstr "Bo'limlash variantini tanlang"
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Biriktirilgan qurilmalarning root katalogini kiriting: "
+
+#, python-brace-format
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "/home bo'limi uchun minimal sig'im: {}GiB\n"
+
+#, python-brace-format
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Arch Linux bo'limi uchun minimal sig'im: {}GiB"
+
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Bu oldindan dasturlashtirilgan profiles_bck ro'yxati. Ular ish stoli muhitlari kabi narsalarni o'rnatishni osonlashtirishi mumkin"
+
+msgid "Current profile selection"
+msgstr "Joriy profil tanlovi"
+
+msgid "Remove all newly added partitions"
+msgstr "Barcha yangi qo'shilgan bo'limlarni o'chirish"
+
+msgid "Assign mountpoint"
+msgstr "Biriktirish nuqtasini belgilash"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Formatlash uchun belgilash/bekor qilish (ma'lumotlarni o'chiradi)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Yuklanuvchi deb belgilash/bekor qilish"
+
+msgid "Change filesystem"
+msgstr "Fayl tizimini o'zgartirish"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Siqilgan deb belgilash/bekor qilish"
+
+msgid "Set subvolumes"
+msgstr "Subvolume'larni sozlash"
+
+msgid "Delete partition"
+msgstr "Bo'limni o'chirish"
+
+msgid "Partition"
+msgstr "Bo'lim"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Bu bo'lim hozirda shifrlangan. Uni formatlash uchun fayl tizimi ko'rsatilishi kerak."
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Bo'limlarni biriktirish nuqtalari o'rnatilayotgan tizimga nisbatan olinadi, masalan, /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr "Agar /boot biriktirish nuqtasi o'rnatilsa, bu bo'lim avtomatik tarzda yuklanuvchi deb belgilanadi."
+
+msgid "Mountpoint: "
+msgstr "Biriktirish nuqtasi: "
+
+msgid "Current free sectors on device {}:"
+msgstr "{} qurilmasidagi joriy bo'sh sektorlar:"
+
+msgid "Total sectors: {}"
+msgstr "Jami sektorlar: {}"
+
+msgid "Enter the start sector (default: {}): "
+msgstr "Boshlang'ich sektorni kiriting (standart: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Bo'limning tugash sektorini kiriting (foizda yoki blok raqami, standart: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Bu barcha yangi qo'shilgan bo'limlarni o'chirib tashlaydi, davom etasizmi?"
+
+#, python-brace-format
+msgid "Partition management: {}"
+msgstr "Bo'limlarni boshqarish: {}"
+
+#, python-brace-format
+msgid "Total length: {}"
+msgstr "Umumiy uzunlik: {}"
+
+msgid "Encryption type"
+msgstr "Shifrlash turi"
+
+msgid "Iteration time"
+msgstr "Iteratsiya vaqti"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "LUKS shifrlash uchun iteratsiya vaqtini kiriting (millisekundda)"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "Yuqori qiymatlar xavfsizlikni oshiradi, lekin tizim yuklanishini sekinlashtiradi"
+
+msgid "Default: 10000ms, Recommended range: 1000-60000"
+msgstr "Standart: 10000ms, Tavsiya etilgan oraliq: 1000-60000"
+
+msgid "Iteration time cannot be empty"
+msgstr "Iteratsiya vaqti bo'sh bo'lishi mumkin emas"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "Iteratsiya vaqti kamida 100ms bo'lishi kerak"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "Iteratsiya vaqti ko'pi bilan 120000ms bo'lishi kerak"
+
+msgid "Please enter a valid number"
+msgstr "Iltimos, yaroqli raqam kiriting"
+
+msgid "Partitions"
+msgstr "Bo'limlar"
+
+msgid "No HSM devices available"
+msgstr "HSM qurilmalari mavjud emas"
+
+msgid "Partitions to be encrypted"
+msgstr "Shifrlanadigan bo'limlar"
+
+msgid "Select disk encryption option"
+msgstr "Diskni shifrlash variantini tanlang"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "HSM uchun FIDO2 qurilmasini tanlang"
+
+msgid "Use a best-effort default partition layout"
+msgstr "Tavsiya etilgan standart bo'limlar sxemasidan foydalanish"
+
+msgid "Manual Partitioning"
+msgstr "Qo'lda bo'limlash"
+
+msgid "Pre-mounted configuration"
+msgstr "Oldindan biriktirilgan konfiguratsiya"
+
+msgid "Unknown"
+msgstr "Noma'lum"
+
+msgid "Partition encryption"
+msgstr "Bo'limni shifrlash"
+
+#, python-brace-format
+msgid " ! Formatting {} in "
+msgstr " ! {} formatlanmoqda "
+
+#, fuzzy
+msgid "← Back"
+msgstr "Orqaga"
+
+msgid "Disk encryption"
+msgstr "Diskni shifrlash"
+
+msgid "Configuration"
+msgstr "Konfiguratsiya"
+
+msgid "Password"
+msgstr "Parol"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "Barcha sozlamalar bekor qilinadi, ishonchingiz komilmi?"
+
+msgid "Back"
+msgstr "Orqaga"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "Tanlangan profillar uchun qaysi greeter'ni o'rnatishni tanlang: {}"
+
+#, python-brace-format
+msgid "Environment type: {}"
+msgstr "Muhit turi: {}"
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr "Nvidia'ning mulkiy drayveri Sway tomonidan qo'llab-quvvatlanmaydi. Muammolarga duch kelishingiz mumkin. Shunda ham davom etasizmi?"
+
+msgid "Installed packages"
+msgstr "O'rnatilgan paketlar"
+
+msgid "Add profile"
+msgstr "Profil qo'shish"
+
+msgid "Edit profile"
+msgstr "Profilni tahrirlash"
+
+msgid "Delete profile"
+msgstr "Profilni o'chirish"
+
+msgid "Profile name: "
+msgstr "Profil nomi: "
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Siz kiritgan profil nomi allaqachon mavjud. Qayta urining."
+
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Bu profil bilan o'rnatiladigan paketlar (probel bilan ajrating, bo'sh qoldiring): "
+
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Bu profil bilan yoqiladigan xizmatlar (probel bilan ajrating, bo'sh qoldiring): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "Bu profil o'rnatish uchun yoqilsinmi?"
+
+msgid "Create your own"
+msgstr "O'zingiz yaratish"
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"Grafik drayverni tanlang yoki barcha ochiq kodli drayverlarni o'rnatish uchun bo'sh qoldiring"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway sizning seat'ingizga (klaviatura, sichqoncha kabi qurilmalar to'plami) kirish huquqiga muhtoj"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Sway'ga qurilmalaringizga kirish huquqini berish variantini tanlang"
+
+msgid "Graphics driver"
+msgstr "Grafik drayver"
+
+msgid "Greeter"
+msgstr "Greeter"
+
+msgid "Please chose which greeter to install"
+msgstr "Qaysi greeter'ni o'rnatishni tanlang"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "Bu oldindan dasturlashtirilgan standart profillar (default_profiles) ro'yxati"
+
+msgid "Disk configuration"
+msgstr "Disk konfiguratsiyasi"
+
+msgid "Profiles"
+msgstr "Profillar"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "Konfiguratsiya fayllarini saqlash uchun mumkin bo'lgan kataloglar qidirilmoqda..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Konfiguratsiya fayllarini saqlash uchun katalog(lar)ni tanlang"
+
+msgid "Add a custom mirror"
+msgstr "Maxsus ko'zgu qo'shish"
+
+msgid "Change custom mirror"
+msgstr "Maxsus ko'zguni o'zgartirish"
+
+msgid "Delete custom mirror"
+msgstr "Maxsus ko'zguni o'chirish"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "Nomini kiriting (o'tkazib yuborish uchun bo'sh qoldiring): "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "URL manzilini kiriting (o'tkazib yuborish uchun bo'sh qoldiring): "
+
+msgid "Select signature check option"
+msgstr "Imzo tekshirish variantini tanlang"
+
+msgid "Select signature option"
+msgstr "Imzo variantini tanlang"
+
+msgid "Custom mirrors"
+msgstr "Maxsus ko'zgular"
+
+msgid "Defined"
+msgstr "Belgilangan"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Foydalanuvchi konfiguratsiyasini (disk sxemasi bilan birga) saqlash"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+"Konfiguratsiya(lar) saqlanadigan katalogni kiriting (TAB orqali to'ldirish mavjud)\n"
+"Saqlash katalogi: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"{} ta konfiguratsiya faylini quyidagi manzilda saqlashni xohlaysizmi?\n"
+"\n"
+"{}"
+
+msgid "Saving {} configuration files to {}"
+msgstr "{} ta konfiguratsiya fayli {} manziliga saqlanmoqda"
+
+msgid "Mirrors"
+msgstr "Ko'zgular"
+
+msgid "Mirror regions"
+msgstr "Ko'zgu hududlari"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Maksimal qiymat: {} ({} ta parallel yuklab olishga, bir vaqtda {max_downloads+1} ta yuklab olishga ruxsat beradi)"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Yaroqsiz qiymat! Qayta urining [1 dan {} gacha yoki o'chirish uchun 0]"
+
+msgid "Locales"
+msgstr "Lokallar"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager'dan foydalanish (GNOME va KDE'da internetni grafik interfeysda sozlash uchun zarur)"
+
+msgid "Total: {} / {}"
+msgstr "Jami: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr "Barcha kiritilgan qiymatlar o'lchov birligi bilan tugashi mumkin: B, KB, KiB, MB, MiB..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Agar o'lchov birligi ko'rsatilmasa, qiymat sektorlarda hisoblanadi"
+
+msgid "Enter start (default: sector {}): "
+msgstr "Boshlanishni kiriting (standart: {} sektori): "
+
+msgid "Enter end (default: {}): "
+msgstr "Tugashni kiriting (standart: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "Fido2 qurilmalarini aniqlab bo'lmadi. Libfido2 o'rnatilganmi?"
+
+msgid "Path"
+msgstr "Yo'l"
+
+msgid "Manufacturer"
+msgstr "Ishlab chiqaruvchi"
+
+msgid "Product"
+msgstr "Mahsulot"
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Yaroqsiz konfiguratsiya: {error}"
+
+msgid "Type"
+msgstr "Tur"
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Bu parametr paketlarni yuklab olish vaqtida bir vaqtning o'zida nechta yuklab olish mumkinligini belgilaydi"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Parallel yuklab olishlar sonini kiriting.\n"
+"\n"
+"Eslatma:\n"
+
+#, python-brace-format
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Tavsiya etilgan maksimal qiymat: {} (Bir vaqtda {} ta parallel yuklab olishga ruxsat beradi)"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - O'chirish/Standart: 0 (Parallel yuklab olishni o'chiradi, bir vaqtda faqat 1 ta yuklab olishga ruxsat beradi)\n"
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Yaroqsiz qiymat! Qayta urining [yoki o'chirish uchun 0]"
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Hyprland sizning seat'ingizga (klaviatura, sichqoncha kabi qurilmalar to'plami) kirish huquqiga muhtoj"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Hyprland'ga qurilmalaringizga kirish huquqini berish variantini tanlang"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Barcha kiritilgan qiymatlar o'lchov birligi bilan tugashi mumkin: %, B, KB, KiB, MB, MiB..."
+
+msgid "Would you like to use unified kernel images?"
+msgstr "Yagona yadro obrazlaridan (UKI) foydalanmoqchimisiz?"
+
+msgid "Unified kernel images"
+msgstr "Yagona yadro obrazlari (UKI)"
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Vaqt sinxronizatsiyasi (timedatectl show) tugashi kutilmoqda."
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Vaqt sinxronizatsiyasi tugamayapti. Vaqtinchalik yechimlar uchun hujjatlarni ko'rib chiqing: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Avtomatik vaqt sinxronizatsiyasini kutish o'tkazib yuborilmoqda (agar o'rnatish paytida vaqt noto'g'ri bo'lsa, bu muammolarga olib kelishi mumkin)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Arch Linux kalitlar zanjiri (keyring) sinxronizatsiyasi tugashi kutilmoqda."
+
+msgid "Selected profiles: "
+msgstr "Tanlangan profillar: "
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Vaqt sinxronizatsiyasi tugamayapti. Vaqtinchalik yechimlar uchun hujjatlarni ko'rib chiqing: https://archinstall.readthedocs.io/"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "nodatacow deb belgilash/bekor qilish"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Siqishdan foydalanmoqchimisiz yoki CoW'ni o'chirmoqchimisiz?"
+
+msgid "Use compression"
+msgstr "Siqishdan foydalanish"
+
+msgid "Disable Copy-on-Write"
+msgstr "Copy-on-Write'ni o'chirish"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Ish stoli muhitlari va oyna menejerlari tanlovi (masalan, GNOME, KDE Plasma, Sway)."
+
+#, python-brace-format
+msgid "Configuration type: {}"
+msgstr "Konfiguratsiya turi: {}"
+
+msgid "LVM configuration type"
+msgstr "LVM konfiguratsiya turi"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "2 dan ortiq bo'limga ega LVM disk shifrlash hozirda qo'llab-quvvatlanmaydi"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "NetworkManager'dan foydalanish (GNOME va KDE Plasma'da internetni grafik interfeysda sozlash uchun zarur)"
+
+msgid "Select a LVM option"
+msgstr "LVM variantini tanlang"
+
+msgid "Partitioning"
+msgstr "Bo'limlash"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Mantiqiy hajmlarni boshqarish (LVM)"
+
+msgid "Physical volumes"
+msgstr "Fizik hajmlar"
+
+msgid "Volumes"
+msgstr "Hajmlar"
+
+msgid "LVM volumes"
+msgstr "LVM hajmlari"
+
+msgid "LVM volumes to be encrypted"
+msgstr "Shifrlanadigan LVM hajmlari"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "Qaysi LVM hajmlarini shifrlashni tanlang"
+
+msgid "Default layout"
+msgstr "Standart sxema"
+
+msgid "No Encryption"
+msgstr "Shifrlashsiz"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LUKS ustida LVM"
+
+msgid "LUKS on LVM"
+msgstr "LVM ustida LUKS"
+
+msgid "Yes"
+msgstr "Ha"
+
+msgid "No"
+msgstr "Yo'q"
+
+msgid "Archinstall help"
+msgstr "Archinstall yordami"
+
+msgid " (default)"
+msgstr " (standart)"
+
+msgid "Press Ctrl+h for help"
+msgstr "Yordam uchun Ctrl+h tugmasini bosing"
+
+msgid "Choose an option to give Sway access to your hardware"
+msgstr "Sway'ga qurilmalaringizga kirish huquqini berish variantini tanlang"
+
+msgid "Seat access"
+msgstr "Seat'ga kirish"
+
+msgid "Mountpoint"
+msgstr "Biriktirish nuqtasi"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Diskni shifrlash parolini kiriting (shifrlash kerak bo'lmasa, bo'sh qoldiring)"
+
+msgid "Disk encryption password"
+msgstr "Diskni shifrlash paroli"
+
+msgid "Partition - New"
+msgstr "Bo'lim - Yangi"
+
+msgid "Filesystem"
+msgstr "Fayl tizimi"
+
+msgid "Invalid size"
+msgstr "Yaroqsiz hajm"
+
+msgid "Start (default: sector {}): "
+msgstr "Boshlanish (standart: {} sektor): "
+
+msgid "End (default: {}): "
+msgstr "Tugash (standart: {}): "
+
+msgid "Subvolume name"
+msgstr "Subvolume nomi"
+
+msgid "Disk configuration type"
+msgstr "Disk konfiguratsiyasi turi"
+
+msgid "Root mount directory"
+msgstr "Root biriktirish katalogi"
+
+msgid "Select language"
+msgstr "Tilni tanlang"
+
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Qo'shimcha paketlarni probel bilan ajratib yozing (o'tkazib yuborish uchun bo'sh qoldiring)"
+
+msgid "Invalid download number"
+msgstr "Yaroqsiz yuklab olishlar soni"
+
+msgid "Number downloads"
+msgstr "Yuklab olishlar soni"
+
+msgid "The username you entered is invalid"
+msgstr "Siz kiritgan foydalanuvchi nomi yaroqsiz"
+
+msgid "Username"
+msgstr "Foydalanuvchi nomi"
+
+#, python-brace-format
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "\"{}\" superuser (sudo) bo'lishi kerakmi?\n"
+
+msgid "Interfaces"
+msgstr "Interfeyslar"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "IP-config rejimida yaroqli IP manzil kiritishingiz kerak"
+
+msgid "Modes"
+msgstr "Rejimlar"
+
+msgid "IP address"
+msgstr "IP manzil"
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Shlyuz (router) IP manzilini kiriting (bo'sh qoldiring)"
+
+msgid "Gateway address"
+msgstr "Shlyuz manzili"
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "DNS serverlarni probel bilan ajratib kiriting (bo'sh qoldiring)"
+
+msgid "DNS servers"
+msgstr "DNS serverlar"
+
+msgid "Configure interfaces"
+msgstr "Interfeyslarni sozlash"
+
+msgid "Kernel"
+msgstr "Yadro"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "UEFI aniqlanmadi, shu sababli ba'zi parametrlar o'chirildi"
+
+msgid "Info"
+msgstr "Ma'lumot"
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Nvidia'ning mulkiy drayveri Sway tomonidan qo'llab-quvvatlanmaydi."
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Muammolarga duch kelishingiz mumkin. Shunda ham davom etasizmi?"
+
+msgid "Main profile"
+msgstr "Asosiy profil"
+
+msgid "Confirm password"
+msgstr "Parolni tasdiqlang"
+
+msgid "The confirmation password did not match, please try again"
+msgstr "Parollar mos kelmadi, iltimos, qayta urining"
+
+msgid "Not a valid directory"
+msgstr "Yaroqsiz katalog"
+
+msgid "Would you like to continue?"
+msgstr "Davom etishni xohlaysizmi?"
+
+msgid "Directory"
+msgstr "Katalog"
+
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "Konfiguratsiya(lar) saqlanadigan katalogni kiriting (TAB orqali to'ldirish mavjud)"
+
+#, python-brace-format
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Konfiguratsiya fayl(lar)ini {} manzilida saqlashni xohlaysizmi?"
+
+msgid "Enabled"
+msgstr "Yoqilgan"
+
+msgid "Disabled"
+msgstr "O'chirilgan"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Iltimos, ushbu muammo (va fayl) haqida https://github.com/archlinux/archinstall/issues manziliga xabar bering"
+
+msgid "Mirror name"
+msgstr "Ko'zgu nomi"
+
+msgid "Url"
+msgstr "URL"
+
+msgid "Select signature check"
+msgstr "Imzo tekshirishni tanlang"
+
+msgid "Select execution mode"
+msgstr "Bajarish rejimini tanlang"
+
+msgid "Press ? for help"
+msgstr "Yordam uchun ? tugmasini bosing"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Hyprland'ga qurilmalaringizga kirish huquqini berish variantini tanlang"
+
+msgid "Additional repositories"
+msgstr "Qo'shimcha repozitoriylar"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Zram'da swap"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Signature check"
+msgstr "Imzo tekshiruvi"
+
+#, python-brace-format
+msgid "Selected free space segment on device {}:"
+msgstr "{} qurilmasidagi tanlangan bo'sh joy segmenti:"
+
+#, python-brace-format
+msgid "Size: {} / {}"
+msgstr "Hajm: {} / {}"
+
+#, python-brace-format
+msgid "Size (default: {}): "
+msgstr "Hajm (standart: {}): "
+
+msgid "HSM device"
+msgstr "HSM qurilmasi"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Ba'zi paketlar repozitoriyda topilmadi"
+
+msgid "User"
+msgstr "Foydalanuvchi"
+
+msgid "The specified configuration will be applied"
+msgstr "Ko'rsatilgan konfiguratsiya qo'llaniladi"
+
+msgid "Wipe"
+msgstr "Tozalash"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "XBOOTLDR deb belgilash/bekor qilish"
+
+msgid "Loading packages..."
+msgstr "Paketlar yuklanmoqda..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Quyidagi ro'yxatdan qo'shimcha o'rnatiladigan paketlarni tanlang"
+
+msgid "Add a custom repository"
+msgstr "Maxsus repozitoriy qo'shish"
+
+msgid "Change custom repository"
+msgstr "Maxsus repozitoriyni o'zgartirish"
+
+msgid "Delete custom repository"
+msgstr "Maxsus repozitoriyni o'chirish"
+
+msgid "Repository name"
+msgstr "Repozitoriy nomi"
+
+msgid "Add a custom server"
+msgstr "Maxsus server qo'shish"
+
+msgid "Change custom server"
+msgstr "Maxsus serverni o'zgartirish"
+
+msgid "Delete custom server"
+msgstr "Maxsus serverni o'chirish"
+
+msgid "Server url"
+msgstr "Server URL'i"
+
+msgid "Select regions"
+msgstr "Hududlarni tanlang"
+
+msgid "Add custom servers"
+msgstr "Maxsus serverlar qo'shish"
+
+msgid "Add custom repository"
+msgstr "Maxsus repozitoriy qo'shish"
+
+msgid "Loading mirror regions..."
+msgstr "Ko'zgu hududlari yuklanmoqda..."
+
+msgid "Mirrors and repositories"
+msgstr "Ko'zgular va repozitoriylar"
+
+msgid "Selected mirror regions"
+msgstr "Tanlangan ko'zgu hududlari"
+
+msgid "Custom servers"
+msgstr "Maxsus serverlar"
+
+msgid "Custom repositories"
+msgstr "Maxsus repozitoriylar"
+
+msgid "Only ASCII characters are supported"
+msgstr "Faqat ASCII belgilari qo'llab-quvvatlanadi"
+
+msgid "Show help"
+msgstr "Yordamni ko'rsatish"
+
+msgid "Exit help"
+msgstr "Yordamdan chiqish"
+
+msgid "Preview scroll up"
+msgstr "Oldindan ko'rish (yuqoriga)"
+
+msgid "Preview scroll down"
+msgstr "Oldindan ko'rish (pastga)"
+
+msgid "Move up"
+msgstr "Yuqoriga"
+
+msgid "Move down"
+msgstr "Pastga"
+
+msgid "Move right"
+msgstr "O'ngga"
+
+msgid "Move left"
+msgstr "Chapga"
+
+msgid "Jump to entry"
+msgstr "Bandga o'tish"
+
+msgid "Skip selection (if available)"
+msgstr "Tanlovni o'tkazib yuborish (agar mumkin bo'lsa)"
+
+msgid "Reset selection (if available)"
+msgstr "Tanlovni bekor qilish (agar mumkin bo'lsa)"
+
+msgid "Select on single select"
+msgstr "Tanlash (yakka tanlov)"
+
+msgid "Select on multi select"
+msgstr "Tanlash (ko'p tanlov)"
+
+msgid "Reset"
+msgstr "Bekor qilish"
+
+msgid "Skip selection menu"
+msgstr "Tanlov menyusini o'tkazib yuborish"
+
+msgid "Start search mode"
+msgstr "Qidiruv rejimini boshlash"
+
+msgid "Exit search mode"
+msgstr "Qidiruv rejimidan chiqish"
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "labwc sizning seat'ingizga (klaviatura, sichqoncha kabi qurilmalar to'plami) kirish huquqiga muhtoj"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "labwc'ga qurilmalaringizga kirish huquqini berish variantini tanlang"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "niri sizning seat'ingizga (klaviatura, sichqoncha kabi qurilmalar to'plami) kirish huquqiga muhtoj"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "niri'ga qurilmalaringizga kirish huquqini berish variantini tanlang"
+
+msgid "Mark/Unmark as ESP"
+msgstr "ESP deb belgilash/bekor qilish"
+
+msgid "Package group:"
+msgstr "Paketlar guruhi:"
+
+msgid "Exit archinstall"
+msgstr "Archinstall'dan chiqish"
+
+msgid "Reboot system"
+msgstr "Tizimni qayta yuklash"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "O'rnatishdan keyingi sozlamalar uchun tizimga chroot qilish"
+
+msgid "Installation completed"
+msgstr "O'rnatish yakunlandi"
+
+msgid "What would you like to do next?"
+msgstr "Keyin nima qilishni xohlaysiz?"
+
+#, python-brace-format
+msgid "Select which mode to configure for \"{}\""
+msgstr "\"{}\" uchun qaysi rejimni sozlashni tanlang"
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Hisob ma'lumotlari faylining shifrini ochish paroli noto'g'ri"
+
+msgid "Incorrect password"
+msgstr "Parol noto'g'ri"
+
+msgid "Credentials file decryption password"
+msgstr "Hisob ma'lumotlari faylini shifrini ochish paroli"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "user_credentials.json faylidagi hisob ma'lumotlarini shifrlashni xohlaysizmi?"
+
+msgid "Credentials file encryption password"
+msgstr "Hisob ma'lumotlari faylini shifrlash paroli"
+
+#, python-brace-format
+msgid "Repositories: {}"
+msgstr "Repozitoriylar: {}"
+
+msgid "New version available"
+msgstr "Yangi versiya mavjud"
+
+msgid "Passwordless login"
+msgstr "Parolsiz kirish"
+
+msgid "Second factor login"
+msgstr "Ikki faktorli kirish"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Bluetooth'ni sozlashni xohlaysizmi?"
+
+msgid "Authentication"
+msgstr "Autentifikatsiya"
+
+msgid "Applications"
+msgstr "Ilovalar"
+
+msgid "U2F login method: "
+msgstr "U2F orqali kirish usuli: "
+
+msgid "Passwordless sudo: "
+msgstr "Parolsiz sudo: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Btrfs snapshot turi: {}"
+
+msgid "Syncing the system..."
+msgstr "Tizim sinxronizatsiya qilinmoqda..."
+
+msgid "Value cannot be empty"
+msgstr "Qiymat bo'sh bo'lishi mumkin emas"
+
+msgid "Snapshot type"
+msgstr "Snapshot turi"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Snapshot turi: {}"
+
+msgid "U2F login setup"
+msgstr "U2F orqali kirishni sozlash"
+
+msgid "No U2F devices found"
+msgstr "U2F qurilmalari topilmadi"
+
+msgid "U2F Login Method"
+msgstr "U2F orqali kirish usuli"
+
+msgid "Enable passwordless sudo?"
+msgstr "Parolsiz sudo yoqilsinmi?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Foydalanuvchi {} uchun U2F qurilmasi sozlanmoqda"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Ro'yxatdan o'tkazish uchun PIN-kodni kiritib, U2F qurilmangizga teginishingiz kerak bo'lishi mumkin"
+
+#~ msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+#~ msgstr "    Iltimos, ushbu muammo (va fayl) haqida https://github.com/archlinux/archinstall/issues manziliga xabar bering"
