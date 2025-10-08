@@ -5,7 +5,6 @@ from archinstall.default_profiles.xorg import XorgProfile
 
 
 class PantheonProfile(XorgProfile):
-
 	def __init__(self) -> None:
 		super().__init__('Pantheon', ProfileType.DesktopEnv)
 
