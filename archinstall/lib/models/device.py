@@ -825,16 +825,12 @@ class FilesystemType(Enum):
 	@property
 	def installation_module(self) -> str | None:
 		match self:
-			case FilesystemType.Btrfs:
-				return 'btrfs'
 			case _:
 				return None
 
 	@property
 	def installation_binary(self) -> str | None:
 		match self:
-			case FilesystemType.Btrfs:
-				return '/usr/bin/btrfs'
 			case _:
 				return None
 
