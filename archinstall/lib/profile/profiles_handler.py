@@ -228,13 +228,6 @@ class ProfileHandler:
 			headers = [f'{kernel}-headers' for kernel in install_session.kernels]
 			# Fixes https://github.com/archlinux/archinstall/issues/585
 			install_session.add_additional_packages(headers)
-		elif driver in [GfxDriver.AllOpenSource, GfxDriver.AmdOpenSource]:
-			# The order of these two are important if amdgpu is installed #808
-			install_session.remove_mod('amdgpu')
-			install_session.remove_mod('radeon')
-
-			install_session.append_mod('amdgpu')
-			install_session.append_mod('radeon')
 
 		driver_pkgs = driver.gfx_packages()
 		pkg_names = [p.value for p in driver_pkgs]
