@@ -823,18 +823,6 @@ class FilesystemType(Enum):
 				return None
 
 	@property
-	def installation_module(self) -> str | None:
-		match self:
-			case _:
-				return None
-
-	@property
-	def installation_binary(self) -> str | None:
-		match self:
-			case _:
-				return None
-
-	@property
 	def installation_hooks(self) -> str | None:
 		match self:
 			case FilesystemType.Btrfs:
