@@ -43,7 +43,6 @@ makedepends=(
   'python-wheel'
   'python-sphinx_rtd_theme'
   'python-pylint'
-  'python-pylint-pydantic'
   'ruff'
 )
 optdepends=(
