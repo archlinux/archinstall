@@ -45,8 +45,6 @@ class PasswordStrength(Enum):
 		symbol = any(not character.isalnum() for character in password)
 		return cls._check_password_strength(digit, upper, lower, symbol, len(password))
 
-	# TODO: Remove the disable line when https://github.com/pylint-dev/pylint/issues/10647 is fixed
-	# pylint: disable=bare-name-capture-pattern
 	@classmethod
 	def _check_password_strength(
 		cls,
