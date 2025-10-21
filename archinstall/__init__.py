@@ -49,10 +49,6 @@ def _check_online() -> None:
 				if not success:
 					exit(0)
 
-	if not arch_config_handler.args.skip_wifi_check:
-		if not wifi_handler.setup():
-			exit(0)
-
 
 def _fetch_arch_db() -> None:
 	info('Fetching Arch Linux package database...')
