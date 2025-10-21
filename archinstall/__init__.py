@@ -8,7 +8,10 @@ import traceback
 
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.network.wifi_handler import wifi_handler
+from archinstall.lib.networking import ping
 from archinstall.lib.packages.packages import check_package_upgrade
+from archinstall.tui.ui.components import tui as ttui
 
 from .lib.hardware import SysInfo
 from .lib.output import FormattedOutput, debug, error, info, log, warn
@@ -36,6 +39,21 @@ def _log_sys_info() -> None:
 	debug(f'Disk states before installing:\n{disk_layouts()}')
 
 
+def _check_online() -> None:
+	try:
+		ping('1.1.1.1')
+	except OSError as ex:
+		if 'Network is unreachable' in str(ex):
+			if not arch_config_handler.args.skip_wifi_check:
+				success = not wifi_handler.setup()
+				if not success:
+					exit(0)
+
+	if not arch_config_handler.args.skip_wifi_check:
+		if not wifi_handler.setup():
+			exit(0)
+
+
 def _fetch_arch_db() -> None:
 	info('Fetching Arch Linux package database...')
 	try:
@@ -44,13 +62,14 @@ def _fetch_arch_db() -> None:
 		error('Failed to sync Arch Linux package database.')
 		if 'could not resolve host' in str(e).lower():
 			error('Most likely due to a missing network connection or DNS issue.')
+
 		error('Run archinstall --debug and check /var/log/archinstall/install.log for details.')
 
 		debug(f'Failed to sync Arch Linux package database: {e}')
 		exit(1)
 
 
-def _check_new_version() -> None:
+def check_version_upgrade() -> str | None:
 	info('Checking version...')
 	upgrade = None
 
@@ -62,7 +81,7 @@ def _check_new_version() -> None:
 
 	text = tr('New version available') + f': {upgrade}'
 	info(text)
-	time.sleep(3)
+	return text
 
 
 def main() -> int:
@@ -81,11 +100,19 @@ def main() -> int:
 
 	_log_sys_info()
 
+	ttui.global_header = 'Archinstall'
+
 	if not arch_config_handler.args.offline:
+		_check_online()
 		_fetch_arch_db()
 
 		if not arch_config_handler.args.skip_version_check:
-			_check_new_version()
+			new_version = check_version_upgrade()
+
+			if new_version:
+				ttui.global_header = f'{ttui.global_header} {new_version}'
+				info(new_version)
+				time.sleep(3)
 
 	script = arch_config_handler.get_script()
 

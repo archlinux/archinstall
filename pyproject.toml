@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "3.0.10"
+version = "3.0.11"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -19,8 +19,10 @@ classifiers = [
 ]
 dependencies = [
     "pyparted>=3.13.0",
-    "pydantic==2.11.9",
+    "pydantic==2.12.3",
     "cryptography>=45.0.7",
+    "textual>=5.3.0",
+    "pytest-mock>=3.15.1",
 ]
 
 [project.urls]
@@ -34,9 +36,8 @@ dev = [
     "mypy==1.18.2",
     "flake8==7.3.0",
     "pre-commit==4.3.0",
-    "ruff==0.13.1",
-    "pylint==3.3.8",
-    "pylint-pydantic==0.3.5",
+    "ruff==0.14.1",
+    "pylint==4.0.2",
     "pytest==8.4.2",
 ]
 doc = ["sphinx"]
@@ -137,7 +138,6 @@ ignore-paths = [
     "^build/",
     "^docs/",
 ]
-load-plugins = ["pylint_pydantic"]
 persistent = false
 py-version = "3.12"
 recursive = true

@@ -71,6 +71,7 @@ msgstr "Roghnaigh comhéadan líonra amháin le chumrú"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Roghnaigh an mód a chumrú le haghaidh \"{}\" nó scipeáil chun an mód réamhshocraithe \"{}\" a úsáid"
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Cuir isteach an IP agus an subnet do {} (mar shampla: 192.168.0.5/24): "
 
@@ -584,6 +585,7 @@ msgstr "Roghnaigh na roghanna subvolume atá ag teastáil "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Sainmhínigh úsáideoirí a bhfuil pribhléid sudo acu, de réir ainm úsáideora: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Cruthaíodh logchomhad anseo: {}"
 
@@ -842,9 +844,11 @@ msgstr "Éilíonn Archinstall pribhléidí fréimhe chun é a rith. Féach --hel
 msgid "Select an execution mode"
 msgstr "Roghnaigh modh forghníomhaithe"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Ní féidir próifíl a fháil ón url sonraithe: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Caithfidh ainm uathúil a bheith ag próifílí, ach aimsíodh sainmhínithe próifíle le hainm dúblach: {}"
 
@@ -863,9 +867,11 @@ msgstr "Roghnaigh rogha deighilte"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Cuir isteach eolaire fréamhacha na ngléasanna gléasta: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Toilleadh íosta le haghaidh /deighilt baile: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Toilleadh íosta do dheighilt Arch Linux: {}GiB"
 
@@ -929,9 +935,11 @@ msgstr "Cuir isteach earnáil deiridh na críochdheighilte (céatadán nó blocu
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Bainfidh sé seo gach deighilt nua-chur leis, leanúint ar aghaidh?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Bainistíocht críochdheighilte: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Fad iomlán: {}"
 
@@ -992,6 +1000,7 @@ msgstr "Anaithnid"
 msgid "Partition encryption"
 msgstr "Criptiú críochdheighilte"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Formáidiú {} in "
 
@@ -1016,6 +1025,7 @@ msgstr "Ar ais"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Roghnaigh cé acu beannaí le suiteáil do na próifílí roghnaithe: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Cineál timpeallachta: {}"
 
@@ -1208,6 +1218,7 @@ msgstr ""
 "\n"
 "Nóta:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Uasluach molta : {} ( Ceadaítear {} íoslódálacha comhthreomhara ag an am céanna )"
 
@@ -1271,6 +1282,7 @@ msgstr "Díchumasaigh Cóipeáil-ar-Scríobh"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Soláthraíonn sé rogha timpeallachtaí deisce agus bainisteoirí fuinneog tíleála, e.g. GNOME, Plasma KDE, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Cineál cumraíochta: {}"
 
@@ -1414,7 +1426,7 @@ msgstr "Tá an t-ainm úsáideora a d'iontráil tú neamhbhailí. Bain triail ei
 msgid "Username"
 msgstr "Ainm Úsáideora: "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Ar cheart \"{}\" a bheith ina shár-úsáideoir (sudo)?"
 
@@ -1496,7 +1508,7 @@ msgstr ""
 "Iontráil eolaire don chumraíocht(s) atá le sábháil (cumasaíodh comhlánú an táb)\n"
 "Sábháil eolaire: "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr ""
 "Ar mhaith leat {} comhad cumraíochta a shábháil sa suíomh seo a leanas?\n"
@@ -1556,15 +1568,15 @@ msgstr ""
 msgid "Signature check"
 msgstr "Roghnaigh an rogha seiceála sínithe"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Earnálacha saor in aisce faoi láthair ar ghléas {}:"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Iomlán: {} / {}"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Cuir isteach an deireadh (réamhshocraithe: {}): "
 
@@ -1764,7 +1776,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr "Ar mhaith leat comhbhrú BTRFS a úsáid?"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Roghnaigh an mód a chumrú le haghaidh \"{}\" nó scipeáil chun an mód réamhshocraithe \"{}\" a úsáid"
 
@@ -1791,6 +1803,73 @@ msgstr ""
 msgid "Credentials file encryption password"
 msgstr "Pasfhocal criptithe"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "Réigiún scáthán"
+
+#, fuzzy
+msgid "New version available"
+msgstr "Níl aon ghléas HSM ar fáil"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Pasfhocal"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Ar mhaith leat comhbhrú BTRFS a úsáid?"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Cineál timpeallachta: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Iontráil pasfhocal: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Roghnaigh gléas FIDO2 le húsáid le haghaidh HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""

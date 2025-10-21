@@ -33,16 +33,16 @@ class MenuItem:
 		return self.value
 
 	@classmethod
-	def yes(cls) -> 'MenuItem':
+	def yes(cls, action: Callable[[Any], Any] | None = None) -> 'MenuItem':
 		if cls._yes is None:
-			cls._yes = cls(tr('Yes'), value=True)
+			cls._yes = cls(tr('Yes'), value=True, key='yes', action=action)
 
 		return cls._yes
 
 	@classmethod
-	def no(cls) -> 'MenuItem':
+	def no(cls, action: Callable[[Any], Any] | None = None) -> 'MenuItem':
 		if cls._no is None:
-			cls._no = cls(tr('No'), value=True)
+			cls._no = cls(tr('No'), value=False, key='no', action=action)
 
 		return cls._no
 
@@ -222,6 +222,10 @@ class MenuItemGroup:
 		if self.default_item == item:
 			return tr(' (default)')
 		return ''
+
+	def set_action_for_all(self, action: Callable[[Any], Any]) -> None:
+		for item in self.items:
+			item.action = action
 
 	@cached_property
 	def items(self) -> list[MenuItem]:

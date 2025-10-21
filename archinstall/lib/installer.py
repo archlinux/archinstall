@@ -802,10 +802,6 @@ class Installer:
 	) -> None:
 		if (pkg := fs_type.installation_pkg) is not None:
 			self._base_packages.append(pkg)
-		if (module := fs_type.installation_module) is not None:
-			self._modules.append(module)
-		if (binary := fs_type.installation_binary) is not None:
-			self._binaries.append(binary)
 
 		# https://github.com/archlinux/archinstall/issues/1837
 		if fs_type.fs_type_mount == 'btrfs':

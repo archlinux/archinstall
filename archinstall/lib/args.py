@@ -49,6 +49,7 @@ class Arguments:
 	no_pkg_lookups: bool = False
 	plugin: str | None = None
 	skip_version_check: bool = False
+	skip_wifi_check: bool = False
 	advanced: bool = False
 	verbose: bool = False
 
@@ -406,6 +407,12 @@ class ArchConfigHandler:
 			action='store_true',
 			default=False,
 			help='Skip the version check when running archinstall',
+		)
+		parser.add_argument(
+			'--skip-wifi-check',
+			action='store_true',
+			default=False,
+			help='Skip wifi check when running archinstall',
 		)
 		parser.add_argument(
 			'--advanced',

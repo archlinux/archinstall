@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-07-02 21:31+0200\n"
+"PO-Revision-Date: 2025-09-14 19:09+0200\n"
 "Last-Translator: Van Matten\n"
 "Language-Team: \n"
 "Language: it\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "2nd-Last-Translator: Alessio Cuccovillo <alessio.cuccovillo.dev@gmail.com>\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.7\n"
 "X-Poedit-Basepath: ../..\n"
 "X-Poedit-SearchPath-0: base.pot\n"
 
@@ -27,7 +27,7 @@ msgid "And one more time for verification: "
 msgstr "E ancora una volta per verifica: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "Vorresti usare lo swap su zram?"
+msgstr "Desideri usare lo swap su zram?"
 
 msgid "Desired hostname for the installation: "
 msgstr "Nome host desiderato per l'installazione: "
@@ -45,7 +45,7 @@ msgid "Select a timezone"
 msgstr "Seleziona un fuso orario"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Vorresti usare GRUB come bootloader invece di systemd-boot?"
+msgstr "Desideri usare GRUB come bootloader invece di systemd-boot?"
 
 msgid "Choose a bootloader"
 msgstr "Scegli un bootloader"
@@ -60,7 +60,7 @@ msgid "If you desire a web browser, such as firefox or chromium, you may specify
 msgstr "Se desideri un browser web, come firefox o chromium, puoi specificarlo nel seguente prompt."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Scrivi pacchetti aggiuntivi da installare (separati da spazi, lascia vuoto per saltare): "
+msgstr "Scrivi i pacchetti aggiuntivi da installare (separati da spazi, lascia vuoto per saltare): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Copia la configurazione di rete ISO nell'installazione"
@@ -74,6 +74,7 @@ msgstr "Seleziona un'interfaccia di rete da configurare"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Seleziona la modalità da configurare per \"{}\" o salta per utilizzare la modalità predefinita \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Inserisci l'IP e la sottorete per {} (esempio: 192.168.0.5/24): "
 
@@ -388,7 +389,7 @@ msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "Verifico l'esistenza dei pacchetti aggiuntivi (potrebbe richiedere alcuni secondi)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Vorresti utilizzare la sincronizzazione automatica dell'ora (NTP) con i server orari predefiniti?\n"
+msgstr "Desideri usare la sincronizzazione automatica dell'ora (NTP) con i server orari predefiniti?\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
@@ -587,17 +588,18 @@ msgstr "Seleziona le opzioni del sottovolume desiderate "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Definisci gli utenti con privilegi sudo, per nome utente: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Un file di log è stato creato qui: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Desideri utilizzare i sottovolumi BTRFS con una struttura predefinita?"
+msgstr "Desideri usare i sottovolumi BTRFS con una struttura predefinita?"
 
 msgid "Would you like to use BTRFS compression?"
-msgstr "Vorresti usare la compressione BTRFS?"
+msgstr "Desideri usare la compressione BTRFS?"
 
 msgid "Would you like to create a separate partition for /home?"
-msgstr "Vorresti creare una partizione separata per /home?"
+msgstr "Desideri creare una partizione separata per /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
 msgstr "Le unità selezionate non hanno la capacità minima richiesta per un suggerimento automatico\n"
@@ -672,7 +674,7 @@ msgid "Press Enter to continue."
 msgstr "Premi Invio per continuare."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Vorresti eseguire il chroot nell'installazione appena creata e fare la configurazione post-installazione?"
+msgstr "Desideri eseguire il chroot nell'installazione appena creata e fare la configurazione post-installazione?"
 
 msgid "Are you sure you want to reset this setting?"
 msgstr "Sei sicuro di voler ripristinare questa impostazione?"
@@ -845,9 +847,11 @@ msgstr "Archinstall richiede i privilegi di root per essere eseguito. Vedi --hel
 msgid "Select an execution mode"
 msgstr "Seleziona una modalità d’esecuzione"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Impossibile recuperare il profilo dall’URL specificato: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "I profili devono avere un nome univoco, ma sono state trovate definizioni di profilo con nome duplicato: {}"
 
@@ -866,9 +870,11 @@ msgstr "Selezione opzione di partizionamento"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Inserisci la directory principale dei dispositivi montati: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Capacità minima per la partizione /home: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Capacità minima per la partizione Arch Linux: {}GiB"
 
@@ -932,9 +938,11 @@ msgstr "Inserisci il settore finale della partizione (percentuale o numero di bl
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Questo rimuoverà tutte le partizioni appena aggiunte, continuare?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Gestione partizione: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Lunghezza totale: {}"
 
@@ -995,6 +1003,7 @@ msgstr "Sconosciuto"
 msgid "Partition encryption"
 msgstr "Crittografia partizione"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Formattazione {} in "
 
@@ -1019,6 +1028,7 @@ msgstr "Indietro"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Scegli quale messaggio di benvenuto installare per i profili scelti: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Tipo di ambiente: {}"
 
@@ -1211,6 +1221,7 @@ msgstr ""
 "\n"
 "Nota:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Valore massimo raccomandato : {} ( Consente {} download paralleli)"
 
@@ -1236,7 +1247,7 @@ msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB...
 msgstr "Tutti i valori immessi possono avere come suffisso un’unità: %, B, KB, KiB, MB, MiB…"
 
 msgid "Would you like to use unified kernel images?"
-msgstr "Vorresti usare le immagini kernel unificate?"
+msgstr "Desideri usare le immagini kernel unificate?"
 
 msgid "Unified kernel images"
 msgstr "Immagini kernel unificate"
@@ -1263,7 +1274,7 @@ msgid "Mark/Unmark as nodatacow"
 msgstr "Seleziona/Deseleziona come nodatacow"
 
 msgid "Would you like to use compression or disable CoW?"
-msgstr "Vorresti usare la compressione o disabilitare CoW?"
+msgstr "Desideri usare la compressione o disabilitare CoW?"
 
 msgid "Use compression"
 msgstr "Usa la compressione"
@@ -1274,6 +1285,7 @@ msgstr "Disabilita Copy-on-Write"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Fornisce una selezione di ambienti desktop e gestori di finestre, per esempio GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Tipo configurazione: {}"
 
@@ -1400,6 +1412,7 @@ msgstr "Il nome utente inserito non è valido"
 msgid "Username"
 msgstr "Nome utente"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "\"{}\" dovrebbe essere un superuser (sudo)?\n"
 
@@ -1458,7 +1471,7 @@ msgid "Not a valid directory"
 msgstr "Non è una cartella valida"
 
 msgid "Would you like to continue?"
-msgstr "Vorresti continuare?"
+msgstr "Desideri continuare?"
 
 msgid "Directory"
 msgstr "Cartella"
@@ -1466,6 +1479,7 @@ msgstr "Cartella"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Inserisci una cartella dove salvare le configurazioni (completamento col tasto tab abilitato)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Vuoi salvare i file di configurazione in {}?"
 
@@ -1511,12 +1525,15 @@ msgstr "Nome"
 msgid "Signature check"
 msgstr "Controllo della firma"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Segmento di spazio libero selezionato sul dispositivo {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Dimensione: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Dimensione (predefinita: {}): "
 
@@ -1677,8 +1694,9 @@ msgid "Installation completed"
 msgstr "Installazione completata"
 
 msgid "What would you like to do next?"
-msgstr "Cosa vorresti fare dopo?"
+msgstr "Cosa desideri fare dopo?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Seleziona la modalità da configurare per \"{}\""
 
@@ -1697,5 +1715,69 @@ msgstr "Vuoi criptare il file di user_credentials.json?"
 msgid "Credentials file encryption password"
 msgstr "Password di crittazione del file delle credenziali"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Repository: {}"
+
+msgid "New version available"
+msgstr "Nuova versione disponibile"
+
+msgid "Passwordless login"
+msgstr "Accesso senza password"
+
+msgid "Second factor login"
+msgstr "Accesso con secondo fattore"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Desideri configurare il Bluetooth?"
+
+msgid "Authentication"
+msgstr "Autenticazione"
+
+msgid "Applications"
+msgstr "Applicazioni"
+
+msgid "U2F login method: "
+msgstr "Metodo di accesso U2F: "
+
+msgid "Passwordless sudo: "
+msgstr "Sudo senza password: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Tipo di snapshot Btrfs: {}"
+
+msgid "Syncing the system..."
+msgstr "Sincronizzazione del sistema in corso…"
+
+msgid "Value cannot be empty"
+msgstr "Il valore non può essere vuoto"
+
+msgid "Snapshot type"
+msgstr "Tipo di snapshot"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tipo di snapshot: {}"
+
+msgid "U2F login setup"
+msgstr "Imposta accesso U2F"
+
+msgid "No U2F devices found"
+msgstr "Nessun dispositivo U2F trovato"
+
+msgid "U2F Login Method"
+msgstr "Metodo di accesso U2F"
+
+msgid "Enable passwordless sudo?"
+msgstr "Attivare sudo senza password?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Impostazione dispositivo U2F per l'utente: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Devi inserire il PIN e toccare il tuo dispositivo U2F per registrarlo"

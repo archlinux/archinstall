@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: summoner <summoner@vivaldi.net>\n"
+"Last-Translator: summoner <summoner@disroot.org>\n"
 "Language-Team: \n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
@@ -27,10 +27,10 @@ msgid "Would you like to use swap on zram?"
 msgstr "Biztosan cserehelyet akar használni a zRam-on?"
 
 msgid "Desired hostname for the installation: "
-msgstr "A kiszolgáló neve a telepítéshez: "
+msgstr "Gép neve a telepítéshez: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "A rendszergazda felhasználó neve a számítógép használatához szükséges „sudo” jogosultságokkal: "
+msgstr "A rendszergazda felhasználóneve a számítógép használatához szükséges „sudo” jogosultságokkal: "
 
 msgid "Any additional users to install (leave blank for no users): "
 msgstr "További felhasználók hozzáadása a telepítéshez (hagyja üresen, ha nem akar több felhasználót hozzáadni): "
@@ -71,6 +71,7 @@ msgstr "Válasszon ki egy hálózati csatolót a konfiguráláshoz"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Válassza ki a konfigurálandó módot a következőhöz: „{}”, vagy hagyja ki ezt a lépést az alapértelmezett „{}” mód használatához"
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Adja meg az IP-címét és az alhálózatát (például: 192.168.0.5/24) a következőhöz: {}: "
 
@@ -339,7 +340,7 @@ msgid "Abort"
 msgstr "Megszakítás"
 
 msgid "Hostname"
-msgstr "Kiszolgálónév"
+msgstr "Gép neve"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "Nincs konfigurálva, nem érhető el, kivéve, ha kézzel állítja be"
@@ -469,7 +470,7 @@ msgid ""
 "Define a new user\n"
 msgstr ""
 "\n"
-"Új felhasználó definiálása\n"
+"Új felhasználó meghatározása\n"
 
 msgid "User Name : "
 msgstr "Felhasználónév : "
@@ -505,7 +506,7 @@ msgid "Save user configuration"
 msgstr "Felhasználói konfiguráció mentése"
 
 msgid "Save user credentials"
-msgstr "Felhasználói hitelesítő adatok mentése"
+msgstr "Felhasználói hitelesítési adatok mentése"
 
 msgid "Save disk layout"
 msgstr "Lemezelrendezés mentése"
@@ -586,6 +587,7 @@ msgstr "Válassza ki az alkötetbeállításokat "
 msgid "Define users with sudo privilege, by username: "
 msgstr "A „sudo” jogosultsággal rendelkező felhasználók meghatározása a felhasználónév alapján: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] A naplófájl itt jött létre: {}"
 
@@ -844,9 +846,11 @@ msgstr "Az Archinstall futtatásához root-jogosultságok szükségesek. Tovább
 msgid "Select an execution mode"
 msgstr "Válasszon ki egy végrehajtási módot"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Nem sikerült lekérni a profilt a megadott webcímről: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "A profiloknak egyedi névvel kell rendelkezniük, de ismétlődő névvel rendelkező profildefiníciók találhatók: {}"
 
@@ -865,9 +869,11 @@ msgstr "Válasszon ki egy particionálási beállítást"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Adja meg a csatolt eszközök gyökérkönyvtárát: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "A „/home” partíció minimális kapacitása: {} GB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Az Arch Linux partíció minimális kapacitása: {} GB"
 
@@ -931,9 +937,11 @@ msgstr "Adja meg a partíció végszektorát (százalékban vagy blokkszámban, 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Ezzel eltávolítja az összes újonnan hozzáadott partíciót, folytatja?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Partíciókezelés: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Teljes hossz: {}"
 
@@ -994,6 +1002,7 @@ msgstr "Ismeretlen"
 msgid "Partition encryption"
 msgstr "Partíciótitkosítás"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! {} formázása erre: "
 
@@ -1018,6 +1027,7 @@ msgstr "Vissza"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Válassza ki a telepítendő bejelentkezési segédet a kiválasztott profilokhoz: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Környezet típusa: {}"
 
@@ -1210,6 +1220,7 @@ msgstr ""
 "\n"
 "Megjegyzés:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Maximális ajánlott érték : {} ( Egyszerre {} párhuzamos letöltést tesz lehetővé )"
 
@@ -1273,6 +1284,7 @@ msgstr "Adatmásolás letiltása íráskor"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Asztali környezetek és csempés ablakkezelők széles választékát kínálja, pl. GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Konfigurációtípus: {}"
 
@@ -1399,6 +1411,7 @@ msgstr "A megadott felhasználónév érvénytelen"
 msgid "Username"
 msgstr "Felhasználónév"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "A(z) „{}” nevű felhasználónak rendszergazdának (sudoer) kell lennie?\n"
 
@@ -1465,6 +1478,7 @@ msgstr "Könyvtár"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Adjon meg egy könyvtárat a mentendő konfiguráció(k) számára (a tabulátoros kiegészítés engedélyezve van)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Szeretné elmenteni a konfigurációs fájl(oka)t a következő helyre: {}?"
 
@@ -1510,12 +1524,15 @@ msgstr "Név"
 msgid "Signature check"
 msgstr "Aláírás-ellenőrzés"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "A kiválasztott szabad szakaszok a(z) {} eszközön:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Méret: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Méret (alapértelmezett: {}): "
 
@@ -1678,11 +1695,12 @@ msgstr "A telepítés sikeresen befejeződött"
 msgid "What would you like to do next?"
 msgstr "Mit szeretne tenni?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Válassza ki a konfigurálandó módot a következőhöz: „{}”"
 
 msgid "Incorrect credentials file decryption password"
-msgstr "Helytelen a hitelesítőadat-fájl visszafejtési jelszava"
+msgstr "Helytelen a jelszó a hitelesítési adatok fájljának visszafejtéséhez"
 
 msgid "Incorrect password"
 msgstr "Helytelen jelszó"
@@ -1696,5 +1714,69 @@ msgstr "Szeretné titkosítani a user_credentials.json fájlt?"
 msgid "Credentials file encryption password"
 msgstr "A hitelesítőadat-fájl titkosítási jelszava"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Tárolók: {}"
+
+msgid "New version available"
+msgstr "Új verzió érhető el"
+
+msgid "Passwordless login"
+msgstr "Jelszó nélküli bejelentkezés"
+
+msgid "Second factor login"
+msgstr "Második lépcsős bejelentkezés"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Szeretné konfigurálni a Bluetooth-t?"
+
+msgid "Authentication"
+msgstr "Hitelesítés"
+
+msgid "Applications"
+msgstr "Alkalmazások"
+
+msgid "U2F login method: "
+msgstr "U2F bejelentkezési eljárás: "
+
+msgid "Passwordless sudo: "
+msgstr "Jelszó nélküli sudo: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "BTRFS-pillanatkép típusa: {}"
+
+msgid "Syncing the system..."
+msgstr "Rendszer szinkronizálása…"
+
+msgid "Value cannot be empty"
+msgstr "Az érték nem lehet üres"
+
+msgid "Snapshot type"
+msgstr "Pillanatkép típusa"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Pillanatkép típusa: {}"
+
+msgid "U2F login setup"
+msgstr "U2F bejelentkezés beállítása"
+
+msgid "No U2F devices found"
+msgstr "Nem található U2F-eszköz"
+
+msgid "U2F Login Method"
+msgstr "U2F bejelentkezési eljárás"
+
+msgid "Enable passwordless sudo?"
+msgstr "Engedélyezi a jelszó nélküli sudo-t?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "U2F-eszköz beállítása a következő felhasználónak: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Lehet, hogy meg kell adnia a PIN-kódot, majd ki kell választania az U2F-eszközt a regisztrációhoz"

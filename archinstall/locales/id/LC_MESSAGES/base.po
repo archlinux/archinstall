@@ -71,6 +71,7 @@ msgstr "Pilih satu interface jaringan untuk dikonfigurasi"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Pilih mode mana yang akan dikonfigurasi untuk \"{}\" atau lewati untuk menggunakan mode default \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Masukkan IP dan subnet untuk {} (contoh: 192.168.0.5/24): "
 
@@ -584,6 +585,7 @@ msgstr "Pilih opsi subvolume yang diinginkan "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Tentukan pengguna dengan hak sudo, berdasarkan nama pengguna: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] File log telah dibuat di sini: {}"
 
@@ -843,9 +845,11 @@ msgstr ""
 msgid "Select an execution mode"
 msgstr "Pilih tindakan untuk '{}'"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr ""
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr ""
 
@@ -869,11 +873,11 @@ msgstr "Hapus partisi"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Kapasitas minimum untuk partisi /home: {}GB\n"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Kapasitas minimum untuk partisi Arch Linux: {}GB"
 
@@ -949,9 +953,11 @@ msgstr "Masukkan sektor akhir partisi (persentase atau nomor blok, mis: {}): "
 msgid "This will remove all newly added partitions, continue?"
 msgstr ""
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr ""
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr ""
 
@@ -1017,6 +1023,7 @@ msgstr ""
 msgid "Partition encryption"
 msgstr ""
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr ""
 
@@ -1044,6 +1051,7 @@ msgstr ""
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr ""
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr ""
 
@@ -1257,7 +1265,7 @@ msgstr ""
 " (Masukkan nilai antara 1 hingga {})\n"
 "Catatan:"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Nilai maksimum   : {} ( Memungkinkan {} unduhan paralel, memungkinkan {} unduhan sekaligus)"
 
@@ -1325,7 +1333,7 @@ msgstr ""
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Menyediakan pilihan desktop environment dan tiling window manager, cth. gnome, kde, sway"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Tidak ada konfigurasi"
 
@@ -1476,7 +1484,7 @@ msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
 msgid "Username"
 msgstr "Nama Pengguna : "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Haruskah \"{}\" menjadi superuser (sudo)?"
 
@@ -1554,7 +1562,7 @@ msgstr ""
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Simpan konfigurasi"
 
@@ -1606,13 +1614,15 @@ msgstr ""
 msgid "Signature check"
 msgstr "Pilih interface untuk ditambahkan"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr ""
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr ""
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
 
@@ -1799,7 +1809,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Pilih mode mana yang akan dikonfigurasi untuk \"{}\" atau lewati untuk menggunakan mode default \"{}\""
 
@@ -1823,6 +1833,72 @@ msgstr "Simpan konfigurasi"
 msgid "Credentials file encryption password"
 msgstr "Kata sandi enkripsi"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "Wilayah mirror"
+
+msgid "New version available"
+msgstr ""
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Kata sandi root"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tidak ada konfigurasi"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Masukan kata sandi: "
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr ""
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
