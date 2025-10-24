@@ -28,31 +28,31 @@ msgid "    Please submit this issue (and file) to https://github.com/archlinux/a
 msgstr "    Por favor, envie este problema (e o arquivo) para: https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr "Você realmente quer abortar?"
+msgstr "Tem certeza de que deseja abortar?"
 
 msgid "And one more time for verification: "
-msgstr "Adicione mais uma vez para verificação: "
+msgstr "Digite novamente para confirmação: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "Gostaria de usar swap em zram?"
+msgstr "Deseja usar zram como swap?"
 
 msgid "Desired hostname for the installation: "
 msgstr "Nome do computador (hostname) desejado para a instalação: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "Nome de usuário requerido para superusuário com privilégios sudo: "
+msgstr "Nome de usuário para a conta administrativa (sudo): "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "Algum usuário adicional para criar (deixe em branco para nenhum): "
+msgstr "Criar usuários adicionais (deixe em branco para nenhum): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Este usuário deve ser um superusuário? (sudoer)?"
+msgstr "Este usuário deve ter previlégios de administrador? (sudo)?"
 
 msgid "Select a timezone"
-msgstr "Selecione um fuso horário"
+msgstr "Selecione o fuso horário"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Prefere usar o GRUB como bootloader ao invés do systemd-boot?"
+msgstr "Deseja usar o GRUB como bootloader em vez do systemd-boot?"
 
 msgid "Choose a bootloader"
 msgstr "Escolha um bootloader"
@@ -64,7 +64,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Se deseja um navegador web, como firefox ou chromium, pode especificá-lo no próximo prompt."
+msgstr "Se quiser um navegador web, como Firefox ou Chromium, especifique-o no próximo prompt."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Digite pacotes adicionais para instalar (separados por espaço, deixe em branco para pular): "
@@ -81,6 +81,7 @@ msgstr "Selecione uma interface de rede para configurar"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Selecione qual modo configurar para \"{}\" ou pule para usar o modo padrão \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Digite o IP e a sub-rede para {} (exemplo: 192.168.0.5/24): "
 
@@ -197,19 +198,19 @@ msgid "Select keyboard layout"
 msgstr "Selecione o layout de teclado"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Selecione uma das regiões de onde baixar os pacotes"
+msgstr "Selecione uma das regiões para baixar os pacotes"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "Selecione um ou mais discos rígidos para usar e configurar"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Para melhor compatibilidade com o seu hardware AMD, talvez queira usar a opção de drivers completamente open-source ou as opções da AMD / ATI."
+msgstr "Para melhor compatibilidade com seu hardware AMD, recomenda-se usar a opção totalmente open source ou as opções AMD / ATI."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Para melhor compatibilidade com o seu hardware Intel, talvez queira usar a opção de drivers completamente open-source ou as opções da Intel.\n"
+msgstr "Para melhor compatibilidade com seu hardware Intel, recomenda-se usar a opção totalmente open source ou as opções Intel.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Para melhor compatibilidade com o seu hardware Nvidia, talvez queira usar o driver proprietário da Nvidia.\n"
+msgstr "Para melhor compatibilidade com seu hardware Nvidia, recomenda-se usar o driver proprietário da Nvidia.\n"
 
 msgid ""
 "\n"
@@ -594,6 +595,7 @@ msgstr "Selecione as opções desejadas do subvolume "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Defina usuários com privilégio sudo, por nome de usuário: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Um arquivo de log foi criado aqui: {}"
 
@@ -852,9 +854,11 @@ msgstr "O Archinstall requer privilégios de root para ser executado. Consulte -
 msgid "Select an execution mode"
 msgstr "Selecione um modo de execução"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Não foi possível obter o perfil a partir da URL especificada: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Os perfis devem ter nomes únicos, mas foram encontradas definições de perfil com nomes duplicados: {}"
 
@@ -873,9 +877,11 @@ msgstr "Selecione uma opção de particionamento"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Digite o diretório raiz dos dispositivos montados: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Capacidade mínima para partição /home : {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Capacidade mínima para a partição do Arch Linux: {}GiB"
 
@@ -939,9 +945,11 @@ msgstr "Digite o setor final da partição (porcentagem ou número de bloco, pad
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Isso irá remover todas as partições recém-adicionadas, continuar?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Gerenciamento de partições: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Tamanho total: {}"
 
@@ -1002,6 +1010,7 @@ msgstr "Desconhecido"
 msgid "Partition encryption"
 msgstr "Encriptação de partição"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Formatando {} em "
 
@@ -1026,6 +1035,7 @@ msgstr "Voltar"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Por favor, escolha qual greeter instalar para os perfis escolhidos: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Tipo de ambiente: {}"
 
@@ -1219,6 +1229,7 @@ msgstr ""
 "\n"
 "Observação:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Valor máximo recomendado : {} ( Permite {} downloads paralelos por vez )"
 
@@ -1282,6 +1293,7 @@ msgstr "Desativar Cópia na Gravação"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Proporciona uma seleção de ambientes gráficos e gerenciadores de janela como por exemplo gnome, kde, sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Tipo de configuração: {}"
 
@@ -1409,6 +1421,7 @@ msgstr "O nome de usuário que você digitou é inválido"
 msgid "Username"
 msgstr "Nome de usuário"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "\"{}\" deve ser um superusuário (sudo)?\n"
 
@@ -1475,6 +1488,7 @@ msgstr "Diretório"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Digite um diretório para as configurações serem salvas (completamento de tab ativado):"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Você deseja salvar arquivo(s) de configuração para {}?"
 
@@ -1520,12 +1534,15 @@ msgstr "Nome"
 msgid "Signature check"
 msgstr "Verificação de assinatura"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Segmento de espaço livre selecionado no dispositivo {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Tamanho: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Tamanho (padrão: {}): "
 
@@ -1688,6 +1705,7 @@ msgstr "Instalação concluída"
 msgid "What would you like to do next?"
 msgstr "O que você gostaria de fazer a seguir?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Selecione qual modo configurar para \"{}\""
 
@@ -1706,8 +1724,76 @@ msgstr "Você deseja criptografar o arquivo user_credentials.json?"
 msgid "Credentials file encryption password"
 msgstr "Senha para criptografar o arquivo de credenciais"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Repositórios: {}"
+
+#, fuzzy
+msgid "New version available"
+msgstr "Nenhum dispositivo HSM disponível"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Senha"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Deseja continuar?"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tipo de ambiente: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Digite uma senha: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Selecione um dispositivo FIDO2 para usar como HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

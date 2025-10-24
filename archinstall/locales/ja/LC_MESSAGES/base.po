@@ -71,6 +71,7 @@ msgstr "設定するネットワークインターフェイスを 1 つ選択"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "どのモードを \"{}\" に設定するかを選択。スキップでデフォルトモード \"{}\" を使用"
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "{} の IP とサブネットを入力（例: 192.168.0.5/24）: "
 
@@ -584,6 +585,7 @@ msgstr "サブボリュームのオプションを選択"
 msgid "Define users with sudo privilege, by username: "
 msgstr "sudo 権限を持つユーザーを、ユーザー名で定義: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] ここにログファイルが作成されました: {}"
 
@@ -842,9 +844,11 @@ msgstr "Archinstall を実行するには root 権限が必要です。詳細に
 msgid "Select an execution mode"
 msgstr "実行モードを選択"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "指定された URL からプロファイルを取得できません: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "プロファイルには一意の名前が必要ですが、重複した名前のプロファイル定義が見つかりました: {}"
 
@@ -863,9 +867,11 @@ msgstr "パーティション作成のオプションを選択"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "マウントしているデバイスのルートディレクトリを入力: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "/home パーティションの最小容量: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Arch Linux パーティションの最小容量: {}GiB"
 
@@ -929,9 +935,11 @@ msgstr "パーティションの終了セクターを入力（パーセンテー
 msgid "This will remove all newly added partitions, continue?"
 msgstr "これは新しく追加されたパーティションをすべて削除します。続けますか？"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "パーティションを管理: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "全体のサイズ: {}"
 
@@ -992,6 +1000,7 @@ msgstr "不明"
 msgid "Partition encryption"
 msgstr "パーティションの暗号化"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! {} のフォーマットまで "
 
@@ -1016,6 +1025,7 @@ msgstr "戻る"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "選択したプロファイルにインストールするグリーターを選択: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "環境のタイプ: {}"
 
@@ -1208,6 +1218,7 @@ msgstr ""
 "\n"
 "注意:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - 最大推奨値 : {} （1度に {} 個の並列ダウンロードを許可する）"
 
@@ -1271,6 +1282,7 @@ msgstr "コピーオンライトを無効にする"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。例: GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "設定タイプ: {}"
 
@@ -1397,6 +1409,7 @@ msgstr "入力したユーザー名は無効です"
 msgid "Username"
 msgstr "ユーザー名"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "\"{}\" はスーパーユーザーに昇格しますか（sudo）？\n"
 
@@ -1463,6 +1476,7 @@ msgstr "ディレクトリ"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "設定を保存するディレクトリを入力（Tab で補完可能）"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "設定ファイルを次の場所に保存しますか？ {}"
 
@@ -1508,12 +1522,15 @@ msgstr "名前"
 msgid "Signature check"
 msgstr "署名チェック"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "デバイス {} の選択された空きスペースセグメント:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "サイズ: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "サイズ (デフォルト: {}): "
 
@@ -1676,6 +1693,7 @@ msgstr "インストール完了"
 msgid "What would you like to do next?"
 msgstr "次は何をしますか？"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "「{}」に設定するモードを選択"
 
@@ -1694,5 +1712,69 @@ msgstr "user_credentials.json ファイルを暗号化しますか？"
 msgid "Credentials file encryption password"
 msgstr "認証情報ファイルの暗号化パスワード"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "リポジトリ: {}"
+
+msgid "New version available"
+msgstr "新しいバージョンが利用可能"
+
+msgid "Passwordless login"
+msgstr "パスワードなしのログイン"
+
+msgid "Second factor login"
+msgstr "2要素ログイン"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Bluetooth を設定しますか？"
+
+msgid "Authentication"
+msgstr "認証"
+
+msgid "Applications"
+msgstr "アプリケーション"
+
+msgid "U2F login method: "
+msgstr "U2F ログインメソッド: "
+
+msgid "Passwordless sudo: "
+msgstr "パスワードなしの sudo: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Btrfs スナップショットのタイプ: {}"
+
+msgid "Syncing the system..."
+msgstr "システムを同期..."
+
+msgid "Value cannot be empty"
+msgstr "値は空にできません"
+
+msgid "Snapshot type"
+msgstr "スナップショットのタイプ"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "スナップショットのタイプ: {}"
+
+msgid "U2F login setup"
+msgstr "U2F ログインの設定"
+
+msgid "No U2F devices found"
+msgstr "U2F デバイスが見つかりません"
+
+msgid "U2F Login Method"
+msgstr "U2F ログインメソッド"
+
+msgid "Enable passwordless sudo?"
+msgstr "パスワードなしの sudo を有効にしますか？"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "ユーザー用 U2F デバイスの設定: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "PIN を入力したのち U2F デバイスをタッチして登録しなければならない場合があります"

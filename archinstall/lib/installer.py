@@ -30,6 +30,7 @@ from archinstall.lib.models.device import (
 	Unit,
 )
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.packages import installed_package
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import Tui
 
@@ -666,7 +667,7 @@ class Installer:
 			info(f'Enabling service {service}')
 
 			try:
-				self.arch_chroot(f'systemctl enable {service}')
+				SysCommand(f'systemctl --root={self.target} enable {service}')
 			except SysCallError as err:
 				raise ServiceException(f'Unable to start service {service}: {err}')
 
@@ -801,10 +802,6 @@ class Installer:
 	) -> None:
 		if (pkg := fs_type.installation_pkg) is not None:
 			self._base_packages.append(pkg)
-		if (module := fs_type.installation_module) is not None:
-			self._modules.append(module)
-		if (binary := fs_type.installation_binary) is not None:
-			self._binaries.append(binary)
 
 		# https://github.com/archlinux/archinstall/issues/1837
 		if fs_type.fs_type_mount == 'btrfs':
@@ -957,6 +954,7 @@ class Installer:
 			if bootloader and bootloader == Bootloader.Grub:
 				self.pacman.strap('grub-btrfs')
 				self.pacman.strap('inotify-tools')
+				self._configure_grub_btrfsd()
 				self.enable_service('grub-btrfsd.service')
 
 	def setup_swap(self, kind: str = 'zram') -> None:
@@ -996,6 +994,27 @@ class Installer:
 				if root := mod.get_root_partition():
 					return root
 		return None
+
+	def _configure_grub_btrfsd(self) -> None:
+		# See https://github.com/Antynea/grub-btrfs?tab=readme-ov-file#-using-timeshift-with-systemd
+		debug('Configuring grub-btrfsd service')
+
+		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
+		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
+		systemd_dir.mkdir(parents=True, exist_ok=True)
+
+		override_conf = systemd_dir / 'override.conf'
+
+		config_content = textwrap.dedent(
+			"""
+			[Service]
+			ExecStart=
+			ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
+			"""
+		)
+
+		override_conf.write_text(config_content)
+		override_conf.chmod(0o644)
 
 	def _get_luks_uuid_from_mapper_dev(self, mapper_dev_path: Path) -> str:
 		lsblk_info = get_lsblk_info(mapper_dev_path, reverse=True, full_dev_path=True)
@@ -1175,22 +1194,24 @@ class Installer:
 
 		# TODO: This is a temporary workaround to deal with https://github.com/archlinux/archinstall/pull/3396#issuecomment-2996862019
 		# the systemd_version check can be removed once `--variables=BOOL` is merged into systemd.
-		if pacman_q_systemd := self.pacman.run('-Q systemd').trace_log:
-			systemd_version = int(pacman_q_systemd.split(b' ')[1][:3].decode())
-		else:
-			systemd_version = 257  # This works as a safety workaround for this hot-fix
+		systemd_pkg = installed_package('systemd')
 
-		# Install the boot loader
+		# keep the version as a str as it can be something like 257.8-2
+		if systemd_pkg is not None:
+			systemd_version = systemd_pkg.version
+		else:
+			systemd_version = '257'  # This works as a safety workaround for this hot-fix
+
 		try:
 			# Force EFI variables since bootctl detects arch-chroot
 			# as a container environemnt since v257 and skips them silently.
 			# https://github.com/systemd/systemd/issues/36174
-			if systemd_version >= 258:
+			if systemd_version >= '258':
 				SysCommand(f'arch-chroot {self.target} bootctl --variables=yes {" ".join(bootctl_options)} install')
 			else:
 				SysCommand(f'arch-chroot {self.target} bootctl {" ".join(bootctl_options)} install')
 		except SysCallError:
-			if systemd_version >= 258:
+			if systemd_version >= '258':
 				# Fallback, try creating the boot loader without touching the EFI variables
 				SysCommand(f'arch-chroot {self.target} bootctl --variables=no {" ".join(bootctl_options)} install')
 			else:

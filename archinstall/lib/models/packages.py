@@ -103,27 +103,12 @@ class PackageSearch:
 
 class LocalPackage(BaseModel):
 	name: str
-	repository: str
 	version: str
 	description: str
 	architecture: str
 	url: str
 	licenses: str
 	groups: str
-	depends_on: str
-	optional_deps: str
-	required_by: str
-	optional_for: str
-	conflicts_with: str
-	replaces: str
-	installed_size: str
-	packager: str
-	build_date: str
-	install_date: str
-	install_reason: str
-	install_script: str
-	validated_by: str
-	provides: str
 
 	@override
 	def __eq__(self, other: object) -> bool:

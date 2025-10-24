@@ -72,6 +72,7 @@ msgstr "მოსარგებად ერთ-ერთი ქსელის
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "აირჩიეთ მოსარგები რეჟიმი \"{}\"-სთვის ან გამოტოვეთ ნაგულისხმევი რეჟიმის \"{}\" გამოსაყენებლად"
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "შეიყვანეთ IP მისამართი და ქვექსელი {}-სთვის (მაგ: 192.168.0.5/24): "
 
@@ -585,6 +586,7 @@ msgstr "აირჩიეთ სასურველი ქვეტომი�
 msgid "Define users with sudo privilege, by username: "
 msgstr "აღწერეთ sudo-ის პრივილეგიების მქონე მომხმარებლები, მათი სახელით: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] ჟურნალის ფაილის მდებარეობა: {}"
 
@@ -843,9 +845,11 @@ msgstr "Archinstall-ს გასაშვებად root მომხმა�
 msgid "Select an execution mode"
 msgstr "აირჩიეთ შესრულების რეჟიმი"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "პროფილის მიღება შეუძლებელია მითითებული ბმულიდან: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "პროფილებს უნიკალური სახელი უნდა ჰქონდეთ, მაგრამ აღმოჩენილია პროფილის აღწერები გამეორებადი სახელით: {}"
 
@@ -864,9 +868,11 @@ msgstr "აირჩიეთ დისკის დაყოფის პარ
 msgid "Enter the root directory of the mounted devices: "
 msgstr "შეიყვანეთ მიმაგრებული მოწყობილობების ძირითადი საქაღალდე: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "მინიმალური სივრცე დანაყოფისთვის /home: {}გიბ\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "მინიმალური სივრცე Arch Linux-ის დანაყოფისთვის: {}გიბ"
 
@@ -930,9 +936,11 @@ msgstr "შეიყვანეთ დანაყოფის ბოლო ს
 msgid "This will remove all newly added partitions, continue?"
 msgstr "ეს ყველა ახლად დამატებულ დანაყოფს წაშლის. გავაგრძელო?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "დანაყოფების მართვა: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "ჯამური სიგრძე: {}"
 
@@ -993,6 +1001,7 @@ msgstr "უცნობი"
 msgid "Partition encryption"
 msgstr "დანაყოფის დაშიფვრა"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! {}-ის დაფორმატება ფორმატში "
 
@@ -1017,6 +1026,7 @@ msgstr "უკან"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "აირჩიეთ, რომელი მისალმების ეკრანის დაყენება გნებავთ არჩეული პროფილებისთვის: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "გარემოს ტიპი: {}"
 
@@ -1209,6 +1219,7 @@ msgstr ""
 "\n"
 "შენიშვნა:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - მინიმალური მნიშვნელობა   : {} ( დაუშვებს {} პარალელურ გადმოწერას )"
 
@@ -1272,6 +1283,7 @@ msgstr "ჩაწერისას-დაკოპირების გათ�
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "მოგაწვდით სამუშაო გარემოებისა და ფანჯრების მმართველების არჩევანს. მაგ: GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "მორგების ტიპი: {}"
 
@@ -1415,7 +1427,7 @@ msgstr "შეყვანილი მომხმარებლის სა�
 msgid "Username"
 msgstr "მომხმარებლის სახელი : "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "იყოს \"{}\" ზემომხმარებელი(sudo)?"
 
@@ -1497,7 +1509,7 @@ msgstr ""
 "შეიყვანეთ საქაღალდე კონფიგურაცი(ებ)-ის შესანახად (ტაბით დასრულება ჩართულია)\n"
 "შენახვის საქაღალდე: "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr ""
 "გნებავთ, შეინახოთ {} კონფიგურაციის ფაილები შემდეგ მისამართზე?\n"
@@ -1556,15 +1568,15 @@ msgstr ""
 msgid "Signature check"
 msgstr "აირჩიეთ ხელმოწერის შემოწმების პარამეტრი"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "ამჟამად თავისუფალი სექტორები მოწყობილობაზე {}:"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size: {} / {}"
 msgstr "სულ: {} / {}"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size (default: {}): "
 msgstr "შეიყვანეთ ბოლო სექტორი (ნაგულისხმევი: {}): "
 
@@ -1764,7 +1776,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr "გნებავთ BTRFS-ის შეკუმშვის გამოყენება?"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "აირჩიეთ მოსარგები რეჟიმი \"{}\"-სთვის ან გამოტოვეთ ნაგულისხმევი რეჟიმის \"{}\" გამოსაყენებლად"
 
@@ -1791,6 +1803,73 @@ msgstr ""
 msgid "Credentials file encryption password"
 msgstr "დაშიფვრის პაროლი"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "სარკის რეგიონი"
+
+#, fuzzy
+msgid "New version available"
+msgstr "HSM მოწყობილობები მიუწვდომელია"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "პაროლი"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "გნებავთ BTRFS-ის შეკუმშვის გამოყენება?"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "გარემოს ტიპი: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "შეიყვანეთ პაროლი: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "აირჩიეთ HSM-სთვის გამოსაყენებელი FIDO2 მოწყობილობა"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""

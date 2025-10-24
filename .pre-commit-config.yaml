@@ -1,7 +1,7 @@
 default_stages: ['pre-commit']
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.7
+    rev: v0.14.1
     hooks:
         # fix unused imports and sort them
       - id: ruff
@@ -11,7 +11,7 @@ repos:
         # run the linter
       - id: ruff
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
     # general hooks:
     - id: check-added-large-files  # Prevent giant files from being committed
@@ -31,7 +31,7 @@ repos:
       args: [--config=.flake8]
       fail_fast: true
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.17.1
+    rev: v1.18.2
     hooks:
     - id: mypy
       args: [

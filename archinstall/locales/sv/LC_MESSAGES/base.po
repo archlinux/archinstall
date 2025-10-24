@@ -72,6 +72,7 @@ msgstr "Välj ett nätverkskort för konfigurering"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Välj vilket läge att konfigurera för \"{}\" eller använd standardläge \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Mata in IP och subnät för {} (exempelvis: 192.168.0.5/24): "
 
@@ -585,6 +586,7 @@ msgstr "Välj önskade inställningar för sub-volymen "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Definera användarnamn med sudo-rättigheter: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] En logg-fil har skapats här: {}"
 
@@ -843,9 +845,11 @@ msgstr "Archinstall kräver root-privilegier för att köras. Se --help för mer
 msgid "Select an execution mode"
 msgstr "Välj ett exekveringsläge"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Det gick inte att hämta profilen från angiven webbadress: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Profiler måste ha ett unikt namn, men profildefinitioner med dubblettnamn hittades: {}"
 
@@ -864,9 +868,11 @@ msgstr "Välj ett partitioneringsalternativ"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Ange rootkatalogen för de monterade enheterna: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Minsta kapacitet för /home-partition: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Minsta kapacitet för Arch Linux-partition: {}GiB"
 
@@ -930,9 +936,11 @@ msgstr "Ange slutsektorn för partitionen (procent eller blocknummer, standard: 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Detta tar bort alla nyligen tillagda partitioner. Fortsätta?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Partitionshantering: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Total längd: {}"
 
@@ -940,28 +948,28 @@ msgid "Encryption type"
 msgstr "Krypteringstyp"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Iterationstid"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Ange iterationstid för LUKS-kryptering (i millisekunder)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Högre värde ökar säkerheten men fördröjer uppstartstiden"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Standard: 10000ms, Rekommenderat intervall: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Iterationstiden kan inte vara tom"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Iterationstiden måste vara minst 100 ms"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Iterationstiden får vara högst 120000 ms"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Var vänlig ange ett giltigt nummer"
 
 msgid "Partitions"
 msgstr "Partitioner"
@@ -993,6 +1001,7 @@ msgstr "Okänd"
 msgid "Partition encryption"
 msgstr "Partitionskryptering"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Formaterar {} om "
 
@@ -1017,6 +1026,7 @@ msgstr "Tillbaka"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Vänligen välj vilken displayhanterare du vill installera för de valda profilerna: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Miljötyp: {}"
 
@@ -1209,6 +1219,7 @@ msgstr ""
 "\n"
 "Observera:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Maximalt rekommenderat värde: {} (Tillåter {} parallella nedladdningar åt gången)"
 
@@ -1272,6 +1283,7 @@ msgstr "Inaktivera Copy-on-Write"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Ger ett urval av skrivbordsmiljöer och kaklade fönsterhanterare, t.ex. GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Konfigurationstyp: {}"
 
@@ -1398,6 +1410,7 @@ msgstr "Användarnamnet du angav är ogiltigt"
 msgid "Username"
 msgstr "Användarnamn"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Ska \"{}\" vara en superanvändare (sudo)?\n"
 
@@ -1464,6 +1477,7 @@ msgstr "Katalog"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Ange en katalog för konfigurationen/konfigurationerna som ska sparas (komplettering av flikar aktiverad)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Vill du spara konfigurationsfil(er) till {}?"
 
@@ -1509,12 +1523,15 @@ msgstr "Namn"
 msgid "Signature check"
 msgstr "Signaturkontroll"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Valt ledigt utrymmessegment på enheten {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Storlek: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Storlek (standard: {}): "
 
@@ -1677,6 +1694,7 @@ msgstr "Installationen slutförd"
 msgid "What would you like to do next?"
 msgstr "Vad vill du göra härnäst?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Välj vilket läge att konfigurera för \"{}\""
 
@@ -1695,5 +1713,69 @@ msgstr "Vill du kryptera user_credentials.json filen?"
 msgid "Credentials file encryption password"
 msgstr "Krypteringslösenord för autentiseringsfil"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Arkiv: {}"
+
+msgid "New version available"
+msgstr "Ny version tillgänglig"
+
+msgid "Passwordless login"
+msgstr "Lösenordslös inloggning"
+
+msgid "Second factor login"
+msgstr "Andra faktorsinloggning"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Vill du konfigurera Bluetooth?"
+
+msgid "Authentication"
+msgstr "Autentisering"
+
+msgid "Applications"
+msgstr "Program"
+
+msgid "U2F login method: "
+msgstr "U2F-inloggningsmetod: "
+
+msgid "Passwordless sudo: "
+msgstr "Lösenordslös sudo: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Btrfs-ögonblicksavbildstyp: {}"
+
+msgid "Syncing the system..."
+msgstr "Synkroniserar systemet..."
+
+msgid "Value cannot be empty"
+msgstr "Värdet kan inte vara tomt"
+
+msgid "Snapshot type"
+msgstr "Ögonblicksavbildstyp"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Ögonblicksavbildstyp: {}"
+
+msgid "U2F login setup"
+msgstr "Ställ in U2F-inloggning"
+
+msgid "No U2F devices found"
+msgstr "Inga U2F-enheter hittades"
+
+msgid "U2F Login Method"
+msgstr "U2F-inloggningsmetod"
+
+msgid "Enable passwordless sudo?"
+msgstr "Aktivera lösenordslös sudo?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Konfigurerar U2F-enhet för användare: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Du kan behöva ange PIN-koden och sedan trycka på din U2F-enhet för att registrera den"

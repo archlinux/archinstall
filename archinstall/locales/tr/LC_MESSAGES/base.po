@@ -72,6 +72,7 @@ msgstr "Yapılandırmak için bir ağ arayüzü seçin"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "\"{}\"i yapılandırmak için bir yöntem seçin ya da varsayılan yöntemi \"{}\" kullanmak için atlayın"
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "{} için IP ve altağ (subnet) girin (örnek: 192.168.0.5/24): "
 
@@ -585,6 +586,7 @@ msgstr "İstenilen alt disk bölümü ayarlarını seçin "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Süper-kullanıcı yetkilerine sahip kullanıcıları tanımlayın, kullanıcı adı ile: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Burada bir günlük dosyası oluşturuldu: {}"
 
@@ -843,9 +845,11 @@ msgstr "Archinstall çalışması için root ayrıcalıkları gerekir. Daha fazl
 msgid "Select an execution mode"
 msgstr "Bir çalıştırma modu seçin"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Belirtilen web adresinden profil getirilemiyor: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Profiller benzersiz ada sahip olmalıdır, ancak yinelenen ada sahip profiller bulundu: {}"
 
@@ -864,9 +868,11 @@ msgstr "Bir bölümleme seçeneği belirleyin"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Takılı aygıtların kök dizinini girin: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "/home disk bölümü için asgari kapasite: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Arch Linux disk bölümü için asgari kapasite: {}GiB"
 
@@ -930,9 +936,11 @@ msgstr "Bölümün bitiş sektörünü girin (yüzde veya blok numarası, varsay
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Bu işlem yeni eklenmiş tüm bölümleri kaldıracaktır, devam edilsin mi?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Bölüm yönetimi: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Toplam uzunluk: {}"
 
@@ -993,6 +1001,7 @@ msgstr "Bilinmeyen"
 msgid "Partition encryption"
 msgstr "Disk bölümü şifrelemesi"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! {} biçimlendiriliyor "
 
@@ -1017,6 +1026,7 @@ msgstr "Geri"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Lütfen seçilen profiller için hangi karşılayıcının kurulacağını seçin: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Ortam türü: {}"
 
@@ -1206,6 +1216,7 @@ msgstr ""
 "\n"
 "Not:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Önerilen maksimum değer : {} ( Bir seferde {} paralel indirmeye izin verir )"
 
@@ -1269,6 +1280,7 @@ msgstr "Copy-on-write'ı (Yazarken kopyala) devre dışı bırak"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "GNOME, KDE Plasma, Sway gibi çeşitli masaüstü ortamları ve döşeme pencere yöneticileri sağlar"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Yapılandırma türü: {}"
 
@@ -1395,6 +1407,7 @@ msgstr "Girdiğiniz kullanıcı adı geçersiz"
 msgid "Username"
 msgstr "Kullanıcı Adı"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "\"{}\" bir süper kullanıcı (sudo) olmalı mı?\n"
 
@@ -1461,6 +1474,7 @@ msgstr "Dizin"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Kaydedilecek yapılandırma(lar) için bir dizin girin (sekme tamamlama etkin)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Yapılandırma dosya(lar)ını {}'a kaydetmek istiyor musunuz?"
 
@@ -1506,12 +1520,15 @@ msgstr "İsim"
 msgid "Signature check"
 msgstr "İmza kontrolü"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Cihaz üzerinde seçilen boş alan segmenti {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Boyut: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Boyut (varsayılan: {}): "
 
@@ -1674,6 +1691,7 @@ msgstr "Kurulum tamamlandı"
 msgid "What would you like to do next?"
 msgstr "Bundan sonra ne yapmak istersiniz?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Hangi mod için yapılandırma yapılacağını seç \"{}\""
 
@@ -1692,8 +1710,76 @@ msgstr "user_credentials.json dosyasını şifrelemek istiyor musunuz?"
 msgid "Credentials file encryption password"
 msgstr "Kimlik bilgileri dosyası şifreleme parolası"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Depolar: {}"
+
+#, fuzzy
+msgid "New version available"
+msgstr "Kullanılabilir HSM cihazı yok"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Parola"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Devam etmek ister misiniz?"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Ortam türü: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Bir parola gir: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "HSM için kullanılacak bir FIDO2 cihazı seçin"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
 
 #~ msgid "Desktop"
 #~ msgstr "Masaüstü"

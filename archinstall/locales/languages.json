@@ -171,7 +171,7 @@
  {"abbr": "ug", "lang": "Uighur"},
  {"abbr": "uk", "lang": "Ukrainian"},
  {"abbr": "ur", "lang": "Urdu", "translated_lang": "اردو"},
- {"abbr": "uz", "lang": "Uzbek"},
+ {"abbr": "uz", "lang": "Uzbek", "translated_lang": "O'zbek"},
  {"abbr": "ve", "lang": "Venda"},
  {"abbr": "vi", "lang": "Vietnamese"},
  {"abbr": "vo", "lang": "Volapük"},
