@@ -1544,6 +1544,8 @@ class Installer:
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
 
+		info(f'rEFInd boot partition: {boot_partition.dev_path}')
+
 		if not efi_partition:
 			raise ValueError('Could not detect EFI system partition')
 		elif not efi_partition.mountpoint:
@@ -1559,7 +1561,22 @@ class Installer:
 		if not boot_partition.mountpoint:
 			raise ValueError('Boot partition is not mounted, cannot write rEFInd config')
 
-		config_path = self.target / boot_partition.mountpoint.relative_to('/') / 'refind_linux.conf'
+		boot_is_separate = (boot_partition != efi_partition and
+							boot_partition.dev_path != efi_partition.dev_path)
+
+		if boot_is_separate:
+			# Separate boot partition (not ESP, not root)
+			config_path = self.target / boot_partition.mountpoint.relative_to('/') / 'refind_linux.conf'
+			boot_on_root = False
+		elif efi_partition.mountpoint == Path('/boot'):
+			# ESP is mounted at /boot, kernels are on ESP
+			config_path = self.target / 'boot' / 'refind_linux.conf'
+			boot_on_root = False
+		else:
+			# ESP is elsewhere (/efi, /boot/efi, etc.), kernels are on root filesystem at /boot
+			config_path = self.target / 'boot' / 'refind_linux.conf'
+			boot_on_root = True
+
 		config_contents = []
 
 		kernel_params = ' '.join(self._get_kernel_params(root))
@@ -1569,7 +1586,22 @@ class Installer:
 				if uki_enabled:
 					entry = f'"Arch Linux ({kernel}{variant}) UKI" "{kernel_params}"'
 				else:
-					initrd_path = f'initrd=\\initramfs-{kernel}{variant}.img'
+					if boot_on_root:
+						# Kernels are in /boot subdirectory of root filesystem
+						if hasattr(root, 'btrfs_subvols') and root.btrfs_subvols:
+							# Root is btrfs with subvolume, find the root subvolume
+							root_subvol = next((sv for sv in root.btrfs_subvols if sv.is_root()), None)
+							if root_subvol:
+								subvol_name = root_subvol.name
+								initrd_path = f'initrd={subvol_name}\\boot\\initramfs-{kernel}{variant}.img'
+							else:
+								initrd_path = f'initrd=\\boot\\initramfs-{kernel}{variant}.img'
+						else:
+							# Root without btrfs subvolume
+							initrd_path = f'initrd=\\boot\\initramfs-{kernel}{variant}.img'
+					else:
+						# Kernels are at root of their partition (ESP or separate boot partition)
+						initrd_path = f'initrd=\\initramfs-{kernel}{variant}.img'
 					entry = f'"Arch Linux ({kernel}{variant})" "{kernel_params} {initrd_path}"'
 
 				config_contents.append(entry)
