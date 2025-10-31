@@ -20,7 +20,7 @@ class LxqtProfile(XorgProfile):
 			'oxygen-icons',
 			'xdg-utils',
 			'ttf-freefont',
-			'leafpad',
+			'l3afpad',
 			'slock',
 		]
 
