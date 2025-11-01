@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] En logg-fil har skapats här: {} {}"
@@ -1781,4 +1781,4 @@ msgid "You may need to enter the PIN and then touch your U2F device to register 
 msgstr "Du kan behöva ange PIN-koden och sedan trycka på din U2F-enhet för att registrera den"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Starta enhetsmodifieringar i "
