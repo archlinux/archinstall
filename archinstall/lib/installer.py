@@ -617,7 +617,7 @@ class Installer:
 			return False
 
 		try:
-			SysCommand(f'arch-chroot {self.target} locale-gen')
+			self.arch_chroot(f'locale-gen')
 		except SysCallError as e:
 			error(f'Failed to run locale-gen on target: {e}')
 			return False
@@ -638,7 +638,7 @@ class Installer:
 
 		if (Path('/usr') / 'share' / 'zoneinfo' / zone).exists():
 			(Path(self.target) / 'etc' / 'localtime').unlink(missing_ok=True)
-			SysCommand(f'arch-chroot {self.target} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
+			self.arch_chroot(f'ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
 			return True
 
 		else:
@@ -676,7 +676,7 @@ class Installer:
 					plugin.on_service(service)
 
 	def run_command(self, cmd: str, *args: str, **kwargs: str) -> SysCommand:
-		return SysCommand(f'arch-chroot {self.target} {cmd}')
+		return SysCommand(f'arch-chroot -S {self.target} {cmd}')
 
 	def arch_chroot(self, cmd: str, run_as: str | None = None) -> SysCommand:
 		if run_as:
@@ -782,7 +782,7 @@ class Installer:
 			mkinit.write(content)
 
 		try:
-			SysCommand(f'arch-chroot {self.target} mkinitcpio {" ".join(flags)}', peek_output=True)
+			self.arch_chroot(f'mkinitcpio {" ".join(flags)}', peek_output=True)
 			return True
 		except SysCallError as e:
 			if e.worker_log:
@@ -894,7 +894,7 @@ class Installer:
 			self.set_keyboard_language(locale_config.kb_layout)
 
 		# TODO: Use python functions for this
-		SysCommand(f'arch-chroot {self.target} chmod 700 /root')
+		self.arch_chroot(f'chmod 700 /root')
 
 		if mkinitcpio and not self.mkinitcpio(['-P']):
 			error('Error generating initramfs (continuing anyway)')
@@ -927,6 +927,7 @@ class Installer:
 			for config_name, mountpoint in snapper.items():
 				command = [
 					'arch-chroot',
+					'-S',
 					str(self.target),
 					'snapper',
 					'--no-dbus',
@@ -1207,15 +1208,15 @@ class Installer:
 			# as a container environemnt since v257 and skips them silently.
 			# https://github.com/systemd/systemd/issues/36174
 			if systemd_version >= '258':
-				SysCommand(f'arch-chroot {self.target} bootctl --variables=yes {" ".join(bootctl_options)} install')
+				self.arch_chroot(f'bootctl --variables=yes {" ".join(bootctl_options)} install')
 			else:
-				SysCommand(f'arch-chroot {self.target} bootctl {" ".join(bootctl_options)} install')
+				self.arch_chroot(f'bootctl {" ".join(bootctl_options)} install')
 		except SysCallError:
 			if systemd_version >= '258':
 				# Fallback, try creating the boot loader without touching the EFI variables
-				SysCommand(f'arch-chroot {self.target} bootctl --variables=no {" ".join(bootctl_options)} install')
+				self.arch_chroot(f'bootctl --variables=no {" ".join(bootctl_options)} install')
 			else:
-				SysCommand(f'arch-chroot {self.target} bootctl --no-variables {" ".join(bootctl_options)} install')
+				self.arch_chroot(f'bootctl --no-variables {" ".join(bootctl_options)} install')
 
 		# Loader configuration is stored in ESP/loader:
 		# https://man.archlinux.org/man/loader.conf.5
@@ -1277,6 +1278,7 @@ class Installer:
 
 		command = [
 			'arch-chroot',
+			'-S',
 			str(self.target),
 			'grub-install',
 			'--debug',
@@ -1329,8 +1331,8 @@ class Installer:
 				raise DiskError(f'Failed to install GRUB boot on {boot_partition.dev_path}: {err}')
 
 		try:
-			SysCommand(
-				f'arch-chroot {self.target} grub-mkconfig -o {boot_dir}/grub/grub.cfg',
+			self.arch_chroot(
+				f'grub-mkconfig -o {boot_dir}/grub/grub.cfg',
 			)
 		except SysCallError as err:
 			raise DiskError(f'Could not configure GRUB: {err}')
@@ -1439,7 +1441,7 @@ class Installer:
 				shutil.copy(limine_path / 'limine-bios.sys', boot_limine_path)
 
 				# `limine bios-install` deploys the stage 1 and 2 to the
-				SysCommand(f'arch-chroot {self.target} limine bios-install {parent_dev_path}', peek_output=True)
+				self.arch_chroot(f'limine bios-install {parent_dev_path}', peek_output=True)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine on {parent_dev_path}: {err}')
 
@@ -1697,7 +1699,7 @@ class Installer:
 		if not handled_by_plugin:
 			info(f'Creating user {user.username}')
 
-			cmd = f'arch-chroot {self.target} useradd -m'
+			cmd = f'useradd -m'
 
 			if user.sudo:
 				cmd += ' -G wheel'
@@ -1705,7 +1707,7 @@ class Installer:
 			cmd += f' {user.username}'
 
 			try:
-				SysCommand(cmd)
+				self.arch_chroot(cmd)
 			except SysCallError as err:
 				raise SystemError(f'Could not create user inside installation: {err}')
 
@@ -1717,7 +1719,7 @@ class Installer:
 		self.set_user_password(user)
 
 		for group in user.groups:
-			SysCommand(f'arch-chroot {self.target} gpasswd -a {user.username} {group}')
+			self.arch_chroot(f'gpasswd -a {user.username} {group}')
 
 		if user.sudo:
 			self.enable_sudo(user)
@@ -1732,7 +1734,7 @@ class Installer:
 			return False
 
 		input_data = f'{user.username}:{enc_password}'.encode()
-		cmd = ['arch-chroot', str(self.target), 'chpasswd', '--encrypted']
+		cmd = ['arch-chroot', '-S', str(self.target), 'chpasswd', '--encrypted']
 
 		try:
 			run(cmd, input_data=input_data)
@@ -1745,7 +1747,7 @@ class Installer:
 		info(f'Setting shell for {user} to {shell}')
 
 		try:
-			SysCommand(f'arch-chroot {self.target} sh -c "chsh -s {shell} {user}"')
+			self.arch_chroot(f'sh -c "chsh -s {shell} {user}"')
 			return True
 		except SysCallError:
 			return False
@@ -1753,7 +1755,7 @@ class Installer:
 	def chown(self, owner: str, path: str, options: list[str] = []) -> bool:
 		cleaned_path = path.replace("'", "\\'")
 		try:
-			SysCommand(f"arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'")
+			self.arch_chroot(f"sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'")
 			return True
 		except SysCallError:
 			return False
@@ -1851,6 +1853,6 @@ def run_custom_user_commands(commands: list[str], installation: Installer) -> No
 		with open(chroot_path, 'w') as user_script:
 			user_script.write(command)
 
-		SysCommand(f'arch-chroot {installation.target} bash {script_path}')
+		SysCommand(f'arch-chroot -S {installation.target} bash {script_path}')
 
 		os.unlink(chroot_path)
