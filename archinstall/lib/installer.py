@@ -617,7 +617,7 @@ class Installer:
 			return False
 
 		try:
-			self.arch_chroot(f'locale-gen')
+			self.arch_chroot('locale-gen')
 		except SysCallError as e:
 			error(f'Failed to run locale-gen on target: {e}')
 			return False
@@ -675,14 +675,14 @@ class Installer:
 				if hasattr(plugin, 'on_service'):
 					plugin.on_service(service)
 
-	def run_command(self, cmd: str, *args: str, **kwargs: str) -> SysCommand:
-		return SysCommand(f'arch-chroot -S {self.target} {cmd}')
+	def run_command(self, cmd: str, peek_output:bool = False) -> SysCommand:
+		return SysCommand(f'arch-chroot -S {self.target} {cmd}', peek_output=peek_output)
 
-	def arch_chroot(self, cmd: str, run_as: str | None = None) -> SysCommand:
+	def arch_chroot(self, cmd: str, run_as: str | None = None, peek_output: bool = False) -> SysCommand:
 		if run_as:
 			cmd = f'su - {run_as} -c {shlex.quote(cmd)}'
 
-		return self.run_command(cmd)
+		return self.run_command(cmd, peek_output=peek_output)
 
 	def drop_to_shell(self) -> None:
 		subprocess.check_call(f'arch-chroot {self.target}', shell=True)
@@ -894,7 +894,7 @@ class Installer:
 			self.set_keyboard_language(locale_config.kb_layout)
 
 		# TODO: Use python functions for this
-		self.arch_chroot(f'chmod 700 /root')
+		self.arch_chroot('chmod 700 /root')
 
 		if mkinitcpio and not self.mkinitcpio(['-P']):
 			error('Error generating initramfs (continuing anyway)')
@@ -1699,7 +1699,7 @@ class Installer:
 		if not handled_by_plugin:
 			info(f'Creating user {user.username}')
 
-			cmd = f'useradd -m'
+			cmd = 'useradd -m'
 
 			if user.sudo:
 				cmd += ' -G wheel'
