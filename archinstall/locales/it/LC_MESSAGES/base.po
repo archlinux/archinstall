@@ -1781,3 +1781,6 @@ msgstr "Impostazione dispositivo U2F per l'utente: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Devi inserire il PIN e toccare il tuo dispositivo U2F per registrarlo"
+
+msgid "Starting device modifications in "
+msgstr ""

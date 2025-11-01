@@ -1780,3 +1780,6 @@ msgstr "U2F-eszköz beállítása a következő felhasználónak: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Lehet, hogy meg kell adnia a PIN-kódot, majd ki kell választania az U2F-eszközt a regisztrációhoz"
+
+msgid "Starting device modifications in "
+msgstr ""

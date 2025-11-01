@@ -1779,3 +1779,6 @@ msgstr "Konfigurerar U2F-enhet för användare: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Du kan behöva ange PIN-koden och sedan trycka på din U2F-enhet för att registrera den"
+
+msgid "Starting device modifications in "
+msgstr ""

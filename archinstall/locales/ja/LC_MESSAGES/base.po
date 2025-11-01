@@ -1778,3 +1778,6 @@ msgstr "ユーザー用 U2F デバイスの設定: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "PIN を入力したのち U2F デバイスをタッチして登録しなければならない場合があります"
+
+msgid "Starting device modifications in "
+msgstr ""
