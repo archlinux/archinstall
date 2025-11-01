@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, NotRequired, TypedDict
+from typing import TYPE_CHECKING, NotRequired, TypedDict, override
 
+from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
 
 from ..models.profile import ProfileConfiguration
@@ -157,3 +159,101 @@ class NetworkConfiguration:
 
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
+
+
+@dataclass
+class WifiNetwork:
+	bssid: str
+	frequency: str
+	signal_level: str
+	flags: str
+	ssid: str
+
+	@override
+	def __hash__(self) -> int:
+		return hash((self.bssid, self.frequency, self.signal_level, self.flags, self.ssid))
+
+	def table_data(self) -> dict[str, str | int]:
+		"""Format WiFi data for table display"""
+		return {
+			'SSID': self.ssid,
+			'Signal': f'{self.signal_level} dBm',
+			'Frequency': f'{self.frequency} MHz',
+			'Security': self.flags,
+			'BSSID': self.bssid,
+		}
+
+	@staticmethod
+	def from_wpa(results: str) -> list[WifiNetwork]:
+		entries: list[WifiNetwork] = []
+
+		for line in results.splitlines():
+			line = line.strip()
+			if not line:
+				continue
+
+			parts = line.split()
+			if len(parts) != 5:
+				continue
+
+			wifi = WifiNetwork(bssid=parts[0], frequency=parts[1], signal_level=parts[2], flags=parts[3], ssid=parts[4])
+			entries.append(wifi)
+
+		return entries
+
+
+@dataclass
+class WifiConfiguredNetwork:
+	network_id: int
+	ssid: str
+	bssid: str
+	flags: list[str]
+
+	@classmethod
+	def from_wpa_cli_output(cls, list_networks: str) -> list[WifiConfiguredNetwork]:
+		"""
+		Example output from 'wpa_cli list_networks'
+
+		Selected interface 'wlan0'
+		network id / ssid / bssid / flags
+		0	WifiGuest any	[CURRENT]
+		1		any [DISABLED]
+		2		any [DISABLED]
+		"""
+
+		lines = list_networks.strip().splitlines()
+		lines = lines[1:]  # remove the header row from the wpa_cli output
+
+		networks = []
+
+		for line in lines:
+			line = line.strip()
+			parts = line.split('\t')
+
+			if len(parts) < 3:
+				continue
+
+			try:
+				# flags = cls._extract_flags(parts[3])
+				flags: list[str] = []
+
+				networks.append(
+					WifiConfiguredNetwork(
+						network_id=int(parts[0]),
+						ssid=parts[1],
+						bssid=parts[2],
+						flags=flags,
+					)
+				)
+			except (ValueError, IndexError):
+				debug('Parsing error for network output')
+
+		return networks
+
+	@classmethod
+	def _extract_flags(cls, flag_string: str) -> list[str]:
+		pattern = r'\[([^\]]+)\]'
+
+		extracted_values = re.findall(pattern, flag_string)
+
+		return extracted_values
