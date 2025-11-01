@@ -1781,6 +1781,9 @@ msgstr "HSM için kullanılacak bir FIDO2 cihazı seçin"
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr ""
 
+msgid "Starting device modifications in "
+msgstr ""
+
 #~ msgid "Desktop"
 #~ msgstr "Masaüstü"
 

@@ -401,9 +401,10 @@ msgstr "Geben Sie einen Benutzernamen ein, um diesen zusätzlich anzulegen (leer
 msgid "Use ESC to skip\n"
 msgstr "ESC um zu überspringen\n"
 
+#, fuzzy
 msgid ""
 "\n"
-"Choose an object from the list, and select one of the available actions for it to execute"
+" Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
 "Wählen Sie ein Objekt aus der Liste und eine Aktion, die Sie ausführen möchten."
@@ -1779,6 +1780,9 @@ msgstr "Richte U2F-Gerät für den Benutzer {} ein"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Sie müssen möglicherweise Ihre PIN eingeben und danach Ihr U2F-Gerät berühren, um es zu registrieren"
+
+msgid "Starting device modifications in "
+msgstr ""
 
 #~ msgid "All open-source"
 #~ msgstr "Alle quelloffene"

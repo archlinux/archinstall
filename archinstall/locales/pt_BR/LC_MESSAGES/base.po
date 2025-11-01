@@ -1795,5 +1795,8 @@ msgstr "Selecione um dispositivo FIDO2 para usar como HSM"
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr ""
 
+msgid "Starting device modifications in "
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "
