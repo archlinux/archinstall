@@ -425,6 +425,9 @@ class GlobalMenu(AbstractMenu[None]):
 
 		bootloader = self._item_group.find_by_key('bootloader').value
 
+		if bootloader == Bootloader.NO_BOOTLOADER:
+			return None
+
 		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
 				if root_partition := layout.get_root_partition():
