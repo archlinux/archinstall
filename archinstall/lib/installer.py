@@ -675,7 +675,7 @@ class Installer:
 				if hasattr(plugin, 'on_service'):
 					plugin.on_service(service)
 
-	def run_command(self, cmd: str, peek_output:bool = False) -> SysCommand:
+	def run_command(self, cmd: str, peek_output: bool = False) -> SysCommand:
 		return SysCommand(f'arch-chroot -S {self.target} {cmd}', peek_output=peek_output)
 
 	def arch_chroot(self, cmd: str, run_as: str | None = None, peek_output: bool = False) -> SysCommand:
