@@ -101,7 +101,7 @@ msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}):
 msgstr "Adja meg a kezdési helyet (felosztott egységekben: s, GB, %, stb. ; alapértelmezett: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Adja meg a befejezési helyet (felosztott egységekben: s, GB, %, stb. ; pl.: {}): "
+msgstr "Adja meg a befejezési helyet (felosztott egységekben: s, GB, %, stb. ; például: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "A(z) {} sorban álló partíciókat tartalmaz, ez eltávolítja azokat, biztos benne?"
@@ -652,7 +652,7 @@ msgid "The password you are using seems to be weak, are you sure you want to use
 msgstr "Úgy tűnik, hogy a megadott jelszó gyenge. Biztosan használni akarja?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Asztali környezetek és ablakkezelők széles választékát kínálja, pl. gnome, kde, sway"
+msgstr "Asztali környezetek és ablakkezelők széles választékát kínálja, például: gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
 msgstr "Válassza ki az asztali környezetet"
@@ -661,7 +661,7 @@ msgid "A very basic installation that allows you to customize Arch Linux as you 
 msgstr "Egy nagyon alapszintű telepítés, amely lehetővé teszi, hogy az Arch Linuxot saját belátása szerint testre szabja."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Különböző kiszolgálócsomagok széles választékát kínálja a telepítéshez és az engedélyezéshez, pl. httpd, nginx, mariadb"
+msgstr "Különböző kiszolgálócsomagok széles választékát kínálja a telepítéshez és az engedélyezéshez, például: httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Válassza ki, hogy mely kiszolgálók legyenek telepítve, ha egyiket sem választja ki, akkor minimális telepítés történik"
@@ -1123,7 +1123,7 @@ msgid "Enter url (leave blank to skip): "
 msgstr "Adjon megy egy webcímet (hagyja üresen a kihagyáshoz): "
 
 msgid "Select signature check option"
-msgstr "Válasszon ki egy aláírásellenőrzési beállítást"
+msgstr "Válasszon ki egy aláírás-ellenőrzési beállítást"
 
 msgid "Select signature option"
 msgstr "Válasszon ki egy aláírásbeállítást"
@@ -1282,7 +1282,7 @@ msgid "Disable Copy-on-Write"
 msgstr "Adatmásolás letiltása íráskor"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Asztali környezetek és csempés ablakkezelők széles választékát kínálja, pl. GNOME, KDE Plasma, Sway"
+msgstr "Asztali környezetek és csempés ablakkezelők széles választékát kínálja, például: GNOME, KDE Plasma, Sway"
 
 #, python-brace-format
 msgid "Configuration type: {}"
@@ -1498,7 +1498,7 @@ msgid "Url"
 msgstr "Webcím"
 
 msgid "Select signature check"
-msgstr "Aláírásellenőrzés kiválasztása"
+msgstr "Aláírás-ellenőrzés kiválasztása"
 
 msgid "Select execution mode"
 msgstr "Végrehajtási mód kiválasztása"
