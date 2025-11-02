@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] A naplófájl itt jött létre: {} {}"
@@ -98,7 +98,7 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Adja meg a partíció fájlrendszertípusát"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Adja meg a kiindulási helyet (felosztott egységekben: s, GB, %, stb. ; alapértelmezett: {}): "
+msgstr "Adja meg a kezdési helyet (felosztott egységekben: s, GB, %, stb. ; alapértelmezett: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr "Adja meg a befejezési helyet (felosztott egységekben: s, GB, %, stb. ; pl.: {}): "
@@ -929,7 +929,7 @@ msgid "Total sectors: {}"
 msgstr "Összes szektor: {}"
 
 msgid "Enter the start sector (default: {}): "
-msgstr "Adja meg a kezdőszektort (alapértelmezett: {}): "
+msgstr "Adja meg a kezdési szektort (alapértelmezett: {}): "
 
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
 msgstr "Adja meg a partíció végszektorát (százalékban vagy blokkszámban, alapértelmezett: {}): "
@@ -1184,7 +1184,7 @@ msgid "If no unit is provided, the value is interpreted as sectors"
 msgstr "Ha nincs mértékegység megadva, akkor az értéket szektorokként értelmezi"
 
 msgid "Enter start (default: sector {}): "
-msgstr "Kezdőpont megadása (alapértelmezett: {} szektor): "
+msgstr "Kezdési hely megadása (alapértelmezett: {} szektor): "
 
 msgid "Enter end (default: {}): "
 msgstr "Végpont megadása (alapértelmezett: {}): "
@@ -1379,7 +1379,7 @@ msgid "Invalid size"
 msgstr "Érvénytelen méret"
 
 msgid "Start (default: sector {}): "
-msgstr "Kezdőpont megadása (alapértelmezett: {} szektor): "
+msgstr "Kezdési hely megadása (alapértelmezett: {} szektor): "
 
 msgid "End (default: {}): "
 msgstr "Végpont megadása (alapértelmezett: {}): "
@@ -1782,4 +1782,4 @@ msgid "You may need to enter the PIN and then touch your U2F device to register 
 msgstr "Lehet, hogy meg kell adnia a PIN-kódot, majd ki kell választania az U2F-eszközt a regisztrációhoz"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Eszközmódosítások indítása a következőben: "
