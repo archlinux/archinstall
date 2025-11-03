@@ -1375,26 +1375,31 @@ class Installer:
 			)
 
 			try:
-				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
-				efi_dir_path_target = efi_partition.mountpoint / 'EFI'
-				if is_target_usb:
-					efi_dir_path = efi_dir_path / 'BOOT'
-					efi_dir_path_target = efi_dir_path_target / 'BOOT'
-				else:
-					efi_dir_path = efi_dir_path / 'limine'
-					efi_dir_path_target = efi_dir_path_target / 'limine'
-
-				efi_dir_path.mkdir(parents=True, exist_ok=True)
+				default_efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'BOOT'
+				default_efi_dir_path_target = efi_partition.mountpoint / 'EFI' / 'BOOT'
+				default_efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
-					shutil.copy(limine_path / file, efi_dir_path)
+					shutil.copy(limine_path / file, default_efi_dir_path)
+
+				config_path = default_efi_dir_path / 'limine.conf'
+				hook_command_custom_efi_path = ''
+
+				if not is_target_usb:
+					efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI' / 'limine'
+					efi_dir_path_target = efi_partition.mountpoint / 'EFI' / 'limine'
+					efi_dir_path.mkdir(parents=True, exist_ok=True)
+
+					config_path = efi_dir_path / 'limine.conf'
+					hook_command_custom_efi_path = f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI /usr/share/limine/BOOTX64.EFI {efi_dir_path_target}/ && '
+
+					for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
+						shutil.copy(limine_path / file, efi_dir_path)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
-			config_path = efi_dir_path / 'limine.conf'
-
 			hook_command = (
-				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_dir_path_target}/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_dir_path_target}/'
+				f'{hook_command_custom_efi_path}/usr/bin/cp /usr/share/limine/BOOTIA32.EFI /usr/share/limine/BOOTX64.EFI {default_efi_dir_path_target}/'
 			)
 
 			if not is_target_usb:
