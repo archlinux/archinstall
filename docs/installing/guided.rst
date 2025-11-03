@@ -7,7 +7,7 @@ Archinstall ships with a pre-programmed `Guided Installer`_ guiding you through 
 
 .. note::
 
-   Other pre-programmed scripts can be invoked by executing :code:`archinstall <script>` *(without .py)*. To see a complete list of scripts, run :code:`archinstall --script list` or check the source code `scripts`_ directory.
+   Other pre-programmed scripts can be invoked by executing :code:`archinstall --script <script>` *(without .py)*. To see a complete list of scripts, run :code:`archinstall --script list` or check the source code `scripts`_ directory.
 
 .. note::
 
