@@ -49,6 +49,7 @@ class Arguments:
 	no_pkg_lookups: bool = False
 	plugin: str | None = None
 	skip_version_check: bool = False
+	skip_wifi_check: bool = False
 	advanced: bool = False
 	verbose: bool = False
 
@@ -101,6 +102,7 @@ class ArchConfig:
 			'archinstall-language': self.archinstall_language.json(),
 			'hostname': self.hostname,
 			'kernels': self.kernels,
+			'uki': self.uki,
 			'ntp': self.ntp,
 			'packages': self.packages,
 			'parallel_downloads': self.parallel_downloads,
@@ -179,6 +181,8 @@ class ArchConfig:
 
 		if bootloader_config := args_config.get('bootloader', None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config, args.skip_boot)
+
+		arch_config.uki = args_config.get('uki', False)
 
 		if args_config.get('uki') and (arch_config.bootloader is None or not arch_config.bootloader.has_uki_support()):
 			arch_config.uki = False
@@ -406,6 +410,12 @@ class ArchConfigHandler:
 			action='store_true',
 			default=False,
 			help='Skip the version check when running archinstall',
+		)
+		parser.add_argument(
+			'--skip-wifi-check',
+			action='store_true',
+			default=False,
+			help='Skip wifi check when running archinstall',
 		)
 		parser.add_argument(
 			'--advanced',

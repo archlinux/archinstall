@@ -1916,6 +1916,9 @@ msgstr ""
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr ""
 
+msgid "Starting device modifications in "
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

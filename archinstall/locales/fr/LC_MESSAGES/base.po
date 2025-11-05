@@ -1750,14 +1750,14 @@ msgid "Applications"
 msgstr "Applications"
 
 msgid "U2F login method: "
-msgstr "Méthode	de connexion U2F : "
+msgstr "Méthode\tde connexion U2F : "
 
 msgid "Passwordless sudo: "
 msgstr "Sudo sans mot de passe : "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr "Type de	snapshot Btrfs : {}"
+msgstr "Type de\tsnapshot Btrfs : {}"
 
 msgid "Syncing the system..."
 msgstr "Synchronisation du système..."
@@ -1792,6 +1792,9 @@ msgstr "Configuration du périphérique U2F pour l'utilisateur : {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Vous devez peut-être entrer le code PIN, puis toucher votre périphérique U2F pour l'enregistrer"
+
+msgid "Starting device modifications in "
+msgstr ""
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "3.0.11"
+version = "3.0.12"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -21,6 +21,8 @@ dependencies = [
     "pyparted>=3.13.0",
     "pydantic==2.12.3",
     "cryptography>=45.0.7",
+    "textual>=5.3.0",
+    "pytest-mock>=3.15.1",
 ]
 
 [project.urls]
@@ -34,7 +36,7 @@ dev = [
     "mypy==1.18.2",
     "flake8==7.3.0",
     "pre-commit==4.3.0",
-    "ruff==0.14.1",
+    "ruff==0.14.3",
     "pylint==4.0.2",
     "pytest==8.4.2",
 ]

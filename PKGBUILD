@@ -5,7 +5,7 @@
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname=archinstall
-pkgver=3.0.11
+pkgver=3.0.12
 pkgrel=1
 pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)
@@ -28,6 +28,7 @@ depends=(
   'python-cryptography'
   'python-pydantic'
   'python-pyparted'
+  'python-textual'
   'systemd'
   'util-linux'
   'xfsprogs'

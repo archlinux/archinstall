@@ -43,10 +43,8 @@ class FilesystemHandler:
 			debug('No modifications required')
 			return
 
-		device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
-
 		if show_countdown:
-			self._final_warning(device_paths)
+			self._final_warning()
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
@@ -337,10 +335,10 @@ class FilesystemHandler:
 				Size(256, Unit.MiB, SectorSize.default()),
 			)
 
-	def _final_warning(self, device_paths: str) -> bool:
+	def _final_warning(self) -> bool:
 		# Issue a final warning before we continue with something un-revertable.
 		# We mention the drive one last time, and count from 5 to 0.
-		out = tr(' ! Formatting {} in ').format(device_paths)
+		out = tr('Starting device modifications in ')
 		Tui.print(out, row=0, endl='', clear_screen=True)
 
 		try:
