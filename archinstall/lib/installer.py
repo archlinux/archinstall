@@ -1582,8 +1582,7 @@ class Installer:
 		if not boot_partition.mountpoint:
 			raise ValueError('Boot partition is not mounted, cannot write rEFInd config')
 
-		boot_is_separate = (boot_partition != efi_partition and
-							boot_partition.dev_path != efi_partition.dev_path)
+		boot_is_separate = boot_partition != efi_partition and boot_partition.dev_path != efi_partition.dev_path
 
 		if boot_is_separate:
 			# Separate boot partition (not ESP, not root)
