@@ -19,7 +19,7 @@ classifiers = [
 ]
 dependencies = [
     "pyparted>=3.13.0",
-    "pydantic==2.12.3",
+    "pydantic==2.12.4",
     "cryptography>=45.0.7",
     "textual>=5.3.0",
     "pytest-mock>=3.15.1",
