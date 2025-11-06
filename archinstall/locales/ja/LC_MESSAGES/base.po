@@ -1781,3 +1781,36 @@ msgstr "PIN を入力したのち U2F デバイスをタッチして登録しな
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "ネットワーク設定なし"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "続行しますか？"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "インターフェースを設定"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "設定するネットワークインターフェイスを 1 つ選択"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "ネットワーク設定なし"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "パスワードを入力: "
+
+msgid "Ok"
+msgstr ""

@@ -1873,3 +1873,39 @@ msgstr "Roghnaigh gléas FIDO2 le húsáid le haghaidh HSM"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Gan cumraíocht líonra"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Ar mhaith leat comhbhrú BTRFS a úsáid?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Comhéadain {} cumraithe"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Roghnaigh comhéadan líonra amháin le chumrú"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Gan cumraíocht líonra"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Iontráil pasfhocal: "
+
+msgid "Ok"
+msgstr ""

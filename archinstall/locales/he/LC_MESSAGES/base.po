@@ -1827,3 +1827,36 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "אין הגדרות רשת"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "להמשיך?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "הגדרת מנשקים"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "נא לבחור מנשק רשת להגדרה"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "אין הגדרות רשת"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "נא למלא סיסמה: "
+
+msgid "Ok"
+msgstr ""

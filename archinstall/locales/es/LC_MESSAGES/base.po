@@ -1792,6 +1792,39 @@ msgstr ""
 msgid "Starting device modifications in "
 msgstr ""
 
+#, fuzzy
+msgid "No network connection found"
+msgstr "Sin configuración de red"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "¿Quiere continuar?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Configurar interfaces"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Seleccione una interfaz de red para configurar"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Sin configuración de red"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Ingrese una contraseña: "
+
+msgid "Ok"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
 

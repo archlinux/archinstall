@@ -1784,3 +1784,36 @@ msgstr "Devi inserire il PIN e toccare il tuo dispositivo U2F per registrarlo"
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Nessuna configurazione di rete"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Desideri continuare?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Configurazione interfacce"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Seleziona un'interfaccia di rete da configurare"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Nessuna configurazione di rete"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Inserisci una password: "
+
+msgid "Ok"
+msgstr ""

@@ -1876,3 +1876,36 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "ქსელის მორგების გარეშე"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "გნებავთ BTRFS-ის შეკუმშვის გამოყენება?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "მორგებულია {} ინტერფეისი"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "მოსარგებად ერთ-ერთი ქსელის ინტერფეისი აირჩიეთ"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "ქსელის მორგების გარეშე"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "შეიყვანეთ პაროლი: "
+
+msgid "Ok"
+msgstr ""

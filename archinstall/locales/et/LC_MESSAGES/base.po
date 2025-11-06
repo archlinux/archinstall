@@ -1919,3 +1919,36 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Puudub võrgu konfiguratsioon"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Kas soovite kasutada BTRFS-i tihendamist?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Konfigureeritud {} liidesed"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Valige üks võrguliides konfigureerimiseks"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Puudub võrgu konfiguratsioon"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Sisestage parool: "
+
+msgid "Ok"
+msgstr ""

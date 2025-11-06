@@ -1784,6 +1784,39 @@ msgstr ""
 msgid "Starting device modifications in "
 msgstr ""
 
+#, fuzzy
+msgid "No network connection found"
+msgstr "Ağ yapılandırması yok"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Devam etmek ister misiniz?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Arayüzleri yapılandır"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Yapılandırmak için bir ağ arayüzü seçin"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Ağ yapılandırması yok"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Bir parola gir: "
+
+msgid "Ok"
+msgstr ""
+
 #~ msgid "Desktop"
 #~ msgstr "Masaüstü"
 

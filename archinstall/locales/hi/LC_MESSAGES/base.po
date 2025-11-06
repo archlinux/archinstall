@@ -1729,3 +1729,31 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+msgid "No network connection found"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "क्या आप swap के लिए zram इस्तेमाल करना चाहेंगे?"
+
+msgid "No wifi interface found"
+msgstr ""
+
+msgid "Select wifi network to connect to"
+msgstr ""
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+msgid "No wifi networks found"
+msgstr ""
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+msgid "Enter wifi password"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
