@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-14 19:09+0200\n"
+"PO-Revision-Date: 2025-11-06 21:03+0100\n"
 "Last-Translator: Van Matten\n"
 "Language-Team: \n"
 "Language: it\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "2nd-Last-Translator: Alessio Cuccovillo <alessio.cuccovillo.dev@gmail.com>\n"
-"X-Generator: Poedit 3.7\n"
+"X-Generator: Poedit 3.8\n"
 "X-Poedit-Basepath: ../..\n"
 "X-Poedit-SearchPath-0: base.pot\n"
 
@@ -1783,37 +1783,31 @@ msgid "You may need to enter the PIN and then touch your U2F device to register 
 msgstr "Devi inserire il PIN e toccare il tuo dispositivo U2F per registrarlo"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Avvio delle modifiche del dispositivo in "
 
-#, fuzzy
 msgid "No network connection found"
-msgstr "Nessuna configurazione di rete"
+msgstr "Nessuna connessione di rete trovata"
 
-#, fuzzy
 msgid "Would you like to connect to a Wifi?"
-msgstr "Desideri continuare?"
+msgstr "Desideri connetterti ad una Wi-FI?"
 
-#, fuzzy
 msgid "No wifi interface found"
-msgstr "Configurazione interfacce"
+msgstr "Nessuna interfaccia Wi-Fi trovata"
 
-#, fuzzy
 msgid "Select wifi network to connect to"
-msgstr "Seleziona un'interfaccia di rete da configurare"
+msgstr "Seleziona una rete Wi-Fi a cui connettersi"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Scansione reti Wi-Fi in corso..."
 
-#, fuzzy
 msgid "No wifi networks found"
-msgstr "Nessuna configurazione di rete"
+msgstr "Nessuna rete Wi-Fi trovata"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "Impostazione del Wi-Fi non riuscita"
 
-#, fuzzy
 msgid "Enter wifi password"
-msgstr "Inserisci una password: "
+msgstr "Inserisci la password del Wi-Fi"
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
