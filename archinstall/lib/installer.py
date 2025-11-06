@@ -779,6 +779,7 @@ class Installer:
 
 			content = re.sub('\nHOOKS=(.*)', f'\nHOOKS=({" ".join(self._hooks)})', content)
 			mkinit.seek(0)
+			mkinit.truncate()
 			mkinit.write(content)
 
 		try:
