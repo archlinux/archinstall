@@ -1889,3 +1889,36 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Ei verkkoasetuksia"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Haluatko käyttää BTRFS-pakkausta?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Määritetty {} liittymää"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Valitse yksi määritettävä verkkoliitäntä"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Ei verkkoasetuksia"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Anna salasana: "
+
+msgid "Ok"
+msgstr ""

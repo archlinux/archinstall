@@ -1820,3 +1820,36 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Нет сетевой конфигурации"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Вы хотите продолжить?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Настройка интерфейсов"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Выберите один сетевой интерфейс для настройки"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Нет сетевой конфигурации"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Введите пароль: "
+
+msgid "Ok"
+msgstr ""

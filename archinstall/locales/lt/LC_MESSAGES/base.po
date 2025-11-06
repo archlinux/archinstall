@@ -1751,3 +1751,32 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Tinklo konfigūraciją"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr ""
+
+msgid "No wifi interface found"
+msgstr ""
+
+msgid "Select wifi network to connect to"
+msgstr ""
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+msgid "No wifi networks found"
+msgstr ""
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Iveskite slaptažodžį"
+
+msgid "Ok"
+msgstr ""

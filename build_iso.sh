@@ -15,6 +15,7 @@ packages=(
 	python-setuptools
 	python-pyparted
 	python-pydantic
+	python-textual
 )
 
 mkdir -p /tmp/archlive/airootfs/root/archinstall-git

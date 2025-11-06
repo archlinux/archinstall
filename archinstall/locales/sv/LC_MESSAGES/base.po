@@ -1782,3 +1782,36 @@ msgstr "Du kan behöva ange PIN-koden och sedan trycka på din U2F-enhet för at
 
 msgid "Starting device modifications in "
 msgstr "Starta enhetsmodifieringar i "
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Ingen nätverkskonfigurering"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Vill du fortsätta?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Konfigurera gränssnitt"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Välj ett nätverkskort för konfigurering"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Ingen nätverkskonfigurering"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Mata in ett lösenord: "
+
+msgid "Ok"
+msgstr ""

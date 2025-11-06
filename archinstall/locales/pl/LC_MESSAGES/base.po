@@ -1783,6 +1783,39 @@ msgstr ""
 msgid "Starting device modifications in "
 msgstr ""
 
+#, fuzzy
+msgid "No network connection found"
+msgstr "Brak konfiguracji sieciowej"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Czy chcesz kontynuować?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Konfiguruj interfejsy"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Wybierz jeden interfejs sieciowy do skonfigurowania"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Brak konfiguracji sieciowej"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Wprowadź hasło: "
+
+msgid "Ok"
+msgstr ""
+
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
 

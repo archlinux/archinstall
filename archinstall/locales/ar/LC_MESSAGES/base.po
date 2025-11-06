@@ -1833,3 +1833,36 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "لا يوجد إعداد للشبكة"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "هل ترغب في الاستمرار؟"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "تهيئة الواجهات"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "حدِّد واجهة شبكة واحدة للإعداد"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "لا يوجد إعداد للشبكة"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "أدخل كلمة مرور: "
+
+msgid "Ok"
+msgstr ""

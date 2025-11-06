@@ -1878,3 +1878,36 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "பிணைய கட்டமைப்பு இல்லை"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "BTRFS சுருக்கத்தைப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "கட்டமைக்கப்பட்ட {} இடைமுகங்கள்"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "கட்டமைக்க ஒரு பிணைய இடைமுகத்தைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "பிணைய கட்டமைப்பு இல்லை"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "கடவுச்சொல்லை உள்ளிடவும்: "
+
+msgid "Ok"
+msgstr ""

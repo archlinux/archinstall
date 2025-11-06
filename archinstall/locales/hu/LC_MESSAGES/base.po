@@ -1783,3 +1783,36 @@ msgstr "Lehet, hogy meg kell adnia a PIN-kódot, majd ki kell választania az U2
 
 msgid "Starting device modifications in "
 msgstr "Eszközmódosítások indítása a következőben: "
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Nincs hálózati konfiguráció"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Szeretné folytatni?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Csatolók konfigurálása"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Válasszon ki egy hálózati csatolót a konfiguráláshoz"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Nincs hálózati konfiguráció"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Adjon meg egy jelszót: "
+
+msgid "Ok"
+msgstr ""

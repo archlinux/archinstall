@@ -1781,3 +1781,36 @@ msgstr "Ви повинні написати PIN та потім торкнут�
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Відсутня конфігурація мережі"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Бажаєте продовжити?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Налаштування інтерфейсів"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Оберіть один мережевий інтерфейс для налаштування"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Відсутня конфігурація мережі"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Введіть пароль: "
+
+msgid "Ok"
+msgstr ""
