@@ -854,7 +854,7 @@ msgid "Profiles must have unique name, but profile definitions with duplicate na
 msgstr "Profile müssen einen eindeutige Namen haben, aber Profildefinition mit gleichem Namen gefunden: {}"
 
 msgid "Select one or more devices to use and configure"
-msgstr "Wählen Sie ein oder mehrere Geräte aus, die konfiguriert und verwendet werden sollen"
+msgstr "Wählen Sie ein oder mehrere Gerät(e) aus, die konfiguriert und verwendet werden sollen"
 
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
 msgstr "Wenn Sie die Laufwerksauswahl zurücksetzen, dann wird das auch das Laufwerkslayout zurückgesetzt. Sind Sie sicher?"
