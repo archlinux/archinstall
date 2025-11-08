@@ -35,7 +35,7 @@ log = ["systemd_python==235"]
 dev = [
     "mypy==1.18.2",
     "flake8==7.3.0",
-    "pre-commit==4.3.0",
+    "pre-commit==4.4.0",
     "ruff==0.14.4",
     "pylint==4.0.2",
     "pytest==8.4.2",
