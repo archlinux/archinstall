@@ -81,7 +81,7 @@ class Pacman:
 			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm --needed',
 			peek_output=True,
 		)
-		# Note needed flag to prevent overlaps in meta packages and installer grep logs for 're-installing'
+		# Note needed flag to prevent overlaps reinstalls
 
 __all__ = [
 	'Pacman',
