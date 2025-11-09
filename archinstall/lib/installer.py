@@ -552,9 +552,10 @@ class Installer:
 	def genfstab(self, flags: str = '-pU') -> None:
 		fstab_path = self.target / 'etc' / 'fstab'
 		info(f'Updating {fstab_path}')
-
+		# see GENFSTAB(8) to limit to mountpoint fixes https://github.com/archlinux/archinstall/issues/3599
+		# useful for host-to-target installs not running from ISO/USB medium
 		try:
-			gen_fstab = SysCommand(f'genfstab {flags} {self.target}').output()
+			gen_fstab = SysCommand(f'genfstab {flags} -f {self.target} {self.target}').output()
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 

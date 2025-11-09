@@ -78,10 +78,10 @@ class Pacman:
 			'Could not strap in packages',
 			'Pacstrap failed. See /var/log/archinstall/install.log or above message for error details',
 			SysCommand,
-			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm',
+			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm --needed',
 			peek_output=True,
 		)
-
+		# Note needed flag to prevent overlaps in meta packages and installer grep logs for 're-installing'
 
 __all__ = [
 	'Pacman',

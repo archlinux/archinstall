@@ -45,9 +45,11 @@ class GfxPackage(Enum):
 	Mesa = 'mesa'
 	NvidiaDkms = 'nvidia-dkms'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
+	NvidiaPrime = 'nvidia-prime'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	VulkanNouveau = 'vulkan-nouveau'
+	VulkanSwrast = 'vulkan-swrast'
 	Xf86VideoAmdgpu = 'xf86-video-amdgpu'
 	Xf86VideoAti = 'xf86-video-ati'
 	Xf86VideoNouveau = 'xf86-video-nouveau'
@@ -134,7 +136,12 @@ class GfxDriver(Enum):
 			case GfxDriver.VMOpenSource:
 				packages += [
 					GfxPackage.Mesa,
+					GfxPackage.VulkanSwrast,
+
 				]
+
+		if self.is_nvidia() and (SysInfo.has_intel_graphics() or SysInfo.has_amd_graphics()):
+  			packages.append(GfxPackage.NvidiaPrime)
 
 		return packages
 
