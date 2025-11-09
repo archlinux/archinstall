@@ -137,7 +137,6 @@ class GfxDriver(Enum):
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.VulkanSwrast,
-
 				]
 
 		if self.is_nvidia() and (SysInfo.has_intel_graphics() or SysInfo.has_amd_graphics()):
