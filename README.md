@@ -1,7 +1,6 @@
 <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 
-### PLEASE NOTE I AM NOT AFFILIATED WITH ARCHLINUX OR ARCHINSTALL, THIS IS A FORK.
-
+### PLEASE NOTE I AM NOT AFFILIATED WITH ARCHLINUX OR ARCHINSTALL, THIS IS A FORK. and i wrote like half the code with copilot i am a vibecoder
 <!-- </div> -->
 # ArchinstallPlus
 [![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
