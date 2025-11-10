@@ -140,7 +140,7 @@ class GfxDriver(Enum):
 				]
 
 		if self.is_nvidia() and (SysInfo.has_intel_graphics() or SysInfo.has_amd_graphics()):
-  			packages.append(GfxPackage.NvidiaPrime)
+			packages.append(GfxPackage.NvidiaPrime)
 
 		return packages
 
