@@ -20,9 +20,9 @@ The installer also doubles as a python library to install Arch Linux and manage 
 Make sure to use the latest version...
 
 ```shell
-$ pacman-key --init
-$ pacman -Sy archinstall
-$ archinstall
+    # pacman-key --init
+    # pacman -Sy archinstall
+    # archinstall
 ```
 
 Alternative ways to install are `git clone` the repository or `pip install --upgrade archinstall`.
