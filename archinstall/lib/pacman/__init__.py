@@ -83,6 +83,7 @@ class Pacman:
 		)
 		# Note needed flag to prevent overlaps reinstalls
 
+
 __all__ = [
 	'Pacman',
 	'PacmanConfig',
