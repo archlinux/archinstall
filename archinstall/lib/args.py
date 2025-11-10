@@ -65,6 +65,8 @@ class ArchConfig:
 	mirror_config: MirrorConfiguration | None = None
 	network_config: NetworkConfiguration | None = None
 	bootloader: Bootloader | None = None
+	secure_boot: bool = False
+	secure_boot_option: str = 'ms'
 	uki: bool = False
 	app_config: ApplicationConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
@@ -103,6 +105,8 @@ class ArchConfig:
 			'hostname': self.hostname,
 			'kernels': self.kernels,
 			'uki': self.uki,
+			'secure_boot': self.secure_boot,
+			'secure_boot_option': self.secure_boot_option,
 			'ntp': self.ntp,
 			'packages': self.packages,
 			'parallel_downloads': self.parallel_downloads,
@@ -182,6 +186,8 @@ class ArchConfig:
 		if bootloader_config := args_config.get('bootloader', None):
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config, args.skip_boot)
 
+		arch_config.secure_boot = args_config.get('secure_boot', False)
+		arch_config.secure_boot_option = args_config.get('secure_boot_option', 'ms')
 		arch_config.uki = args_config.get('uki', False)
 
 		if args_config.get('uki') and (arch_config.bootloader is None or not arch_config.bootloader.has_uki_support()):

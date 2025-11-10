@@ -114,6 +114,58 @@ def ask_for_uki(preset: bool = True) -> bool:
 			raise ValueError('Unhandled result type')
 
 
+def ask_secure_boot(preset: bool = True) -> bool:
+	prompt = tr('Would you like to enable Secure Boot?') + '\n'
+
+	group = MenuItemGroup.yes_no()
+	group.set_focus_by_value(preset)
+
+	result = SelectMenu[bool](
+		group,
+		header=prompt,
+		columns=2,
+		orientation=Orientation.HORIZONTAL,
+		alignment=Alignment.CENTER,
+		allow_skip=True,
+	).run()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return result.item() == MenuItem.yes()
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
+
+
+def ask_secure_boot_option(preset: str = 'ms') -> str:
+	prompt = tr('Which Secure Boot option would you like to use?') + '\n'
+
+	items = [
+		MenuItem('Microsoft Keys', value='ms'),
+		MenuItem("rhboot's UEFI shim loader", value='shim'),
+		MenuItem("valdikSS's Super-UEFIinSecureBoot-Disk", value='valdikss')
+	]
+
+	group = MenuItemGroup(items)
+	group.set_focus_by_value(preset)
+
+	result = SelectMenu[str](
+		group,
+		header=prompt,
+		alignment=Alignment.CENTER,
+		allow_skip=True,
+	).run()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return result.get_value()
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
+
+
 def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None) -> GfxDriver | None:
 	"""
 	Some what convoluted function, whose job is simple.

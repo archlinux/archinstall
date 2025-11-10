@@ -11,6 +11,7 @@ from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
+from archinstall.lib.secure_boot import setup_secure_boot
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import (
 	DiskLayoutType,
@@ -104,6 +105,9 @@ def perform_installation(mountpoint: Path) -> None:
 				installation.add_additional_packages('grub')
 
 			installation.add_bootloader(config.bootloader, config.uki)
+
+		if config.secure_boot:
+			setup_secure_boot(installation)
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config

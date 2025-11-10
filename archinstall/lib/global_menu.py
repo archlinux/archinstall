@@ -93,6 +93,14 @@ class GlobalMenu(AbstractMenu[None]):
 				key='bootloader',
 			),
 			MenuItem(
+				text=tr('Secure Boot'),
+				value=False,
+				enabled=SysInfo.has_uefi(),
+				action=self._select_secure_boot,
+				preview_action=self._prev_secure_boot,
+				key='secure_boot',
+			),
+			MenuItem(
 				text=tr('Unified kernel images'),
 				value=False,
 				enabled=SysInfo.has_uefi(),
@@ -472,6 +480,21 @@ class GlobalMenu(AbstractMenu[None]):
 			return tr(f'Invalid configuration: {error}')
 
 		return None
+
+	def _prev_secure_boot(self, item: MenuItem) -> str | None:
+		if item.value:
+			return tr('Enabled')
+		return tr('Disabled')
+
+	def _select_secure_boot(self, preset: bool) -> bool:
+		from .interactions.system_conf import ask_secure_boot
+		secure_boot = ask_secure_boot(preset)
+		if secure_boot:
+			secure_boot_option = self._item_group.find_by_key('secure_boot_option')
+			if secure_boot_option:
+				from .interactions.system_conf import ask_secure_boot_option
+				secure_boot_option.value = ask_secure_boot_option(secure_boot_option.value)
+		return secure_boot
 
 	def _prev_profile(self, item: MenuItem) -> str | None:
 		profile_config: ProfileConfiguration | None = item.value

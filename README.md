@@ -1,17 +1,27 @@
-<!-- <div align="center"> -->
 <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 
 <!-- </div> -->
-# Arch Installer
+# ArchinstallPlus
 [![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
-Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
+A fork of the official [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
+This version includes additional features, most notably a comprehensive Secure Boot implementation.
 The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium)*.
 
 * archinstall [discord](https://discord.gg/aDeMffrxNg) server
 * archinstall [#archinstall:matrix.org](https://matrix.to/#/#archinstall:matrix.org) Matrix channel
 * archinstall [#archinstall@irc.libera.chat:6697](https://web.libera.chat/?channel=#archinstall)
 * archinstall [documentation](https://archinstall.archlinux.page/)
+
+## New Features in ArchinstallPlus
+
+This fork introduces a robust and easy-to-use Secure Boot setup, integrated directly into the installer's TUI. You can now enable and configure Secure Boot with one of the following automated options:
+
+*   **sbctl with Microsoft Keys**: The default and most compatible option. It generates your own keys and also enrolls the standard Microsoft keys, ensuring that most signed binaries and hardware work out of the box.
+*   **rhboot's UEFI shim loader**: A popular alternative that uses a pre-signed bootloader to chain-load your kernel. This is a great option for a balance of security and convenience.
+*   **valdikSS's Super-UEFIinSecureBoot-Disk**: For advanced users, this option allows you to use a custom-signed bootloader that can boot almost anything. `archinstallplus` automates the entire process of downloading, extracting, and enrolling the necessary keys.
+
+All of these options are fully automated. Simply select your preferred method from the menu, and `archinstallplus` will handle the rest.
 
 # Installation & Usage
 ```shell
