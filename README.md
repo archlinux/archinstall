@@ -1,6 +1,6 @@
 <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 
-### PLEASE NOTE I DON'T OWN ARCHINSTALL, THIS IS A FORK.
+### PLEASE NOTE I AM NOT AFFILIATED WITH ARCHLINUX OR ARCHINSTALL, THIS IS A FORK.
 
 <!-- </div> -->
 # ArchinstallPlus
