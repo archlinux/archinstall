@@ -4,7 +4,7 @@
 # ArchinstallPlus
 [![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
-A fork of the official [Arch Linux Installer]([https://wiki.archlinux.org/index.php/Arch_Linux](https://github.com/archlinux/archinstall) installer with optional secure boot.
+A fork of the official [Arch Linux Installer](https://github.com/archlinux/archinstall) installer with optional secure boot.
 This version includes additional features, most notably a comprehensive Secure Boot implementation.
 The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium)*.
 
