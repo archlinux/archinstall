@@ -878,7 +878,7 @@ class Installer:
 
 		vconsole_path = vconsole_dir / 'vconsole.conf'
 		vconsole_path.write_text(f'KEYMAP={kb_layout}\n')
-
+		debug(f'Wrote to {vconsole_dir} using {kb_layout}')
 		# This action takes place on the host system as pacstrap copies over package repository lists.
 		pacman_conf = PacmanConfig(self.target)
 		pacman_conf.enable(optional_repositories)
