@@ -73,7 +73,7 @@ class Installer:
 		self._base_packages = base_packages or __packages__[:3]
 		self.kernels = kernels or ['linux']
 		self._disk_config = disk_config
-
+		self.config: dict[str, Any]
 		self._disk_encryption = disk_config.disk_encryption or DiskEncryption(EncryptionType.NoEncryption)
 		self.target: Path = target
 
@@ -108,7 +108,6 @@ class Installer:
 			'microcode',
 			'modconf',
 			'kms',
-			'keyboard',
 			'sd-vconsole',
 			'block',
 			'filesystems',
@@ -863,6 +862,21 @@ class Installer:
 			debug('Archinstall will not install any ucode.')
 
 		debug(f'Optional repositories: {optional_repositories}')
+
+		# We need to set vconsole before the first hook in accordance to
+		# https://wiki.archlinux.org/title/Linux_console/Keyboard_configuration#Persistent_configuration
+		# https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio/-/releases/v40
+		locale_cfg = self.config.get('locale_config')
+		if locale_cfg is None:
+			raise ValueError('locale_config not set')
+
+		kb_layout = locale_cfg.kb_layout
+
+		vconsole_dir = Path(self.target) / 'etc'
+		vconsole_dir.mkdir(parents=True, exist_ok=True)
+
+		vconsole_path = vconsole_dir / 'vconsole.conf'
+		vconsole_path.write_text(f'KEYMAP={kb_layout}\n')
 
 		# This action takes place on the host system as pacstrap copies over package repository lists.
 		pacman_conf = PacmanConfig(self.target)
