@@ -113,6 +113,7 @@ class Installer:
 			'filesystems',
 			'fsck',
 		]
+		# https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio/-/commit/d0a98218d2444b939cf4932265cc70a6a89a8d22
 		self._kernel_params: list[str] = []
 		self._fstab_entries: list[str] = []
 
