@@ -974,8 +974,8 @@ class Installer:
 
 			self.pacman.strap('cronie')
 			self.pacman.strap('timeshift')
+			self.enable_service('cronie.service')
 
-		self.enable_service('cronie.service')
 		if bootloader and bootloader == Bootloader.Grub:
 			debug('Setting up grub integration for either')
 			self.pacman.strap('grub-btrfs')
@@ -1031,7 +1031,7 @@ class Installer:
 
 		debug('Configuring grub-btrfsd service for {snapshot_type} at {snapshot_path}')
 
-		# Works for either snapper or ts
+		# Works for either snapper or ts just adpating default paths above
 		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
 		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
 		systemd_dir.mkdir(parents=True, exist_ok=True)
