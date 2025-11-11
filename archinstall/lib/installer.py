@@ -108,12 +108,14 @@ class Installer:
 			'microcode',
 			'modconf',
 			'kms',
+			'keyboard',
 			'sd-vconsole',
 			'block',
 			'filesystems',
 			'fsck',
 		]
 		# https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio/-/commit/d0a98218d2444b939cf4932265cc70a6a89a8d22
+		# Not sure about what should be kep or not so I'll just leave it as is
 		self._kernel_params: list[str] = []
 		self._fstab_entries: list[str] = []
 
