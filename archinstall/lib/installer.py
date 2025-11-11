@@ -884,7 +884,7 @@ class Installer:
 		# Write the KEYMAP to vconsole.conf
 		vconsole_path.write_text(f'KEYMAP={kb_vconsole}\n')
 
-		debug(f'Wrote to {vconsole_dir} using {kb_vconsole}')
+		debug(f'Wrote to {vconsole_path} using {kb_vconsole}')
 
 		# This action takes place on the host system as pacstrap copies over package repository lists.
 		pacman_conf = PacmanConfig(self.target)
