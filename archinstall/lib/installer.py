@@ -965,7 +965,7 @@ class Installer:
 					SysCommand(command, peek_output=True)
 				except SysCallError as err:
 					raise DiskError(f'Could not setup Btrfs snapper: {err}')
-
+			self._configure_grub_btrfsd_snapper()
 			self.enable_service('snapper-timeline.timer')
 			self.enable_service('snapper-cleanup.timer')
 		elif snapshot_type == SnapshotType.Timeshift:
@@ -979,7 +979,7 @@ class Installer:
 			if bootloader and bootloader == Bootloader.Grub:
 				self.pacman.strap('grub-btrfs')
 				self.pacman.strap('inotify-tools')
-				self._configure_grub_btrfsd()
+				self._configure_grub_btrfsd_timeshift()
 				self.enable_service('grub-btrfsd.service')
 
 	def setup_swap(self, kind: str = 'zram') -> None:
@@ -1020,9 +1020,9 @@ class Installer:
 					return root
 		return None
 
-	def _configure_grub_btrfsd(self) -> None:
+	def _configure_grub_btrfsd_timeshift(self) -> None:
 		# See https://github.com/Antynea/grub-btrfs?tab=readme-ov-file#-using-timeshift-with-systemd
-		debug('Configuring grub-btrfsd service')
+		debug('Configuring grub-btrfsd service for timeshift')
 
 		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
 		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
@@ -1035,6 +1035,26 @@ class Installer:
 			[Service]
 			ExecStart=
 			ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
+			"""
+		)
+
+		override_conf.write_text(config_content)
+		override_conf.chmod(0o644)
+
+	def _configure_grub_btrfsd_snapper(self) -> None:
+		debug('Configuring grub-btrfsd service for snapper')
+
+		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
+		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
+		systemd_dir.mkdir(parents=True, exist_ok=True)
+
+		override_conf = systemd_dir / 'override.conf'
+
+		config_content = textwrap.dedent(
+			"""
+			[Service]
+			ExecStart=
+			ExecStart=/usr/bin/grub-btrfsd --syslog /.snapshots
 			"""
 		)
 
