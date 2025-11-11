@@ -969,22 +969,19 @@ class Installer:
 			self.enable_service('snapper-timeline.timer')
 			self.enable_service('snapper-cleanup.timer')
 
-			if bootloader and bootloader == Bootloader.Grub:
-				self._configure_grub_btrfsd(snapshot_type)
-
 		elif snapshot_type == SnapshotType.Timeshift:
 			debug('Setting up Btrfs timeshift')
 
 			self.pacman.strap('cronie')
 			self.pacman.strap('timeshift')
 
-			self.enable_service('cronie.service')
-
-			if bootloader and bootloader == Bootloader.Grub:
-				self.pacman.strap('grub-btrfs')
-				self.pacman.strap('inotify-tools')
-				self._configure_grub_btrfsd(snapshot_type)
-				self.enable_service('grub-btrfsd.service')
+		self.enable_service('cronie.service')
+		if bootloader and bootloader == Bootloader.Grub:
+			debug('Setting up grub integration for either')
+			self.pacman.strap('grub-btrfs')
+			self.pacman.strap('inotify-tools')
+			self._configure_grub_btrfsd(snapshot_type)
+			self.enable_service('grub-btrfsd.service')
 
 	def setup_swap(self, kind: str = 'zram') -> None:
 		if kind == 'zram':
