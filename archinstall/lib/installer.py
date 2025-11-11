@@ -72,8 +72,8 @@ class Installer:
 		"""
 		self._base_packages = base_packages or __packages__[:3]
 		self.kernels = kernels or ['linux']
+		self.config: dict[str, Any] = {}
 		self._disk_config = disk_config
-		self.config: dict[str, Any]
 		self._disk_encryption = disk_config.disk_encryption or DiskEncryption(EncryptionType.NoEncryption)
 		self.target: Path = target
 
