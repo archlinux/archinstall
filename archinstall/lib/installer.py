@@ -776,6 +776,7 @@ class Installer:
 				# This is purely for stability reasons, we're going away from this.
 				# * systemd -> udev
 				# * sd-vconsole -> keymap
+				# This will require change too
 				self._hooks = [hook.replace('systemd', 'udev').replace('sd-vconsole', 'keymap consolefont') for hook in self._hooks]
 
 			content = re.sub('\nHOOKS=(.*)', f'\nHOOKS=({" ".join(self._hooks)})', content)
@@ -867,18 +868,22 @@ class Installer:
 		# We need to set vconsole before the first hook in accordance to
 		# https://wiki.archlinux.org/title/Linux_console/Keyboard_configuration#Persistent_configuration
 		# https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio/-/releases/v40
-		locale_cfg = self.config.get('locale_config')
-		if locale_cfg is None:
-			raise ValueError('locale_config not set')
+		locale_cfg = locale_config or LocaleConfiguration.default()
 
-		kb_layout = locale_cfg.kb_layout
+		# Get keyboard layout
+		kb_vconsole = locale_cfg.kb_layout
 
+		# Ensure /etc exists
 		vconsole_dir = Path(self.target) / 'etc'
 		vconsole_dir.mkdir(parents=True, exist_ok=True)
 
 		vconsole_path = vconsole_dir / 'vconsole.conf'
-		vconsole_path.write_text(f'KEYMAP={kb_layout}\n')
-		debug(f'Wrote to {vconsole_dir} using {kb_layout}')
+
+		# Write the KEYMAP to vconsole.conf
+		vconsole_path.write_text(f'KEYMAP={kb_vconsole}\n')
+
+		debug(f'Wrote to {vconsole_dir} using {kb_vconsole}')
+
 		# This action takes place on the host system as pacstrap copies over package repository lists.
 		pacman_conf = PacmanConfig(self.target)
 		pacman_conf.enable(optional_repositories)
