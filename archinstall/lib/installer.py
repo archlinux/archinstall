@@ -965,9 +965,13 @@ class Installer:
 					SysCommand(command, peek_output=True)
 				except SysCallError as err:
 					raise DiskError(f'Could not setup Btrfs snapper: {err}')
-			self._configure_grub_btrfsd_snapper()
+
 			self.enable_service('snapper-timeline.timer')
 			self.enable_service('snapper-cleanup.timer')
+
+			if bootloader and bootloader == Bootloader.Grub:
+				self._configure_grub_btrfsd(snapshot_type)
+
 		elif snapshot_type == SnapshotType.Timeshift:
 			debug('Setting up Btrfs timeshift')
 
@@ -979,7 +983,7 @@ class Installer:
 			if bootloader and bootloader == Bootloader.Grub:
 				self.pacman.strap('grub-btrfs')
 				self.pacman.strap('inotify-tools')
-				self._configure_grub_btrfsd_timeshift()
+				self._configure_grub_btrfsd(snapshot_type)
 				self.enable_service('grub-btrfsd.service')
 
 	def setup_swap(self, kind: str = 'zram') -> None:
@@ -1020,10 +1024,17 @@ class Installer:
 					return root
 		return None
 
-	def _configure_grub_btrfsd_timeshift(self) -> None:
-		# See https://github.com/Antynea/grub-btrfs?tab=readme-ov-file#-using-timeshift-with-systemd
-		debug('Configuring grub-btrfsd service for timeshift')
+	def _configure_grub_btrfsd(self, snapshot_type: SnapshotType) -> None:
+		if snapshot_type == SnapshotType.Timeshift:
+			snapshot_path = '--timeshift-auto'
+		elif snapshot_type == SnapshotType.Snapper:
+			snapshot_path = '/.snapshots'
+		else:
+			raise ValueError('Unsupported snapshot type')
 
+		debug('Configuring grub-btrfsd service for {snapshot_type} at {snapshot_path}')
+
+		# Works for either snapper or ts
 		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
 		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
 		systemd_dir.mkdir(parents=True, exist_ok=True)
@@ -1034,29 +1045,9 @@ class Installer:
 			"""
 			[Service]
 			ExecStart=
-			ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
+			ExecStart=/usr/bin/grub-btrfsd --syslog {snapshot_path}
 			"""
-		)
-
-		override_conf.write_text(config_content)
-		override_conf.chmod(0o644)
-
-	def _configure_grub_btrfsd_snapper(self) -> None:
-		debug('Configuring grub-btrfsd service for snapper')
-
-		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
-		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
-		systemd_dir.mkdir(parents=True, exist_ok=True)
-
-		override_conf = systemd_dir / 'override.conf'
-
-		config_content = textwrap.dedent(
-			"""
-			[Service]
-			ExecStart=
-			ExecStart=/usr/bin/grub-btrfsd --syslog /.snapshots
-			"""
-		)
+		).format(snapshot_path=snapshot_path)
 
 		override_conf.write_text(config_content)
 		override_conf.chmod(0o644)
