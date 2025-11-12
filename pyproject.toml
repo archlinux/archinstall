@@ -38,7 +38,7 @@ dev = [
     "pre-commit==4.4.0",
     "ruff==0.14.4",
     "pylint==4.0.2",
-    "pytest==9.0.0",
+    "pytest==9.0.1",
 ]
 doc = ["sphinx"]
 
