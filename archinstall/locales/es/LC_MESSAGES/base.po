@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: \n"
+"Last-Translator: esbendev <bsmith@scnctech.com>\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -947,28 +947,28 @@ msgid "Encryption type"
 msgstr "Tipo de cifrado"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Tiempo de iteración"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Ingrese el tiempo de iteración para cifrado LUKS (en milisegundos)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Valores más grandes mejoran la seguridad pero aumentan el tiempo de arranque"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Por defecto: 10000ms, Rango recomendado 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Tiempo de iteración no puede estar vacío"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Tiempo de iteración no puede menor a 100ms"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Tiempo de iteración no puede ser mayor a 120000ms"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Por favor ingrese un número válido"
 
 msgid "Partitions"
 msgstr "Particiones"
@@ -1728,7 +1728,7 @@ msgstr "No hay dispositivos HSM disponibles"
 
 #, fuzzy
 msgid "Passwordless login"
-msgstr "Contraseña"
+msgstr "Inicio de sesión sin contraseña"
 
 msgid "Second factor login"
 msgstr ""
@@ -1741,56 +1741,56 @@ msgid "Would you like to configure Bluetooth?"
 msgstr "¿Quiere continuar?"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Autenticación"
 
 msgid "Applications"
-msgstr ""
+msgstr "Aplicaciones"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "Método de inicio de sesión U2F: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Sudo sin contraseña: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Tipo de snapshot Btrfs: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Sincronizando el sistema..."
 
 msgid "Value cannot be empty"
-msgstr ""
+msgstr "El valor no puede estár vacío"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Tipo de snapshot"
 
 #, fuzzy, python-brace-format
 msgid "Snapshot type: {}"
 msgstr "Tipo de entorno: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Configuración de inicio de sesión U2F"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "No se encontró dispositivos U2F"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "Método de inicio de sesión U2F"
 
 #, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Ingrese una contraseña: "
+msgstr "Habilitar sudo sin contraseña?"
 
 #, fuzzy, python-brace-format
 msgid "Setting up U2F device for user: {}"
 msgstr "Seleccione un dispositivo FIDO2 para usar con HSM"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "Puede que deba ingresar su PIN antes de tocar su dispositivo U2F para registrarlo"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Iniciando modificaciones en dispositivo en "
 
 #, fuzzy
 msgid "No network connection found"
@@ -1809,21 +1809,21 @@ msgid "Select wifi network to connect to"
 msgstr "Seleccione una interfaz de red para configurar"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Buscando redes de wifi..."
 
 #, fuzzy
 msgid "No wifi networks found"
 msgstr "Sin configuración de red"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "Error configurando wifi"
 
 #, fuzzy
 msgid "Enter wifi password"
 msgstr "Ingrese una contraseña: "
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
