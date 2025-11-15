@@ -45,9 +45,12 @@ class GfxPackage(Enum):
 	Mesa = 'mesa'
 	NvidiaDkms = 'nvidia-dkms'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
+	Ppd = 'power-profiles-daemon'
+	NvidiaPrime = 'nvidia-prime'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	VulkanNouveau = 'vulkan-nouveau'
+	VulkanSwrast = 'vulkan-swrast'
 	Xf86VideoAmdgpu = 'xf86-video-amdgpu'
 	Xf86VideoAti = 'xf86-video-ati'
 	Xf86VideoNouveau = 'xf86-video-nouveau'
@@ -134,7 +137,14 @@ class GfxDriver(Enum):
 			case GfxDriver.VMOpenSource:
 				packages += [
 					GfxPackage.Mesa,
+					GfxPackage.VulkanSwrast,
 				]
+
+		if SysInfo.is_laptop() and self.is_nvidia() and (SysInfo.has_intel_graphics() or SysInfo.has_amd_graphics()):
+			packages.append(GfxPackage.NvidiaPrime)
+
+		if SysInfo.is_laptop():
+			packages.append(GfxPackage.Ppd)
 
 		return packages
 
@@ -192,7 +202,32 @@ class _SysInfo:
 				modules.append(module)
 
 		return modules
+	
+	@cached_property
+	def form_factor(self) -> bool:
+		"""
+		Safeguards if it's a laptop
+		"""
+		for entry in Path('/sys/class/power_supply').iterdir():
+			present_file = entry / 'present'
+			if present_file.is_file() and present_file.read_text().strip() == '1':
+				# already know its a laptop if one is in this file but
+				capacity_file = entry / 'capacity'
+				battery_level = None
+				if capacity_file.is_file():
+					battery_level = int(capacity_file.read_text().strip())
+					# Could be useful to warn on low battery for installs
 
+				status_file = entry / 'status'
+				if status_file.is_file():
+					status = status_file.read_text().strip()
+					# status can be: "Charging", "Discharging", "Full"
+					# we can then ignore low battery if Charging
+					debug(f'Battery: {battery_level}, Status: {status}')
+					if battery_level and battery_level < 15 and status == 'Discharging':
+						debug('Warning: Low battery detected. Please charge before installing.')
+				return True
+		return False
 
 _sys_info = _SysInfo()
 
@@ -274,6 +309,13 @@ class SysInfo:
 			debug(f'Could not detect virtual system: {err}')
 
 		return None
+
+	@staticmethod
+	def is_laptop() -> bool:
+		"""
+		Detects if the system is a laptop by checking for battery presence
+		"""
+		return _sys_info.form_factor()
 
 	@staticmethod
 	def is_vm() -> bool:
