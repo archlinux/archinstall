@@ -316,7 +316,7 @@ class SysInfo:
 		"""
 		Detects if the system is a laptop by checking for battery presence
 		"""
-		return _sys_info.form_factor()
+		return _sys_info.form_factor
 
 	@staticmethod
 	def is_vm() -> bool:
