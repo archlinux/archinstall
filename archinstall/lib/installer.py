@@ -868,8 +868,8 @@ class Installer:
 		pacman_conf.enable(optional_repositories)
 		pacman_conf.apply()
 
-		locale_config or LocaleConfiguration.default()
-		self.set_vconsole(locale_config)
+		if locale_config:
+			self.set_vconsole(locale_config)
 
 		self.pacman.strap(self._base_packages)
 		self._helper_flags['base-strapped'] = True
@@ -1764,7 +1764,7 @@ class Installer:
 		except SysCallError:
 			return False
 
-	def set_vconsole(self, locale_config: 'LocaleConfiguration') -> None:
+	def set_vconsole(self, locale_config: 'LocaleConfiguration'):
 		# use the already set kb layout
 		kb_vconsole: str = locale_config.kb_layout
 		# this is the default used in ISO other option for hdpi screens TER16x32
