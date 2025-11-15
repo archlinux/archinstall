@@ -229,6 +229,7 @@ class _SysInfo:
 				return True
 		return False
 
+
 _sys_info = _SysInfo()
 
 
