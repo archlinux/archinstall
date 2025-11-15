@@ -202,7 +202,7 @@ class _SysInfo:
 				modules.append(module)
 
 		return modules
-	
+
 	@cached_property
 	def form_factor(self) -> bool:
 		"""
