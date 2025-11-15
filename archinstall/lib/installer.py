@@ -554,7 +554,7 @@ class Installer:
 		info(f'Updating {fstab_path}')
 
 		try:
-			gen_fstab = SysCommand(f'genfstab {flags} -f {self.target} {self.target}').output()
+			gen_fstab = SysCommand(f'genfstab {flags} {self.target}').output()
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
@@ -945,20 +945,19 @@ class Installer:
 
 			self.enable_service('snapper-timeline.timer')
 			self.enable_service('snapper-cleanup.timer')
-
 		elif snapshot_type == SnapshotType.Timeshift:
 			debug('Setting up Btrfs timeshift')
 
 			self.pacman.strap('cronie')
 			self.pacman.strap('timeshift')
+
 			self.enable_service('cronie.service')
 
-		if bootloader and bootloader == Bootloader.Grub:
-			debug('Setting up grub integration for either')
-			self.pacman.strap('grub-btrfs')
-			self.pacman.strap('inotify-tools')
-			self._configure_grub_btrfsd(snapshot_type)
-			self.enable_service('grub-btrfsd.service')
+			if bootloader and bootloader == Bootloader.Grub:
+				self.pacman.strap('grub-btrfs')
+				self.pacman.strap('inotify-tools')
+				self._configure_grub_btrfsd()
+				self.enable_service('grub-btrfsd.service')
 
 	def setup_swap(self, kind: str = 'zram') -> None:
 		if kind == 'zram':
@@ -998,17 +997,10 @@ class Installer:
 					return root
 		return None
 
-	def _configure_grub_btrfsd(self, snapshot_type: SnapshotType) -> None:
-		if snapshot_type == SnapshotType.Timeshift:
-			snapshot_path = '--timeshift-auto'
-		elif snapshot_type == SnapshotType.Snapper:
-			snapshot_path = '/.snapshots'
-		else:
-			raise ValueError('Unsupported snapshot type')
+	def _configure_grub_btrfsd(self) -> None:
+		# See https://github.com/Antynea/grub-btrfs?tab=readme-ov-file#-using-timeshift-with-systemd
+		debug('Configuring grub-btrfsd service')
 
-		debug('Configuring grub-btrfsd service for {snapshot_type} at {snapshot_path}')
-
-		# Works for either snapper or ts just adpating default paths above
 		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
 		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
 		systemd_dir.mkdir(parents=True, exist_ok=True)
@@ -1019,9 +1011,9 @@ class Installer:
 			"""
 			[Service]
 			ExecStart=
-			ExecStart=/usr/bin/grub-btrfsd --syslog {snapshot_path}
+			ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
 			"""
-		).format(snapshot_path=snapshot_path)
+		)
 
 		override_conf.write_text(config_content)
 		override_conf.chmod(0o644)
