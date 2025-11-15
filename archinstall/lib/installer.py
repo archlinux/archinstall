@@ -554,7 +554,7 @@ class Installer:
 		info(f'Updating {fstab_path}')
 
 		try:
-			gen_fstab = SysCommand(f'genfstab {flags} -f {self.target} {self.target}').output()
+			gen_fstab = SysCommand(f'genfstab {flags} {self.target}').output()
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
