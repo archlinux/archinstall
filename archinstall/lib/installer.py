@@ -1775,7 +1775,7 @@ class Installer:
 		font_vconsole = 'default8x16'
 
 		# Ensure /etc exists
-		vconsole_dir: Path = Path(self.target) / 'etc'
+		vconsole_dir: Path = self.target / 'etc'
 		vconsole_dir.mkdir(parents=True, exist_ok=True)
 		vconsole_path: Path = vconsole_dir / 'vconsole.conf'
 
