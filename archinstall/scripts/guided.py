@@ -62,7 +62,7 @@ def perform_installation(mountpoint: Path) -> None:
 		return
 
 	disk_config = config.disk_config
-	run_mkinitcpio = not (config.bootloader_config.uki if config.bootloader_config else False)
+	run_mkinitcpio = not config.bootloader_config or not config.bootloader_config.uki
 	locale_config = config.locale_config
 	optional_repositories = config.mirror_config.optional_repositories if config.mirror_config else []
 	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
