@@ -15,7 +15,7 @@ from pydantic.dataclasses import dataclass as p_dataclass
 from archinstall.lib.crypt import decrypt
 from archinstall.lib.models.application import ApplicationConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
-from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
@@ -64,9 +64,7 @@ class ArchConfig:
 	profile_config: ProfileConfiguration | None = None
 	mirror_config: MirrorConfiguration | None = None
 	network_config: NetworkConfiguration | None = None
-	bootloader: Bootloader | None = None
-	bootloader_removable: bool = False
-	uki: bool = False
+	bootloader_config: BootloaderConfiguration | None = None
 	app_config: ApplicationConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
 	hostname: str = 'archlinux'
@@ -103,8 +101,6 @@ class ArchConfig:
 			'archinstall-language': self.archinstall_language.json(),
 			'hostname': self.hostname,
 			'kernels': self.kernels,
-			'uki': self.uki,
-			'bootloader_removable': self.bootloader_removable,
 			'ntp': self.ntp,
 			'packages': self.packages,
 			'parallel_downloads': self.parallel_downloads,
@@ -112,7 +108,7 @@ class ArchConfig:
 			'timezone': self.timezone,
 			'services': self.services,
 			'custom_commands': self.custom_commands,
-			'bootloader': self.bootloader.json() if self.bootloader else None,
+			'bootloader_config': self.bootloader_config.json() if self.bootloader_config else None,
 			'app_config': self.app_config.json() if self.app_config else None,
 			'auth_config': self.auth_config.json() if self.auth_config else None,
 		}
@@ -181,14 +177,18 @@ class ArchConfig:
 		if net_config := args_config.get('network_config', None):
 			arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
 
-		if bootloader_config := args_config.get('bootloader', None):
-			arch_config.bootloader = Bootloader.from_arg(bootloader_config, args.skip_boot)
-
-		arch_config.uki = args_config.get('uki', False)
-		arch_config.bootloader_removable = args_config.get('bootloader_removable', False)
-
-		if args_config.get('uki') and (arch_config.bootloader is None or not arch_config.bootloader.has_uki_support()):
-			arch_config.uki = False
+		# Parse bootloader configuration
+		if bootloader_config_dict := args_config.get('bootloader_config', None):
+			# New format: bootloader_config with bootloader, uki, and removable
+			arch_config.bootloader_config = BootloaderConfiguration.parse_arg(bootloader_config_dict, args.skip_boot)
+		elif bootloader_str := args_config.get('bootloader', None):
+			# Old format: separate bootloader and uki fields (backward compatibility)
+			bootloader = Bootloader.from_arg(bootloader_str, args.skip_boot)
+			uki = args_config.get('uki', False)
+			# Validate UKI compatibility
+			if uki and not bootloader.has_uki_support():
+				uki = False
+			arch_config.bootloader_config = BootloaderConfiguration(bootloader=bootloader, uki=uki, removable=False)
 
 		# deprecated: backwards compatibility
 		audio_config_args = args_config.get('audio_config', None)

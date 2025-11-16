@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import sys
+from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 from ..hardware import SysInfo
 from ..output import warn
@@ -48,3 +50,32 @@ class Bootloader(Enum):
 			sys.exit(1)
 
 		return Bootloader(bootloader)
+
+
+@dataclass
+class BootloaderConfiguration:
+	bootloader: Bootloader
+	uki: bool = False
+	removable: bool = False
+
+	def json(self) -> dict[str, Any]:
+		return {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
+
+	@classmethod
+	def parse_arg(cls, config: dict[str, Any], skip_boot: bool) -> BootloaderConfiguration:
+		bootloader = Bootloader.from_arg(config.get('bootloader', ''), skip_boot)
+		uki = config.get('uki', False)
+		removable = config.get('removable', False)
+		return cls(bootloader=bootloader, uki=uki, removable=removable)
+
+	@classmethod
+	def get_default(cls) -> BootloaderConfiguration:
+		return cls(bootloader=Bootloader.get_default(), uki=False, removable=False)
+
+	def preview(self) -> str:
+		text = f'Bootloader: {self.bootloader.value}'
+		if self.uki and self.bootloader.has_uki_support():
+			text += ' (UKI)'
+		if self.removable and self.bootloader in [Bootloader.Grub, Bootloader.Limine]:
+			text += ' (removable)'
+		return text

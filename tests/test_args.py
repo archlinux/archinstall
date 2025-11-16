@@ -9,7 +9,7 @@ from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
 from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
-from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
@@ -214,8 +214,11 @@ def test_config_file_parsing(
 				),
 			],
 		),
-		bootloader=Bootloader.Systemd,
-		uki=False,
+		bootloader_config=BootloaderConfiguration(
+			bootloader=Bootloader.Systemd,
+			uki=False,
+			removable=False,
+		),
 		hostname='archy',
 		kernels=['linux-zen'],
 		ntp=True,
