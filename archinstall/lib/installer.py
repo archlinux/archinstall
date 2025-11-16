@@ -1006,7 +1006,7 @@ class Installer:
 		else:
 			raise ValueError('Unsupported snapshot type')
 
-		debug('Configuring grub-btrfsd service for {snapshot_type} at {snapshot_path}')
+		debug(f'Configuring grub-btrfsd service for {snapshot_type} at {snapshot_path}')
 
 		# Works for either snapper or ts just adpating default paths above
 		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
