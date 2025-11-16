@@ -29,6 +29,19 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		)
 
 	def _define_menu_options(self) -> list[MenuItem]:
+		bootloader = self._bootloader_conf.bootloader
+		has_uefi = SysInfo.has_uefi()
+
+		# UKI availability
+		uki_enabled = has_uefi and bootloader.has_uki_support()
+		if not uki_enabled:
+			self._bootloader_conf.uki = False
+
+		# Removable availability
+		removable_enabled = has_uefi and bootloader in [Bootloader.Grub, Bootloader.Limine]
+		if not removable_enabled:
+			self._bootloader_conf.removable = False
+
 		return [
 			MenuItem(
 				text=tr('Bootloader'),
@@ -44,6 +57,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				value=self._bootloader_conf.uki,
 				preview_action=self._prev_uki,
 				key='uki',
+				enabled=uki_enabled,
 			),
 			MenuItem(
 				text=tr('Install to removable location'),
@@ -51,6 +65,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				value=self._bootloader_conf.removable,
 				preview_action=self._prev_removable,
 				key='removable',
+				enabled=removable_enabled,
 			),
 		]
 
