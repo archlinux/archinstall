@@ -177,15 +177,12 @@ class ArchConfig:
 		if net_config := args_config.get('network_config', None):
 			arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
 
-		# Parse bootloader configuration
 		if bootloader_config_dict := args_config.get('bootloader_config', None):
-			# New format: bootloader_config with bootloader, uki, and removable
 			arch_config.bootloader_config = BootloaderConfiguration.parse_arg(bootloader_config_dict, args.skip_boot)
+		# DEPRECATED: separate bootloader and uki fields (backward compatibility)
 		elif bootloader_str := args_config.get('bootloader', None):
-			# Old format: separate bootloader and uki fields (backward compatibility)
 			bootloader = Bootloader.from_arg(bootloader_str, args.skip_boot)
 			uki = args_config.get('uki', False)
-			# Validate UKI compatibility
 			if uki and not bootloader.has_uki_support():
 				uki = False
 			arch_config.bootloader_config = BootloaderConfiguration(bootloader=bootloader, uki=uki, removable=False)

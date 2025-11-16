@@ -74,8 +74,8 @@ class BootloaderConfiguration:
 
 	def preview(self) -> str:
 		text = f'Bootloader: {self.bootloader.value}'
-		if self.uki and self.bootloader.has_uki_support():
-			text += ' (UKI)'
-		if self.removable and self.bootloader in [Bootloader.Grub, Bootloader.Limine]:
-			text += ' (removable)'
+		if self.uki:
+			text += ', UKI'
+		if self.removable:
+			text += ', removable'
 		return text
