@@ -65,6 +65,7 @@ class ArchConfig:
 	mirror_config: MirrorConfiguration | None = None
 	network_config: NetworkConfiguration | None = None
 	bootloader: Bootloader | None = None
+	bootloader_removable: bool = False
 	uki: bool = False
 	app_config: ApplicationConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
@@ -103,6 +104,7 @@ class ArchConfig:
 			'hostname': self.hostname,
 			'kernels': self.kernels,
 			'uki': self.uki,
+			'bootloader_removable': self.bootloader_removable,
 			'ntp': self.ntp,
 			'packages': self.packages,
 			'parallel_downloads': self.parallel_downloads,
@@ -183,6 +185,7 @@ class ArchConfig:
 			arch_config.bootloader = Bootloader.from_arg(bootloader_config, args.skip_boot)
 
 		arch_config.uki = args_config.get('uki', False)
+		arch_config.bootloader_removable = args_config.get('bootloader_removable', False)
 
 		if args_config.get('uki') and (arch_config.bootloader is None or not arch_config.bootloader.has_uki_support()):
 			arch_config.uki = False

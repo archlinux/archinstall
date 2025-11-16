@@ -22,7 +22,7 @@ from .interactions.general_conf import (
 	ask_ntp,
 )
 from .interactions.network_menu import ask_to_configure_network
-from .interactions.system_conf import ask_for_bootloader, ask_for_swap, ask_for_uki, select_kernel
+from .interactions.system_conf import ask_for_bootloader, ask_for_bootloader_removable, ask_for_swap, ask_for_uki, select_kernel
 from .locale.locale_menu import LocaleMenu
 from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
 from .mirrors import MirrorMenu
@@ -511,6 +511,15 @@ class GlobalMenu(AbstractMenu[None]):
 				uki.enabled = False
 			else:
 				uki.enabled = True
+
+			# If GRUB or Limine is selected on UEFI, immediately ask about removable installation
+			if bootloader in [Bootloader.Grub, Bootloader.Limine] and SysInfo.has_uefi():
+				current_removable = self._arch_config.bootloader_removable
+				removable = ask_for_bootloader_removable(current_removable)
+				self._arch_config.bootloader_removable = removable
+			else:
+				# Reset removable flag for other bootloaders
+				self._arch_config.bootloader_removable = False
 
 		return bootloader
 

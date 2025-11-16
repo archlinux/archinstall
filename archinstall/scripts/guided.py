@@ -103,7 +103,7 @@ def perform_installation(mountpoint: Path) -> None:
 			if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
 				installation.add_additional_packages('grub')
 
-			installation.add_bootloader(config.bootloader, config.uki)
+			installation.add_bootloader(config.bootloader, config.uki, config.bootloader_removable)
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
