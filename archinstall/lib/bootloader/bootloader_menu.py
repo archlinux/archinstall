@@ -38,7 +38,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 			self._bootloader_conf.uki = False
 
 		# Removable availability
-		removable_enabled = has_uefi and bootloader in [Bootloader.Grub, Bootloader.Limine]
+		removable_enabled = has_uefi and bootloader.has_removable_support()
 		if not removable_enabled:
 			self._bootloader_conf.removable = False
 
@@ -107,12 +107,12 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 
 			# Update removable option based on bootloader
 			removable_item = self._menu_item_group.find_by_key('removable')
-			if bootloader in [Bootloader.Grub, Bootloader.Limine] and SysInfo.has_uefi():
-				removable_item.enabled = True
-			else:
+			if not SysInfo.has_uefi() or not bootloader.has_removable_support():
 				removable_item.enabled = False
 				removable_item.value = False
 				self._bootloader_conf.removable = False
+			else:
+				removable_item.enabled = True
 
 		return bootloader
 
