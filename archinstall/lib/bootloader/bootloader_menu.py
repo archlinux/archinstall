@@ -1,3 +1,4 @@
+import textwrap
 from typing import override
 
 from archinstall.lib.translationhandler import tr
@@ -153,17 +154,26 @@ def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
 
 def ask_for_bootloader_removable(preset: bool = False) -> bool:
 	prompt = (
-		tr('Would you like to install the bootloader to the default removable media search location?\n')
+		tr('Would you like to install the bootloader to the default removable media search location?')
+		+ '\n\n'
+		+ tr('This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:')
+		+ '\n\n  • '
+		+ tr('USB drives or other portable external media.')
+		+ '\n  • '
+		+ tr('Systems where you want the disk to be bootable on any computer.')
+		+ '\n  • '
+		+ tr('Firmware that does not properly support NVRAM boot entries.')
+		+ '\n\n'
+		+ tr(
+			textwrap.dedent(
+				"""\
+				This is NOT recommended if none of the above apply, as it makes installing multiple
+				EFI bootloaders on the same disk more challenging, and it overwrites whatever bootloader
+				was previously installed on the default removable media search location, if any.
+				"""
+			)
+		)
 		+ '\n'
-		+ tr('This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:\n')
-		+ '\n'
-		+ tr('  • USB drives or other portable external media\n')
-		+ tr('  • Systems where you want the disk to be bootable on any computer\n')
-		+ tr('  • Firmware that does not properly support NVRAM boot entries\n')
-		+ '\n'
-		+ tr('This is NOT recommended if none of the above apply, as it makes installing multiple\n')
-		+ tr('EFI bootloaders on the same disk more challenging, and it overwrites whatever bootloader\n')
-		+ tr('was previously installed on the default removable media search location, if any.\n')
 	)
 
 	group = MenuItemGroup.yes_no()
