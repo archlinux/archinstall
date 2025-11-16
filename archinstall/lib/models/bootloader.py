@@ -23,6 +23,13 @@ class Bootloader(Enum):
 			case _:
 				return False
 
+	def has_removable_support(self) -> bool:
+		match self:
+			case Bootloader.Grub | Bootloader.Limine:
+				return True
+			case _:
+				return False
+
 	def json(self) -> str:
 		return self.value
 
