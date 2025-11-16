@@ -1643,6 +1643,20 @@ class Installer:
 
 		info(f'Adding bootloader {bootloader.value} to {boot_partition.dev_path}')
 
+		# validate UKI support
+		if uki_enabled and not bootloader.has_uki_support():
+			warn(f'Bootloader {bootloader.value} does not support UKI; disabling.')
+			uki_enabled = False
+
+		# validate removable bootloader option
+		if bootloader_removable:
+			if not SysInfo.has_uefi():
+				warn('Removable install requested but system is not UEFI; disabling.')
+				bootloader_removable = False
+			elif not bootloader.has_removable_support():
+				warn(f'Bootloader {bootloader.value} lacks removable support; disabling.')
+				bootloader_removable = False
+
 		if uki_enabled:
 			self._config_uki(root, efi_partition)
 
