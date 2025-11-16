@@ -87,9 +87,9 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Bootloader'),
+				value=BootloaderConfiguration.get_default(),
 				action=self._select_bootloader_config,
 				preview_action=self._prev_bootloader_config,
-				mandatory=True,
 				key='bootloader_config',
 			),
 			MenuItem(
