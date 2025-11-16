@@ -14,10 +14,8 @@ The installer also doubles as a python library to install Arch Linux and manage 
 * archinstall [documentation](https://archinstall.archlinux.page/)
 
 # Installation & Usage
-
-> In the ISO you are root by default. Use sudo if running from an existing system. 
-
-Make sure to use the latest version...
+> [!TIP]
+> In the ISO you are root by default. Use sudo if running from an existing system.
 
 ```shell
     # pacman-key --init
