@@ -1387,9 +1387,15 @@ class Installer:
 				if bootloader_removable:
 					efi_dir_path = efi_dir_path / 'BOOT'
 					efi_dir_path_target = efi_dir_path_target / 'BOOT'
+
+					boot_limine_path = self.target / 'boot' / 'limine'
+					boot_limine_path.mkdir(parents=True, exist_ok=True)
+					config_path = boot_limine_path / 'limine.conf'
 				else:
-					efi_dir_path = efi_dir_path / 'limine'
-					efi_dir_path_target = efi_dir_path_target / 'limine'
+					efi_dir_path = efi_dir_path / 'arch-limine'
+					efi_dir_path_target = efi_dir_path_target / 'arch-limine'
+
+					config_path = efi_dir_path / 'limine.conf'
 
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
@@ -1397,8 +1403,6 @@ class Installer:
 					shutil.copy(limine_path / file, efi_dir_path)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
-
-			config_path = efi_dir_path / 'limine.conf'
 
 			hook_command = (
 				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_dir_path_target}/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_dir_path_target}/'
@@ -1413,9 +1417,9 @@ class Installer:
 					raise OSError(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
 
 				if efi_bitness == '64':
-					loader_path = '/EFI/limine/BOOTX64.EFI'
+					loader_path = '\\EFI\\arch-limine\\BOOTX64.EFI'
 				elif efi_bitness == '32':
-					loader_path = '/EFI/limine/BOOTIA32.EFI'
+					loader_path = '\\EFI\\arch-limine\\BOOTIA32.EFI'
 				else:
 					raise ValueError(f'EFI bitness is neither 32 nor 64 bits. Found "{efi_bitness}".')
 
@@ -1426,7 +1430,7 @@ class Installer:
 						f' --disk {parent_dev_path}'
 						f' --part {efi_partition.partn}'
 						' --label "Arch Linux Limine Bootloader"'
-						f' --loader {loader_path}'
+						f" --loader '{loader_path}'"
 						' --unicode'
 						' --verbose',
 					)
