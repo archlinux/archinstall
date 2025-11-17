@@ -1487,23 +1487,24 @@ class Installer:
 			path_root = f'uuid({boot_partition.partuuid})'
 
 		for kernel in self.kernels:
-			for variant in ('', '-fallback'):
-				if uki_enabled:
-					entry = [
-						'protocol: efi',
-						f'path: boot():/EFI/Linux/arch-{kernel}.efi',
-						f'cmdline: {kernel_params}',
-					]
-				else:
+			if uki_enabled:
+				entry = [
+					'protocol: efi',
+					f'path: boot():/EFI/Linux/arch-{kernel}.efi',
+					f'cmdline: {kernel_params}',
+				]
+				config_contents += f'\n/Arch Linux ({kernel})\n'
+				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
+			else:
+				for variant in ('', '-fallback'):
 					entry = [
 						'protocol: linux',
 						f'path: {path_root}:/vmlinuz-{kernel}',
 						f'cmdline: {kernel_params}',
 						f'module_path: {path_root}:/initramfs-{kernel}{variant}.img',
 					]
-
-				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
-				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
+					config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
+					config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
 
 		config_path.write_text(config_contents)
 
