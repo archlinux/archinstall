@@ -1616,7 +1616,7 @@ class Installer:
 		Archinstall supports one of three types:
 		* systemd-bootctl
 		* grub
-		* limine (beta)
+		* limine
 		* efistub (beta)
 
 		:param bootloader: Type of bootloader to be added
