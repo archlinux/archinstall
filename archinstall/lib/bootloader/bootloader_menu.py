@@ -117,14 +117,74 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		return bootloader
 
 	def _select_uki(self, preset: bool) -> bool:
-		return ask_for_uki(preset)
+		prompt = tr('Would you like to use unified kernel images?') + '\n'
+
+		group = MenuItemGroup.yes_no()
+		group.set_focus_by_value(preset)
+
+		result = SelectMenu[bool](
+			group,
+			header=prompt,
+			columns=2,
+			orientation=Orientation.HORIZONTAL,
+			alignment=Alignment.CENTER,
+			allow_skip=True,
+		).run()
+
+		match result.type_:
+			case ResultType.Skip:
+				return preset
+			case ResultType.Selection:
+				return result.item() == MenuItem.yes()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
 
 	def _select_removable(self, preset: bool) -> bool:
-		return ask_for_bootloader_removable(preset)
+		prompt = (
+			tr('Would you like to install the bootloader to the default removable media search location?')
+			+ '\n\n'
+			+ tr('This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:')
+			+ '\n\n  • '
+			+ tr('USB drives or other portable external media.')
+			+ '\n  • '
+			+ tr('Systems where you want the disk to be bootable on any computer.')
+			+ '\n  • '
+			+ tr('Firmware that does not properly support NVRAM boot entries.')
+			+ '\n\n'
+			+ tr(
+				textwrap.dedent(
+					"""\
+					This is NOT recommended if none of the above apply, as it makes installing multiple
+					EFI bootloaders on the same disk more challenging, and it overwrites whatever bootloader
+					was previously installed on the default removable media search location, if any.
+					"""
+				)
+			)
+			+ '\n'
+		)
+
+		group = MenuItemGroup.yes_no()
+		group.set_focus_by_value(preset)
+
+		result = SelectMenu[bool](
+			group,
+			header=prompt,
+			columns=2,
+			orientation=Orientation.HORIZONTAL,
+			alignment=Alignment.CENTER,
+			allow_skip=True,
+		).run()
+
+		match result.type_:
+			case ResultType.Skip:
+				return preset
+			case ResultType.Selection:
+				return result.item() == MenuItem.yes()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
 
 
 def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
-	# Systemd is UEFI only
 	options = []
 	hidden_options = []
 	default = None
@@ -163,74 +223,5 @@ def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
 			return preset
 		case ResultType.Selection:
 			return result.get_value()
-		case ResultType.Reset:
-			raise ValueError('Unhandled result type')
-
-
-def ask_for_bootloader_removable(preset: bool = False) -> bool:
-	prompt = (
-		tr('Would you like to install the bootloader to the default removable media search location?')
-		+ '\n\n'
-		+ tr('This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:')
-		+ '\n\n  • '
-		+ tr('USB drives or other portable external media.')
-		+ '\n  • '
-		+ tr('Systems where you want the disk to be bootable on any computer.')
-		+ '\n  • '
-		+ tr('Firmware that does not properly support NVRAM boot entries.')
-		+ '\n\n'
-		+ tr(
-			textwrap.dedent(
-				"""\
-				This is NOT recommended if none of the above apply, as it makes installing multiple
-				EFI bootloaders on the same disk more challenging, and it overwrites whatever bootloader
-				was previously installed on the default removable media search location, if any.
-				"""
-			)
-		)
-		+ '\n'
-	)
-
-	group = MenuItemGroup.yes_no()
-	group.set_focus_by_value(preset)
-
-	result = SelectMenu[bool](
-		group,
-		header=prompt,
-		columns=2,
-		orientation=Orientation.HORIZONTAL,
-		alignment=Alignment.CENTER,
-		allow_skip=True,
-	).run()
-
-	match result.type_:
-		case ResultType.Skip:
-			return preset
-		case ResultType.Selection:
-			return result.item() == MenuItem.yes()
-		case ResultType.Reset:
-			raise ValueError('Unhandled result type')
-
-
-def ask_for_uki(preset: bool = True) -> bool:
-	prompt = tr('Would you like to use unified kernel images?') + '\n'
-
-	group = MenuItemGroup.yes_no()
-	group.set_focus_by_value(preset)
-
-	result = SelectMenu[bool](
-		group,
-		header=prompt,
-		columns=2,
-		orientation=Orientation.HORIZONTAL,
-		alignment=Alignment.CENTER,
-		allow_skip=True,
-	).run()
-
-	match result.type_:
-		case ResultType.Skip:
-			return preset
-		case ResultType.Selection:
-			return result.item() == MenuItem.yes()
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
