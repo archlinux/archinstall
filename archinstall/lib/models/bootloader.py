@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
+from archinstall.lib.translationhandler import tr
+
 from ..hardware import SysInfo
 from ..output import warn
 
@@ -80,9 +82,20 @@ class BootloaderConfiguration:
 		return cls(bootloader=Bootloader.get_default(), uki=False, removable=False)
 
 	def preview(self) -> str:
-		text = f'Bootloader: {self.bootloader.value}'
-		if self.uki:
-			text += ', UKI'
-		if self.removable:
-			text += ', removable'
+		text = f'{tr("Bootloader")}: {self.bootloader.value}'
+		text += '\n'
+		if SysInfo.has_uefi() and self.bootloader.has_uki_support():
+			if self.uki:
+				uki_string = tr('Enabled')
+			else:
+				uki_string = tr('Disabled')
+			text += f'UKI: {uki_string}'
+			text += '\n'
+		if SysInfo.has_uefi() and self.bootloader.has_removable_support():
+			if self.removable:
+				removable_string = tr('Enabled')
+			else:
+				removable_string = tr('Disabled')
+			text += f'{tr("Removable")}: {removable_string}'
+			text += '\n'
 		return text
