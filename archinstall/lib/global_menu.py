@@ -12,7 +12,7 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from .applications.application_menu import ApplicationMenu
 from .args import ArchConfig
 from .authentication.authentication_menu import AuthenticationMenu
-from .bootloader import BootloaderMenu
+from .bootloader.bootloader_menu import BootloaderMenu
 from .configuration import save_config
 from .hardware import SysInfo
 from .interactions.general_conf import (
