@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ここにログファイルが作成されました: {} {}"
@@ -1780,37 +1780,31 @@ msgid "You may need to enter the PIN and then touch your U2F device to register 
 msgstr "PIN を入力したのち U2F デバイスをタッチして登録しなければならない場合があります"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "次の場所でデバイスの変更を開始しています "
 
-#, fuzzy
 msgid "No network connection found"
-msgstr "ネットワーク設定なし"
+msgstr "ネットワーク接続が見つかりません"
 
-#, fuzzy
 msgid "Would you like to connect to a Wifi?"
-msgstr "続行しますか？"
+msgstr "Wi-Fi に接続しますか？"
 
-#, fuzzy
 msgid "No wifi interface found"
-msgstr "インターフェースを設定"
+msgstr "Wi-Fi インターフェースが見つかりません"
 
-#, fuzzy
 msgid "Select wifi network to connect to"
-msgstr "設定するネットワークインターフェイスを 1 つ選択"
+msgstr "接続する Wi-Fi ネットワークを選択"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Wi-Fi ネットワークをスキャンしています..."
 
-#, fuzzy
 msgid "No wifi networks found"
-msgstr "ネットワーク設定なし"
+msgstr "Wi-Fi ネットワークが見つかりません"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "Wi-Fi の設定に失敗しました"
 
-#, fuzzy
 msgid "Enter wifi password"
-msgstr "パスワードを入力: "
+msgstr "Wi-Fi パスワードを入力"
 
 msgid "Ok"
-msgstr ""
+msgstr "OK"
