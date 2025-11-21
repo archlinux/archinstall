@@ -12,6 +12,7 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from .applications.application_menu import ApplicationMenu
 from .args import ArchConfig
 from .authentication.authentication_menu import AuthenticationMenu
+from .bootloader.bootloader_menu import BootloaderMenu
 from .configuration import save_config
 from .hardware import SysInfo
 from .interactions.general_conf import (
@@ -22,11 +23,11 @@ from .interactions.general_conf import (
 	ask_ntp,
 )
 from .interactions.network_menu import ask_to_configure_network
-from .interactions.system_conf import ask_for_bootloader, ask_for_swap, ask_for_uki, select_kernel
+from .interactions.system_conf import ask_for_swap, select_kernel
 from .locale.locale_menu import LocaleMenu
 from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
 from .mirrors import MirrorMenu
-from .models.bootloader import Bootloader
+from .models.bootloader import Bootloader, BootloaderConfiguration
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
 from .models.network import NetworkConfiguration, NicType
@@ -86,19 +87,10 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Bootloader'),
-				value=Bootloader.get_default(),
-				action=self._select_bootloader,
-				preview_action=self._prev_bootloader,
-				mandatory=True,
-				key='bootloader',
-			),
-			MenuItem(
-				text=tr('Unified kernel images'),
-				value=False,
-				enabled=SysInfo.has_uefi(),
-				action=ask_for_uki,
-				preview_action=self._prev_uki,
-				key='uki',
+				value=BootloaderConfiguration.get_default(),
+				action=self._select_bootloader_config,
+				preview_action=self._prev_bootloader_config,
+				key='bootloader_config',
 			),
 			MenuItem(
 				text=tr('Hostname'),
@@ -379,13 +371,6 @@ class GlobalMenu(AbstractMenu[None]):
 			return output
 		return None
 
-	def _prev_uki(self, item: MenuItem) -> str | None:
-		if item.value is not None:
-			output = f'{tr("Unified kernel images")}: '
-			output += tr('Enabled') if item.value else tr('Disabled')
-			return output
-		return None
-
 	def _prev_hostname(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			return f'{tr("Hostname")}: {item.value}'
@@ -402,9 +387,10 @@ class GlobalMenu(AbstractMenu[None]):
 			return f'{tr("Kernel")}: {kernel}'
 		return None
 
-	def _prev_bootloader(self, item: MenuItem) -> str | None:
-		if item.value is not None:
-			return f'{tr("Bootloader")}: {item.value.value}'
+	def _prev_bootloader_config(self, item: MenuItem) -> str | None:
+		bootloader_config: BootloaderConfiguration | None = item.value
+		if bootloader_config:
+			return bootloader_config.preview()
 		return None
 
 	def _validate_bootloader(self) -> str | None:
@@ -418,15 +404,17 @@ class GlobalMenu(AbstractMenu[None]):
 		XXX: The caller is responsible for wrapping the string with the translation
 			shim if necessary.
 		"""
-		bootloader: Bootloader | None = None
+		bootloader_config: BootloaderConfiguration | None = None
 		root_partition: PartitionModification | None = None
 		boot_partition: PartitionModification | None = None
 		efi_partition: PartitionModification | None = None
 
-		bootloader = self._item_group.find_by_key('bootloader').value
+		bootloader_config = self._item_group.find_by_key('bootloader_config').value
 
-		if bootloader == Bootloader.NO_BOOTLOADER:
+		if not bootloader_config or bootloader_config.bootloader == Bootloader.NO_BOOTLOADER:
 			return None
+
+		bootloader = bootloader_config.bootloader
 
 		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
@@ -501,18 +489,16 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return disk_config
 
-	def _select_bootloader(self, preset: Bootloader | None) -> Bootloader | None:
-		bootloader = ask_for_bootloader(preset)
+	def _select_bootloader_config(
+		self,
+		preset: BootloaderConfiguration | None = None,
+	) -> BootloaderConfiguration | None:
+		if preset is None:
+			preset = BootloaderConfiguration.get_default()
 
-		if bootloader:
-			uki = self._item_group.find_by_key('uki')
-			if not SysInfo.has_uefi() or not bootloader.has_uki_support():
-				uki.value = False
-				uki.enabled = False
-			else:
-				uki.enabled = True
+		bootloader_config = BootloaderMenu(preset).run()
 
-		return bootloader
+		return bootloader_config
 
 	def _select_profile(self, current_profile: ProfileConfiguration | None) -> ProfileConfiguration | None:
 		from .profile.profile_menu import ProfileMenu

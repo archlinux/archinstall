@@ -18,7 +18,11 @@
   "audio_config": {
     "audio": "pipewire"
   },
-  "bootloader": "Systemd-boot",
+  "bootloader_config": {
+    "bootloader": "Systemd-boot",
+    "uki": false,
+    "removable": false
+  },
   "services": [
     "service_1",
     "service_2"
