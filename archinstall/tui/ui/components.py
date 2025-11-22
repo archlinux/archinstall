@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
-from typing import Any, TypeVar, override
+from typing import Any, ClassVar, TypeVar, override
 
 from textual import work
 from textual.app import App, ComposeResult
@@ -20,7 +20,7 @@ ValueT = TypeVar('ValueT')
 
 
 class BaseScreen(Screen[Result[ValueT]]):
-	BINDINGS = [  # noqa: RUF012
+	BINDINGS: ClassVar = [
 		Binding('escape', 'cancel_operation', 'Cancel', show=True),
 		Binding('ctrl+c', 'reset_operation', 'Reset', show=True),
 	]
@@ -97,7 +97,7 @@ class LoadingScreen(BaseScreen[None]):
 
 
 class ConfirmationScreen(BaseScreen[ValueT]):
-	BINDINGS = [  # noqa: RUF012
+	BINDINGS: ClassVar = [
 		Binding('l', 'focus_right', 'Focus right', show=True),
 		Binding('h', 'focus_left', 'Focus left', show=True),
 		Binding('right', 'focus_right', 'Focus right', show=True),
@@ -317,7 +317,7 @@ class InputScreen(BaseScreen[str]):
 
 
 class TableSelectionScreen(BaseScreen[ValueT]):
-	BINDINGS = [  # noqa: RUF012
+	BINDINGS: ClassVar = [
 		Binding('j', 'cursor_down', 'Down', show=True),
 		Binding('k', 'cursor_up', 'Up', show=True),
 	]
