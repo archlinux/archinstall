@@ -233,6 +233,9 @@ class ProfileHandler:
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
 
+		# Enable power-profiles-daemon on laptops after graphics packages are installed
+		install_session.enable_power_profiles()
+
 	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration) -> None:
 		profile = profile_config.profile
 
