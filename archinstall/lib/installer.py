@@ -1115,7 +1115,7 @@ class Installer:
 		self,
 		root: PartitionModification | LvmVolume,
 		id_root: bool = True,
-		partuuid: bool = True,
+		partuuid: bool = False,
 	) -> list[str]:
 		kernel_parameters = []
 
