@@ -1168,7 +1168,7 @@ class Installer:
 		)
 
 		for kernel in self.kernels:
-			for variant in ('', '-fallback'):
+			for variant in ('',):
 				# Setup the loader entry
 				name = entry_name.format(kernel=kernel, variant=variant)
 				entry_conf = entries_dir / name
@@ -1496,7 +1496,7 @@ class Installer:
 				config_contents += f'\n/Arch Linux ({kernel})\n'
 				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
 			else:
-				for variant in ('', '-fallback'):
+				for variant in ('',):
 					entry = [
 						'protocol: linux',
 						f'path: {path_root}:/vmlinuz-{kernel}',
