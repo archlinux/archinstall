@@ -1589,7 +1589,7 @@ class Installer:
 		info(f'rEFInd EFI partition: {efi_partition.dev_path}')
 
 		try:
-			self.arch_chroot(f'refind-install')
+			self.arch_chroot('refind-install')
 		except SysCallError as err:
 			raise DiskError(f'Could not install rEFInd to {self.target}{efi_partition.mountpoint}: {err}')
 
