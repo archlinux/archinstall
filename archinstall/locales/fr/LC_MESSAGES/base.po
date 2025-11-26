@@ -1796,6 +1796,39 @@ msgstr "Vous devez peut-être entrer le code PIN, puis toucher votre périphéri
 msgid "Starting device modifications in "
 msgstr ""
 
+#, fuzzy
+msgid "No network connection found"
+msgstr "Aucune configuration réseau"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Voulez-vous continuer ?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Configurer les interfaces"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Sélectionner une interface réseau à configurer"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Aucune configuration réseau"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Entrer un mot de passe : "
+
+msgid "Ok"
+msgstr ""
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Modifier {origkey} :"

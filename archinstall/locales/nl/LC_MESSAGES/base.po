@@ -1919,6 +1919,39 @@ msgstr ""
 msgid "Starting device modifications in "
 msgstr ""
 
+#, fuzzy
+msgid "No network connection found"
+msgstr "Geen netwerkconfiguratie"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Gebruiker verwijderen"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Kies een in te stellen netwerkkaart"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Geen netwerkconfiguratie"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Voer een wachtwoord in: "
+
+msgid "Ok"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

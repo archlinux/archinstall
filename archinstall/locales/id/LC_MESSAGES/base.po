@@ -1905,3 +1905,36 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Tidak ada konfigurasi jaringan"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Interface {} dikonfigurasi"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Pilih satu interface jaringan untuk dikonfigurasi"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Tidak ada konfigurasi jaringan"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Masukan kata sandi: "
+
+msgid "Ok"
+msgstr ""

@@ -1895,3 +1895,36 @@ msgstr ""
 
 msgid "Starting device modifications in "
 msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Nu există o configurare de rețea"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Configurează interfața {}"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Selectați o interfață de rețea pentru configurare"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Nu există o configurare de rețea"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Introduceți o parolă: "
+
+msgid "Ok"
+msgstr ""

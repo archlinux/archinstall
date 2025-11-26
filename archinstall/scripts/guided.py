@@ -62,7 +62,7 @@ def perform_installation(mountpoint: Path) -> None:
 		return
 
 	disk_config = config.disk_config
-	run_mkinitcpio = not config.uki
+	run_mkinitcpio = not config.bootloader_config or not config.bootloader_config.uki
 	locale_config = config.locale_config
 	optional_repositories = config.mirror_config.optional_repositories if config.mirror_config else []
 	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
@@ -99,11 +99,11 @@ def perform_installation(mountpoint: Path) -> None:
 		if config.swap:
 			installation.setup_swap('zram')
 
-		if config.bootloader and config.bootloader != Bootloader.NO_BOOTLOADER:
-			if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
+		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
+			if config.bootloader_config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
 				installation.add_additional_packages('grub')
 
-			installation.add_bootloader(config.bootloader, config.uki)
+			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
@@ -155,7 +155,8 @@ def perform_installation(mountpoint: Path) -> None:
 			snapshot_config = btrfs_options.snapshot_config if btrfs_options else None
 			snapshot_type = snapshot_config.snapshot_type if snapshot_config else None
 			if snapshot_type:
-				installation.setup_btrfs_snapshot(snapshot_type, config.bootloader)
+				bootloader = config.bootloader_config.bootloader if config.bootloader_config else None
+				installation.setup_btrfs_snapshot(snapshot_type, bootloader)
 
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if cc := config.custom_commands:
