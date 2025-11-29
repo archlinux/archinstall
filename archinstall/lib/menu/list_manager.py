@@ -68,8 +68,6 @@ class ListManager[ValueT]:
 			if self._prompt is not None:
 				prompt = f'{self._prompt}\n\n'
 
-			prompt = None
-
 			result = SelectMenu[ValueT | str](
 				group,
 				header=prompt,
