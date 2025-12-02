@@ -236,12 +236,10 @@ class MenuItemGroup:
 
 	def _items_score(self, item: MenuItem) -> int:
 		pattern = self._filter_pattern.lower()
-		if pattern in item.text.lower():
-			if item.text.lower().startswith(pattern):
-				return 0
-			else:
-				return 1
-		return 2
+		if item.text.lower().startswith(pattern):
+			return 0
+		else:
+			return 1
 
 	@property
 	def filter_pattern(self) -> str:
