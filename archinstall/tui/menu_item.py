@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from _ast import pattern
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -231,24 +230,18 @@ class MenuItemGroup:
 	@cached_property
 	def items(self) -> list[MenuItem]:
 		pattern = self._filter_pattern.lower()
-		starts_with_items = list(filter(self._items_startswith(pattern), self._menu_items)) # Working on
-		contains_items = list(filter(self._items_contains(pattern), self._menu_items))
-		l_items = (starts_with_items + contains_items)
+		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self._menu_items)
+		l_items = sorted(items, key=self._items_score)
 		return l_items
 
-	def _items_startswith(self, item: MenuItem, pattern: str) -> bool:
+	def _items_score(self, item: MenuItem) -> int:
 		pattern = self._filter_pattern.lower()
-
-		if item.is_empty():
-			return True
-		return item.text.lower().startswith(pattern)
-
-	def _items_contains(self, item: MenuItem, pattern: str) -> bool:
-		pattern = self._filter_pattern.lower()
-
-		if item.is_empty():
-			return True
-		return pattern in item.text.lower() and not item.text.lower().startswith(pattern)
+		if pattern in item.text.lower():
+			if item.text.lower().startswith(pattern):
+				return 0
+			else:
+				return 1
+		return 2
 
 	@property
 	def filter_pattern(self) -> str:
