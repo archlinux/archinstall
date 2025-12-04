@@ -250,17 +250,17 @@ class MenuItemGroup:
 	def set_filter_pattern(self, pattern: str) -> None:
 		self._filter_pattern = pattern
 		delattr(self, 'items')  # resetting the cache
-		self._reload_focus_item()
+		self.focus_first()
 
 	def append_filter(self, pattern: str) -> None:
 		self._filter_pattern += pattern
 		delattr(self, 'items')  # resetting the cache
-		self._reload_focus_item()
+		self.focus_first()
 
 	def reduce_filter(self) -> None:
 		self._filter_pattern = self._filter_pattern[:-1]
 		delattr(self, 'items')  # resetting the cache
-		self._reload_focus_item()
+		self.focus_first()
 
 	def _reload_focus_item(self) -> None:
 		if len(self.items) > 0:
@@ -417,9 +417,7 @@ class MenuItemsState:
 		if focus_row_idx is None:
 			return []
 
-		start, end = 0, 0
-
-		if len(self._view_items) == 0 or self._prev_row_idx == -1 or self._item_group.has_filter():  # initial setup or filter
+		if len(self._view_items) == 0 or self._prev_row_idx == -1 or focus_row_idx == 0:  # initial setup or filter
 			if focus_row_idx < self._total_rows:
 				start = 0
 				end = self._total_rows
