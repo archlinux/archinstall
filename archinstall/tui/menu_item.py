@@ -417,7 +417,9 @@ class MenuItemsState:
 		if focus_row_idx is None:
 			return []
 
-		if len(self._view_items) == 0 or self._prev_row_idx == -1 or focus_row_idx == 0:  # initial setup or filter
+		start, end = 0, 0
+
+		if len(self._view_items) == 0 or self._prev_row_idx == -1 or focus_row_idx == 0:  # initial setup
 			if focus_row_idx < self._total_rows:
 				start = 0
 				end = self._total_rows
