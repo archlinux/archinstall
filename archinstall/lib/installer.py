@@ -659,6 +659,13 @@ class Installer:
 		# fstrim is owned by util-linux, a dependency of both base and systemd.
 		self.enable_service('fstrim.timer')
 
+	def enable_power_profiles(self) -> None:
+		if SysInfo.is_laptop():
+			info('Detected laptop form factor, enabling power-profiles-daemon')
+			self.enable_service('power-profiles-daemon.service')
+		else:
+			debug('Desktop/server detected, skipping power-profiles-daemon')
+
 	def enable_service(self, services: str | list[str]) -> None:
 		if isinstance(services, str):
 			services = [services]
