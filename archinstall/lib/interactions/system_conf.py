@@ -46,7 +46,7 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 
 def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None) -> GfxDriver | None:
 	"""
-	Some what convoluted function, whose job is simple.
+	Somewhat convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
 
 	(The template xorg is for beginner users, not advanced, and should

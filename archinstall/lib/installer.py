@@ -132,7 +132,7 @@ class Installer:
 			self.sync_log_to_install_medium()
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
-			# and then reboot, and a identical log file will be found in the ISO medium anyway.
+			# and then reboot, and an identical log file will be found in the ISO medium anyway.
 			Tui.print(str(tr('[!] A log file has been created here: {}').format(logger.path)))
 			Tui.print(tr('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues'))
 

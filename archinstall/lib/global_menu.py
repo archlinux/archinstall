@@ -41,10 +41,10 @@ from .translationhandler import Language, tr, translation_handler
 class GlobalMenu(AbstractMenu[None]):
 	def __init__(self, arch_config: ArchConfig) -> None:
 		self._arch_config = arch_config
-		menu_optioons = self._get_menu_options()
+		menu_options = self._get_menu_options()
 
 		self._item_group = MenuItemGroup(
-			menu_optioons,
+			menu_options,
 			sort_items=False,
 			checkmarks=True,
 		)
