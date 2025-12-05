@@ -233,7 +233,7 @@ class MenuItemGroup:
 		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self._menu_items)
 		l_items = list(items)
 		return l_items
-
+		
 	@property
 	def filter_pattern(self) -> str:
 		return self._filter_pattern
