@@ -1321,14 +1321,7 @@ class Installer:
 			try:
 				SysCommand(command, peek_output=True)
 			except SysCallError as err:
-				if not bootloader_removable:
-					command.append('--removable')
-					try:
-						SysCommand(command, peek_output=True)
-					except SysCallError:
-						pass
-
-				raise DiskError(f'Could not install GRUB to {self.target}{efi_partition.mountpoint}: {err}') from err
+				raise DiskError(f'Could not install GRUB to {self.target}{efi_partition.mountpoint}: {err}')
 		else:
 			info(f'GRUB boot partition: {boot_partition.dev_path}')
 
