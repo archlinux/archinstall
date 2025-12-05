@@ -226,19 +226,13 @@ class MenuItemGroup:
 	def set_action_for_all(self, action: Callable[[Any], Any]) -> None:
 		for item in self.items:
 			item.action = action
-
+	
 	@cached_property
 	def items(self) -> list[MenuItem]:
 		pattern = self._filter_pattern.lower()
 		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self._menu_items)
-		l_items = sorted(items, key=self._items_score)
+		l_items = list(items)
 		return l_items
-
-	def _items_score(self, item: MenuItem) -> int:
-		pattern = self._filter_pattern.lower()
-		if item.text.lower().startswith(pattern):
-			return 0
-		return 1
 
 	@property
 	def filter_pattern(self) -> str:
