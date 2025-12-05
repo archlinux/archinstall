@@ -226,14 +226,14 @@ class MenuItemGroup:
 	def set_action_for_all(self, action: Callable[[Any], Any]) -> None:
 		for item in self.items:
 			item.action = action
-	
+
 	@cached_property
 	def items(self) -> list[MenuItem]:
 		pattern = self._filter_pattern.lower()
 		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self._menu_items)
 		l_items = list(items)
 		return l_items
-		
+
 	@property
 	def filter_pattern(self) -> str:
 		return self._filter_pattern
