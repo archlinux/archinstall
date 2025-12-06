@@ -2,7 +2,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
 from typing import Any, override
-
 from pydantic import BaseModel
 
 from archinstall.lib.translationhandler import tr
