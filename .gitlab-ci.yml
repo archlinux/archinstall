@@ -36,7 +36,7 @@ flake8:
     - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
 # We currently do not have unit tests implemented but this stage is written in anticipation of their future usage.
-# When a stage name is preceeded with a '.' it's treated as "disabled" by GitLab and is not executed, so it's fine for it to be declared.
+# When a stage name is preceded with a '.' it's treated as "disabled" by GitLab and is not executed, so it's fine for it to be declared.
 .pytest:
   stage: test
   tags:

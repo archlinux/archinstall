@@ -147,8 +147,8 @@ def perform_installation(mountpoint: Path) -> None:
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
-		if servies := config.services:
-			installation.enable_service(servies)
+		if services := config.services:
+			installation.enable_service(services)
 
 		if disk_config.has_default_btrfs_vols():
 			btrfs_options = disk_config.btrfs_options

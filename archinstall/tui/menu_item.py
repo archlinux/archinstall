@@ -395,7 +395,7 @@ class MenuItemsState:
 		self._prev_visible_rows: list[int] = []
 		self._view_items: list[list[MenuItem]] = []
 
-	def _determine_foucs_row(self) -> int | None:
+	def _determine_focus_row(self) -> int | None:
 		focus_index = self._item_group.index_focus()
 
 		if focus_index is None:
@@ -406,7 +406,7 @@ class MenuItemsState:
 
 	def get_view_items(self) -> list[list[MenuItem]]:
 		enabled_items = self._item_group.get_enabled_items()
-		focus_row_idx = self._determine_foucs_row()
+		focus_row_idx = self._determine_focus_row()
 
 		if focus_row_idx is None:
 			return []

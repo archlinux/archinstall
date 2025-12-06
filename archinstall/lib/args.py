@@ -232,7 +232,7 @@ class ArchConfig:
 				arch_config.auth_config = AuthenticationConfiguration()
 			arch_config.auth_config.root_enc_password = root_password
 
-		# DEPRECATED: backwards copatibility
+		# DEPRECATED: backwards compatibility
 		users: list[User] = []
 		if args_users := args_config.get('!users', None):
 			users = User.parse_arguments(args_users)

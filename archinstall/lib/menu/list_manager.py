@@ -141,6 +141,6 @@ class ListManager[ValueT]:
 
 	def filter_options(self, selection: ValueT, options: list[str]) -> list[str]:
 		"""
-		filter which actions to show for an specific selection
+		filter which actions to show for a specific selection
 		"""
 		return options

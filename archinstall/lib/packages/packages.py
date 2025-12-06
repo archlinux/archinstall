@@ -95,7 +95,7 @@ def find_packages(*names: str) -> dict[str, PackageSearchResult]:
 def validate_package_list(packages: list[str]) -> tuple[list[str], list[str]]:
 	"""
 	Validates a list of given packages.
-	return: Tuple of lists containing valid packavges in the first and invalid
+	return: Tuple of lists containing valid packages in the first and invalid
 	packages in the second entry
 	"""
 	valid_packages = {package for package in packages if find_package(package)}

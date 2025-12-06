@@ -62,7 +62,7 @@ archinstall --config <path to user config file or URL> --creds <path to user cre
 ```
 
 ### Credentials configuration file encryption
-By default all user account credentials are hashed with `yescrypt` and only the hash is stored in the saved `user_credentials.json` file.
+By default, all user account credentials are hashed with `yescrypt` and only the hash is stored in the saved `user_credentials.json` file.
 This is not possible for disk encryption password which needs to be stored in plaintext to be able to apply it.
 
 However, when selecting to save configuration files, `archinstall` will prompt for the option to encrypt the `user_credentials.json` file content.
@@ -75,7 +75,7 @@ there are multiple ways to provide the decryption key:
 
 # Help or Issues
 
-If you come across any issues, kindly submit your issue here on Github or post your query in the
+If you come across any issues, kindly submit your issue here on GitHub or post your query in the
 [discord](https://discord.gg/aDeMffrxNg) help channel.
 
 When submitting an issue, please:
