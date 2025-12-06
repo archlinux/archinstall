@@ -44,7 +44,7 @@ class U2FLoginConfiguration:
 	def parse_arg(args: U2FLoginConfigSerialization) -> 'U2FLoginConfiguration | None':
 		u2f_login_method = args.get('u2f_login_method')
 
-		if u2f_login_method is None:
+		if not u2f_login_method:
 			return None
 
 		u2f_config = U2FLoginConfiguration(u2f_login_method=U2FLoginMethod(u2f_login_method))
