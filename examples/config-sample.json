@@ -3,7 +3,11 @@
   "audio_config": {
     "audio": "pipewire"
   },
-  "bootloader": "Systemd-boot",
+  "bootloader_config": {
+    "bootloader": "Systemd-boot",
+    "uki": false,
+    "removable": false
+  },
   "debug": false,
   "disk_config": {
     "config_type": "default_layout",

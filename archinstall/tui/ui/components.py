@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
-from typing import Any, TypeVar, override
+from typing import Any, ClassVar, TypeVar, override
 
 from textual import work
 from textual.app import App, ComposeResult
@@ -20,7 +20,7 @@ ValueT = TypeVar('ValueT')
 
 
 class BaseScreen(Screen[Result[ValueT]]):
-	BINDINGS = [  # noqa: RUF012
+	BINDINGS: ClassVar = [
 		Binding('escape', 'cancel_operation', 'Cancel', show=True),
 		Binding('ctrl+c', 'reset_operation', 'Reset', show=True),
 	]
@@ -32,11 +32,11 @@ class BaseScreen(Screen[Result[ValueT]]):
 
 	def action_cancel_operation(self) -> None:
 		if self._allow_skip:
-			self.dismiss(Result(ResultType.Skip, None))  # type: ignore[unused-awaitable]
+			_ = self.dismiss(Result(ResultType.Skip, None))
 
 	def action_reset_operation(self) -> None:
 		if self._allow_reset:
-			self.dismiss(Result(ResultType.Reset, None))  # type: ignore[unused-awaitable]
+			_ = self.dismiss(Result(ResultType.Reset, None))
 
 	def _compose_header(self) -> ComposeResult:
 		"""Compose the app header if global header text is available."""
@@ -93,11 +93,11 @@ class LoadingScreen(BaseScreen[None]):
 		self.set_timer(self._timer, self.action_pop_screen)
 
 	def action_pop_screen(self) -> None:
-		self.dismiss()  # type: ignore[unused-awaitable]
+		_ = self.dismiss()
 
 
 class ConfirmationScreen(BaseScreen[ValueT]):
-	BINDINGS = [  # noqa: RUF012
+	BINDINGS: ClassVar = [
 		Binding('l', 'focus_right', 'Focus right', show=True),
 		Binding('h', 'focus_left', 'Focus left', show=True),
 		Binding('right', 'focus_right', 'Focus right', show=True),
@@ -208,7 +208,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 			item = self._group.focus_item
 			if not item:
 				return None
-			self.dismiss(Result(ResultType.Selection, item.value))  # type: ignore[unused-awaitable]
+			_ = self.dismiss(Result(ResultType.Selection, item.value))
 
 
 class NotifyScreen(ConfirmationScreen[ValueT]):
@@ -313,11 +313,11 @@ class InputScreen(BaseScreen[str]):
 		if event.key == 'enter':
 			input_field = self.query_one('#main_input', Input)
 			value = input_field.value
-			self.dismiss(Result(ResultType.Selection, value))  # type: ignore[unused-awaitable]
+			_ = self.dismiss(Result(ResultType.Selection, value))
 
 
 class TableSelectionScreen(BaseScreen[ValueT]):
-	BINDINGS = [  # noqa: RUF012
+	BINDINGS: ClassVar = [
 		Binding('j', 'cursor_down', 'Down', show=True),
 		Binding('k', 'cursor_up', 'Up', show=True),
 	]
@@ -434,7 +434,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 
 	def _put_data_to_table(self, table: DataTable[ValueT], data: list[ValueT]) -> None:
 		if not data:
-			self.dismiss(Result(ResultType.Selection, None))  # type: ignore[unused-awaitable]
+			_ = self.dismiss(Result(ResultType.Selection, None))
 			return
 
 		cols = list(data[0].table_data().keys())  # type: ignore[attr-defined]
@@ -454,7 +454,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 
 	def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
 		data: ValueT = event.row_key.value  # type: ignore[assignment]
-		self.dismiss(Result(ResultType.Selection, data))  # type: ignore[unused-awaitable]
+		_ = self.dismiss(Result(ResultType.Selection, data))
 
 
 class TApp(App[Any]):

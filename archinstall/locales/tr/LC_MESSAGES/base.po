@@ -1,16 +1,18 @@
+# Please do not completely remove previous translator information from Language-Team.
+# If you are the last translator, you may add your full information to Last-Translator and your username to Language-Team.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 21.05.2022\n"
-"PO-Revision-Date: 2025-06-15 16:12+0300\n"
-"Last-Translator: Serdar Sağlam <teknomobil@msn.com>\n"
-"Language-Team: Turkish\n"
+"PO-Revision-Date: 2025-12-02 14:55+0100\n"
+"Last-Translator: Abdullah Koyuncu @wiseweb-works <wisewebworks@outlook.com>\n"
+"Language-Team: SerdarSaglam, favilances, wiseweb-works, AlperShal, arlsdk, tugsatenes, eren-ince, Schwarzeisc00l, Oruch379\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Burada bir günlük dosyası oluşturuldu: {} {}"
@@ -947,29 +949,30 @@ msgstr "Toplam uzunluk: {}"
 msgid "Encryption type"
 msgstr "Şifreleme türü"
 
+# Iteration (en) = (tr) yineleme/tekrarlama/tekerrür. In think "yineleme"  is more accurate.
 msgid "Iteration time"
-msgstr ""
+msgstr "Yineleme süresi"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "LUKS şifreleme için yineleme süresini girin (milisaniye cinsinden)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Daha yüksek değerler güvenliği artırır ancak önyükleme süresini yavaşlatır"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Varsayılan: 10000 ms, Önerilen aralık: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Yineleme süresi boş bırakılamaz"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Yineleme süresi en az 100 ms olmalıdır"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Yineleme süresi en fazla 120000 ms olmalıdır"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Lütfen geçerli bir sayı girin"
 
 msgid "Partitions"
 msgstr "Bölümler"
@@ -1659,13 +1662,13 @@ msgid "Exit search mode"
 msgstr "Arama modundan çık"
 
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Labwc cihazlarınıza erişmesi gerekir (klavye, fare vb. donanım cihazları koleksiyonu)"
+msgstr "labwc cihazlarınıza erişmesi gerekir (klavye, fare vb. donanım cihazları koleksiyonu)"
 
 msgid "Choose an option to give labwc access to your hardware"
 msgstr "Labwc donanımınıza erişim izni vermek için bir seçenek belirleyin"
 
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Niri cihazlarınıza erişmesi gerekir (klavye, fare vb. donanım cihazları koleksiyonu)"
+msgstr "niri cihazlarınıza erişmesi gerekir (klavye, fare vb. donanım cihazları koleksiyonu)"
 
 msgid "Choose an option to give niri access to your hardware"
 msgstr "Niri donanımınıza erişim izni vermek için bir seçenek belirleyin"
@@ -1683,7 +1686,7 @@ msgid "Reboot system"
 msgstr "Sistemi yeniden başlat"
 
 msgid "chroot into installation for post-installation configurations"
-msgstr "Kurulum sonrası yapılandırmalar için kuruluma chroot ekleyin"
+msgstr "kurulum sonrası yapılandırmalar için kuruluma chroot ekleyin"
 
 msgid "Installation completed"
 msgstr "Kurulum tamamlandı"
@@ -1705,7 +1708,7 @@ msgid "Credentials file decryption password"
 msgstr "Kimlik bilgileri dosyası şifre çözme parolası"
 
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "user_credentials.json dosyasını şifrelemek istiyor musunuz?"
+msgstr "User_credentials.json dosyasını şifrelemek istiyor musunuz?"
 
 msgid "Credentials file encryption password"
 msgstr "Kimlik bilgileri dosyası şifreleme parolası"
@@ -1714,108 +1717,125 @@ msgstr "Kimlik bilgileri dosyası şifreleme parolası"
 msgid "Repositories: {}"
 msgstr "Depolar: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "Kullanılabilir HSM cihazı yok"
+msgstr "Yeni sürüm mevcut"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Parola"
+msgstr "Şifresiz giriş"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "İkinci faktörlü oturum açma"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Devam etmek ister misiniz?"
+msgstr "Bluetooth'u yapılandırmak ister misiniz?"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Kimlik Doğrulama"
 
 msgid "Applications"
-msgstr ""
+msgstr "Uygulamalar"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "U2F oturum açma yöntemi: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Parolasız sudo: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Btrfs anlık görüntü türü: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Sistem senkronize ediliyor..."
 
 msgid "Value cannot be empty"
-msgstr ""
+msgstr "Değer boş olamaz"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Anlık görüntü türü"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Ortam türü: {}"
+msgstr "Anlık görüntü türü: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "U2F oturum açma kurulumu"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "U2F cihazı bulunamadı"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "U2F Oturum Açma Yöntemi"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Bir parola gir: "
+msgstr "Parolasız sudo'yu etkinleştir?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "HSM için kullanılacak bir FIDO2 cihazı seçin"
+msgstr "Kullanıcı için U2F cihazını kurma: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "PIN kodunu girmeniz ve ardından U2F cihazınıza dokunarak kaydetmeniz gerekebilir"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Cihaz modifikasyonlarına başlama "
 
-#, fuzzy
 msgid "No network connection found"
-msgstr "Ağ yapılandırması yok"
+msgstr "Ağ bağlantısı bulunamadı"
 
-#, fuzzy
 msgid "Would you like to connect to a Wifi?"
-msgstr "Devam etmek ister misiniz?"
+msgstr "Wifi'ye bağlanmak ister misiniz?"
 
-#, fuzzy
 msgid "No wifi interface found"
-msgstr "Arayüzleri yapılandır"
+msgstr "Wifi arayüzü bulunamadı"
 
-#, fuzzy
 msgid "Select wifi network to connect to"
-msgstr "Yapılandırmak için bir ağ arayüzü seçin"
+msgstr "Bağlanmak için wifi ağını seçin"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Wifi ağlarını tarıyor..."
 
-#, fuzzy
 msgid "No wifi networks found"
-msgstr "Ağ yapılandırması yok"
+msgstr "Wifi ağı bulunamadı"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "Wifi kurulumu başarısız oldu"
 
-#, fuzzy
 msgid "Enter wifi password"
-msgstr "Bir parola gir: "
+msgstr "Wifi şifresini girin"
 
 msgid "Ok"
-msgstr ""
+msgstr "Tamam"
+
+msgid "Removable"
+msgstr "Çıkarılabilir"
+
+msgid "Install to removable location"
+msgstr "Çıkarılabilir konuma yükle"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "/EFI/BOOT/ (çıkarılabilir konum) içine kurulacaktır."
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "NVRAM girişi ile standart konuma yüklenecektir"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Önyükleyiciyi varsayılan çıkarılabilir medya arama konumuna yüklemek ister misiniz?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Bu, önyükleyiciyi /EFI/BOOT/BOOTX64.EFI (veya benzeri) konumuna yükler. Bu, aşağıdakiler için yararlıdır:"
+
+msgid "USB drives or other portable external media."
+msgstr "USB sürücüler veya diğer taşınabilir harici ortamlar."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Diskin herhangi bir bilgisayarda önyüklenebilir olmasını istediğiniz sistemler."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "NVRAM önyükleme girişlerini düzgün şekilde desteklemeyen ürün yazılımı."
 
 #~ msgid "Desktop"
 #~ msgstr "Masaüstü"

@@ -36,7 +36,7 @@ msgid "Any additional users to install (leave blank for no users): "
 msgstr "További felhasználók hozzáadása a telepítéshez (hagyja üresen, ha nem akar több felhasználót hozzáadni): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Ennek a felhasználónak rendszergazdának (sudoer) kell lennie?"
+msgstr "Ez a felhasználó rendszergazda (sudoer) legyen?"
 
 msgid "Select a timezone"
 msgstr "Időzóna kiválasztása"
@@ -1072,7 +1072,7 @@ msgstr ""
 "Válasszon ki egy grafikus illesztőprogramot, vagy hagyja üresen az összes nyílt forráskódú illesztőprogram telepítéséhez"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "A Swaynek hozzáférésre van szüksége (olyan hardvereszközök gyűjteményéhez mint például a billentyűzet, az egér, stb.)"
+msgstr "A Swaynek hozzáférésre van szüksége az Ön munkamenetéhez (olyan hardvereszközök gyűjteményéhez, mint például a billentyűzet, az egér, stb.)"
 
 msgid ""
 "\n"
@@ -1231,7 +1231,7 @@ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 msgstr "Érvénytelen bemenet! Próbálja újra egy érvényes bemenettel [vagy 0-t a letiltáshoz]"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "A Hyprlandnek hozzáférésre van szüksége (olyan hardvereszközök gyűjteményéhez mint például a billentyűzet, az egér, stb.)"
+msgstr "A Hyprlandnek hozzáférésre van szüksége az Ön munkamenetéhez (olyan hardvereszközök gyűjteményéhez, mint például a billentyűzet, az egér, stb.)"
 
 msgid ""
 "\n"
@@ -1810,3 +1810,30 @@ msgstr "Adja meg a Wi-Fi-jelszót"
 
 msgid "Ok"
 msgstr "OK"
+
+msgid "Removable"
+msgstr "Cserélhető adathordozó"
+
+msgid "Install to removable location"
+msgstr "Telepítés cserélhető adathordozóra"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "Telepítés helye: /EFI/BOOT/ (cserélhető adathordozó)"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "Telepítés szabványos helyre, NVRAM-bejegyzéssel"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Szeretné a rendszerbetöltőt a cserélhető adathordozók alapértelmezett keresési helyére telepíteni?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Ez a rendszerbetöltőt az /EFI/BOOT/BOOTX64.EFI (vagy hasonló) helyre telepíti, ami hasznos lehet a következőkhöz:"
+
+msgid "USB drives or other portable external media."
+msgstr "USB-meghajtóknál vagy egyéb hordozható, külső adathordozóknál."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Olyan rendszereknél, ahol azt szeretné, hogy a lemez bármely számítógépen indítható legyen."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Olyan firmware-eknél, amelyek nem támogatják megfelelően az NVRAM-rendszerindítási bejegyzéseket."
