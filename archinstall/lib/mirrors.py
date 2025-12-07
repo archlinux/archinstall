@@ -418,12 +418,12 @@ class MirrorListHandler:
 
 		for attempt_nr in range(attempts):
 			try:
-				mirrorlist = fetch_data_from_url(url)
+				mirrorlist = fetch_data_from_url(url, timeout=1)
 				self._status_mappings = self._parse_remote_mirror_list(mirrorlist)
 				return True
 			except Exception as e:
 				debug(f'Error while fetching mirror list: {e}')
-				time.sleep(attempt_nr + 1)
+				time.sleep(0.5)
 
 		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
 		return False
