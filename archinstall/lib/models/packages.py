@@ -13,21 +13,9 @@ class Repository(Enum):
 	Extra = 'extra'
 	Multilib = 'multilib'
 	Testing = 'testing'
-
-	def get_repository_list(self) -> list[str]:
-		match self:
-			case Repository.Core:
-				return [Repository.Core.value]
-			case Repository.Extra:
-				return [Repository.Extra.value]
-			case Repository.Multilib:
-				return [Repository.Multilib.value]
-			case Repository.Testing:
-				return [
-					'core-testing',
-					'extra-testing',
-					'multilib-testing',
-				]
+	MultilibTesting = 'multilib-testing'
+	CoreTesting = 'core-testing'
+	ExtraTesting = 'extra-testing'
 
 
 @dataclass
