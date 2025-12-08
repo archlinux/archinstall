@@ -113,9 +113,9 @@ def main() -> int:
 
 	if running_from_host():
 		# log which mode we are using
-		info('Running from host (H2T Mode)')
+		info('Running from host (H2T Mode)...')
 	else:
-		info('Running from ISO (Live Mode)')
+		info('Running from ISO (Live Mode)...')
 
 	script = arch_config_handler.get_script()
 
