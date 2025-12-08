@@ -22,7 +22,6 @@ For full `at_keyboard` support it is possible through `ckbcomp` See guide [here]
 
 By default bootloaders look for `vconsole.conf` keymap. Other bootloaders such as `systemd-boot` and `limine` have full keymap support.
 
-
 ## Adding new languages
 
 New languages can be added simply by creating a new folder with the proper language abbreviation (see list `languages.json` if unsure).
