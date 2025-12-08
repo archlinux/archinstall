@@ -35,8 +35,6 @@ def running_from_host() -> bool:
 	Returns False if /run/archiso exists (ISO mode).
 	"""
 	is_host = not Path('/run/archiso').exists()
-	mode = 'Host mode (H2T)' if is_host else 'ISO mode (Live)'
-	debug(f'Installation mode detected: {mode} (/run/archiso {"does not exist" if is_host else "exists"})')
 	return is_host
 
 
