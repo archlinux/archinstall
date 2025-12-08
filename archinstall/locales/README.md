@@ -13,7 +13,7 @@ All available console fonts can be found in `/usr/share/kbd/consolefonts` and th
 can be set with `setfont LatGrkCyr-8x16`.
 
 Also note that for example [grub bootloader](https://www.gnu.org/software/grub/manual/grub/grub.html#Input-terminal) has ASCII limited range:
-For full disk encryption (LUKS2) this means alphanumeric latin characters (one-char-per-keystroke).
+For full disk encryption (LUKS2) or grub-shell, boot options edit: this means alphanumeric latin characters (one-char-per-keystroke).
 
 Archinstall validates this by making sure your passwords are ASCII compatible.
 It is quite trivial through Login-manager and/or Desktop Environment to set other layouts or switching later-on.
