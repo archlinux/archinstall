@@ -354,9 +354,14 @@ def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
 	:rtype: Repository
 	"""
 
-	repositories = [Repository.Multilib, Repository.Testing]
+	repositories = [
+		Repository.Multilib,
+		Repository.MultilibTesting,
+		Repository.CoreTesting,
+		Repository.ExtraTesting,
+	]
 	items = [MenuItem(r.value, value=r) for r in repositories]
-	group = MenuItemGroup(items, sort_items=True)
+	group = MenuItemGroup(items, sort_items=False)
 	group.set_selected_by_value(preset)
 
 	result = SelectMenu[Repository](
