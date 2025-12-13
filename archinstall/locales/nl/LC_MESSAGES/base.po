@@ -607,22 +607,22 @@ msgid "Would you like to create a separate partition for /home?"
 msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr ""
+msgstr "De geselecteerde stations hebben niet de minimale capaciteit die vereist is voor een automatische suggestie\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr ""
+msgstr "Minimale capaciteit voor de /home partitie: {}GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr ""
+msgstr "Minimale capaciteit voor de Arch Linux partitie: {}GB"
 
 msgid "Continue"
-msgstr ""
+msgstr "Doorgaan"
 
 msgid "yes"
-msgstr ""
+msgstr "ja"
 
 msgid "no"
-msgstr ""
+msgstr "nee"
 
 msgid "set: {}"
 msgstr ""
@@ -638,14 +638,14 @@ msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr ""
 
 msgid "Add interface"
-msgstr ""
+msgstr "Voeg interface toe"
 
 msgid "Edit interface"
-msgstr ""
+msgstr "Bewerk interface"
 
 #, fuzzy
 msgid "Delete interface"
-msgstr "Gebruiker verwijderen"
+msgstr "Interface verwijderen"
 
 #, fuzzy
 msgid "Select interface to add"
@@ -682,7 +682,7 @@ msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr ""
 
 msgid "Press Enter to continue."
-msgstr ""
+msgstr "Druk op Enter om door te gaan"
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
 msgstr ""
@@ -763,16 +763,16 @@ msgstr ""
 "Kies welke partitie moet worden gemaskeerd alvorens te formatteren"
 
 msgid "Use HSM to unlock encrypted drive"
-msgstr ""
+msgstr "Gebruik HSM om deze drive te ontgrendelen"
 
 msgid "Device"
-msgstr ""
+msgstr "Apparaat"
 
 msgid "Size"
-msgstr ""
+msgstr "Grootte"
 
 msgid "Free space"
-msgstr ""
+msgstr "Beschikbare schrijfruimte"
 
 msgid "Bus-type"
 msgstr ""
@@ -797,27 +797,27 @@ msgid "Select which partitions to encrypt"
 msgstr "Kies welke partitie moet worden versleuteld"
 
 msgid "very weak"
-msgstr ""
+msgstr "Zeer zwak"
 
 msgid "weak"
-msgstr ""
+msgstr "Zwak"
 
 msgid "moderate"
-msgstr ""
+msgstr "Gemiddeld"
 
 msgid "strong"
-msgstr ""
+msgstr "Sterk"
 
 #, fuzzy
 msgid "Add subvolume"
 msgstr " Subvolume :{:16}"
 
 msgid "Edit subvolume"
-msgstr ""
+msgstr "Subvolume bewerken"
 
 #, fuzzy
 msgid "Delete subvolume"
-msgstr "Gebruiker verwijderen"
+msgstr "Subvolume verwijderen"
 
 msgid "Configured {} interfaces"
 msgstr ""
@@ -852,16 +852,16 @@ msgid "ESC to skip"
 msgstr "Druk op Esc om over te slaan\n"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "Druk op CTRL+C om te resetten"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "TAB om te selecteren"
 
 msgid "[Default value: 0] > "
 msgstr ""
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
+msgstr "Om deze vertaling te gebruiken, installeer handmatig een lettertype die deze taal ondersteund."
 
 msgid "The font should be stored as {}"
 msgstr ""
@@ -890,11 +890,11 @@ msgstr ""
 
 #, fuzzy
 msgid "Existing Partitions"
-msgstr "Bezig met toevoegen van partitie…"
+msgstr "Bestaande partities"
 
 #, fuzzy
 msgid "Select a partitioning option"
-msgstr "Partitie verwijderen"
+msgstr "Selecteer een optie"
 
 #, fuzzy
 msgid "Enter the root directory of the mounted devices: "
@@ -947,7 +947,7 @@ msgid "Delete partition"
 msgstr "Partitie verwijderen"
 
 msgid "Partition"
-msgstr ""
+msgstr "Partitie"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
 msgstr ""
@@ -963,7 +963,7 @@ msgid "Mountpoint: "
 msgstr ""
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "Vrije sectoren op apparaat {}:"
 
 #, fuzzy
 msgid "Total sectors: {}"
@@ -978,7 +978,7 @@ msgid "Enter the end sector of the partition (percentage or block number, defaul
 msgstr "Voer de eindsector in (percentage of bloknummer - bijvoorbeeld: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "Hiermee worden alle nieuw toegevoegde partities verwijderd. Doorgaan?"
 
 #, python-brace-format
 msgid "Partition management: {}"
@@ -1002,7 +1002,7 @@ msgid "Higher values increase security but slow down boot time"
 msgstr ""
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Standaard: 10000ms, Aanbevolen bereik: 1000-60000"
 
 msgid "Iteration time cannot be empty"
 msgstr ""
@@ -1014,10 +1014,10 @@ msgid "Iteration time must be at most 120000ms"
 msgstr ""
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Vul een geldig nummer in"
 
 msgid "Partitions"
-msgstr ""
+msgstr "Partities"
 
 msgid "No HSM devices available"
 msgstr ""
@@ -1046,7 +1046,7 @@ msgid "Pre-mounted configuration"
 msgstr "Geen configuratie"
 
 msgid "Unknown"
-msgstr ""
+msgstr "Onbekend"
 
 msgid "Partition encryption"
 msgstr ""
@@ -1056,7 +1056,7 @@ msgid " ! Formatting {} in "
 msgstr ""
 
 msgid "← Back"
-msgstr ""
+msgstr "← Terug"
 
 msgid "Disk encryption"
 msgstr ""
@@ -1074,7 +1074,7 @@ msgid "All settings will be reset, are you sure?"
 msgstr "‘{}’ bevat in behandeling zijnde partities, welke hierdoor worden verwijderd. Weet u zeker dat u wilt doorgaan?"
 
 msgid "Back"
-msgstr ""
+msgstr "Terug"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr ""
@@ -1121,7 +1121,7 @@ msgid "Should this profile be enabled for installation?"
 msgstr ""
 
 msgid "Create your own"
-msgstr ""
+msgstr "Maak je eigen"
 
 #, fuzzy
 msgid ""
@@ -1268,14 +1268,14 @@ msgid "Manufacturer"
 msgstr ""
 
 msgid "Product"
-msgstr ""
+msgstr "Product"
 
 #, fuzzy, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "Configuratie vastleggen"
 
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
 msgstr ""
@@ -1413,10 +1413,10 @@ msgid "LUKS on LVM"
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 msgid "No"
-msgstr ""
+msgstr "Nee"
 
 #, fuzzy
 msgid "Archinstall help"
@@ -1426,7 +1426,7 @@ msgid " (default)"
 msgstr ""
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "Toets Crtl+h voor hulp"
 
 msgid "Choose an option to give Sway access to your hardware"
 msgstr ""
@@ -1457,7 +1457,7 @@ msgid "Filesystem"
 msgstr ""
 
 msgid "Invalid size"
-msgstr ""
+msgstr "Invalide grootte"
 
 #, fuzzy
 msgid "Start (default: sector {}): "
@@ -1487,13 +1487,13 @@ msgid "Write additional packages to install (space separated, leave blank to ski
 msgstr "Typ de namen van te installeren pakketten (spatiegescheiden - laat leeg om over te slaan): "
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "Invalide aantal downloads"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "Aantal downloads"
 
 msgid "The username you entered is invalid"
-msgstr ""
+msgstr "De gebruikersnaam is incorrect"
 
 #, fuzzy
 msgid "Username"
@@ -1508,13 +1508,13 @@ msgid "Interfaces"
 msgstr "Gebruiker verwijderen"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "Vul een geldig IP adres in de IP-config modus"
 
 msgid "Modes"
 msgstr ""
 
 msgid "IP address"
-msgstr ""
+msgstr "IP adres"
 
 #, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
@@ -1540,10 +1540,10 @@ msgid "Kernel"
 msgstr "Kernels"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "UEFI is niet herkend. Sommige instellingen zullen worden uitgeschakeld"
 
 msgid "Info"
-msgstr ""
+msgstr "Informatie"
 
 msgid "The proprietary Nvidia driver is not supported by Sway."
 msgstr ""
@@ -1560,7 +1560,7 @@ msgid "Confirm password"
 msgstr "Wachtwoord wijzigen"
 
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "De wachtwoorden zijn ongelijk. Probeer opnieuw."
 
 #, fuzzy
 msgid "Not a valid directory"
@@ -1571,7 +1571,7 @@ msgid "Would you like to continue?"
 msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
 
 msgid "Directory"
-msgstr ""
+msgstr "Map"
 
 #, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
@@ -1582,14 +1582,14 @@ msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Configuratie vastleggen"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Ingeschakeld"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Uitgeschakeld"
 
 #, fuzzy
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Meld dit voorval (inclusief het logboek) op https://github.com/archlinux/archinstall/issues"
+msgstr "Meld dit voorval (inclusief het logboek) op https://github.com/archlinux/archinstall/issues"
 
 #, fuzzy
 msgid "Mirror name"
@@ -1607,7 +1607,7 @@ msgid "Select execution mode"
 msgstr "Kies een actie voor '{}'"
 
 msgid "Press ? for help"
-msgstr ""
+msgstr "Toets ? voor hulp"
 
 msgid "Choose an option to give Hyprland access to your hardware"
 msgstr ""
@@ -1635,7 +1635,7 @@ msgstr ""
 
 #, python-brace-format
 msgid "Size: {} / {}"
-msgstr ""
+msgstr "Grootte: {} / {}"
 
 #, fuzzy, python-brace-format
 msgid "Size (default: {}): "
@@ -1673,10 +1673,10 @@ msgid "Add a custom repository"
 msgstr "Gebruiker toevoegen"
 
 msgid "Change custom repository"
-msgstr ""
+msgstr "Gebruiker wijzigen"
 
 msgid "Delete custom repository"
-msgstr ""
+msgstr "Gebruiker verwijderen"
 
 #, fuzzy
 msgid "Repository name"
@@ -1730,13 +1730,13 @@ msgid "Custom repositories"
 msgstr "Aanvullende pakketbronnen"
 
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Alleen ASCII karakters zijn toegestaan"
 
 msgid "Show help"
-msgstr ""
+msgstr "Laat hulp zien"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Sluit hulp af"
 
 msgid "Preview scroll up"
 msgstr ""
@@ -1745,16 +1745,16 @@ msgid "Preview scroll down"
 msgstr ""
 
 msgid "Move up"
-msgstr ""
+msgstr "Omhoog"
 
 msgid "Move down"
-msgstr ""
+msgstr "Omlaag"
 
 msgid "Move right"
-msgstr ""
+msgstr "Naar rechts"
 
 msgid "Move left"
-msgstr ""
+msgstr "Naar links"
 
 msgid "Jump to entry"
 msgstr ""
@@ -1781,10 +1781,10 @@ msgid "Skip selection menu"
 msgstr "Kies een actie voor '{}'"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Start zoekmodus"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Sluit zoekmodus af"
 
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr ""
@@ -1810,13 +1810,13 @@ msgid "Exit archinstall"
 msgstr "Archinstall-taal"
 
 msgid "Reboot system"
-msgstr ""
+msgstr "Systeem opnieuw opstarten"
 
 msgid "chroot into installation for post-installation configurations"
 msgstr ""
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Installatie geslaagd"
 
 #, fuzzy
 msgid "What would you like to do next?"
@@ -1851,27 +1851,27 @@ msgid "Repositories: {}"
 msgstr "Spiegelserverregio"
 
 msgid "New version available"
-msgstr ""
+msgstr "Nieuwe versie beschikbaar"
 
 #, fuzzy
 msgid "Passwordless login"
 msgstr "Rootwachtwoord"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Tweestapsverificatie"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
 #, fuzzy
 msgid "Would you like to configure Bluetooth?"
 msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Authenticatie"
 
 msgid "Applications"
-msgstr ""
+msgstr "Applicaties"
 
 msgid "U2F login method: "
 msgstr ""
@@ -1887,7 +1887,7 @@ msgid "Syncing the system..."
 msgstr ""
 
 msgid "Value cannot be empty"
-msgstr ""
+msgstr "Waarde mag niet leeg zijn"
 
 msgid "Snapshot type"
 msgstr ""
@@ -1936,24 +1936,24 @@ msgid "Select wifi network to connect to"
 msgstr "Kies een in te stellen netwerkkaart"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Wifi netwerken scannen..."
 
 #, fuzzy
 msgid "No wifi networks found"
 msgstr "Geen netwerkconfiguratie"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "Mislukt om wifi op te zetten"
 
 #, fuzzy
 msgid "Enter wifi password"
 msgstr "Voer een wachtwoord in: "
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "Removable"
-msgstr ""
+msgstr "Verwijderbaar"
 
 msgid "Install to removable location"
 msgstr ""
@@ -1978,6 +1978,14 @@ msgstr ""
 
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr ""
+
+#, python-brace-format
+msgid "Setting up U2F login: {u2f_config.u2f_login_method.value}"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
+msgstr "Standaard: 10000ms, Aanbevolen bereik: 1000-60000"
 
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
