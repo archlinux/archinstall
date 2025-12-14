@@ -39,7 +39,7 @@ msgid "Should this user be a superuser (sudoer)?"
 msgstr "Divê ev bikarhêner superbikarhêner (sudoer) be?"
 
 msgid "Select a timezone"
-msgstr "Herêmeke demjimêrê hilbijêre"
+msgstr "Herêmeke demê hilbijêre"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
 msgstr "Tu dixwazî GRUB wekî barkarê destpêkirinê li şûna systemd-boot bi kar bînî?"
