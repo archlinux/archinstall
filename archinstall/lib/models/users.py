@@ -201,7 +201,7 @@ class User:
 			elif enc_password:
 				password = Password(enc_password=enc_password)
 
-			if username is None or password is None:
+			if not username or password is None:
 				continue
 
 			user = User(

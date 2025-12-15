@@ -51,8 +51,8 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 				btrfs_snapshot_config=snapshot_config,
 			)
 
-		menu_optioons = self._define_menu_options()
-		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
+		menu_options = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_options, sort_items=False, checkmarks=True)
 
 		super().__init__(
 			self._item_group,

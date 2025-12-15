@@ -29,7 +29,7 @@ def perform_installation(mountpoint: Path) -> None:
 		disk_config,
 		kernels=config.kernels,
 	) as installation:
-		# Strap in the base system, add a boot loader and configure
+		# Strap in the base system, add a bootloader and configure
 		# some other minor details as specified by this profile and user.
 		installation.mount_ordered_layout()
 		installation.minimal_installation()

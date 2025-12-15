@@ -132,7 +132,7 @@ class Installer:
 			self.sync_log_to_install_medium()
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
-			# and then reboot, and a identical log file will be found in the ISO medium anyway.
+			# and then reboot, and an identical log file will be found in the ISO medium anyway.
 			Tui.print(str(tr('[!] A log file has been created here: {}').format(logger.path)))
 			Tui.print(tr('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues'))
 
@@ -554,7 +554,7 @@ class Installer:
 		info(f'Updating {fstab_path}')
 
 		try:
-			gen_fstab = SysCommand(f'genfstab {flags} {self.target}').output()
+			gen_fstab = SysCommand(f'genfstab {flags} -f {self.target} {self.target}').output()
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
@@ -875,6 +875,9 @@ class Installer:
 		pacman_conf.enable(optional_repositories)
 		pacman_conf.apply()
 
+		if locale_config:
+			self.set_vconsole(locale_config)
+
 		self.pacman.strap(self._base_packages)
 		self._helper_flags['base-strapped'] = True
 
@@ -952,19 +955,20 @@ class Installer:
 
 			self.enable_service('snapper-timeline.timer')
 			self.enable_service('snapper-cleanup.timer')
+
 		elif snapshot_type == SnapshotType.Timeshift:
 			debug('Setting up Btrfs timeshift')
 
 			self.pacman.strap('cronie')
 			self.pacman.strap('timeshift')
-
 			self.enable_service('cronie.service')
 
-			if bootloader and bootloader == Bootloader.Grub:
-				self.pacman.strap('grub-btrfs')
-				self.pacman.strap('inotify-tools')
-				self._configure_grub_btrfsd()
-				self.enable_service('grub-btrfsd.service')
+		if bootloader and bootloader == Bootloader.Grub:
+			debug('Setting up grub integration for either')
+			self.pacman.strap('grub-btrfs')
+			self.pacman.strap('inotify-tools')
+			self._configure_grub_btrfsd(snapshot_type)
+			self.enable_service('grub-btrfsd.service')
 
 	def setup_swap(self, kind: str = 'zram') -> None:
 		if kind == 'zram':
@@ -1004,10 +1008,17 @@ class Installer:
 					return root
 		return None
 
-	def _configure_grub_btrfsd(self) -> None:
-		# See https://github.com/Antynea/grub-btrfs?tab=readme-ov-file#-using-timeshift-with-systemd
-		debug('Configuring grub-btrfsd service')
+	def _configure_grub_btrfsd(self, snapshot_type: SnapshotType) -> None:
+		if snapshot_type == SnapshotType.Timeshift:
+			snapshot_path = '--timeshift-auto'
+		elif snapshot_type == SnapshotType.Snapper:
+			snapshot_path = '/.snapshots'
+		else:
+			raise ValueError('Unsupported snapshot type')
 
+		debug(f'Configuring grub-btrfsd service for {snapshot_type} at {snapshot_path}')
+
+		# Works for either snapper or ts just adpating default paths above
 		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
 		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
 		systemd_dir.mkdir(parents=True, exist_ok=True)
@@ -1018,9 +1029,9 @@ class Installer:
 			"""
 			[Service]
 			ExecStart=
-			ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
+			ExecStart=/usr/bin/grub-btrfsd --syslog {snapshot_path}
 			"""
-		)
+		).format(snapshot_path=snapshot_path)
 
 		override_conf.write_text(config_content)
 		override_conf.chmod(0o644)
@@ -1159,19 +1170,18 @@ class Installer:
 			f"""\
 			# Created by: archinstall
 			# Created on: {self.init_time}
-			title   Arch Linux ({{kernel}}{{variant}})
+			title   Arch Linux ({{kernel}})
 			linux   /vmlinuz-{{kernel}}
-			initrd  /initramfs-{{kernel}}{{variant}}.img
+			initrd  /initramfs-{{kernel}}.img
 			options {' '.join(self._get_kernel_params(root))}
 			""",
 		)
 
 		for kernel in self.kernels:
-			for variant in ('', '-fallback'):
-				# Setup the loader entry
-				name = entry_name.format(kernel=kernel, variant=variant)
-				entry_conf = entries_dir / name
-				entry_conf.write_text(entry_template.format(kernel=kernel, variant=variant))
+			# Setup the loader entry
+			name = entry_name.format(kernel=kernel)
+			entry_conf = entries_dir / name
+			entry_conf.write_text(entry_template.format(kernel=kernel))
 
 	def _add_systemd_bootloader(
 		self,
@@ -1236,8 +1246,8 @@ class Installer:
 		if uki_enabled:
 			default_entry = f'arch-{default_kernel}.efi'
 		else:
-			entry_name = self.init_time + '_{kernel}{variant}.conf'
-			default_entry = entry_name.format(kernel=default_kernel, variant='')
+			entry_name = self.init_time + '_{kernel}.conf'
+			default_entry = entry_name.format(kernel=default_kernel)
 			self._create_bls_entries(boot_partition, root, entry_name)
 
 		default = f'default {default_entry}'
@@ -1267,6 +1277,7 @@ class Installer:
 		boot_partition: PartitionModification,
 		root: PartitionModification | LvmVolume,
 		efi_partition: PartitionModification | None,
+		bootloader_removable: bool = False,
 	) -> None:
 		debug('Installing grub bootloader')
 
@@ -1310,18 +1321,17 @@ class Installer:
 				f'--efi-directory={efi_partition.mountpoint}',
 				*boot_dir_arg,
 				'--bootloader-id=GRUB',
-				'--removable',
 			]
+
+			if bootloader_removable:
+				add_options.append('--removable')
 
 			command.extend(add_options)
 
 			try:
 				SysCommand(command, peek_output=True)
-			except SysCallError:
-				try:
-					SysCommand(command, peek_output=True)
-				except SysCallError as err:
-					raise DiskError(f'Could not install GRUB to {self.target}{efi_partition.mountpoint}: {err}')
+			except SysCallError as err:
+				raise DiskError(f'Could not install GRUB to {self.target}{efi_partition.mountpoint}: {err}')
 		else:
 			info(f'GRUB boot partition: {boot_partition.dev_path}')
 
@@ -1353,6 +1363,7 @@ class Installer:
 		efi_partition: PartitionModification | None,
 		root: PartitionModification | LvmVolume,
 		uki_enabled: bool = False,
+		bootloader_removable: bool = False,
 	) -> None:
 		debug('Installing Limine bootloader')
 
@@ -1375,22 +1386,22 @@ class Installer:
 			info(f'Limine EFI partition: {efi_partition.dev_path}')
 
 			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
-			is_target_usb = (
-				SysCommand(
-					f'udevadm info --no-pager --query=property --property=ID_BUS --value --name={parent_dev_path}',
-				).decode()
-				== 'usb'
-			)
 
 			try:
 				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
 				efi_dir_path_target = efi_partition.mountpoint / 'EFI'
-				if is_target_usb:
+				if bootloader_removable:
 					efi_dir_path = efi_dir_path / 'BOOT'
 					efi_dir_path_target = efi_dir_path_target / 'BOOT'
+
+					boot_limine_path = self.target / 'boot' / 'limine'
+					boot_limine_path.mkdir(parents=True, exist_ok=True)
+					config_path = boot_limine_path / 'limine.conf'
 				else:
-					efi_dir_path = efi_dir_path / 'limine'
-					efi_dir_path_target = efi_dir_path_target / 'limine'
+					efi_dir_path = efi_dir_path / 'arch-limine'
+					efi_dir_path_target = efi_dir_path_target / 'arch-limine'
+
+					config_path = efi_dir_path / 'limine.conf'
 
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
@@ -1399,13 +1410,11 @@ class Installer:
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
-			config_path = efi_dir_path / 'limine.conf'
-
 			hook_command = (
 				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_dir_path_target}/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_dir_path_target}/'
 			)
 
-			if not is_target_usb:
+			if not bootloader_removable:
 				# Create EFI boot menu entry for Limine.
 				try:
 					with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
@@ -1414,9 +1423,9 @@ class Installer:
 					raise OSError(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
 
 				if efi_bitness == '64':
-					loader_path = '/EFI/limine/BOOTX64.EFI'
+					loader_path = '\\EFI\\arch-limine\\BOOTX64.EFI'
 				elif efi_bitness == '32':
-					loader_path = '/EFI/limine/BOOTIA32.EFI'
+					loader_path = '\\EFI\\arch-limine\\BOOTIA32.EFI'
 				else:
 					raise ValueError(f'EFI bitness is neither 32 nor 64 bits. Found "{efi_bitness}".')
 
@@ -1427,7 +1436,7 @@ class Installer:
 						f' --disk {parent_dev_path}'
 						f' --part {efi_partition.partn}'
 						' --label "Arch Linux Limine Bootloader"'
-						f' --loader {loader_path}'
+						f" --loader '{loader_path}'"
 						' --unicode'
 						' --verbose',
 					)
@@ -1484,22 +1493,22 @@ class Installer:
 			path_root = f'uuid({boot_partition.partuuid})'
 
 		for kernel in self.kernels:
-			for variant in ('', '-fallback'):
-				if uki_enabled:
-					entry = [
-						'protocol: efi',
-						f'path: boot():/EFI/Linux/arch-{kernel}.efi',
-						f'cmdline: {kernel_params}',
-					]
-				else:
-					entry = [
-						'protocol: linux',
-						f'path: {path_root}:/vmlinuz-{kernel}',
-						f'cmdline: {kernel_params}',
-						f'module_path: {path_root}:/initramfs-{kernel}{variant}.img',
-					]
-
-				config_contents += f'\n/Arch Linux ({kernel}{variant})\n'
+			if uki_enabled:
+				entry = [
+					'protocol: efi',
+					f'path: boot():/EFI/Linux/arch-{kernel}.efi',
+					f'cmdline: {kernel_params}',
+				]
+				config_contents += f'\n/Arch Linux ({kernel})\n'
+				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
+			else:
+				entry = [
+					'protocol: linux',
+					f'path: {path_root}:/vmlinuz-{kernel}',
+					f'cmdline: {kernel_params}',
+					f'module_path: {path_root}:/initramfs-{kernel}.img',
+				]
+				config_contents += f'\n/Arch Linux ({kernel})\n'
 				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
 
 		config_path.write_text(config_contents)
@@ -1611,16 +1620,18 @@ class Installer:
 		if not self.mkinitcpio(['-P']):
 			error('Error generating initramfs (continuing anyway)')
 
-	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False) -> None:
+	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False, bootloader_removable: bool = False) -> None:
 		"""
 		Adds a bootloader to the installation instance.
 		Archinstall supports one of three types:
 		* systemd-bootctl
 		* grub
-		* limine (beta)
+		* limine
 		* efistub (beta)
 
 		:param bootloader: Type of bootloader to be added
+		:param uki_enabled: Whether to use unified kernel images
+		:param bootloader_removable: Whether to install to removable media location (UEFI only, for GRUB and Limine)
 		"""
 
 		for plugin in plugins.values():
@@ -1642,6 +1653,20 @@ class Installer:
 
 		info(f'Adding bootloader {bootloader.value} to {boot_partition.dev_path}')
 
+		# validate UKI support
+		if uki_enabled and not bootloader.has_uki_support():
+			warn(f'Bootloader {bootloader.value} does not support UKI; disabling.')
+			uki_enabled = False
+
+		# validate removable bootloader option
+		if bootloader_removable:
+			if not SysInfo.has_uefi():
+				warn('Removable install requested but system is not UEFI; disabling.')
+				bootloader_removable = False
+			elif not bootloader.has_removable_support():
+				warn(f'Bootloader {bootloader.value} lacks removable support; disabling.')
+				bootloader_removable = False
+
 		if uki_enabled:
 			self._config_uki(root, efi_partition)
 
@@ -1649,11 +1674,11 @@ class Installer:
 			case Bootloader.Systemd:
 				self._add_systemd_bootloader(boot_partition, root, efi_partition, uki_enabled)
 			case Bootloader.Grub:
-				self._add_grub_bootloader(boot_partition, root, efi_partition)
+				self._add_grub_bootloader(boot_partition, root, efi_partition, bootloader_removable)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:
-				self._add_limine_bootloader(boot_partition, efi_partition, root, uki_enabled)
+				self._add_limine_bootloader(boot_partition, efi_partition, root, uki_enabled, bootloader_removable)
 
 	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
@@ -1767,6 +1792,29 @@ class Installer:
 			return True
 		except SysCallError:
 			return False
+
+	def set_vconsole(self, locale_config: 'LocaleConfiguration') -> None:
+		# use the already set kb layout
+		kb_vconsole: str = locale_config.kb_layout
+		# this is the default used in ISO other option for hdpi screens TER16x32
+		# can be checked using
+		# zgrep "CONFIG_FONT" /proc/config.gz
+		# https://wiki.archlinux.org/title/Linux_console#Fonts
+
+		font_vconsole = 'default8x16'
+
+		# Ensure /etc exists
+		vconsole_dir: Path = self.target / 'etc'
+		vconsole_dir.mkdir(parents=True, exist_ok=True)
+		vconsole_path: Path = vconsole_dir / 'vconsole.conf'
+
+		# Write both KEYMAP and FONT to vconsole.conf
+		vconsole_content = f'KEYMAP={kb_vconsole}\n'
+		# Corrects another warning
+		vconsole_content += f'FONT={font_vconsole}\n'
+
+		vconsole_path.write_text(vconsole_content)
+		info(f'Wrote to {vconsole_path} using {kb_vconsole} and {font_vconsole}')
 
 	def set_keyboard_language(self, language: str) -> bool:
 		info(f'Setting keyboard language to {language}')

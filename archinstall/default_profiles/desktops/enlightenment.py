@@ -4,7 +4,7 @@ from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
 
 
-class EnlighenmentProfile(XorgProfile):
+class EnlightenmentProfile(XorgProfile):
 	def __init__(self) -> None:
 		super().__init__('Enlightenment', ProfileType.WindowMgr)
 

@@ -82,7 +82,7 @@ class MirrorStatusEntryV3(BaseModel):
 	@property
 	def latency(self) -> float | None:
 		"""
-		Latency measures the miliseconds between one ICMP request & response.
+		Latency measures the milliseconds between one ICMP request & response.
 		It only does so once because we check if self._latency is None, and a ICMP timeout result in -1
 		We do this because some hosts blocks ICMP so we'll have to rely on .speed() instead which is slower.
 		"""
