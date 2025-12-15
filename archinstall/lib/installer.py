@@ -676,7 +676,7 @@ class Installer:
 					plugin.on_service(service)
 
 	def run_command(self, cmd: str, peek_output: bool = False) -> SysCommand:
-		return SysCommand(f'arch-chroot -S {self.target} {cmd}', peek_output=peek_output)
+		return SysCommand(f'arch-chroot {self.target} {cmd}', peek_output=peek_output)
 
 	def arch_chroot(self, cmd: str, run_as: str | None = None, peek_output: bool = False) -> SysCommand:
 		if run_as:
@@ -1902,6 +1902,6 @@ def run_custom_user_commands(commands: list[str], installation: Installer) -> No
 		with open(chroot_path, 'w') as user_script:
 			user_script.write(command)
 
-		SysCommand(f'arch-chroot -S {installation.target} bash {script_path}')
+		SysCommand(f'arch-chroot {installation.target} bash {script_path}')
 
 		os.unlink(chroot_path)
