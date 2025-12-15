@@ -27,6 +27,17 @@ _VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
 _VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
 
 
+def running_from_host() -> bool:
+	"""
+	Check if running from an installed system.
+
+	Returns True if running from installed system (host mode) for host-to-target install.
+	Returns False if /run/archiso exists (ISO mode).
+	"""
+	is_host = not Path('/run/archiso').exists()
+	return is_host
+
+
 def generate_password(length: int = 64) -> str:
 	haystack = string.printable  # digits, ascii_letters, punctuation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for _ in range(length))
@@ -46,7 +57,7 @@ def clear_vt100_escape_codes_from_str(data: str) -> str:
 	return re.sub(_VT100_ESCAPE_REGEX, '', data)
 
 
-def jsonify(obj: object, safe: bool = True) -> object:
+def jsonify(obj: Any, safe: bool = True) -> Any:
 	"""
 	Converts objects into json.dumps() compatible nested dictionaries.
 	Setting safe to True skips dictionary keys starting with a bang (!)
@@ -84,7 +95,7 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 
 	@override
-	def encode(self, o: object) -> str:
+	def encode(self, o: Any) -> str:
 		return super().encode(jsonify(o))
 
 
@@ -94,7 +105,7 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 
 	@override
-	def encode(self, o: object) -> str:
+	def encode(self, o: Any) -> str:
 		return super().encode(jsonify(o, safe=False))
 
 

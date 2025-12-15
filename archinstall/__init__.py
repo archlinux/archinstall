@@ -13,6 +13,7 @@ from archinstall.lib.networking import ping
 from archinstall.lib.packages.packages import check_package_upgrade
 from archinstall.tui.ui.components import tui as ttui
 
+from .lib.general import running_from_host
 from .lib.hardware import SysInfo
 from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
@@ -109,6 +110,12 @@ def main() -> int:
 				ttui.global_header = f'{ttui.global_header} {new_version}'
 				info(new_version)
 				time.sleep(3)
+
+	if running_from_host():
+		# log which mode we are using
+		debug('Running from Host (H2T Mode)...')
+	else:
+		debug('Running from ISO (Live Mode)...')
 
 	script = arch_config_handler.get_script()
 
