@@ -531,10 +531,10 @@ msgid "Optional repositories"
 msgstr "Depoyên vebijêrkî"
 
 msgid "Save configuration"
-msgstr "Rêxisitinê tomar bike"
+msgstr "Rêkxisitinê tomar bike"
 
 msgid "Missing configurations:\n"
-msgstr "Rêxisitinên wenda:\n"
+msgstr "Rêkxisitinên wenda:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
 msgstr "An borînpeyva root an herî kêm 1 superbikarhêner were diyarkirin"
@@ -853,7 +853,7 @@ msgid "Profiles must have unique name, but profile definitions with duplicate na
 msgstr "Pêdivî ye ku profîl nava yekana be, lê pênaseyên profîlê yên bi navên dûbarekirî hatin dîtin: {}"
 
 msgid "Select one or more devices to use and configure"
-msgstr "Yek an çend amûran bo bikaranîn û rêxisitinê hilbijêre"
+msgstr "Yek an çend amûran bo bikaranîn û rêkxisitinê hilbijêre"
 
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
 msgstr "Ku tu hilbijartina amûrê ji nû ve saz bikî, ev ê şêwaza dîskê ya heyî jî ji nû ve saz bike. Tu bawer î?"
@@ -1011,7 +1011,7 @@ msgid "Disk encryption"
 msgstr "Şîfrekirina dîskê"
 
 msgid "Configuration"
-msgstr "Rêxistin"
+msgstr "Rêkxistin"
 
 msgid "Password"
 msgstr "Borînpeyv"
@@ -1094,7 +1094,7 @@ msgid "This is a list of pre-programmed default_profiles"
 msgstr "Ev lîsteyek ji profîlên_berdest ên pêş-bernamekirî ye"
 
 msgid "Disk configuration"
-msgstr "Rêxisitina dîskê"
+msgstr "Rêkxisitina dîskê"
 
 msgid "Profiles"
 msgstr "Profîl"
@@ -1103,7 +1103,7 @@ msgid "Finding possible directories to save configuration files ..."
 msgstr "Dîtina peldankên gengaz ji bo tomarkirina pelên rêkxisitinê ..."
 
 msgid "Select directory (or directories) for saving configuration files"
-msgstr "Ji bo tomarkirina pelên rêxisitinê pelrêçekê (an jî pelrêçan) hilbijêre"
+msgstr "Ji bo tomarkirina pelên rêkxisitinê pelrêçekê (an jî pelrêçan) hilbijêre"
 
 msgid "Add a custom mirror"
 msgstr "Eynika kesane tevlî bike"
@@ -1133,7 +1133,7 @@ msgid "Defined"
 msgstr "Danaskirî"
 
 msgid "Save user configuration (including disk layout)"
-msgstr "Rêxisitinên bikarhêner tomar bike (tevlî şêwaza dîskê)"
+msgstr "Rêkxisitinên bikarhêner tomar bike (tevlî şêwaza dîskê)"
 
 msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
