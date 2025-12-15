@@ -33,7 +33,7 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.19.0",
+    "mypy==1.19.1",
     "flake8==7.3.0",
     "pre-commit==4.5.0",
     "ruff==0.14.9",
