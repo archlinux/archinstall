@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Soubor protokolu byl vytvořen zde: {} {}"
@@ -883,7 +883,7 @@ msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Označení/Odznačení oddílu ke zformátování (vymaže data)"
 
 msgid "Mark/Unmark as bootable"
-msgstr "Označit/Odznačit jako zaváděcí"
+msgstr "Označit/Odznačit jako spouštěcí"
 
 msgid "Change filesystem"
 msgstr "Změnit souborový systém"
@@ -907,7 +907,7 @@ msgid "Partition mount-points are relative to inside the installation, the boot 
 msgstr "Přípojné body diskových oddílů jsou relativní uvnitř instalace, například spouštěcí bod by byl /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr "Pokud je nastaven přípojný bod /boot, oddíl je zároveň označený jako zaváděcí."
+msgstr "Pokud je nastaven přípojný bod /boot, oddíl je zároveň označený jako spouštěcí."
 
 msgid "Mountpoint: "
 msgstr "Přípojný bod: "
@@ -939,28 +939,28 @@ msgid "Encryption type"
 msgstr "Typ šifrování"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Doba iterace"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Zadejte dobu iterace pro šifrování LUKS (v milisekundách)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Vyšší hodnoty zvyšují bezpečnost, ale snižují dobu spouštění"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Výchozí: 10000ms, Doporučený rozsah: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Doba iterace nesmí být prázdná"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Doba iterace musí být alespoň 100 ms"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Doba iterace musí být alespoň 120000ms"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Prosím zadejte platné číslo"
 
 msgid "Partitions"
 msgstr "Diskové oddíly"
@@ -994,7 +994,7 @@ msgstr "Šifrování diskového oddílu"
 
 #, python-brace-format
 msgid " ! Formatting {} in "
-msgstr " ! Formátuji {} na "
+msgstr " ! Formátování {} na "
 
 msgid "← Back"
 msgstr "← Zpět"
@@ -1248,7 +1248,7 @@ msgid "Time syncronization not completing, while you wait - check the docs for w
 msgstr "Synchronizace času není dokončena, mezitím se můžete podívat na možnosti řešení: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr "Přeskakuji čekání na automatickou synchronizaci času (nesynchronizovaný čas může způsobit problémy během instalace)"
+msgstr "Přeskakování čekání na automatickou synchronizaci času (nesynchronizovaný čas může způsobit problémy během instalace)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Čekám na dokončení synchronizace Arch Linux keyring (archlinux-keyring-wkd-sync)."
@@ -1677,7 +1677,7 @@ msgid "Reboot system"
 msgstr "Restartovat systém"
 
 msgid "chroot into installation for post-installation configurations"
-msgstr "Vstoupit skrze chroot do své nově vytvořené instalace a provést závěrečnou konfiguraci"
+msgstr "vstoupit skrze chroot do své nově vytvořené instalace a provést závěrečnou konfiguraci"
 
 msgid "Installation completed"
 msgstr "Instalace dokončena"
@@ -1708,132 +1708,122 @@ msgstr "Heslo pro zašifrování souboru s přihlašovacími údaji"
 msgid "Repositories: {}"
 msgstr "Repozitáře: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "Žádné HSM zařízení není dostupné"
+msgstr "Je dostupná nová verze"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Heslo"
+msgstr "Přihlášení bez hesla"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Dvoufázové přihlášení"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Přejete si pokračovat?"
+msgstr "Přejete si nastavit Bluetooth?"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Ověřování"
 
 msgid "Applications"
-msgstr ""
+msgstr "Aplikace"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "Způsob U2F přihlášení: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Sudo bez hesla: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Druh Btrfs snímku: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Synchronizování systému..."
 
 msgid "Value cannot be empty"
-msgstr ""
+msgstr "Hodnota nesmí být prázdná"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Druh snímku"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Typ prostředí: {}"
+msgstr "Druh snímku: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Nastavení U2F přihlášení"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Nebylo nalezeno žádné U2F zařízení"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "Způsob U2F přihlášení"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Zadejte heslo: "
+msgstr "Povolit sudo bez hesla?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Vyberte FIDO2 zařízení abyste mohli používat HSM"
+msgstr "Nastavování U2F zařízení pro uživatele: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "Možná budete muset zadat PIN a poté potvrdit na svém U2F zařízení, aby se zaregistrovalo"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Spouští se úpravy zařízení v "
 
-#, fuzzy
 msgid "No network connection found"
-msgstr "Žádná konfigurace sítě"
+msgstr "Nebylo nalezeno žádné síťové připojení"
 
-#, fuzzy
 msgid "Would you like to connect to a Wifi?"
-msgstr "Přejete si pokračovat?"
+msgstr "Přejete si připojit se k Wifi?"
 
-#, fuzzy
 msgid "No wifi interface found"
-msgstr "Nakonfigurujte rozhraní"
+msgstr "Nebylo nalezeno žádné wifi zařízení"
 
-#, fuzzy
 msgid "Select wifi network to connect to"
-msgstr "Zvolte síťové rozhraní ke konfiguraci"
+msgstr "Zvolte ke které wifi se chcete připojit"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Vyhledávání wifi sítí..."
 
-#, fuzzy
 msgid "No wifi networks found"
-msgstr "Žádná konfigurace sítě"
+msgstr "Nebylo nalezeny žádné wifi sítě"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "Nepodařilo se nastavit wifi"
 
-#, fuzzy
 msgid "Enter wifi password"
-msgstr "Zadejte heslo: "
+msgstr "Zadejte heslo pro wifi"
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "Removable"
-msgstr ""
+msgstr "Vyměnitelné"
 
 msgid "Install to removable location"
-msgstr ""
+msgstr "Nainstalovat na vyměnitelné médium"
 
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
+msgstr "Bude nainstalováno do /EFI/BOOT/ (přenosné umístění)"
 
 msgid "Will install to standard location with NVRAM entry"
-msgstr ""
+msgstr "Bude nainstalováno na standardní umístění s NVRAM záznamem"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
+msgstr "Chcete nainstalovat zavadeč do výchozího umístění pro vyhledávání přenosných médií?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
+msgstr "Toto nainstaluje zavaděč do /EFI/BOOT/BOOTX64.EFI (nebo podobně), což je užitečné pro:"
 
 msgid "USB drives or other portable external media."
-msgstr ""
+msgstr "USB disky nebo jiná přenosná externí média."
 
 msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
+msgstr "Systémy, kde chcete, aby byl disk spouštěcí na jakémkoli počítači."
 
 msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
+msgstr "Firmware, který správně nepodporuje spouštěcí záznamy v NVRAM."

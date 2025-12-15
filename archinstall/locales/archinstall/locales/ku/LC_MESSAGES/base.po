@@ -1,0 +1,1837 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Cyaxares\n"
+"Language: ku\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.8\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] Peleke tomarkirinê li vir hat afirandin: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Tika vê pirsgirêkê (û pelê) bişîne bo https://github.com/archlinux/archinstall/issues"
+
+msgid "Do you really want to abort?"
+msgstr "Tu dixwazî têk bibî?"
+
+msgid "And one more time for verification: "
+msgstr "Û careke din ji bo piştrastkriinê: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "Tu dixwazî swap li ser zram bi kar bînî?"
+
+msgid "Desired hostname for the installation: "
+msgstr "Navê mêvandarê xwestî ji bo sazkirinê: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Navê bikarhêner ji bo superbikarhênerê pêwîst bi mafên sudo yên taybet: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Her bikarhênerên din ên ku werin sazkirin (ku bikarhêner tune ne vala bihêle): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Divê ev bikarhêner superbikarhêner (sudoer) be?"
+
+msgid "Select a timezone"
+msgstr "Herêmeke demê hilbijêre"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Tu dixwazî GRUB wekî barkarê destpêkirinê li şûna systemd-boot bi kar bînî?"
+
+msgid "Choose a bootloader"
+msgstr "Barkarê destpêkirinê hilbijêre"
+
+msgid "Choose an audio server"
+msgstr "Rajekarekî dengî hilbijêre"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Tenê pakêtên wekî base, base-devel, linux, linux-firmware, efibootmgr û pakêtên profîlê yên vebijêrkî tên sazkirin."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "Ku tu gerokeke tevnê dixwazî, wekî firefox an chromium, tu dikarî wê di fermana jêrîn de diyar bikî."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Pakêtên din binivîse ji bo sazkirinê (bi valahiyê veqetandî, bo derbas bikî vala bihêle): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Sazkariyên tora ISO ya ji bo sazkirinê jê bigire"
+
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "Rêveberiya torê bi kar bîne (ji bo sazkirina înternetê bi awayekî grafîkî di GNOME û KDE de pêdivî ye)"
+
+msgid "Select one network interface to configure"
+msgstr "Ji bo sazkirinê navrûyeke torê hilbijêre"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "Ka kîjan awaya ku bo \"{}\" were rêkxisitin hilbijêre yan derbas bike bo bikaranîna awaya berdest \"{}\""
+
+#, python-brace-format
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "IP û bintorê ji bo {} têxîne (mînak: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Navnîşana IP ya dergehê (router) a xwe têxîne yan ku tune be vala bihêle: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "Rajekarên DNS a xwe têxîne (bi valahiyê veqetandî, ku tune be vala bihêle): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "Dabeşkirinê xwe ya sereke divê kîjan pergala pelê bi kar bîne hilbijêre"
+
+msgid "Current partition layout"
+msgstr "Şêwaza dabeşkirina heyî"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"Ka tu yê çi bikî bi\n"
+"{} re hilbijêre"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Cûreyê pergala pelê ya xwestî ji bo dabeşkirinê têxîne"
+
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Cihê destpêkê têxîne (bi yekîneyên parçekirî: s, GB, %, hwd.; berdest: {}): "
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Cihê dawî têxîne (bi yekîneyên parçekirî: s, GB, %, hwd.; mînak: {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} tê de dabeşkirinên rêzkirî heye, ev ê wan jê bibe, tu bawer î?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"Li gorî naverokê divê kîjan dabeşkirin werin jêbirin hilbijêre"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"Li gorî naverokê divê kîjan dabeşkirin were siwarkirin hilbijêre"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Xalên siwarkirina dabeşkirinê bi hundirê sazkirinê ve girêdayî ne, barkirin wê wekî mînak /boot be."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "Cihê ku dabeşkirin lê were siwarkirin hilbijêre (ji bo rakirina xala siwarkirinê vala bihêle): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"Bo dabeşkirin were veşartin ji bo formatkirinê hilbijêre"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"Bo dabeşkirin wekî şîfrekirî were nîşankirin hilbijêre"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"Bo dabeşkirin wekî destpêkbar were nîşankirin hilbijêre"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"Bo dabeşkirin pergaleke pelê li ser were sazkirin hilbijêre"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Cûreyê pergala pelê ya xwestî ji bo dabeşkirinê têxîne: "
+
+msgid "Archinstall language"
+msgstr "Zimanê Archinstall"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "Hemû ajokarên hilbijartî jê dibe û şewaza dabeşkirina kesane ya bi têkoşîna herî baş bi kar bîne"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "Ka bi her ajokarekê re tu yê çi bikî (bi bikaranîna dabeşkirinê tê şopandin) hilbijêre"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "Tiştê ku tu dixwazî bi amûrên astengkirî yên hilbijartî bikî hilbijêre"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "Ev lîsteyek profîlên pêş-bernamekirî ye, dibe ku ew sazkirina tiştên wekî jîngehên sermaseyê hêsantir bikin"
+
+msgid "Select keyboard layout"
+msgstr "Şêwaza kilîtdankê hilbijêre"
+
+msgid "Select one of the regions to download packages from"
+msgstr "Ji bo daxistina pakêtan yek ji herêman hilbijêre"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "Yek an çend req ajokar hilbijêre da ku bi kar bîn û rêk bixî"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Ji bo çêtirîn lihevhatin bi reqalavên AMD a te re, dibe ku tu bixwazî vebijêrkên hemû çavkaniya vekirî yên AMD / ATI bi kar bînî."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Ji bo çêtirîn lihevhatin bi reqalavên Intel a te re, dibe ku tu bixwazî vebijêrkên hemû çavkaniya vekirî yên Intel bi kar bînî.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Ji bo çêtirîn lihevhatin bi reqalavên Nvidia ya te re, dibe ku tu bixwazî vebijêrkên hemû çavkaniya vekirî yên Nvidia bi kar bînî.\r\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"Ajokareke grafîkê hilbijêre yan vala bihêle da ku hemû ajokarên çavkaniya vekirî werin sazkirin"
+
+msgid "All open-source (default)"
+msgstr "Hemû çavkaniya vekirî (berdest)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "Ka kîjan kernel bo bi kar bînî hilbijêre yan ji bo berdest \"{}\" vala bihêle"
+
+msgid "Choose which locale language to use"
+msgstr "Ka kîjan zimanê herêmî bo bikaranînê hilbijêre"
+
+msgid "Choose which locale encoding to use"
+msgstr "Ka kîjan kodkirina herêmî bo bikaranînê hilbijêre"
+
+msgid "Select one of the values shown below: "
+msgstr "Yek ji nirxên ku li jêr tên nîşandan hilbijêre: "
+
+msgid "Select one or more of the options below: "
+msgstr "Yek an çend ji vebijêrkên li jêr hilbijêre: "
+
+msgid "Adding partition...."
+msgstr "Dabeşkirin tevlî dibe...."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "Ji bo domandinê divê tu cûreyek fs a derbasdar têxînî. Ji bo cûreyên fs a derbasdar li `man partid` binêre."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "Şaşetî: Lîstekirina profîlan li ser girêdanê \"{}\" bû sedema:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "Şaşetî: Encama \"{}\" wekî JSON nehat deşîfrekirin:"
+
+msgid "Keyboard layout"
+msgstr "Şêwaza kilîtdankê"
+
+msgid "Mirror region"
+msgstr "Herêma eynikê"
+
+msgid "Locale language"
+msgstr "Zimanê herêmî"
+
+msgid "Locale encoding"
+msgstr "Kodkirina herêmî"
+
+msgid "Drive(s)"
+msgstr "Ajokar"
+
+msgid "Disk layout"
+msgstr "Şêwaza dîskê"
+
+msgid "Encryption password"
+msgstr "Borînpeyva şîfrekirinê"
+
+msgid "Swap"
+msgstr "Swap"
+
+msgid "Bootloader"
+msgstr "Barkarê destpêkirinê"
+
+msgid "Root password"
+msgstr "Borînpeyva Root"
+
+msgid "Superuser account"
+msgstr "Jimarê superbikarhêner"
+
+msgid "User account"
+msgstr "Jimarê bikarhêner"
+
+msgid "Profile"
+msgstr "Profîl"
+
+msgid "Audio"
+msgstr "Deng"
+
+msgid "Kernels"
+msgstr "Kernel"
+
+msgid "Additional packages"
+msgstr "Pakêtên vebijêrkî"
+
+msgid "Network configuration"
+msgstr "Sazkirina torê"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Hevdemkirina demê ya xweber (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "Sazkirina ({} rêkxisitin(an) wenda ne)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"Te biryar da ku tu yê hilbijartina reqdîsk derbas bikî\n"
+"û wê her sazkirina ajokarê çi be ku li {} hatiye sazkirin bi kar bîne (ezmûnkirî)\n"
+"ŞIYARÎ: Archinstall wê guncavbûna vê sazkirinê kontrol neke\n"
+"Tu dixwazî bidomînî ?"
+
+msgid "Re-using partition instance: {}"
+msgstr "Ji nû ve bikaranîna mînaka dabeşkirinê: {}"
+
+msgid "Create a new partition"
+msgstr "Dabeşkirineke nû biafrîne"
+
+msgid "Delete a partition"
+msgstr "Dabeşkirinekê jê bibe"
+
+msgid "Clear/Delete all partitions"
+msgstr "Hemû dabeşkirinan pak bike/ jê bibe"
+
+msgid "Assign mount-point for a partition"
+msgstr "Ji bo dabeşkirinê xala-siwarkirinê destnîşan bike"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "Dabeşkirinekê ku bo were formatkirin nîşan bide/nede (daneyan jê dibe)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "Dabeşkirinekê wekî şifrekirî nîşan bide/nede"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "Dabeşkirinekê wekî destpêkbar nîşan bide/nede (xweber ji bo /boot)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "Pergala pelê ya xwestî ji bo dabeşkirinê saz bike"
+
+msgid "Abort"
+msgstr "Têk bibe"
+
+msgid "Hostname"
+msgstr "Navê mêvandar"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "Nehatiye rêkxisitin, heya ku bi destan saz nekî ne pêkan e"
+
+msgid "Timezone"
+msgstr "Herêma demê"
+
+msgid "Set/Modify the below options"
+msgstr "Vebijarkên li jêr saz bike/biguherîne"
+
+msgid "Install"
+msgstr "Saz bike"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"Bo derbas bikî ESC bi kar bîne \n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "Şewaza dabeşkirinê pêşniyar bike"
+
+msgid "Enter a password: "
+msgstr "Borînpeyvekê têxîne: "
+
+msgid "Enter a encryption password for {}"
+msgstr "Borînpeyveke şîfrekirî ji bo {} têxîne"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "Borînpeyva şîfrekirinê ya dîskê têxîne (ku şîfrekrin tune be vala bihêle): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Bi mafên sudo yên taybet re super-bikarhênerek pêwist biafirîne: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "Borînpeyva root têxîne (ku root neçalak bike vala bihêle ): "
+
+msgid "Password for user \"{}\": "
+msgstr "Borînpeyv ji bo bikarhêner \"{}\": "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "Piştrastkirina hebûna pakêtên din bike (ev dibe ku çend çirkeyan bidome)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Tu dixwazî hevdemkirina demê ya xweber (NTP) bi rajekarên demê yên kesane re bi kar bînî?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"Bo ku NTP bixebite, dibe ku demê reqalav û gavên din ên piştî sazkirinê pêwist be.\n"
+"\n"
+"Ji bo bêtir zanyarî, Tika wiki Arch kontrol bike"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "Bo afirandina bikarhênereke din navê bikarhênereke vebijêrkî têxîne (bo derbas bikî vala bihêle): "
+
+msgid "Use ESC to skip\n"
+msgstr "Bo derbas bikî ESC bi kar bîne\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+"Tiştekî ji listeyê hilbijêre, û yek ji çalakiyên heyî ji bo pêkanîna wê hilbijêre"
+
+msgid "Cancel"
+msgstr "Têk bibe"
+
+msgid "Confirm and exit"
+msgstr "Biperjîne û derkeve"
+
+msgid "Add"
+msgstr "Tevlî bike"
+
+msgid "Copy"
+msgstr "Jê bigire"
+
+msgid "Edit"
+msgstr "Biguherîne"
+
+msgid "Delete"
+msgstr "Jê bibe"
+
+msgid "Select an action for '{}'"
+msgstr "Çalakiyekê ji bo '{}' hilbijêre"
+
+msgid "Copy to new key:"
+msgstr "Bo kilîtê nû jê bigire:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "Çûreya nic nenas e: {}. Nirxên gengaz ev in {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"Ev rêkxisitinê te ya hilbijartî ye:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman jixwe dixebite, herî pir 10 xulekan bimîne benda bidawîbûna wî."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Kilîtê pacman ya pêş-hebûyî hiç tune bû. Tika berî ku archinstall bi kar bînî, danişînên pacman ên heyî pak bike."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "Ka kîjan depoyên vebijêrkî divê çalak bibe hilbijêre"
+
+msgid "Add a user"
+msgstr "Bikarhênerekî tevlî bike"
+
+msgid "Change password"
+msgstr "Borînpeyvê biguherîne"
+
+msgid "Promote/Demote user"
+msgstr "Bikarhêner blind bike/neke"
+
+msgid "Delete User"
+msgstr "Bikarhêner jê bibe"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"Bikarhênereke nû danasîn bike\n"
+
+msgid "User Name : "
+msgstr "Navê bikarhêner: "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "Divê {} superbikarhênera (sudoer) be?"
+
+msgid "Define users with sudo privilege: "
+msgstr "Bikarhênerên bi mafên sudo yên taybet danasîn bike: "
+
+msgid "No network configuration"
+msgstr "Rêkxisitina torê tune ye"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "Binpeldankên xwestî li ser dabeşekirineke btrfs saz bike"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"Ka kîjan dabeşkirin li ser binpeldank divê saz bibe hilbijêre"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "Birêvebirina btrfs ji bo dabeşkirina heyî bi rê ve bibe"
+
+msgid "No configuration"
+msgstr "Rêkxisitin tune ye"
+
+msgid "Save user configuration"
+msgstr "Rêkxisitinê bikarhêner tomar bike"
+
+msgid "Save user credentials"
+msgstr "Bawernameyên bikarhêner tomar bike"
+
+msgid "Save disk layout"
+msgstr "Şêwaza dîskê tomar bike"
+
+msgid "Save all"
+msgstr "Hemû tomar bike"
+
+msgid "Choose which configuration to save"
+msgstr "Ka kîjan rêkxisitin divê tomar bibe hilbijêre"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "Ji bo rêkxisitin ku werin tomarkirin pelrêçekê têxîne: "
+
+msgid "Not a valid directory: {}"
+msgstr "Pelrêç nederbasdar e: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "Ew borînpeyva ku tu bi kar tînî xuya dike lawaz e,"
+
+msgid "are you sure you want to use it?"
+msgstr "tu bawer î ku dixwazî ​​wê bi kar bînî?"
+
+msgid "Optional repositories"
+msgstr "Depoyên vebijêrkî"
+
+msgid "Save configuration"
+msgstr "Rêkxisitinê tomar bike"
+
+msgid "Missing configurations:\n"
+msgstr "Rêkxisitinên wenda:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "An borînpeyva root an herî kêm 1 superbikarhêner were diyarkirin"
+
+msgid "Manage superuser accounts: "
+msgstr "Jimarên superbikarhêner bi rê ve bibe: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "Jimarên bikarhênerên asayî bi rê ve bibe: "
+
+msgid " Subvolume :{:16}"
+msgstr " Binpeldank :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " li {:16} siwar bûye"
+
+msgid " with option {}"
+msgstr " bi vebijêrk {}"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+"Nirxên xwestî ji bo binpelandkeke nû dagire \n"
+
+msgid "Subvolume name "
+msgstr "Navê binpeldankê "
+
+msgid "Subvolume mountpoint"
+msgstr "Xala siwarkirinê ya binpeldankê"
+
+msgid "Subvolume options"
+msgstr "Vebijêrkên binpeldankê"
+
+msgid "Save"
+msgstr "Tomar bike"
+
+msgid "Subvolume name :"
+msgstr "Navê binpeldankê :"
+
+msgid "Select a mount point :"
+msgstr "Xaleke siwarkirinê hilbijêre:"
+
+msgid "Select the desired subvolume options "
+msgstr "Vebijarkên binpeldankê yên xwestî hilbijêre "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "Bikarhênerên bi mafên sudo yên taybet, bi navê bikarhêner danasîn bike: "
+
+#, python-brace-format
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] Peleke tomarkirinê li vir hat afirandin: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Tu dixwazî BTRFS bi avahiyeke kesane bi kar bînî?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "Tu dixwaz î kompressa BTRFS bi kar bînî?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Tu dixwazî ji bo /home beşeke cûda biafrînî?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Kapasîteya herî kêm a ajokarên hilbijartî a pêwîst ji bo pêşniyareke xweber tune ye\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "Kapasîteya herî kêm ji bo dabeşkirina /home: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Kapasîteya herî kêm ji bo dabeşkirina Arch Linux: {}GB"
+
+msgid "Continue"
+msgstr "Bidomîne"
+
+msgid "yes"
+msgstr "erê"
+
+msgid "no"
+msgstr "na"
+
+msgid "set: {}"
+msgstr "saz bike: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "Sazkirina rêkxisitinê destî divê lîsteyek be"
+
+msgid "No iface specified for manual configuration"
+msgstr "Ji bo rêkxisitina destî iface nehatiye diyarkirin"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "Rêkxisitina nic a destî bê DHCP a xweber pêdiviya navnîşana IP dike"
+
+msgid "Add interface"
+msgstr "Navrûyê tevlî bike"
+
+msgid "Edit interface"
+msgstr "Navrûyê biguherîne"
+
+msgid "Delete interface"
+msgstr "Navrûyê jê bibe"
+
+msgid "Select interface to add"
+msgstr "Navrûya ji bo tevlîkirinê hilbijêre"
+
+msgid "Manual configuration"
+msgstr "Rêkxisitina destî"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "Dabeşkrinê wekî  nîşan bide/nede (tenê btrfs)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "Borînpeyva ku tu bi kar tînî xuya dike ku lawaz e, tu bawer î ku tu dixwazî wê bi kar bînî?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "Hilbijartinekê ji jîngehên sermaseyê û rêveberên çarçoveyan ên sermaseyê peyda dike, mînak gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "Jîngeha sermaseya xwe ya xwestî hilbijêre"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Sazkirinek pir bingehîn e ku dihêle tu Arch Linux li gorî xwe kesane bikî."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "Hilbijartinek ji pakêtên  yên cûrbecûr peyda dike ji bo sazkirin û çalakkirinê, mînak httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "Ka kîjan rajekar divê saz bikî hilbijêre, ku tune bin wê demê sazkirineke biçûk wê were kirin"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "Pergaleke herî biçûk û her wiha ajokarên xorg û ajokarên grafîkan saz dike."
+
+msgid "Press Enter to continue."
+msgstr "Bo domandinê Enter bitikîne."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "Tu dixwazî bi chroot têkevî nav sazkirina nû afirandî û rêkxistina piştî-sazkirinê pêk bînî?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Tu bi rastî dixwazî ​​vê sazkariyê ji nû ve saz bikî?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "Yek an çend req dîsk hilbijêre ku bi kar bînî û rêkxisitin bixî\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "Her guhertinek li sazkariyên heyî wê şêwaza dîskê ji nû ve saz bike!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "Ku tu hilbijartina dîskê ji nû ve saz bikî, ev ê şewaza dîskê ya heyî jî ji nû ve saz bike. Tu bawer î?"
+
+msgid "Save and exit"
+msgstr "Tomar bike û derkeve"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"dabeşkirinên rêzkirî tê de heye, ev ê wan rake, tu bawer î?"
+
+msgid "No audio server"
+msgstr "Tu rajekarên dengê tune ye"
+
+msgid "(default)"
+msgstr "(berdest)"
+
+msgid "Use ESC to skip"
+msgstr "Bo derbas bikî ESC bi kar bîne"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"CTRL + C bi kar bîne da ku hilbijartina heyî ji nû ve saz bikî\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "Jê bigire bo: "
+
+msgid "Edit: "
+msgstr "Biguherîne: "
+
+msgid "Key: "
+msgstr "Kilît: "
+
+msgid "Edit {}: "
+msgstr "{}: biguherîne  "
+
+msgid "Add: "
+msgstr "Tevlî bike: "
+
+msgid "Value: "
+msgstr "Nirx: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "Tu dikarî hilbijartina ajokar û dabeşkirinê derbas bikî û her sazkirina ajokara ku li /mnt hatiye sazkirin bi kar bînî (ezmûnî)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Yek ji dîskan hilbijêre yan derbas bike û /mnt wekî berdest bi kar bîne"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Ka kîjan dabeşkirinên bo formatkirinê werin nîşankirin hilbijêre:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Ji bo vekirina ajokara şîfrekirî HSM bi kar bîne"
+
+msgid "Device"
+msgstr "Amûr"
+
+msgid "Size"
+msgstr "Mezinahî"
+
+msgid "Free space"
+msgstr "Cihê vala"
+
+msgid "Bus-type"
+msgstr "Cûreya-Bus"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "An borînpeyva root an herî kêm 1 bikarhênera xwedî mafên sudo yên taybet were destnîşankirin"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Navê bikarhêner têxîne (bo derbas bikî vala bihêle): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "Navê bikarhênerê ku te nivîsand ne derbasdar e. Dîsa hewl bide"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Divê \"{}\" superbikarhêner (sudo) be?"
+
+msgid "Select which partitions to encrypt"
+msgstr "Beşên ku werin şîfrekirin hilbijêre"
+
+msgid "very weak"
+msgstr "pir lawaz e"
+
+msgid "weak"
+msgstr "lawaz e"
+
+msgid "moderate"
+msgstr "navînî e"
+
+msgid "strong"
+msgstr "bihêz e"
+
+msgid "Add subvolume"
+msgstr "Binpeldankê tevlî bike"
+
+msgid "Edit subvolume"
+msgstr "Binpeldankê biguherîne"
+
+msgid "Delete subvolume"
+msgstr "Binpeldankê jê bibe"
+
+msgid "Configured {} interfaces"
+msgstr "Navrûyên {} ên rêkxistî"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "Ev vebijêrk jimara daxisitinên paralel ên ku dikarin di dema sazkirinê de werin xuyakirin çalak dike"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {})\n"
+"Note:"
+msgstr ""
+"Jimara daxisitinên paralel ên ku werin çalakkirin têxîne.\n"
+"(Nirxekê di navbera 1 û {} de têxîne)\n"
+"Nîşe:"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Nirxa herî pir: {} ( Mafê dide daxisitinên paralel ên {}, mafê dide {} daxisitinan di yek car de )"
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - Nirxa herî kêm: 1 ( Mafê dide 1 daxisitina paralel, mafê dide 2 daxisitinan di yek car de )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - Neçalak/Berdest: 0 ( Daxistina paralel neçalak dike, mafê tenê dide 1 daxistin di yek car de )"
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "Têketineke nederbasdar! Bi têketineke derbasdar re dîsa hewl bide [1 bo {max_downloads}, an 0 bo neçalakkirinê]"
+
+msgid "Parallel Downloads"
+msgstr "Daxistinên parallel"
+
+msgid "ESC to skip"
+msgstr "ESC bo derbas bikî"
+
+msgid "CTRL+C to reset"
+msgstr "CTRL+C bo jinûvesazkirinê"
+
+msgid "TAB to select"
+msgstr "TAB bo hilbijartinê"
+
+msgid "[Default value: 0] > "
+msgstr "[Nirxa berdest: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Ji bo ku tu bikaribî vê wergerê bi kar bînî, tika cûrenivîsekeke ku ziman piştgirî dike bi destan saz bike."
+
+msgid "The font should be stored as {}"
+msgstr "Divê çûrenivîs wekî {} were tomarkirin"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Bo xebitandina Archinstall mafên root pêdivî dike. Ji bo bêtir zanyarî li --alîkarî binêre."
+
+msgid "Select an execution mode"
+msgstr "Awayeke pêkanînê hilbijêre"
+
+#, python-brace-format
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Nikare profîlê ji navnîşana girêdanê ya diyarkirî bîne : {}"
+
+#, python-brace-format
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Pêdivî ye ku profîl nava yekana be, lê pênaseyên profîlê yên bi navên dûbarekirî hatin dîtin: {}"
+
+msgid "Select one or more devices to use and configure"
+msgstr "Yek an çend amûran bo bikaranîn û rêkxisitinê hilbijêre"
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Ku tu hilbijartina amûrê ji nû ve saz bikî, ev ê şêwaza dîskê ya heyî jî ji nû ve saz bike. Tu bawer î?"
+
+msgid "Existing Partitions"
+msgstr "Dabeşkirinên heyî"
+
+msgid "Select a partitioning option"
+msgstr "Vebijêrkeke dabeşkirinê hilbijêre"
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Peldanka root ya amûrênn siwarkirî têxîne: "
+
+#, python-brace-format
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Kapasîteya herî kêm ji bo dabeşkirina /home: {}GiB\n"
+
+#, python-brace-format
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Kapasîteya herî kêm ji bo dabeşkirina Arch Linux: {}GiB"
+
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Ev lîsteyek ji profiles_bck ên pêş-bernamekirî ye, dibe ku ew sazkirina tiştên wekî jîngehên sermaseyê hêsantir bike"
+
+msgid "Current profile selection"
+msgstr "Hilbijartina profîla heyî"
+
+msgid "Remove all newly added partitions"
+msgstr "Hemû beşên nû tevlîkirî rake"
+
+msgid "Assign mountpoint"
+msgstr "Xala siwarkirinê destnîşan bike"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Nîşan bike/neke bo were formatkirin (daneyan jê dibe)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Wekî destpêkbar nîşan bide/nede"
+
+msgid "Change filesystem"
+msgstr "Pergala pelê biguherîne"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Wekî guvaştî nîşan bide/nede"
+
+msgid "Set subvolumes"
+msgstr "Binpeldankan saz bike"
+
+msgid "Delete partition"
+msgstr "Dabeşkirinê jê bibe"
+
+msgid "Partition"
+msgstr "Dabeşkirin"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Ev dabeşkirin niha şîfrekirî ye, ji bo formatkirina wê divê pergaleke pelan were destnîşankirin"
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Xalên siwarkirina dabeşkirinê bi hundirê sazkirinê ve girêdayî ne, despêkirin wê wekî mînak /boot be."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr "Ku xala siwarkirinê /boot hatibe sazkirin, wê demê dabeşkirin jî wê wekî destpêkbar were nîşankirin."
+
+msgid "Mountpoint: "
+msgstr "Xala siwarkirinê: "
+
+msgid "Current free sectors on device {}:"
+msgstr "Sektorên vala ên niha li ser amûra {}:"
+
+msgid "Total sectors: {}"
+msgstr "Tevahiya sektoran: {}"
+
+msgid "Enter the start sector (default: {}): "
+msgstr "Sektora destpêkê têxîne (berdest: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Sektora dawî ya dabeşkirinê têxîne (ji sedî an jimareya blokê, kesane: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Ev ê hemû dabeşkirinên nû tevlîkirî rake, bidomînî?"
+
+#, python-brace-format
+msgid "Partition management: {}"
+msgstr "Rêvebiriya dabeşkirinê: {}"
+
+#, python-brace-format
+msgid "Total length: {}"
+msgstr "Dirêjahiya tevahî: {}"
+
+msgid "Encryption type"
+msgstr "Cûreyê şîfrekirinê"
+
+msgid "Iteration time"
+msgstr "Dema dûbarekirinê"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "Dema dûbarekirinê ji bo şîfrekirina LUKS têxîne (bi milîçirkeyan)"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "Nirxên bilind ewlehiyê bilind dikin lê di dema destpêkirinê de hêdî dikin"
+
+msgid "Default: 10000ms, Recommended range: 1000-60000"
+msgstr "Kesane: 10000ms, Rêjeya pêşniyarkirî: 1000-60000"
+
+msgid "Iteration time cannot be empty"
+msgstr "Dema dûbarekirinê nabe ku vala be"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "Dema dûbarekirinê divê herî kêm 100ms be"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "Dema dûbarekirinê divê herî pir 120000ms be"
+
+msgid "Please enter a valid number"
+msgstr "Tika jimareke derbasdar têxîne"
+
+msgid "Partitions"
+msgstr "Dabeşkirin"
+
+msgid "No HSM devices available"
+msgstr "Amûrên HSM tune ne"
+
+msgid "Partitions to be encrypted"
+msgstr "Beşên ku werin şîfrekirin"
+
+msgid "Select disk encryption option"
+msgstr "Vebijêrka şîfrekirina dîskê hilbijêre"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Amûrek FIDO2 hilbijêre ku ji bo HSM bi kar bînî"
+
+msgid "Use a best-effort default partition layout"
+msgstr "Şewaza dabeşkirina kesane ya bi têkoşîna herî baş bi kar bîne"
+
+msgid "Manual Partitioning"
+msgstr "Dabeşkirina destî"
+
+msgid "Pre-mounted configuration"
+msgstr "Rêkxistina pêş-siwarkirî"
+
+msgid "Unknown"
+msgstr "Nenas"
+
+msgid "Partition encryption"
+msgstr "Şîfrekirina dabeşkirinê"
+
+#, python-brace-format
+msgid " ! Formatting {} in "
+msgstr " ! Formatkirina {} di "
+
+msgid "← Back"
+msgstr "← Vegere"
+
+msgid "Disk encryption"
+msgstr "Şîfrekirina dîskê"
+
+msgid "Configuration"
+msgstr "Rêkxistin"
+
+msgid "Password"
+msgstr "Borînpeyv"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "Hemû sazkarî wê ji nû ve werin sazkirin, tu bawer î?"
+
+msgid "Back"
+msgstr "Vegere"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "Tika, ji bo profîlên hilbijartî kîjan silavkar divê saz bikî hilbijêre: {}"
+
+#, python-brace-format
+msgid "Environment type: {}"
+msgstr "Cûreya jîngehê: {}"
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr "Ajokarê xwedan Nvidia ji aliyê Sway ve nayê piştgirîkirin. Dibe ku tu bi pirsgirêkan re rû bi rû werî, tu bi wê re baş î?"
+
+msgid "Installed packages"
+msgstr "Pakêtên sazkirî"
+
+msgid "Add profile"
+msgstr "Profîlê tevlî bike"
+
+msgid "Edit profile"
+msgstr "Profîlê biguherîne"
+
+msgid "Delete profile"
+msgstr "Profîlê jê bibe"
+
+msgid "Profile name: "
+msgstr "Navê profîlê: "
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Navê profîlê ku te nivîsand jixwe tê bikaranîn. Dîsa hewl bide"
+
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Pakêtên ku bi vê profîlê werin sazkirin (bi valahiyê veqetandî, bo derbas bikî vala bihêle): "
+
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Rajearên ku bi vê profîlê re werin çalakkirin (bi valahiyê veqetandî, bo derbas bikî vala bihêle): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "Divê ev profîl ji bo sazkirinê were çalakkirin?"
+
+msgid "Create your own"
+msgstr "Ya xwe biafirîne"
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"Ajokarek grafîkan hilbijêre yan vala bihêle da ku hemû ajokarên çavkaniya vekirî werin sazkirin"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway gihîştina cihê te pêwîst dike (komek ji req amûran b.m. kilîtdank, mişk, hwd)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Vebijêrkekê hilbijêre da ku Sway bigihêje reqalavê te"
+
+msgid "Graphics driver"
+msgstr "Ajokara grafîkan"
+
+msgid "Greeter"
+msgstr "Silavkar"
+
+msgid "Please chose which greeter to install"
+msgstr "Tika ka kîjan silavkar divê were sazkirin hilbijêre"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "Ev lîsteyek ji profîlên_berdest ên pêş-bernamekirî ye"
+
+msgid "Disk configuration"
+msgstr "Rêkxisitina dîskê"
+
+msgid "Profiles"
+msgstr "Profîl"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "Dîtina peldankên gengaz ji bo tomarkirina pelên rêkxisitinê ..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Ji bo tomarkirina pelên rêkxisitinê pelrêçekê (an jî pelrêçan) hilbijêre"
+
+msgid "Add a custom mirror"
+msgstr "Eynika kesane tevlî bike"
+
+msgid "Change custom mirror"
+msgstr "Eynika kesane biguherîne"
+
+msgid "Delete custom mirror"
+msgstr "Eynika kesane jê bibe"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "Navê têxîne (bo derbas bikî vala bihêle): "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "Girêdanê têxîne (bo derbas bikî vala bihêle): "
+
+msgid "Select signature check option"
+msgstr "Vebijêrka kontrolkirina îmzeyê hilbijêre"
+
+msgid "Select signature option"
+msgstr "Vebijêrka îmzeyê hilbijêre"
+
+msgid "Custom mirrors"
+msgstr "Eynikên kesane"
+
+msgid "Defined"
+msgstr "Danaskirî"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Rêkxisitinên bikarhêner tomar bike (tevlî şêwaza dîskê)"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+"Ji bo rêkxistin(an) ku werin tomarkirin peldankekê têxîne (bidawîkirina tabê çalak e)\n"
+"Pelrêçê tomar bike: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"Tu dixwazî pel(ên) rêkxistî li cihê jêrîn tomar bibin?\n"
+"\n"
+"{}"
+
+msgid "Saving {} configuration files to {}"
+msgstr "{} pelên rêkxsitinê tên tomarkirin bo {}"
+
+msgid "Mirrors"
+msgstr "Eynik"
+
+msgid "Mirror regions"
+msgstr "Herêmên eynikê"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Nirxa herî pir: {} ( Mafê dide {} daxistinên paralel, mafê dide {max_downloads+1} daxistinan di carekê de)"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Têketineke nederbasdar! Bi têketineke derbasdar dîsa hewl bide [1 heya {}, an 0 ji bo neçalakkirinê]"
+
+msgid "Locales"
+msgstr "Ziman"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager bi kar bîne (ji bo rêkxistina înternetê bi awayekî grafîkî di GNOME û KDE de pêdivî ye)"
+
+msgid "Total: {} / {}"
+msgstr "Tevahî: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr "Hemû nirxên têxistî dikarin bi yekîneyek paşgiran werin veqetandin: B, KB, KiB, MB, MiB..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Ku yekîneyek neyê dayîn, nirx wekî sektor tê şîrovekirin"
+
+msgid "Enter start (default: sector {}): "
+msgstr "Destpêkê têxîne (kesane: sektora {}): "
+
+msgid "Enter end (default: {}): "
+msgstr "Dawî têxîne (kesane: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "Amûrên fido2 nayên destnîşankirin. Libfido2 hatiye sazkirin?"
+
+msgid "Path"
+msgstr "Rêgeh"
+
+msgid "Manufacturer"
+msgstr "Afirîner"
+
+msgid "Product"
+msgstr "Berhem"
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Rêkxisitina nederbasdar: {error}"
+
+msgid "Type"
+msgstr "Cûre"
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Ev vebijêrk jimara daxistinên paralel ên ku dikarin di dema daxistinan pakêtan de xuya dibin çalak dike"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Jimara daxistinên paralel ên ku werin çalakkirin têxîne.\n"
+"\n"
+"Nîşe:\n"
+
+#, python-brace-format
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Nirxa herî pir a pêşniyarkirî: {} (Mafê dide {} daxisitinên paralel di carekê de)"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Neçalak/Berdest: 0 ( Daxistina paralel neçalak dike, mafê tenê dide 1 daxistin di carekê de )\n"
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Têketineke nederbasdar! Bi têketineke derbasdar dîsa hewl bide [an 0 ji bo neçalakkirinê]"
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Hyprland gihîştina cihê te pêwîst dike(komek ji req amûran b.m. kilîtdank, mişk, hwd)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Vebijêrkek hilbijêre da ku Hyprland bigihêje reqalavê te"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Hemû nirxên têketinê dikarin bi yekîneyekê werin paşgirkirin: %, B, KB, KiB, MB, MiB..."
+
+msgid "Would you like to use unified kernel images?"
+msgstr "Tu dixwazî wêneyên kernel ên yekgirtî bi kar bînî?"
+
+msgid "Unified kernel images"
+msgstr "Wêneyên kernel ên yekgirtî"
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Li benda bidawîbûna hevdemkirina demê ye (nîşandana timedatectl)."
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Hevdemkirina demê bidawî nabe, di dema bendabûnê de - pelbendan ji bo rêgiran kontrol bike: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Li benda bidawîbûna demê tê derbaskirin (ev dikare bibe sedema pirsgirêkan ku dem neyê hevdemkirin di dema sazkirinê de)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Li benda bidawîbûna hevdemkirina keyring Arch Linux e (archlinux-keyring-wkd-sync)."
+
+msgid "Selected profiles: "
+msgstr "Profîlên hilbijartî: "
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Hevdemkirina demê bidawî nabe,di dema bendabûna de - pelpendan ji bo rêgiran kontrol bike: https://archinstall.readthedocs.io/"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "Wekî nodatacow nîşan bide/nede"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Tu dixwazî CoW biguvîşî bi kar bînî yan neçalak bikî?"
+
+msgid "Use compression"
+msgstr "Givaştinê bi kar bîne"
+
+msgid "Disable Copy-on-Write"
+msgstr "Jêgirin-li ser-Nivîsandinê neçalak bike"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Hilbijartinek ji jîngehên sermaseyê û rêveberên çarçoveyê komkirî peyda dike, mînak: GNOME, KDE Plasma, Sway"
+
+#, python-brace-format
+msgid "Configuration type: {}"
+msgstr "Çûreya rêkxisitinê: {}"
+
+msgid "LVM configuration type"
+msgstr "Cûreya rêkxistinê LVM"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "Şîfrekirina dîskê LVM bi bêtirî 2 beşan niha nayê piştgirîkirin"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "Rêvebirê torê bi kar bîne (ji bo sazkirina înternetê bi grafîkî di GNOME û KDE Plasma de pêdivî ye)"
+
+msgid "Select a LVM option"
+msgstr "Vebijêrkeke LVM hilbijêre"
+
+msgid "Partitioning"
+msgstr "Dabeşkirin"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Rêvebiriya mezinahiya lojîkî (LVM)"
+
+msgid "Physical volumes"
+msgstr "Mezinahiyên fizîkî"
+
+msgid "Volumes"
+msgstr "Mezinahî"
+
+msgid "LVM volumes"
+msgstr "Peldankên LVM"
+
+msgid "LVM volumes to be encrypted"
+msgstr "Peldankên LVM ên ku wê werin şîfrekirin"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "Ka kîjan dabeşkirinên LVM divê were şîfrekirin hilbijêre"
+
+msgid "Default layout"
+msgstr "Şêwaza berdest"
+
+msgid "No Encryption"
+msgstr "Şîfrekirin tune ye"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM li ser LUKS"
+
+msgid "LUKS on LVM"
+msgstr "LUKS li ser LVM"
+
+msgid "Yes"
+msgstr "Erê"
+
+msgid "No"
+msgstr "Na"
+
+msgid "Archinstall help"
+msgstr "Alîkariya Archinstall"
+
+msgid " (default)"
+msgstr " (berdest)"
+
+msgid "Press Ctrl+h for help"
+msgstr "Ji bo alîkariyê Ctrl+h bitikîne"
+
+msgid "Choose an option to give Sway access to your hardware"
+msgstr "Vebijêrkekê hilbijêre da ku Sway bigihêje reqalavê te"
+
+msgid "Seat access"
+msgstr "Gihîştina cihê"
+
+msgid "Mountpoint"
+msgstr "Xala siwarkirinê"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Borînpeyva şîfrekirina dîskê têxîne (ji bo şîfrekirin tune be vala bihêle)"
+
+msgid "Disk encryption password"
+msgstr "Borînpeyva şîfrekirina dîskê"
+
+msgid "Partition - New"
+msgstr "Dabeşkirin - Nû"
+
+msgid "Filesystem"
+msgstr "Pergala pelê"
+
+msgid "Invalid size"
+msgstr "Mezinahî nederbasdar e"
+
+msgid "Start (default: sector {}): "
+msgstr "Destpêk (berdest: sektor {}): "
+
+msgid "End (default: {}): "
+msgstr "Dawî (berdest: {}): "
+
+msgid "Subvolume name"
+msgstr "Navê binpeldankê"
+
+msgid "Disk configuration type"
+msgstr "Cûreya rêkxisitinê dîskê"
+
+msgid "Root mount directory"
+msgstr "Pelrêça siwarkirina root"
+
+msgid "Select language"
+msgstr "Ziman hilbijêre"
+
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Ji bo sazkirinê pakêtên din binivîse (bi valahiya veqetandî, bo derbas bikî vala bihêle)"
+
+msgid "Invalid download number"
+msgstr "Jimara daxisitinê nederbasdar e"
+
+msgid "Number downloads"
+msgstr "Jimara daxistinan"
+
+msgid "The username you entered is invalid"
+msgstr "Navê bikarhênerê ku te nivîsand nederbasdar e"
+
+msgid "Username"
+msgstr "Navê bikarhêner"
+
+#, python-brace-format
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Divê \"{}\" superbikarhênerek (sudo) be?\n"
+
+msgid "Interfaces"
+msgstr "Navrû"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "Pêdivî ye ku tu IP a derbasdar di awaya IP-config de têxînî"
+
+msgid "Modes"
+msgstr "Awa"
+
+msgid "IP address"
+msgstr "Navnîşana IP"
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Navnîşana IP ya dergehê (router) a xwe têxîne (ji bo ne yek vala bihêle)"
+
+msgid "Gateway address"
+msgstr "Navnîşana dergehê"
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Rajekarên DNS a xwe bi valahiya veqetandî têxîne (ji bo ne yek vala bihêle)"
+
+msgid "DNS servers"
+msgstr "Rajekarên DNS"
+
+msgid "Configure interfaces"
+msgstr "Navrûyan rêkxistin bike"
+
+msgid "Kernel"
+msgstr "Kernel"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "UEFI nayê dîtin û hinek vebijêrk neçalak in"
+
+msgid "Info"
+msgstr "Zanyarî"
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Ajokara xwedan Nvidia ji aliya Sway ve nayê piştgirîkirin."
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Dibe ku tu bi pirsgirêkan re rû bi rû werî, tu bi wê re baş î?"
+
+msgid "Main profile"
+msgstr "Profîla sereke"
+
+msgid "Confirm password"
+msgstr "Borînpeyvê biperjîne"
+
+msgid "The confirmation password did not match, please try again"
+msgstr "Pejirandina borînpeyvê li hev nehat, tika dîsa hewl bide"
+
+msgid "Not a valid directory"
+msgstr "Pelrêçek nederbasdar e"
+
+msgid "Would you like to continue?"
+msgstr "Dixwazî bidomînî?"
+
+msgid "Directory"
+msgstr "Pelrêç"
+
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "Ji bo sazkirin werin tomarkirin pêlrêçekê têxîne (Bidawîkirina tabê çalak e)"
+
+#, python-brace-format
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Tu dixwazî pel(ên) sazkirinê li {} werin tomarkirin?"
+
+msgid "Enabled"
+msgstr "Çalakkirî"
+
+msgid "Disabled"
+msgstr "Neçalakkirî"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Tika vê pirsgirêkê (û pelê) bişîne bo https://github.com/archlinux/archinstall/issues"
+
+msgid "Mirror name"
+msgstr "Navê eynikê"
+
+msgid "Url"
+msgstr "Girêdan"
+
+msgid "Select signature check"
+msgstr "Kontrola îmzeyê hilbijêre"
+
+msgid "Select execution mode"
+msgstr "Awaya çalakkirinê hilbijêre"
+
+msgid "Press ? for help"
+msgstr "Ji bo alîkariyê pêl ? bike"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Vebijêrkekê hilbijêre ku Hyprland bigihêje reqalavê te"
+
+msgid "Additional repositories"
+msgstr "Depoyên vebijêrkî"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Swap li ser zram"
+
+msgid "Name"
+msgstr "Nav"
+
+msgid "Signature check"
+msgstr "Kontrolkirina îmzeyê"
+
+#, python-brace-format
+msgid "Selected free space segment on device {}:"
+msgstr "Beşa cîhê vala ya hilbijartî li ser amûra {}:"
+
+#, python-brace-format
+msgid "Size: {} / {}"
+msgstr "Mezinahî: {} / {}"
+
+#, python-brace-format
+msgid "Size (default: {}): "
+msgstr "Mezinahî (berdest: {}): "
+
+msgid "HSM device"
+msgstr "Amûra HSM"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Hinek pakêt di depoyê de nehatin dîtin"
+
+msgid "User"
+msgstr "Bikarhêner"
+
+msgid "The specified configuration will be applied"
+msgstr "Sazkariya destnîşankirî wê were sepandin"
+
+msgid "Wipe"
+msgstr "Jê bibe"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Wekî XBOOTLDR nîşan bide/nede"
+
+msgid "Loading packages..."
+msgstr "Pakêt tên barkirin..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Ji lîsteya jêrîn pakêtên ku divê werin sazkirin hilbijêre"
+
+msgid "Add a custom repository"
+msgstr "Depoyek kesane tevlî bike"
+
+msgid "Change custom repository"
+msgstr "Depoya kesane biguherîne"
+
+msgid "Delete custom repository"
+msgstr "Depoya kesane jê bibe"
+
+msgid "Repository name"
+msgstr "Navê depoyê"
+
+msgid "Add a custom server"
+msgstr "Rajekarek kesane tevlî bike"
+
+msgid "Change custom server"
+msgstr "Rajekara kesane biguherîne"
+
+msgid "Delete custom server"
+msgstr "Rajekara kesane jê bibe"
+
+msgid "Server url"
+msgstr "Girêdana rajekar"
+
+msgid "Select regions"
+msgstr "Herêman hilbijêre"
+
+msgid "Add custom servers"
+msgstr "Rajekarên kesane tevlî bike"
+
+msgid "Add custom repository"
+msgstr "Depoya kesane tevlî bike"
+
+msgid "Loading mirror regions..."
+msgstr "Herêmên eynikê tên barkirin..."
+
+msgid "Mirrors and repositories"
+msgstr "Eynik û depo"
+
+msgid "Selected mirror regions"
+msgstr "Herêmên eynikê ên hilbijartî"
+
+msgid "Custom servers"
+msgstr "Rajekarên kesane"
+
+msgid "Custom repositories"
+msgstr "Depoyên kesane"
+
+msgid "Only ASCII characters are supported"
+msgstr "Tenê karekterên ASCII tên piştgirîkirin"
+
+msgid "Show help"
+msgstr "Alîkariyê nîşan bide"
+
+msgid "Exit help"
+msgstr "Ji alîkariyê derkeve"
+
+msgid "Preview scroll up"
+msgstr "Pêşdîtina şemitandina jor"
+
+msgid "Preview scroll down"
+msgstr "Pêşdîtina şemitandina jêr"
+
+msgid "Move up"
+msgstr "Bilivîne jorê"
+
+msgid "Move down"
+msgstr "Bilivîne jêrê"
+
+msgid "Move right"
+msgstr "Bilivîne rastê"
+
+msgid "Move left"
+msgstr "Bilivîne çepê"
+
+msgid "Jump to entry"
+msgstr "Biçe bo têketinê"
+
+msgid "Skip selection (if available)"
+msgstr "Hilbijartinê derbas bike (ku pêkan be)"
+
+msgid "Reset selection (if available)"
+msgstr "Hilbijartinê ji nû ve saz bike (ku pêkan be)"
+
+msgid "Select on single select"
+msgstr "Li ser hilbijartina yekane hilbijêre"
+
+msgid "Select on multi select"
+msgstr "Li ser çend-hilbijartin hilbijêre"
+
+msgid "Reset"
+msgstr "Ji nû ve saz bike"
+
+msgid "Skip selection menu"
+msgstr "Menuya hilbijartinê derbas bike"
+
+msgid "Start search mode"
+msgstr "Awaya lêgerînê dest pê bike"
+
+msgid "Exit search mode"
+msgstr "Awaya lêgerînê bi dawî bike"
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "labwc gihîştina cihê te pêwîst dike (komek ji reqalavan b.m. kilîtdank, mişk, hwd)"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Vebijêrkekê hilbijêre da ku labwc bigihêje reqalavê te"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "niri gihîştina cihê te pêwîst dike (komek ji reqalavan b.m. kilîtdank, mişk, hwd)"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Vebijêrkekê hilbijêre da ku niri bigihêje reqalavê te"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Wekî ESP nîşan bide/ nede"
+
+msgid "Package group:"
+msgstr "Koma pakêtê:"
+
+msgid "Exit archinstall"
+msgstr "Ji archinstall derkeve"
+
+msgid "Reboot system"
+msgstr "Pergalê ji nû ve dest bike"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "bi chroot têkeve hundir sazkirinê bo rêkxistina piştî-sazkirinê"
+
+msgid "Installation completed"
+msgstr "Sazkirin qediya"
+
+msgid "What would you like to do next?"
+msgstr "Tu dixwazî ​​çi bikî paşê?"
+
+#, python-brace-format
+msgid "Select which mode to configure for \"{}\""
+msgstr "Ka kîjan awa bo sazkirinê ji bo \"{}\" hilbijêre"
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Borînpeyva şîfrekirina pelê bawernameyan şaş e"
+
+msgid "Incorrect password"
+msgstr "Borînpeyv şaş e"
+
+msgid "Credentials file decryption password"
+msgstr "Borînpeyva şîfrekirina pelê bawernameyan"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Tu dixwazî ​​pelê user_credentials.json şîfre bikî?"
+
+msgid "Credentials file encryption password"
+msgstr "Borînpeyva şîfrekirina pelê bawernameyan"
+
+#, python-brace-format
+msgid "Repositories: {}"
+msgstr "Depo: {}"
+
+msgid "New version available"
+msgstr "Guhertoya nû heye"
+
+msgid "Passwordless login"
+msgstr "Têketina bê borînpeyv"
+
+msgid "Second factor login"
+msgstr "Têketina faktora duyemîn"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Tu dixwazî ​​Bluetooth saz bikî?"
+
+msgid "Authentication"
+msgstr "Rastkirin"
+
+msgid "Applications"
+msgstr "Sepan"
+
+msgid "U2F login method: "
+msgstr "Rêbaza têketina U2F: "
+
+msgid "Passwordless sudo: "
+msgstr "Sudo ya bê borînpeyv: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Cûreya snapshot ê Btrfs: {}"
+
+msgid "Syncing the system..."
+msgstr "Pergal tê hevdemkirin..."
+
+msgid "Value cannot be empty"
+msgstr "Nirx nabe ku vala be"
+
+msgid "Snapshot type"
+msgstr "Cûreya snapshot"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Cûreya snapshot: {}"
+
+msgid "U2F login setup"
+msgstr "Sazkirina têketina U2F"
+
+msgid "No U2F devices found"
+msgstr "Amûrên U2F nehatin dîtin"
+
+msgid "U2F Login Method"
+msgstr "Rêbaza têketina U2F"
+
+msgid "Enable passwordless sudo?"
+msgstr "Sudo bê borînpeyv çalak bike?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Sazkirina amûra U2F ji bo bikarhêner: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Dibe ku tu PIN têxînî û paşê amûrê xwe ya U2F bitikînî da ku wê tomar bikî"
+
+msgid "Starting device modifications in "
+msgstr "Guhertinên amûrê dest pê dike di "
+
+msgid "No network connection found"
+msgstr "Tu Girêdanên torê nehatin dîtin"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Tu dixwazî bi Wifi ve girêdayî bibî?"
+
+msgid "No wifi interface found"
+msgstr "Tu navrûya wifi nehat dîtin"
+
+msgid "Select wifi network to connect to"
+msgstr "Tora wifi hilbijêre ku pê ve girê bidî"
+
+msgid "Scanning wifi networks..."
+msgstr "Li torên wifi digere..."
+
+msgid "No wifi networks found"
+msgstr "Tu torên wifi nehatin dîtin"
+
+msgid "Failed setting up wifi"
+msgstr "Sazkirina wifi têk çû"
+
+msgid "Enter wifi password"
+msgstr "Borînpeyva wifi têxîne"
+
+msgid "Ok"
+msgstr "Baş e"
+
+msgid "Removable"
+msgstr "Jêbirbar"
+
+msgid "Install to removable location"
+msgstr "Li cîhê jêbirbar saz bike"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "Wê li /EFI/BOOT/ saz bike (cihê jêbirbar)"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "Wê bi têketina NVRAM li cîhê standard saz bike"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Tu dixwazî barkarê destpêkirinê li cîhê lêgerîna medyaya jêbirbar ya berdest saz bikî?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Ev barkarê destpêkirinê li /EFI/BOOT/BOOTX64.EFI (an nêzîk) saz dike ku kêrhatî ye ji bo:"
+
+msgid "USB drives or other portable external media."
+msgstr "Ajokarên USB an medyaya derveyî ya barkirî yên din."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Pergalên ku tu dixwazî dîskê li ser her kombersê destpêkbar be."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Firmware ku têketinên destpêkirina NVRAM bi rêkûpêk piştgirî nake."
