@@ -150,9 +150,10 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Timezone'),
 				action=ask_for_a_timezone,
-				value='UTC',
+				value=None,
 				preview_action=self._prev_tz,
 				key='timezone',
+				mandatory=True,
 			),
 			MenuItem(
 				text=tr('Automatic time sync (NTP)'),
@@ -331,10 +332,11 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_tz(self, item: MenuItem) -> str | None:
 		if item.value:
 			output = f'{tr("Timezone")}: {item.value}'
-			if item.value == 'UTC':
-				if rtc_time := SysInfo.hw_clock():
-					output += f'\nRTC time: {rtc_time}'
 			return output
+		else:
+			# Show RTC time when no timezone is selected yet
+			if rtc_time := SysInfo.hw_clock():
+				return f'RTC time: {rtc_time}'
 		return None
 
 	def _prev_ntp(self, item: MenuItem) -> str | None:

@@ -73,7 +73,7 @@ class ArchConfig:
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
 	swap: bool = True
-	timezone: str = 'UTC'
+	timezone: str | None = None
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
 
@@ -213,7 +213,7 @@ class ArchConfig:
 
 		arch_config.swap = args_config.get('swap', True)
 
-		if timezone := args_config.get('timezone', 'UTC'):
+		if timezone := args_config.get('timezone', None):
 			arch_config.timezone = timezone
 
 		if services := args_config.get('services', []):

@@ -195,7 +195,7 @@ timedatectl status
 timedatectl set-time "YYYY-MM-DD HH:MM:SS"
 ```
 
-Or in motherboard settings directly ! If you have internet and picked your timezone properly in the menu, NTP should handle this by default.
+Or in motherboard settings directly ! If you have internet and picked your timezone properly in the menu, NTP handles this by default.
 
 ## How to dual boot with Windows
 
