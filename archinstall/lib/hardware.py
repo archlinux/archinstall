@@ -143,6 +143,13 @@ class _SysInfo:
 	def __init__(self) -> None:
 		pass
 
+	def hw_clock(self) -> str:
+		"""
+		Returns the local time from timedatectl
+		"""
+		time = SysCommand('timedatectl show --property=TimeRTC --value').decode().strip()
+		return f'{time}'
+
 	@cached_property
 	def cpu_info(self) -> dict[str, str]:
 		"""
@@ -206,6 +213,10 @@ class SysInfo:
 	@staticmethod
 	def has_uefi() -> bool:
 		return os.path.isdir('/sys/firmware/efi')
+
+	@staticmethod
+	def hw_clock() -> str:
+		return _sys_info.hw_clock()
 
 	@staticmethod
 	def _graphics_devices() -> dict[str, str]:
