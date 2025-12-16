@@ -145,10 +145,10 @@ class _SysInfo:
 
 	def hw_clock(self) -> str:
 		"""
-		Returns the local time from timedatectl
+		Returns the RTC (hardware clock) time from timedatectl
 		"""
-		time = SysCommand('timedatectl show --property=TimeRTC --value').decode().strip()
-		return f'{time}'
+		time = SysCommand('timedatectl show --property=RTCTimeUSec --value').decode().strip()
+		return time
 
 	@cached_property
 	def cpu_info(self) -> dict[str, str]:

@@ -184,6 +184,13 @@ For a quick fix the below command will install the latest keyrings
 
 ```pacman -Sy archlinux-keyring```
 
+## GPG verification errors pacstrap
+This can occur if the timezone selected is incorrect and/or hardware clock in motherboard settings is not set (during verification of packages at first base-strap). Ie. when CMOS battery is dead and power cut-off happens. This can reset other settings such as Sata Mode, Fast Boot, etc
+
+Look for RTC field (real-time clock)
+```timedatectl status```
+And make sure to set it properly according to your timezone in the menu. NTP will also auto sync if internet is found.
+
 ## How to dual boot with Windows
 
 To install Arch Linux alongside an existing Windows installation using  `archinstall`, follow these steps:

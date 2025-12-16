@@ -331,8 +331,9 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_tz(self, item: MenuItem) -> str | None:
 		if item.value:
 			output = f'{tr("Timezone")}: {item.value}'
-			if rtc_time := SysInfo.hw_clock():
-				output += f'\nRTC time: {rtc_time}'
+			if item.value == 'UTC':
+				if rtc_time := SysInfo.hw_clock():
+					output += f'\nRTC time: {rtc_time}'
 			return output
 		return None
 
