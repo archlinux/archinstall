@@ -185,11 +185,16 @@ For a quick fix the below command will install the latest keyrings
 ```pacman -Sy archlinux-keyring```
 
 ## GPG verification errors pacstrap
-This can occur if the timezone selected is incorrect and/or hardware clock in motherboard settings is not set (during verification of packages at first base-strap). Ie. when CMOS battery is dead and power cut-off happens. This can reset other settings such as Sata Mode, Fast Boot, etc
+This can occur if the timezone selected is incorrect and/or hardware clock in motherboard settings is not accurate (fails during verification of packages at first base-strap). Ie. when CMOS battery is dead and power cut-off happens this can reset other settings such as Clock, Sata Mode, Fast Boot, etc...
 
-Look for RTC field (real-time clock)
-```timedatectl status```
-And make sure to set it properly according to your timezone in the menu. NTP will also auto sync if internet is found.
+For offline installs can set manually via:
+
+```
+timedatectl status
+timedatectl set-time "YYYY-MM-DD HH:MM:SS"
+```
+
+Or in motherboard settings directly ! If you have internet and no misconfiguration, NTP should handle this by default.
 
 ## How to dual boot with Windows
 
