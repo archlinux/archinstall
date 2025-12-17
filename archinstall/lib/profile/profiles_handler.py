@@ -201,7 +201,7 @@ class ProfileHandler:
 				service = ['gdm']
 			case GreeterType.Ly:
 				packages = ['ly']
-				service = ['ly']
+				service = ['ly@tty1']
 			case GreeterType.CosmicSession:
 				packages = ['cosmic-greeter']
 
