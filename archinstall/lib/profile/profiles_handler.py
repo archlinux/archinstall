@@ -212,7 +212,6 @@ class ProfileHandler:
 			install_session.enable_service(service)
 			install_session.disable_service(service_disable)
 
-
 		# slick-greeter requires a config change
 		if greeter == GreeterType.LightdmSlick:
 			path = install_session.target.joinpath('etc/lightdm/lightdm.conf')
