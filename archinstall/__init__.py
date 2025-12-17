@@ -14,7 +14,7 @@ from archinstall.lib.packages.packages import check_package_upgrade
 from archinstall.tui.ui.components import tui as ttui
 
 from .lib.general import running_from_host
-from .lib.hardware import SysInfo, _sys_info
+from .lib.hardware import SysInfo
 from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
 from .lib.plugins import load_plugin, plugins
@@ -35,6 +35,7 @@ def _log_sys_info() -> None:
 	debug(f'Memory statistics: {SysInfo.mem_available()} available out of {SysInfo.mem_total()} total installed')
 	debug(f'Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_vm()}')
 	debug(f'Graphics devices detected: {SysInfo._graphics_devices().keys()}')
+	from archinstall.lib.hardware import _sys_info
 
 	# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 	debug(f'Disk states before installing:\n{disk_layouts()}')
