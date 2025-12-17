@@ -35,7 +35,6 @@ def _log_sys_info() -> None:
 	debug(f'Memory statistics: {SysInfo.mem_available()} available out of {SysInfo.mem_total()} total installed')
 	debug(f'Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_vm()}')
 	debug(f'Graphics devices detected: {SysInfo._graphics_devices().keys()}')
-	from archinstall.lib.hardware import _sys_info
 
 	# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 	debug(f'Disk states before installing:\n{disk_layouts()}')
