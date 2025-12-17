@@ -185,6 +185,7 @@ class ProfileHandler:
 	def install_greeter(self, install_session: 'Installer', greeter: GreeterType) -> None:
 		packages = []
 		service = None
+		service_disable = None
 
 		match greeter:
 			case GreeterType.LightdmSlick:
@@ -210,6 +211,7 @@ class ProfileHandler:
 			install_session.add_additional_packages(packages)
 		if service:
 			install_session.enable_service(service)
+		if service_disable:
 			install_session.disable_service(service_disable)
 
 		# slick-greeter requires a config change
