@@ -14,7 +14,7 @@ from archinstall.lib.packages.packages import check_package_upgrade
 from archinstall.tui.ui.components import tui as ttui
 
 from .lib.general import running_from_host
-from .lib.hardware import SysInfo
+from .lib.hardware import SysInfo, _sys_info
 from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
 from .lib.plugins import load_plugin, plugins
