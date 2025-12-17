@@ -211,7 +211,7 @@ class ProfileHandler:
 		if service:
 			install_session.enable_service(service)
 			install_session.disable_service(service_disable)
-			
+		
 
 		# slick-greeter requires a config change
 		if greeter == GreeterType.LightdmSlick:
