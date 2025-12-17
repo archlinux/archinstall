@@ -202,6 +202,7 @@ class ProfileHandler:
 			case GreeterType.Ly:
 				packages = ['ly']
 				service = ['ly@tty1']
+				service_disable = ['getty@tty1']
 			case GreeterType.CosmicSession:
 				packages = ['cosmic-greeter']
 
@@ -209,6 +210,8 @@ class ProfileHandler:
 			install_session.add_additional_packages(packages)
 		if service:
 			install_session.enable_service(service)
+			install_session.disable_service(service_disable)
+			
 
 		# slick-greeter requires a config change
 		if greeter == GreeterType.LightdmSlick:
