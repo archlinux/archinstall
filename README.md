@@ -144,9 +144,9 @@ pacman -S qemu-system-x86 qemu-img
 # create a disk (note its allocated not used yet)
 qemu-img create -f qcow2 "$image_name" 40G
 # boot for installation
-qemu-system-x86 -enable-kvm -m 4096 -cpu host -smp 4 \
+qemu-system-x86_64 -enable-kvm -m 4096 -cpu host -smp 4 \
   -vga std -hda "$image_name" -cdrom archlinux-x86_64.iso -boot d
-# once inside ISO (for testing branches)
+# once inside ISO (example testing branches)
 pacman -Sy --noconfirm git && git clone -b testing-branch https://github.com/archlinux/archinstall
 # alternative is to use pacman -Sy archinstall && archinstall
 cd archinstall && python -m archinstall
@@ -167,7 +167,7 @@ qemu-system-x86 -enable-kvm -m 4096 -cpu host -smp 4 \
   -vga std -hda "$image_name" -boot c
 ```
 
-More advanced use cases can use `qemu-hw-display-virtio-gpu-pci qemu-hw-display-virtio-gpu qemu-ui-sdl qemu-ui-gtk qemu-audio-pipewire`. 
+More advanced use cases can use `virglrenderer qemu-hw-display-virtio-gpu-pci qemu-hw-display-virtio-gpu qemu-ui-sdl qemu-ui-gtk qemu-audio-pipewire`. 
 
 Possibly get hardware acceleration/sound to work via `-device virtio-gpu-pci`, `-vga none -display sdl,gl=on` and `-audiodev pipewire,id=snd0 -device intel-hda -device hda-duplex,audiodev=snd0`
 
