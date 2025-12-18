@@ -167,9 +167,9 @@ qemu-system-x86 -enable-kvm -m 4096 -cpu host -smp 4 \
   -vga std -hda "$image_name" -boot c
 ```
 
-More advanced use cases can use `virglrenderer qemu-hw-display-virtio-gpu-pci qemu-hw-display-virtio-gpu qemu-ui-sdl qemu-ui-gtk qemu-audio-pipewire`. 
+More advanced use cases can use `virglrenderer qemu-hw-display-virtio-gpu-pci qemu-hw-display-virtio-gpu qemu-ui-sdl qemu-ui-gtk qemu-audio-pipewire`. And full list of subjects can be found [here](https://wiki.archlinux.org/title/Category:Virtualization)
 
-Possibly get hardware acceleration/sound to work via `-device virtio-gpu-pci`, `-vga none -display sdl,gl=on` and `-audiodev pipewire,id=snd0 -device intel-hda -device hda-duplex,audiodev=snd0`
+Possibly get hardware acceleration/sound to work via `-device virtio-gpu-pci`, `-vga none -display sdl,gl=on` and `-audiodev pipewire,id=snd0 -device intel-hda -device hda-duplex,audiodev=snd0`. Illustrative examples.
 
 Or use any of the GUI managers which should handle parts of this for you: [VirtManager](https://wiki.archlinux.org/title/Virt-manager), [VirtualBox](https://wiki.archlinux.org/title/VirtualBox), [VMWare](https://wiki.archlinux.org/title/VMware), RemoteBox, etc.
 
