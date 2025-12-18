@@ -135,45 +135,52 @@ The profiles' definitions and the packages they will install can be directly vie
 
 ## Using a Live ISO Image
 
-If you want to test a commit, branch, or bleeding edge release from the repository using the standard Arch Linux Live ISO image,
-replace the archinstall version with a newer one and execute the subsequent steps defined below.
+Using [`QEMU`](https://wiki.archlinux.org/title/QEMU):
+> Provided you have KVM compatible hardware: check using `lsmod | grep -i "kvm"` this can often be enabled/disabled in motherboard settings under term "Virtualisation".
 
-*Note: When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow
-running a re-installation or upgrade of the installer. In case one runs into this issue, any of the following can be used
-- Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
-- The boot parameter `copytoram=y` (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26)
-can be specified which will copy the root filesystem to tmpfs.*
+```shell
+# deps
+pacman -S qemu-system-x86 qemu-img
+# create a disk (note its allocated not used yet)
+qemu-img create -f qcow2 "$image_name" 40G
+# boot for installation
+qemu-system-x86 -enable-kvm -m 4096 -cpu host -smp 4 \
+  -vga std -hda "$image_name" -cdrom archlinux-x86_64.iso -boot d
+# once inside ISO (for testing branches)
+pacman -Sy --noconfirm git && git clone -b testing-branch https://github.com/archlinux/archinstall
+# alternative is to use pacman -Sy archinstall && archinstall
+cd archinstall && python -m archinstall
+```
 
-1. You need a working network connection
-2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
-   *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
-3. Uninstall the previous version of archinstall with `pip uninstall --break-system-packages archinstall`
-4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
-5. Enter the repository with `cd archinstall`
-   *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
-6. To run the source code, there are 2 different options:
-   - Run a specific branch version from source directly using `python -m archinstall`, in most cases this will work just fine, the
-      rare case it will not work is if the source has introduced any new dependencies that are not installed yet
-   - Installing the branch version with `pip install --break-system-packages .` and `archinstall`
+To test with UEFI vars add:
+```shell
+-drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd
+-drive if=pflash,format=raw,file=/usr/share/ovmf/x64/OVMF_VARS.4m.fd 
+``` 
+Check these path exists on your system `ls -la /usr/share/ovmf/x64/`.
+
+Once install is done use `poweroff` then:
+
+```shell
+# standard (after installation)
+qemu-system-x86 -enable-kvm -m 4096 -cpu host -smp 4 \
+  -vga std -hda "$image_name" -boot c
+```
+
+More advanced use cases can use `qemu-hw-display-virtio-gpu-pci qemu-hw-display-virtio-gpu qemu-ui-sdl qemu-ui-gtk qemu-audio-pipewire`. 
+
+Possibly get hardware acceleration/sound to work via `-device virtio-gpu-pci`, `-vga none -display sdl,gl=on` and `-audiodev pipewire,id=snd0 -device intel-hda -device hda-duplex,audiodev=snd0`
+
+Or use any of the GUI managers which should handle parts of this for you: [VirtualBox](https://wiki.archlinux.org/title/VirtualBox), [VMWare](https://wiki.archlinux.org/title/VMware), RemoteBox, etc.
 
 ## Without a Live ISO Image
 
-To test this without a live ISO, the simplest approach is to use a local image and create a loop device.<br>
-This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
+Using [`archiso`](https://wiki.archlinux.org/title/Archiso) to create your own ISO.
 
-    # truncate -s 20G testimage.img
-    # losetup --partscan --show --find ./testimage.img
-    # pip install --upgrade archinstall
-    # python -m archinstall --script guided
-    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd 
-
-This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
-`archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
-*(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium, so this won't work entirely out of the box, but that gives you a general idea of what we're going for here)*
+This is neat as you can pre-cache packages as a [local repo](https://wiki.archlinux.org/title/Archiso#Custom_local_repository) in order to shorten testing time. 
 
 There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.
-
 
 # FAQ
 
