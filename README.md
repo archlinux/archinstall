@@ -210,7 +210,7 @@ To install Arch Linux alongside an existing Windows installation using  `archins
 11. Modify any additional settings for your installation as necessary.
 12. Start the installation upon completion of setup.
 
-Another approach is to install to a second disk (if you hardware support `Other OS` secure boot) and refer to [GrubWiki](https://wiki.archlinux.org/title/GRUB#Detecting_other_operating_systems)
+Another approach is to install to a second disk (if you hardware support `Other OS` secure boot) and refer to [GrubWiki](https://wiki.archlinux.org/title/GRUB#Detecting_other_operating_systems) or your respective bootloader.
 
 # Mission Statement
 
