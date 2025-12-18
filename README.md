@@ -182,6 +182,8 @@ This is neat as you can pre-cache packages as a [local repo](https://wiki.archli
 There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.
 
+You can also run archinstall from an existing host-system to install to another target without an ISO.
+
 # FAQ
 
 ## Keyring out-of-date
