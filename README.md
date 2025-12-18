@@ -171,7 +171,7 @@ More advanced use cases can use `virglrenderer qemu-hw-display-virtio-gpu-pci qe
 
 Possibly get hardware acceleration/sound to work via `-device virtio-gpu-pci`, `-vga none -display sdl,gl=on` and `-audiodev pipewire,id=snd0 -device intel-hda -device hda-duplex,audiodev=snd0`
 
-Or use any of the GUI managers which should handle parts of this for you: [VirtualBox](https://wiki.archlinux.org/title/VirtualBox), [VMWare](https://wiki.archlinux.org/title/VMware), RemoteBox, etc.
+Or use any of the GUI managers which should handle parts of this for you: [VirtManager](https://wiki.archlinux.org/title/Virt-manager), [VirtualBox](https://wiki.archlinux.org/title/VirtualBox), [VMWare](https://wiki.archlinux.org/title/VMware), RemoteBox, etc.
 
 ## Without a Live ISO Image
 
