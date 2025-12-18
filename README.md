@@ -136,7 +136,7 @@ The profiles' definitions and the packages they will install can be directly vie
 ## Using a Live ISO Image
 
 Using [`QEMU`](https://wiki.archlinux.org/title/QEMU):
-> Provided you have KVM compatible hardware: check using `lsmod | grep -i "kvm"` this can often be enabled/disabled in motherboard settings under term "Virtualisation".
+> Provided you have KVM compatible hardware: check using `lsmod | grep -i "kvm"` this can often be enabled/disabled in motherboard settings under term "Virtualisation". And an ISO from [ArchDownload](https://archlinux.org/download/)
 
 ```shell
 # deps
