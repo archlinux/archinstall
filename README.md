@@ -147,11 +147,12 @@ qemu-img create -f qcow2 "$image_name" 40G
 qemu-system-x86_64 -enable-kvm -m 4096 -cpu host -smp 4 \
   -vga std -hda "$image_name" -cdrom archlinux-x86_64.iso -boot d
 ```
-Once inside QEMU/ISO (example testing branches)
-```
+Once inside QEMU/ISO (example testing branches):
+
+```shell
 pacman -Sy git
 git clone -b testing-branch https://github.com/archlinux/archinstall
-# alternative is to use pacman -Sy archinstall && archinstall
+# alternative is to clone master then checkout <branch>
 cd archinstall && python -m archinstall
 ```
 
