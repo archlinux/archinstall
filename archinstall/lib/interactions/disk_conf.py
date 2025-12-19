@@ -3,7 +3,7 @@ from pathlib import Path
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.partitioning_menu import manual_partitioning
-from archinstall.lib.menu.menu_helper import MenuHelper
+from archinstall.lib.menu.helpers import Confirmation, Notify, Selection, Table
 from archinstall.lib.models.device import (
 	BDevice,
 	BtrfsMountOption,
@@ -28,10 +28,8 @@ from archinstall.lib.models.device import (
 )
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties, Orientation, PreviewStyle
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 from ..output import FormattedOutput
 from ..utils.util import prompt_dir
@@ -39,7 +37,7 @@ from ..utils.util import prompt_dir
 
 def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 	def _preview_device_selection(item: MenuItem) -> str | None:
-		device = item.get_value()
+		device: _DeviceInfo = item.value  # type: ignore[assignment]
 		dev = device_handler.get_device(device.path)
 
 		if dev and dev.partition_infos:
@@ -50,23 +48,32 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 		preset = []
 
 	devices = device_handler.devices
-	options = [d.device_info for d in devices]
+
+	items = [
+		MenuItem(
+			str(d.device_info.path),
+			d.device_info,
+			preview_action=_preview_device_selection,
+		)
+		for d in devices
+	]
+
 	presets = [p.device_info for p in preset]
 
-	group = MenuHelper(options).create_menu_group()
+	group = MenuItemGroup(items)
 	group.set_selected_by_value(presets)
-	group.set_preview_for_all(_preview_device_selection)
 
-	result = SelectMenu[_DeviceInfo](
-		group,
-		alignment=Alignment.CENTER,
-		search_enabled=False,
-		multi=True,
-		preview_style=PreviewStyle.BOTTOM,
-		preview_size='auto',
-		preview_frame=FrameProperties.max('Partitions'),
+	result = Table[_DeviceInfo](
+		header=tr('Select disks for the installation'),
+		group=group,
+		presets=presets,
 		allow_skip=True,
-	).run()
+		multi=True,
+		preview_location='bottom',
+		preview_header=tr('Partitions'),
+	).show()
+
+	debug(f'Result: {result}')
 
 	match result.type_:
 		case ResultType.Reset:
@@ -81,6 +88,7 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 				if device.device_info in selected_device_info:
 					selected_devices.append(device)
 
+			debug(f'Selected devices: {selected_device_info}')
 			return selected_devices
 
 
@@ -132,13 +140,12 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 	if preset:
 		group.set_selected_by_value(preset.config_type.display_msg())
 
-	result = SelectMenu[str](
+	result = Selection[str](
 		group,
+		header=tr('Select a disk configuration'),
 		allow_skip=True,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Disk configuration type')),
 		allow_reset=True,
-	).run()
+	).show()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -149,10 +156,11 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 			selection = result.get_value()
 
 			if selection == pre_mount_mode:
-				output = 'You will use whatever drive-setup is mounted at the specified directory\n'
-				output += "WARNING: Archinstall won't check the suitability of this setup\n"
+				output = tr('Enter root mount directory') + '\n\n'
+				output += tr('You will use whatever drive-setup is mounted at the specified directory') + '\n'
+				output += tr("WARNING: Archinstall won't check the suitability of this setup")
 
-				path = prompt_dir(tr('Root mount directory'), output, allow_skip=True)
+				path = prompt_dir(output, allow_skip=True)
 
 				if path is None:
 					return None
@@ -170,6 +178,9 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 
 			if not devices:
 				return None
+
+			if devices == preset_devices:
+				return preset
 
 			if result.get_value() == default_layout:
 				modifications = get_default_partition_layout(devices)
@@ -202,13 +213,11 @@ def select_lvm_config(
 	group = MenuItemGroup(items)
 	group.set_focus_by_value(preset_value)
 
-	result = SelectMenu[str](
+	result = Selection[str](
 		group,
 		allow_reset=True,
 		allow_skip=True,
-		frame=FrameProperties.min(tr('LVM configuration type')),
-		alignment=Alignment.CENTER,
-	).run()
+	).show()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -253,12 +262,11 @@ def select_main_filesystem_format() -> FilesystemType:
 		items.append(MenuItem('ntfs', value=FilesystemType.Ntfs))
 
 	group = MenuItemGroup(items, sort_items=False)
-	result = SelectMenu[FilesystemType](
+	result = Selection[FilesystemType](
 		group,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min('Filesystem'),
+		header=tr('Select main filesystem'),
 		allow_skip=False,
-	).run()
+	).show()
 
 	match result.type_:
 		case ResultType.Selection:
@@ -277,15 +285,12 @@ def select_mount_options() -> list[str]:
 		MenuItem(disable_cow, value=BtrfsMountOption.nodatacow.value),
 	]
 	group = MenuItemGroup(items, sort_items=False)
-	result = SelectMenu[str](
+
+	result = Selection[str](
 		group,
 		header=prompt,
-		alignment=Alignment.CENTER,
-		columns=2,
-		orientation=Orientation.HORIZONTAL,
-		search_enabled=False,
 		allow_skip=True,
-	).run()
+	).show()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -338,16 +343,12 @@ def suggest_single_disk_layout(
 
 	if filesystem_type == FilesystemType.Btrfs:
 		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
-		group = MenuItemGroup.yes_no()
-		group.set_focus_by_value(MenuItem.yes().value)
-		result = SelectMenu[bool](
-			group,
+
+		result = Confirmation(
 			header=prompt,
-			alignment=Alignment.CENTER,
-			columns=2,
-			orientation=Orientation.HORIZONTAL,
 			allow_skip=False,
-		).run()
+			preset=True,
+		).show()
 
 		using_subvolumes = result.item() == MenuItem.yes()
 		mount_options = select_mount_options()
@@ -375,16 +376,12 @@ def suggest_single_disk_layout(
 		using_home_partition = True
 	else:
 		prompt = tr('Would you like to create a separate partition for /home?') + '\n'
-		group = MenuItemGroup.yes_no()
-		group.set_focus_by_value(MenuItem.yes().value)
-		result = SelectMenu(
-			group,
+
+		result = Confirmation(
 			header=prompt,
-			orientation=Orientation.HORIZONTAL,
-			columns=2,
-			alignment=Alignment.CENTER,
 			allow_skip=False,
-		).run()
+			preset=True,
+		).show()
 
 		using_home_partition = result.item() == MenuItem.yes()
 
@@ -474,10 +471,7 @@ def suggest_multi_disk_layout(
 		text += tr('Minimum capacity for /home partition: {}GiB\n').format(min_home_partition_size.format_size(Unit.GiB))
 		text += tr('Minimum capacity for Arch Linux partition: {}GiB').format(desired_root_partition_size.format_size(Unit.GiB))
 
-		items = [MenuItem(tr('Continue'))]
-		group = MenuItemGroup(items)
-		SelectMenu(group).run()
-
+		Notify(text).show()
 		return []
 
 	if filesystem_type == FilesystemType.Btrfs:
@@ -565,18 +559,7 @@ def suggest_lvm_layout(
 
 	if filesystem_type == FilesystemType.Btrfs:
 		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
-		group = MenuItemGroup.yes_no()
-		group.set_focus_by_value(MenuItem.yes().value)
-
-		result = SelectMenu[bool](
-			group,
-			header=prompt,
-			search_enabled=False,
-			allow_skip=False,
-			orientation=Orientation.HORIZONTAL,
-			columns=2,
-			alignment=Alignment.CENTER,
-		).run()
+		result = Confirmation(header=prompt, allow_skip=False, preset=True).show()
 
 		using_subvolumes = MenuItem.yes() == result.item()
 		mount_options = select_mount_options()

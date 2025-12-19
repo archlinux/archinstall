@@ -5,7 +5,6 @@ import time
 from pathlib import Path
 
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import Tui
 
 from ..interactions.general_conf import ask_abort
 from ..luks import Luks2
@@ -339,15 +338,14 @@ class FilesystemHandler:
 		# Issue a final warning before we continue with something un-revertable.
 		# We mention the drive one last time, and count from 5 to 0.
 		out = tr('Starting device modifications in ')
-		Tui.print(out, row=0, endl='', clear_screen=True)
+		print(out, end='', flush=True)
 
 		try:
 			countdown = '\n5...4...3...2...1\n'
 			for c in countdown:
-				Tui.print(c, row=0, endl='')
+				print(c, end='', flush=True)
 				time.sleep(0.25)
 		except KeyboardInterrupt:
-			with Tui():
-				ask_abort()
+			ask_abort()
 
 		return True

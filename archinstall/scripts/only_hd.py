@@ -7,20 +7,18 @@ from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
-from archinstall.tui import Tui
 
 
 def ask_user_questions() -> None:
-	with Tui():
-		global_menu = GlobalMenu(arch_config_handler.config)
-		global_menu.disable_all()
+	global_menu = GlobalMenu(arch_config_handler.config)
+	global_menu.disable_all()
 
-		global_menu.set_enabled('archinstall_language', True)
-		global_menu.set_enabled('disk_config', True)
-		global_menu.set_enabled('swap', True)
-		global_menu.set_enabled('__config__', True)
+	global_menu.set_enabled('archinstall_language', True)
+	global_menu.set_enabled('disk_config', True)
+	global_menu.set_enabled('swap', True)
+	global_menu.set_enabled('__config__', True)
 
-		global_menu.run()
+	global_menu.run()
 
 
 def perform_installation(mountpoint: Path) -> None:
@@ -69,10 +67,9 @@ def _only_hd() -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		with Tui():
-			if not config.confirm_config():
-				debug('Installation aborted')
-				aborted = True
+		if not config.confirm_config():
+			debug('Installation aborted')
+			aborted = True
 
 		if aborted:
 			return _only_hd()

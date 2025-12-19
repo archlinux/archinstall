@@ -11,7 +11,7 @@ from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.network.wifi_handler import wifi_handler
 from archinstall.lib.networking import ping
 from archinstall.lib.packages.packages import check_package_upgrade
-from archinstall.tui.ui.components import tui as ttui
+from archinstall.tui.ui.components import tui as tui
 
 from .lib.general import running_from_host
 from .lib.hardware import SysInfo
@@ -19,7 +19,6 @@ from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
 from .lib.plugins import load_plugin, plugins
 from .lib.translationhandler import Language, tr, translation_handler
-from .tui.curses_menu import Tui
 
 
 # @archinstall.plugin decorator hook to programmatically add
@@ -97,7 +96,7 @@ def main() -> int:
 
 	_log_sys_info()
 
-	ttui.global_header = 'Archinstall'
+	tui.global_header = 'Archinstall'
 
 	if not arch_config_handler.args.offline:
 		_check_online()
@@ -107,7 +106,7 @@ def main() -> int:
 			new_version = check_version_upgrade()
 
 			if new_version:
-				ttui.global_header = f'{ttui.global_header} {new_version}'
+				tui.global_header = f'{tui.global_header} {new_version}'
 				info(new_version)
 				time.sleep(3)
 
@@ -135,9 +134,6 @@ def run_as_a_module() -> None:
 	except Exception as e:
 		exc = e
 	finally:
-		# restore the terminal to the original state
-		Tui.shutdown()
-
 		if exc:
 			err = ''.join(traceback.format_exception(exc))
 			error(err)
@@ -159,7 +155,6 @@ __all__ = [
 	'Language',
 	'Pacman',
 	'SysInfo',
-	'Tui',
 	'arch_config_handler',
 	'debug',
 	'disk_layouts',

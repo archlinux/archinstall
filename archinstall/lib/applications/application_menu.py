@@ -1,12 +1,11 @@
 from typing import override
 
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
+from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties, Orientation
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
 class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
@@ -67,22 +66,14 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 
 
 def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfiguration | None:
-	group = MenuItemGroup.yes_no()
-	group.focus_item = MenuItem.no()
-
-	if preset is not None:
-		group.set_selected_by_value(preset.enabled)
-
 	header = tr('Would you like to configure Bluetooth?') + '\n'
+	preset_val = preset.enabled if preset else False
 
-	result = SelectMenu[bool](
-		group,
+	result = Confirmation(
 		header=header,
-		alignment=Alignment.CENTER,
-		columns=2,
-		orientation=Orientation.HORIZONTAL,
 		allow_skip=True,
-	).run()
+		preset=preset_val,
+	).show()
 
 	match result.type_:
 		case ResultType.Selection:
@@ -101,12 +92,11 @@ def select_audio(preset: AudioConfiguration | None = None) -> AudioConfiguration
 	if preset:
 		group.set_focus_by_value(preset.audio)
 
-	result = SelectMenu[Audio](
+	result = Selection[Audio](
 		group,
+		header=tr('Select audio configuration'),
 		allow_skip=True,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Audio')),
-	).run()
+	).show()
 
 	match result.type_:
 		case ResultType.Skip:
