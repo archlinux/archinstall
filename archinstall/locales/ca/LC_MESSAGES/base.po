@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] S'ha creat un fitxer de registre aquí: {} {}"
@@ -1716,133 +1716,122 @@ msgstr "Contrasenya d'encriptació del fitxer de credencials"
 msgid "Repositories: {}"
 msgstr "Repositoris: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "No hi ha dispositius HSM disponibles"
+msgstr "Versió nova disponible"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Contrasenya"
+msgstr "Inici de sessió sense contrasenya"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Inici de sessió amb segon factor"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Voleu continuar?"
+msgstr "Voleu configurar el Bluetooth?"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Autenticació"
 
 msgid "Applications"
-msgstr ""
+msgstr "Aplicacions"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "Mètode d'inici de sessió U2F: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Sudo sense contrasenya: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Tipus d'instantània Btrfs: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Sincronitzant el sistema..."
 
-#, fuzzy
 msgid "Value cannot be empty"
-msgstr "El temps d'iteració no pot ser buit"
+msgstr "El valor no pot ser buit"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Tipus d'instantània"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Tipus d'entorn: {}"
+msgstr "Tipus d'instantània: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Configuració d'autenticació U2F"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "No s'han trobat dispositius U2F"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "Mètode d'inici de sessió U2F"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Introduïu una contrasenya: "
+msgstr "Cal activar sudo sense contrasenya?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Seleccioneu un dispositiu FIDO2 per a utilitzar amb HSM"
+msgstr "Preparant el dispositiu U2F per a l'usuari: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "Pot ser que necessiteu introduir el PIN i tocar el dispositiu U2F per a registrar-lo"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Començant modificacions del dispositiu en "
 
-#, fuzzy
 msgid "No network connection found"
-msgstr "Sense configuració de xarxa"
+msgstr "No s'ha trobat cap configuració de xarxa"
 
-#, fuzzy
 msgid "Would you like to connect to a Wifi?"
-msgstr "Voleu continuar?"
+msgstr "Us voleu connectar al Wifi?"
 
-#, fuzzy
 msgid "No wifi interface found"
-msgstr "Configurar interfícies"
+msgstr "No s'ha trobat cap interfície wifi"
 
-#, fuzzy
 msgid "Select wifi network to connect to"
-msgstr "Seleccioneu una interfície de xarxa a configurar"
+msgstr "Seleccioneu la xarxa wifi on connectar-se"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Escanejant xarxes wifi..."
 
-#, fuzzy
 msgid "No wifi networks found"
-msgstr "Sense configuració de xarxa"
+msgstr "No s'han trobat xarxes wifi"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "Error configurant el wifi"
 
-#, fuzzy
 msgid "Enter wifi password"
-msgstr "Introduïu una contrasenya: "
+msgstr "Introduïu la contrasenya del wifi"
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "Removable"
-msgstr ""
+msgstr "Extraïble"
 
 msgid "Install to removable location"
-msgstr ""
+msgstr "Instal·lar a un mitjà extraïble"
 
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
+msgstr "S'instal·larà a /EFI/BOOT (mitjà extraïble)"
 
 msgid "Will install to standard location with NVRAM entry"
-msgstr ""
+msgstr "S'instal·larà a una ubicació estàndard amb un registre NVRAM"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
+msgstr "Voleu instal·lar el bootloader a la ubicació predeterminada del dispositiu extraïble?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
+msgstr "Això instal·larà el bootloader a /EFI/BOOT/BOOTX64.EFI (o similar). És útil per a:"
 
 msgid "USB drives or other portable external media."
-msgstr ""
+msgstr "Llapis USB o altres mitjans extraïbles externs."
 
 msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
+msgstr "Sistemes on vulgueu que el dispositiu arranqui en qualsevol ordinador."
 
 msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
+msgstr "Firmware que no suporta registres d'arrancada NVRAM."
