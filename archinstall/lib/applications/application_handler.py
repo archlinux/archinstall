@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from archinstall.applications.audio import AudioApp
 from archinstall.applications.bluetooth import BluetoothApp
+from archinstall.applications.printer import PrinterApp
 from archinstall.lib.models import Audio
 from archinstall.lib.models.application import ApplicationConfiguration
 from archinstall.lib.models.users import User
@@ -24,6 +25,9 @@ class ApplicationHandler:
 				app_config.audio_config,
 				users,
 			)
+
+		if app_config.printer_config and app_config.printer_config.enabled:
+			PrinterApp().install(install_session)
 
 
 application_handler = ApplicationHandler()

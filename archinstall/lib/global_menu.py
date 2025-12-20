@@ -324,6 +324,11 @@ class GlobalMenu(AbstractMenu[None]):
 				output += f'{tr("Audio")}: {audio_config.audio.value}'
 				output += '\n'
 
+			if app_config.printer_config:
+				output += f'{tr("Print service")}: '
+				output += tr('Enabled') if app_config.printer_config.enabled else tr('Disabled')
+				output += '\n'
+
 			return output
 
 		return None

@@ -17,9 +17,14 @@ class AudioConfigSerialization(TypedDict):
 	audio: str
 
 
+class PrinterConfigSerialization(TypedDict):
+	enabled: bool
+
+
 class ApplicationSerialization(TypedDict):
 	bluetooth_config: NotRequired[BluetoothConfigSerialization]
 	audio_config: NotRequired[AudioConfigSerialization]
+	printer_config: NotRequired[PrinterConfigSerialization]
 
 
 @dataclass
@@ -51,9 +56,22 @@ class BluetoothConfiguration:
 
 
 @dataclass
+class PrinterConfiguration:
+	enabled: bool
+
+	def json(self) -> PrinterConfigSerialization:
+		return {'enabled': self.enabled}
+
+	@staticmethod
+	def parse_arg(arg: dict[str, Any]) -> 'PrinterConfiguration':
+		return PrinterConfiguration(arg['enabled'])
+
+
+@dataclass
 class ApplicationConfiguration:
 	bluetooth_config: BluetoothConfiguration | None = None
 	audio_config: AudioConfiguration | None = None
+	printer_config: PrinterConfiguration | None = None
 
 	@staticmethod
 	def parse_arg(
@@ -72,6 +90,9 @@ class ApplicationConfiguration:
 		if args and (audio_config := args.get('audio_config')) is not None:
 			app_config.audio_config = AudioConfiguration.parse_arg(audio_config)
 
+		if args and (printer_config := args.get('printer_config')) is not None:
+			app_config.printer_config = PrinterConfiguration.parse_arg(printer_config)
+
 		return app_config
 
 	def json(self) -> ApplicationSerialization:
@@ -82,5 +103,8 @@ class ApplicationConfiguration:
 
 		if self.audio_config:
 			config['audio_config'] = self.audio_config.json()
+
+		if self.printer_config:
+			config['printer_config'] = self.printer_config.json()
 
 		return config
