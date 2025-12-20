@@ -50,7 +50,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 			),
 			MenuItem(
 				text=tr('Print service'),
-				action=select_audio,
+				action=select_printer,
 				preview_action=self._prev_printer,
 				key='printer_config',
 			),
