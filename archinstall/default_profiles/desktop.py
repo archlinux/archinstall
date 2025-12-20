@@ -35,6 +35,7 @@ class DesktopProfile(Profile):
 			'wpa_supplicant',
 			'smartmontools',
 			'xdg-utils',
+			'power-profiles-daemon'
 		]
 
 	@property
