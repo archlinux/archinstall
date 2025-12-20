@@ -54,7 +54,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		if item.value is not None:
 			bluetooth_config: BluetoothConfiguration = item.value
 
-			output = 'Bluetooth: '
+			output = f'{tr("Bluetooth")}: '
 			output += tr('Enabled') if bluetooth_config.enabled else tr('Disabled')
 			return output
 		return None
