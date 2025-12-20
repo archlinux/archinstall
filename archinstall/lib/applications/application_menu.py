@@ -75,7 +75,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		if item.value is not None:
 			printer_config: PrinterConfiguration = item.value
 
-			output = 'Print service: '
+			output = f'{tr("Print service")}: '
 			output += tr('Enabled') if printer_config.enabled else tr('Disabled')
 			return output
 		return None
