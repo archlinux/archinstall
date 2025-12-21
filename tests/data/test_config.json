@@ -8,7 +8,7 @@
       "audio_config": {
           "audio": "pipewire"
       },
-      "printer_config": {
+      "print_service_config": {
           "enabled": true
       }
   },

@@ -1,7 +1,7 @@
 from typing import override
 
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
-from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration, PrinterConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration, PrintServiceConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -50,9 +50,9 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 			),
 			MenuItem(
 				text=tr('Print service'),
-				action=select_printer,
-				preview_action=self._prev_printer,
-				key='printer_config',
+				action=select_print_service,
+				preview_action=self._prev_print_service,
+				key='print_service_config',
 			),
 		]
 
@@ -71,12 +71,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 			return f'{tr("Audio")}: {config.audio.value}'
 		return None
 
-	def _prev_printer(self, item: MenuItem) -> str | None:
+	def _prev_print_service(self, item: MenuItem) -> str | None:
 		if item.value is not None:
-			printer_config: PrinterConfiguration = item.value
+			print_service_config: PrintServiceConfiguration = item.value
 
 			output = f'{tr("Print service")}: '
-			output += tr('Enabled') if printer_config.enabled else tr('Disabled')
+			output += tr('Enabled') if print_service_config.enabled else tr('Disabled')
 			return output
 		return None
 
@@ -109,7 +109,7 @@ def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfigur
 			raise ValueError('Unhandled result type')
 
 
-def select_printer(preset: PrinterConfiguration | None) -> PrinterConfiguration | None:
+def select_print_service(preset: PrintServiceConfiguration | None) -> PrintServiceConfiguration | None:
 	group = MenuItemGroup.yes_no()
 	group.focus_item = MenuItem.no()
 
@@ -130,7 +130,7 @@ def select_printer(preset: PrinterConfiguration | None) -> PrinterConfiguration 
 	match result.type_:
 		case ResultType.Selection:
 			enabled = result.item() == MenuItem.yes()
-			return PrinterConfiguration(enabled)
+			return PrintServiceConfiguration(enabled)
 		case ResultType.Skip:
 			return preset
 		case _:

@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 
 
-class PrinterApp:
+class PrintServiceApp:
 	@property
 	def packages(self) -> list[str]:
 		return ['cups', 'system-config-printer', 'cups-pk-helper']
