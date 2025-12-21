@@ -93,6 +93,14 @@ class GlobalMenu(AbstractMenu[None]):
 				key='bootloader_config',
 			),
 			MenuItem(
+				text=tr('Kernels'),
+				value=['linux'],
+				action=select_kernel,
+				preview_action=self._prev_kernel,
+				mandatory=True,
+				key='kernels',
+			),
+			MenuItem(
 				text=tr('Hostname'),
 				value='archlinux',
 				action=ask_hostname,
@@ -117,14 +125,6 @@ class GlobalMenu(AbstractMenu[None]):
 				value=[],
 				preview_action=self._prev_applications,
 				key='app_config',
-			),
-			MenuItem(
-				text=tr('Kernels'),
-				value=['linux'],
-				action=select_kernel,
-				preview_action=self._prev_kernel,
-				mandatory=True,
-				key='kernels',
 			),
 			MenuItem(
 				text=tr('Network configuration'),
