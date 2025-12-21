@@ -132,7 +132,7 @@ def test_config_file_parsing(
 		app_config=ApplicationConfiguration(
 			bluetooth_config=BluetoothConfiguration(enabled=True),
 			audio_config=AudioConfiguration(audio=Audio.PIPEWIRE),
-			print_service_config=PrintServiceConfiguration(enabled=True)
+			print_service_config=PrintServiceConfiguration(enabled=True),
 		),
 		auth_config=AuthenticationConfiguration(
 			root_enc_password=Password(enc_password='password_hash'),
