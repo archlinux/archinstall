@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, NotRequired, TypedDict
 from archinstall.lib.translationhandler import tr
 
 from ...default_profiles.profile import GreeterType, Profile
-from ..hardware import GfxDriver
+from ..hardware import GfxDriver, GfxPackage
 from ..models.profile import ProfileConfiguration
 from ..networking import fetch_data_from_url, list_interfaces
 from ..output import debug, error, info
@@ -224,12 +224,24 @@ class ProfileHandler:
 	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
 		debug(f'Installing GFX driver: {driver.value}')
 
-		if driver in [GfxDriver.NvidiaOpenKernel]:
+		driver_pkgs = driver.gfx_packages()
+		# All non-standard kernel packages have a '-' in their name.
+		# ex: 'linux-zen' and 'linux-lts'
+		is_dkms_needed = any('-' in s for s in install_session.kernels)
+
+		if driver.has_dkms_variant() and is_dkms_needed:
+			debug(f'A non-standard kernel was selected, installing DKMS variant of {driver.value}')
+
 			headers = [f'{kernel}-headers' for kernel in install_session.kernels]
-			# Fixes https://github.com/archlinux/archinstall/issues/585
 			install_session.add_additional_packages(headers)
 
-		driver_pkgs = driver.gfx_packages()
+			driver_pkgs.append(GfxPackage.Dkms)
+
+			match self:
+				case GfxDriver.Nvidia:
+					driver_pkgs.remove(GfxPackage.Nvidia)
+					driver_pkgs.append(GfxPackage.NvidiaDkms)
+
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
 
