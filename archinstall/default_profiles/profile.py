@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from enum import Enum, auto
 from typing import TYPE_CHECKING
 
@@ -33,10 +32,7 @@ class GreeterType(Enum):
 	Sddm = 'sddm'
 	Gdm = 'gdm'
 	Ly = 'ly'
-
-	# .. todo:: Remove when we un-hide cosmic behind --advanced
-	if '--advanced' in sys.argv:
-		CosmicSession = 'cosmic-greeter'
+	CosmicSession = 'cosmic-greeter'
 
 
 class SelectResult(Enum):
