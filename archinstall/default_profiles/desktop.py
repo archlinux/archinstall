@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType, SelectResult
+from archinstall.lib.hardware import SysInfo
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui.curses_menu import SelectMenu
@@ -35,7 +36,6 @@ class DesktopProfile(Profile):
 			'wpa_supplicant',
 			'smartmontools',
 			'xdg-utils',
-			'power-profiles-daemon'
 		]
 
 	@property
@@ -99,6 +99,9 @@ class DesktopProfile(Profile):
 	def install(self, install_session: 'Installer') -> None:
 		# Install common packages for all desktop environments
 		install_session.add_additional_packages(self.packages)
+
+		if SysInfo.has_battery():
+			install_session.add_additional_packages('power-profiles-daemon')
 
 		for profile in self.current_selection:
 			info(f'Installing profile {profile.name}...')
