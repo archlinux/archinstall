@@ -184,7 +184,7 @@ For a quick fix the below command will install the latest keyrings
 
 ```pacman -Sy archlinux-keyring```
 
-## GPG verification errors pacstrap
+## PGP verification errors pacstrap
 
 This can occur if the **timezone selected** is incorrect and/or hardware clock in motherboard settings is not accurate (fails during verification of packages at first base-strap). Ie. when CMOS battery is dead and power cut-off happens this can reset other settings such as Clock, Sata Mode, Fast Boot, etc...
 
