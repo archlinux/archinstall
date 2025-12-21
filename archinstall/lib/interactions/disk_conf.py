@@ -197,8 +197,9 @@ def select_lvm_config(
 ) -> LvmConfiguration | None:
 	preset_value = preset.config_type.display_msg() if preset else None
 	default_mode = LvmLayoutType.Default.display_msg()
+	no_home = LvmLayoutType.NoHome.display_msg()
 
-	items = [MenuItem(default_mode, value=default_mode)]
+	items = [MenuItem(default_mode, value=default_mode), MenuItem(no_home, value=no_home)]
 	group = MenuItemGroup(items)
 	group.set_focus_by_value(preset_value)
 
@@ -218,6 +219,8 @@ def select_lvm_config(
 		case ResultType.Selection:
 			if result.get_value() == default_mode:
 				return suggest_lvm_layout(disk_config)
+			if result.get_value() == no_home:
+				return suggest_lvm_layout(disk_config, home_volume=False)
 
 	return None
 
@@ -551,13 +554,13 @@ def suggest_lvm_layout(
 	disk_config: DiskLayoutConfiguration,
 	filesystem_type: FilesystemType | None = None,
 	vg_grp_name: str = 'ArchinstallVg',
+	home_volume: bool = True
 ) -> LvmConfiguration:
 	if disk_config.config_type != DiskLayoutType.Default:
 		raise ValueError('LVM suggested volumes are only available for default partitioning')
 
 	using_subvolumes = False
 	btrfs_subvols = []
-	home_volume = True
 	mount_options = []
 
 	if not filesystem_type:
@@ -602,7 +605,7 @@ def suggest_lvm_layout(
 		[p.length for p in other_part],
 		Size(0, Unit.B, SectorSize.default()),
 	)
-	root_vol_size = Size(20, Unit.GiB, SectorSize.default())
+	root_vol_size = Size(20, Unit.GiB, SectorSize.default()) if home_volume else total_vol_available
 	home_vol_size = total_vol_available - root_vol_size
 
 	lvm_vol_group = LvmVolumeGroup(vg_grp_name, pvs=other_part)
