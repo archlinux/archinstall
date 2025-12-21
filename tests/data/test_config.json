@@ -7,6 +7,9 @@
       },
       "audio_config": {
           "audio": "pipewire"
+      },
+      "print_service_config": {
+          "enabled": true
       }
   },
   "auth_config": {

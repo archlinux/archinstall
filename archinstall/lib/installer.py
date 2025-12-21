@@ -675,6 +675,18 @@ class Installer:
 				if hasattr(plugin, 'on_service'):
 					plugin.on_service(service)
 
+	def disable_service(self, services_disable: str | list[str]) -> None:
+		if isinstance(services_disable, str):
+			services_disable = [services_disable]
+
+		for service in services_disable:
+			info(f'Disabling service {service}')
+
+			try:
+				SysCommand(f'systemctl --root={self.target} disable {service}')
+			except SysCallError as err:
+				raise ServiceException(f'Unable to disable service {service}: {err}')
+
 	def run_command(self, cmd: str, peek_output: bool = False) -> SysCommand:
 		return SysCommand(f'arch-chroot -S {self.target} {cmd}', peek_output=peek_output)
 

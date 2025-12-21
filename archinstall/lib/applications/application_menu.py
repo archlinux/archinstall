@@ -1,7 +1,7 @@
 from typing import override
 
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
-from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration, PrintServiceConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -48,13 +48,19 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				preview_action=self._prev_audio,
 				key='audio_config',
 			),
+			MenuItem(
+				text=tr('Print service'),
+				action=select_print_service,
+				preview_action=self._prev_print_service,
+				key='print_service_config',
+			),
 		]
 
 	def _prev_bluetooth(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			bluetooth_config: BluetoothConfiguration = item.value
 
-			output = 'Bluetooth: '
+			output = f'{tr("Bluetooth")}: '
 			output += tr('Enabled') if bluetooth_config.enabled else tr('Disabled')
 			return output
 		return None
@@ -63,6 +69,15 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		if item.value is not None:
 			config: AudioConfiguration = item.value
 			return f'{tr("Audio")}: {config.audio.value}'
+		return None
+
+	def _prev_print_service(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			print_service_config: PrintServiceConfiguration = item.value
+
+			output = f'{tr("Print service")}: '
+			output += tr('Enabled') if print_service_config.enabled else tr('Disabled')
+			return output
 		return None
 
 
@@ -88,6 +103,34 @@ def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfigur
 		case ResultType.Selection:
 			enabled = result.item() == MenuItem.yes()
 			return BluetoothConfiguration(enabled)
+		case ResultType.Skip:
+			return preset
+		case _:
+			raise ValueError('Unhandled result type')
+
+
+def select_print_service(preset: PrintServiceConfiguration | None) -> PrintServiceConfiguration | None:
+	group = MenuItemGroup.yes_no()
+	group.focus_item = MenuItem.no()
+
+	if preset is not None:
+		group.set_selected_by_value(preset.enabled)
+
+	header = tr('Would you like to configure the print service?') + '\n'
+
+	result = SelectMenu[bool](
+		group,
+		header=header,
+		alignment=Alignment.CENTER,
+		columns=2,
+		orientation=Orientation.HORIZONTAL,
+		allow_skip=True,
+	).run()
+
+	match result.type_:
+		case ResultType.Selection:
+			enabled = result.item() == MenuItem.yes()
+			return PrintServiceConfiguration(enabled)
 		case ResultType.Skip:
 			return preset
 		case _:
