@@ -1779,6 +1779,12 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr ""
 
+msgid "Print service"
+msgstr ""
+
+msgid "Would you like to configure the print service?"
+msgstr ""
+
 msgid "Authentication"
 msgstr ""
 
