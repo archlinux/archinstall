@@ -68,7 +68,7 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 	if SysInfo.has_intel_graphics():
 		header += tr('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n')
 	if SysInfo.has_nvidia_graphics():
-		header += tr('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n')
+		header += tr('For the best compatibility with your NVIDIA hardware, you may want to use the official NVIDIA driver.\n')
 
 	result = SelectMenu[GfxDriver](
 		group,

@@ -193,8 +193,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"For the best compatibility with your Nvidia hardware, you may want to use "
-"the Nvidia proprietary driver.\n"
+"For the best compatibility with your NVIDIA hardware, you may want to use "
+"the official NVIDIA driver.\n"
 msgstr ""
 
 msgid ""
@@ -1051,7 +1051,7 @@ msgid "Environment type: {}"
 msgstr ""
 
 msgid ""
-"The proprietary Nvidia driver is not supported by Sway. It is likely that "
+"The official NVIDIA driver is not supported by Sway. It is likely that "
 "you will run into issues, are you okay with that?"
 msgstr ""
 
@@ -1488,7 +1488,7 @@ msgstr ""
 msgid "Info"
 msgstr ""
 
-msgid "The proprietary Nvidia driver is not supported by Sway."
+msgid "The official NVIDIA driver is not supported by Sway."
 msgstr ""
 
 msgid "It is likely that you will run into issues, are you okay with that?"
