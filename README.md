@@ -193,7 +193,7 @@ You can also run archinstall from an existing host-system to install to another 
 # FAQ
 
 ## Keyring out-of-date
-For a description of the problem [see here](https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213) and discussion in issue https://github.com/archlinux/archinstall/issues/2213.
+For a description of the problem [see here](https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213) and discussion in [issue](https://github.com/archlinux/archinstall/issues/2213.)
 
 For a quick fix the below command will install the latest keyrings
 
