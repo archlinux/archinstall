@@ -156,6 +156,8 @@ git clone -b testing-branch https://github.com/archlinux/archinstall
 cd archinstall && python -m archinstall
 ```
 
+Collaborators maintain their own [forks](https://github.com/archlinux/archinstall/forks?include=active&page=1&period=2y&sort_by=last_updated) that can also be tested.
+
 To test with UEFI vars add:
 ```shell
 -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd
