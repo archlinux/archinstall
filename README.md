@@ -193,11 +193,16 @@ You can also run archinstall from an existing host-system to install to another 
 # FAQ
 
 ## Keyring out-of-date
-For a description of the problem see https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 and discussion in issue https://github.com/archlinux/archinstall/issues/2213.
+For a description of the problem [see here](https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213) and discussion in issue https://github.com/archlinux/archinstall/issues/2213.
 
 For a quick fix the below command will install the latest keyrings
 
 ```pacman -Sy archlinux-keyring```
+
+## Wkd or ntp hang
+For a more complete solution see [here](https://archinstall.archlinux.page/help/known_issues.html#waiting-for-arch-linux-keyring-sync-archlinux-keyring-wkd-sync-to-complete-2679)
+
+```archinstall --skip-ntp --skip-wkd```
 
 ## How to dual boot with Windows
 
