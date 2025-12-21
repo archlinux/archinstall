@@ -237,7 +237,7 @@ class ProfileHandler:
 
 			driver_pkgs.append(GfxPackage.Dkms)
 
-			match self:
+			match driver:
 				case GfxDriver.Nvidia:
 					driver_pkgs.remove(GfxPackage.Nvidia)
 					driver_pkgs.append(GfxPackage.NvidiaDkms)
