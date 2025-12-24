@@ -979,12 +979,16 @@ class Installer:
 		if kind == 'zram':
 			info('Setting up swap on zram')
 			self.pacman.strap('zram-generator')
-
+			# Get RAM size in MB from hardware info
+			ram_kb = SysInfo.mem_total()
+			# Convert KB to MB and divide by 2
+			size_mb = ram_kb // 2048  
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
 			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
 			with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
 				zram_conf.write('[zram0]\n')
+				zram_conf.write(f'zram-size = {size_mb}\n')
 
 			self.enable_service('systemd-zram-setup@zram0.service')
 
