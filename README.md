@@ -175,13 +175,27 @@ qemu-system-x86 -enable-kvm -m 4096 -cpu host -smp 4 \
 
 More advanced use cases can use `virglrenderer qemu-hw-display-virtio-gpu-pci qemu-hw-display-virtio-gpu qemu-ui-sdl qemu-ui-gtk qemu-audio-pipewire`. And full list of subjects can be found [here](https://wiki.archlinux.org/title/Category:Virtualization)
 
-Possibly get hardware acceleration/sound to work via `-device virtio-gpu-pci`, `-vga none -display sdl,gl=on` and `-audiodev pipewire,id=snd0 -device intel-hda -device hda-duplex,audiodev=snd0`. Illustrative examples.
+Possibly get hardware acceleration/sound to work via `-device virtio-gpu-pci`, `-vga none -display sdl,gl=on` and `-audiodev pipewire,id=snd0 -device intel-hda -device hda-duplex,audiodev=snd0`. Illustrative examples. The guest system my also require drivers such as `vulkan-swrast` or `vulkan-virtio`.
 
 Or use any of the GUI managers which should handle parts of this for you: [VirtManager](https://wiki.archlinux.org/title/Virt-manager), [VirtualBox](https://wiki.archlinux.org/title/VirtualBox), [VMWare](https://wiki.archlinux.org/title/VMware), RemoteBox, etc.
 
 ## Without a Live ISO Image
 
-Using [`archiso`](https://wiki.archlinux.org/title/Archiso) to create your own ISO.
+To test this without a live ISO, the simplest approach is to use a local image and create a loop device.
+This can be done by installing pacman -S arch-install-scripts util-linux locally and doing the following:
+```shell
+# truncate -s 20G testimage.img
+# losetup --partscan --show ./testimage.img
+# pip install --upgrade archinstall
+# python -m archinstall --script guided
+# qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd 
+```
+
+This will create a 20 GB testimage.img and create a loop device which we can use to format and install to.
+archinstall is installed and executed in guided mode. Once the installation is complete, you can use qemu/kvm to boot the test media.
+(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium, so this won't work entirely out of the box, but that gives you a general idea of what we're going for here)
+
+Or using [`archiso`](https://wiki.archlinux.org/title/Archiso) to create your own ISO.
 
 This is neat as you can pre-cache packages as a [local repo](https://wiki.archlinux.org/title/Archiso#Custom_local_repository) in order to shorten testing time. 
 
