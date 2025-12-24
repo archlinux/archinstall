@@ -983,6 +983,7 @@ class Installer:
 			ram_kb = SysInfo.mem_total()
 			# Convert KB to MB and divide by 2, with minimum of 4096 MB
 			size_mb = max(ram_kb // 2048, 4096)
+			info(f'Zram size: {size_mb} from RAM: {ram_kb}')
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
 			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
