@@ -54,11 +54,6 @@ from .storage import storage
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ['base', 'sudo', 'linux-firmware', 'linux', 'linux-lts', 'linux-zen', 'linux-hardened']
 
-# base-devel is actually more a developer's thing and isn't strictly required in arch systems
-# it also overlaps the following pacman, grep, sed, gawk, findutils, file, gettext, gzip, archlinux-keyring (already in base)
-# not needed for a common user gcc, make, autoconf, automake, binutils, flex, bison, etc.
-# see https://github.com/archlinux/archinstall/discussions/159
-
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ['brltty', 'espeakup', 'alsa-utils']
 
