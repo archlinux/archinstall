@@ -268,7 +268,7 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 
 
 def ask_post_installation(elapsed_time: float | None = None) -> PostInstallationAction:
-	header = ('Installation completed')
+	header = 'Installation completed'
 	if elapsed_time is not None:
 		minutes = int(elapsed_time // 60)
 		seconds = int(elapsed_time % 60)
