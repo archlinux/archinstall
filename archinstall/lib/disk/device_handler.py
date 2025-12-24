@@ -422,8 +422,8 @@ class DeviceHandler:
 		cmd: str,
 		info_type: Literal['lv', 'vg', 'pvseg'],
 	) -> LvmVolumeInfo | LvmGroupInfo | LvmPVInfo | None:
-		# Retry for up to 30 seconds (10 attempts * 3 seconds)
-		max_retries = 10
+		# Retry for up to 5 mins
+		max_retries = 100
 		for attempt in range(max_retries):
 			try:
 				return self._lvm_info(cmd, info_type)
