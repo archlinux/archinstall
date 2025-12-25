@@ -1,4 +1,5 @@
 import os
+import time
 from pathlib import Path
 
 from archinstall import SysInfo
@@ -53,6 +54,7 @@ def perform_installation(mountpoint: Path) -> None:
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
+	start_time = time.time()
 	info('Starting installation...')
 
 	config = arch_config_handler.config
@@ -168,7 +170,8 @@ def perform_installation(mountpoint: Path) -> None:
 
 		if not arch_config_handler.args.silent:
 			with Tui():
-				action = ask_post_installation()
+				elapsed_time = time.time() - start_time
+				action = ask_post_installation(elapsed_time)
 
 			match action:
 				case PostInstallationAction.EXIT:
