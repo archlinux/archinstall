@@ -32,7 +32,6 @@ class DesktopProfile(Profile):
 			'wget',
 			'iwd',
 			'wireless_tools',
-			'wpa_supplicant',
 			'smartmontools',
 			'xdg-utils',
 		]

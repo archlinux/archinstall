@@ -151,7 +151,7 @@ class NetworkConfiguration:
 					enable_services=True,  # Sources the ISO network configuration to the install medium.
 				)
 			case NicType.NM:
-				installation.add_additional_packages(['networkmanager'])
+				installation.add_additional_packages(['networkmanager', 'wpa_supplicant'])
 				if profile_config and profile_config.profile:
 					if profile_config.profile.is_desktop_profile():
 						installation.add_additional_packages(['network-manager-applet'])
