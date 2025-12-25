@@ -407,9 +407,11 @@ class MirrorListHandler:
 		from .args import arch_config_handler
 
 		if arch_config_handler.args.offline:
+			self._fetched_remote = False
 			self.load_local_mirrors()
 		else:
-			if not self.load_remote_mirrors():
+			self._fetched_remote = self.load_remote_mirrors()
+			if not self._fetched_remote:
 				self.load_local_mirrors()
 
 	def load_remote_mirrors(self) -> bool:
