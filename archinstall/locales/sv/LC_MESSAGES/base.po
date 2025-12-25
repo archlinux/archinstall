@@ -1811,28 +1811,28 @@ msgid "Ok"
 msgstr "Ok"
 
 msgid "Removable"
-msgstr ""
+msgstr "Borttagbar"
 
 msgid "Install to removable location"
-msgstr ""
+msgstr "Installera till borttagbar plats"
 
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
+msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats)"
 
 msgid "Will install to standard location with NVRAM entry"
-msgstr ""
+msgstr "Installeras på standardplats med NVRAM-post"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
+msgstr "Vill du installera bootloadern på standardsökvägen för flyttbara medier?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
+msgstr "Detta installerar bootloadern till /EFI/BOOT/BOOTX64.EFI (eller liknande) vilket är användbart för:"
 
 msgid "USB drives or other portable external media."
-msgstr ""
+msgstr "USB-minnen eller andra portabla externa medier."
 
 msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
+msgstr "System där du vill att disken ska vara uppstartsbar på vilken dator som helst."
 
 msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
+msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt."
