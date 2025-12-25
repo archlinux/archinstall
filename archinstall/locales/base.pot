@@ -50,6 +50,9 @@ msgid ""
 "and optional profile packages are installed."
 msgstr ""
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid ""
 "If you desire a web browser, such as firefox or chromium, you may specify it "
 "in the following prompt."
