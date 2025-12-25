@@ -28,9 +28,39 @@ class ProfileConfiguration:
 
 		return {
 			'profile': profile_handler.to_json(self.profile),
-			'gfx_driver': self.gfx_driver.value if self.gfx_driver else None,
-			'greeter': self.greeter.value if self.greeter else None,
+			'gfx_driver': self.gfx_driver.name if self.gfx_driver else None,
+			'greeter': self.greeter.name if self.greeter else None,
 		}
+
+	@staticmethod
+	def _parse_gfx_driver(value: str) -> GfxDriver:
+		"""Parse graphics driver with backwards compatibility for old configs."""
+		# Mapping for deprecated driver values to new enum members
+		deprecated_map = {
+			'Nvidia (proprietary)': GfxDriver.Nvidia,
+			'Nvidia (open kernel module for newer GPUs, Turing+)': GfxDriver.Nvidia,
+		}
+
+		# Try deprecated value mapping first
+		if value in deprecated_map:
+			return deprecated_map[value]
+
+		# Try parsing as enum name (new format)
+		try:
+			return GfxDriver[value]
+		except KeyError:
+			# Fall back to enum value (old format)
+			return GfxDriver(value)
+
+	@staticmethod
+	def _parse_greeter(value: str) -> GreeterType:
+		"""Parse greeter with backwards compatibility for old configs."""
+		# Try parsing as enum name (new format)
+		try:
+			return GreeterType[value]
+		except KeyError:
+			# Fall back to enum value (old format)
+			return GreeterType(value)
 
 	@classmethod
 	def parse_arg(cls, arg: _ProfileConfigurationSerialization) -> 'ProfileConfiguration':
@@ -42,6 +72,6 @@ class ProfileConfiguration:
 
 		return ProfileConfiguration(
 			profile,
-			GfxDriver(gfx_driver) if gfx_driver else None,
-			GreeterType(greeter) if greeter else None,
+			cls._parse_gfx_driver(gfx_driver) if gfx_driver else None,
+			cls._parse_greeter(greeter) if greeter else None,
 		)

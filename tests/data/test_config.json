@@ -182,8 +182,8 @@
   ],
   "parallel_downloads": 66,
   "profile_config": {
-    "gfx_driver": "All open-source",
-    "greeter": "lightdm-gtk-greeter",
+    "gfx_driver": "AllOpenSource",
+    "greeter": "Lightdm",
     "profile": {
       "custom_settings": {
         "Hyprland": {
