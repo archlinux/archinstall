@@ -2,8 +2,9 @@ from typing import TYPE_CHECKING
 
 from archinstall.applications.audio import AudioApp
 from archinstall.applications.bluetooth import BluetoothApp
+from archinstall.applications.power_management import PowerManagementApp
 from archinstall.lib.models import Audio
-from archinstall.lib.models.application import ApplicationConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, PowerManagement
 from archinstall.lib.models.users import User
 
 if TYPE_CHECKING:
@@ -23,6 +24,12 @@ class ApplicationHandler:
 				install_session,
 				app_config.audio_config,
 				users,
+			)
+
+		if app_config.power_management_config and app_config.power_management_config.power_management != PowerManagement.NO_POWER_MANAGEMENT:
+			PowerManagementApp().install(
+				install_session,
+				app_config.power_management_config,
 			)
 
 

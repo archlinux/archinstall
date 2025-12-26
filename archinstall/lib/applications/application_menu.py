@@ -1,7 +1,15 @@
 from typing import override
 
+from archinstall.lib.hardware import SysInfo
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
-from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration
+from archinstall.lib.models.application import (
+	ApplicationConfiguration,
+	Audio,
+	AudioConfiguration,
+	BluetoothConfiguration,
+	PowerManagement,
+	PowerManagementConfiguration,
+)
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -48,7 +56,20 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				preview_action=self._prev_audio,
 				key='audio_config',
 			),
+			MenuItem(
+				text=tr('Power management daemon'),
+				action=select_audio,
+				preview_action=self._prev_power_management,
+				enabled=SysInfo.has_battery(),
+				key='power_management_config',
+			),
 		]
+
+	def _prev_power_management(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			config: PowerManagementConfiguration = item.value
+			return f'{tr("Power management daemon")}: {config.power_management.value}'
+		return None
 
 	def _prev_bluetooth(self, item: MenuItem) -> str | None:
 		if item.value is not None:
@@ -64,6 +85,29 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 			config: AudioConfiguration = item.value
 			return f'{tr("Audio")}: {config.audio.value}'
 		return None
+
+
+def select_power_management(preset: PowerManagementConfiguration | None = None) -> PowerManagementConfiguration | None:
+	items = [MenuItem(a.value, value=a) for a in PowerManagement]
+	group = MenuItemGroup(items)
+
+	if preset:
+		group.set_focus_by_value(preset.power_management)
+
+	result = SelectMenu[PowerManagement](
+		group,
+		allow_skip=True,
+		alignment=Alignment.CENTER,
+		frame=FrameProperties.min(tr('Power management daemon')),
+	).run()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return PowerManagementConfiguration(power_management=result.get_value())
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
 
 
 def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfiguration | None:
