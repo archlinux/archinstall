@@ -599,7 +599,7 @@ class GlobalMenu(AbstractMenu[None]):
 			choice = result.get_value()
 
 			if choice == 'save_abort':
-				success, _saved_files = auto_save_config(self._arch_config)
+				success, _ = auto_save_config(self._arch_config)
 				if success:
 					# Check if credentials are actually present (not just empty JSON)
 					config_output = ConfigurationOutput(self._arch_config)
