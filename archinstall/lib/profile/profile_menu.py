@@ -77,7 +77,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				self._item_group.find_by_key('gfx_driver').value = None
 			else:
 				self._item_group.find_by_key('gfx_driver').enabled = True
-				self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
+				self._item_group.find_by_key('gfx_driver').value = GfxDriver.MesaAll.value[0]
 
 			if not profile.is_greeter_supported():
 				self._item_group.find_by_key('greeter').enabled = False

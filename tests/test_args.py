@@ -178,7 +178,7 @@ def test_config_file_parsing(
 					'main': 'Desktop',
 				}
 			),
-			gfx_driver=GfxDriver.AllOpenSource,
+			gfx_driver=GfxDriver.MesaAll,
 			greeter=GreeterType.Lightdm,
 		),
 		mirror_config=MirrorConfiguration(
