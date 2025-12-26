@@ -69,31 +69,6 @@ def mount_partition(partition: LsblkInfo, mount_point: Path) -> bool:
 		return False
 
 
-def mount_special_filesystems(mount_point: Path) -> bool:
-	"""Mount special filesystems needed for chroot (/dev, /proc, /sys, /run)."""
-	special_mounts = [
-		('/dev', 'dev', ['--bind']),
-		('/proc', 'proc', ['--bind']),
-		('/sys', 'sys', ['--bind']),
-		('/run', 'run', ['--bind']),
-	]
-
-	try:
-		for source, target, options in special_mounts:
-			target_path = mount_point / target
-			if not target_path.exists():
-				target_path.mkdir(parents=True)
-
-			cmd = ['mount'] + options + [source, str(target_path)]
-			subprocess.run(cmd, check=True, capture_output=True)
-			info(f'Mounted {source} to {target_path}')
-
-		return True
-	except subprocess.CalledProcessError as e:
-		error(f'Failed to mount special filesystems: {e.stderr.decode()}')
-		return False
-
-
 def mount_additional_filesystems(mount_point: Path) -> None:
 	"""
 	Try to mount additional filesystems based on /etc/fstab in the mounted root.
@@ -263,15 +238,11 @@ def rescue() -> None:
 	# Mount additional filesystems from fstab
 	mount_additional_filesystems(mount_point)
 
-	# Mount special filesystems
-	if not mount_special_filesystems(mount_point):
-		unmount_all(mount_point)
-		return
-
 	# Display information
 	info('')
 	info(f'Installation mounted at: {mount_point}')
 	info('Entering chroot environment...')
+	info('Note: arch-chroot will automatically mount /dev, /proc, /sys, and handle DNS.')
 	info('Type "exit" to leave the chroot and return to the live environment.')
 	info('')
 
