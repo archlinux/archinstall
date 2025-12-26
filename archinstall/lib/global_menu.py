@@ -576,9 +576,6 @@ class GlobalMenu(AbstractMenu[None]):
 
 	def _handle_abort(self, preset: None) -> None:
 		"""Handle abort with option to save selections"""
-		# Sync current selections to config
-		self.sync_all_to_config()
-
 		items = [
 			MenuItem(text=tr('Save selections and abort'), value='save_abort'),
 			MenuItem(text=tr('Abort without saving'), value='abort_only'),
@@ -599,6 +596,8 @@ class GlobalMenu(AbstractMenu[None]):
 			choice = result.get_value()
 
 			if choice == 'save_abort':
+				# Sync current selections to config before saving
+				self.sync_all_to_config()
 				success, _ = auto_save_config(self._arch_config)
 				if success:
 					# Check if credentials are actually present (not just empty JSON)
