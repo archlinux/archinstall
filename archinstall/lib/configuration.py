@@ -2,6 +2,7 @@ import json
 import readline
 import stat
 from pathlib import Path
+from typing import Any
 
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu, Tui
@@ -242,3 +243,63 @@ def save_config(config: ArchConfig) -> None:
 			config_output.save_user_creds(dest_path, password=enc_password)
 		case 'all':
 			config_output.save(dest_path, creds=True, password=enc_password)
+
+
+def has_saved_config() -> bool:
+	"""Check if there's a saved config in /var/log/archinstall"""
+	config_file = logger.directory / 'user_configuration.json'
+	return config_file.exists()
+
+
+def load_saved_config() -> dict[str, Any] | None:
+	"""Load saved config and credentials from /var/log/archinstall"""
+	try:
+		config_data: dict[str, Any] = {}
+
+		# Load main config
+		config_file = logger.directory / 'user_configuration.json'
+		if config_file.exists():
+			with open(config_file) as f:
+				config_data.update(json.load(f))
+
+		# Load credentials if they exist (follows same pattern as args.py)
+		creds_file = logger.directory / 'user_credentials.json'
+		if creds_file.exists():
+			with open(creds_file) as f:
+				creds_data = json.load(f)
+				config_data.update(creds_data)
+
+		return config_data if config_data else None
+
+	except Exception as e:
+		print(f'Failed to load saved config: {e}')
+	return None
+
+
+def auto_save_config(config: ArchConfig) -> tuple[bool, list[str]]:
+	"""Automatically save config to /var/log/archinstall without prompts
+
+	Returns:
+		tuple[bool, list[str]]: (success, list of saved files)
+	"""
+	try:
+		config_output = ConfigurationOutput(config)
+		save_path = logger.directory
+
+		# Ensure directory exists
+		save_path.mkdir(exist_ok=True, parents=True)
+
+		saved_files: list[str] = []
+
+		# Save configuration
+		config_output.save_user_config(save_path)
+		saved_files.append(str(save_path / 'user_configuration.json'))
+
+		# Save credentials
+		config_output.save_user_creds(save_path, password=None)
+		saved_files.append(str(save_path / 'user_credentials.json'))
+
+		return True, saved_files
+	except Exception as e:
+		debug(f'Failed to auto-save config: {e}')
+		return False, []
