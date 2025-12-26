@@ -26,7 +26,7 @@ class ApplicationHandler:
 				app_config.audio_config,
 				users,
 			)
-      
+
 		if app_config.power_management_config and app_config.power_management_config.power_management != PowerManagement.NO_POWER_MANAGEMENT:
 			PowerManagementApp().install(
 				install_session,
