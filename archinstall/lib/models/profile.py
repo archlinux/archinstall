@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from multiprocessing import Value
 from typing import TYPE_CHECKING, TypedDict
 
 from archinstall.default_profiles.profile import GreeterType, Profile
@@ -18,7 +17,7 @@ class _ProfileConfigurationSerialization(TypedDict):
 	greeter: str | None
 
 
-def _parse_gfx_driver(value: str):
+def _parse_gfx_driver(value: str) -> GfxDriver:
 	# A really ugly hack to deal with older configs that use values
 	# instead of keys for their config.
 	match value:

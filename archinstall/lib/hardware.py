@@ -2,6 +2,7 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
+from typing import Any
 
 from .exceptions import SysCallError
 from .general import SysCommand
@@ -64,7 +65,7 @@ class GfxDriver(Enum):
 	MesaVirtualized = ('mesa_vm', 'VirtualBox (open-source)')
 
 	@classmethod
-	def from_key(cls, key: str):
+	def from_key(cls, key: str) -> Any:
 		for member in cls:
 			if member.value[0] == key:
 				return member

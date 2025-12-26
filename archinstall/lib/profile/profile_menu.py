@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from typing import override
 
-from archinstall import warn
 from archinstall.default_profiles.profile import GreeterType, Profile
-from archinstall.lib.output import info
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
