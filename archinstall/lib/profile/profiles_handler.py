@@ -222,7 +222,7 @@ class ProfileHandler:
 				file.write(filedata)
 
 	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
-		debug(f'Installing GFX driver: {driver.value}')
+		debug(f'Installing GFX driver: {driver.value[1]}')
 
 		driver_pkgs = driver.gfx_packages()
 		# All non-standard kernel packages have a '-' in their name.
