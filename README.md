@@ -40,7 +40,7 @@ archinstall
 ```
 
 #### Advanced
-Some additional options that most users do not need are hidden behind the `--advanced` flag (and all options/args can be consulted through `-h` or `--help`). 
+Some additional options that most users do not need are hidden behind the `--advanced` flag and all options/args can be consulted through `-h` or `--help`. 
 
 ## Running from a declarative configuration file or URL
 
