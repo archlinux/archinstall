@@ -211,7 +211,7 @@ _sys_info = _SysInfo()
 
 class SysInfo:
 	@staticmethod
-	def has_battery():
+	def has_battery() -> bool:
 		for type_path in Path('/sys/class/power_supply/').glob('*/type'):
 			try:
 				with open(type_path) as f:
