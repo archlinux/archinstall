@@ -200,10 +200,9 @@ _sys_info = _SysInfo()
 class SysInfo:
 	@staticmethod
 	def has_battery():
-		for device in os.listdir('/sys/class/power_supply/'):
-			device_type_path = os.path.join('/sys/class/power_supply/', device, 'type')
+		for type_path in Path('/sys/class/power_supply/').glob('*/type'):
 			try:
-				with open(device_type_path) as f:
+				with open(type_path) as f:
 					if f.read().strip() == 'Battery':
 						return True
 			except OSError:
