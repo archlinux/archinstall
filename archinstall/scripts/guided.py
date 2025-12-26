@@ -45,7 +45,7 @@ def _check_for_saved_config() -> None:
 
 		result = SelectMenu[str](
 			group,
-			header=('Saved configuration found in user_configuration.json.') + '\n' + ('What would you like to do?'),
+			header=('Saved configuration found.'),
 			alignment=Alignment.CENTER,
 			allow_skip=False,
 		).run()
