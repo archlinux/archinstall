@@ -422,11 +422,18 @@ class DeviceHandler:
 		cmd: str,
 		info_type: Literal['lv', 'vg', 'pvseg'],
 	) -> LvmVolumeInfo | LvmGroupInfo | LvmPVInfo | None:
-		while True:
+		# Retry for up to 5 mins
+		max_retries = 100
+		for attempt in range(max_retries):
 			try:
 				return self._lvm_info(cmd, info_type)
 			except ValueError:
-				time.sleep(3)
+				if attempt < max_retries - 1:
+					debug(f'LVM info query failed (attempt {attempt + 1}/{max_retries}), retrying in 3 seconds...')
+					time.sleep(3)
+
+		debug(f'LVM info query failed after {max_retries} attempts')
+		return None
 
 	def lvm_vol_info(self, lv_name: str) -> LvmVolumeInfo | None:
 		cmd = f'lvs --reportformat json --unit B -S lv_name={lv_name}'
@@ -477,6 +484,13 @@ class DeviceHandler:
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
 
+		# Wait for the command to complete
+		while worker.is_alive():
+			worker.poll()
+
+		# Sync with udev to ensure the PVs are visible
+		self.udev_sync()
+
 	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str) -> None:
 		pvs_str = ' '.join([str(pv) for pv in pvs])
 		cmd = f'vgcreate --yes {vg_name} {pvs_str}'
@@ -486,6 +500,13 @@ class DeviceHandler:
 		worker = SysCommandWorker(cmd)
 		worker.poll()
 		worker.write(b'y\n', line_ending=False)
+
+		# Wait for the command to complete
+		while worker.is_alive():
+			worker.poll()
+
+		# Sync with udev to ensure the VG is visible
+		self.udev_sync()
 
 	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Size | None = None) -> None:
 		if offset is not None:

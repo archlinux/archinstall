@@ -27,10 +27,15 @@ class AudioConfigSerialization(TypedDict):
 	audio: str
 
 
+class PrintServiceConfigSerialization(TypedDict):
+	enabled: bool
+
+
 class ApplicationSerialization(TypedDict):
 	bluetooth_config: NotRequired[BluetoothConfigSerialization]
 	audio_config: NotRequired[AudioConfigSerialization]
 	power_management_config: NotRequired[PowerManagementConfigSerialization]
+	print_service_config: NotRequired[PrintServiceConfigSerialization]
 
 
 @dataclass
@@ -77,11 +82,23 @@ class PowerManagementConfiguration:
 		)
 
 
+class PrintServiceConfiguration:
+	enabled: bool
+
+	def json(self) -> PrintServiceConfigSerialization:
+		return {'enabled': self.enabled}
+
+	@staticmethod
+	def parse_arg(arg: dict[str, Any]) -> 'PrintServiceConfiguration':
+		return PrintServiceConfiguration(arg['enabled'])
+
+
 @dataclass
 class ApplicationConfiguration:
 	bluetooth_config: BluetoothConfiguration | None = None
 	audio_config: AudioConfiguration | None = None
 	power_management_config: PowerManagementConfiguration | None = None
+	print_service_config: PrintServiceConfiguration | None = None
 
 	@staticmethod
 	def parse_arg(
@@ -103,6 +120,9 @@ class ApplicationConfiguration:
 		if args and (power_management_config := args.get('power_management_config')) is not None:
 			app_config.power_management_config = PowerManagementConfiguration.parse_arg(power_management_config)
 
+		if args and (print_service_config := args.get('print_service_config')) is not None:
+			app_config.print_service_config = PrintServiceConfiguration.parse_arg(print_service_config)
+
 		return app_config
 
 	def json(self) -> ApplicationSerialization:
@@ -116,5 +136,8 @@ class ApplicationConfiguration:
 
 		if self.power_management_config:
 			config['power_management_config'] = self.power_management_config.json()
+
+		if self.print_service_config:
+			config['print_service_config'] = self.print_service_config.json()
 
 		return config
