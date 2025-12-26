@@ -55,9 +55,9 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 	if not options:
 		options = [driver for driver in GfxDriver]
 
-	items = [MenuItem(o.value, value=o, preview_action=lambda x: x.value.packages_text()) for o in options]
+	items = [MenuItem(o.value[1], value=o, preview_action=lambda x: x.value.packages_text()) for o in options]
 	group = MenuItemGroup(items, sort_items=True)
-	group.set_default_by_value(GfxDriver.AllOpenSource)
+	group.set_default_by_value(GfxDriver.MesaAll)
 
 	if preset is not None:
 		group.set_focus_by_value(preset)

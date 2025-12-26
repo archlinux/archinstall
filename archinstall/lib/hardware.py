@@ -56,12 +56,19 @@ class GfxPackage(Enum):
 
 
 class GfxDriver(Enum):
-	AllOpenSource = 'All open-source'
-	AmdOpenSource = 'AMD / ATI (open-source)'
-	IntelOpenSource = 'Intel (open-source)'
-	Nvidia = 'Nvidia (official open kernel module, for newer GPUs, Turing+)'
-	NvidiaOpenSource = 'Nvidia (open-source nouveau driver)'
-	VMOpenSource = 'VirtualBox (open-source)'
+	MesaAll = ('mesa_all', 'All open-source')
+	MesaAmd = ('mesa_amd', 'AMD / ATI (open-source)')
+	MesaIntel = ('mesa_intel', 'Intel (open-source)')
+	Nvidia = ('nvidia', 'Nvidia (official open kernel module, for newer GPUs, Turing+)')
+	MesaNvidia = ('mesa_nvidia', 'Nvidia (open-source nouveau driver)')
+	MesaVirtualized = ('mesa_vm', 'VirtualBox (open-source)')
+
+	@classmethod
+	def from_key(cls, key: str):
+		for member in cls:
+			if member.value[0] == key:
+				return member
+		return None
 
 	def has_dkms_variant(self) -> bool:
 		match self:
@@ -83,7 +90,7 @@ class GfxDriver(Enum):
 		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
 
 		match self:
-			case GfxDriver.AllOpenSource:
+			case GfxDriver.MesaAll:
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoAmdgpu,
@@ -96,7 +103,7 @@ class GfxDriver(Enum):
 					GfxPackage.VulkanIntel,
 					GfxPackage.VulkanNouveau,
 				]
-			case GfxDriver.AmdOpenSource:
+			case GfxDriver.MesaAmd:
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoAmdgpu,
@@ -104,7 +111,7 @@ class GfxDriver(Enum):
 					GfxPackage.LibvaMesaDriver,
 					GfxPackage.VulkanRadeon,
 				]
-			case GfxDriver.IntelOpenSource:
+			case GfxDriver.MesaIntel:
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.LibvaIntelDriver,
@@ -116,14 +123,14 @@ class GfxDriver(Enum):
 					GfxPackage.Nvidia,
 					GfxPackage.LibvaNvidiaDriver,
 				]
-			case GfxDriver.NvidiaOpenSource:
+			case GfxDriver.MesaNvidia:
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoNouveau,
 					GfxPackage.LibvaMesaDriver,
 					GfxPackage.VulkanNouveau,
 				]
-			case GfxDriver.VMOpenSource:
+			case GfxDriver.MesaVirtualized:
 				packages += [
 					GfxPackage.Mesa,
 				]

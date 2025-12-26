@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from multiprocessing import Value
 from typing import TYPE_CHECKING, TypedDict
 
 from archinstall.default_profiles.profile import GreeterType, Profile
@@ -17,6 +18,26 @@ class _ProfileConfigurationSerialization(TypedDict):
 	greeter: str | None
 
 
+def _parse_gfx_driver(value: str):
+	# A really ugly hack to deal with older configs that use values
+	# instead of keys for their config.
+	match value:
+		case 'All open-source':
+			return GfxDriver.MesaAll
+		case 'AMD / ATI (open-source)':
+			return GfxDriver.MesaAmd
+		case 'Intel (open-source)':
+			return GfxDriver.MesaIntel
+		case 'Nvidia (open kernel module for newer GPUs, Turing+)':
+			return GfxDriver.Nvidia
+		case 'Nvidia (open-source nouveau driver)' | 'Nvidia (proprietary)':
+			return GfxDriver.MesaNvidia
+		case 'VirtualBox (open-source)':
+			return GfxDriver.MesaVirtualized
+
+	return GfxDriver.from_key(value)
+
+
 @dataclass
 class ProfileConfiguration:
 	profile: Profile | None = None
@@ -28,7 +49,7 @@ class ProfileConfiguration:
 
 		return {
 			'profile': profile_handler.to_json(self.profile),
-			'gfx_driver': self.gfx_driver.value if self.gfx_driver else None,
+			'gfx_driver': self.gfx_driver.value[0] if self.gfx_driver else None,
 			'greeter': self.greeter.value if self.greeter else None,
 		}
 
@@ -42,6 +63,6 @@ class ProfileConfiguration:
 
 		return ProfileConfiguration(
 			profile,
-			GfxDriver(gfx_driver) if gfx_driver else None,
+			_parse_gfx_driver(gfx_driver) if gfx_driver else None,
 			GreeterType(greeter) if greeter else None,
 		)
