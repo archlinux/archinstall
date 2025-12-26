@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import override
 
+from archinstall import warn
 from archinstall.default_profiles.profile import GreeterType, Profile
+from archinstall.lib.output import info
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -77,7 +79,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				self._item_group.find_by_key('gfx_driver').value = None
 			else:
 				self._item_group.find_by_key('gfx_driver').enabled = True
-				self._item_group.find_by_key('gfx_driver').value = GfxDriver.MesaAll.value[0]
+				self._item_group.find_by_key('gfx_driver').value = GfxDriver.MesaAll
 
 			if not profile.is_greeter_supported():
 				self._item_group.find_by_key('greeter').enabled = False
@@ -126,7 +128,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 
 	def _prev_gfx(self, item: MenuItem) -> str | None:
 		if item.value:
-			driver = item.get_value()[0]
+			driver = item.get_value().value[1]
 			packages = item.get_value().packages_text()
 			return f'Driver: {driver}\n{packages}'
 		return None

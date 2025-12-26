@@ -472,7 +472,7 @@ class GlobalMenu(AbstractMenu[None]):
 				output += profile_config.profile.name + '\n'
 
 			if profile_config.gfx_driver:
-				output += tr('Graphics driver') + ': ' + profile_config.gfx_driver.value + '\n'
+				output += tr('Graphics driver') + ': ' + profile_config.gfx_driver.value[1] + '\n'
 
 			if profile_config.greeter:
 				output += tr('Greeter') + ': ' + profile_config.greeter.value + '\n'
