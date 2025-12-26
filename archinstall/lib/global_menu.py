@@ -36,7 +36,7 @@ from .models.mirrors import MirrorConfiguration
 from .models.network import NetworkConfiguration, NicType
 from .models.packages import Repository
 from .models.profile import ProfileConfiguration
-from .output import FormattedOutput
+from .output import FormattedOutput, info, warn
 from .pacman.config import PacmanConfig
 from .translationhandler import Language, tr, translation_handler
 
@@ -605,10 +605,10 @@ class GlobalMenu(AbstractMenu[None]):
 					config_output = ConfigurationOutput(self._arch_config)
 					creds_json = config_output.user_credentials_to_json()
 					has_creds = creds_json and creds_json.strip() != '{}'
-					creds_status = '✓' if has_creds else '✗ (empty)'
-					print(f'Saved: user_configuration.json ✓, user_credentials.json {creds_status} - Resume by running installer again.')
+					creds_status = 'saved' if has_creds else 'empty'
+					info(f'Configuration saved: user_configuration.json, user_credentials.json ({creds_status}).')
 				else:
-					print('Failed to save selections.')
+					warn('Failed to save selections.')
 				exit(1)
 			elif choice == 'abort_only':
 				exit(1)

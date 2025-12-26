@@ -59,9 +59,9 @@ def _check_for_saved_config() -> None:
 					try:
 						new_config = ArchConfig.from_config(cached_config, arch_config_handler.args)
 						arch_config_handler._config = new_config
-						print('Saved selections loaded successfully')
+						info('Saved selections loaded successfully')
 					except Exception as e:
-						print(f'Failed to load saved selections: {e}')
+						error(f'Failed to load saved selections: {e}')
 			elif choice == 'fresh':
 				# Remove both saved config files
 				config_file = logger.directory / 'user_configuration.json'

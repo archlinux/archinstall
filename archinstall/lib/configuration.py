@@ -272,7 +272,7 @@ def load_saved_config() -> dict[str, Any] | None:
 		return config_data if config_data else None
 
 	except Exception as e:
-		print(f'Failed to load saved config: {e}')
+		warn(f'Failed to load saved config: {e}')
 	return None
 
 
