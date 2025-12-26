@@ -9,7 +9,7 @@ from archinstall.lib.models.application import (
 	BluetoothConfiguration,
 	PowerManagement,
 	PowerManagementConfiguration,
-  PrintServiceConfiguration,
+	PrintServiceConfiguration,
 )
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
@@ -65,7 +65,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 			),
 			MenuItem(
 				text=tr('Power management daemon'),
-				action=select_audio,
+				action=select_power_management,
 				preview_action=self._prev_power_management,
 				enabled=SysInfo.has_battery(),
 				key='power_management_config',

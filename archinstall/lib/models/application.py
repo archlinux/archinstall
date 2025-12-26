@@ -82,6 +82,7 @@ class PowerManagementConfiguration:
 		)
 
 
+@dataclass
 class PrintServiceConfiguration:
 	enabled: bool
 
