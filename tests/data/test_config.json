@@ -179,7 +179,7 @@
   ],
   "parallel_downloads": 66,
   "profile_config": {
-    "gfx_driver": "All open-source",
+    "gfx_driver": "mesa_all",
     "greeter": "lightdm-gtk-greeter",
     "profile": {
       "custom_settings": {

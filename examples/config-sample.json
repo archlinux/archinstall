@@ -135,7 +135,7 @@
   "packages": [],
   "parallel downloads": 0,
   "profile_config": {
-    "gfx_driver": "All open-source (default)",
+    "gfx_driver": "mesa_all",
     "greeter": "sddm",
     "profile": {
       "details": [

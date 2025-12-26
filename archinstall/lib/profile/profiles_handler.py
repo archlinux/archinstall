@@ -230,7 +230,7 @@ class ProfileHandler:
 		is_dkms_needed = any('-' in s for s in install_session.kernels)
 
 		if driver.has_dkms_variant() and is_dkms_needed:
-			debug(f'A non-standard kernel was selected, installing DKMS variant of {driver.value}')
+			debug(f'A non-standard kernel was selected, installing DKMS variant of {driver.value[1]}')
 
 			headers = [f'{kernel}-headers' for kernel in install_session.kernels]
 			install_session.add_additional_packages(headers)
