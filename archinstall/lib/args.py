@@ -52,6 +52,7 @@ class Arguments:
 	skip_wifi_check: bool = False
 	advanced: bool = False
 	verbose: bool = False
+	rescue: bool = False
 
 
 @dataclass
@@ -275,6 +276,9 @@ class ArchConfigHandler:
 		return self._args
 
 	def get_script(self) -> str:
+		if self.args.rescue:
+			return 'rescue'
+
 		if script := self.args.script:
 			return script
 
@@ -428,6 +432,12 @@ class ArchConfigHandler:
 			action='store_true',
 			default=False,
 			help='Enabled verbose options',
+		)
+		parser.add_argument(
+			'--rescue',
+			action='store_true',
+			default=False,
+			help='Mount and chroot into an existing installation for rescue purposes',
 		)
 
 		return parser
