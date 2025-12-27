@@ -2,7 +2,7 @@ from pathlib import Path
 
 from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall.lib.args import arch_config_handler
-from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.configuration import ConfigurationHandler
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.installer import Installer
@@ -64,7 +64,7 @@ def _minimal() -> None:
 		disk_config = DiskLayoutConfigurationMenu(disk_layout_config=None).run()
 		arch_config_handler.config.disk_config = disk_config
 
-	config = ConfigurationOutput(arch_config_handler.config)
+	config = ConfigurationHandler(arch_config_handler.config)
 	config.write_debug()
 	config.save()
 

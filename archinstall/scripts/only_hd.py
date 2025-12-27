@@ -2,7 +2,7 @@ from pathlib import Path
 
 from archinstall import debug, error
 from archinstall.lib.args import arch_config_handler
-from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.configuration import ConfigurationHandler
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
@@ -60,7 +60,7 @@ def _only_hd() -> None:
 	if not arch_config_handler.args.silent:
 		ask_user_questions()
 
-	config = ConfigurationOutput(arch_config_handler.config)
+	config = ConfigurationHandler(arch_config_handler.config)
 	config.write_debug()
 	config.save()
 

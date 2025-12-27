@@ -6,7 +6,7 @@ from archinstall import SysInfo
 from archinstall.lib.applications.application_handler import application_handler
 from archinstall.lib.args import ArchConfig, arch_config_handler
 from archinstall.lib.authentication.authentication_handler import auth_handler
-from archinstall.lib.configuration import ConfigurationOutput, has_saved_config, load_saved_config
+from archinstall.lib.configuration import ConfigurationHandler
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
@@ -31,7 +31,9 @@ from archinstall.tui.types import Alignment
 
 def _check_for_saved_config() -> None:
 	"""Check for saved config and offer to resume"""
-	if not has_saved_config() or arch_config_handler.args.silent:
+	if not arch_config_handler.args.debug:
+		return
+	if not ConfigurationHandler.has_saved_config() or arch_config_handler.args.silent:
 		return
 
 	with Tui():
@@ -45,7 +47,7 @@ def _check_for_saved_config() -> None:
 
 		result = SelectMenu[str](
 			group,
-			header=('Saved configuration found.'),
+			header=('Saved configuration found: \n'),
 			alignment=Alignment.CENTER,
 			allow_skip=False,
 		).run()
@@ -54,7 +56,7 @@ def _check_for_saved_config() -> None:
 			choice = result.get_value()
 
 			if choice == 'resume':
-				cached_config = load_saved_config()
+				cached_config = ConfigurationHandler.load_saved_config()
 				if cached_config:
 					try:
 						new_config = ArchConfig.from_config(cached_config, arch_config_handler.args)
@@ -238,7 +240,7 @@ def guided() -> None:
 		_check_for_saved_config()
 		ask_user_questions()
 
-	config = ConfigurationOutput(arch_config_handler.config)
+	config = ConfigurationHandler(arch_config_handler.config)
 	config.write_debug()
 	config.save()
 

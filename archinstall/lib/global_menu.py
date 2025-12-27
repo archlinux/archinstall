@@ -16,7 +16,7 @@ from .applications.application_menu import ApplicationMenu
 from .args import ArchConfig
 from .authentication.authentication_menu import AuthenticationMenu
 from .bootloader.bootloader_menu import BootloaderMenu
-from .configuration import ConfigurationOutput, auto_save_config, save_config
+from .configuration import ConfigurationHandler, save_config
 from .hardware import SysInfo
 from .interactions.general_conf import (
 	add_number_of_parallel_downloads,
@@ -576,18 +576,25 @@ class GlobalMenu(AbstractMenu[None]):
 
 	def _handle_abort(self, preset: None) -> None:
 		"""Handle abort with option to save selections"""
-		items = [
-			MenuItem(text=tr('Save selections and abort'), value='save_abort'),
-			MenuItem(text=tr('Abort without saving'), value='abort_only'),
-			MenuItem(text=tr('Cancel abort'), value='cancel'),
-		]
+		from .args import arch_config_handler
+
+		items = []
+
+		# Only show save option in debug mode
+		if arch_config_handler.args.debug:
+			items.append(MenuItem(text=tr('Save selections and abort'), value='save_abort'))
+			items.append(MenuItem(text=tr('Abort without saving'), value='abort_only'))
+		else:
+			items.append(MenuItem(text=tr('Abort'), value='abort_only'))
+
+		items.append(MenuItem(text=tr('Cancel'), value='cancel'))
 
 		group = MenuItemGroup(items)
-		group.focus_item = group.items[0]  # Focus on save option
+		group.focus_item = group.items[0]  # Focus on first option
 
 		result = SelectMenu[str](
 			group,
-			header=tr('You are about to abort the installation.'),
+			header=tr('Abort the installation? \n'),
 			alignment=Alignment.CENTER,
 			allow_skip=False,
 		).run()
@@ -598,10 +605,10 @@ class GlobalMenu(AbstractMenu[None]):
 			if choice == 'save_abort':
 				# Sync current selections to config before saving
 				self.sync_all_to_config()
-				success, _ = auto_save_config(self._arch_config)
+				config_output = ConfigurationHandler(self._arch_config)
+				success, _ = config_output.auto_save_config()
 				if success:
 					# Check if credentials are actually present (not just empty JSON)
-					config_output = ConfigurationOutput(self._arch_config)
 					creds_json = config_output.user_credentials_to_json()
 					has_creds = creds_json and creds_json.strip() != '{}'
 					creds_status = 'saved' if has_creds else 'empty'
