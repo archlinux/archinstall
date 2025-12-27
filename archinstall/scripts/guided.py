@@ -4,9 +4,9 @@ from pathlib import Path
 
 from archinstall import SysInfo
 from archinstall.lib.applications.application_handler import application_handler
-from archinstall.lib.args import arch_config_handler
+from archinstall.lib.args import ArchConfig, arch_config_handler
 from archinstall.lib.authentication.authentication_handler import auth_handler
-from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.configuration import ConfigurationHandler
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
@@ -18,11 +18,61 @@ from archinstall.lib.models.device import (
 	EncryptionType,
 )
 from archinstall.lib.models.users import User
-from archinstall.lib.output import debug, error, info
+from archinstall.lib.output import debug, error, info, logger
 from archinstall.lib.packages.packages import check_package_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 from archinstall.tui import Tui
+from archinstall.tui.curses_menu import SelectMenu
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment
+
+
+def _check_for_saved_config() -> None:
+	"""Check for saved config and offer to resume"""
+	if not arch_config_handler.args.debug:
+		return
+	if not ConfigurationHandler.has_saved_config() or arch_config_handler.args.silent:
+		return
+
+	with Tui():
+		items = [
+			MenuItem(text=('Resume from saved selections'), value='resume'),
+			MenuItem(text=('Start fresh'), value='fresh'),
+		]
+
+		group = MenuItemGroup(items)
+		group.focus_item = group.items[0]  # Focus on resume
+
+		result = SelectMenu[str](
+			group,
+			header=('Saved configuration found: \n'),
+			alignment=Alignment.CENTER,
+			allow_skip=False,
+		).run()
+
+		if result.type_ == ResultType.Selection:
+			choice = result.get_value()
+
+			if choice == 'resume':
+				cached_config = ConfigurationHandler.load_saved_config()
+				if cached_config:
+					try:
+						new_config = ArchConfig.from_config(cached_config, arch_config_handler.args)
+						arch_config_handler._config = new_config
+						info('Saved selections loaded successfully')
+					except Exception as e:
+						error(f'Failed to load saved selections: {e}')
+			elif choice == 'fresh':
+				# Remove both saved config files
+				config_file = logger.directory / 'user_configuration.json'
+				creds_file = logger.directory / 'user_credentials.json'
+
+				if config_file.exists():
+					config_file.unlink()
+				if creds_file.exists():
+					creds_file.unlink()
 
 
 def ask_user_questions() -> None:
@@ -187,9 +237,10 @@ def perform_installation(mountpoint: Path) -> None:
 
 def guided() -> None:
 	if not arch_config_handler.args.silent:
+		_check_for_saved_config()
 		ask_user_questions()
 
-	config = ConfigurationOutput(arch_config_handler.config)
+	config = ConfigurationHandler(arch_config_handler.config)
 	config.write_debug()
 	config.save()
 
