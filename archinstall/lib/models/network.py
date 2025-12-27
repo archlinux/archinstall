@@ -151,10 +151,6 @@ class NetworkConfiguration:
 					enable_services=True,  # Sources the ISO network configuration to the install medium.
 				)
 			case NicType.NM | NicType.NM_IWD:
-				if self.type == NicType.NM_IWD:
-					# Copy ISO config for IWD
-					installation.copy_iso_network_config(enable_services=False)
-
 				# Install NetworkManager package for both cases
 				packages = ['networkmanager']
 				# Defautl back-end only for non-iwd
