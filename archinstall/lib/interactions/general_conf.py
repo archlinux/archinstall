@@ -273,7 +273,7 @@ def ask_post_installation(elapsed_time: float | None = None) -> PostInstallation
 	if elapsed_time is not None:
 		minutes = int(elapsed_time // 60)
 		seconds = int(elapsed_time % 60)
-		header += f' in {minutes}m {seconds}s' + '\n'
+		header += f' in {minutes}m{seconds}s' + '\n'
 	header += tr('What would you like to do next?') + '\n'
 
 	items = [MenuItem(action.value, value=action) for action in PostInstallationAction]
