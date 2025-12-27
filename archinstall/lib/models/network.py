@@ -151,9 +151,8 @@ class NetworkConfiguration:
 					enable_services=True,  # Sources the ISO network configuration to the install medium.
 				)
 			case NicType.NM | NicType.NM_IWD:
-				# Common setup for both NetworkManager configurations
 				if self.type == NicType.NM_IWD:
-					# Copy ISO config first for initial connectivity
+					# Copy ISO config for IWD
 					installation.copy_iso_network_config(enable_services=False)
 
 				# Install NetworkManager package for both cases
@@ -169,7 +168,6 @@ class NetworkConfiguration:
 					if profile_config.profile.is_desktop_profile():
 						installation.add_additional_packages('network-manager-applet')
 
-				# Type-specific configuration
 				if self.type == NicType.NM:
 					# Default just NM service
 					installation.enable_service('NetworkManager.service')
