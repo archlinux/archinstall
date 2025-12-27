@@ -18,7 +18,7 @@
     "packages": ["docker", "git", "wget", "zsh"],
     "services": ["docker"],
     "profile": "gnome",
-    "gfx_driver": "All open-source (default)",
+    "gfx_driver": "mesa_all",
     "swap": true,
     "sys-encoding": "utf-8",
     "sys-language": "en_US",

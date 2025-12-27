@@ -77,7 +77,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				self._item_group.find_by_key('gfx_driver').value = None
 			else:
 				self._item_group.find_by_key('gfx_driver').enabled = True
-				self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
+				self._item_group.find_by_key('gfx_driver').value = GfxDriver.MesaAll
 
 			if not profile.is_greeter_supported():
 				self._item_group.find_by_key('greeter').enabled = False
@@ -100,8 +100,10 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				driver = select_driver(preset=preset)
 
 			if driver and 'Sway' in profile.current_selection_names():
-				if driver.is_nvidia():
-					header = tr('The proprietary Nvidia driver is not supported by Sway.') + '\n'
+				# Sway only cares about the official NVIDIA driver in this situation
+				# see: https://github.com/swaywm/sway/blob/238f0d4a8b399f0df6791c47eb54c8636722d5a9/sway/server.c#L165
+				if driver == GfxDriver.Nvidia:
+					header = tr('The official NVIDIA driver is not supported by Sway.') + '\n'
 					header += tr('It is likely that you will run into issues, are you okay with that?') + '\n'
 
 					group = MenuItemGroup.yes_no()
@@ -124,7 +126,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 
 	def _prev_gfx(self, item: MenuItem) -> str | None:
 		if item.value:
-			driver = item.get_value().value
+			driver = item.get_value().value[1]
 			packages = item.get_value().packages_text()
 			return f'Driver: {driver}\n{packages}'
 		return None
