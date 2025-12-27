@@ -83,8 +83,8 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 
 	def _prev_removable(self, item: MenuItem) -> str | None:
 		if item.value:
-			return tr('Will install to /EFI/BOOT/ (removable location)')
-		return tr('Will install to standard location with NVRAM entry')
+			return tr('Will install to /EFI/BOOT/ (removable location, safe default)')
+		return tr('Will install to custom location with NVRAM entry')
 
 	@override
 	def run(
@@ -114,6 +114,9 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				removable_item.value = False
 				self._bootloader_conf.removable = False
 			else:
+				if not removable_item.enabled:
+					removable_item.value = True
+					self._bootloader_conf.removable = True
 				removable_item.enabled = True
 
 		return bootloader
@@ -147,18 +150,26 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 			+ '\n\n'
 			+ tr('This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:')
 			+ '\n\n  • '
+			+ tr('Firmware that does not properly support NVRAM boot entries like most MSI motherboards,')
+			+ '\n    '
+			+ tr('most Apple Macs, many laptops...')
+			+ '\n  • '
 			+ tr('USB drives or other portable external media.')
 			+ '\n  • '
 			+ tr('Systems where you want the disk to be bootable on any computer.')
-			+ '\n  • '
-			+ tr('Firmware that does not properly support NVRAM boot entries.')
 			+ '\n\n'
 			+ tr(
 				textwrap.dedent(
 					"""\
-					This is NOT recommended if none of the above apply, as it makes installing multiple
-					EFI bootloaders on the same disk more challenging, and it overwrites whatever bootloader
-					was previously installed on the default removable media search location, if any.
+					If you do not know what this means, LEAVE THIS OPTION ENABLED, as it is the safe default.
+
+					It is suggested to disable this if none of the above apply, as it makes installing multiple
+					EFI bootloaders on the same disk easier, and it will not overwrite whatever bootloader
+					was previously installed at the default removable media search location, if any.
+
+					It may also make the installation more resilient in case of dual-booting with Windows,
+					as Windows is known to sometimes erase or replace the bootloader installed at the removable
+					location.
 					"""
 				)
 			)
