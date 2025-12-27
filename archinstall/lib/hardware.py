@@ -211,6 +211,18 @@ _sys_info = _SysInfo()
 
 class SysInfo:
 	@staticmethod
+	def has_battery() -> bool:
+		for type_path in Path('/sys/class/power_supply/').glob('*/type'):
+			try:
+				with open(type_path) as f:
+					if f.read().strip() == 'Battery':
+						return True
+			except OSError:
+				continue
+
+		return False
+
+	@staticmethod
 	def has_wifi() -> bool:
 		ifaces = list(list_interfaces().values())
 		return 'WIRELESS' in enrich_iface_types(ifaces).values()

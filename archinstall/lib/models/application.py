@@ -3,6 +3,16 @@ from enum import StrEnum, auto
 from typing import Any, NotRequired, TypedDict
 
 
+class PowerManagement(StrEnum):
+	NO_POWER_MANAGEMENT = 'No power management daemon'
+	POWER_PROFILES_DAEMON = 'power-profiles-daemon'
+	TUNED = auto()
+
+
+class PowerManagementConfigSerialization(TypedDict):
+	power_management: str
+
+
 class BluetoothConfigSerialization(TypedDict):
 	enabled: bool
 
@@ -24,6 +34,7 @@ class PrintServiceConfigSerialization(TypedDict):
 class ApplicationSerialization(TypedDict):
 	bluetooth_config: NotRequired[BluetoothConfigSerialization]
 	audio_config: NotRequired[AudioConfigSerialization]
+	power_management_config: NotRequired[PowerManagementConfigSerialization]
 	print_service_config: NotRequired[PrintServiceConfigSerialization]
 
 
@@ -56,6 +67,22 @@ class BluetoothConfiguration:
 
 
 @dataclass
+class PowerManagementConfiguration:
+	power_management: PowerManagement
+
+	def json(self) -> PowerManagementConfigSerialization:
+		return {
+			'power_management': self.power_management.value,
+		}
+
+	@staticmethod
+	def parse_arg(arg: dict[str, Any]) -> 'PowerManagementConfiguration':
+		return PowerManagementConfiguration(
+			PowerManagement(arg['power_management']),
+		)
+
+
+@dataclass
 class PrintServiceConfiguration:
 	enabled: bool
 
@@ -71,6 +98,7 @@ class PrintServiceConfiguration:
 class ApplicationConfiguration:
 	bluetooth_config: BluetoothConfiguration | None = None
 	audio_config: AudioConfiguration | None = None
+	power_management_config: PowerManagementConfiguration | None = None
 	print_service_config: PrintServiceConfiguration | None = None
 
 	@staticmethod
@@ -90,6 +118,9 @@ class ApplicationConfiguration:
 		if args and (audio_config := args.get('audio_config')) is not None:
 			app_config.audio_config = AudioConfiguration.parse_arg(audio_config)
 
+		if args and (power_management_config := args.get('power_management_config')) is not None:
+			app_config.power_management_config = PowerManagementConfiguration.parse_arg(power_management_config)
+
 		if args and (print_service_config := args.get('print_service_config')) is not None:
 			app_config.print_service_config = PrintServiceConfiguration.parse_arg(print_service_config)
 
@@ -103,6 +134,9 @@ class ApplicationConfiguration:
 
 		if self.audio_config:
 			config['audio_config'] = self.audio_config.json()
+
+		if self.power_management_config:
+			config['power_management_config'] = self.power_management_config.json()
 
 		if self.print_service_config:
 			config['print_service_config'] = self.print_service_config.json()
