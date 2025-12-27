@@ -121,7 +121,7 @@ def enrich_iface_types(interfaces: list[str]) -> dict[str, str]:
 	return result
 
 
-def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout: int = 3) -> str:
+def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout: int = 30) -> str:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE

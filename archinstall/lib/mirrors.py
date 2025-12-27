@@ -412,6 +412,7 @@ class MirrorListHandler:
 			self.load_local_mirrors()
 		else:
 			self._fetched_remote = self.load_remote_mirrors()
+			debug(f'load mirrors: {self._fetched_remote}')
 			if not self._fetched_remote:
 				self.load_local_mirrors()
 
