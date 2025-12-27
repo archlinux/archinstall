@@ -776,14 +776,6 @@ class Installer:
 		iwd_backend_conf = nm_conf_dir / 'wifi_backend.conf'
 		iwd_backend_conf.write_text('[device]\nwifi.backend=iwd\n')
 
-		# Disable standalone iwd service
-		# and enable NetworkManager
-		def post_install_configure_nm_iwd(*args: str, **kwargs: str) -> None:
-			self.disable_service('iwd.service')
-			self.enable_service('NetworkManager.service')
-
-		self.post_base_install.append(post_install_configure_nm_iwd)
-
 	def mkinitcpio(self, flags: list[str]) -> bool:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mkinitcpio'):

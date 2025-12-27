@@ -164,15 +164,15 @@ class NetworkConfiguration:
 					if profile_config.profile.is_desktop_profile():
 						installation.add_additional_packages('network-manager-applet')
 
-				if self.type == NicType.NM:
-					# Default just NM service
-					installation.enable_service('NetworkManager.service')
-				else:  # NM_IWD special handling
+				installation.enable_service('NetworkManager.service')
+				if self.type == NicType.NM_IWD:
+					# NM_IWD special handling
 					installation.configure_nm_iwd()
+					installation.disable_service('iwd.service')
+
 			case NicType.MANUAL:
 				for nic in self.nics:
 					installation.configure_nic(nic)
-
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
 
