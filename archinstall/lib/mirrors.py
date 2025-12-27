@@ -389,6 +389,7 @@ class MirrorListHandler:
 	) -> None:
 		self._local_mirrorlist = local_mirrorlist
 		self._status_mappings: dict[str, list[MirrorStatusEntryV3]] | None = None
+		self._fetched_remote: bool = False
 
 	def _mappings(self) -> dict[str, list[MirrorStatusEntryV3]]:
 		if self._status_mappings is None:
@@ -412,9 +413,12 @@ class MirrorListHandler:
 		from .args import arch_config_handler
 
 		if arch_config_handler.args.offline:
+			self._fetched_remote = False
 			self.load_local_mirrors()
 		else:
-			if not self.load_remote_mirrors():
+			self._fetched_remote = self.load_remote_mirrors()
+			debug(f'load mirrors: {self._fetched_remote}')
+			if not self._fetched_remote:
 				self.load_local_mirrors()
 
 	def load_remote_mirrors(self) -> bool:
@@ -441,7 +445,15 @@ class MirrorListHandler:
 	def get_status_by_region(self, region: str, speed_sort: bool) -> list[MirrorStatusEntryV3]:
 		mappings = self._mappings()
 		region_list = mappings[region]
-		return sorted(region_list, key=lambda mirror: (mirror.score, mirror.speed))
+
+		# Only sort if we have remote mirror data with score/speed info
+		# Local mirrors lack this data and can be modified manually before-hand
+		# Or reflector potentially ran already
+		if self._fetched_remote and speed_sort:
+			# original return
+			return sorted(region_list, key=lambda mirror: (mirror.score, mirror.speed))
+		# just return as-is without sorting?
+		return region_list
 
 	def _parse_remote_mirror_list(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
 		mirror_status = MirrorStatusListV3.model_validate_json(mirrorlist)
