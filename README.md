@@ -23,7 +23,7 @@ The installer also doubles as a python library to install Arch Linux and manage 
     # archinstall
 ```
 
-Alternative ways to install are `git clone` the repository or `pip install --upgrade archinstall`.
+Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall)) or `pip install --upgrade archinstall`.
 
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
 
@@ -36,11 +36,11 @@ archinstall
 
 ```shell
     # cd archinstall-git
-    # python -m archinstall
+    # python -m archinstall $@
 ```
 
 #### Advanced
-Some additional options that most users do not need are hidden behind the `--advanced` flag.
+Some additional options that most users do not need are hidden behind the `--advanced` flag and all options/args can be consulted through `-h` or `--help`. 
 
 ## Running from a declarative configuration file or URL
 
@@ -162,7 +162,7 @@ To test this without a live ISO, the simplest approach is to use a local image a
 This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
 
     # truncate -s 20G testimage.img
-    # losetup --partscan --show --find ./testimage.img
+    # losetup --partscan --show ./testimage.img
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd 
