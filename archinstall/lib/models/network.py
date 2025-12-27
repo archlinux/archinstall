@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 class NicType(Enum):
 	ISO = 'iso'
 	NM = 'nm'
+	NM_IWD = 'nm_iwd'
 	MANUAL = 'manual'
 
 	def display_msg(self) -> str:
@@ -24,7 +25,9 @@ class NicType(Enum):
 			case NicType.ISO:
 				return tr('Copy ISO network configuration to installation')
 			case NicType.NM:
-				return tr('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)')
+				return tr('Use Network Manager (default backend)')
+			case NicType.NM_IWD:
+				return tr('Use Network Manager (iwd backend)')
 			case NicType.MANUAL:
 				return tr('Manual configuration')
 
@@ -147,16 +150,29 @@ class NetworkConfiguration:
 				installation.copy_iso_network_config(
 					enable_services=True,  # Sources the ISO network configuration to the install medium.
 				)
-			case NicType.NM:
-				installation.add_additional_packages(['networkmanager'])
+			case NicType.NM | NicType.NM_IWD:
+				# Install NetworkManager package for both cases
+				packages = ['networkmanager']
+				# Defautl back-end only for non-iwd
+				if self.type == NicType.NM:
+					packages.append('wpa_supplicant')
+
+				installation.add_additional_packages(packages)
+
+				# Desktop profile -> Always add applet
 				if profile_config and profile_config.profile:
 					if profile_config.profile.is_desktop_profile():
-						installation.add_additional_packages(['network-manager-applet'])
+						installation.add_additional_packages('network-manager-applet')
+
 				installation.enable_service('NetworkManager.service')
+				if self.type == NicType.NM_IWD:
+					# NM_IWD special handling
+					installation.configure_nm_iwd()
+					installation.disable_service('iwd.service')
+
 			case NicType.MANUAL:
 				for nic in self.nics:
 					installation.configure_nic(nic)
-
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
 
