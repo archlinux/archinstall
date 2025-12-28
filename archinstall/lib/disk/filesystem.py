@@ -158,14 +158,6 @@ class FilesystemHandler:
 			for luks in enc_vols.values():
 				luks.lock()
 
-	def _safely_close_lvm(self, lvm_config: LvmConfiguration, export_vg: bool = False) -> None:
-		for vg in lvm_config.vol_groups:
-			for vol in vg.volumes:
-				device_handler.lvm_vol_change(vol, False)
-
-			if export_vg:
-				device_handler.lvm_export_vg(vg)
-
 	def _setup_lvm(
 		self,
 		lvm_config: LvmConfiguration,
