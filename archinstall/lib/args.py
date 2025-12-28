@@ -72,7 +72,7 @@ class ArchConfig:
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
-	swap: bool | dict[str, Any] = True
+	swap: bool | dict[str, str] = True
 	timezone: str = 'UTC'
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
