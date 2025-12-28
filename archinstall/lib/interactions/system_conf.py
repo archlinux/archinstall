@@ -98,15 +98,12 @@ def ask_for_swap(preset: bool | dict[str, str] = True) -> bool | dict[str, str]:
 	else:
 		default_enabled = True
 
-	if default_enabled:
-		default_item = MenuItem.yes()
-	else:
-		default_item = MenuItem.no()
-
 	prompt = tr('Would you like to use swap on zram?') + '\n'
 
 	group = MenuItemGroup.yes_no()
-	group.set_focus_by_value(default_item)
+	# Set focus to Yes (True) or No (False) based on default_enabled
+	group.set_default_by_value(default_enabled)
+	group.set_focus_by_value(default_enabled)
 
 	result = SelectMenu[bool](
 		group,
