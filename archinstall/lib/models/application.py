@@ -21,6 +21,14 @@ class PrintServiceConfigSerialization(TypedDict):
 	enabled: bool
 
 
+class ZramAlgorithm(StrEnum):
+	ZSTD = 'zstd'
+	LZO_RLE = 'lzo-rle'
+	LZO = 'lzo'
+	LZ4 = 'lz4'
+	LZ4HC = 'lz4hc'
+
+
 class ApplicationSerialization(TypedDict):
 	bluetooth_config: NotRequired[BluetoothConfigSerialization]
 	audio_config: NotRequired[AudioConfigSerialization]
@@ -65,6 +73,12 @@ class PrintServiceConfiguration:
 	@staticmethod
 	def parse_arg(arg: dict[str, Any]) -> 'PrintServiceConfiguration':
 		return PrintServiceConfiguration(arg['enabled'])
+
+
+@dataclass
+class ZramConfig:
+	enabled: bool
+	algorithm: ZramAlgorithm = ZramAlgorithm.ZSTD
 
 
 @dataclass

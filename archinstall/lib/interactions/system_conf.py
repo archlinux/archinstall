@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from archinstall.lib.models.application import ZramAlgorithm, ZramConfig
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -89,21 +90,12 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 			return result.get_value()
 
 
-def ask_for_swap(preset: bool | dict[str, str] = True) -> bool | dict[str, str]:
-	# Handle backward compatibility
-	default_enabled: bool
-	if isinstance(preset, dict):
-		default_enabled = True
-	else:
-		# preset is bool
-		default_enabled = preset
-
+def ask_for_swap(preset: ZramConfig = ZramConfig(enabled=True)) -> ZramConfig:
 	prompt = tr('Would you like to use swap on zram?') + '\n'
 
 	group = MenuItemGroup.yes_no()
-	# Set focus to Yes (True) or No (False) based on default_enabled
-	group.set_default_by_value(default_enabled)
-	group.set_focus_by_value(default_enabled)
+	group.set_default_by_value(preset.enabled)
+	group.set_focus_by_value(preset.enabled)
 
 	result = SelectMenu[bool](
 		group,
@@ -120,35 +112,30 @@ def ask_for_swap(preset: bool | dict[str, str] = True) -> bool | dict[str, str]:
 		case ResultType.Selection:
 			enabled = result.item() == MenuItem.yes()
 			if not enabled:
-				return False
+				return ZramConfig(enabled=False)
 
 			# Ask for compression algorithm
-			algo_preset = 'zstd'
-			if isinstance(preset, dict):
-				algo_preset = preset.get('algo', 'zstd')
-
-			algorithms = ['zstd', 'lzo-rle', 'lzo', 'lz4', 'lz4hc']
-			algo_items = [MenuItem(a, value=a) for a in algorithms]
+			algo_items = [MenuItem(a.value, value=a) for a in ZramAlgorithm]
 			algo_group = MenuItemGroup(algo_items, sort_items=False)
-			algo_group.set_default_by_value(algo_preset)
-			algo_group.set_focus_by_value(algo_preset)
+			algo_group.set_default_by_value(preset.algorithm)
+			algo_group.set_focus_by_value(preset.algorithm)
 
-			algo_result = SelectMenu[str](
+			algo_result = SelectMenu[ZramAlgorithm](
 				algo_group,
 				header=tr('Select zram compression algorithm:') + '\n',
 				alignment=Alignment.CENTER,
 				allow_skip=True,
 			).run()
 
-			algo: str
+			algo: ZramAlgorithm
 			match algo_result.type_:
 				case ResultType.Skip:
-					algo = algo_preset
+					algo = preset.algorithm
 				case ResultType.Selection:
 					algo = algo_result.get_value()
 				case ResultType.Reset:
-					algo = 'zstd'
+					algo = ZramAlgorithm.ZSTD
 
-			return {'algo': algo}
+			return ZramConfig(enabled=True, algorithm=algo)
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')

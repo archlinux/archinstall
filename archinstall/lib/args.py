@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 from pydantic.dataclasses import dataclass as p_dataclass
 
 from archinstall.lib.crypt import decrypt
-from archinstall.lib.models.application import ApplicationConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, ZramAlgorithm, ZramConfig
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
@@ -72,7 +72,7 @@ class ArchConfig:
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
-	swap: bool | dict[str, str] = True
+	swap: ZramConfig = field(default_factory=lambda: ZramConfig(enabled=True))
 	timezone: str = 'UTC'
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
@@ -211,7 +211,15 @@ class ArchConfig:
 		if parallel_downloads := args_config.get('parallel_downloads', 0):
 			arch_config.parallel_downloads = parallel_downloads
 
-		arch_config.swap = args_config.get('swap', True)
+		# Parse swap config - transform bool/dict into ZramConfig
+		swap_arg = args_config.get('swap', True)
+		if isinstance(swap_arg, bool):
+			arch_config.swap = ZramConfig(enabled=swap_arg)
+		elif isinstance(swap_arg, dict):
+			algo = swap_arg.get('algo', ZramAlgorithm.ZSTD.value)
+			arch_config.swap = ZramConfig(enabled=True, algorithm=ZramAlgorithm(algo))
+		else:
+			arch_config.swap = ZramConfig(enabled=True)
 
 		if timezone := args_config.get('timezone', 'UTC'):
 			arch_config.timezone = timezone

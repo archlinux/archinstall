@@ -372,12 +372,9 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_swap(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			output = f'{tr("Swap on zram")}: '
-			if isinstance(item.value, dict):
-				output += tr('Enabled')
-				algo = item.value.get('algo', 'zstd')
-				output += f'\n{tr("Compression algorithm")}: {algo}'
-			else:
-				output += tr('Enabled') if item.value else tr('Disabled')
+			output += tr('Enabled') if item.value.enabled else tr('Disabled')
+			if item.value.enabled:
+				output += f'\n{tr("Compression algorithm")}: {item.value.algorithm.value}'
 			return output
 		return None
 
