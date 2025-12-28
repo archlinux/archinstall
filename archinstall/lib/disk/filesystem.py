@@ -145,21 +145,18 @@ class FilesystemHandler:
 			self._setup_lvm(lvm_config, enc_mods)
 			self._format_lvm_vols(lvm_config)
 
-			# export the lvm group safely otherwise the Luks cannot be closed
-			self._safely_close_lvm(lvm_config, export_vg=True)
-
-			for luks in enc_mods.values():
-				luks.lock()
+			# Don't close LVM or LUKS during setup - keep everything active
+			# The installation phase will handle unlocking and mounting
+			# Closing causes "parent leaked" and lvchange errors
 		elif enc_config.encryption_type == EncryptionType.LuksOnLvm:
 			self._setup_lvm(lvm_config)
 			enc_vols = self._encrypt_lvm_vols(lvm_config, enc_config, False)
 			self._format_lvm_vols(lvm_config, enc_vols)
 
+			# Lock LUKS devices but keep LVM active
+			# LVM volumes must remain active for later re-unlock during installation
 			for luks in enc_vols.values():
 				luks.lock()
-
-			# Don't export VG for LuksOnLvm - dm-crypt references prevent clean export
-			self._safely_close_lvm(lvm_config, export_vg=False)
 
 	def _safely_close_lvm(self, lvm_config: LvmConfiguration, export_vg: bool = False) -> None:
 		for vg in lvm_config.vol_groups:
