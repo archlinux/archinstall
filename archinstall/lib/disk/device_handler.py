@@ -492,7 +492,8 @@ class DeviceHandler:
 
 	def lvm_pv_create(self, pvs: Iterable[Path]) -> None:
 		pvs_str = ' '.join([str(pv) for pv in pvs])
-		cmd = f'pvcreate --yes --force {pvs_str}'
+		# Signatures are already wiped by wipefs, -f is just for safety
+		cmd = f'pvcreate -f --yes {pvs_str}'
 		# note flags used in scripting
 		debug(f'Creating LVM PVS: {cmd}')
 		SysCommand(cmd)
@@ -751,6 +752,17 @@ class DeviceHandler:
 			self._setup_partition(part_mod, modification.device, disk, requires_delete=requires_delete)
 
 		disk.commit()
+
+		# Wipe filesystem/LVM signatures from newly created partitions
+		# to prevent "signature detected" errors
+		for part_mod in filtered_part:
+			if part_mod.dev_path:
+				debug(f'Wiping signatures from: {part_mod.dev_path}')
+				SysCommand(f'wipefs --all {part_mod.dev_path}', ignore_errors=True)
+
+		# Sync with udev after wiping signatures
+		if filtered_part:
+			self.udev_sync()
 
 	@staticmethod
 	def swapon(path: Path) -> None:
