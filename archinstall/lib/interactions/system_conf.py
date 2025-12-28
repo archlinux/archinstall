@@ -91,12 +91,12 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 
 def ask_for_swap(preset: bool | dict[str, str] = True) -> bool | dict[str, str]:
 	# Handle backward compatibility
+	default_enabled: bool
 	if isinstance(preset, dict):
 		default_enabled = True
-	elif isinstance(preset, bool):
-		default_enabled = preset
 	else:
-		default_enabled = True
+		# preset is bool
+		default_enabled = preset
 
 	prompt = tr('Would you like to use swap on zram?') + '\n'
 
@@ -140,6 +140,7 @@ def ask_for_swap(preset: bool | dict[str, str] = True) -> bool | dict[str, str]:
 				allow_skip=True,
 			).run()
 
+			algo: str
 			match algo_result.type_:
 				case ResultType.Skip:
 					algo = algo_preset
@@ -148,6 +149,6 @@ def ask_for_swap(preset: bool | dict[str, str] = True) -> bool | dict[str, str]:
 				case ResultType.Reset:
 					algo = 'zstd'
 
-			return {'enabled': True, 'algo': algo}
+			return {'algo': algo}
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
