@@ -146,7 +146,7 @@ class FilesystemHandler:
 			self._format_lvm_vols(lvm_config)
 
 			# export the lvm group safely otherwise the Luks cannot be closed
-			self._safely_close_lvm(lvm_config)
+			self._safely_close_lvm(lvm_config, export_vg=True)
 
 			for luks in enc_mods.values():
 				luks.lock()
@@ -158,14 +158,16 @@ class FilesystemHandler:
 			for luks in enc_vols.values():
 				luks.lock()
 
-			self._safely_close_lvm(lvm_config)
+			# Don't export VG for LuksOnLvm - dm-crypt references prevent clean export
+			self._safely_close_lvm(lvm_config, export_vg=False)
 
-	def _safely_close_lvm(self, lvm_config: LvmConfiguration) -> None:
+	def _safely_close_lvm(self, lvm_config: LvmConfiguration, export_vg: bool = False) -> None:
 		for vg in lvm_config.vol_groups:
 			for vol in vg.volumes:
 				device_handler.lvm_vol_change(vol, False)
 
-			device_handler.lvm_export_vg(vg)
+			if export_vg:
+				device_handler.lvm_export_vg(vg)
 
 	def _setup_lvm(
 		self,
