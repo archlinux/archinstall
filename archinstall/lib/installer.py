@@ -975,7 +975,7 @@ class Installer:
 			self._configure_grub_btrfsd(snapshot_type)
 			self.enable_service('grub-btrfsd.service')
 
-	def setup_swap(self, kind: str = 'zram') -> None:
+	def setup_swap(self, kind: str = 'zram', algo: str = 'zstd') -> None:
 		if kind == 'zram':
 			info('Setting up swap on zram')
 			self.pacman.strap('zram-generator')
@@ -984,12 +984,12 @@ class Installer:
 			# Convert KB to MB and divide by 2, with minimum of 4096 MB
 			size_mb = max(ram_kb // 2048, 4096)
 			info(f'Zram size: {size_mb} from RAM: {ram_kb}')
-			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
-			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
-			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
+			info(f'Zram compression algorithm: {algo}')
+
 			with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
 				zram_conf.write('[zram0]\n')
 				zram_conf.write(f'zram-size = {size_mb}\n')
+				zram_conf.write(f'compression-algorithm = {algo}\n')
 
 			self.enable_service('systemd-zram-setup@zram0.service')
 

@@ -89,8 +89,16 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 			return result.get_value()
 
 
-def ask_for_swap(preset: bool = True) -> bool:
-	if preset:
+def ask_for_swap(preset: bool | dict[str, str] = True) -> bool | dict[str, str]:
+	# Handle backward compatibility
+	if isinstance(preset, dict):
+		default_enabled = True
+	elif isinstance(preset, bool):
+		default_enabled = preset
+	else:
+		default_enabled = True
+
+	if default_enabled:
 		default_item = MenuItem.yes()
 	else:
 		default_item = MenuItem.no()
@@ -113,6 +121,36 @@ def ask_for_swap(preset: bool = True) -> bool:
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			return result.item() == MenuItem.yes()
+			enabled = result.item() == MenuItem.yes()
+			if not enabled:
+				return False
+
+			# Ask for compression algorithm
+			algo_preset = 'zstd'
+			if isinstance(preset, dict):
+				algo_preset = preset.get('algo', 'zstd')
+
+			algorithms = ['zstd', 'lzo-rle', 'lzo', 'lz4', 'lz4hc']
+			algo_items = [MenuItem(a, value=a) for a in algorithms]
+			algo_group = MenuItemGroup(algo_items, sort_items=False)
+			algo_group.set_default_by_value(algo_preset)
+			algo_group.set_focus_by_value(algo_preset)
+
+			algo_result = SelectMenu[str](
+				algo_group,
+				header=tr('Select zram compression algorithm:') + '\n',
+				alignment=Alignment.CENTER,
+				allow_skip=True,
+			).run()
+
+			match algo_result.type_:
+				case ResultType.Skip:
+					algo = algo_preset
+				case ResultType.Selection:
+					algo = algo_result.get_value()
+				case ResultType.Reset:
+					algo = 'zstd'
+
+			return {'enabled': True, 'algo': algo}
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')

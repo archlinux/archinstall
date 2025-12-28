@@ -99,7 +99,12 @@ def perform_installation(mountpoint: Path) -> None:
 			installation.set_mirrors(mirror_config, on_target=True)
 
 		if config.swap:
-			installation.setup_swap('zram')
+			# Handle both boolean and dict swap configurations
+			if isinstance(config.swap, dict):
+				algo = config.swap.get('algo', 'zstd')
+				installation.setup_swap('zram', algo=algo)
+			else:
+				installation.setup_swap('zram')
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
 			if config.bootloader_config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
