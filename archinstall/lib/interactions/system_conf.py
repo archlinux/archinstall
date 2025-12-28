@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from archinstall.lib.models.application import ZramAlgorithm, ZramConfig
+from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -90,7 +90,7 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 			return result.get_value()
 
 
-def ask_for_swap(preset: ZramConfig = ZramConfig(enabled=True)) -> ZramConfig:
+def ask_for_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) -> ZramConfiguration:
 	prompt = tr('Would you like to use swap on zram?') + '\n'
 
 	group = MenuItemGroup.yes_no()
@@ -112,7 +112,7 @@ def ask_for_swap(preset: ZramConfig = ZramConfig(enabled=True)) -> ZramConfig:
 		case ResultType.Selection:
 			enabled = result.item() == MenuItem.yes()
 			if not enabled:
-				return ZramConfig(enabled=False)
+				return ZramConfiguration(enabled=False)
 
 			# Ask for compression algorithm
 			algo_items = [MenuItem(a.value, value=a) for a in ZramAlgorithm]
@@ -136,6 +136,6 @@ def ask_for_swap(preset: ZramConfig = ZramConfig(enabled=True)) -> ZramConfig:
 				case ResultType.Reset:
 					algo = ZramAlgorithm.ZSTD
 
-			return ZramConfig(enabled=True, algorithm=algo)
+			return ZramConfiguration(enabled=True, algorithm=algo)
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')

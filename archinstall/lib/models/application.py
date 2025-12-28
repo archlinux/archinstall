@@ -76,7 +76,7 @@ class PrintServiceConfiguration:
 
 
 @dataclass
-class ZramConfig:
+class ZramConfiguration:
 	enabled: bool
 	algorithm: ZramAlgorithm = ZramAlgorithm.ZSTD
 

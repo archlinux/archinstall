@@ -13,7 +13,7 @@ from archinstall.lib.models.application import (
 	AudioConfiguration,
 	BluetoothConfiguration,
 	PrintServiceConfiguration,
-	ZramConfig,
+	ZramConfiguration,
 )
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
@@ -232,7 +232,7 @@ def test_config_file_parsing(
 		ntp=True,
 		packages=['firefox'],
 		parallel_downloads=66,
-		swap=ZramConfig(enabled=False),
+		swap=ZramConfiguration(enabled=False),
 		timezone='UTC',
 		services=['service_1', 'service_2'],
 		custom_commands=["echo 'Hello, World!'"],
