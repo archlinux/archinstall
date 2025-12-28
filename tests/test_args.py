@@ -7,7 +7,14 @@ from pytest import MonkeyPatch
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
-from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration, PrintServiceConfiguration, ZramConfig
+from archinstall.lib.models.application import (
+	ApplicationConfiguration,
+	Audio,
+	AudioConfiguration,
+	BluetoothConfiguration,
+	PrintServiceConfiguration,
+	ZramConfig,
+)
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
