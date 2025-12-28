@@ -758,7 +758,7 @@ class DeviceHandler:
 		for part_mod in filtered_part:
 			if part_mod.dev_path:
 				debug(f'Wiping signatures from: {part_mod.dev_path}')
-				SysCommand(f'wipefs --all {part_mod.dev_path}', ignore_errors=True)
+				SysCommand(f'wipefs --all {part_mod.dev_path}')
 
 		# Sync with udev after wiping signatures
 		if filtered_part:
