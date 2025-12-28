@@ -94,7 +94,7 @@ def ask_for_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) ->
 	prompt = tr('Would you like to use swap on zram?') + '\n'
 
 	group = MenuItemGroup.yes_no()
-	group.set_default_by_value(preset.enabled)
+	group.set_default_by_value(True)
 	group.set_focus_by_value(preset.enabled)
 
 	result = SelectMenu[bool](
@@ -117,7 +117,7 @@ def ask_for_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) ->
 			# Ask for compression algorithm
 			algo_items = [MenuItem(a.value, value=a) for a in ZramAlgorithm]
 			algo_group = MenuItemGroup(algo_items, sort_items=False)
-			algo_group.set_default_by_value(preset.algorithm)
+			algo_group.set_default_by_value(ZramAlgorithm.ZSTD)
 			algo_group.set_focus_by_value(preset.algorithm)
 
 			algo_result = SelectMenu[ZramAlgorithm](
