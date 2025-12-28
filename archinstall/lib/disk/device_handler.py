@@ -464,8 +464,22 @@ class DeviceHandler:
 		SysCommand(cmd)
 
 	def lvm_import_vg(self, vg: LvmVolumeGroup) -> None:
-		cmd = f'vgimport {vg.name}'
+		# Check if the VG is actually exported before trying to import it
+		check_cmd = f'vgs --noheadings -o vg_exported {vg.name}'
 
+		try:
+			result = SysCommand(check_cmd)
+			is_exported = result.decode().strip() == 'exported'
+		except SysCallError:
+			# VG might not exist yet, skip import
+			debug(f'Volume group {vg.name} not found, skipping import')
+			return
+
+		if not is_exported:
+			debug(f'Volume group {vg.name} is already active (not exported), skipping import')
+			return
+
+		cmd = f'vgimport {vg.name}'
 		debug(f'vgimport: {cmd}')
 		SysCommand(cmd)
 
@@ -477,33 +491,21 @@ class DeviceHandler:
 		SysCommand(cmd)
 
 	def lvm_pv_create(self, pvs: Iterable[Path]) -> None:
-		cmd = 'pvcreate ' + ' '.join([str(pv) for pv in pvs])
+		pvs_str = ' '.join([str(pv) for pv in pvs])
+		cmd = f'pvcreate --yes --force {pvs_str}'
+		# note flags used in scripting
 		debug(f'Creating LVM PVS: {cmd}')
-
-		worker = SysCommandWorker(cmd)
-		worker.poll()
-		worker.write(b'y\n', line_ending=False)
-
-		# Wait for the command to complete
-		while worker.is_alive():
-			worker.poll()
+		SysCommand(cmd)
 
 		# Sync with udev to ensure the PVs are visible
 		self.udev_sync()
 
 	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str) -> None:
 		pvs_str = ' '.join([str(pv) for pv in pvs])
-		cmd = f'vgcreate --yes {vg_name} {pvs_str}'
+		cmd = f'vgcreate --yes --force {vg_name} {pvs_str}'
 
 		debug(f'Creating LVM group: {cmd}')
-
-		worker = SysCommandWorker(cmd)
-		worker.poll()
-		worker.write(b'y\n', line_ending=False)
-
-		# Wait for the command to complete
-		while worker.is_alive():
-			worker.poll()
+		SysCommand(cmd)
 
 		# Sync with udev to ensure the VG is visible
 		self.udev_sync()
