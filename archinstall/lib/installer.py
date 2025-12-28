@@ -194,9 +194,16 @@ class Installer:
 		else:
 			info(tr('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
 
-		info('Waiting for automatic mirror selection (reflector) to complete.')
-		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
-			time.sleep(1)
+		if not arch_config_handler.args.offline:
+			info('Waiting for automatic mirror selection (reflector) to complete.')
+			for _ in range(60):
+				if self._service_state('reflector') in ('dead', 'failed', 'exited'):
+					break
+				time.sleep(1)
+			else:
+				warn('Reflector did not complete within 60 seconds, continuing anyway...')
+		else:
+			info('Skipped reflector...')
 
 		# info('Waiting for pacman-init.service to complete.')
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
@@ -767,6 +774,14 @@ class Installer:
 					self.enable_service(['systemd-networkd', 'systemd-resolved'])
 
 		return True
+
+	def configure_nm_iwd(self) -> None:
+		# Create NetworkManager config directory and write iwd backend conf
+		nm_conf_dir = self.target / 'etc/NetworkManager/conf.d'
+		nm_conf_dir.mkdir(parents=True, exist_ok=True)
+
+		iwd_backend_conf = nm_conf_dir / 'wifi_backend.conf'
+		iwd_backend_conf.write_text('[device]\nwifi.backend=iwd\n')
 
 	def mkinitcpio(self, flags: list[str]) -> bool:
 		for plugin in plugins.values():

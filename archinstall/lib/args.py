@@ -185,7 +185,7 @@ class ArchConfig:
 			uki = args_config.get('uki', False)
 			if uki and not bootloader.has_uki_support():
 				uki = False
-			arch_config.bootloader_config = BootloaderConfiguration(bootloader=bootloader, uki=uki, removable=False)
+			arch_config.bootloader_config = BootloaderConfiguration(bootloader=bootloader, uki=uki, removable=True)
 
 		# deprecated: backwards compatibility
 		audio_config_args = args_config.get('audio_config', None)
