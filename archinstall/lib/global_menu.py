@@ -150,7 +150,8 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Timezone'),
 				action=ask_for_a_timezone,
-				value='UTC',
+				value=None,
+				mandatory=True,
 				preview_action=self._prev_tz,
 				key='timezone',
 			),
