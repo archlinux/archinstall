@@ -211,7 +211,8 @@ class ArchConfig:
 		if parallel_downloads := args_config.get('parallel_downloads', 0):
 			arch_config.parallel_downloads = parallel_downloads
 
-		if swap_arg := args_config.get('swap'):
+		swap_arg = args_config.get('swap')
+		if swap_arg is not None:
 			arch_config.swap = ZramConfiguration.parse_arg(swap_arg)
 
 		if timezone := args_config.get('timezone', 'UTC'):
