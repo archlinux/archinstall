@@ -372,7 +372,9 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_swap(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			output = f'{tr("Swap on zram")}: '
-			output += tr('Enabled') if item.value else tr('Disabled')
+			output += tr('Enabled') if item.value.enabled else tr('Disabled')
+			if item.value.enabled:
+				output += f'\n{tr("Compression algorithm")}: {item.value.algorithm.value}'
 			return output
 		return None
 
