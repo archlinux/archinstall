@@ -18,7 +18,7 @@ jobs:
           pacman --noconfirm -Sy archlinux-keyring
           pacman --noconfirm -Syyu
           pacman --noconfirm -Sy python-uv python-setuptools python-pip
-          pacman --noconfirm -Sy python-pyparted python-pydantic
+          pacman --noconfirm -Sy python-pyparted python-pydantic python-textual
       - name: Remove existing archinstall (if any)
         run: 
           uv pip uninstall archinstall --break-system-packages --system

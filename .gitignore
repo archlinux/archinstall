@@ -40,3 +40,4 @@ requirements.txt
 /actions-runner
 /cmd_output.txt
 uv.lock
+pyrightconfig.json

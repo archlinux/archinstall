@@ -1,69 +1,64 @@
 from pathlib import Path
 
+from archinstall.lib.menu.helpers import Input
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import EditMenu
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment
+from archinstall.tui.ui.result import ResultType
 
 from ..models.users import Password
 from ..output import FormattedOutput
 
 
 def get_password(
-	text: str,
 	header: str | None = None,
 	allow_skip: bool = False,
 	preset: str | None = None,
 	skip_confirmation: bool = False,
 ) -> Password | None:
-	failure: str | None = None
-
 	while True:
-		user_hdr = None
-		if failure is not None:
-			user_hdr = f'{header}\n{failure}\n'
-		elif header is not None:
-			user_hdr = header
-
-		result = EditMenu(
-			text,
-			header=user_hdr,
-			alignment=Alignment.CENTER,
+		result = Input(
+			header=header,
 			allow_skip=allow_skip,
-			default_text=preset,
-			hide_input=True,
-		).input()
+			default_value=preset,
+			password=True,
+		).show()
 
-		if allow_skip:
-			if not result.has_item() or not result.text():
+		if result.type_ == ResultType.Skip:
+			if allow_skip:
 				return None
+			else:
+				continue
+		elif result.type_ == ResultType.Selection:
+			if not result.get_value():
+				if allow_skip:
+					return None
+				else:
+					continue
 
-		password = Password(plaintext=result.text())
+		password = Password(plaintext=result.get_value())
+		break
 
-		if skip_confirmation:
-			return password
+	if skip_confirmation:
+		return password
 
-		if header is not None:
-			confirmation_header = f'{header}{tr("Password")}: {password.hidden()}\n'
-		else:
-			confirmation_header = f'{tr("Password")}: {password.hidden()}\n'
+	confirmation_header = f'{tr("Password")}: {password.hidden()}\n\n'
+	confirmation_header += tr('Confirm password')
 
-		result = EditMenu(
-			tr('Confirm password'),
-			header=confirmation_header,
-			alignment=Alignment.CENTER,
-			allow_skip=False,
-			hide_input=True,
-		).input()
+	def _validate(value: str) -> str | None:
+		if value != password._plaintext:
+			return tr('The password did not match, please try again')
+		return None
 
-		if password._plaintext == result.text():
-			return password
+	_ = Input(
+		header=confirmation_header,
+		allow_skip=False,
+		password=True,
+		validator_callback=_validate,
+	).show()
 
-		failure = tr('The confirmation password did not match, please try again')
+	return password
 
 
 def prompt_dir(
-	text: str,
 	header: str | None = None,
 	validate: bool = True,
 	must_exist: bool = True,
@@ -87,24 +82,22 @@ def prompt_dir(
 	else:
 		validate_func = None
 
-	result = EditMenu(
-		text,
+	result = Input(
 		header=header,
-		alignment=Alignment.CENTER,
 		allow_skip=allow_skip,
-		validator=validate_func,
-		default_text=preset,
-	).input()
+		validator_callback=validate_func,
+		default_value=preset,
+	).show()
 
 	match result.type_:
 		case ResultType.Skip:
 			return None
 		case ResultType.Selection:
-			if not result.text():
+			if not result.get_value():
 				return None
-			return Path(result.text())
-
-	return None
+			return Path(result.get_value())
+		case _:
+			return None
 
 
 def is_subpath(first: Path, second: Path) -> bool:

@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 from typing import override
 
+from archinstall.lib.menu.helpers import Confirmation, Input, Selection
 from archinstall.lib.models.device import (
 	BtrfsMountOption,
 	DeviceModification,
@@ -18,10 +19,8 @@ from archinstall.lib.models.device import (
 	Unit,
 )
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import EditMenu, SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties, Orientation
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 from ..menu.list_manager import ListManager
 from ..output import FormattedOutput
@@ -238,7 +237,7 @@ class PartitioningList(ListManager[DiskSegment]):
 				# was marked as formatting, otherwise we run into issues where
 				# 1. select a new fs -> potentially mark as wipe now
 				# 2. Switch back to old filesystem -> should unmark wipe now, but
-				#     how do we know it was the original one?
+				# how do we know it was the original one?
 				not_filter += [
 					self._actions['set_filesystem'],
 					self._actions['mark_bootable'],
@@ -404,10 +403,10 @@ class PartitioningList(ListManager[DiskSegment]):
 				partition.mountpoint = None
 
 	def _prompt_mountpoint(self) -> Path:
-		header = tr('Partition mount-points are relative to inside the installation, the boot would be /boot as an example.') + '\n'
-		prompt = tr('Mountpoint')
+		header = tr('Partition mount-points are relative to inside the installation, the boot would be /boot as an example.') + '\n\n'
+		header += tr('Enter a mountpoint')
 
-		mountpoint = prompt_dir(prompt, header, validate=False, allow_skip=False)
+		mountpoint = prompt_dir(header, validate=False, allow_skip=False)
 		assert mountpoint
 
 		return mountpoint
@@ -417,13 +416,11 @@ class PartitioningList(ListManager[DiskSegment]):
 		items = [MenuItem(fs.value, value=fs) for fs in fs_types]
 		group = MenuItemGroup(items, sort_items=False)
 
-		result = SelectMenu[FilesystemType](
+		result = Selection[FilesystemType](
 			group,
 			header=prompt,
-			alignment=Alignment.CENTER,
-			frame=FrameProperties.min(tr('Filesystem')),
 			allow_skip=False,
-		).run()
+		).show()
 
 		match result.type_:
 			case ResultType.Selection:
@@ -485,18 +482,16 @@ class PartitioningList(ListManager[DiskSegment]):
 
 		prompt += tr('Size: {} / {}').format(max_sectors, max_bytes) + '\n\n'
 		prompt += tr('All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB...') + '\n'
-		prompt += tr('If no unit is provided, the value is interpreted as sectors') + '\n'
+		prompt += tr('If no unit is provided, the value is interpreted as sectors') + '\n\n'
 
 		max_size = free_space.length
+		prompt += tr('Enter a size (default: {}): ').format(max_size.format_highest())
 
-		title = tr('Size (default: {}): ').format(max_size.format_highest())
-
-		result = EditMenu(
-			title,
+		result = Input(
 			header=f'{prompt}\b',
 			allow_skip=True,
-			validator=validate,
-		).input()
+			validator_callback=validate,
+		).show()
 
 		size: Size | None = None
 
@@ -504,12 +499,14 @@ class PartitioningList(ListManager[DiskSegment]):
 			case ResultType.Skip:
 				size = max_size
 			case ResultType.Selection:
-				value = result.text()
+				value = result.get_value()
 
 				if value:
 					size = self._validate_value(sector_size, max_size, value)
 				else:
 					size = max_size
+			case _:
+				raise ValueError('Unhandled result type')
 
 		assert size
 		return size
@@ -546,15 +543,11 @@ class PartitioningList(ListManager[DiskSegment]):
 	def _reset_confirmation(self) -> bool:
 		prompt = tr('This will remove all newly added partitions, continue?') + '\n'
 
-		result = SelectMenu[bool](
-			MenuItemGroup.yes_no(),
+		result = Confirmation(
 			header=prompt,
-			alignment=Alignment.CENTER,
-			orientation=Orientation.HORIZONTAL,
-			columns=2,
-			reset_warning_msg=prompt,
 			allow_skip=False,
-		).run()
+			allow_reset=False,
+		).show()
 
 		return result.item() == MenuItem.yes()
 
