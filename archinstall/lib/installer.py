@@ -248,6 +248,7 @@ class Installer:
 
 		match self._disk_encryption.encryption_type:
 			case EncryptionType.NoEncryption:
+				self._import_lvm()
 				self._mount_lvm_layout()
 			case EncryptionType.Luks:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
