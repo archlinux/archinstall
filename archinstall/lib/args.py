@@ -72,7 +72,7 @@ class ArchConfig:
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
-	swap: ZramConfiguration = field(default_factory=lambda: ZramConfiguration(enabled=True))
+	swap: ZramConfiguration = ZramConfiguration(enabled=True)
 	timezone: str = 'UTC'
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
@@ -212,14 +212,14 @@ class ArchConfig:
 			arch_config.parallel_downloads = parallel_downloads
 
 		# Parse swap config - transform bool/dict into ZramConfiguration
-		swap_arg = args_config.get('swap', True)
+		swap_arg = args_config.get('swap', ZramConfiguration(enabled=True))
 		if isinstance(swap_arg, bool):
 			arch_config.swap = ZramConfiguration(enabled=swap_arg)
 		elif isinstance(swap_arg, dict):
 			algo = swap_arg.get('algo', ZramAlgorithm.ZSTD.value)
 			arch_config.swap = ZramConfiguration(enabled=True, algorithm=ZramAlgorithm(algo))
 		else:
-			arch_config.swap = ZramConfiguration(enabled=True)
+			arch_config.swap = swap_arg
 
 		if timezone := args_config.get('timezone', 'UTC'):
 			arch_config.timezone = timezone

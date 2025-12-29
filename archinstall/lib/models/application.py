@@ -75,7 +75,7 @@ class PrintServiceConfiguration:
 		return PrintServiceConfiguration(arg['enabled'])
 
 
-@dataclass
+@dataclass(frozen=True)
 class ZramConfiguration:
 	enabled: bool
 	algorithm: ZramAlgorithm = ZramAlgorithm.ZSTD

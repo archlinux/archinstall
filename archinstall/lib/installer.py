@@ -16,6 +16,7 @@ from typing import Any
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.disk.utils import get_lsblk_by_mountpoint, get_lsblk_info
+from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -990,7 +991,7 @@ class Installer:
 			self._configure_grub_btrfsd(snapshot_type)
 			self.enable_service('grub-btrfsd.service')
 
-	def setup_swap(self, kind: str = 'zram', algo: str = 'zstd') -> None:
+	def setup_swap(self, kind: str = 'zram', algo: ZramAlgorithm = ZramAlgorithm.ZSTD) -> None:
 		if kind == 'zram':
 			info('Setting up swap on zram')
 			self.pacman.strap('zram-generator')
@@ -999,12 +1000,12 @@ class Installer:
 			# Convert KB to MB and divide by 2, with minimum of 4096 MB
 			size_mb = max(ram_kb // 2048, 4096)
 			info(f'Zram size: {size_mb} from RAM: {ram_kb}')
-			info(f'Zram compression algorithm: {algo}')
+			info(f'Zram compression algorithm: {algo.value}')
 
 			with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
 				zram_conf.write('[zram0]\n')
 				zram_conf.write(f'zram-size = {size_mb}\n')
-				zram_conf.write(f'compression-algorithm = {algo}\n')
+				zram_conf.write(f'compression-algorithm = {algo.value}\n')
 
 			self.enable_service('systemd-zram-setup@zram0.service')
 

@@ -115,8 +115,7 @@ def ask_for_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) ->
 				return ZramConfiguration(enabled=False)
 
 			# Ask for compression algorithm
-			algo_items = [MenuItem(a.value, value=a) for a in ZramAlgorithm]
-			algo_group = MenuItemGroup(algo_items, sort_items=False)
+			algo_group = MenuItemGroup.from_enum(ZramAlgorithm, sort_items=False)
 			algo_group.set_default_by_value(ZramAlgorithm.ZSTD)
 			algo_group.set_focus_by_value(preset.algorithm)
 
@@ -133,8 +132,6 @@ def ask_for_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) ->
 					algo = preset.algorithm
 				case ResultType.Selection:
 					algo = algo_result.get_value()
-				case ResultType.Reset:
-					algo = ZramAlgorithm.ZSTD
 
 			return ZramConfiguration(enabled=True, algorithm=algo)
 		case ResultType.Reset:
