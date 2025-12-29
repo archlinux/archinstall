@@ -754,8 +754,13 @@ class Installer:
 				for psk in psk_files:
 					shutil.copy2(psk, f'{self.target}/var/lib/iwd/{os.path.basename(psk)}')
 
-		# Add symlink to enable systemd-resolved
-		os.symlink('/run/systemd/resolve/stub-resolv.conf', f'{self.target}/etc/resolv.conf')
+		# Enable systemd-resolved by (forcefully) setting a symlink
+		# For further details see  https://wiki.archlinux.org/title/Systemd-resolved#DNS
+		resolv_config_path = Path(f'{self.target}/etc/resolv.conf')
+		if resolv_config_path.exists():
+			os.unlink(resolv_config_path)
+		os.symlink('/run/systemd/resolve/stub-resolv.conf', resolv_config_path)
+
 		# Copy (if any) systemd-networkd config files
 		if netconfigurations := glob.glob('/etc/systemd/network/*'):
 			if not os.path.isdir(f'{self.target}/etc/systemd/network/'):
