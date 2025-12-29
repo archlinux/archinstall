@@ -2,6 +2,7 @@ import json
 import readline
 import stat
 from pathlib import Path
+from typing import Any
 
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu, Tui
@@ -16,7 +17,10 @@ from .output import debug, logger, warn
 from .utils.util import get_password, prompt_dir
 
 
-class ConfigurationOutput:
+class ConfigurationHandler:
+	_USER_CONFIG_FILENAME = 'user_configuration.json'
+	_USER_CREDS_FILENAME = 'user_credentials.json'
+
 	def __init__(self, config: ArchConfig):
 		"""
 		Configuration output handler to parse the existing
@@ -29,8 +33,8 @@ class ConfigurationOutput:
 
 		self._config = config
 		self._default_save_path = logger.directory
-		self._user_config_file = Path('user_configuration.json')
-		self._user_creds_file = Path('user_credentials.json')
+		self._user_config_file = Path(self._USER_CONFIG_FILENAME)
+		self._user_creds_file = Path(self._USER_CREDS_FILENAME)
 
 	@property
 	def user_configuration_file(self) -> Path:
@@ -121,6 +125,60 @@ class ConfigurationOutput:
 			if creds:
 				self.save_user_creds(save_path, password=password)
 
+	@classmethod
+	def has_saved_config(cls) -> bool:
+		config_file = logger.directory / cls._USER_CONFIG_FILENAME
+		return config_file.exists()
+
+	@classmethod
+	def load_saved_config(cls) -> dict[str, Any] | None:
+		try:
+			config_data: dict[str, Any] = {}
+
+			# Load main config
+			config_file = logger.directory / cls._USER_CONFIG_FILENAME
+			if config_file.exists():
+				with open(config_file) as f:
+					config_data.update(json.load(f))
+
+			# Load credentials
+			creds_file = logger.directory / cls._USER_CREDS_FILENAME
+			if creds_file.exists():
+				with open(creds_file) as f:
+					creds_data = json.load(f)
+					config_data.update(creds_data)
+
+			return config_data if config_data else None
+
+		except Exception as e:
+			warn(f'Failed to load saved config: {e}')
+		return None
+
+	def auto_save_config(self) -> tuple[bool, list[str]]:
+		"""Automatically save config to /var/log/archinstall without prompts
+
+		Returns:
+			tuple[bool, list[str]]: (success, list of saved files)
+		"""
+		try:
+			save_path = logger.directory
+			save_path.mkdir(exist_ok=True, parents=True)
+
+			saved_files: list[str] = []
+
+			# Save configuration
+			self.save_user_config(save_path)
+			saved_files.append(str(save_path / self._user_config_file))
+
+			# Save credentials
+			self.save_user_creds(save_path, password=None)
+			saved_files.append(str(save_path / self._user_creds_file))
+
+			return True, saved_files
+		except Exception as e:
+			debug(f'Failed to auto-save config: {e}')
+			return False, []
+
 
 def save_config(config: ArchConfig) -> None:
 	def preview(item: MenuItem) -> str | None:
@@ -139,7 +197,7 @@ def save_config(config: ArchConfig) -> None:
 				return '\n'.join(output)
 		return None
 
-	config_output = ConfigurationOutput(config)
+	config_output = ConfigurationHandler(config)
 
 	items = [
 		MenuItem(
