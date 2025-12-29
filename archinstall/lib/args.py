@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 from pydantic.dataclasses import dataclass as p_dataclass
 
 from archinstall.lib.crypt import decrypt
-from archinstall.lib.models.application import ApplicationConfiguration, ZramAlgorithm, ZramConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
@@ -211,15 +211,8 @@ class ArchConfig:
 		if parallel_downloads := args_config.get('parallel_downloads', 0):
 			arch_config.parallel_downloads = parallel_downloads
 
-		# Parse swap config - transform bool/dict into ZramConfiguration
-		swap_arg = args_config.get('swap', ZramConfiguration(enabled=True))
-		if isinstance(swap_arg, bool):
-			arch_config.swap = ZramConfiguration(enabled=swap_arg)
-		elif isinstance(swap_arg, dict):
-			algo = swap_arg.get('algo', ZramAlgorithm.ZSTD.value)
-			arch_config.swap = ZramConfiguration(enabled=True, algorithm=ZramAlgorithm(algo))
-		else:
-			arch_config.swap = swap_arg
+		swap_arg = args_config.get('swap', True)
+		arch_config.swap = ZramConfiguration.parse_arg(swap_arg)
 
 		if timezone := args_config.get('timezone', 'UTC'):
 			arch_config.timezone = timezone

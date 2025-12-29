@@ -80,6 +80,15 @@ class ZramConfiguration:
 	enabled: bool
 	algorithm: ZramAlgorithm = ZramAlgorithm.ZSTD
 
+	@staticmethod
+	def parse_arg(arg: bool | dict[str, Any]) -> 'ZramConfiguration':
+		if isinstance(arg, bool):
+			return ZramConfiguration(enabled=arg)
+
+		enabled = arg.get('enabled', True)
+		algo = arg.get('algorithm', arg.get('algo', ZramAlgorithm.ZSTD.value))
+		return ZramConfiguration(enabled=enabled, algorithm=ZramAlgorithm(algo))
+
 
 @dataclass
 class ApplicationConfiguration:
