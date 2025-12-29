@@ -1,2 +1,2 @@
 #!/bin/sh
-pacman-key --init && pacman -Sy --noconfirm git && git clone -b testing https://github.com/h8d13/archinstall-patch && cd archinstall-patch && python -m archinstall --debug --verbose
+pacman-key --init && git clone -b testing https://github.com/h8d13/archinstall-patch && cd archinstall-patch && python -m archinstall --debug --verbose
