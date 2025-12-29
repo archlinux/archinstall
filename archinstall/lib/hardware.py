@@ -38,7 +38,6 @@ class CpuVendor(Enum):
 
 class GfxPackage(Enum):
 	Dkms = 'dkms'
-	IntelMediaDriver = 'intel-media-driver'
 	LibvaIntelDriver = 'libva-intel-driver'
 	LibvaMesaDriver = 'libva-mesa-driver'
 	LibvaNvidiaDriver = 'libva-nvidia-driver'
@@ -48,6 +47,8 @@ class GfxPackage(Enum):
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	VulkanNouveau = 'vulkan-nouveau'
+	VulkanSwrast = 'vulkan-swrast'
+	VulkanVirtio = 'vulkan-virtio'
 	Xf86VideoAmdgpu = 'xf86-video-amdgpu'
 	Xf86VideoAti = 'xf86-video-ati'
 	Xf86VideoNouveau = 'xf86-video-nouveau'
@@ -92,7 +93,6 @@ class GfxDriver(Enum):
 					GfxPackage.Xf86VideoNouveau,
 					GfxPackage.LibvaMesaDriver,
 					GfxPackage.LibvaIntelDriver,
-					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanRadeon,
 					GfxPackage.VulkanIntel,
 					GfxPackage.VulkanNouveau,
@@ -109,7 +109,6 @@ class GfxDriver(Enum):
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.LibvaIntelDriver,
-					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel,
 				]
 			case GfxDriver.NvidiaOpenKernel:
@@ -134,6 +133,8 @@ class GfxDriver(Enum):
 			case GfxDriver.VMOpenSource:
 				packages += [
 					GfxPackage.Mesa,
+					GfxPackage.VulkanSwrast,
+					GfxPackage.VulkanVirtio,
 				]
 
 		return packages
