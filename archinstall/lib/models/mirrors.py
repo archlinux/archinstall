@@ -10,7 +10,7 @@ from typing import Any, TypedDict, override
 from pydantic import BaseModel, field_validator, model_validator
 
 from ..models.packages import Repository
-from ..networking import DownloadTimer, ping
+from ..networking import DownloadTimer, fetch_data_from_url, ping
 from ..output import debug
 
 
@@ -132,6 +132,81 @@ class MirrorStatusListV3(BaseModel):
 			return data
 
 		raise ValueError('MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/')
+
+
+class ArchLinuxDeCountry(BaseModel):
+	code: str
+	name: str
+
+
+class ArchLinuxDeMirrorEntry(BaseModel):
+	url: str
+	country: ArchLinuxDeCountry | None = None
+	durationAvg: float | None = None
+	delay: int | None = None
+	durationStddev: float | None = None
+	completionPct: float | None = None
+	score: float | None = None
+	lastSync: datetime.datetime | None = None
+	ipv4: bool = True
+	ipv6: bool = False
+	host: str
+
+	def to_v3_entry(self) -> dict[str, Any]:
+		"""Convert to MirrorStatusEntryV3 compatible format"""
+		return {
+			'url': self.url,
+			'protocol': urllib.parse.urlparse(self.url).scheme,
+			'active': True,
+			'country': self.country.name if self.country else 'Worldwide',
+			'country_code': self.country.code if self.country else 'WW',
+			'isos': True,
+			'ipv4': self.ipv4,
+			'ipv6': self.ipv6,
+			'details': self.host,
+			'delay': self.delay,
+			'last_sync': self.lastSync,
+			'duration_avg': self.durationAvg,
+			'duration_stddev': self.durationStddev,
+			'completion_pct': self.completionPct,
+			'score': self.score,
+		}
+
+
+class ArchLinuxDeMirrorList(BaseModel):
+	offset: int
+	limit: int
+	total: int
+	count: int
+	items: list[ArchLinuxDeMirrorEntry]
+
+	@classmethod
+	def fetch_all(cls, base_url: str) -> 'ArchLinuxDeMirrorList':
+		"""Fetch all paginated results from archlinux.de API"""
+
+		limit = 100
+		first_page = cls.model_validate_json(fetch_data_from_url(f'{base_url}?offset=0&limit={limit}'))
+		all_items = list(first_page.items)
+
+		for offset in range(limit, first_page.total, limit):
+			page = cls.model_validate_json(fetch_data_from_url(f'{base_url}?offset={offset}&limit={limit}'))
+			all_items.extend(page.items)
+			debug(f'Fetched {len(all_items)}/{first_page.total} mirrors')
+
+		return cls(offset=0, limit=len(all_items), total=len(all_items), count=len(all_items), items=all_items)
+
+	def to_v3(self) -> MirrorStatusListV3:
+		"""Convert to MirrorStatusListV3 format"""
+		urls = [item.to_v3_entry() for item in self.items]
+		return MirrorStatusListV3.model_validate(
+			{
+				'version': 3,
+				'cutoff': 3600,
+				'last_check': datetime.datetime.now(datetime.UTC),
+				'num_checks': 1,
+				'urls': urls,
+			}
+		)
 
 
 @dataclass

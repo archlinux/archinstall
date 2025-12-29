@@ -12,6 +12,7 @@ from archinstall.tui.types import Alignment, FrameProperties
 from .menu.abstract_menu import AbstractSubMenu
 from .menu.list_manager import ListManager
 from .models.mirrors import (
+	ArchLinuxDeMirrorList,
 	CustomRepository,
 	CustomServer,
 	MirrorConfiguration,
@@ -427,12 +428,24 @@ class MirrorListHandler:
 
 		for attempt_nr in range(attempts):
 			try:
-				mirrorlist = fetch_data_from_url(url)
-				self._status_mappings = self._parse_remote_mirror_list(mirrorlist)
+				de_url = ArchLinuxDeMirrorList.fetch_all('https://www.archlinux.de/api/mirrors')
+				v3_list = de_url.to_v3()
+				self._status_mappings = self._parse_remote_mirror_list(v3_list.model_dump_json())
 				return True
 			except Exception as e:
-				debug(f'Error while fetching mirror list: {e}')
-				time.sleep(attempt_nr + 1)
+				debug(f'Error fetching from archlinux.de: {e}')
+				if attempt_nr < attempts - 1:
+					time.sleep(attempt_nr + 1)
+
+		for attempt_nr in range(attempts):
+			try:
+				data = fetch_data_from_url(url)
+				self._status_mappings = self._parse_remote_mirror_list(data)
+				return True
+			except Exception as e:
+				debug(f'Error fetching from archlinux.org: {e}')
+				if attempt_nr < attempts - 1:
+					time.sleep(attempt_nr + 1)
 
 		debug('Unable to fetch mirror list remotely, falling back to local mirror list')
 		return False
