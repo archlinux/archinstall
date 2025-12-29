@@ -115,7 +115,7 @@ class Chars:
 	Block = '█'
 	Triangle_up = '▲'
 	Triangle_down = '▼'
-	Check = '+'
+	Check = '✓'
 	Cross = 'x'
 	Right_arrow = '←'
 
