@@ -73,7 +73,6 @@ class ArchConfig:
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
-	swap: bool = True
 	timezone: str | None = None
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
