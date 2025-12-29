@@ -213,7 +213,8 @@ class ArchConfig:
 
 		arch_config.swap = args_config.get('swap', True)
 
-		arch_config.timezone = args_config.get('timezone', 'UTC')
+		if 'timezone' in args_config:
+			arch_config.timezone = args_config.get('timezone', 'UTC')
 
 		if services := args_config.get('services', []):
 			arch_config.services = services
