@@ -1,39 +1,39 @@
-# This workflow will build an Arch Linux ISO file with the commit on it
+# # This workflow will build an Arch Linux ISO file with the commit on it
 
-name: Build Arch ISO with ArchInstall Commit
+# name: Build Arch ISO with ArchInstall Commit
 
-on:
-  push:
-    branches:
-      - master
-      - main # In case we adopt this convention in the future
-  pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '**.editorconfig'
-      - '**.gitignore'
-      - '**.md'
-      - 'LICENSE'
-      - 'PKGBUILD'
-  release:
-    types:
-      - created
+# on:
+#   push:
+#     branches:
+#       - master
+#       - main # In case we adopt this convention in the future
+#   pull_request:
+#     paths-ignore:
+#       - 'docs/**'
+#       - '**.editorconfig'
+#       - '**.gitignore'
+#       - '**.md'
+#       - 'LICENSE'
+#       - 'PKGBUILD'
+#   release:
+#     types:
+#       - created
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    container:
-      image: archlinux/archlinux:latest
-      options: --privileged
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-      - run: pwd
-      - run: find .
-      - run: cat /etc/os-release
-      - run: pacman-key --init
-      - run: pacman --noconfirm -Sy archlinux-keyring
-      - run: ./build_iso.sh
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
-        with:
-          name: Arch Live ISO
-          path: /tmp/archlive/out/*.iso
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     container:
+#       image: archlinux/archlinux:latest
+#       options: --privileged
+#     steps:
+#       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+#       - run: pwd
+#       - run: find .
+#       - run: cat /etc/os-release
+#       - run: pacman-key --init
+#       - run: pacman --noconfirm -Sy archlinux-keyring
+#       - run: ./build_iso.sh
+#       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+#         with:
+#           name: Arch Live ISO
+#           path: /tmp/archlive/out/*.iso

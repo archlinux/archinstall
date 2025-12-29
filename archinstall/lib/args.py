@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 from pydantic.dataclasses import dataclass as p_dataclass
 
 from archinstall.lib.crypt import decrypt
-from archinstall.lib.models.application import ApplicationConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
@@ -67,6 +67,7 @@ class ArchConfig:
 	bootloader_config: BootloaderConfiguration | None = None
 	app_config: ApplicationConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
+	swap: ZramConfiguration | None = None
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: ['linux'])
 	ntp: bool = True
@@ -211,7 +212,9 @@ class ArchConfig:
 		if parallel_downloads := args_config.get('parallel_downloads', 0):
 			arch_config.parallel_downloads = parallel_downloads
 
-		arch_config.swap = args_config.get('swap', True)
+		swap_arg = args_config.get('swap')
+		if swap_arg is not None:
+			arch_config.swap = ZramConfiguration.parse_arg(swap_arg)
 
 		if 'timezone' in args_config:
 			arch_config.timezone = args_config.get('timezone', 'UTC')

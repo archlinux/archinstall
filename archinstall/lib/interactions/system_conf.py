@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -89,16 +90,12 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 			return result.get_value()
 
 
-def ask_for_swap(preset: bool = True) -> bool:
-	if preset:
-		default_item = MenuItem.yes()
-	else:
-		default_item = MenuItem.no()
-
+def ask_for_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) -> ZramConfiguration:
 	prompt = tr('Would you like to use swap on zram?') + '\n'
 
 	group = MenuItemGroup.yes_no()
-	group.set_focus_by_value(default_item)
+	group.set_default_by_value(True)
+	group.set_focus_by_value(preset.enabled)
 
 	result = SelectMenu[bool](
 		group,
@@ -113,6 +110,29 @@ def ask_for_swap(preset: bool = True) -> bool:
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			return result.item() == MenuItem.yes()
+			enabled = result.item() == MenuItem.yes()
+			if not enabled:
+				return ZramConfiguration(enabled=False)
+
+			# Ask for compression algorithm
+			algo_group = MenuItemGroup.from_enum(ZramAlgorithm, sort_items=False)
+			algo_group.set_default_by_value(ZramAlgorithm.ZSTD)
+			algo_group.set_focus_by_value(preset.algorithm)
+
+			algo_result = SelectMenu[ZramAlgorithm](
+				algo_group,
+				header=tr('Select zram compression algorithm:') + '\n',
+				alignment=Alignment.CENTER,
+				allow_skip=True,
+			).run()
+
+			algo: ZramAlgorithm
+			match algo_result.type_:
+				case ResultType.Skip:
+					algo = preset.algorithm
+				case ResultType.Selection:
+					algo = algo_result.get_value()
+
+			return ZramConfiguration(enabled=True, algorithm=algo)
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')

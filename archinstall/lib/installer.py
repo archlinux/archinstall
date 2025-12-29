@@ -16,6 +16,7 @@ from typing import Any
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.disk.utils import get_lsblk_by_mountpoint, get_lsblk_info
+from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -248,6 +249,7 @@ class Installer:
 
 		match self._disk_encryption.encryption_type:
 			case EncryptionType.NoEncryption:
+				self._import_lvm()
 				self._mount_lvm_layout()
 			case EncryptionType.Luks:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
@@ -990,7 +992,7 @@ class Installer:
 			self._configure_grub_btrfsd(snapshot_type)
 			self.enable_service('grub-btrfsd.service')
 
-	def setup_swap(self, kind: str = 'zram') -> None:
+	def setup_swap(self, kind: str = 'zram', algo: ZramAlgorithm = ZramAlgorithm.ZSTD) -> None:
 		if kind == 'zram':
 			info('Setting up swap on zram')
 			self.pacman.strap('zram-generator')
@@ -999,12 +1001,12 @@ class Installer:
 			# Convert KB to MB and divide by 2, with minimum of 4096 MB
 			size_mb = max(ram_kb // 2048, 4096)
 			info(f'Zram size: {size_mb} from RAM: {ram_kb}')
-			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
-			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
-			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
+			info(f'Zram compression algorithm: {algo.value}')
+
 			with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
 				zram_conf.write('[zram0]\n')
 				zram_conf.write(f'zram-size = {size_mb}\n')
+				zram_conf.write(f'compression-algorithm = {algo.value}\n')
 
 			self.enable_service('systemd-zram-setup@zram0.service')
 
