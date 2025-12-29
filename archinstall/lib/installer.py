@@ -364,11 +364,14 @@ class Installer:
 			target = self.target / part_mod.relative_mountpoint
 			device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
 		elif part_mod.fs_type == FilesystemType.Btrfs:
-			self._mount_btrfs_subvol(
-				part_mod.dev_path,
-				part_mod.btrfs_subvols,
-				part_mod.mount_options,
-			)
+			# Only mount BTRFS subvolumes that have mountpoints specified
+			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
+			if subvols_with_mountpoints:
+				self._mount_btrfs_subvol(
+					part_mod.dev_path,
+					part_mod.btrfs_subvols,
+					part_mod.mount_options,
+				)
 		elif part_mod.is_swap():
 			device_handler.swapon(part_mod.dev_path)
 
@@ -379,14 +382,20 @@ class Installer:
 				device_handler.mount(volume.dev_path, target, options=volume.mount_options)
 
 		if volume.fs_type == FilesystemType.Btrfs and volume.dev_path:
-			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols, volume.mount_options)
+			# Only mount BTRFS subvolumes that have mountpoints specified
+			subvols_with_mountpoints = [sv for sv in volume.btrfs_subvols if sv.mountpoint is not None]
+			if subvols_with_mountpoints:
+				self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols, volume.mount_options)
 
 	def _mount_luks_partition(self, part_mod: PartitionModification, luks_handler: Luks2) -> None:
 		if not luks_handler.mapper_dev:
 			return None
 
 		if part_mod.fs_type == FilesystemType.Btrfs and part_mod.btrfs_subvols:
-			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
+			# Only mount BTRFS subvolumes that have mountpoints specified
+			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
+			if subvols_with_mountpoints:
+				self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
 		elif part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
 			device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
@@ -398,7 +407,10 @@ class Installer:
 				device_handler.mount(luks_handler.mapper_dev, target, options=volume.mount_options)
 
 		if volume.fs_type == FilesystemType.Btrfs and luks_handler.mapper_dev:
-			self._mount_btrfs_subvol(luks_handler.mapper_dev, volume.btrfs_subvols, volume.mount_options)
+			# Only mount BTRFS subvolumes that have mountpoints specified
+			subvols_with_mountpoints = [sv for sv in volume.btrfs_subvols if sv.mountpoint is not None]
+			if subvols_with_mountpoints:
+				self._mount_btrfs_subvol(luks_handler.mapper_dev, volume.btrfs_subvols, volume.mount_options)
 
 	def _mount_btrfs_subvol(
 		self,
@@ -406,7 +418,9 @@ class Installer:
 		subvolumes: list[SubvolumeModification],
 		mount_options: list[str] = [],
 	) -> None:
-		for subvol in sorted(subvolumes, key=lambda x: x.relative_mountpoint):
+		# Filter out subvolumes without mountpoints to avoid errors when sorting
+		subvols_with_mountpoints = [sv for sv in subvolumes if sv.mountpoint is not None]
+		for subvol in sorted(subvols_with_mountpoints, key=lambda x: x.relative_mountpoint):
 			mountpoint = self.target / subvol.relative_mountpoint
 			options = mount_options + [f'subvol={subvol.name}']
 			device_handler.mount(dev_path, mountpoint, options=options)
