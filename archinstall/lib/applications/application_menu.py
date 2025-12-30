@@ -123,7 +123,7 @@ def select_power_management(preset: PowerManagementConfiguration | None = None) 
 		case ResultType.Selection:
 			return PowerManagementConfiguration(power_management=result.get_value())
 		case ResultType.Reset:
-			return (preset := None)
+			return None
 
 
 def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfiguration | None:
