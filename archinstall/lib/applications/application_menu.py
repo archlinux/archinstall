@@ -64,7 +64,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				key='print_service_config',
 			),
 			MenuItem(
-				text=tr('Power management daemon'),
+				text=tr('Power management'),
 				action=select_power_management,
 				preview_action=self._prev_power_management,
 				enabled=SysInfo.has_battery(),
@@ -75,7 +75,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 	def _prev_power_management(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			config: PowerManagementConfiguration = item.value
-			return f'{tr("Power management daemon")}: {config.power_management.value}'
+			return f'{tr("Power management")}: {config.power_management.value}'
 		return None
 
 	def _prev_bluetooth(self, item: MenuItem) -> str | None:
@@ -104,8 +104,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 
 
 def select_power_management(preset: PowerManagementConfiguration | None = None) -> PowerManagementConfiguration | None:
-	items = [MenuItem(a.value, value=a) for a in PowerManagement]
-	group = MenuItemGroup(items)
+	group = MenuItemGroup.from_enum(PowerManagement)
 
 	if preset:
 		group.set_focus_by_value(preset.power_management)
@@ -114,7 +113,8 @@ def select_power_management(preset: PowerManagementConfiguration | None = None) 
 		group,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Power management daemon')),
+		allow_reset=True,
+		frame=FrameProperties.min(tr('Power management')),
 	).run()
 
 	match result.type_:

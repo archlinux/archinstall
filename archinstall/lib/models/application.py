@@ -4,7 +4,7 @@ from typing import Any, NotRequired, TypedDict
 
 
 class PowerManagement(StrEnum):
-	NO_POWER_MANAGEMENT = 'No power management daemon'
+	NO_POWER_MANAGEMENT = 'No power management'
 	POWER_PROFILES_DAEMON = 'power-profiles-daemon'
 	TUNED = auto()
 

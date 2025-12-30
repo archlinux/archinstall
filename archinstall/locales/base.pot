@@ -1788,7 +1788,7 @@ msgstr ""
 msgid "Would you like to configure the print service?"
 msgstr ""
 
-msgid "Power management daemon"
+msgid "Power management"
 msgstr ""
 
 msgid "Authentication"
