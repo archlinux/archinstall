@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, NotRequired, TypedDict
 from archinstall.lib.translationhandler import tr
 
 from ...default_profiles.profile import GreeterType, Profile
-from ..hardware import GfxDriver
+from ..hardware import GfxDriver, GfxPackage
 from ..models.profile import ProfileConfiguration
 from ..networking import fetch_data_from_url, list_interfaces
 from ..output import debug, error, info
@@ -229,12 +229,24 @@ class ProfileHandler:
 	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
 		debug(f'Installing GFX driver: {driver.value}')
 
-		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
+		driver_pkgs = driver.gfx_packages()
+		# All non-standard kernel packages have a '-' in their name.
+		# ex: 'linux-zen' and 'linux-lts'
+		are_dkms_needed = any('-' in s for s in install_session.kernels)
+
+		if driver.has_dkms_variant() and are_dkms_needed:
+			debug(f'A non-standard kernel was selected, installing DKMS variant of {driver.value}')
+
+			install_session.add_additional_packages(GfxPackage.Dkms.value)
+
 			headers = [f'{kernel}-headers' for kernel in install_session.kernels]
-			# Fixes https://github.com/archlinux/archinstall/issues/585
 			install_session.add_additional_packages(headers)
 
-		driver_pkgs = driver.gfx_packages()
+			match driver:
+				case GfxDriver.NvidiaOpenKernel:
+					driver_pkgs.remove(GfxPackage.NvidiaOpen)
+					driver_pkgs.append(GfxPackage.NvidiaOpenDkms)
+
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
 

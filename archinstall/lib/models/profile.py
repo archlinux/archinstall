@@ -28,7 +28,7 @@ class ProfileConfiguration:
 
 		return {
 			'profile': profile_handler.to_json(self.profile),
-			'gfx_driver': self.gfx_driver.value if self.gfx_driver else None,
+			'gfx_driver': self.gfx_driver.name if self.gfx_driver else None,
 			'greeter': self.greeter.value if self.greeter else None,
 		}
 
@@ -40,8 +40,15 @@ class ProfileConfiguration:
 		greeter = arg.get('greeter', None)
 		gfx_driver = arg.get('gfx_driver', None)
 
+		_gfx_driver: GfxDriver | None = None
+		if gfx_driver:
+			try:
+				_gfx_driver = GfxDriver(gfx_driver)
+			except Exception:
+				_gfx_driver = GfxDriver[gfx_driver]
+
 		return ProfileConfiguration(
 			profile,
-			GfxDriver(gfx_driver) if gfx_driver else None,
+			_gfx_driver if _gfx_driver else None,
 			GreeterType(greeter) if greeter else None,
 		)
