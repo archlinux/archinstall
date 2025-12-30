@@ -450,8 +450,8 @@ class MirrorListHandler:
 		# Local mirrors lack this data and can be modified manually before-hand
 		# Or reflector potentially ran already
 		if self._fetched_remote and speed_sort:
-			# original return
-			return sorted(region_list, key=lambda mirror: (mirror.score, mirror.speed))
+			# Sort by speed descending (higher is better in bitrate form core.db download)
+			return sorted(region_list, key=lambda mirror: -mirror.speed)
 		# just return as-is without sorting?
 		return region_list
 
