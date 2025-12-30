@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import override
 
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
-from archinstall.lib.models.application import ApplicationConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
 from archinstall.lib.packages import list_available_packages
@@ -80,7 +80,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Swap'),
-				value=True,
+				value=ZramConfiguration(enabled=True),
 				action=ask_for_swap,
 				preview_action=self._prev_swap,
 				key='swap',
@@ -372,7 +372,9 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_swap(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			output = f'{tr("Swap on zram")}: '
-			output += tr('Enabled') if item.value else tr('Disabled')
+			output += tr('Enabled') if item.value.enabled else tr('Disabled')
+			if item.value.enabled:
+				output += f'\n{tr("Compression algorithm")}: {item.value.algorithm.value}'
 			return output
 		return None
 
