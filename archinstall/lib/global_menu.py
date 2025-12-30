@@ -56,7 +56,7 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Archinstall language'),
 				action=self._select_archinstall_language,
-				display_action=lambda x: x.display_name if x else '',
+				preview_action=self._prev_archinstall_language,
 				key='archinstall_language',
 			),
 			MenuItem(
@@ -238,6 +238,13 @@ class GlobalMenu(AbstractMenu[None]):
 		self._update_lang_text()
 
 		return language
+
+	def _prev_archinstall_language(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
+
+		lang: Language = item.value
+		return f'{tr("Language")}: {lang.display_name}'
 
 	def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
 		app_config = ApplicationMenu(preset).run()
