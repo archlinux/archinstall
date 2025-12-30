@@ -28,10 +28,6 @@ class PowerManagementApp:
 	) -> None:
 		debug(f'Installing power management daemon: {power_management_config.power_management.value}')
 
-		if power_management_config.power_management == PowerManagement.NO_POWER_MANAGEMENT:
-			debug('No power management daemon selected, skipping installation.')
-			return
-
 		match power_management_config.power_management:
 			case PowerManagement.POWER_PROFILES_DAEMON:
 				install_session.add_additional_packages(self.ppd_packages)

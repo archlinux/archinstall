@@ -5,7 +5,7 @@ from archinstall.applications.bluetooth import BluetoothApp
 from archinstall.applications.power_management import PowerManagementApp
 from archinstall.applications.print_service import PrintServiceApp
 from archinstall.lib.models import Audio
-from archinstall.lib.models.application import ApplicationConfiguration, PowerManagement
+from archinstall.lib.models.application import ApplicationConfiguration
 from archinstall.lib.models.users import User
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ class ApplicationHandler:
 				users,
 			)
 
-		if app_config.power_management_config and app_config.power_management_config.power_management != PowerManagement.NO_POWER_MANAGEMENT:
+		if app_config.power_management_config:
 			PowerManagementApp().install(
 				install_session,
 				app_config.power_management_config,
