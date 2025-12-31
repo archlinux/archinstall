@@ -466,6 +466,10 @@ class GlobalMenu(AbstractMenu[None]):
 			if boot_partition.fs_type not in [FilesystemType.Fat12, FilesystemType.Fat16, FilesystemType.Fat32]:
 				return 'Limine does not support booting with a non-FAT boot partition'
 
+		elif bootloader == Bootloader.Refind:
+			if not SysInfo.has_uefi():
+				return 'rEFInd can only be used on UEFI systems'
+
 		return None
 
 	def _prev_install_invalid_config(self, item: MenuItem) -> str | None:
