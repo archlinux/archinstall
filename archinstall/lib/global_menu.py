@@ -336,6 +336,11 @@ class GlobalMenu(AbstractMenu[None]):
 				output += tr('Enabled') if app_config.print_service_config.enabled else tr('Disabled')
 				output += '\n'
 
+			if app_config.power_management_config:
+				power_management_config = app_config.power_management_config
+				output += f'{tr("Power management")}: {power_management_config.power_management.value}'
+				output += '\n'
+
 			return output
 
 		return None

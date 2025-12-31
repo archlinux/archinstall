@@ -144,6 +144,18 @@ class _SysInfo:
 		pass
 
 	@cached_property
+	def has_battery(self) -> bool:
+		for type_path in Path('/sys/class/power_supply/').glob('*/type'):
+			try:
+				with open(type_path) as f:
+					if f.read().strip() == 'Battery':
+						return True
+			except OSError:
+				continue
+
+		return False
+
+	@cached_property
 	def cpu_info(self) -> dict[str, str]:
 		"""
 		Returns system cpu information
@@ -210,6 +222,10 @@ _sys_info = _SysInfo()
 
 
 class SysInfo:
+	@staticmethod
+	def has_battery() -> bool:
+		return _sys_info.has_battery
+
 	@staticmethod
 	def has_wifi() -> bool:
 		ifaces = list(list_interfaces().values())
