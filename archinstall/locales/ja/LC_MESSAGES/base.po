@@ -1740,9 +1740,8 @@ msgstr "印刷サービス"
 msgid "Would you like to configure the print service?"
 msgstr "印刷サービスを設定しますか？"
 
-#, fuzzy
 msgid "Power management"
-msgstr "パーティションを管理: {}"
+msgstr "電力管理"
 
 msgid "Authentication"
 msgstr "認証"
@@ -1849,37 +1848,32 @@ msgstr "ディスクをどのコンピューターでも起動できるように
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "NVRAM ブートエントリーを適切にサポートしていないファームウェア。"
 
-#, fuzzy
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr "/EFI/BOOT/ (リムーバブルな場所) にインストールする"
+msgstr "/EFI/BOOT/（リムーバブルな場所、安全なデフォルト）にインストール"
 
-#, fuzzy
 msgid "Will install to custom location with NVRAM entry"
-msgstr "NVRAM エントリーのある標準の場所にインストールする"
+msgstr "NVRAM エントリーを使用してカスタムした場所にインストール"
 
-#, fuzzy
 msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr "NVRAM ブートエントリーを適切にサポートしていないファームウェア。"
+msgstr "ほとんどの MSI マザーボードのように NVRAM ブートエントリーを適切にサポートしていないファームウェア、"
 
 msgid "most Apple Macs, many laptops..."
-msgstr ""
+msgstr "ほとんどの Apple Mac、多くのラップトップ..."
 
-#, fuzzy
 msgid "Language"
-msgstr "ロケール言語"
+msgstr "言語"
 
 msgid "Compression algorithm"
-msgstr ""
+msgstr "圧縮アルゴリズム"
 
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "base、sudo、linux、linux-firmware、efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
 
-#, fuzzy
 msgid "Select zram compression algorithm:"
-msgstr "マウントポイントを選択:"
+msgstr "zram 圧縮アルゴリズムを選択:"
 
 msgid "Use Network Manager (default backend)"
-msgstr ""
+msgstr "NetworkManager（デフォルトのバックエンド）を使用する"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr ""
+msgstr "NetworkManager (iwd バックエンド) を使用する"
