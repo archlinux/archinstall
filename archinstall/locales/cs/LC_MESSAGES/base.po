@@ -53,6 +53,9 @@ msgstr "Zvolte audio server"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Budou nainstalovány pouze balíčky jako base, base-devel, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Pokud si přejete nainstalovat webový prohlížeč, jako je například Firefox nebo Chromium, můžete jej zadat do následujícího pole."
 
@@ -1723,6 +1726,17 @@ msgstr "Bluetooth"
 msgid "Would you like to configure Bluetooth?"
 msgstr "Přejete si nastavit Bluetooth?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Přejete si nastavit Bluetooth?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Správa diskových oddílů: {}"
+
 msgid "Authentication"
 msgstr "Ověřování"
 
@@ -1827,3 +1841,39 @@ msgstr "Systémy, kde chcete, aby byl disk spouštěcí na jakémkoli počítač
 
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "Firmware, který správně nepodporuje spouštěcí záznamy v NVRAM."
+
+#, fuzzy
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Bude nainstalováno do /EFI/BOOT/ (přenosné umístění)"
+
+#, fuzzy
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Bude nainstalováno na standardní umístění s NVRAM záznamem"
+
+#, fuzzy
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmware, který správně nepodporuje spouštěcí záznamy v NVRAM."
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Místní jazyk"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Budou nainstalovány pouze balíčky jako base, base-devel, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Zvolte přípojný bod:"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""

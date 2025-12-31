@@ -23,7 +23,7 @@ from .models.mirrors import (
 )
 from .models.packages import Repository
 from .networking import fetch_data_from_url
-from .output import FormattedOutput, debug
+from .output import FormattedOutput, debug, info
 
 
 class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
@@ -450,6 +450,7 @@ class MirrorListHandler:
 		# Local mirrors lack this data and can be modified manually before-hand
 		# Or reflector potentially ran already
 		if self._fetched_remote and speed_sort:
+			info('Sorting your selected mirror list based on the speed between you and the individual mirrors (this might take a while)')
 			# Sort by speed descending (higher is better in bitrate form core.db download)
 			return sorted(region_list, key=lambda mirror: -mirror.speed)
 		# just return as-is without sorting?
