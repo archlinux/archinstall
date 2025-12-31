@@ -53,6 +53,9 @@ msgstr "Elija un servidor de audio"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si desea un navegador web, como firefox o chromium, puede especificarlo en el siguiente mensaje."
 
@@ -1740,6 +1743,17 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "¿Quiere continuar?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "¿Quiere continuar?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Gestión de particiones: {}"
+
 msgid "Authentication"
 msgstr "Autenticación"
 
@@ -1850,6 +1864,39 @@ msgid "Systems where you want the disk to be bootable on any computer."
 msgstr ""
 
 msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Idioma local"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Seleccione un punto de montaje :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""
 
 #~ msgid "Add :"

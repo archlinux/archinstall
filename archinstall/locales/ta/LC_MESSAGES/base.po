@@ -53,6 +53,9 @@ msgstr "ஆடியோ சர்வரை தேர்வு செய்யவ
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "தொகுப்பு Base, base-devel, linux, linux-firmware, efibootmgr மற்றும் விருப்ப சுயவிவர தொகுப்புகள் போன்ற தொகுப்புகள் மட்டுமே நிறுவப்பட்டுள்ளன."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "நீங்கள் பயர்பாக்ஸ் அல்லது குரோமியம் போன்ற இணைய உலாவியை விரும்பினால், அதை பின்வரும் வரியில் குறிப்பிடலாம்."
 
@@ -1827,6 +1830,17 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "BTRFS சுருக்கத்தைப் பயன்படுத்த விரும்புகிறீர்களா?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "BTRFS சுருக்கத்தைப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "பகிர்வு மேலாண்மை: {}"
+
 msgid "Authentication"
 msgstr ""
 
@@ -1937,4 +1951,37 @@ msgid "Systems where you want the disk to be bootable on any computer."
 msgstr ""
 
 msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "லோகேல் மொழி"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "தொகுப்பு Base, base-devel, linux, linux-firmware, efibootmgr மற்றும் விருப்ப சுயவிவர தொகுப்புகள் போன்ற தொகுப்புகள் மட்டுமே நிறுவப்பட்டுள்ளன."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "மவுண்ட் பாயிண்ட்டைத் தேர்ந்தெடுக்கவும்:"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""

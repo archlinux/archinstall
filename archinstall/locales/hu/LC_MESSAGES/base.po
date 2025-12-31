@@ -53,6 +53,9 @@ msgstr "Válasszon ki egy hangkiszolgálót"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok lesznek telepítve."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő promptban adhatja meg."
 
@@ -1733,6 +1736,17 @@ msgstr "Bluetooth"
 msgid "Would you like to configure Bluetooth?"
 msgstr "Szeretné konfigurálni a Bluetooth-t?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Szeretné konfigurálni a Bluetooth-t?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Partíciókezelés: {}"
+
 msgid "Authentication"
 msgstr "Hitelesítés"
 
@@ -1837,3 +1851,39 @@ msgstr "Olyan rendszereknél, ahol azt szeretné, hogy a lemez bármely számít
 
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "Olyan firmware-eknél, amelyek nem támogatják megfelelően az NVRAM-rendszerindítási bejegyzéseket."
+
+#, fuzzy
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Telepítés helye: /EFI/BOOT/ (cserélhető adathordozó)"
+
+#, fuzzy
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Telepítés szabványos helyre, NVRAM-bejegyzéssel"
+
+#, fuzzy
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Olyan firmware-eknél, amelyek nem támogatják megfelelően az NVRAM-rendszerindítási bejegyzéseket."
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Helyi nyelv"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok lesznek telepítve."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Válasszon ki egy csatolási pontot :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""
