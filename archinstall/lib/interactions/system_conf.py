@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
@@ -8,6 +10,9 @@ from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment, FrameProperties, FrameStyle, Orientation, PreviewStyle
 
 from ..hardware import GfxDriver, SysInfo
+
+if TYPE_CHECKING:
+	from archinstall.default_profiles.profile import Profile
 
 
 def select_kernel(preset: list[str] = []) -> list[str]:
@@ -45,7 +50,7 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 			return result.get_values()
 
 
-def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None) -> GfxDriver | None:
+def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None, profile: 'Profile | None' = None) -> GfxDriver | None:
 	"""
 	Somewhat convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -56,7 +61,9 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 	if not options:
 		options = [driver for driver in GfxDriver]
 
-	items = [MenuItem(o.value, value=o, preview_action=lambda x: x.value.packages_text()) for o in options]
+	# Get display server requirements from profile if available
+	servers = profile.display_servers() if profile else None
+	items = [MenuItem(o.value, value=o, preview_action=lambda x: x.value.packages_text(servers)) for o in options]
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_default_by_value(GfxDriver.AllOpenSource)
 

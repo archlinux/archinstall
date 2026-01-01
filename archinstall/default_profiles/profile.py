@@ -26,6 +26,12 @@ class ProfileType(Enum):
 	Application = 'Application'
 
 
+class DisplayServer(Enum):
+	X11 = 'x11'
+	Wayland = 'wayland'
+	Both = 'both'
+
+
 class GreeterType(Enum):
 	Lightdm = 'lightdm-gtk-greeter'
 	LightdmSlick = 'lightdm-slick-greeter'
@@ -174,6 +180,20 @@ class Profile:
 
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
+
+	def display_servers(self) -> set[DisplayServer]:
+		"""
+		Returns the set of display servers required by this profile.
+		By default, returns an empty set (no specific requirements).
+		Profiles should override this to specify their requirements.
+		"""
+		if self.current_selection:
+			# Aggregate requirements from sub-profiles
+			servers = set()
+			for profile in self.current_selection:
+				servers.update(profile.display_servers())
+			return servers
+		return set()
 
 	def preview_text(self) -> str:
 		"""

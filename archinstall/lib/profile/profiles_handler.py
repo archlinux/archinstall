@@ -226,7 +226,7 @@ class ProfileHandler:
 			with open(path, 'w') as file:
 				file.write(filedata)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
+	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver, profile: Profile | None = None) -> None:
 		debug(f'Installing GFX driver: {driver.value}')
 
 		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
@@ -234,7 +234,9 @@ class ProfileHandler:
 			# Fixes https://github.com/archlinux/archinstall/issues/585
 			install_session.add_additional_packages(headers)
 
-		driver_pkgs = driver.gfx_packages()
+		# Determine display server requirements from profile
+		display_servers = profile.display_servers() if profile else None
+		driver_pkgs = driver.gfx_packages(display_servers)
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
 
@@ -247,7 +249,7 @@ class ProfileHandler:
 		profile.install(install_session)
 
 		if profile_config.gfx_driver and (profile.is_xorg_type_profile() or profile.is_desktop_profile()):
-			self.install_gfx_driver(install_session, profile_config.gfx_driver)
+			self.install_gfx_driver(install_session, profile_config.gfx_driver, profile)
 
 		if profile_config.greeter:
 			self.install_greeter(install_session, profile_config.greeter)

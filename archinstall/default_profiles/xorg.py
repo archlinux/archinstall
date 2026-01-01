@@ -1,6 +1,6 @@
 from typing import override
 
-from archinstall.default_profiles.profile import Profile, ProfileType
+from archinstall.default_profiles.profile import DisplayServer, Profile, ProfileType
 from archinstall.lib.translationhandler import tr
 
 
@@ -32,3 +32,7 @@ class XorgProfile(Profile):
 		return [
 			'xorg-server',
 		]
+
+	@override
+	def display_servers(self) -> set[DisplayServer]:
+		return {DisplayServer.X11}
