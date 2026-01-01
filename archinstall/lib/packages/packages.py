@@ -129,14 +129,14 @@ def check_package_upgrade(package: str) -> str | None:
 
 
 def _create_package_stub(repo: str, name: str, version: str) -> AvailablePackage:
-	defaults = {field: '' for field in AvailablePackage.model_fields}
+	defaults = {field_name: '' for field_name in AvailablePackage.model_fields.keys()}
 	defaults.update({'repository': repo, 'name': name, 'version': version})
 	return AvailablePackage(**defaults)
 
 
 def _update_package(pkg: AvailablePackage, detailed: AvailablePackage) -> None:
-	for field in AvailablePackage.model_fields:
-		setattr(pkg, field, getattr(detailed, field))
+	for field_name in AvailablePackage.model_fields.keys():
+		setattr(pkg, field_name, getattr(detailed, field_name))
 
 
 def enrich_package_info(pkg: AvailablePackage) -> None:

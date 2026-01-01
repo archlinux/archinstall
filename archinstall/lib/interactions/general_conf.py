@@ -174,8 +174,11 @@ def ask_additional_packages_to_install(
 			preset_packages.append(package_groups[p])
 
 	def preview_package(item: MenuItem) -> str:
-		enrich_package_info(item.value)
-		return item.value.info()
+		pkg = item.value
+		if isinstance(pkg, AvailablePackage):
+			enrich_package_info(pkg)
+			return pkg.info()
+		return ''
 
 	items = [
 		MenuItem(
