@@ -124,7 +124,7 @@ class GfxDriver(Enum):
 			case GfxDriver.IntelOpenSource:
 				packages += [
 					GfxPackage.Mesa,
-					#GfxPackage.LibvaIntelDriver, #ISSUE#3005 (legacy)
+					# GfxPackage.LibvaIntelDriver, #ISSUE#3005 (legacy)
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel,
 				]
