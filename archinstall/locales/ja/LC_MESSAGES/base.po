@@ -1740,6 +1740,9 @@ msgstr "印刷サービス"
 msgid "Would you like to configure the print service?"
 msgstr "印刷サービスを設定しますか？"
 
+msgid "Power management"
+msgstr "電力管理"
+
 msgid "Authentication"
 msgstr "認証"
 
@@ -1845,5 +1848,32 @@ msgstr "ディスクをどのコンピューターでも起動できるように
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "NVRAM ブートエントリーを適切にサポートしていないファームウェア。"
 
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "/EFI/BOOT/（リムーバブルな場所、安全なデフォルト）にインストール"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "NVRAM エントリーを使用してカスタムした場所にインストール"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "ほとんどの MSI マザーボードのように NVRAM ブートエントリーを適切にサポートしていないファームウェア、"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "ほとんどの Apple Mac、多くのラップトップ..."
+
+msgid "Language"
+msgstr "言語"
+
+msgid "Compression algorithm"
+msgstr "圧縮アルゴリズム"
+
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "base、sudo、linux、linux-firmware、efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
+
+msgid "Select zram compression algorithm:"
+msgstr "zram 圧縮アルゴリズムを選択:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "NetworkManager（デフォルトのバックエンド）を使用する"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "NetworkManager (iwd バックエンド) を使用する"

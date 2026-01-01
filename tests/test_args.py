@@ -7,7 +7,14 @@ from pytest import MonkeyPatch
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
-from archinstall.lib.models.application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration, PrintServiceConfiguration
+from archinstall.lib.models.application import (
+	ApplicationConfiguration,
+	Audio,
+	AudioConfiguration,
+	BluetoothConfiguration,
+	PrintServiceConfiguration,
+	ZramConfiguration,
+)
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
@@ -225,7 +232,7 @@ def test_config_file_parsing(
 		ntp=True,
 		packages=['firefox'],
 		parallel_downloads=66,
-		swap=False,
+		swap=ZramConfiguration(enabled=False),
 		timezone='UTC',
 		services=['service_1', 'service_2'],
 		custom_commands=["echo 'Hello, World!'"],
