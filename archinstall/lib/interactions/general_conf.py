@@ -173,7 +173,7 @@ def ask_additional_packages_to_install(
 		elif p in package_groups:
 			preset_packages.append(package_groups[p])
 
-	def preview_package(item):
+	def preview_package(item: MenuItem) -> str:
 		enrich_package_info(item.value)
 		return item.value.info()
 
