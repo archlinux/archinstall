@@ -44,12 +44,9 @@ repos:
         - pytest-mock
         - cryptography
         - textual
-  - repo: local
+  - repo: https://github.com/pycqa/pylint
+    rev: v4.0.4
     hooks:
-      - id: pylint
-        name: pylint
-        entry: pylint
-        language: system
-        types: [python]
-        fail_fast: true
-        require_serial: true
+    - id: pylint
+      fail_fast: true
+      require_serial: true
