@@ -137,7 +137,7 @@ def list_available_packages(
 	"""
 	packages: dict[str, AvailablePackage] = {}
 	current_package: list[str] = []
-	filtered_repos = [name for repo in repositories for name in repo.get_repository_list()]
+	filtered_repos = [repo.value for repo in repositories]
 
 	try:
 		Pacman.run('-Sy')

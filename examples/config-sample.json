@@ -146,7 +146,10 @@
   },
   "script": "guided",
   "silent": false,
-  "swap": true,
+  "swap": {
+    "enabled": true,
+    "algorithm": "zstd"
+  },
   "timezone": "UTC",
   "version": "2.8.6"
 }

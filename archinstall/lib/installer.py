@@ -16,6 +16,7 @@ from typing import Any
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.disk.utils import get_lsblk_by_mountpoint, get_lsblk_info
+from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -52,7 +53,7 @@ from .plugins import plugins
 from .storage import storage
 
 # Any package that the Installer() is responsible for (optional and the default ones)
-__packages__ = ['base', 'base-devel', 'linux-firmware', 'linux', 'linux-lts', 'linux-zen', 'linux-hardened']
+__packages__ = ['base', 'sudo', 'linux-firmware', 'linux', 'linux-lts', 'linux-zen', 'linux-hardened']
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ['brltty', 'espeakup', 'alsa-utils']
@@ -194,9 +195,16 @@ class Installer:
 		else:
 			info(tr('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
 
-		info('Waiting for automatic mirror selection (reflector) to complete.')
-		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
-			time.sleep(1)
+		if not arch_config_handler.args.offline:
+			info('Waiting for automatic mirror selection (reflector) to complete.')
+			for _ in range(60):
+				if self._service_state('reflector') in ('dead', 'failed', 'exited'):
+					break
+				time.sleep(1)
+			else:
+				warn('Reflector did not complete within 60 seconds, continuing anyway...')
+		else:
+			info('Skipped reflector...')
 
 		# info('Waiting for pacman-init.service to complete.')
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
@@ -241,6 +249,7 @@ class Installer:
 
 		match self._disk_encryption.encryption_type:
 			case EncryptionType.NoEncryption:
+				self._import_lvm()
 				self._mount_lvm_layout()
 			case EncryptionType.Luks:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
@@ -746,6 +755,13 @@ class Installer:
 				for psk in psk_files:
 					shutil.copy2(psk, f'{self.target}/var/lib/iwd/{os.path.basename(psk)}')
 
+		# Enable systemd-resolved by (forcefully) setting a symlink
+		# For further details see  https://wiki.archlinux.org/title/Systemd-resolved#DNS
+		resolv_config_path = Path(f'{self.target}/etc/resolv.conf')
+		if resolv_config_path.exists():
+			os.unlink(resolv_config_path)
+		os.symlink('/run/systemd/resolve/stub-resolv.conf', resolv_config_path)
+
 		# Copy (if any) systemd-networkd config files
 		if netconfigurations := glob.glob('/etc/systemd/network/*'):
 			if not os.path.isdir(f'{self.target}/etc/systemd/network/'):
@@ -767,6 +783,14 @@ class Installer:
 					self.enable_service(['systemd-networkd', 'systemd-resolved'])
 
 		return True
+
+	def configure_nm_iwd(self) -> None:
+		# Create NetworkManager config directory and write iwd backend conf
+		nm_conf_dir = self.target / 'etc/NetworkManager/conf.d'
+		nm_conf_dir.mkdir(parents=True, exist_ok=True)
+
+		iwd_backend_conf = nm_conf_dir / 'wifi_backend.conf'
+		iwd_backend_conf.write_text('[device]\nwifi.backend=iwd\n')
 
 	def mkinitcpio(self, flags: list[str]) -> bool:
 		for plugin in plugins.values():
@@ -975,16 +999,21 @@ class Installer:
 			self._configure_grub_btrfsd(snapshot_type)
 			self.enable_service('grub-btrfsd.service')
 
-	def setup_swap(self, kind: str = 'zram') -> None:
+	def setup_swap(self, kind: str = 'zram', algo: ZramAlgorithm = ZramAlgorithm.ZSTD) -> None:
 		if kind == 'zram':
 			info('Setting up swap on zram')
 			self.pacman.strap('zram-generator')
+			# Get RAM size in MB from hardware info
+			ram_kb = SysInfo.mem_total()
+			# Convert KB to MB and divide by 2, with minimum of 4096 MB
+			size_mb = max(ram_kb // 2048, 4096)
+			info(f'Zram size: {size_mb} from RAM: {ram_kb}')
+			info(f'Zram compression algorithm: {algo.value}')
 
-			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
-			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
-			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
 			with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
 				zram_conf.write('[zram0]\n')
+				zram_conf.write(f'zram-size = {size_mb}\n')
+				zram_conf.write(f'compression-algorithm = {algo.value}\n')
 
 			self.enable_service('systemd-zram-setup@zram0.service')
 
@@ -1575,6 +1604,106 @@ class Installer:
 
 		self._helper_flags['bootloader'] = 'efistub'
 
+	def _add_refind_bootloader(
+		self,
+		boot_partition: PartitionModification,
+		efi_partition: PartitionModification | None,
+		root: PartitionModification | LvmVolume,
+		uki_enabled: bool = False,
+	) -> None:
+		debug('Installing rEFInd bootloader')
+
+		self.pacman.strap('refind')
+
+		if not SysInfo.has_uefi():
+			raise HardwareIncompatibilityError
+
+		info(f'rEFInd boot partition: {boot_partition.dev_path}')
+
+		if not efi_partition:
+			raise ValueError('Could not detect EFI system partition')
+		elif not efi_partition.mountpoint:
+			raise ValueError('EFI system partition is not mounted')
+
+		info(f'rEFInd EFI partition: {efi_partition.dev_path}')
+
+		try:
+			self.arch_chroot('refind-install')
+		except SysCallError as err:
+			raise DiskError(f'Could not install rEFInd to {self.target}{efi_partition.mountpoint}: {err}')
+
+		if not boot_partition.mountpoint:
+			raise ValueError('Boot partition is not mounted, cannot write rEFInd config')
+
+		boot_is_separate = boot_partition != efi_partition and boot_partition.dev_path != efi_partition.dev_path
+
+		if boot_is_separate:
+			# Separate boot partition (not ESP, not root)
+			config_path = self.target / boot_partition.mountpoint.relative_to('/') / 'refind_linux.conf'
+			boot_on_root = False
+		elif efi_partition.mountpoint == Path('/boot'):
+			# ESP is mounted at /boot, kernels are on ESP
+			config_path = self.target / 'boot' / 'refind_linux.conf'
+			boot_on_root = False
+		else:
+			# ESP is elsewhere (/efi, /boot/efi, etc.), kernels are on root filesystem at /boot
+			config_path = self.target / 'boot' / 'refind_linux.conf'
+			boot_on_root = True
+
+		config_contents = []
+
+		kernel_params = ' '.join(self._get_kernel_params(root))
+
+		for kernel in self.kernels:
+			for variant in ('', '-fallback'):
+				if uki_enabled:
+					entry = f'"Arch Linux ({kernel}{variant}) UKI" "{kernel_params}"'
+				else:
+					if boot_on_root:
+						# Kernels are in /boot subdirectory of root filesystem
+						if hasattr(root, 'btrfs_subvols') and root.btrfs_subvols:
+							# Root is btrfs with subvolume, find the root subvolume
+							root_subvol = next((sv for sv in root.btrfs_subvols if sv.is_root()), None)
+							if root_subvol:
+								subvol_name = root_subvol.name
+								initrd_path = f'initrd={subvol_name}\\boot\\initramfs-{kernel}{variant}.img'
+							else:
+								initrd_path = f'initrd=\\boot\\initramfs-{kernel}{variant}.img'
+						else:
+							# Root without btrfs subvolume
+							initrd_path = f'initrd=\\boot\\initramfs-{kernel}{variant}.img'
+					else:
+						# Kernels are at root of their partition (ESP or separate boot partition)
+						initrd_path = f'initrd=\\initramfs-{kernel}{variant}.img'
+					entry = f'"Arch Linux ({kernel}{variant})" "{kernel_params} {initrd_path}"'
+
+				config_contents.append(entry)
+
+		config_path.write_text('\n'.join(config_contents) + '\n')
+
+		hook_contents = textwrap.dedent(
+			"""\
+			[Trigger]
+			Operation = Install
+			Operation = Upgrade
+			Type = Package
+			Target = refind
+
+			[Action]
+			Description = Updating rEFInd on ESP
+			When = PostTransaction
+			Exec = /usr/bin/refind-install
+			"""
+		)
+
+		hooks_dir = self.target / 'etc' / 'pacman.d' / 'hooks'
+		hooks_dir.mkdir(parents=True, exist_ok=True)
+
+		hook_path = hooks_dir / '99-refind.hook'
+		hook_path.write_text(hook_contents)
+
+		self._helper_flags['bootloader'] = 'refind'
+
 	def _config_uki(
 		self,
 		root: PartitionModification | LvmVolume,
@@ -1628,11 +1757,12 @@ class Installer:
 	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False, bootloader_removable: bool = False) -> None:
 		"""
 		Adds a bootloader to the installation instance.
-		Archinstall supports one of three types:
+		Archinstall supports one of five types:
 		* systemd-bootctl
 		* grub
 		* limine
 		* efistub (beta)
+		* refnd (beta)
 
 		:param bootloader: Type of bootloader to be added
 		:param uki_enabled: Whether to use unified kernel images
@@ -1684,6 +1814,8 @@ class Installer:
 				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:
 				self._add_limine_bootloader(boot_partition, efi_partition, root, uki_enabled, bootloader_removable)
+			case Bootloader.Refind:
+				self._add_refind_bootloader(boot_partition, efi_partition, root, uki_enabled)
 
 	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)

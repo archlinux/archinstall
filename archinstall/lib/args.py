@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 from pydantic.dataclasses import dataclass as p_dataclass
 
 from archinstall.lib.crypt import decrypt
-from archinstall.lib.models.application import ApplicationConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
@@ -67,12 +67,12 @@ class ArchConfig:
 	bootloader_config: BootloaderConfiguration | None = None
 	app_config: ApplicationConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
+	swap: ZramConfiguration | None = None
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: ['linux'])
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
-	swap: bool = True
 	timezone: str = 'UTC'
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
@@ -185,7 +185,7 @@ class ArchConfig:
 			uki = args_config.get('uki', False)
 			if uki and not bootloader.has_uki_support():
 				uki = False
-			arch_config.bootloader_config = BootloaderConfiguration(bootloader=bootloader, uki=uki, removable=False)
+			arch_config.bootloader_config = BootloaderConfiguration(bootloader=bootloader, uki=uki, removable=True)
 
 		# deprecated: backwards compatibility
 		audio_config_args = args_config.get('audio_config', None)
@@ -211,7 +211,9 @@ class ArchConfig:
 		if parallel_downloads := args_config.get('parallel_downloads', 0):
 			arch_config.parallel_downloads = parallel_downloads
 
-		arch_config.swap = args_config.get('swap', True)
+		swap_arg = args_config.get('swap')
+		if swap_arg is not None:
+			arch_config.swap = ZramConfiguration.parse_arg(swap_arg)
 
 		if timezone := args_config.get('timezone', 'UTC'):
 			arch_config.timezone = timezone

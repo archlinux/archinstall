@@ -17,10 +17,11 @@ class Bootloader(Enum):
 	Grub = 'Grub'
 	Efistub = 'Efistub'
 	Limine = 'Limine'
+	Refind = 'Refind'
 
 	def has_uki_support(self) -> bool:
 		match self:
-			case Bootloader.Efistub | Bootloader.Limine | Bootloader.Systemd:
+			case Bootloader.Efistub | Bootloader.Limine | Bootloader.Systemd | Bootloader.Refind:
 				return True
 			case _:
 				return False
@@ -65,7 +66,7 @@ class Bootloader(Enum):
 class BootloaderConfiguration:
 	bootloader: Bootloader
 	uki: bool = False
-	removable: bool = False
+	removable: bool = True
 
 	def json(self) -> dict[str, Any]:
 		return {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
@@ -74,12 +75,14 @@ class BootloaderConfiguration:
 	def parse_arg(cls, config: dict[str, Any], skip_boot: bool) -> BootloaderConfiguration:
 		bootloader = Bootloader.from_arg(config.get('bootloader', ''), skip_boot)
 		uki = config.get('uki', False)
-		removable = config.get('removable', False)
+		removable = config.get('removable', True)
 		return cls(bootloader=bootloader, uki=uki, removable=removable)
 
 	@classmethod
 	def get_default(cls) -> BootloaderConfiguration:
-		return cls(bootloader=Bootloader.get_default(), uki=False, removable=False)
+		bootloader = Bootloader.get_default()
+		removable = SysInfo.has_uefi() and bootloader.has_removable_support()
+		return cls(bootloader=bootloader, uki=False, removable=removable)
 
 	def preview(self) -> str:
 		text = f'{tr("Bootloader")}: {self.bootloader.value}'
