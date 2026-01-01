@@ -152,6 +152,7 @@ class GfxDriver(Enum):
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.VulkanIcdLoader,
+					GfxPackage.LibvaMesaDriver,
 				]
 
 		return packages
