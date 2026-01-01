@@ -29,7 +29,6 @@ class ProfileType(Enum):
 class DisplayServer(Enum):
 	X11 = 'x11'
 	Wayland = 'wayland'
-	Both = 'both'
 
 
 class GreeterType(Enum):

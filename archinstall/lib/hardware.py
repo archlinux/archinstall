@@ -86,16 +86,16 @@ class GfxDriver(Enum):
 
 	def gfx_packages(self, servers: set['DisplayServer'] | None = None) -> list[GfxPackage]:
 		from archinstall.default_profiles.profile import DisplayServer
-
+		# empty list
 		packages = []
 
-		# Only add X11 packages if X11 or Both display servers are required
+		# Only add X11 packages if required by said profile
 		if servers is None:
 			# Default behavior when no profile is passed: include X11 for bw-compat
 			packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
 		elif servers:
 			# Profile provided display server requirements - respect them
-			if DisplayServer.X11 in servers or DisplayServer.Both in servers:
+			if DisplayServer.X11 in servers:
 				packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
 		# else: servers is empty set handled by profile itself
 
@@ -124,8 +124,8 @@ class GfxDriver(Enum):
 			case GfxDriver.IntelOpenSource:
 				packages += [
 					GfxPackage.Mesa,
-					GfxPackage.LibvaIntelDriver,
-					GfxPackage.IntelMediaDriver,
+					#GfxPackage.LibvaIntelDriver, #ISSUE#3005 (legacy)
+					GfxPackage.IntelMediaDriver, 
 					GfxPackage.VulkanIntel,
 				]
 			case GfxDriver.NvidiaOpenKernel:
