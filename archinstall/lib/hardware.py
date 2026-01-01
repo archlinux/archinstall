@@ -87,7 +87,7 @@ class GfxDriver(Enum):
 
 	def gfx_packages(self, servers: set['DisplayServer'] | None = None) -> list[GfxPackage]:
 		from archinstall.default_profiles.profile import DisplayServer
-		
+
 		# empty list
 		packages = []
 
