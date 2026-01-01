@@ -125,7 +125,7 @@ class GfxDriver(Enum):
 				packages += [
 					GfxPackage.Mesa,
 					#GfxPackage.LibvaIntelDriver, #ISSUE#3005 (legacy)
-					GfxPackage.IntelMediaDriver, 
+					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel,
 				]
 			case GfxDriver.NvidiaOpenKernel:
