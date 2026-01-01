@@ -174,6 +174,34 @@ This will create a *20 GB* `testimage.img` and create a loop device which we can
 There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.
 
+## Boot an Arch ISO image in a VM
+
+You may want to boot an ISO image in a VM to test `archinstall` in there.
+
+* Download the latest [Arch ISO](https://archlinux.org/download/)
+* Use the the below command to boot the ISO in a VM
+
+```
+qemu-system-x86_64 -enable-kvm \
+-machine q35,accel=kvm -device intel-iommu \
+-cpu host -m 4096 -boot order=d \
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive file=./archlinux-2025.12.01-x86_64.iso,format=raw
+```
+
+HINT: For espeakup support
+```
+qemu-system-x86_64 -enable-kvm \
+-machine q35,accel=kvm -device intel-iommu \
+-cpu host -m 4096 -boot order=d \
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive file=./archlinux-2025.12.01-x86_64.iso,format=raw \
+-device intel-hda -device hda-duplex,audiodev=snd0 \
+-audiodev pa,id=snd0,server=/run/user/1000/pulse/native
+```
+
 
 # FAQ
 
