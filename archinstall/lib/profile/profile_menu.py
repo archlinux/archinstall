@@ -7,7 +7,7 @@ from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties, Orientation
+from archinstall.tui.types import Alignment, FrameProperties
 
 from ..hardware import GfxDriver
 from ..interactions.system_conf import select_driver
@@ -46,9 +46,9 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 			MenuItem(
 				text=tr('Graphics driver'),
 				action=self._select_gfx_driver,
-				value=self._profile_config.gfx_driver if self._profile_config.profile and self._profile_config.profile.is_graphic_driver_supported() else None,
+				value=self._profile_config.gfx_driver if self._profile_config.profile else None,
 				preview_action=self._prev_gfx,
-				enabled=self._profile_config.profile.is_graphic_driver_supported() if self._profile_config.profile else False,
+				enabled=bool(self._profile_config.profile and self._profile_config.profile.display_servers()),
 				dependencies=['profile'],
 				key='gfx_driver',
 			),
@@ -56,7 +56,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				text=tr('Greeter'),
 				action=lambda x: select_greeter(preset=x),
 				value=self._profile_config.greeter if self._profile_config.profile and self._profile_config.profile.is_greeter_supported() else None,
-				enabled=self._profile_config.profile.is_graphic_driver_supported() if self._profile_config.profile else False,
+				enabled=bool(self._profile_config.profile and self._profile_config.profile.is_greeter_supported()),
 				preview_action=self._prev_greeter,
 				dependencies=['profile'],
 				key='greeter',
@@ -72,12 +72,12 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		profile = select_profile(preset)
 
 		if profile is not None:
-			if not profile.is_graphic_driver_supported():
-				self._item_group.find_by_key('gfx_driver').enabled = False
-				self._item_group.find_by_key('gfx_driver').value = None
-			else:
+			if profile.display_servers():
 				self._item_group.find_by_key('gfx_driver').enabled = True
 				self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
+			else:
+				self._item_group.find_by_key('gfx_driver').enabled = False
+				self._item_group.find_by_key('gfx_driver').value = None
 
 			if not profile.is_greeter_supported():
 				self._item_group.find_by_key('greeter').enabled = False
@@ -96,36 +96,16 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		profile: Profile | None = self._item_group.find_by_key('profile').value
 
 		if profile:
-			if profile.is_graphic_driver_supported():
-				driver = select_driver(preset=preset)
-
-			if driver and 'Sway' in profile.current_selection_names():
-				if driver.is_nvidia():
-					header = tr('The proprietary Nvidia driver is not supported by Sway.') + '\n'
-					header += tr('It is likely that you will run into issues, are you okay with that?') + '\n'
-
-					group = MenuItemGroup.yes_no()
-					group.focus_item = MenuItem.no()
-					group.default_item = MenuItem.no()
-
-					result = SelectMenu[bool](
-						group,
-						header=header,
-						allow_skip=False,
-						columns=2,
-						orientation=Orientation.HORIZONTAL,
-						alignment=Alignment.CENTER,
-					).run()
-
-					if result.item() == MenuItem.no():
-						return preset
+			driver = select_driver(preset=preset, profile=profile)
 
 		return driver
 
 	def _prev_gfx(self, item: MenuItem) -> str | None:
 		if item.value:
 			driver = item.get_value().value
-			packages = item.get_value().packages_text()
+			profile: Profile | None = self._item_group.find_by_key('profile').value
+			servers = profile.display_servers() if profile else None
+			packages = item.get_value().packages_text(servers)
 			return f'Driver: {driver}\n{packages}'
 		return None
 

@@ -2,12 +2,16 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from .exceptions import SysCallError
 from .general import SysCommand
 from .networking import enrich_iface_types, list_interfaces
 from .output import debug
 from .translationhandler import tr
+
+if TYPE_CHECKING:
+	from archinstall.default_profiles.profile import DisplayServer
 
 
 class CpuVendor(Enum):
@@ -48,6 +52,7 @@ class GfxPackage(Enum):
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	VulkanNouveau = 'vulkan-nouveau'
+	VulkanIcdLoader = 'vulkan-icd-loader'
 	Xf86VideoAmdgpu = 'xf86-video-amdgpu'
 	Xf86VideoAti = 'xf86-video-ati'
 	Xf86VideoNouveau = 'xf86-video-nouveau'
@@ -71,8 +76,8 @@ class GfxDriver(Enum):
 			case _:
 				return False
 
-	def packages_text(self) -> str:
-		pkg_names = [p.value for p in self.gfx_packages()]
+	def packages_text(self, servers: set['DisplayServer'] | None = None) -> str:
+		pkg_names = [p.value for p in self.gfx_packages(servers)]
 		text = tr('Installed packages') + ':\n'
 
 		for p in sorted(pkg_names):
@@ -80,8 +85,21 @@ class GfxDriver(Enum):
 
 		return text
 
-	def gfx_packages(self) -> list[GfxPackage]:
-		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
+	def gfx_packages(self, servers: set['DisplayServer'] | None = None) -> list[GfxPackage]:
+		from archinstall.default_profiles.profile import DisplayServer
+
+		# empty list
+		packages = []
+
+		# Only add X11 packages if required by said profile
+		if servers is None:
+			# Default behavior when no profile is passed: include X11 for bw-compat
+			packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
+		elif servers:
+			# Profile provided display server requirements - respect them
+			if DisplayServer.X11 in servers:
+				packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
+		# else: servers is empty set handled by profile itself
 
 		match self:
 			case GfxDriver.AllOpenSource:
@@ -108,7 +126,7 @@ class GfxDriver(Enum):
 			case GfxDriver.IntelOpenSource:
 				packages += [
 					GfxPackage.Mesa,
-					GfxPackage.LibvaIntelDriver,
+					# GfxPackage.LibvaIntelDriver, #ISSUE#3005 (legacy)
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel,
 				]
@@ -134,6 +152,8 @@ class GfxDriver(Enum):
 			case GfxDriver.VMOpenSource:
 				packages += [
 					GfxPackage.Mesa,
+					GfxPackage.VulkanIcdLoader,
+					GfxPackage.LibvaMesaDriver,
 				]
 
 		return packages
