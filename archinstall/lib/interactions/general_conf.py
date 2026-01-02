@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import assert_never
 
 from archinstall.lib.models.packages import Repository
-from archinstall.lib.packages.packages import list_available_packages
+from archinstall.lib.packages.packages import enrich_package_info, list_available_packages
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import EditMenu, SelectMenu, Tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -173,11 +173,18 @@ def ask_additional_packages_to_install(
 		elif p in package_groups:
 			preset_packages.append(package_groups[p])
 
+	def preview_package(item: MenuItem) -> str:
+		pkg = item.value
+		if isinstance(pkg, AvailablePackage):
+			enrich_package_info(pkg)
+			return pkg.info()
+		return ''
+
 	items = [
 		MenuItem(
 			name,
 			value=pkg,
-			preview_action=lambda x: x.value.info(),
+			preview_action=preview_package,
 		)
 		for name, pkg in packages.items()
 	]
