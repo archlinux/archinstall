@@ -891,13 +891,16 @@ class Installer:
 			self._disable_fstrim = True
 		
 		if fs_type.fs_type_mount == 'bcachefs':
-			if 'bcachefs' not in self._modules:
-				self._modules.append('bcachefs')
+            if 'bcachefs' not in self._modules:
+                # This line (and all subsequent lines) should be indented correctly
+                self._modules.append('bcachefs')
 
             if 'bcachefs' not in self._hooks:
-				try:
+                try:
                     block_index = self._hooks.index('block')
-                    self._hooks.insert(block_index + 1, 'bcachefs')	
+                    self._hooks.insert(block_index + 1, 'bcachefs')
+                except ValueError:
+                    pass
 
 		# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 		if fs_type.fs_type_mount == 'ntfs3' and mountpoint == self.target:
