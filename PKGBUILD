@@ -35,6 +35,7 @@ depends=(
   'lvm2'
   'f2fs-tools'
   'ntfs-3g'
+  'exfatprogs'
 )
 makedepends=(
   'python-build'

@@ -284,6 +284,8 @@ class DeviceHandler:
 				mkfs_type = 'fat'
 				# Set FAT size
 				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
+			case FilesystemType.Exfat:
+				pass
 			case FilesystemType.Ntfs:
 				# Skip zeroing and bad sector check
 				options.append('--fast')
@@ -567,12 +569,12 @@ class DeviceHandler:
 		)
 
 		fs_value = part_mod.safe_fs_type.parted_value
-		filesystem = FileSystem(type=fs_value, geometry=geometry)
 
 		partition = Partition(
 			disk=disk,
 			type=part_mod.type.get_partition_code(),
-			fs=filesystem,
+			# exfat is not supported by parted
+			fs=FileSystem(type=fs_value, geometry=geometry) if fs_value != 'exfat' else None,
 			geometry=geometry,
 		)
 
