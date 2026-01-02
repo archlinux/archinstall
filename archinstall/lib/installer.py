@@ -265,12 +265,11 @@ class Installer:
 
 		try:
 			# Use mainline headers and build dkms to load modules
-			Pacman.run('-Sy --noconfirm linux-headers bcachefs-tools bcachefs-dkms ')
+			Pacman.run('-Sy --noconfirm --needed linux-headers bcachefs-tools bcachefs-dkms ')
 			info('Bcachefs packages installed successfully. DKMS will load the module.')
 		except SysCallError as err:
 			raise RequirementError(
-				f'Failed to install bcachefs-dkms: {err}\n'
-				'Bcachefs requires bcachefs-dkms (kernel module removed in 6.18+)'
+				f'Failed to install bcachefs-dkms: {err}'
 			)
 
 	def mount_ordered_layout(self) -> None:
@@ -881,7 +880,7 @@ class Installer:
 		if (pkg := fs_type.installation_pkg) is not None:
 			self._base_packages.append(pkg)
 
-		# Install linux-headers and bcachefs-dkms if bcachefs is selected (for DKMS module)
+		# Install linux-headers and bcachefs-dkms if bcachefs is selected
 		if fs_type == FilesystemType.Bcachefs:
 			self._base_packages.extend(f'{kernel}-headers' for kernel in self.kernels)
 			self._base_packages.append('bcachefs-dkms')
