@@ -169,7 +169,6 @@ class Profile:
 	def is_custom_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.CustomType
 
-
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
