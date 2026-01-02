@@ -240,7 +240,6 @@ class Installer:
 
 	def sanity_check(self) -> None:
 		# self._verify_boot_part()
-		self._verify_bcachefs_support()
 		self._verify_service_stop()
 
 	def _verify_bcachefs_support(self) -> None:
@@ -265,7 +264,7 @@ class Installer:
 
 		try:
 			# Use mainline headers and build dkms to load modules
-			Pacman.run('-Sy --noconfirm --needed linux-headers bcachefs-tools bcachefs-dkms ')
+			Pacman.run('-Sy --noconfirm --needed linux-headers bcachefs-dkms ')
 			info('Bcachefs packages installed successfully. DKMS will load the module.')
 		except SysCallError as err:
 			raise RequirementError(
