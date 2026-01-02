@@ -248,11 +248,7 @@ class Installer:
 		Since bcachefs was removed from kernel 6.18+, it requires bcachefs-dkms.
 		"""
 		# Check if any partition uses bcachefs
-		if not any(
-			part.fs_type == FilesystemType.Bcachefs
-			for mod in self._disk_config.device_modifications
-			for part in mod.partitions
-		):
+		if not any(part.fs_type == FilesystemType.Bcachefs for mod in self._disk_config.device_modifications for part in mod.partitions):
 			return
 
 		# Check if module was manually loaded
@@ -263,13 +259,11 @@ class Installer:
 		info('Installing bcachefs packages...')
 
 		try:
-			# Use mainline headers and build dkms to load modules
+			# Use mainline headers and build dkms to load modules #
 			Pacman.run('-Sy --noconfirm --needed linux-headers bcachefs-dkms ')
 			info('Bcachefs packages installed successfully. DKMS will load the module.')
 		except SysCallError as err:
-			raise RequirementError(
-				f'Failed to install bcachefs-dkms: {err}'
-			)
+			raise RequirementError(f'Failed to install bcachefs-dkms: {err}')
 
 	def mount_ordered_layout(self) -> None:
 		# Ensure bcachefs support is available before attempting to mount
