@@ -242,7 +242,34 @@ class Installer:
 		# self._verify_boot_part()
 		self._verify_service_stop()
 
+	def _verify_bcachefs_support(self) -> None:
+		"""
+		Check if bcachefs is being used and ensure the module is available.
+		Since bcachefs was removed from kernel 6.18+, it requires bcachefs-dkms.
+		"""
+		# Check if any partition uses bcachefs
+		if not any(part.fs_type == FilesystemType.Bcachefs for mod in self._disk_config.device_modifications for part in mod.partitions):
+			return
+
+		# Check if module was manually loaded
+		if SysInfo.has_bcachefs():
+			return
+
+		info('Bcachefs filesystem selected but module not loaded')
+		info('Installing bcachefs packages...')
+
+		try:
+			# Use mainline headers and build dkms to load modules #
+			Pacman.run('-Sy --noconfirm --needed linux-headers bcachefs-dkms ')
+			info('Bcachefs packages installed successfully. DKMS will load the module.')
+		except SysCallError as err:
+			raise RequirementError(f'Failed to install bcachefs-dkms: {err}')
+
 	def mount_ordered_layout(self) -> None:
+		# Ensure bcachefs support is available before attempting to mount
+		# only installs if bcachefs is selected and module not loaded
+		self._verify_bcachefs_support()
+
 		debug('Mounting ordered layout')
 
 		luks_handlers: dict[Any, Luks2] = {}
@@ -362,7 +389,13 @@ class Installer:
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
-			device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
+
+			if part_mod.fs_type == FilesystemType.Bcachefs:
+				mount_fs = part_mod.fs_type.value
+			else:
+				mount_fs = None
+
+			device_handler.mount(part_mod.dev_path, target, mount_fs, options=part_mod.mount_options)
 		elif part_mod.fs_type == FilesystemType.Btrfs:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
@@ -854,9 +887,25 @@ class Installer:
 		if (pkg := fs_type.installation_pkg) is not None:
 			self._base_packages.append(pkg)
 
+		# Install linux-headers and bcachefs-dkms if bcachefs is selected
+		if fs_type == FilesystemType.Bcachefs:
+			self._base_packages.extend(f'{kernel}-headers' for kernel in self.kernels)
+			self._base_packages.append('bcachefs-dkms')
+
 		# https://github.com/archlinux/archinstall/issues/1837
-		if fs_type.fs_type_mount == 'btrfs':
+		# https://github.com/koverstreet/bcachefs/issues/916
+		if fs_type.fs_type_mount in ('btrfs', 'bcachefs'):
 			self._disable_fstrim = True
+
+		if fs_type.fs_type_mount == 'bcachefs' and 'bcachefs' not in self._modules:
+			self._modules.append('bcachefs')
+
+		if 'bcachefs' not in self._hooks:
+			try:
+				block_index = self._hooks.index('block')
+				self._hooks.insert(block_index + 1, 'bcachefs')
+			except ValueError:
+				pass
 
 		# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 		if fs_type.fs_type_mount == 'ntfs3' and mountpoint == self.target:

@@ -344,3 +344,12 @@ class SysInfo:
 				return True
 
 		return False
+
+	@staticmethod
+	def has_bcachefs() -> bool:
+		"""
+		Check if bcachefs kernel module is available/loaded.
+		Required since bcachefs was removed from mainline kernel in 6.18+
+		and now requires bcachefs-dkms package.
+		"""
+		return 'bcachefs' in _sys_info.loaded_modules

@@ -250,6 +250,7 @@ def select_main_filesystem_format() -> FilesystemType:
 	]
 
 	if arch_config_handler.args.advanced:
+		items.append(MenuItem('bcachefs', value=FilesystemType.Bcachefs))
 		items.append(MenuItem('ntfs', value=FilesystemType.Ntfs))
 
 	group = MenuItemGroup(items, sort_items=False)
