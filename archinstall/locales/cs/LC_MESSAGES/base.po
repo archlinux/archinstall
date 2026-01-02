@@ -54,7 +54,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Budou nainstalovány pouze balíčky jako base, base-devel, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
 
 msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr ""
+msgstr "Poznámka: balík base-devel se již neinstaluje automaticky. Přidejte jej zde, pokud potřebujete nástroje pro sestavování."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Pokud si přejete nainstalovat webový prohlížeč, jako je například Firefox nebo Chromium, můžete jej zadat do následujícího pole."
@@ -66,7 +66,7 @@ msgid "Copy ISO network configuration to installation"
 msgstr "Zkopírovat do instalace konfiguraci sítě z ISO"
 
 msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
+msgstr "Použít NetworkManager (nezbytné pro grafickou konfiguraci v GNOME a KDE)"
 
 msgid "Select one network interface to configure"
 msgstr "Zvolte síťové rozhraní ke konfiguraci"
@@ -725,7 +725,7 @@ msgid "Value: "
 msgstr "Hodnota: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Výběr disku a tvorbu oddílů můžete přeskočit a použít jakýkoliv setup, který je připojen na /mnt (experimentální)"
+msgstr "Můžete přeskočit výběr disku a rozdělení oddílů a použít libovolné rozložení disků, které je připojeno v /mnt (experimentální)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "Zvolte jeden z disků nebo přeskočte a použijte /mnt jako výchozí"
@@ -1043,7 +1043,7 @@ msgid "Profile name: "
 msgstr "Jméno profilu: "
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr "Zadané jméno profilu již existuje. Zkuste to znovu"
+msgstr "Zadaný název profilu již existuje. Zkuste to znovu"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
 msgstr "Zadejte další balíčky k instalaci v tomto profilu (oddělené mezerou, ponechte prázdné k přeskočení): "
@@ -1165,7 +1165,7 @@ msgid "Locales"
 msgstr "Lokalizace"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
+msgstr "Použít NetworkManager (nezbytné pro grafickou konfiguraci v GNOME a KDE)"
 
 msgid "Total: {} / {}"
 msgstr "Celkem: {} / {}"
@@ -1257,7 +1257,7 @@ msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to compl
 msgstr "Čekám na dokončení synchronizace Arch Linux keyring (archlinux-keyring-wkd-sync)."
 
 msgid "Selected profiles: "
-msgstr "Vybrané profily: "
+msgstr "Zvolené profily: "
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "Synchronizace času není dokončena, mezitím se můžete podívat na možnosti řešení: https://archinstall.readthedocs.io/"
@@ -1288,10 +1288,10 @@ msgid "LVM disk encryption with more than 2 partitions is currently not supporte
 msgstr "LVM šifrování disku s více jak dvěma oddíly není v tuto chvíli podporováno"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "Použít NetworkManager (neubytné pro grafickou konfiguraci inernetu v GNOME a KDE)"
+msgstr "Použít NetworkManager (nezbytné pro grafickou konfiguraci inernetu v GNOME a KDE)"
 
 msgid "Select a LVM option"
-msgstr "Vyberte možnost LVM"
+msgstr "Zvolte možnost LVM"
 
 msgid "Partitioning"
 msgstr "Rozdělení diskových oddílů"
@@ -1387,7 +1387,7 @@ msgid "Root mount directory"
 msgstr "Kořenový adresář pro připojení"
 
 msgid "Select language"
-msgstr "Vyberte jazyk"
+msgstr "Zvolte jazyk"
 
 msgid "Write additional packages to install (space separated, leave blank to skip)"
 msgstr "Zadejte další balíčky k instalaci (oddělené mezerou, ponechte prázdné k přeskočení)"
@@ -1519,7 +1519,7 @@ msgstr "Kontrola podpisu"
 
 #, python-brace-format
 msgid "Selected free space segment on device {}:"
-msgstr "Vybrané volné sektory na zařízení {}:"
+msgstr "Zvolené volné sektory na zařízení {}:"
 
 #, python-brace-format
 msgid "Size: {} / {}"
@@ -1563,7 +1563,7 @@ msgid "Delete custom repository"
 msgstr "Smazat vlastní repozitář"
 
 msgid "Repository name"
-msgstr "Jméno repozitáře"
+msgstr "Název repozitáře"
 
 msgid "Add a custom server"
 msgstr "Přidat vlastní server"
@@ -1578,7 +1578,7 @@ msgid "Server url"
 msgstr "URL serveru"
 
 msgid "Select regions"
-msgstr "Vyberte regiony"
+msgstr "Zvolte regiony"
 
 msgid "Add custom servers"
 msgstr "Přidat vlastní servery"
@@ -1593,7 +1593,7 @@ msgid "Mirrors and repositories"
 msgstr "Zrcadla a repozitáře"
 
 msgid "Selected mirror regions"
-msgstr "Vybrané oblasti zrcadel"
+msgstr "Zvolené oblasti zrcadel"
 
 msgid "Custom servers"
 msgstr "Vlastní servery"
@@ -1727,15 +1727,13 @@ msgid "Would you like to configure Bluetooth?"
 msgstr "Přejete si nastavit Bluetooth?"
 
 msgid "Print service"
-msgstr ""
+msgstr "Tisková služba"
 
-#, fuzzy
 msgid "Would you like to configure the print service?"
-msgstr "Přejete si nastavit Bluetooth?"
+msgstr "Přejete si nastavit tiskovou službu?"
 
-#, fuzzy
 msgid "Power management"
-msgstr "Správa diskových oddílů: {}"
+msgstr "Správa napájení"
 
 msgid "Authentication"
 msgstr "Ověřování"
@@ -1795,7 +1793,7 @@ msgid "Would you like to connect to a Wifi?"
 msgstr "Přejete si připojit se k Wifi?"
 
 msgid "No wifi interface found"
-msgstr "Nebylo nalezeno žádné wifi zařízení"
+msgstr "Nebyly nalezeno žádné wifi zařízení"
 
 msgid "Select wifi network to connect to"
 msgstr "Zvolte ke které wifi se chcete připojit"
@@ -1822,13 +1820,13 @@ msgid "Install to removable location"
 msgstr "Nainstalovat na vyměnitelné médium"
 
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr "Bude nainstalováno do /EFI/BOOT/ (přenosné umístění)"
+msgstr "Instalace do /EFI/BOOT/ (vyměnitelné umístění)"
 
 msgid "Will install to standard location with NVRAM entry"
-msgstr "Bude nainstalováno na standardní umístění s NVRAM záznamem"
+msgstr "Instalace na standardní umístění s NVRAM záznamem"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr "Chcete nainstalovat zavadeč do výchozího umístění pro vyhledávání přenosných médií?"
+msgstr "Přejete si nainstalovat zavadeč do výchozího umístění pro vyhledávání vyměnitelných médií?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
 msgstr "Toto nainstaluje zavaděč do /EFI/BOOT/BOOTX64.EFI (nebo podobně), což je užitečné pro:"
@@ -1842,38 +1840,32 @@ msgstr "Systémy, kde chcete, aby byl disk spouštěcí na jakémkoli počítač
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "Firmware, který správně nepodporuje spouštěcí záznamy v NVRAM."
 
-#, fuzzy
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr "Bude nainstalováno do /EFI/BOOT/ (přenosné umístění)"
+msgstr "Instalace do /EFI/BOOT/ (vyměnitelné umístění, bezpečná výchozí volba)"
 
-#, fuzzy
 msgid "Will install to custom location with NVRAM entry"
-msgstr "Bude nainstalováno na standardní umístění s NVRAM záznamem"
+msgstr "Instalace na standardní umístění s NVRAM záznamem"
 
-#, fuzzy
 msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr "Firmware, který správně nepodporuje spouštěcí záznamy v NVRAM."
+msgstr "Firmware, který nepodporuje správně zaváděcí záznamy v NVRAM, jako je tomu u většiny základních desek MSI,"
 
 msgid "most Apple Macs, many laptops..."
-msgstr ""
+msgstr "většina počítačů Apple Mac, mnoho notebooků…"
 
-#, fuzzy
 msgid "Language"
-msgstr "Místní jazyk"
+msgstr "Jazyk"
 
 msgid "Compression algorithm"
-msgstr ""
+msgstr "Kompresní algoritmus"
 
-#, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Budou nainstalovány pouze balíčky jako base, base-devel, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
+msgstr "Budou nainstalovány pouze balíčky jako base, sudo, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
 
-#, fuzzy
 msgid "Select zram compression algorithm:"
-msgstr "Zvolte přípojný bod:"
+msgstr "Zvolte kompresní algoritmus pro zram:"
 
 msgid "Use Network Manager (default backend)"
-msgstr ""
+msgstr "Použít Network Manager (výchozí backend)"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr ""
+msgstr "Použít Network Manager (iwd backend)"
