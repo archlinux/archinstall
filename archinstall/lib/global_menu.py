@@ -7,13 +7,16 @@ from archinstall.lib.models.application import ApplicationConfiguration, ZramCon
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
 from archinstall.lib.packages import list_available_packages
+from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
+from archinstall.tui.types import Alignment
 
 from .applications.application_menu import ApplicationMenu
 from .args import ArchConfig
 from .authentication.authentication_menu import AuthenticationMenu
 from .bootloader.bootloader_menu import BootloaderMenu
-from .configuration import save_config
+from .configuration import ConfigurationHandler, save_config
 from .hardware import SysInfo
 from .interactions.general_conf import (
 	add_number_of_parallel_downloads,
@@ -33,7 +36,7 @@ from .models.mirrors import MirrorConfiguration
 from .models.network import NetworkConfiguration, NicType
 from .models.packages import Repository
 from .models.profile import ProfileConfiguration
-from .output import FormattedOutput
+from .output import FormattedOutput, info, warn
 from .pacman.config import PacmanConfig
 from .translationhandler import Language, tr, translation_handler
 
@@ -176,7 +179,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Abort'),
-				action=lambda x: exit(1),
+				action=self._handle_abort,
 				key=f'{CONFIG_KEY}_abort',
 			),
 		]
@@ -588,3 +591,51 @@ class GlobalMenu(AbstractMenu[None]):
 			output += f'{title}:\n\n{table}'
 
 		return output.strip()
+
+	def _handle_abort(self, preset: None) -> None:
+		"""Handle abort with option to save selections"""
+		from .args import arch_config_handler
+
+		items = []
+
+		# Only show save option in debug mode
+		if arch_config_handler.args.debug:
+			items.append(MenuItem(text=tr('Save selections and abort'), value='save_abort'))
+			items.append(MenuItem(text=tr('Abort without saving'), value='abort_only'))
+		else:
+			items.append(MenuItem(text=tr('Abort'), value='abort_only'))
+
+		items.append(MenuItem(text=tr('Cancel'), value='cancel'))
+
+		group = MenuItemGroup(items)
+		group.focus_item = group.items[0]  # Focus on first option
+
+		result = SelectMenu[str](
+			group,
+			header=tr('Abort the installation? \n'),
+			alignment=Alignment.CENTER,
+			allow_skip=False,
+		).run()
+
+		if result.type_ == ResultType.Selection:
+			choice = result.get_value()
+
+			if choice == 'save_abort':
+				# Sync current selections to config before saving
+				self.sync_all_to_config()
+				config_output = ConfigurationHandler(self._arch_config)
+				success, _ = config_output.auto_save_config()
+				if success:
+					# Check if credentials are actually present (not just empty JSON)
+					creds_json = config_output.user_credentials_to_json()
+					has_creds = creds_json and creds_json.strip() != '{}'
+					creds_status = 'saved' if has_creds else 'empty'
+					info(f'Configuration saved: user_configuration.json, user_credentials.json ({creds_status}).')
+				else:
+					warn('Failed to save selections.')
+				exit(1)
+			elif choice == 'abort_only':
+				exit(1)
+			# If 'cancel', just return to menu
+
+		return None
