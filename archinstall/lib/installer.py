@@ -881,9 +881,10 @@ class Installer:
 		if (pkg := fs_type.installation_pkg) is not None:
 			self._base_packages.append(pkg)
 
-		# Install linux-headers if bcachefs is selected
+		# Install linux-headers and bcachefs-dkms if bcachefs is selected (for DKMS module)
 		if fs_type == FilesystemType.Bcachefs:
 			self._base_packages.extend(f'{kernel}-headers' for kernel in self.kernels)
+			self._base_packages.append('bcachefs-dkms')
 
 		# https://github.com/archlinux/archinstall/issues/1837
   		# https://github.com/koverstreet/bcachefs/issues/916
