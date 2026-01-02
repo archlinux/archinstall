@@ -888,18 +888,20 @@ class Installer:
 		# https://github.com/archlinux/archinstall/issues/1837
   		# https://github.com/koverstreet/bcachefs/issues/916
 		if fs_type.fs_type_mount in ('btrfs', 'bcachefs'):
-			self._disable_fstrim = True
-		
-		if fs_type.fs_type_mount == 'bcachefs':
+            self._disable_fstrim = True
+        
+        if fs_type.fs_type_mount == 'bcachefs':
+            # This line (894) is the one causing the current error. 
+            # It needs 12 spaces of indentation.
             if 'bcachefs' not in self._modules:
-                # This line (and all subsequent lines) should be indented correctly
                 self._modules.append('bcachefs')
 
             if 'bcachefs' not in self._hooks:
                 try:
                     block_index = self._hooks.index('block')
-                    self._hooks.insert(block_index + 1, 'bcachefs')
+                    self._hooks.insert(block_index + 1, 'bcachefs')    
                 except ValueError:
+                    # Added a pass here to properly close the try/except block.
                     pass
 
 		# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
