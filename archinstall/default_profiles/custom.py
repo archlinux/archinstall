@@ -203,7 +203,6 @@
 # 			ProfileType.CustomType,
 # 			packages=packages,
 # 			services=services,
-# 			support_gfx_driver=True
 # 		)
 #
 # 		self.custom_enabled = enabled

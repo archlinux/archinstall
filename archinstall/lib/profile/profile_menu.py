@@ -48,7 +48,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				action=self._select_gfx_driver,
 				value=self._profile_config.gfx_driver if self._profile_config.profile else None,
 				preview_action=self._prev_gfx,
-				enabled=self._profile_config.profile is not None,
+				enabled=bool(self._profile_config.profile and self._profile_config.profile.display_servers()),
 				dependencies=['profile'],
 				key='gfx_driver',
 			),
@@ -56,7 +56,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				text=tr('Greeter'),
 				action=lambda x: select_greeter(preset=x),
 				value=self._profile_config.greeter if self._profile_config.profile and self._profile_config.profile.is_greeter_supported() else None,
-				enabled=self._profile_config.profile is not None,
+				enabled=bool(self._profile_config.profile and self._profile_config.profile.is_greeter_supported()),
 				preview_action=self._prev_greeter,
 				dependencies=['profile'],
 				key='greeter',
@@ -72,8 +72,12 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		profile = select_profile(preset)
 
 		if profile is not None:
-			self._item_group.find_by_key('gfx_driver').enabled = True
-			self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
+			if profile.display_servers():
+				self._item_group.find_by_key('gfx_driver').enabled = True
+				self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
+			else:
+				self._item_group.find_by_key('gfx_driver').enabled = False
+				self._item_group.find_by_key('gfx_driver').value = None
 
 			if not profile.is_greeter_supported():
 				self._item_group.find_by_key('greeter').enabled = False

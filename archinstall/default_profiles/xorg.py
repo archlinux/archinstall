@@ -14,7 +14,6 @@ class XorgProfile(Profile):
 		super().__init__(
 			name,
 			profile_type,
-			support_gfx_driver=True,
 			advanced=advanced,
 		)
 
