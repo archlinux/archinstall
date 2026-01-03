@@ -1400,7 +1400,6 @@ class Installer:
 		# Add custom UKI entries if enabled
 		if uki_enabled and SysInfo.has_uefi() and efi_partition:
 			custom_entries = self.target / 'etc/grub.d/09_custom'
-			# Initialize with proper shebang header and 3 comment lines
 			entries_content = (
 				'#!/bin/sh\n'
 				'exec tail -n +3 $0\n'
@@ -1409,28 +1408,22 @@ class Installer:
 				'# Custom entries can be added below.\n\n'
 			)
 
-			# Generate UKI menu entries for each kernel
 			uki_entries = []
 			for kernel in self.kernels:
-				uki_file = f'/EFI/Linux/arch-{kernel}.efi'
 				entry = textwrap.dedent(
 					f"""
 					menuentry "Arch Linux ({kernel}) UKI" {{
-						insmod fat
-						insmod chain
-						search --no-floppy --set=root --fs-uuid {efi_partition.uuid}
-						chainloader {uki_file}
+						uki /EFI/Linux/arch-{kernel}.efi
 					}}
 					"""
 				)
 				uki_entries.append(entry)
 
-			# Write UKI entries to 09_custom
 			entries_content += '\n'.join(uki_entries)
 			custom_entries.write_text(entries_content)
 			custom_entries.chmod(0o755)
 
-			# Disable 10_linux permanently to prevent broken entries on kernel updates
+			# Disable 10_linux to prevent broken entries on kernel updates
 			linux_script = self.target / 'etc/grub.d/10_linux'
 			if linux_script.exists():
 				linux_script.chmod(0o644)
