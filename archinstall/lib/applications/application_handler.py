@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from archinstall.applications.audio import AudioApp
 from archinstall.applications.bluetooth import BluetoothApp
+from archinstall.applications.firewall import FirewallApp
 from archinstall.applications.power_management import PowerManagementApp
 from archinstall.applications.print_service import PrintServiceApp
 from archinstall.lib.models import Audio
@@ -35,6 +36,12 @@ class ApplicationHandler:
 
 		if app_config.print_service_config and app_config.print_service_config.enabled:
 			PrintServiceApp().install(install_session)
+
+		if app_config.firewall_config:
+			FirewallApp().install(
+				install_session,
+				app_config.firewall_config,
+			)
 
 
 application_handler = ApplicationHandler()

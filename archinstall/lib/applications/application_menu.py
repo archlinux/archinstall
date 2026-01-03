@@ -7,6 +7,8 @@ from archinstall.lib.models.application import (
 	Audio,
 	AudioConfiguration,
 	BluetoothConfiguration,
+	Firewall,
+	FirewallConfiguration,
 	PowerManagement,
 	PowerManagementConfiguration,
 	PrintServiceConfiguration,
@@ -70,6 +72,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				enabled=SysInfo.has_battery(),
 				key='power_management_config',
 			),
+			MenuItem(
+				text=tr('Firewall'),
+				action=select_firewall,
+				preview_action=self._prev_firewall,
+				key='firewall_config',
+			),
 		]
 
 	def _prev_power_management(self, item: MenuItem) -> str | None:
@@ -100,6 +108,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 			output = f'{tr("Print service")}: '
 			output += tr('Enabled') if print_service_config.enabled else tr('Disabled')
 			return output
+		return None
+
+	def _prev_firewall(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			config: FirewallConfiguration = item.value
+			return f'{tr("Firewall")}: {config.firewall.value}'
 		return None
 
 
@@ -203,3 +217,26 @@ def select_audio(preset: AudioConfiguration | None = None) -> AudioConfiguration
 			return AudioConfiguration(audio=result.get_value())
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
+
+
+def select_firewall(preset: FirewallConfiguration | None = None) -> FirewallConfiguration | None:
+	group = MenuItemGroup.from_enum(Firewall)
+
+	if preset:
+		group.set_focus_by_value(preset.firewall)
+
+	result = SelectMenu[Firewall](
+		group,
+		allow_skip=True,
+		alignment=Alignment.CENTER,
+		allow_reset=True,
+		frame=FrameProperties.min(tr('Firewall')),
+	).run()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return FirewallConfiguration(firewall=result.get_value())
+		case ResultType.Reset:
+			return None
