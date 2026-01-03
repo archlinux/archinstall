@@ -21,7 +21,7 @@ class Bootloader(Enum):
 
 	def has_uki_support(self) -> bool:
 		match self:
-			case Bootloader.Efistub | Bootloader.Limine | Bootloader.Systemd | Bootloader.Refind:
+			case Bootloader.Efistub | Bootloader.Limine | Bootloader.Systemd | Bootloader.Refind | Bootloader.Grub:
 				return True
 			case _:
 				return False
@@ -82,7 +82,8 @@ class BootloaderConfiguration:
 	def get_default(cls) -> BootloaderConfiguration:
 		bootloader = Bootloader.get_default()
 		removable = SysInfo.has_uefi() and bootloader.has_removable_support()
-		return cls(bootloader=bootloader, uki=False, removable=removable)
+		uki = SysInfo.has_uefi() and bootloader.has_uki_support()
+		return cls(bootloader=bootloader, uki=uki, removable=removable)
 
 	def preview(self) -> str:
 		text = f'{tr("Bootloader")}: {self.bootloader.value}'
