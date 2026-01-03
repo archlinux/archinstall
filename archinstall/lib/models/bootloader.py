@@ -20,11 +20,7 @@ class Bootloader(Enum):
 	Refind = 'Refind'
 
 	def has_uki_support(self) -> bool:
-		match self:
-			case Bootloader.Efistub | Bootloader.Limine | Bootloader.Systemd | Bootloader.Refind | Bootloader.Grub:
-				return True
-			case _:
-				return False
+      return self != Bootloader.NO_BOOTLOADER
 
 	def has_removable_support(self) -> bool:
 		match self:
