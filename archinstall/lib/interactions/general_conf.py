@@ -195,25 +195,31 @@ def ask_additional_packages_to_install(
 	menu_group = MenuItemGroup(items, sort_items=True)
 	menu_group.set_selected_by_value(preset_packages)
 
-	# Helper to prefetch next packages in background
+	# Helper to prefetch packages in both directions in background
 	def _prefetch_packages(group: MenuItemGroup, current_item: MenuItem) -> None:
 		try:
 			filtered_items = group.items
 			current_idx = filtered_items.index(current_item)
 
-			# Collect next 50 packages
+			# Collect next 50 packages (forward)
 			prefetch = []
 			for i in range(current_idx + 1, min(current_idx + 51, len(filtered_items))):
 				next_pkg = filtered_items[i].value
 				if isinstance(next_pkg, AvailablePackage):
 					prefetch.append(next_pkg)
 
+			# Collect previous 50 packages (backward)
+			for i in range(max(0, current_idx - 50), current_idx):
+				prev_pkg = filtered_items[i].value
+				if isinstance(prev_pkg, AvailablePackage):
+					prefetch.append(prev_pkg)
+
 			if prefetch:
 				enrich_package_info(prefetch[0], prefetch=prefetch[1:])
 		except (ValueError, IndexError):
 			pass
 
-	# Preview function for packages - enriches current and prefetches next 50
+	# Preview function for packages - enriches current and prefetches ±50 packages
 	def preview_package(item: MenuItem) -> str:
 		pkg = item.value
 		if isinstance(pkg, AvailablePackage):
