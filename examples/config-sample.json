@@ -151,5 +151,6 @@
     "algorithm": "zstd"
   },
   "timezone": "UTC",
-  "version": "2.8.6"
+  "version": "2.8.6",
+  "bug_report_url": "https://github.com/archlinux/archinstall"
 }
