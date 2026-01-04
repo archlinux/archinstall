@@ -33,5 +33,5 @@ class XorgProfile(Profile):
 		]
 
 	@override
-	get_all_display_servers(self) -> set[DisplayServer]:
+	def get_all_display_servers(self) -> set[DisplayServer]:
 		return {DisplayServer.X11}
