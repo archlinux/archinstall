@@ -1927,6 +1927,16 @@ class Installer:
 			debug(f'Error setting user password: {err}')
 			return False
 
+	def lock_root_account(self) -> bool:
+		info('Locking root account')
+
+		try:
+			self.arch_chroot('passwd -l root')
+			return True
+		except SysCallError as err:
+			error(f'Failed to lock root account: {err}')
+			return False
+
 	def user_set_shell(self, user: str, shell: str) -> bool:
 		info(f'Setting shell for {user} to {shell}')
 

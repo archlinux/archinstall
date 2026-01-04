@@ -144,6 +144,9 @@ def perform_installation(mountpoint: Path) -> None:
 			root_user = User('root', config.auth_config.root_enc_password, False)
 			installation.set_user_password(root_user)
 
+			if config.auth_config.lock_root_account:
+				installation.lock_root_account()
+
 		if (profile_config := config.profile_config) and profile_config.profile:
 			profile_config.profile.post_install(installation)
 

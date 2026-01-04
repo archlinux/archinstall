@@ -13,6 +13,7 @@ class U2FLoginConfigSerialization(TypedDict):
 
 class AuthenticationSerialization(TypedDict):
 	u2f_config: NotRequired[U2FLoginConfigSerialization]
+	lock_root_account: NotRequired[bool]
 
 
 class U2FLoginMethod(Enum):
@@ -62,6 +63,7 @@ class AuthenticationConfiguration:
 	root_enc_password: Password | None = None
 	users: list[User] = field(default_factory=list)
 	u2f_config: U2FLoginConfiguration | None = None
+	lock_root_account: bool = False
 
 	@staticmethod
 	def parse_arg(args: dict[str, Any]) -> 'AuthenticationConfiguration':
@@ -73,6 +75,9 @@ class AuthenticationConfiguration:
 		if enc_password := args.get('root_enc_password'):
 			auth_config.root_enc_password = Password(enc_password=enc_password)
 
+		if lock_root := args.get('lock_root_account'):
+			auth_config.lock_root_account = lock_root
+
 		return auth_config
 
 	def json(self) -> AuthenticationSerialization:
@@ -80,5 +85,8 @@ class AuthenticationConfiguration:
 
 		if self.u2f_config:
 			config['u2f_config'] = self.u2f_config.json()
+
+		if self.lock_root_account:
+			config['lock_root_account'] = self.lock_root_account
 
 		return config

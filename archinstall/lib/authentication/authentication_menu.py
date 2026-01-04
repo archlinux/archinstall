@@ -56,6 +56,14 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 				preview_action=self._prev_u2f_login,
 				key='u2f_config',
 			),
+			MenuItem(
+				text=tr('Lock root account'),
+				action=lambda preset: select_lock_root_account(preset),
+				value=self._auth_config.lock_root_account,
+				preview_action=self._prev_lock_root,
+				dependencies=['root_enc_password', self._check_dep_sudo_users],
+				key='lock_root_account',
+			),
 		]
 
 	def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
@@ -82,6 +90,13 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 			return False
 		return True
 
+	def _check_dep_sudo_users(self) -> bool:
+		"""Check if at least one sudo user exists"""
+		users: list[User] | None = self._item_group.find_by_key('users').value
+		if users:
+			return any(user.sudo for user in users)
+		return False
+
 	def _prev_u2f_login(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			u2f_config: U2FLoginConfiguration = item.value
@@ -98,6 +113,11 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		if not devices:
 			return tr('No U2F devices found')
 
+		return None
+
+	def _prev_lock_root(self, item: MenuItem) -> str | None:
+		if item.value is True:
+			return tr('Root account will be locked after installation')
 		return None
 
 
@@ -157,3 +177,29 @@ def select_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | N
 			return None
 		case _:
 			raise ValueError('Unhandled result type')
+
+
+def select_lock_root_account(preset: bool) -> bool:
+	group = MenuItemGroup.yes_no()
+	group.focus_item = MenuItem.yes() if preset else MenuItem.no()
+
+	header = tr('Lock root account?')
+	subheader = tr('Sudo users can still edit /etc/shadow or use sudo directly."')
+
+	result = SelectMenu[bool](
+		group,
+		header=header,
+		sub_header=subheader,
+		alignment=Alignment.CENTER,
+		columns=2,
+		orientation=Orientation.HORIZONTAL,
+		allow_skip=True,
+	).run()
+
+	match result.type_:
+		case ResultType.Selection:
+			return result.item() == MenuItem.yes()
+		case ResultType.Skip:
+			return preset
+		case _:
+			return False
