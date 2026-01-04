@@ -58,7 +58,7 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 			),
 			MenuItem(
 				text=tr('Lock root account'),
-				action=lambda preset: select_lock_root_account(preset),
+				action=select_lock_root_account,
 				value=self._auth_config.lock_root_account,
 				preview_action=self._prev_lock_root,
 				dependencies=['root_enc_password', self._check_dep_sudo_users],
