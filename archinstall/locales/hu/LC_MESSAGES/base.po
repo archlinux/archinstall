@@ -101,7 +101,7 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Adja meg a partíció fájlrendszertípusát"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Adja meg a kezdési helyet (a Parteddel kompatibilis egységekben: s, GB, %, stb.; alapértelmezett: {}): "
+msgstr "Adja meg a kezdési helyet (a Parteddal kompatibilis egységekben: s, GB, %, stb.; alapértelmezett: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr "Adja meg a befejezési helyet (felosztott egységekben: s, GB, %, stb.; például: {}): "
@@ -328,7 +328,7 @@ msgid "Assign mount-point for a partition"
 msgstr "Csatolási pont hozzárendelése egy partícióhoz"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "Egy partíció megjelölése/elvetése, mint formázandó (adatok törlése)"
+msgstr "Egy partíció megjelölése/elvetése mint formázandó (adatok törlése)"
 
 msgid "Mark/Unmark a partition as encrypted"
 msgstr "Egy partíció megjelölése/elvetése mint titkosított"
@@ -607,10 +607,10 @@ msgid "The selected drives do not have the minimum capacity required for an auto
 msgstr "A kiválasztott meghajtók nem rendelkeznek az automatikus javaslathoz szükséges minimális kapacitással.\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr "A „/home” partíció minimális kapacitása: {}GB\n"
+msgstr "A „/home” partíció minimális kapacitása: {} GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr "Az Arch Linux-partíció minimális kapacitása: {}GB"
+msgstr "Az Arch Linux-partíció minimális kapacitása: {} GB"
 
 msgid "Continue"
 msgstr "Folytatás"
@@ -874,11 +874,11 @@ msgstr "Adja meg a csatolt eszközök gyökérkönyvtárát: "
 
 #, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "A „/home” partíció minimális kapacitása: {}GiB\n"
+msgstr "A „/home” partíció minimális kapacitása: {} GiB\n"
 
 #, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "Az Arch Linux-partíció minimális kapacitása: {}GiB"
+msgstr "Az Arch Linux-partíció minimális kapacitása: {} GiB"
 
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
 msgstr "Ez az előre programozott profiles_bck lista, ami megkönnyítheti az olyan dolgok telepítését, mint például az asztali környezetekét"
@@ -1449,7 +1449,7 @@ msgid "Kernel"
 msgstr "Kernel"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr "A rendszer nem észlelt UEFI-módot, ezért egyes opciók le vannak tiltva"
+msgstr "A rendszer nem észlelt UEFI-módot, ezért egyes beállítások le vannak tiltva"
 
 msgid "Info"
 msgstr "Információ"
