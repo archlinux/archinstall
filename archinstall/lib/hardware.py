@@ -84,7 +84,6 @@ class GfxDriver(Enum):
 		return text
 
 	def gfx_packages(self, servers: set[DisplayServer] | None = None) -> list[GfxPackage]:
-
 		packages = []
 
 		if servers is None or DisplayServer.X11 in servers:
