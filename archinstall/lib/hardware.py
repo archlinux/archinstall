@@ -2,16 +2,14 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING
+
+from archinstall.default_profiles.profile import DisplayServer
 
 from .exceptions import SysCallError
 from .general import SysCommand
 from .networking import enrich_iface_types, list_interfaces
 from .output import debug
 from .translationhandler import tr
-
-if TYPE_CHECKING:
-	from archinstall.default_profiles.profile import DisplayServer
 
 
 class CpuVendor(Enum):
@@ -76,7 +74,7 @@ class GfxDriver(Enum):
 			case _:
 				return False
 
-	def packages_text(self, servers: set['DisplayServer'] | None = None) -> str:
+	def packages_text(self, servers: set[DisplayServer] | None = None) -> str:
 		pkg_names = [p.value for p in self.gfx_packages(servers)]
 		text = tr('Installed packages') + ':\n'
 
@@ -88,18 +86,11 @@ class GfxDriver(Enum):
 	def gfx_packages(self, servers: set['DisplayServer'] | None = None) -> list[GfxPackage]:
 		from archinstall.default_profiles.profile import DisplayServer
 
-		# empty list
 		packages = []
 
-		# Only add X11 packages if required by said profile
-		if servers is None:
-			# Default behavior when no profile is passed: include X11 for bw-compat
+		if servers is None or DisplayServer.X11 in servers:
 			packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
-		elif servers:
-			# Profile provided display server requirements - respect them
-			if DisplayServer.X11 in servers:
-				packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
-		# else: servers is empty set handled by profile itself
+		# else: servers is empty set or doesn't contain X11
 
 		match self:
 			case GfxDriver.AllOpenSource:

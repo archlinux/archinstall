@@ -71,5 +71,5 @@ class LabwcProfile(XorgProfile):
 		return None
 
 	@override
-	def display_servers(self) -> set[DisplayServer]:
+	get_all_display_servers(self) -> set[DisplayServer]:
 		return {DisplayServer.Wayland}

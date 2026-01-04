@@ -172,7 +172,7 @@ class Profile:
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
-	def display_servers(self) -> set[DisplayServer]:
+	get_all_display_servers(self) -> set[DisplayServer]:
 		"""
 		Returns the set of display servers required by this profile.
 		By default, returns an empty set (no specific requirements).
