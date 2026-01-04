@@ -1,5 +1,8 @@
 {
   "archinstall-language": "English",
+  "auth_config": {
+    "lock_root_account": false
+  },
   "audio_config": {
     "audio": "pipewire"
   },
