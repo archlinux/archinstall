@@ -183,13 +183,11 @@ def select_lock_root_account(preset: bool) -> bool:
 	group = MenuItemGroup.yes_no()
 	group.focus_item = MenuItem.yes() if preset else MenuItem.no()
 
-	header = tr('Lock root account?')
-	subheader = tr('Sudo users can still edit /etc/shadow or use sudo directly."')
+	header = tr('Lock root account?\n') + tr('Sudo users can still edit /etc/shadow or use sudo directly.\n')
 
 	result = SelectMenu[bool](
 		group,
 		header=header,
-		sub_header=subheader,
 		alignment=Alignment.CENTER,
 		columns=2,
 		orientation=Orientation.HORIZONTAL,
