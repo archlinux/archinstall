@@ -235,7 +235,7 @@ class ProfileHandler:
 			install_session.add_additional_packages(headers)
 
 		# Determine display server requirements from profile
-		display_servers = profile.display_servers() if profile else None
+		display_servers = profile.get_all_display_servers() if profile else None
 		driver_pkgs = driver.gfx_packages(display_servers)
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)

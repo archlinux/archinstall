@@ -48,7 +48,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				action=self._select_gfx_driver,
 				value=self._profile_config.gfx_driver if self._profile_config.profile else None,
 				preview_action=self._prev_gfx,
-				enabled=bool(self._profile_config.profile and self._profile_config.profile.display_servers()),
+				enabled=bool(self._profile_config.profile and self._profile_config.profile.get_all_display_servers()),
 				dependencies=['profile'],
 				key='gfx_driver',
 			),
@@ -72,7 +72,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		profile = select_profile(preset)
 
 		if profile is not None:
-			if profile.display_servers():
+			if profile.get_all_display_servers():
 				self._item_group.find_by_key('gfx_driver').enabled = True
 				self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
 			else:
@@ -104,7 +104,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		if item.value:
 			driver = item.get_value().value
 			profile: Profile | None = self._item_group.find_by_key('profile').value
-			servers = profile.display_servers() if profile else None
+			servers = profile.get_all_display_servers() if profile else None
 			packages = item.get_value().packages_text(servers)
 			return f'Driver: {driver}\n{packages}'
 		return None

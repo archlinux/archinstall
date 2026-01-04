@@ -57,7 +57,7 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 	if not options:
 		options = [driver for driver in GfxDriver]
 
-	servers = profile.display_servers() if profile else None
+	servers = profile.get_all_display_servers() if profile else None
 	items = [MenuItem(o.value, value=o, preview_action=lambda x: x.value.packages_text(servers)) for o in options]
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_default_by_value(GfxDriver.AllOpenSource)

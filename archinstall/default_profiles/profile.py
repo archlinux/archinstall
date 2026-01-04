@@ -182,7 +182,7 @@ class Profile:
 			# Aggregate requirements from sub-profiles
 			servers = set()
 			for profile in self.current_selection:
-				servers.update(profile.display_servers())
+				servers.update(profile.get_all_display_servers())
 			return servers
 		return set()
 
