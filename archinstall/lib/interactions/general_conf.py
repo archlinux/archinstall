@@ -275,6 +275,7 @@ def ask_post_installation(elapsed_time: float | None = None) -> PostInstallation
 		seconds = int(elapsed_time % 60)
 		header += f' in {minutes}m{seconds}s' + '\n'
 	header += tr('What would you like to do next?') + '\n'
+	header += tr('Usually reboot, change boot priority in motherboard settings.') + '\n'
 
 	items = [MenuItem(action.value, value=action) for action in PostInstallationAction]
 	group = MenuItemGroup(items)
