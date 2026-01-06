@@ -19,8 +19,8 @@ from ..translationhandler import Language
 
 
 class PostInstallationAction(Enum):
+	REBOOT = tr('Reboot system (and remove install media)')
 	EXIT = tr('Exit archinstall')
-	REBOOT = tr('Reboot system')
 	CHROOT = tr('chroot into installation for post-installation configurations')
 
 
@@ -275,7 +275,6 @@ def ask_post_installation(elapsed_time: float | None = None) -> PostInstallation
 		seconds = int(elapsed_time % 60)
 		header += f' in {minutes}m{seconds}s' + '\n'
 	header += tr('What would you like to do next?') + '\n'
-	header += tr('\nUsually reboot, remove install medium. \nAnd change boot priority in BIOS settings.') + '\n'
 
 	items = [MenuItem(action.value, value=action) for action in PostInstallationAction]
 	group = MenuItemGroup(items)
