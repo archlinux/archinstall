@@ -174,7 +174,7 @@ class Profile:
 
 	def display_servers(self) -> set[DisplayServer]:
 		from ..lib.profile.profiles_handler import profile_handler
-		
+
 		return profile_handler.display_servers(self)
 
 	def preview_text(self) -> str:
