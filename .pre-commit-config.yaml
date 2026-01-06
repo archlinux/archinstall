@@ -41,7 +41,6 @@ repos:
       additional_dependencies:
         - pydantic
         - pytest
-        - pytest-mock
         - cryptography
         - textual
   - repo: https://github.com/pycqa/pylint

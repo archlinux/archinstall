@@ -22,7 +22,6 @@ dependencies = [
     "pydantic==2.12.5",
     "cryptography>=45.0.7",
     "textual>=5.3.0",
-    "pytest-mock>=3.15.1",
 ]
 
 [project.urls]
