@@ -128,9 +128,12 @@ ignore_missing_imports = true
 targets = ["archinstall"]
 exclude = ["/tests"]
 
-[tool.pytest.ini_options]
+[tool.pytest]
 pythonpath = ["."]
-addopts = "-s"
+addopts = [
+    "-s",
+    "--strict",
+]
 testpaths = ["tests"]
 
 [tool.pylint.main]
