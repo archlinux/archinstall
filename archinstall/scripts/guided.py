@@ -174,10 +174,10 @@ def perform_installation(mountpoint: Path) -> None:
 				action = ask_post_installation(elapsed_time)
 
 			match action:
-				case PostInstallationAction.REBOOT:
-					os.system('reboot')
 				case PostInstallationAction.EXIT:
 					pass
+				case PostInstallationAction.REBOOT:
+					os.system('reboot')
 				case PostInstallationAction.CHROOT:
 					try:
 						installation.drop_to_shell()
