@@ -3,6 +3,7 @@ from __future__ import annotations
 from enum import Enum, auto
 from typing import TYPE_CHECKING
 
+from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
@@ -172,19 +173,8 @@ class Profile:
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
-	def get_all_display_servers(self) -> set[DisplayServer]:
-		"""
-		Returns the set of display servers required by this profile.
-		By default, returns an empty set (no specific requirements).
-		Profiles should override this to specify their requirements.
-		"""
-		if self.current_selection:
-			# Aggregate requirements from sub-profiles
-			servers = set()
-			for profile in self.current_selection:
-				servers.update(profile.get_all_display_servers())
-			return servers
-		return set()
+	def display_servers(self) -> set[DisplayServer]:
+		return profile_handler.display_servers(self)
 
 	def preview_text(self) -> str:
 		"""

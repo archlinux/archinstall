@@ -22,5 +22,5 @@ class GnomeProfile(XorgProfile):
 		return GreeterType.Gdm
 
 	@override
-	def get_all_display_servers(self) -> set[DisplayServer]:
+	def display_servers(self) -> set[DisplayServer]:
 		return {DisplayServer.Wayland}

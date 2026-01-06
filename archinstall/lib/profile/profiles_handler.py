@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from archinstall.lib.translationhandler import tr
 
-from ...default_profiles.profile import GreeterType, Profile
+from ...default_profiles.profile import DisplayServer, GreeterType, Profile
 from ..hardware import GfxDriver
 from ..models.profile import ProfileConfiguration
 from ..networking import fetch_data_from_url, list_interfaces
@@ -235,7 +235,7 @@ class ProfileHandler:
 			install_session.add_additional_packages(headers)
 
 		# Determine display server requirements from profile
-		display_servers = profile.get_all_display_servers() if profile else None
+		display_servers = profile.display_servers() if profile else None
 		driver_pkgs = driver.gfx_packages(display_servers)
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
@@ -366,6 +366,20 @@ class ProfileHandler:
 		for profile in self.get_top_level_profiles():
 			if profile.name not in excluded_profiles:
 				profile.reset()
+
+	def display_servers(self, profile: Profile) -> set[DisplayServer]:
+		"""
+		Returns the set of display servers required by this profile.
+		By default, returns an empty set (no specific requirements).
+		Profiles should override this to specify their requirements.
+		"""
+		if profile.current_selection:
+			# Aggregate requirements from sub-profiles
+			servers = set()
+			for sub_profile in profile.current_selection:
+				servers.update(sub_profile.display_servers())
+			return servers
+		return set()
 
 
 profile_handler = ProfileHandler()
