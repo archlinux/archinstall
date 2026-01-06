@@ -69,7 +69,7 @@ class BluetoothConfiguration:
 		return {'enabled': self.enabled}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'BluetoothConfiguration':
+	def parse_arg(arg: BluetoothConfigSerialization) -> 'BluetoothConfiguration':
 		return BluetoothConfiguration(arg['enabled'])
 
 
@@ -83,7 +83,7 @@ class PowerManagementConfiguration:
 		}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'PowerManagementConfiguration':
+	def parse_arg(arg: PowerManagementConfigSerialization) -> 'PowerManagementConfiguration':
 		return PowerManagementConfiguration(
 			PowerManagement(arg['power_management']),
 		)
@@ -97,7 +97,7 @@ class PrintServiceConfiguration:
 		return {'enabled': self.enabled}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'PrintServiceConfiguration':
+	def parse_arg(arg: PrintServiceConfigSerialization) -> 'PrintServiceConfiguration':
 		return PrintServiceConfiguration(arg['enabled'])
 
 
