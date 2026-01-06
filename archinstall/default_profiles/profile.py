@@ -3,7 +3,6 @@ from __future__ import annotations
 from enum import Enum, auto
 from typing import TYPE_CHECKING
 
-from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
@@ -174,6 +173,7 @@ class Profile:
 		return self._support_greeter
 
 	def display_servers(self) -> set[DisplayServer]:
+		from ..lib.profile.profiles_handler import profile_handler
 		return profile_handler.display_servers(self)
 
 	def preview_text(self) -> str:
