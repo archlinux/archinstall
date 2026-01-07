@@ -24,19 +24,19 @@ msgid "And one more time for verification: "
 msgstr "És még egyszer az ellenőrzéshez: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "Biztosan cserehelyet akar használni a zRam-on?"
+msgstr "Szeretne zRam alapú cserehelyet használni?"
 
 msgid "Desired hostname for the installation: "
 msgstr "Gép neve a telepítéshez: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "A rendszergazda felhasználóneve a számítógép használatához szükséges „sudo” jogosultságokkal: "
+msgstr "A sudo-jogosultságokkal rendelkező rendszergazda felhasználóneve: "
 
 msgid "Any additional users to install (leave blank for no users): "
 msgstr "További felhasználók hozzáadása a telepítéshez (hagyja üresen, ha nem akar több felhasználót hozzáadni): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Ez a felhasználó rendszergazda (sudoer) legyen?"
+msgstr "Rendelkezzen ez a felhasználó rendszergazdai (sudo) jogosultságokkal?"
 
 msgid "Select a timezone"
 msgstr "Időzóna kiválasztása"
@@ -51,10 +51,10 @@ msgid "Choose an audio server"
 msgstr "Válasszon ki egy hangkiszolgálót"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok lesznek telepítve."
+msgstr "Csak az olyan csomagok, mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok lesznek telepítve."
 
 msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr ""
+msgstr "Megjegyzés: a base-devel már nem települ alapértelmezettként. Ha szüksége van az összeállítási eszközökre, akkor itt adhatja hozzá a telepítéshez."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Ha olyan böngészőre vágyik, mint például a Firefox vagy a Chromium, akkor azt a következő promptban adhatja meg."
@@ -76,7 +76,7 @@ msgstr "Válassza ki a konfigurálandó módot a következőhöz: „{}”, vagy
 
 #, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Adja meg az IP-címét és az alhálózatát (például: 192.168.0.5/24) a következőhöz: {}: "
+msgstr "Adja meg a(z) {} IP-címét és alhálózatát (például: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr "Adja meg az átjáró (elosztó) IP-címét (hagyja üresen, ha nincs ilyen): "
@@ -101,10 +101,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Adja meg a partíció fájlrendszertípusát"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Adja meg a kezdési helyet (felosztott egységekben: s, GB, %, stb. ; alapértelmezett: {}): "
+msgstr "Adja meg a kezdési helyet (a Parteddal kompatibilis egységekben: s, GB, %, stb.; alapértelmezett: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Adja meg a befejezési helyet (felosztott egységekben: s, GB, %, stb. ; például: {}): "
+msgstr "Adja meg a befejezési helyet (felosztott egységekben: s, GB, %, stb.; például: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "A(z) {} sorban álló partíciókat tartalmaz, ez eltávolítja azokat, biztos benne?"
@@ -197,10 +197,10 @@ msgid "Select one or more hard drives to use and configure"
 msgstr "Válasszon ki egy vagy több meghajtót a használathoz és a konfiguráláshoz"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Az AMD hardverrel való legjobb kompatibilitás érdekében érdemes lehet az összes nyílt forráskódú- vagy az AMD / ATI beállítást használni."
+msgstr "Az AMD hardverrel való legjobb kompatibilitás érdekében érdemes lehet az összes nyílt forráskódú vagy az AMD / ATI beállítást használni."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Az Intel hardverrel való legjobb kompatibilitás érdekében érdemes lehet az összes nyílt forráskódú- vagy az Intel beállítást használni.\n"
+msgstr "Az Intel hardverrel való legjobb kompatibilitás érdekében érdemes lehet az összes nyílt forráskódú vagy az Intel beállítást használni.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
 msgstr "Az Nvidia hardverrel való legjobb kompatibilitás érdekében érdemes lehet az Nvidia saját fejlesztésű, zárt illesztőprogramját használni.\n"
@@ -476,7 +476,7 @@ msgstr ""
 "Új felhasználó meghatározása\n"
 
 msgid "User Name : "
-msgstr "Felhasználónév : "
+msgstr "Felhasználónév: "
 
 msgid "Should {} be a superuser (sudoer)?"
 msgstr "{} rendszergazda (sudoer) legyen?"
@@ -551,10 +551,10 @@ msgid "Manage ordinary user accounts: "
 msgstr "Normál felhasználói fiókok kezelése: "
 
 msgid " Subvolume :{:16}"
-msgstr " Alkötet :{:16}"
+msgstr " Alkötet: {:16}"
 
 msgid " mounted at {:16}"
-msgstr " csatolva a következőhöz: {:16}"
+msgstr " csatolási pont: {:16}"
 
 msgid " with option {}"
 msgstr " a következő beállítással: {}"
@@ -579,10 +579,10 @@ msgid "Save"
 msgstr "Mentés"
 
 msgid "Subvolume name :"
-msgstr "Alkötet neve :"
+msgstr "Alkötet neve:"
 
 msgid "Select a mount point :"
-msgstr "Válasszon ki egy csatolási pontot :"
+msgstr "Válasszon ki egy csatolási pontot:"
 
 msgid "Select the desired subvolume options "
 msgstr "Válassza ki az alkötetbeállításokat "
@@ -670,7 +670,7 @@ msgid "Choose which servers to install, if none then a minimal installation will
 msgstr "Válassza ki, hogy mely kiszolgálók legyenek telepítve, ha egyiket sem választja ki, akkor minimális telepítés történik"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr "Telepít egy minimális rendszert, valamint a xorg és a grafikus illesztőprogramokat."
+msgstr "Telepít egy minimális rendszert, valamint az xorg-ot és a grafikus illesztőprogramokat."
 
 msgid "Press Enter to continue."
 msgstr "A folytatáshoz nyomja meg az „Entert”."
@@ -810,13 +810,13 @@ msgstr ""
 "Megjegyzés:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr " - Maximális érték   :  {} ({} párhuzamos letöltést tesz lehetővé és egyszerre {} letöltést enged meg)"
+msgstr " - Maximális érték: {} ({} párhuzamos letöltést tesz lehetővé egyszerre {} szálon)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Minimális érték   : 1 (1 párhuzamos letöltést tesz lehetővé és egyszerre 2 letöltést enged meg)"
+msgstr " - Minimális érték: 1 (1 párhuzamos letöltést tesz lehetővé, egyszerre 2 szálon)"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr " - Letiltás/alapértelmezett: 0 (Kikapcsolja a párhuzamos letöltést, egyszerre csak 1 letöltést tesz lehetővé)"
+msgstr " - Letiltás/alapértelmezett: 0 (Kikapcsolja a párhuzamos letöltést, egyszerre csak 1 szálon teszi lehetővé a letöltést)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
@@ -832,7 +832,7 @@ msgid "CTRL+C to reset"
 msgstr "CTRL+C → a visszaállításhoz"
 
 msgid "TAB to select"
-msgstr "TAB → a listaelem(ek) kiválasztásához"
+msgstr "TAB → a kiválasztáshoz"
 
 msgid "[Default value: 0] > "
 msgstr "[Alapértelmezett érték: 0] > "
@@ -874,11 +874,11 @@ msgstr "Adja meg a csatolt eszközök gyökérkönyvtárát: "
 
 #, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "A „/home” partíció minimális kapacitása: {} GB\n"
+msgstr "A „/home” partíció minimális kapacitása: {} GiB\n"
 
 #, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "Az Arch Linux partíció minimális kapacitása: {} GB"
+msgstr "Az Arch Linux-partíció minimális kapacitása: {} GiB"
 
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
 msgstr "Ez az előre programozott profiles_bck lista, ami megkönnyítheti az olyan dolgok telepítését, mint például az asztali környezetekét"
@@ -1166,7 +1166,7 @@ msgid "Mirror regions"
 msgstr "Tükörrégiók"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Maximális érték   : {} ( {} párhuzamos letöltést tesz lehetővé és egyszerre {max_downloads+1} letöltést enged meg )"
+msgstr " - Maximális érték: {} ({} párhuzamos letöltést tesz lehetővé, egyszerre {max_downloads+1} szálon)"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Érvénytelen bemenet! Próbálja újra egy érvényes bemenettel [1-től {}-ig, vagy 0-t a letiltáshoz]"
@@ -1225,7 +1225,7 @@ msgstr ""
 
 #, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Maximális ajánlott érték : {} ( Egyszerre {} párhuzamos letöltést tesz lehetővé )"
+msgstr " - Maximális ajánlott érték: {} ({} párhuzamos letöltést tesz lehetővé egyszerre)"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
 msgstr " - Letiltás/Alapértelmezett: 0 (Kikapcsolja a párhuzamos letöltést, egyszerre csak 1 letöltést tesz lehetővé)\n"
@@ -1403,10 +1403,10 @@ msgid "Write additional packages to install (space separated, leave blank to ski
 msgstr "Írjon be további csomagneveket a telepítéshez (szóközzel elválasztva; hagyja üresen a kihagyáshoz)"
 
 msgid "Invalid download number"
-msgstr "Érvénytelen letöltésszám"
+msgstr "Érvénytelen érték lett megadva a párhuzamos letöltések számához"
 
 msgid "Number downloads"
-msgstr "Letöltésszám"
+msgstr "Párhuzamos letöltések száma"
 
 msgid "The username you entered is invalid"
 msgstr "A megadott felhasználónév érvénytelen"
@@ -1449,7 +1449,7 @@ msgid "Kernel"
 msgstr "Kernel"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr "Az UEFI nem észlelhető, és egyes beállítások le vannak tiltva"
+msgstr "A rendszer nem észlelt UEFI-módot, ezért egyes beállítások le vannak tiltva"
 
 msgid "Info"
 msgstr "Információ"
@@ -1519,7 +1519,7 @@ msgid "NTP"
 msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr "Swap a zram fölött"
+msgstr "Swap a zRam fölött"
 
 msgid "Name"
 msgstr "Név"
@@ -1737,15 +1737,13 @@ msgid "Would you like to configure Bluetooth?"
 msgstr "Szeretné konfigurálni a Bluetooth-t?"
 
 msgid "Print service"
-msgstr ""
+msgstr "Nyomtatási szolgáltatás"
 
-#, fuzzy
 msgid "Would you like to configure the print service?"
-msgstr "Szeretné konfigurálni a Bluetooth-t?"
+msgstr "Szeretné konfigurálni a nyomtatási szolgáltatást?"
 
-#, fuzzy
 msgid "Power management"
-msgstr "Partíciókezelés: {}"
+msgstr "Energiagazdálkodás"
 
 msgid "Authentication"
 msgstr "Hitelesítés"
@@ -1852,38 +1850,32 @@ msgstr "Olyan rendszereknél, ahol azt szeretné, hogy a lemez bármely számít
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "Olyan firmware-eknél, amelyek nem támogatják megfelelően az NVRAM-rendszerindítási bejegyzéseket."
 
-#, fuzzy
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr "Telepítés helye: /EFI/BOOT/ (cserélhető adathordozó)"
+msgstr "Telepítés helye: /EFI/BOOT/ (cserélhető adathordozó, biztonságos alapértelmezett)"
 
-#, fuzzy
 msgid "Will install to custom location with NVRAM entry"
-msgstr "Telepítés szabványos helyre, NVRAM-bejegyzéssel"
+msgstr "Telepítés egyénileg kiválasztott helyre, NVRAM-bejegyzéssel"
 
-#, fuzzy
 msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr "Olyan firmware-eknél, amelyek nem támogatják megfelelően az NVRAM-rendszerindítási bejegyzéseket."
+msgstr "Olyan firmware, amely nem támogatja megfelelően az NVRAM-rendszerindító bejegyzéseket, mint a legtöbb MSI-alaplap,"
 
 msgid "most Apple Macs, many laptops..."
-msgstr ""
+msgstr "a legtöbb Apple Mac és számos egyéb laptop…"
 
-#, fuzzy
 msgid "Language"
-msgstr "Helyi nyelv"
+msgstr "Nyelv"
 
 msgid "Compression algorithm"
-msgstr ""
+msgstr "Tömörítési algoritmus"
 
-#, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Csak az olyan csomagok mint a base, base-devel, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok lesznek telepítve."
+msgstr "Csak az olyan csomagok, mint a base, sudo, linux, linux-firmware, efibootmgr és a nem kötelező profilcsomagok lesznek telepítve."
 
-#, fuzzy
 msgid "Select zram compression algorithm:"
-msgstr "Válasszon ki egy csatolási pontot :"
+msgstr "Válassza ki a zRam tömörítési algoritmust:"
 
 msgid "Use Network Manager (default backend)"
-msgstr ""
+msgstr "Hálózatkezelő használata (alapértelmezett háttérprogram)"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr ""
+msgstr "Hálózatkezelő használata (iwd-háttérprogram)"

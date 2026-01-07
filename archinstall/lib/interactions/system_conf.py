@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from archinstall.default_profiles.profile import Profile
+from typing import assert_never
+
 from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
@@ -128,12 +130,15 @@ def ask_for_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) ->
 				allow_skip=True,
 			).run()
 
-			algo: ZramAlgorithm
 			match algo_result.type_:
 				case ResultType.Skip:
 					algo = preset.algorithm
 				case ResultType.Selection:
 					algo = algo_result.get_value()
+				case ResultType.Reset:
+					raise ValueError('Unhandled result type')
+				case _:
+					assert_never(algo_result.type_)
 
 			return ZramConfiguration(enabled=True, algorithm=algo)
 		case ResultType.Reset:

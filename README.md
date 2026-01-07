@@ -35,7 +35,8 @@ archinstall
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
 
 ```shell
-    # cd archinstall-git
+    # git clone https://github.com/archlinux/archinstall
+    # cd archinstall
     # python -m archinstall $@
 ```
 

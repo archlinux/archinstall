@@ -30,6 +30,14 @@ class PrintServiceConfigSerialization(TypedDict):
 	enabled: bool
 
 
+class Firewall(StrEnum):
+	UFW = 'ufw'
+
+
+class FirewallConfigSerialization(TypedDict):
+	firewall: str
+
+
 class ZramAlgorithm(StrEnum):
 	ZSTD = 'zstd'
 	LZO_RLE = 'lzo-rle'
@@ -43,6 +51,7 @@ class ApplicationSerialization(TypedDict):
 	audio_config: NotRequired[AudioConfigSerialization]
 	power_management_config: NotRequired[PowerManagementConfigSerialization]
 	print_service_config: NotRequired[PrintServiceConfigSerialization]
+	firewall_config: NotRequired[FirewallConfigSerialization]
 
 
 @dataclass
@@ -69,7 +78,7 @@ class BluetoothConfiguration:
 		return {'enabled': self.enabled}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'BluetoothConfiguration':
+	def parse_arg(arg: BluetoothConfigSerialization) -> 'BluetoothConfiguration':
 		return BluetoothConfiguration(arg['enabled'])
 
 
@@ -83,7 +92,7 @@ class PowerManagementConfiguration:
 		}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'PowerManagementConfiguration':
+	def parse_arg(arg: PowerManagementConfigSerialization) -> 'PowerManagementConfiguration':
 		return PowerManagementConfiguration(
 			PowerManagement(arg['power_management']),
 		)
@@ -97,8 +106,24 @@ class PrintServiceConfiguration:
 		return {'enabled': self.enabled}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'PrintServiceConfiguration':
+	def parse_arg(arg: PrintServiceConfigSerialization) -> 'PrintServiceConfiguration':
 		return PrintServiceConfiguration(arg['enabled'])
+
+
+@dataclass
+class FirewallConfiguration:
+	firewall: Firewall
+
+	def json(self) -> FirewallConfigSerialization:
+		return {
+			'firewall': self.firewall.value,
+		}
+
+	@staticmethod
+	def parse_arg(arg: dict[str, Any]) -> 'FirewallConfiguration':
+		return FirewallConfiguration(
+			Firewall(arg['firewall']),
+		)
 
 
 @dataclass(frozen=True)
@@ -122,6 +147,7 @@ class ApplicationConfiguration:
 	audio_config: AudioConfiguration | None = None
 	power_management_config: PowerManagementConfiguration | None = None
 	print_service_config: PrintServiceConfiguration | None = None
+	firewall_config: FirewallConfiguration | None = None
 
 	@staticmethod
 	def parse_arg(
@@ -146,6 +172,9 @@ class ApplicationConfiguration:
 		if args and (print_service_config := args.get('print_service_config')) is not None:
 			app_config.print_service_config = PrintServiceConfiguration.parse_arg(print_service_config)
 
+		if args and (firewall_config := args.get('firewall_config')) is not None:
+			app_config.firewall_config = FirewallConfiguration.parse_arg(firewall_config)
+
 		return app_config
 
 	def json(self) -> ApplicationSerialization:
@@ -162,5 +191,8 @@ class ApplicationConfiguration:
 
 		if self.print_service_config:
 			config['print_service_config'] = self.print_service_config.json()
+
+		if self.firewall_config:
+			config['firewall_config'] = self.firewall_config.json()
 
 		return config
