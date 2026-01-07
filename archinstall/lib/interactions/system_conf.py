@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from archinstall.default_profiles.profile import Profile
 from typing import assert_never
 
+from archinstall.default_profiles.profile import Profile
 from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
