@@ -1,3 +1,4 @@
+import atexit
 import re
 from pathlib import Path
 from shutil import copy2
@@ -47,10 +48,12 @@ class PacmanConfig:
 				if row + 1 < len(content) and content[row + 1].lstrip().startswith('#'):
 					content[row + 1] = re.sub(r'^#\s*', '', content[row + 1])
 
-		# Modify file only in ISO env
+		# Apply temp using backup then revert on exit handler
 		if running_from_host():
-			pass
-		else:
+			temp_copy = self._config_path.with_suffix('.bak')
+			copy2(self._config_path, temp_copy)
+			atexit.register(lambda: copy2(temp_copy, self._config_path))
+		else:  # Apply directly
 			with open(self._config_path, 'w') as f:
 				f.writelines(content)
 
