@@ -140,6 +140,7 @@ testpaths = ["tests"]
 ignore-paths = [
     "^build/",
     "^docs/",
+    "^node_modules/",
 ]
 persistent = false
 py-version = "3.12"
