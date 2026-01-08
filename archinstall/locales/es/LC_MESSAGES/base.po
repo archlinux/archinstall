@@ -53,6 +53,9 @@ msgstr "Elija un servidor de audio"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Nota: base-devel ya no viene instalado por defecto. Agreguelo aquí si necesita herramientas de build."
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si desea un navegador web, como firefox o chromium, puede especificarlo en el siguiente mensaje."
 
@@ -1736,6 +1739,15 @@ msgstr "Bluetooth"
 msgid "Would you like to configure Bluetooth?"
 msgstr "¿Desea configurar Bluetooth?"
 
+msgid "Print service"
+msgstr "Servicio de impresión"
+
+msgid "Would you like to configure the print service?"
+msgstr "¿Desea configurar el servicio de impresión?"
+
+msgid "Power management"
+msgstr "Administración de energía"
+
 msgid "Authentication"
 msgstr "Autenticación"
 
@@ -1809,10 +1821,67 @@ msgid "Failed setting up wifi"
 msgstr "Error configurando wifi"
 
 msgid "Enter wifi password"
-msgstr "Ingrese contraseña de wifi: "
+msgstr "Ingrese contraseña de wifi"
 
 msgid "Ok"
 msgstr "Ok"
+
+msgid "Removable"
+msgstr "Desmontable"
+
+msgid "Install to removable location"
+msgstr "Instalar a ubicación desmontable"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "Se instalará en /EFI/BOOT/ (ubicación desmontable)"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "Se instalará en ubicación estandar con entrada NVRAM"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "¿Desea instalar el gestor de arranque en la ubicación predeterminada de búsqueda de medios desmontables?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Esto instala el gestor de arranque en /EFI/BOOT/BOOTX64.EFI (o similar) lo cual es útil para:"
+
+msgid "USB drives or other portable external media."
+msgstr "Disco USB u otros medios portátiles externos."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Sistemas donde quiere que el disco sea arrancable en cualquier computadora."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Firmware que no soporta entradas arrancables NVRAM."
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Instalará a /EFI/BOOT/ (ubicación desmontable, segura por defecto)" 
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Instalará a ubicación personalizada con entrada NVRAM"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmware que no soporta entradas arrancables NVRAM como la mayoría de las placas MSI,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "la mayoría de las Macs Apple, muchas laptops..."
+
+msgid "Language"
+msgstr "Idioma local"
+
+msgid "Compression algorithm"
+msgstr "Algoritmo de compresión"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
+
+msgid "Select zram compression algorithm:"
+msgstr "Seleccione algorimto de compresión zram:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Usar Gestor de Red (backend por defecto)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Usar gestor de Red (backend iwd)"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
