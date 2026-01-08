@@ -1399,7 +1399,7 @@ class Installer:
 
 		# Add custom UKI entries if enabled
 		if uki_enabled and SysInfo.has_uefi() and efi_partition:
-			custom_entries = self.target / 'etc/grub.d/09_custom'
+			custom_entries = self.target / 'etc/grub.d/40_custom'
 			entries_content = (
 				'#!/bin/sh\n'
 				'exec tail -n +3 $0\n'
@@ -1422,11 +1422,6 @@ class Installer:
 			entries_content += '\n'.join(uki_entries)
 			custom_entries.write_text(entries_content)
 			custom_entries.chmod(0o755)
-
-			# Disable 10_linux to prevent broken entries on kernel updates
-			linux_script = self.target / 'etc/grub.d/10_linux'
-			if linux_script.exists():
-				linux_script.chmod(0o644)
 
 		try:
 			self.arch_chroot(
