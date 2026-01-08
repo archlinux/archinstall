@@ -13,6 +13,7 @@ from archinstall.lib.networking import ping
 from archinstall.lib.packages.packages import check_package_upgrade
 from archinstall.tui.ui.components import tui as ttui
 
+from .lib.general import running_from_host
 from .lib.hardware import SysInfo
 from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
@@ -110,6 +111,12 @@ def main() -> int:
 				info(new_version)
 				time.sleep(3)
 
+	if running_from_host():
+		# log which mode we are using
+		debug('Running from Host (H2T Mode)...')
+	else:
+		debug('Running from ISO (Live Mode)...')
+
 	script = arch_config_handler.get_script()
 
 	mod_name = f'archinstall.scripts.{script}'
@@ -138,7 +145,7 @@ def run_as_a_module() -> None:
 			text = (
 				'Archinstall experienced the above error. If you think this is a bug, please report it to\n'
 				'https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".\n\n'
-				"Hint: To extract the log from a live ISO \ncurl -F'file=@/var/log/archinstall/install.log' https://0x0.st\n"
+				"Hint: To extract the log from a live ISO \ncurl -F 'file=@/var/log/archinstall/install.log' https://0x0.st\n"
 			)
 
 			warn(text)

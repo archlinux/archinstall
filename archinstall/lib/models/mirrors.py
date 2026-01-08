@@ -82,7 +82,7 @@ class MirrorStatusEntryV3(BaseModel):
 	@property
 	def latency(self) -> float | None:
 		"""
-		Latency measures the miliseconds between one ICMP request & response.
+		Latency measures the milliseconds between one ICMP request & response.
 		It only does so once because we check if self._latency is None, and a ICMP timeout result in -1
 		We do this because some hosts blocks ICMP so we'll have to rely on .speed() instead which is slower.
 		"""
@@ -105,10 +105,13 @@ class MirrorStatusEntryV3(BaseModel):
 
 	@model_validator(mode='after')
 	def debug_output(self) -> 'MirrorStatusEntryV3':
+		from ..args import arch_config_handler
+
 		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(port[0]) if port and len(port) >= 1 else None
 
-		debug(f'Loaded mirror {self._hostname}' + (f' with current score of {self.score}' if self.score else ''))
+		if arch_config_handler.args.verbose:
+			debug(f'Loaded mirror {self._hostname}' + (f' with current score of {self.score}' if self.score else ''))
 		return self
 
 

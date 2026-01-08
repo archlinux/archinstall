@@ -7,7 +7,7 @@ from archinstall.tui import Tui
 
 for _profile in profile_handler.get_mac_addr_profiles():
 	# Tailored means it's a match for this machine
-	# based on it's MAC address (or some other criteria
+	# based on its MAC address (or some other criteria
 	# that fits the requirements for this machine specifically).
 	info(f'Found a tailored profile for this machine called: "{_profile.name}"')
 

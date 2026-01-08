@@ -437,7 +437,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		max_size: Size,
 		text: str,
 	) -> Size | None:
-		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', text, re.I)
+		match = re.match(r'^\s*([0-9]+)\s*([a-zA-Z%]*)\s*$', text, re.I)
 
 		if not match:
 			return None

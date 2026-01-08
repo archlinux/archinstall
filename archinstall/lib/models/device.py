@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import builtins
 import math
 import uuid
 from dataclasses import dataclass, field
@@ -772,7 +773,7 @@ class PartitionGUID(Enum):
 	LINUX_ROOT_X86_64 = '4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709'
 
 	@property
-	def bytes(self) -> bytes:
+	def bytes(self) -> builtins.bytes:
 		return uuid.UUID(self.value).bytes
 
 

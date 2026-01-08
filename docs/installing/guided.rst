@@ -66,6 +66,11 @@ The contents of :code:`https://domain.lan/config.json`:
      "additional-repositories": [],
      "archinstall-language": "English",
      "audio_config": null,
+     "bootloader_config": {
+       "bootloader": "Systemd-boot",
+       "uki": false,
+       "removable": false
+     },
      "bootloader": "Systemd-boot",
      "debug": false,
      "disk_config": {

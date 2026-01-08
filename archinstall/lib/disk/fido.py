@@ -112,6 +112,8 @@ class Fido2:
 		pw_inputted = False
 		pin_inputted = False
 
+		info('You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds')
+
 		while worker.is_alive():
 			if pw_inputted is False:
 				if bytes(f'please enter current passphrase for disk {dev_path}', 'UTF-8') in worker._trace_log.lower():
@@ -121,5 +123,3 @@ class Fido2:
 				if bytes('please enter security token pin', 'UTF-8') in worker._trace_log.lower():
 					worker.write(bytes(getpass.getpass(' '), 'UTF-8'))
 					pin_inputted = True
-
-				info('You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds')

@@ -1751,6 +1751,17 @@ msgstr "Administración de energía"
 msgid "Authentication"
 msgstr "Autenticación"
 
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "¿Quiere continuar?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Gestión de particiones: {}"
+
+msgid "Authentication"
+msgstr "Autenticación"
+
 msgid "Applications"
 msgstr "Aplicaciones"
 

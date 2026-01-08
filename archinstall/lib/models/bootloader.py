@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import sys
+from dataclasses import dataclass
 from enum import Enum
+from typing import Any
+
+from archinstall.lib.translationhandler import tr
 
 from ..hardware import SysInfo
 from ..output import warn
@@ -13,10 +17,14 @@ class Bootloader(Enum):
 	Grub = 'Grub'
 	Efistub = 'Efistub'
 	Limine = 'Limine'
+	Refind = 'Refind'
 
 	def has_uki_support(self) -> bool:
+		return self != Bootloader.NO_BOOTLOADER
+
+	def has_removable_support(self) -> bool:
 		match self:
-			case Bootloader.Efistub | Bootloader.Limine | Bootloader.Systemd:
+			case Bootloader.Grub | Bootloader.Limine:
 				return True
 			case _:
 				return False
@@ -48,3 +56,46 @@ class Bootloader(Enum):
 			sys.exit(1)
 
 		return Bootloader(bootloader)
+
+
+@dataclass
+class BootloaderConfiguration:
+	bootloader: Bootloader
+	uki: bool = False
+	removable: bool = True
+
+	def json(self) -> dict[str, Any]:
+		return {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
+
+	@classmethod
+	def parse_arg(cls, config: dict[str, Any], skip_boot: bool) -> BootloaderConfiguration:
+		bootloader = Bootloader.from_arg(config.get('bootloader', ''), skip_boot)
+		uki = config.get('uki', False)
+		removable = config.get('removable', True)
+		return cls(bootloader=bootloader, uki=uki, removable=removable)
+
+	@classmethod
+	def get_default(cls) -> BootloaderConfiguration:
+		bootloader = Bootloader.get_default()
+		removable = SysInfo.has_uefi() and bootloader.has_removable_support()
+		uki = SysInfo.has_uefi() and bootloader.has_uki_support()
+		return cls(bootloader=bootloader, uki=uki, removable=removable)
+
+	def preview(self) -> str:
+		text = f'{tr("Bootloader")}: {self.bootloader.value}'
+		text += '\n'
+		if SysInfo.has_uefi() and self.bootloader.has_uki_support():
+			if self.uki:
+				uki_string = tr('Enabled')
+			else:
+				uki_string = tr('Disabled')
+			text += f'UKI: {uki_string}'
+			text += '\n'
+		if SysInfo.has_uefi() and self.bootloader.has_removable_support():
+			if self.removable:
+				removable_string = tr('Enabled')
+			else:
+				removable_string = tr('Disabled')
+			text += f'{tr("Removable")}: {removable_string}'
+			text += '\n'
+		return text

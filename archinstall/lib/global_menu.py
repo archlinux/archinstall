@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import override
 
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
-from archinstall.lib.models.application import ApplicationConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
 from archinstall.lib.packages import list_available_packages
@@ -12,6 +12,7 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from .applications.application_menu import ApplicationMenu
 from .args import ArchConfig
 from .authentication.authentication_menu import AuthenticationMenu
+from .bootloader.bootloader_menu import BootloaderMenu
 from .configuration import save_config
 from .hardware import SysInfo
 from .interactions.general_conf import (
@@ -22,11 +23,11 @@ from .interactions.general_conf import (
 	ask_ntp,
 )
 from .interactions.network_menu import ask_to_configure_network
-from .interactions.system_conf import ask_for_bootloader, ask_for_swap, ask_for_uki, select_kernel
+from .interactions.system_conf import ask_for_swap, select_kernel
 from .locale.locale_menu import LocaleMenu
 from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
 from .mirrors import MirrorMenu
-from .models.bootloader import Bootloader
+from .models.bootloader import Bootloader, BootloaderConfiguration
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
 from .models.network import NetworkConfiguration, NicType
@@ -40,10 +41,10 @@ from .translationhandler import Language, tr, translation_handler
 class GlobalMenu(AbstractMenu[None]):
 	def __init__(self, arch_config: ArchConfig) -> None:
 		self._arch_config = arch_config
-		menu_optioons = self._get_menu_options()
+		menu_options = self._get_menu_options()
 
 		self._item_group = MenuItemGroup(
-			menu_optioons,
+			menu_options,
 			sort_items=False,
 			checkmarks=True,
 		)
@@ -55,7 +56,7 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Archinstall language'),
 				action=self._select_archinstall_language,
-				display_action=lambda x: x.display_name if x else '',
+				preview_action=self._prev_archinstall_language,
 				key='archinstall_language',
 			),
 			MenuItem(
@@ -79,26 +80,25 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Swap'),
-				value=True,
+				value=ZramConfiguration(enabled=True),
 				action=ask_for_swap,
 				preview_action=self._prev_swap,
 				key='swap',
 			),
 			MenuItem(
 				text=tr('Bootloader'),
-				value=Bootloader.get_default(),
-				action=self._select_bootloader,
-				preview_action=self._prev_bootloader,
-				mandatory=True,
-				key='bootloader',
+				value=BootloaderConfiguration.get_default(),
+				action=self._select_bootloader_config,
+				preview_action=self._prev_bootloader_config,
+				key='bootloader_config',
 			),
 			MenuItem(
-				text=tr('Unified kernel images'),
-				value=False,
-				enabled=SysInfo.has_uefi(),
-				action=ask_for_uki,
-				preview_action=self._prev_uki,
-				key='uki',
+				text=tr('Kernels'),
+				value=['linux'],
+				action=select_kernel,
+				preview_action=self._prev_kernel,
+				mandatory=True,
+				key='kernels',
 			),
 			MenuItem(
 				text=tr('Hostname'),
@@ -125,14 +125,6 @@ class GlobalMenu(AbstractMenu[None]):
 				value=[],
 				preview_action=self._prev_applications,
 				key='app_config',
-			),
-			MenuItem(
-				text=tr('Kernels'),
-				value=['linux'],
-				action=select_kernel,
-				preview_action=self._prev_kernel,
-				mandatory=True,
-				key='kernels',
 			),
 			MenuItem(
 				text=tr('Network configuration'),
@@ -247,6 +239,13 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return language
 
+	def _prev_archinstall_language(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
+
+		lang: Language = item.value
+		return f'{tr("Language")}: {lang.display_name}'
+
 	def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
 		app_config = ApplicationMenu(preset).run()
 		return app_config
@@ -332,6 +331,16 @@ class GlobalMenu(AbstractMenu[None]):
 				output += f'{tr("Audio")}: {audio_config.audio.value}'
 				output += '\n'
 
+			if app_config.print_service_config:
+				output += f'{tr("Print service")}: '
+				output += tr('Enabled') if app_config.print_service_config.enabled else tr('Disabled')
+				output += '\n'
+
+			if app_config.power_management_config:
+				power_management_config = app_config.power_management_config
+				output += f'{tr("Power management")}: {power_management_config.power_management.value}'
+				output += '\n'
+
 			return output
 
 		return None
@@ -375,14 +384,9 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_swap(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			output = f'{tr("Swap on zram")}: '
-			output += tr('Enabled') if item.value else tr('Disabled')
-			return output
-		return None
-
-	def _prev_uki(self, item: MenuItem) -> str | None:
-		if item.value is not None:
-			output = f'{tr("Unified kernel images")}: '
-			output += tr('Enabled') if item.value else tr('Disabled')
+			output += tr('Enabled') if item.value.enabled else tr('Disabled')
+			if item.value.enabled:
+				output += f'\n{tr("Compression algorithm")}: {item.value.algorithm.value}'
 			return output
 		return None
 
@@ -402,9 +406,10 @@ class GlobalMenu(AbstractMenu[None]):
 			return f'{tr("Kernel")}: {kernel}'
 		return None
 
-	def _prev_bootloader(self, item: MenuItem) -> str | None:
-		if item.value is not None:
-			return f'{tr("Bootloader")}: {item.value.value}'
+	def _prev_bootloader_config(self, item: MenuItem) -> str | None:
+		bootloader_config: BootloaderConfiguration | None = item.value
+		if bootloader_config:
+			return bootloader_config.preview()
 		return None
 
 	def _validate_bootloader(self) -> str | None:
@@ -418,15 +423,17 @@ class GlobalMenu(AbstractMenu[None]):
 		XXX: The caller is responsible for wrapping the string with the translation
 			shim if necessary.
 		"""
-		bootloader: Bootloader | None = None
+		bootloader_config: BootloaderConfiguration | None = None
 		root_partition: PartitionModification | None = None
 		boot_partition: PartitionModification | None = None
 		efi_partition: PartitionModification | None = None
 
-		bootloader = self._item_group.find_by_key('bootloader').value
+		bootloader_config = self._item_group.find_by_key('bootloader_config').value
 
-		if bootloader == Bootloader.NO_BOOTLOADER:
+		if not bootloader_config or bootloader_config.bootloader == Bootloader.NO_BOOTLOADER:
 			return None
+
+		bootloader = bootloader_config.bootloader
 
 		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
@@ -458,6 +465,10 @@ class GlobalMenu(AbstractMenu[None]):
 		if bootloader == Bootloader.Limine:
 			if boot_partition.fs_type not in [FilesystemType.Fat12, FilesystemType.Fat16, FilesystemType.Fat32]:
 				return 'Limine does not support booting with a non-FAT boot partition'
+
+		elif bootloader == Bootloader.Refind:
+			if not SysInfo.has_uefi():
+				return 'rEFInd can only be used on UEFI systems'
 
 		return None
 
@@ -501,18 +512,16 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return disk_config
 
-	def _select_bootloader(self, preset: Bootloader | None) -> Bootloader | None:
-		bootloader = ask_for_bootloader(preset)
+	def _select_bootloader_config(
+		self,
+		preset: BootloaderConfiguration | None = None,
+	) -> BootloaderConfiguration | None:
+		if preset is None:
+			preset = BootloaderConfiguration.get_default()
 
-		if bootloader:
-			uki = self._item_group.find_by_key('uki')
-			if not SysInfo.has_uefi() or not bootloader.has_uki_support():
-				uki.value = False
-				uki.enabled = False
-			else:
-				uki.enabled = True
+		bootloader_config = BootloaderMenu(preset).run()
 
-		return bootloader
+		return bootloader_config
 
 	def _select_profile(self, current_profile: ProfileConfiguration | None) -> ProfileConfiguration | None:
 		from .profile.profile_menu import ProfileMenu
