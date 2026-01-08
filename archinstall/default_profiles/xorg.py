@@ -25,6 +25,13 @@ class XorgProfile(Profile):
 
 		return text
 
+	@property
+	@override
+	def packages(self) -> list[str]:
+		return [
+			'xorg-server',
+		]
+
 	@override
 	def display_servers(self) -> set[DisplayServer]:
 		return {DisplayServer.X11}
