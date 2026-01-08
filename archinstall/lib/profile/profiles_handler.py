@@ -370,8 +370,8 @@ class ProfileHandler:
 	def display_servers(self, profile: Profile) -> set[DisplayServer]:
 		"""
 		Returns the set of display servers required by this profile.
-		By default, returns an empty set (no specific requirements).
-		Profiles should override this to specify their requirements.
+		Aggregates requirements from sub-profiles if present.
+		Profiles inherit from XorgProfile or WaylandProfile to specify their display server.
 		"""
 		if profile.current_selection:
 			# Aggregate requirements from sub-profiles
