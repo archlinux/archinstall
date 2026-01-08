@@ -204,9 +204,6 @@ class ProfileHandler:
 				packages = ['ly']
 				service = ['ly@tty1']
 				service_disable = ['getty@tty1']
-			case GreeterType.Regreet:
-				packages = ['greetd', 'greetd-regreet']
-				service = ['greetd']
 			case GreeterType.CosmicSession:
 				packages = ['cosmic-greeter']
 				service = ['cosmic-greeter']
@@ -225,17 +222,6 @@ class ProfileHandler:
 				filedata = file.read()
 
 			filedata = filedata.replace('#greeter-session=example-gtk-gnome', 'greeter-session=lightdm-slick-greeter')
-
-			with open(path, 'w') as file:
-				file.write(filedata)
-
-		# regreet requires greetd config to launch it inside cage
-		if greeter == GreeterType.Regreet:
-			path = install_session.target.joinpath('etc/greetd/config.toml')
-			with open(path) as file:
-				filedata = file.read()
-
-			filedata = filedata.replace('command = "agreety --cmd /bin/sh"', 'command = "cage -s -- regreet"')
 
 			with open(path, 'w') as file:
 				file.write(filedata)
