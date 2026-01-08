@@ -1,8 +1,8 @@
 from typing import override
 
 from archinstall.default_profiles.desktops import SeatAccess
-from archinstall.default_profiles.profile import DisplayServer, GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import GreeterType, ProfileType
+from archinstall.default_profiles.wayland import WaylandProfile
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import SelectMenu
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -10,7 +10,7 @@ from archinstall.tui.result import ResultType
 from archinstall.tui.types import Alignment, FrameProperties
 
 
-class SwayProfile(XorgProfile):
+class SwayProfile(WaylandProfile):
 	def __init__(self) -> None:
 		super().__init__(
 			'Sway',
@@ -79,7 +79,3 @@ class SwayProfile(XorgProfile):
 	def do_on_select(self) -> None:
 		self._ask_seat_access()
 		return None
-
-	@override
-	def display_servers(self) -> set[DisplayServer]:
-		return {DisplayServer.Wayland}

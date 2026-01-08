@@ -63,7 +63,6 @@ class Profile:
 		self.custom_settings: dict[str, str | None] = {}
 		self.advanced = advanced
 
-		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
 
 		# self.gfx_driver: str | None = None

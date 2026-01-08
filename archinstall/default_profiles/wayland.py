@@ -4,11 +4,11 @@ from archinstall.default_profiles.profile import DisplayServer, Profile, Profile
 from archinstall.lib.translationhandler import tr
 
 
-class XorgProfile(Profile):
+class WaylandProfile(Profile):
 	def __init__(
 		self,
-		name: str = 'Xorg',
-		profile_type: ProfileType = ProfileType.Xorg,
+		name: str = 'Wayland',
+		profile_type: ProfileType = ProfileType.Desktop,
 		advanced: bool = False,
 	):
 		super().__init__(
@@ -27,4 +27,4 @@ class XorgProfile(Profile):
 
 	@override
 	def display_servers(self) -> set[DisplayServer]:
-		return {DisplayServer.X11}
+		return {DisplayServer.Wayland}

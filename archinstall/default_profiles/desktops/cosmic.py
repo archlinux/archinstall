@@ -1,10 +1,10 @@
 from typing import override
 
-from archinstall.default_profiles.profile import DisplayServer, GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import GreeterType, ProfileType
+from archinstall.default_profiles.wayland import WaylandProfile
 
 
-class CosmicProfile(XorgProfile):
+class CosmicProfile(WaylandProfile):
 	def __init__(self) -> None:
 		super().__init__('Cosmic', ProfileType.DesktopEnv)
 
@@ -20,7 +20,3 @@ class CosmicProfile(XorgProfile):
 	@override
 	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.CosmicSession
-
-	@override
-	def display_servers(self) -> set[DisplayServer]:
-		return {DisplayServer.Wayland}
