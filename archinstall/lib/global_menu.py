@@ -341,11 +341,6 @@ class GlobalMenu(AbstractMenu[None]):
 				output += f'{tr("Power management")}: {power_management_config.power_management.value}'
 				output += '\n'
 
-			if app_config.firewall_config:
-				firewall_config = app_config.firewall_config
-				output += f'{tr("Firewall")}: {firewall_config.firewall.value}'
-				output += '\n'
-
 			if app_config.editor_config:
 				editor_config = app_config.editor_config
 				output += f'{tr("Editor")}: {editor_config.editor.value}'
