@@ -147,7 +147,7 @@ class ManagementConfiguration:
 		}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'ManagementConfiguration':
+	def parse_arg(arg: ManagementConfigSerialization) -> 'ManagementConfiguration':
 		return ManagementConfiguration(
 			tools=[Management(t) for t in arg['tools']],
 		)
