@@ -50,7 +50,6 @@ class GfxPackage(Enum):
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	VulkanNouveau = 'vulkan-nouveau'
-	VulkanIcdLoader = 'vulkan-icd-loader'
 	Xf86VideoAmdgpu = 'xf86-video-amdgpu'
 	Xf86VideoAti = 'xf86-video-ati'
 	Xf86VideoNouveau = 'xf86-video-nouveau'
@@ -141,7 +140,6 @@ class GfxDriver(Enum):
 			case GfxDriver.VMOpenSource:
 				packages += [
 					GfxPackage.Mesa,
-					GfxPackage.VulkanIcdLoader,
 					GfxPackage.LibvaMesaDriver,
 				]
 
