@@ -43,7 +43,7 @@ class Editor(StrEnum):
 	MICRO = auto()
 	VI = auto()
 	VIM = auto()
-	NEOVIM = auto()
+	NVIM = auto()
 	EMACS = auto()
 
 

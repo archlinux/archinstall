@@ -8,9 +8,9 @@ if TYPE_CHECKING:
 
 
 class EditorApp:
-	def _get_editor_binary(self, editor: Editor) -> str:
-		# special handling only name that differs
-		return 'nvim' if editor == Editor.NEOVIM else editor.value
+	def get_editor_binary(self, editor: Editor) -> str:
+		# use the value directly
+		return editor.value
 
 	def install(
 		self,
@@ -21,7 +21,7 @@ class EditorApp:
 
 		install_session.add_additional_packages(editor_config.editor.value)
 
-		editor_binary = self._get_editor_binary(editor_config.editor)
+		editor_binary = self.get_editor_binary(editor_config.editor)
 		environment_path = install_session.target / 'etc' / 'environment'
 
 		debug(f'Setting EDITOR={editor_binary} in {environment_path}')
