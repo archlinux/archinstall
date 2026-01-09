@@ -25,8 +25,6 @@ class DesktopProfile(Profile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			'nano',
-			'vim',
 			'openssh',
 			'htop',
 			'wget',
