@@ -2,11 +2,6 @@ from typing import override
 
 from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.wayland import WaylandProfile
-from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties
 
 
 class NiriProfile(WaylandProfile):
