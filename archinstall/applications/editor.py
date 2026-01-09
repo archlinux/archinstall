@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class EditorApp:
 	def _get_editor_binary(self, editor: Editor) -> str:
-		# codefiles hack since its the only name that differs
+		# special handling only name that differs
 		return 'nvim' if editor == Editor.NEOVIM else editor.value
 
 	def install(
