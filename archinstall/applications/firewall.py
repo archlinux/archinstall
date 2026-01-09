@@ -31,3 +31,4 @@ class FirewallApp:
 			case Firewall.UFW:
 				install_session.add_additional_packages(self.ufw_packages)
 				install_session.enable_service(self.ufw_services)
+				install_session.arch_chroot('ufw enable')
