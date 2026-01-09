@@ -259,11 +259,14 @@ def select_firewall(preset: FirewallConfiguration | None = None) -> FirewallConf
 def select_editor(preset: EditorConfiguration | None = None) -> EditorConfiguration | None:
 	group = MenuItemGroup.from_enum(Editor)
 
+	header = tr('Would you like to set an editor globally?') + '\n'
+
 	if preset:
 		group.set_focus_by_value(preset.editor)
 
 	result = SelectMenu[Editor](
 		group,
+		header=header,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
 		allow_reset=True,
