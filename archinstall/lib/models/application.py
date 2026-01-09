@@ -39,12 +39,12 @@ class FirewallConfigSerialization(TypedDict):
 
 
 class Editor(StrEnum):
-	NANO = 'nano'
-	MICRO = 'micro'
-	VI = 'vi'
-	VIM = 'vim'
-	NEOVIM = 'neovim'
-	EMACS = 'emacs'
+	NANO = auto()
+	MICRO = auto()
+	VI = auto()
+	VIM = auto()
+	NEOVIM = auto()
+	EMACS = auto()
 
 
 class EditorConfigSerialization(TypedDict):
