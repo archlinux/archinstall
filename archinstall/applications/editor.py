@@ -19,7 +19,7 @@ class EditorApp:
 	) -> None:
 		debug(f'Installing editor: {editor_config.editor.value}')
 
-		install_session.add_additional_packages([editor_config.editor.value])
+		install_session.add_additional_packages(editor_config.editor.value)
 
 		editor_binary = self._get_editor_binary(editor_config.editor)
 		environment_path = install_session.target / 'etc' / 'environment'
