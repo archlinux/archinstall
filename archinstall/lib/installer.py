@@ -1066,7 +1066,7 @@ class Installer:
 
 		debug(f'Configuring grub-btrfsd service for {snapshot_type} at {snapshot_path}')
 
-		# Works for either snapper or ts just adpating default paths above
+		# Works for either snapper or ts just adapting default paths above
 		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
 		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
 		systemd_dir.mkdir(parents=True, exist_ok=True)
@@ -1271,7 +1271,7 @@ class Installer:
 
 		try:
 			# Force EFI variables since bootctl detects arch-chroot
-			# as a container environemnt since v257 and skips them silently.
+			# as a container environment since v257 and skips them silently.
 			# https://github.com/systemd/systemd/issues/36174
 			if systemd_version >= '258':
 				self.arch_chroot(f'bootctl --variables=yes {" ".join(bootctl_options)} install')
