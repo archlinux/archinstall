@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from archinstall.lib.models.application import Management, ManagementConfiguration
+from archinstall.lib.models.application import ManagementConfiguration
 from archinstall.lib.output import debug
 
 if TYPE_CHECKING:
