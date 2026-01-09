@@ -38,6 +38,16 @@ class FirewallConfigSerialization(TypedDict):
 	firewall: str
 
 
+class Management(StrEnum):
+	MAN = 'man-db'
+	PACMAN_CONTRIB = 'pacman-contrib'
+	REFLECTOR = 'reflector'
+
+
+class ManagementConfigSerialization(TypedDict):
+	tools: list[str]
+
+
 class ZramAlgorithm(StrEnum):
 	ZSTD = 'zstd'
 	LZO_RLE = 'lzo-rle'
@@ -52,6 +62,7 @@ class ApplicationSerialization(TypedDict):
 	power_management_config: NotRequired[PowerManagementConfigSerialization]
 	print_service_config: NotRequired[PrintServiceConfigSerialization]
 	firewall_config: NotRequired[FirewallConfigSerialization]
+	management_config: NotRequired[ManagementConfigSerialization]
 
 
 @dataclass
@@ -126,6 +137,22 @@ class FirewallConfiguration:
 		)
 
 
+@dataclass
+class ManagementConfiguration:
+	tools: list[Management]
+
+	def json(self) -> ManagementConfigSerialization:
+		return {
+			'tools': [t.value for t in self.tools],
+		}
+
+	@staticmethod
+	def parse_arg(arg: dict[str, Any]) -> 'ManagementConfiguration':
+		return ManagementConfiguration(
+			tools=[Management(t) for t in arg['tools']],
+		)
+
+
 @dataclass(frozen=True)
 class ZramConfiguration:
 	enabled: bool
@@ -148,6 +175,7 @@ class ApplicationConfiguration:
 	power_management_config: PowerManagementConfiguration | None = None
 	print_service_config: PrintServiceConfiguration | None = None
 	firewall_config: FirewallConfiguration | None = None
+	management_config: ManagementConfiguration | None = None
 
 	@staticmethod
 	def parse_arg(
@@ -175,6 +203,9 @@ class ApplicationConfiguration:
 		if args and (firewall_config := args.get('firewall_config')) is not None:
 			app_config.firewall_config = FirewallConfiguration.parse_arg(firewall_config)
 
+		if args and (management_config := args.get('management_config')) is not None:
+			app_config.management_config = ManagementConfiguration.parse_arg(management_config)
+
 		return app_config
 
 	def json(self) -> ApplicationSerialization:
@@ -194,5 +225,8 @@ class ApplicationConfiguration:
 
 		if self.firewall_config:
 			config['firewall_config'] = self.firewall_config.json()
+
+		if self.management_config:
+			config['management_config'] = self.management_config.json()
 
 		return config

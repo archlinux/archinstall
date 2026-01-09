@@ -346,6 +346,11 @@ class GlobalMenu(AbstractMenu[None]):
 				output += f'{tr("Firewall")}: {firewall_config.firewall.value}'
 				output += '\n'
 
+			if app_config.management_config and app_config.management_config.tools:
+				tools = ', '.join([t.value for t in app_config.management_config.tools])
+				output += f'{tr("Management")}: {tools}'
+				output += '\n'
+
 			return output
 
 		return None

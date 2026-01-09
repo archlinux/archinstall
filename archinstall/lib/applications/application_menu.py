@@ -9,6 +9,8 @@ from archinstall.lib.models.application import (
 	BluetoothConfiguration,
 	Firewall,
 	FirewallConfiguration,
+	Management,
+	ManagementConfiguration,
 	PowerManagement,
 	PowerManagementConfiguration,
 	PrintServiceConfiguration,
@@ -78,6 +80,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				preview_action=self._prev_firewall,
 				key='firewall_config',
 			),
+			MenuItem(
+				text=tr('Management'),
+				action=select_management,
+				preview_action=self._prev_management,
+				key='management_config',
+			),
 		]
 
 	def _prev_power_management(self, item: MenuItem) -> str | None:
@@ -114,6 +122,13 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		if item.value is not None:
 			config: FirewallConfiguration = item.value
 			return f'{tr("Firewall")}: {config.firewall.value}'
+		return None
+
+	def _prev_management(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			config: ManagementConfiguration = item.value
+			tools = ', '.join([t.value for t in config.tools])
+			return f'{tr("Management")}: {tools}'
 		return None
 
 
@@ -238,5 +253,29 @@ def select_firewall(preset: FirewallConfiguration | None = None) -> FirewallConf
 			return preset
 		case ResultType.Selection:
 			return FirewallConfiguration(firewall=result.get_value())
+		case ResultType.Reset:
+			return None
+
+
+def select_management(preset: ManagementConfiguration | None = None) -> ManagementConfiguration | None:
+	group = MenuItemGroup.from_enum(Management)
+
+	if preset:
+		group.set_selected_by_value(preset.tools)
+
+	result = SelectMenu[Management](
+		group,
+		allow_skip=True,
+		alignment=Alignment.CENTER,
+		allow_reset=True,
+		frame=FrameProperties.min(tr('Management')),
+		multi=True,
+	).run()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return ManagementConfiguration(tools=result.get_values())
 		case ResultType.Reset:
 			return None
