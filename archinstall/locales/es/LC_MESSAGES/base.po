@@ -21,7 +21,7 @@ msgid "Do you really want to abort?"
 msgstr "¿Realmente desea abortar?"
 
 msgid "And one more time for verification: "
-msgstr "Una vez más para verificar: "
+msgstr "Y una vez más para verificar: "
 
 msgid "Would you like to use swap on zram?"
 msgstr "¿Le gustaría usar swap en zram?"
@@ -42,7 +42,7 @@ msgid "Select a timezone"
 msgstr "Seleccione una zona horaria"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Te gustaría usar GRUB como gestor de arranque en lugar de systemd-boot?"
+msgstr "Le gustaría usar GRUB como gestor de arranque en lugar de systemd-boot?"
 
 msgid "Choose a bootloader"
 msgstr "Elija un gestor de arranque"
@@ -54,13 +54,13 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
 
 msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr ""
+msgstr "Nota: base-devel ya no viene instalado por defecto. Agreguelo aquí si necesita herramientas de build."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si desea un navegador web, como firefox o chromium, puede especificarlo en el siguiente mensaje."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Escriba paquetes adicionales para instalar (separados por espacios, deja en blanco para omitir): "
+msgstr "Escriba paquetes adicionales para instalar (separados por espacios, deje en blanco para omitir): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Copiar la configuración de red ISO a la instalación"
@@ -107,7 +107,7 @@ msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr "Ingrese la ubicación final (en unidades divididas: s, GB, %, etc. ; ej.: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "{} contiene particiones en cola, esto eliminará esas particiones, ¿estás seguro?"
+msgstr "{} contiene particiones en cola, esto eliminará esas particiones, ¿está seguro?"
 
 msgid ""
 "{}\n"
@@ -125,10 +125,10 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleccione por índice la ubicación de la partición a montar"
+"Seleccione por índice qué partición montar en qué ubicación"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Los puntos de montaje de la partición son relativos al interior de la instalación, el arranque sería /boot como ejemplo."
+msgstr " * Los puntos de montaje de la partición son relativos al interior de la instalación, por ejemplo: el arranque sería /boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr "Seleccione dónde montar la partición (deje en blanco para eliminar el punto de montaje): "
@@ -176,7 +176,7 @@ msgid "Archinstall language"
 msgstr "Idioma de Archinstall"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Borrar todas las unidades seleccionadas y use un diseño de partición predeterminado de mejor esfuerzo"
+msgstr "Borrar todas las unidades seleccionadas y usar un diseño de partición predeterminado de mejor esfuerzo"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
 msgstr "Seleccione qué hacer con cada unidad individual (seguido del uso de la partición)"
@@ -191,7 +191,7 @@ msgid "Select keyboard layout"
 msgstr "Seleccione la distribución del teclado"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Seleccione una de las regiones para descargar paquetes desde"
+msgstr "Seleccione qué región usar para descargar paquetes"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "Seleccione uno o más discos duros para usar y configurar"
@@ -236,10 +236,10 @@ msgid "Adding partition...."
 msgstr "Añadiendo partición..."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Debe ingresar un tipo de fs válido para continuar. Consulte `man parted` para conocer los tipos de fs válidos."
+msgstr "Debe ingresar un tipo de sistema de archivos (fs-type) válido para continuar. Consulte `man parted` para conocer los tipos válidos."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Error: Enlistar perfiles en la URL \"{}\" resultó en:"
+msgstr "Error: Listar perfiles en la URL \"{}\" resultó en:"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Error: No se pudo decodificar el resultado \"{}\" como JSON:"
@@ -259,6 +259,7 @@ msgstr "Codificación local"
 msgid "Drive(s)"
 msgstr "Disco(s)"
 
+# not sure about this one... we've been saying distribución instead of diseño up to now...  
 msgid "Disk layout"
 msgstr "Diseño del disco"
 
@@ -298,6 +299,7 @@ msgstr "Configuración de la red"
 msgid "Automatic time sync (NTP)"
 msgstr "Sincronización automática de hora (NTP)"
 
+# are you installing missing configs or are there missing configs
 msgid "Install ({} config(s) missing)"
 msgstr "Instalar ({} ajuste(s) faltante(s))"
 
@@ -307,7 +309,7 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"Has decidido saltar la selección de discos duros\n"
+"Ha decidido saltar la selección de discos duros\n"
 "y usar la configuración montada en {} (experimental)\n"
 "ADVERTENCIA: Archinstall no verificará la idoneidad de esta configuración\n"
 "¿Desea continuar?"
@@ -389,7 +391,7 @@ msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "Verificando que los paquetes adicionales existen (esto puede tardar unos segundos)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Le gustaría utilizar la sincronización automática de hora (NTP) con los servidores de hora predeterminados?\n"
+msgstr "¿Le gustaría utilizar la sincronización automática de hora (NTP) con los servidores de hora predeterminados?\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
@@ -449,7 +451,7 @@ msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate
 msgstr "Pacman ya se está ejecutando, esperando un máximo de 10 minutos para que finalice."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "El bloqueo de Pacman preexistente nunca se cerró. Limpie cualquier sesión de Pacman existente antes de usar archinstall."
+msgstr "El bloqueo de pacman preexistente nunca se cerró. Limpie cualquier sesión de pacman existente antes de usar archinstall."
 
 msgid "Choose which optional additional repositories to enable"
 msgstr "Elija qué repositorios adicionales opcionales habilitar"
@@ -460,6 +462,7 @@ msgstr "Añadir un usuario"
 msgid "Change password"
 msgstr "Cambiar contraseña"
 
+# maybe ascender/descender here?
 msgid "Promote/Demote user"
 msgstr "Promocionar/Degradar usuario"
 
@@ -568,10 +571,10 @@ msgid "Subvolume name "
 msgstr "Nombre del subvolumen "
 
 msgid "Subvolume mountpoint"
-msgstr "Punto de montaje de subvolumen"
+msgstr "Punto de montaje del subvolumen"
 
 msgid "Subvolume options"
-msgstr "Opciones de subvolumen"
+msgstr "Opciones del subvolumen"
 
 msgid "Save"
 msgstr "Guardar"
@@ -793,7 +796,7 @@ msgid "Delete subvolume"
 msgstr "Eliminar subvolumen"
 
 msgid "Configured {} interfaces"
-msgstr "{} interfaces configuradas"
+msgstr "Interfaces {} configuradas"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Esta opción habilita la cantidad de descargas paralelas que pueden ocurrir durante la instalación"
@@ -1014,7 +1017,7 @@ msgid "Disk encryption"
 msgstr "Cifrado de disco"
 
 msgid "Configuration"
-msgstr "Configuration"
+msgstr "Configuración"
 
 msgid "Password"
 msgstr "Contraseña"
@@ -1454,7 +1457,7 @@ msgid "Info"
 msgstr "Info"
 
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "El controlador propietario de Nvidia no es compatible con Sway."
+msgstr "El controlador patentado de Nvidia no es compatible con Sway."
 
 msgid "It is likely that you will run into issues, are you okay with that?"
 msgstr "Es probable que tengas problemas. ¿Te parece bien?"
@@ -1466,7 +1469,7 @@ msgid "Confirm password"
 msgstr "Confirmar contraseña"
 
 msgid "The confirmation password did not match, please try again"
-msgstr "La confirmación de la contraseña no coincide, por favor intente nuevamente"
+msgstr "La contraseña de confirmación no coincide, por favor intente nuevamente"
 
 msgid "Not a valid directory"
 msgstr "No es un directorio válido"
@@ -1518,7 +1521,7 @@ msgid "NTP"
 msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr "Intercambio en zram"
+msgstr "Swap en zram"
 
 msgid "Name"
 msgstr "Nombre"
@@ -1596,7 +1599,7 @@ msgid "Add custom repository"
 msgstr "Agregar repositorio personalizado"
 
 msgid "Loading mirror regions..."
-msgstr "Cargando regiones espejo..."
+msgstr "Cargando regiones de espejo..."
 
 msgid "Mirrors and repositories"
 msgstr "Espejos y repositorios"
@@ -1620,10 +1623,10 @@ msgid "Exit help"
 msgstr "Ayuda para salir"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Subir en vista previa"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Bajar en vista previa"
 
 msgid "Move up"
 msgstr "Subir"
@@ -1701,50 +1704,52 @@ msgstr "¿Qué le gustaría hacer a continuación?"
 msgid "Select which mode to configure for \"{}\""
 msgstr "Seleccione qué modo configurar para \"{}\""
 
-#, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr "Contraseña de cifrado de disco"
+msgstr "Contraseña incorrecta para descifrar el archivo de credenciales"
 
-#, fuzzy
 msgid "Incorrect password"
-msgstr "Contraseña de root"
+msgstr "Contraseña incorrecta"
 
-#, fuzzy
 msgid "Credentials file decryption password"
-msgstr "Contraseña de cifrado de disco"
+msgstr "Contraseña para descifrar el archivo de credenciales"
 
-#, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "¿Desea guardar los archivos de configuración en {}?"
+msgstr "¿Desea encriptar el archivo user_credentials.json?"
 
 #, fuzzy
 msgid "Credentials file encryption password"
-msgstr "Contraseña de cifrado de disco"
+msgstr "Contraseña para cifrar el archivo de credenciales"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Repositories: {}"
-msgstr "Nombre del repositorio"
+msgstr "Repositorios: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "No hay dispositivos HSM disponibles"
+msgstr "Nueva versión disponible"
 
-#, fuzzy
 msgid "Passwordless login"
 msgstr "Inicio de sesión sin contraseña"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Inicio de sesión con factor secundario"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "¿Quiere continuar?"
+msgstr "¿Desea configurar Bluetooth?"
 
 msgid "Print service"
-msgstr ""
+msgstr "Servicio de impresión"
+
+msgid "Would you like to configure the print service?"
+msgstr "¿Desea configurar el servicio de impresión?"
+
+msgid "Power management"
+msgstr "Administración de energía"
+
+msgid "Authentication"
+msgstr "Autenticación"
 
 #, fuzzy
 msgid "Would you like to configure the print service?"
@@ -1779,9 +1784,9 @@ msgstr "El valor no puede estár vacío"
 msgid "Snapshot type"
 msgstr "Tipo de snapshot"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Tipo de entorno: {}"
+msgstr "Tipo de snapshot: {}"
 
 msgid "U2F login setup"
 msgstr "Configuración de inicio de sesión U2F"
@@ -1792,13 +1797,12 @@ msgstr "No se encontró dispositivos U2F"
 msgid "U2F Login Method"
 msgstr "Método de inicio de sesión U2F"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
 msgstr "Habilitar sudo sin contraseña?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Seleccione un dispositivo FIDO2 para usar con HSM"
+msgstr "Configurando dispositivo U2F para usuario: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Puede que deba ingresar su PIN antes de tocar su dispositivo U2F para registrarlo"
@@ -1806,98 +1810,89 @@ msgstr "Puede que deba ingresar su PIN antes de tocar su dispositivo U2F para re
 msgid "Starting device modifications in "
 msgstr "Iniciando modificaciones en dispositivo en "
 
-#, fuzzy
 msgid "No network connection found"
-msgstr "Sin configuración de red"
+msgstr "No se encontró una conección de red"
 
-#, fuzzy
 msgid "Would you like to connect to a Wifi?"
-msgstr "¿Quiere continuar?"
+msgstr "¿Desea conectarse a Wifi?"
 
-#, fuzzy
 msgid "No wifi interface found"
-msgstr "Configurar interfaces"
+msgstr "No se encontró ninguna interfaz de wifi"
 
-#, fuzzy
 msgid "Select wifi network to connect to"
-msgstr "Seleccione una interfaz de red para configurar"
+msgstr "Seleccione una red de wifi para conectarse"
 
 msgid "Scanning wifi networks..."
 msgstr "Buscando redes de wifi..."
 
-#, fuzzy
 msgid "No wifi networks found"
-msgstr "Sin configuración de red"
+msgstr "No se encontró redes de wifi"
 
 msgid "Failed setting up wifi"
 msgstr "Error configurando wifi"
 
-#, fuzzy
 msgid "Enter wifi password"
-msgstr "Ingrese una contraseña: "
+msgstr "Ingrese contraseña de wifi"
 
 msgid "Ok"
 msgstr "Ok"
 
 msgid "Removable"
-msgstr ""
+msgstr "Desmontable"
 
 msgid "Install to removable location"
-msgstr ""
+msgstr "Instalar a ubicación desmontable"
 
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
+msgstr "Se instalará en /EFI/BOOT/ (ubicación desmontable)"
 
 msgid "Will install to standard location with NVRAM entry"
-msgstr ""
+msgstr "Se instalará en ubicación estandar con entrada NVRAM"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
+msgstr "¿Desea instalar el gestor de arranque en la ubicación predeterminada de búsqueda de medios desmontables?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
+msgstr "Esto instala el gestor de arranque en /EFI/BOOT/BOOTX64.EFI (o similar) lo cual es útil para:"
 
 msgid "USB drives or other portable external media."
-msgstr ""
+msgstr "Disco USB u otros medios portátiles externos."
 
 msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
+msgstr "Sistemas donde quiere que el disco sea arrancable en cualquier computadora."
 
 msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
+msgstr "Firmware que no soporta entradas arrancables NVRAM."
 
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr ""
+msgstr "Instalará a /EFI/BOOT/ (ubicación desmontable, segura por defecto)" 
 
 msgid "Will install to custom location with NVRAM entry"
-msgstr ""
+msgstr "Instalará a ubicación personalizada con entrada NVRAM"
 
 msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr ""
+msgstr "Firmware que no soporta entradas arrancables NVRAM como la mayoría de las placas MSI,"
 
 msgid "most Apple Macs, many laptops..."
-msgstr ""
+msgstr "la mayoría de las Macs Apple, muchas laptops..."
 
-#, fuzzy
 msgid "Language"
 msgstr "Idioma local"
 
 msgid "Compression algorithm"
-msgstr ""
+msgstr "Algoritmo de compresión"
 
-#, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
 
-#, fuzzy
 msgid "Select zram compression algorithm:"
-msgstr "Seleccione un punto de montaje :"
+msgstr "Seleccione algorimto de compresión zram:"
 
 msgid "Use Network Manager (default backend)"
-msgstr ""
+msgstr "Usar Gestor de Red (backend por defecto)"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr ""
+msgstr "Usar gestor de Red (backend iwd)"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
