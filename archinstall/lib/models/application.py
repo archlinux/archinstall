@@ -147,7 +147,7 @@ class MonitorConfiguration:
 		}
 
 	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'MonitorConfiguration':
+	def parse_arg(arg: MonitorConfigSerialization) -> 'MonitorConfiguration':
 		return MonitorConfiguration(
 			Monitor(arg['monitor']),
 		)
