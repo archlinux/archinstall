@@ -38,6 +38,19 @@ class FirewallConfigSerialization(TypedDict):
 	firewall: str
 
 
+class Editor(StrEnum):
+	NANO = 'nano'
+	MICRO = 'micro'
+	VI = 'vi'
+	VIM = 'vim'
+	NEOVIM = 'neovim'
+	EMACS = 'emacs'
+
+
+class EditorConfigSerialization(TypedDict):
+	editor: str
+
+
 class ZramAlgorithm(StrEnum):
 	ZSTD = 'zstd'
 	LZO_RLE = 'lzo-rle'
@@ -52,6 +65,7 @@ class ApplicationSerialization(TypedDict):
 	power_management_config: NotRequired[PowerManagementConfigSerialization]
 	print_service_config: NotRequired[PrintServiceConfigSerialization]
 	firewall_config: NotRequired[FirewallConfigSerialization]
+	editor_config: NotRequired[EditorConfigSerialization]
 
 
 @dataclass
@@ -126,6 +140,22 @@ class FirewallConfiguration:
 		)
 
 
+@dataclass
+class EditorConfiguration:
+	editor: Editor
+
+	def json(self) -> EditorConfigSerialization:
+		return {
+			'editor': self.editor.value,
+		}
+
+	@staticmethod
+	def parse_arg(arg: dict[str, Any]) -> 'EditorConfiguration':
+		return EditorConfiguration(
+			Editor(arg['editor']),
+		)
+
+
 @dataclass(frozen=True)
 class ZramConfiguration:
 	enabled: bool
@@ -148,6 +178,7 @@ class ApplicationConfiguration:
 	power_management_config: PowerManagementConfiguration | None = None
 	print_service_config: PrintServiceConfiguration | None = None
 	firewall_config: FirewallConfiguration | None = None
+	editor_config: EditorConfiguration | None = None
 
 	@staticmethod
 	def parse_arg(
@@ -175,6 +206,9 @@ class ApplicationConfiguration:
 		if args and (firewall_config := args.get('firewall_config')) is not None:
 			app_config.firewall_config = FirewallConfiguration.parse_arg(firewall_config)
 
+		if args and (editor_config := args.get('editor_config')) is not None:
+			app_config.editor_config = EditorConfiguration.parse_arg(editor_config)
+
 		return app_config
 
 	def json(self) -> ApplicationSerialization:
@@ -194,5 +228,8 @@ class ApplicationConfiguration:
 
 		if self.firewall_config:
 			config['firewall_config'] = self.firewall_config.json()
+
+		if self.editor_config:
+			config['editor_config'] = self.editor_config.json()
 
 		return config

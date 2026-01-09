@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from archinstall.applications.audio import AudioApp
 from archinstall.applications.bluetooth import BluetoothApp
+from archinstall.applications.editor import EditorApp
 from archinstall.applications.firewall import FirewallApp
 from archinstall.applications.power_management import PowerManagementApp
 from archinstall.applications.print_service import PrintServiceApp
@@ -41,6 +42,12 @@ class ApplicationHandler:
 			FirewallApp().install(
 				install_session,
 				app_config.firewall_config,
+			)
+
+		if app_config.editor_config:
+			EditorApp().install(
+				install_session,
+				app_config.editor_config,
 			)
 
 
