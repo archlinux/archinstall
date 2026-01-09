@@ -22,9 +22,11 @@ class EditorApp:
 		install_session.add_additional_packages(editor_config.editor.value)
 
 		editor_binary = self.get_editor_binary(editor_config.editor)
+		# special handling for shorter names needs to happen after pkg has been added above as 'neovim'
+		editor_binary_short = {'neovim': 'nvim'}.get(editor_binary, editor_binary)
 		environment_path = install_session.target / 'etc' / 'environment'
 
-		debug(f'Setting EDITOR={editor_binary} in {environment_path}')
+		debug(f'Setting EDITOR={editor_binary_short} in {environment_path}')
 
 		with open(environment_path, 'a') as f:
-			f.write(f'EDITOR={editor_binary}\n')
+			f.write(f'EDITOR={editor_binary_short}\n')
