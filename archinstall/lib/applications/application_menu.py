@@ -260,11 +260,14 @@ def select_firewall(preset: FirewallConfiguration | None = None) -> FirewallConf
 def select_management(preset: ManagementConfiguration | None = None) -> ManagementConfiguration | None:
 	group = MenuItemGroup.from_enum(Management)
 
+	header = tr('Would you like to install management tools?') + '\n'
+
 	if preset:
 		group.set_selected_by_value(preset.tools)
 
 	result = SelectMenu[Management](
 		group,
+		header=header,
 		allow_skip=True,
 		alignment=Alignment.CENTER,
 		allow_reset=True,
