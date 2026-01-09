@@ -34,4 +34,3 @@ class MonitorApp:
 				install_session.add_additional_packages(self.btop_package)
 			case Monitor.BOTTOM:
 				install_session.add_additional_packages(self.bottom_package)
-
