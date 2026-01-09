@@ -28,7 +28,6 @@ class DesktopProfile(Profile):
 			'nano',
 			'vim',
 			'openssh',
-			'htop',
 			'wget',
 			'iwd',
 			'wireless_tools',

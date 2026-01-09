@@ -9,6 +9,8 @@ from archinstall.lib.models.application import (
 	BluetoothConfiguration,
 	Firewall,
 	FirewallConfiguration,
+	Monitor,
+	MonitorConfiguration,
 	PowerManagement,
 	PowerManagementConfiguration,
 	PrintServiceConfiguration,
@@ -78,6 +80,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				preview_action=self._prev_firewall,
 				key='firewall_config',
 			),
+			MenuItem(
+				text=tr('Monitor'),
+				action=select_monitor,
+				preview_action=self._prev_monitor,
+				key='monitor_config',
+			),
 		]
 
 	def _prev_power_management(self, item: MenuItem) -> str | None:
@@ -114,6 +122,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		if item.value is not None:
 			config: FirewallConfiguration = item.value
 			return f'{tr("Firewall")}: {config.firewall.value}'
+		return None
+
+	def _prev_monitor(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			config: MonitorConfiguration = item.value
+			return f'{tr("Monitor")}: {config.monitor.value}'
 		return None
 
 
@@ -238,5 +252,28 @@ def select_firewall(preset: FirewallConfiguration | None = None) -> FirewallConf
 			return preset
 		case ResultType.Selection:
 			return FirewallConfiguration(firewall=result.get_value())
+		case ResultType.Reset:
+			return None
+
+
+def select_monitor(preset: MonitorConfiguration | None = None) -> MonitorConfiguration | None:
+	group = MenuItemGroup.from_enum(Monitor)
+
+	if preset:
+		group.set_focus_by_value(preset.monitor)
+
+	result = SelectMenu[Monitor](
+		group,
+		allow_skip=True,
+		alignment=Alignment.CENTER,
+		allow_reset=True,
+		frame=FrameProperties.min(tr('Monitor')),
+	).run()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return MonitorConfiguration(monitor=result.get_value())
 		case ResultType.Reset:
 			return None
