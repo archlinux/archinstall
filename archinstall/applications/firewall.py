@@ -31,4 +31,6 @@ class FirewallApp:
 			case Firewall.UFW:
 				install_session.add_additional_packages(self.ufw_packages)
 				install_session.enable_service(self.ufw_services)
-				install_session.arch_chroot("sed -i 's/ENABLED=no/ENABLED=yes/' /etc/ufw/ufw.conf")
+				# write default conf file to enabled
+				ufw_conf = install_session.target / 'etc/ufw/ufw.conf'
+				ufw_conf.write_text(ufw_conf.read_text().replace('ENABLED=no', 'ENABLED=yes'))
