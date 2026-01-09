@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class EditorApp:
 	def _get_editor_binary(self, editor: Editor) -> str:
-		"""Return the binary name for the EDITOR environment variable."""
+		# codefiles hack since its the only name that differs
 		return 'nvim' if editor == Editor.NEOVIM else editor.value
 
 	def install(
