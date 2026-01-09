@@ -47,5 +47,6 @@ repos:
     rev: v4.0.4
     hooks:
     - id: pylint
+      args: ['--init-hook', 'import sys; sys.path.insert(0, ".")']
       fail_fast: true
       require_serial: true
