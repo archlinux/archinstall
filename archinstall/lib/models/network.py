@@ -153,7 +153,7 @@ class NetworkConfiguration:
 			case NicType.NM | NicType.NM_IWD:
 				# Install NetworkManager package for both cases
 				packages = ['networkmanager']
-				# Defautl back-end only for non-iwd
+				# Default back-end only for non-iwd
 				if self.type == NicType.NM:
 					packages.append('wpa_supplicant')
 

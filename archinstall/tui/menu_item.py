@@ -429,7 +429,7 @@ class MenuItemsState:
 			else:
 				start = focus_row_idx
 				end = focus_row_idx + self._total_rows
-		elif len(enabled_items) <= self._total_rows:  # the view can handle oll items
+		elif len(enabled_items) <= self._total_rows:  # the view can handle all items
 			start = 0
 			end = self._total_rows
 		elif not self._item_group.has_filter() and focus_row_idx in self._prev_visible_rows:  # focus is in the same view
