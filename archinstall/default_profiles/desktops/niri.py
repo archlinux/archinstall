@@ -1,6 +1,5 @@
 from typing import override
 
-from archinstall.default_profiles.desktops import SeatAccess
 from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.wayland import WaylandProfile
 from archinstall.lib.translationhandler import tr
