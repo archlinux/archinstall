@@ -1,7 +1,7 @@
 archinstall Documentation
 =========================
 
-**archinstall** is library which can be used to install Arch Linux.
+**archinstall** is a library which can be used to install Arch Linux.
 The library comes packaged with different pre-configured installers, such as the default :ref:`guided` installer.
 
 Some of the features of Archinstall are:
