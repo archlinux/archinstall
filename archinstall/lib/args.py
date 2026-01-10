@@ -132,7 +132,7 @@ class ArchConfig:
 
 	@classmethod
 	def from_config(cls, args_config: dict[str, Any], args: Arguments) -> 'ArchConfig':
-		arch_config = ArchConfig()
+		arch_config = cls()
 
 		arch_config.locale_config = LocaleConfiguration.parse_arg(args_config)
 

@@ -166,7 +166,7 @@ class PackageGroup:
 				if len(group) == 0:
 					continue
 
-				pkg_groups.setdefault(group, PackageGroup(group))
+				pkg_groups.setdefault(group, cls(group))
 				pkg_groups[group].packages.append(pkg.name)
 
 		return pkg_groups

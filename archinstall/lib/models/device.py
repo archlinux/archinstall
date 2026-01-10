@@ -95,7 +95,7 @@ class DiskLayoutConfiguration:
 		if not config_type:
 			raise ValueError('Missing disk layout configuration: config_type')
 
-		config = DiskLayoutConfiguration(
+		config = cls(
 			config_type=DiskLayoutType(config_type),
 			device_modifications=device_modifications,
 		)
@@ -294,7 +294,7 @@ class SectorSize:
 
 	@classmethod
 	def parse_args(cls, arg: _SectorSizeSerialization) -> SectorSize:
-		return SectorSize(
+		return cls(
 			arg['value'],
 			Unit[arg['unit']],
 		)
@@ -333,7 +333,7 @@ class Size:
 	def parse_args(cls, size_arg: _SizeSerialization) -> Size:
 		sector_size = size_arg['sector_size']
 
-		return Size(
+		return cls(
 			size_arg['value'],
 			Unit[size_arg['unit']],
 			SectorSize.parse_args(sector_size),
@@ -553,7 +553,7 @@ class _PartitionInfo:
 			SectorSize(partition.disk.device.sectorSize, Unit.B),
 		)
 
-		return _PartitionInfo(
+		return cls(
 			partition=partition,
 			name=partition.get_name(),
 			type=partition_type,
@@ -608,7 +608,7 @@ class _DeviceInfo:
 		sector_size = SectorSize(device.sectorSize, Unit.B)
 		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
 
-		return _DeviceInfo(
+		return cls(
 			model=device.model.strip(),
 			path=Path(device.path),
 			type=device_type,
@@ -632,7 +632,7 @@ class SubvolumeModification:
 
 	@classmethod
 	def from_existing_subvol_info(cls, info: _BtrfsSubvolumeInfo) -> SubvolumeModification:
-		return SubvolumeModification(info.name, mountpoint=info.mountpoint)
+		return cls(info.name, mountpoint=info.mountpoint)
 
 	@classmethod
 	def parse_args(cls, subvol_args: list[_SubvolumeModificationSerialization]) -> list[SubvolumeModification]:
@@ -644,7 +644,7 @@ class SubvolumeModification:
 
 			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
 
-			mods.append(SubvolumeModification(entry['name'], mountpoint))
+			mods.append(cls(entry['name'], mountpoint))
 
 		return mods
 
@@ -723,10 +723,10 @@ class PartitionType(Enum):
 	@classmethod
 	def get_type_from_code(cls, code: int) -> PartitionType:
 		if code == parted.PARTITION_NORMAL:
-			return PartitionType.Primary
+			return cls.Primary
 		else:
 			debug(f'Partition code not supported: {code}')
-			return PartitionType._Unknown
+			return cls._Unknown
 
 	def get_partition_code(self) -> int | None:
 		if self == PartitionType.Primary:
@@ -923,7 +923,7 @@ class PartitionModification:
 			mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
 			subvol_mods = []
 
-		return PartitionModification(
+		return cls(
 			status=ModificationStatus.Exist,
 			type=partition_info.type,
 			start=partition_info.start,
@@ -1433,10 +1433,10 @@ class EncryptionType(Enum):
 	@classmethod
 	def _encryption_type_mapper(cls) -> dict[str, 'EncryptionType']:
 		return {
-			tr('No Encryption'): EncryptionType.NoEncryption,
-			tr('LUKS'): EncryptionType.Luks,
-			tr('LVM on LUKS'): EncryptionType.LvmOnLuks,
-			tr('LUKS on LVM'): EncryptionType.LuksOnLvm,
+			tr('No Encryption'): cls.NoEncryption,
+			tr('LUKS'): cls.Luks,
+			tr('LVM on LUKS'): cls.LvmOnLuks,
+			tr('LUKS on LVM'): cls.LuksOnLvm,
 		}
 
 	@classmethod
@@ -1539,7 +1539,7 @@ class DiskEncryption:
 				if vol.obj_id in disk_encryption.get('lvm_volumes', []):
 					volumes.append(vol)
 
-		enc = DiskEncryption(
+		enc = cls(
 			EncryptionType(disk_encryption['encryption_type']),
 			password,
 			enc_partitions,
@@ -1583,7 +1583,7 @@ class Fido2Device:
 
 	@classmethod
 	def parse_arg(cls, arg: _Fido2DeviceSerialization) -> 'Fido2Device':
-		return Fido2Device(
+		return cls(
 			Path(arg['path']),
 			arg['manufacturer'],
 			arg['product'],

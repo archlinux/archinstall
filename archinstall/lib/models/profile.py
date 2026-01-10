@@ -40,7 +40,7 @@ class ProfileConfiguration:
 		greeter = arg.get('greeter', None)
 		gfx_driver = arg.get('gfx_driver', None)
 
-		return ProfileConfiguration(
+		return cls(
 			profile,
 			GfxDriver(gfx_driver) if gfx_driver else None,
 			GreeterType(greeter) if greeter else None,
