@@ -56,7 +56,7 @@ class FormattedOutput:
 		capitalize: bool = False,
 	) -> str:
 		"""variant of as_table (subtly different code) which has two additional parameters
-		filter which is a list of fields which will be shon
+		filter which is a list of fields which will be shown
 		class_formatter a special method to format the outgoing data
 
 		A general comment, the format selected for the output (a string where every data record is separated by newline)
