@@ -28,7 +28,7 @@ class ProfileConfiguration:
 
 		return {
 			'profile': profile_handler.to_json(self.profile),
-			'gfx_driver': self.gfx_driver.value if self.gfx_driver else None,
+			'gfx_driver': self.gfx_driver.name if self.gfx_driver else None,
 			'greeter': self.greeter.value if self.greeter else None,
 		}
 
@@ -40,8 +40,22 @@ class ProfileConfiguration:
 		greeter = arg.get('greeter', None)
 		gfx_driver = arg.get('gfx_driver', None)
 
+		_gfx_driver: GfxDriver | None = None
+		if gfx_driver:
+			# Note: This is for backwards compatability with older configs.
+			# We fall back to the open-source nouveau driver here because if
+			# we end up installing the open kernel modules on a machine with pre-Turing
+			# hardware, the user will end up with a broken install (unresponsive black screen).
+			if gfx_driver == 'Nvidia (proprietary)':
+				_gfx_driver = GfxDriver.NvidiaOpenSource
+			else:
+				try:
+					_gfx_driver = GfxDriver(gfx_driver)
+				except Exception:
+					_gfx_driver = GfxDriver[gfx_driver]
+
 		return ProfileConfiguration(
 			profile,
-			GfxDriver(gfx_driver) if gfx_driver else None,
+			_gfx_driver,
 			GreeterType(greeter) if greeter else None,
 		)
