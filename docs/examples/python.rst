@@ -29,7 +29,7 @@ We begin by creating "`scripts`_:code:`/test_installer.py`". The placement here 
 This script can now already be called using :code:`python -m archinstall --script test_installer` after a successful installation of the library itself.
 But the script won't do much. So we'll do something simple like list all the hard drives as an example.
 
-To do this, we'll begin by importing :code:`archinstall` in our "`scripts`_:code:`/test_installer.py`" and call a function whtin ``archinstall``.
+To do this, we'll begin by importing :code:`archinstall` in our "`scripts`_:code:`/test_installer.py`" and call a function within ``archinstall``.
 
 .. code-block:: python
 
