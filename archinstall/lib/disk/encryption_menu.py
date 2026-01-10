@@ -184,7 +184,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		enc_type = self._item_group.find_by_key('encryption_type').value
 
 		if enc_type:
-			enc_text = EncryptionType.type_to_text(enc_type)
+			enc_text = enc_type.type_to_text()
 			return f'{tr("Encryption type")}: {enc_text}'
 
 		return None
@@ -252,9 +252,9 @@ def select_encryption_type(
 	if not preset:
 		preset = options[0]
 
-	preset_value = EncryptionType.type_to_text(preset)
+	preset_value = preset.type_to_text()
 
-	items = [MenuItem(EncryptionType.type_to_text(o), value=o) for o in options]
+	items = [MenuItem(o.type_to_text(), value=o) for o in options]
 	group = MenuItemGroup(items)
 	group.set_focus_by_value(preset_value)
 
