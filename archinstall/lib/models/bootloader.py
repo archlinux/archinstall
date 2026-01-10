@@ -37,25 +37,25 @@ class Bootloader(Enum):
 		from ..args import arch_config_handler
 
 		if arch_config_handler.args.skip_boot:
-			return Bootloader.NO_BOOTLOADER
+			return cls.NO_BOOTLOADER
 		elif SysInfo.has_uefi():
-			return Bootloader.Systemd
+			return cls.Systemd
 		else:
-			return Bootloader.Grub
+			return cls.Grub
 
 	@classmethod
 	def from_arg(cls, bootloader: str, skip_boot: bool) -> Bootloader:
 		# to support old configuration files
 		bootloader = bootloader.capitalize()
 
-		bootloader_options = [e.value for e in Bootloader if e != Bootloader.NO_BOOTLOADER or skip_boot is True]
+		bootloader_options = [e.value for e in cls if e != cls.NO_BOOTLOADER or skip_boot is True]
 
 		if bootloader not in bootloader_options:
 			values = ', '.join(bootloader_options)
 			warn(f'Invalid bootloader value "{bootloader}". Allowed values: {values}')
 			sys.exit(1)
 
-		return Bootloader(bootloader)
+		return cls(bootloader)
 
 
 @dataclass

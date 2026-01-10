@@ -59,45 +59,45 @@ class PasswordStrength(Enum):
 		if digit and upper and lower and symbol:
 			match length:
 				case num if 13 <= num:
-					return PasswordStrength.STRONG
+					return cls.STRONG
 				case num if 11 <= num <= 12:
-					return PasswordStrength.MODERATE
+					return cls.MODERATE
 				case num if 7 <= num <= 10:
-					return PasswordStrength.WEAK
+					return cls.WEAK
 				case num if num <= 6:
-					return PasswordStrength.VERY_WEAK
+					return cls.VERY_WEAK
 		elif digit and upper and lower:
 			match length:
 				case num if 14 <= num:
-					return PasswordStrength.STRONG
+					return cls.STRONG
 				case num if 11 <= num <= 13:
-					return PasswordStrength.MODERATE
+					return cls.MODERATE
 				case num if 7 <= num <= 10:
-					return PasswordStrength.WEAK
+					return cls.WEAK
 				case num if num <= 6:
-					return PasswordStrength.VERY_WEAK
+					return cls.VERY_WEAK
 		elif upper and lower:
 			match length:
 				case num if 15 <= num:
-					return PasswordStrength.STRONG
+					return cls.STRONG
 				case num if 12 <= num <= 14:
-					return PasswordStrength.MODERATE
+					return cls.MODERATE
 				case num if 7 <= num <= 11:
-					return PasswordStrength.WEAK
+					return cls.WEAK
 				case num if num <= 6:
-					return PasswordStrength.VERY_WEAK
+					return cls.VERY_WEAK
 		elif lower or upper:
 			match length:
 				case num if 18 <= num:
-					return PasswordStrength.STRONG
+					return cls.STRONG
 				case num if 14 <= num <= 17:
-					return PasswordStrength.MODERATE
+					return cls.MODERATE
 				case num if 9 <= num <= 13:
-					return PasswordStrength.WEAK
+					return cls.WEAK
 				case num if num <= 8:
-					return PasswordStrength.VERY_WEAK
+					return cls.VERY_WEAK
 
-		return PasswordStrength.VERY_WEAK
+		return cls.VERY_WEAK
 
 
 UserSerialization = TypedDict(
@@ -204,7 +204,7 @@ class User:
 			if not username or password is None:
 				continue
 
-			user = User(
+			user = cls(
 				username=username,
 				password=password,
 				sudo=entry.get('sudo', False) is True,

@@ -254,7 +254,7 @@ class WifiConfiguredNetwork:
 				flags: list[str] = []
 
 				networks.append(
-					WifiConfiguredNetwork(
+					cls(
 						network_id=int(parts[0]),
 						ssid=parts[1],
 						bssid=parts[2],
