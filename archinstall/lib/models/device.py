@@ -1495,9 +1495,8 @@ class DiskEncryption:
 
 		return obj
 
-	@classmethod
+	@staticmethod
 	def validate_enc(
-		cls,
 		modifications: list[DeviceModification],
 		lvm_config: LvmConfiguration | None = None,
 	) -> bool:

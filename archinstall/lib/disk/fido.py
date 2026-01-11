@@ -101,13 +101,8 @@ class Fido2:
 
 		return cls._cryptenroll_devices
 
-	@classmethod
-	def fido2_enroll(
-		cls,
-		hsm_device: Fido2Device,
-		dev_path: Path,
-		password: Password,
-	) -> None:
+	@staticmethod
+	def fido2_enroll(hsm_device: Fido2Device, dev_path: Path, password: Password) -> None:
 		worker = SysCommandWorker(f'systemd-cryptenroll --fido2-device={hsm_device.path} {dev_path}', peek_output=True)
 		pw_inputted = False
 		pin_inputted = False
