@@ -152,8 +152,8 @@ class PackageGroup:
 	def from_available_packages(
 		cls,
 		packages: dict[str, AvailablePackage],
-	) -> dict[str, 'PackageGroup']:
-		pkg_groups: dict[str, 'PackageGroup'] = {}
+	) -> dict[str, Self]:
+		pkg_groups: dict[str, Self] = {}
 
 		for pkg in packages.values():
 			if 'None' in pkg.groups:

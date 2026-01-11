@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import NotRequired, TypedDict, override
+from typing import NotRequired, Self, TypedDict, override
 
 from archinstall.lib.translationhandler import tr
 
@@ -38,7 +38,7 @@ class PasswordStrength(Enum):
 				return 'green'
 
 	@classmethod
-	def strength(cls, password: str) -> 'PasswordStrength':
+	def strength(cls, password: str) -> Self:
 		digit = any(character.isdigit() for character in password)
 		upper = any(character.isupper() for character in password)
 		lower = any(character.islower() for character in password)
@@ -53,7 +53,7 @@ class PasswordStrength(Enum):
 		lower: bool,
 		symbol: bool,
 		length: int,
-	) -> 'PasswordStrength':
+	) -> Self:
 		# suggested evaluation
 		# https://github.com/archlinux/archinstall/issues/1304#issuecomment-1146768163
 		if digit and upper and lower and symbol:
@@ -185,8 +185,8 @@ class User:
 	def parse_arguments(
 		cls,
 		args: list[UserSerialization],
-	) -> list['User']:
-		users: list[User] = []
+	) -> list[Self]:
+		users = []
 
 		for entry in args:
 			username = entry.get('username')

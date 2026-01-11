@@ -41,7 +41,7 @@ class LocaleConfiguration:
 			self.kb_layout = args['kb_layout']
 
 	@classmethod
-	def parse_arg(cls, args: dict[str, Any]) -> 'LocaleConfiguration':
+	def parse_arg(cls, args: dict[str, Any]) -> Self:
 		default = cls.default()
 
 		if 'locale_config' in args:

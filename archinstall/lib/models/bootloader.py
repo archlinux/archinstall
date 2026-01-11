@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, Self
 
 from archinstall.lib.translationhandler import tr
 
@@ -33,7 +33,7 @@ class Bootloader(Enum):
 		return self.value
 
 	@classmethod
-	def get_default(cls) -> Bootloader:
+	def get_default(cls) -> Self:
 		from ..args import arch_config_handler
 
 		if arch_config_handler.args.skip_boot:
@@ -44,7 +44,7 @@ class Bootloader(Enum):
 			return cls.Grub
 
 	@classmethod
-	def from_arg(cls, bootloader: str, skip_boot: bool) -> Bootloader:
+	def from_arg(cls, bootloader: str, skip_boot: bool) -> Self:
 		# to support old configuration files
 		bootloader = bootloader.capitalize()
 
@@ -68,14 +68,14 @@ class BootloaderConfiguration:
 		return {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
 
 	@classmethod
-	def parse_arg(cls, config: dict[str, Any], skip_boot: bool) -> BootloaderConfiguration:
+	def parse_arg(cls, config: dict[str, Any], skip_boot: bool) -> Self:
 		bootloader = Bootloader.from_arg(config.get('bootloader', ''), skip_boot)
 		uki = config.get('uki', False)
 		removable = config.get('removable', True)
 		return cls(bootloader=bootloader, uki=uki, removable=removable)
 
 	@classmethod
-	def get_default(cls) -> BootloaderConfiguration:
+	def get_default(cls) -> Self:
 		bootloader = Bootloader.get_default()
 		removable = SysInfo.has_uefi() and bootloader.has_removable_support()
 		uki = SysInfo.has_uefi() and bootloader.has_uki_support()
