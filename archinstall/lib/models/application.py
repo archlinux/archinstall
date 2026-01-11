@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import StrEnum, auto
-from typing import Any, NotRequired, TypedDict
+from typing import Any, NotRequired, Self, TypedDict
 
 
 class PowerManagement(StrEnum):
@@ -63,9 +63,9 @@ class AudioConfiguration:
 			'audio': self.audio.value,
 		}
 
-	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'AudioConfiguration':
-		return AudioConfiguration(
+	@classmethod
+	def parse_arg(cls, arg: dict[str, Any]) -> Self:
+		return cls(
 			Audio(arg['audio']),
 		)
 
@@ -77,9 +77,9 @@ class BluetoothConfiguration:
 	def json(self) -> BluetoothConfigSerialization:
 		return {'enabled': self.enabled}
 
-	@staticmethod
-	def parse_arg(arg: BluetoothConfigSerialization) -> 'BluetoothConfiguration':
-		return BluetoothConfiguration(arg['enabled'])
+	@classmethod
+	def parse_arg(cls, arg: BluetoothConfigSerialization) -> Self:
+		return cls(arg['enabled'])
 
 
 @dataclass
@@ -91,9 +91,9 @@ class PowerManagementConfiguration:
 			'power_management': self.power_management.value,
 		}
 
-	@staticmethod
-	def parse_arg(arg: PowerManagementConfigSerialization) -> 'PowerManagementConfiguration':
-		return PowerManagementConfiguration(
+	@classmethod
+	def parse_arg(cls, arg: PowerManagementConfigSerialization) -> Self:
+		return cls(
 			PowerManagement(arg['power_management']),
 		)
 
@@ -105,9 +105,9 @@ class PrintServiceConfiguration:
 	def json(self) -> PrintServiceConfigSerialization:
 		return {'enabled': self.enabled}
 
-	@staticmethod
-	def parse_arg(arg: PrintServiceConfigSerialization) -> 'PrintServiceConfiguration':
-		return PrintServiceConfiguration(arg['enabled'])
+	@classmethod
+	def parse_arg(cls, arg: PrintServiceConfigSerialization) -> Self:
+		return cls(arg['enabled'])
 
 
 @dataclass
@@ -119,9 +119,9 @@ class FirewallConfiguration:
 			'firewall': self.firewall.value,
 		}
 
-	@staticmethod
-	def parse_arg(arg: dict[str, Any]) -> 'FirewallConfiguration':
-		return FirewallConfiguration(
+	@classmethod
+	def parse_arg(cls, arg: dict[str, Any]) -> Self:
+		return cls(
 			Firewall(arg['firewall']),
 		)
 
@@ -131,14 +131,14 @@ class ZramConfiguration:
 	enabled: bool
 	algorithm: ZramAlgorithm = ZramAlgorithm.ZSTD
 
-	@staticmethod
-	def parse_arg(arg: bool | dict[str, Any]) -> 'ZramConfiguration':
+	@classmethod
+	def parse_arg(cls, arg: bool | dict[str, Any]) -> Self:
 		if isinstance(arg, bool):
-			return ZramConfiguration(enabled=arg)
+			return cls(enabled=arg)
 
 		enabled = arg.get('enabled', True)
 		algo = arg.get('algorithm', arg.get('algo', ZramAlgorithm.ZSTD.value))
-		return ZramConfiguration(enabled=enabled, algorithm=ZramAlgorithm(algo))
+		return cls(enabled=enabled, algorithm=ZramAlgorithm(algo))
 
 
 @dataclass
@@ -149,12 +149,13 @@ class ApplicationConfiguration:
 	print_service_config: PrintServiceConfiguration | None = None
 	firewall_config: FirewallConfiguration | None = None
 
-	@staticmethod
+	@classmethod
 	def parse_arg(
+		cls,
 		args: dict[str, Any] | None = None,
 		old_audio_config: dict[str, Any] | None = None,
-	) -> 'ApplicationConfiguration':
-		app_config = ApplicationConfiguration()
+	) -> Self:
+		app_config = cls()
 
 		if args and (bluetooth_config := args.get('bluetooth_config')) is not None:
 			app_config.bluetooth_config = BluetoothConfiguration.parse_arg(bluetooth_config)

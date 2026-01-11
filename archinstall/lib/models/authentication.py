@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, NotRequired, TypedDict
+from typing import Any, NotRequired, Self, TypedDict
 
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.translationhandler import tr
@@ -40,14 +40,14 @@ class U2FLoginConfiguration:
 			'passwordless_sudo': self.passwordless_sudo,
 		}
 
-	@staticmethod
-	def parse_arg(args: U2FLoginConfigSerialization) -> 'U2FLoginConfiguration | None':
+	@classmethod
+	def parse_arg(cls, args: U2FLoginConfigSerialization) -> Self | None:
 		u2f_login_method = args.get('u2f_login_method')
 
 		if not u2f_login_method:
 			return None
 
-		u2f_config = U2FLoginConfiguration(u2f_login_method=U2FLoginMethod(u2f_login_method))
+		u2f_config = cls(u2f_login_method=U2FLoginMethod(u2f_login_method))
 
 		u2f_config.u2f_login_method = U2FLoginMethod(u2f_login_method)
 
@@ -63,9 +63,9 @@ class AuthenticationConfiguration:
 	users: list[User] = field(default_factory=list)
 	u2f_config: U2FLoginConfiguration | None = None
 
-	@staticmethod
-	def parse_arg(args: dict[str, Any]) -> 'AuthenticationConfiguration':
-		auth_config = AuthenticationConfiguration()
+	@classmethod
+	def parse_arg(cls, args: dict[str, Any]) -> Self:
+		auth_config = cls()
 
 		if (u2f_config := args.get('u2f_config')) is not None:
 			auth_config.u2f_config = U2FLoginConfiguration.parse_arg(u2f_config)

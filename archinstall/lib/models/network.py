@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, NotRequired, TypedDict, override
+from typing import TYPE_CHECKING, NotRequired, Self, TypedDict, override
 
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
@@ -66,9 +66,9 @@ class Nic:
 			'dns': self.dns,
 		}
 
-	@staticmethod
-	def parse_arg(arg: _NicSerialization) -> Nic:
-		return Nic(
+	@classmethod
+	def parse_arg(cls, arg: _NicSerialization) -> Self:
+		return cls(
 			iface=arg.get('iface', None),
 			ip=arg.get('ip', None),
 			dhcp=arg.get('dhcp', True),
@@ -121,22 +121,22 @@ class NetworkConfiguration:
 
 		return config
 
-	@staticmethod
-	def parse_arg(config: _NetworkConfigurationSerialization) -> NetworkConfiguration | None:
+	@classmethod
+	def parse_arg(cls, config: _NetworkConfigurationSerialization) -> Self | None:
 		nic_type = config.get('type', None)
 		if not nic_type:
 			return None
 
 		match NicType(nic_type):
 			case NicType.ISO:
-				return NetworkConfiguration(NicType.ISO)
+				return cls(NicType.ISO)
 			case NicType.NM:
-				return NetworkConfiguration(NicType.NM)
+				return cls(NicType.NM)
 			case NicType.MANUAL:
 				nics_arg = config.get('nics', [])
 				if nics_arg:
 					nics = [Nic.parse_arg(n) for n in nics_arg]
-					return NetworkConfiguration(NicType.MANUAL, nics)
+					return cls(NicType.MANUAL, nics)
 
 		return None
 
@@ -199,9 +199,9 @@ class WifiNetwork:
 			'BSSID': self.bssid,
 		}
 
-	@staticmethod
-	def from_wpa(results: str) -> list[WifiNetwork]:
-		entries: list[WifiNetwork] = []
+	@classmethod
+	def from_wpa(cls, results: str) -> list[Self]:
+		entries = []
 
 		for line in results.splitlines():
 			line = line.strip()
@@ -212,7 +212,7 @@ class WifiNetwork:
 			if len(parts) != 5:
 				continue
 
-			wifi = WifiNetwork(bssid=parts[0], frequency=parts[1], signal_level=parts[2], flags=parts[3], ssid=parts[4])
+			wifi = cls(bssid=parts[0], frequency=parts[1], signal_level=parts[2], flags=parts[3], ssid=parts[4])
 			entries.append(wifi)
 
 		return entries

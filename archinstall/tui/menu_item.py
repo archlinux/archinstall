@@ -4,7 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Self
 
 from archinstall.lib.translationhandler import tr
 
@@ -113,21 +113,22 @@ class MenuItemGroup:
 	def get_enabled_items(self) -> list[MenuItem]:
 		return [it for it in self.items if self.is_enabled(it)]
 
-	@staticmethod
-	def yes_no() -> 'MenuItemGroup':
-		return MenuItemGroup(
+	@classmethod
+	def yes_no(cls) -> Self:
+		return cls(
 			[MenuItem.yes(), MenuItem.no()],
 			sort_items=True,
 		)
 
-	@staticmethod
+	@classmethod
 	def from_enum(
+		cls,
 		enum_cls: type[Enum],
 		sort_items: bool = False,
 		preset: Enum | None = None,
-	) -> 'MenuItemGroup':
+	) -> Self:
 		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
-		group = MenuItemGroup(items, sort_items=sort_items)
+		group = cls(items, sort_items=sort_items)
 
 		if preset is not None:
 			group.set_selected_by_value(preset)

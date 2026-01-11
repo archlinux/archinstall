@@ -6,7 +6,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import NotRequired, TypedDict, override
+from typing import NotRequired, Self, TypedDict, override
 from uuid import UUID
 
 import parted
@@ -254,17 +254,17 @@ class Unit(Enum):
 
 	sectors = 'sectors'  # size in sector
 
-	@staticmethod
-	def get_all_units() -> list[str]:
-		return [u.name for u in Unit]
+	@classmethod
+	def get_all_units(cls) -> list[str]:
+		return [u.name for u in cls]
 
-	@staticmethod
-	def get_si_units() -> list[Unit]:
-		return [u for u in Unit if 'i' not in u.name and u.name != 'sectors']
+	@classmethod
+	def get_si_units(cls) -> list[Self]:
+		return [u for u in cls if 'i' not in u.name and u.name != 'sectors']
 
-	@staticmethod
-	def get_binary_units() -> list[Unit]:
-		return [u for u in Unit if 'i' in u.name or u.name == 'B']
+	@classmethod
+	def get_binary_units(cls) -> list[Self]:
+		return [u for u in cls if 'i' in u.name or u.name == 'B']
 
 
 class _SectorSizeSerialization(TypedDict):
@@ -282,9 +282,9 @@ class SectorSize:
 			case Unit.sectors:
 				raise ValueError('Unit type sector not allowed for SectorSize')
 
-	@staticmethod
-	def default() -> SectorSize:
-		return SectorSize(512, Unit.B)
+	@classmethod
+	def default(cls) -> Self:
+		return cls(512, Unit.B)
 
 	def json(self) -> _SectorSizeSerialization:
 		return {
@@ -1087,15 +1087,15 @@ class LvmVolumeGroup:
 			'volumes': [vol.json() for vol in self.volumes],
 		}
 
-	@staticmethod
-	def parse_arg(arg: _LvmVolumeGroupSerialization, disk_config: DiskLayoutConfiguration) -> LvmVolumeGroup:
+	@classmethod
+	def parse_arg(cls, arg: _LvmVolumeGroupSerialization, disk_config: DiskLayoutConfiguration) -> Self:
 		lvm_pvs = []
 		for mod in disk_config.device_modifications:
 			for part in mod.partitions:
 				if part.obj_id in arg.get('lvm_pvs', []):
 					lvm_pvs.append(part)
 
-		return LvmVolumeGroup(
+		return cls(
 			arg['name'],
 			lvm_pvs,
 			[LvmVolume.parse_arg(vol) for vol in arg['volumes']],
@@ -1191,9 +1191,9 @@ class LvmVolume:
 
 		raise ValueError('Mountpoint is not specified')
 
-	@staticmethod
-	def parse_arg(arg: _LvmVolumeSerialization) -> LvmVolume:
-		volume = LvmVolume(
+	@classmethod
+	def parse_arg(cls, arg: _LvmVolumeSerialization) -> Self:
+		volume = cls(
 			status=LvmVolumeStatus(arg['status']),
 			name=arg['name'],
 			fs_type=FilesystemType(arg['fs_type']),
@@ -1296,8 +1296,8 @@ class LvmConfiguration:
 			'vol_groups': [vol_gr.json() for vol_gr in self.vol_groups],
 		}
 
-	@staticmethod
-	def parse_arg(arg: _LvmConfigurationSerialization, disk_config: DiskLayoutConfiguration) -> LvmConfiguration:
+	@classmethod
+	def parse_arg(cls, arg: _LvmConfigurationSerialization, disk_config: DiskLayoutConfiguration) -> Self:
 		lvm_pvs = []
 		for mod in disk_config.device_modifications:
 			for part in mod.partitions:
@@ -1305,7 +1305,7 @@ class LvmConfiguration:
 				if part.obj_id in arg.get('lvm_pvs', []):  # type: ignore[operator]
 					lvm_pvs.append(part)
 
-		return LvmConfiguration(
+		return cls(
 			config_type=LvmLayoutType(arg['config_type']),
 			vol_groups=[LvmVolumeGroup.parse_arg(vol_group, disk_config) for vol_group in arg['vol_groups']],
 		)
@@ -1354,9 +1354,9 @@ class SnapshotConfig:
 	def json(self) -> _SnapshotConfigSerialization:
 		return {'type': self.snapshot_type.value}
 
-	@staticmethod
-	def parse_args(args: _SnapshotConfigSerialization) -> SnapshotConfig:
-		return SnapshotConfig(SnapshotType(args['type']))
+	@classmethod
+	def parse_args(cls, args: _SnapshotConfigSerialization) -> Self:
+		return cls(SnapshotType(args['type']))
 
 
 @dataclass
@@ -1366,12 +1366,12 @@ class BtrfsOptions:
 	def json(self) -> _BtrfsOptionsSerialization:
 		return {'snapshot_config': self.snapshot_config.json() if self.snapshot_config else None}
 
-	@staticmethod
-	def parse_arg(arg: _BtrfsOptionsSerialization) -> BtrfsOptions | None:
+	@classmethod
+	def parse_arg(cls, arg: _BtrfsOptionsSerialization) -> Self | None:
 		snapshot_args = arg.get('snapshot_config')
 		if snapshot_args:
 			snapshot_config = SnapshotConfig.parse_args(snapshot_args)
-			return BtrfsOptions(snapshot_config)
+			return cls(snapshot_config)
 
 		return None
 
