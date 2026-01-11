@@ -257,7 +257,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 
 		if enc_config:
 			enc_type = enc_config.encryption_type
-			output = tr('Encryption type') + f': {EncryptionType.type_to_text(enc_type)}\n'
+			output = tr('Encryption type') + f': {enc_type.type_to_text()}\n'
 
 			if enc_config.encryption_password:
 				output += tr('Password') + f': {enc_config.encryption_password.hidden()}\n'

@@ -1444,11 +1444,10 @@ class EncryptionType(Enum):
 		mapping = cls._encryption_type_mapper()
 		return mapping[text]
 
-	@classmethod
-	def type_to_text(cls, type_: 'EncryptionType') -> str:
-		mapping = cls._encryption_type_mapper()
-		type_to_text = {type_: text for text, type_ in mapping.items()}
-		return type_to_text[type_]
+	def type_to_text(self) -> str:
+		mapping = self._encryption_type_mapper()
+		type_to_text = {enctype: text for text, enctype in mapping.items()}
+		return type_to_text[self]
 
 
 class _DiskEncryptionSerialization(TypedDict):
