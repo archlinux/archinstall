@@ -86,7 +86,7 @@ class DiskLayoutConfiguration:
 		cls,
 		disk_config: _DiskLayoutConfigurationSerialization,
 		enc_password: Password | None = None,
-	) -> DiskLayoutConfiguration | None:
+	) -> Self | None:
 		from archinstall.lib.disk.device_handler import device_handler
 
 		device_modifications: list[DeviceModification] = []
@@ -223,7 +223,7 @@ class PartitionTable(Enum):
 		return self == PartitionTable.MBR
 
 	@classmethod
-	def default(cls) -> PartitionTable:
+	def default(cls) -> Self:
 		return cls.GPT if SysInfo.has_uefi() else cls.MBR
 
 
@@ -293,7 +293,7 @@ class SectorSize:
 		}
 
 	@classmethod
-	def parse_args(cls, arg: _SectorSizeSerialization) -> SectorSize:
+	def parse_args(cls, arg: _SectorSizeSerialization) -> Self:
 		return cls(
 			arg['value'],
 			Unit[arg['unit']],
@@ -330,7 +330,7 @@ class Size:
 		}
 
 	@classmethod
-	def parse_args(cls, size_arg: _SizeSerialization) -> Size:
+	def parse_args(cls, size_arg: _SizeSerialization) -> Self:
 		sector_size = size_arg['sector_size']
 
 		return cls(
@@ -537,7 +537,7 @@ class _PartitionInfo:
 		lsblk_info: LsblkInfo,
 		fs_type: FilesystemType | None,
 		btrfs_subvol_infos: list[_BtrfsSubvolumeInfo] = [],
-	) -> _PartitionInfo:
+	) -> Self:
 		partition_type = PartitionType.get_type_from_code(partition.type)
 		flags = [f for f in PartitionFlag if partition.getFlag(f.flag_id)]
 
@@ -595,7 +595,7 @@ class _DeviceInfo:
 		}
 
 	@classmethod
-	def from_disk(cls, disk: Disk) -> _DeviceInfo:
+	def from_disk(cls, disk: Disk) -> Self:
 		device = disk.device
 		if device.type == 18:
 			device_type = 'loop'
@@ -631,11 +631,11 @@ class SubvolumeModification:
 	mountpoint: Path | None = None
 
 	@classmethod
-	def from_existing_subvol_info(cls, info: _BtrfsSubvolumeInfo) -> SubvolumeModification:
+	def from_existing_subvol_info(cls, info: _BtrfsSubvolumeInfo) -> Self:
 		return cls(info.name, mountpoint=info.mountpoint)
 
 	@classmethod
-	def parse_args(cls, subvol_args: list[_SubvolumeModificationSerialization]) -> list[SubvolumeModification]:
+	def parse_args(cls, subvol_args: list[_SubvolumeModificationSerialization]) -> list[Self]:
 		mods = []
 		for entry in subvol_args:
 			if not entry.get('name', None) or not entry.get('mountpoint', None):
@@ -721,7 +721,7 @@ class PartitionType(Enum):
 	_Unknown = 'unknown'
 
 	@classmethod
-	def get_type_from_code(cls, code: int) -> PartitionType:
+	def get_type_from_code(cls, code: int) -> Self:
 		if code == parted.PARTITION_NORMAL:
 			return cls.Primary
 		else:
@@ -754,7 +754,7 @@ class PartitionFlag(PartitionFlagDataMixin, Enum):
 		return self.alias or self.name.lower()
 
 	@classmethod
-	def from_string(cls, s: str) -> PartitionFlag | None:
+	def from_string(cls, s: str) -> Self | None:
 		s = s.lower()
 
 		for partition_flag in cls:
@@ -911,7 +911,7 @@ class PartitionModification:
 		return self.fs_type
 
 	@classmethod
-	def from_existing_partition(cls, partition_info: _PartitionInfo) -> PartitionModification:
+	def from_existing_partition(cls, partition_info: _PartitionInfo) -> Self:
 		if partition_info.btrfs_subvol_infos:
 			mountpoint = None
 			subvol_mods = []
@@ -1431,7 +1431,7 @@ class EncryptionType(Enum):
 	LuksOnLvm = 'luks_on_lvm'
 
 	@classmethod
-	def _encryption_type_mapper(cls) -> dict[str, 'EncryptionType']:
+	def _encryption_type_mapper(cls) -> dict[str, Self]:
 		return {
 			tr('No Encryption'): cls.NoEncryption,
 			tr('LUKS'): cls.Luks,
@@ -1440,7 +1440,7 @@ class EncryptionType(Enum):
 		}
 
 	@classmethod
-	def text_to_type(cls, text: str) -> 'EncryptionType':
+	def text_to_type(cls, text: str) -> Self:
 		mapping = cls._encryption_type_mapper()
 		return mapping[text]
 
@@ -1518,7 +1518,7 @@ class DiskEncryption:
 		disk_config: DiskLayoutConfiguration,
 		disk_encryption: _DiskEncryptionSerialization,
 		password: Password | None = None,
-	) -> 'DiskEncryption | None':
+	) -> Self | None:
 		if not cls.validate_enc(disk_config.device_modifications, disk_config.lvm_config):
 			return None
 
@@ -1580,7 +1580,7 @@ class Fido2Device:
 		}
 
 	@classmethod
-	def parse_arg(cls, arg: _Fido2DeviceSerialization) -> 'Fido2Device':
+	def parse_arg(cls, arg: _Fido2DeviceSerialization) -> Self:
 		return cls(
 			Path(arg['path']),
 			arg['manufacturer'],

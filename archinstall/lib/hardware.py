@@ -2,6 +2,7 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
+from typing import Self
 
 from .exceptions import SysCallError
 from .general import SysCommand
@@ -16,7 +17,7 @@ class CpuVendor(Enum):
 	_Unknown = 'unknown'
 
 	@classmethod
-	def get_vendor(cls, name: str) -> 'CpuVendor':
+	def get_vendor(cls, name: str) -> Self:
 		if vendor := getattr(cls, name, None):
 			return vendor
 		else:

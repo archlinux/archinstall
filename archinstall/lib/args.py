@@ -7,7 +7,7 @@ from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
 from importlib.metadata import version
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 from urllib.request import Request, urlopen
 
 from pydantic.dataclasses import dataclass as p_dataclass
@@ -131,7 +131,7 @@ class ArchConfig:
 		return config
 
 	@classmethod
-	def from_config(cls, args_config: dict[str, Any], args: Arguments) -> 'ArchConfig':
+	def from_config(cls, args_config: dict[str, Any], args: Arguments) -> Self:
 		arch_config = cls()
 
 		arch_config.locale_config = LocaleConfiguration.parse_arg(args_config)

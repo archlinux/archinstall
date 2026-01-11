@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, Self, TypedDict
 
 from archinstall.default_profiles.profile import GreeterType, Profile
 
@@ -33,7 +33,7 @@ class ProfileConfiguration:
 		}
 
 	@classmethod
-	def parse_arg(cls, arg: _ProfileConfigurationSerialization) -> 'ProfileConfiguration':
+	def parse_arg(cls, arg: _ProfileConfigurationSerialization) -> Self:
 		from ..profile.profiles_handler import profile_handler
 
 		profile = profile_handler.parse_profile_config(arg['profile'])

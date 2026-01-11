@@ -226,7 +226,7 @@ class WifiConfiguredNetwork:
 	flags: list[str]
 
 	@classmethod
-	def from_wpa_cli_output(cls, list_networks: str) -> list[WifiConfiguredNetwork]:
+	def from_wpa_cli_output(cls, list_networks: str) -> list[Self]:
 		"""
 		Example output from 'wpa_cli list_networks'
 
