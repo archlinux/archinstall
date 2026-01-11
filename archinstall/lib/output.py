@@ -15,9 +15,8 @@ if TYPE_CHECKING:
 
 
 class FormattedOutput:
-	@classmethod
+	@staticmethod
 	def _get_values(
-		cls,
 		o: 'DataclassInstance',
 		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = [],
@@ -110,8 +109,8 @@ class FormattedOutput:
 
 		return output
 
-	@classmethod
-	def as_columns(cls, entries: list[str], cols: int) -> str:
+	@staticmethod
+	def as_columns(entries: list[str], cols: int) -> str:
 		"""
 		Will format a list into a given number of columns
 		"""
