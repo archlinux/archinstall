@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
-from typing import Any, override
+from typing import Any, Self, override
 
 from pydantic import BaseModel
 
@@ -47,9 +47,9 @@ class PackageSearchResult:
 	makedepends: list[str]
 	checkdepends: list[str]
 
-	@staticmethod
-	def from_json(data: dict[str, Any]) -> 'PackageSearchResult':
-		return PackageSearchResult(**data)
+	@classmethod
+	def from_json(cls, data: dict[str, Any]) -> Self:
+		return cls(**data)
 
 	@property
 	def pkg_version(self) -> str:
@@ -75,11 +75,11 @@ class PackageSearch:
 	page: int
 	results: list[PackageSearchResult]
 
-	@staticmethod
-	def from_json(data: dict[str, Any]) -> 'PackageSearch':
+	@classmethod
+	def from_json(cls, data: dict[str, Any]) -> Self:
 		results = [PackageSearchResult.from_json(r) for r in data['results']]
 
-		return PackageSearch(
+		return cls(
 			version=data['version'],
 			limit=data['limit'],
 			valid=data['valid'],
