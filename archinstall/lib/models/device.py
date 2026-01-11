@@ -823,14 +823,6 @@ class FilesystemType(Enum):
 			case _:
 				return None
 
-	@property
-	def installation_hooks(self) -> str | None:
-		match self:
-			case FilesystemType.Btrfs:
-				return 'btrfs'
-			case _:
-				return None
-
 
 class ModificationStatus(Enum):
 	Exist = 'existing'
