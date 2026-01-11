@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import override
 
 from archinstall.default_profiles.profile import GreeterType, Profile

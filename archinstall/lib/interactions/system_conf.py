@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import assert_never
 
 from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
