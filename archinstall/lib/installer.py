@@ -1549,7 +1549,7 @@ class Installer:
 					f'cmdline: {kernel_params}',
 				]
 				config_contents += f'\n/Arch Linux ({kernel})\n'
-				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
+				config_contents += '\n'.join(f'    {it}' for it in entry) + '\n'
 			else:
 				entry = [
 					'protocol: linux',
@@ -1558,7 +1558,7 @@ class Installer:
 					f'module_path: {path_root}:/initramfs-{kernel}.img',
 				]
 				config_contents += f'\n/Arch Linux ({kernel})\n'
-				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
+				config_contents += '\n'.join(f'    {it}' for it in entry) + '\n'
 
 		config_path.write_text(config_contents)
 

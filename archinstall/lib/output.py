@@ -320,7 +320,7 @@ def log(
 	reset: bool = False,
 	font: list[Font] = [],
 ) -> None:
-	text = ' '.join([str(x) for x in msgs])
+	text = ' '.join(str(x) for x in msgs)
 
 	logger.log(level, text)
 

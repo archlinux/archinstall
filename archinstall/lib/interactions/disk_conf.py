@@ -483,7 +483,7 @@ def suggest_multi_disk_layout(
 	if filesystem_type == FilesystemType.Btrfs:
 		mount_options = select_mount_options()
 
-	device_paths = ', '.join([str(d.device_info.path) for d in devices])
+	device_paths = ', '.join(str(d.device_info.path) for d in devices)
 
 	debug(f'Suggesting multi-disk-layout for devices: {device_paths}')
 	debug(f'/root: {root_device.device_info.path}')

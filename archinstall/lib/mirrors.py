@@ -275,7 +275,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 	def _prev_additional_repos(self, item: MenuItem) -> str | None:
 		if item.value:
 			repositories: list[Repository] = item.value
-			repos = ', '.join([repo.value for repo in repositories])
+			repos = ', '.join(repo.value for repo in repositories)
 			return f'{tr("Additional repositories")}: {repos}'
 		return None
 
@@ -292,7 +292,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 			return None
 
 		custom_servers: list[CustomServer] = item.value
-		output = '\n'.join([server.url for server in custom_servers])
+		output = '\n'.join(server.url for server in custom_servers)
 		return output.strip()
 
 	@override

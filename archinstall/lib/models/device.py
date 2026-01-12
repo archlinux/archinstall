@@ -522,7 +522,7 @@ class _PartitionInfo:
 			'Start': self.start.format_size(Unit.sectors, self.sector_size, include_unit=False),
 			'End': end.format_size(Unit.sectors, self.sector_size, include_unit=False),
 			'Size': self.length.format_highest(),
-			'Flags': ', '.join([f.description for f in self.flags]),
+			'Flags': ', '.join(f.description for f in self.flags),
 		}
 
 		if self.btrfs_subvol_infos:
@@ -1044,7 +1044,7 @@ class PartitionModification:
 			'FS type': self.fs_type.value if self.fs_type else 'Unknown',
 			'Mountpoint': str(self.mountpoint) if self.mountpoint else '',
 			'Mount options': ', '.join(self.mount_options),
-			'Flags': ', '.join([f.description for f in self.flags]),
+			'Flags': ', '.join(f.description for f in self.flags),
 		}
 
 		if self.btrfs_subvols:

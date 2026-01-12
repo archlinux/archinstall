@@ -149,7 +149,7 @@ def ask_additional_packages_to_install(
 ) -> list[str]:
 	repositories |= {Repository.Core, Repository.Extra}
 
-	respos_text = ', '.join([r.value for r in repositories])
+	respos_text = ', '.join(r.value for r in repositories)
 	output = tr('Repositories: {}').format(respos_text) + '\n'
 
 	output += tr('Loading packages...')

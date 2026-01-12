@@ -177,7 +177,7 @@
 # 	def info(self) -> Optional[ProfileInfo]:
 # 		enabled_profiles = [p for p in self._current_selection if p.custom_enabled]
 # 		if enabled_profiles:
-# 			details = ', '.join([p.name for p in enabled_profiles])
+# 			details = ', '.join(p.name for p in enabled_profiles)
 # 			gfx_driver = self.gfx_driver
 # 			return ProfileInfo(self.name, details, gfx_driver)
 #

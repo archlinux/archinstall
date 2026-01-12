@@ -373,7 +373,7 @@ class DeviceHandler:
 
 		# for whatever reason the output sometimes contains
 		# "File descriptor X leaked leaked on vgs invocation
-		data = '\n'.join([raw for raw in raw_info if 'File descriptor' not in raw])
+		data = '\n'.join(raw for raw in raw_info if 'File descriptor' not in raw)
 
 		debug(f'LVM info: {data}')
 
@@ -489,7 +489,7 @@ class DeviceHandler:
 		SysCommand(cmd)
 
 	def lvm_pv_create(self, pvs: Iterable[Path]) -> None:
-		pvs_str = ' '.join([str(pv) for pv in pvs])
+		pvs_str = ' '.join(str(pv) for pv in pvs)
 		# Signatures are already wiped by wipefs, -f is just for safety
 		cmd = f'pvcreate -f --yes {pvs_str}'
 		# note flags used in scripting
@@ -500,7 +500,7 @@ class DeviceHandler:
 		self.udev_sync()
 
 	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str) -> None:
-		pvs_str = ' '.join([str(pv) for pv in pvs])
+		pvs_str = ' '.join(str(pv) for pv in pvs)
 		cmd = f'vgcreate --yes --force {vg_name} {pvs_str}'
 
 		debug(f'Creating LVM group: {cmd}')
