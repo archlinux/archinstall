@@ -1,3 +1,4 @@
+import sys
 from typing import override
 
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
@@ -174,7 +175,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Abort'),
-				action=lambda x: exit(1),
+				action=lambda x: sys.exit(1),
 				key=f'{CONFIG_KEY}_abort',
 			),
 		]

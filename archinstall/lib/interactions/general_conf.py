@@ -1,3 +1,4 @@
+import sys
 from enum import Enum
 from pathlib import Path
 from typing import assert_never
@@ -305,4 +306,4 @@ def ask_abort() -> None:
 	).run()
 
 	if result.item() == MenuItem.yes():
-		exit(0)
+		sys.exit(0)
