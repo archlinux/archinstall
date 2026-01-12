@@ -136,5 +136,5 @@ def format_cols(items: list[str], header: str | None = None) -> str:
 
 	text += FormattedOutput.as_columns(items, col)
 	# remove whitespaces on each row
-	text = '\n'.join([t.strip() for t in text.split('\n')])
+	text = '\n'.join(t.strip() for t in text.split('\n'))
 	return text

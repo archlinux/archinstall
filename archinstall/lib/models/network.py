@@ -98,7 +98,7 @@ class Nic:
 		config_str = ''
 		for top, entries in config.items():
 			config_str += f'[{top}]\n'
-			config_str += '\n'.join([f'{k}={v}' for k, v in entries])
+			config_str += '\n'.join(f'{k}={v}' for k, v in entries)
 			config_str += '\n\n'
 
 		return config_str

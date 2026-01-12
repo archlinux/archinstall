@@ -582,7 +582,7 @@ class GlobalMenu(AbstractMenu[None]):
 		if mirror_config.optional_repositories:
 			title = tr('Optional repositories')
 			divider = '-' * len(title)
-			repos = ', '.join([r.value for r in mirror_config.optional_repositories])
+			repos = ', '.join(r.value for r in mirror_config.optional_repositories)
 			output += f'{title}\n{divider}\n{repos}\n\n'
 
 		if mirror_config.custom_repositories:

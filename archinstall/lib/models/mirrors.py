@@ -243,11 +243,11 @@ class MirrorConfiguration:
 
 	@property
 	def region_names(self) -> str:
-		return '\n'.join([m.name for m in self.mirror_regions])
+		return '\n'.join(m.name for m in self.mirror_regions)
 
 	@property
 	def custom_server_urls(self) -> str:
-		return '\n'.join([s.url for s in self.custom_servers])
+		return '\n'.join(s.url for s in self.custom_servers)
 
 	def json(self) -> _MirrorConfigurationSerialization:
 		regions = {}
