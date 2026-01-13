@@ -1,5 +1,4 @@
-from __future__ import annotations
-
+import sys
 from enum import Enum
 from pathlib import Path
 
@@ -139,7 +138,7 @@ def ask_additional_packages_to_install(
 ) -> list[str]:
 	repositories |= {Repository.Core, Repository.Extra}
 
-	respos_text = ', '.join([r.value for r in repositories])
+	respos_text = ', '.join(r.value for r in repositories)
 	output = tr('Repositories: {}').format(respos_text) + '\n'
 	output += tr('Loading packages...')
 
@@ -298,4 +297,4 @@ def ask_abort() -> None:
 	).show()
 
 	if result.get_value():
-		exit(0)
+		sys.exit(0)

@@ -76,7 +76,7 @@ class FrameProperties:
 
 	@classmethod
 	def max(cls, header: str) -> 'FrameProperties':
-		return FrameProperties(
+		return cls(
 			header,
 			FrameStyle.MAX,
 			FrameStyle.MAX,
@@ -84,7 +84,7 @@ class FrameProperties:
 
 	@classmethod
 	def min(cls, header: str) -> 'FrameProperties':
-		return FrameProperties(
+		return cls(
 			header,
 			FrameStyle.MIN,
 			FrameStyle.MIN,

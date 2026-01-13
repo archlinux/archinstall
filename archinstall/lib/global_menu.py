@@ -1,11 +1,10 @@
-from __future__ import annotations
-
+import sys
 from typing import override
 
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
-from archinstall.lib.models.application import ApplicationConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
-from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, FilesystemType, PartitionModification
+from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, PartitionModification
 from archinstall.lib.packages import list_available_packages
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
@@ -60,7 +59,7 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Archinstall language'),
 				action=self._select_archinstall_language,
-				display_action=lambda x: x.display_name if x else '',
+				preview_action=self._prev_archinstall_language,
 				key='archinstall_language',
 			),
 			MenuItem(
@@ -85,7 +84,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Swap'),
-				value=True,
+				value=ZramConfiguration(enabled=True),
 				action=ask_for_swap,
 				preview_action=self._prev_swap,
 				key='swap',
@@ -96,6 +95,14 @@ class GlobalMenu(AbstractMenu[None]):
 				action=self._select_bootloader_config,
 				preview_action=self._prev_bootloader_config,
 				key='bootloader_config',
+			),
+			MenuItem(
+				text=tr('Kernels'),
+				value=['linux'],
+				action=select_kernel,
+				preview_action=self._prev_kernel,
+				mandatory=True,
+				key='kernels',
 			),
 			MenuItem(
 				text=tr('Hostname'),
@@ -122,14 +129,6 @@ class GlobalMenu(AbstractMenu[None]):
 				value=[],
 				preview_action=self._prev_applications,
 				key='app_config',
-			),
-			MenuItem(
-				text=tr('Kernels'),
-				value=['linux'],
-				action=select_kernel,
-				preview_action=self._prev_kernel,
-				mandatory=True,
-				key='kernels',
 			),
 			MenuItem(
 				text=tr('Network configuration'),
@@ -182,7 +181,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Abort'),
-				action=lambda x: exit(1),
+				action=lambda x: sys.exit(1),
 				key=f'{CONFIG_KEY}_abort',
 			),
 		]
@@ -244,6 +243,13 @@ class GlobalMenu(AbstractMenu[None]):
 		self._update_lang_text()
 
 		return language
+
+	def _prev_archinstall_language(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
+
+		lang: Language = item.value
+		return f'{tr("Language")}: {lang.display_name}'
 
 	def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
 		app_config = ApplicationMenu(preset).run()
@@ -335,6 +341,16 @@ class GlobalMenu(AbstractMenu[None]):
 				output += tr('Enabled') if app_config.print_service_config.enabled else tr('Disabled')
 				output += '\n'
 
+			if app_config.power_management_config:
+				power_management_config = app_config.power_management_config
+				output += f'{tr("Power management")}: {power_management_config.power_management.value}'
+				output += '\n'
+
+			if app_config.firewall_config:
+				firewall_config = app_config.firewall_config
+				output += f'{tr("Firewall")}: {firewall_config.firewall.value}'
+				output += '\n'
+
 			return output
 
 		return None
@@ -364,7 +380,7 @@ class GlobalMenu(AbstractMenu[None]):
 				output += '{}: {}'.format(tr('LVM configuration type'), disk_layout_conf.lvm_config.config_type.display_msg()) + '\n'
 
 			if disk_layout_conf.disk_encryption:
-				output += tr('Disk encryption') + ': ' + EncryptionType.type_to_text(disk_layout_conf.disk_encryption.encryption_type) + '\n'
+				output += tr('Disk encryption') + ': ' + disk_layout_conf.disk_encryption.encryption_type.type_to_text() + '\n'
 
 			if disk_layout_conf.btrfs_options:
 				btrfs_options = disk_layout_conf.btrfs_options
@@ -378,7 +394,9 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_swap(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			output = f'{tr("Swap on zram")}: '
-			output += tr('Enabled') if item.value else tr('Disabled')
+			output += tr('Enabled') if item.value.enabled else tr('Disabled')
+			if item.value.enabled:
+				output += f'\n{tr("Compression algorithm")}: {item.value.algorithm.value}'
 			return output
 		return None
 
@@ -457,6 +475,10 @@ class GlobalMenu(AbstractMenu[None]):
 		if bootloader == Bootloader.Limine:
 			if boot_partition.fs_type not in [FilesystemType.Fat12, FilesystemType.Fat16, FilesystemType.Fat32]:
 				return 'Limine does not support booting with a non-FAT boot partition'
+
+		elif bootloader == Bootloader.Refind:
+			if not SysInfo.has_uefi():
+				return 'rEFInd can only be used on UEFI systems'
 
 		return None
 
@@ -567,7 +589,7 @@ class GlobalMenu(AbstractMenu[None]):
 		if mirror_config.optional_repositories:
 			title = tr('Optional repositories')
 			divider = '-' * len(title)
-			repos = ', '.join([r.value for r in mirror_config.optional_repositories])
+			repos = ', '.join(r.value for r in mirror_config.optional_repositories)
 			output += f'{title}\n{divider}\n{repos}\n\n'
 
 		if mirror_config.custom_repositories:

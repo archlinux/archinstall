@@ -155,9 +155,37 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		return None
 
-	def _prev_type(self, item: MenuItem) -> str | None:
-		if item.value:
-			enc_text = EncryptionType.type_to_text(item.value)
+	def _preview(self, item: MenuItem) -> str | None:
+		output = ''
+
+		if (enc_type := self._prev_type()) is not None:
+			output += enc_type
+
+		if (enc_pwd := self._prev_password()) is not None:
+			output += f'\n{enc_pwd}'
+
+		if (iter_time := self._prev_iter_time()) is not None:
+			output += f'\n{iter_time}'
+
+		if (fido_device := self._prev_hsm()) is not None:
+			output += f'\n{fido_device}'
+
+		if (partitions := self._prev_partitions()) is not None:
+			output += f'\n\n{partitions}'
+
+		if (lvm := self._prev_lvm_vols()) is not None:
+			output += f'\n\n{lvm}'
+
+		if not output:
+			return None
+
+		return output
+
+	def _prev_type(self) -> str | None:
+		enc_type = self._item_group.find_by_key('encryption_type').value
+
+		if enc_type:
+			enc_text = enc_type.type_to_text()
 			return f'{tr("Encryption type")}: {enc_text}'
 
 		return None
@@ -219,9 +247,9 @@ def select_encryption_type(
 	if not preset:
 		preset = options[0]
 
-	preset_value = EncryptionType.type_to_text(preset)
+	preset_value = preset.type_to_text()
 
-	items = [MenuItem(EncryptionType.type_to_text(o), value=o) for o in options]
+	items = [MenuItem(o.type_to_text(), value=o) for o in options]
 	group = MenuItemGroup(items)
 	group.set_focus_by_value(preset_value)
 

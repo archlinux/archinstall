@@ -53,6 +53,9 @@ msgstr "Wybierz serwer dźwięku"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Instalowane są tylko pakiety takie jak base, base-devel, linux, linux-firmware, efibootmgr i opcjonalne pakiety profili."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Jeśli potrzebujesz przeglądarki internetowej, takiej jak firefox lub chromium, możesz ją określić w następującym oknie dialogowym."
 
@@ -1731,6 +1734,17 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "Czy chcesz kontynuować?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Czy chcesz kontynuować?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Zarządzanie partycją: {}"
+
 msgid "Authentication"
 msgstr ""
 
@@ -1841,6 +1855,39 @@ msgid "Systems where you want the disk to be bootable on any computer."
 msgstr ""
 
 msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Język"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Instalowane są tylko pakiety takie jak base, base-devel, linux, linux-firmware, efibootmgr i opcjonalne pakiety profili."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Wybierz punkt montowania :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "

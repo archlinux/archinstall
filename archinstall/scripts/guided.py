@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 from pathlib import Path
 
@@ -96,8 +97,8 @@ def perform_installation(mountpoint: Path) -> None:
 		if mirror_config := config.mirror_config:
 			installation.set_mirrors(mirror_config, on_target=True)
 
-		if config.swap:
-			installation.setup_swap('zram')
+		if config.swap and config.swap.enabled:
+			installation.setup_swap('zram', algo=config.swap.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
 			if config.bootloader_config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
@@ -191,7 +192,7 @@ def guided() -> None:
 	config.save()
 
 	if arch_config_handler.args.dry_run:
-		exit(0)
+		sys.exit(0)
 
 	if not arch_config_handler.args.silent:
 		aborted = False

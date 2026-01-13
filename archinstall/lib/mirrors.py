@@ -22,7 +22,7 @@ from .models.mirrors import (
 )
 from .models.packages import Repository
 from .networking import fetch_data_from_url
-from .output import FormattedOutput, debug
+from .output import FormattedOutput, debug, info
 
 
 class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
@@ -269,7 +269,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 	def _prev_additional_repos(self, item: MenuItem) -> str | None:
 		if item.value:
 			repositories: list[Repository] = item.value
-			repos = ', '.join([repo.value for repo in repositories])
+			repos = ', '.join(repo.value for repo in repositories)
 			return f'{tr("Additional repositories")}: {repos}'
 		return None
 
@@ -286,7 +286,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 			return None
 
 		custom_servers: list[CustomServer] = item.value
-		output = '\n'.join([server.url for server in custom_servers])
+		output = '\n'.join(server.url for server in custom_servers)
 		return output.strip()
 
 	@override
@@ -444,8 +444,9 @@ class MirrorListHandler:
 		# Local mirrors lack this data and can be modified manually before-hand
 		# Or reflector potentially ran already
 		if self._fetched_remote and speed_sort:
-			# original return
-			return sorted(region_list, key=lambda mirror: (mirror.score, mirror.speed))
+			info('Sorting your selected mirror list based on the speed between you and the individual mirrors (this might take a while)')
+			# Sort by speed descending (higher is better in bitrate form core.db download)
+			return sorted(region_list, key=lambda mirror: -mirror.speed)
 		# just return as-is without sorting?
 		return region_list
 

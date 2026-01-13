@@ -15,9 +15,8 @@ if TYPE_CHECKING:
 
 
 class FormattedOutput:
-	@classmethod
+	@staticmethod
 	def _get_values(
-		cls,
 		o: 'DataclassInstance',
 		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = [],
@@ -56,7 +55,7 @@ class FormattedOutput:
 		capitalize: bool = False,
 	) -> str:
 		"""variant of as_table (subtly different code) which has two additional parameters
-		filter which is a list of fields which will be shon
+		filter which is a list of fields which will be shown
 		class_formatter a special method to format the outgoing data
 
 		A general comment, the format selected for the output (a string where every data record is separated by newline)
@@ -110,8 +109,8 @@ class FormattedOutput:
 
 		return output
 
-	@classmethod
-	def as_columns(cls, entries: list[str], cols: int) -> str:
+	@staticmethod
+	def as_columns(entries: list[str], cols: int) -> str:
 		"""
 		Will format a list into a given number of columns
 		"""
@@ -321,7 +320,7 @@ def log(
 	reset: bool = False,
 	font: list[Font] = [],
 ) -> None:
-	text = ' '.join([str(x) for x in msgs])
+	text = ' '.join(str(x) for x in msgs)
 
 	logger.log(level, text)
 

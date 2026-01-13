@@ -54,6 +54,9 @@ msgstr "Выберите звуковой сервер"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Устанавливаются только такие пакеты, как base, base-devel, linux, linux-firmware, efibootmgr и дополнительные пакеты профиля."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Если вы хотите использовать веб-браузер, например, firefox или chromium, вы можете указать его в следующем запросе."
 
@@ -1769,6 +1772,17 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "Вы хотите продолжить?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Вы хотите продолжить?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Управление разделом: {}"
+
 msgid "Authentication"
 msgstr ""
 
@@ -1879,4 +1893,37 @@ msgid "Systems where you want the disk to be bootable on any computer."
 msgstr ""
 
 msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Язык локали"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Устанавливаются только такие пакеты, как base, base-devel, linux, linux-firmware, efibootmgr и дополнительные пакеты профиля."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Выберите точку монтирования:"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""

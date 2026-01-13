@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import json
 import logging
 import os
@@ -375,7 +373,7 @@ class DeviceHandler:
 
 		# for whatever reason the output sometimes contains
 		# "File descriptor X leaked leaked on vgs invocation
-		data = '\n'.join([raw for raw in raw_info if 'File descriptor' not in raw])
+		data = '\n'.join(raw for raw in raw_info if 'File descriptor' not in raw)
 
 		debug(f'LVM info: {data}')
 
@@ -464,8 +462,22 @@ class DeviceHandler:
 		SysCommand(cmd)
 
 	def lvm_import_vg(self, vg: LvmVolumeGroup) -> None:
-		cmd = f'vgimport {vg.name}'
+		# Check if the VG is actually exported before trying to import it
+		check_cmd = f'vgs --noheadings -o vg_exported {vg.name}'
 
+		try:
+			result = SysCommand(check_cmd)
+			is_exported = result.decode().strip() == 'exported'
+		except SysCallError:
+			# VG might not exist yet, skip import
+			debug(f'Volume group {vg.name} not found, skipping import')
+			return
+
+		if not is_exported:
+			debug(f'Volume group {vg.name} is already active (not exported), skipping import')
+			return
+
+		cmd = f'vgimport {vg.name}'
 		debug(f'vgimport: {cmd}')
 		SysCommand(cmd)
 
@@ -477,33 +489,22 @@ class DeviceHandler:
 		SysCommand(cmd)
 
 	def lvm_pv_create(self, pvs: Iterable[Path]) -> None:
-		cmd = 'pvcreate ' + ' '.join([str(pv) for pv in pvs])
+		pvs_str = ' '.join(str(pv) for pv in pvs)
+		# Signatures are already wiped by wipefs, -f is just for safety
+		cmd = f'pvcreate -f --yes {pvs_str}'
+		# note flags used in scripting
 		debug(f'Creating LVM PVS: {cmd}')
-
-		worker = SysCommandWorker(cmd)
-		worker.poll()
-		worker.write(b'y\n', line_ending=False)
-
-		# Wait for the command to complete
-		while worker.is_alive():
-			worker.poll()
+		SysCommand(cmd)
 
 		# Sync with udev to ensure the PVs are visible
 		self.udev_sync()
 
 	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str) -> None:
-		pvs_str = ' '.join([str(pv) for pv in pvs])
-		cmd = f'vgcreate --yes {vg_name} {pvs_str}'
+		pvs_str = ' '.join(str(pv) for pv in pvs)
+		cmd = f'vgcreate --yes --force {vg_name} {pvs_str}'
 
 		debug(f'Creating LVM group: {cmd}')
-
-		worker = SysCommandWorker(cmd)
-		worker.poll()
-		worker.write(b'y\n', line_ending=False)
-
-		# Wait for the command to complete
-		while worker.is_alive():
-			worker.poll()
+		SysCommand(cmd)
 
 		# Sync with udev to ensure the VG is visible
 		self.udev_sync()
@@ -749,6 +750,17 @@ class DeviceHandler:
 			self._setup_partition(part_mod, modification.device, disk, requires_delete=requires_delete)
 
 		disk.commit()
+
+		# Wipe filesystem/LVM signatures from newly created partitions
+		# to prevent "signature detected" errors
+		for part_mod in filtered_part:
+			if part_mod.dev_path:
+				debug(f'Wiping signatures from: {part_mod.dev_path}')
+				SysCommand(f'wipefs --all {part_mod.dev_path}')
+
+		# Sync with udev after wiping signatures
+		if filtered_part:
+			self.udev_sync()
 
 	@staticmethod
 	def swapon(path: Path) -> None:

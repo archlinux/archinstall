@@ -53,6 +53,9 @@ msgstr "Trieu un servidor d'àudio"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Només s'instal·laran paquets com base, base-devel, linux, linux-firmware, efibootmgr i altres paquets de perfil opcionals."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si desitgeu un navegador web, com ara firefox o chromium, ho podeu especificar al proper missatge."
 
@@ -1731,6 +1734,17 @@ msgstr "Bluetooth"
 msgid "Would you like to configure Bluetooth?"
 msgstr "Voleu configurar el Bluetooth?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Voleu configurar el Bluetooth?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Gestió de particions: {}"
+
 msgid "Authentication"
 msgstr "Autenticació"
 
@@ -1835,3 +1849,39 @@ msgstr "Sistemes on vulgueu que el dispositiu arranqui en qualsevol ordinador."
 
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "Firmware que no suporta registres d'arrancada NVRAM."
+
+#, fuzzy
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "S'instal·larà a /EFI/BOOT (mitjà extraïble)"
+
+#, fuzzy
+msgid "Will install to custom location with NVRAM entry"
+msgstr "S'instal·larà a una ubicació estàndard amb un registre NVRAM"
+
+#, fuzzy
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmware que no suporta registres d'arrancada NVRAM."
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Idioma local"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Només s'instal·laran paquets com base, base-devel, linux, linux-firmware, efibootmgr i altres paquets de perfil opcionals."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Seleccioneu un punt de muntatge :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""

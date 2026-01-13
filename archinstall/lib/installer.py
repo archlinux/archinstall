@@ -16,6 +16,7 @@ from typing import Any
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.disk.utils import get_lsblk_by_mountpoint, get_lsblk_info
+from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -247,6 +248,7 @@ class Installer:
 
 		match self._disk_encryption.encryption_type:
 			case EncryptionType.NoEncryption:
+				self._import_lvm()
 				self._mount_lvm_layout()
 			case EncryptionType.Luks:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
@@ -361,11 +363,14 @@ class Installer:
 			target = self.target / part_mod.relative_mountpoint
 			device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
 		elif part_mod.fs_type == FilesystemType.Btrfs:
-			self._mount_btrfs_subvol(
-				part_mod.dev_path,
-				part_mod.btrfs_subvols,
-				part_mod.mount_options,
-			)
+			# Only mount BTRFS subvolumes that have mountpoints specified
+			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
+			if subvols_with_mountpoints:
+				self._mount_btrfs_subvol(
+					part_mod.dev_path,
+					part_mod.btrfs_subvols,
+					part_mod.mount_options,
+				)
 		elif part_mod.is_swap():
 			device_handler.swapon(part_mod.dev_path)
 
@@ -376,14 +381,20 @@ class Installer:
 				device_handler.mount(volume.dev_path, target, options=volume.mount_options)
 
 		if volume.fs_type == FilesystemType.Btrfs and volume.dev_path:
-			self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols, volume.mount_options)
+			# Only mount BTRFS subvolumes that have mountpoints specified
+			subvols_with_mountpoints = [sv for sv in volume.btrfs_subvols if sv.mountpoint is not None]
+			if subvols_with_mountpoints:
+				self._mount_btrfs_subvol(volume.dev_path, volume.btrfs_subvols, volume.mount_options)
 
 	def _mount_luks_partition(self, part_mod: PartitionModification, luks_handler: Luks2) -> None:
 		if not luks_handler.mapper_dev:
 			return None
 
 		if part_mod.fs_type == FilesystemType.Btrfs and part_mod.btrfs_subvols:
-			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
+			# Only mount BTRFS subvolumes that have mountpoints specified
+			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
+			if subvols_with_mountpoints:
+				self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
 		elif part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
 			device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
@@ -395,7 +406,10 @@ class Installer:
 				device_handler.mount(luks_handler.mapper_dev, target, options=volume.mount_options)
 
 		if volume.fs_type == FilesystemType.Btrfs and luks_handler.mapper_dev:
-			self._mount_btrfs_subvol(luks_handler.mapper_dev, volume.btrfs_subvols, volume.mount_options)
+			# Only mount BTRFS subvolumes that have mountpoints specified
+			subvols_with_mountpoints = [sv for sv in volume.btrfs_subvols if sv.mountpoint is not None]
+			if subvols_with_mountpoints:
+				self._mount_btrfs_subvol(luks_handler.mapper_dev, volume.btrfs_subvols, volume.mount_options)
 
 	def _mount_btrfs_subvol(
 		self,
@@ -403,7 +417,9 @@ class Installer:
 		subvolumes: list[SubvolumeModification],
 		mount_options: list[str] = [],
 	) -> None:
-		for subvol in sorted(subvolumes, key=lambda x: x.relative_mountpoint):
+		# Filter out subvolumes without mountpoints to avoid errors when sorting
+		subvols_with_mountpoints = [sv for sv in subvolumes if sv.mountpoint is not None]
+		for subvol in sorted(subvols_with_mountpoints, key=lambda x: x.relative_mountpoint):
 			mountpoint = self.target / subvol.relative_mountpoint
 			options = mount_options + [f'subvol={subvol.name}']
 			device_handler.mount(dev_path, mountpoint, options=options)
@@ -752,6 +768,13 @@ class Installer:
 				for psk in psk_files:
 					shutil.copy2(psk, f'{self.target}/var/lib/iwd/{os.path.basename(psk)}')
 
+		# Enable systemd-resolved by (forcefully) setting a symlink
+		# For further details see  https://wiki.archlinux.org/title/Systemd-resolved#DNS
+		resolv_config_path = Path(f'{self.target}/etc/resolv.conf')
+		if resolv_config_path.exists():
+			os.unlink(resolv_config_path)
+		os.symlink('/run/systemd/resolve/stub-resolv.conf', resolv_config_path)
+
 		# Copy (if any) systemd-networkd config files
 		if netconfigurations := glob.glob('/etc/systemd/network/*'):
 			if not os.path.isdir(f'{self.target}/etc/systemd/network/'):
@@ -989,7 +1012,7 @@ class Installer:
 			self._configure_grub_btrfsd(snapshot_type)
 			self.enable_service('grub-btrfsd.service')
 
-	def setup_swap(self, kind: str = 'zram') -> None:
+	def setup_swap(self, kind: str = 'zram', algo: ZramAlgorithm = ZramAlgorithm.ZSTD) -> None:
 		if kind == 'zram':
 			info('Setting up swap on zram')
 			self.pacman.strap('zram-generator')
@@ -998,12 +1021,12 @@ class Installer:
 			# Convert KB to MB and divide by 2, with minimum of 4096 MB
 			size_mb = max(ram_kb // 2048, 4096)
 			info(f'Zram size: {size_mb} from RAM: {ram_kb}')
-			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
-			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
-			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
+			info(f'Zram compression algorithm: {algo.value}')
+
 			with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
 				zram_conf.write('[zram0]\n')
 				zram_conf.write(f'zram-size = {size_mb}\n')
+				zram_conf.write(f'compression-algorithm = {algo.value}\n')
 
 			self.enable_service('systemd-zram-setup@zram0.service')
 
@@ -1042,7 +1065,7 @@ class Installer:
 
 		debug(f'Configuring grub-btrfsd service for {snapshot_type} at {snapshot_path}')
 
-		# Works for either snapper or ts just adpating default paths above
+		# Works for either snapper or ts just adapting default paths above
 		# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#id-1.14.3
 		systemd_dir = self.target / 'etc/systemd/system/grub-btrfsd.service.d'
 		systemd_dir.mkdir(parents=True, exist_ok=True)
@@ -1247,7 +1270,7 @@ class Installer:
 
 		try:
 			# Force EFI variables since bootctl detects arch-chroot
-			# as a container environemnt since v257 and skips them silently.
+			# as a container environment since v257 and skips them silently.
 			# https://github.com/systemd/systemd/issues/36174
 			if systemd_version >= '258':
 				self.arch_chroot(f'bootctl --variables=yes {" ".join(bootctl_options)} install')
@@ -1301,6 +1324,7 @@ class Installer:
 		boot_partition: PartitionModification,
 		root: PartitionModification | LvmVolume,
 		efi_partition: PartitionModification | None,
+		uki_enabled: bool = False,
 		bootloader_removable: bool = False,
 	) -> None:
 		debug('Installing grub bootloader')
@@ -1524,7 +1548,7 @@ class Installer:
 					f'cmdline: {kernel_params}',
 				]
 				config_contents += f'\n/Arch Linux ({kernel})\n'
-				config_contents += '\n'.join([f'	{it}' for it in entry]) + '\n'
+				config_contents += '\n'.join(f'    {it}' for it in entry) + '\n'
 			else:
 				entry = [
 					'protocol: linux',
@@ -1533,7 +1557,7 @@ class Installer:
 					f'module_path: {path_root}:/initramfs-{kernel}.img',
 				]
 				config_contents += f'\n/Arch Linux ({kernel})\n'
-				config_contents += '\n'.join([f'	{it}' for it in entry]) + '\n'
+				config_contents += '\n'.join(f'    {it}' for it in entry) + '\n'
 
 		config_path.write_text(config_contents)
 
@@ -1594,6 +1618,105 @@ class Installer:
 
 		self._helper_flags['bootloader'] = 'efistub'
 
+	def _add_refind_bootloader(
+		self,
+		boot_partition: PartitionModification,
+		efi_partition: PartitionModification | None,
+		root: PartitionModification | LvmVolume,
+		uki_enabled: bool = False,
+	) -> None:
+		debug('Installing rEFInd bootloader')
+
+		self.pacman.strap('refind')
+
+		if not SysInfo.has_uefi():
+			raise HardwareIncompatibilityError
+
+		info(f'rEFInd boot partition: {boot_partition.dev_path}')
+
+		if not efi_partition:
+			raise ValueError('Could not detect EFI system partition')
+		elif not efi_partition.mountpoint:
+			raise ValueError('EFI system partition is not mounted')
+
+		info(f'rEFInd EFI partition: {efi_partition.dev_path}')
+
+		try:
+			self.arch_chroot('refind-install')
+		except SysCallError as err:
+			raise DiskError(f'Could not install rEFInd to {self.target}{efi_partition.mountpoint}: {err}')
+
+		if not boot_partition.mountpoint:
+			raise ValueError('Boot partition is not mounted, cannot write rEFInd config')
+
+		boot_is_separate = boot_partition != efi_partition and boot_partition.dev_path != efi_partition.dev_path
+
+		if boot_is_separate:
+			# Separate boot partition (not ESP, not root)
+			config_path = self.target / boot_partition.mountpoint.relative_to('/') / 'refind_linux.conf'
+			boot_on_root = False
+		elif efi_partition.mountpoint == Path('/boot'):
+			# ESP is mounted at /boot, kernels are on ESP
+			config_path = self.target / 'boot' / 'refind_linux.conf'
+			boot_on_root = False
+		else:
+			# ESP is elsewhere (/efi, /boot/efi, etc.), kernels are on root filesystem at /boot
+			config_path = self.target / 'boot' / 'refind_linux.conf'
+			boot_on_root = True
+
+		config_contents = []
+
+		kernel_params = ' '.join(self._get_kernel_params(root))
+
+		for kernel in self.kernels:
+			if uki_enabled:
+				entry = f'"Arch Linux ({kernel}) UKI" "{kernel_params}"'
+			else:
+				if boot_on_root:
+					# Kernels are in /boot subdirectory of root filesystem
+					if hasattr(root, 'btrfs_subvols') and root.btrfs_subvols:
+						# Root is btrfs with subvolume, find the root subvolume
+						root_subvol = next((sv for sv in root.btrfs_subvols if sv.is_root()), None)
+						if root_subvol:
+							subvol_name = root_subvol.name
+							initrd_path = f'initrd={subvol_name}\\boot\\initramfs-{kernel}.img'
+						else:
+							initrd_path = f'initrd=\\boot\\initramfs-{kernel}.img'
+					else:
+						# Root without btrfs subvolume
+						initrd_path = f'initrd=\\boot\\initramfs-{kernel}.img'
+				else:
+					# Kernels are at root of their partition (ESP or separate boot partition)
+					initrd_path = f'initrd=\\initramfs-{kernel}.img'
+				entry = f'"Arch Linux ({kernel})" "{kernel_params} {initrd_path}"'
+
+			config_contents.append(entry)
+
+		config_path.write_text('\n'.join(config_contents) + '\n')
+
+		hook_contents = textwrap.dedent(
+			"""\
+			[Trigger]
+			Operation = Install
+			Operation = Upgrade
+			Type = Package
+			Target = refind
+
+			[Action]
+			Description = Updating rEFInd on ESP
+			When = PostTransaction
+			Exec = /usr/bin/refind-install
+			"""
+		)
+
+		hooks_dir = self.target / 'etc' / 'pacman.d' / 'hooks'
+		hooks_dir.mkdir(parents=True, exist_ok=True)
+
+		hook_path = hooks_dir / '99-refind.hook'
+		hook_path.write_text(hook_contents)
+
+		self._helper_flags['bootloader'] = 'refind'
+
 	def _config_uki(
 		self,
 		root: PartitionModification | LvmVolume,
@@ -1647,11 +1770,12 @@ class Installer:
 	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False, bootloader_removable: bool = False) -> None:
 		"""
 		Adds a bootloader to the installation instance.
-		Archinstall supports one of three types:
+		Archinstall supports one of five types:
 		* systemd-bootctl
 		* grub
 		* limine
 		* efistub (beta)
+		* refnd (beta)
 
 		:param bootloader: Type of bootloader to be added
 		:param uki_enabled: Whether to use unified kernel images
@@ -1661,7 +1785,7 @@ class Installer:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_add_bootloader'):
 				# Allow plugins to override the boot-loader handling.
-				# This allows for bot configuring and installing bootloaders.
+				# This allows for boot configuring and installing bootloaders.
 				if plugin.on_add_bootloader(self):
 					return
 
@@ -1698,11 +1822,13 @@ class Installer:
 			case Bootloader.Systemd:
 				self._add_systemd_bootloader(boot_partition, root, efi_partition, uki_enabled)
 			case Bootloader.Grub:
-				self._add_grub_bootloader(boot_partition, root, efi_partition, bootloader_removable)
+				self._add_grub_bootloader(boot_partition, root, efi_partition, uki_enabled, bootloader_removable)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:
 				self._add_limine_bootloader(boot_partition, efi_partition, root, uki_enabled, bootloader_removable)
+			case Bootloader.Refind:
+				self._add_refind_bootloader(boot_partition, efi_partition, root, uki_enabled)
 
 	def add_additional_packages(self, packages: str | list[str]) -> None:
 		return self.pacman.strap(packages)
@@ -1894,7 +2020,7 @@ class Installer:
 
 	def _service_started(self, service_name: str) -> str | None:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
-			service_name += '.service'  # Just to be safe
+			service_name += '.service'	# Just to be safe
 
 		last_execution_time = (
 			SysCommand(
@@ -1912,7 +2038,7 @@ class Installer:
 
 	def _service_state(self, service_name: str) -> str:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
-			service_name += '.service'  # Just to be safe
+			service_name += '.service'	# Just to be safe
 
 		return SysCommand(
 			f'systemctl show --no-pager -p SubState --value {service_name}',

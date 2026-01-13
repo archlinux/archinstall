@@ -53,6 +53,9 @@ msgstr "Selectați un server audio"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Dacă doriți un browser, precum firefox sau chromium, puteți să-l specificați în promptul următor."
 
@@ -1844,6 +1847,17 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "Doriți să folosiți compresie pentru BTRFS?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Managementul partiției: {}"
+
 msgid "Authentication"
 msgstr ""
 
@@ -1954,4 +1968,37 @@ msgid "Systems where you want the disk to be bootable on any computer."
 msgstr ""
 
 msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Limba locală"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Seleactați un punct de montare :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""

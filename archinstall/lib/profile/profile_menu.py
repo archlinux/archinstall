@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import override
 
 from archinstall.default_profiles.profile import GreeterType, Profile
@@ -132,7 +130,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		if profile:
 			if (sub_profiles := profile.current_selection) is not None:
 				text += tr('Selected profiles: ')
-				text += ', '.join([p.name for p in sub_profiles]) + '\n'
+				text += ', '.join(p.name for p in sub_profiles) + '\n'
 
 			if packages := profile.packages_text(include_sub_packages=True):
 				text += f'{packages}'

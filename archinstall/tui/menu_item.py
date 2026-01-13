@@ -116,7 +116,7 @@ class MenuItemGroup:
 
 	def add_item(self, item: MenuItem) -> None:
 		self._menu_items.append(item)
-		delattr(self, 'items')  # resetting the cache
+		delattr(self, 'items')	# resetting the cache
 
 	def find_by_id(self, item_id: str) -> MenuItem:
 		for item in self._menu_items:
@@ -135,21 +135,22 @@ class MenuItemGroup:
 	def get_enabled_items(self) -> list[MenuItem]:
 		return [it for it in self.items if self.is_enabled(it)]
 
-	@staticmethod
-	def yes_no() -> 'MenuItemGroup':
-		return MenuItemGroup(
+	@classmethod
+	def yes_no(cls) -> Self:
+		return cls(
 			[MenuItem.yes(), MenuItem.no()],
 			sort_items=True,
 		)
 
-	@staticmethod
+	@classmethod
 	def from_enum(
+		cls,
 		enum_cls: type[Enum],
 		sort_items: bool = False,
 		preset: Enum | None = None,
-	) -> 'MenuItemGroup':
+	) -> Self:
 		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
-		group = MenuItemGroup(items, sort_items=sort_items)
+		group = cls(items, sort_items=sort_items)
 
 		if preset is not None:
 			group.set_selected_by_value(preset)
@@ -286,17 +287,17 @@ class MenuItemGroup:
 
 	def set_filter_pattern(self, pattern: str) -> None:
 		self._filter_pattern = pattern
-		delattr(self, 'items')  # resetting the cache
+		delattr(self, 'items')	# resetting the cache
 		self.focus_first()
 
 	def append_filter(self, pattern: str) -> None:
 		self._filter_pattern += pattern
-		delattr(self, 'items')  # resetting the cache
+		delattr(self, 'items')	# resetting the cache
 		self.focus_first()
 
 	def reduce_filter(self) -> None:
 		self._filter_pattern = self._filter_pattern[:-1]
-		delattr(self, 'items')  # resetting the cache
+		delattr(self, 'items')	# resetting the cache
 		self.focus_first()
 
 	def _reload_focus_item(self) -> None:
@@ -466,7 +467,7 @@ class MenuItemsState:
 			else:
 				start = focus_row_idx
 				end = focus_row_idx + self._total_rows
-		elif len(enabled_items) <= self._total_rows:  # the view can handle oll items
+		elif len(enabled_items) <= self._total_rows:  # the view can handle all items
 			start = 0
 			end = self._total_rows
 		elif not self._item_group.has_filter() and focus_row_idx in self._prev_visible_rows:  # focus is in the same view

@@ -63,6 +63,9 @@ msgstr "Escolha um servidor de áudio"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Se quiser um navegador web, como Firefox ou Chromium, especifique-o no próximo prompt."
 
@@ -1746,6 +1749,17 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "Deseja configurar o Bluetooth?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Deseja configurar o Bluetooth?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Gerenciamento de partições: {}"
+
 msgid "Authentication"
 msgstr "Autenticação"
 
@@ -1788,6 +1802,7 @@ msgstr "Método de login U2F"
 msgid "Enable passwordless sudo?"
 msgstr "Digite uma senha: "
 
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
 msgstr "Configurando dispositivo U2F para o usuário: {}"
 
@@ -1856,6 +1871,42 @@ msgstr "Sistemas nos quais você deseja que o disco seja inicializável em qualq
 
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "Firmware que não oferece suporte adequado a entradas de boot na NVRAM."
+
+#, fuzzy
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Será instalado em /EFI/BOOT/ (local removível)"
+
+#, fuzzy
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Será instalado no local padrão com entrada na NVRAM"
+
+#, fuzzy
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmware que não oferece suporte adequado a entradas de boot na NVRAM."
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Idioma de localização"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Selecione um ponto de montagem :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

@@ -47,7 +47,7 @@ def _check_online() -> None:
 			if not arch_config_handler.args.skip_wifi_check:
 				success = not wifi_handler.setup()
 				if not success:
-					exit(0)
+					sys.exit(0)
 
 
 def _fetch_arch_db() -> None:
@@ -62,7 +62,7 @@ def _fetch_arch_db() -> None:
 		error('Run archinstall --debug and check /var/log/archinstall/install.log for details.')
 
 		debug(f'Failed to sync Arch Linux package database: {e}')
-		exit(1)
+		sys.exit(1)
 
 
 def main() -> int:
@@ -130,7 +130,7 @@ def run_as_a_module() -> None:
 			warn(text)
 			rc = 1
 
-		exit(rc)
+		sys.exit(rc)
 
 
 __all__ = [

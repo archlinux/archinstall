@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 21.05.2022\n"
-"PO-Revision-Date: 2025-12-02 14:55+0100\n"
+"PO-Revision-Date: 2025-12-31 16:10+0100\n"
 "Last-Translator: Abdullah Koyuncu @wiseweb-works <wisewebworks@outlook.com>\n"
 "Language-Team: SerdarSaglam, favilances, wiseweb-works, AlperShal, arlsdk, tugsatenes, eren-ince, Schwarzeisc00l, Oruch379\n"
 "Language: tr\n"
@@ -55,6 +55,9 @@ msgstr "Bir ses sunucusu seç"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Yalnızca base, base-devel, linux, linux-firmware, efibootmgr ve isteğe bağlı profil paketleri gibi paketler yüklenir."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Not: base-devel artık varsayılan olarak yüklenmemektedir. Derleme araçlarına ihtiyacınız varsa buradan ekleyin."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Firefox veya Chromium gibi bir web tarayıcısı isterseniz, sıradaki ekranda belirtebilirsiniz."
@@ -1732,6 +1735,15 @@ msgstr "Bluetooth"
 msgid "Would you like to configure Bluetooth?"
 msgstr "Bluetooth'u yapılandırmak ister misiniz?"
 
+msgid "Print service"
+msgstr "Yazdırma hizmeti"
+
+msgid "Would you like to configure the print service?"
+msgstr "Yazdırma hizmetini yapılandırmak ister misiniz?"
+
+msgid "Power management"
+msgstr "Güç yönetimi"
+
 msgid "Authentication"
 msgstr "Kimlik Doğrulama"
 
@@ -1836,6 +1848,36 @@ msgstr "Diskin herhangi bir bilgisayarda önyüklenebilir olmasını istediğini
 
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "NVRAM önyükleme girişlerini düzgün şekilde desteklemeyen ürün yazılımı."
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "/EFI/BOOT/ konumuna yüklenecektir (çıkarılabilir konum, güvenli varsayılan)"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "NVRAM girişi ile özel konuma yüklenecektir"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "NVRAM önyükleme girişlerini düzgün şekilde desteklemeyen ürün yazılımı, çoğu MSI anakart gibi,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "çoğu Apple Mac, birçok dizüstü bilgisayar..."
+
+msgid "Language"
+msgstr "Dil"
+
+msgid "Compression algorithm"
+msgstr "Sıkıştırma algoritması"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Yalnızca base, sudo, linux, linux-firmware, efibootmgr gibi temel paketler ve isteğe bağlı profil paketleri yüklenir."
+
+msgid "Select zram compression algorithm:"
+msgstr "Zram sıkıştırma algoritmasını seçin:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Ağ Yöneticisi'ni kullanın (varsayılan backend)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Ağ Yöneticisi'ni kullanın (iwd backend)"
 
 #~ msgid "Desktop"
 #~ msgstr "Masaüstü"

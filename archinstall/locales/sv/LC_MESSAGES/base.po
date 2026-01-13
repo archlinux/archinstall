@@ -54,6 +54,9 @@ msgstr "Välj en ljud-server"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Enbart paket som base, base-devel, linux, linux-firmware, efibootmgr och självvalda paket är installerade."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Observera: base-devel kommer inte att installeras längre som standard. Lägg till det här om du behöver byggverktyg."
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Om du önskar en webbläsare, exempelvis firefox eller chromium, bör du skriva in dom i följande fält."
 
@@ -1732,6 +1735,15 @@ msgstr "Bluetooth"
 msgid "Would you like to configure Bluetooth?"
 msgstr "Vill du konfigurera Bluetooth?"
 
+msgid "Print service"
+msgstr "Utskriftstjänst"
+
+msgid "Would you like to configure the print service?"
+msgstr "Vill du konfigurera utskriftstjänsten?"
+
+msgid "Power management"
+msgstr "Strömhantering"
+
 msgid "Authentication"
 msgstr "Autentisering"
 
@@ -1836,3 +1848,33 @@ msgstr "System där du vill att disken ska vara uppstartsbar på vilken dator so
 
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt."
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats, säker standardinställning))"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Kommer att installeras på en anpassad plats med NVRAM-post"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt som de flesta MSI-moderkort,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "de flesta Apple Mac-datorer, många bärbara datorer..."
+
+msgid "Language"
+msgstr "Språk"
+
+msgid "Compression algorithm"
+msgstr "Kompressionsalgoritm"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Endast paket som base, sudo, linux, linux-firmware, efibootmgr och valfria profilpaket installeras."
+
+msgid "Select zram compression algorithm:"
+msgstr "Välj zram kompressionsalgoritm:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Använd Network Manager (standard backend)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Använd Network Manager (iwd backend)"

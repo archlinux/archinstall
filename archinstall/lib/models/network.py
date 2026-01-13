@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, NotRequired, TypedDict, override
+from typing import TYPE_CHECKING, NotRequired, Self, TypedDict, override
 
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
@@ -66,9 +66,9 @@ class Nic:
 			'dns': self.dns,
 		}
 
-	@staticmethod
-	def parse_arg(arg: _NicSerialization) -> Nic:
-		return Nic(
+	@classmethod
+	def parse_arg(cls, arg: _NicSerialization) -> Self:
+		return cls(
 			iface=arg.get('iface', None),
 			ip=arg.get('ip', None),
 			dhcp=arg.get('dhcp', True),
@@ -98,7 +98,7 @@ class Nic:
 		config_str = ''
 		for top, entries in config.items():
 			config_str += f'[{top}]\n'
-			config_str += '\n'.join([f'{k}={v}' for k, v in entries])
+			config_str += '\n'.join(f'{k}={v}' for k, v in entries)
 			config_str += '\n\n'
 
 		return config_str
@@ -121,22 +121,22 @@ class NetworkConfiguration:
 
 		return config
 
-	@staticmethod
-	def parse_arg(config: _NetworkConfigurationSerialization) -> NetworkConfiguration | None:
+	@classmethod
+	def parse_arg(cls, config: _NetworkConfigurationSerialization) -> Self | None:
 		nic_type = config.get('type', None)
 		if not nic_type:
 			return None
 
 		match NicType(nic_type):
 			case NicType.ISO:
-				return NetworkConfiguration(NicType.ISO)
+				return cls(NicType.ISO)
 			case NicType.NM:
-				return NetworkConfiguration(NicType.NM)
+				return cls(NicType.NM)
 			case NicType.MANUAL:
 				nics_arg = config.get('nics', [])
 				if nics_arg:
 					nics = [Nic.parse_arg(n) for n in nics_arg]
-					return NetworkConfiguration(NicType.MANUAL, nics)
+					return cls(NicType.MANUAL, nics)
 
 		return None
 
@@ -153,7 +153,7 @@ class NetworkConfiguration:
 			case NicType.NM | NicType.NM_IWD:
 				# Install NetworkManager package for both cases
 				packages = ['networkmanager']
-				# Defautl back-end only for non-iwd
+				# Default back-end only for non-iwd
 				if self.type == NicType.NM:
 					packages.append('wpa_supplicant')
 
@@ -199,9 +199,9 @@ class WifiNetwork:
 			'BSSID': self.bssid,
 		}
 
-	@staticmethod
-	def from_wpa(results: str) -> list[WifiNetwork]:
-		entries: list[WifiNetwork] = []
+	@classmethod
+	def from_wpa(cls, results: str) -> list[Self]:
+		entries = []
 
 		for line in results.splitlines():
 			line = line.strip()
@@ -212,7 +212,7 @@ class WifiNetwork:
 			if len(parts) != 5:
 				continue
 
-			wifi = WifiNetwork(bssid=parts[0], frequency=parts[1], signal_level=parts[2], flags=parts[3], ssid=parts[4])
+			wifi = cls(bssid=parts[0], frequency=parts[1], signal_level=parts[2], flags=parts[3], ssid=parts[4])
 			entries.append(wifi)
 
 		return entries
@@ -226,7 +226,7 @@ class WifiConfiguredNetwork:
 	flags: list[str]
 
 	@classmethod
-	def from_wpa_cli_output(cls, list_networks: str) -> list[WifiConfiguredNetwork]:
+	def from_wpa_cli_output(cls, list_networks: str) -> list[Self]:
 		"""
 		Example output from 'wpa_cli list_networks'
 
@@ -254,7 +254,7 @@ class WifiConfiguredNetwork:
 				flags: list[str] = []
 
 				networks.append(
-					WifiConfiguredNetwork(
+					cls(
 						network_id=int(parts[0]),
 						ssid=parts[1],
 						bssid=parts[2],
@@ -266,8 +266,8 @@ class WifiConfiguredNetwork:
 
 		return networks
 
-	@classmethod
-	def _extract_flags(cls, flag_string: str) -> list[str]:
+	@staticmethod
+	def _extract_flags(flag_string: str) -> list[str]:
 		pattern = r'\[([^\]]+)\]'
 
 		extracted_values = re.findall(pattern, flag_string)

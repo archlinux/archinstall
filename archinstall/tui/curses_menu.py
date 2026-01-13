@@ -1161,7 +1161,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 
 		if len(key_handles) > 1:
 			decoded = MenuKeys.decode(key)
-			handles = ', '.join([k.name for k in key_handles])
+			handles = ', '.join(k.name for k in key_handles)
 			raise ValueError(f'Multiple key matches for key {decoded}: {handles}')
 		elif len(key_handles) == 0:
 			return None

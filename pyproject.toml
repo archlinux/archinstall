@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "3.0.14"
+version = "3.0.15"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -22,7 +22,6 @@ dependencies = [
     "pydantic==2.12.5",
     "cryptography>=45.0.7",
     "textual>=5.3.0",
-    "pytest-mock>=3.15.1",
 ]
 
 [project.urls]
@@ -36,7 +35,7 @@ dev = [
     "mypy==1.19.1",
     "flake8==7.3.0",
     "pre-commit==4.5.1",
-    "ruff==0.14.10",
+    "ruff==0.14.11",
     "pylint==4.0.4",
     "pytest==9.0.2",
 ]
@@ -128,15 +127,19 @@ ignore_missing_imports = true
 targets = ["archinstall"]
 exclude = ["/tests"]
 
-[tool.pytest.ini_options]
+[tool.pytest]
 pythonpath = ["."]
-addopts = "-s"
+addopts = [
+    "-s",
+    "--strict",
+]
 testpaths = ["tests"]
 
 [tool.pylint.main]
 ignore-paths = [
     "^build/",
     "^docs/",
+    "^node_modules/",
 ]
 persistent = false
 py-version = "3.12"
@@ -224,6 +227,7 @@ ignore = [
     "RUF015",   # unnecessary-iterable-allocation-for-first-element
     "RUF039",   # unraw-re-pattern
     "RUF051",   # if-key-in-dict-del
+    "RUF067",   # non-empty-init-module
     "UP037",    # quoted-annotation
     "W191",     # tab-indentation
 ]
