@@ -1,3 +1,15 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Hannan Javed <hannansahib@gmail.com>\n"
+"Language-Team: \n"
+"Language: ur\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Aik log file yahan bana di gai hai: {} {}"
 
