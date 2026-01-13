@@ -32,7 +32,6 @@ from archinstall.lib.models.device import (
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.packages import installed_package
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import Tui
 
 from .args import arch_config_handler
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
@@ -133,8 +132,8 @@ class Installer:
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and an identical log file will be found in the ISO medium anyway.
-			Tui.print(str(tr('[!] A log file has been created here: {}').format(logger.path)))
-			Tui.print(tr('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues'))
+			print(tr('[!] A log file has been created here: {}').format(logger.path))
+			print(tr('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues'))
 
 			# Return None to propagate the exception
 			return None
@@ -207,7 +206,7 @@ class Installer:
 
 		# info('Waiting for pacman-init.service to complete.')
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
-		# 	time.sleep(1)
+		# time.sleep(1)
 
 		if not arch_config_handler.args.skip_wkd:
 			info(tr('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.'))
@@ -1079,7 +1078,7 @@ class Installer:
 
 		if root_partition in self._disk_encryption.partitions:
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
-			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+			# or simply a partition encryption. Right now we assume it's a partition (and we always have)
 
 			if self._disk_encryption.hsm_device:
 				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
@@ -1195,9 +1194,9 @@ class Installer:
 			f"""\
 			# Created by: archinstall
 			# Created on: {self.init_time}
-			title   Arch Linux ({{kernel}})
-			linux   /vmlinuz-{{kernel}}
-			initrd  /initramfs-{{kernel}}.img
+			title	Arch Linux ({{kernel}})
+			linux	/vmlinuz-{{kernel}}
+			initrd	/initramfs-{{kernel}}.img
 			options {' '.join(self._get_kernel_params(root))}
 			""",
 		)
@@ -1525,7 +1524,7 @@ class Installer:
 					f'cmdline: {kernel_params}',
 				]
 				config_contents += f'\n/Arch Linux ({kernel})\n'
-				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
+				config_contents += '\n'.join([f'	{it}' for it in entry]) + '\n'
 			else:
 				entry = [
 					'protocol: linux',
@@ -1534,7 +1533,7 @@ class Installer:
 					f'module_path: {path_root}:/initramfs-{kernel}.img',
 				]
 				config_contents += f'\n/Arch Linux ({kernel})\n'
-				config_contents += '\n'.join([f'    {it}' for it in entry]) + '\n'
+				config_contents += '\n'.join([f'	{it}' for it in entry]) + '\n'
 
 		config_path.write_text(config_contents)
 

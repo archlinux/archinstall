@@ -1,10 +1,9 @@
 from __future__ import annotations
 
+from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties, FrameStyle, Orientation, PreviewStyle
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 from ..hardware import GfxDriver, SysInfo
 
@@ -26,14 +25,13 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 	group.set_focus_by_value(default_kernel)
 	group.set_selected_by_value(preset)
 
-	result = SelectMenu[str](
+	result = Selection[str](
 		group,
+		header=tr('Select which kernel(s) to install'),
 		allow_skip=True,
 		allow_reset=True,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Kernel')),
 		multi=True,
-	).run()
+	).show()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -42,6 +40,20 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 			return []
 		case ResultType.Selection:
 			return result.get_values()
+
+
+def ask_for_uki(preset: bool = True) -> bool:
+	prompt = tr('Would you like to use unified kernel images?') + '\n'
+
+	result = Confirmation(header=prompt, allow_skip=True, preset=preset).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return result.get_value()
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
 
 
 def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None) -> GfxDriver | None:
@@ -55,7 +67,15 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 	if not options:
 		options = [driver for driver in GfxDriver]
 
-	items = [MenuItem(o.value, value=o, preview_action=lambda x: x.value.packages_text()) for o in options]
+	items = [
+		MenuItem(
+			o.value,
+			value=o,
+			preview_action=lambda x: x.value.packages_text() if x.value else None,
+		)
+		for o in options
+	]
+
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_default_by_value(GfxDriver.AllOpenSource)
 
@@ -70,15 +90,13 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 	if SysInfo.has_nvidia_graphics():
 		header += tr('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n')
 
-	result = SelectMenu[GfxDriver](
+	result = Selection[GfxDriver](
 		group,
 		header=header,
 		allow_skip=True,
 		allow_reset=True,
-		preview_size='auto',
-		preview_style=PreviewStyle.BOTTOM,
-		preview_frame=FrameProperties(tr('Info'), h_frame_style=FrameStyle.MIN),
-	).run()
+		preview_location='right',
+	).show()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -90,24 +108,13 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 
 
 def ask_for_swap(preset: bool = True) -> bool:
-	if preset:
-		default_item = MenuItem.yes()
-	else:
-		default_item = MenuItem.no()
+	prompt = tr('Would you like to use swap on zram?')
 
-	prompt = tr('Would you like to use swap on zram?') + '\n'
-
-	group = MenuItemGroup.yes_no()
-	group.set_focus_by_value(default_item)
-
-	result = SelectMenu[bool](
-		group,
+	result = Confirmation(
 		header=prompt,
-		columns=2,
-		orientation=Orientation.HORIZONTAL,
-		alignment=Alignment.CENTER,
 		allow_skip=True,
-	).run()
+		preset=preset,
+	).show()
 
 	match result.type_:
 		case ResultType.Skip:

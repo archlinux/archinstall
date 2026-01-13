@@ -1,5 +1,5 @@
 from archinstall.lib.output import FormattedOutput
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
 
 class MenuHelper[ValueT]:

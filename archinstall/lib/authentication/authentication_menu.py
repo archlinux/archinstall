@@ -3,15 +3,14 @@ from typing import override
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.interactions.manage_users_conf import ask_for_additional_users
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
+from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
 from archinstall.lib.utils.util import get_password
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties, Orientation
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
 class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
@@ -31,15 +30,14 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		)
 
 	@override
-	def run(self, additional_title: str | None = None) -> AuthenticationConfiguration:
-		super().run(additional_title=additional_title)
-		return self._auth_config
+	def run(self) -> AuthenticationConfiguration | None:
+		return super().run()
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
 				text=tr('Root password'),
-				action=select_root_password,
+				action=lambda x: select_root_password(),
 				preview_action=self._prev_root_pwd,
 				key='root_enc_password',
 			),
@@ -101,12 +99,12 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		return None
 
 
-def select_root_password(preset: str | None = None) -> Password | None:
-	password = get_password(text=tr('Root password'), allow_skip=True)
+def select_root_password() -> Password | None:
+	password = get_password(header=tr('Enter root password'), allow_skip=True)
 	return password
 
 
-def select_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | None:
+def select_u2f_login(preset: U2FLoginConfiguration | None) -> U2FLoginConfiguration | None:
 	devices = Fido2.get_fido2_devices()
 	if not devices:
 		return None
@@ -120,30 +118,22 @@ def select_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | N
 	if preset is not None:
 		group.set_selected_by_value(preset.u2f_login_method)
 
-	result = SelectMenu[U2FLoginMethod](
+	result = Selection[U2FLoginMethod](
 		group,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('U2F Login Method')),
 		allow_skip=True,
 		allow_reset=True,
-	).run()
+	).show()
 
 	match result.type_:
 		case ResultType.Selection:
 			u2f_method = result.get_value()
-
-			group = MenuItemGroup.yes_no()
-			group.focus_item = MenuItem.no()
 			header = tr('Enable passwordless sudo?')
 
-			result_sudo = SelectMenu[bool](
-				group,
+			result_sudo = Confirmation(
 				header=header,
-				alignment=Alignment.CENTER,
-				columns=2,
-				orientation=Orientation.HORIZONTAL,
 				allow_skip=True,
-			).run()
+				preset=False,
+			).show()
 
 			passwordless_sudo = result_sudo.item() == MenuItem.yes()
 
@@ -155,5 +145,3 @@ def select_u2f_login(preset: U2FLoginConfiguration) -> U2FLoginConfiguration | N
 			return preset
 		case ResultType.Reset:
 			return None
-		case _:
-			raise ValueError('Unhandled result type')

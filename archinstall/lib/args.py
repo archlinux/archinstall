@@ -27,7 +27,6 @@ from archinstall.lib.output import debug, error, logger, warn
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.utils.util import get_password
-from archinstall.tui.curses_menu import Tui
 
 
 @p_dataclass
@@ -496,31 +495,30 @@ class ArchConfigHandler:
 						raise err from err
 			else:
 				incorrect_password = False
+				header = tr('Enter credentials file decryption password')
 
-				with Tui():
-					while True:
-						header = tr('Incorrect password') if incorrect_password else None
+				while True:
+					prompt = f'{header}\n\n' + tr('Incorrect password') if incorrect_password else ''
 
-						decryption_pwd = get_password(
-							text=tr('Credentials file decryption password'),
-							header=header,
-							allow_skip=False,
-							skip_confirmation=True,
-						)
+					decryption_pwd = get_password(
+						header=prompt,
+						allow_skip=False,
+						skip_confirmation=True,
+					)
 
-						if not decryption_pwd:
-							return None
+					if not decryption_pwd:
+						return None
 
-						try:
-							creds_data = decrypt(creds_data, decryption_pwd.plaintext)
-							break
-						except ValueError as err:
-							if 'Invalid password' in str(err):
-								debug('Incorrect credentials file decryption password')
-								incorrect_password = True
-							else:
-								debug(f'Error decrypting credentials file: {err}')
-								raise err from err
+					try:
+						creds_data = decrypt(creds_data, decryption_pwd.plaintext)
+						break
+					except ValueError as err:
+						if 'Invalid password' in str(err):
+							debug('Incorrect credentials file decryption password')
+							incorrect_password = True
+						else:
+							debug(f'Error decrypting credentials file: {err}')
+							raise err from err
 
 		return json.loads(creds_data)
 

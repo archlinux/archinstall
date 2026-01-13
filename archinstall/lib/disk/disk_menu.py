@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import override
 
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
+from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
 	BtrfsOptions,
@@ -14,10 +15,8 @@ from archinstall.lib.models.device import (
 	SnapshotType,
 )
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 from ..interactions.disk_conf import select_disk_config, select_lvm_config
 from ..menu.abstract_menu import AbstractSubMenu
@@ -32,7 +31,7 @@ class DiskMenuConfig:
 	disk_encryption: DiskEncryption | None
 
 
-class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
+class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 	def __init__(self, disk_layout_config: DiskLayoutConfiguration | None):
 		if not disk_layout_config:
 			self._disk_menu_config = DiskMenuConfig(
@@ -95,14 +94,16 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 		]
 
 	@override
-	def run(self, additional_title: str | None = None) -> DiskLayoutConfiguration | None:
-		super().run(additional_title=additional_title)
+	def run(self) -> DiskLayoutConfiguration | None:  # type: ignore[override]
+		config: DiskMenuConfig | None = super().run()
+		if config is None:
+			return None
 
-		if self._disk_menu_config.disk_config:
-			self._disk_menu_config.disk_config.lvm_config = self._disk_menu_config.lvm_config
-			self._disk_menu_config.disk_config.btrfs_options = BtrfsOptions(snapshot_config=self._disk_menu_config.btrfs_snapshot_config)
-			self._disk_menu_config.disk_config.disk_encryption = self._disk_menu_config.disk_encryption
-			return self._disk_menu_config.disk_config
+		if config.disk_config:
+			config.disk_config.lvm_config = self._disk_menu_config.lvm_config
+			config.disk_config.btrfs_options = BtrfsOptions(snapshot_config=self._disk_menu_config.btrfs_snapshot_config)
+			config.disk_config.disk_encryption = self._disk_menu_config.disk_encryption
+			return config.disk_config
 
 		return None
 
@@ -169,13 +170,11 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 			preset=preset_type,
 		)
 
-		result = SelectMenu[SnapshotType](
+		result = Selection[SnapshotType](
 			group,
 			allow_reset=True,
 			allow_skip=True,
-			frame=FrameProperties.min(tr('Snapshot type')),
-			alignment=Alignment.CENTER,
-		).run()
+		).show()
 
 		match result.type_:
 			case ResultType.Skip:
@@ -250,9 +249,10 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskLayoutConfiguration]):
 
 	def _prev_disk_encryption(self, item: MenuItem) -> str | None:
 		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
+		lvm_config: LvmConfiguration | None = self._item_group.find_by_key('lvm_config').value
 		enc_config: DiskEncryption | None = item.value
 
-		if disk_config and not DiskEncryption.validate_enc(disk_config.device_modifications, disk_config.lvm_config):
+		if disk_config and not DiskEncryption.validate_enc(disk_config.device_modifications, lvm_config):
 			return tr('LVM disk encryption with more than 2 partitions is currently not supported')
 
 		if enc_config:
