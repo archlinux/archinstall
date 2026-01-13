@@ -308,7 +308,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 			[
 				1 if self._show_frame else 0,  # add top buffer for the frame
 				option_list.region.y,  # padding/margin offset of the option list
-				index,	# index of the highlighted option
+				index,  # index of the highlighted option
 				-option_list.scroll_offset.y,  # scroll offset
 			]
 		)
@@ -530,7 +530,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 			[
 				1 if self._show_frame else 0,  # add top buffer for the frame
 				selection_list.region.y,  # padding/margin offset of the option list
-				index,	# index of the highlighted option
+				index,  # index of the highlighted option
 				-selection_list.scroll_offset.y,  # scroll offset
 			]
 		)
@@ -968,7 +968,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 				else:
 					row_values.insert(0, '[ ]')
 
-			row_key = table.add_row(*row_values, key=item)	# type: ignore[arg-type]
+			row_key = table.add_row(*row_values, key=item)  # type: ignore[arg-type]
 			if item in selected:
 				self._selected_keys.add(row_key)
 
@@ -1021,8 +1021,8 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 		target_y = sum(
 			[
 				data_table.region.y,  # padding/margin offset of the option list
-				1,	# table header
-				row_index,	# index of the highlighted row
+				1,  # table header
+				row_index,  # index of the highlighted row
 				-data_table.scroll_offset.y,  # scroll offset
 			]
 		)
@@ -1046,7 +1046,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 			_ = self.dismiss(
 				Result[ValueT](
 					ResultType.Selection,
-					_item=event.row_key.value,	# type: ignore[arg-type]
+					_item=event.row_key.value,  # type: ignore[arg-type]
 				)
 			)
 
@@ -1172,7 +1172,7 @@ class _AppInstance(App[ValueT]):
 		except Exception as err:
 			debug(f'Error while running main app: {err}')
 			# this will terminate the textual app and return the exception
-			self.exit(err)	# type: ignore[arg-type]
+			self.exit(err)  # type: ignore[arg-type]
 
 	@work
 	async def _show_async(self, screen: Screen[Result[ValueT]]) -> Result[ValueT]:

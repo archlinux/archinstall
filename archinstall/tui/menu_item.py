@@ -116,7 +116,7 @@ class MenuItemGroup:
 
 	def add_item(self, item: MenuItem) -> None:
 		self._menu_items.append(item)
-		delattr(self, 'items')	# resetting the cache
+		delattr(self, 'items')  # resetting the cache
 
 	def find_by_id(self, item_id: str) -> MenuItem:
 		for item in self._menu_items:
@@ -287,17 +287,17 @@ class MenuItemGroup:
 
 	def set_filter_pattern(self, pattern: str) -> None:
 		self._filter_pattern = pattern
-		delattr(self, 'items')	# resetting the cache
+		delattr(self, 'items')  # resetting the cache
 		self.focus_first()
 
 	def append_filter(self, pattern: str) -> None:
 		self._filter_pattern += pattern
-		delattr(self, 'items')	# resetting the cache
+		delattr(self, 'items')  # resetting the cache
 		self.focus_first()
 
 	def reduce_filter(self) -> None:
 		self._filter_pattern = self._filter_pattern[:-1]
-		delattr(self, 'items')	# resetting the cache
+		delattr(self, 'items')  # resetting the cache
 		self.focus_first()
 
 	def _reload_focus_item(self) -> None:

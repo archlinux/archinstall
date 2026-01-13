@@ -158,22 +158,22 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def _preview(self, item: MenuItem) -> str | None:
 		output = ''
 
-		if (enc_type := self._prev_type()) is not None:
+		if (enc_type := self._prev_type(item)) is not None:
 			output += enc_type
 
-		if (enc_pwd := self._prev_password()) is not None:
+		if (enc_pwd := self._prev_password(item)) is not None:
 			output += f'\n{enc_pwd}'
 
-		if (iter_time := self._prev_iter_time()) is not None:
+		if (iter_time := self._prev_iter_time(item)) is not None:
 			output += f'\n{iter_time}'
 
-		if (fido_device := self._prev_hsm()) is not None:
+		if (fido_device := self._prev_hsm(item)) is not None:
 			output += f'\n{fido_device}'
 
-		if (partitions := self._prev_partitions()) is not None:
+		if (partitions := self._prev_partitions(item)) is not None:
 			output += f'\n\n{partitions}'
 
-		if (lvm := self._prev_lvm_vols()) is not None:
+		if (lvm := self._prev_lvm_vols(item)) is not None:
 			output += f'\n\n{lvm}'
 
 		if not output:
@@ -181,7 +181,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		return output
 
-	def _prev_type(self) -> str | None:
+	def _prev_type(self, item: MenuItem) -> str | None:
 		enc_type = self._item_group.find_by_key('encryption_type').value
 
 		if enc_type:

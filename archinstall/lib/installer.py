@@ -2020,7 +2020,7 @@ class Installer:
 
 	def _service_started(self, service_name: str) -> str | None:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
-			service_name += '.service'	# Just to be safe
+			service_name += '.service'  # Just to be safe
 
 		last_execution_time = (
 			SysCommand(
@@ -2038,7 +2038,7 @@ class Installer:
 
 	def _service_state(self, service_name: str) -> str:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
-			service_name += '.service'	# Just to be safe
+			service_name += '.service'  # Just to be safe
 
 		return SysCommand(
 			f'systemctl show --no-pager -p SubState --value {service_name}',

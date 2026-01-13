@@ -38,11 +38,7 @@ from .translationhandler import Language, tr, translation_handler
 
 
 class GlobalMenu(AbstractMenu[None]):
-	def __init__(
-		self,
-		arch_config: ArchConfig,
-		title: str | None = None
-	) -> None:
+	def __init__(self, arch_config: ArchConfig, title: str | None = None) -> None:
 		self._arch_config = arch_config
 		menu_options = self._get_menu_options()
 

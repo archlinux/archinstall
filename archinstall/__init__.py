@@ -8,12 +8,11 @@ import traceback
 
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.general import running_from_host
 from archinstall.lib.network.wifi_handler import wifi_handler
 from archinstall.lib.networking import ping
 from archinstall.lib.packages.packages import check_version_upgrade
-from archinstall.tui.ui.components import tui as tui
 
-from archinstall.lib.general import running_from_host
 from .lib.hardware import SysInfo
 from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
