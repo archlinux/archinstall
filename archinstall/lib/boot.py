@@ -1,6 +1,7 @@
 import time
 from collections.abc import Iterator
 from types import TracebackType
+from typing import Self
 
 from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
@@ -16,7 +17,7 @@ class Boot:
 		self.session: SysCommandWorker | None = None
 		self.ready = False
 
-	def __enter__(self) -> 'Boot':
+	def __enter__(self) -> Self:
 		if (existing_session := storage.get('active_boot', None)) and existing_session.instance != self.instance:
 			raise KeyError('Archinstall only supports booting up one instance and another session is already active.')
 
