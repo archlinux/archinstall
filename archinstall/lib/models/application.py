@@ -32,6 +32,7 @@ class PrintServiceConfigSerialization(TypedDict):
 
 class Firewall(StrEnum):
 	UFW = 'ufw'
+	FWD = 'firewalld'
 
 
 class FirewallConfigSerialization(TypedDict):
