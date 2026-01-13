@@ -441,20 +441,20 @@ class Size:
 			return self.value * self.sector_size.normalize()
 		return int(self.value * self.unit.value)
 
-	def __sub__(self, other: Size) -> Size:
+	def __sub__(self, other: Self) -> Size:
 		src_norm = self._normalize()
 		dest_norm = other._normalize()
 		return Size(abs(src_norm - dest_norm), Unit.B, self.sector_size)
 
-	def __add__(self, other: Size) -> Size:
+	def __add__(self, other: Self) -> Size:
 		src_norm = self._normalize()
 		dest_norm = other._normalize()
 		return Size(abs(src_norm + dest_norm), Unit.B, self.sector_size)
 
-	def __lt__(self, other: Size) -> bool:
+	def __lt__(self, other: Self) -> bool:
 		return self._normalize() < other._normalize()
 
-	def __le__(self, other: Size) -> bool:
+	def __le__(self, other: Self) -> bool:
 		return self._normalize() <= other._normalize()
 
 	@override
@@ -471,10 +471,10 @@ class Size:
 
 		return self._normalize() != other._normalize()
 
-	def __gt__(self, other: Size) -> bool:
+	def __gt__(self, other: Self) -> bool:
 		return self._normalize() > other._normalize()
 
-	def __ge__(self, other: Size) -> bool:
+	def __ge__(self, other: Self) -> bool:
 		return self._normalize() >= other._normalize()
 
 
