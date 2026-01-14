@@ -1,6 +1,7 @@
 import curses
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import Self
 
 SCROLL_INTERVAL = 10
 
@@ -75,7 +76,7 @@ class FrameProperties:
 	h_frame_style: FrameStyle = FrameStyle.MAX
 
 	@classmethod
-	def max(cls, header: str) -> 'FrameProperties':
+	def max(cls, header: str) -> Self:
 		return cls(
 			header,
 			FrameStyle.MAX,
@@ -83,7 +84,7 @@ class FrameProperties:
 		)
 
 	@classmethod
-	def min(cls, header: str) -> 'FrameProperties':
+	def min(cls, header: str) -> Self:
 		return cls(
 			header,
 			FrameStyle.MIN,
