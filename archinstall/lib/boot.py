@@ -1,16 +1,21 @@
+from __future__ import annotations
+
 import time
 from collections.abc import Iterator
 from types import TracebackType
-from typing import Self
+from typing import TYPE_CHECKING, ClassVar, Self
 
 from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
-from .installer import Installer
 from .output import error
-from .storage import storage
+
+if TYPE_CHECKING:
+	from .installer import Installer
 
 
 class Boot:
+	_active_boot: ClassVar[Self | None] = None
+
 	def __init__(self, installation: Installer):
 		self.instance = installation
 		self.container_name = 'archinstall'
@@ -18,12 +23,12 @@ class Boot:
 		self.ready = False
 
 	def __enter__(self) -> Self:
-		if (existing_session := storage.get('active_boot', None)) and existing_session.instance != self.instance:
+		if Boot._active_boot and Boot._active_boot.instance != self.instance:
 			raise KeyError('Archinstall only supports booting up one instance and another session is already active.')
 
-		if existing_session:
-			self.session = existing_session.session
-			self.ready = existing_session.ready
+		if Boot._active_boot:
+			self.session = Boot._active_boot.session
+			self.ready = Boot._active_boot.ready
 		else:
 			# '-P' or --console=pipe  could help us not having to do a bunch
 			# of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
@@ -46,7 +51,7 @@ class Boot:
 					self.ready = True
 					break
 
-		storage['active_boot'] = self
+		Boot._active_boot = self
 		return self
 
 	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
@@ -75,7 +80,7 @@ class Boot:
 			shutdown_exit_code = shutdown.exit_code
 
 		if self.session and (self.session.exit_code == 0 or shutdown_exit_code == 0):
-			storage['active_boot'] = None
+			Boot._active_boot = None
 		else:
 			session_exit_code = self.session.exit_code if self.session else -1
 
