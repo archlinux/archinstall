@@ -8,12 +8,10 @@
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 if TYPE_CHECKING:
-	from archinstall.lib.boot import Boot
 	from archinstall.lib.installer import Installer
 
 
 class _StorageDict(TypedDict):
-	active_boot: NotRequired['Boot | None']
 	installation_session: NotRequired['Installer']
 
 

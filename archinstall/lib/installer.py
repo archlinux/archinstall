@@ -36,6 +36,7 @@ from archinstall.lib.translationhandler import tr
 from archinstall.tui.curses_menu import Tui
 
 from .args import arch_config_handler
+from .boot import Boot
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from .general import SysCommand, run
 from .hardware import SysInfo
@@ -1977,8 +1978,6 @@ class Installer:
 
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
-			from .boot import Boot
-
 			with Boot(self) as session:
 				os.system('systemd-run --machine=archinstall --pty localectl set-keymap ""')
 
@@ -2004,8 +2003,6 @@ class Installer:
 			if not verify_x11_keyboard_layout(language):
 				error(f'Invalid x11-keyboard language specified: {language}')
 				return False
-
-			from .boot import Boot
 
 			with Boot(self) as session:
 				session.SysCommand(['localectl', 'set-x11-keymap', '""'])
