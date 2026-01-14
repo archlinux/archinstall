@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, Self, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class ServerProfile(Profile):
-	def __init__(self, current_value: list[Profile] = []):
+	def __init__(self, current_value: list[Self] = []):
 		super().__init__(
 			'Server',
 			ProfileType.Server,
@@ -34,7 +34,7 @@ class ServerProfile(Profile):
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_selected_by_value(self.current_selection)
 
-		result = SelectMenu[Profile](
+		result = SelectMenu[Self](
 			group,
 			allow_reset=True,
 			allow_skip=True,
