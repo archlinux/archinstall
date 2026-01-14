@@ -1,3 +1,15 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Hannan Javed <hannansahib@gmail.com>\n"
+"Language-Team: \n"
+"Language: ur\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Aik log file yahan bana di gai hai: {} {}"
 
@@ -40,6 +52,9 @@ msgstr "Audio server ka intkhab"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Sirf packages jaisa ke'h base, base-devel, linux, linux-firmware, efibootmgr aur ikhti'ari profile packages hi install hein."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Note: base-devel ab default tor par install nahi hota. Yahan pr isko shamil krein agar aapko build tools chahiye."
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Agar aap web browser chahtay hein, jaise firefox ya chromium, to aap foori taur par kar saktay hein."
 
@@ -58,6 +73,7 @@ msgstr "tarteb karnay kay liay aik network interface ka intikhab krein"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "intikhab krein ke'h \"{}\" kay liay kon sa mode tarteb karna hay ya default mode \"{}\" istimal karnay kay liay skip krein"
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "IP aur subnet {} kay liay dar'j krein (masal kay taur par: 192.168.0.5/24): "
 
@@ -370,7 +386,7 @@ msgid "Password for user \"{}\": "
 msgstr "\"{}\" sarif kay liay password: "
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
-msgstr "Is baat ki tasdeeq ho rhi hay kay azafi package Mand hein (is mein kuch second lag saktay hein)"
+msgstr "Is baat ki tasdeeq ho rhi hay kay azafi packages mojood hein (is mein kuch second lag saktay hein)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
 msgstr "Kia Aap time ki automatic muta'bqat (NTP) default time servers kay sath istimal karna chahtay hein?\n"
@@ -572,6 +588,7 @@ msgstr "Matlooba subvolume options ka in'tkhab krein "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Sar'feen sudo mara'at kay sath hein wazah't krein, username kay sath: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Yahan log file banai ja chuki hai: {}"
 
@@ -831,9 +848,11 @@ msgstr "Archinstall ko chalanay kay liay root hona zarori hai. ziada kay liay --
 msgid "Select an execution mode"
 msgstr "Excution mode ko select krein"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "muntkh'b url: {} say profile hasil krna mumkin nahi"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Profiles ka munfirad hona zarori hai, lakin profile ki tareef duhray namoo kay sath mili hai: {}"
 
@@ -852,9 +871,11 @@ msgstr "Aik ikhti'ari partion ka intikhab krein"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Mounted devices kay liay root directory ko darj krein"
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "/home partition kay liay Minimum capacity: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Arch linux partion kay liay Minimum capacity: {}GiB"
 
@@ -918,14 +939,40 @@ msgstr "Partition kay a'akhri sector ki dar'j krein (fisad ya block ka number, d
 msgid "This will remove all newly added partitions, continue?"
 msgstr "yeh nai shamil ki gai tamam partitions remove karay ga, jari rakhein?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Partiotion ki management: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Total length: {}"
 
 msgid "Encryption type"
 msgstr "Encryption ki type"
+
+msgid "Iteration time"
+msgstr "Iteration ka time"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "Iteration time LUKS encryption kay liay darj krein (milliseconds main)"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "Bari values security ko barhati hain lekin boot time ko slow karti hain"
+
+msgid "Default: 10000ms, Recommended range: 1000-60000"
+msgstr "Default: 10000ms, Tajwiz shuda range: 1000-60000"
+
+msgid "Iteration time cannot be empty"
+msgstr "Iteration time khali nahi ho sakta"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "Iteration time kam az kam 100ms hona chahiye"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "Iteration time ziada say ziada 120000ms hona chahiye"
+
+msgid "Please enter a valid number"
+msgstr "Brah e meharbani ek durust number darj krein"
 
 msgid "Partitions"
 msgstr "Partitons"
@@ -957,6 +1004,7 @@ msgstr "Maloom nahi"
 msgid "Partition encryption"
 msgstr "Partition ki encryption"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! formatting {} main"
 
@@ -982,6 +1030,7 @@ msgstr "Back"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "brah e meharbani muntkh'b profile kay liay greeter ko install kay liay select krein: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Environment ki type: {}"
 
@@ -1174,6 +1223,7 @@ msgstr ""
 "\n"
 "Note:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Maximum safarish karda value   : {} ( {} downloads ki aik waqat main ajazat hai )"
 
@@ -1237,7 +1287,7 @@ msgstr "Copy-on-Write ko disable krein"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Yeh desktop environments or tiling window managers ki feharist daita hai jaisa kay GNOME, KDE Plasma, Sway"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Tarteb ki type: {}"
 
@@ -1388,7 +1438,7 @@ msgstr "Darj shuda username galat hai, dubara koshish krein"
 msgid "Username"
 msgstr "Saraf ka naam: "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Kia \"{}\" ko aik superuser (sudo) hona chahiay?\n"
 
@@ -1468,7 +1518,7 @@ msgstr "Directory"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Tartebon ko save karnay kay liay directory darj krein (pora karnay kay liay tab dubain)"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Kia aap tarteb filon {} ko save karna chahtay hein?"
 
@@ -1522,15 +1572,15 @@ msgstr "Naam"
 msgid "Signature check"
 msgstr "Signature kay check"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Mojoda khali sector is device par {}:"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Size: {} / {}"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Size (default: {}): "
 
@@ -1720,7 +1770,7 @@ msgstr "Installation makamil hoe"
 msgid "What would you like to do next?"
 msgstr "Is say agay app kia krna chahay gay?"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Kis mode ki tarteb \"{}\" yahan karni hai, intkhab krein"
 
@@ -1742,9 +1792,176 @@ msgstr "Kia aap user_credentials.json ki file ko encrypt krna chahtay hain?"
 msgid "Credentials file encryption password"
 msgstr "Decryption password kay liay isnaad ki file"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "Repositories: {}"
+
+msgid "New version available"
+msgstr "Naya version mojood hai"
+
+msgid "Passwordless login"
+msgstr "Password ke beghair login"
+
+msgid "Second factor login"
+msgstr "Second factor login"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Kya aap Bluetooth ko tart'eb dena chahtay hain?"
+
+msgid "Print service"
+msgstr "Print service"
+
+msgid "Would you like to configure the print service?"
+msgstr "Kya aap print service ko tart'eb dena chahtay hain?"
+
+msgid "Power management"
+msgstr "Power management"
+
+msgid "Authentication"
+msgstr "Authentication"
+
+msgid "Applications"
+msgstr "Applications"
+
+msgid "U2F login method: "
+msgstr "U2F login ka tariqa: "
+
+msgid "Passwordless sudo: "
+msgstr "Password ke beghair sudo: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Btrfs snapshot ki type: {}"
+
+msgid "Syncing the system..."
+msgstr "System ko sync kia ja rha hai..."
+
+#, fuzzy
+msgid "Value cannot be empty"
+msgstr "Value khali nahi ho sakti"
+
+msgid "Snapshot type"
+msgstr "Snapshot ki type"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Snapshot ki type: {}"
+
+msgid "U2F login setup"
+msgstr "U2F login ka setup"
+
+msgid "No U2F devices found"
+msgstr "Koi U2F device nahi mile"
+
+msgid "U2F Login Method"
+msgstr "U2F Login ka tariqa"
+
+msgid "Enable passwordless sudo?"
+msgstr "Password ke beghair sudo enable karna hai?"
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "U2f device set horha hai is user kay liye: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Hosakta hai apko PIN darj karni pare aur phir apnay U2F device ko touch karna pare usko register karne kay liye"
+
+msgid "Starting device modifications in "
+msgstr "Device main tabdili shuru ho rhi hai "
+
+msgid "No network connection found"
+msgstr "Koi network connection nahi mila"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Kya app Wifi say connect karna chahtay hain?"
+
+msgid "No wifi interface found"
+msgstr "Koi Wifi interface nahi mila"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Wifi network muntakh'b krein connect karne kay liye"
+
+msgid "Scanning wifi networks..."
+msgstr "Wifi networks scan ho rhe hain..."
+
+msgid "No wifi networks found"
+msgstr "Koi wifi network nahi mila"
+
+msgid "Failed setting up wifi"
+msgstr "Wifi setup karne main nakami hui"
+
+msgid "Enter wifi password"
+msgstr "Wifi ka password darj krein"
+
+msgid "Ok"
+msgstr "Theek hai"
+
+#, fuzzy
+msgid "Removable"
+msgstr "Hatnay layak"
+
+#, fuzzy
+msgid "Install to removable location"
+msgstr "Hatnay layak jaga par install krein"
+
+#, fuzzy
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "/EFI/BOOT/ (hatnay layak jaga) par install kia jay ga"
+
+#, fuzzy
+msgid "Will install to standard location with NVRAM entry"
+msgstr "Mayari jaga par NVRAM entry kay sath install kia jay ga"
+
+#, fuzzy
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Kya aap bootloader ko default hatnay layak search location par install karna chahtay hain?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Yay bootloader ko /EFI/BOOT/BOOTX64.EFI (ya is jesi jaga) par install karta hai jo kay mufeed hai:"
+
+msgid "USB drives or other portable external media."
+msgstr "USB drives ya dosray portable external media."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Systems jahan par aap chahte hain kay disk kisi bhi computer par bootable ho."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Firmware jo NVRAM boot entries ko durust tor par support nahi karta."
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "/EFI/BOOT/ (hatnay ki qabil jaga, mehfooz default) par install hoga"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Apni marzi ki jaga par NVRAM entry kay sath install hoga"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmware jo NVRAM boot entries ko durust tor par support nahi karta jaise kay ziada tar MSI ke motherboards,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "zayadatar Apple Macs, bohat say laptops..."
+
+msgid "Language"
+msgstr "Zubaan"
+
+msgid "Compression algorithm"
+msgstr "Compression algorithm"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Sirf packages jese base, sudo, linux, linux-firmware, efibootmgr aur optional profile packages install hongay."
+
+msgid "Select zram compression algorithm:"
+msgstr "Zram compression algorithm ko select krein:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Network Manager istmal krein (default backend)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Network Manager istmal krein (iwd backend)"
 
 #~ msgid ""
 #~ "{}\n"
