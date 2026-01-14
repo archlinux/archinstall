@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum, auto
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from archinstall.lib.translationhandler import tr
 
@@ -46,7 +46,7 @@ class Profile:
 		self,
 		name: str,
 		profile_type: ProfileType,
-		current_selection: list[Profile] = [],
+		current_selection: list[Self] = [],
 		packages: list[str] = [],
 		services: list[str] = [],
 		support_gfx_driver: bool = False,

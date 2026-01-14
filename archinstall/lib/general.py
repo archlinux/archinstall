@@ -15,7 +15,7 @@ from pathlib import Path
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
 from types import TracebackType
-from typing import Any, override
+from typing import Any, Self, override
 
 from .exceptions import RequirementError, SysCallError
 from .output import debug, error, logger
@@ -177,7 +177,7 @@ class SysCommandWorker:
 		except UnicodeDecodeError:
 			return str(self._trace_log)
 
-	def __enter__(self) -> 'SysCommandWorker':
+	def __enter__(self) -> Self:
 		return self
 
 	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
