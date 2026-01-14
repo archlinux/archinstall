@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING
 from archinstall.lib.general import SysCommandWorker
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.users import User
-from archinstall.lib.output import debug
+from archinstall.lib.output import debug, info
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import Tui
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -82,7 +81,7 @@ class AuthenticationHandler:
 
 		install_session.pacman.strap('pam-u2f')
 
-		Tui.print(tr(f'Setting up U2F login: {u2f_config.u2f_login_method.value}'))
+		print(tr(f'Setting up U2F login: {u2f_config.u2f_login_method.value}'))
 
 		# https://developers.yubico.com/pam-u2f/
 		u2f_auth_file = install_session.target / 'etc/u2f_mappings'
@@ -92,9 +91,9 @@ class AuthenticationHandler:
 		registered_keys: list[str] = []
 
 		for user in users:
-			Tui.print('')
-			Tui.print(tr('Setting up U2F device for user: {}').format(user.username))
-			Tui.print(tr('You may need to enter the PIN and then touch your U2F device to register it'))
+			print('')
+			info(tr('Setting up U2F device for user: {}').format(user.username))
+			info(tr('You may need to enter the PIN and then touch your U2F device to register it'))
 
 			cmd = ' '.join(
 				['arch-chroot', '-S', str(install_session.target), 'pamu2fcfg', '-u', user.username, '-o', f'pam://{hostname}', '-i', f'pam://{hostname}']

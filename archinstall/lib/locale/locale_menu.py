@@ -1,10 +1,9 @@
 from typing import override
 
+from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 from ..menu.abstract_menu import AbstractSubMenu
 from ..models.locale import LocaleConfiguration
@@ -32,40 +31,33 @@ class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 				text=tr('Keyboard layout'),
 				action=self._select_kb_layout,
 				value=self._locale_conf.kb_layout,
-				preview_action=self._prev_locale,
+				preview_action=lambda item: item.get_value(),
 				key='kb_layout',
 			),
 			MenuItem(
 				text=tr('Locale language'),
 				action=select_locale_lang,
 				value=self._locale_conf.sys_lang,
-				preview_action=self._prev_locale,
+				preview_action=lambda item: item.get_value(),
 				key='sys_lang',
 			),
 			MenuItem(
 				text=tr('Locale encoding'),
 				action=select_locale_enc,
 				value=self._locale_conf.sys_enc,
-				preview_action=self._prev_locale,
+				preview_action=lambda item: item.get_value(),
 				key='sys_enc',
 			),
 		]
 
-	def _prev_locale(self, item: MenuItem) -> str:
-		temp_locale = LocaleConfiguration(
-			self._menu_item_group.find_by_key('kb_layout').get_value(),
-			self._menu_item_group.find_by_key('sys_lang').get_value(),
-			self._menu_item_group.find_by_key('sys_enc').get_value(),
-		)
-		return temp_locale.preview()
-
 	@override
-	def run(
-		self,
-		additional_title: str | None = None,
-	) -> LocaleConfiguration:
-		super().run(additional_title=additional_title)
-		return self._locale_conf
+	def run(self) -> LocaleConfiguration:
+		config = super().run()
+
+		if config is None:
+			config = LocaleConfiguration.default()
+
+		return config
 
 	def _select_kb_layout(self, preset: str | None) -> str | None:
 		kb_lang = select_kb_layout(preset)
@@ -82,12 +74,11 @@ def select_locale_lang(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu[str](
-		group,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Locale language')),
-		allow_skip=True,
-	).run()
+	result = Selection[str](
+		header=tr('Locale language'),
+		group=group,
+		enable_filter=True,
+	).show()
 
 	match result.type_:
 		case ResultType.Selection:
@@ -106,12 +97,11 @@ def select_locale_enc(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu[str](
-		group,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Locale encoding')),
-		allow_skip=True,
-	).run()
+	result = Selection[str](
+		header=tr('Locale encoding'),
+		group=group,
+		enable_filter=True,
+	).show()
 
 	match result.type_:
 		case ResultType.Selection:
@@ -138,12 +128,11 @@ def select_kb_layout(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=False)
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu[str](
-		group,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Keyboard layout')),
-		allow_skip=True,
-	).run()
+	result = Selection[str](
+		header=tr('Keyboard layout'),
+		group=group,
+		enable_filter=True,
+	).show()
 
 	match result.type_:
 		case ResultType.Selection:

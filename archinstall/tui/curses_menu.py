@@ -90,7 +90,7 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 		lines = help_text.split('\n')
 
 		entries = [ViewportEntry('', 0, 0, STYLE.NORMAL)]
-		entries += [ViewportEntry(f'   {e}   ', idx + 1, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
+		entries += [ViewportEntry(f'   {e}	 ', idx + 1, 0, STYLE.NORMAL) for idx, e in enumerate(lines)]
 		self._help_window.update(entries, 0)
 
 	def get_header_entries(self, header: str) -> list[ViewportEntry]:
@@ -227,7 +227,8 @@ class AbstractViewport:
 
 			# 2 for frames, 1 for extra space start away from frame
 			# must align with def _adjust_entries
-			frame_end += 3  # 2 for frame
+			# 2 for frame
+			frame_end += 3
 
 			frame_height = len(rows) + 1
 			if frame_height > max_height:
@@ -1122,7 +1123,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 
 	def _multi_prefix(self, item: MenuItem) -> str:
 		if item.read_only:
-			return '    '
+			return '	'
 		elif self._item_group.is_item_selected(item):
 			return '[x] '
 		else:

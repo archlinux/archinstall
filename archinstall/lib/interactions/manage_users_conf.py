@@ -1,11 +1,10 @@
 import re
 from typing import override
 
+from archinstall.lib.menu.helpers import Confirmation, Input
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import EditMenu, SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, Orientation
+from archinstall.tui.ui.menu_item import MenuItem
+from archinstall.tui.ui.result import ResultType
 
 from ..menu.list_manager import ListManager
 from ..models.users import User
@@ -43,7 +42,8 @@ class UserList(ListManager[User]):
 				data += [new_user]
 		elif action == self._actions[1] and entry:  # change password
 			header = f'{tr("User")}: {entry.username}\n'
-			new_password = get_password(tr('Password'), header=header)
+			header += tr('Enter new password')
+			new_password = get_password(header=header)
 
 			if new_password:
 				user = next(filter(lambda x: x == entry, data))
@@ -63,17 +63,17 @@ class UserList(ListManager[User]):
 		return tr('The username you entered is invalid')
 
 	def _add_user(self) -> User | None:
-		editResult = EditMenu(
-			tr('Username'),
+		editResult = Input(
+			tr('Enter a username'),
 			allow_skip=True,
-			validator=self._check_for_correct_username,
-		).input()
+			validator_callback=self._check_for_correct_username,
+		).show()
 
 		match editResult.type_:
 			case ResultType.Skip:
 				return None
 			case ResultType.Selection:
-				username = editResult.text()
+				username = editResult.get_value()
 			case _:
 				raise ValueError('Unhandled result type')
 
@@ -81,27 +81,21 @@ class UserList(ListManager[User]):
 			return None
 
 		header = f'{tr("Username")}: {username}\n'
+		prompt = f'{header}\n' + tr('Enter a password')
 
-		password = get_password(tr('Password'), header=header, allow_skip=True)
+		password = get_password(header=prompt, allow_skip=True)
 
 		if not password:
 			return None
 
-		header += f'{tr("Password")}: {password.hidden()}\n\n'
-		header += str(tr('Should "{}" be a superuser (sudo)?\n')).format(username)
+		header += f'{tr("Password")}: {password.hidden()}\n'
+		prompt = f'{header}\n' + tr('Should "{}" be a superuser (sudo)?\n').format(username)
 
-		group = MenuItemGroup.yes_no()
-		group.focus_item = MenuItem.yes()
-
-		result = SelectMenu[bool](
-			group,
-			header=header,
-			alignment=Alignment.CENTER,
-			columns=2,
-			orientation=Orientation.HORIZONTAL,
-			search_enabled=False,
+		result = Confirmation(
+			header=prompt,
 			allow_skip=False,
-		).run()
+			preset=True,
+		).show()
 
 		match result.type_:
 			case ResultType.Selection:

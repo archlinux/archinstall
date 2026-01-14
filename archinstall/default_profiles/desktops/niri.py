@@ -3,11 +3,10 @@ from typing import override
 from archinstall.default_profiles.desktops import SeatAccess
 from archinstall.default_profiles.profile import GreeterType, ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
 class NiriProfile(XorgProfile):
@@ -62,13 +61,11 @@ class NiriProfile(XorgProfile):
 		default = self.custom_settings.get('seat_access', None)
 		group.set_default_by_value(default)
 
-		result = SelectMenu[SeatAccess](
+		result = Selection[SeatAccess](
 			group,
 			header=header,
 			allow_skip=False,
-			frame=FrameProperties.min(tr('Seat access')),
-			alignment=Alignment.CENTER,
-		).run()
+		).show()
 
 		if result.type_ == ResultType.Selection:
 			self.custom_settings['seat_access'] = result.get_value().value

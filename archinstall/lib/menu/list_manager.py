@@ -1,12 +1,11 @@
 import copy
 from typing import cast
 
+from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
 class ListManager[ValueT]:
@@ -18,7 +17,7 @@ class ListManager[ValueT]:
 		prompt: str | None = None,
 	):
 		"""
-		:param prompt:  Text which will appear at the header
+		:param prompt:	Text which will appear at the header
 		type param: string
 
 		:param entries: list/dict of option to be shown / manipulated
@@ -68,13 +67,12 @@ class ListManager[ValueT]:
 			if self._prompt is not None:
 				prompt = f'{self._prompt}\n\n'
 
-			result = SelectMenu[ValueT | str](
+			result = Selection[ValueT | str](
 				group,
 				header=prompt,
-				search_enabled=False,
+				enable_filter=False,
 				allow_skip=False,
-				alignment=Alignment.CENTER,
-			).run()
+			).show()
 
 			match result.type_:
 				case ResultType.Selection:
@@ -106,15 +104,14 @@ class ListManager[ValueT]:
 		items = [MenuItem(o, value=o) for o in options]
 		group = MenuItemGroup(items, sort_items=False)
 
-		header = f'{self.selected_action_display(entry)}\n'
+		header = f'{self.selected_action_display(entry)}'
 
-		result = SelectMenu[str](
+		result = Selection[str](
 			group,
 			header=header,
-			search_enabled=False,
+			enable_filter=False,
 			allow_skip=False,
-			alignment=Alignment.CENTER,
-		).run()
+		).show()
 
 		match result.type_:
 			case ResultType.Selection:
