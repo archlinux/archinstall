@@ -62,7 +62,7 @@ class PackageSearchResult:
 
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other: 'PackageSearchResult') -> bool:
+	def __lt__(self, other: Self) -> bool:
 		return self.pkg_version < other.pkg_version
 
 
@@ -105,7 +105,7 @@ class LocalPackage(BaseModel):
 
 		return self.version == other.version
 
-	def __lt__(self, other: 'LocalPackage') -> bool:
+	def __lt__(self, other: Self) -> bool:
 		return self.version < other.version
 
 
