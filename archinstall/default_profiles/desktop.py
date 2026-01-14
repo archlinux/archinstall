@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, Self, override
 
 from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class DesktopProfile(Profile):
-	def __init__(self, current_selection: list[Profile] = []) -> None:
+	def __init__(self, current_selection: list[Self] = []) -> None:
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
@@ -68,7 +68,7 @@ class DesktopProfile(Profile):
 		group = MenuItemGroup(items, sort_items=True, sort_case_sensitive=False)
 		group.set_selected_by_value(self.current_selection)
 
-		result = SelectMenu[Profile](
+		result = SelectMenu[Self](
 			group,
 			multi=True,
 			allow_reset=True,
