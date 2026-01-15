@@ -51,7 +51,6 @@ from .output import debug, error, info, log, logger, warn
 from .pacman import Pacman
 from .pacman.config import PacmanConfig
 from .plugins import plugins
-from .storage import storage
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ['base', 'sudo', 'linux-firmware', 'linux', 'linux-lts', 'linux-zen', 'linux-hardened']
@@ -94,8 +93,6 @@ class Installer:
 			self._base_packages.extend(__accessibility_packages__)
 
 		self.post_base_install: list[Callable] = []  # type: ignore[type-arg]
-
-		storage['installation_session'] = self
 
 		self._modules: list[str] = []
 		self._binaries: list[str] = []
