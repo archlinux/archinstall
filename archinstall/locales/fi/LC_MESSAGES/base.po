@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Kimmo Kujansuu <mrkujansuu@gmail.com>\n"
+"Last-Translator: Aleksi Puhakainen <aleksi.puhakainen@gmail.com>\n"
 "Language-Team: \n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
@@ -1452,20 +1452,20 @@ msgid "Interfaces"
 msgstr "Lisää liitäntä"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "Sinun on annettava kelvollinen IP-osoite IP-määritystilassa"
 
 msgid "Modes"
-msgstr ""
+msgstr "Tilat"
 
 msgid "IP address"
-msgstr ""
+msgstr "IP osoite"
 
 #, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
 msgstr "Anna yhdyskäytävän (reitittimen) IP-osoite tai jätä tyhjäksi: "
 
 msgid "Gateway address"
-msgstr ""
+msgstr "Yhdyskäytävän osoite"
 
 #, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
@@ -1484,10 +1484,10 @@ msgid "Kernel"
 msgstr "Kernelit"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "UEFIa ei tunnisteta ja jotkin asetukset on poistettu käytöstä"
 
 msgid "Info"
-msgstr ""
+msgstr "Informaatio"
 
 #, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
@@ -1533,10 +1533,10 @@ msgstr ""
 "{}"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Käytössä"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Pois Käytostä"
 
 #, fuzzy
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
@@ -1578,7 +1578,7 @@ msgid "Swap on zram"
 msgstr ""
 
 msgid "Name"
-msgstr ""
+msgstr "Nimi"
 
 #, fuzzy
 msgid "Signature check"
@@ -1691,7 +1691,7 @@ msgid "Only ASCII characters are supported"
 msgstr ""
 
 msgid "Show help"
-msgstr ""
+msgstr "Näytä apua"
 
 msgid "Exit help"
 msgstr ""
@@ -1703,16 +1703,16 @@ msgid "Preview scroll down"
 msgstr ""
 
 msgid "Move up"
-msgstr ""
+msgstr "Liikku ylös"
 
 msgid "Move down"
-msgstr ""
+msgstr "Liikku alas"
 
 msgid "Move right"
-msgstr ""
+msgstr "Liiku oikealle"
 
 msgid "Move left"
-msgstr ""
+msgstr "Liiku vasemmalle"
 
 msgid "Jump to entry"
 msgstr ""
@@ -1786,7 +1786,7 @@ msgid "chroot into installation for post-installation configurations"
 msgstr "Haluatko chroot:in uuteen asennukseen ja suorittaa asennuksen jälkeiset asetukset?"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Lataus valmis"
 
 #, fuzzy
 msgid "What would you like to do next?"
@@ -1853,7 +1853,7 @@ msgid "Power management"
 msgstr "Osioiden hallinta: {}"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Todennus"
 
 msgid "Applications"
 msgstr ""
@@ -1862,7 +1862,7 @@ msgid "U2F login method: "
 msgstr ""
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Salasanaton sudo"
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
