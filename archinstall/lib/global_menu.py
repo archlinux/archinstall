@@ -345,6 +345,11 @@ class GlobalMenu(AbstractMenu[None]):
 				output += f'{tr("Firewall")}: {firewall_config.firewall.value}'
 				output += '\n'
 
+			if app_config.camera_config:
+				output += f'{tr("Camera")}: '
+				output += tr('Enabled') if app_config.camera_config.enabled else tr('Disabled')
+				output += '\n'
+
 			return output
 
 		return None

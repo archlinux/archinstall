@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from archinstall.applications.audio import AudioApp
 from archinstall.applications.bluetooth import BluetoothApp
+from archinstall.applications.camera import CameraApp
 from archinstall.applications.firewall import FirewallApp
 from archinstall.applications.power_management import PowerManagementApp
 from archinstall.applications.print_service import PrintServiceApp
@@ -43,5 +44,7 @@ class ApplicationHandler:
 				app_config.firewall_config,
 			)
 
+		if app_config.camera_config and app_config.camera_config.enabled:
+			CameraApp().install(install_session)
 
 application_handler = ApplicationHandler()
