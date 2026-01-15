@@ -22,7 +22,6 @@ class ProfileType(Enum):
 	DesktopEnv = 'Desktop Environment'
 	CustomType = 'CustomType'
 	# special things
-	Tailored = 'Tailored'
 	Application = 'Application'
 
 
@@ -157,9 +156,6 @@ class Profile:
 
 	def is_xorg_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.Xorg if self._advanced_check() else False
-
-	def is_tailored(self) -> bool:
-		return self.profile_type == ProfileType.Tailored
 
 	def is_custom_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.CustomType
