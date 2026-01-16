@@ -49,10 +49,10 @@ class MenuKeys(Enum):
 	SCROLL_DOWN = frozenset({338})
 
 	@classmethod
-	def from_ord(cls, key: int) -> list['MenuKeys']:
-		matches = []
+	def from_ord(cls, key: int) -> list[Self]:
+		matches: list[Self] = []
 
-		for group in MenuKeys:
+		for group in cls:
 			if key in group.value:
 				matches.append(group)
 
