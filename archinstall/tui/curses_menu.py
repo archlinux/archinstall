@@ -50,7 +50,7 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 	def clear_help_win(self) -> None:
 		self._help_window.erase()
 
-	def _set_help_viewport(self) -> 'Viewport':
+	def _set_help_viewport(self) -> Viewport:
 		max_height, max_width = Tui.t().max_yx
 		height = max_height - 10
 
