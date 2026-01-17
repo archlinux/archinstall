@@ -21,8 +21,8 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		else:
 			self._auth_config = AuthenticationConfiguration()
 
-		menu_optioons = self._define_menu_options()
-		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)
+		menu_options = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_options, checkmarks=True)
 
 		super().__init__(
 			self._item_group,

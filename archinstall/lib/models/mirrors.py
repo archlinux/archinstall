@@ -5,7 +5,7 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, TypedDict, override
+from typing import Any, Self, TypedDict, override
 
 from pydantic import BaseModel, field_validator, model_validator
 
@@ -82,7 +82,7 @@ class MirrorStatusEntryV3(BaseModel):
 	@property
 	def latency(self) -> float | None:
 		"""
-		Latency measures the miliseconds between one ICMP request & response.
+		Latency measures the milliseconds between one ICMP request & response.
 		It only does so once because we check if self._latency is None, and a ICMP timeout result in -1
 		We do this because some hosts blocks ICMP so we'll have to rely on .speed() instead which is slower.
 		"""
@@ -104,11 +104,14 @@ class MirrorStatusEntryV3(BaseModel):
 		return value
 
 	@model_validator(mode='after')
-	def debug_output(self) -> 'MirrorStatusEntryV3':
+	def debug_output(self) -> Self:
+		from ..args import arch_config_handler
+
 		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(port[0]) if port and len(port) >= 1 else None
 
-		debug(f'Loaded mirror {self._hostname}' + (f' with current score of {self.score}' if self.score else ''))
+		if arch_config_handler.args.verbose:
+			debug(f'Loaded mirror {self._hostname}' + (f' with current score of {self.score}' if self.score else ''))
 		return self
 
 
@@ -188,11 +191,11 @@ class CustomRepository:
 		}
 
 	@classmethod
-	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomRepository']:
+	def parse_args(cls, args: list[dict[str, str]]) -> list[Self]:
 		configs = []
 		for arg in args:
 			configs.append(
-				CustomRepository(
+				cls(
 					arg['name'],
 					arg['url'],
 					SignCheck(arg['sign_check']),
@@ -214,11 +217,11 @@ class CustomServer:
 		return {'url': self.url}
 
 	@classmethod
-	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomServer']:
+	def parse_args(cls, args: list[dict[str, str]]) -> list[Self]:
 		configs = []
 		for arg in args:
 			configs.append(
-				CustomServer(arg['url']),
+				cls(arg['url']),
 			)
 
 		return configs
@@ -240,11 +243,11 @@ class MirrorConfiguration:
 
 	@property
 	def region_names(self) -> str:
-		return '\n'.join([m.name for m in self.mirror_regions])
+		return '\n'.join(m.name for m in self.mirror_regions)
 
 	@property
 	def custom_server_urls(self) -> str:
-		return '\n'.join([s.url for s in self.custom_servers])
+		return '\n'.join(s.url for s in self.custom_servers)
 
 	def json(self) -> _MirrorConfigurationSerialization:
 		regions = {}
@@ -301,8 +304,8 @@ class MirrorConfiguration:
 		cls,
 		args: dict[str, Any],
 		backwards_compatible_repo: list[Repository] = [],
-	) -> 'MirrorConfiguration':
-		config = MirrorConfiguration()
+	) -> Self:
+		config = cls()
 
 		mirror_regions = args.get('mirror_regions', [])
 		if mirror_regions:

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import sys
 from enum import Enum, auto
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from archinstall.lib.translationhandler import tr
 
@@ -23,7 +22,6 @@ class ProfileType(Enum):
 	DesktopEnv = 'Desktop Environment'
 	CustomType = 'CustomType'
 	# special things
-	Tailored = 'Tailored'
 	Application = 'Application'
 
 
@@ -33,10 +31,7 @@ class GreeterType(Enum):
 	Sddm = 'sddm'
 	Gdm = 'gdm'
 	Ly = 'ly'
-
-	# .. todo:: Remove when we un-hide cosmic behind --advanced
-	if '--advanced' in sys.argv:
-		CosmicSession = 'cosmic-greeter'
+	CosmicSession = 'cosmic-greeter'
 
 
 class SelectResult(Enum):
@@ -50,7 +45,7 @@ class Profile:
 		self,
 		name: str,
 		profile_type: ProfileType,
-		current_selection: list[Profile] = [],
+		current_selection: list[Self] = [],
 		packages: list[str] = [],
 		services: list[str] = [],
 		support_gfx_driver: bool = False,
@@ -106,12 +101,12 @@ class Profile:
 
 		return self.advanced is False or arch_config_handler.args.advanced is True
 
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		"""
 		Performs installation steps when this profile was selected
 		"""
 
-	def post_install(self, install_session: 'Installer') -> None:
+	def post_install(self, install_session: Installer) -> None:
 		"""
 		Hook that will be called when the installation process is
 		finished and custom installation steps for specific default_profiles
@@ -161,9 +156,6 @@ class Profile:
 
 	def is_xorg_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.Xorg if self._advanced_check() else False
-
-	def is_tailored(self) -> bool:
-		return self.profile_type == ProfileType.Tailored
 
 	def is_custom_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.CustomType

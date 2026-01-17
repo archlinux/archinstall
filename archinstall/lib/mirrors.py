@@ -23,7 +23,7 @@ from .models.mirrors import (
 )
 from .models.packages import Repository
 from .networking import fetch_data_from_url
-from .output import FormattedOutput, debug
+from .output import FormattedOutput, debug, info
 
 
 class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
@@ -217,8 +217,8 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 		else:
 			self._mirror_config = MirrorConfiguration()
 
-		menu_optioons = self._define_menu_options()
-		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)
+		menu_options = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_options, checkmarks=True)
 
 		super().__init__(
 			self._item_group,
@@ -275,7 +275,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 	def _prev_additional_repos(self, item: MenuItem) -> str | None:
 		if item.value:
 			repositories: list[Repository] = item.value
-			repos = ', '.join([repo.value for repo in repositories])
+			repos = ', '.join(repo.value for repo in repositories)
 			return f'{tr("Additional repositories")}: {repos}'
 		return None
 
@@ -292,7 +292,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 			return None
 
 		custom_servers: list[CustomServer] = item.value
-		output = '\n'.join([server.url for server in custom_servers])
+		output = '\n'.join(server.url for server in custom_servers)
 		return output.strip()
 
 	@override
@@ -354,9 +354,14 @@ def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
 	:rtype: Repository
 	"""
 
-	repositories = [Repository.Multilib, Repository.Testing]
+	repositories = [
+		Repository.Multilib,
+		Repository.MultilibTesting,
+		Repository.CoreTesting,
+		Repository.ExtraTesting,
+	]
 	items = [MenuItem(r.value, value=r) for r in repositories]
-	group = MenuItemGroup(items, sort_items=True)
+	group = MenuItemGroup(items, sort_items=False)
 	group.set_selected_by_value(preset)
 
 	result = SelectMenu[Repository](
@@ -384,6 +389,7 @@ class MirrorListHandler:
 	) -> None:
 		self._local_mirrorlist = local_mirrorlist
 		self._status_mappings: dict[str, list[MirrorStatusEntryV3]] | None = None
+		self._fetched_remote: bool = False
 
 	def _mappings(self) -> dict[str, list[MirrorStatusEntryV3]]:
 		if self._status_mappings is None:
@@ -407,9 +413,12 @@ class MirrorListHandler:
 		from .args import arch_config_handler
 
 		if arch_config_handler.args.offline:
+			self._fetched_remote = False
 			self.load_local_mirrors()
 		else:
-			if not self.load_remote_mirrors():
+			self._fetched_remote = self.load_remote_mirrors()
+			debug(f'load mirrors: {self._fetched_remote}')
+			if not self._fetched_remote:
 				self.load_local_mirrors()
 
 	def load_remote_mirrors(self) -> bool:
@@ -436,7 +445,16 @@ class MirrorListHandler:
 	def get_status_by_region(self, region: str, speed_sort: bool) -> list[MirrorStatusEntryV3]:
 		mappings = self._mappings()
 		region_list = mappings[region]
-		return sorted(region_list, key=lambda mirror: (mirror.score, mirror.speed))
+
+		# Only sort if we have remote mirror data with score/speed info
+		# Local mirrors lack this data and can be modified manually before-hand
+		# Or reflector potentially ran already
+		if self._fetched_remote and speed_sort:
+			info('Sorting your selected mirror list based on the speed between you and the individual mirrors (this might take a while)')
+			# Sort by speed descending (higher is better in bitrate form core.db download)
+			return sorted(region_list, key=lambda mirror: -mirror.speed)
+		# just return as-is without sorting?
+		return region_list
 
 	def _parse_remote_mirror_list(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
 		mirror_status = MirrorStatusListV3.model_validate_json(mirrorlist)

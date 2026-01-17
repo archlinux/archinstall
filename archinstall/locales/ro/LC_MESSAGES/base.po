@@ -53,6 +53,9 @@ msgstr "Selectați un server audio"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Dacă doriți un browser, precum firefox sau chromium, puteți să-l specificați în promptul următor."
 
@@ -1844,6 +1847,17 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "Doriți să folosiți compresie pentru BTRFS?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Managementul partiției: {}"
+
 msgid "Authentication"
 msgstr ""
 
@@ -1891,4 +1905,100 @@ msgid "Setting up U2F device for user: {}"
 msgstr "Selectați utilizarea unui device FID02 pentru HSM"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Nu există o configurare de rețea"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Configurează interfața {}"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Selectați o interfață de rețea pentru configurare"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Nu există o configurare de rețea"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Introduceți o parolă: "
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Limba locală"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Seleactați un punct de montare :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""

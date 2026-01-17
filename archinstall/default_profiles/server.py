@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, override
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Self, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
@@ -13,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class ServerProfile(Profile):
-	def __init__(self, current_value: list[Profile] = []):
+	def __init__(self, current_value: list[Self] = []):
 		super().__init__(
 			'Server',
 			ProfileType.Server,
@@ -34,7 +36,7 @@ class ServerProfile(Profile):
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_selected_by_value(self.current_selection)
 
-		result = SelectMenu[Profile](
+		result = SelectMenu[Self](
 			group,
 			allow_reset=True,
 			allow_skip=True,
@@ -55,12 +57,12 @@ class ServerProfile(Profile):
 				return SelectResult.ResetCurrent
 
 	@override
-	def post_install(self, install_session: 'Installer') -> None:
+	def post_install(self, install_session: Installer) -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
 
 	@override
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		server_info = self.current_selection_names()
 		details = ', '.join(server_info)
 		info(f'Now installing the selected servers: {details}')

@@ -7,6 +7,9 @@
       },
       "audio_config": {
           "audio": "pipewire"
+      },
+      "print_service_config": {
+          "enabled": true
       }
   },
   "auth_config": {
@@ -18,7 +21,11 @@
   "audio_config": {
     "audio": "pipewire"
   },
-  "bootloader": "Systemd-boot",
+  "bootloader_config": {
+    "bootloader": "Systemd-boot",
+    "uki": false,
+    "removable": false
+  },
   "services": [
     "service_1",
     "service_2"

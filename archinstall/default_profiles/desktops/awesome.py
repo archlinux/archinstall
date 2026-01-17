@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import ProfileType
@@ -29,7 +31,7 @@ class AwesomeProfile(XorgProfile):
 		]
 
 	@override
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		super().install(install_session)
 
 		# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.

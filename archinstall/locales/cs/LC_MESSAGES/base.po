@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Soubor protokolu byl vytvořen zde: {} {}"
@@ -53,6 +53,9 @@ msgstr "Zvolte audio server"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Budou nainstalovány pouze balíčky jako base, base-devel, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Poznámka: balík base-devel se již neinstaluje automaticky. Přidejte jej zde, pokud potřebujete nástroje pro sestavování."
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Pokud si přejete nainstalovat webový prohlížeč, jako je například Firefox nebo Chromium, můžete jej zadat do následujícího pole."
 
@@ -63,7 +66,7 @@ msgid "Copy ISO network configuration to installation"
 msgstr "Zkopírovat do instalace konfiguraci sítě z ISO"
 
 msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
+msgstr "Použít NetworkManager (nezbytné pro grafickou konfiguraci v GNOME a KDE)"
 
 msgid "Select one network interface to configure"
 msgstr "Zvolte síťové rozhraní ke konfiguraci"
@@ -722,7 +725,7 @@ msgid "Value: "
 msgstr "Hodnota: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Výběr disku a tvorbu oddílů můžete přeskočit a použít jakýkoliv setup, který je připojen na /mnt (experimentální)"
+msgstr "Můžete přeskočit výběr disku a rozdělení oddílů a použít libovolné rozložení disků, které je připojeno v /mnt (experimentální)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "Zvolte jeden z disků nebo přeskočte a použijte /mnt jako výchozí"
@@ -883,7 +886,7 @@ msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Označení/Odznačení oddílu ke zformátování (vymaže data)"
 
 msgid "Mark/Unmark as bootable"
-msgstr "Označit/Odznačit jako zaváděcí"
+msgstr "Označit/Odznačit jako spouštěcí"
 
 msgid "Change filesystem"
 msgstr "Změnit souborový systém"
@@ -907,7 +910,7 @@ msgid "Partition mount-points are relative to inside the installation, the boot 
 msgstr "Přípojné body diskových oddílů jsou relativní uvnitř instalace, například spouštěcí bod by byl /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr "Pokud je nastaven přípojný bod /boot, oddíl je zároveň označený jako zaváděcí."
+msgstr "Pokud je nastaven přípojný bod /boot, oddíl je zároveň označený jako spouštěcí."
 
 msgid "Mountpoint: "
 msgstr "Přípojný bod: "
@@ -939,28 +942,28 @@ msgid "Encryption type"
 msgstr "Typ šifrování"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Doba iterace"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Zadejte dobu iterace pro šifrování LUKS (v milisekundách)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Vyšší hodnoty zvyšují bezpečnost, ale snižují dobu spouštění"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Výchozí: 10000ms, Doporučený rozsah: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Doba iterace nesmí být prázdná"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Doba iterace musí být alespoň 100 ms"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Doba iterace musí být alespoň 120000ms"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Prosím zadejte platné číslo"
 
 msgid "Partitions"
 msgstr "Diskové oddíly"
@@ -994,7 +997,7 @@ msgstr "Šifrování diskového oddílu"
 
 #, python-brace-format
 msgid " ! Formatting {} in "
-msgstr " ! Formátuji {} na "
+msgstr " ! Formátování {} na "
 
 msgid "← Back"
 msgstr "← Zpět"
@@ -1040,7 +1043,7 @@ msgid "Profile name: "
 msgstr "Jméno profilu: "
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr "Zadané jméno profilu již existuje. Zkuste to znovu"
+msgstr "Zadaný název profilu již existuje. Zkuste to znovu"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
 msgstr "Zadejte další balíčky k instalaci v tomto profilu (oddělené mezerou, ponechte prázdné k přeskočení): "
@@ -1162,7 +1165,7 @@ msgid "Locales"
 msgstr "Lokalizace"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
+msgstr "Použít NetworkManager (nezbytné pro grafickou konfiguraci v GNOME a KDE)"
 
 msgid "Total: {} / {}"
 msgstr "Celkem: {} / {}"
@@ -1248,13 +1251,13 @@ msgid "Time syncronization not completing, while you wait - check the docs for w
 msgstr "Synchronizace času není dokončena, mezitím se můžete podívat na možnosti řešení: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr "Přeskakuji čekání na automatickou synchronizaci času (nesynchronizovaný čas může způsobit problémy během instalace)"
+msgstr "Přeskakování čekání na automatickou synchronizaci času (nesynchronizovaný čas může způsobit problémy během instalace)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Čekám na dokončení synchronizace Arch Linux keyring (archlinux-keyring-wkd-sync)."
 
 msgid "Selected profiles: "
-msgstr "Vybrané profily: "
+msgstr "Zvolené profily: "
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
 msgstr "Synchronizace času není dokončena, mezitím se můžete podívat na možnosti řešení: https://archinstall.readthedocs.io/"
@@ -1285,10 +1288,10 @@ msgid "LVM disk encryption with more than 2 partitions is currently not supporte
 msgstr "LVM šifrování disku s více jak dvěma oddíly není v tuto chvíli podporováno"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "Použít NetworkManager (neubytné pro grafickou konfiguraci inernetu v GNOME a KDE)"
+msgstr "Použít NetworkManager (nezbytné pro grafickou konfiguraci inernetu v GNOME a KDE)"
 
 msgid "Select a LVM option"
-msgstr "Vyberte možnost LVM"
+msgstr "Zvolte možnost LVM"
 
 msgid "Partitioning"
 msgstr "Rozdělení diskových oddílů"
@@ -1384,7 +1387,7 @@ msgid "Root mount directory"
 msgstr "Kořenový adresář pro připojení"
 
 msgid "Select language"
-msgstr "Vyberte jazyk"
+msgstr "Zvolte jazyk"
 
 msgid "Write additional packages to install (space separated, leave blank to skip)"
 msgstr "Zadejte další balíčky k instalaci (oddělené mezerou, ponechte prázdné k přeskočení)"
@@ -1516,7 +1519,7 @@ msgstr "Kontrola podpisu"
 
 #, python-brace-format
 msgid "Selected free space segment on device {}:"
-msgstr "Vybrané volné sektory na zařízení {}:"
+msgstr "Zvolené volné sektory na zařízení {}:"
 
 #, python-brace-format
 msgid "Size: {} / {}"
@@ -1560,7 +1563,7 @@ msgid "Delete custom repository"
 msgstr "Smazat vlastní repozitář"
 
 msgid "Repository name"
-msgstr "Jméno repozitáře"
+msgstr "Název repozitáře"
 
 msgid "Add a custom server"
 msgstr "Přidat vlastní server"
@@ -1575,7 +1578,7 @@ msgid "Server url"
 msgstr "URL serveru"
 
 msgid "Select regions"
-msgstr "Vyberte regiony"
+msgstr "Zvolte regiony"
 
 msgid "Add custom servers"
 msgstr "Přidat vlastní servery"
@@ -1590,7 +1593,7 @@ msgid "Mirrors and repositories"
 msgstr "Zrcadla a repozitáře"
 
 msgid "Selected mirror regions"
-msgstr "Vybrané oblasti zrcadel"
+msgstr "Zvolené oblasti zrcadel"
 
 msgid "Custom servers"
 msgstr "Vlastní servery"
@@ -1677,7 +1680,7 @@ msgid "Reboot system"
 msgstr "Restartovat systém"
 
 msgid "chroot into installation for post-installation configurations"
-msgstr "Vstoupit skrze chroot do své nově vytvořené instalace a provést závěrečnou konfiguraci"
+msgstr "vstoupit skrze chroot do své nově vytvořené instalace a provést závěrečnou konfiguraci"
 
 msgid "Installation completed"
 msgstr "Instalace dokončena"
@@ -1708,69 +1711,161 @@ msgstr "Heslo pro zašifrování souboru s přihlašovacími údaji"
 msgid "Repositories: {}"
 msgstr "Repozitáře: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "Žádné HSM zařízení není dostupné"
+msgstr "Je dostupná nová verze"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Heslo"
+msgstr "Přihlášení bez hesla"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Dvoufázové přihlášení"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Přejete si pokračovat?"
+msgstr "Přejete si nastavit Bluetooth?"
+
+msgid "Print service"
+msgstr "Tisková služba"
+
+msgid "Would you like to configure the print service?"
+msgstr "Přejete si nastavit tiskovou službu?"
+
+msgid "Power management"
+msgstr "Správa napájení"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Ověřování"
 
 msgid "Applications"
-msgstr ""
+msgstr "Aplikace"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "Způsob U2F přihlášení: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Sudo bez hesla: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Druh Btrfs snímku: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Synchronizování systému..."
 
 msgid "Value cannot be empty"
-msgstr ""
+msgstr "Hodnota nesmí být prázdná"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Druh snímku"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Typ prostředí: {}"
+msgstr "Druh snímku: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Nastavení U2F přihlášení"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Nebylo nalezeno žádné U2F zařízení"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "Způsob U2F přihlášení"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Zadejte heslo: "
+msgstr "Povolit sudo bez hesla?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Vyberte FIDO2 zařízení abyste mohli používat HSM"
+msgstr "Nastavování U2F zařízení pro uživatele: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "Možná budete muset zadat PIN a poté potvrdit na svém U2F zařízení, aby se zaregistrovalo"
+
+msgid "Starting device modifications in "
+msgstr "Spouští se úpravy zařízení v "
+
+msgid "No network connection found"
+msgstr "Nebylo nalezeno žádné síťové připojení"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Přejete si připojit se k Wifi?"
+
+msgid "No wifi interface found"
+msgstr "Nebyly nalezeno žádné wifi zařízení"
+
+msgid "Select wifi network to connect to"
+msgstr "Zvolte ke které wifi se chcete připojit"
+
+msgid "Scanning wifi networks..."
+msgstr "Vyhledávání wifi sítí..."
+
+msgid "No wifi networks found"
+msgstr "Nebylo nalezeny žádné wifi sítě"
+
+msgid "Failed setting up wifi"
+msgstr "Nepodařilo se nastavit wifi"
+
+msgid "Enter wifi password"
+msgstr "Zadejte heslo pro wifi"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Removable"
+msgstr "Vyměnitelné"
+
+msgid "Install to removable location"
+msgstr "Nainstalovat na vyměnitelné médium"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "Instalace do /EFI/BOOT/ (vyměnitelné umístění)"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "Instalace na standardní umístění s NVRAM záznamem"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Přejete si nainstalovat zavadeč do výchozího umístění pro vyhledávání vyměnitelných médií?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Toto nainstaluje zavaděč do /EFI/BOOT/BOOTX64.EFI (nebo podobně), což je užitečné pro:"
+
+msgid "USB drives or other portable external media."
+msgstr "USB disky nebo jiná přenosná externí média."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Systémy, kde chcete, aby byl disk spouštěcí na jakémkoli počítači."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Firmware, který správně nepodporuje spouštěcí záznamy v NVRAM."
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Instalace do /EFI/BOOT/ (vyměnitelné umístění, bezpečná výchozí volba)"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Instalace na standardní umístění s NVRAM záznamem"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmware, který nepodporuje správně zaváděcí záznamy v NVRAM, jako je tomu u většiny základních desek MSI,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "většina počítačů Apple Mac, mnoho notebooků…"
+
+msgid "Language"
+msgstr "Jazyk"
+
+msgid "Compression algorithm"
+msgstr "Kompresní algoritmus"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Budou nainstalovány pouze balíčky jako base, sudo, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
+
+msgid "Select zram compression algorithm:"
+msgstr "Zvolte kompresní algoritmus pro zram:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Použít Network Manager (výchozí backend)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Použít Network Manager (iwd backend)"

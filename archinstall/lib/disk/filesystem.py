@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import math
 import time
 from pathlib import Path
@@ -43,10 +41,8 @@ class FilesystemHandler:
 			debug('No modifications required')
 			return
 
-		device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
-
 		if show_countdown:
-			self._final_warning(device_paths)
+			self._final_warning()
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
@@ -147,27 +143,18 @@ class FilesystemHandler:
 			self._setup_lvm(lvm_config, enc_mods)
 			self._format_lvm_vols(lvm_config)
 
-			# export the lvm group safely otherwise the Luks cannot be closed
-			self._safely_close_lvm(lvm_config)
-
-			for luks in enc_mods.values():
-				luks.lock()
+			# Don't close LVM or LUKS during setup - keep everything active
+			# The installation phase will handle unlocking and mounting
+			# Closing causes "parent leaked" and lvchange errors
 		elif enc_config.encryption_type == EncryptionType.LuksOnLvm:
 			self._setup_lvm(lvm_config)
 			enc_vols = self._encrypt_lvm_vols(lvm_config, enc_config, False)
 			self._format_lvm_vols(lvm_config, enc_vols)
 
+			# Lock LUKS devices but keep LVM active
+			# LVM volumes must remain active for later re-unlock during installation
 			for luks in enc_vols.values():
 				luks.lock()
-
-			self._safely_close_lvm(lvm_config)
-
-	def _safely_close_lvm(self, lvm_config: LvmConfiguration) -> None:
-		for vg in lvm_config.vol_groups:
-			for vol in vg.volumes:
-				device_handler.lvm_vol_change(vol, False)
-
-			device_handler.lvm_export_vg(vg)
 
 	def _setup_lvm(
 		self,
@@ -337,10 +324,10 @@ class FilesystemHandler:
 				Size(256, Unit.MiB, SectorSize.default()),
 			)
 
-	def _final_warning(self, device_paths: str) -> bool:
+	def _final_warning(self) -> bool:
 		# Issue a final warning before we continue with something un-revertable.
-		# We mention the drive one last time, and count from 5 to 0.
-		out = tr(' ! Formatting {} in ').format(device_paths)
+		# We count down from 5 to 0.
+		out = tr('Starting device modifications in ')
 		Tui.print(out, row=0, endl='', clear_screen=True)
 
 		try:

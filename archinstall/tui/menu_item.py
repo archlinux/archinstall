@@ -1,10 +1,8 @@
-from __future__ import annotations
-
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Self
 
 from archinstall.lib.translationhandler import tr
 
@@ -25,24 +23,24 @@ class MenuItem:
 	preview_action: Callable[[Any], str | None] | None = None
 	key: str | None = None
 
-	_yes: ClassVar[MenuItem | None] = None
-	_no: ClassVar[MenuItem | None] = None
+	_yes: ClassVar[Self | None] = None
+	_no: ClassVar[Self | None] = None
 
 	def get_value(self) -> Any:
 		assert self.value is not None
 		return self.value
 
 	@classmethod
-	def yes(cls) -> 'MenuItem':
+	def yes(cls, action: Callable[[Any], Any] | None = None) -> Self:
 		if cls._yes is None:
-			cls._yes = cls(tr('Yes'), value=True)
+			cls._yes = cls(tr('Yes'), value=True, key='yes', action=action)
 
 		return cls._yes
 
 	@classmethod
-	def no(cls) -> 'MenuItem':
+	def no(cls, action: Callable[[Any], Any] | None = None) -> Self:
 		if cls._no is None:
-			cls._no = cls(tr('No'), value=True)
+			cls._no = cls(tr('No'), value=False, key='no', action=action)
 
 		return cls._no
 
@@ -113,21 +111,22 @@ class MenuItemGroup:
 	def get_enabled_items(self) -> list[MenuItem]:
 		return [it for it in self.items if self.is_enabled(it)]
 
-	@staticmethod
-	def yes_no() -> 'MenuItemGroup':
-		return MenuItemGroup(
+	@classmethod
+	def yes_no(cls) -> Self:
+		return cls(
 			[MenuItem.yes(), MenuItem.no()],
 			sort_items=True,
 		)
 
-	@staticmethod
+	@classmethod
 	def from_enum(
+		cls,
 		enum_cls: type[Enum],
 		sort_items: bool = False,
 		preset: Enum | None = None,
-	) -> 'MenuItemGroup':
+	) -> Self:
 		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
-		group = MenuItemGroup(items, sort_items=sort_items)
+		group = cls(items, sort_items=sort_items)
 
 		if preset is not None:
 			group.set_selected_by_value(preset)
@@ -223,12 +222,22 @@ class MenuItemGroup:
 			return tr(' (default)')
 		return ''
 
+	def set_action_for_all(self, action: Callable[[Any], Any]) -> None:
+		for item in self.items:
+			item.action = action
+
 	@cached_property
 	def items(self) -> list[MenuItem]:
 		pattern = self._filter_pattern.lower()
 		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self._menu_items)
-		l_items = list(items)
+		l_items = sorted(items, key=self._items_score)
 		return l_items
+
+	def _items_score(self, item: MenuItem) -> int:
+		pattern = self._filter_pattern.lower()
+		if item.text.lower().startswith(pattern):
+			return 0
+		return 1
 
 	@property
 	def filter_pattern(self) -> str:
@@ -240,17 +249,17 @@ class MenuItemGroup:
 	def set_filter_pattern(self, pattern: str) -> None:
 		self._filter_pattern = pattern
 		delattr(self, 'items')  # resetting the cache
-		self._reload_focus_item()
+		self.focus_first()
 
 	def append_filter(self, pattern: str) -> None:
 		self._filter_pattern += pattern
 		delattr(self, 'items')  # resetting the cache
-		self._reload_focus_item()
+		self.focus_first()
 
 	def reduce_filter(self) -> None:
 		self._filter_pattern = self._filter_pattern[:-1]
 		delattr(self, 'items')  # resetting the cache
-		self._reload_focus_item()
+		self.focus_first()
 
 	def _reload_focus_item(self) -> None:
 		if len(self.items) > 0:
@@ -391,7 +400,7 @@ class MenuItemsState:
 		self._prev_visible_rows: list[int] = []
 		self._view_items: list[list[MenuItem]] = []
 
-	def _determine_foucs_row(self) -> int | None:
+	def _determine_focus_row(self) -> int | None:
 		focus_index = self._item_group.index_focus()
 
 		if focus_index is None:
@@ -402,14 +411,14 @@ class MenuItemsState:
 
 	def get_view_items(self) -> list[list[MenuItem]]:
 		enabled_items = self._item_group.get_enabled_items()
-		focus_row_idx = self._determine_foucs_row()
+		focus_row_idx = self._determine_focus_row()
 
 		if focus_row_idx is None:
 			return []
 
 		start, end = 0, 0
 
-		if len(self._view_items) == 0 or self._prev_row_idx == -1 or self._item_group.has_filter():  # initial setup or filter
+		if len(self._view_items) == 0 or self._prev_row_idx == -1 or focus_row_idx == 0:  # initial setup
 			if focus_row_idx < self._total_rows:
 				start = 0
 				end = self._total_rows
@@ -419,7 +428,7 @@ class MenuItemsState:
 			else:
 				start = focus_row_idx
 				end = focus_row_idx + self._total_rows
-		elif len(enabled_items) <= self._total_rows:  # the view can handle oll items
+		elif len(enabled_items) <= self._total_rows:  # the view can handle all items
 			start = 0
 			end = self._total_rows
 		elif not self._item_group.has_filter() and focus_row_idx in self._prev_visible_rows:  # focus is in the same view

@@ -16,7 +16,7 @@ from .general_conf import (
 )
 from .manage_users_conf import UserList, ask_for_additional_users
 from .network_menu import ManualNetworkConfig, ask_to_configure_network
-from .system_conf import ask_for_bootloader, ask_for_swap, ask_for_uki, select_driver, select_kernel
+from .system_conf import ask_for_swap, select_driver, select_kernel
 
 __all__ = [
 	'ManualNetworkConfig',
@@ -25,9 +25,7 @@ __all__ = [
 	'ask_additional_packages_to_install',
 	'ask_for_a_timezone',
 	'ask_for_additional_users',
-	'ask_for_bootloader',
 	'ask_for_swap',
-	'ask_for_uki',
 	'ask_hostname',
 	'ask_ntp',
 	'ask_to_configure_network',

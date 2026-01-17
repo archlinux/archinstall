@@ -17,9 +17,9 @@ class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 		locale_conf: LocaleConfiguration,
 	):
 		self._locale_conf = locale_conf
-		menu_optioons = self._define_menu_options()
+		menu_options = self._define_menu_options()
 
-		self._item_group = MenuItemGroup(menu_optioons, sort_items=False, checkmarks=True)
+		self._item_group = MenuItemGroup(menu_options, sort_items=False, checkmarks=True)
 		super().__init__(
 			self._item_group,
 			config=self._locale_conf,

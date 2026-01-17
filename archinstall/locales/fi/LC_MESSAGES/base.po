@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Kimmo Kujansuu <mrkujansuu@gmail.com>\n"
+"Last-Translator: Aleksi Puhakainen <aleksi.puhakainen@gmail.com>\n"
 "Language-Team: \n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
@@ -53,6 +53,9 @@ msgstr "Valitse audiopalvelin"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Vain paketit, kuten base, base-devel, linux, linux-firmware, efibootmgr ja valinnaiset profiili-paketit, asennetaan."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Jos haluat selaimen, kuten firefox tai chromium, voit valita sen seuraavassa kohdassa."
@@ -1449,20 +1452,20 @@ msgid "Interfaces"
 msgstr "Lisää liitäntä"
 
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "Sinun on annettava kelvollinen IP-osoite IP-määritystilassa"
 
 msgid "Modes"
-msgstr ""
+msgstr "Tilat"
 
 msgid "IP address"
-msgstr ""
+msgstr "IP osoite"
 
 #, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
 msgstr "Anna yhdyskäytävän (reitittimen) IP-osoite tai jätä tyhjäksi: "
 
 msgid "Gateway address"
-msgstr ""
+msgstr "Yhdyskäytävän osoite"
 
 #, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
@@ -1481,10 +1484,10 @@ msgid "Kernel"
 msgstr "Kernelit"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "UEFIa ei tunnisteta ja jotkin asetukset on poistettu käytöstä"
 
 msgid "Info"
-msgstr ""
+msgstr "Informaatio"
 
 #, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
@@ -1530,10 +1533,10 @@ msgstr ""
 "{}"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Käytössä"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Pois Käytostä"
 
 #, fuzzy
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
@@ -1575,7 +1578,7 @@ msgid "Swap on zram"
 msgstr ""
 
 msgid "Name"
-msgstr ""
+msgstr "Nimi"
 
 #, fuzzy
 msgid "Signature check"
@@ -1688,7 +1691,7 @@ msgid "Only ASCII characters are supported"
 msgstr ""
 
 msgid "Show help"
-msgstr ""
+msgstr "Näytä apua"
 
 msgid "Exit help"
 msgstr ""
@@ -1700,16 +1703,16 @@ msgid "Preview scroll down"
 msgstr ""
 
 msgid "Move up"
-msgstr ""
+msgstr "Liikku ylös"
 
 msgid "Move down"
-msgstr ""
+msgstr "Liikku alas"
 
 msgid "Move right"
-msgstr ""
+msgstr "Liiku oikealle"
 
 msgid "Move left"
-msgstr ""
+msgstr "Liiku vasemmalle"
 
 msgid "Jump to entry"
 msgstr ""
@@ -1783,7 +1786,7 @@ msgid "chroot into installation for post-installation configurations"
 msgstr "Haluatko chroot:in uuteen asennukseen ja suorittaa asennuksen jälkeiset asetukset?"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Lataus valmis"
 
 #, fuzzy
 msgid "What would you like to do next?"
@@ -1838,8 +1841,19 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "Haluatko käyttää BTRFS-pakkausta?"
 
-msgid "Authentication"
+msgid "Print service"
 msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Haluatko käyttää BTRFS-pakkausta?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Osioiden hallinta: {}"
+
+msgid "Authentication"
+msgstr "Todennus"
 
 msgid "Applications"
 msgstr ""
@@ -1848,7 +1862,7 @@ msgid "U2F login method: "
 msgstr ""
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Salasanaton sudo"
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
@@ -1885,4 +1899,100 @@ msgid "Setting up U2F device for user: {}"
 msgstr "Valitse HSM:ään käytettävä FIDO2-laite"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Ei verkkoasetuksia"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Haluatko käyttää BTRFS-pakkausta?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Määritetty {} liittymää"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Valitse yksi määritettävä verkkoliitäntä"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Ei verkkoasetuksia"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Anna salasana: "
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Kieli"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Vain paketit, kuten base, base-devel, linux, linux-firmware, efibootmgr ja valinnaiset profiili-paketit, asennetaan."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Valitse liitoskohta :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""

@@ -483,7 +483,7 @@ def suggest_multi_disk_layout(
 	if filesystem_type == FilesystemType.Btrfs:
 		mount_options = select_mount_options()
 
-	device_paths = ', '.join([str(d.device_info.path) for d in devices])
+	device_paths = ', '.join(str(d.device_info.path) for d in devices)
 
 	debug(f'Suggesting multi-disk-layout for devices: {device_paths}')
 	debug(f'/root: {root_device.device_info.path}')
@@ -602,7 +602,7 @@ def suggest_lvm_layout(
 		[p.length for p in other_part],
 		Size(0, Unit.B, SectorSize.default()),
 	)
-	root_vol_size = Size(20, Unit.GiB, SectorSize.default())
+	root_vol_size = process_root_partition_size(total_vol_available, SectorSize.default())
 	home_vol_size = total_vol_available - root_vol_size
 
 	lvm_vol_group = LvmVolumeGroup(vg_grp_name, pvs=other_part)

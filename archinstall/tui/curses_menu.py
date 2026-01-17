@@ -9,7 +9,7 @@ from collections.abc import Callable
 from curses.ascii import isprint
 from curses.textpad import Textbox
 from types import FrameType, TracebackType
-from typing import Literal, override
+from typing import ClassVar, Literal, Self, override
 
 from archinstall.lib.translationhandler import tr
 
@@ -1160,7 +1160,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 
 		if len(key_handles) > 1:
 			decoded = MenuKeys.decode(key)
-			handles = ', '.join([k.name for k in key_handles])
+			handles = ', '.join(k.name for k in key_handles)
 			raise ValueError(f'Multiple key matches for key {decoded}: {handles}')
 		elif len(key_handles) == 0:
 			return None
@@ -1240,7 +1240,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 
 
 class Tui:
-	_t: Tui | None = None
+	_t: ClassVar[Self | None] = None
 
 	def __enter__(self) -> None:
 		if Tui._t is None:
@@ -1254,10 +1254,10 @@ class Tui:
 	def screen(self) -> curses.window:
 		return self._screen
 
-	@staticmethod
-	def t() -> 'Tui':
-		assert Tui._t is not None
-		return Tui._t
+	@classmethod
+	def t(cls) -> Self:
+		assert cls._t is not None
+		return cls._t
 
 	@staticmethod
 	def shutdown() -> None:
@@ -1266,7 +1266,7 @@ class Tui:
 
 		Tui.t().stop()
 
-	def init(self) -> 'Tui':
+	def init(self) -> Self:
 		self._screen = curses.initscr()
 		curses.noecho()
 		curses.cbreak()

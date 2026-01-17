@@ -1,19 +1,19 @@
 # Translators:
 # Hugo Carvalho <hugokarvalho@hotmail.com>
-#
+# Luis Antonio <github.com/zaorinu>
 msgid ""
 msgstr ""
 "Project-Id-Version: archinstall\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
+"PO-Revision-Date: 2025-21-12 16:08\n"
+"Last-Translator: Luis Antonio <github.com/zaorinu>\n"
 "Language-Team: Portuguese <hugokarvalho@hotmail.com>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Foi criado um ficheiro de registo aqui: {} {}"
@@ -56,6 +56,9 @@ msgstr "Escolha um servidor de áudio"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Se quer um navegador web, como firefox ou chromium, deve especificá-lo na pergunta seguinte."
@@ -1721,70 +1724,166 @@ msgstr "Palavra-passe de encriptação do ficheiro de credenciais"
 msgid "Repositories: {}"
 msgstr "Repositórios: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "Nenhum dispositivo HSM disponível"
+msgstr "Nova versão disponível"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Palavra-passe"
+msgstr "Autenticação sem palavra-passe"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Início de sessão com segundo fator"
 
 msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Pretende configurar o Bluetooth?"
+
+msgid "Print service"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to configure Bluetooth?"
-msgstr "Gostaria de continuar?"
+msgid "Would you like to configure the print service?"
+msgstr "Pretende configurar o Bluetooth?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Gestão de partições: {}"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Autenticação"
 
 msgid "Applications"
-msgstr ""
+msgstr "Aplicacões"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "Método de login U2F:"
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Sudo sem palavra-passe:"
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Tipo de snapshot Btrfs: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "A sincronizar o sistema…"
 
-#, fuzzy
 msgid "Value cannot be empty"
-msgstr "O tempo de iteração não pode estar em branco"
+msgstr "O valor não pode estar vazio"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Tipo de snapshot"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Tipo de ambiente: {}"
+msgstr "Tipo de snapshot: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Configuração do início de sessão U2F"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Não foram encontrados dispositivos U2F"
 
 msgid "U2F Login Method"
+msgstr "Método de início de sessão U2F"
+
+msgid "Enable passwordless sudo?"
+msgstr "Ativar sudo sem palavra-passe?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "A configurar o dispositivo U2F para o utilizador: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+msgid "No network connection found"
+msgstr "Não foi encontrada nenhuma ligação de rede"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Pretende ligar-se a uma rede Wi-Fi?"
+
+msgid "No wifi interface found"
+msgstr "Não foi encontrada nenhuma interface Wi-Fi"
+
+msgid "Select wifi network to connect to"
+msgstr "Selecionar a rede Wi-Fi à qual ligar"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+msgid "No wifi networks found"
+msgstr "Não foram encontradas redes Wi-Fi"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+msgid "Enter wifi password"
+msgstr "Introduza a palavra-passe da rede Wi-Fi"
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
 msgstr ""
 
 #, fuzzy
-msgid "Enable passwordless sudo?"
-msgstr "Introduzir uma palavra-passe: "
+msgid "Language"
+msgstr "Idioma de localização"
 
-#, fuzzy, python-brace-format
-msgid "Setting up U2F device for user: {}"
-msgstr "Selecionar um dispositivo FIDO2 para usar como HSM"
+msgid "Compression algorithm"
+msgstr ""
 
-msgid "You may need to enter the PIN and then touch your U2F device to register it"
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Selecionar um ponto de montagem :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""

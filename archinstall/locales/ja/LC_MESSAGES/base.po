@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ここにログファイルが作成されました: {} {}"
@@ -52,6 +52,9 @@ msgstr "オーディオサーバーを選択"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "base, base-devel, linux, linux-firmware, efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "注意: base-devel はデフォルトではインストールされなくなりました。ビルドツールが必要な場合は、ここで追加してください。"
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "firefox や chromium などのウェブブラウザーをインストールする場合は、次のプロンプトで指定できます。"
@@ -1731,6 +1734,15 @@ msgstr "Bluetooth"
 msgid "Would you like to configure Bluetooth?"
 msgstr "Bluetooth を設定しますか？"
 
+msgid "Print service"
+msgstr "印刷サービス"
+
+msgid "Would you like to configure the print service?"
+msgstr "印刷サービスを設定しますか？"
+
+msgid "Power management"
+msgstr "電力管理"
+
 msgid "Authentication"
 msgstr "認証"
 
@@ -1778,3 +1790,90 @@ msgstr "ユーザー用 U2F デバイスの設定: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "PIN を入力したのち U2F デバイスをタッチして登録しなければならない場合があります"
+
+msgid "Starting device modifications in "
+msgstr "次の場所でデバイスの変更を開始しています "
+
+msgid "No network connection found"
+msgstr "ネットワーク接続が見つかりません"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Wi-Fi に接続しますか？"
+
+msgid "No wifi interface found"
+msgstr "Wi-Fi インターフェースが見つかりません"
+
+msgid "Select wifi network to connect to"
+msgstr "接続する Wi-Fi ネットワークを選択"
+
+msgid "Scanning wifi networks..."
+msgstr "Wi-Fi ネットワークをスキャンしています..."
+
+msgid "No wifi networks found"
+msgstr "Wi-Fi ネットワークが見つかりません"
+
+msgid "Failed setting up wifi"
+msgstr "Wi-Fi の設定に失敗しました"
+
+msgid "Enter wifi password"
+msgstr "Wi-Fi パスワードを入力"
+
+msgid "Ok"
+msgstr "OK"
+
+msgid "Removable"
+msgstr "リムーバブル"
+
+msgid "Install to removable location"
+msgstr "リムーバブルな場所にインストールする"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "/EFI/BOOT/ (リムーバブルな場所) にインストールする"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "NVRAM エントリーのある標準の場所にインストールする"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "ブートローダーをデフォルトのリムーバブルメディアの検索場所にインストールしますか？"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "ブートローダーが /EFI/BOOT/BOOTX64.EFI (または類似の場所) にインストールされ、次の場合に役立ちます:"
+
+msgid "USB drives or other portable external media."
+msgstr "USB ドライブまたは他のポータブル外部メディア。"
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "ディスクをどのコンピューターでも起動できるようにするシステム。"
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "NVRAM ブートエントリーを適切にサポートしていないファームウェア。"
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "/EFI/BOOT/（リムーバブルな場所、安全なデフォルト）にインストール"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "NVRAM エントリーを使用してカスタムした場所にインストール"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "ほとんどの MSI マザーボードのように NVRAM ブートエントリーを適切にサポートしていないファームウェア、"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "ほとんどの Apple Mac、多くのラップトップ..."
+
+msgid "Language"
+msgstr "言語"
+
+msgid "Compression algorithm"
+msgstr "圧縮アルゴリズム"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "base、sudo、linux、linux-firmware、efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
+
+msgid "Select zram compression algorithm:"
+msgstr "zram 圧縮アルゴリズムを選択:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "NetworkManager（デフォルトのバックエンド）を使用する"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "NetworkManager (iwd バックエンド) を使用する"

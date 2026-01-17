@@ -5,21 +5,21 @@
 #  Diogo Silva <github.com/Diogo-ss>
 #  Mário Victor Ribeiro Silva <github.com/ComicShrimp>
 #  Rafael Fontenelle <rafaelff@gnome.org>, 2023.
-#  Luis Antonio <github.com/ruisuantonio>, 2025.
+#  Luis Antonio <github.com/zaorinu>
 #  Luiz Felipe <github.com/LuizWT>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: archinstall\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-07-22 20:18\n"
-"Last-Translator: Luiz Felipe <github.com/LuizWT>\n"
+"PO-Revision-Date: 2025-12-21 13:22-0300\n"
+"Last-Translator: Luis Antonio <github.com/zaorinu>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Um arquivo de registro foi criado aqui: {} {}"
@@ -62,6 +62,9 @@ msgstr "Escolha um servidor de áudio"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Se quiser um navegador web, como Firefox ou Chromium, especifique-o no próximo prompt."
@@ -135,7 +138,7 @@ msgstr ""
 "Selecione por índice quais partições montar em"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Os pontos de montagem são relativos ao sistema instalado; por exemplo, boot fica em /boot"
+msgstr " * Os pontos de montagem são relativos ao sistema instalado; por exemplo, boot fica em /boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr "Selecione onde montar a partição (deixe em branco para remover o ponto de montagem): "
@@ -1734,65 +1737,175 @@ msgstr "Nenhum dispositivo HSM disponível"
 
 #, fuzzy
 msgid "Passwordless login"
-msgstr "Senha"
+msgstr "Login sem senha"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Autenticação de dois fatores"
 
 msgid "Bluetooth"
 msgstr ""
 
 #, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Deseja continuar?"
+msgstr "Deseja configurar o Bluetooth?"
+
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Deseja configurar o Bluetooth?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Gerenciamento de partições: {}"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Autenticação"
 
 msgid "Applications"
-msgstr ""
+msgstr "Aplicativos"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "Método de login U2F: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Sudo sem senha: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Tipo de snapshot Btrfs: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Sincronizando o sistema..."
 
 msgid "Value cannot be empty"
-msgstr ""
+msgstr "Valor não pode estar vazio"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Tipo de snapshot"
 
 #, fuzzy, python-brace-format
 msgid "Snapshot type: {}"
 msgstr "Tipo de ambiente: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Configuração de login U2F"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Nenhum dispositivo U2F encontrado"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "Método de login U2F"
 
 #, fuzzy
 msgid "Enable passwordless sudo?"
 msgstr "Digite uma senha: "
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Selecione um dispositivo FIDO2 para usar como HSM"
+msgstr "Configurando dispositivo U2F para o usuário: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Talvez seja necessário inserir o PIN e, em seguida, tocar no seu dispositivo U2F para registrá-lo"
+
+msgid "Starting device modifications in "
+msgstr "Iniciando modificações no dispositivo em "
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Nenhuma configuração de rede"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Deseja continuar?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Configurar interfaces"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Selecione uma interface de rede para configurar"
+
+msgid "Scanning wifi networks..."
+msgstr "Escaneando redes wifi..."
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Nenhuma configuração de rede"
+
+msgid "Failed setting up wifi"
+msgstr "Falha ao configurar o Wi-Fi"
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Digite a senha do Wi-Fi"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Removable"
+msgstr "Removível"
+
+msgid "Install to removable location"
+msgstr "Instalar em local removível"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "Será instalado em /EFI/BOOT/ (local removível)"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "Será instalado no local padrão com entrada na NVRAM"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Você gostaria de instalar o bootloader no local padrão de busca de mídia removível?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Isso instala o bootloader em /EFI/BOOT/BOOTX64.EFI (ou similar), o que é útil para:"
+
+msgid "USB drives or other portable external media."
+msgstr "Pendrives USB ou outras mídias externas portáteis."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Sistemas nos quais você deseja que o disco seja inicializável em qualquer computador."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Firmware que não oferece suporte adequado a entradas de boot na NVRAM."
+
+#, fuzzy
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Será instalado em /EFI/BOOT/ (local removível)"
+
+#, fuzzy
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Será instalado no local padrão com entrada na NVRAM"
+
+#, fuzzy
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmware que não oferece suporte adequado a entradas de boot na NVRAM."
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Idioma de localização"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Selecione um ponto de montagem :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "

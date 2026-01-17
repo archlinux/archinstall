@@ -51,6 +51,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Note: base-devel is no longer installed by default. Add it here if you need "
+"build tools."
+msgstr ""
+
+msgid ""
 "If you desire a web browser, such as firefox or chromium, you may specify it "
 "in the following prompt."
 msgstr ""
@@ -1779,6 +1784,15 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr ""
 
+msgid "Print service"
+msgstr ""
+
+msgid "Would you like to configure the print service?"
+msgstr ""
+
+msgid "Power management"
+msgstr ""
+
 msgid "Authentication"
 msgstr ""
 
@@ -1826,4 +1840,99 @@ msgstr ""
 
 msgid ""
 "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+msgid "No network connection found"
+msgstr ""
+
+msgid "Would you like to connect to a Wifi?"
+msgstr ""
+
+msgid "No wifi interface found"
+msgstr ""
+
+msgid "Select wifi network to connect to"
+msgstr ""
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+msgid "No wifi networks found"
+msgstr ""
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+msgid "Enter wifi password"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid ""
+"Would you like to install the bootloader to the default removable media "
+"search location?"
+msgstr ""
+
+msgid ""
+"This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is "
+"useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid ""
+"Firmware that does not properly support NVRAM boot entries like most MSI "
+"motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Compression algorithm"
+msgstr ""
+
+msgid ""
+"Only packages such as base, sudo, linux, linux-firmware, efibootmgr and "
+"optional profile packages are installed."
+msgstr ""
+
+msgid "Select zram compression algorithm:"
+msgstr ""
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""

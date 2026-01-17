@@ -12,6 +12,16 @@ want to be selected, then a proper font has to be set manually in the console.
 All available console fonts can be found in `/usr/share/kbd/consolefonts` and they
 can be set with `setfont LatGrkCyr-8x16`.
 
+Also note that for example [grub bootloader](https://www.gnu.org/software/grub/manual/grub/grub.html#Input-terminal) has ASCII limited range:
+For full disk encryption (LUKS2) or grub-shell, boot options edit: this means alphanumeric latin characters (one-char-per-keystroke).
+
+Archinstall validates this by making sure your passwords are ASCII compatible.
+It is quite trivial through Login-manager and/or Desktop Environment to set other layouts or switching later-on.
+
+For full `at_keyboard` support it is possible through `ckbcomp` See guide [here](https://fitzcarraldoblog.wordpress.com/2019/04/21/how-to-change-the-keymap-keyboard-layout-used-by-the-grub-shell-in-gentoo-linux/) And [ckbcomp<sup>AUR</sup>](https://aur.archlinux.org/packages/ckbcomp)
+
+By default bootloaders look for `vconsole.conf` keymap. Other bootloaders such as `systemd-boot` and `limine` have full keymap support.
+
 ## Adding new languages
 
 New languages can be added simply by creating a new folder with the proper language abbreviation (see list `languages.json` if unsure).

@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from archinstall import debug, error
@@ -65,7 +66,7 @@ def _only_hd() -> None:
 	config.save()
 
 	if arch_config_handler.args.dry_run:
-		exit(0)
+		sys.exit(0)
 
 	if not arch_config_handler.args.silent:
 		aborted = False

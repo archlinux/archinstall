@@ -1,5 +1,4 @@
-from __future__ import annotations
-
+import sys
 from enum import Enum
 from pathlib import Path
 from typing import assert_never
@@ -151,7 +150,7 @@ def ask_additional_packages_to_install(
 ) -> list[str]:
 	repositories |= {Repository.Core, Repository.Extra}
 
-	respos_text = ', '.join([r.value for r in repositories])
+	respos_text = ', '.join(r.value for r in repositories)
 	output = tr('Repositories: {}').format(respos_text) + '\n'
 
 	output += tr('Loading packages...')
@@ -161,7 +160,8 @@ def ask_additional_packages_to_install(
 	package_groups = PackageGroup.from_available_packages(packages)
 
 	# Additional packages (with some light weight error handling for invalid package names)
-	header = tr('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.') + '\n'
+	header = tr('Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed.') + '\n'
+	header += tr('Note: base-devel is no longer installed by default. Add it here if you need build tools.') + '\n'
 	header += tr('Select any packages from the below list that should be installed additionally') + '\n'
 
 	# there are over 15k packages so this needs to be quick
@@ -267,8 +267,12 @@ def add_number_of_parallel_downloads(preset: int | None = None) -> int | None:
 	return downloads
 
 
-def ask_post_installation() -> PostInstallationAction:
-	header = tr('Installation completed') + '\n\n'
+def ask_post_installation(elapsed_time: float | None = None) -> PostInstallationAction:
+	header = 'Installation completed'
+	if elapsed_time is not None:
+		minutes = int(elapsed_time // 60)
+		seconds = int(elapsed_time % 60)
+		header += f' in {minutes}m{seconds}s' + '\n'
 	header += tr('What would you like to do next?') + '\n'
 
 	items = [MenuItem(action.value, value=action) for action in PostInstallationAction]
@@ -302,4 +306,4 @@ def ask_abort() -> None:
 	).run()
 
 	if result.item() == MenuItem.yes():
-		exit(0)
+		sys.exit(0)

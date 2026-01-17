@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import ipaddress
 from typing import assert_never, override
 
@@ -212,6 +210,8 @@ def ask_to_configure_network(preset: NetworkConfiguration | None) -> NetworkConf
 					return NetworkConfiguration(NicType.ISO)
 				case NicType.NM:
 					return NetworkConfiguration(NicType.NM)
+				case NicType.NM_IWD:
+					return NetworkConfiguration(NicType.NM_IWD)
 				case NicType.MANUAL:
 					preset_nics = preset.nics if preset else []
 					nics = ManualNetworkConfig(tr('Configure interfaces'), preset_nics).run()

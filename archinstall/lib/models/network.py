@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, NotRequired, TypedDict
+from typing import TYPE_CHECKING, NotRequired, Self, TypedDict, override
 
+from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
 
 from ..models.profile import ProfileConfiguration
@@ -15,6 +17,7 @@ if TYPE_CHECKING:
 class NicType(Enum):
 	ISO = 'iso'
 	NM = 'nm'
+	NM_IWD = 'nm_iwd'
 	MANUAL = 'manual'
 
 	def display_msg(self) -> str:
@@ -22,7 +25,9 @@ class NicType(Enum):
 			case NicType.ISO:
 				return tr('Copy ISO network configuration to installation')
 			case NicType.NM:
-				return tr('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)')
+				return tr('Use Network Manager (default backend)')
+			case NicType.NM_IWD:
+				return tr('Use Network Manager (iwd backend)')
 			case NicType.MANUAL:
 				return tr('Manual configuration')
 
@@ -61,9 +66,9 @@ class Nic:
 			'dns': self.dns,
 		}
 
-	@staticmethod
-	def parse_arg(arg: _NicSerialization) -> Nic:
-		return Nic(
+	@classmethod
+	def parse_arg(cls, arg: _NicSerialization) -> Self:
+		return cls(
 			iface=arg.get('iface', None),
 			ip=arg.get('ip', None),
 			dhcp=arg.get('dhcp', True),
@@ -93,7 +98,7 @@ class Nic:
 		config_str = ''
 		for top, entries in config.items():
 			config_str += f'[{top}]\n'
-			config_str += '\n'.join([f'{k}={v}' for k, v in entries])
+			config_str += '\n'.join(f'{k}={v}' for k, v in entries)
 			config_str += '\n\n'
 
 		return config_str
@@ -116,22 +121,22 @@ class NetworkConfiguration:
 
 		return config
 
-	@staticmethod
-	def parse_arg(config: _NetworkConfigurationSerialization) -> NetworkConfiguration | None:
+	@classmethod
+	def parse_arg(cls, config: _NetworkConfigurationSerialization) -> Self | None:
 		nic_type = config.get('type', None)
 		if not nic_type:
 			return None
 
 		match NicType(nic_type):
 			case NicType.ISO:
-				return NetworkConfiguration(NicType.ISO)
+				return cls(NicType.ISO)
 			case NicType.NM:
-				return NetworkConfiguration(NicType.NM)
+				return cls(NicType.NM)
 			case NicType.MANUAL:
 				nics_arg = config.get('nics', [])
 				if nics_arg:
 					nics = [Nic.parse_arg(n) for n in nics_arg]
-					return NetworkConfiguration(NicType.MANUAL, nics)
+					return cls(NicType.MANUAL, nics)
 
 		return None
 
@@ -145,15 +150,126 @@ class NetworkConfiguration:
 				installation.copy_iso_network_config(
 					enable_services=True,  # Sources the ISO network configuration to the install medium.
 				)
-			case NicType.NM:
-				installation.add_additional_packages(['networkmanager'])
+			case NicType.NM | NicType.NM_IWD:
+				# Install NetworkManager package for both cases
+				packages = ['networkmanager']
+				# Default back-end only for non-iwd
+				if self.type == NicType.NM:
+					packages.append('wpa_supplicant')
+
+				installation.add_additional_packages(packages)
+
+				# Desktop profile -> Always add applet
 				if profile_config and profile_config.profile:
 					if profile_config.profile.is_desktop_profile():
-						installation.add_additional_packages(['network-manager-applet'])
+						installation.add_additional_packages('network-manager-applet')
+
 				installation.enable_service('NetworkManager.service')
+				if self.type == NicType.NM_IWD:
+					# NM_IWD special handling
+					installation.configure_nm_iwd()
+					installation.disable_service('iwd.service')
+
 			case NicType.MANUAL:
 				for nic in self.nics:
 					installation.configure_nic(nic)
-
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
+
+
+@dataclass
+class WifiNetwork:
+	bssid: str
+	frequency: str
+	signal_level: str
+	flags: str
+	ssid: str
+
+	@override
+	def __hash__(self) -> int:
+		return hash((self.bssid, self.frequency, self.signal_level, self.flags, self.ssid))
+
+	def table_data(self) -> dict[str, str | int]:
+		"""Format WiFi data for table display"""
+		return {
+			'SSID': self.ssid,
+			'Signal': f'{self.signal_level} dBm',
+			'Frequency': f'{self.frequency} MHz',
+			'Security': self.flags,
+			'BSSID': self.bssid,
+		}
+
+	@classmethod
+	def from_wpa(cls, results: str) -> list[Self]:
+		entries = []
+
+		for line in results.splitlines():
+			line = line.strip()
+			if not line:
+				continue
+
+			parts = line.split()
+			if len(parts) != 5:
+				continue
+
+			wifi = cls(bssid=parts[0], frequency=parts[1], signal_level=parts[2], flags=parts[3], ssid=parts[4])
+			entries.append(wifi)
+
+		return entries
+
+
+@dataclass
+class WifiConfiguredNetwork:
+	network_id: int
+	ssid: str
+	bssid: str
+	flags: list[str]
+
+	@classmethod
+	def from_wpa_cli_output(cls, list_networks: str) -> list[Self]:
+		"""
+		Example output from 'wpa_cli list_networks'
+
+		Selected interface 'wlan0'
+		network id / ssid / bssid / flags
+		0	WifiGuest any	[CURRENT]
+		1		any [DISABLED]
+		2		any [DISABLED]
+		"""
+
+		lines = list_networks.strip().splitlines()
+		lines = lines[1:]  # remove the header row from the wpa_cli output
+
+		networks = []
+
+		for line in lines:
+			line = line.strip()
+			parts = line.split('\t')
+
+			if len(parts) < 3:
+				continue
+
+			try:
+				# flags = cls._extract_flags(parts[3])
+				flags: list[str] = []
+
+				networks.append(
+					cls(
+						network_id=int(parts[0]),
+						ssid=parts[1],
+						bssid=parts[2],
+						flags=flags,
+					)
+				)
+			except (ValueError, IndexError):
+				debug('Parsing error for network output')
+
+		return networks
+
+	@staticmethod
+	def _extract_flags(flag_string: str) -> list[str]:
+		pattern = r'\[([^\]]+)\]'
+
+		extracted_values = re.findall(pattern, flag_string)
+
+		return extracted_values

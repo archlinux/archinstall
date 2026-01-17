@@ -53,6 +53,9 @@ msgstr "오디오 서버를 선택하세요"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "base, base-devel, linux, linux-firmware, efibootmgr 및 선택적 프로파일 패키지와 같은 패키지만 설치됩니다."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "만약 파이어폭스나 크로미움같은 웹브라우저를 희망하실 경우 다음 프롬프트에서 지정하실 수 있습니다."
 
@@ -1855,6 +1858,16 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "BTRFS 압축을 사용하시겠습니까?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "BTRFS 압축을 사용하시겠습니까?"
+
+msgid "Power management"
+msgstr ""
+
 msgid "Authentication"
 msgstr ""
 
@@ -1902,4 +1915,100 @@ msgid "Setting up U2F device for user: {}"
 msgstr ""
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "네트워크 구성 없음"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "BTRFS 압축을 사용하시겠습니까?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "구성된 {} 인터페이스"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "구성할 네트워크 인터페이스를 하나 선택하세요"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "네트워크 구성 없음"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "비밀번호를 입력하세요: "
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "로케일 언어"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "base, base-devel, linux, linux-firmware, efibootmgr 및 선택적 프로파일 패키지와 같은 패키지만 설치됩니다."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "마운트 지점을 선택하세요 :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""

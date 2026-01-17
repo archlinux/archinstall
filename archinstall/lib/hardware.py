@@ -2,6 +2,7 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
+from typing import Self
 
 from .exceptions import SysCallError
 from .general import SysCommand
@@ -16,7 +17,7 @@ class CpuVendor(Enum):
 	_Unknown = 'unknown'
 
 	@classmethod
-	def get_vendor(cls, name: str) -> 'CpuVendor':
+	def get_vendor(cls, name: str) -> Self:
 		if vendor := getattr(cls, name, None):
 			return vendor
 		else:
@@ -144,6 +145,18 @@ class _SysInfo:
 		pass
 
 	@cached_property
+	def has_battery(self) -> bool:
+		for type_path in Path('/sys/class/power_supply/').glob('*/type'):
+			try:
+				with open(type_path) as f:
+					if f.read().strip() == 'Battery':
+						return True
+			except OSError:
+				continue
+
+		return False
+
+	@cached_property
 	def cpu_info(self) -> dict[str, str]:
 		"""
 		Returns system cpu information
@@ -193,11 +206,27 @@ class _SysInfo:
 
 		return modules
 
+	@cached_property
+	def graphics_devices(self) -> dict[str, str]:
+		"""
+		Returns detected graphics devices (cached)
+		"""
+		cards: dict[str, str] = {}
+		for line in SysCommand('lspci'):
+			if b' VGA ' in line or b' 3D ' in line:
+				_, identifier = line.split(b': ', 1)
+				cards[identifier.strip().decode('UTF-8')] = str(line)
+		return cards
+
 
 _sys_info = _SysInfo()
 
 
 class SysInfo:
+	@staticmethod
+	def has_battery() -> bool:
+		return _sys_info.has_battery
+
 	@staticmethod
 	def has_wifi() -> bool:
 		ifaces = list(list_interfaces().values())
@@ -209,24 +238,19 @@ class SysInfo:
 
 	@staticmethod
 	def _graphics_devices() -> dict[str, str]:
-		cards: dict[str, str] = {}
-		for line in SysCommand('lspci'):
-			if b' VGA ' in line or b' 3D ' in line:
-				_, identifier = line.split(b': ', 1)
-				cards[identifier.strip().decode('UTF-8')] = str(line)
-		return cards
+		return _sys_info.graphics_devices
 
 	@staticmethod
 	def has_nvidia_graphics() -> bool:
-		return any('nvidia' in x.lower() for x in SysInfo._graphics_devices())
+		return any('nvidia' in x.lower() for x in _sys_info.graphics_devices)
 
 	@staticmethod
 	def has_amd_graphics() -> bool:
-		return any('amd' in x.lower() for x in SysInfo._graphics_devices())
+		return any('amd' in x.lower() for x in _sys_info.graphics_devices)
 
 	@staticmethod
 	def has_intel_graphics() -> bool:
-		return any('intel' in x.lower() for x in SysInfo._graphics_devices())
+		return any('intel' in x.lower() for x in _sys_info.graphics_devices)
 
 	@staticmethod
 	def cpu_vendor() -> CpuVendor | None:

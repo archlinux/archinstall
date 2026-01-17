@@ -53,6 +53,9 @@ msgstr "Wählen Sie einen Audioserver aus"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Nur Pakete wie base, base-devel, linux, linux-firmware, efibootmgr und optionale Profilpakete werden installiert."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Wenn Sie einen Webbrowser installieren möchten, wie z.B. Firefox oder Chromium, können Sie diese nun eingeben."
 
@@ -401,9 +404,10 @@ msgstr "Geben Sie einen Benutzernamen ein, um diesen zusätzlich anzulegen (leer
 msgid "Use ESC to skip\n"
 msgstr "ESC um zu überspringen\n"
 
+#, fuzzy
 msgid ""
 "\n"
-"Choose an object from the list, and select one of the available actions for it to execute"
+" Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
 "Wählen Sie ein Objekt aus der Liste und eine Aktion, die Sie ausführen möchten."
@@ -853,7 +857,7 @@ msgid "Profiles must have unique name, but profile definitions with duplicate na
 msgstr "Profile müssen einen eindeutige Namen haben, aber Profildefinition mit gleichem Namen gefunden: {}"
 
 msgid "Select one or more devices to use and configure"
-msgstr "Wählen Sie ein oder mehrere Geräte aus, die konfiguriert und verwendet werden sollen"
+msgstr "Wählen Sie ein oder mehrere Gerät(e) aus, die konfiguriert und verwendet werden sollen"
 
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
 msgstr "Wenn Sie die Laufwerksauswahl zurücksetzen, dann wird das auch das Laufwerkslayout zurückgesetzt. Sind Sie sicher?"
@@ -1732,6 +1736,17 @@ msgstr "Bluetooth"
 msgid "Would you like to configure Bluetooth?"
 msgstr "Möchten Sie Bluetooth aktivieren?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Möchten Sie Bluetooth aktivieren?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Partitionsverwaltung: {}"
+
 msgid "Authentication"
 msgstr "Authentifizierung"
 
@@ -1779,6 +1794,102 @@ msgstr "Richte U2F-Gerät für den Benutzer {} ein"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Sie müssen möglicherweise Ihre PIN eingeben und danach Ihr U2F-Gerät berühren, um es zu registrieren"
+
+msgid "Starting device modifications in "
+msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Keine Netzwerkkonfiguration"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Möchten Sie fortfahren?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Schnittstellen konfigurieren"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Wählen Sie einen Netzwerkadapter zur Konfiguration aus"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Keine Netzwerkkonfiguration"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Passwort eingeben: "
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Lokale Sprache"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Nur Pakete wie base, base-devel, linux, linux-firmware, efibootmgr und optionale Profilpakete werden installiert."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Wählen Sie einen Einhängeort aus:"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""
 
 #~ msgid "All open-source"
 #~ msgstr "Alle quelloffene"

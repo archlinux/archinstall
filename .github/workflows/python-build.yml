@@ -11,7 +11,7 @@ jobs:
       image: archlinux/archlinux:latest
       options: --privileged
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - name: Prepare arch
         run: |
           pacman-key --init
@@ -33,7 +33,7 @@ jobs:
           archinstall --script guided -v
           archinstall --script only_hd -v
           archinstall --script minimal -v
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: archinstall
           path: dist/*

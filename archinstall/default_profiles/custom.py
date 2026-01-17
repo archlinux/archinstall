@@ -1,3 +1,5 @@
+# from __future__ import annotations
+#
 # from typing import List, Dict, Optional, TYPE_CHECKING, Any
 #
 # from ..lib import menu
@@ -157,11 +159,11 @@
 #
 # 		return SelectResult.NewSelection
 #
-# 	def post_install(self, install_session: 'Installer'):
+# 	def post_install(self, install_session: Installer):
 # 		for profile in self._current_selection:
 # 			profile.post_install(install_session)
 #
-# 	def install(self, install_session: 'Installer'):
+# 	def install(self, install_session: Installer):
 # 		driver_packages = self.gfx_driver_packages()
 # 		install_session.add_additional_packages(driver_packages)
 #
@@ -177,7 +179,7 @@
 # 	def info(self) -> Optional[ProfileInfo]:
 # 		enabled_profiles = [p for p in self._current_selection if p.custom_enabled]
 # 		if enabled_profiles:
-# 			details = ', '.join([p.name for p in enabled_profiles])
+# 			details = ', '.join(p.name for p in enabled_profiles)
 # 			gfx_driver = self.gfx_driver
 # 			return ProfileInfo(self.name, details, gfx_driver)
 #

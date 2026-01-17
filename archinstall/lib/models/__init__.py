@@ -1,9 +1,4 @@
-from .application import (
-	ApplicationConfiguration,
-	Audio,
-	AudioConfiguration,
-	BluetoothConfiguration,
-)
+from .application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration, PrintServiceConfiguration
 from .bootloader import Bootloader
 from .device import (
 	BDevice,
@@ -76,6 +71,7 @@ __all__ = [
 	'PartitionTable',
 	'PartitionType',
 	'PasswordStrength',
+	'PrintServiceConfiguration',
 	'ProfileConfiguration',
 	'Repository',
 	'SectorSize',

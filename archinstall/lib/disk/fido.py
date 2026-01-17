@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import getpass
 from pathlib import Path
 from typing import ClassVar
@@ -101,16 +99,13 @@ class Fido2:
 
 		return cls._cryptenroll_devices
 
-	@classmethod
-	def fido2_enroll(
-		cls,
-		hsm_device: Fido2Device,
-		dev_path: Path,
-		password: Password,
-	) -> None:
+	@staticmethod
+	def fido2_enroll(hsm_device: Fido2Device, dev_path: Path, password: Password) -> None:
 		worker = SysCommandWorker(f'systemd-cryptenroll --fido2-device={hsm_device.path} {dev_path}', peek_output=True)
 		pw_inputted = False
 		pin_inputted = False
+
+		info('You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds')
 
 		while worker.is_alive():
 			if pw_inputted is False:
@@ -121,5 +116,3 @@ class Fido2:
 				if bytes('please enter security token pin', 'UTF-8') in worker._trace_log.lower():
 					worker.write(bytes(getpass.getpass(' '), 'UTF-8'))
 					pin_inputted = True
-
-				info('You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds')

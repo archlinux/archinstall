@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] En logg-fil har skapats här: {} {}"
@@ -53,6 +53,9 @@ msgstr "Välj en ljud-server"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Enbart paket som base, base-devel, linux, linux-firmware, efibootmgr och självvalda paket är installerade."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Observera: base-devel kommer inte att installeras längre som standard. Lägg till det här om du behöver byggverktyg."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Om du önskar en webbläsare, exempelvis firefox eller chromium, bör du skriva in dom i följande fält."
@@ -1732,6 +1735,15 @@ msgstr "Bluetooth"
 msgid "Would you like to configure Bluetooth?"
 msgstr "Vill du konfigurera Bluetooth?"
 
+msgid "Print service"
+msgstr "Utskriftstjänst"
+
+msgid "Would you like to configure the print service?"
+msgstr "Vill du konfigurera utskriftstjänsten?"
+
+msgid "Power management"
+msgstr "Strömhantering"
+
 msgid "Authentication"
 msgstr "Autentisering"
 
@@ -1779,3 +1791,90 @@ msgstr "Konfigurerar U2F-enhet för användare: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Du kan behöva ange PIN-koden och sedan trycka på din U2F-enhet för att registrera den"
+
+msgid "Starting device modifications in "
+msgstr "Starta enhetsmodifieringar i "
+
+msgid "No network connection found"
+msgstr "Ingen nätverksanslutning hittades"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Vill du ansluta till ett wifi nätverk?"
+
+msgid "No wifi interface found"
+msgstr "Inget wifi gränssnitt hittades"
+
+msgid "Select wifi network to connect to"
+msgstr "Välj ett wifi nätverk att ansluta till"
+
+msgid "Scanning wifi networks..."
+msgstr "Skannar efter wifi nätverk..."
+
+msgid "No wifi networks found"
+msgstr "Inga wifi nätverk hittades"
+
+msgid "Failed setting up wifi"
+msgstr "Misslyckades med att ställa in wifi"
+
+msgid "Enter wifi password"
+msgstr "Ange wifi lösenord"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Removable"
+msgstr "Borttagbar"
+
+msgid "Install to removable location"
+msgstr "Installera till borttagbar plats"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats)"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "Installeras på standardplats med NVRAM-post"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Vill du installera bootloadern på standardsökvägen för flyttbara medier?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Detta installerar bootloadern till /EFI/BOOT/BOOTX64.EFI (eller liknande) vilket är användbart för:"
+
+msgid "USB drives or other portable external media."
+msgstr "USB-minnen eller andra portabla externa medier."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "System där du vill att disken ska vara uppstartsbar på vilken dator som helst."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt."
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats, säker standardinställning))"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Kommer att installeras på en anpassad plats med NVRAM-post"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt som de flesta MSI-moderkort,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "de flesta Apple Mac-datorer, många bärbara datorer..."
+
+msgid "Language"
+msgstr "Språk"
+
+msgid "Compression algorithm"
+msgstr "Kompressionsalgoritm"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Endast paket som base, sudo, linux, linux-firmware, efibootmgr och valfria profilpaket installeras."
+
+msgid "Select zram compression algorithm:"
+msgstr "Välj zram kompressionsalgoritm:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Använd Network Manager (standard backend)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Använd Network Manager (iwd backend)"

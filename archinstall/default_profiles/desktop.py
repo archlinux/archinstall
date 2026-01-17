@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, override
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Self, override
 
 from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType, SelectResult
 from archinstall.lib.output import info
@@ -13,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class DesktopProfile(Profile):
-	def __init__(self, current_selection: list[Profile] = []) -> None:
+	def __init__(self, current_selection: list[Self] = []) -> None:
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
@@ -32,7 +34,6 @@ class DesktopProfile(Profile):
 			'wget',
 			'iwd',
 			'wireless_tools',
-			'wpa_supplicant',
 			'smartmontools',
 			'xdg-utils',
 		]
@@ -69,7 +70,7 @@ class DesktopProfile(Profile):
 		group = MenuItemGroup(items, sort_items=True, sort_case_sensitive=False)
 		group.set_selected_by_value(self.current_selection)
 
-		result = SelectMenu[Profile](
+		result = SelectMenu[Self](
 			group,
 			multi=True,
 			allow_reset=True,
@@ -90,12 +91,12 @@ class DesktopProfile(Profile):
 				return SelectResult.ResetCurrent
 
 	@override
-	def post_install(self, install_session: 'Installer') -> None:
+	def post_install(self, install_session: Installer) -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
 
 	@override
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		# Install common packages for all desktop environments
 		install_session.add_additional_packages(self.packages)
 

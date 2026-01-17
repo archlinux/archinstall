@@ -53,6 +53,9 @@ msgstr "Wybierz serwer dźwięku"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Instalowane są tylko pakiety takie jak base, base-devel, linux, linux-firmware, efibootmgr i opcjonalne pakiety profili."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Jeśli potrzebujesz przeglądarki internetowej, takiej jak firefox lub chromium, możesz ją określić w następującym oknie dialogowym."
 
@@ -1731,6 +1734,17 @@ msgstr ""
 msgid "Would you like to configure Bluetooth?"
 msgstr "Czy chcesz kontynuować?"
 
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Czy chcesz kontynuować?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Zarządzanie partycją: {}"
+
 msgid "Authentication"
 msgstr ""
 
@@ -1778,6 +1792,102 @@ msgid "Setting up U2F device for user: {}"
 msgstr "Wybierz urządzenie FIDO2 do użycia z HSM"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Brak konfiguracji sieciowej"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Czy chcesz kontynuować?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Konfiguruj interfejsy"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Wybierz jeden interfejs sieciowy do skonfigurowania"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Brak konfiguracji sieciowej"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Wprowadź hasło: "
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Język"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Instalowane są tylko pakiety takie jak base, base-devel, linux, linux-firmware, efibootmgr i opcjonalne pakiety profili."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Wybierz punkt montowania :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
 msgstr ""
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "

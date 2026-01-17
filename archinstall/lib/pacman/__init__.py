@@ -1,3 +1,4 @@
+import sys
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -35,7 +36,7 @@ class Pacman:
 
 			if time.time() - started > (60 * 10):
 				error(tr('Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall.'))
-				exit(1)
+				sys.exit(1)
 
 		return SysCommand(f'{default_cmd} {args}')
 
@@ -78,7 +79,7 @@ class Pacman:
 			'Could not strap in packages',
 			'Pacstrap failed. See /var/log/archinstall/install.log or above message for error details',
 			SysCommand,
-			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm',
+			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm --needed',
 			peek_output=True,
 		)
 
