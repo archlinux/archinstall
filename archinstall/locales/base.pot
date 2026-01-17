@@ -1790,6 +1790,12 @@ msgstr ""
 msgid "Would you like to configure the print service?"
 msgstr ""
 
+msgid "Camera"
+msgstr ""
+
+msgid "Would you like to install libcamera?"
+msgstr ""
+
 msgid "Power management"
 msgstr ""
 

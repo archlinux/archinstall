@@ -12,6 +12,7 @@ from archinstall.lib.models.application import (
 	Audio,
 	AudioConfiguration,
 	BluetoothConfiguration,
+	CameraConfiguration,
 	PrintServiceConfiguration,
 	ZramConfiguration,
 )
@@ -140,6 +141,7 @@ def test_config_file_parsing(
 			bluetooth_config=BluetoothConfiguration(enabled=True),
 			audio_config=AudioConfiguration(audio=Audio.PIPEWIRE),
 			print_service_config=PrintServiceConfiguration(enabled=True),
+			camera_config=CameraConfiguration(enabled=True),
 		),
 		auth_config=AuthenticationConfiguration(
 			root_enc_password=Password(enc_password='password_hash'),
