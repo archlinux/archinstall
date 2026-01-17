@@ -101,12 +101,12 @@ class Profile:
 
 		return self.advanced is False or arch_config_handler.args.advanced is True
 
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		"""
 		Performs installation steps when this profile was selected
 		"""
 
-	def post_install(self, install_session: 'Installer') -> None:
+	def post_install(self, install_session: Installer) -> None:
 		"""
 		Hook that will be called when the installation process is
 		finished and custom installation steps for specific default_profiles

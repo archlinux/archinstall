@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from archinstall.lib.models.application import Firewall, FirewallConfiguration
@@ -34,7 +36,7 @@ class FirewallApp:
 
 	def install(
 		self,
-		install_session: 'Installer',
+		install_session: Installer,
 		firewall_config: FirewallConfiguration,
 	) -> None:
 		debug(f'Installing firewall: {firewall_config.firewall.value}')

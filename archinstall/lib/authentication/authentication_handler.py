@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import getpass
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -16,20 +18,20 @@ if TYPE_CHECKING:
 class AuthenticationHandler:
 	def setup_auth(
 		self,
-		install_session: 'Installer',
+		install_session: Installer,
 		auth_config: AuthenticationConfiguration,
 		hostname: str,
 	) -> None:
 		if auth_config.u2f_config and auth_config.users is not None:
 			self._setup_u2f_login(install_session, auth_config.u2f_config, auth_config.users, hostname)
 
-	def _setup_u2f_login(self, install_session: 'Installer', u2f_config: U2FLoginConfiguration, users: list[User], hostname: str) -> None:
+	def _setup_u2f_login(self, install_session: Installer, u2f_config: U2FLoginConfiguration, users: list[User], hostname: str) -> None:
 		self._configure_u2f_mapping(install_session, u2f_config, users, hostname)
 		self._update_pam_config(install_session, u2f_config)
 
 	def _update_pam_config(
 		self,
-		install_session: 'Installer',
+		install_session: Installer,
 		u2f_config: U2FLoginConfiguration,
 	) -> None:
 		match u2f_config.u2f_login_method:
@@ -73,7 +75,7 @@ class AuthenticationHandler:
 
 	def _configure_u2f_mapping(
 		self,
-		install_session: 'Installer',
+		install_session: Installer,
 		u2f_config: U2FLoginConfiguration,
 		users: list[User],
 		hostname: str,

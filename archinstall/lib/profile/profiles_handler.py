@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import importlib.util
 import inspect
 import sys
@@ -171,7 +173,7 @@ class ProfileHandler:
 	def get_custom_profiles(self) -> list[Profile]:
 		return [p for p in self.profiles if p.is_custom_type_profile()]
 
-	def install_greeter(self, install_session: 'Installer', greeter: GreeterType) -> None:
+	def install_greeter(self, install_session: Installer, greeter: GreeterType) -> None:
 		packages = []
 		service = None
 		service_disable = None
@@ -215,7 +217,7 @@ class ProfileHandler:
 			with open(path, 'w') as file:
 				file.write(filedata)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
+	def install_gfx_driver(self, install_session: Installer, driver: GfxDriver) -> None:
 		debug(f'Installing GFX driver: {driver.value}')
 
 		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
@@ -227,7 +229,7 @@ class ProfileHandler:
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
 
-	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration) -> None:
+	def install_profile_config(self, install_session: Installer, profile_config: ProfileConfiguration) -> None:
 		profile = profile_config.profile
 
 		if not profile:
