@@ -1942,7 +1942,7 @@ class Installer:
 		except SysCallError:
 			return False
 
-	def set_vconsole(self, locale_config: 'LocaleConfiguration') -> None:
+	def set_vconsole(self, locale_config: LocaleConfiguration) -> None:
 		# use the already set kb layout
 		kb_vconsole: str = locale_config.kb_layout
 		# this is the default used in ISO other option for hdpi screens TER16x32
