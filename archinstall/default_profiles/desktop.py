@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Self, override
 
 from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType, SelectResult
@@ -89,12 +91,12 @@ class DesktopProfile(Profile):
 				return SelectResult.ResetCurrent
 
 	@override
-	def post_install(self, install_session: 'Installer') -> None:
+	def post_install(self, install_session: Installer) -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
 
 	@override
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		# Install common packages for all desktop environments
 		install_session.add_additional_packages(self.packages)
 

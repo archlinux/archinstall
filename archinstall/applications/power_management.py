@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from archinstall.lib.models.application import PowerManagement, PowerManagementConfiguration
@@ -23,7 +25,7 @@ class PowerManagementApp:
 
 	def install(
 		self,
-		install_session: 'Installer',
+		install_session: Installer,
 		power_management_config: PowerManagementConfiguration,
 	) -> None:
 		debug(f'Installing power management daemon: {power_management_config.power_management.value}')
