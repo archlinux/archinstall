@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from archinstall.lib.output import debug
@@ -17,7 +19,7 @@ class PrintServiceApp:
 			'cups.service',
 		]
 
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		debug('Installing print service')
 		install_session.add_additional_packages(self.packages)
 		install_session.enable_service(self.services)

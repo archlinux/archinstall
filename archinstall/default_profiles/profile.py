@@ -22,7 +22,6 @@ class ProfileType(Enum):
 	DesktopEnv = 'Desktop Environment'
 	CustomType = 'CustomType'
 	# special things
-	Tailored = 'Tailored'
 	Application = 'Application'
 
 
@@ -102,12 +101,12 @@ class Profile:
 
 		return self.advanced is False or arch_config_handler.args.advanced is True
 
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		"""
 		Performs installation steps when this profile was selected
 		"""
 
-	def post_install(self, install_session: 'Installer') -> None:
+	def post_install(self, install_session: Installer) -> None:
 		"""
 		Hook that will be called when the installation process is
 		finished and custom installation steps for specific default_profiles
@@ -157,9 +156,6 @@ class Profile:
 
 	def is_xorg_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.Xorg if self._advanced_check() else False
-
-	def is_tailored(self) -> bool:
-		return self.profile_type == ProfileType.Tailored
 
 	def is_custom_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.CustomType

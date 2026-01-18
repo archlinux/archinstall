@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -26,9 +24,8 @@ class MenuItem:
 	key: str | None = None
 
 	_id: str = ''
-
-	_yes: ClassVar[MenuItem | None] = None
-	_no: ClassVar[MenuItem | None] = None
+	_yes: ClassVar[Self | None] = None
+	_no: ClassVar[Self | None] = None
 
 	def __post_init__(self) -> None:
 		if self.key is not None:
@@ -48,14 +45,14 @@ class MenuItem:
 		return self.value
 
 	@classmethod
-	def yes(cls, action: Callable[[Any], Any] | None = None) -> 'MenuItem':
+	def yes(cls, action: Callable[[Any], Any] | None = None) -> Self:
 		if cls._yes is None:
 			cls._yes = cls(tr('Yes'), value=True, key='yes', action=action)
 
 		return cls._yes
 
 	@classmethod
-	def no(cls, action: Callable[[Any], Any] | None = None) -> 'MenuItem':
+	def no(cls, action: Callable[[Any], Any] | None = None) -> Self:
 		if cls._no is None:
 			cls._no = cls(tr('No'), value=False, key='no', action=action)
 

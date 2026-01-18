@@ -9,7 +9,7 @@ from collections.abc import Callable
 from curses.ascii import isprint
 from curses.textpad import Textbox
 from types import FrameType, TracebackType
-from typing import Literal, override
+from typing import ClassVar, Literal, Self, override
 
 from archinstall.lib.translationhandler import tr
 
@@ -50,7 +50,7 @@ class AbstractCurses[ValueT](metaclass=ABCMeta):
 	def clear_help_win(self) -> None:
 		self._help_window.erase()
 
-	def _set_help_viewport(self) -> 'Viewport':
+	def _set_help_viewport(self) -> Viewport:
 		max_height, max_width = Tui.t().max_yx
 		height = max_height - 10
 
@@ -1241,7 +1241,7 @@ class SelectMenu[ValueT](AbstractCurses[ValueT]):
 
 
 class Tui:
-	_t: Tui | None = None
+	_t: ClassVar[Self | None] = None
 
 	def __enter__(self) -> None:
 		if Tui._t is None:
@@ -1255,10 +1255,10 @@ class Tui:
 	def screen(self) -> curses.window:
 		return self._screen
 
-	@staticmethod
-	def t() -> 'Tui':
-		assert Tui._t is not None
-		return Tui._t
+	@classmethod
+	def t(cls) -> Self:
+		assert cls._t is not None
+		return cls._t
 
 	@staticmethod
 	def shutdown() -> None:
@@ -1267,7 +1267,7 @@ class Tui:
 
 		Tui.t().stop()
 
-	def init(self) -> 'Tui':
+	def init(self) -> Self:
 		self._screen = curses.initscr()
 		curses.noecho()
 		curses.cbreak()

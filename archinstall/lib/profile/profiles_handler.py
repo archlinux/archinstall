@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import importlib.util
 import inspect
 import sys
 from collections import Counter
-from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
@@ -13,7 +14,7 @@ from archinstall.lib.translationhandler import tr
 from ...default_profiles.profile import GreeterType, Profile
 from ..hardware import GfxDriver
 from ..models.profile import ProfileConfiguration
-from ..networking import fetch_data_from_url, list_interfaces
+from ..networking import fetch_data_from_url
 from ..output import debug, error, info
 
 if TYPE_CHECKING:
@@ -141,10 +142,6 @@ class ProfileHandler:
 		self._profiles = self._profiles or self._find_available_profiles()
 		return self._profiles
 
-	@cached_property
-	def _local_mac_addresses(self) -> list[str]:
-		return list(list_interfaces())
-
 	def add_custom_profiles(self, profiles: Profile | list[Profile]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
@@ -176,11 +173,7 @@ class ProfileHandler:
 	def get_custom_profiles(self) -> list[Profile]:
 		return [p for p in self.profiles if p.is_custom_type_profile()]
 
-	def get_mac_addr_profiles(self) -> list[Profile]:
-		tailored = [p for p in self.profiles if p.is_tailored()]
-		return [t for t in tailored if t.name in self._local_mac_addresses]
-
-	def install_greeter(self, install_session: 'Installer', greeter: GreeterType) -> None:
+	def install_greeter(self, install_session: Installer, greeter: GreeterType) -> None:
 		packages = []
 		service = None
 		service_disable = None
@@ -224,7 +217,7 @@ class ProfileHandler:
 			with open(path, 'w') as file:
 				file.write(filedata)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
+	def install_gfx_driver(self, install_session: Installer, driver: GfxDriver) -> None:
 		debug(f'Installing GFX driver: {driver.value}')
 
 		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
@@ -236,7 +229,7 @@ class ProfileHandler:
 		pkg_names = [p.value for p in driver_pkgs]
 		install_session.add_additional_packages(pkg_names)
 
-	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration) -> None:
+	def install_profile_config(self, install_session: Installer, profile_config: ProfileConfiguration) -> None:
 		profile = profile_config.profile
 
 		if not profile:

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType
@@ -24,7 +26,7 @@ class DockerProfile(Profile):
 		return ['docker']
 
 	@override
-	def post_install(self, install_session: 'Installer') -> None:
+	def post_install(self, install_session: Installer) -> None:
 		from archinstall.lib.args import arch_config_handler
 
 		if auth_config := arch_config_handler.config.auth_config:

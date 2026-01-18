@@ -104,7 +104,7 @@ class MirrorStatusEntryV3(BaseModel):
 		return value
 
 	@model_validator(mode='after')
-	def debug_output(self) -> 'MirrorStatusEntryV3':
+	def debug_output(self) -> Self:
 		from ..args import arch_config_handler
 
 		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
