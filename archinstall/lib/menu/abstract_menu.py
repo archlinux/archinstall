@@ -1,11 +1,11 @@
 from types import TracebackType
 from typing import Any, Self
 
+from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu, Tui
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Chars, FrameProperties, FrameStyle, PreviewStyle
+from archinstall.tui.types import Chars
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 from ..output import error
 
@@ -17,6 +17,7 @@ class AbstractMenu[ValueT]:
 		self,
 		item_group: MenuItemGroup,
 		config: Any,
+		title: str | None = None,
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
 		reset_warning: str | None = None,
@@ -26,6 +27,7 @@ class AbstractMenu[ValueT]:
 		self.auto_cursor = auto_cursor
 		self._allow_reset = allow_reset
 		self._reset_warning = reset_warning
+		self._title = title
 
 		self.is_context_mgr = False
 
@@ -40,7 +42,7 @@ class AbstractMenu[ValueT]:
 		# TODO: skip processing when it comes from a planified exit
 		if exc_type is not None:
 			error(str(exc_value))
-			Tui.print('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')
+			print('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')
 
 			# Return None to propagate the exception
 			return None
@@ -92,37 +94,36 @@ class AbstractMenu[ValueT]:
 	def _is_config_valid(self) -> bool:
 		return True
 
-	def run(
-		self,
-		additional_title: str | None = None,
-	) -> ValueT | None:
+	def run(self) -> ValueT | None:
 		self._sync_from_config()
 
 		while True:
-			result = SelectMenu[ValueT](
-				self._menu_item_group,
+			result = Selection[ValueT](
+				title=self._title,
+				group=self._menu_item_group,
 				allow_skip=False,
 				allow_reset=self._allow_reset,
-				reset_warning_msg=self._reset_warning,
-				preview_style=PreviewStyle.RIGHT,
-				preview_size='auto',
-				preview_frame=FrameProperties('Info', FrameStyle.MAX),
-				additional_title=additional_title,
-			).run()
+				preview_location='right',
+			).show()
 
 			match result.type_:
 				case ResultType.Selection:
 					item: MenuItem = result.item()
+					self._menu_item_group.focus_item = item
 
 					if item.action is None:
 						if not self._is_config_valid():
 							continue
 						break
+					else:
+						item.value = item.action(item.value)
 				case ResultType.Reset:
 					return None
+				case _:
+					pass
 
 		self.sync_all_to_config()
-		return None
+		return self._config
 
 
 class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):

@@ -8,18 +8,16 @@ import traceback
 
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.general import running_from_host
 from archinstall.lib.network.wifi_handler import wifi_handler
 from archinstall.lib.networking import ping
-from archinstall.lib.packages.packages import check_package_upgrade
-from archinstall.tui.ui.components import tui as ttui
+from archinstall.lib.packages.packages import check_version_upgrade
 
-from .lib.general import running_from_host
 from .lib.hardware import SysInfo
 from .lib.output import FormattedOutput, debug, error, info, log, warn
 from .lib.pacman import Pacman
 from .lib.plugins import load_plugin, plugins
 from .lib.translationhandler import Language, tr, translation_handler
-from .tui.curses_menu import Tui
 
 
 # @archinstall.plugin decorator hook to programmatically add
@@ -66,21 +64,6 @@ def _fetch_arch_db() -> None:
 		sys.exit(1)
 
 
-def check_version_upgrade() -> str | None:
-	info('Checking version...')
-	upgrade = None
-
-	upgrade = check_package_upgrade('archinstall')
-
-	if upgrade is None:
-		debug('No archinstall upgrades found')
-		return None
-
-	text = tr('New version available') + f': {upgrade}'
-	info(text)
-	return text
-
-
 def main() -> int:
 	"""
 	This can either be run as the compiled and installed application: python setup.py install
@@ -97,18 +80,16 @@ def main() -> int:
 
 	_log_sys_info()
 
-	ttui.global_header = 'Archinstall'
-
 	if not arch_config_handler.args.offline:
 		_check_online()
 		_fetch_arch_db()
 
 		if not arch_config_handler.args.skip_version_check:
-			new_version = check_version_upgrade()
+			upgrade = check_version_upgrade()
 
-			if new_version:
-				ttui.global_header = f'{ttui.global_header} {new_version}'
-				info(new_version)
+			if upgrade:
+				text = tr('New version available') + f': {upgrade}'
+				info(text)
 				time.sleep(3)
 
 	if running_from_host():
@@ -135,9 +116,6 @@ def run_as_a_module() -> None:
 	except Exception as e:
 		exc = e
 	finally:
-		# restore the terminal to the original state
-		Tui.shutdown()
-
 		if exc:
 			err = ''.join(traceback.format_exception(exc))
 			error(err)
@@ -159,7 +137,6 @@ __all__ = [
 	'Language',
 	'Pacman',
 	'SysInfo',
-	'Tui',
 	'arch_config_handler',
 	'debug',
 	'disk_layouts',

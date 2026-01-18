@@ -332,6 +332,4 @@ def log(
 	Journald.log(text, level=level)
 
 	if level != logging.DEBUG:
-		from archinstall.tui.curses_menu import Tui
-
-		Tui.print(text)
+		print(text)

@@ -287,9 +287,9 @@ class SysCommandWorker:
 			os.chdir(str(self.working_directory))
 
 		# Note: If for any reason, we get a Python exception between here
-		#   and until os.close(), the traceback will get locked inside
-		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
-		#   only way to get the traceback without losing it.
+		# and until os.close(), the traceback will get locked inside
+		# stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
+		# only way to get the traceback without losing it.
 
 		self.pid, self.child_fd = pty.fork()
 

@@ -20,10 +20,9 @@ from archinstall.lib.models.device import (
 )
 from archinstall.lib.models.users import User
 from archinstall.lib.output import debug, error, info
-from archinstall.lib.packages.packages import check_package_upgrade
+from archinstall.lib.packages.packages import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
-from archinstall.tui import Tui
 
 
 def ask_user_questions() -> None:
@@ -33,20 +32,19 @@ def ask_user_questions() -> None:
 	will we continue with the actual installation steps.
 	"""
 
-	title_text = None
+	upgrade = check_version_upgrade()
+	title_text = 'Archlinux'
 
-	upgrade = check_package_upgrade('archinstall')
 	if upgrade:
 		text = tr('New version available') + f': {upgrade}'
-		title_text = f'  ({text})'
+		title_text += f' ({text})'
 
-	with Tui():
-		global_menu = GlobalMenu(arch_config_handler.config)
+	global_menu = GlobalMenu(arch_config_handler.config, title=title_text)
 
-		if not arch_config_handler.args.advanced:
-			global_menu.set_enabled('parallel_downloads', False)
+	if not arch_config_handler.args.advanced:
+		global_menu.set_enabled('parallel_downloads', False)
 
-		global_menu.run(additional_title=title_text)
+	global_menu.run()
 
 
 def perform_installation(mountpoint: Path) -> None:
@@ -170,9 +168,8 @@ def perform_installation(mountpoint: Path) -> None:
 		debug(f'Disk states after installing:\n{disk_layouts()}')
 
 		if not arch_config_handler.args.silent:
-			with Tui():
-				elapsed_time = time.time() - start_time
-				action = ask_post_installation(elapsed_time)
+			elapsed_time = time.time() - start_time
+			action = ask_post_installation(elapsed_time)
 
 			match action:
 				case PostInstallationAction.EXIT:
@@ -199,10 +196,9 @@ def guided() -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		with Tui():
-			if not config.confirm_config():
-				debug('Installation aborted')
-				aborted = True
+		if not config.confirm_config():
+			debug('Installation aborted')
+			aborted = True
 
 		if aborted:
 			return guided()

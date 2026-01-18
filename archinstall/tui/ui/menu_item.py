@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -5,8 +7,6 @@ from functools import cached_property
 from typing import Any, ClassVar, Self, override
 
 from archinstall.lib.translationhandler import tr
-
-from ..lib.utils.unicode import unicode_ljust
 
 
 @dataclass
@@ -24,6 +24,7 @@ class MenuItem:
 	key: str | None = None
 
 	_id: str = ''
+
 	_yes: ClassVar[Self | None] = None
 	_no: ClassVar[Self | None] = None
 
@@ -110,6 +111,11 @@ class MenuItemGroup:
 
 		if self.focus_item not in self.items:
 			raise ValueError(f'Selected item not in menu: {self.focus_item}')
+
+	@classmethod
+	def from_objects(cls, items: list[Any]) -> Self:
+		items = [MenuItem(str(id(item)), value=item) for item in items]
+		return cls(items)
 
 	def add_item(self, item: MenuItem) -> None:
 		self._menu_items.append(item)
@@ -199,59 +205,9 @@ class MenuItemGroup:
 
 		return None
 
-	def index_focus(self) -> int | None:
-		if self.focus_item and self.items:
-			try:
-				return self.items.index(self.focus_item)
-			except ValueError:
-				# on large menus (15k+) when filtering very quickly
-				# the index search is too slow while the items are reduced
-				# by the filter and it will blow up as it cannot find the
-				# focus item
-				pass
-
-		return None
-
-	@property
-	def size(self) -> int:
-		return len(self.items)
-
-	def get_max_width(self) -> int:
-		# use the menu_items not the items here otherwise the preview
-		# will get resized all the time when a filter is applied
-		return max([len(self.get_item_text(item)) for item in self._menu_items])
-
 	@cached_property
 	def _max_items_text_width(self) -> int:
 		return max([len(item.text) for item in self._menu_items])
-
-	def get_item_text(self, item: MenuItem) -> str:
-		if item.is_empty():
-			return ''
-
-		max_width = self._max_items_text_width
-		display_text = item.get_display_value()
-
-		default_text = self._default_suffix(item)
-
-		text = unicode_ljust(str(item.text), max_width, ' ')
-		spacing = ' ' * 4
-
-		if display_text:
-			text = f'{text}{spacing}{display_text}'
-		elif self._checkmarks:
-			from .types import Chars
-
-			if item.has_value():
-				if item.get_value() is not False:
-					text = f'{text}{spacing}{Chars.Check}'
-			else:
-				text = item.text
-
-		if default_text:
-			text = f'{text} {default_text}'
-
-		return text.rstrip(' ')
 
 	def _default_suffix(self, item: MenuItem) -> str:
 		if self.default_item == item:
@@ -275,44 +231,10 @@ class MenuItemGroup:
 			return 0
 		return 1
 
-	@property
-	def filter_pattern(self) -> str:
-		return self._filter_pattern
-
-	def has_filter(self) -> bool:
-		return self._filter_pattern != ''
-
 	def set_filter_pattern(self, pattern: str) -> None:
 		self._filter_pattern = pattern
 		delattr(self, 'items')  # resetting the cache
 		self.focus_first()
-
-	def append_filter(self, pattern: str) -> None:
-		self._filter_pattern += pattern
-		delattr(self, 'items')  # resetting the cache
-		self.focus_first()
-
-	def reduce_filter(self) -> None:
-		self._filter_pattern = self._filter_pattern[:-1]
-		delattr(self, 'items')  # resetting the cache
-		self.focus_first()
-
-	def _reload_focus_item(self) -> None:
-		if len(self.items) > 0:
-			if self.focus_item not in self.items:
-				self.focus_first()
-		else:
-			self.focus_item = None
-
-	def is_item_selected(self, item: MenuItem) -> bool:
-		return item in self.selected_items
-
-	def select_current_item(self) -> None:
-		if self.focus_item:
-			if self.focus_item in self.selected_items:
-				self.selected_items.remove(self.focus_item)
-			else:
-				self.selected_items.append(self.focus_item)
 
 	def focus_index(self, index: int) -> None:
 		enabled = self.get_enabled_items()
@@ -380,12 +302,6 @@ class MenuItemGroup:
 
 		return None
 
-	def is_mandatory_fulfilled(self) -> bool:
-		for item in self._menu_items:
-			if item.mandatory and not item.value:
-				return False
-		return True
-
 	def max_item_width(self) -> int:
 		spaces = [len(str(it.text)) for it in self.items]
 		if spaces:
@@ -418,99 +334,3 @@ class MenuItemGroup:
 				return False
 
 		return True
-
-
-class MenuItemsState:
-	def __init__(
-		self,
-		item_group: MenuItemGroup,
-		total_cols: int,
-		total_rows: int,
-		with_frame: bool,
-	) -> None:
-		self._item_group = item_group
-		self._total_cols = total_cols
-		self._total_rows = total_rows - 2 if with_frame else total_rows
-
-		self._prev_row_idx: int = -1
-		self._prev_visible_rows: list[int] = []
-		self._view_items: list[list[MenuItem]] = []
-
-	def _determine_focus_row(self) -> int | None:
-		focus_index = self._item_group.index_focus()
-
-		if focus_index is None:
-			return None
-
-		row_index = focus_index // self._total_cols
-		return row_index
-
-	def get_view_items(self) -> list[list[MenuItem]]:
-		enabled_items = self._item_group.get_enabled_items()
-		focus_row_idx = self._determine_focus_row()
-
-		if focus_row_idx is None:
-			return []
-
-		start, end = 0, 0
-
-		if len(self._view_items) == 0 or self._prev_row_idx == -1 or focus_row_idx == 0:  # initial setup
-			if focus_row_idx < self._total_rows:
-				start = 0
-				end = self._total_rows
-			elif focus_row_idx > len(enabled_items) - self._total_rows:
-				start = len(enabled_items) - self._total_rows
-				end = len(enabled_items)
-			else:
-				start = focus_row_idx
-				end = focus_row_idx + self._total_rows
-		elif len(enabled_items) <= self._total_rows:  # the view can handle all items
-			start = 0
-			end = self._total_rows
-		elif not self._item_group.has_filter() and focus_row_idx in self._prev_visible_rows:  # focus is in the same view
-			self._prev_row_idx = focus_row_idx
-			return self._view_items
-		else:
-			if self._item_group.has_filter():
-				start = focus_row_idx
-				end = focus_row_idx + self._total_rows
-			else:
-				delta = focus_row_idx - self._prev_row_idx
-
-				if delta > 0:  # cursor is on the bottom most row
-					start = focus_row_idx - self._total_rows + 1
-					end = focus_row_idx + 1
-				else:  # focus is on the top most row
-					start = focus_row_idx
-					end = focus_row_idx + self._total_rows
-
-		self._view_items = self._get_view_items(enabled_items, start, end)
-		self._prev_visible_rows = list(range(start, end))
-		self._prev_row_idx = focus_row_idx
-
-		return self._view_items
-
-	def _get_view_items(
-		self,
-		items: list[MenuItem],
-		start_row: int,
-		total_rows: int,
-	) -> list[list[MenuItem]]:
-		groups: list[list[MenuItem]] = []
-		nr_items = self._total_cols * min(total_rows, len(items))
-
-		for x in range(start_row, nr_items, self._total_cols):
-			groups.append(
-				items[x : x + self._total_cols],
-			)
-
-		return groups
-
-	def _max_visible_items(self) -> int:
-		return self._total_cols * self._total_rows
-
-	def _remaining_next_spots(self) -> int:
-		return self._max_visible_items() - self._prev_row_idx
-
-	def _remaining_prev_spots(self) -> int:
-		return self._max_visible_items() - self._remaining_next_spots()

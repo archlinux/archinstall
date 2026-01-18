@@ -12,7 +12,6 @@ from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.tui import Tui
 
 
 def perform_installation(mountpoint: Path) -> None:
@@ -61,9 +60,8 @@ def perform_installation(mountpoint: Path) -> None:
 
 
 def _minimal() -> None:
-	with Tui():
-		disk_config = DiskLayoutConfigurationMenu(disk_layout_config=None).run()
-		arch_config_handler.config.disk_config = disk_config
+	disk_config = DiskLayoutConfigurationMenu(disk_layout_config=None).run()
+	arch_config_handler.config.disk_config = disk_config
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
@@ -74,10 +72,9 @@ def _minimal() -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		with Tui():
-			if not config.confirm_config():
-				debug('Installation aborted')
-				aborted = True
+		if not config.confirm_config():
+			debug('Installation aborted')
+			aborted = True
 
 		if aborted:
 			return _minimal()

@@ -16,6 +16,24 @@ BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
 BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/'
 
 
+# TODO: This shouldn't be living in here but there are too many
+# circular dependecies so they will need to be cleanup up first
+@lru_cache(maxsize=128)
+def check_version_upgrade() -> str | None:
+	debug('Checking version')
+	upgrade = None
+
+	upgrade = check_package_upgrade('archinstall')
+
+	if upgrade is None:
+		debug('No archinstall upgrades found')
+		return None
+
+	debug(f'Archinstall latest: {upgrade}')
+
+	return upgrade
+
+
 def _make_request(url: str, params: dict[str, str]) -> addinfourl:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False

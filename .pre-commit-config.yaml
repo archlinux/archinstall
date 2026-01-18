@@ -43,9 +43,12 @@ repos:
         - pytest
         - cryptography
         - textual
-  - repo: https://github.com/pycqa/pylint
-    rev: v4.0.4
+  - repo: local
     hooks:
-    - id: pylint
-      fail_fast: true
-      require_serial: true
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        fail_fast: true
+        require_serial: true
