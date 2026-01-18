@@ -25,7 +25,7 @@ archinstall
 
 Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall)) or `pip install --upgrade archinstall`.
 
-### Upgrade `archinstall on live Arch ISO image
+## Upgrade `archinstall` on live Arch ISO image
 
 Upgrading archinstall on the ISO needs to be donw via a full system upgrade using `pacman -Syu`
 
