@@ -18,12 +18,22 @@ The installer also doubles as a python library to install Arch Linux and manage 
 > In the ISO you are root by default. Use sudo if running from an existing system.
 
 ```shell
-    # pacman-key --init
-    # pacman -Sy archinstall
-    # archinstall
+pacman-key --init
+pacman -Sy archinstall
+archinstall
 ```
 
 Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall)) or `pip install --upgrade archinstall`.
+
+### Upgrade `archinstall on live Arch ISO image
+
+Upgrading archinstall on the ISO needs to be donw via a full system upgrade using `pacman -Syu`
+
+When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow running a re-installation or upgrade of the installer.
+In case one runs into this issue, any of the following can be used
+
+* Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
+* Specify the boot parameter copytoram=y (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) which will copy the root filesystem to tmpfs
 
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
 
@@ -138,12 +148,6 @@ The profiles' definitions and the packages they will install can be directly vie
 
 If you want to test a commit, branch, or bleeding edge release from the repository using the standard Arch Linux Live ISO image,
 replace the archinstall version with a newer one and execute the subsequent steps defined below.
-
-*Note: When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow
-running a re-installation or upgrade of the installer. In case one runs into this issue, any of the following can be used
-- Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
-- The boot parameter `copytoram=y` (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26)
-can be specified which will copy the root filesystem to tmpfs.*
 
 1. You need a working network connection
 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
