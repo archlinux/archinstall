@@ -25,8 +25,8 @@ class MenuItem:
 
 	_id: str = ''
 
-	_yes: ClassVar[MenuItem | None] = None
-	_no: ClassVar[MenuItem | None] = None
+	_yes: ClassVar[Self | None] = None
+	_no: ClassVar[Self | None] = None
 
 	def __post_init__(self) -> None:
 		if self.key is not None:
@@ -46,14 +46,14 @@ class MenuItem:
 		return self.value
 
 	@classmethod
-	def yes(cls, action: Callable[[Any], Any] | None = None) -> 'MenuItem':
+	def yes(cls, action: Callable[[Any], Any] | None = None) -> Self:
 		if cls._yes is None:
 			cls._yes = cls(tr('Yes'), value=True, key='yes', action=action)
 
 		return cls._yes
 
 	@classmethod
-	def no(cls, action: Callable[[Any], Any] | None = None) -> 'MenuItem':
+	def no(cls, action: Callable[[Any], Any] | None = None) -> Self:
 		if cls._no is None:
 			cls._no = cls(tr('No'), value=False, key='no', action=action)
 
@@ -138,21 +138,22 @@ class MenuItemGroup:
 	def get_enabled_items(self) -> list[MenuItem]:
 		return [it for it in self.items if self.is_enabled(it)]
 
-	@staticmethod
-	def yes_no() -> 'MenuItemGroup':
-		return MenuItemGroup(
+	@classmethod
+	def yes_no(cls) -> Self:
+		return cls(
 			[MenuItem.yes(), MenuItem.no()],
 			sort_items=True,
 		)
 
-	@staticmethod
+	@classmethod
 	def from_enum(
+		cls,
 		enum_cls: type[Enum],
 		sort_items: bool = False,
 		preset: Enum | None = None,
-	) -> 'MenuItemGroup':
+	) -> Self:
 		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
-		group = MenuItemGroup(items, sort_items=sort_items)
+		group = cls(items, sort_items=sort_items)
 
 		if preset is not None:
 			group.set_selected_by_value(preset)
