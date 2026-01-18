@@ -28,7 +28,10 @@ Alternative ways to install are `git clone` the repository (and is better since 
 ## Upgrade `archinstall` on live Arch ISO image
 
 Upgrading archinstall on the ISO needs to be donw via a full system upgrade using 
-```pacman -Syu```
+
+```shell
+pacman -Syu
+```
 
 When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow running a re-installation or upgrade of the installer.
 In case one runs into this issue, any of the following can be used
