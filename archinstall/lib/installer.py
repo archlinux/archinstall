@@ -4,6 +4,7 @@ import platform
 import re
 import shlex
 import shutil
+import stat
 import subprocess
 import textwrap
 import time
@@ -1329,14 +1330,6 @@ class Installer:
 
 		self.pacman.strap('grub')
 
-		grub_default = self.target / 'etc/default/grub'
-		config = grub_default.read_text()
-
-		kernel_parameters = ' '.join(self._get_kernel_params(root, False, False))
-		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{kernel_parameters}\2', config, count=1)
-
-		grub_default.write_text(config)
-
 		info(f'GRUB boot partition: {boot_partition.dev_path}')
 
 		boot_dir = Path('/boot')
@@ -1393,6 +1386,50 @@ class Installer:
 				SysCommand(command + add_options, peek_output=True)
 			except SysCallError as err:
 				raise DiskError(f'Failed to install GRUB boot on {boot_partition.dev_path}: {err}')
+
+		if SysInfo.has_uefi() and uki_enabled:
+			grub_d = self.target / 'etc/grub.d'
+			linux_file = grub_d / '10_linux'
+			uki_file = grub_d / '15_uki'
+
+			raw_str_platform = r'\$grub_platform'
+			space_indent_cmd = '  uki'
+			content = textwrap.dedent(
+				f"""\
+				#! /bin/sh
+				set -e
+
+				cat << EOF
+				if [ "{raw_str_platform}" = "efi" ]; then
+				{space_indent_cmd}
+				fi
+				EOF
+				""",
+			)
+
+			try:
+				mode = linux_file.stat().st_mode
+				linux_file.chmod(mode & ~(stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH))
+				uki_file.write_text(content)
+				uki_file.chmod(mode)
+			except OSError:
+				error('Failed to enable UKI menu entries')
+		else:
+			grub_default = self.target / 'etc/default/grub'
+			config = grub_default.read_text()
+
+			kernel_parameters = ' '.join(
+				self._get_kernel_params(root, id_root=False, partuuid=False),
+			)
+			config = re.sub(
+				r'^(GRUB_CMDLINE_LINUX=")(")$',
+				rf'\1{kernel_parameters}\2',
+				config,
+				count=1,
+				flags=re.MULTILINE,
+			)
+
+			grub_default.write_text(config)
 
 		try:
 			self.arch_chroot(
