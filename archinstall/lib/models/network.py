@@ -3,13 +3,10 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, NotRequired, Self, TypedDict, override
+from typing import NotRequired, Self, TypedDict, override
 
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
-
-if TYPE_CHECKING:
-	pass
 
 
 class NicType(Enum):
