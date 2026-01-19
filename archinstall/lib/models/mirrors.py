@@ -12,6 +12,7 @@ from pydantic import BaseModel, field_validator, model_validator
 from ..models.packages import Repository
 from ..networking import DownloadTimer, ping
 from ..output import debug
+from ..mirror.mirror_handler import mirror_list_handler
 
 
 class MirrorStatusEntryV3(BaseModel):
@@ -59,17 +60,17 @@ class MirrorStatusEntryV3(BaseModel):
 
 					assert timer.time is not None
 					self._speed = size / timer.time
-					debug(f'    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
+					debug(f'	speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
 				# Do not retry error
 				except urllib.error.URLError as error:
-					debug(f'    speed: <undetermined> ({error}), skip')
+					debug(f'	speed: <undetermined> ({error}), skip')
 					self._speed = 0
 				# Do retry error
 				except (http.client.IncompleteRead, ConnectionResetError) as error:
-					debug(f'    speed: <undetermined> ({error}), retry')
+					debug(f'	speed: <undetermined> ({error}), retry')
 				# Catch all
 				except Exception as error:
-					debug(f'    speed: <undetermined> ({error}), skip')
+					debug(f'	speed: <undetermined> ({error}), skip')
 					self._speed = 0
 
 				retry += 1
@@ -99,7 +100,7 @@ class MirrorStatusEntryV3(BaseModel):
 	def validate_score(cls, value: float) -> int | None:
 		if value is not None:
 			value = round(value)
-			debug(f'    score: {value}')
+			debug(f'	score: {value}')
 
 		return value
 
@@ -272,8 +273,6 @@ class MirrorConfiguration:
 		return config.strip()
 
 	def regions_config(self, speed_sort: bool = True) -> str:
-		from ..mirrors import mirror_list_handler
-
 		config = ''
 
 		for mirror_region in self.mirror_regions:
