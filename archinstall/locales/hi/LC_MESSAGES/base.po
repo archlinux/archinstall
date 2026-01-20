@@ -1208,7 +1208,7 @@ msgstr ""
 msgid "Mark/Unmark as nodatacow"
 msgstr ""
 
-#, Would you like to use compression or disable CoW?
+
 msgid "Would you like to use compression or disable CoW?"
 msgstr "क्या आप compression का उपयोग करना चाहते हैं या CoW को बंद करना चाहते हैं?"
 
@@ -1331,7 +1331,7 @@ msgstr ""
 msgid "Root mount directory"
 msgstr ""
 
-#, fuzzy
+
 msgid "Select language"
 msgstr "भाषा चुनें"
 
@@ -1409,7 +1409,7 @@ msgstr ""
 msgid "Not a valid directory"
 msgstr ""
 
-#, fuzzy
+
 msgid "Would you like to continue?"
 msgstr "क्या आप जारी रखना चाहते हैं?"
 
