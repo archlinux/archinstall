@@ -42,7 +42,7 @@ dev = [
 doc = ["sphinx"]
 
 [project.scripts]
-archinstall = "archinstall:run_as_a_module"
+archinstall = "archinstall.main:main"
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "USAGE.rst"]}
