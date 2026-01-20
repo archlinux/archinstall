@@ -9,7 +9,7 @@ from urllib.response import addinfourl
 from ..exceptions import PackageError, SysCallError
 from ..models.packages import AvailablePackage, LocalPackage, PackageSearch, PackageSearchResult, Repository
 from ..output import debug
-from ..pacman import Pacman
+from ..pacman.pacman import Pacman
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
