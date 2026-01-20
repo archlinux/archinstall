@@ -12,13 +12,13 @@ msgstr ""
 "X-Generator: Poedit 3.2.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
-msgstr ""
+msgstr "[!] यहाँ एक लॉग फ़ाइल बनाई गई है: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
 msgstr ""
 
 msgid "Do you really want to abort?"
-msgstr ""
+msgstr "क्या आप वाकई रद्द करना चाहते हैं?"
 
 msgid "And one more time for verification: "
 msgstr "सत्यापन के लिए एक बार और: "
@@ -39,10 +39,10 @@ msgid "Should this user be a superuser (sudoer)?"
 msgstr "क्या यह user एक superuser होना चाहिए (sudoer)?"
 
 msgid "Select a timezone"
-msgstr "एक समयक्षेत्र चुनें"
+msgstr "समयक्षेत्र चुनें"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "क्या आप systemd-boot की जगह GRUB इस्तेमाल करना चाहेंगे bootloader ke liye?"
+msgstr "क्या आप systemd-boot की जगह GRUB को BOOTLOADER के रूप में इस्तेमाल करना चाहेंगे?"
 
 msgid "Choose a bootloader"
 msgstr "एक bootloader चुनें"
@@ -313,7 +313,7 @@ msgid "Set desired filesystem for a partition"
 msgstr ""
 
 msgid "Abort"
-msgstr ""
+msgstr "रद्द करें"
 
 msgid "Hostname"
 msgstr ""
@@ -379,7 +379,7 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "रद्द करें"
 
 msgid "Confirm and exit"
 msgstr ""
@@ -569,10 +569,10 @@ msgid "Minimum capacity for Arch Linux partition: {}GB"
 msgstr ""
 
 msgid "Continue"
-msgstr ""
+msgstr "जारी रखें"
 
 msgid "yes"
-msgstr ""
+msgstr "हाँ"
 
 msgid "no"
 msgstr ""
@@ -775,7 +775,7 @@ msgid "Parallel Downloads"
 msgstr ""
 
 msgid "ESC to skip"
-msgstr ""
+msgstr "छोड़ने के लिए esc दबाएँ"
 
 msgid "CTRL+C to reset"
 msgstr ""
@@ -959,7 +959,7 @@ msgid " ! Formatting {} in "
 msgstr ""
 
 msgid "← Back"
-msgstr ""
+msgstr "← वापस"
 
 msgid "Disk encryption"
 msgstr ""
@@ -1210,7 +1210,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr "क्या आप swap के लिए zram इस्तेमाल करना चाहेंगे?"
+msgstr "क्या आप compression का उपयोग करना चाहते हैं या CoW को बंद करना चाहते हैं?"
 
 msgid "Use compression"
 msgstr ""
@@ -1333,7 +1333,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Select language"
-msgstr "एक समयक्षेत्र चुनें"
+msgstr "भाषा चुनें"
 
 #, fuzzy
 msgid "Write additional packages to install (space separated, leave blank to skip)"
@@ -1401,7 +1401,7 @@ msgid "Main profile"
 msgstr ""
 
 msgid "Confirm password"
-msgstr ""
+msgstr "पासवर्ड की पुष्टि करें"
 
 msgid "The confirmation password did not match, please try again"
 msgstr ""
@@ -1411,7 +1411,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Would you like to continue?"
-msgstr "क्या आप swap के लिए zram इस्तेमाल करना चाहेंगे?"
+msgstr "क्या आप जारी रखना चाहते हैं?"
 
 msgid "Directory"
 msgstr ""
