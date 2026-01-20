@@ -775,7 +775,7 @@ msgid "Parallel Downloads"
 msgstr ""
 
 msgid "ESC to skip"
-msgstr "छोड़ने के लिए esc दबाएँ"
+msgstr "छोड़ने के लिए ESC दबाएँ"
 
 msgid "CTRL+C to reset"
 msgstr ""
@@ -1208,7 +1208,7 @@ msgstr ""
 msgid "Mark/Unmark as nodatacow"
 msgstr ""
 
-#, fuzzy
+#, Would you like to use compression or disable CoW?
 msgid "Would you like to use compression or disable CoW?"
 msgstr "क्या आप compression का उपयोग करना चाहते हैं या CoW को बंद करना चाहते हैं?"
 
@@ -1278,7 +1278,7 @@ msgid "Yes"
 msgstr ""
 
 msgid "No"
-msgstr ""
+msgstr "नहीं"
 
 msgid "Archinstall help"
 msgstr ""
