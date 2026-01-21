@@ -3,7 +3,6 @@ import sys
 import time
 from pathlib import Path
 
-from archinstall import SysInfo
 from archinstall.lib.applications.application_handler import application_handler
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.authentication.authentication_handler import auth_handler
@@ -11,6 +10,7 @@ from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
+from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
 from archinstall.lib.models import Bootloader
