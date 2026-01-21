@@ -941,12 +941,12 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 		selected = group.selected_items
 
 		if not items:
-			_ = self.dismiss(Result(ResultType.Selection))
+			_ = self.dismiss(Result(ResultType.Skip))
 			return
 
 		value = items[0].value
 		if not value:
-			_ = self.dismiss(Result(ResultType.Selection))
+			_ = self.dismiss(Result(ResultType.Skip))
 			return
 
 		cols = list(value.table_data().keys())
@@ -1035,10 +1035,14 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 	def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
 		if self._multi:
 			if len(self._selected_keys) == 0:
-				if not self._allow_skip:
+				# Auto-select current row if nothing is selected and Enter is pressed
+				if self._current_row_key:
+					items = [self._current_row_key.value]
+					_ = self.dismiss(Result(ResultType.Selection, _item=items))  # type: ignore[arg-type]
+				elif not self._allow_skip:
 					return
-
-				_ = self.dismiss(Result[ValueT](ResultType.Skip))
+				else:
+					_ = self.dismiss(Result[ValueT](ResultType.Skip))
 			else:
 				items = [row_key.value for row_key in self._selected_keys]
 				_ = self.dismiss(Result(ResultType.Selection, _item=items))  # type: ignore[arg-type]
