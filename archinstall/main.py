@@ -3,6 +3,7 @@
 import importlib
 import os
 import sys
+import textwrap
 import time
 import traceback
 
@@ -100,6 +101,22 @@ def run() -> int:
 	return 0
 
 
+def _error_message(exc: Exception) -> None:
+	err = ''.join(traceback.format_exception(exc))
+	error(err)
+
+	text = textwrap.dedent(
+		"""\
+		Archinstall experienced the above error. If you think this is a bug, please report it to
+		https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".
+
+		Hint: To extract the log from a live ISO
+		curl -F 'file=@/var/log/archinstall/install.log' https://0x0.st
+		"""
+	)
+	warn(text)
+
+
 def main() -> int:
 	rc = 0
 	exc = None
@@ -110,20 +127,11 @@ def main() -> int:
 		exc = e
 	finally:
 		if exc:
-			err = ''.join(traceback.format_exception(exc))
-			error(err)
-
-			text = (
-				'Archinstall experienced the above error. If you think this is a bug, please report it to\n'
-				'https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".\n\n'
-				"Hint: To extract the log from a live ISO \ncurl -F 'file=@/var/log/archinstall/install.log' https://0x0.st\n"
-			)
-
-			warn(text)
+			_error_message(exc)
 			rc = 1
 
-		sys.exit(rc)
+	return rc
 
 
 if __name__ == '__main__':
-	main()
+	sys.exit(main())
