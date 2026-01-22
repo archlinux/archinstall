@@ -40,6 +40,3 @@ class NetworkHandler:
 					installation.configure_nic(nic)
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
-
-
-network_handler = NetworkHandler()

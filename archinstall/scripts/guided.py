@@ -19,7 +19,7 @@ from archinstall.lib.models.device import (
 	EncryptionType,
 )
 from archinstall.lib.models.users import User
-from archinstall.lib.network.network_handler import network_handler
+from archinstall.lib.network.network_handler import NetworkHandler
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.packages.packages import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -108,7 +108,7 @@ def perform_installation(mountpoint: Path) -> None:
 			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
 
 		if config.network_config:
-			network_handler.install_network_config(
+			NetworkHandler().install_network_config(
 				config.network_config,
 				installation,
 				config.profile_config,
