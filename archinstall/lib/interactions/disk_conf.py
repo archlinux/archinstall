@@ -35,7 +35,7 @@ from ..output import FormattedOutput
 from ..utils.util import prompt_dir
 
 
-def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
+def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | None:
 	def _preview_device_selection(item: MenuItem) -> str | None:
 		device: _DeviceInfo = item.value  # type: ignore[assignment]
 		dev = device_handler.get_device(device.path)
@@ -73,13 +73,11 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 		preview_header=tr('Partitions'),
 	).show()
 
-	debug(f'Result: {result}')
-
 	match result.type_:
 		case ResultType.Reset:
-			return []
+			return None
 		case ResultType.Skip:
-			return preset
+			return None
 		case ResultType.Selection:
 			selected_device_info = result.get_values()
 			selected_devices = []
@@ -88,7 +86,6 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 				if device.device_info in selected_device_info:
 					selected_devices.append(device)
 
-			debug(f'Selected devices: {selected_device_info}')
 			return selected_devices
 
 
@@ -176,10 +173,7 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 			preset_devices = [mod.device for mod in preset.device_modifications] if preset else []
 			devices = select_devices(preset_devices)
 
-			if not devices:
-				return None
-
-			if devices == preset_devices:
+			if devices is None:
 				return preset
 
 			if result.get_value() == default_layout:
