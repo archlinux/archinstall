@@ -1234,12 +1234,11 @@ msgstr ""
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
 msgstr ""
 
-#, fuzzy
 msgid "Select a LVM option"
-msgstr "एक समयक्षेत्र चुनें"
+msgstr "एक LVM विकल्प चुनें"
 
 msgid "Partitioning"
-msgstr ""
+msgstr "विभाजन"
 
 msgid "Logical Volume Management (LVM)"
 msgstr ""
@@ -1335,9 +1334,8 @@ msgstr ""
 msgid "Select language"
 msgstr "भाषा चुनें"
 
-#, fuzzy
 msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "अन्य packages का नाम लिखें (स्पेस छोड़कर, अन्यथा खाली छोड़ें): "
+msgstr "स्थापित करने के लिए अतिरिक्त पैकेज लिखें (स्थान अलग करें, छोड़ने के लिए खाली छोड़ें)"
 
 msgid "Invalid download number"
 msgstr ""
@@ -1351,9 +1349,8 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-#, fuzzy, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "क्या यह user एक superuser होना चाहिए (sudoer)?"
+msgstr "क्या \"{}\" को superuser (sudo) होना चाहिए?\n"
 
 msgid "Interfaces"
 msgstr ""
@@ -1441,9 +1438,8 @@ msgstr ""
 msgid "Select signature check"
 msgstr ""
 
-#, fuzzy
 msgid "Select execution mode"
-msgstr "एक समयक्षेत्र चुनें"
+msgstr "निष्पादन मोड का चयन करें"
 
 msgid "Press ? for help"
 msgstr ""
@@ -1517,9 +1513,8 @@ msgstr ""
 msgid "Add a custom server"
 msgstr ""
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "एक audio server चुनें"
+msgstr "कस्टम सर्वर बदलें"
 
 msgid "Delete custom server"
 msgstr ""
@@ -1527,9 +1522,8 @@ msgstr ""
 msgid "Server url"
 msgstr ""
 
-#, fuzzy
 msgid "Select regions"
-msgstr "एक समयक्षेत्र चुनें"
+msgstr "क्षेत्र चुनें"
 
 msgid "Add custom servers"
 msgstr ""
@@ -1591,16 +1585,14 @@ msgstr ""
 msgid "Select on single select"
 msgstr ""
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "एक समयक्षेत्र चुनें"
+msgstr "बहु चयन पर चयन करें"
 
 msgid "Reset"
 msgstr ""
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "एक समयक्षेत्र चुनें"
+msgstr "चयन मेनू छोड़ें"
 
 msgid "Start search mode"
 msgstr ""
@@ -1638,9 +1630,8 @@ msgstr ""
 msgid "Installation completed"
 msgstr ""
 
-#, fuzzy
 msgid "What would you like to do next?"
-msgstr "क्या आप swap के लिए zram इस्तेमाल करना चाहेंगे?"
+msgstr "अब आप क्या करना चाहेंगे?"
 
 #, python-brace-format
 msgid "Select which mode to configure for \"{}\""
@@ -1668,9 +1659,8 @@ msgstr ""
 msgid "New version available"
 msgstr ""
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "पासवर्ड"
+msgstr "बिना पासवर्ड के लॉगिन करें"
 
 msgid "Second factor login"
 msgstr ""
@@ -1678,16 +1668,14 @@ msgstr ""
 msgid "Bluetooth"
 msgstr ""
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "क्या आप swap के लिए zram इस्तेमाल करना चाहेंगे?"
+msgstr "क्या आप ब्लूटूथ कॉन्फ़िगर करना चाहेंगे?"
 
 msgid "Print service"
 msgstr ""
 
-#, fuzzy
 msgid "Would you like to configure the print service?"
-msgstr "क्या आप swap के लिए zram इस्तेमाल करना चाहेंगे?"
+msgstr "क्या आप print सेवा को कॉन्फ़िगर करना चाहेंगे?"
 
 msgid "Power management"
 msgstr ""
