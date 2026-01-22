@@ -201,13 +201,13 @@ class DiskLayoutConfiguration:
 		return config
 
 	def has_default_btrfs_vols(self) -> bool:
-		if self.config_type == DiskLayoutType.Default:
-			for mod in self.device_modifications:
-				for part in mod.partitions:
-					if part.is_create_or_modify():
-						if part.fs_type == FilesystemType.Btrfs:
-							if len(part.btrfs_subvols) > 0:
-								return True
+		for mod in self.device_modifications:
+			for part in mod.partitions:
+				if not (part.is_create_or_modify() and part.fs_type == FilesystemType.Btrfs):
+					continue
+
+				if any(subvol.is_default_root() for subvol in part.btrfs_subvols):
+					return True
 
 		return False
 
@@ -667,6 +667,9 @@ class SubvolumeModification:
 		if self.mountpoint:
 			return self.mountpoint == Path('/')
 		return False
+
+	def is_default_root(self) -> bool:
+		return self.name == Path('@') and self.is_root()
 
 	def json(self) -> _SubvolumeModificationSerialization:
 		return {'name': str(self.name), 'mountpoint': str(self.mountpoint)}
