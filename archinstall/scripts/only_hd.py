@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 from archinstall.lib.args import arch_config_handler
@@ -64,7 +63,7 @@ def _only_hd() -> None:
 	config.save()
 
 	if arch_config_handler.args.dry_run:
-		sys.exit(0)
+		return
 
 	if not arch_config_handler.args.silent:
 		aborted = False

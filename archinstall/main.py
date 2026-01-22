@@ -32,7 +32,7 @@ def _log_sys_info() -> None:
 	debug(f'Disk states before installing:\n{disk_layouts()}')
 
 
-def _check_online() -> None:
+def _check_online() -> bool:
 	try:
 		ping('1.1.1.1')
 	except OSError as ex:
@@ -40,10 +40,12 @@ def _check_online() -> None:
 			if not arch_config_handler.args.skip_wifi_check:
 				success = not wifi_handler.setup()
 				if not success:
-					sys.exit(0)
+					return False
+
+	return True
 
 
-def _fetch_arch_db() -> None:
+def _fetch_arch_db() -> bool:
 	info('Fetching Arch Linux package database...')
 	try:
 		Pacman.run('-Sy')
@@ -55,7 +57,9 @@ def _fetch_arch_db() -> None:
 		error('Run archinstall --debug and check /var/log/archinstall/install.log for details.')
 
 		debug(f'Failed to sync Arch Linux package database: {e}')
-		sys.exit(1)
+		return False
+
+	return True
 
 
 def run() -> int:
@@ -75,8 +79,11 @@ def run() -> int:
 	_log_sys_info()
 
 	if not arch_config_handler.args.offline:
-		_check_online()
-		_fetch_arch_db()
+		if not _check_online():
+			return 0
+
+		if not _fetch_arch_db():
+			return 1
 
 		if not arch_config_handler.args.skip_version_check:
 			upgrade = check_version_upgrade()
