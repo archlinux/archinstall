@@ -112,15 +112,20 @@ def get_default_partition_layout(
 def _manual_partitioning(
 	preset: list[DeviceModification],
 	devices: list[BDevice],
-) -> list[DeviceModification]:
-	modifications = []
+) -> list[DeviceModification] | None:
+	modifications: list[DeviceModification] = []
+
 	for device in devices:
 		mod = next(filter(lambda x: x.device == device, preset), None)
 		if not mod:
 			mod = DeviceModification(device, wipe=False)
 
-		if device_mod := manual_partitioning(mod, device_handler.partition_table):
-			modifications.append(device_mod)
+		device_mod = manual_partitioning(mod, device_handler.partition_table)
+
+		if not device_mod:
+			return None
+
+		modifications.append(device_mod)
 
 	return modifications
 
@@ -191,13 +196,15 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 					)
 			elif result.get_value() == manual_mode:
 				preset_mods = preset.device_modifications if preset else []
-				modifications = _manual_partitioning(preset_mods, devices)
+				partitions = _manual_partitioning(preset_mods, devices)
 
-				if modifications:
-					return DiskLayoutConfiguration(
-						config_type=DiskLayoutType.Manual,
-						device_modifications=modifications,
-					)
+				if not partitions:
+					return preset
+
+				return DiskLayoutConfiguration(
+					config_type=DiskLayoutType.Manual,
+					device_modifications=partitions,
+				)
 
 	return None
 

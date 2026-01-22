@@ -58,7 +58,7 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 
 	def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
 		preset = [] if preset is None else preset
-		users = ask_for_additional_users(defined_users=preset)
+		users = ask_for_additional_users(preset=preset)
 		return users
 
 	def _prev_users(self, item: MenuItem) -> str | None:
