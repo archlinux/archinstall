@@ -10,7 +10,7 @@ import traceback
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.general import running_from_host
-from archinstall.lib.network.wifi_handler import wifi_handler
+from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
 from archinstall.lib.packages.packages import check_version_upgrade
 
@@ -32,12 +32,12 @@ def _log_sys_info() -> None:
 	debug(f'Disk states before installing:\n{disk_layouts()}')
 
 
-def _check_online() -> bool:
+def _check_online(wifi_handler: WifiHandler | None = None) -> bool:
 	try:
 		ping('1.1.1.1')
 	except OSError as ex:
 		if 'Network is unreachable' in str(ex):
-			if not arch_config_handler.args.skip_wifi_check:
+			if wifi_handler is not None:
 				success = not wifi_handler.setup()
 				if not success:
 					return False
@@ -79,7 +79,12 @@ def run() -> int:
 	_log_sys_info()
 
 	if not arch_config_handler.args.offline:
-		if not _check_online():
+		if not arch_config_handler.args.skip_wifi_check:
+			wifi_handler = WifiHandler()
+		else:
+			wifi_handler = None
+
+		if not _check_online(wifi_handler):
 			return 0
 
 		if not _fetch_arch_db():
