@@ -42,6 +42,7 @@ from .general import SysCommand, run
 from .hardware import SysInfo
 from .locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
+from .mirrors import MirrorListHandler
 from .models.bootloader import Bootloader
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
@@ -528,6 +529,7 @@ class Installer:
 
 	def set_mirrors(
 		self,
+		mirror_list_handler: MirrorListHandler,
 		mirror_config: MirrorConfiguration,
 		on_target: bool = False,
 	) -> None:
@@ -558,7 +560,7 @@ class Installer:
 			with open(pacman_config, 'a') as fp:
 				fp.write(repositories_config)
 
-		regions_config = mirror_config.regions_config(speed_sort=True)
+		regions_config = mirror_config.regions_config(mirror_list_handler, speed_sort=True)
 		if regions_config:
 			debug(f'Mirrorlist:\n{regions_config}')
 			mirrorlist_config.write_text(regions_config)

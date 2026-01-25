@@ -12,6 +12,7 @@ from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
+from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import (
 	DiskLayoutType,
@@ -24,7 +25,7 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
 
-def ask_user_questions() -> None:
+def ask_user_questions(mirror_list_handler: MirrorListHandler) -> None:
 	"""
 	First, we'll ask the user for a bunch of user input.
 	Not until we're satisfied with what we want to install
@@ -38,7 +39,11 @@ def ask_user_questions() -> None:
 		text = tr('New version available') + f': {upgrade}'
 		title_text += f' ({text})'
 
-	global_menu = GlobalMenu(arch_config_handler.config, title=title_text)
+	global_menu = GlobalMenu(
+		arch_config_handler.config,
+		mirror_list_handler,
+		title=title_text,
+	)
 
 	if not arch_config_handler.args.advanced:
 		global_menu.set_enabled('parallel_downloads', False)
@@ -46,7 +51,10 @@ def ask_user_questions() -> None:
 	global_menu.run()
 
 
-def perform_installation(mountpoint: Path) -> None:
+def perform_installation(
+	mountpoint: Path,
+	mirror_list_handler: MirrorListHandler,
+) -> None:
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
@@ -84,7 +92,7 @@ def perform_installation(mountpoint: Path) -> None:
 				installation.generate_key_files()
 
 		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_config, on_target=False)
+			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=False)
 
 		installation.minimal_installation(
 			optional_repositories=optional_repositories,
@@ -94,7 +102,7 @@ def perform_installation(mountpoint: Path) -> None:
 		)
 
 		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_config, on_target=True)
+			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=True)
 
 		if config.swap and config.swap.enabled:
 			installation.setup_swap('zram', algo=config.swap.algorithm)
@@ -183,8 +191,13 @@ def perform_installation(mountpoint: Path) -> None:
 
 
 def guided() -> None:
+	mirror_list_handler = MirrorListHandler(
+		offline=arch_config_handler.args.offline,
+		verbose=arch_config_handler.args.verbose,
+	)
+
 	if not arch_config_handler.args.silent:
-		ask_user_questions()
+		ask_user_questions(mirror_list_handler)
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
@@ -206,7 +219,7 @@ def guided() -> None:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
-	perform_installation(arch_config_handler.args.mountpoint)
+	perform_installation(arch_config_handler.args.mountpoint, mirror_list_handler)
 
 
 guided()
