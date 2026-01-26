@@ -40,6 +40,9 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			'',
 		)
 
+	def show(self) -> list[CustomRepository] | None:
+		return super().run()
+
 	@override
 	def selected_action_display(self, selection: CustomRepository) -> str:
 		return selection.name
@@ -157,6 +160,9 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 			self._actions[1:],
 			'',
 		)
+
+	def show(self) -> list[CustomServer] | None:
+		return super().run()
 
 	@override
 	def selected_action_display(self, selection: CustomServer) -> str:
@@ -332,12 +338,20 @@ def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
 
 
 def add_custom_mirror_servers(preset: list[CustomServer] = []) -> list[CustomServer]:
-	custom_mirrors = CustomMirrorServersList(preset).run()
+	custom_mirrors = CustomMirrorServersList(preset).show()
+
+	if not custom_mirrors:
+		return preset
+
 	return custom_mirrors
 
 
 def select_custom_mirror(preset: list[CustomRepository] = []) -> list[CustomRepository]:
-	custom_mirrors = CustomMirrorRepositoriesList(preset).run()
+	custom_mirrors = CustomMirrorRepositoriesList(preset).show()
+
+	if not custom_mirrors:
+		return preset
+
 	return custom_mirrors
 
 
