@@ -27,7 +27,7 @@ Alternative ways to install are `git clone` the repository (and is better since 
 
 ## Upgrade `archinstall` on live Arch ISO image
 
-Upgrading archinstall on the ISO needs to be donw via a full system upgrade using 
+Upgrading archinstall on the ISO needs to be done via a full system upgrade using 
 
 ```shell
 pacman -Syu
