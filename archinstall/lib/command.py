@@ -1,17 +1,17 @@
 import os
 import shlex
+import stat
+import subprocess
 import sys
 import time
 from collections.abc import Iterator
 from select import EPOLLHUP, EPOLLIN, epoll
 from types import TracebackType
 from typing import Any, Self, override
-import stat
-import subprocess
 
 from archinstall.lib.exceptions import SysCallError
-from archinstall.lib.general import locate_binary, clear_vt100_escape_codes
-from archinstall.lib.output import debug, error
+from archinstall.lib.general import clear_vt100_escape_codes, locate_binary
+from archinstall.lib.output import debug, error, logger
 
 
 class SysCommandWorker:
@@ -26,7 +26,7 @@ class SysCommandWorker:
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
 
-		if cmd and not cmd[0].startswith(('/', './')):	# Path() does not work well
+		if cmd and not cmd[0].startswith(('/', './')):  # Path() does not work well
 			cmd[0] = locate_binary(cmd[0])
 
 		self.cmd = cmd
@@ -122,7 +122,7 @@ class SysCommandWorker:
 		return False
 
 	def write(self, data: bytes, line_ending: bool = True) -> int:
-		assert isinstance(data, bytes)	# TODO: Maybe we can support str as well and encode it
+		assert isinstance(data, bytes)  # TODO: Maybe we can support str as well and encode it
 
 		self.make_sure_we_are_executing()
 
@@ -375,5 +375,3 @@ def _append_log(file: str, content: str) -> None:
 	except (PermissionError, FileNotFoundError):
 		# If the file does not exist, ignore the error
 		pass
-
-
