@@ -126,6 +126,3 @@ class AuthenticationHandler:
 			existing_keys = all_keys
 
 		u2f_auth_file.write_text(existing_keys)
-
-
-auth_handler = AuthenticationHandler()
