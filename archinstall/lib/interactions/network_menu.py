@@ -26,6 +26,9 @@ class ManualNetworkConfig(ListManager[Nic]):
 			prompt,
 		)
 
+	def show(self) -> list[Nic] | None:
+		return super().run()
+
 	@override
 	def selected_action_display(self, selection: Nic) -> str:
 		return selection.iface if selection.iface else ''
@@ -198,7 +201,7 @@ def ask_to_configure_network(preset: NetworkConfiguration | None) -> NetworkConf
 					return NetworkConfiguration(NicType.NM_IWD)
 				case NicType.MANUAL:
 					preset_nics = preset.nics if preset else []
-					nics = ManualNetworkConfig(tr('Configure interfaces'), preset_nics).run()
+					nics = ManualNetworkConfig(tr('Configure interfaces'), preset_nics).show()
 
 					if nics:
 						return NetworkConfiguration(NicType.MANUAL, nics)

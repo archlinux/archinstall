@@ -25,7 +25,7 @@ from .interactions.network_menu import ask_to_configure_network
 from .interactions.system_conf import ask_for_swap, select_kernel
 from .locale.locale_menu import LocaleMenu
 from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
-from .mirrors import MirrorMenu
+from .mirrors import MirrorListHandler, MirrorMenu
 from .models.bootloader import Bootloader, BootloaderConfiguration
 from .models.locale import LocaleConfiguration
 from .models.mirrors import MirrorConfiguration
@@ -38,8 +38,14 @@ from .translationhandler import Language, tr, translation_handler
 
 
 class GlobalMenu(AbstractMenu[None]):
-	def __init__(self, arch_config: ArchConfig, title: str | None = None) -> None:
+	def __init__(
+		self,
+		arch_config: ArchConfig,
+		mirror_list_handler: MirrorListHandler | None = None,
+		title: str | None = None,
+	) -> None:
 		self._arch_config = arch_config
+		self._mirror_list_handler = mirror_list_handler
 		menu_options = self._get_menu_options()
 
 		self._item_group = MenuItemGroup(
@@ -550,7 +556,12 @@ class GlobalMenu(AbstractMenu[None]):
 		return packages
 
 	def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
-		mirror_configuration = MirrorMenu(preset=preset).run()
+		if self._mirror_list_handler is not None:
+			mirror_list_handler = self._mirror_list_handler
+		else:
+			mirror_list_handler = MirrorListHandler()
+
+		mirror_configuration = MirrorMenu(mirror_list_handler, preset=preset).run()
 
 		if mirror_configuration and mirror_configuration.optional_repositories:
 			# reset the package list cache in case the repository selection has changed
