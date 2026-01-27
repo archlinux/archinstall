@@ -4,7 +4,7 @@ from pathlib import Path
 
 from archinstall.lib.applications.application_handler import application_handler
 from archinstall.lib.args import arch_config_handler
-from archinstall.lib.authentication.authentication_handler import auth_handler
+from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
@@ -54,6 +54,7 @@ def ask_user_questions(mirror_list_handler: MirrorListHandler) -> None:
 def perform_installation(
 	mountpoint: Path,
 	mirror_list_handler: MirrorListHandler,
+	auth_handler: AuthenticationHandler,
 ) -> None:
 	"""
 	Performs the installation steps on a block device.
@@ -219,7 +220,11 @@ def guided() -> None:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
-	perform_installation(arch_config_handler.args.mountpoint, mirror_list_handler)
+	perform_installation(
+		arch_config_handler.args.mountpoint,
+		mirror_list_handler,
+		AuthenticationHandler(),
+	)
 
 
 guided()
