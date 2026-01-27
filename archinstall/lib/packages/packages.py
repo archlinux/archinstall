@@ -12,24 +12,6 @@ from ..output import debug
 from ..pacman.pacman import Pacman
 
 
-# TODO: This shouldn't be living in here but there are too many
-# circular dependecies so they will need to be cleanup up first
-@lru_cache(maxsize=128)
-def check_version_upgrade() -> str | None:
-	debug('Checking version')
-	upgrade = None
-
-	upgrade = check_package_upgrade('archinstall')
-
-	if upgrade is None:
-		debug('No archinstall upgrades found')
-		return None
-
-	debug(f'Archinstall latest: {upgrade}')
-
-	return upgrade
-
-
 def installed_package(package: str) -> LocalPackage | None:
 	try:
 		package_info = []

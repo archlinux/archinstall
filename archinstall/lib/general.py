@@ -11,11 +11,14 @@ import time
 from collections.abc import Iterator
 from datetime import date, datetime
 from enum import Enum
+from functools import lru_cache
 from pathlib import Path
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
 from types import TracebackType
 from typing import Any, Self, override
+
+from archinstall.lib.packages.packages import check_package_upgrade
 
 from .exceptions import RequirementError, SysCallError
 from .output import debug, error, logger
@@ -23,6 +26,22 @@ from .output import debug, error, logger
 # https://stackoverflow.com/a/43627833/929999
 _VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
 _VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
+
+
+@lru_cache(maxsize=128)
+def check_version_upgrade() -> str | None:
+	debug('Checking version')
+	upgrade = None
+
+	upgrade = check_package_upgrade('archinstall')
+
+	if upgrade is None:
+		debug('No archinstall upgrades found')
+		return None
+
+	debug(f'Archinstall latest: {upgrade}')
+
+	return upgrade
 
 
 def running_from_host() -> bool:

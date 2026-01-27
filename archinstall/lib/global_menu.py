@@ -5,6 +5,7 @@ from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, PartitionModification
+from archinstall.lib.network.network_menu import ask_to_configure_network
 from archinstall.lib.packages.packages import ask_additional_packages_to_install, list_available_packages
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
@@ -20,7 +21,6 @@ from .interactions.general_conf import (
 	ask_hostname,
 	ask_ntp,
 )
-from .interactions.network_menu import ask_to_configure_network
 from .interactions.system_conf import ask_for_swap, select_kernel
 from .locale.locale_menu import LocaleMenu
 from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
