@@ -7,6 +7,7 @@ from archinstall.lib.models.application import (
 	ApplicationConfiguration,
 	Audio,
 	AudioConfiguration,
+	CameraConfiguration,
 	BluetoothConfiguration,
 	Firewall,
 	FirewallConfiguration,
@@ -77,6 +78,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				preview_action=self._prev_firewall,
 				key='firewall_config',
 			),
+			MenuItem(
+				text=tr('Camera'),
+				action=select_camera,
+				preview_action=self._prev_camera,
+				key='camera_config',
+			),
 		]
 
 	def _prev_power_management(self, item: MenuItem) -> str | None:
@@ -113,6 +120,15 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		if item.value is not None:
 			config: FirewallConfiguration = item.value
 			return f'{tr("Firewall")}: {config.firewall.value}'
+		return None
+
+	def _prev_camera(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			camera_config: CameraConfiguration = item.value
+
+			output = f'{tr("Camera")}: '
+			output += tr('Enabled') if camera_config.enabled else tr('Disabled')
+			return output
 		return None
 
 
@@ -217,3 +233,30 @@ def select_firewall(preset: FirewallConfiguration | None = None) -> FirewallConf
 			return FirewallConfiguration(firewall=result.get_value())
 		case ResultType.Reset:
 			return None
+
+def select_camera(preset: CameraConfiguration | None) -> CameraConfiguration | None:
+	group = MenuItemGroup.yes_no()
+	group.focus_item = MenuItem.no()
+
+	if preset is not None:
+		group.set_selected_by_value(preset.enabled)
+
+	header = tr('Would you like to install libcamera?') + '\n'
+
+	result = SelectMenu[bool](
+		group,
+		header=header,
+		alignment=Alignment.CENTER,
+		columns=2,
+		orientation=Orientation.HORIZONTAL,
+		allow_skip=True,
+	).run()
+
+	match result.type_:
+		case ResultType.Selection:
+			enabled = result.item() == MenuItem.yes()
+			return CameraConfiguration(enabled)
+		case ResultType.Skip:
+			return preset
+		case _:
+			raise ValueError('Unhandled result type')

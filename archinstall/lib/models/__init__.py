@@ -1,4 +1,4 @@
-from .application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration, PrintServiceConfiguration
+from .application import ApplicationConfiguration, Audio, AudioConfiguration, BluetoothConfiguration, CameraConfiguration, PrintServiceConfiguration
 from .bootloader import Bootloader
 from .device import (
 	BDevice,
@@ -41,6 +41,7 @@ __all__ = [
 	'BDevice',
 	'BluetoothConfiguration',
 	'Bootloader',
+	'CameraConfiguration',
 	'CustomRepository',
 	'DeviceGeometry',
 	'DeviceModification',

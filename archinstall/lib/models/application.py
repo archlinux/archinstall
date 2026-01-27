@@ -38,6 +38,8 @@ class Firewall(StrEnum):
 class FirewallConfigSerialization(TypedDict):
 	firewall: str
 
+class CameraConfigSerialization(TypedDict):
+	enabled: bool
 
 class ZramAlgorithm(StrEnum):
 	ZSTD = 'zstd'
@@ -53,7 +55,7 @@ class ApplicationSerialization(TypedDict):
 	power_management_config: NotRequired[PowerManagementConfigSerialization]
 	print_service_config: NotRequired[PrintServiceConfigSerialization]
 	firewall_config: NotRequired[FirewallConfigSerialization]
-
+	camera_config: NotRequired[CameraConfigSerialization]
 
 @dataclass
 class AudioConfiguration:
@@ -141,6 +143,16 @@ class ZramConfiguration:
 		algo = arg.get('algorithm', arg.get('algo', ZramAlgorithm.ZSTD.value))
 		return cls(enabled=enabled, algorithm=ZramAlgorithm(algo))
 
+@dataclass
+class CameraConfiguration:
+	enabled: bool
+
+	def json(self) -> CameraConfigSerialization:
+		return {'enabled': self.enabled}
+
+	@classmethod
+	def parse_arg(cls, arg: CameraConfigSerialization) -> Self:
+		return cls(arg['enabled'])
 
 @dataclass
 class ApplicationConfiguration:
@@ -149,6 +161,7 @@ class ApplicationConfiguration:
 	power_management_config: PowerManagementConfiguration | None = None
 	print_service_config: PrintServiceConfiguration | None = None
 	firewall_config: FirewallConfiguration | None = None
+	camera_config: CameraConfiguration | None = None
 
 	@classmethod
 	def parse_arg(
@@ -177,6 +190,10 @@ class ApplicationConfiguration:
 		if args and (firewall_config := args.get('firewall_config')) is not None:
 			app_config.firewall_config = FirewallConfiguration.parse_arg(firewall_config)
 
+		if args and (camera_config := args.get('camera_config')) is not None:
+			app_config.camera_config = CameraConfiguration.parse_arg(camera_config)
+
+
 		return app_config
 
 	def json(self) -> ApplicationSerialization:
@@ -196,5 +213,8 @@ class ApplicationConfiguration:
 
 		if self.firewall_config:
 			config['firewall_config'] = self.firewall_config.json()
+
+		if self.camera_config:
+			config['camera_config'] = self.camera_config.json()
 
 		return config
