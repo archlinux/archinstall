@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import assert_never
 
+from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import SysCallError
-from archinstall.lib.general import SysCommand
 from archinstall.lib.models.network import WifiConfiguredNetwork, WifiNetwork
 from archinstall.lib.network.wpa_supplicant import WpaSupplicantConfig
 from archinstall.lib.output import debug

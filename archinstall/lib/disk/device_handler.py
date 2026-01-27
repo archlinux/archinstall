@@ -8,8 +8,8 @@ from typing import Literal, overload
 
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
+from ..command import SysCommand, SysCommandWorker
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
-from ..general import SysCommand, SysCommandWorker
 from ..luks import Luks2
 from ..models.device import (
 	DEFAULT_ITER_TIME,
@@ -850,8 +850,8 @@ class DeviceHandler:
 	def _wipe(self, dev_path: Path) -> None:
 		"""
 		Wipe a device (partition or otherwise) of meta-data, be it file system, LVM, etc.
-		@param dev_path:	Device path of the partition to be wiped.
-		@type dev_path:		str
+		@param dev_path:    Device path of the partition to be wiped.
+		@type dev_path:     str
 		"""
 		with open(dev_path, 'wb') as p:
 			p.write(bytearray(1024))

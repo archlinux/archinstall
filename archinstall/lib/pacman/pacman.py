@@ -5,8 +5,8 @@ from pathlib import Path
 
 from archinstall.lib.translationhandler import tr
 
+from ..command import SysCommand
 from ..exceptions import RequirementError
-from ..general import SysCommand
 from ..output import error, info, warn
 from ..plugins import plugins
 
