@@ -14,15 +14,12 @@ from .general_conf import (
 	ask_ntp,
 	select_archinstall_language,
 )
-from .manage_users_conf import UserList, ask_for_additional_users
 from .system_conf import ask_for_swap, select_driver, select_kernel
 
 __all__ = [
-	'UserList',
 	'add_number_of_parallel_downloads',
 	'ask_additional_packages_to_install',
 	'ask_for_a_timezone',
-	'ask_for_additional_users',
 	'ask_for_swap',
 	'ask_hostname',
 	'ask_ntp',

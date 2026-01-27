@@ -1,13 +1,12 @@
-import sys
 from pathlib import Path
 
-from archinstall import debug, error
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
+from archinstall.lib.output import debug, error
 
 
 def ask_user_questions() -> None:
@@ -64,7 +63,7 @@ def _only_hd() -> None:
 	config.save()
 
 	if arch_config_handler.args.dry_run:
-		sys.exit(0)
+		return
 
 	if not arch_config_handler.args.silent:
 		aborted = False

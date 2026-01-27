@@ -29,6 +29,9 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 			prompt,
 		)
 
+	def show(self) -> list[SubvolumeModification] | None:
+		return super().run()
+
 	@override
 	def selected_action_display(self, selection: SubvolumeModification) -> str:
 		return str(selection.name)
