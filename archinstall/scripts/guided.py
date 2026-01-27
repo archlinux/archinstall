@@ -2,7 +2,7 @@ import os
 import time
 from pathlib import Path
 
-from archinstall.lib.applications.application_handler import application_handler
+from archinstall.lib.applications.application_handler import ApplicationHandler
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.configuration import ConfigurationOutput
@@ -55,6 +55,7 @@ def perform_installation(
 	mountpoint: Path,
 	mirror_list_handler: MirrorListHandler,
 	auth_handler: AuthenticationHandler,
+	application_handler: ApplicationHandler,
 ) -> None:
 	"""
 	Performs the installation steps on a block device.
@@ -224,6 +225,7 @@ def guided() -> None:
 		arch_config_handler.args.mountpoint,
 		mirror_list_handler,
 		AuthenticationHandler(),
+		ApplicationHandler(),
 	)
 
 
