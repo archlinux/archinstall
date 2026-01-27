@@ -5,7 +5,7 @@ from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, PartitionModification
-from archinstall.lib.packages import list_available_packages
+from archinstall.lib.packages.packages import ask_additional_packages_to_install, list_available_packages
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
 from .applications.application_menu import ApplicationMenu
@@ -16,7 +16,6 @@ from .configuration import save_config
 from .hardware import SysInfo
 from .interactions.general_conf import (
 	add_number_of_parallel_downloads,
-	ask_additional_packages_to_install,
 	ask_for_a_timezone,
 	ask_hostname,
 	ask_ntp,
