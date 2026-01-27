@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import http.client
 import urllib.error
@@ -5,13 +7,16 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Self, TypedDict, override
+from typing import TYPE_CHECKING, Any, Self, TypedDict, override
 
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 
 from ..models.packages import Repository
 from ..networking import DownloadTimer, ping
 from ..output import debug
+
+if TYPE_CHECKING:
+	from ..mirrors import MirrorListHandler
 
 
 class MirrorStatusEntryV3(BaseModel):
@@ -104,13 +109,11 @@ class MirrorStatusEntryV3(BaseModel):
 		return value
 
 	@model_validator(mode='after')
-	def debug_output(self) -> Self:
-		from ..args import arch_config_handler
-
+	def debug_output(self, info: ValidationInfo) -> Self:
 		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(port[0]) if port and len(port) >= 1 else None
 
-		if arch_config_handler.args.verbose:
+		if (ctx := info.context) and ctx.get('verbose'):
 			debug(f'Loaded mirror {self._hostname}' + (f' with current score of {self.score}' if self.score else ''))
 		return self
 
@@ -271,9 +274,11 @@ class MirrorConfiguration:
 
 		return config.strip()
 
-	def regions_config(self, speed_sort: bool = True) -> str:
-		from ..mirrors import mirror_list_handler
-
+	def regions_config(
+		self,
+		mirror_list_handler: MirrorListHandler,
+		speed_sort: bool = True,
+	) -> str:
 		config = ''
 
 		for mirror_region in self.mirror_regions:
