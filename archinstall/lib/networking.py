@@ -14,7 +14,7 @@ from urllib.request import urlopen
 
 from .exceptions import DownloadTimeout, SysCallError
 from .output import debug, error, info
-from .pacman import Pacman
+from .pacman.pacman import Pacman
 
 
 class DownloadTimer:

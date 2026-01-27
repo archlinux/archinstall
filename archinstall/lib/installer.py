@@ -49,8 +49,8 @@ from .models.mirrors import MirrorConfiguration
 from .models.network import Nic
 from .models.users import User
 from .output import debug, error, info, log, logger, warn
-from .pacman import Pacman
 from .pacman.config import PacmanConfig
+from .pacman.pacman import Pacman
 from .plugins import plugins
 
 # Any package that the Installer() is responsible for (optional and the default ones)

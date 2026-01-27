@@ -3,7 +3,7 @@ from functools import lru_cache
 from ..exceptions import SysCallError
 from ..models.packages import AvailablePackage, LocalPackage, Repository
 from ..output import debug
-from ..pacman import Pacman
+from ..pacman.pacman import Pacman
 
 
 # TODO: This shouldn't be living in here but there are too many

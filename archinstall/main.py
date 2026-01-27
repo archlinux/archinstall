@@ -16,7 +16,7 @@ from archinstall.lib.packages.packages import check_version_upgrade
 
 from .lib.hardware import SysInfo
 from .lib.output import debug, error, info, warn
-from .lib.pacman import Pacman
+from .lib.pacman.pacman import Pacman
 from .lib.translationhandler import tr
 
 
