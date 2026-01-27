@@ -9,7 +9,6 @@ from ..exceptions import RequirementError
 from ..general import SysCommand
 from ..output import error, info, warn
 from ..plugins import plugins
-from .config import PacmanConfig
 
 
 class Pacman:
