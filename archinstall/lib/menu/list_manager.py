@@ -30,7 +30,6 @@ class ListManager[ValueT]:
 		:param sub_menu_actions: list of actions available for a chosen entry
 		type param: list
 		"""
-		self._original_data = copy.deepcopy(entries)
 		self._data = copy.deepcopy(entries)
 
 		self._prompt = prompt
@@ -54,7 +53,7 @@ class ListManager[ValueT]:
 			return self._last_choice == self._cancel_action
 		return False
 
-	def run(self) -> list[ValueT]:
+	def run(self) -> list[ValueT] | None:
 		additional_options = self._base_actions + self._terminate_actions
 
 		while True:
@@ -94,7 +93,7 @@ class ListManager[ValueT]:
 		self._last_choice = value
 
 		if result.get_value() == self._cancel_action:
-			return self._original_data  # return the original list
+			return None
 		else:
 			return self._data
 

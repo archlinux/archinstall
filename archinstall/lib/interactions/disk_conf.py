@@ -35,7 +35,7 @@ from ..output import FormattedOutput
 from ..utils.util import prompt_dir
 
 
-def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
+def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | None:
 	def _preview_device_selection(item: MenuItem) -> str | None:
 		device: _DeviceInfo = item.value  # type: ignore[assignment]
 		dev = device_handler.get_device(device.path)
@@ -73,13 +73,11 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 		preview_header=tr('Partitions'),
 	).show()
 
-	debug(f'Result: {result}')
-
 	match result.type_:
 		case ResultType.Reset:
-			return []
+			return None
 		case ResultType.Skip:
-			return preset
+			return None
 		case ResultType.Selection:
 			selected_device_info = result.get_values()
 			selected_devices = []
@@ -88,7 +86,6 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice]:
 				if device.device_info in selected_device_info:
 					selected_devices.append(device)
 
-			debug(f'Selected devices: {selected_device_info}')
 			return selected_devices
 
 
@@ -112,15 +109,20 @@ def get_default_partition_layout(
 def _manual_partitioning(
 	preset: list[DeviceModification],
 	devices: list[BDevice],
-) -> list[DeviceModification]:
-	modifications = []
+) -> list[DeviceModification] | None:
+	modifications: list[DeviceModification] = []
+
 	for device in devices:
 		mod = next(filter(lambda x: x.device == device, preset), None)
 		if not mod:
 			mod = DeviceModification(device, wipe=False)
 
-		if device_mod := manual_partitioning(mod, device_handler.partition_table):
-			modifications.append(device_mod)
+		device_mod = manual_partitioning(mod, device_handler.partition_table)
+
+		if not device_mod:
+			return None
+
+		modifications.append(device_mod)
 
 	return modifications
 
@@ -176,10 +178,7 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 			preset_devices = [mod.device for mod in preset.device_modifications] if preset else []
 			devices = select_devices(preset_devices)
 
-			if not devices:
-				return None
-
-			if devices == preset_devices:
+			if devices is None:
 				return preset
 
 			if result.get_value() == default_layout:
@@ -191,13 +190,15 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 					)
 			elif result.get_value() == manual_mode:
 				preset_mods = preset.device_modifications if preset else []
-				modifications = _manual_partitioning(preset_mods, devices)
+				partitions = _manual_partitioning(preset_mods, devices)
 
-				if modifications:
-					return DiskLayoutConfiguration(
-						config_type=DiskLayoutType.Manual,
-						device_modifications=modifications,
-					)
+				if not partitions:
+					return preset
+
+				return DiskLayoutConfiguration(
+					config_type=DiskLayoutType.Manual,
+					device_modifications=partitions,
+				)
 
 	return None
 

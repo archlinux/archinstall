@@ -27,6 +27,12 @@ for plugin_definition in metadata.entry_points().select(group='archinstall.plugi
 		)
 
 
+# @archinstall.plugin decorator hook to programmatically add
+# plugins in runtime. Useful in profiles_bck and other things.
+def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
+	plugins[f.__name__] = f
+
+
 def _localize_path(path: Path) -> Path:
 	"""
 	Support structures for load_plugin()

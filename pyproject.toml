@@ -35,14 +35,14 @@ dev = [
     "mypy==1.19.1",
     "flake8==7.3.0",
     "pre-commit==4.5.1",
-    "ruff==0.14.13",
+    "ruff==0.14.14",
     "pylint==4.0.4",
     "pytest==9.0.2",
 ]
 doc = ["sphinx"]
 
 [project.scripts]
-archinstall = "archinstall:run_as_a_module"
+archinstall = "archinstall.main:main"
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "USAGE.rst"]}

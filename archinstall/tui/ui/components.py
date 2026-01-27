@@ -1205,7 +1205,6 @@ class TApp:
 	def exit(self, result: Result[ValueT]) -> None:
 		assert TApp.app
 		TApp.app.exit(result)
-		return
 
 
 tui = TApp()

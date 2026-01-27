@@ -275,6 +275,3 @@ class WifiHandler:
 		except SysCallError as err:
 			debug('Unable to retrieve wifi results')
 			raise err
-
-
-wifi_handler = WifiHandler()
