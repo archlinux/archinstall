@@ -32,7 +32,7 @@ from archinstall.lib.models.device import (
 	Unit,
 )
 from archinstall.lib.models.packages import Repository
-from archinstall.lib.packages import installed_package
+from archinstall.lib.packages.packages import installed_package
 from archinstall.lib.translationhandler import tr
 
 from .args import arch_config_handler

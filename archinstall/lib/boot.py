@@ -5,9 +5,8 @@ from collections.abc import Iterator
 from types import TracebackType
 from typing import TYPE_CHECKING, ClassVar, Self
 
-from .command import SysCommand, SysCommandWorker
+from .command import SysCommand, SysCommandWorker, locate_binary
 from .exceptions import SysCallError
-from .general import locate_binary
 from .output import error
 
 if TYPE_CHECKING:

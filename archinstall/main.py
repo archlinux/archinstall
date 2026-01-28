@@ -10,10 +10,9 @@ from pathlib import Path
 
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
-from archinstall.lib.general import running_from_host
+from archinstall.lib.general import check_version_upgrade, running_from_host
 from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
-from archinstall.lib.packages.packages import check_version_upgrade
 
 from .lib.hardware import SysInfo
 from .lib.output import debug, error, info, warn

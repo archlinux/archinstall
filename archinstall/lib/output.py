@@ -8,7 +8,7 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from .utils.unicode import unicode_ljust, unicode_rjust
+from .utils.encoding import unicode_ljust, unicode_rjust
 
 if TYPE_CHECKING:
 	from _typeshed import DataclassInstance
