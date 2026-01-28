@@ -2,6 +2,9 @@ import json
 import readline
 import stat
 from pathlib import Path
+from typing import Any
+
+from pydantic import TypeAdapter
 
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.translationhandler import tr
@@ -10,7 +13,6 @@ from archinstall.tui.ui.result import ResultType
 
 from .args import ArchConfig
 from .crypt import encrypt
-from .general import JSON, UNSAFE_JSON
 from .output import debug, logger, warn
 from .utils.util import get_password, prompt_dir
 
@@ -40,12 +42,18 @@ class ConfigurationOutput:
 		return self._user_creds_file
 
 	def user_config_to_json(self) -> str:
-		out = self._config.safe_json()
-		return json.dumps(out, indent=4, sort_keys=True, cls=JSON)
+		config = self._config.safe_config()
+
+		adapter = TypeAdapter(dict[str, Any])
+		python_dict = adapter.dump_python(config)
+		return json.dumps(python_dict, indent=4, sort_keys=True)
 
 	def user_credentials_to_json(self) -> str:
-		out = self._config.unsafe_json()
-		return json.dumps(out, indent=4, sort_keys=True, cls=UNSAFE_JSON)
+		config = self._config.unsafe_config()
+
+		adapter = TypeAdapter(dict[str, Any])
+		python_dict = adapter.dump_python(config)
+		return json.dumps(python_dict, indent=4, sort_keys=True)
 
 	def write_debug(self) -> None:
 		debug(' -- Chosen configuration --')
