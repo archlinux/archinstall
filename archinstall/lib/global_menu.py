@@ -555,12 +555,10 @@ class GlobalMenu(AbstractMenu[None]):
 		return packages
 
 	def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
-		if self._mirror_list_handler is not None:
-			mirror_list_handler = self._mirror_list_handler
-		else:
-			mirror_list_handler = MirrorListHandler()
+		if self._mirror_list_handler is None:
+			self._mirror_list_handler = MirrorListHandler()
 
-		mirror_configuration = MirrorMenu(mirror_list_handler, preset=preset).run()
+		mirror_configuration = MirrorMenu(self._mirror_list_handler, preset=preset).run()
 
 		if mirror_configuration and mirror_configuration.optional_repositories:
 			# reset the package list cache in case the repository selection has changed
