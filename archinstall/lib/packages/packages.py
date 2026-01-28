@@ -1,8 +1,7 @@
 from functools import lru_cache
 
 from archinstall.lib.menu.helpers import Loading, Notify, Selection
-from archinstall.lib.models import LocalPackage
-from archinstall.lib.models.packages import AvailablePackage, PackageGroup, Repository
+from archinstall.lib.models.packages import AvailablePackage, LocalPackage, PackageGroup, Repository
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
