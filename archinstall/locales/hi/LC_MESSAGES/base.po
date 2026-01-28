@@ -1675,19 +1675,19 @@ msgid "Choose an option to give niri access to your hardware"
 msgstr "niri को अपने हार्डवेयर तक पहुंच देने के लिए एक विकल्प चुनें"
 
 msgid "Mark/Unmark as ESP"
-msgstr ""
+msgstr "ESP के रूप में चिह्नित/अचिह्नित करें"
 
 msgid "Package group:"
-msgstr ""
+msgstr "पैकेज समूह:"
 
 msgid "Exit archinstall"
 msgstr "archinstall से बाहर निकलें"
 
 msgid "Reboot system"
-msgstr ""
+msgstr "सिस्टम रीबूट करें"
 
 msgid "chroot into installation for post-installation configurations"
-msgstr ""
+msgstr "स्थापना के बाद के कॉन्फ़िगरेशन के लिए इंस्टॉलेशन में chroot करें"
 
 msgid "Installation completed"
 msgstr "स्थापना पूरी हुई"
@@ -1697,182 +1697,183 @@ msgstr "अब आप क्या करना चाहेंगे?"
 
 #, python-brace-format
 msgid "Select which mode to configure for \"{}\""
-msgstr ""
+msgstr "\"{}\" के लिए कौन सा मोड कॉन्फ़िगर करना है, चुनें"
 
 msgid "Incorrect credentials file decryption password"
-msgstr ""
+msgstr "गलत क्रेडेंशियल्स फ़ाइल डिक्रिप्शन पासवर्ड"
 
 msgid "Incorrect password"
 msgstr "गलत पासवर्ड"
 
 msgid "Credentials file decryption password"
-msgstr ""
+msgstr "क्रेडेंशियल्स फ़ाइल डिक्रिप्शन पासवर्ड"
 
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr ""
+msgstr "क्या आप user_credentials.json फ़ाइल को एन्क्रिप्ट करना चाहते हैं?"
 
 msgid "Credentials file encryption password"
-msgstr ""
+msgstr "क्रेडेंशियल्स फ़ाइल एन्क्रिप्शन पासवर्ड"
 
 #, python-brace-format
 msgid "Repositories: {}"
-msgstr ""
+msgstr "रिपॉजिटरी: {}"
 
 msgid "New version available"
-msgstr ""
+msgstr "नया संस्करण उपलब्ध है"
 
 msgid "Passwordless login"
 msgstr "बिना पासवर्ड के लॉगिन करें"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "सेकंड फैक्टर लॉगिन"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "ब्लूटूथ"
 
 msgid "Would you like to configure Bluetooth?"
 msgstr "क्या आप ब्लूटूथ कॉन्फ़िगर करना चाहेंगे?"
 
 msgid "Print service"
-msgstr ""
+msgstr "प्रिंट सेवा"
 
 msgid "Would you like to configure the print service?"
 msgstr "क्या आप print सेवा को कॉन्फ़िगर करना चाहेंगे?"
 
 msgid "Power management"
-msgstr ""
+msgstr "पावर मैनेजमेंट"
 
 msgid "Authentication"
-msgstr ""
+msgstr "प्रमाणीकरण"
 
 msgid "Applications"
-msgstr ""
+msgstr "एप्लिकेशन्स"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "U2F लॉगिन विधि: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "बिना पासवर्ड के sudo: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Btrfs स्नैपशॉट प्रकार: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "सिस्टम सिंक किया जा रहा है..."
 
 msgid "Value cannot be empty"
-msgstr ""
+msgstr "मूल्य खाली नहीं हो सकता"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "स्नैपशॉट प्रकार"
 
 #, python-brace-format
 msgid "Snapshot type: {}"
-msgstr ""
+msgstr "स्नैपशॉट प्रकार: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "U2F लॉगिन सेटअप"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "कोई U2F डिवाइस नहीं मिला"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "U2F लॉगिन विधि"
 
 msgid "Enable passwordless sudo?"
-msgstr ""
+msgstr "क्या बिना पासवर्ड के sudo सक्षम करें?"
 
 #, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr ""
+msgstr "उपयोगकर्ता के लिए U2F डिवाइस सेटअप किया जा रहा है: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "इसे रजिस्टर करने के लिए आपको पिन दर्ज करने और फिर अपने U2F डिवाइस को टच करने की आवश्यकता हो सकती है"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "डिवाइस संशोधन शुरू हो रहा है "
 
 msgid "No network connection found"
-msgstr ""
+msgstr "कोई नेटवर्क कनेक्शन नहीं मिला"
 
 msgid "Would you like to connect to a Wifi?"
 msgstr "क्या आप wifi से कनेक्ट करना चाहेंगे?"
 
 msgid "No wifi interface found"
-msgstr ""
+msgstr "कोई वाई-फाई इंटरफ़ेस नहीं मिला"
 
 msgid "Select wifi network to connect to"
-msgstr ""
+msgstr "कनेक्ट करने के लिए वाई-फाई नेटवर्क चुनें"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "वाई-फाई नेटवर्क स्कैन किए जा रहे हैं..."
 
 msgid "No wifi networks found"
-msgstr ""
+msgstr "कोई वाई-फाई नेटवर्क नहीं मिला"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "वाई-फाई सेटअप विफल रहा"
 
 msgid "Enter wifi password"
-msgstr ""
+msgstr "वाई-फाई पासवर्ड दर्ज करें"
 
 msgid "Ok"
 msgstr "ठीक है"
 
 msgid "Removable"
-msgstr ""
+msgstr "रिमूवेबल"
 
 msgid "Install to removable location"
-msgstr ""
+msgstr "रिमूवेबल लोकेशन पर इंस्टॉल करें"
 
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
+msgstr "/EFI/BOOT/ (रिमूवेबल लोकेशन) पर इंस्टॉल होगा"
 
 msgid "Will install to standard location with NVRAM entry"
-msgstr ""
+msgstr "NVRAM एंट्री के साथ मानक स्थान पर इंस्टॉल होगा"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
+msgstr "क्या आप बूटलोडर को डिफ़ॉल्ट रिमूवेबल मीडिया सर्च लोकेशन पर इंस्टॉल करना चाहेंगे?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
+msgstr "यह बूटलोडर को /EFI/BOOT/BOOTX64.EFI (या समान) पर इंस्टॉल करता है जो इसके लिए उपयोगी है:"
 
 msgid "USB drives or other portable external media."
-msgstr ""
+msgstr "USB ड्राइव या अन्य पोर्टेबल बाहरी मीडिया।"
 
 msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
+msgstr "ऐसे सिस्टम जहाँ आप चाहते हैं कि डिस्क किसी भी कंप्यूटर पर बूट करने योग्य हो।"
 
 msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
+msgstr "फ़र्मवेयर जो NVRAM बूट प्रविष्टियों का ठीक से समर्थन नहीं करता है।"
 
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr ""
+msgstr "/EFI/BOOT/ (रिमूवेबल लोकेशन, सुरक्षित डिफ़ॉल्ट) पर इंस्टॉल होगा"
 
 msgid "Will install to custom location with NVRAM entry"
-msgstr ""
+msgstr "NVRAM एंट्री के साथ कस्टम स्थान पर इंस्टॉल होगा"
 
 msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr ""
+msgstr "फ़र्मवेयर जो अधिकांश MSI मदरबोर्ड की तरह NVRAM बूट प्रविष्टियों का ठीक से समर्थन नहीं करता है,"
 
 msgid "most Apple Macs, many laptops..."
-msgstr ""
+msgstr "अधिकांश Apple Mac, कई लैपटॉप..."
 
 msgid "Language"
 msgstr "एक भाषा चुनें"
 
 msgid "Compression algorithm"
-msgstr ""
+msgstr "संपीड़न एल्गोरिथ्म"
 
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr ""
+msgstr "केवल base, sudo, linux, linux-firmware, efibootmgr और वैकल्पिक प्रोफ़ाइल पैकेज ही इंस्टॉल किए गए हैं।"
 
 msgid "Select zram compression algorithm:"
 msgstr "Zram संपीड़न एल्गोरिथ्म का चयन करें:"
 
 msgid "Use Network Manager (default backend)"
-msgstr ""
+msgstr "नेटवर्क मैनेजर का उपयोग करें (डिफ़ॉल्ट बैकएंड)"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr ""
+msgstr "नेटवर्क मैनेजर का उपयोग करें (iwd बैकएंड)"
+
