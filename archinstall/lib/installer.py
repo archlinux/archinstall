@@ -37,8 +37,8 @@ from archinstall.lib.translationhandler import tr
 
 from .args import arch_config_handler
 from .boot import Boot
+from .command import SysCommand, run
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
-from .general import SysCommand, run
 from .hardware import SysInfo
 from .locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2

@@ -7,8 +7,9 @@ from types import TracebackType
 from archinstall.lib.disk.utils import get_lsblk_info, umount
 from archinstall.lib.models.device import DEFAULT_ITER_TIME
 
+from .command import SysCommand, SysCommandWorker, run
 from .exceptions import DiskError, SysCallError
-from .general import SysCommand, SysCommandWorker, generate_password, run
+from .general import generate_password
 from .models.users import Password
 from .output import debug, info
 

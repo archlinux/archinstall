@@ -6,6 +6,7 @@ import sys
 import textwrap
 import time
 import traceback
+from pathlib import Path
 
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
@@ -62,6 +63,16 @@ def _fetch_arch_db() -> bool:
 	return True
 
 
+def _list_scripts() -> str:
+	lines = ['The following are viable --script options:']
+
+	for file in (Path(__file__).parent / 'scripts').glob('*.py'):
+		if file.stem != '__init__':
+			lines.append(f'    {file.stem}')
+
+	return '\n'.join(lines)
+
+
 def run() -> int:
 	"""
 	This can either be run as the compiled and installed application: python setup.py install
@@ -70,6 +81,12 @@ def run() -> int:
 	"""
 	if '--help' in sys.argv or '-h' in sys.argv:
 		arch_config_handler.print_help()
+		return 0
+
+	script = arch_config_handler.get_script()
+
+	if script == 'list':
+		print(_list_scripts())
 		return 0
 
 	if os.getuid() != 0:
@@ -104,11 +121,10 @@ def run() -> int:
 	else:
 		debug('Running from ISO (Live Mode)...')
 
-	script = arch_config_handler.get_script()
-
 	mod_name = f'archinstall.scripts.{script}'
 	# by loading the module we'll automatically run the script
-	importlib.import_module(mod_name)
+	module = importlib.import_module(mod_name)
+	module.main()
 
 	return 0
 

@@ -1,5 +1,6 @@
+from ..command import SysCommand
 from ..exceptions import ServiceException, SysCallError
-from ..general import SysCommand, running_from_host
+from ..general import running_from_host
 from ..output import error
 
 

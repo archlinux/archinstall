@@ -4,8 +4,8 @@ from functools import cached_property
 from pathlib import Path
 from typing import Self
 
+from .command import SysCommand
 from .exceptions import SysCallError
-from .general import SysCommand
 from .networking import enrich_iface_types, list_interfaces
 from .output import debug
 from .translationhandler import tr
