@@ -190,7 +190,7 @@ def perform_installation(
 						pass
 
 
-def guided() -> None:
+def main() -> None:
 	mirror_list_handler = MirrorListHandler(
 		offline=arch_config_handler.args.offline,
 		verbose=arch_config_handler.args.verbose,
@@ -213,7 +213,7 @@ def guided() -> None:
 			aborted = True
 
 		if aborted:
-			return guided()
+			return main()
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
@@ -227,4 +227,5 @@ def guided() -> None:
 	)
 
 
-guided()
+if __name__ == '__main__':
+	main()

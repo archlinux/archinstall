@@ -58,7 +58,7 @@ def perform_installation(mountpoint: Path) -> None:
 	info(' * devel (password: devel)')
 
 
-def _minimal() -> None:
+def main() -> None:
 	disk_config = DiskLayoutConfigurationMenu(disk_layout_config=None).run()
 	arch_config_handler.config.disk_config = disk_config
 
@@ -76,7 +76,7 @@ def _minimal() -> None:
 			aborted = True
 
 		if aborted:
-			return _minimal()
+			return main()
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
@@ -85,4 +85,5 @@ def _minimal() -> None:
 	perform_installation(arch_config_handler.args.mountpoint)
 
 
-_minimal()
+if __name__ == '__main__':
+	main()

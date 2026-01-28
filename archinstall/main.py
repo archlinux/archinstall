@@ -83,7 +83,9 @@ def run() -> int:
 		arch_config_handler.print_help()
 		return 0
 
-	if arch_config_handler.get_script() == 'list':
+	script = arch_config_handler.get_script()
+
+	if script == 'list':
 		print(_list_scripts())
 		return 0
 
@@ -119,11 +121,10 @@ def run() -> int:
 	else:
 		debug('Running from ISO (Live Mode)...')
 
-	script = arch_config_handler.get_script()
-
 	mod_name = f'archinstall.scripts.{script}'
 	# by loading the module we'll automatically run the script
-	importlib.import_module(mod_name)
+	module = importlib.import_module(mod_name)
+	module.main()
 
 	return 0
 
