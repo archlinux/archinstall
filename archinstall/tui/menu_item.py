@@ -6,7 +6,7 @@ from typing import Any, ClassVar, Self, override
 
 from archinstall.lib.translationhandler import tr
 
-from ..lib.utils.unicode import unicode_ljust
+from ..lib.utils.encoding import unicode_ljust
 
 
 @dataclass

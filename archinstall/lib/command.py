@@ -6,12 +6,13 @@ import sys
 import time
 from collections.abc import Iterator
 from select import EPOLLHUP, EPOLLIN, epoll
+from shutil import which
 from types import TracebackType
 from typing import Any, Self, override
 
-from archinstall.lib.exceptions import SysCallError
-from archinstall.lib.general import clear_vt100_escape_codes, locate_binary
+from archinstall.lib.exceptions import RequirementError, SysCallError
 from archinstall.lib.output import debug, error, logger
+from archinstall.lib.utils.encoding import clear_vt100_escape_codes
 
 
 class SysCommandWorker:
@@ -343,6 +344,12 @@ def run(
 		stderr=subprocess.STDOUT,
 		check=True,
 	)
+
+
+def locate_binary(name: str) -> str:
+	if path := which(name):
+		return path
+	raise RequirementError(f'Binary {name} does not exist.')
 
 
 def _pid_exists(pid: int) -> bool:
