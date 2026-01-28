@@ -190,8 +190,12 @@ class PartitioningList(ListManager[DiskSegment]):
 	def get_part_mods(disk_segments: list[DiskSegment]) -> list[PartitionModification]:
 		return [s.segment for s in disk_segments if isinstance(s.segment, PartitionModification)]
 
-	def get_device_mod(self) -> DeviceModification:
+	def show(self) -> DeviceModification | None:
 		disk_segments = super().run()
+
+		if not disk_segments:
+			return None
+
 		partitions = self.get_part_mods(disk_segments)
 		return DeviceModification(self._device, self._wipe, partitions)
 
@@ -376,10 +380,13 @@ class PartitioningList(ListManager[DiskSegment]):
 			partition.mount_options = [o for o in partition.mount_options if o != option.value]
 
 	def _set_btrfs_subvolumes(self, partition: PartitionModification) -> None:
-		partition.btrfs_subvols = SubvolumeMenu(
+		subvols = SubvolumeMenu(
 			partition.btrfs_subvols,
 			None,
-		).run()
+		).show()
+
+		if subvols is not None:
+			partition.btrfs_subvols = subvols
 
 	def _prompt_formatting(self, partition: PartitionModification) -> None:
 		# an existing partition can toggle between Exist or Modify
@@ -569,7 +576,10 @@ def manual_partitioning(
 	partition_table: PartitionTable,
 ) -> DeviceModification | None:
 	menu_list = PartitioningList(device_mod, partition_table)
-	mod = menu_list.get_device_mod()
+	mod = menu_list.show()
+
+	if not mod:
+		return None
 
 	if menu_list.is_last_choice_cancel():
 		return device_mod

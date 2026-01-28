@@ -40,6 +40,9 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			'',
 		)
 
+	def show(self) -> list[CustomRepository] | None:
+		return super().run()
+
 	@override
 	def selected_action_display(self, selection: CustomRepository) -> str:
 		return selection.name
@@ -158,6 +161,9 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 			'',
 		)
 
+	def show(self) -> list[CustomServer] | None:
+		return super().run()
+
 	@override
 	def selected_action_display(self, selection: CustomServer) -> str:
 		return selection.url
@@ -201,189 +207,18 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 				return None
 
 
-class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
-	def __init__(
-		self,
-		preset: MirrorConfiguration | None = None,
-	):
-		if preset:
-			self._mirror_config = preset
-		else:
-			self._mirror_config = MirrorConfiguration()
-
-		menu_options = self._define_menu_options()
-		self._item_group = MenuItemGroup(menu_options, checkmarks=True)
-
-		super().__init__(
-			self._item_group,
-			config=self._mirror_config,
-			allow_reset=True,
-		)
-
-	def _define_menu_options(self) -> list[MenuItem]:
-		return [
-			MenuItem(
-				text=tr('Select regions'),
-				action=select_mirror_regions,
-				value=self._mirror_config.mirror_regions,
-				preview_action=self._prev_regions,
-				key='mirror_regions',
-			),
-			MenuItem(
-				text=tr('Add custom servers'),
-				action=add_custom_mirror_servers,
-				value=self._mirror_config.custom_servers,
-				preview_action=self._prev_custom_servers,
-				key='custom_servers',
-			),
-			MenuItem(
-				text=tr('Optional repositories'),
-				action=select_optional_repositories,
-				value=[],
-				preview_action=self._prev_additional_repos,
-				key='optional_repositories',
-			),
-			MenuItem(
-				text=tr('Add custom repository'),
-				action=select_custom_mirror,
-				value=self._mirror_config.custom_repositories,
-				preview_action=self._prev_custom_mirror,
-				key='custom_repositories',
-			),
-		]
-
-	def _prev_regions(self, item: MenuItem) -> str:
-		regions = item.get_value()
-
-		output = ''
-		for region in regions:
-			output += f'{region.name}\n'
-
-			for url in region.urls:
-				output += f' - {url}\n'
-
-			output += '\n'
-
-		return output
-
-	def _prev_additional_repos(self, item: MenuItem) -> str | None:
-		if item.value:
-			repositories: list[Repository] = item.value
-			repos = ', '.join(repo.value for repo in repositories)
-			return f'{tr("Additional repositories")}: {repos}'
-		return None
-
-	def _prev_custom_mirror(self, item: MenuItem) -> str | None:
-		if not item.value:
-			return None
-
-		custom_mirrors: list[CustomRepository] = item.value
-		output = FormattedOutput.as_table(custom_mirrors)
-		return output.strip()
-
-	def _prev_custom_servers(self, item: MenuItem) -> str | None:
-		if not item.value:
-			return None
-
-		custom_servers: list[CustomServer] = item.value
-		output = '\n'.join(server.url for server in custom_servers)
-		return output.strip()
-
-	@override
-	def run(self) -> MirrorConfiguration | None:
-		return super().run()
-
-
-def select_mirror_regions(preset: list[MirrorRegion]) -> list[MirrorRegion]:
-	Loading[None](
-		header=tr('Loading mirror regions...'),
-		data_callback=mirror_list_handler.load_mirrors,
-	).show()
-
-	available_regions = mirror_list_handler.get_mirror_regions()
-
-	if not available_regions:
-		return []
-
-	preset_regions = [region for region in available_regions if region in preset]
-
-	items = [MenuItem(region.name, value=region) for region in available_regions]
-	group = MenuItemGroup(items, sort_items=True)
-
-	group.set_selected_by_value(preset_regions)
-
-	result = Selection[MirrorRegion](
-		group,
-		header=tr('Select mirror regions to be enabled'),
-		allow_reset=True,
-		allow_skip=True,
-		multi=True,
-		enable_filter=True,
-	).show()
-
-	match result.type_:
-		case ResultType.Skip:
-			return preset_regions
-		case ResultType.Reset:
-			return []
-		case ResultType.Selection:
-			selected_mirrors = result.get_values()
-			return selected_mirrors
-
-
-def add_custom_mirror_servers(preset: list[CustomServer] = []) -> list[CustomServer]:
-	custom_mirrors = CustomMirrorServersList(preset).run()
-	return custom_mirrors
-
-
-def select_custom_mirror(preset: list[CustomRepository] = []) -> list[CustomRepository]:
-	custom_mirrors = CustomMirrorRepositoriesList(preset).run()
-	return custom_mirrors
-
-
-def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
-	"""
-	Allows the user to select additional repositories (multilib, and testing) if desired.
-
-	:return: The string as a selected repository
-	:rtype: Repository
-	"""
-
-	repositories = [
-		Repository.Multilib,
-		Repository.MultilibTesting,
-		Repository.CoreTesting,
-		Repository.ExtraTesting,
-	]
-	items = [MenuItem(r.value, value=r) for r in repositories]
-	group = MenuItemGroup(items, sort_items=False)
-	group.set_selected_by_value(preset)
-
-	result = Selection[Repository](
-		group,
-		header=tr('Select optional repositories to be enabled'),
-		allow_reset=True,
-		allow_skip=True,
-		multi=True,
-	).show()
-
-	match result.type_:
-		case ResultType.Skip:
-			return preset
-		case ResultType.Reset:
-			return []
-		case ResultType.Selection:
-			return result.get_values()
-
-
 class MirrorListHandler:
 	def __init__(
 		self,
 		local_mirrorlist: Path = Path('/etc/pacman.d/mirrorlist'),
+		offline: bool = False,
+		verbose: bool = False,
 	) -> None:
 		self._local_mirrorlist = local_mirrorlist
 		self._status_mappings: dict[str, list[MirrorStatusEntryV3]] | None = None
 		self._fetched_remote: bool = False
+		self.offline = offline
+		self.verbose = verbose
 
 	def _mappings(self) -> dict[str, list[MirrorStatusEntryV3]]:
 		if self._status_mappings is None:
@@ -404,9 +239,7 @@ class MirrorListHandler:
 		return available_mirrors
 
 	def load_mirrors(self) -> None:
-		from .args import arch_config_handler
-
-		if arch_config_handler.args.offline:
+		if self.offline:
 			self._fetched_remote = False
 			self.load_local_mirrors()
 		else:
@@ -451,7 +284,8 @@ class MirrorListHandler:
 		return region_list
 
 	def _parse_remote_mirror_list(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
-		mirror_status = MirrorStatusListV3.model_validate_json(mirrorlist)
+		context = {'verbose': self.verbose}
+		mirror_status = MirrorStatusListV3.model_validate_json(mirrorlist, context=context)
 
 		sorting_placeholder: dict[str, list[MirrorStatusEntryV3]] = {}
 
@@ -528,4 +362,190 @@ class MirrorListHandler:
 		return mirror_list
 
 
-mirror_list_handler = MirrorListHandler()
+class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
+	def __init__(
+		self,
+		mirror_list_handler: MirrorListHandler,
+		preset: MirrorConfiguration | None = None,
+	):
+		if preset:
+			self._mirror_config = preset
+		else:
+			self._mirror_config = MirrorConfiguration()
+
+		self._mirror_list_handler = mirror_list_handler
+
+		menu_options = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_options, checkmarks=True)
+
+		super().__init__(
+			self._item_group,
+			config=self._mirror_config,
+			allow_reset=True,
+		)
+
+	def _define_menu_options(self) -> list[MenuItem]:
+		return [
+			MenuItem(
+				text=tr('Select regions'),
+				action=lambda x: select_mirror_regions(self._mirror_list_handler, x),
+				value=self._mirror_config.mirror_regions,
+				preview_action=self._prev_regions,
+				key='mirror_regions',
+			),
+			MenuItem(
+				text=tr('Add custom servers'),
+				action=add_custom_mirror_servers,
+				value=self._mirror_config.custom_servers,
+				preview_action=self._prev_custom_servers,
+				key='custom_servers',
+			),
+			MenuItem(
+				text=tr('Optional repositories'),
+				action=select_optional_repositories,
+				value=[],
+				preview_action=self._prev_additional_repos,
+				key='optional_repositories',
+			),
+			MenuItem(
+				text=tr('Add custom repository'),
+				action=select_custom_mirror,
+				value=self._mirror_config.custom_repositories,
+				preview_action=self._prev_custom_mirror,
+				key='custom_repositories',
+			),
+		]
+
+	def _prev_regions(self, item: MenuItem) -> str:
+		regions = item.get_value()
+
+		output = ''
+		for region in regions:
+			output += f'{region.name}\n'
+
+			for url in region.urls:
+				output += f' - {url}\n'
+
+			output += '\n'
+
+		return output
+
+	def _prev_additional_repos(self, item: MenuItem) -> str | None:
+		if item.value:
+			repositories: list[Repository] = item.value
+			repos = ', '.join(repo.value for repo in repositories)
+			return f'{tr("Additional repositories")}: {repos}'
+		return None
+
+	def _prev_custom_mirror(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
+
+		custom_mirrors: list[CustomRepository] = item.value
+		output = FormattedOutput.as_table(custom_mirrors)
+		return output.strip()
+
+	def _prev_custom_servers(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
+
+		custom_servers: list[CustomServer] = item.value
+		output = '\n'.join(server.url for server in custom_servers)
+		return output.strip()
+
+	@override
+	def run(self) -> MirrorConfiguration | None:
+		return super().run()
+
+
+def select_mirror_regions(
+	mirror_list_handler: MirrorListHandler,
+	preset: list[MirrorRegion],
+) -> list[MirrorRegion]:
+	Loading[None](
+		header=tr('Loading mirror regions...'),
+		data_callback=mirror_list_handler.load_mirrors,
+	).show()
+
+	available_regions = mirror_list_handler.get_mirror_regions()
+
+	if not available_regions:
+		return []
+
+	preset_regions = [region for region in available_regions if region in preset]
+
+	items = [MenuItem(region.name, value=region) for region in available_regions]
+	group = MenuItemGroup(items, sort_items=True)
+
+	group.set_selected_by_value(preset_regions)
+
+	result = Selection[MirrorRegion](
+		group,
+		header=tr('Select mirror regions to be enabled'),
+		allow_reset=True,
+		allow_skip=True,
+		multi=True,
+		enable_filter=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset_regions
+		case ResultType.Reset:
+			return []
+		case ResultType.Selection:
+			selected_mirrors = result.get_values()
+			return selected_mirrors
+
+
+def add_custom_mirror_servers(preset: list[CustomServer] = []) -> list[CustomServer]:
+	custom_mirrors = CustomMirrorServersList(preset).show()
+
+	if not custom_mirrors:
+		return preset
+
+	return custom_mirrors
+
+
+def select_custom_mirror(preset: list[CustomRepository] = []) -> list[CustomRepository]:
+	custom_mirrors = CustomMirrorRepositoriesList(preset).show()
+
+	if not custom_mirrors:
+		return preset
+
+	return custom_mirrors
+
+
+def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
+	"""
+	Allows the user to select additional repositories (multilib, and testing) if desired.
+
+	:return: The string as a selected repository
+	:rtype: Repository
+	"""
+
+	repositories = [
+		Repository.Multilib,
+		Repository.MultilibTesting,
+		Repository.CoreTesting,
+		Repository.ExtraTesting,
+	]
+	items = [MenuItem(r.value, value=r) for r in repositories]
+	group = MenuItemGroup(items, sort_items=False)
+	group.set_selected_by_value(preset)
+
+	result = Selection[Repository](
+		group,
+		header=tr('Select optional repositories to be enabled'),
+		allow_reset=True,
+		allow_skip=True,
+		multi=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return []
+		case ResultType.Selection:
+			return result.get_values()

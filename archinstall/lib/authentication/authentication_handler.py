@@ -4,7 +4,7 @@ import getpass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from archinstall.lib.general import SysCommandWorker
+from archinstall.lib.command import SysCommandWorker
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.users import User
 from archinstall.lib.output import debug, info
@@ -126,6 +126,3 @@ class AuthenticationHandler:
 			existing_keys = all_keys
 
 		u2f_auth_file.write_text(existing_keys)
-
-
-auth_handler = AuthenticationHandler()

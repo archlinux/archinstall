@@ -2,9 +2,9 @@ import os
 import time
 from pathlib import Path
 
-from archinstall.lib.applications.application_handler import application_handler
+from archinstall.lib.applications.application_handler import ApplicationHandler
 from archinstall.lib.args import arch_config_handler
-from archinstall.lib.authentication.authentication_handler import auth_handler
+from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
@@ -12,19 +12,21 @@ from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
+from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import (
 	DiskLayoutType,
 	EncryptionType,
 )
 from archinstall.lib.models.users import User
+from archinstall.lib.network.network_handler import NetworkHandler
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.packages.packages import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
 
-def ask_user_questions() -> None:
+def ask_user_questions(mirror_list_handler: MirrorListHandler) -> None:
 	"""
 	First, we'll ask the user for a bunch of user input.
 	Not until we're satisfied with what we want to install
@@ -38,7 +40,11 @@ def ask_user_questions() -> None:
 		text = tr('New version available') + f': {upgrade}'
 		title_text += f' ({text})'
 
-	global_menu = GlobalMenu(arch_config_handler.config, title=title_text)
+	global_menu = GlobalMenu(
+		arch_config_handler.config,
+		mirror_list_handler,
+		title=title_text,
+	)
 
 	if not arch_config_handler.args.advanced:
 		global_menu.set_enabled('parallel_downloads', False)
@@ -46,7 +52,12 @@ def ask_user_questions() -> None:
 	global_menu.run()
 
 
-def perform_installation(mountpoint: Path) -> None:
+def perform_installation(
+	mountpoint: Path,
+	mirror_list_handler: MirrorListHandler,
+	auth_handler: AuthenticationHandler,
+	application_handler: ApplicationHandler,
+) -> None:
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
@@ -84,7 +95,7 @@ def perform_installation(mountpoint: Path) -> None:
 				installation.generate_key_files()
 
 		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_config, on_target=False)
+			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=False)
 
 		installation.minimal_installation(
 			optional_repositories=optional_repositories,
@@ -94,7 +105,7 @@ def perform_installation(mountpoint: Path) -> None:
 		)
 
 		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_config, on_target=True)
+			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=True)
 
 		if config.swap and config.swap.enabled:
 			installation.setup_swap('zram', algo=config.swap.algorithm)
@@ -105,12 +116,9 @@ def perform_installation(mountpoint: Path) -> None:
 
 			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
 
-		# If user selected to copy the current ISO network configuration
-		# Perform a copy of the config
-		network_config = config.network_config
-
-		if network_config:
-			network_config.install_network_config(
+		if config.network_config:
+			NetworkHandler().install_network_config(
+				config.network_config,
 				installation,
 				config.profile_config,
 			)
@@ -182,9 +190,14 @@ def perform_installation(mountpoint: Path) -> None:
 						pass
 
 
-def guided() -> None:
+def main() -> None:
+	mirror_list_handler = MirrorListHandler(
+		offline=arch_config_handler.args.offline,
+		verbose=arch_config_handler.args.verbose,
+	)
+
 	if not arch_config_handler.args.silent:
-		ask_user_questions()
+		ask_user_questions(mirror_list_handler)
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
@@ -200,13 +213,19 @@ def guided() -> None:
 			aborted = True
 
 		if aborted:
-			return guided()
+			return main()
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
-	perform_installation(arch_config_handler.args.mountpoint)
+	perform_installation(
+		arch_config_handler.args.mountpoint,
+		mirror_list_handler,
+		AuthenticationHandler(),
+		ApplicationHandler(),
+	)
 
 
-guided()
+if __name__ == '__main__':
+	main()

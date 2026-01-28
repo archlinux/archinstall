@@ -9,6 +9,7 @@ from archinstall.lib.installer import Installer
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
+from archinstall.lib.network.network_handler import NetworkHandler
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.profile.profiles_handler import profile_handler
 
@@ -35,10 +36,9 @@ def perform_installation(mountpoint: Path) -> None:
 		installation.set_hostname('minimal-arch')
 		installation.add_bootloader(Bootloader.Systemd)
 
-		network_config = config.network_config
-
-		if network_config:
-			network_config.install_network_config(
+		if config.network_config:
+			NetworkHandler().install_network_config(
+				config.network_config,
 				installation,
 				config.profile_config,
 			)
@@ -58,7 +58,7 @@ def perform_installation(mountpoint: Path) -> None:
 	info(' * devel (password: devel)')
 
 
-def _minimal() -> None:
+def main() -> None:
 	disk_config = DiskLayoutConfigurationMenu(disk_layout_config=None).run()
 	arch_config_handler.config.disk_config = disk_config
 
@@ -76,7 +76,7 @@ def _minimal() -> None:
 			aborted = True
 
 		if aborted:
-			return _minimal()
+			return main()
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
@@ -85,4 +85,5 @@ def _minimal() -> None:
 	perform_installation(arch_config_handler.args.mountpoint)
 
 
-_minimal()
+if __name__ == '__main__':
+	main()

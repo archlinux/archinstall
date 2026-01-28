@@ -44,6 +44,3 @@ class ApplicationHandler:
 				install_session,
 				app_config.firewall_config,
 			)
-
-
-application_handler = ApplicationHandler()
