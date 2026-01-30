@@ -1,7 +1,7 @@
-from ..command import SysCommand
-from ..exceptions import ServiceException, SysCallError
-from ..general import running_from_host
-from ..output import error
+from archinstall.lib.command import SysCommand
+from archinstall.lib.exceptions import ServiceException, SysCallError
+from archinstall.lib.general import running_from_host
+from archinstall.lib.output import error
 
 
 def list_keyboard_languages() -> list[str]:

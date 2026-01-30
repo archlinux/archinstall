@@ -1,13 +1,12 @@
 from typing import override
 
+from archinstall.lib.locale.utils import list_keyboard_languages, list_locales, set_kb_layout
+from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Selection
+from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..menu.abstract_menu import AbstractSubMenu
-from ..models.locale import LocaleConfiguration
-from .utils import list_keyboard_languages, list_locales, set_kb_layout
 
 
 class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):

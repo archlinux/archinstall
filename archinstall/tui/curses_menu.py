@@ -12,11 +12,10 @@ from types import FrameType, TracebackType
 from typing import ClassVar, Literal, Self, override
 
 from archinstall.lib.translationhandler import tr
-
-from .help import Help
-from .menu_item import MenuItem, MenuItemGroup, MenuItemsState
-from .result import Result, ResultType
-from .types import (
+from archinstall.tui.help import Help
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MenuItemsState
+from archinstall.tui.result import Result, ResultType
+from archinstall.tui.types import (
 	SCROLL_INTERVAL,
 	STYLE,
 	Alignment,

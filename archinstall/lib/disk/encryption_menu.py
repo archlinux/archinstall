@@ -1,26 +1,26 @@
 from pathlib import Path
 from typing import override
 
+from archinstall.lib.disk.fido import Fido2
+from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Input, Selection, Table
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.models.device import (
+	DEFAULT_ITER_TIME,
 	DeviceModification,
 	DiskEncryption,
 	EncryptionType,
+	Fido2Device,
 	LvmConfiguration,
 	LvmVolume,
 	PartitionModification,
 )
+from archinstall.lib.models.users import Password
+from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.util import get_password
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..menu.abstract_menu import AbstractSubMenu
-from ..models.device import DEFAULT_ITER_TIME, Fido2Device
-from ..models.users import Password
-from ..output import FormattedOutput
-from ..utils.util import get_password
-from .fido import Fido2
 
 
 class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):

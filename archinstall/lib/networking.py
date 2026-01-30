@@ -12,9 +12,9 @@ from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-from .exceptions import DownloadTimeout, SysCallError
-from .output import debug, error, info
-from .pacman.pacman import Pacman
+from archinstall.lib.exceptions import DownloadTimeout, SysCallError
+from archinstall.lib.output import debug, error, info
+from archinstall.lib.pacman.pacman import Pacman
 
 
 class DownloadTimer:

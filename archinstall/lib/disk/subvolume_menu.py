@@ -2,12 +2,11 @@ from pathlib import Path
 from typing import assert_never, override
 
 from archinstall.lib.menu.helpers import Input
+from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.models.device import SubvolumeModification
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.util import prompt_dir
 from archinstall.tui.ui.result import ResultType
-
-from ..menu.list_manager import ListManager
-from ..utils.util import prompt_dir
 
 
 class SubvolumeMenu(ListManager[SubvolumeModification]):

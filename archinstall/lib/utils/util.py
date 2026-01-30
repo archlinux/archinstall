@@ -3,11 +3,10 @@ import string
 from pathlib import Path
 
 from archinstall.lib.menu.helpers import Input
+from archinstall.lib.models.users import Password
+from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.result import ResultType
-
-from ..models.users import Password
-from ..output import FormattedOutput
 
 
 def generate_password(length: int = 64) -> str:

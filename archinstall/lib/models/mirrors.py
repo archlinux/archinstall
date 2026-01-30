@@ -11,12 +11,12 @@ from typing import TYPE_CHECKING, Any, Self, TypedDict, override
 
 from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 
-from ..models.packages import Repository
-from ..networking import DownloadTimer, ping
-from ..output import debug
+from archinstall.lib.models.packages import Repository
+from archinstall.lib.networking import DownloadTimer, ping
+from archinstall.lib.output import debug
 
 if TYPE_CHECKING:
-	from ..mirrors import MirrorListHandler
+	from archinstall.lib.mirrors import MirrorListHandler
 
 
 class MirrorStatusEntryV3(BaseModel):

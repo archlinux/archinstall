@@ -6,7 +6,7 @@ from pathlib import Path
 from cryptography.fernet import Fernet, InvalidToken
 from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
 
-from .output import debug
+from archinstall.lib.output import debug
 
 libcrypt = ctypes.CDLL('libcrypt.so')
 

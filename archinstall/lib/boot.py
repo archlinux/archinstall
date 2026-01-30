@@ -5,12 +5,12 @@ from collections.abc import Iterator
 from types import TracebackType
 from typing import TYPE_CHECKING, ClassVar, Self
 
-from .command import SysCommand, SysCommandWorker, locate_binary
-from .exceptions import SysCallError
-from .output import error
+from archinstall.lib.command import SysCommand, SysCommandWorker, locate_binary
+from archinstall.lib.exceptions import SysCallError
+from archinstall.lib.output import error
 
 if TYPE_CHECKING:
-	from .installer import Installer
+	from archinstall.lib.installer import Installer
 
 
 class Boot:

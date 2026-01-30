@@ -8,10 +8,11 @@ from typing import Literal, overload
 
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
-from ..command import SysCommand, SysCommandWorker
-from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
-from ..luks import Luks2
-from ..models.device import (
+from archinstall.lib.command import SysCommand, SysCommandWorker
+from archinstall.lib.disk.utils import find_lsblk_info, get_all_lsblk_info, get_lsblk_info, umount
+from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesystemFormat
+from archinstall.lib.luks import Luks2
+from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
 	BDevice,
 	BtrfsMountOption,
@@ -37,15 +38,9 @@ from ..models.device import (
 	_DeviceInfo,
 	_PartitionInfo,
 )
-from ..models.users import Password
-from ..output import debug, error, info, log
-from ..utils.util import is_subpath
-from .utils import (
-	find_lsblk_info,
-	get_all_lsblk_info,
-	get_lsblk_info,
-	umount,
-)
+from archinstall.lib.models.users import Password
+from archinstall.lib.output import debug, error, info, log
+from archinstall.lib.utils.util import is_subpath
 
 
 class DeviceHandler:
