@@ -4,7 +4,7 @@ from pathlib import Path
 
 from archinstall.lib.translationhandler import tr
 
-from ..interactions.general_conf import ask_abort
+from ..interactions.general_conf import confirm_abort
 from ..luks import Luks2
 from ..models.device import (
 	DiskEncryption,
@@ -335,6 +335,6 @@ class FilesystemHandler:
 				print(c, end='', flush=True)
 				time.sleep(0.25)
 		except KeyboardInterrupt:
-			ask_abort()
+			confirm_abort()
 
 		return True

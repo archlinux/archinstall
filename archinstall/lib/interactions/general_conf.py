@@ -18,7 +18,7 @@ class PostInstallationAction(Enum):
 	CHROOT = tr('chroot into installation for post-installation configurations')
 
 
-def ask_ntp(preset: bool = True) -> bool:
+def select_ntp(preset: bool = True) -> bool:
 	header = tr('Would you like to use automatic time synchronization (NTP) with the default time servers?\n') + '\n'
 	header += (
 		tr(
@@ -42,7 +42,7 @@ def ask_ntp(preset: bool = True) -> bool:
 			raise ValueError('Unhandled return type')
 
 
-def ask_hostname(preset: str | None = None) -> str | None:
+def select_hostname(preset: str | None = None) -> str | None:
 	result = Input(
 		header=tr('Enter a hostname'),
 		allow_skip=True,
@@ -61,7 +61,7 @@ def ask_hostname(preset: str | None = None) -> str | None:
 			raise ValueError('Unhandled result type')
 
 
-def ask_for_a_timezone(preset: str | None = None) -> str | None:
+def select_timezone(preset: str | None = None) -> str | None:
 	default = 'UTC'
 	timezones = list_timezones()
 
@@ -179,7 +179,7 @@ def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
 	return downloads
 
 
-def ask_post_installation(elapsed_time: float | None = None) -> PostInstallationAction:
+def select_post_installation(elapsed_time: float | None = None) -> PostInstallationAction:
 	header = 'Installation completed'
 	if elapsed_time is not None:
 		minutes = int(elapsed_time // 60)
@@ -203,7 +203,7 @@ def ask_post_installation(elapsed_time: float | None = None) -> PostInstallation
 			raise ValueError('Post installation action not handled')
 
 
-def ask_abort() -> None:
+def confirm_abort() -> None:
 	prompt = tr('Do you really want to abort?') + '\n'
 
 	result = Confirmation(

@@ -9,7 +9,7 @@ from archinstall.lib.installer import Installer
 from archinstall.lib.output import debug, error
 
 
-def ask_user_questions() -> None:
+def show_menu() -> None:
 	global_menu = GlobalMenu(arch_config_handler.config)
 	global_menu.disable_all()
 
@@ -56,7 +56,7 @@ def perform_installation(mountpoint: Path) -> None:
 
 def main() -> None:
 	if not arch_config_handler.args.silent:
-		ask_user_questions()
+		show_menu()
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()

@@ -12,7 +12,7 @@ from archinstall.lib.general import check_version_upgrade
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
-from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
+from archinstall.lib.interactions.general_conf import PostInstallationAction, select_post_installation
 from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import (
@@ -26,13 +26,7 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
 
-def ask_user_questions(mirror_list_handler: MirrorListHandler) -> None:
-	"""
-	First, we'll ask the user for a bunch of user input.
-	Not until we're satisfied with what we want to install
-	will we continue with the actual installation steps.
-	"""
-
+def show_menu(mirror_list_handler: MirrorListHandler) -> None:
 	upgrade = check_version_upgrade()
 	title_text = 'Archlinux'
 
@@ -176,7 +170,7 @@ def perform_installation(
 
 		if not arch_config_handler.args.silent:
 			elapsed_time = time.time() - start_time
-			action = ask_post_installation(elapsed_time)
+			action = select_post_installation(elapsed_time)
 
 			match action:
 				case PostInstallationAction.EXIT:
@@ -197,7 +191,7 @@ def main() -> None:
 	)
 
 	if not arch_config_handler.args.silent:
-		ask_user_questions(mirror_list_handler)
+		show_menu(mirror_list_handler)
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
