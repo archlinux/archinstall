@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 
-from .menu_item import MenuItem
+from archinstall.tui.menu_item import MenuItem
 
 
 class ResultType(Enum):

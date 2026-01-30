@@ -5,8 +5,7 @@ from functools import cached_property
 from typing import Any, ClassVar, Self, override
 
 from archinstall.lib.translationhandler import tr
-
-from ..lib.utils.encoding import unicode_ljust
+from archinstall.lib.utils.encoding import unicode_ljust
 
 
 @dataclass
@@ -240,7 +239,7 @@ class MenuItemGroup:
 		if display_text:
 			text = f'{text}{spacing}{display_text}'
 		elif self._checkmarks:
-			from .types import Chars
+			from archinstall.tui.types import Chars
 
 			if item.has_value():
 				if item.get_value() is not False:

@@ -1,15 +1,14 @@
 import textwrap
 from typing import override
 
+from archinstall.lib.args import arch_config_handler
+from archinstall.lib.hardware import SysInfo
+from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Confirmation, Selection
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..args import arch_config_handler
-from ..hardware import SysInfo
-from ..menu.abstract_menu import AbstractSubMenu
-from ..models.bootloader import Bootloader, BootloaderConfiguration
 
 
 class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):

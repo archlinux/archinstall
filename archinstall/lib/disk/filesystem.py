@@ -2,11 +2,10 @@ import math
 import time
 from pathlib import Path
 
-from archinstall.lib.translationhandler import tr
-
-from ..interactions.general_conf import confirm_abort
-from ..luks import Luks2
-from ..models.device import (
+from archinstall.lib.disk.device_handler import device_handler
+from archinstall.lib.interactions.general_conf import confirm_abort
+from archinstall.lib.luks import Luks2
+from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
 	DiskLayoutType,
@@ -20,8 +19,8 @@ from ..models.device import (
 	Size,
 	Unit,
 )
-from ..output import debug, info
-from .device_handler import device_handler
+from archinstall.lib.output import debug, info
+from archinstall.lib.translationhandler import tr
 
 
 class FilesystemHandler:

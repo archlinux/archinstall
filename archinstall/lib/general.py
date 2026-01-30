@@ -5,9 +5,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, override
 
+from archinstall.lib.output import debug
 from archinstall.lib.packages.packages import check_package_upgrade
-
-from .output import debug
 
 
 @lru_cache(maxsize=128)

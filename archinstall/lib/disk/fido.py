@@ -2,13 +2,12 @@ import getpass
 from pathlib import Path
 from typing import ClassVar
 
+from archinstall.lib.command import SysCommand, SysCommandWorker
+from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.models.device import Fido2Device
+from archinstall.lib.models.users import Password
+from archinstall.lib.output import error, info
 from archinstall.lib.utils.encoding import clear_vt100_escape_codes_from_str
-
-from ..command import SysCommand, SysCommandWorker
-from ..exceptions import SysCallError
-from ..models.users import Password
-from ..output import error, info
 
 
 class Fido2:

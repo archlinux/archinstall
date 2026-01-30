@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Self
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
-	from ..lib.installer import Installer
+	from archinstall.lib.installer import Installer
 
 
 class ProfileType(Enum):

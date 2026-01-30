@@ -1,12 +1,11 @@
 from typing import assert_never
 
+from archinstall.lib.hardware import GfxDriver, SysInfo
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..hardware import GfxDriver, SysInfo
 
 
 def select_kernel(preset: list[str] = []) -> list[str]:

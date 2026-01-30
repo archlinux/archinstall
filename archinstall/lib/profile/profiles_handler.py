@@ -9,16 +9,15 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
+from archinstall.default_profiles.profile import GreeterType, Profile
+from archinstall.lib.hardware import GfxDriver
+from archinstall.lib.models.profile import ProfileConfiguration
+from archinstall.lib.networking import fetch_data_from_url
+from archinstall.lib.output import debug, error, info
 from archinstall.lib.translationhandler import tr
 
-from ...default_profiles.profile import GreeterType, Profile
-from ..hardware import GfxDriver
-from ..models.profile import ProfileConfiguration
-from ..networking import fetch_data_from_url
-from ..output import debug, error, info
-
 if TYPE_CHECKING:
-	from ..installer import Installer
+	from archinstall.lib.installer import Installer
 
 
 class ProfileSerialization(TypedDict):

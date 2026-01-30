@@ -2,13 +2,12 @@ import ipaddress
 from typing import assert_never, override
 
 from archinstall.lib.menu.helpers import Input, Selection
+from archinstall.lib.menu.list_manager import ListManager
+from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
+from archinstall.lib.networking import list_interfaces
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..menu.list_manager import ListManager
-from ..models.network import NetworkConfiguration, Nic, NicType
-from ..networking import list_interfaces
 
 
 class ManualNetworkConfig(ListManager[Nic]):
