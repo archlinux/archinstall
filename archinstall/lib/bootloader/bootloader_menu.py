@@ -91,7 +91,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		return self._bootloader_conf
 
 	def _select_bootloader(self, preset: Bootloader | None) -> Bootloader | None:
-		bootloader = ask_for_bootloader(preset)
+		bootloader = select_bootloader(preset)
 
 		if bootloader:
 			# Update UKI option based on bootloader
@@ -177,7 +177,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				raise ValueError('Unhandled result type')
 
 
-def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
+def select_bootloader(preset: Bootloader | None) -> Bootloader | None:
 	options = []
 	hidden_options = []
 	default = None

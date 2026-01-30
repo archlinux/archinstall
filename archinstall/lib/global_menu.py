@@ -5,8 +5,8 @@ from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, PartitionModification
-from archinstall.lib.network.network_menu import ask_to_configure_network
-from archinstall.lib.packages.packages import ask_additional_packages_to_install, list_available_packages
+from archinstall.lib.network.network_menu import select_network
+from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
 from .applications.application_menu import ApplicationMenu
@@ -17,11 +17,11 @@ from .configuration import save_config
 from .hardware import SysInfo
 from .interactions.general_conf import (
 	add_number_of_parallel_downloads,
-	ask_for_a_timezone,
-	ask_hostname,
-	ask_ntp,
+	select_hostname,
+	select_ntp,
+	select_timezone,
 )
-from .interactions.system_conf import ask_for_swap, select_kernel
+from .interactions.system_conf import select_kernel, select_swap
 from .locale.locale_menu import LocaleMenu
 from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
 from .mirrors import MirrorListHandler, MirrorMenu
@@ -86,7 +86,7 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Swap'),
 				value=ZramConfiguration(enabled=True),
-				action=ask_for_swap,
+				action=select_swap,
 				preview_action=self._prev_swap,
 				key='swap',
 			),
@@ -108,7 +108,7 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Hostname'),
 				value='archlinux',
-				action=ask_hostname,
+				action=select_hostname,
 				preview_action=self._prev_hostname,
 				key='hostname',
 			),
@@ -133,7 +133,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Network configuration'),
-				action=ask_to_configure_network,
+				action=select_network,
 				value={},
 				preview_action=self._prev_network_config,
 				key='network_config',
@@ -154,14 +154,14 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Timezone'),
-				action=ask_for_a_timezone,
+				action=select_timezone,
 				value='UTC',
 				preview_action=self._prev_tz,
 				key='timezone',
 			),
 			MenuItem(
 				text=tr('Automatic time sync (NTP)'),
-				action=ask_ntp,
+				action=select_ntp,
 				value=True,
 				preview_action=self._prev_ntp,
 				key='ntp',
@@ -547,7 +547,7 @@ class GlobalMenu(AbstractMenu[None]):
 		if config:
 			repositories = set(config.optional_repositories)
 
-		packages = ask_additional_packages_to_install(
+		packages = select_additional_packages(
 			preset,
 			repositories=repositories,
 		)

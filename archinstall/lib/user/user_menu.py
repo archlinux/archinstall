@@ -109,7 +109,7 @@ class UserList(ListManager[User]):
 		return User(username, password, sudo)
 
 
-def ask_for_additional_users(prompt: str = '', preset: list[User] = []) -> list[User]:
+def select_users(prompt: str = '', preset: list[User] = []) -> list[User]:
 	users = UserList(prompt, preset).show()
 
 	if users is None:
