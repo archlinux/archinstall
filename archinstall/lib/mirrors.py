@@ -41,7 +41,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 		)
 
 	def show(self) -> list[CustomRepository] | None:
-		return super().run()
+		return super()._run()
 
 	@override
 	def selected_action_display(self, selection: CustomRepository) -> str:
@@ -162,7 +162,7 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 		)
 
 	def show(self) -> list[CustomServer] | None:
-		return super().run()
+		return super()._run()
 
 	@override
 	def selected_action_display(self, selection: CustomServer) -> str:

@@ -30,7 +30,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 		)
 
 	def show(self) -> list[SubvolumeModification] | None:
-		return super().run()
+		return super()._run()
 
 	@override
 	def selected_action_display(self, selection: SubvolumeModification) -> str:
