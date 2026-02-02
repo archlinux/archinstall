@@ -1570,7 +1570,8 @@ class Installer:
 		hook_path.write_text(hook_contents)
 
 		kernel_params = ' '.join(self._get_kernel_params(root))
-		config_contents = 'timeout: 5\n'
+		config_contents = f'# Created by archinstall on {self.init_time}\\n'
+		config_contents += 'timeout: 5\\n'
 
 		path_root = 'boot()'
 		if efi_partition and boot_partition != efi_partition:
