@@ -37,6 +37,7 @@ def show_menu(mirror_list_handler: MirrorListHandler) -> None:
 	global_menu = GlobalMenu(
 		arch_config_handler.config,
 		mirror_list_handler,
+		arch_config_handler.args.skip_boot,
 		title=title_text,
 	)
 
