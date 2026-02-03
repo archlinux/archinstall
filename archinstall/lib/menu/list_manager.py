@@ -53,7 +53,7 @@ class ListManager[ValueT]:
 			return self._last_choice == self._cancel_action
 		return False
 
-	def run(self) -> list[ValueT] | None:
+	def _run(self) -> list[ValueT] | None:
 		additional_options = self._base_actions + self._terminate_actions
 
 		while True:
