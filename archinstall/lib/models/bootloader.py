@@ -30,10 +30,8 @@ class Bootloader(Enum):
 		return self.value
 
 	@classmethod
-	def get_default(cls) -> Self:
-		from archinstall.lib.args import arch_config_handler
-
-		if arch_config_handler.args.skip_boot:
+	def get_default(cls, skip_boot: bool = False) -> Self:
+		if skip_boot:
 			return cls.NO_BOOTLOADER
 		elif SysInfo.has_uefi():
 			return cls.Systemd
@@ -72,8 +70,8 @@ class BootloaderConfiguration:
 		return cls(bootloader=bootloader, uki=uki, removable=removable)
 
 	@classmethod
-	def get_default(cls) -> Self:
-		bootloader = Bootloader.get_default()
+	def get_default(cls, skip_boot: bool = False) -> Self:
+		bootloader = Bootloader.get_default(skip_boot)
 		removable = SysInfo.has_uefi() and bootloader.has_removable_support()
 		uki = SysInfo.has_uefi() and bootloader.has_uki_support()
 		return cls(bootloader=bootloader, uki=uki, removable=removable)

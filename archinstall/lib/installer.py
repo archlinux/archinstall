@@ -79,7 +79,6 @@ class Installer:
 		self.target: Path = target
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
-		self.milliseconds = int(str(time.time()).split('.')[1])
 		self._helper_flags: dict[str, str | bool | None] = {
 			'base': False,
 			'bootloader': None,

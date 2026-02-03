@@ -266,7 +266,7 @@ class MirrorListHandler:
 	def load_local_mirrors(self) -> None:
 		with self._local_mirrorlist.open('r') as fp:
 			mirrorlist = fp.read()
-			self._status_mappings = self._parse_locale_mirrors(mirrorlist)
+			self._status_mappings = self._parse_local_mirrors(mirrorlist)
 
 	def get_status_by_region(self, region: str, speed_sort: bool) -> list[MirrorStatusEntryV3]:
 		mappings = self._mappings()
@@ -317,7 +317,7 @@ class MirrorListHandler:
 
 		return sorted_by_regions
 
-	def _parse_locale_mirrors(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
+	def _parse_local_mirrors(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
 		lines = mirrorlist.splitlines()
 
 		# remove empty lines

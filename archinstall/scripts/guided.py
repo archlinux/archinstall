@@ -34,6 +34,7 @@ def show_menu(mirror_list_handler: MirrorListHandler) -> None:
 	global_menu = GlobalMenu(
 		arch_config_handler.config,
 		mirror_list_handler,
+		arch_config_handler.args.skip_boot,
 		title=title_text,
 	)
 
@@ -54,7 +55,7 @@ def perform_installation(
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	start_time = time.time()
+	start_time = time.monotonic()
 	info('Starting installation...')
 
 	config = arch_config_handler.config
@@ -166,7 +167,7 @@ def perform_installation(
 		debug(f'Disk states after installing:\n{disk_layouts()}')
 
 		if not arch_config_handler.args.silent:
-			elapsed_time = time.time() - start_time
+			elapsed_time = time.monotonic() - start_time
 			action = select_post_installation(elapsed_time)
 
 			match action:
