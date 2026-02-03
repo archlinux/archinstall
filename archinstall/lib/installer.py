@@ -32,6 +32,7 @@ from archinstall.lib.models.device import (
 	DiskLayoutConfiguration,
 	EncryptionType,
 	FilesystemType,
+	LsblkInfo,
 	LvmVolume,
 	PartitionModification,
 	SectorSize,
@@ -1090,6 +1091,23 @@ class Installer:
 
 		return lsblk_info.children[0].uuid
 
+	def _find_crypt_parent(self, dev_path: Path) -> LsblkInfo | None:
+		try:
+			lsblk_info = get_lsblk_info(dev_path, reverse=True, full_dev_path=True)
+		except DiskError as err:
+			debug(f'Unable to determine crypt parent for {dev_path}: {err}')
+			return None
+
+		def _walk(node: LsblkInfo) -> LsblkInfo | None:
+			if node.type == 'crypt':
+				return node
+			for child in node.children:
+				if found := _walk(child):
+					return found
+			return None
+
+		return _walk(lsblk_info)
+
 	def _get_kernel_params_partition(
 		self,
 		root_partition: PartitionModification,
@@ -1099,8 +1117,35 @@ class Installer:
 		kernel_parameters = []
 
 		if root_partition in self._disk_encryption.partitions:
-			# TODO: We need to detect if the encrypted device is a whole disk encryption,
-			# or simply a partition encryption. Right now we assume it's a partition (and we always have)
+			crypt_parent = self._find_crypt_parent(root_partition.safe_dev_path)
+			if crypt_parent and crypt_parent.path != root_partition.safe_dev_path:
+				uuid = self._get_luks_uuid_from_mapper_dev(crypt_parent.path)
+
+				if self._disk_encryption.hsm_device:
+					debug(f'Root partition is inside encrypted device, HSM, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'rd.luks.name={uuid}={crypt_parent.name}')
+					# Note: tpm2-device and fido2-device don't play along very well:
+					# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
+					kernel_parameters.append('rd.luks.options=fido2-device=auto,password-echo=no')
+				else:
+					debug(f'Root partition is inside encrypted device, identifying by UUID: {uuid}')
+					kernel_parameters.append(f'cryptdevice=UUID={uuid}:{crypt_parent.name}')
+
+				if id_root:
+					if partuuid and root_partition.partuuid:
+						debug(
+							f'Identifying root partition inside LUKS by PARTUUID: {root_partition.partuuid}',
+						)
+						kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid}')
+					elif root_partition.uuid:
+						debug(
+							f'Identifying root partition inside LUKS by UUID: {root_partition.uuid}',
+						)
+						kernel_parameters.append(f'root=UUID={root_partition.uuid}')
+					else:
+						raise ValueError('Root partition UUID could not be determined')
+
+				return kernel_parameters
 
 			if self._disk_encryption.hsm_device:
 				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
@@ -1569,7 +1614,8 @@ class Installer:
 		hook_path.write_text(hook_contents)
 
 		kernel_params = ' '.join(self._get_kernel_params(root))
-		config_contents = 'timeout: 5\n'
+		config_contents = f'# Created by archinstall on {self.init_time}\\n'
+		config_contents += 'timeout: 5\\n'
 
 		path_root = 'boot()'
 		if efi_partition and boot_partition != efi_partition:

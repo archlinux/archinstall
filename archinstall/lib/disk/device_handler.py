@@ -49,6 +49,9 @@ class DeviceHandler:
 	def __init__(self) -> None:
 		self._devices: dict[Path, BDevice] = {}
 		self._partition_table = PartitionTable.default()
+		if os.environ.get('ARCHINSTALL_SKIP_DEVICE_PROBE') == '1':
+			debug('Skipping device probe due to ARCHINSTALL_SKIP_DEVICE_PROBE=1')
+			return
 		self.load_devices()
 
 	@property

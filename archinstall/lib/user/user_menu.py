@@ -27,7 +27,7 @@ class UserList(ListManager[User]):
 		)
 
 	def show(self) -> list[User] | None:
-		return super().run()
+		return super()._run()
 
 	@override
 	def selected_action_display(self, selection: User) -> str:

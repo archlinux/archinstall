@@ -190,7 +190,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		return [s.segment for s in disk_segments if isinstance(s.segment, PartitionModification)]
 
 	def show(self) -> DeviceModification | None:
-		disk_segments = super().run()
+		disk_segments = super()._run()
 
 		if not disk_segments:
 			return None

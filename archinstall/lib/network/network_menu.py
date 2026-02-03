@@ -26,7 +26,7 @@ class ManualNetworkConfig(ListManager[Nic]):
 		)
 
 	def show(self) -> list[Nic] | None:
-		return super().run()
+		return super()._run()
 
 	@override
 	def selected_action_display(self, selection: Nic) -> str:
