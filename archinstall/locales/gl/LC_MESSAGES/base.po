@@ -1882,6 +1882,151 @@ msgstr "Usar xestor de Red (backend por defecto)"
 msgid "Use Network Manager (iwd backend)"
 msgstr "Usar xestor de Red (backend iwd)"
 
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Guardar configuración de usuario"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Contraseña para descifrar el archivo de credenciales"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Ingrese unha contraseña: "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Configuración"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Ingrese un directorio para guardar a(s) configuración(es): "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Tipo de cifrado"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Nome do host desexado para a instalación: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Seleccione un punto de montaje :"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Ingrese el final (predeterminado: {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Nome do subvolumen"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Punto de montaje do subvolumen"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Configuración do disco"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "Directorio de montaxe raíz"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Cambiar el sistema de archivos"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Seleccione unha zona horaria"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"Ingrese el número de descargas paralelas que se habilitarán.\n"
+"\n"
+"Nota:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Por favor, elixa qué xestor de inicio de sesión instalar"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "Nome do repositorio"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Cambiar el repositorio personalizado"
+
+#, fuzzy
+msgid "Enter server url"
+msgstr "URL do servidor"
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Regiones de espejo seleccionadas"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Escoxa qué repositorios adicionais opcionales habilitar"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Eliminar intefaz"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "Sin configuración de red"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "No se encontró dispositivos U2F"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Por favor, elixa qué xestor de inicio de sesión instalar"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Perfiles seleccionados: "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Ingrese contraseña de wifi"
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Ingrese unha contraseña: "
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "A contraseña de confirmación no coincide, por favor intente nuevamente"
+
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
 
