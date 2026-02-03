@@ -77,7 +77,7 @@ class ArchConfig:
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
 
-	def unsafe_json(self) -> dict[str, Any]:
+	def unsafe_config(self) -> dict[str, Any]:
 		config: dict[str, list[UserSerialization] | str | None] = {}
 
 		if self.auth_config:
@@ -94,7 +94,7 @@ class ArchConfig:
 
 		return config
 
-	def safe_json(self) -> dict[str, Any]:
+	def safe_config(self) -> dict[str, Any]:
 		config: Any = {
 			'version': self.version,
 			'script': self.script,
