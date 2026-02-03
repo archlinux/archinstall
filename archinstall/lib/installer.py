@@ -1279,6 +1279,54 @@ class Installer:
 			entry_conf = entries_dir / name
 			entry_conf.write_text(entry_template.format(kernel=kernel))
 
+	def _cleanup_systemd_boot_entries(self, boot_partition: PartitionModification) -> None:
+		entries_dir = self.target / boot_partition.relative_mountpoint / 'loader/entries'
+		if not entries_dir.exists():
+			return
+
+		for entry in entries_dir.glob('*.conf'):
+			try:
+				content = entry.read_text()
+			except OSError as err:
+				warn(f'Failed to read loader entry {entry}: {err}')
+				continue
+
+			if 'Created by: archinstall' in content:
+				try:
+					entry.unlink()
+					debug(f'Removed old loader entry: {entry}')
+				except OSError as err:
+					warn(f'Failed to remove loader entry {entry}: {err}')
+
+	def _cleanup_efistub_entries(self, boot_partition: PartitionModification) -> None:
+		if not boot_partition.partn:
+			debug('Boot partition number not set, skipping EFI entry cleanup')
+			return
+
+		try:
+			output = SysCommand(['efibootmgr', '--verbose']).decode()
+		except SysCallError as err:
+			warn(f'Failed to read EFI boot entries: {err}')
+			return
+
+		part_token = f'HD({boot_partition.partn},'
+		for line in output.splitlines():
+			line = line.strip()
+			if not line.startswith('Boot'):
+				continue
+			if 'Arch Linux' not in line or part_token not in line:
+				continue
+
+			boot_id = line[4:8]
+			if len(boot_id) != 4:
+				continue
+
+			try:
+				SysCommand(['efibootmgr', '-b', boot_id, '-B'])
+				debug(f'Removed EFI boot entry Boot{boot_id}')
+			except SysCallError as err:
+				warn(f'Failed to remove EFI boot entry Boot{boot_id}: {err}')
+
 	def _add_systemd_bootloader(
 		self,
 		boot_partition: PartitionModification,
@@ -1302,6 +1350,7 @@ class Installer:
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
 		bootctl_options = []
+		self._cleanup_systemd_boot_entries(boot_partition)
 
 		if boot_partition != efi_partition:
 			bootctl_options.append(f'--esp-path={efi_partition.mountpoint}')
@@ -1665,6 +1714,7 @@ class Installer:
 		# TODO: Ideally we would want to check if another config
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
+		self._cleanup_efistub_entries(boot_partition)
 
 		if not uki_enabled:
 			loader = '/vmlinuz-{kernel}'
