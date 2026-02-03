@@ -29,6 +29,8 @@ depends=(
   'python-pydantic'
   'python-pyparted'
   'python-textual'
+  'python-markdown-it-py'
+  'python-linkify-it-py'
   'systemd'
   'util-linux'
   'xfsprogs'
