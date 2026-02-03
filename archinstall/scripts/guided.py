@@ -8,7 +8,6 @@ from archinstall.lib.authentication.authentication_handler import Authentication
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
-from archinstall.lib.general import check_version_upgrade
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
@@ -22,6 +21,7 @@ from archinstall.lib.models.device import (
 from archinstall.lib.models.users import User
 from archinstall.lib.network.network_handler import NetworkHandler
 from archinstall.lib.output import debug, error, info
+from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
