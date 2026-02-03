@@ -41,10 +41,12 @@ class GlobalMenu(AbstractMenu[None]):
 		self,
 		arch_config: ArchConfig,
 		mirror_list_handler: MirrorListHandler | None = None,
+		skip_boot: bool = False,
 		title: str | None = None,
 	) -> None:
 		self._arch_config = arch_config
 		self._mirror_list_handler = mirror_list_handler
+		self._skip_boot = skip_boot
 		menu_options = self._get_menu_options()
 
 		self._item_group = MenuItemGroup(
@@ -92,7 +94,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Bootloader'),
-				value=BootloaderConfiguration.get_default(),
+				value=BootloaderConfiguration.get_default(self._skip_boot),
 				action=self._select_bootloader_config,
 				preview_action=self._prev_bootloader_config,
 				key='bootloader_config',
@@ -528,9 +530,9 @@ class GlobalMenu(AbstractMenu[None]):
 		preset: BootloaderConfiguration | None = None,
 	) -> BootloaderConfiguration | None:
 		if preset is None:
-			preset = BootloaderConfiguration.get_default()
+			preset = BootloaderConfiguration.get_default(self._skip_boot)
 
-		bootloader_config = BootloaderMenu(preset).run()
+		bootloader_config = BootloaderMenu(preset, self._skip_boot).run()
 
 		return bootloader_config
 
