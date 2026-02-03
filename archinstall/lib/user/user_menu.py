@@ -28,7 +28,7 @@ class UserList(ListManager[User]):
 		)
 
 	def show(self) -> list[User] | None:
-		return super().run()
+		return super()._run()
 
 	@override
 	def selected_action_display(self, selection: User) -> str:
@@ -109,7 +109,7 @@ class UserList(ListManager[User]):
 		return User(username, password, sudo)
 
 
-def ask_for_additional_users(prompt: str = '', preset: list[User] = []) -> list[User]:
+def select_users(prompt: str = '', preset: list[User] = []) -> list[User]:
 	users = UserList(prompt, preset).show()
 
 	if users is None:

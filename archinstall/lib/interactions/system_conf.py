@@ -43,7 +43,7 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 			return result.get_values()
 
 
-def ask_for_uki(preset: bool = True) -> bool:
+def select_uki(preset: bool = True) -> bool:
 	prompt = tr('Would you like to use unified kernel images?') + '\n'
 
 	result = Confirmation(header=prompt, allow_skip=True, preset=preset).show()
@@ -108,7 +108,7 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 			return result.get_value()
 
 
-def ask_for_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) -> ZramConfiguration:
+def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) -> ZramConfiguration:
 	prompt = tr('Would you like to use swap on zram?') + '\n'
 
 	group = MenuItemGroup.yes_no()

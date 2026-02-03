@@ -8,7 +8,7 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from .utils.unicode import unicode_ljust, unicode_rjust
+from .utils.encoding import unicode_ljust, unicode_rjust
 
 if TYPE_CHECKING:
 	from _typeshed import DataclassInstance
@@ -100,7 +100,7 @@ class FormattedOutput:
 				if '!' in key:
 					value = '*' * len(value)
 
-				if isinstance(value, int | float) or (isinstance(value, str) and value.isnumeric()):
+				if isinstance(value, (int, float)) or (isinstance(value, str) and value.isnumeric()):
 					obj_data.append(unicode_rjust(str(value), width))
 				else:
 					obj_data.append(unicode_ljust(str(value), width))

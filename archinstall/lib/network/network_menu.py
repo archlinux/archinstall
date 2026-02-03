@@ -27,7 +27,7 @@ class ManualNetworkConfig(ListManager[Nic]):
 		)
 
 	def show(self) -> list[Nic] | None:
-		return super().run()
+		return super()._run()
 
 	@override
 	def selected_action_display(self, selection: Nic) -> str:
@@ -166,7 +166,7 @@ class ManualNetworkConfig(ListManager[Nic]):
 			return Nic(iface=iface_name)
 
 
-def ask_to_configure_network(preset: NetworkConfiguration | None) -> NetworkConfiguration | None:
+def select_network(preset: NetworkConfiguration | None) -> NetworkConfiguration | None:
 	"""
 	Configure the network on the newly installed system
 	"""

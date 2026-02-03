@@ -2,16 +2,13 @@ import sys
 from enum import Enum
 from pathlib import Path
 
-from archinstall.lib.menu.helpers import Confirmation, Input, Loading, Notify, Selection
-from archinstall.lib.models.packages import Repository
-from archinstall.lib.packages.packages import list_available_packages
+from archinstall.lib.menu.helpers import Confirmation, Input, Selection
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
 from ..locale.utils import list_timezones
-from ..models.packages import AvailablePackage, PackageGroup
-from ..output import debug, warn
+from ..output import warn
 from ..translationhandler import Language
 
 
@@ -21,7 +18,7 @@ class PostInstallationAction(Enum):
 	CHROOT = tr('chroot into installation for post-installation configurations')
 
 
-def ask_ntp(preset: bool = True) -> bool:
+def select_ntp(preset: bool = True) -> bool:
 	header = tr('Would you like to use automatic time synchronization (NTP) with the default time servers?\n') + '\n'
 	header += (
 		tr(
@@ -45,7 +42,7 @@ def ask_ntp(preset: bool = True) -> bool:
 			raise ValueError('Unhandled return type')
 
 
-def ask_hostname(preset: str | None = None) -> str | None:
+def select_hostname(preset: str | None = None) -> str | None:
 	result = Input(
 		header=tr('Enter a hostname'),
 		allow_skip=True,
@@ -64,7 +61,7 @@ def ask_hostname(preset: str | None = None) -> str | None:
 			raise ValueError('Unhandled result type')
 
 
-def ask_for_a_timezone(preset: str | None = None) -> str | None:
+def select_timezone(preset: str | None = None) -> str | None:
 	default = 'UTC'
 	timezones = list_timezones()
 
@@ -132,87 +129,6 @@ def select_archinstall_language(languages: list[Language], preset: Language) -> 
 			raise ValueError('Language selection not handled')
 
 
-def ask_additional_packages_to_install(
-	preset: list[str] = [],
-	repositories: set[Repository] = set(),
-) -> list[str]:
-	repositories |= {Repository.Core, Repository.Extra}
-
-	respos_text = ', '.join(r.value for r in repositories)
-	output = tr('Repositories: {}').format(respos_text) + '\n'
-	output += tr('Loading packages...')
-
-	result = Loading[dict[str, AvailablePackage]](
-		header=output,
-		data_callback=lambda: list_available_packages(tuple(repositories)),
-	).show()
-
-	if result.type_ != ResultType.Selection:
-		debug('Error while loading packages')
-		return preset
-
-	packages = result.get_value()
-
-	if not packages:
-		Notify(tr('No packages found')).show()
-		return []
-
-	package_groups = PackageGroup.from_available_packages(packages)
-
-	# Additional packages (with some light weight error handling for invalid package names)
-	header = tr('Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed.') + '\n'
-	header += tr('Note: base-devel is no longer installed by default. Add it here if you need build tools.') + '\n'
-	header += tr('Select any packages from the below list that should be installed additionally') + '\n'
-
-	# there are over 15k packages so this needs to be quick
-	preset_packages: list[AvailablePackage | PackageGroup] = []
-	for p in preset:
-		if p in packages:
-			preset_packages.append(packages[p])
-		elif p in package_groups:
-			preset_packages.append(package_groups[p])
-
-	items = [
-		MenuItem(
-			name,
-			value=pkg,
-			preview_action=lambda x: x.value.info() if x.value else None,
-		)
-		for name, pkg in packages.items()
-	]
-
-	items += [
-		MenuItem(
-			name,
-			value=group,
-			preview_action=lambda x: x.value.info() if x.value else None,
-		)
-		for name, group in package_groups.items()
-	]
-
-	menu_group = MenuItemGroup(items, sort_items=True)
-	menu_group.set_selected_by_value(preset_packages)
-
-	pck_result = Selection[AvailablePackage | PackageGroup](
-		menu_group,
-		header=header,
-		allow_reset=True,
-		allow_skip=True,
-		multi=True,
-		preview_location='right',
-		enable_filter=True,
-	).show()
-
-	match pck_result.type_:
-		case ResultType.Skip:
-			return preset
-		case ResultType.Reset:
-			return []
-		case ResultType.Selection:
-			selected_pacakges = pck_result.get_values()
-			return [pkg.name for pkg in selected_pacakges]
-
-
 def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
 	max_recommended = 5
 
@@ -263,7 +179,7 @@ def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
 	return downloads
 
 
-def ask_post_installation(elapsed_time: float | None = None) -> PostInstallationAction:
+def select_post_installation(elapsed_time: float | None = None) -> PostInstallationAction:
 	header = 'Installation completed'
 	if elapsed_time is not None:
 		minutes = int(elapsed_time // 60)
@@ -287,7 +203,7 @@ def ask_post_installation(elapsed_time: float | None = None) -> PostInstallation
 			raise ValueError('Post installation action not handled')
 
 
-def ask_abort() -> None:
+def confirm_abort() -> None:
 	prompt = tr('Do you really want to abort?') + '\n'
 
 	result = Confirmation(

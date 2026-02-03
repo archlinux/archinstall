@@ -8,28 +8,26 @@ from .disk_conf import (
 )
 from .general_conf import (
 	add_number_of_parallel_downloads,
-	ask_additional_packages_to_install,
-	ask_for_a_timezone,
-	ask_hostname,
-	ask_ntp,
 	select_archinstall_language,
+	select_hostname,
+	select_ntp,
+	select_timezone,
 )
-from .system_conf import ask_for_swap, select_driver, select_kernel
+from .system_conf import select_driver, select_kernel, select_swap
 
 __all__ = [
 	'add_number_of_parallel_downloads',
-	'ask_additional_packages_to_install',
-	'ask_for_a_timezone',
-	'ask_for_swap',
-	'ask_hostname',
-	'ask_ntp',
 	'get_default_partition_layout',
 	'select_archinstall_language',
 	'select_devices',
 	'select_disk_config',
 	'select_driver',
+	'select_hostname',
 	'select_kernel',
 	'select_main_filesystem_format',
+	'select_ntp',
+	'select_swap',
+	'select_timezone',
 	'suggest_multi_disk_layout',
 	'suggest_single_disk_layout',
 ]

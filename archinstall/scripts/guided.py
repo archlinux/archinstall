@@ -8,10 +8,11 @@ from archinstall.lib.authentication.authentication_handler import Authentication
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.general import check_version_upgrade
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
-from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
+from archinstall.lib.interactions.general_conf import PostInstallationAction, select_post_installation
 from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import (
@@ -21,18 +22,11 @@ from archinstall.lib.models.device import (
 from archinstall.lib.models.users import User
 from archinstall.lib.network.network_handler import NetworkHandler
 from archinstall.lib.output import debug, error, info
-from archinstall.lib.packages.packages import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
 
-def ask_user_questions(mirror_list_handler: MirrorListHandler) -> None:
-	"""
-	First, we'll ask the user for a bunch of user input.
-	Not until we're satisfied with what we want to install
-	will we continue with the actual installation steps.
-	"""
-
+def show_menu(mirror_list_handler: MirrorListHandler) -> None:
 	upgrade = check_version_upgrade()
 	title_text = 'Archlinux'
 
@@ -43,6 +37,7 @@ def ask_user_questions(mirror_list_handler: MirrorListHandler) -> None:
 	global_menu = GlobalMenu(
 		arch_config_handler.config,
 		mirror_list_handler,
+		arch_config_handler.args.skip_boot,
 		title=title_text,
 	)
 
@@ -63,7 +58,7 @@ def perform_installation(
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	start_time = time.time()
+	start_time = time.monotonic()
 	info('Starting installation...')
 
 	config = arch_config_handler.config
@@ -175,8 +170,8 @@ def perform_installation(
 		debug(f'Disk states after installing:\n{disk_layouts()}')
 
 		if not arch_config_handler.args.silent:
-			elapsed_time = time.time() - start_time
-			action = ask_post_installation(elapsed_time)
+			elapsed_time = time.monotonic() - start_time
+			action = select_post_installation(elapsed_time)
 
 			match action:
 				case PostInstallationAction.EXIT:
@@ -197,7 +192,7 @@ def main() -> None:
 	)
 
 	if not arch_config_handler.args.silent:
-		ask_user_questions(mirror_list_handler)
+		show_menu(mirror_list_handler)
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
