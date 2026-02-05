@@ -2,14 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-12-31 14:53+0100\n"
+"PO-Revision-Date: 2026-01-20 19:23+0100\n"
 "Last-Translator: Van Matten\n"
-"Language-Team: \n"
+"Language-Team: Alessio Cuccovillo <alessio.cuccovillo.dev@gmail.com>, Van Matten\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"2nd-Last-Translator: Alessio Cuccovillo <alessio.cuccovillo.dev@gmail.com>\n"
 "X-Generator: Poedit 3.8\n"
 "X-Poedit-Basepath: ../..\n"
 "X-Poedit-SearchPath-0: base.pot\n"
@@ -131,7 +130,7 @@ msgstr ""
 "Seleziona per indice quale partizione montare dove"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * I punti di montaggio della partizione sono relativi all'interno dell'installazione, per esempio l'avvio sarebbe /boot."
+msgstr " * I punti di mount della partizione sono relativi all'interno dell'installazione, per esempio l'avvio sarebbe /boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr "Seleziona dove montare la partizione (lascia vuoto per rimuovere il punto di mount): "
@@ -918,7 +917,7 @@ msgid "This partition is currently encrypted, to format it a filesystem has to b
 msgstr "Questa partizione è attualmente crittografata, per formattarla è necessario specificare un filesystem"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr "I punti di montaggio della partizione sono relativi all'interno dell'installazione, l'avvio sarebbe per esempio /boot."
+msgstr "I punti di mount della partizione sono relativi all'interno dell'installazione, l'avvio sarebbe per esempio /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
 msgstr "Se il punto di mount /boot è impostato, anche la partizione sarà contrassegnata come avviabile."
@@ -1395,7 +1394,7 @@ msgid "Disk configuration type"
 msgstr "Tipo configurazione disco"
 
 msgid "Root mount directory"
-msgstr "Cartella di montaggio di root"
+msgstr "Cartella di montaggio del root"
 
 msgid "Select language"
 msgstr "Seleziona lingua"
@@ -1880,3 +1879,116 @@ msgstr "Usa NetworkManager (backend predefinito)"
 
 msgid "Use Network Manager (iwd backend)"
 msgstr "Usa NetworkManager (backend iwd)"
+
+msgid "Firewall"
+msgstr "Firewall"
+
+msgid "Enter credentials file decryption password"
+msgstr "Inserici la password di decrittazione del file delle credenziali"
+
+msgid "Configuration preview"
+msgstr "Anteprima della configurazione"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Inserisci una cartella in cui salvare le configurazioni"
+
+msgid "Enter a respository name"
+msgstr "Inserisci il nome di un repository"
+
+msgid "Enter the repository url"
+msgstr "Inserisci l'URL della repository"
+
+msgid "Enter server url"
+msgstr "Inserisci l'URL del server"
+
+msgid "Select mirror regions to be enabled"
+msgstr "Seleziona quali regioni dei mirror abilitare"
+
+msgid "Select optional repositories to be enabled"
+msgstr "Seleziona quali repository aggiuntive opzionali abilitare"
+
+msgid "Select audio configuration"
+msgstr "Seleziona la configurazione audio"
+
+msgid "Enter root password"
+msgstr "Inserisci la password di root"
+
+msgid "Select bootloader to install"
+msgstr "Seleziona il bootloader da installare"
+
+msgid "Select encryption type"
+msgstr "Seleziona il tipo di crittografia"
+
+msgid "Select disks for the installation"
+msgstr "Seleziona il disco per l'installazione"
+
+msgid "Enter a mountpoint"
+msgstr "Inserisci un punto di mount"
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Inserisci una dimensione (predefinita: {}): "
+
+msgid "Enter subvolume name"
+msgstr "Inserisci il nome del sottovolume"
+
+msgid "Enter subvolume mountpoint"
+msgstr "Inserisci il punto di mount del sottovolume"
+
+msgid "Select a disk configuration"
+msgstr "Seleziona una configurazione del disco"
+
+msgid "Enter root mount directory"
+msgstr "Inserisci la cartella di montaggio del root"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "Userai qualunque configurazione del disco che sia montata nella cartella specificata"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "ATTENZIONE: Archinstall non verificherà la compatibilità di di questa configurazione"
+
+msgid "Select main filesystem"
+msgstr "Seleziona il filesystem principale"
+
+msgid "Enter a hostname"
+msgstr "Inserisci un nome dell'host"
+
+msgid "Select timezone"
+msgstr "Seleziona il fuso orario"
+
+msgid "No packages found"
+msgstr "Nessun pacchetto trovato"
+
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr "Inserisci il numero di download in parallelo da abilitare"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "Il valore deve essere tra 1 e {}"
+
+msgid "Enter new password"
+msgstr "Inserisci una nuova password"
+
+msgid "Enter a username"
+msgstr "Inserisci un nome utente"
+
+msgid "Enter a password"
+msgstr "Inserisci una password"
+
+msgid "Select an interface"
+msgstr "Seleziona un'interfaccia"
+
+msgid "Choose network configuration"
+msgstr "Scegli la configurazione di rete"
+
+msgid "Select which kernel(s) to install"
+msgstr "Scegli quali kernel installare"
+
+msgid "Select which greeter to install"
+msgstr "Seleziona quale schermata di benvenuto installare"
+
+msgid "Select a profile type"
+msgstr "Seleziona un tipo di profilo"
+
+msgid "The password did not match, please try again"
+msgstr "La password non corrisponde, prova ancora"
