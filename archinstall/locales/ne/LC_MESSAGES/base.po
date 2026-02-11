@@ -347,7 +347,7 @@ msgid "Set/Modify the below options"
 msgstr ""
 
 msgid "Install"
-msgstr ""
+msgstr "स्थापना गर्नुहोस्"
 
 msgid ""
 "Use ESC to skip\n"
