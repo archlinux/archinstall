@@ -332,10 +332,10 @@ msgid "Set desired filesystem for a partition"
 msgstr ""
 
 msgid "Abort"
-msgstr ""
+msgstr "रद्द गर्नुहोस्"
 
 msgid "Hostname"
-msgstr ""
+msgstr "होस्टनाम"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr ""
@@ -601,10 +601,10 @@ msgid "Continue"
 msgstr ""
 
 msgid "yes"
-msgstr ""
+msgstr "हो"
 
-msgid "no"
-msgstr ""
+msgid "No"
+msgstr "होइन"
 
 msgid "set: {}"
 msgstr ""
@@ -1034,19 +1034,19 @@ msgid "← Back"
 msgstr ""
 
 msgid "Disk encryption"
-msgstr ""
+msgstr "डिस्क इन्क्रिप्सन"
 
 msgid "Configuration"
 msgstr ""
 
 msgid "Password"
-msgstr ""
+msgstr "पासवर्ड"
 
 msgid "All settings will be reset, are you sure?"
 msgstr ""
 
 msgid "Back"
-msgstr ""
+msgstr "पछाडि"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr ""
@@ -1589,7 +1589,7 @@ msgid "Some packages could not be found in the repository"
 msgstr ""
 
 msgid "User"
-msgstr ""
+msgstr "प्रयोगकर्ता"
 
 msgid "The specified configuration will be applied"
 msgstr ""
@@ -1918,7 +1918,7 @@ msgid "most Apple Macs, many laptops..."
 msgstr ""
 
 msgid "Language"
-msgstr ""
+msgstr "भाषा"
 
 msgid "Compression algorithm"
 msgstr ""
