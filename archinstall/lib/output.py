@@ -100,7 +100,7 @@ class FormattedOutput:
 				if '!' in key:
 					value = '*' * len(value)
 
-				if isinstance(value, int | float) or (isinstance(value, str) and value.isnumeric()):
+				if isinstance(value, (int, float)) or (isinstance(value, str) and value.isnumeric()):
 					obj_data.append(unicode_rjust(str(value), width))
 				else:
 					obj_data.append(unicode_ljust(str(value), width))

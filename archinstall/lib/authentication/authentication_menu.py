@@ -7,7 +7,7 @@ from archinstall.lib.models.authentication import AuthenticationConfiguration, U
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
-from archinstall.lib.user.user_menu import ask_for_additional_users
+from archinstall.lib.user.user_menu import select_users
 from archinstall.lib.utils.util import get_password
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
@@ -58,7 +58,7 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 
 	def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
 		preset = [] if preset is None else preset
-		users = ask_for_additional_users(preset=preset)
+		users = select_users(preset=preset)
 		return users
 
 	def _prev_users(self, item: MenuItem) -> str | None:

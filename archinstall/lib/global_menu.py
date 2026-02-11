@@ -5,8 +5,8 @@ from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, PartitionModification
-from archinstall.lib.network.network_menu import ask_to_configure_network
-from archinstall.lib.packages.packages import ask_additional_packages_to_install, list_available_packages
+from archinstall.lib.network.network_menu import select_network
+from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
 from .applications.application_menu import ApplicationMenu
@@ -17,11 +17,11 @@ from .configuration import save_config
 from .hardware import SysInfo
 from .interactions.general_conf import (
 	add_number_of_parallel_downloads,
-	ask_for_a_timezone,
-	ask_hostname,
-	ask_ntp,
+	select_hostname,
+	select_ntp,
+	select_timezone,
 )
-from .interactions.system_conf import ask_for_swap, select_kernel
+from .interactions.system_conf import select_kernel, select_swap
 from .locale.locale_menu import LocaleMenu
 from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
 from .mirrors import MirrorListHandler, MirrorMenu
@@ -41,10 +41,12 @@ class GlobalMenu(AbstractMenu[None]):
 		self,
 		arch_config: ArchConfig,
 		mirror_list_handler: MirrorListHandler | None = None,
+		skip_boot: bool = False,
 		title: str | None = None,
 	) -> None:
 		self._arch_config = arch_config
 		self._mirror_list_handler = mirror_list_handler
+		self._skip_boot = skip_boot
 		menu_options = self._get_menu_options()
 
 		self._item_group = MenuItemGroup(
@@ -86,13 +88,13 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Swap'),
 				value=ZramConfiguration(enabled=True),
-				action=ask_for_swap,
+				action=select_swap,
 				preview_action=self._prev_swap,
 				key='swap',
 			),
 			MenuItem(
 				text=tr('Bootloader'),
-				value=BootloaderConfiguration.get_default(),
+				value=BootloaderConfiguration.get_default(self._skip_boot),
 				action=self._select_bootloader_config,
 				preview_action=self._prev_bootloader_config,
 				key='bootloader_config',
@@ -108,7 +110,7 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Hostname'),
 				value='archlinux',
-				action=ask_hostname,
+				action=select_hostname,
 				preview_action=self._prev_hostname,
 				key='hostname',
 			),
@@ -133,7 +135,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Network configuration'),
-				action=ask_to_configure_network,
+				action=select_network,
 				value={},
 				preview_action=self._prev_network_config,
 				key='network_config',
@@ -154,14 +156,14 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Timezone'),
-				action=ask_for_a_timezone,
+				action=select_timezone,
 				value='UTC',
 				preview_action=self._prev_tz,
 				key='timezone',
 			),
 			MenuItem(
 				text=tr('Automatic time sync (NTP)'),
-				action=ask_ntp,
+				action=select_ntp,
 				value=True,
 				preview_action=self._prev_ntp,
 				key='ntp',
@@ -528,9 +530,9 @@ class GlobalMenu(AbstractMenu[None]):
 		preset: BootloaderConfiguration | None = None,
 	) -> BootloaderConfiguration | None:
 		if preset is None:
-			preset = BootloaderConfiguration.get_default()
+			preset = BootloaderConfiguration.get_default(self._skip_boot)
 
-		bootloader_config = BootloaderMenu(preset).run()
+		bootloader_config = BootloaderMenu(preset, self._skip_boot).run()
 
 		return bootloader_config
 
@@ -547,7 +549,7 @@ class GlobalMenu(AbstractMenu[None]):
 		if config:
 			repositories = set(config.optional_repositories)
 
-		packages = ask_additional_packages_to_install(
+		packages = select_additional_packages(
 			preset,
 			repositories=repositories,
 		)
@@ -555,12 +557,10 @@ class GlobalMenu(AbstractMenu[None]):
 		return packages
 
 	def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
-		if self._mirror_list_handler is not None:
-			mirror_list_handler = self._mirror_list_handler
-		else:
-			mirror_list_handler = MirrorListHandler()
+		if self._mirror_list_handler is None:
+			self._mirror_list_handler = MirrorListHandler()
 
-		mirror_configuration = MirrorMenu(mirror_list_handler, preset=preset).run()
+		mirror_configuration = MirrorMenu(self._mirror_list_handler, preset=preset).run()
 
 		if mirror_configuration and mirror_configuration.optional_repositories:
 			# reset the package list cache in case the repository selection has changed

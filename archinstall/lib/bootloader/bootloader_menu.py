@@ -6,7 +6,6 @@ from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
-from ..args import arch_config_handler
 from ..hardware import SysInfo
 from ..menu.abstract_menu import AbstractSubMenu
 from ..models.bootloader import Bootloader, BootloaderConfiguration
@@ -16,8 +15,10 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 	def __init__(
 		self,
 		bootloader_conf: BootloaderConfiguration,
+		skip_boot: bool = False,
 	):
 		self._bootloader_conf = bootloader_conf
+		self._skip_boot = skip_boot
 		menu_options = self._define_menu_options()
 
 		self._item_group = MenuItemGroup(menu_options, sort_items=False, checkmarks=True)
@@ -91,7 +92,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		return self._bootloader_conf
 
 	def _select_bootloader(self, preset: Bootloader | None) -> Bootloader | None:
-		bootloader = ask_for_bootloader(preset)
+		bootloader = select_bootloader(preset, self._skip_boot)
 
 		if bootloader:
 			# Update UKI option based on bootloader
@@ -177,13 +178,16 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				raise ValueError('Unhandled result type')
 
 
-def ask_for_bootloader(preset: Bootloader | None) -> Bootloader | None:
+def select_bootloader(
+	preset: Bootloader | None,
+	skip_boot: bool = False,
+) -> Bootloader | None:
 	options = []
 	hidden_options = []
 	default = None
 	header = tr('Select bootloader to install')
 
-	if arch_config_handler.args.skip_boot:
+	if skip_boot:
 		default = Bootloader.NO_BOOTLOADER
 	else:
 		hidden_options += [Bootloader.NO_BOOTLOADER]

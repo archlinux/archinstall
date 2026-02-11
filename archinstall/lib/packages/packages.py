@@ -85,7 +85,7 @@ def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 	return cls.model_validate(package)
 
 
-def ask_additional_packages_to_install(
+def select_additional_packages(
 	preset: list[str] = [],
 	repositories: set[Repository] = set(),
 ) -> list[str]:

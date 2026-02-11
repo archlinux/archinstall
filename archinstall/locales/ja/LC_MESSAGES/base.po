@@ -531,7 +531,7 @@ msgid "are you sure you want to use it?"
 msgstr "本当に使用してもよろしいですか？"
 
 msgid "Optional repositories"
-msgstr "オプションのリポジトリ"
+msgstr "オプションリポジトリ"
 
 msgid "Save configuration"
 msgstr "設定を保存"
@@ -1511,7 +1511,7 @@ msgid "Choose an option to give Hyprland access to your hardware"
 msgstr "Hyprland にハードウェアへのアクセスを許可するオプションを選択"
 
 msgid "Additional repositories"
-msgstr "追加のリポジトリ"
+msgstr "追加リポジトリ"
 
 msgid "NTP"
 msgstr "NTP"
@@ -1571,7 +1571,7 @@ msgid "Delete custom repository"
 msgstr "カスタムリポジトリを削除"
 
 msgid "Repository name"
-msgstr "リポジトリの名前"
+msgstr "リポジトリ名"
 
 msgid "Add a custom server"
 msgstr "カスタムサーバーを追加"
@@ -1877,3 +1877,116 @@ msgstr "NetworkManager（デフォルトのバックエンド）を使用する"
 
 msgid "Use Network Manager (iwd backend)"
 msgstr "NetworkManager (iwd バックエンド) を使用する"
+
+msgid "Firewall"
+msgstr "ファイアウォール"
+
+msgid "Select audio configuration"
+msgstr "オーディオ設定を選択"
+
+msgid "Enter credentials file decryption password"
+msgstr "認証情報ファイルの復号パスワードを入力"
+
+msgid "Enter root password"
+msgstr "ルートパスワードを入力"
+
+msgid "Select bootloader to install"
+msgstr "インストールするブートローダーを選択"
+
+msgid "Configuration preview"
+msgstr "設定プレビュー"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "設定を保存するディレクトリを入力"
+
+msgid "Select encryption type"
+msgstr "暗号化のタイプを選択"
+
+msgid "Select disks for the installation"
+msgstr "インストール用のディスクを選択"
+
+msgid "Enter a mountpoint"
+msgstr "マウントポイントを入力"
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "サイズを入力（デフォルト: {}): "
+
+msgid "Enter subvolume name"
+msgstr "サブボリューム名を入力"
+
+msgid "Enter subvolume mountpoint"
+msgstr "サブボリュームのマウントポイントを入力"
+
+msgid "Select a disk configuration"
+msgstr "ディスクの設定を選択"
+
+msgid "Enter root mount directory"
+msgstr "ルートマウントディレクトリを入力"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "指定されたディレクトリにマウントされているドライブの設定を使用します"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "警告: Archinstall はこのセットアップの適合性をチェックしません"
+
+msgid "Select main filesystem"
+msgstr "メインファイルシステムを選択"
+
+msgid "Enter a hostname"
+msgstr "ホスト名を入力"
+
+msgid "Select timezone"
+msgstr "タイムゾーンを選択"
+
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr "有効にする並列ダウンロード数を入力"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "値は 1 から {} までの範囲にしてください"
+
+msgid "Select which kernel(s) to install"
+msgstr "インストールするカーネルを選択"
+
+msgid "Enter a respository name"
+msgstr "リポジトリ名を入力"
+
+msgid "Enter the repository url"
+msgstr "リポジトリの URL を入力"
+
+msgid "Enter server url"
+msgstr "サーバーの URL を入力"
+
+msgid "Select mirror regions to be enabled"
+msgstr "有効にするミラー地域を選択"
+
+msgid "Select optional repositories to be enabled"
+msgstr "有効にするオプションリポジトリを選択"
+
+msgid "Select an interface"
+msgstr "インターフェースを選択"
+
+msgid "Choose network configuration"
+msgstr "ネットワーク設定を選択"
+
+msgid "No packages found"
+msgstr "パッケージが見つかりません"
+
+msgid "Select which greeter to install"
+msgstr "インストールするグリーターを選択"
+
+msgid "Select a profile type"
+msgstr "プロファイルのタイプを選択"
+
+msgid "Enter new password"
+msgstr "新しいパスワードを入力"
+
+msgid "Enter a username"
+msgstr "ユーザー名を入力"
+
+msgid "Enter a password"
+msgstr "パスワードを入力"
+
+msgid "The password did not match, please try again"
+msgstr "パスワードが一致しません。もう一度試してください"

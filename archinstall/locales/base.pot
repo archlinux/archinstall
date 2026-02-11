@@ -1936,3 +1936,116 @@ msgstr ""
 
 msgid "Use Network Manager (iwd backend)"
 msgstr ""
+
+msgid "Firewall"
+msgstr ""
+
+msgid "Select audio configuration"
+msgstr ""
+
+msgid "Enter credentials file decryption password"
+msgstr ""
+
+msgid "Enter root password"
+msgstr ""
+
+msgid "Select bootloader to install"
+msgstr ""
+
+msgid "Configuration preview"
+msgstr ""
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr ""
+
+msgid "Select encryption type"
+msgstr ""
+
+msgid "Select disks for the installation"
+msgstr ""
+
+msgid "Enter a mountpoint"
+msgstr ""
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr ""
+
+msgid "Enter subvolume name"
+msgstr ""
+
+msgid "Enter subvolume mountpoint"
+msgstr ""
+
+msgid "Select a disk configuration"
+msgstr ""
+
+msgid "Enter root mount directory"
+msgstr ""
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+msgid "Select main filesystem"
+msgstr ""
+
+msgid "Enter a hostname"
+msgstr ""
+
+msgid "Select timezone"
+msgstr ""
+
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+msgid "Select which kernel(s) to install"
+msgstr ""
+
+msgid "Enter a respository name"
+msgstr ""
+
+msgid "Enter the repository url"
+msgstr ""
+
+msgid "Enter server url"
+msgstr ""
+
+msgid "Select mirror regions to be enabled"
+msgstr ""
+
+msgid "Select optional repositories to be enabled"
+msgstr ""
+
+msgid "Select an interface"
+msgstr ""
+
+msgid "Choose network configuration"
+msgstr ""
+
+msgid "No packages found"
+msgstr ""
+
+msgid "Select which greeter to install"
+msgstr ""
+
+msgid "Select a profile type"
+msgstr ""
+
+msgid "Enter new password"
+msgstr ""
+
+msgid "Enter a username"
+msgstr ""
+
+msgid "Enter a password"
+msgstr ""
+
+msgid "The password did not match, please try again"
+msgstr ""
