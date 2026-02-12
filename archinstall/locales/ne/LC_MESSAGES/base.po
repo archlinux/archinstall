@@ -5,31 +5,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "[!] A log file has been created here: {} {}"
-msgstr ""
+msgstr "[!] यहाँ एउटा लग फाइल (log file) सिर्जना गरिएको छ: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr ""
+msgstr "    कृपया यो समस्या (र फाइल) यहाँ बुझाउनुहोस्: https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr ""
+msgstr "के तपाईं साँच्चै रद्द गर्न चाहनुहुन्छ?"
 
 msgid "And one more time for verification: "
-msgstr ""
+msgstr "र प्रमाणीकरणको लागि फेरि एक पटक: "
 
 msgid "Would you like to use swap on zram?"
-msgstr ""
+msgstr "के तपाईं zram मा swap प्रयोग गर्न चाहनुहुन्छ?"
 
 msgid "Desired hostname for the installation: "
-msgstr ""
+msgstr "स्थापनाको लागि इच्छाएको होस्ट-नाम (hostname): "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr ""
+msgstr "sudo विशेषाधिकार भएको सुपर-युजर (superuser) को लागि प्रयोगकर्ता-नाम: "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr ""
+msgstr "थप्नुपर्ने अन्य कुनै प्रयोगकर्ताहरू (कुनै नभए खाली छोड्नुहोस्): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr ""
+msgstr "के यो प्रयोगकर्ता सुपर-युजर (sudoer) हुनुपर्छ?"
 
 msgid "Select a timezone"
 msgstr ""
