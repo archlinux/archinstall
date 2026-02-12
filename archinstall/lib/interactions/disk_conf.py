@@ -4,6 +4,7 @@ from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.partitioning_menu import manual_partitioning
 from archinstall.lib.menu.helpers import Confirmation, Notify, Selection, Table
+from archinstall.lib.menu.util import prompt_dir
 from archinstall.lib.models.device import (
 	BDevice,
 	BtrfsMountOption,
@@ -32,7 +33,6 @@ from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
 from ..output import FormattedOutput
-from ..utils.util import prompt_dir
 
 
 def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | None:

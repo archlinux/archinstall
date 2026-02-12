@@ -16,10 +16,10 @@ from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
 from ..menu.abstract_menu import AbstractSubMenu
+from ..menu.util import get_password
 from ..models.device import DEFAULT_ITER_TIME, Fido2Device
 from ..models.users import Password
 from ..output import FormattedOutput
-from ..utils.util import get_password
 from .fido import Fido2
 
 
