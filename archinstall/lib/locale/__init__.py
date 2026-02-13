@@ -1,4 +1,4 @@
-from .utils import (
+from archinstall.lib.locale.utils import (
 	list_keyboard_languages,
 	list_locales,
 	list_timezones,

@@ -26,13 +26,11 @@ from archinstall.lib.models.device import (
 	Unit,
 	_DeviceInfo,
 )
-from archinstall.lib.output import debug
+from archinstall.lib.output import FormattedOutput, debug
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.util import prompt_dir
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..output import FormattedOutput
-from ..utils.util import prompt_dir
 
 
 def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | None:

@@ -3,10 +3,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Self
 
+from archinstall.lib.hardware import SysInfo
+from archinstall.lib.output import warn
 from archinstall.lib.translationhandler import tr
-
-from ..hardware import SysInfo
-from ..output import warn
 
 
 class Bootloader(Enum):

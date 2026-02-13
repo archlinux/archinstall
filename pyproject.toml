@@ -179,6 +179,9 @@ indent-style = "tab"
 quote-style = "single"
 docstring-code-format = true
 
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
 [tool.ruff.lint]
 select = [
     "ASYNC",  # flake8-async
@@ -209,6 +212,7 @@ select = [
     "UP",     # pyupgrade
     "W",      # pycodestyle warnings
     "YTT",    # flake8-2020
+    "TID",    # flake8-tidy-imports (Enables TID252)
 ]
 
 ignore = [
