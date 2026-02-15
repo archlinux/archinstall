@@ -6,7 +6,6 @@ from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
-from ..hardware import SysInfo
 from ..menu.abstract_menu import AbstractSubMenu
 from ..models.bootloader import Bootloader, BootloaderConfiguration
 
@@ -15,10 +14,12 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 	def __init__(
 		self,
 		bootloader_conf: BootloaderConfiguration,
+		uefi: bool,
 		skip_boot: bool = False,
 	):
 		self._bootloader_conf = bootloader_conf
 		self._skip_boot = skip_boot
+		self._uefi = uefi
 		menu_options = self._define_menu_options()
 
 		self._item_group = MenuItemGroup(menu_options, sort_items=False, checkmarks=True)
@@ -30,15 +31,14 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		bootloader = self._bootloader_conf.bootloader
-		has_uefi = SysInfo.has_uefi()
 
 		# UKI availability
-		uki_enabled = has_uefi and bootloader.has_uki_support()
+		uki_enabled = self._uefi and bootloader.has_uki_support()
 		if not uki_enabled:
 			self._bootloader_conf.uki = False
 
 		# Removable availability
-		removable_enabled = has_uefi and bootloader.has_removable_support()
+		removable_enabled = self._uefi and bootloader.has_removable_support()
 		if not removable_enabled:
 			self._bootloader_conf.removable = False
 
@@ -92,12 +92,12 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		return self._bootloader_conf
 
 	def _select_bootloader(self, preset: Bootloader | None) -> Bootloader | None:
-		bootloader = select_bootloader(preset, self._skip_boot)
+		bootloader = select_bootloader(preset, self._uefi, self._skip_boot)
 
 		if bootloader:
 			# Update UKI option based on bootloader
 			uki_item = self._menu_item_group.find_by_key('uki')
-			if not SysInfo.has_uefi() or not bootloader.has_uki_support():
+			if not self._uefi or not bootloader.has_uki_support():
 				uki_item.enabled = False
 				uki_item.value = False
 				self._bootloader_conf.uki = False
@@ -106,7 +106,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 
 			# Update removable option based on bootloader
 			removable_item = self._menu_item_group.find_by_key('removable')
-			if not SysInfo.has_uefi() or not bootloader.has_removable_support():
+			if not self._uefi or not bootloader.has_removable_support():
 				removable_item.enabled = False
 				removable_item.value = False
 				self._bootloader_conf.removable = False
@@ -180,27 +180,23 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 
 def select_bootloader(
 	preset: Bootloader | None,
+	uefi: bool,
 	skip_boot: bool = False,
 ) -> Bootloader | None:
 	options = []
 	hidden_options = []
-	default = None
 	header = tr('Select bootloader to install')
 
-	if skip_boot:
-		default = Bootloader.NO_BOOTLOADER
-	else:
+	default = Bootloader.get_default(uefi, skip_boot)
+
+	if not skip_boot:
 		hidden_options += [Bootloader.NO_BOOTLOADER]
 
-	if not SysInfo.has_uefi():
+	if not uefi:
 		options += [Bootloader.Grub, Bootloader.Limine]
-		if not default:
-			default = Bootloader.Grub
 		header += '\n' + tr('UEFI is not detected and some options are disabled')
 	else:
 		options += [b for b in Bootloader if b not in hidden_options]
-		if not default:
-			default = Bootloader.Systemd
 
 	items = [MenuItem(o.value, value=o) for o in options]
 	group = MenuItemGroup(items)
