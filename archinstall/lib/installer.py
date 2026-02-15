@@ -1618,7 +1618,7 @@ class Installer:
 
 		if not uki_enabled:
 			loader = '/vmlinuz-{kernel}'
-			# python escaping for a single forward slash
+			# python escaping for a single backslash
 			# according to wiki EFISTUB when passed to --unicode
 			entries = (
 				'initrd=\\initramfs-{kernel}.img',
