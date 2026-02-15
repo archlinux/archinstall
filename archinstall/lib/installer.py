@@ -1620,7 +1620,7 @@ class Installer:
 			loader = '/vmlinuz-{kernel}'
 			# EFI standards stipulate backslashes
 			entries = (
-				'initrd=\\initramfs-{kernel}.img',
+				r'initrd=\initramfs-{kernel}.img',
 				*self._get_kernel_params(root),
 			)
 
