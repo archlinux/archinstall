@@ -16,7 +16,7 @@ from typing import Any, Self
 
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.fido import Fido2
-from archinstall.lib.disk.utils import get_lsblk_by_mountpoint, get_lsblk_info, mount
+from archinstall.lib.disk.utils import get_lsblk_by_mountpoint, get_lsblk_info, mount, swapon
 from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.device import (
 	DiskEncryption,
@@ -371,7 +371,7 @@ class Installer:
 					part_mod.mount_options,
 				)
 		elif part_mod.is_swap():
-			device_handler.swapon(part_mod.dev_path)
+			swapon(part_mod.dev_path)
 
 	def _mount_lvm_vol(self, volume: LvmVolume) -> None:
 		if volume.fs_type != FilesystemType.Btrfs:

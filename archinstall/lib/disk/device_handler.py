@@ -763,13 +763,6 @@ class DeviceHandler:
 		if filtered_part:
 			self.udev_sync()
 
-	@staticmethod
-	def swapon(path: Path) -> None:
-		try:
-			SysCommand(['swapon', str(path)])
-		except SysCallError as err:
-			raise DiskError(f'Could not enable swap {path}:\n{err.message}')
-
 	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> list[DeviceModification]:
 		part_mods: dict[Path, list[PartitionModification]] = {}
 
