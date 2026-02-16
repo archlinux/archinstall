@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.models.device import LsblkInfo
-from archinstall.lib.output import debug, warn
+from archinstall.lib.output import debug, info, warn
 
 
 class LsblkOutput(BaseModel):
@@ -67,12 +67,12 @@ def get_lsblk_output() -> LsblkOutput:
 
 def find_lsblk_info(
 	dev_path: Path | str,
-	info: list[LsblkInfo],
+	info_list: list[LsblkInfo],
 ) -> LsblkInfo | None:
 	if isinstance(dev_path, str):
 		dev_path = Path(dev_path)
 
-	for lsblk_info in info:
+	for lsblk_info in info_list:
 		if lsblk_info.path == dev_path:
 			return lsblk_info
 
@@ -108,6 +108,43 @@ def disk_layouts() -> str:
 		return ''
 
 	return lsblk_output.model_dump_json(indent=4)
+
+
+def mount(
+	dev_path: Path,
+	target_mountpoint: Path,
+	mount_fs: str | None = None,
+	create_target_mountpoint: bool = True,
+	options: list[str] = [],
+) -> None:
+	if create_target_mountpoint and not target_mountpoint.exists():
+		target_mountpoint.mkdir(parents=True, exist_ok=True)
+
+	if not target_mountpoint.exists():
+		raise ValueError('Target mountpoint does not exist')
+
+	lsblk_info = get_lsblk_info(dev_path)
+	if target_mountpoint in lsblk_info.mountpoints:
+		info(f'Device already mounted at {target_mountpoint}')
+		return
+
+	cmd = ['mount']
+
+	if len(options):
+		cmd.extend(('-o', ','.join(options)))
+	if mount_fs:
+		cmd.extend(('-t', mount_fs))
+
+	cmd.extend((str(dev_path), str(target_mountpoint)))
+
+	command = ' '.join(cmd)
+
+	debug(f'Mounting {dev_path}: {command}')
+
+	try:
+		SysCommand(command)
+	except SysCallError as err:
+		raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
 
 def umount(mountpoint: Path, recursive: bool = False) -> None:
