@@ -191,19 +191,6 @@ class DeviceHandler:
 		lsblk = get_lsblk_info(dev_path)
 		return Path(f'/dev/{lsblk.pkname}')
 
-	def get_unique_path_for_device(self, dev_path: Path) -> Path | None:
-		paths = Path('/dev/disk/by-id').glob('*')
-		linked_targets = {p.resolve(): p for p in paths}
-		linked_wwn_targets = {p: linked_targets[p] for p in linked_targets if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
-
-		if dev_path in linked_wwn_targets:
-			return linked_wwn_targets[dev_path]
-
-		if dev_path in linked_targets:
-			return linked_targets[dev_path]
-
-		return None
-
 	def get_uuid_for_path(self, path: Path) -> str | None:
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None

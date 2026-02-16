@@ -16,7 +16,13 @@ from typing import Any, Self
 
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.fido import Fido2
-from archinstall.lib.disk.utils import get_lsblk_by_mountpoint, get_lsblk_info, mount, swapon
+from archinstall.lib.disk.utils import (
+	get_lsblk_by_mountpoint,
+	get_lsblk_info,
+	get_unique_path_for_device,
+	mount,
+	swapon,
+)
 from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.device import (
 	DiskEncryption,
@@ -1534,7 +1540,7 @@ class Installer:
 
 			parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
 
-			if unique_path := device_handler.get_unique_path_for_device(parent_dev_path):
+			if unique_path := get_unique_path_for_device(parent_dev_path):
 				parent_dev_path = unique_path
 
 			try:
