@@ -16,25 +16,24 @@ class NetworkHandler:
 					enable_services=True,  # Sources the ISO network configuration to the install medium.
 				)
 			case NicType.NM | NicType.NM_IWD:
-				# Install NetworkManager package for both cases
 				packages = ['networkmanager']
-				# Default back-end only for non-iwd
-				if network_config.type == NicType.NM:
-					packages.append('wpa_supplicant')
+				if network_config.type == NicType.NM:  # default
+					packages.extend(['wpa_supplicant', 'wireless_tools'])
+				else:  # iwd better support for some wifi cards
+					packages.append('iwd')
 
 				installation.add_additional_packages(packages)
 
-				# Desktop profile -> Always add applet
-				if profile_config and profile_config.profile:
-					if profile_config.profile.is_desktop_profile():
-						installation.add_additional_packages('network-manager-applet')
+				# in any case if desktop
+				if profile_config and profile_config.profile and profile_config.profile.is_desktop_profile():
+					installation.add_additional_packages('network-manager-applet')
 
 				installation.enable_service('NetworkManager.service')
+
+				# special handling for NM iwd service + conf
 				if network_config.type == NicType.NM_IWD:
-					# NM_IWD special handling
 					installation.configure_nm_iwd()
 					installation.disable_service('iwd.service')
-
 			case NicType.MANUAL:
 				for nic in network_config.nics:
 					installation.configure_nic(nic)
