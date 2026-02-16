@@ -98,8 +98,7 @@ class Installer:
 		self._binaries: list[str] = []
 		self._files: list[str] = []
 
-		# systemd, sd-vconsole and sd-encrypt will be replaced by udev, keymap and encrypt
-		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
+		# sd-encrypt is inserted by _prepare_encrypt() when disk encryption is configured
 		self._hooks: list[str] = [
 			'base',
 			'systemd',
@@ -818,14 +817,6 @@ class Installer:
 			content = re.sub('\nBINARIES=(.*)', f'\nBINARIES=({" ".join(self._binaries)})', content)
 			content = re.sub('\nFILES=(.*)', f'\nFILES=({" ".join(self._files)})', content)
 
-			if not self._disk_encryption.hsm_device:
-				# For now, if we don't use HSM we revert to the old
-				# way of setting up encryption hooks for mkinitcpio.
-				# This is purely for stability reasons, we're going away from this.
-				# * systemd -> udev
-				# * sd-vconsole -> keymap
-				self._hooks = [hook.replace('systemd', 'udev').replace('sd-vconsole', 'keymap consolefont') for hook in self._hooks]
-
 			content = re.sub('\nHOOKS=(.*)', f'\nHOOKS=({" ".join(self._hooks)})', content)
 			mkinit.seek(0)
 			mkinit.truncate()
@@ -867,11 +858,8 @@ class Installer:
 			# Required by mkinitcpio to add support for fido2-device options
 			self.pacman.strap('libfido2')
 
-			if 'sd-encrypt' not in self._hooks:
-				self._hooks.insert(self._hooks.index(before), 'sd-encrypt')
-		else:
-			if 'encrypt' not in self._hooks:
-				self._hooks.insert(self._hooks.index(before), 'encrypt')
+		if 'sd-encrypt' not in self._hooks:
+			self._hooks.insert(self._hooks.index(before), 'sd-encrypt')
 
 	def minimal_installation(
 		self,
@@ -1103,19 +1091,13 @@ class Installer:
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
 			# or simply a partition encryption. Right now we assume it's a partition (and we always have)
 
+			debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
+			kernel_parameters.append(f'rd.luks.name={root_partition.uuid}=root')
+
 			if self._disk_encryption.hsm_device:
-				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
-				# Note: UUID must be used, not PARTUUID for sd-encrypt to work
-				kernel_parameters.append(f'rd.luks.name={root_partition.uuid}=root')
 				# Note: tpm2-device and fido2-device don't play along very well:
 				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
 				kernel_parameters.append('rd.luks.options=fido2-device=auto,password-echo=no')
-			elif partuuid:
-				debug(f'Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
-				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:root')
-			else:
-				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
-				kernel_parameters.append(f'cryptdevice=UUID={root_partition.uuid}:root')
 
 			if id_root:
 				kernel_parameters.append('root=/dev/mapper/root')
@@ -1147,21 +1129,13 @@ class Installer:
 
 				uuid = self._get_luks_uuid_from_mapper_dev(pv_seg_info.pv_name)
 
-				if self._disk_encryption.hsm_device:
-					debug(f'LvmOnLuks, encrypted root partition, HSM, identifying by UUID: {uuid}')
-					kernel_parameters.append(f'rd.luks.name={uuid}=cryptlvm root={lvm.safe_dev_path}')
-				else:
-					debug(f'LvmOnLuks, encrypted root partition, identifying by UUID: {uuid}')
-					kernel_parameters.append(f'cryptdevice=UUID={uuid}:cryptlvm root={lvm.safe_dev_path}')
+				debug(f'LvmOnLuks, encrypted root partition, identifying by UUID: {uuid}')
+				kernel_parameters.append(f'rd.luks.name={uuid}=cryptlvm root={lvm.safe_dev_path}')
 			case EncryptionType.LuksOnLvm:
 				uuid = self._get_luks_uuid_from_mapper_dev(lvm.mapper_path)
 
-				if self._disk_encryption.hsm_device:
-					debug(f'LuksOnLvm, encrypted root partition, HSM, identifying by UUID: {uuid}')
-					kernel_parameters.append(f'rd.luks.name={uuid}=root root=/dev/mapper/root')
-				else:
-					debug(f'LuksOnLvm, encrypted root partition, identifying by UUID: {uuid}')
-					kernel_parameters.append(f'cryptdevice=UUID={uuid}:root root=/dev/mapper/root')
+				debug(f'LuksOnLvm, encrypted root partition, identifying by UUID: {uuid}')
+				kernel_parameters.append(f'rd.luks.name={uuid}=root root=/dev/mapper/root')
 			case EncryptionType.NoEncryption:
 				debug(f'Identifying root lvm by mapper device: {lvm.dev_path}')
 				kernel_parameters.append(f'root={lvm.safe_dev_path}')
