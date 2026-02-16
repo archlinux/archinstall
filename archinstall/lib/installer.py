@@ -41,7 +41,7 @@ from .command import SysCommand, run
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from .hardware import SysInfo
 from .locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
-from .luks import Luks2
+from .luks import Luks2, unlock_luks2_dev
 from .mirrors import MirrorListHandler
 from .models.bootloader import Bootloader
 from .models.locale import LocaleConfiguration
@@ -317,7 +317,7 @@ class Installer:
 		partitions: list[PartitionModification],
 	) -> dict[PartitionModification, Luks2]:
 		return {
-			part_mod: device_handler.unlock_luks2_dev(
+			part_mod: unlock_luks2_dev(
 				part_mod.dev_path,
 				part_mod.mapper_name,
 				self._disk_encryption.encryption_password,
@@ -344,7 +344,7 @@ class Installer:
 		lvm_volumes: list[LvmVolume],
 	) -> dict[LvmVolume, Luks2]:
 		return {
-			vol: device_handler.unlock_luks2_dev(
+			vol: unlock_luks2_dev(
 				vol.dev_path,
 				vol.mapper_name,
 				self._disk_encryption.encryption_password,
