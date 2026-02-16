@@ -163,3 +163,10 @@ def umount(mountpoint: Path, recursive: bool = False) -> None:
 	for path in lsblk_info.mountpoints:
 		debug(f'Unmounting mountpoint: {path}')
 		SysCommand(cmd + [str(path)])
+
+
+def swapon(path: Path) -> None:
+	try:
+		SysCommand(['swapon', str(path)])
+	except SysCallError as err:
+		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
