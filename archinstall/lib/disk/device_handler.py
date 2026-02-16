@@ -10,7 +10,7 @@ from parted import Device, Disk, DiskException, FileSystem, Geometry, IOExceptio
 
 from ..command import SysCommand, SysCommandWorker
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
-from ..luks import Luks2
+from ..luks import Luks2, unlock_luks2_dev
 from ..models.device import (
 	DEFAULT_ITER_TIME,
 	BDevice,
@@ -658,7 +658,7 @@ class DeviceHandler:
 			if not part_mod.mapper_name:
 				raise ValueError('No device path specified for modification')
 
-			luks_handler = self.unlock_luks2_dev(
+			luks_handler = unlock_luks2_dev(
 				part_mod.safe_dev_path,
 				part_mod.mapper_name,
 				enc_conf.encryption_password,
@@ -690,19 +690,6 @@ class DeviceHandler:
 
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
 			luks_handler.lock()
-
-	def unlock_luks2_dev(
-		self,
-		dev_path: Path,
-		mapper_name: str,
-		enc_password: Password | None,
-	) -> Luks2:
-		luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
-
-		if not luks_handler.is_unlocked():
-			luks_handler.unlock()
-
-		return luks_handler
 
 	def umount_all_existing(self, device_path: Path) -> None:
 		debug(f'Unmounting all existing partitions: {device_path}')

@@ -237,3 +237,16 @@ class Luks2:
 			uuid = self._get_luks_uuid()
 			row = f'{self.mapper_name} UUID={uuid} {key_file} {opt}\n'
 			crypttab.write(row)
+
+
+def unlock_luks2_dev(
+	dev_path: Path,
+	mapper_name: str,
+	enc_password: Password | None,
+) -> Luks2:
+	luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
+
+	if not luks_handler.is_unlocked():
+		luks_handler.unlock()
+
+	return luks_handler
