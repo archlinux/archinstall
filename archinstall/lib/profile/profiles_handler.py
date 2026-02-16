@@ -235,10 +235,10 @@ class ProfileHandler:
 		if not profile:
 			return
 
-		profile.install(install_session)
-
 		if profile_config.gfx_driver and (profile.is_xorg_type_profile() or profile.is_desktop_profile()):
 			self.install_gfx_driver(install_session, profile_config.gfx_driver)
+
+		profile.install(install_session)
 
 		if profile_config.greeter:
 			self.install_greeter(install_session, profile_config.greeter)
