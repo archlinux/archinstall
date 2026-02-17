@@ -187,10 +187,6 @@ class DeviceHandler:
 				return part
 		return None
 
-	def get_parent_device_path(self, dev_path: Path) -> Path:
-		lsblk = get_lsblk_info(dev_path)
-		return Path(f'/dev/{lsblk.pkname}')
-
 	def get_uuid_for_path(self, path: Path) -> str | None:
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None

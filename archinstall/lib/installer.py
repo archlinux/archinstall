@@ -19,6 +19,7 @@ from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.disk.utils import (
 	get_lsblk_by_mountpoint,
 	get_lsblk_info,
+	get_parent_device_path,
 	get_unique_path_for_device,
 	mount,
 	swapon,
@@ -1381,7 +1382,7 @@ class Installer:
 		else:
 			info(f'GRUB boot partition: {boot_partition.dev_path}')
 
-			parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+			parent_dev_path = get_parent_device_path(boot_partition.safe_dev_path)
 
 			add_options = [
 				'--target=i386-pc',
@@ -1475,7 +1476,7 @@ class Installer:
 
 			info(f'Limine EFI partition: {efi_partition.dev_path}')
 
-			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+			parent_dev_path = get_parent_device_path(efi_partition.safe_dev_path)
 
 			try:
 				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
@@ -1538,7 +1539,7 @@ class Installer:
 
 			config_path = boot_limine_path / 'limine.conf'
 
-			parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+			parent_dev_path = get_parent_device_path(boot_partition.safe_dev_path)
 
 			if unique_path := get_unique_path_for_device(parent_dev_path):
 				parent_dev_path = unique_path
@@ -1635,7 +1636,7 @@ class Installer:
 			loader = '/EFI/Linux/arch-{kernel}.efi'
 			cmdline = []
 
-		parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+		parent_dev_path = get_parent_device_path(boot_partition.safe_dev_path)
 
 		cmd_template = (
 			'efibootmgr',
