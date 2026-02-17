@@ -110,6 +110,11 @@ def disk_layouts() -> str:
 	return lsblk_output.model_dump_json(indent=4)
 
 
+def get_parent_device_path(dev_path: Path) -> Path:
+	lsblk = get_lsblk_info(dev_path)
+	return Path(f'/dev/{lsblk.pkname}')
+
+
 def get_unique_path_for_device(dev_path: Path) -> Path | None:
 	paths = Path('/dev/disk/by-id').glob('*')
 	linked_targets = {p.resolve(): p for p in paths}
