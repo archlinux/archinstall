@@ -14,8 +14,8 @@ from subprocess import CalledProcessError
 from types import TracebackType
 from typing import Any, Self
 
-from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.fido import Fido2
+from archinstall.lib.disk.lvm import lvm_import_vg, lvm_pvseg_info, lvm_vol_change
 from archinstall.lib.disk.utils import (
 	get_lsblk_by_mountpoint,
 	get_lsblk_info,
@@ -341,10 +341,10 @@ class Installer:
 			return
 
 		for vg in lvm_config.vol_groups:
-			device_handler.lvm_import_vg(vg)
+			lvm_import_vg(vg)
 
 			for vol in vg.volumes:
-				device_handler.lvm_vol_change(vol, True)
+				lvm_vol_change(vol, True)
 
 	def _prepare_luks_lvm(
 		self,
@@ -1147,7 +1147,7 @@ class Installer:
 				if not lvm.vg_name:
 					raise ValueError(f'Unable to determine VG name for {lvm.name}')
 
-				pv_seg_info = device_handler.lvm_pvseg_info(lvm.vg_name, lvm.name)
+				pv_seg_info = lvm_pvseg_info(lvm.vg_name, lvm.name)
 
 				if not pv_seg_info:
 					raise ValueError(f'Unable to determine PV segment info for {lvm.vg_name}/{lvm.name}')
