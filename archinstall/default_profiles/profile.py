@@ -32,6 +32,7 @@ class GreeterType(Enum):
 	Gdm = 'gdm'
 	Ly = 'ly'
 	CosmicSession = 'cosmic-greeter'
+	PlasmaLoginManager = 'plasma-login-manager'
 
 
 class SelectResult(Enum):

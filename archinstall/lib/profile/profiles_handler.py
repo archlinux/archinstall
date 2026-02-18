@@ -198,6 +198,9 @@ class ProfileHandler:
 			case GreeterType.CosmicSession:
 				packages = ['cosmic-greeter']
 				service = ['cosmic-greeter']
+			case GreeterType.PlasmaLoginManager:
+				packages = ['plasma-login-manager']
+				service = ['plasmalogin']
 
 		if packages:
 			install_session.add_additional_packages(packages)
