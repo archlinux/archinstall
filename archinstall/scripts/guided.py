@@ -77,12 +77,17 @@ def perform_installation(
 		mountpoint,
 		disk_config,
 		kernels=config.kernels,
+		silent=arch_config_handler.args.silent,
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
 
-		installation.sanity_check()
+		installation.sanity_check(
+			arch_config_handler.args.offline,
+			arch_config_handler.args.skip_ntp,
+			arch_config_handler.args.skip_wkd,
+		)
 
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			if disk_config.disk_encryption and disk_config.disk_encryption.encryption_type != EncryptionType.NoEncryption:

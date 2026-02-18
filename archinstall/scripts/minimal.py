@@ -28,6 +28,7 @@ def perform_installation(mountpoint: Path) -> None:
 		mountpoint,
 		disk_config,
 		kernels=config.kernels,
+		silent=arch_config_handler.args.silent,
 	) as installation:
 		# Strap in the base system, add a bootloader and configure
 		# some other minor details as specified by this profile and user.
