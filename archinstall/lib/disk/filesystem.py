@@ -22,6 +22,7 @@ from ..models.device import (
 )
 from ..output import debug, info
 from .device_handler import device_handler
+from .lvm import lvm_group_info, lvm_vol_info
 
 
 class FilesystemHandler:
@@ -168,7 +169,7 @@ class FilesystemHandler:
 			device_handler.lvm_vg_create(pv_dev_paths, vg.name)
 
 			# figure out what the actual available size in the group is
-			vg_info = device_handler.lvm_group_info(vg.name)
+			vg_info = lvm_group_info(vg.name)
 
 			if not vg_info:
 				raise ValueError('Unable to fetch VG info')
@@ -202,7 +203,7 @@ class FilesystemHandler:
 
 				while True:
 					debug('Fetching LVM volume info')
-					lv_info = device_handler.lvm_vol_info(lv.name)
+					lv_info = lvm_vol_info(lv.name)
 					if lv_info is not None:
 						break
 
