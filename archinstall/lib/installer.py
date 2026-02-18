@@ -42,7 +42,6 @@ from archinstall.lib.models.packages import Repository
 from archinstall.lib.packages.packages import installed_package
 from archinstall.lib.translationhandler import tr
 
-from .args import arch_config_handler
 from .boot import Boot
 from .command import SysCommand, run
 from .exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
@@ -74,6 +73,7 @@ class Installer:
 		disk_config: DiskLayoutConfiguration,
 		base_packages: list[str] = [],
 		kernels: list[str] | None = None,
+		silent: bool = False,
 	):
 		"""
 		`Installer()` is the wrapper for most basic installation steps.
@@ -126,7 +126,7 @@ class Installer:
 		self._zram_enabled = False
 		self._disable_fstrim = False
 
-		self.pacman = Pacman(self.target, arch_config_handler.args.silent)
+		self.pacman = Pacman(self.target, silent)
 
 	def __enter__(self) -> Self:
 		return self
@@ -176,14 +176,14 @@ class Installer:
 		if mod not in self._modules:
 			self._modules.append(mod)
 
-	def _verify_service_stop(self) -> None:
+	def _verify_service_stop(self, offline: bool, skip_ntp: bool, skip_wkd: bool) -> None:
 		"""
 		Certain services might be running that affects the system during installation.
 		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
 
-		if not arch_config_handler.args.skip_ntp:
+		if not skip_ntp:
 			info(tr('Waiting for time sync (timedatectl show) to complete.'))
 
 			started_wait = time.time()
@@ -200,7 +200,7 @@ class Installer:
 		else:
 			info(tr('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
 
-		if not arch_config_handler.args.offline:
+		if not offline:
 			info('Waiting for automatic mirror selection (reflector) to complete.')
 			for _ in range(60):
 				if self._service_state('reflector') in ('dead', 'failed', 'exited'):
@@ -215,7 +215,7 @@ class Installer:
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 		# time.sleep(1)
 
-		if not arch_config_handler.args.skip_wkd:
+		if not skip_wkd:
 			info(tr('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.'))
 			# Wait for the timer to kick in
 			while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
@@ -243,9 +243,14 @@ class Installer:
 					f'Please resize it to at least 200MiB and re-run the installation.',
 				)
 
-	def sanity_check(self) -> None:
+	def sanity_check(
+		self,
+		offline: bool = False,
+		skip_ntp: bool = False,
+		skip_wkd: bool = False,
+	) -> None:
 		# self._verify_boot_part()
-		self._verify_service_stop()
+		self._verify_service_stop(offline, skip_ntp, skip_wkd)
 
 	def mount_ordered_layout(self) -> None:
 		debug('Mounting ordered layout')
