@@ -51,12 +51,10 @@ class Profile:
 		services: list[str] = [],
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
-		advanced: bool = False,
 	) -> None:
 		self.name = name
 		self.profile_type = profile_type
 		self.custom_settings: dict[str, str | None] = {}
-		self.advanced = advanced
 
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
@@ -92,15 +90,6 @@ class Profile:
 		Setting a default greeter type for a desktop profile
 		"""
 		return None
-
-	def _advanced_check(self) -> bool:
-		"""
-		Used to control if the Profile() should be visible or not in different contexts.
-		Returns True if --advanced is given on a Profile(advanced=True) instance.
-		"""
-		from archinstall.lib.args import arch_config_handler
-
-		return self.advanced is False or arch_config_handler.args.advanced is True
 
 	def install(self, install_session: Installer) -> None:
 		"""
@@ -147,16 +136,16 @@ class Profile:
 		return self.profile_type in top_levels
 
 	def is_desktop_profile(self) -> bool:
-		return self.profile_type == ProfileType.Desktop if self._advanced_check() else False
+		return self.profile_type == ProfileType.Desktop
 
 	def is_server_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.ServerType
 
 	def is_desktop_type_profile(self) -> bool:
-		return (self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr) if self._advanced_check() else False
+		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
 
 	def is_xorg_type_profile(self) -> bool:
-		return self.profile_type == ProfileType.Xorg if self._advanced_check() else False
+		return self.profile_type == ProfileType.Xorg
 
 	def is_custom_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.CustomType
