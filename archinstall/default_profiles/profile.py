@@ -7,6 +7,7 @@ from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
 	from ..lib.installer import Installer
+	from ..lib.models.users import User
 
 
 class ProfileType(Enum):
@@ -101,6 +102,13 @@ class Profile:
 		Hook that will be called when the installation process is
 		finished and custom installation steps for specific default_profiles
 		are needed
+		"""
+
+	def provision(self, install_session: Installer, users: list[User]) -> None:
+		"""
+		Hook that will be called when the installation process is
+		finished and user configuration for specific default_profiles
+		is needed
 		"""
 
 	def json(self) -> dict[str, str]:
