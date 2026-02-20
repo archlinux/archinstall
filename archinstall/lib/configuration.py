@@ -13,8 +13,8 @@ from archinstall.tui.ui.result import ResultType
 
 from .args import ArchConfig
 from .crypt import encrypt
+from .menu.util import get_password, prompt_dir
 from .output import debug, logger, warn
-from .utils.util import get_password, prompt_dir
 
 
 class ConfigurationOutput:
