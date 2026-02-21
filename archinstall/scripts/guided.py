@@ -123,8 +123,10 @@ def perform_installation(
 				config.profile_config,
 			)
 
+		users = None
 		if config.auth_config:
 			if config.auth_config.users:
+				users = config.auth_config.users
 				installation.create_users(config.auth_config.users)
 				auth_handler.setup_auth(installation, config.auth_config, config.hostname)
 
@@ -152,6 +154,9 @@ def perform_installation(
 
 		if (profile_config := config.profile_config) and profile_config.profile:
 			profile_config.profile.post_install(installation)
+
+			if users:
+				profile_config.profile.provision(installation, users)
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
