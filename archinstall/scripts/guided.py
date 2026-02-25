@@ -102,7 +102,6 @@ def perform_installation(
 			mkinitcpio=run_mkinitcpio,
 			hostname=arch_config_handler.config.hostname,
 			locale_config=locale_config,
-			timezone=config.timezone,
 		)
 
 		if mirror_config := config.mirror_config:
@@ -139,6 +138,9 @@ def perform_installation(
 
 		if config.packages and config.packages[0] != '':
 			installation.add_additional_packages(config.packages)
+
+		if timezone := config.timezone:
+			installation.set_timezone(timezone)
 
 		if config.ntp:
 			installation.activate_time_synchronization()

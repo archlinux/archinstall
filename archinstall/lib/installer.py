@@ -891,7 +891,6 @@ class Installer:
 		mkinitcpio: bool = True,
 		hostname: str | None = None,
 		locale_config: LocaleConfiguration | None = LocaleConfiguration.default(),
-		timezone: str | None = None,
 	) -> None:
 		if self._disk_config.lvm_config:
 			lvm = 'lvm2'
@@ -948,6 +947,10 @@ class Installer:
 		if not self._disable_fstrim:
 			self.enable_periodic_trim()
 
+		# TODO: Support locale and timezone
+		# os.remove(f'{self.target}/etc/localtime')
+		# sys_command(f'arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
+		# sys_command('arch-chroot /mnt hwclock --hctosys --localtime')
 		if hostname:
 			self.set_hostname(hostname)
 
@@ -955,15 +958,8 @@ class Installer:
 			self.set_locale(locale_config)
 			self.set_keyboard_language(locale_config.kb_layout)
 
-		if timezone:
-			if not self.set_timezone(timezone):
-				warn(f'Failed to set timezone: {timezone}')
-
-		root_dir = self.target / 'root'
-		if root_dir.exists():
-			root_dir.chmod(0o700)
-		else:
-			debug(f'Root directory not found at {root_dir}, skipping chmod')
+		# TODO: Use python functions for this
+		self.arch_chroot('chmod 700 /root')
 
 		if mkinitcpio and not self.mkinitcpio(['-P']):
 			error('Error generating initramfs (continuing anyway)')
