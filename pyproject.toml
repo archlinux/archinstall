@@ -23,7 +23,6 @@ dependencies = [
     "cryptography>=45.0.7",
     "textual>=5.3.0",
     "markdown-it-py[linkify]>=4.0.0",
-    "pylint>=4.0.5",
 ]
 
 [project.urls]
