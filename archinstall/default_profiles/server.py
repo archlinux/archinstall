@@ -11,6 +11,7 @@ from archinstall.tui.ui.result import ResultType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
+	from archinstall.lib.models.users import User
 
 
 class ServerProfile(Profile):
@@ -52,6 +53,11 @@ class ServerProfile(Profile):
 				return SelectResult.SameSelection
 			case ResultType.Reset:
 				return SelectResult.ResetCurrent
+
+	@override
+	def provision(self, install_session: Installer, users: list[User]) -> None:
+		for profile in self.current_selection:
+			profile.provision(install_session, users)
 
 	@override
 	def post_install(self, install_session: Installer) -> None:

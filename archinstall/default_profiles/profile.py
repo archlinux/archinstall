@@ -7,6 +7,7 @@ from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
+	from archinstall.lib.models.users import User
 
 
 class ProfileType(Enum):
@@ -32,6 +33,7 @@ class GreeterType(Enum):
 	Gdm = 'gdm'
 	Ly = 'ly'
 	CosmicSession = 'cosmic-greeter'
+	PlasmaLoginManager = 'plasma-login-manager'
 
 
 class SelectResult(Enum):
@@ -50,12 +52,10 @@ class Profile:
 		services: list[str] = [],
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
-		advanced: bool = False,
 	) -> None:
 		self.name = name
 		self.profile_type = profile_type
 		self.custom_settings: dict[str, str | None] = {}
-		self.advanced = advanced
 
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
@@ -92,15 +92,6 @@ class Profile:
 		"""
 		return None
 
-	def _advanced_check(self) -> bool:
-		"""
-		Used to control if the Profile() should be visible or not in different contexts.
-		Returns True if --advanced is given on a Profile(advanced=True) instance.
-		"""
-		from archinstall.lib.args import arch_config_handler
-
-		return self.advanced is False or arch_config_handler.args.advanced is True
-
 	def install(self, install_session: Installer) -> None:
 		"""
 		Performs installation steps when this profile was selected
@@ -111,6 +102,13 @@ class Profile:
 		Hook that will be called when the installation process is
 		finished and custom installation steps for specific default_profiles
 		are needed
+		"""
+
+	def provision(self, install_session: Installer, users: list[User]) -> None:
+		"""
+		Hook that will be called when the installation process is
+		finished and user configuration for specific default_profiles
+		is needed
 		"""
 
 	def json(self) -> dict[str, str]:
@@ -146,16 +144,16 @@ class Profile:
 		return self.profile_type in top_levels
 
 	def is_desktop_profile(self) -> bool:
-		return self.profile_type == ProfileType.Desktop if self._advanced_check() else False
+		return self.profile_type == ProfileType.Desktop
 
 	def is_server_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.ServerType
 
 	def is_desktop_type_profile(self) -> bool:
-		return (self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr) if self._advanced_check() else False
+		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
 
 	def is_xorg_type_profile(self) -> bool:
-		return self.profile_type == ProfileType.Xorg if self._advanced_check() else False
+		return self.profile_type == ProfileType.Xorg
 
 	def is_custom_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.CustomType

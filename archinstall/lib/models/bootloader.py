@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Self
 
-from archinstall.lib.hardware import SysInfo
 from archinstall.lib.output import warn
 from archinstall.lib.translationhandler import tr
 
@@ -30,10 +29,10 @@ class Bootloader(Enum):
 		return self.value
 
 	@classmethod
-	def get_default(cls, skip_boot: bool = False) -> Self:
+	def get_default(cls, uefi: bool, skip_boot: bool = False) -> Self:
 		if skip_boot:
 			return cls.NO_BOOTLOADER
-		elif SysInfo.has_uefi():
+		elif uefi:
 			return cls.Systemd
 		else:
 			return cls.Grub
@@ -70,23 +69,23 @@ class BootloaderConfiguration:
 		return cls(bootloader=bootloader, uki=uki, removable=removable)
 
 	@classmethod
-	def get_default(cls, skip_boot: bool = False) -> Self:
-		bootloader = Bootloader.get_default(skip_boot)
-		removable = SysInfo.has_uefi() and bootloader.has_removable_support()
-		uki = SysInfo.has_uefi() and bootloader.has_uki_support()
+	def get_default(cls, uefi: bool, skip_boot: bool = False) -> Self:
+		bootloader = Bootloader.get_default(uefi, skip_boot)
+		removable = uefi and bootloader.has_removable_support()
+		uki = uefi and bootloader.has_uki_support()
 		return cls(bootloader=bootloader, uki=uki, removable=removable)
 
-	def preview(self) -> str:
+	def preview(self, uefi: bool) -> str:
 		text = f'{tr("Bootloader")}: {self.bootloader.value}'
 		text += '\n'
-		if SysInfo.has_uefi() and self.bootloader.has_uki_support():
+		if uefi and self.bootloader.has_uki_support():
 			if self.uki:
 				uki_string = tr('Enabled')
 			else:
 				uki_string = tr('Disabled')
 			text += f'UKI: {uki_string}'
 			text += '\n'
-		if SysInfo.has_uefi() and self.bootloader.has_removable_support():
+		if uefi and self.bootloader.has_removable_support():
 			if self.removable:
 				removable_string = tr('Enabled')
 			else:

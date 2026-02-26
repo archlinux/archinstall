@@ -14,16 +14,22 @@ from subprocess import CalledProcessError
 from types import TracebackType
 from typing import Any, Self
 
-from archinstall.lib.args import arch_config_handler
 from archinstall.lib.boot import Boot
 from archinstall.lib.command import SysCommand, run
-from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.fido import Fido2
-from archinstall.lib.disk.utils import get_lsblk_by_mountpoint, get_lsblk_info
+from archinstall.lib.disk.lvm import lvm_import_vg, lvm_pvseg_info, lvm_vol_change
+from archinstall.lib.disk.utils import (
+	get_lsblk_by_mountpoint,
+	get_lsblk_info,
+	get_parent_device_path,
+	get_unique_path_for_device,
+	mount,
+	swapon,
+)
 from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
-from archinstall.lib.luks import Luks2
+from archinstall.lib.luks import Luks2, unlock_luks2_dev
 from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.bootloader import Bootloader
@@ -32,7 +38,6 @@ from archinstall.lib.models.device import (
 	DiskLayoutConfiguration,
 	EncryptionType,
 	FilesystemType,
-	LsblkInfo,
 	LvmVolume,
 	PartitionModification,
 	SectorSize,
@@ -67,6 +72,7 @@ class Installer:
 		disk_config: DiskLayoutConfiguration,
 		base_packages: list[str] = [],
 		kernels: list[str] | None = None,
+		silent: bool = False,
 	):
 		"""
 		`Installer()` is the wrapper for most basic installation steps.
@@ -119,7 +125,7 @@ class Installer:
 		self._zram_enabled = False
 		self._disable_fstrim = False
 
-		self.pacman = Pacman(self.target, arch_config_handler.args.silent)
+		self.pacman = Pacman(self.target, silent)
 
 	def __enter__(self) -> Self:
 		return self
@@ -169,14 +175,14 @@ class Installer:
 		if mod not in self._modules:
 			self._modules.append(mod)
 
-	def _verify_service_stop(self) -> None:
+	def _verify_service_stop(self, offline: bool, skip_ntp: bool, skip_wkd: bool) -> None:
 		"""
 		Certain services might be running that affects the system during installation.
 		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
 
-		if not arch_config_handler.args.skip_ntp:
+		if not skip_ntp:
 			info(tr('Waiting for time sync (timedatectl show) to complete.'))
 
 			started_wait = time.time()
@@ -193,7 +199,7 @@ class Installer:
 		else:
 			info(tr('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
 
-		if not arch_config_handler.args.offline:
+		if not offline:
 			info('Waiting for automatic mirror selection (reflector) to complete.')
 			for _ in range(60):
 				if self._service_state('reflector') in ('dead', 'failed', 'exited'):
@@ -208,7 +214,7 @@ class Installer:
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 		# time.sleep(1)
 
-		if not arch_config_handler.args.skip_wkd:
+		if not skip_wkd:
 			info(tr('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.'))
 			# Wait for the timer to kick in
 			while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
@@ -236,9 +242,14 @@ class Installer:
 					f'Please resize it to at least 200MiB and re-run the installation.',
 				)
 
-	def sanity_check(self) -> None:
+	def sanity_check(
+		self,
+		offline: bool = False,
+		skip_ntp: bool = False,
+		skip_wkd: bool = False,
+	) -> None:
 		# self._verify_boot_part()
-		self._verify_service_stop()
+		self._verify_service_stop(offline, skip_ntp, skip_wkd)
 
 	def mount_ordered_layout(self) -> None:
 		debug('Mounting ordered layout')
@@ -317,7 +328,7 @@ class Installer:
 		partitions: list[PartitionModification],
 	) -> dict[PartitionModification, Luks2]:
 		return {
-			part_mod: device_handler.unlock_luks2_dev(
+			part_mod: unlock_luks2_dev(
 				part_mod.dev_path,
 				part_mod.mapper_name,
 				self._disk_encryption.encryption_password,
@@ -334,17 +345,17 @@ class Installer:
 			return
 
 		for vg in lvm_config.vol_groups:
-			device_handler.lvm_import_vg(vg)
+			lvm_import_vg(vg)
 
 			for vol in vg.volumes:
-				device_handler.lvm_vol_change(vol, True)
+				lvm_vol_change(vol, True)
 
 	def _prepare_luks_lvm(
 		self,
 		lvm_volumes: list[LvmVolume],
 	) -> dict[LvmVolume, Luks2]:
 		return {
-			vol: device_handler.unlock_luks2_dev(
+			vol: unlock_luks2_dev(
 				vol.dev_path,
 				vol.mapper_name,
 				self._disk_encryption.encryption_password,
@@ -360,7 +371,7 @@ class Installer:
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
-			device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
+			mount(part_mod.dev_path, target, options=part_mod.mount_options)
 		elif part_mod.fs_type == FilesystemType.Btrfs:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
@@ -371,13 +382,13 @@ class Installer:
 					part_mod.mount_options,
 				)
 		elif part_mod.is_swap():
-			device_handler.swapon(part_mod.dev_path)
+			swapon(part_mod.dev_path)
 
 	def _mount_lvm_vol(self, volume: LvmVolume) -> None:
 		if volume.fs_type != FilesystemType.Btrfs:
 			if volume.mountpoint and volume.dev_path:
 				target = self.target / volume.relative_mountpoint
-				device_handler.mount(volume.dev_path, target, options=volume.mount_options)
+				mount(volume.dev_path, target, options=volume.mount_options)
 
 		if volume.fs_type == FilesystemType.Btrfs and volume.dev_path:
 			# Only mount BTRFS subvolumes that have mountpoints specified
@@ -396,13 +407,13 @@ class Installer:
 				self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols, part_mod.mount_options)
 		elif part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
-			device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+			mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
 	def _mount_luks_volume(self, volume: LvmVolume, luks_handler: Luks2) -> None:
 		if volume.fs_type != FilesystemType.Btrfs:
 			if volume.mountpoint and luks_handler.mapper_dev:
 				target = self.target / volume.relative_mountpoint
-				device_handler.mount(luks_handler.mapper_dev, target, options=volume.mount_options)
+				mount(luks_handler.mapper_dev, target, options=volume.mount_options)
 
 		if volume.fs_type == FilesystemType.Btrfs and luks_handler.mapper_dev:
 			# Only mount BTRFS subvolumes that have mountpoints specified
@@ -421,7 +432,7 @@ class Installer:
 		for subvol in sorted(subvols_with_mountpoints, key=lambda x: x.relative_mountpoint):
 			mountpoint = self.target / subvol.relative_mountpoint
 			options = mount_options + [f'subvol={subvol.name}']
-			device_handler.mount(dev_path, mountpoint, options=options)
+			mount(dev_path, mountpoint, options=options)
 
 	def generate_key_files(self) -> None:
 		match self._disk_encryption.encryption_type:
@@ -1091,23 +1102,6 @@ class Installer:
 
 		return lsblk_info.children[0].uuid
 
-	def _find_crypt_parent(self, dev_path: Path) -> LsblkInfo | None:
-		try:
-			lsblk_info = get_lsblk_info(dev_path, reverse=True, full_dev_path=True)
-		except DiskError as err:
-			debug(f'Unable to determine crypt parent for {dev_path}: {err}')
-			return None
-
-		def _walk(node: LsblkInfo) -> LsblkInfo | None:
-			if node.type == 'crypt':
-				return node
-			for child in node.children:
-				if found := _walk(child):
-					return found
-			return None
-
-		return _walk(lsblk_info)
-
 	def _get_kernel_params_partition(
 		self,
 		root_partition: PartitionModification,
@@ -1117,35 +1111,8 @@ class Installer:
 		kernel_parameters = []
 
 		if root_partition in self._disk_encryption.partitions:
-			crypt_parent = self._find_crypt_parent(root_partition.safe_dev_path)
-			if crypt_parent and crypt_parent.path != root_partition.safe_dev_path:
-				uuid = self._get_luks_uuid_from_mapper_dev(crypt_parent.path)
-
-				if self._disk_encryption.hsm_device:
-					debug(f'Root partition is inside encrypted device, HSM, identifying by UUID: {uuid}')
-					kernel_parameters.append(f'rd.luks.name={uuid}={crypt_parent.name}')
-					# Note: tpm2-device and fido2-device don't play along very well:
-					# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
-					kernel_parameters.append('rd.luks.options=fido2-device=auto,password-echo=no')
-				else:
-					debug(f'Root partition is inside encrypted device, identifying by UUID: {uuid}')
-					kernel_parameters.append(f'cryptdevice=UUID={uuid}:{crypt_parent.name}')
-
-				if id_root:
-					if partuuid and root_partition.partuuid:
-						debug(
-							f'Identifying root partition inside LUKS by PARTUUID: {root_partition.partuuid}',
-						)
-						kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid}')
-					elif root_partition.uuid:
-						debug(
-							f'Identifying root partition inside LUKS by UUID: {root_partition.uuid}',
-						)
-						kernel_parameters.append(f'root=UUID={root_partition.uuid}')
-					else:
-						raise ValueError('Root partition UUID could not be determined')
-
-				return kernel_parameters
+			# TODO: We need to detect if the encrypted device is a whole disk encryption,
+			# or simply a partition encryption. Right now we assume it's a partition (and we always have)
 
 			if self._disk_encryption.hsm_device:
 				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
@@ -1184,7 +1151,7 @@ class Installer:
 				if not lvm.vg_name:
 					raise ValueError(f'Unable to determine VG name for {lvm.name}')
 
-				pv_seg_info = device_handler.lvm_pvseg_info(lvm.vg_name, lvm.name)
+				pv_seg_info = lvm_pvseg_info(lvm.vg_name, lvm.name)
 
 				if not pv_seg_info:
 					raise ValueError(f'Unable to determine PV segment info for {lvm.vg_name}/{lvm.name}')
@@ -1419,7 +1386,7 @@ class Installer:
 		else:
 			info(f'GRUB boot partition: {boot_partition.dev_path}')
 
-			parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+			parent_dev_path = get_parent_device_path(boot_partition.safe_dev_path)
 
 			add_options = [
 				'--target=i386-pc',
@@ -1513,7 +1480,7 @@ class Installer:
 
 			info(f'Limine EFI partition: {efi_partition.dev_path}')
 
-			parent_dev_path = device_handler.get_parent_device_path(efi_partition.safe_dev_path)
+			parent_dev_path = get_parent_device_path(efi_partition.safe_dev_path)
 
 			try:
 				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
@@ -1576,9 +1543,9 @@ class Installer:
 
 			config_path = boot_limine_path / 'limine.conf'
 
-			parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+			parent_dev_path = get_parent_device_path(boot_partition.safe_dev_path)
 
-			if unique_path := device_handler.get_unique_path_for_device(parent_dev_path):
+			if unique_path := get_unique_path_for_device(parent_dev_path):
 				parent_dev_path = unique_path
 
 			try:
@@ -1614,8 +1581,7 @@ class Installer:
 		hook_path.write_text(hook_contents)
 
 		kernel_params = ' '.join(self._get_kernel_params(root))
-		config_contents = f'# Created by archinstall on {self.init_time}\\n'
-		config_contents += 'timeout: 5\\n'
+		config_contents = 'timeout: 5\n'
 
 		path_root = 'boot()'
 		if efi_partition and boot_partition != efi_partition:
@@ -1663,9 +1629,9 @@ class Installer:
 
 		if not uki_enabled:
 			loader = '/vmlinuz-{kernel}'
-
+			# EFI standards stipulate backslashes
 			entries = (
-				'initrd=/initramfs-{kernel}.img',
+				r'initrd=\initramfs-{kernel}.img',
 				*self._get_kernel_params(root),
 			)
 
@@ -1674,7 +1640,7 @@ class Installer:
 			loader = '/EFI/Linux/arch-{kernel}.efi'
 			cmdline = []
 
-		parent_dev_path = device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+		parent_dev_path = get_parent_device_path(boot_partition.safe_dev_path)
 
 		cmd_template = (
 			'efibootmgr',

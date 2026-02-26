@@ -5,6 +5,7 @@ from typing import override
 from archinstall.lib.disk.subvolume_menu import SubvolumeMenu
 from archinstall.lib.menu.helpers import Confirmation, Input, Selection
 from archinstall.lib.menu.list_manager import ListManager
+from archinstall.lib.menu.util import prompt_dir
 from archinstall.lib.models.device import (
 	BtrfsMountOption,
 	DeviceModification,
@@ -20,7 +21,6 @@ from archinstall.lib.models.device import (
 )
 from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
-from archinstall.lib.utils.util import prompt_dir
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 

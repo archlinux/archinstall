@@ -9,13 +9,11 @@ class XorgProfile(Profile):
 		self,
 		name: str = 'Xorg',
 		profile_type: ProfileType = ProfileType.Xorg,
-		advanced: bool = False,
 	):
 		super().__init__(
 			name,
 			profile_type,
 			support_gfx_driver=True,
-			advanced=advanced,
 		)
 
 	@override

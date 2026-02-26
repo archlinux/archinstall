@@ -9,9 +9,9 @@ from pydantic import TypeAdapter
 from archinstall.lib.args import ArchConfig
 from archinstall.lib.crypt import encrypt
 from archinstall.lib.menu.helpers import Confirmation, Selection
+from archinstall.lib.menu.util import get_password, prompt_dir
 from archinstall.lib.output import debug, logger, warn
 from archinstall.lib.translationhandler import tr
-from archinstall.lib.utils.util import get_password, prompt_dir
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 

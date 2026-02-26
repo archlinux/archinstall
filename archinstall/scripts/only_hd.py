@@ -40,6 +40,7 @@ def perform_installation(mountpoint: Path) -> None:
 		mountpoint,
 		disk_config,
 		kernels=config.kernels,
+		silent=arch_config_handler.args.silent,
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.

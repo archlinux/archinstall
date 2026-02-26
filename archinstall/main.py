@@ -10,13 +10,14 @@ from pathlib import Path
 
 from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.utils import disk_layouts
-from archinstall.lib.general import check_version_upgrade, running_from_host
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
 from archinstall.lib.output import debug, error, info, warn
+from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.util import running_from_host
 
 
 def _log_sys_info() -> None:

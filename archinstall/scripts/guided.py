@@ -8,7 +8,6 @@ from archinstall.lib.authentication.authentication_handler import Authentication
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
-from archinstall.lib.general import check_version_upgrade
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
@@ -19,6 +18,7 @@ from archinstall.lib.models.device import DiskLayoutType, EncryptionType
 from archinstall.lib.models.users import User
 from archinstall.lib.network.network_handler import NetworkHandler
 from archinstall.lib.output import debug, error, info
+from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
@@ -74,12 +74,17 @@ def perform_installation(
 		mountpoint,
 		disk_config,
 		kernels=config.kernels,
+		silent=arch_config_handler.args.silent,
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
 
-		installation.sanity_check()
+		installation.sanity_check(
+			arch_config_handler.args.offline,
+			arch_config_handler.args.skip_ntp,
+			arch_config_handler.args.skip_wkd,
+		)
 
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			if disk_config.disk_encryption and disk_config.disk_encryption.encryption_type != EncryptionType.NoEncryption:
@@ -115,8 +120,10 @@ def perform_installation(
 				config.profile_config,
 			)
 
+		users = None
 		if config.auth_config:
 			if config.auth_config.users:
+				users = config.auth_config.users
 				installation.create_users(config.auth_config.users)
 				auth_handler.setup_auth(installation, config.auth_config, config.hostname)
 
@@ -144,6 +151,9 @@ def perform_installation(
 
 		if (profile_config := config.profile_config) and profile_config.profile:
 			profile_config.profile.post_install(installation)
+
+			if users:
+				profile_config.profile.provision(installation, users)
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.

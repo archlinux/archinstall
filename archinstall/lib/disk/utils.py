@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.models.device import LsblkInfo
-from archinstall.lib.output import debug, warn
+from archinstall.lib.output import debug, info, warn
 
 
 class LsblkOutput(BaseModel):
@@ -67,12 +67,12 @@ def get_lsblk_output() -> LsblkOutput:
 
 def find_lsblk_info(
 	dev_path: Path | str,
-	info: list[LsblkInfo],
+	info_list: list[LsblkInfo],
 ) -> LsblkInfo | None:
 	if isinstance(dev_path, str):
 		dev_path = Path(dev_path)
 
-	for lsblk_info in info:
+	for lsblk_info in info_list:
 		if lsblk_info.path == dev_path:
 			return lsblk_info
 
@@ -110,6 +110,62 @@ def disk_layouts() -> str:
 	return lsblk_output.model_dump_json(indent=4)
 
 
+def get_parent_device_path(dev_path: Path) -> Path:
+	lsblk = get_lsblk_info(dev_path)
+	return Path(f'/dev/{lsblk.pkname}')
+
+
+def get_unique_path_for_device(dev_path: Path) -> Path | None:
+	paths = Path('/dev/disk/by-id').glob('*')
+	linked_targets = {p.resolve(): p for p in paths}
+	linked_wwn_targets = {p: linked_targets[p] for p in linked_targets if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
+
+	if dev_path in linked_wwn_targets:
+		return linked_wwn_targets[dev_path]
+
+	if dev_path in linked_targets:
+		return linked_targets[dev_path]
+
+	return None
+
+
+def mount(
+	dev_path: Path,
+	target_mountpoint: Path,
+	mount_fs: str | None = None,
+	create_target_mountpoint: bool = True,
+	options: list[str] = [],
+) -> None:
+	if create_target_mountpoint and not target_mountpoint.exists():
+		target_mountpoint.mkdir(parents=True, exist_ok=True)
+
+	if not target_mountpoint.exists():
+		raise ValueError('Target mountpoint does not exist')
+
+	lsblk_info = get_lsblk_info(dev_path)
+	if target_mountpoint in lsblk_info.mountpoints:
+		info(f'Device already mounted at {target_mountpoint}')
+		return
+
+	cmd = ['mount']
+
+	if len(options):
+		cmd.extend(('-o', ','.join(options)))
+	if mount_fs:
+		cmd.extend(('-t', mount_fs))
+
+	cmd.extend((str(dev_path), str(target_mountpoint)))
+
+	command = ' '.join(cmd)
+
+	debug(f'Mounting {dev_path}: {command}')
+
+	try:
+		SysCommand(command)
+	except SysCallError as err:
+		raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
+
+
 def umount(mountpoint: Path, recursive: bool = False) -> None:
 	lsblk_info = get_lsblk_info(mountpoint)
 
@@ -126,3 +182,10 @@ def umount(mountpoint: Path, recursive: bool = False) -> None:
 	for path in lsblk_info.mountpoints:
 		debug(f'Unmounting mountpoint: {path}')
 		SysCommand(cmd + [str(path)])
+
+
+def swapon(path: Path) -> None:
+	try:
+		SysCommand(['swapon', str(path)])
+	except SysCallError as err:
+		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
