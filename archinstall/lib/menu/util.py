@@ -1,10 +1,9 @@
 from pathlib import Path
 
 from archinstall.lib.menu.helpers import Input
+from archinstall.lib.models.users import Password
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.result import ResultType
-
-from ..models.users import Password
 
 
 def get_password(

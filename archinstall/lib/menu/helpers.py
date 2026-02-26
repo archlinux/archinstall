@@ -4,15 +4,7 @@ from typing import Any, Literal, TypeVar, override
 from textual.validation import ValidationResult, Validator
 
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import (
-	InputScreen,
-	LoadingScreen,
-	NotifyScreen,
-	OptionListScreen,
-	SelectListScreen,
-	TableSelectionScreen,
-	tui,
-)
+from archinstall.tui.ui.components import InputScreen, LoadingScreen, NotifyScreen, OptionListScreen, SelectListScreen, TableSelectionScreen, tui
 from archinstall.tui.ui.menu_item import MenuItemGroup
 from archinstall.tui.ui.result import Result, ResultType
 

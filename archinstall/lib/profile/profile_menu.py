@@ -1,15 +1,14 @@
 from typing import override
 
 from archinstall.default_profiles.profile import GreeterType, Profile
+from archinstall.lib.hardware import GfxDriver
+from archinstall.lib.interactions.system_conf import select_driver
+from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Confirmation, Selection
+from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..hardware import GfxDriver
-from ..interactions.system_conf import select_driver
-from ..menu.abstract_menu import AbstractSubMenu
-from ..models.profile import ProfileConfiguration
 
 
 class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):

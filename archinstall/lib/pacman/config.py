@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 from shutil import copy2
 
-from ..models.packages import Repository
+from archinstall.lib.models.packages import Repository
 
 
 class PacmanConfig:

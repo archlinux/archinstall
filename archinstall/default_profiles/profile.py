@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, Self
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
-	from ..lib.installer import Installer
-	from ..lib.models.users import User
+	from archinstall.lib.installer import Installer
+	from archinstall.lib.models.users import User
 
 
 class ProfileType(Enum):

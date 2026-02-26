@@ -2,7 +2,9 @@ import re
 from pathlib import Path
 from typing import override
 
+from archinstall.lib.disk.subvolume_menu import SubvolumeMenu
 from archinstall.lib.menu.helpers import Confirmation, Input, Selection
+from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.menu.util import prompt_dir
 from archinstall.lib.models.device import (
 	BtrfsMountOption,
@@ -17,13 +19,10 @@ from archinstall.lib.models.device import (
 	Size,
 	Unit,
 )
+from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..menu.list_manager import ListManager
-from ..output import FormattedOutput
-from .subvolume_menu import SubvolumeMenu
 
 
 class FreeSpace:
@@ -566,7 +565,7 @@ class PartitioningList(ListManager[DiskSegment]):
 			if not self._reset_confirmation():
 				return None
 
-		from ..interactions.disk_conf import suggest_single_disk_layout
+		from archinstall.lib.interactions.disk_conf import suggest_single_disk_layout
 
 		return suggest_single_disk_layout(self._device)
 

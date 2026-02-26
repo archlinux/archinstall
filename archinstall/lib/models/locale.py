@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 from typing import Any, Self
 
+from archinstall.lib.locale.utils import get_kb_layout
 from archinstall.lib.translationhandler import tr
-
-from ..locale.utils import get_kb_layout
 
 
 @dataclass

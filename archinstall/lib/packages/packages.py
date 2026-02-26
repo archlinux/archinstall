@@ -1,14 +1,13 @@
 from functools import lru_cache
 
+from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.menu.helpers import Loading, Notify, Selection
 from archinstall.lib.models.packages import AvailablePackage, LocalPackage, PackageGroup, Repository
+from archinstall.lib.output import debug
+from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..exceptions import SysCallError
-from ..output import debug
-from ..pacman.pacman import Pacman
 
 
 def installed_package(package: str) -> LocalPackage | None:

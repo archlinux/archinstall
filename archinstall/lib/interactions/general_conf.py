@@ -2,14 +2,12 @@ import sys
 from enum import Enum
 from pathlib import Path
 
+from archinstall.lib.locale.utils import list_timezones
 from archinstall.lib.menu.helpers import Confirmation, Input, Selection
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.output import warn
+from archinstall.lib.translationhandler import Language, tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
-
-from ..locale.utils import list_timezones
-from ..output import warn
-from ..translationhandler import Language
 
 
 class PostInstallationAction(Enum):
@@ -88,7 +86,7 @@ def select_timezone(preset: str | None = None) -> str | None:
 
 
 def select_language(preset: str | None = None) -> str | None:
-	from ..locale.locale_menu import select_kb_layout
+	from archinstall.lib.locale.locale_menu import select_kb_layout
 
 	# We'll raise an exception in an upcoming version.
 	# from ..exceptions import Deprecated

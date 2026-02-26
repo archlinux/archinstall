@@ -14,10 +14,7 @@ from archinstall.lib.installer import Installer, accessibility_tools_in_use, run
 from archinstall.lib.interactions.general_conf import PostInstallationAction, select_post_installation
 from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models import Bootloader
-from archinstall.lib.models.device import (
-	DiskLayoutType,
-	EncryptionType,
-)
+from archinstall.lib.models.device import DiskLayoutType, EncryptionType
 from archinstall.lib.models.users import User
 from archinstall.lib.network.network_handler import NetworkHandler
 from archinstall.lib.output import debug, error, info

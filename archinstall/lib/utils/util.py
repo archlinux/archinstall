@@ -2,7 +2,7 @@ import secrets
 import string
 from pathlib import Path
 
-from ..output import FormattedOutput
+from archinstall.lib.output import FormattedOutput
 
 
 def running_from_host() -> bool:

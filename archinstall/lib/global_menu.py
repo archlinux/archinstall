@@ -1,39 +1,33 @@
 import sys
 from typing import override
 
+from archinstall.lib.applications.application_menu import ApplicationMenu
+from archinstall.lib.args import ArchConfig
+from archinstall.lib.authentication.authentication_menu import AuthenticationMenu
+from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
+from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
+from archinstall.lib.hardware import SysInfo
+from archinstall.lib.interactions.general_conf import add_number_of_parallel_downloads, select_hostname, select_ntp, select_timezone
+from archinstall.lib.interactions.system_conf import select_kernel, select_swap
+from archinstall.lib.locale.locale_menu import LocaleMenu
+from archinstall.lib.menu.abstract_menu import CONFIG_KEY, AbstractMenu
+from archinstall.lib.mirrors import MirrorListHandler, MirrorMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, PartitionModification
+from archinstall.lib.models.locale import LocaleConfiguration
+from archinstall.lib.models.mirrors import MirrorConfiguration
+from archinstall.lib.models.network import NetworkConfiguration, NicType
+from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
+from archinstall.lib.output import FormattedOutput
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
+from archinstall.lib.pacman.config import PacmanConfig
+from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-
-from .applications.application_menu import ApplicationMenu
-from .args import ArchConfig
-from .authentication.authentication_menu import AuthenticationMenu
-from .bootloader.bootloader_menu import BootloaderMenu
-from .configuration import save_config
-from .hardware import SysInfo
-from .interactions.general_conf import (
-	add_number_of_parallel_downloads,
-	select_hostname,
-	select_ntp,
-	select_timezone,
-)
-from .interactions.system_conf import select_kernel, select_swap
-from .locale.locale_menu import LocaleMenu
-from .menu.abstract_menu import CONFIG_KEY, AbstractMenu
-from .mirrors import MirrorListHandler, MirrorMenu
-from .models.bootloader import Bootloader, BootloaderConfiguration
-from .models.locale import LocaleConfiguration
-from .models.mirrors import MirrorConfiguration
-from .models.network import NetworkConfiguration, NicType
-from .models.packages import Repository
-from .models.profile import ProfileConfiguration
-from .output import FormattedOutput
-from .pacman.config import PacmanConfig
-from .translationhandler import Language, tr, translation_handler
 
 
 class GlobalMenu(AbstractMenu[None]):
@@ -239,7 +233,7 @@ class GlobalMenu(AbstractMenu[None]):
 		return self._validate_bootloader() is None
 
 	def _select_archinstall_language(self, preset: Language) -> Language:
-		from .interactions.general_conf import select_archinstall_language
+		from archinstall.lib.interactions.general_conf import select_archinstall_language
 
 		language = select_archinstall_language(translation_handler.translated_languages, preset)
 		translation_handler.activate(language)
@@ -538,7 +532,7 @@ class GlobalMenu(AbstractMenu[None]):
 		return bootloader_config
 
 	def _select_profile(self, current_profile: ProfileConfiguration | None) -> ProfileConfiguration | None:
-		from .profile.profile_menu import ProfileMenu
+		from archinstall.lib.profile.profile_menu import ProfileMenu
 
 		profile_config = ProfileMenu(preset=current_profile).run()
 		return profile_config

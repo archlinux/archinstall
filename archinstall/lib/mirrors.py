@@ -3,14 +3,10 @@ import urllib.parse
 from pathlib import Path
 from typing import override
 
+from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Input, Loading, Selection
-from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
-
-from .menu.abstract_menu import AbstractSubMenu
-from .menu.list_manager import ListManager
-from .models.mirrors import (
+from archinstall.lib.menu.list_manager import ListManager
+from archinstall.lib.models.mirrors import (
 	CustomRepository,
 	CustomServer,
 	MirrorConfiguration,
@@ -20,9 +16,12 @@ from .models.mirrors import (
 	SignCheck,
 	SignOption,
 )
-from .models.packages import Repository
-from .networking import fetch_data_from_url
-from .output import FormattedOutput, debug, info
+from archinstall.lib.models.packages import Repository
+from archinstall.lib.networking import fetch_data_from_url
+from archinstall.lib.output import FormattedOutput, debug, info
+from archinstall.lib.translationhandler import tr
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
 class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
