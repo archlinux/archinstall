@@ -44,7 +44,9 @@ class GfxPackage(Enum):
 	LibvaMesaDriver = 'libva-mesa-driver'
 	LibvaNvidiaDriver = 'libva-nvidia-driver'
 	Mesa = 'mesa'
+	Nvidia = 'nvidia'
 	NvidiaDkms = 'nvidia-dkms'
+	NvidiaOpen = 'nvidia-open'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
@@ -60,14 +62,16 @@ class GfxDriver(Enum):
 	AllOpenSource = 'All open-source'
 	AmdOpenSource = 'AMD / ATI (open-source)'
 	IntelOpenSource = 'Intel (open-source)'
-	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
+	NvidiaOpenKernelNonDkms = 'Nvidia (open kernel module for newer GPUs, Turing+, for default kernel)'
+	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+, dkms - for custom kernels)'
 	NvidiaOpenSource = 'Nvidia (open-source nouveau driver)'
-	NvidiaProprietary = 'Nvidia (proprietary)'
+	NvidiaProprietaryNonDkms = 'Nvidia (proprietary, for default kernel)'
+	NvidiaProprietary = 'Nvidia (proprietary, dkms - for custom kernels)'
 	VMOpenSource = 'VirtualBox (open-source)'
 
 	def is_nvidia(self) -> bool:
 		match self:
-			case GfxDriver.NvidiaProprietary | GfxDriver.NvidiaOpenSource | GfxDriver.NvidiaOpenKernel:
+			case GfxDriver.NvidiaProprietary | GfxDriver.NvidiaOpenSource | GfxDriver.NvidiaOpenKernel | GfxDriver.NvidiaProprietaryNonDkms | Nvidia.OpenKernelNonDkms:
 				return True
 			case _:
 				return False
@@ -113,6 +117,11 @@ class GfxDriver(Enum):
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanIntel,
 				]
+			case GfxDriver.NvidiaOpenKernelNonDkms:
+				packages += [
+					GfxPackage.NvidiaOpen,
+					GfxPackage.LibvaNvidiaDriver,
+				]
 			case GfxDriver.NvidiaOpenKernel:
 				packages += [
 					GfxPackage.NvidiaOpenDkms,
@@ -125,6 +134,11 @@ class GfxDriver(Enum):
 					GfxPackage.Xf86VideoNouveau,
 					GfxPackage.LibvaMesaDriver,
 					GfxPackage.VulkanNouveau,
+				]
+			case GfxDriver.NvidiaProprietaryNonDkms:
+				packages += [
+					GfxPackage.Nvidia,
+					GfxPackage.LibvaNvidiaDriver,
 				]
 			case GfxDriver.NvidiaProprietary:
 				packages += [
