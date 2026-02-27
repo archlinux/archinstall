@@ -957,9 +957,6 @@ class Installer:
 			self.set_locale(locale_config)
 			self.set_keyboard_language(locale_config.kb_layout)
 
-		# TODO: Use python functions for this
-		self.arch_chroot('chmod 700 /root')
-
 		if mkinitcpio and not self.mkinitcpio(['-P']):
 			error('Error generating initramfs (continuing anyway)')
 
