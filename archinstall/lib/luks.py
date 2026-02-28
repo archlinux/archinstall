@@ -40,10 +40,6 @@ class Luks2:
 		worker.poll()
 		worker.write(b'YES\n', line_ending=False)
 
-	def __post_init__(self) -> None:
-		if self.luks_dev_path is None:
-			raise ValueError('Partition must have a path set')
-
 	def __enter__(self) -> None:
 		self.unlock(self.key_file)
 
