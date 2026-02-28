@@ -231,7 +231,6 @@ ignore = [
     "RUF005",   # collection-literal-concatenation
     "RUF015",   # unnecessary-iterable-allocation-for-first-element
     "RUF039",   # unraw-re-pattern
-    "RUF051",   # if-key-in-dict-del
     "RUF067",   # non-empty-init-module
     "W191",     # tab-indentation
 ]
