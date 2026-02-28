@@ -1,29 +1,28 @@
-from __future__ import annotations
-
 import time
 from collections.abc import Iterator
+from pathlib import Path
 from types import TracebackType
-from typing import TYPE_CHECKING, ClassVar, Self
+from typing import ClassVar, Self
 
 from archinstall.lib.command import SysCommand, SysCommandWorker, locate_binary
 from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.output import error
 
-if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
-
 
 class Boot:
 	_active_boot: ClassVar[Self | None] = None
 
-	def __init__(self, installation: Installer):
-		self.instance = installation
+	def __init__(self, path: Path | str):
+		if isinstance(path, Path):
+			path = str(path)
+
+		self.path = path
 		self.container_name = 'archinstall'
 		self.session: SysCommandWorker | None = None
 		self.ready = False
 
 	def __enter__(self) -> Self:
-		if Boot._active_boot and Boot._active_boot.instance != self.instance:
+		if Boot._active_boot and Boot._active_boot.path != self.path:
 			raise KeyError('Archinstall only supports booting up one instance and another session is already active.')
 
 		if Boot._active_boot:
@@ -36,7 +35,7 @@ class Boot:
 				[
 					'systemd-nspawn',
 					'-D',
-					str(self.instance.target),
+					self.path,
 					'--timezone=off',
 					'-b',
 					'--no-pager',
@@ -61,7 +60,7 @@ class Boot:
 		if exc_type is not None:
 			error(
 				str(exc_value),
-				f'The error above occurred in a temporary boot-up of the installation {self.instance}',
+				f'The error above occurred in a temporary boot-up of the installation {self.path!r}',
 			)
 
 		shutdown = None
@@ -85,7 +84,7 @@ class Boot:
 			session_exit_code = self.session.exit_code if self.session else -1
 
 			raise SysCallError(
-				f'Could not shut down temporary boot of {self.instance}: {session_exit_code}/{shutdown_exit_code}',
+				f'Could not shut down temporary boot of {self.path!r}: {session_exit_code}/{shutdown_exit_code}',
 				exit_code=next(filter(bool, [session_exit_code, shutdown_exit_code])),
 			)
 
