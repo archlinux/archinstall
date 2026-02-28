@@ -8,6 +8,7 @@ from importlib import metadata
 from pathlib import Path
 
 from archinstall.lib.output import error, info, warn
+from archinstall.lib.version import get_version
 
 plugins = {}
 
@@ -94,11 +95,9 @@ def load_plugin(path: Path) -> None:
 		namespace = _import_via_path(localized)
 
 	if namespace and namespace in sys.modules:
-		from archinstall.lib.args import arch_config_handler
-
 		# Version dependency via __archinstall__version__ variable (if present) in the plugin
 		# Any errors in version inconsistency will be handled through normal error handling if not defined.
-		version = arch_config_handler.config.version
+		version = get_version()
 
 		if version is not None:
 			version_major_and_minor = version.rsplit('.', 1)[0]
