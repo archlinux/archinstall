@@ -5,15 +5,14 @@ from pathlib import Path
 from archinstall.lib.output import FormattedOutput
 
 
-def running_from_host() -> bool:
+def running_from_iso() -> bool:
 	"""
-	Check if running from an installed system.
+	Check if running from the archiso environment.
 
-	Returns True if running from installed system (host mode) for host-to-target install.
-	Returns False if /run/archiso exists (ISO mode).
+	Returns True if /run/archiso/airootfs is a mount point (ISO mode).
+	Returns False if running from installed system (host mode) for host-to-target install.
 	"""
-	is_host = not Path('/run/archiso').exists()
-	return is_host
+	return Path('/run/archiso/airootfs').is_mount()
 
 
 def generate_password(length: int = 64) -> str:

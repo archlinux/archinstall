@@ -17,7 +17,7 @@ from archinstall.lib.output import debug, error, info, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr
-from archinstall.lib.utils.util import running_from_host
+from archinstall.lib.utils.util import running_from_iso
 
 
 def _log_sys_info() -> None:
@@ -114,11 +114,10 @@ def run() -> int:
 				info(text)
 				time.sleep(3)
 
-	if running_from_host():
-		# log which mode we are using
-		debug('Running from Host (H2T Mode)...')
-	else:
+	if running_from_iso():
 		debug('Running from ISO (Live Mode)...')
+	else:
+		debug('Running from Host (H2T Mode)...')
 
 	mod_name = f'archinstall.scripts.{script}'
 	# by loading the module we'll automatically run the script

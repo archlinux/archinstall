@@ -1,7 +1,7 @@
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import ServiceException, SysCallError
 from archinstall.lib.output import error
-from archinstall.lib.utils.util import running_from_host
+from archinstall.lib.utils.util import running_from_iso
 
 
 def list_keyboard_languages() -> list[str]:
@@ -80,7 +80,7 @@ def get_kb_layout() -> str:
 
 
 def set_kb_layout(locale: str) -> bool:
-	if running_from_host():
+	if not running_from_iso():
 		# Skip when running from host - no need to change host keymap
 		# The target installation keymap is set via installer.set_keyboard_language()
 		return True
