@@ -31,8 +31,6 @@ class DesktopProfile(Profile):
 			'openssh',
 			'htop',
 			'wget',
-			'iwd',
-			'wireless_tools',
 			'smartmontools',
 			'xdg-utils',
 		]

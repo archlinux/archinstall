@@ -808,14 +808,6 @@ class Installer:
 
 		return True
 
-	def configure_nm_iwd(self) -> None:
-		# Create NetworkManager config directory and write iwd backend conf
-		nm_conf_dir = self.target / 'etc/NetworkManager/conf.d'
-		nm_conf_dir.mkdir(parents=True, exist_ok=True)
-
-		iwd_backend_conf = nm_conf_dir / 'wifi_backend.conf'
-		iwd_backend_conf.write_text('[device]\nwifi.backend=iwd\n')
-
 	def mkinitcpio(self, flags: list[str]) -> bool:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mkinitcpio'):
