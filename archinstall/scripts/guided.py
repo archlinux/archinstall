@@ -105,7 +105,7 @@ def perform_installation(
 			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=True)
 
 		if config.swap and config.swap.enabled:
-			installation.setup_swap('zram', algo=config.swap.algorithm)
+			installation.setup_swap(algo=config.swap.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
 			if config.bootloader_config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
