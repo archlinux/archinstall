@@ -9,7 +9,6 @@ from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
-from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, select_post_installation
 from archinstall.lib.mirrors import MirrorListHandler
@@ -108,9 +107,6 @@ def perform_installation(
 			installation.setup_swap('zram', algo=config.swap.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
-			if config.bootloader_config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
-				installation.add_additional_packages('grub')
-
 			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
 
 		if config.network_config:
