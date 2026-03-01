@@ -16,7 +16,7 @@ from archinstall.lib.networking import DownloadTimer, ping
 from archinstall.lib.output import debug
 
 if TYPE_CHECKING:
-	from archinstall.lib.mirrors import MirrorListHandler
+	from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 
 
 class MirrorStatusEntryV3(BaseModel):
@@ -64,17 +64,17 @@ class MirrorStatusEntryV3(BaseModel):
 
 					assert timer.time is not None
 					self._speed = size / timer.time
-					debug(f'    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
+					debug(f'	speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
 				# Do not retry error
 				except urllib.error.URLError as error:
-					debug(f'    speed: <undetermined> ({error}), skip')
+					debug(f'	speed: <undetermined> ({error}), skip')
 					self._speed = 0
 				# Do retry error
 				except (http.client.IncompleteRead, ConnectionResetError) as error:
-					debug(f'    speed: <undetermined> ({error}), retry')
+					debug(f'	speed: <undetermined> ({error}), retry')
 				# Catch all
 				except Exception as error:
-					debug(f'    speed: <undetermined> ({error}), skip')
+					debug(f'	speed: <undetermined> ({error}), skip')
 					self._speed = 0
 
 				retry += 1
@@ -104,7 +104,7 @@ class MirrorStatusEntryV3(BaseModel):
 	def validate_score(cls, value: float) -> int | None:
 		if value is not None:
 			value = round(value)
-			debug(f'    score: {value}')
+			debug(f'	score: {value}')
 
 		return value
 

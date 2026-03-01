@@ -12,7 +12,8 @@ from archinstall.lib.interactions.general_conf import add_number_of_parallel_dow
 from archinstall.lib.interactions.system_conf import select_kernel, select_swap
 from archinstall.lib.locale.locale_menu import LocaleMenu
 from archinstall.lib.menu.abstract_menu import CONFIG_KEY, AbstractMenu
-from archinstall.lib.mirrors import MirrorListHandler, MirrorMenu
+from archinstall.lib.mirror.mirror_handler import MirrorListHandler
+from archinstall.lib.mirror.mirror_menu import MirrorMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
