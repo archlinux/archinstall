@@ -6,7 +6,6 @@ import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
-from importlib.metadata import version
 from pathlib import Path
 from typing import Any, Self
 from urllib.request import Request, urlopen
@@ -28,6 +27,7 @@ from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.output import debug, error, logger, warn
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.lib.version import get_version
 
 
 @p_dataclass
@@ -263,7 +263,7 @@ class ArchConfigHandler:
 
 		try:
 			self._config = ArchConfig.from_config(config, args)
-			self._config.version = self._get_version()
+			self._config.version = get_version()
 		except ValueError as err:
 			warn(str(err))
 			sys.exit(1)
@@ -288,12 +288,6 @@ class ArchConfigHandler:
 	def print_help(self) -> None:
 		self._parser.print_help()
 
-	def _get_version(self) -> str:
-		try:
-			return version('archinstall')
-		except Exception:
-			return 'Archinstall version not found'
-
 	def _define_arguments(self) -> ArgumentParser:
 		parser = ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 		parser.add_argument(
@@ -301,7 +295,7 @@ class ArchConfigHandler:
 			'--version',
 			action='version',
 			default=False,
-			version='%(prog)s ' + self._get_version(),
+			version='%(prog)s ' + get_version(),
 		)
 		parser.add_argument(
 			'--config',
