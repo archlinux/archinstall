@@ -16,7 +16,7 @@ from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import DiskLayoutType, EncryptionType
 from archinstall.lib.models.users import User
-from archinstall.lib.network.utils import install_network_config
+from archinstall.lib.network.network_handler import install_network_config
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
