@@ -4,14 +4,13 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from types import TracebackType
 
+from archinstall.lib.command import SysCommand, SysCommandWorker, run
 from archinstall.lib.disk.utils import get_lsblk_info, umount
+from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.models.device import DEFAULT_ITER_TIME
+from archinstall.lib.models.users import Password
+from archinstall.lib.output import debug, info
 from archinstall.lib.utils.util import generate_password
-
-from .command import SysCommand, SysCommandWorker, run
-from .exceptions import DiskError, SysCallError
-from .models.users import Password
-from .output import debug, info
 
 
 @dataclass
@@ -40,10 +39,6 @@ class Luks2:
 		worker = SysCommandWorker(f'cryptsetup erase {self.luks_dev_path}')
 		worker.poll()
 		worker.write(b'YES\n', line_ending=False)
-
-	def __post_init__(self) -> None:
-		if self.luks_dev_path is None:
-			raise ValueError('Partition must have a path set')
 
 	def __enter__(self) -> None:
 		self.unlock(self.key_file)

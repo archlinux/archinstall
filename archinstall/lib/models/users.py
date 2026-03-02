@@ -2,9 +2,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import NotRequired, Self, TypedDict, override
 
+from archinstall.lib.crypt import crypt_yescrypt
 from archinstall.lib.translationhandler import tr
-
-from ..crypt import crypt_yescrypt
 
 
 class PasswordStrength(Enum):

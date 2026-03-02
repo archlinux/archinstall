@@ -8,20 +8,16 @@ from archinstall.lib.authentication.authentication_handler import Authentication
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
-from archinstall.lib.general import check_version_upgrade
 from archinstall.lib.global_menu import GlobalMenu
-from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, select_post_installation
 from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models import Bootloader
-from archinstall.lib.models.device import (
-	DiskLayoutType,
-	EncryptionType,
-)
+from archinstall.lib.models.device import DiskLayoutType, EncryptionType
 from archinstall.lib.models.users import User
 from archinstall.lib.network.network_handler import NetworkHandler
 from archinstall.lib.output import debug, error, info
+from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
@@ -111,9 +107,6 @@ def perform_installation(
 			installation.setup_swap('zram', algo=config.swap.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
-			if config.bootloader_config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
-				installation.add_additional_packages('grub')
-
 			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
 
 		if config.network_config:
@@ -123,8 +116,10 @@ def perform_installation(
 				config.profile_config,
 			)
 
+		users = None
 		if config.auth_config:
 			if config.auth_config.users:
+				users = config.auth_config.users
 				installation.create_users(config.auth_config.users)
 				auth_handler.setup_auth(installation, config.auth_config, config.hostname)
 
@@ -152,6 +147,9 @@ def perform_installation(
 
 		if (profile_config := config.profile_config) and profile_config.profile:
 			profile_config.profile.post_install(installation)
+
+			if users:
+				profile_config.profile.provision(installation, users)
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
