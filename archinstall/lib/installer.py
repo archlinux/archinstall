@@ -1194,7 +1194,7 @@ class Installer:
 
 			kernel_parameters.append('rw')
 
-		kernel_parameters.append(f'rootfstype={root.safe_fs_type}')
+		kernel_parameters.append(f'rootfstype={root.safe_fs_type.value}')
 		kernel_parameters.extend(self._kernel_params)
 
 		debug(f'kernel parameters: {" ".join(kernel_parameters)}')
