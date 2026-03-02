@@ -253,9 +253,6 @@ class DeviceHandler:
 				mkfs_type = 'fat'
 				# Set FAT size
 				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
-			case FilesystemType.Ntfs:
-				# Skip zeroing and bad sector check
-				options.append('--fast')
 			case FilesystemType.LinuxSwap:
 				command = 'mkswap'
 			case _:

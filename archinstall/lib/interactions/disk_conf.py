@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.partitioning_menu import manual_partitioning
 from archinstall.lib.menu.helpers import Confirmation, Notify, Selection, Table
@@ -256,9 +255,6 @@ def select_main_filesystem_format() -> FilesystemType:
 		MenuItem('xfs', value=FilesystemType.Xfs),
 		MenuItem('f2fs', value=FilesystemType.F2fs),
 	]
-
-	if arch_config_handler.args.advanced:
-		items.append(MenuItem('ntfs', value=FilesystemType.Ntfs))
 
 	group = MenuItemGroup(items, sort_items=False)
 	result = Selection[FilesystemType](
