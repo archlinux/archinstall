@@ -36,7 +36,6 @@ depends=(
   'xfsprogs'
   'lvm2'
   'f2fs-tools'
-  'ntfs-3g'
   'libfido2'
 )
 makedepends=(
