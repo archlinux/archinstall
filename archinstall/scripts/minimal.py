@@ -1,7 +1,5 @@
-from pathlib import Path
-
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall.lib.args import arch_config_handler
+from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.disk.filesystem import FilesystemHandler
@@ -14,7 +12,8 @@ from archinstall.lib.output import debug, error, info
 from archinstall.lib.profile.profiles_handler import profile_handler
 
 
-def perform_installation(mountpoint: Path) -> None:
+def perform_installation(arch_config_handler: ArchConfigHandler) -> None:
+	mountpoint = arch_config_handler.args.mountpoint
 	config = arch_config_handler.config
 
 	if not config.disk_config:
@@ -59,7 +58,10 @@ def perform_installation(mountpoint: Path) -> None:
 	info(' * devel (password: devel)')
 
 
-def main() -> None:
+def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
+	if arch_config_handler is None:
+		arch_config_handler = ArchConfigHandler()
+
 	disk_config = DiskLayoutConfigurationMenu(disk_layout_config=None).run()
 	arch_config_handler.config.disk_config = disk_config
 
@@ -77,13 +79,13 @@ def main() -> None:
 			aborted = True
 
 		if aborted:
-			return main()
+			return main(arch_config_handler)
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
-	perform_installation(arch_config_handler.args.mountpoint)
+	perform_installation(arch_config_handler)
 
 
 if __name__ == '__main__':

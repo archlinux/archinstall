@@ -1,9 +1,8 @@
 import os
 import time
-from pathlib import Path
 
 from archinstall.lib.applications.application_handler import ApplicationHandler
-from archinstall.lib.args import arch_config_handler
+from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
@@ -22,7 +21,10 @@ from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 
 
-def show_menu(mirror_list_handler: MirrorListHandler) -> None:
+def show_menu(
+	arch_config_handler: ArchConfigHandler,
+	mirror_list_handler: MirrorListHandler,
+) -> None:
 	upgrade = check_version_upgrade()
 	title_text = 'Archlinux'
 
@@ -44,7 +46,7 @@ def show_menu(mirror_list_handler: MirrorListHandler) -> None:
 
 
 def perform_installation(
-	mountpoint: Path,
+	arch_config_handler: ArchConfigHandler,
 	mirror_list_handler: MirrorListHandler,
 	auth_handler: AuthenticationHandler,
 	application_handler: ApplicationHandler,
@@ -57,6 +59,7 @@ def perform_installation(
 	start_time = time.monotonic()
 	info('Starting installation...')
 
+	mountpoint = arch_config_handler.args.mountpoint
 	config = arch_config_handler.config
 
 	if not config.disk_config:
@@ -188,14 +191,17 @@ def perform_installation(
 						pass
 
 
-def main() -> None:
+def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
+	if arch_config_handler is None:
+		arch_config_handler = ArchConfigHandler()
+
 	mirror_list_handler = MirrorListHandler(
 		offline=arch_config_handler.args.offline,
 		verbose=arch_config_handler.args.verbose,
 	)
 
 	if not arch_config_handler.args.silent:
-		show_menu(mirror_list_handler)
+		show_menu(arch_config_handler, mirror_list_handler)
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
@@ -211,14 +217,14 @@ def main() -> None:
 			aborted = True
 
 		if aborted:
-			return main()
+			return main(arch_config_handler)
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
 	perform_installation(
-		arch_config_handler.args.mountpoint,
+		arch_config_handler,
 		mirror_list_handler,
 		AuthenticationHandler(),
 		ApplicationHandler(),
