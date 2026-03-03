@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from archinstall.lib.args import arch_config_handler
+from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
@@ -9,7 +9,7 @@ from archinstall.lib.installer import Installer
 from archinstall.lib.output import debug, error
 
 
-def show_menu() -> None:
+def show_menu(arch_config_handler: ArchConfigHandler) -> None:
 	global_menu = GlobalMenu(arch_config_handler.config)
 	global_menu.disable_all()
 
@@ -21,12 +21,13 @@ def show_menu() -> None:
 	global_menu.run()
 
 
-def perform_installation(mountpoint: Path) -> None:
+def perform_installation(arch_config_handler: ArchConfigHandler) -> None:
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
+	mountpoint = arch_config_handler.args.mountpoint
 	config = arch_config_handler.config
 
 	if not config.disk_config:
@@ -55,9 +56,12 @@ def perform_installation(mountpoint: Path) -> None:
 	debug(f'Disk states after installing:\n{disk_layouts()}')
 
 
-def main() -> None:
+def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
+	if arch_config_handler is None:
+		arch_config_handler = ArchConfigHandler()
+
 	if not arch_config_handler.args.silent:
-		show_menu()
+		show_menu(arch_config_handler)
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
@@ -73,13 +77,13 @@ def main() -> None:
 			aborted = True
 
 		if aborted:
-			return main()
+			return main(arch_config_handler)
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 		fs_handler.perform_filesystem_operations()
 
-	perform_installation(arch_config_handler.args.mountpoint)
+	perform_installation(arch_config_handler)
 
 
 if __name__ == '__main__':
