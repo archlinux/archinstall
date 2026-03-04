@@ -32,73 +32,75 @@ msgid "Should this user be a superuser (sudoer)?"
 msgstr "के यो प्रयोगकर्ता सुपर-युजर (sudoer) हुनुपर्छ?"
 
 msgid "Select a timezone"
-msgstr ""
+msgstr "समय-क्षेत्र (timezone) चयन गर्नुहोस्"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr ""
+msgstr "के तपाईं systemd-boot को सट्टा GRUB लाई बूटलोडरको रूपमा प्रयोग गर्न चाहनुहुन्छ?"
 
 msgid "Choose a bootloader"
-msgstr ""
+msgstr "बूटलोडर (bootloader) रोज्नुहोस्"
 
 msgid "Choose an audio server"
-msgstr ""
+msgstr "अडियो सर्भर (audio server) रोज्नुहोस्"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr ""
+msgstr "base, base-devel, linux, linux-firmware, efibootmgr र वैकल्पिक प्रोफाइल प्याकेजहरू मात्र स्थापना गरिनेछ।"
 
 msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr ""
+msgstr "नोट: base-devel अब पूर्वनिर्धारित रूपमा स्थापना हुँदैन। यदि तपाईंलाई निर्माण उपकरणहरू (build tools) चाहिन्छ भने यहाँ थप्नुहोस्।"
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr ""
+msgstr "यदि तपाईं फायरफक्स वा क्रोमियम जस्ता वेब ब्राउजर चाहनुहुन्छ भने, अर्को प्रम्प्टमा उल्लेख गर्न सक्नुहुन्छ।"
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr ""
+msgstr "स्थापना गर्नका लागि थप प्याकेजहरू लेख्नुहोस् (स्पेसले छुट्याउनुहोस्, छोड्नको लागि खाली राख्नुहोस्): "
 
 msgid "Copy ISO network configuration to installation"
-msgstr ""
+msgstr "ISO को नेटवर्क कन्फिगरेसन स्थापनामा प्रतिलिपि गर्नुहोस्"
 
 msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr ""
+msgstr "NetworkManager प्रयोग गर्नुहोस् (GNOME र KDE मा ग्राफिकल रूपमा इन्टरनेट कन्फिगर गर्न आवश्यक छ)"
 
 msgid "Select one network interface to configure"
-msgstr ""
+msgstr "कन्फिगर गर्नको लागि एउटा नेटवर्क इन्टरफेस चयन गर्नुहोस्"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr ""
+msgstr "\"{}\" को लागि कुन मोड कन्फिगर गर्ने चयन गर्नुहोस् वा पूर्वनिर्धारित मोड \"{}\" प्रयोग गर्न छोड्नुहोस्"
 
 #, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr ""
+msgstr "{} को लागि IP र सबनेट राख्नुहोस् (उदाहरण: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr ""
+msgstr "तपाईंको गेटवे (राउटर) IP ठेगाना राख्नुहोस् वा कुनै नभए खाली छोड्नुहोस्: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr ""
+msgstr "तपाईंको DNS सर्भरहरू राख्नुहोस् (स्पेसले छुट्याउनुहोस्, कुनै नभए खाली छोड्नुहोस्): "
 
 msgid "Select which filesystem your main partition should use"
-msgstr ""
+msgstr "तपाईंको मुख्य पार्टिसनले कुन फाइल-प्रणाली (filesystem) प्रयोग गर्ने चयन गर्नुहोस्"
 
 msgid "Current partition layout"
-msgstr ""
+msgstr "हालको पार्टिसन लेआउट (partition layout)"
 
 msgid ""
 "Select what to do with\n"
 "{}"
 msgstr ""
+"चयन गर्नुहोस् के गर्ने\n"
+"{}"
 
 msgid "Enter a desired filesystem type for the partition"
-msgstr ""
+msgstr "पार्टिसनको लागि इच्छाएको फाइल-प्रणालीको प्रकार राख्नुहोस्"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "सुरुवात स्थान राख्नुहोस् (parted units मा: s, GB, %, आदि; पूर्वनिर्धारित: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "अन्त्य स्थान राख्नुहोस् (parted units मा: s, GB, %, आदि; उदाहरणका लागि: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr ""
+msgstr "{} मा लामबद्ध (queued) पार्टिसनहरू छन्, यसले ती हटाउनेछ, के तपाईं पक्का हुनुहुन्छ?"
 
 msgid ""
 "{}\n"
