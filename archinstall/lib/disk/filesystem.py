@@ -4,6 +4,7 @@ from pathlib import Path
 
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.lvm import lvm_group_info, lvm_vol_info
+from archinstall.lib.disk.utils import udev_sync
 from archinstall.lib.interactions.general_conf import confirm_abort
 from archinstall.lib.luks import Luks2
 from archinstall.lib.models.device import (
@@ -53,7 +54,7 @@ class FilesystemHandler:
 		for mod in device_mods:
 			device_handler.partition(mod)
 
-		device_handler.udev_sync()
+		udev_sync()
 
 		if self._disk_config.lvm_config:
 			for mod in device_mods:
@@ -97,7 +98,7 @@ class FilesystemHandler:
 				device_handler.format(part_mod.safe_fs_type, part_mod.safe_dev_path)
 
 			# synchronize with udev before using lsblk
-			device_handler.udev_sync()
+			udev_sync()
 
 			lsblk_info = device_handler.fetch_part_info(part_mod.safe_dev_path)
 
