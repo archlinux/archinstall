@@ -549,6 +549,3 @@ class ArchConfigHandler:
 				clean_args[key] = val
 
 		return clean_args
-
-
-arch_config_handler: ArchConfigHandler = ArchConfigHandler()

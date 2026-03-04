@@ -862,13 +862,8 @@ class Installer:
 			self._base_packages.append(pkg)
 
 		# https://github.com/archlinux/archinstall/issues/1837
-		if fs_type.fs_type_mount == 'btrfs':
+		if fs_type == FilesystemType.Btrfs:
 			self._disable_fstrim = True
-
-		# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-		if fs_type.fs_type_mount == 'ntfs3' and mountpoint == self.target:
-			if 'fsck' in self._hooks:
-				self._hooks.remove('fsck')
 
 	def _prepare_encrypt(self, before: str = 'filesystems') -> None:
 		if self._disk_encryption.hsm_device:
@@ -1199,7 +1194,7 @@ class Installer:
 
 			kernel_parameters.append('rw')
 
-		kernel_parameters.append(f'rootfstype={root.safe_fs_type.fs_type_mount}')
+		kernel_parameters.append(f'rootfstype={root.safe_fs_type.value}')
 		kernel_parameters.extend(self._kernel_params)
 
 		debug(f'kernel parameters: {" ".join(kernel_parameters)}')

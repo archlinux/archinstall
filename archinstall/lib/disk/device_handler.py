@@ -6,7 +6,14 @@ from pathlib import Path
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
 from archinstall.lib.command import SysCommand, SysCommandWorker
-from archinstall.lib.disk.utils import find_lsblk_info, get_all_lsblk_info, get_lsblk_info, mount, umount
+from archinstall.lib.disk.utils import (
+	find_lsblk_info,
+	get_all_lsblk_info,
+	get_lsblk_info,
+	mount,
+	udev_sync,
+	umount,
+)
 from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from archinstall.lib.luks import Luks2, unlock_luks2_dev
 from archinstall.lib.models.device import (
@@ -55,7 +62,7 @@ class DeviceHandler:
 	def load_devices(self) -> None:
 		block_devices = {}
 
-		self.udev_sync()
+		udev_sync()
 		all_lsblk_info = get_all_lsblk_info()
 		devices = getAllDevices()
 		devices.extend(self.get_loop_devices())
@@ -253,9 +260,6 @@ class DeviceHandler:
 				mkfs_type = 'fat'
 				# Set FAT size
 				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
-			case FilesystemType.Ntfs:
-				# Skip zeroing and bad sector check
-				options.append('--fast')
 			case FilesystemType.LinuxSwap:
 				command = 'mkswap'
 			case _:
@@ -291,7 +295,7 @@ class DeviceHandler:
 
 		key_file = luks_handler.encrypt(iter_time=iter_time)
 
-		self.udev_sync()
+		udev_sync()
 
 		luks_handler.unlock(key_file=key_file)
 
@@ -322,7 +326,7 @@ class DeviceHandler:
 
 		key_file = luks_handler.encrypt(iter_time=enc_conf.iter_time)
 
-		self.udev_sync()
+		udev_sync()
 
 		luks_handler.unlock(key_file=key_file)
 
@@ -357,7 +361,7 @@ class DeviceHandler:
 		SysCommand(cmd)
 
 		# Sync with udev to ensure the PVs are visible
-		self.udev_sync()
+		udev_sync()
 
 	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str) -> None:
 		pvs_str = ' '.join(str(pv) for pv in pvs)
@@ -367,7 +371,7 @@ class DeviceHandler:
 		SysCommand(cmd)
 
 		# Sync with udev to ensure the VG is visible
-		self.udev_sync()
+		udev_sync()
 
 	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Size | None = None) -> None:
 		if offset is not None:
@@ -607,7 +611,7 @@ class DeviceHandler:
 
 		# Sync with udev after wiping signatures
 		if filtered_part:
-			self.udev_sync()
+			udev_sync()
 
 	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> list[DeviceModification]:
 		part_mods: dict[Path, list[PartitionModification]] = {}
@@ -675,13 +679,6 @@ class DeviceHandler:
 			self._wipe(partition.path)
 
 		self._wipe(block_device.device_info.path)
-
-	@staticmethod
-	def udev_sync() -> None:
-		try:
-			SysCommand('udevadm settle')
-		except SysCallError as err:
-			debug(f'Failed to synchronize with udev: {err}')
 
 
 device_handler = DeviceHandler()

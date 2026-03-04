@@ -8,7 +8,7 @@ import time
 import traceback
 from pathlib import Path
 
-from archinstall.lib.args import arch_config_handler
+from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.network.wifi_handler import WifiHandler
@@ -78,6 +78,8 @@ def run() -> int:
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
+	arch_config_handler = ArchConfigHandler()
+
 	if '--help' in sys.argv or '-h' in sys.argv:
 		arch_config_handler.print_help()
 		return 0
@@ -122,7 +124,7 @@ def run() -> int:
 	mod_name = f'archinstall.scripts.{script}'
 	# by loading the module we'll automatically run the script
 	module = importlib.import_module(mod_name)
-	module.main()
+	module.main(arch_config_handler)
 
 	return 0
 
