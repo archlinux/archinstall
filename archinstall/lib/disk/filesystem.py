@@ -3,7 +3,14 @@ import time
 from pathlib import Path
 
 from archinstall.lib.disk.device_handler import device_handler
-from archinstall.lib.disk.lvm import lvm_group_info, lvm_vol_info
+from archinstall.lib.disk.lvm import (
+	lvm_group_info,
+	lvm_pv_create,
+	lvm_vg_create,
+	lvm_vol_create,
+	lvm_vol_info,
+	lvm_vol_reduce,
+)
 from archinstall.lib.disk.utils import udev_sync
 from archinstall.lib.interactions.general_conf import confirm_abort
 from archinstall.lib.luks import Luks2
@@ -166,7 +173,7 @@ class FilesystemHandler:
 		for vg in lvm_config.vol_groups:
 			pv_dev_paths = self._get_all_pv_dev_paths(vg.pvs, enc_mods)
 
-			device_handler.lvm_vg_create(pv_dev_paths, vg.name)
+			lvm_vg_create(pv_dev_paths, vg.name)
 
 			# figure out what the actual available size in the group is
 			vg_info = lvm_group_info(vg.name)
@@ -199,7 +206,7 @@ class FilesystemHandler:
 				offset = max_vol_offset if lv == max_vol else None
 
 				debug(f'vg: {vg.name}, vol: {lv.name}, offset: {offset}')
-				device_handler.lvm_vol_create(vg.name, lv, offset)
+				lvm_vol_create(vg.name, lv, offset)
 
 				while True:
 					debug('Fetching LVM volume info')
@@ -241,7 +248,7 @@ class FilesystemHandler:
 		for vg in lvm_config.vol_groups:
 			pv_paths |= self._get_all_pv_dev_paths(vg.pvs, enc_mods)
 
-		device_handler.lvm_pv_create(pv_paths)
+		lvm_pv_create(pv_paths)
 
 	def _get_all_pv_dev_paths(
 		self,
@@ -319,7 +326,7 @@ class FilesystemHandler:
 		if any([vol.fs_type == FilesystemType.Ext4 for vol in vol_gp.volumes]):
 			largest_vol = max(vol_gp.volumes, key=lambda x: x.length)
 
-			device_handler.lvm_vol_reduce(
+			lvm_vol_reduce(
 				largest_vol.safe_dev_path,
 				Size(256, Unit.MiB, SectorSize.default()),
 			)
