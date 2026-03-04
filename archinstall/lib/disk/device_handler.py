@@ -1,11 +1,10 @@
 import logging
 import os
-from collections.abc import Iterable
 from pathlib import Path
 
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
-from archinstall.lib.command import SysCommand, SysCommandWorker
+from archinstall.lib.command import SysCommand
 from archinstall.lib.disk.utils import (
 	find_lsblk_info,
 	get_all_lsblk_info,
@@ -24,14 +23,11 @@ from archinstall.lib.models.device import (
 	DiskEncryption,
 	FilesystemType,
 	LsblkInfo,
-	LvmVolume,
-	LvmVolumeGroup,
 	ModificationStatus,
 	PartitionFlag,
 	PartitionGUID,
 	PartitionModification,
 	PartitionTable,
-	Size,
 	SubvolumeModification,
 	Unit,
 	_BtrfsSubvolumeInfo,
@@ -338,58 +334,6 @@ class DeviceHandler:
 
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
-
-	def lvm_export_vg(self, vg: LvmVolumeGroup) -> None:
-		cmd = f'vgexport {vg.name}'
-
-		debug(f'vgexport: {cmd}')
-		SysCommand(cmd)
-
-	def lvm_vol_reduce(self, vol_path: Path, amount: Size) -> None:
-		val = amount.format_size(Unit.B, include_unit=False)
-		cmd = f'lvreduce -L -{val}B {vol_path}'
-
-		debug(f'Reducing LVM volume size: {cmd}')
-		SysCommand(cmd)
-
-	def lvm_pv_create(self, pvs: Iterable[Path]) -> None:
-		pvs_str = ' '.join(str(pv) for pv in pvs)
-		# Signatures are already wiped by wipefs, -f is just for safety
-		cmd = f'pvcreate -f --yes {pvs_str}'
-		# note flags used in scripting
-		debug(f'Creating LVM PVS: {cmd}')
-		SysCommand(cmd)
-
-		# Sync with udev to ensure the PVs are visible
-		udev_sync()
-
-	def lvm_vg_create(self, pvs: Iterable[Path], vg_name: str) -> None:
-		pvs_str = ' '.join(str(pv) for pv in pvs)
-		cmd = f'vgcreate --yes --force {vg_name} {pvs_str}'
-
-		debug(f'Creating LVM group: {cmd}')
-		SysCommand(cmd)
-
-		# Sync with udev to ensure the VG is visible
-		udev_sync()
-
-	def lvm_vol_create(self, vg_name: str, volume: LvmVolume, offset: Size | None = None) -> None:
-		if offset is not None:
-			length = volume.length - offset
-		else:
-			length = volume.length
-
-		length_str = length.format_size(Unit.B, include_unit=False)
-		cmd = f'lvcreate --yes -L {length_str}B {vg_name} -n {volume.name}'
-
-		debug(f'Creating volume: {cmd}')
-
-		worker = SysCommandWorker(cmd)
-		worker.poll()
-		worker.write(b'y\n', line_ending=False)
-
-		volume.vg_name = vg_name
-		volume.dev_path = Path(f'/dev/{vg_name}/{volume.name}')
 
 	def _setup_partition(
 		self,
