@@ -14,8 +14,7 @@ msgstr ""
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] यहाँ एक लॉग फ़ाइल बनाई गई है: {} {}"
 
-#, fuzzy
-msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
 msgstr "कृपया इस समस्या (और फ़ाइल) को https://github.com/archlinux/archinstall/issues पर सबमिट करें।"
 
 msgid "Do you really want to abort?"
@@ -808,12 +807,10 @@ msgstr ""
 " (1 से {} के बीच मान दर्ज करें)\n"
 "नोट:"
 
-#, fuzzy
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
 msgstr " - अधिकतम मान   : {} ( {} समानांतर डाउनलोड की अनुमति देता है, एक समय में {} डाउनलोड की अनुमति देता है )"
 
-#, fuzzy
-msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - न्यूनतम मान   : 1 ( 1 समानांतर डाउनलोड की अनुमति देता है, एक समय में 2 डाउनलोड की अनुमति देता है )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
@@ -1166,8 +1163,7 @@ msgstr "मिरर (Mirrors)"
 msgid "Mirror regions"
 msgstr "मिरर क्षेत्र"
 
-#, fuzzy
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
 msgstr " - अधिकतम मान   : {} ( {} समानांतर डाउनलोड की अनुमति देता है, एक समय में {max_downloads+1} डाउनलोड की अनुमति देता है )"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
@@ -1416,7 +1412,6 @@ msgstr "आपके द्वारा दर्ज किया गया य�
 msgid "Username"
 msgstr "उपयोगकर्ता नाम"
 
-#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "क्या \"{}\" को superuser (sudo) होना चाहिए?\n"
 
@@ -1494,7 +1489,7 @@ msgid "Disabled"
 msgstr "अक्षम"
 
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "कृपया इस समस्या (और फ़ाइल) को https://github.com/archlinux/archinstall/issues पर सबमिट करें।"
+msgstr "कृपया इस समस्या (और फ़ाइल) को https://github.com/archlinux/archinstall/issues पर सबमिट करें"
 
 msgid "Mirror name"
 msgstr "मिरर का नाम"
@@ -1881,154 +1876,3 @@ msgstr "नेटवर्क मैनेजर का उपयोग कर�
 
 msgid "Use Network Manager (iwd backend)"
 msgstr "नेटवर्क मैनेजर का उपयोग करें (iwd बैकएंड)"
-
-msgid "Firewall"
-msgstr ""
-
-#, fuzzy
-msgid "Select audio configuration"
-msgstr "उपयोगकर्ता कॉन्फ़िगरेशन सहेजें"
-
-#, fuzzy
-msgid "Enter credentials file decryption password"
-msgstr "क्रेडेंशियल्स फ़ाइल डिक्रिप्शन पासवर्ड"
-
-#, fuzzy
-msgid "Enter root password"
-msgstr "पासवर्ड दर्ज करें: "
-
-msgid "Select bootloader to install"
-msgstr ""
-
-#, fuzzy
-msgid "Configuration preview"
-msgstr "कॉन्फ़िगरेशन"
-
-#, fuzzy
-msgid "Enter a directory for the configuration(s) to be saved"
-msgstr "कॉन्फ़िगरेशन सहेजने के लिए डायरेक्टरी दर्ज करें: "
-
-#, fuzzy
-msgid "Select encryption type"
-msgstr "एन्क्रिप्शन प्रकार"
-
-#, fuzzy
-msgid "Select disks for the installation"
-msgstr "इच्छित होस्ट का नाम (hostname) इंस्टालेशन के लिए: "
-
-#, fuzzy
-msgid "Enter a mountpoint"
-msgstr "माउंट पॉइंट चुनें :"
-
-#, fuzzy, python-brace-format
-msgid "Enter a size (default: {}): "
-msgstr "अंत दर्ज करें (डिफ़ॉल्ट: {}): "
-
-#, fuzzy
-msgid "Enter subvolume name"
-msgstr "सबवॉल्यूम का नाम"
-
-#, fuzzy
-msgid "Enter subvolume mountpoint"
-msgstr "सबवॉल्यूम माउंटपॉइंट"
-
-#, fuzzy
-msgid "Select a disk configuration"
-msgstr "डिस्क कॉन्फ़िगरेशन"
-
-#, fuzzy
-msgid "Enter root mount directory"
-msgstr "रूट माउंट डायरेक्टरी"
-
-msgid "You will use whatever drive-setup is mounted at the specified directory"
-msgstr ""
-
-msgid "WARNING: Archinstall won't check the suitability of this setup"
-msgstr ""
-
-#, fuzzy
-msgid "Select main filesystem"
-msgstr "फ़ाइलसिस्टम बदलें"
-
-msgid "Enter a hostname"
-msgstr ""
-
-#, fuzzy
-msgid "Select timezone"
-msgstr "समयक्षेत्र चुनें"
-
-#, fuzzy
-msgid "Enter the number of parallel downloads to be enabled"
-msgstr ""
-"सक्षम किए जाने वाले समानांतर डाउनलोड की संख्या दर्ज करें।\n"
-"\n"
-"नोट:\n"
-
-#, python-brace-format
-msgid "Value must be between 1 and {}"
-msgstr ""
-
-#, fuzzy
-msgid "Select which kernel(s) to install"
-msgstr "कृपया चुनें कि कौन सा ग्रीटर इंस्टॉल करना है"
-
-#, fuzzy
-msgid "Enter a respository name"
-msgstr "रिपॉजिटरी का नाम"
-
-#, fuzzy
-msgid "Enter the repository url"
-msgstr "कस्टम रिपॉजिटरी बदलें"
-
-#, fuzzy
-msgid "Enter server url"
-msgstr "सर्वर url"
-
-#, fuzzy
-msgid "Select mirror regions to be enabled"
-msgstr "चयनित मिरर क्षेत्र"
-
-#, fuzzy
-msgid "Select optional repositories to be enabled"
-msgstr "चुनें कि कौन से वैकल्पिक अतिरिक्त रिपॉजिटरी को सक्षम करना है"
-
-#, fuzzy
-msgid "Select an interface"
-msgstr "इंटरफ़ेस हटाएँ"
-
-#, fuzzy
-msgid "Choose network configuration"
-msgstr "कोई नेटवर्क कॉन्फ़िगरेशन नहीं"
-
-#, fuzzy
-msgid "No packages found"
-msgstr "कोई U2F डिवाइस नहीं मिला"
-
-#, fuzzy
-msgid "Select which greeter to install"
-msgstr "कृपया चुनें कि कौन सा ग्रीटर इंस्टॉल करना है"
-
-#, fuzzy
-msgid "Select a profile type"
-msgstr "चयनित प्रोफ़ाइल: "
-
-#, fuzzy
-msgid "Enter new password"
-msgstr "वाई-फाई पासवर्ड दर्ज करें"
-
-msgid "Enter a username"
-msgstr ""
-
-#, fuzzy
-msgid "Enter a password"
-msgstr "पासवर्ड दर्ज करें: "
-
-#, fuzzy
-msgid "The password did not match, please try again"
-msgstr "पुष्टि पासवर्ड मेल नहीं खाता, कृपया पुनः प्रयास करें"
-
-msgid "Weak password. Use uppercase, lowercase, numbers, and symbols."
-msgstr ""
-
-msgid "Moderate password. Add length and more character variety."
-msgstr ""

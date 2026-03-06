@@ -2,7 +2,6 @@ from pathlib import Path
 
 from archinstall.lib.menu.helpers import Input
 from archinstall.lib.models.users import Password, PasswordStrength
-from archinstall.lib.output import warn
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.result import ResultType
 
@@ -13,12 +12,26 @@ def get_password(
 	preset: str | None = None,
 	skip_confirmation: bool = False,
 ) -> Password | None:
+	def password_hint(value: str) -> tuple[str, str] | None:
+		if not value:
+			return None
+		strength = PasswordStrength.strength(value)
+		if strength == PasswordStrength.VERY_WEAK:
+			return (tr('Too weak - too short'), 'input-hint-weak')
+		elif strength == PasswordStrength.WEAK:
+			return (tr('Weak - add uppercase, lowercase, numbers and symbols'), 'input-hint-weak')
+		elif strength == PasswordStrength.MODERATE:
+			return (tr('Moderate - increase length'), 'input-hint-moderate')
+		elif strength == PasswordStrength.STRONG:
+			return (tr('Strong'), 'input-hint-strong')
+
 	while True:
 		result = Input(
 			header=header,
 			allow_skip=allow_skip,
 			default_value=preset,
 			password=True,
+			info_callback=password_hint,
 		).show()
 
 		if result.type_ == ResultType.Skip:
@@ -34,12 +47,6 @@ def get_password(
 					continue
 
 		password = Password(plaintext=result.get_value())
-
-		strength = PasswordStrength.strength(password.plaintext)
-		if strength in (PasswordStrength.VERY_WEAK, PasswordStrength.WEAK):
-			warn(tr('Weak password. Use uppercase, lowercase, numbers, and symbols.'))
-		elif strength == PasswordStrength.MODERATE:
-			warn(tr('Moderate password. Add length and more character variety.'))
 
 		break
 
