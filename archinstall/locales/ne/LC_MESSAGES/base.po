@@ -107,171 +107,192 @@ msgid ""
 "\n"
 "Select by index which partitions to delete"
 msgstr ""
+"{}\n"
+"\n"
+"कुन पार्टिसनहरू मेटाउने हो, अनुक्रमणिका (index) अनुसार चयन गर्नुहोस्"
 
 msgid ""
 "{}\n"
 "\n"
 "Select by index which partition to mount where"
 msgstr ""
+"{}\n"
+"\n"
+"कुन पार्टिसन कहाँ माउन्ट (mount) गर्ने हो, अनुक्रमणिका (index) अनुसार चयन गर्नुहोस्"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr ""
+msgstr " * पार्टिसन माउन्ट-पोइन्टहरू स्थापना भित्रका हुन्, उदाहरणका लागि बूट /boot हुनेछ।"
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr ""
+msgstr "पार्टिसन कहाँ माउन्ट गर्ने चयन गर्नुहोस् (माउन्ट-पोइन्ट हटाउन खाली छोड्नुहोस्): "
 
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mask for formatting"
 msgstr ""
+"{}\n"
+"\n"
+"फर्म्याट (format) गर्नको लागि कुन पार्टिसन छान्ने हो, चयन गर्नुहोस्"
 
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mark as encrypted"
 msgstr ""
+"{}\n"
+"\n"
+"कुन पार्टिसनलाई इन्क्रिप्टेड (encrypted) को रूपमा चिन्ह लगाउने हो, चयन गर्नुहोस्"
 
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mark as bootable"
 msgstr ""
+"{}\n"
+"\n"
+"कुन पार्टिसनलाई बूटयोग्य (bootable) को रूपमा चिन्ह लगाउने हो, चयन गर्नुहोस्"
 
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to set a filesystem on"
 msgstr ""
+"{}\n"
+"\n"
+"कुन पार्टिसनमा फाइल-प्रणाली (filesystem) सेट गर्ने हो, चयन गर्नुहोस्"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr ""
+msgstr "पार्टिसनको लागि इच्छाएको फाइल-प्रणालीको प्रकार राख्नुहोस्: "
 
 msgid "Archinstall language"
-msgstr ""
+msgstr "Archinstall भाषा"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr ""
+msgstr "सबै चयन गरिएका ड्राइभहरू सफा गर्नुहोस् र उत्तम-प्रयास पूर्वनिर्धारित पार्टिसन लेआउट प्रयोग गर्नुहोस्"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr ""
+msgstr "प्रत्येक व्यक्तिगत ड्राइभसँग के गर्ने चयन गर्नुहोस् (पार्टिसन प्रयोग पछि)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr ""
+msgstr "चयन गरिएका ब्लक उपकरणहरू (block devices) सँग तपाईं के गर्न चाहनुहुन्छ, चयन गर्नुहोस्"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr ""
+msgstr "यो पूर्व-प्रोग्राम गरिएका प्रोफाइलहरूको सूची हो, यसले डेस्कटप वातावरण जस्ता चीजहरू स्थापना गर्न सजिलो बनाउन सक्छ"
 
 msgid "Select keyboard layout"
-msgstr ""
+msgstr "किबोर्ड लेआउट चयन गर्नुहोस्"
 
 msgid "Select one of the regions to download packages from"
-msgstr ""
+msgstr "प्याकेजहरू डाउनलोड गर्नका लागि क्षेत्रहरू मध्ये एक चयन गर्नुहोस्"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr ""
+msgstr "प्रयोग र कन्फिगर गर्नको लागि एक वा बढी हार्ड ड्राइभहरू चयन गर्नुहोस्"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr ""
+msgstr "तपाईंको AMD हार्डवेयरसँग उत्तम अनुकूलताको लागि, तपाईं कि त सबै खुला-स्रोत (open-source) वा AMD / ATI विकल्पहरू प्रयोग गर्न सक्नुहुन्छ।"
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr ""
+msgstr "तपाईंको Intel हार्डवेयरसँग उत्तम अनुकूलताको लागि, तपाईं कि त सबै खुला-स्रोत (open-source) वा Intel विकल्पहरू प्रयोग गर्न सक्नुहुन्छ।\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr ""
+msgstr "तपाईंको Nvidia हार्डवेयरसँग उत्तम अनुकूलताको लागि, तपाईं Nvidia प्रोप्राइटरी ड्राइभर प्रयोग गर्न सक्नुहुन्छ।\n"
 
 msgid ""
 "\n"
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
+"\n"
+"\n"
+"ग्राफिक्स ड्राइभर चयन गर्नुहोस् वा सबै खुला-स्रोत ड्राइभरहरू स्थापना गर्न खाली छोड्नुहोस्"
 
 msgid "All open-source (default)"
-msgstr ""
+msgstr "सबै खुला-स्रोत (पूर्वनिर्धारित)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr ""
+msgstr "कुन कर्नलहरू (kernels) प्रयोग गर्ने रोज्नुहोस् वा पूर्वनिर्धारित \"{}\" को लागि खाली छोड्नुहोस्"
 
 msgid "Choose which locale language to use"
-msgstr ""
+msgstr "कुन लोकेल (locale) भाषा प्रयोग गर्ने रोज्नुहोस्"
 
 msgid "Choose which locale encoding to use"
-msgstr ""
+msgstr "कुन लोकेल इन्कोडिङ (locale encoding) प्रयोग गर्ने रोज्नुहोस्"
 
 msgid "Select one of the values shown below: "
-msgstr ""
+msgstr "तल देखाइएका मानहरू मध्ये एक चयन गर्नुहोस्: "
 
 msgid "Select one or more of the options below: "
-msgstr ""
+msgstr "तलका विकल्पहरू मध्ये एक वा बढी चयन गर्नुहोस्: "
 
 msgid "Adding partition...."
-msgstr ""
+msgstr "पार्टिसन थपिँदैछ...."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr ""
+msgstr "अगाडि बढ्नको लागि तपाईंले मान्य फाइल-प्रणाली प्रकार (fs-type) प्रविष्ट गर्नुपर्छ। मान्य प्रकारहरूको लागि `man parted` हेर्नुहोस्।"
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr ""
+msgstr "त्रुटि: URL \"{}\" मा प्रोफाइलहरू सूचीबद्ध गर्दा यो परिणाम आयो:"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr ""
+msgstr "त्रुटि: \"{}\" परिणामलाई JSON को रूपमा डिकोड गर्न सकिएन:"
 
 msgid "Keyboard layout"
-msgstr ""
+msgstr "किबोर्ड लेआउट"
 
 msgid "Mirror region"
-msgstr ""
+msgstr "मिरर क्षेत्र (Mirror region)"
 
 msgid "Locale language"
-msgstr ""
+msgstr "लोकेल भाषा"
 
 msgid "Locale encoding"
-msgstr ""
+msgstr "लोकेल इन्कोडिङ"
 
 msgid "Drive(s)"
-msgstr ""
+msgstr "ड्राइभ(हरू)"
 
 msgid "Disk layout"
-msgstr ""
+msgstr "डिस्क लेआउट"
 
 msgid "Encryption password"
-msgstr ""
+msgstr "इन्क्रिप्सन पासवर्ड"
 
 msgid "Swap"
-msgstr ""
+msgstr "Swap"
 
 msgid "Bootloader"
-msgstr ""
+msgstr "बूटलोडर"
 
 msgid "Root password"
-msgstr ""
+msgstr "रूट (Root) पासवर्ड"
 
 msgid "Superuser account"
-msgstr ""
+msgstr "सुपर-युजर खाता"
 
 msgid "User account"
-msgstr ""
+msgstr "प्रयोगकर्ता खाता"
 
 msgid "Profile"
-msgstr ""
+msgstr "प्रोफाइल"
 
 msgid "Audio"
-msgstr ""
+msgstr "अडियो"
 
 msgid "Kernels"
-msgstr ""
+msgstr "कर्नलहरू (Kernels)"
 
 msgid "Additional packages"
-msgstr ""
+msgstr "थप प्याकेजहरू"
 
 msgid "Network configuration"
-msgstr ""
+msgstr "नेटवर्क कन्फिगरेसन"
 
 msgid "Automatic time sync (NTP)"
-msgstr ""
+msgstr "स्वचालित समय सिङ्क्रोनाइजेसन (NTP)"
 
 msgid "Install ({} config(s) missing)"
-msgstr ""
+msgstr "स्थापना गर्नुहोस् ({} कन्फिगरेसन बाँकी)"
 
 msgid ""
 "You decided to skip harddrive selection\n"
@@ -279,48 +300,52 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
+"तपाईंले हार्ड-ड्राइभ चयन छोड्ने निर्णय गर्नुभयो\n"
+"र {} मा माउन्ट गरिएको जुनकुनै ड्राइभ-सेटअप प्रयोग गरिनेछ (प्रयोगात्मक)\n"
+"चेतावनी: Archinstall ले यो सेटअपको उपयुक्तता जाँच गर्ने छैन\n"
+"के तपाईं जारी राख्न चाहनुहुन्छ?"
 
 msgid "Re-using partition instance: {}"
-msgstr ""
+msgstr "पार्टिसन उदाहरण पुन: प्रयोग गरिँदै: {}"
 
 msgid "Create a new partition"
-msgstr ""
+msgstr "नयाँ पार्टिसन सिर्जना गर्नुहोस्"
 
 msgid "Delete a partition"
-msgstr ""
+msgstr "पार्टिसन मेटाउनुहोस्"
 
 msgid "Clear/Delete all partitions"
-msgstr ""
+msgstr "सबै पार्टिसनहरू सफा गर्नुहोस्/मेटाउनुहोस्"
 
 msgid "Assign mount-point for a partition"
-msgstr ""
+msgstr "पार्टिसनको लागि माउन्ट-पोइन्ट तोक्नुहोस्"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr ""
+msgstr "पार्टिसन फर्म्याट गर्नको लागि चिन्ह लगाउनुहोस् वा हटाउनुहोस् (डाटा मेटिनेछ)"
 
 msgid "Mark/Unmark a partition as encrypted"
-msgstr ""
+msgstr "पार्टिसनलाई इन्क्रिप्टेडको रूपमा चिन्ह लगाउनुहोस् वा हटाउनुहोस्"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr ""
+msgstr "पार्टिसनलाई बूटयोग्य (bootable) को रूपमा चिन्ह लगाउनुहोस् वा हटाउनुहोस् (/boot को लागि स्वचालित)"
 
 msgid "Set desired filesystem for a partition"
-msgstr ""
+msgstr "पार्टिसनको लागि इच्छाएको फाइल-प्रणाली (filesystem) सेट गर्नुहोस्"
 
 msgid "Abort"
 msgstr "रद्द गर्नुहोस्"
 
 msgid "Hostname"
-msgstr "होस्टनाम"
+msgstr "होस्टनाम (Hostname)"
 
 msgid "Not configured, unavailable unless setup manually"
-msgstr ""
+msgstr "कन्फिगर गरिएको छैन, म्यानुअल रूपमा सेटअप नगरेसम्म उपलब्ध हुने छैन"
 
 msgid "Timezone"
-msgstr ""
+msgstr "समय-क्षेत्र (Timezone)"
 
 msgid "Set/Modify the below options"
-msgstr ""
+msgstr "तलका विकल्पहरू सेट वा परिमार्जन गर्नुहोस्"
 
 msgid "Install"
 msgstr "स्थापना गर्नुहोस्"
@@ -329,152 +354,165 @@ msgid ""
 "Use ESC to skip\n"
 "\n"
 msgstr ""
+"छोड्नको लागि ESC प्रयोग गर्नुहोस्\n"
+"\n"
 
 msgid "Suggest partition layout"
-msgstr ""
+msgstr "पार्टिसन लेआउट सुझाव दिनुहोस्"
 
 msgid "Enter a password: "
-msgstr ""
+msgstr "पासवर्ड राख्नुहोस्: "
 
 msgid "Enter a encryption password for {}"
-msgstr ""
+msgstr "{} को लागि इन्क्रिप्सन पासवर्ड राख्नुहोस्"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr ""
+msgstr "डिस्क इन्क्रिप्सन पासवर्ड राख्नुहोस् (इन्क्रिप्सन नचाहिएमा खाली छोड्नुहोस्): "
 
 msgid "Create a required super-user with sudo privileges: "
-msgstr ""
+msgstr "sudo विशेषाधिकार भएको आवश्यक सुपर-युजर (superuser) सिर्जना गर्नुहोस्: "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr ""
+msgstr "रूट (root) पासवर्ड राख्नुहोस् (रूट असक्षम गर्न खाली छोड्नुहोस्): "
 
 msgid "Password for user \"{}\": "
-msgstr ""
+msgstr "प्रयोगकर्ता \"{}\" को लागि पासवर्ड: "
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
-msgstr ""
+msgstr "थप प्याकेजहरू अवस्थित छन् कि छैनन् भनेर प्रमाणित गरिँदैछ (यसले केही सेकेन्ड लिन सक्छ)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr ""
+msgstr "के तपाईं पूर्वनिर्धारित समय सर्भरहरूसँग स्वचालित समय सिङ्क्रोनाइजेसन (NTP) प्रयोग गर्न चाहनुहुन्छ?\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
+"NTP ले काम गर्नको लागि हार्डवेयर समय र अन्य पोस्ट-कन्फिगरेसन चरणहरू आवश्यक पर्न सक्छ।\n"
+"थप जानकारीको लागि, कृपया Arch wiki जाँच गर्नुहोस्"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr ""
+msgstr "थप प्रयोगकर्ता सिर्जना गर्न प्रयोगकर्ता-नाम राख्नुहोस् (छोड्नको लागि खाली छोड्नुहोस्): "
 
 msgid "Use ESC to skip\n"
-msgstr ""
+msgstr "छोड्नको लागि ESC प्रयोग गर्नुहोस्\n"
 
 msgid ""
 "\n"
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
+"\n"
+" सूचीबाट एउटा वस्तु छान्नुहोस्, र यसलाई कार्यान्वयन गर्न उपलब्ध कार्यहरू मध्ये एउटा चयन गर्नुहोस्"
 
 msgid "Cancel"
-msgstr ""
+msgstr "रद्द गर्नुहोस्"
 
 msgid "Confirm and exit"
-msgstr ""
+msgstr "पुष्टि गर्नुहोस् र बाहिर निस्कनुहोस्"
 
 msgid "Add"
-msgstr ""
+msgstr "थप्नुहोस्"
 
 msgid "Copy"
-msgstr ""
+msgstr "प्रतिलिपि गर्नुहोस्"
 
 msgid "Edit"
-msgstr ""
+msgstr "सम्पादन गर्नुहोस्"
 
 msgid "Delete"
-msgstr ""
+msgstr "मेटाउनुहोस्"
 
 msgid "Select an action for '{}'"
-msgstr ""
+msgstr "'{}' को लागि एउटा कार्य चयन गर्नुहोस्"
 
 msgid "Copy to new key:"
-msgstr ""
+msgstr "नयाँ कुञ्जी (key) मा प्रतिलिपि गर्नुहोस्:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr ""
+msgstr "अज्ञात nic प्रकार: {}। सम्भावित मानहरू {} हुन्"
 
 msgid ""
 "\n"
 "This is your chosen configuration:"
 msgstr ""
+"\n"
+"यो तपाईंले रोज्नुभएको कन्फिगरेसन हो:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr ""
+msgstr "Pacman पहिले नै चलिरहेको छ, यसलाई बन्द हुनको लागि अधिकतम १० मिनेट पर्खिँदैछ।"
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr ""
+msgstr "पहिले देखिको pacman लक हटेन। कृपया archinstall प्रयोग गर्नु अघि अवस्थित कुनै पनि pacman सेसनहरू बन्द गर्नुहोस्।"
 
 msgid "Choose which optional additional repositories to enable"
-msgstr ""
+msgstr "सक्षम गर्नका लागि कुन वैकल्पिक थप रिपोजिटरीहरू (repositories) रोज्ने हो, चयन गर्नुहोस्"
 
 msgid "Add a user"
-msgstr ""
+msgstr "प्रयोगकर्ता थप्नुहोस्"
 
 msgid "Change password"
-msgstr ""
+msgstr "पासवर्ड परिवर्तन गर्नुहोस्"
 
 msgid "Promote/Demote user"
-msgstr ""
+msgstr "प्रयोगकर्तालाई बढावा/घटावा (Promote/Demote) गर्नुहोस्"
 
 msgid "Delete User"
-msgstr ""
+msgstr "प्रयोगकर्ता मेटाउनुहोस्"
 
 msgid ""
 "\n"
 "Define a new user\n"
 msgstr ""
+"\n"
+"नयाँ प्रयोगकर्ता परिभाषित गर्नुहोस्\n"
 
 msgid "User Name : "
-msgstr ""
+msgstr "प्रयोगकर्ताको नाम : "
 
 msgid "Should {} be a superuser (sudoer)?"
-msgstr ""
+msgstr "के {} सुपर-युजर (sudoer) हुनुपर्छ?"
 
 msgid "Define users with sudo privilege: "
-msgstr ""
+msgstr "sudo विशेषाधिकार भएका प्रयोगकर्ताहरू परिभाषित गर्नुहोस्: "
 
 msgid "No network configuration"
-msgstr ""
+msgstr "कुनै नेटवर्क कन्फिगरेसन छैन"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr ""
+msgstr "btrfs पार्टिसनमा इच्छाएको सब-भोल्युमहरू (subvolumes) सेट गर्नुहोस्"
 
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to set subvolumes on"
 msgstr ""
+"{}\n"
+"\n"
+"कुन पार्टिसनमा सब-भोल्युमहरू सेट गर्ने हो, चयन गर्नुहोस्"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr ""
+msgstr "हालको पार्टिसनको लागि btrfs सब-भोल्युमहरू व्यवस्थित गर्नुहोस्"
 
 msgid "No configuration"
-msgstr ""
+msgstr "कुनै कन्फिगरेसन छैन"
 
 msgid "Save user configuration"
-msgstr ""
+msgstr "प्रयोगकर्ता कन्फिगरेसन बचत गर्नुहोस्"
 
 msgid "Save user credentials"
-msgstr ""
+msgstr "प्रयोगकर्ताका पत्यारपत्रहरू (credentials) बचत गर्नुहोस्"
 
 msgid "Save disk layout"
-msgstr ""
+msgstr "डिस्क लेआउट बचत गर्नुहोस्"
 
 msgid "Save all"
-msgstr ""
+msgstr "सबै बचत गर्नुहोस्"
 
 msgid "Choose which configuration to save"
-msgstr ""
+msgstr "कुन कन्फिगरेसन बचत गर्ने रोज्नुहोस्"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr ""
+msgstr "कन्फिगरेसन बचत गर्नको लागि एउटा डाइरेक्टरी प्रविष्ट गर्नुहोस्: "
 
 msgid "Not a valid directory: {}"
 msgstr ""
