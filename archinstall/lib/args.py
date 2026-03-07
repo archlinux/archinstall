@@ -500,7 +500,7 @@ class ArchConfigHandler:
 					decryption_pwd = get_password(
 						header=prompt,
 						allow_skip=False,
-						skip_confirmation=True,
+						no_confirmation=True,
 					)
 
 					if not decryption_pwd:
