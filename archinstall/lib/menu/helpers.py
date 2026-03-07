@@ -152,6 +152,7 @@ class Input:
 		allow_skip: bool = True,
 		allow_reset: bool = False,
 		validator_callback: Callable[[str], str | None] | None = None,
+		info_callback: Callable[[str], tuple[str, str] | None] | None = None,
 	):
 		self._header = header
 		self._placeholder = placeholder
@@ -160,6 +161,7 @@ class Input:
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
 		self._validator_callback = validator_callback
+		self._info_callback = info_callback
 
 	def show(self) -> Result[str]:
 		result: Result[str] = tui.run(self)
@@ -176,6 +178,7 @@ class Input:
 			allow_skip=self._allow_skip,
 			allow_reset=self._allow_reset,
 			validator=validator,
+			info_callback=self._info_callback,
 		).run()
 
 		if result.type_ == ResultType.Reset:
