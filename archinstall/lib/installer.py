@@ -17,6 +17,7 @@ from typing import Any, Self
 from archinstall.lib.boot import Boot
 from archinstall.lib.command import SysCommand, run
 from archinstall.lib.disk.fido import Fido2
+from archinstall.lib.disk.luks import Luks2, unlock_luks2_dev
 from archinstall.lib.disk.lvm import lvm_import_vg, lvm_pvseg_info, lvm_vol_change
 from archinstall.lib.disk.utils import (
 	get_lsblk_by_mountpoint,
@@ -29,7 +30,6 @@ from archinstall.lib.disk.utils import (
 from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
-from archinstall.lib.luks import Luks2, unlock_luks2_dev
 from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.bootloader import Bootloader

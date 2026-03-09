@@ -5,6 +5,7 @@ from pathlib import Path
 from parted import Device, Disk, DiskException, FileSystem, Geometry, IOException, Partition, PartitionException, freshDisk, getAllDevices, getDevice, newDisk
 
 from archinstall.lib.command import SysCommand
+from archinstall.lib.disk.luks import Luks2, unlock_luks2_dev
 from archinstall.lib.disk.utils import (
 	find_lsblk_info,
 	get_all_lsblk_info,
@@ -14,7 +15,6 @@ from archinstall.lib.disk.utils import (
 	umount,
 )
 from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesystemFormat
-from archinstall.lib.luks import Luks2, unlock_luks2_dev
 from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
 	BDevice,
@@ -601,8 +601,8 @@ class DeviceHandler:
 	def _wipe(self, dev_path: Path) -> None:
 		"""
 		Wipe a device (partition or otherwise) of meta-data, be it file system, LVM, etc.
-		@param dev_path:    Device path of the partition to be wiped.
-		@type dev_path:     str
+		@param dev_path:	Device path of the partition to be wiped.
+		@type dev_path:		str
 		"""
 		with open(dev_path, 'wb') as p:
 			p.write(bytearray(1024))
