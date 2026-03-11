@@ -1,4 +1,4 @@
-"""Arch Linux installer - guided, templates etc."""
+# Arch Linux installer - guided, templates etc.
 
 import importlib
 import os
