@@ -221,10 +221,10 @@ msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "Виберіть, які ядра використовувати, або залиште порожнім для стандартного \"{}\""
 
 msgid "Choose which locale language to use"
-msgstr "Виберіть мову для використання"
+msgstr "Оберіть мову, яку будете використовувати"
 
 msgid "Choose which locale encoding to use"
-msgstr "Виберіть, яке кодування мови використовувати"
+msgstr "Оберіть кодування локалізації, яке будете використовувати"
 
 msgid "Select one of the values shown below: "
 msgstr "Виберіть одне з наведених нижче значень: "
@@ -430,7 +430,7 @@ msgid "Delete"
 msgstr "Видалити"
 
 msgid "Select an action for '{}'"
-msgstr "Оберіть дію для \"{}\""
+msgstr "Оберіть дію для '{}'"
 
 msgid "Copy to new key:"
 msgstr "Копіювати в новий ключ:"
@@ -443,10 +443,10 @@ msgid ""
 "This is your chosen configuration:"
 msgstr ""
 "\n"
-"Ось конфігурація, яку ви обрали:"
+"Конфігурація, обрана вами:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "Pacman вже запущено, чекаємо максимум 10 хвилин, поки він завершиться."
+msgstr "Pacman вже працює, очікування до 10 хвилин, поки він завершиться."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
 msgstr "Попереднє блокування pacman не завершено. Будь ласка, очистіть усі наявні сеанси pacman перед використанням archinstall."
@@ -665,7 +665,7 @@ msgid "Provides a selection of various server packages to install and enable, e.
 msgstr "Надає вибір різних серверних пакетів для встановлення та ввімкнення, наприклад httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Виберіть, які сервери встановити, якщо жодного, буде виконано мінімальну інсталяцію"
+msgstr "Оберіть сервери для встановлення. Якщо нічого не обрано, буде виконано мінімальну інсталяцію"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Встановлює мінімальну систему, а також xorg і графічні драйвери."
@@ -1314,10 +1314,10 @@ msgid "Volumes"
 msgstr "Томи"
 
 msgid "LVM volumes"
-msgstr "Томи LVM"
+msgstr "LVM томи"
 
 msgid "LVM volumes to be encrypted"
-msgstr "Томи LVM, які потрібно зашифрувати"
+msgstr "LVM томи, які потрібно зашифрувати"
 
 msgid "Select which LVM volumes to encrypt"
 msgstr "Виберіть томи LVM для шифрування"
@@ -1344,13 +1344,13 @@ msgid "No"
 msgstr "Ні"
 
 msgid "Archinstall help"
-msgstr "Допомога з Archinstall"
+msgstr "Довідка Archinstall"
 
 msgid " (default)"
 msgstr " (типово)"
 
 msgid "Press Ctrl+h for help"
-msgstr "Натисніть Ctrl+h для допомоги"
+msgstr "Натисніть Ctrl+h для довідки"
 
 msgid "Choose an option to give Sway access to your hardware"
 msgstr "Оберіть опцію для надання Sway доступ до вашого обладнання"
@@ -1392,7 +1392,7 @@ msgid "Disk configuration type"
 msgstr "Конфігурація диску"
 
 msgid "Root mount directory"
-msgstr "Точка монтування Root"
+msgstr "Точка монтування системи (Root)"
 
 msgid "Select language"
 msgstr "Обрати мову"
@@ -1438,7 +1438,7 @@ msgid "Enter your DNS servers with space separated (leave blank for none)"
 msgstr "Введіть ваші DNS-сервери (розділені пробілами, залиште порожнім якщо їх немає):"
 
 msgid "DNS servers"
-msgstr "DNS- сервера"
+msgstr "DNS- сервери"
 
 msgid "Configure interfaces"
 msgstr "Налаштування інтерфейсів"
@@ -1505,7 +1505,7 @@ msgid "Select execution mode"
 msgstr "Оберіть режим роботи"
 
 msgid "Press ? for help"
-msgstr "Натисніть ? для допомоги"
+msgstr "Натисніть ? для довідки"
 
 msgid "Choose an option to give Hyprland access to your hardware"
 msgstr "Надайте Hyprland доступ до вашого обладнання"
@@ -1589,7 +1589,7 @@ msgid "Select regions"
 msgstr "Обрати регіони"
 
 msgid "Add custom servers"
-msgstr "Додати користувацькі сервера"
+msgstr "Додати користувацькі сервери"
 
 msgid "Add custom repository"
 msgstr "Додати користувацький репозиторій"
@@ -1604,7 +1604,7 @@ msgid "Selected mirror regions"
 msgstr "Обрані регіони дзеркал"
 
 msgid "Custom servers"
-msgstr "Користувацькі сервера"
+msgstr "Користувацькі сервери"
 
 msgid "Custom repositories"
 msgstr "Користувацькі репозиторії"
@@ -1613,10 +1613,10 @@ msgid "Only ASCII characters are supported"
 msgstr "Підтримуються лише ASCII символи"
 
 msgid "Show help"
-msgstr "Показати допомогу"
+msgstr "Показати довідку"
 
 msgid "Exit help"
-msgstr "Вийти з допомоги"
+msgstr "Вийти з довідки"
 
 msgid "Preview scroll up"
 msgstr "Прокрутка перегляду догори"
