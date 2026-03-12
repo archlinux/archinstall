@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import json
 import os
 import sys
@@ -496,11 +497,12 @@ class ArchConfigHandler:
 
 				while True:
 					prompt = f'{header}\n\n' + tr('Incorrect password') if incorrect_password else ''
-
-					decryption_pwd = get_password(
-						header=prompt,
-						allow_skip=False,
-						skip_confirmation=True,
+					decryption_pwd = asyncio.run(
+						get_password(
+							header=prompt,
+							allow_skip=False,
+							skip_confirmation=True,
+						)
 					)
 
 					if not decryption_pwd:

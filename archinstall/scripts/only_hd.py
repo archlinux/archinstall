@@ -1,4 +1,6 @@
+import sys
 from pathlib import Path
+from typing import Any
 
 from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.configuration import ConfigurationOutput
@@ -6,7 +8,11 @@ from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
+from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.output import debug, error
+from archinstall.lib.translationhandler import tr
+from archinstall.tui.ui.components import tui
+from archinstall.tui.ui.result import Result
 
 
 def show_menu(arch_config_handler: ArchConfigHandler) -> None:
@@ -18,7 +24,9 @@ def show_menu(arch_config_handler: ArchConfigHandler) -> None:
 	global_menu.set_enabled('swap', True)
 	global_menu.set_enabled('__config__', True)
 
-	global_menu.run()
+	result: Any | None = tui.run(global_menu)
+	if result is None:
+		sys.exit(0)
 
 
 def perform_installation(arch_config_handler: ArchConfigHandler) -> None:
@@ -72,7 +80,9 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		if not config.confirm_config():
+		res: bool = tui.run(config.confirm_config)
+
+		if not res:
 			debug('Installation aborted')
 			aborted = True
 
@@ -81,6 +91,11 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
+
+		rc: Result[bool] = tui.run(lambda: delayed_warning(tr('Starting device modifications in ')))
+		if not rc.get_value():
+			return main()
+
 		fs_handler.perform_filesystem_operations()
 
 	perform_installation(arch_config_handler)

@@ -39,8 +39,8 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		)
 
 	@override
-	def run(self) -> ApplicationConfiguration:
-		super().run()
+	async def show(self) -> ApplicationConfiguration | None:
+		_ = await super().show()
 		return self._app_config
 
 	def _define_menu_options(self) -> list[MenuItem]:
@@ -116,13 +116,13 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		return None
 
 
-def select_power_management(preset: PowerManagementConfiguration | None = None) -> PowerManagementConfiguration | None:
+async def select_power_management(preset: PowerManagementConfiguration | None = None) -> PowerManagementConfiguration | None:
 	group = MenuItemGroup.from_enum(PowerManagement)
 
 	if preset:
 		group.set_focus_by_value(preset.power_management)
 
-	result = Selection[PowerManagement](
+	result = await Selection[PowerManagement](
 		group,
 		allow_skip=True,
 		allow_reset=True,
@@ -137,11 +137,11 @@ def select_power_management(preset: PowerManagementConfiguration | None = None) 
 			return None
 
 
-def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfiguration | None:
+async def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfiguration | None:
 	header = tr('Would you like to configure Bluetooth?') + '\n'
 	preset_val = preset.enabled if preset else False
 
-	result = Confirmation(
+	result = await Confirmation(
 		header=header,
 		allow_skip=True,
 		preset=preset_val,
@@ -156,11 +156,11 @@ def select_bluetooth(preset: BluetoothConfiguration | None) -> BluetoothConfigur
 			raise ValueError('Unhandled result type')
 
 
-def select_print_service(preset: PrintServiceConfiguration | None) -> PrintServiceConfiguration | None:
+async def select_print_service(preset: PrintServiceConfiguration | None) -> PrintServiceConfiguration | None:
 	header = tr('Would you like to configure the print service?') + '\n'
 	preset_val = preset.enabled if preset else False
 
-	result = Confirmation(
+	result = await Confirmation(
 		header=header,
 		allow_skip=True,
 		preset=preset_val,
@@ -176,14 +176,14 @@ def select_print_service(preset: PrintServiceConfiguration | None) -> PrintServi
 			raise ValueError('Unhandled result type')
 
 
-def select_audio(preset: AudioConfiguration | None = None) -> AudioConfiguration | None:
+async def select_audio(preset: AudioConfiguration | None = None) -> AudioConfiguration | None:
 	items = [MenuItem(a.value, value=a) for a in Audio]
 	group = MenuItemGroup(items)
 
 	if preset:
 		group.set_focus_by_value(preset.audio)
 
-	result = Selection[Audio](
+	result = await Selection[Audio](
 		group,
 		header=tr('Select audio configuration'),
 		allow_skip=True,
@@ -198,13 +198,13 @@ def select_audio(preset: AudioConfiguration | None = None) -> AudioConfiguration
 			raise ValueError('Unhandled result type')
 
 
-def select_firewall(preset: FirewallConfiguration | None = None) -> FirewallConfiguration | None:
+async def select_firewall(preset: FirewallConfiguration | None = None) -> FirewallConfiguration | None:
 	group = MenuItemGroup.from_enum(Firewall)
 
 	if preset:
 		group.set_focus_by_value(preset.firewall)
 
-	result = Selection[Firewall](
+	result = await Selection[Firewall](
 		group,
 		allow_skip=True,
 		allow_reset=True,

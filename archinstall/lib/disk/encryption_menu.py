@@ -98,9 +98,9 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			),
 		]
 
-	def _select_lvm_vols(self, preset: list[LvmVolume]) -> list[LvmVolume]:
+	async def _select_lvm_vols(self, preset: list[LvmVolume]) -> list[LvmVolume]:
 		if self._lvm_config:
-			return select_lvm_vols_to_encrypt(self._lvm_config, preset=preset)
+			return await select_lvm_vols_to_encrypt(self._lvm_config, preset=preset)
 		return []
 
 	def _check_dep_enc_type(self) -> bool:
@@ -122,8 +122,8 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		return False
 
 	@override
-	def run(self) -> DiskEncryption | None:
-		enc_config = super().run()
+	async def show(self) -> DiskEncryption | None:
+		enc_config = await super().show()
 		if enc_config is None:
 			return None
 
@@ -233,7 +233,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		return None
 
 
-def select_encryption_type(
+async def select_encryption_type(
 	lvm_config: LvmConfiguration | None = None,
 	preset: EncryptionType | None = None,
 ) -> EncryptionType | None:
@@ -253,7 +253,7 @@ def select_encryption_type(
 	group = MenuItemGroup(items)
 	group.set_focus_by_value(preset_value)
 
-	result = Selection[EncryptionType](
+	result = await Selection[EncryptionType](
 		group,
 		header=tr('Select encryption type'),
 		allow_skip=True,
@@ -269,9 +269,9 @@ def select_encryption_type(
 			return result.get_value()
 
 
-def select_encrypted_password() -> Password | None:
+async def select_encrypted_password() -> Password | None:
 	header = tr('Enter disk encryption password (leave blank for no encryption)') + '\n'
-	password = get_password(
+	password = await get_password(
 		header=header,
 		allow_skip=True,
 	)
@@ -279,7 +279,7 @@ def select_encrypted_password() -> Password | None:
 	return password
 
 
-def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
+async def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 	header = tr('Select a FIDO2 device to use for HSM') + '\n'
 
 	try:
@@ -290,7 +290,7 @@ def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 	if fido_devices:
 		group = MenuHelper(data=fido_devices).create_menu_group()
 
-		result = Selection[Fido2Device](
+		result = await Selection[Fido2Device](
 			group,
 			header=header,
 			allow_skip=True,
@@ -307,7 +307,7 @@ def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
 	return None
 
 
-def select_partitions_to_encrypt(
+async def select_partitions_to_encrypt(
 	modification: list[DeviceModification],
 	preset: list[PartitionModification],
 ) -> list[PartitionModification]:
@@ -324,7 +324,7 @@ def select_partitions_to_encrypt(
 		group = MenuItemGroup.from_objects(partitions)
 		group.set_selected_by_value(preset)
 
-		result = Table[PartitionModification](
+		result = await Table[PartitionModification](
 			header=tr('Select disks for the installation'),
 			group=group,
 			allow_skip=True,
@@ -343,7 +343,7 @@ def select_partitions_to_encrypt(
 	return []
 
 
-def select_lvm_vols_to_encrypt(
+async def select_lvm_vols_to_encrypt(
 	lvm_config: LvmConfiguration,
 	preset: list[LvmVolume],
 ) -> list[LvmVolume]:
@@ -353,7 +353,7 @@ def select_lvm_vols_to_encrypt(
 		group = MenuItemGroup.from_objects(volumes)
 		group.set_selected_by_value(preset)
 
-		result = Table[LvmVolume](
+		result = await Table[LvmVolume](
 			header=tr('Select disks for the installation'),
 			group=group,
 			allow_skip=True,
@@ -372,7 +372,7 @@ def select_lvm_vols_to_encrypt(
 	return []
 
 
-def select_iteration_time(preset: int | None = None) -> int | None:
+async def select_iteration_time(preset: int | None = None) -> int | None:
 	header = tr('Enter iteration time for LUKS encryption (in milliseconds)') + '\n'
 	header += tr('Higher values increase security but slow down boot time') + '\n'
 	header += tr(f'Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000') + '\n'
@@ -388,7 +388,7 @@ def select_iteration_time(preset: int | None = None) -> int | None:
 		except ValueError:
 			return tr('Please enter a valid number')
 
-	result = Input(
+	result = await Input(
 		header=header,
 		allow_skip=True,
 		default_value=str(preset) if preset else str(DEFAULT_ITER_TIME),

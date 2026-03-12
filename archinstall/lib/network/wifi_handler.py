@@ -1,7 +1,7 @@
 from asyncio import sleep
 from dataclasses import dataclass
 from pathlib import Path
-from typing import assert_never
+from typing import assert_never, override
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import SysCallError
@@ -9,7 +9,7 @@ from archinstall.lib.models.network import WifiConfiguredNetwork, WifiNetwork
 from archinstall.lib.network.wpa_supplicant import WpaSupplicantConfig
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import ConfirmationScreen, InputScreen, LoadingScreen, NotifyScreen, TableSelectionScreen, tui
+from archinstall.tui.ui.components import ConfirmationScreen, InputScreen, InstanceRunnable, LoadingScreen, NotifyScreen, TableSelectionScreen, tui
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import Result, ResultType
 
@@ -21,15 +21,12 @@ class WpaCliResult:
 	error: str | None = None
 
 
-class WifiHandler:
+class WifiHandler(InstanceRunnable[bool]):
 	def __init__(self) -> None:
-		self._wpa_config = WpaSupplicantConfig()
+		self._wpa_config: WpaSupplicantConfig = WpaSupplicantConfig()
 
-	def setup(self) -> bool:
-		result: Result[bool] = tui.run(self)
-		return result.get_value()
-
-	async def _run(self) -> None:
+	@override
+	async def run(self) -> bool | None:
 		"""
 		This is the entry point that is called by components.TApp
 		"""
@@ -37,8 +34,7 @@ class WifiHandler:
 
 		if not wifi_iface:
 			debug('No wifi interface found')
-			tui.exit(Result.false())
-			return None
+			return False
 
 		prompt = tr('No network connection found') + '\n\n'
 		prompt += tr('Would you like to connect to a Wifi?') + '\n'
@@ -53,14 +49,12 @@ class WifiHandler:
 		match result.type_:
 			case ResultType.Selection:
 				if result.get_value() is False:
-					tui.exit(Result.false())
-					return None
+					return False
 			case ResultType.Skip | ResultType.Reset:
-				tui.exit(Result.false())
-				return None
+				return False
 
 		setup_result = await self._setup_wifi(wifi_iface)
-		tui.exit(Result(ResultType.Selection, _data=setup_result))
+		return setup_result
 
 	async def _enable_supplicant(self, wifi_iface: str) -> bool:
 		self._wpa_config.load_config()

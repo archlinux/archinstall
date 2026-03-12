@@ -1,17 +1,29 @@
+from enum import Enum
 from types import TracebackType
-from typing import Any, Self
+from typing import Any, Self, override
 
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.output import error
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.types import Chars
+from archinstall.tui.ui.components import InstanceRunnable
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
 CONFIG_KEY = '__config__'
 
 
-class AbstractMenu[ValueT]:
+class SpecialMenuKey(Enum):
+	SAVE = f'{CONFIG_KEY}_save'
+	INSTALL = f'{CONFIG_KEY}_install'
+	ABORT = f'{CONFIG_KEY}_abort'
+
+	@staticmethod
+	def matches(key: str) -> bool:
+		return any(key == item.value for item in SpecialMenuKey)
+
+
+class AbstractMenu[ValueT](InstanceRunnable[ValueT]):
 	def __init__(
 		self,
 		item_group: MenuItemGroup,
@@ -50,7 +62,7 @@ class AbstractMenu[ValueT]:
 
 	def _sync_from_config(self) -> None:
 		for item in self._menu_item_group._menu_items:
-			if item.key is not None and not item.key.startswith(CONFIG_KEY):
+			if item.key is not None and not SpecialMenuKey.matches(item.key):
 				config_value = getattr(self._config, item.key)
 				if config_value is not None:
 					item.value = config_value
@@ -61,7 +73,7 @@ class AbstractMenu[ValueT]:
 				setattr(self._config, item.key, item.value)
 
 	def _sync(self, item: MenuItem) -> None:
-		if not item.key or item.key.startswith(CONFIG_KEY):
+		if not item.key or SpecialMenuKey.matches(item.key):
 			return
 
 		config_value = getattr(self._config, item.key)
@@ -79,7 +91,7 @@ class AbstractMenu[ValueT]:
 
 		for item in self._menu_item_group.items:
 			if item.key:
-				if item.key == key or (is_config_key and item.key.startswith(CONFIG_KEY)):
+				if item.key == key or (is_config_key and SpecialMenuKey.matches(item.key)):
 					item.enabled = enabled
 					found = True
 
@@ -90,14 +102,18 @@ class AbstractMenu[ValueT]:
 		for item in self._menu_item_group.items:
 			item.enabled = False
 
-	def _is_config_valid(self) -> bool:
+	def is_config_valid(self) -> bool:
 		return True
 
-	def run(self) -> ValueT | None:
+	@override
+	async def run(self) -> ValueT | None:
+		return await self.show()
+
+	async def show(self) -> ValueT | None:
 		self._sync_from_config()
 
 		while True:
-			result = Selection[ValueT](
+			result = await Selection[ValueT](
 				title=self._title,
 				group=self._menu_item_group,
 				allow_skip=False,
@@ -111,11 +127,14 @@ class AbstractMenu[ValueT]:
 					self._menu_item_group.focus_item = item
 
 					if item.action is None:
-						if not self._is_config_valid():
-							continue
-						break
+						if item.key == SpecialMenuKey.INSTALL.value:
+							if not self.is_config_valid():
+								continue
+							break
+						elif item.key == SpecialMenuKey.ABORT.value:
+							return None
 					else:
-						item.value = item.action(item.value)
+						item.value = await item.action(item.value)
 				case ResultType.Reset:
 					return None
 				case _:

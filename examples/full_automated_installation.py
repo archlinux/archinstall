@@ -94,7 +94,7 @@ fs_handler = FilesystemHandler(disk_config)
 
 # perform all file operations
 # WARNING: this will potentially format the filesystem and delete all data
-fs_handler.perform_filesystem_operations(show_countdown=False)
+fs_handler.perform_filesystem_operations()
 
 mountpoint = Path('/tmp')
 
