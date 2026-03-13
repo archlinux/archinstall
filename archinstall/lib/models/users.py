@@ -107,6 +107,7 @@ UserSerialization = TypedDict(
 		'sudo': bool,
 		'groups': list[str],
 		'enc_password': str | None,
+		'birth_date': NotRequired[str],
 	},
 )
 
@@ -158,6 +159,7 @@ class User:
 	password: Password
 	sudo: bool
 	groups: list[str] = field(default_factory=list)
+	birth_date: str = ''
 
 	@override
 	def __str__(self) -> str:
@@ -170,15 +172,21 @@ class User:
 			'password': self.password.hidden(),
 			'sudo': self.sudo,
 			'groups': self.groups,
+			'birth_date': self.birth_date,
 		}
 
 	def json(self) -> UserSerialization:
-		return {
+		data: UserSerialization = {
 			'username': self.username,
 			'enc_password': self.password.enc_password,
 			'sudo': self.sudo,
 			'groups': self.groups,
 		}
+
+		if self.birth_date:
+			data['birth_date'] = self.birth_date
+
+		return data
 
 	@classmethod
 	def parse_arguments(
@@ -208,6 +216,7 @@ class User:
 				password=password,
 				sudo=entry.get('sudo', False) is True,
 				groups=groups,
+				birth_date=entry.get('birth_date', ''),
 			)
 
 			users.append(user)
