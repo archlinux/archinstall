@@ -45,7 +45,7 @@ class UserList(ListManager[User]):
 		elif action == self._actions[1] and entry:  # change password
 			header = f'{tr("User")}: {entry.username}\n'
 			header += tr('Enter new password')
-			new_password = get_password(header=header)
+			new_password = get_password(header=header, allow_skip=True)
 
 			if new_password:
 				user = next(filter(lambda x: x == entry, data))
