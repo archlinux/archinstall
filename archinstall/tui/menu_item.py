@@ -315,7 +315,9 @@ class MenuItemGroup:
 
 	def focus_index(self, index: int) -> None:
 		enabled = self.get_enabled_items()
-		self.focus_item = enabled[index]
+		if not (0 <= index < len(enabled)):
+			return
+		self.focus_item = enabled[index]]
 
 	def focus_first(self) -> None:
 		if len(self.items) == 0:
