@@ -1,10 +1,9 @@
 import os
 import sys
 import time
-from typing import Any
 
 from archinstall.lib.applications.application_handler import ApplicationHandler
-from archinstall.lib.args import ArchConfigHandler
+from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
@@ -46,7 +45,7 @@ def show_menu(
 	if not arch_config_handler.args.advanced:
 		global_menu.set_enabled('parallel_downloads', False)
 
-	result: Any | None = tui.run(global_menu)
+	result: ArchConfig | None = tui.run(global_menu)
 	if result is None:
 		sys.exit(0)
 

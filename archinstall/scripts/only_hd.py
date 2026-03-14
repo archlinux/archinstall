@@ -1,8 +1,7 @@
 import sys
 from pathlib import Path
-from typing import Any
 
-from archinstall.lib.args import ArchConfigHandler
+from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
@@ -23,7 +22,7 @@ def show_menu(arch_config_handler: ArchConfigHandler) -> None:
 	global_menu.set_enabled('swap', True)
 	global_menu.set_enabled('__config__', True)
 
-	result: Any | None = tui.run(global_menu)
+	result: ArchConfig | None = tui.run(global_menu)
 	if result is None:
 		sys.exit(0)
 
