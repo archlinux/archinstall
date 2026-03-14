@@ -89,7 +89,7 @@ async def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 
-		if not await delayed_warning(tr('Starting device modifications in ')):
+		if not delayed_warning(tr('Starting device modifications in ')):
 			return await main()
 
 		fs_handler.perform_filesystem_operations()

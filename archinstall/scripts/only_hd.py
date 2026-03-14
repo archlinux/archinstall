@@ -12,7 +12,6 @@ from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.output import debug, error
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.components import tui
-from archinstall.tui.ui.result import Result
 
 
 def show_menu(arch_config_handler: ArchConfigHandler) -> None:
@@ -92,8 +91,7 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 
-		rc: Result[bool] = tui.run(lambda: delayed_warning(tr('Starting device modifications in ')))
-		if not rc.get_value():
+		if not delayed_warning(tr('Starting device modifications in ')):
 			return main()
 
 		fs_handler.perform_filesystem_operations()

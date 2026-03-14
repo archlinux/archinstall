@@ -133,6 +133,8 @@ class AbstractMenu[ValueT](InstanceRunnable[ValueT]):
 							break
 						elif item.key == SpecialMenuKey.ABORT.value:
 							return None
+						else:
+							break
 					else:
 						item.value = await item.action(item.value)
 				case ResultType.Reset:

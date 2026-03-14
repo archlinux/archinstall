@@ -1197,7 +1197,7 @@ class _AppInstance(App[ValueT]):
 class TApp:
 	app: _AppInstance[Any] | None = None
 
-	def run(self, main: InstanceRunnable[ValueT] | Callable[[], Awaitable[Any]]) -> ValueT:
+	def run(self, main: InstanceRunnable[ValueT] | Callable[[], Awaitable[ValueT]]) -> ValueT:
 		TApp.app = _AppInstance(main)
 		result: ValueT | Exception | None = TApp.app.run()
 

@@ -1,10 +1,11 @@
-import asyncio
 import sys
+import time
 from pathlib import Path
 
 from archinstall.lib.menu.helpers import Confirmation, Input
 from archinstall.lib.models.users import Password
 from archinstall.lib.translationhandler import tr
+from archinstall.tui.ui.components import tui
 from archinstall.tui.ui.result import ResultType
 
 
@@ -100,7 +101,7 @@ async def prompt_dir(
 			return None
 
 
-async def confirm_abort() -> None:
+async def confirm_abort() -> bool:
 	prompt = tr('Do you really want to abort?') + '\n'
 
 	result = await Confirmation(
@@ -109,11 +110,10 @@ async def confirm_abort() -> None:
 		preset=False,
 	).show()
 
-	if result.get_value():
-		sys.exit(0)
+	return result.get_value()
 
 
-async def delayed_warning(message: str) -> bool:
+def delayed_warning(message: str) -> bool:
 	# Issue a final warning before we continue with something un-revertable.
 	# We count down from 5 to 0.
 	print(message, end='', flush=True)
@@ -122,8 +122,10 @@ async def delayed_warning(message: str) -> bool:
 		countdown = '\n5...4...3...2...1\n'
 		for c in countdown:
 			print(c, end='', flush=True)
-			await asyncio.sleep(0.25)
+			time.sleep(0.25)
 	except KeyboardInterrupt:
-		await confirm_abort()
+		ret: bool = tui.run(confirm_abort)
+		if ret:
+			sys.exit(1)
 
 	return True

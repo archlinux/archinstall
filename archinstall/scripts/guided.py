@@ -23,7 +23,6 @@ from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.components import tui
-from archinstall.tui.ui.result import Result, ResultType
 
 
 def show_menu(
@@ -184,20 +183,18 @@ def perform_installation(
 
 		if not arch_config_handler.args.silent:
 			elapsed_time = time.monotonic() - start_time
-			result: Result[PostInstallationAction] = tui.run(lambda: select_post_installation(elapsed_time))
+			action: PostInstallationAction = tui.run(lambda: select_post_installation(elapsed_time))
 
-			if result.type_ == ResultType.Selection:
-				action = result.get_value()
-				match action:
-					case PostInstallationAction.EXIT:
+			match action:
+				case PostInstallationAction.EXIT:
+					pass
+				case PostInstallationAction.REBOOT:
+					_ = os.system('reboot')
+				case PostInstallationAction.CHROOT:
+					try:
+						installation.drop_to_shell()
+					except Exception:
 						pass
-					case PostInstallationAction.REBOOT:
-						_ = os.system('reboot')
-					case PostInstallationAction.CHROOT:
-						try:
-							installation.drop_to_shell()
-						except Exception:
-							pass
 
 
 def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
@@ -233,8 +230,7 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
 
-		rc: Result[bool] = tui.run(lambda: delayed_warning(tr('Starting device modifications in ')))
-		if not rc.get_value():
+		if not delayed_warning(tr('Starting device modifications in ')):
 			return main()
 
 		fs_handler.perform_filesystem_operations()
