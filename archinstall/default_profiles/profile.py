@@ -117,7 +117,7 @@ class Profile:
 		"""
 		return {}
 
-	def do_on_select(self) -> SelectResult | None:
+	async def do_on_select(self) -> SelectResult | None:
 		"""
 		Hook that will be called when a profile is selected
 		"""

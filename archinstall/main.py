@@ -18,6 +18,7 @@ from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr
 from archinstall.lib.utils.util import running_from_iso
+from archinstall.tui.ui.components import tui
 
 
 def _log_sys_info() -> None:
@@ -38,8 +39,8 @@ def _check_online(wifi_handler: WifiHandler | None = None) -> bool:
 	except OSError as ex:
 		if 'Network is unreachable' in str(ex):
 			if wifi_handler is not None:
-				success = not wifi_handler.setup()
-				if not success:
+				result: bool = tui.run(wifi_handler)
+				if not result:
 					return False
 
 	return True

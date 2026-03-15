@@ -1,14 +1,12 @@
 from collections.abc import Awaitable, Callable
-from typing import Any, Literal, TypeVar, override
+from typing import Any, Literal, override
 
 from textual.validation import ValidationResult, Validator
 
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import InputScreen, LoadingScreen, NotifyScreen, OptionListScreen, SelectListScreen, TableSelectionScreen, tui
+from archinstall.tui.ui.components import InputScreen, LoadingScreen, NotifyScreen, OptionListScreen, SelectListScreen, TableSelectionScreen
 from archinstall.tui.ui.menu_item import MenuItemGroup
 from archinstall.tui.ui.result import Result, ResultType
-
-ValueT = TypeVar('ValueT')
 
 
 class Selection[ValueT]:
@@ -32,11 +30,7 @@ class Selection[ValueT]:
 		self._multi = multi
 		self._enable_filter = enable_filter
 
-	def show(self) -> Result[ValueT]:
-		result: Result[ValueT] = tui.run(self)
-		return result
-
-	async def _run(self) -> None:
+	async def show(self) -> Result[ValueT]:
 		if self._multi:
 			result = await SelectListScreen[ValueT](
 				self._group,
@@ -61,9 +55,9 @@ class Selection[ValueT]:
 			confirmed = await _confirm_reset()
 
 			if confirmed.get_value() is False:
-				return await self._run()
+				return await self.show()
 
-		tui.exit(result)
+		return result
 
 
 class Confirmation:
@@ -90,11 +84,7 @@ class Confirmation:
 		else:
 			self._group = group
 
-	def show(self) -> Result[bool]:
-		result: Result[bool] = tui.run(self)
-		return result
-
-	async def _run(self) -> None:
+	async def show(self) -> Result[bool]:
 		result = await OptionListScreen[bool](
 			self._group,
 			header=self._header,
@@ -108,22 +98,18 @@ class Confirmation:
 			confirmed = await _confirm_reset()
 
 			if confirmed.get_value() is False:
-				return await self._run()
+				return await self.show()
 
-		tui.exit(result)
+		return result
 
 
 class Notify:
 	def __init__(self, header: str):
 		self._header = header
 
-	def show(self) -> Result[bool]:
-		result: Result[bool] = tui.run(self)
-		return result
-
-	async def _run(self) -> None:
-		await NotifyScreen(header=self._header).run()
-		tui.exit(Result.true())
+	async def show(self) -> Result[bool]:
+		_ = await NotifyScreen(header=self._header).run()
+		return Result.true()
 
 
 class GenericValidator(Validator):
@@ -161,11 +147,7 @@ class Input:
 		self._allow_reset = allow_reset
 		self._validator_callback = validator_callback
 
-	def show(self) -> Result[str]:
-		result: Result[str] = tui.run(self)
-		return result
-
-	async def _run(self) -> None:
+	async def show(self) -> Result[str]:
 		validator = GenericValidator(self._validator_callback) if self._validator_callback else None
 
 		result = await InputScreen(
@@ -182,9 +164,9 @@ class Input:
 			confirmed = await _confirm_reset()
 
 			if confirmed.get_value() is False:
-				return await self._run()
+				return await self.show()
 
-		tui.exit(result)
+		return result
 
 
 class Loading[ValueT]:
@@ -198,23 +180,19 @@ class Loading[ValueT]:
 		self._timer = timer
 		self._data_callback = data_callback
 
-	def show(self) -> Result[ValueT]:
-		result: Result[ValueT] = tui.run(self)
-		return result
-
-	async def _run(self) -> None:
+	async def show(self) -> Result[ValueT]:
 		if self._data_callback:
-			result = await LoadingScreen(
+			result = await LoadingScreen[ValueT](
 				header=self._header,
 				data_callback=self._data_callback,
 			).run()
-			tui.exit(result)
+			return result
 		else:
-			await LoadingScreen(
+			_ = await LoadingScreen(
 				timer=self._timer,
 				header=self._header,
 			).run()
-			tui.exit(Result.true())
+			return Result.true()
 
 
 class Table[ValueT]:
@@ -245,11 +223,7 @@ class Table[ValueT]:
 		if self._group is None and self._data_callback is None:
 			raise ValueError('Either data or data_callback must be provided')
 
-	def show(self) -> Result[ValueT]:
-		result: Result[ValueT] = tui.run(self)
-		return result
-
-	async def _run(self) -> None:
+	async def show(self) -> Result[ValueT]:
 		result = await TableSelectionScreen[ValueT](
 			header=self._header,
 			group=self._group,
@@ -266,9 +240,9 @@ class Table[ValueT]:
 			confirmed = await _confirm_reset()
 
 			if confirmed.get_value() is False:
-				return await self._run()
+				return await self.show()
 
-		tui.exit(result)
+		return result
 
 
 async def _confirm_reset() -> Result[bool]:

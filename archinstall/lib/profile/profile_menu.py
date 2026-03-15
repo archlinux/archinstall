@@ -60,11 +60,11 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		]
 
 	@override
-	def run(self) -> ProfileConfiguration | None:
-		return super().run()
+	async def show(self) -> ProfileConfiguration | None:
+		return await super().show()
 
-	def _select_profile(self, preset: Profile | None) -> Profile | None:
-		profile = select_profile(preset)
+	async def _select_profile(self, preset: Profile | None) -> Profile | None:
+		profile = await select_profile(preset)
 
 		if profile is not None:
 			if not profile.is_graphic_driver_supported():
@@ -86,20 +86,20 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 
 		return profile
 
-	def _select_gfx_driver(self, preset: GfxDriver | None = None) -> GfxDriver | None:
+	async def _select_gfx_driver(self, preset: GfxDriver | None = None) -> GfxDriver | None:
 		driver = preset
 		profile: Profile | None = self._item_group.find_by_key('profile').value
 
 		if profile:
 			if profile.is_graphic_driver_supported():
-				driver = select_driver(preset=preset)
+				driver = await select_driver(preset=preset)
 
 			if driver and 'Sway' in profile.current_selection_names():
 				if driver.is_nvidia():
 					header = tr('The proprietary Nvidia driver is not supported by Sway.') + '\n'
 					header += tr('It is likely that you will run into issues, are you okay with that?') + '\n'
 
-					result = Confirmation(
+					result = await Confirmation(
 						header=header,
 						allow_skip=False,
 						preset=False,
@@ -140,7 +140,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		return None
 
 
-def select_greeter(
+async def select_greeter(
 	profile: Profile | None = None,
 	preset: GreeterType | None = None,
 ) -> GreeterType | None:
@@ -157,7 +157,7 @@ def select_greeter(
 
 		group.set_default_by_value(default)
 
-		result = Selection[GreeterType](
+		result = await Selection[GreeterType](
 			group,
 			header=tr('Select which greeter to install'),
 			allow_skip=True,
@@ -174,7 +174,7 @@ def select_greeter(
 	return None
 
 
-def select_profile(
+async def select_profile(
 	current_profile: Profile | None = None,
 	header: str | None = None,
 	allow_reset: bool = True,
@@ -190,7 +190,7 @@ def select_profile(
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_selected_by_value(current_profile)
 
-	result = Selection[Profile](
+	result = await Selection[Profile](
 		group,
 		header=header,
 		allow_reset=allow_reset,
@@ -204,7 +204,7 @@ def select_profile(
 			return current_profile
 		case ResultType.Selection:
 			profile_selection = result.get_value()
-			select_result = profile_selection.do_on_select()
+			select_result = await profile_selection.do_on_select()
 
 			if not select_result:
 				return None
