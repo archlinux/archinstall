@@ -1,4 +1,3 @@
-import sys
 from enum import Enum
 from pathlib import Path
 
@@ -16,7 +15,7 @@ class PostInstallationAction(Enum):
 	CHROOT = tr('chroot into installation for post-installation configurations')
 
 
-def select_ntp(preset: bool = True) -> bool:
+async def select_ntp(preset: bool = True) -> bool:
 	header = tr('Would you like to use automatic time synchronization (NTP) with the default time servers?\n') + '\n'
 	header += (
 		tr(
@@ -25,7 +24,7 @@ def select_ntp(preset: bool = True) -> bool:
 		+ '\n'
 	)
 
-	result = Confirmation(
+	result = await Confirmation(
 		header=header,
 		allow_skip=True,
 		preset=preset,
@@ -40,8 +39,8 @@ def select_ntp(preset: bool = True) -> bool:
 			raise ValueError('Unhandled return type')
 
 
-def select_hostname(preset: str | None = None) -> str | None:
-	result = Input(
+async def select_hostname(preset: str | None = None) -> str | None:
+	result = await Input(
 		header=tr('Enter a hostname'),
 		allow_skip=True,
 		default_value=preset,
@@ -59,7 +58,7 @@ def select_hostname(preset: str | None = None) -> str | None:
 			raise ValueError('Unhandled result type')
 
 
-def select_timezone(preset: str | None = None) -> str | None:
+async def select_timezone(preset: str | None = None) -> str | None:
 	default = 'UTC'
 	timezones = list_timezones()
 
@@ -68,7 +67,7 @@ def select_timezone(preset: str | None = None) -> str | None:
 	group.set_selected_by_value(preset)
 	group.set_default_by_value(default)
 
-	result = Selection[str](
+	result = await Selection[str](
 		group,
 		header=tr('Select timezone'),
 		allow_reset=True,
@@ -85,7 +84,7 @@ def select_timezone(preset: str | None = None) -> str | None:
 			return result.get_value()
 
 
-def select_language(preset: str | None = None) -> str | None:
+async def select_language(preset: str | None = None) -> str | None:
 	from archinstall.lib.locale.locale_menu import select_kb_layout
 
 	# We'll raise an exception in an upcoming version.
@@ -95,10 +94,10 @@ def select_language(preset: str | None = None) -> str | None:
 	# No need to translate this i feel, as it's a short lived message.
 	warn('select_language() is deprecated, use select_kb_layout() instead. select_language() will be removed in a future version')
 
-	return select_kb_layout(preset)
+	return await select_kb_layout(preset)
 
 
-def select_archinstall_language(languages: list[Language], preset: Language) -> Language:
+async def select_archinstall_language(languages: list[Language], preset: Language) -> Language:
 	# these are the displayed language names which can either be
 	# the english name of a language or, if present, the
 	# name of the language in its own language
@@ -111,7 +110,7 @@ def select_archinstall_language(languages: list[Language], preset: Language) -> 
 	title += 'All available fonts can be found in "/usr/share/kbd/consolefonts"\n'
 	title += 'e.g. setfont LatGrkCyr-8x16 (to display latin/greek/cyrillic characters)\n'
 
-	result = Selection[Language](
+	result = await Selection[Language](
 		header=title,
 		group=group,
 		allow_reset=False,
@@ -127,7 +126,7 @@ def select_archinstall_language(languages: list[Language], preset: Language) -> 
 			raise ValueError('Language selection not handled')
 
 
-def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
+async def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
 	max_recommended = 5
 
 	header = tr('This option enables the number of parallel downloads that can occur during package downloads') + '\n'
@@ -145,7 +144,7 @@ def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
 		except Exception:
 			return tr('Please enter a valid number')
 
-	result = Input(
+	result = await Input(
 		header=header,
 		allow_skip=True,
 		allow_reset=True,
@@ -164,10 +163,10 @@ def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
 			downloads = int(result.get_value())
 
 	pacman_conf_path = Path('/etc/pacman.conf')
-	with pacman_conf_path.open() as f:
+	with pacman_conf_path.open() as f:  # noqa: ASYNC230
 		pacman_conf = f.read().split('\n')
 
-	with pacman_conf_path.open('w') as fwrite:
+	with pacman_conf_path.open('w') as fwrite:  # noqa: ASYNC230
 		for line in pacman_conf:
 			if 'ParallelDownloads' in line:
 				fwrite.write(f'ParallelDownloads = {downloads}\n')
@@ -177,7 +176,7 @@ def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
 	return downloads
 
 
-def select_post_installation(elapsed_time: float | None = None) -> PostInstallationAction:
+async def select_post_installation(elapsed_time: float | None = None) -> PostInstallationAction:
 	header = 'Installation completed'
 	if elapsed_time is not None:
 		minutes = int(elapsed_time // 60)
@@ -188,7 +187,7 @@ def select_post_installation(elapsed_time: float | None = None) -> PostInstallat
 	items = [MenuItem(action.value, value=action) for action in PostInstallationAction]
 	group = MenuItemGroup(items)
 
-	result = Selection[PostInstallationAction](
+	result = await Selection[PostInstallationAction](
 		group,
 		header=header,
 		allow_skip=False,
@@ -199,16 +198,3 @@ def select_post_installation(elapsed_time: float | None = None) -> PostInstallat
 			return result.get_value()
 		case _:
 			raise ValueError('Post installation action not handled')
-
-
-def confirm_abort() -> None:
-	prompt = tr('Do you really want to abort?') + '\n'
-
-	result = Confirmation(
-		header=prompt,
-		allow_skip=False,
-		preset=False,
-	).show()
-
-	if result.get_value():
-		sys.exit(0)

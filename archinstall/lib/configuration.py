@@ -58,14 +58,14 @@ class ConfigurationOutput:
 		debug(' -- Chosen configuration --')
 		debug(self.user_config_to_json())
 
-	def confirm_config(self) -> bool:
+	async def confirm_config(self) -> bool:
 		header = f'{tr("The specified configuration will be applied")}. '
 		header += tr('Would you like to continue?') + '\n'
 
 		group = MenuItemGroup.yes_no()
 		group.set_preview_for_all(lambda x: self.user_config_to_json())
 
-		result = Confirmation(
+		result = await Confirmation(
 			group=group,
 			header=header,
 			allow_skip=False,
@@ -123,7 +123,7 @@ class ConfigurationOutput:
 				self.save_user_creds(save_path, password=password)
 
 
-def save_config(config: ArchConfig) -> None:
+async def save_config(config: ArchConfig) -> None:
 	def preview(item: MenuItem) -> str | None:
 		match item.value:
 			case 'user_config':
@@ -161,7 +161,7 @@ def save_config(config: ArchConfig) -> None:
 	]
 
 	group = MenuItemGroup(items)
-	result = Selection[str](
+	result = await Selection[str](
 		group,
 		allow_skip=True,
 		preview_location='right',
@@ -178,7 +178,7 @@ def save_config(config: ArchConfig) -> None:
 	readline.set_completer_delims('\t\n=')
 	readline.parse_and_bind('tab: complete')
 
-	dest_path = prompt_dir(
+	dest_path = await prompt_dir(
 		tr('Enter a directory for the configuration(s) to be saved') + '\n',
 		allow_skip=True,
 	)
@@ -188,7 +188,7 @@ def save_config(config: ArchConfig) -> None:
 
 	header = tr('Do you want to save the configuration file(s) to {}?').format(dest_path)
 
-	save_result = Confirmation(
+	save_result = await Confirmation(
 		header=header,
 		allow_skip=False,
 		preset=True,
@@ -205,7 +205,7 @@ def save_config(config: ArchConfig) -> None:
 
 	header = tr('Do you want to encrypt the user_credentials.json file?')
 
-	enc_result = Confirmation(
+	enc_result = await Confirmation(
 		header=header,
 		allow_skip=False,
 		preset=False,
@@ -214,7 +214,7 @@ def save_config(config: ArchConfig) -> None:
 	enc_password: str | None = None
 	if enc_result.type_ == ResultType.Selection:
 		if enc_result.get_value():
-			password = get_password(
+			password = await get_password(
 				header=tr('Credentials file encryption password'),
 				allow_skip=True,
 			)

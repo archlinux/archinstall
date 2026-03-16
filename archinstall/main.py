@@ -1,4 +1,4 @@
-"""Arch Linux installer - guided, templates etc."""
+# Arch Linux installer - guided, templates etc.
 
 import importlib
 import os
@@ -8,7 +8,7 @@ import time
 import traceback
 from pathlib import Path
 
-from archinstall.lib.args import arch_config_handler
+from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.network.wifi_handler import WifiHandler
@@ -18,6 +18,7 @@ from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr
 from archinstall.lib.utils.util import running_from_iso
+from archinstall.tui.ui.components import tui
 
 
 def _log_sys_info() -> None:
@@ -38,8 +39,8 @@ def _check_online(wifi_handler: WifiHandler | None = None) -> bool:
 	except OSError as ex:
 		if 'Network is unreachable' in str(ex):
 			if wifi_handler is not None:
-				success = not wifi_handler.setup()
-				if not success:
+				result: bool = tui.run(wifi_handler)
+				if not result:
 					return False
 
 	return True
@@ -78,6 +79,8 @@ def run() -> int:
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
+	arch_config_handler = ArchConfigHandler()
+
 	if '--help' in sys.argv or '-h' in sys.argv:
 		arch_config_handler.print_help()
 		return 0
@@ -122,7 +125,7 @@ def run() -> int:
 	mod_name = f'archinstall.scripts.{script}'
 	# by loading the module we'll automatically run the script
 	module = importlib.import_module(mod_name)
-	module.main()
+	module.main(arch_config_handler)
 
 	return 0
 

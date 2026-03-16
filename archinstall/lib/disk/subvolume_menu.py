@@ -28,20 +28,20 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 			prompt,
 		)
 
-	def show(self) -> list[SubvolumeModification] | None:
-		return super()._run()
+	async def show(self) -> list[SubvolumeModification] | None:
+		return await super()._run()
 
 	@override
 	def selected_action_display(self, selection: SubvolumeModification) -> str:
 		return str(selection.name)
 
-	def _add_subvolume(self, preset: SubvolumeModification | None = None) -> SubvolumeModification | None:
+	async def _add_subvolume(self, preset: SubvolumeModification | None = None) -> SubvolumeModification | None:
 		def validate(value: str | None) -> str | None:
 			if value:
 				return None
 			return tr('Value cannot be empty')
 
-		result = Input(
+		result = await Input(
 			header=tr('Enter subvolume name'),
 			allow_skip=True,
 			default_value=str(preset.name) if preset else None,
@@ -61,7 +61,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 		header = f'{tr("Subvolume name")}: {name}\n\n'
 		header += tr('Enter subvolume mountpoint')
 
-		path = prompt_dir(
+		path = await prompt_dir(
 			header=header,
 			allow_skip=True,
 			validate=True,
@@ -74,14 +74,14 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 		return SubvolumeModification(Path(name), path)
 
 	@override
-	def handle_action(
+	async def handle_action(
 		self,
 		action: str,
 		entry: SubvolumeModification | None,
 		data: list[SubvolumeModification],
 	) -> list[SubvolumeModification]:
 		if action == self._actions[0]:
-			new_subvolume = self._add_subvolume()
+			new_subvolume = await self._add_subvolume()
 
 			if new_subvolume is not None:
 				# in case a user with the same username as an existing user
@@ -90,7 +90,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 				data += [new_subvolume]
 		elif entry is not None:
 			if action == self._actions[1]:
-				new_subvolume = self._add_subvolume(entry)
+				new_subvolume = await self._add_subvolume(entry)
 
 				if new_subvolume is not None:
 					# we'll remove the original subvolume and add the modified version

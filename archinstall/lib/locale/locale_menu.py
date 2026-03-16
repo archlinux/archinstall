@@ -50,22 +50,22 @@ class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 		]
 
 	@override
-	def run(self) -> LocaleConfiguration:
-		config = super().run()
+	async def show(self) -> LocaleConfiguration | None:
+		config = await super().show()
 
 		if config is None:
 			config = LocaleConfiguration.default()
 
 		return config
 
-	def _select_kb_layout(self, preset: str | None) -> str | None:
-		kb_lang = select_kb_layout(preset)
+	async def _select_kb_layout(self, preset: str | None) -> str | None:
+		kb_lang = await select_kb_layout(preset)
 		if kb_lang:
 			set_kb_layout(kb_lang)
 		return kb_lang
 
 
-def select_locale_lang(preset: str | None = None) -> str | None:
+async def select_locale_lang(preset: str | None = None) -> str | None:
 	locales = list_locales()
 	locale_lang = set([locale.split()[0] for locale in locales])
 
@@ -73,7 +73,7 @@ def select_locale_lang(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_focus_by_value(preset)
 
-	result = Selection[str](
+	result = await Selection[str](
 		header=tr('Locale language'),
 		group=group,
 		enable_filter=True,
@@ -88,7 +88,7 @@ def select_locale_lang(preset: str | None = None) -> str | None:
 			raise ValueError('Unhandled return type')
 
 
-def select_locale_enc(preset: str | None = None) -> str | None:
+async def select_locale_enc(preset: str | None = None) -> str | None:
 	locales = list_locales()
 	locale_enc = set([locale.split()[1] for locale in locales])
 
@@ -96,7 +96,7 @@ def select_locale_enc(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_focus_by_value(preset)
 
-	result = Selection[str](
+	result = await Selection[str](
 		header=tr('Locale encoding'),
 		group=group,
 		enable_filter=True,
@@ -111,7 +111,7 @@ def select_locale_enc(preset: str | None = None) -> str | None:
 			raise ValueError('Unhandled return type')
 
 
-def select_kb_layout(preset: str | None = None) -> str | None:
+async def select_kb_layout(preset: str | None = None) -> str | None:
 	"""
 	Select keyboard layout
 
@@ -127,7 +127,7 @@ def select_kb_layout(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=False)
 	group.set_focus_by_value(preset)
 
-	result = Selection[str](
+	result = await Selection[str](
 		header=tr('Keyboard layout'),
 		group=group,
 		enable_filter=True,

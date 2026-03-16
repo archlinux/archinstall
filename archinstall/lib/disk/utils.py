@@ -129,6 +129,13 @@ def get_unique_path_for_device(dev_path: Path) -> Path | None:
 	return None
 
 
+def udev_sync() -> None:
+	try:
+		SysCommand('udevadm settle')
+	except SysCallError as err:
+		debug(f'Failed to synchronize with udev: {err}')
+
+
 def mount(
 	dev_path: Path,
 	target_mountpoint: Path,

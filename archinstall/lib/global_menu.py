@@ -1,4 +1,3 @@
-import sys
 from typing import override
 
 from archinstall.lib.applications.application_menu import ApplicationMenu
@@ -11,7 +10,7 @@ from archinstall.lib.hardware import SysInfo
 from archinstall.lib.interactions.general_conf import add_number_of_parallel_downloads, select_hostname, select_ntp, select_timezone
 from archinstall.lib.interactions.system_conf import select_kernel, select_swap
 from archinstall.lib.locale.locale_menu import LocaleMenu
-from archinstall.lib.menu.abstract_menu import CONFIG_KEY, AbstractMenu
+from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.mirror.mirror_menu import MirrorMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
@@ -171,30 +170,29 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Save configuration'),
 				action=lambda x: self._safe_config(),
-				key=f'{CONFIG_KEY}_save',
+				key=SpecialMenuKey.SAVE.value,
 			),
 			MenuItem(
 				text=tr('Install'),
 				preview_action=self._prev_install_invalid_config,
-				key=f'{CONFIG_KEY}_install',
+				key=SpecialMenuKey.INSTALL.value,
 			),
 			MenuItem(
 				text=tr('Abort'),
-				action=lambda x: sys.exit(1),
-				key=f'{CONFIG_KEY}_abort',
+				key=SpecialMenuKey.ABORT.value,
 			),
 		]
 
 		return menu_options
 
-	def _safe_config(self) -> None:
+	async def _safe_config(self) -> None:
 		# data: dict[str, Any] = {}
 		# for item in self._item_group.items:
 		# if item.key is not None:
 		# data[item.key] = item.value
 
 		self.sync_all_to_config()
-		save_config(self._arch_config)
+		await save_config(self._arch_config)
 
 	def _missing_configs(self) -> list[str]:
 		item: MenuItem = self._item_group.find_by_key('auth_config')
@@ -225,7 +223,7 @@ class GlobalMenu(AbstractMenu[None]):
 		return list(missing)
 
 	@override
-	def _is_config_valid(self) -> bool:
+	def is_config_valid(self) -> bool:
 		"""
 		Checks the validity of the current configuration.
 		"""
@@ -233,10 +231,10 @@ class GlobalMenu(AbstractMenu[None]):
 			return False
 		return self._validate_bootloader() is None
 
-	def _select_archinstall_language(self, preset: Language) -> Language:
+	async def _select_archinstall_language(self, preset: Language) -> Language:
 		from archinstall.lib.interactions.general_conf import select_archinstall_language
 
-		language = select_archinstall_language(translation_handler.translated_languages, preset)
+		language = await select_archinstall_language(translation_handler.translated_languages, preset)
 		translation_handler.activate(language)
 
 		self._update_lang_text()
@@ -250,12 +248,12 @@ class GlobalMenu(AbstractMenu[None]):
 		lang: Language = item.value
 		return f'{tr("Language")}: {lang.display_name}'
 
-	def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
-		app_config = ApplicationMenu(preset).run()
+	async def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
+		app_config = await ApplicationMenu(preset).show()
 		return app_config
 
-	def _select_authentication(self, preset: AuthenticationConfiguration | None) -> AuthenticationConfiguration | None:
-		auth_config = AuthenticationMenu(preset).run()
+	async def _select_authentication(self, preset: AuthenticationConfiguration | None) -> AuthenticationConfiguration | None:
+		auth_config = await AuthenticationMenu(preset).show()
 		return auth_config
 
 	def _update_lang_text(self) -> None:
@@ -269,8 +267,8 @@ class GlobalMenu(AbstractMenu[None]):
 			if o.key is not None:
 				self._item_group.find_by_key(o.key).text = o.text
 
-	def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration:
-		locale_config = LocaleMenu(preset).run()
+	async def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration | None:
+		locale_config = await LocaleMenu(preset).show()
 		return locale_config
 
 	def _prev_locale(self, item: MenuItem) -> str | None:
@@ -428,9 +426,6 @@ class GlobalMenu(AbstractMenu[None]):
 
 		Returns [`None`] if the bootloader is valid, otherwise returns a
 		string with the error message.
-
-		XXX: The caller is responsible for wrapping the string with the translation
-			shim if necessary.
 		"""
 		bootloader_config: BootloaderConfiguration | None = None
 		root_partition: PartitionModification | None = None
@@ -513,50 +508,49 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return None
 
-	def _select_disk_config(
+	async def _select_disk_config(
 		self,
 		preset: DiskLayoutConfiguration | None = None,
 	) -> DiskLayoutConfiguration | None:
-		disk_config = DiskLayoutConfigurationMenu(preset).run()
-
+		disk_config = await DiskLayoutConfigurationMenu(preset).show()
 		return disk_config
 
-	def _select_bootloader_config(
+	async def _select_bootloader_config(
 		self,
 		preset: BootloaderConfiguration | None = None,
 	) -> BootloaderConfiguration | None:
 		if preset is None:
 			preset = BootloaderConfiguration.get_default(self._uefi, self._skip_boot)
 
-		bootloader_config = BootloaderMenu(preset, self._uefi, self._skip_boot).run()
+		bootloader_config = await BootloaderMenu(preset, self._uefi, self._skip_boot).show()
 
 		return bootloader_config
 
-	def _select_profile(self, current_profile: ProfileConfiguration | None) -> ProfileConfiguration | None:
+	async def _select_profile(self, current_profile: ProfileConfiguration | None) -> ProfileConfiguration | None:
 		from archinstall.lib.profile.profile_menu import ProfileMenu
 
-		profile_config = ProfileMenu(preset=current_profile).run()
+		profile_config = await ProfileMenu(preset=current_profile).show()
 		return profile_config
 
-	def _select_additional_packages(self, preset: list[str]) -> list[str]:
+	async def _select_additional_packages(self, preset: list[str]) -> list[str]:
 		config: MirrorConfiguration | None = self._item_group.find_by_key('mirror_config').value
 
 		repositories: set[Repository] = set()
 		if config:
 			repositories = set(config.optional_repositories)
 
-		packages = select_additional_packages(
+		packages = await select_additional_packages(
 			preset,
 			repositories=repositories,
 		)
 
 		return packages
 
-	def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
+	async def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
 		if self._mirror_list_handler is None:
 			self._mirror_list_handler = MirrorListHandler()
 
-		mirror_configuration = MirrorMenu(self._mirror_list_handler, preset=preset).run()
+		mirror_configuration = await MirrorMenu(self._mirror_list_handler, preset=preset).run()
 
 		if mirror_configuration and mirror_configuration.optional_repositories:
 			# reset the package list cache in case the repository selection has changed

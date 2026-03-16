@@ -51,12 +51,12 @@ class DesktopProfile(Profile):
 
 		return None
 
-	def _do_on_select_profiles(self) -> None:
+	async def _do_on_select_profiles(self) -> None:
 		for profile in self.current_selection:
-			profile.do_on_select()
+			await profile.do_on_select()
 
 	@override
-	def do_on_select(self) -> SelectResult:
+	async def do_on_select(self) -> SelectResult:
 		items = [
 			MenuItem(
 				p.name,
@@ -69,7 +69,7 @@ class DesktopProfile(Profile):
 		group = MenuItemGroup(items, sort_items=True, sort_case_sensitive=False)
 		group.set_selected_by_value(self.current_selection)
 
-		result = Selection[Self](
+		result = await Selection[Self](
 			group,
 			multi=True,
 			allow_reset=True,
@@ -80,7 +80,7 @@ class DesktopProfile(Profile):
 		match result.type_:
 			case ResultType.Selection:
 				self.current_selection = result.get_values()
-				self._do_on_select_profiles()
+				await self._do_on_select_profiles()
 				return SelectResult.NewSelection
 			case ResultType.Skip:
 				return SelectResult.SameSelection

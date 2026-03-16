@@ -800,16 +800,6 @@ class FilesystemType(Enum):
 		return self == FilesystemType.Crypto_luks
 
 	@property
-	def fs_type_mount(self) -> str:
-		match self:
-			case FilesystemType.Ntfs:
-				return 'ntfs3'
-			case FilesystemType.Fat32:
-				return 'vfat'
-			case _:
-				return self.value
-
-	@property
 	def parted_value(self) -> str:
 		return self.value + '(v1)' if self == FilesystemType.LinuxSwap else self.value
 

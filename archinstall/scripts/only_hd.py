@@ -1,15 +1,19 @@
+import sys
 from pathlib import Path
 
-from archinstall.lib.args import arch_config_handler
+from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
+from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.output import debug, error
+from archinstall.lib.translationhandler import tr
+from archinstall.tui.ui.components import tui
 
 
-def show_menu() -> None:
+def show_menu(arch_config_handler: ArchConfigHandler) -> None:
 	global_menu = GlobalMenu(arch_config_handler.config)
 	global_menu.disable_all()
 
@@ -18,15 +22,18 @@ def show_menu() -> None:
 	global_menu.set_enabled('swap', True)
 	global_menu.set_enabled('__config__', True)
 
-	global_menu.run()
+	result: ArchConfig | None = tui.run(global_menu)
+	if result is None:
+		sys.exit(0)
 
 
-def perform_installation(mountpoint: Path) -> None:
+def perform_installation(arch_config_handler: ArchConfigHandler) -> None:
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
+	mountpoint = arch_config_handler.args.mountpoint
 	config = arch_config_handler.config
 
 	if not config.disk_config:
@@ -55,9 +62,12 @@ def perform_installation(mountpoint: Path) -> None:
 	debug(f'Disk states after installing:\n{disk_layouts()}')
 
 
-def main() -> None:
+def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
+	if arch_config_handler is None:
+		arch_config_handler = ArchConfigHandler()
+
 	if not arch_config_handler.args.silent:
-		show_menu()
+		show_menu(arch_config_handler)
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
@@ -68,18 +78,24 @@ def main() -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		if not config.confirm_config():
+		res: bool = tui.run(config.confirm_config)
+
+		if not res:
 			debug('Installation aborted')
 			aborted = True
 
 		if aborted:
-			return main()
+			return main(arch_config_handler)
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
+
+		if not delayed_warning(tr('Starting device modifications in ')):
+			return main()
+
 		fs_handler.perform_filesystem_operations()
 
-	perform_installation(arch_config_handler.args.mountpoint)
+	perform_installation(arch_config_handler)
 
 
 if __name__ == '__main__':

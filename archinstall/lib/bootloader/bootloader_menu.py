@@ -86,12 +86,12 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		return tr('Will install to custom location with NVRAM entry')
 
 	@override
-	def run(self) -> BootloaderConfiguration:
-		super().run()
+	async def show(self) -> BootloaderConfiguration:
+		_ = await super().show()
 		return self._bootloader_conf
 
-	def _select_bootloader(self, preset: Bootloader | None) -> Bootloader | None:
-		bootloader = select_bootloader(preset, self._uefi, self._skip_boot)
+	async def _select_bootloader(self, preset: Bootloader | None) -> Bootloader | None:
+		bootloader = await select_bootloader(preset, self._uefi, self._skip_boot)
 
 		if bootloader:
 			# Update UKI option based on bootloader
@@ -117,10 +117,10 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 
 		return bootloader
 
-	def _select_uki(self, preset: bool) -> bool:
+	async def _select_uki(self, preset: bool) -> bool:
 		prompt = tr('Would you like to use unified kernel images?') + '\n'
 
-		result = Confirmation(header=prompt, allow_skip=True, preset=preset).show()
+		result = await Confirmation(header=prompt, allow_skip=True, preset=preset).show()
 
 		match result.type_:
 			case ResultType.Skip:
@@ -130,7 +130,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 			case ResultType.Reset:
 				raise ValueError('Unhandled result type')
 
-	def _select_removable(self, preset: bool) -> bool:
+	async def _select_removable(self, preset: bool) -> bool:
 		prompt = (
 			tr('Would you like to install the bootloader to the default removable media search location?')
 			+ '\n\n'
@@ -162,7 +162,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 			+ '\n'
 		)
 
-		result = Confirmation(
+		result = await Confirmation(
 			header=prompt,
 			allow_skip=True,
 			preset=preset,
@@ -177,7 +177,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				raise ValueError('Unhandled result type')
 
 
-def select_bootloader(
+async def select_bootloader(
 	preset: Bootloader | None,
 	uefi: bool,
 	skip_boot: bool = False,
@@ -202,7 +202,7 @@ def select_bootloader(
 	group.set_default_by_value(default)
 	group.set_focus_by_value(preset)
 
-	result = Selection[Bootloader](
+	result = await Selection[Bootloader](
 		group,
 		header=header,
 		allow_skip=True,

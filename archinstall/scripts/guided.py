@@ -1,17 +1,17 @@
 import os
+import sys
 import time
-from pathlib import Path
 
 from archinstall.lib.applications.application_handler import ApplicationHandler
-from archinstall.lib.args import arch_config_handler
+from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
-from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, select_post_installation
+from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import DiskLayoutType, EncryptionType
@@ -21,9 +21,13 @@ from archinstall.lib.output import debug, error, info
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
+from archinstall.tui.ui.components import tui
 
 
-def show_menu(mirror_list_handler: MirrorListHandler) -> None:
+def show_menu(
+	arch_config_handler: ArchConfigHandler,
+	mirror_list_handler: MirrorListHandler,
+) -> None:
 	upgrade = check_version_upgrade()
 	title_text = 'Archlinux'
 
@@ -41,11 +45,13 @@ def show_menu(mirror_list_handler: MirrorListHandler) -> None:
 	if not arch_config_handler.args.advanced:
 		global_menu.set_enabled('parallel_downloads', False)
 
-	global_menu.run()
+	result: ArchConfig | None = tui.run(global_menu)
+	if result is None:
+		sys.exit(0)
 
 
 def perform_installation(
-	mountpoint: Path,
+	arch_config_handler: ArchConfigHandler,
 	mirror_list_handler: MirrorListHandler,
 	auth_handler: AuthenticationHandler,
 	application_handler: ApplicationHandler,
@@ -58,6 +64,7 @@ def perform_installation(
 	start_time = time.monotonic()
 	info('Starting installation...')
 
+	mountpoint = arch_config_handler.args.mountpoint
 	config = arch_config_handler.config
 
 	if not config.disk_config:
@@ -108,9 +115,6 @@ def perform_installation(
 			installation.setup_swap('zram', algo=config.swap.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
-			if config.bootloader_config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
-				installation.add_additional_packages('grub')
-
 			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
 
 		if config.network_config:
@@ -178,13 +182,13 @@ def perform_installation(
 
 		if not arch_config_handler.args.silent:
 			elapsed_time = time.monotonic() - start_time
-			action = select_post_installation(elapsed_time)
+			action: PostInstallationAction = tui.run(lambda: select_post_installation(elapsed_time))
 
 			match action:
 				case PostInstallationAction.EXIT:
 					pass
 				case PostInstallationAction.REBOOT:
-					os.system('reboot')
+					_ = os.system('reboot')
 				case PostInstallationAction.CHROOT:
 					try:
 						installation.drop_to_shell()
@@ -192,14 +196,17 @@ def perform_installation(
 						pass
 
 
-def main() -> None:
+def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
+	if arch_config_handler is None:
+		arch_config_handler = ArchConfigHandler()
+
 	mirror_list_handler = MirrorListHandler(
 		offline=arch_config_handler.args.offline,
 		verbose=arch_config_handler.args.verbose,
 	)
 
 	if not arch_config_handler.args.silent:
-		show_menu(mirror_list_handler)
+		show_menu(arch_config_handler, mirror_list_handler)
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
@@ -210,19 +217,25 @@ def main() -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		if not config.confirm_config():
+		res: bool = tui.run(config.confirm_config)
+
+		if not res:
 			debug('Installation aborted')
 			aborted = True
 
 		if aborted:
-			return main()
+			return main(arch_config_handler)
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
+
+		if not delayed_warning(tr('Starting device modifications in ')):
+			return main()
+
 		fs_handler.perform_filesystem_operations()
 
 	perform_installation(
-		arch_config_handler.args.mountpoint,
+		arch_config_handler,
 		mirror_list_handler,
 		AuthenticationHandler(),
 		ApplicationHandler(),

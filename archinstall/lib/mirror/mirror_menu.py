@@ -34,27 +34,27 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 			'',
 		)
 
-	def show(self) -> list[CustomRepository] | None:
-		return super()._run()
+	async def show(self) -> list[CustomRepository] | None:
+		return await super()._run()
 
 	@override
 	def selected_action_display(self, selection: CustomRepository) -> str:
 		return selection.name
 
 	@override
-	def handle_action(
+	async def handle_action(
 		self,
 		action: str,
 		entry: CustomRepository | None,
 		data: list[CustomRepository],
 	) -> list[CustomRepository]:
 		if action == self._actions[0]:  # add
-			new_repo = self._add_custom_repository()
+			new_repo = await self._add_custom_repository()
 			if new_repo is not None:
 				data = [d for d in data if d.name != new_repo.name]
 				data += [new_repo]
 		elif action == self._actions[1] and entry:  # modify repo
-			new_repo = self._add_custom_repository(entry)
+			new_repo = await self._add_custom_repository(entry)
 			if new_repo is not None:
 				data = [d for d in data if d.name != entry.name]
 				data += [new_repo]
@@ -63,8 +63,8 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 
 		return data
 
-	def _add_custom_repository(self, preset: CustomRepository | None = None) -> CustomRepository | None:
-		edit_result = Input(
+	async def _add_custom_repository(self, preset: CustomRepository | None = None) -> CustomRepository | None:
+		edit_result = await Input(
 			header=tr('Enter a respository name'),
 			allow_skip=True,
 			default_value=preset.name if preset else None,
@@ -81,7 +81,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 		header = f'{tr("Name")}: {name}\n'
 		prompt = f'{header}\n' + tr('Enter the repository url')
 
-		edit_result = Input(
+		edit_result = await Input(
 			header=prompt,
 			allow_skip=True,
 			default_value=preset.url if preset else None,
@@ -104,7 +104,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 		if preset is not None:
 			group.set_selected_by_value(preset.sign_check.value)
 
-		result = Selection[SignCheck](
+		result = await Selection[SignCheck](
 			group,
 			header=prompt,
 			allow_skip=False,
@@ -125,7 +125,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 		if preset is not None:
 			group.set_selected_by_value(preset.sign_option.value)
 
-		result = Selection(
+		result = await Selection(
 			group,
 			header=prompt,
 			allow_skip=False,
@@ -155,27 +155,27 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 			'',
 		)
 
-	def show(self) -> list[CustomServer] | None:
-		return super()._run()
+	async def show(self) -> list[CustomServer] | None:
+		return await super()._run()
 
 	@override
 	def selected_action_display(self, selection: CustomServer) -> str:
 		return selection.url
 
 	@override
-	def handle_action(
+	async def handle_action(
 		self,
 		action: str,
 		entry: CustomServer | None,
 		data: list[CustomServer],
 	) -> list[CustomServer]:
 		if action == self._actions[0]:  # add
-			new_server = self._add_custom_server()
+			new_server = await self._add_custom_server()
 			if new_server is not None:
 				data = [d for d in data if d.url != new_server.url]
 				data += [new_server]
 		elif action == self._actions[1] and entry:  # modify repo
-			new_server = self._add_custom_server(entry)
+			new_server = await self._add_custom_server(entry)
 			if new_server is not None:
 				data = [d for d in data if d.url != entry.url]
 				data += [new_server]
@@ -184,8 +184,8 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 
 		return data
 
-	def _add_custom_server(self, preset: CustomServer | None = None) -> CustomServer | None:
-		edit_result = Input(
+	async def _add_custom_server(self, preset: CustomServer | None = None) -> CustomServer | None:
+		edit_result = await Input(
 			header=tr('Enter server url'),
 			allow_skip=True,
 			default_value=preset.url if preset else None,
@@ -293,15 +293,15 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 		return output.strip()
 
 	@override
-	def run(self) -> MirrorConfiguration | None:
-		return super().run()
+	async def show(self) -> MirrorConfiguration | None:
+		return await super().show()
 
 
-def select_mirror_regions(
+async def select_mirror_regions(
 	mirror_list_handler: MirrorListHandler,
 	preset: list[MirrorRegion],
 ) -> list[MirrorRegion]:
-	Loading[None](
+	await Loading[None](
 		header=tr('Loading mirror regions...'),
 		data_callback=mirror_list_handler.load_mirrors,
 	).show()
@@ -318,7 +318,7 @@ def select_mirror_regions(
 
 	group.set_selected_by_value(preset_regions)
 
-	result = Selection[MirrorRegion](
+	result = await Selection[MirrorRegion](
 		group,
 		header=tr('Select mirror regions to be enabled'),
 		allow_reset=True,
@@ -337,8 +337,8 @@ def select_mirror_regions(
 			return selected_mirrors
 
 
-def add_custom_mirror_servers(preset: list[CustomServer] = []) -> list[CustomServer]:
-	custom_mirrors = CustomMirrorServersList(preset).show()
+async def add_custom_mirror_servers(preset: list[CustomServer] = []) -> list[CustomServer]:
+	custom_mirrors = await CustomMirrorServersList(preset).show()
 
 	if not custom_mirrors:
 		return preset
@@ -346,8 +346,8 @@ def add_custom_mirror_servers(preset: list[CustomServer] = []) -> list[CustomSer
 	return custom_mirrors
 
 
-def select_custom_mirror(preset: list[CustomRepository] = []) -> list[CustomRepository]:
-	custom_mirrors = CustomMirrorRepositoriesList(preset).show()
+async def select_custom_mirror(preset: list[CustomRepository] = []) -> list[CustomRepository]:
+	custom_mirrors = await CustomMirrorRepositoriesList(preset).show()
 
 	if not custom_mirrors:
 		return preset
@@ -355,7 +355,7 @@ def select_custom_mirror(preset: list[CustomRepository] = []) -> list[CustomRepo
 	return custom_mirrors
 
 
-def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
+async def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
 	"""
 	Allows the user to select additional repositories (multilib, and testing) if desired.
 
@@ -373,7 +373,7 @@ def select_optional_repositories(preset: list[Repository]) -> list[Repository]:
 	group = MenuItemGroup(items, sort_items=False)
 	group.set_selected_by_value(preset)
 
-	result = Selection[Repository](
+	result = await Selection[Repository](
 		group,
 		header=tr('Select optional repositories to be enabled'),
 		allow_reset=True,

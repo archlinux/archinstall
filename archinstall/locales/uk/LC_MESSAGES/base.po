@@ -221,10 +221,10 @@ msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "Виберіть, які ядра використовувати, або залиште порожнім для стандартного \"{}\""
 
 msgid "Choose which locale language to use"
-msgstr "Виберіть мову для використання"
+msgstr "Оберіть мову, яку будете використовувати"
 
 msgid "Choose which locale encoding to use"
-msgstr "Виберіть, яке кодування мови використовувати"
+msgstr "Оберіть кодування локалізації, яке будете використовувати"
 
 msgid "Select one of the values shown below: "
 msgstr "Виберіть одне з наведених нижче значень: "
@@ -430,7 +430,7 @@ msgid "Delete"
 msgstr "Видалити"
 
 msgid "Select an action for '{}'"
-msgstr "Оберіть дію для \"{}\""
+msgstr "Оберіть дію для '{}'"
 
 msgid "Copy to new key:"
 msgstr "Копіювати в новий ключ:"
@@ -443,10 +443,10 @@ msgid ""
 "This is your chosen configuration:"
 msgstr ""
 "\n"
-"Ось конфігурація, яку ви обрали:"
+"Конфігурація, обрана вами:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "Pacman вже запущено, чекаємо максимум 10 хвилин, поки він завершиться."
+msgstr "Pacman вже працює, очікування до 10 хвилин, поки він завершиться."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
 msgstr "Попереднє блокування pacman не завершено. Будь ласка, очистіть усі наявні сеанси pacman перед використанням archinstall."
@@ -665,7 +665,7 @@ msgid "Provides a selection of various server packages to install and enable, e.
 msgstr "Надає вибір різних серверних пакетів для встановлення та ввімкнення, наприклад httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Виберіть, які сервери встановити, якщо жодного, буде виконано мінімальну інсталяцію"
+msgstr "Оберіть сервери для встановлення. Якщо нічого не обрано, буде виконано мінімальну інсталяцію"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Встановлює мінімальну систему, а також xorg і графічні драйвери."
@@ -763,7 +763,7 @@ msgid "Enter username (leave blank to skip): "
 msgstr "Введіть ім'я користувача (залиште порожнім, щоб пропустити): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr "Введене вами ім'я користувача недійсне. Спробуйте знову"
+msgstr "Введене вами ім'я користувача недійсне. Спробуйте ще раз"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Чи має \"{}\" бути суперкористувачем (sudo)?"
@@ -885,7 +885,7 @@ msgid "Current profile selection"
 msgstr "Поточний вибір профілів"
 
 msgid "Remove all newly added partitions"
-msgstr "Прибрати всі новостворені розділи"
+msgstr "Вилучити всі новостворені розділи"
 
 msgid "Assign mountpoint"
 msgstr "Призначити точку монтування для розділу"
@@ -915,7 +915,7 @@ msgid "This partition is currently encrypted, to format it a filesystem has to b
 msgstr "Цей розділ наразі зашифрований. Щоб його відформатувати, потрібно вказати файлову систему"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr "Точки монтування розділів відносяться до внутрішньої інсталяції, наприклад, завантажувач буде знаходитись в /boot."
+msgstr "Точки монтування розділів відносяться до внутрішньої інсталяції, наприклад, завантажувач буде в /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
 msgstr "Якщо вказано точку монтування /boot, цей розділ також буде позначено як завантажувальний."
@@ -1011,7 +1011,7 @@ msgid "← Back"
 msgstr "← Назад"
 
 msgid "Disk encryption"
-msgstr "Шифрування диску"
+msgstr "Шифрування диска"
 
 msgid "Configuration"
 msgstr "Конфігурація"
@@ -1026,17 +1026,17 @@ msgid "Back"
 msgstr "Назад"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr "Будь ласка, виберіть, який вітальник встановити для обраних профілів: {}"
+msgstr "Будь ласка, виберіть, який екран привітання встановити для обраних профілів: {}"
 
 #, python-brace-format
 msgid "Environment type: {}"
 msgstr "Тип середовища: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr "Пропрієтарні драйвера Nvidia не підтримуються Sway. Існує ймовірність виникнення проблем. Продовжити попри це?"
+msgstr "Пропрієтарні драйвери Nvidia не підтримуються Sway. Існує ймовірність виникнення проблем. Продовжити попри це?"
 
 msgid "Installed packages"
-msgstr "Встановленні пакуни"
+msgstr "Встановленні пакунки"
 
 msgid "Add profile"
 msgstr "Додайте профіль"
@@ -1051,13 +1051,13 @@ msgid "Profile name: "
 msgstr "Назва профілю: "
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr "Введене вами ім'я користувача вже використовується. Спробуйте знов"
+msgstr "Введене вами ім'я користувача вже використовується. Спробуйте ще раз"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
 msgstr "Напишіть додаткові пакети для інсталяції (розділені пробілами, залиште порожнім, щоб пропустити): "
 
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Напишіть сервіси що увімкнути з цим профілем (розділені пробілами, залиште порожнім, щоб пропустити): "
+msgstr "Сервіси, які слід увімкнути з цим профілем (розділені пробілами, залиште порожнім, щоб пропустити): "
 
 msgid "Should this profile be enabled for installation?"
 msgstr "Чи повинен цей профіль бути увімкненим для встановлення?"
@@ -1097,7 +1097,7 @@ msgid "This is a list of pre-programmed default_profiles"
 msgstr "Список попередньо налаштованих default_profiles"
 
 msgid "Disk configuration"
-msgstr "Конфігурація диску"
+msgstr "Конфігурація диска"
 
 msgid "Profiles"
 msgstr "Профіль"
@@ -1115,7 +1115,7 @@ msgid "Change custom mirror"
 msgstr "Змінити користувацьке дзеркало"
 
 msgid "Delete custom mirror"
-msgstr "Прибрати власне дзеркало"
+msgstr "Вилучити власне дзеркало"
 
 msgid "Enter name (leave blank to skip): "
 msgstr "Введіть ім'я користувача (залиште порожнім, щоб пропустити): "
@@ -1136,7 +1136,7 @@ msgid "Defined"
 msgstr "Задано"
 
 msgid "Save user configuration (including disk layout)"
-msgstr "Зберегти конфігурацію користувача (враховуючи поділ диску)"
+msgstr "Зберегти конфігурацію користувача (враховуючи поділ диска)"
 
 msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
@@ -1150,7 +1150,7 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
-"Чи хочете ви зберегти {} файл(и) конфігурацій до задоного місця?\n"
+"Чи хочете ви зберегти {} файл(и) конфігурацій до заданого місця?\n"
 "\n"
 "{}"
 
@@ -1188,7 +1188,7 @@ msgid "Enter start (default: sector {}): "
 msgstr "Введіть початковий сектор (відсоток або номер блоку, типово: {}): "
 
 msgid "Enter end (default: {}): "
-msgstr "Введіть початковий сектор (відсоток або номер блоку, типово: {}): "
+msgstr "Введіть кінцевий сектор (відсоток або номер блоку, типово: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
 msgstr "Неможливо визначити пристрої fido2. Чи встановлено libfido2?"
@@ -1302,7 +1302,7 @@ msgid "Select a LVM option"
 msgstr "Оберіть опцію LVM"
 
 msgid "Partitioning"
-msgstr "Розподіл"
+msgstr "Розмітка"
 
 msgid "Logical Volume Management (LVM)"
 msgstr "Logical Volume Management (LVM)"
@@ -1314,10 +1314,10 @@ msgid "Volumes"
 msgstr "Томи"
 
 msgid "LVM volumes"
-msgstr "Томи LVM"
+msgstr "LVM томи"
 
 msgid "LVM volumes to be encrypted"
-msgstr "Томи LVM, які потрібно зашифрувати"
+msgstr "LVM томи, які потрібно зашифрувати"
 
 msgid "Select which LVM volumes to encrypt"
 msgstr "Виберіть томи LVM для шифрування"
@@ -1344,13 +1344,13 @@ msgid "No"
 msgstr "Ні"
 
 msgid "Archinstall help"
-msgstr "Допомога з Archinstall"
+msgstr "Довідка Archinstall"
 
 msgid " (default)"
 msgstr " (типово)"
 
 msgid "Press Ctrl+h for help"
-msgstr "Натисніть Ctrl+h для допомоги"
+msgstr "Натисніть Ctrl+h для довідки"
 
 msgid "Choose an option to give Sway access to your hardware"
 msgstr "Оберіть опцію для надання Sway доступ до вашого обладнання"
@@ -1377,7 +1377,7 @@ msgid "Filesystem"
 msgstr "Файлова система"
 
 msgid "Invalid size"
-msgstr "Некорректний розмір"
+msgstr "Некоректний розмір"
 
 msgid "Start (default: sector {}): "
 msgstr "Введіть початковий сектор (відсоток або номер блоку, типово: {}): "
@@ -1389,10 +1389,10 @@ msgid "Subvolume name"
 msgstr "Назва підтому"
 
 msgid "Disk configuration type"
-msgstr "Конфігурація диску"
+msgstr "Конфігурація диска"
 
 msgid "Root mount directory"
-msgstr "Точка монтування Root"
+msgstr "Точка монтування системи (Root)"
 
 msgid "Select language"
 msgstr "Обрати мову"
@@ -1438,7 +1438,7 @@ msgid "Enter your DNS servers with space separated (leave blank for none)"
 msgstr "Введіть ваші DNS-сервери (розділені пробілами, залиште порожнім якщо їх немає):"
 
 msgid "DNS servers"
-msgstr "DNS- сервера"
+msgstr "DNS- сервери"
 
 msgid "Configure interfaces"
 msgstr "Налаштування інтерфейсів"
@@ -1453,10 +1453,10 @@ msgid "Info"
 msgstr "Інформація"
 
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "Пропрієтарні драйвера Nvidia не підтримуються Sway."
+msgstr "Пропрієтарні драйвери Nvidia не підтримуються Sway."
 
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "Існує ймовірність виникнення проблем. Продовжити попри це?"
+msgstr "Існує ймовірність виникнення проблем. Продовжити?"
 
 msgid "Main profile"
 msgstr "Головний профіль"
@@ -1465,7 +1465,7 @@ msgid "Confirm password"
 msgstr "Підтвердити пароль"
 
 msgid "The confirmation password did not match, please try again"
-msgstr "Паролі не співпадають, спробуйте знову"
+msgstr "Паролі не збігаються, спробуйте ще раз"
 
 msgid "Not a valid directory"
 msgstr "Недійсний каталог"
@@ -1505,7 +1505,7 @@ msgid "Select execution mode"
 msgstr "Оберіть режим роботи"
 
 msgid "Press ? for help"
-msgstr "Натисніть ? для допомоги"
+msgstr "Натисніть ? для довідки"
 
 msgid "Choose an option to give Hyprland access to your hardware"
 msgstr "Надайте Hyprland доступ до вашого обладнання"
@@ -1589,7 +1589,7 @@ msgid "Select regions"
 msgstr "Обрати регіони"
 
 msgid "Add custom servers"
-msgstr "Додати користувацькі сервера"
+msgstr "Додати користувацькі сервери"
 
 msgid "Add custom repository"
 msgstr "Додати користувацький репозиторій"
@@ -1604,7 +1604,7 @@ msgid "Selected mirror regions"
 msgstr "Обрані регіони дзеркал"
 
 msgid "Custom servers"
-msgstr "Користувацькі сервера"
+msgstr "Користувацькі сервери"
 
 msgid "Custom repositories"
 msgstr "Користувацькі репозиторії"
@@ -1613,10 +1613,10 @@ msgid "Only ASCII characters are supported"
 msgstr "Підтримуються лише ASCII символи"
 
 msgid "Show help"
-msgstr "Показати допомогу"
+msgstr "Показати довідку"
 
 msgid "Exit help"
-msgstr "Вийти з допомоги"
+msgstr "Вийти з довідки"
 
 msgid "Preview scroll up"
 msgstr "Прокрутка перегляду догори"
@@ -1717,7 +1717,7 @@ msgstr "Пароль розшифрування файлу облікових д
 
 #, python-brace-format
 msgid "Repositories: {}"
-msgstr "Репоиторії: {}"
+msgstr "Репозиторії: {}"
 
 msgid "New version available"
 msgstr "Доступна нова версія"
@@ -1757,7 +1757,7 @@ msgstr "Sudo без паролю: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr "Тип знімку Btrfs: {}"
+msgstr "Тип знімка Btrfs: {}"
 
 msgid "Syncing the system..."
 msgstr "Синхронізація системи..."
@@ -1766,11 +1766,11 @@ msgid "Value cannot be empty"
 msgstr "Значення не може бути пустим"
 
 msgid "Snapshot type"
-msgstr "Тип знімку"
+msgstr "Тип знімка"
 
 #, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Тип знімку: {}"
+msgstr "Тип знімка: {}"
 
 msgid "U2F login setup"
 msgstr "Налаштування входу з пристроєм двофакторної авторизації"
