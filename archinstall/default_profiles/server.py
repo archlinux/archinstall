@@ -23,7 +23,7 @@ class ServerProfile(Profile):
 		)
 
 	@override
-	def do_on_select(self) -> SelectResult:
+	async def do_on_select(self) -> SelectResult:
 		items = [
 			MenuItem(
 				p.name,
@@ -36,7 +36,7 @@ class ServerProfile(Profile):
 		group = MenuItemGroup(items, sort_items=True)
 		group.set_selected_by_value(self.current_selection)
 
-		result = Selection[Self](
+		result = await Selection[Self](
 			group,
 			allow_reset=True,
 			allow_skip=True,

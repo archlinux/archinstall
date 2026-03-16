@@ -28,6 +28,7 @@ from archinstall.lib.output import debug, error, logger, warn
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.version import get_version
+from archinstall.tui.ui.components import tui
 
 
 @p_dataclass
@@ -491,16 +492,17 @@ class ArchConfigHandler:
 						debug(f'Error decrypting credentials file: {err}')
 						raise err from err
 			else:
-				incorrect_password = False
 				header = tr('Enter credentials file decryption password')
+				wrong_pwd_text = tr('Incorrect password')
+				prompt = header
 
 				while True:
-					prompt = f'{header}\n\n' + tr('Incorrect password') if incorrect_password else ''
-
-					decryption_pwd = get_password(
-						header=prompt,
-						allow_skip=False,
-						no_confirmation=True,
+					decryption_pwd: Password | None = tui.run(
+						lambda p=prompt: get_password(  # type: ignore[misc]
+							header=p,
+							allow_skip=False,
+							no_confirmation=True,
+						)
 					)
 
 					if not decryption_pwd:
@@ -512,7 +514,7 @@ class ArchConfigHandler:
 					except ValueError as err:
 						if 'Invalid password' in str(err):
 							debug('Incorrect credentials file decryption password')
-							incorrect_password = True
+							prompt = f'{header}' + f'\n\n{wrong_pwd_text}'
 						else:
 							debug(f'Error decrypting credentials file: {err}')
 							raise err from err
@@ -549,6 +551,3 @@ class ArchConfigHandler:
 				clean_args[key] = val
 
 		return clean_args
-
-
-arch_config_handler: ArchConfigHandler = ArchConfigHandler()

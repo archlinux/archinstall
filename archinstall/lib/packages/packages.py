@@ -84,7 +84,7 @@ def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 	return cls.model_validate(package)
 
 
-def select_additional_packages(
+async def select_additional_packages(
 	preset: list[str] = [],
 	repositories: set[Repository] = set(),
 ) -> list[str]:
@@ -94,7 +94,7 @@ def select_additional_packages(
 	output = tr('Repositories: {}').format(respos_text) + '\n'
 	output += tr('Loading packages...')
 
-	result = Loading[dict[str, AvailablePackage]](
+	result = await Loading[dict[str, AvailablePackage]](
 		header=output,
 		data_callback=lambda: list_available_packages(tuple(repositories)),
 	).show()
@@ -106,7 +106,7 @@ def select_additional_packages(
 	packages = result.get_value()
 
 	if not packages:
-		Notify(tr('No packages found')).show()
+		await Notify(tr('No packages found')).show()
 		return []
 
 	package_groups = PackageGroup.from_available_packages(packages)
@@ -145,7 +145,7 @@ def select_additional_packages(
 	menu_group = MenuItemGroup(items, sort_items=True)
 	menu_group.set_selected_by_value(preset_packages)
 
-	pck_result = Selection[AvailablePackage | PackageGroup](
+	pck_result = await Selection[AvailablePackage | PackageGroup](
 		menu_group,
 		header=header,
 		allow_reset=True,

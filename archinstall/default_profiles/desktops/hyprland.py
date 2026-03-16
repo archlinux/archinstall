@@ -45,7 +45,7 @@ class HyprlandProfile(XorgProfile):
 			return [pref]
 		return []
 
-	def _select_seat_access(self) -> None:
+	async def _select_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
 		header = tr('Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)')
 		header += '\n' + tr('Choose an option to give Hyprland access to your hardware') + '\n'
@@ -56,7 +56,7 @@ class HyprlandProfile(XorgProfile):
 		default = self.custom_settings.get('seat_access', None)
 		group.set_default_by_value(default)
 
-		result = Selection[SeatAccess](
+		result = await Selection[SeatAccess](
 			group,
 			header=header,
 			allow_skip=False,
@@ -66,5 +66,5 @@ class HyprlandProfile(XorgProfile):
 			self.custom_settings['seat_access'] = result.get_value().value
 
 	@override
-	def do_on_select(self) -> None:
-		self._select_seat_access()
+	async def do_on_select(self) -> None:
+		await self._select_seat_access()

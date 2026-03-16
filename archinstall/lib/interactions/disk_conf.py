@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from archinstall.lib.args import arch_config_handler
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.partitioning_menu import manual_partitioning
 from archinstall.lib.menu.helpers import Confirmation, Notify, Selection, Table
@@ -33,7 +32,7 @@ from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
 
-def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | None:
+async def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | None:
 	def _preview_device_selection(item: MenuItem) -> str | None:
 		device: _DeviceInfo = item.value  # type: ignore[assignment]
 		dev = device_handler.get_device(device.path)
@@ -61,7 +60,7 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | None:
 	group = MenuItemGroup(items)
 	group.set_selected_by_value(presets)
 
-	result = Table[_DeviceInfo](
+	result = await Table[_DeviceInfo](
 		header=tr('Select disks for the installation'),
 		group=group,
 		presets=presets,
@@ -87,24 +86,24 @@ def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | None:
 			return selected_devices
 
 
-def get_default_partition_layout(
+async def get_default_partition_layout(
 	devices: list[BDevice],
 	filesystem_type: FilesystemType | None = None,
 ) -> list[DeviceModification]:
 	if len(devices) == 1:
-		device_modification = suggest_single_disk_layout(
+		device_modification = await suggest_single_disk_layout(
 			devices[0],
 			filesystem_type=filesystem_type,
 		)
 		return [device_modification]
 	else:
-		return suggest_multi_disk_layout(
+		return await suggest_multi_disk_layout(
 			devices,
 			filesystem_type=filesystem_type,
 		)
 
 
-def _manual_partitioning(
+async def _manual_partitioning(
 	preset: list[DeviceModification],
 	devices: list[BDevice],
 ) -> list[DeviceModification] | None:
@@ -115,7 +114,7 @@ def _manual_partitioning(
 		if not mod:
 			mod = DeviceModification(device, wipe=False)
 
-		device_mod = manual_partitioning(mod, device_handler.partition_table)
+		device_mod = await manual_partitioning(mod, device_handler.partition_table)
 
 		if not device_mod:
 			return None
@@ -125,7 +124,7 @@ def _manual_partitioning(
 	return modifications
 
 
-def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLayoutConfiguration | None:
+async def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLayoutConfiguration | None:
 	default_layout = DiskLayoutType.Default.display_msg()
 	manual_mode = DiskLayoutType.Manual.display_msg()
 	pre_mount_mode = DiskLayoutType.Pre_mount.display_msg()
@@ -140,7 +139,7 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 	if preset:
 		group.set_selected_by_value(preset.config_type.display_msg())
 
-	result = Selection[str](
+	result = await Selection[str](
 		group,
 		header=tr('Select a disk configuration'),
 		allow_skip=True,
@@ -160,7 +159,7 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 				output += tr('You will use whatever drive-setup is mounted at the specified directory') + '\n'
 				output += tr("WARNING: Archinstall won't check the suitability of this setup")
 
-				path = prompt_dir(output, allow_skip=True)
+				path = await prompt_dir(output, allow_skip=True)
 
 				if path is None:
 					return None
@@ -174,13 +173,13 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 				)
 
 			preset_devices = [mod.device for mod in preset.device_modifications] if preset else []
-			devices = select_devices(preset_devices)
+			devices = await select_devices(preset_devices)
 
 			if devices is None:
 				return preset
 
 			if result.get_value() == default_layout:
-				modifications = get_default_partition_layout(devices)
+				modifications = await get_default_partition_layout(devices)
 				if modifications:
 					return DiskLayoutConfiguration(
 						config_type=DiskLayoutType.Default,
@@ -188,7 +187,7 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 					)
 			elif result.get_value() == manual_mode:
 				preset_mods = preset.device_modifications if preset else []
-				partitions = _manual_partitioning(preset_mods, devices)
+				partitions = await _manual_partitioning(preset_mods, devices)
 
 				if not partitions:
 					return preset
@@ -201,7 +200,7 @@ def select_disk_config(preset: DiskLayoutConfiguration | None = None) -> DiskLay
 	return None
 
 
-def select_lvm_config(
+async def select_lvm_config(
 	disk_config: DiskLayoutConfiguration,
 	preset: LvmConfiguration | None = None,
 ) -> LvmConfiguration | None:
@@ -212,7 +211,7 @@ def select_lvm_config(
 	group = MenuItemGroup(items)
 	group.set_focus_by_value(preset_value)
 
-	result = Selection[str](
+	result = await Selection[str](
 		group,
 		allow_reset=True,
 		allow_skip=True,
@@ -225,7 +224,7 @@ def select_lvm_config(
 			return None
 		case ResultType.Selection:
 			if result.get_value() == default_mode:
-				return suggest_lvm_layout(disk_config)
+				return await suggest_lvm_layout(disk_config)
 
 	return None
 
@@ -249,7 +248,7 @@ def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModifi
 	)
 
 
-def select_main_filesystem_format() -> FilesystemType:
+async def select_main_filesystem_format() -> FilesystemType:
 	items = [
 		MenuItem('btrfs', value=FilesystemType.Btrfs),
 		MenuItem('ext4', value=FilesystemType.Ext4),
@@ -257,11 +256,8 @@ def select_main_filesystem_format() -> FilesystemType:
 		MenuItem('f2fs', value=FilesystemType.F2fs),
 	]
 
-	if arch_config_handler.args.advanced:
-		items.append(MenuItem('ntfs', value=FilesystemType.Ntfs))
-
 	group = MenuItemGroup(items, sort_items=False)
-	result = Selection[FilesystemType](
+	result = await Selection[FilesystemType](
 		group,
 		header=tr('Select main filesystem'),
 		allow_skip=False,
@@ -274,7 +270,7 @@ def select_main_filesystem_format() -> FilesystemType:
 			raise ValueError('Unhandled result type')
 
 
-def select_mount_options() -> list[str]:
+async def select_mount_options() -> list[str]:
 	prompt = tr('Would you like to use compression or disable CoW?') + '\n'
 	compression = tr('Use compression')
 	disable_cow = tr('Disable Copy-on-Write')
@@ -285,7 +281,7 @@ def select_mount_options() -> list[str]:
 	]
 	group = MenuItemGroup(items, sort_items=False)
 
-	result = Selection[str](
+	result = await Selection[str](
 		group,
 		header=prompt,
 		allow_skip=True,
@@ -327,13 +323,13 @@ def get_default_btrfs_subvols() -> list[SubvolumeModification]:
 	]
 
 
-def suggest_single_disk_layout(
+async def suggest_single_disk_layout(
 	device: BDevice,
 	filesystem_type: FilesystemType | None = None,
 	separate_home: bool | None = None,
 ) -> DeviceModification:
 	if not filesystem_type:
-		filesystem_type = select_main_filesystem_format()
+		filesystem_type = await select_main_filesystem_format()
 
 	sector_size = device.device_info.sector_size
 	total_size = device.device_info.total_size
@@ -343,14 +339,14 @@ def suggest_single_disk_layout(
 	if filesystem_type == FilesystemType.Btrfs:
 		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
 
-		result = Confirmation(
+		result = await Confirmation(
 			header=prompt,
 			allow_skip=False,
 			preset=True,
 		).show()
 
 		using_subvolumes = result.item() == MenuItem.yes()
-		mount_options = select_mount_options()
+		mount_options = await select_mount_options()
 	else:
 		using_subvolumes = False
 		mount_options = []
@@ -376,7 +372,7 @@ def suggest_single_disk_layout(
 	else:
 		prompt = tr('Would you like to create a separate partition for /home?') + '\n'
 
-		result = Confirmation(
+		result = await Confirmation(
 			header=prompt,
 			allow_skip=False,
 			preset=True,
@@ -433,7 +429,7 @@ def suggest_single_disk_layout(
 	return device_modification
 
 
-def suggest_multi_disk_layout(
+async def suggest_multi_disk_layout(
 	devices: list[BDevice],
 	filesystem_type: FilesystemType | None = None,
 ) -> list[DeviceModification]:
@@ -449,7 +445,7 @@ def suggest_multi_disk_layout(
 	mount_options = []
 
 	if not filesystem_type:
-		filesystem_type = select_main_filesystem_format()
+		filesystem_type = await select_main_filesystem_format()
 
 	# find proper disk for /home
 	possible_devices = [d for d in devices if d.device_info.total_size >= min_home_partition_size]
@@ -470,11 +466,11 @@ def suggest_multi_disk_layout(
 		text += tr('Minimum capacity for /home partition: {}GiB\n').format(min_home_partition_size.format_size(Unit.GiB))
 		text += tr('Minimum capacity for Arch Linux partition: {}GiB').format(desired_root_partition_size.format_size(Unit.GiB))
 
-		Notify(text).show()
+		_ = await Notify(text).show()
 		return []
 
 	if filesystem_type == FilesystemType.Btrfs:
-		mount_options = select_mount_options()
+		mount_options = await select_mount_options()
 
 	device_paths = ', '.join(str(d.device_info.path) for d in devices)
 
@@ -540,7 +536,7 @@ def suggest_multi_disk_layout(
 	return [root_device_modification, home_device_modification]
 
 
-def suggest_lvm_layout(
+async def suggest_lvm_layout(
 	disk_config: DiskLayoutConfiguration,
 	filesystem_type: FilesystemType | None = None,
 	vg_grp_name: str = 'ArchinstallVg',
@@ -554,14 +550,14 @@ def suggest_lvm_layout(
 	mount_options = []
 
 	if not filesystem_type:
-		filesystem_type = select_main_filesystem_format()
+		filesystem_type = await select_main_filesystem_format()
 
 	if filesystem_type == FilesystemType.Btrfs:
 		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
-		result = Confirmation(header=prompt, allow_skip=False, preset=True).show()
+		result = await Confirmation(header=prompt, allow_skip=False, preset=True).show()
 
 		using_subvolumes = MenuItem.yes() == result.item()
-		mount_options = select_mount_options()
+		mount_options = await select_mount_options()
 
 	if using_subvolumes:
 		btrfs_subvols = get_default_btrfs_subvols()

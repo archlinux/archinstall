@@ -30,8 +30,8 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		)
 
 	@override
-	def run(self) -> AuthenticationConfiguration | None:
-		return super().run()
+	async def show(self) -> AuthenticationConfiguration | None:
+		return await super().show()
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
@@ -56,9 +56,9 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 			),
 		]
 
-	def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
+	async def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
 		preset = [] if preset is None else preset
-		users = select_users(preset=preset)
+		users = await select_users(preset=preset)
 		return users
 
 	def _prev_users(self, item: MenuItem) -> str | None:
@@ -99,12 +99,12 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		return None
 
 
-def select_root_password() -> Password | None:
-	password = get_password(header=tr('Enter root password'), allow_skip=True)
+async def select_root_password() -> Password | None:
+	password = await get_password(header=tr('Enter root password'), allow_skip=True)
 	return password
 
 
-def select_u2f_login(preset: U2FLoginConfiguration | None) -> U2FLoginConfiguration | None:
+async def select_u2f_login(preset: U2FLoginConfiguration | None) -> U2FLoginConfiguration | None:
 	devices = Fido2.get_fido2_devices()
 	if not devices:
 		return None
@@ -118,7 +118,7 @@ def select_u2f_login(preset: U2FLoginConfiguration | None) -> U2FLoginConfigurat
 	if preset is not None:
 		group.set_selected_by_value(preset.u2f_login_method)
 
-	result = Selection[U2FLoginMethod](
+	result = await Selection[U2FLoginMethod](
 		group,
 		allow_skip=True,
 		allow_reset=True,
@@ -129,7 +129,7 @@ def select_u2f_login(preset: U2FLoginConfiguration | None) -> U2FLoginConfigurat
 			u2f_method = result.get_value()
 			header = tr('Enable passwordless sudo?')
 
-			result_sudo = Confirmation(
+			result_sudo = await Confirmation(
 				header=header,
 				allow_skip=True,
 				preset=False,

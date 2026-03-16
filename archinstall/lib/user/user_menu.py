@@ -26,17 +26,17 @@ class UserList(ListManager[User]):
 			prompt,
 		)
 
-	def show(self) -> list[User] | None:
-		return super()._run()
+	async def show(self) -> list[User] | None:
+		return await super()._run()
 
 	@override
 	def selected_action_display(self, selection: User) -> str:
 		return selection.username
 
 	@override
-	def handle_action(self, action: str, entry: User | None, data: list[User]) -> list[User]:
+	async def handle_action(self, action: str, entry: User | None, data: list[User]) -> list[User]:
 		if action == self._actions[0]:  # add
-			new_user = self._add_user()
+			new_user = await self._add_user()
 			if new_user is not None:
 				# in case a user with the same username as an existing user
 				# was created we'll replace the existing one
@@ -45,7 +45,7 @@ class UserList(ListManager[User]):
 		elif action == self._actions[1] and entry:  # change password
 			header = f'{tr("User")}: {entry.username}\n'
 			header += tr('Enter new password')
-			new_password = get_password(header=header, allow_skip=True)
+			new_password = await get_password(header=header, allow_skip=True)
 
 			if new_password:
 				user = next(filter(lambda x: x == entry, data))
@@ -64,8 +64,8 @@ class UserList(ListManager[User]):
 				return None
 		return tr('The username you entered is invalid')
 
-	def _add_user(self) -> User | None:
-		editResult = Input(
+	async def _add_user(self) -> User | None:
+		editResult = await Input(
 			tr('Enter a username'),
 			allow_skip=True,
 			validator_callback=self._check_for_correct_username,
@@ -85,7 +85,7 @@ class UserList(ListManager[User]):
 		header = f'{tr("Username")}: {username}\n'
 		prompt = f'{header}\n' + tr('Enter a password')
 
-		password = get_password(header=prompt, allow_skip=True)
+		password = await get_password(header=prompt, allow_skip=True)
 
 		if not password:
 			return None
@@ -93,7 +93,7 @@ class UserList(ListManager[User]):
 		header += f'{tr("Password")}: {password.hidden()}\n'
 		prompt = f'{header}\n' + tr('Should "{}" be a superuser (sudo)?\n').format(username)
 
-		result = Confirmation(
+		result = await Confirmation(
 			header=prompt,
 			allow_skip=False,
 			preset=True,
@@ -108,8 +108,8 @@ class UserList(ListManager[User]):
 		return User(username, password, sudo)
 
 
-def select_users(prompt: str = '', preset: list[User] = []) -> list[User]:
-	users = UserList(prompt, preset).show()
+async def select_users(prompt: str = '', preset: list[User] = []) -> list[User]:
+	users = await UserList(prompt, preset).show()
 
 	if users is None:
 		return preset
