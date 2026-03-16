@@ -13,7 +13,6 @@ from archinstall.lib.disk.lvm import (
 	lvm_vol_reduce,
 )
 from archinstall.lib.disk.utils import udev_sync
-from archinstall.lib.interactions.general_conf import confirm_abort
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -29,7 +28,6 @@ from archinstall.lib.models.device import (
 	Unit,
 )
 from archinstall.lib.output import debug, info
-from archinstall.lib.translationhandler import tr
 
 
 class FilesystemHandler:
@@ -37,7 +35,7 @@ class FilesystemHandler:
 		self._disk_config = disk_config
 		self._enc_config = disk_config.disk_encryption
 
-	def perform_filesystem_operations(self, show_countdown: bool = True) -> None:
+	def perform_filesystem_operations(self) -> None:
 		if self._disk_config.config_type == DiskLayoutType.Pre_mount:
 			debug('Disk layout configuration is set to pre-mount, not performing any operations')
 			return
@@ -47,9 +45,6 @@ class FilesystemHandler:
 		if not device_mods:
 			debug('No modifications required')
 			return
-
-		if show_countdown:
-			self._final_warning()
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
@@ -330,19 +325,3 @@ class FilesystemHandler:
 				largest_vol.safe_dev_path,
 				Size(256, Unit.MiB, SectorSize.default()),
 			)
-
-	def _final_warning(self) -> bool:
-		# Issue a final warning before we continue with something un-revertable.
-		# We count down from 5 to 0.
-		out = tr('Starting device modifications in ')
-		print(out, end='', flush=True)
-
-		try:
-			countdown = '\n5...4...3...2...1\n'
-			for c in countdown:
-				print(c, end='', flush=True)
-				time.sleep(0.25)
-		except KeyboardInterrupt:
-			confirm_abort()
-
-		return True

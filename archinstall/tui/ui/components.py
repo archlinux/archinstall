@@ -1,6 +1,7 @@
 import sys
+from abc import ABC, abstractmethod
 from collections.abc import Awaitable, Callable
-from typing import Any, ClassVar, Literal, TypeVar, override
+from typing import Any, ClassVar, Literal, TypeVar, cast, override
 
 from textual import work
 from textual.app import App, ComposeResult
@@ -44,7 +45,7 @@ class BaseScreen(Screen[Result[ValueT]]):
 			_ = self.dismiss(Result(ResultType.Reset))
 
 
-class LoadingScreen(BaseScreen[None]):
+class LoadingScreen(BaseScreen[ValueT]):
 	CSS = """
 	LoadingScreen {
 		align: center middle;
@@ -78,7 +79,7 @@ class LoadingScreen(BaseScreen[None]):
 		self._header = header
 		self._data_callback = data_callback
 
-	async def run(self) -> Result[None]:
+	async def run(self) -> Result[ValueT]:
 		assert TApp.app
 		return await TApp.app.show(self)
 
@@ -1051,6 +1052,12 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 			)
 
 
+class InstanceRunnable[ValueT](ABC):
+	@abstractmethod
+	async def run(self) -> ValueT | None:
+		pass
+
+
 class _AppInstance(App[ValueT]):
 	ENABLE_COMMAND_PALETTE = False
 
@@ -1148,7 +1155,7 @@ class _AppInstance(App[ValueT]):
 	}
 	"""
 
-	def __init__(self, main: Any) -> None:
+	def __init__(self, main: InstanceRunnable[ValueT] | Callable[[], Awaitable[ValueT]]) -> None:
 		super().__init__(ansi_color=True)
 		self._main = main
 
@@ -1166,13 +1173,18 @@ class _AppInstance(App[ValueT]):
 	@work
 	async def _run_worker(self) -> None:
 		try:
-			await self._main._run()
+			if isinstance(self._main, InstanceRunnable):
+				result: ValueT | None = await self._main.run()
+			else:
+				result = await self._main()
+
+			tui.exit(result)
 		except WorkerCancelled:
 			debug('Worker was cancelled')
 		except Exception as err:
 			debug(f'Error while running main app: {err}')
 			# this will terminate the textual app and return the exception
-			self.exit(err)  # type: ignore[arg-type]
+			self.exit(cast(ValueT, err))
 
 	@work
 	async def _show_async(self, screen: Screen[Result[ValueT]]) -> Result[ValueT]:
@@ -1185,13 +1197,9 @@ class _AppInstance(App[ValueT]):
 class TApp:
 	app: _AppInstance[Any] | None = None
 
-	def __init__(self) -> None:
-		self._main = None
-		self._global_header: str | None = None
-
-	def run(self, main: Any) -> Result[ValueT]:
+	def run(self, main: InstanceRunnable[ValueT] | Callable[[], Awaitable[ValueT]]) -> ValueT:
 		TApp.app = _AppInstance(main)
-		result: Result[ValueT] | Exception | None = TApp.app.run()
+		result: ValueT | Exception | None = TApp.app.run()
 
 		if isinstance(result, Exception):
 			raise result
@@ -1202,7 +1210,7 @@ class TApp:
 
 		return result
 
-	def exit(self, result: Result[ValueT]) -> None:
+	def exit(self, result: Any) -> None:
 		assert TApp.app
 		TApp.app.exit(result)
 

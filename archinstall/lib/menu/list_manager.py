@@ -53,7 +53,7 @@ class ListManager[ValueT]:
 			return self._last_choice == self._cancel_action
 		return False
 
-	def _run(self) -> list[ValueT] | None:
+	async def _run(self) -> list[ValueT] | None:
 		additional_options = self._base_actions + self._terminate_actions
 
 		while True:
@@ -66,7 +66,7 @@ class ListManager[ValueT]:
 			if self._prompt is not None:
 				prompt = f'{self._prompt}\n\n'
 
-			result = Selection[ValueT | str](
+			result = await Selection[ValueT | str](
 				group,
 				header=prompt,
 				enable_filter=False,
@@ -81,14 +81,14 @@ class ListManager[ValueT]:
 
 			if value in self._base_actions:
 				value = cast(str, value)
-				self._data = self.handle_action(value, None, self._data)
+				self._data = await self.handle_action(value, None, self._data)
 			elif value in self._terminate_actions:
 				break
 			else:  # an entry of the existing selection was chosen
 				selected_entry = result.get_value()
 				selected_entry = cast(ValueT, selected_entry)
 
-				self._run_actions_on_entry(selected_entry)
+				await self._run_actions_on_entry(selected_entry)
 
 		self._last_choice = value
 
@@ -97,7 +97,7 @@ class ListManager[ValueT]:
 		else:
 			return self._data
 
-	def _run_actions_on_entry(self, entry: ValueT) -> None:
+	async def _run_actions_on_entry(self, entry: ValueT) -> None:
 		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]
 
 		items = [MenuItem(o, value=o) for o in options]
@@ -105,7 +105,7 @@ class ListManager[ValueT]:
 
 		header = f'{self.selected_action_display(entry)}'
 
-		result = Selection[str](
+		result = await Selection[str](
 			group,
 			header=header,
 			enable_filter=False,
@@ -119,7 +119,7 @@ class ListManager[ValueT]:
 				raise ValueError('Unhandled return type')
 
 		if value != self._cancel_action:
-			self._data = self.handle_action(value, entry, self._data)
+			self._data = await self.handle_action(value, entry, self._data)
 
 	def selected_action_display(self, selection: ValueT) -> str:
 		"""
@@ -128,7 +128,7 @@ class ListManager[ValueT]:
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def handle_action(self, action: str, entry: ValueT | None, data: list[ValueT]) -> list[ValueT]:
+	async def handle_action(self, action: str, entry: ValueT | None, data: list[ValueT]) -> list[ValueT]:
 		"""
 		this function is called when a base action or
 		a specific action for an entry is triggered

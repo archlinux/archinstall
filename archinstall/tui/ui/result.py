@@ -25,6 +25,18 @@ class Result[ValueT]:
 	def false(cls) -> Self:
 		return cls(ResultType.Selection, _data=False)  # type: ignore[arg-type]
 
+	@classmethod
+	def reset(cls) -> Self:
+		return cls(ResultType.Reset)
+
+	@classmethod
+	def selection(cls, value: ValueT | list[ValueT] | None) -> Self:
+		return cls(ResultType.Selection, _data=value)
+
+	@classmethod
+	def skip(cls) -> Self:
+		return cls(ResultType.Skip)
+
 	def has_data(self) -> bool:
 		return self._data is not None
 

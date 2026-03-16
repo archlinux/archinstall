@@ -93,8 +93,8 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 		]
 
 	@override
-	def run(self) -> DiskLayoutConfiguration | None:  # type: ignore[override]
-		config: DiskMenuConfig | None = super().run()
+	async def show(self) -> DiskLayoutConfiguration | None:  # type: ignore[override]
+		config: DiskMenuConfig | None = await super().show()
 		if config is None:
 			return None
 
@@ -122,7 +122,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 
 		return False
 
-	def _select_disk_encryption(self, preset: DiskEncryption | None) -> DiskEncryption | None:
+	async def _select_disk_encryption(self, preset: DiskEncryption | None) -> DiskEncryption | None:
 		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
 		lvm_config: LvmConfiguration | None = self._item_group.find_by_key('lvm_config').value
 
@@ -134,12 +134,12 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 		if not DiskEncryption.validate_enc(modifications, lvm_config):
 			return None
 
-		disk_encryption = DiskEncryptionMenu(modifications, lvm_config=lvm_config, preset=preset).run()
+		disk_encryption = await DiskEncryptionMenu(modifications, lvm_config=lvm_config, preset=preset).show()
 
 		return disk_encryption
 
-	def _select_disk_layout_config(self, preset: DiskLayoutConfiguration | None) -> DiskLayoutConfiguration | None:
-		disk_config = select_disk_config(preset)
+	async def _select_disk_layout_config(self, preset: DiskLayoutConfiguration | None) -> DiskLayoutConfiguration | None:
+		disk_config = await select_disk_config(preset)
 
 		if disk_config != preset:
 			self._menu_item_group.find_by_key('lvm_config').value = None
@@ -147,20 +147,20 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 
 		return disk_config
 
-	def _select_lvm_config(self, preset: LvmConfiguration | None) -> LvmConfiguration | None:
+	async def _select_lvm_config(self, preset: LvmConfiguration | None) -> LvmConfiguration | None:
 		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
 
 		if not disk_config:
 			return preset
 
-		lvm_config = select_lvm_config(disk_config, preset=preset)
+		lvm_config = await select_lvm_config(disk_config, preset=preset)
 
 		if lvm_config != preset:
 			self._menu_item_group.find_by_key('disk_encryption').value = None
 
 		return lvm_config
 
-	def _select_btrfs_snapshots(self, preset: SnapshotConfig | None) -> SnapshotConfig | None:
+	async def _select_btrfs_snapshots(self, preset: SnapshotConfig | None) -> SnapshotConfig | None:
 		preset_type = preset.snapshot_type if preset else None
 
 		group = MenuItemGroup.from_enum(
@@ -169,7 +169,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 			preset=preset_type,
 		)
 
-		result = Selection[SnapshotType](
+		result = await Selection[SnapshotType](
 			group,
 			allow_reset=True,
 			allow_skip=True,

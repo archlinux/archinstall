@@ -8,7 +8,7 @@ from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
 
-def select_kernel(preset: list[str] = []) -> list[str]:
+async def select_kernel(preset: list[str] = []) -> list[str]:
 	"""
 	Asks the user to select a kernel for system.
 
@@ -25,7 +25,7 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 	group.set_focus_by_value(default_kernel)
 	group.set_selected_by_value(preset)
 
-	result = Selection[str](
+	result = await Selection[str](
 		group,
 		header=tr('Select which kernel(s) to install'),
 		allow_skip=True,
@@ -42,10 +42,10 @@ def select_kernel(preset: list[str] = []) -> list[str]:
 			return result.get_values()
 
 
-def select_uki(preset: bool = True) -> bool:
+async def select_uki(preset: bool = True) -> bool:
 	prompt = tr('Would you like to use unified kernel images?') + '\n'
 
-	result = Confirmation(header=prompt, allow_skip=True, preset=preset).show()
+	result = await Confirmation(header=prompt, allow_skip=True, preset=preset).show()
 
 	match result.type_:
 		case ResultType.Skip:
@@ -56,7 +56,7 @@ def select_uki(preset: bool = True) -> bool:
 			raise ValueError('Unhandled result type')
 
 
-def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None) -> GfxDriver | None:
+async def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None) -> GfxDriver | None:
 	"""
 	Somewhat convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -90,7 +90,7 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 	if SysInfo.has_nvidia_graphics():
 		header += tr('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n')
 
-	result = Selection[GfxDriver](
+	result = await Selection[GfxDriver](
 		group,
 		header=header,
 		allow_skip=True,
@@ -107,14 +107,14 @@ def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None
 			return result.get_value()
 
 
-def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) -> ZramConfiguration:
+async def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) -> ZramConfiguration:
 	prompt = tr('Would you like to use swap on zram?') + '\n'
 
 	group = MenuItemGroup.yes_no()
 	group.set_default_by_value(True)
 	group.set_focus_by_value(preset.enabled)
 
-	result = Confirmation(
+	result = await Confirmation(
 		header=prompt,
 		allow_skip=True,
 		preset=preset.enabled,
@@ -133,7 +133,7 @@ def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) -> 
 			algo_group.set_default_by_value(ZramAlgorithm.ZSTD)
 			algo_group.set_focus_by_value(preset.algorithm)
 
-			algo_result = Selection[ZramAlgorithm](
+			algo_result = await Selection[ZramAlgorithm](
 				algo_group,
 				header=tr('Select zram compression algorithm:') + '\n',
 				allow_skip=True,

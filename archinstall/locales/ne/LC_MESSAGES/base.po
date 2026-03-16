@@ -512,7 +512,8 @@ msgid "Choose which configuration to save"
 msgstr "कुन कन्फिगरेसन बचत गर्ने रोज्नुहोस्"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "कन्फिगरेसन बचत गर्नको लागि एउटा डाइरेक्टरी प्रविष्ट गर्नुहोस्: "ok
+msgstr "कन्फिगरेसन बचत गर्नको लागि एउटा डाइरेक्टरी प्रविष्ट गर्नुहोस्: "
+
 msgid "Not a valid directory: {}"
 msgstr "मान्य डाइरेक्टरी होइन: {}"
 
@@ -725,211 +726,216 @@ msgid "Value: "
 msgstr "मान (Value): "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr ""
+msgstr "तपाईं ड्राइभ चयन र पार्टिसन गर्ने प्रक्रिया छोडेर /mnt मा माउन्ट गरिएको जुनकुनै ड्राइभ-सेटअप प्रयोग गर्न सक्नुहुन्छ (प्रयोगात्मक)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr ""
+msgstr "डिस्कहरू मध्ये एक चयन गर्नुहोस् वा छोडेर /mnt लाई पूर्वनिर्धारितको रूपमा प्रयोग गर्नुहोस्"
 
 msgid "Select which partitions to mark for formatting:"
-msgstr ""
+msgstr "फर्म्याट गर्नका लागि कुन पार्टिसनहरू चिन्ह लगाउने हो, चयन गर्नुहोस्:"
 
 msgid "Use HSM to unlock encrypted drive"
-msgstr ""
+msgstr "इन्क्रिप्टेड ड्राइभ अनलक गर्न HSM प्रयोग गर्नुहोस्"
 
 msgid "Device"
-msgstr ""
+msgstr "उपकरण (Device)"
 
 msgid "Size"
-msgstr ""
+msgstr "साइज"
 
 msgid "Free space"
-msgstr ""
+msgstr "खाली ठाउँ"
 
 msgid "Bus-type"
-msgstr ""
+msgstr "बस-प्रकार (Bus-type)"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr ""
+msgstr "कि त रूट-पासवर्ड वा कम्तिमा १ sudo विशेषाधिकार भएको प्रयोगकर्ता उल्लेख गर्नुपर्छ"
 
 msgid "Enter username (leave blank to skip): "
-msgstr ""
+msgstr "प्रयोगकर्ता-नाम प्रविष्ट गर्नुहोस् (छोड्नको लागि खाली छोड्नुहोस्): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr ""
+msgstr "तपाईंले प्रविष्ट गर्नुभएको प्रयोगकर्ता-नाम अमान्य छ। फेरि प्रयास गर्नुहोस्"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr ""
+msgstr "के \"{}\" सुपर-युजर (sudo) हुनुपर्छ?"
 
 msgid "Select which partitions to encrypt"
-msgstr ""
+msgstr "कुन पार्टिसनहरू इन्क्रिप्ट गर्ने हो, चयन गर्नुहोस्"
 
 msgid "very weak"
-msgstr ""
+msgstr "एकदमै कमजोर"
 
 msgid "weak"
-msgstr ""
+msgstr "कमजोर"
 
 msgid "moderate"
-msgstr ""
+msgstr "मध्यम"
 
 msgid "strong"
-msgstr ""
+msgstr "बलियो"
 
 msgid "Add subvolume"
-msgstr ""
+msgstr "सब-भोल्युम थप्नुहोस्"
 
 msgid "Edit subvolume"
-msgstr ""
+msgstr "सब-भोल्युम सम्पादन गर्नुहोस्"
 
 msgid "Delete subvolume"
-msgstr ""
+msgstr "सब-भोल्युम मेटाउनुहोस्"
 
 msgid "Configured {} interfaces"
-msgstr ""
+msgstr "{} इन्टरफेसहरू कन्फिगर गरियो"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr ""
+msgstr "यो विकल्पले स्थापनाको क्रममा हुन सक्ने समानान्तर डाउनलोड (parallel downloads) को संख्या सक्षम पार्छ"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 " (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
+"सक्षम गरिने समानान्तर डाउनलोडको संख्या प्रविष्ट गर्नुहोस्।\n"
+" (१ देखि {} सम्मको मान प्रविष्ट गर्नुहोस्)\n"
+"द्रष्टव्य:"
 
+#, fuzzy
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr ""
+msgstr " - अधिकतम मान    : {} ( यसले {} समानान्तर डाउनलोड र एक पटकमा {} डाउनलोड अनुमति दिन्छ )"
 
+#, fuzzy
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr " - न्यूनतम मान    : १ ( यसले १ समानान्तर डाउनलोड र एक पटकमा २ डाउनलोड अनुमति दिन्छ )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr " - असक्षम/पूर्वनिर्धारित : ० ( समानान्तर डाउनलोड असक्षम गर्छ, एक पटकमा १ डाउनलोड मात्र अनुमति दिन्छ )"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "अमान्य इनपुट! मान्य इनपुटको साथ पुन: प्रयास गर्नुहोस् [१ देखि {max_downloads}, वा असक्षम गर्न ०]"
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "समानान्तर डाउनलोडहरू (Parallel Downloads)"
 
 msgid "ESC to skip"
-msgstr ""
+msgstr "छोड्नको लागि ESC"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "रिसेट गर्न CTRL+C"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "चयन गर्न TAB"
 
 msgid "[Default value: 0] > "
-msgstr ""
+msgstr "[पूर्वनिर्धारित मान: ०] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
+msgstr "यो अनुवाद प्रयोग गर्न सक्षम हुनको लागि, कृपया यो भाषा समर्थन गर्ने फन्ट म्यानुअल रूपमा स्थापना गर्नुहोस्।"
 
 msgid "The font should be stored as {}"
-msgstr ""
+msgstr "फन्ट {} को रूपमा भण्डारण गरिनुपर्छ"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall चलाउन रूट (root) विशेषाधिकार चाहिन्छ। थप जानकारीको लागि --help हेर्नुहोस्।"
 
 msgid "Select an execution mode"
-msgstr ""
+msgstr "कार्यान्वयन मोड (execution mode) चयन गर्नुहोस्"
 
 #, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "उल्लेख गरिएको url बाट प्रोफाइल प्राप्त गर्न असमर्थ: {}"
 
 #, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "प्रोफाइलहरूको नाम अद्वितीय हुनुपर्छ, तर दोहोरिएको नाम भएका प्रोफाइल परिभाषाहरू फेला परे: {}"
 
 msgid "Select one or more devices to use and configure"
-msgstr ""
+msgstr "प्रयोग र कन्फिगर गर्नको लागि एक वा बढी उपकरणहरू चयन गर्नुहोस्"
 
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr ""
+msgstr "यदि तपाईंले उपकरण चयन रिसेट गर्नुभयो भने यसले हालको डिस्क लेआउट पनि रिसेट गर्नेछ। के तपाईं पक्का हुनुहुन्छ?"
 
 msgid "Existing Partitions"
-msgstr ""
+msgstr "अवस्थित पार्टिसनहरू"
 
 msgid "Select a partitioning option"
-msgstr ""
+msgstr "पार्टिसनिङ विकल्प चयन गर्नुहोस्"
 
 msgid "Enter the root directory of the mounted devices: "
-msgstr ""
+msgstr "माउन्ट गरिएका उपकरणहरूको रूट डाइरेक्टरी प्रविष्ट गर्नुहोस्: "
 
 #, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr ""
+msgstr "/home पार्टिसनको लागि न्यूनतम क्षमता: {}GiB\n"
 
 #, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr ""
+msgstr "Arch Linux पार्टिसनको लागि न्यूनतम क्षमता: {}GiB"
 
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr ""
+msgstr "यो पूर्व-प्रोग्राम गरिएका प्रोफाइलहरूको सूची हो, यसले डेस्कटप वातावरण जस्ता चीजहरू स्थापना गर्न सजिलो बनाउन सक्छ"
 
 msgid "Current profile selection"
-msgstr ""
+msgstr "हालको प्रोफाइल चयन"
 
 msgid "Remove all newly added partitions"
-msgstr ""
+msgstr "भर्खरै थपिएका सबै पार्टिसनहरू हटाउनुहोस्"
 
 msgid "Assign mountpoint"
-msgstr ""
+msgstr "माउन्ट-पोइन्ट तोक्नुहोस्"
 
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr ""
+msgstr "फर्म्याट गर्नको लागि चिन्ह लगाउनुहोस् वा हटाउनुहोस् (डाटा मेटिनेछ)"
 
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "बूटयोग्यको रूपमा चिन्ह लगाउनुहोस् वा हटाउनुहोस्"
 
 msgid "Change filesystem"
-msgstr ""
+msgstr "फाइल-प्रणाली परिवर्तन गर्नुहोस्"
 
 msgid "Mark/Unmark as compressed"
-msgstr ""
+msgstr "कम्प्रेस्डको रूपमा चिन्ह लगाउनुहोस् वा हटाउनुहोस्"
 
 msgid "Set subvolumes"
-msgstr ""
+msgstr "सब-भोल्युमहरू सेट गर्नुहोस्"
 
 msgid "Delete partition"
-msgstr ""
+msgstr "पार्टिसन मेटाउनुहोस्"
 
 msgid "Partition"
-msgstr ""
+msgstr "पार्टिसन"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "यो पार्टिसन हाल इन्क्रिप्टेड छ, यसलाई फर्म्याट गर्नको लागि फाइल-प्रणाली उल्लेख गर्नुपर्छ"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr ""
+msgstr "पार्टिसन माउन्ट-पोइन्टहरू स्थापना भित्रका हुन्, उदाहरणका लागि बूट /boot हुनेछ।"
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "यदि माउन्ट-पोइन्ट /boot सेट गरियो भने, पार्टिसनलाई बूटयोग्यको रूपमा पनि चिन्ह लगाइनेछ।"
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "माउन्ट-पोइन्ट: "
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "उपकरण {} मा हालका खाली सेक्टरहरू (sectors):"
 
 msgid "Total sectors: {}"
-msgstr ""
+msgstr "कुल सेक्टरहरू: {}"
 
 msgid "Enter the start sector (default: {}): "
-msgstr ""
+msgstr "सुरुवात सेक्टर प्रविष्ट गर्नुहोस् (पूर्वनिर्धारित: {}): "
 
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr ""
+msgstr "पार्टिसनको अन्त्य सेक्टर प्रविष्ट गर्नुहोस् (प्रतिशत वा ब्लक नम्बर, पूर्वनिर्धारित: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "यसले भर्खरै थपिएका सबै पार्टिसनहरू हटाउनेछ, जारी राख्ने?"
 
 #, python-brace-format
 msgid "Partition management: {}"
-msgstr ""
+msgstr "पार्टिसन व्यवस्थापन: {}"
 
 #, python-brace-format
 msgid "Total length: {}"

@@ -1,8 +1,9 @@
 import os
+import sys
 import time
 
 from archinstall.lib.applications.application_handler import ApplicationHandler
-from archinstall.lib.args import ArchConfigHandler
+from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
@@ -10,6 +11,7 @@ from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, select_post_installation
+from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.mirrors import MirrorListHandler
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import DiskLayoutType, EncryptionType
@@ -19,6 +21,7 @@ from archinstall.lib.output import debug, error, info
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
+from archinstall.tui.ui.components import tui
 
 
 def show_menu(
@@ -42,7 +45,9 @@ def show_menu(
 	if not arch_config_handler.args.advanced:
 		global_menu.set_enabled('parallel_downloads', False)
 
-	global_menu.run()
+	result: ArchConfig | None = tui.run(global_menu)
+	if result is None:
+		sys.exit(0)
 
 
 def perform_installation(
@@ -177,13 +182,13 @@ def perform_installation(
 
 		if not arch_config_handler.args.silent:
 			elapsed_time = time.monotonic() - start_time
-			action = select_post_installation(elapsed_time)
+			action: PostInstallationAction = tui.run(lambda: select_post_installation(elapsed_time))
 
 			match action:
 				case PostInstallationAction.EXIT:
 					pass
 				case PostInstallationAction.REBOOT:
-					os.system('reboot')
+					_ = os.system('reboot')
 				case PostInstallationAction.CHROOT:
 					try:
 						installation.drop_to_shell()
@@ -212,7 +217,9 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		if not config.confirm_config():
+		res: bool = tui.run(config.confirm_config)
+
+		if not res:
 			debug('Installation aborted')
 			aborted = True
 
@@ -221,6 +228,10 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
+
+		if not delayed_warning(tr('Starting device modifications in ')):
+			return main()
+
 		fs_handler.perform_filesystem_operations()
 
 	perform_installation(

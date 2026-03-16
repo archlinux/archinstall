@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
@@ -13,7 +13,7 @@ from archinstall.lib.translationhandler import tr
 class MenuItem:
 	text: str
 	value: Any | None = None
-	action: Callable[[Any], Any] | None = None
+	action: Callable[[Any], Awaitable[Any]] | None = None
 	enabled: bool = True
 	read_only: bool = False
 	mandatory: bool = False
