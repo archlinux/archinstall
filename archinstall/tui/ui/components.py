@@ -1,6 +1,8 @@
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Awaitable, Callable
+from dataclasses import dataclass
+from enum import Enum, auto
 from typing import Any, ClassVar, Literal, TypeVar, cast, override
 
 from textual import work
@@ -707,6 +709,18 @@ class NotifyScreen(ConfirmationScreen[ValueT]):
 		super().__init__(group, header)
 
 
+class InputInfoType(Enum):
+	MsgInfo = auto()
+	MsgWarning = auto()
+	MsgError = auto()
+
+
+@dataclass
+class InputInfo:
+	message: str
+	info_type: InputInfoType
+
+
 class InputScreen(BaseScreen[str]):
 	CSS = """
 	InputScreen {
@@ -728,6 +742,22 @@ class InputScreen(BaseScreen[str]):
 		color: red;
 		text-align: center;
 	}
+
+	#input-info {
+		text-align: center;
+	}
+
+	.input-hint-msg-error {
+		color: red;
+	}
+
+	.input-hint-msg-warning {
+		color: yellow;
+	}
+
+	.input-hint-msg-info {
+		color: green;
+	}
 	"""
 
 	def __init__(
@@ -739,6 +769,7 @@ class InputScreen(BaseScreen[str]):
 		allow_reset: bool = False,
 		allow_skip: bool = False,
 		validator: Validator | None = None,
+		info_callback: Callable[[str], InputInfo | None] | None = None,
 	):
 		super().__init__(allow_skip, allow_reset)
 		self._header = header or ''
@@ -748,6 +779,7 @@ class InputScreen(BaseScreen[str]):
 		self._allow_reset = allow_reset
 		self._allow_skip = allow_skip
 		self._validator = validator
+		self._info_callback = info_callback
 
 	async def run(self) -> Result[str]:
 		assert TApp.app
@@ -768,6 +800,7 @@ class InputScreen(BaseScreen[str]):
 					validate_on=['submitted'],
 				)
 				yield Label('', classes='input-failure', id='input-failure')
+				yield Label('', id='input-info')
 
 		yield Footer()
 
@@ -783,6 +816,24 @@ class InputScreen(BaseScreen[str]):
 			self.query_one('#input-failure', Label).update(failure_out)
 		else:
 			_ = self.dismiss(Result(ResultType.Selection, _data=event.value))
+
+	def on_input_changed(self, event: Input.Changed) -> None:
+		info_label = self.query_one('#input-info', Label)
+		if self._info_callback:
+			result = self._info_callback(event.value)
+			if result:
+				css_class = ''
+				if result.info_type == InputInfoType.MsgError:
+					css_class = 'input-hint-msg-error'
+				elif result.info_type == InputInfoType.MsgWarning:
+					css_class = 'input-hint-msg-warning'
+				elif result.info_type == InputInfoType.MsgInfo:
+					css_class = 'input-hint-msg-info'
+				info_label.update(result.message)
+				info_label.set_classes(css_class)
+			else:
+				info_label.update('')
+				info_label.set_classes('')
 
 
 class _DataTable(DataTable[ValueT]):
