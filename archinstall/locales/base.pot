@@ -2049,3 +2049,12 @@ msgstr ""
 
 msgid "The password did not match, please try again"
 msgstr ""
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
