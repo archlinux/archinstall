@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-20 19:23+0100\n"
+"PO-Revision-Date: 2026-04-12 10:26+0200\n"
 "Last-Translator: Van Matten\n"
 "Language-Team: Alessio Cuccovillo <alessio.cuccovillo.dev@gmail.com>, Van Matten\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
 "X-Poedit-Basepath: ../..\n"
 "X-Poedit-SearchPath-0: base.pot\n"
 
@@ -1028,7 +1028,7 @@ msgid "Back"
 msgstr "Indietro"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr "Scegli quale messaggio di benvenuto installare per i profili scelti: {}"
+msgstr "Scegli quale greeter installare per i profili scelti: {}"
 
 #, python-brace-format
 msgid "Environment type: {}"
@@ -1090,10 +1090,10 @@ msgid "Graphics driver"
 msgstr "Driver grafici"
 
 msgid "Greeter"
-msgstr "Programma di benvenuto"
+msgstr "Greeter"
 
 msgid "Please chose which greeter to install"
-msgstr "Scegli quale programma di benvenuto installare"
+msgstr "Scegli quale greeter installare"
 
 msgid "This is a list of pre-programmed default_profiles"
 msgstr "Questo è un elenco di default_profiles preprogrammati"
@@ -1243,7 +1243,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Scegli un’opzione per concedere a Hyprland l'accesso al tuo hardware a Hyprland"
+"Scegli un’opzione per concedere a Hyprland l'accesso al tuo hardware"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "Tutti i valori immessi possono avere come suffisso un’unità: %, B, KB, KiB, MB, MiB…"
@@ -1561,7 +1561,7 @@ msgid "Loading packages..."
 msgstr "Caricamento pacchetti in corso..."
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr "Seleziona dalla lista sotto i pacchetti da installare"
+msgstr "Seleziona dalla lista sotto i pacchetti aggiuntivi da installare"
 
 msgid "Add a custom repository"
 msgstr "Aggiungi una repository personalizzata"
@@ -1621,10 +1621,10 @@ msgid "Exit help"
 msgstr "Chiudi aiuto"
 
 msgid "Preview scroll up"
-msgstr "Anteprima scorrimento vero l'alto"
+msgstr "Anteprima scorrimento su"
 
 msgid "Preview scroll down"
-msgstr "Anteprima scorrimento vero il basso"
+msgstr "Anteprima scorrimento giù"
 
 msgid "Move up"
 msgstr "Muovi su"
@@ -1664,6 +1664,123 @@ msgstr "Avvia modalità ricerca"
 
 msgid "Exit search mode"
 msgstr "Chiudi modalità ricerca"
+
+msgid "General"
+msgstr "Generale"
+
+msgid "Navigation"
+msgstr "Navigazione"
+
+msgid "Selection"
+msgstr "Selezione"
+
+msgid "Search"
+msgstr "Cerca"
+
+msgid "Down"
+msgstr "In fondo"
+
+msgid "Up"
+msgstr "Su"
+
+msgid "Confirm"
+msgstr "Conferma"
+
+msgid "Focus right"
+msgstr "Vai a destra"
+
+msgid "Focus left"
+msgstr "Vai a sinistra"
+
+msgid "Toggle"
+msgstr "Attiva/disattiva"
+
+msgid "Show/Hide help"
+msgstr "Mostra/nascondi aiuto"
+
+msgid "Quit"
+msgstr "Esci"
+
+msgid "First"
+msgstr "Primo"
+
+msgid "Last"
+msgstr "Ultimo"
+
+msgid "Select"
+msgstr "Seleziona"
+
+msgid "Page Up"
+msgstr "Pagina su"
+
+msgid "Page Down"
+msgstr "Pagina su"
+
+msgid "Page up"
+msgstr "Pagina su"
+
+msgid "Page down"
+msgstr "Pagina giù"
+
+msgid "Page Left"
+msgstr "Pagina a sinistra"
+
+msgid "Page Right"
+msgstr "Pagina a destra"
+
+msgid "Cursor up"
+msgstr "Cursore su"
+
+msgid "Cursor down"
+msgstr "Cursore giù"
+
+msgid "Cursor right"
+msgstr "Cursore a destra"
+
+msgid "Cursor left"
+msgstr "Cursore a sinistra"
+
+msgid "Top"
+msgstr "In cima"
+
+msgid "Bottom"
+msgstr "In fondo"
+
+msgid "Home"
+msgstr "Inizio"
+
+msgid "End"
+msgstr "Fine"
+
+msgid "Toggle option"
+msgstr "Opzioni di attivazione"
+
+msgid "Scroll Up"
+msgstr "Scorri Su"
+
+msgid "Scroll Down"
+msgstr "Scorri giù"
+
+msgid "Scroll Left"
+msgstr "Scorri a sinistra"
+
+msgid "Scroll Right"
+msgstr "Scorri a destra"
+
+msgid "Scroll Home"
+msgstr "Scorri all'inizio"
+
+msgid "Scroll End"
+msgstr "Scorri alla fine"
+
+msgid "Focus Next"
+msgstr "Vai al successivo"
+
+msgid "Focus Previous"
+msgstr "Vai al precedente"
+
+msgid "Copy selected text"
+msgstr "Copia il testo selezionato"
 
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc ha bisogno dell’accesso al tuo posto (insieme di dispositivi hardware, ad esempio tastiera, mouse, ecc.)"
@@ -1883,38 +2000,23 @@ msgstr "Usa NetworkManager (backend iwd)"
 msgid "Firewall"
 msgstr "Firewall"
 
-msgid "Enter credentials file decryption password"
-msgstr "Inserici la password di decrittazione del file delle credenziali"
-
-msgid "Configuration preview"
-msgstr "Anteprima della configurazione"
-
-msgid "Enter a directory for the configuration(s) to be saved"
-msgstr "Inserisci una cartella in cui salvare le configurazioni"
-
-msgid "Enter a respository name"
-msgstr "Inserisci il nome di un repository"
-
-msgid "Enter the repository url"
-msgstr "Inserisci l'URL della repository"
-
-msgid "Enter server url"
-msgstr "Inserisci l'URL del server"
-
-msgid "Select mirror regions to be enabled"
-msgstr "Seleziona quali regioni dei mirror abilitare"
-
-msgid "Select optional repositories to be enabled"
-msgstr "Seleziona quali repository aggiuntive opzionali abilitare"
-
 msgid "Select audio configuration"
 msgstr "Seleziona la configurazione audio"
+
+msgid "Enter credentials file decryption password"
+msgstr "Inserici la password di decrittazione del file delle credenziali"
 
 msgid "Enter root password"
 msgstr "Inserisci la password di root"
 
 msgid "Select bootloader to install"
 msgstr "Seleziona il bootloader da installare"
+
+msgid "Configuration preview"
+msgstr "Anteprima della configurazione"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Inserisci una cartella in cui salvare le configurazioni"
 
 msgid "Select encryption type"
 msgstr "Seleziona il tipo di crittografia"
@@ -1956,15 +2058,45 @@ msgstr "Inserisci un nome dell'host"
 msgid "Select timezone"
 msgstr "Seleziona il fuso orario"
 
-msgid "No packages found"
-msgstr "Nessun pacchetto trovato"
-
 msgid "Enter the number of parallel downloads to be enabled"
 msgstr "Inserisci il numero di download in parallelo da abilitare"
 
 #, python-brace-format
 msgid "Value must be between 1 and {}"
 msgstr "Il valore deve essere tra 1 e {}"
+
+msgid "Select which kernel(s) to install"
+msgstr "Scegli quali kernel installare"
+
+msgid "Enter a respository name"
+msgstr "Inserisci il nome di un repository"
+
+msgid "Enter the repository url"
+msgstr "Inserisci l'URL della repository"
+
+msgid "Enter server url"
+msgstr "Inserisci l'URL del server"
+
+msgid "Select mirror regions to be enabled"
+msgstr "Seleziona quali regioni dei mirror abilitare"
+
+msgid "Select optional repositories to be enabled"
+msgstr "Seleziona quali repository aggiuntive opzionali abilitare"
+
+msgid "Select an interface"
+msgstr "Seleziona un'interfaccia"
+
+msgid "Choose network configuration"
+msgstr "Scegli la configurazione di rete"
+
+msgid "No packages found"
+msgstr "Nessun pacchetto trovato"
+
+msgid "Select which greeter to install"
+msgstr "Seleziona quale greeter installare"
+
+msgid "Select a profile type"
+msgstr "Seleziona un tipo di profilo"
 
 msgid "Enter new password"
 msgstr "Inserisci una nuova password"
@@ -1975,20 +2107,54 @@ msgstr "Inserisci un nome utente"
 msgid "Enter a password"
 msgstr "Inserisci una password"
 
-msgid "Select an interface"
-msgstr "Seleziona un'interfaccia"
-
-msgid "Choose network configuration"
-msgstr "Scegli la configurazione di rete"
-
-msgid "Select which kernel(s) to install"
-msgstr "Scegli quali kernel installare"
-
-msgid "Select which greeter to install"
-msgstr "Seleziona quale schermata di benvenuto installare"
-
-msgid "Select a profile type"
-msgstr "Seleziona un tipo di profilo"
-
 msgid "The password did not match, please try again"
 msgstr "La password non corrisponde, prova ancora"
+
+msgid "Password strength: Weak"
+msgstr "Complessità password: Bassa"
+
+msgid "Password strength: Moderate"
+msgstr "Complessità password: Media"
+
+msgid "Password strength: Strong"
+msgstr "Complessità password: Alta"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "Il profilo desktop selezionato richiede un utente regolare per accedere via greeter"
+
+#, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Tipo di ambiente: {} {}"
+
+msgid "Recommended"
+msgstr "Raccomandato"
+
+msgid "Package"
+msgstr "Pacchetto"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr "Selezione curata di pacchetti di KDE Plasma"
+
+msgid "Dependencies"
+msgstr "Dipendenze"
+
+msgid "Package group"
+msgstr "Gruppo di pacchetti"
+
+msgid "Extensive KDE Plasma installation"
+msgstr "Installazione di KDE Plasma estesa"
+
+msgid "Packages in group"
+msgstr "Pacchetti nel gruppo"
+
+msgid "Minimal KDE Plasma installation"
+msgstr "Installazione di KDE Plasma minimale"
+
+msgid "Description"
+msgstr "Descrizione"
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Seleziona la configurazione di KDE Plasma da installare"
+
+msgid "Input cannot be empty"
+msgstr "Il campo non può essere vuoto"
