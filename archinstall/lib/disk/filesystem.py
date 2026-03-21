@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 
 from archinstall.lib.disk.device_handler import device_handler
+from archinstall.lib.disk.luks import Luks2
 from archinstall.lib.disk.lvm import (
 	lvm_group_info,
 	lvm_pv_create,
@@ -12,7 +13,6 @@ from archinstall.lib.disk.lvm import (
 	lvm_vol_reduce,
 )
 from archinstall.lib.disk.utils import udev_sync
-from archinstall.lib.luks import Luks2
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
