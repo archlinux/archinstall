@@ -8,7 +8,7 @@ from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
-from archinstall.lib.network.network_handler import NetworkHandler
+from archinstall.lib.network.network_handler import install_network_config
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
@@ -40,7 +40,7 @@ def perform_installation(arch_config_handler: ArchConfigHandler) -> None:
 		installation.add_bootloader(Bootloader.Systemd)
 
 		if config.network_config:
-			NetworkHandler().install_network_config(
+			install_network_config(
 				config.network_config,
 				installation,
 				config.profile_config,

@@ -13,7 +13,7 @@ async def get_password(
 	header: str | None = None,
 	allow_skip: bool = False,
 	preset: str | None = None,
-	skip_confirmation: bool = False,
+	no_confirmation: bool = False,
 ) -> Password | None:
 	def password_hint(value: str) -> InputInfo | None:
 		if not value:
@@ -51,7 +51,7 @@ async def get_password(
 		password = Password(plaintext=result.get_value())
 		break
 
-	if skip_confirmation:
+	if no_confirmation:
 		return password
 
 	confirmation_header = f'{tr("Password")}: {password.hidden()}\n\n'
@@ -62,12 +62,15 @@ async def get_password(
 			return tr('The password did not match, please try again')
 		return None
 
-	_ = await Input(
+	result = await Input(
 		header=confirmation_header,
-		allow_skip=False,
+		allow_skip=allow_skip,
 		password=True,
 		validator_callback=_validate,
 	).show()
+
+	if result.type_ == ResultType.Skip:
+		return None
 
 	return password
 

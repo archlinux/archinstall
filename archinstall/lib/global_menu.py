@@ -11,7 +11,8 @@ from archinstall.lib.general.system_menu import select_kernel, select_swap
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.locale_menu import LocaleMenu
 from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
-from archinstall.lib.mirrors import MirrorListHandler, MirrorMenu
+from archinstall.lib.mirror.mirror_handler import MirrorListHandler
+from archinstall.lib.mirror.mirror_menu import MirrorMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
