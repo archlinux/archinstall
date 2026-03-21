@@ -501,7 +501,7 @@ class ArchConfigHandler:
 						lambda p=prompt: get_password(  # type: ignore[misc]
 							header=p,
 							allow_skip=False,
-							skip_confirmation=True,
+							no_confirmation=True,
 						)
 					)
 
