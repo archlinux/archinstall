@@ -566,7 +566,7 @@ class PartitioningList(ListManager[DiskSegment]):
 			if not await self._reset_confirmation():
 				return None
 
-		from archinstall.lib.interactions.disk_conf import suggest_single_disk_layout
+		from archinstall.lib.disk.disk_menu import suggest_single_disk_layout
 
 		return await suggest_single_disk_layout(self._device)
 
