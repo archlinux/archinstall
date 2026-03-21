@@ -3,9 +3,9 @@ import time
 from pathlib import Path
 
 from archinstall.lib.menu.helpers import Confirmation, Input
-from archinstall.lib.models.users import Password
+from archinstall.lib.models.users import Password, PasswordStrength
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import tui
+from archinstall.tui.ui.components import InputInfo, InputInfoType, tui
 from archinstall.tui.ui.result import ResultType
 
 
@@ -13,14 +13,27 @@ async def get_password(
 	header: str | None = None,
 	allow_skip: bool = False,
 	preset: str | None = None,
-	skip_confirmation: bool = False,
+	no_confirmation: bool = False,
 ) -> Password | None:
+	def password_hint(value: str) -> InputInfo | None:
+		if not value:
+			return None
+		strength = PasswordStrength.strength(value)
+		if strength in (PasswordStrength.VERY_WEAK, PasswordStrength.WEAK):
+			return InputInfo(message=tr('Password strength: Weak'), info_type=InputInfoType.MsgError)
+		elif strength == PasswordStrength.MODERATE:
+			return InputInfo(message=tr('Password strength: Moderate'), info_type=InputInfoType.MsgWarning)
+		elif strength == PasswordStrength.STRONG:
+			return InputInfo(message=tr('Password strength: Strong'), info_type=InputInfoType.MsgInfo)
+		return None
+
 	while True:
 		result = await Input(
 			header=header,
 			allow_skip=allow_skip,
 			default_value=preset,
 			password=True,
+			info_callback=password_hint,
 		).show()
 
 		if result.type_ == ResultType.Skip:
@@ -38,7 +51,7 @@ async def get_password(
 		password = Password(plaintext=result.get_value())
 		break
 
-	if skip_confirmation:
+	if no_confirmation:
 		return password
 
 	confirmation_header = f'{tr("Password")}: {password.hidden()}\n\n'
@@ -49,12 +62,15 @@ async def get_password(
 			return tr('The password did not match, please try again')
 		return None
 
-	_ = await Input(
+	result = await Input(
 		header=confirmation_header,
-		allow_skip=False,
+		allow_skip=allow_skip,
 		password=True,
 		validator_callback=_validate,
 	).show()
+
+	if result.type_ == ResultType.Skip:
+		return None
 
 	return password
 

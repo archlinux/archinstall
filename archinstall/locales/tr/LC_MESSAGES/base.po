@@ -1879,6 +1879,160 @@ msgstr "Ağ Yöneticisi'ni kullanın (varsayılan backend)"
 msgid "Use Network Manager (iwd backend)"
 msgstr "Ağ Yöneticisi'ni kullanın (iwd backend)"
 
+msgid "Firewall"
+msgstr "Güvenlik Duvarı"
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Kullanıcı yapılandırmasını kaydet"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Kimlik bilgileri dosyası şifre çözme parolası"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Bir parola gir: "
+
+msgid "Select bootloader to install"
+msgstr "Yüklemek istediğiniz önyükleyiciyi seçiniz"
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Yapılandırma"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Yapılandırmaların kaydedilmesi için bir dizin girin: "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Şifreleme türü"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Kurulum için istenilen ana bilgisayar adı: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Bir bağlantı noktası seçin :"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Bitiş girin (varsayılan: {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Alt disk bölümü ismi"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Alt disk bölümü bağlantı noktası"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Disk yapılandırması"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "Kök (/) bağlama dizini"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "Belirtilen dizine bağlanmış olan sürücü yapılandırmasını kullanacaksınız"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "DİKKAT: Archinstall betiği bu kurulumun uygunluğunu kontrol etmeyecektir"
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Dosya sistemini değiştir"
+
+msgid "Enter a hostname"
+msgstr "Bir ana bilgisayar adı girin"
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Bir zaman dilimi seç"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"Etkinleştirilecek paralel indirme sayısını girin.\n"
+"\n"
+"Not:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "Değer 1 ile {} arasında olmalı"
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Lütfen hangi karşılayıcının (greeter) kurulacağını seçin"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "Depo adı"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Özel depoyu değiştir"
+
+#, fuzzy
+msgid "Enter server url"
+msgstr "Sunucu adresi"
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Seçilmiş ayna bölgeleri"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Hangi tercihi ek depoların (repositorylerin) aktifleştirileceğini seçin"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Arayüzü sil"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "Ağ yapılandırması yok"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "U2F cihazı bulunamadı"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Lütfen hangi karşılayıcının (greeter) kurulacağını seçin"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Seçilmiş profiller: "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Wifi şifresini girin"
+
+msgid "Enter a username"
+msgstr "Bir kullanıcı adı gir"
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Bir parola gir: "
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "Onay parolası eşleşmedi, lütfen tekrar deneyin"
+
+msgid "Password strength: Weak"
+msgstr "Şifre gücü: Zayıf"
+
+msgid "Password strength: Moderate"
+msgstr "Şifre gücü: Ortalama"
+
+msgid "Password strength: Strong"
+msgstr "Şifre gücü: Güçlü"
+
 #~ msgid "Desktop"
 #~ msgstr "Masaüstü"
 

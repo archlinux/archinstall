@@ -30,7 +30,7 @@ from archinstall.lib.disk.utils import (
 from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
-from archinstall.lib.mirrors import MirrorListHandler
+from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device import (
@@ -805,14 +805,6 @@ class Installer:
 
 		return True
 
-	def configure_nm_iwd(self) -> None:
-		# Create NetworkManager config directory and write iwd backend conf
-		nm_conf_dir = self.target / 'etc/NetworkManager/conf.d'
-		nm_conf_dir.mkdir(parents=True, exist_ok=True)
-
-		iwd_backend_conf = nm_conf_dir / 'wifi_backend.conf'
-		iwd_backend_conf.write_text('[device]\nwifi.backend=iwd\n')
-
 	def mkinitcpio(self, flags: list[str]) -> bool:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mkinitcpio'):
@@ -1012,27 +1004,19 @@ class Installer:
 			self._configure_grub_btrfsd(snapshot_type)
 			self.enable_service('grub-btrfsd.service')
 
-	def setup_swap(self, kind: str = 'zram', algo: ZramAlgorithm = ZramAlgorithm.ZSTD) -> None:
-		if kind == 'zram':
-			info('Setting up swap on zram')
-			self.pacman.strap('zram-generator')
-			# Get RAM size in MB from hardware info
-			ram_kb = SysInfo.mem_total()
-			# Convert KB to MB and divide by 2, with minimum of 4096 MB
-			size_mb = max(ram_kb // 2048, 4096)
-			info(f'Zram size: {size_mb} from RAM: {ram_kb}')
-			info(f'Zram compression algorithm: {algo.value}')
+	def setup_swap(self, algo: ZramAlgorithm = ZramAlgorithm.ZSTD) -> None:
+		info('Setting up swap on zram')
+		self.pacman.strap('zram-generator')
 
-			with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
-				zram_conf.write('[zram0]\n')
-				zram_conf.write(f'zram-size = {size_mb}\n')
-				zram_conf.write(f'compression-algorithm = {algo.value}\n')
+		info(f'Zram compression algorithm: {algo.value}')
 
-			self.enable_service('systemd-zram-setup@zram0.service')
+		with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
+			zram_conf.write('[zram0]\n')
+			zram_conf.write(f'compression-algorithm = {algo.value}\n')
 
-			self._zram_enabled = True
-		else:
-			raise ValueError('Archinstall currently only supports setting up swap on zram')
+		self.enable_service('systemd-zram-setup@zram0.service')
+
+		self._zram_enabled = True
 
 	def _get_efi_partition(self) -> PartitionModification | None:
 		for layout in self._disk_config.device_modifications:

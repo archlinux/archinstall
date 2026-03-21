@@ -12,11 +12,11 @@ from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.interactions.general_conf import PostInstallationAction, select_post_installation
 from archinstall.lib.menu.util import delayed_warning
-from archinstall.lib.mirrors import MirrorListHandler
+from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import DiskLayoutType, EncryptionType
 from archinstall.lib.models.users import User
-from archinstall.lib.network.network_handler import NetworkHandler
+from archinstall.lib.network.network_handler import install_network_config
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -112,13 +112,13 @@ def perform_installation(
 			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=True)
 
 		if config.swap and config.swap.enabled:
-			installation.setup_swap('zram', algo=config.swap.algorithm)
+			installation.setup_swap(algo=config.swap.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
 			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
 
 		if config.network_config:
-			NetworkHandler().install_network_config(
+			install_network_config(
 				config.network_config,
 				installation,
 				config.profile_config,
