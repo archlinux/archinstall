@@ -30,7 +30,7 @@ from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, 
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from archinstall.lib.luks import Luks2, unlock_luks2_dev
-from archinstall.lib.mirrors import MirrorListHandler
+from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.device import (
