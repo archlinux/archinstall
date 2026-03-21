@@ -6,9 +6,9 @@ from archinstall.lib.authentication.authentication_menu import AuthenticationMen
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
+from archinstall.lib.general.general_menu import add_number_of_parallel_downloads, select_hostname, select_ntp, select_timezone
+from archinstall.lib.general.system_menu import select_kernel, select_swap
 from archinstall.lib.hardware import SysInfo
-from archinstall.lib.interactions.general_menu import add_number_of_parallel_downloads, select_hostname, select_ntp, select_timezone
-from archinstall.lib.interactions.system_menu import select_kernel, select_swap
 from archinstall.lib.locale.locale_menu import LocaleMenu
 from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
 from archinstall.lib.mirrors import MirrorListHandler, MirrorMenu
@@ -231,7 +231,7 @@ class GlobalMenu(AbstractMenu[None]):
 		return self._validate_bootloader() is None
 
 	async def _select_archinstall_language(self, preset: Language) -> Language:
-		from archinstall.lib.interactions.general_menu import select_archinstall_language
+		from archinstall.lib.general.general_menu import select_archinstall_language
 
 		language = await select_archinstall_language(translation_handler.translated_languages, preset)
 		translation_handler.activate(language)
