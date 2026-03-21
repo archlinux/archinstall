@@ -1,4 +1,5 @@
 import re
+from datetime import UTC, date, datetime
 from typing import override
 
 from archinstall.lib.menu.helpers import Confirmation, Input
@@ -91,6 +92,12 @@ class UserList(ListManager[User]):
 			return None
 
 		header += f'{tr("Password")}: {password.hidden()}\n'
+
+		birth_date = self._ask_birth_date(header)
+
+		if birth_date:
+			header += f'{tr("Birth date")}: {birth_date}\n'
+
 		prompt = f'{header}\n' + tr('Should "{}" be a superuser (sudo)?\n').format(username)
 
 		result = await Confirmation(
@@ -105,7 +112,35 @@ class UserList(ListManager[User]):
 			case _:
 				raise ValueError('Unhandled result type')
 
-		return User(username, password, sudo)
+		return User(username, password, sudo, birth_date=birth_date)
+
+	def _validate_birth_date(self, value: str | None) -> str | None:
+		if not value:
+			return tr('Birth date is required')
+		try:
+			dt = date.fromisoformat(value)
+		except ValueError:
+			return tr('Invalid date format. Use YYYY-MM-DD')
+		if dt > datetime.now(tz=UTC).date():
+			return tr('Birth date cannot be in the future')
+		if dt.year < 1900:
+			return tr('Birth date year must be 1900 or later')
+		return None
+
+	def _ask_birth_date(self, header: str) -> str:
+		prompt = f'{header}\n' + tr('Enter birth date (YYYY-MM-DD, e.g. 2000-01-01)')
+
+		result = Input(
+			prompt,
+			allow_skip=False,
+			validator_callback=self._validate_birth_date,
+		).show()
+
+		match result.type_:
+			case ResultType.Selection:
+				return result.get_value() or ''
+			case _:
+				raise ValueError('Unhandled result type')
 
 
 async def select_users(prompt: str = '', preset: list[User] = []) -> list[User]:
