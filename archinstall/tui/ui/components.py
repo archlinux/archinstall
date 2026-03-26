@@ -113,7 +113,9 @@ class LoadingScreen(BaseScreen[ValueT]):
 	def _exec_callback(self) -> None:
 		assert self._data_callback
 		result = self._data_callback()
-		_ = self.dismiss(Result(ResultType.Selection, _data=result))
+		# cannot call self.dismiss directly from
+		# background thread (thread=true) as there's no event loop
+		self.app.call_from_thread(self.dismiss, Result(ResultType.Selection, _data=result))
 
 	def action_pop_screen(self) -> None:
 		_ = self.dismiss()
