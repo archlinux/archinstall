@@ -288,6 +288,10 @@ class OptionListScreen(BaseScreen[ValueT]):
 		if focus_item := self._group.focus_item:
 			self._set_preview(focus_item.get_id())
 
+	def on_input_submitted(self, event: Input.Submitted) -> None:
+		if self.query_one(Input).has_focus:
+			self._handle_search_action()
+
 	def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
 		selected_option = event.option
 		if selected_option.id is not None:
@@ -487,6 +491,10 @@ class SelectListScreen(BaseScreen[ValueT]):
 			yield Input(placeholder='/filter', id='filter-input')
 
 		yield Footer()
+
+	def on_input_submitted(self, event: Input.Submitted) -> None:
+		if self.query_one(Input).has_focus:
+			self._handle_search_action()
 
 	def on_mount(self) -> None:
 		self._update_options(self._options)
