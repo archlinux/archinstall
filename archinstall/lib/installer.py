@@ -1,4 +1,5 @@
 import glob
+import json
 import os
 import platform
 import re
@@ -1926,6 +1927,20 @@ class Installer:
 
 		if user.sudo:
 			self.enable_sudo(user)
+
+		if user.birth_date:
+			self._write_userdb_dropin(user)
+
+	def _write_userdb_dropin(self, user: User) -> None:
+		userdb_dir = self.target / 'etc' / 'userdb'
+		userdb_dir.mkdir(parents=True, exist_ok=True)
+
+		dropin = userdb_dir / f'{user.username}.user'
+		record = {'userName': user.username, 'birthDate': user.birth_date}
+		dropin.write_text(json.dumps(record))
+		dropin.chmod(0o644)
+
+		info(f'Wrote userdb drop-in for {user.username} with birth date')
 
 	def set_user_password(self, user: User) -> bool:
 		info(f'Setting password for {user.username}')
