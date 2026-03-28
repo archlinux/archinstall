@@ -54,7 +54,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Nur Pakete wie base, base-devel, linux, linux-firmware, efibootmgr und optionale Profilpakete werden installiert."
 
 msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr ""
+msgstr "Hinweis: base-devel wird nicht mehr standardmäßig installiert. Fügen Sie es hier hinzu, wenn sie Build-Tools benötigen."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Wenn Sie einen Webbrowser installieren möchten, wie z.B. Firefox oder Chromium, können Sie diese nun eingeben."
@@ -1737,7 +1737,7 @@ msgid "Would you like to configure Bluetooth?"
 msgstr "Möchten Sie Bluetooth aktivieren?"
 
 msgid "Print service"
-msgstr ""
+msgstr "Drucker service"
 
 #, fuzzy
 msgid "Would you like to configure the print service?"
@@ -1815,67 +1815,67 @@ msgid "Select wifi network to connect to"
 msgstr "Wählen Sie einen Netzwerkadapter zur Konfiguration aus"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Suche nach WLAN-Netzwerken..."
 
 #, fuzzy
 msgid "No wifi networks found"
 msgstr "Keine Netzwerkkonfiguration"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "WLAN-Einrichtung fehlgeschlagen."
 
 #, fuzzy
 msgid "Enter wifi password"
 msgstr "Passwort eingeben: "
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "Removable"
-msgstr ""
+msgstr "Wechseldatenträger"
 
 msgid "Install to removable location"
-msgstr ""
+msgstr "Auf wechseldatenträger-Pfad installieren"
 
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
+msgstr "Wird in /EFI/BOOT/ installiert (Wechseldatenträger-Pfad)"
 
 msgid "Will install to standard location with NVRAM entry"
-msgstr ""
+msgstr "Wird am Standardpfad mit NVRAM-Eintrag installiert"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
+msgstr "Möchten Sie den bootloader am Standard-Suchpfad für Wechseldatenträger installieren?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
+msgstr "Dies installiert den Bootloader nach /EFI/BOOT/BOOTX64.EFI (oder ähnlich), was nützlich ist für:"
 
 msgid "USB drives or other portable external media."
-msgstr ""
+msgstr "USB-Sticks oder andere tragbare externe Datenträger."
 
 msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
+msgstr "Systeme, bei denen der Datenträger auf jedem Computer bootfähig sein soll."
 
 msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
+msgstr "Firmware, die NVRAM-Starteinträge nicht korrekt unterstützt."
 
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr ""
+msgstr "Wird in /EFI/BOOT/ installiert (Wechseldatenträger-Pfad, sichere Voreinstellung)"
 
 msgid "Will install to custom location with NVRAM entry"
-msgstr ""
+msgstr "Wird am benutzerdefinierten Pfad mit NVRAM-Eintrag installiert"
 
 msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr ""
+msgstr "Firmware, die NVRAM-Starteinträge nicht korrekt unterstützt, wie die meisten MSI-Mainboards,"
 
 msgid "most Apple Macs, many laptops..."
-msgstr ""
+msgstr "die meisten Apple Macs, viele Laptops..."
 
 #, fuzzy
 msgid "Language"
-msgstr "Lokale Sprache"
+msgstr "Sprache"
 
 msgid "Compression algorithm"
-msgstr ""
+msgstr "Komprimierungsalgorithmus"
 
 #, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
@@ -1886,10 +1886,10 @@ msgid "Select zram compression algorithm:"
 msgstr "Wählen Sie einen Einhängeort aus:"
 
 msgid "Use Network Manager (default backend)"
-msgstr ""
+msgstr "NetworkManager verwenden (Standard-Backend)"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr ""
+msgstr "NetworkManager verwenden (iwd-Backend)"
 
 #~ msgid "All open-source"
 #~ msgstr "Alle quelloffene"
