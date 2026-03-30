@@ -203,25 +203,15 @@ class GlobalMenu(AbstractMenu[None]):
 			item = self._item_group.find_by_key(s)
 			return item.has_value()
 
-		def has_superuser() -> bool:
-			if auth_config and auth_config.users:
-				return any([u.sudo for u in auth_config.users])
-			return False
-
-		def has_regular_user() -> bool:
-			if auth_config and auth_config.users:
-				return len(auth_config.users) > 0
-			return False
-
 		missing = set()
 
-		if (auth_config is None or auth_config.root_enc_password is None) and not has_superuser():
+		if (auth_config is None or auth_config.root_enc_password is None) and not (auth_config and auth_config.has_superuser()):
 			missing.add(
 				tr('Either root-password or at least 1 user with sudo privileges must be specified'),
 			)
 
 		# These greeters only show users with UID >= 1000 and have no manual login by default
-		if not has_regular_user():
+		if not (auth_config and auth_config.has_regular_user()):
 			profile_item: MenuItem = self._item_group.find_by_key('profile_config')
 			profile_config: ProfileConfiguration | None = profile_item.value
 
