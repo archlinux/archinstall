@@ -1,5 +1,6 @@
 from typing import override
 
+from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.applications.application_menu import ApplicationMenu
 from archinstall.lib.args import ArchConfig
 from archinstall.lib.authentication.authentication_menu import AuthenticationMenu
@@ -207,12 +208,29 @@ class GlobalMenu(AbstractMenu[None]):
 				return any([u.sudo for u in auth_config.users])
 			return False
 
+		def has_regular_user() -> bool:
+			if auth_config and auth_config.users:
+				return len(auth_config.users) > 0
+			return False
+
 		missing = set()
 
 		if (auth_config is None or auth_config.root_enc_password is None) and not has_superuser():
 			missing.add(
 				tr('Either root-password or at least 1 user with sudo privileges must be specified'),
 			)
+
+		# These greeters only show users with UID >= 1000 and have no manual login by default
+		if not has_regular_user():
+			profile_item: MenuItem = self._item_group.find_by_key('profile_config')
+			profile_config: ProfileConfiguration | None = profile_item.value
+
+			if profile_config and profile_config.profile and profile_config.profile.is_desktop_profile():
+				problematic_greeters = {GreeterType.Sddm}
+				if any(p.default_greeter_type in problematic_greeters for p in profile_config.profile.current_selection):
+					missing.add(
+						tr('The selected desktop profile requires a regular user to log in via the greeter'),
+					)
 
 		for item in self._item_group.items:
 			if item.mandatory:
