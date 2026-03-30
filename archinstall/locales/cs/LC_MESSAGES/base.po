@@ -1869,3 +1869,157 @@ msgstr "Použít Network Manager (výchozí backend)"
 
 msgid "Use Network Manager (iwd backend)"
 msgstr "Použít Network Manager (iwd backend)"
+
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Uložit uživatelskou konfiguraci"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Heslo pro dešifrování souboru s přihlašovacími údaji"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Zadejte heslo: "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Konfigurace"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Zadejte adresář pro uložení konfigurace (konfigurací): "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Typ šifrování"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Název počítače k instalaci: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Zvolte přípojný bod:"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Zadejte konec (výchozí: {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Název podsvazku"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Přípojný bod podsvazku"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Konfigurace disku"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "Kořenový adresář pro připojení"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Změnit souborový systém"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Zvolte časovou zónu"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"Zadejte povolený počet paralelních stahování.\n"
+"\n"
+"Poznámka:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Prosím vyberte přihlašovací obrazovku k instalaci"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "Název repozitáře"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Změnit vlastní repozitář"
+
+#, fuzzy
+msgid "Enter server url"
+msgstr "URL serveru"
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Zvolené oblasti zrcadel"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Vyberte, které dodatečné balíčky mají být povoleny"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Smazat rozhraní"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "Žádná konfigurace sítě"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "Nebylo nalezeno žádné U2F zařízení"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Prosím vyberte přihlašovací obrazovku k instalaci"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Zvolené profily: "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Zadejte heslo pro wifi"
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Zadejte heslo: "
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "Potvrzovací heslo se neshoduje, zkuste to prosím znovu"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""

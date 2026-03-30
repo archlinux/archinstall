@@ -1983,3 +1983,154 @@ msgstr ""
 
 msgid "Use Network Manager (iwd backend)"
 msgstr ""
+
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Sábháil cumraíocht úsáideora"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Pasfhocal criptithe"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Iontráil pasfhocal: "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Cumraíocht"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Cuir isteach eolaire don chumraíocht(s) atá le sábháil: "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Cineál criptithe"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "An t-óstainm inmhianaithe don suiteáil: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Roghnaigh pointe gléasta :"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Cuir isteach an deireadh (réamhshocraithe: {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Ainm fo-imleabhar "
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Pointe sléibhe subvolume"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Cumraíocht diosca"
+
+msgid "Enter root mount directory"
+msgstr ""
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Athraigh córas comhaid"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Roghnaigh crios ama"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"Cuir isteach líon na n-íoslódálacha comhthreomhara atá le cumasú.\n"
+"\n"
+"Nóta:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Roghnaigh cé acu beannaitheoir atá le suiteáil"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "Réigiún scáthán"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Athraigh scáthán saincheaptha"
+
+msgid "Enter server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Réigiúin scátháin"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Roghnaigh na stórtha breise roghnacha le cumasú"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Scrios comhéadan"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "Gan cumraíocht líonra"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "Comhéadain {} cumraithe"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Roghnaigh cé acu beannaitheoir atá le suiteáil"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Próifílí roghnaithe: "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Iontráil pasfhocal: "
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Iontráil pasfhocal: "
+
+msgid "The password did not match, please try again"
+msgstr ""
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""

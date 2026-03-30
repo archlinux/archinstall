@@ -1995,6 +1995,15 @@ msgstr "Ingrese una contraseña"
 msgid "The password did not match, please try again"
 msgstr "La contraseña no coincide, por favor inténtelo nuevamente"
 
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
+
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
 

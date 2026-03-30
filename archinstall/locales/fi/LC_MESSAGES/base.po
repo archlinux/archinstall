@@ -1996,3 +1996,154 @@ msgstr ""
 
 msgid "Use Network Manager (iwd backend)"
 msgstr ""
+
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Tallenna käyttäjän määritykset"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Salauksen salasana"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Anna salasana: "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Asetukset"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Anna hakemisto tallennettaville määrityksille: "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Salaustyyppi"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Valitse hostname asennukselle: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Valitse liitoskohta :"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Anna loppu (oletus:  {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Alitaltion nimi "
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Alitaltion liitoskohta"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Kiintolevyn määritys"
+
+msgid "Enter root mount directory"
+msgstr ""
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Vaihda tiedostojärjestelmä"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Valitse aikavyöhyke"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"Anna rinnakkaisten latausten määrä.\n"
+"\n"
+"Huomaa:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Valitse asennettava käyttöliittymä"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "Pakettivarasto"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Vaihda mukautettu peilipaikka"
+
+msgid "Enter server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Peilipaikan maa"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Valitse, valinnaiset lisävarastot jotka otetaan käyttöön"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Poista liitäntä"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "Ei verkkoasetuksia"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "Määritetty {} liittymää"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Valitse asennettava käyttöliittymä"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Valitut profiilit: "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Anna salasana: "
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Anna salasana: "
+
+msgid "The password did not match, please try again"
+msgstr ""
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""

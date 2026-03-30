@@ -1940,3 +1940,156 @@ msgstr ""
 
 msgid "Use Network Manager (iwd backend)"
 msgstr ""
+
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "حفظ إعدادات المستخدم"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "كلمة سر التشفير"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "أدخل كلمة مرور: "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "الإعداد "
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "أدخل مجلداً للإعدادات التي سيتم حفظها: "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "نوع التشفير"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "اسم المضيف المُراد للتثبيت: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "حدد نقطة التثبيت :"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "أدخل النهاية (افتراضي: {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "اسم وحدة التخزين الفرعية"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "نقطة تحميل وحدة التخزين الفرعية"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "ضبط القرص"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "دليل جذر الضم"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "تغيير نظام الملفات"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "حدِّد منطقة زمنية"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"أدخل عدد التنزيلات المتوازية المراد تمكينها.\n"
+"\n"
+"ملاحظة:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "يرجى اختيار المُرحِّب الذي سيتم تثبيته"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "اسم المرآة"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "تغيير المرآة المخصصة"
+
+msgid "Enter server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "مناطق المرايا"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "اختر المستودعات الإضافية الاختيارية التي تريد تمكينها"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "حذف الواجهة"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "لا يوجد إعداد للشبكة"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "تهيئة الواجهات"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "يرجى اختيار المُرحِّب الذي سيتم تثبيته"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "ملفات تعريف مختارة:  "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "أدخل كلمة مرور: "
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "أدخل كلمة مرور: "
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "كلمة المرور التأكيدية غير متطابقة، يرجى المحاولة مرة أخرى"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""

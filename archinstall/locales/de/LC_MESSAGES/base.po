@@ -1891,6 +1891,160 @@ msgstr ""
 msgid "Use Network Manager (iwd backend)"
 msgstr ""
 
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Benutzerkonfiguration speichern"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Passwort für die Entschlüsselung der Anmeldedaten-Datei"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Passwort eingeben: "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Konfiguration"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Geben Sie einen Ordner an, in dem Konfigurationen gespeichert werden sollen: "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Verschlüsselungstyp"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Gewünschter Gerätename/Hostname für die Installation: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Wählen Sie einen Einhängeort aus:"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Geben Sie das Ende ein (Standard: {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Name des Subvolumes"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Subvolume-Einhängeort"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Laufwerkskonfiguration"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "Einhängeverzeichnis der Root-Partition"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Dateisystem ändern"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Wählen Sie eine Zeitzone aus"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"Geben Sie die Nummer an parallelen Downloads an.\n"
+"\n"
+"Achtung:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Bitte den zu installierenden Greeter (Begrüßer/Anmeldebildschirm) auswählen"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "Name des Repositoriums"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Benutzerdefiniertes Repositorium bearbeiten"
+
+#, fuzzy
+msgid "Enter server url"
+msgstr "Server-URL"
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Ausgewählte Spiegelserver-Regionen"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Wählen Sie aus, welche zusätzlichen Repositories verwendet werden sollen"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Verbindung löschen"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "Keine Netzwerkkonfiguration"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "Keine U2F-Geräte gefunden"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Bitte den zu installierenden Greeter (Begrüßer/Anmeldebildschirm) auswählen"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Ausgewählte Profile: "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Passwort eingeben: "
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Passwort eingeben: "
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "Das Passwort stimmt nicht überein, bitte versuche es erneut"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
+
 #~ msgid "All open-source"
 #~ msgstr "Alle quelloffene"
 

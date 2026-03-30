@@ -1903,6 +1903,160 @@ msgstr ""
 msgid "Use Network Manager (iwd backend)"
 msgstr ""
 
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Enregistrer la configuration utilisateur"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Mot de passe de déchiffrement du disque"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Entrer un mot de passe : "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Configuration"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Saisir un répertoire pour la ou les configuration(s) à enregistrer : "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Type de chiffrement"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Nom d'hôte souhaité pour l'installation : "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Sélectionner un point de montage :"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Saisir le secteur de fin (par défaut : secteur {}) : "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Nom du sous-volume"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Point de montage du sous-volume"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Configuration du disque"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "Répertoire de montage racine"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Changer le système de fichiers"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Sélectionner un fuseau horaire"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"Saisir le nombre de téléchargements parallèles à activer.\n"
+"\n"
+"Note :\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Veuillez choisir le greeter (interface de connexion) à installer"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "Nom du dépôt"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Modifier le dépôt personnalisé"
+
+#, fuzzy
+msgid "Enter server url"
+msgstr "URL du serveur"
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Régions de miroirs sélectionnées"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Choisir les dépôts supplémentaires en option à activer"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Supprimer l'interface"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "Aucune configuration réseau"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "Pas de périphériques U2F trouvés"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Veuillez choisir le greeter (interface de connexion) à installer"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Profils sélectionnés : "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Entrer un mot de passe : "
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Entrer un mot de passe : "
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "Le mot de passe de confirmation ne correspond pas, veuillez réessayer"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Modifier {origkey} :"

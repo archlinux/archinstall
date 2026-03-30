@@ -1934,3 +1934,156 @@ msgstr ""
 
 msgid "Use Network Manager (iwd backend)"
 msgstr ""
+
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "שמירת הגדרת משתמש"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "סיסמת הצפנת כונן"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "נא למלא סיסמה: "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "הגדרות"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "נא למלא את התיקייה להגדרות לשמירה: "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "סוג הצפנה"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "שם מארח רצוי להתקנה: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "נא לבחור נק׳ עגינה :"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "נא למלא סוף (ברירת מחדל: {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "שם תת־כרך"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "נק׳ עיגון תת־כרך"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "הגדרת כונן"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "תיקיית עגינת שורש"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "החלפת מערכת קבצים"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "בחירת אזור זמן"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"נא למלא את מספר ההורדות המקביליות להפעלה.‬\n"
+"\n"
+"‫הערה:‬\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "נא לבחור איזו מערכת קבלת פנים להתקין"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "שם אתר המראה"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "החלפת אתר מראה משלך"
+
+msgid "Enter server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "אזורי אתרי מראה"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "נא לבחור אילו מאגרים נוספים להפעיל כרשות"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "מחיקת מנשק"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "אין הגדרות רשת"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "הגדרת מנשקים"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "נא לבחור איזו מערכת קבלת פנים להתקין"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "פרופילים נבחרים: "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "נא למלא סיסמה: "
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "נא למלא סיסמה: "
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "סיסמת האישור לא תואמת, נא לנסות שוב"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
