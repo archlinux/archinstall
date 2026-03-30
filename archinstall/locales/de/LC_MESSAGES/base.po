@@ -54,7 +54,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Nur Pakete wie base, base-devel, linux, linux-firmware, efibootmgr und optionale Profilpakete werden installiert."
 
 msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr "Hinweis: base-devel wird nicht mehr standardmäßig installiert. Fügen Sie es hier hinzu, wenn sie Build-Tools benötigen."
+msgstr "Hinweis: base-devel wird nicht mehr standardmäßig installiert. Fügen Sie es hier hinzu, wenn Sie Build-Tools benötigen."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Wenn Sie einen Webbrowser installieren möchten, wie z.B. Firefox oder Chromium, können Sie diese nun eingeben."
@@ -1737,7 +1737,7 @@ msgid "Would you like to configure Bluetooth?"
 msgstr "Möchten Sie Bluetooth aktivieren?"
 
 msgid "Print service"
-msgstr "Drucker service"
+msgstr "Drucker-Service"
 
 #, fuzzy
 msgid "Would you like to configure the print service?"
@@ -1835,19 +1835,19 @@ msgid "Removable"
 msgstr "Wechseldatenträger"
 
 msgid "Install to removable location"
-msgstr "Auf wechseldatenträger-Pfad installieren"
+msgstr "Auf Wechseldatenträger installieren"
 
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr "Wird in /EFI/BOOT/ installiert (Wechseldatenträger-Pfad)"
+msgstr "Wird in /EFI/BOOT/ installiert (Wechseldatenträger)"
 
 msgid "Will install to standard location with NVRAM entry"
 msgstr "Wird am Standardpfad mit NVRAM-Eintrag installiert"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr "Möchten Sie den bootloader am Standard-Suchpfad für Wechseldatenträger installieren?"
+msgstr "Möchten Sie den Bootloader am Standard-Suchpfad für Wechseldatenträger installieren?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr "Dies installiert den Bootloader nach /EFI/BOOT/BOOTX64.EFI (oder ähnlich), was nützlich ist für:"
+msgstr "Dies installiert den Bootloader unter /EFI/BOOT/BOOTX64.EFI (oder ähnlich), was nützlich ist für:"
 
 msgid "USB drives or other portable external media."
 msgstr "USB-Sticks oder andere tragbare externe Datenträger."
