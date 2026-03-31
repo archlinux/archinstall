@@ -41,7 +41,6 @@ class GfxPackage(Enum):
 	Dkms = 'dkms'
 	IntelMediaDriver = 'intel-media-driver'
 	LibvaIntelDriver = 'libva-intel-driver'
-	LibvaMesaDriver = 'libva-mesa-driver'
 	LibvaNvidiaDriver = 'libva-nvidia-driver'
 	Mesa = 'mesa'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
@@ -89,7 +88,6 @@ class GfxDriver(Enum):
 					GfxPackage.Xf86VideoAmdgpu,
 					GfxPackage.Xf86VideoAti,
 					GfxPackage.Xf86VideoNouveau,
-					GfxPackage.LibvaMesaDriver,
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanRadeon,
@@ -101,7 +99,6 @@ class GfxDriver(Enum):
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoAmdgpu,
 					GfxPackage.Xf86VideoAti,
-					GfxPackage.LibvaMesaDriver,
 					GfxPackage.VulkanRadeon,
 				]
 			case GfxDriver.IntelOpenSource:
@@ -121,7 +118,6 @@ class GfxDriver(Enum):
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoNouveau,
-					GfxPackage.LibvaMesaDriver,
 					GfxPackage.VulkanNouveau,
 				]
 			case GfxDriver.VMOpenSource:
