@@ -4,17 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "4.0"
+version = "4.1"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
 license = "GPL-3.0-only"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 keywords = ["linux", "arch", "archinstall", "installer"]
 classifiers = [
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
@@ -65,7 +65,7 @@ include-package-data = true
 archinstall = "archinstall"
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.14"
 files = "."
 exclude = "^build/"
 disallow_any_explicit = false
@@ -143,7 +143,7 @@ ignore-paths = [
     "^node_modules/",
 ]
 persistent = false
-py-version = "3.12"
+py-version = "3.14"
 recursive = true
 
 [tool.pylint.format]
