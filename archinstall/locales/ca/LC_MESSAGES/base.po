@@ -54,7 +54,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Només s'instal·laran paquets com base, base-devel, linux, linux-firmware, efibootmgr i altres paquets de perfil opcionals."
 
 msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr ""
+msgstr "Avís: base-devel ja no és instal·lat per defecte. Afegiu el paquet aquí si necessiteu les eines de compilació."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si desitgeu un navegador web, com ara firefox o chromium, ho podeu especificar al proper missatge."
@@ -1735,15 +1735,13 @@ msgid "Would you like to configure Bluetooth?"
 msgstr "Voleu configurar el Bluetooth?"
 
 msgid "Print service"
-msgstr ""
+msgstr "Servei d'impressió"
 
-#, fuzzy
 msgid "Would you like to configure the print service?"
-msgstr "Voleu configurar el Bluetooth?"
+msgstr "Voleu configurar el servei d'impressió?"
 
-#, fuzzy
 msgid "Power management"
-msgstr "Gestió de particions: {}"
+msgstr "Gestió d'energia"
 
 msgid "Authentication"
 msgstr "Autenticació"
@@ -1850,192 +1848,157 @@ msgstr "Sistemes on vulgueu que el dispositiu arranqui en qualsevol ordinador."
 msgid "Firmware that does not properly support NVRAM boot entries."
 msgstr "Firmware que no suporta registres d'arrancada NVRAM."
 
-#, fuzzy
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
 msgstr "S'instal·larà a /EFI/BOOT (mitjà extraïble)"
 
-#, fuzzy
 msgid "Will install to custom location with NVRAM entry"
-msgstr "S'instal·larà a una ubicació estàndard amb un registre NVRAM"
+msgstr "S'instal·larà a una ubicació personalitzada amb un registre NVRAM"
 
-#, fuzzy
 msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr "Firmware que no suporta registres d'arrancada NVRAM."
+msgstr "Firmware que no suporta registres d'arrancada NVRAM com ara la majoria de plaques base MSI,"
 
 msgid "most Apple Macs, many laptops..."
-msgstr ""
+msgstr "la majoria de Macs d'Apple, molts portàtils..."
 
-#, fuzzy
 msgid "Language"
-msgstr "Idioma local"
+msgstr "Idioma"
 
 msgid "Compression algorithm"
-msgstr ""
+msgstr "Algorisme de compressió"
 
-#, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Només s'instal·laran paquets com base, base-devel, linux, linux-firmware, efibootmgr i altres paquets de perfil opcionals."
+msgstr "Només s'instal·laran paquets com base, linux, linux-firmware, efibootmgr i altres paquets de perfil opcionals."
 
-#, fuzzy
 msgid "Select zram compression algorithm:"
-msgstr "Seleccioneu un punt de muntatge :"
+msgstr "Seleccioneu un algorisme de compressió per a zram:"
 
 msgid "Use Network Manager (default backend)"
-msgstr ""
+msgstr "Utilitzar Network Manager (backend per defecte)"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr ""
+msgstr "Utilitzar Network Manager (backend per a iwd)"
 
 msgid "Firewall"
-msgstr ""
+msgstr "Tallafocs"
 
-#, fuzzy
 msgid "Select audio configuration"
-msgstr "Guardar configuració d'usuari"
+msgstr "Seleccionar configuració d'àudio"
 
-#, fuzzy
 msgid "Enter credentials file decryption password"
-msgstr "Contrasenya de desencriptació del fitxer de credencials"
+msgstr "Introduïu la contrasenya de des-encriptació del fitxer de credencials"
 
-#, fuzzy
 msgid "Enter root password"
-msgstr "Introduïu una contrasenya: "
+msgstr "Introduïu la contrasenya de root"
 
 msgid "Select bootloader to install"
-msgstr ""
+msgstr "Selecció del bootloader a instal·lar"
 
-#, fuzzy
 msgid "Configuration preview"
-msgstr "Configuració"
+msgstr "Vista prèvia de la configuració"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved"
-msgstr "Introduïu un directori on guardar les configuracions: "
+msgstr "Introduïu un directori on guardar les configuracions "
 
-#, fuzzy
 msgid "Select encryption type"
-msgstr "Tipus de xifrat"
+msgstr "Seleccioneu el tipus de xifrat"
 
-#, fuzzy
 msgid "Select disks for the installation"
-msgstr "Nom de host desitjat per a la instal·lació: "
+msgstr "Seleccioneu els discs per a la instal·lació"
 
-#, fuzzy
 msgid "Enter a mountpoint"
-msgstr "Seleccioneu un punt de muntatge :"
+msgstr "Introduïu un punt de muntatge"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Enter a size (default: {}): "
-msgstr "Introduïu el final (per defecte: {}): "
+msgstr "Introduïu la mida (per defecte: {}): "
 
-#, fuzzy
 msgid "Enter subvolume name"
-msgstr "Nom del subvolum"
+msgstr "Introduïu el nom del subvolum"
 
-#, fuzzy
 msgid "Enter subvolume mountpoint"
-msgstr "Punt de muntatge del subvolum"
+msgstr "Introduïu el punt de muntatge del subvolum"
 
-#, fuzzy
 msgid "Select a disk configuration"
-msgstr "Configuració del disc"
+msgstr "Seleccioneu una configuració de disc"
 
-#, fuzzy
 msgid "Enter root mount directory"
-msgstr "Directori de muntatge arrel"
+msgstr "Introduïu el directori de muntatge de root"
 
 msgid "You will use whatever drive-setup is mounted at the specified directory"
-msgstr ""
+msgstr "S'utilitzarà la configuració de disc que estigui muntada al directori especificat"
 
 msgid "WARNING: Archinstall won't check the suitability of this setup"
-msgstr ""
+msgstr "AVÍS: archinstall no comprovarà la compatibilitat d'aquesta configuració"
 
-#, fuzzy
 msgid "Select main filesystem"
-msgstr "Canviar el sistema de fitxers"
+msgstr "Seleccioneu el sistema de fitxers principal"
 
 msgid "Enter a hostname"
-msgstr ""
+msgstr "Introduïu un nom de host"
 
-#, fuzzy
 msgid "Select timezone"
 msgstr "Seleccioneu una franja horària"
 
-#, fuzzy
 msgid "Enter the number of parallel downloads to be enabled"
-msgstr ""
-"Introduïu el número de descàrregues paral·leles a activar.\n"
-"\n"
-"Nota:\n"
+msgstr "Introduïu el número de descàrregues paral·leles permeses"
 
 #, python-brace-format
 msgid "Value must be between 1 and {}"
-msgstr ""
+msgstr "S'admeten valors entre 1 i {}"
 
-#, fuzzy
 msgid "Select which kernel(s) to install"
-msgstr "Si us plau, escolliu quin gestor d'inici de sessió instal·lar"
+msgstr "Seleccioneu el(s) nucli(s) a instal·lar"
 
-#, fuzzy
 msgid "Enter a respository name"
-msgstr "Nom del repositori"
+msgstr "Introduïu el nom del repositori"
 
-#, fuzzy
 msgid "Enter the repository url"
-msgstr "Canviar repositori personalitzat"
+msgstr "Introduïu url del repositori"
 
-#, fuzzy
 msgid "Enter server url"
-msgstr "URL del servidor"
+msgstr "Introduïu la URL del servidor"
 
-#, fuzzy
 msgid "Select mirror regions to be enabled"
-msgstr "Regions de miralls seleccionades"
+msgstr "Seleccioneu regions dels miralls a activar"
 
-#, fuzzy
 msgid "Select optional repositories to be enabled"
-msgstr "Trieu quins repositoris addicionals opcionals cal activar"
+msgstr "Seleccioneu repositoris addicionals a activar"
 
-#, fuzzy
 msgid "Select an interface"
-msgstr "Eliminar interfície"
+msgstr "Seleccioneu una interfície"
 
-#, fuzzy
 msgid "Choose network configuration"
-msgstr "Sense configuració de xarxa"
+msgstr "Trieu la configuració de xarxa"
 
-#, fuzzy
 msgid "No packages found"
-msgstr "No s'han trobat dispositius U2F"
+msgstr "No s'han trobat paquets"
 
-#, fuzzy
 msgid "Select which greeter to install"
-msgstr "Si us plau, escolliu quin gestor d'inici de sessió instal·lar"
+msgstr "Seleccioneu el gestor d'inici de sessió a instal·lar"
 
-#, fuzzy
 msgid "Select a profile type"
-msgstr "Perfils seleccionats: "
+msgstr "Seleccioneu un tipus de perfil"
 
-#, fuzzy
 msgid "Enter new password"
-msgstr "Introduïu la contrasenya del wifi"
+msgstr "Introduïu una contrasenya nova"
 
 msgid "Enter a username"
-msgstr ""
+msgstr "Introduïu un nom d'usuari"
 
-#, fuzzy
 msgid "Enter a password"
-msgstr "Introduïu una contrasenya: "
+msgstr "Introduïu una contrasenya"
 
-#, fuzzy
 msgid "The password did not match, please try again"
-msgstr "La confirmació de la contrasenya no coincideix, si us plau torneu-ho a intentar"
+msgstr "La contrasenya no coincideix, si us plau torneu-ho a intentar"
 
 msgid "Password strength: Weak"
-msgstr ""
+msgstr "Seguretat de la contrasenya: feble"
 
 msgid "Password strength: Moderate"
-msgstr ""
+msgstr "Seguretat de la contrasenya: moderada"
 
 msgid "Password strength: Strong"
-msgstr ""
+msgstr "Seguretat de la contrasenya: alta"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "El perfil d'escriptori seleccionat necessita de l'inici de sessió d'un usuari mitjançant el gestor"
