@@ -19,7 +19,6 @@ class AwesomeProfile(XorgProfile):
 		return super().packages + [
 			'awesome',
 			'alacritty',
-			'xorg-xinit',
 			'xorg-xrandr',
 			'xterm',
 			'feh',

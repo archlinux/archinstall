@@ -15,6 +15,7 @@ class ProfileType(Enum):
 	Server = 'Server'
 	Desktop = 'Desktop'
 	Xorg = 'Xorg'
+	Wayland = 'Wayland'
 	Minimal = 'Minimal'
 	Custom = 'Custom'
 	# detailed selection default_profiles
@@ -140,7 +141,7 @@ class Profile:
 		self.current_selection = []
 
 	def is_top_level_profile(self) -> bool:
-		top_levels = [ProfileType.Desktop, ProfileType.Server, ProfileType.Xorg, ProfileType.Minimal, ProfileType.Custom]
+		top_levels = [ProfileType.Desktop, ProfileType.Server, ProfileType.Xorg, ProfileType.Wayland, ProfileType.Minimal, ProfileType.Custom]
 		return self.profile_type in top_levels
 
 	def is_desktop_profile(self) -> bool:

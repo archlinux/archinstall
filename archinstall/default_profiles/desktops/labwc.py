@@ -2,14 +2,14 @@ from typing import override
 
 from archinstall.default_profiles.desktops import SeatAccess
 from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.wayland import WaylandProfile
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
 
-class LabwcProfile(XorgProfile):
+class LabwcProfile(WaylandProfile):
 	def __init__(self) -> None:
 		super().__init__(
 			'Labwc',

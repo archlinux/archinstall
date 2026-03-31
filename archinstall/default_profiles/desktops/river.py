@@ -1,10 +1,10 @@
 from typing import override
 
 from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.wayland import WaylandProfile
 
 
-class RiverProfile(XorgProfile):
+class RiverProfile(WaylandProfile):
 	def __init__(self) -> None:
 		super().__init__('River', ProfileType.WindowMgr)
 

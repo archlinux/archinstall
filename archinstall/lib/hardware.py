@@ -51,8 +51,6 @@ class GfxPackage(Enum):
 	Xf86VideoAmdgpu = 'xf86-video-amdgpu'
 	Xf86VideoAti = 'xf86-video-ati'
 	Xf86VideoNouveau = 'xf86-video-nouveau'
-	XorgServer = 'xorg-server'
-	XorgXinit = 'xorg-xinit'
 
 
 class GfxDriver(Enum):
@@ -80,7 +78,7 @@ class GfxDriver(Enum):
 		return text
 
 	def gfx_packages(self) -> list[GfxPackage]:
-		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
+		packages: list[GfxPackage] = []
 
 		match self:
 			case GfxDriver.AllOpenSource:

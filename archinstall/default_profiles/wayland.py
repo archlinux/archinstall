@@ -4,11 +4,11 @@ from archinstall.default_profiles.profile import Profile, ProfileType
 from archinstall.lib.translationhandler import tr
 
 
-class XorgProfile(Profile):
+class WaylandProfile(Profile):
 	def __init__(
 		self,
-		name: str = 'Xorg',
-		profile_type: ProfileType = ProfileType.Xorg,
+		name: str = 'Wayland',
+		profile_type: ProfileType = ProfileType.Wayland,
 	):
 		super().__init__(
 			name,
@@ -18,7 +18,7 @@ class XorgProfile(Profile):
 
 	@override
 	def preview_text(self) -> str:
-		text = tr('Environment type: Xorg {}').format(self.profile_type.value)
+		text = tr('Environment type: Wayland {}').format(self.profile_type.value)
 		if packages := self.packages_text():
 			text += f'\n{packages}'
 
@@ -27,7 +27,4 @@ class XorgProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
-			'xorg-server',
-			'xorg-xinit',
-		]
+		return []
