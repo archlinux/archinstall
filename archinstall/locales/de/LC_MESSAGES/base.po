@@ -2045,6 +2045,9 @@ msgstr ""
 msgid "Password strength: Strong"
 msgstr ""
 
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""
+
 #~ msgid "All open-source"
 #~ msgstr "Alle quelloffene"
 

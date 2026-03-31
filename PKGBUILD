@@ -5,7 +5,7 @@
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname=archinstall
-pkgver=4.0
+pkgver=4.1
 pkgrel=1
 pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)
@@ -46,6 +46,7 @@ makedepends=(
   'python-wheel'
   'python-sphinx_rtd_theme'
   'python-pylint'
+  'python-pylint-pydantic'
   'ruff'
 )
 optdepends=(
