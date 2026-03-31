@@ -82,3 +82,9 @@ class AuthenticationConfiguration:
 			config['u2f_config'] = self.u2f_config.json()
 
 		return config
+
+	def has_superuser(self) -> bool:
+		return any(u.sudo for u in self.users)
+
+	def has_regular_user(self) -> bool:
+		return len(self.users) > 0
