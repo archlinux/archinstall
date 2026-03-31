@@ -444,6 +444,8 @@ class Installer:
 				pass
 
 	def _generate_key_files_partitions(self) -> None:
+		root_is_encrypted = any(p.is_root() for p in self._disk_encryption.partitions)
+
 		for part_mod in self._disk_encryption.partitions:
 			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
 
@@ -454,8 +456,12 @@ class Installer:
 			)
 
 			if gen_enc_file and not part_mod.is_root():
-				debug(f'Creating key-file: {part_mod.dev_path}')
-				luks_handler.create_keyfile(self.target)
+				if root_is_encrypted:
+					debug(f'Creating key-file: {part_mod.dev_path}')
+					luks_handler.create_keyfile(self.target)
+				else:
+					debug(f'Adding passphrase-based crypttab entry for {part_mod.dev_path}')
+					luks_handler.create_crypttab_entry(self.target)
 
 			if part_mod.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
@@ -467,6 +473,8 @@ class Installer:
 						)
 
 	def _generate_key_file_lvm_volumes(self) -> None:
+		root_is_encrypted = any(v.is_root() for v in self._disk_encryption.lvm_volumes)
+
 		for vol in self._disk_encryption.lvm_volumes:
 			gen_enc_file = self._disk_encryption.should_generate_encryption_file(vol)
 
@@ -477,8 +485,12 @@ class Installer:
 			)
 
 			if gen_enc_file and not vol.is_root():
-				info(f'Creating key-file: {vol.dev_path}')
-				luks_handler.create_keyfile(self.target)
+				if root_is_encrypted:
+					info(f'Creating key-file: {vol.dev_path}')
+					luks_handler.create_keyfile(self.target)
+				else:
+					info(f'Adding passphrase-based crypttab entry for {vol.dev_path}')
+					luks_handler.create_crypttab_entry(self.target)
 
 			if vol.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
