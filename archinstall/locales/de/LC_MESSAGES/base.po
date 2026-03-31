@@ -1739,11 +1739,9 @@ msgstr "Möchten Sie Bluetooth aktivieren?"
 msgid "Print service"
 msgstr "Drucker-Service"
 
-#, fuzzy
 msgid "Would you like to configure the print service?"
 msgstr "Möchten Sie Bluetooth aktivieren?"
 
-#, fuzzy
 msgid "Power management"
 msgstr "Partitionsverwaltung: {}"
 
@@ -1798,33 +1796,27 @@ msgstr "Sie müssen möglicherweise Ihre PIN eingeben und danach Ihr U2F-Gerät 
 msgid "Starting device modifications in "
 msgstr ""
 
-#, fuzzy
 msgid "No network connection found"
 msgstr "Keine Netzwerkkonfiguration"
 
-#, fuzzy
 msgid "Would you like to connect to a Wifi?"
 msgstr "Möchten Sie fortfahren?"
 
-#, fuzzy
 msgid "No wifi interface found"
 msgstr "Schnittstellen konfigurieren"
 
-#, fuzzy
 msgid "Select wifi network to connect to"
 msgstr "Wählen Sie einen Netzwerkadapter zur Konfiguration aus"
 
 msgid "Scanning wifi networks..."
 msgstr "Suche nach WLAN-Netzwerken..."
 
-#, fuzzy
 msgid "No wifi networks found"
 msgstr "Keine Netzwerkkonfiguration"
 
 msgid "Failed setting up wifi"
 msgstr "WLAN-Einrichtung fehlgeschlagen."
 
-#, fuzzy
 msgid "Enter wifi password"
 msgstr "Passwort eingeben: "
 
@@ -1870,18 +1862,15 @@ msgstr "Firmware, die NVRAM-Starteinträge nicht korrekt unterstützt, wie die m
 msgid "most Apple Macs, many laptops..."
 msgstr "die meisten Apple Macs, viele Laptops..."
 
-#, fuzzy
 msgid "Language"
 msgstr "Sprache"
 
 msgid "Compression algorithm"
 msgstr "Komprimierungsalgorithmus"
 
-#, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Nur Pakete wie base, base-devel, linux, linux-firmware, efibootmgr und optionale Profilpakete werden installiert."
 
-#, fuzzy
 msgid "Select zram compression algorithm:"
 msgstr "Wählen Sie einen Einhängeort aus:"
 
