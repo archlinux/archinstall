@@ -1312,7 +1312,7 @@ class Tui:
 		clear_screen: bool = False,
 	) -> None:
 		if clear_screen:
-			os.system('clear')
+			os.system('clear')  # type: ignore[deprecated, unused-ignore]
 
 		if Tui._t is None:
 			print(text, end=endl)
@@ -1357,7 +1357,7 @@ class Tui:
 		return component.kickoff(self._screen)
 
 	def _reset_terminal(self) -> None:
-		os.system('reset')
+		os.system('reset')  # type: ignore[deprecated, unused-ignore]
 
 	def _set_up_colors(self) -> None:
 		curses.init_pair(STYLE.NORMAL.value, curses.COLOR_WHITE, curses.COLOR_BLACK)
