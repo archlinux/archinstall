@@ -14,7 +14,7 @@ class LxqtProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		return super().packages + [
 			'lxqt',
 			'breeze-icons',
 			'oxygen-icons',

@@ -11,7 +11,7 @@ class EnlightenmentProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		return super().packages + [
 			'enlightenment',
 			'terminology',
 		]

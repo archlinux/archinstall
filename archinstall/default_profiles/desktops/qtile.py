@@ -11,7 +11,7 @@ class QtileProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		return super().packages + [
 			'qtile',
 			'alacritty',
 		]

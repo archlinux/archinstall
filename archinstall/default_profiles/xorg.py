@@ -1,6 +1,9 @@
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import Profile, ProfileType
+
+if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
 
 
 class XorgProfile(Profile):
@@ -22,3 +25,7 @@ class XorgProfile(Profile):
 			'xorg-server',
 			'xorg-xinit',
 		]
+
+	@override
+	def install(self, install_session: Installer) -> None:
+		install_session.add_additional_packages(self.packages)

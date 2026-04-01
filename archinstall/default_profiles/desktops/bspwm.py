@@ -12,7 +12,7 @@ class BspwmProfile(XorgProfile):
 	@override
 	def packages(self) -> list[str]:
 		# return super().packages + [
-		return [
+		return super().packages + [
 			'bspwm',
 			'sxhkd',
 			'dmenu',

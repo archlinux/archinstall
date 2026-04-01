@@ -11,7 +11,7 @@ class DeepinProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		return super().packages + [
 			'deepin',
 			'deepin-terminal',
 			'deepin-editor',

@@ -11,7 +11,7 @@ class BudgieProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		return super().packages + [
 			'materia-gtk-theme',
 			'budgie',
 			'mate-terminal',

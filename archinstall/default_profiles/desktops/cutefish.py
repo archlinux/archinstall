@@ -11,7 +11,7 @@ class CutefishProfile(XorgProfile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		return super().packages + [
 			'cutefish',
 			'noto-fonts',
 		]
