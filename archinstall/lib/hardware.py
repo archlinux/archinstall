@@ -43,6 +43,7 @@ class GfxPackage(Enum):
 	LibvaIntelDriver = 'libva-intel-driver'
 	LibvaNvidiaDriver = 'libva-nvidia-driver'
 	Mesa = 'mesa'
+	NvidiaOpen = 'nvidia-open'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'

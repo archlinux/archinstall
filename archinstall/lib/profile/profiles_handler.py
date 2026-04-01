@@ -10,7 +10,7 @@ from types import ModuleType
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from archinstall.default_profiles.profile import GreeterType, Profile
-from archinstall.lib.hardware import GfxDriver
+from archinstall.lib.hardware import GfxDriver, GfxPackage
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.networking import fetch_data_from_url
 from archinstall.lib.output import debug, error, info
@@ -222,13 +222,22 @@ class ProfileHandler:
 	def install_gfx_driver(self, install_session: Installer, driver: GfxDriver) -> None:
 		debug(f'Installing GFX driver: {driver.value}')
 
-		if driver in [GfxDriver.NvidiaOpenKernel]:
-			headers = [f'{kernel}-headers' for kernel in install_session.kernels]
-			# Fixes https://github.com/archlinux/archinstall/issues/585
-			install_session.add_additional_packages(headers)
-
 		driver_pkgs = driver.gfx_packages()
 		pkg_names = [p.value for p in driver_pkgs]
+
+		# For Nvidia open kernel modules, use nvidia-open instead of nvidia-open-dkms
+		# when all selected kernels are mainline (no dkms needed). This avoids
+		# installing dkms + kernel headers and speeds up installation.
+		if driver == GfxDriver.NvidiaOpenKernel:
+			needs_dkms = any('-' in k for k in install_session.kernels)
+
+			if needs_dkms:
+				headers = [f'{kernel}-headers' for kernel in install_session.kernels]
+				install_session.add_additional_packages(headers)
+			else:
+				pkg_names = [GfxPackage.NvidiaOpen.value if p == GfxPackage.NvidiaOpenDkms.value else p for p in pkg_names]
+				pkg_names = [p for p in pkg_names if p != GfxPackage.Dkms.value]
+
 		install_session.add_additional_packages(pkg_names)
 
 	def install_profile_config(self, install_session: Installer, profile_config: ProfileConfiguration) -> None:
