@@ -15,7 +15,6 @@ class ProfileType(Enum):
 	Server = 'Server'
 	Desktop = 'Desktop'
 	Xorg = 'Xorg'
-	Wayland = 'Wayland'
 	Minimal = 'Minimal'
 	Custom = 'Custom'
 	# detailed selection default_profiles
@@ -53,6 +52,7 @@ class Profile:
 		services: list[str] = [],
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
+		is_wayland: bool = False,
 	) -> None:
 		self.name = name
 		self.profile_type = profile_type
@@ -60,6 +60,7 @@ class Profile:
 
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
+		self._is_wayland = is_wayland
 
 		# self.gfx_driver: str | None = None
 
@@ -141,7 +142,7 @@ class Profile:
 		self.current_selection = []
 
 	def is_top_level_profile(self) -> bool:
-		top_levels = [ProfileType.Desktop, ProfileType.Server, ProfileType.Xorg, ProfileType.Wayland, ProfileType.Minimal, ProfileType.Custom]
+		top_levels = [ProfileType.Desktop, ProfileType.Server, ProfileType.Xorg, ProfileType.Minimal, ProfileType.Custom]
 		return self.profile_type in top_levels
 
 	def is_desktop_profile(self) -> bool:
@@ -170,10 +171,21 @@ class Profile:
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
+	@property
+	def is_wayland(self) -> bool:
+		return self._is_wayland
+
 	def preview_text(self) -> str:
 		"""
 		Override this method to provide a preview text for the profile
 		"""
+		if self.is_desktop_type_profile():
+			display_type = 'Wayland' if self._is_wayland else 'Xorg'
+			text = tr('Environment type: {} {}').format(display_type, self.profile_type.value)
+			if packages := self.packages_text():
+				text += f'\n{packages}'
+			return text
+
 		return self.packages_text()
 
 	def packages_text(self, include_sub_packages: bool = False) -> str:

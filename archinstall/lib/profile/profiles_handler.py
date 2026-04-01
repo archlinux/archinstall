@@ -350,7 +350,7 @@ class ProfileHandler:
 		profiles = []
 		for file in profiles_path.glob('**/*.py'):
 			# ignore the abstract base classes
-			if file.name in ('profile.py', 'wayland.py'):
+			if file.name == 'profile.py':
 				continue
 			profiles += self._process_profile_file(file)
 

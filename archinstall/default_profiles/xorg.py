@@ -1,7 +1,6 @@
 from typing import override
 
 from archinstall.default_profiles.profile import Profile, ProfileType
-from archinstall.lib.translationhandler import tr
 
 
 class XorgProfile(Profile):
@@ -15,14 +14,6 @@ class XorgProfile(Profile):
 			profile_type,
 			support_gfx_driver=True,
 		)
-
-	@override
-	def preview_text(self) -> str:
-		text = tr('Environment type: Xorg {}').format(self.profile_type.value)
-		if packages := self.packages_text():
-			text += f'\n{packages}'
-
-		return text
 
 	@property
 	@override

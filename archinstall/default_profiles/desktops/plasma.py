@@ -1,12 +1,11 @@
 from typing import override
 
-from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.wayland import WaylandProfile
+from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType
 
 
-class PlasmaProfile(WaylandProfile):
+class PlasmaProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('KDE Plasma', ProfileType.DesktopEnv)
+		super().__init__('KDE Plasma', ProfileType.DesktopEnv, support_gfx_driver=True, is_wayland=True)
 
 	@property
 	@override
