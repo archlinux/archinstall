@@ -5,7 +5,12 @@ from archinstall.default_profiles.profile import GreeterType, Profile, ProfileTy
 
 class CosmicProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('Cosmic', ProfileType.DesktopEnv, support_gfx_driver=True, is_wayland=True)
+		super().__init__(
+			'Cosmic',
+			ProfileType.DesktopEnv,
+			support_gfx_driver=True,
+			is_wayland=True,
+		)
 
 	@property
 	@override

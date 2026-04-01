@@ -5,7 +5,12 @@ from archinstall.default_profiles.profile import GreeterType, Profile, ProfileTy
 
 class RiverProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('River', ProfileType.WindowMgr, support_gfx_driver=True, is_wayland=True)
+		super().__init__(
+			'River',
+			ProfileType.WindowMgr,
+			support_gfx_driver=True,
+			is_wayland=True,
+		)
 
 	@property
 	@override

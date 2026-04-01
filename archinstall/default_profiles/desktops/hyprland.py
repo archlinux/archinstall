@@ -10,7 +10,12 @@ from archinstall.tui.ui.result import ResultType
 
 class HyprlandProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('Hyprland', ProfileType.DesktopEnv, support_gfx_driver=True, is_wayland=True)
+		super().__init__(
+			'Hyprland',
+			ProfileType.DesktopEnv,
+			support_gfx_driver=True,
+			is_wayland=True,
+		)
 
 		self.custom_settings = {'seat_access': None}
 
