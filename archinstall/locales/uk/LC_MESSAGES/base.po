@@ -309,7 +309,7 @@ msgid ""
 msgstr ""
 "Ви вирішили пропустити вибір жорсткого диска\n"
 "і буде використовувати будь-який диск, змонтований в {} (експериментально)\n"
-"ПОПЕРЕДЖЕННЯ: Archinstall не перевіряє придатність цього налаштування\n"
+"ПОПЕРЕДЖЕННЯ: Archinstall не перевірятиме відповідність цієї конфігурації\n"
 "Ви бажаєте продовжити?"
 
 msgid "Re-using partition instance: {}"
@@ -1877,3 +1877,128 @@ msgstr "Використовувати NetworkManager (типовий)"
 
 msgid "Use Network Manager (iwd backend)"
 msgstr "Використовувати NetworkManager (з iwd)"
+
+msgid "Firewall"
+msgstr "Брандмауер"
+
+msgid "Select audio configuration"
+msgstr "Оберіть конфігурацію аудіо"
+
+msgid "Enter credentials file decryption password"
+msgstr "Введіть пароль розшифрування файлу облікових даних"
+
+msgid "Enter root password"
+msgstr "Введіть пароль root"
+
+msgid "Select bootloader to install"
+msgstr "Оберіть завантажувач для встановлення"
+
+msgid "Configuration preview"
+msgstr "Попередній перегляд конфігурації"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Введіть каталог для збереження конфігурацій"
+
+msgid "Select encryption type"
+msgstr "Оберіть тип шифрування"
+
+msgid "Select disks for the installation"
+msgstr "Оберіть диски для встановлення"
+
+msgid "Enter a mountpoint"
+msgstr "Введіть точку монтування"
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Введіть розмір (типово: {}): "
+
+msgid "Enter subvolume name"
+msgstr "Введіть назву підтому"
+
+msgid "Enter subvolume mountpoint"
+msgstr "Введіть точку монтування підтому"
+
+msgid "Select a disk configuration"
+msgstr "Оберіть конфігурацію диска"
+
+msgid "Enter root mount directory"
+msgstr "Введіть кореневий каталог монтування"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "Буде використано будь-яке налаштування диска, змонтоване у вказаному каталозі"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "ПОПЕРЕДЖЕННЯ: Archinstall не перевірятиме відповідність цієї конфігурації"
+
+msgid "Select main filesystem"
+msgstr "Оберіть основну файлову систему"
+
+msgid "Enter a hostname"
+msgstr "Введіть ім'я хоста"
+
+msgid "Select timezone"
+msgstr "Оберіть часовий пояс"
+
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr "Введіть кількість паралельних завантажень"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "Значення має бути від 1 до {}"
+
+msgid "Select which kernel(s) to install"
+msgstr "Оберіть ядро(-а) для встановлення"
+
+msgid "Enter a respository name"
+msgstr "Введіть назву репозиторію"
+
+msgid "Enter the repository url"
+msgstr "Введіть URL репозиторію"
+
+msgid "Enter server url"
+msgstr "Введіть URL сервера"
+
+msgid "Select mirror regions to be enabled"
+msgstr "Оберіть регіони дзеркал для ввімкнення"
+
+msgid "Select optional repositories to be enabled"
+msgstr "Оберіть додаткові репозиторії для ввімкнення"
+
+msgid "Select an interface"
+msgstr "Оберіть інтерфейс"
+
+msgid "Choose network configuration"
+msgstr "Оберіть конфігурацію мережі"
+
+msgid "No packages found"
+msgstr "Пакети не знайдено"
+
+msgid "Select which greeter to install"
+msgstr "Оберіть менеджер входу для встановлення"
+
+msgid "Select a profile type"
+msgstr "Оберіть тип профілю"
+
+msgid "Enter new password"
+msgstr "Введіть новий пароль"
+
+msgid "Enter a username"
+msgstr "Введіть ім'я користувача"
+
+msgid "Enter a password"
+msgstr "Введіть пароль"
+
+msgid "The password did not match, please try again"
+msgstr "Паролі не збігаються, спробуйте ще раз"
+
+msgid "Password strength: Weak"
+msgstr "Надійність пароля: Слабка"
+
+msgid "Password strength: Moderate"
+msgstr "Надійність пароля: Помірна"
+
+msgid "Password strength: Strong"
+msgstr "Надійність пароля: Сильна"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "Обраний профіль робочого столу вимагає входу звичайного користувача через менеджер входу"
