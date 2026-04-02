@@ -27,7 +27,7 @@ class DesktopProfile(Profile):
 	def packages(self) -> list[str]:
 		return [
 			'nano',
-			'vim', ## should be ex-vi-compat
+			'vim',
 			'openssh',
 			'htop',
 			'wget',
