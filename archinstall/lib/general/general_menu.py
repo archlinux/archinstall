@@ -15,6 +15,22 @@ class PostInstallationAction(Enum):
 	CHROOT = tr('chroot into installation for post-installation configurations')
 
 
+async def select_jurisdiction(preset: bool = False) -> bool:
+	header = tr('Are you located in California, Brazil, or any other region that mandates operating systems to verify or assist to verify the age, name, sex, or any other identifying information of the user?') + '\n'
+
+	result = await Confirmation(
+		header=header,
+		allow_skip=False,
+		preset=preset,
+	).show()
+
+	match result.type_:
+		case ResultType.Selection:
+			return result.item() == MenuItem.yes()
+		case _:
+			raise ValueError('Unhandled return type')
+
+
 async def select_ntp(preset: bool = True) -> bool:
 	header = tr('Would you like to use automatic time synchronization (NTP) with the default time servers?\n') + '\n'
 	header += (

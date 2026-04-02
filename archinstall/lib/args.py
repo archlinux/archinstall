@@ -72,6 +72,7 @@ class ArchConfig:
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: ['linux'])
 	ntp: bool = True
+	jurisdiction_restriction: bool = False
 	packages: list[str] = field(default_factory=list)
 	parallel_downloads: int = 0
 	timezone: str = 'UTC'
@@ -112,6 +113,7 @@ class ArchConfig:
 			'bootloader_config': self.bootloader_config.json() if self.bootloader_config else None,
 			'app_config': self.app_config.json() if self.app_config else None,
 			'auth_config': self.auth_config.json() if self.auth_config else None,
+			'jurisdiction_restriction': self.jurisdiction_restriction,
 		}
 
 		if self.locale_config:
@@ -139,6 +141,8 @@ class ArchConfig:
 
 		if script := args_config.get('script', None):
 			arch_config.script = script
+
+		arch_config.jurisdiction_restriction = args_config.get('jurisdiction_restriction', False)
 
 		if archinstall_lang := args_config.get('archinstall-language', None):
 			arch_config.archinstall_language = translation_handler.get_language_by_name(archinstall_lang)

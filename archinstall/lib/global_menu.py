@@ -7,7 +7,7 @@ from archinstall.lib.authentication.authentication_menu import AuthenticationMen
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
-from archinstall.lib.general.general_menu import add_number_of_parallel_downloads, select_hostname, select_ntp, select_timezone
+from archinstall.lib.general.general_menu import add_number_of_parallel_downloads, select_hostname, select_ntp, select_timezone, select_jurisdiction
 from archinstall.lib.general.system_menu import select_kernel, select_swap
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.locale_menu import LocaleMenu
@@ -60,6 +60,13 @@ class GlobalMenu(AbstractMenu[None]):
 				action=self._select_archinstall_language,
 				preview_action=self._prev_archinstall_language,
 				key='archinstall_language',
+			),
+			MenuItem(
+				text=tr('Jurisdiction Restriction'),
+				action=select_jurisdiction,
+				value=False,
+				preview_action=self._prev_jurisdiction,
+				key='jurisdiction_restriction',
 			),
 			MenuItem(
 				text=tr('Locales'),
@@ -198,6 +205,7 @@ class GlobalMenu(AbstractMenu[None]):
 	def _missing_configs(self) -> list[str]:
 		item: MenuItem = self._item_group.find_by_key('auth_config')
 		auth_config: AuthenticationConfiguration | None = item.value
+		jurisdiction_restriction_item: MenuItem = self._item_group.find_by_key('jurisdiction_restriction')
 
 		def check(s: str) -> bool:
 			item = self._item_group.find_by_key(s)
@@ -205,6 +213,10 @@ class GlobalMenu(AbstractMenu[None]):
 
 		missing = set()
 
+		if jurisdiction_restriction_item.value:
+			missing.add(
+				tr('We do not provide Arch Linux to your jurisdiction. Please contact your local lawmakers if you have any question.'),
+			)
 		if (auth_config is None or auth_config.root_enc_password is None) and not (auth_config and auth_config.has_superuser()):
 			missing.add(
 				tr('Either root-password or at least 1 user with sudo privileges must be specified'),
@@ -369,6 +381,13 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value is not None:
 			output = f'{tr("NTP")}: '
 			output += tr('Enabled') if item.value else tr('Disabled')
+			return output
+		return None
+
+	def _prev_jurisdiction(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			output = f'{tr("Jurisdiction Restriction")}: '
+			output += tr('Yes') if item.value else tr('No')
 			return output
 		return None
 
