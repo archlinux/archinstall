@@ -2,6 +2,7 @@ import builtins
 import gettext
 import json
 import os
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import override
@@ -14,6 +15,7 @@ class Language:
 	translation: gettext.NullTranslations
 	translation_percent: int
 	translated_lang: str | None
+	console_font: str | None = None
 
 	@property
 	def display_name(self) -> str:
@@ -29,6 +31,28 @@ class Language:
 
 	def json(self) -> str:
 		return self.name_en
+
+
+_DEFAULT_FONT = 'default8x16'
+
+
+def _set_console_font(font_name: str | None) -> None:
+	"""
+	Set the console font via setfont.
+	Falls back to default8x16 if font_name is None or setfont fails.
+	"""
+	target = font_name or _DEFAULT_FONT
+
+	try:
+		result = subprocess.run(['setfont', target], capture_output=True, timeout=10)
+		if result.returncode != 0 and target != _DEFAULT_FONT:
+			subprocess.run(['setfont', _DEFAULT_FONT], capture_output=True, timeout=10)
+	except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+		if target != _DEFAULT_FONT:
+			try:
+				subprocess.run(['setfont', _DEFAULT_FONT], capture_output=True, timeout=10)
+			except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+				pass
 
 
 class TranslationHandler:
@@ -57,6 +81,7 @@ class TranslationHandler:
 			abbr = mapping_entry['abbr']
 			lang = mapping_entry['lang']
 			translated_lang = mapping_entry.get('translated_lang', None)
+			console_font = mapping_entry.get('console_font', None)
 
 			try:
 				# get a translation for a specific language
@@ -71,7 +96,7 @@ class TranslationHandler:
 					# prevent cases where the .pot file is out of date and the percentage is above 100
 					percent = min(100, percent)
 
-				language = Language(abbr, lang, translation, percent, translated_lang)
+				language = Language(abbr, lang, translation, percent, translated_lang, console_font)
 				languages.append(language)
 			except FileNotFoundError as err:
 				raise FileNotFoundError(f"Could not locate language file for '{lang}': {err}")
@@ -133,6 +158,7 @@ class TranslationHandler:
 		"""
 		# The install() call has the side effect of assigning GNUTranslations.gettext to builtins._
 		language.translation.install()
+		_set_console_font(language.console_font)
 
 	def _get_locales_dir(self) -> Path:
 		"""
