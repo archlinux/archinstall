@@ -1709,6 +1709,123 @@ msgstr ""
 msgid "Exit search mode"
 msgstr ""
 
+msgid "General"
+msgstr ""
+
+msgid "Navigation"
+msgstr ""
+
+msgid "Selection"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+msgid "Confirm"
+msgstr ""
+
+msgid "Focus right"
+msgstr ""
+
+msgid "Focus left"
+msgstr ""
+
+msgid "Toggle"
+msgstr ""
+
+msgid "Show/Hide help"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+msgid "Select"
+msgstr ""
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+msgid "Page up"
+msgstr ""
+
+msgid "Page down"
+msgstr ""
+
+msgid "Page Left"
+msgstr ""
+
+msgid "Page Right"
+msgstr ""
+
+msgid "Cursor up"
+msgstr ""
+
+msgid "Cursor down"
+msgstr ""
+
+msgid "Cursor right"
+msgstr ""
+
+msgid "Cursor left"
+msgstr ""
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "End"
+msgstr ""
+
+msgid "Toggle option"
+msgstr ""
+
+msgid "Scroll Up"
+msgstr ""
+
+msgid "Scroll Down"
+msgstr ""
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 msgid ""
 "labwc needs access to your seat (collection of hardware devices i.e. "
 "keyboard, mouse, etc)"

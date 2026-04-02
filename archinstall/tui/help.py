@@ -97,7 +97,7 @@ class Help:
 		max_key_width = max([help.get_key_width() for help in help_texts])
 
 		for help_group in help_texts:
-			help_output += f'{help_group.group_id.value}\n'
+			help_output += f'{tr(help_group.group_id.value)}\n'
 			divider_len = max_desc_width + max_key_width
 			help_output += '-' * divider_len + '\n'
 

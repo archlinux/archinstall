@@ -1663,6 +1663,123 @@ msgstr "Запустити режим пошуку"
 msgid "Exit search mode"
 msgstr "Вийти з режиму пошуку"
 
+msgid "General"
+msgstr "Загальне"
+
+msgid "Navigation"
+msgstr "Навігація"
+
+msgid "Selection"
+msgstr "Вибір"
+
+msgid "Search"
+msgstr "Пошук"
+
+msgid "Down"
+msgstr "Вниз"
+
+msgid "Up"
+msgstr "Вгору"
+
+msgid "Confirm"
+msgstr "Підтвердити"
+
+msgid "Focus right"
+msgstr "Фокус вправо"
+
+msgid "Focus left"
+msgstr "Фокус вліво"
+
+msgid "Toggle"
+msgstr "Перемкнути"
+
+msgid "Show/Hide help"
+msgstr "Показати/Сховати довідку"
+
+msgid "Quit"
+msgstr "Вийти"
+
+msgid "First"
+msgstr "На початок"
+
+msgid "Last"
+msgstr "В кінець"
+
+msgid "Select"
+msgstr "Обрати"
+
+msgid "Page Up"
+msgstr "Сторінка вгору"
+
+msgid "Page Down"
+msgstr "Сторінка вниз"
+
+msgid "Page up"
+msgstr "Сторінка вгору"
+
+msgid "Page down"
+msgstr "Сторінка вниз"
+
+msgid "Page Left"
+msgstr "Сторінка вліво"
+
+msgid "Page Right"
+msgstr "Сторінка вправо"
+
+msgid "Cursor up"
+msgstr "Курсор вгору"
+
+msgid "Cursor down"
+msgstr "Курсор вниз"
+
+msgid "Cursor right"
+msgstr "Курсор вправо"
+
+msgid "Cursor left"
+msgstr "Курсор вліво"
+
+msgid "Top"
+msgstr "На початок"
+
+msgid "Bottom"
+msgstr "В кінець"
+
+msgid "Home"
+msgstr "Початок"
+
+msgid "End"
+msgstr "Кінець"
+
+msgid "Toggle option"
+msgstr "Перемкнути опцію"
+
+msgid "Scroll Up"
+msgstr "Прокрутка вгору"
+
+msgid "Scroll Down"
+msgstr "Прокрутка вниз"
+
+msgid "Scroll Left"
+msgstr "Прокрутка вліво"
+
+msgid "Scroll Right"
+msgstr "Прокрутка вправо"
+
+msgid "Scroll Home"
+msgstr "Прокрутка на початок"
+
+msgid "Scroll End"
+msgstr "Прокрутка в кінець"
+
+msgid "Focus Next"
+msgstr "Фокус на наступний"
+
+msgid "Focus Previous"
+msgstr "Фокус на попередній"
+
+msgid "Copy selected text"
+msgstr "Копіювати виділений текст"
+
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc потребує доступ до вашого місця (набору апаратних пристроїв, таких як клавіатура, миша тощо)"
 

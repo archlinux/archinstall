@@ -1,7 +1,7 @@
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum, auto
 from typing import Any, ClassVar, Literal, TypeVar, cast, override
 
@@ -25,6 +25,16 @@ from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import Result, ResultType
 
 ValueT = TypeVar('ValueT')
+
+
+def _translate_bindings(widget: Any) -> None:
+	if widget._merged_bindings is None:
+		return
+	for key, bindings in widget._merged_bindings.key_to_bindings.items():
+		widget._bindings.key_to_bindings[key] = [
+			replace(b, description=tr(b.description)) if b.description else b
+			for b in bindings
+		]
 
 
 class BaseScreen(Screen[Result[ValueT]]):
@@ -97,6 +107,7 @@ class LoadingScreen(BaseScreen[ValueT]):
 		yield Footer()
 
 	def on_mount(self) -> None:
+		_translate_bindings(self)
 		if self._data_callback:
 			self._exec_callback()
 		else:
@@ -128,6 +139,9 @@ class _OptionList(OptionList):
 		Binding('j', 'cursor_down', 'Down', show=False),
 		Binding('k', 'cursor_up', 'Up', show=False),
 	]
+
+	def on_mount(self) -> None:
+		_translate_bindings(self)
 
 
 class OptionListScreen(BaseScreen[ValueT]):
@@ -271,6 +285,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		yield Footer()
 
 	def on_mount(self) -> None:
+		_translate_bindings(self)
 		self._update_options(self._options)
 		self.query_one(OptionList).focus()
 
@@ -354,6 +369,9 @@ class _SelectionList(SelectionList[ValueT]):
 		Binding('j', 'cursor_down', 'Down', show=False),
 		Binding('k', 'cursor_up', 'Up', show=False),
 	]
+
+	def on_mount(self) -> None:
+		_translate_bindings(self)
 
 
 class SelectListScreen(BaseScreen[ValueT]):
@@ -499,6 +517,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 			self._handle_search_action()
 
 	def on_mount(self) -> None:
+		_translate_bindings(self)
 		self._update_options(self._options)
 		self.query_one(SelectionList).focus()
 
@@ -660,6 +679,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 		yield Footer()
 
 	def on_mount(self) -> None:
+		_translate_bindings(self)
 		self._update_selection()
 
 	def action_focus_right(self) -> None:
@@ -815,6 +835,7 @@ class InputScreen(BaseScreen[str]):
 		yield Footer()
 
 	def on_mount(self) -> None:
+		_translate_bindings(self)
 		input_field = self.query_one('#main_input', Input)
 		input_field.focus()
 
@@ -853,6 +874,9 @@ class _DataTable(DataTable[ValueT]):
 		Binding('j', 'cursor_down', 'Down', show=False),
 		Binding('k', 'cursor_up', 'Up', show=False),
 	]
+
+	def on_mount(self) -> None:
+		_translate_bindings(self)
 
 
 class TableSelectionScreen(BaseScreen[ValueT]):
@@ -974,6 +998,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 		yield Footer()
 
 	def on_mount(self) -> None:
+		_translate_bindings(self)
 		self._display_header(True)
 		data_table = self.query_one(DataTable)
 		data_table.cell_padding = 2
@@ -1229,6 +1254,7 @@ class _AppInstance(App[ValueT]):
 			_ = self.screen.mount(HelpPanel())
 
 	def on_mount(self) -> None:
+		_translate_bindings(self)
 		self._run_worker()
 
 	@work
