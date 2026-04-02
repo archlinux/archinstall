@@ -34,6 +34,7 @@ class Language:
 
 
 _DEFAULT_FONT = 'default8x16'
+_ENV_FONT = os.environ.get('FONT')
 
 
 def _set_console_font(font_name: str | None) -> None:
@@ -158,7 +159,8 @@ class TranslationHandler:
 		"""
 		# The install() call has the side effect of assigning GNUTranslations.gettext to builtins._
 		language.translation.install()
-		_set_console_font(language.console_font)
+
+		_set_console_font(_ENV_FONT if _ENV_FONT else language.console_font)
 
 	def _get_locales_dir(self) -> Path:
 		"""

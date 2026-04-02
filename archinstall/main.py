@@ -16,7 +16,7 @@ from archinstall.lib.networking import ping
 from archinstall.lib.output import debug, error, info, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translationhandler import _ENV_FONT, _set_console_font, tr
 from archinstall.lib.utils.util import running_from_iso
 from archinstall.tui.ui.components import tui
 
@@ -79,6 +79,9 @@ def run() -> int:
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
+	if _ENV_FONT:
+		_set_console_font(_ENV_FONT)
+
 	arch_config_handler = ArchConfigHandler()
 
 	if '--help' in sys.argv or '-h' in sys.argv:
@@ -158,6 +161,8 @@ def main() -> int:
 		if exc:
 			_error_message(exc)
 			rc = 1
+
+		_set_console_font(None)
 
 	return rc
 
