@@ -45,13 +45,13 @@ def _set_console_font(font_name: str | None) -> None:
 	target = font_name or _DEFAULT_FONT
 
 	try:
-		result = subprocess.run(['setfont', target], capture_output=True, timeout=10)
+		result = subprocess.run(['setfont', target], capture_output=True, check=False, timeout=10)
 		if result.returncode != 0 and target != _DEFAULT_FONT:
-			subprocess.run(['setfont', _DEFAULT_FONT], capture_output=True, timeout=10)
+			subprocess.run(['setfont', _DEFAULT_FONT], capture_output=True, check=False, timeout=10)
 	except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
 		if target != _DEFAULT_FONT:
 			try:
-				subprocess.run(['setfont', _DEFAULT_FONT], capture_output=True, timeout=10)
+				subprocess.run(['setfont', _DEFAULT_FONT], capture_output=True, check=False, timeout=10)
 			except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
 				pass
 
