@@ -1996,16 +1996,16 @@ msgid "The password did not match, please try again"
 msgstr "La contraseña no coincide, por favor inténtelo nuevamente"
 
 msgid "Password strength: Weak"
-msgstr ""
+msgstr "Seguridad de la contraseña: Débil"
 
 msgid "Password strength: Moderate"
-msgstr ""
+msgstr "Seguridad de la contraseña: Media"
 
 msgid "Password strength: Strong"
-msgstr ""
+msgstr "Seguridad de la contraseña: Fuerte"
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
-msgstr ""
+msgstr "El perfil de escritorio seleccionado requiere que un usuario estándar inicie sesión a través de la pantalla de bienvenida"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
