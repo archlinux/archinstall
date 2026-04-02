@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, override
 
-from archinstall.default_profiles.profile import Profile, ProfileType
+from archinstall.default_profiles.profile import DisplayServerType, Profile, ProfileType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -16,6 +16,7 @@ class XorgProfile(Profile):
 			name,
 			profile_type,
 			support_gfx_driver=True,
+			display_server=DisplayServerType.Xorg,
 		)
 
 	@property

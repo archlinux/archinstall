@@ -1,7 +1,7 @@
 from typing import override
 
 from archinstall.default_profiles.desktops import SeatAccess
-from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
@@ -14,7 +14,7 @@ class NiriProfile(Profile):
 			'Niri',
 			ProfileType.WindowMgr,
 			support_gfx_driver=True,
-			is_wayland=True,
+			display_server=DisplayServerType.Wayland,
 		)
 
 		self.custom_settings = {'seat_access': None}

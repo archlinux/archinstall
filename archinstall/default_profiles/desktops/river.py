@@ -1,6 +1,6 @@
 from typing import override
 
-from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
 
 
 class RiverProfile(Profile):
@@ -9,7 +9,7 @@ class RiverProfile(Profile):
 			'River',
 			ProfileType.WindowMgr,
 			support_gfx_driver=True,
-			is_wayland=True,
+			display_server=DisplayServerType.Wayland,
 		)
 
 	@property
