@@ -15,7 +15,7 @@ class XmonadProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'xmonad',
 			'xmonad-contrib',
 			'xmonad-extras',

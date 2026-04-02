@@ -15,7 +15,7 @@ class I3wmProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'i3-wm',
 			'i3lock',
 			'i3status',

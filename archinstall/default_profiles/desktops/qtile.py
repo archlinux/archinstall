@@ -15,7 +15,7 @@ class QtileProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'qtile',
 			'alacritty',
 		]

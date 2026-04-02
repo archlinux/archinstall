@@ -15,7 +15,7 @@ class CinnamonProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'cinnamon',
 			'system-config-printer',
 			'gnome-keyring',

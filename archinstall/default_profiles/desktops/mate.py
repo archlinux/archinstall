@@ -15,7 +15,7 @@ class MateProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'mate',
 			'mate-extra',
 		]

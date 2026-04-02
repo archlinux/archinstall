@@ -15,7 +15,7 @@ class EnlightenmentProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'enlightenment',
 			'terminology',
 		]

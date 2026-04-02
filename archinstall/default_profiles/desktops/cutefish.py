@@ -15,7 +15,7 @@ class CutefishProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'cutefish',
 			'noto-fonts',
 		]

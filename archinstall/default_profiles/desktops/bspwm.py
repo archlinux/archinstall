@@ -15,8 +15,7 @@ class BspwmProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		# return super().packages + [
-		return super().packages + [
+		return [
 			'bspwm',
 			'sxhkd',
 			'dmenu',

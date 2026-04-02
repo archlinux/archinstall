@@ -15,7 +15,7 @@ class Xfce4Profile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'xfce4',
 			'xfce4-goodies',
 			'pavucontrol',

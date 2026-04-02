@@ -15,7 +15,7 @@ class BudgieProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'materia-gtk-theme',
 			'budgie',
 			'mate-terminal',
