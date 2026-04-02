@@ -53,6 +53,7 @@ class GfxPackage(Enum):
 	Xf86VideoNouveau = 'xf86-video-nouveau'
 	XorgServer = 'xorg-server'
 	XorgXinit = 'xorg-xinit'
+	Xxhash = 'xxhash'
 
 
 class GfxDriver(Enum):
@@ -114,6 +115,7 @@ class GfxDriver(Enum):
 					GfxPackage.NvidiaOpenDkms,
 					GfxPackage.Dkms,
 					GfxPackage.LibvaNvidiaDriver,
+					GfxPackage.Xxhash,
 				]
 			case GfxDriver.NvidiaOpenSource:
 				packages += [
