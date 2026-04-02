@@ -31,10 +31,7 @@ def _translate_bindings(widget: Any) -> None:
 	if widget._merged_bindings is None:
 		return
 	for key, bindings in widget._merged_bindings.key_to_bindings.items():
-		widget._bindings.key_to_bindings[key] = [
-			replace(b, description=tr(b.description)) if b.description else b
-			for b in bindings
-		]
+		widget._bindings.key_to_bindings[key] = [replace(b, description=tr(b.description)) if b.description else b for b in bindings]
 
 
 class BaseScreen(Screen[Result[ValueT]]):
@@ -140,6 +137,7 @@ class _OptionList(OptionList):
 		Binding('k', 'cursor_up', 'Up', show=False),
 	]
 
+	@override
 	def on_mount(self) -> None:
 		_translate_bindings(self)
 
@@ -370,6 +368,7 @@ class _SelectionList(SelectionList[ValueT]):
 		Binding('k', 'cursor_up', 'Up', show=False),
 	]
 
+	@override
 	def on_mount(self) -> None:
 		_translate_bindings(self)
 
@@ -875,6 +874,7 @@ class _DataTable(DataTable[ValueT]):
 		Binding('k', 'cursor_up', 'Up', show=False),
 	]
 
+	@override
 	def on_mount(self) -> None:
 		_translate_bindings(self)
 
