@@ -1,12 +1,16 @@
 from typing import override
 
-from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
 
 
-class RiverProfile(XorgProfile):
+class RiverProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('River', ProfileType.WindowMgr)
+		super().__init__(
+			'River',
+			ProfileType.WindowMgr,
+			support_gfx_driver=True,
+			display_server=DisplayServerType.Wayland,
+		)
 
 	@property
 	@override

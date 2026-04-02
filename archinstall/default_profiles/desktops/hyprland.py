@@ -1,17 +1,21 @@
 from typing import override
 
 from archinstall.default_profiles.desktops import SeatAccess
-from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
 
-class HyprlandProfile(XorgProfile):
+class HyprlandProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('Hyprland', ProfileType.DesktopEnv)
+		super().__init__(
+			'Hyprland',
+			ProfileType.DesktopEnv,
+			support_gfx_driver=True,
+			display_server=DisplayServerType.Wayland,
+		)
 
 		self.custom_settings = {'seat_access': None}
 

@@ -349,8 +349,8 @@ class ProfileHandler:
 		profiles_path = Path(__file__).parents[2] / 'default_profiles'
 		profiles = []
 		for file in profiles_path.glob('**/*.py'):
-			# ignore the abstract default_profiles class
-			if 'profile.py' in file.name:
+			# ignore the abstract base classes
+			if file.name == 'profile.py':
 				continue
 			profiles += self._process_profile_file(file)
 

@@ -10,6 +10,11 @@ if TYPE_CHECKING:
 	from archinstall.lib.models.users import User
 
 
+class DisplayServerType(Enum):
+	Xorg = 'Xorg'
+	Wayland = 'Wayland'
+
+
 class ProfileType(Enum):
 	# top level default_profiles
 	Server = 'Server'
@@ -52,6 +57,7 @@ class Profile:
 		services: list[str] = [],
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
+		display_server: DisplayServerType | None = None,
 	) -> None:
 		self.name = name
 		self.profile_type = profile_type
@@ -59,6 +65,7 @@ class Profile:
 
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
+		self._display_server = display_server
 
 		# self.gfx_driver: str | None = None
 
@@ -169,10 +176,23 @@ class Profile:
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
+	@property
+	def display_server(self) -> DisplayServerType | None:
+		return self._display_server
+
 	def preview_text(self) -> str:
 		"""
 		Override this method to provide a preview text for the profile
 		"""
+		if self.is_desktop_type_profile():
+			if self._display_server:
+				text = tr('Environment type: {} {}').format(self._display_server.value, self.profile_type.value)
+			else:
+				text = tr('Environment type: {}').format(self.profile_type.value)
+			if packages := self.packages_text():
+				text += f'\n{packages}'
+			return text
+
 		return self.packages_text()
 
 	def packages_text(self, include_sub_packages: bool = False) -> str:
