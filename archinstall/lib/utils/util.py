@@ -20,17 +20,6 @@ def generate_password(length: int = 64) -> str:
 	return ''.join(secrets.choice(haystack) for _ in range(length))
 
 
-def is_subpath(first: Path, second: Path) -> bool:
-	"""
-	Check if _first_ a subpath of _second_
-	"""
-	try:
-		first.relative_to(second)
-		return True
-	except ValueError:
-		return False
-
-
 def format_cols(items: list[str], header: str | None = None) -> str:
 	if header:
 		text = f'{header}:\n'
