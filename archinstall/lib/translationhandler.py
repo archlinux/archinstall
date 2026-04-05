@@ -56,8 +56,8 @@ def _set_console_font(font_name: str | None) -> None:
 		if target != _DEFAULT_FONT:
 			try:
 				SysCommand(f'setfont {_DEFAULT_FONT}')
-			except SysCallError as err:
-				debug(f'Failed to set default console font: {err}')
+			except SysCallError as fallback_err:
+				debug(f'Failed to set default console font: {fallback_err}')
 
 
 def _save_console_font() -> None:
