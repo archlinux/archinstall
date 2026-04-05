@@ -11,6 +11,10 @@ from pathlib import Path
 from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.installer import Installer
+from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
+from archinstall.lib.mirror.mirror_handler import MirrorListHandler
+from archinstall.lib.mirror.mirror_menu import MirrorMenu
 from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
 from archinstall.lib.output import debug, error, info, warn
@@ -46,11 +50,60 @@ def _check_online(wifi_handler: WifiHandler | None = None) -> bool:
 	return True
 
 
-def _fetch_arch_db() -> bool:
+SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS = 15
+
+
+def _confirm_switch_mirror_sources(elapsed_seconds: float) -> bool:
+	if not sys.stdin.isatty():
+		return False
+
+	prompt = tr('Refreshing repositories is taking a long time ({} seconds). Would you like to switch mirror sources? (Y/n): ').format(int(elapsed_seconds))
+	try:
+		return input(prompt).strip().lower() in ('y', 'yes', '')
+	except EOFError:
+		return False
+
+
+def _switch_mirror_sources() -> bool:
+	info(tr('Switching mirror sources.'))
+	mirror_list_handler = MirrorListHandler()
+
+	try:
+		mirror_configuration = tui.run(lambda: MirrorMenu(mirror_list_handler).run())
+	except Exception as e:
+		error(tr('Could not open mirror configuration menu.'))
+		debug(f'Failed to switch mirror sources: {e}')
+		return False
+
+	if mirror_configuration is None:
+		warn(tr('Mirror source selection cancelled.'))
+		return False
+
+	try:
+		installer = Installer(
+			Path('/'),
+			DiskLayoutConfiguration(DiskLayoutType.Pre_mount, mountpoint=Path('/')),
+		)
+		installer.set_mirrors(mirror_list_handler, mirror_configuration, on_target=False)
+		info(tr('Mirror sources have been updated.'))
+		return True
+	except Exception as e:
+		error(tr('Failed to update the local mirror list.'))
+		debug(f'Failed to update the mirror list: {e}')
+		return False
+
+
+def _fetch_arch_db(retry: bool = False) -> bool:
 	info('Fetching Arch Linux package database...')
+	started = time.time()
 	try:
 		Pacman.run('-Sy')
 	except Exception as e:
+		elapsed = time.time() - started
+		if not retry and elapsed > SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS:
+			if _confirm_switch_mirror_sources(elapsed) and _switch_mirror_sources():
+				return _fetch_arch_db(retry=True)
+
 		error('Failed to sync Arch Linux package database.')
 		if 'could not resolve host' in str(e).lower():
 			error('Most likely due to a missing network connection or DNS issue.')
@@ -59,6 +112,11 @@ def _fetch_arch_db() -> bool:
 
 		debug(f'Failed to sync Arch Linux package database: {e}')
 		return False
+
+	elapsed = time.time() - started
+	if not retry and elapsed > SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS:
+		if _confirm_switch_mirror_sources(elapsed) and _switch_mirror_sources():
+			return _fetch_arch_db(retry=True)
 
 	return True
 
