@@ -2,10 +2,13 @@ import builtins
 import gettext
 import json
 import os
-import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import override
+
+from archinstall.lib.command import SysCommand
+from archinstall.lib.exceptions import SysCallError
+from archinstall.lib.output import debug
 
 
 @dataclass
@@ -35,6 +38,8 @@ class Language:
 
 _DEFAULT_FONT = 'default8x16'
 _ENV_FONT = os.environ.get('FONT')
+_FONT_BACKUP = Path('/tmp/archinstall_font_backup')
+_CMAP_BACKUP = Path('/tmp/archinstall_cmap_backup')
 
 
 def _set_console_font(font_name: str | None) -> None:
@@ -45,15 +50,36 @@ def _set_console_font(font_name: str | None) -> None:
 	target = font_name or _DEFAULT_FONT
 
 	try:
-		result = subprocess.run(['setfont', target], capture_output=True, check=False, timeout=10)
-		if result.returncode != 0 and target != _DEFAULT_FONT:
-			subprocess.run(['setfont', _DEFAULT_FONT], capture_output=True, check=False, timeout=10)
-	except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+		SysCommand(f'setfont {target}')
+	except SysCallError as err:
+		debug(f'Failed to set console font {target}: {err}')
 		if target != _DEFAULT_FONT:
 			try:
-				subprocess.run(['setfont', _DEFAULT_FONT], capture_output=True, check=False, timeout=10)
-			except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
-				pass
+				SysCommand(f'setfont {_DEFAULT_FONT}')
+			except SysCallError as err:
+				debug(f'Failed to set default console font: {err}')
+
+
+def _save_console_font() -> None:
+	"""Save the current console font (with unicode map) and console map to backup files."""
+	try:
+		SysCommand(f'setfont -O {_FONT_BACKUP} -om {_CMAP_BACKUP}')
+	except SysCallError as err:
+		debug(f'Failed to save console font: {err}')
+
+
+def _restore_console_font() -> None:
+	"""Restore console font (with unicode map) and console map from backup, falling back to default8x16."""
+	if _FONT_BACKUP.exists():
+		args = str(_FONT_BACKUP)
+		if _CMAP_BACKUP.exists():
+			args += f' -m {_CMAP_BACKUP}'
+		_set_console_font(args)
+	else:
+		_set_console_font(None)
+
+	_FONT_BACKUP.unlink(missing_ok=True)
+	_CMAP_BACKUP.unlink(missing_ok=True)
 
 
 class TranslationHandler:
