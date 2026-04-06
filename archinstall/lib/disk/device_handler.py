@@ -36,6 +36,7 @@ from archinstall.lib.models.device import (
 )
 from archinstall.lib.models.users import Password
 from archinstall.lib.output import debug, error, info, log
+from archinstall.lib.pathnames import ARCHISO_MOUNTPOINT
 
 
 class DeviceHandler:
@@ -62,8 +63,6 @@ class DeviceHandler:
 		devices = getAllDevices()
 		devices.extend(self.get_loop_devices())
 
-		archiso_mountpoint = Path('/run/archiso/airootfs')
-
 		for device in devices:
 			dev_lsblk_info = find_lsblk_info(device.path, all_lsblk_info)
 
@@ -75,7 +74,7 @@ class DeviceHandler:
 				continue
 
 			# exclude archiso loop device
-			if dev_lsblk_info.mountpoint == archiso_mountpoint:
+			if dev_lsblk_info.mountpoint == ARCHISO_MOUNTPOINT:
 				continue
 
 			try:
