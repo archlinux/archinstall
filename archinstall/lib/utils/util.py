@@ -1,8 +1,8 @@
 import secrets
 import string
-from pathlib import Path
 
 from archinstall.lib.output import FormattedOutput
+from archinstall.lib.pathnames import ARCHISO_MOUNTPOINT
 
 
 def running_from_iso() -> bool:
@@ -12,7 +12,7 @@ def running_from_iso() -> bool:
 	Returns True if /run/archiso/airootfs is a mount point (ISO mode).
 	Returns False if running from installed system (host mode) for host-to-target install.
 	"""
-	return Path('/run/archiso/airootfs').is_mount()
+	return ARCHISO_MOUNTPOINT.is_mount()
 
 
 def generate_password(length: int = 64) -> str:
