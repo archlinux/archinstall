@@ -36,7 +36,6 @@ from archinstall.lib.models.device import (
 )
 from archinstall.lib.models.users import Password
 from archinstall.lib.output import debug, error, info, log
-from archinstall.lib.utils.util import is_subpath
 
 
 class DeviceHandler:
@@ -563,7 +562,7 @@ class DeviceHandler:
 		for device in self.devices:
 			for part_info in device.partition_infos:
 				for mountpoint in part_info.mountpoints:
-					if is_subpath(mountpoint, base_mountpoint):
+					if mountpoint.is_relative_to(base_mountpoint):
 						path = Path(part_info.disk.device.path)
 						part_mods.setdefault(path, [])
 						part_mod = PartitionModification.from_existing_partition(part_info)
