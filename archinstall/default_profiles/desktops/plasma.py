@@ -16,12 +16,11 @@ class PlasmaProfile(Profile):
 	@override
 	def packages(self) -> list[str]:
 		return [
-			'plasma-desktop',
+			'plasma-meta',
 			'konsole',
-			'kate',
 			'dolphin',
 			'ark',
-			'plasma-workspace',
+			'kate',
 		]
 
 	@property
