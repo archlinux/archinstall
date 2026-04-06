@@ -4,7 +4,6 @@ import platform
 import re
 import shlex
 import shutil
-import stat
 import subprocess
 import textwrap
 import time
@@ -29,6 +28,7 @@ from archinstall.lib.disk.utils import (
 )
 from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
@@ -1386,7 +1386,7 @@ class Installer:
 				raise DiskError(f'Failed to install GRUB boot on {boot_partition.dev_path}: {err}')
 
 		if SysInfo.has_uefi() and uki_enabled:
-			grub_d = self.target / 'etc/grub.d'
+			grub_d = LPath(self.target) / 'etc/grub.d'
 			linux_file = grub_d / '10_linux'
 			uki_file = grub_d / '15_uki'
 
@@ -1406,10 +1406,9 @@ class Installer:
 			)
 
 			try:
-				mode = linux_file.stat().st_mode
-				linux_file.chmod(mode & ~(stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH))
 				uki_file.write_text(content)
-				uki_file.chmod(mode)
+				uki_file.add_exec()
+				linux_file.remove_exec()
 			except OSError:
 				error('Failed to enable UKI menu entries')
 		else:
