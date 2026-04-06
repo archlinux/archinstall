@@ -1990,12 +1990,10 @@ class Installer:
 	def set_vconsole(self, locale_config: LocaleConfiguration) -> None:
 		# use the already set kb layout
 		kb_vconsole: str = locale_config.kb_layout
-		# this is the default used in ISO other option for hdpi screens TER16x32
-		# can be checked using
-		# zgrep "CONFIG_FONT" /proc/config.gz
-		# https://wiki.archlinux.org/title/Linux_console#Fonts
+		font_vconsole = locale_config.console_font
 
-		font_vconsole = 'default8x16'
+		if font_vconsole.startswith('ter-'):
+			self.pacman.strap(['terminus-font'])
 
 		# Ensure /etc exists
 		vconsole_dir: Path = self.target / 'etc'

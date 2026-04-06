@@ -1,3 +1,5 @@
+import os
+
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import ServiceException, SysCallError
 from archinstall.lib.output import error
@@ -24,6 +26,17 @@ def list_locales() -> list[str]:
 				locales.append(line.rstrip())
 
 	return locales
+
+
+def list_console_fonts() -> list[str]:
+	fonts: set[str] = set()
+
+	for entry in os.listdir('/usr/share/kbd/consolefonts'):
+		if entry.endswith('.gz'):
+			name = entry.removesuffix('.gz').removesuffix('.psfu').removesuffix('.psf').removesuffix('.cp').removesuffix('.fnt')
+			fonts.add(name)
+
+	return sorted(fonts)
 
 
 def list_x11_keyboard_languages() -> list[str]:
