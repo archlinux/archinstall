@@ -17,6 +17,9 @@ class PlasmaProfile(Profile):
 	def packages(self) -> list[str]:
 		return [
 			'plasma-desktop',
+			'plasma-pa',
+			'kwin',
+			'kscreen',
 			'konsole',
 			'kate',
 			'dolphin',
