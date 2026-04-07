@@ -11,18 +11,13 @@ from pathlib import Path
 from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.hardware import SysInfo
-from archinstall.lib.installer import Installer
-from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
-from archinstall.lib.mirror.mirror_handler import MirrorListHandler
-from archinstall.lib.mirror.mirror_menu import MirrorMenu
 from archinstall.lib.network.wifi_handler import WifiHandler
-from archinstall.lib.networking import ping
 from archinstall.lib.output import debug, error, info, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.switch_mirror import check_online, switch_mirror_sources
 from archinstall.lib.utils.util import running_from_iso
-from archinstall.tui.ui.components import tui
 
 
 def _log_sys_info() -> None:
@@ -37,21 +32,7 @@ def _log_sys_info() -> None:
 	debug(f'Disk states before installing:\n{disk_layouts()}')
 
 
-def _check_online(wifi_handler: WifiHandler | None = None) -> bool:
-	try:
-		ping('1.1.1.1')
-	except OSError as ex:
-		if 'Network is unreachable' in str(ex):
-			if wifi_handler is not None:
-				result: bool = tui.run(wifi_handler)
-				if not result:
-					return False
-
-	return True
-
-
-SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS = 15
-
+SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS = 10
 
 def _confirm_switch_mirror_sources(elapsed_seconds: float) -> bool:
 	if not sys.stdin.isatty():
@@ -64,35 +45,6 @@ def _confirm_switch_mirror_sources(elapsed_seconds: float) -> bool:
 		return False
 
 
-def _switch_mirror_sources() -> bool:
-	info(tr('Switching mirror sources.'))
-	mirror_list_handler = MirrorListHandler()
-
-	try:
-		mirror_configuration = tui.run(lambda: MirrorMenu(mirror_list_handler).run())
-	except Exception as e:
-		error(tr('Could not open mirror configuration menu.'))
-		debug(f'Failed to switch mirror sources: {e}')
-		return False
-
-	if mirror_configuration is None:
-		warn(tr('Mirror source selection cancelled.'))
-		return False
-
-	try:
-		installer = Installer(
-			Path('/'),
-			DiskLayoutConfiguration(DiskLayoutType.Pre_mount, mountpoint=Path('/')),
-		)
-		installer.set_mirrors(mirror_list_handler, mirror_configuration, on_target=False)
-		info(tr('Mirror sources have been updated.'))
-		return True
-	except Exception as e:
-		error(tr('Failed to update the local mirror list.'))
-		debug(f'Failed to update the mirror list: {e}')
-		return False
-
-
 def _fetch_arch_db(retry: bool = False) -> bool:
 	info('Fetching Arch Linux package database...')
 	started = time.time()
@@ -101,7 +53,7 @@ def _fetch_arch_db(retry: bool = False) -> bool:
 	except Exception as e:
 		elapsed = time.time() - started
 		if not retry and elapsed > SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS:
-			if _confirm_switch_mirror_sources(elapsed) and _switch_mirror_sources():
+			if _confirm_switch_mirror_sources(elapsed) and switch_mirror_sources():
 				return _fetch_arch_db(retry=True)
 
 		error('Failed to sync Arch Linux package database.')
@@ -115,7 +67,7 @@ def _fetch_arch_db(retry: bool = False) -> bool:
 
 	elapsed = time.time() - started
 	if not retry and elapsed > SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS:
-		if _confirm_switch_mirror_sources(elapsed) and _switch_mirror_sources():
+		if _confirm_switch_mirror_sources(elapsed) and switch_mirror_sources():
 			return _fetch_arch_db(retry=True)
 
 	return True
@@ -161,7 +113,7 @@ def run() -> int:
 		else:
 			wifi_handler = None
 
-		if not _check_online(wifi_handler):
+		if not check_online(wifi_handler):
 			return 0
 
 		if not _fetch_arch_db():
