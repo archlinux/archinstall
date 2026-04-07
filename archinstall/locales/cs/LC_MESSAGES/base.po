@@ -1871,158 +1871,126 @@ msgid "Use Network Manager (iwd backend)"
 msgstr "Použít Network Manager (iwd backend)"
 
 msgid "Firewall"
-msgstr ""
+msgstr "Firewall"
 
-#, fuzzy
 msgid "Select audio configuration"
-msgstr "Uložit uživatelskou konfiguraci"
+msgstr "Zvolte konfiguraci zvuku"
 
-#, fuzzy
 msgid "Enter credentials file decryption password"
-msgstr "Heslo pro dešifrování souboru s přihlašovacími údaji"
+msgstr "Zadejte heslo pro dešifrování souboru s přihlašovacími údaji"
 
-#, fuzzy
 msgid "Enter root password"
-msgstr "Zadejte heslo: "
+msgstr "Zadejte heslo správce (root): "
 
 msgid "Select bootloader to install"
-msgstr ""
+msgstr "Zvolte zavaděč k instalaci"
 
-#, fuzzy
 msgid "Configuration preview"
-msgstr "Konfigurace"
+msgstr "Náhled konfigurace"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved"
-msgstr "Zadejte adresář pro uložení konfigurace (konfigurací): "
+msgstr "Zadejte adresář pro uložení konfigurace (konfigurací)"
 
-#, fuzzy
 msgid "Select encryption type"
-msgstr "Typ šifrování"
+msgstr "Zvolte typ šifrování"
 
-#, fuzzy
 msgid "Select disks for the installation"
-msgstr "Název počítače k instalaci: "
+msgstr "Zvolte disky pro instalaci"
 
-#, fuzzy
 msgid "Enter a mountpoint"
-msgstr "Zvolte přípojný bod:"
+msgstr "Zadejte přípojný bod"
 
-#, fuzzy, python-brace-format
 msgid "Enter a size (default: {}): "
-msgstr "Zadejte konec (výchozí: {}): "
+msgstr "Zadejte velikost (výchozí: {}): "
 
-#, fuzzy
 msgid "Enter subvolume name"
-msgstr "Název podsvazku"
+msgstr "Zadejte název podsvazku"
 
-#, fuzzy
 msgid "Enter subvolume mountpoint"
-msgstr "Přípojný bod podsvazku"
+msgstr "Zadejte přípojný bod podsvazku"
 
-#, fuzzy
 msgid "Select a disk configuration"
-msgstr "Konfigurace disku"
+msgstr "Zvolte konfiguraci disku"
 
-#, fuzzy
 msgid "Enter root mount directory"
-msgstr "Kořenový adresář pro připojení"
+msgstr "Zadejte kořenový adresář pro připojení"
 
 msgid "You will use whatever drive-setup is mounted at the specified directory"
-msgstr ""
+msgstr "Budete používat jakékoli nastavení disku připojené v zadaném adresáři"
 
 msgid "WARNING: Archinstall won't check the suitability of this setup"
-msgstr ""
+msgstr "VAROVÁNÍ: Archinstall nekontroluje vhodnost tohoto nastavení"
 
-#, fuzzy
 msgid "Select main filesystem"
-msgstr "Změnit souborový systém"
+msgstr "Zvolte hlavní souborový systém"
 
 msgid "Enter a hostname"
-msgstr ""
+msgstr "Zadejte název počítače"
 
-#, fuzzy
 msgid "Select timezone"
 msgstr "Zvolte časovou zónu"
 
-#, fuzzy
 msgid "Enter the number of parallel downloads to be enabled"
-msgstr ""
-"Zadejte povolený počet paralelních stahování.\n"
-"\n"
-"Poznámka:\n"
+msgstr "Zadejte povolený počet paralelních stahování, která mají být povolena"
 
 #, python-brace-format
 msgid "Value must be between 1 and {}"
-msgstr ""
+msgstr "Hodnota musí být mezi 1 a {}"
 
-#, fuzzy
 msgid "Select which kernel(s) to install"
-msgstr "Prosím vyberte přihlašovací obrazovku k instalaci"
+msgstr "Zvolte, která jádra mají být nainstalována"
 
-#, fuzzy
 msgid "Enter a respository name"
-msgstr "Název repozitáře"
+msgstr "Zadejte název repozitáře"
 
-#, fuzzy
 msgid "Enter the repository url"
-msgstr "Změnit vlastní repozitář"
+msgstr "Zadejte URL repozitáře"
 
-#, fuzzy
 msgid "Enter server url"
-msgstr "URL serveru"
+msgstr "Zadejte URL serveru"
 
-#, fuzzy
 msgid "Select mirror regions to be enabled"
-msgstr "Zvolené oblasti zrcadel"
+msgstr "Zvolte oblasti zrcadel, které se mají povolit"
 
-#, fuzzy
 msgid "Select optional repositories to be enabled"
-msgstr "Vyberte, které dodatečné balíčky mají být povoleny"
+msgstr "Zvolte volitelné repozitáře, které se mají povolit"
 
-#, fuzzy
 msgid "Select an interface"
-msgstr "Smazat rozhraní"
+msgstr "Zvolte rozhraní"
 
-#, fuzzy
 msgid "Choose network configuration"
-msgstr "Žádná konfigurace sítě"
+msgstr "Zvolte konfiguraci sítě"
 
-#, fuzzy
 msgid "No packages found"
-msgstr "Nebylo nalezeno žádné U2F zařízení"
+msgstr "Nebyly nalezeny žádné balíčky"
 
-#, fuzzy
 msgid "Select which greeter to install"
-msgstr "Prosím vyberte přihlašovací obrazovku k instalaci"
+msgstr "Zvolte přihlašovací obrazovku k instalaci"
 
 #, fuzzy
 msgid "Select a profile type"
-msgstr "Zvolené profily: "
+msgstr "Zvolte typ profilu"
 
-#, fuzzy
 msgid "Enter new password"
-msgstr "Zadejte heslo pro wifi"
+msgstr "Zadejte nové heslo"
 
 msgid "Enter a username"
-msgstr ""
+msgstr "Zadejte uživatelské jméno"
 
-#, fuzzy
 msgid "Enter a password"
-msgstr "Zadejte heslo: "
+msgstr "Zadejte heslo"
 
-#, fuzzy
 msgid "The password did not match, please try again"
-msgstr "Potvrzovací heslo se neshoduje, zkuste to prosím znovu"
+msgstr "Hesla se neshodují, prosím zkuste to znovu"
 
 msgid "Password strength: Weak"
-msgstr ""
+msgstr "Síla hesla: Slabá"
 
 msgid "Password strength: Moderate"
-msgstr ""
+msgstr "Síla hesla: Střední"
 
 msgid "Password strength: Strong"
-msgstr ""
+msgstr "Síla hesla: Silné"
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
-msgstr ""
+msgstr "Zvolený profil plochy vyžaduje, aby se normální uživatel přihlásil prostřednictvím přihlašovací obrazovky"
