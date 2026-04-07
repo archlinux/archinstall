@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class FormattedOutput:
 	@staticmethod
 	def _get_values(
-		o: 'DataclassInstance',
+		o: DataclassInstance,
 		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 		filter_list: list[str] = [],
 	) -> dict[str, Any]:
