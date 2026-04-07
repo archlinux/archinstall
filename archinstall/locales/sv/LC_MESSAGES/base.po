@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] En logg-fil har skapats här: {} {}"
@@ -54,6 +54,9 @@ msgstr "Välj en ljud-server"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Enbart paket som base, base-devel, linux, linux-firmware, efibootmgr och självvalda paket är installerade."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Observera: base-devel kommer inte att installeras längre som standard. Lägg till det här om du behöver byggverktyg."
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Om du önskar en webbläsare, exempelvis firefox eller chromium, bör du skriva in dom i följande fält."
 
@@ -72,6 +75,7 @@ msgstr "Välj ett nätverkskort för konfigurering"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Välj vilket läge att konfigurera för \"{}\" eller använd standardläge \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Mata in IP och subnät för {} (exempelvis: 192.168.0.5/24): "
 
@@ -585,6 +589,7 @@ msgstr "Välj önskade inställningar för sub-volymen "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Definera användarnamn med sudo-rättigheter: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] En logg-fil har skapats här: {}"
 
@@ -843,9 +848,11 @@ msgstr "Archinstall kräver root-privilegier för att köras. Se --help för mer
 msgid "Select an execution mode"
 msgstr "Välj ett exekveringsläge"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Det gick inte att hämta profilen från angiven webbadress: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Profiler måste ha ett unikt namn, men profildefinitioner med dubblettnamn hittades: {}"
 
@@ -864,9 +871,11 @@ msgstr "Välj ett partitioneringsalternativ"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Ange rootkatalogen för de monterade enheterna: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Minsta kapacitet för /home-partition: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Minsta kapacitet för Arch Linux-partition: {}GiB"
 
@@ -930,9 +939,11 @@ msgstr "Ange slutsektorn för partitionen (procent eller blocknummer, standard: 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Detta tar bort alla nyligen tillagda partitioner. Fortsätta?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Partitionshantering: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Total längd: {}"
 
@@ -993,6 +1004,7 @@ msgstr "Okänd"
 msgid "Partition encryption"
 msgstr "Partitionskryptering"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Formaterar {} om "
 
@@ -1017,6 +1029,7 @@ msgstr "Tillbaka"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Vänligen välj vilken displayhanterare du vill installera för de valda profilerna: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Miljötyp: {}"
 
@@ -1209,6 +1222,7 @@ msgstr ""
 "\n"
 "Observera:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Maximalt rekommenderat värde: {} (Tillåter {} parallella nedladdningar åt gången)"
 
@@ -1272,6 +1286,7 @@ msgstr "Inaktivera Copy-on-Write"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Ger ett urval av skrivbordsmiljöer och kaklade fönsterhanterare, t.ex. GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Konfigurationstyp: {}"
 
@@ -1398,6 +1413,7 @@ msgstr "Användarnamnet du angav är ogiltigt"
 msgid "Username"
 msgstr "Användarnamn"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Ska \"{}\" vara en superanvändare (sudo)?\n"
 
@@ -1464,6 +1480,7 @@ msgstr "Katalog"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Ange en katalog för konfigurationen/konfigurationerna som ska sparas (komplettering av flikar aktiverad)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Vill du spara konfigurationsfil(er) till {}?"
 
@@ -1509,12 +1526,15 @@ msgstr "Namn"
 msgid "Signature check"
 msgstr "Signaturkontroll"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Valt ledigt utrymmessegment på enheten {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Storlek: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Storlek (standard: {}): "
 
@@ -1677,6 +1697,7 @@ msgstr "Installationen slutförd"
 msgid "What would you like to do next?"
 msgstr "Vad vill du göra härnäst?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Välj vilket läge att konfigurera för \"{}\""
 
@@ -1695,5 +1716,165 @@ msgstr "Vill du kryptera user_credentials.json filen?"
 msgid "Credentials file encryption password"
 msgstr "Krypteringslösenord för autentiseringsfil"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Arkiv: {}"
+
+msgid "New version available"
+msgstr "Ny version tillgänglig"
+
+msgid "Passwordless login"
+msgstr "Lösenordslös inloggning"
+
+msgid "Second factor login"
+msgstr "Andra faktorsinloggning"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Vill du konfigurera Bluetooth?"
+
+msgid "Print service"
+msgstr "Utskriftstjänst"
+
+msgid "Would you like to configure the print service?"
+msgstr "Vill du konfigurera utskriftstjänsten?"
+
+msgid "Power management"
+msgstr "Strömhantering"
+
+msgid "Authentication"
+msgstr "Autentisering"
+
+msgid "Applications"
+msgstr "Program"
+
+msgid "U2F login method: "
+msgstr "U2F-inloggningsmetod: "
+
+msgid "Passwordless sudo: "
+msgstr "Lösenordslös sudo: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Btrfs-ögonblicksavbildstyp: {}"
+
+msgid "Syncing the system..."
+msgstr "Synkroniserar systemet..."
+
+msgid "Value cannot be empty"
+msgstr "Värdet kan inte vara tomt"
+
+msgid "Snapshot type"
+msgstr "Ögonblicksavbildstyp"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Ögonblicksavbildstyp: {}"
+
+msgid "U2F login setup"
+msgstr "Ställ in U2F-inloggning"
+
+msgid "No U2F devices found"
+msgstr "Inga U2F-enheter hittades"
+
+msgid "U2F Login Method"
+msgstr "U2F-inloggningsmetod"
+
+msgid "Enable passwordless sudo?"
+msgstr "Aktivera lösenordslös sudo?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Konfigurerar U2F-enhet för användare: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Du kan behöva ange PIN-koden och sedan trycka på din U2F-enhet för att registrera den"
+
+msgid "Starting device modifications in "
+msgstr "Starta enhetsmodifieringar i "
+
+msgid "No network connection found"
+msgstr "Ingen nätverksanslutning hittades"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Vill du ansluta till ett wifi nätverk?"
+
+msgid "No wifi interface found"
+msgstr "Inget wifi gränssnitt hittades"
+
+msgid "Select wifi network to connect to"
+msgstr "Välj ett wifi nätverk att ansluta till"
+
+msgid "Scanning wifi networks..."
+msgstr "Skannar efter wifi nätverk..."
+
+msgid "No wifi networks found"
+msgstr "Inga wifi nätverk hittades"
+
+msgid "Failed setting up wifi"
+msgstr "Misslyckades med att ställa in wifi"
+
+msgid "Enter wifi password"
+msgstr "Ange wifi lösenord"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Removable"
+msgstr "Borttagbar"
+
+msgid "Install to removable location"
+msgstr "Installera till borttagbar plats"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats)"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "Installeras på standardplats med NVRAM-post"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Vill du installera bootloadern på standardsökvägen för flyttbara medier?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Detta installerar bootloadern till /EFI/BOOT/BOOTX64.EFI (eller liknande) vilket är användbart för:"
+
+msgid "USB drives or other portable external media."
+msgstr "USB-minnen eller andra portabla externa medier."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "System där du vill att disken ska vara uppstartsbar på vilken dator som helst."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt."
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats, säker standardinställning))"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Kommer att installeras på en anpassad plats med NVRAM-post"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt som de flesta MSI-moderkort,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "de flesta Apple Mac-datorer, många bärbara datorer..."
+
+msgid "Language"
+msgstr "Språk"
+
+msgid "Compression algorithm"
+msgstr "Kompressionsalgoritm"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Endast paket som base, sudo, linux, linux-firmware, efibootmgr och valfria profilpaket installeras."
+
+msgid "Select zram compression algorithm:"
+msgstr "Välj zram kompressionsalgoritm:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Använd Network Manager (standard backend)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Använd Network Manager (iwd backend)"

@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, Self, TypedDict
 
 from archinstall.default_profiles.profile import GreeterType, Profile
-
-from ..hardware import GfxDriver
+from archinstall.lib.hardware import GfxDriver
 
 if TYPE_CHECKING:
 	from archinstall.lib.profile.profiles_handler import ProfileSerialization
@@ -24,7 +23,7 @@ class ProfileConfiguration:
 	greeter: GreeterType | None = None
 
 	def json(self) -> _ProfileConfigurationSerialization:
-		from ..profile.profiles_handler import profile_handler
+		from archinstall.lib.profile.profiles_handler import profile_handler
 
 		return {
 			'profile': profile_handler.to_json(self.profile),
@@ -33,14 +32,20 @@ class ProfileConfiguration:
 		}
 
 	@classmethod
-	def parse_arg(cls, arg: _ProfileConfigurationSerialization) -> 'ProfileConfiguration':
-		from ..profile.profiles_handler import profile_handler
+	def parse_arg(cls, arg: _ProfileConfigurationSerialization) -> Self:
+		from archinstall.lib.profile.profiles_handler import profile_handler
 
 		profile = profile_handler.parse_profile_config(arg['profile'])
 		greeter = arg.get('greeter', None)
 		gfx_driver = arg.get('gfx_driver', None)
 
-		return ProfileConfiguration(
+		if gfx_driver == 'Nvidia (proprietary)':
+			raise ValueError(
+				'The Nvidia proprietary driver (nvidia-dkms) has been removed from the Arch repos. '
+				'Please use "Nvidia (open kernel module for newer GPUs, Turing+)" instead.'
+			)
+
+		return cls(
 			profile,
 			GfxDriver(gfx_driver) if gfx_driver else None,
 			GreeterType(greeter) if greeter else None,

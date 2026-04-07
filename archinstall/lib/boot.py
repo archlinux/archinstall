@@ -1,28 +1,33 @@
 import time
 from collections.abc import Iterator
+from pathlib import Path
 from types import TracebackType
+from typing import ClassVar, Self
 
-from .exceptions import SysCallError
-from .general import SysCommand, SysCommandWorker, locate_binary
-from .installer import Installer
-from .output import error
-from .storage import storage
+from archinstall.lib.command import SysCommand, SysCommandWorker, locate_binary
+from archinstall.lib.exceptions import SysCallError
+from archinstall.lib.output import error
 
 
 class Boot:
-	def __init__(self, installation: Installer):
-		self.instance = installation
+	_active_boot: ClassVar[Self | None] = None
+
+	def __init__(self, path: Path | str):
+		if isinstance(path, Path):
+			path = str(path)
+
+		self.path = path
 		self.container_name = 'archinstall'
 		self.session: SysCommandWorker | None = None
 		self.ready = False
 
-	def __enter__(self) -> 'Boot':
-		if (existing_session := storage.get('active_boot', None)) and existing_session.instance != self.instance:
+	def __enter__(self) -> Self:
+		if Boot._active_boot and Boot._active_boot.path != self.path:
 			raise KeyError('Archinstall only supports booting up one instance and another session is already active.')
 
-		if existing_session:
-			self.session = existing_session.session
-			self.ready = existing_session.ready
+		if Boot._active_boot:
+			self.session = Boot._active_boot.session
+			self.ready = Boot._active_boot.ready
 		else:
 			# '-P' or --console=pipe  could help us not having to do a bunch
 			# of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
@@ -30,7 +35,7 @@ class Boot:
 				[
 					'systemd-nspawn',
 					'-D',
-					str(self.instance.target),
+					self.path,
 					'--timezone=off',
 					'-b',
 					'--no-pager',
@@ -45,7 +50,7 @@ class Boot:
 					self.ready = True
 					break
 
-		storage['active_boot'] = self
+		Boot._active_boot = self
 		return self
 
 	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
@@ -55,7 +60,7 @@ class Boot:
 		if exc_type is not None:
 			error(
 				str(exc_value),
-				f'The error above occurred in a temporary boot-up of the installation {self.instance}',
+				f'The error above occurred in a temporary boot-up of the installation {self.path!r}',
 			)
 
 		shutdown = None
@@ -74,12 +79,12 @@ class Boot:
 			shutdown_exit_code = shutdown.exit_code
 
 		if self.session and (self.session.exit_code == 0 or shutdown_exit_code == 0):
-			storage['active_boot'] = None
+			Boot._active_boot = None
 		else:
 			session_exit_code = self.session.exit_code if self.session else -1
 
 			raise SysCallError(
-				f'Could not shut down temporary boot of {self.instance}: {session_exit_code}/{shutdown_exit_code}',
+				f'Could not shut down temporary boot of {self.path!r}: {session_exit_code}/{shutdown_exit_code}',
 				exit_code=next(filter(bool, [session_exit_code, shutdown_exit_code])),
 			)
 

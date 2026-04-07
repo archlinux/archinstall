@@ -53,6 +53,9 @@ msgstr "Selectați un server audio"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Dacă doriți un browser, precum firefox sau chromium, puteți să-l specificați în promptul următor."
 
@@ -71,6 +74,7 @@ msgstr "Selectați o interfață de rețea pentru configurare"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Selectați modul de configurare pentru \"{}\" sau folosiți modul predefinit \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Introduceți IP-ul și subrețeaua pentru {} (example: 192.168.0.5/24): "
 
@@ -584,6 +588,7 @@ msgstr "Selectați opțiunile dorite pentru subvolum "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Definiți utilizatorii cu privilegii sudo, după nume utilizator: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Un fișier de jurnal a fost creat aici: {}"
 
@@ -842,9 +847,11 @@ msgstr "Archinstall necesită privilegii avansate pentru execuție. Vedeți --he
 msgid "Select an execution mode"
 msgstr "Selectați un mod de execuție"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Nu se poate prelua profilul de la URL-ul specificat: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Profilurile trebuie să aibă nume unicate, dar definiții de profil cu nume duplicate au fost găsite: {}"
 
@@ -863,9 +870,11 @@ msgstr "Selectați o opțiune de partiționare"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Introduceți directorul rădăcină a dispozitivelor montate: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Capacitatea minimă pentru partiția /home: {}GB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Capacitatea minimă pentru partiția Arch Linux: {}GB"
 
@@ -929,9 +938,11 @@ msgstr "Introduceți sectorul de final pentru partiționare (procentaj sau numă
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Această acțiune va șterge toate partițiile noi adăugate, continuați?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Managementul partiției: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Lungime totală: {}"
 
@@ -992,6 +1003,7 @@ msgstr "Neștiut"
 msgid "Partition encryption"
 msgstr "Criptare partiție"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Se formatează {} in "
 
@@ -1016,6 +1028,7 @@ msgstr "Înapoi"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Vă rog selectați un manager de afișare pentru profilurile selectate: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Tip mediu: {}"
 
@@ -1208,6 +1221,7 @@ msgstr ""
 "\n"
 "Notă:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Valoare minimă  : {} ( Permite {} descărcări simultane în același timp )"
 
@@ -1279,7 +1293,7 @@ msgstr ""
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Oferă o selecție de medii de lucru și manageri de ferestre precum GNOME, KDE, Sway"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Configurație"
 
@@ -1435,7 +1449,7 @@ msgstr "Numele de utilizator adăugat este invalid. Încercați din nou"
 msgid "Username"
 msgstr "Nume utilizator : "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Ar trebui ca \"{}\" să fie un utilizator cu privilegii (sudo)?"
 
@@ -1517,7 +1531,7 @@ msgstr ""
 "Introduceți un director pentru salvarea configurării (configurațiilor, completare automată cu Tab activată)\n"
 "Directorul pentru salvare: "
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr ""
 "Doriți să salvați fișierele de configurare {} în această locație?\n"
@@ -1576,15 +1590,15 @@ msgstr ""
 msgid "Signature check"
 msgstr "Selectați opțiunea pentru verificarea semnăturii"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Sectoarele libere curente de pe dispozitiv {}:"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Total: {} / {}"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Introduceți final (predefinit: {}): "
 
@@ -1784,7 +1798,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr "Doriți să folosiți compresie pentru BTRFS?"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Selectați modul de configurare pentru \"{}\" sau folosiți modul predefinit \"{}\""
 
@@ -1811,6 +1825,180 @@ msgstr ""
 msgid "Credentials file encryption password"
 msgstr "Parola de criptare"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "Regiune de oglindire"
+
+#, fuzzy
+msgid "New version available"
+msgstr "Nicun dispozitiv HSM disponibil"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Parola"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Managementul partiției: {}"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tip mediu: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Introduceți o parolă: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Selectați utilizarea unui device FID02 pentru HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "Nu există o configurare de rețea"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "Configurează interfața {}"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "Selectați o interfață de rețea pentru configurare"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "Nu există o configurare de rețea"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "Introduceți o parolă: "
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Limba locală"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Seleactați un punct de montare :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""

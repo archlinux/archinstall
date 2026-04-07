@@ -2,7 +2,7 @@ Key,Value(s),Description,Required
 additional-repositories,[ `multilib <https://wiki.archlinux.org/title/Official_repositories#multilib>`_!, `testing <https://wiki.archlinux.org/title/Official_repositories#Testing_repositories>`_ ],Enables one or more of the testing and multilib repositories before proceeding with installation,No
 archinstall-language,`lang <https://github.com/archlinux/archinstall/blob/master/archinstall/locales/languages.json>`__,Sets the TUI language used *(make sure to use the ``lang`` value not the ``abbr``)*,No
 audio_config,`pipewire <https://wiki.archlinux.org/title/PipeWire>`_!, `pulseaudio <https://wiki.archlinux.org/title/PulseAudio>`_,Audioserver to be installed,No
-bootloader,`Systemd-boot <https://wiki.archlinux.org/title/Systemd-boot>`_!, `grub <https://wiki.archlinux.org/title/GRUB>`_,Bootloader to be installed *(grub being mandatory on BIOS machines)*,Yes
+bootloader_config,"{ bootloader: `Systemd-boot <https://wiki.archlinux.org/title/Systemd-boot>`_!, `grub <https://wiki.archlinux.org/title/GRUB>`_!, `limine <https://wiki.archlinux.org/title/Limine>`_!, uki: ``true``/``false``!, removable: ``true``/``false`` }","Bootloader configuration. ``bootloader`` selects which bootloader to install *(grub/limine mandatory on BIOS)*. ``uki`` enables unified kernel images *(UEFI only!,  systemd-boot/limine only)*. ``removable`` installs to default removable media path /EFI/BOOT/ instead of NVRAM *(UEFI only!, grub/limine only)*",Yes
 debug,``true``!, ``false``,Enables debug output,No
 disk_config,*Read more under* :ref:`disk config`,Contains the desired disk setup to be used during installation,No
 disk_encryption,*Read more about under* :ref:`disk encryption`,Parameters for disk encryption applied on top of ``disk_config``,No

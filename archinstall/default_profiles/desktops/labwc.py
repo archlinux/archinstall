@@ -1,20 +1,20 @@
 from typing import override
 
 from archinstall.default_profiles.desktops import SeatAccess
-from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
+from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
-class LabwcProfile(XorgProfile):
+class LabwcProfile(Profile):
 	def __init__(self) -> None:
 		super().__init__(
 			'Labwc',
 			ProfileType.WindowMgr,
+			support_gfx_driver=True,
+			display_server=DisplayServerType.Wayland,
 		)
 
 		self.custom_settings = {'seat_access': None}
@@ -43,7 +43,7 @@ class LabwcProfile(XorgProfile):
 			return [pref]
 		return []
 
-	def _ask_seat_access(self) -> None:
+	async def _select_seat_access(self) -> None:
 		# need to activate seat service and add to seat group
 		header = tr('labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)')
 		header += '\n' + tr('Choose an option to give labwc access to your hardware') + '\n'
@@ -54,18 +54,15 @@ class LabwcProfile(XorgProfile):
 		default = self.custom_settings.get('seat_access', None)
 		group.set_default_by_value(default)
 
-		result = SelectMenu[SeatAccess](
+		result = await Selection[SeatAccess](
 			group,
 			header=header,
 			allow_skip=False,
-			frame=FrameProperties.min(tr('Seat access')),
-			alignment=Alignment.CENTER,
-		).run()
+		).show()
 
 		if result.type_ == ResultType.Selection:
 			self.custom_settings['seat_access'] = result.get_value().value
 
 	@override
-	def do_on_select(self) -> None:
-		self._ask_seat_access()
-		return None
+	async def do_on_select(self) -> None:
+		await self._select_seat_access()

@@ -1,101 +1,18 @@
-from __future__ import annotations
-
-import json
 import os
-import re
-import secrets
 import shlex
 import stat
-import string
 import subprocess
 import sys
 import time
 from collections.abc import Iterator
-from datetime import date, datetime
-from enum import Enum
-from pathlib import Path
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
 from types import TracebackType
-from typing import Any, override
+from typing import Any, Self, override
 
-from .exceptions import RequirementError, SysCallError
-from .output import debug, error, logger
-
-# https://stackoverflow.com/a/43627833/929999
-_VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
-_VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
-
-
-def generate_password(length: int = 64) -> str:
-	haystack = string.printable  # digits, ascii_letters, punctuation (!"#$[] etc) and whitespace
-	return ''.join(secrets.choice(haystack) for _ in range(length))
-
-
-def locate_binary(name: str) -> str:
-	if path := which(name):
-		return path
-	raise RequirementError(f'Binary {name} does not exist.')
-
-
-def clear_vt100_escape_codes(data: bytes) -> bytes:
-	return re.sub(_VT100_ESCAPE_REGEX_BYTES, b'', data)
-
-
-def clear_vt100_escape_codes_from_str(data: str) -> str:
-	return re.sub(_VT100_ESCAPE_REGEX, '', data)
-
-
-def jsonify(obj: object, safe: bool = True) -> object:
-	"""
-	Converts objects into json.dumps() compatible nested dictionaries.
-	Setting safe to True skips dictionary keys starting with a bang (!)
-	"""
-
-	compatible_types = str, int, float, bool
-	if isinstance(obj, dict):
-		return {
-			key: jsonify(value, safe)
-			for key, value in obj.items()
-			if isinstance(key, compatible_types) and not (isinstance(key, str) and key.startswith('!') and safe)
-		}
-	if isinstance(obj, Enum):
-		return obj.value
-	if hasattr(obj, 'json'):
-		# json() is a friendly name for json-helper, it should return
-		# a dictionary representation of the object so that it can be
-		# processed by the json library.
-		return jsonify(obj.json(), safe)
-	if isinstance(obj, datetime | date):
-		return obj.isoformat()
-	if isinstance(obj, list | set | tuple):
-		return [jsonify(item, safe) for item in obj]
-	if isinstance(obj, Path):
-		return str(obj)
-	if hasattr(obj, '__dict__'):
-		return vars(obj)
-
-	return obj
-
-
-class JSON(json.JSONEncoder, json.JSONDecoder):
-	"""
-	A safe JSON encoder that will omit private information in dicts (starting with !)
-	"""
-
-	@override
-	def encode(self, o: object) -> str:
-		return super().encode(jsonify(o))
-
-
-class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
-	"""
-	UNSAFE_JSON will call/encode and keep private information in dicts (starting with !)
-	"""
-
-	@override
-	def encode(self, o: object) -> str:
-		return super().encode(jsonify(o, safe=False))
+from archinstall.lib.exceptions import RequirementError, SysCallError
+from archinstall.lib.output import debug, error, logger
+from archinstall.lib.utils.encoding import clear_vt100_escape_codes
 
 
 class SysCommandWorker:
@@ -168,7 +85,7 @@ class SysCommandWorker:
 		except UnicodeDecodeError:
 			return str(self._trace_log)
 
-	def __enter__(self) -> 'SysCommandWorker':
+	def __enter__(self) -> Self:
 		return self
 
 	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
@@ -278,9 +195,9 @@ class SysCommandWorker:
 			os.chdir(str(self.working_directory))
 
 		# Note: If for any reason, we get a Python exception between here
-		#   and until os.close(), the traceback will get locked inside
-		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
-		#   only way to get the traceback without losing it.
+		# and until os.close(), the traceback will get locked inside
+		# stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
+		# only way to get the traceback without losing it.
 
 		self.pid, self.child_fd = pty.fork()
 
@@ -414,31 +331,6 @@ class SysCommand:
 		return None
 
 
-def _append_log(file: str, content: str) -> None:
-	path = logger.directory / file
-
-	change_perm = not path.exists()
-
-	try:
-		with path.open('a') as f:
-			f.write(content)
-
-		if change_perm:
-			path.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
-	except (PermissionError, FileNotFoundError):
-		# If the file does not exist, ignore the error
-		pass
-
-
-def _cmd_history(cmd: list[str]) -> None:
-	content = f'{time.time()} {cmd}\n'
-	_append_log('cmd_history.txt', content)
-
-
-def _cmd_output(output: str) -> None:
-	_append_log('cmd_output.txt', output)
-
-
 def run(
 	cmd: list[str],
 	input_data: bytes | None = None,
@@ -454,8 +346,39 @@ def run(
 	)
 
 
+def locate_binary(name: str) -> str:
+	if path := which(name):
+		return path
+	raise RequirementError(f'Binary {name} does not exist.')
+
+
 def _pid_exists(pid: int) -> bool:
 	try:
 		return any(subprocess.check_output(['ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
 		return False
+
+
+def _cmd_history(cmd: list[str]) -> None:
+	content = f'{time.time()} {cmd}\n'
+	_append_log('cmd_history.txt', content)
+
+
+def _cmd_output(output: str) -> None:
+	_append_log('cmd_output.txt', output)
+
+
+def _append_log(file: str, content: str) -> None:
+	path = logger.directory / file
+
+	change_perm = not path.exists()
+
+	try:
+		with path.open('a') as f:
+			f.write(content)
+
+		if change_perm:
+			path.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+	except (PermissionError, FileNotFoundError):
+		# If the file does not exist, ignore the error
+		pass

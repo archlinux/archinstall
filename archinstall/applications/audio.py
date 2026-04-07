@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from archinstall.lib.hardware import SysInfo
@@ -30,8 +32,8 @@ class AudioApp:
 
 	def _enable_pipewire(
 		self,
-		install_session: 'Installer',
-		users: list['User'] | None = None,
+		install_session: Installer,
+		users: list[User] | None = None,
 	) -> None:
 		if users is None:
 			return
@@ -56,7 +58,7 @@ class AudioApp:
 
 	def install(
 		self,
-		install_session: 'Installer',
+		install_session: Installer,
 		audio_config: AudioConfiguration,
 		users: list[User] | None = None,
 	) -> None:

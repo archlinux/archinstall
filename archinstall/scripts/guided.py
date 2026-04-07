@@ -1,60 +1,70 @@
 import os
-from pathlib import Path
+import sys
+import time
 
-from archinstall import SysInfo
-from archinstall.lib.applications.application_handler import application_handler
-from archinstall.lib.args import arch_config_handler
-from archinstall.lib.authentication.authentication_handler import auth_handler
+from archinstall.lib.applications.application_handler import ApplicationHandler
+from archinstall.lib.args import ArchConfig, ArchConfigHandler
+from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.general.general_menu import PostInstallationAction, select_post_installation
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
-from archinstall.lib.interactions.general_conf import PostInstallationAction, ask_post_installation
+from archinstall.lib.menu.util import delayed_warning
+from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models import Bootloader
-from archinstall.lib.models.device import (
-	DiskLayoutType,
-	EncryptionType,
-)
+from archinstall.lib.models.device import DiskLayoutType, EncryptionType
 from archinstall.lib.models.users import User
+from archinstall.lib.network.network_handler import install_network_config
 from archinstall.lib.output import debug, error, info
-from archinstall.lib.packages.packages import check_package_upgrade
+from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
-from archinstall.tui import Tui
+from archinstall.tui.ui.components import tui
 
 
-def ask_user_questions() -> None:
-	"""
-	First, we'll ask the user for a bunch of user input.
-	Not until we're satisfied with what we want to install
-	will we continue with the actual installation steps.
-	"""
+def show_menu(
+	arch_config_handler: ArchConfigHandler,
+	mirror_list_handler: MirrorListHandler,
+) -> None:
+	upgrade = check_version_upgrade()
+	title_text = 'Archlinux'
 
-	title_text = None
-
-	upgrade = check_package_upgrade('archinstall')
 	if upgrade:
 		text = tr('New version available') + f': {upgrade}'
-		title_text = f'  ({text})'
+		title_text += f' ({text})'
 
-	with Tui():
-		global_menu = GlobalMenu(arch_config_handler.config)
+	global_menu = GlobalMenu(
+		arch_config_handler.config,
+		mirror_list_handler,
+		arch_config_handler.args.skip_boot,
+		title=title_text,
+	)
 
-		if not arch_config_handler.args.advanced:
-			global_menu.set_enabled('parallel_downloads', False)
+	if not arch_config_handler.args.advanced:
+		global_menu.set_enabled('parallel_downloads', False)
 
-		global_menu.run(additional_title=title_text)
+	result: ArchConfig | None = tui.run(global_menu)
+	if result is None:
+		sys.exit(0)
 
 
-def perform_installation(mountpoint: Path) -> None:
+def perform_installation(
+	arch_config_handler: ArchConfigHandler,
+	mirror_list_handler: MirrorListHandler,
+	auth_handler: AuthenticationHandler,
+	application_handler: ApplicationHandler,
+) -> None:
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
+	start_time = time.monotonic()
 	info('Starting installation...')
 
+	mountpoint = arch_config_handler.args.mountpoint
 	config = arch_config_handler.config
 
 	if not config.disk_config:
@@ -62,7 +72,7 @@ def perform_installation(mountpoint: Path) -> None:
 		return
 
 	disk_config = config.disk_config
-	run_mkinitcpio = not config.uki
+	run_mkinitcpio = not config.bootloader_config or not config.bootloader_config.uki
 	locale_config = config.locale_config
 	optional_repositories = config.mirror_config.optional_repositories if config.mirror_config else []
 	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
@@ -71,12 +81,17 @@ def perform_installation(mountpoint: Path) -> None:
 		mountpoint,
 		disk_config,
 		kernels=config.kernels,
+		silent=arch_config_handler.args.silent,
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
 
-		installation.sanity_check()
+		installation.sanity_check(
+			arch_config_handler.args.offline,
+			arch_config_handler.args.skip_ntp,
+			arch_config_handler.args.skip_wkd,
+		)
 
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			if disk_config.disk_encryption and disk_config.disk_encryption.encryption_type != EncryptionType.NoEncryption:
@@ -84,7 +99,7 @@ def perform_installation(mountpoint: Path) -> None:
 				installation.generate_key_files()
 
 		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_config, on_target=False)
+			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=False)
 
 		installation.minimal_installation(
 			optional_repositories=optional_repositories,
@@ -94,29 +109,25 @@ def perform_installation(mountpoint: Path) -> None:
 		)
 
 		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_config, on_target=True)
+			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=True)
 
-		if config.swap:
-			installation.setup_swap('zram')
+		if config.swap and config.swap.enabled:
+			installation.setup_swap(algo=config.swap.algorithm)
 
-		if config.bootloader and config.bootloader != Bootloader.NO_BOOTLOADER:
-			if config.bootloader == Bootloader.Grub and SysInfo.has_uefi():
-				installation.add_additional_packages('grub')
+		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
+			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
 
-			installation.add_bootloader(config.bootloader, config.uki)
-
-		# If user selected to copy the current ISO network configuration
-		# Perform a copy of the config
-		network_config = config.network_config
-
-		if network_config:
-			network_config.install_network_config(
+		if config.network_config:
+			install_network_config(
+				config.network_config,
 				installation,
 				config.profile_config,
 			)
 
+		users = None
 		if config.auth_config:
 			if config.auth_config.users:
+				users = config.auth_config.users
 				installation.create_users(config.auth_config.users)
 				auth_handler.setup_auth(installation, config.auth_config, config.hostname)
 
@@ -145,17 +156,21 @@ def perform_installation(mountpoint: Path) -> None:
 		if (profile_config := config.profile_config) and profile_config.profile:
 			profile_config.profile.post_install(installation)
 
+			if users:
+				profile_config.profile.provision(installation, users)
+
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
-		if servies := config.services:
-			installation.enable_service(servies)
+		if services := config.services:
+			installation.enable_service(services)
 
 		if disk_config.has_default_btrfs_vols():
 			btrfs_options = disk_config.btrfs_options
 			snapshot_config = btrfs_options.snapshot_config if btrfs_options else None
 			snapshot_type = snapshot_config.snapshot_type if snapshot_config else None
 			if snapshot_type:
-				installation.setup_btrfs_snapshot(snapshot_type, config.bootloader)
+				bootloader = config.bootloader_config.bootloader if config.bootloader_config else None
+				installation.setup_btrfs_snapshot(snapshot_type, bootloader)
 
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if cc := config.custom_commands:
@@ -166,14 +181,14 @@ def perform_installation(mountpoint: Path) -> None:
 		debug(f'Disk states after installing:\n{disk_layouts()}')
 
 		if not arch_config_handler.args.silent:
-			with Tui():
-				action = ask_post_installation()
+			elapsed_time = time.monotonic() - start_time
+			action: PostInstallationAction = tui.run(lambda: select_post_installation(elapsed_time))
 
 			match action:
 				case PostInstallationAction.EXIT:
 					pass
 				case PostInstallationAction.REBOOT:
-					os.system('reboot')
+					_ = os.system('reboot')  # type: ignore[deprecated, unused-ignore]
 				case PostInstallationAction.CHROOT:
 					try:
 						installation.drop_to_shell()
@@ -181,32 +196,51 @@ def perform_installation(mountpoint: Path) -> None:
 						pass
 
 
-def guided() -> None:
+def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
+	if arch_config_handler is None:
+		arch_config_handler = ArchConfigHandler()
+
+	mirror_list_handler = MirrorListHandler(
+		offline=arch_config_handler.args.offline,
+		verbose=arch_config_handler.args.verbose,
+	)
+
 	if not arch_config_handler.args.silent:
-		ask_user_questions()
+		show_menu(arch_config_handler, mirror_list_handler)
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
 	config.save()
 
 	if arch_config_handler.args.dry_run:
-		exit(0)
+		return
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		with Tui():
-			if not config.confirm_config():
-				debug('Installation aborted')
-				aborted = True
+		res: bool = tui.run(config.confirm_config)
+
+		if not res:
+			debug('Installation aborted')
+			aborted = True
 
 		if aborted:
-			return guided()
+			return main(arch_config_handler)
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
+
+		if not delayed_warning(tr('Starting device modifications in ')):
+			return main()
+
 		fs_handler.perform_filesystem_operations()
 
-	perform_installation(arch_config_handler.args.mountpoint)
+	perform_installation(
+		arch_config_handler,
+		mirror_list_handler,
+		AuthenticationHandler(),
+		ApplicationHandler(),
+	)
 
 
-guided()
+if __name__ == '__main__':
+	main()

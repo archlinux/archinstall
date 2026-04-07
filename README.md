@@ -6,7 +6,7 @@
 [![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
-The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium)*.
+The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium or from an existing installation)*.
 
 * archinstall [discord](https://discord.gg/aDeMffrxNg) server
 * archinstall [#archinstall:matrix.org](https://matrix.to/#/#archinstall:matrix.org) Matrix channel
@@ -14,28 +14,53 @@ The installer also doubles as a python library to install Arch Linux and manage 
 * archinstall [documentation](https://archinstall.archlinux.page/)
 
 # Installation & Usage
+> [!TIP]
+> In the ISO you are root by default. Use sudo if running from an existing system.
+
 ```shell
-sudo pacman -S archinstall
-```
-
-Alternative ways to install are `git clone` the repository or `pip install --upgrade archinstall`.
-
-## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
-
-Assuming you are on an Arch Linux live-ISO or installed via `pip`:
-```shell
+pacman-key --init
+pacman -Sy archinstall
 archinstall
 ```
 
-## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
+Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall)) or `pip install --upgrade archinstall`.
+
+## Upgrade `archinstall` on live Arch ISO image
+
+Upgrading archinstall on the ISO needs to be done via a full system upgrade using 
 
 ```shell
-    # cd archinstall-git
-    # python -m archinstall
+pacman -Syu
+```
+
+When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow running a re-installation or upgrade of the installer.
+In case one runs into this issue, any of the following can be used
+
+* Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
+* Specify the boot parameter copytoram=y (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) which will copy the root filesystem to tmpfs
+
+## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
+
+Assuming you are on an Arch Linux live-ISO or installed via `pip`, `archinstall` will use the `guided` script by default
+```shell
+archinstall
+```
+similar goes for running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git
+
+```shell
+git clone https://github.com/archlinux/archinstall
+cd archinstall
+python -m archinstall $@
+```
+
+To run alternative scripts using the `--script` parameter
+
+```
+archinstall --script <name>
 ```
 
 #### Advanced
-Some additional options that most users do not need are hidden behind the `--advanced` flag.
+Some additional options that most users do not need are hidden behind the `--advanced` flag and all options/args can be consulted through `-h` or `--help`. 
 
 ## Running from a declarative configuration file or URL
 
@@ -57,7 +82,7 @@ archinstall --config <path to user config file or URL> --creds <path to user cre
 ```
 
 ### Credentials configuration file encryption
-By default all user account credentials are hashed with `yescrypt` and only the hash is stored in the saved `user_credentials.json` file.
+By default, all user account credentials are hashed with `yescrypt` and only the hash is stored in the saved `user_credentials.json` file.
 This is not possible for disk encryption password which needs to be stored in plaintext to be able to apply it.
 
 However, when selecting to save configuration files, `archinstall` will prompt for the option to encrypt the `user_credentials.json` file content.
@@ -70,7 +95,7 @@ there are multiple ways to provide the decryption key:
 
 # Help or Issues
 
-If you come across any issues, kindly submit your issue here on Github or post your query in the
+If you come across any issues, kindly submit your issue here on GitHub or post your query in the
 [discord](https://discord.gg/aDeMffrxNg) help channel.
 
 When submitting an issue, please:
@@ -133,12 +158,6 @@ The profiles' definitions and the packages they will install can be directly vie
 If you want to test a commit, branch, or bleeding edge release from the repository using the standard Arch Linux Live ISO image,
 replace the archinstall version with a newer one and execute the subsequent steps defined below.
 
-*Note: When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow
-running a re-installation or upgrade of the installer. In case one runs into this issue, any of the following can be used
-- Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
-- The boot parameter `copytoram=y` (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26)
-can be specified which will copy the root filesystem to tmpfs.*
-
 1. You need a working network connection
 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
    *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
@@ -157,7 +176,7 @@ To test this without a live ISO, the simplest approach is to use a local image a
 This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
 
     # truncate -s 20G testimage.img
-    # losetup --partscan --show --find ./testimage.img
+    # losetup --partscan --show ./testimage.img
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd 
@@ -168,6 +187,34 @@ This will create a *20 GB* `testimage.img` and create a loop device which we can
 
 There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.
+
+## Boot an Arch ISO image in a VM
+
+You may want to boot an ISO image in a VM to test `archinstall` in there.
+
+* Download the latest [Arch ISO](https://archlinux.org/download/)
+* Use the the below command to boot the ISO in a VM
+
+```
+qemu-system-x86_64 -enable-kvm \
+-machine q35,accel=kvm -device intel-iommu \
+-cpu host -m 4096 -boot order=d \
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive file=./archlinux-2025.12.01-x86_64.iso,format=raw
+```
+
+HINT: For espeakup support
+```
+qemu-system-x86_64 -enable-kvm \
+-machine q35,accel=kvm -device intel-iommu \
+-cpu host -m 4096 -boot order=d \
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive file=./archlinux-2025.12.01-x86_64.iso,format=raw \
+-device intel-hda -device hda-duplex,audiodev=snd0 \
+-audiodev pa,id=snd0,server=/run/user/1000/pulse/native
+```
 
 
 # FAQ

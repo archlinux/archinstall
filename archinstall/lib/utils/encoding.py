@@ -1,5 +1,18 @@
+import re
 import unicodedata
 from functools import lru_cache
+
+# https://stackoverflow.com/a/43627833/929999
+_VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
+_VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
+
+
+def clear_vt100_escape_codes(data: bytes) -> bytes:
+	return re.sub(_VT100_ESCAPE_REGEX_BYTES, b'', data)
+
+
+def clear_vt100_escape_codes_from_str(data: str) -> str:
+	return re.sub(_VT100_ESCAPE_REGEX, '', data)
 
 
 @lru_cache(maxsize=128)

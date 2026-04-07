@@ -4,22 +4,20 @@ import importlib.util
 import inspect
 import sys
 from collections import Counter
-from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
+from archinstall.default_profiles.profile import GreeterType, Profile
+from archinstall.lib.hardware import GfxDriver, GfxPackage
+from archinstall.lib.models.profile import ProfileConfiguration
+from archinstall.lib.networking import fetch_data_from_url
+from archinstall.lib.output import debug, error, info
 from archinstall.lib.translationhandler import tr
 
-from ...default_profiles.profile import GreeterType, Profile
-from ..hardware import GfxDriver
-from ..models.profile import ProfileConfiguration
-from ..networking import fetch_data_from_url, list_interfaces
-from ..output import debug, error, info
-
 if TYPE_CHECKING:
-	from ..installer import Installer
+	from archinstall.lib.installer import Installer
 
 
 class ProfileSerialization(TypedDict):
@@ -143,10 +141,6 @@ class ProfileHandler:
 		self._profiles = self._profiles or self._find_available_profiles()
 		return self._profiles
 
-	@cached_property
-	def _local_mac_addresses(self) -> list[str]:
-		return list(list_interfaces())
-
 	def add_custom_profiles(self, profiles: Profile | list[Profile]) -> None:
 		if not isinstance(profiles, list):
 			profiles = [profiles]
@@ -178,13 +172,10 @@ class ProfileHandler:
 	def get_custom_profiles(self) -> list[Profile]:
 		return [p for p in self.profiles if p.is_custom_type_profile()]
 
-	def get_mac_addr_profiles(self) -> list[Profile]:
-		tailored = [p for p in self.profiles if p.is_tailored()]
-		return [t for t in tailored if t.name in self._local_mac_addresses]
-
-	def install_greeter(self, install_session: 'Installer', greeter: GreeterType) -> None:
+	def install_greeter(self, install_session: Installer, greeter: GreeterType) -> None:
 		packages = []
 		service = None
+		service_disable = None
 
 		match greeter:
 			case GreeterType.LightdmSlick:
@@ -201,14 +192,21 @@ class ProfileHandler:
 				service = ['gdm']
 			case GreeterType.Ly:
 				packages = ['ly']
-				service = ['ly']
+				service = ['ly@tty1']
+				service_disable = ['getty@tty1']
 			case GreeterType.CosmicSession:
 				packages = ['cosmic-greeter']
+				service = ['cosmic-greeter']
+			case GreeterType.PlasmaLoginManager:
+				packages = ['plasma-login-manager']
+				service = ['plasmalogin']
 
 		if packages:
 			install_session.add_additional_packages(packages)
 		if service:
 			install_session.enable_service(service)
+		if service_disable:
+			install_session.disable_service(service_disable)
 
 		# slick-greeter requires a config change
 		if greeter == GreeterType.LightdmSlick:
@@ -221,35 +219,37 @@ class ProfileHandler:
 			with open(path, 'w') as file:
 				file.write(filedata)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: GfxDriver) -> None:
+	def install_gfx_driver(self, install_session: Installer, driver: GfxDriver) -> None:
 		debug(f'Installing GFX driver: {driver.value}')
-
-		if driver in [GfxDriver.NvidiaOpenKernel, GfxDriver.NvidiaProprietary]:
-			headers = [f'{kernel}-headers' for kernel in install_session.kernels]
-			# Fixes https://github.com/archlinux/archinstall/issues/585
-			install_session.add_additional_packages(headers)
-		elif driver in [GfxDriver.AllOpenSource, GfxDriver.AmdOpenSource]:
-			# The order of these two are important if amdgpu is installed #808
-			install_session.remove_mod('amdgpu')
-			install_session.remove_mod('radeon')
-
-			install_session.append_mod('amdgpu')
-			install_session.append_mod('radeon')
 
 		driver_pkgs = driver.gfx_packages()
 		pkg_names = [p.value for p in driver_pkgs]
+
+		# For Nvidia open kernel modules, use nvidia-open instead of nvidia-open-dkms
+		# when all selected kernels are mainline (no dkms needed). This avoids
+		# installing dkms + kernel headers and speeds up installation.
+		if driver == GfxDriver.NvidiaOpenKernel:
+			needs_dkms = any('-' in k for k in install_session.kernels)
+
+			if needs_dkms:
+				headers = [f'{kernel}-headers' for kernel in install_session.kernels]
+				install_session.add_additional_packages(headers)
+			else:
+				pkg_names = [GfxPackage.NvidiaOpen.value if p == GfxPackage.NvidiaOpenDkms.value else p for p in pkg_names]
+				pkg_names = [p for p in pkg_names if p != GfxPackage.Dkms.value]
+
 		install_session.add_additional_packages(pkg_names)
 
-	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration) -> None:
+	def install_profile_config(self, install_session: Installer, profile_config: ProfileConfiguration) -> None:
 		profile = profile_config.profile
 
 		if not profile:
 			return
 
-		profile.install(install_session)
-
 		if profile_config.gfx_driver and (profile.is_xorg_type_profile() or profile.is_desktop_profile()):
 			self.install_gfx_driver(install_session, profile_config.gfx_driver)
+
+		profile.install(install_session)
 
 		if profile_config.greeter:
 			self.install_greeter(install_session, profile_config.greeter)
@@ -349,8 +349,8 @@ class ProfileHandler:
 		profiles_path = Path(__file__).parents[2] / 'default_profiles'
 		profiles = []
 		for file in profiles_path.glob('**/*.py'):
-			# ignore the abstract default_profiles class
-			if 'profile.py' in file.name:
+			# ignore the abstract base classes
+			if file.name == 'profile.py':
 				continue
 			profiles += self._process_profile_file(file)
 

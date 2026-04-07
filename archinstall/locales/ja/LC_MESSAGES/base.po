@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ここにログファイルが作成されました: {} {}"
@@ -53,6 +53,9 @@ msgstr "オーディオサーバーを選択"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "base, base-devel, linux, linux-firmware, efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "注意: base-devel はデフォルトではインストールされなくなりました。ビルドツールが必要な場合は、ここで追加してください。"
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "firefox や chromium などのウェブブラウザーをインストールする場合は、次のプロンプトで指定できます。"
 
@@ -71,6 +74,7 @@ msgstr "設定するネットワークインターフェイスを 1 つ選択"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "どのモードを \"{}\" に設定するかを選択。スキップでデフォルトモード \"{}\" を使用"
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "{} の IP とサブネットを入力（例: 192.168.0.5/24）: "
 
@@ -527,7 +531,7 @@ msgid "are you sure you want to use it?"
 msgstr "本当に使用してもよろしいですか？"
 
 msgid "Optional repositories"
-msgstr "オプションのリポジトリ"
+msgstr "オプションリポジトリ"
 
 msgid "Save configuration"
 msgstr "設定を保存"
@@ -584,6 +588,7 @@ msgstr "サブボリュームのオプションを選択"
 msgid "Define users with sudo privilege, by username: "
 msgstr "sudo 権限を持つユーザーを、ユーザー名で定義: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] ここにログファイルが作成されました: {}"
 
@@ -842,9 +847,11 @@ msgstr "Archinstall を実行するには root 権限が必要です。詳細に
 msgid "Select an execution mode"
 msgstr "実行モードを選択"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "指定された URL からプロファイルを取得できません: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "プロファイルには一意の名前が必要ですが、重複した名前のプロファイル定義が見つかりました: {}"
 
@@ -863,9 +870,11 @@ msgstr "パーティション作成のオプションを選択"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "マウントしているデバイスのルートディレクトリを入力: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "/home パーティションの最小容量: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Arch Linux パーティションの最小容量: {}GiB"
 
@@ -929,9 +938,11 @@ msgstr "パーティションの終了セクターを入力（パーセンテー
 msgid "This will remove all newly added partitions, continue?"
 msgstr "これは新しく追加されたパーティションをすべて削除します。続けますか？"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "パーティションを管理: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "全体のサイズ: {}"
 
@@ -992,6 +1003,7 @@ msgstr "不明"
 msgid "Partition encryption"
 msgstr "パーティションの暗号化"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! {} のフォーマットまで "
 
@@ -1016,6 +1028,7 @@ msgstr "戻る"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "選択したプロファイルにインストールするグリーターを選択: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "環境のタイプ: {}"
 
@@ -1208,6 +1221,7 @@ msgstr ""
 "\n"
 "注意:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - 最大推奨値 : {} （1度に {} 個の並列ダウンロードを許可する）"
 
@@ -1271,6 +1285,7 @@ msgstr "コピーオンライトを無効にする"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。例: GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "設定タイプ: {}"
 
@@ -1397,6 +1412,7 @@ msgstr "入力したユーザー名は無効です"
 msgid "Username"
 msgstr "ユーザー名"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "\"{}\" はスーパーユーザーに昇格しますか（sudo）？\n"
 
@@ -1463,6 +1479,7 @@ msgstr "ディレクトリ"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "設定を保存するディレクトリを入力（Tab で補完可能）"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "設定ファイルを次の場所に保存しますか？ {}"
 
@@ -1494,7 +1511,7 @@ msgid "Choose an option to give Hyprland access to your hardware"
 msgstr "Hyprland にハードウェアへのアクセスを許可するオプションを選択"
 
 msgid "Additional repositories"
-msgstr "追加のリポジトリ"
+msgstr "追加リポジトリ"
 
 msgid "NTP"
 msgstr "NTP"
@@ -1508,12 +1525,15 @@ msgstr "名前"
 msgid "Signature check"
 msgstr "署名チェック"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "デバイス {} の選択された空きスペースセグメント:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "サイズ: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "サイズ (デフォルト: {}): "
 
@@ -1551,7 +1571,7 @@ msgid "Delete custom repository"
 msgstr "カスタムリポジトリを削除"
 
 msgid "Repository name"
-msgstr "リポジトリの名前"
+msgstr "リポジトリ名"
 
 msgid "Add a custom server"
 msgstr "カスタムサーバーを追加"
@@ -1676,6 +1696,7 @@ msgstr "インストール完了"
 msgid "What would you like to do next?"
 msgstr "次は何をしますか？"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "「{}」に設定するモードを選択"
 
@@ -1694,5 +1715,278 @@ msgstr "user_credentials.json ファイルを暗号化しますか？"
 msgid "Credentials file encryption password"
 msgstr "認証情報ファイルの暗号化パスワード"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "リポジトリ: {}"
+
+msgid "New version available"
+msgstr "新しいバージョンが利用可能"
+
+msgid "Passwordless login"
+msgstr "パスワードなしのログイン"
+
+msgid "Second factor login"
+msgstr "2要素ログイン"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Bluetooth を設定しますか？"
+
+msgid "Print service"
+msgstr "印刷サービス"
+
+msgid "Would you like to configure the print service?"
+msgstr "印刷サービスを設定しますか？"
+
+msgid "Power management"
+msgstr "電力管理"
+
+msgid "Authentication"
+msgstr "認証"
+
+msgid "Applications"
+msgstr "アプリケーション"
+
+msgid "U2F login method: "
+msgstr "U2F ログインメソッド: "
+
+msgid "Passwordless sudo: "
+msgstr "パスワードなしの sudo: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Btrfs スナップショットのタイプ: {}"
+
+msgid "Syncing the system..."
+msgstr "システムを同期..."
+
+msgid "Value cannot be empty"
+msgstr "値は空にできません"
+
+msgid "Snapshot type"
+msgstr "スナップショットのタイプ"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "スナップショットのタイプ: {}"
+
+msgid "U2F login setup"
+msgstr "U2F ログインの設定"
+
+msgid "No U2F devices found"
+msgstr "U2F デバイスが見つかりません"
+
+msgid "U2F Login Method"
+msgstr "U2F ログインメソッド"
+
+msgid "Enable passwordless sudo?"
+msgstr "パスワードなしの sudo を有効にしますか？"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "ユーザー用 U2F デバイスの設定: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "PIN を入力したのち U2F デバイスをタッチして登録しなければならない場合があります"
+
+msgid "Starting device modifications in "
+msgstr "次の場所でデバイスの変更を開始しています "
+
+msgid "No network connection found"
+msgstr "ネットワーク接続が見つかりません"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Wi-Fi に接続しますか？"
+
+msgid "No wifi interface found"
+msgstr "Wi-Fi インターフェースが見つかりません"
+
+msgid "Select wifi network to connect to"
+msgstr "接続する Wi-Fi ネットワークを選択"
+
+msgid "Scanning wifi networks..."
+msgstr "Wi-Fi ネットワークをスキャンしています..."
+
+msgid "No wifi networks found"
+msgstr "Wi-Fi ネットワークが見つかりません"
+
+msgid "Failed setting up wifi"
+msgstr "Wi-Fi の設定に失敗しました"
+
+msgid "Enter wifi password"
+msgstr "Wi-Fi パスワードを入力"
+
+msgid "Ok"
+msgstr "OK"
+
+msgid "Removable"
+msgstr "リムーバブル"
+
+msgid "Install to removable location"
+msgstr "リムーバブルな場所にインストールする"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "/EFI/BOOT/ (リムーバブルな場所) にインストールする"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "NVRAM エントリーのある標準の場所にインストールする"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "ブートローダーをデフォルトのリムーバブルメディアの検索場所にインストールしますか？"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "ブートローダーが /EFI/BOOT/BOOTX64.EFI (または類似の場所) にインストールされ、次の場合に役立ちます:"
+
+msgid "USB drives or other portable external media."
+msgstr "USB ドライブまたは他のポータブル外部メディア。"
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "ディスクをどのコンピューターでも起動できるようにするシステム。"
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "NVRAM ブートエントリーを適切にサポートしていないファームウェア。"
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "/EFI/BOOT/（リムーバブルな場所、安全なデフォルト）にインストール"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "NVRAM エントリーを使用してカスタムした場所にインストール"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "ほとんどの MSI マザーボードのように NVRAM ブートエントリーを適切にサポートしていないファームウェア、"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "ほとんどの Apple Mac、多くのラップトップ..."
+
+msgid "Language"
+msgstr "言語"
+
+msgid "Compression algorithm"
+msgstr "圧縮アルゴリズム"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "base、sudo、linux、linux-firmware、efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
+
+msgid "Select zram compression algorithm:"
+msgstr "zram 圧縮アルゴリズムを選択:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "NetworkManager（デフォルトのバックエンド）を使用する"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "NetworkManager (iwd バックエンド) を使用する"
+
+msgid "Firewall"
+msgstr "ファイアウォール"
+
+msgid "Select audio configuration"
+msgstr "オーディオ設定を選択"
+
+msgid "Enter credentials file decryption password"
+msgstr "認証情報ファイルの復号パスワードを入力"
+
+msgid "Enter root password"
+msgstr "ルートパスワードを入力"
+
+msgid "Select bootloader to install"
+msgstr "インストールするブートローダーを選択"
+
+msgid "Configuration preview"
+msgstr "設定プレビュー"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "設定を保存するディレクトリを入力"
+
+msgid "Select encryption type"
+msgstr "暗号化のタイプを選択"
+
+msgid "Select disks for the installation"
+msgstr "インストール用のディスクを選択"
+
+msgid "Enter a mountpoint"
+msgstr "マウントポイントを入力"
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "サイズを入力（デフォルト: {}): "
+
+msgid "Enter subvolume name"
+msgstr "サブボリューム名を入力"
+
+msgid "Enter subvolume mountpoint"
+msgstr "サブボリュームのマウントポイントを入力"
+
+msgid "Select a disk configuration"
+msgstr "ディスクの設定を選択"
+
+msgid "Enter root mount directory"
+msgstr "ルートマウントディレクトリを入力"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "指定されたディレクトリにマウントされているドライブの設定を使用します"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "警告: Archinstall はこのセットアップの適合性をチェックしません"
+
+msgid "Select main filesystem"
+msgstr "メインファイルシステムを選択"
+
+msgid "Enter a hostname"
+msgstr "ホスト名を入力"
+
+msgid "Select timezone"
+msgstr "タイムゾーンを選択"
+
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr "有効にする並列ダウンロード数を入力"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "値は 1 から {} までの範囲にしてください"
+
+msgid "Select which kernel(s) to install"
+msgstr "インストールするカーネルを選択"
+
+msgid "Enter a respository name"
+msgstr "リポジトリ名を入力"
+
+msgid "Enter the repository url"
+msgstr "リポジトリの URL を入力"
+
+msgid "Enter server url"
+msgstr "サーバーの URL を入力"
+
+msgid "Select mirror regions to be enabled"
+msgstr "有効にするミラー地域を選択"
+
+msgid "Select optional repositories to be enabled"
+msgstr "有効にするオプションリポジトリを選択"
+
+msgid "Select an interface"
+msgstr "インターフェースを選択"
+
+msgid "Choose network configuration"
+msgstr "ネットワーク設定を選択"
+
+msgid "No packages found"
+msgstr "パッケージが見つかりません"
+
+msgid "Select which greeter to install"
+msgstr "インストールするグリーターを選択"
+
+msgid "Select a profile type"
+msgstr "プロファイルのタイプを選択"
+
+msgid "Enter new password"
+msgstr "新しいパスワードを入力"
+
+msgid "Enter a username"
+msgstr "ユーザー名を入力"
+
+msgid "Enter a password"
+msgstr "パスワードを入力"
+
+msgid "The password did not match, please try again"
+msgstr "パスワードが一致しません。もう一度試してください"

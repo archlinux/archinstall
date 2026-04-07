@@ -15,8 +15,12 @@ packages=(
 	python-setuptools
 	python-pyparted
 	python-pydantic
+	python-textual
 )
 
+if [ -d "/tmp/archlive" ]; then
+    rm -rf "/tmp/archlive"
+fi
 mkdir -p /tmp/archlive/airootfs/root/archinstall-git
 cp -r . /tmp/archlive/airootfs/root/archinstall-git
 

@@ -53,6 +53,9 @@ msgstr "נא לבחור שרת שמע"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "רק חבילות כגוןbase,‏ base-devel,‏ linux,‏ linux-firmware,‏ efibootmgr וחבילות פרופיל כרשות מותקנות."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "כדי שיותקן דפדפן כגון firefox או chromium אפשר לציין זאת בבקשה הבאה."
 
@@ -71,6 +74,7 @@ msgstr "נא לבחור מנשק רשת להגדרה"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "נא לבחור איזה מצב להגדרה עבור „{}“ או לדלג כדי להשתמש במצב ברירת המחדל „{}“"
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "נא למלא IP ורשת־משנה (סאבנט) עבור {} (למשל: 192.168.0.5/24): "
 
@@ -589,6 +593,7 @@ msgstr "נא לבחור את אפשרויות התת־כרך הרצויות "
 msgid "Define users with sudo privilege, by username: "
 msgstr "הגדרת משתמשים עם הרשאת על (sudo), לפי שם משתמש: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] כאן נוצר קובץ יומן: {}"
 
@@ -849,9 +854,11 @@ msgstr "‫Archinstall דורש הרשאות עליונות (root) כדי לעל
 msgid "Select an execution mode"
 msgstr "נא לבחור מצב הפעלה"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "לא ניתן למשוך את הפרופיל מהכתובת שצוינה: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "השמות של הפרופילים חייבים להיות יחודיים, אך נמצאו הגדרות פרופילים עם שמות כפולים: {}"
 
@@ -870,9 +877,11 @@ msgstr "נא לבחור אפשרויות מחיצות"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "נא למלא את תיקיית השורש של ההתקנים המעוגנים: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "קיבולת מזערית למחיצת ‎/home: {} ג״ב\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "קיבולת מזערית למחיצת Arch Linux: {} ג״ב"
 
@@ -936,9 +945,11 @@ msgstr "נא למלא את מקטע (סקטור) הסוף של המחיצה (א�
 msgid "This will remove all newly added partitions, continue?"
 msgstr "הפעולה הזאת תסיר את המחיצות שנוספו, להמשיך?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "ניהול מחיצות: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "אורך כולל: {}"
 
@@ -999,6 +1010,7 @@ msgstr "לא ידוע"
 msgid "Partition encryption"
 msgstr "הצפנת מחיצה"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! {} מפורמט תחת "
 
@@ -1023,6 +1035,7 @@ msgstr "חזרה"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "נא לבחור את מערכת קבלת הפנים לפרופילים הנבחרים: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "סוג סביבה: {}"
 
@@ -1216,6 +1229,7 @@ msgstr ""
 "\n"
 "‫הערה:‬\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - הערך המרבי המומלץ: {} ( מאפשר {} הורדות במקביל בכל עת )"
 
@@ -1279,6 +1293,7 @@ msgstr "השבתת העתקה בעת כתיבה"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "מספק מבחר סביבות שולחן עבודה ומנהלי ריצוף חלונות, למשל: GNOME,‏ KDE פלזמה, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "סוג הגדרה: {}"
 
@@ -1405,6 +1420,7 @@ msgstr "שם המשתמש שמילאת שגוי"
 msgid "Username"
 msgstr "שם משתמש"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "האם ל־„{}“ אמורות להיות הרשאות על (sudo)?\n"
 
@@ -1471,6 +1487,7 @@ msgstr "תיקייה"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "נא למלא תיקייה לשמירת ההגדרות (אפשר להשלים עם tab)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "לשמור את קובצי ההגדרות אל {}?"
 
@@ -1516,12 +1533,15 @@ msgstr "שם"
 msgid "Signature check"
 msgstr "בדיקת חתימות"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "כמות המקטעים (הסגמנטים) הנבחרים בכונן {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "גודל: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "גודל (ברירת מחדל: {}): "
 
@@ -1713,7 +1733,7 @@ msgstr ""
 msgid "What would you like to do next?"
 msgstr "להמשיך?"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "נא לבחור איזה מצב להגדרה עבור „{}“ או לדלג כדי להשתמש במצב ברירת המחדל „{}“"
 
@@ -1737,6 +1757,336 @@ msgstr "לשמור את קובצי ההגדרות אל {}?"
 msgid "Credentials file encryption password"
 msgstr "סיסמת הצפנת כונן"
 
-#, fuzzy
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
 msgstr "שם אתר המראה"
+
+#, fuzzy
+msgid "New version available"
+msgstr "אין התקני HSM זמינים"
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "סיסמה"
+
+msgid "Second factor login"
+msgstr ""
+
+msgid "Bluetooth"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "להמשיך?"
+
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "להמשיך?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "ניהול מחיצות: {}"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Value cannot be empty"
+msgstr ""
+
+msgid "Snapshot type"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "סוג סביבה: {}"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+msgid "U2F Login Method"
+msgstr ""
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "נא למלא סיסמה: "
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "נא לבחור את התקן ה־FIDO2 לשימוש עבור HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+#, fuzzy
+msgid "No network connection found"
+msgstr "אין הגדרות רשת"
+
+#, fuzzy
+msgid "Would you like to connect to a Wifi?"
+msgstr "להמשיך?"
+
+#, fuzzy
+msgid "No wifi interface found"
+msgstr "הגדרת מנשקים"
+
+#, fuzzy
+msgid "Select wifi network to connect to"
+msgstr "נא לבחור מנשק רשת להגדרה"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+#, fuzzy
+msgid "No wifi networks found"
+msgstr "אין הגדרות רשת"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+#, fuzzy
+msgid "Enter wifi password"
+msgstr "נא למלא סיסמה: "
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "שפת ההגדרה האזורית"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "רק חבילות כגוןbase,‏ base-devel,‏ linux,‏ linux-firmware,‏ efibootmgr וחבילות פרופיל כרשות מותקנות."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "נא לבחור נק׳ עגינה :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""
+
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "שמירת הגדרת משתמש"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "סיסמת הצפנת כונן"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "נא למלא סיסמה: "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "הגדרות"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "נא למלא את התיקייה להגדרות לשמירה: "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "סוג הצפנה"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "שם מארח רצוי להתקנה: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "נא לבחור נק׳ עגינה :"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "נא למלא סוף (ברירת מחדל: {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "שם תת־כרך"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "נק׳ עיגון תת־כרך"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "הגדרת כונן"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "תיקיית עגינת שורש"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "החלפת מערכת קבצים"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "בחירת אזור זמן"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"נא למלא את מספר ההורדות המקביליות להפעלה.‬\n"
+"\n"
+"‫הערה:‬\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "נא לבחור איזו מערכת קבלת פנים להתקין"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "שם אתר המראה"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "החלפת אתר מראה משלך"
+
+msgid "Enter server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "אזורי אתרי מראה"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "נא לבחור אילו מאגרים נוספים להפעיל כרשות"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "מחיקת מנשק"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "אין הגדרות רשת"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "הגדרת מנשקים"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "נא לבחור איזו מערכת קבלת פנים להתקין"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "פרופילים נבחרים: "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "נא למלא סיסמה: "
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "נא למלא סיסמה: "
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "סיסמת האישור לא תואמת, נא לנסות שוב"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""

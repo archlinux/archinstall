@@ -4,23 +4,25 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "3.0.10"
+version = "4.1"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
 license = "GPL-3.0-only"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 keywords = ["linux", "arch", "archinstall", "installer"]
 classifiers = [
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
     "pyparted>=3.13.0",
-    "pydantic==2.11.7",
-    "cryptography>=44.0.2",
+    "pydantic==2.12.5",
+    "cryptography>=45.0.7",
+    "textual>=5.3.0",
+    "markdown-it-py[linkify]>=4.0.0",
 ]
 
 [project.urls]
@@ -31,18 +33,17 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.17.1",
+    "mypy==1.20.0",
     "flake8==7.3.0",
-    "pre-commit==4.3.0",
-    "ruff==0.12.12",
-    "pylint==3.3.8",
-    "pylint-pydantic==0.3.5",
-    "pytest==8.4.2",
+    "pre-commit==4.5.1",
+    "ruff==0.15.9",
+    "pylint==4.0.5",
+    "pytest==9.0.2",
 ]
 doc = ["sphinx"]
 
 [project.scripts]
-archinstall = "archinstall:run_as_a_module"
+archinstall = "archinstall.main:main"
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "USAGE.rst"]}
@@ -64,7 +65,7 @@ include-package-data = true
 archinstall = "archinstall"
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.14"
 files = "."
 exclude = "^build/"
 disallow_any_explicit = false
@@ -127,19 +128,22 @@ ignore_missing_imports = true
 targets = ["archinstall"]
 exclude = ["/tests"]
 
-[tool.pytest.ini_options]
+[tool.pytest]
 pythonpath = ["."]
-addopts = "-s"
+addopts = [
+    "-s",
+    "--strict",
+]
 testpaths = ["tests"]
 
 [tool.pylint.main]
 ignore-paths = [
     "^build/",
     "^docs/",
+    "^node_modules/",
 ]
-load-plugins = ["pylint_pydantic"]
 persistent = false
-py-version = "3.12"
+py-version = "3.14"
 recursive = true
 
 [tool.pylint.format]
@@ -176,6 +180,9 @@ indent-style = "tab"
 quote-style = "single"
 docstring-code-format = true
 
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
 [tool.ruff.lint]
 select = [
     "ASYNC",  # flake8-async
@@ -206,6 +213,7 @@ select = [
     "UP",     # pyupgrade
     "W",      # pycodestyle warnings
     "YTT",    # flake8-2020
+    "TID",    # flake8-tidy-imports (Enables TID252)
 ]
 
 ignore = [
@@ -223,8 +231,7 @@ ignore = [
     "RUF005",   # collection-literal-concatenation
     "RUF015",   # unnecessary-iterable-allocation-for-first-element
     "RUF039",   # unraw-re-pattern
-    "RUF051",   # if-key-in-dict-del
-    "UP037",    # quoted-annotation
+    "RUF067",   # non-empty-init-module
     "W191",     # tab-indentation
 ]
 

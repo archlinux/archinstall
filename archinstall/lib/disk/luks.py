@@ -1,18 +1,16 @@
-from __future__ import annotations
-
 import shlex
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CalledProcessError
 from types import TracebackType
 
+from archinstall.lib.command import SysCommand, SysCommandWorker, run
 from archinstall.lib.disk.utils import get_lsblk_info, umount
+from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.models.device import DEFAULT_ITER_TIME
-
-from .exceptions import DiskError, SysCallError
-from .general import SysCommand, SysCommandWorker, generate_password, run
-from .models.users import Password
-from .output import debug, info
+from archinstall.lib.models.users import Password
+from archinstall.lib.output import debug, info
+from archinstall.lib.utils.util import generate_password
 
 
 @dataclass
@@ -41,10 +39,6 @@ class Luks2:
 		worker = SysCommandWorker(f'cryptsetup erase {self.luks_dev_path}')
 		worker.poll()
 		worker.write(b'YES\n', line_ending=False)
-
-	def __post_init__(self) -> None:
-		if self.luks_dev_path is None:
-			raise ValueError('Partition must have a path set')
 
 	def __enter__(self) -> None:
 		self.unlock(self.key_file)
@@ -210,6 +204,18 @@ class Luks2:
 		self._add_key(key_file)
 		self._crypttab(crypttab_path, kf_path, options=['luks', 'key-slot=1'])
 
+	def create_crypttab_entry(self, target_path: Path) -> None:
+		"""
+		Add a crypttab entry without a keyfile so systemd prompts
+		for the passphrase at boot.
+		"""
+		if self.mapper_name is None:
+			raise ValueError('Mapper name must be provided')
+
+		crypttab_path = target_path / 'etc/crypttab'
+		crypttab_path.parent.mkdir(parents=True, exist_ok=True)
+		self._crypttab(crypttab_path, Path('none'), options=['luks'])
+
 	def _add_key(self, key_file: Path) -> None:
 		debug(f'Adding additional key-file {key_file}')
 
@@ -238,3 +244,16 @@ class Luks2:
 			uuid = self._get_luks_uuid()
 			row = f'{self.mapper_name} UUID={uuid} {key_file} {opt}\n'
 			crypttab.write(row)
+
+
+def unlock_luks2_dev(
+	dev_path: Path,
+	mapper_name: str,
+	enc_password: Password | None,
+) -> Luks2:
+	luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
+
+	if not luks_handler.is_unlocked():
+		luks_handler.unlock()
+
+	return luks_handler

@@ -12,9 +12,9 @@ from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-from .exceptions import DownloadTimeout, SysCallError
-from .output import debug, error, info
-from .pacman import Pacman
+from archinstall.lib.exceptions import DownloadTimeout, SysCallError
+from archinstall.lib.output import debug, error, info
+from archinstall.lib.pacman.pacman import Pacman
 
 
 class DownloadTimer:
@@ -121,7 +121,7 @@ def enrich_iface_types(interfaces: list[str]) -> dict[str, str]:
 	return result
 
 
-def fetch_data_from_url(url: str, params: dict[str, str] | None = None) -> str:
+def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout: int = 30) -> str:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -133,7 +133,7 @@ def fetch_data_from_url(url: str, params: dict[str, str] | None = None) -> str:
 		full_url = url
 
 	try:
-		response = urlopen(full_url, context=ssl_context)
+		response = urlopen(full_url, context=ssl_context, timeout=timeout)
 		data = response.read().decode('UTF-8')
 		return data
 	except URLError as e:

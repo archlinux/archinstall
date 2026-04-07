@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import http.client
 import urllib.error
@@ -5,13 +7,16 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, TypedDict, override
+from typing import TYPE_CHECKING, Any, Self, TypedDict, override
 
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 
-from ..models.packages import Repository
-from ..networking import DownloadTimer, ping
-from ..output import debug
+from archinstall.lib.models.packages import Repository
+from archinstall.lib.networking import DownloadTimer, ping
+from archinstall.lib.output import debug
+
+if TYPE_CHECKING:
+	from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 
 
 class MirrorStatusEntryV3(BaseModel):
@@ -59,17 +64,17 @@ class MirrorStatusEntryV3(BaseModel):
 
 					assert timer.time is not None
 					self._speed = size / timer.time
-					debug(f'    speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
+					debug(f'	speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
 				# Do not retry error
 				except urllib.error.URLError as error:
-					debug(f'    speed: <undetermined> ({error}), skip')
+					debug(f'	speed: <undetermined> ({error}), skip')
 					self._speed = 0
 				# Do retry error
 				except (http.client.IncompleteRead, ConnectionResetError) as error:
-					debug(f'    speed: <undetermined> ({error}), retry')
+					debug(f'	speed: <undetermined> ({error}), retry')
 				# Catch all
 				except Exception as error:
-					debug(f'    speed: <undetermined> ({error}), skip')
+					debug(f'	speed: <undetermined> ({error}), skip')
 					self._speed = 0
 
 				retry += 1
@@ -82,7 +87,7 @@ class MirrorStatusEntryV3(BaseModel):
 	@property
 	def latency(self) -> float | None:
 		"""
-		Latency measures the miliseconds between one ICMP request & response.
+		Latency measures the milliseconds between one ICMP request & response.
 		It only does so once because we check if self._latency is None, and a ICMP timeout result in -1
 		We do this because some hosts blocks ICMP so we'll have to rely on .speed() instead which is slower.
 		"""
@@ -99,16 +104,17 @@ class MirrorStatusEntryV3(BaseModel):
 	def validate_score(cls, value: float) -> int | None:
 		if value is not None:
 			value = round(value)
-			debug(f'    score: {value}')
+			debug(f'	score: {value}')
 
 		return value
 
 	@model_validator(mode='after')
-	def debug_output(self) -> 'MirrorStatusEntryV3':
+	def debug_output(self, info: ValidationInfo) -> Self:
 		self._hostname, *port = urllib.parse.urlparse(self.url).netloc.split(':', 1)
 		self._port = int(port[0]) if port and len(port) >= 1 else None
 
-		debug(f'Loaded mirror {self._hostname}' + (f' with current score of {self.score}' if self.score else ''))
+		if (ctx := info.context) and ctx.get('verbose'):
+			debug(f'Loaded mirror {self._hostname}' + (f' with current score of {self.score}' if self.score else ''))
 		return self
 
 
@@ -188,11 +194,11 @@ class CustomRepository:
 		}
 
 	@classmethod
-	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomRepository']:
+	def parse_args(cls, args: list[dict[str, str]]) -> list[Self]:
 		configs = []
 		for arg in args:
 			configs.append(
-				CustomRepository(
+				cls(
 					arg['name'],
 					arg['url'],
 					SignCheck(arg['sign_check']),
@@ -214,11 +220,11 @@ class CustomServer:
 		return {'url': self.url}
 
 	@classmethod
-	def parse_args(cls, args: list[dict[str, str]]) -> list['CustomServer']:
+	def parse_args(cls, args: list[dict[str, str]]) -> list[Self]:
 		configs = []
 		for arg in args:
 			configs.append(
-				CustomServer(arg['url']),
+				cls(arg['url']),
 			)
 
 		return configs
@@ -240,11 +246,11 @@ class MirrorConfiguration:
 
 	@property
 	def region_names(self) -> str:
-		return '\n'.join([m.name for m in self.mirror_regions])
+		return '\n'.join(m.name for m in self.mirror_regions)
 
 	@property
 	def custom_server_urls(self) -> str:
-		return '\n'.join([s.url for s in self.custom_servers])
+		return '\n'.join(s.url for s in self.custom_servers)
 
 	def json(self) -> _MirrorConfigurationSerialization:
 		regions = {}
@@ -268,9 +274,11 @@ class MirrorConfiguration:
 
 		return config.strip()
 
-	def regions_config(self, speed_sort: bool = True) -> str:
-		from ..mirrors import mirror_list_handler
-
+	def regions_config(
+		self,
+		mirror_list_handler: MirrorListHandler,
+		speed_sort: bool = True,
+	) -> str:
 		config = ''
 
 		for mirror_region in self.mirror_regions:
@@ -301,8 +309,8 @@ class MirrorConfiguration:
 		cls,
 		args: dict[str, Any],
 		backwards_compatible_repo: list[Repository] = [],
-	) -> 'MirrorConfiguration':
-		config = MirrorConfiguration()
+	) -> Self:
+		config = cls()
 
 		mirror_regions = args.get('mirror_regions', [])
 		if mirror_regions:

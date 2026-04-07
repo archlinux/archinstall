@@ -1,15 +1,19 @@
-from __future__ import annotations
-
 import math
 import time
 from pathlib import Path
 
-from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import Tui
-
-from ..interactions.general_conf import ask_abort
-from ..luks import Luks2
-from ..models.device import (
+from archinstall.lib.disk.device_handler import device_handler
+from archinstall.lib.disk.luks import Luks2
+from archinstall.lib.disk.lvm import (
+	lvm_group_info,
+	lvm_pv_create,
+	lvm_vg_create,
+	lvm_vol_create,
+	lvm_vol_info,
+	lvm_vol_reduce,
+)
+from archinstall.lib.disk.utils import udev_sync
+from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
 	DiskLayoutType,
@@ -23,8 +27,7 @@ from ..models.device import (
 	Size,
 	Unit,
 )
-from ..output import debug, info
-from .device_handler import device_handler
+from archinstall.lib.output import debug, info
 
 
 class FilesystemHandler:
@@ -32,7 +35,7 @@ class FilesystemHandler:
 		self._disk_config = disk_config
 		self._enc_config = disk_config.disk_encryption
 
-	def perform_filesystem_operations(self, show_countdown: bool = True) -> None:
+	def perform_filesystem_operations(self) -> None:
 		if self._disk_config.config_type == DiskLayoutType.Pre_mount:
 			debug('Disk layout configuration is set to pre-mount, not performing any operations')
 			return
@@ -42,11 +45,6 @@ class FilesystemHandler:
 		if not device_mods:
 			debug('No modifications required')
 			return
-
-		device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
-
-		if show_countdown:
-			self._final_warning(device_paths)
 
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
@@ -58,7 +56,7 @@ class FilesystemHandler:
 		for mod in device_mods:
 			device_handler.partition(mod)
 
-		device_handler.udev_sync()
+		udev_sync()
 
 		if self._disk_config.lvm_config:
 			for mod in device_mods:
@@ -102,7 +100,7 @@ class FilesystemHandler:
 				device_handler.format(part_mod.safe_fs_type, part_mod.safe_dev_path)
 
 			# synchronize with udev before using lsblk
-			device_handler.udev_sync()
+			udev_sync()
 
 			lsblk_info = device_handler.fetch_part_info(part_mod.safe_dev_path)
 
@@ -147,27 +145,18 @@ class FilesystemHandler:
 			self._setup_lvm(lvm_config, enc_mods)
 			self._format_lvm_vols(lvm_config)
 
-			# export the lvm group safely otherwise the Luks cannot be closed
-			self._safely_close_lvm(lvm_config)
-
-			for luks in enc_mods.values():
-				luks.lock()
+			# Don't close LVM or LUKS during setup - keep everything active
+			# The installation phase will handle unlocking and mounting
+			# Closing causes "parent leaked" and lvchange errors
 		elif enc_config.encryption_type == EncryptionType.LuksOnLvm:
 			self._setup_lvm(lvm_config)
 			enc_vols = self._encrypt_lvm_vols(lvm_config, enc_config, False)
 			self._format_lvm_vols(lvm_config, enc_vols)
 
+			# Lock LUKS devices but keep LVM active
+			# LVM volumes must remain active for later re-unlock during installation
 			for luks in enc_vols.values():
 				luks.lock()
-
-			self._safely_close_lvm(lvm_config)
-
-	def _safely_close_lvm(self, lvm_config: LvmConfiguration) -> None:
-		for vg in lvm_config.vol_groups:
-			for vol in vg.volumes:
-				device_handler.lvm_vol_change(vol, False)
-
-			device_handler.lvm_export_vg(vg)
 
 	def _setup_lvm(
 		self,
@@ -179,10 +168,10 @@ class FilesystemHandler:
 		for vg in lvm_config.vol_groups:
 			pv_dev_paths = self._get_all_pv_dev_paths(vg.pvs, enc_mods)
 
-			device_handler.lvm_vg_create(pv_dev_paths, vg.name)
+			lvm_vg_create(pv_dev_paths, vg.name)
 
 			# figure out what the actual available size in the group is
-			vg_info = device_handler.lvm_group_info(vg.name)
+			vg_info = lvm_group_info(vg.name)
 
 			if not vg_info:
 				raise ValueError('Unable to fetch VG info')
@@ -212,11 +201,11 @@ class FilesystemHandler:
 				offset = max_vol_offset if lv == max_vol else None
 
 				debug(f'vg: {vg.name}, vol: {lv.name}, offset: {offset}')
-				device_handler.lvm_vol_create(vg.name, lv, offset)
+				lvm_vol_create(vg.name, lv, offset)
 
 				while True:
 					debug('Fetching LVM volume info')
-					lv_info = device_handler.lvm_vol_info(lv.name)
+					lv_info = lvm_vol_info(lv.name)
 					if lv_info is not None:
 						break
 
@@ -254,7 +243,7 @@ class FilesystemHandler:
 		for vg in lvm_config.vol_groups:
 			pv_paths |= self._get_all_pv_dev_paths(vg.pvs, enc_mods)
 
-		device_handler.lvm_pv_create(pv_paths)
+		lvm_pv_create(pv_paths)
 
 	def _get_all_pv_dev_paths(
 		self,
@@ -332,24 +321,7 @@ class FilesystemHandler:
 		if any([vol.fs_type == FilesystemType.Ext4 for vol in vol_gp.volumes]):
 			largest_vol = max(vol_gp.volumes, key=lambda x: x.length)
 
-			device_handler.lvm_vol_reduce(
+			lvm_vol_reduce(
 				largest_vol.safe_dev_path,
 				Size(256, Unit.MiB, SectorSize.default()),
 			)
-
-	def _final_warning(self, device_paths: str) -> bool:
-		# Issue a final warning before we continue with something un-revertable.
-		# We mention the drive one last time, and count from 5 to 0.
-		out = tr(' ! Formatting {} in ').format(device_paths)
-		Tui.print(out, row=0, endl='', clear_screen=True)
-
-		try:
-			countdown = '\n5...4...3...2...1\n'
-			for c in countdown:
-				Tui.print(c, row=0, endl='')
-				time.sleep(0.25)
-		except KeyboardInterrupt:
-			with Tui():
-				ask_abort()
-
-		return True

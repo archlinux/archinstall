@@ -1,107 +1,13 @@
-import json
-import ssl
 from functools import lru_cache
-from urllib.error import HTTPError
-from urllib.parse import urlencode
-from urllib.request import urlopen
-from urllib.response import addinfourl
 
-from ..exceptions import PackageError, SysCallError
-from ..models.packages import AvailablePackage, LocalPackage, PackageSearch, PackageSearchResult, Repository
-from ..output import debug
-from ..pacman import Pacman
-
-BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
-# BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
-BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/'
-
-
-def _make_request(url: str, params: dict[str, str]) -> addinfourl:
-	ssl_context = ssl.create_default_context()
-	ssl_context.check_hostname = False
-	ssl_context.verify_mode = ssl.CERT_NONE
-
-	encoded = urlencode(params)
-	full_url = f'{url}?{encoded}'
-
-	return urlopen(full_url, context=ssl_context)
-
-
-def group_search(name: str) -> list[PackageSearchResult]:
-	# TODO UPSTREAM: Implement /json/ for the groups search
-	try:
-		response = _make_request(BASE_GROUP_URL, {'name': name})
-	except HTTPError as err:
-		if err.code == 404:
-			return []
-		else:
-			raise err
-
-	# Just to be sure some code didn't slip through the exception
-	data = response.read().decode('utf-8')
-
-	return [PackageSearchResult(**package) for package in json.loads(data)['results']]
-
-
-def package_search(package: str) -> PackageSearch:
-	"""
-	Finds a specific package via the package database.
-	It makes a simple web-request, which might be a bit slow.
-	"""
-	# TODO UPSTREAM: Implement bulk search, either support name=X&name=Y or split on space (%20 or ' ')
-	# TODO: utilize pacman cache first, upstream second.
-	response = _make_request(BASE_URL_PKG_SEARCH, {'name': package})
-
-	if response.code != 200:
-		raise PackageError(f'Could not locate package: [{response.code}] {response}')
-
-	data = response.read().decode('UTF-8')
-	json_data = json.loads(data)
-	return PackageSearch.from_json(json_data)
-
-
-def find_package(package: str) -> list[PackageSearchResult]:
-	data = package_search(package)
-	results = []
-
-	for result in data.results:
-		if result.pkgname == package:
-			results.append(result)
-
-	# If we didn't find the package in the search results,
-	# odds are it's a group package
-	if not results:
-		# Check if the package is actually a group
-		for result in group_search(package):
-			results.append(result)
-
-	return results
-
-
-def find_packages(*names: str) -> dict[str, PackageSearchResult]:
-	"""
-	This function returns the search results for many packages.
-	The function itself is rather slow, so consider not sending to
-	many packages to the search query.
-	"""
-	result = {}
-	for package in names:
-		for found_package in find_package(package):
-			result[package] = found_package
-
-	return result
-
-
-def validate_package_list(packages: list[str]) -> tuple[list[str], list[str]]:
-	"""
-	Validates a list of given packages.
-	return: Tuple of lists containing valid packavges in the first and invalid
-	packages in the second entry
-	"""
-	valid_packages = {package for package in packages if find_package(package)}
-	invalid_packages = set(packages) - valid_packages
-
-	return list(valid_packages), list(invalid_packages)
+from archinstall.lib.exceptions import SysCallError
+from archinstall.lib.menu.helpers import Loading, Notify, Selection
+from archinstall.lib.models.packages import AvailablePackage, LocalPackage, PackageGroup, Repository
+from archinstall.lib.output import debug
+from archinstall.lib.pacman.pacman import Pacman
+from archinstall.lib.translationhandler import tr
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
 def installed_package(package: str) -> LocalPackage | None:
@@ -137,7 +43,7 @@ def list_available_packages(
 	"""
 	packages: dict[str, AvailablePackage] = {}
 	current_package: list[str] = []
-	filtered_repos = [name for repo in repositories for name in repo.get_repository_list()]
+	filtered_repos = [repo.value for repo in repositories]
 
 	try:
 		Pacman.run('-Sy')
@@ -176,3 +82,84 @@ def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 			package[key] = value.strip()
 
 	return cls.model_validate(package)
+
+
+async def select_additional_packages(
+	preset: list[str] = [],
+	repositories: set[Repository] = set(),
+) -> list[str]:
+	repositories |= {Repository.Core, Repository.Extra}
+
+	respos_text = ', '.join(r.value for r in repositories)
+	output = tr('Repositories: {}').format(respos_text) + '\n'
+	output += tr('Loading packages...')
+
+	result = await Loading[dict[str, AvailablePackage]](
+		header=output,
+		data_callback=lambda: list_available_packages(tuple(repositories)),
+	).show()
+
+	if result.type_ != ResultType.Selection:
+		debug('Error while loading packages')
+		return preset
+
+	packages = result.get_value()
+
+	if not packages:
+		await Notify(tr('No packages found')).show()
+		return []
+
+	package_groups = PackageGroup.from_available_packages(packages)
+
+	# Additional packages (with some light weight error handling for invalid package names)
+	header = tr('Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed.') + '\n'
+	header += tr('Note: base-devel is no longer installed by default. Add it here if you need build tools.') + '\n'
+	header += tr('Select any packages from the below list that should be installed additionally') + '\n'
+
+	# there are over 15k packages so this needs to be quick
+	preset_packages: list[AvailablePackage | PackageGroup] = []
+	for p in preset:
+		if p in packages:
+			preset_packages.append(packages[p])
+		elif p in package_groups:
+			preset_packages.append(package_groups[p])
+
+	items = [
+		MenuItem(
+			name,
+			value=pkg,
+			preview_action=lambda x: x.value.info() if x.value else None,
+		)
+		for name, pkg in packages.items()
+	]
+
+	items += [
+		MenuItem(
+			name,
+			value=group,
+			preview_action=lambda x: x.value.info() if x.value else None,
+		)
+		for name, group in package_groups.items()
+	]
+
+	menu_group = MenuItemGroup(items, sort_items=True)
+	menu_group.set_selected_by_value(preset_packages)
+
+	pck_result = await Selection[AvailablePackage | PackageGroup](
+		menu_group,
+		header=header,
+		allow_reset=True,
+		allow_skip=True,
+		multi=True,
+		preview_location='right',
+		enable_filter=True,
+	).show()
+
+	match pck_result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return []
+		case ResultType.Selection:
+			selected_pacakges = pck_result.get_values()
+			return [pkg.name for pkg in selected_pacakges]

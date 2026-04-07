@@ -7,7 +7,8 @@ import urllib.request
 from importlib import metadata
 from pathlib import Path
 
-from .output import error, info, warn
+from archinstall.lib.output import error, info, warn
+from archinstall.lib.version import get_version
 
 plugins = {}
 
@@ -25,6 +26,12 @@ for plugin_definition in metadata.entry_points().select(group='archinstall.plugi
 			f'Error: {err}',
 			f'The above error was detected when loading the plugin: {plugin_definition}',
 		)
+
+
+# @archinstall.plugin decorator hook to programmatically add
+# plugins in runtime. Useful in profiles_bck and other things.
+def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
+	plugins[f.__name__] = f
 
 
 def _localize_path(path: Path) -> Path:
@@ -88,11 +95,9 @@ def load_plugin(path: Path) -> None:
 		namespace = _import_via_path(localized)
 
 	if namespace and namespace in sys.modules:
-		from .args import arch_config_handler
-
 		# Version dependency via __archinstall__version__ variable (if present) in the plugin
 		# Any errors in version inconsistency will be handled through normal error handling if not defined.
-		version = arch_config_handler.config.version
+		version = get_version()
 
 		if version is not None:
 			version_major_and_minor = version.rsplit('.', 1)[0]

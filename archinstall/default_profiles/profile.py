@@ -1,13 +1,18 @@
 from __future__ import annotations
 
-import sys
 from enum import Enum, auto
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
-	from ..lib.installer import Installer
+	from archinstall.lib.installer import Installer
+	from archinstall.lib.models.users import User
+
+
+class DisplayServerType(Enum):
+	Xorg = 'Xorg'
+	Wayland = 'Wayland'
 
 
 class ProfileType(Enum):
@@ -23,7 +28,6 @@ class ProfileType(Enum):
 	DesktopEnv = 'Desktop Environment'
 	CustomType = 'CustomType'
 	# special things
-	Tailored = 'Tailored'
 	Application = 'Application'
 
 
@@ -33,10 +37,8 @@ class GreeterType(Enum):
 	Sddm = 'sddm'
 	Gdm = 'gdm'
 	Ly = 'ly'
-
-	# .. todo:: Remove when we un-hide cosmic behind --advanced
-	if '--advanced' in sys.argv:
-		CosmicSession = 'cosmic-greeter'
+	CosmicSession = 'cosmic-greeter'
+	PlasmaLoginManager = 'plasma-login-manager'
 
 
 class SelectResult(Enum):
@@ -50,20 +52,20 @@ class Profile:
 		self,
 		name: str,
 		profile_type: ProfileType,
-		current_selection: list[Profile] = [],
+		current_selection: list[Self] = [],
 		packages: list[str] = [],
 		services: list[str] = [],
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
-		advanced: bool = False,
+		display_server: DisplayServerType | None = None,
 	) -> None:
 		self.name = name
 		self.profile_type = profile_type
 		self.custom_settings: dict[str, str | None] = {}
-		self.advanced = advanced
 
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
+		self._display_server = display_server
 
 		# self.gfx_driver: str | None = None
 
@@ -97,25 +99,23 @@ class Profile:
 		"""
 		return None
 
-	def _advanced_check(self) -> bool:
-		"""
-		Used to control if the Profile() should be visible or not in different contexts.
-		Returns True if --advanced is given on a Profile(advanced=True) instance.
-		"""
-		from archinstall.lib.args import arch_config_handler
-
-		return self.advanced is False or arch_config_handler.args.advanced is True
-
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		"""
 		Performs installation steps when this profile was selected
 		"""
 
-	def post_install(self, install_session: 'Installer') -> None:
+	def post_install(self, install_session: Installer) -> None:
 		"""
 		Hook that will be called when the installation process is
 		finished and custom installation steps for specific default_profiles
 		are needed
+		"""
+
+	def provision(self, install_session: Installer, users: list[User]) -> None:
+		"""
+		Hook that will be called when the installation process is
+		finished and user configuration for specific default_profiles
+		is needed
 		"""
 
 	def json(self) -> dict[str, str]:
@@ -124,7 +124,7 @@ class Profile:
 		"""
 		return {}
 
-	def do_on_select(self) -> SelectResult | None:
+	async def do_on_select(self) -> SelectResult | None:
 		"""
 		Hook that will be called when a profile is selected
 		"""
@@ -151,19 +151,16 @@ class Profile:
 		return self.profile_type in top_levels
 
 	def is_desktop_profile(self) -> bool:
-		return self.profile_type == ProfileType.Desktop if self._advanced_check() else False
+		return self.profile_type == ProfileType.Desktop
 
 	def is_server_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.ServerType
 
 	def is_desktop_type_profile(self) -> bool:
-		return (self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr) if self._advanced_check() else False
+		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
 
 	def is_xorg_type_profile(self) -> bool:
-		return self.profile_type == ProfileType.Xorg if self._advanced_check() else False
-
-	def is_tailored(self) -> bool:
-		return self.profile_type == ProfileType.Tailored
+		return self.profile_type == ProfileType.Xorg
 
 	def is_custom_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.CustomType
@@ -179,10 +176,23 @@ class Profile:
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter
 
+	@property
+	def display_server(self) -> DisplayServerType | None:
+		return self._display_server
+
 	def preview_text(self) -> str:
 		"""
 		Override this method to provide a preview text for the profile
 		"""
+		if self.is_desktop_type_profile():
+			if self._display_server:
+				text = tr('Environment type: {} {}').format(self._display_server.value, self.profile_type.value)
+			else:
+				text = tr('Environment type: {}').format(self.profile_type.value)
+			if packages := self.packages_text():
+				text += f'\n{packages}'
+			return text
+
 		return self.packages_text()
 
 	def packages_text(self, include_sub_packages: bool = False) -> str:

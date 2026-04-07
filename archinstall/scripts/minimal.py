@@ -1,20 +1,22 @@
-from pathlib import Path
-
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall.lib.args import arch_config_handler
+from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.installer import Installer
+from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
+from archinstall.lib.network.network_handler import install_network_config
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.tui import Tui
+from archinstall.lib.translationhandler import tr
+from archinstall.tui.ui.components import tui
 
 
-def perform_installation(mountpoint: Path) -> None:
+def perform_installation(arch_config_handler: ArchConfigHandler) -> None:
+	mountpoint = arch_config_handler.args.mountpoint
 	config = arch_config_handler.config
 
 	if not config.disk_config:
@@ -28,18 +30,18 @@ def perform_installation(mountpoint: Path) -> None:
 		mountpoint,
 		disk_config,
 		kernels=config.kernels,
+		silent=arch_config_handler.args.silent,
 	) as installation:
-		# Strap in the base system, add a boot loader and configure
+		# Strap in the base system, add a bootloader and configure
 		# some other minor details as specified by this profile and user.
 		installation.mount_ordered_layout()
 		installation.minimal_installation()
 		installation.set_hostname('minimal-arch')
 		installation.add_bootloader(Bootloader.Systemd)
 
-		network_config = config.network_config
-
-		if network_config:
-			network_config.install_network_config(
+		if config.network_config:
+			install_network_config(
+				config.network_config,
 				installation,
 				config.profile_config,
 			)
@@ -59,33 +61,41 @@ def perform_installation(mountpoint: Path) -> None:
 	info(' * devel (password: devel)')
 
 
-def _minimal() -> None:
-	with Tui():
-		disk_config = DiskLayoutConfigurationMenu(disk_layout_config=None).run()
-		arch_config_handler.config.disk_config = disk_config
+async def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
+	if arch_config_handler is None:
+		arch_config_handler = ArchConfigHandler()
+
+	disk_config = await DiskLayoutConfigurationMenu(disk_layout_config=None).show()
+	arch_config_handler.config.disk_config = disk_config
 
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
 	config.save()
 
 	if arch_config_handler.args.dry_run:
-		exit(0)
+		return
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		with Tui():
-			if not config.confirm_config():
-				debug('Installation aborted')
-				aborted = True
+		res: bool = tui.run(config.confirm_config)
+
+		if not res:
+			debug('Installation aborted')
+			aborted = True
 
 		if aborted:
-			return _minimal()
+			return await main(arch_config_handler)
 
 	if arch_config_handler.config.disk_config:
 		fs_handler = FilesystemHandler(arch_config_handler.config.disk_config)
+
+		if not delayed_warning(tr('Starting device modifications in ')):
+			return await main()
+
 		fs_handler.perform_filesystem_operations()
 
-	perform_installation(arch_config_handler.args.mountpoint)
+	perform_installation(arch_config_handler)
 
 
-_minimal()
+if __name__ == '__main__':
+	tui.run(main)

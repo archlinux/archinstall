@@ -1,13 +1,14 @@
+from __future__ import annotations
+
 import getpass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from archinstall.lib.general import SysCommandWorker
+from archinstall.lib.command import SysCommandWorker
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.users import User
-from archinstall.lib.output import debug
+from archinstall.lib.output import debug, info
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import Tui
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -16,20 +17,20 @@ if TYPE_CHECKING:
 class AuthenticationHandler:
 	def setup_auth(
 		self,
-		install_session: 'Installer',
+		install_session: Installer,
 		auth_config: AuthenticationConfiguration,
 		hostname: str,
 	) -> None:
 		if auth_config.u2f_config and auth_config.users is not None:
 			self._setup_u2f_login(install_session, auth_config.u2f_config, auth_config.users, hostname)
 
-	def _setup_u2f_login(self, install_session: 'Installer', u2f_config: U2FLoginConfiguration, users: list[User], hostname: str) -> None:
+	def _setup_u2f_login(self, install_session: Installer, u2f_config: U2FLoginConfiguration, users: list[User], hostname: str) -> None:
 		self._configure_u2f_mapping(install_session, u2f_config, users, hostname)
 		self._update_pam_config(install_session, u2f_config)
 
 	def _update_pam_config(
 		self,
-		install_session: 'Installer',
+		install_session: Installer,
 		u2f_config: U2FLoginConfiguration,
 	) -> None:
 		match u2f_config.u2f_login_method:
@@ -73,7 +74,7 @@ class AuthenticationHandler:
 
 	def _configure_u2f_mapping(
 		self,
-		install_session: 'Installer',
+		install_session: Installer,
 		u2f_config: U2FLoginConfiguration,
 		users: list[User],
 		hostname: str,
@@ -82,7 +83,7 @@ class AuthenticationHandler:
 
 		install_session.pacman.strap('pam-u2f')
 
-		Tui.print(tr(f'Setting up U2F login: {u2f_config.u2f_login_method.value}'))
+		print(tr(f'Setting up U2F login: {u2f_config.u2f_login_method.value}'))
 
 		# https://developers.yubico.com/pam-u2f/
 		u2f_auth_file = install_session.target / 'etc/u2f_mappings'
@@ -92,11 +93,13 @@ class AuthenticationHandler:
 		registered_keys: list[str] = []
 
 		for user in users:
-			Tui.print('')
-			Tui.print(tr('Setting up U2F device for user: {}').format(user.username))
-			Tui.print(tr('You may need to enter the PIN and then touch your U2F device to register it'))
+			print('')
+			info(tr('Setting up U2F device for user: {}').format(user.username))
+			info(tr('You may need to enter the PIN and then touch your U2F device to register it'))
 
-			cmd = ' '.join(['arch-chroot', str(install_session.target), 'pamu2fcfg', '-u', user.username, '-o', f'pam://{hostname}', '-i', f'pam://{hostname}'])
+			cmd = ' '.join(
+				['arch-chroot', '-S', str(install_session.target), 'pamu2fcfg', '-u', user.username, '-o', f'pam://{hostname}', '-i', f'pam://{hostname}']
+			)
 
 			debug(f'Enrolling U2F device: {cmd}')
 
@@ -123,6 +126,3 @@ class AuthenticationHandler:
 			existing_keys = all_keys
 
 		u2f_auth_file.write_text(existing_keys)
-
-
-auth_handler = AuthenticationHandler()

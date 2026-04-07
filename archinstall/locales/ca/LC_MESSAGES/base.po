@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] S'ha creat un fitxer de registre aquí: {} {}"
@@ -53,6 +53,9 @@ msgstr "Trieu un servidor d'àudio"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Només s'instal·laran paquets com base, base-devel, linux, linux-firmware, efibootmgr i altres paquets de perfil opcionals."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Avís: base-devel ja no és instal·lat per defecte. Afegiu el paquet aquí si necessiteu les eines de compilació."
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si desitgeu un navegador web, com ara firefox o chromium, ho podeu especificar al proper missatge."
 
@@ -71,6 +74,7 @@ msgstr "Seleccioneu una interfície de xarxa a configurar"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Seleccioneu quin mode configurar per a \"{}\" o ometeu per a usar el mode predeterminat \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Introduïu la IP i la subxarxa per a {} (exemple: 192.168.0.5/24): "
 
@@ -584,6 +588,7 @@ msgstr "Seleccioneu les opcions de subvolum desitjades "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Definiu usuaris amb privilegi sudo, per nom d'usuari: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] S'ha creat un fitxer de registre aquí: {}"
 
@@ -842,9 +847,11 @@ msgstr "Archinstall necessita permisos de root per a executar-se. Vegeu --help p
 msgid "Select an execution mode"
 msgstr "Seleccioneu un mode d'execució"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "No es pot recuperar el perfil de la URL especificada: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Els perfils han de tenir un nom únic, però s'han trobat definicions de perfil amb noms duplicats: {}"
 
@@ -863,9 +870,11 @@ msgstr "Seleccioneu una opció de partició"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Introduïu el directori arrel dels dispositius muntats: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Capacitat mínima per a la partició /home: {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Capacitat mínima per a la partició Arch Linux: {}GiB"
 
@@ -929,9 +938,11 @@ msgstr "Introduïu el sector final de la partició (percentatge o número de blo
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Això eliminarà totes les particions recentment afegides, continuar?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Gestió de particions: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Llargada total: {}"
 
@@ -992,6 +1003,7 @@ msgstr "Desconegut"
 msgid "Partition encryption"
 msgstr "Xifrat de partició"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! Formatant {} en "
 
@@ -1016,6 +1028,7 @@ msgstr "Tornar"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Si us plau, seleccioneu quin gestor d'inici de sessió instal·lar pels perfils escollits: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Tipus d'entorn: {}"
 
@@ -1208,6 +1221,7 @@ msgstr ""
 "\n"
 "Nota:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Valor màxim recomanat : {} ( Permets {} descàrregues paral·leles simultànies )"
 
@@ -1271,6 +1285,7 @@ msgstr "Desactivar Copy-on-Write"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Proporciona una selecció d'entorns d'escriptori i gestors de finestres en mosaic, com ara GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Tipus de configuració: {}"
 
@@ -1397,6 +1412,7 @@ msgstr "El nom d'usuari introduït no és vàlid"
 msgid "Username"
 msgstr "Nom d'usuari"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Cal que \"{}\" sigui superusuari (sudo)?\n"
 
@@ -1463,6 +1479,7 @@ msgstr "Directori"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Introduïu un directori on guardar les configuracions (compleció amb TAB activada)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Voleu guardar el(s) fitxer(s) de configuració a {}?"
 
@@ -1508,12 +1525,15 @@ msgstr "Nom"
 msgid "Signature check"
 msgstr "Verificació de signatura"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Segment d'espai lliure seleccionat al dispositiu {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Mida: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Mida (per defecte: {}): "
 
@@ -1676,6 +1696,7 @@ msgstr "Instal·lació completa"
 msgid "What would you like to do next?"
 msgstr "Què voleu fer a continuació?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Seleccioneu quin mode cal configurar per a \"{}\""
 
@@ -1694,5 +1715,290 @@ msgstr "Voleu encriptar el fitxer user_credentials.json?"
 msgid "Credentials file encryption password"
 msgstr "Contrasenya d'encriptació del fitxer de credencials"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Repositoris: {}"
+
+msgid "New version available"
+msgstr "Versió nova disponible"
+
+msgid "Passwordless login"
+msgstr "Inici de sessió sense contrasenya"
+
+msgid "Second factor login"
+msgstr "Inici de sessió amb segon factor"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Voleu configurar el Bluetooth?"
+
+msgid "Print service"
+msgstr "Servei d'impressió"
+
+msgid "Would you like to configure the print service?"
+msgstr "Voleu configurar el servei d'impressió?"
+
+msgid "Power management"
+msgstr "Gestió d'energia"
+
+msgid "Authentication"
+msgstr "Autenticació"
+
+msgid "Applications"
+msgstr "Aplicacions"
+
+msgid "U2F login method: "
+msgstr "Mètode d'inici de sessió U2F: "
+
+msgid "Passwordless sudo: "
+msgstr "Sudo sense contrasenya: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Tipus d'instantània Btrfs: {}"
+
+msgid "Syncing the system..."
+msgstr "Sincronitzant el sistema..."
+
+msgid "Value cannot be empty"
+msgstr "El valor no pot ser buit"
+
+msgid "Snapshot type"
+msgstr "Tipus d'instantània"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tipus d'instantània: {}"
+
+msgid "U2F login setup"
+msgstr "Configuració d'autenticació U2F"
+
+msgid "No U2F devices found"
+msgstr "No s'han trobat dispositius U2F"
+
+msgid "U2F Login Method"
+msgstr "Mètode d'inici de sessió U2F"
+
+msgid "Enable passwordless sudo?"
+msgstr "Cal activar sudo sense contrasenya?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Preparant el dispositiu U2F per a l'usuari: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Pot ser que necessiteu introduir el PIN i tocar el dispositiu U2F per a registrar-lo"
+
+msgid "Starting device modifications in "
+msgstr "Començant modificacions del dispositiu en "
+
+msgid "No network connection found"
+msgstr "No s'ha trobat cap configuració de xarxa"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Us voleu connectar al Wifi?"
+
+msgid "No wifi interface found"
+msgstr "No s'ha trobat cap interfície wifi"
+
+msgid "Select wifi network to connect to"
+msgstr "Seleccioneu la xarxa wifi on connectar-se"
+
+msgid "Scanning wifi networks..."
+msgstr "Escanejant xarxes wifi..."
+
+msgid "No wifi networks found"
+msgstr "No s'han trobat xarxes wifi"
+
+msgid "Failed setting up wifi"
+msgstr "Error configurant el wifi"
+
+msgid "Enter wifi password"
+msgstr "Introduïu la contrasenya del wifi"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Removable"
+msgstr "Extraïble"
+
+msgid "Install to removable location"
+msgstr "Instal·lar a un mitjà extraïble"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "S'instal·larà a /EFI/BOOT (mitjà extraïble)"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "S'instal·larà a una ubicació estàndard amb un registre NVRAM"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Voleu instal·lar el bootloader a la ubicació predeterminada del dispositiu extraïble?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Això instal·larà el bootloader a /EFI/BOOT/BOOTX64.EFI (o similar). És útil per a:"
+
+msgid "USB drives or other portable external media."
+msgstr "Llapis USB o altres mitjans extraïbles externs."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Sistemes on vulgueu que el dispositiu arranqui en qualsevol ordinador."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Firmware que no suporta registres d'arrancada NVRAM."
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "S'instal·larà a /EFI/BOOT (mitjà extraïble)"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "S'instal·larà a una ubicació personalitzada amb un registre NVRAM"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmware que no suporta registres d'arrancada NVRAM com ara la majoria de plaques base MSI,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "la majoria de Macs d'Apple, molts portàtils..."
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Compression algorithm"
+msgstr "Algorisme de compressió"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Només s'instal·laran paquets com base, linux, linux-firmware, efibootmgr i altres paquets de perfil opcionals."
+
+msgid "Select zram compression algorithm:"
+msgstr "Seleccioneu un algorisme de compressió per a zram:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Utilitzar Network Manager (backend per defecte)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Utilitzar Network Manager (backend per a iwd)"
+
+msgid "Firewall"
+msgstr "Tallafocs"
+
+msgid "Select audio configuration"
+msgstr "Seleccionar configuració d'àudio"
+
+msgid "Enter credentials file decryption password"
+msgstr "Introduïu la contrasenya de des-encriptació del fitxer de credencials"
+
+msgid "Enter root password"
+msgstr "Introduïu la contrasenya de root"
+
+msgid "Select bootloader to install"
+msgstr "Selecció del bootloader a instal·lar"
+
+msgid "Configuration preview"
+msgstr "Vista prèvia de la configuració"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Introduïu un directori on guardar les configuracions "
+
+msgid "Select encryption type"
+msgstr "Seleccioneu el tipus de xifrat"
+
+msgid "Select disks for the installation"
+msgstr "Seleccioneu els discs per a la instal·lació"
+
+msgid "Enter a mountpoint"
+msgstr "Introduïu un punt de muntatge"
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Introduïu la mida (per defecte: {}): "
+
+msgid "Enter subvolume name"
+msgstr "Introduïu el nom del subvolum"
+
+msgid "Enter subvolume mountpoint"
+msgstr "Introduïu el punt de muntatge del subvolum"
+
+msgid "Select a disk configuration"
+msgstr "Seleccioneu una configuració de disc"
+
+msgid "Enter root mount directory"
+msgstr "Introduïu el directori de muntatge de root"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "S'utilitzarà la configuració de disc que estigui muntada al directori especificat"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "AVÍS: archinstall no comprovarà la compatibilitat d'aquesta configuració"
+
+msgid "Select main filesystem"
+msgstr "Seleccioneu el sistema de fitxers principal"
+
+msgid "Enter a hostname"
+msgstr "Introduïu un nom de host"
+
+msgid "Select timezone"
+msgstr "Seleccioneu una franja horària"
+
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr "Introduïu el número de descàrregues paral·leles permeses"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "S'admeten valors entre 1 i {}"
+
+msgid "Select which kernel(s) to install"
+msgstr "Seleccioneu el(s) nucli(s) a instal·lar"
+
+msgid "Enter a respository name"
+msgstr "Introduïu el nom del repositori"
+
+msgid "Enter the repository url"
+msgstr "Introduïu url del repositori"
+
+msgid "Enter server url"
+msgstr "Introduïu la URL del servidor"
+
+msgid "Select mirror regions to be enabled"
+msgstr "Seleccioneu regions dels miralls a activar"
+
+msgid "Select optional repositories to be enabled"
+msgstr "Seleccioneu repositoris addicionals a activar"
+
+msgid "Select an interface"
+msgstr "Seleccioneu una interfície"
+
+msgid "Choose network configuration"
+msgstr "Trieu la configuració de xarxa"
+
+msgid "No packages found"
+msgstr "No s'han trobat paquets"
+
+msgid "Select which greeter to install"
+msgstr "Seleccioneu el gestor d'inici de sessió a instal·lar"
+
+msgid "Select a profile type"
+msgstr "Seleccioneu un tipus de perfil"
+
+msgid "Enter new password"
+msgstr "Introduïu una contrasenya nova"
+
+msgid "Enter a username"
+msgstr "Introduïu un nom d'usuari"
+
+msgid "Enter a password"
+msgstr "Introduïu una contrasenya"
+
+msgid "The password did not match, please try again"
+msgstr "La contrasenya no coincideix, si us plau torneu-ho a intentar"
+
+msgid "Password strength: Weak"
+msgstr "Seguretat de la contrasenya: feble"
+
+msgid "Password strength: Moderate"
+msgstr "Seguretat de la contrasenya: moderada"
+
+msgid "Password strength: Strong"
+msgstr "Seguretat de la contrasenya: alta"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "El perfil d'escriptori seleccionat necessita de l'inici de sessió d'un usuari mitjançant el gestor"

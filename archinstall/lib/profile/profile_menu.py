@@ -1,18 +1,14 @@
-from __future__ import annotations
-
 from typing import override
 
 from archinstall.default_profiles.profile import GreeterType, Profile
+from archinstall.lib.general.system_menu import select_driver
+from archinstall.lib.hardware import GfxDriver
+from archinstall.lib.menu.abstract_menu import AbstractSubMenu
+from archinstall.lib.menu.helpers import Confirmation, Selection
+from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment, FrameProperties, Orientation
-
-from ..hardware import GfxDriver
-from ..interactions.system_conf import select_driver
-from ..menu.abstract_menu import AbstractSubMenu
-from ..models.profile import ProfileConfiguration
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
 class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
@@ -25,8 +21,8 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		else:
 			self._profile_config = ProfileConfiguration()
 
-		menu_optioons = self._define_menu_options()
-		self._item_group = MenuItemGroup(menu_optioons, checkmarks=True)
+		menu_options = self._define_menu_options()
+		self._item_group = MenuItemGroup(menu_options, checkmarks=True)
 
 		super().__init__(
 			self._item_group,
@@ -64,12 +60,11 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		]
 
 	@override
-	def run(self, additional_title: str | None = None) -> ProfileConfiguration | None:
-		super().run(additional_title=additional_title)
-		return self._profile_config
+	async def show(self) -> ProfileConfiguration | None:
+		return await super().show()
 
-	def _select_profile(self, preset: Profile | None) -> Profile | None:
-		profile = select_profile(preset)
+	async def _select_profile(self, preset: Profile | None) -> Profile | None:
+		profile = await select_profile(preset)
 
 		if profile is not None:
 			if not profile.is_graphic_driver_supported():
@@ -91,33 +86,26 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 
 		return profile
 
-	def _select_gfx_driver(self, preset: GfxDriver | None = None) -> GfxDriver | None:
+	async def _select_gfx_driver(self, preset: GfxDriver | None = None) -> GfxDriver | None:
 		driver = preset
 		profile: Profile | None = self._item_group.find_by_key('profile').value
 
 		if profile:
 			if profile.is_graphic_driver_supported():
-				driver = select_driver(preset=preset)
+				driver = await select_driver(preset=preset)
 
 			if driver and 'Sway' in profile.current_selection_names():
 				if driver.is_nvidia():
 					header = tr('The proprietary Nvidia driver is not supported by Sway.') + '\n'
 					header += tr('It is likely that you will run into issues, are you okay with that?') + '\n'
 
-					group = MenuItemGroup.yes_no()
-					group.focus_item = MenuItem.no()
-					group.default_item = MenuItem.no()
-
-					result = SelectMenu[bool](
-						group,
+					result = await Confirmation(
 						header=header,
 						allow_skip=False,
-						columns=2,
-						orientation=Orientation.HORIZONTAL,
-						alignment=Alignment.CENTER,
-					).run()
+						preset=False,
+					).show()
 
-					if result.item() == MenuItem.no():
+					if result.get_value():
 						return preset
 
 		return driver
@@ -141,7 +129,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		if profile:
 			if (sub_profiles := profile.current_selection) is not None:
 				text += tr('Selected profiles: ')
-				text += ', '.join([p.name for p in sub_profiles]) + '\n'
+				text += ', '.join(p.name for p in sub_profiles) + '\n'
 
 			if packages := profile.packages_text(include_sub_packages=True):
 				text += f'{packages}'
@@ -152,7 +140,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 		return None
 
 
-def select_greeter(
+async def select_greeter(
 	profile: Profile | None = None,
 	preset: GreeterType | None = None,
 ) -> GreeterType | None:
@@ -169,12 +157,11 @@ def select_greeter(
 
 		group.set_default_by_value(default)
 
-		result = SelectMenu[GreeterType](
+		result = await Selection[GreeterType](
 			group,
+			header=tr('Select which greeter to install'),
 			allow_skip=True,
-			frame=FrameProperties.min(tr('Greeter')),
-			alignment=Alignment.CENTER,
-		).run()
+		).show()
 
 		match result.type_:
 			case ResultType.Skip:
@@ -187,7 +174,7 @@ def select_greeter(
 	return None
 
 
-def select_profile(
+async def select_profile(
 	current_profile: Profile | None = None,
 	header: str | None = None,
 	allow_reset: bool = True,
@@ -197,20 +184,18 @@ def select_profile(
 	top_level_profiles = profile_handler.get_top_level_profiles()
 
 	if header is None:
-		header = tr('This is a list of pre-programmed default_profiles') + '\n'
+		header = tr('Select a profile type')
 
 	items = [MenuItem(p.name, value=p) for p in top_level_profiles]
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_selected_by_value(current_profile)
 
-	result = SelectMenu[Profile](
+	result = await Selection[Profile](
 		group,
 		header=header,
 		allow_reset=allow_reset,
 		allow_skip=True,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Main profile')),
-	).run()
+	).show()
 
 	match result.type_:
 		case ResultType.Reset:
@@ -219,7 +204,7 @@ def select_profile(
 			return current_profile
 		case ResultType.Selection:
 			profile_selection = result.get_value()
-			select_result = profile_selection.do_on_select()
+			select_result = await profile_selection.do_on_select()
 
 			if not select_result:
 				return None

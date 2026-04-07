@@ -1,19 +1,19 @@
 # Translators:
 # Hugo Carvalho <hugokarvalho@hotmail.com>
-#
+# Luis Antonio <github.com/zaorinu>
 msgid ""
 msgstr ""
 "Project-Id-Version: archinstall\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
+"PO-Revision-Date: 2025-21-12 16:08\n"
+"Last-Translator: Luis Antonio <github.com/zaorinu>\n"
 "Language-Team: Portuguese <hugokarvalho@hotmail.com>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Foi criado um ficheiro de registo aqui: {} {}"
@@ -57,6 +57,9 @@ msgstr "Escolha um servidor de áudio"
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Se quer um navegador web, como firefox ou chromium, deve especificá-lo na pergunta seguinte."
 
@@ -75,6 +78,7 @@ msgstr "Selecionar uma interface de rede para configurar"
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Selecionar qual o modo a configurar para \"{}\" ou ignorar para usar o modo predefinido \"{}\""
 
+#, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Inserir o IP e sub-rede para {} (exemplo: 192.168.0.5/24): "
 
@@ -588,6 +592,7 @@ msgstr "Selecionar as opções desejadas do subvolume "
 msgid "Define users with sudo privilege, by username: "
 msgstr "Definir utilizadores com privilégio sudo, por nome de utilizador: "
 
+#, python-brace-format
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Um ficheiro de registo foi criado aqui: {}"
 
@@ -846,9 +851,11 @@ msgstr "O archinstall requer privilégios root para ser executado. Ver --help pa
 msgid "Select an execution mode"
 msgstr "Selecionar um modo de execução"
 
+#, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
 msgstr "Não foi possível obter o perfil a partir do URL especificado: {}"
 
+#, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr "Os perfis devem ter nomes únicos, mas foram encontradas definições de perfil com nomes duplicados: {}"
 
@@ -867,9 +874,11 @@ msgstr "Selecionar uma opção de particionamento"
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Inserir o diretório root dos dispositivos montados: "
 
+#, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
 msgstr "Capacidade mínima para partição /home : {}GiB\n"
 
+#, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Capacidade mínima para a partição do Arch Linux: {}GiB"
 
@@ -933,9 +942,11 @@ msgstr "Inserir o setor final da partição (percentagem ou número de bloco, pr
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Isto irá remover todas as partições recém adicionadas, continuar?"
 
+#, python-brace-format
 msgid "Partition management: {}"
 msgstr "Gestão de partições: {}"
 
+#, python-brace-format
 msgid "Total length: {}"
 msgstr "Tamanho total: {}"
 
@@ -996,6 +1007,7 @@ msgstr "Desconhecido"
 msgid "Partition encryption"
 msgstr "Encriptação de partições"
 
+#, python-brace-format
 msgid " ! Formatting {} in "
 msgstr " ! A formatar {} em "
 
@@ -1020,6 +1032,7 @@ msgstr "Voltar"
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr "Escolher qual a interface gráfica de início de sessão a instalar para os perfis escolhidos: {}"
 
+#, python-brace-format
 msgid "Environment type: {}"
 msgstr "Tipo de ambiente: {}"
 
@@ -1213,6 +1226,7 @@ msgstr ""
 "\n"
 "Nota:\n"
 
+#, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
 msgstr " - Valor máximo recomendado : {} ( Permite {} transferências paralelas de cada vez )"
 
@@ -1276,6 +1290,7 @@ msgstr "Desativar Copy-on-Write"
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
 msgstr "Disponibiliza uma seleção de ambientes gráficos e gestores de janelas em mosaico, por exemplo, GNOME, KDE Plasma, Sway"
 
+#, python-brace-format
 msgid "Configuration type: {}"
 msgstr "Tipo de configuração: {}"
 
@@ -1402,6 +1417,7 @@ msgstr "O nome de utilizador introduzido é inválido"
 msgid "Username"
 msgstr "Nome de utilizador"
 
+#, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
 msgstr "Deverá \"{}\" ser um superutilizador (sudo)?\n"
 
@@ -1468,6 +1484,7 @@ msgstr "Diretório"
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
 msgstr "Introduzir um diretório para a(s) configuração(ões) a guardar (preenchimento com a tecla Tab ativado)"
 
+#, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Pretende guardar o(s) ficheiro(s) de configuração em {}?"
 
@@ -1513,12 +1530,15 @@ msgstr "Nome"
 msgid "Signature check"
 msgstr "Verificação de assinatura"
 
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Segmento de espaço livre selecionado no dispositivo {}:"
 
+#, python-brace-format
 msgid "Size: {} / {}"
 msgstr "Tamanho: {} / {}"
 
+#, python-brace-format
 msgid "Size (default: {}): "
 msgstr "Tamanho (predefinido: {}): "
 
@@ -1681,6 +1701,7 @@ msgstr "Instalação concluída"
 msgid "What would you like to do next?"
 msgstr "O que gostaria de fazer a seguir?"
 
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Selecione qual modo configurar para \"{}\""
 
@@ -1699,5 +1720,170 @@ msgstr "Pretende desencriptar o ficheiro user_credentials.json?"
 msgid "Credentials file encryption password"
 msgstr "Palavra-passe de encriptação do ficheiro de credenciais"
 
+#, python-brace-format
 msgid "Repositories: {}"
 msgstr "Repositórios: {}"
+
+msgid "New version available"
+msgstr "Nova versão disponível"
+
+msgid "Passwordless login"
+msgstr "Autenticação sem palavra-passe"
+
+msgid "Second factor login"
+msgstr "Início de sessão com segundo fator"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Pretende configurar o Bluetooth?"
+
+msgid "Print service"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Pretende configurar o Bluetooth?"
+
+#, fuzzy
+msgid "Power management"
+msgstr "Gestão de partições: {}"
+
+msgid "Authentication"
+msgstr "Autenticação"
+
+msgid "Applications"
+msgstr "Aplicacões"
+
+msgid "U2F login method: "
+msgstr "Método de login U2F:"
+
+msgid "Passwordless sudo: "
+msgstr "Sudo sem palavra-passe:"
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Tipo de snapshot Btrfs: {}"
+
+msgid "Syncing the system..."
+msgstr "A sincronizar o sistema…"
+
+msgid "Value cannot be empty"
+msgstr "O valor não pode estar vazio"
+
+msgid "Snapshot type"
+msgstr "Tipo de snapshot"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tipo de snapshot: {}"
+
+msgid "U2F login setup"
+msgstr "Configuração do início de sessão U2F"
+
+msgid "No U2F devices found"
+msgstr "Não foram encontrados dispositivos U2F"
+
+msgid "U2F Login Method"
+msgstr "Método de início de sessão U2F"
+
+msgid "Enable passwordless sudo?"
+msgstr "Ativar sudo sem palavra-passe?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "A configurar o dispositivo U2F para o utilizador: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+msgid "No network connection found"
+msgstr "Não foi encontrada nenhuma ligação de rede"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Pretende ligar-se a uma rede Wi-Fi?"
+
+msgid "No wifi interface found"
+msgstr "Não foi encontrada nenhuma interface Wi-Fi"
+
+msgid "Select wifi network to connect to"
+msgstr "Selecionar a rede Wi-Fi à qual ligar"
+
+msgid "Scanning wifi networks..."
+msgstr ""
+
+msgid "No wifi networks found"
+msgstr "Não foram encontradas redes Wi-Fi"
+
+msgid "Failed setting up wifi"
+msgstr ""
+
+msgid "Enter wifi password"
+msgstr "Introduza a palavra-passe da rede Wi-Fi"
+
+msgid "Ok"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr ""
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr ""
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Idioma de localização"
+
+msgid "Compression algorithm"
+msgstr ""
+
+#, fuzzy
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Apenas pacotes como base, base-devel, linux, linux-firmware, efibootmgr e pacotes opcionais de perfil são instalados."
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Selecionar um ponto de montagem :"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""

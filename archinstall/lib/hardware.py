@@ -2,12 +2,13 @@ import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
+from typing import Self
 
-from .exceptions import SysCallError
-from .general import SysCommand
-from .networking import enrich_iface_types, list_interfaces
-from .output import debug
-from .translationhandler import tr
+from archinstall.lib.command import SysCommand
+from archinstall.lib.exceptions import SysCallError
+from archinstall.lib.networking import enrich_iface_types, list_interfaces
+from archinstall.lib.output import debug
+from archinstall.lib.translationhandler import tr
 
 
 class CpuVendor(Enum):
@@ -16,7 +17,7 @@ class CpuVendor(Enum):
 	_Unknown = 'unknown'
 
 	@classmethod
-	def get_vendor(cls, name: str) -> 'CpuVendor':
+	def get_vendor(cls, name: str) -> Self:
 		if vendor := getattr(cls, name, None):
 			return vendor
 		else:
@@ -40,10 +41,9 @@ class GfxPackage(Enum):
 	Dkms = 'dkms'
 	IntelMediaDriver = 'intel-media-driver'
 	LibvaIntelDriver = 'libva-intel-driver'
-	LibvaMesaDriver = 'libva-mesa-driver'
 	LibvaNvidiaDriver = 'libva-nvidia-driver'
 	Mesa = 'mesa'
-	NvidiaDkms = 'nvidia-dkms'
+	NvidiaOpen = 'nvidia-open'
 	NvidiaOpenDkms = 'nvidia-open-dkms'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
@@ -51,8 +51,6 @@ class GfxPackage(Enum):
 	Xf86VideoAmdgpu = 'xf86-video-amdgpu'
 	Xf86VideoAti = 'xf86-video-ati'
 	Xf86VideoNouveau = 'xf86-video-nouveau'
-	XorgServer = 'xorg-server'
-	XorgXinit = 'xorg-xinit'
 
 
 class GfxDriver(Enum):
@@ -61,12 +59,11 @@ class GfxDriver(Enum):
 	IntelOpenSource = 'Intel (open-source)'
 	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
 	NvidiaOpenSource = 'Nvidia (open-source nouveau driver)'
-	NvidiaProprietary = 'Nvidia (proprietary)'
 	VMOpenSource = 'VirtualBox (open-source)'
 
 	def is_nvidia(self) -> bool:
 		match self:
-			case GfxDriver.NvidiaProprietary | GfxDriver.NvidiaOpenSource | GfxDriver.NvidiaOpenKernel:
+			case GfxDriver.NvidiaOpenSource | GfxDriver.NvidiaOpenKernel:
 				return True
 			case _:
 				return False
@@ -81,7 +78,7 @@ class GfxDriver(Enum):
 		return text
 
 	def gfx_packages(self) -> list[GfxPackage]:
-		packages = [GfxPackage.XorgServer, GfxPackage.XorgXinit]
+		packages: list[GfxPackage] = []
 
 		match self:
 			case GfxDriver.AllOpenSource:
@@ -90,7 +87,6 @@ class GfxDriver(Enum):
 					GfxPackage.Xf86VideoAmdgpu,
 					GfxPackage.Xf86VideoAti,
 					GfxPackage.Xf86VideoNouveau,
-					GfxPackage.LibvaMesaDriver,
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VulkanRadeon,
@@ -102,7 +98,6 @@ class GfxDriver(Enum):
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoAmdgpu,
 					GfxPackage.Xf86VideoAti,
-					GfxPackage.LibvaMesaDriver,
 					GfxPackage.VulkanRadeon,
 				]
 			case GfxDriver.IntelOpenSource:
@@ -122,14 +117,7 @@ class GfxDriver(Enum):
 				packages += [
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoNouveau,
-					GfxPackage.LibvaMesaDriver,
 					GfxPackage.VulkanNouveau,
-				]
-			case GfxDriver.NvidiaProprietary:
-				packages += [
-					GfxPackage.NvidiaDkms,
-					GfxPackage.Dkms,
-					GfxPackage.LibvaNvidiaDriver,
 				]
 			case GfxDriver.VMOpenSource:
 				packages += [
@@ -142,6 +130,18 @@ class GfxDriver(Enum):
 class _SysInfo:
 	def __init__(self) -> None:
 		pass
+
+	@cached_property
+	def has_battery(self) -> bool:
+		for type_path in Path('/sys/class/power_supply/').glob('*/type'):
+			try:
+				with open(type_path) as f:
+					if f.read().strip() == 'Battery':
+						return True
+			except OSError:
+				continue
+
+		return False
 
 	@cached_property
 	def cpu_info(self) -> dict[str, str]:
@@ -193,11 +193,27 @@ class _SysInfo:
 
 		return modules
 
+	@cached_property
+	def graphics_devices(self) -> dict[str, str]:
+		"""
+		Returns detected graphics devices (cached)
+		"""
+		cards: dict[str, str] = {}
+		for line in SysCommand('lspci'):
+			if b' VGA ' in line or b' 3D ' in line:
+				_, identifier = line.split(b': ', 1)
+				cards[identifier.strip().decode('UTF-8')] = str(line)
+		return cards
+
 
 _sys_info = _SysInfo()
 
 
 class SysInfo:
+	@staticmethod
+	def has_battery() -> bool:
+		return _sys_info.has_battery
+
 	@staticmethod
 	def has_wifi() -> bool:
 		ifaces = list(list_interfaces().values())
@@ -209,24 +225,19 @@ class SysInfo:
 
 	@staticmethod
 	def _graphics_devices() -> dict[str, str]:
-		cards: dict[str, str] = {}
-		for line in SysCommand('lspci'):
-			if b' VGA ' in line or b' 3D ' in line:
-				_, identifier = line.split(b': ', 1)
-				cards[identifier.strip().decode('UTF-8')] = str(line)
-		return cards
+		return _sys_info.graphics_devices
 
 	@staticmethod
 	def has_nvidia_graphics() -> bool:
-		return any('nvidia' in x.lower() for x in SysInfo._graphics_devices())
+		return any('nvidia' in x.lower() for x in _sys_info.graphics_devices)
 
 	@staticmethod
 	def has_amd_graphics() -> bool:
-		return any('amd' in x.lower() for x in SysInfo._graphics_devices())
+		return any('amd' in x.lower() for x in _sys_info.graphics_devices)
 
 	@staticmethod
 	def has_intel_graphics() -> bool:
-		return any('intel' in x.lower() for x in SysInfo._graphics_devices())
+		return any('intel' in x.lower() for x in _sys_info.graphics_devices)
 
 	@staticmethod
 	def cpu_vendor() -> CpuVendor | None:

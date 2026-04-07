@@ -1,12 +1,11 @@
 import copy
 from typing import cast
 
+from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.curses_menu import SelectMenu
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.result import ResultType
-from archinstall.tui.types import Alignment
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
 class ListManager[ValueT]:
@@ -18,7 +17,7 @@ class ListManager[ValueT]:
 		prompt: str | None = None,
 	):
 		"""
-		:param prompt:  Text which will appear at the header
+		:param prompt:	Text which will appear at the header
 		type param: string
 
 		:param entries: list/dict of option to be shown / manipulated
@@ -31,7 +30,6 @@ class ListManager[ValueT]:
 		:param sub_menu_actions: list of actions available for a chosen entry
 		type param: list
 		"""
-		self._original_data = copy.deepcopy(entries)
 		self._data = copy.deepcopy(entries)
 
 		self._prompt = prompt
@@ -55,7 +53,7 @@ class ListManager[ValueT]:
 			return self._last_choice == self._cancel_action
 		return False
 
-	def run(self) -> list[ValueT]:
+	async def _run(self) -> list[ValueT] | None:
 		additional_options = self._base_actions + self._terminate_actions
 
 		while True:
@@ -68,15 +66,12 @@ class ListManager[ValueT]:
 			if self._prompt is not None:
 				prompt = f'{self._prompt}\n\n'
 
-			prompt = None
-
-			result = SelectMenu[ValueT | str](
+			result = await Selection[ValueT | str](
 				group,
 				header=prompt,
-				search_enabled=False,
+				enable_filter=False,
 				allow_skip=False,
-				alignment=Alignment.CENTER,
-			).run()
+			).show()
 
 			match result.type_:
 				case ResultType.Selection:
@@ -85,38 +80,36 @@ class ListManager[ValueT]:
 					raise ValueError('Unhandled return type')
 
 			if value in self._base_actions:
-				value = cast(str, value)
-				self._data = self.handle_action(value, None, self._data)
+				self._data = await self.handle_action(value, None, self._data)
 			elif value in self._terminate_actions:
 				break
 			else:  # an entry of the existing selection was chosen
 				selected_entry = result.get_value()
 				selected_entry = cast(ValueT, selected_entry)
 
-				self._run_actions_on_entry(selected_entry)
+				await self._run_actions_on_entry(selected_entry)
 
 		self._last_choice = value
 
 		if result.get_value() == self._cancel_action:
-			return self._original_data  # return the original list
+			return None
 		else:
 			return self._data
 
-	def _run_actions_on_entry(self, entry: ValueT) -> None:
+	async def _run_actions_on_entry(self, entry: ValueT) -> None:
 		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]
 
 		items = [MenuItem(o, value=o) for o in options]
 		group = MenuItemGroup(items, sort_items=False)
 
-		header = f'{self.selected_action_display(entry)}\n'
+		header = f'{self.selected_action_display(entry)}'
 
-		result = SelectMenu[str](
+		result = await Selection[str](
 			group,
 			header=header,
-			search_enabled=False,
+			enable_filter=False,
 			allow_skip=False,
-			alignment=Alignment.CENTER,
-		).run()
+		).show()
 
 		match result.type_:
 			case ResultType.Selection:
@@ -125,7 +118,7 @@ class ListManager[ValueT]:
 				raise ValueError('Unhandled return type')
 
 		if value != self._cancel_action:
-			self._data = self.handle_action(value, entry, self._data)
+			self._data = await self.handle_action(value, entry, self._data)
 
 	def selected_action_display(self, selection: ValueT) -> str:
 		"""
@@ -134,7 +127,7 @@ class ListManager[ValueT]:
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def handle_action(self, action: str, entry: ValueT | None, data: list[ValueT]) -> list[ValueT]:
+	async def handle_action(self, action: str, entry: ValueT | None, data: list[ValueT]) -> list[ValueT]:
 		"""
 		this function is called when a base action or
 		a specific action for an entry is triggered
@@ -143,6 +136,6 @@ class ListManager[ValueT]:
 
 	def filter_options(self, selection: ValueT, options: list[str]) -> list[str]:
 		"""
-		filter which actions to show for an specific selection
+		filter which actions to show for a specific selection
 		"""
 		return options

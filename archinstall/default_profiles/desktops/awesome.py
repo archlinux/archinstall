@@ -1,23 +1,28 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, override
 
-from archinstall.default_profiles.profile import ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import DisplayServerType, Profile, ProfileType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 
 
-class AwesomeProfile(XorgProfile):
+class AwesomeProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('Awesome', ProfileType.WindowMgr)
+		super().__init__(
+			'Awesome',
+			ProfileType.WindowMgr,
+			support_gfx_driver=True,
+			display_server=DisplayServerType.Xorg,
+		)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return super().packages + [
+		return [
 			'awesome',
 			'alacritty',
-			'xorg-xinit',
 			'xorg-xrandr',
 			'xterm',
 			'feh',
@@ -29,7 +34,7 @@ class AwesomeProfile(XorgProfile):
 		]
 
 	@override
-	def install(self, install_session: 'Installer') -> None:
+	def install(self, install_session: Installer) -> None:
 		super().install(install_session)
 
 		# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.
