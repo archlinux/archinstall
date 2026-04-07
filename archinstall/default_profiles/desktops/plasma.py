@@ -19,6 +19,7 @@ class PlasmaProfile(Profile):
 			'plasma-desktop',
 			'kscreen',
 			'plasma-pa',
+			'plasma-nm',
 			'konsole',
 			'kate',
 			'dolphin',
