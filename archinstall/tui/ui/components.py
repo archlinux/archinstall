@@ -815,6 +815,12 @@ class InputScreen(BaseScreen[str]):
 
 			self.query_one('#input-failure', Label).update(failure_out)
 		else:
+			input_value = event.value
+
+			if not input_value and not self._allow_skip:
+				self.query_one('#input-failure', Label).update(tr('Input cannot be empty'))
+				return
+
 			_ = self.dismiss(Result(ResultType.Selection, _data=event.value))
 
 	def on_input_changed(self, event: Input.Changed) -> None:
