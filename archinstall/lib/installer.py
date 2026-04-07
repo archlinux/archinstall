@@ -1,4 +1,3 @@
-import glob
 import os
 import platform
 import re
@@ -763,46 +762,46 @@ class Installer:
 
 	def copy_iso_network_config(self, enable_services: bool = False) -> bool:
 		# Copy (if any) iwd password and config files
-		if os.path.isdir('/var/lib/iwd/'):
-			if psk_files := glob.glob('/var/lib/iwd/*.psk'):
-				if not os.path.isdir(f'{self.target}/var/lib/iwd'):
-					os.makedirs(f'{self.target}/var/lib/iwd')
+		iwd_dir = LPath('/var/lib/iwd')
+		if psk_files := list(iwd_dir.glob('*.psk')):
+			iwd_target = self.target / iwd_dir.relative_to_root()
+			iwd_target.mkdir(parents=True, exist_ok=True)
 
-				if enable_services:
-					# If we haven't installed the base yet (function called pre-maturely)
-					if self._helper_flags.get('base', False) is False:
-						self._base_packages.append('iwd')
+			for psk in psk_files:
+				psk.copy(iwd_target / psk.name, preserve_metadata=True)
 
-						# This function will be called after minimal_installation()
-						# as a hook for post-installs. This hook is only needed if
-						# base is not installed yet.
-						def post_install_enable_iwd_service(*args: str, **kwargs: str) -> None:
-							self.enable_service('iwd')
+			if enable_services:
+				# If we haven't installed the base yet (function called pre-maturely)
+				if self._helper_flags.get('base', False) is False:
+					self._base_packages.append('iwd')
 
-						self.post_base_install.append(post_install_enable_iwd_service)
-					# Otherwise, we can go ahead and add the required package
-					# and enable it's service:
-					else:
-						self.pacman.strap('iwd')
+					# This function will be called after minimal_installation()
+					# as a hook for post-installs. This hook is only needed if
+					# base is not installed yet.
+					def post_install_enable_iwd_service(*args: str, **kwargs: str) -> None:
 						self.enable_service('iwd')
 
-				for psk in psk_files:
-					shutil.copy2(psk, f'{self.target}/var/lib/iwd/{os.path.basename(psk)}')
+					self.post_base_install.append(post_install_enable_iwd_service)
+				# Otherwise, we can go ahead and add the required package
+				# and enable it's service:
+				else:
+					self.pacman.strap('iwd')
+					self.enable_service('iwd')
 
 		# Enable systemd-resolved by (forcefully) setting a symlink
 		# For further details see  https://wiki.archlinux.org/title/Systemd-resolved#DNS
-		resolv_config_path = Path(f'{self.target}/etc/resolv.conf')
-		if resolv_config_path.exists():
-			os.unlink(resolv_config_path)
-		os.symlink('/run/systemd/resolve/stub-resolv.conf', resolv_config_path)
+		resolv_config_path = self.target / 'etc/resolv.conf'
+		resolv_config_path.unlink(missing_ok=True)
+		resolv_config_path.symlink_to('/run/systemd/resolve/stub-resolv.conf')
 
 		# Copy (if any) systemd-networkd config files
-		if netconfigurations := glob.glob('/etc/systemd/network/*'):
-			if not os.path.isdir(f'{self.target}/etc/systemd/network/'):
-				os.makedirs(f'{self.target}/etc/systemd/network/')
+		network_dir = LPath('/etc/systemd/network')
+		if netconfigurations := list(network_dir.glob('*')):
+			network_target = self.target / network_dir.relative_to_root()
+			network_target.mkdir(parents=True, exist_ok=True)
 
 			for netconf_file in netconfigurations:
-				shutil.copy2(netconf_file, f'{self.target}/etc/systemd/network/{os.path.basename(netconf_file)}')
+				netconf_file.copy(network_target / netconf_file.name, preserve_metadata=True)
 
 			if enable_services:
 				# If we haven't installed the base yet (function called pre-maturely)
