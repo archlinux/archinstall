@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum, auto
+from enum import Enum, StrEnum, auto
 from typing import TYPE_CHECKING, Self
 
 from archinstall.lib.translationhandler import tr
@@ -47,6 +47,11 @@ class SelectResult(Enum):
 	ResetCurrent = auto()
 
 
+class CustomSetting(StrEnum):
+	SeatAccess = 'seat_access'
+	PlasmaFlavor = 'plasma_flavor'
+
+
 class Profile:
 	def __init__(
 		self,
@@ -61,7 +66,7 @@ class Profile:
 	) -> None:
 		self.name = name
 		self.profile_type = profile_type
-		self.custom_settings: dict[str, str | None] = {}
+		self.custom_settings: dict[CustomSetting, str | None] = {}
 
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
@@ -130,7 +135,7 @@ class Profile:
 		"""
 		return SelectResult.NewSelection
 
-	def set_custom_settings(self, settings: dict[str, str | None]) -> None:
+	def set_custom_settings(self, settings: dict[CustomSetting, str | None]) -> None:
 		"""
 		Set the custom settings for the profile.
 		This is also called when the settings are parsed from the config

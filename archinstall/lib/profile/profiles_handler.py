@@ -9,7 +9,7 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
-from archinstall.default_profiles.profile import GreeterType, Profile
+from archinstall.default_profiles.profile import CustomSetting, GreeterType, Profile
 from archinstall.lib.hardware import GfxDriver, GfxPackage
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.networking import fetch_data_from_url
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 class ProfileSerialization(TypedDict):
 	main: NotRequired[str]
 	details: NotRequired[list[str]]
-	custom_settings: NotRequired[dict[str, dict[str, str | None]]]
+	custom_settings: NotRequired[dict[str, dict[CustomSetting, str | None]]]
 	path: NotRequired[str]
 
 
@@ -76,27 +76,27 @@ class ProfileHandler:
 				self._import_profile_from_url(url_path)
 
 		# if custom := profile_config.get('custom', None):
-		# 	from archinstall.default_profiles.custom import CustomTypeProfile
-		# 	custom_types = []
+		# from archinstall.default_profiles.custom import CustomTypeProfile
+		# custom_types = []
 		#
-		# 	for entry in custom:
-		# 		custom_types.append(
-		# 			CustomTypeProfile(
-		# 				entry['name'],
-		# 				entry['enabled'],
-		# 				entry.get('packages', []),
-		# 				entry.get('services', [])
-		# 			)
-		# 		)
+		# for entry in custom:
+		# custom_types.append(
+		# CustomTypeProfile(
+		# entry['name'],
+		# entry['enabled'],
+		# entry.get('packages', []),
+		# entry.get('services', [])
+		# )
+		# )
 		#
-		# 	self.remove_custom_profiles(custom_types)
-		# 	self.add_custom_profiles(custom_types)
+		# self.remove_custom_profiles(custom_types)
+		# self.add_custom_profiles(custom_types)
 		#
-		# 	# this doesn't mean it's actual going to be set as a selection
-		# 	# but we are simply populating the custom profile with all
-		# 	# possible custom definitions
-		# 	if custom_profile := self.get_profile_by_name('Custom'):
-		# 		custom_profile.set_current_selection(custom_types)
+		# # this doesn't mean it's actual going to be set as a selection
+		# # but we are simply populating the custom profile with all
+		# # possible custom definitions
+		# if custom_profile := self.get_profile_by_name('Custom'):
+		# custom_profile.set_current_selection(custom_types)
 
 		if main := profile_config.get('main', None):
 			profile = self.get_profile_by_name(main) if main else None
@@ -111,7 +111,7 @@ class ProfileHandler:
 		if details:
 			for detail in filter(None, details):
 				# [2024-04-19] TODO: Backwards compatibility after naming change: https://github.com/archlinux/archinstall/pull/2421
-				#                    'Kde' is deprecated, remove this block in a future version
+				# 'Kde' is deprecated, remove this block in a future version
 				if detail == 'Kde':
 					detail = 'KDE Plasma'
 

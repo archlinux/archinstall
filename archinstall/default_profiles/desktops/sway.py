@@ -1,7 +1,7 @@
 from typing import override
 
 from archinstall.default_profiles.desktops import SeatAccess
-from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
+from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
@@ -17,13 +17,13 @@ class SwayProfile(Profile):
 			display_server=DisplayServerType.Wayland,
 		)
 
-		self.custom_settings = {'seat_access': None}
+		self.custom_settings = {CustomSetting.SeatAccess: None}
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		additional = []
-		if seat := self.custom_settings.get('seat_access', None):
+		if seat := self.custom_settings.get(CustomSetting.SeatAccess, None):
 			additional = [seat]
 
 		return [
@@ -49,7 +49,7 @@ class SwayProfile(Profile):
 	@property
 	@override
 	def services(self) -> list[str]:
-		if pref := self.custom_settings.get('seat_access', None):
+		if pref := self.custom_settings.get(CustomSetting.SeatAccess, None):
 			return [pref]
 		return []
 
@@ -61,7 +61,7 @@ class SwayProfile(Profile):
 		items = [MenuItem(s.value, value=s) for s in SeatAccess]
 		group = MenuItemGroup(items, sort_items=True)
 
-		default = self.custom_settings.get('seat_access', None)
+		default = self.custom_settings.get(CustomSetting.SeatAccess, None)
 		group.set_default_by_value(default)
 
 		result = await Selection[SeatAccess](
@@ -71,7 +71,7 @@ class SwayProfile(Profile):
 		).show()
 
 		if result.type_ == ResultType.Selection:
-			self.custom_settings['seat_access'] = result.get_value().value
+			self.custom_settings[CustomSetting.SeatAccess] = result.get_value().value
 
 	@override
 	async def do_on_select(self) -> None:
