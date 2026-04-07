@@ -2063,3 +2063,7 @@ msgid ""
 "The selected desktop profile requires a regular user to log in via the "
 "greeter"
 msgstr ""
+
+#, python-brace-format
+msgid "Environment type: {} {}"
+msgstr ""
