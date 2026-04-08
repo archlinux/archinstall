@@ -1,6 +1,5 @@
 import re
 from pathlib import Path
-from shutil import copy2
 
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.pathnames import PACMAN_CONF
@@ -52,4 +51,4 @@ class PacmanConfig:
 
 	def persist(self) -> None:
 		if self._repositories and self._config_remote_path:
-			copy2(PACMAN_CONF, self._config_remote_path)
+			PACMAN_CONF.copy(self._config_remote_path, preserve_metadata=True)
