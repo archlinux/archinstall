@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import curses
 import os
 import signal
