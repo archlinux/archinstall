@@ -188,7 +188,7 @@ def perform_installation(
 				case PostInstallationAction.EXIT:
 					pass
 				case PostInstallationAction.REBOOT:
-					_ = os.system('reboot')  # type: ignore[deprecated, unused-ignore]
+					_ = os.system('reboot')  # type: ignore[deprecated]
 				case PostInstallationAction.CHROOT:
 					try:
 						installation.drop_to_shell()
