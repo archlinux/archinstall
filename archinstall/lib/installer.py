@@ -506,11 +506,9 @@ class Installer:
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
 		if self._helper_flags.get('base-strapped', False) is True:
 			absolute_logfile = logger.path
-
-			if not os.path.isdir(f'{self.target}/{os.path.dirname(absolute_logfile)}'):
-				os.makedirs(f'{self.target}/{os.path.dirname(absolute_logfile)}')
-
-			shutil.copy2(absolute_logfile, f'{self.target}/{absolute_logfile}')
+			logfile_target = self.target / absolute_logfile
+			logfile_target.parent.mkdir(parents=True, exist_ok=True)
+			absolute_logfile.copy(logfile_target, preserve_metadata=True)
 
 		return True
 
