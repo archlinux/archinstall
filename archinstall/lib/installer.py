@@ -2008,7 +2008,7 @@ class Installer:
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
 			with Boot(self.target) as session:
-				os.system('systemd-run --machine=archinstall --pty localectl set-keymap ""')  # type: ignore[deprecated, unused-ignore]
+				os.system('systemd-run --machine=archinstall --pty localectl set-keymap ""')  # type: ignore[deprecated]
 
 				try:
 					session.SysCommand(['localectl', 'set-keymap', language])
@@ -2074,7 +2074,7 @@ class Installer:
 
 
 def accessibility_tools_in_use() -> bool:
-	return os.system('systemctl is-active --quiet espeakup.service') == 0  # type: ignore[deprecated, unused-ignore]
+	return os.system('systemctl is-active --quiet espeakup.service') == 0  # type: ignore[deprecated]
 
 
 def run_custom_user_commands(commands: list[str], installation: Installer) -> None:
