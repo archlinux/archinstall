@@ -2,7 +2,6 @@ import os
 import platform
 import re
 import shlex
-import shutil
 import subprocess
 import textwrap
 import time
@@ -1483,7 +1482,7 @@ class Installer:
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
-					shutil.copy(limine_path / file, efi_dir_path)
+					(limine_path / file).copy(efi_dir_path)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
@@ -1532,7 +1531,7 @@ class Installer:
 
 			try:
 				# The `limine-bios.sys` file contains stage 3 code.
-				shutil.copy(limine_path / 'limine-bios.sys', boot_limine_path)
+				(limine_path / 'limine-bios.sys').copy(boot_limine_path)
 
 				# `limine bios-install` deploys the stage 1 and 2 to the
 				self.arch_chroot(f'limine bios-install {parent_dev_path}', peek_output=True)
