@@ -17,7 +17,7 @@ class PlasmaFlavor(StrEnum):
 	def show(self) -> str:
 		match self:
 			case PlasmaFlavor.Meta:
-				return f'({tr("Recommended")}) {self.value}'
+				return f'{self.value} ({tr("Recommended")})'
 			case PlasmaFlavor.Plasma | PlasmaFlavor.Desktop:
 				return self.value
 
