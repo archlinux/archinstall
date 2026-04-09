@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from enum import Enum, StrEnum, auto
 from typing import TYPE_CHECKING, Self
 

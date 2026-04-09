@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import curses
 import os
 import signal
@@ -1312,7 +1310,7 @@ class Tui:
 		clear_screen: bool = False,
 	) -> None:
 		if clear_screen:
-			os.system('clear')  # type: ignore[deprecated, unused-ignore]
+			os.system('clear')  # type: ignore[deprecated]
 
 		if Tui._t is None:
 			print(text, end=endl)
@@ -1357,7 +1355,7 @@ class Tui:
 		return component.kickoff(self._screen)
 
 	def _reset_terminal(self) -> None:
-		os.system('reset')  # type: ignore[deprecated, unused-ignore]
+		os.system('reset')  # type: ignore[deprecated]
 
 	def _set_up_colors(self) -> None:
 		curses.init_pair(STYLE.NORMAL.value, curses.COLOR_WHITE, curses.COLOR_BLACK)
