@@ -353,6 +353,7 @@ class _SelectionList(SelectionList[ValueT]):
 		Binding('up', 'cursor_up', 'Up', show=True),
 		Binding('j', 'cursor_down', 'Down', show=False),
 		Binding('k', 'cursor_up', 'Up', show=False),
+		Binding('space', 'select', 'Toggle', show=True),
 	]
 
 
@@ -503,9 +504,18 @@ class SelectListScreen(BaseScreen[ValueT]):
 		self.query_one(SelectionList).focus()
 
 	def on_key(self, event: Key) -> None:
-		if self.query_one(SelectionList).has_focus:
-			if event.key == 'enter':
-				_ = self.dismiss(Result(ResultType.Selection, _item=self._selected_items))
+		selection_list = self.query_one(SelectionList)
+
+		if not selection_list.has_focus or event.key != 'enter':
+			return None
+
+		if len(self._selected_items) < 1:
+			index = selection_list.highlighted
+			if index is not None:
+				selection = selection_list.get_option_at_index(index)
+				self._selected_items.append(selection.value)
+
+		_ = self.dismiss(Result(ResultType.Selection, _item=self._selected_items))
 
 	def on_input_changed(self, event: Input.Changed) -> None:
 		search_term = event.value.lower()
@@ -825,6 +835,12 @@ class InputScreen(BaseScreen[str]):
 
 			self.query_one('#input-failure', Label).update(failure_out)
 		else:
+			input_value = event.value
+
+			if not input_value and not self._allow_skip:
+				self.query_one('#input-failure', Label).update(tr('Input cannot be empty'))
+				return
+
 			_ = self.dismiss(Result(ResultType.Selection, _data=event.value))
 
 	def on_input_changed(self, event: Input.Changed) -> None:
@@ -852,12 +868,14 @@ class _DataTable(DataTable[ValueT]):
 		Binding('up', 'cursor_up', 'Up', show=True),
 		Binding('j', 'cursor_down', 'Down', show=False),
 		Binding('k', 'cursor_up', 'Up', show=False),
+		Binding('space', 'select', 'Toggle', show=True),
+		Binding('enter', 'select_cursor', 'Confirm', show=True),
 	]
 
 
 class TableSelectionScreen(BaseScreen[ValueT]):
 	BINDINGS: ClassVar = [
-		Binding('space', 'toggle_selection', 'Toggle', show=True),
+		Binding('space', 'toggle_selection', 'Toggle', show=True),  # expclit handling of space in multi-selection mode
 	]
 
 	CSS = """
@@ -1097,20 +1115,18 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 	def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
 		if self._multi:
 			if len(self._selected_keys) == 0:
-				if not self._allow_skip:
-					return
-
-				_ = self.dismiss(Result[ValueT](ResultType.Skip))
+				selection = [event.row_key.value]
 			else:
-				items = [row_key.value for row_key in self._selected_keys]
-				_ = self.dismiss(Result(ResultType.Selection, _item=items))  # type: ignore[arg-type]
+				selection = [row_key.value for row_key in self._selected_keys]
 		else:
-			_ = self.dismiss(
-				Result[ValueT](
-					ResultType.Selection,
-					_item=event.row_key.value,  # type: ignore[arg-type]
-				)
+			selection = event.row_key.value  # type: ignore[assignment]
+
+		_ = self.dismiss(
+			Result[ValueT](
+				ResultType.Selection,
+				_item=selection,  # type: ignore[arg-type]
 			)
+		)
 
 
 class InstanceRunnable[ValueT](ABC):

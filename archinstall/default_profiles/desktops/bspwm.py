@@ -1,17 +1,20 @@
 from typing import override
 
-from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
 
 
-class BspwmProfile(XorgProfile):
+class BspwmProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('Bspwm', ProfileType.WindowMgr)
+		super().__init__(
+			'Bspwm',
+			ProfileType.WindowMgr,
+			support_gfx_driver=True,
+			display_server=DisplayServerType.Xorg,
+		)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
-		# return super().packages + [
 		return [
 			'bspwm',
 			'sxhkd',

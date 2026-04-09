@@ -1,12 +1,16 @@
 from typing import override
 
-from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
 
 
-class Xfce4Profile(XorgProfile):
+class Xfce4Profile(Profile):
 	def __init__(self) -> None:
-		super().__init__('Xfce4', ProfileType.DesktopEnv)
+		super().__init__(
+			'Xfce4',
+			ProfileType.DesktopEnv,
+			support_gfx_driver=True,
+			display_server=DisplayServerType.Xorg,
+		)
 
 	@property
 	@override

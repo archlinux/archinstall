@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -119,7 +117,7 @@ class MenuItemGroup:
 
 	def add_item(self, item: MenuItem) -> None:
 		self._menu_items.append(item)
-		delattr(self, 'items')  # resetting the cache
+		del self.items  # resetting the cache
 
 	def find_by_id(self, item_id: str) -> MenuItem:
 		for item in self._menu_items:
@@ -233,7 +231,7 @@ class MenuItemGroup:
 
 	def set_filter_pattern(self, pattern: str) -> None:
 		self._filter_pattern = pattern
-		delattr(self, 'items')  # resetting the cache
+		del self.items  # resetting the cache
 		self.focus_first()
 
 	def focus_index(self, index: int) -> None:

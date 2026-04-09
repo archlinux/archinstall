@@ -3,13 +3,13 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: acuteenvy\n"
+"Last-Translator: Lena Pastwa <lena@lnps.me>\n"
 "Language-Team: \n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.8\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Plik dziennika został stworzony tutaj: {} {}"
@@ -54,7 +54,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Instalowane są tylko pakiety takie jak base, base-devel, linux, linux-firmware, efibootmgr i opcjonalne pakiety profili."
 
 msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr ""
+msgstr "Uwaga: base-devel nie jest już domyślnie instalowane. Dodaj je tutaj, jeżeli potrzebujesz narzędzi do budowania pakietów."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Jeśli potrzebujesz przeglądarki internetowej, takiej jak firefox lub chromium, możesz ją określić w następującym oknie dialogowym."
@@ -101,10 +101,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Wprowadź żądany typ systemu plików dla partycji"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Wybierz lokację startową (w jednostkach parted: s, GB, %, itd. ; domyślna: {}) "
+msgstr "Wybierz lokalizację startową (w jednostkach parted: s, GB, %, itd. ; domyślna: {}) "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Wybierz lokację końcową (w jednostkach parted: s, GB, %, itd. ; przykład: {}) "
+msgstr "Wybierz lokalizację końcową (w jednostkach parted: s, GB, %, itd. ; przykład: {}) "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} zawiera partycje oczekujące w kolejce, to spowoduje ich usunięcie. Czy na pewno chcesz to zrobić?"
@@ -170,7 +170,7 @@ msgstr ""
 "Wybierz partycję, na której ma zostać utworzony system plików"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Wprowadź typ systemu plików dla partycji: "
+msgstr "Wprowadź pożądany typ systemu plików dla partycji: "
 
 msgid "Archinstall language"
 msgstr "Język archinstall-a"
@@ -218,7 +218,7 @@ msgid "All open-source (default)"
 msgstr "Wszystkie open-source (domyślnie)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Wybierz które jądra mają być używane, lub pozostaw puste, aby użyć ustawień domyślnych \"{}\""
+msgstr "Wybierz które jądra użyć lub pozostaw puste, aby użyć ustawień domyślnych \"{}\""
 
 msgid "Choose which locale language to use"
 msgstr "Wybierz języki, których chcesz używać"
@@ -257,7 +257,7 @@ msgid "Locale encoding"
 msgstr "Kodowanie"
 
 msgid "Drive(s)"
-msgstr "Dyski twarde"
+msgstr "Dysk(i)"
 
 msgid "Disk layout"
 msgstr "Układ dysku"
@@ -340,7 +340,7 @@ msgid "Set desired filesystem for a partition"
 msgstr "Ustaw system plików dla partycji"
 
 msgid "Abort"
-msgstr "Anuluj"
+msgstr "Przerwij"
 
 msgid "Hostname"
 msgstr "Nazwa hosta"
@@ -525,7 +525,7 @@ msgid "The password you are using seems to be weak,"
 msgstr "Używane przez Ciebie hasło wydaje się być słabe,"
 
 msgid "are you sure you want to use it?"
-msgstr "czy na pewno chcesz go używać?"
+msgstr "czy na pewno chcesz go użyć?"
 
 msgid "Optional repositories"
 msgstr "Opcjonalne repozytoria"
@@ -644,7 +644,7 @@ msgid "Manual configuration"
 msgstr "Ręczna konfiguracja"
 
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Oznacz/odznacz partycje jako skompresowaną (tylko w btrfs)"
+msgstr "Oznacz/odznacz partycje jako skompresowaną (tylko btrfs)"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
 msgstr "Używane przez Ciebie hasło wydaje się być słabe, czy na pewno chcesz go użyć?"
@@ -900,7 +900,7 @@ msgid "Mark/Unmark as compressed"
 msgstr "Oznacz/odznacz partycje jako skompresowaną"
 
 msgid "Set subvolumes"
-msgstr "Ustaw podwolumin"
+msgstr "Ustaw subwolumin"
 
 msgid "Delete partition"
 msgstr "Usuń partycję"
@@ -947,28 +947,28 @@ msgid "Encryption type"
 msgstr "Typ szyfrowania"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "Czas iteracji"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Wprowadź czas iteracji dla szyfrowania LUKS (w milisekundach)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Wyższe wartości zwiększają bezpieczeństwo, ale spowalniają uruchamianie"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Domyślnie: 10000ms, Rekomendowany przedział: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Czas iteracji nie może być pusty"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Czas iteracji nie może być niższy niż 100ms"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Czas iteracji nie może być wyższy niż 120000ms"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Proszę wprowadzić poprawną liczbę"
 
 msgid "Partitions"
 msgstr "Partycje"
@@ -1716,179 +1716,293 @@ msgstr "Hasło szyfrujące plik danych uwierzytelniających"
 msgid "Repositories: {}"
 msgstr "Repozytoria: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "Brak dostępnych urządzeń HSM"
+msgstr "Nowa wersja dostępna"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Hasło"
+msgstr "Logowanie bezhasłowe"
 
 msgid "Second factor login"
-msgstr ""
+msgstr "Logowanie dwuskładnikowe"
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Czy chcesz kontynuować?"
+msgstr "Czy chcesz skonfigurować Bluetooth?"
 
 msgid "Print service"
-msgstr ""
+msgstr "Usługa drukowania"
 
-#, fuzzy
 msgid "Would you like to configure the print service?"
-msgstr "Czy chcesz kontynuować?"
+msgstr "Czy chcesz skonfigurować usługę drukowania?"
 
-#, fuzzy
 msgid "Power management"
-msgstr "Zarządzanie partycją: {}"
+msgstr "Zarządzanie zasilaniem"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Uwierzytelnianie"
 
 msgid "Applications"
-msgstr ""
+msgstr "Aplikacje"
 
 msgid "U2F login method: "
-msgstr ""
+msgstr "Metoda logowania U2F: "
 
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Bezhasłowe sudo: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Typ migawki Btrfs: {}"
 
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Synchronizowanie systemu..."
 
 msgid "Value cannot be empty"
-msgstr ""
+msgstr "Wartość nie może być pusta"
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "Typ migawki"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
-msgstr "Typ środowiska: {}"
+msgstr "Typ migawki: {}"
 
 msgid "U2F login setup"
-msgstr ""
+msgstr "Konfiguracja logowania U2F"
 
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Nie znaleziono urządzeń U2F"
 
 msgid "U2F Login Method"
-msgstr ""
+msgstr "Metoda Logowania U2F"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Wprowadź hasło: "
+msgstr "Włączyć bezhasłowe sudo?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Wybierz urządzenie FIDO2 do użycia z HSM"
+msgstr "Konfigurowanie urządzenia U2F dla użytkownika: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+msgstr "Prawdopodobnie będzie trzeba wprowadzić PIN oraz dotknąć urządzenia U2F, aby je zarejestrować"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Wprowadzanie zmian do urządzeń w "
 
-#, fuzzy
 msgid "No network connection found"
-msgstr "Brak konfiguracji sieciowej"
+msgstr "Brak połączenia z siecią"
 
-#, fuzzy
 msgid "Would you like to connect to a Wifi?"
-msgstr "Czy chcesz kontynuować?"
+msgstr "Czy chcesz połączyć się z Wifi?"
 
-#, fuzzy
 msgid "No wifi interface found"
-msgstr "Konfiguruj interfejsy"
+msgstr "Nie znaleziono interfejsu wifi"
 
-#, fuzzy
 msgid "Select wifi network to connect to"
-msgstr "Wybierz jeden interfejs sieciowy do skonfigurowania"
+msgstr "Wybierz sieć wifi do połączenia się"
 
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Skanowanie sieci wifi..."
 
-#, fuzzy
 msgid "No wifi networks found"
-msgstr "Brak konfiguracji sieciowej"
+msgstr "Nie znaleziono sieci wifi"
 
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "Nie udało się skonfigurować wifi"
 
-#, fuzzy
 msgid "Enter wifi password"
-msgstr "Wprowadź hasło: "
+msgstr "Wprowadź hasło do wifi"
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "Removable"
-msgstr ""
+msgstr "Usuwalne"
 
 msgid "Install to removable location"
-msgstr ""
+msgstr "Zainstaluj do usuwalnej lokalizacji"
 
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
+msgstr "Zainstaluje do /EFI/BOOT/ (usuwalna lokalizacja)"
 
 msgid "Will install to standard location with NVRAM entry"
-msgstr ""
+msgstr "Zainstaluje do standardowej lokalizacji z wpisem do NVRAM"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
+msgstr "Czy chcesz zainstalować program rozruchowy do domyślnej lokalizacji wyszukiwania nośników wymiennych?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
+msgstr "Instaluje program rozruchowy do /EFI/BOOT/BOOTX64.EFI (lub podobnie), co jest użyteczne w następujących sytuacjach:"
 
 msgid "USB drives or other portable external media."
-msgstr ""
+msgstr "Dyski USB lub inne przenośne zewnętrzne nośniki."
 
 msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
+msgstr "Systemy, w których chcesz, by dysk był bootowalny na dowolnym komputerze."
 
 msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
+msgstr "Oprogramowanie układowe, które nie wspiera poprawnie wpisów rozruchowych w NVRAM."
 
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr ""
+msgstr "Zainstaluje do /EFI/BOOT/ (usuwalna lokalizacja, bezpieczna wartość domyślna)"
 
 msgid "Will install to custom location with NVRAM entry"
-msgstr ""
+msgstr "Zainstaluje do niestandardowej lokalizacji z wpisem do NVRAM"
 
 msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr ""
+msgstr "Oprogramowanie układowe, które nie wspiera poprawnie wpisów rozruchowych w NVRAM, jak większość płyt głównych MSI,"
 
 msgid "most Apple Macs, many laptops..."
-msgstr ""
+msgstr "większość Apple Mac-ów, wiele laptopów..."
 
-#, fuzzy
 msgid "Language"
 msgstr "Język"
 
 msgid "Compression algorithm"
-msgstr ""
+msgstr "Algorytm kompresji"
 
-#, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Instalowane są tylko pakiety takie jak base, base-devel, linux, linux-firmware, efibootmgr i opcjonalne pakiety profili."
+msgstr "Instalowane są tylko pakiety takie jak base, sudo, linux, linux-firmware, efibootmgr i opcjonalne pakiety profili."
 
-#, fuzzy
 msgid "Select zram compression algorithm:"
-msgstr "Wybierz punkt montowania :"
+msgstr "Wybierz algorytm kompresji zram:"
 
 msgid "Use Network Manager (default backend)"
-msgstr ""
+msgstr "Użyj NetworkManager'a (domyślny backend)"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr ""
+msgstr "Użyj NetworkManager'a (backend iwd)"
+
+msgid "Firewall"
+msgstr "Zapora sieciowa"
+
+msgid "Select audio configuration"
+msgstr "Wybierz konfigurację audio"
+
+msgid "Enter credentials file decryption password"
+msgstr "Wprowadź hasło odszyfrowujące plik danych uwierzytelniających"
+
+msgid "Enter root password"
+msgstr "Wprowadź hasło roota"
+
+msgid "Select bootloader to install"
+msgstr "Wybierz program rozruchowy do zainstalowania"
+
+msgid "Configuration preview"
+msgstr "Podgląd konfiguracji"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Wprowadź katalog, w którym ma zostać zapisana konfiguracja"
+
+msgid "Select encryption type"
+msgstr "Wybierz typ szyfrowania"
+
+msgid "Select disks for the installation"
+msgstr "Wybierz dyski dla tej instalacji"
+
+msgid "Enter a mountpoint"
+msgstr "Wprowadź punkt montowania"
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Wprowadź rozmiar (domyślnie: {}): "
+
+msgid "Enter subvolume name"
+msgstr "Wprowadź nazwę subwoluminu"
+
+msgid "Enter subvolume mountpoint"
+msgstr "Wprowadź punkt montowania subwoluminu"
+
+msgid "Select a disk configuration"
+msgstr "Wybierz konfigurację dysku"
+
+msgid "Enter root mount directory"
+msgstr "Wprowadź zamontowany katalog główny (root)"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "Użyjesz konfiguracji dysków zamontowanej w podanej ścieżce"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "OSTRZEŻENIE: Archinstall nie sprawdzi poprawności tej konfiguracji"
+
+msgid "Select main filesystem"
+msgstr "Zmień główny system plików"
+
+msgid "Enter a hostname"
+msgstr "Wprowadź nazwę hosta"
+
+msgid "Select timezone"
+msgstr "Wybierz strefę czasową"
+
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr "Wprowadź maksymalną liczbę plików pobieranych jednocześnie"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "Wartość musi być pomiędzy 1 a {}"
+
+msgid "Select which kernel(s) to install"
+msgstr "Wybierz, które jądro/jądra zainstalować"
+
+msgid "Enter a respository name"
+msgstr "Wprowadź nazwę repozytorium"
+
+msgid "Enter the repository url"
+msgstr "Wprowadź url repozytorium"
+
+msgid "Enter server url"
+msgstr "Wprowadź url serwera"
+
+msgid "Select mirror regions to be enabled"
+msgstr "Wybierz, które regiony serwerów lustrzanych chcesz włączyć"
+
+msgid "Select optional repositories to be enabled"
+msgstr "Wybierz, które z opcjonalnych repozytoriów chcesz włączyć"
+
+msgid "Select an interface"
+msgstr "Wybierz interfejs"
+
+msgid "Choose network configuration"
+msgstr "Wybierz konfigurację sieciową"
+
+msgid "No packages found"
+msgstr "Nie znaleziono pakietów"
+
+msgid "Select which greeter to install"
+msgstr "Wybierz, który greeter zainstalować"
+
+msgid "Select a profile type"
+msgstr "Wybierz typ profilu"
+
+msgid "Enter new password"
+msgstr "Wprowadź nowe hasło"
+
+msgid "Enter a username"
+msgstr "Wprowadź nazwę użytkownika"
+
+msgid "Enter a password"
+msgstr "Wprowadź hasło"
+
+msgid "The password did not match, please try again"
+msgstr "Hasło nie jest poprawne, proszę spróbować jeszcze raz"
+
+msgid "Password strength: Weak"
+msgstr "Jakość hasła: Słabe"
+
+msgid "Password strength: Moderate"
+msgstr "Jakość hasła: Średnie"
+
+msgid "Password strength: Strong"
+msgstr "Jakość hasła: Mocne"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "Wybrany profil pulpitu wymaga logowania normalnego użytkownika przez greeter"
+
+#, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Typ środowiska: {} {}"
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "

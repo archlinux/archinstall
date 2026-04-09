@@ -1,10 +1,7 @@
-import glob
 import os
 import platform
 import re
 import shlex
-import shutil
-import stat
 import subprocess
 import textwrap
 import time
@@ -29,6 +26,7 @@ from archinstall.lib.disk.utils import (
 )
 from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
@@ -55,6 +53,7 @@ from archinstall.lib.output import debug, error, info, log, logger, warn
 from archinstall.lib.packages.packages import installed_package
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman import Pacman
+from archinstall.lib.pathnames import PACMAN_CONF
 from archinstall.lib.plugins import plugins
 from archinstall.lib.translationhandler import tr
 
@@ -506,11 +505,9 @@ class Installer:
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
 		if self._helper_flags.get('base-strapped', False) is True:
 			absolute_logfile = logger.path
-
-			if not os.path.isdir(f'{self.target}/{os.path.dirname(absolute_logfile)}'):
-				os.makedirs(f'{self.target}/{os.path.dirname(absolute_logfile)}')
-
-			shutil.copy2(absolute_logfile, f'{self.target}/{absolute_logfile}')
+			logfile_target = self.target / absolute_logfile
+			logfile_target.parent.mkdir(parents=True, exist_ok=True)
+			absolute_logfile.copy(logfile_target, preserve_metadata=True)
 
 		return True
 
@@ -570,7 +567,7 @@ class Installer:
 
 		root = self.target if on_target else Path('/')
 		mirrorlist_config = root / 'etc/pacman.d/mirrorlist'
-		pacman_config = root / 'etc/pacman.conf'
+		pacman_config = root / PACMAN_CONF.relative_to_root()
 
 		repositories_config = mirror_config.repositories_config()
 		if repositories_config:
@@ -762,46 +759,46 @@ class Installer:
 
 	def copy_iso_network_config(self, enable_services: bool = False) -> bool:
 		# Copy (if any) iwd password and config files
-		if os.path.isdir('/var/lib/iwd/'):
-			if psk_files := glob.glob('/var/lib/iwd/*.psk'):
-				if not os.path.isdir(f'{self.target}/var/lib/iwd'):
-					os.makedirs(f'{self.target}/var/lib/iwd')
+		iwd_dir = LPath('/var/lib/iwd')
+		if psk_files := list(iwd_dir.glob('*.psk')):
+			iwd_target = self.target / iwd_dir.relative_to_root()
+			iwd_target.mkdir(parents=True, exist_ok=True)
 
-				if enable_services:
-					# If we haven't installed the base yet (function called pre-maturely)
-					if self._helper_flags.get('base', False) is False:
-						self._base_packages.append('iwd')
+			for psk in psk_files:
+				psk.copy(iwd_target / psk.name, preserve_metadata=True)
 
-						# This function will be called after minimal_installation()
-						# as a hook for post-installs. This hook is only needed if
-						# base is not installed yet.
-						def post_install_enable_iwd_service(*args: str, **kwargs: str) -> None:
-							self.enable_service('iwd')
+			if enable_services:
+				# If we haven't installed the base yet (function called pre-maturely)
+				if self._helper_flags.get('base', False) is False:
+					self._base_packages.append('iwd')
 
-						self.post_base_install.append(post_install_enable_iwd_service)
-					# Otherwise, we can go ahead and add the required package
-					# and enable it's service:
-					else:
-						self.pacman.strap('iwd')
+					# This function will be called after minimal_installation()
+					# as a hook for post-installs. This hook is only needed if
+					# base is not installed yet.
+					def post_install_enable_iwd_service(*args: str, **kwargs: str) -> None:
 						self.enable_service('iwd')
 
-				for psk in psk_files:
-					shutil.copy2(psk, f'{self.target}/var/lib/iwd/{os.path.basename(psk)}')
+					self.post_base_install.append(post_install_enable_iwd_service)
+				# Otherwise, we can go ahead and add the required package
+				# and enable it's service:
+				else:
+					self.pacman.strap('iwd')
+					self.enable_service('iwd')
 
 		# Enable systemd-resolved by (forcefully) setting a symlink
 		# For further details see  https://wiki.archlinux.org/title/Systemd-resolved#DNS
-		resolv_config_path = Path(f'{self.target}/etc/resolv.conf')
-		if resolv_config_path.exists():
-			os.unlink(resolv_config_path)
-		os.symlink('/run/systemd/resolve/stub-resolv.conf', resolv_config_path)
+		resolv_config_path = self.target / 'etc/resolv.conf'
+		resolv_config_path.unlink(missing_ok=True)
+		resolv_config_path.symlink_to('/run/systemd/resolve/stub-resolv.conf')
 
 		# Copy (if any) systemd-networkd config files
-		if netconfigurations := glob.glob('/etc/systemd/network/*'):
-			if not os.path.isdir(f'{self.target}/etc/systemd/network/'):
-				os.makedirs(f'{self.target}/etc/systemd/network/')
+		network_dir = LPath('/etc/systemd/network')
+		if netconfigurations := list(network_dir.glob('*')):
+			network_target = self.target / network_dir.relative_to_root()
+			network_target.mkdir(parents=True, exist_ok=True)
 
 			for netconf_file in netconfigurations:
-				shutil.copy2(netconf_file, f'{self.target}/etc/systemd/network/{os.path.basename(netconf_file)}')
+				netconf_file.copy(network_target / netconf_file.name, preserve_metadata=True)
 
 			if enable_services:
 				# If we haven't installed the base yet (function called pre-maturely)
@@ -1385,7 +1382,7 @@ class Installer:
 				raise DiskError(f'Failed to install GRUB boot on {boot_partition.dev_path}: {err}')
 
 		if SysInfo.has_uefi() and uki_enabled:
-			grub_d = self.target / 'etc/grub.d'
+			grub_d = LPath(self.target) / 'etc/grub.d'
 			linux_file = grub_d / '10_linux'
 			uki_file = grub_d / '15_uki'
 
@@ -1405,10 +1402,9 @@ class Installer:
 			)
 
 			try:
-				mode = linux_file.stat().st_mode
-				linux_file.chmod(mode & ~(stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH))
 				uki_file.write_text(content)
-				uki_file.chmod(mode)
+				uki_file.add_exec()
+				linux_file.remove_exec()
 			except OSError:
 				error('Failed to enable UKI menu entries')
 		else:
@@ -1486,7 +1482,7 @@ class Installer:
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
-					shutil.copy(limine_path / file, efi_dir_path)
+					(limine_path / file).copy(efi_dir_path)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
@@ -1535,7 +1531,7 @@ class Installer:
 
 			try:
 				# The `limine-bios.sys` file contains stage 3 code.
-				shutil.copy(limine_path / 'limine-bios.sys', boot_limine_path)
+				(limine_path / 'limine-bios.sys').copy(boot_limine_path)
 
 				# `limine bios-install` deploys the stage 1 and 2 to the
 				self.arch_chroot(f'limine bios-install {parent_dev_path}', peek_output=True)
@@ -2009,7 +2005,7 @@ class Installer:
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
 			with Boot(self.target) as session:
-				os.system('systemd-run --machine=archinstall --pty localectl set-keymap ""')  # type: ignore[deprecated, unused-ignore]
+				os.system('systemd-run --machine=archinstall --pty localectl set-keymap ""')  # type: ignore[deprecated]
 
 				try:
 					session.SysCommand(['localectl', 'set-keymap', language])
@@ -2075,7 +2071,7 @@ class Installer:
 
 
 def accessibility_tools_in_use() -> bool:
-	return os.system('systemctl is-active --quiet espeakup.service') == 0  # type: ignore[deprecated, unused-ignore]
+	return os.system('systemctl is-active --quiet espeakup.service') == 0  # type: ignore[deprecated]
 
 
 def run_custom_user_commands(commands: list[str], installation: Installer) -> None:

@@ -1,12 +1,16 @@
 from typing import override
 
-from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
 
 
-class LxqtProfile(XorgProfile):
+class LxqtProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('Lxqt', ProfileType.DesktopEnv)
+		super().__init__(
+			'Lxqt',
+			ProfileType.DesktopEnv,
+			support_gfx_driver=True,
+			display_server=DisplayServerType.Xorg,
+		)
 
 	# NOTE: SDDM is the only officially supported greeter for LXQt, so unlike other DEs, lightdm is not used here.
 	# LXQt works with lightdm, but since this is not supported, we will not default to this.

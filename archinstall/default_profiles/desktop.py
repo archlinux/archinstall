@@ -1,8 +1,6 @@
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, Self, override
 
-from archinstall.default_profiles.profile import GreeterType, Profile, ProfileType, SelectResult
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType, SelectResult
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -95,10 +93,16 @@ class DesktopProfile(Profile):
 		# Install common packages for all desktop environments
 		install_session.add_additional_packages(self.packages)
 
+		xorg_installed = False
+
 		for profile in self.current_selection:
 			info(f'Installing profile {profile.name}...')
 
 			install_session.add_additional_packages(profile.packages)
 			install_session.enable_service(profile.services)
+
+			if not xorg_installed and profile.display_server == DisplayServerType.Xorg:
+				install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
+				xorg_installed = True
 
 			profile.install(install_session)

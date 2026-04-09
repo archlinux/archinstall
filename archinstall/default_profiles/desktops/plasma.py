@@ -1,18 +1,24 @@
 from typing import override
 
-from archinstall.default_profiles.profile import GreeterType, ProfileType
-from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
 
 
-class PlasmaProfile(XorgProfile):
+class PlasmaProfile(Profile):
 	def __init__(self) -> None:
-		super().__init__('KDE Plasma', ProfileType.DesktopEnv)
+		super().__init__(
+			'KDE Plasma',
+			ProfileType.DesktopEnv,
+			support_gfx_driver=True,
+			display_server=DisplayServerType.Wayland,
+		)
 
 	@property
 	@override
 	def packages(self) -> list[str]:
 		return [
 			'plasma-desktop',
+			'kscreen',
+			'plasma-pa',
 			'konsole',
 			'kate',
 			'dolphin',
