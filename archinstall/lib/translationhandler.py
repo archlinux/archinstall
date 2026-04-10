@@ -2,6 +2,7 @@ import builtins
 import gettext
 import json
 import os
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import override
@@ -38,8 +39,8 @@ class Language:
 
 _DEFAULT_FONT = 'default8x16'
 _ENV_FONT = os.environ.get('FONT')
-_FONT_BACKUP = Path('/tmp/archinstall_font_backup')
-_CMAP_BACKUP = Path('/tmp/archinstall_cmap_backup')
+_font_backup: Path | None = None
+_cmap_backup: Path | None = None
 _using_env_font = False
 
 
@@ -61,25 +62,36 @@ def _set_console_font(font_name: str | None) -> bool:
 
 
 def _save_console_font() -> None:
-	"""Save the current console font (with unicode map) and console map to backup files."""
+	"""Save the current console font (with unicode map) and console map to temp files."""
+	global _font_backup, _cmap_backup
+
 	try:
-		SysCommand(f'setfont -O {_FONT_BACKUP} -om {_CMAP_BACKUP}')
+		_font_backup = Path(tempfile.mktemp(prefix='archinstall_font_'))
+		_cmap_backup = Path(tempfile.mktemp(prefix='archinstall_cmap_'))
+		SysCommand(f'setfont -O {_font_backup} -om {_cmap_backup}')
 	except SysCallError as err:
 		debug(f'Failed to save console font: {err}')
+		_font_backup = None
+		_cmap_backup = None
 
 
 def _restore_console_font() -> None:
 	"""Restore console font (with unicode map) and console map from backup."""
-	if not _FONT_BACKUP.exists():
+	global _font_backup, _cmap_backup
+
+	if _font_backup is None or not _font_backup.exists():
 		return
 
-	args = str(_FONT_BACKUP)
-	if _CMAP_BACKUP.exists():
-		args += f' -m {_CMAP_BACKUP}'
+	args = str(_font_backup)
+	if _cmap_backup is not None and _cmap_backup.exists():
+		args += f' -m {_cmap_backup}'
 	_set_console_font(args)
 
-	_FONT_BACKUP.unlink(missing_ok=True)
-	_CMAP_BACKUP.unlink(missing_ok=True)
+	_font_backup.unlink(missing_ok=True)
+	_font_backup = None
+	if _cmap_backup is not None:
+		_cmap_backup.unlink(missing_ok=True)
+		_cmap_backup = None
 
 
 class TranslationHandler:
