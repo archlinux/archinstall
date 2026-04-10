@@ -1753,6 +1753,8 @@ class Installer:
 		if not efi_partition or not efi_partition.mountpoint:
 			raise ValueError(f'Could not detect ESP at mountpoint {self.target}')
 
+		self.pacman.strap('mkinitcpio')
+
 		# Set up kernel command line
 		with open(self.target / 'etc/kernel/cmdline', 'w') as cmdline:
 			kernel_parameters = self._get_kernel_params(root)
