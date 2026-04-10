@@ -142,7 +142,7 @@ class ArchConfig:
 
 		if archinstall_lang := args_config.get('archinstall-language', None):
 			arch_config.archinstall_language = translation_handler.get_language_by_name(archinstall_lang)
-			translation_handler.activate(arch_config.archinstall_language)
+			translation_handler.activate(arch_config.archinstall_language, set_font=False)
 
 		if disk_config := args_config.get('disk_config', {}):
 			enc_password = args_config.get('encryption_password', '')

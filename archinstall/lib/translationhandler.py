@@ -42,22 +42,21 @@ _FONT_BACKUP = Path('/tmp/archinstall_font_backup')
 _CMAP_BACKUP = Path('/tmp/archinstall_cmap_backup')
 
 
-def _set_console_font(font_name: str | None) -> None:
+def _set_console_font(font_name: str | None) -> bool:
 	"""
 	Set the console font via setfont.
-	Falls back to default8x16 if font_name is None or setfont fails.
+	If font_name is None, sets default8x16.
+	On failure, keeps the current font unchanged.
+	Returns True on success, False on failure.
 	"""
 	target = font_name or _DEFAULT_FONT
 
 	try:
 		SysCommand(f'setfont {target}')
+		return True
 	except SysCallError as err:
 		debug(f'Failed to set console font {target}: {err}')
-		if target != _DEFAULT_FONT:
-			try:
-				SysCommand(f'setfont {_DEFAULT_FONT}')
-			except SysCallError as fallback_err:
-				debug(f'Failed to set default console font: {fallback_err}')
+		return False
 
 
 def _save_console_font() -> None:
@@ -69,14 +68,14 @@ def _save_console_font() -> None:
 
 
 def _restore_console_font() -> None:
-	"""Restore console font (with unicode map) and console map from backup, falling back to default8x16."""
-	if _FONT_BACKUP.exists():
-		args = str(_FONT_BACKUP)
-		if _CMAP_BACKUP.exists():
-			args += f' -m {_CMAP_BACKUP}'
-		_set_console_font(args)
-	else:
-		_set_console_font(None)
+	"""Restore console font (with unicode map) and console map from backup."""
+	if not _FONT_BACKUP.exists():
+		return
+
+	args = str(_FONT_BACKUP)
+	if _CMAP_BACKUP.exists():
+		args += f' -m {_CMAP_BACKUP}'
+	_set_console_font(args)
 
 	_FONT_BACKUP.unlink(missing_ok=True)
 	_CMAP_BACKUP.unlink(missing_ok=True)
@@ -86,6 +85,7 @@ class TranslationHandler:
 	def __init__(self) -> None:
 		self._base_pot = 'base.pot'
 		self._languages = 'languages.json'
+		self._active_language: Language | None = None
 
 		self._total_messages = self._get_total_active_messages()
 		self._translated_languages = self._get_translations()
@@ -93,6 +93,12 @@ class TranslationHandler:
 	@property
 	def translated_languages(self) -> list[Language]:
 		return self._translated_languages
+
+	@property
+	def active_font(self) -> str | None:
+		if self._active_language is not None:
+			return self._active_language.console_font
+		return None
 
 	def _get_translations(self) -> list[Language]:
 		"""
@@ -179,14 +185,16 @@ class TranslationHandler:
 		except Exception:
 			raise ValueError(f'No language with abbreviation "{abbr}" found')
 
-	def activate(self, language: Language) -> None:
+	def activate(self, language: Language, set_font: bool = True) -> None:
 		"""
 		Set the provided language as the current translation
 		"""
 		# The install() call has the side effect of assigning GNUTranslations.gettext to builtins._
 		language.translation.install()
+		self._active_language = language
 
-		_set_console_font(_ENV_FONT if _ENV_FONT else language.console_font)
+		if set_font:
+			_set_console_font(_ENV_FONT if _ENV_FONT else language.console_font)
 
 	def _get_locales_dir(self) -> Path:
 		"""
