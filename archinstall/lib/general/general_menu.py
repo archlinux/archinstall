@@ -3,7 +3,6 @@ from enum import Enum
 from archinstall.lib.locale.utils import list_timezones
 from archinstall.lib.menu.helpers import Confirmation, Input, Selection
 from archinstall.lib.output import warn
-from archinstall.lib.pathnames import PACMAN_CONF
 from archinstall.lib.translationhandler import Language, tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
@@ -124,55 +123,6 @@ async def select_archinstall_language(languages: list[Language], preset: Languag
 			return result.get_value()
 		case ResultType.Reset:
 			raise ValueError('Language selection not handled')
-
-
-async def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
-	max_recommended = 5
-
-	header = tr('This option enables the number of parallel downloads that can occur during package downloads') + '\n'
-	header += tr(' - Maximum recommended value : {} ( Allows {} parallel downloads at a time )').format(max_recommended, max_recommended) + '\n\n'
-	header += tr('Enter the number of parallel downloads to be enabled')
-
-	def validator(s: str) -> str | None:
-		try:
-			value = int(s)
-
-			if 1 <= value <= max_recommended:
-				return None
-
-			return tr('Value must be between 1 and {}').format(max_recommended)
-		except Exception:
-			return tr('Please enter a valid number')
-
-	result = await Input(
-		header=header,
-		allow_skip=True,
-		allow_reset=True,
-		validator_callback=validator,
-		default_value=str(preset),
-	).show()
-
-	downloads = 1
-
-	match result.type_:
-		case ResultType.Skip:
-			return preset
-		case ResultType.Reset:
-			return downloads
-		case ResultType.Selection:
-			downloads = int(result.get_value())
-
-	with PACMAN_CONF.open() as f:
-		pacman_conf = f.read().split('\n')
-
-	with PACMAN_CONF.open('w') as fwrite:
-		for line in pacman_conf:
-			if 'ParallelDownloads' in line:
-				fwrite.write(f'ParallelDownloads = {downloads}\n')
-			else:
-				fwrite.write(f'{line}\n')
-
-	return downloads
 
 
 async def select_post_installation(elapsed_time: float | None = None) -> PostInstallationAction:

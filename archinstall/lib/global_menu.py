@@ -7,7 +7,7 @@ from archinstall.lib.authentication.authentication_menu import AuthenticationMen
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
-from archinstall.lib.general.general_menu import add_number_of_parallel_downloads, select_hostname, select_ntp, select_timezone
+from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
 from archinstall.lib.general.system_menu import select_kernel, select_swap
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.locale_menu import LocaleMenu
@@ -22,11 +22,13 @@ from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, NicType
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
 from archinstall.lib.output import FormattedOutput
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
+from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
@@ -137,11 +139,11 @@ class GlobalMenu(AbstractMenu[None]):
 				key='network_config',
 			),
 			MenuItem(
-				text=tr('Parallel Downloads'),
-				action=add_number_of_parallel_downloads,
-				value=1,
-				preview_action=self._prev_parallel_dw,
-				key='parallel_downloads',
+				text=tr('Pacman'),
+				action=self._pacman_configuration,
+				value=PacmanConfiguration.default(),
+				preview_action=self._prev_pacman_config,
+				key='pacman_config',
 			),
 			MenuItem(
 				text=tr('Additional packages'),
@@ -410,10 +412,14 @@ class GlobalMenu(AbstractMenu[None]):
 			return f'{tr("Hostname")}: {item.value}'
 		return None
 
-	def _prev_parallel_dw(self, item: MenuItem) -> str | None:
-		if item.value is not None:
-			return f'{tr("Parallel Downloads")}: {item.value}'
-		return None
+	async def _pacman_configuration(self, preset: PacmanConfiguration) -> PacmanConfiguration | None:
+		return await PacmanMenu(preset).show()
+
+	def _prev_pacman_config(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
+		config: PacmanConfiguration = item.value
+		return config.preview()
 
 	def _prev_kernel(self, item: MenuItem) -> str | None:
 		if item.value:
