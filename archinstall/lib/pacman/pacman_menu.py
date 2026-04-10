@@ -47,7 +47,7 @@ class PacmanMenu(AbstractSubMenu[PacmanConfiguration]):
 		config = await super().show()
 
 		if config is None:
-			config = PacmanConfiguration.default()
+			return PacmanConfiguration.default()
 
 		_apply_to_live(config.parallel_downloads)
 
