@@ -269,7 +269,7 @@ class GlobalMenu(AbstractMenu[None]):
 		The options for the global menu are generated with a static text;
 		each entry of the menu needs to be updated with the new translation
 		"""
-		from archinstall.tui.ui.components import TApp, _translate_bindings
+		from archinstall.tui.ui.components import TApp
 
 		new_options = self._get_menu_options()
 
@@ -277,8 +277,7 @@ class GlobalMenu(AbstractMenu[None]):
 			if o.key is not None:
 				self._item_group.find_by_key(o.key).text = o.text
 
-		if TApp.app is not None:
-			_translate_bindings(TApp.app)
+		TApp.translate_bindings()
 
 	async def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration | None:
 		locale_config = await LocaleMenu(preset).show()

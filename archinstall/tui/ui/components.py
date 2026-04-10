@@ -7,7 +7,7 @@ from typing import Any, ClassVar, Literal, TypeVar, cast, override
 
 from textual import work
 from textual.app import App, ComposeResult
-from textual.binding import Binding
+from textual.binding import Binding, BindingsMap
 from textual.containers import Center, Horizontal, ScrollableContainer, Vertical
 from textual.events import Key
 from textual.geometry import Offset
@@ -27,11 +27,16 @@ from archinstall.tui.ui.result import Result, ResultType
 ValueT = TypeVar('ValueT')
 
 
-def _translate_bindings(widget: Any) -> None:
-	if widget._merged_bindings is None:
+def _translate_bindings(source: BindingsMap | None, target: BindingsMap) -> None:
+	"""Translate binding descriptions from source to target.
+
+	Uses source (original, immutable class-level cache) to avoid
+	double-translation on repeated calls (e.g. language switch).
+	"""
+	if source is None:
 		return
-	for key, bindings in widget._merged_bindings.key_to_bindings.items():
-		widget._bindings.key_to_bindings[key] = [replace(b, description=tr(b.description)) if b.description else b for b in bindings]
+	for key, bindings in source.key_to_bindings.items():
+		target.key_to_bindings[key] = [replace(b, description=tr(b.description)) if b.description else b for b in bindings]
 
 
 class BaseScreen(Screen[Result[ValueT]]):
@@ -104,7 +109,7 @@ class LoadingScreen(BaseScreen[ValueT]):
 		yield Footer()
 
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 		if self._data_callback:
 			self._exec_callback()
 		else:
@@ -139,7 +144,7 @@ class _OptionList(OptionList):
 
 	@override
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 
 
 class OptionListScreen(BaseScreen[ValueT]):
@@ -283,7 +288,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		yield Footer()
 
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 		self._update_options(self._options)
 		self.query_one(OptionList).focus()
 
@@ -370,7 +375,7 @@ class _SelectionList(SelectionList[ValueT]):
 
 	@override
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 
 
 class SelectListScreen(BaseScreen[ValueT]):
@@ -516,7 +521,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 			self._handle_search_action()
 
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 		self._update_options(self._options)
 		self.query_one(SelectionList).focus()
 
@@ -678,7 +683,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 		yield Footer()
 
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 		self._update_selection()
 
 	def action_focus_right(self) -> None:
@@ -834,7 +839,7 @@ class InputScreen(BaseScreen[str]):
 		yield Footer()
 
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 		input_field = self.query_one('#main_input', Input)
 		input_field.focus()
 
@@ -876,7 +881,7 @@ class _DataTable(DataTable[ValueT]):
 
 	@override
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 
 
 class TableSelectionScreen(BaseScreen[ValueT]):
@@ -998,7 +1003,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 		yield Footer()
 
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 		self._display_header(True)
 		data_table = self.query_one(DataTable)
 		data_table.cell_padding = 2
@@ -1254,7 +1259,7 @@ class _AppInstance(App[ValueT]):
 			_ = self.screen.mount(HelpPanel())
 
 	def on_mount(self) -> None:
-		_translate_bindings(self)
+		_translate_bindings(self._merged_bindings, self._bindings)
 		self._run_worker()
 
 	@work
@@ -1300,6 +1305,12 @@ class TApp:
 	def exit(self, result: Any) -> None:
 		assert TApp.app
 		TApp.app.exit(result)
+
+	@staticmethod
+	def translate_bindings() -> None:
+		"""Re-translate app-level binding descriptions after language change."""
+		if TApp.app is not None:
+			_translate_bindings(TApp.app._merged_bindings, TApp.app._bindings)
 
 
 tui = TApp()
