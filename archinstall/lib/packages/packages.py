@@ -35,6 +35,34 @@ def check_package_upgrade(package: str) -> str | None:
 
 
 @lru_cache
+def package_group_info(package: str) -> PackageGroup | None:
+	try:
+		package_info: list[str] = []
+		for line in Pacman.run(f'-Sg {package}'):
+			package_info.append(line.decode().strip())
+		group = PackageGroup.from_package_group_output(package_info)
+		return group
+	except SysCallError:
+		debug(f'Failed to get package info: {package}')
+
+	return None
+
+
+@lru_cache
+def available_package(package: str) -> AvailablePackage | None:
+	try:
+		package_info: list[str] = []
+		for line in Pacman.run(f'-S --info {package}'):
+			package_info.append(line.decode().strip())
+
+		return _parse_package_output(package_info, AvailablePackage)
+	except SysCallError:
+		pass
+
+	return None
+
+
+@lru_cache
 def list_available_packages(
 	repositories: tuple[Repository, ...],
 ) -> dict[str, AvailablePackage]:
@@ -74,12 +102,18 @@ def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 	cls: type[PackageType],
 ) -> PackageType:
 	package = {}
+	current_key = None
 
 	for line in package_meta:
-		if ':' in line:
-			key, value = line.split(':', 1)
-			key = _normalize_key_name(key)
-			package[key] = value.strip()
+		if not line.strip():
+			continue
+
+		if ':' in line and not line.startswith('  '):
+			key_raw, value = line.split(':', 1)
+			current_key = _normalize_key_name(key_raw)
+			package[current_key] = value.strip()
+		elif current_key:
+			package[current_key] += ' ' + line.strip()
 
 	return cls.model_validate(package)
 

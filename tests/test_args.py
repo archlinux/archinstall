@@ -4,7 +4,7 @@ from pathlib import Path
 
 from pytest import MonkeyPatch
 
-from archinstall.default_profiles.profile import GreeterType
+from archinstall.default_profiles.profile import CustomSetting, GreeterType
 from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
 from archinstall.lib.hardware import GfxDriver
 from archinstall.lib.models.application import (
@@ -173,10 +173,13 @@ def test_config_file_parsing(
 				{
 					'custom_settings': {
 						'Hyprland': {
-							'seat_access': 'polkit',
+							CustomSetting.SeatAccess: 'polkit',
 						},
 						'Sway': {
-							'seat_access': 'seatd',
+							CustomSetting.SeatAccess: 'seatd',
+						},
+						'KDE Plasma': {
+							CustomSetting.PlasmaFlavor: 'plasma-meta',
 						},
 					},
 					'details': [
