@@ -142,11 +142,25 @@ class AvailablePackage(BaseModel):
 
 		return output
 
+	@cached_property
+	def get_depends_on(self) -> list[str]:
+		return [entry.strip() for entry in self.depends_on.split(' ') if entry.strip()]
+
+	@cached_property
+	def get_optional_deps(self) -> list[str]:
+		return [entry.strip() for entry in self.optional_deps.split(' ') if entry.strip()]
+
 
 @dataclass
 class PackageGroup:
 	name: str
 	packages: list[str] = field(default_factory=list)
+
+	@classmethod
+	def from_package_group_output(cls, data: list[str]) -> Self:
+		name = data[0].split()[0].strip()
+		packages = [line.split()[1].strip() for line in data if line.strip()]
+		return cls(name, packages)
 
 	@classmethod
 	def from_available_packages(

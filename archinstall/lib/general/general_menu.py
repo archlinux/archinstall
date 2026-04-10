@@ -1,9 +1,9 @@
 from enum import Enum
-from pathlib import Path
 
 from archinstall.lib.locale.utils import list_timezones
 from archinstall.lib.menu.helpers import Confirmation, Input, Selection
 from archinstall.lib.output import warn
+from archinstall.lib.pathnames import PACMAN_CONF
 from archinstall.lib.translationhandler import Language, tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
@@ -162,11 +162,10 @@ async def add_number_of_parallel_downloads(preset: int = 1) -> int | None:
 		case ResultType.Selection:
 			downloads = int(result.get_value())
 
-	pacman_conf_path = Path('/etc/pacman.conf')
-	with pacman_conf_path.open() as f:  # noqa: ASYNC230
+	with PACMAN_CONF.open() as f:
 		pacman_conf = f.read().split('\n')
 
-	with pacman_conf_path.open('w') as fwrite:  # noqa: ASYNC230
+	with PACMAN_CONF.open('w') as fwrite:
 		for line in pacman_conf:
 			if 'ParallelDownloads' in line:
 				fwrite.write(f'ParallelDownloads = {downloads}\n')

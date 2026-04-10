@@ -36,7 +36,7 @@ from archinstall.lib.models.device import (
 )
 from archinstall.lib.models.users import Password
 from archinstall.lib.output import debug, error, info, log
-from archinstall.lib.utils.util import is_subpath
+from archinstall.lib.pathnames import ARCHISO_MOUNTPOINT
 
 
 class DeviceHandler:
@@ -63,8 +63,6 @@ class DeviceHandler:
 		devices = getAllDevices()
 		devices.extend(self.get_loop_devices())
 
-		archiso_mountpoint = Path('/run/archiso/airootfs')
-
 		for device in devices:
 			dev_lsblk_info = find_lsblk_info(device.path, all_lsblk_info)
 
@@ -76,7 +74,7 @@ class DeviceHandler:
 				continue
 
 			# exclude archiso loop device
-			if dev_lsblk_info.mountpoint == archiso_mountpoint:
+			if dev_lsblk_info.mountpoint == ARCHISO_MOUNTPOINT:
 				continue
 
 			try:
@@ -563,7 +561,7 @@ class DeviceHandler:
 		for device in self.devices:
 			for part_info in device.partition_infos:
 				for mountpoint in part_info.mountpoints:
-					if is_subpath(mountpoint, base_mountpoint):
+					if mountpoint.is_relative_to(base_mountpoint):
 						path = Path(part_info.disk.device.path)
 						part_mods.setdefault(path, [])
 						part_mod = PartitionModification.from_existing_partition(part_info)

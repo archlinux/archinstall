@@ -6,6 +6,7 @@ from pathlib import Path
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import RequirementError
 from archinstall.lib.output import error, info, warn
+from archinstall.lib.pathnames import PACMAN_CONF
 from archinstall.lib.plugins import plugins
 from archinstall.lib.translationhandler import tr
 
@@ -77,6 +78,6 @@ class Pacman:
 			'Could not strap in packages',
 			'Pacstrap failed. See /var/log/archinstall/install.log or above message for error details',
 			SysCommand,
-			f'pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm --needed',
+			f'pacstrap -C {PACMAN_CONF} -K {self.target} {" ".join(packages)} --noconfirm --needed',
 			peek_output=True,
 		)

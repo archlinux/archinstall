@@ -1,17 +1,16 @@
 import re
 from pathlib import Path
-from shutil import copy2
 
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.pathnames import PACMAN_CONF
 
 
 class PacmanConfig:
 	def __init__(self, target: Path | None):
-		self._config_path = Path('/etc') / 'pacman.conf'
 		self._config_remote_path: Path | None = None
 
 		if target:
-			self._config_remote_path = target / 'etc' / 'pacman.conf'
+			self._config_remote_path = target / PACMAN_CONF.relative_to_root()
 
 		self._repositories: list[Repository] = []
 
@@ -32,7 +31,7 @@ class PacmanConfig:
 			else:
 				repos_to_enable.append(repo.value)
 
-		content = self._config_path.read_text().splitlines(keepends=True)
+		content = PACMAN_CONF.read_text().splitlines(keepends=True)
 
 		for row, line in enumerate(content):
 			# Check if this is a commented repository section that needs to be enabled
@@ -47,9 +46,9 @@ class PacmanConfig:
 					content[row + 1] = re.sub(r'^#\s*', '', content[row + 1])
 
 		# Write the modified content back to the file
-		with open(self._config_path, 'w') as f:
+		with PACMAN_CONF.open('w') as f:
 			f.writelines(content)
 
 	def persist(self) -> None:
 		if self._repositories and self._config_remote_path:
-			copy2(self._config_path, self._config_remote_path)
+			PACMAN_CONF.copy(self._config_remote_path, preserve_metadata=True)
