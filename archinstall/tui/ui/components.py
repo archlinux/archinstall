@@ -1239,6 +1239,7 @@ class _AppInstance(App[ValueT]):
 	@override
 	async def _on_exit_app(self) -> None:
 		from archinstall.lib.translationhandler import _restore_console_font
+
 		_restore_console_font()
 		await super()._on_exit_app()
 
@@ -1252,6 +1253,7 @@ class _AppInstance(App[ValueT]):
 
 	def on_mount(self) -> None:
 		import archinstall.lib.translationhandler as th
+
 		if th._ENV_FONT:
 			if th._set_console_font(th._ENV_FONT):
 				th._font_state.using_env_font = True
