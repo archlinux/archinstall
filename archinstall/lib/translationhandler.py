@@ -40,6 +40,7 @@ _DEFAULT_FONT = 'default8x16'
 _ENV_FONT = os.environ.get('FONT')
 _FONT_BACKUP = Path('/tmp/archinstall_font_backup')
 _CMAP_BACKUP = Path('/tmp/archinstall_cmap_backup')
+_using_env_font = False
 
 
 def _set_console_font(font_name: str | None) -> bool:
@@ -193,8 +194,8 @@ class TranslationHandler:
 		language.translation.install()
 		self._active_language = language
 
-		if set_font:
-			_set_console_font(_ENV_FONT if _ENV_FONT else language.console_font)
+		if set_font and not _using_env_font:
+			_set_console_font(language.console_font)
 
 	def _get_locales_dir(self) -> Path:
 		"""
