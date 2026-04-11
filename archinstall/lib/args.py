@@ -22,6 +22,7 @@ from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.output import debug, error, logger, warn
@@ -73,7 +74,7 @@ class ArchConfig:
 	kernels: list[str] = field(default_factory=lambda: ['linux'])
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
-	parallel_downloads: int = 0
+	pacman_config: PacmanConfiguration = field(default_factory=PacmanConfiguration.default)
 	timezone: str = 'UTC'
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
@@ -104,7 +105,7 @@ class ArchConfig:
 			'kernels': self.kernels,
 			'ntp': self.ntp,
 			'packages': self.packages,
-			'parallel_downloads': self.parallel_downloads,
+			'pacman_config': self.pacman_config.json(),
 			'swap': self.swap,
 			'timezone': self.timezone,
 			'services': self.services,
@@ -209,8 +210,10 @@ class ArchConfig:
 		if packages := args_config.get('packages', []):
 			arch_config.packages = packages
 
-		if parallel_downloads := args_config.get('parallel_downloads', 0):
-			arch_config.parallel_downloads = parallel_downloads
+		if pacman_config := args_config.get('pacman_config', None):
+			arch_config.pacman_config = PacmanConfiguration.parse_arg(pacman_config)
+		elif parallel_downloads := args_config.get('parallel_downloads', 0):
+			arch_config.pacman_config = PacmanConfiguration(parallel_downloads=int(parallel_downloads))
 
 		swap_arg = args_config.get('swap')
 		if swap_arg is not None:

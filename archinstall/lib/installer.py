@@ -48,6 +48,7 @@ from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import Nic
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.users import User
 from archinstall.lib.output import debug, error, info, log, logger, warn
 from archinstall.lib.packages.packages import installed_package
@@ -886,6 +887,7 @@ class Installer:
 		mkinitcpio: bool = True,
 		hostname: str | None = None,
 		locale_config: LocaleConfiguration | None = LocaleConfiguration.default(),
+		pacman_config: PacmanConfiguration | None = None,
 	) -> None:
 		if self._disk_config.lvm_config:
 			lvm = 'lvm2'
@@ -931,6 +933,9 @@ class Installer:
 		self._helper_flags['base-strapped'] = True
 
 		pacman_conf.persist()
+
+		if pacman_config:
+			pacman_conf.configure(pacman_config)
 
 		# Periodic TRIM may improve the performance and longevity of SSDs whilst
 		# having no adverse effect on other devices. Most distributions enable

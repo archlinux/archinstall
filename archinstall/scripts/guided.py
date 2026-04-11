@@ -43,7 +43,7 @@ def show_menu(
 	)
 
 	if not arch_config_handler.args.advanced:
-		global_menu.set_enabled('parallel_downloads', False)
+		global_menu.set_enabled('pacman_config', False)
 
 	result: ArchConfig | None = tui.run(global_menu)
 	if result is None:
@@ -106,6 +106,7 @@ def perform_installation(
 			mkinitcpio=run_mkinitcpio,
 			hostname=arch_config_handler.config.hostname,
 			locale_config=locale_config,
+			pacman_config=config.pacman_config,
 		)
 
 		if mirror_config := config.mirror_config:

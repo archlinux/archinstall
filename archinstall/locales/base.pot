@@ -830,6 +830,19 @@ msgstr ""
 msgid "Parallel Downloads"
 msgstr ""
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr ""
 
@@ -2066,4 +2079,37 @@ msgstr ""
 
 #, python-brace-format
 msgid "Environment type: {} {}"
+msgstr ""
+
+msgid "Input cannot be empty"
+msgstr ""
+
+msgid "Recommended"
+msgstr ""
+
+msgid "Package"
+msgstr ""
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+msgid "Package group"
+msgstr ""
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+msgid "Packages in group"
+msgstr ""
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Select a flavor of KDE Plasma to install"
 msgstr ""
