@@ -19,7 +19,7 @@ from textual.widgets.option_list import Option
 from textual.widgets.selection_list import Selection
 from textual.worker import WorkerCancelled
 
-from archinstall.lib.output import debug
+from archinstall.lib.output import debug, info
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import Result, ResultType
@@ -1236,6 +1236,13 @@ class _AppInstance(App[ValueT]):
 		super().__init__(ansi_color=True)
 		self._main = main
 
+	@override
+	async def _on_exit_app(self) -> None:
+		from archinstall.lib.translationhandler import _restore_console_font
+
+		_restore_console_font()
+		await super()._on_exit_app()
+
 	def action_trigger_help(self) -> None:
 		from textual.widgets import HelpPanel
 
@@ -1245,6 +1252,17 @@ class _AppInstance(App[ValueT]):
 			_ = self.screen.mount(HelpPanel())
 
 	def on_mount(self) -> None:
+		import archinstall.lib.translationhandler as th
+
+		if th._ENV_FONT:
+			if th._set_console_font(th._ENV_FONT):
+				th.translation_handler._using_env_font = True
+			else:
+				debug(f'FONT={th._ENV_FONT} could not be set, using language font mapping')
+				if th.translation_handler.active_font:
+					th._set_console_font(th.translation_handler.active_font)
+		elif th.translation_handler.active_font:
+			th._set_console_font(th.translation_handler.active_font)
 		self._run_worker()
 
 	@work
@@ -1275,8 +1293,13 @@ class TApp:
 	app: _AppInstance[Any] | None = None
 
 	def run(self, main: InstanceRunnable[ValueT] | Callable[[], Awaitable[ValueT]]) -> ValueT:
+		import archinstall.lib.translationhandler as th
+
 		TApp.app = _AppInstance(main)
 		result: ValueT | Exception | None = TApp.app.run()
+
+		if th._ENV_FONT and not th.translation_handler._using_env_font:
+			info(f'FONT={th._ENV_FONT} could not be set, using language font mapping')
 
 		if isinstance(result, Exception):
 			raise result
