@@ -1322,8 +1322,7 @@ class TApp:
 		assert TApp.app
 		TApp.app.exit(result)
 
-	@staticmethod
-	def translate_bindings() -> None:
+	def translate_bindings(self) -> None:
 		"""Re-translate app-level binding descriptions after language change."""
 		if TApp.app is not None:
 			_translate_bindings(TApp.app._merged_bindings, TApp.app._bindings)
