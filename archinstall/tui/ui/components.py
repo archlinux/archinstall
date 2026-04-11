@@ -1256,7 +1256,7 @@ class _AppInstance(App[ValueT]):
 
 		if th._ENV_FONT:
 			if th._set_console_font(th._ENV_FONT):
-				th._font_state.using_env_font = True
+				th.translation_handler._using_env_font = True
 			else:
 				debug(f'FONT={th._ENV_FONT} could not be set, using language font mapping')
 				if th.translation_handler.active_font:
@@ -1298,7 +1298,7 @@ class TApp:
 		TApp.app = _AppInstance(main)
 		result: ValueT | Exception | None = TApp.app.run()
 
-		if th._ENV_FONT and not th._font_state.using_env_font:
+		if th._ENV_FONT and not th.translation_handler._using_env_font:
 			info(f'FONT={th._ENV_FONT} could not be set, using language font mapping')
 
 		if isinstance(result, Exception):

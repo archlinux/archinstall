@@ -41,16 +41,6 @@ _DEFAULT_FONT = 'default8x16'
 _ENV_FONT = os.environ.get('FONT')
 
 
-class _FontState:
-	def __init__(self) -> None:
-		self.font_backup: Path | None = None
-		self.cmap_backup: Path | None = None
-		self.using_env_font: bool = False
-
-
-_font_state = _FontState()
-
-
 def _set_console_font(font_name: str | None) -> bool:
 	"""
 	Set the console font via setfont.
@@ -75,30 +65,30 @@ def _save_console_font() -> None:
 		cmap_fd, cmap_path = tempfile.mkstemp(prefix='archinstall_cmap_')
 		os.close(font_fd)
 		os.close(cmap_fd)
-		_font_state.font_backup = Path(font_path)
-		_font_state.cmap_backup = Path(cmap_path)
-		SysCommand(f'setfont -O {_font_state.font_backup} -om {_font_state.cmap_backup}')
+		translation_handler._font_backup = Path(font_path)
+		translation_handler._cmap_backup = Path(cmap_path)
+		SysCommand(f'setfont -O {translation_handler._font_backup} -om {translation_handler._cmap_backup}')
 	except SysCallError as err:
 		debug(f'Failed to save console font: {err}')
-		_font_state.font_backup = None
-		_font_state.cmap_backup = None
+		translation_handler._font_backup = None
+		translation_handler._cmap_backup = None
 
 
 def _restore_console_font() -> None:
 	"""Restore console font (with unicode map) and console map from backup."""
-	if _font_state.font_backup is None or not _font_state.font_backup.exists():
+	if translation_handler._font_backup is None or not translation_handler._font_backup.exists():
 		return
 
-	args = str(_font_state.font_backup)
-	if _font_state.cmap_backup is not None and _font_state.cmap_backup.exists():
-		args += f' -m {_font_state.cmap_backup}'
+	args = str(translation_handler._font_backup)
+	if translation_handler._cmap_backup is not None and translation_handler._cmap_backup.exists():
+		args += f' -m {translation_handler._cmap_backup}'
 	_set_console_font(args)
 
-	_font_state.font_backup.unlink(missing_ok=True)
-	_font_state.font_backup = None
-	if _font_state.cmap_backup is not None:
-		_font_state.cmap_backup.unlink(missing_ok=True)
-		_font_state.cmap_backup = None
+	translation_handler._font_backup.unlink(missing_ok=True)
+	translation_handler._font_backup = None
+	if translation_handler._cmap_backup is not None:
+		translation_handler._cmap_backup.unlink(missing_ok=True)
+		translation_handler._cmap_backup = None
 
 
 class TranslationHandler:
@@ -106,6 +96,9 @@ class TranslationHandler:
 		self._base_pot = 'base.pot'
 		self._languages = 'languages.json'
 		self._active_language: Language | None = None
+		self._font_backup: Path | None = None
+		self._cmap_backup: Path | None = None
+		self._using_env_font: bool = False
 
 		self._total_messages = self._get_total_active_messages()
 		self._translated_languages = self._get_translations()
@@ -213,7 +206,7 @@ class TranslationHandler:
 		language.translation.install()
 		self._active_language = language
 
-		if set_font and not _font_state.using_env_font:
+		if set_font and not self._using_env_font:
 			_set_console_font(language.console_font)
 
 	def _get_locales_dir(self) -> Path:
