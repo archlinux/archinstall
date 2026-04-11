@@ -633,6 +633,9 @@ msgstr ""
 msgid "Manual configuration"
 msgstr ""
 
+msgid "No network"
+msgstr ""
+
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr ""
 

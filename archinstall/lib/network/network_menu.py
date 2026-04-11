@@ -172,7 +172,7 @@ async def select_network(preset: NetworkConfiguration | None) -> NetworkConfigur
 	"""
 
 	items = [MenuItem(n.display_msg(), value=n) for n in NicType]
-	group = MenuItemGroup(items, sort_items=True)
+	group = MenuItemGroup(items, sort_items=False)
 
 	if preset:
 		group.set_selected_by_value(preset.type)
@@ -205,5 +205,7 @@ async def select_network(preset: NetworkConfiguration | None) -> NetworkConfigur
 
 					if nics:
 						return NetworkConfiguration(NicType.MANUAL, nics)
+				case NicType.NONE:
+					return NetworkConfiguration(NicType.NONE)
 
 	return preset
