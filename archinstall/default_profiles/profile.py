@@ -212,6 +212,6 @@ class Profile:
 		text = tr('Installed packages') + ':\n'
 
 		for pkg in sorted(packages):
-			text += f'\t- {pkg}\n'
+			text += f'    - {pkg}\n'
 
 		return text

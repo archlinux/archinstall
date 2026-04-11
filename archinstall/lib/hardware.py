@@ -73,7 +73,7 @@ class GfxDriver(Enum):
 		text = tr('Installed packages') + ':\n'
 
 		for p in sorted(pkg_names):
-			text += f'\t- {p}\n'
+			text += f'    - {p}\n'
 
 		return text
 
