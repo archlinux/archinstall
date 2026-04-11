@@ -39,6 +39,15 @@ class FirewallConfigSerialization(TypedDict):
 	firewall: str
 
 
+class FontPackage(StrEnum):
+	EMOJI = 'noto-fonts-emoji'
+	CJK = 'noto-fonts-cjk'
+
+
+class FontsConfigSerialization(TypedDict):
+	fonts: list[str]
+
+
 class ZramAlgorithm(StrEnum):
 	ZSTD = 'zstd'
 	LZO_RLE = 'lzo-rle'
@@ -53,6 +62,7 @@ class ApplicationSerialization(TypedDict):
 	power_management_config: NotRequired[PowerManagementConfigSerialization]
 	print_service_config: NotRequired[PrintServiceConfigSerialization]
 	firewall_config: NotRequired[FirewallConfigSerialization]
+	fonts_config: NotRequired[FontsConfigSerialization]
 
 
 @dataclass
@@ -127,6 +137,18 @@ class FirewallConfiguration:
 		)
 
 
+@dataclass
+class FontsConfiguration:
+	fonts: list[FontPackage]
+
+	def json(self) -> FontsConfigSerialization:
+		return {'fonts': [f.value for f in self.fonts]}
+
+	@classmethod
+	def parse_arg(cls, arg: FontsConfigSerialization) -> Self:
+		return cls(fonts=[FontPackage(f) for f in arg['fonts']])
+
+
 @dataclass(frozen=True)
 class ZramConfiguration:
 	enabled: bool
@@ -149,6 +171,7 @@ class ApplicationConfiguration:
 	power_management_config: PowerManagementConfiguration | None = None
 	print_service_config: PrintServiceConfiguration | None = None
 	firewall_config: FirewallConfiguration | None = None
+	fonts_config: FontsConfiguration | None = None
 
 	@classmethod
 	def parse_arg(
@@ -177,6 +200,9 @@ class ApplicationConfiguration:
 		if args and (firewall_config := args.get('firewall_config')) is not None:
 			app_config.firewall_config = FirewallConfiguration.parse_arg(firewall_config)
 
+		if args and (fonts_config := args.get('fonts_config')) is not None:
+			app_config.fonts_config = FontsConfiguration.parse_arg(fonts_config)
+
 		return app_config
 
 	def json(self) -> ApplicationSerialization:
@@ -196,5 +222,8 @@ class ApplicationConfiguration:
 
 		if self.firewall_config:
 			config['firewall_config'] = self.firewall_config.json()
+
+		if self.fonts_config:
+			config['fonts_config'] = self.fonts_config.json()
 
 		return config

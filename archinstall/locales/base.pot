@@ -1940,6 +1940,18 @@ msgstr ""
 msgid "Firewall"
 msgstr ""
 
+msgid "Fonts"
+msgstr ""
+
+msgid "Select font packages to install"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
 msgid "Select audio configuration"
 msgstr ""
 
