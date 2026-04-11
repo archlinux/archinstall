@@ -321,7 +321,7 @@ async def select_partitions_to_encrypt(
 	avail_partitions = [p for p in partitions if not p.exists()]
 
 	if avail_partitions:
-		group = MenuItemGroup.from_objects(partitions)
+		group = MenuItemGroup.from_objects(avail_partitions)
 		group.set_selected_by_value(preset)
 
 		result = await Table[PartitionModification](
