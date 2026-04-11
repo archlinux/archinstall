@@ -1940,7 +1940,7 @@ msgstr ""
 msgid "Firewall"
 msgstr ""
 
-msgid "Fonts"
+msgid "Additional fonts"
 msgstr ""
 
 msgid "Select font packages to install"

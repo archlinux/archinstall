@@ -80,7 +80,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				key='firewall_config',
 			),
 			MenuItem(
-				text=tr('Fonts'),
+				text=tr('Additional fonts'),
 				action=select_fonts,
 				value=self._app_config.fonts_config,
 				preview_action=self._prev_fonts,
@@ -128,7 +128,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		if item.value is not None:
 			config: FontsConfiguration = item.value
 			packages = ', '.join(f.value for f in config.fonts)
-			return f'{tr("Fonts")}: {packages}'
+			return f'{tr("Additional fonts")}: {packages}'
 		return None
 
 

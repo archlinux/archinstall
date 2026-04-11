@@ -1881,8 +1881,8 @@ msgstr "Використовувати NetworkManager (з iwd)"
 msgid "Firewall"
 msgstr "Брандмауер"
 
-msgid "Fonts"
-msgstr "Шрифти"
+msgid "Additional fonts"
+msgstr "Додаткові шрифти"
 
 msgid "Select font packages to install"
 msgstr "Оберіть пакети шрифтів для встановлення"
