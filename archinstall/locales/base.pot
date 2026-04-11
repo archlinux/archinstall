@@ -2032,6 +2032,9 @@ msgstr ""
 msgid "Choose network configuration"
 msgstr ""
 
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr ""
+
 msgid "No packages found"
 msgstr ""
 
