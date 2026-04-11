@@ -633,6 +633,9 @@ msgstr ""
 msgid "Manual configuration"
 msgstr ""
 
+msgid "No network"
+msgstr ""
+
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr ""
 
@@ -2027,6 +2030,9 @@ msgid "Select an interface"
 msgstr ""
 
 msgid "Choose network configuration"
+msgstr ""
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
 msgstr ""
 
 msgid "No packages found"

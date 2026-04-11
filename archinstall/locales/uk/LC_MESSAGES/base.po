@@ -646,6 +646,9 @@ msgstr "Оберіть інтерфейс для додавання"
 msgid "Manual configuration"
 msgstr "Ручне налаштування"
 
+msgid "No network"
+msgstr "Без мережі"
+
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr "Позначити/зняти позначку розділу як стисненого (лише btrfs)"
 
@@ -1969,6 +1972,9 @@ msgstr "Оберіть інтерфейс"
 
 msgid "Choose network configuration"
 msgstr "Оберіть конфігурацію мережі"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Рекомендовано: Network Manager для робочого столу, ручне налаштування для сервера"
 
 msgid "No packages found"
 msgstr "Пакети не знайдено"

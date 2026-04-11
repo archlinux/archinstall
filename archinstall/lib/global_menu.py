@@ -134,6 +134,7 @@ class GlobalMenu(AbstractMenu[None]):
 				action=select_network,
 				value={},
 				preview_action=self._prev_network_config,
+				mandatory=True,
 				key='network_config',
 			),
 			MenuItem(
