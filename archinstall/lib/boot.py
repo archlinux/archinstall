@@ -4,7 +4,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Self
 
-from archinstall.lib.command import SysCommand, SysCommandWorker, locate_binary
+from archinstall.lib.command import SysCommand, SysCommandWorker
 from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.output import error
 
@@ -105,17 +105,7 @@ class Boot:
 		return self.session.is_alive()
 
 	def SysCommand(self, cmd: list[str], *args, **kwargs) -> SysCommand:  # type: ignore[no-untyped-def]
-		if cmd[0][0] != '/' and cmd[0][:2] != './':
-			# This check is also done in SysCommand & SysCommandWorker.
-			# However, that check is done for `machinectl` and not for our chroot command.
-			# So this wrapper for SysCommand will do this additionally.
-
-			cmd[0] = locate_binary(cmd[0])
-
 		return SysCommand(['systemd-run', f'--machine={self.container_name}', '--pty', *cmd], *args, **kwargs)
 
 	def SysCommandWorker(self, cmd: list[str], *args, **kwargs) -> SysCommandWorker:  # type: ignore[no-untyped-def]
-		if cmd[0][0] != '/' and cmd[0][:2] != './':
-			cmd[0] = locate_binary(cmd[0])
-
 		return SysCommandWorker(['systemd-run', f'--machine={self.container_name}', '--pty', *cmd], *args, **kwargs)
