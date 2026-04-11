@@ -16,8 +16,11 @@ from archinstall.lib.output import debug, error, info, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr
-from archinstall.lib.switch_mirror import check_online, switch_mirror_sources
+from archinstall.lib.switch_mirror import switch_mirror_sources
 from archinstall.lib.utils.util import running_from_iso
+from archinstall.lib.networking import ping
+from archinstall.lib.menu.helpers import Confirmation
+from archinstall.tui.ui.components import tui
 
 
 def _log_sys_info() -> None:
@@ -31,17 +34,29 @@ def _log_sys_info() -> None:
 	# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 	debug(f'Disk states before installing:\n{disk_layouts()}')
 
+def check_online(wifi_handler: WifiHandler | None = None) -> bool:
+	try:
+		ping('1.1.1.1')
+	except OSError as ex:
+		if 'Network is unreachable' in str(ex):
+			if wifi_handler is not None:
+				result: bool = tui.run(wifi_handler)
+				if not result:
+					return False
 
-SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS = 10
+	return True
+
+SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS = 1
 
 def _confirm_switch_mirror_sources(elapsed_seconds: float) -> bool:
 	if not sys.stdin.isatty():
 		return False
 
-	prompt = tr('Refreshing repositories is taking a long time ({} seconds). Would you like to switch mirror sources? (Y/n): ').format(int(elapsed_seconds))
+	header = tr('Refreshing repositories is taking a long time ({} seconds). Would you like to switch mirror sources?').format(int(elapsed_seconds))
 	try:
-		return input(prompt).strip().lower() in ('y', 'yes', '')
-	except EOFError:
+		result = tui.run(lambda: Confirmation(header).show())
+		return result.get_value() is True
+	except Exception:
 		return False
 
 

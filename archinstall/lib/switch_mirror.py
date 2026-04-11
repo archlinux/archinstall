@@ -4,24 +4,9 @@ from archinstall.lib.installer import Installer
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.mirror.mirror_menu import MirrorMenu
-from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.output import debug, error, info, warn
 from archinstall.lib.translationhandler import tr
-from archinstall.lib.networking import ping
 from archinstall.tui.ui.components import tui
-
-
-def check_online(wifi_handler: WifiHandler | None = None) -> bool:
-    try:
-        ping('1.1.1.1')
-    except OSError as ex:
-        if 'Network is unreachable' in str(ex):
-            if wifi_handler is not None:
-                result: bool = tui.run(wifi_handler)
-                if not result:
-                    return False
-
-    return True
 
 def switch_mirror_sources() -> bool:
     info(tr('Switching mirror sources.'))
