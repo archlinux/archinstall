@@ -28,6 +28,7 @@ from archinstall.lib.output import FormattedOutput
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.tui.ui.components import TApp
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
 
@@ -269,8 +270,6 @@ class GlobalMenu(AbstractMenu[None]):
 		The options for the global menu are generated with a static text;
 		each entry of the menu needs to be updated with the new translation
 		"""
-		from archinstall.tui.ui.components import TApp
-
 		new_options = self._get_menu_options()
 
 		for o in new_options:
