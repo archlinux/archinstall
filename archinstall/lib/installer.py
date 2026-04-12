@@ -54,7 +54,6 @@ from archinstall.lib.packages.packages import installed_package
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.pathnames import MIRRORLIST, PACMAN_CONF
-from archinstall.lib.plugins import plugins
 from archinstall.lib.translationhandler import tr
 
 # Any package that the Installer() is responsible for (optional and the default ones)
@@ -560,11 +559,6 @@ class Installer:
 		"""
 		debug('Setting mirrors on ' + ('target' if on_target else 'live system'))
 
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_mirrors'):
-				if result := plugin.on_mirrors(mirror_config):
-					mirror_config = result
-
 		if on_target:
 			mirrorlist_config = self.target / MIRRORLIST.relative_to_root()
 			pacman_config = self.target / PACMAN_CONF.relative_to_root()
@@ -605,11 +599,6 @@ class Installer:
 
 		if not fstab_path.is_file():
 			raise RequirementError('Could not create fstab file')
-
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_genfstab'):
-				if plugin.on_genfstab(self) is True:
-					break
 
 		with open(fstab_path, 'a') as fp:
 			for entry in self._fstab_entries:
@@ -673,11 +662,6 @@ class Installer:
 		if not len(zone):
 			return True  # Redundant
 
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_timezone'):
-				if result := plugin.on_timezone(zone):
-					zone = result
-
 		if (Path('/usr') / 'share' / 'zoneinfo' / zone).exists():
 			(Path(self.target) / 'etc' / 'localtime').unlink(missing_ok=True)
 			self.arch_chroot(f'ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
@@ -713,10 +697,6 @@ class Installer:
 			except SysCallError as err:
 				raise ServiceException(f'Unable to start service {service}: {err}')
 
-			for plugin in plugins.values():
-				if hasattr(plugin, 'on_service'):
-					plugin.on_service(service)
-
 	def disable_service(self, services_disable: str | list[str]) -> None:
 		if isinstance(services_disable, str):
 			services_disable = [services_disable]
@@ -743,19 +723,6 @@ class Installer:
 
 	def configure_nic(self, nic: Nic) -> None:
 		conf = nic.as_systemd_config()
-
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_configure_nic'):
-				conf = (
-					plugin.on_configure_nic(
-						nic.iface,
-						nic.dhcp,
-						nic.ip,
-						nic.gateway,
-						nic.dns,
-					)
-					or conf
-				)
 
 		with open(f'{self.target}/etc/systemd/network/10-{nic.iface}.network', 'a') as netconf:
 			netconf.write(str(conf))
@@ -818,12 +785,6 @@ class Installer:
 		return True
 
 	def mkinitcpio(self, flags: list[str]) -> bool:
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_mkinitcpio'):
-				# Allow plugins to override the usage of mkinitcpio altogether.
-				if plugin.on_mkinitcpio(self):
-					return True
-
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'r+') as mkinit:
 			content = mkinit.read()
 			content = re.sub('\nMODULES=(.*)', f'\nMODULES=({" ".join(self._modules)})', content)
@@ -962,10 +923,6 @@ class Installer:
 		for function in self.post_base_install:
 			info(f'Running post-installation hook: {function}')
 			function(self)
-
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_install'):
-				plugin.on_install(self)
 
 	def setup_btrfs_snapshot(
 		self,
@@ -1812,14 +1769,6 @@ class Installer:
 		:param uki_enabled: Whether to use unified kernel images
 		:param bootloader_removable: Whether to install to removable media location (UEFI only, for GRUB and Limine)
 		"""
-
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_add_bootloader'):
-				# Allow plugins to override the boot-loader handling.
-				# This allows for boot configuring and installing bootloaders.
-				if plugin.on_add_bootloader(self):
-					return
-
 		efi_partition = self._get_efi_partition()
 		boot_partition = self._get_boot_partition()
 		root = self._get_root()
@@ -1902,33 +1851,19 @@ class Installer:
 			self._create_user(user)
 
 	def _create_user(self, user: User) -> None:
-		# This plugin hook allows for the plugin to handle the creation of the user.
-		# Password and Group management is still handled by user_create()
-		handled_by_plugin = False
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_user_create'):
-				if result := plugin.on_user_create(self, user):
-					handled_by_plugin = result
+		info(f'Creating user {user.username}')
 
-		if not handled_by_plugin:
-			info(f'Creating user {user.username}')
+		cmd = 'useradd -m'
 
-			cmd = 'useradd -m'
+		if user.sudo:
+			cmd += ' -G wheel'
 
-			if user.sudo:
-				cmd += ' -G wheel'
+		cmd += f' {user.username}'
 
-			cmd += f' {user.username}'
-
-			try:
-				self.arch_chroot(cmd)
-			except SysCallError as err:
-				raise SystemError(f'Could not create user inside installation: {err}')
-
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_user_created'):
-				if result := plugin.on_user_created(self, user):
-					handled_by_plugin = result
+		try:
+			self.arch_chroot(cmd)
+		except SysCallError as err:
+			raise SystemError(f'Could not create user inside installation: {err}')
 
 		self.set_user_password(user)
 
