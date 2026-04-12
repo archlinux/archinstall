@@ -2,7 +2,7 @@ import builtins
 import math
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import Enum, StrEnum, auto
 from pathlib import Path
 from typing import NotRequired, Self, TypedDict, override
 from uuid import UUID
@@ -131,9 +131,14 @@ class DiskLayoutConfiguration:
 			for partition in entry.get('partitions', []):
 				flags = [flag for f in partition.get('flags', []) if (flag := PartitionFlag.from_string(f))]
 
+				if fs_type := partition.get('fs_type'):
+					fs_type = FilesystemType(fs_type)
+				else:
+					fs_type = None
+
 				device_partition = PartitionModification(
 					status=ModificationStatus(partition['status']),
-					fs_type=FilesystemType(partition['fs_type']) if partition.get('fs_type') else None,
+					fs_type=fs_type,
 					start=Size.parse_args(partition['start']),
 					length=Size.parse_args(partition['size']),
 					mount_options=partition['mount_options'],
@@ -777,17 +782,17 @@ class PartitionGUID(Enum):
 		return uuid.UUID(self.value).bytes
 
 
-class FilesystemType(Enum):
-	BTRFS = 'btrfs'
-	EXT2 = 'ext2'
-	EXT3 = 'ext3'
-	EXT4 = 'ext4'
-	F2FS = 'f2fs'
-	FAT12 = 'fat12'
-	FAT16 = 'fat16'
-	FAT32 = 'fat32'
-	NTFS = 'ntfs'
-	XFS = 'xfs'
+class FilesystemType(StrEnum):
+	BTRFS = auto()
+	EXT2 = auto()
+	EXT3 = auto()
+	EXT4 = auto()
+	F2FS = auto()
+	FAT12 = auto()
+	FAT16 = auto()
+	FAT32 = auto()
+	NTFS = auto()
+	XFS = auto()
 	LINUX_SWAP = 'linux-swap'
 
 	# this is not a FS known to parted, so be careful
