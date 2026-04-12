@@ -39,11 +39,9 @@ def show_menu(
 		arch_config_handler.config,
 		mirror_list_handler,
 		arch_config_handler.args.skip_boot,
+		advanced=arch_config_handler.args.advanced,
 		title=title_text,
 	)
-
-	if not arch_config_handler.args.advanced:
-		global_menu.set_enabled('pacman_config', False)
 
 	result: ArchConfig | None = tui.run(global_menu)
 	if result is None:

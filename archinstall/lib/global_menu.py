@@ -40,11 +40,13 @@ class GlobalMenu(AbstractMenu[None]):
 		arch_config: ArchConfig,
 		mirror_list_handler: MirrorListHandler | None = None,
 		skip_boot: bool = False,
+		advanced: bool = False,
 		title: str | None = None,
 	) -> None:
 		self._arch_config = arch_config
 		self._mirror_list_handler = mirror_list_handler
 		self._skip_boot = skip_boot
+		self._advanced = advanced
 		self._uefi = SysInfo.has_uefi()
 		menu_options = self._get_menu_options()
 
@@ -416,13 +418,17 @@ class GlobalMenu(AbstractMenu[None]):
 		return None
 
 	async def _pacman_configuration(self, preset: PacmanConfiguration) -> PacmanConfiguration | None:
-		return await PacmanMenu(preset).show()
+		return await PacmanMenu(preset, advanced=self._advanced).show()
 
 	def _prev_pacman_config(self, item: MenuItem) -> str | None:
 		if not item.value:
 			return None
 		config: PacmanConfiguration = item.value
-		return config.preview()
+		output = ''
+		if self._advanced:
+			output += '{}: {}\n'.format(tr('Parallel Downloads'), config.parallel_downloads)
+		output += '{}: {}'.format(tr('Color'), config.color)
+		return output
 
 	def _prev_kernel(self, item: MenuItem) -> str | None:
 		if item.value:
