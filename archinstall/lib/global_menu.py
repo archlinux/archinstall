@@ -474,11 +474,11 @@ class GlobalMenu(AbstractMenu[None]):
 			if efi_partition is None:
 				return 'EFI system partition (ESP) not found'
 
-			if efi_partition.fs_type not in [FilesystemType.Fat12, FilesystemType.Fat16, FilesystemType.Fat32]:
+			if efi_partition.fs_type not in [FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32]:
 				return 'ESP must be formatted as a FAT filesystem'
 
 		if bootloader == Bootloader.Limine:
-			if boot_partition.fs_type not in [FilesystemType.Fat12, FilesystemType.Fat16, FilesystemType.Fat32]:
+			if boot_partition.fs_type not in [FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32]:
 				return 'Limine does not support booting with a non-FAT boot partition'
 
 		elif bootloader == Bootloader.Refind:
