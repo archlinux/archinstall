@@ -6,12 +6,13 @@ from archinstall.lib.models import MirrorRegion
 from archinstall.lib.models.mirrors import MirrorStatusEntryV3, MirrorStatusListV3
 from archinstall.lib.networking import fetch_data_from_url
 from archinstall.lib.output import debug, info
+from archinstall.lib.pathnames import MIRRORLIST
 
 
 class MirrorListHandler:
 	def __init__(
 		self,
-		local_mirrorlist: Path = Path('/etc/pacman.d/mirrorlist'),
+		local_mirrorlist: Path = MIRRORLIST,
 		offline: bool = False,
 		verbose: bool = False,
 	) -> None:

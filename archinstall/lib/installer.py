@@ -53,7 +53,7 @@ from archinstall.lib.output import debug, error, info, log, logger, warn
 from archinstall.lib.packages.packages import installed_package
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman import Pacman
-from archinstall.lib.pathnames import PACMAN_CONF
+from archinstall.lib.pathnames import MIRRORLIST, PACMAN_CONF
 from archinstall.lib.plugins import plugins
 from archinstall.lib.translationhandler import tr
 
@@ -565,9 +565,12 @@ class Installer:
 				if result := plugin.on_mirrors(mirror_config):
 					mirror_config = result
 
-		root = self.target if on_target else Path('/')
-		mirrorlist_config = root / 'etc/pacman.d/mirrorlist'
-		pacman_config = root / PACMAN_CONF.relative_to_root()
+		if on_target:
+			mirrorlist_config = self.target / MIRRORLIST.relative_to_root()
+			pacman_config = self.target / PACMAN_CONF.relative_to_root()
+		else:
+			mirrorlist_config = MIRRORLIST
+			pacman_config = PACMAN_CONF
 
 		repositories_config = mirror_config.repositories_config()
 		if repositories_config:
