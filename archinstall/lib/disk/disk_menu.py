@@ -515,10 +515,10 @@ def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModifi
 
 async def select_main_filesystem_format() -> FilesystemType:
 	items = [
-		MenuItem('btrfs', value=FilesystemType.BTRFS),
-		MenuItem('ext4', value=FilesystemType.EXT4),
-		MenuItem('xfs', value=FilesystemType.XFS),
-		MenuItem('f2fs', value=FilesystemType.F2FS),
+		MenuItem(FilesystemType.BTRFS.value, value=FilesystemType.BTRFS),
+		MenuItem(FilesystemType.EXT4.value, value=FilesystemType.EXT4),
+		MenuItem(FilesystemType.XFS.value, value=FilesystemType.XFS),
+		MenuItem(FilesystemType.F2FS.value, value=FilesystemType.F2FS),
 	]
 
 	group = MenuItemGroup(items, sort_items=False)
