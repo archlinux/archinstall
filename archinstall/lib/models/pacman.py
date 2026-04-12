@@ -1,7 +1,12 @@
 from dataclasses import dataclass
-from typing import Any, Self
+from typing import Self, TypedDict
 
 from archinstall.lib.translationhandler import tr
+
+
+class PacmanConfigSerialization(TypedDict):
+	parallel_downloads: int
+	color: bool
 
 
 @dataclass
@@ -13,7 +18,7 @@ class PacmanConfiguration:
 	def default(cls) -> Self:
 		return cls()
 
-	def json(self) -> dict[str, Any]:
+	def json(self) -> PacmanConfigSerialization:
 		return {
 			'parallel_downloads': self.parallel_downloads,
 			'color': self.color,
@@ -26,7 +31,7 @@ class PacmanConfiguration:
 		return output
 
 	@classmethod
-	def parse_arg(cls, args: dict[str, Any]) -> Self:
+	def parse_arg(cls, args: PacmanConfigSerialization) -> Self:
 		config = cls.default()
 
 		if 'parallel_downloads' in args:
