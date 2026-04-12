@@ -1,6 +1,7 @@
 import base64
 import ctypes
 import os
+from ctypes.util import find_library
 from pathlib import Path
 
 from cryptography.fernet import Fernet, InvalidToken
@@ -8,7 +9,13 @@ from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
 
 from archinstall.lib.output import debug
 
-libcrypt = ctypes.CDLL('libcrypt.so')
+libcrypt_name = find_library('crypt') or 'libcrypt.so'
+try:
+	libcrypt = ctypes.CDLL(libcrypt_name)
+except OSError as exc:
+	raise ImportError(
+		'Could not load system libcrypt library; make sure libcrypt is installed and accessible.'
+	) from exc
 
 libcrypt.crypt.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
 libcrypt.crypt.restype = ctypes.c_char_p
