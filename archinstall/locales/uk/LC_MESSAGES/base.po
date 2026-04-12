@@ -1887,6 +1887,9 @@ msgstr "Додаткові шрифти"
 msgid "Select font packages to install"
 msgstr "Оберіть пакети шрифтів для встановлення"
 
+msgid "Unicode font coverage for most languages"
+msgstr "покриття шрифтами Unicode для більшості мов"
+
 msgid "color emoji for browsers and apps"
 msgstr "кольорові емодзі для браузерів та програм"
 

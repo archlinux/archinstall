@@ -1946,6 +1946,9 @@ msgstr ""
 msgid "Select font packages to install"
 msgstr ""
 
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
 msgid "color emoji for browsers and apps"
 msgstr ""
 

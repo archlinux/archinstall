@@ -40,6 +40,7 @@ class FirewallConfigSerialization(TypedDict):
 
 
 class FontPackage(StrEnum):
+	NOTO = 'noto-fonts'
 	EMOJI = 'noto-fonts-emoji'
 	CJK = 'noto-fonts-cjk'
 
