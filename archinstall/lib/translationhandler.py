@@ -58,7 +58,7 @@ def _set_console_font(font_name: str | None) -> bool:
 		return False
 
 
-def _save_console_font() -> None:
+def save_console_font() -> None:
 	"""Save the current console font (with unicode map) and console map to temp files."""
 	try:
 		font_fd, font_path = tempfile.mkstemp(prefix='archinstall_font_')
@@ -74,7 +74,7 @@ def _save_console_font() -> None:
 		translation_handler._cmap_backup = None
 
 
-def _restore_console_font() -> None:
+def restore_console_font() -> None:
 	"""Restore console font (with unicode map) and console map from backup."""
 	if translation_handler._font_backup is None or not translation_handler._font_backup.exists():
 		return
@@ -208,6 +208,26 @@ class TranslationHandler:
 
 		if set_font and not self._using_env_font:
 			_set_console_font(language.console_font)
+
+	def apply_console_font(self) -> None:
+		"""Apply console font from FONT env var or active language mapping.
+
+		If FONT env var is set and valid, use it and skip language mapping.
+		If FONT is set but invalid, fall back to language font.
+		If FONT is not set, use active language font.
+		"""
+		if _ENV_FONT:
+			if _set_console_font(_ENV_FONT):
+				self._using_env_font = True
+				debug(f'Console font set from FONT env var: {_ENV_FONT}')
+			else:
+				debug(f'FONT={_ENV_FONT} could not be set, falling back to language font mapping')
+				if self.active_font:
+					_set_console_font(self.active_font)
+					debug(f'Console font set from language mapping: {self.active_font}')
+		elif self.active_font:
+			_set_console_font(self.active_font)
+			debug(f'Console font set from language mapping: {self.active_font}')
 
 	def _get_locales_dir(self) -> Path:
 		"""
