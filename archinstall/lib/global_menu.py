@@ -30,6 +30,7 @@ from archinstall.lib.packages.packages import list_available_packages, select_ad
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.tui.ui.components import tui
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
 
@@ -276,6 +277,8 @@ class GlobalMenu(AbstractMenu[None]):
 		for o in new_options:
 			if o.key is not None:
 				self._item_group.find_by_key(o.key).text = o.text
+
+		tui.translate_bindings()
 
 	async def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration | None:
 		locale_config = await LocaleMenu(preset).show()

@@ -5,7 +5,7 @@ from typing import Any, NotRequired, Self, TypedDict
 
 class PowerManagement(StrEnum):
 	POWER_PROFILES_DAEMON = 'power-profiles-daemon'
-	TUNED = 'tuned'
+	TUNED = auto()
 
 
 class PowerManagementConfigSerialization(TypedDict):
@@ -31,7 +31,7 @@ class PrintServiceConfigSerialization(TypedDict):
 
 
 class Firewall(StrEnum):
-	UFW = 'ufw'
+	UFW = auto()
 	FWD = 'firewalld'
 
 
@@ -40,11 +40,11 @@ class FirewallConfigSerialization(TypedDict):
 
 
 class ZramAlgorithm(StrEnum):
-	ZSTD = 'zstd'
+	ZSTD = auto()
 	LZO_RLE = 'lzo-rle'
-	LZO = 'lzo'
-	LZ4 = 'lz4'
-	LZ4HC = 'lz4hc'
+	LZO = auto()
+	LZ4 = auto()
+	LZ4HC = auto()
 
 
 class ApplicationSerialization(TypedDict):
