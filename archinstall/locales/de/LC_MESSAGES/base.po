@@ -299,7 +299,7 @@ msgid "Automatic time sync (NTP)"
 msgstr "Automatische Zeitsynchronisierung (NTP)"
 
 msgid "Install ({} config(s) missing)"
-msgstr "Installieren ({} Konfiguration(en) ausständig)"
+msgstr "Installieren ({} Konfiguration(en) ausstehend)"
 
 msgid ""
 "You decided to skip harddrive selection\n"
@@ -867,7 +867,7 @@ msgstr "Konnte Profil nicht von der angegebenen URL holen: {}"
 
 #, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr "Profile müssen einen eindeutige Namen haben, aber Profildefinition mit gleichem Namen gefunden: {}"
+msgstr "Profile müssen einen eindeutigen Namen haben, aber Profildefinition mit gleichem Namen gefunden: {}"
 
 msgid "Select one or more devices to use and configure"
 msgstr "Wählen Sie ein oder mehrere Gerät(e) aus, die konfiguriert und verwendet werden sollen"
@@ -1050,7 +1050,7 @@ msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that
 msgstr "Der proprietäre Nvidia-Treiber wird von Sway nicht unterstützt. Es ist wahrscheinlich, dass Fehler auftreten werden, trotzdem fortfahren?"
 
 msgid "Installed packages"
-msgstr "Installiere Pakete"
+msgstr "Installierte Pakete"
 
 msgid "Add profile"
 msgstr "Profil hinzufügen"
@@ -1085,7 +1085,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Wählen sie einen Grafiktreiber aus oder leer lassen um alle quelloffenen Treiber zu installieren"
+"Wählen Sie einen Grafiktreiber aus oder leer lassen, um alle quelloffenen Treiber zu installieren"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Sway benötigt Zugriff auf ihren Seat (Sammlung von Hardwaregeräten wie Tastatur, Maus, usw.)"
@@ -1480,7 +1480,7 @@ msgid "Confirm password"
 msgstr "Passwort bestätigen"
 
 msgid "The confirmation password did not match, please try again"
-msgstr "Das Passwort stimmt nicht überein, bitte versuche es erneut"
+msgstr "Das Passwort stimmt nicht überein, bitte versuchen Sie es erneut"
 
 msgid "Not a valid directory"
 msgstr "Ungültiges Verzeichnis"
@@ -1559,7 +1559,7 @@ msgid "Some packages could not be found in the repository"
 msgstr "Einige Pakete konnten nicht in den Repositorien gefunden werden"
 
 msgid "User"
-msgstr "Benutzername"
+msgstr "Benutzer"
 
 msgid "The specified configuration will be applied"
 msgstr "Die festgelegte Konfiguration wird angewendet"
@@ -1870,10 +1870,10 @@ msgid "Print service"
 msgstr "Drucker-Service"
 
 msgid "Would you like to configure the print service?"
-msgstr "Möchten Sie Bluetooth aktivieren?"
+msgstr "Möchten Sie den Drucker-Service konfigurieren?"
 
 msgid "Power management"
-msgstr "Partitionsverwaltung: {}"
+msgstr "Energieverwaltung"
 
 msgid "Authentication"
 msgstr "Authentifizierung"
@@ -1927,28 +1927,28 @@ msgid "Starting device modifications in "
 msgstr "Starte Geräteänderungen in "
 
 msgid "No network connection found"
-msgstr "Keine Netzwerkkonfiguration"
+msgstr "Keine Netzwerkverbindung gefunden"
 
 msgid "Would you like to connect to a Wifi?"
-msgstr "Möchten Sie fortfahren?"
+msgstr "Möchten Sie sich mit einem WLAN verbinden?"
 
 msgid "No wifi interface found"
-msgstr "Schnittstellen konfigurieren"
+msgstr "Kein WLAN-Interface gefunden"
 
 msgid "Select wifi network to connect to"
-msgstr "Wählen Sie einen Netzwerkadapter zur Konfiguration aus"
+msgstr "WLAN-Netzwerk zum Verbinden auswählen"
 
 msgid "Scanning wifi networks..."
 msgstr "Suche nach WLAN-Netzwerken..."
 
 msgid "No wifi networks found"
-msgstr "Keine Netzwerkkonfiguration"
+msgstr "Keine WLAN-Netzwerke gefunden"
 
 msgid "Failed setting up wifi"
 msgstr "WLAN-Einrichtung fehlgeschlagen."
 
 msgid "Enter wifi password"
-msgstr "Passwort eingeben: "
+msgstr "WLAN-Passwort eingeben"
 
 msgid "Ok"
 msgstr "Ok"
@@ -1999,10 +1999,10 @@ msgid "Compression algorithm"
 msgstr "Komprimierungsalgorithmus"
 
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Nur Pakete wie base, base-devel, linux, linux-firmware, efibootmgr und optionale Profilpakete werden installiert."
+msgstr "Nur Pakete wie base, sudo, linux, linux-firmware, efibootmgr und optionale Profilpakete werden installiert."
 
 msgid "Select zram compression algorithm:"
-msgstr "Wählen Sie einen Einhängeort aus:"
+msgstr "Zram-Komprimierungsalgorithmus auswählen:"
 
 msgid "Use Network Manager (default backend)"
 msgstr "NetworkManager verwenden (Standard-Backend)"
@@ -2120,7 +2120,7 @@ msgid "Enter a password"
 msgstr "Passwort eingeben: "
 
 msgid "The password did not match, please try again"
-msgstr "Das Passwort stimmt nicht überein, bitte versuche es erneut"
+msgstr "Das Passwort stimmt nicht überein, bitte versuchen Sie es erneut"
 
 msgid "Password strength: Weak"
 msgstr "Passwortstärke: Schwach"
