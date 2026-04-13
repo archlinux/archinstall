@@ -23,7 +23,6 @@ from archinstall.lib.models.device import (
 	LvmLayoutType,
 	LvmVolume,
 	LvmVolumeGroup,
-	LvmVolumeStatus,
 	ModificationStatus,
 	PartitionFlag,
 	PartitionModification,
@@ -851,7 +850,7 @@ async def suggest_lvm_layout(
 	lvm_vol_group = LvmVolumeGroup(vg_grp_name, pvs=other_part)
 
 	root_vol = LvmVolume(
-		status=LvmVolumeStatus.Create,
+		status=ModificationStatus.CREATE,
 		name='root',
 		fs_type=filesystem_type,
 		length=root_vol_size,
@@ -864,7 +863,7 @@ async def suggest_lvm_layout(
 
 	if home_volume:
 		home_vol = LvmVolume(
-			status=LvmVolumeStatus.Create,
+			status=ModificationStatus.CREATE,
 			name='home',
 			fs_type=filesystem_type,
 			length=home_vol_size,

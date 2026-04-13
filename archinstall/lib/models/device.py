@@ -1088,13 +1088,6 @@ class LvmVolumeGroup:
 		return lv in self.volumes
 
 
-class LvmVolumeStatus(Enum):
-	Exist = 'existing'
-	Modify = 'modify'
-	Delete = 'delete'
-	Create = 'create'
-
-
 class _LvmVolumeSerialization(TypedDict):
 	obj_id: str
 	status: str
@@ -1108,7 +1101,7 @@ class _LvmVolumeSerialization(TypedDict):
 
 @dataclass
 class LvmVolume:
-	status: LvmVolumeStatus
+	status: ModificationStatus
 	name: str
 	fs_type: FilesystemType
 	length: Size
@@ -1177,7 +1170,7 @@ class LvmVolume:
 	@classmethod
 	def parse_arg(cls, arg: _LvmVolumeSerialization) -> Self:
 		volume = cls(
-			status=LvmVolumeStatus(arg['status']),
+			status=ModificationStatus(arg['status']),
 			name=arg['name'],
 			fs_type=FilesystemType(arg['fs_type']),
 			length=Size.parse_args(arg['length']),
@@ -1215,13 +1208,13 @@ class LvmVolume:
 		return part_mod
 
 	def is_modify(self) -> bool:
-		return self.status == LvmVolumeStatus.Modify
+		return self.status == ModificationStatus.MODIFY
 
 	def exists(self) -> bool:
-		return self.status == LvmVolumeStatus.Exist
+		return self.status == ModificationStatus.EXIST
 
 	def is_exists_or_modify(self) -> bool:
-		return self.status in [LvmVolumeStatus.Exist, LvmVolumeStatus.Modify]
+		return self.status in [ModificationStatus.EXIST, ModificationStatus.MODIFY]
 
 	def is_root(self) -> bool:
 		if self.mountpoint is not None:
