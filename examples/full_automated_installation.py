@@ -37,7 +37,7 @@ device_modification = DeviceModification(device, wipe=True)
 
 # create a new boot partition
 boot_partition = PartitionModification(
-	status=ModificationStatus.Create,
+	status=ModificationStatus.CREATE,
 	type=PartitionType.Primary,
 	start=Size(1, Unit.MiB, device.device_info.sector_size),
 	length=Size(512, Unit.MiB, device.device_info.sector_size),
@@ -49,7 +49,7 @@ device_modification.add_partition(boot_partition)
 
 # create a root partition
 root_partition = PartitionModification(
-	status=ModificationStatus.Create,
+	status=ModificationStatus.CREATE,
 	type=PartitionType.Primary,
 	start=Size(513, Unit.MiB, device.device_info.sector_size),
 	length=Size(20, Unit.GiB, device.device_info.sector_size),
@@ -64,7 +64,7 @@ length_home = device.device_info.total_size - start_home
 
 # create a new home partition
 home_partition = PartitionModification(
-	status=ModificationStatus.Create,
+	status=ModificationStatus.CREATE,
 	type=PartitionType.Primary,
 	start=start_home,
 	length=length_home,

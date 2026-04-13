@@ -503,7 +503,7 @@ def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModifi
 
 	# boot partition
 	return PartitionModification(
-		status=ModificationStatus.Create,
+		status=ModificationStatus.CREATE,
 		type=PartitionType.Primary,
 		start=start,
 		length=size,
@@ -655,7 +655,7 @@ async def suggest_single_disk_layout(
 		root_length = available_space - root_start
 
 	root_partition = PartitionModification(
-		status=ModificationStatus.Create,
+		status=ModificationStatus.CREATE,
 		type=PartitionType.Primary,
 		start=root_start,
 		length=root_length,
@@ -680,7 +680,7 @@ async def suggest_single_disk_layout(
 			flags.append(PartitionFlag.LINUX_HOME)
 
 		home_partition = PartitionModification(
-			status=ModificationStatus.Create,
+			status=ModificationStatus.CREATE,
 			type=PartitionType.Primary,
 			start=home_start,
 			length=home_length,
@@ -765,7 +765,7 @@ async def suggest_multi_disk_layout(
 
 	# add root partition to the root device
 	root_partition = PartitionModification(
-		status=ModificationStatus.Create,
+		status=ModificationStatus.CREATE,
 		type=PartitionType.Primary,
 		start=root_start,
 		length=root_length,
@@ -787,7 +787,7 @@ async def suggest_multi_disk_layout(
 
 	# add home partition to home device
 	home_partition = PartitionModification(
-		status=ModificationStatus.Create,
+		status=ModificationStatus.CREATE,
 		type=PartitionType.Primary,
 		start=home_start,
 		length=home_length,
