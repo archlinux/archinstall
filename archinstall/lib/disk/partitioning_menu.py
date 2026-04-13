@@ -255,7 +255,7 @@ class PartitioningList(ListManager[DiskSegment]):
 				]
 
 			# non btrfs partitions shouldn't get btrfs options
-			if selection.segment.fs_type != FilesystemType.Btrfs:
+			if selection.segment.fs_type != FilesystemType.BTRFS:
 				not_filter += [
 					self._actions['btrfs_mark_compressed'],
 					self._actions['btrfs_mark_nodatacow'],
@@ -332,7 +332,7 @@ class PartitioningList(ListManager[DiskSegment]):
 						partition.flags = []
 						partition.set_flag(PartitionFlag.SWAP)
 					# btrfs subvolumes will define mountpoints
-					if fs_type == FilesystemType.Btrfs:
+					if fs_type == FilesystemType.BTRFS:
 						partition.mountpoint = None
 				case 'btrfs_mark_compressed':
 					self._toggle_mount_option(partition, BtrfsMountOption.compress)
@@ -399,12 +399,12 @@ class PartitioningList(ListManager[DiskSegment]):
 		# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
 		# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
 		# it's safe to change the filesystem for this partition.
-		if partition.fs_type == FilesystemType.Crypto_luks:
+		if partition.fs_type == FilesystemType.CRYPTO_LUKS:
 			prompt = tr('This partition is currently encrypted, to format it a filesystem has to be specified') + '\n'
 			fs_type = await self._prompt_partition_fs_type(prompt)
 			partition.fs_type = fs_type
 
-			if fs_type == FilesystemType.Btrfs:
+			if fs_type == FilesystemType.BTRFS:
 				partition.mountpoint = None
 
 	async def _prompt_mountpoint(self) -> Path:
@@ -417,7 +417,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		return mountpoint
 
 	async def _prompt_partition_fs_type(self, prompt: str | None = None) -> FilesystemType:
-		fs_types = filter(lambda fs: fs != FilesystemType.Crypto_luks, FilesystemType)
+		fs_types = filter(lambda fs: fs != FilesystemType.CRYPTO_LUKS, FilesystemType)
 		items = [MenuItem(fs.value, value=fs) for fs in fs_types]
 		group = MenuItemGroup(items, sort_items=False)
 
@@ -522,7 +522,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		fs_type = await self._prompt_partition_fs_type()
 
 		mountpoint = None
-		if fs_type not in (FilesystemType.Btrfs, FilesystemType.LinuxSwap):
+		if fs_type not in (FilesystemType.BTRFS, FilesystemType.LINUX_SWAP):
 			mountpoint = await self._prompt_mountpoint()
 
 		partition = PartitionModification(

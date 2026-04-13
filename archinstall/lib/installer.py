@@ -369,7 +369,7 @@ class Installer:
 		if part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
 			mount(part_mod.dev_path, target, options=part_mod.mount_options)
-		elif part_mod.fs_type == FilesystemType.Btrfs:
+		elif part_mod.fs_type == FilesystemType.BTRFS:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
 			if subvols_with_mountpoints:
@@ -382,12 +382,12 @@ class Installer:
 			swapon(part_mod.dev_path)
 
 	def _mount_lvm_vol(self, volume: LvmVolume) -> None:
-		if volume.fs_type != FilesystemType.Btrfs:
+		if volume.fs_type != FilesystemType.BTRFS:
 			if volume.mountpoint and volume.dev_path:
 				target = self.target / volume.relative_mountpoint
 				mount(volume.dev_path, target, options=volume.mount_options)
 
-		if volume.fs_type == FilesystemType.Btrfs and volume.dev_path:
+		if volume.fs_type == FilesystemType.BTRFS and volume.dev_path:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in volume.btrfs_subvols if sv.mountpoint is not None]
 			if subvols_with_mountpoints:
@@ -397,7 +397,7 @@ class Installer:
 		if not luks_handler.mapper_dev:
 			return None
 
-		if part_mod.fs_type == FilesystemType.Btrfs and part_mod.btrfs_subvols:
+		if part_mod.fs_type == FilesystemType.BTRFS and part_mod.btrfs_subvols:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
 			if subvols_with_mountpoints:
@@ -407,12 +407,12 @@ class Installer:
 			mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
 	def _mount_luks_volume(self, volume: LvmVolume, luks_handler: Luks2) -> None:
-		if volume.fs_type != FilesystemType.Btrfs:
+		if volume.fs_type != FilesystemType.BTRFS:
 			if volume.mountpoint and luks_handler.mapper_dev:
 				target = self.target / volume.relative_mountpoint
 				mount(luks_handler.mapper_dev, target, options=volume.mount_options)
 
-		if volume.fs_type == FilesystemType.Btrfs and luks_handler.mapper_dev:
+		if volume.fs_type == FilesystemType.BTRFS and luks_handler.mapper_dev:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in volume.btrfs_subvols if sv.mountpoint is not None]
 			if subvols_with_mountpoints:
@@ -867,7 +867,7 @@ class Installer:
 			self._base_packages.append(pkg)
 
 		# https://github.com/archlinux/archinstall/issues/1837
-		if fs_type == FilesystemType.Btrfs:
+		if fs_type == FilesystemType.BTRFS:
 			self._disable_fstrim = True
 
 	def _prepare_encrypt(self, before: str = 'filesystems') -> None:

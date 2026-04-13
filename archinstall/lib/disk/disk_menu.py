@@ -508,17 +508,17 @@ def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModifi
 		start=start,
 		length=size,
 		mountpoint=Path('/boot'),
-		fs_type=FilesystemType.Fat32,
+		fs_type=FilesystemType.FAT32,
 		flags=flags,
 	)
 
 
 async def select_main_filesystem_format() -> FilesystemType:
 	items = [
-		MenuItem('btrfs', value=FilesystemType.Btrfs),
-		MenuItem('ext4', value=FilesystemType.Ext4),
-		MenuItem('xfs', value=FilesystemType.Xfs),
-		MenuItem('f2fs', value=FilesystemType.F2fs),
+		MenuItem(FilesystemType.BTRFS.value, value=FilesystemType.BTRFS),
+		MenuItem(FilesystemType.EXT4.value, value=FilesystemType.EXT4),
+		MenuItem(FilesystemType.XFS.value, value=FilesystemType.XFS),
+		MenuItem(FilesystemType.F2FS.value, value=FilesystemType.F2FS),
 	]
 
 	group = MenuItemGroup(items, sort_items=False)
@@ -601,7 +601,7 @@ async def suggest_single_disk_layout(
 	available_space = total_size
 	min_size_to_allow_home_part = Size(64, Unit.GiB, sector_size)
 
-	if filesystem_type == FilesystemType.Btrfs:
+	if filesystem_type == FilesystemType.BTRFS:
 		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
 
 		result = await Confirmation(
@@ -734,7 +734,7 @@ async def suggest_multi_disk_layout(
 		_ = await Notify(text).show()
 		return []
 
-	if filesystem_type == FilesystemType.Btrfs:
+	if filesystem_type == FilesystemType.BTRFS:
 		mount_options = await select_mount_options()
 
 	device_paths = ', '.join(str(d.device_info.path) for d in devices)
@@ -817,7 +817,7 @@ async def suggest_lvm_layout(
 	if not filesystem_type:
 		filesystem_type = await select_main_filesystem_format()
 
-	if filesystem_type == FilesystemType.Btrfs:
+	if filesystem_type == FilesystemType.BTRFS:
 		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
 		result = await Confirmation(header=prompt, allow_skip=False, preset=True).show()
 

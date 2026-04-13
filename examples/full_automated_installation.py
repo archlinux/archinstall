@@ -42,7 +42,7 @@ boot_partition = PartitionModification(
 	start=Size(1, Unit.MiB, device.device_info.sector_size),
 	length=Size(512, Unit.MiB, device.device_info.sector_size),
 	mountpoint=Path('/boot'),
-	fs_type=FilesystemType.Fat32,
+	fs_type=FilesystemType.FAT32,
 	flags=[PartitionFlag.BOOT],
 )
 device_modification.add_partition(boot_partition)

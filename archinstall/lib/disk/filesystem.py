@@ -70,7 +70,7 @@ class FilesystemHandler:
 				self._format_partitions(mod.partitions)
 
 				for part_mod in mod.partitions:
-					if part_mod.fs_type == FilesystemType.Btrfs and part_mod.is_create_or_modify():
+					if part_mod.fs_type == FilesystemType.BTRFS and part_mod.is_create_or_modify():
 						device_handler.create_btrfs_volumes(part_mod, enc_conf=self._enc_config)
 
 	def _format_partitions(
@@ -113,7 +113,7 @@ class FilesystemHandler:
 			# verify that all partitions have a path set (which implies that they have been created)
 			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
 			# crypto luks is not a valid file system type
-			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError('Crypto luks cannot be set as a filesystem type'),
+			lambda x: x.fs_type is FilesystemType.CRYPTO_LUKS: ValueError('Crypto luks cannot be set as a filesystem type'),
 			# file system type must be set
 			lambda x: x.fs_type is None: ValueError('File system type must be set for modification'),
 		}
@@ -230,7 +230,7 @@ class FilesystemHandler:
 			# find the mapper device yet
 			device_handler.format(vol.fs_type, path)
 
-			if vol.fs_type == FilesystemType.Btrfs:
+			if vol.fs_type == FilesystemType.BTRFS:
 				device_handler.create_lvm_btrfs_subvolumes(path, vol.btrfs_subvols, vol.mount_options)
 
 	def _lvm_create_pvs(
@@ -318,7 +318,7 @@ class FilesystemHandler:
 		# from arch wiki:
 		# If a logical volume will be formatted with ext4, leave at least 256 MiB
 		# free space in the volume group to allow using e2scrub
-		if any([vol.fs_type == FilesystemType.Ext4 for vol in vol_gp.volumes]):
+		if any([vol.fs_type == FilesystemType.EXT4 for vol in vol_gp.volumes]):
 			largest_vol = max(vol_gp.volumes, key=lambda x: x.length)
 
 			lvm_vol_reduce(

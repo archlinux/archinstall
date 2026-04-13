@@ -2,7 +2,7 @@ import builtins
 import math
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import Enum, StrEnum, auto
 from pathlib import Path
 from typing import NotRequired, Self, TypedDict, override
 from uuid import UUID
@@ -131,9 +131,14 @@ class DiskLayoutConfiguration:
 			for partition in entry.get('partitions', []):
 				flags = [flag for f in partition.get('flags', []) if (flag := PartitionFlag.from_string(f))]
 
+				if fs_type := partition.get('fs_type'):
+					fs_type = FilesystemType(fs_type)
+				else:
+					fs_type = None
+
 				device_partition = PartitionModification(
 					status=ModificationStatus(partition['status']),
-					fs_type=FilesystemType(partition['fs_type']) if partition.get('fs_type') else None,
+					fs_type=fs_type,
 					start=Size.parse_args(partition['start']),
 					length=Size.parse_args(partition['size']),
 					mount_options=partition['mount_options'],
@@ -200,7 +205,7 @@ class DiskLayoutConfiguration:
 	def has_default_btrfs_vols(self) -> bool:
 		for mod in self.device_modifications:
 			for part in mod.partitions:
-				if not (part.is_create_or_modify() and part.fs_type == FilesystemType.Btrfs):
+				if not (part.is_create_or_modify() and part.fs_type == FilesystemType.BTRFS):
 					continue
 
 				if any(subvol.is_default_root() for subvol in part.btrfs_subvols):
@@ -777,38 +782,38 @@ class PartitionGUID(Enum):
 		return uuid.UUID(self.value).bytes
 
 
-class FilesystemType(Enum):
-	Btrfs = 'btrfs'
-	Ext2 = 'ext2'
-	Ext3 = 'ext3'
-	Ext4 = 'ext4'
-	F2fs = 'f2fs'
-	Fat12 = 'fat12'
-	Fat16 = 'fat16'
-	Fat32 = 'fat32'
-	Ntfs = 'ntfs'
-	Xfs = 'xfs'
-	LinuxSwap = 'linux-swap'
+class FilesystemType(StrEnum):
+	BTRFS = auto()
+	EXT2 = auto()
+	EXT3 = auto()
+	EXT4 = auto()
+	F2FS = auto()
+	FAT12 = auto()
+	FAT16 = auto()
+	FAT32 = auto()
+	NTFS = auto()
+	XFS = auto()
+	LINUX_SWAP = 'linux-swap'
 
 	# this is not a FS known to parted, so be careful
 	# with the usage from this enum
-	Crypto_luks = 'crypto_LUKS'
+	CRYPTO_LUKS = 'crypto_LUKS'
 
 	def is_crypto(self) -> bool:
-		return self == FilesystemType.Crypto_luks
+		return self == FilesystemType.CRYPTO_LUKS
 
 	@property
 	def parted_value(self) -> str:
-		return self.value + '(v1)' if self == FilesystemType.LinuxSwap else self.value
+		return self.value + '(v1)' if self == FilesystemType.LINUX_SWAP else self.value
 
 	@property
 	def installation_pkg(self) -> str | None:
 		match self:
-			case FilesystemType.Btrfs:
+			case FilesystemType.BTRFS:
 				return 'btrfs-progs'
-			case FilesystemType.Xfs:
+			case FilesystemType.XFS:
 				return 'xfsprogs'
-			case FilesystemType.F2fs:
+			case FilesystemType.F2FS:
 				return 'f2fs-tools'
 			case _:
 				return None
@@ -953,7 +958,7 @@ class PartitionModification:
 		return False
 
 	def is_swap(self) -> bool:
-		return self.fs_type == FilesystemType.LinuxSwap
+		return self.fs_type == FilesystemType.LINUX_SWAP
 
 	def is_modify(self) -> bool:
 		return self.status == ModificationStatus.Modify
