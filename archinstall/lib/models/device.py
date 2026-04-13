@@ -819,11 +819,11 @@ class FilesystemType(StrEnum):
 				return None
 
 
-class ModificationStatus(Enum):
+class ModificationStatus(StrEnum):
 	EXIST = 'existing'
-	MODIFY = 'modify'
-	DELETE = 'delete'
-	CREATE = 'create'
+	MODIFY = auto()
+	DELETE = auto()
+	CREATE = auto()
 
 
 class _PartitionModificationSerialization(TypedDict):
