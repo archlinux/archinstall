@@ -824,6 +824,19 @@ msgstr "Ungültige Eingabe! Erneut mit gültiger Eingabe versuchen [1 bis {max_d
 msgid "Parallel Downloads"
 msgstr "Parallele Downloads"
 
+msgid "Pacman"
+msgstr "Pacman"
+
+msgid "Color"
+msgstr "Farbe"
+
+#, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "Anzahl paralleler Downloads eingeben (1-{})"
+
+msgid "Enable colored output for pacman"
+msgstr "Farbige Ausgabe für Pacman aktivieren"
+
 msgid "ESC to skip"
 msgstr "Drücken Sie ESC, um zu überspringen"
 
@@ -1665,6 +1678,123 @@ msgstr "Suchmodus starten"
 msgid "Exit search mode"
 msgstr "Suchmodus beenden"
 
+msgid "General"
+msgstr "Allgemein"
+
+msgid "Navigation"
+msgstr "Navigation"
+
+msgid "Selection"
+msgstr "Auswahl"
+
+msgid "Search"
+msgstr "Suchen"
+
+msgid "Down"
+msgstr "Runter"
+
+msgid "Up"
+msgstr "Hoch"
+
+msgid "Confirm"
+msgstr "Bestätigen und Schließen"
+
+msgid "Focus right"
+msgstr "Nach rechts bewegen"
+
+msgid "Focus left"
+msgstr "Nach links bewegen"
+
+msgid "Toggle"
+msgstr "Umschalten"
+
+msgid "Show/Hide help"
+msgstr "Hilfe anzeigen/ausblenden"
+
+msgid "Quit"
+msgstr "Beenden"
+
+msgid "First"
+msgstr "Erste"
+
+msgid "Last"
+msgstr "Letzte"
+
+msgid "Select"
+msgstr "Auswählen"
+
+msgid "Page Up"
+msgstr "Bild nach oben"
+
+msgid "Page Down"
+msgstr "Bild nach unten"
+
+msgid "Page up"
+msgstr "Bild nach oben"
+
+msgid "Page down"
+msgstr "Bild nach unten"
+
+msgid "Page Left"
+msgstr "Seite nach links"
+
+msgid "Page Right"
+msgstr "Seite nach rechts"
+
+msgid "Cursor up"
+msgstr "Cursor nach oben"
+
+msgid "Cursor down"
+msgstr "Cursor nach unten"
+
+msgid "Cursor right"
+msgstr "Cursor nach rechts"
+
+msgid "Cursor left"
+msgstr "Cursor nach links"
+
+msgid "Top"
+msgstr "Zum Anfang"
+
+msgid "Bottom"
+msgstr "Zum Ende"
+
+msgid "Home"
+msgstr "Pos1"
+
+msgid "End"
+msgstr "Ende"
+
+msgid "Toggle option"
+msgstr "Option umschalten"
+
+msgid "Scroll Up"
+msgstr "Nach oben scrollen"
+
+msgid "Scroll Down"
+msgstr "Nach unten scrollen"
+
+msgid "Scroll Left"
+msgstr "Nach links scrollen"
+
+msgid "Scroll Right"
+msgstr "Nach rechts scrollen"
+
+msgid "Scroll Home"
+msgstr "Zum Anfang scrollen"
+
+msgid "Scroll End"
+msgstr "Zum Ende scrollen"
+
+msgid "Focus Next"
+msgstr "Nächstes fokussieren"
+
+msgid "Focus Previous"
+msgstr "Vorheriges fokussieren"
+
+msgid "Copy selected text"
+msgstr "Ausgewählten Text kopieren"
+
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc benötigt Zugriff auf ihren Seat (Sammlung von Hardwaregeräten wie Tastatur, Maus, usw.)"
 
@@ -1794,7 +1924,7 @@ msgid "You may need to enter the PIN and then touch your U2F device to register 
 msgstr "Sie müssen möglicherweise Ihre PIN eingeben und danach Ihr U2F-Gerät berühren, um es zu registrieren"
 
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Starte Geräteänderungen in "
 
 msgid "No network connection found"
 msgstr "Keine Netzwerkkonfiguration"
@@ -1881,161 +2011,164 @@ msgid "Use Network Manager (iwd backend)"
 msgstr "NetworkManager verwenden (iwd-Backend)"
 
 msgid "Firewall"
-msgstr ""
+msgstr "Firewall"
 
-#, fuzzy
 msgid "Select audio configuration"
-msgstr "Benutzerkonfiguration speichern"
+msgstr "Audiokonfiguration auswählen"
 
-#, fuzzy
 msgid "Enter credentials file decryption password"
 msgstr "Passwort für die Entschlüsselung der Anmeldedaten-Datei"
 
-#, fuzzy
 msgid "Enter root password"
-msgstr "Passwort eingeben: "
+msgstr "Root-Passwort eingeben"
 
 msgid "Select bootloader to install"
-msgstr ""
+msgstr "Bootloader zur Installation auswählen"
 
-#, fuzzy
 msgid "Configuration preview"
-msgstr "Konfiguration"
+msgstr "Konfigurationsvorschau"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved"
-msgstr "Geben Sie einen Ordner an, in dem Konfigurationen gespeichert werden sollen: "
+msgstr "Verzeichnis für die zu speichernden Konfiguration(en) eingeben"
 
-#, fuzzy
 msgid "Select encryption type"
 msgstr "Verschlüsselungstyp"
 
-#, fuzzy
 msgid "Select disks for the installation"
-msgstr "Gewünschter Gerätename/Hostname für die Installation: "
+msgstr "Festplatten für die Installation auswählen"
 
-#, fuzzy
 msgid "Enter a mountpoint"
 msgstr "Wählen Sie einen Einhängeort aus:"
 
-#, fuzzy, python-brace-format
 msgid "Enter a size (default: {}): "
-msgstr "Geben Sie das Ende ein (Standard: {}): "
+msgstr "Größe eingeben (Standard: {}): "
 
-#, fuzzy
 msgid "Enter subvolume name"
 msgstr "Name des Subvolumes"
 
-#, fuzzy
 msgid "Enter subvolume mountpoint"
 msgstr "Subvolume-Einhängeort"
 
-#, fuzzy
 msgid "Select a disk configuration"
 msgstr "Laufwerkskonfiguration"
 
-#, fuzzy
 msgid "Enter root mount directory"
 msgstr "Einhängeverzeichnis der Root-Partition"
 
 msgid "You will use whatever drive-setup is mounted at the specified directory"
-msgstr ""
+msgstr "Es wird das Laufwerk-Setup verwendet, das im angegebenen Verzeichnis eingehängt ist"
 
 msgid "WARNING: Archinstall won't check the suitability of this setup"
-msgstr ""
+msgstr "WARNUNG: Archinstall überprüft die Eignung dieser Konfiguration nicht"
 
-#, fuzzy
 msgid "Select main filesystem"
-msgstr "Dateisystem ändern"
+msgstr "Hauptdateisystem auswählen"
 
 msgid "Enter a hostname"
-msgstr ""
+msgstr "Hostnamen eingeben"
 
-#, fuzzy
 msgid "Select timezone"
 msgstr "Wählen Sie eine Zeitzone aus"
 
-#, fuzzy
 msgid "Enter the number of parallel downloads to be enabled"
-msgstr ""
-"Geben Sie die Nummer an parallelen Downloads an.\n"
-"\n"
-"Achtung:\n"
+msgstr "Anzahl paralleler Downloads eingeben"
 
 #, python-brace-format
 msgid "Value must be between 1 and {}"
-msgstr ""
+msgstr "Der Wert muss zwischen 1 und {} liegen"
 
-#, fuzzy
 msgid "Select which kernel(s) to install"
-msgstr "Bitte den zu installierenden Greeter (Begrüßer/Anmeldebildschirm) auswählen"
+msgstr "Zu installierenden Kernel auswählen"
 
-#, fuzzy
 msgid "Enter a respository name"
 msgstr "Name des Repositoriums"
 
-#, fuzzy
 msgid "Enter the repository url"
-msgstr "Benutzerdefiniertes Repositorium bearbeiten"
+msgstr "Repository-URL eingeben"
 
-#, fuzzy
 msgid "Enter server url"
 msgstr "Server-URL"
 
-#, fuzzy
 msgid "Select mirror regions to be enabled"
-msgstr "Ausgewählte Spiegelserver-Regionen"
+msgstr "Zu aktivierende Spiegelserver-Regionen auswählen"
 
-#, fuzzy
 msgid "Select optional repositories to be enabled"
-msgstr "Wählen Sie aus, welche zusätzlichen Repositories verwendet werden sollen"
+msgstr "Optionale Repositorien auswählen"
 
-#, fuzzy
 msgid "Select an interface"
-msgstr "Verbindung löschen"
+msgstr "Netzwerkschnittstelle auswählen"
 
-#, fuzzy
 msgid "Choose network configuration"
-msgstr "Keine Netzwerkkonfiguration"
+msgstr "Netzwerkkonfiguration wählen"
 
-#, fuzzy
 msgid "No packages found"
-msgstr "Keine U2F-Geräte gefunden"
+msgstr "Keine Pakete gefunden"
 
-#, fuzzy
 msgid "Select which greeter to install"
-msgstr "Bitte den zu installierenden Greeter (Begrüßer/Anmeldebildschirm) auswählen"
+msgstr "Zu installierenden Greeter auswählen"
 
-#, fuzzy
 msgid "Select a profile type"
-msgstr "Ausgewählte Profile: "
+msgstr "Profiltyp auswählen"
 
-#, fuzzy
 msgid "Enter new password"
-msgstr "Passwort eingeben: "
+msgstr "Neues Passwort eingeben"
 
 msgid "Enter a username"
-msgstr ""
+msgstr "Benutzernamen eingeben"
 
-#, fuzzy
 msgid "Enter a password"
 msgstr "Passwort eingeben: "
 
-#, fuzzy
 msgid "The password did not match, please try again"
 msgstr "Das Passwort stimmt nicht überein, bitte versuche es erneut"
 
 msgid "Password strength: Weak"
-msgstr ""
+msgstr "Passwortstärke: Schwach"
 
 msgid "Password strength: Moderate"
-msgstr ""
+msgstr "Passwortstärke: Mittel"
 
 msgid "Password strength: Strong"
-msgstr ""
+msgstr "Passwortstärke: Stark"
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
-msgstr ""
+msgstr "Das ausgewählte Desktop-Profil erfordert einen regulären Benutzer zur Anmeldung über den Greeter"
+
+msgid "Environment type: {} {}"
+msgstr "Umgebungstyp: {} {}"
+
+msgid "Input cannot be empty"
+msgstr "Der Wert darf nicht leer sein"
+
+msgid "Recommended"
+msgstr "Empfohlen"
+
+msgid "Package"
+msgstr "Paket"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr "Kuratierte Auswahl an KDE-Plasma-Paketen"
+
+msgid "Dependencies"
+msgstr "Abhängigkeiten"
+
+msgid "Package group"
+msgstr "Paketgruppe"
+
+msgid "Extensive KDE Plasma installation"
+msgstr "Umfangreiche KDE-Plasma-Installation"
+
+msgid "Packages in group"
+msgstr "Pakete in der Gruppe"
+
+msgid "Minimal KDE Plasma installation"
+msgstr "Minimale KDE-Plasma-Installation"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "KDE-Plasma-Variante zur Installation auswählen"
 
 #~ msgid "All open-source"
 #~ msgstr "Alle quelloffene"
