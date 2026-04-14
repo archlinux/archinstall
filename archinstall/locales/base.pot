@@ -2304,3 +2304,159 @@ msgstr ""
 #, python-brace-format
 msgid "Choose an option how to give {} access to your hardware"
 msgstr ""
+
+#, python-brace-format
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr ""
+
+msgid "Do you want to continue?"
+msgstr ""
+
+#, python-brace-format
+msgid "Log uploaded successfully. URL: {}"
+msgstr ""
+
+msgid "Failed to upload log."
+msgstr ""
+
+msgid "ArchInstall Language"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+msgid "Installation Script"
+msgstr ""
+
+msgid "Application"
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid "Custom commands"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "Root encrypted password"
+msgstr ""
+
+msgid "Zram enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "Zram algorithm {}"
+msgstr ""
+
+msgid "Bluetooth enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "Audio server \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Power management \"{}\""
+msgstr ""
+
+msgid "Print service enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "Firewall \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Extra fonts \"{}\""
+msgstr ""
+
+msgid "Root password set"
+msgstr ""
+
+#, python-brace-format
+msgid "Configured {} user(s)"
+msgstr ""
+
+msgid "U2F set up"
+msgstr ""
+
+#, python-brace-format
+msgid "Bootloader \"{}\""
+msgstr ""
+
+msgid "UKI enabled"
+msgstr ""
+
+msgid "Default"
+msgstr ""
+
+msgid "Manual"
+msgstr ""
+
+msgid "Pre-mount"
+msgstr ""
+
+#, python-brace-format
+msgid "{} layout"
+msgstr ""
+
+#, python-brace-format
+msgid "Devices {}"
+msgstr ""
+
+msgid "LVM set up"
+msgstr ""
+
+#, python-brace-format
+msgid "{} encryption"
+msgstr ""
+
+#, python-brace-format
+msgid "Btrfs snapshot \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Keyboard layout \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Locale language \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Locale encoding \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Console font \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Mirror regions \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Optional repositories \"{}\""
+msgstr ""
+
+msgid "Custom servers set up"
+msgstr ""
+
+msgid "Custom repositories set up"
+msgstr ""
+
+msgid "Use standalone iwd"
+msgstr ""
+
+msgid "Color enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "{} grphics driver"
+msgstr ""
+
+#, python-brace-format
+msgid "{} greeter"
+msgstr ""
