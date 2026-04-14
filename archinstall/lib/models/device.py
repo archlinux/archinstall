@@ -4,7 +4,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto
 from pathlib import Path
-from typing import NotRequired, Self, TypedDict, override
+from typing import Any, NotRequired, Self, TypedDict, override
 from uuid import UUID
 
 import parted
@@ -1590,14 +1590,18 @@ class LsblkInfo(BaseModel):
 
 	@field_validator('size', mode='before')
 	@classmethod
-	def convert_size(cls, v: int, info: ValidationInfo) -> Size:
-		sector_size = SectorSize(info.data['log_sec'], Unit.B)
-		return Size(v, Unit.B, sector_size)
+	def convert_size(cls, value: Any, info: ValidationInfo) -> Any:
+		if isinstance(value, int):
+			sector_size = SectorSize(info.data['log_sec'], Unit.B)
+			return Size(value, Unit.B, sector_size)
+		return value
 
 	@field_validator('mountpoints', 'fsroots', mode='before')
 	@classmethod
-	def remove_none(cls, v: list[Path | None]) -> list[Path]:
-		return [item for item in v if item is not None]
+	def remove_none(cls, value: Any) -> Any:
+		if isinstance(value, list):
+			return [item for item in value if item is not None]
+		return value
 
 	@field_serializer('size', when_used='json')
 	def serialize_size(self, size: Size) -> str:
