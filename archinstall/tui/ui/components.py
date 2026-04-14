@@ -1268,9 +1268,9 @@ class _AppInstance(App[ValueT]):
 
 	@override
 	async def _on_exit_app(self) -> None:
-		from archinstall.lib.translationhandler import restore_console_font
+		from archinstall.lib.translationhandler import translation_handler
 
-		restore_console_font()
+		translation_handler.restore_console_font()
 		await super()._on_exit_app()
 
 	def action_trigger_help(self) -> None:
