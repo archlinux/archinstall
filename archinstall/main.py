@@ -46,7 +46,7 @@ def check_online(wifi_handler: WifiHandler | None = None) -> bool:
 
 	return True
 
-SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS = 1
+SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS = 5
 
 def _confirm_switch_mirror_sources(elapsed_seconds: float) -> bool:
 	if not sys.stdin.isatty():
@@ -76,9 +76,6 @@ def _fetch_arch_db(retry: bool = False) -> bool:
 			error('Most likely due to a missing network connection or DNS issue.')
 
 		error('Run archinstall --debug and check /var/log/archinstall/install.log for details.')
-
-		debug(f'Failed to sync Arch Linux package database: {e}')
-		return False
 
 	elapsed = time.time() - started
 	if not retry and elapsed > SLOW_ARCH_DB_SYNC_THRESHOLD_SECONDS:
