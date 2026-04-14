@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from enum import StrEnum, auto
 from typing import Any, NotRequired, Self, TypedDict
 
+from archinstall.lib.translationhandler import tr
+
 
 class PowerManagement(StrEnum):
 	POWER_PROFILES_DAEMON = 'power-profiles-daemon'
@@ -43,6 +45,15 @@ class FontPackage(StrEnum):
 	NOTO = 'noto-fonts'
 	EMOJI = 'noto-fonts-emoji'
 	CJK = 'noto-fonts-cjk'
+
+	def description(self) -> str:
+		match self:
+			case FontPackage.NOTO:
+				return tr('Unicode font coverage for most languages')
+			case FontPackage.EMOJI:
+				return tr('color emoji for browsers and apps')
+			case FontPackage.CJK:
+				return tr('Chinese, Japanese, Korean characters')
 
 
 class FontsConfigSerialization(TypedDict):

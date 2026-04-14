@@ -236,12 +236,7 @@ async def select_firewall(preset: FirewallConfiguration | None = None) -> Firewa
 
 
 async def select_fonts(preset: FontsConfiguration | None = None) -> FontsConfiguration | None:
-	descriptions = {
-		FontPackage.NOTO: tr('Unicode font coverage for most languages'),
-		FontPackage.EMOJI: tr('color emoji for browsers and apps'),
-		FontPackage.CJK: tr('Chinese, Japanese, Korean characters'),
-	}
-	items = [MenuItem(f'{f.value} ({descriptions[f]})', value=f) for f in FontPackage]
+	items = [MenuItem(f'{f.value} ({f.description()})', value=f) for f in FontPackage]
 	group = MenuItemGroup(items)
 
 	if preset:
