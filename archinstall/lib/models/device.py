@@ -164,15 +164,15 @@ class DiskLayoutConfiguration:
 				continue
 
 			first = non_delete_partitions[0]
-			if first.status == ModificationStatus.Create and not first.start.is_valid_start():
+			if first.status == ModificationStatus.CREATE and not first.start.is_valid_start():
 				raise ValueError('First partition must start at no less than 1 MiB')
 
 			for i, current_partition in enumerate(non_delete_partitions[1:], start=1):
 				previous_partition = non_delete_partitions[i - 1]
-				if current_partition.status == ModificationStatus.Create and current_partition.start < previous_partition.end:
+				if current_partition.status == ModificationStatus.CREATE and current_partition.start < previous_partition.end:
 					raise ValueError('Partitions overlap')
 
-			create_partitions = [part_mod for part_mod in non_delete_partitions if part_mod.status == ModificationStatus.Create]
+			create_partitions = [part_mod for part_mod in non_delete_partitions if part_mod.status == ModificationStatus.CREATE]
 
 			if not create_partitions:
 				continue
@@ -819,11 +819,11 @@ class FilesystemType(StrEnum):
 				return None
 
 
-class ModificationStatus(Enum):
-	Exist = 'existing'
-	Modify = 'modify'
-	Delete = 'delete'
-	Create = 'create'
+class ModificationStatus(StrEnum):
+	EXIST = 'existing'
+	MODIFY = auto()
+	DELETE = auto()
+	CREATE = auto()
 
 
 class _PartitionModificationSerialization(TypedDict):
@@ -868,7 +868,7 @@ class PartitionModification:
 		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
 
-		if self.fs_type is None and self.status == ModificationStatus.Modify:
+		if self.fs_type is None and self.status == ModificationStatus.MODIFY:
 			raise ValueError('FS type must not be empty on modifications with status type modify')
 
 	@override
@@ -911,7 +911,7 @@ class PartitionModification:
 			subvol_mods = []
 
 		return cls(
-			status=ModificationStatus.Exist,
+			status=ModificationStatus.EXIST,
 			type=partition_info.type,
 			start=partition_info.start,
 			length=partition_info.length,
@@ -961,23 +961,23 @@ class PartitionModification:
 		return self.fs_type == FilesystemType.LINUX_SWAP
 
 	def is_modify(self) -> bool:
-		return self.status == ModificationStatus.Modify
+		return self.status == ModificationStatus.MODIFY
 
 	def is_delete(self) -> bool:
-		return self.status == ModificationStatus.Delete
+		return self.status == ModificationStatus.DELETE
 
 	def exists(self) -> bool:
-		return self.status == ModificationStatus.Exist
+		return self.status == ModificationStatus.EXIST
 
 	def is_exists_or_modify(self) -> bool:
 		return self.status in [
-			ModificationStatus.Exist,
-			ModificationStatus.Delete,
-			ModificationStatus.Modify,
+			ModificationStatus.EXIST,
+			ModificationStatus.DELETE,
+			ModificationStatus.MODIFY,
 		]
 
 	def is_create_or_modify(self) -> bool:
-		return self.status in [ModificationStatus.Create, ModificationStatus.Modify]
+		return self.status in [ModificationStatus.CREATE, ModificationStatus.MODIFY]
 
 	@property
 	def mapper_name(self) -> str | None:
@@ -1088,13 +1088,6 @@ class LvmVolumeGroup:
 		return lv in self.volumes
 
 
-class LvmVolumeStatus(Enum):
-	Exist = 'existing'
-	Modify = 'modify'
-	Delete = 'delete'
-	Create = 'create'
-
-
 class _LvmVolumeSerialization(TypedDict):
 	obj_id: str
 	status: str
@@ -1108,7 +1101,7 @@ class _LvmVolumeSerialization(TypedDict):
 
 @dataclass
 class LvmVolume:
-	status: LvmVolumeStatus
+	status: ModificationStatus
 	name: str
 	fs_type: FilesystemType
 	length: Size
@@ -1177,7 +1170,7 @@ class LvmVolume:
 	@classmethod
 	def parse_arg(cls, arg: _LvmVolumeSerialization) -> Self:
 		volume = cls(
-			status=LvmVolumeStatus(arg['status']),
+			status=ModificationStatus(arg['status']),
 			name=arg['name'],
 			fs_type=FilesystemType(arg['fs_type']),
 			length=Size.parse_args(arg['length']),
@@ -1215,13 +1208,13 @@ class LvmVolume:
 		return part_mod
 
 	def is_modify(self) -> bool:
-		return self.status == LvmVolumeStatus.Modify
+		return self.status == ModificationStatus.MODIFY
 
 	def exists(self) -> bool:
-		return self.status == LvmVolumeStatus.Exist
+		return self.status == ModificationStatus.EXIST
 
 	def is_exists_or_modify(self) -> bool:
-		return self.status in [LvmVolumeStatus.Exist, LvmVolumeStatus.Modify]
+		return self.status in [ModificationStatus.EXIST, ModificationStatus.MODIFY]
 
 	def is_root(self) -> bool:
 		if self.mountpoint is not None:

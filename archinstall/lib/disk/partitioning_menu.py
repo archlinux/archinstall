@@ -57,7 +57,7 @@ class DiskSegment:
 			return self.segment.table_data()
 
 		part_mod = PartitionModification(
-			status=ModificationStatus.Create,
+			status=ModificationStatus.CREATE,
 			type=PartitionType._Unknown,
 			start=self.segment.start,
 			length=self.segment.length,
@@ -209,7 +209,7 @@ class PartitioningList(ListManager[DiskSegment]):
 	@override
 	def selected_action_display(self, selection: DiskSegment) -> str:
 		if isinstance(selection.segment, PartitionModification):
-			if selection.segment.status == ModificationStatus.Create:
+			if selection.segment.status == ModificationStatus.CREATE:
 				return tr('Partition - New')
 			elif selection.segment.is_delete() and selection.segment.dev_path:
 				title = tr('Partition') + '\n\n'
@@ -357,7 +357,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		data: list[DiskSegment],
 	) -> list[DiskSegment]:
 		if entry.is_exists_or_modify():
-			entry.status = ModificationStatus.Delete
+			entry.status = ModificationStatus.DELETE
 			part_mods = self.get_part_mods(data)
 		else:
 			part_mods = [d.segment for d in data if isinstance(d.segment, PartitionModification) and d.segment != entry]
@@ -391,10 +391,10 @@ class PartitioningList(ListManager[DiskSegment]):
 	async def _prompt_formatting(self, partition: PartitionModification) -> None:
 		# an existing partition can toggle between Exist or Modify
 		if partition.is_modify():
-			partition.status = ModificationStatus.Exist
+			partition.status = ModificationStatus.EXIST
 			return
 		elif partition.exists():
-			partition.status = ModificationStatus.Modify
+			partition.status = ModificationStatus.MODIFY
 
 		# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
 		# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
@@ -526,7 +526,7 @@ class PartitioningList(ListManager[DiskSegment]):
 			mountpoint = await self._prompt_mountpoint()
 
 		partition = PartitionModification(
-			status=ModificationStatus.Create,
+			status=ModificationStatus.CREATE,
 			type=PartitionType.Primary,
 			start=free_space.start,
 			length=length,
