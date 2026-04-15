@@ -5,7 +5,7 @@
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname=archinstall
-pkgver=4.1
+pkgver=4.2
 pkgrel=1
 pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)

@@ -823,6 +823,19 @@ msgstr "Entrada no vàlida! Intenteu-ho novament amb una entrada vàlida [1 a {m
 msgid "Parallel Downloads"
 msgstr "Descàrregues paral·leles"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "Introduïu el número de descàrregues paral·leles permeses"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "ESC per a ometre"
 
@@ -1663,6 +1676,139 @@ msgstr "Iniciar el mode de cerca"
 msgid "Exit search mode"
 msgstr "Sortir del mode de cerca"
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "Guardar configuració"
+
+#, fuzzy
+msgid "Selection"
+msgstr "Seleccioneu regions"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "Confirmar i sortir"
+
+#, fuzzy
+msgid "Focus right"
+msgstr "Mou a la dreta"
+
+#, fuzzy
+msgid "Focus left"
+msgstr "Mou a l'esquerra"
+
+msgid "Toggle"
+msgstr ""
+
+#, fuzzy
+msgid "Show/Hide help"
+msgstr "Mostrar l'ajuda"
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "Seleccioneu regions"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+#, fuzzy
+msgid "Page up"
+msgstr "Group de paquets:"
+
+#, fuzzy
+msgid "Page down"
+msgstr "Mou avall"
+
+msgid "Page Left"
+msgstr ""
+
+#, fuzzy
+msgid "Page Right"
+msgstr "Mou a la dreta"
+
+msgid "Cursor up"
+msgstr ""
+
+#, fuzzy
+msgid "Cursor down"
+msgstr "Mou avall"
+
+#, fuzzy
+msgid "Cursor right"
+msgstr "Mou a la dreta"
+
+#, fuzzy
+msgid "Cursor left"
+msgstr "Mou a l'esquerra"
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+#, fuzzy
+msgid "End"
+msgstr "Activat"
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "Opcions del subvolum"
+
+msgid "Scroll Up"
+msgstr ""
+
+#, fuzzy
+msgid "Scroll Down"
+msgstr "Previsualització avall"
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc necessita accés al vostre seient (gestor de dispositius de maquinari, com ara teclat, ratolí, etc)"
 
@@ -2002,3 +2148,46 @@ msgstr "Seguretat de la contrasenya: alta"
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr "El perfil d'escriptori seleccionat necessita de l'inici de sessió d'un usuari mitjançant el gestor"
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Tipus d'entorn: {}"
+
+#, fuzzy
+msgid "Input cannot be empty"
+msgstr "El valor no pot ser buit"
+
+msgid "Recommended"
+msgstr ""
+
+#, fuzzy
+msgid "Package"
+msgstr "Group de paquets:"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "Group de paquets:"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Packages in group"
+msgstr "Group de paquets:"
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Xifrat de disc"
+
+#, fuzzy
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Selecció del bootloader a instal·lar"
