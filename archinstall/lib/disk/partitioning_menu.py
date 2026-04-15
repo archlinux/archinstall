@@ -58,7 +58,7 @@ class DiskSegment:
 
 		part_mod = PartitionModification(
 			status=ModificationStatus.CREATE,
-			type=PartitionType._Unknown,
+			type=PartitionType._UNKNOWN,
 			start=self.segment.start,
 			length=self.segment.length,
 		)
@@ -527,7 +527,7 @@ class PartitioningList(ListManager[DiskSegment]):
 
 		partition = PartitionModification(
 			status=ModificationStatus.CREATE,
-			type=PartitionType.Primary,
+			type=PartitionType.PRIMARY,
 			start=free_space.start,
 			length=length,
 			fs_type=fs_type,

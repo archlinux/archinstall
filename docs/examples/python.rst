@@ -64,7 +64,7 @@ After running ``python -m archinstall test_installer`` it should print something
                _PartitionInfo(
                    partition=<parted.partition.Partition object at 0x7fbe166c4a90>,
                    name='primary',
-                   type=<PartitionType.Primary: 'primary'>,
+                   type=<PartitionType.PRIMARY: 'primary'>,
                    fs_type=<FilesystemType.FAT32: 'fat32'>,
                    path='/dev/nvme0n1p1',
                    start=Size(value=2048, unit=<Unit.sectors: 'sectors'>, sector_size=SectorSize(value=512, unit=<Unit.B: 1>)),
