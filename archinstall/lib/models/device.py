@@ -720,9 +720,9 @@ class BDevice:
 		return hash(self.disk.device.path)
 
 
-class PartitionType(Enum):
-	BOOT = 'boot'
-	PRIMARY = 'primary'
+class PartitionType(StrEnum):
+	BOOT = auto()
+	PRIMARY = auto()
 	_UNKNOWN = 'unknown'
 
 	@classmethod
