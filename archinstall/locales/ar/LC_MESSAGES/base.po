@@ -827,6 +827,22 @@ msgstr "إدخال غير صالح! حاول مرة أخرى بإدخال صال
 msgid "Parallel Downloads"
 msgstr "التنزيلات الموازية"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"أدخل عدد التنزيلات المتوازية المراد تمكينها.\n"
+"\n"
+"ملاحظة:\n"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "زر الهروب ESC للتخطي"
 
@@ -1673,6 +1689,139 @@ msgstr "ابدأ وضع البحث"
 msgid "Exit search mode"
 msgstr "أنهي وضع البحث"
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "حفظ الإعدادات"
+
+#, fuzzy
+msgid "Selection"
+msgstr "اختر المناطق"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "تأكيد وخروج"
+
+#, fuzzy
+msgid "Focus right"
+msgstr "تحرّك يمينًا"
+
+#, fuzzy
+msgid "Focus left"
+msgstr "تحرّك يسارًا"
+
+msgid "Toggle"
+msgstr ""
+
+#, fuzzy
+msgid "Show/Hide help"
+msgstr "إظهار المساعدة"
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "اختر المناطق"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+#, fuzzy
+msgid "Page up"
+msgstr "مجموعة الحزم:"
+
+#, fuzzy
+msgid "Page down"
+msgstr "انزل لأسفل"
+
+msgid "Page Left"
+msgstr ""
+
+#, fuzzy
+msgid "Page Right"
+msgstr "تحرّك يمينًا"
+
+msgid "Cursor up"
+msgstr ""
+
+#, fuzzy
+msgid "Cursor down"
+msgstr "انزل لأسفل"
+
+#, fuzzy
+msgid "Cursor right"
+msgstr "تحرّك يمينًا"
+
+#, fuzzy
+msgid "Cursor left"
+msgstr "تحرّك يسارًا"
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+#, fuzzy
+msgid "End"
+msgstr "مفعّل"
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "خيارات وحدة التّخزين الفرعيّة"
+
+msgid "Scroll Up"
+msgstr ""
+
+#, fuzzy
+msgid "Scroll Down"
+msgstr "مرّر المُعايَنة للأسفل"
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "يحتاج labwc للوصول إلى مقعدك (مجموعة أجهزة مثل لوحة المفاتيح، والفأرة وغيرها)"
 
@@ -2016,3 +2165,46 @@ msgstr "قوة كلمة المرور: قوية"
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr "يتطلب ملفّ تعريف سطح المكتب المحدّد من المستخدم العادي تسجيل الدخول عبر لوحة الترحيب"
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "نوع البيئة: {}"
+
+#, fuzzy
+msgid "Input cannot be empty"
+msgstr "لا ينبغي أن تكون القيمة فارغة"
+
+msgid "Recommended"
+msgstr ""
+
+#, fuzzy
+msgid "Package"
+msgstr "مجموعة الحزم:"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "مجموعة الحزم:"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Packages in group"
+msgstr "مجموعة الحزم:"
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "تشفير القرص "
+
+#, fuzzy
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "اختر برنامج الإقلاع المُراد تثبيته"

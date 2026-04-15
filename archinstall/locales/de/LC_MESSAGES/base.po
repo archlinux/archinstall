@@ -2040,6 +2040,7 @@ msgstr "Festplatten für die Installation auswählen"
 msgid "Enter a mountpoint"
 msgstr "Wählen Sie einen Einhängeort aus:"
 
+#, python-brace-format
 msgid "Enter a size (default: {}): "
 msgstr "Größe eingeben (Standard: {}): "
 
@@ -2134,6 +2135,7 @@ msgstr "Passwortstärke: Stark"
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr "Das ausgewählte Desktop-Profil erfordert einen regulären Benutzer zur Anmeldung über den Greeter"
 
+#, python-brace-format
 msgid "Environment type: {} {}"
 msgstr "Umgebungstyp: {} {}"
 

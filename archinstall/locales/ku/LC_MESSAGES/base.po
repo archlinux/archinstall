@@ -823,6 +823,22 @@ msgstr "Têketineke nederbasdar! Bi têketineke derbasdar re dîsa hewl bide [1 
 msgid "Parallel Downloads"
 msgstr "Daxistinên parallel"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"Jimara daxistinên paralel ên ku werin çalakkirin têxîne.\n"
+"\n"
+"Nîşe:\n"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "ESC bo derbas bikî"
 
@@ -1663,6 +1679,139 @@ msgstr "Awaya lêgerînê dest pê bike"
 msgid "Exit search mode"
 msgstr "Awaya lêgerînê bi dawî bike"
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "Rêkxisitinê tomar bike"
+
+#, fuzzy
+msgid "Selection"
+msgstr "Herêman hilbijêre"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "Biperjîne û derkeve"
+
+#, fuzzy
+msgid "Focus right"
+msgstr "Bilivîne rastê"
+
+#, fuzzy
+msgid "Focus left"
+msgstr "Bilivîne çepê"
+
+msgid "Toggle"
+msgstr ""
+
+#, fuzzy
+msgid "Show/Hide help"
+msgstr "Alîkariyê nîşan bide"
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "Herêman hilbijêre"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+#, fuzzy
+msgid "Page up"
+msgstr "Koma pakêtê:"
+
+#, fuzzy
+msgid "Page down"
+msgstr "Bilivîne jêrê"
+
+msgid "Page Left"
+msgstr ""
+
+#, fuzzy
+msgid "Page Right"
+msgstr "Bilivîne rastê"
+
+msgid "Cursor up"
+msgstr ""
+
+#, fuzzy
+msgid "Cursor down"
+msgstr "Bilivîne jêrê"
+
+#, fuzzy
+msgid "Cursor right"
+msgstr "Bilivîne rastê"
+
+#, fuzzy
+msgid "Cursor left"
+msgstr "Bilivîne çepê"
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+#, fuzzy
+msgid "End"
+msgstr "Çalakkirî"
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "Vebijêrkên binpeldankê"
+
+msgid "Scroll Up"
+msgstr ""
+
+#, fuzzy
+msgid "Scroll Down"
+msgstr "Pêşdîtina şemitandina jêr"
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc gihîştina cihê te pêwîst dike (komek ji reqalavan b.m. kilîtdank, mişk, hwd)"
 
@@ -1884,4 +2033,203 @@ msgid "Use Network Manager (default backend)"
 msgstr ""
 
 msgid "Use Network Manager (iwd backend)"
+msgstr ""
+
+msgid "Firewall"
+msgstr ""
+
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Rêkxisitinê bikarhêner tomar bike"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Borînpeyva şîfrekirina pelê bawernameyan"
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Borînpeyvekê têxîne: "
+
+msgid "Select bootloader to install"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Rêkxistin"
+
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Ji bo rêkxisitin ku werin tomarkirin pelrêçekê têxîne: "
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Cûreyê şîfrekirinê"
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Navê mêvandarê xwestî ji bo sazkirinê: "
+
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Xaleke siwarkirinê hilbijêre:"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Dawî têxîne (kesane: {}): "
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Navê binpeldankê"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Xala siwarkirinê ya binpeldankê"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Rêkxisitina dîskê"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "Pelrêça siwarkirina root"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Pergala pelê biguherîne"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Herêmeke demê hilbijêre"
+
+#, fuzzy
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr ""
+"Jimara daxistinên paralel ên ku werin çalakkirin têxîne.\n"
+"\n"
+"Nîşe:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Tika ka kîjan silavkar divê were sazkirin hilbijêre"
+
+#, fuzzy
+msgid "Enter a respository name"
+msgstr "Navê depoyê"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Depoya kesane biguherîne"
+
+#, fuzzy
+msgid "Enter server url"
+msgstr "Girêdana rajekar"
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Herêmên eynikê ên hilbijartî"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Ka kîjan depoyên vebijêrkî divê çalak bibe hilbijêre"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Navrûyê jê bibe"
+
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "Rêkxisitina torê tune ye"
+
+#, fuzzy
+msgid "No packages found"
+msgstr "Amûrên U2F nehatin dîtin"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Tika ka kîjan silavkar divê were sazkirin hilbijêre"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Profîlên hilbijartî: "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Borînpeyva wifi têxîne"
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Borînpeyvekê têxîne: "
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "Pejirandina borînpeyvê li hev nehat, tika dîsa hewl bide"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Cûreya jîngehê: {}"
+
+#, fuzzy
+msgid "Input cannot be empty"
+msgstr "Nirx nabe ku vala be"
+
+msgid "Recommended"
+msgstr ""
+
+#, fuzzy
+msgid "Package"
+msgstr "Koma pakêtê:"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "Koma pakêtê:"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Packages in group"
+msgstr "Koma pakêtê:"
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Şîfrekirina dîskê"
+
+msgid "Select a flavor of KDE Plasma to install"
 msgstr ""

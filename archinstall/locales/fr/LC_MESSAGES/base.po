@@ -823,6 +823,22 @@ msgstr "Entrée invalide ! Réessayer avec une entrée valide [1 pour {max_downl
 msgid "Parallel Downloads"
 msgstr "Téléchargements parallèles"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"Saisir le nombre de téléchargements parallèles à activer.\n"
+"\n"
+"Note :\n"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "ESC pour ignorer"
 
@@ -1663,6 +1679,139 @@ msgstr "Démarrer le mode de recherche"
 msgid "Exit search mode"
 msgstr "Quitter le mode de recherche"
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "Enregistrer la configuration"
+
+#, fuzzy
+msgid "Selection"
+msgstr "Sélectionner des régions"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "Confirmer et quitter"
+
+#, fuzzy
+msgid "Focus right"
+msgstr "Déplacer vers la droite"
+
+#, fuzzy
+msgid "Focus left"
+msgstr "Déplacer vers la gauche"
+
+msgid "Toggle"
+msgstr ""
+
+#, fuzzy
+msgid "Show/Hide help"
+msgstr "Afficher de l'aide"
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "Sélectionner des régions"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+#, fuzzy
+msgid "Page up"
+msgstr "Groupe de paquets :"
+
+#, fuzzy
+msgid "Page down"
+msgstr "Déplacer vers le bas"
+
+msgid "Page Left"
+msgstr ""
+
+#, fuzzy
+msgid "Page Right"
+msgstr "Déplacer vers la droite"
+
+msgid "Cursor up"
+msgstr ""
+
+#, fuzzy
+msgid "Cursor down"
+msgstr "Déplacer vers le bas"
+
+#, fuzzy
+msgid "Cursor right"
+msgstr "Déplacer vers la droite"
+
+#, fuzzy
+msgid "Cursor left"
+msgstr "Déplacer vers la gauche"
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+#, fuzzy
+msgid "End"
+msgstr "Activé"
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "Options de sous-volume"
+
+msgid "Scroll Up"
+msgstr ""
+
+#, fuzzy
+msgid "Scroll Down"
+msgstr "Faire défiler l’aperçu vers le bas"
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc a besoin d’accéder à votre siège (ensemble d’appareils matériels, c’est-à-dire clavier, souris, etc.)"
 
@@ -2059,6 +2208,49 @@ msgstr ""
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Type d'environnement : {}"
+
+#, fuzzy
+msgid "Input cannot be empty"
+msgstr "La valeur ne peut pas être vide"
+
+msgid "Recommended"
+msgstr ""
+
+#, fuzzy
+msgid "Package"
+msgstr "Groupe de paquets :"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "Groupe de paquets :"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Packages in group"
+msgstr "Groupe de paquets :"
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Chiffrement du disque"
+
+#, fuzzy
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Veuillez choisir le greeter (interface de connexion) à installer"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
