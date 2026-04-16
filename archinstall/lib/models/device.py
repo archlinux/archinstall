@@ -1400,11 +1400,11 @@ class DeviceModification:
 		}
 
 
-class EncryptionType(Enum):
-	NO_ENCRYPTION = 'no_encryption'
-	LUKS = 'luks'
-	LVM_ON_LUKS = 'lvm_on_luks'
-	LUKS_ON_LVM = 'luks_on_lvm'
+class EncryptionType(StrEnum):
+	NO_ENCRYPTION = auto()
+	LUKS = auto()
+	LVM_ON_LUKS = auto()
+	LUKS_ON_LVM = auto()
 
 	@classmethod
 	def _encryption_type_mapper(cls) -> dict[str, Self]:
