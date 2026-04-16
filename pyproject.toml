@@ -22,7 +22,8 @@ dependencies = [
     "pydantic==2.12.5",
     "cryptography==46.0.7",
     "textual==8.2.3",
-    "markdown-it-py[linkify]==4.0.0",
+    "markdown-it-py==4.0.0",
+    "linkify-it-py==2.1.0",
 ]
 
 [project.urls]
