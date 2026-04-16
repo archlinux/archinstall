@@ -18,11 +18,11 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
-    "pyparted>=3.13.0",
+    "pyparted==3.13.0",
     "pydantic==2.12.5",
-    "cryptography>=45.0.7",
-    "textual>=5.3.0",
-    "markdown-it-py[linkify]>=4.0.0",
+    "cryptography==46.0.7",
+    "textual==8.2.3",
+    "markdown-it-py[linkify]==4.0.0",
 ]
 
 [project.urls]
