@@ -1046,6 +1046,20 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 			header = self.query_one('#header_text', Label)
 			header.display = not is_loading
 
+	def _get_column_keys(self, items: list[MenuItem]) -> list[str]:
+		all_keys: list[str] = []
+		for item in items:
+			if item.value:
+				all_keys.extend(item.value.table_data().keys())
+
+		# Create unique list while preserving order
+		unique_keys: list[str] = list(dict.fromkeys(all_keys))
+
+		if self._multi:
+			unique_keys.insert(0, '   ')
+
+		return unique_keys
+
 	def _put_data_to_table(self, table: DataTable[ValueT], group: MenuItemGroup) -> None:
 		items = group.items
 		selected = group.selected_items
@@ -1054,15 +1068,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 			_ = self.dismiss(Result(ResultType.Selection))
 			return
 
-		value = items[0].value
-		if not value:
-			_ = self.dismiss(Result(ResultType.Selection))
-			return
-
-		cols = list(value.table_data().keys())
-
-		if self._multi:
-			cols.insert(0, '   ')
+		cols = self._get_column_keys(items)
 
 		table.add_columns(*cols)
 
