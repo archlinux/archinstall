@@ -82,7 +82,7 @@ class Installer:
 		self.kernels = kernels or ['linux']
 		self._disk_config = disk_config
 
-		self._disk_encryption = disk_config.disk_encryption or DiskEncryption(EncryptionType.NoEncryption)
+		self._disk_encryption = disk_config.disk_encryption or DiskEncryption(EncryptionType.NO_ENCRYPTION)
 		self.target: Path = target
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
@@ -254,16 +254,16 @@ class Installer:
 		luks_handlers: dict[Any, Luks2] = {}
 
 		match self._disk_encryption.encryption_type:
-			case EncryptionType.NoEncryption:
+			case EncryptionType.NO_ENCRYPTION:
 				self._import_lvm()
 				self._mount_lvm_layout()
-			case EncryptionType.Luks:
+			case EncryptionType.LUKS:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
-			case EncryptionType.LvmOnLuks:
+			case EncryptionType.LVM_ON_LUKS:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
 				self._import_lvm()
 				self._mount_lvm_layout(luks_handlers)
-			case EncryptionType.LuksOnLvm:
+			case EncryptionType.LUKS_ON_LVM:
 				self._import_lvm()
 				luks_handlers = self._prepare_luks_lvm(self._disk_encryption.lvm_volumes)
 				self._mount_lvm_layout(luks_handlers)
@@ -433,11 +433,11 @@ class Installer:
 
 	def generate_key_files(self) -> None:
 		match self._disk_encryption.encryption_type:
-			case EncryptionType.Luks:
+			case EncryptionType.LUKS:
 				self._generate_key_files_partitions()
-			case EncryptionType.LuksOnLvm:
+			case EncryptionType.LUKS_ON_LVM:
 				self._generate_key_file_lvm_volumes()
-			case EncryptionType.LvmOnLuks:
+			case EncryptionType.LVM_ON_LUKS:
 				# currently LvmOnLuks only supports a single
 				# partitioning layout (boot + partition)
 				# so we won't need any keyfile generation atm
@@ -899,7 +899,7 @@ class Installer:
 					if vol.fs_type is not None:
 						self._prepare_fs_type(vol.fs_type, vol.mountpoint)
 
-			types = (EncryptionType.LvmOnLuks, EncryptionType.LuksOnLvm)
+			types = (EncryptionType.LVM_ON_LUKS, EncryptionType.LUKS_ON_LVM)
 			if self._disk_encryption.encryption_type in types:
 				self._prepare_encrypt(lvm)
 		else:
@@ -1137,7 +1137,7 @@ class Installer:
 		kernel_parameters = []
 
 		match self._disk_encryption.encryption_type:
-			case EncryptionType.LvmOnLuks:
+			case EncryptionType.LVM_ON_LUKS:
 				if not lvm.vg_name:
 					raise ValueError(f'Unable to determine VG name for {lvm.name}')
 
@@ -1154,7 +1154,7 @@ class Installer:
 				else:
 					debug(f'LvmOnLuks, encrypted root partition, identifying by UUID: {uuid}')
 					kernel_parameters.append(f'cryptdevice=UUID={uuid}:cryptlvm root={lvm.safe_dev_path}')
-			case EncryptionType.LuksOnLvm:
+			case EncryptionType.LUKS_ON_LVM:
 				uuid = self._get_luks_uuid_from_mapper_dev(lvm.mapper_path)
 
 				if self._disk_encryption.hsm_device:
@@ -1163,7 +1163,7 @@ class Installer:
 				else:
 					debug(f'LuksOnLvm, encrypted root partition, identifying by UUID: {uuid}')
 					kernel_parameters.append(f'cryptdevice=UUID={uuid}:root root=/dev/mapper/root')
-			case EncryptionType.NoEncryption:
+			case EncryptionType.NO_ENCRYPTION:
 				debug(f'Identifying root lvm by mapper device: {lvm.dev_path}')
 				kernel_parameters.append(f'root={lvm.safe_dev_path}')
 

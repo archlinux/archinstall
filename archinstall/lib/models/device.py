@@ -1401,18 +1401,18 @@ class DeviceModification:
 
 
 class EncryptionType(Enum):
-	NoEncryption = 'no_encryption'
-	Luks = 'luks'
-	LvmOnLuks = 'lvm_on_luks'
-	LuksOnLvm = 'luks_on_lvm'
+	NO_ENCRYPTION = 'no_encryption'
+	LUKS = 'luks'
+	LVM_ON_LUKS = 'lvm_on_luks'
+	LUKS_ON_LVM = 'luks_on_lvm'
 
 	@classmethod
 	def _encryption_type_mapper(cls) -> dict[str, Self]:
 		return {
-			tr('No Encryption'): cls.NoEncryption,
-			tr('LUKS'): cls.Luks,
-			tr('LVM on LUKS'): cls.LvmOnLuks,
-			tr('LUKS on LVM'): cls.LuksOnLvm,
+			tr('No Encryption'): cls.NO_ENCRYPTION,
+			tr('LUKS'): cls.LUKS,
+			tr('LVM on LUKS'): cls.LVM_ON_LUKS,
+			tr('LUKS on LVM'): cls.LUKS_ON_LVM,
 		}
 
 	@classmethod
@@ -1436,7 +1436,7 @@ class _DiskEncryptionSerialization(TypedDict):
 
 @dataclass
 class DiskEncryption:
-	encryption_type: EncryptionType = EncryptionType.NoEncryption
+	encryption_type: EncryptionType = EncryptionType.NO_ENCRYPTION
 	encryption_password: Password | None = None
 	partitions: list[PartitionModification] = field(default_factory=list)
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
@@ -1444,10 +1444,10 @@ class DiskEncryption:
 	iter_time: int = DEFAULT_ITER_TIME
 
 	def __post_init__(self) -> None:
-		if self.encryption_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks] and not self.partitions:
+		if self.encryption_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS] and not self.partitions:
 			raise ValueError('Luks or LvmOnLuks encryption require partitions to be defined')
 
-		if self.encryption_type == EncryptionType.LuksOnLvm and not self.lvm_volumes:
+		if self.encryption_type == EncryptionType.LUKS_ON_LVM and not self.lvm_volumes:
 			raise ValueError('LuksOnLvm encryption require LMV volumes to be defined')
 
 	def should_generate_encryption_file(self, dev: PartitionModification | LvmVolume) -> bool:
