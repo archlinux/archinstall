@@ -503,7 +503,7 @@ def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModifi
 	# boot partition
 	return PartitionModification(
 		status=ModificationStatus.CREATE,
-		type=PartitionType.Primary,
+		type=PartitionType.PRIMARY,
 		start=start,
 		length=size,
 		mountpoint=Path('/boot'),
@@ -655,7 +655,7 @@ async def suggest_single_disk_layout(
 
 	root_partition = PartitionModification(
 		status=ModificationStatus.CREATE,
-		type=PartitionType.Primary,
+		type=PartitionType.PRIMARY,
 		start=root_start,
 		length=root_length,
 		mountpoint=Path('/') if not using_subvolumes else None,
@@ -680,7 +680,7 @@ async def suggest_single_disk_layout(
 
 		home_partition = PartitionModification(
 			status=ModificationStatus.CREATE,
-			type=PartitionType.Primary,
+			type=PartitionType.PRIMARY,
 			start=home_start,
 			length=home_length,
 			mountpoint=Path('/home'),
@@ -765,7 +765,7 @@ async def suggest_multi_disk_layout(
 	# add root partition to the root device
 	root_partition = PartitionModification(
 		status=ModificationStatus.CREATE,
-		type=PartitionType.Primary,
+		type=PartitionType.PRIMARY,
 		start=root_start,
 		length=root_length,
 		mountpoint=Path('/'),
@@ -787,7 +787,7 @@ async def suggest_multi_disk_layout(
 	# add home partition to home device
 	home_partition = PartitionModification(
 		status=ModificationStatus.CREATE,
-		type=PartitionType.Primary,
+		type=PartitionType.PRIMARY,
 		start=home_start,
 		length=home_length,
 		mountpoint=Path('/home'),

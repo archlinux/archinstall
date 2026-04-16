@@ -720,23 +720,23 @@ class BDevice:
 		return hash(self.disk.device.path)
 
 
-class PartitionType(Enum):
-	Boot = 'boot'
-	Primary = 'primary'
-	_Unknown = 'unknown'
+class PartitionType(StrEnum):
+	BOOT = auto()
+	PRIMARY = auto()
+	_UNKNOWN = 'unknown'
 
 	@classmethod
 	def get_type_from_code(cls, code: int) -> Self:
 		if code == parted.PARTITION_NORMAL:
-			return cls.Primary
+			return cls.PRIMARY
 		else:
 			debug(f'Partition code not supported: {code}')
-			return cls._Unknown
+			return cls._UNKNOWN
 
 	def get_partition_code(self) -> int | None:
-		if self == PartitionType.Primary:
+		if self == PartitionType.PRIMARY:
 			return parted.PARTITION_NORMAL
-		elif self == PartitionType.Boot:
+		elif self == PartitionType.BOOT:
 			return parted.PARTITION_BOOT
 		return None
 
