@@ -82,7 +82,7 @@ disk_config = DiskLayoutConfiguration(
 # disk encryption configuration (Optional)
 disk_encryption = DiskEncryption(
 	encryption_password=Password(plaintext='enc_password'),
-	encryption_type=EncryptionType.Luks,
+	encryption_type=EncryptionType.LUKS,
 	partitions=[home_partition],
 	hsm_device=None,
 )

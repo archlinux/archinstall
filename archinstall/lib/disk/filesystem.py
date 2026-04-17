@@ -139,7 +139,7 @@ class FilesystemHandler:
 			self._format_lvm_vols(self._disk_config.lvm_config)
 
 	def _setup_lvm_encrypted(self, lvm_config: LvmConfiguration, enc_config: DiskEncryption) -> None:
-		if enc_config.encryption_type == EncryptionType.LvmOnLuks:
+		if enc_config.encryption_type == EncryptionType.LVM_ON_LUKS:
 			enc_mods = self._encrypt_partitions(enc_config, lock_after_create=False)
 
 			self._setup_lvm(lvm_config, enc_mods)
@@ -148,7 +148,7 @@ class FilesystemHandler:
 			# Don't close LVM or LUKS during setup - keep everything active
 			# The installation phase will handle unlocking and mounting
 			# Closing causes "parent leaked" and lvchange errors
-		elif enc_config.encryption_type == EncryptionType.LuksOnLvm:
+		elif enc_config.encryption_type == EncryptionType.LUKS_ON_LVM:
 			self._setup_lvm(lvm_config)
 			enc_vols = self._encrypt_lvm_vols(lvm_config, enc_config, False)
 			self._format_lvm_vols(lvm_config, enc_vols)

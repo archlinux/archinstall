@@ -92,7 +92,7 @@ def perform_installation(
 		)
 
 		if disk_config.config_type != DiskLayoutType.Pre_mount:
-			if disk_config.disk_encryption and disk_config.disk_encryption.encryption_type != EncryptionType.NoEncryption:
+			if disk_config.disk_encryption and disk_config.disk_encryption.encryption_type != EncryptionType.NO_ENCRYPTION:
 				# generate encryption key files for the mounted luks devices
 				installation.generate_key_files()
 
