@@ -45,6 +45,8 @@ class FontPackage(StrEnum):
 	NOTO = 'noto-fonts'
 	EMOJI = 'noto-fonts-emoji'
 	CJK = 'noto-fonts-cjk'
+	LIBERATION = 'ttf-liberation'
+	DEJAVU = 'ttf-dejavu'
 
 	def description(self) -> str:
 		match self:
@@ -54,6 +56,10 @@ class FontPackage(StrEnum):
 				return tr('color emoji for browsers and apps')
 			case FontPackage.CJK:
 				return tr('Chinese, Japanese, Korean characters')
+			case FontPackage.LIBERATION:
+				return tr('Arial/Times/Courier replacement, Cyrillic support for Steam/games')
+			case FontPackage.DEJAVU:
+				return tr('wide Unicode coverage, good fallback font')
 
 
 class FontsConfigSerialization(TypedDict):
