@@ -14,7 +14,7 @@
       "description": "Track runtime Python deps via Arch Linux repos instead of PyPI",
       "managerFilePatterns": ["**/pyproject.toml"],
       "matchStrings": [
-        "\"(?<depName>pyparted|pydantic|cryptography|textual|markdown-it-py)(?:\\[.*?\\])?==(?<currentValue>[^\"]+)\""
+        "\"(?<depName>pyparted|pydantic|cryptography|textual|markdown-it-py|linkify-it-py)==(?<currentValue>[^\"]+)\""
       ],
       "depNameTemplate": "arch/python-{{{depName}}}",
       "datasourceTemplate": "repology",
@@ -58,6 +58,7 @@
         "cryptography",
         "textual",
         "markdown-it-py",
+        "linkify-it-py",
         "systemd_python"
       ],
       "enabled": false
