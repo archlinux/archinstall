@@ -505,10 +505,9 @@ class Installer:
 		# Copy over the install log (if there is one) to the install medium if
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
 		if self._helper_flags.get('base-strapped', False) is True:
-			absolute_logfile = logger.path
-			logfile_target = self.target / absolute_logfile
-			logfile_target.parent.mkdir(parents=True, exist_ok=True)
-			absolute_logfile.copy(logfile_target, preserve_metadata=True)
+			logfile_target = self.target / LPath(logger.directory).relative_to_root()
+			logfile_target.mkdir(parents=True, exist_ok=True)
+			logger.path.copy_into(logfile_target, preserve_metadata=True)
 
 		return True
 
@@ -1490,7 +1489,7 @@ class Installer:
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
-					(limine_path / file).copy(efi_dir_path)
+					(limine_path / file).copy_into(efi_dir_path)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
@@ -1539,7 +1538,7 @@ class Installer:
 
 			try:
 				# The `limine-bios.sys` file contains stage 3 code.
-				(limine_path / 'limine-bios.sys').copy(boot_limine_path)
+				(limine_path / 'limine-bios.sys').copy_into(boot_limine_path)
 
 				# `limine bios-install` deploys the stage 1 and 2 to the
 				self.arch_chroot(f'limine bios-install {parent_dev_path}', peek_output=True)
