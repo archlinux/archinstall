@@ -10,6 +10,8 @@ from archinstall.lib.models.application import (
 	BluetoothConfiguration,
 	Firewall,
 	FirewallConfiguration,
+	FontPackage,
+	FontsConfiguration,
 	PowerManagement,
 	PowerManagementConfiguration,
 	PrintServiceConfiguration,
@@ -77,6 +79,13 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				preview_action=self._prev_firewall,
 				key='firewall_config',
 			),
+			MenuItem(
+				text=tr('Additional fonts'),
+				action=select_fonts,
+				value=self._app_config.fonts_config,
+				preview_action=self._prev_fonts,
+				key='fonts_config',
+			),
 		]
 
 	def _prev_power_management(self, item: MenuItem) -> str | None:
@@ -113,6 +122,13 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 		if item.value is not None:
 			config: FirewallConfiguration = item.value
 			return f'{tr("Firewall")}: {config.firewall.value}'
+		return None
+
+	def _prev_fonts(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			config: FontsConfiguration = item.value
+			packages = ', '.join(f.value for f in config.fonts)
+			return f'{tr("Additional fonts")}: {packages}'
 		return None
 
 
@@ -215,5 +231,33 @@ async def select_firewall(preset: FirewallConfiguration | None = None) -> Firewa
 			return preset
 		case ResultType.Selection:
 			return FirewallConfiguration(firewall=result.get_value())
+		case ResultType.Reset:
+			return None
+
+
+async def select_fonts(preset: FontsConfiguration | None = None) -> FontsConfiguration | None:
+	items = [MenuItem(f'{f.value} ({f.description()})', value=f) for f in FontPackage]
+	group = MenuItemGroup(items)
+
+	if preset:
+		for f in preset.fonts:
+			group.set_selected_by_value(f)
+
+	result = await Selection[FontPackage](
+		group,
+		header=tr('Select font packages to install'),
+		allow_skip=True,
+		allow_reset=True,
+		multi=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			selected = result.get_values()
+			if selected:
+				return FontsConfiguration(fonts=selected)
+			return None
 		case ResultType.Reset:
 			return None

@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from enum import StrEnum, auto
 from typing import Any, NotRequired, Self, TypedDict
 
+from archinstall.lib.translationhandler import tr
+
 
 class PowerManagement(StrEnum):
 	POWER_PROFILES_DAEMON = 'power-profiles-daemon'
@@ -39,6 +41,31 @@ class FirewallConfigSerialization(TypedDict):
 	firewall: str
 
 
+class FontPackage(StrEnum):
+	NOTO = 'noto-fonts'
+	EMOJI = 'noto-fonts-emoji'
+	CJK = 'noto-fonts-cjk'
+	LIBERATION = 'ttf-liberation'
+	DEJAVU = 'ttf-dejavu'
+
+	def description(self) -> str:
+		match self:
+			case FontPackage.NOTO:
+				return tr('Unicode font coverage for most languages')
+			case FontPackage.EMOJI:
+				return tr('color emoji for browsers and apps')
+			case FontPackage.CJK:
+				return tr('Chinese, Japanese, Korean characters')
+			case FontPackage.LIBERATION:
+				return tr('Arial/Times/Courier replacement, Cyrillic support for Steam/games')
+			case FontPackage.DEJAVU:
+				return tr('wide Unicode coverage, good fallback font')
+
+
+class FontsConfigSerialization(TypedDict):
+	fonts: list[str]
+
+
 class ZramAlgorithm(StrEnum):
 	ZSTD = auto()
 	LZO_RLE = 'lzo-rle'
@@ -53,6 +80,7 @@ class ApplicationSerialization(TypedDict):
 	power_management_config: NotRequired[PowerManagementConfigSerialization]
 	print_service_config: NotRequired[PrintServiceConfigSerialization]
 	firewall_config: NotRequired[FirewallConfigSerialization]
+	fonts_config: NotRequired[FontsConfigSerialization]
 
 
 @dataclass
@@ -127,6 +155,18 @@ class FirewallConfiguration:
 		)
 
 
+@dataclass
+class FontsConfiguration:
+	fonts: list[FontPackage]
+
+	def json(self) -> FontsConfigSerialization:
+		return {'fonts': [f.value for f in self.fonts]}
+
+	@classmethod
+	def parse_arg(cls, arg: FontsConfigSerialization) -> Self:
+		return cls(fonts=[FontPackage(f) for f in arg['fonts']])
+
+
 @dataclass(frozen=True)
 class ZramConfiguration:
 	enabled: bool
@@ -149,6 +189,7 @@ class ApplicationConfiguration:
 	power_management_config: PowerManagementConfiguration | None = None
 	print_service_config: PrintServiceConfiguration | None = None
 	firewall_config: FirewallConfiguration | None = None
+	fonts_config: FontsConfiguration | None = None
 
 	@classmethod
 	def parse_arg(
@@ -177,6 +218,9 @@ class ApplicationConfiguration:
 		if args and (firewall_config := args.get('firewall_config')) is not None:
 			app_config.firewall_config = FirewallConfiguration.parse_arg(firewall_config)
 
+		if args and (fonts_config := args.get('fonts_config')) is not None:
+			app_config.fonts_config = FontsConfiguration.parse_arg(fonts_config)
+
 		return app_config
 
 	def json(self) -> ApplicationSerialization:
@@ -196,5 +240,8 @@ class ApplicationConfiguration:
 
 		if self.firewall_config:
 			config['firewall_config'] = self.firewall_config.json()
+
+		if self.fonts_config:
+			config['fonts_config'] = self.fonts_config.json()
 
 		return config

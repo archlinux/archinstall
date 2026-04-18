@@ -2070,6 +2070,21 @@ msgstr ""
 msgid "Firewall"
 msgstr ""
 
+msgid "Additional fonts"
+msgstr ""
+
+msgid "Select font packages to install"
+msgstr ""
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
 msgid "Select audio configuration"
 msgstr ""
 
