@@ -1466,6 +1466,16 @@ class Installer:
 			elif not efi_partition.mountpoint:
 				raise ValueError('EFI partition is not mounted')
 
+			# Limine can only read FAT filesystems. When the ESP doubles as
+			# the boot partition but is mounted outside /boot (e.g. /efi,
+			# /boot/efi) and UKI is disabled, kernels end up on the root
+			# filesystem under /boot/ which Limine cannot access.
+			if boot_partition == efi_partition and efi_partition.mountpoint != Path('/boot') and not uki_enabled:
+				raise DiskError(
+					f'Limine requires kernels on a FAT partition. The ESP is mounted at {efi_partition.mountpoint}, '
+					'so enable UKI or add a separate /boot partition to install Limine.',
+				)
+
 			info(f'Limine EFI partition: {efi_partition.dev_path}')
 
 			parent_dev_path = get_parent_device_path(efi_partition.safe_dev_path)
@@ -1476,15 +1486,11 @@ class Installer:
 				if bootloader_removable:
 					efi_dir_path = efi_dir_path / 'BOOT'
 					efi_dir_path_target = efi_dir_path_target / 'BOOT'
-
-					boot_limine_path = self.target / 'boot' / 'limine'
-					boot_limine_path.mkdir(parents=True, exist_ok=True)
-					config_path = boot_limine_path / 'limine.conf'
 				else:
 					efi_dir_path = efi_dir_path / 'arch-limine'
 					efi_dir_path_target = efi_dir_path_target / 'arch-limine'
 
-					config_path = efi_dir_path / 'limine.conf'
+				config_path = efi_dir_path / 'limine.conf'
 
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 

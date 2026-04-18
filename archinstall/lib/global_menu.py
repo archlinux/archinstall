@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import override
 
 from archinstall.default_profiles.profile import GreeterType
@@ -492,6 +493,11 @@ class GlobalMenu(AbstractMenu[None]):
 		if bootloader == Bootloader.Limine:
 			if boot_partition.fs_type not in [FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32]:
 				return 'Limine does not support booting with a non-FAT boot partition'
+			if self._uefi and efi_partition and boot_partition == efi_partition and efi_partition.mountpoint != Path('/boot') and not bootloader_config.uki:
+				return (
+					f'Limine requires kernels on a FAT partition. The ESP is mounted at {efi_partition.mountpoint}, '
+					'enable UKI or add a separate /boot partition'
+				)
 
 		elif bootloader == Bootloader.Refind:
 			if not self._uefi:
