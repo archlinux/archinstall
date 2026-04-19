@@ -1502,6 +1502,9 @@ msgstr "सक्षम"
 msgid "Disabled"
 msgstr "अक्षम"
 
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "कृपया इस समस्या (और फ़ाइल) को https://github.com/archlinux/archinstall/issues पर सबमिट करें।"
+
 msgid "Mirror name"
 msgstr "मिरर का नाम"
 
