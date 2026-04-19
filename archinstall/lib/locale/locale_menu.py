@@ -157,7 +157,6 @@ async def select_console_font(preset: str | None = None) -> str | None:
 	group.set_focus_by_value(preset)
 
 	result = await Selection[str](
-		group,
 		header=tr('Console font'),
 		group=group,
 		enable_filter=True,
