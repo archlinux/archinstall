@@ -109,3 +109,15 @@ def list_timezones() -> list[str]:
 		.decode()
 		.splitlines()
 	)
+
+def list_console_fonts() -> list[str]:
+	fonts: list[str] = []
+	font_dir = Path('/usr/share/kbd/consolefonts')
+	if font_dir.exists():
+		for f in font_dir.iterdir():
+			# do not ask me there are readme files in here
+			if not f.name.startswith('README'):
+				name = f.name.removesuffix('.gz').removesuffix('.psfu').removesuffix('.psf')
+				fonts.append(name)
+
+	return sorted(fonts, key=lambda x: (len(x), x))
