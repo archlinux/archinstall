@@ -807,11 +807,9 @@ msgstr ""
 " (1 से {} के बीच मान दर्ज करें)\n"
 "नोट:"
 
-#, fuzzy
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
 msgstr " - अधिकतम मान   : {} ( {} समानांतर डाउनलोड की अनुमति देता है, एक समय में {} डाउनलोड की अनुमति देता है )"
 
-#, fuzzy
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - न्यूनतम मान   : 1 ( 1 समानांतर डाउनलोड की अनुमति देता है, एक समय में 2 डाउनलोड की अनुमति देता है )"
 
@@ -826,20 +824,17 @@ msgid "Parallel Downloads"
 msgstr "समानांतर डाउनलोड"
 
 msgid "Pacman"
-msgstr ""
+msgstr "Pacman"
 
 msgid "Color"
-msgstr ""
+msgstr "रंग"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Enter the number of parallel downloads (1-{})"
-msgstr ""
-"सक्षम किए जाने वाले समानांतर डाउनलोड की संख्या दर्ज करें।\n"
-"\n"
-"नोट:\n"
+msgstr "समानांतर डाउनलोड की संख्या दर्ज करें (1-{})"
 
 msgid "Enable colored output for pacman"
-msgstr ""
+msgstr "Pacman के लिए रंगीन आउटपुट सक्षम करें"
 
 msgid "ESC to skip"
 msgstr "छोड़ने के लिए ESC दबाएँ"
