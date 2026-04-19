@@ -156,7 +156,7 @@ async def select_console_font(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=False)
 	group.set_focus_by_value(preset)
 
-	result = await Selecton[str](
+	result = await Selection[str](
 		group,
 		header=tr('Console font'),
 		group=group,
