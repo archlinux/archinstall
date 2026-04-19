@@ -1,8 +1,9 @@
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import ServiceException, SysCallError
+from archinstall.lib.linux_path import LPath
 from archinstall.lib.output import error
 from archinstall.lib.utils.util import running_from_iso
-from archinstall.linux_path import LPath
+
 
 def list_keyboard_languages() -> list[str]:
 	return (
@@ -109,6 +110,7 @@ def list_timezones() -> list[str]:
 		.decode()
 		.splitlines()
 	)
+
 
 def list_console_fonts() -> list[str]:
 	fonts: list[str] = []
