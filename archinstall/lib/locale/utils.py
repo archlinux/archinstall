@@ -2,7 +2,7 @@ from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import ServiceException, SysCallError
 from archinstall.lib.output import error
 from archinstall.lib.utils.util import running_from_iso
-
+from archinstall.linux_path import LPath
 
 def list_keyboard_languages() -> list[str]:
 	return (
@@ -112,7 +112,7 @@ def list_timezones() -> list[str]:
 
 def list_console_fonts() -> list[str]:
 	fonts: list[str] = []
-	font_dir = Path('/usr/share/kbd/consolefonts')
+	font_dir = LPath('/usr/share/kbd/consolefonts')
 	if font_dir.exists():
 		for f in font_dir.iterdir():
 			# do not ask me there are readme files in here

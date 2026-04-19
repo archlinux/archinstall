@@ -148,6 +148,7 @@ async def select_kb_layout(preset: str | None = None) -> str | None:
 		case _:
 			raise ValueError('Unhandled return type')
 
+
 async def select_console_font(preset: str | None = None) -> str | None:
 	fonts = list_console_fonts()
 
@@ -155,12 +156,12 @@ async def select_console_font(preset: str | None = None) -> str | None:
 	group = MenuItemGroup(items, sort_items=False)
 	group.set_focus_by_value(preset)
 
-	result = SelectMenu[str](
+	result = await Selecton[str](
 		group,
-		alignment=Alignment.CENTER,
-		frame=FrameProperties.min(tr('Console font')),
-		allow_skip=True,
-	).run()
+		header=tr('Console font'),
+		group=group,
+		enable_filter=True,
+	).show()
 
 	match result.type_:
 		case ResultType.Selection:
