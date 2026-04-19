@@ -1176,7 +1176,6 @@ msgstr "मिरर (Mirrors)"
 msgid "Mirror regions"
 msgstr "मिरर क्षेत्र"
 
-#, fuzzy
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
 msgstr " - अधिकतम मान   : {} ( {} समानांतर डाउनलोड की अनुमति देता है, एक समय में {max_downloads+1} डाउनलोड की अनुमति देता है )"
 
@@ -1675,137 +1674,121 @@ msgid "Exit search mode"
 msgstr "खोज मोड से बाहर निकलें"
 
 msgid "General"
-msgstr ""
+msgstr "सामान्य"
 
-#, fuzzy
 msgid "Navigation"
-msgstr "कॉन्फ़िगरेशन सहेजें"
+msgstr "नेविगेशन"
 
-#, fuzzy
 msgid "Selection"
-msgstr "क्षेत्र चुनें"
+msgstr "चयन"
 
 msgid "Search"
-msgstr ""
+msgstr "खोज"
 
 msgid "Down"
-msgstr ""
+msgstr "नीचे"
 
 msgid "Up"
-msgstr ""
+msgstr "ऊपर"
 
-#, fuzzy
 msgid "Confirm"
-msgstr "पुष्टि करें और बाहर निकलें"
+msgstr "पुष्टि करें"
 
-#, fuzzy
 msgid "Focus right"
-msgstr "दाएँ जाएँ"
+msgstr "दाएँ फोकस करें"
 
-#, fuzzy
 msgid "Focus left"
-msgstr "बाएँ जाएँ"
+msgstr "बाएँ फोकस करें"
 
 msgid "Toggle"
-msgstr ""
+msgstr "बदलें"
 
-#, fuzzy
 msgid "Show/Hide help"
-msgstr "मदद दिखायें"
+msgstr "मदद दिखाएँ/छुपाएँ"
 
 msgid "Quit"
-msgstr ""
+msgstr "बाहर निकलें"
 
 msgid "First"
-msgstr ""
+msgstr "पहला"
 
 msgid "Last"
-msgstr ""
+msgstr "अंतिम"
 
-#, fuzzy
 msgid "Select"
-msgstr "क्षेत्र चुनें"
+msgstr "चुनें"
 
 msgid "Page Up"
-msgstr ""
+msgstr "पेज ऊपर"
 
 msgid "Page Down"
-msgstr ""
+msgstr "पेज नीचे"
 
-#, fuzzy
 msgid "Page up"
-msgstr "पैकेज समूह:"
+msgstr "पेज ऊपर"
 
-#, fuzzy
 msgid "Page down"
-msgstr "नीचे जाएँ"
+msgstr "पेज नीचे"
 
 msgid "Page Left"
-msgstr ""
+msgstr "पेज बाएँ"
 
-#, fuzzy
 msgid "Page Right"
-msgstr "दाएँ जाएँ"
+msgstr "पेज दाएँ"
 
 msgid "Cursor up"
-msgstr ""
+msgstr "कर्सर ऊपर"
 
-#, fuzzy
 msgid "Cursor down"
-msgstr "नीचे जाएँ"
+msgstr "कर्सर नीचे"
 
-#, fuzzy
 msgid "Cursor right"
-msgstr "दाएँ जाएँ"
+msgstr "कर्सर दाएँ"
 
-#, fuzzy
 msgid "Cursor left"
-msgstr "बाएँ जाएँ"
+msgstr "कर्सर बाएँ"
 
 msgid "Top"
-msgstr ""
+msgstr "ऊपर"
 
 msgid "Bottom"
-msgstr ""
+msgstr "नीचे"
 
 msgid "Home"
-msgstr ""
+msgstr "होम"
 
-#, fuzzy
 msgid "End"
-msgstr "सक्षम"
+msgstr "एंड"
 
-#, fuzzy
 msgid "Toggle option"
-msgstr "सबवॉल्यूम विकल्प"
+msgstr "विकल्प बदलें"
 
 msgid "Scroll Up"
-msgstr ""
+msgstr "ऊपर स्क्रॉल करें"
 
-#, fuzzy
 msgid "Scroll Down"
-msgstr "प्रिव्यू नीचे स्क्रॉल करें"
+msgstr "नीचे स्क्रॉल करें"
 
 msgid "Scroll Left"
-msgstr ""
+msgstr "बाएँ स्क्रॉल करें"
 
 msgid "Scroll Right"
-msgstr ""
+msgstr "दाएँ स्क्रॉल करें"
 
 msgid "Scroll Home"
-msgstr ""
+msgstr "स्क्रॉल होम"
 
 msgid "Scroll End"
-msgstr ""
+msgstr "स्क्रॉल एंड"
 
 msgid "Focus Next"
-msgstr ""
+msgstr "अगले पर फोकस"
 
 msgid "Focus Previous"
-msgstr ""
+msgstr "पिछले पर फोकस"
 
 msgid "Copy selected text"
-msgstr ""
+msgstr "चयनित टेक्स्ट कॉपी करें"
 
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc को आपकी सीट (हार्डवेयर डिवाइसेज का संग्रह यानी कीबोर्ड, माउस, आदि) तक पहुंच की आवश्यकता है"
@@ -2023,223 +2006,184 @@ msgid "Use Network Manager (iwd backend)"
 msgstr "नेटवर्क मैनेजर का उपयोग करें (iwd बैकएंड)"
 
 msgid "Firewall"
-msgstr ""
+msgstr "फ़ायरवॉल"
 
-#, fuzzy
 msgid "Additional fonts"
-msgstr "अतिरिक्त रिपॉजिटरी"
+msgstr "अतिरिक्त फ़ॉन्ट"
 
-#, fuzzy
 msgid "Select font packages to install"
-msgstr "जोड़ने के लिए इंटरफ़ेस चुनें"
+msgstr "इंस्टॉल करने के लिए फ़ॉन्ट पैकेज चुनें"
 
 msgid "Unicode font coverage for most languages"
-msgstr ""
+msgstr "अधिकांश भाषाओं के लिए यूनिकोड फ़ॉन्ट समर्थन"
 
 msgid "color emoji for browsers and apps"
-msgstr ""
+msgstr "ब्राउज़र और ऐप्स के लिए रंगीन इमोजी"
 
 msgid "Chinese, Japanese, Korean characters"
-msgstr ""
+msgstr "चीनी, जापानी, कोरियाई वर्ण"
 
-#, fuzzy
 msgid "Select audio configuration"
-msgstr "उपयोगकर्ता कॉन्फ़िगरेशन सहेजें"
+msgstr "ऑडियो कॉन्फ़िगरेशन चुनें"
 
-#, fuzzy
 msgid "Enter credentials file decryption password"
-msgstr "क्रेडेंशियल्स फ़ाइल डिक्रिप्शन पासवर्ड"
+msgstr "क्रेडेंशियल्स फ़ाइल डिक्रिप्शन पासवर्ड दर्ज करें"
 
-#, fuzzy
 msgid "Enter root password"
-msgstr "पासवर्ड दर्ज करें: "
+msgstr "रूट पासवर्ड दर्ज करें"
 
 msgid "Select bootloader to install"
-msgstr ""
+msgstr "इंस्टॉल करने के लिए बूटलोडर चुनें"
 
-#, fuzzy
 msgid "Configuration preview"
-msgstr "कॉन्फ़िगरेशन"
+msgstr "कॉन्फ़िगरेशन पूर्वावलोकन देखें"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved"
-msgstr "कॉन्फ़िगरेशन सहेजने के लिए डायरेक्टरी दर्ज करें: "
+msgstr "कॉन्फ़िगरेशन सहेजने के लिए डायरेक्टरी दर्ज करें"
 
-#, fuzzy
 msgid "Select encryption type"
-msgstr "एन्क्रिप्शन प्रकार"
+msgstr "एन्क्रिप्शन प्रकार चुनें"
 
-#, fuzzy
 msgid "Select disks for the installation"
-msgstr "इच्छित होस्ट का नाम (hostname) इंस्टालेशन के लिए: "
+msgstr "इंस्टॉलेशन के लिए डिस्क चुनें"
 
-#, fuzzy
 msgid "Enter a mountpoint"
-msgstr "माउंट पॉइंट चुनें :"
+msgstr "माउंटपॉइंट दर्ज करें"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Enter a size (default: {}): "
-msgstr "अंत दर्ज करें (डिफ़ॉल्ट: {}): "
+msgstr "आकार दर्ज करें (डिफ़ॉल्ट: {}): "
 
-#, fuzzy
 msgid "Enter subvolume name"
-msgstr "सबवॉल्यूम का नाम"
+msgstr "सबवॉल्यूम का नाम दर्ज करें"
 
-#, fuzzy
 msgid "Enter subvolume mountpoint"
-msgstr "सबवॉल्यूम माउंटपॉइंट"
+msgstr "सबवॉल्यूम माउंटपॉइंट दर्ज करें"
 
-#, fuzzy
 msgid "Select a disk configuration"
-msgstr "डिस्क कॉन्फ़िगरेशन"
+msgstr "एक डिस्क कॉन्फ़िगरेशन चुनें"
 
-#, fuzzy
 msgid "Enter root mount directory"
-msgstr "रूट माउंट डायरेक्टरी"
+msgstr "रूट माउंट डायरेक्टरी दर्ज करें"
 
 msgid "You will use whatever drive-setup is mounted at the specified directory"
-msgstr ""
+msgstr "आप निर्दिष्ट डायरेक्टरी पर माउंट किए गए किसी भी ड्राइव-सेटअप का उपयोग करेंगे"
 
 msgid "WARNING: Archinstall won't check the suitability of this setup"
-msgstr ""
+msgstr "चेतावनी: Archinstall इस सेटअप की उपयुक्तता की जाँच नहीं करेगा"
 
-#, fuzzy
 msgid "Select main filesystem"
-msgstr "फ़ाइलसिस्टम बदलें"
+msgstr "मुख्य फ़ाइलसिस्टम चुनें"
 
 msgid "Enter a hostname"
-msgstr ""
+msgstr "होस्टनेम दर्ज करें"
 
-#, fuzzy
 msgid "Select timezone"
 msgstr "समयक्षेत्र चुनें"
 
-#, fuzzy
 msgid "Enter the number of parallel downloads to be enabled"
-msgstr ""
-"सक्षम किए जाने वाले समानांतर डाउनलोड की संख्या दर्ज करें।\n"
-"\n"
-"नोट:\n"
+msgstr "सक्षम किए जाने वाले समानांतर डाउनलोड की संख्या दर्ज करें"
 
 #, python-brace-format
 msgid "Value must be between 1 and {}"
-msgstr ""
+msgstr "मान 1 और {} के बीच होना चाहिए"
 
-#, fuzzy
 msgid "Select which kernel(s) to install"
-msgstr "कृपया चुनें कि कौन सा ग्रीटर इंस्टॉल करना है"
+msgstr "इंस्टॉल करने के लिए कौन से कर्नेल चुनें"
 
-#, fuzzy
 msgid "Enter a respository name"
-msgstr "रिपॉजिटरी का नाम"
+msgstr "रिपॉजिटरी का नाम दर्ज करें"
 
-#, fuzzy
 msgid "Enter the repository url"
-msgstr "कस्टम रिपॉजिटरी बदलें"
+msgstr "रिपॉजिटरी URL दर्ज करें"
 
-#, fuzzy
 msgid "Enter server url"
-msgstr "सर्वर url"
+msgstr "सर्वर URL दर्ज करें"
 
-#, fuzzy
 msgid "Select mirror regions to be enabled"
-msgstr "चयनित मिरर क्षेत्र"
+msgstr "सक्षम करने के लिए मिरर क्षेत्र चुनें"
 
-#, fuzzy
 msgid "Select optional repositories to be enabled"
-msgstr "चुनें कि कौन से वैकल्पिक अतिरिक्त रिपॉजिटरी को सक्षम करना है"
+msgstr "सक्षम करने के लिए वैकल्पिक रिपॉजिटरी चुनें"
 
-#, fuzzy
 msgid "Select an interface"
-msgstr "इंटरफ़ेस हटाएँ"
+msgstr "एक इंटरफ़ेस चुनें"
 
-#, fuzzy
 msgid "Choose network configuration"
-msgstr "कोई नेटवर्क कॉन्फ़िगरेशन नहीं"
+msgstr "नेटवर्क कॉन्फ़िगरेशन चुनें"
 
-#, fuzzy
 msgid "No packages found"
-msgstr "कोई U2F डिवाइस नहीं मिला"
+msgstr "कोई पैकेज नहीं मिला"
 
-#, fuzzy
 msgid "Select which greeter to install"
-msgstr "कृपया चुनें कि कौन सा ग्रीटर इंस्टॉल करना है"
+msgstr "कौन सा ग्रीटर इंस्टॉल करना है चुनें"
 
-#, fuzzy
 msgid "Select a profile type"
-msgstr "चयनित प्रोफ़ाइल: "
+msgstr "प्रोफ़ाइल प्रकार चुनें"
 
-#, fuzzy
 msgid "Enter new password"
-msgstr "वाई-फाई पासवर्ड दर्ज करें"
+msgstr "नया पासवर्ड दर्ज करें"
 
 msgid "Enter a username"
-msgstr ""
+msgstr "यूज़रनेम दर्ज करें"
 
-#, fuzzy
 msgid "Enter a password"
-msgstr "पासवर्ड दर्ज करें: "
+msgstr "पासवर्ड दर्ज करें"
 
-#, fuzzy
 msgid "The password did not match, please try again"
-msgstr "पुष्टि पासवर्ड मेल नहीं खाता, कृपया पुनः प्रयास करें"
+msgstr "पासवर्ड मेल नहीं खाया, कृपया पुनः प्रयास करें"
 
 msgid "Password strength: Weak"
-msgstr ""
+msgstr "पासवर्ड मजबूती: कमजोर"
 
 msgid "Password strength: Moderate"
-msgstr ""
+msgstr "पासवर्ड मजबूती: मध्यम"
 
 msgid "Password strength: Strong"
-msgstr ""
+msgstr "पासवर्ड मजबूती: मजबूत"
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
-msgstr ""
+msgstr "चयनित डेस्कटॉप प्रोफ़ाइल में ग्रीटर के जरिए लॉग इन करने के लिए एक सामान्य उपयोगकर्ता आवश्यक है"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Environment type: {} {}"
-msgstr "एन्वायरनमेंट प्रकार: {}"
+msgstr "एन्वायरनमेंट प्रकार: {} {}"
 
-#, fuzzy
 msgid "Input cannot be empty"
-msgstr "मूल्य खाली नहीं हो सकता"
+msgstr "इनपुट खाली नहीं हो सकता"
 
 msgid "Recommended"
-msgstr ""
+msgstr "अनुशंसित"
 
-#, fuzzy
 msgid "Package"
-msgstr "पैकेज समूह:"
+msgstr "पैकेज"
 
 msgid "Curated selection of KDE Plasma packages"
-msgstr ""
+msgstr "KDE Plasma पैकेजों का चुना हुआ संग्रह"
 
 msgid "Dependencies"
-msgstr ""
+msgstr "निर्भरताएँ"
 
-#, fuzzy
 msgid "Package group"
 msgstr "पैकेज समूह:"
 
 msgid "Extensive KDE Plasma installation"
-msgstr ""
+msgstr "विस्तृत KDE Plasma इंस्टॉलेशन"
 
-#, fuzzy
 msgid "Packages in group"
-msgstr "पैकेज समूह:"
+msgstr "समूह में पैकेज"
 
 msgid "Minimal KDE Plasma installation"
-msgstr ""
+msgstr "न्यूनतम KDE Plasma इंस्टॉलेशन"
 
-#, fuzzy
 msgid "Description"
-msgstr "डिस्क एन्क्रिप्शन"
+msgstr "विवरण"
 
 msgid "Select a flavor of KDE Plasma to install"
-msgstr ""
+msgstr "इंस्टॉल करने के लिए KDE Plasma का एक प्रकार चुनें"
 
 msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
-msgstr ""
+msgstr "Arial/Times/Courier का विकल्प, Steam/गेम्स के लिए Cyrillic समर्थन"
 
 msgid "wide Unicode coverage, good fallback font"
-msgstr ""
+msgstr "विस्तृत यूनिकोड कवरेज, अच्छा फॉलबैक फ़ॉन्ट"
