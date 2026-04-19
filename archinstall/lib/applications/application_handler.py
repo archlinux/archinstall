@@ -6,7 +6,9 @@ from archinstall.applications.firewall import FirewallApp
 from archinstall.applications.fonts import FontsApp
 from archinstall.applications.power_management import PowerManagementApp
 from archinstall.applications.print_service import PrintServiceApp
+from archinstall.applications.AUR_helper import AURHelperApp
 from archinstall.lib.models import Audio
+from archinstall.lib.models.application import AURHelper
 from archinstall.lib.models.application import ApplicationConfiguration
 from archinstall.lib.models.users import User
 
@@ -37,6 +39,13 @@ class ApplicationHandler:
 
 		if app_config.print_service_config and app_config.print_service_config.enabled:
 			PrintServiceApp().install(install_session)
+
+		if app_config.AUR_helper_config and app_config.AUR_helper_config.AUR_helper != AURHelper.NO_AUR_HELPER:
+			AURHelperApp().install(
+				install_session,
+				app_config.AUR_helper_config,
+				users,
+			)		
 
 		if app_config.firewall_config:
 			FirewallApp().install(

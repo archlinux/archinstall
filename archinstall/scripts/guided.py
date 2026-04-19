@@ -131,7 +131,7 @@ def perform_installation(
 				auth_handler.setup_auth(installation, config.auth_config, config.hostname)
 
 		if app_config := config.app_config:
-			application_handler.install_applications(installation, app_config)
+			application_handler.install_applications(installation, app_config, users)
 
 		if profile_config := config.profile_config:
 			profile_handler.install_profile_config(installation, profile_config)

@@ -7,6 +7,8 @@ from archinstall.lib.models.application import (
 	ApplicationConfiguration,
 	Audio,
 	AudioConfiguration,
+	AURHelper,
+	AURHelperConfiguration,
 	BluetoothConfiguration,
 	Firewall,
 	FirewallConfiguration,
@@ -67,6 +69,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 				key='print_service_config',
 			),
 			MenuItem(
+				text=tr('AUR helper'),
+				action=select_AUR_helper,
+				preview_action=self._prev_AUR_helper,
+				key='AUR_helper_config',
+			),
+			MenuItem(
 				text=tr('Power management'),
 				action=select_power_management,
 				preview_action=self._prev_power_management,
@@ -116,6 +124,12 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 			output = f'{tr("Print service")}: '
 			output += tr('Enabled') if print_service_config.enabled else tr('Disabled')
 			return output
+		return None
+
+	def _prev_AUR_helper(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			config: AURHelperConfiguration = item.value
+			return f'{tr("AUR helper")}: {config.AUR_helper.value}'
 		return None
 
 	def _prev_firewall(self, item: MenuItem) -> str | None:
@@ -210,6 +224,28 @@ async def select_audio(preset: AudioConfiguration | None = None) -> AudioConfigu
 			return preset
 		case ResultType.Selection:
 			return AudioConfiguration(audio=result.get_value())
+		case ResultType.Reset:
+			raise ValueError('Unhandled result type')
+
+
+async def select_AUR_helper(preset: AURHelperConfiguration | None = None) -> AURHelperConfiguration | None:
+	items = [MenuItem(a.value, value=a) for a in AURHelper]
+	group = MenuItemGroup(items)
+
+	if preset:
+		group.set_focus_by_value(preset.AUR_helper)
+
+	result = await Selection[AURHelper](
+		group,
+		header=tr('Select an AUR helper'),
+		allow_skip=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return AURHelperConfiguration(AUR_helper=result.get_value())
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
 

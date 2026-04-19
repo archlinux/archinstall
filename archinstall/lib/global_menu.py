@@ -352,6 +352,11 @@ class GlobalMenu(AbstractMenu[None]):
 				output += f'{tr("Print service")}: '
 				output += tr('Enabled') if app_config.print_service_config.enabled else tr('Disabled')
 				output += '\n'
+			
+			if app_config.AUR_helper_config:
+				AUR_helper_config = app_config.AUR_helper_config
+				output += f'{tr("AUR helper")}: {AUR_helper_config.AUR_helper.value}'
+				output += '\n'
 
 			if app_config.power_management_config:
 				power_management_config = app_config.power_management_config

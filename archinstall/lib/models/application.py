@@ -31,6 +31,13 @@ class AudioConfigSerialization(TypedDict):
 class PrintServiceConfigSerialization(TypedDict):
 	enabled: bool
 
+class AURHelper(StrEnum):
+	NO_AUR_HELPER = 'No AUR helper'
+	YAY = auto()
+	PARU = auto()
+
+class AURHelperConfigSerialization(TypedDict):
+	AUR_helper: str
 
 class Firewall(StrEnum):
 	UFW = auto()
@@ -79,6 +86,7 @@ class ApplicationSerialization(TypedDict):
 	audio_config: NotRequired[AudioConfigSerialization]
 	power_management_config: NotRequired[PowerManagementConfigSerialization]
 	print_service_config: NotRequired[PrintServiceConfigSerialization]
+	AUR_helper_config: NotRequired[AURHelperConfigSerialization]
 	firewall_config: NotRequired[FirewallConfigSerialization]
 	fonts_config: NotRequired[FontsConfigSerialization]
 
@@ -140,6 +148,22 @@ class PrintServiceConfiguration:
 
 
 @dataclass
+class AURHelperConfiguration:
+	AUR_helper: AURHelper
+
+	def json(self) -> AURHelperConfigSerialization:
+		return {
+			'AUR_helper': self.AUR_helper.value,
+		}
+
+	@classmethod
+	def parse_arg(cls, arg: dict[str, Any]) -> Self:
+		return cls(
+			AURHelper(arg['AUR_helper']),
+		)
+
+
+@dataclass
 class FirewallConfiguration:
 	firewall: Firewall
 
@@ -188,6 +212,7 @@ class ApplicationConfiguration:
 	audio_config: AudioConfiguration | None = None
 	power_management_config: PowerManagementConfiguration | None = None
 	print_service_config: PrintServiceConfiguration | None = None
+	AUR_helper_config: AURHelperConfiguration | None = None
 	firewall_config: FirewallConfiguration | None = None
 	fonts_config: FontsConfiguration | None = None
 
@@ -215,6 +240,9 @@ class ApplicationConfiguration:
 		if args and (print_service_config := args.get('print_service_config')) is not None:
 			app_config.print_service_config = PrintServiceConfiguration.parse_arg(print_service_config)
 
+		if args and (AUR_helper_config := args.get('AUR_helper_config')) is not None:
+			app_config.AUR_helper_config = AURHelperConfiguration.parse_arg(AUR_helper_config)
+
 		if args and (firewall_config := args.get('firewall_config')) is not None:
 			app_config.firewall_config = FirewallConfiguration.parse_arg(firewall_config)
 
@@ -237,6 +265,9 @@ class ApplicationConfiguration:
 
 		if self.print_service_config:
 			config['print_service_config'] = self.print_service_config.json()
+
+		if self.AUR_helper_config:
+			config['AUR_helper_config'] = self.AUR_helper_config.json()
 
 		if self.firewall_config:
 			config['firewall_config'] = self.firewall_config.json()
