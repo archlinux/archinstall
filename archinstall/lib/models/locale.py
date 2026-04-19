@@ -30,7 +30,7 @@ class LocaleConfiguration:
 	def preview(self) -> str:
 		output = '{}: {}\n'.format(tr('Keyboard layout'), self.kb_layout)
 		output += '{}: {}\n'.format(tr('Locale language'), self.sys_lang)
-		output += '{}: {}'.format(tr('Locale encoding'), self.sys_enc)
+		output += '{}: {}\n'.format(tr('Locale encoding'), self.sys_enc)
 		output += '{}: {}'.format(tr('Console font'), self.console_font)
 		return output
 
