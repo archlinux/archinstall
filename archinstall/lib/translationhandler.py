@@ -217,6 +217,9 @@ class TranslationHandler:
 		If FONT is set but invalid, fall back to language font.
 		If FONT is not set, use active language font.
 		"""
+		if not running_from_iso():
+			return
+
 		if _ENV_FONT:
 			if self._set_font(_ENV_FONT):
 				self._using_env_font = True
