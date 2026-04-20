@@ -2245,3 +2245,9 @@ msgstr ""
 
 msgid "Select a flavor of KDE Plasma to install"
 msgstr ""
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
