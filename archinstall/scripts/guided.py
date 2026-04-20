@@ -1,11 +1,11 @@
 import os
 import sys
 import time
-from pathlib import Path
 
 from archinstall.lib.applications.application_handler import ApplicationHandler
 from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
+from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
@@ -196,35 +196,6 @@ def perform_installation(
 						pass
 
 
-def _check_bootloader_layout(config: ArchConfig) -> str | None:
-	"""Validate bootloader configuration against disk layout.
-
-	Returns an error message if the configuration would produce an
-	unbootable system, or None if it is valid.
-	"""
-	# Limine can only read FAT. When the ESP is the boot partition but
-	# mounted outside /boot and UKI is disabled, the kernel ends up on the
-	# root filesystem which Limine cannot access.
-	if not (config.bootloader_config and config.bootloader_config.bootloader == Bootloader.Limine and not config.bootloader_config.uki and config.disk_config):
-		return None
-
-	efi_part = next(
-		(p for m in config.disk_config.device_modifications if (p := m.get_efi_partition())),
-		None,
-	)
-	boot_part = next(
-		(p for m in config.disk_config.device_modifications if (p := m.get_boot_partition())),
-		None,
-	)
-
-	if efi_part and boot_part == efi_part and efi_part.mountpoint != Path('/boot'):
-		return (
-			f'Limine requires kernels on a FAT partition. The ESP is mounted at {efi_part.mountpoint}, '
-			'enable UKI or add a separate /boot partition to install Limine.'
-		)
-	return None
-
-
 def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	if arch_config_handler is None:
 		arch_config_handler = ArchConfigHandler()
@@ -243,7 +214,10 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	# Safety net for silent/config-file flow. The TUI menu blocks Install via
 	# GlobalMenu._validate_bootloader() before reaching this point.
-	if err_msg := _check_bootloader_layout(arch_config_handler.config):
+	if err_msg := validate_bootloader_layout(
+		arch_config_handler.config.bootloader_config,
+		arch_config_handler.config.disk_config,
+	):
 		error(err_msg)
 		return
 
