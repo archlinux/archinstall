@@ -2031,6 +2031,23 @@ msgstr "Usar gestor de Red (backend iwd)"
 msgid "Firewall"
 msgstr "Cortafuegos"
 
+#, fuzzy
+msgid "Additional fonts"
+msgstr "Repositorios adicionales"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Seleccione el gestor de arranque que desea instalar"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
 msgid "Select audio configuration"
 msgstr "Seleccionar configuración de audio"
 
@@ -2195,6 +2212,12 @@ msgstr "Cifrado de disco"
 #, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
 msgstr "Seleccione el gestor de arranque que desea instalar"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"

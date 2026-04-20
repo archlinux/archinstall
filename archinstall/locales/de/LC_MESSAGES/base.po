@@ -2013,6 +2013,23 @@ msgstr "NetworkManager verwenden (iwd-Backend)"
 msgid "Firewall"
 msgstr "Firewall"
 
+#, fuzzy
+msgid "Additional fonts"
+msgstr "Zusätzliche Repositorien"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Bootloader zur Installation auswählen"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
 msgid "Select audio configuration"
 msgstr "Audiokonfiguration auswählen"
 
@@ -2171,6 +2188,12 @@ msgstr "Beschreibung"
 
 msgid "Select a flavor of KDE Plasma to install"
 msgstr "KDE-Plasma-Variante zur Installation auswählen"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
 
 #~ msgid "All open-source"
 #~ msgstr "Alle quelloffene"

@@ -2169,6 +2169,23 @@ msgid "Firewall"
 msgstr ""
 
 #, fuzzy
+msgid "Additional fonts"
+msgstr "Valikulised repositooriumid"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Palun valige millist tervitajat installida"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+#, fuzzy
 msgid "Select audio configuration"
 msgstr "Salvesta kasutaja konfiguratsioon"
 
@@ -2358,3 +2375,9 @@ msgstr "Ketta krüpteerimine"
 #, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
 msgstr "Palun valige millist tervitajat installida"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""

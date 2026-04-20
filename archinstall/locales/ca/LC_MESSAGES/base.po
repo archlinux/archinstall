@@ -2027,6 +2027,23 @@ msgstr "Utilitzar Network Manager (backend per a iwd)"
 msgid "Firewall"
 msgstr "Tallafocs"
 
+#, fuzzy
+msgid "Additional fonts"
+msgstr "Repositoris addicionals"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Selecció del bootloader a instal·lar"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
 msgid "Select audio configuration"
 msgstr "Seleccionar configuració d'àudio"
 
@@ -2191,3 +2208,9 @@ msgstr "Xifrat de disc"
 #, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
 msgstr "Selecció del bootloader a instal·lar"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
