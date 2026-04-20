@@ -2056,6 +2056,23 @@ msgid "Firewall"
 msgstr ""
 
 #, fuzzy
+msgid "Additional fonts"
+msgstr "Dépôts supplémentaires"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Veuillez choisir le greeter (interface de connexion) à installer"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+#, fuzzy
 msgid "Select audio configuration"
 msgstr "Enregistrer la configuration utilisateur"
 
@@ -2251,6 +2268,12 @@ msgstr "Chiffrement du disque"
 #, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
 msgstr "Veuillez choisir le greeter (interface de connexion) à installer"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

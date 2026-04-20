@@ -2126,6 +2126,23 @@ msgid "Firewall"
 msgstr ""
 
 #, fuzzy
+msgid "Additional fonts"
+msgstr "Taisclanna roghnacha"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Roghnaigh cé acu beannaitheoir atá le suiteáil"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+#, fuzzy
 msgid "Select audio configuration"
 msgstr "Sábháil cumraíocht úsáideora"
 
@@ -2315,3 +2332,9 @@ msgstr "Criptiú diosca"
 #, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
 msgstr "Roghnaigh cé acu beannaitheoir atá le suiteáil"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""

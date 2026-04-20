@@ -2078,6 +2078,23 @@ msgid "Firewall"
 msgstr ""
 
 #, fuzzy
+msgid "Additional fonts"
+msgstr "מאגרים נוספים"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "נא לבחור איזו מערכת קבלת פנים להתקין"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+#, fuzzy
 msgid "Select audio configuration"
 msgstr "שמירת הגדרת משתמש"
 
@@ -2269,3 +2286,9 @@ msgstr "הצפנת כונן"
 #, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
 msgstr "נא לבחור איזו מערכת קבלת פנים להתקין"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
