@@ -97,6 +97,9 @@ class TranslationHandler:
 
 	def restore_console_font(self) -> None:
 		"""Restore console font (with unicode map) and console map from backup."""
+		if not running_from_iso():
+			return
+
 		if self._font_backup is None or not self._font_backup.exists():
 			return
 
