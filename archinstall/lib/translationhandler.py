@@ -71,7 +71,7 @@ class TranslationHandler:
 
 		target = font_name or _DEFAULT_FONT
 		try:
-			SysCommand(f'setfont {target}')
+			SysCommand(['setfont', target])
 			return True
 		except SysCallError as err:
 			debug(f'Failed to set console font {target}: {err}')
@@ -89,7 +89,7 @@ class TranslationHandler:
 			os.close(cmap_fd)
 			self._font_backup = Path(font_path)
 			self._cmap_backup = Path(cmap_path)
-			SysCommand(f'setfont -O {self._font_backup} -om {self._cmap_backup}')
+			SysCommand(['setfont', '-O', str(self._font_backup), '-om', str(self._cmap_backup)])
 		except SysCallError as err:
 			debug(f'Failed to save console font: {err}')
 			self._font_backup = None
@@ -103,10 +103,13 @@ class TranslationHandler:
 		if self._font_backup is None or not self._font_backup.exists():
 			return
 
-		args = str(self._font_backup)
+		cmd = ['setfont', str(self._font_backup)]
 		if self._cmap_backup is not None and self._cmap_backup.exists():
-			args += f' -m {self._cmap_backup}'
-		self._set_font(args)
+			cmd += ['-m', str(self._cmap_backup)]
+		try:
+			SysCommand(cmd)
+		except SysCallError as err:
+			debug(f'Failed to restore console font: {err}')
 
 		self._font_backup.unlink(missing_ok=True)
 		self._font_backup = None
