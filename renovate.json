@@ -19,7 +19,7 @@
       "depNameTemplate": "arch/python-{{{depName}}}",
       "datasourceTemplate": "repology",
       "versioningTemplate": "loose",
-      "extractVersionTemplate": "^(?<version>.*)-\\d+$"
+      "extractVersionTemplate": "^(?<version>.+)-\\d+$"
     },
     {
       "customType": "regex",
@@ -31,7 +31,7 @@
       "depNameTemplate": "arch/python-systemd",
       "datasourceTemplate": "repology",
       "versioningTemplate": "loose",
-      "extractVersionTemplate": "^(?<version>.*)-\\d+$"
+      "extractVersionTemplate": "^(?<version>.+)-\\d+$"
     }
   ],
   "packageRules": [
