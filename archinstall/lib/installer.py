@@ -1964,18 +1964,22 @@ class Installer:
 	def user_set_shell(self, user: str, shell: str) -> bool:
 		info(f'Setting shell for {user} to {shell}')
 
+		cmd = ['arch-chroot', '-S', str(self.target), 'chsh', '-s', shell, user]
 		try:
-			self.arch_chroot(f'sh -c "chsh -s {shell} {user}"')
+			run(cmd)
 			return True
-		except SysCallError:
+		except CalledProcessError as err:
+			debug(f'Error setting user shell: {err}')
 			return False
 
-	def chown(self, owner: str, path: str, options: list[str] = []) -> bool:
-		cleaned_path = path.replace("'", "\\'")
+	def chown(self, owner: str, path: str, options: list[str] | None = None) -> bool:
+		options = options or []
+		cmd = ['arch-chroot', '-S', str(self.target), 'chown', *options, owner, path]
 		try:
-			self.arch_chroot(f"sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'")
+			run(cmd)
 			return True
-		except SysCallError:
+		except CalledProcessError as err:
+			debug(f'Error changing ownership of {path}: {err}')
 			return False
 
 	def set_vconsole(self, locale_config: LocaleConfiguration) -> None:
