@@ -41,3 +41,4 @@ requirements.txt
 /cmd_output.txt
 node_modules/
 uv.lock
+/docs/mddos/.obsidian
