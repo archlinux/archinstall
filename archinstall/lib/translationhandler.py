@@ -10,6 +10,7 @@ from typing import override
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.output import debug
+from archinstall.lib.utils.util import running_from_iso
 
 
 @dataclass
@@ -65,8 +66,6 @@ class TranslationHandler:
 
 	def _set_font(self, font_name: str | None) -> bool:
 		"""Set the console font via setfont. Only runs on ISO. Returns True on success."""
-		from archinstall.lib.utils.util import running_from_iso
-
 		if not running_from_iso():
 			return False
 
@@ -80,8 +79,6 @@ class TranslationHandler:
 
 	def save_console_font(self) -> None:
 		"""Save the current console font (with unicode map) and console map to temp files."""
-		from archinstall.lib.utils.util import running_from_iso
-
 		if not running_from_iso():
 			return
 
