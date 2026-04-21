@@ -1717,7 +1717,7 @@ msgstr "Alternar"
 
 #, fuzzy
 msgid "Show/Hide help"
-msgstr "Mostrar/Cerrar ayuda"
+msgstr "Mostrar/Ocultar ayuda"
 
 msgid "Quit"
 msgstr "Salir"
