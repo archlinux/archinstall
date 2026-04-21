@@ -2040,13 +2040,13 @@ msgid "Select font packages to install"
 msgstr "Seleccione el gestor de arranque que desea instalar"
 
 msgid "Unicode font coverage for most languages"
-msgstr "Fuente unicode cubierta para la mayoria de idiomas"
+msgstr "Fuente unicode cubierta para la mayoría de idiomas"
 
 msgid "color emoji for browsers and apps"
 msgstr "Emoji de color para navegador y apps"
 
 msgid "Chinese, Japanese, Korean characters"
-msgstr "Caracteres Chino, Japones, Koreano"
+msgstr "Carácteres Chino, Japonés, Koreano"
 
 msgid "Select audio configuration"
 msgstr "Seleccionar configuración de audio"
@@ -2196,7 +2196,7 @@ msgid "Package group"
 msgstr "Grupo de paquetes:"
 
 msgid "Extensive KDE Plasma installation"
-msgstr "Instalacion KDE Plasma Extensible"
+msgstr "Instalación KDE Plasma Extensible"
 
 #, fuzzy
 msgid "Packages in group"
@@ -2225,7 +2225,7 @@ msgstr "Configurando Inicio U2F: {u2f_config.u2f_login_method.value}"
 
 #, fuzzy, python-brace-format
 msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
-msgstr "Por defecto: 10000ms, Rango recomendado 1000-60000"
+msgstr "Por defecto: {DEFAULT_ITER_TIME}ms, Rango recomendado 1000-60000"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
