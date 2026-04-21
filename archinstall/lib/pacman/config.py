@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.pathnames import PACMAN_CONF
 
 
@@ -50,5 +51,23 @@ class PacmanConfig:
 			f.writelines(content)
 
 	def persist(self) -> None:
-		if self._repositories and self._config_remote_path:
+		if self._config_remote_path:
 			PACMAN_CONF.copy(self._config_remote_path, preserve_metadata=True)
+
+	def configure(self, pacman_config: PacmanConfiguration) -> None:
+		"""Apply PacmanConfiguration (Color, ParallelDownloads) to the target system's pacman.conf."""
+		if not self._config_remote_path or not self._config_remote_path.exists():
+			return
+
+		content = self._config_remote_path.read_text().splitlines()
+		result = []
+
+		for line in content:
+			if re.match(r'^#?\s*ParallelDownloads', line):
+				result.append(f'ParallelDownloads = {pacman_config.parallel_downloads}')
+			elif re.match(r'^#?\s*Color\s*$', line):
+				result.append('Color' if pacman_config.color else '#Color')
+			else:
+				result.append(line)
+
+		self._config_remote_path.write_text('\n'.join(result) + '\n')

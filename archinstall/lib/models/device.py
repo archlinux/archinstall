@@ -2,9 +2,9 @@ import builtins
 import math
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import Enum, StrEnum, auto
 from pathlib import Path
-from typing import NotRequired, Self, TypedDict, override
+from typing import Any, NotRequired, Self, TypedDict, override
 from uuid import UUID
 
 import parted
@@ -131,9 +131,14 @@ class DiskLayoutConfiguration:
 			for partition in entry.get('partitions', []):
 				flags = [flag for f in partition.get('flags', []) if (flag := PartitionFlag.from_string(f))]
 
+				if fs_type := partition.get('fs_type'):
+					fs_type = FilesystemType(fs_type)
+				else:
+					fs_type = None
+
 				device_partition = PartitionModification(
 					status=ModificationStatus(partition['status']),
-					fs_type=FilesystemType(partition['fs_type']) if partition.get('fs_type') else None,
+					fs_type=fs_type,
 					start=Size.parse_args(partition['start']),
 					length=Size.parse_args(partition['size']),
 					mount_options=partition['mount_options'],
@@ -159,15 +164,15 @@ class DiskLayoutConfiguration:
 				continue
 
 			first = non_delete_partitions[0]
-			if first.status == ModificationStatus.Create and not first.start.is_valid_start():
+			if first.status == ModificationStatus.CREATE and not first.start.is_valid_start():
 				raise ValueError('First partition must start at no less than 1 MiB')
 
 			for i, current_partition in enumerate(non_delete_partitions[1:], start=1):
 				previous_partition = non_delete_partitions[i - 1]
-				if current_partition.status == ModificationStatus.Create and current_partition.start < previous_partition.end:
+				if current_partition.status == ModificationStatus.CREATE and current_partition.start < previous_partition.end:
 					raise ValueError('Partitions overlap')
 
-			create_partitions = [part_mod for part_mod in non_delete_partitions if part_mod.status == ModificationStatus.Create]
+			create_partitions = [part_mod for part_mod in non_delete_partitions if part_mod.status == ModificationStatus.CREATE]
 
 			if not create_partitions:
 				continue
@@ -200,7 +205,7 @@ class DiskLayoutConfiguration:
 	def has_default_btrfs_vols(self) -> bool:
 		for mod in self.device_modifications:
 			for part in mod.partitions:
-				if not (part.is_create_or_modify() and part.fs_type == FilesystemType.Btrfs):
+				if not (part.is_create_or_modify() and part.fs_type == FilesystemType.BTRFS):
 					continue
 
 				if any(subvol.is_default_root() for subvol in part.btrfs_subvols):
@@ -715,23 +720,23 @@ class BDevice:
 		return hash(self.disk.device.path)
 
 
-class PartitionType(Enum):
-	Boot = 'boot'
-	Primary = 'primary'
-	_Unknown = 'unknown'
+class PartitionType(StrEnum):
+	BOOT = auto()
+	PRIMARY = auto()
+	_UNKNOWN = 'unknown'
 
 	@classmethod
 	def get_type_from_code(cls, code: int) -> Self:
 		if code == parted.PARTITION_NORMAL:
-			return cls.Primary
+			return cls.PRIMARY
 		else:
 			debug(f'Partition code not supported: {code}')
-			return cls._Unknown
+			return cls._UNKNOWN
 
 	def get_partition_code(self) -> int | None:
-		if self == PartitionType.Primary:
+		if self == PartitionType.PRIMARY:
 			return parted.PARTITION_NORMAL
-		elif self == PartitionType.Boot:
+		elif self == PartitionType.BOOT:
 			return parted.PARTITION_BOOT
 		return None
 
@@ -777,48 +782,48 @@ class PartitionGUID(Enum):
 		return uuid.UUID(self.value).bytes
 
 
-class FilesystemType(Enum):
-	Btrfs = 'btrfs'
-	Ext2 = 'ext2'
-	Ext3 = 'ext3'
-	Ext4 = 'ext4'
-	F2fs = 'f2fs'
-	Fat12 = 'fat12'
-	Fat16 = 'fat16'
-	Fat32 = 'fat32'
-	Ntfs = 'ntfs'
-	Xfs = 'xfs'
-	LinuxSwap = 'linux-swap'
+class FilesystemType(StrEnum):
+	BTRFS = auto()
+	EXT2 = auto()
+	EXT3 = auto()
+	EXT4 = auto()
+	F2FS = auto()
+	FAT12 = auto()
+	FAT16 = auto()
+	FAT32 = auto()
+	NTFS = auto()
+	XFS = auto()
+	LINUX_SWAP = 'linux-swap'
 
 	# this is not a FS known to parted, so be careful
 	# with the usage from this enum
-	Crypto_luks = 'crypto_LUKS'
+	CRYPTO_LUKS = 'crypto_LUKS'
 
 	def is_crypto(self) -> bool:
-		return self == FilesystemType.Crypto_luks
+		return self == FilesystemType.CRYPTO_LUKS
 
 	@property
 	def parted_value(self) -> str:
-		return self.value + '(v1)' if self == FilesystemType.LinuxSwap else self.value
+		return self.value + '(v1)' if self == FilesystemType.LINUX_SWAP else self.value
 
 	@property
 	def installation_pkg(self) -> str | None:
 		match self:
-			case FilesystemType.Btrfs:
+			case FilesystemType.BTRFS:
 				return 'btrfs-progs'
-			case FilesystemType.Xfs:
+			case FilesystemType.XFS:
 				return 'xfsprogs'
-			case FilesystemType.F2fs:
+			case FilesystemType.F2FS:
 				return 'f2fs-tools'
 			case _:
 				return None
 
 
-class ModificationStatus(Enum):
-	Exist = 'existing'
-	Modify = 'modify'
-	Delete = 'delete'
-	Create = 'create'
+class ModificationStatus(StrEnum):
+	EXIST = 'existing'
+	MODIFY = auto()
+	DELETE = auto()
+	CREATE = auto()
 
 
 class _PartitionModificationSerialization(TypedDict):
@@ -863,7 +868,7 @@ class PartitionModification:
 		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
 
-		if self.fs_type is None and self.status == ModificationStatus.Modify:
+		if self.fs_type is None and self.status == ModificationStatus.MODIFY:
 			raise ValueError('FS type must not be empty on modifications with status type modify')
 
 	@override
@@ -906,7 +911,7 @@ class PartitionModification:
 			subvol_mods = []
 
 		return cls(
-			status=ModificationStatus.Exist,
+			status=ModificationStatus.EXIST,
 			type=partition_info.type,
 			start=partition_info.start,
 			length=partition_info.length,
@@ -953,26 +958,26 @@ class PartitionModification:
 		return False
 
 	def is_swap(self) -> bool:
-		return self.fs_type == FilesystemType.LinuxSwap
+		return self.fs_type == FilesystemType.LINUX_SWAP
 
 	def is_modify(self) -> bool:
-		return self.status == ModificationStatus.Modify
+		return self.status == ModificationStatus.MODIFY
 
 	def is_delete(self) -> bool:
-		return self.status == ModificationStatus.Delete
+		return self.status == ModificationStatus.DELETE
 
 	def exists(self) -> bool:
-		return self.status == ModificationStatus.Exist
+		return self.status == ModificationStatus.EXIST
 
 	def is_exists_or_modify(self) -> bool:
 		return self.status in [
-			ModificationStatus.Exist,
-			ModificationStatus.Delete,
-			ModificationStatus.Modify,
+			ModificationStatus.EXIST,
+			ModificationStatus.DELETE,
+			ModificationStatus.MODIFY,
 		]
 
 	def is_create_or_modify(self) -> bool:
-		return self.status in [ModificationStatus.Create, ModificationStatus.Modify]
+		return self.status in [ModificationStatus.CREATE, ModificationStatus.MODIFY]
 
 	@property
 	def mapper_name(self) -> str | None:
@@ -1083,13 +1088,6 @@ class LvmVolumeGroup:
 		return lv in self.volumes
 
 
-class LvmVolumeStatus(Enum):
-	Exist = 'existing'
-	Modify = 'modify'
-	Delete = 'delete'
-	Create = 'create'
-
-
 class _LvmVolumeSerialization(TypedDict):
 	obj_id: str
 	status: str
@@ -1103,7 +1101,7 @@ class _LvmVolumeSerialization(TypedDict):
 
 @dataclass
 class LvmVolume:
-	status: LvmVolumeStatus
+	status: ModificationStatus
 	name: str
 	fs_type: FilesystemType
 	length: Size
@@ -1172,7 +1170,7 @@ class LvmVolume:
 	@classmethod
 	def parse_arg(cls, arg: _LvmVolumeSerialization) -> Self:
 		volume = cls(
-			status=LvmVolumeStatus(arg['status']),
+			status=ModificationStatus(arg['status']),
 			name=arg['name'],
 			fs_type=FilesystemType(arg['fs_type']),
 			length=Size.parse_args(arg['length']),
@@ -1210,13 +1208,13 @@ class LvmVolume:
 		return part_mod
 
 	def is_modify(self) -> bool:
-		return self.status == LvmVolumeStatus.Modify
+		return self.status == ModificationStatus.MODIFY
 
 	def exists(self) -> bool:
-		return self.status == LvmVolumeStatus.Exist
+		return self.status == ModificationStatus.EXIST
 
 	def is_exists_or_modify(self) -> bool:
-		return self.status in [LvmVolumeStatus.Exist, LvmVolumeStatus.Modify]
+		return self.status in [ModificationStatus.EXIST, ModificationStatus.MODIFY]
 
 	def is_root(self) -> bool:
 		if self.mountpoint is not None:
@@ -1402,19 +1400,19 @@ class DeviceModification:
 		}
 
 
-class EncryptionType(Enum):
-	NoEncryption = 'no_encryption'
-	Luks = 'luks'
-	LvmOnLuks = 'lvm_on_luks'
-	LuksOnLvm = 'luks_on_lvm'
+class EncryptionType(StrEnum):
+	NO_ENCRYPTION = auto()
+	LUKS = auto()
+	LVM_ON_LUKS = auto()
+	LUKS_ON_LVM = auto()
 
 	@classmethod
 	def _encryption_type_mapper(cls) -> dict[str, Self]:
 		return {
-			tr('No Encryption'): cls.NoEncryption,
-			tr('LUKS'): cls.Luks,
-			tr('LVM on LUKS'): cls.LvmOnLuks,
-			tr('LUKS on LVM'): cls.LuksOnLvm,
+			tr('No Encryption'): cls.NO_ENCRYPTION,
+			tr('LUKS'): cls.LUKS,
+			tr('LVM on LUKS'): cls.LVM_ON_LUKS,
+			tr('LUKS on LVM'): cls.LUKS_ON_LVM,
 		}
 
 	@classmethod
@@ -1438,7 +1436,7 @@ class _DiskEncryptionSerialization(TypedDict):
 
 @dataclass
 class DiskEncryption:
-	encryption_type: EncryptionType = EncryptionType.NoEncryption
+	encryption_type: EncryptionType = EncryptionType.NO_ENCRYPTION
 	encryption_password: Password | None = None
 	partitions: list[PartitionModification] = field(default_factory=list)
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
@@ -1446,10 +1444,10 @@ class DiskEncryption:
 	iter_time: int = DEFAULT_ITER_TIME
 
 	def __post_init__(self) -> None:
-		if self.encryption_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks] and not self.partitions:
+		if self.encryption_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS] and not self.partitions:
 			raise ValueError('Luks or LvmOnLuks encryption require partitions to be defined')
 
-		if self.encryption_type == EncryptionType.LuksOnLvm and not self.lvm_volumes:
+		if self.encryption_type == EncryptionType.LUKS_ON_LVM and not self.lvm_volumes:
 			raise ValueError('LuksOnLvm encryption require LMV volumes to be defined')
 
 	def should_generate_encryption_file(self, dev: PartitionModification | LvmVolume) -> bool:
@@ -1592,14 +1590,18 @@ class LsblkInfo(BaseModel):
 
 	@field_validator('size', mode='before')
 	@classmethod
-	def convert_size(cls, v: int, info: ValidationInfo) -> Size:
-		sector_size = SectorSize(info.data['log_sec'], Unit.B)
-		return Size(v, Unit.B, sector_size)
+	def convert_size(cls, value: Any, info: ValidationInfo) -> Any:
+		if isinstance(value, int):
+			sector_size = SectorSize(info.data['log_sec'], Unit.B)
+			return Size(value, Unit.B, sector_size)
+		return value
 
 	@field_validator('mountpoints', 'fsroots', mode='before')
 	@classmethod
-	def remove_none(cls, v: list[Path | None]) -> list[Path]:
-		return [item for item in v if item is not None]
+	def remove_none(cls, value: Any) -> Any:
+		if isinstance(value, list):
+			return [item for item in value if item is not None]
+		return value
 
 	@field_serializer('size', when_used='json')
 	def serialize_size(self, size: Size) -> str:

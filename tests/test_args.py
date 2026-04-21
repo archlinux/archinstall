@@ -22,6 +22,7 @@ from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
 from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -234,7 +235,7 @@ def test_config_file_parsing(
 		kernels=['linux-zen'],
 		ntp=True,
 		packages=['firefox'],
-		parallel_downloads=66,
+		pacman_config=PacmanConfiguration(parallel_downloads=66),
 		swap=ZramConfiguration(enabled=False),
 		timezone='UTC',
 		services=['service_1', 'service_2'],

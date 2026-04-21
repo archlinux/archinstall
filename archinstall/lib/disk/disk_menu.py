@@ -23,7 +23,6 @@ from archinstall.lib.models.device import (
 	LvmLayoutType,
 	LvmVolume,
 	LvmVolumeGroup,
-	LvmVolumeStatus,
 	ModificationStatus,
 	PartitionFlag,
 	PartitionModification,
@@ -281,7 +280,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 			if enc_config.encryption_password:
 				output += tr('Password') + f': {enc_config.encryption_password.hidden()}\n'
 
-			if enc_type != EncryptionType.NoEncryption:
+			if enc_type != EncryptionType.NO_ENCRYPTION:
 				output += tr('Iteration time') + f': {enc_config.iter_time or DEFAULT_ITER_TIME}ms\n'
 
 			if enc_config.partitions:
@@ -503,22 +502,22 @@ def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModifi
 
 	# boot partition
 	return PartitionModification(
-		status=ModificationStatus.Create,
-		type=PartitionType.Primary,
+		status=ModificationStatus.CREATE,
+		type=PartitionType.PRIMARY,
 		start=start,
 		length=size,
 		mountpoint=Path('/boot'),
-		fs_type=FilesystemType.Fat32,
+		fs_type=FilesystemType.FAT32,
 		flags=flags,
 	)
 
 
 async def select_main_filesystem_format() -> FilesystemType:
 	items = [
-		MenuItem('btrfs', value=FilesystemType.Btrfs),
-		MenuItem('ext4', value=FilesystemType.Ext4),
-		MenuItem('xfs', value=FilesystemType.Xfs),
-		MenuItem('f2fs', value=FilesystemType.F2fs),
+		MenuItem(FilesystemType.BTRFS.value, value=FilesystemType.BTRFS),
+		MenuItem(FilesystemType.EXT4.value, value=FilesystemType.EXT4),
+		MenuItem(FilesystemType.XFS.value, value=FilesystemType.XFS),
+		MenuItem(FilesystemType.F2FS.value, value=FilesystemType.F2FS),
 	]
 
 	group = MenuItemGroup(items, sort_items=False)
@@ -601,7 +600,7 @@ async def suggest_single_disk_layout(
 	available_space = total_size
 	min_size_to_allow_home_part = Size(64, Unit.GiB, sector_size)
 
-	if filesystem_type == FilesystemType.Btrfs:
+	if filesystem_type == FilesystemType.BTRFS:
 		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
 
 		result = await Confirmation(
@@ -655,8 +654,8 @@ async def suggest_single_disk_layout(
 		root_length = available_space - root_start
 
 	root_partition = PartitionModification(
-		status=ModificationStatus.Create,
-		type=PartitionType.Primary,
+		status=ModificationStatus.CREATE,
+		type=PartitionType.PRIMARY,
 		start=root_start,
 		length=root_length,
 		mountpoint=Path('/') if not using_subvolumes else None,
@@ -680,8 +679,8 @@ async def suggest_single_disk_layout(
 			flags.append(PartitionFlag.LINUX_HOME)
 
 		home_partition = PartitionModification(
-			status=ModificationStatus.Create,
-			type=PartitionType.Primary,
+			status=ModificationStatus.CREATE,
+			type=PartitionType.PRIMARY,
 			start=home_start,
 			length=home_length,
 			mountpoint=Path('/home'),
@@ -734,7 +733,7 @@ async def suggest_multi_disk_layout(
 		_ = await Notify(text).show()
 		return []
 
-	if filesystem_type == FilesystemType.Btrfs:
+	if filesystem_type == FilesystemType.BTRFS:
 		mount_options = await select_mount_options()
 
 	device_paths = ', '.join(str(d.device_info.path) for d in devices)
@@ -765,8 +764,8 @@ async def suggest_multi_disk_layout(
 
 	# add root partition to the root device
 	root_partition = PartitionModification(
-		status=ModificationStatus.Create,
-		type=PartitionType.Primary,
+		status=ModificationStatus.CREATE,
+		type=PartitionType.PRIMARY,
 		start=root_start,
 		length=root_length,
 		mountpoint=Path('/'),
@@ -787,8 +786,8 @@ async def suggest_multi_disk_layout(
 
 	# add home partition to home device
 	home_partition = PartitionModification(
-		status=ModificationStatus.Create,
-		type=PartitionType.Primary,
+		status=ModificationStatus.CREATE,
+		type=PartitionType.PRIMARY,
 		start=home_start,
 		length=home_length,
 		mountpoint=Path('/home'),
@@ -817,7 +816,7 @@ async def suggest_lvm_layout(
 	if not filesystem_type:
 		filesystem_type = await select_main_filesystem_format()
 
-	if filesystem_type == FilesystemType.Btrfs:
+	if filesystem_type == FilesystemType.BTRFS:
 		prompt = tr('Would you like to use BTRFS subvolumes with a default structure?') + '\n'
 		result = await Confirmation(header=prompt, allow_skip=False, preset=True).show()
 
@@ -851,7 +850,7 @@ async def suggest_lvm_layout(
 	lvm_vol_group = LvmVolumeGroup(vg_grp_name, pvs=other_part)
 
 	root_vol = LvmVolume(
-		status=LvmVolumeStatus.Create,
+		status=ModificationStatus.CREATE,
 		name='root',
 		fs_type=filesystem_type,
 		length=root_vol_size,
@@ -864,7 +863,7 @@ async def suggest_lvm_layout(
 
 	if home_volume:
 		home_vol = LvmVolume(
-			status=LvmVolumeStatus.Create,
+			status=ModificationStatus.CREATE,
 			name='home',
 			fs_type=filesystem_type,
 			length=home_vol_size,

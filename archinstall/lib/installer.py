@@ -48,12 +48,13 @@ from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import Nic
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.users import User
 from archinstall.lib.output import debug, error, info, log, logger, warn
 from archinstall.lib.packages.packages import installed_package
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman import Pacman
-from archinstall.lib.pathnames import PACMAN_CONF
+from archinstall.lib.pathnames import MIRRORLIST, PACMAN_CONF
 from archinstall.lib.plugins import plugins
 from archinstall.lib.translationhandler import tr
 
@@ -81,7 +82,7 @@ class Installer:
 		self.kernels = kernels or ['linux']
 		self._disk_config = disk_config
 
-		self._disk_encryption = disk_config.disk_encryption or DiskEncryption(EncryptionType.NoEncryption)
+		self._disk_encryption = disk_config.disk_encryption or DiskEncryption(EncryptionType.NO_ENCRYPTION)
 		self.target: Path = target
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
@@ -253,16 +254,16 @@ class Installer:
 		luks_handlers: dict[Any, Luks2] = {}
 
 		match self._disk_encryption.encryption_type:
-			case EncryptionType.NoEncryption:
+			case EncryptionType.NO_ENCRYPTION:
 				self._import_lvm()
 				self._mount_lvm_layout()
-			case EncryptionType.Luks:
+			case EncryptionType.LUKS:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
-			case EncryptionType.LvmOnLuks:
+			case EncryptionType.LVM_ON_LUKS:
 				luks_handlers = self._prepare_luks_partitions(self._disk_encryption.partitions)
 				self._import_lvm()
 				self._mount_lvm_layout(luks_handlers)
-			case EncryptionType.LuksOnLvm:
+			case EncryptionType.LUKS_ON_LVM:
 				self._import_lvm()
 				luks_handlers = self._prepare_luks_lvm(self._disk_encryption.lvm_volumes)
 				self._mount_lvm_layout(luks_handlers)
@@ -368,7 +369,7 @@ class Installer:
 		if part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
 			mount(part_mod.dev_path, target, options=part_mod.mount_options)
-		elif part_mod.fs_type == FilesystemType.Btrfs:
+		elif part_mod.fs_type == FilesystemType.BTRFS:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
 			if subvols_with_mountpoints:
@@ -381,12 +382,12 @@ class Installer:
 			swapon(part_mod.dev_path)
 
 	def _mount_lvm_vol(self, volume: LvmVolume) -> None:
-		if volume.fs_type != FilesystemType.Btrfs:
+		if volume.fs_type != FilesystemType.BTRFS:
 			if volume.mountpoint and volume.dev_path:
 				target = self.target / volume.relative_mountpoint
 				mount(volume.dev_path, target, options=volume.mount_options)
 
-		if volume.fs_type == FilesystemType.Btrfs and volume.dev_path:
+		if volume.fs_type == FilesystemType.BTRFS and volume.dev_path:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in volume.btrfs_subvols if sv.mountpoint is not None]
 			if subvols_with_mountpoints:
@@ -396,7 +397,7 @@ class Installer:
 		if not luks_handler.mapper_dev:
 			return None
 
-		if part_mod.fs_type == FilesystemType.Btrfs and part_mod.btrfs_subvols:
+		if part_mod.fs_type == FilesystemType.BTRFS and part_mod.btrfs_subvols:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
 			if subvols_with_mountpoints:
@@ -406,12 +407,12 @@ class Installer:
 			mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
 	def _mount_luks_volume(self, volume: LvmVolume, luks_handler: Luks2) -> None:
-		if volume.fs_type != FilesystemType.Btrfs:
+		if volume.fs_type != FilesystemType.BTRFS:
 			if volume.mountpoint and luks_handler.mapper_dev:
 				target = self.target / volume.relative_mountpoint
 				mount(luks_handler.mapper_dev, target, options=volume.mount_options)
 
-		if volume.fs_type == FilesystemType.Btrfs and luks_handler.mapper_dev:
+		if volume.fs_type == FilesystemType.BTRFS and luks_handler.mapper_dev:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in volume.btrfs_subvols if sv.mountpoint is not None]
 			if subvols_with_mountpoints:
@@ -432,11 +433,11 @@ class Installer:
 
 	def generate_key_files(self) -> None:
 		match self._disk_encryption.encryption_type:
-			case EncryptionType.Luks:
+			case EncryptionType.LUKS:
 				self._generate_key_files_partitions()
-			case EncryptionType.LuksOnLvm:
+			case EncryptionType.LUKS_ON_LVM:
 				self._generate_key_file_lvm_volumes()
-			case EncryptionType.LvmOnLuks:
+			case EncryptionType.LVM_ON_LUKS:
 				# currently LvmOnLuks only supports a single
 				# partitioning layout (boot + partition)
 				# so we won't need any keyfile generation atm
@@ -504,10 +505,9 @@ class Installer:
 		# Copy over the install log (if there is one) to the install medium if
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
 		if self._helper_flags.get('base-strapped', False) is True:
-			absolute_logfile = logger.path
-			logfile_target = self.target / absolute_logfile
-			logfile_target.parent.mkdir(parents=True, exist_ok=True)
-			absolute_logfile.copy(logfile_target, preserve_metadata=True)
+			logfile_target = self.target / LPath(logger.directory).relative_to_root()
+			logfile_target.mkdir(parents=True, exist_ok=True)
+			logger.path.copy_into(logfile_target, preserve_metadata=True)
 
 		return True
 
@@ -565,9 +565,12 @@ class Installer:
 				if result := plugin.on_mirrors(mirror_config):
 					mirror_config = result
 
-		root = self.target if on_target else Path('/')
-		mirrorlist_config = root / 'etc/pacman.d/mirrorlist'
-		pacman_config = root / PACMAN_CONF.relative_to_root()
+		if on_target:
+			mirrorlist_config = self.target / MIRRORLIST.relative_to_root()
+			pacman_config = self.target / PACMAN_CONF.relative_to_root()
+		else:
+			mirrorlist_config = MIRRORLIST
+			pacman_config = PACMAN_CONF
 
 		repositories_config = mirror_config.repositories_config()
 		if repositories_config:
@@ -863,7 +866,7 @@ class Installer:
 			self._base_packages.append(pkg)
 
 		# https://github.com/archlinux/archinstall/issues/1837
-		if fs_type == FilesystemType.Btrfs:
+		if fs_type == FilesystemType.BTRFS:
 			self._disable_fstrim = True
 
 	def _prepare_encrypt(self, before: str = 'filesystems') -> None:
@@ -883,6 +886,7 @@ class Installer:
 		mkinitcpio: bool = True,
 		hostname: str | None = None,
 		locale_config: LocaleConfiguration | None = LocaleConfiguration.default(),
+		pacman_config: PacmanConfiguration | None = None,
 	) -> None:
 		if self._disk_config.lvm_config:
 			lvm = 'lvm2'
@@ -894,7 +898,7 @@ class Installer:
 					if vol.fs_type is not None:
 						self._prepare_fs_type(vol.fs_type, vol.mountpoint)
 
-			types = (EncryptionType.LvmOnLuks, EncryptionType.LuksOnLvm)
+			types = (EncryptionType.LVM_ON_LUKS, EncryptionType.LUKS_ON_LVM)
 			if self._disk_encryption.encryption_type in types:
 				self._prepare_encrypt(lvm)
 		else:
@@ -928,6 +932,9 @@ class Installer:
 		self._helper_flags['base-strapped'] = True
 
 		pacman_conf.persist()
+
+		if pacman_config:
+			pacman_conf.configure(pacman_config)
 
 		# Periodic TRIM may improve the performance and longevity of SSDs whilst
 		# having no adverse effect on other devices. Most distributions enable
@@ -1129,7 +1136,7 @@ class Installer:
 		kernel_parameters = []
 
 		match self._disk_encryption.encryption_type:
-			case EncryptionType.LvmOnLuks:
+			case EncryptionType.LVM_ON_LUKS:
 				if not lvm.vg_name:
 					raise ValueError(f'Unable to determine VG name for {lvm.name}')
 
@@ -1146,7 +1153,7 @@ class Installer:
 				else:
 					debug(f'LvmOnLuks, encrypted root partition, identifying by UUID: {uuid}')
 					kernel_parameters.append(f'cryptdevice=UUID={uuid}:cryptlvm root={lvm.safe_dev_path}')
-			case EncryptionType.LuksOnLvm:
+			case EncryptionType.LUKS_ON_LVM:
 				uuid = self._get_luks_uuid_from_mapper_dev(lvm.mapper_path)
 
 				if self._disk_encryption.hsm_device:
@@ -1155,7 +1162,7 @@ class Installer:
 				else:
 					debug(f'LuksOnLvm, encrypted root partition, identifying by UUID: {uuid}')
 					kernel_parameters.append(f'cryptdevice=UUID={uuid}:root root=/dev/mapper/root')
-			case EncryptionType.NoEncryption:
+			case EncryptionType.NO_ENCRYPTION:
 				debug(f'Identifying root lvm by mapper device: {lvm.dev_path}')
 				kernel_parameters.append(f'root={lvm.safe_dev_path}')
 
@@ -1482,7 +1489,7 @@ class Installer:
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
-					(limine_path / file).copy(efi_dir_path)
+					(limine_path / file).copy_into(efi_dir_path)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
@@ -1531,7 +1538,7 @@ class Installer:
 
 			try:
 				# The `limine-bios.sys` file contains stage 3 code.
-				(limine_path / 'limine-bios.sys').copy(boot_limine_path)
+				(limine_path / 'limine-bios.sys').copy_into(boot_limine_path)
 
 				# `limine bios-install` deploys the stage 1 and 2 to the
 				self.arch_chroot(f'limine bios-install {parent_dev_path}', peek_output=True)
@@ -1957,18 +1964,22 @@ class Installer:
 	def user_set_shell(self, user: str, shell: str) -> bool:
 		info(f'Setting shell for {user} to {shell}')
 
+		cmd = ['arch-chroot', '-S', str(self.target), 'chsh', '-s', shell, user]
 		try:
-			self.arch_chroot(f'sh -c "chsh -s {shell} {user}"')
+			run(cmd)
 			return True
-		except SysCallError:
+		except CalledProcessError as err:
+			debug(f'Error setting user shell: {err}')
 			return False
 
-	def chown(self, owner: str, path: str, options: list[str] = []) -> bool:
-		cleaned_path = path.replace("'", "\\'")
+	def chown(self, owner: str, path: str, options: list[str] | None = None) -> bool:
+		options = options or []
+		cmd = ['arch-chroot', '-S', str(self.target), 'chown', *options, owner, path]
 		try:
-			self.arch_chroot(f"sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'")
+			run(cmd)
 			return True
-		except SysCallError:
+		except CalledProcessError as err:
+			debug(f'Error changing ownership of {path}: {err}')
 			return False
 
 	def set_vconsole(self, locale_config: LocaleConfiguration) -> None:

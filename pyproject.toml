@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "4.1"
+version = "4.3"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -18,11 +18,12 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
-    "pyparted>=3.13.0",
+    "pyparted==3.13.0",
     "pydantic==2.12.5",
-    "cryptography>=45.0.7",
-    "textual>=5.3.0",
-    "markdown-it-py[linkify]>=4.0.0",
+    "cryptography==46.0.7",
+    "textual==8.2.3",
+    "markdown-it-py==4.0.0",
+    "linkify-it-py==2.1.0",
 ]
 
 [project.urls]
@@ -33,10 +34,10 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.20.0",
+    "mypy==1.20.1",
     "flake8==7.3.0",
     "pre-commit==4.5.1",
-    "ruff==0.15.10",
+    "ruff==0.15.11",
     "pylint==4.0.5",
     "pytest==9.0.3",
 ]

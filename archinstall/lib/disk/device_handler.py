@@ -99,7 +99,7 @@ class DeviceHandler:
 				fs_type = self._determine_fs_type(partition, lsblk_info)
 				subvol_infos = []
 
-				if fs_type == FilesystemType.Btrfs:
+				if fs_type == FilesystemType.BTRFS:
 					subvol_infos = self.get_btrfs_info(partition.path, lsblk_info)
 
 				partition_infos.append(
@@ -147,8 +147,8 @@ class DeviceHandler:
 	) -> FilesystemType | None:
 		try:
 			if partition.fileSystem:
-				if partition.fileSystem.type == FilesystemType.LinuxSwap.parted_value:
-					return FilesystemType.LinuxSwap
+				if partition.fileSystem.type == FilesystemType.LINUX_SWAP.parted_value:
+					return FilesystemType.LINUX_SWAP
 				return FilesystemType(partition.fileSystem.type)
 			elif lsblk_info is not None:
 				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
@@ -241,20 +241,20 @@ class DeviceHandler:
 		options = []
 
 		match fs_type:
-			case FilesystemType.Btrfs | FilesystemType.Xfs:
+			case FilesystemType.BTRFS | FilesystemType.XFS:
 				# Force overwrite
 				options.append('-f')
-			case FilesystemType.F2fs:
+			case FilesystemType.F2FS:
 				options.append('-f')
 				options.extend(('-O', 'extra_attr'))
-			case FilesystemType.Ext2 | FilesystemType.Ext3 | FilesystemType.Ext4:
+			case FilesystemType.EXT2 | FilesystemType.EXT3 | FilesystemType.EXT4:
 				# Force create
 				options.append('-F')
-			case FilesystemType.Fat12 | FilesystemType.Fat16 | FilesystemType.Fat32:
+			case FilesystemType.FAT12 | FilesystemType.FAT16 | FilesystemType.FAT32:
 				mkfs_type = 'fat'
 				# Set FAT size
 				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
-			case FilesystemType.LinuxSwap:
+			case FilesystemType.LINUX_SWAP:
 				command = 'mkswap'
 			case _:
 				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
@@ -342,7 +342,7 @@ class DeviceHandler:
 	) -> None:
 		# when we require a delete and the partition to be (re)created
 		# already exists then we have to delete it first
-		if requires_delete and part_mod.status in [ModificationStatus.Modify, ModificationStatus.Delete]:
+		if requires_delete and part_mod.status in [ModificationStatus.MODIFY, ModificationStatus.DELETE]:
 			info(f'Delete existing partition: {part_mod.safe_dev_path}')
 			part_info = self.find_partition(part_mod.safe_dev_path)
 
@@ -351,7 +351,7 @@ class DeviceHandler:
 
 			disk.deletePartition(part_info.partition)
 
-		if part_mod.status == ModificationStatus.Delete:
+		if part_mod.status == ModificationStatus.DELETE:
 			return
 
 		start_sector = part_mod.start.convert(
@@ -505,7 +505,7 @@ class DeviceHandler:
 			debug(f'Unmounting: {partition.path}')
 
 			# un-mount for existing encrypted partitions
-			if partition.fs_type == FilesystemType.Crypto_luks:
+			if partition.fs_type == FilesystemType.CRYPTO_LUKS:
 				Luks2(partition.path).lock()
 			else:
 				umount(partition.path, recursive=True)

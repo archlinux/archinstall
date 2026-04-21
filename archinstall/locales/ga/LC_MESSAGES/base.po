@@ -823,6 +823,22 @@ msgstr "Ionchur neamhbhailí! Bain triail eile as le hionchur bailí [1 go {max_
 msgid "Parallel Downloads"
 msgstr "Comhuaineach íosluchtuithe"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"Cuir isteach líon na n-íoslódálacha comhthreomhara atá le cumasú.\n"
+"\n"
+"Nóta:\n"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "ESC a scipeáil"
 
@@ -1731,6 +1747,128 @@ msgstr ""
 msgid "Exit search mode"
 msgstr ""
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "Sábháil cumraíocht"
+
+#, fuzzy
+msgid "Selection"
+msgstr "Roghnaigh an rogha sínithe"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "Deimhnigh agus scoir"
+
+msgid "Focus right"
+msgstr ""
+
+msgid "Focus left"
+msgstr ""
+
+msgid "Toggle"
+msgstr ""
+
+msgid "Show/Hide help"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "Roghnaigh an rogha sínithe"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+msgid "Page up"
+msgstr ""
+
+msgid "Page down"
+msgstr ""
+
+msgid "Page Left"
+msgstr ""
+
+msgid "Page Right"
+msgstr ""
+
+msgid "Cursor up"
+msgstr ""
+
+msgid "Cursor down"
+msgstr ""
+
+msgid "Cursor right"
+msgstr ""
+
+msgid "Cursor left"
+msgstr ""
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "End"
+msgstr ""
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "Roghanna subvolume"
+
+msgid "Scroll Up"
+msgstr ""
+
+msgid "Scroll Down"
+msgstr ""
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 #, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Teastaíonn rochtain ó Sway ar do shuíochán (bailiúchán de ghléasanna crua-earraí i.e. méarchlár, luch, srl)"
@@ -1988,6 +2126,23 @@ msgid "Firewall"
 msgstr ""
 
 #, fuzzy
+msgid "Additional fonts"
+msgstr "Taisclanna roghnacha"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Roghnaigh cé acu beannaitheoir atá le suiteáil"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+#, fuzzy
 msgid "Select audio configuration"
 msgstr "Sábháil cumraíocht úsáideora"
 
@@ -2136,4 +2291,50 @@ msgid "Password strength: Strong"
 msgstr ""
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Cineál timpeallachta: {}"
+
+msgid "Input cannot be empty"
+msgstr ""
+
+msgid "Recommended"
+msgstr ""
+
+msgid "Package"
+msgstr ""
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "Comhéadain {} cumraithe"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+msgid "Packages in group"
+msgstr ""
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Criptiú diosca"
+
+#, fuzzy
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Roghnaigh cé acu beannaitheoir atá le suiteáil"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
 msgstr ""

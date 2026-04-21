@@ -7,7 +7,7 @@ from archinstall.lib.authentication.authentication_menu import AuthenticationMen
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
-from archinstall.lib.general.general_menu import add_number_of_parallel_downloads, select_hostname, select_ntp, select_timezone
+from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
 from archinstall.lib.general.system_menu import select_kernel, select_swap
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.locale_menu import LocaleMenu
@@ -22,12 +22,15 @@ from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, NicType
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
 from archinstall.lib.output import FormattedOutput
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
+from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.tui.ui.components import tui
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 
 
@@ -37,11 +40,13 @@ class GlobalMenu(AbstractMenu[None]):
 		arch_config: ArchConfig,
 		mirror_list_handler: MirrorListHandler | None = None,
 		skip_boot: bool = False,
+		advanced: bool = False,
 		title: str | None = None,
 	) -> None:
 		self._arch_config = arch_config
 		self._mirror_list_handler = mirror_list_handler
 		self._skip_boot = skip_boot
+		self._advanced = advanced
 		self._uefi = SysInfo.has_uefi()
 		menu_options = self._get_menu_options()
 
@@ -138,11 +143,11 @@ class GlobalMenu(AbstractMenu[None]):
 				key='network_config',
 			),
 			MenuItem(
-				text=tr('Parallel Downloads'),
-				action=add_number_of_parallel_downloads,
-				value=1,
-				preview_action=self._prev_parallel_dw,
-				key='parallel_downloads',
+				text=tr('Pacman'),
+				action=self._pacman_configuration,
+				value=PacmanConfiguration.default(),
+				preview_action=self._prev_pacman_config,
+				key='pacman_config',
 			),
 			MenuItem(
 				text=tr('Additional packages'),
@@ -275,6 +280,8 @@ class GlobalMenu(AbstractMenu[None]):
 		for o in new_options:
 			if o.key is not None:
 				self._item_group.find_by_key(o.key).text = o.text
+
+		tui.translate_bindings()
 
 	async def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration | None:
 		locale_config = await LocaleMenu(preset).show()
@@ -411,10 +418,18 @@ class GlobalMenu(AbstractMenu[None]):
 			return f'{tr("Hostname")}: {item.value}'
 		return None
 
-	def _prev_parallel_dw(self, item: MenuItem) -> str | None:
-		if item.value is not None:
-			return f'{tr("Parallel Downloads")}: {item.value}'
-		return None
+	async def _pacman_configuration(self, preset: PacmanConfiguration) -> PacmanConfiguration | None:
+		return await PacmanMenu(preset, advanced=self._advanced).show()
+
+	def _prev_pacman_config(self, item: MenuItem) -> str | None:
+		if not item.value:
+			return None
+		config: PacmanConfiguration = item.value
+		output = ''
+		if self._advanced:
+			output += '{}: {}\n'.format(tr('Parallel Downloads'), config.parallel_downloads)
+		output += '{}: {}'.format(tr('Color'), config.color)
+		return output
 
 	def _prev_kernel(self, item: MenuItem) -> str | None:
 		if item.value:
@@ -472,11 +487,11 @@ class GlobalMenu(AbstractMenu[None]):
 			if efi_partition is None:
 				return 'EFI system partition (ESP) not found'
 
-			if efi_partition.fs_type not in [FilesystemType.Fat12, FilesystemType.Fat16, FilesystemType.Fat32]:
+			if efi_partition.fs_type not in [FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32]:
 				return 'ESP must be formatted as a FAT filesystem'
 
 		if bootloader == Bootloader.Limine:
-			if boot_partition.fs_type not in [FilesystemType.Fat12, FilesystemType.Fat16, FilesystemType.Fat32]:
+			if boot_partition.fs_type not in [FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32]:
 				return 'Limine does not support booting with a non-FAT boot partition'
 
 		elif bootloader == Bootloader.Refind:

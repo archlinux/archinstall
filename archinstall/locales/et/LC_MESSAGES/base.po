@@ -838,6 +838,22 @@ msgstr "Vale sisestus! Proovige uuesti kehtiva sisendiga [1 {max_downloads} või
 msgid "Parallel Downloads"
 msgstr "Paralleelsed allalaadimised"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"Sisestage lubatavate paralleelsete allalaadimiste arv.\n"
+" (Sisestage väärtus vahemikus 1 kuni {max_downloads})\n"
+"note:"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "ESC vahelejätmiseks"
 
@@ -1774,6 +1790,128 @@ msgstr ""
 msgid "Exit search mode"
 msgstr ""
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "Salvesta konfiguratsioon"
+
+#, fuzzy
+msgid "Selection"
+msgstr "Valige allkirja valik"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "Kinnita ja lahku"
+
+msgid "Focus right"
+msgstr ""
+
+msgid "Focus left"
+msgstr ""
+
+msgid "Toggle"
+msgstr ""
+
+msgid "Show/Hide help"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "Valige allkirja valik"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+msgid "Page up"
+msgstr ""
+
+msgid "Page down"
+msgstr ""
+
+msgid "Page Left"
+msgstr ""
+
+msgid "Page Right"
+msgstr ""
+
+msgid "Cursor up"
+msgstr ""
+
+msgid "Cursor down"
+msgstr ""
+
+msgid "Cursor right"
+msgstr ""
+
+msgid "Cursor left"
+msgstr ""
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "End"
+msgstr ""
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "Alamhulga valikud"
+
+msgid "Scroll Up"
+msgstr ""
+
+msgid "Scroll Down"
+msgstr ""
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 #, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Sway vajab juurdepääsu teie seatile (riistvaraseadmete kogum, st klaviatuur, hiir jne."
@@ -2031,6 +2169,23 @@ msgid "Firewall"
 msgstr ""
 
 #, fuzzy
+msgid "Additional fonts"
+msgstr "Valikulised repositooriumid"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Palun valige millist tervitajat installida"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+#, fuzzy
 msgid "Select audio configuration"
 msgstr "Salvesta kasutaja konfiguratsioon"
 
@@ -2179,4 +2334,50 @@ msgid "Password strength: Strong"
 msgstr ""
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Keskkonna tüüp: {}"
+
+msgid "Input cannot be empty"
+msgstr ""
+
+msgid "Recommended"
+msgstr ""
+
+msgid "Package"
+msgstr ""
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "Konfigureeritud {} liidesed"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+msgid "Packages in group"
+msgstr ""
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Ketta krüpteerimine"
+
+#, fuzzy
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Palun valige millist tervitajat installida"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
 msgstr ""

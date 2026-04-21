@@ -826,6 +826,19 @@ msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [1 a {m
 msgid "Parallel Downloads"
 msgstr "Descargas paralelas"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "Ingrese el número de descargas paralelas que desea habilitar"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "ESC para omitir"
 
@@ -1667,6 +1680,139 @@ msgstr "Iniciar modo de búsqueda"
 msgid "Exit search mode"
 msgstr "Salir del modo de búsqueda"
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "Guardar configuración"
+
+#, fuzzy
+msgid "Selection"
+msgstr "Seleccione regiones"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "Confirmar y salir"
+
+#, fuzzy
+msgid "Focus right"
+msgstr "Mover a la derecha"
+
+#, fuzzy
+msgid "Focus left"
+msgstr "Mover a la izquierda"
+
+msgid "Toggle"
+msgstr ""
+
+#, fuzzy
+msgid "Show/Hide help"
+msgstr "Mostrar ayuda"
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "Seleccione regiones"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+#, fuzzy
+msgid "Page up"
+msgstr "Grupo de paquetes:"
+
+#, fuzzy
+msgid "Page down"
+msgstr "Bajar"
+
+msgid "Page Left"
+msgstr ""
+
+#, fuzzy
+msgid "Page Right"
+msgstr "Mover a la derecha"
+
+msgid "Cursor up"
+msgstr ""
+
+#, fuzzy
+msgid "Cursor down"
+msgstr "Bajar"
+
+#, fuzzy
+msgid "Cursor right"
+msgstr "Mover a la derecha"
+
+#, fuzzy
+msgid "Cursor left"
+msgstr "Mover a la izquierda"
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+#, fuzzy
+msgid "End"
+msgstr "Habilitado"
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "Opciones del subvolumen"
+
+msgid "Scroll Up"
+msgstr ""
+
+#, fuzzy
+msgid "Scroll Down"
+msgstr "Bajar en vista previa"
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc necesita acceso a su asiento (colección de dispositivos de hardware, es decir, teclado, ratón, etc.)"
 
@@ -1885,6 +2031,23 @@ msgstr "Usar gestor de Red (backend iwd)"
 msgid "Firewall"
 msgstr "Cortafuegos"
 
+#, fuzzy
+msgid "Additional fonts"
+msgstr "Repositorios adicionales"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Seleccione el gestor de arranque que desea instalar"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
 msgid "Select audio configuration"
 msgstr "Seleccionar configuración de audio"
 
@@ -2006,6 +2169,55 @@ msgstr "Seguridad de la contraseña: Fuerte"
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr "El perfil de escritorio seleccionado requiere que un usuario estándar inicie sesión a través de la pantalla de bienvenida"
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Tipo de entorno: {}"
+
+#, fuzzy
+msgid "Input cannot be empty"
+msgstr "El valor no puede estár vacío"
+
+msgid "Recommended"
+msgstr ""
+
+#, fuzzy
+msgid "Package"
+msgstr "Grupo de paquetes:"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "Grupo de paquetes:"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Packages in group"
+msgstr "Grupo de paquetes:"
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Cifrado de disco"
+
+#, fuzzy
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Seleccione el gestor de arranque que desea instalar"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"

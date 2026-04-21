@@ -8,6 +8,32 @@
   "pre-commit": {
     "enabled": true
   },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track runtime Python deps via Arch Linux repos instead of PyPI",
+      "managerFilePatterns": ["**/pyproject.toml"],
+      "matchStrings": [
+        "\"(?<depName>pyparted|pydantic|cryptography|textual|markdown-it-py|linkify-it-py)==(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "arch/python-{{{depName}}}",
+      "datasourceTemplate": "repology",
+      "versioningTemplate": "loose",
+      "extractVersionTemplate": "^(?<version>.+)-\\d+$"
+    },
+    {
+      "customType": "regex",
+      "description": "Track systemd_python via Arch Linux repos (different package name)",
+      "managerFilePatterns": ["**/pyproject.toml"],
+      "matchStrings": [
+        "\"systemd_python==(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "arch/python-systemd",
+      "datasourceTemplate": "repology",
+      "versioningTemplate": "loose",
+      "extractVersionTemplate": "^(?<version>.+)-\\d+$"
+    }
+  ],
   "packageRules": [
     {
       "matchDepTypes": [
@@ -24,6 +50,20 @@
         "astral-sh/ruff-pre-commit"
       ],
       "automerge": true
+    },
+    {
+      "description": "Disable PyPI updates for runtime deps tracked via Arch repos",
+      "matchDatasources": ["pypi"],
+      "matchPackageNames": [
+        "pyparted",
+        "pydantic",
+        "cryptography",
+        "textual",
+        "markdown-it-py",
+        "linkify-it-py",
+        "systemd_python"
+      ],
+      "enabled": false
     }
   ]
 }

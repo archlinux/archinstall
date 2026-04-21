@@ -815,6 +815,19 @@ msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {ma
 msgid "Parallel Downloads"
 msgstr "Paralelní stahování"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "Zadejte povolený počet paralelních stahování, která mají být povolena"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "Pomocí ESC přeskočíte"
 
@@ -1655,6 +1668,139 @@ msgstr "Spustit režim vyhledávání"
 msgid "Exit search mode"
 msgstr "Opustit režim vyhledávání"
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "Uložit konfiguraci"
+
+#, fuzzy
+msgid "Selection"
+msgstr "Zvolte regiony"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "Potvrdit a ukončit"
+
+#, fuzzy
+msgid "Focus right"
+msgstr "Posunout doprava"
+
+#, fuzzy
+msgid "Focus left"
+msgstr "Posunout doleva"
+
+msgid "Toggle"
+msgstr ""
+
+#, fuzzy
+msgid "Show/Hide help"
+msgstr "Zobrazit nápovědu"
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "Zvolte regiony"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+#, fuzzy
+msgid "Page up"
+msgstr "Skupina balíčků:"
+
+#, fuzzy
+msgid "Page down"
+msgstr "Posunout dolů"
+
+msgid "Page Left"
+msgstr ""
+
+#, fuzzy
+msgid "Page Right"
+msgstr "Posunout doprava"
+
+msgid "Cursor up"
+msgstr ""
+
+#, fuzzy
+msgid "Cursor down"
+msgstr "Posunout dolů"
+
+#, fuzzy
+msgid "Cursor right"
+msgstr "Posunout doprava"
+
+#, fuzzy
+msgid "Cursor left"
+msgstr "Posunout doleva"
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+#, fuzzy
+msgid "End"
+msgstr "Povoleno"
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "Přepínače podsvazku"
+
+msgid "Scroll Up"
+msgstr ""
+
+#, fuzzy
+msgid "Scroll Down"
+msgstr "Posunout náhled dolů"
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc vyžaduje přístup k vašemu sezení (soubor zařízení jako např. klávesnice, myš, atd.)"
 
@@ -1873,6 +2019,23 @@ msgstr "Použít Network Manager (iwd backend)"
 msgid "Firewall"
 msgstr "Firewall"
 
+#, fuzzy
+msgid "Additional fonts"
+msgstr "Dodatečné repozitáře"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Zvolte zavaděč k instalaci"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
 msgid "Select audio configuration"
 msgstr "Zvolte konfiguraci zvuku"
 
@@ -1900,6 +2063,7 @@ msgstr "Zvolte disky pro instalaci"
 msgid "Enter a mountpoint"
 msgstr "Zadejte přípojný bod"
 
+#, python-brace-format
 msgid "Enter a size (default: {}): "
 msgstr "Zadejte velikost (výchozí: {}): "
 
@@ -1994,3 +2158,52 @@ msgstr "Síla hesla: Silné"
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr "Zvolený profil plochy vyžaduje, aby se normální uživatel přihlásil prostřednictvím přihlašovací obrazovky"
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Typ prostředí: {}"
+
+#, fuzzy
+msgid "Input cannot be empty"
+msgstr "Hodnota nesmí být prázdná"
+
+msgid "Recommended"
+msgstr ""
+
+#, fuzzy
+msgid "Package"
+msgstr "Skupina balíčků:"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "Skupina balíčků:"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Packages in group"
+msgstr "Skupina balíčků:"
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Šifrování disku"
+
+#, fuzzy
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Zvolte zavaděč k instalaci"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""

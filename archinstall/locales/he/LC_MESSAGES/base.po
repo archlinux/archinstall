@@ -830,6 +830,22 @@ msgstr "קלט שגוי! נא לנסות שוב עם קלט תקין [1 עד {ma
 msgid "Parallel Downloads"
 msgstr "הורדות במקביל"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"נא למלא את מספר ההורדות המקביליות להפעלה.‬\n"
+"\n"
+"‫הערה:‬\n"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "‫ESC לדילוג"
 
@@ -1691,6 +1707,129 @@ msgstr ""
 msgid "Exit search mode"
 msgstr ""
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "שמירת הגדרה"
+
+#, fuzzy
+msgid "Selection"
+msgstr "בחירת אפשרות חתימות"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "אישור ויציאה"
+
+msgid "Focus right"
+msgstr ""
+
+msgid "Focus left"
+msgstr ""
+
+msgid "Toggle"
+msgstr ""
+
+msgid "Show/Hide help"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "בחירת אפשרות חתימות"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+msgid "Page up"
+msgstr ""
+
+msgid "Page down"
+msgstr ""
+
+msgid "Page Left"
+msgstr ""
+
+msgid "Page Right"
+msgstr ""
+
+msgid "Cursor up"
+msgstr ""
+
+msgid "Cursor down"
+msgstr ""
+
+msgid "Cursor right"
+msgstr ""
+
+msgid "Cursor left"
+msgstr ""
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+#, fuzzy
+msgid "End"
+msgstr "פעיל"
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "אפשרויות תת־כרך"
+
+msgid "Scroll Up"
+msgstr ""
+
+msgid "Scroll Down"
+msgstr ""
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 #, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "‫Sway צריך גישה למושב (אוסף של התקני חומרה כמו למשל מקלדת, עכבר וכו׳) שלך"
@@ -1939,6 +2078,23 @@ msgid "Firewall"
 msgstr ""
 
 #, fuzzy
+msgid "Additional fonts"
+msgstr "מאגרים נוספים"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "נא לבחור איזו מערכת קבלת פנים להתקין"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+#, fuzzy
 msgid "Select audio configuration"
 msgstr "שמירת הגדרת משתמש"
 
@@ -2089,4 +2245,50 @@ msgid "Password strength: Strong"
 msgstr ""
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "סוג סביבה: {}"
+
+msgid "Input cannot be empty"
+msgstr ""
+
+msgid "Recommended"
+msgstr ""
+
+msgid "Package"
+msgstr ""
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "הגדרת מנשקים"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+msgid "Packages in group"
+msgstr ""
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "הצפנת כונן"
+
+#, fuzzy
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "נא לבחור איזו מערכת קבלת פנים להתקין"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
 msgstr ""

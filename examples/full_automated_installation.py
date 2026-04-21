@@ -37,20 +37,20 @@ device_modification = DeviceModification(device, wipe=True)
 
 # create a new boot partition
 boot_partition = PartitionModification(
-	status=ModificationStatus.Create,
-	type=PartitionType.Primary,
+	status=ModificationStatus.CREATE,
+	type=PartitionType.PRIMARY,
 	start=Size(1, Unit.MiB, device.device_info.sector_size),
 	length=Size(512, Unit.MiB, device.device_info.sector_size),
 	mountpoint=Path('/boot'),
-	fs_type=FilesystemType.Fat32,
+	fs_type=FilesystemType.FAT32,
 	flags=[PartitionFlag.BOOT],
 )
 device_modification.add_partition(boot_partition)
 
 # create a root partition
 root_partition = PartitionModification(
-	status=ModificationStatus.Create,
-	type=PartitionType.Primary,
+	status=ModificationStatus.CREATE,
+	type=PartitionType.PRIMARY,
 	start=Size(513, Unit.MiB, device.device_info.sector_size),
 	length=Size(20, Unit.GiB, device.device_info.sector_size),
 	mountpoint=None,
@@ -64,8 +64,8 @@ length_home = device.device_info.total_size - start_home
 
 # create a new home partition
 home_partition = PartitionModification(
-	status=ModificationStatus.Create,
-	type=PartitionType.Primary,
+	status=ModificationStatus.CREATE,
+	type=PartitionType.PRIMARY,
 	start=start_home,
 	length=length_home,
 	mountpoint=Path('/home'),
@@ -82,7 +82,7 @@ disk_config = DiskLayoutConfiguration(
 # disk encryption configuration (Optional)
 disk_encryption = DiskEncryption(
 	encryption_password=Password(plaintext='enc_password'),
-	encryption_type=EncryptionType.Luks,
+	encryption_type=EncryptionType.LUKS,
 	partitions=[home_partition],
 	hsm_device=None,
 )

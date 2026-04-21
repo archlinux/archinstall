@@ -824,6 +824,22 @@ msgstr "Virheellinen arvo! Yritä uudelleen kelvollisella arvolla [1 - {max_down
 msgid "Parallel Downloads"
 msgstr "Rinnakkaiset lataukset"
 
+msgid "Pacman"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"Anna rinnakkaisten latausten määrä.\n"
+"\n"
+"Huomaa:\n"
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
 msgid "ESC to skip"
 msgstr "Ohita painamalla ESC"
 
@@ -1744,6 +1760,137 @@ msgstr ""
 msgid "Exit search mode"
 msgstr ""
 
+msgid "General"
+msgstr ""
+
+#, fuzzy
+msgid "Navigation"
+msgstr "Tallenna määritykset"
+
+#, fuzzy
+msgid "Selection"
+msgstr "Valitse allekirjoituksen asetus"
+
+msgid "Search"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm"
+msgstr "Vahvista ja poistu"
+
+#, fuzzy
+msgid "Focus right"
+msgstr "Liiku oikealle"
+
+#, fuzzy
+msgid "Focus left"
+msgstr "Liiku vasemmalle"
+
+msgid "Toggle"
+msgstr ""
+
+#, fuzzy
+msgid "Show/Hide help"
+msgstr "Näytä apua"
+
+msgid "Quit"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+#, fuzzy
+msgid "Select"
+msgstr "Valitse allekirjoituksen asetus"
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+msgid "Page up"
+msgstr ""
+
+#, fuzzy
+msgid "Page down"
+msgstr "Liikku alas"
+
+msgid "Page Left"
+msgstr ""
+
+#, fuzzy
+msgid "Page Right"
+msgstr "Liiku oikealle"
+
+msgid "Cursor up"
+msgstr ""
+
+#, fuzzy
+msgid "Cursor down"
+msgstr "Liikku alas"
+
+#, fuzzy
+msgid "Cursor right"
+msgstr "Liiku oikealle"
+
+#, fuzzy
+msgid "Cursor left"
+msgstr "Liiku vasemmalle"
+
+msgid "Top"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+#, fuzzy
+msgid "End"
+msgstr "Käytössä"
+
+#, fuzzy
+msgid "Toggle option"
+msgstr "Alitaltion valinnat"
+
+msgid "Scroll Up"
+msgstr ""
+
+msgid "Scroll Down"
+msgstr ""
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
 #, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Sway tarvitsee pääsyn istuntoon (kokoelma laitteistoja, kuten näppäimistö, hiiri jne.)"
@@ -2001,6 +2148,23 @@ msgid "Firewall"
 msgstr ""
 
 #, fuzzy
+msgid "Additional fonts"
+msgstr "Valinnaiset arkistot"
+
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Valitse asennettava käyttöliittymä"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+#, fuzzy
 msgid "Select audio configuration"
 msgstr "Tallenna käyttäjän määritykset"
 
@@ -2149,4 +2313,50 @@ msgid "Password strength: Strong"
 msgstr ""
 
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Ympäristötyyppi: {}"
+
+msgid "Input cannot be empty"
+msgstr ""
+
+msgid "Recommended"
+msgstr ""
+
+msgid "Package"
+msgstr ""
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
+
+msgid "Dependencies"
+msgstr ""
+
+#, fuzzy
+msgid "Package group"
+msgstr "Määritetty {} liittymää"
+
+msgid "Extensive KDE Plasma installation"
+msgstr ""
+
+msgid "Packages in group"
+msgstr ""
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Levyn salaus"
+
+#, fuzzy
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Valitse asennettava käyttöliittymä"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
 msgstr ""

@@ -105,19 +105,19 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 	def _check_dep_enc_type(self) -> bool:
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
-		if enc_type and enc_type != EncryptionType.NoEncryption:
+		if enc_type and enc_type != EncryptionType.NO_ENCRYPTION:
 			return True
 		return False
 
 	def _check_dep_partitions(self) -> bool:
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
-		if enc_type and enc_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks]:
+		if enc_type and enc_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS]:
 			return True
 		return False
 
 	def _check_dep_lvm_vols(self) -> bool:
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
-		if enc_type and enc_type == EncryptionType.LuksOnLvm:
+		if enc_type and enc_type == EncryptionType.LUKS_ON_LVM:
 			return True
 		return False
 
@@ -137,13 +137,13 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		assert enc_partitions is not None
 		assert enc_lvm_vols is not None
 
-		if enc_type in [EncryptionType.Luks, EncryptionType.LvmOnLuks] and enc_partitions:
+		if enc_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS] and enc_partitions:
 			enc_lvm_vols = []
 
-		if enc_type == EncryptionType.LuksOnLvm:
+		if enc_type == EncryptionType.LUKS_ON_LVM:
 			enc_partitions = []
 
-		if enc_type != EncryptionType.NoEncryption and enc_password and (enc_partitions or enc_lvm_vols):
+		if enc_type != EncryptionType.NO_ENCRYPTION and enc_password and (enc_partitions or enc_lvm_vols):
 			return DiskEncryption(
 				encryption_password=enc_password,
 				encryption_type=enc_type,
@@ -227,7 +227,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			iter_time = item.value
 			enc_type = self._item_group.find_by_key('encryption_type').value
 
-			if iter_time and enc_type != EncryptionType.NoEncryption:
+			if iter_time and enc_type != EncryptionType.NO_ENCRYPTION:
 				return f'{tr("Iteration time")}: {iter_time}ms'
 
 		return None
@@ -240,9 +240,9 @@ async def select_encryption_type(
 	options: list[EncryptionType] = []
 
 	if lvm_config:
-		options = [EncryptionType.LvmOnLuks, EncryptionType.LuksOnLvm]
+		options = [EncryptionType.LVM_ON_LUKS, EncryptionType.LUKS_ON_LVM]
 	else:
-		options = [EncryptionType.Luks]
+		options = [EncryptionType.LUKS]
 
 	if not preset:
 		preset = options[0]
@@ -321,7 +321,7 @@ async def select_partitions_to_encrypt(
 	avail_partitions = [p for p in partitions if not p.exists()]
 
 	if avail_partitions:
-		group = MenuItemGroup.from_objects(partitions)
+		group = MenuItemGroup.from_objects(avail_partitions)
 		group.set_selected_by_value(preset)
 
 		result = await Table[PartitionModification](
