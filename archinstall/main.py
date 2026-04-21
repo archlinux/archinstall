@@ -16,7 +16,7 @@ from archinstall.lib.networking import ping
 from archinstall.lib.output import debug, error, info, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translationhandler import tr, translation_handler
 from archinstall.lib.utils.util import running_from_iso
 from archinstall.tui.ui.components import tui
 
@@ -95,6 +95,8 @@ def run() -> int:
 		print(tr('Archinstall requires root privileges to run. See --help for more.'))
 		return 1
 
+	translation_handler.save_console_font()
+
 	_log_sys_info()
 
 	if not arch_config_handler.args.offline:
@@ -158,6 +160,8 @@ def main() -> int:
 		if exc:
 			_error_message(exc)
 			rc = 1
+
+		translation_handler.restore_console_font()
 
 	return rc
 

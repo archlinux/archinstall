@@ -1272,6 +1272,13 @@ class _AppInstance(App[ValueT]):
 		super().__init__(ansi_color=True)
 		self._main = main
 
+	@override
+	async def _on_exit_app(self) -> None:
+		from archinstall.lib.translationhandler import translation_handler
+
+		translation_handler.restore_console_font()
+		await super()._on_exit_app()
+
 	def action_trigger_help(self) -> None:
 		from textual.widgets import HelpPanel
 
@@ -1281,6 +1288,9 @@ class _AppInstance(App[ValueT]):
 			_ = self.screen.mount(HelpPanel())
 
 	def on_mount(self) -> None:
+		from archinstall.lib.translationhandler import translation_handler
+
+		translation_handler.apply_console_font()
 		_translate_bindings(self._merged_bindings, self._bindings)
 		self._run_worker()
 

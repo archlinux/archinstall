@@ -105,9 +105,9 @@ async def select_archinstall_language(languages: list[Language], preset: Languag
 	group = MenuItemGroup(items, sort_items=True)
 	group.set_focus_by_value(preset)
 
-	title = 'NOTE: If a language can not displayed properly, a proper font must be set manually in the console.\n'
-	title += 'All available fonts can be found in "/usr/share/kbd/consolefonts"\n'
-	title += 'e.g. setfont LatGrkCyr-8x16 (to display latin/greek/cyrillic characters)\n'
+	title = 'NOTE: Console font will be set automatically for supported languages.\n'
+	title += 'For other languages, fonts can be found in "/usr/share/kbd/consolefonts"\n'
+	title += 'and set manually with: setfont <fontname>\n'
 
 	result = await Selection[Language](
 		header=title,
