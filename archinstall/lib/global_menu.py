@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import override
 
 from archinstall.default_profiles.profile import GreeterType
@@ -6,6 +5,7 @@ from archinstall.lib.applications.application_menu import ApplicationMenu
 from archinstall.lib.args import ArchConfig
 from archinstall.lib.authentication.authentication_menu import AuthenticationMenu
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
+from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
@@ -490,18 +490,11 @@ class GlobalMenu(AbstractMenu[None]):
 			if efi_partition.fs_type not in [FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32]:
 				return 'ESP must be formatted as a FAT filesystem'
 
-		if bootloader == Bootloader.Limine:
-			if boot_partition.fs_type not in [FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32]:
-				return 'Limine does not support booting with a non-FAT boot partition'
-			if self._uefi and efi_partition and boot_partition == efi_partition and efi_partition.mountpoint != Path('/boot') and not bootloader_config.uki:
-				return (
-					f'Limine requires kernels on a FAT partition. The ESP is mounted at {efi_partition.mountpoint}, '
-					'enable UKI or add a separate /boot partition'
-				)
+		if bootloader == Bootloader.Refind and not self._uefi:
+			return 'rEFInd can only be used on UEFI systems'
 
-		elif bootloader == Bootloader.Refind:
-			if not self._uefi:
-				return 'rEFInd can only be used on UEFI systems'
+		if failure := validate_bootloader_layout(bootloader_config, disk_config):
+			return failure.description
 
 		return None
 

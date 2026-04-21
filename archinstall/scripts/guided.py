@@ -214,11 +214,11 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	# Safety net for silent/config-file flow. The TUI menu blocks Install via
 	# GlobalMenu._validate_bootloader() before reaching this point.
-	if err_msg := validate_bootloader_layout(
+	if failure := validate_bootloader_layout(
 		arch_config_handler.config.bootloader_config,
 		arch_config_handler.config.disk_config,
 	):
-		error(err_msg)
+		error(failure.description)
 		return
 
 	if arch_config_handler.args.dry_run:

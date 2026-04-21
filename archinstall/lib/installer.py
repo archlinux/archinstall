@@ -12,6 +12,7 @@ from types import TracebackType
 from typing import Any, Self
 
 from archinstall.lib.boot import Boot
+from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.command import SysCommand, run
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.disk.luks import Luks2, unlock_luks2_dev
@@ -30,7 +31,7 @@ from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
-from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -1466,15 +1467,13 @@ class Installer:
 			elif not efi_partition.mountpoint:
 				raise ValueError('EFI partition is not mounted')
 
-			# Limine can only read FAT filesystems. When the ESP doubles as
-			# the boot partition but is mounted outside /boot (e.g. /efi,
-			# /boot/efi) and UKI is disabled, kernels end up on the root
-			# filesystem under /boot/ which Limine cannot access.
-			if boot_partition == efi_partition and efi_partition.mountpoint != Path('/boot') and not uki_enabled:
-				raise DiskError(
-					f'Limine requires kernels on a FAT partition. The ESP is mounted at {efi_partition.mountpoint}, '
-					'so enable UKI or add a separate /boot partition to install Limine.',
-				)
+			# Safety net for programmatic callers that bypass GlobalMenu and
+			# guided.py validation.
+			if failure := validate_bootloader_layout(
+				BootloaderConfiguration(bootloader=Bootloader.Limine, uki=uki_enabled),
+				self._disk_config,
+			):
+				raise DiskError(failure.description)
 
 			info(f'Limine EFI partition: {efi_partition.dev_path}')
 
