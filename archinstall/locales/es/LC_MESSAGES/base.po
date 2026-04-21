@@ -2203,7 +2203,7 @@ msgid "Packages in group"
 msgstr "Grupo de paquetes:"
 
 msgid "Minimal KDE Plasma installation"
-msgstr "Instalacion minima de KDE Plasma"
+msgstr "Instalación minima de KDE Plasma"
 
 #, fuzzy
 msgid "Description"
