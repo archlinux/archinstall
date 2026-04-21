@@ -1,11 +1,7 @@
 from typing import override
 
-from archinstall.default_profiles.desktops import SeatAccess
+from archinstall.default_profiles.desktops.utils import select_seat_access
 from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType
-from archinstall.lib.menu.helpers import Selection
-from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
 
 
 class LabwcProfile(Profile):
@@ -43,26 +39,8 @@ class LabwcProfile(Profile):
 			return [pref]
 		return []
 
-	async def _select_seat_access(self) -> None:
-		# need to activate seat service and add to seat group
-		header = tr('labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)')
-		header += '\n' + tr('Choose an option to give labwc access to your hardware') + '\n'
-
-		items = [MenuItem(s.value, value=s) for s in SeatAccess]
-		group = MenuItemGroup(items, sort_items=True)
-
-		default = self.custom_settings.get(CustomSetting.SeatAccess, None)
-		group.set_default_by_value(default)
-
-		result = await Selection[SeatAccess](
-			group,
-			header=header,
-			allow_skip=False,
-		).show()
-
-		if result.type_ == ResultType.Selection:
-			self.custom_settings[CustomSetting.SeatAccess] = result.get_value().value
-
 	@override
 	async def do_on_select(self) -> None:
-		await self._select_seat_access()
+		default = self.custom_settings.get(CustomSetting.SeatAccess, None)
+		seat_access = await select_seat_access(self.name, default)
+		self.custom_settings[CustomSetting.SeatAccess] = seat_access.value
