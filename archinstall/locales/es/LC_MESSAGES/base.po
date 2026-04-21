@@ -1726,7 +1726,7 @@ msgid "First"
 msgstr "Primero"
 
 msgid "Last"
-msgstr "Ultimo"
+msgstr "Último"
 
 #, fuzzy
 msgid "Select"
