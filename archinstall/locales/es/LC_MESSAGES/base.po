@@ -299,7 +299,7 @@ msgstr "Configuración de la red"
 msgid "Automatic time sync (NTP)"
 msgstr "Sincronización automática de hora (NTP)"
 
-# are you installing missing configs or are there missing configs 
+# are you installing missing configs or are there missing configs
 msgid "Install ({} config(s) missing)"
 msgstr "Instalar ({} ajuste(s) faltante(s))"
 
