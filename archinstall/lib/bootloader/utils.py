@@ -3,9 +3,7 @@ from enum import Enum, auto
 from pathlib import Path
 
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
-from archinstall.lib.models.device import DiskLayoutConfiguration, FilesystemType
-
-_FAT_FILESYSTEMS = (FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32)
+from archinstall.lib.models.device import DiskLayoutConfiguration
 
 
 class BootloaderValidationFailureKind(Enum):
@@ -39,7 +37,7 @@ def validate_bootloader_layout(
 
 		# Limine reads its config and kernels from the boot partition, which
 		# must be FAT.
-		if boot_part and boot_part.fs_type not in _FAT_FILESYSTEMS:
+		if boot_part and (boot_part.fs_type is None or not boot_part.fs_type.is_fat()):
 			return BootloaderValidationFailure(
 				kind=BootloaderValidationFailureKind.LimineNonFatBoot,
 				description='Limine does not support booting with a non-FAT boot partition.',
