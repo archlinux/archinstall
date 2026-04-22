@@ -36,67 +36,66 @@ class PasswordStrength(Enum):
 			case PasswordStrength.STRONG:
 				return 'green'
 
-	@classmethod
-	def strength(cls, password: str) -> Self:
+	@staticmethod
+	def strength(password: str) -> PasswordStrength:
 		digit = any(character.isdigit() for character in password)
 		upper = any(character.isupper() for character in password)
 		lower = any(character.islower() for character in password)
 		symbol = any(not character.isalnum() for character in password)
-		return cls._check_password_strength(digit, upper, lower, symbol, len(password))
+		return PasswordStrength._check_password_strength(digit, upper, lower, symbol, len(password))
 
-	@classmethod
+	@staticmethod
 	def _check_password_strength(
-		cls,
 		digit: bool,
 		upper: bool,
 		lower: bool,
 		symbol: bool,
 		length: int,
-	) -> Self:
+	) -> PasswordStrength:
 		# suggested evaluation
 		# https://github.com/archlinux/archinstall/issues/1304#issuecomment-1146768163
 		if digit and upper and lower and symbol:
 			match length:
 				case num if 13 <= num:
-					return cls.STRONG
+					return PasswordStrength.STRONG
 				case num if 11 <= num <= 12:
-					return cls.MODERATE
+					return PasswordStrength.MODERATE
 				case num if 7 <= num <= 10:
-					return cls.WEAK
+					return PasswordStrength.WEAK
 				case num if num <= 6:
-					return cls.VERY_WEAK
+					return PasswordStrength.VERY_WEAK
 		elif digit and upper and lower:
 			match length:
 				case num if 14 <= num:
-					return cls.STRONG
+					return PasswordStrength.STRONG
 				case num if 11 <= num <= 13:
-					return cls.MODERATE
+					return PasswordStrength.MODERATE
 				case num if 7 <= num <= 10:
-					return cls.WEAK
+					return PasswordStrength.WEAK
 				case num if num <= 6:
-					return cls.VERY_WEAK
+					return PasswordStrength.VERY_WEAK
 		elif upper and lower:
 			match length:
 				case num if 15 <= num:
-					return cls.STRONG
+					return PasswordStrength.STRONG
 				case num if 12 <= num <= 14:
-					return cls.MODERATE
+					return PasswordStrength.MODERATE
 				case num if 7 <= num <= 11:
-					return cls.WEAK
+					return PasswordStrength.WEAK
 				case num if num <= 6:
-					return cls.VERY_WEAK
+					return PasswordStrength.VERY_WEAK
 		elif lower or upper:
 			match length:
 				case num if 18 <= num:
-					return cls.STRONG
+					return PasswordStrength.STRONG
 				case num if 14 <= num <= 17:
-					return cls.MODERATE
+					return PasswordStrength.MODERATE
 				case num if 9 <= num <= 13:
-					return cls.WEAK
+					return PasswordStrength.WEAK
 				case num if num <= 8:
-					return cls.VERY_WEAK
+					return PasswordStrength.VERY_WEAK
 
-		return cls.VERY_WEAK
+		return PasswordStrength.VERY_WEAK
 
 
 UserSerialization = TypedDict(
