@@ -5,6 +5,7 @@ import time
 from archinstall.lib.applications.application_handler import ApplicationHandler
 from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
+from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
@@ -210,6 +211,15 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	config = ConfigurationOutput(arch_config_handler.config)
 	config.write_debug()
 	config.save()
+
+	# Safety net for silent/config-file flow. The TUI menu blocks Install via
+	# GlobalMenu._validate_bootloader() before reaching this point.
+	if failure := validate_bootloader_layout(
+		arch_config_handler.config.bootloader_config,
+		arch_config_handler.config.disk_config,
+	):
+		error(failure.description)
+		return
 
 	if arch_config_handler.args.dry_run:
 		return

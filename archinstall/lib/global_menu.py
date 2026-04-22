@@ -5,6 +5,7 @@ from archinstall.lib.applications.application_menu import ApplicationMenu
 from archinstall.lib.args import ArchConfig
 from archinstall.lib.authentication.authentication_menu import AuthenticationMenu
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
+from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
@@ -17,7 +18,7 @@ from archinstall.lib.mirror.mirror_menu import MirrorMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
-from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, PartitionModification
+from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, PartitionModification
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, NicType
@@ -486,16 +487,14 @@ class GlobalMenu(AbstractMenu[None]):
 			if efi_partition is None:
 				return 'EFI system partition (ESP) not found'
 
-			if efi_partition.fs_type not in [FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32]:
+			if efi_partition.fs_type is None or not efi_partition.fs_type.is_fat():
 				return 'ESP must be formatted as a FAT filesystem'
 
-		if bootloader == Bootloader.Limine:
-			if boot_partition.fs_type not in [FilesystemType.FAT12, FilesystemType.FAT16, FilesystemType.FAT32]:
-				return 'Limine does not support booting with a non-FAT boot partition'
+		if bootloader == Bootloader.Refind and not self._uefi:
+			return 'rEFInd can only be used on UEFI systems'
 
-		elif bootloader == Bootloader.Refind:
-			if not self._uefi:
-				return 'rEFInd can only be used on UEFI systems'
+		if failure := validate_bootloader_layout(bootloader_config, disk_config):
+			return failure.description
 
 		return None
 

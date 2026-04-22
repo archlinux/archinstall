@@ -12,6 +12,7 @@ from types import TracebackType
 from typing import Any, Self
 
 from archinstall.lib.boot import Boot
+from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.command import SysCommand, run
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.disk.luks import Luks2, unlock_luks2_dev
@@ -30,7 +31,7 @@ from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
-from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -1466,6 +1467,14 @@ class Installer:
 			elif not efi_partition.mountpoint:
 				raise ValueError('EFI partition is not mounted')
 
+			# Safety net for programmatic callers that bypass GlobalMenu and
+			# guided.py validation.
+			if failure := validate_bootloader_layout(
+				BootloaderConfiguration(bootloader=Bootloader.Limine, uki=uki_enabled),
+				self._disk_config,
+			):
+				raise DiskError(failure.description)
+
 			info(f'Limine EFI partition: {efi_partition.dev_path}')
 
 			parent_dev_path = get_parent_device_path(efi_partition.safe_dev_path)
@@ -1476,15 +1485,11 @@ class Installer:
 				if bootloader_removable:
 					efi_dir_path = efi_dir_path / 'BOOT'
 					efi_dir_path_target = efi_dir_path_target / 'BOOT'
-
-					boot_limine_path = self.target / 'boot' / 'limine'
-					boot_limine_path.mkdir(parents=True, exist_ok=True)
-					config_path = boot_limine_path / 'limine.conf'
 				else:
 					efi_dir_path = efi_dir_path / 'arch-limine'
 					efi_dir_path_target = efi_dir_path_target / 'arch-limine'
 
-					config_path = efi_dir_path / 'limine.conf'
+				config_path = efi_dir_path / 'limine.conf'
 
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
