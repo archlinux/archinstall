@@ -827,17 +827,17 @@ msgid "Parallel Downloads"
 msgstr "Descargas paralelas"
 
 msgid "Pacman"
-msgstr ""
+msgstr "Pacman"
 
 msgid "Color"
-msgstr ""
+msgstr "Color"
 
 #, fuzzy, python-brace-format
 msgid "Enter the number of parallel downloads (1-{})"
 msgstr "Ingrese el número de descargas paralelas que desea habilitar"
 
 msgid "Enable colored output for pacman"
-msgstr ""
+msgstr "Activa salida a color para pacman"
 
 msgid "ESC to skip"
 msgstr "ESC para omitir"
@@ -1681,7 +1681,7 @@ msgid "Exit search mode"
 msgstr "Salir del modo de búsqueda"
 
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #, fuzzy
 msgid "Navigation"
@@ -1692,13 +1692,13 @@ msgid "Selection"
 msgstr "Seleccione regiones"
 
 msgid "Search"
-msgstr ""
+msgstr "Buscar"
 
 msgid "Down"
-msgstr ""
+msgstr "Abajo"
 
 msgid "Up"
-msgstr ""
+msgstr "Arriba"
 
 #, fuzzy
 msgid "Confirm"
@@ -1713,30 +1713,30 @@ msgid "Focus left"
 msgstr "Mover a la izquierda"
 
 msgid "Toggle"
-msgstr ""
+msgstr "Alternar"
 
 #, fuzzy
 msgid "Show/Hide help"
-msgstr "Mostrar ayuda"
+msgstr "Mostrar/Ocultar ayuda"
 
 msgid "Quit"
-msgstr ""
+msgstr "Salir"
 
 msgid "First"
-msgstr ""
+msgstr "Primero"
 
 msgid "Last"
-msgstr ""
+msgstr "Último"
 
 #, fuzzy
 msgid "Select"
 msgstr "Seleccione regiones"
 
 msgid "Page Up"
-msgstr ""
+msgstr "Subir"
 
 msgid "Page Down"
-msgstr ""
+msgstr "Bajar"
 
 #, fuzzy
 msgid "Page up"
@@ -1747,14 +1747,14 @@ msgid "Page down"
 msgstr "Bajar"
 
 msgid "Page Left"
-msgstr ""
+msgstr "Izquierda"
 
 #, fuzzy
 msgid "Page Right"
 msgstr "Mover a la derecha"
 
 msgid "Cursor up"
-msgstr ""
+msgstr "Subir"
 
 #, fuzzy
 msgid "Cursor down"
@@ -1769,13 +1769,13 @@ msgid "Cursor left"
 msgstr "Mover a la izquierda"
 
 msgid "Top"
-msgstr ""
+msgstr "Arriba"
 
 msgid "Bottom"
-msgstr ""
+msgstr "Abajo"
 
 msgid "Home"
-msgstr ""
+msgstr "Inicio"
 
 #, fuzzy
 msgid "End"
@@ -1786,32 +1786,32 @@ msgid "Toggle option"
 msgstr "Opciones del subvolumen"
 
 msgid "Scroll Up"
-msgstr ""
+msgstr "Mover Arriba"
 
 #, fuzzy
 msgid "Scroll Down"
 msgstr "Bajar en vista previa"
 
 msgid "Scroll Left"
-msgstr ""
+msgstr "Mover Izquierda"
 
 msgid "Scroll Right"
-msgstr ""
+msgstr "Mover Derecha"
 
 msgid "Scroll Home"
-msgstr ""
+msgstr "Ir a Inicio"
 
 msgid "Scroll End"
-msgstr ""
+msgstr "Ir al Final"
 
 msgid "Focus Next"
-msgstr ""
+msgstr "Centrar Siguiente"
 
 msgid "Focus Previous"
-msgstr ""
+msgstr "Centrar Anterior"
 
 msgid "Copy selected text"
-msgstr ""
+msgstr "Copiar texto seleccionado"
 
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc necesita acceso a su asiento (colección de dispositivos de hardware, es decir, teclado, ratón, etc.)"
@@ -2040,13 +2040,13 @@ msgid "Select font packages to install"
 msgstr "Seleccione el gestor de arranque que desea instalar"
 
 msgid "Unicode font coverage for most languages"
-msgstr ""
+msgstr "Fuente unicode cubierta para la mayoría de idiomas"
 
 msgid "color emoji for browsers and apps"
-msgstr ""
+msgstr "Emoji de color para navegador y apps"
 
 msgid "Chinese, Japanese, Korean characters"
-msgstr ""
+msgstr "Carácteres Chino, Japonés, Koreano"
 
 msgid "Select audio configuration"
 msgstr "Seleccionar configuración de audio"
@@ -2179,31 +2179,31 @@ msgid "Input cannot be empty"
 msgstr "El valor no puede estár vacío"
 
 msgid "Recommended"
-msgstr ""
+msgstr "Recomendado"
 
 #, fuzzy
 msgid "Package"
 msgstr "Grupo de paquetes:"
 
 msgid "Curated selection of KDE Plasma packages"
-msgstr ""
+msgstr "Selección curada de paquetes KDE Plasma"
 
 msgid "Dependencies"
-msgstr ""
+msgstr "Dependencias"
 
 #, fuzzy
 msgid "Package group"
 msgstr "Grupo de paquetes:"
 
 msgid "Extensive KDE Plasma installation"
-msgstr ""
+msgstr "Instalación KDE Plasma Extensible"
 
 #, fuzzy
 msgid "Packages in group"
 msgstr "Grupo de paquetes:"
 
 msgid "Minimal KDE Plasma installation"
-msgstr ""
+msgstr "Instalación minima de KDE Plasma"
 
 #, fuzzy
 msgid "Description"
@@ -2218,6 +2218,14 @@ msgstr ""
 
 msgid "wide Unicode coverage, good fallback font"
 msgstr ""
+
+#, python-brace-format
+msgid "Setting up U2F login: {u2f_config.u2f_login_method.value}"
+msgstr "Configurando Inicio U2F: {u2f_config.u2f_login_method.value}"
+
+#, fuzzy, python-brace-format
+msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
+msgstr "Por defecto: {DEFAULT_ITER_TIME}ms, Rango recomendado 1000-60000"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
