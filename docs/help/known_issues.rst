@@ -100,26 +100,6 @@ This is also a catch-all issue.
 
 This means that feature requests like supporting filesystems such as `ZFS`_ can not be added, and issues cannot be solved by using AUR packages either.
 
-.. note::
-
-   But in spirit of giving the community options, ``archinstall`` supports :ref:`archinstall.Plugins`, which means you can run ``archinstall --plugin <url>`` and source an AUR plugin.
-
-   `torxed/archinstall-aur <https://github.com/torxed/archinstall-aur>`_ is a reference implementation for plugins:
-
-   .. code-block:: console
-
-      # archinstall --plugin https://archlinux.life/aur-plugin
-
-   `phisch/archinstall-aur <https://github.com/phisch/archinstall-aur>`_ is another alternative:
-
-   .. code-block:: console
-
-      # archinstall --plugin https://raw.githubusercontent.com/phisch/archinstall-aur/master/archinstall-aur.py
-
-   .. warning::
-
-      This will allow for unsupported usage of AUR during installation.
-
 .. _#1686: https://github.com/archlinux/archinstall/issues/1686
 .. _#2002: https://github.com/archlinux/archinstall/issues/2002
 .. _#2144: https://github.com/archlinux/archinstall/issues/2144

@@ -7,7 +7,6 @@ from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import RequirementError
 from archinstall.lib.output import error, info, warn
 from archinstall.lib.pathnames import PACMAN_CONF
-from archinstall.lib.plugins import plugins
 from archinstall.lib.translationhandler import tr
 
 
@@ -66,11 +65,6 @@ class Pacman:
 		self.sync()
 		if isinstance(packages, str):
 			packages = [packages]
-
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_pacstrap'):
-				if result := plugin.on_pacstrap(packages):
-					packages = result
 
 		info(f'Installing packages: {packages}')
 

@@ -26,7 +26,6 @@ from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.output import debug, error, logger, warn
-from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.version import get_version
 from archinstall.tui.ui.components import tui
@@ -49,7 +48,6 @@ class Arguments:
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
-	plugin: str | None = None
 	skip_version_check: bool = False
 	skip_wifi_check: bool = False
 	advanced: bool = False
@@ -400,13 +398,6 @@ class ArchConfigHandler:
 			help='Disabled package validation specifically prior to starting installation.',
 		)
 		parser.add_argument(
-			'--plugin',
-			nargs='?',
-			type=str,
-			default=None,
-			help='File path to a plugin to load',
-		)
-		parser.add_argument(
 			'--skip-version-check',
 			action='store_true',
 			default=False,
@@ -444,10 +435,6 @@ class ArchConfigHandler:
 
 		if args.debug:
 			warn(f'Warning: --debug mode will write certain credentials to {logger.path}!')
-
-		if args.plugin:
-			plugin_path = Path(args.plugin)
-			load_plugin(plugin_path)
 
 		if args.creds_decryption_key is None:
 			if os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY'):
