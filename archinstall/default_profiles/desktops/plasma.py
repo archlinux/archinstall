@@ -29,7 +29,7 @@ class PlasmaFlavor(StrEnum):
 		match self:
 			case PlasmaFlavor.Meta:
 				ty = tr('Package')
-				desc = tr('Curated selection of KDE Plasma packages')
+				desc = tr('A meta package that depends on a curated set of packages. Installing it pulls in the full desktop \nenvironment, including extras. Recommended for most users who want a complete desktop.')
 				info = available_package(self.value)
 
 				if info is not None:
@@ -37,7 +37,7 @@ class PlasmaFlavor(StrEnum):
 					details += '\n'.join(f'- {entry}' for entry in info.get_depends_on)
 			case PlasmaFlavor.Plasma:
 				ty = tr('Package group')
-				desc = tr('Extensive KDE Plasma installation')
+				desc = tr('A package group containing all Plasma packages. Installing the group pulls in all packages together. \nUnlike a meta package, individual packages can be removed afterward without affecting the group.')
 				group = package_group_info(self.value)
 
 				if group is not None:
@@ -45,7 +45,7 @@ class PlasmaFlavor(StrEnum):
 					details += '\n'.join(f'- {entry}' for entry in group.packages)
 			case PlasmaFlavor.Desktop:
 				ty = tr('Package group')
-				desc = tr('Minimal KDE Plasma installation')
+				desc = tr('The core KDE Plasma desktop package. Provides only the essential components needed to run a \nfunctional Plasma session. Suitable for users who want a minimal setup with fewer packages.')
 				info = available_package(self.value)
 
 				if info is not None:
@@ -57,9 +57,9 @@ class PlasmaFlavor(StrEnum):
 	def packages(self) -> list[str]:
 		match self:
 			case PlasmaFlavor.Meta:
-				return ['plasma-meta']
+				return ['plasma-meta', 'konsole', 'dolphin', 'kate', 'ark']
 			case PlasmaFlavor.Plasma:
-				return ['plasma']
+				return ['plasma', 'konsole', 'dolphin', 'kate', 'ark']
 			case PlasmaFlavor.Desktop:
 				return ['plasma-desktop']
 
