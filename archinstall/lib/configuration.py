@@ -10,6 +10,7 @@ from archinstall.lib.args import ArchConfig
 from archinstall.lib.crypt import encrypt
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.menu.util import get_password, prompt_dir
+from archinstall.lib.models.network import NetworkConfiguration
 from archinstall.lib.output import debug, logger, warn
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
@@ -58,9 +59,12 @@ class ConfigurationOutput:
 		debug(' -- Chosen configuration --')
 		debug(self.user_config_to_json())
 
-	async def confirm_config(self) -> bool:
+	async def confirm_config(self, show_install_warnings: bool = False) -> bool:
 		header = f'{tr("The specified configuration will be applied")}. '
 		header += tr('Would you like to continue?') + '\n'
+
+		if show_install_warnings:
+			header += self._render_install_warnings()
 
 		group = MenuItemGroup.yes_no()
 		group.set_preview_for_all(lambda x: self.user_config_to_json())
@@ -78,6 +82,22 @@ class ConfigurationOutput:
 			return False
 
 		return True
+
+	def get_install_warnings(self) -> list[str]:
+		warnings: list[str] = []
+
+		if not isinstance(self._config.network_config, NetworkConfiguration):
+			warnings.append(tr('Warning: no network configuration selected. Network will need to be set up manually on the installed system.'))
+
+		return warnings
+
+	def _render_install_warnings(self) -> str:
+		warnings = self.get_install_warnings()
+
+		if not warnings:
+			return ''
+
+		return '\n' + '\n'.join(f'[yellow]{w}[/]' for w in warnings) + '\n'
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
 		dest_path_ok = dest_path.exists() and dest_path.is_dir()

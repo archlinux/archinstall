@@ -25,7 +25,7 @@ class NicType(Enum):
 			case NicType.MANUAL:
 				return tr('Manual configuration')
 			case NicType.NONE:
-				return tr('No network')
+				return tr('No network configuration')
 
 
 class _NicSerialization(TypedDict):

@@ -483,7 +483,7 @@ msgid "Define users with sudo privilege: "
 msgstr "Визначте користувачів із привілеєм sudo: "
 
 msgid "No network configuration"
-msgstr "Відсутня конфігурація мережі"
+msgstr "Без налаштування мережі"
 
 msgid "Set desired subvolumes on a btrfs partition"
 msgstr "Встановіть потрібні підтома на розділі btrfs"
@@ -645,9 +645,6 @@ msgstr "Оберіть інтерфейс для додавання"
 
 msgid "Manual configuration"
 msgstr "Ручне налаштування"
-
-msgid "No network"
-msgstr "Без мережі"
 
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr "Позначити/зняти позначку розділу як стисненого (лише btrfs)"
@@ -2120,6 +2117,9 @@ msgstr "Оберіть конфігурацію мережі"
 
 msgid "Recommended: Network Manager for desktop, Manual for server"
 msgstr "Рекомендовано: Network Manager для робочого столу, ручне налаштування для сервера"
+
+msgid "Warning: no network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Попередження: конфігурацію мережі не обрано. Мережу доведеться налаштувати вручну на встановленій системі."
 
 msgid "No packages found"
 msgstr "Пакети не знайдено"
