@@ -1245,6 +1245,21 @@ msgstr ""
 msgid "Invalid configuration: {error}"
 msgstr ""
 
+msgid "Ready to install"
+msgstr ""
+
+msgid "Disks"
+msgstr ""
+
+msgid "Packages"
+msgstr ""
+
+msgid "Network"
+msgstr ""
+
+msgid "Locale"
+msgstr ""
+
 msgid "Type"
 msgstr ""
 
