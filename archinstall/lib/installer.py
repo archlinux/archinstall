@@ -1922,16 +1922,17 @@ class Installer:
 		if not handled_by_plugin:
 			info(f'Creating user {user.username}')
 
-			cmd = 'useradd -m'
+			cmd = ['arch-chroot', '-S', str(self.target), 'useradd', '-m']
 
 			if user.sudo:
-				cmd += ' -G wheel'
+				cmd += ['-G', 'wheel']
 
-			cmd += f' {user.username}'
+			cmd.append(user.username)
 
 			try:
-				self.arch_chroot(cmd)
-			except SysCallError as err:
+				run(cmd)
+			except CalledProcessError as err:
+				debug(f'Error creating user {user.username}: {err}')
 				raise SystemError(f'Could not create user inside installation: {err}')
 
 		for plugin in plugins.values():
@@ -1942,7 +1943,11 @@ class Installer:
 		self.set_user_password(user)
 
 		for group in user.groups:
-			self.arch_chroot(f'gpasswd -a {user.username} {group}')
+			cmd = ['arch-chroot', '-S', str(self.target), 'gpasswd', '-a', user.username, group]
+			try:
+				run(cmd)
+			except CalledProcessError as err:
+				debug(f'Error adding {user.username} to group {group}: {err}')
 
 		if user.sudo:
 			self.enable_sudo(user)
