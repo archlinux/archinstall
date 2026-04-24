@@ -8,6 +8,7 @@ SAFETY_LOCK
 **/**.egg*
 **/**.sh
 !archinstall/locales/locales_generator.sh
+!dev_vm.sh
 **/**.egg-info/
 **/**build/
 **/**src/
@@ -39,5 +40,7 @@ requirements.txt
 /.gitconfig
 /actions-runner
 /cmd_output.txt
+/.dev-iso/
+/.dev-configs/
 node_modules/
 uv.lock
