@@ -57,11 +57,11 @@ class PlasmaFlavor(StrEnum):
 	def packages(self) -> list[str]:
 		match self:
 			case PlasmaFlavor.Meta:
-				return ['plasma-meta']
+				return ['plasma-meta', 'konsole', 'dolphin', 'kate', 'ark']
 			case PlasmaFlavor.Plasma:
-				return ['plasma']
+				return ['plasma', 'konsole', 'dolphin', 'kate', 'ark']
 			case PlasmaFlavor.Desktop:
-				return ['plasma-desktop']
+				return ['plasma-desktop', 'konsole', 'dolphin']
 
 
 class PlasmaProfile(Profile):
