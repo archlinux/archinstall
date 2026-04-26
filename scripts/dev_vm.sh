@@ -15,13 +15,16 @@
 #   /root/cfg                .dev-configs share (9p rw, mounted only if folder exists)
 #   archinstall              alias for `python -m archinstall`
 #
-# Usage:
-#   ./dev_vm.sh              - build ISO if missing, fresh disk, boot
-#   ./dev_vm.sh rebuild | r  - force rebuild ISO, fresh disk, boot
-#   ./dev_vm.sh keep    | k  - reuse disk, boot ISO
-#   ./dev_vm.sh boot    | b  - boot from installed disk (no ISO)
-#   ./dev_vm.sh clean   | c  - remove disk, NVRAM, ISO
-#   ./dev_vm.sh -h           - show this help
+# Run from the project root or from inside scripts/ - both work, the script
+# resolves the project root from its own location.
+#
+# Usage (from project root):
+#   ./scripts/dev_vm.sh              - build ISO if missing, fresh disk, boot
+#   ./scripts/dev_vm.sh rebuild | r  - force rebuild ISO, fresh disk, boot
+#   ./scripts/dev_vm.sh keep    | k  - reuse disk, boot ISO
+#   ./scripts/dev_vm.sh boot    | b  - boot from installed disk (no ISO)
+#   ./scripts/dev_vm.sh clean   | c  - remove disk, NVRAM, ISO
+#   ./scripts/dev_vm.sh -h           - show this help
 #
 # Env overrides:
 #   SCREEN_W, SCREEN_H       - virtio-vga resolution (default 1280x720)
@@ -32,11 +35,11 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_DIR="$SCRIPT_DIR"
-CONFIGS_DIR="$SCRIPT_DIR/.dev-configs"
-ISO_DIR="$SCRIPT_DIR/.dev-iso"
-DISK="$SCRIPT_DIR/.dev-disk.qcow2"
-OVMF_VARS="$SCRIPT_DIR/.dev-ovmf-vars.fd"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+CONFIGS_DIR="$PROJECT_DIR/.dev-configs"
+ISO_DIR="$PROJECT_DIR/.dev-iso"
+DISK="$PROJECT_DIR/.dev-disk.qcow2"
+OVMF_VARS="$PROJECT_DIR/.dev-ovmf-vars.fd"
 DISK_SIZE="30G"
 RAM="4G"
 CPUS="4"
@@ -97,27 +100,12 @@ check_arch_host() {
 }
 
 # Parse runtime deps from pyproject.toml and map to Arch package names.
-# Assumes the `python-<name>` convention, which holds for every archinstall
-# dependency today. If a future dep breaks the convention, fix here.
+# Delegates to derive_packages.py so the Python logic lives in a real .py file.
 derive_packages() {
     command -v python3 >/dev/null 2>&1 || err "python3 not found on host (needed to parse pyproject.toml)"
     local result
-    result=$(python3 - "$PROJECT_DIR/pyproject.toml" <<'PY'
-import re
-import sys
-import tomllib
-
-with open(sys.argv[1], 'rb') as f:
-    data = tomllib.load(f)
-for dep in data['project']['dependencies']:
-    name = re.split(r'[<>=!~;\[\s]', dep, maxsplit=1)[0].strip()
-    if name:
-        # PEP 503: lowercase, any run of [-_.] becomes '-'. Arch mirrors this
-        # naming, so normalize before prepending the python- prefix.
-        name = re.sub(r'[-_.]+', '-', name).lower()
-        print(f'python-{name}')
-PY
-) || err "failed to parse $PROJECT_DIR/pyproject.toml"
+    result=$(python3 "$SCRIPT_DIR/derive_packages.py" "$PROJECT_DIR/pyproject.toml") \
+        || err "failed to parse $PROJECT_DIR/pyproject.toml"
     [ -n "$result" ] || err "pyproject.toml has no [project.dependencies]"
     printf '%s\n' "$result"
 }
