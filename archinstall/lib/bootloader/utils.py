@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
 
+from archinstall.lib.hardware import SysInfo
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration
 
@@ -9,6 +10,8 @@ from archinstall.lib.models.device import DiskLayoutConfiguration
 class BootloaderValidationFailureKind(Enum):
 	LimineNonFatBoot = auto()
 	LimineLayout = auto()
+	BootloaderRequiresUefi = auto()
+	EfistubNonFatBoot = auto()
 
 
 @dataclass(frozen=True)
@@ -29,12 +32,32 @@ def validate_bootloader_layout(
 	if not (bootloader_config and disk_config):
 		return None
 
-	if bootloader_config.bootloader == Bootloader.Limine:
-		boot_part = next(
-			(p for m in disk_config.device_modifications if (p := m.get_boot_partition())),
-			None,
+	bootloader = bootloader_config.bootloader
+
+	if bootloader == Bootloader.NO_BOOTLOADER:
+		return None
+
+	if bootloader.is_uefi_only() and not SysInfo.has_uefi():
+		return BootloaderValidationFailure(
+			kind=BootloaderValidationFailureKind.BootloaderRequiresUefi,
+			description=f'{bootloader.value} requires a UEFI system.',
 		)
 
+	boot_part = next(
+		(p for m in disk_config.device_modifications if (p := m.get_boot_partition())),
+		None,
+	)
+
+	if bootloader == Bootloader.Efistub:
+		# The UEFI firmware reads the kernel directly from the boot partition,
+		# which must be FAT.
+		if boot_part and (boot_part.fs_type is None or not boot_part.fs_type.is_fat()):
+			return BootloaderValidationFailure(
+				kind=BootloaderValidationFailureKind.EfistubNonFatBoot,
+				description='Efistub does not support booting with a non-FAT boot partition.',
+			)
+
+	if bootloader == Bootloader.Limine:
 		# Limine reads its config and kernels from the boot partition, which
 		# must be FAT.
 		if boot_part and (boot_part.fs_type is None or not boot_part.fs_type.is_fat()):

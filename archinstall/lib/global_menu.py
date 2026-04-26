@@ -461,8 +461,6 @@ class GlobalMenu(AbstractMenu[None]):
 		if not bootloader_config or bootloader_config.bootloader == Bootloader.NO_BOOTLOADER:
 			return None
 
-		bootloader = bootloader_config.bootloader
-
 		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
 				if root_partition := layout.get_root_partition():
@@ -489,9 +487,6 @@ class GlobalMenu(AbstractMenu[None]):
 
 			if efi_partition.fs_type is None or not efi_partition.fs_type.is_fat():
 				return 'ESP must be formatted as a FAT filesystem'
-
-		if bootloader == Bootloader.Refind and not self._uefi:
-			return 'rEFInd can only be used on UEFI systems'
 
 		if failure := validate_bootloader_layout(bootloader_config, disk_config):
 			return failure.description

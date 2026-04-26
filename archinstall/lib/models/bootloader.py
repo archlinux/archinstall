@@ -25,6 +25,13 @@ class Bootloader(Enum):
 			case _:
 				return False
 
+	def is_uefi_only(self) -> bool:
+		match self:
+			case Bootloader.Systemd | Bootloader.Efistub | Bootloader.Refind:
+				return True
+			case _:
+				return False
+
 	def json(self) -> str:
 		return self.value
 
