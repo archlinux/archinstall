@@ -739,6 +739,9 @@ class Installer:
 
 		return self.run_command(cmd, peek_output=peek_output)
 
+	def _chroot_argv(self, *args: str) -> list[str]:
+		return ['arch-chroot', '-S', str(self.target), *args]
+
 	def drop_to_shell(self) -> None:
 		subprocess.check_call(f'arch-chroot {self.target}', shell=True)
 
@@ -987,17 +990,7 @@ class Installer:
 			}
 
 			for config_name, mountpoint in snapper.items():
-				command = [
-					'arch-chroot',
-					'-S',
-					str(self.target),
-					'snapper',
-					'--no-dbus',
-					'-c',
-					config_name,
-					'create-config',
-					mountpoint,
-				]
+				command = self._chroot_argv('snapper', '--no-dbus', '-c', config_name, 'create-config', mountpoint)
 
 				try:
 					SysCommand(command, peek_output=True)
@@ -1336,13 +1329,7 @@ class Installer:
 
 		boot_dir = Path('/boot')
 
-		command = [
-			'arch-chroot',
-			'-S',
-			str(self.target),
-			'grub-install',
-			'--debug',
-		]
+		command = self._chroot_argv('grub-install', '--debug')
 
 		if SysInfo.has_uefi():
 			if not efi_partition:
@@ -1922,12 +1909,12 @@ class Installer:
 		if not handled_by_plugin:
 			info(f'Creating user {user.username}')
 
-			cmd = ['arch-chroot', '-S', str(self.target), 'useradd', '-m']
+			cmd = self._chroot_argv('useradd', '-m')
 
 			if user.sudo:
 				cmd += ['-G', 'wheel']
 
-			cmd.append(user.username)
+			cmd += ['--', user.username]
 
 			try:
 				run(cmd)
@@ -1943,11 +1930,11 @@ class Installer:
 		self.set_user_password(user)
 
 		for group in user.groups:
-			cmd = ['arch-chroot', '-S', str(self.target), 'gpasswd', '-a', user.username, group]
+			cmd = self._chroot_argv('gpasswd', '-a', user.username, group)
 			try:
 				run(cmd)
 			except CalledProcessError as err:
-				debug(f'Error adding {user.username} to group {group}: {err}')
+				warn(f'Failed to add {user.username} to group {group}: {err}')
 
 		if user.sudo:
 			self.enable_sudo(user)
@@ -1962,7 +1949,7 @@ class Installer:
 			return False
 
 		input_data = f'{user.username}:{enc_password}'.encode()
-		cmd = ['arch-chroot', '-S', str(self.target), 'chpasswd', '--encrypted']
+		cmd = self._chroot_argv('chpasswd', '--encrypted')
 
 		try:
 			run(cmd, input_data=input_data)
@@ -1974,7 +1961,7 @@ class Installer:
 	def user_set_shell(self, user: str, shell: str) -> bool:
 		info(f'Setting shell for {user} to {shell}')
 
-		cmd = ['arch-chroot', '-S', str(self.target), 'chsh', '-s', shell, user]
+		cmd = self._chroot_argv('chsh', '-s', shell, user)
 		try:
 			run(cmd)
 			return True
@@ -1984,7 +1971,7 @@ class Installer:
 
 	def chown(self, owner: str, path: str, options: list[str] | None = None) -> bool:
 		options = options or []
-		cmd = ['arch-chroot', '-S', str(self.target), 'chown', *options, owner, path]
+		cmd = self._chroot_argv('chown', *options, '--', owner, path)
 		try:
 			run(cmd)
 			return True
