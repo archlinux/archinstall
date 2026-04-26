@@ -130,7 +130,7 @@ BUILD_DIR=/tmp/archlive-dev
 
 # Runtime deps - python plus the list derived from pyproject.toml on the host.
 # Source comes via 9p, no wheel build needed.
-packages=(python)
+packages=(python git)
 while IFS= read -r p; do
     [ -n "$p" ] && packages+=("$p")
 done <<< "$RUNTIME_DEPS"
@@ -146,6 +146,14 @@ sed -i '/^archinstall$/d' "$BUILD_DIR/packages.x86_64"
 for p in "${packages[@]}"; do
     echo "$p" >> "$BUILD_DIR/packages.x86_64"
 done
+
+# Trust the 9p-mounted source for git: host UIDs differ from the guest's,
+# which would otherwise trip git's safe.directory dubious-ownership check.
+mkdir -p "$BUILD_DIR/airootfs/etc"
+cat > "$BUILD_DIR/airootfs/etc/gitconfig" <<'GIT'
+[safe]
+	directory = /root/archinstall-dev
+GIT
 
 # Auto-mount project, alias archinstall, print info on login
 mkdir -p "$BUILD_DIR/airootfs/root"
