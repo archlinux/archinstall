@@ -19,9 +19,6 @@ class BootloaderValidationFailure:
 	description: str
 
 
-_UEFI_ONLY_BOOTLOADERS = (Bootloader.Systemd, Bootloader.Efistub, Bootloader.Refind)
-
-
 def validate_bootloader_layout(
 	bootloader_config: BootloaderConfiguration | None,
 	disk_config: DiskLayoutConfiguration | None,
@@ -40,7 +37,7 @@ def validate_bootloader_layout(
 	if bootloader == Bootloader.NO_BOOTLOADER:
 		return None
 
-	if bootloader in _UEFI_ONLY_BOOTLOADERS and not is_uefi:
+	if bootloader.is_uefi_only() and not is_uefi:
 		return BootloaderValidationFailure(
 			kind=BootloaderValidationFailureKind.BootloaderRequiresUefi,
 			description=f'{bootloader.value} requires a UEFI system.',
