@@ -1,3 +1,6 @@
+from functools import lru_cache
+from pathlib import Path
+
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import ServiceException, SysCallError
 from archinstall.lib.output import error
@@ -24,6 +27,13 @@ def list_locales() -> list[str]:
 				locales.append(line.rstrip())
 
 	return locales
+
+
+@lru_cache
+def list_console_fonts() -> list[str]:
+	directory = Path('/usr/share/kbd/consolefonts')
+	fonts = {path.name.split('.')[0] for path in directory.glob('*.gz')}
+	return sorted(fonts)
 
 
 def list_x11_keyboard_languages() -> list[str]:

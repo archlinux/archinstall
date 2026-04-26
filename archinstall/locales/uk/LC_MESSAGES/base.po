@@ -256,6 +256,9 @@ msgstr "Мова локалізації"
 msgid "Locale encoding"
 msgstr "Кодування локалізації"
 
+msgid "Console font"
+msgstr "Шрифт консолі"
+
 msgid "Drive(s)"
 msgstr "Диск(и)"
 

@@ -252,6 +252,9 @@ msgstr ""
 msgid "Locale encoding"
 msgstr ""
 
+msgid "Console font"
+msgstr ""
+
 msgid "Drive(s)"
 msgstr ""
 
