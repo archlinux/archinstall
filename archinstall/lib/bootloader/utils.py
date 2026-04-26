@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
 
+from archinstall.lib.hardware import SysInfo
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration
 
@@ -22,7 +23,6 @@ class BootloaderValidationFailure:
 def validate_bootloader_layout(
 	bootloader_config: BootloaderConfiguration | None,
 	disk_config: DiskLayoutConfiguration | None,
-	is_uefi: bool,
 ) -> BootloaderValidationFailure | None:
 	"""Validate bootloader configuration against disk layout.
 
@@ -37,7 +37,7 @@ def validate_bootloader_layout(
 	if bootloader == Bootloader.NO_BOOTLOADER:
 		return None
 
-	if bootloader.is_uefi_only() and not is_uefi:
+	if bootloader.is_uefi_only() and not SysInfo.has_uefi():
 		return BootloaderValidationFailure(
 			kind=BootloaderValidationFailureKind.BootloaderRequiresUefi,
 			description=f'{bootloader.value} requires a UEFI system.',

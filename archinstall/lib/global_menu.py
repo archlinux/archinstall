@@ -488,7 +488,7 @@ class GlobalMenu(AbstractMenu[None]):
 			if efi_partition.fs_type is None or not efi_partition.fs_type.is_fat():
 				return 'ESP must be formatted as a FAT filesystem'
 
-		if failure := validate_bootloader_layout(bootloader_config, disk_config, self._uefi):
+		if failure := validate_bootloader_layout(bootloader_config, disk_config):
 			return failure.description
 
 		return None

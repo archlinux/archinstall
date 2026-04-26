@@ -1472,7 +1472,6 @@ class Installer:
 			if failure := validate_bootloader_layout(
 				BootloaderConfiguration(bootloader=Bootloader.Limine, uki=uki_enabled),
 				self._disk_config,
-				SysInfo.has_uefi(),
 			):
 				raise DiskError(failure.description)
 

@@ -11,7 +11,6 @@ from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.general.general_menu import PostInstallationAction, select_post_installation
 from archinstall.lib.global_menu import GlobalMenu
-from archinstall.lib.hardware import SysInfo
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
 from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
@@ -218,7 +217,6 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	if failure := validate_bootloader_layout(
 		arch_config_handler.config.bootloader_config,
 		arch_config_handler.config.disk_config,
-		SysInfo.has_uefi(),
 	):
 		error(failure.description)
 		return
