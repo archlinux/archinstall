@@ -1,4 +1,5 @@
-import os
+from functools import lru_cache
+from pathlib import Path
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import ServiceException, SysCallError
@@ -28,14 +29,10 @@ def list_locales() -> list[str]:
 	return locales
 
 
+@lru_cache
 def list_console_fonts() -> list[str]:
-	fonts: set[str] = set()
-
-	for entry in os.listdir('/usr/share/kbd/consolefonts'):
-		if entry.endswith('.gz'):
-			name = entry.removesuffix('.gz').removesuffix('.psfu').removesuffix('.psf').removesuffix('.cp').removesuffix('.fnt')
-			fonts.add(name)
-
+	directory = Path('/usr/share/kbd/consolefonts')
+	fonts = {path.name.split('.')[0] for path in directory.glob('*.gz')}
 	return sorted(fonts)
 
 
