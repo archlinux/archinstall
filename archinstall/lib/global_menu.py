@@ -6,7 +6,7 @@ from archinstall.lib.args import ArchConfig
 from archinstall.lib.authentication.authentication_menu import AuthenticationMenu
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
-from archinstall.lib.configuration import save_config
+from archinstall.lib.configuration import ConfigurationOutput, save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
 from archinstall.lib.general.system_menu import select_kernel, select_swap
@@ -498,70 +498,6 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return None
 
-	def _install_summary(self) -> str:
-		"""
-		Render a concise two-column summary of the current install configuration.
-
-		The left column holds section labels, the right column holds values.
-		Column width adapts to the longest translated label so translations
-		do not break the alignment. Rows whose underlying config is not set
-		are skipped.
-
-		Returns an empty string if nothing meaningful to show.
-		"""
-		rows: list[tuple[str, str]] = []
-
-		disk_config: DiskLayoutConfiguration | None = self._item_group.find_by_key('disk_config').value
-		if disk_config and disk_config.device_modifications:
-			disk_parts: list[str] = []
-			for mod in disk_config.device_modifications:
-				path = str(mod.device_path)
-				root_part = mod.get_root_partition()
-				flags: list[str] = []
-				if root_part and root_part.fs_type:
-					flags.append(root_part.fs_type.value)
-				if disk_config.disk_encryption:
-					flags.append(tr('LUKS'))
-				disk_parts.append(f'{path} ({" + ".join(flags)})' if flags else path)
-			rows.append((tr('Disks'), ', '.join(disk_parts)))
-
-		bl_config: BootloaderConfiguration | None = self._item_group.find_by_key('bootloader_config').value
-		if bl_config and bl_config.bootloader != Bootloader.NO_BOOTLOADER:
-			rows.append((tr('Bootloader'), bl_config.bootloader.value))
-
-		kernels: list[str] | None = self._item_group.find_by_key('kernels').value
-		if kernels:
-			rows.append((tr('Kernel'), ', '.join(kernels)))
-
-		profile_config: ProfileConfiguration | None = self._item_group.find_by_key('profile_config').value
-		if profile_config and profile_config.profile:
-			names = profile_config.profile.current_selection_names()
-			rows.append((tr('Profile'), ', '.join(names) if names else profile_config.profile.name))
-			if profile_config.greeter:
-				rows.append((tr('Greeter'), profile_config.greeter.value))
-
-		packages: list[str] | None = self._item_group.find_by_key('packages').value
-		if packages:
-			rows.append((tr('Packages'), str(len(packages))))
-
-		net_config = self._item_group.find_by_key('network_config').value
-		if isinstance(net_config, NetworkConfiguration):
-			rows.append((tr('Network'), net_config.type.display_msg()))
-
-		locale_config: LocaleConfiguration | None = self._item_group.find_by_key('locale_config').value
-		if locale_config:
-			rows.append((tr('Locale'), locale_config.sys_lang))
-
-		tz = self._item_group.find_by_key('timezone').value
-		if tz:
-			rows.append((tr('Timezone'), tz))
-
-		if not rows:
-			return ''
-
-		label_width = max(len(label) for label, _ in rows) + 2
-		return '\n'.join(f'{label:<{label_width}}{value}' for label, value in rows)
-
 	def _prev_install_invalid_config(self, item: MenuItem) -> str | None:
 		if missing := self._missing_configs():
 			text = tr('Missing configurations:\n')
@@ -572,7 +508,8 @@ class GlobalMenu(AbstractMenu[None]):
 		if error := self._validate_bootloader():
 			return tr(f'Invalid configuration: {error}')
 
-		summary = self._install_summary()
+		self.sync_all_to_config()
+		summary = ConfigurationOutput(self._arch_config).as_summary()
 		if summary:
 			return f'{tr("Ready to install")}\n\n{summary}'
 		return tr('Ready to install')
