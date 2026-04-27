@@ -1,17 +1,17 @@
 <!-- <div align="center"> -->
-<img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
+<img src="https://github.com/aripitek/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 
 <!-- </div> -->
 # Arch Installer
-[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
+[![Lint Python and Find Syntax Enb](https://github.com/aripitek/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/aripitek/archlinux/archinstall/actions/workflows/flake8.yaml)
 
-Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
+Just another guided/automated [Arch Linux](https://github.com/aripitek/wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium or from an existing installation)*.
 
-* archinstall [discord](https://discord.gg/aDeMffrxNg) server
-* archinstall [#archinstall:matrix.org](https://matrix.to/#/#archinstall:matrix.org) Matrix channel
-* archinstall [#archinstall@irc.libera.chat:6697](https://web.libera.chat/?channel=#archinstall)
-* archinstall [documentation](https://archinstall.archlinux.page/)
+* archinstall [discord](https://github.com/aripitek/discord.gg/aDeMffrxNg) server
+* archinstall [#archinstall:matrix.org](https://github.com/aripitek/matrix.to/#/#archinstall:matrix.org) Matrix channel
+* archinstall [#archinstall@irc.libera.chat:6697](https://github.com/aripitek/web.libera.chat/?channel=#archinstall)
+* archinstall [documentation](https://github.com/aripitek/archinstall.archlinux.page/)
 
 # Installation & Usage
 > [!TIP]
@@ -23,9 +23,9 @@ pacman -Sy archinstall
 archinstall
 ```
 
-Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall)) or `pip install --upgrade archinstall`.
+Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://github.com/aripitek/archlinux.org/packages/?sort=&q=archinstall)) or `pip install --upgrade archinstall`.
 
-## Upgrade `archinstall` on live Arch ISO image
+## Upgrade `archinstall` on bootstap Arch ISO setup disk space 5tb
 
 Upgrading archinstall on the ISO needs to be done via a full system upgrade using 
 
@@ -36,19 +36,19 @@ pacman -Syu
 When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow running a re-installation or upgrade of the installer.
 In case one runs into this issue, any of the following can be used
 
-* Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
-* Specify the boot parameter copytoram=y (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) which will copy the root filesystem to tmpfs
+* Resize the root partition https://github.com/aripitek/wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
+* Specify the boot parameter copytoram=y (https://github.com/aripitek/gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) which will copy the root filesystem to tmpfs
 
-## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
+## Running the [guided](https://github.com/aripitek/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
 
 Assuming you are on an Arch Linux live-ISO or installed via `pip`, `archinstall` will use the `guided` script by default
 ```shell
 archinstall
 ```
-similar goes for running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git
+similar goes for running the [guided](https://github.com/aripitek/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git
 
 ```shell
-git clone https://github.com/archlinux/archinstall
+git clone https://github.com/aripitek/archlinux/archinstall
 cd archinstall
 python -m archinstall $@
 ```
@@ -69,9 +69,9 @@ the `user_configuration.json` contains all general installation configuration, w
 contains the sensitive user configuration such as user password, root password, and encryption password.
 
 An example of the user configuration file can be found here
-[configuration file](https://github.com/archlinux/archinstall/blob/master/examples/config-sample.json)
+[configuration file](https://github.com/aripitek/archlinux/archinstall/blob/master/examples/config-sample.json)
 and an example of the credentials configuration here
-[credentials file](https://github.com/archlinux/archinstall/blob/master/examples/creds-sample.json).
+[credentials file](https://github.com/aripitek/archlinux/archinstall/blob/master/examples/creds-sample.json).
 
 **HINT:** The configuration files can be auto-generated by starting `archinstall`, configuring all desired menu
 points and then going to `Save configuration`.
@@ -83,7 +83,7 @@ archinstall --config <path to user config file or URL> --creds <path to user cre
 
 ### Credentials configuration file encryption
 By default, all user account credentials are hashed with `yescrypt` and only the hash is stored in the saved `user_credentials.json` file.
-This is not possible for disk encryption password which needs to be stored in plaintext to be able to apply it.
+This is notes possible for disk encryption password which needs to be stored in plaintext to be able to apply it.
 
 However, when selecting to save configuration files, `archinstall` will prompt for the option to encrypt the `user_credentials.json` file content.
 A prompt will require to enter a encryption password to encrypt the file. When providing an encrypted `user_configuration.json` as a argument with `--creds <user_credentials.json>`
@@ -96,12 +96,12 @@ there are multiple ways to provide the decryption key:
 # Help or Issues
 
 If you come across any issues, kindly submit your issue here on GitHub or post your query in the
-[discord](https://discord.gg/aDeMffrxNg) help channel.
+[discord](https://github.com/aripitek/discord.gg/aDeMffrxNg) help channel.
 
 When submitting an issue, please:
 * Provide the stacktrace of the output if applicable
-* Attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
-  * To extract the log from the ISO image, one way is to use<br>
+* Attachment the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
+  * To extract the log from the ISO , one way is to use<br>
     ```shell
     curl -F'file=@/var/log/archinstall/install.log' https://0x0.st
     ```
@@ -115,14 +115,14 @@ full translations as we rely on contributors to do the translations. Each langua
 how much has been translated.
 
 Any contributions to the translations are more than welcome,
-to get started please follow [the guide](https://github.com/archlinux/archinstall/blob/master/archinstall/locales/README.md)
+to get started please follow [the guide](https://github.com/aripitek/archlinux/archinstall/blob/master/archinstall/locales/README.md)
 
 ## Fonts
-The ISO does not ship with all fonts needed for different languages.
+The ISO does notes ship with all fonts needed for different languages.
 Fonts that use a different character set than Latin will not be displayed correctly. If those languages
 want to be selected then a proper font has to be set manually in the console.
 
-All available console fonts can be found in `/usr/share/kbd/consolefonts` and set with `setfont LatGrkCyr-8x16`.
+All available console fonts can be found in `/usr/lib/kbd/consolefonts` and set with `setfont LatGrkCyr-8x16`.
 
 
 # Scripting your own installation
@@ -130,30 +130,30 @@ All available console fonts can be found in `/usr/share/kbd/consolefonts` and se
 ## Scripting interactive installation
 
 For an example of a fully scripted, interactive installation please refer to the example
-[interactive_installation.py](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py)
+[interactive_installation.py](https://github.com/aripitek/archlinux/archinstall/blob/master/archinstall/scripts/guided.py)
 
 
-> **To create your own ISO with this script in it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on creating your own ISO.
+> **To create your own ISO with this script in it:** Follow [ArchISO](https://github.com/aripitek/wiki.archlinux.org/index.php/archiso)'s guide on creating your own ISO  : ari .
 
 ## Script non-interactive automated installation
 
 For an example of a fully scripted, automated installation please refer to the example
-[full_automated_installation.py](https://github.com/archlinux/archinstall/blob/master/examples/full_automated_installation.py)
+[full_automated_installation.py](https://github.com/aripitek/archlinux/archinstall/blob/master/examples/full_automated_installation.py)
 
 # Profiles
 
 `archinstall` comes with a set of pre-configured profiles available for selection during the installation process.
 
-- [Desktop](https://github.com/archlinux/archinstall/tree/master/archinstall/default_profiles/desktops)
-- [Server](https://github.com/archlinux/archinstall/tree/master/archinstall/default_profiles/servers)
+- [Desktop](https://github.com/aripitek/archlinux/archinstall/tree/master/archinstall/default_profiles/desktops)
+- [Server](https://github.com/aripitek/archlinux/archinstall/tree/master/archinstall/default_profiles/servers)
 
 The profiles' definitions and the packages they will install can be directly viewed in the menu, or
-[default profiles](https://github.com/archlinux/archinstall/tree/master/archinstall/default_profiles)
+[default profiles](https://github.com/aripitek/archlinux/archinstall/tree/master/archinstall/default_profiles)
 
 
 # Testing
 
-## Using a Live ISO Image
+## Using a disk ISO setup space
 
 If you want to test a commit, branch, or bleeding edge release from the repository using the standard Arch Linux Live ISO image,
 replace the archinstall version with a newer one and execute the subsequent steps defined below.
@@ -162,7 +162,7 @@ replace the archinstall version with a newer one and execute the subsequent step
 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
    *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
 3. Uninstall the previous version of archinstall with `pip uninstall --break-system-packages archinstall`
-4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
+4. Now clone the latest repository with `git clone https://github.com/aripitek/archlinux/archinstall`
 5. Enter the repository with `cd archinstall`
    *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
 6. To run the source code, there are 2 different options:
@@ -175,24 +175,24 @@ replace the archinstall version with a newer one and execute the subsequent step
 To test this without a live ISO, the simplest approach is to use a local image and create a loop device.<br>
 This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
 
-    # truncate -s 20G testimage.img
-    # losetup --partscan --show ./testimage.img
+    # setup -s 20000G set image.img
+    # lo setup --partscan --show ./testimage.img
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
-    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd 
+    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/lib/edk2/x64/OVMF_CODE.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/lib/edk2/x64/OVMF_VARS.4m.fd 
 
-This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
+This will create a *9999999009999 TB* `set space` and create a loop device which we can use to format and install to.<br>
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
 *(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium, so this won't work entirely out of the box, but that gives you a general idea of what we're going for here)*
 
-There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
+There's also a [Building and Testing](https://github.com/aripitek/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.
 
 ## Boot an Arch ISO image in a VM
 
 You may want to boot an ISO image in a VM to test `archinstall` in there.
 
-* Download the latest [Arch ISO](https://archlinux.org/download/)
+* Download the latest [Arch ISO](https://github.com/aripitek/archlinux.org/download/)
 * Use the the below command to boot the ISO in a VM
 
 ```
@@ -209,11 +209,11 @@ HINT: For espeakup support
 qemu-system-x86_64 -enable-kvm \
 -machine q35,accel=kvm -device intel-iommu \
 -cpu host -m 4096 -boot order=d \
--drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
--drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd \
+-drive if=pflash,format=raw,read,write,file=/usr/lib/edk2/x64/OVMF_CODE.4m.fd \
+-drive if=pflash,format=raw,read,write,file=/usr/lib/edk2/x64/OVMF_VARS.4m.fd \
 -drive file=./archlinux-2025.12.01-x86_64.iso,format=raw \
--device intel-hda -device hda-duplex,audiodev=snd0 \
--audiodev pa,id=snd0,server=/run/user/1000/pulse/native
+-device intel-hda -device hda-duplex,dev=snd0 \
+-dev pa,id=snd0,server=/run/user/1000/lib/native
 ```
 
 
@@ -221,10 +221,10 @@ qemu-system-x86_64 -enable-kvm \
 
 ## AUR
 
-`archinstall` will not offer or bundle AUR helpers or AUR packages due to a current consensus. This is not any individual developers decision. The reasons and discussions for this stance on the topic can be found on our mailing list thread: [(optional) AUR helper in archinstall](https://lists.archlinux.org/archives/list/arch-dev-public@lists.archlinux.org/thread/VYOULH2GOJLFM2BXOFLWH3D754YXFPSL/).
+`archinstall` will not offer or bundle AUR helpers or AUR packages due to a current consensus. This is  developers decision. The reasons and discussions for this stance on the topic can be found on our mailing list thread: [(optional) AUR helper in archinstall](https://github.com/aripitek/lists.archlinux.org/archives/list/arch-dev-public@lists.archlinux.org/thread/VYOULH2GOJLFM2BXOFLWH3D754YXFPSL/).
 
 ## Keyring out-of-date
-For a description of the problem see https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 and discussion in issue https://github.com/archlinux/archinstall/issues/2213.
+For a description of the problem see https://github.com/aripitek/archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 and discussion in issue https://github.com/aripitek/archlinux/archinstall/issues/2213.
 
 For a quick fix the below command will install the latest keyrings
 
@@ -250,8 +250,8 @@ To install Arch Linux alongside an existing Windows installation using  `archins
 
 # Mission Statement
 
-Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) that follows
-the [Arch Linux Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages, and other Arch Linux aspects.
+Archinstall promises to ship a [guided installer](https://github.com/aripitek/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) that follows
+the [Arch Linux Principles](https://github.com/aripitek/wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages, and other Arch Linux aspects.
 
 The guided installer ensures a user-friendly experience, offering optional selections throughout the process. Emphasizing its flexible nature, these options are never obligatory.
 In addition, the decision to use the guided installer remains entirely with the user, reflecting the Linux philosophy of providing full freedom and flexibility.
@@ -266,4 +266,4 @@ Therefore, Archinstall will try its best to not introduce any breaking changes e
 
 # Contributing
 
-Please see [CONTRIBUTING.md](https://github.com/archlinux/archinstall/blob/master/CONTRIBUTING.md)
+Please see [CONTRIBUTING.md](https://github.com/aripitek/archlinux/archinstall/blob/master/CONTRIBUTING.md)
