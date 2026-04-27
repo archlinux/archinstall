@@ -60,7 +60,12 @@ from archinstall.lib.plugins import plugins
 from archinstall.lib.translationhandler import tr
 
 # Any package that the Installer() is responsible for (optional and the default ones)
-__packages__ = ['base', 'sudo', 'linux-firmware', 'linux', 'linux-lts', 'linux-zen', 'linux-hardened']
+# https://github.com/archlinux/archinstall/issues/4368
+# mkinitcpio is listed explicitly so pacstrap installs it deterministically. Otherwise
+# pacman picks the first initramfs provider from the host's pacman.conf, which on non-Arch
+# hosts (EndeavourOS prefers dracut, etc.) breaks the installer's mkinitcpio() and
+# _config_uki() methods that assume mkinitcpio is present in the chroot.
+__packages__ = ['base', 'sudo', 'linux-firmware', 'mkinitcpio', 'linux', 'linux-lts', 'linux-zen', 'linux-hardened']
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ['brltty', 'espeakup', 'alsa-utils']
@@ -79,7 +84,7 @@ class Installer:
 		`Installer()` is the wrapper for most basic installation steps.
 		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
 		"""
-		self._base_packages = base_packages or __packages__[:3]
+		self._base_packages = base_packages or __packages__[:4]
 		self.kernels = kernels or ['linux']
 		self._disk_config = disk_config
 
