@@ -163,6 +163,12 @@ msgstr ""
 msgid "Archinstall language"
 msgstr ""
 
+msgid "Use this language as the target system language as well?"
+msgstr ""
+
+msgid "The following settings will be applied:"
+msgstr ""
+
 msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr ""
 

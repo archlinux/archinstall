@@ -8,11 +8,14 @@ from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.configuration import ConfigurationOutput, save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
+from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
 from archinstall.lib.general.system_menu import select_kernel, select_swap
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.locale import list_timezones
 from archinstall.lib.locale.locale_menu import LocaleMenu
 from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
+from archinstall.lib.menu.helpers import Confirmation
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.mirror.mirror_menu import MirrorMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
@@ -27,13 +30,14 @@ from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
-from archinstall.lib.output import FormattedOutput
+from archinstall.lib.output import FormattedOutput, debug
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
-from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.lib.translationhandler import DEFAULT_TIMEZONE, Language, tr, translation_handler
 from archinstall.tui.ui.components import tui
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.result import ResultType
 
 
 class GlobalMenu(AbstractMenu[None]):
@@ -160,7 +164,7 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Timezone'),
 				action=select_timezone,
-				value='UTC',
+				value=DEFAULT_TIMEZONE,
 				preview_action=self._prev_tz,
 				key='timezone',
 			),
@@ -254,7 +258,79 @@ class GlobalMenu(AbstractMenu[None]):
 
 		self._update_lang_text()
 
+		await self._maybe_apply_language_to_locale(language)
+
 		return language
+
+	async def _maybe_apply_language_to_locale(self, language: Language) -> None:
+		"""Offer to mirror the selected archinstall language into the target system locale.
+
+		Triggered only when the language has a sys_lang mapping, since otherwise
+		there is no target locale to offer. Console font and timezone rows are
+		added to the prompt only when their language-derived target value differs
+		from the current setting, so re-picking a language with fewer mappings
+		(for example switching from Ukrainian to German, which has no console_font
+		of its own) resets the stale Ukrainian font alongside the new locale.
+		"""
+		if not language.sys_lang:
+			return
+
+		locale_item = self._item_group.find_by_key('locale_config')
+		locale_config: LocaleConfiguration | None = locale_item.value
+		if not locale_config:
+			return
+
+		tz_item = self._item_group.find_by_key('timezone')
+		current_tz: str = tz_item.value or DEFAULT_TIMEZONE
+		target_tz = language.target_timezone
+		offer_tz = self._is_timezone_offerable(target_tz, current_tz)
+
+		diff = locale_config.language_diff(language)
+		if diff.is_empty() and not offer_tz:
+			return
+
+		rows = diff.labeled_rows()
+		if offer_tz:
+			rows.append((tr('Timezone'), target_tz))
+
+		if not await self._confirm_locale_apply(rows):
+			return
+
+		locale_config.apply_language_diff(diff)
+		if offer_tz:
+			tz_item.value = target_tz
+
+	def _is_timezone_offerable(self, target_tz: str, current_tz: str) -> bool:
+		"""Return True when the candidate differs from the current and exists in tzdata.
+
+		The same source the timezone menu reads from, so we never offer a value
+		the user could not have selected manually. UTC is always present, so this
+		is effectively a no-op for the reset-to-default case.
+		"""
+		if target_tz == current_tz:
+			return False
+		try:
+			return target_tz in list_timezones()
+		except SysCallError as err:
+			debug(f'Failed to validate target timezone {target_tz}: {err}')
+			return False
+
+	async def _confirm_locale_apply(self, rows: list[tuple[str, str]]) -> bool:
+		"""Render and show the confirmation dialog for the locale changes."""
+		label_w = max(len(label) for label, _ in rows)
+		data_lines = [f'  {label.ljust(label_w)}  : {value}' for label, value in rows]
+
+		question = tr('Use this language as the target system language as well?')
+		header = tr('The following settings will be applied:')
+
+		# The TUI centers every line of the prompt independently, so pad all
+		# lines to a common width; otherwise the colon column drifts.
+		width = max(len(question), len(header), *(len(line) for line in data_lines))
+		separator = '=' * width
+		prompt = question.ljust(width) + '\n\n' + header.ljust(width) + '\n' + separator + '\n' + '\n'.join(line.ljust(width) for line in data_lines) + '\n'
+
+		result = await Confirmation(header=prompt, preset=True).show()
+		return result.type_ == ResultType.Selection and result.item() == MenuItem.yes()
 
 	def _prev_archinstall_language(self, item: MenuItem) -> str | None:
 		if not item.value:
