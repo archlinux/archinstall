@@ -172,6 +172,23 @@ score = false
 [tool.pylint.variables]
 init-import = true
 
+[tool.pyrefly]
+python-version = "3.14"
+
+replace-imports-with-any = [
+    "parted",  # pyparted doesn't have type hints
+]
+
+[tool.pyrefly.errors]
+# Enable some additional rules that are disabled by default
+implicit-abstract-class = true
+missing-override-decorator = true
+missing-source = true
+not-required-key-access = true
+open-unpacking = true
+unannotated-parameter = true
+unused-ignore = true
+
 [tool.ruff]
 target-version = "py314"
 line-length = 160
