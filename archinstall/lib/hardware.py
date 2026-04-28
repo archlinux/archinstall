@@ -68,6 +68,19 @@ class GfxDriver(Enum):
 			case _:
 				return False
 
+	def is_nvidia_proprietary(self) -> bool:
+		"""
+		True for Nvidia drivers that ship proprietary userspace components.
+		Currently only NvidiaOpenKernel (nvidia-open-dkms): open kernel module
+		paired with proprietary userspace. NvidiaOpenSource (nouveau) is fully
+		open and works with Sway, so it is excluded.
+		"""
+		match self:
+			case GfxDriver.NvidiaOpenKernel:
+				return True
+			case _:
+				return False
+
 	def packages_text(self) -> str:
 		pkg_names = [p.value for p in self.gfx_packages()]
 		text = tr('Installed packages') + ':\n'

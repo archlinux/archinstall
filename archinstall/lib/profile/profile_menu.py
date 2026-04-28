@@ -95,7 +95,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				driver = await select_driver(preset=preset)
 
 			if driver and 'Sway' in profile.current_selection_names():
-				if driver.is_nvidia():
+				if driver.is_nvidia_proprietary():
 					header = tr('The proprietary Nvidia driver is not supported by Sway.') + '\n'
 					header += tr('It is likely that you will run into issues, are you okay with that?') + '\n'
 
@@ -105,8 +105,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 						preset=False,
 					).show()
 
-					if result.get_value():
-						return preset
+					return driver if result.get_value() else preset
 
 		return driver
 
