@@ -22,7 +22,7 @@ Restarting ``systemd-timesyncd.service`` might work but most often you need to c
 Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete. `#2679`_
 ------------------------------
 
-The ``archlinux-keyring-wkd-sync.service`` or ``archlinux-keyring-wkd-sync.timer`` can hang "indefinitely" some times.
+The ``archlinux-keyring-wkd-sync.service`` or ``archlinux-keyring-wkd-sync.timer`` can hang "indefinitely" sometimes.
 This is usually due to an inability to reach the key servers, or a slow connection towards key servers.
 
 The script ``/usr/bin/archlinux-keyring-wkd-sync`` can be run manually, to verify if it's executing slowly or not.
@@ -65,7 +65,7 @@ ARM, 32bit and other CPU types error out `#1686`_, `#2185`_
 
 This is a bit of a catch-all known issue.
 Officially `x86_64`_ is only supported by Arch Linux.
-Hence little effort have been put into supporting other platforms.
+Hence little effort has been put into supporting other platforms.
 
 In theory, other architectures should work but small quirks might arise.
 
@@ -79,10 +79,10 @@ Missing key-issues tend to be that the `archlinux-keyring`_ package is out of da
 There is an attempt from upstream to fix this issue, and it's the `archlinux-keyring-wkd-sync.service`_
 
 The service starts almost immediately during boot, and if network is not configured in time — the service will fail.
-Subsequently the ``archinstall`` run might operate on a old keyring despite there being an update service for this.
+Subsequently the ``archinstall`` run might operate on an old keyring despite there being an update service for this.
 
 There is really no way to reliably over time work around this issue in ``archinstall``.
-Instead, efforts to the upstream service should be considered the way forward. And/or keys not expiring between a sane amount of ISO's.
+Instead, efforts to the upstream service should be considered the way forward. And/or keys not expiring between a sane amount of ISOs.
 
 .. note::
 
