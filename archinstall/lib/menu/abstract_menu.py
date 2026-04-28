@@ -5,7 +5,6 @@ from typing import Any, Self, override
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.output import error
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.types import Chars
 from archinstall.tui.ui.components import InstanceRunnable
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
@@ -154,7 +153,7 @@ class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
 	):
-		back_text = f'{Chars.Right_arrow} ' + tr('Back')
+		back_text = '← ' + tr('Back')
 		item_group.add_item(MenuItem(text=back_text))
 
 		super().__init__(
