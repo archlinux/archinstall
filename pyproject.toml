@@ -20,8 +20,8 @@ classifiers = [
 dependencies = [
     "pyparted==3.13.0",
     "pydantic==2.12.5",
-    "cryptography==46.0.7",
-    "textual==8.2.3",
+    "cryptography==47.0.0",
+    "textual==8.2.4",
     "markdown-it-py==4.0.0",
     "linkify-it-py==2.1.0",
 ]
@@ -34,10 +34,10 @@ Source = "https://github.com/archlinux/archinstall"
 [project.optional-dependencies]
 log = ["systemd_python==235"]
 dev = [
-    "mypy==1.20.1",
+    "mypy==1.20.2",
     "flake8==7.3.0",
-    "pre-commit==4.5.1",
-    "ruff==0.15.11",
+    "pre-commit==4.6.0",
+    "ruff==0.15.12",
     "pylint==4.0.5",
     "pytest==9.0.3",
 ]

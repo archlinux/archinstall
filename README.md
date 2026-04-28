@@ -179,7 +179,7 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # losetup --partscan --show ./testimage.img
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
-    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd 
+    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd 
 
 This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
@@ -199,8 +199,8 @@ You may want to boot an ISO image in a VM to test `archinstall` in there.
 qemu-system-x86_64 -enable-kvm \
 -machine q35,accel=kvm -device intel-iommu \
 -cpu host -m 4096 -boot order=d \
--drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
--drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
+-drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd \
 -drive file=./archlinux-2025.12.01-x86_64.iso,format=raw
 ```
 
@@ -209,8 +209,8 @@ HINT: For espeakup support
 qemu-system-x86_64 -enable-kvm \
 -machine q35,accel=kvm -device intel-iommu \
 -cpu host -m 4096 -boot order=d \
--drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
--drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF.4m.fd \
+-drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
+-drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd \
 -drive file=./archlinux-2025.12.01-x86_64.iso,format=raw \
 -device intel-hda -device hda-duplex,audiodev=snd0 \
 -audiodev pa,id=snd0,server=/run/user/1000/pulse/native
@@ -218,6 +218,10 @@ qemu-system-x86_64 -enable-kvm \
 
 
 # FAQ
+
+## AUR
+
+`archinstall` will not offer or bundle AUR helpers or AUR packages due to a current consensus. This is not any individual developers decision. The reasons and discussions for this stance on the topic can be found on our mailing list thread: [(optional) AUR helper in archinstall](https://lists.archlinux.org/archives/list/arch-dev-public@lists.archlinux.org/thread/VYOULH2GOJLFM2BXOFLWH3D754YXFPSL/).
 
 ## Keyring out-of-date
 For a description of the problem see https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 and discussion in issue https://github.com/archlinux/archinstall/issues/2213.

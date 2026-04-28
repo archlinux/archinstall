@@ -256,6 +256,9 @@ msgstr "Мова локалізації"
 msgid "Locale encoding"
 msgstr "Кодування локалізації"
 
+msgid "Console font"
+msgstr "Шрифт консолі"
+
 msgid "Drive(s)"
 msgstr "Диск(и)"
 
@@ -1218,6 +1221,21 @@ msgstr "Модель"
 #, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "Неправильна конфігурація: {error}"
+
+msgid "Ready to install"
+msgstr "Готово до встановлення"
+
+msgid "Disks"
+msgstr "Диски"
+
+msgid "Packages"
+msgstr "Пакети"
+
+msgid "Network"
+msgstr "Мережа"
+
+msgid "Locale"
+msgstr "Локаль"
 
 msgid "Type"
 msgstr "Тип"

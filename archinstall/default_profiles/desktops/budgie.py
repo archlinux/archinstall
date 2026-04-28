@@ -9,7 +9,7 @@ class BudgieProfile(Profile):
 			'Budgie',
 			ProfileType.DesktopEnv,
 			support_gfx_driver=True,
-			display_server=DisplayServerType.Xorg,
+			display_server=DisplayServerType.Wayland,
 		)
 
 	@property
@@ -18,12 +18,12 @@ class BudgieProfile(Profile):
 		return [
 			'materia-gtk-theme',
 			'budgie',
-			'mate-terminal',
-			'nemo',
+			'konsole',
+			'dolphin',
 			'papirus-icon-theme',
 		]
 
 	@property
 	@override
 	def default_greeter_type(self) -> GreeterType:
-		return GreeterType.LightdmSlick
+		return GreeterType.Sddm

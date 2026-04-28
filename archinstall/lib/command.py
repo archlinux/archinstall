@@ -44,8 +44,8 @@ class SysCommandWorker:
 		self._trace_log_pos = 0
 		self.poll_object = epoll()
 		self.child_fd: int | None = None
-		self.started: float | None = None
-		self.ended: float | None = None
+		self.started = False
+		self.ended = False
 		self.remove_vt100_escape_codes_from_lines: bool = remove_vt100_escape_codes_from_lines
 
 	def __contains__(self, key: bytes) -> bool:
@@ -117,7 +117,7 @@ class SysCommandWorker:
 	def is_alive(self) -> bool:
 		self.poll()
 
-		if self.started and self.ended is None:
+		if self.started and not self.ended:
 			return True
 
 		return False
@@ -173,11 +173,11 @@ class SysCommandWorker:
 					self.peak(output)
 					self._trace_log += output
 				except OSError:
-					self.ended = time.time()
+					self.ended = True
 					break
 
 			if self.ended or (not got_output and not _pid_exists(self.pid)):
-				self.ended = time.time()
+				self.ended = True
 				try:
 					wait_status = os.waitpid(self.pid, 0)[1]
 					self.exit_code = os.waitstatus_to_exitcode(wait_status)
@@ -215,7 +215,7 @@ class SysCommandWorker:
 			# Only parent process moves back to the original working directory
 			os.chdir(old_dir)
 
-		self.started = time.time()
+		self.started = True
 		self.poll_object.register(self.child_fd, EPOLLIN | EPOLLHUP)
 
 		return True
