@@ -2133,6 +2133,12 @@ msgstr "Оберіть інтерфейс"
 msgid "Choose network configuration"
 msgstr "Оберіть конфігурацію мережі"
 
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Рекомендовано: Network Manager для робочого столу, ручне налаштування для сервера"
+
+msgid "Warning: no network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Попередження: конфігурацію мережі не обрано. Мережу доведеться налаштувати вручну на встановленій системі."
+
 msgid "No packages found"
 msgstr "Пакети не знайдено"
 

@@ -172,14 +172,17 @@ async def select_network(preset: NetworkConfiguration | None) -> NetworkConfigur
 	"""
 
 	items = [MenuItem(n.display_msg(), value=n) for n in NicType]
-	group = MenuItemGroup(items, sort_items=True)
+	group = MenuItemGroup(items, sort_items=False)
 
 	if preset:
 		group.set_selected_by_value(preset.type)
 
+	header = tr('Choose network configuration') + '\n'
+	header += tr('Recommended: Network Manager for desktop, Manual for server') + '\n'
+
 	result = await Selection[NicType](
 		group,
-		header=tr('Choose network configuration'),
+		header=header,
 		allow_reset=True,
 		allow_skip=True,
 	).show()
