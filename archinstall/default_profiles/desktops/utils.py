@@ -14,7 +14,7 @@ class SeatAccess(Enum):
 async def select_seat_access(profile_name: str, default: str | None) -> SeatAccess:
 	header = tr('{} needs access to your seat').format(profile_name)
 	header += f' ({tr("collection of hardware devices i.e. keyboard, mouse")})' + '\n'
-	header += tr('Choose an option how to give access to your hardware')
+	header += tr('Choose an option how to give {} access to your hardware').format(profile_name)
 
 	items = [MenuItem(s.value, value=s) for s in SeatAccess]
 	group = MenuItemGroup(items, sort_items=True)
