@@ -29,11 +29,11 @@ class Pacman:
 		if pacman_db_lock.exists():
 			warn(tr('Pacman is already running, waiting maximum 10 minutes for it to terminate.'))
 
-		started = time.time()
+		started = time.monotonic()
 		while pacman_db_lock.exists():
 			time.sleep(0.25)
 
-			if time.time() - started > (60 * 10):
+			if time.monotonic() - started > (60 * 10):
 				error(tr('Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall.'))
 				sys.exit(1)
 

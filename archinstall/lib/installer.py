@@ -189,10 +189,10 @@ class Installer:
 		if not skip_ntp:
 			info(tr('Waiting for time sync (timedatectl show) to complete.'))
 
-			started_wait = time.time()
+			started_wait = time.monotonic()
 			notified = False
 			while True:
-				if not notified and time.time() - started_wait > 5:
+				if not notified and time.monotonic() - started_wait > 5:
 					notified = True
 					warn(tr('Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/'))
 
