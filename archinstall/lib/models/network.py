@@ -12,7 +12,6 @@ class NicType(Enum):
 	NM = 'nm'
 	NM_IWD = 'nm_iwd'
 	MANUAL = 'manual'
-	NONE = 'none'
 
 	def display_msg(self) -> str:
 		match self:
@@ -24,8 +23,6 @@ class NicType(Enum):
 				return tr('Use Network Manager (iwd backend)')
 			case NicType.MANUAL:
 				return tr('Manual configuration')
-			case NicType.NONE:
-				return tr('No network configuration')
 
 
 class _NicSerialization(TypedDict):

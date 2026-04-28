@@ -486,7 +486,7 @@ msgid "Define users with sudo privilege: "
 msgstr "Визначте користувачів із привілеєм sudo: "
 
 msgid "No network configuration"
-msgstr "Без налаштування мережі"
+msgstr "Відсутня конфігурація мережі"
 
 msgid "Set desired subvolumes on a btrfs partition"
 msgstr "Встановіть потрібні підтома на розділі btrfs"

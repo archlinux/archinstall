@@ -208,7 +208,5 @@ async def select_network(preset: NetworkConfiguration | None) -> NetworkConfigur
 
 					if nics:
 						return NetworkConfiguration(NicType.MANUAL, nics)
-				case NicType.NONE:
-					return NetworkConfiguration(NicType.NONE)
 
 	return preset

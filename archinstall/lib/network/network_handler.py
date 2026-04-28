@@ -37,8 +37,6 @@ def install_network_config(
 				installation.configure_nic(nic)
 			installation.enable_service('systemd-networkd')
 			installation.enable_service('systemd-resolved')
-		case NicType.NONE:
-			pass
 
 
 def _configure_nm_iwd(installation: Installer) -> None:
