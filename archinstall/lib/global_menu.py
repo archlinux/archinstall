@@ -6,7 +6,7 @@ from archinstall.lib.args import ArchConfig
 from archinstall.lib.authentication.authentication_menu import AuthenticationMenu
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
-from archinstall.lib.configuration import save_config
+from archinstall.lib.configuration import ConfigurationOutput, save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
 from archinstall.lib.general.system_menu import select_kernel, select_swap
@@ -504,7 +504,11 @@ class GlobalMenu(AbstractMenu[None]):
 		if error := self._validate_bootloader():
 			return tr(f'Invalid configuration: {error}')
 
-		return None
+		self.sync_all_to_config()
+		summary = ConfigurationOutput(self._arch_config).as_summary()
+		if summary:
+			return f'{tr("Ready to install")}\n\n{summary}'
+		return tr('Ready to install')
 
 	def _prev_profile(self, item: MenuItem) -> str | None:
 		profile_config: ProfileConfiguration | None = item.value
