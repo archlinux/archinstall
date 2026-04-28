@@ -81,17 +81,6 @@ class GfxDriver(Enum):
 			case _:
 				return False
 
-	def is_nvidia_nouveau(self) -> bool:
-		"""
-		True for the open-source nouveau driver (Mesa) for Nvidia GPUs.
-		Currently only NvidiaOpenSource. Officially supported by Sway.
-		"""
-		match self:
-			case GfxDriver.NvidiaOpenSource:
-				return True
-			case _:
-				return False
-
 	def packages_text(self) -> str:
 		pkg_names = [p.value for p in self.gfx_packages()]
 		text = tr('Installed packages') + ':\n'

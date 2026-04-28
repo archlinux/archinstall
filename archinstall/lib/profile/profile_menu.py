@@ -105,8 +105,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 						preset=False,
 					).show()
 
-					if not result.get_value():
-						return preset
+					return driver if result.get_value() else preset
 
 		return driver
 
