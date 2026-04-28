@@ -48,6 +48,7 @@ from archinstall.lib.models.device import (
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import Nic
+from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.users import User
@@ -65,7 +66,7 @@ from archinstall.lib.translationhandler import tr
 # pacman picks the first initramfs provider from the host's pacman.conf, which on non-Arch
 # hosts (EndeavourOS prefers dracut, etc.) breaks the installer's mkinitcpio() and
 # _config_uki() methods that assume mkinitcpio is present in the chroot.
-__packages__ = ['base', 'sudo', 'linux-firmware', 'mkinitcpio', 'linux', 'linux-lts', 'linux-zen', 'linux-hardened']
+__packages__ = ['base', 'sudo', 'linux-firmware', 'mkinitcpio'] + [k.value for k in Kernel]
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ['brltty', 'espeakup', 'alsa-utils']
@@ -85,7 +86,7 @@ class Installer:
 		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
 		"""
 		self._base_packages = base_packages or __packages__[:4]
-		self.kernels = kernels or ['linux']
+		self.kernels = kernels or [DEFAULT_KERNEL.value]
 		self._disk_config = disk_config
 
 		self._disk_encryption = disk_config.disk_encryption or DiskEncryption(EncryptionType.NO_ENCRYPTION)
@@ -744,6 +745,9 @@ class Installer:
 
 		return self.run_command(cmd, peek_output=peek_output)
 
+	def _chroot_argv(self, *args: str) -> list[str]:
+		return ['arch-chroot', '-S', str(self.target), *args]
+
 	def drop_to_shell(self) -> None:
 		subprocess.check_call(f'arch-chroot {self.target}', shell=True)
 
@@ -992,17 +996,7 @@ class Installer:
 			}
 
 			for config_name, mountpoint in snapper.items():
-				command = [
-					'arch-chroot',
-					'-S',
-					str(self.target),
-					'snapper',
-					'--no-dbus',
-					'-c',
-					config_name,
-					'create-config',
-					mountpoint,
-				]
+				command = self._chroot_argv('snapper', '--no-dbus', '-c', config_name, 'create-config', mountpoint)
 
 				try:
 					SysCommand(command, peek_output=True)
@@ -1341,13 +1335,7 @@ class Installer:
 
 		boot_dir = Path('/boot')
 
-		command = [
-			'arch-chroot',
-			'-S',
-			str(self.target),
-			'grub-install',
-			'--debug',
-		]
+		command = self._chroot_argv('grub-install', '--debug')
 
 		if SysInfo.has_uefi():
 			if not efi_partition:
@@ -1927,16 +1915,17 @@ class Installer:
 		if not handled_by_plugin:
 			info(f'Creating user {user.username}')
 
-			cmd = 'useradd -m'
+			cmd = self._chroot_argv('useradd', '-m')
 
 			if user.sudo:
-				cmd += ' -G wheel'
+				cmd += ['-G', 'wheel']
 
-			cmd += f' {user.username}'
+			cmd += ['--', user.username]
 
 			try:
-				self.arch_chroot(cmd)
-			except SysCallError as err:
+				run(cmd)
+			except CalledProcessError as err:
+				debug(f'Error creating user {user.username}: {err}')
 				raise SystemError(f'Could not create user inside installation: {err}')
 
 		for plugin in plugins.values():
@@ -1947,7 +1936,11 @@ class Installer:
 		self.set_user_password(user)
 
 		for group in user.groups:
-			self.arch_chroot(f'gpasswd -a {user.username} {group}')
+			cmd = self._chroot_argv('gpasswd', '-a', user.username, group)
+			try:
+				run(cmd)
+			except CalledProcessError as err:
+				warn(f'Failed to add {user.username} to group {group}: {err}')
 
 		if user.sudo:
 			self.enable_sudo(user)
@@ -1962,7 +1955,7 @@ class Installer:
 			return False
 
 		input_data = f'{user.username}:{enc_password}'.encode()
-		cmd = ['arch-chroot', '-S', str(self.target), 'chpasswd', '--encrypted']
+		cmd = self._chroot_argv('chpasswd', '--encrypted')
 
 		try:
 			run(cmd, input_data=input_data)
@@ -1974,7 +1967,7 @@ class Installer:
 	def user_set_shell(self, user: str, shell: str) -> bool:
 		info(f'Setting shell for {user} to {shell}')
 
-		cmd = ['arch-chroot', '-S', str(self.target), 'chsh', '-s', shell, user]
+		cmd = self._chroot_argv('chsh', '-s', shell, user)
 		try:
 			run(cmd)
 			return True
@@ -1984,7 +1977,7 @@ class Installer:
 
 	def chown(self, owner: str, path: str, options: list[str] | None = None) -> bool:
 		options = options or []
-		cmd = ['arch-chroot', '-S', str(self.target), 'chown', *options, owner, path]
+		cmd = self._chroot_argv('chown', *options, '--', owner, path)
 		try:
 			run(cmd)
 			return True
@@ -1995,12 +1988,10 @@ class Installer:
 	def set_vconsole(self, locale_config: LocaleConfiguration) -> None:
 		# use the already set kb layout
 		kb_vconsole: str = locale_config.kb_layout
-		# this is the default used in ISO other option for hdpi screens TER16x32
-		# can be checked using
-		# zgrep "CONFIG_FONT" /proc/config.gz
-		# https://wiki.archlinux.org/title/Linux_console#Fonts
+		font_vconsole = locale_config.console_font
 
-		font_vconsole = 'default8x16'
+		if font_vconsole.startswith('ter-'):
+			self.pacman.strap(['terminus-font'])
 
 		# Ensure /etc exists
 		vconsole_dir: Path = self.target / 'etc'

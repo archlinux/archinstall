@@ -1,6 +1,6 @@
 from typing import override
 
-from archinstall.lib.locale.utils import list_keyboard_languages, list_locales, set_kb_layout
+from archinstall.lib.locale.utils import list_console_fonts, list_keyboard_languages, list_locales, set_kb_layout
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.models.locale import LocaleConfiguration
@@ -46,6 +46,13 @@ class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 				value=self._locale_conf.sys_enc,
 				preview_action=lambda item: item.get_value(),
 				key='sys_enc',
+			),
+			MenuItem(
+				text=tr('Console font'),
+				action=select_console_font,
+				value=self._locale_conf.console_font,
+				preview_action=lambda item: item.get_value(),
+				key='console_font',
 			),
 		]
 
@@ -129,6 +136,28 @@ async def select_kb_layout(preset: str | None = None) -> str | None:
 
 	result = await Selection[str](
 		header=tr('Keyboard layout'),
+		group=group,
+		enable_filter=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Selection:
+			return result.get_value()
+		case ResultType.Skip:
+			return preset
+		case _:
+			raise ValueError('Unhandled return type')
+
+
+async def select_console_font(preset: str | None = None) -> str | None:
+	fonts = list_console_fonts()
+
+	items = [MenuItem(f, value=f) for f in fonts]
+	group = MenuItemGroup(items, sort_items=False)
+	group.set_focus_by_value(preset)
+
+	result = await Selection[str](
+		header=tr('Console font'),
 		group=group,
 		enable_filter=True,
 	).show()

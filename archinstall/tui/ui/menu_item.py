@@ -1,4 +1,4 @@
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
@@ -148,7 +148,7 @@ class MenuItemGroup:
 		cls,
 		enum_cls: type[Enum],
 		sort_items: bool = False,
-		preset: Enum | None = None,
+		preset: Iterable[Enum] | Enum | None = None,
 	) -> Self:
 		items = [MenuItem(elem.value, value=elem) for elem in enum_cls]
 		group = cls(items, sort_items=sort_items)

@@ -3,29 +3,24 @@ from typing import assert_never
 from archinstall.lib.hardware import GfxDriver, SysInfo
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
+from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
 
-async def select_kernel(preset: list[str] = []) -> list[str]:
+async def select_kernel(preset: list[Kernel] = []) -> list[Kernel]:
 	"""
 	Asks the user to select a kernel for system.
 
 	:return: The string as a selected kernel
 	:rtype: string
 	"""
-	kernels = ['linux', 'linux-lts', 'linux-zen', 'linux-hardened']
-	default_kernel = 'linux'
+	group = MenuItemGroup.from_enum(Kernel, sort_items=True, preset=preset)
+	group.set_default_by_value(DEFAULT_KERNEL)
+	group.set_focus_by_value(DEFAULT_KERNEL)
 
-	items = [MenuItem(k, value=k) for k in kernels]
-
-	group = MenuItemGroup(items, sort_items=True)
-	group.set_default_by_value(default_kernel)
-	group.set_focus_by_value(default_kernel)
-	group.set_selected_by_value(preset)
-
-	result = await Selection[str](
+	result = await Selection[Kernel](
 		group,
 		header=tr('Select which kernel(s) to install'),
 		allow_skip=True,
