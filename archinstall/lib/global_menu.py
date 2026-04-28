@@ -22,6 +22,7 @@ from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutTyp
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, NicType
+from archinstall.lib.models.package_types import DEFAULT_KERNEL
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
@@ -103,7 +104,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Kernels'),
-				value=['linux'],
+				value=[DEFAULT_KERNEL],
 				action=select_kernel,
 				preview_action=self._prev_kernel,
 				mandatory=True,

@@ -21,6 +21,7 @@ from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguratio
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration
+from archinstall.lib.models.package_types import DEFAULT_KERNEL
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
@@ -71,7 +72,7 @@ class ArchConfig:
 	auth_config: AuthenticationConfiguration | None = None
 	swap: ZramConfiguration | None = None
 	hostname: str = 'archlinux'
-	kernels: list[str] = field(default_factory=lambda: ['linux'])
+	kernels: list[str] = field(default_factory=lambda: [DEFAULT_KERNEL.value])
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	pacman_config: PacmanConfiguration = field(default_factory=PacmanConfiguration.default)
