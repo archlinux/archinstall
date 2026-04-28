@@ -42,5 +42,6 @@ requirements.txt
 /cmd_output.txt
 /.dev-iso/
 /.dev-configs/
+/.dev-logs/
 node_modules/
 uv.lock

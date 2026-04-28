@@ -1,19 +1,22 @@
 #!/bin/bash
 # Dev test VM for archinstall.
 # Builds a minimal dev ISO on first run (runtime deps pre-installed, 9p shares
-# auto-mounted, `archinstall` aliased to `python -m archinstall`), then launches
-# QEMU. Source lives on the host, guest mounts it read-only - no rebuild loop.
+# auto-mounted, `archinstall` wrapped to clear logs and run `python -m archinstall`),
+# then launches QEMU. Source lives on the host, guest mounts it read-only - no rebuild loop.
 #
 # Host artifacts (created in repo root, all git-ignored):
 #   .dev-iso/                generated dev ISO (mkarchiso output)
 #   .dev-disk.qcow2          VM disk image (qemu-img)
 #   .dev-ovmf-vars.fd        persistent UEFI NVRAM (copied from OVMF_VARS)
 #   .dev-configs/            optional, user-created - shared rw to guest as /root/cfg
+#   .dev-logs/               auto-created - shared rw to guest as /var/log/archinstall
 #
 # Inside the guest after boot:
 #   /root/archinstall-dev    project source (9p ro, host edits appear live)
 #   /root/cfg                .dev-configs share (9p rw, mounted only if folder exists)
-#   archinstall              alias for `python -m archinstall`
+#   /var/log/archinstall     .dev-logs share (9p rw, host can tail install.log live)
+#   archinstall              wrapper around `python -m archinstall`; clears the
+#                            log directory on every invocation
 #
 # Run from the project root or from inside scripts/ - both work, the script
 # resolves the project root from its own location.
@@ -23,7 +26,7 @@
 #   ./scripts/dev_vm.sh rebuild | r  - force rebuild ISO, fresh disk, boot
 #   ./scripts/dev_vm.sh keep    | k  - reuse disk, boot ISO
 #   ./scripts/dev_vm.sh boot    | b  - boot from installed disk (no ISO)
-#   ./scripts/dev_vm.sh clean   | c  - remove disk, NVRAM, ISO
+#   ./scripts/dev_vm.sh clean   | c  - remove disk, NVRAM, ISO, logs
 #   ./scripts/dev_vm.sh -h           - show this help
 #
 # Env overrides:
@@ -37,6 +40,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 CONFIGS_DIR="$PROJECT_DIR/.dev-configs"
+LOGS_DIR="$PROJECT_DIR/.dev-logs"
 ISO_DIR="$PROJECT_DIR/.dev-iso"
 DISK="$PROJECT_DIR/.dev-disk.qcow2"
 OVMF_VARS="$PROJECT_DIR/.dev-ovmf-vars.fd"
@@ -155,24 +159,32 @@ cat > "$BUILD_DIR/airootfs/etc/gitconfig" <<'GIT'
 	directory = /root/archinstall-dev
 GIT
 
-# Auto-mount project, alias archinstall, print info on login
+# Auto-mount project, define archinstall wrapper, print info on login
 mkdir -p "$BUILD_DIR/airootfs/root"
 cat > "$BUILD_DIR/airootfs/root/.zprofile" <<'ZP'
-mkdir -p /root/archinstall-dev /root/cfg
+mkdir -p /root/archinstall-dev /root/cfg /var/log/archinstall
 if ! mount -t 9p -o trans=virtio,ro dev /root/archinstall-dev 2>/dev/null; then
-    echo "ERROR: failed to mount 9p 'dev' share. The archinstall alias will not work."
+    echo "ERROR: failed to mount 9p 'dev' share. The archinstall wrapper will not work."
     echo "Check host qemu virtfs support and that the guest kernel has the 9p module."
 fi
 mount -t 9p -o trans=virtio cfg /root/cfg 2>/dev/null || true
+mount -t 9p -o trans=virtio logs /var/log/archinstall 2>/dev/null || true
 cd /root/archinstall-dev
 export PYTHONDONTWRITEBYTECODE=1
-alias archinstall='python -m archinstall'
+# Wrapper instead of a plain alias so each invocation starts with a clean log
+# directory. The directory is a 9p mount from the host, so the contents are
+# wiped (find -delete) instead of removing the mountpoint itself.
+archinstall() {
+    find /var/log/archinstall -mindepth 1 -delete 2>/dev/null
+    python -m archinstall "$@"
+}
 cat <<MSG
 
 === archinstall dev environment ===
 Source:  /root/archinstall-dev   (9p, read-only, live host edits)
 Configs: /root/cfg               (9p, optional, if .dev-configs on host)
-Run:     archinstall             (alias for 'python -m archinstall')
+Logs:    /var/log/archinstall    (9p, host sees install.log live in .dev-logs/)
+Run:     archinstall             (wraps 'python -m archinstall'; clears /var/log/archinstall first)
 
 MSG
 ZP
@@ -192,7 +204,7 @@ case "$ARG" in
         ;;
     clean|c)
         rm -fv "$DISK" "$OVMF_VARS"
-        rm -rf "$ISO_DIR"
+        rm -rf "$ISO_DIR" "$LOGS_DIR"
         exit 0
         ;;
     boot|b)
@@ -258,6 +270,11 @@ QEMU_ARGS=(
 if [ -d "$CONFIGS_DIR" ]; then
     QEMU_ARGS+=(-virtfs "local,path=$CONFIGS_DIR,mount_tag=cfg,security_model=mapped-xattr")
 fi
+
+# Logs share: always mounted, host folder auto-created so install.log is
+# visible from the host (.dev-logs/install.log) without re-entering the VM.
+mkdir -p "$LOGS_DIR"
+QEMU_ARGS+=(-virtfs "local,path=$LOGS_DIR,mount_tag=logs,security_model=mapped-xattr")
 
 if [ "$ATTACH_ISO" = "true" ]; then
     ISO="$(find_iso)"
