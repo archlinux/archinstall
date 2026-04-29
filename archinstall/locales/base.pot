@@ -2285,3 +2285,11 @@ msgstr ""
 #, python-brace-format
 msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
 msgstr ""
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr ""
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr ""
