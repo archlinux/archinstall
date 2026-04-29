@@ -256,6 +256,9 @@ msgstr "ロケール言語"
 msgid "Locale encoding"
 msgstr "ロケールエンコーディング"
 
+msgid "Console font"
+msgstr "コンソールフォント"
+
 msgid "Drive(s)"
 msgstr "ドライブ"
 
@@ -1219,6 +1222,21 @@ msgstr "製品"
 msgid "Invalid configuration: {error}"
 msgstr "無効な設定: {error}"
 
+msgid "Ready to install"
+msgstr "インストール準備完了"
+
+msgid "Disks"
+msgstr "ディスク"
+
+msgid "Packages"
+msgstr "パッケージ"
+
+msgid "Network"
+msgstr "ネットワーク"
+
+msgid "Locale"
+msgstr "ロケール"
+
 msgid "Type"
 msgstr "タイプ"
 
@@ -2114,6 +2132,12 @@ msgstr "インターフェースを選択"
 
 msgid "Choose network configuration"
 msgstr "ネットワーク設定を選択"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "推奨: デスクトップのネットワークマネージャー、サーバーのマニュアル"
+
+msgid "Warning: no network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "警告: ネットワーク設定が選択されていません。インストール後のシステムで、ネットワークを手動で設定する必要があります。"
 
 msgid "No packages found"
 msgstr "パッケージが見つかりません"
