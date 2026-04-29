@@ -133,7 +133,7 @@ class Journald:
 		try:
 			import systemd.journal  # type: ignore[import-not-found]
 		except ModuleNotFoundError:
-			return None
+			return
 
 		log_adapter = logging.getLogger('archinstall')
 		log_fmt = logging.Formatter('[%(levelname)s]: %(message)s')
