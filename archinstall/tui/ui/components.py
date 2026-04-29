@@ -350,7 +350,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 
 	def _set_preview(self, item_id: str) -> None:
 		if self._preview_location is None:
-			return None
+			return
 
 		preview_widget = self.query_one('#preview_content', Label)
 		item = self._group.find_by_id(item_id)
@@ -530,7 +530,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		selection_list = self.query_one(SelectionList)
 
 		if not selection_list.has_focus or event.key != 'enter':
-			return None
+			return
 
 		if len(self._selected_items) < 1:
 			index = selection_list.highlighted
@@ -743,7 +743,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 			if self._is_btn_focus():
 				item = self._group.focus_item
 				if not item:
-					return None
+					return
 				_ = self.dismiss(Result(ResultType.Selection, _item=item))
 
 
