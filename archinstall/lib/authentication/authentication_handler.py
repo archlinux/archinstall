@@ -81,7 +81,7 @@ class AuthenticationHandler:
 
 		install_session.pacman.strap('pam-u2f')
 
-		print(tr(f'Setting up U2F login: {u2f_config.u2f_login_method.value}'))
+		print(tr('Setting up U2F login: {}').format(u2f_config.u2f_login_method.value))
 
 		# https://developers.yubico.com/pam-u2f/
 		u2f_auth_file = install_session.target / 'etc/u2f_mappings'
