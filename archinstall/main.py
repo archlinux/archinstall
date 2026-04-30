@@ -141,8 +141,9 @@ def _error_message(exc: Exception) -> None:
 		Archinstall experienced the above error. If you think this is a bug, please report it to
 		https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".
 
-		Hint: To extract the log from a live ISO
-		curl -F 'file=@/var/log/archinstall/install.log' https://0x0.st
+		Hint: To extract the log from a live ISO you can mount a USB drive or use
+		cat /var/log/archinstall/install.log
+		to view and copy the relevant output.
 		"""
 	)
 	warn(text)
