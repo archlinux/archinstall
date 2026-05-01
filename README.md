@@ -101,9 +101,9 @@ If you come across any issues, kindly submit your issue here on GitHub or post y
 When submitting an issue, please:
 * Provide the stacktrace of the output if applicable
 * Attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
-  * To extract the log from the ISO image, one way is to use<br>
+  * To upload the log from the ISO image and get a shareable URL, run<br>
     ```shell
-    curl -F'file=@/var/log/archinstall/install.log' https://0x0.st
+    archinstall --share-log
     ```
 
 

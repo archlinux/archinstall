@@ -16,6 +16,7 @@ from archinstall.lib.networking import ping
 from archinstall.lib.output import debug, error, info, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
+from archinstall.lib.share_log import share_install_log
 from archinstall.lib.translationhandler import tr, translation_handler
 from archinstall.lib.utils.util import running_from_iso
 from archinstall.tui.ui.components import tui
@@ -95,6 +96,9 @@ def run() -> int:
 		print(tr('Archinstall requires root privileges to run. See --help for more.'))
 		return 1
 
+	if arch_config_handler.args.share_log:
+		return share_install_log()
+
 	translation_handler.save_console_font()
 
 	_log_sys_info()
@@ -141,8 +145,8 @@ def _error_message(exc: Exception) -> None:
 		Archinstall experienced the above error. If you think this is a bug, please report it to
 		https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".
 
-		Hint: To extract the log from a live ISO
-		curl -F 'file=@/var/log/archinstall/install.log' https://0x0.st
+		Hint: To upload the log and get a shareable URL, run
+		archinstall --share-log
 		"""
 	)
 	warn(text)
