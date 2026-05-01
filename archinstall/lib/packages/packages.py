@@ -9,6 +9,12 @@ from archinstall.lib.translationhandler import tr
 from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.ui.result import ResultType
 
+# Force pacman to emit untruncated single-line field values. With the default
+# pty width of 80 columns, pacman wraps long fields like Description across
+# multiple lines, and our line-based parser ends up dropping the continuation
+# lines after they get pre-stripped of their leading whitespace. See #3580.
+_WIDE_PACMAN_ENV = {'COLUMNS': '500'}
+
 
 def installed_package(package: str) -> LocalPackage | None:
 	try:
@@ -52,7 +58,7 @@ def package_group_info(package: str) -> PackageGroup | None:
 def available_package(package: str) -> AvailablePackage | None:
 	try:
 		package_info: list[str] = []
-		for line in Pacman.run(f'-S --info {package}'):
+		for line in Pacman.run(f'-S --info {package}', environment_vars=_WIDE_PACMAN_ENV):
 			package_info.append(line.decode().strip())
 
 		return _parse_package_output(package_info, AvailablePackage)
@@ -78,7 +84,7 @@ def list_available_packages(
 	except Exception as e:
 		debug(f'Failed to sync Arch Linux package database: {e}')
 
-	for line in Pacman.run('-S --info'):
+	for line in Pacman.run('-S --info', environment_vars=_WIDE_PACMAN_ENV):
 		dec_line = line.decode().strip()
 		current_package.append(dec_line)
 

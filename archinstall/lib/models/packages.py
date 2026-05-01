@@ -1,3 +1,5 @@
+import os
+import textwrap
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
@@ -134,13 +136,32 @@ class AvailablePackage(BaseModel):
 
 	# return all package info line by line
 	def info(self) -> str:
-		output = ''
-		for key, value in self.model_dump().items():
-			key = key.replace('_', ' ').capitalize()
-			key = key.ljust(self.longest_key)
-			output += f'{key} : {value}\n'
+		# Preview pane occupies roughly half the terminal width when shown
+		# alongside the option list. Wrap each value to fit so long fields
+		# (Description, Optional Deps, etc.) do not produce horizontal scroll.
+		try:
+			cols = os.get_terminal_size().columns
+		except OSError:
+			cols = 80
+		preview_width = max(40, cols // 2 - 5)
+		indent = ' ' * (self.longest_key + 3)
 
-		return output
+		lines: list[str] = []
+		for key, value in self.model_dump().items():
+			key_label = key.replace('_', ' ').capitalize().ljust(self.longest_key)
+			prefix = f'{key_label} : '
+			lines.append(
+				textwrap.fill(
+					str(value),
+					width=preview_width,
+					initial_indent=prefix,
+					subsequent_indent=indent,
+					break_long_words=False,
+					break_on_hyphens=False,
+				),
+			)
+
+		return '\n'.join(lines) + '\n'
 
 	@cached_property
 	def get_depends_on(self) -> list[str]:
