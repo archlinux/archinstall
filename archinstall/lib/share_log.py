@@ -34,23 +34,20 @@ def share_install_log() -> int:
 
 	if size > _PASTE_MAX_SIZE:
 		print(
-			f'Log file is too large to share: {size} bytes '
-			f'(limit: {_PASTE_MAX_SIZE} bytes). '
-			f'Trim it or upload manually.',
+			f'Log file is too large to share: {size} bytes (limit: {_PASTE_MAX_SIZE} bytes). Trim it or upload manually.',
 			file=sys.stderr,
 		)
 		return 1
 
 	print(f'About to upload {log_path} ({size} bytes) to {_PASTE_URL}', file=sys.stderr)
 	print(
-		'The log may contain hostname, mirror URLs, package list and '
-		'partition layout. The uploaded paste is public.',
+		'The log may contain hostname, mirror URLs, package list and partition layout. The uploaded paste is public.',
 		file=sys.stderr,
 	)
 
 	try:
 		answer = input('Continue? [y/N]: ').strip().lower()
-	except (EOFError, KeyboardInterrupt):
+	except EOFError, KeyboardInterrupt:
 		print(file=sys.stderr)
 		return 1
 
