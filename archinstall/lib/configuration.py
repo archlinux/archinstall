@@ -124,12 +124,9 @@ class ConfigurationOutput:
 		label_width = max(len(label) for label, _ in rows) + 2
 		return '\n'.join(f'{label:<{label_width}}{value}' for label, value in rows)
 
-	async def confirm_config(self, show_install_warnings: bool = False) -> bool:
+	async def confirm_config(self) -> bool:
 		header = f'{tr("The specified configuration will be applied")}. '
 		header += tr('Would you like to continue?') + '\n'
-
-		if show_install_warnings:
-			header += self._render_install_warnings()
 
 		group = MenuItemGroup.yes_no()
 		group.set_preview_for_all(lambda x: self.user_config_to_json())
@@ -155,14 +152,6 @@ class ConfigurationOutput:
 			warnings.append(tr('Warning: no network configuration selected. Network will need to be set up manually on the installed system.'))
 
 		return warnings
-
-	def _render_install_warnings(self) -> str:
-		warnings = self.get_install_warnings()
-
-		if not warnings:
-			return ''
-
-		return '\n' + '\n'.join(f'[yellow]{w}[/]' for w in warnings) + '\n'
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
 		dest_path_ok = dest_path.exists() and dest_path.is_dir()

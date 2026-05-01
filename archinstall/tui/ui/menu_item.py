@@ -19,6 +19,7 @@ class MenuItem:
 	dependencies_not: list[str] = field(default_factory=list)
 	display_action: Callable[[Any], str] | None = None
 	preview_action: Callable[[Self], str | None] | None = None
+	preview_markup: bool = False
 	key: str | None = None
 
 	_id: str = ''

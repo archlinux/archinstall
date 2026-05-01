@@ -1,5 +1,7 @@
 from typing import override
 
+from rich.markup import escape as _escape_markup
+
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.applications.application_menu import ApplicationMenu
 from archinstall.lib.args import ArchConfig
@@ -183,6 +185,7 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Install'),
 				preview_action=self._prev_install_invalid_config,
+				preview_markup=True,
 				key=SpecialMenuKey.INSTALL.value,
 			),
 			MenuItem(
@@ -495,20 +498,30 @@ class GlobalMenu(AbstractMenu[None]):
 		return None
 
 	def _prev_install_invalid_config(self, item: MenuItem) -> str | None:
+		self.sync_all_to_config()
+		config_output = ConfigurationOutput(self._arch_config)
+
+		warnings = config_output.get_install_warnings()
+		warnings_text = ''
+		if warnings:
+			warnings_text = f'\n\n[yellow]{_escape_markup(tr("Warnings:"))}\n'
+			for w in warnings:
+				warnings_text += f'- {_escape_markup(w)}\n'
+			warnings_text = warnings_text.rstrip('\n') + '[/yellow]'
+
 		if missing := self._missing_configs():
-			text = tr('Missing configurations:\n')
+			text = f'[red]{_escape_markup(tr("Missing configurations:"))}\n'
 			for m in missing:
-				text += f'- {m}\n'
-			return text[:-1]  # remove last new line
+				text += f'- {_escape_markup(m)}\n'
+			return text.rstrip('\n') + '[/red]' + warnings_text
 
 		if error := self._validate_bootloader():
-			return tr(f'Invalid configuration: {error}')
+			return f'[red]{_escape_markup(tr(f"Invalid configuration: {error}"))}[/red]' + warnings_text
 
-		self.sync_all_to_config()
-		summary = ConfigurationOutput(self._arch_config).as_summary()
+		summary = config_output.as_summary()
 		if summary:
-			return f'{tr("Ready to install")}\n\n{summary}'
-		return tr('Ready to install')
+			return f'[green]{_escape_markup(tr("Ready to install"))}[/green]{warnings_text}\n\n{_escape_markup(summary)}'
+		return f'[green]{_escape_markup(tr("Ready to install"))}[/green]{warnings_text}'
 
 	def _prev_profile(self, item: MenuItem) -> str | None:
 		profile_config: ProfileConfiguration | None = item.value
