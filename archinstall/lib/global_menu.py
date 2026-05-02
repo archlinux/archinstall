@@ -509,14 +509,25 @@ class GlobalMenu(AbstractMenu[None]):
 				warnings_text += f'- {_escape_markup(w)}\n'
 			warnings_text = warnings_text.rstrip('\n') + '[/yellow]'
 
+		blocks = ''
+
 		if missing := self._missing_configs():
 			text = f'[red]{_escape_markup(tr("Missing configurations:"))}\n'
 			for m in missing:
 				text += f'- {_escape_markup(m)}\n'
-			return text.rstrip('\n') + '[/red]' + warnings_text
+			blocks += text.rstrip('\n') + '[/red]'
 
-		if error := self._validate_bootloader():
-			return f'[red]{_escape_markup(tr(f"Invalid configuration: {error}"))}[/red]' + warnings_text
+		disk_item = self._item_group.find_by_key('disk_config')
+		if disk_item.has_value():
+			if error := self._validate_bootloader():
+				if blocks:
+					blocks += '\n\n'
+				text = f'[red]{_escape_markup(tr("Invalid configuration:"))}\n'
+				text += f'- {_escape_markup(error)}'
+				blocks += text + '[/red]'
+
+		if blocks:
+			return blocks + warnings_text
 
 		summary = config_output.as_summary()
 		if summary:

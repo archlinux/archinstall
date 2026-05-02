@@ -5,7 +5,7 @@ from dataclasses import dataclass, replace
 from enum import Enum, auto
 from typing import Any, ClassVar, Literal, TypeVar, cast, override
 
-from rich.markup import escape as _escape_markup
+from rich.text import Text
 from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding, BindingsMap
@@ -281,7 +281,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 				with Container():
 					yield option_list
 					yield Rule(orientation=rule_orientation)
-					yield ScrollableContainer(Label('', id='preview_content', markup=True))
+					yield ScrollableContainer(Label('', id='preview_content', markup=False))
 
 		if self._filter:
 			yield Input(placeholder='/filter', id='filter-input')
@@ -360,9 +360,8 @@ class OptionListScreen(BaseScreen[ValueT]):
 			maybe_preview = item.preview_action(item)
 
 			if maybe_preview is not None:
-				if not item.preview_markup:
-					maybe_preview = _escape_markup(maybe_preview)
-				preview_widget.update(maybe_preview)
+				content = Text.from_markup(maybe_preview) if item.preview_markup else maybe_preview
+				preview_widget.update(content)
 				return
 
 		preview_widget.update('')
@@ -513,7 +512,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 				with Container():
 					yield selection_list
 					yield Rule(orientation=rule_orientation)
-					yield ScrollableContainer(Label('', id='preview_content', markup=True))
+					yield ScrollableContainer(Label('', id='preview_content', markup=False))
 
 		if self._filter:
 			yield Input(placeholder='/filter', id='filter-input')
@@ -604,9 +603,8 @@ class SelectListScreen(BaseScreen[ValueT]):
 		if item.preview_action is not None:
 			maybe_preview = item.preview_action(item)
 			if maybe_preview is not None:
-				if not item.preview_markup:
-					maybe_preview = _escape_markup(maybe_preview)
-				preview_widget.update(maybe_preview)
+				content = Text.from_markup(maybe_preview) if item.preview_markup else maybe_preview
+				preview_widget.update(content)
 				return
 
 		preview_widget.update('')
@@ -693,7 +691,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 				yield Rule(orientation='horizontal')
 				if self._preview_header is not None:
 					yield Label(self._preview_header, classes='preview-header', id='preview_header')
-				yield ScrollableContainer(Label('', id='preview_content', markup=True))
+				yield ScrollableContainer(Label('', id='preview_content', markup=False))
 
 		yield Footer()
 
@@ -731,9 +729,8 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 					else:
 						text = focused.preview_action(focused)
 						if text is not None:
-							if not focused.preview_markup:
-								text = _escape_markup(text)
-							preview.update(text)
+							content = Text.from_markup(text) if focused.preview_markup else text
+							preview.update(content)
 			else:
 				button.remove_class('-active')
 
@@ -1023,7 +1020,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 					yield Rule(orientation='horizontal')
 					if self._preview_header is not None:
 						yield Label(self._preview_header, classes='preview-header', id='preview-header')
-					yield ScrollableContainer(Label('', id='preview_content', markup=True))
+					yield ScrollableContainer(Label('', id='preview_content', markup=False))
 
 		yield Footer()
 
@@ -1133,9 +1130,8 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 
 		maybe_preview = item.preview_action(item)
 		if maybe_preview is not None:
-			if not item.preview_markup:
-				maybe_preview = _escape_markup(maybe_preview)
-			preview_widget.update(maybe_preview)
+			content = Text.from_markup(maybe_preview) if item.preview_markup else maybe_preview
+			preview_widget.update(content)
 			return
 
 		preview_widget.update('')
