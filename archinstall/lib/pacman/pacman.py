@@ -18,11 +18,7 @@ class Pacman:
 		self.target = target
 
 	@staticmethod
-	def run(
-		args: str,
-		default_cmd: str = 'pacman',
-		environment_vars: dict[str, str] | None = None,
-	) -> SysCommand:
+	def run(args: str, default_cmd: str = 'pacman') -> SysCommand:
 		"""
 		A centralized function to call `pacman` from.
 		It also protects us from colliding with other running pacman sessions (if used locally).
@@ -41,7 +37,7 @@ class Pacman:
 				error(tr('Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall.'))
 				sys.exit(1)
 
-		return SysCommand(f'{default_cmd} {args}', environment_vars=environment_vars)
+		return SysCommand(f'{default_cmd} {args}')
 
 	def ask(self, error_message: str, bail_message: str, func: Callable, *args, **kwargs) -> None:  # type: ignore[no-untyped-def, type-arg]
 		while True:

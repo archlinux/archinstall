@@ -433,6 +433,11 @@ class SelectListScreen(BaseScreen[ValueT]):
 		color: white;
 		text-style: bold;
 	}
+
+	#preview_content {
+		width: 100%;
+		height: auto;
+	}
 	"""
 
 	def __init__(
