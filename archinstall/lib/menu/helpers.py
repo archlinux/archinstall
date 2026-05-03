@@ -4,9 +4,9 @@ from typing import Any, Literal, override
 from textual.validation import ValidationResult, Validator
 
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import InputInfo, InputScreen, LoadingScreen, NotifyScreen, OptionListScreen, SelectListScreen, TableSelectionScreen
-from archinstall.tui.ui.menu_item import MenuItemGroup
-from archinstall.tui.ui.result import Result, ResultType
+from archinstall.tui.components import InputInfo, InputScreen, LoadingScreen, NotifyScreen, OptionListScreen, SelectListScreen, TableSelectionScreen
+from archinstall.tui.menu_item import MenuItemGroup
+from archinstall.tui.result import Result, ResultType
 
 
 class Selection[ValueT]:

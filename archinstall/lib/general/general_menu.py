@@ -4,8 +4,8 @@ from archinstall.lib.locale.utils import list_timezones
 from archinstall.lib.menu.helpers import Confirmation, Input, Selection
 from archinstall.lib.output import warn
 from archinstall.lib.translationhandler import Language, tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 class PostInstallationAction(Enum):
