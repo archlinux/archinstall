@@ -1,6 +1,10 @@
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
+
+if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
+	from archinstall.lib.models.users import User
 
 
 class BspwmProfile(Profile):
@@ -27,3 +31,11 @@ class BspwmProfile(Profile):
 	@override
 	def default_greeter_type(self) -> GreeterType:
 		return GreeterType.Lightdm
+
+	@override
+	def provision(self, install_session: Installer, users: list[User]) -> None:
+		for user in users:
+			install_session.arch_chroot('mkdir -p ~/.config/bspwm ~/.config/sxhkd', run_as=user.username)
+			install_session.arch_chroot('cp /usr/share/doc/bspwm/examples/bspwmrc ~/.config/bspwm/', run_as=user.username)
+			install_session.arch_chroot('cp /usr/share/doc/bspwm/examples/sxhkdrc ~/.config/sxhkd/', run_as=user.username)
+			install_session.arch_chroot('chmod +x ~/.config/bspwm/bspwmrc', run_as=user.username)

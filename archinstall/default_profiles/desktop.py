@@ -9,6 +9,7 @@ from archinstall.tui.ui.result import ResultType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
+	from archinstall.lib.models.users import User
 
 
 class DesktopProfile(Profile):
@@ -87,6 +88,11 @@ class DesktopProfile(Profile):
 	def post_install(self, install_session: Installer) -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
+
+	@override
+	def provision(self, install_session: Installer, users: list[User]) -> None:
+		for profile in self.current_selection:
+			profile.provision(install_session, users)
 
 	@override
 	def install(self, install_session: Installer) -> None:
