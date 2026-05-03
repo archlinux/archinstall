@@ -1,10 +1,25 @@
+from __future__ import annotations
+
 from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import Enum, auto
 from functools import cached_property
 from typing import Any, ClassVar, Self, override
 
 from archinstall.lib.translationhandler import tr
+
+
+class MsgLevelType(Enum):
+	MsgNone = auto()
+	MsgInfo = auto()
+	MsgWarning = auto()
+	MsgError = auto()
+
+
+@dataclass
+class PreviewResult:
+	message: str
+	msg_level: MsgLevelType
 
 
 @dataclass
@@ -18,8 +33,7 @@ class MenuItem:
 	dependencies: list[str | Callable[[], bool]] = field(default_factory=list)
 	dependencies_not: list[str] = field(default_factory=list)
 	display_action: Callable[[Any], str] | None = None
-	preview_action: Callable[[Self], str | None] | None = None
-	preview_markup: bool = False
+	preview_action: Callable[[Self], str | PreviewResult | list[PreviewResult] | None] | None = None
 	key: str | None = None
 
 	_id: str = ''

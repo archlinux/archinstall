@@ -1,7 +1,5 @@
 from typing import override
 
-from rich.markup import escape as _escape_markup
-
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.applications.application_menu import ApplicationMenu
 from archinstall.lib.args import ArchConfig
@@ -35,7 +33,7 @@ from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.tui.ui.components import tui
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 
 
 class GlobalMenu(AbstractMenu[None]):
@@ -185,7 +183,6 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Install'),
 				preview_action=self._prev_install_invalid_config,
-				preview_markup=True,
 				key=SpecialMenuKey.INSTALL.value,
 			),
 			MenuItem(
@@ -497,42 +494,40 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return None
 
-	def _prev_install_invalid_config(self, item: MenuItem) -> str | None:
+	def _prev_install_invalid_config(self, item: MenuItem) -> str | PreviewResult | list[PreviewResult] | None:
 		self.sync_all_to_config()
 		config_output = ConfigurationOutput(self._arch_config)
 
 		warnings = config_output.get_install_warnings()
-		warnings_text = ''
-		if warnings:
-			warnings_text = f'\n\n[yellow]{_escape_markup(tr("Warnings:"))}\n'
-			for w in warnings:
-				warnings_text += f'- {_escape_markup(w)}\n'
-			warnings_text = warnings_text.rstrip('\n') + '[/yellow]'
+		sections: list[PreviewResult] = []
 
-		blocks = ''
-
+		errors = ''
 		if missing := self._missing_configs():
-			text = f'[red]{_escape_markup(tr("Missing configurations:"))}\n'
-			for m in missing:
-				text += f'- {_escape_markup(m)}\n'
-			blocks += text.rstrip('\n') + '[/red]'
+			errors += f'{tr("Missing configurations:")}\n'
+			errors += '\n'.join(f'- {m}' for m in missing)
 
 		disk_item = self._item_group.find_by_key('disk_config')
 		if disk_item.has_value():
 			if error := self._validate_bootloader():
-				if blocks:
-					blocks += '\n\n'
-				text = f'[red]{_escape_markup(tr("Invalid configuration:"))}\n'
-				text += f'- {_escape_markup(error)}'
-				blocks += text + '[/red]'
+				if errors:
+					errors += '\n\n'
+				errors += f'{tr("Invalid configuration:")}\n- {error}'
 
-		if blocks:
-			return blocks + warnings_text
+		if errors:
+			sections.append(PreviewResult(errors, MsgLevelType.MsgError))
+		else:
+			sections.append(PreviewResult(tr('Ready to install'), MsgLevelType.MsgInfo))
 
-		summary = config_output.as_summary()
-		if summary:
-			return f'[green]{_escape_markup(tr("Ready to install"))}[/green]{warnings_text}\n\n{_escape_markup(summary)}'
-		return f'[green]{_escape_markup(tr("Ready to install"))}[/green]{warnings_text}'
+		if warnings:
+			text = f'{tr("Warnings:")}\n' + '\n'.join(f'- {w}' for w in warnings)
+			sections.append(PreviewResult(text, MsgLevelType.MsgWarning))
+
+		if not errors:
+			summary = config_output.as_summary()
+			if summary:
+				sections.append(PreviewResult(summary, MsgLevelType.MsgNone))
+
+		return sections
 
 	def _prev_profile(self, item: MenuItem) -> str | None:
 		profile_config: ProfileConfiguration | None = item.value

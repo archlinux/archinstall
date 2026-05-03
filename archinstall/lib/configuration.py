@@ -149,7 +149,7 @@ class ConfigurationOutput:
 		warnings: list[str] = []
 
 		if not isinstance(self._config.network_config, NetworkConfiguration):
-			warnings.append(tr('Warning: no network configuration selected. Network will need to be set up manually on the installed system.'))
+			warnings.append(tr('No network configuration selected. Network will need to be set up manually on the installed system.'))
 
 		return warnings
 

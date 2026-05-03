@@ -2,7 +2,6 @@ import sys
 from abc import ABC, abstractmethod
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, replace
-from enum import Enum, auto
 from typing import Any, ClassVar, Literal, TypeVar, cast, override
 
 from rich.text import Text
@@ -22,10 +21,37 @@ from textual.worker import WorkerCancelled
 
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 from archinstall.tui.ui.result import Result, ResultType
 
 ValueT = TypeVar('ValueT')
+
+
+_LEVEL_STYLE: dict[MsgLevelType, str] = {
+	MsgLevelType.MsgNone: '',
+	MsgLevelType.MsgError: 'red',
+	MsgLevelType.MsgWarning: 'bright_yellow',
+	MsgLevelType.MsgInfo: 'green',
+}
+
+
+def _update_preview(widget: Label, result: str | PreviewResult | list[PreviewResult] | None) -> None:
+	if result is None:
+		widget.update('')
+		return
+
+	if isinstance(result, str):
+		widget.update(result)
+	elif isinstance(result, PreviewResult):
+		text = Text(result.message, style=_LEVEL_STYLE[result.msg_level])
+		widget.update(text)
+	else:
+		text = Text()
+		for i, section in enumerate(result):
+			if i > 0:
+				text.append('\n\n')
+			text.append(section.message, style=_LEVEL_STYLE[section.msg_level])
+		widget.update(text)
 
 
 def _translate_bindings(source: BindingsMap | None, target: BindingsMap) -> None:
@@ -357,14 +383,9 @@ class OptionListScreen(BaseScreen[ValueT]):
 		item = self._group.find_by_id(item_id)
 
 		if item.preview_action is not None:
-			maybe_preview = item.preview_action(item)
-
-			if maybe_preview is not None:
-				content = Text.from_markup(maybe_preview) if item.preview_markup else maybe_preview
-				preview_widget.update(content)
-				return
-
-		preview_widget.update('')
+			_update_preview(preview_widget, item.preview_action(item))
+		else:
+			_update_preview(preview_widget, None)
 
 
 class _SelectionList(SelectionList[ValueT]):
@@ -601,13 +622,9 @@ class SelectListScreen(BaseScreen[ValueT]):
 		preview_widget = self.query_one('#preview_content', Label)
 
 		if item.preview_action is not None:
-			maybe_preview = item.preview_action(item)
-			if maybe_preview is not None:
-				content = Text.from_markup(maybe_preview) if item.preview_markup else maybe_preview
-				preview_widget.update(content)
-				return
-
-		preview_widget.update('')
+			_update_preview(preview_widget, item.preview_action(item))
+		else:
+			_update_preview(preview_widget, None)
 
 
 # DEPRECATED: Removed when switching to async
@@ -723,14 +740,8 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 
 				if self._preview_header is not None:
 					preview = self.query_one('#preview_content', Label)
-
-					if focused.preview_action is None:
-						preview.update('')
-					else:
-						text = focused.preview_action(focused)
-						if text is not None:
-							content = Text.from_markup(text) if focused.preview_markup else text
-							preview.update(content)
+					result = focused.preview_action(focused) if focused.preview_action else None
+					_update_preview(preview, result)
 			else:
 				button.remove_class('-active')
 
@@ -757,16 +768,10 @@ class NotifyScreen(ConfirmationScreen[ValueT]):
 		super().__init__(group, header)
 
 
-class InputInfoType(Enum):
-	MsgInfo = auto()
-	MsgWarning = auto()
-	MsgError = auto()
-
-
 @dataclass
 class InputInfo:
 	message: str
-	info_type: InputInfoType
+	msg_level: MsgLevelType
 
 
 class InputScreen(BaseScreen[str]):
@@ -878,11 +883,11 @@ class InputScreen(BaseScreen[str]):
 			result = self._info_callback(event.value)
 			if result:
 				css_class = ''
-				if result.info_type == InputInfoType.MsgError:
+				if result.msg_level == MsgLevelType.MsgError:
 					css_class = 'input-hint-msg-error'
-				elif result.info_type == InputInfoType.MsgWarning:
+				elif result.msg_level == MsgLevelType.MsgWarning:
 					css_class = 'input-hint-msg-warning'
-				elif result.info_type == InputInfoType.MsgInfo:
+				elif result.msg_level == MsgLevelType.MsgInfo:
 					css_class = 'input-hint-msg-info'
 				info_label.update(result.message)
 				info_label.set_classes(css_class)
@@ -1127,14 +1132,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 			return
 
 		preview_widget = self.query_one('#preview_content', Label)
-
-		maybe_preview = item.preview_action(item)
-		if maybe_preview is not None:
-			content = Text.from_markup(maybe_preview) if item.preview_markup else maybe_preview
-			preview_widget.update(content)
-			return
-
-		preview_widget.update('')
+		_update_preview(preview_widget, item.preview_action(item))
 
 	def _set_cursor(self, row_index: int) -> None:
 		data_table = self.query_one(DataTable)
@@ -1271,6 +1269,7 @@ class _AppInstance(App[ValueT]):
 		background: black;
 		border-left: vkey white 20%;
 	}
+
 	"""
 
 	def __init__(self, main: InstanceRunnable[ValueT] | Callable[[], Awaitable[ValueT]]) -> None:
