@@ -333,3 +333,93 @@ def log(
 
 	if level != logging.DEBUG:
 		print(text)
+
+
+_PASTE_URL = 'https://paste.rs'
+_PASTE_MAX_SIZE = 10 * 1024 * 1024
+
+
+def share_install_log() -> int:
+	from archinstall.lib.command import SysCommand
+	from archinstall.lib.exceptions import SysCallError
+
+	log_path = logger.path
+
+	if not log_path.exists():
+		info(f'Log file not found: {log_path}')
+		return 1
+
+	size = log_path.stat().st_size
+	if size == 0:
+		info(f'Log file is empty: {log_path}')
+		return 1
+
+	if size > _PASTE_MAX_SIZE:
+		info(f'Log file exceeds {_PASTE_MAX_SIZE} bytes, uploading last {_PASTE_MAX_SIZE} bytes')
+		content = log_path.read_bytes()[-_PASTE_MAX_SIZE:]
+	else:
+		content = log_path.read_bytes()
+
+	header = f'About to upload {log_path} ({len(content)} bytes) to {_PASTE_URL}\n\n'
+	header += 'The log may contain hostname, mirror URLs, package list and partition layout.\n'
+	header += 'The uploaded paste is public.\n\n'
+	header += 'Continue?'
+
+	try:
+		from archinstall.tui.ui.components import tui
+
+		confirmed: bool = tui.run(lambda: _confirm_share(header))
+	except Exception:
+		confirmed = False
+
+	if not confirmed:
+		info('Cancelled.')
+		return 1
+
+	import tempfile
+
+	if size > _PASTE_MAX_SIZE:
+		fd, tmp_path_str = tempfile.mkstemp(suffix='.log')
+		try:
+			with os.fdopen(fd, 'wb') as f:
+				f.write(content)
+			upload_path = tmp_path_str
+		except Exception:
+			os.close(fd)
+			raise
+	else:
+		upload_path = str(log_path)
+		tmp_path_str = None
+
+	try:
+		result = SysCommand(f'curl -sS --data-binary @{upload_path} {_PASTE_URL}')
+	except SysCallError as e:
+		info(f'Upload failed: {e}')
+		return 1
+	finally:
+		if tmp_path_str:
+			Path(tmp_path_str).unlink(missing_ok=True)
+
+	url = result.decode().strip()
+
+	if not url.startswith('http'):
+		info(f'Unexpected response from {_PASTE_URL}: {url[:200]!r}')
+		return 1
+
+	# raw print so the URL is pipe-friendly (no ANSI colors, no log prefix)
+	print(url)
+	return 0
+
+
+async def _confirm_share(header: str) -> bool:
+	from archinstall.lib.menu.helpers import Confirmation
+	from archinstall.tui.ui.menu_item import MenuItemGroup
+
+	result = await Confirmation(
+		group=MenuItemGroup.yes_no(),
+		header=header,
+		allow_skip=False,
+		preset=False,
+	).show()
+
+	return result.get_value()

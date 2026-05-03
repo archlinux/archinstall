@@ -13,10 +13,9 @@ from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
-from archinstall.lib.output import debug, error, info, warn
+from archinstall.lib.output import debug, error, info, share_install_log, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
-from archinstall.lib.share_log import share_install_log
 from archinstall.lib.translationhandler import tr, translation_handler
 from archinstall.lib.utils.util import running_from_iso
 from archinstall.tui.ui.components import tui
@@ -80,6 +79,9 @@ def run() -> int:
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
+	if 'share-log' in sys.argv:
+		return share_install_log()
+
 	arch_config_handler = ArchConfigHandler()
 
 	if '--help' in sys.argv or '-h' in sys.argv:
@@ -95,9 +97,6 @@ def run() -> int:
 	if os.getuid() != 0:
 		print(tr('Archinstall requires root privileges to run. See --help for more.'))
 		return 1
-
-	if arch_config_handler.args.share_log:
-		return share_install_log()
 
 	translation_handler.save_console_font()
 
@@ -146,7 +145,7 @@ def _error_message(exc: Exception) -> None:
 		https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".
 
 		Hint: To upload the log and get a shareable URL, run
-		archinstall --share-log
+		archinstall share-log
 		"""
 	)
 	warn(text)

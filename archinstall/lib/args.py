@@ -55,7 +55,6 @@ class Arguments:
 	skip_wifi_check: bool = False
 	advanced: bool = False
 	verbose: bool = False
-	share_log: bool = False
 
 
 @dataclass
@@ -432,13 +431,6 @@ class ArchConfigHandler:
 			default=False,
 			help='Enabled verbose options',
 		)
-		parser.add_argument(
-			'--share-log',
-			action='store_true',
-			default=False,
-			help='Upload /var/log/archinstall/install.log to paste.rs and print the URL, then exit',
-		)
-
 		return parser
 
 	def _parse_args(self) -> Arguments:
