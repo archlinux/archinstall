@@ -30,7 +30,7 @@ from archinstall.lib.output import debug, error, logger, warn
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.version import get_version
-from archinstall.tui.ui.components import tui
+from archinstall.tui.components import tui
 
 
 @p_dataclass
