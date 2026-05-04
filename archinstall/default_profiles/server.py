@@ -4,8 +4,8 @@ from archinstall.default_profiles.profile import Profile, ProfileType, SelectRes
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

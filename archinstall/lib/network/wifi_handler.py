@@ -9,9 +9,9 @@ from archinstall.lib.models.network import WifiConfiguredNetwork, WifiNetwork
 from archinstall.lib.network.wpa_supplicant import WpaSupplicantConfig
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import ConfirmationScreen, InputScreen, InstanceRunnable, LoadingScreen, NotifyScreen, TableSelectionScreen, tui
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import Result, ResultType
+from archinstall.tui.components import ConfirmationScreen, InputScreen, InstanceRunnable, LoadingScreen, NotifyScreen, TableSelectionScreen, tui
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import Result, ResultType
 
 
 @dataclass

@@ -18,7 +18,7 @@ from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr, translation_handler
 from archinstall.lib.utils.util import running_from_iso
-from archinstall.tui.ui.components import tui
+from archinstall.tui.components import tui
 
 
 def _log_sys_info() -> None:

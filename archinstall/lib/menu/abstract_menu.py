@@ -5,9 +5,9 @@ from typing import Any, Self, override
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.output import error
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import InstanceRunnable
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.components import InstanceRunnable
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 CONFIG_KEY = '__config__'
 

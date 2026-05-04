@@ -35,9 +35,9 @@ from archinstall.lib.packages.packages import list_available_packages, select_ad
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import DEFAULT_TIMEZONE, Language, tr, translation_handler
-from archinstall.tui.ui.components import tui
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.components import tui
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 class GlobalMenu(AbstractMenu[None]):

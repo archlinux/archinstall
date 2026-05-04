@@ -21,7 +21,7 @@ dependencies = [
     "pyparted==3.13.0",
     "pydantic==2.12.5",
     "cryptography==47.0.0",
-    "textual==8.2.4",
+    "textual==8.2.5",
     "markdown-it-py==4.0.0",
     "linkify-it-py==2.1.0",
 ]

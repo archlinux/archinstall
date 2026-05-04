@@ -9,8 +9,8 @@ from archinstall.lib.models.users import Password, User
 from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
 from archinstall.lib.user.user_menu import select_users
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):

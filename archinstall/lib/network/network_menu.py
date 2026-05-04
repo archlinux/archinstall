@@ -6,8 +6,8 @@ from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
 from archinstall.lib.networking import list_interfaces
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 class ManualNetworkConfig(ListManager[Nic]):
