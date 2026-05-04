@@ -211,6 +211,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		allow_reset: bool = False,
 		preview_location: Literal['right', 'bottom'] | None = None,
 		enable_filter: bool = False,
+		wrap_preview: bool = False,
 	):
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
@@ -218,6 +219,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		self._title = title
 		self._preview_location = preview_location
 		self._filter = enable_filter
+		self._wrap_preview = wrap_preview
 		self._show_frame = False
 
 		self._options = self._get_options()
@@ -280,7 +282,10 @@ class OptionListScreen(BaseScreen[ValueT]):
 				with Container():
 					yield option_list
 					yield Rule(orientation=rule_orientation)
-					yield ScrollableContainer(Label('', id='preview_content', markup=False))
+					preview_label = Label('', id='preview_content', markup=False)
+					if self._wrap_preview:
+						preview_label.add_class('wrap-preview')
+					yield ScrollableContainer(preview_label)
 
 		if self._filter:
 			yield Input(placeholder='/filter', id='filter-input')
@@ -434,7 +439,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		text-style: bold;
 	}
 
-	#preview_content {
+	.wrap-preview {
 		width: 100%;
 		height: auto;
 	}
@@ -448,6 +453,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		allow_reset: bool = False,
 		preview_location: Literal['right', 'bottom'] | None = None,
 		enable_filter: bool = False,
+		wrap_preview: bool = False,
 	):
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
@@ -455,6 +461,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		self._preview_location = preview_location
 		self._show_frame = False
 		self._filter = enable_filter
+		self._wrap_preview = wrap_preview
 
 		self._selected_items: list[MenuItem] = self._group.selected_items
 		self._options: list[Selection[MenuItem]] = self._get_selections()
@@ -515,7 +522,10 @@ class SelectListScreen(BaseScreen[ValueT]):
 				with Container():
 					yield selection_list
 					yield Rule(orientation=rule_orientation)
-					yield ScrollableContainer(Label('', id='preview_content', markup=False))
+					preview_label = Label('', id='preview_content', markup=False)
+					if self._wrap_preview:
+						preview_label.add_class('wrap-preview')
+					yield ScrollableContainer(preview_label)
 
 		if self._filter:
 			yield Input(placeholder='/filter', id='filter-input')

@@ -187,6 +187,7 @@ async def select_additional_packages(
 		multi=True,
 		preview_location='right',
 		enable_filter=True,
+		wrap_preview=True,
 	).show()
 
 	match pck_result.type_:
