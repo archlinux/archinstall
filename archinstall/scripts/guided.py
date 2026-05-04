@@ -22,7 +22,7 @@ from archinstall.lib.output import debug, error, info
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import tui
+from archinstall.tui.components import tui
 
 
 def show_menu(

@@ -37,8 +37,8 @@ from archinstall.lib.models.device import (
 )
 from archinstall.lib.output import FormattedOutput, debug
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 @dataclass

@@ -402,7 +402,7 @@ class Installer:
 
 	def _mount_luks_partition(self, part_mod: PartitionModification, luks_handler: Luks2) -> None:
 		if not luks_handler.mapper_dev:
-			return None
+			return
 
 		if part_mod.fs_type == FilesystemType.BTRFS and part_mod.btrfs_subvols:
 			# Only mount BTRFS subvolumes that have mountpoints specified

@@ -53,7 +53,7 @@ class AuthenticationHandler:
 	def _add_u2f_entry(self, file: Path, entry: str) -> None:
 		if not file.exists():
 			debug(f'File does not exist: {file}')
-			return None
+			return
 
 		content = file.read_text().splitlines()
 
