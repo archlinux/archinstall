@@ -4,17 +4,17 @@
 # auto-mounted, `archinstall` wrapped to clear logs and run `python -m archinstall`),
 # then launches QEMU. Source lives on the host, guest mounts it read-only - no rebuild loop.
 #
-# Host artifacts (created in repo root, all git-ignored):
-#   .dev-iso/                generated dev ISO (mkarchiso output)
-#   .dev-disk.qcow2          VM disk image (qemu-img)
-#   .dev-ovmf-vars.fd        persistent UEFI NVRAM (copied from OVMF_VARS)
-#   .dev-configs/            optional, user-created - shared rw to guest as /root/cfg
-#   .dev-logs/               auto-created - shared rw to guest as /var/log/archinstall
+# Host artifacts (all under .dev/ in repo root, git-ignored):
+#   .dev/iso/                generated dev ISO (mkarchiso output)
+#   .dev/disk.qcow2          VM disk image (qemu-img)
+#   .dev/ovmf-vars.fd        persistent UEFI NVRAM (copied from OVMF_VARS)
+#   .dev/configs/            optional, user-created - shared rw to guest as /root/cfg
+#   .dev/logs/               auto-created - shared rw to guest as /var/log/archinstall
 #
 # Inside the guest after boot:
 #   /root/archinstall-dev    project source (9p ro, host edits appear live)
-#   /root/cfg                .dev-configs share (9p rw, mounted only if folder exists)
-#   /var/log/archinstall     .dev-logs share (9p rw, host can tail install.log live)
+#   /root/cfg                .dev/configs share (9p rw, mounted only if folder exists)
+#   /var/log/archinstall     .dev/logs share (9p rw, host can tail install.log live)
 #   archinstall              wrapper around `python -m archinstall`; clears the
 #                            log directory on every invocation
 #
@@ -29,6 +29,12 @@
 #   ./scripts/dev_vm.sh clean   | c  - remove disk, NVRAM, ISO, logs
 #   ./scripts/dev_vm.sh -h           - show this help
 #
+# Firmware mode (default is UEFI 64-bit):
+#   --bios                   - legacy BIOS boot (SeaBIOS, no OVMF)
+#
+# Flag can be combined with a command:
+#   ./scripts/dev_vm.sh --bios rebuild
+#
 # Env overrides:
 #   SCREEN_W, SCREEN_H       - virtio-vga resolution (default 1280x720)
 #
@@ -39,43 +45,52 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-CONFIGS_DIR="$PROJECT_DIR/.dev-configs"
-LOGS_DIR="$PROJECT_DIR/.dev-logs"
-ISO_DIR="$PROJECT_DIR/.dev-iso"
-DISK="$PROJECT_DIR/.dev-disk.qcow2"
-OVMF_VARS="$PROJECT_DIR/.dev-ovmf-vars.fd"
+DEV_DIR="$PROJECT_DIR/.dev"
+CONFIGS_DIR="$DEV_DIR/configs"
+LOGS_DIR="$DEV_DIR/logs"
+ISO_DIR="$DEV_DIR/iso"
+DISK="$DEV_DIR/disk.qcow2"
+OVMF_VARS="$DEV_DIR/ovmf-vars.fd"
 DISK_SIZE="30G"
 RAM="4G"
 CPUS="4"
 SCREEN_W="${SCREEN_W:-1280}"
 SCREEN_H="${SCREEN_H:-720}"
-ARG="${1:-default}"
+
+err() { echo "ERROR: $*" >&2; exit 1; }
+
+# Parse flags and command from arguments
+FW_MODE="uefi64"
+ARG="default"
+for arg in "$@"; do
+    case "$arg" in
+        --bios)
+            FW_MODE="bios"
+            ;;
+        *)
+            ARG="$arg"
+            ;;
+    esac
+done
 
 # OVMF firmware - probed at runtime across common distro paths
 OVMF_CODE=""
 OVMF_VARS_ORIG=""
 
-err() { echo "ERROR: $*" >&2; exit 1; }
-
 probe_ovmf() {
-    local pairs=(
-        "/usr/share/edk2/x64/OVMF_CODE.4m.fd:/usr/share/edk2/x64/OVMF_VARS.4m.fd"
-        "/usr/share/edk2-ovmf/x64/OVMF_CODE.fd:/usr/share/edk2-ovmf/x64/OVMF_VARS.fd"
-        "/usr/share/edk2/ovmf/OVMF_CODE.fd:/usr/share/edk2/ovmf/OVMF_VARS.fd"
-        "/usr/share/OVMF/OVMF_CODE_4M.fd:/usr/share/OVMF/OVMF_VARS_4M.fd"
-        "/usr/share/OVMF/OVMF_CODE.fd:/usr/share/OVMF/OVMF_VARS.fd"
-    )
-    local pair code vars
-    for pair in "${pairs[@]}"; do
-        code="${pair%%:*}"
-        vars="${pair##*:}"
-        if [ -f "$code" ] && [ -f "$vars" ]; then
-            OVMF_CODE="$code"
-            OVMF_VARS_ORIG="$vars"
-            return 0
-        fi
-    done
-    err "OVMF firmware not found. Install 'edk2-ovmf' (Arch), 'ovmf' (Debian/Ubuntu), or 'edk2-ovmf' (Fedora)."
+    if [ -f /usr/share/edk2/x64/OVMF_CODE.4m.fd ] && [ -f /usr/share/edk2/x64/OVMF_VARS.4m.fd ]; then
+        OVMF_CODE="/usr/share/edk2/x64/OVMF_CODE.4m.fd"
+        OVMF_VARS_ORIG="/usr/share/edk2/x64/OVMF_VARS.4m.fd"
+        return 0
+    fi
+    echo ">>> OVMF firmware not found. Installing edk2-ovmf (sudo needed for UEFI support)..."
+    sudo pacman --noconfirm -S edk2-ovmf
+    if [ -f /usr/share/edk2/x64/OVMF_CODE.4m.fd ] && [ -f /usr/share/edk2/x64/OVMF_VARS.4m.fd ]; then
+        OVMF_CODE="/usr/share/edk2/x64/OVMF_CODE.4m.fd"
+        OVMF_VARS_ORIG="/usr/share/edk2/x64/OVMF_VARS.4m.fd"
+        return 0
+    fi
+    err "x64 OVMF not found at /usr/share/edk2/x64/ even after installing edk2-ovmf."
 }
 
 check_host_deps() {
@@ -182,8 +197,8 @@ cat <<MSG
 
 === archinstall dev environment ===
 Source:  /root/archinstall-dev   (9p, read-only, live host edits)
-Configs: /root/cfg               (9p, optional, if .dev-configs on host)
-Logs:    /var/log/archinstall    (9p, host sees install.log live in .dev-logs/)
+Configs: /root/cfg               (9p, optional, if .dev/configs on host)
+Logs:    /var/log/archinstall    (9p, host sees install.log live in .dev/logs/)
 Run:     archinstall             (wraps 'python -m archinstall'; clears /var/log/archinstall first)
 
 MSG
@@ -209,14 +224,14 @@ case "$ARG" in
         ;;
     boot|b)
         check_host_deps
-        probe_ovmf
+        [ "$FW_MODE" != "bios" ] && probe_ovmf
         [ -f "$DISK" ] || err "Disk missing, run without args first"
         BOOT_ORDER="c"
         ATTACH_ISO=false
         ;;
     rebuild|r)
         check_host_deps
-        probe_ovmf
+        [ "$FW_MODE" != "bios" ] && probe_ovmf
         rm -rf "$ISO_DIR"
         build_iso
         rm -f "$DISK"
@@ -226,7 +241,7 @@ case "$ARG" in
         ;;
     keep|k)
         check_host_deps
-        probe_ovmf
+        [ "$FW_MODE" != "bios" ] && probe_ovmf
         [ -f "$DISK" ] || err "Disk missing, run without args first"
         [ -n "$(find_iso)" ] || build_iso
         BOOT_ORDER="d"
@@ -234,7 +249,7 @@ case "$ARG" in
         ;;
     default)
         check_host_deps
-        probe_ovmf
+        [ "$FW_MODE" != "bios" ] && probe_ovmf
         [ -n "$(find_iso)" ] || build_iso
         rm -f "$DISK"
         qemu-img create -f qcow2 "$DISK" "$DISK_SIZE"
@@ -246,7 +261,9 @@ case "$ARG" in
         ;;
 esac
 
-[ -f "$OVMF_VARS" ] || cp "$OVMF_VARS_ORIG" "$OVMF_VARS"
+if [ "$FW_MODE" != "bios" ]; then
+    [ -f "$OVMF_VARS" ] || cp "$OVMF_VARS_ORIG" "$OVMF_VARS"
+fi
 
 QEMU_ARGS=(
     -machine q35
@@ -260,11 +277,16 @@ QEMU_ARGS=(
     -device "virtio-vga,xres=$SCREEN_W,yres=$SCREEN_H"
     -display gtk,zoom-to-fit=off
     -monitor stdio
-    -drive "if=pflash,format=raw,readonly=on,file=$OVMF_CODE"
-    -drive "if=pflash,format=raw,file=$OVMF_VARS"
     -virtfs "local,path=$PROJECT_DIR,mount_tag=dev,security_model=mapped-xattr,readonly=on"
     -boot "order=$BOOT_ORDER"
 )
+
+if [ "$FW_MODE" != "bios" ]; then
+    QEMU_ARGS+=(
+        -drive "if=pflash,format=raw,readonly=on,file=$OVMF_CODE"
+        -drive "if=pflash,format=raw,file=$OVMF_VARS"
+    )
+fi
 
 # Optional second 9p share for test configs, only if host folder exists
 if [ -d "$CONFIGS_DIR" ]; then
@@ -272,7 +294,7 @@ if [ -d "$CONFIGS_DIR" ]; then
 fi
 
 # Logs share: always mounted, host folder auto-created so install.log is
-# visible from the host (.dev-logs/install.log) without re-entering the VM.
+# visible from the host (.dev/logs/install.log) without re-entering the VM.
 mkdir -p "$LOGS_DIR"
 QEMU_ARGS+=(-virtfs "local,path=$LOGS_DIR,mount_tag=logs,security_model=mapped-xattr")
 
