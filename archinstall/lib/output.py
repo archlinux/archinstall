@@ -364,7 +364,7 @@ def share_install_log() -> int:
 	header += 'The uploaded paste is public.\n\n'
 	header += 'Continue?'
 
-	from archinstall.tui.ui.components import tui
+	from archinstall.tui.components import tui
 
 	confirmed: bool = tui.run(lambda: _confirm_share(header))
 
@@ -391,7 +391,7 @@ def share_install_log() -> int:
 
 async def _confirm_share(header: str) -> bool:
 	from archinstall.lib.menu.helpers import Confirmation
-	from archinstall.tui.ui.menu_item import MenuItemGroup
+	from archinstall.tui.menu_item import MenuItemGroup
 
 	result = await Confirmation(
 		group=MenuItemGroup.yes_no(),
