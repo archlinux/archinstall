@@ -502,7 +502,7 @@ class GlobalMenu(AbstractMenu[None]):
 			return text[:-1]  # remove last new line
 
 		if error := self._validate_bootloader():
-			return tr(f'Invalid configuration: {error}')
+			return tr('Invalid configuration: {}').format(error)
 
 		self.sync_all_to_config()
 		summary = ConfigurationOutput(self._arch_config).as_summary()

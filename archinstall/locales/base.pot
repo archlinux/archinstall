@@ -1245,7 +1245,7 @@ msgid "Product"
 msgstr ""
 
 #, python-brace-format
-msgid "Invalid configuration: {error}"
+msgid "Invalid configuration: {}"
 msgstr ""
 
 msgid "Ready to install"
