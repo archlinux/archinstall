@@ -1,6 +1,8 @@
 import logging
 import os
 import sys
+import urllib.error
+import urllib.request
 from collections.abc import Callable
 from dataclasses import asdict, is_dataclass
 from datetime import UTC, datetime
@@ -340,9 +342,6 @@ _PASTE_MAX_SIZE = 10 * 1024 * 1024
 
 
 def share_install_log() -> int:
-	from archinstall.lib.command import SysCommand
-	from archinstall.lib.exceptions import SysCallError
-
 	log_path = logger.path
 
 	if not log_path.exists():
@@ -365,42 +364,21 @@ def share_install_log() -> int:
 	header += 'The uploaded paste is public.\n\n'
 	header += 'Continue?'
 
-	try:
-		from archinstall.tui.ui.components import tui
+	from archinstall.tui.ui.components import tui
 
-		confirmed: bool = tui.run(lambda: _confirm_share(header))
-	except Exception:
-		confirmed = False
+	confirmed: bool = tui.run(lambda: _confirm_share(header))
 
 	if not confirmed:
 		info('Cancelled.')
 		return 1
 
-	import tempfile
-
-	if size > _PASTE_MAX_SIZE:
-		fd, tmp_path_str = tempfile.mkstemp(suffix='.log')
-		try:
-			with os.fdopen(fd, 'wb') as f:
-				f.write(content)
-			upload_path = tmp_path_str
-		except Exception:
-			os.close(fd)
-			raise
-	else:
-		upload_path = str(log_path)
-		tmp_path_str = None
-
 	try:
-		result = SysCommand(f'curl -sS --data-binary @{upload_path} {_PASTE_URL}')
-	except SysCallError as e:
+		req = urllib.request.Request(_PASTE_URL, data=content)
+		with urllib.request.urlopen(req) as response:
+			url = response.read().decode().strip()
+	except urllib.error.URLError as e:
 		info(f'Upload failed: {e}')
 		return 1
-	finally:
-		if tmp_path_str:
-			Path(tmp_path_str).unlink(missing_ok=True)
-
-	url = result.decode().strip()
 
 	if not url.startswith('http'):
 		info(f'Unexpected response from {_PASTE_URL}: {url[:200]!r}')
