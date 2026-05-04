@@ -5,9 +5,9 @@ from pathlib import Path
 from archinstall.lib.menu.helpers import Confirmation, Input
 from archinstall.lib.models.users import Password, PasswordStrength
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import InputInfo, tui
-from archinstall.tui.ui.menu_item import MsgLevelType
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.components import InputInfo, tui
+from archinstall.tui.menu_item import MsgLevelType
+from archinstall.tui.result import ResultType
 
 
 async def get_password(
