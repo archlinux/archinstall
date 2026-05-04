@@ -6,8 +6,8 @@ from archinstall.lib.models.packages import AvailablePackage, LocalPackage, Pack
 from archinstall.lib.output import debug
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 def installed_package(package: str) -> LocalPackage | None:

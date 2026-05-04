@@ -63,10 +63,10 @@ msgid "Write additional packages to install (space separated, leave blank to ski
 msgstr "追加でインストールするパッケージを書く（スペースで区切る。無記入でスキップ）: "
 
 msgid "Copy ISO network configuration to installation"
-msgstr "ISO ネットワーク設定をインストール環境にコピー"
+msgstr "ISO のネットワーク設定をインストール環境にコピー"
 
 msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "NetworkManager を使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
+msgstr "ネットワークマネージャーを使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
 
 msgid "Select one network interface to configure"
 msgstr "設定するネットワークインターフェイスを 1 つ選択"
@@ -224,7 +224,7 @@ msgid "Choose which locale language to use"
 msgstr "使用するロケール言語を選択"
 
 msgid "Choose which locale encoding to use"
-msgstr "使用するロケール エンコーディングを選択"
+msgstr "使用するロケールエンコーディングを選択"
 
 msgid "Select one of the values shown below: "
 msgstr "以下の値のいずれかを選択: "
@@ -255,6 +255,9 @@ msgstr "ロケール言語"
 
 msgid "Locale encoding"
 msgstr "ロケールエンコーディング"
+
+msgid "Console font"
+msgstr "コンソールフォント"
 
 msgid "Drive(s)"
 msgstr "ドライブ"
@@ -449,7 +452,7 @@ msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate
 msgstr "Pacman はすでに実行されており、終了するまで最大 10 分間待機します。"
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "既存の pacman のロックが終了しませんでした。Archinstall を使用する前に、既存の pacman セッションをクリーンアップしてください。"
+msgstr "既存の pacman のロックが終了しませんでした。archinstall を使用する前に、既存の pacman セッションをすべてクリーンアップしてください。"
 
 msgid "Choose which optional additional repositories to enable"
 msgstr "オプションで有効にする追加リポジトリを選択"
@@ -823,6 +826,19 @@ msgstr "無効な入力です！有効な入力を使用して再試行してく
 msgid "Parallel Downloads"
 msgstr "並行ダウンロード"
 
+msgid "Pacman"
+msgstr "Pacman"
+
+msgid "Color"
+msgstr "カラー"
+
+#, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "並列ダウンロード数を入力 (1-{})"
+
+msgid "Enable colored output for pacman"
+msgstr "pacman でカラー出力を有効にする"
+
 msgid "ESC to skip"
 msgstr "Esc でスキップ"
 
@@ -950,7 +966,7 @@ msgid "Encryption type"
 msgstr "暗号化のタイプ"
 
 msgid "Iteration time"
-msgstr "反復時間"
+msgstr "イテレーション時間"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
 msgstr "LUKS 暗号化のイテレーション時間（ミリ秒単位）を入力"
@@ -1030,7 +1046,7 @@ msgstr "選択したプロファイルにインストールするグリーター
 
 #, python-brace-format
 msgid "Environment type: {}"
-msgstr "環境のタイプ: {}"
+msgstr "環境タイプ: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
 msgstr "プロプライエタリの Nvidia ドライバーは Sway ではサポートされていません。問題が発生する可能性がありますが、よろしいですか？"
@@ -1173,7 +1189,7 @@ msgid "Locales"
 msgstr "ロケール"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "NetworkManager を使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
+msgstr "ネットワークマネージャーを使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
 
 msgid "Total: {} / {}"
 msgstr "全体: {} / {}"
@@ -1205,6 +1221,21 @@ msgstr "製品"
 #, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "無効な設定: {error}"
+
+msgid "Ready to install"
+msgstr "インストール準備完了"
+
+msgid "Disks"
+msgstr "ディスク"
+
+msgid "Packages"
+msgstr "パッケージ"
+
+msgid "Network"
+msgstr "ネットワーク"
+
+msgid "Locale"
+msgstr "ロケール"
 
 msgid "Type"
 msgstr "タイプ"
@@ -1296,7 +1327,7 @@ msgid "LVM disk encryption with more than 2 partitions is currently not supporte
 msgstr "パーティションが2個を超える場合の LVM ディスク暗号化は、現在サポートしていません"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "NetworkManager を使用する（GNOME と KDE Plasma でインターネットをグラフィカルに設定するのに必要）"
+msgstr "ネットワークマネージャーを使用（GNOME と KDE Plasma でインターネットをグラフィカルに設定するのに必要）"
 
 msgid "Select a LVM option"
 msgstr "LVM のオプションを選択"
@@ -1550,7 +1581,7 @@ msgid "The specified configuration will be applied"
 msgstr "指定された設定が適用されます"
 
 msgid "Wipe"
-msgstr "ワイプ"
+msgstr "消去"
 
 msgid "Mark/Unmark as XBOOTLDR"
 msgstr "XBOOTLDR としてマーク/マーク解除"
@@ -1662,6 +1693,123 @@ msgstr "検索モードを開始"
 
 msgid "Exit search mode"
 msgstr "検索モードを終了"
+
+msgid "General"
+msgstr "一般"
+
+msgid "Navigation"
+msgstr "ナビゲーション"
+
+msgid "Selection"
+msgstr "選択"
+
+msgid "Search"
+msgstr "検索"
+
+msgid "Down"
+msgstr "下へ"
+
+msgid "Up"
+msgstr "上へ"
+
+msgid "Confirm"
+msgstr "確認"
+
+msgid "Focus right"
+msgstr "右にフォーカス"
+
+msgid "Focus left"
+msgstr "左にフォーカス"
+
+msgid "Toggle"
+msgstr "切り替え"
+
+msgid "Show/Hide help"
+msgstr "ヘルプを表示/隠す"
+
+msgid "Quit"
+msgstr "終了"
+
+msgid "First"
+msgstr "最初"
+
+msgid "Last"
+msgstr "最後"
+
+msgid "Select"
+msgstr "選択"
+
+msgid "Page Up"
+msgstr "上のページへ"
+
+msgid "Page Down"
+msgstr "下のページへ"
+
+msgid "Page up"
+msgstr "上のページへ"
+
+msgid "Page down"
+msgstr "下のページへ"
+
+msgid "Page Left"
+msgstr "左のページへ"
+
+msgid "Page Right"
+msgstr "右のページへ"
+
+msgid "Cursor up"
+msgstr "カーソルを上へ"
+
+msgid "Cursor down"
+msgstr "カースルを下へ"
+
+msgid "Cursor right"
+msgstr "カーソルを右へ"
+
+msgid "Cursor left"
+msgstr "カーソルを左へ"
+
+msgid "Top"
+msgstr "一番上へ"
+
+msgid "Bottom"
+msgstr "一番下へ"
+
+msgid "Home"
+msgstr "ホーム"
+
+msgid "End"
+msgstr "最後へ"
+
+msgid "Toggle option"
+msgstr "オプションを切り替え"
+
+msgid "Scroll Up"
+msgstr "上にスクロール"
+
+msgid "Scroll Down"
+msgstr "下にスクロール"
+
+msgid "Scroll Left"
+msgstr "左にスクロール"
+
+msgid "Scroll Right"
+msgstr "右にスクロール"
+
+msgid "Scroll Home"
+msgstr "ホームにスクロール"
+
+msgid "Scroll End"
+msgstr "一番下にスクロール"
+
+msgid "Focus Next"
+msgstr "次にフォーカス"
+
+msgid "Focus Previous"
+msgstr "前にフォーカス"
+
+msgid "Copy selected text"
+msgstr "選択したテキストをコピー"
 
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
@@ -1873,13 +2021,28 @@ msgid "Select zram compression algorithm:"
 msgstr "zram 圧縮アルゴリズムを選択:"
 
 msgid "Use Network Manager (default backend)"
-msgstr "NetworkManager（デフォルトのバックエンド）を使用する"
+msgstr "Network Manager を使用（デフォルトのバックエンド）"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr "NetworkManager (iwd バックエンド) を使用する"
+msgstr "Network Manager を使用（iwd バックエンド）"
 
 msgid "Firewall"
 msgstr "ファイアウォール"
+
+msgid "Additional fonts"
+msgstr "追加フォント"
+
+msgid "Select font packages to install"
+msgstr "インストールするフォントパッケージを選択"
+
+msgid "Unicode font coverage for most languages"
+msgstr "ほとんどの言語をカバーする Unicode フォント"
+
+msgid "color emoji for browsers and apps"
+msgstr "ブラウザやアプリ用のカラー絵文字"
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr "日本語、中国語、韓国語の文字"
 
 msgid "Select audio configuration"
 msgstr "オーディオ設定を選択"
@@ -1888,7 +2051,7 @@ msgid "Enter credentials file decryption password"
 msgstr "認証情報ファイルの復号パスワードを入力"
 
 msgid "Enter root password"
-msgstr "ルートパスワードを入力"
+msgstr "root パスワードを入力"
 
 msgid "Select bootloader to install"
 msgstr "インストールするブートローダーを選択"
@@ -1970,6 +2133,12 @@ msgstr "インターフェースを選択"
 msgid "Choose network configuration"
 msgstr "ネットワーク設定を選択"
 
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "推奨: デスクトップのネットワークマネージャー、サーバーのマニュアル"
+
+msgid "Warning: no network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "警告: ネットワーク設定が選択されていません。インストール後のシステムで、ネットワークを手動で設定する必要があります。"
+
 msgid "No packages found"
 msgstr "パッケージが見つかりません"
 
@@ -1990,3 +2159,74 @@ msgstr "パスワードを入力"
 
 msgid "The password did not match, please try again"
 msgstr "パスワードが一致しません。もう一度試してください"
+
+msgid "Password strength: Weak"
+msgstr "パスワードの強度: 弱い"
+
+msgid "Password strength: Moderate"
+msgstr "パスワードの強度: 中程度"
+
+msgid "Password strength: Strong"
+msgstr "パスワードの強度: 強い"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "選択されたデスクトッププロファイルでは、一般ユーザーがグリーター経由でログインする必要があります"
+
+#, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "環境タイプ: {} {}"
+
+msgid "Input cannot be empty"
+msgstr "入力は空にできません"
+
+msgid "Recommended"
+msgstr "推奨"
+
+msgid "Package"
+msgstr "パッケージ"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr "厳選した KDE Plasma パッケージ"
+
+msgid "Dependencies"
+msgstr "依存関係"
+
+msgid "Package group"
+msgstr "パッケージグループ"
+
+msgid "Extensive KDE Plasma installation"
+msgstr "広範囲の KDE Plasma インストール"
+
+msgid "Packages in group"
+msgstr "グループ内のパッケージ"
+
+msgid "Minimal KDE Plasma installation"
+msgstr "最小限の KDE Plasma インストール"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "インストールする KDE Plasma のバージョンを選択"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr "Arial/Times/Courier フォントの代替、Steam/ゲームにおけるキリル文字のサポート"
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr "Unicode を広くカバーする良い代替フォント"
+
+#, python-brace-format
+msgid "Setting up U2F login: {u2f_config.u2f_login_method.value}"
+msgstr "U2F ログインの設定: {u2f_config.u2f_login_method.value}"
+
+#, python-brace-format
+msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
+msgstr "デフォルト: {DEFAULT_ITER_TIME}ms, 推奨範囲: 1000-60000"
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "U2F ログインの設定: {}"
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "デフォルト: {}ms, 推奨範囲: 1000-60000"

@@ -5,6 +5,7 @@ import time
 from archinstall.lib.applications.application_handler import ApplicationHandler
 from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
+from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
@@ -21,7 +22,7 @@ from archinstall.lib.output import debug, error, info
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import tui
+from archinstall.tui.components import tui
 
 
 def show_menu(
@@ -211,12 +212,21 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	config.write_debug()
 	config.save()
 
+	# Safety net for silent/config-file flow. The TUI menu blocks Install via
+	# GlobalMenu._validate_bootloader() before reaching this point.
+	if failure := validate_bootloader_layout(
+		arch_config_handler.config.bootloader_config,
+		arch_config_handler.config.disk_config,
+	):
+		error(failure.description)
+		return
+
 	if arch_config_handler.args.dry_run:
 		return
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		res: bool = tui.run(config.confirm_config)
+		res: bool = tui.run(lambda: config.confirm_config(show_install_warnings=True))
 
 		if not res:
 			debug('Installation aborted')

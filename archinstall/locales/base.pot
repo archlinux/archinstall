@@ -252,6 +252,9 @@ msgstr ""
 msgid "Locale encoding"
 msgstr ""
 
+msgid "Console font"
+msgstr ""
+
 msgid "Drive(s)"
 msgstr ""
 
@@ -1245,6 +1248,21 @@ msgstr ""
 msgid "Invalid configuration: {error}"
 msgstr ""
 
+msgid "Ready to install"
+msgstr ""
+
+msgid "Disks"
+msgstr ""
+
+msgid "Packages"
+msgstr ""
+
+msgid "Network"
+msgstr ""
+
+msgid "Locale"
+msgstr ""
+
 msgid "Type"
 msgstr ""
 
@@ -2174,6 +2192,14 @@ msgstr ""
 msgid "Choose network configuration"
 msgstr ""
 
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr ""
+
+msgid ""
+"Warning: no network configuration selected. Network will need to be set up "
+"manually on the installed system."
+msgstr ""
+
 msgid "No packages found"
 msgstr ""
 
@@ -2250,4 +2276,20 @@ msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
 msgstr ""
 
 msgid "wide Unicode coverage, good fallback font"
+msgstr ""
+
+#, python-brace-format
+msgid "Setting up U2F login: {u2f_config.u2f_login_method.value}"
+msgstr ""
+
+#, python-brace-format
+msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
+msgstr ""
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr ""
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
 msgstr ""

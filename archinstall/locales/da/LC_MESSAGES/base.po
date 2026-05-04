@@ -1,0 +1,2224 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] En logfil er blevet oprettet her: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Indsend venligst denne fejl (og filen) til https://github.com/archlinux/archinstall/issues"
+
+msgid "Do you really want to abort?"
+msgstr "Vil du virkelig afbryde?"
+
+msgid "And one more time for verification: "
+msgstr "Og én gang til for bekræftelse: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "Vil du bruge swap på zram?"
+
+msgid "Desired hostname for the installation: "
+msgstr "Ønsket værtsnavn for installationen: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Brugernavn til den påkrævede superbruger med sudo-rettigheder: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Eventuelle yderligere brugere der skal oprettes (lad feltet være tomt for ingen): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Skal denne bruger være superbruger (sudoer)?"
+
+msgid "Select a timezone"
+msgstr "Vælg en tidszone"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Vil du bruge GRUB som bootloader i stedet for systemd-boot?"
+
+msgid "Choose a bootloader"
+msgstr "Vælg en bootloader"
+
+msgid "Choose an audio server"
+msgstr "Vælg en lydserver"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Kun pakker som base, base-devel, linux, linux-firmware, efibootmgr og valgfrie profilpakker installeres."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Bemærk: base-devel installeres ikke længere som standard. Tilføj den her, hvis du har brug for byggeværktøjer."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "Hvis du ønsker en webbrowser, f.eks. firefox eller chromium, kan du angive den i næste prompt."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Skriv yderligere pakker der skal installeres (adskilt med mellemrum, lad feltet være tomt for at springe over): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Kopiér ISO-netværkskonfigurationen til installationen"
+
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "Brug NetworkManager (nødvendigt for grafisk internetkonfiguration i GNOME og KDE)"
+
+msgid "Select one network interface to configure"
+msgstr "Vælg én netværksgrænseflade der skal konfigureres"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "Vælg hvilken tilstand der skal konfigureres for \"{}\", eller spring over for at bruge standardtilstanden \"{}\""
+
+#, python-brace-format
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Indtast IP og subnet for {} (eksempel: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Indtast IP-adressen på din gateway (router), eller lad feltet være tomt for ingen: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "Indtast dine DNS-servere (adskilt med mellemrum, tomt for ingen): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "Vælg hvilket filsystem din hovedpartition skal bruge"
+
+msgid "Current partition layout"
+msgstr "Nuværende partitionslayout"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"Vælg hvad der skal gøres med\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Indtast den ønskede filsystemtype for partitionen"
+
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Indtast startplaceringen (i parted-enheder: s, GB, %, osv.; standard: {}): "
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Indtast slutplaceringen (i parted-enheder: s, GB, %, osv.; f.eks.: {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} indeholder planlagte partitioner. Dette vil fjerne dem. Er du sikker?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"Vælg efter indeks hvilke partitioner der skal slettes"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"Vælg efter indeks hvilken partition der skal monteres hveller"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Partitionens monteringspunkter er relative inde i installationen; boot vil f.eks. være /boot."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "Vælg hvor partitionen skal monteres (lad feltet være tomt for at fjerne monteringspunktet): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"Vælg hvilken partition der skal markeres til formatering"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"Vælg hvilken partition der skal mark som krypteret"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"Vælg hvilken partition der skal mark som bootbar"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"Vælg hvilken partition der skal set en filsystem on"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Indtast den ønskede filsystemtype for partitionen: "
+
+msgid "Archinstall language"
+msgstr "Archinstall-sprog"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "Slet alle valgte drev og brug et bedst muligt standardpartitionslayout"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "Vælg hvad der skal gøres med hvert enkelt drev (efterfulgt af partitionsbrug)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "Vælg hvad du vil gøre med de valgte blokenheder"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "Dette er en liste over forudprogrammerede profiler, som kan gøre det lettere at installere ting som skrivebordsmiljøer"
+
+msgid "Select keyboard layout"
+msgstr "Vælg tastaturlayout"
+
+msgid "Select one of the regions to download packages from"
+msgstr "Vælg en af regionerne som pakker skal hentes fra"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "Vælg en eller flere harddiske der skal bruges og konfigureres"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "For bedst kompatibilitet med din AMD-hardware kan du bruge enten alle open source-drivere eller AMD/ATI-valgene."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "For bedst kompatibilitet med din Intel-hardware kan du bruge enten alle open source-drivere eller Intel-valgene.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "For bedst kompatibilitet med din Nvidia-hardware kan du bruge Nvidias proprietære driver.\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Vælg en grafikdriver, eller lad feltet være tomt for at installere alle open source-drivere"
+
+msgid "All open-source (default)"
+msgstr "Alle open source-drivere (standard)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "Vælg hvilke kerner der skal bruges, eller lad feltet være tomt for standard \"{}\""
+
+msgid "Choose which locale language to use"
+msgstr "Vælg hvilket lokaliseringssprog der skal bruges"
+
+msgid "Choose which locale encoding to use"
+msgstr "Vælg hvilken lokaliseringskodning der skal bruges"
+
+msgid "Select one of the values shown below: "
+msgstr "Vælg en af værdierne nedenfor: "
+
+msgid "Select one or more of the options below: "
+msgstr "Vælg en eller flere af mulighederne nedenfor: "
+
+msgid "Adding partition...."
+msgstr "Tilføjer partition...."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "Du skal indtaste en gyldig fs-type for at fortsætte. Se `man parted` for gyldige fs-typer."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "Fejl: Liste over profiler fra URL \"{}\" gav:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "Fejl: Kunne ikke afkode resultatet \"{}\" som JSON:"
+
+msgid "Keyboard layout"
+msgstr "Tastaturlayout"
+
+msgid "Mirror region"
+msgstr "Spejlregion"
+
+msgid "Locale language"
+msgstr "Lokaliseringssprog"
+
+msgid "Locale encoding"
+msgstr "Lokaliseringskodning"
+
+msgid "Console font"
+msgstr "Konsolskrifttype"
+
+msgid "Drive(s)"
+msgstr "Drev"
+
+msgid "Disk layout"
+msgstr "Disklayout"
+
+msgid "Encryption password"
+msgstr "Krypteringsadgangskode"
+
+msgid "Swap"
+msgstr "Swap"
+
+msgid "Bootloader"
+msgstr "Bootloader"
+
+msgid "Root password"
+msgstr "Root-adgangskode"
+
+msgid "Superuser account"
+msgstr "Superbrugerkonto"
+
+msgid "User account"
+msgstr "Brugerkonto"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Audio"
+msgstr "Lyd"
+
+msgid "Kernels"
+msgstr "Kerner"
+
+msgid "Additional packages"
+msgstr "Yderligere pakker"
+
+msgid "Network configuration"
+msgstr "Netværkskonfiguration"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Automatisk tidssynkronisering (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "Installer ({} konfiguration(er) mangler)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"Du valgte at springe harddiskvalg over\n"
+"og vil bruge den drevopsætning der er monteret på {} (eksperimentelt)\n"
+"ADVARSEL: Archinstall kontrollerer ikke om denne opsætning er egnet\n"
+"Vil du fortsætte?"
+
+msgid "Re-using partition instance: {}"
+msgstr "Genbruger partitionsinstans: {}"
+
+msgid "Create a new partition"
+msgstr "Create en new partition"
+
+msgid "Delete a partition"
+msgstr "Slet en partition"
+
+msgid "Clear/Delete all partitions"
+msgstr "Clear/Slet all partitioner"
+
+msgid "Assign mount-point for a partition"
+msgstr "Tildel monteringspunkt til en partition"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "Markér/fjern markering en partition skal være fellermateret (wipes data)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "Markér/fjern markering en partition som krypteret"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "Markér/fjern markering af en partition som bootbar (automatisk for /boot)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "Angiv ønsket filsystem for en partition"
+
+msgid "Abort"
+msgstr "Afbryd"
+
+msgid "Hostname"
+msgstr "Værtsnavn"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "Ikke konfigureret, utilgængelig medmindre det sættes op manuelt"
+
+msgid "Timezone"
+msgstr "Tidszone"
+
+msgid "Set/Modify the below options"
+msgstr "Angiv/ændr indstillingerne nedenfor"
+
+msgid "Install"
+msgstr "Installer"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"Brug ESC for at springe over\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "Foreslå partitionslayout"
+
+msgid "Enter a password: "
+msgstr "Indtast en adgangskode: "
+
+msgid "Enter a encryption password for {}"
+msgstr "Indtast en krypteringsadgangskode for {}"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "Indtast adgangskode til diskkryptering (lad feltet være tomt for ingen kryptering): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Create en required super-bruger med sudo-rettigheder: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "Indtast root-adgangskode (lad feltet være tomt for at deaktivere root): "
+
+msgid "Password for user \"{}\": "
+msgstr "Adgangskode for brugeren \"{}\": "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "Kontrollerer at de yderligere pakker findes (det kan tage et par sekunder)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Vil du bruge automatisk tidssynkronisering (NTP) med standardtidserverne?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"Hardwaretid og andre efterkonfigurationstrin kan være nødvendige for at NTP virker.\n"
+"Se Arch-wikien for mere information"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "Indtast et brugernavn for at oprette en ekstra bruger (lad feltet være tomt for at springe over): "
+
+msgid "Use ESC to skip\n"
+msgstr "Brug ESC for at springe over\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+" Vælg et objekt fra listen, og vælg en af de tilgængelige handlinger der skal udføres"
+
+msgid "Cancel"
+msgstr "Annuller"
+
+msgid "Confirm and exit"
+msgstr "Bekræft og afslut"
+
+msgid "Add"
+msgstr "Tilføj"
+
+msgid "Copy"
+msgstr "Kopiér"
+
+msgid "Edit"
+msgstr "Redigér"
+
+msgid "Delete"
+msgstr "Slet"
+
+msgid "Select an action for '{}'"
+msgstr "Vælg en handling for '{}'"
+
+msgid "Copy to new key:"
+msgstr "Kopiér til ny nøgle:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "Ukendt NIC-type: {}. Mulige værdier er {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"Dette er din valgte konfiguration:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman kører allerede. Venter højst 10 minutter på at den afsluttes."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "En eksisterende pacman-lås blev aldrig afsluttet. Ryd op i eventuelle eksisterende pacman-sessioner før du bruger archinstall."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "Vælg hvilke valgfrie ekstra pakkearkiver der skal aktiveres"
+
+msgid "Add a user"
+msgstr "Tilføj en bruger"
+
+msgid "Change password"
+msgstr "Skift adgangskode"
+
+msgid "Promote/Demote user"
+msgstr "Forfrem/degrader bruger"
+
+msgid "Delete User"
+msgstr "Slet bruger"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"Definér en ny bruger\n"
+
+msgid "User Name : "
+msgstr "Brugernavn: "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "Skal {} være superbruger (sudoer)?"
+
+msgid "Define users with sudo privilege: "
+msgstr "Definér brugere med sudo-rettigheder: "
+
+msgid "No network configuration"
+msgstr "Ingen netværkskonfiguration"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "Set desired underenheds on en btrfs partition"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"Vælg hvilken partition der skal set underenheds on"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "Administrér btrfs-underenheder for den aktuelle partition"
+
+msgid "No configuration"
+msgstr "Ingen konfiguration"
+
+msgid "Save user configuration"
+msgstr "Gem brugerkonfiguration"
+
+msgid "Save user credentials"
+msgstr "Gem brugerlegitimationsoplysninger"
+
+msgid "Save disk layout"
+msgstr "Gem disklayout"
+
+msgid "Save all"
+msgstr "Gem alt"
+
+msgid "Choose which configuration to save"
+msgstr "Vælg hvilken konfiguration der skal gemmes"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "Indtast en mappe hvor konfigurationen/konfigurationerne skal gemmes: "
+
+msgid "Not a valid directory: {}"
+msgstr "Ikke en gyldig mappe: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "Adgangskoden du bruger ser ud til at være svag,"
+
+msgid "are you sure you want to use it?"
+msgstr "er du sikker på at du vil bruge den?"
+
+msgid "Optional repositories"
+msgstr "Valgfrie pakkearkiver"
+
+msgid "Save configuration"
+msgstr "Gem konfiguration"
+
+msgid "Missing configurations:\n"
+msgstr "Manglende konfigurationer:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "Enten root-adgangskode eller mindst 1 superbruger skal angives"
+
+msgid "Manage superuser accounts: "
+msgstr "Administrér superbrugerkonti: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "Administrér almindelige brugerkonti: "
+
+msgid " Subvolume :{:16}"
+msgstr " Underenhed :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " montereed at {:16}"
+
+msgid " with option {}"
+msgstr " med mulighed {}"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+" Udfyld de ønskede værdier for en ny underenhed \n"
+
+msgid "Subvolume name "
+msgstr "Subvolume navn "
+
+msgid "Subvolume mountpoint"
+msgstr "Subvolume monteringspunkt"
+
+msgid "Subvolume options"
+msgstr "Subvolume muligheds"
+
+msgid "Save"
+msgstr "Gem"
+
+msgid "Subvolume name :"
+msgstr "Subvolume navn :"
+
+msgid "Select a mount point :"
+msgstr "Vælg en montere point :"
+
+msgid "Select the desired subvolume options "
+msgstr "Vælg desired underenhed muligheds "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "Define brugers med sudo privilege, by brugernavn: "
+
+#, python-brace-format
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] A log fil has been created here: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Vil du bruge BTRFS-underenheder med en standardstruktur?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "Vil du bruge BTRFS-komprimering?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Vil du oprette en separat partition til /home?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "De valgte drev har ikke den minimumskapacitet der kræves for et automatisk forslag\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "Minimumskapacitet for /home-partition: {} GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Minimumskapacitet for Arch Linux-partition: {} GB"
+
+msgid "Continue"
+msgstr "Fortsæt"
+
+msgid "yes"
+msgstr "ja"
+
+msgid "no"
+msgstr "nej"
+
+msgid "set: {}"
+msgstr "angivet: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "Manuel konfigurationsindstilling skal være en liste"
+
+msgid "No iface specified for manual configuration"
+msgstr "Ingen grænseflade angivet til manuel konfiguration"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "Manuel NIC-konfiguration uden automatisk DHCP kræver en IP-adresse"
+
+msgid "Add interface"
+msgstr "Tilføj grænseflade"
+
+msgid "Edit interface"
+msgstr "Redigér grænseflade"
+
+msgid "Delete interface"
+msgstr "Slet grænseflade"
+
+msgid "Select interface to add"
+msgstr "Vælg grænseflade der skal tilføjes"
+
+msgid "Manual configuration"
+msgstr "Manuel konfiguration"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "Markér/fjern markering en partition som komprimeret (btrfs only)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "Adgangskoden du bruger ser ud til at være svag. Er du sikker på at du vil bruge den?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "Giver et udvalg af skrivebordsmiljøer og flisebaserede vindueshåndterere, f.eks. gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "Vælg dit ønskede skrivebordsmiljø"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "En meget grundlæggende installation, der lader dig tilpasse Arch Linux som du ønsker."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "Giver et udvalg af forskellige serverpakker der kan installeres og aktiveres, f.eks. httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "Vælg hvilke servere der skal installeres. Hvis ingen vælges, udføres en minimal installation"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "Installerer et minimalt system samt xorg og grafikdrivere."
+
+msgid "Press Enter to continue."
+msgstr "Tryk Enter for at fortsætte."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "Vil du chroote ind i den nyoprettede installation og udføre efterkonfiguration?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Er du sikker på at du vil nulstille denne indstilling?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "Vælg en eller flere harddiske der skal bruges og konfigureres\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "Enhver ændring af den eksisterende indstilling vil nulstille disklayoutet!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "Hvis du nulstiller harddiskvalget, nulstilles det nuværende disklayout også. Er du sikker?"
+
+msgid "Save and exit"
+msgstr "Gem og afslut"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"indeholder planlagte partitioner. Dette vil fjerne dem. Er du sikker?"
+
+msgid "No audio server"
+msgstr "Ingen lydserver"
+
+msgid "(default)"
+msgstr "(standard)"
+
+msgid "Use ESC to skip"
+msgstr "Brug ESC for at springe over"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"Brug CTRL+C for at nulstille det aktuelle valg\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "Kopiér til: "
+
+msgid "Edit: "
+msgstr "Redigér: "
+
+msgid "Key: "
+msgstr "Nøgle: "
+
+msgid "Edit {}: "
+msgstr "Redigér {}: "
+
+msgid "Add: "
+msgstr "Tilføj: "
+
+msgid "Value: "
+msgstr "Værdi: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "You can springe over selecting en drev og partitioning og use whatever drev-setup is montereed at /mnt (experimental)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Vælg en af diskene, eller spring over og brug /mnt som standard"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Vælg hvilke partitioner der skal markeres til formatering:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Brug HSM til at låse krypteret drev op"
+
+msgid "Device"
+msgstr "Enhed"
+
+msgid "Size"
+msgstr "Størrelse"
+
+msgid "Free space"
+msgstr "Ledig plads"
+
+msgid "Bus-type"
+msgstr "Bustype"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Enten root-adgangskode eller mindst 1 bruger med sudo-rettigheder skal angives"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Indtast brugernavn (lad feltet være tomt for at springe over): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "The brugernavn you entered is ingyldig. Try again"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Skal \"{}\" være superbruger (sudo)?"
+
+msgid "Select which partitions to encrypt"
+msgstr "Vælg hvilke partitioner der skal krypteres"
+
+msgid "very weak"
+msgstr "meget svag"
+
+msgid "weak"
+msgstr "svag"
+
+msgid "moderate"
+msgstr "moderat"
+
+msgid "strong"
+msgstr "stærk"
+
+msgid "Add subvolume"
+msgstr "Tilføj underenhed"
+
+msgid "Edit subvolume"
+msgstr "Redigér underenhed"
+
+msgid "Delete subvolume"
+msgstr "Slet underenhed"
+
+msgid "Configured {} interfaces"
+msgstr "Configured {} grænseflades"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "Denne indstilling aktiverer antallet af parallelle downloads under installationen"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {})\n"
+"Note:"
+msgstr ""
+"Indtast antallet af parallelle downloads der skal aktiveres.\n"
+" (Indtast en værdi mellem 1 og {})\n"
+"Bemærk:"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Maksimumsværdi   : {} (tillader {} parallelle downloads, {} downloads ad gangen)"
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - Minimumsværdi   : 1 (tillader 1 parallel download, 2 downloads ad gangen)"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - Deaktiver/standard : 0 (deaktiverer parallel download og tillader kun 1 download ad gangen)"
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "Ugyldigt input! Prøv igen med et gyldigt input [1 til {max_downloads}, eller 0 for at deaktivere]"
+
+msgid "Parallel Downloads"
+msgstr "Parallelle downloads"
+
+msgid "Pacman"
+msgstr "Pacman"
+
+msgid "Color"
+msgstr "Farve"
+
+#, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "Indtast antallet af parallelle downloads (1-{})"
+
+msgid "Enable colored output for pacman"
+msgstr "Aktivér farvet output for pacman"
+
+msgid "ESC to skip"
+msgstr "ESC for at springe over"
+
+msgid "CTRL+C to reset"
+msgstr "CTRL+C for at nulstille"
+
+msgid "TAB to select"
+msgstr "TAB for at vælge"
+
+msgid "[Default value: 0] > "
+msgstr "[Standard værdi: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "For at kunne bruge denne oversættelse skal du manuelt installere en skrifttype der understøtter sproget."
+
+msgid "The font should be stored as {}"
+msgstr "Skrifttypen skal gemmes som {}"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall kræver root-rettigheder for at køre. Se --help for mere information."
+
+msgid "Select an execution mode"
+msgstr "Vælg en execution tilstand"
+
+#, python-brace-format
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Kan ikke hente profil fra den angivne URL: {}"
+
+#, python-brace-format
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Profils must have unique navn, but profil definitions med duplicate navn found: {}"
+
+msgid "Select one or more devices to use and configure"
+msgstr "Vælg en eller flere enheder der skal bruges og konfigureres"
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Hvis du nulstiller enhedsvalget, nulstilles det aktuelle disklayout også. Er du sikker?"
+
+msgid "Existing Partitions"
+msgstr "Existing Partitioner"
+
+msgid "Select a partitioning option"
+msgstr "Vælg en partitioning mulighed"
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Indtast root-mappen for de monterede enheder: "
+
+#, python-brace-format
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Minimumskapacitet for /home-partition: {} GiB\n"
+
+#, python-brace-format
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Minimumskapacitet for Arch Linux-partition: {} GiB"
+
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Dette er en liste over forudprogrammerede profiles_bck, som kan gøre det lettere at installere ting som skrivebordsmiljøer"
+
+msgid "Current profile selection"
+msgstr "Nuværende profil selection"
+
+msgid "Remove all newly added partitions"
+msgstr "Remove all newly tilføjed partitioner"
+
+msgid "Assign mountpoint"
+msgstr "Assign monteringspunkt"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Markér/fjern markering skal være fellermateret (wipes data)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Markér/fjern markering som bootbar"
+
+msgid "Change filesystem"
+msgstr "Ændr filsystem"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Markér/fjern markering som komprimeret"
+
+msgid "Set subvolumes"
+msgstr "Set underenheds"
+
+msgid "Delete partition"
+msgstr "Slet partition"
+
+msgid "Partition"
+msgstr "Partition"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Denne partition er i øjeblikket krypteret. For at formatere den skal der angives et filsystem."
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Partitionens monteringspunkter er relative inde i installationen; boot vil f.eks. være /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr "Hvis monteringspunktet /boot angives, markeres partitionen også som bootbar."
+
+msgid "Mountpoint: "
+msgstr "Monteringspunkt: "
+
+msgid "Current free sectors on device {}:"
+msgstr "Nuværende free sectellers on enhed {}:"
+
+msgid "Total sectors: {}"
+msgstr "Total sectellers: {}"
+
+msgid "Enter the start sector (default: {}): "
+msgstr "Indtast start secteller (standard: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Indtast partitionens slutsektor (procent eller bloknummer, standard: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Dette vil fjerne alle nyligt tilføjede partitioner. Fortsæt?"
+
+#, python-brace-format
+msgid "Partition management: {}"
+msgstr "Partitionshåndtering: {}"
+
+#, python-brace-format
+msgid "Total length: {}"
+msgstr "Samlet længde: {}"
+
+msgid "Encryption type"
+msgstr "Krypteringstype"
+
+msgid "Iteration time"
+msgstr "Iterationstid"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "Indtast iterationstid for LUKS-kryptering (i millisekunder)"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "Higher værdis increase security but slow down boot time"
+
+msgid "Default: 10000ms, Recommended range: 1000-60000"
+msgstr "Standard: 10000 ms, anbefalet område: 1000-60000"
+
+msgid "Iteration time cannot be empty"
+msgstr "Iterationstid må ikke være tom"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "Iterationstid skal være mindst 100 ms"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "Iterationstid må højst være 120000 ms"
+
+msgid "Please enter a valid number"
+msgstr "Indtast venligst et gyldigt tal"
+
+msgid "Partitions"
+msgstr "Partitioner"
+
+msgid "No HSM devices available"
+msgstr "No HSM enheds available"
+
+msgid "Partitions to be encrypted"
+msgstr "Partitioner skal være krypteret"
+
+msgid "Select disk encryption option"
+msgstr "Vælg disk kryptering mulighed"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Vælg en FIDO2-enhed der skal bruges til HSM"
+
+msgid "Use a best-effort default partition layout"
+msgstr "Use en best-effellert standard partition layout"
+
+msgid "Manual Partitioning"
+msgstr "Manuel partitionering"
+
+msgid "Pre-mounted configuration"
+msgstr "Pre-montereed konfiguration"
+
+msgid "Unknown"
+msgstr "Ukendt"
+
+msgid "Partition encryption"
+msgstr "Partition kryptering"
+
+#, python-brace-format
+msgid " ! Formatting {} in "
+msgstr " ! Fellermatting {} in "
+
+#, fuzzy
+msgid "← Back"
+msgstr " Tilbage"
+
+msgid "Disk encryption"
+msgstr "Disk kryptering"
+
+msgid "Configuration"
+msgstr "Konfiguration"
+
+msgid "Password"
+msgstr "Adgangskode"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "Alle indstillinger nulstilles. Er du sikker?"
+
+msgid "Back"
+msgstr "Tilbage"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "Vælg hvilken login-skærm der skal installeres for de valgte profiler: {}"
+
+#, python-brace-format
+msgid "Environment type: {}"
+msgstr "Miljøtype: {}"
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr "Den proprietære Nvidia-driver understøttes ikke af Sway. Du vil sandsynligvis støde på problemer. Er det i orden?"
+
+msgid "Installed packages"
+msgstr "Installered pakker"
+
+msgid "Add profile"
+msgstr "Tilføj profil"
+
+msgid "Edit profile"
+msgstr "Redigér profil"
+
+msgid "Delete profile"
+msgstr "Slet profil"
+
+msgid "Profile name: "
+msgstr "Profil navn: "
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "The profil navn you entered is already in use. Try again"
+
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Pakker der skal installeres med denne profil (adskilt med mellemrum, lad feltet være tomt for at springe over): "
+
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Tjenester der skal aktiveres med denne profil (adskilt med mellemrum, lad feltet være tomt for at springe over): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "Skal denne profil aktiveres til installation?"
+
+msgid "Create your own"
+msgstr "Opret din egen"
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"Vælg en grafikdriver, eller lad feltet være tomt for at installere alle open source-drivere"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway skal have adgang til dit seat (samling af hardwareenheder, dvs. tastatur, mus osv.)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Vælg en mulighed for at give Sway adgang til din hardware"
+
+msgid "Graphics driver"
+msgstr "Grafikdriver"
+
+msgid "Greeter"
+msgstr "Login-skærm"
+
+msgid "Please chose which greeter to install"
+msgstr "Vælg hvilken login-skærm der skal installeres"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "Dette er en liste over forudprogrammerede default_profiles"
+
+msgid "Disk configuration"
+msgstr "Diskkonfiguration"
+
+msgid "Profiles"
+msgstr "Profiler"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "Finder mulige mapper til at gemme konfigurationsfiler ..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Vælg mappe (eller mapper) til lagring af konfigurationsfiler"
+
+msgid "Add a custom mirror"
+msgstr "Tilføj en brugerdefineret spejl"
+
+msgid "Change custom mirror"
+msgstr "Ændr brugerdefineret spejl"
+
+msgid "Delete custom mirror"
+msgstr "Slet brugerdefineret spejl"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "Indtast navn (lad feltet være tomt for at springe over): "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "Indtast URL (lad feltet være tomt for at springe over): "
+
+msgid "Select signature check option"
+msgstr "Vælg signatur kontrol mulighed"
+
+msgid "Select signature option"
+msgstr "Vælg signatur mulighed"
+
+msgid "Custom mirrors"
+msgstr "Brugerdefinerede spejle"
+
+msgid "Defined"
+msgstr "Defineret"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Gem bruger konfiguration (including disk layout)"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+"Indtast en mappe hvor konfigurationen/konfigurationerne skal gemmes (tab-fuldførelse aktiveret)\n"
+"Gemmemappe: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"Vil du gemme {} konfigurationsfil(er) på følgende placering?\n"
+"\n"
+"{}"
+
+msgid "Saving {} configuration files to {}"
+msgstr "Gemmer {} konfigurationsfiler til {}"
+
+msgid "Mirrors"
+msgstr "Spejle"
+
+msgid "Mirror regions"
+msgstr "Mirreller regioner"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Maksimumsværdi   : {} (tillader {} parallelle downloads, {max_downloads+1} downloads ad gangen)"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Ugyldigt input! Prøv igen med et gyldigt input [1 til {}, eller 0 for at deaktivere]"
+
+msgid "Locales"
+msgstr "Lokaliseringer"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Brug NetworkManager (nødvendigt for at konfigurere internet grafisk i GNOME og KDE)"
+
+msgid "Total: {} / {}"
+msgstr "I alt: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+msgstr "Alle indtastede værdier kan afsluttes med en enhed: B, KB, KiB, MB, MiB..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "If no unit is provided, værdi is interpreted som sectellers"
+
+msgid "Enter start (default: sector {}): "
+msgstr "Indtast start (standard: secteller {}): "
+
+msgid "Enter end (default: {}): "
+msgstr "Indtast end (standard: {}): "
+
+msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+msgstr "Kan ikke registrere fido2-enheder. Er libfido2 installeret?"
+
+msgid "Path"
+msgstr "Sti"
+
+msgid "Manufacturer"
+msgstr "Producent"
+
+msgid "Product"
+msgstr "Produkt"
+
+#, python-brace-format
+msgid "Invalid configuration: {error}"
+msgstr "Ugyldig konfiguration: {error}"
+
+msgid "Ready to install"
+msgstr "Klar til installation"
+
+msgid "Disks"
+msgstr "Diske"
+
+msgid "Packages"
+msgstr "Pakker"
+
+msgid "Network"
+msgstr "Netværk"
+
+msgid "Locale"
+msgstr "Lokalisering"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "This option enables the number of parallel downloads that can occur during package downloads"
+msgstr "Denne indstilling aktiverer antallet af parallelle downloads under pakkehentning"
+
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+"\n"
+"Note:\n"
+msgstr ""
+"Indtast antallet af parallelle downloads der skal aktiveres.\n"
+"\n"
+"Bemærk:\n"
+
+#, python-brace-format
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr " - Maksimal anbefalet værdi : {} (tillader {} parallelle downloads ad gangen)"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+msgstr " - Deaktiver/standard : 0 (deaktiverer parallel download og tillader kun 1 download ad gangen)\n"
+
+msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+msgstr "Ugyldigt input! Prøv igen med et gyldigt input [eller 0 for at deaktivere]"
+
+msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Hyprland skal have adgang til dit seat (samling af hardwareenheder, dvs. tastatur, mus osv.)"
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Hyprland access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Vælg en mulighed for at give Hyprland adgang til din hardware"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Alle indtastede værdier kan afsluttes med en enhed: %, B, KB, KiB, MB, MiB..."
+
+msgid "Would you like to use unified kernel images?"
+msgstr "Vil du use unified kerne images?"
+
+msgid "Unified kernel images"
+msgstr "Unified kerne images"
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Venter på at tidssynkronisering (timedatectl show) bliver fuldført."
+
+msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Tidssynkronisering fuldføres ikke. Mens du venter, kan du se dokumentationen for løsninger: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Springer ventetid på automatisk tidssynkronisering over (det kan give problemer, hvis tiden ikke er synkroniseret under installationen)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Venter på at Arch Linux-nøgleringssynkronisering (archlinux-keyring-wkd-sync) bliver fuldført."
+
+msgid "Selected profiles: "
+msgstr "Vælged profils: "
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Tidssynkronisering fuldføres ikke. Mens du venter, kan du se dokumentationen for løsninger: https://archinstall.readthedocs.io/"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "Markér/fjern markering som nodatacow"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Vil du use komprimering eller deaktivere CoW?"
+
+msgid "Use compression"
+msgstr "Use komprimering"
+
+msgid "Disable Copy-on-Write"
+msgstr "Deaktiver Copy-on-Write"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+msgstr "Giver et udvalg af skrivebordsmiljøer og flisebaserede vindueshåndterere, f.eks. GNOME, KDE Plasma, Sway"
+
+#, python-brace-format
+msgid "Configuration type: {}"
+msgstr "Konfiguration type: {}"
+
+msgid "LVM configuration type"
+msgstr "LVM konfiguration type"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "LVM disk kryptering med mellere than 2 partitioner is aktuellely not suppellerted"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+msgstr "Brug NetworkManager (nødvendigt for at konfigurere internet grafisk i GNOME og KDE Plasma)"
+
+msgid "Select a LVM option"
+msgstr "Vælg en LVM mulighed"
+
+msgid "Partitioning"
+msgstr "Partitionering"
+
+msgid "Logical Volume Management (LVM)"
+msgstr "Logisk diskenhedshåndtering (LVM)"
+
+msgid "Physical volumes"
+msgstr "Fysiske diskenheder"
+
+msgid "Volumes"
+msgstr "Diskenheder"
+
+msgid "LVM volumes"
+msgstr "LVM-diskenheder"
+
+msgid "LVM volumes to be encrypted"
+msgstr "LVM volumes skal være krypteret"
+
+msgid "Select which LVM volumes to encrypt"
+msgstr "Vælg hvilke LVM-diskenheder der skal krypteres"
+
+msgid "Default layout"
+msgstr "Standard layout"
+
+msgid "No Encryption"
+msgstr "Ingen kryptering"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM på LUKS"
+
+msgid "LUKS on LVM"
+msgstr "LUKS på LVM"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nej"
+
+msgid "Archinstall help"
+msgstr "Archinstallere help"
+
+msgid " (default)"
+msgstr " (standard)"
+
+msgid "Press Ctrl+h for help"
+msgstr "Tryk Ctrl+h for hjælp"
+
+msgid "Choose an option to give Sway access to your hardware"
+msgstr "Vælg en mulighed for at give Sway adgang til din hardware"
+
+msgid "Seat access"
+msgstr "Seat-adgang"
+
+msgid "Mountpoint"
+msgstr "Monteringspunkt"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Indtast adgangskode til diskkryptering (lad feltet være tomt for ingen kryptering)"
+
+msgid "Disk encryption password"
+msgstr "Disk kryptering adgangskode"
+
+msgid "Partition - New"
+msgstr "Partition - ny"
+
+msgid "Filesystem"
+msgstr "Filsystem"
+
+msgid "Invalid size"
+msgstr "Ugyldig størrelse"
+
+msgid "Start (default: sector {}): "
+msgstr "Start (standard: secteller {}): "
+
+msgid "End (default: {}): "
+msgstr "End (standard: {}): "
+
+msgid "Subvolume name"
+msgstr "Subvolume navn"
+
+msgid "Disk configuration type"
+msgstr "Disk konfiguration type"
+
+msgid "Root mount directory"
+msgstr "Root-monteringsmappe"
+
+msgid "Select language"
+msgstr "Vælg sprog"
+
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Skriv yderligere pakker der skal installeres (adskilt med mellemrum, lad feltet være tomt for at springe over)"
+
+msgid "Invalid download number"
+msgstr "Ugyldigt downloadantal"
+
+msgid "Number downloads"
+msgstr "Antal downloads"
+
+msgid "The username you entered is invalid"
+msgstr "The brugernavn you entered is ingyldig"
+
+msgid "Username"
+msgstr "Brugernavn"
+
+#, python-brace-format
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Skal \"{}\" være superbruger (sudo)?\n"
+
+msgid "Interfaces"
+msgstr "Grænseflader"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "Du skal indtaste en gyldig IP i IP-konfigurationstilstand"
+
+msgid "Modes"
+msgstr "Tilstande"
+
+msgid "IP address"
+msgstr "IP-adresse"
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Indtast IP-adressen på din gateway (router) (lad feltet være tomt for ingen)"
+
+msgid "Gateway address"
+msgstr "Gateway-adresse"
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Indtast dine DNS-servere adskilt med mellemrum (lad feltet være tomt for ingen)"
+
+msgid "DNS servers"
+msgstr "DNS-servere"
+
+msgid "Configure interfaces"
+msgstr "Configure grænseflades"
+
+msgid "Kernel"
+msgstr "Kerne"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "UEFI is not detected og some muligheds are deaktiveret"
+
+msgid "Info"
+msgstr "Info"
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "The proprietary Nvidia drevr is not suppellerted by Sway."
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Du vil sandsynligvis støde på problemer. Er det i orden?"
+
+msgid "Main profile"
+msgstr "Main profil"
+
+msgid "Confirm password"
+msgstr "Confirm adgangskode"
+
+msgid "The confirmation password did not match, please try again"
+msgstr "The confirmation adgangskode did not match, please try again"
+
+msgid "Not a valid directory"
+msgstr "Not en gyldig mappe"
+
+msgid "Would you like to continue?"
+msgstr "Vil du fellertsætte?"
+
+msgid "Directory"
+msgstr "Mappe"
+
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "Indtast en mappe hvor konfigurationen/konfigurationerne skal gemmes (tab-fuldførelse aktiveret)"
+
+#, python-brace-format
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Vil du gem konfiguration fil(s) to {}?"
+
+msgid "Enabled"
+msgstr "Aktiveret"
+
+msgid "Disabled"
+msgstr "Deaktiveret"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Indsend venligst denne fejl (og filen) til https://github.com/archlinux/archinstall/issues"
+
+msgid "Mirror name"
+msgstr "Spejlnavn"
+
+msgid "Url"
+msgstr "URL"
+
+msgid "Select signature check"
+msgstr "Vælg signatur kontrol"
+
+msgid "Select execution mode"
+msgstr "Vælg execution tilstand"
+
+msgid "Press ? for help"
+msgstr "Tryk ? for hjælp"
+
+msgid "Choose an option to give Hyprland access to your hardware"
+msgstr "Vælg en mulighed for at give Hyprland adgang til din hardware"
+
+msgid "Additional repositories"
+msgstr "Yderligere pakkearkiver"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "Swap on zram"
+msgstr "Swap på zram"
+
+msgid "Name"
+msgstr "Navn"
+
+msgid "Signature check"
+msgstr "Signaturkontrol"
+
+#, python-brace-format
+msgid "Selected free space segment on device {}:"
+msgstr "Vælged ledig plads segment on enhed {}:"
+
+#, python-brace-format
+msgid "Size: {} / {}"
+msgstr "Størrelse: {} / {}"
+
+#, python-brace-format
+msgid "Size (default: {}): "
+msgstr "Størrelse (standard: {}): "
+
+msgid "HSM device"
+msgstr "HSM-enhed"
+
+msgid "Some packages could not be found in the repository"
+msgstr "Nogle pakker kunne ikke findes i pakkearkivet"
+
+msgid "User"
+msgstr "Bruger"
+
+msgid "The specified configuration will be applied"
+msgstr "Den angivne konfiguration vil blive anvendt"
+
+msgid "Wipe"
+msgstr "Slet"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Markér/fjern markering som XBOOTLDR"
+
+msgid "Loading packages..."
+msgstr "Indlæser pakker..."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Vælg eventuelle pakker fra listen nedenfor som også skal installeres"
+
+msgid "Add a custom repository"
+msgstr "Tilføj en brugerdefineret pakkearkiv"
+
+msgid "Change custom repository"
+msgstr "Ændr brugerdefineret pakkearkiv"
+
+msgid "Delete custom repository"
+msgstr "Slet brugerdefineret pakkearkiv"
+
+msgid "Repository name"
+msgstr "Arkivnavn"
+
+msgid "Add a custom server"
+msgstr "Tilføj en brugerdefineret server"
+
+msgid "Change custom server"
+msgstr "Ændr brugerdefineret server"
+
+msgid "Delete custom server"
+msgstr "Slet brugerdefineret server"
+
+msgid "Server url"
+msgstr "Server-URL"
+
+msgid "Select regions"
+msgstr "Vælg regioner"
+
+msgid "Add custom servers"
+msgstr "Tilføj brugerdefineret servers"
+
+msgid "Add custom repository"
+msgstr "Tilføj brugerdefineret pakkearkiv"
+
+msgid "Loading mirror regions..."
+msgstr "Loading spejl regioner..."
+
+msgid "Mirrors and repositories"
+msgstr "Mirrellers og pakkearkiver"
+
+msgid "Selected mirror regions"
+msgstr "Vælged spejl regioner"
+
+msgid "Custom servers"
+msgstr "Brugerdefinerede servere"
+
+msgid "Custom repositories"
+msgstr "Brugerdefinerede pakkearkiver"
+
+msgid "Only ASCII characters are supported"
+msgstr "Only ASCII characters are suppellerted"
+
+msgid "Show help"
+msgstr "Vis hjælp"
+
+msgid "Exit help"
+msgstr "Afslut hjælp"
+
+msgid "Preview scroll up"
+msgstr "Forhåndsvisning rul op"
+
+msgid "Preview scroll down"
+msgstr "Forhåndsvisning rul ned"
+
+msgid "Move up"
+msgstr "Flyt op"
+
+msgid "Move down"
+msgstr "Flyt ned"
+
+msgid "Move right"
+msgstr "Flyt til højre"
+
+msgid "Move left"
+msgstr "Flyt til venstre"
+
+msgid "Jump to entry"
+msgstr "Hop til post"
+
+msgid "Skip selection (if available)"
+msgstr "Spring over selection (if available)"
+
+msgid "Reset selection (if available)"
+msgstr "Nulstil valg (hvis tilgængeligt)"
+
+msgid "Select on single select"
+msgstr "Vælg on single select"
+
+msgid "Select on multi select"
+msgstr "Vælg on multi select"
+
+msgid "Reset"
+msgstr "Nulstil"
+
+msgid "Skip selection menu"
+msgstr "Spring over selection menu"
+
+msgid "Start search mode"
+msgstr "Start search tilstand"
+
+msgid "Exit search mode"
+msgstr "Exit search tilstand"
+
+msgid "General"
+msgstr "Generelt"
+
+msgid "Navigation"
+msgstr "Navigation"
+
+msgid "Selection"
+msgstr "Valg"
+
+msgid "Search"
+msgstr "Søg"
+
+msgid "Down"
+msgstr "Ned"
+
+msgid "Up"
+msgstr "Op"
+
+msgid "Confirm"
+msgstr "Bekræft"
+
+msgid "Focus right"
+msgstr "Fokus til højre"
+
+msgid "Focus left"
+msgstr "Fokus til venstre"
+
+msgid "Toggle"
+msgstr "Slå til/fra"
+
+msgid "Show/Hide help"
+msgstr "Vis/skjul hjælp"
+
+msgid "Quit"
+msgstr "Afslut"
+
+msgid "First"
+msgstr "Første"
+
+msgid "Last"
+msgstr "Sidste"
+
+msgid "Select"
+msgstr "Vælg"
+
+msgid "Page Up"
+msgstr "Side op"
+
+msgid "Page Down"
+msgstr "Side ned"
+
+msgid "Page up"
+msgstr "Side op"
+
+msgid "Page down"
+msgstr "Side ned"
+
+msgid "Page Left"
+msgstr "Side venstre"
+
+msgid "Page Right"
+msgstr "Side højre"
+
+msgid "Cursor up"
+msgstr "Markør op"
+
+msgid "Cursor down"
+msgstr "Markør ned"
+
+msgid "Cursor right"
+msgstr "Markør højre"
+
+msgid "Cursor left"
+msgstr "Markør venstre"
+
+msgid "Top"
+msgstr "Top"
+
+msgid "Bottom"
+msgstr "Bund"
+
+msgid "Home"
+msgstr "Hjem"
+
+msgid "End"
+msgstr "Slut"
+
+msgid "Toggle option"
+msgstr "Toggle mulighed"
+
+msgid "Scroll Up"
+msgstr "Rul op"
+
+msgid "Scroll Down"
+msgstr "Rul ned"
+
+msgid "Scroll Left"
+msgstr "Rul til venstre"
+
+msgid "Scroll Right"
+msgstr "Rul til højre"
+
+msgid "Scroll Home"
+msgstr "Rul til start"
+
+msgid "Scroll End"
+msgstr "Rul til slut"
+
+msgid "Focus Next"
+msgstr "Fokusér næste"
+
+msgid "Focus Previous"
+msgstr "Fokusér forrige"
+
+msgid "Copy selected text"
+msgstr "Kopiér markeret tekst"
+
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "labwc skal have adgang til dit seat (samling af hardwareenheder, dvs. tastatur, mus osv.)"
+
+msgid "Choose an option to give labwc access to your hardware"
+msgstr "Vælg en mulighed for at give labwc adgang til din hardware"
+
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "niri skal have adgang til dit seat (samling af hardwareenheder, dvs. tastatur, mus osv.)"
+
+msgid "Choose an option to give niri access to your hardware"
+msgstr "Vælg en mulighed for at give niri adgang til din hardware"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Markér/fjern markering som ESP"
+
+msgid "Package group:"
+msgstr "Pakkegruppe:"
+
+msgid "Exit archinstall"
+msgstr "Afslut archinstall"
+
+msgid "Reboot system"
+msgstr "Genstart systemet"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "chroot ind i installationen for efterinstallationskonfiguration"
+
+msgid "Installation completed"
+msgstr "Installationen er fuldført"
+
+msgid "What would you like to do next?"
+msgstr "Hvad vil du gøre nu?"
+
+#, python-brace-format
+msgid "Select which mode to configure for \"{}\""
+msgstr "Vælg hvilken tilstand der skal konfigureres for \"{}\""
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Incellerrect credentials fil decryption adgangskode"
+
+msgid "Incorrect password"
+msgstr "Incellerrect adgangskode"
+
+msgid "Credentials file decryption password"
+msgstr "Credentials fil decryption adgangskode"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Vil du encrypt bruger_credentials.json fil?"
+
+msgid "Credentials file encryption password"
+msgstr "Credentials fil kryptering adgangskode"
+
+#, python-brace-format
+msgid "Repositories: {}"
+msgstr "Repositelleries: {}"
+
+msgid "New version available"
+msgstr "Ny version tilgængelig"
+
+msgid "Passwordless login"
+msgstr "Adgangskodeless login"
+
+msgid "Second factor login"
+msgstr "Second facteller login"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Vil du configure Bluetooth?"
+
+msgid "Print service"
+msgstr "Udskriftstjeneste"
+
+msgid "Would you like to configure the print service?"
+msgstr "Vil du configure udskriftstjeneste?"
+
+msgid "Power management"
+msgstr "Strømstyring"
+
+msgid "Authentication"
+msgstr "Godkendelse"
+
+msgid "Applications"
+msgstr "Programmer"
+
+msgid "U2F login method: "
+msgstr "U2F-loginmetode: "
+
+msgid "Passwordless sudo: "
+msgstr "Adgangskodeless sudo: "
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Btrfs-snapshot-type: {}"
+
+msgid "Syncing the system..."
+msgstr "Syncing system..."
+
+msgid "Value cannot be empty"
+msgstr "Værdien må ikke være tom"
+
+msgid "Snapshot type"
+msgstr "Snapshot-type"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Snapshot-type: {}"
+
+msgid "U2F login setup"
+msgstr "Opsætning af U2F-login"
+
+msgid "No U2F devices found"
+msgstr "No U2F enheds found"
+
+msgid "U2F Login Method"
+msgstr "U2F-loginmetode"
+
+msgid "Enable passwordless sudo?"
+msgstr "Enable adgangskodeless sudo?"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Sætter U2F-enhed op for bruger: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Du skal muligvis indtaste PIN-koden og derefter røre ved din U2F-enhed for at registrere den"
+
+msgid "Starting device modifications in "
+msgstr "Starting enhed modifications in "
+
+msgid "No network connection found"
+msgstr "No netværk connection found"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Vil du oprette forbindelse til Wi-Fi?"
+
+msgid "No wifi interface found"
+msgstr "No wifi grænseflade found"
+
+msgid "Select wifi network to connect to"
+msgstr "Vælg det Wi-Fi-netværk der skal oprettes forbindelse til"
+
+msgid "Scanning wifi networks..."
+msgstr "Scanning wifi netværks..."
+
+msgid "No wifi networks found"
+msgstr "No wifi netværks found"
+
+msgid "Failed setting up wifi"
+msgstr "Kunne ikke sætte wifi op"
+
+msgid "Enter wifi password"
+msgstr "Indtast wifi adgangskode"
+
+msgid "Ok"
+msgstr "OK"
+
+msgid "Removable"
+msgstr "Flytbar"
+
+msgid "Install to removable location"
+msgstr "Installer til flytbar placering"
+
+msgid "Will install to /EFI/BOOT/ (removable location)"
+msgstr "Installerer til /EFI/BOOT/ (flytbar placering)"
+
+msgid "Will install to standard location with NVRAM entry"
+msgstr "Installerer til standardplacering med NVRAM-post"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Vil du installere bootloaderen på standardplaceringen for søgning efter flytbare medier?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Dette installerer bootloaderen til /EFI/BOOT/BOOTX64.EFI (eller tilsvarende), hvilket er nyttigt for:"
+
+msgid "USB drives or other portable external media."
+msgstr "USB drevs eller other pellertable external media."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Systems where you want disk skal være bootbar on any computer."
+
+msgid "Firmware that does not properly support NVRAM boot entries."
+msgstr "Firmware der ikke korrekt understøtter NVRAM-bootposter."
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Installerer til /EFI/BOOT/ (flytbar placering, sikker standard)"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Installerer til brugerdefineret placering med NVRAM-post"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmware der ikke korrekt understøtter NVRAM-bootposter, som de fleste MSI-bundkort,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "de fleste Apple Mac-computere, mange bærbare..."
+
+msgid "Language"
+msgstr "Sprog"
+
+msgid "Compression algorithm"
+msgstr "Komprimeringsalgoritme"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Only pakker such som base, sudo, linux, linux-firmware, efibootmgr og mulighedal profil pakker are installereed."
+
+msgid "Select zram compression algorithm:"
+msgstr "Vælg zram komprimering algellerithm:"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Use Netværk Manager (standard backend)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Use Netværk Manager (iwd backend)"
+
+msgid "Firewall"
+msgstr "Firewall"
+
+msgid "Additional fonts"
+msgstr "Yderligere skrifttyper"
+
+msgid "Select font packages to install"
+msgstr "Vælg skrifttypepakker der skal installeres"
+
+msgid "Unicode font coverage for most languages"
+msgstr "Unicode-skrifttypedækning for de fleste sprog"
+
+msgid "color emoji for browsers and apps"
+msgstr "farveemoji til browsere og apps"
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr "Chinese, Japanese, Kellerean characters"
+
+msgid "Select audio configuration"
+msgstr "Vælg lyd konfiguration"
+
+msgid "Enter credentials file decryption password"
+msgstr "Indtast credentials fil decryption adgangskode"
+
+msgid "Enter root password"
+msgstr "Indtast root-adgangskode"
+
+msgid "Select bootloader to install"
+msgstr "Vælg bootloader der skal installeres"
+
+msgid "Configuration preview"
+msgstr "Konfigurationsforhåndsvisning"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Indtast en mappe hvor konfigurationen/konfigurationerne skal gemmes"
+
+msgid "Select encryption type"
+msgstr "Vælg kryptering type"
+
+msgid "Select disks for the installation"
+msgstr "Vælg diske til installationen"
+
+msgid "Enter a mountpoint"
+msgstr "Indtast en monteringspunkt"
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Indtast en størrelse (standard: {}): "
+
+msgid "Enter subvolume name"
+msgstr "Indtast underenhed navn"
+
+msgid "Enter subvolume mountpoint"
+msgstr "Indtast underenhed monteringspunkt"
+
+msgid "Select a disk configuration"
+msgstr "Vælg en disk konfiguration"
+
+msgid "Enter root mount directory"
+msgstr "Indtast root montere mappe"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "You will use whatever drev-setup is montereed at specified mappe"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "ADVARSEL: Archinstall kontrollerer ikke om denne opsætning er egnet"
+
+msgid "Select main filesystem"
+msgstr "Vælg main filsystem"
+
+msgid "Enter a hostname"
+msgstr "Indtast en hostnavn"
+
+msgid "Select timezone"
+msgstr "Vælg timezone"
+
+msgid "Enter the number of parallel downloads to be enabled"
+msgstr "Indtast antallet af parallelle downloads der skal aktiveres"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "Værdien skal være mellem 1 og {}"
+
+msgid "Select which kernel(s) to install"
+msgstr "Vælg hvilke kerner der skal installeres"
+
+msgid "Enter a respository name"
+msgstr "Indtast en respositellery navn"
+
+msgid "Enter the repository url"
+msgstr "Indtast pakkearkiv url"
+
+msgid "Enter server url"
+msgstr "Indtast server url"
+
+msgid "Select mirror regions to be enabled"
+msgstr "Vælg spejl regioner skal være aktiveret"
+
+msgid "Select optional repositories to be enabled"
+msgstr "Vælg mulighedal pakkearkiver skal være aktiveret"
+
+msgid "Select an interface"
+msgstr "Vælg en grænseflade"
+
+msgid "Choose network configuration"
+msgstr "Vælg netværk konfiguration"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Anbefalet: Network Manager til desktop, manuel til server"
+
+msgid "Warning: no network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Advarsel: ingen netværkskonfiguration valgt. Netværket skal sættes op manuelt på det installerede system."
+
+msgid "No packages found"
+msgstr "Ingen pakker fundet"
+
+msgid "Select which greeter to install"
+msgstr "Vælg hvilken login-skærm der skal installeres"
+
+msgid "Select a profile type"
+msgstr "Vælg en profil type"
+
+msgid "Enter new password"
+msgstr "Indtast ny adgangskode"
+
+msgid "Enter a username"
+msgstr "Indtast et brugernavn"
+
+msgid "Enter a password"
+msgstr "Indtast en adgangskode"
+
+msgid "The password did not match, please try again"
+msgstr "The adgangskode did not match, please try again"
+
+msgid "Password strength: Weak"
+msgstr "Adgangskodestyrke: Svag"
+
+msgid "Password strength: Moderate"
+msgstr "Adgangskodestyrke: Moderat"
+
+msgid "Password strength: Strong"
+msgstr "Adgangskodestyrke: Stærk"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "Den valgte skrivebordsprofil kræver en almindelig bruger for at logge ind via login-skærmen"
+
+#, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Miljøtype: {} {}"
+
+msgid "Input cannot be empty"
+msgstr "Input må ikke være tomt"
+
+msgid "Recommended"
+msgstr "Anbefalet"
+
+msgid "Package"
+msgstr "Pakke"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr "Kurateret udvalg af KDE Plasma-pakker"
+
+msgid "Dependencies"
+msgstr "Afhængigheder"
+
+msgid "Package group"
+msgstr "Pakkegruppe"
+
+msgid "Extensive KDE Plasma installation"
+msgstr "Extensive KDE Plasma installereation"
+
+msgid "Packages in group"
+msgstr "Pakker i gruppen"
+
+msgid "Minimal KDE Plasma installation"
+msgstr "Minimal KDE Plasma installereation"
+
+msgid "Description"
+msgstr "Beskrivelse"
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Vælg hvilken variant af KDE Plasma der skal installeres"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr "Erstatning for Arial/Times/Courier, kyrillisk understøttelse til Steam/spil"
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr "wide Unicode coverage, good fallback skrifttype"
+
+#, python-brace-format
+msgid "Setting up U2F login: {u2f_config.u2f_login_method.value}"
+msgstr "Sætter U2F-login op: {u2f_config.u2f_login_method.value}"
+
+#, python-brace-format
+msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
+msgstr "Standard: {DEFAULT_ITER_TIME} ms, anbefalet område: 1000-60000"

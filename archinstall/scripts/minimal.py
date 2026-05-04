@@ -12,7 +12,7 @@ from archinstall.lib.network.network_handler import install_network_config
 from archinstall.lib.output import debug, error, info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import tui
+from archinstall.tui.components import tui
 
 
 def perform_installation(arch_config_handler: ArchConfigHandler) -> None:
@@ -77,7 +77,7 @@ async def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		res: bool = tui.run(config.confirm_config)
+		res: bool = tui.run(lambda: config.confirm_config(show_install_warnings=True))
 
 		if not res:
 			debug('Installation aborted')

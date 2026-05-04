@@ -10,6 +10,11 @@ class LocaleConfiguration:
 	kb_layout: str
 	sys_lang: str
 	sys_enc: str
+	# this is the default used in ISO other option for hdpi screens TER16x32
+	# can be checked using
+	# zgrep "CONFIG_FONT" /proc/config.gz
+	# https://wiki.archlinux.org/title/Linux_console#Font
+	console_font: str = 'default8x16'
 
 	@classmethod
 	def default(cls) -> Self:
@@ -23,12 +28,14 @@ class LocaleConfiguration:
 			'kb_layout': self.kb_layout,
 			'sys_lang': self.sys_lang,
 			'sys_enc': self.sys_enc,
+			'console_font': self.console_font,
 		}
 
 	def preview(self) -> str:
 		output = '{}: {}\n'.format(tr('Keyboard layout'), self.kb_layout)
 		output += '{}: {}\n'.format(tr('Locale language'), self.sys_lang)
-		output += '{}: {}'.format(tr('Locale encoding'), self.sys_enc)
+		output += '{}: {}\n'.format(tr('Locale encoding'), self.sys_enc)
+		output += '{}: {}'.format(tr('Console font'), self.console_font)
 		return output
 
 	def _load_config(self, args: dict[str, str]) -> None:
@@ -38,6 +45,8 @@ class LocaleConfiguration:
 			self.sys_enc = args['sys_enc']
 		if 'kb_layout' in args:
 			self.kb_layout = args['kb_layout']
+		if 'console_font' in args:
+			self.console_font = args['console_font']
 
 	@classmethod
 	def parse_arg(cls, args: dict[str, Any]) -> Self:

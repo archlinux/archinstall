@@ -10,10 +10,12 @@ from archinstall.lib.args import ArchConfig
 from archinstall.lib.crypt import encrypt
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.menu.util import get_password, prompt_dir
+from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models.network import NetworkConfiguration
 from archinstall.lib.output import debug, logger, warn
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 class ConfigurationOutput:
@@ -58,9 +60,76 @@ class ConfigurationOutput:
 		debug(' -- Chosen configuration --')
 		debug(self.user_config_to_json())
 
-	async def confirm_config(self) -> bool:
+	def as_summary(self) -> str:
+		"""
+		Render a concise two-column summary of the current configuration.
+
+		The left column holds section labels, the right column holds values.
+		Column width adapts to the longest translated label so translations
+		do not break the alignment. Rows whose underlying config is not set
+		are skipped.
+
+		Returns an empty string if nothing meaningful to show.
+		"""
+		rows: list[tuple[str, str]] = []
+
+		disk_config = self._config.disk_config
+		if disk_config and disk_config.device_modifications:
+			disk_parts: list[str] = []
+			for mod in disk_config.device_modifications:
+				path = str(mod.device_path)
+				root_part = mod.get_root_partition()
+				flags: list[str] = []
+				if root_part and root_part.fs_type:
+					flags.append(root_part.fs_type.value)
+				if disk_config.disk_encryption:
+					flags.append(tr('LUKS'))
+				disk_parts.append(f'{path} ({" + ".join(flags)})' if flags else path)
+			rows.append((tr('Disks'), ', '.join(disk_parts)))
+
+		bl_config = self._config.bootloader_config
+		if bl_config and bl_config.bootloader != Bootloader.NO_BOOTLOADER:
+			rows.append((tr('Bootloader'), bl_config.bootloader.value))
+
+		kernels = self._config.kernels
+		if kernels:
+			rows.append((tr('Kernel'), ', '.join(kernels)))
+
+		profile_config = self._config.profile_config
+		if profile_config and profile_config.profile:
+			names = profile_config.profile.current_selection_names()
+			rows.append((tr('Profile'), ', '.join(names) if names else profile_config.profile.name))
+			if profile_config.greeter:
+				rows.append((tr('Greeter'), profile_config.greeter.value))
+
+		packages = self._config.packages
+		if packages:
+			rows.append((tr('Packages'), str(len(packages))))
+
+		net_config = self._config.network_config
+		if isinstance(net_config, NetworkConfiguration):
+			rows.append((tr('Network'), net_config.type.display_msg()))
+
+		locale_config = self._config.locale_config
+		if locale_config:
+			rows.append((tr('Locale'), locale_config.sys_lang))
+
+		tz = self._config.timezone
+		if tz:
+			rows.append((tr('Timezone'), tz))
+
+		if not rows:
+			return ''
+
+		label_width = max(len(label) for label, _ in rows) + 2
+		return '\n'.join(f'{label:<{label_width}}{value}' for label, value in rows)
+
+	async def confirm_config(self, show_install_warnings: bool = False) -> bool:
 		header = f'{tr("The specified configuration will be applied")}. '
 		header += tr('Would you like to continue?') + '\n'
+
+		if show_install_warnings:
+			header += self._render_install_warnings()
 
 		group = MenuItemGroup.yes_no()
 		group.set_preview_for_all(lambda x: self.user_config_to_json())
@@ -78,6 +147,22 @@ class ConfigurationOutput:
 			return False
 
 		return True
+
+	def get_install_warnings(self) -> list[str]:
+		warnings: list[str] = []
+
+		if not isinstance(self._config.network_config, NetworkConfiguration):
+			warnings.append(tr('Warning: no network configuration selected. Network will need to be set up manually on the installed system.'))
+
+		return warnings
+
+	def _render_install_warnings(self) -> str:
+		warnings = self.get_install_warnings()
+
+		if not warnings:
+			return ''
+
+		return '\n' + '\n'.join(f'[yellow]{w}[/]' for w in warnings) + '\n'
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
 		dest_path_ok = dest_path.exists() and dest_path.is_dir()

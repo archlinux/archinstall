@@ -12,6 +12,7 @@ from types import TracebackType
 from typing import Any, Self
 
 from archinstall.lib.boot import Boot
+from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.command import SysCommand, run
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.disk.luks import Luks2, unlock_luks2_dev
@@ -30,7 +31,7 @@ from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
-from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -47,6 +48,7 @@ from archinstall.lib.models.device import (
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import Nic
+from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.users import User
@@ -59,7 +61,12 @@ from archinstall.lib.plugins import plugins
 from archinstall.lib.translationhandler import tr
 
 # Any package that the Installer() is responsible for (optional and the default ones)
-__packages__ = ['base', 'sudo', 'linux-firmware', 'linux', 'linux-lts', 'linux-zen', 'linux-hardened']
+# https://github.com/archlinux/archinstall/issues/4368
+# mkinitcpio is listed explicitly so pacstrap installs it deterministically. Otherwise
+# pacman picks the first initramfs provider from the host's pacman.conf, which on non-Arch
+# hosts (EndeavourOS prefers dracut, etc.) breaks the installer's mkinitcpio() and
+# _config_uki() methods that assume mkinitcpio is present in the chroot.
+__packages__ = ['base', 'sudo', 'linux-firmware', 'mkinitcpio'] + [k.value for k in Kernel]
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ['brltty', 'espeakup', 'alsa-utils']
@@ -78,8 +85,8 @@ class Installer:
 		`Installer()` is the wrapper for most basic installation steps.
 		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
 		"""
-		self._base_packages = base_packages or __packages__[:3]
-		self.kernels = kernels or ['linux']
+		self._base_packages = base_packages or __packages__[:4]
+		self.kernels = kernels or [DEFAULT_KERNEL.value]
 		self._disk_config = disk_config
 
 		self._disk_encryption = disk_config.disk_encryption or DiskEncryption(EncryptionType.NO_ENCRYPTION)
@@ -182,10 +189,10 @@ class Installer:
 		if not skip_ntp:
 			info(tr('Waiting for time sync (timedatectl show) to complete.'))
 
-			started_wait = time.time()
+			started_wait = time.monotonic()
 			notified = False
 			while True:
-				if not notified and time.time() - started_wait > 5:
+				if not notified and time.monotonic() - started_wait > 5:
 					notified = True
 					warn(tr('Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/'))
 
@@ -395,7 +402,7 @@ class Installer:
 
 	def _mount_luks_partition(self, part_mod: PartitionModification, luks_handler: Luks2) -> None:
 		if not luks_handler.mapper_dev:
-			return None
+			return
 
 		if part_mod.fs_type == FilesystemType.BTRFS and part_mod.btrfs_subvols:
 			# Only mount BTRFS subvolumes that have mountpoints specified
@@ -738,6 +745,9 @@ class Installer:
 
 		return self.run_command(cmd, peek_output=peek_output)
 
+	def _chroot_argv(self, *args: str) -> list[str]:
+		return ['arch-chroot', '-S', str(self.target), *args]
+
 	def drop_to_shell(self) -> None:
 		subprocess.check_call(f'arch-chroot {self.target}', shell=True)
 
@@ -986,17 +996,7 @@ class Installer:
 			}
 
 			for config_name, mountpoint in snapper.items():
-				command = [
-					'arch-chroot',
-					'-S',
-					str(self.target),
-					'snapper',
-					'--no-dbus',
-					'-c',
-					config_name,
-					'create-config',
-					mountpoint,
-				]
+				command = self._chroot_argv('snapper', '--no-dbus', '-c', config_name, 'create-config', mountpoint)
 
 				try:
 					SysCommand(command, peek_output=True)
@@ -1335,13 +1335,7 @@ class Installer:
 
 		boot_dir = Path('/boot')
 
-		command = [
-			'arch-chroot',
-			'-S',
-			str(self.target),
-			'grub-install',
-			'--debug',
-		]
+		command = self._chroot_argv('grub-install', '--debug')
 
 		if SysInfo.has_uefi():
 			if not efi_partition:
@@ -1466,6 +1460,14 @@ class Installer:
 			elif not efi_partition.mountpoint:
 				raise ValueError('EFI partition is not mounted')
 
+			# Safety net for programmatic callers that bypass GlobalMenu and
+			# guided.py validation.
+			if failure := validate_bootloader_layout(
+				BootloaderConfiguration(bootloader=Bootloader.Limine, uki=uki_enabled),
+				self._disk_config,
+			):
+				raise DiskError(failure.description)
+
 			info(f'Limine EFI partition: {efi_partition.dev_path}')
 
 			parent_dev_path = get_parent_device_path(efi_partition.safe_dev_path)
@@ -1476,15 +1478,11 @@ class Installer:
 				if bootloader_removable:
 					efi_dir_path = efi_dir_path / 'BOOT'
 					efi_dir_path_target = efi_dir_path_target / 'BOOT'
-
-					boot_limine_path = self.target / 'boot' / 'limine'
-					boot_limine_path.mkdir(parents=True, exist_ok=True)
-					config_path = boot_limine_path / 'limine.conf'
 				else:
 					efi_dir_path = efi_dir_path / 'arch-limine'
 					efi_dir_path_target = efi_dir_path_target / 'arch-limine'
 
-					config_path = efi_dir_path / 'limine.conf'
+				config_path = efi_dir_path / 'limine.conf'
 
 				efi_dir_path.mkdir(parents=True, exist_ok=True)
 
@@ -1917,16 +1915,17 @@ class Installer:
 		if not handled_by_plugin:
 			info(f'Creating user {user.username}')
 
-			cmd = 'useradd -m'
+			cmd = self._chroot_argv('useradd', '-m')
 
 			if user.sudo:
-				cmd += ' -G wheel'
+				cmd += ['-G', 'wheel']
 
-			cmd += f' {user.username}'
+			cmd += ['--', user.username]
 
 			try:
-				self.arch_chroot(cmd)
-			except SysCallError as err:
+				run(cmd)
+			except CalledProcessError as err:
+				debug(f'Error creating user {user.username}: {err}')
 				raise SystemError(f'Could not create user inside installation: {err}')
 
 		for plugin in plugins.values():
@@ -1937,7 +1936,11 @@ class Installer:
 		self.set_user_password(user)
 
 		for group in user.groups:
-			self.arch_chroot(f'gpasswd -a {user.username} {group}')
+			cmd = self._chroot_argv('gpasswd', '-a', user.username, group)
+			try:
+				run(cmd)
+			except CalledProcessError as err:
+				warn(f'Failed to add {user.username} to group {group}: {err}')
 
 		if user.sudo:
 			self.enable_sudo(user)
@@ -1952,7 +1955,7 @@ class Installer:
 			return False
 
 		input_data = f'{user.username}:{enc_password}'.encode()
-		cmd = ['arch-chroot', '-S', str(self.target), 'chpasswd', '--encrypted']
+		cmd = self._chroot_argv('chpasswd', '--encrypted')
 
 		try:
 			run(cmd, input_data=input_data)
@@ -1964,7 +1967,7 @@ class Installer:
 	def user_set_shell(self, user: str, shell: str) -> bool:
 		info(f'Setting shell for {user} to {shell}')
 
-		cmd = ['arch-chroot', '-S', str(self.target), 'chsh', '-s', shell, user]
+		cmd = self._chroot_argv('chsh', '-s', shell, user)
 		try:
 			run(cmd)
 			return True
@@ -1974,7 +1977,7 @@ class Installer:
 
 	def chown(self, owner: str, path: str, options: list[str] | None = None) -> bool:
 		options = options or []
-		cmd = ['arch-chroot', '-S', str(self.target), 'chown', *options, owner, path]
+		cmd = self._chroot_argv('chown', *options, '--', owner, path)
 		try:
 			run(cmd)
 			return True
@@ -1985,12 +1988,10 @@ class Installer:
 	def set_vconsole(self, locale_config: LocaleConfiguration) -> None:
 		# use the already set kb layout
 		kb_vconsole: str = locale_config.kb_layout
-		# this is the default used in ISO other option for hdpi screens TER16x32
-		# can be checked using
-		# zgrep "CONFIG_FONT" /proc/config.gz
-		# https://wiki.archlinux.org/title/Linux_console#Fonts
+		font_vconsole = locale_config.console_font
 
-		font_vconsole = 'default8x16'
+		if font_vconsole.startswith('ter-'):
+			self.pacman.strap(['terminus-font'])
 
 		# Ensure /etc exists
 		vconsole_dir: Path = self.target / 'etc'
