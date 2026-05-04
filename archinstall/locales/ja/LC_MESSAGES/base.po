@@ -2051,7 +2051,7 @@ msgid "Enter credentials file decryption password"
 msgstr "認証情報ファイルの復号パスワードを入力"
 
 msgid "Enter root password"
-msgstr "ルートパスワードを入力"
+msgstr "root パスワードを入力"
 
 msgid "Select bootloader to install"
 msgstr "インストールするブートローダーを選択"
@@ -2222,3 +2222,11 @@ msgstr "U2F ログインの設定: {u2f_config.u2f_login_method.value}"
 #, python-brace-format
 msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
 msgstr "デフォルト: {DEFAULT_ITER_TIME}ms, 推奨範囲: 1000-60000"
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "U2F ログインの設定: {}"
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "デフォルト: {}ms, 推奨範囲: 1000-60000"
