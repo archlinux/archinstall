@@ -115,21 +115,10 @@ def perform_installation(
 			installation.setup_swap(algo=config.swap.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
-			keep_initramfs = False
-			if (
-				config.bootloader_config.uki
-				and config.bootloader_config.bootloader == Bootloader.Grub
-				and disk_config.has_default_btrfs_vols()
-				and disk_config.btrfs_options
-				and disk_config.btrfs_options.snapshot_config
-			):
-				keep_initramfs = True
-
 			installation.add_bootloader(
 				config.bootloader_config.bootloader,
 				config.bootloader_config.uki,
 				config.bootloader_config.removable,
-				keep_initramfs,
 			)
 
 		if config.network_config:

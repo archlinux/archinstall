@@ -1806,7 +1806,6 @@ class Installer:
 		bootloader: Bootloader,
 		uki_enabled: bool = False,
 		bootloader_removable: bool = False,
-		keep_initramfs: bool = False,
 	) -> None:
 		"""
 		Adds a bootloader to the installation instance.
@@ -1856,6 +1855,12 @@ class Installer:
 				bootloader_removable = False
 
 		if uki_enabled:
+			keep_initramfs = (
+				bootloader == Bootloader.Grub
+				and self._disk_config.has_default_btrfs_vols()
+				and self._disk_config.btrfs_options is not None
+				and self._disk_config.btrfs_options.snapshot_config is not None
+			)
 			self._config_uki(root, efi_partition, keep_initramfs)
 
 		match bootloader:
