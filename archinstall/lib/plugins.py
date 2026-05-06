@@ -2,6 +2,7 @@ import hashlib
 import importlib.util
 import os
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from importlib import metadata
@@ -34,21 +35,40 @@ def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
 	plugins[f.__name__] = f
 
 
-def _localize_path(path: Path) -> Path:
+def _localize_path(path: str | Path) -> Path:
 	"""
 	Support structures for load_plugin()
 	"""
-	url = urllib.parse.urlparse(str(path))
+	# Keep as string to preserve URL format (Path normalization breaks URLs)
+	path_str = str(path)
+	url = urllib.parse.urlparse(path_str)
 
 	if url.scheme and url.scheme in ('https', 'http'):
-		converted_path = Path(f'/tmp/{path.stem}_{hashlib.md5(os.urandom(12)).hexdigest()}.py')
+		# Extract filename from the URL path component
+		# Use os.path.basename instead of path.stem to handle URLs correctly
+		url_path = url.path
+		filename = os.path.basename(url_path) if url_path else 'plugin'
+		# Remove .py extension if present for the temporary filename format
+		if filename.endswith('.py'):
+			filename_base = filename.replace('.py', '')
+		else:
+			filename_base = filename
+		
+		converted_path = Path(f'/tmp/{filename_base}_{hashlib.md5(os.urandom(12)).hexdigest()}.py')
 
 		with open(converted_path, 'w') as temp_file:
-			temp_file.write(urllib.request.urlopen(url.geturl()).read().decode('utf-8'))
+			# Use the original path string directly instead of reconstructing from parsed URL
+			# This avoids issues with url.geturl() producing malformed URLs
+			try:
+				response = urllib.request.urlopen(path_str)
+				temp_file.write(response.read().decode('utf-8'))
+			except urllib.error.URLError as e:
+				error(f'Failed to download plugin from {path_str}: {e}')
+				raise
 
 		return converted_path
 	else:
-		return path
+		return Path(path)
 
 
 def _import_via_path(path: Path, namespace: str | None = None) -> str:
@@ -80,18 +100,20 @@ def _import_via_path(path: Path, namespace: str | None = None) -> str:
 	return namespace
 
 
-def load_plugin(path: Path) -> None:
+def load_plugin(path: str | Path) -> None:
 	namespace: str | None = None
-	parsed_url = urllib.parse.urlparse(str(path))
+	# Keep URL as string to preserve scheme (avoid Path normalization)
+	path_str = str(path) if isinstance(path, Path) else path
+	parsed_url = urllib.parse.urlparse(path_str)
 	info(f'Loading plugin from url {parsed_url}')
 
 	# The Profile was not a direct match on a remote URL
 	if not parsed_url.scheme:
 		# Path was not found in any known examples, check if it's an absolute path
-		if os.path.isfile(path):
-			namespace = _import_via_path(path)
+		if os.path.isfile(path_str):
+			namespace = _import_via_path(Path(path_str))
 	elif parsed_url.scheme in ('https', 'http'):
-		localized = _localize_path(path)
+		localized = _localize_path(path_str)
 		namespace = _import_via_path(localized)
 
 	if namespace and namespace in sys.modules:

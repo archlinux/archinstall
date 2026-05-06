@@ -447,8 +447,8 @@ class ArchConfigHandler:
 			warn(f'Warning: --debug mode will write certain credentials to {logger.path}!')
 
 		if args.plugin:
-			plugin_path = Path(args.plugin)
-			load_plugin(plugin_path)
+			# Pass plugin as string to preserve URL format (avoid Path normalization)
+			load_plugin(args.plugin)
 
 		if args.creds_decryption_key is None:
 			if os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY'):
