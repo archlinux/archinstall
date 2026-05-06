@@ -1,10 +1,8 @@
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType
-
-if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
-	from archinstall.lib.models.users import User
+from archinstall.lib.installer import Installer
+from archinstall.lib.models.users import User
 
 
 class BspwmProfile(Profile):
