@@ -52,6 +52,7 @@ class Selection[ValueT]:
 				allow_reset=self._allow_reset,
 				preview_location=self._preview_location,
 				enable_filter=self._enable_filter,
+				wrap_preview=self._wrap_preview,
 			).run()
 
 		if result.type_ == ResultType.Reset:

@@ -200,6 +200,11 @@ class OptionListScreen(BaseScreen[ValueT]):
 		color: white;
 		text-style: bold;
 	}
+
+	.wrap-preview {
+		width: 100%;
+		height: auto;
+	}
 	"""
 
 	def __init__(
