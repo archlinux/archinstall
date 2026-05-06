@@ -103,7 +103,7 @@ When submitting an issue, please:
 * Attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
   * To upload the log from the ISO image and get a shareable URL, run<br>
     ```shell
-    archinstall --share-log
+    archinstall share-log
     ```
 
 

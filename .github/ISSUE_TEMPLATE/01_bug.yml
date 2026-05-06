@@ -42,7 +42,7 @@ body:
       value: >
         **Note**: Assuming you have network connectivity,
         you can easily upload the installation log and get a shareable URL by running:
-        `archinstall --share-log`
+        `archinstall share-log`
 
   - type: textarea
     id: freeform
