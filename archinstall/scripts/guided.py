@@ -115,7 +115,11 @@ def perform_installation(
 			installation.setup_swap(algo=config.swap.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
-			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
+			installation.add_bootloader(
+				config.bootloader_config.bootloader,
+				config.bootloader_config.uki,
+				config.bootloader_config.removable,
+			)
 
 		if config.network_config:
 			install_network_config(
