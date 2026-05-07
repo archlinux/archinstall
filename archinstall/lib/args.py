@@ -431,7 +431,6 @@ class ArchConfigHandler:
 			default=False,
 			help='Enabled verbose options',
 		)
-
 		return parser
 
 	def _parse_args(self) -> Arguments:
