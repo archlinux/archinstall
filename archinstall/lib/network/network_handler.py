@@ -32,6 +32,12 @@ def install_network_config(
 				_configure_nm_iwd(installation)
 				installation.disable_service('iwd.service')
 
+		case NicType.IWD:
+			installation.add_additional_packages(['iwd'])
+			_configure_iwd_standalone(installation)
+			installation.enable_service('iwd.service')
+			installation.enable_service('systemd-resolved.service')
+
 		case NicType.MANUAL:
 			for nic in network_config.nics:
 				installation.configure_nic(nic)
@@ -45,3 +51,12 @@ def _configure_nm_iwd(installation: Installer) -> None:
 
 	iwd_backend_conf = nm_conf_dir / 'wifi_backend.conf'
 	_ = iwd_backend_conf.write_text('[device]\nwifi.backend=iwd\n')
+
+
+def _configure_iwd_standalone(installation: Installer) -> None:
+	# Let iwd handle DHCP/DNS itself; resolved picks up its DNS via the symlink.
+	iwd_conf_dir = installation.target / 'etc/iwd'
+	iwd_conf_dir.mkdir(parents=True, exist_ok=True)
+
+	main_conf = iwd_conf_dir / 'main.conf'
+	_ = main_conf.write_text('[General]\nEnableNetworkConfiguration=true\n\n[Network]\nNameResolvingService=systemd\n')
