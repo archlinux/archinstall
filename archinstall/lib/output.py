@@ -155,6 +155,10 @@ class Logger:
 	def path(self) -> Path:
 		return self._path / 'install.log'
 
+	@path.setter
+	def path(self, value: Path) -> None:
+		self._path = value
+
 	@property
 	def directory(self) -> Path:
 		return self._path
@@ -181,6 +185,17 @@ class Logger:
 			ts = _timestamp()
 			level_name = logging.getLevelName(level)
 			f.write(f'[{ts}] - {level_name} - {content}\n')
+
+	def get_content(self, max_bytes: int | None = None) -> bytes:
+		content = self.path.read_bytes()
+
+		if max_bytes is not None:
+			size = self.path.stat().st_size
+
+			if size > max_bytes:
+				content = content[-max_bytes:]
+
+		return content
 
 
 logger = Logger()
@@ -265,6 +280,11 @@ def _stylize_output(
 	return f'\033[{ansi}m{text}\033[0m'
 
 
+def _timestamp() -> str:
+	now = datetime.now(tz=UTC)
+	return now.strftime('%Y-%m-%d %H:%M:%S')
+
+
 def info(
 	*msgs: str,
 	level: int = logging.INFO,
@@ -274,11 +294,6 @@ def info(
 	font: list[Font] = [],
 ) -> None:
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
-
-
-def _timestamp() -> str:
-	now = datetime.now(tz=UTC)
-	return now.strftime('%Y-%m-%d %H:%M:%S')
 
 
 def debug(
@@ -338,35 +353,20 @@ def log(
 
 
 def share_install_log(
-	paste_url: str = 'https://paste.rs',
-	max_size: int = 10 * 1024 * 1024,
-	confirm: Callable[[str], bool] = lambda _: True,
-) -> int:
+	paste_url: str,
+	max_bytes: int | None = None,
+) -> str | None:
 	log_path = logger.path
 
 	if not log_path.exists():
 		info(f'Log file not found: {log_path}')
-		return 1
+		return None
 
-	size = log_path.stat().st_size
-	if size == 0:
+	content = logger.get_content(max_bytes=max_bytes)
+
+	if len(content) == 0:
 		info(f'Log file is empty: {log_path}')
-		return 1
-
-	if size > max_size:
-		info(f'Log file exceeds {max_size} bytes, uploading last {max_size} bytes')
-		content = log_path.read_bytes()[-max_size:]
-	else:
-		content = log_path.read_bytes()
-
-	header = f'About to upload {log_path} ({len(content)} bytes) to {paste_url}\n\n'
-	header += 'The log may contain hostname, mirror URLs, package list and partition layout.\n'
-	header += 'The uploaded paste is public.\n\n'
-	header += 'Continue?'
-
-	if not confirm(header):
-		info('Cancelled.')
-		return 1
+		return None
 
 	try:
 		req = urllib.request.Request(paste_url, data=content)
@@ -374,12 +374,10 @@ def share_install_log(
 			url = response.read().decode().strip()
 	except urllib.error.URLError as e:
 		info(f'Upload failed: {e}')
-		return 1
+		return None
 
 	if not url.startswith('http'):
 		info(f'Unexpected response from {paste_url}: {url[:200]!r}')
-		return 1
+		return None
 
-	# raw print so the URL is pipe-friendly (no ANSI colors, no log prefix)
-	print(url)
-	return 0
+	return url

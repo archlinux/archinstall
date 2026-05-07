@@ -40,6 +40,7 @@ dev = [
     "ruff==0.15.12",
     "pylint==4.0.5",
     "pytest==9.0.3",
+    "hypothesis>=6.152.4",
 ]
 doc = ["sphinx"]
 

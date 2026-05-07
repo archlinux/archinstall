@@ -41,6 +41,7 @@ repos:
       additional_dependencies:
         - pydantic
         - pytest
+        - hypothesis
         - cryptography
         - textual
   - repo: local

@@ -8,13 +8,13 @@ import time
 import traceback
 from pathlib import Path
 
-from archinstall.lib.args import ArchConfigHandler
+from archinstall.lib.args import ArchConfigHandler, SubCommand
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.menu.helpers import Confirmation
 from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
-from archinstall.lib.output import debug, error, info, share_install_log, warn
+from archinstall.lib.output import debug, error, info, logger, share_install_log, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr, translation_handler
@@ -75,17 +75,36 @@ def _list_scripts() -> str:
 	return '\n'.join(lines)
 
 
-def _tui_confirm(header: str) -> bool:
-	async def _ask() -> bool:
+def _share_log_command() -> None:
+	paste_url: str = 'https://paste.rs'
+	log_path = logger.path
+	max_size = 10 * 1024 * 1024  # max supported size by paste.rs
+	content = logger.get_content(max_bytes=max_size).decode()
+
+	header = tr('About to upload "{}" to the publicly accessible {}').format(log_path, paste_url) + '\n\n'
+	header += tr('Do you want to continue?')
+
+	group = MenuItemGroup.yes_no()
+	group.set_preview_for_all(lambda _: content)
+
+	async def _confirm() -> bool:
 		result = await Confirmation(
-			group=MenuItemGroup.yes_no(),
 			header=header,
 			allow_skip=False,
-			preset=False,
+			group=group,
+			preview_header='Log content',
+			preview_location='bottom',
 		).show()
 		return result.get_value()
 
-	return tui.run(_ask)
+	result = tui.run(_confirm)
+
+	if result is True:
+		res = share_install_log(paste_url=paste_url, max_bytes=max_size)
+		if res is not None:
+			info(tr('Log uploaded successfully. URL: {}').format(res))
+		else:
+			error(tr('Failed to upload log.'))
 
 
 def run() -> int:
@@ -94,14 +113,18 @@ def run() -> int:
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
-	if 'share-log' in sys.argv:
-		return share_install_log(confirm=_tui_confirm)
-
 	arch_config_handler = ArchConfigHandler()
 
 	if '--help' in sys.argv or '-h' in sys.argv:
 		arch_config_handler.print_help()
 		return 0
+
+	match arch_config_handler.args.command:
+		case SubCommand.SHARE_LOG:
+			_share_log_command()
+			exit(0)
+		case None:
+			pass
 
 	script = arch_config_handler.get_script()
 
