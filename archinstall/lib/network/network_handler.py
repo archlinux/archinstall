@@ -36,6 +36,7 @@ def install_network_config(
 			installation.add_additional_packages(['iwd'])
 			_configure_iwd_standalone(installation)
 			installation.enable_service('iwd.service')
+			installation.enable_service('systemd-networkd.service')
 			installation.enable_service('systemd-resolved.service')
 
 		case NicType.MANUAL:
@@ -54,9 +55,18 @@ def _configure_nm_iwd(installation: Installer) -> None:
 
 
 def _configure_iwd_standalone(installation: Installer) -> None:
-	# Let iwd handle DHCP/DNS itself; resolved picks up its DNS via the symlink.
+	# iwd manages wireless only; systemd-networkd handles wired DHCP.
 	iwd_conf_dir = installation.target / 'etc/iwd'
 	iwd_conf_dir.mkdir(parents=True, exist_ok=True)
 
 	main_conf = iwd_conf_dir / 'main.conf'
 	_ = main_conf.write_text('[General]\nEnableNetworkConfiguration=true\n\n[Network]\nNameResolvingService=systemd\n')
+
+	networkd_dir = installation.target / 'etc/systemd/network'
+	networkd_dir.mkdir(parents=True, exist_ok=True)
+	wired_conf = networkd_dir / '20-wired.network'
+	_ = wired_conf.write_text('[Match]\nName=en*\nName=eth*\n\n[Network]\nDHCP=yes\n')
+
+	resolv = installation.target / 'etc/resolv.conf'
+	resolv.unlink(missing_ok=True)
+	resolv.symlink_to('/run/systemd/resolve/stub-resolv.conf')
