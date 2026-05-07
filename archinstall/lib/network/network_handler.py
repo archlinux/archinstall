@@ -65,7 +65,7 @@ def _configure_iwd_standalone(installation: Installer) -> None:
 	networkd_dir = installation.target / 'etc/systemd/network'
 	networkd_dir.mkdir(parents=True, exist_ok=True)
 	wired_conf = networkd_dir / '20-wired.network'
-	_ = wired_conf.write_text('[Match]\nName=en*\nName=eth*\n\n[Network]\nDHCP=yes\n')
+	_ = wired_conf.write_text('[Match]\nType=ether\nKind=!*\n\n[Network]\nDHCP=yes\n')
 
 	resolv = installation.target / 'etc/resolv.conf'
 	resolv.unlink(missing_ok=True)
