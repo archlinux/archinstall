@@ -2,7 +2,7 @@ from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
-from typing import Any, ClassVar, Self, override
+from typing import Any, Self, override
 
 from archinstall.lib.translationhandler import tr
 
@@ -23,9 +23,6 @@ class MenuItem:
 
 	_id: str = ''
 
-	_yes: ClassVar[Self | None] = None
-	_no: ClassVar[Self | None] = None
-
 	def __post_init__(self) -> None:
 		if self.key is not None:
 			self._id = self.key
@@ -45,17 +42,11 @@ class MenuItem:
 
 	@classmethod
 	def yes(cls, action: Callable[[Any], Any] | None = None) -> Self:
-		if cls._yes is None:
-			cls._yes = cls(tr('Yes'), value=True, key='yes', action=action)
-
-		return cls._yes
+		return cls(tr('Yes'), value=True, key='yes', action=action)
 
 	@classmethod
 	def no(cls, action: Callable[[Any], Any] | None = None) -> Self:
-		if cls._no is None:
-			cls._no = cls(tr('No'), value=False, key='no', action=action)
-
-		return cls._no
+		return cls(tr('No'), value=False, key='no', action=action)
 
 	def is_empty(self) -> bool:
 		return self.text == '' or self.text is None
