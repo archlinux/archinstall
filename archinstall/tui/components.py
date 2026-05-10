@@ -350,11 +350,6 @@ class OptionListScreen(BaseScreen[ValueT]):
 			]
 		)
 
-		# debug(f'Index: {index}')
-		# debug(f'Region: {option_list.region}')
-		# debug(f'Scroll offset: {option_list.scroll_offset}')
-		# debug(f'Target_Y: {target_y}')
-
 		self.app.cursor_position = Offset(option_list.region.x, target_y)
 		self.app.refresh()
 
@@ -1162,8 +1157,6 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 				-data_table.scroll_offset.y,  # scroll offset
 			]
 		)
-
-		debug(f'Setting cursor to target_y: {target_y}')
 
 		self.app.cursor_position = Offset(data_table.region.x, target_y)
 		self.app.refresh()

@@ -6,13 +6,12 @@ from typing import Any
 
 from pydantic import TypeAdapter
 
-from archinstall.lib.args import ArchConfig
+from archinstall.lib.args import ArchConfig, ArchConfigType
 from archinstall.lib.crypt import encrypt
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.menu.util import get_password, prompt_dir
-from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.network import NetworkConfiguration
-from archinstall.lib.output import debug, logger, warn
+from archinstall.lib.output import as_key_value_pair, debug, logger, warn
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -45,7 +44,7 @@ class ConfigurationOutput:
 	def user_config_to_json(self) -> str:
 		config = self._config.safe_config()
 
-		adapter = TypeAdapter(dict[str, Any])
+		adapter = TypeAdapter(dict[ArchConfigType, Any])
 		python_dict = adapter.dump_python(config)
 		return json.dumps(python_dict, indent=4, sort_keys=True)
 
@@ -64,65 +63,24 @@ class ConfigurationOutput:
 		"""
 		Render a concise two-column summary of the current configuration.
 
-		The left column holds section labels, the right column holds values.
-		Column width adapts to the longest translated label so translations
-		do not break the alignment. Rows whose underlying config is not set
-		are skipped.
-
 		Returns an empty string if nothing meaningful to show.
 		"""
-		rows: list[tuple[str, str]] = []
+		cfg: dict[str, str | list[str] | bool] = {}
 
-		disk_config = self._config.disk_config
-		if disk_config and disk_config.device_modifications:
-			disk_parts: list[str] = []
-			for mod in disk_config.device_modifications:
-				path = str(mod.device_path)
-				root_part = mod.get_root_partition()
-				flags: list[str] = []
-				if root_part and root_part.fs_type:
-					flags.append(root_part.fs_type.value)
-				if disk_config.disk_encryption:
-					flags.append(tr('LUKS'))
-				disk_parts.append(f'{path} ({" + ".join(flags)})' if flags else path)
-			rows.append((tr('Disks'), ', '.join(disk_parts)))
+		for key, value in self._config.plain_cfg().items():
+			cfg[key.text()] = value
 
-		bl_config = self._config.bootloader_config
-		if bl_config and bl_config.bootloader != Bootloader.NO_BOOTLOADER:
-			rows.append((tr('Bootloader'), bl_config.bootloader.value))
+		for config_type, obj in self._config.sub_cfg().items():
+			if not hasattr(obj, 'summary'):
+				continue
 
-		kernels = self._config.kernels
-		if kernels:
-			rows.append((tr('Kernel'), ', '.join(kernels)))
+			summary = obj.summary()
+			if summary:
+				cfg[config_type.text()] = summary
 
-		profile_config = self._config.profile_config
-		if profile_config and profile_config.profile:
-			names = profile_config.profile.current_selection_names()
-			rows.append((tr('Profile'), ', '.join(names) if names else profile_config.profile.name))
-			if profile_config.greeter:
-				rows.append((tr('Greeter'), profile_config.greeter.value))
+		simple_summary = as_key_value_pair(cfg, ignore_empty=True)
 
-		packages = self._config.packages
-		if packages:
-			rows.append((tr('Packages'), str(len(packages))))
-
-		net_config = self._config.network_config
-		if isinstance(net_config, NetworkConfiguration):
-			rows.append((tr('Network'), net_config.type.display_msg()))
-
-		locale_config = self._config.locale_config
-		if locale_config:
-			rows.append((tr('Locale'), locale_config.sys_lang))
-
-		tz = self._config.timezone
-		if tz:
-			rows.append((tr('Timezone'), tz))
-
-		if not rows:
-			return ''
-
-		label_width = max(len(label) for label, _ in rows) + 2
-		return '\n'.join(f'{label:<{label_width}}{value}' for label, value in rows)
+		return simple_summary
 
 	async def confirm_config(self, show_install_warnings: bool = False) -> bool:
 		header = f'{tr("The specified configuration will be applied")}. '
