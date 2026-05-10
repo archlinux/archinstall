@@ -1,0 +1,43 @@
+[Content]
+Packages=
+	acpid
+	intel-media-driver
+	linux-firmware
+	linux-firmware-intel
+	ca-certificates-mozilla
+	ca-certificates-utils
+	nano
+	gvfs
+	noto-fonts
+	cantarell-fonts
+	ttf-dejavu
+	polkit
+	bash
+	bzip2
+	coreutils
+	file
+	filesystem
+	findutils
+	gawk
+	gcc-libs
+	gettext
+	glibc
+	grep
+	gzip
+	iproute2
+	iputils
+	licenses
+	pciutils
+	procps-ng
+	psmisc
+	sed
+	tar
+	linux
+	diffutils
+	less
+	strace
+	util-linux
+	xz
+	git
+WithDocs=false
+KernelCommandLine=quiet splash
