@@ -38,6 +38,16 @@ Packages=
 	strace
 	util-linux
 	xz
+	pacman-contrib
+	gcc
 	git
+	pkgconfig
+	python
+	python-pip
+	python-uv
+	python-setuptools
+	python-pyparted
+	python-pydantic
+	python-textual
 WithDocs=false
 KernelCommandLine=quiet splash

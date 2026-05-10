@@ -41,3 +41,7 @@ requirements.txt
 /cmd_output.txt
 node_modules/
 uv.lock
+test_tooling/mkosi/*image*
+test_tooling/mkosi/mkosi.cache/**
+test_tooling/mkosi/mkosi.tools/**
+test_tooling/mkosi/mkosi.tools.manifest
