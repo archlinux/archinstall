@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, NotRequired, Self, TypedDict
+from typing import Any, NotRequired, Self, TypedDict, override
 
+from archinstall.lib.models.config import SubConfig
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.translationhandler import tr
 
@@ -58,7 +59,7 @@ class U2FLoginConfiguration:
 
 
 @dataclass
-class AuthenticationConfiguration:
+class AuthenticationConfiguration(SubConfig):
 	root_enc_password: Password | None = None
 	users: list[User] = field(default_factory=list)
 	u2f_config: U2FLoginConfiguration | None = None
@@ -75,6 +76,7 @@ class AuthenticationConfiguration:
 
 		return auth_config
 
+	@override
 	def json(self) -> AuthenticationSerialization:
 		config: AuthenticationSerialization = {}
 
@@ -82,6 +84,21 @@ class AuthenticationConfiguration:
 			config['u2f_config'] = self.u2f_config.json()
 
 		return config
+
+	@override
+	def summary(self) -> list[str]:
+		out: list[str] = []
+
+		if self.root_enc_password:
+			out.append(tr('Root password set'))
+
+		if self.users:
+			out.append(tr('Configured {} user(s)').format(len(self.users)))
+
+		if self.u2f_config:
+			out.append(tr('U2F set up'))
+
+		return out
 
 	def has_superuser(self) -> bool:
 		return any(u.sudo for u in self.users)

@@ -6,6 +6,7 @@ import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
+from enum import StrEnum
 from pathlib import Path
 from typing import Any, Self
 from urllib.request import Request, urlopen
@@ -17,6 +18,7 @@ from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
+from archinstall.lib.models.config import SubConfig
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
@@ -57,6 +59,81 @@ class Arguments:
 	verbose: bool = False
 
 
+class ArchConfigType(StrEnum):
+	VERSION = 'version'
+	SCRIPT = 'script'
+	LOCALE_CONFIG = 'locale_config'
+	ARCHINSTALL_LANGUAGE = 'archinstall_language'
+	DISK_CONFIG = 'disk_config'
+	PROFILE_CONFIG = 'profile_config'
+	MIRROR_CONFIG = 'mirror_config'
+	NETWORK_CONFIG = 'network_config'
+	BOOTLOADER_CONFIG = 'bootloader_config'
+	APP_CONFIG = 'app_config'
+	AUTH_CONFIG = 'auth_config'
+	SWAP = 'swap'
+	USERS = 'users'
+	ROOT_ENC_PASSWORD = 'root_enc_password'
+	ENCRYPTION_PASSWORD = 'encryption_password'
+	HOSTNAME = 'hostname'
+	KERNELS = 'kernels'
+	NTP = 'ntp'
+	TIMEZONE = 'timezone'
+	SERVICES = 'services'
+	PACKAGES = 'packages'
+	PACMAN_CONFIG = 'pacman_config'
+	CUSTOM_COMMANDS = 'custom_commands'
+
+	def text(self) -> str:
+		match self:
+			case ArchConfigType.ARCHINSTALL_LANGUAGE:
+				return tr('ArchInstall Language')
+			case ArchConfigType.VERSION:
+				return tr('Version')
+			case ArchConfigType.SCRIPT:
+				return tr('Installation Script')
+			case ArchConfigType.LOCALE_CONFIG:
+				return tr('Locales')
+			case ArchConfigType.DISK_CONFIG:
+				return tr('Disk configuration')
+			case ArchConfigType.PROFILE_CONFIG:
+				return tr('Profile')
+			case ArchConfigType.MIRROR_CONFIG:
+				return tr('Mirrors and repositories')
+			case ArchConfigType.NETWORK_CONFIG:
+				return tr('Network')
+			case ArchConfigType.BOOTLOADER_CONFIG:
+				return tr('Bootloader')
+			case ArchConfigType.APP_CONFIG:
+				return tr('Application')
+			case ArchConfigType.AUTH_CONFIG:
+				return tr('Authentication')
+			case ArchConfigType.SWAP:
+				return tr('Swap')
+			case ArchConfigType.HOSTNAME:
+				return tr('Hostname')
+			case ArchConfigType.KERNELS:
+				return tr('Kernels')
+			case ArchConfigType.NTP:
+				return tr('Automatic time sync (NTP)')
+			case ArchConfigType.TIMEZONE:
+				return tr('Timezone')
+			case ArchConfigType.SERVICES:
+				return tr('Services')
+			case ArchConfigType.PACKAGES:
+				return tr('Additional packages')
+			case ArchConfigType.PACMAN_CONFIG:
+				return tr('Pacman')
+			case ArchConfigType.CUSTOM_COMMANDS:
+				return tr('Custom commands')
+			case ArchConfigType.USERS:
+				return tr('Users')
+			case ArchConfigType.ROOT_ENC_PASSWORD:
+				return tr('Root encrypted password')
+			case ArchConfigType.ENCRYPTION_PASSWORD:
+				return tr('Disk encryption password')
+
+
 @dataclass
 class ArchConfig:
 	version: str | None = None
@@ -80,58 +157,84 @@ class ArchConfig:
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
 
-	def unsafe_config(self) -> dict[str, Any]:
-		config: dict[str, list[UserSerialization] | str | None] = {}
+	def unsafe_config(self) -> dict[ArchConfigType, Any]:
+		config: dict[ArchConfigType, list[UserSerialization] | str | None] = {}
 
 		if self.auth_config:
 			if self.auth_config.users:
-				config['users'] = [user.json() for user in self.auth_config.users]
+				config[ArchConfigType.USERS] = [user.json() for user in self.auth_config.users]
 
 			if self.auth_config.root_enc_password:
-				config['root_enc_password'] = self.auth_config.root_enc_password.enc_password
+				config[ArchConfigType.ROOT_ENC_PASSWORD] = self.auth_config.root_enc_password.enc_password
 
 		if self.disk_config:
 			disk_encryption = self.disk_config.disk_encryption
 			if disk_encryption and disk_encryption.encryption_password:
-				config['encryption_password'] = disk_encryption.encryption_password.plaintext
+				config[ArchConfigType.ENCRYPTION_PASSWORD] = disk_encryption.encryption_password.plaintext
 
 		return config
 
-	def safe_config(self) -> dict[str, Any]:
-		config: Any = {
-			'version': self.version,
-			'script': self.script,
-			'archinstall-language': self.archinstall_language.json(),
-			'hostname': self.hostname,
-			'kernels': self.kernels,
-			'ntp': self.ntp,
-			'packages': self.packages,
-			'pacman_config': self.pacman_config.json(),
-			'swap': self.swap,
-			'timezone': self.timezone,
-			'services': self.services,
-			'custom_commands': self.custom_commands,
-			'bootloader_config': self.bootloader_config.json() if self.bootloader_config else None,
-			'app_config': self.app_config.json() if self.app_config else None,
-			'auth_config': self.auth_config.json() if self.auth_config else None,
+	def safe_config(self) -> dict[ArchConfigType, Any]:
+		base_config: dict[ArchConfigType, Any] = {
+			ArchConfigType.VERSION: self.version,
+			ArchConfigType.SCRIPT: self.script,
+			ArchConfigType.ARCHINSTALL_LANGUAGE: self.archinstall_language.json(),
 		}
 
-		if self.locale_config:
-			config['locale_config'] = self.locale_config.json()
+		base_config.update(self.plain_cfg())
+		sub_config = self.sub_cfg()
 
-		if self.disk_config:
-			config['disk_config'] = self.disk_config.json()
+		for config_type, value in sub_config.items():
+			if not hasattr(value, 'json'):
+				raise ValueError(f'Config value for {config_type} must implement json() method')
+			base_config[config_type] = value.json()
 
-		if self.profile_config:
-			config['profile_config'] = self.profile_config.json()
+		return base_config
+
+	def plain_cfg(self) -> dict[ArchConfigType, str | list[str] | bool]:
+		return {
+			ArchConfigType.HOSTNAME: self.hostname,
+			ArchConfigType.KERNELS: self.kernels,
+			ArchConfigType.NTP: self.ntp,
+			ArchConfigType.TIMEZONE: self.timezone,
+			ArchConfigType.SERVICES: self.services,
+			ArchConfigType.PACKAGES: self.packages,
+			ArchConfigType.CUSTOM_COMMANDS: self.custom_commands,
+		}
+
+	def sub_cfg(self) -> dict[ArchConfigType, SubConfig]:
+		cfg: dict[ArchConfigType, SubConfig] = {
+			ArchConfigType.PACMAN_CONFIG: self.pacman_config,
+		}
 
 		if self.mirror_config:
-			config['mirror_config'] = self.mirror_config.json()
+			cfg[ArchConfigType.MIRROR_CONFIG] = self.mirror_config
+
+		if self.bootloader_config:
+			cfg[ArchConfigType.BOOTLOADER_CONFIG] = self.bootloader_config
+
+		if self.disk_config:
+			cfg[ArchConfigType.DISK_CONFIG] = self.disk_config
+
+		if self.swap:
+			cfg[ArchConfigType.SWAP] = self.swap
+
+		if self.auth_config:
+			cfg[ArchConfigType.AUTH_CONFIG] = self.auth_config
+
+		if self.locale_config:
+			cfg[ArchConfigType.LOCALE_CONFIG] = self.locale_config
+
+		if self.profile_config:
+			cfg[ArchConfigType.PROFILE_CONFIG] = self.profile_config
 
 		if self.network_config:
-			config['network_config'] = self.network_config.json()
+			cfg[ArchConfigType.NETWORK_CONFIG] = self.network_config
 
-		return config
+		if self.app_config:
+			cfg[ArchConfigType.APP_CONFIG] = self.app_config
+
+		return cfg
 
 	@classmethod
 	def from_config(cls, args_config: dict[str, Any], args: Arguments) -> Self:

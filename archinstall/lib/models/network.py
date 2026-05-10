@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import NotRequired, Self, TypedDict, override
 
+from archinstall.lib.models.config import SubConfig
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
 
@@ -103,16 +104,21 @@ class _NetworkConfigurationSerialization(TypedDict):
 
 
 @dataclass
-class NetworkConfiguration:
+class NetworkConfiguration(SubConfig):
 	type: NicType
 	nics: list[Nic] = field(default_factory=list)
 
+	@override
 	def json(self) -> _NetworkConfigurationSerialization:
 		config: _NetworkConfigurationSerialization = {'type': self.type.value}
 		if self.nics:
 			config['nics'] = [n.json() for n in self.nics]
 
 		return config
+
+	@override
+	def summary(self) -> str:
+		return self.type.display_msg()
 
 	@classmethod
 	def parse_arg(cls, config: _NetworkConfigurationSerialization) -> Self | None:
