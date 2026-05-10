@@ -49,10 +49,10 @@ class ConfigurationOutput:
 		return json.dumps(python_dict, indent=4, sort_keys=True)
 
 	def user_credentials_to_json(self) -> str:
-		config = self._config.unsafe_config()
+		cfg = self._config.unsafe_config()
 
-		adapter = TypeAdapter(dict[str, Any])
-		python_dict = adapter.dump_python(config)
+		adapter = TypeAdapter(dict[ArchConfigType, Any])
+		python_dict = adapter.dump_python(cfg)
 		return json.dumps(python_dict, indent=4, sort_keys=True)
 
 	def write_debug(self) -> None:

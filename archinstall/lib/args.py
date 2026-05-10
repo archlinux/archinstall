@@ -72,6 +72,9 @@ class ArchConfigType(StrEnum):
 	APP_CONFIG = 'app_config'
 	AUTH_CONFIG = 'auth_config'
 	SWAP = 'swap'
+	USERS = 'users'
+	ROOT_ENC_PASSWORD = 'root_enc_password'
+	ENCRYPTION_PASSWORD = 'encryption_password'
 	HOSTNAME = 'hostname'
 	KERNELS = 'kernels'
 	NTP = 'ntp'
@@ -123,6 +126,12 @@ class ArchConfigType(StrEnum):
 				return tr('Pacman')
 			case ArchConfigType.CUSTOM_COMMANDS:
 				return tr('Custom commands')
+			case ArchConfigType.USERS:
+				return tr('Users')
+			case ArchConfigType.ROOT_ENC_PASSWORD:
+				return tr('Root encrypted password')
+			case ArchConfigType.ENCRYPTION_PASSWORD:
+				return tr('Disk encryption password')
 
 
 @dataclass
@@ -148,20 +157,20 @@ class ArchConfig:
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
 
-	def unsafe_config(self) -> dict[str, Any]:
-		config: dict[str, list[UserSerialization] | str | None] = {}
+	def unsafe_config(self) -> dict[ArchConfigType, Any]:
+		config: dict[ArchConfigType, list[UserSerialization] | str | None] = {}
 
 		if self.auth_config:
 			if self.auth_config.users:
-				config['users'] = [user.json() for user in self.auth_config.users]
+				config[ArchConfigType.USERS] = [user.json() for user in self.auth_config.users]
 
 			if self.auth_config.root_enc_password:
-				config['root_enc_password'] = self.auth_config.root_enc_password.enc_password
+				config[ArchConfigType.ROOT_ENC_PASSWORD] = self.auth_config.root_enc_password.enc_password
 
 		if self.disk_config:
 			disk_encryption = self.disk_config.disk_encryption
 			if disk_encryption and disk_encryption.encryption_password:
-				config['encryption_password'] = disk_encryption.encryption_password.plaintext
+				config[ArchConfigType.ENCRYPTION_PASSWORD] = disk_encryption.encryption_password.plaintext
 
 		return config
 
