@@ -6,7 +6,6 @@ import subprocess
 import textwrap
 import time
 from collections.abc import Callable
-from contextlib import suppress
 from pathlib import Path
 from subprocess import CalledProcessError
 from types import TracebackType
@@ -17,7 +16,7 @@ from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.command import SysCommand, run
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.disk.luks import Luks2, unlock_luks2_dev
-from archinstall.lib.disk.lvm import lvm_import_vg, lvm_pvseg_info, lvm_vg_change, lvm_vol_change
+from archinstall.lib.disk.lvm import lvm_import_vg, lvm_pvseg_info, lvm_vol_change
 from archinstall.lib.disk.utils import (
 	get_lsblk_by_mountpoint,
 	get_lsblk_info,
@@ -25,8 +24,7 @@ from archinstall.lib.disk.utils import (
 	get_unique_path_for_device,
 	mount,
 	swapon,
-	udev_sync,
-	umount,
+	teardown,
 )
 from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from archinstall.lib.hardware import SysInfo
@@ -176,7 +174,7 @@ class Installer:
 				return False
 		finally:
 			try:
-				self.teardown()
+				teardown(self)
 			except Exception as err:
 				warn(f'Failed to teardown installation target: {err}')
 
@@ -447,110 +445,6 @@ class Installer:
 			mountpoint = self.target / subvol.relative_mountpoint
 			options = mount_options + [f'subvol={subvol.name}']
 			mount(dev_path, mountpoint, options=options)
-
-	def teardown(self) -> None:
-		if not self._layout_teardown_required:
-			debug('No mounted layout registered for teardown')
-			return
-
-		info('Tearing down installation target')
-
-		with suppress(Exception):
-			os.sync()
-
-		self._swapoff_layout()
-
-		with suppress(SysCallError, DiskError):
-			umount(self.target, recursive=True)
-
-		match self._disk_encryption.encryption_type:
-			case EncryptionType.LUKS:
-				self._teardown_luks_partitions()
-
-			case EncryptionType.LUKS_ON_LVM:
-				self._teardown_luks_lvm()
-				self._teardown_lvm()
-
-			case EncryptionType.LVM_ON_LUKS:
-				self._teardown_lvm()
-				self._teardown_luks_partitions()
-
-			case EncryptionType.NO_ENCRYPTION:
-				self._teardown_lvm()
-
-		with suppress(SysCallError):
-			udev_sync()
-
-		self._layout_teardown_required = False
-
-	def _swapoff_path(self, path: Path | None) -> None:
-		if path is None:
-			return
-
-		with suppress(SysCallError, DiskError):
-			SysCommand(['swapoff', str(path)])
-
-	def _swapoff_layout(self) -> None:
-		for mod in self._disk_config.device_modifications:
-			for part in mod.partitions:
-				if part.is_swap():
-					self._swapoff_path(part.dev_path)
-
-					if part.mapper_name:
-						self._swapoff_path(Path('/dev/mapper') / part.mapper_name)
-
-		if not self._disk_config.lvm_config:
-			return
-
-		for vol in self._disk_config.lvm_config.get_all_volumes():
-			if vol.fs_type == FilesystemType.LINUX_SWAP:
-				self._swapoff_path(vol.dev_path)
-
-				if vol.mapper_name:
-					self._swapoff_path(Path('/dev/mapper') / vol.mapper_name)
-
-	def _teardown_lvm(self) -> None:
-		lvm_config = self._disk_config.lvm_config
-
-		if not lvm_config:
-			return
-
-		for vg in reversed(lvm_config.vol_groups):
-			for vol in reversed(vg.volumes):
-				if not vol.dev_path:
-					continue
-
-				with suppress(SysCallError, DiskError):
-					lvm_vol_change(vol, False)
-
-			with suppress(SysCallError, DiskError):
-				lvm_vg_change(vg, False)
-
-	def _teardown_luks_partitions(self) -> None:
-		for part_mod in reversed(self._disk_encryption.partitions):
-			if not part_mod.dev_path or not part_mod.mapper_name:
-				continue
-
-			luks_handler = Luks2(
-				part_mod.dev_path,
-				mapper_name=part_mod.mapper_name,
-			)
-
-			with suppress(SysCallError, DiskError):
-				luks_handler.lock()
-
-	def _teardown_luks_lvm(self) -> None:
-		for vol in reversed(self._disk_encryption.lvm_volumes):
-			if not vol.dev_path or not vol.mapper_name:
-				continue
-
-			luks_handler = Luks2(
-				vol.dev_path,
-				mapper_name=vol.mapper_name,
-			)
-
-			with suppress(SysCallError, DiskError):
-				luks_handler.lock()
 
 	def generate_key_files(self) -> None:
 		match self._disk_encryption.encryption_type:
