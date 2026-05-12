@@ -27,7 +27,7 @@ from archinstall.lib.models.device import (
 	_DeviceInfo,
 )
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import CustomRepository, MirrorConfiguration, MirrorRegion
+from archinstall.lib.models.mirrors import CustomRepository, MirrorRegion, PacmanConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.packages import LocalPackage, PackageSearch, PackageSearchResult, Repository
 from archinstall.lib.models.profile import ProfileConfiguration
@@ -56,7 +56,6 @@ __all__ = [
 	'LvmLayoutType',
 	'LvmVolume',
 	'LvmVolumeGroup',
-	'MirrorConfiguration',
 	'MirrorRegion',
 	'ModificationStatus',
 	'NetworkConfiguration',
@@ -64,6 +63,7 @@ __all__ = [
 	'NicType',
 	'PackageSearch',
 	'PackageSearchResult',
+	'PacmanConfiguration',
 	'PartitionFlag',
 	'PartitionModification',
 	'PartitionTable',

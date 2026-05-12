@@ -14,23 +14,21 @@ from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.locale_menu import LocaleMenu
 from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
-from archinstall.lib.mirror.mirror_menu import MirrorMenu
+from archinstall.lib.mirror.mirror_menu import PacmanMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, PartitionModification
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import MirrorConfiguration
+from archinstall.lib.models.mirrors import PacmanConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, NicType
 from archinstall.lib.models.package_types import DEFAULT_KERNEL
 from archinstall.lib.models.packages import Repository
-from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
 from archinstall.lib.output import FormattedOutput
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
-from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.tui.components import tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -76,10 +74,10 @@ class GlobalMenu(AbstractMenu[None]):
 				key='locale_config',
 			),
 			MenuItem(
-				text=tr('Mirrors and repositories'),
-				action=self._mirror_configuration,
-				preview_action=self._prev_mirror_config,
-				key='mirror_config',
+				text=tr('Pacman configuration'),
+				action=self._pacman_configuration,
+				preview_action=self._prev_pacman_config,
+				key='pacman_config',
 			),
 			MenuItem(
 				text=tr('Disk configuration'),
@@ -142,13 +140,6 @@ class GlobalMenu(AbstractMenu[None]):
 				value={},
 				preview_action=self._prev_network_config,
 				key='network_config',
-			),
-			MenuItem(
-				text=tr('Pacman'),
-				action=self._pacman_configuration,
-				value=PacmanConfiguration.default(),
-				preview_action=self._prev_pacman_config,
-				key='pacman_config',
 			),
 			MenuItem(
 				text=tr('Additional packages'),
@@ -419,19 +410,6 @@ class GlobalMenu(AbstractMenu[None]):
 			return f'{tr("Hostname")}: {item.value}'
 		return None
 
-	async def _pacman_configuration(self, preset: PacmanConfiguration) -> PacmanConfiguration | None:
-		return await PacmanMenu(preset, advanced=self._advanced).show()
-
-	def _prev_pacman_config(self, item: MenuItem) -> str | None:
-		if not item.value:
-			return None
-		config: PacmanConfiguration = item.value
-		output = ''
-		if self._advanced:
-			output += '{}: {}\n'.format(tr('Parallel Downloads'), config.parallel_downloads)
-		output += '{}: {}'.format(tr('Color'), config.color)
-		return output
-
 	def _prev_kernel(self, item: MenuItem) -> str | None:
 		if item.value:
 			kernel = ', '.join(item.value)
@@ -555,7 +533,7 @@ class GlobalMenu(AbstractMenu[None]):
 		return profile_config
 
 	async def _select_additional_packages(self, preset: list[str]) -> list[str]:
-		config: MirrorConfiguration | None = self._item_group.find_by_key('mirror_config').value
+		config: PacmanConfiguration | None = self._item_group.find_by_key('pacman_config').value
 
 		repositories: set[Repository] = set()
 		if config:
@@ -568,51 +546,54 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return packages
 
-	async def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
+	async def _pacman_configuration(self, preset: PacmanConfiguration | None = None) -> PacmanConfiguration | None:
 		if self._mirror_list_handler is None:
 			self._mirror_list_handler = MirrorListHandler()
 
-		mirror_configuration = await MirrorMenu(self._mirror_list_handler, preset=preset).run()
+		pacman_configuration = await PacmanMenu(self._mirror_list_handler, preset=preset).run()
 
-		if mirror_configuration and mirror_configuration.optional_repositories:
+		if pacman_configuration and pacman_configuration.optional_repositories:
 			# reset the package list cache in case the repository selection has changed
 			list_available_packages.cache_clear()
 
 			# enable the repositories in the config
 			pacman_config = PacmanConfig(None)
-			pacman_config.enable(mirror_configuration.optional_repositories)
+			pacman_config.enable(pacman_configuration.optional_repositories)
 			pacman_config.apply()
 
-		return mirror_configuration
+		return pacman_configuration
 
-	def _prev_mirror_config(self, item: MenuItem) -> str | None:
+	def _prev_pacman_config(self, item: MenuItem) -> str | None:
 		if not item.value:
 			return None
 
-		mirror_config: MirrorConfiguration = item.value
+		pacman_config: PacmanConfiguration = item.value
 
 		output = ''
-		if mirror_config.mirror_regions:
+		if pacman_config.mirror_regions:
 			title = tr('Selected mirror regions')
 			divider = '-' * len(title)
-			regions = mirror_config.region_names
+			regions = pacman_config.region_names
 			output += f'{title}\n{divider}\n{regions}\n\n'
 
-		if mirror_config.custom_servers:
+		if pacman_config.custom_servers:
 			title = tr('Custom servers')
 			divider = '-' * len(title)
-			servers = mirror_config.custom_server_urls
+			servers = pacman_config.custom_server_urls
 			output += f'{title}\n{divider}\n{servers}\n\n'
 
-		if mirror_config.optional_repositories:
+		if pacman_config.optional_repositories:
 			title = tr('Optional repositories')
 			divider = '-' * len(title)
-			repos = ', '.join(r.value for r in mirror_config.optional_repositories)
+			repos = ', '.join(r.value for r in pacman_config.optional_repositories)
 			output += f'{title}\n{divider}\n{repos}\n\n'
 
-		if mirror_config.custom_repositories:
+		if pacman_config.custom_repositories:
 			title = tr('Custom repositories')
-			table = FormattedOutput.as_table(mirror_config.custom_repositories)
-			output += f'{title}:\n\n{table}'
+			table = FormattedOutput.as_table(pacman_config.custom_repositories)
+			output += f'{title}:\n\n{table}\n\n'
+
+		output += '{}: {}\n'.format(tr('Parallel Downloads'), pacman_config.parallel_downloads)
+		output += '{}: {}'.format(tr('Color'), pacman_config.color)
 
 		return output.strip()

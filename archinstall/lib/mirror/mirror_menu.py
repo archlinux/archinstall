@@ -1,19 +1,20 @@
 from typing import override
 
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
-from archinstall.lib.menu.helpers import Input, Loading, Selection
+from archinstall.lib.menu.helpers import Confirmation, Input, Loading, Selection
 from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.mirrors import (
 	CustomRepository,
 	CustomServer,
-	MirrorConfiguration,
 	MirrorRegion,
+	PacmanConfiguration,
 	SignCheck,
 	SignOption,
 )
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.output import FormattedOutput
+from archinstall.lib.pathnames import PACMAN_CONF
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -201,16 +202,16 @@ class CustomMirrorServersList(ListManager[CustomServer]):
 				return None
 
 
-class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
+class PacmanMenu(AbstractSubMenu[PacmanConfiguration]):
 	def __init__(
 		self,
 		mirror_list_handler: MirrorListHandler,
-		preset: MirrorConfiguration | None = None,
+		preset: PacmanConfiguration | None = None,
 	):
 		if preset:
-			self._mirror_config = preset
+			self._pacman_config = preset
 		else:
-			self._mirror_config = MirrorConfiguration()
+			self._pacman_config = PacmanConfiguration()
 
 		self._mirror_list_handler = mirror_list_handler
 
@@ -219,7 +220,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 
 		super().__init__(
 			self._item_group,
-			config=self._mirror_config,
+			config=self._pacman_config,
 			allow_reset=True,
 		)
 
@@ -228,14 +229,14 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 			MenuItem(
 				text=tr('Select regions'),
 				action=lambda x: select_mirror_regions(self._mirror_list_handler, x),
-				value=self._mirror_config.mirror_regions,
+				value=self._pacman_config.mirror_regions,
 				preview_action=self._prev_regions,
 				key='mirror_regions',
 			),
 			MenuItem(
 				text=tr('Add custom servers'),
 				action=add_custom_mirror_servers,
-				value=self._mirror_config.custom_servers,
+				value=self._pacman_config.custom_servers,
 				preview_action=self._prev_custom_servers,
 				key='custom_servers',
 			),
@@ -249,9 +250,23 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 			MenuItem(
 				text=tr('Add custom repository'),
 				action=select_custom_mirror,
-				value=self._mirror_config.custom_repositories,
+				value=self._pacman_config.custom_repositories,
 				preview_action=self._prev_custom_mirror,
 				key='custom_repositories',
+			),
+			MenuItem(
+				text=tr('Parallel Downloads'),
+				action=select_parallel_downloads,
+				value=self._pacman_config.parallel_downloads,
+				preview_action=lambda item: str(item.get_value()),
+				key='parallel_downloads',
+			),
+			MenuItem(
+				text=tr('Color'),
+				action=select_color,
+				value=self._pacman_config.color,
+				preview_action=lambda item: str(item.get_value()),
+				key='color',
 			),
 		]
 
@@ -293,8 +308,73 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 		return output.strip()
 
 	@override
-	async def show(self) -> MirrorConfiguration | None:
-		return await super().show()
+	async def show(self) -> PacmanConfiguration | None:
+		config = await super().show()
+
+		if config is not None:
+			_apply_to_live(config.parallel_downloads)
+
+		return config
+
+
+def _apply_to_live(parallel_downloads: int) -> None:
+	"""Apply ParallelDownloads to live system pacman.conf for faster installation."""
+	with PACMAN_CONF.open() as f:
+		pacman_conf = f.read().split('\n')
+
+	with PACMAN_CONF.open('w') as fwrite:
+		for line in pacman_conf:
+			if 'ParallelDownloads' in line:
+				fwrite.write(f'ParallelDownloads = {parallel_downloads}\n')
+			else:
+				fwrite.write(f'{line}\n')
+
+
+async def select_parallel_downloads(preset: int = 5) -> int | None:
+	max_recommended = 10
+
+	header = tr('Enter the number of parallel downloads (1-{})').format(max_recommended)
+
+	def validator(s: str) -> str | None:
+		try:
+			value = int(s)
+			if 1 <= value <= max_recommended:
+				return None
+			return tr('Value must be between 1 and {}').format(max_recommended)
+		except Exception:
+			return tr('Please enter a valid number')
+
+	result = await Input(
+		header=header,
+		allow_skip=True,
+		allow_reset=True,
+		validator_callback=validator,
+		default_value=str(preset),
+	).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return 5
+		case ResultType.Selection:
+			return int(result.get_value())
+
+
+async def select_color(preset: bool = True) -> bool | None:
+	result = await Confirmation(
+		header=tr('Enable colored output for pacman'),
+		preset=preset,
+		allow_skip=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return True
+		case ResultType.Selection:
+			return result.get_value()
 
 
 async def select_mirror_regions(

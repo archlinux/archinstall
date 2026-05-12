@@ -230,19 +230,23 @@ class CustomServer:
 		return configs
 
 
-class _MirrorConfigurationSerialization(TypedDict):
+class _PacmanConfigurationSerialization(TypedDict):
 	mirror_regions: dict[str, list[str]]
 	custom_servers: list[CustomServer]
 	optional_repositories: list[str]
 	custom_repositories: list[_CustomRepositorySerialization]
+	parallel_downloads: int
+	color: bool
 
 
 @dataclass
-class MirrorConfiguration(SubConfig):
+class PacmanConfiguration(SubConfig):
 	mirror_regions: list[MirrorRegion] = field(default_factory=list)
 	custom_servers: list[CustomServer] = field(default_factory=list)
 	optional_repositories: list[Repository] = field(default_factory=list)
 	custom_repositories: list[CustomRepository] = field(default_factory=list)
+	parallel_downloads: int = 5
+	color: bool = True
 
 	@property
 	def region_names(self) -> str:
@@ -253,7 +257,7 @@ class MirrorConfiguration(SubConfig):
 		return '\n'.join(s.url for s in self.custom_servers)
 
 	@override
-	def json(self) -> _MirrorConfigurationSerialization:
+	def json(self) -> _PacmanConfigurationSerialization:
 		regions = {}
 		for m in self.mirror_regions:
 			regions.update(m.json())
@@ -263,6 +267,8 @@ class MirrorConfiguration(SubConfig):
 			'custom_servers': self.custom_servers,
 			'optional_repositories': [r.value for r in self.optional_repositories],
 			'custom_repositories': [c.json() for c in self.custom_repositories],
+			'parallel_downloads': self.parallel_downloads,
+			'color': self.color,
 		}
 
 	@override
@@ -280,6 +286,11 @@ class MirrorConfiguration(SubConfig):
 
 		if self.custom_repositories:
 			out.append(tr('Custom repositories set up'))
+
+		out.append(tr('Parallel downloads: {}').format(self.parallel_downloads))
+
+		if self.color:
+			out.append(tr('Color enabled'))
 
 		return out
 
@@ -352,5 +363,10 @@ class MirrorConfiguration(SubConfig):
 			for r in backwards_compatible_repo:
 				if r not in config.optional_repositories:
 					config.optional_repositories.append(r)
+
+		if 'parallel_downloads' in args:
+			config.parallel_downloads = int(args['parallel_downloads'])
+		if 'color' in args:
+			config.color = bool(args['color'])
 
 		return config

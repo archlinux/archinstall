@@ -1,6 +1,6 @@
 {
     "additional-repositories": ["testing"],
-    "mirror_config": {
+    "pacman_config": {
         "custom_mirrors": [
             {
                 "name": "my_mirror",
