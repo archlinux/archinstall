@@ -49,5 +49,8 @@ Packages=
 	python-pyparted
 	python-pydantic
 	python-textual
+	dosfstools
+	btrfs-progs
+	arch-install-scripts
 WithDocs=false
 KernelCommandLine=quiet splash
