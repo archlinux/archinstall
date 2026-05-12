@@ -14,7 +14,6 @@ from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.locale_menu import LocaleMenu
 from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
-from archinstall.lib.mirror.mirror_menu import PacmanMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
@@ -29,6 +28,7 @@ from archinstall.lib.network.network_menu import select_network
 from archinstall.lib.output import FormattedOutput
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
+from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.tui.components import tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
