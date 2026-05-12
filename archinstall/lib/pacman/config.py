@@ -1,8 +1,8 @@
 import re
 from pathlib import Path
 
-from archinstall.lib.models.mirrors import PacmanConfiguration
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.pathnames import PACMAN_CONF
 
 

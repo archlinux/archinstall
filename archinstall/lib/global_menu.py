@@ -19,10 +19,10 @@ from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, PartitionModification
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import PacmanConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, NicType
 from archinstall.lib.models.package_types import DEFAULT_KERNEL
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
 from archinstall.lib.output import FormattedOutput

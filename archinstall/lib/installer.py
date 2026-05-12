@@ -46,10 +46,10 @@ from archinstall.lib.models.device import (
 	Unit,
 )
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import PacmanConfiguration
 from archinstall.lib.models.network import Nic
 from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.users import User
 from archinstall.lib.output import debug, error, info, log, logger, warn
 from archinstall.lib.packages.packages import installed_package

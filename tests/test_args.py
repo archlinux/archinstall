@@ -19,9 +19,9 @@ from archinstall.lib.models.authentication import AuthenticationConfiguration, U
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorRegion, PacmanConfiguration, SignCheck, SignOption
 from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import CustomRepository, CustomServer, MirrorRegion, PacmanConfiguration, SignCheck, SignOption
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler

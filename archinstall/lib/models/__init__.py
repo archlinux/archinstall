@@ -27,9 +27,9 @@ from archinstall.lib.models.device import (
 	_DeviceInfo,
 )
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import CustomRepository, MirrorRegion, PacmanConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.packages import LocalPackage, PackageSearch, PackageSearchResult, Repository
+from archinstall.lib.models.pacman import CustomRepository, MirrorRegion, PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import PasswordStrength, User
 

@@ -21,10 +21,10 @@ from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguratio
 from archinstall.lib.models.config import SubConfig
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import PacmanConfiguration
 from archinstall.lib.models.network import NetworkConfiguration
 from archinstall.lib.models.package_types import DEFAULT_KERNEL
 from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.output import debug, error, logger, warn

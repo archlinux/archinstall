@@ -4,7 +4,8 @@ from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Confirmation, Input, Loading, Selection
 from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
-from archinstall.lib.models.mirrors import (
+from archinstall.lib.models.packages import Repository
+from archinstall.lib.models.pacman import (
 	CustomRepository,
 	CustomServer,
 	MirrorRegion,
@@ -12,7 +13,6 @@ from archinstall.lib.models.mirrors import (
 	SignCheck,
 	SignOption,
 )
-from archinstall.lib.models.packages import Repository
 from archinstall.lib.output import FormattedOutput
 from archinstall.lib.pathnames import PACMAN_CONF
 from archinstall.lib.translationhandler import tr
