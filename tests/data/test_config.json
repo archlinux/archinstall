@@ -159,7 +159,9 @@
         "sign_check": "Required",
         "sign_option": "TrustAll"
       }
-    ]
+    ],
+    "parallel_downloads": 66,
+    "color": true
   },
   "network_config": {
     "type": "manual",
@@ -180,7 +182,6 @@
   "packages": [
     "firefox"
   ],
-  "parallel_downloads": 66,
   "profile_config": {
     "gfx_driver": "All open-source",
     "greeter": "lightdm-gtk-greeter",
