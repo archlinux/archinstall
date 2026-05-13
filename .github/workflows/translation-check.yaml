@@ -5,13 +5,11 @@ on:
             - 'archinstall/**/*.py'
             - 'archinstall/locales/**'
             - '.github/workflows/translation-check.yaml'
-            - '.github/scripts/check_pot_freshness.py'
     pull_request:
         paths:
             - 'archinstall/**/*.py'
             - 'archinstall/locales/**'
             - '.github/workflows/translation-check.yaml'
-            - '.github/scripts/check_pot_freshness.py'
 jobs:
     validate-po:
         name: Validate .po files and translation patterns
@@ -123,18 +121,18 @@ jobs:
                 else
                     echo "has_py_changes=false" >> "$GITHUB_OUTPUT"
                 fi
-            - name: Install gettext and python
+            - name: Install gettext
               if: steps.check_py.outputs.has_py_changes == 'true'
               run: |
                 pacman-key --init
                 pacman --noconfirm -Sy archlinux-keyring
                 pacman --noconfirm -Syyu
-                pacman --noconfirm -S gettext python
+                pacman --noconfirm -S gettext
             - name: Check for missing translatable strings
               if: steps.check_py.outputs.has_py_changes == 'true'
               run: |
                 cd archinstall
-                find . -type f -name '*.py' | xargs xgettext \
+                find . -type f -name '*.py' | sort | xargs xgettext \
                     --no-location --omit-header --keyword='tr' \
                     -d base -o /tmp/generated.pot
-                python3 ../.github/scripts/check_pot_freshness.py /tmp/generated.pot locales/base.pot
+                msgcmp --use-untranslated locales/base.pot /tmp/generated.pot
