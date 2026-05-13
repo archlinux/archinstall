@@ -1,3 +1,5 @@
+import textwrap
+
 from archinstall.lib.installer import Installer
 from archinstall.lib.models.network import NetworkConfiguration, NicType
 from archinstall.lib.models.profile import ProfileConfiguration
@@ -60,12 +62,27 @@ def _configure_iwd_standalone(installation: Installer) -> None:
 	iwd_conf_dir.mkdir(parents=True, exist_ok=True)
 
 	main_conf = iwd_conf_dir / 'main.conf'
-	_ = main_conf.write_text('[General]\nEnableNetworkConfiguration=true\n\n[Network]\nNameResolvingService=systemd\n')
+	main_conf_content = textwrap.dedent("""\
+		[General]
+		EnableNetworkConfiguration=true
+
+		[Network]
+		NameResolvingService=systemd
+	""")
+	_ = main_conf.write_text(main_conf_content)
 
 	networkd_dir = installation.target / 'etc/systemd/network'
 	networkd_dir.mkdir(parents=True, exist_ok=True)
 	wired_conf = networkd_dir / '20-wired.network'
-	_ = wired_conf.write_text('[Match]\nType=ether\nKind=!*\n\n[Network]\nDHCP=yes\n')
+	wired_conf_content = textwrap.dedent("""\
+		[Match]
+		Type=ether
+		Kind=!*
+
+		[Network]
+		DHCP=yes
+	""")
+	_ = wired_conf.write_text(wired_conf_content)
 
 	resolv = installation.target / 'etc/resolv.conf'
 	resolv.unlink(missing_ok=True)
