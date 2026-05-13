@@ -1,6 +1,8 @@
 import logging
 import os
 import sys
+import urllib.error
+import urllib.request
 from collections.abc import Callable
 from dataclasses import asdict, is_dataclass
 from datetime import UTC, datetime
@@ -9,6 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from archinstall.lib.utils.encoding import unicode_ljust, unicode_rjust
+from archinstall.tui.rich import BaseRichTable
 
 if TYPE_CHECKING:
 	from _typeshed import DataclassInstance
@@ -18,7 +21,7 @@ class FormattedOutput:
 	@staticmethod
 	def _get_values(
 		o: DataclassInstance,
-		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
+		class_formatter: str | Callable | None = None,  # type: ignore[type-arg]  # pyright: ignore[reportMissingTypeArgument]
 		filter_list: list[str] = [],
 	) -> dict[str, Any]:
 		"""
@@ -125,6 +128,35 @@ class FormattedOutput:
 			output += out_fmt.format(*row) + '\n'
 
 		return output
+
+
+def as_key_value_pair(
+	entries: dict[str, str | list[str] | bool],
+	ignore_empty: bool = True,
+) -> str:
+	"""
+	Formats key-values as a Rich Table:
+		key1	: value1
+		key2	: value2
+	...
+	"""
+	table = BaseRichTable()
+	table.add_column('key', style='bold', no_wrap=True)
+	table.add_column('value', style='white', max_width=70)
+
+	for label, value in entries.items():
+		if ignore_empty and not value:
+			continue
+
+		if isinstance(value, bool):
+			value = 'Yes' if value else 'No'
+
+		if isinstance(value, list):
+			value = '\n  '.join(str(val) for val in value)
+
+		table.add_row(label.title(), f': {value}')
+
+	return table.stringify()
 
 
 class Journald:
@@ -333,3 +365,51 @@ def log(
 
 	if level != logging.DEBUG:
 		print(text)
+
+
+def share_install_log(
+	paste_url: str = 'https://paste.rs',
+	max_size: int = 10 * 1024 * 1024,
+	confirm: Callable[[str], bool] = lambda _: True,
+) -> int:
+	log_path = logger.path
+
+	if not log_path.exists():
+		info(f'Log file not found: {log_path}')
+		return 1
+
+	size = log_path.stat().st_size
+	if size == 0:
+		info(f'Log file is empty: {log_path}')
+		return 1
+
+	if size > max_size:
+		info(f'Log file exceeds {max_size} bytes, uploading last {max_size} bytes')
+		content = log_path.read_bytes()[-max_size:]
+	else:
+		content = log_path.read_bytes()
+
+	header = f'About to upload {log_path} ({len(content)} bytes) to {paste_url}\n\n'
+	header += 'The log may contain hostname, mirror URLs, package list and partition layout.\n'
+	header += 'The uploaded paste is public.\n\n'
+	header += 'Continue?'
+
+	if not confirm(header):
+		info('Cancelled.')
+		return 1
+
+	try:
+		req = urllib.request.Request(paste_url, data=content)
+		with urllib.request.urlopen(req) as response:
+			url = response.read().decode().strip()
+	except urllib.error.URLError as e:
+		info(f'Upload failed: {e}')
+		return 1
+
+	if not url.startswith('http'):
+		info(f'Unexpected response from {paste_url}: {url[:200]!r}')
+		return 1
+
+	# raw print so the URL is pipe-friendly (no ANSI colors, no log prefix)
+	print(url)
+	return 0

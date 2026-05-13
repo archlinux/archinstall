@@ -41,8 +41,8 @@ body:
     attributes:
       value: >
         **Note**: Assuming you have network connectivity,
-        you can easily post the installation log using the following command:
-        `curl -F'file=@/var/log/archinstall/install.log' https://0x0.st`
+        you can easily upload the installation log and get a shareable URL by running:
+        `archinstall share-log`
 
   - type: textarea
     id: freeform

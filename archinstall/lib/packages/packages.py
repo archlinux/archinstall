@@ -14,7 +14,7 @@ def installed_package(package: str) -> LocalPackage | None:
 	try:
 		package_info = []
 		for line in Pacman.run(f'-Q --info {package}'):
-			package_info.append(line.decode().strip())
+			package_info.append(line.decode().rstrip())
 
 		return _parse_package_output(package_info, LocalPackage)
 	except SysCallError:
@@ -53,7 +53,7 @@ def available_package(package: str) -> AvailablePackage | None:
 	try:
 		package_info: list[str] = []
 		for line in Pacman.run(f'-S --info {package}'):
-			package_info.append(line.decode().strip())
+			package_info.append(line.decode().rstrip())
 
 		return _parse_package_output(package_info, AvailablePackage)
 	except SysCallError:
@@ -79,7 +79,7 @@ def list_available_packages(
 		debug(f'Failed to sync Arch Linux package database: {e}')
 
 	for line in Pacman.run('-S --info'):
-		dec_line = line.decode().strip()
+		dec_line = line.decode().rstrip()
 		current_package.append(dec_line)
 
 		if dec_line.startswith('Validated'):
@@ -187,6 +187,7 @@ async def select_additional_packages(
 		multi=True,
 		preview_location='right',
 		enable_filter=True,
+		wrap_preview=True,
 	).show()
 
 	match pck_result.type_:

@@ -12,6 +12,7 @@ from parted import Disk, Geometry, Partition
 from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_validator
 
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.models.config import SubConfig
 from archinstall.lib.models.users import Password
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
@@ -34,6 +35,15 @@ class DiskLayoutType(Enum):
 			case DiskLayoutType.Pre_mount:
 				return tr('Pre-mounted configuration')
 
+	def short_msg(self) -> str:
+		match self:
+			case DiskLayoutType.Default:
+				return tr('Default')
+			case DiskLayoutType.Manual:
+				return tr('Manual')
+			case DiskLayoutType.Pre_mount:
+				return tr('Pre-mount')
+
 
 class _DiskLayoutConfigurationSerialization(TypedDict):
 	config_type: str
@@ -45,7 +55,7 @@ class _DiskLayoutConfigurationSerialization(TypedDict):
 
 
 @dataclass
-class DiskLayoutConfiguration:
+class DiskLayoutConfiguration(SubConfig):
 	config_type: DiskLayoutType
 	device_modifications: list[DeviceModification] = field(default_factory=list)
 	lvm_config: LvmConfiguration | None = None
@@ -55,6 +65,7 @@ class DiskLayoutConfiguration:
 	# used for pre-mounted config
 	mountpoint: Path | None = None
 
+	@override
 	def json(self) -> _DiskLayoutConfigurationSerialization:
 		if self.config_type == DiskLayoutType.Pre_mount:
 			return {
@@ -77,6 +88,28 @@ class DiskLayoutConfiguration:
 				config['btrfs_options'] = self.btrfs_options.json()
 
 			return config
+
+	@override
+	def summary(self) -> list[str]:
+		out = [tr('{} layout').format(self.config_type.short_msg())]
+
+		devices = set(mod.device_path for mod in self.device_modifications)
+
+		if devices:
+			dev_str = ', '.join(str(d) for d in devices)
+			out.append(tr('Devices {}').format(dev_str))
+
+			if self.lvm_config is not None:
+				out.append(tr('LVM set up'))
+
+		if self.disk_encryption is not None:
+			out.append(tr('{} encryption').format(self.disk_encryption.encryption_type.type_to_text()))
+
+		if self.btrfs_options is not None:
+			if self.btrfs_options.snapshot_config:
+				out.append(tr('Btrfs snapshot "{}"').format(self.btrfs_options.snapshot_config.snapshot_type))
+
+		return out
 
 	@classmethod
 	def parse_arg(
@@ -1321,7 +1354,7 @@ class _SnapshotConfigSerialization(TypedDict):
 	type: str
 
 
-class SnapshotType(Enum):
+class SnapshotType(StrEnum):
 	Snapper = 'Snapper'
 	Timeshift = 'Timeshift'
 

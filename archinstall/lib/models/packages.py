@@ -132,7 +132,6 @@ class AvailablePackage(BaseModel):
 	def longest_key(self) -> int:
 		return max(len(key) for key in self.model_dump().keys())
 
-	# return all package info line by line
 	def info(self) -> str:
 		output = ''
 		for key, value in self.model_dump().items():
