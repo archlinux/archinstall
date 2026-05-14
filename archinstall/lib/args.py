@@ -37,26 +37,26 @@ from archinstall.tui.components import tui
 
 @p_dataclass
 class Arguments:
-    config: Path | None = None
-    config_url: str | None = None
-    creds: Path | None = None
-    creds_url: str | None = None
-    creds_decryption_key: str | None = None
-    silent: bool = False
-    dry_run: bool = False
-    script: str | None = None
-    mountpoint: Path = Path('/mnt')
-    skip_ntp: bool = False
-    skip_wkd: bool = False
-    skip_boot: bool = False
-    debug: bool = False
-    offline: bool = False
-    no_pkg_lookups: bool = False
-    plugin: str | None = None
-    skip_version_check: bool = False
-    skip_wifi_check: bool = False
-    advanced: bool = False
-    verbose: bool = False
+	config: Path | None = None
+	config_url: str | None = None
+	creds: Path | None = None
+	creds_url: str | None = None
+	creds_decryption_key: str | None = None
+	silent: bool = False
+	dry_run: bool = False
+	script: str | None = None
+	mountpoint: Path = Path('/mnt')
+	skip_ntp: bool = False
+	skip_wkd: bool = False
+	skip_boot: bool = False
+	debug: bool = False
+	offline: bool = False
+	no_pkg_lookups: bool = False
+	plugin: str | None = None
+	skip_version_check: bool = False
+	skip_wifi_check: bool = False
+	advanced: bool = False
+	verbose: bool = False
 
 
 class ArchConfigType(StrEnum):
@@ -276,90 +276,90 @@ class ArchConfig:
 			if additional_repositories := args_config.get('additional-repositories', []):
 				backwards_compatible_repo = [Repository(r) for r in additional_repositories]
 
-            arch_config.mirror_config = MirrorConfiguration.parse_args(
-                mirror_config,
-                backwards_compatible_repo,
-            )
+			arch_config.mirror_config = MirrorConfiguration.parse_args(
+				mirror_config,
+				backwards_compatible_repo,
+			)
 
-        if net_config := args_config.get('network_config', None):
-            arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
+		if net_config := args_config.get('network_config', None):
+			arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
 
-        if bootloader_config_dict := args_config.get('bootloader_config', None):
-            arch_config.bootloader_config = BootloaderConfiguration.parse_arg(bootloader_config_dict, args.skip_boot)
-        # DEPRECATED: separate bootloader and uki fields (backward compatibility)
-        elif bootloader_str := args_config.get('bootloader', None):
-            bootloader = Bootloader.from_arg(bootloader_str, args.skip_boot)
-            uki = args_config.get('uki', False)
-            if uki and not bootloader.has_uki_support():
-                uki = False
-            arch_config.bootloader_config = BootloaderConfiguration(bootloader=bootloader, uki=uki, removable=True)
+		if bootloader_config_dict := args_config.get('bootloader_config', None):
+			arch_config.bootloader_config = BootloaderConfiguration.parse_arg(bootloader_config_dict, args.skip_boot)
+		# DEPRECATED: separate bootloader and uki fields (backward compatibility)
+		elif bootloader_str := args_config.get('bootloader', None):
+			bootloader = Bootloader.from_arg(bootloader_str, args.skip_boot)
+			uki = args_config.get('uki', False)
+			if uki and not bootloader.has_uki_support():
+				uki = False
+			arch_config.bootloader_config = BootloaderConfiguration(bootloader=bootloader, uki=uki, removable=True)
 
-        # deprecated: backwards compatibility
-        audio_config_args = args_config.get('audio_config', None)
-        app_config_args = args_config.get('app_config', None)
+		# deprecated: backwards compatibility
+		audio_config_args = args_config.get('audio_config', None)
+		app_config_args = args_config.get('app_config', None)
 
-        if audio_config_args is not None or app_config_args is not None:
-            arch_config.app_config = ApplicationConfiguration.parse_arg(app_config_args, audio_config_args)
+		if audio_config_args is not None or app_config_args is not None:
+			arch_config.app_config = ApplicationConfiguration.parse_arg(app_config_args, audio_config_args)
 
-        if auth_config_args := args_config.get('auth_config', None):
-            arch_config.auth_config = AuthenticationConfiguration.parse_arg(auth_config_args)
+		if auth_config_args := args_config.get('auth_config', None):
+			arch_config.auth_config = AuthenticationConfiguration.parse_arg(auth_config_args)
 
-        if hostname := args_config.get('hostname', ''):
-            arch_config.hostname = hostname
+		if hostname := args_config.get('hostname', ''):
+			arch_config.hostname = hostname
 
-        if kernels := args_config.get('kernels', []):
-            arch_config.kernels = kernels
+		if kernels := args_config.get('kernels', []):
+			arch_config.kernels = kernels
 
-        arch_config.ntp = args_config.get('ntp', True)
+		arch_config.ntp = args_config.get('ntp', True)
 
-        if packages := args_config.get('packages', []):
-            arch_config.packages = packages
+		if packages := args_config.get('packages', []):
+			arch_config.packages = packages
 
-        if pacman_config := args_config.get('pacman_config', None):
-            arch_config.pacman_config = PacmanConfiguration.parse_arg(pacman_config)
-        elif parallel_downloads := args_config.get('parallel_downloads', 0):
-            arch_config.pacman_config = PacmanConfiguration(parallel_downloads=int(parallel_downloads))
+		if pacman_config := args_config.get('pacman_config', None):
+			arch_config.pacman_config = PacmanConfiguration.parse_arg(pacman_config)
+		elif parallel_downloads := args_config.get('parallel_downloads', 0):
+			arch_config.pacman_config = PacmanConfiguration(parallel_downloads=int(parallel_downloads))
 
-        swap_arg = args_config.get('swap')
-        if swap_arg is not None:
-            arch_config.swap = ZramConfiguration.parse_arg(swap_arg)
+		swap_arg = args_config.get('swap')
+		if swap_arg is not None:
+			arch_config.swap = ZramConfiguration.parse_arg(swap_arg)
 
-        if timezone := args_config.get('timezone', 'UTC'):
-            arch_config.timezone = timezone
+		if timezone := args_config.get('timezone', 'UTC'):
+			arch_config.timezone = timezone
 
-        if services := args_config.get('services', []):
-            arch_config.services = services
+		if services := args_config.get('services', []):
+			arch_config.services = services
 
-        # DEPRECATED: backwards compatibility
-        root_password = None
-        if root_password := args_config.get('!root-password', None):
-            root_password = Password(plaintext=root_password)
+		# DEPRECATED: backwards compatibility
+		root_password = None
+		if root_password := args_config.get('!root-password', None):
+			root_password = Password(plaintext=root_password)
 
-        if enc_password := args_config.get('root_enc_password', None):
-            root_password = Password(enc_password=enc_password)
+		if enc_password := args_config.get('root_enc_password', None):
+			root_password = Password(enc_password=enc_password)
 
-        if root_password is not None:
-            if arch_config.auth_config is None:
-                arch_config.auth_config = AuthenticationConfiguration()
-            arch_config.auth_config.root_enc_password = root_password
+		if root_password is not None:
+			if arch_config.auth_config is None:
+				arch_config.auth_config = AuthenticationConfiguration()
+			arch_config.auth_config.root_enc_password = root_password
 
-        # DEPRECATED: backwards compatibility
-        users: list[User] = []
-        if args_users := args_config.get('!users', None):
-            users = User.parse_arguments(args_users)
+		# DEPRECATED: backwards compatibility
+		users: list[User] = []
+		if args_users := args_config.get('!users', None):
+			users = User.parse_arguments(args_users)
 
-        if args_users := args_config.get('users', None):
-            users = User.parse_arguments(args_users)
+		if args_users := args_config.get('users', None):
+			users = User.parse_arguments(args_users)
 
-        if users:
-            if arch_config.auth_config is None:
-                arch_config.auth_config = AuthenticationConfiguration()
-            arch_config.auth_config.users = users
+		if users:
+			if arch_config.auth_config is None:
+				arch_config.auth_config = AuthenticationConfiguration()
+			arch_config.auth_config.users = users
 
-        if custom_commands := args_config.get('custom_commands', []):
-            arch_config.custom_commands = custom_commands
+		if custom_commands := args_config.get('custom_commands', []):
+			arch_config.custom_commands = custom_commands
 
-        return arch_config
+		return arch_config
 
 
 class ArchConfigHandler:
@@ -549,8 +549,8 @@ class ArchConfigHandler:
 			warn(f'Warning: --debug mode will write certain credentials to {logger.path}!')
 
 		if args.plugin:
-			plugin_path = Path(args.plugin)
-			load_plugin(plugin_path)
+			# pathlib collapses "https://..." to "https:/..." which breaks URL loading (#3021).
+			load_plugin(args.plugin)
 
 		if args.creds_decryption_key is None:
 			if os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY'):
