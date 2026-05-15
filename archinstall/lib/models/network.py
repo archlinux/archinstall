@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import NotRequired, Self, TypedDict, override
 
+from archinstall.lib.models.config import SubConfig
 from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
 
@@ -11,6 +12,7 @@ class NicType(Enum):
 	ISO = 'iso'
 	NM = 'nm'
 	NM_IWD = 'nm_iwd'
+	IWD = 'iwd'
 	MANUAL = 'manual'
 
 	def display_msg(self) -> str:
@@ -21,6 +23,8 @@ class NicType(Enum):
 				return tr('Use Network Manager (default backend)')
 			case NicType.NM_IWD:
 				return tr('Use Network Manager (iwd backend)')
+			case NicType.IWD:
+				return tr('Use standalone iwd')
 			case NicType.MANUAL:
 				return tr('Manual configuration')
 
@@ -103,16 +107,21 @@ class _NetworkConfigurationSerialization(TypedDict):
 
 
 @dataclass
-class NetworkConfiguration:
+class NetworkConfiguration(SubConfig):
 	type: NicType
 	nics: list[Nic] = field(default_factory=list)
 
+	@override
 	def json(self) -> _NetworkConfigurationSerialization:
 		config: _NetworkConfigurationSerialization = {'type': self.type.value}
 		if self.nics:
 			config['nics'] = [n.json() for n in self.nics]
 
 		return config
+
+	@override
+	def summary(self) -> str:
+		return self.type.display_msg()
 
 	@classmethod
 	def parse_arg(cls, config: _NetworkConfigurationSerialization) -> Self | None:
@@ -125,6 +134,10 @@ class NetworkConfiguration:
 				return cls(NicType.ISO)
 			case NicType.NM:
 				return cls(NicType.NM)
+			case NicType.NM_IWD:
+				return cls(NicType.NM_IWD)
+			case NicType.IWD:
+				return cls(NicType.IWD)
 			case NicType.MANUAL:
 				nics_arg = config.get('nics', [])
 				if nics_arg:

@@ -2293,3 +2293,14 @@ msgstr ""
 #, python-brace-format
 msgid "Default: {}ms, Recommended range: 1000-60000"
 msgstr ""
+
+#, python-brace-format
+msgid "{} needs access to your seat"
+msgstr ""
+
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr ""
+
+#, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
+msgstr ""
