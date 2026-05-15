@@ -192,7 +192,7 @@ The contents of :code:`https://domain.lan/config.json`:
        "sys_enc": "UTF-8",
        "sys_lang": "en_US"
      },
-     "mirror_config": {
+     "pacman_config": {
        "custom_servers": [
          {
            "url": "https://mymirror.com/$repo/os/$arch"

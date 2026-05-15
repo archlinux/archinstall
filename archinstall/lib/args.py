@@ -21,7 +21,6 @@ from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguratio
 from archinstall.lib.models.config import SubConfig
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration
 from archinstall.lib.models.package_types import DEFAULT_KERNEL
 from archinstall.lib.models.packages import Repository
@@ -66,7 +65,6 @@ class ArchConfigType(StrEnum):
 	ARCHINSTALL_LANGUAGE = 'archinstall_language'
 	DISK_CONFIG = 'disk_config'
 	PROFILE_CONFIG = 'profile_config'
-	MIRROR_CONFIG = 'mirror_config'
 	NETWORK_CONFIG = 'network_config'
 	BOOTLOADER_CONFIG = 'bootloader_config'
 	APP_CONFIG = 'app_config'
@@ -98,8 +96,6 @@ class ArchConfigType(StrEnum):
 				return tr('Disk configuration')
 			case ArchConfigType.PROFILE_CONFIG:
 				return tr('Profile')
-			case ArchConfigType.MIRROR_CONFIG:
-				return tr('Mirrors and repositories')
 			case ArchConfigType.NETWORK_CONFIG:
 				return tr('Network')
 			case ArchConfigType.BOOTLOADER_CONFIG:
@@ -123,7 +119,7 @@ class ArchConfigType(StrEnum):
 			case ArchConfigType.PACKAGES:
 				return tr('Additional packages')
 			case ArchConfigType.PACMAN_CONFIG:
-				return tr('Pacman')
+				return tr('Pacman configuration')
 			case ArchConfigType.CUSTOM_COMMANDS:
 				return tr('Custom commands')
 			case ArchConfigType.USERS:
@@ -142,7 +138,7 @@ class ArchConfig:
 	archinstall_language: Language = field(default_factory=lambda: translation_handler.get_language_by_abbr('en'))
 	disk_config: DiskLayoutConfiguration | None = None
 	profile_config: ProfileConfiguration | None = None
-	mirror_config: MirrorConfiguration | None = None
+	pacman_config: PacmanConfiguration | None = None
 	network_config: NetworkConfiguration | None = None
 	bootloader_config: BootloaderConfiguration | None = None
 	app_config: ApplicationConfiguration | None = None
@@ -152,7 +148,6 @@ class ArchConfig:
 	kernels: list[str] = field(default_factory=lambda: [DEFAULT_KERNEL.value])
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
-	pacman_config: PacmanConfiguration = field(default_factory=PacmanConfiguration.default)
 	timezone: str = 'UTC'
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
@@ -203,12 +198,10 @@ class ArchConfig:
 		}
 
 	def sub_cfg(self) -> dict[ArchConfigType, SubConfig]:
-		cfg: dict[ArchConfigType, SubConfig] = {
-			ArchConfigType.PACMAN_CONFIG: self.pacman_config,
-		}
+		cfg: dict[ArchConfigType, SubConfig] = {}
 
-		if self.mirror_config:
-			cfg[ArchConfigType.MIRROR_CONFIG] = self.mirror_config
+		if self.pacman_config:
+			cfg[ArchConfigType.PACMAN_CONFIG] = self.pacman_config
 
 		if self.bootloader_config:
 			cfg[ArchConfigType.BOOTLOADER_CONFIG] = self.bootloader_config
@@ -271,15 +264,20 @@ class ArchConfig:
 		if profile_config := args_config.get('profile_config', None):
 			arch_config.profile_config = ProfileConfiguration.parse_arg(profile_config)
 
-		if mirror_config := args_config.get('mirror_config', None):
+		if pacman_config := args_config.get('pacman_config', None):
 			backwards_compatible_repo = []
 			if additional_repositories := args_config.get('additional-repositories', []):
 				backwards_compatible_repo = [Repository(r) for r in additional_repositories]
 
-			arch_config.mirror_config = MirrorConfiguration.parse_args(
-				mirror_config,
+			arch_config.pacman_config = PacmanConfiguration.parse_args(
+				pacman_config,
 				backwards_compatible_repo,
 			)
+
+		if parallel_downloads := args_config.get('parallel_downloads', 0):
+			if arch_config.pacman_config is None:
+				arch_config.pacman_config = PacmanConfiguration()
+			arch_config.pacman_config.parallel_downloads = int(parallel_downloads)
 
 		if net_config := args_config.get('network_config', None):
 			arch_config.network_config = NetworkConfiguration.parse_arg(net_config)
@@ -314,11 +312,6 @@ class ArchConfig:
 
 		if packages := args_config.get('packages', []):
 			arch_config.packages = packages
-
-		if pacman_config := args_config.get('pacman_config', None):
-			arch_config.pacman_config = PacmanConfiguration.parse_arg(pacman_config)
-		elif parallel_downloads := args_config.get('parallel_downloads', 0):
-			arch_config.pacman_config = PacmanConfiguration(parallel_downloads=int(parallel_downloads))
 
 		swap_arg = args_config.get('swap')
 		if swap_arg is not None:

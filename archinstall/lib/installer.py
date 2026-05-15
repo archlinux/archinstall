@@ -46,7 +46,6 @@ from archinstall.lib.models.device import (
 	Unit,
 )
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import Nic
 from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
 from archinstall.lib.models.packages import Repository
@@ -553,14 +552,14 @@ class Installer:
 	def set_mirrors(
 		self,
 		mirror_list_handler: MirrorListHandler,
-		mirror_config: MirrorConfiguration,
+		pacman_config: PacmanConfiguration,
 		on_target: bool = False,
 	) -> None:
 		"""
 		Set the mirror configuration for the installation.
 
-		:param mirror_config: The mirror configuration to use.
-		:type mirror_config: MirrorConfiguration
+		:param pacman_config: The mirror configuration to use.
+		:type pacman_config: PacmanConfiguration
 
 		:on_target: Whether to set the mirrors on the target system or the live system.
 		:param on_target: bool
@@ -569,29 +568,29 @@ class Installer:
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mirrors'):
-				if result := plugin.on_mirrors(mirror_config):
-					mirror_config = result
+				if result := plugin.on_mirrors(pacman_config):
+					pacman_config = result
 
 		if on_target:
 			mirrorlist_config = self.target / MIRRORLIST.relative_to_root()
-			pacman_config = self.target / PACMAN_CONF.relative_to_root()
+			pacman_conf_path = self.target / PACMAN_CONF.relative_to_root()
 		else:
 			mirrorlist_config = MIRRORLIST
-			pacman_config = PACMAN_CONF
+			pacman_conf_path = PACMAN_CONF
 
-		repositories_config = mirror_config.repositories_config()
+		repositories_config = pacman_config.repositories_config()
 		if repositories_config:
 			debug(f'Pacman config: {repositories_config}')
 
-			with open(pacman_config, 'a') as fp:
+			with open(pacman_conf_path, 'a') as fp:
 				fp.write(repositories_config)
 
-		regions_config = mirror_config.regions_config(mirror_list_handler, speed_sort=True)
+		regions_config = pacman_config.regions_config(mirror_list_handler, speed_sort=True)
 		if regions_config:
 			debug(f'Mirrorlist:\n{regions_config}')
 			mirrorlist_config.write_text(regions_config)
 
-		custom_servers = mirror_config.custom_servers_config()
+		custom_servers = pacman_config.custom_servers_config()
 		if custom_servers:
 			debug(f'Custom servers:\n{custom_servers}')
 

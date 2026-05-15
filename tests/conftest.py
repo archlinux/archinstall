@@ -29,8 +29,8 @@ def deprecated_creds_config() -> Path:
 
 
 @pytest.fixture(scope='session')
-def deprecated_mirror_config() -> Path:
-	return Path(__file__).parent / 'data' / 'test_deprecated_mirror_config.json'
+def deprecated_pacman_config() -> Path:
+	return Path(__file__).parent / 'data' / 'test_deprecated_pacman_config.json'
 
 
 @pytest.fixture(scope='session')

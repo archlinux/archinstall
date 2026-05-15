@@ -19,10 +19,9 @@ from archinstall.lib.models.authentication import AuthenticationConfiguration, U
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
 from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
 from archinstall.lib.models.packages import Repository
-from archinstall.lib.models.pacman import PacmanConfiguration
+from archinstall.lib.models.pacman import CustomRepository, CustomServer, MirrorRegion, PacmanConfiguration, SignCheck, SignOption
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -193,7 +192,7 @@ def test_config_file_parsing(
 			gfx_driver=GfxDriver.AllOpenSource,
 			greeter=GreeterType.Lightdm,
 		),
-		mirror_config=MirrorConfiguration(
+		pacman_config=PacmanConfiguration(
 			mirror_regions=[
 				MirrorRegion(
 					name='Australia',
@@ -210,6 +209,7 @@ def test_config_file_parsing(
 					sign_option=SignOption.TrustAll,
 				),
 			],
+			parallel_downloads=66,
 		),
 		network_config=NetworkConfiguration(
 			type=NicType.MANUAL,
@@ -235,7 +235,6 @@ def test_config_file_parsing(
 		kernels=['linux-zen'],
 		ntp=True,
 		packages=['firefox'],
-		pacman_config=PacmanConfiguration(parallel_downloads=66),
 		swap=ZramConfiguration(enabled=False),
 		timezone='UTC',
 		services=['service_1', 'service_2'],
@@ -243,23 +242,23 @@ def test_config_file_parsing(
 	)
 
 
-def test_deprecated_mirror_config_parsing(
+def test_deprecated_pacman_config_parsing(
 	monkeypatch: MonkeyPatch,
-	deprecated_mirror_config: Path,
+	deprecated_pacman_config: Path,
 ) -> None:
 	monkeypatch.setattr(
 		'sys.argv',
 		[
 			'archinstall',
 			'--config',
-			str(deprecated_mirror_config),
+			str(deprecated_pacman_config),
 		],
 	)
 
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
-	assert arch_config.mirror_config == MirrorConfiguration(
+	assert arch_config.pacman_config == PacmanConfiguration(
 		mirror_regions=[
 			MirrorRegion(
 				name='Australia',

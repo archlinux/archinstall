@@ -3,7 +3,7 @@ import urllib.parse
 from pathlib import Path
 
 from archinstall.lib.models import MirrorRegion
-from archinstall.lib.models.mirrors import MirrorStatusEntryV3, MirrorStatusListV3
+from archinstall.lib.models.pacman import MirrorStatusEntryV3, MirrorStatusListV3
 from archinstall.lib.networking import fetch_data_from_url
 from archinstall.lib.output import debug, info
 from archinstall.lib.pathnames import MIRRORLIST

@@ -73,7 +73,7 @@ def perform_installation(
 	disk_config = config.disk_config
 	run_mkinitcpio = not config.bootloader_config or not config.bootloader_config.uki
 	locale_config = config.locale_config
-	optional_repositories = config.mirror_config.optional_repositories if config.mirror_config else []
+	optional_repositories = config.pacman_config.optional_repositories if config.pacman_config else []
 	mountpoint = disk_config.mountpoint if disk_config.mountpoint else mountpoint
 
 	with Installer(
@@ -97,8 +97,8 @@ def perform_installation(
 				# generate encryption key files for the mounted luks devices
 				installation.generate_key_files()
 
-		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=False)
+		if pacman_config := config.pacman_config:
+			installation.set_mirrors(mirror_list_handler, pacman_config, on_target=False)
 
 		installation.minimal_installation(
 			optional_repositories=optional_repositories,
@@ -108,8 +108,8 @@ def perform_installation(
 			pacman_config=config.pacman_config,
 		)
 
-		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=True)
+		if pacman_config := config.pacman_config:
+			installation.set_mirrors(mirror_list_handler, pacman_config, on_target=True)
 
 		if config.swap and config.swap.enabled:
 			installation.setup_swap(algo=config.swap.algorithm)
