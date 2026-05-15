@@ -5,13 +5,12 @@ import urllib.error
 import urllib.request
 from collections.abc import Callable
 from dataclasses import asdict, is_dataclass
-from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from archinstall.lib.utils.encoding import unicode_ljust, unicode_rjust
-from archinstall.tui.rich import BaseRichTable
+from archinstall.lib.utils.util import timestamp
 
 if TYPE_CHECKING:
 	from _typeshed import DataclassInstance
@@ -112,74 +111,13 @@ class FormattedOutput:
 
 		return output
 
-	@staticmethod
-	def as_columns(entries: list[str], cols: int) -> str:
-		"""
-		Will format a list into a given number of columns
-		"""
-		chunks = []
-		output = ''
-
-		for i in range(0, len(entries), cols):
-			chunks.append(entries[i : i + cols])
-
-		for row in chunks:
-			out_fmt = '{: <30} ' * len(row)
-			output += out_fmt.format(*row) + '\n'
-
-		return output
-
-
-def as_key_value_pair(
-	entries: dict[str, str | list[str] | bool],
-	ignore_empty: bool = True,
-) -> str:
-	"""
-	Formats key-values as a Rich Table:
-		key1	: value1
-		key2	: value2
-	...
-	"""
-	table = BaseRichTable()
-	table.add_column('key', style='bold', no_wrap=True)
-	table.add_column('value', style='white', max_width=70)
-
-	for label, value in entries.items():
-		if ignore_empty and not value:
-			continue
-
-		if isinstance(value, bool):
-			value = 'Yes' if value else 'No'
-
-		if isinstance(value, list):
-			value = '\n  '.join(str(val) for val in value)
-
-		table.add_row(label.title(), f': {value}')
-
-	return table.stringify()
-
-
-class Journald:
-	@staticmethod
-	def log(message: str, level: int = logging.DEBUG) -> None:
-		try:
-			import systemd.journal  # type: ignore[import-not-found]
-		except ModuleNotFoundError:
-			return
-
-		log_adapter = logging.getLogger('archinstall')
-		log_fmt = logging.Formatter('[%(levelname)s]: %(message)s')
-		log_ch = systemd.journal.JournalHandler()
-		log_ch.setFormatter(log_fmt)
-		log_adapter.addHandler(log_ch)
-		log_adapter.setLevel(logging.DEBUG)
-
-		log_adapter.log(level, message)
-
 
 class Logger:
-	def __init__(self, path: Path = Path('/var/log/archinstall')) -> None:
-		self._path = path
+	def __init__(self, path: Path | None = None) -> None:
+		if path is None:
+			path = Path('/var/log/archinstall')
+
+		self._path: Path = path
 
 	@property
 	def path(self) -> Path:
@@ -212,7 +150,7 @@ class Logger:
 		self._check_permissions()
 
 		with self.path.open('a') as f:
-			ts = _timestamp()
+			ts = timestamp()
 			level_name = logging.getLevelName(level)
 			f.write(f'[{ts}] - {level_name} - {content}\n')
 
@@ -310,9 +248,20 @@ def _stylize_output(
 	return f'\033[{ansi}m{text}\033[0m'
 
 
-def _timestamp() -> str:
-	now = datetime.now(tz=UTC)
-	return now.strftime('%Y-%m-%d %H:%M:%S')
+def journal_log(message: str, level: int = logging.DEBUG) -> None:
+	try:
+		import systemd.journal  # type: ignore[import-not-found]
+	except ModuleNotFoundError:
+		return
+
+	log_adapter = logging.getLogger('archinstall')
+	log_fmt = logging.Formatter('[%(levelname)s]: %(message)s')
+	log_ch = systemd.journal.JournalHandler()
+	log_ch.setFormatter(log_fmt)
+	log_adapter.addHandler(log_ch)
+	log_adapter.setLevel(logging.DEBUG)
+
+	log_adapter.log(level, message)
 
 
 def info(
@@ -376,7 +325,7 @@ def log(
 	if _supports_color():
 		text = _stylize_output(text, fg, bg, reset, font)
 
-	Journald.log(text, level=level)
+	journal_log(text, level=level)
 
 	if level != logging.DEBUG:
 		print(text)

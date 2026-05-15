@@ -1,8 +1,14 @@
 import secrets
 import string
+from datetime import UTC, datetime
 
-from archinstall.lib.output import FormattedOutput
 from archinstall.lib.pathnames import ARCHISO_MOUNTPOINT
+from archinstall.lib.utils.format import as_columns
+
+
+def timestamp() -> str:
+	now = datetime.now(tz=UTC)
+	return now.strftime('%Y-%m-%d %H:%M:%S')
 
 
 def running_from_iso() -> bool:
@@ -36,7 +42,7 @@ def format_cols(items: list[str], header: str | None = None) -> str:
 	else:
 		col = 4
 
-	text += FormattedOutput.as_columns(items, col)
+	text += as_columns(items, col)
 	# remove whitespaces on each row
 	text = '\n'.join(t.strip() for t in text.split('\n'))
 	return text
