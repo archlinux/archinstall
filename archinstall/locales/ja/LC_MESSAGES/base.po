@@ -830,7 +830,7 @@ msgid "Pacman"
 msgstr "Pacman"
 
 msgid "Color"
-msgstr "カラー"
+msgstr "カラー出力"
 
 #, python-brace-format
 msgid "Enter the number of parallel downloads (1-{})"
@@ -1223,7 +1223,7 @@ msgid "Invalid configuration: {error}"
 msgstr "無効な設定: {error}"
 
 msgid "Ready to install"
-msgstr "インストール準備完了"
+msgstr "インストールの準備が完了"
 
 msgid "Disks"
 msgstr "ディスク"
@@ -1548,7 +1548,7 @@ msgid "NTP"
 msgstr "NTP"
 
 msgid "Swap on zram"
-msgstr "zram のスワップ"
+msgstr "Zram 上でスワップ"
 
 msgid "Name"
 msgstr "名前"
@@ -2230,3 +2230,170 @@ msgstr "U2F ログインの設定: {}"
 #, python-brace-format
 msgid "Default: {}ms, Recommended range: 1000-60000"
 msgstr "デフォルト: {}ms, 推奨範囲: 1000-60000"
+
+#, python-brace-format
+msgid "{} needs access to your seat"
+msgstr "{} はお使いの Seat へのアクセスを必要とします"
+
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "ハードウェアデバイス群。キーボード、マウスなど"
+
+#, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
+msgstr "{} にハードウェアへのアクセスを許可する方法を選択"
+
+msgid "Zram enabled"
+msgstr "Zram を有効にする"
+
+#, python-brace-format
+msgid "Zram algorithm {}"
+msgstr "Zram アルゴリズム {}"
+
+msgid "Bluetooth enabled"
+msgstr "Bluetooth を有効にする"
+
+#, python-brace-format
+msgid "Audio server \"{}\""
+msgstr "オーディオサーバー \"{}\""
+
+#, python-brace-format
+msgid "Power management \"{}\""
+msgstr "電力管理 \"{}\""
+
+msgid "Print service enabled"
+msgstr "印刷サービスを有効にする"
+
+#, python-brace-format
+msgid "Firewall \"{}\""
+msgstr "ファイアウォール \"{}\""
+
+#, python-brace-format
+msgid "Extra fonts \"{}\""
+msgstr "追加フォント \"{}\""
+
+msgid "Root password set"
+msgstr "Root パスワードを設定"
+
+#, python-brace-format
+msgid "Configured {} user(s)"
+msgstr "{} 人のユーザーを設定"
+
+msgid "U2F set up"
+msgstr "U2F を設定"
+
+#, python-brace-format
+msgid "Keyboard layout \"{}\""
+msgstr "キーボードレイアウト \"{}\""
+
+#, python-brace-format
+msgid "Locale language \"{}\""
+msgstr "ロケール言語 \"{}\""
+
+#, python-brace-format
+msgid "Locale encoding \"{}\""
+msgstr "ロケールエンコーディング \"{}\""
+
+#, python-brace-format
+msgid "Console font \"{}\""
+msgstr "コンソールフォント \"{}\""
+
+msgid "Default"
+msgstr "デフォルト"
+
+msgid "Manual"
+msgstr "マニュアル"
+
+msgid "Pre-mount"
+msgstr "プレマウント"
+
+#, python-brace-format
+msgid "{} layout"
+msgstr "{} レイアウト"
+
+#, python-brace-format
+msgid "Devices {}"
+msgstr "デバイス {}"
+
+msgid "LVM set up"
+msgstr "LVM の設定"
+
+#, python-brace-format
+msgid "{} encryption"
+msgstr "{} 暗号化"
+
+#, python-brace-format
+msgid "Btrfs snapshot \"{}\""
+msgstr "Btrfs スナップショット \"{}\""
+
+msgid "Use standalone iwd"
+msgstr "スタンドアロンの iwd を使用"
+
+#, python-brace-format
+msgid "Mirror regions \"{}\""
+msgstr "ミラーの地域 \"{}\""
+
+#, python-brace-format
+msgid "Optional repositories \"{}\""
+msgstr "オプションリポジトリ \"{}\""
+
+msgid "Custom servers set up"
+msgstr "カスタムサーバーを設定"
+
+msgid "Custom repositories set up"
+msgstr "カスタムリポジトリを設定"
+
+#, python-brace-format
+msgid "Bootloader \"{}\""
+msgstr "ブートローダー \"{}\""
+
+msgid "UKI enabled"
+msgstr "UKI を有効にする"
+
+msgid "Color enabled"
+msgstr "カラー出力を有効にする"
+
+#, python-brace-format
+msgid "{} grphics driver"
+msgstr "{} グラフィックドライバー"
+
+#, python-brace-format
+msgid "{} greeter"
+msgstr "{} グリーター"
+
+msgid "ArchInstall Language"
+msgstr "ArchInstall の言語"
+
+msgid "Version"
+msgstr "バージョン"
+
+msgid "Installation Script"
+msgstr "インストールスクリプト"
+
+msgid "Application"
+msgstr "アプリケーション"
+
+msgid "Services"
+msgstr "サービス"
+
+msgid "Custom commands"
+msgstr "カスタムコマンド"
+
+msgid "Users"
+msgstr "ユーザー"
+
+msgid "Root encrypted password"
+msgstr "Root 暗号化パスワード"
+
+#, python-brace-format
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr "\"{}\" を公開アクセス可能な {} にアップロードしようとしています"
+
+msgid "Do you want to continue?"
+msgstr "続行しますか？"
+
+#, python-brace-format
+msgid "Log uploaded successfully. URL: {}"
+msgstr "ログのアップロードに成功しました。URL: {}"
+
+msgid "Failed to upload log."
+msgstr "ログのアップロードに失敗しました。"
