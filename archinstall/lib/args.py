@@ -6,7 +6,7 @@ import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import Enum, StrEnum
 from pathlib import Path
 from typing import Any, Self
 from urllib.request import Request, urlopen
@@ -35,6 +35,10 @@ from archinstall.lib.version import get_version
 from archinstall.tui.components import tui
 
 
+class SubCommand(Enum):
+	SHARE_LOG = 'share-log'
+
+
 @p_dataclass
 class Arguments:
 	config: Path | None = None
@@ -57,6 +61,8 @@ class Arguments:
 	skip_wifi_check: bool = False
 	advanced: bool = False
 	verbose: bool = False
+
+	command: SubCommand | None = None
 
 
 class ArchConfigType(StrEnum):
@@ -365,13 +371,13 @@ class ArchConfig:
 class ArchConfigHandler:
 	def __init__(self) -> None:
 		self._parser: ArgumentParser = self._define_arguments()
-		args: Arguments = self._parse_args()
-		self._args = args
+		self._add_sub_parsers()
 
+		self._args: Arguments = self._parse_args()
 		config = self._parse_config()
 
 		try:
-			self._config = ArchConfig.from_config(config, args)
+			self._config = ArchConfig.from_config(config, self._args)
 			self._config.version = get_version()
 		except ValueError as err:
 			warn(str(err))
@@ -397,8 +403,13 @@ class ArchConfigHandler:
 	def print_help(self) -> None:
 		self._parser.print_help()
 
+	def _add_sub_parsers(self) -> None:
+		subparsers = self._parser.add_subparsers(dest='command', help='Available subcommands')
+		_ = subparsers.add_parser(SubCommand.SHARE_LOG.value, help='Upload log file to public server')
+
 	def _define_arguments(self) -> ArgumentParser:
 		parser = ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
 		parser.add_argument(
 			'-v',
 			'--version',
