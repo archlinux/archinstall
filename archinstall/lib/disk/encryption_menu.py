@@ -17,8 +17,8 @@ from archinstall.lib.models.device import (
 	PartitionModification,
 )
 from archinstall.lib.models.users import Password
-from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.format import as_table
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
@@ -199,7 +199,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def _prev_partitions(self, item: MenuItem) -> str | None:
 		if item.value:
 			output = tr('Partitions to be encrypted') + '\n'
-			output += FormattedOutput.as_table(item.value)
+			output += as_table(item.value)
 			return output.rstrip()
 
 		return None
@@ -207,7 +207,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def _prev_lvm_vols(self, item: MenuItem) -> str | None:
 		if item.value:
 			output = tr('LVM volumes to be encrypted') + '\n'
-			output += FormattedOutput.as_table(item.value)
+			output += as_table(item.value)
 			return output.rstrip()
 
 		return None

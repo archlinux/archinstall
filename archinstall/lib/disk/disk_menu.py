@@ -35,8 +35,9 @@ from archinstall.lib.models.device import (
 	Unit,
 	_DeviceInfo,
 )
-from archinstall.lib.output import FormattedOutput, debug
+from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.format import as_table
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
@@ -221,7 +222,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 
 			for mod in device_mods:
 				# create partition table
-				partition_table = FormattedOutput.as_table(mod.partitions)
+				partition_table = as_table(mod.partitions)
 
 				output_partition += f'{mod.device_path}: {mod.device.device_info.model}\n'
 				output_partition += '{}: {}\n'.format(tr('Wipe'), mod.wipe)
@@ -230,7 +231,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 				# create btrfs table
 				btrfs_partitions = [p for p in mod.partitions if p.btrfs_subvols]
 				for partition in btrfs_partitions:
-					output_btrfs += FormattedOutput.as_table(partition.btrfs_subvols) + '\n'
+					output_btrfs += as_table(partition.btrfs_subvols) + '\n'
 
 			output = output_partition + output_btrfs
 			return output.rstrip()
@@ -246,12 +247,12 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 		output = '{}: {}\n'.format(tr('Configuration'), lvm_config.config_type.display_msg())
 
 		for vol_gp in lvm_config.vol_groups:
-			pv_table = FormattedOutput.as_table(vol_gp.pvs)
+			pv_table = as_table(vol_gp.pvs)
 			output += '{}:\n{}'.format(tr('Physical volumes'), pv_table)
 
 			output += f'\nVolume Group: {vol_gp.name}'
 
-			lvm_volumes = FormattedOutput.as_table(vol_gp.volumes)
+			lvm_volumes = as_table(vol_gp.volumes)
 			output += '\n\n{}:\n{}'.format(tr('Volumes'), lvm_volumes)
 
 			return output
@@ -302,7 +303,7 @@ async def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | N
 		dev = device_handler.get_device(device.path)
 
 		if dev and dev.partition_infos:
-			return FormattedOutput.as_table(dev.partition_infos)
+			return as_table(dev.partition_infos)
 		return None
 
 	if preset is None:

@@ -19,8 +19,8 @@ from archinstall.lib.models.device import (
 	Size,
 	Unit,
 )
-from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.format import as_table
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
@@ -479,7 +479,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		sector_size = device_info.sector_size
 
 		text = tr('Selected free space segment on device {}:').format(device_info.path) + '\n\n'
-		free_space_table = FormattedOutput.as_table([free_space])
+		free_space_table = as_table([free_space])
 		prompt = text + free_space_table + '\n'
 
 		max_sectors = free_space.length.format_size(Unit.sectors, sector_size)
