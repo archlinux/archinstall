@@ -9,7 +9,7 @@ import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
-from archinstall.lib.output import share_install_log
+from archinstall.lib.log import share_install_log
 
 urls = st.builds(
 	'{}://{}.{}/{}'.format,

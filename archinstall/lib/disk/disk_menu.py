@@ -5,6 +5,7 @@ from typing import override
 from archinstall.lib.disk.device_handler import device_handler
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
 from archinstall.lib.disk.partitioning_menu import manual_partitioning
+from archinstall.lib.log import debug
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Confirmation, Notify, Selection, Table
 from archinstall.lib.menu.util import prompt_dir
@@ -35,7 +36,6 @@ from archinstall.lib.models.device import (
 	Unit,
 	_DeviceInfo,
 )
-from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
 from archinstall.lib.utils.format import as_table
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup

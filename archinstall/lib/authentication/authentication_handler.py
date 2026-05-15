@@ -3,9 +3,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from archinstall.lib.command import SysCommandWorker
+from archinstall.lib.log import debug, info
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.users import User
-from archinstall.lib.output import debug, info
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:

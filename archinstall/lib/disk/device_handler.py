@@ -15,6 +15,7 @@ from archinstall.lib.disk.utils import (
 	umount,
 )
 from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesystemFormat
+from archinstall.lib.log import debug, error, info, log
 from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
 	BDevice,
@@ -35,7 +36,6 @@ from archinstall.lib.models.device import (
 	_PartitionInfo,
 )
 from archinstall.lib.models.users import Password
-from archinstall.lib.output import debug, error, info, log
 from archinstall.lib.pathnames import ARCHISO_MOUNTPOINT
 
 

@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Self, override
 
+from archinstall.lib.log import warn
 from archinstall.lib.models.config import SubConfig
-from archinstall.lib.output import warn
 from archinstall.lib.translationhandler import tr
 
 

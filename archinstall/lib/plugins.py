@@ -7,7 +7,7 @@ import urllib.request
 from importlib import metadata
 from pathlib import Path
 
-from archinstall.lib.output import error, info, warn
+from archinstall.lib.log import error, info, warn
 from archinstall.lib.version import get_version
 
 plugins = {}

@@ -12,9 +12,9 @@ from parted import Disk, Geometry, Partition
 from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_validator
 
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.log import debug
 from archinstall.lib.models.config import SubConfig
 from archinstall.lib.models.users import Password
-from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
 
 ENC_IDENTIFIER = 'ainst'

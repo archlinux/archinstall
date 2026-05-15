@@ -5,7 +5,7 @@ from pathlib import Path
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import RequirementError
-from archinstall.lib.output import error, info, warn
+from archinstall.lib.log import error, info, warn
 from archinstall.lib.pathnames import PACMAN_CONF
 from archinstall.lib.plugins import plugins
 from archinstall.lib.translationhandler import tr
