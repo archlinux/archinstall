@@ -24,6 +24,7 @@ from archinstall.lib.disk.utils import (
 	get_unique_path_for_device,
 	mount,
 	swapon,
+	teardown,
 )
 from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
 from archinstall.lib.hardware import SysInfo
@@ -131,45 +132,51 @@ class Installer:
 
 		self._zram_enabled = False
 		self._disable_fstrim = False
-
+		self._layout_teardown_required = False
 		self.pacman = Pacman(self.target, silent)
 
 	def __enter__(self) -> Self:
 		return self
 
 	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> bool | None:
-		if exc_type is not None:
-			error(str(exc_value))
+		try:
+			if exc_type is not None:
+				error(str(exc_value))
 
-			self.sync_log_to_install_medium()
+				self.sync_log_to_install_medium()
 
-			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
-			# and then reboot, and an identical log file will be found in the ISO medium anyway.
-			print(tr('[!] A log file has been created here: {}').format(logger.path))
-			print(tr('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues'))
+				# We avoid printing /mnt/<log path> because that might confuse people if they note it down
+				# and then reboot, and an identical log file will be found in the ISO medium anyway.
+				print(tr('[!] A log file has been created here: {}').format(logger.path))
+				print(tr('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues'))
 
-			# Return None to propagate the exception
-			return None
+				# Return None to propagate the exception
+				return None
 
-		info(tr('Syncing the system...'))
-		os.sync()
+			info(tr('Syncing the system...'))
+			os.sync()
 
-		if not (missing_steps := self.post_install_check()):
-			msg = f'Installation completed without any errors.\nLog files temporarily available at {logger.directory}.\nYou may reboot when ready.\n'
-			log(msg, fg='green')
-			self.sync_log_to_install_medium()
-			return True
-		else:
-			warn('Some required steps were not successfully installed/configured before leaving the installer:')
+			if not (missing_steps := self.post_install_check()):
+				msg = f'Installation completed without any errors.\nLog files temporarily available at {logger.directory}.\nYou may reboot when ready.\n'
+				log(msg, fg='green')
+				self.sync_log_to_install_medium()
+				return True
+			else:
+				warn('Some required steps were not successfully installed/configured before leaving the installer:')
 
-			for step in missing_steps:
-				warn(f' - {step}')
+				for step in missing_steps:
+					warn(f' - {step}')
 
-			warn(f'Detailed error logs can be found at: {logger.directory}')
-			warn('Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues')
+				warn(f'Detailed error logs can be found at: {logger.directory}')
+				warn('Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues')
 
-			self.sync_log_to_install_medium()
-			return False
+				self.sync_log_to_install_medium()
+				return False
+		finally:
+			try:
+				teardown(self)
+			except Exception as err:
+				warn(f'Failed to teardown installation target: {err}')
 
 	def remove_mod(self, mod: str) -> None:
 		if mod in self._modules:
@@ -257,6 +264,7 @@ class Installer:
 
 	def mount_ordered_layout(self) -> None:
 		debug('Mounting ordered layout')
+		self._layout_teardown_required = True
 
 		luks_handlers: dict[Any, Luks2] = {}
 

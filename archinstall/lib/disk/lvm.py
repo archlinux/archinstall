@@ -118,6 +118,14 @@ def lvm_vol_change(vol: LvmVolume, activate: bool) -> None:
 	SysCommand(cmd)
 
 
+def lvm_vg_change(vg: LvmVolumeGroup, activate: bool) -> None:
+	active_flag = 'y' if activate else 'n'
+	cmd = ['vgchange', '-a', active_flag, vg.name]
+
+	debug(f'vgchange volume group: {" ".join(cmd)}')
+	SysCommand(cmd)
+
+
 def lvm_export_vg(vg: LvmVolumeGroup) -> None:
 	cmd = f'vgexport {vg.name}'
 
