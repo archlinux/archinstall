@@ -7,6 +7,7 @@ from typing import Literal, overload
 from archinstall.lib.command import SysCommand, SysCommandWorker
 from archinstall.lib.disk.utils import udev_sync
 from archinstall.lib.exceptions import SysCallError
+from archinstall.lib.log import debug
 from archinstall.lib.models.device import (
 	LvmGroupInfo,
 	LvmPVInfo,
@@ -17,7 +18,6 @@ from archinstall.lib.models.device import (
 	Size,
 	Unit,
 )
-from archinstall.lib.output import debug
 
 
 def _lvm_info(

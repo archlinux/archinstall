@@ -13,7 +13,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 from archinstall.lib.exceptions import DownloadTimeout, SysCallError
-from archinstall.lib.output import debug, error, info
+from archinstall.lib.log import debug, error, info
 from archinstall.lib.pacman.pacman import Pacman
 
 

@@ -11,7 +11,7 @@ from types import TracebackType
 from typing import Any, Self, override
 
 from archinstall.lib.exceptions import RequirementError, SysCallError
-from archinstall.lib.output import debug, error, logger
+from archinstall.lib.log import debug, error, logger
 from archinstall.lib.utils.encoding import clear_vt100_escape_codes
 
 

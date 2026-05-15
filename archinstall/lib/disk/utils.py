@@ -4,8 +4,8 @@ from pydantic import BaseModel
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import DiskError, SysCallError
+from archinstall.lib.log import debug, info, warn
 from archinstall.lib.models.device import LsblkInfo
-from archinstall.lib.output import debug, info, warn
 
 
 class LsblkOutput(BaseModel):

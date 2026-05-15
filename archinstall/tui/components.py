@@ -19,7 +19,7 @@ from textual.widgets.option_list import Option
 from textual.widgets.selection_list import Selection
 from textual.worker import WorkerCancelled
 
-from archinstall.lib.output import debug
+from archinstall.lib.log import debug
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import Result, ResultType

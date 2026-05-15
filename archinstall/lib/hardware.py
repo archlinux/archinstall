@@ -6,8 +6,8 @@ from typing import Self
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import SysCallError
+from archinstall.lib.log import debug
 from archinstall.lib.networking import enrich_iface_types, list_interfaces
-from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
 
 
