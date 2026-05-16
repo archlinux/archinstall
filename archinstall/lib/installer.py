@@ -375,7 +375,12 @@ class Installer:
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
-			mount(part_mod.dev_path, target, options=part_mod.mount_options)
+			options = part_mod.mount_options
+
+			if part_mod.is_efi():
+				options = list(dict.fromkeys(options + ['fmask=0077', 'dmask=0077']))
+
+			mount(part_mod.dev_path, target, options=options)
 		elif part_mod.fs_type == FilesystemType.BTRFS:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
