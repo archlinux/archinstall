@@ -2460,3 +2460,6 @@ msgstr ""
 #, python-brace-format
 msgid "{} greeter"
 msgstr ""
+
+msgid "Enter a repository name"
+msgstr ""
