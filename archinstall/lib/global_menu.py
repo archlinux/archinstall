@@ -33,7 +33,7 @@ from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.tui.components import tui
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 
 
 class GlobalMenu(AbstractMenu[None]):
@@ -494,21 +494,40 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return None
 
-	def _prev_install_invalid_config(self, item: MenuItem) -> str | None:
-		if missing := self._missing_configs():
-			text = tr('Missing configurations:\n')
-			for m in missing:
-				text += f'- {m}\n'
-			return text[:-1]  # remove last new line
-
-		if error := self._validate_bootloader():
-			return tr(f'Invalid configuration: {error}')
-
+	def _prev_install_invalid_config(self, item: MenuItem) -> str | PreviewResult | list[PreviewResult] | None:
 		self.sync_all_to_config()
-		summary = ConfigurationOutput(self._arch_config).as_summary()
-		if summary:
-			return f'{tr("Ready to install")}\n\n{summary}'
-		return tr('Ready to install')
+		config_output = ConfigurationOutput(self._arch_config)
+
+		warnings = config_output.get_install_warnings()
+		sections: list[PreviewResult] = []
+
+		errors = ''
+		if missing := self._missing_configs():
+			errors += f'{tr("Missing configurations:")}\n'
+			errors += '\n'.join(f'- {m}' for m in missing)
+
+		disk_item = self._item_group.find_by_key('disk_config')
+		if disk_item.has_value():
+			if error := self._validate_bootloader():
+				if errors:
+					errors += '\n\n'
+				errors += f'{tr("Invalid configuration:")}\n- {error}'
+
+		if errors:
+			sections.append(PreviewResult(errors, MsgLevelType.MsgError))
+		else:
+			sections.append(PreviewResult(tr('Ready to install'), MsgLevelType.MsgInfo))
+
+		if warnings:
+			text = f'{tr("Warnings:")}\n' + '\n'.join(f'- {w}' for w in warnings)
+			sections.append(PreviewResult(text, MsgLevelType.MsgWarning))
+
+		if not errors:
+			summary = config_output.as_summary()
+			if summary:
+				sections.append(PreviewResult(summary, MsgLevelType.MsgNone))
+
+		return sections
 
 	def _prev_profile(self, item: MenuItem) -> str | None:
 		profile_config: ProfileConfiguration | None = item.value
