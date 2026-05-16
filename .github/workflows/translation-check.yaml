@@ -1,0 +1,138 @@
+name: Translation validation
+on:
+    push:
+        paths:
+            - 'archinstall/**/*.py'
+            - 'archinstall/locales/**'
+            - '.github/workflows/translation-check.yaml'
+    pull_request:
+        paths:
+            - 'archinstall/**/*.py'
+            - 'archinstall/locales/**'
+            - '.github/workflows/translation-check.yaml'
+jobs:
+    validate-po:
+        name: Validate .po files and translation patterns
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux/archlinux:latest
+        steps:
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+              with:
+                fetch-depth: 0
+            - name: Find changed files
+              id: changed
+              run: |
+                if [ "${{ github.event_name }}" = "pull_request" ]; then
+                    base="${{ github.event.pull_request.base.sha }}"
+                    head="${{ github.event.pull_request.head.sha }}"
+                else
+                    base="${{ github.event.before }}"
+                    head="${{ github.sha }}"
+                fi
+                changed_po=$(git diff --name-only "$base" "$head" 2>/dev/null | grep '\.po$' || true)
+                changed_py=$(git diff --name-only "$base" "$head" 2>/dev/null | grep '\.py$' || true)
+                if [ -n "$changed_po" ]; then
+                    echo "has_po=true" >> "$GITHUB_OUTPUT"
+                    echo "$changed_po" > /tmp/changed_po.txt
+                else
+                    echo "has_po=false" >> "$GITHUB_OUTPUT"
+                fi
+                if [ -n "$changed_py" ]; then
+                    echo "has_py=true" >> "$GITHUB_OUTPUT"
+                else
+                    echo "has_py=false" >> "$GITHUB_OUTPUT"
+                fi
+            - name: Install gettext
+              if: steps.changed.outputs.has_po == 'true'
+              run: |
+                pacman-key --init
+                pacman --noconfirm -Sy archlinux-keyring
+                pacman --noconfirm -Syyu
+                pacman --noconfirm -S gettext
+            - name: Check changed .po syntax with msgfmt
+              if: steps.changed.outputs.has_po == 'true'
+              run: |
+                failed=0
+                while IFS= read -r po; do
+                    if [ -f "$po" ] && ! msgfmt --check --output-file=/dev/null "$po" 2>&1; then
+                        echo "FAIL: $po"
+                        failed=1
+                    fi
+                done < /tmp/changed_po.txt
+                if [ "$failed" -eq 1 ]; then
+                    echo "::error::Some .po files have syntax errors"
+                    exit 1
+                fi
+                echo "All changed .po files passed syntax check"
+            - name: Warn if changed .mo files are out of sync
+              if: steps.changed.outputs.has_po == 'true'
+              run: |
+                out_of_sync=0
+                while IFS= read -r po; do
+                    if [ ! -f "$po" ]; then continue; fi
+                    mo="${po%.po}.mo"
+                    if [ ! -f "$mo" ]; then
+                        echo "::warning::Missing .mo file for $po"
+                        out_of_sync=1
+                        continue
+                    fi
+                    tmp_mo=$(mktemp)
+                    msgfmt --output-file="$tmp_mo" "$po"
+                    if ! cmp -s "$mo" "$tmp_mo"; then
+                        echo "::warning::$mo is out of sync with $po - run locales_generator.sh"
+                        out_of_sync=1
+                    fi
+                    rm -f "$tmp_mo"
+                done < /tmp/changed_po.txt
+                if [ "$out_of_sync" -eq 1 ]; then
+                    echo "Some .mo files are out of sync (warning only)"
+                fi
+            - name: Check for tr(f-string) anti-pattern
+              if: steps.changed.outputs.has_py == 'true'
+              run: |
+                if grep -rn --include='*.py' "tr(f['\"]" archinstall/; then
+                    echo "::error::Found tr(f'...') pattern. Use tr('...{}').format(...) instead"
+                    exit 1
+                fi
+                echo "No tr(f-string) anti-pattern found"
+
+    validate-pot:
+        name: Validate base.pot is up to date
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux/archlinux:latest
+        steps:
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+              with:
+                fetch-depth: 0
+            - name: Check for changed Python files
+              id: check_py
+              run: |
+                if [ "${{ github.event_name }}" = "pull_request" ]; then
+                    base="${{ github.event.pull_request.base.sha }}"
+                    head="${{ github.event.pull_request.head.sha }}"
+                else
+                    base="${{ github.event.before }}"
+                    head="${{ github.sha }}"
+                fi
+                if git diff --name-only "$base" "$head" 2>/dev/null | grep -q '\.py$'; then
+                    echo "has_py_changes=true" >> "$GITHUB_OUTPUT"
+                else
+                    echo "has_py_changes=false" >> "$GITHUB_OUTPUT"
+                fi
+            - name: Install gettext
+              if: steps.check_py.outputs.has_py_changes == 'true'
+              run: |
+                pacman-key --init
+                pacman --noconfirm -Sy archlinux-keyring
+                pacman --noconfirm -Syyu
+                pacman --noconfirm -S gettext
+            - name: Check for missing translatable strings
+              if: steps.check_py.outputs.has_py_changes == 'true'
+              run: |
+                cd archinstall
+                find . -type f -name '*.py' | sort | xargs xgettext \
+                    --no-location --omit-header --keyword='tr' \
+                    -d base -o /tmp/generated.pot
+                msgcmp --use-untranslated locales/base.pot /tmp/generated.pot
