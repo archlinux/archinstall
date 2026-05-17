@@ -65,7 +65,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 
 	async def _add_custom_repository(self, preset: CustomRepository | None = None) -> CustomRepository | None:
 		edit_result = await Input(
-			header=tr('Enter a respository name'),
+			header=tr('Enter a repository name'),
 			allow_skip=True,
 			default_value=preset.name if preset else None,
 		).show()
