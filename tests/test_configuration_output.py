@@ -66,3 +66,28 @@ def test_creds_roundtrip(
 	expected = json.loads(creds_fixture.read_text())
 
 	assert sorted(result.items()) == sorted(expected.items())
+
+
+def test_aur_config_roundtrip(
+	monkeypatch: MonkeyPatch,
+	aur_config_fixture: Path,
+) -> None:
+	monkeypatch.setattr('sys.argv', ['archinstall', '--config', str(aur_config_fixture)])
+
+	handler = ArchConfigHandler()
+	arch_config = handler.config
+	arch_config.version = '3.0.2'
+
+	assert arch_config.aur_config is not None
+	assert arch_config.aur_config.helper_config is not None
+	assert arch_config.aur_config.helper_config.helper.value == 'paru'
+
+	config_output = ConfigurationOutput(arch_config)
+	test_out_dir = Path('/tmp/')
+	test_out_file = test_out_dir / config_output.user_configuration_file
+	config_output.save(test_out_dir)
+
+	result = json.loads(test_out_file.read_text())
+	expected = json.loads(aur_config_fixture.read_text())
+
+	assert result['aur_config'] == expected['aur_config']

@@ -2463,3 +2463,27 @@ msgstr ""
 
 msgid "Enter a repository name"
 msgstr ""
+
+msgid "Enable AUR"
+msgstr ""
+
+msgid "Enable AUR Helper"
+msgstr ""
+
+msgid "AUR helper"
+msgstr ""
+
+msgid "AUR helper requires a non-root user account. Configure one under Authentication."
+msgstr ""
+
+#, python-brace-format
+msgid "Installing AUR helper {}"
+msgstr ""
+
+#, python-brace-format
+msgid "Failed to install AUR helper: {}"
+msgstr ""
+
+#, python-brace-format
+msgid "AUR helper \"{}\""
+msgstr ""

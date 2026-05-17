@@ -3,6 +3,7 @@ from typing import override
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.applications.application_menu import ApplicationMenu
 from archinstall.lib.args import ArchConfig
+from archinstall.lib.aur.aur_menu import AURMenu
 from archinstall.lib.authentication.authentication_menu import AuthenticationMenu
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
@@ -16,6 +17,7 @@ from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.mirror.mirror_menu import MirrorMenu
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
+from archinstall.lib.models.aur import AURConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, PartitionModification
@@ -137,6 +139,12 @@ class GlobalMenu(AbstractMenu[None]):
 				key='app_config',
 			),
 			MenuItem(
+				text=tr('Enable AUR'),
+				action=self._select_aur,
+				preview_action=self._prev_aur,
+				key='aur_config',
+			),
+			MenuItem(
 				text=tr('Network configuration'),
 				action=select_network,
 				value={},
@@ -235,6 +243,13 @@ class GlobalMenu(AbstractMenu[None]):
 				if not check(item.key):
 					missing.add(item.text)
 
+		aur_item: MenuItem = self._item_group.find_by_key('aur_config')
+		aur_config: AURConfiguration | None = aur_item.value
+		if aur_config and aur_config.helper_config and not (auth_config and auth_config.has_regular_user()):
+			missing.add(
+				tr('AUR helper requires a non-root user account. Configure one under Authentication.'),
+			)
+
 		return list(missing)
 
 	@override
@@ -266,6 +281,17 @@ class GlobalMenu(AbstractMenu[None]):
 	async def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
 		app_config = await ApplicationMenu(preset).show()
 		return app_config
+
+	async def _select_aur(self, preset: AURConfiguration | None) -> AURConfiguration | None:
+		aur_config = await AURMenu(preset).show()
+		return aur_config
+
+	def _prev_aur(self, item: MenuItem) -> str | None:
+		if item.value is not None:
+			aur_config: AURConfiguration = item.value
+			if aur_config.helper_config:
+				return f'{tr("AUR helper")}: {aur_config.helper_config.helper.value}'
+		return None
 
 	async def _select_authentication(self, preset: AuthenticationConfiguration | None) -> AuthenticationConfiguration | None:
 		auth_config = await AuthenticationMenu(preset).show()

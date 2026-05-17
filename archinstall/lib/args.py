@@ -16,6 +16,7 @@ from pydantic.dataclasses import dataclass as p_dataclass
 from archinstall.lib.crypt import decrypt
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
+from archinstall.lib.models.aur import AURConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.config import SubConfig
@@ -76,6 +77,7 @@ class ArchConfigType(StrEnum):
 	NETWORK_CONFIG = 'network_config'
 	BOOTLOADER_CONFIG = 'bootloader_config'
 	APP_CONFIG = 'app_config'
+	AUR_CONFIG = 'aur_config'
 	AUTH_CONFIG = 'auth_config'
 	SWAP = 'swap'
 	USERS = 'users'
@@ -112,6 +114,8 @@ class ArchConfigType(StrEnum):
 				return tr('Bootloader')
 			case ArchConfigType.APP_CONFIG:
 				return tr('Application')
+			case ArchConfigType.AUR_CONFIG:
+				return tr('Enable AUR')
 			case ArchConfigType.AUTH_CONFIG:
 				return tr('Authentication')
 			case ArchConfigType.SWAP:
@@ -152,6 +156,7 @@ class ArchConfig:
 	network_config: NetworkConfiguration | None = None
 	bootloader_config: BootloaderConfiguration | None = None
 	app_config: ApplicationConfiguration | None = None
+	aur_config: AURConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
 	swap: ZramConfiguration | None = None
 	hostname: str = 'archlinux'
@@ -240,6 +245,9 @@ class ArchConfig:
 		if self.app_config:
 			cfg[ArchConfigType.APP_CONFIG] = self.app_config
 
+		if self.aur_config:
+			cfg[ArchConfigType.AUR_CONFIG] = self.aur_config
+
 		return cfg
 
 	@classmethod
@@ -306,6 +314,9 @@ class ArchConfig:
 
 		if audio_config_args is not None or app_config_args is not None:
 			arch_config.app_config = ApplicationConfiguration.parse_arg(app_config_args, audio_config_args)
+
+		if aur_config_args := args_config.get('aur_config', None):
+			arch_config.aur_config = AURConfiguration.parse_arg(aur_config_args)
 
 		if auth_config_args := args_config.get('auth_config', None):
 			arch_config.auth_config = AuthenticationConfiguration.parse_arg(auth_config_args)

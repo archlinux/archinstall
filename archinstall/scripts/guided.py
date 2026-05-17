@@ -4,6 +4,7 @@ import time
 
 from archinstall.lib.applications.application_handler import ApplicationHandler
 from archinstall.lib.args import ArchConfig, ArchConfigHandler
+from archinstall.lib.aur.aur_handler import AURHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.configuration import ConfigurationOutput
@@ -137,6 +138,8 @@ def perform_installation(
 
 		if app_config := config.app_config:
 			application_handler.install_applications(installation, app_config)
+
+		AURHandler().install_aur(installation, config.aur_config, users or [])
 
 		if profile_config := config.profile_config:
 			profile_handler.install_profile_config(installation, profile_config)
