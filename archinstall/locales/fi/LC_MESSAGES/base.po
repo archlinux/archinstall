@@ -2190,7 +2190,7 @@ msgstr "Valittu työpöydän profiili vaati tavallisen käyttäjän kirjautumise
 
 #, python-brace-format
 msgid "Environment type: {} {}"
-msgstr "Ympäristötyyppi: {}"
+msgstr "Ympäristötyyppi: {} {}"
 
 msgid "Input cannot be empty"
 msgstr "Syöttö ei voi olla tyhjä"
@@ -2245,4 +2245,4 @@ msgstr "Määritetään U2F laitetta käyttäjälle: {}"
 
 #, python-brace-format
 msgid "Default: {}ms, Recommended range: 1000-60000"
-msgstr "Oletusarvo: 10000ms, suositeltu 1000-60000ms"
+msgstr "Oletusarvo: {}ms, suositeltu 1000-60000ms"
