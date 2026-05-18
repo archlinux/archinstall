@@ -1,11 +1,17 @@
+import os
+from contextlib import suppress
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import DiskError, SysCallError
-from archinstall.lib.models.device import LsblkInfo
+from archinstall.lib.models.device import EncryptionType, FilesystemType, LsblkInfo
 from archinstall.lib.output import debug, info, warn
+
+if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
 
 
 class LsblkOutput(BaseModel):
@@ -196,3 +202,119 @@ def swapon(path: Path) -> None:
 		SysCommand(['swapon', str(path)])
 	except SysCallError as err:
 		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
+
+
+def teardown(installer: Installer) -> None:
+	if not installer._layout_teardown_required:
+		debug('No mounted layout registered for teardown')
+		return
+
+	info('Tearing down installation target')
+
+	with suppress(Exception):
+		os.sync()
+
+	_swapoff_layout(installer)
+
+	with suppress(SysCallError, DiskError):
+		umount(installer.target, recursive=True)
+
+	match installer._disk_encryption.encryption_type:
+		case EncryptionType.LUKS:
+			_teardown_luks_partitions(installer)
+
+		case EncryptionType.LUKS_ON_LVM:
+			_teardown_luks_lvm(installer)
+			_teardown_lvm(installer)
+
+		case EncryptionType.LVM_ON_LUKS:
+			_teardown_lvm(installer)
+			_teardown_luks_partitions(installer)
+
+		case EncryptionType.NO_ENCRYPTION:
+			_teardown_lvm(installer)
+
+	with suppress(SysCallError):
+		udev_sync()
+
+	installer._layout_teardown_required = False
+
+
+def _swapoff_path(path: Path | None) -> None:
+	if path is None:
+		return
+
+	with suppress(SysCallError, DiskError):
+		SysCommand(['swapoff', str(path)])
+
+
+def _swapoff_layout(installer: Installer) -> None:
+	for mod in installer._disk_config.device_modifications:
+		for part in mod.partitions:
+			if part.is_swap():
+				_swapoff_path(part.dev_path)
+
+				if part.mapper_name:
+					_swapoff_path(Path('/dev/mapper') / part.mapper_name)
+
+	if not installer._disk_config.lvm_config:
+		return
+
+	for vol in installer._disk_config.lvm_config.get_all_volumes():
+		if vol.fs_type == FilesystemType.LINUX_SWAP:
+			_swapoff_path(vol.dev_path)
+
+			if vol.mapper_name:
+				_swapoff_path(Path('/dev/mapper') / vol.mapper_name)
+
+
+def _teardown_lvm(installer: Installer) -> None:
+	from archinstall.lib.disk.lvm import lvm_vg_change, lvm_vol_change
+
+	lvm_config = installer._disk_config.lvm_config
+
+	if not lvm_config:
+		return
+
+	for vg in reversed(lvm_config.vol_groups):
+		for vol in reversed(vg.volumes):
+			if not vol.dev_path:
+				continue
+
+			with suppress(SysCallError, DiskError):
+				lvm_vol_change(vol, False)
+
+		with suppress(SysCallError, DiskError):
+			lvm_vg_change(vg, False)
+
+
+def _teardown_luks_partitions(installer: Installer) -> None:
+	from archinstall.lib.disk.luks import Luks2
+
+	for part_mod in reversed(installer._disk_encryption.partitions):
+		if not part_mod.dev_path or not part_mod.mapper_name:
+			continue
+
+		luks_handler = Luks2(
+			part_mod.dev_path,
+			mapper_name=part_mod.mapper_name,
+		)
+
+		with suppress(SysCallError, DiskError):
+			luks_handler.lock()
+
+
+def _teardown_luks_lvm(installer: Installer) -> None:
+	from archinstall.lib.disk.luks import Luks2
+
+	for vol in reversed(installer._disk_encryption.lvm_volumes):
+		if not vol.dev_path or not vol.mapper_name:
+			continue
+
+		luks_handler = Luks2(
+			vol.dev_path,
+			mapper_name=vol.mapper_name,
+		)
+
+		with suppress(SysCallError, DiskError):
+			luks_handler.lock()
