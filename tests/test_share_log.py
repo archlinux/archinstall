@@ -9,7 +9,7 @@ import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
-from archinstall.lib.output import share_install_log
+from archinstall.lib.log import share_install_log
 
 urls = st.builds(
 	'{}://{}.{}/{}'.format,
@@ -55,7 +55,7 @@ def test_file_not_found(
 ) -> None:
 	missing_log = tmp_path / sub_path / 'install.log'
 
-	with patch('archinstall.lib.output.logger._path', new=missing_log):
+	with patch('archinstall.lib.log.logger._path', new=missing_log):
 		assert share_install_log(paste_url, max_byte) is None
 
 
@@ -64,8 +64,8 @@ def test_file_not_found(
 def test_empty_file(log_file: Path, paste_url: str, max_byte: int | None) -> None:
 	log_file.write_bytes(b'')
 
-	with patch('archinstall.lib.output.logger._path', new=log_file.parent):
-		# with patch('archinstall.lib.output.logger', _fake_logger(log_file)):
+	with patch('archinstall.lib.log.logger._path', new=log_file.parent):
+		# with patch('archinstall.lib.log.logger', _fake_logger(log_file)):
 		assert share_install_log(paste_url, max_byte) is None
 
 
@@ -76,7 +76,7 @@ def test_successful_upload(log_file: Path, resp_url: str, paste_url: str, max_by
 	fake_response = BytesIO(resp_url.encode())
 
 	with (
-		patch('archinstall.lib.output.logger._path', new=log_file.parent),
+		patch('archinstall.lib.log.logger._path', new=log_file.parent),
 		patch('urllib.request.urlopen', return_value=fake_response),
 	):
 		result = share_install_log(paste_url, max_byte)
@@ -93,7 +93,7 @@ def test_truncation(log_file: Path, resp_url: str, paste_url: str, max_byte: int
 	exptected_byte = len(content) if max_byte is None else max_byte
 
 	with (
-		patch('archinstall.lib.output.logger._path', new=log_file.parent),
+		patch('archinstall.lib.log.logger._path', new=log_file.parent),
 		patch('urllib.request.urlopen', return_value=fake_response) as mock_open,
 	):
 		_ = share_install_log(paste_url, max_byte)
@@ -108,7 +108,7 @@ def test_network_error(log_file: Path, paste_url: str, max_byte: int | None) -> 
 	log_file.write_text('some log content')
 
 	with (
-		patch('archinstall.lib.output.logger._path', new=log_file.parent),
+		patch('archinstall.lib.log.logger._path', new=log_file.parent),
 		patch('urllib.request.urlopen', side_effect=urllib.error.URLError('no network')),
 	):
 		assert share_install_log(paste_url, max_byte) is None
@@ -121,7 +121,7 @@ def test_unexpected_response(log_file: Path, paste_url: str, max_byte: int | Non
 	fake_response = BytesIO(b'ERROR: something went wrong')
 
 	with (
-		patch('archinstall.lib.output.logger._path', new=log_file.parent),
+		patch('archinstall.lib.log.logger._path', new=log_file.parent),
 		patch('urllib.request.urlopen', return_value=fake_response),
 	):
 		assert share_install_log(paste_url, max_byte) is None

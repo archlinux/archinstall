@@ -27,11 +27,11 @@ from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
-from archinstall.lib.output import FormattedOutput
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.lib.utils.format import as_table
 from archinstall.tui.components import tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
@@ -299,7 +299,7 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value:
 			network_config: NetworkConfiguration = item.value
 			if network_config.type == NicType.MANUAL:
-				output = FormattedOutput.as_table(network_config.nics)
+				output = as_table(network_config.nics)
 			else:
 				output = f'{tr("Network configuration")}:\n{network_config.type.display_msg()}'
 
@@ -321,7 +321,7 @@ class GlobalMenu(AbstractMenu[None]):
 				output += f'{tr("Root password")}: {auth_config.root_enc_password.hidden()}\n'
 
 			if auth_config.users:
-				output += FormattedOutput.as_table(auth_config.users) + '\n'
+				output += as_table(auth_config.users) + '\n'
 
 			if auth_config.u2f_config:
 				u2f_config = auth_config.u2f_config
@@ -612,7 +612,7 @@ class GlobalMenu(AbstractMenu[None]):
 
 		if mirror_config.custom_repositories:
 			title = tr('Custom repositories')
-			table = FormattedOutput.as_table(mirror_config.custom_repositories)
+			table = as_table(mirror_config.custom_repositories)
 			output += f'{title}:\n\n{table}'
 
 		return output.strip()

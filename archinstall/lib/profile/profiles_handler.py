@@ -9,9 +9,9 @@ from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from archinstall.default_profiles.profile import CustomSetting, GreeterType, Profile
 from archinstall.lib.hardware import GfxDriver, GfxPackage
+from archinstall.lib.log import debug, error, info
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.networking import fetch_data_from_url
-from archinstall.lib.output import debug, error, info
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from archinstall.lib.output import debug
+from archinstall.lib.log import debug
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

@@ -11,10 +11,10 @@ from pathlib import Path
 from archinstall.lib.args import ArchConfigHandler, SubCommand
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.log import debug, error, info, logger, share_install_log, warn
 from archinstall.lib.menu.helpers import Confirmation
 from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
-from archinstall.lib.output import debug, error, info, logger, share_install_log, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr, translation_handler

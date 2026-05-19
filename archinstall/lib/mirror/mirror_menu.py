@@ -13,8 +13,8 @@ from archinstall.lib.models.mirrors import (
 	SignOption,
 )
 from archinstall.lib.models.packages import Repository
-from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
+from archinstall.lib.utils.format import as_table
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
@@ -281,7 +281,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 			return None
 
 		custom_mirrors: list[CustomRepository] = item.value
-		output = FormattedOutput.as_table(custom_mirrors)
+		output = as_table(custom_mirrors)
 		return output.strip()
 
 	def _prev_custom_servers(self, item: MenuItem) -> str | None:
