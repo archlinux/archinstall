@@ -19,7 +19,7 @@ from textual.widgets.option_list import Option
 from textual.widgets.selection_list import Selection
 from textual.worker import WorkerCancelled
 
-from archinstall.lib.output import debug
+from archinstall.lib.log import debug
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import Result, ResultType
@@ -349,11 +349,6 @@ class OptionListScreen(BaseScreen[ValueT]):
 				-option_list.scroll_offset.y,  # scroll offset
 			]
 		)
-
-		# debug(f'Index: {index}')
-		# debug(f'Region: {option_list.region}')
-		# debug(f'Scroll offset: {option_list.scroll_offset}')
-		# debug(f'Target_Y: {target_y}')
 
 		self.app.cursor_position = Offset(option_list.region.x, target_y)
 		self.app.refresh()
@@ -1162,8 +1157,6 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 				-data_table.scroll_offset.y,  # scroll offset
 			]
 		)
-
-		debug(f'Setting cursor to target_y: {target_y}')
 
 		self.app.cursor_position = Offset(data_table.region.x, target_y)
 		self.app.refresh()

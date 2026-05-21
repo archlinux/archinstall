@@ -9,7 +9,7 @@ from typing import override
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import SysCallError
-from archinstall.lib.output import debug
+from archinstall.lib.log import debug
 from archinstall.lib.utils.util import running_from_iso
 
 
