@@ -7,7 +7,7 @@ from archinstall.default_profiles.profile import CustomSetting, DisplayServerTyp
 class NiriProfile(Profile):
 	def __init__(self) -> None:
 		super().__init__(
-			'Niri',
+			'niri',
 			ProfileType.WindowMgr,
 			support_gfx_driver=True,
 			display_server=DisplayServerType.Wayland,
