@@ -17,8 +17,7 @@ msgstr "[!] Một tệp nhật ký (log) đã được tạo ở đây: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
 msgstr ""
-"    Vui lòng gửi vấn đề này (và tệp tin) đến địa chỉ https://github.com/archlinux/archinstall/"
-"issues"
+"    Vui lòng gửi vấn đề này (và tệp tin) đến địa chỉ https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
 msgstr "Bạn thật sự có muốn hủy bỏ không?"
@@ -261,7 +260,7 @@ msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "Chọn hạt nhân nào sẽ sử dụng hoặc để trống mặc định \"{}\""
 
 msgid "Choose which locale language to use"
-msgstr "Chọn ngôn ngữ địa phương muốn sử dụng"
+msgstr "Chọn ngôn ngữ hệ thống muốn sử dụng"
 
 #, fuzzy
 msgid "Choose which locale encoding to use"
@@ -299,14 +298,13 @@ msgid "Mirror region"
 msgstr "Vùng gương"
 
 msgid "Locale language"
-msgstr "Ngôn ngữ địa phương"
+msgstr "Ngôn ngữ hệ thống (Locale)"
 
 msgid "Locale encoding"
 msgstr "Mã hóa ngôn ngữ hệ thống"
 
-#, fuzzy
 msgid "Console font"
-msgstr "Phông chữ bảng điều khiển"
+msgstr "Phông chữ console"
 
 #, fuzzy
 msgid "Drive(s)"
@@ -320,9 +318,8 @@ msgstr "Bố trí đĩa"
 msgid "Encryption password"
 msgstr "Mật khẩu mã hóa"
 
-#, fuzzy
 msgid "Swap"
-msgstr "Tráo đổi"
+msgstr "Bộ nhớ đệm (Swap)"
 
 msgid "Bootloader"
 msgstr "Trình khởi động"
@@ -657,9 +654,8 @@ msgstr "Mật khẩu bạn đang sử dụng có vẻ yếu,"
 msgid "are you sure you want to use it?"
 msgstr "bạn có chắc chắn muốn sử dụng nó không?"
 
-#, fuzzy
 msgid "Optional repositories"
-msgstr "Kho lưu trữ tùy chọn"
+msgstr "Kho phần mềm tùy chọn"
 
 #, fuzzy
 msgid "Save configuration"
@@ -1214,9 +1210,8 @@ msgstr ""
 msgid "Mountpoint: "
 msgstr "Điểm gắn kết:"
 
-#, fuzzy
 msgid "Current free sectors on device {}:"
-msgstr "Các lĩnh vực miễn phí hiện tại trên thiết bị {}:"
+msgstr "Các phân vùng trống hiện có trên thiết bị {}:"
 
 #, fuzzy
 msgid "Total sectors: {}"
@@ -1514,7 +1509,7 @@ msgid "Mirrors"
 msgstr "Máy chủ bản sao (Mirror)"
 
 msgid "Mirror regions"
-msgstr "Máy chủ bản sao địa phương"
+msgstr "Máy chủ bản sao"
 
 #, fuzzy
 msgid ""
@@ -2032,7 +2027,7 @@ msgstr "Tên"
 msgid "Signature check"
 msgstr "Kiểm tra chữ ký"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Selected free space segment on device {}:"
 msgstr "Phân đoạn không gian trống đã chọn trên thiết bị {} :"
 
@@ -2048,9 +2043,8 @@ msgstr "Kích thước (mặc định: {} ):"
 msgid "HSM device"
 msgstr "thiết bị HSM"
 
-#, fuzzy
 msgid "Some packages could not be found in the repository"
-msgstr "Không thể tìm thấy một số gói trong kho lưu trữ"
+msgstr "Không thể tìm thấy một số gói trong kho phần mềm"
 
 #, fuzzy
 msgid "User"
@@ -2076,21 +2070,17 @@ msgstr "Đang tải gói..."
 msgid "Select any packages from the below list that should be installed additionally"
 msgstr "Chọn bất kỳ gói nào từ danh sách bên dưới cần được cài đặt bổ sung"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Thêm kho lưu trữ tùy chỉnh"
+msgstr "Thêm kho phần mềm tùy chỉnh"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Thay đổi kho lưu trữ tùy chỉnh"
+msgstr "Thay đổi kho phần mềm tùy chỉnh"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Xóa kho lưu trữ tùy chỉnh"
+msgstr "Xóa kho phần mềm tùy chỉnh"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Tên kho lưu trữ"
+msgstr "Tên kho phần mềm"
 
 #, fuzzy
 msgid "Add a custom server"
@@ -2116,19 +2106,17 @@ msgstr "Chọn vùng"
 msgid "Add custom servers"
 msgstr "Thêm máy chủ tùy chỉnh"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Thêm kho lưu trữ tùy chỉnh"
+msgstr "Thêm kho phần mềm tùy chỉnh"
 
 msgid "Loading mirror regions..."
-msgstr "Đang tải các máy chủ bản sao địa phương..."
+msgstr "Đang tải các máy chủ bản sao..."
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Máy chủ bản sao (Mirror) và kho lưu trữ"
+msgstr "Máy chủ bản sao (Mirror) và kho phần mềm"
 
 msgid "Selected mirror regions"
-msgstr "Máy chủ bản sao địa phương được chọn"
+msgstr "Máy chủ bản sao được chọn"
 
 #, fuzzy
 msgid "Custom servers"
@@ -2438,9 +2426,9 @@ msgstr "Bạn có muốn mã hóa tệp user_credentials.json không?"
 msgid "Credentials file encryption password"
 msgstr "Mật khẩu mã hóa tập tin thông tin xác thực"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Repositories: {}"
-msgstr "Kho lưu trữ: {}"
+msgstr "Kho phần mềm: {}"
 
 #, fuzzy
 msgid "New version available"
@@ -2490,9 +2478,9 @@ msgstr "Phương thức đăng nhập U2F:"
 msgid "Passwordless sudo: "
 msgstr "Sudo không cần mật khẩu:"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr "Loại ảnh chụp nhanh Btrfs: {}"
+msgstr "Loại bản sao lưu tức thời Btrfs \"{}\""
 
 #, fuzzy
 msgid "Syncing the system..."
@@ -2502,9 +2490,8 @@ msgstr "Đang đồng bộ hóa hệ thống..."
 msgid "Value cannot be empty"
 msgstr "Giá trị không thể trống"
 
-#, fuzzy
 msgid "Snapshot type"
-msgstr "Kiểu ảnh chụp nhanh"
+msgstr "Kiểu của bản sao lưu"
 
 #, fuzzy, python-brace-format
 msgid "Snapshot type: {}"
@@ -2767,24 +2754,21 @@ msgstr "Giá trị phải nằm trong khoảng từ 1 đến {}"
 msgid "Select which kernel(s) to install"
 msgstr "Chọn (các) hạt nhân để cài đặt"
 
-#, fuzzy
 msgid "Enter a respository name"
-msgstr "Nhập tên kho lưu trữ"
+msgstr "Nhập tên kho phần mềm"
 
-#, fuzzy
 msgid "Enter the repository url"
-msgstr "Nhập url kho lưu trữ"
+msgstr "Nhập url kho phần mềm"
 
 #, fuzzy
 msgid "Enter server url"
 msgstr "Nhập url máy chủ"
 
 msgid "Select mirror regions to be enabled"
-msgstr "Chọn các máy chủ bản sao địa phương sẽ được kích hoạt"
+msgstr "Chọn các máy chủ bản sao sẽ được kích hoạt"
 
-#, fuzzy
 msgid "Select optional repositories to be enabled"
-msgstr "Chọn kho lưu trữ tùy chọn sẽ được kích hoạt"
+msgstr "Chọn kho phần mềm bổ sung sẽ được kích hoạt"
 
 #, fuzzy
 msgid "Select an interface"
@@ -3045,57 +3029,54 @@ msgstr "Thủ công"
 msgid "Pre-mount"
 msgstr "Gắn trước"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{} layout"
 msgstr "Bố cục {}"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Devices {}"
 msgstr "Thiết bị {}"
 
-#, fuzzy
 msgid "LVM set up"
-msgstr "Thiết lập LVM"
+msgstr "Cấu hình LVM"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{} encryption"
 msgstr "Mã hóa {}"
 
 #, python-brace-format
 msgid "Btrfs snapshot \"{}\""
-msgstr "Ảnh chụp nhanh Btrfs \"{}\""
+msgstr "Bản sao lưu tức thời Btrfs \"{}\""
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Keyboard layout \"{}\""
 msgstr "Bố cục bàn phím \"{}\""
 
 #, python-brace-format
 msgid "Locale language \"{}\""
-msgstr "Ngôn ngữ địa phương \"{}\""
+msgstr "Ngôn ngữ hệ thống (Locale) \"{}\""
 
 #, python-brace-format
 msgid "Locale encoding \"{}\""
 msgstr "Mã hóa ngôn ngữ hệ thống \"{}\""
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Console font \"{}\""
-msgstr "Phông chữ bảng điều khiển \"{}\""
+msgstr "Phông chữ Console \"{}\""
 
 #, python-brace-format
 msgid "Mirror regions \"{}\""
-msgstr "Máy chủ bản sao địa phương \"{}\""
+msgstr "Máy chủ bản sao \"{}\""
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Optional repositories \"{}\""
-msgstr "Kho lưu trữ tùy chọn \"{}\""
+msgstr "Kho phần mềm bổ sung \"{}\""
 
-#, fuzzy
 msgid "Custom servers set up"
-msgstr "Máy chủ tùy chỉnh được thiết lập"
+msgstr "Cấu hình máy chủ tùy chỉnh"
 
-#, fuzzy
 msgid "Custom repositories set up"
-msgstr "Kho lưu trữ tùy chỉnh được thiết lập"
+msgstr "Kho phần mềm tùy chỉnh được thiết lập"
 
 #, fuzzy
 msgid "Use standalone iwd"
@@ -3113,6 +3094,5 @@ msgstr "Trình điều khiển đồ họa {}"
 msgid "{} greeter"
 msgstr "Lời chào {}"
 
-#, fuzzy
 msgid "Enter a repository name"
-msgstr "Nhập tên kho lưu trữ"
+msgstr "Nhập tên kho phần mềm"
