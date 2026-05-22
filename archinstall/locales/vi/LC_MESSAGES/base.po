@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -14,12 +15,10 @@ msgstr ""
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Một tệp nhật ký (log) đã được tạo ở đây: {} {}"
 
-msgid ""
-"    Please submit this issue (and file) to https://github.com/archlinux/"
-"archinstall/issues"
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
 msgstr ""
-"    Vui lòng gửi vấn đề này (và tệp tin) đến địa chỉ https://github.com/"
-"archlinux/archinstall/issues"
+"    Vui lòng gửi vấn đề này (và tệp tin) đến địa chỉ https://github.com/archlinux/archinstall/"
+"issues"
 
 msgid "Do you really want to abort?"
 msgstr "Bạn thật sự có muốn hủy bỏ không?"
@@ -34,7 +33,7 @@ msgid "Desired hostname for the installation: "
 msgstr "Tên của máy mà bạn mong muốn trong quá trình cài đặt: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "Tên người dùng cho tài khoản quản trị có quyền sudo:"
+msgstr "Tên người dùng cho tài khoản quản trị có quyền sudo: "
 
 msgid "Any additional users to install (leave blank for no users): "
 msgstr "Thêm người dùng khác (để trống nếu không cần): "
@@ -46,9 +45,7 @@ msgid "Select a timezone"
 msgstr "Vui lòng chọn múi giờ"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr ""
-"Bạn có muốn GRUB là trình khởi động (bootloader) mặc định thay vì systemd-"
-"boot không?"
+msgstr "Bạn có muốn GRUB là trình khởi động (bootloader) mặc định thay vì systemd-boot không?"
 
 msgid "Choose a bootloader"
 msgstr "Chọn một trình khởi động (bootloader)"
@@ -57,50 +54,37 @@ msgid "Choose an audio server"
 msgstr "Chọn hệ thống âm thanh"
 
 msgid ""
-"Only packages such as base, base-devel, linux, linux-firmware, efibootmgr "
-"and optional profile packages are installed."
+"Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile "
+"packages are installed."
 msgstr ""
-"Chỉ có base, base-devel, linux, linux-firmware, efibootmgr và các gói cấu "
-"hình (profile) tùy chọn sẽ được cài đặt."
+"Chỉ có base, base-devel, linux, linux-firmware, efibootmgr và các gói cấu hình (profile) tùy "
+"chọn sẽ được cài đặt."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+"Note: base-devel không còn được cài đặt mặc định nữa. Thêm nó ở đây nếu bạn cần công cụ biên "
+"dịch."
 
 msgid ""
-"Note: base-devel is no longer installed by default. Add it here if you need "
-"build tools."
+"If you desire a web browser, such as firefox or chromium, you may specify it in the following "
+"prompt."
 msgstr ""
-"Note: base-devel không còn được cài đặt mặc định nữa. Thêm nó ở đây nếu bạn "
-"cần công cụ biên dịch."
+"Nếu bạn cần tình duyệt như Firefox hay Chromium, bạn có thể chỉ định chúng ở dòng nhắc dưới đây."
 
-msgid ""
-"If you desire a web browser, such as firefox or chromium, you may specify it "
-"in the following prompt."
-msgstr ""
-"Nếu bạn cần tình duyệt như Firefox hay Chromium, bạn có thể chỉ định chúng ở "
-"dòng nhắc dưới đây."
-
-msgid ""
-"Write additional packages to install (space separated, leave blank to skip): "
-msgstr ""
-"Ghi tất cả gói mà bạn muốn cài đặt (cách nhau bằng dấu cách, bỏ trống để bỏ "
-"qua): "
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Ghi tất cả gói mà bạn muốn cài đặt (cách nhau bằng dấu cách, bỏ trống để bỏ qua): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Sao chép cấu hình mạng của ISO sang thư mục cài đặt"
 
-msgid ""
-"Use NetworkManager (necessary for configuring internet graphically in GNOME "
-"and KDE)"
-msgstr ""
-"Dùng NetworkManager (cần thiết cho cấu hình mạng bằng giao diện đồ họa trên "
-"GNOME và KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "Dùng NetworkManager (cần thiết cho cấu hình mạng bằng giao diện đồ họa trên GNOME và KDE)"
 
 msgid "Select one network interface to configure"
 msgstr "Chọn một giao diện mạng để cấu hình"
 
-msgid ""
-"Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr ""
-"Chọn chế độ nào để cấu hình cho \"{}\" hoặc bỏ qua để dùng cái mặc định \"{}"
-"\""
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "Chọn chế độ nào để cấu hình cho \"{}\" hoặc bỏ qua để dùng cái mặc định \"{}\""
 
 #, python-brace-format
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
@@ -110,9 +94,7 @@ msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr "Nhập địa chỉ IP gateway (router) của bạn hoặc bỏ trống nếu không có: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr ""
-"Nhập máy chủ DNS mà bạn muốn (cách nhau bởi dấu cách, bỏ trống nếu muốn dùng "
-"mặc định): "
+msgstr "Nhập máy chủ DNS mà bạn muốn (cách nhau bởi dấu cách, bỏ trống nếu muốn dùng mặc định): "
 
 msgid "Select which filesystem your main partition should use"
 msgstr "Chọn hệ thống tệp nào mà phân vùng chính của bạn nên dùng"
@@ -130,21 +112,16 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Vui lòng nhập loại hệ thống tập tin mà bạn muốn cho phân vùng"
 
-msgid ""
-"Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
-"Nhập vị trí bắt đầu của phân vùng (theo đơn vị phân vùng: s, GB, %, v.v.; "
-"mặc định: {}):"
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Nhập vị trí bắt đầu của phân vùng (theo đơn vị phân vùng: s, GB, %, v.v.; mặc định: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
-"Nhập vị trí kết thúc của phân vùng (theo đơn vị phân vùng: s, GB, %, v.v.; "
-"mặc định: {}):"
+"Nhập vị trí kết thúc của phân vùng (theo đơn vị phân vùng: s, GB, %, v.v.; mặc định: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr ""
-"{} chứa các phân vùng trong hàng đợi, hành động này sẽ loại bỏ chúng, bạn có "
-"chắc chắn không?"
+"{} chứa các phân vùng trong hàng đợi, hành động này sẽ loại bỏ chúng, bạn có chắc chắn không?"
 
 msgid ""
 "{}\n"
@@ -165,11 +142,11 @@ msgstr ""
 "Chọn số thứ tự phân vùng nàu cần gắn (mount)"
 
 msgid ""
-" * Partition mount-points are relative to inside the installation, the boot "
-"would be /boot as an example."
+" * Partition mount-points are relative to inside the installation, the boot would be /boot as "
+"an example."
 msgstr ""
-" * Các điểm gắn phân vùng được tính tương đối với bên trong hệ thống mới, ví "
-"dụ phân vùng khởi động sẽ là /boot."
+" * Các điểm gắn phân vùng được tính tương đối với bên trong hệ thống mới, ví dụ phân vùng khởi "
+"động sẽ là /boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr "Chọn điểm gắn cho phân vùng (để trống để xóa điểm gắn): "
@@ -219,2300 +196,2923 @@ msgstr "Ngôn ngữ (Archinstall)"
 msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "Xóa sạch các ổ đĩa đã chọn và dùng bố cục phân vùng mặc định tốt nhất"
 
-msgid ""
-"Select what to do with each individual drive (followed by partition usage)"
+msgid "Select what to do with each individual drive (followed by partition usage)"
 msgstr "Chọn việc với mỗi ổ đĩa (theo sau là cách sử dụng phân vùng)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr ""
+msgstr "Chọn những gì bạn muốn làm với các thiết bị đã chọn"
 
+#, fuzzy
 msgid ""
-"This is a list of pre-programmed profiles, they might make it easier to "
-"install things like desktop environments"
+"This is a list of pre-programmed profiles, they might make it easier to install things like "
+"desktop environments"
 msgstr ""
+"Đây là danh sách các cấu hình được lập trình sẵn, chúng có thể giúp cài đặt những thứ như môi "
+"trường máy tính để bàn dễ dàng hơn"
 
 msgid "Select keyboard layout"
 msgstr "Bố cục bàn phím hiện tại"
 
+#, fuzzy
 msgid "Select one of the regions to download packages from"
-msgstr ""
+msgstr "Chọn một trong các khu vực để tải xuống các gói từ"
 
+#, fuzzy
 msgid "Select one or more hard drives to use and configure"
-msgstr ""
+msgstr "Chọn một hoặc nhiều ổ cứng để sử dụng và cấu hình"
 
+#, fuzzy
 msgid ""
-"For the best compatibility with your AMD hardware, you may want to use "
-"either the all open-source or AMD / ATI options."
+"For the best compatibility with your AMD hardware, you may want to use either the all open-"
+"source or AMD / ATI options."
 msgstr ""
+"Để có khả năng tương thích tốt nhất với phần cứng AMD của bạn, bạn có thể muốn sử dụng tùy chọn "
+"tất cả nguồn mở hoặc AMD / ATI."
 
+#, fuzzy
 msgid ""
-"For the best compatibility with your Intel hardware, you may want to use "
-"either the all open-source or Intel options.\n"
+"For the best compatibility with your Intel hardware, you may want to use either the all open-"
+"source or Intel options.\n"
 msgstr ""
+"Để có khả năng tương thích tốt nhất với phần cứng Intel của bạn, bạn có thể muốn sử dụng tùy "
+"chọn tất cả nguồn mở hoặc Intel."
 
+#, fuzzy
 msgid ""
-"For the best compatibility with your Nvidia hardware, you may want to use "
-"the Nvidia proprietary driver.\n"
+"For the best compatibility with your Nvidia hardware, you may want to use the Nvidia "
+"proprietary driver.\n"
 msgstr ""
+"Để có khả năng tương thích tốt nhất với phần cứng Nvidia của bạn, bạn có thể muốn sử dụng trình "
+"điều khiển độc quyền của Nvidia."
 
+#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
-msgstr ""
+msgstr "Chọn trình điều khiển đồ họa hoặc để trống để cài đặt tất cả trình điều khiển nguồn mở"
 
+#, fuzzy
 msgid "All open-source (default)"
-msgstr ""
+msgstr "Tất cả nguồn mở (mặc định)"
 
+#, fuzzy
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr ""
+msgstr "Chọn hạt nhân nào sẽ sử dụng hoặc để trống mặc định \"{}\""
 
 msgid "Choose which locale language to use"
 msgstr "Chọn ngôn ngữ địa phương muốn sử dụng"
 
+#, fuzzy
 msgid "Choose which locale encoding to use"
-msgstr ""
+msgstr "Chọn mã hóa ngôn ngữ nào sẽ sử dụng"
 
+#, fuzzy
 msgid "Select one of the values shown below: "
-msgstr ""
+msgstr "Chọn một trong các giá trị hiển thị bên dưới:"
 
+#, fuzzy
 msgid "Select one or more of the options below: "
-msgstr ""
+msgstr "Chọn một hoặc nhiều tùy chọn bên dưới:"
 
 msgid "Adding partition...."
 msgstr "Đang thêm phân vùng...."
 
 msgid ""
-"You need to enter a valid fs-type in order to continue. See `man parted` for "
-"valid fs-type's."
+"You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
 msgstr ""
+"Vui lòng nhập loại hệ thống tập tin (fs) hợp lệ để tiếp tục. Xem `man parted` để biết loại fs "
+"hợp lệ."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr ""
+msgstr "Lỗi: Liệt kê cấu hình trên URL \"{}\" dẫn đến:"
 
+#, fuzzy
 msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr ""
+msgstr "Lỗi: Không thể giải mã kết quả \" {} \" dưới dạng JSON:"
 
 msgid "Keyboard layout"
 msgstr "Bố cục bàn phím"
 
+#, fuzzy
 msgid "Mirror region"
-msgstr ""
+msgstr "Vùng gương"
 
 msgid "Locale language"
 msgstr "Ngôn ngữ địa phương"
 
 msgid "Locale encoding"
-msgstr ""
+msgstr "Mã hóa ngôn ngữ hệ thống"
 
+#, fuzzy
 msgid "Console font"
-msgstr ""
+msgstr "Phông chữ bảng điều khiển"
 
+#, fuzzy
 msgid "Drive(s)"
-msgstr ""
+msgstr "(Các) ổ đĩa"
 
+#, fuzzy
 msgid "Disk layout"
-msgstr ""
+msgstr "Bố trí đĩa"
 
+#, fuzzy
 msgid "Encryption password"
-msgstr ""
+msgstr "Mật khẩu mã hóa"
 
+#, fuzzy
 msgid "Swap"
-msgstr ""
+msgstr "Tráo đổi"
 
 msgid "Bootloader"
 msgstr "Trình khởi động"
 
+#, fuzzy
 msgid "Root password"
-msgstr ""
+msgstr "Mật khẩu gốc"
 
+#, fuzzy
 msgid "Superuser account"
-msgstr ""
+msgstr "Tài khoản siêu người dùng"
 
+#, fuzzy
 msgid "User account"
-msgstr ""
+msgstr "Tài khoản người dùng"
 
+#, fuzzy
 msgid "Profile"
-msgstr ""
+msgstr "Cấu hình (Profile)"
 
+#, fuzzy
 msgid "Audio"
-msgstr ""
+msgstr "Âm thanh"
 
+#, fuzzy
 msgid "Kernels"
-msgstr ""
+msgstr "hạt nhân"
 
+#, fuzzy
 msgid "Additional packages"
-msgstr ""
+msgstr "Gói bổ sung"
 
+#, fuzzy
 msgid "Network configuration"
-msgstr ""
+msgstr "Cấu hình mạng"
 
+#, fuzzy
 msgid "Automatic time sync (NTP)"
-msgstr ""
+msgstr "Đồng bộ hóa thời gian tự động (NTP)"
 
+#, fuzzy
 msgid "Install ({} config(s) missing)"
-msgstr ""
+msgstr "Cài đặt (thiếu (các) cấu hình {})"
 
+#, fuzzy
 msgid ""
 "You decided to skip harddrive selection\n"
 "and will use whatever drive-setup is mounted at {} (experimental)\n"
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
+"Bạn quyết định bỏ qua việc lựa chọn ổ cứng\n"
+"và sẽ sử dụng bất kỳ thiết lập ổ đĩa nào được gắn ở {} (thử nghiệm)\n"
+"CẢNH BÁO: Archinstall sẽ không kiểm tra tính phù hợp của thiết lập này\n"
+"Bạn có muốn tiếp tục không?"
 
+#, fuzzy
 msgid "Re-using partition instance: {}"
-msgstr ""
+msgstr "Sử dụng lại phiên bản phân vùng: {}"
 
+#, fuzzy
 msgid "Create a new partition"
-msgstr ""
+msgstr "Tạo một phân vùng mới"
 
+#, fuzzy
 msgid "Delete a partition"
-msgstr ""
+msgstr "Xóa một phân vùng"
 
 msgid "Clear/Delete all partitions"
-msgstr ""
+msgstr "Xóa tất cả các phân vùng"
 
+#, fuzzy
 msgid "Assign mount-point for a partition"
-msgstr ""
+msgstr "Gán điểm gắn kết cho một phân vùng"
 
+#, fuzzy
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu phân vùng cần định dạng (xóa dữ liệu)"
 
+#, fuzzy
 msgid "Mark/Unmark a partition as encrypted"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu phân vùng là đã mã hóa"
 
+#, fuzzy
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu phân vùng là có khả năng khởi động (tự động cho/boot)"
 
+#, fuzzy
 msgid "Set desired filesystem for a partition"
-msgstr ""
+msgstr "Đặt hệ thống tập tin mong muốn cho một phân vùng"
 
+#, fuzzy
 msgid "Abort"
-msgstr ""
+msgstr "Hủy bỏ"
 
+#, fuzzy
 msgid "Hostname"
-msgstr ""
+msgstr "Tên máy chủ"
 
+#, fuzzy
 msgid "Not configured, unavailable unless setup manually"
-msgstr ""
+msgstr "Chưa được định cấu hình, không khả dụng trừ khi được thiết lập thủ công"
 
 msgid "Timezone"
 msgstr "Múi giờ"
 
+#, fuzzy
 msgid "Set/Modify the below options"
-msgstr ""
+msgstr "Đặt/Sửa đổi các tùy chọn bên dưới"
 
+#, fuzzy
 msgid "Install"
-msgstr ""
+msgstr "Cài đặt"
 
+#, fuzzy
 msgid ""
 "Use ESC to skip\n"
 "\n"
-msgstr ""
+msgstr "Sử dụng ESC để bỏ qua"
 
+#, fuzzy
 msgid "Suggest partition layout"
-msgstr ""
+msgstr "Đề xuất bố trí phân vùng"
 
+#, fuzzy
 msgid "Enter a password: "
-msgstr ""
+msgstr "Nhập mật khẩu:"
 
+#, fuzzy
 msgid "Enter a encryption password for {}"
-msgstr ""
+msgstr "Nhập mật khẩu mã hóa cho {}"
 
+#, fuzzy
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr ""
+msgstr "Nhập mật khẩu mã hóa ổ đĩa (để trống nếu không mã hóa):"
 
+#, fuzzy
 msgid "Create a required super-user with sudo privileges: "
-msgstr ""
+msgstr "Tạo một siêu người dùng bắt buộc với các đặc quyền sudo:"
 
+#, fuzzy
 msgid "Enter root password (leave blank to disable root): "
-msgstr ""
+msgstr "Nhập mật khẩu root (để trống để tắt root):"
 
+#, fuzzy
 msgid "Password for user \"{}\": "
-msgstr ""
+msgstr "Mật khẩu cho người dùng \" {} \":"
 
-msgid ""
-"Verifying that additional packages exist (this might take a few seconds)"
-msgstr ""
+#, fuzzy
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "Xác minh rằng các gói bổ sung tồn tại (việc này có thể mất vài giây)"
 
+#, fuzzy
 msgid ""
-"Would you like to use automatic time synchronization (NTP) with the default "
-"time servers?\n"
+"Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
 msgstr ""
+"Bạn có muốn sử dụng đồng bộ hóa thời gian tự động (NTP) với máy chủ thời gian mặc định không?"
 
+#, fuzzy
 msgid ""
-"Hardware time and other post-configuration steps might be required in order "
-"for NTP to work.\n"
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
+"Thời gian phần cứng và các bước sau cấu hình khác có thể được yêu cầu để NTP hoạt động.\n"
+"Để biết thêm thông tin, vui lòng kiểm tra Arch wiki"
 
+#, fuzzy
 msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr ""
+msgstr "Nhập tên người dùng để tạo thêm người dùng (để trống để bỏ qua):"
 
+#, fuzzy
 msgid "Use ESC to skip\n"
-msgstr ""
+msgstr "Sử dụng ESC để bỏ qua"
 
+#, fuzzy
 msgid ""
 "\n"
-" Choose an object from the list, and select one of the available actions for "
-"it to execute"
-msgstr ""
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr "Chọn một đối tượng từ danh sách và chọn một trong các hành động có sẵn để nó thực thi"
 
+#, fuzzy
 msgid "Cancel"
-msgstr ""
+msgstr "Hủy bỏ"
 
+#, fuzzy
 msgid "Confirm and exit"
-msgstr ""
+msgstr "Xác nhận và thoát"
 
+#, fuzzy
 msgid "Add"
-msgstr ""
+msgstr "Thêm vào"
 
+#, fuzzy
 msgid "Copy"
-msgstr ""
+msgstr "Sao chép"
 
+#, fuzzy
 msgid "Edit"
-msgstr ""
+msgstr "Biên tập"
 
+#, fuzzy
 msgid "Delete"
-msgstr ""
+msgstr "Xóa bỏ"
 
 msgid "Select an action for '{}'"
-msgstr ""
+msgstr "Chọn hành động cho '{}'"
 
+#, fuzzy
 msgid "Copy to new key:"
-msgstr ""
+msgstr "Sao chép sang khóa mới:"
 
+#, fuzzy
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr ""
+msgstr "Loại nic không xác định: {} . Giá trị có thể là {}"
 
 msgid ""
 "\n"
 "This is your chosen configuration:"
 msgstr ""
+"\n"
+"Đây là cấu hình bạn đã chọn:"
 
+#, fuzzy
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman đang chạy, đợi tối đa 10 phút để nó kết thúc."
+
+#, fuzzy
 msgid ""
-"Pacman is already running, waiting maximum 10 minutes for it to terminate."
+"Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before "
+"using archinstall."
 msgstr ""
+"Khóa pacman có sẵn không bao giờ thoát. Vui lòng dọn sạch mọi phiên pacman hiện có trước khi sử "
+"dụng Archinstall."
 
-msgid ""
-"Pre-existing pacman lock never exited. Please clean up any existing pacman "
-"sessions before using archinstall."
-msgstr ""
-
+#, fuzzy
 msgid "Choose which optional additional repositories to enable"
-msgstr ""
+msgstr "Chọn kho bổ sung tùy chọn nào để kích hoạt"
 
+#, fuzzy
 msgid "Add a user"
-msgstr ""
+msgstr "Thêm người dùng"
 
+#, fuzzy
 msgid "Change password"
-msgstr ""
+msgstr "Thay đổi mật khẩu"
 
+#, fuzzy
 msgid "Promote/Demote user"
-msgstr ""
+msgstr "Thăng hạng/Hạ cấp người dùng"
 
+#, fuzzy
 msgid "Delete User"
-msgstr ""
+msgstr "Xóa người dùng"
 
+#, fuzzy
 msgid ""
 "\n"
 "Define a new user\n"
-msgstr ""
+msgstr "Xác định người dùng mới"
 
+#, fuzzy
 msgid "User Name : "
-msgstr ""
+msgstr "Tên người dùng:"
 
+#, fuzzy
 msgid "Should {} be a superuser (sudoer)?"
-msgstr ""
+msgstr "{} có nên là siêu người dùng (sudoer) không?"
 
+#, fuzzy
 msgid "Define users with sudo privilege: "
-msgstr ""
+msgstr "Xác định người dùng có đặc quyền sudo:"
 
+#, fuzzy
 msgid "No network configuration"
-msgstr ""
+msgstr "Không có cấu hình mạng"
 
+#, fuzzy
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr ""
+msgstr "Đặt các tập con mong muốn trên phân vùng btrfs"
 
+#, fuzzy
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to set subvolumes on"
 msgstr ""
+"{} \n"
+"\n"
+"Chọn phân vùng để đặt subvolume trên"
 
+#, fuzzy
 msgid "Manage btrfs subvolumes for current partition"
-msgstr ""
+msgstr "Quản lý subvolume btrfs cho phân vùng hiện tại"
 
+#, fuzzy
 msgid "No configuration"
-msgstr ""
+msgstr "Không có cấu hình"
 
+#, fuzzy
 msgid "Save user configuration"
-msgstr ""
+msgstr "Lưu cấu hình người dùng"
 
+#, fuzzy
 msgid "Save user credentials"
-msgstr ""
+msgstr "Lưu thông tin đăng nhập của người dùng"
 
+#, fuzzy
 msgid "Save disk layout"
-msgstr ""
+msgstr "Lưu bố cục đĩa"
 
+#, fuzzy
 msgid "Save all"
-msgstr ""
+msgstr "Lưu tất cả"
 
+#, fuzzy
 msgid "Choose which configuration to save"
-msgstr ""
+msgstr "Chọn cấu hình nào để lưu"
 
+#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr ""
+msgstr "Nhập thư mục để lưu (các) cấu hình:"
 
+#, fuzzy
 msgid "Not a valid directory: {}"
-msgstr ""
+msgstr "Thư mục không hợp lệ: {}"
 
+#, fuzzy
 msgid "The password you are using seems to be weak,"
-msgstr ""
+msgstr "Mật khẩu bạn đang sử dụng có vẻ yếu,"
 
+#, fuzzy
 msgid "are you sure you want to use it?"
-msgstr ""
+msgstr "bạn có chắc chắn muốn sử dụng nó không?"
 
+#, fuzzy
 msgid "Optional repositories"
-msgstr ""
+msgstr "Kho lưu trữ tùy chọn"
 
+#, fuzzy
 msgid "Save configuration"
-msgstr ""
+msgstr "Lưu cấu hình"
 
+#, fuzzy
 msgid "Missing configurations:\n"
-msgstr ""
+msgstr "Thiếu cấu hình:"
 
+#, fuzzy
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr ""
+msgstr "Phải chỉ định mật khẩu gốc hoặc ít nhất 1 siêu người dùng"
 
+#, fuzzy
 msgid "Manage superuser accounts: "
-msgstr ""
+msgstr "Quản lý tài khoản siêu người dùng:"
 
+#, fuzzy
 msgid "Manage ordinary user accounts: "
-msgstr ""
+msgstr "Quản lý tài khoản người dùng thông thường:"
 
+#, fuzzy
 msgid " Subvolume :{:16}"
-msgstr ""
+msgstr "Âm lượng phụ: {:16}"
 
+#, fuzzy
 msgid " mounted at {:16}"
-msgstr ""
+msgstr "gắn ở {:16}"
 
+#, fuzzy
 msgid " with option {}"
-msgstr ""
+msgstr "với tùy chọn {}"
 
+#, fuzzy
 msgid ""
 "\n"
 " Fill the desired values for a new subvolume \n"
-msgstr ""
+msgstr "Điền các giá trị mong muốn cho một subvolume mới"
 
+#, fuzzy
 msgid "Subvolume name "
-msgstr ""
+msgstr "Tên tập con"
 
+#, fuzzy
 msgid "Subvolume mountpoint"
-msgstr ""
+msgstr "Điểm gắn kết âm lượng phụ"
 
+#, fuzzy
 msgid "Subvolume options"
-msgstr ""
+msgstr "Tùy chọn âm lượng phụ"
 
+#, fuzzy
 msgid "Save"
-msgstr ""
+msgstr "Cứu"
 
+#, fuzzy
 msgid "Subvolume name :"
-msgstr ""
+msgstr "Tên tập con:"
 
+#, fuzzy
 msgid "Select a mount point :"
-msgstr ""
+msgstr "Chọn điểm gắn kết:"
 
+#, fuzzy
 msgid "Select the desired subvolume options "
-msgstr ""
+msgstr "Chọn các tùy chọn âm lượng phụ mong muốn"
 
+#, fuzzy
 msgid "Define users with sudo privilege, by username: "
-msgstr ""
+msgstr "Xác định người dùng có đặc quyền sudo, theo tên người dùng:"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "[!] A log file has been created here: {}"
-msgstr ""
+msgstr "[!] Một tệp nhật ký đã được tạo ở đây: {}"
 
+#, fuzzy
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr ""
+msgstr "Bạn có muốn sử dụng các tập con BTRFS có cấu trúc mặc định không?"
 
+#, fuzzy
 msgid "Would you like to use BTRFS compression?"
-msgstr ""
+msgstr "Bạn có muốn sử dụng tính năng nén BTRFS không?"
 
+#, fuzzy
 msgid "Would you like to create a separate partition for /home?"
-msgstr ""
+msgstr "Bạn có muốn tạo một phân vùng riêng cho /home không?"
 
+#, fuzzy
 msgid ""
-"The selected drives do not have the minimum capacity required for an "
-"automatic suggestion\n"
-msgstr ""
+"The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Các ổ đĩa đã chọn không có dung lượng tối thiểu cần thiết để tự động đề xuất"
 
+#, fuzzy
 msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr ""
+msgstr "Dung lượng tối thiểu cho phân vùng /home: {} GB"
 
+#, fuzzy
 msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr ""
+msgstr "Dung lượng tối thiểu cho phân vùng Arch Linux: {} GB"
 
+#, fuzzy
 msgid "Continue"
-msgstr ""
+msgstr "Tiếp tục"
 
+#, fuzzy
 msgid "yes"
-msgstr ""
+msgstr "Đúng"
 
+#, fuzzy
 msgid "no"
-msgstr ""
+msgstr "KHÔNG"
 
+#, fuzzy
 msgid "set: {}"
-msgstr ""
+msgstr "bộ: {}"
 
+#, fuzzy
 msgid "Manual configuration setting must be a list"
-msgstr ""
+msgstr "Cài đặt cấu hình thủ công phải là một danh sách"
 
+#, fuzzy
 msgid "No iface specified for manual configuration"
-msgstr ""
+msgstr "Không có iface được chỉ định cho cấu hình thủ công"
 
+#, fuzzy
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr ""
+msgstr "Cấu hình nic thủ công không có DHCP tự động yêu cầu địa chỉ IP"
 
+#, fuzzy
 msgid "Add interface"
-msgstr ""
+msgstr "Thêm giao diện"
 
+#, fuzzy
 msgid "Edit interface"
-msgstr ""
+msgstr "Chỉnh sửa giao diện"
 
+#, fuzzy
 msgid "Delete interface"
-msgstr ""
+msgstr "Xóa giao diện"
 
+#, fuzzy
 msgid "Select interface to add"
-msgstr ""
+msgstr "Chọn giao diện để thêm"
 
+#, fuzzy
 msgid "Manual configuration"
-msgstr ""
+msgstr "Cấu hình thủ công"
 
+#, fuzzy
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu phân vùng là đã nén (chỉ btrfs)"
 
+#, fuzzy
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "Mật khẩu bạn đang sử dụng có vẻ yếu, bạn có chắc chắn muốn sử dụng nó không?"
+
+#, fuzzy
 msgid ""
-"The password you are using seems to be weak, are you sure you want to use it?"
+"Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
 msgstr ""
+"Cung cấp lựa chọn môi trường máy tính để bàn và trình quản lý cửa sổ xếp lớp, ví dụ: gnome, "
+"kde, lắc lư"
 
-msgid ""
-"Provides a selection of desktop environments and tiling window managers, "
-"e.g. gnome, kde, sway"
-msgstr ""
-
+#, fuzzy
 msgid "Select your desired desktop environment"
-msgstr ""
+msgstr "Chọn môi trường máy tính để bàn mong muốn của bạn"
 
+#, fuzzy
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Một bản cài đặt rất cơ bản cho phép bạn tùy chỉnh Arch Linux khi bạn thấy phù hợp."
+
+#, fuzzy
 msgid ""
-"A very basic installation that allows you to customize Arch Linux as you see "
-"fit."
+"Provides a selection of various server packages to install and enable, e.g. httpd, nginx, "
+"mariadb"
 msgstr ""
+"Cung cấp nhiều lựa chọn gói máy chủ khác nhau để cài đặt và kích hoạt, ví dụ: httpd, nginx, "
+"mariadb"
 
-msgid ""
-"Provides a selection of various server packages to install and enable, e.g. "
-"httpd, nginx, mariadb"
-msgstr ""
+#, fuzzy
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "Chọn máy chủ nào sẽ cài đặt, nếu không có thì cài đặt tối thiểu sẽ được thực hiện"
 
-msgid ""
-"Choose which servers to install, if none then a minimal installation will be "
-"done"
-msgstr ""
-
+#, fuzzy
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr ""
+msgstr "Cài đặt một hệ thống tối thiểu cũng như trình điều khiển xorg và đồ họa."
 
+#, fuzzy
 msgid "Press Enter to continue."
-msgstr ""
+msgstr "Nhấn Enter để tiếp tục."
 
+#, fuzzy
 msgid ""
-"Would you like to chroot into the newly created installation and perform "
-"post-installation configuration?"
-msgstr ""
+"Would you like to chroot into the newly created installation and perform post-installation "
+"configuration?"
+msgstr "Bạn có muốn chroot vào bản cài đặt mới tạo và thực hiện cấu hình sau khi cài đặt không?"
 
+#, fuzzy
 msgid "Are you sure you want to reset this setting?"
-msgstr ""
+msgstr "Bạn có chắc chắn muốn đặt lại cài đặt này không?"
 
+#, fuzzy
 msgid "Select one or more hard drives to use and configure\n"
-msgstr ""
+msgstr "Chọn một hoặc nhiều ổ cứng để sử dụng và cấu hình"
 
+#, fuzzy
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr ""
+msgstr "Mọi sửa đổi đối với cài đặt hiện có sẽ đặt lại bố cục đĩa!"
 
+#, fuzzy
 msgid ""
-"If you reset the harddrive selection this will also reset the current disk "
-"layout. Are you sure?"
+"If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
 msgstr ""
+"Nếu bạn đặt lại lựa chọn ổ cứng, thao tác này cũng sẽ đặt lại bố cục đĩa hiện tại. Bạn có chắc "
+"không?"
 
+#, fuzzy
 msgid "Save and exit"
-msgstr ""
+msgstr "Lưu và thoát"
 
+#, fuzzy
 msgid ""
 "{}\n"
 "contains queued partitions, this will remove those, are you sure?"
 msgstr ""
+"{} \n"
+"chứa các phân vùng được xếp hàng đợi, thao tác này sẽ xóa những phân vùng đó, bạn có chắc không?"
 
+#, fuzzy
 msgid "No audio server"
-msgstr ""
+msgstr "Không có máy chủ âm thanh"
 
+#, fuzzy
 msgid "(default)"
-msgstr ""
+msgstr "(mặc định)"
 
+#, fuzzy
 msgid "Use ESC to skip"
-msgstr ""
+msgstr "Sử dụng ESC để bỏ qua"
 
+#, fuzzy
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
-msgstr ""
+msgstr "Sử dụng CTRL+C để đặt lại lựa chọn hiện tại"
 
+#, fuzzy
 msgid "Copy to: "
-msgstr ""
+msgstr "Sao chép vào:"
 
+#, fuzzy
 msgid "Edit: "
-msgstr ""
+msgstr "Biên tập:"
 
+#, fuzzy
 msgid "Key: "
-msgstr ""
+msgstr "Chìa khóa:"
 
+#, fuzzy
 msgid "Edit {}: "
-msgstr ""
+msgstr "Chỉnh sửa {}:"
 
+#, fuzzy
 msgid "Add: "
-msgstr ""
+msgstr "Thêm vào:"
 
+#, fuzzy
 msgid "Value: "
-msgstr ""
+msgstr "Giá trị:"
 
+#, fuzzy
 msgid ""
-"You can skip selecting a drive and partitioning and use whatever drive-setup "
-"is mounted at /mnt (experimental)"
+"You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt "
+"(experimental)"
 msgstr ""
+"Bạn có thể bỏ qua việc chọn ổ đĩa và phân vùng và sử dụng bất kỳ thiết lập ổ đĩa nào được gắn "
+"tại /mnt (thử nghiệm)"
 
+#, fuzzy
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr ""
+msgstr "Chọn một trong các đĩa hoặc bỏ qua và sử dụng /mnt làm mặc định"
 
+#, fuzzy
 msgid "Select which partitions to mark for formatting:"
-msgstr ""
+msgstr "Chọn phân vùng cần đánh dấu để định dạng:"
 
+#, fuzzy
 msgid "Use HSM to unlock encrypted drive"
-msgstr ""
+msgstr "Sử dụng HSM để mở khóa ổ đĩa được mã hóa"
 
+#, fuzzy
 msgid "Device"
-msgstr ""
+msgstr "Thiết bị"
 
+#, fuzzy
 msgid "Size"
-msgstr ""
+msgstr "Kích cỡ"
 
+#, fuzzy
 msgid "Free space"
-msgstr ""
+msgstr "Không gian trống"
 
+#, fuzzy
 msgid "Bus-type"
-msgstr ""
+msgstr "Loại xe buýt"
 
-msgid ""
-"Either root-password or at least 1 user with sudo privileges must be "
-"specified"
-msgstr ""
+#, fuzzy
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Phải chỉ định mật khẩu gốc hoặc ít nhất 1 người dùng có đặc quyền sudo"
 
+#, fuzzy
 msgid "Enter username (leave blank to skip): "
-msgstr ""
+msgstr "Nhập tên người dùng (để trống để bỏ qua):"
 
+#, fuzzy
 msgid "The username you entered is invalid. Try again"
-msgstr ""
+msgstr "Tên người dùng bạn đã nhập không hợp lệ. Thử lại"
 
+#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr ""
+msgstr "\"{}\" có nên là siêu người dùng (sudo) không?"
 
+#, fuzzy
 msgid "Select which partitions to encrypt"
-msgstr ""
+msgstr "Chọn phân vùng để mã hóa"
 
+#, fuzzy
 msgid "very weak"
-msgstr ""
+msgstr "rất yếu"
 
+#, fuzzy
 msgid "weak"
-msgstr ""
+msgstr "yếu đuối"
 
+#, fuzzy
 msgid "moderate"
-msgstr ""
+msgstr "vừa phải"
 
+#, fuzzy
 msgid "strong"
-msgstr ""
+msgstr "mạnh"
 
+#, fuzzy
 msgid "Add subvolume"
-msgstr ""
+msgstr "Thêm âm lượng phụ"
 
+#, fuzzy
 msgid "Edit subvolume"
-msgstr ""
+msgstr "Chỉnh sửa âm lượng phụ"
 
+#, fuzzy
 msgid "Delete subvolume"
-msgstr ""
+msgstr "Xóa tập con"
 
+#, fuzzy
 msgid "Configured {} interfaces"
-msgstr ""
+msgstr "Giao diện {} được định cấu hình"
 
-msgid ""
-"This option enables the number of parallel downloads that can occur during "
-"installation"
-msgstr ""
+#, fuzzy
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "Tùy chọn này cho phép số lượng tải xuống song song có thể xảy ra trong quá trình cài đặt"
 
+#, fuzzy
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 " (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
+"Nhập số lượng tải xuống song song sẽ được kích hoạt.\n"
+" (Nhập giá trị từ 1 đến {} )\n"
+"Lưu ý:"
 
-msgid ""
-" - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads "
-"at a time )"
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr "- Giá trị tối đa: {} (Cho phép tải song song {}, cho phép tải {} cùng một lúc)"
+
+#, fuzzy
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr "- Giá trị tối thiểu: 1 (Cho phép tải 1 song song, cho phép tải 2 lần cùng lúc)"
+
+#, fuzzy
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr ""
+"- Tắt/Mặc định: 0 ( Vô hiệu hóa tải xuống song song, chỉ cho phép tải xuống 1 lần mỗi lần )"
 
-msgid ""
-" - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a "
-"time )"
+#, fuzzy, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
 msgstr ""
+"Đầu vào không hợp lệ! Hãy thử lại với giá trị đầu vào hợp lệ [1 đến {max_downloads} hoặc 0 để "
+"tắt]"
 
-msgid ""
-" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 "
-"download at a time )"
-msgstr ""
-
-#, python-brace-format
-msgid ""
-"Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to "
-"disable]"
-msgstr ""
-
+#, fuzzy
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Tải xuống song song"
 
+#, fuzzy
 msgid "Pacman"
-msgstr ""
+msgstr "Pacman"
 
+#, fuzzy
 msgid "Color"
-msgstr ""
+msgstr "Màu sắc"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Enter the number of parallel downloads (1-{})"
-msgstr ""
+msgstr "Nhập số lượt tải song song (1- {} )"
 
+#, fuzzy
 msgid "Enable colored output for pacman"
-msgstr ""
+msgstr "Kích hoạt đầu ra màu cho pacman"
 
+#, fuzzy
 msgid "ESC to skip"
-msgstr ""
+msgstr "ESC để bỏ qua"
 
+#, fuzzy
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "CTRL+C để đặt lại"
 
+#, fuzzy
 msgid "TAB to select"
-msgstr ""
+msgstr "TAB để chọn"
 
+#, fuzzy
 msgid "[Default value: 0] > "
-msgstr ""
+msgstr "[Giá trị mặc định: 0] >"
 
+#, fuzzy
 msgid ""
-"To be able to use this translation, please install a font manually that "
-"supports the language."
+"To be able to use this translation, please install a font manually that supports the language."
 msgstr ""
+"Để có thể sử dụng bản dịch này, vui lòng cài đặt phông chữ hỗ trợ ngôn ngữ theo cách thủ công."
 
+#, fuzzy
 msgid "The font should be stored as {}"
-msgstr ""
+msgstr "Phông chữ phải được lưu dưới dạng {}"
 
+#, fuzzy
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall yêu cầu quyền root để chạy. Xem --help để biết thêm."
 
+#, fuzzy
 msgid "Select an execution mode"
-msgstr ""
+msgstr "Chọn chế độ thực hiện"
 
 #, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "Không thể tìm nạp cấu hình từ url được chỉ định: {}"
 
 #, python-brace-format
-msgid ""
-"Profiles must have unique name, but profile definitions with duplicate name "
-"found: {}"
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr ""
+"Cấu hình (Profile) phải có tên duy nhất, nhưng tìm thấy định nghĩa cấu hình có tên trùng lặp: {}"
 
+#, fuzzy
 msgid "Select one or more devices to use and configure"
-msgstr ""
+msgstr "Chọn một hoặc nhiều thiết bị để sử dụng và định cấu hình"
 
+#, fuzzy
 msgid ""
-"If you reset the device selection this will also reset the current disk "
-"layout. Are you sure?"
+"If you reset the device selection this will also reset the current disk layout. Are you sure?"
 msgstr ""
+"Nếu bạn đặt lại lựa chọn thiết bị, thao tác này cũng sẽ đặt lại bố cục đĩa hiện tại. Bạn có "
+"chắc không?"
 
+#, fuzzy
 msgid "Existing Partitions"
-msgstr ""
+msgstr "Phân vùng hiện có"
 
+#, fuzzy
 msgid "Select a partitioning option"
-msgstr ""
+msgstr "Chọn một tùy chọn phân vùng"
 
+#, fuzzy
 msgid "Enter the root directory of the mounted devices: "
-msgstr ""
+msgstr "Nhập thư mục gốc của thiết bị được gắn:"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr ""
+msgstr "Dung lượng tối thiểu cho phân vùng /home: {} GiB"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr ""
+msgstr "Dung lượng tối thiểu cho phân vùng Arch Linux: {} GiB"
 
+#, fuzzy
 msgid ""
-"This is a list of pre-programmed profiles_bck, they might make it easier to "
-"install things like desktop environments"
+"This is a list of pre-programmed profiles_bck, they might make it easier to install things like "
+"desktop environments"
 msgstr ""
+"Đây là danh sách các profile_bck được lập trình sẵn, chúng có thể giúp cài đặt những thứ như "
+"môi trường máy tính để bàn dễ dàng hơn"
 
 msgid "Current profile selection"
-msgstr ""
+msgstr "Lựa chọn cấu hình hiện tại"
 
+#, fuzzy
 msgid "Remove all newly added partitions"
-msgstr ""
+msgstr "Xóa tất cả các phân vùng mới được thêm vào"
 
+#, fuzzy
 msgid "Assign mountpoint"
-msgstr ""
+msgstr "Chỉ định điểm gắn kết"
 
+#, fuzzy
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu để định dạng (xóa dữ liệu)"
 
+#, fuzzy
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu là có khả năng khởi động"
 
+#, fuzzy
 msgid "Change filesystem"
-msgstr ""
+msgstr "Thay đổi hệ thống tập tin"
 
+#, fuzzy
 msgid "Mark/Unmark as compressed"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu là đã nén"
 
+#, fuzzy
 msgid "Set subvolumes"
-msgstr ""
+msgstr "Đặt âm lượng phụ"
 
+#, fuzzy
 msgid "Delete partition"
-msgstr ""
+msgstr "Xóa phân vùng"
 
+#, fuzzy
 msgid "Partition"
-msgstr ""
+msgstr "Phân vùng"
 
+#, fuzzy
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Phân vùng này hiện đã được mã hóa, để định dạng nó, phải chỉ định hệ thống tập tin"
+
+#, fuzzy
 msgid ""
-"This partition is currently encrypted, to format it a filesystem has to be "
-"specified"
+"Partition mount-points are relative to inside the installation, the boot would be /boot as an "
+"example."
 msgstr ""
+"Các điểm gắn kết phân vùng có liên quan đến bên trong quá trình cài đặt, khởi động sẽ là /boot "
+"làm ví dụ."
 
-msgid ""
-"Partition mount-points are relative to inside the installation, the boot "
-"would be /boot as an example."
+#, fuzzy
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
 msgstr ""
+"Nếu điểm gắn kết/khởi động được đặt thì phân vùng cũng sẽ được đánh dấu là có khả năng khởi "
+"động."
 
-msgid ""
-"If mountpoint /boot is set, then the partition will also be marked as "
-"bootable."
-msgstr ""
-
+#, fuzzy
 msgid "Mountpoint: "
-msgstr ""
+msgstr "Điểm gắn kết:"
 
+#, fuzzy
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "Các lĩnh vực miễn phí hiện tại trên thiết bị {}:"
 
+#, fuzzy
 msgid "Total sectors: {}"
-msgstr ""
+msgstr "Tổng số ngành: {}"
 
+#, fuzzy
 msgid "Enter the start sector (default: {}): "
-msgstr ""
+msgstr "Nhập khu vực bắt đầu (mặc định: {} ):"
 
-msgid ""
-"Enter the end sector of the partition (percentage or block number, default: "
-"{}): "
-msgstr ""
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Nhập khu vực cuối của phân vùng (phần trăm hoặc số khối, mặc định: {} ):"
 
+#, fuzzy
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "Điều này sẽ loại bỏ tất cả các phân vùng mới được thêm vào, tiếp tục?"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Partition management: {}"
-msgstr ""
+msgstr "Quản lý phân vùng: {}"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Total length: {}"
-msgstr ""
+msgstr "Tổng chiều dài: {}"
 
+#, fuzzy
 msgid "Encryption type"
-msgstr ""
+msgstr "Kiểu mã hóa"
 
+#, fuzzy
 msgid "Iteration time"
-msgstr ""
+msgstr "Thời gian lặp lại"
 
+#, fuzzy
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "Nhập thời gian lặp lại để mã hóa LUKS (tính bằng mili giây)"
 
+#, fuzzy
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "Giá trị cao hơn tăng cường bảo mật nhưng làm chậm thời gian khởi động"
 
+#, fuzzy
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Mặc định: 10000ms, Phạm vi khuyến nghị: 1000-60000"
 
+#, fuzzy
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "Thời gian lặp lại không được để trống"
 
+#, fuzzy
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "Thời gian lặp phải ít nhất là 100ms"
 
+#, fuzzy
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "Thời gian lặp lại tối đa là 120000ms"
 
+#, fuzzy
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Vui lòng nhập một số hợp lệ"
 
+#, fuzzy
 msgid "Partitions"
-msgstr ""
+msgstr "Phân vùng"
 
+#, fuzzy
 msgid "No HSM devices available"
-msgstr ""
+msgstr "Không có thiết bị HSM nào"
 
+#, fuzzy
 msgid "Partitions to be encrypted"
-msgstr ""
+msgstr "Các phân vùng được mã hóa"
 
+#, fuzzy
 msgid "Select disk encryption option"
-msgstr ""
+msgstr "Chọn tùy chọn mã hóa ổ đĩa"
 
+#, fuzzy
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "Chọn thiết bị FIDO2 để sử dụng cho HSM"
 
+#, fuzzy
 msgid "Use a best-effort default partition layout"
-msgstr ""
+msgstr "Sử dụng bố cục phân vùng mặc định với nỗ lực tốt nhất"
 
+#, fuzzy
 msgid "Manual Partitioning"
-msgstr ""
+msgstr "Phân vùng thủ công"
 
+#, fuzzy
 msgid "Pre-mounted configuration"
-msgstr ""
+msgstr "Cấu hình được gắn sẵn"
 
+#, fuzzy
 msgid "Unknown"
-msgstr ""
+msgstr "Không xác định"
 
+#, fuzzy
 msgid "Partition encryption"
-msgstr ""
+msgstr "Mã hóa phân vùng"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr "! Định dạng {} trong"
 
+#, fuzzy
 msgid "← Back"
-msgstr ""
+msgstr "← Quay lại"
 
+#, fuzzy
 msgid "Disk encryption"
-msgstr ""
+msgstr "Mã hóa ổ đĩa"
 
+#, fuzzy
 msgid "Configuration"
-msgstr ""
+msgstr "Cấu hình"
 
+#, fuzzy
 msgid "Password"
-msgstr ""
+msgstr "Mật khẩu"
 
+#, fuzzy
 msgid "All settings will be reset, are you sure?"
-msgstr ""
+msgstr "Tất cả cài đặt sẽ được đặt lại, bạn có chắc chắn không?"
 
+#, fuzzy
 msgid "Back"
-msgstr ""
+msgstr "Mặt sau"
 
+#, fuzzy
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "Vui lòng chọn cài đặt lời chào cho các cấu hình đã chọn: {}"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Environment type: {}"
-msgstr ""
+msgstr "Loại môi trường: {}"
 
+#, fuzzy
 msgid ""
-"The proprietary Nvidia driver is not supported by Sway. It is likely that "
-"you will run into issues, are you okay with that?"
+"The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into "
+"issues, are you okay with that?"
 msgstr ""
+"Trình điều khiển Nvidia độc quyền không được Sway hỗ trợ. Có khả năng là bạn sẽ gặp phải vấn "
+"đề, bạn có ổn với điều đó không?"
 
+#, fuzzy
 msgid "Installed packages"
-msgstr ""
+msgstr "Gói đã cài đặt"
 
 msgid "Add profile"
-msgstr ""
+msgstr "Thêm người dùng"
 
 msgid "Edit profile"
-msgstr ""
+msgstr "Chỉnh sửa người dùng"
 
 msgid "Delete profile"
-msgstr ""
+msgstr "Xóa người dùng"
 
 msgid "Profile name: "
-msgstr ""
+msgstr "Tên người dùng: "
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr ""
+msgstr "Tên người dùng bạn nhập đã được sử dụng. Thử lại"
 
-msgid ""
-"Packages to be install with this profile (space separated, leave blank to "
-"skip): "
-msgstr ""
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Các gói sẽ được cài đặt với cấu hình này (cách nhau bằng dấu cách, để trống để bỏ qua): "
 
-msgid ""
-"Services to be enabled with this profile (space separated, leave blank to "
-"skip): "
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
 msgstr ""
+"Các dịch vụ được kích hoạt với cấu hình này (cách nhau bằng dấu cách, để trống để bỏ qua): "
 
+#, fuzzy
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "Cấu hình này có nên được kích hoạt để cài đặt không?"
 
+#, fuzzy
 msgid "Create your own"
-msgstr ""
+msgstr "Tạo của riêng bạn"
 
+#, fuzzy
 msgid ""
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
-msgstr ""
+msgstr "Chọn trình điều khiển đồ họa hoặc để trống để cài đặt tất cả trình điều khiển nguồn mở"
 
-msgid ""
-"Sway needs access to your seat (collection of hardware devices i.e. "
-"keyboard, mouse, etc)"
+#, fuzzy
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr ""
+"Sway cần quyền truy cập vào chỗ ngồi của bạn (bộ sưu tập các thiết bị phần cứng, ví dụ như bàn "
+"phím, chuột, v.v.)"
 
+#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
-msgstr ""
+msgstr "Chọn một tùy chọn để cấp cho Sway quyền truy cập vào phần cứng của bạn"
 
+#, fuzzy
 msgid "Graphics driver"
-msgstr ""
+msgstr "Trình điều khiển đồ họa"
 
+#, fuzzy
 msgid "Greeter"
-msgstr ""
+msgstr "người chào hỏi"
 
+#, fuzzy
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "Vui lòng chọn lời chào nào để cài đặt"
 
+#, fuzzy
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "Đây là danh sách default_profiles được lập trình sẵn"
 
+#, fuzzy
 msgid "Disk configuration"
-msgstr ""
+msgstr "Cấu hình đĩa"
 
+#, fuzzy
 msgid "Profiles"
-msgstr ""
+msgstr "Cấu hình (Profile)"
 
+#, fuzzy
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "Tìm các thư mục có thể lưu file cấu hình..."
 
+#, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
-msgstr ""
+msgstr "Chọn thư mục (hoặc các thư mục) để lưu file cấu hình"
 
+#, fuzzy
 msgid "Add a custom mirror"
-msgstr ""
+msgstr "Thêm một tấm gương tùy chỉnh"
 
+#, fuzzy
 msgid "Change custom mirror"
-msgstr ""
+msgstr "Thay đổi gương tùy chỉnh"
 
+#, fuzzy
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "Xóa gương tùy chỉnh"
 
+#, fuzzy
 msgid "Enter name (leave blank to skip): "
-msgstr ""
+msgstr "Nhập tên (để trống để bỏ qua):"
 
+#, fuzzy
 msgid "Enter url (leave blank to skip): "
-msgstr ""
+msgstr "Nhập url (để trống để bỏ qua):"
 
+#, fuzzy
 msgid "Select signature check option"
-msgstr ""
+msgstr "Chọn tùy chọn kiểm tra chữ ký"
 
+#, fuzzy
 msgid "Select signature option"
-msgstr ""
+msgstr "Chọn tùy chọn chữ ký"
 
+#, fuzzy
 msgid "Custom mirrors"
-msgstr ""
+msgstr "Máy chủ bản sao (Mirror) tùy chỉnh"
 
+#, fuzzy
 msgid "Defined"
-msgstr ""
+msgstr "Đã xác định"
 
+#, fuzzy
 msgid "Save user configuration (including disk layout)"
-msgstr ""
+msgstr "Lưu cấu hình người dùng (bao gồm cả bố cục đĩa)"
 
+#, fuzzy
 msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion "
-"enabled)\n"
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
+"Nhập thư mục để lưu (các) cấu hình (bật tính năng hoàn thành tab)\n"
+"Lưu thư mục:"
 
+#, fuzzy
 msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
 "\n"
 "{}"
 msgstr ""
+"Bạn có muốn lưu (các) tệp cấu hình {} ở vị trí sau không?\n"
+"\n"
+" {}"
 
+#, fuzzy
 msgid "Saving {} configuration files to {}"
-msgstr ""
+msgstr "Lưu tệp cấu hình {} vào {}"
 
+#, fuzzy
 msgid "Mirrors"
-msgstr ""
+msgstr "Máy chủ bản sao (Mirror)"
 
 msgid "Mirror regions"
-msgstr ""
+msgstr "Máy chủ bản sao địa phương"
 
+#, fuzzy
 msgid ""
-" - Maximum value   : {} ( Allows {} parallel downloads, allows "
-"{max_downloads+1} downloads at a time )"
-msgstr ""
+" - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a "
+"time )"
+msgstr "- Giá trị tối đa: {} (Cho phép tải song song {}, cho phép tải {max_downloads+1} cùng lúc)"
 
+#, fuzzy
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr ""
+msgstr "Đầu vào không hợp lệ! Hãy thử lại với giá trị đầu vào hợp lệ [1 đến {} hoặc 0 để tắt]"
 
+#, fuzzy
 msgid "Locales"
-msgstr ""
+msgstr "Ngôn ngữ"
 
-msgid ""
-"Use NetworkManager (necessary to configure internet graphically in GNOME and "
-"KDE)"
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr ""
+"Sử dụng Trình quản lý mạng (cần thiết để định cấu hình đồ họa internet trong Gnome và KDE)"
 
+#, fuzzy
 msgid "Total: {} / {}"
-msgstr ""
+msgstr "Tổng cộng: {}/{}"
 
+#, fuzzy
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Tất cả các giá trị đã nhập có thể được thêm vào một đơn vị: B, KB, KiB, MB, MiB..."
 
+#, fuzzy
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Nếu không có đơn vị nào được cung cấp, giá trị được hiểu là các ngành"
 
+#, fuzzy
 msgid "Enter start (default: sector {}): "
-msgstr ""
+msgstr "Nhập bắt đầu (mặc định: khu vực {} ):"
 
+#, fuzzy
 msgid "Enter end (default: {}): "
-msgstr ""
+msgstr "Nhập cuối (mặc định: {} ):"
 
+#, fuzzy
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
+msgstr "Không thể xác định thiết bị fido2. libfido2 đã được cài đặt chưa?"
 
+#, fuzzy
 msgid "Path"
-msgstr ""
+msgstr "Con đường"
 
+#, fuzzy
 msgid "Manufacturer"
-msgstr ""
+msgstr "nhà sản xuất"
 
+#, fuzzy
 msgid "Product"
-msgstr ""
+msgstr "Sản phẩm"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid configuration: {}"
-msgstr ""
+msgstr "Cấu hình không hợp lệ: {}"
 
+#, fuzzy
 msgid "Ready to install"
-msgstr ""
+msgstr "Sẵn sàng để cài đặt"
 
+#, fuzzy
 msgid "Disks"
-msgstr ""
+msgstr "Đĩa"
 
+#, fuzzy
 msgid "Packages"
-msgstr ""
+msgstr "Gói"
 
+#, fuzzy
 msgid "Network"
-msgstr ""
+msgstr "Mạng"
 
+#, fuzzy
 msgid "Locale"
-msgstr ""
+msgstr "Ngôn ngữ"
 
+#, fuzzy
 msgid "Type"
-msgstr ""
+msgstr "Kiểu"
 
+#, fuzzy
 msgid ""
-"This option enables the number of parallel downloads that can occur during "
-"package downloads"
+"This option enables the number of parallel downloads that can occur during package downloads"
 msgstr ""
+"Tùy chọn này cho phép số lượng tải xuống song song có thể xảy ra trong quá trình tải xuống gói"
 
+#, fuzzy
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 "\n"
 "Note:\n"
 msgstr ""
+"Nhập số lượng tải xuống song song sẽ được kích hoạt.\n"
+"\n"
+"Ghi chú:"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
+msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+msgstr "- Giá trị khuyến nghị tối đa: {} (Cho phép tải xuống song song {} cùng một lúc)"
+
+#, fuzzy
 msgid ""
-" - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
 msgstr ""
+"- Tắt/Mặc định: 0 ( Vô hiệu hóa tải xuống song song, chỉ cho phép tải xuống 1 lần mỗi lần )"
 
-msgid ""
-" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 "
-"download at a time )\n"
-msgstr ""
-
+#, fuzzy
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr ""
+msgstr "Đầu vào không hợp lệ! Hãy thử lại với thông tin đầu vào hợp lệ [hoặc 0 để tắt]"
 
+#, fuzzy
 msgid ""
-"Hyprland needs access to your seat (collection of hardware devices i.e. "
-"keyboard, mouse, etc)"
+"Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr ""
+"Hyprland cần quyền truy cập vào chỗ ngồi của bạn (bộ sưu tập các thiết bị phần cứng như bàn "
+"phím, chuột, v.v.)"
 
+#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Hyprland access to your hardware"
-msgstr ""
+msgstr "Chọn một tùy chọn để cấp cho Hyprland quyền truy cập vào phần cứng của bạn"
 
-msgid ""
-"All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
+#, fuzzy
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Tất cả các giá trị đã nhập có thể được gắn với một đơn vị: %, B, KB, KiB, MB, MiB..."
 
+#, fuzzy
 msgid "Would you like to use unified kernel images?"
-msgstr ""
+msgstr "Bạn có muốn sử dụng hình ảnh hạt nhân hợp nhất không?"
 
+#, fuzzy
 msgid "Unified kernel images"
-msgstr ""
+msgstr "Hình ảnh hạt nhân hợp nhất"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
 msgstr ""
 
+#, fuzzy
 msgid ""
-"Time syncronization not completing, while you wait - check the docs for "
-"workarounds: https://archinstall.readthedocs.io/"
+"Time syncronization not completing, while you wait - check the docs for workarounds: https://"
+"archinstall.readthedocs.io/"
 msgstr ""
+"Quá trình đồng bộ hóa thời gian không hoàn tất trong khi bạn chờ đợi - hãy kiểm tra tài liệu để "
+"biết cách giải quyết: https://archinstall.readthedocs.io/"
 
+#, fuzzy
 msgid ""
-"Skipping waiting for automatic time sync (this can cause issues if time is "
-"out of sync during installation)"
+"Skipping waiting for automatic time sync (this can cause issues if time is out of sync during "
+"installation)"
 msgstr ""
+"Bỏ qua việc chờ đồng bộ hóa thời gian tự động (điều này có thể gây ra sự cố nếu thời gian không "
+"đồng bộ trong khi cài đặt)"
 
-msgid ""
-"Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
+#, fuzzy
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Đang chờ đồng bộ hóa khóa Arch Linux (archlinux-keyring-wkd-sync) hoàn tất."
 
+#, fuzzy
 msgid "Selected profiles: "
-msgstr ""
+msgstr "Cấu hình (Profile) đã chọn:"
 
+#, fuzzy
 msgid ""
-"Time synchronization not completing, while you wait - check the docs for "
-"workarounds: https://archinstall.readthedocs.io/"
+"Time synchronization not completing, while you wait - check the docs for workarounds: https://"
+"archinstall.readthedocs.io/"
 msgstr ""
+"Đồng bộ hóa thời gian không hoàn tất, trong khi bạn chờ đợi - hãy kiểm tra tài liệu để biết "
+"cách giải quyết: https://archinstall.readthedocs.io/"
 
+#, fuzzy
 msgid "Mark/Unmark as nodatacow"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu là gật đầu"
 
+#, fuzzy
 msgid "Would you like to use compression or disable CoW?"
-msgstr ""
+msgstr "Bạn muốn sử dụng tính năng nén hay tắt CoW?"
 
+#, fuzzy
 msgid "Use compression"
-msgstr ""
+msgstr "Sử dụng tính năng nén"
 
+#, fuzzy
 msgid "Disable Copy-on-Write"
-msgstr ""
+msgstr "Tắt tính năng Sao chép khi ghi"
 
+#, fuzzy
 msgid ""
-"Provides a selection of desktop environments and tiling window managers, "
-"e.g. GNOME, KDE Plasma, Sway"
+"Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE "
+"Plasma, Sway"
 msgstr ""
+"Cung cấp lựa chọn môi trường máy tính để bàn và trình quản lý cửa sổ xếp lớp, ví dụ: Gnome, KDE "
+"Plasma, Sway"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Configuration type: {}"
-msgstr ""
+msgstr "Loại cấu hình: {}"
 
+#, fuzzy
 msgid "LVM configuration type"
-msgstr ""
+msgstr "Loại cấu hình LVM"
 
-msgid ""
-"LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
+#, fuzzy
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "Mã hóa đĩa LVM với hơn 2 phân vùng hiện không được hỗ trợ"
 
-msgid ""
-"Use NetworkManager (necessary to configure internet graphically in GNOME and "
-"KDE Plasma)"
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
 msgstr ""
+"Sử dụng Trình quản lý mạng (cần thiết để định cấu hình đồ họa internet trong Gnome và KDE "
+"Plasma)"
 
+#, fuzzy
 msgid "Select a LVM option"
-msgstr ""
+msgstr "Chọn tùy chọn LVM"
 
+#, fuzzy
 msgid "Partitioning"
-msgstr ""
+msgstr "Phân vùng"
 
+#, fuzzy
 msgid "Logical Volume Management (LVM)"
-msgstr ""
+msgstr "Quản lý khối hợp lý (LVM)"
 
+#, fuzzy
 msgid "Physical volumes"
-msgstr ""
+msgstr "Khối lượng vật lý"
 
+#, fuzzy
 msgid "Volumes"
-msgstr ""
+msgstr "Tập"
 
+#, fuzzy
 msgid "LVM volumes"
-msgstr ""
+msgstr "Khối lượng LVM"
 
+#, fuzzy
 msgid "LVM volumes to be encrypted"
-msgstr ""
+msgstr "Khối lượng LVM được mã hóa"
 
+#, fuzzy
 msgid "Select which LVM volumes to encrypt"
-msgstr ""
+msgstr "Chọn khối LVM nào sẽ mã hóa"
 
+#, fuzzy
 msgid "Default layout"
-msgstr ""
+msgstr "Bố cục mặc định"
 
+#, fuzzy
 msgid "No Encryption"
-msgstr ""
+msgstr "Không mã hóa"
 
+#, fuzzy
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
+#, fuzzy
 msgid "LVM on LUKS"
-msgstr ""
+msgstr "LVM trên LUKS"
 
+#, fuzzy
 msgid "LUKS on LVM"
-msgstr ""
+msgstr "LUKS trên LVM"
 
+#, fuzzy
 msgid "Yes"
-msgstr ""
+msgstr "Đúng"
 
+#, fuzzy
 msgid "No"
-msgstr ""
+msgstr "KHÔNG"
 
+#, fuzzy
 msgid "Archinstall help"
-msgstr ""
+msgstr "Trợ giúp cài đặt Arch"
 
+#, fuzzy
 msgid " (default)"
-msgstr ""
+msgstr "(mặc định)"
 
+#, fuzzy
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "Nhấn Ctrl+h để được trợ giúp"
 
+#, fuzzy
 msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
+msgstr "Chọn một tùy chọn để cấp cho Sway quyền truy cập vào phần cứng của bạn"
 
+#, fuzzy
 msgid "Seat access"
-msgstr ""
+msgstr "Quyền truy cập chỗ ngồi"
 
+#, fuzzy
 msgid "Mountpoint"
-msgstr ""
+msgstr "điểm gắn kết"
 
+#, fuzzy
 msgid "HSM"
-msgstr ""
+msgstr "HSM"
 
+#, fuzzy
 msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr ""
+msgstr "Nhập mật khẩu mã hóa ổ đĩa (để trống nếu không mã hóa)"
 
+#, fuzzy
 msgid "Disk encryption password"
-msgstr ""
+msgstr "Mật khẩu mã hóa ổ đĩa"
 
+#, fuzzy
 msgid "Partition - New"
-msgstr ""
+msgstr "Phân vùng - Mới"
 
+#, fuzzy
 msgid "Filesystem"
-msgstr ""
+msgstr "Hệ thống tập tin"
 
+#, fuzzy
 msgid "Invalid size"
-msgstr ""
+msgstr "Kích thước không hợp lệ"
 
+#, fuzzy
 msgid "Start (default: sector {}): "
-msgstr ""
+msgstr "Bắt đầu (mặc định: khu vực {} ):"
 
+#, fuzzy
 msgid "End (default: {}): "
-msgstr ""
+msgstr "Kết thúc (mặc định: {} ):"
 
+#, fuzzy
 msgid "Subvolume name"
-msgstr ""
+msgstr "Tên tập con"
 
+#, fuzzy
 msgid "Disk configuration type"
-msgstr ""
+msgstr "Kiểu cấu hình đĩa"
 
+#, fuzzy
 msgid "Root mount directory"
-msgstr ""
+msgstr "Thư mục gắn kết gốc"
 
+#, fuzzy
 msgid "Select language"
-msgstr ""
+msgstr "Chọn ngôn ngữ"
 
-msgid ""
-"Write additional packages to install (space separated, leave blank to skip)"
-msgstr ""
+#, fuzzy
+msgid "Write additional packages to install (space separated, leave blank to skip)"
+msgstr "Ghi thêm các gói cần cài đặt (cách nhau dấu cách, để trống để bỏ qua)"
 
+#, fuzzy
 msgid "Invalid download number"
-msgstr ""
+msgstr "Số tải xuống không hợp lệ"
 
+#, fuzzy
 msgid "Number downloads"
-msgstr ""
+msgstr "Số lượt tải xuống"
 
+#, fuzzy
 msgid "The username you entered is invalid"
-msgstr ""
+msgstr "Tên người dùng bạn đã nhập không hợp lệ"
 
+#, fuzzy
 msgid "Username"
-msgstr ""
+msgstr "Tên người dùng"
 
 #, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr ""
+msgstr "\"{}\" có nên là siêu người dùng (sudo) không?\n"
 
+#, fuzzy
 msgid "Interfaces"
-msgstr ""
+msgstr "Giao diện"
 
+#, fuzzy
 msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
+msgstr "Bạn cần nhập IP hợp lệ ở chế độ IP-config"
 
+#, fuzzy
 msgid "Modes"
-msgstr ""
+msgstr "Chế độ"
 
+#, fuzzy
 msgid "IP address"
-msgstr ""
+msgstr "địa chỉ IP"
 
+#, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
-msgstr ""
+msgstr "Nhập địa chỉ IP cổng (bộ định tuyến) của bạn (không để trống nếu không)"
 
+#, fuzzy
 msgid "Gateway address"
-msgstr ""
+msgstr "Địa chỉ cổng"
 
+#, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr ""
+msgstr "Nhập máy chủ DNS của bạn có khoảng trắng được phân tách (không để trống)"
 
+#, fuzzy
 msgid "DNS servers"
-msgstr ""
+msgstr "máy chủ DNS"
 
+#, fuzzy
 msgid "Configure interfaces"
-msgstr ""
+msgstr "Cấu hình giao diện"
 
+#, fuzzy
 msgid "Kernel"
-msgstr ""
+msgstr "hạt nhân"
 
+#, fuzzy
 msgid "UEFI is not detected and some options are disabled"
-msgstr ""
+msgstr "UEFI không được phát hiện và một số tùy chọn bị tắt"
 
+#, fuzzy
 msgid "Info"
-msgstr ""
+msgstr "Thông tin"
 
+#, fuzzy
 msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr ""
+msgstr "Trình điều khiển Nvidia độc quyền không được Sway hỗ trợ."
 
+#, fuzzy
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "Có khả năng là bạn sẽ gặp phải vấn đề, bạn có ổn với điều đó không?"
 
+#, fuzzy
 msgid "Main profile"
-msgstr ""
+msgstr "Cấu hình (Profile) chính"
 
+#, fuzzy
 msgid "Confirm password"
-msgstr ""
+msgstr "Xác nhận mật khẩu"
 
+#, fuzzy
 msgid "The confirmation password did not match, please try again"
-msgstr ""
+msgstr "Mật khẩu xác nhận không khớp, vui lòng thử lại"
 
+#, fuzzy
 msgid "Not a valid directory"
-msgstr ""
+msgstr "Không phải là một thư mục hợp lệ"
 
+#, fuzzy
 msgid "Would you like to continue?"
-msgstr ""
+msgstr "Bạn có muốn tiếp tục không?"
 
+#, fuzzy
 msgid "Directory"
-msgstr ""
+msgstr "Thư mục"
 
-msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion "
-"enabled)"
-msgstr ""
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+msgstr "Nhập thư mục để lưu (các) cấu hình (bật tính năng hoàn thành tab)"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
-msgstr ""
+msgstr "Bạn có muốn lưu (các) tệp cấu hình vào {} không?"
 
+#, fuzzy
 msgid "Enabled"
-msgstr ""
+msgstr "Đã bật"
 
+#, fuzzy
 msgid "Disabled"
-msgstr ""
+msgstr "Tàn tật"
 
-msgid ""
-"Please submit this issue (and file) to https://github.com/archlinux/"
-"archinstall/issues"
-msgstr ""
+#, fuzzy
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Vui lòng gửi vấn đề này (và tệp) tới https://github.com/archlinux/archinstall/issues"
 
+#, fuzzy
 msgid "Mirror name"
-msgstr ""
+msgstr "Tên gương"
 
+#, fuzzy
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
+#, fuzzy
 msgid "Select signature check"
-msgstr ""
+msgstr "Chọn kiểm tra chữ ký"
 
+#, fuzzy
 msgid "Select execution mode"
-msgstr ""
+msgstr "Chọn chế độ thực hiện"
 
+#, fuzzy
 msgid "Press ? for help"
-msgstr ""
+msgstr "Nhấn ? để được giúp đỡ"
 
+#, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
+msgstr "Chọn một tùy chọn để cấp cho Hyprland quyền truy cập vào phần cứng của bạn"
 
+#, fuzzy
 msgid "Additional repositories"
-msgstr ""
+msgstr "Kho bổ sung"
 
+#, fuzzy
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
+#, fuzzy
 msgid "Swap on zram"
-msgstr ""
+msgstr "Trao đổi trên zram"
 
+#, fuzzy
 msgid "Name"
-msgstr ""
+msgstr "Tên"
 
+#, fuzzy
 msgid "Signature check"
-msgstr ""
+msgstr "Kiểm tra chữ ký"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Selected free space segment on device {}:"
-msgstr ""
+msgstr "Phân đoạn không gian trống đã chọn trên thiết bị {} :"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Size: {} / {}"
-msgstr ""
+msgstr "Kích thước: {}/{}"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Size (default: {}): "
-msgstr ""
+msgstr "Kích thước (mặc định: {} ):"
 
+#, fuzzy
 msgid "HSM device"
-msgstr ""
+msgstr "thiết bị HSM"
 
+#, fuzzy
 msgid "Some packages could not be found in the repository"
-msgstr ""
+msgstr "Không thể tìm thấy một số gói trong kho lưu trữ"
 
+#, fuzzy
 msgid "User"
-msgstr ""
+msgstr "người dùng"
 
+#, fuzzy
 msgid "The specified configuration will be applied"
-msgstr ""
+msgstr "Cấu hình được chỉ định sẽ được áp dụng"
 
+#, fuzzy
 msgid "Wipe"
-msgstr ""
+msgstr "Lau đi"
 
+#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu là XBOOTLDR"
 
+#, fuzzy
 msgid "Loading packages..."
-msgstr ""
+msgstr "Đang tải gói..."
 
-msgid ""
-"Select any packages from the below list that should be installed additionally"
-msgstr ""
+#, fuzzy
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Chọn bất kỳ gói nào từ danh sách bên dưới cần được cài đặt bổ sung"
 
+#, fuzzy
 msgid "Add a custom repository"
-msgstr ""
+msgstr "Thêm kho lưu trữ tùy chỉnh"
 
+#, fuzzy
 msgid "Change custom repository"
-msgstr ""
+msgstr "Thay đổi kho lưu trữ tùy chỉnh"
 
+#, fuzzy
 msgid "Delete custom repository"
-msgstr ""
+msgstr "Xóa kho lưu trữ tùy chỉnh"
 
+#, fuzzy
 msgid "Repository name"
-msgstr ""
+msgstr "Tên kho lưu trữ"
 
+#, fuzzy
 msgid "Add a custom server"
-msgstr ""
+msgstr "Thêm một máy chủ tùy chỉnh"
 
+#, fuzzy
 msgid "Change custom server"
-msgstr ""
+msgstr "Thay đổi máy chủ tùy chỉnh"
 
+#, fuzzy
 msgid "Delete custom server"
-msgstr ""
+msgstr "Xóa máy chủ tùy chỉnh"
 
+#, fuzzy
 msgid "Server url"
-msgstr ""
+msgstr "Url máy chủ"
 
+#, fuzzy
 msgid "Select regions"
-msgstr ""
+msgstr "Chọn vùng"
 
+#, fuzzy
 msgid "Add custom servers"
-msgstr ""
+msgstr "Thêm máy chủ tùy chỉnh"
 
+#, fuzzy
 msgid "Add custom repository"
-msgstr ""
+msgstr "Thêm kho lưu trữ tùy chỉnh"
 
 msgid "Loading mirror regions..."
-msgstr ""
+msgstr "Đang tải các máy chủ bản sao địa phương..."
 
+#, fuzzy
 msgid "Mirrors and repositories"
-msgstr ""
+msgstr "Máy chủ bản sao (Mirror) và kho lưu trữ"
 
 msgid "Selected mirror regions"
-msgstr ""
+msgstr "Máy chủ bản sao địa phương được chọn"
 
+#, fuzzy
 msgid "Custom servers"
-msgstr ""
+msgstr "Máy chủ tùy chỉnh"
 
+#, fuzzy
 msgid "Custom repositories"
-msgstr ""
+msgstr "Kho tùy chỉnh"
 
+#, fuzzy
 msgid "Only ASCII characters are supported"
-msgstr ""
+msgstr "Chỉ hỗ trợ các ký tự ASCII"
 
+#, fuzzy
 msgid "Show help"
-msgstr ""
+msgstr "Hiển thị trợ giúp"
 
+#, fuzzy
 msgid "Exit help"
-msgstr ""
+msgstr "Thoát trợ giúp"
 
+#, fuzzy
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Xem trước cuộn lên"
 
+#, fuzzy
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Xem trước cuộn xuống"
 
+#, fuzzy
 msgid "Move up"
-msgstr ""
+msgstr "Di chuyển lên"
 
+#, fuzzy
 msgid "Move down"
-msgstr ""
+msgstr "Di chuyển xuống"
 
+#, fuzzy
 msgid "Move right"
-msgstr ""
+msgstr "Di chuyển sang phải"
 
+#, fuzzy
 msgid "Move left"
-msgstr ""
+msgstr "Di chuyển sang trái"
 
+#, fuzzy
 msgid "Jump to entry"
-msgstr ""
+msgstr "Chuyển đến mục nhập"
 
+#, fuzzy
 msgid "Skip selection (if available)"
-msgstr ""
+msgstr "Bỏ qua lựa chọn (nếu có)"
 
+#, fuzzy
 msgid "Reset selection (if available)"
-msgstr ""
+msgstr "Đặt lại lựa chọn (nếu có)"
 
+#, fuzzy
 msgid "Select on single select"
-msgstr ""
+msgstr "Chọn trên một lần chọn"
 
+#, fuzzy
 msgid "Select on multi select"
-msgstr ""
+msgstr "Chọn trên nhiều lựa chọn"
 
+#, fuzzy
 msgid "Reset"
-msgstr ""
+msgstr "Cài lại"
 
+#, fuzzy
 msgid "Skip selection menu"
-msgstr ""
+msgstr "Bỏ qua menu lựa chọn"
 
+#, fuzzy
 msgid "Start search mode"
-msgstr ""
+msgstr "Bắt đầu chế độ tìm kiếm"
 
+#, fuzzy
 msgid "Exit search mode"
-msgstr ""
+msgstr "Thoát chế độ tìm kiếm"
 
+#, fuzzy
 msgid "General"
-msgstr ""
+msgstr "Tổng quan"
 
+#, fuzzy
 msgid "Navigation"
-msgstr ""
+msgstr "Điều hướng"
 
+#, fuzzy
 msgid "Selection"
-msgstr ""
+msgstr "Lựa chọn"
 
+#, fuzzy
 msgid "Search"
-msgstr ""
+msgstr "Tìm kiếm"
 
+#, fuzzy
 msgid "Down"
-msgstr ""
+msgstr "Xuống"
 
+#, fuzzy
 msgid "Up"
-msgstr ""
+msgstr "Hướng lên"
 
+#, fuzzy
 msgid "Confirm"
-msgstr ""
+msgstr "Xác nhận"
 
+#, fuzzy
 msgid "Focus right"
-msgstr ""
+msgstr "Lấy nét phải"
 
+#, fuzzy
 msgid "Focus left"
-msgstr ""
+msgstr "Tập trung vào bên trái"
 
+#, fuzzy
 msgid "Toggle"
-msgstr ""
+msgstr "Chuyển đổi"
 
+#, fuzzy
 msgid "Show/Hide help"
-msgstr ""
+msgstr "Hiển thị/Ẩn trợ giúp"
 
+#, fuzzy
 msgid "Quit"
-msgstr ""
+msgstr "Từ bỏ"
 
+#, fuzzy
 msgid "First"
-msgstr ""
+msgstr "Đầu tiên"
 
+#, fuzzy
 msgid "Last"
-msgstr ""
+msgstr "Cuối cùng"
 
+#, fuzzy
 msgid "Select"
-msgstr ""
+msgstr "Lựa chọn"
 
+#, fuzzy
 msgid "Page Up"
-msgstr ""
+msgstr "Trang lên"
 
+#, fuzzy
 msgid "Page Down"
-msgstr ""
+msgstr "Trang xuống"
 
+#, fuzzy
 msgid "Page up"
-msgstr ""
+msgstr "Trang lên"
 
+#, fuzzy
 msgid "Page down"
-msgstr ""
+msgstr "Trang xuống"
 
+#, fuzzy
 msgid "Page Left"
-msgstr ""
+msgstr "Trang còn lại"
 
+#, fuzzy
 msgid "Page Right"
-msgstr ""
+msgstr "Trang bên phải"
 
+#, fuzzy
 msgid "Cursor up"
-msgstr ""
+msgstr "Con trỏ lên"
 
+#, fuzzy
 msgid "Cursor down"
-msgstr ""
+msgstr "Con trỏ xuống"
 
+#, fuzzy
 msgid "Cursor right"
-msgstr ""
+msgstr "Con trỏ sang phải"
 
+#, fuzzy
 msgid "Cursor left"
-msgstr ""
+msgstr "Con trỏ sang trái"
 
+#, fuzzy
 msgid "Top"
-msgstr ""
+msgstr "Đứng đầu"
 
+#, fuzzy
 msgid "Bottom"
-msgstr ""
+msgstr "Đáy"
 
+#, fuzzy
 msgid "Home"
-msgstr ""
+msgstr "Trang chủ"
 
+#, fuzzy
 msgid "End"
-msgstr ""
+msgstr "Kết thúc"
 
+#, fuzzy
 msgid "Toggle option"
-msgstr ""
+msgstr "Tùy chọn chuyển đổi"
 
+#, fuzzy
 msgid "Scroll Up"
-msgstr ""
+msgstr "Cuộn lên"
 
+#, fuzzy
 msgid "Scroll Down"
-msgstr ""
+msgstr "Cuộn xuống"
 
+#, fuzzy
 msgid "Scroll Left"
-msgstr ""
+msgstr "Cuộn sang trái"
 
+#, fuzzy
 msgid "Scroll Right"
-msgstr ""
+msgstr "Cuộn sang phải"
 
+#, fuzzy
 msgid "Scroll Home"
-msgstr ""
+msgstr "Cuộn về nhà"
 
+#, fuzzy
 msgid "Scroll End"
-msgstr ""
+msgstr "Cuối cuộn"
 
+#, fuzzy
 msgid "Focus Next"
-msgstr ""
+msgstr "Tập trung tiếp theo"
 
+#, fuzzy
 msgid "Focus Previous"
-msgstr ""
+msgstr "Tập trung trước đó"
 
+#, fuzzy
 msgid "Copy selected text"
-msgstr ""
+msgstr "Sao chép văn bản đã chọn"
 
-msgid ""
-"labwc needs access to your seat (collection of hardware devices i.e. "
-"keyboard, mouse, etc)"
+#, fuzzy
+msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr ""
+"labwc cần quyền truy cập vào chỗ ngồi của bạn (bộ sưu tập các thiết bị phần cứng như bàn phím, "
+"chuột, v.v.)"
 
+#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr ""
+msgstr "Chọn một tùy chọn để cấp quyền truy cập labwc vào phần cứng của bạn"
 
-msgid ""
-"niri needs access to your seat (collection of hardware devices i.e. "
-"keyboard, mouse, etc)"
+#, fuzzy
+msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr ""
+"niri cần quyền truy cập vào chỗ ngồi của bạn (bộ sưu tập các thiết bị phần cứng như bàn phím, "
+"chuột, v.v.)"
 
+#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr ""
+msgstr "Chọn một tùy chọn để cấp cho niri quyền truy cập vào phần cứng của bạn"
 
+#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr ""
+msgstr "Đánh dấu/Bỏ đánh dấu là ESP"
 
+#, fuzzy
 msgid "Package group:"
-msgstr ""
+msgstr "Nhóm gói:"
 
+#, fuzzy
 msgid "Exit archinstall"
-msgstr ""
+msgstr "Thoát khỏi cài đặt Arch"
 
+#, fuzzy
 msgid "Reboot system"
-msgstr ""
+msgstr "Khởi động lại hệ thống"
 
+#, fuzzy
 msgid "chroot into installation for post-installation configurations"
-msgstr ""
+msgstr "chroot vào cài đặt để cấu hình sau khi cài đặt"
 
+#, fuzzy
 msgid "Installation completed"
-msgstr ""
+msgstr "Cài đặt hoàn tất"
 
+#, fuzzy
 msgid "What would you like to do next?"
-msgstr ""
+msgstr "Bạn muốn làm gì tiếp theo?"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Select which mode to configure for \"{}\""
-msgstr ""
+msgstr "Chọn chế độ cấu hình cho \"{}\""
 
+#, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr ""
+msgstr "Mật khẩu giải mã tập tin thông tin xác thực không chính xác"
 
+#, fuzzy
 msgid "Incorrect password"
-msgstr ""
+msgstr "Mật khẩu không chính xác"
 
+#, fuzzy
 msgid "Credentials file decryption password"
-msgstr ""
+msgstr "Mật khẩu giải mã tập tin thông tin xác thực"
 
+#, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr ""
+msgstr "Bạn có muốn mã hóa tệp user_credentials.json không?"
 
+#, fuzzy
 msgid "Credentials file encryption password"
-msgstr ""
+msgstr "Mật khẩu mã hóa tập tin thông tin xác thực"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Repositories: {}"
-msgstr ""
+msgstr "Kho lưu trữ: {}"
 
+#, fuzzy
 msgid "New version available"
-msgstr ""
+msgstr "Đã có phiên bản mới"
 
+#, fuzzy
 msgid "Passwordless login"
-msgstr ""
+msgstr "Đăng nhập không cần mật khẩu"
 
+#, fuzzy
 msgid "Second factor login"
-msgstr ""
+msgstr "Đăng nhập yếu tố thứ hai"
 
+#, fuzzy
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
+#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr ""
+msgstr "Bạn có muốn định cấu hình Bluetooth không?"
 
+#, fuzzy
 msgid "Print service"
-msgstr ""
+msgstr "Dịch vụ in ấn"
 
+#, fuzzy
 msgid "Would you like to configure the print service?"
-msgstr ""
+msgstr "Bạn có muốn định cấu hình dịch vụ in không?"
 
+#, fuzzy
 msgid "Power management"
-msgstr ""
+msgstr "Quản lý nguồn điện"
 
+#, fuzzy
 msgid "Authentication"
-msgstr ""
+msgstr "Xác thực"
 
+#, fuzzy
 msgid "Applications"
-msgstr ""
+msgstr "Ứng dụng"
 
+#, fuzzy
 msgid "U2F login method: "
-msgstr ""
+msgstr "Phương thức đăng nhập U2F:"
 
+#, fuzzy
 msgid "Passwordless sudo: "
-msgstr ""
+msgstr "Sudo không cần mật khẩu:"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "Loại ảnh chụp nhanh Btrfs: {}"
 
+#, fuzzy
 msgid "Syncing the system..."
-msgstr ""
+msgstr "Đang đồng bộ hóa hệ thống..."
 
+#, fuzzy
 msgid "Value cannot be empty"
-msgstr ""
+msgstr "Giá trị không thể trống"
 
+#, fuzzy
 msgid "Snapshot type"
-msgstr ""
+msgstr "Kiểu ảnh chụp nhanh"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Snapshot type: {}"
-msgstr ""
+msgstr "Kiểu chụp nhanh: {}"
 
+#, fuzzy
 msgid "U2F login setup"
-msgstr ""
+msgstr "Thiết lập đăng nhập U2F"
 
+#, fuzzy
 msgid "No U2F devices found"
-msgstr ""
+msgstr "Không tìm thấy thiết bị U2F nào"
 
+#, fuzzy
 msgid "U2F Login Method"
-msgstr ""
+msgstr "Phương thức đăng nhập U2F"
 
+#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr ""
+msgstr "Kích hoạt sudo không mật khẩu?"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr ""
+msgstr "Thiết lập thiết bị U2F cho người dùng: {}"
 
-msgid ""
-"You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
+#, fuzzy
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Bạn có thể cần nhập mã PIN rồi chạm vào thiết bị U2F của mình để đăng ký"
 
+#, fuzzy
 msgid "Starting device modifications in "
-msgstr ""
+msgstr "Bắt đầu sửa đổi thiết bị trong"
 
+#, fuzzy
 msgid "No network connection found"
-msgstr ""
+msgstr "Không tìm thấy kết nối mạng"
 
+#, fuzzy
 msgid "Would you like to connect to a Wifi?"
-msgstr ""
+msgstr "Bạn có muốn kết nối với Wifi không?"
 
+#, fuzzy
 msgid "No wifi interface found"
-msgstr ""
+msgstr "Không tìm thấy giao diện wifi"
 
+#, fuzzy
 msgid "Select wifi network to connect to"
-msgstr ""
+msgstr "Chọn mạng wifi để kết nối"
 
+#, fuzzy
 msgid "Scanning wifi networks..."
-msgstr ""
+msgstr "Đang quét mạng wifi..."
 
+#, fuzzy
 msgid "No wifi networks found"
-msgstr ""
+msgstr "Không tìm thấy mạng wifi"
 
+#, fuzzy
 msgid "Failed setting up wifi"
-msgstr ""
+msgstr "Cài đặt wifi không thành công"
 
+#, fuzzy
 msgid "Enter wifi password"
-msgstr ""
+msgstr "Nhập mật khẩu wifi"
 
+#, fuzzy
 msgid "Ok"
-msgstr ""
+msgstr "Được rồi"
 
+#, fuzzy
 msgid "Removable"
-msgstr ""
+msgstr "Có thể tháo rời"
 
+#, fuzzy
 msgid "Install to removable location"
-msgstr ""
+msgstr "Cài đặt vào vị trí có thể tháo rời"
 
+#, fuzzy
 msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
+msgstr "Sẽ cài đặt vào /EFI/BOOT/ (vị trí có thể tháo rời)"
 
+#, fuzzy
 msgid "Will install to standard location with NVRAM entry"
-msgstr ""
+msgstr "Sẽ cài đặt vào vị trí tiêu chuẩn với mục nhập NVRAM"
 
-msgid ""
-"Would you like to install the bootloader to the default removable media "
-"search location?"
+#, fuzzy
+msgid "Would you like to install the bootloader to the default removable media search location?"
 msgstr ""
+"Bạn có muốn cài đặt bộ nạp khởi động vào vị trí tìm kiếm phương tiện di động mặc định không?"
 
-msgid ""
-"This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is "
-"useful for:"
+#, fuzzy
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
 msgstr ""
+"Việc này sẽ cài đặt bộ tải khởi động vào /EFI/BOOT/BOOTX64.EFI (hoặc tương tự), rất hữu ích cho:"
 
+#, fuzzy
 msgid "USB drives or other portable external media."
-msgstr ""
+msgstr "Ổ USB hoặc phương tiện di động bên ngoài khác."
 
+#, fuzzy
 msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
+msgstr "Các hệ thống mà bạn muốn đĩa có khả năng khởi động trên bất kỳ máy tính nào."
 
+#, fuzzy
 msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
+msgstr "Phần sụn không hỗ trợ đúng cách các mục khởi động NVRAM."
 
+#, fuzzy
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr ""
+msgstr "Sẽ cài đặt vào /EFI/BOOT/ (vị trí có thể tháo rời, mặc định an toàn)"
 
+#, fuzzy
 msgid "Will install to custom location with NVRAM entry"
-msgstr ""
+msgstr "Sẽ cài đặt vào vị trí tùy chỉnh với mục nhập NVRAM"
 
-msgid ""
-"Firmware that does not properly support NVRAM boot entries like most MSI "
-"motherboards,"
-msgstr ""
+#, fuzzy
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Phần sụn không hỗ trợ đúng cách các mục khởi động NVRAM như hầu hết các bo mạch chủ MSI,"
 
+#, fuzzy
 msgid "most Apple Macs, many laptops..."
-msgstr ""
+msgstr "hầu hết các máy Mac của Apple, nhiều máy tính xách tay..."
 
+#, fuzzy
 msgid "Language"
-msgstr ""
+msgstr "Ngôn ngữ"
 
+#, fuzzy
 msgid "Compression algorithm"
-msgstr ""
+msgstr "Thuật toán nén"
 
 msgid ""
-"Only packages such as base, sudo, linux, linux-firmware, efibootmgr and "
-"optional profile packages are installed."
+"Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile "
+"packages are installed."
 msgstr ""
+"Chỉ các gói như base, sudo, linux, linux-firmware, efibootmgr và các gói cấu hình tùy chọn mới "
+"được cài đặt."
 
+#, fuzzy
 msgid "Select zram compression algorithm:"
-msgstr ""
+msgstr "Chọn thuật toán nén zram:"
 
+#, fuzzy
 msgid "Use Network Manager (default backend)"
-msgstr ""
+msgstr "Sử dụng Trình quản lý mạng (phụ trợ mặc định)"
 
+#, fuzzy
 msgid "Use Network Manager (iwd backend)"
-msgstr ""
+msgstr "Sử dụng Trình quản lý mạng (phụ trợ iwd)"
 
+#, fuzzy
 msgid "Firewall"
-msgstr ""
+msgstr "Tường lửa"
 
+#, fuzzy
 msgid "Additional fonts"
-msgstr ""
+msgstr "Phông chữ bổ sung"
 
+#, fuzzy
 msgid "Select font packages to install"
-msgstr ""
+msgstr "Chọn gói font để cài đặt"
 
+#, fuzzy
 msgid "Unicode font coverage for most languages"
-msgstr ""
+msgstr "Phạm vi phông chữ Unicode cho hầu hết các ngôn ngữ"
 
+#, fuzzy
 msgid "color emoji for browsers and apps"
-msgstr ""
+msgstr "biểu tượng cảm xúc màu cho trình duyệt và ứng dụng"
 
+#, fuzzy
 msgid "Chinese, Japanese, Korean characters"
-msgstr ""
+msgstr "Ký tự Trung Quốc, Nhật Bản, Hàn Quốc"
 
+#, fuzzy
 msgid "Select audio configuration"
-msgstr ""
+msgstr "Chọn cấu hình âm thanh"
 
+#, fuzzy
 msgid "Enter credentials file decryption password"
-msgstr ""
+msgstr "Nhập mật khẩu giải mã tập tin thông tin xác thực"
 
+#, fuzzy
 msgid "Enter root password"
-msgstr ""
+msgstr "Nhập mật khẩu gốc"
 
+#, fuzzy
 msgid "Select bootloader to install"
-msgstr ""
+msgstr "Chọn bootloader để cài đặt"
 
+#, fuzzy
 msgid "Configuration preview"
-msgstr ""
+msgstr "Xem trước cấu hình"
 
+#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved"
-msgstr ""
+msgstr "Nhập thư mục để lưu (các) cấu hình"
 
+#, fuzzy
 msgid "Select encryption type"
-msgstr ""
+msgstr "Chọn loại mã hóa"
 
+#, fuzzy
 msgid "Select disks for the installation"
-msgstr ""
+msgstr "Chọn đĩa để cài đặt"
 
+#, fuzzy
 msgid "Enter a mountpoint"
-msgstr ""
+msgstr "Nhập điểm gắn kết"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Enter a size (default: {}): "
-msgstr ""
+msgstr "Nhập kích thước (mặc định: {} ):"
 
+#, fuzzy
 msgid "Enter subvolume name"
-msgstr ""
+msgstr "Nhập tên tập con"
 
+#, fuzzy
 msgid "Enter subvolume mountpoint"
-msgstr ""
+msgstr "Nhập điểm gắn kết subvolume"
 
+#, fuzzy
 msgid "Select a disk configuration"
-msgstr ""
+msgstr "Chọn cấu hình đĩa"
 
+#, fuzzy
 msgid "Enter root mount directory"
-msgstr ""
+msgstr "Nhập thư mục gắn kết gốc"
 
+#, fuzzy
 msgid "You will use whatever drive-setup is mounted at the specified directory"
-msgstr ""
+msgstr "Bạn sẽ sử dụng bất kỳ thiết lập ổ đĩa nào được gắn vào thư mục đã chỉ định"
 
+#, fuzzy
 msgid "WARNING: Archinstall won't check the suitability of this setup"
-msgstr ""
+msgstr "CẢNH BÁO: Archinstall sẽ không kiểm tra tính phù hợp của thiết lập này"
 
+#, fuzzy
 msgid "Select main filesystem"
-msgstr ""
+msgstr "Chọn hệ thống tập tin chính"
 
+#, fuzzy
 msgid "Enter a hostname"
-msgstr ""
+msgstr "Nhập tên máy chủ"
 
+#, fuzzy
 msgid "Select timezone"
-msgstr ""
+msgstr "Chọn múi giờ"
 
+#, fuzzy
 msgid "Enter the number of parallel downloads to be enabled"
-msgstr ""
+msgstr "Nhập số lượng tải song song sẽ được kích hoạt"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Value must be between 1 and {}"
-msgstr ""
+msgstr "Giá trị phải nằm trong khoảng từ 1 đến {}"
 
+#, fuzzy
 msgid "Select which kernel(s) to install"
-msgstr ""
+msgstr "Chọn (các) hạt nhân để cài đặt"
 
+#, fuzzy
 msgid "Enter a respository name"
-msgstr ""
+msgstr "Nhập tên kho lưu trữ"
 
+#, fuzzy
 msgid "Enter the repository url"
-msgstr ""
+msgstr "Nhập url kho lưu trữ"
 
+#, fuzzy
 msgid "Enter server url"
-msgstr ""
+msgstr "Nhập url máy chủ"
 
 msgid "Select mirror regions to be enabled"
-msgstr ""
+msgstr "Chọn các máy chủ bản sao địa phương sẽ được kích hoạt"
 
+#, fuzzy
 msgid "Select optional repositories to be enabled"
-msgstr ""
+msgstr "Chọn kho lưu trữ tùy chọn sẽ được kích hoạt"
 
+#, fuzzy
 msgid "Select an interface"
-msgstr ""
+msgstr "Chọn một giao diện"
 
+#, fuzzy
 msgid "Choose network configuration"
-msgstr ""
+msgstr "Chọn cấu hình mạng"
 
+#, fuzzy
 msgid "Recommended: Network Manager for desktop, Manual for server"
-msgstr ""
+msgstr "Khuyến nghị: Trình quản lý mạng cho máy tính để bàn, Hướng dẫn sử dụng cho máy chủ"
 
+#, fuzzy
 msgid ""
-"Warning: no network configuration selected. Network will need to be set up "
-"manually on the installed system."
+"Warning: no network configuration selected. Network will need to be set up manually on the "
+"installed system."
 msgstr ""
+"Cảnh báo: chưa chọn cấu hình mạng. Mạng sẽ cần được thiết lập thủ công trên hệ thống đã cài đặt."
 
+#, fuzzy
 msgid "No packages found"
-msgstr ""
+msgstr "Không tìm thấy gói nào"
 
+#, fuzzy
 msgid "Select which greeter to install"
-msgstr ""
+msgstr "Chọn lời chào để cài đặt"
 
 msgid "Select a profile type"
-msgstr ""
+msgstr "Chọn loại cấu hình"
 
+#, fuzzy
 msgid "Enter new password"
-msgstr ""
+msgstr "Nhập mật khẩu mới"
 
+#, fuzzy
 msgid "Enter a username"
-msgstr ""
+msgstr "Nhập tên người dùng"
 
+#, fuzzy
 msgid "Enter a password"
-msgstr ""
+msgstr "Nhập mật khẩu"
 
+#, fuzzy
 msgid "The password did not match, please try again"
-msgstr ""
+msgstr "Mật khẩu không khớp, vui lòng thử lại"
 
+#, fuzzy
 msgid "Password strength: Weak"
-msgstr ""
+msgstr "Độ mạnh của mật khẩu: Yếu"
 
+#, fuzzy
 msgid "Password strength: Moderate"
-msgstr ""
+msgstr "Độ mạnh mật khẩu: Trung bình"
 
+#, fuzzy
 msgid "Password strength: Strong"
-msgstr ""
+msgstr "Độ mạnh mật khẩu: Mạnh"
 
-msgid ""
-"The selected desktop profile requires a regular user to log in via the "
-"greeter"
+#, fuzzy
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr ""
+"Cấu hình máy tính để bàn đã chọn yêu cầu người dùng thông thường đăng nhập thông qua lời chào"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Environment type: {} {}"
-msgstr ""
+msgstr "Loại môi trường: {} {}"
 
+#, fuzzy
 msgid "Input cannot be empty"
-msgstr ""
+msgstr "Đầu vào không thể trống"
 
+#, fuzzy
 msgid "Recommended"
-msgstr ""
+msgstr "Khuyến khích"
 
+#, fuzzy
 msgid "Package"
-msgstr ""
+msgstr "Bưu kiện"
 
+#, fuzzy
 msgid "Curated selection of KDE Plasma packages"
-msgstr ""
+msgstr "Lựa chọn các gói KDE Plasma được tuyển chọn"
 
+#, fuzzy
 msgid "Dependencies"
-msgstr ""
+msgstr "phụ thuộc"
 
+#, fuzzy
 msgid "Package group"
-msgstr ""
+msgstr "Nhóm gói"
 
+#, fuzzy
 msgid "Extensive KDE Plasma installation"
-msgstr ""
+msgstr "Cài đặt KDE Plasma mở rộng"
 
+#, fuzzy
 msgid "Packages in group"
-msgstr ""
+msgstr "Gói trong nhóm"
 
+#, fuzzy
 msgid "Minimal KDE Plasma installation"
-msgstr ""
+msgstr "Cài đặt KDE Plasma tối thiểu"
 
+#, fuzzy
 msgid "Description"
-msgstr ""
+msgstr "Sự miêu tả"
 
+#, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
-msgstr ""
+msgstr "Chọn phiên bản KDE Plasma để cài đặt"
 
+#, fuzzy
 msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
-msgstr ""
+msgstr "Thay thế Arial/Time/Courier, hỗ trợ Cyrillic cho Steam/game"
 
+#, fuzzy
 msgid "wide Unicode coverage, good fallback font"
-msgstr ""
+msgstr "vùng phủ sóng Unicode rộng, phông chữ dự phòng tốt"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Setting up U2F login: {u2f_config.u2f_login_method.value}"
-msgstr ""
+msgstr "Thiết lập đăng nhập U2F: {u2f_config.u2f_login_method.value}"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Mặc định: {DEFAULT_ITER_TIME} ms, Phạm vi khuyến nghị: 1000-60000"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Setting up U2F login: {}"
-msgstr ""
+msgstr "Thiết lập đăng nhập U2F: {}"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Default: {}ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "Mặc định: {} ms, Phạm vi khuyến nghị: 1000-60000"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "{} needs access to your seat"
-msgstr ""
+msgstr "{} cần quyền truy cập vào chỗ ngồi của bạn"
 
+#, fuzzy
 msgid "collection of hardware devices i.e. keyboard, mouse"
-msgstr ""
+msgstr "tập hợp các thiết bị phần cứng như bàn phím, chuột"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Choose an option how to give {} access to your hardware"
-msgstr ""
+msgstr "Chọn một tùy chọn về cách cấp quyền truy cập {} vào phần cứng của bạn"
 
 #, python-brace-format
 msgid "About to upload \"{}\" to the publicly accessible {}"
-msgstr ""
+msgstr "Sắp tải \"{}\" lên {} có thể truy cập công khai"
 
+#, fuzzy
 msgid "Do you want to continue?"
-msgstr ""
+msgstr "Bạn có muốn tiếp tục không?"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Log uploaded successfully. URL: {}"
-msgstr ""
+msgstr "Nhật ký được tải lên thành công. URL: {}"
 
+#, fuzzy
 msgid "Failed to upload log."
-msgstr ""
+msgstr "Không thể tải lên nhật ký."
 
+#, fuzzy
 msgid "ArchInstall Language"
-msgstr ""
+msgstr "Ngôn ngữ cài đặt Arch"
 
+#, fuzzy
 msgid "Version"
-msgstr ""
+msgstr "Phiên bản"
 
+#, fuzzy
 msgid "Installation Script"
-msgstr ""
+msgstr "Tập lệnh cài đặt"
 
+#, fuzzy
 msgid "Application"
-msgstr ""
+msgstr "Ứng dụng"
 
+#, fuzzy
 msgid "Services"
-msgstr ""
+msgstr "Dịch vụ"
 
+#, fuzzy
 msgid "Custom commands"
-msgstr ""
+msgstr "Lệnh tùy chỉnh"
 
+#, fuzzy
 msgid "Users"
-msgstr ""
+msgstr "Người dùng"
 
+#, fuzzy
 msgid "Root encrypted password"
-msgstr ""
+msgstr "Mật khẩu được mã hóa gốc"
 
+#, fuzzy
 msgid "Zram enabled"
-msgstr ""
+msgstr "Đã bật Zram"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Zram algorithm {}"
-msgstr ""
+msgstr "Thuật toán Zram {}"
 
+#, fuzzy
 msgid "Bluetooth enabled"
-msgstr ""
+msgstr "Đã bật Bluetooth"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Audio server \"{}\""
-msgstr ""
+msgstr "Máy chủ âm thanh \"{}\""
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Power management \"{}\""
-msgstr ""
+msgstr "Quản lý nguồn điện \"{}\""
 
+#, fuzzy
 msgid "Print service enabled"
-msgstr ""
+msgstr "Đã bật dịch vụ in"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Firewall \"{}\""
-msgstr ""
+msgstr "Tường lửa \"{}\""
 
 #, python-brace-format
 msgid "Extra fonts \"{}\""
-msgstr ""
+msgstr "Phông chữ bổ sung \"{}\""
 
+#, fuzzy
 msgid "Root password set"
-msgstr ""
+msgstr "Đã đặt mật khẩu gốc"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Configured {} user(s)"
-msgstr ""
+msgstr "(Những) người dùng {} đã định cấu hình"
 
+#, fuzzy
 msgid "U2F set up"
-msgstr ""
+msgstr "thiết lập U2F"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Bootloader \"{}\""
-msgstr ""
+msgstr "Bộ nạp khởi động \"{}\""
 
+#, fuzzy
 msgid "UKI enabled"
-msgstr ""
+msgstr "Đã bật UKI"
 
+#, fuzzy
 msgid "Default"
-msgstr ""
+msgstr "Mặc định"
 
+#, fuzzy
 msgid "Manual"
-msgstr ""
+msgstr "Thủ công"
 
+#, fuzzy
 msgid "Pre-mount"
-msgstr ""
+msgstr "Gắn trước"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "{} layout"
-msgstr ""
+msgstr "Bố cục {}"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Devices {}"
-msgstr ""
+msgstr "Thiết bị {}"
 
+#, fuzzy
 msgid "LVM set up"
-msgstr ""
+msgstr "Thiết lập LVM"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "{} encryption"
-msgstr ""
+msgstr "Mã hóa {}"
 
 #, python-brace-format
 msgid "Btrfs snapshot \"{}\""
-msgstr ""
+msgstr "Ảnh chụp nhanh Btrfs \"{}\""
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Keyboard layout \"{}\""
-msgstr ""
+msgstr "Bố cục bàn phím \"{}\""
 
 #, python-brace-format
 msgid "Locale language \"{}\""
-msgstr ""
+msgstr "Ngôn ngữ địa phương \"{}\""
 
 #, python-brace-format
 msgid "Locale encoding \"{}\""
-msgstr ""
+msgstr "Mã hóa ngôn ngữ hệ thống \"{}\""
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Console font \"{}\""
-msgstr ""
+msgstr "Phông chữ bảng điều khiển \"{}\""
 
 #, python-brace-format
 msgid "Mirror regions \"{}\""
-msgstr ""
+msgstr "Máy chủ bản sao địa phương \"{}\""
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Optional repositories \"{}\""
-msgstr ""
+msgstr "Kho lưu trữ tùy chọn \"{}\""
 
+#, fuzzy
 msgid "Custom servers set up"
-msgstr ""
+msgstr "Máy chủ tùy chỉnh được thiết lập"
 
+#, fuzzy
 msgid "Custom repositories set up"
-msgstr ""
+msgstr "Kho lưu trữ tùy chỉnh được thiết lập"
 
+#, fuzzy
 msgid "Use standalone iwd"
-msgstr ""
+msgstr "Sử dụng iwd độc lập"
 
+#, fuzzy
 msgid "Color enabled"
-msgstr ""
+msgstr "Đã bật màu"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "{} grphics driver"
-msgstr ""
+msgstr "Trình điều khiển đồ họa {}"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "{} greeter"
-msgstr ""
+msgstr "Lời chào {}"
 
+#, fuzzy
 msgid "Enter a repository name"
-msgstr ""
+msgstr "Nhập tên kho lưu trữ"
