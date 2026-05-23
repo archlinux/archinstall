@@ -9,8 +9,8 @@ import shutil
 import subprocess
 import sys
 import time
-from collections.abc import Iterator
 from argparse import ArgumentParser
+from collections.abc import Iterator
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
 from types import TracebackType
