@@ -3,31 +3,99 @@ import subprocess
 import pathlib
 import re
 import getpass
-import os
 import grp
 import shlex
-import stat
 import sys
 import time
 import shutil
 import hashlib
-from collections.abc import Iterator
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
 from types import TracebackType
-from typing import Any, Self, override
 from argparse import ArgumentParser
-from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
+from typing import Self, Any, override, Iterator
 
-
-username = getpass.getuser()
-groupname = grp.getgrgid(os.getgid()).gr_name
 
 class RequirementError(Exception):
 	pass
 
+
 class ArgumentError(Exception):
 	pass
+
+
+def get_master(interface):
+	master_path = pathlib.Path(f"/sys/class/net/{interface}/master")
+	return master_path.readlink().name if master_path.exists() else None
+
+def gray(text):
+	return f"\033[38;5;246m{text}\033[0m"
+
+def orange(text):
+	return f"\033[38;5;208m{text}\033[0m"
+
+def red(text):
+	return f"\033[31m{text}\033[0m"
+
+sudo_password = None  # Gets populated later
+harddrives = {}
+username = getpass.getuser()
+groupname = grp.getgrgid(os.getgid()).gr_name
+
+# https://stackoverflow.com/a/43627833/929999
+_VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
+_VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
+
+parser = ArgumentParser(description="A set of common parameters for the tooling", add_help=True)
+
+# Defaults to the order of which the harddrives are defined.
+boot_option = parser.add_mutually_exclusive_group()
+boot_option.add_argument('--uki', help='Boot a UKI (EFI) image')
+boot_option.add_argument('--kernel', help='Boot a Linux kernel')
+boot_option.add_argument('--iso', help='Boot a ISO 9660')
+
+networking = parser.add_argument_group("Networking", "Disables the default '-net nic -net user' network behavior of Qemu.")
+networking.add_argument("--tap", nargs="?", help="Configures a TAP interface and passes it in as a virtio-net-pci.", default=None, type=str)
+networking.add_argument("--tap-mac", nargs="?", help="MAC for the --tap interface", default='52:54:00:00:00:02')
+networking.add_argument("--bridge", nargs="?", help="Configures a bridge, to which the --tap is added.", default=None, type=str)
+networking.add_argument("--bridge-mac", nargs="?", help="MAC for the interface", default=None)
+networking.add_argument("--bridge-master", nargs="?", help="Which interface to set as 'master' on the bridge.", default=None, type=str)
+
+hardware = parser.add_argument_group("Hardware", "General hardware specs for the virtual machine")
+# To override the use of EFI boot (will not work with --uki for obvious reasons)
+hardware.add_argument("--bios", action="store_true", help="Disables EFI (edk2/ovmf) and uses BIOS support instead", default=False)
+hardware.add_argument("--memory", nargs="?", help="Ammount of memory to supply the machine", default=8192)
+hardware.add_argument("--harddrive", action='append', help="Sets up one or more virtio-scsi-pci, size is defined by --harddrive test.qcow2:15G", type=str)
+hardware.add_argument("--cpu", help="Sets the number of cores to allocate (default nproc -1)", type=str, default=os.cpu_count() - 1 if os.cpu_count() else 1)
+hardware.add_argument("--resolution", help="Sets Qemu's VGA resolution", type=str, default="1920x1107")
+
+kernel = parser.add_argument_group("Kernel", "--kernel specific arguments")
+kernel.add_argument("--initrd", nargs="?", help="Defines which ISO to run (skips build all together)", default=None, type=pathlib.Path)
+
+args, unknowns = parser.parse_known_args()  # pylint: disable=redefined-outer-name
+
+if args.bios and args.uki:
+	raise ArgumentError("Cannot boot a --uki image with --bios mode (at least not that I know of).")
+
+if args.uki is None and args.kernel is None and args.iso is None and args.harddrive is None:
+	raise ArgumentError("Cannot boot this machine, define at least one of: --uki, --kernel, --iso, --harddrive")
+
+if args.bridge is None and args.bridge_master:
+	raise ArgumentError("Cannot use --bridge-master without defining --bridge")
+
+if args.bridge is None and args.bridge_mac:
+	raise ArgumentError("Cannot use --bridge-mac without defining --bridge")
+elif args.bridge and args.bridge_mac is None:
+	args.bridge_mac = '52:54:00:00:00:1'
+
+if args.tap and not args.bridge and get_master(args.tap) is None:
+	# We'll allow it, because maybe we're tesing what happens without networking, but the NIC exists. Or the user has some creative iptables/nftables forwarding.
+	print(orange("--tap does not have a master, consider adding --bridge or manual set a master using ip-link(8)."))
+
+if args.tap is None and args.bridge:
+	print(orange("--bridge* arguments will be ignored since there's no --tap defined"))
+elif args.tap and args.tap_mac is None:
+	args.tap_mac = '52:54:00:00:00:2'
 
 class SysCallError(Exception):
 	def __init__(self, message: str, exit_code: int | None = None, worker_log: bytes = b'') -> None:
@@ -36,20 +104,6 @@ class SysCallError(Exception):
 		self.exit_code = exit_code
 		self.worker_log = worker_log
 
-def gray(text):
-	return f"\033[38;5;246m{text}\033[0m"
-def orange(text):
-	return f"\033[38;5;208m{text}\033[0m"
-def red(text):
-	return f"\033[31m{text}\033[0m"
-
-def get_master(interface):
-	master_path = pathlib.Path(f"/sys/class/net/{interface}/master")
-	return master_path.readlink().name if master_path.exists() else None
-
-# https://stackoverflow.com/a/43627833/929999
-_VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
-_VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
 def clear_vt100_escape_codes(data: bytes) -> bytes:
 	return re.sub(_VT100_ESCAPE_REGEX_BYTES, b'', data)
 
@@ -57,6 +111,12 @@ def locate_binary(name: str) -> str:
 	if path := which(name):
 		return path
 	raise RequirementError(f'Binary {name} does not exist.')
+
+def _pid_exists(pid: int) -> bool:
+	try:
+		return any(subprocess.check_output(['ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
+	except subprocess.CalledProcessError:
+		return False
 
 class SysCommandWorker:
 	def __init__(
@@ -105,7 +165,7 @@ class SysCommandWorker:
 
 		return False
 
-	def __iter__(self, *args: str, **kwargs: dict[str, Any]) -> Iterator[bytes]:
+	def __iter__(self, *args: str, **kwargs: dict[str, Any]) -> Iterator[bytes]:  # pylint: disable=redefined-outer-name
 		last_line = self._trace_log.rfind(b'\n')
 		lines = filter(None, self._trace_log[self._trace_log_pos : last_line].splitlines())
 		for line in lines:
@@ -197,8 +257,6 @@ class SysCommandWorker:
 				except UnicodeDecodeError:
 					return False
 
-			_cmd_output(output)
-
 			sys.stdout.write(output)
 			sys.stdout.flush()
 
@@ -264,70 +322,18 @@ class SysCommandWorker:
 	def decode(self, encoding: str = 'UTF-8') -> str:
 		return self._trace_log.decode(encoding)
 
-parser = ArgumentParser(description="A set of common parameters for the tooling", add_help=True)
-
-# Defaults to the order of which the harddrives are defined.
-boot_option = parser.add_mutually_exclusive_group()
-boot_option.add_argument('--uki', help='Boot a UKI (EFI) image')
-boot_option.add_argument('--kernel', help='Boot a Linux kernel')
-boot_option.add_argument('--iso', help='Boot a ISO 9660')
-
-networking = parser.add_argument_group("Networking", "Disables the default '-net nic -net user' network behavior of Qemu.")
-networking.add_argument("--tap", nargs="?", help="Configures a TAP interface and passes it in as a virtio-net-pci.", default=None, type=str)
-networking.add_argument("--tap-mac", nargs="?", help="MAC for the --tap interface", default='52:54:00:00:00:02')
-networking.add_argument("--bridge", nargs="?", help="Configures a bridge, to which the --tap is added.", default=None, type=str)
-networking.add_argument("--bridge-mac", nargs="?", help="MAC for the interface", default=None)
-networking.add_argument("--bridge-master", nargs="?", help="Which interface to set as 'master' on the bridge.", default=None, type=str)
-
-hardware = parser.add_argument_group("Hardware", "General hardware specs for the virtual machine")
-# To override the use of EFI boot (will not work with --uki for obvious reasons)
-hardware.add_argument("--bios", action="store_true", help="Disables EFI (edk2/ovmf) and uses BIOS support instead", default=False)
-hardware.add_argument("--memory", nargs="?", help="Ammount of memory to supply the machine", default=8192)
-hardware.add_argument("--harddrive", action='append', help="Sets up one or more virtio-scsi-pci, size is defined by --harddrive test.qcow2:15G", type=str)
-hardware.add_argument("--cpu", help="Sets the number of cores to allocate (default nproc -1)", type=str, default=os.cpu_count() - 1 if os.cpu_count() else 1)
-hardware.add_argument("--resolution", help="Sets Qemu's VGA resolution", type=str, default="1920x1107")
-
-kernel = parser.add_argument_group("Kernel", "--kernel specific arguments")
-kernel.add_argument("--initrd", nargs="?", help="Defines which ISO to run (skips build all together)", default=None, type=pathlib.Path)
-
-args, unknowns = parser.parse_known_args()
-
-if args.bios and args.uki:
-	raise ArgumentError(f"Cannot boot a --uki image with --bios mode (at least not that I know of).")
-
-if args.uki is None and args.kernel is None and args.iso is None and args.harddrive is None:
-	raise ArgumentError(f"Cannot boot this machine, define at least one of: --uki, --kernel, --iso, --harddrive")
-
-if args.bridge is None and args.bridge_master:
-	raise ArgumentError(f"Cannot use --bridge-master without defining --bridge")
-
-if args.bridge is None and args.bridge_mac:
-	raise ArgumentError(f"Cannot use --bridge-mac without defining --bridge")
-elif args.bridge and args.bridge_mac is None:
-	args.bridge_mac = '52:54:00:00:00:1'
-
-if args.tap and not args.bridge and get_master(args.tap) is None:
-	# We'll allow it, because maybe we're tesing what happens without networking, but the NIC exists. Or the user has some creative iptables/nftables forwarding.
-	print(orange(f"--tap does not have a master, consider adding --bridge or manual set a master using ip-link(8)."))
-
-if args.tap is None and args.bridge:
-	print(orange(f"--bridge* arguments will be ignored since there's no --tap defined"))
-elif args.tap and args.tap_mac is None:
-	args.tap_mac = '52:54:00:00:00:2'
-
-sudo_password = None
 def ensure_sudo():
-	global sudo_password
+	global sudo_password  # pylint: disable=global-statement
 	
 	if sudo_password is None:
 		if (sudo_password := getpass.getpass(f"[sudo] password for {username}: ")) == "":
-			raise ValueError(f"Certain commands need sudo to work and no sudo password was given.")
+			raise ValueError("Certain commands need sudo to work and no sudo password was given.")
 
 def setup_networking():
 	if args.tap:
 		if pathlib.Path(f"/sys/class/net/{args.tap}").exists() is False:
 			print(gray(f"Creating {args.tap} for user {username} and group {groupname}"))
-			handle, pw_prompted = archinstall.SysCommandWorker(f"sudo ip tuntap add dev {args.tap} mode tap user {username} group {groupname}"), False
+			handle, pw_prompted = SysCommandWorker(f"sudo ip tuntap add dev {args.tap} mode tap user {username} group {groupname}"), False
 			while handle.is_alive():
 				if b'password for' in handle and pw_prompted is False:
 					ensure_sudo()
@@ -386,7 +392,6 @@ def setup_networking():
 				handle.write(bytes(sudo_password, 'UTF-8'))
 				pw_prompted = True
 
-harddrives={}
 def setup_disks():
 	if args.harddrive:
 		for harddrive_arg in args.harddrive:
@@ -395,7 +400,11 @@ def setup_disks():
 			harddrives[path] = size.strip()
 
 			if path.exists() is False:
-				if (handle := SysCommand(f"qemu-img create -f qcow2 {hdd} {size}")).exit_code != 0:
+				handle = SysCommandWorker(f"qemu-img create -f qcow2 {hdd} {size}")
+				while handle.is_alive():
+					time.sleep(0.01)
+
+				if handle.exit_code != 0:
 					raise ValueError(f"Could not create harddrive {hdd}: {handle}")
 
 setup_networking()
@@ -409,16 +418,16 @@ if args.uki or args.bios is False:
 
 boot_index = 0
 qemu = 'qemu-system-x86_64'
-qemu += f' -cpu host'
-qemu += f' -enable-kvm'
-qemu += f' -machine q35,accel=kvm'
-qemu += f' -object rng-random,filename=/dev/urandom,id=rng0'
-qemu += f' -device virtio-rng-pci,rng=rng0'
-qemu += f' -global driver=cfi.pflash01,property=secure,value=on'
+qemu += ' -cpu host'
+qemu += ' -enable-kvm'
+qemu += ' -machine q35,accel=kvm'
+qemu += ' -object rng-random,filename=/dev/urandom,id=rng0'
+qemu += ' -device virtio-rng-pci,rng=rng0'
+qemu += ' -global driver=cfi.pflash01,property=secure,value=on'
 qemu += f' -smp {args.cpu},sockets=1,dies=1,cores={args.cpu},threads=1'
 # qemu += f' -vga vga'
 qemu += f' -device VGA,edid=on,xres={args.resolution.split('x')[0]},yres={args.resolution.split('x')[1]}'
-qemu += f' -device intel-iommu,device-iotlb=on,caching-mode=on'
+qemu += ' -device intel-iommu,device-iotlb=on,caching-mode=on'
 qemu += f' -m {args.memory}'
 if args.bios is False:
 	qemu += f' -drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.secboot.4m.fd.{disk_paths_hash}'
