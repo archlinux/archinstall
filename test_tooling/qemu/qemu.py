@@ -1,19 +1,20 @@
-import os
-import subprocess
-import pathlib
-import re
 import getpass
 import grp
+import hashlib
+import os
+import pathlib
+import re
 import shlex
+import shutil
+import subprocess
 import sys
 import time
-import shutil
-import hashlib
+from collections.abc import Iterator
+from argparse import ArgumentParser
 from select import EPOLLHUP, EPOLLIN, epoll
 from shutil import which
 from types import TracebackType
-from argparse import ArgumentParser
-from typing import Self, Any, override, Iterator
+from typing import Any, Self, override
 
 
 class RequirementError(Exception):
@@ -25,17 +26,21 @@ class ArgumentError(Exception):
 
 
 def get_master(interface):
-	master_path = pathlib.Path(f"/sys/class/net/{interface}/master")
+	master_path = pathlib.Path(f'/sys/class/net/{interface}/master')
 	return master_path.readlink().name if master_path.exists() else None
 
+
 def gray(text):
-	return f"\033[38;5;246m{text}\033[0m"
+	return f'\033[38;5;246m{text}\033[0m'
+
 
 def orange(text):
-	return f"\033[38;5;208m{text}\033[0m"
+	return f'\033[38;5;208m{text}\033[0m'
+
 
 def red(text):
-	return f"\033[31m{text}\033[0m"
+	return f'\033[31m{text}\033[0m'
+
 
 sudo_password = None  # Gets populated later
 harddrives = {}
@@ -46,7 +51,7 @@ groupname = grp.getgrgid(os.getgid()).gr_name
 _VT100_ESCAPE_REGEX = r'\x1B\[[?0-9;]*[a-zA-Z]'
 _VT100_ESCAPE_REGEX_BYTES = _VT100_ESCAPE_REGEX.encode()
 
-parser = ArgumentParser(description="A set of common parameters for the tooling", add_help=True)
+parser = ArgumentParser(description='A set of common parameters for the tooling', add_help=True)
 
 # Defaults to the order of which the harddrives are defined.
 boot_option = parser.add_mutually_exclusive_group()
@@ -54,48 +59,49 @@ boot_option.add_argument('--uki', help='Boot a UKI (EFI) image')
 boot_option.add_argument('--kernel', help='Boot a Linux kernel')
 boot_option.add_argument('--iso', help='Boot a ISO 9660')
 
-networking = parser.add_argument_group("Networking", "Disables the default '-net nic -net user' network behavior of Qemu.")
-networking.add_argument("--tap", nargs="?", help="Configures a TAP interface and passes it in as a virtio-net-pci.", default=None, type=str)
-networking.add_argument("--tap-mac", nargs="?", help="MAC for the --tap interface", default='52:54:00:00:00:02')
-networking.add_argument("--bridge", nargs="?", help="Configures a bridge, to which the --tap is added.", default=None, type=str)
-networking.add_argument("--bridge-mac", nargs="?", help="MAC for the interface", default=None)
-networking.add_argument("--bridge-master", nargs="?", help="Which interface to set as 'master' on the bridge.", default=None, type=str)
+networking = parser.add_argument_group('Networking', "Disables the default '-net nic -net user' network behavior of Qemu.")
+networking.add_argument('--tap', nargs='?', help='Configures a TAP interface and passes it in as a virtio-net-pci.', default=None, type=str)
+networking.add_argument('--tap-mac', nargs='?', help='MAC for the --tap interface', default='52:54:00:00:00:02')
+networking.add_argument('--bridge', nargs='?', help='Configures a bridge, to which the --tap is added.', default=None, type=str)
+networking.add_argument('--bridge-mac', nargs='?', help='MAC for the interface', default=None)
+networking.add_argument('--bridge-master', nargs='?', help="Which interface to set as 'master' on the bridge.", default=None, type=str)
 
-hardware = parser.add_argument_group("Hardware", "General hardware specs for the virtual machine")
+hardware = parser.add_argument_group('Hardware', 'General hardware specs for the virtual machine')
 # To override the use of EFI boot (will not work with --uki for obvious reasons)
-hardware.add_argument("--bios", action="store_true", help="Disables EFI (edk2/ovmf) and uses BIOS support instead", default=False)
-hardware.add_argument("--memory", nargs="?", help="Ammount of memory to supply the machine", default=8192)
-hardware.add_argument("--harddrive", action='append', help="Sets up one or more virtio-scsi-pci, size is defined by --harddrive test.qcow2:15G", type=str)
-hardware.add_argument("--cpu", help="Sets the number of cores to allocate (default nproc -1)", type=str, default=os.cpu_count() - 1 if os.cpu_count() else 1)
-hardware.add_argument("--resolution", help="Sets Qemu's VGA resolution", type=str, default="1920x1107")
+hardware.add_argument('--bios', action='store_true', help='Disables EFI (edk2/ovmf) and uses BIOS support instead', default=False)
+hardware.add_argument('--memory', nargs='?', help='Ammount of memory to supply the machine', default=8192)
+hardware.add_argument('--harddrive', action='append', help='Sets up one or more virtio-scsi-pci, size is defined by --harddrive test.qcow2:15G', type=str)
+hardware.add_argument('--cpu', help='Sets the number of cores to allocate (default nproc -1)', type=str, default=os.cpu_count() - 1 if os.cpu_count() else 1)
+hardware.add_argument('--resolution', help="Sets Qemu's VGA resolution", type=str, default='1920x1107')
 
-kernel = parser.add_argument_group("Kernel", "--kernel specific arguments")
-kernel.add_argument("--initrd", nargs="?", help="Defines which ISO to run (skips build all together)", default=None, type=pathlib.Path)
+kernel = parser.add_argument_group('Kernel', '--kernel specific arguments')
+kernel.add_argument('--initrd', nargs='?', help='Defines which ISO to run (skips build all together)', default=None, type=pathlib.Path)
 
 args, unknowns = parser.parse_known_args()  # pylint: disable=redefined-outer-name
 
 if args.bios and args.uki:
-	raise ArgumentError("Cannot boot a --uki image with --bios mode (at least not that I know of).")
+	raise ArgumentError('Cannot boot a --uki image with --bios mode (at least not that I know of).')
 
 if args.uki is None and args.kernel is None and args.iso is None and args.harddrive is None:
-	raise ArgumentError("Cannot boot this machine, define at least one of: --uki, --kernel, --iso, --harddrive")
+	raise ArgumentError('Cannot boot this machine, define at least one of: --uki, --kernel, --iso, --harddrive')
 
 if args.bridge is None and args.bridge_master:
-	raise ArgumentError("Cannot use --bridge-master without defining --bridge")
+	raise ArgumentError('Cannot use --bridge-master without defining --bridge')
 
 if args.bridge is None and args.bridge_mac:
-	raise ArgumentError("Cannot use --bridge-mac without defining --bridge")
+	raise ArgumentError('Cannot use --bridge-mac without defining --bridge')
 elif args.bridge and args.bridge_mac is None:
 	args.bridge_mac = '52:54:00:00:00:1'
 
 if args.tap and not args.bridge and get_master(args.tap) is None:
 	# We'll allow it, because maybe we're tesing what happens without networking, but the NIC exists. Or the user has some creative iptables/nftables forwarding.
-	print(orange("--tap does not have a master, consider adding --bridge or manual set a master using ip-link(8)."))
+	print(orange('--tap does not have a master, consider adding --bridge or manual set a master using ip-link(8).'))
 
 if args.tap is None and args.bridge:
 	print(orange("--bridge* arguments will be ignored since there's no --tap defined"))
 elif args.tap and args.tap_mac is None:
 	args.tap_mac = '52:54:00:00:00:2'
+
 
 class SysCallError(Exception):
 	def __init__(self, message: str, exit_code: int | None = None, worker_log: bytes = b'') -> None:
@@ -104,19 +110,23 @@ class SysCallError(Exception):
 		self.exit_code = exit_code
 		self.worker_log = worker_log
 
+
 def clear_vt100_escape_codes(data: bytes) -> bytes:
 	return re.sub(_VT100_ESCAPE_REGEX_BYTES, b'', data)
+
 
 def locate_binary(name: str) -> str:
 	if path := which(name):
 		return path
 	raise RequirementError(f'Binary {name} does not exist.')
 
+
 def _pid_exists(pid: int) -> bool:
 	try:
 		return any(subprocess.check_output(['ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
 		return False
+
 
 class SysCommandWorker:
 	def __init__(
@@ -322,18 +332,20 @@ class SysCommandWorker:
 	def decode(self, encoding: str = 'UTF-8') -> str:
 		return self._trace_log.decode(encoding)
 
+
 def ensure_sudo():
 	global sudo_password  # pylint: disable=global-statement
-	
+
 	if sudo_password is None:
-		if (sudo_password := getpass.getpass(f"[sudo] password for {username}: ")) == "":
-			raise ValueError("Certain commands need sudo to work and no sudo password was given.")
+		if (sudo_password := getpass.getpass(f'[sudo] password for {username}: ')) == '':
+			raise ValueError('Certain commands need sudo to work and no sudo password was given.')
+
 
 def setup_networking():
 	if args.tap:
-		if pathlib.Path(f"/sys/class/net/{args.tap}").exists() is False:
-			print(gray(f"Creating {args.tap} for user {username} and group {groupname}"))
-			handle, pw_prompted = SysCommandWorker(f"sudo ip tuntap add dev {args.tap} mode tap user {username} group {groupname}"), False
+		if pathlib.Path(f'/sys/class/net/{args.tap}').exists() is False:
+			print(gray(f'Creating {args.tap} for user {username} and group {groupname}'))
+			handle, pw_prompted = SysCommandWorker(f'sudo ip tuntap add dev {args.tap} mode tap user {username} group {groupname}'), False
 			while handle.is_alive():
 				if b'password for' in handle and pw_prompted is False:
 					ensure_sudo()
@@ -341,9 +353,9 @@ def setup_networking():
 					pw_prompted = True
 
 		if args.bridge:
-			if pathlib.Path(f"/sys/class/net/{args.bridge}").exists() is False:
-				print(gray(f"Creating {args.bridge}"))
-				handle, pw_prompted = SysCommandWorker(f"sudo ip link add name {args.bridge} type bridge"), False
+			if pathlib.Path(f'/sys/class/net/{args.bridge}').exists() is False:
+				print(gray(f'Creating {args.bridge}'))
+				handle, pw_prompted = SysCommandWorker(f'sudo ip link add name {args.bridge} type bridge'), False
 				while handle.is_alive():
 					if b'password for' in handle and pw_prompted is False:
 						ensure_sudo()
@@ -351,8 +363,8 @@ def setup_networking():
 						pw_prompted = True
 
 			if args.bridge_mac:
-				handle, pw_prompted = SysCommandWorker(f"sudo ip link set dev {args.bridge} address {args.bridge_mac}"), False
-				print(gray(f"Setting bridge {args.bridge} MAC address to {args.bridge_mac}"))
+				handle, pw_prompted = SysCommandWorker(f'sudo ip link set dev {args.bridge} address {args.bridge_mac}'), False
+				print(gray(f'Setting bridge {args.bridge} MAC address to {args.bridge_mac}'))
 				while handle.is_alive():
 					if b'password for' in handle and pw_prompted is False:
 						ensure_sudo()
@@ -360,37 +372,38 @@ def setup_networking():
 						pw_prompted = True
 
 			if args.bridge_master and get_master(args.bridge) != args.bridge_master:
-				handle, pw_prompted = SysCommandWorker(f"sudo ip link set dev {args.bridge_master} master {args.bridge}"), False
-				print(gray(f"Setting interface {args.bridge_master} master to {args.bridge}"))
+				handle, pw_prompted = SysCommandWorker(f'sudo ip link set dev {args.bridge_master} master {args.bridge}'), False
+				print(gray(f'Setting interface {args.bridge_master} master to {args.bridge}'))
 				while handle.is_alive():
 					if b'password for' in handle and pw_prompted is False:
 						ensure_sudo()
 						handle.write(bytes(sudo_password, 'UTF-8'))
 						pw_prompted = True
 
-			print(gray(f"Setting interface {args.tap} master to {args.bridge}"))
-			handle, pw_prompted = SysCommandWorker(f"sudo ip link set dev {args.tap} master {args.bridge}"), False
+			print(gray(f'Setting interface {args.tap} master to {args.bridge}'))
+			handle, pw_prompted = SysCommandWorker(f'sudo ip link set dev {args.tap} master {args.bridge}'), False
 			while handle.is_alive():
 				if b'password for' in handle and pw_prompted is False:
 					ensure_sudo()
 					handle.write(bytes(sudo_password, 'UTF-8'))
 					pw_prompted = True
 
-			print(gray(f"Bringing up bridge {args.bridge}"))
-			handle, pw_prompted = SysCommandWorker(f"sudo ip link set dev {args.bridge} up"), False
+			print(gray(f'Bringing up bridge {args.bridge}'))
+			handle, pw_prompted = SysCommandWorker(f'sudo ip link set dev {args.bridge} up'), False
 			while handle.is_alive():
 				if b'password for' in handle and pw_prompted is False:
 					ensure_sudo()
 					handle.write(bytes(sudo_password, 'UTF-8'))
 					pw_prompted = True
 
-		print(gray(f"Bringing interface {args.tap} up"))
-		handle, pw_prompted = SysCommandWorker(f"sudo ip link set dev {args.tap} up"), False
+		print(gray(f'Bringing interface {args.tap} up'))
+		handle, pw_prompted = SysCommandWorker(f'sudo ip link set dev {args.tap} up'), False
 		while handle.is_alive():
 			if b'password for' in handle and pw_prompted is False:
 				ensure_sudo()
 				handle.write(bytes(sudo_password, 'UTF-8'))
 				pw_prompted = True
+
 
 def setup_disks():
 	if args.harddrive:
@@ -400,12 +413,13 @@ def setup_disks():
 			harddrives[path] = size.strip()
 
 			if path.exists() is False:
-				handle = SysCommandWorker(f"qemu-img create -f qcow2 {hdd} {size}")
+				handle = SysCommandWorker(f'qemu-img create -f qcow2 {hdd} {size}')
 				while handle.is_alive():
 					time.sleep(0.01)
 
 				if handle.exit_code != 0:
-					raise ValueError(f"Could not create harddrive {hdd}: {handle}")
+					raise ValueError(f'Could not create harddrive {hdd}: {handle}')
+
 
 setup_networking()
 setup_disks()
@@ -413,8 +427,8 @@ setup_disks()
 if args.uki or args.bios is False:
 	disk_paths_hash = hashlib.sha1((''.join(sorted([str(x) for x in harddrives.keys()]))).encode()).hexdigest()
 
-	shutil.copy2('/usr/share/ovmf/x64/OVMF_CODE.secboot.4m.fd', f"./OVMF_CODE.secboot.4m.fd.{disk_paths_hash}")
-	shutil.copy2('/usr/share/ovmf/x64/OVMF_VARS.4m.fd', f"./OVMF_VARS.4m.fd.{disk_paths_hash}")
+	shutil.copy2('/usr/share/ovmf/x64/OVMF_CODE.secboot.4m.fd', f'./OVMF_CODE.secboot.4m.fd.{disk_paths_hash}')
+	shutil.copy2('/usr/share/ovmf/x64/OVMF_VARS.4m.fd', f'./OVMF_VARS.4m.fd.{disk_paths_hash}')
 
 boot_index = 0
 qemu = 'qemu-system-x86_64'
@@ -426,7 +440,7 @@ qemu += ' -device virtio-rng-pci,rng=rng0'
 qemu += ' -global driver=cfi.pflash01,property=secure,value=on'
 qemu += f' -smp {args.cpu},sockets=1,dies=1,cores={args.cpu},threads=1'
 # qemu += f' -vga vga'
-qemu += f' -device VGA,edid=on,xres={args.resolution.split('x')[0]},yres={args.resolution.split('x')[1]}'
+qemu += f' -device VGA,edid=on,xres={args.resolution.split("x")[0]},yres={args.resolution.split("x")[1]}'
 qemu += ' -device intel-iommu,device-iotlb=on,caching-mode=on'
 qemu += f' -m {args.memory}'
 if args.bios is False:
@@ -440,14 +454,14 @@ for scsi_index, hdd in enumerate(harddrives.keys()):
 	# qemu += f' -device virtio-scsi-pci,bus=pcie.0,id=scsi{index}'
 	# qemu += f'  -device scsi-hd,drive=hdd{index},bus=scsi{index}.0,id=scsi{index}.0,bootindex={hdd_boot_priority+index}'
 	# qemu += f'   -drive file={hdd},if=none,format=qcow2,discard=unmap,aio=native,cache=none,id=hdd{index}'
-	qemu += f' -device virtio-scsi-pci,bus=pcie.0,id=scsi{scsi_index},addr=0x{scsi_index+8}'
+	qemu += f' -device virtio-scsi-pci,bus=pcie.0,id=scsi{scsi_index},addr=0x{scsi_index + 8}'
 	qemu += f'  -device scsi-hd,drive=libvirt-{scsi_index}-format,bus=scsi{scsi_index}.0,id=scsi{scsi_index}-0-0-0,channel=0,scsi-id=0,lun=0,device_id=drive-scsi0-0-0-0,bootindex={boot_index},write-cache=on'
 	qemu += f'   -blockdev \'{{"driver":"file","filename":"{hdd}","aio":"threads","node-name":"libvirt-{scsi_index}-storage","cache":{{"direct":false,"no-flush":false}},"auto-read-only":true,"discard":"unmap"}}\''
 	qemu += f'   -blockdev \'{{"node-name":"libvirt-{scsi_index}-format","read-only":false,"discard":"unmap","cache":{{"direct":true,"no-flush":false}},"driver":"qcow2","file":"libvirt-{scsi_index}-storage","backing":null}}\''
 	boot_index += 1
 if args.iso:
-	qemu += f' -device virtio-scsi-pci,bus=pcie.0,id=scsi{scsi_index+1}'
-	qemu += f'  -device scsi-cd,drive=cdrom0,bus=scsi{scsi_index+1}.0,bootindex={boot_index}'
+	qemu += f' -device virtio-scsi-pci,bus=pcie.0,id=scsi{scsi_index + 1}'
+	qemu += f'  -device scsi-cd,drive=cdrom0,bus=scsi{scsi_index + 1}.0,bootindex={boot_index}'
 	qemu += f'   -drive file={args.iso},media=cdrom,if=none,format=raw,cache=none,id=cdrom0'
 	boot_index += 1
 
@@ -460,11 +474,7 @@ if args.tap:
 
 print(gray(qemu))
 
-qemu_session = subprocess.run(
-	shlex.split(qemu),
-	check=True,
-	capture_output=True
-)
+qemu_session = subprocess.run(shlex.split(qemu), check=True, capture_output=True)
 
 if qemu_session.stdout:
 	print(qemu_session.stdout.decode())
