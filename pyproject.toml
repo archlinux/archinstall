@@ -69,7 +69,10 @@ archinstall = "archinstall"
 [tool.mypy]
 python_version = "3.14"
 files = "."
-exclude = "^build/"
+exclude = [
+    "^build/",
+    "^test_tooling/",
+]
 disallow_any_explicit = false
 disallow_any_expr = false
 disallow_any_unimported = true
