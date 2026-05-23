@@ -94,7 +94,8 @@ elif args.bridge and args.bridge_mac is None:
 	args.bridge_mac = '52:54:00:00:00:1'
 
 if args.tap and not args.bridge and get_master(args.tap) is None:
-	# We'll allow it, because maybe we're tesing what happens without networking, but the NIC exists. Or the user has some creative iptables/nftables forwarding.
+	# We'll allow it, because maybe we're tesing what happens without networking, but the NIC exists.
+	# Or the user has some creative iptables/nftables forwarding.
 	print(orange('--tap does not have a master, consider adding --bridge or manual set a master using ip-link(8).'))
 
 if args.tap is None and args.bridge:
@@ -455,9 +456,9 @@ for scsi_index, hdd in enumerate(harddrives.keys()):
 	# qemu += f'  -device scsi-hd,drive=hdd{index},bus=scsi{index}.0,id=scsi{index}.0,bootindex={hdd_boot_priority+index}'
 	# qemu += f'   -drive file={hdd},if=none,format=qcow2,discard=unmap,aio=native,cache=none,id=hdd{index}'
 	qemu += f' -device virtio-scsi-pci,bus=pcie.0,id=scsi{scsi_index},addr=0x{scsi_index + 8}'
-	qemu += f'  -device scsi-hd,drive=libvirt-{scsi_index}-format,bus=scsi{scsi_index}.0,id=scsi{scsi_index}-0-0-0,channel=0,scsi-id=0,lun=0,device_id=drive-scsi0-0-0-0,bootindex={boot_index},write-cache=on'
-	qemu += f'   -blockdev \'{{"driver":"file","filename":"{hdd}","aio":"threads","node-name":"libvirt-{scsi_index}-storage","cache":{{"direct":false,"no-flush":false}},"auto-read-only":true,"discard":"unmap"}}\''
-	qemu += f'   -blockdev \'{{"node-name":"libvirt-{scsi_index}-format","read-only":false,"discard":"unmap","cache":{{"direct":true,"no-flush":false}},"driver":"qcow2","file":"libvirt-{scsi_index}-storage","backing":null}}\''
+	qemu += f'  -device scsi-hd,drive=libvirt-{scsi_index}-format,bus=scsi{scsi_index}.0,id=scsi{scsi_index}-0-0-0,channel=0,scsi-id=0,lun=0,device_id=drive-scsi0-0-0-0,bootindex={boot_index},write-cache=on'  # noqa: E501
+	qemu += f'   -blockdev \'{{"driver":"file","filename":"{hdd}","aio":"threads","node-name":"libvirt-{scsi_index}-storage","cache":{{"direct":false,"no-flush":false}},"auto-read-only":true,"discard":"unmap"}}\''  # noqa: E501
+	qemu += f'   -blockdev \'{{"node-name":"libvirt-{scsi_index}-format","read-only":false,"discard":"unmap","cache":{{"direct":true,"no-flush":false}},"driver":"qcow2","file":"libvirt-{scsi_index}-storage","backing":null}}\''  # noqa: E501
 	boot_index += 1
 if args.iso:
 	qemu += f' -device virtio-scsi-pci,bus=pcie.0,id=scsi{scsi_index + 1}'
