@@ -1,0 +1,7 @@
+// Place per-output configuration here.
+// Example:
+// output "DP-1" {
+//     mode "2560x1440@165"
+//     position x=0 y=0
+//     scale 1
+// }
