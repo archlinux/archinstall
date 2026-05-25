@@ -32,7 +32,7 @@ from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyb
 from archinstall.lib.log import debug, error, info, log, logger, warn
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
-from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration, PlymouthTheme
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -1755,6 +1755,28 @@ class Installer:
 
 		self._helper_flags['bootloader'] = 'refind'
 
+	def _install_plymouth(self, plymouth: PlymouthTheme) -> None:
+		debug(f'Installing plymouth with theme: {plymouth.value}')
+		self.add_additional_packages(['plymouth'])
+
+		for param in ('quiet', 'splash'):
+			if param not in self._kernel_params:
+				self._kernel_params.append(param)
+
+		if 'plymouth' not in self._hooks:
+			for hook, insert_after in [('encrypt', False), ('sd-encrypt', False), ('systemd', True), ('filesystems', False), ('keyboard', True)]:
+				try:
+					idx = self._hooks.index(hook)
+					self._hooks.insert(idx + (1 if insert_after else 0), 'plymouth')
+					break
+				except ValueError:
+					continue
+			else:
+				self._hooks.append('plymouth')
+
+		self.arch_chroot(f'plymouth-set-default-theme {plymouth.value}')
+		self.mkinitcpio(['-P'])
+
 	def _config_uki(
 		self,
 		root: PartitionModification | LvmVolume,
@@ -1807,10 +1829,7 @@ class Installer:
 			error('Error generating initramfs (continuing anyway)')
 
 	def add_bootloader(
-		self,
-		bootloader: Bootloader,
-		uki_enabled: bool = False,
-		bootloader_removable: bool = False,
+		self, bootloader: Bootloader, uki_enabled: bool = False, bootloader_removable: bool = False, plymouth: PlymouthTheme | None = None
 	) -> None:
 		"""
 		Adds a bootloader to the installation instance.
@@ -1824,6 +1843,7 @@ class Installer:
 		:param bootloader: Type of bootloader to be added
 		:param uki_enabled: Whether to use unified kernel images
 		:param bootloader_removable: Whether to install to removable media location (UEFI only, for GRUB and Limine)
+		:param plymouth: Optional Plymouth theme to install and configure
 		"""
 
 		for plugin in plugins.values():
@@ -1858,6 +1878,9 @@ class Installer:
 			elif not bootloader.has_removable_support():
 				warn(f'Bootloader {bootloader.value} lacks removable support; disabling.')
 				bootloader_removable = False
+
+		if plymouth is not None:
+			self._install_plymouth(plymouth)
 
 		if uki_enabled:
 			keep_initramfs = (

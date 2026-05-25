@@ -16,7 +16,6 @@ from pydantic.dataclasses import dataclass as p_dataclass
 from archinstall.lib.crypt import decrypt
 from archinstall.lib.log import debug, error, logger, warn
 from archinstall.lib.menu.util import get_password
-from archinstall.lib.models import PlymouthConfiguration
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
@@ -89,7 +88,6 @@ class ArchConfigType(StrEnum):
 	SERVICES = 'services'
 	PACKAGES = 'packages'
 	PACMAN_CONFIG = 'pacman_config'
-	PLYMOUTH_CONFIG = 'plymouth_config'
 	CUSTOM_COMMANDS = 'custom_commands'
 
 	def text(self) -> str:
@@ -132,8 +130,6 @@ class ArchConfigType(StrEnum):
 				return tr('Additional packages')
 			case ArchConfigType.PACMAN_CONFIG:
 				return tr('Pacman')
-			case ArchConfigType.PLYMOUTH_CONFIG:
-				return tr('Plymouth')
 			case ArchConfigType.CUSTOM_COMMANDS:
 				return tr('Custom commands')
 			case ArchConfigType.USERS:
@@ -163,7 +159,6 @@ class ArchConfig:
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	pacman_config: PacmanConfiguration = field(default_factory=PacmanConfiguration.default)
-	plymouth_config: PlymouthConfiguration | None = None
 	timezone: str = 'UTC'
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
@@ -244,9 +239,6 @@ class ArchConfig:
 
 		if self.app_config:
 			cfg[ArchConfigType.APP_CONFIG] = self.app_config
-
-		if self.plymouth_config:
-			cfg[ArchConfigType.PLYMOUTH_CONFIG] = self.plymouth_config
 
 		return cfg
 
@@ -343,9 +335,6 @@ class ArchConfig:
 
 		if services := args_config.get('services', []):
 			arch_config.services = services
-
-		if plymouth_config := args_config.get('plymouth_config', None):
-			arch_config.plymouth_config = PlymouthConfiguration.parse_arg(plymouth_config)
 
 		# DEPRECATED: backwards compatibility
 		root_password = None

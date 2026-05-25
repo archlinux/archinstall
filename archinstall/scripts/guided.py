@@ -20,7 +20,6 @@ from archinstall.lib.models.device import DiskLayoutType, EncryptionType
 from archinstall.lib.models.users import User
 from archinstall.lib.network.network_handler import install_network_config
 from archinstall.lib.packages.util import check_version_upgrade
-from archinstall.lib.plymouth.plymouth_handler import PlymouthHandler
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.components import tui
@@ -115,14 +114,12 @@ def perform_installation(
 		if config.swap and config.swap.enabled:
 			installation.setup_swap(algo=config.swap.algorithm)
 
-		if config.plymouth_config:
-			PlymouthHandler().install(installation, config.plymouth_config)
-
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
 			installation.add_bootloader(
 				config.bootloader_config.bootloader,
 				config.bootloader_config.uki,
 				config.bootloader_config.removable,
+				config.bootloader_config.plymouth,
 			)
 
 		if config.network_config:

@@ -25,13 +25,11 @@ from archinstall.lib.models.network import NetworkConfiguration, NicType
 from archinstall.lib.models.package_types import DEFAULT_KERNEL
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
-from archinstall.lib.models.plymouth import PlymouthConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
-from archinstall.lib.plymouth.plymouth_menu import select_plymouth_theme
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.utils.format import as_table
 from archinstall.tui.components import tui
@@ -151,13 +149,6 @@ class GlobalMenu(AbstractMenu[None]):
 				value=PacmanConfiguration.default(),
 				preview_action=self._prev_pacman_config,
 				key='pacman_config',
-			),
-			MenuItem(
-				text=tr('Plymouth'),
-				action=self._plymouth_configuration,
-				value=None,
-				preview_action=self._prev_plymouth_config,
-				key='plymouth_config',
 			),
 			MenuItem(
 				text=tr('Additional packages'),
@@ -440,15 +431,6 @@ class GlobalMenu(AbstractMenu[None]):
 			output += '{}: {}\n'.format(tr('Parallel Downloads'), config.parallel_downloads)
 		output += '{}: {}'.format(tr('Color'), config.color)
 		return output
-
-	async def _plymouth_configuration(self, preset: PlymouthConfiguration | None) -> PlymouthConfiguration | None:
-		return await select_plymouth_theme(preset)
-
-	def _prev_plymouth_config(self, item: MenuItem) -> str | None:
-		if not item.value:
-			return None
-		config: PlymouthConfiguration = item.value
-		return config.preview()
 
 	def _prev_kernel(self, item: MenuItem) -> str | None:
 		if item.value:
