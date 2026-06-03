@@ -19,10 +19,10 @@ from textual.widgets.option_list import Option
 from textual.widgets.selection_list import Selection
 from textual.worker import WorkerCancelled
 
-from archinstall.lib.output import debug
+from archinstall.lib.log import debug
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import Result, ResultType
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import Result, ResultType
 
 ValueT = TypeVar('ValueT')
 
@@ -200,6 +200,11 @@ class OptionListScreen(BaseScreen[ValueT]):
 		color: white;
 		text-style: bold;
 	}
+
+	.wrap-preview {
+		width: 100%;
+		height: auto;
+	}
 	"""
 
 	def __init__(
@@ -211,6 +216,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		allow_reset: bool = False,
 		preview_location: Literal['right', 'bottom'] | None = None,
 		enable_filter: bool = False,
+		wrap_preview: bool = False,
 	):
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
@@ -218,6 +224,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		self._title = title
 		self._preview_location = preview_location
 		self._filter = enable_filter
+		self._wrap_preview = wrap_preview
 		self._show_frame = False
 
 		self._options = self._get_options()
@@ -280,7 +287,10 @@ class OptionListScreen(BaseScreen[ValueT]):
 				with Container():
 					yield option_list
 					yield Rule(orientation=rule_orientation)
-					yield ScrollableContainer(Label('', id='preview_content', markup=False))
+					preview_label = Label('', id='preview_content', markup=False)
+					if self._wrap_preview:
+						preview_label.add_class('wrap-preview')
+					yield ScrollableContainer(preview_label)
 
 		if self._filter:
 			yield Input(placeholder='/filter', id='filter-input')
@@ -340,17 +350,12 @@ class OptionListScreen(BaseScreen[ValueT]):
 			]
 		)
 
-		# debug(f'Index: {index}')
-		# debug(f'Region: {option_list.region}')
-		# debug(f'Scroll offset: {option_list.scroll_offset}')
-		# debug(f'Target_Y: {target_y}')
-
 		self.app.cursor_position = Offset(option_list.region.x, target_y)
 		self.app.refresh()
 
 	def _set_preview(self, item_id: str) -> None:
 		if self._preview_location is None:
-			return None
+			return
 
 		preview_widget = self.query_one('#preview_content', Label)
 		item = self._group.find_by_id(item_id)
@@ -433,6 +438,11 @@ class SelectListScreen(BaseScreen[ValueT]):
 		color: white;
 		text-style: bold;
 	}
+
+	.wrap-preview {
+		width: 100%;
+		height: auto;
+	}
 	"""
 
 	def __init__(
@@ -443,6 +453,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		allow_reset: bool = False,
 		preview_location: Literal['right', 'bottom'] | None = None,
 		enable_filter: bool = False,
+		wrap_preview: bool = False,
 	):
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
@@ -450,6 +461,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		self._preview_location = preview_location
 		self._show_frame = False
 		self._filter = enable_filter
+		self._wrap_preview = wrap_preview
 
 		self._selected_items: list[MenuItem] = self._group.selected_items
 		self._options: list[Selection[MenuItem]] = self._get_selections()
@@ -510,7 +522,10 @@ class SelectListScreen(BaseScreen[ValueT]):
 				with Container():
 					yield selection_list
 					yield Rule(orientation=rule_orientation)
-					yield ScrollableContainer(Label('', id='preview_content', markup=False))
+					preview_label = Label('', id='preview_content', markup=False)
+					if self._wrap_preview:
+						preview_label.add_class('wrap-preview')
+					yield ScrollableContainer(preview_label)
 
 		if self._filter:
 			yield Input(placeholder='/filter', id='filter-input')
@@ -530,7 +545,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		selection_list = self.query_one(SelectionList)
 
 		if not selection_list.has_focus or event.key != 'enter':
-			return None
+			return
 
 		if len(self._selected_items) < 1:
 			index = selection_list.highlighted
@@ -743,7 +758,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 			if self._is_btn_focus():
 				item = self._group.focus_item
 				if not item:
-					return None
+					return
 				_ = self.dismiss(Result(ResultType.Selection, _item=item))
 
 
@@ -1142,8 +1157,6 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 				-data_table.scroll_offset.y,  # scroll offset
 			]
 		)
-
-		debug(f'Setting cursor to target_y: {target_y}')
 
 		self.app.cursor_position = Offset(data_table.region.x, target_y)
 		self.app.refresh()

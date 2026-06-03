@@ -5,8 +5,8 @@ from archinstall.lib.menu.helpers import Confirmation, Input
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.pathnames import PACMAN_CONF
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 class PacmanMenu(AbstractSubMenu[PacmanConfiguration]):

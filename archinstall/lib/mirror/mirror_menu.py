@@ -13,10 +13,10 @@ from archinstall.lib.models.mirrors import (
 	SignOption,
 )
 from archinstall.lib.models.packages import Repository
-from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.lib.utils.format import as_table
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
@@ -65,7 +65,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 
 	async def _add_custom_repository(self, preset: CustomRepository | None = None) -> CustomRepository | None:
 		edit_result = await Input(
-			header=tr('Enter a respository name'),
+			header=tr('Enter a repository name'),
 			allow_skip=True,
 			default_value=preset.name if preset else None,
 		).show()
@@ -281,7 +281,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 			return None
 
 		custom_mirrors: list[CustomRepository] = item.value
-		output = FormattedOutput.as_table(custom_mirrors)
+		output = as_table(custom_mirrors)
 		return output.strip()
 
 	def _prev_custom_servers(self, item: MenuItem) -> str | None:

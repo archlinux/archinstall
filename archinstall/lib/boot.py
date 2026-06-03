@@ -6,7 +6,7 @@ from typing import ClassVar, Self
 
 from archinstall.lib.command import SysCommand, SysCommandWorker
 from archinstall.lib.exceptions import SysCallError
-from archinstall.lib.output import error
+from archinstall.lib.log import error
 
 
 class Boot:

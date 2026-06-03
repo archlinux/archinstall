@@ -12,17 +12,17 @@ from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.general.general_menu import PostInstallationAction, select_post_installation
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
+from archinstall.lib.log import debug, error, info
 from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models import Bootloader
 from archinstall.lib.models.device import DiskLayoutType, EncryptionType
 from archinstall.lib.models.users import User
 from archinstall.lib.network.network_handler import install_network_config
-from archinstall.lib.output import debug, error, info
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import tui
+from archinstall.tui.components import tui
 
 
 def show_menu(
@@ -115,7 +115,11 @@ def perform_installation(
 			installation.setup_swap(algo=config.swap.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
-			installation.add_bootloader(config.bootloader_config.bootloader, config.bootloader_config.uki, config.bootloader_config.removable)
+			installation.add_bootloader(
+				config.bootloader_config.bootloader,
+				config.bootloader_config.uki,
+				config.bootloader_config.removable,
+			)
 
 		if config.network_config:
 			install_network_config(
@@ -226,7 +230,7 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		res: bool = tui.run(config.confirm_config)
+		res: bool = tui.run(lambda: config.confirm_config(show_install_warnings=True))
 
 		if not res:
 			debug('Installation aborted')

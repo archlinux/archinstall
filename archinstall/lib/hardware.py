@@ -6,8 +6,8 @@ from typing import Self
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import SysCallError
+from archinstall.lib.log import debug
 from archinstall.lib.networking import enrich_iface_types, list_interfaces
-from archinstall.lib.output import debug
 from archinstall.lib.translationhandler import tr
 
 
@@ -64,6 +64,19 @@ class GfxDriver(Enum):
 	def is_nvidia(self) -> bool:
 		match self:
 			case GfxDriver.NvidiaOpenSource | GfxDriver.NvidiaOpenKernel:
+				return True
+			case _:
+				return False
+
+	def is_nvidia_proprietary(self) -> bool:
+		"""
+		True for Nvidia drivers that ship proprietary userspace components.
+		Currently only NvidiaOpenKernel (nvidia-open-dkms): open kernel module
+		paired with proprietary userspace. NvidiaOpenSource (nouveau) is fully
+		open and works with Sway, so it is excluded.
+		"""
+		match self:
+			case GfxDriver.NvidiaOpenKernel:
 				return True
 			case _:
 				return False

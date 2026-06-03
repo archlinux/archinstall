@@ -8,17 +8,19 @@ import time
 import traceback
 from pathlib import Path
 
-from archinstall.lib.args import ArchConfigHandler
+from archinstall.lib.args import ArchConfigHandler, SubCommand
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.log import debug, error, info, logger, share_install_log, warn
+from archinstall.lib.menu.helpers import Confirmation
 from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
-from archinstall.lib.output import debug, error, info, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr, translation_handler
 from archinstall.lib.utils.util import running_from_iso
-from archinstall.tui.ui.components import tui
+from archinstall.tui.components import tui
+from archinstall.tui.menu_item import MenuItemGroup
 
 
 def _log_sys_info() -> None:
@@ -73,6 +75,38 @@ def _list_scripts() -> str:
 	return '\n'.join(lines)
 
 
+def _share_log_command() -> None:
+	paste_url: str = 'https://paste.rs'
+	log_path = logger.path
+	max_size = 10 * 1024 * 1024  # max supported size by paste.rs
+	content = logger.get_content(max_bytes=max_size).decode()
+
+	header = tr('About to upload "{}" to the publicly accessible {}').format(log_path, paste_url) + '\n\n'
+	header += tr('Do you want to continue?')
+
+	group = MenuItemGroup.yes_no()
+	group.set_preview_for_all(lambda _: content)
+
+	async def _confirm() -> bool:
+		result = await Confirmation(
+			header=header,
+			allow_skip=False,
+			group=group,
+			preview_header='Log content',
+			preview_location='bottom',
+		).show()
+		return result.get_value()
+
+	result = tui.run(_confirm)
+
+	if result is True:
+		res = share_install_log(paste_url=paste_url, max_bytes=max_size)
+		if res is not None:
+			info(tr('Log uploaded successfully. URL: {}').format(res))
+		else:
+			error(tr('Failed to upload log.'))
+
+
 def run() -> int:
 	"""
 	This can either be run as the compiled and installed application: python setup.py install
@@ -84,6 +118,13 @@ def run() -> int:
 	if '--help' in sys.argv or '-h' in sys.argv:
 		arch_config_handler.print_help()
 		return 0
+
+	match arch_config_handler.args.command:
+		case SubCommand.SHARE_LOG:
+			_share_log_command()
+			exit(0)
+		case None:
+			pass
 
 	script = arch_config_handler.get_script()
 
@@ -141,8 +182,8 @@ def _error_message(exc: Exception) -> None:
 		Archinstall experienced the above error. If you think this is a bug, please report it to
 		https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".
 
-		Hint: To extract the log from a live ISO
-		curl -F 'file=@/var/log/archinstall/install.log' https://0x0.st
+		Hint: To upload the log and get a shareable URL, run
+		archinstall share-log
 		"""
 	)
 	warn(text)

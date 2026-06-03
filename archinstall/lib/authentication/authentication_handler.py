@@ -3,9 +3,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from archinstall.lib.command import SysCommandWorker
+from archinstall.lib.log import debug, info
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.users import User
-from archinstall.lib.output import debug, info
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
@@ -53,7 +53,7 @@ class AuthenticationHandler:
 	def _add_u2f_entry(self, file: Path, entry: str) -> None:
 		if not file.exists():
 			debug(f'File does not exist: {file}')
-			return None
+			return
 
 		content = file.read_text().splitlines()
 
@@ -81,7 +81,7 @@ class AuthenticationHandler:
 
 		install_session.pacman.strap('pam-u2f')
 
-		print(tr(f'Setting up U2F login: {u2f_config.u2f_login_method.value}'))
+		print(tr('Setting up U2F login: {}').format(u2f_config.u2f_login_method.value))
 
 		# https://developers.yubico.com/pam-u2f/
 		u2f_auth_file = install_session.target / 'etc/u2f_mappings'

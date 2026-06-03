@@ -43,3 +43,7 @@ requirements.txt
 /.dev/
 node_modules/
 uv.lock
+test_tooling/mkosi/mkosi.output/*image*
+test_tooling/mkosi/mkosi.cache/**
+test_tooling/mkosi/mkosi.tools/**
+test_tooling/mkosi/mkosi.tools.manifest

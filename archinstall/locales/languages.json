@@ -42,7 +42,7 @@
  {"abbr": "fo", "lang": "Faroese"},
  {"abbr": "fa", "lang": "Persian"},
  {"abbr": "fj", "lang": "Fijian"},
- {"abbr": "fi", "lang": "Finnish"},
+ {"abbr": "fi", "lang": "Finnish", "translated_lang": "Suomi"},
  {"abbr": "fr", "lang": "French", "translated_lang": "Français"},
  {"abbr": "fy", "lang": "Western Frisian"},
  {"abbr": "ff", "lang": "Fulah"},

@@ -17,10 +17,10 @@ from archinstall.lib.models.device import (
 	PartitionModification,
 )
 from archinstall.lib.models.users import Password
-from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.lib.utils.format import as_table
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
@@ -199,7 +199,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def _prev_partitions(self, item: MenuItem) -> str | None:
 		if item.value:
 			output = tr('Partitions to be encrypted') + '\n'
-			output += FormattedOutput.as_table(item.value)
+			output += as_table(item.value)
 			return output.rstrip()
 
 		return None
@@ -207,7 +207,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	def _prev_lvm_vols(self, item: MenuItem) -> str | None:
 		if item.value:
 			output = tr('LVM volumes to be encrypted') + '\n'
-			output += FormattedOutput.as_table(item.value)
+			output += as_table(item.value)
 			return output.rstrip()
 
 		return None
@@ -375,7 +375,7 @@ async def select_lvm_vols_to_encrypt(
 async def select_iteration_time(preset: int | None = None) -> int | None:
 	header = tr('Enter iteration time for LUKS encryption (in milliseconds)') + '\n'
 	header += tr('Higher values increase security but slow down boot time') + '\n'
-	header += tr(f'Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000') + '\n'
+	header += tr('Default: {}ms, Recommended range: 1000-60000').format(DEFAULT_ITER_TIME) + '\n'
 
 	def validate_iter_time(value: str) -> str | None:
 		try:

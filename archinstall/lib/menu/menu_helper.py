@@ -1,5 +1,5 @@
-from archinstall.lib.output import FormattedOutput
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.lib.utils.format import as_table
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
 
 class MenuHelper[ValueT]:
@@ -32,7 +32,7 @@ class MenuHelper[ValueT]:
 		display_data: dict[str, ValueT | str | None] = {}
 
 		if data:
-			table = FormattedOutput.as_table(data)
+			table = as_table(data)
 			rows = table.split('\n')
 
 			# these are the header rows of the table

@@ -54,7 +54,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
 
 msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr "Nota: base-devel ya no viene instalado por defecto. Agreguelo aquí si necesita herramientas de build."
+msgstr "Nota: base-devel ya no viene instalado por defecto. Agreguelo aquí si necesita herramientas de compilación."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si desea un navegador web, como firefox o chromium, puede especificarlo en el siguiente mensaje."
@@ -173,7 +173,7 @@ msgid "Enter a desired filesystem type for the partition: "
 msgstr "Ingrese un tipo de sistema de archivos deseado para la partición: "
 
 msgid "Archinstall language"
-msgstr "Idioma de Archinstall"
+msgstr "Idioma de archinstall"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "Borrar todas las unidades seleccionadas y usar un diseño de partición predeterminado de mejor esfuerzo"
@@ -197,7 +197,7 @@ msgid "Select one or more hard drives to use and configure"
 msgstr "Seleccione uno o más discos duros para usar y configurar"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Para obtener la mejor compatibilidad con su hardware AMD, es posible que desee utilizar las opciones de código abierto o AMD / ATI."
+msgstr "Para obtener la mejor compatibilidad con su hardware AMD, es posible que desee utilizar las opciones de código abierto o AMD/ATI."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
 msgstr "Para obtener la mejor compatibilidad con su hardware Intel, es posible que desee utilizar las opciones de código abierto o de Intel.\n"
@@ -218,7 +218,7 @@ msgid "All open-source (default)"
 msgstr "Todos de código abierto (predeterminado)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Elija qué kernel usar o déjelo en blanco para usar el kernel \"{}\" predeterminado"
+msgstr "Elija qué núcleo usar o deje en blanco para usar el núcleo \"{}\" predeterminado"
 
 msgid "Choose which locale language to use"
 msgstr "Elija qué idioma local usar"
@@ -382,7 +382,7 @@ msgid "Create a required super-user with sudo privileges: "
 msgstr "Crear un super-usuario requerido con privilegios sudo: "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "Ingrese la contraseña de root (deje en blanco para deshabilitar root): "
+msgstr "Ingrese la contraseña de root (deje en blanco para desactivar root): "
 
 msgid "Password for user \"{}\": "
 msgstr "Contraseña para el usuario “{}”: "
@@ -454,7 +454,7 @@ msgid "Pre-existing pacman lock never exited. Please clean up any existing pacma
 msgstr "El bloqueo de pacman preexistente nunca se cerró. Limpie cualquier sesión de pacman existente antes de usar archinstall."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Elija qué repositorios adicionales opcionales habilitar"
+msgstr "Elija qué repositorios adicionales opcionales activar"
 
 msgid "Add a user"
 msgstr "Añadir un usuario"
@@ -489,7 +489,7 @@ msgid "No network configuration"
 msgstr "Sin configuración de red"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Establecer los subvolúmenes deseados en una partición btrfs"
+msgstr "Establecer los subvolúmenes deseados en una partición BTRFS"
 
 msgid ""
 "{}\n"
@@ -501,7 +501,7 @@ msgstr ""
 "Seleccione en qué partición configurar los subvolúmenes"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr "Administrar subvolúmenes btrfs para la partición actual"
+msgstr "Administrar subvolúmenes BTRFS para la partición actual"
 
 msgid "No configuration"
 msgstr "Sin configuración"
@@ -650,7 +650,7 @@ msgid "Manual configuration"
 msgstr "Configuración manual"
 
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Marcar/Desmarcar una partición como comprimida (solo btrfs)"
+msgstr "Marcar/Desmarcar una partición como comprimida (solo BTRFS)"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
 msgstr "La contraseña que está utilizando parece ser débil, ¿está seguro de que desea usarla?"
@@ -665,7 +665,7 @@ msgid "A very basic installation that allows you to customize Arch Linux as you 
 msgstr "Una instalación muy básica que te permite personalizar Arch Linux como mejor te parezca."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Proporciona una selección de varios paquetes de servidor para instalar y habilitar, p.e. httpd, nginx, mariadb"
+msgstr "Proporciona una selección de varios paquetes de servidor para instalar y activar, p.ej. httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Elija qué servidores instalar, si no hay ninguno, se realizará una instalación mínima"
@@ -799,29 +799,29 @@ msgid "Configured {} interfaces"
 msgstr "Interfaces {} configuradas"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Esta opción habilita la cantidad de descargas paralelas que pueden ocurrir durante la instalación"
+msgstr "Esta opción activa la cantidad de descargas paralelas que pueden ocurrir durante la instalación"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 " (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
-"Ingrese el número de descargas paralelas que se habilitarán.\n"
+"Ingrese el número de descargas paralelas que se activarán.\n"
 " (Ingrese un valor entre 1 y {})\n"
 "Nota:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr " - Valor máximo   : {} ( Habilita {} descargas paralelas, permite {} descargas simultáneas )"
+msgstr " - Valor máximo   : {} (Permitir {} descargas paralelas, permite {} descargas simultáneas)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Valor mínimo   : 1 ( Habilita 1 descarga paralela, permite 2 descargas simultáneas )"
+msgstr " - Valor mínimo   : 1 (Permitir 1 descarga paralela, permite 2 descargas simultáneas)"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr " - Deshabilitar/Predeterminado : 0 ( Deshabilita la descarga paralela, permite solo 1 descarga simultánea )"
+msgstr " - Desactivar/Predeterminado : 0 (Desactiva la descarga paralela, permite solo 1 descarga simultánea)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [1 a {max_downloads}, o 0 para deshabilitar]"
+msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [1 a {max_downloads}, o 0 para desactivar]"
 
 msgid "Parallel Downloads"
 msgstr "Descargas paralelas"
@@ -832,9 +832,9 @@ msgstr "Pacman"
 msgid "Color"
 msgstr "Color"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Enter the number of parallel downloads (1-{})"
-msgstr "Ingrese el número de descargas paralelas que desea habilitar"
+msgstr "Ingrese el número de descargas paralelas (1-{})"
 
 msgid "Enable colored output for pacman"
 msgstr "Activa salida a color para pacman"
@@ -975,7 +975,7 @@ msgid "Higher values increase security but slow down boot time"
 msgstr "Valores más grandes mejoran la seguridad pero aumentan el tiempo de arranque"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr "Por defecto: 10000ms, Rango recomendado 1000-60000"
+msgstr "Predeterminado: 10000ms, Rango recomendado 1000-60000"
 
 msgid "Iteration time cannot be empty"
 msgstr "Tiempo de iteración no puede estar vacío"
@@ -1073,10 +1073,10 @@ msgid "Packages to be install with this profile (space separated, leave blank to
 msgstr "Paquetes que se instalarán con este perfil (separados por espacios, déjelo en blanco para omitir): "
 
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Servicios que se habilitarán con este perfil (separados por espacios, deje en blanco para omitir): "
+msgstr "Servicios que se activarán con este perfil (separados por espacios, deje en blanco para omitir): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr "¿Debería habilitarse este perfil para la instalación?"
+msgstr "¿Debería activarse este perfil para la instalación?"
 
 msgid "Create your own"
 msgstr "Crear tu propio"
@@ -1158,7 +1158,7 @@ msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
-"Ingrese un directorio para guardar las configuraciones (completar con tabulación habilitado)\n"
+"Ingrese un directorio para guardar las configuraciones (completar con tabulación activado)\n"
 "Guardar directorio: "
 
 msgid ""
@@ -1180,10 +1180,10 @@ msgid "Mirror regions"
 msgstr "Regiones de espejos"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Valor máximo   : {} ( Habilita {} descargas paralelas, permite {max_downloads+1} descargas simultáneas )"
+msgstr " - Valor máximo   : {} (Permitir {} descargas paralelas, permite {max_downloads+1} descargas simultáneas)"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [1 a {}, o 0 para deshabilitar]"
+msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [1 a {}, o 0 para desactivar]"
 
 msgid "Locales"
 msgstr "Localidades"
@@ -1226,26 +1226,26 @@ msgid "Type"
 msgstr "Tipo"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Esta opción habilita la cantidad de descargas paralelas que pueden ocurrir durante las descargas de paquetes"
+msgstr "Esta opción activa la cantidad de descargas paralelas que pueden ocurrir durante las descargas de paquetes"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 "\n"
 "Note:\n"
 msgstr ""
-"Ingrese el número de descargas paralelas que se habilitarán.\n"
+"Ingrese el número de descargas paralelas que se activarán.\n"
 "\n"
 "Nota:\n"
 
 #, python-brace-format
 msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Valor máximo recomendado : {} ( Permite {} descargas paralelas simultáneas )"
+msgstr " - Valor máximo recomendado : {} (Permite {} descargas paralelas simultáneas)"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - Deshabilitar/Predeterminado : 0 ( Deshabilita la descarga paralela, permite solo 1 descarga simultánea )\n"
+msgstr " - Desactivar/Predeterminado : 0 (Desactiva la descarga paralela, permite solo 1 descarga simultánea)\n"
 
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [o 0 para deshabilitar]"
+msgstr "¡Entrada no válida! Intente nuevamente con una entrada válida [o 0 para desactivar]"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "Hyprland necesita acceso a su asiento (colección de dispositivos de hardware, es decir, teclado, mouse, etc.)"
@@ -1263,10 +1263,10 @@ msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB...
 msgstr "Todos los valores introducidos pueden tener como sufijo una unidad: %, B, KB, KiB, MB, MiB..."
 
 msgid "Would you like to use unified kernel images?"
-msgstr "¿Le gustaría utilizar imágenes del kernel unificadas?"
+msgstr "¿Le gustaría utilizar imágenes del núcleo unificadas?"
 
 msgid "Unified kernel images"
-msgstr "Imágenes del kernel unificadas"
+msgstr "Imágenes del núcleo unificadas"
 
 msgid "Waiting for time sync (timedatectl show) to complete."
 msgstr "Esperando a que se complete la sincronización de la hora (timedatectl show)."
@@ -1449,7 +1449,7 @@ msgid "Enter your gateway (router) IP address (leave blank for none)"
 msgstr "Ingrese la dirección IP de su puerta de enlace (enrutador) (deje en blanco si no hay ninguna)"
 
 msgid "Gateway address"
-msgstr "Dirección de puerta de enlace"
+msgstr "Dirección de la puerta de enlace"
 
 msgid "Enter your DNS servers with space separated (leave blank for none)"
 msgstr "Ingrese sus servidores DNS separados por espacios (deje en blanco si no hay ninguno)"
@@ -1464,7 +1464,7 @@ msgid "Kernel"
 msgstr "Núcleo"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr "No se detecta UEFI y algunas opciones están deshabilitadas"
+msgstr "No se detecta UEFI y algunas opciones están desactivadas"
 
 msgid "Info"
 msgstr "Info"
@@ -1494,17 +1494,17 @@ msgid "Directory"
 msgstr "Directorio"
 
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr "Ingrese un directorio para guardar las configuraciones (autocompletado de tabulación habilitado)"
+msgstr "Ingrese un directorio para guardar las configuraciones (autocompletado de tabulación activado)"
 
 #, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "¿Desea guardar los archivos de configuración en {}?"
 
 msgid "Enabled"
-msgstr "Habilitado"
+msgstr "Activado"
 
 msgid "Disabled"
-msgstr "Deshabilitado"
+msgstr "Desactivado"
 
 msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
 msgstr "Envíe este problema (y archivo) a https://github.com/archlinux/archinstall/issues"
@@ -1683,13 +1683,11 @@ msgstr "Salir del modo de búsqueda"
 msgid "General"
 msgstr "General"
 
-#, fuzzy
 msgid "Navigation"
-msgstr "Guardar configuración"
+msgstr "Navegación"
 
-#, fuzzy
 msgid "Selection"
-msgstr "Seleccione regiones"
+msgstr "Selección"
 
 msgid "Search"
 msgstr "Buscar"
@@ -1700,22 +1698,18 @@ msgstr "Abajo"
 msgid "Up"
 msgstr "Arriba"
 
-#, fuzzy
 msgid "Confirm"
-msgstr "Confirmar y salir"
+msgstr "Confirmar"
 
-#, fuzzy
 msgid "Focus right"
-msgstr "Mover a la derecha"
+msgstr "Enfocar a la derecha"
 
-#, fuzzy
 msgid "Focus left"
-msgstr "Mover a la izquierda"
+msgstr "Enfocar a la izquierda"
 
 msgid "Toggle"
 msgstr "Alternar"
 
-#, fuzzy
 msgid "Show/Hide help"
 msgstr "Mostrar/Ocultar ayuda"
 
@@ -1728,45 +1722,38 @@ msgstr "Primero"
 msgid "Last"
 msgstr "Último"
 
-#, fuzzy
 msgid "Select"
-msgstr "Seleccione regiones"
+msgstr "Seleccionar"
 
 msgid "Page Up"
-msgstr "Subir"
+msgstr "Subir página"
 
 msgid "Page Down"
-msgstr "Bajar"
+msgstr "Bajar página"
 
-#, fuzzy
 msgid "Page up"
-msgstr "Grupo de paquetes:"
+msgstr "Subir página"
 
-#, fuzzy
 msgid "Page down"
-msgstr "Bajar"
+msgstr "Bajar página"
 
 msgid "Page Left"
-msgstr "Izquierda"
+msgstr "Página izquierda"
 
-#, fuzzy
 msgid "Page Right"
-msgstr "Mover a la derecha"
+msgstr "Página derecha"
 
 msgid "Cursor up"
 msgstr "Subir"
 
-#, fuzzy
 msgid "Cursor down"
-msgstr "Bajar"
+msgstr "Cursor hacia abajo"
 
-#, fuzzy
 msgid "Cursor right"
-msgstr "Mover a la derecha"
+msgstr "Cursor hacia la derecha"
 
-#, fuzzy
 msgid "Cursor left"
-msgstr "Mover a la izquierda"
+msgstr "Cursor hacia la izquierda"
 
 msgid "Top"
 msgstr "Arriba"
@@ -1777,38 +1764,35 @@ msgstr "Abajo"
 msgid "Home"
 msgstr "Inicio"
 
-#, fuzzy
 msgid "End"
-msgstr "Habilitado"
+msgstr "Final"
 
-#, fuzzy
 msgid "Toggle option"
-msgstr "Opciones del subvolumen"
+msgstr "Opción de alternancia"
 
 msgid "Scroll Up"
 msgstr "Mover Arriba"
 
-#, fuzzy
 msgid "Scroll Down"
-msgstr "Bajar en vista previa"
+msgstr "Deslizar hacia abajo"
 
 msgid "Scroll Left"
-msgstr "Mover Izquierda"
+msgstr "Mover hacia la izquierda"
 
 msgid "Scroll Right"
-msgstr "Mover Derecha"
+msgstr "Mover hacia la derecha"
 
 msgid "Scroll Home"
-msgstr "Ir a Inicio"
+msgstr "Ir al Inicio"
 
 msgid "Scroll End"
 msgstr "Ir al Final"
 
 msgid "Focus Next"
-msgstr "Centrar Siguiente"
+msgstr "Enfocar a la siguiente"
 
 msgid "Focus Previous"
-msgstr "Centrar Anterior"
+msgstr "Enfocar a la anterior"
 
 msgid "Copy selected text"
 msgstr "Copiar texto seleccionado"
@@ -1838,7 +1822,7 @@ msgid "Reboot system"
 msgstr "Reiniciar el sistema"
 
 msgid "chroot into installation for post-installation configurations"
-msgstr "chroot en la instalación para configuraciones posteriores a la instalación"
+msgstr "Hacer chroot en la instalación para configuraciones posteriores a la instalación"
 
 msgid "Installation completed"
 msgstr "Instalación completada"
@@ -1907,7 +1891,7 @@ msgstr "Sudo sin contraseña: "
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr "Tipo de snapshot Btrfs: {}"
+msgstr "Tipo de instantánea BTRFS: {}"
 
 msgid "Syncing the system..."
 msgstr "Sincronizando el sistema..."
@@ -1932,7 +1916,7 @@ msgid "U2F Login Method"
 msgstr "Método de inicio de sesión U2F"
 
 msgid "Enable passwordless sudo?"
-msgstr "Habilitar sudo sin contraseña?"
+msgstr "¿Activar sudo sin contraseña?"
 
 #, python-brace-format
 msgid "Setting up U2F device for user: {}"
@@ -1948,25 +1932,25 @@ msgid "No network connection found"
 msgstr "No se encontró una conección de red"
 
 msgid "Would you like to connect to a Wifi?"
-msgstr "¿Desea conectarse a Wifi?"
+msgstr "¿Desea conectarse al Wi-Fi?"
 
 msgid "No wifi interface found"
-msgstr "No se encontró ninguna interfaz de wifi"
+msgstr "No se encontró ninguna interfaz Wi-Fi"
 
 msgid "Select wifi network to connect to"
-msgstr "Seleccione una red de wifi para conectarse"
+msgstr "Seleccione una red Wi-Fi para conectarse"
 
 msgid "Scanning wifi networks..."
-msgstr "Buscando redes de wifi..."
+msgstr "Buscando redes Wi-Fi..."
 
 msgid "No wifi networks found"
-msgstr "No se encontró redes de wifi"
+msgstr "No se encontró redes Wi-Fi"
 
 msgid "Failed setting up wifi"
-msgstr "Error configurando wifi"
+msgstr "Error al configurar el Wi-Fi"
 
 msgid "Enter wifi password"
-msgstr "Ingrese contraseña de wifi"
+msgstr "Ingrese la contraseña del Wi-Fi"
 
 msgid "Ok"
 msgstr "Ok"
@@ -2017,7 +2001,7 @@ msgid "Compression algorithm"
 msgstr "Algoritmo de compresión"
 
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
+msgstr "Solo paquetes como base, sudo, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
 
 msgid "Select zram compression algorithm:"
 msgstr "Seleccione algorimto de compresión zram:"
@@ -2031,19 +2015,17 @@ msgstr "Usar gestor de Red (backend iwd)"
 msgid "Firewall"
 msgstr "Cortafuegos"
 
-#, fuzzy
 msgid "Additional fonts"
-msgstr "Repositorios adicionales"
+msgstr "Fuentes adicionales"
 
-#, fuzzy
 msgid "Select font packages to install"
-msgstr "Seleccione el gestor de arranque que desea instalar"
+msgstr "Seleccione los paquetes de fuentes que desea instalar"
 
 msgid "Unicode font coverage for most languages"
 msgstr "Fuente unicode cubierta para la mayoría de idiomas"
 
 msgid "color emoji for browsers and apps"
-msgstr "Emoji de color para navegador y apps"
+msgstr "Emoji de colores para navegadores y aplicaciones"
 
 msgid "Chinese, Japanese, Korean characters"
 msgstr "Carácteres Chino, Japonés, Koreano"
@@ -2107,7 +2089,7 @@ msgid "Select timezone"
 msgstr "Seleccione una zona horaria"
 
 msgid "Enter the number of parallel downloads to be enabled"
-msgstr "Ingrese el número de descargas paralelas que desea habilitar"
+msgstr "Ingrese el número de descargas paralelas que desea activar"
 
 #, python-brace-format
 msgid "Value must be between 1 and {}"
@@ -2126,10 +2108,10 @@ msgid "Enter server url"
 msgstr "Ingrese la URL del servidor"
 
 msgid "Select mirror regions to be enabled"
-msgstr "Seleccione las regiones espejo que se habilitarán"
+msgstr "Seleccione las regiones espejo que se activarán"
 
 msgid "Select optional repositories to be enabled"
-msgstr "Seleccione repositorios opcionales para habilitar"
+msgstr "Seleccione repositorios opcionales para activar"
 
 msgid "Select an interface"
 msgstr "Seleccione una interfaz"
@@ -2170,20 +2152,18 @@ msgstr "Seguridad de la contraseña: Fuerte"
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr "El perfil de escritorio seleccionado requiere que un usuario estándar inicie sesión a través de la pantalla de bienvenida"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Environment type: {} {}"
-msgstr "Tipo de entorno: {}"
+msgstr "Tipo de entorno: {} {}"
 
-#, fuzzy
 msgid "Input cannot be empty"
-msgstr "El valor no puede estár vacío"
+msgstr "La entrada no debe estar vacía"
 
 msgid "Recommended"
 msgstr "Recomendado"
 
-#, fuzzy
 msgid "Package"
-msgstr "Grupo de paquetes:"
+msgstr "Paquete"
 
 msgid "Curated selection of KDE Plasma packages"
 msgstr "Selección curada de paquetes KDE Plasma"
@@ -2191,41 +2171,37 @@ msgstr "Selección curada de paquetes KDE Plasma"
 msgid "Dependencies"
 msgstr "Dependencias"
 
-#, fuzzy
 msgid "Package group"
-msgstr "Grupo de paquetes:"
+msgstr "Grupo de paquetes"
 
 msgid "Extensive KDE Plasma installation"
 msgstr "Instalación KDE Plasma Extensible"
 
-#, fuzzy
 msgid "Packages in group"
-msgstr "Grupo de paquetes:"
+msgstr "Paquetes en grupo"
 
 msgid "Minimal KDE Plasma installation"
 msgstr "Instalación minima de KDE Plasma"
 
-#, fuzzy
 msgid "Description"
-msgstr "Cifrado de disco"
+msgstr "Descripción"
 
-#, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
-msgstr "Seleccione el gestor de arranque que desea instalar"
+msgstr "Seleccione una variante de KDE Plasma para instalar"
 
 msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
-msgstr ""
+msgstr "Sustitución de Arial/Times/Courier, compatibilidad con caracteres cirílicos para Steam/juegos"
 
 msgid "wide Unicode coverage, good fallback font"
-msgstr ""
+msgstr "Amplia cobertura Unicode, buena fuente de reserva"
 
 #, python-brace-format
 msgid "Setting up U2F login: {u2f_config.u2f_login_method.value}"
 msgstr "Configurando Inicio U2F: {u2f_config.u2f_login_method.value}"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
-msgstr "Por defecto: {DEFAULT_ITER_TIME}ms, Rango recomendado 1000-60000"
+msgstr "Predeterminado: {DEFAULT_ITER_TIME}ms, Rango recomendado: 1000-60000"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"

@@ -256,6 +256,9 @@ msgstr "Мова локалізації"
 msgid "Locale encoding"
 msgstr "Кодування локалізації"
 
+msgid "Console font"
+msgstr "Шрифт консолі"
+
 msgid "Drive(s)"
 msgstr "Диск(и)"
 
@@ -1039,7 +1042,7 @@ msgid "Back"
 msgstr "Назад"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr "Будь ласка, виберіть, який екран привітання встановити для обраних профілів: {}"
+msgstr "Будь ласка, виберіть, який менеджер входу встановити для обраних профілів: {}"
 
 #, python-brace-format
 msgid "Environment type: {}"
@@ -1101,10 +1104,10 @@ msgid "Graphics driver"
 msgstr "Графічні драйвери"
 
 msgid "Greeter"
-msgstr "Дисплейний менеджер"
+msgstr "Менеджер входу"
 
 msgid "Please chose which greeter to install"
-msgstr "Виберіть, який дисплейний менеджер встановлювати"
+msgstr "Виберіть, який менеджер входу встановлювати"
 
 msgid "This is a list of pre-programmed default_profiles"
 msgstr "Список попередньо налаштованих default_profiles"
@@ -1218,6 +1221,21 @@ msgstr "Модель"
 #, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "Неправильна конфігурація: {error}"
+
+msgid "Ready to install"
+msgstr "Готово до встановлення"
+
+msgid "Disks"
+msgstr "Диски"
+
+msgid "Packages"
+msgstr "Пакети"
+
+msgid "Network"
+msgstr "Мережа"
+
+msgid "Locale"
+msgstr "Локаль"
 
 msgid "Type"
 msgstr "Тип"
@@ -1903,7 +1921,7 @@ msgid "Snapshot type: {}"
 msgstr "Тип знімка: {}"
 
 msgid "U2F login setup"
-msgstr "Налаштування входу з пристроєм двофакторної авторизації"
+msgstr "Налаштування входу з пристроєм двофакторної автентифікації"
 
 msgid "No U2F devices found"
 msgstr "Не знайдено жодного пристрою двофакторної автентифікації"
@@ -1919,7 +1937,7 @@ msgid "Setting up U2F device for user: {}"
 msgstr "Налаштування пристроя двофакторної автентифікації для користувача: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr "Ви повинні написати PIN та потім торкнутися вашого пристрою двофакторної авторизації, щоб зареєструвати його"
+msgstr "Ви повинні написати PIN та потім торкнутися вашого пристрою двофакторної автентифікації, щоб зареєструвати його"
 
 msgid "Starting device modifications in "
 msgstr "Початок модифікацій пристрою в "
@@ -2115,6 +2133,12 @@ msgstr "Оберіть інтерфейс"
 msgid "Choose network configuration"
 msgstr "Оберіть конфігурацію мережі"
 
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Рекомендовано: Network Manager для робочого столу, ручне налаштування для сервера"
+
+msgid "Warning: no network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Попередження: конфігурацію мережі не обрано. Мережу доведеться налаштувати вручну на встановленій системі."
+
 msgid "No packages found"
 msgstr "Пакети не знайдено"
 
@@ -2148,45 +2172,61 @@ msgstr "Надійність пароля: Сильна"
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr "Обраний профіль робочого столу вимагає входу звичайного користувача через менеджер входу"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Environment type: {} {}"
-msgstr "Тип середовища: {}"
+msgstr "Тип середовища: {} {}"
 
-#, fuzzy
 msgid "Input cannot be empty"
 msgstr "Значення не може бути пустим"
 
 msgid "Recommended"
-msgstr ""
+msgstr "Рекомендовано"
 
-#, fuzzy
 msgid "Package"
-msgstr "Група пакетів:"
+msgstr "Пакет"
 
 msgid "Curated selection of KDE Plasma packages"
-msgstr ""
+msgstr "Підібраний набір пакетів KDE Plasma"
 
 msgid "Dependencies"
-msgstr ""
+msgstr "Залежності"
 
-#, fuzzy
 msgid "Package group"
-msgstr "Група пакетів:"
+msgstr "Група пакетів"
 
 msgid "Extensive KDE Plasma installation"
-msgstr ""
+msgstr "Розширене встановлення KDE Plasma"
 
-#, fuzzy
 msgid "Packages in group"
-msgstr "Група пакетів:"
+msgstr "Пакети у групі"
 
 msgid "Minimal KDE Plasma installation"
-msgstr ""
+msgstr "Мінімальне встановлення KDE Plasma"
 
-#, fuzzy
 msgid "Description"
-msgstr "Шифрування диска"
+msgstr "Опис"
 
-#, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
-msgstr "Оберіть завантажувач для встановлення"
+msgstr "Оберіть варіант KDE Plasma для встановлення"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr "заміна Arial/Times/Courier, підтримка кирилиці для Steam та ігор"
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr "широке покриття Unicode, хороший резервний шрифт"
+
+#, python-brace-format
+msgid "Setting up U2F login: {u2f_config.u2f_login_method.value}"
+msgstr "Налаштування входу з пристроєм двофакторної автентифікації: {u2f_config.u2f_login_method.value}"
+
+#, python-brace-format
+msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
+msgstr "Стандартно: {DEFAULT_ITER_TIME}мс, Рекомендований діапазон - 1000-60000"
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "Налаштування входу з пристроєм двофакторної автентифікації: {}"
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "Стандартно: {}мс, Рекомендований діапазон - 1000-60000"

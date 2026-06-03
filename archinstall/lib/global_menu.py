@@ -6,7 +6,7 @@ from archinstall.lib.args import ArchConfig
 from archinstall.lib.authentication.authentication_menu import AuthenticationMenu
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
-from archinstall.lib.configuration import save_config
+from archinstall.lib.configuration import ConfigurationOutput, save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
 from archinstall.lib.general.system_menu import select_kernel, select_swap
@@ -22,17 +22,18 @@ from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutTyp
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, NicType
+from archinstall.lib.models.package_types import DEFAULT_KERNEL
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
-from archinstall.lib.output import FormattedOutput
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
-from archinstall.tui.ui.components import tui
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
+from archinstall.lib.utils.format import as_table
+from archinstall.tui.components import tui
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
 
 class GlobalMenu(AbstractMenu[None]):
@@ -103,7 +104,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Kernels'),
-				value=['linux'],
+				value=[DEFAULT_KERNEL],
 				action=select_kernel,
 				preview_action=self._prev_kernel,
 				mandatory=True,
@@ -298,7 +299,7 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value:
 			network_config: NetworkConfiguration = item.value
 			if network_config.type == NicType.MANUAL:
-				output = FormattedOutput.as_table(network_config.nics)
+				output = as_table(network_config.nics)
 			else:
 				output = f'{tr("Network configuration")}:\n{network_config.type.display_msg()}'
 
@@ -320,7 +321,7 @@ class GlobalMenu(AbstractMenu[None]):
 				output += f'{tr("Root password")}: {auth_config.root_enc_password.hidden()}\n'
 
 			if auth_config.users:
-				output += FormattedOutput.as_table(auth_config.users) + '\n'
+				output += as_table(auth_config.users) + '\n'
 
 			if auth_config.u2f_config:
 				u2f_config = auth_config.u2f_config
@@ -461,8 +462,6 @@ class GlobalMenu(AbstractMenu[None]):
 		if not bootloader_config or bootloader_config.bootloader == Bootloader.NO_BOOTLOADER:
 			return None
 
-		bootloader = bootloader_config.bootloader
-
 		if disk_config := self._item_group.find_by_key('disk_config').value:
 			for layout in disk_config.device_modifications:
 				if root_partition := layout.get_root_partition():
@@ -490,9 +489,6 @@ class GlobalMenu(AbstractMenu[None]):
 			if efi_partition.fs_type is None or not efi_partition.fs_type.is_fat():
 				return 'ESP must be formatted as a FAT filesystem'
 
-		if bootloader == Bootloader.Refind and not self._uefi:
-			return 'rEFInd can only be used on UEFI systems'
-
 		if failure := validate_bootloader_layout(bootloader_config, disk_config):
 			return failure.description
 
@@ -506,9 +502,13 @@ class GlobalMenu(AbstractMenu[None]):
 			return text[:-1]  # remove last new line
 
 		if error := self._validate_bootloader():
-			return tr(f'Invalid configuration: {error}')
+			return tr('Invalid configuration: {}').format(error)
 
-		return None
+		self.sync_all_to_config()
+		summary = ConfigurationOutput(self._arch_config).as_summary()
+		if summary:
+			return f'{tr("Ready to install")}\n\n{summary}'
+		return tr('Ready to install')
 
 	def _prev_profile(self, item: MenuItem) -> str | None:
 		profile_config: ProfileConfiguration | None = item.value
@@ -612,7 +612,7 @@ class GlobalMenu(AbstractMenu[None]):
 
 		if mirror_config.custom_repositories:
 			title = tr('Custom repositories')
-			table = FormattedOutput.as_table(mirror_config.custom_repositories)
+			table = as_table(mirror_config.custom_repositories)
 			output += f'{title}:\n\n{table}'
 
 		return output.strip()

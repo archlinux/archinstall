@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import Self, cast
 
 from archinstall.tui.menu_item import MenuItem
 
@@ -13,25 +14,58 @@ class ResultType(Enum):
 @dataclass
 class Result[ValueT]:
 	type_: ResultType
-	_item: MenuItem | list[MenuItem] | str | None
+	_data: ValueT | list[ValueT] | None = None
+	_item: MenuItem | list[MenuItem] | None = None
 
-	def has_item(self) -> bool:
+	@classmethod
+	def true(cls) -> Self:
+		return cls(ResultType.Selection, _data=True)  # type: ignore[arg-type]
+
+	@classmethod
+	def false(cls) -> Self:
+		return cls(ResultType.Selection, _data=False)  # type: ignore[arg-type]
+
+	@classmethod
+	def reset(cls) -> Self:
+		return cls(ResultType.Reset)
+
+	@classmethod
+	def selection(cls, value: ValueT | list[ValueT] | None) -> Self:
+		return cls(ResultType.Selection, _data=value)
+
+	@classmethod
+	def skip(cls) -> Self:
+		return cls(ResultType.Skip)
+
+	def has_data(self) -> bool:
+		return self._data is not None
+
+	def has_value(self) -> bool:
 		return self._item is not None
 
-	def get_value(self) -> ValueT:
-		return self.item().get_value()  # type: ignore[no-any-return]
-
-	def get_values(self) -> list[ValueT]:
-		return [i.get_value() for i in self.items()]
-
 	def item(self) -> MenuItem:
-		assert self._item is not None and isinstance(self._item, MenuItem)
+		if isinstance(self._item, list) or self._item is None:
+			raise ValueError('Invalid item type')
 		return self._item
 
 	def items(self) -> list[MenuItem]:
-		assert self._item is not None and isinstance(self._item, list)
-		return self._item
+		if isinstance(self._item, list):
+			return self._item
 
-	def text(self) -> str:
-		assert self._item is not None and isinstance(self._item, str)
-		return self._item
+		raise ValueError('Invalid item type')
+
+	def get_value(self) -> ValueT:
+		if self._item is not None:
+			return self.item().get_value()  # type: ignore[no-any-return]
+
+		if type(self._data) is not list and self._data is not None:
+			return cast(ValueT, self._data)
+
+		raise ValueError('No value found')
+
+	def get_values(self) -> list[ValueT]:
+		if self._item is not None:
+			return [i.get_value() for i in self.items()]
+
+		assert type(self._data) is list
+		return cast(list[ValueT], self._data)

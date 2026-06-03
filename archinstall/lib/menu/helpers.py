@@ -4,9 +4,9 @@ from typing import Any, Literal, override
 from textual.validation import ValidationResult, Validator
 
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import InputInfo, InputScreen, LoadingScreen, NotifyScreen, OptionListScreen, SelectListScreen, TableSelectionScreen
-from archinstall.tui.ui.menu_item import MenuItemGroup
-from archinstall.tui.ui.result import Result, ResultType
+from archinstall.tui.components import InputInfo, InputScreen, LoadingScreen, NotifyScreen, OptionListScreen, SelectListScreen, TableSelectionScreen
+from archinstall.tui.menu_item import MenuItemGroup
+from archinstall.tui.result import Result, ResultType
 
 
 class Selection[ValueT]:
@@ -20,6 +20,7 @@ class Selection[ValueT]:
 		preview_location: Literal['right', 'bottom'] | None = None,
 		multi: bool = False,
 		enable_filter: bool = False,
+		wrap_preview: bool = False,
 	):
 		self._header = header
 		self._title = title
@@ -29,6 +30,7 @@ class Selection[ValueT]:
 		self._preview_location = preview_location
 		self._multi = multi
 		self._enable_filter = enable_filter
+		self._wrap_preview = wrap_preview
 
 	async def show(self) -> Result[ValueT]:
 		if self._multi:
@@ -39,6 +41,7 @@ class Selection[ValueT]:
 				allow_reset=self._allow_reset,
 				preview_location=self._preview_location,
 				enable_filter=self._enable_filter,
+				wrap_preview=self._wrap_preview,
 			).run()
 		else:
 			result = await OptionListScreen[ValueT](
@@ -49,6 +52,7 @@ class Selection[ValueT]:
 				allow_reset=self._allow_reset,
 				preview_location=self._preview_location,
 				enable_filter=self._enable_filter,
+				wrap_preview=self._wrap_preview,
 			).run()
 
 		if result.type_ == ResultType.Reset:

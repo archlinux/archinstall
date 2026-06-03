@@ -7,10 +7,10 @@ from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
+from archinstall.lib.log import debug, error
 from archinstall.lib.menu.util import delayed_warning
-from archinstall.lib.output import debug, error
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.components import tui
+from archinstall.tui.components import tui
 
 
 def show_menu(arch_config_handler: ArchConfigHandler) -> None:

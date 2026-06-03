@@ -6,14 +6,16 @@ from typing import Any
 
 from pydantic import TypeAdapter
 
-from archinstall.lib.args import ArchConfig
+from archinstall.lib.args import ArchConfig, ArchConfigType
 from archinstall.lib.crypt import encrypt
+from archinstall.lib.log import debug, logger, warn
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.menu.util import get_password, prompt_dir
-from archinstall.lib.output import debug, logger, warn
+from archinstall.lib.models.network import NetworkConfiguration
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.ui.menu_item import MenuItem, MenuItemGroup
-from archinstall.tui.ui.result import ResultType
+from archinstall.lib.utils.format import as_key_value_pair
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 
 class ConfigurationOutput:
@@ -43,24 +45,50 @@ class ConfigurationOutput:
 	def user_config_to_json(self) -> str:
 		config = self._config.safe_config()
 
-		adapter = TypeAdapter(dict[str, Any])
+		adapter = TypeAdapter(dict[ArchConfigType, Any])
 		python_dict = adapter.dump_python(config)
 		return json.dumps(python_dict, indent=4, sort_keys=True)
 
 	def user_credentials_to_json(self) -> str:
-		config = self._config.unsafe_config()
+		cfg = self._config.unsafe_config()
 
-		adapter = TypeAdapter(dict[str, Any])
-		python_dict = adapter.dump_python(config)
+		adapter = TypeAdapter(dict[ArchConfigType, Any])
+		python_dict = adapter.dump_python(cfg)
 		return json.dumps(python_dict, indent=4, sort_keys=True)
 
 	def write_debug(self) -> None:
 		debug(' -- Chosen configuration --')
 		debug(self.user_config_to_json())
 
-	async def confirm_config(self) -> bool:
+	def as_summary(self) -> str:
+		"""
+		Render a concise two-column summary of the current configuration.
+
+		Returns an empty string if nothing meaningful to show.
+		"""
+		cfg: dict[str, str | list[str] | bool] = {}
+
+		for key, value in self._config.plain_cfg().items():
+			cfg[key.text()] = value
+
+		for config_type, obj in self._config.sub_cfg().items():
+			if not hasattr(obj, 'summary'):
+				continue
+
+			summary = obj.summary()
+			if summary:
+				cfg[config_type.text()] = summary
+
+		simple_summary = as_key_value_pair(cfg, ignore_empty=True)
+
+		return simple_summary
+
+	async def confirm_config(self, show_install_warnings: bool = False) -> bool:
 		header = f'{tr("The specified configuration will be applied")}. '
 		header += tr('Would you like to continue?') + '\n'
+
+		if show_install_warnings:
+			header += self._render_install_warnings()
 
 		group = MenuItemGroup.yes_no()
 		group.set_preview_for_all(lambda x: self.user_config_to_json())
@@ -78,6 +106,22 @@ class ConfigurationOutput:
 			return False
 
 		return True
+
+	def get_install_warnings(self) -> list[str]:
+		warnings: list[str] = []
+
+		if not isinstance(self._config.network_config, NetworkConfiguration):
+			warnings.append(tr('Warning: no network configuration selected. Network will need to be set up manually on the installed system.'))
+
+		return warnings
+
+	def _render_install_warnings(self) -> str:
+		warnings = self.get_install_warnings()
+
+		if not warnings:
+			return ''
+
+		return '\n' + '\n'.join(f'[yellow]{w}[/]' for w in warnings) + '\n'
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
 		dest_path_ok = dest_path.exists() and dest_path.is_dir()
