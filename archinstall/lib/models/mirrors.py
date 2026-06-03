@@ -9,9 +9,11 @@ from typing import TYPE_CHECKING, Any, Self, TypedDict, override
 
 from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 
+from archinstall.lib.models.config import SubConfig
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.networking import DownloadTimer, ping
 from archinstall.lib.output import debug
+from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
 	from archinstall.lib.mirror.mirror_handler import MirrorListHandler
@@ -236,7 +238,7 @@ class _MirrorConfigurationSerialization(TypedDict):
 
 
 @dataclass
-class MirrorConfiguration:
+class MirrorConfiguration(SubConfig):
 	mirror_regions: list[MirrorRegion] = field(default_factory=list)
 	custom_servers: list[CustomServer] = field(default_factory=list)
 	optional_repositories: list[Repository] = field(default_factory=list)
@@ -250,6 +252,7 @@ class MirrorConfiguration:
 	def custom_server_urls(self) -> str:
 		return '\n'.join(s.url for s in self.custom_servers)
 
+	@override
 	def json(self) -> _MirrorConfigurationSerialization:
 		regions = {}
 		for m in self.mirror_regions:
@@ -261,6 +264,24 @@ class MirrorConfiguration:
 			'optional_repositories': [r.value for r in self.optional_repositories],
 			'custom_repositories': [c.json() for c in self.custom_repositories],
 		}
+
+	@override
+	def summary(self) -> list[str]:
+		out: list[str] = []
+
+		if self.mirror_regions:
+			out.append(tr('Mirror regions "{}"').format(', '.join(m.name for m in self.mirror_regions)))
+
+		if self.optional_repositories:
+			out.append(tr('Optional repositories "{}"').format(', '.join(r.value for r in self.optional_repositories)))
+
+		if self.custom_servers:
+			out.append(tr('Custom servers set up'))
+
+		if self.custom_repositories:
+			out.append(tr('Custom repositories set up'))
+
+		return out
 
 	def custom_servers_config(self) -> str:
 		config = ''

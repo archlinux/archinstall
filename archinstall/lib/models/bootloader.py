@@ -1,8 +1,9 @@
 import sys
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Self
+from typing import Any, Self, override
 
+from archinstall.lib.models.config import SubConfig
 from archinstall.lib.output import warn
 from archinstall.lib.translationhandler import tr
 
@@ -60,13 +61,25 @@ class Bootloader(Enum):
 
 
 @dataclass
-class BootloaderConfiguration:
+class BootloaderConfiguration(SubConfig):
 	bootloader: Bootloader
 	uki: bool = False
 	removable: bool = True
 
+	@override
 	def json(self) -> dict[str, Any]:
 		return {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
+
+	@override
+	def summary(self) -> list[str]:
+		out = [tr('Bootloader "{}"').format(self.bootloader.value)]
+
+		if self.uki:
+			out.append(tr('UKI enabled'))
+		if self.removable:
+			out.append(tr('Removable'))
+
+		return out
 
 	@classmethod
 	def parse_arg(cls, config: dict[str, Any], skip_boot: bool) -> Self:

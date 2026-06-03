@@ -18,12 +18,13 @@ class BudgieProfile(Profile):
 		return [
 			'materia-gtk-theme',
 			'budgie',
-			'konsole',
-			'dolphin',
+			'mate-terminal',
+			'nemo',
+			'nemo-fileroller',
 			'papirus-icon-theme',
 		]
 
 	@property
 	@override
 	def default_greeter_type(self) -> GreeterType:
-		return GreeterType.Sddm
+		return GreeterType.LightdmSlick

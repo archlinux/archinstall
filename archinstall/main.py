@@ -11,14 +11,16 @@ from pathlib import Path
 from archinstall.lib.args import ArchConfigHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.menu.helpers import Confirmation
 from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
-from archinstall.lib.output import debug, error, info, warn
+from archinstall.lib.output import debug, error, info, share_install_log, warn
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr, translation_handler
 from archinstall.lib.utils.util import running_from_iso
 from archinstall.tui.components import tui
+from archinstall.tui.menu_item import MenuItemGroup
 
 
 def _log_sys_info() -> None:
@@ -73,12 +75,28 @@ def _list_scripts() -> str:
 	return '\n'.join(lines)
 
 
+def _tui_confirm(header: str) -> bool:
+	async def _ask() -> bool:
+		result = await Confirmation(
+			group=MenuItemGroup.yes_no(),
+			header=header,
+			allow_skip=False,
+			preset=False,
+		).show()
+		return result.get_value()
+
+	return tui.run(_ask)
+
+
 def run() -> int:
 	"""
 	This can either be run as the compiled and installed application: python setup.py install
 	OR straight as a module: python -m archinstall
 	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
+	if 'share-log' in sys.argv:
+		return share_install_log(confirm=_tui_confirm)
+
 	arch_config_handler = ArchConfigHandler()
 
 	if '--help' in sys.argv or '-h' in sys.argv:
@@ -141,8 +159,8 @@ def _error_message(exc: Exception) -> None:
 		Archinstall experienced the above error. If you think this is a bug, please report it to
 		https://github.com/archlinux/archinstall and include the log file "/var/log/archinstall/install.log".
 
-		Hint: To extract the log from a live ISO
-		curl -F 'file=@/var/log/archinstall/install.log' https://0x0.st
+		Hint: To upload the log and get a shareable URL, run
+		archinstall share-log
 		"""
 	)
 	warn(text)

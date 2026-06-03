@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from enum import StrEnum, auto
-from typing import Any, NotRequired, Self, TypedDict
+from typing import Any, NotRequired, Self, TypedDict, override
 
+from archinstall.lib.models.config import SubConfig
 from archinstall.lib.translationhandler import tr
 
 
@@ -168,7 +169,7 @@ class FontsConfiguration:
 
 
 @dataclass(frozen=True)
-class ZramConfiguration:
+class ZramConfiguration(SubConfig):
 	enabled: bool
 	algorithm: ZramAlgorithm = ZramAlgorithm.ZSTD
 
@@ -181,9 +182,28 @@ class ZramConfiguration:
 		algo = arg.get('algorithm', arg.get('algo', ZramAlgorithm.ZSTD.value))
 		return cls(enabled=enabled, algorithm=ZramAlgorithm(algo))
 
+	@override
+	def json(self) -> dict[str, bool | str]:
+		return {
+			'enabled': self.enabled,
+			'algorithm': self.algorithm.value,
+		}
+
+	@override
+	def summary(self) -> list[str] | None:
+		out: list[str] = []
+
+		if self.enabled:
+			out.append(tr('Zram enabled'))
+
+			out.append(tr('Zram algorithm {}').format(self.algorithm))
+			return out
+
+		return None
+
 
 @dataclass
-class ApplicationConfiguration:
+class ApplicationConfiguration(SubConfig):
 	bluetooth_config: BluetoothConfiguration | None = None
 	audio_config: AudioConfiguration | None = None
 	power_management_config: PowerManagementConfiguration | None = None
@@ -223,6 +243,7 @@ class ApplicationConfiguration:
 
 		return app_config
 
+	@override
 	def json(self) -> ApplicationSerialization:
 		config: ApplicationSerialization = {}
 
@@ -245,3 +266,28 @@ class ApplicationConfiguration:
 			config['fonts_config'] = self.fonts_config.json()
 
 		return config
+
+	@override
+	def summary(self) -> list[str]:
+		out: list[str] = []
+
+		if self.bluetooth_config and self.bluetooth_config.enabled:
+			out.append(tr('Bluetooth enabled'))
+
+		if self.audio_config:
+			out.append(tr('Audio server "{}"').format(self.audio_config.audio))
+
+		if self.power_management_config:
+			out.append(tr('Power management "{}"').format(self.power_management_config.power_management))
+
+		if self.print_service_config and self.print_service_config.enabled:
+			out.append(tr('Print service enabled'))
+
+		if self.firewall_config:
+			out.append(tr('Firewall "{}"').format(self.firewall_config.firewall))
+
+		if self.fonts_config and self.fonts_config.fonts:
+			fonts = ', '.join(f.value for f in self.fonts_config.fonts)
+			out.append(tr('Extra fonts "{}"').format(fonts))
+
+		return out
