@@ -133,7 +133,7 @@ class WifiHandler(InstanceRunnable[bool]):
 
 		match result.type_:
 			case ResultType.Selection:
-				if not result.has_data():
+				if not result.has_value() and not result.has_data():
 					debug('No networks found')
 					await NotifyScreen(header=tr('No wifi networks found')).run()
 					tui.exit(Result.false())
