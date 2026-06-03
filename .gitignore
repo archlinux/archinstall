@@ -8,7 +8,7 @@ SAFETY_LOCK
 **/**.egg*
 **/**.sh
 !archinstall/locales/locales_generator.sh
-!scripts/dev_vm.sh
+!test_tooling/dev_vm/dev_vm.sh
 **/**.egg-info/
 **/**build/
 **/**src/

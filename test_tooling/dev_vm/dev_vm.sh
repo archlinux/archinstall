@@ -18,22 +18,22 @@
 #   archinstall              wrapper around `python -m archinstall`; clears the
 #                            log directory on every invocation
 #
-# Run from the project root or from inside scripts/ - both work, the script
-# resolves the project root from its own location.
+# Run from the project root or from inside test_tooling/dev_vm/ - both work,
+# the script resolves the project root from its own location.
 #
 # Usage (from project root):
-#   ./scripts/dev_vm.sh              - build ISO if missing, fresh disk, boot
-#   ./scripts/dev_vm.sh rebuild | r  - force rebuild ISO, fresh disk, boot
-#   ./scripts/dev_vm.sh keep    | k  - reuse disk, boot ISO
-#   ./scripts/dev_vm.sh boot    | b  - boot from installed disk (no ISO)
-#   ./scripts/dev_vm.sh clean   | c  - remove disk, NVRAM, ISO, logs
-#   ./scripts/dev_vm.sh -h           - show this help
+#   ./test_tooling/dev_vm/dev_vm.sh              - build ISO if missing, fresh disk, boot
+#   ./test_tooling/dev_vm/dev_vm.sh rebuild | r  - force rebuild ISO, fresh disk, boot
+#   ./test_tooling/dev_vm/dev_vm.sh keep    | k  - reuse disk, boot ISO
+#   ./test_tooling/dev_vm/dev_vm.sh boot    | b  - boot from installed disk (no ISO)
+#   ./test_tooling/dev_vm/dev_vm.sh clean   | c  - remove disk, NVRAM, ISO, logs
+#   ./test_tooling/dev_vm/dev_vm.sh -h           - show this help
 #
 # Firmware mode (default is UEFI 64-bit):
 #   --bios                   - legacy BIOS boot (SeaBIOS, no OVMF)
 #
 # Flag can be combined with a command:
-#   ./scripts/dev_vm.sh --bios rebuild
+#   ./test_tooling/dev_vm/dev_vm.sh --bios rebuild
 #
 # Env overrides:
 #   SCREEN_W, SCREEN_H       - virtio-vga resolution (default 1280x720)
@@ -44,7 +44,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 DEV_DIR="$PROJECT_DIR/.dev"
 CONFIGS_DIR="$DEV_DIR/configs"
 LOGS_DIR="$DEV_DIR/logs"
