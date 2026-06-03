@@ -9,9 +9,9 @@ from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from archinstall.default_profiles.profile import CustomSetting, GreeterType, Profile
 from archinstall.lib.hardware import GfxDriver, GfxPackage
+from archinstall.lib.log import debug, error, info
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.networking import fetch_data_from_url
-from archinstall.lib.output import debug, error, info
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
@@ -175,6 +175,9 @@ class ProfileHandler:
 			case GreeterType.PlasmaLoginManager:
 				packages = ['plasma-login-manager']
 				service = ['plasmalogin']
+			case GreeterType.GreetdDms:
+				packages = ['greetd']
+				service = ['greetd']
 
 		if packages:
 			install_session.add_additional_packages(packages)
@@ -193,6 +196,26 @@ class ProfileHandler:
 
 			with open(path, 'w') as file:
 				file.write(filedata)
+
+		if greeter == GreeterType.GreetdDms:
+			greetd_config = install_session.target / 'etc/greetd/config.toml'
+			greetd_config.parent.mkdir(parents=True, exist_ok=True)
+			greetd_config.write_text(
+				'[terminal]\n'
+				'vt = 1\n'
+				'\n'
+				'[default_session]\n'
+				'user = "greeter"\n'
+				'command = "/usr/share/quickshell/dms/Modules/Greetd/assets/dms-greeter --command niri -p /usr/share/quickshell/dms"\n',
+			)
+
+			tmpfiles = install_session.target / 'etc/tmpfiles.d/dms-greeter.conf'
+			tmpfiles.parent.mkdir(parents=True, exist_ok=True)
+			tmpfiles.write_text(
+				'#  Path                    Mode User    Group   Age Argument\n'
+				'd /var/cache/dms-greeter   0750 greeter greeter -\n'
+				'd /var/lib/greeter         0755 greeter greeter -\n',
+			)
 
 	def install_gfx_driver(self, install_session: Installer, driver: GfxDriver) -> None:
 		debug(f'Installing GFX driver: {driver.value}')

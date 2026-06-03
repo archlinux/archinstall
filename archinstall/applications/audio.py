@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING
 
 from archinstall.lib.hardware import SysInfo
+from archinstall.lib.log import debug
 from archinstall.lib.models.application import Audio, AudioConfiguration
 from archinstall.lib.models.users import User
-from archinstall.lib.output import debug
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

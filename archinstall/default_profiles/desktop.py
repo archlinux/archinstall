@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING, Self, override
 
 from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType, SelectResult
+from archinstall.lib.log import info
 from archinstall.lib.menu.helpers import Selection
-from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType

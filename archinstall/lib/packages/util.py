@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from archinstall.lib.output import debug
+from archinstall.lib.log import debug
 from archinstall.lib.packages.packages import check_package_upgrade
 
 
