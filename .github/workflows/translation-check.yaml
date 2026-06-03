@@ -1,0 +1,22 @@
+name: Translation validation
+on:
+    push:
+        paths:
+            - 'archinstall/**/*.py'
+            - 'archinstall/locales/**'
+            - '.github/workflows/translation-check.yaml'
+    pull_request:
+        paths:
+            - 'archinstall/**/*.py'
+            - 'archinstall/locales/**'
+            - '.github/workflows/translation-check.yaml'
+jobs:
+    translations:
+        name: Validate translations
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+            - name: Install gettext
+              run: sudo apt-get update && sudo apt-get install -y gettext
+            - name: Run translation checks
+              run: bash archinstall/locales/locales_generator.sh check

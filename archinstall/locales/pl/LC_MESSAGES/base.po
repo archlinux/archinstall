@@ -256,6 +256,9 @@ msgstr "Język"
 msgid "Locale encoding"
 msgstr "Kodowanie"
 
+msgid "Console font"
+msgstr "Czcionka konsoli"
+
 msgid "Drive(s)"
 msgstr "Dysk(i)"
 
@@ -820,6 +823,19 @@ msgstr "Nieprawidłowa wartość! Spróbuj jeszcze raz z prawidłową wartości�
 msgid "Parallel Downloads"
 msgstr "Pobieranie kilku plików jednocześnie"
 
+msgid "Pacman"
+msgstr "Pacman"
+
+msgid "Color"
+msgstr "Kolor"
+
+#, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "Wprowadź maksymalną liczbę plików pobieranych jednocześnie (1-{})"
+
+msgid "Enable colored output for pacman"
+msgstr "Włącz kolory w pacmanie"
+
 msgid "ESC to skip"
 msgstr "Naciśnij ESC, aby pominąć"
 
@@ -1202,6 +1218,21 @@ msgstr "Produkt"
 #, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr "Niepoprawna konfiguracja: {error}"
+
+msgid "Ready to install"
+msgstr "Gotowe do zainstalowania"
+
+msgid "Disks"
+msgstr "Dyski"
+
+msgid "Packages"
+msgstr "Pakiety"
+
+msgid "Network"
+msgstr "Sieć"
+
+msgid "Locale"
+msgstr "Ustawienia regionalne (locale)"
 
 msgid "Type"
 msgstr "Typ"
@@ -1660,6 +1691,123 @@ msgstr "Wejdź w tryb wyszukiwania"
 msgid "Exit search mode"
 msgstr "Wyjdź z trybu wyszukiwania"
 
+msgid "General"
+msgstr "Ogólne"
+
+msgid "Navigation"
+msgstr "Nawigacja"
+
+msgid "Selection"
+msgstr "Wybór"
+
+msgid "Search"
+msgstr "Szukaj"
+
+msgid "Down"
+msgstr "W dół"
+
+msgid "Up"
+msgstr "W górę"
+
+msgid "Confirm"
+msgstr "Potwierdź"
+
+msgid "Focus right"
+msgstr "W prawo"
+
+msgid "Focus left"
+msgstr "W lewo"
+
+msgid "Toggle"
+msgstr "Zaznacz/Odznacz"
+
+msgid "Show/Hide help"
+msgstr "Pokaż/Ukryj pomoc"
+
+msgid "Quit"
+msgstr "Wyjdź"
+
+msgid "First"
+msgstr "Pierwszy"
+
+msgid "Last"
+msgstr "Ostatni"
+
+msgid "Select"
+msgstr "Wybierz"
+
+msgid "Page Up"
+msgstr "Strona w górę"
+
+msgid "Page Down"
+msgstr "Strona w dół"
+
+msgid "Page up"
+msgstr "Strona w górę"
+
+msgid "Page down"
+msgstr "Strona w dół"
+
+msgid "Page Left"
+msgstr "Strona w lewo"
+
+msgid "Page Right"
+msgstr "Strona w prawo"
+
+msgid "Cursor up"
+msgstr "Kursor w górę"
+
+msgid "Cursor down"
+msgstr "Kursor w dół"
+
+msgid "Cursor right"
+msgstr "Kursor w prawo"
+
+msgid "Cursor left"
+msgstr "Kursor w lewo"
+
+msgid "Top"
+msgstr "Góra"
+
+msgid "Bottom"
+msgstr "Dół"
+
+msgid "Home"
+msgstr "Początek"
+
+msgid "End"
+msgstr "Koniec"
+
+msgid "Toggle option"
+msgstr "Zaznacz/Odznacz opcję"
+
+msgid "Scroll Up"
+msgstr "Przewiń w górę"
+
+msgid "Scroll Down"
+msgstr "Przewiń w dół"
+
+msgid "Scroll Left"
+msgstr "Przewiń w lewo"
+
+msgid "Scroll Right"
+msgstr "Przewiń w prawo"
+
+msgid "Scroll Home"
+msgstr "Przewiń do początku"
+
+msgid "Scroll End"
+msgstr "Przewiń do końca"
+
+msgid "Focus Next"
+msgstr "Następny"
+
+msgid "Focus Previous"
+msgstr "Poprzedni"
+
+msgid "Copy selected text"
+msgstr "Skopiuj zaznaczony tekst"
+
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr "labwc potrzebuje dostępu do twojego seat'a (sprzętu, np. klawiatury, myszki)"
 
@@ -1878,6 +2026,21 @@ msgstr "Użyj NetworkManager'a (backend iwd)"
 msgid "Firewall"
 msgstr "Zapora sieciowa"
 
+msgid "Additional fonts"
+msgstr "Dodatkowe czcionki"
+
+msgid "Select font packages to install"
+msgstr "Wybierz pakiety czcionek do zainstalowania"
+
+msgid "Unicode font coverage for most languages"
+msgstr "Wsparcie Unicode dla większości języków"
+
+msgid "color emoji for browsers and apps"
+msgstr "kolorowe emoji dla przeglądarek i aplikacji"
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr "Chińskie, Japońskie, Koreańskie znaki"
+
 msgid "Select audio configuration"
 msgstr "Wybierz konfigurację audio"
 
@@ -1965,7 +2128,13 @@ msgid "Select an interface"
 msgstr "Wybierz interfejs"
 
 msgid "Choose network configuration"
-msgstr "Wybierz konfigurację sieciową"
+msgstr "Wybierz konfigurację sieci"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Rekomendowane: Network Manager dla desktopów, ręcznie dla serwerów"
+
+msgid "Warning: no network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Uwaga: nie wybrano konfiguracji sieci. Sieć musi zostać skonfigurowana ręcznie w zainstalowanym systemie."
 
 msgid "No packages found"
 msgstr "Nie znaleziono pakietów"
@@ -2003,6 +2172,72 @@ msgstr "Wybrany profil pulpitu wymaga logowania normalnego użytkownika przez gr
 #, python-brace-format
 msgid "Environment type: {} {}"
 msgstr "Typ środowiska: {} {}"
+
+msgid "Input cannot be empty"
+msgstr "Podana wartość nie może być pusta"
+
+msgid "Recommended"
+msgstr "Rekomendowane"
+
+msgid "Package"
+msgstr "Pakiet"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr "Wyselekcjonowany zestaw pakietów KDE Plasma"
+
+msgid "Dependencies"
+msgstr "Zależności"
+
+msgid "Package group"
+msgstr "Grupa pakietów"
+
+msgid "Extensive KDE Plasma installation"
+msgstr "Obszerna instalacja KDE Plasma"
+
+msgid "Packages in group"
+msgstr "Pakiety w grupie"
+
+msgid "Minimal KDE Plasma installation"
+msgstr "Minimalistyczna instalacja KDE Plasma"
+
+msgid "Description"
+msgstr "Opis"
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Wybierz rodzaj KDE Plasma do zainstalowania"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr "Zamiennik Arial/Times/Courier, obsługa Cyrylicy dla Steam/gier"
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr "szerokie wsparcie Unicode, dobra czczionka zastępcza"
+
+#, python-brace-format
+msgid "Setting up U2F login: {u2f_config.u2f_login_method.value}"
+msgstr "Ustawianie logowania U2F {u2f_config.u2f_login_method.value}"
+
+#, python-brace-format
+msgid "Default: {DEFAULT_ITER_TIME}ms, Recommended range: 1000-60000"
+msgstr "Domyślnie: {DEFAULT_ITER_TIME}ms, Rekomendowany przedział: 1000-60000"
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "Konfigurowanie logowania U2F: {}"
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "Domyślnie: {}ms, Rekomendowany przedział: 1000-60000"
+
+#, python-brace-format
+msgid "{} needs access to your seat"
+msgstr "{} potrzebuje dostępu do twojego seat'a"
+
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "zbiór urządzeń, t.j. klawiatura, myszka"
+
+#, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
+msgstr "Wybierz opcję, aby nadać {} dostęp do twojego sprzętu"
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "

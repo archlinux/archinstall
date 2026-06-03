@@ -29,6 +29,7 @@ from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, 
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
+from archinstall.lib.log import debug, error, info, log, logger, warn
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
@@ -52,7 +53,6 @@ from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.users import User
-from archinstall.lib.output import debug, error, info, log, logger, warn
 from archinstall.lib.packages.packages import installed_package
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman import Pacman
@@ -375,7 +375,12 @@ class Installer:
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint:
 			target = self.target / part_mod.relative_mountpoint
-			mount(part_mod.dev_path, target, options=part_mod.mount_options)
+			options = part_mod.mount_options
+
+			if part_mod.is_efi():
+				options = list(dict.fromkeys(options + ['fmask=0077', 'dmask=0077']))
+
+			mount(part_mod.dev_path, target, options=options)
 		elif part_mod.fs_type == FilesystemType.BTRFS:
 			# Only mount BTRFS subvolumes that have mountpoints specified
 			subvols_with_mountpoints = [sv for sv in part_mod.btrfs_subvols if sv.mountpoint is not None]
@@ -1754,6 +1759,7 @@ class Installer:
 		self,
 		root: PartitionModification | LvmVolume,
 		efi_partition: PartitionModification | None,
+		keep_initramfs: bool = False,
 	) -> None:
 		if not efi_partition or not efi_partition.mountpoint:
 			raise ValueError(f'Could not detect ESP at mountpoint {self.target}')
@@ -1777,11 +1783,11 @@ class Installer:
 			config = preset.read_text().splitlines(True)
 
 			for index, line in enumerate(config):
-				# Avoid storing redundant image file
 				if m := image_re.match(line):
-					image = self.target / m.group(2)
-					image.unlink(missing_ok=True)
-					config[index] = '#' + m.group(1)
+					if not keep_initramfs:
+						image = self.target / m.group(2)
+						image.unlink(missing_ok=True)
+						config[index] = '#' + m.group(1)
 				elif m := uki_re.match(line):
 					if diff_mountpoint:
 						config[index] = m.group(2) + diff_mountpoint + m.group(3)
@@ -1800,7 +1806,12 @@ class Installer:
 		if not self.mkinitcpio(['-P']):
 			error('Error generating initramfs (continuing anyway)')
 
-	def add_bootloader(self, bootloader: Bootloader, uki_enabled: bool = False, bootloader_removable: bool = False) -> None:
+	def add_bootloader(
+		self,
+		bootloader: Bootloader,
+		uki_enabled: bool = False,
+		bootloader_removable: bool = False,
+	) -> None:
 		"""
 		Adds a bootloader to the installation instance.
 		Archinstall supports one of five types:
@@ -1849,7 +1860,13 @@ class Installer:
 				bootloader_removable = False
 
 		if uki_enabled:
-			self._config_uki(root, efi_partition)
+			keep_initramfs = (
+				bootloader == Bootloader.Grub
+				and self._disk_config.has_default_btrfs_vols()
+				and self._disk_config.btrfs_options is not None
+				and self._disk_config.btrfs_options.snapshot_config is not None
+			)
+			self._config_uki(root, efi_partition, keep_initramfs)
 
 		match bootloader:
 			case Bootloader.Systemd:

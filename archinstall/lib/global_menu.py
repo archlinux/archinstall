@@ -14,6 +14,7 @@ from archinstall.lib.general.system_menu import select_kernel, select_swap
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale import list_timezones
 from archinstall.lib.locale.locale_menu import LocaleMenu
+from archinstall.lib.log import debug
 from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
 from archinstall.lib.menu.helpers import Confirmation
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
@@ -30,11 +31,11 @@ from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
-from archinstall.lib.output import FormattedOutput, debug
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import DEFAULT_TIMEZONE, Language, tr, translation_handler
+from archinstall.lib.utils.format import as_table
 from archinstall.tui.components import tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -375,7 +376,7 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value:
 			network_config: NetworkConfiguration = item.value
 			if network_config.type == NicType.MANUAL:
-				output = FormattedOutput.as_table(network_config.nics)
+				output = as_table(network_config.nics)
 			else:
 				output = f'{tr("Network configuration")}:\n{network_config.type.display_msg()}'
 
@@ -397,7 +398,7 @@ class GlobalMenu(AbstractMenu[None]):
 				output += f'{tr("Root password")}: {auth_config.root_enc_password.hidden()}\n'
 
 			if auth_config.users:
-				output += FormattedOutput.as_table(auth_config.users) + '\n'
+				output += as_table(auth_config.users) + '\n'
 
 			if auth_config.u2f_config:
 				u2f_config = auth_config.u2f_config
@@ -578,7 +579,7 @@ class GlobalMenu(AbstractMenu[None]):
 			return text[:-1]  # remove last new line
 
 		if error := self._validate_bootloader():
-			return tr(f'Invalid configuration: {error}')
+			return tr('Invalid configuration: {}').format(error)
 
 		self.sync_all_to_config()
 		summary = ConfigurationOutput(self._arch_config).as_summary()
@@ -688,7 +689,7 @@ class GlobalMenu(AbstractMenu[None]):
 
 		if mirror_config.custom_repositories:
 			title = tr('Custom repositories')
-			table = FormattedOutput.as_table(mirror_config.custom_repositories)
+			table = as_table(mirror_config.custom_repositories)
 			output += f'{title}:\n\n{table}'
 
 		return output.strip()

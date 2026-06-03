@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+git clone https://github.com/archlinux/archinstall.git /root/archinstall-git
+(cd /root/archinstall-git && git checkout master)
+
+# TODO: Set geo-mirrors statically instead
+curl -s "https://archlinux.org/mirrorlist/?country=SE&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+
+pacman-key --init
+pacman-key --populate archlinux

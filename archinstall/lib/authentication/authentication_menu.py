@@ -6,9 +6,9 @@ from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.users import Password, User
-from archinstall.lib.output import FormattedOutput
 from archinstall.lib.translationhandler import tr
 from archinstall.lib.user.user_menu import select_users
+from archinstall.lib.utils.format import as_table
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
@@ -65,7 +65,7 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		users: list[User] | None = item.value
 
 		if users:
-			return FormattedOutput.as_table(users)
+			return as_table(users)
 		return None
 
 	def _prev_root_pwd(self, item: MenuItem) -> str | None:

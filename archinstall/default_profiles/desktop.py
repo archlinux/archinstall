@@ -1,14 +1,15 @@
 from typing import TYPE_CHECKING, Self, override
 
 from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType, SelectResult
+from archinstall.lib.log import info
 from archinstall.lib.menu.helpers import Selection
-from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
+	from archinstall.lib.models.users import User
 
 
 class DesktopProfile(Profile):
@@ -87,6 +88,11 @@ class DesktopProfile(Profile):
 	def post_install(self, install_session: Installer) -> None:
 		for profile in self.current_selection:
 			profile.post_install(install_session)
+
+	@override
+	def provision(self, install_session: Installer, users: list[User]) -> None:
+		for profile in self.current_selection:
+			profile.provision(install_session, users)
 
 	@override
 	def install(self, install_session: Installer) -> None:

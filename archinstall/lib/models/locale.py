@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import Any, Self
+from typing import Any, Self, override
 
 from archinstall.lib.locale.utils import get_kb_layout
+from archinstall.lib.models.config import SubConfig
 from archinstall.lib.translationhandler import DEFAULT_CONSOLE_FONT, Language, tr
 
 
@@ -35,7 +36,7 @@ class LocaleLanguageDiff:
 
 
 @dataclass
-class LocaleConfiguration:
+class LocaleConfiguration(SubConfig):
 	kb_layout: str
 	sys_lang: str
 	sys_enc: str
@@ -52,6 +53,7 @@ class LocaleConfiguration:
 			layout = 'us'
 		return cls(layout, 'en_US.UTF-8', 'UTF-8')
 
+	@override
 	def json(self) -> dict[str, str]:
 		return {
 			'kb_layout': self.kb_layout,
@@ -59,6 +61,15 @@ class LocaleConfiguration:
 			'sys_enc': self.sys_enc,
 			'console_font': self.console_font,
 		}
+
+	@override
+	def summary(self) -> list[str]:
+		return [
+			tr('Keyboard layout "{}"').format(self.kb_layout),
+			tr('Locale language "{}"').format(self.sys_lang),
+			tr('Locale encoding "{}"').format(self.sys_enc),
+			tr('Console font "{}"').format(self.console_font),
+		]
 
 	def preview(self) -> str:
 		output = '{}: {}\n'.format(tr('Keyboard layout'), self.kb_layout)
