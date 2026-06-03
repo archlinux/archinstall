@@ -13,6 +13,7 @@ from archinstall.lib.disk.lvm import (
 	lvm_vol_reduce,
 )
 from archinstall.lib.disk.utils import udev_sync
+from archinstall.lib.log import debug, info
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -27,7 +28,6 @@ from archinstall.lib.models.device import (
 	Size,
 	Unit,
 )
-from archinstall.lib.output import debug, info
 
 
 class FilesystemHandler:

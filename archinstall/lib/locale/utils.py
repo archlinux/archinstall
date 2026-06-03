@@ -3,7 +3,7 @@ from pathlib import Path
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import ServiceException, SysCallError
-from archinstall.lib.output import error
+from archinstall.lib.log import error
 from archinstall.lib.utils.util import running_from_iso
 
 

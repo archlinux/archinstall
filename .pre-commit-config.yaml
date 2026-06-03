@@ -1,7 +1,7 @@
 default_stages: ['pre-commit']
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.12
+    rev: v0.15.14
     hooks:
         # fix unused imports and sort them
       - id: ruff
@@ -41,6 +41,7 @@ repos:
       additional_dependencies:
         - pydantic
         - pytest
+        - hypothesis
         - cryptography
         - textual
   - repo: local
