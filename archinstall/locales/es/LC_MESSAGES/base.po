@@ -53,7 +53,7 @@ msgstr "conjunto de dispositivos de hardware, por ejemplo, teclado, ratón"
 
 #, python-brace-format
 msgid "Choose an option how to give {} access to your hardware"
-msgstr "Elige una opción para darle a {} acceso a su hardware."
+msgstr "Elige una opción para darle a {} acceso a su hardware"
 
 #, python-brace-format
 msgid "Environment type: {} {}"
@@ -97,7 +97,7 @@ msgid "Would you like to configure the print service?"
 msgstr "¿Desea configurar el servicio de impresión?"
 
 msgid "Select audio configuration"
-msgstr "Seleccionar configuración de audio"
+msgstr "Seleccione la configuración de audio"
 
 msgid "Select font packages to install"
 msgstr "Seleccione los paquetes de fuentes que desea instalar"
@@ -768,7 +768,7 @@ msgid "Enter server url"
 msgstr "Ingrese la URL del servidor"
 
 msgid "Select regions"
-msgstr "Seleccione regiones"
+msgstr "Seleccionar regiones"
 
 msgid "Add custom servers"
 msgstr "Agregar servidores personalizados"
@@ -948,10 +948,10 @@ msgid "Copy ISO network configuration to installation"
 msgstr "Copiar la configuración de red ISO a la instalación"
 
 msgid "Use Network Manager (default backend)"
-msgstr "Usar Gestor de Red (backend por defecto)"
+msgstr "Usar Network Manager (backend predeterminado)"
 
 msgid "Use Network Manager (iwd backend)"
-msgstr "Usar gestor de Red (backend iwd)"
+msgstr "Usar Network Manager (backend iwd)"
 
 msgid "Use standalone iwd"
 msgstr "Utilizar iwd independiente"
@@ -1018,7 +1018,7 @@ msgid "Choose network configuration"
 msgstr "Elija la configuración de red"
 
 msgid "Recommended: Network Manager for desktop, Manual for server"
-msgstr "Recomendado: Network Manager para equipos de escritorio, Manual para servidores."
+msgstr "Recomendado: Network Manager para equipos de escritorio, Manual para servidores"
 
 msgid "Configure interfaces"
 msgstr "Configurar interfaces"
