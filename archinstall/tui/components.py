@@ -27,22 +27,19 @@ from archinstall.tui.result import Result, ResultType
 ValueT = TypeVar('ValueT')
 
 
-def _update_preview(widget: Label, result: str | PreviewResult | list[PreviewResult] | None) -> None:
+def _update_preview(widget: Label, result: str | PreviewResult | None) -> None:
 	if result is None:
 		widget.update('')
 		return
 
 	if isinstance(result, str):
 		widget.update(result)
-	elif isinstance(result, PreviewResult):
-		text = Text(result.message, style=result.msg_level.style())
-		widget.update(text)
 	else:
 		text = Text()
-		for i, section in enumerate(result):
+		for i, (message, level) in enumerate(result.messages):
 			if i > 0:
 				text.append('\n\n')
-			text.append(section.message, style=section.msg_level.style())
+			text.append(message, style=level.style())
 		widget.update(text)
 
 

@@ -29,8 +29,7 @@ class MsgLevelType(Enum):
 
 @dataclass
 class PreviewResult:
-	message: str
-	msg_level: MsgLevelType
+	messages: list[tuple[str, MsgLevelType]]
 
 
 @dataclass
@@ -44,7 +43,7 @@ class MenuItem:
 	dependencies: list[str | Callable[[], bool]] = field(default_factory=list)
 	dependencies_not: list[str] = field(default_factory=list)
 	display_action: Callable[[Any], str] | None = None
-	preview_action: Callable[[Self], str | PreviewResult | list[PreviewResult] | None] | None = None
+	preview_action: Callable[[Self], str | PreviewResult | None] | None = None
 	key: str | None = None
 
 	_id: str = ''

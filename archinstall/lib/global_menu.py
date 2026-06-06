@@ -502,12 +502,12 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return warnings
 
-	def _prev_install_invalid_config(self, item: MenuItem) -> str | PreviewResult | list[PreviewResult] | None:
+	def _prev_install_invalid_config(self, item: MenuItem) -> PreviewResult | None:
 		self.sync_all_to_config()
 		config_output = ConfigurationOutput(self._arch_config)
 
 		warnings = self._get_install_warnings()
-		sections: list[PreviewResult] = []
+		messages: list[tuple[str, MsgLevelType]] = []
 
 		errors = ''
 		if missing := self._missing_configs():
@@ -522,20 +522,20 @@ class GlobalMenu(AbstractMenu[None]):
 				errors += f'{tr("Invalid configuration:")}\n- {error}'
 
 		if errors:
-			sections.append(PreviewResult(errors, MsgLevelType.MsgError))
+			messages.append((errors, MsgLevelType.MsgError))
 		else:
-			sections.append(PreviewResult(tr('Ready to install'), MsgLevelType.MsgInfo))
+			messages.append((tr('Ready to install'), MsgLevelType.MsgInfo))
 
 		if warnings:
 			text = f'{tr("Warnings:")}\n' + '\n'.join(f'- {w}' for w in warnings)
-			sections.append(PreviewResult(text, MsgLevelType.MsgWarning))
+			messages.append((text, MsgLevelType.MsgWarning))
 
 		if not errors:
 			summary = config_output.as_summary()
 			if summary:
-				sections.append(PreviewResult(summary, MsgLevelType.MsgNone))
+				messages.append((summary, MsgLevelType.MsgNone))
 
-		return sections
+		return PreviewResult(messages)
 
 	def _prev_profile(self, item: MenuItem) -> str | None:
 		profile_config: ProfileConfiguration | None = item.value
