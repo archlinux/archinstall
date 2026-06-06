@@ -149,7 +149,11 @@ class Luks2:
 			'luks2',
 		]
 
-		result = run(cmd, input_data=passphrase)
+		try:
+			result = run(cmd, input_data=passphrase)
+		except CalledProcessError as err:
+			output = err.stdout.decode().rstrip()
+			raise DiskError(f'Could not unlock luks2 device "{self.luks_dev_path}": {output}')
 
 		debug(f'cryptsetup open output: {result.stdout.decode().rstrip()}')
 
