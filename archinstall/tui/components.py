@@ -27,14 +27,6 @@ from archinstall.tui.result import Result, ResultType
 ValueT = TypeVar('ValueT')
 
 
-_LEVEL_STYLE: dict[MsgLevelType, str] = {
-	MsgLevelType.MsgNone: '',
-	MsgLevelType.MsgError: 'red',
-	MsgLevelType.MsgWarning: 'bright_yellow',
-	MsgLevelType.MsgInfo: 'green',
-}
-
-
 def _update_preview(widget: Label, result: str | PreviewResult | list[PreviewResult] | None) -> None:
 	if result is None:
 		widget.update('')
@@ -43,14 +35,14 @@ def _update_preview(widget: Label, result: str | PreviewResult | list[PreviewRes
 	if isinstance(result, str):
 		widget.update(result)
 	elif isinstance(result, PreviewResult):
-		text = Text(result.message, style=_LEVEL_STYLE[result.msg_level])
+		text = Text(result.message, style=result.msg_level.style())
 		widget.update(text)
 	else:
 		text = Text()
 		for i, section in enumerate(result):
 			if i > 0:
 				text.append('\n\n')
-			text.append(section.message, style=_LEVEL_STYLE[section.msg_level])
+			text.append(section.message, style=section.msg_level.style())
 		widget.update(text)
 
 

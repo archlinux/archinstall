@@ -15,6 +15,17 @@ class MsgLevelType(Enum):
 	MsgWarning = auto()
 	MsgError = auto()
 
+	def style(self) -> str:
+		match self:
+			case MsgLevelType.MsgNone:
+				return 'white'
+			case MsgLevelType.MsgInfo:
+				return 'green'
+			case MsgLevelType.MsgWarning:
+				return 'bright_yellow'
+			case MsgLevelType.MsgError:
+				return 'red'
+
 
 @dataclass
 class PreviewResult:
