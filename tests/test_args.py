@@ -5,7 +5,7 @@ from pathlib import Path
 from pytest import MonkeyPatch
 
 from archinstall.default_profiles.profile import CustomSetting, GreeterType
-from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments
+from archinstall.lib.args import ArchConfig, ArchConfigHandler, Arguments, SubCommand
 from archinstall.lib.hardware import GfxDriver
 from archinstall.lib.models.application import (
 	ApplicationConfiguration,
@@ -51,7 +51,10 @@ def test_default_args(monkeypatch: MonkeyPatch) -> None:
 		no_pkg_lookups=False,
 		plugin=None,
 		skip_version_check=False,
+		skip_wifi_check=False,
 		advanced=False,
+		verbose=False,
+		command=None,
 	)
 
 
@@ -357,6 +360,23 @@ def test_encrypted_creds_with_arg(
 			groups=[],
 		),
 	]
+
+
+def test_skip_wifi_and_verbose_flags(monkeypatch: MonkeyPatch) -> None:
+	monkeypatch.setattr(
+		'sys.argv',
+		[
+			'archinstall',
+			'--skip-wifi-check',
+			'--verbose',
+		],
+	)
+
+	handler = ArchConfigHandler()
+	args = handler.args
+
+	assert args.skip_wifi_check is True
+	assert args.verbose is True
 
 
 def test_encrypted_creds_with_env_var(
