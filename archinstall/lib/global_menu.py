@@ -494,11 +494,19 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return None
 
+	def _get_install_warnings(self) -> list[str]:
+		warnings: list[str] = []
+
+		if not isinstance(self._arch_config.network_config, NetworkConfiguration):
+			warnings.append(tr('No network configuration selected. Network will need to be set up manually on the installed system.'))
+
+		return warnings
+
 	def _prev_install_invalid_config(self, item: MenuItem) -> str | PreviewResult | list[PreviewResult] | None:
 		self.sync_all_to_config()
 		config_output = ConfigurationOutput(self._arch_config)
 
-		warnings = config_output.get_install_warnings()
+		warnings = self._get_install_warnings()
 		sections: list[PreviewResult] = []
 
 		errors = ''

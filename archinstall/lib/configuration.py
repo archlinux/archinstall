@@ -11,7 +11,6 @@ from archinstall.lib.crypt import encrypt
 from archinstall.lib.log import debug, logger, warn
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.menu.util import get_password, prompt_dir
-from archinstall.lib.models.network import NetworkConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.lib.utils.format import as_key_value_pair
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -103,14 +102,6 @@ class ConfigurationOutput:
 			return False
 
 		return True
-
-	def get_install_warnings(self) -> list[str]:
-		warnings: list[str] = []
-
-		if not isinstance(self._config.network_config, NetworkConfiguration):
-			warnings.append(tr('No network configuration selected. Network will need to be set up manually on the installed system.'))
-
-		return warnings
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
 		dest_path_ok = dest_path.exists() and dest_path.is_dir()
