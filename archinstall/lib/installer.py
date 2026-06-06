@@ -131,7 +131,6 @@ class Installer:
 
 		self._zram_enabled = False
 		self._disable_fstrim = False
-		self._keyring_synced = True
 
 		self.pacman = Pacman(self.target, silent)
 
@@ -230,8 +229,7 @@ class Installer:
 				time.sleep(1)
 
 			if self._service_state('archlinux-keyring-wkd-sync.service') == 'failed':
-				self._keyring_synced = False
-				warn('archlinux-keyring-wkd-sync failed, custom mirror configuration will be skipped')
+				warn('archlinux-keyring-wkd-sync failed, keyring may need reinit during pacman sync')
 
 	def _verify_boot_part(self) -> None:
 		"""
@@ -250,10 +248,6 @@ class Installer:
 					f'The boot partition mounted at {boot_mount} is not large enough to install a boot loader. '
 					f'Please resize it to at least 200MiB and re-run the installation.',
 				)
-
-	@property
-	def keyring_synced(self) -> bool:
-		return self._keyring_synced
 
 	def sanity_check(
 		self,
