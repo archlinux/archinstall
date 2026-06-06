@@ -12,7 +12,7 @@ from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.general.general_menu import PostInstallationAction, select_post_installation
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer, accessibility_tools_in_use, run_custom_user_commands
-from archinstall.lib.log import debug, error, info
+from archinstall.lib.log import debug, error, info, warn
 from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models import Bootloader
@@ -98,7 +98,10 @@ def perform_installation(
 				installation.generate_key_files()
 
 		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=False)
+			if installation.keyring_synced:
+				installation.set_mirrors(mirror_list_handler, mirror_config, on_target=False)
+			else:
+				warn('Skipping custom mirror configuration due to keyring sync failure')
 
 		installation.minimal_installation(
 			optional_repositories=optional_repositories,
@@ -109,7 +112,10 @@ def perform_installation(
 		)
 
 		if mirror_config := config.mirror_config:
-			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=True)
+			if installation.keyring_synced:
+				installation.set_mirrors(mirror_list_handler, mirror_config, on_target=True)
+			else:
+				warn('Skipping target mirror configuration due to keyring sync failure')
 
 		if config.swap and config.swap.enabled:
 			installation.setup_swap(algo=config.swap.algorithm)
