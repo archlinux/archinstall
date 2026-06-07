@@ -2,11 +2,18 @@ from __future__ import annotations
 
 from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass, field
-from enum import Enum, auto
+from enum import Enum, StrEnum, auto
 from functools import cached_property
 from typing import Any, ClassVar, Self, override
 
 from archinstall.lib.translationhandler import tr
+
+
+class MsgLevelStyle(StrEnum):
+	White = 'white'
+	Green = 'green'
+	Yellow = 'bright_yellow'
+	Red = 'red'
 
 
 class MsgLevelType(Enum):
@@ -15,16 +22,16 @@ class MsgLevelType(Enum):
 	MsgWarning = auto()
 	MsgError = auto()
 
-	def style(self) -> str:
+	def style(self) -> MsgLevelStyle:
 		match self:
 			case MsgLevelType.MsgNone:
-				return 'white'
+				return MsgLevelStyle.White
 			case MsgLevelType.MsgInfo:
-				return 'green'
+				return MsgLevelStyle.Green
 			case MsgLevelType.MsgWarning:
-				return 'bright_yellow'
+				return MsgLevelStyle.Yellow
 			case MsgLevelType.MsgError:
-				return 'red'
+				return MsgLevelStyle.Red
 
 
 @dataclass
