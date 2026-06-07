@@ -55,35 +55,35 @@ class Pacman:
 			return
 
 		try:
-			self.run('-Syy', default_cmd='pacman')
+			self.run('-Syy')
 		except SysCallError as err:
 			if b'GPGME' in err.worker_log or b'keyring' in err.worker_log.lower():
 				warn('Pacman sync failed with keyring error, attempting keyring reinit')
 				self._reinit_keyring()
-				self.ask(
-					'Could not sync a new package database after keyring reinit',
-					'Could not sync mirrors',
-					self.run,
-					'-Syy',
-					default_cmd='pacman',
-				)
+				msg = 'Could not sync a new package database after keyring reinit'
 			else:
-				self.ask(
-					'Could not sync a new package database',
-					'Could not sync mirrors',
-					self.run,
-					'-Syy',
-					default_cmd='pacman',
-				)
+				msg = 'Could not sync a new package database'
+
+			self.ask(msg, 'Could not sync mirrors', self.run, '-Syy')
 
 		self.synced = True
 
 	@staticmethod
-	def _reinit_keyring() -> None:
+	def _is_running(process: str) -> bool:
 		try:
-			SysCommand('killall gpg-agent')
-		except SysCallError as err:
-			debug(f'killall gpg-agent failed (may not be running): {err}')
+			SysCommand(f'pgrep -x {process}')
+			return True
+		except SysCallError:
+			debug(f'{process} is not running')
+			return False
+
+	@staticmethod
+	def _reinit_keyring() -> None:
+		if Pacman._is_running('gpg-agent'):
+			try:
+				SysCommand('killall gpg-agent')
+			except SysCallError as err:
+				debug(f'Failed to kill gpg-agent: {err}')
 
 		try:
 			SysCommand('pacman-key --init')
