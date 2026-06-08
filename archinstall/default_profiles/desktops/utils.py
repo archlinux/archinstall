@@ -19,7 +19,7 @@ class SeatAccess(Enum):
 def provision_seat_access(
 	install_session: Installer,
 	users: list[User],
-	seat_access: str | None,
+	seat_access: str,
 ) -> None:
 	if seat_access == SeatAccess.seatd.value:
 		for user in users:

@@ -1,11 +1,7 @@
-from typing import TYPE_CHECKING, override
+from typing import override
 
-from archinstall.default_profiles.desktops.utils import provision_seat_access, select_seat_access
+from archinstall.default_profiles.desktops.utils import select_seat_access
 from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType
-
-if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
-	from archinstall.lib.models.users import User
 
 
 class NiriProfile(Profile):
@@ -50,10 +46,6 @@ class NiriProfile(Profile):
 		if pref := self.custom_settings.get(CustomSetting.SeatAccess, None):
 			return [pref]
 		return []
-
-	@override
-	def provision(self, install_session: Installer, users: list[User]) -> None:
-		provision_seat_access(install_session, users, self.custom_settings.get(CustomSetting.SeatAccess))
 
 	@override
 	async def do_on_select(self) -> None:
