@@ -37,7 +37,7 @@ from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import DEFAULT_TIMEZONE, Language, tr, translation_handler
 from archinstall.lib.utils.format import as_table
 from archinstall.tui.components import tui
-from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 from archinstall.tui.result import ResultType
 
 
@@ -571,21 +571,48 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return None
 
-	def _prev_install_invalid_config(self, item: MenuItem) -> str | None:
-		if missing := self._missing_configs():
-			text = tr('Missing configurations:\n')
-			for m in missing:
-				text += f'- {m}\n'
-			return text[:-1]  # remove last new line
+	def _get_install_warnings(self) -> list[str]:
+		warnings: list[str] = []
 
-		if error := self._validate_bootloader():
-			return tr('Invalid configuration: {}').format(error)
+		if not isinstance(self._arch_config.network_config, NetworkConfiguration):
+			warnings.append(tr('No network configuration selected. Network will need to be set up manually on the installed system.'))
 
+		return warnings
+
+	def _prev_install_invalid_config(self, item: MenuItem) -> PreviewResult | None:
 		self.sync_all_to_config()
-		summary = ConfigurationOutput(self._arch_config).as_summary()
-		if summary:
-			return f'{tr("Ready to install")}\n\n{summary}'
-		return tr('Ready to install')
+		config_output = ConfigurationOutput(self._arch_config)
+
+		warnings = self._get_install_warnings()
+		messages: list[tuple[str, MsgLevelType]] = []
+
+		errors = ''
+		if missing := self._missing_configs():
+			errors += f'{tr("Missing configurations:")}\n'
+			errors += '\n'.join(f'- {m}' for m in missing)
+
+		disk_item = self._item_group.find_by_key('disk_config')
+		if disk_item.has_value():
+			if error := self._validate_bootloader():
+				if errors:
+					errors += '\n\n'
+				errors += f'{tr("Invalid configuration:")}\n- {error}'
+
+		if errors:
+			messages.append((errors, MsgLevelType.MsgError))
+		else:
+			messages.append((tr('Ready to install'), MsgLevelType.MsgInfo))
+
+		if warnings:
+			text = f'{tr("Warnings:")}\n' + '\n'.join(f'- {w}' for w in warnings)
+			messages.append((text, MsgLevelType.MsgWarning))
+
+		if not errors:
+			summary = config_output.as_summary()
+			if summary:
+				messages.append((summary, MsgLevelType.MsgNone))
+
+		return PreviewResult(messages)
 
 	def _prev_profile(self, item: MenuItem) -> str | None:
 		profile_config: ProfileConfiguration | None = item.value
