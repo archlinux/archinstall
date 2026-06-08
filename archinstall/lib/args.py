@@ -560,8 +560,8 @@ class ArchConfigHandler:
 			warn(f'Warning: --debug mode will write certain credentials to {logger.path}!')
 
 		if args.plugin:
-			plugin_path = Path(args.plugin)
-			load_plugin(plugin_path)
+			# pathlib collapses "https://..." to "https:/..." which breaks URL loading (#3021).
+			load_plugin(args.plugin)
 
 		if args.creds_decryption_key is None:
 			if os.environ.get('ARCHINSTALL_CREDS_DECRYPTION_KEY'):
