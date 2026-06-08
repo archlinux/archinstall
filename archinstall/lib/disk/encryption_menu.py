@@ -71,6 +71,13 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._prev_iter_time,
 				key='iter_time',
+            ),
+            MenuItem(
+                text=tr('Encryption cipher'),
+                action=self._select_cipher,
+                value=self._enc_config.cipher if self._enc_config.cipher else 'aes-xts-plain64',
+                dependencies=[self._check_dep_enc_type],
+                key='cipher',
 			),
 			MenuItem(
 				text=tr('Partitions'),
@@ -132,6 +139,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		iter_time: int | None = self._item_group.find_by_key('iter_time').value
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_volumes').value
+        cipher_value: str | None = self._item_group.find_by_key('cipher').value
 
 		assert enc_type is not None
 		assert enc_partitions is not None
@@ -151,6 +159,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				lvm_volumes=enc_lvm_vols,
 				hsm_device=enc_config.hsm_device,
 				iter_time=iter_time or DEFAULT_ITER_TIME,
+                cipher=cipher_value,
 			)
 
 		return None
