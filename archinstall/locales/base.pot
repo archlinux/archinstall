@@ -989,7 +989,7 @@ msgid "Color enabled"
 msgstr ""
 
 #, python-brace-format
-msgid "{} grphics driver"
+msgid "{} graphics driver"
 msgstr ""
 
 #, python-brace-format
