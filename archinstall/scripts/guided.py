@@ -230,7 +230,7 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		res: bool = tui.run(lambda: config.confirm_config(show_install_warnings=True))
+		res: bool = tui.run(config.confirm_config)
 
 		if not res:
 			debug('Installation aborted')

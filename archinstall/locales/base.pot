@@ -1208,3 +1208,17 @@ msgstr ""
 
 msgid " (default)"
 msgstr ""
+
+msgid "Invalid configuration:"
+msgstr ""
+
+msgid "Missing configurations:"
+msgstr ""
+
+msgid "Warnings:"
+msgstr ""
+
+msgid ""
+"No network configuration selected. Network will need to be set up manually "
+"on the installed system."
+msgstr ""
