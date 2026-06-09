@@ -2236,3 +2236,162 @@ msgstr "Налаштування входу з пристроєм двофакт
 #, python-brace-format
 msgid "Default: {}ms, Recommended range: 1000-60000"
 msgstr "Стандартно: {}мс, Рекомендований діапазон - 1000-60000"
+
+msgid "ArchInstall Language"
+msgstr "Мова ArchInstall"
+
+msgid "Version"
+msgstr "Версія"
+
+msgid "Installation Script"
+msgstr "Скрипт встановлення"
+
+msgid "Application"
+msgstr "Додаток"
+
+msgid "Services"
+msgstr "Служби"
+
+msgid "Custom commands"
+msgstr "Користувацькі команди"
+
+msgid "Users"
+msgstr "Користувачі"
+
+msgid "Root encrypted password"
+msgstr "Зашифрований пароль root"
+
+msgid "Audio server \"{}\""
+msgstr "Аудіосервер \"{}\""
+
+msgid "Firewall \"{}\""
+msgstr "Брандмауер \"{}\""
+
+msgid "Bootloader \"{}\""
+msgstr "Завантажувач \"{}\""
+
+msgid "Power management \"{}\""
+msgstr "Керування живленням \"{}\""
+
+msgid "Btrfs snapshot \"{}\""
+msgstr "Знімок Btrfs \"{}\""
+
+msgid "Keyboard layout \"{}\""
+msgstr "Розкладка клавіатури \"{}\""
+
+msgid "Locale language \"{}\""
+msgstr "Мова локалізації \"{}\""
+
+msgid "Locale encoding \"{}\""
+msgstr "Кодування локалізації \"{}\""
+
+msgid "Console font \"{}\""
+msgstr "Шрифт консолі \"{}\""
+
+msgid "Mirror regions \"{}\""
+msgstr "Регіони дзеркал \"{}\""
+
+msgid "Optional repositories \"{}\""
+msgstr "Необов'язкові репозиторії \"{}\""
+
+msgid "Extra fonts \"{}\""
+msgstr "Додаткові шрифти \"{}\""
+
+msgid "Bluetooth enabled"
+msgstr "Bluetooth увімкнено"
+
+msgid "Color enabled"
+msgstr "Колір увімкнено"
+
+msgid "Print service enabled"
+msgstr "Службу друку увімкнено"
+
+msgid "Zram enabled"
+msgstr "Zram увімкнено"
+
+msgid "UKI enabled"
+msgstr "UKI увімкнено"
+
+msgid "Root password set"
+msgstr "Пароль root встановлено"
+
+msgid "U2F set up"
+msgstr "U2F налаштовано"
+
+msgid "LVM set up"
+msgstr "LVM налаштовано"
+
+msgid "Custom servers set up"
+msgstr "Користувацькі сервери налаштовано"
+
+msgid "Custom repositories set up"
+msgstr "Користувацькі репозиторії налаштовано"
+
+msgid "Configured {} user(s)"
+msgstr "Налаштовано користувачів: {}"
+
+msgid "Zram algorithm {}"
+msgstr "Алгоритм Zram {}"
+
+msgid "Devices {}"
+msgstr "Пристрої {}"
+
+msgid "{} grphics driver"
+msgstr "Графічний драйвер {}"
+
+msgid "{} encryption"
+msgstr "Шифрування {}"
+
+msgid "{} layout"
+msgstr "Розмітка {}"
+
+msgid "{} greeter"
+msgstr "Менеджер входу {}"
+
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr "Зараз \"{}\" буде вивантажено на загальнодоступний {}"
+
+msgid "Log uploaded successfully. URL: {}"
+msgstr "Журнал успішно вивантажено. URL: {}"
+
+msgid "Failed to upload log."
+msgstr "Не вдалося вивантажити журнал."
+
+msgid "Manual"
+msgstr "Вручну"
+
+msgid "Pre-mount"
+msgstr "Передмонтування"
+
+msgid "Default"
+msgstr "Типово"
+
+msgid "Warnings:"
+msgstr "Попередження:"
+
+msgid "Missing configurations:"
+msgstr "Відсутні конфігурації:"
+
+msgid "Invalid configuration:"
+msgstr "Неправильна конфігурація:"
+
+msgid "Do you want to continue?"
+msgstr "Бажаєте продовжити?"
+
+msgid "Enter a repository name"
+msgstr "Введіть назву репозиторію"
+
+msgid "Use standalone iwd"
+msgstr "Використовувати автономний iwd"
+
+msgid "{} needs access to your seat"
+msgstr "{} потребує доступу до вашого seat"
+
+msgid "Choose an option how to give {} access to your hardware"
+msgstr "Виберіть, як надати {} доступ до вашого обладнання"
+
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "набір апаратних пристроїв, напр. клавіатура, миша"
+
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Конфігурацію мережі не обрано. Мережу доведеться налаштувати вручну на встановленій системі."
