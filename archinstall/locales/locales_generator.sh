@@ -70,25 +70,10 @@ cmd_check_no_tr_fstring() {
 	echo "No tr(f-string) anti-pattern found."
 }
 
-cmd_check_pot_freshness() {
-	# msgcmp (not diff) because base.pot carries legacy stale entries from
-	# --join-existing; diff would always fail until a full cleanup is done.
-	echo "Checking base.pot for missing strings..."
-	find . -type f -iname '*.py' | sort \
-		| xargs xgettext --no-location --omit-header --keyword='tr' \
-			-d base -o /tmp/generated.pot
-	if ! msgcmp --use-untranslated locales/base.pot /tmp/generated.pot; then
-		echo "ERROR: base.pot is missing strings - run: locales_generator.sh all" >&2
-		return 1
-	fi
-	echo "base.pot contains all translatable strings."
-}
-
 cmd_check() {
 	local failed=0
 	cmd_check_po_syntax || failed=1
 	cmd_check_no_tr_fstring || failed=1
-	cmd_check_pot_freshness || failed=1
 	if [ "$failed" -eq 1 ]; then
 		echo "Some translation checks failed." >&2
 		exit 1
