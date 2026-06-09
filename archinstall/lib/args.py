@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import stat
 import sys
 import urllib.error
 import urllib.parse
@@ -11,9 +12,10 @@ from pathlib import Path
 from typing import Any, Self
 from urllib.request import Request, urlopen
 
+from pydantic import TypeAdapter
 from pydantic.dataclasses import dataclass as p_dataclass
 
-from archinstall.lib.crypt import decrypt
+from archinstall.lib.crypt import decrypt, encrypt
 from archinstall.lib.log import debug, error, logger, warn
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
@@ -31,6 +33,8 @@ from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.lib.utils.format import as_key_value_pair
+from archinstall.lib.utils.util import is_valid_path
 from archinstall.lib.version import get_version
 from archinstall.tui.components import tui
 
@@ -138,6 +142,11 @@ class ArchConfigType(StrEnum):
 				return tr('Root encrypted password')
 			case ArchConfigType.ENCRYPTION_PASSWORD:
 				return tr('Disk encryption password')
+
+
+USER_CONFIG_FILE: Path = Path('user_configuration.json')
+USER_CREDS_FILE: Path = Path('user_credentials.json')
+DEFAULT_SAVE_PATH = logger.directory
 
 
 @dataclass
@@ -366,6 +375,94 @@ class ArchConfig:
 			arch_config.custom_commands = custom_commands
 
 		return arch_config
+
+	def user_config_to_json(self) -> str:
+		config = self.safe_config()
+
+		adapter = TypeAdapter(dict[ArchConfigType, Any])
+		python_dict = adapter.dump_python(config)
+		return json.dumps(python_dict, indent=4, sort_keys=True)
+
+	def user_credentials_to_json(self) -> str:
+		cfg = self.unsafe_config()
+
+		adapter = TypeAdapter(dict[ArchConfigType, Any])
+		python_dict = adapter.dump_python(cfg)
+		return json.dumps(python_dict, indent=4, sort_keys=True)
+
+	def write_debug(self) -> None:
+		debug(' -- Chosen configuration --')
+		debug(self.user_config_to_json())
+
+	def save(
+		self,
+		dest_path: Path | None = None,
+		creds: bool = False,
+		password: str | None = None,
+	) -> None:
+		save_path = dest_path or DEFAULT_SAVE_PATH
+
+		if not is_valid_path(save_path):
+			warn(
+				f'Destination directory {save_path} does not exist or is not a directory\n.',
+				'Configuration files can not be saved',
+			)
+			return
+
+		self.save_user_config(save_path)
+		if creds:
+			self.save_user_creds(save_path, password=password)
+
+	def save_user_config(self, dest_path: Path) -> None:
+		if not is_valid_path(dest_path):
+			error(f'Invalid path {dest_path}. User configuration could not be saved.')
+			return
+
+		target = dest_path / USER_CONFIG_FILE
+		data = self.user_config_to_json()
+		target.write_text(data)
+		target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+
+	def save_user_creds(
+		self,
+		dest_path: Path,
+		password: str | None = None,
+	) -> None:
+		if not is_valid_path(dest_path):
+			error(f'Invalid path {dest_path}. User credentials could not be saved.')
+			return
+
+		data = self.user_credentials_to_json()
+
+		if password:
+			data = encrypt(password, data)
+
+		target = dest_path / USER_CREDS_FILE
+		target.write_text(data)
+		target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+
+	def as_summary(self) -> str:
+		"""
+		Render a concise two-column summary of the current configuration.
+
+		Returns an empty string if nothing meaningful to show.
+		"""
+		cfg: dict[str, str | list[str] | bool] = {}
+
+		for key, value in self.plain_cfg().items():
+			cfg[key.text()] = value
+
+		for config_type, obj in self.sub_cfg().items():
+			if not hasattr(obj, 'summary'):
+				continue
+
+			summary = obj.summary()
+			if summary:
+				cfg[config_type.text()] = summary
+
+		simple_summary = as_key_value_pair(cfg, ignore_empty=True)
+
+		return simple_summary
 
 
 class ArchConfigHandler:

@@ -1,6 +1,7 @@
 import secrets
 import string
 from datetime import UTC, datetime
+from pathlib import Path
 
 from archinstall.lib.pathnames import ARCHISO_MOUNTPOINT
 from archinstall.lib.utils.format import as_columns
@@ -46,3 +47,7 @@ def format_cols(items: list[str], header: str | None = None) -> str:
 	# remove whitespaces on each row
 	text = '\n'.join(t.strip() for t in text.split('\n'))
 	return text
+
+
+def is_valid_path(path: Path) -> bool:
+	return path.exists() and path.is_dir()
