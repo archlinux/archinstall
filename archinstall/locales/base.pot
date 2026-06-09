@@ -257,11 +257,6 @@ msgstr ""
 msgid "Configuration preview"
 msgstr ""
 
-msgid ""
-"Warning: no network configuration selected. Network will need to be set up "
-"manually on the installed system."
-msgstr ""
-
 msgid "No configuration"
 msgstr ""
 
@@ -642,14 +637,21 @@ msgstr ""
 msgid "Kernel"
 msgstr ""
 
-msgid "Missing configurations:\n"
+msgid ""
+"No network configuration selected. Network will need to be set up manually "
+"on the installed system."
 msgstr ""
 
-#, python-brace-format
-msgid "Invalid configuration: {}"
+msgid "Missing configurations:"
+msgstr ""
+
+msgid "Invalid configuration:"
 msgstr ""
 
 msgid "Ready to install"
+msgstr ""
+
+msgid "Warnings:"
 msgstr ""
 
 msgid "Profiles"
@@ -987,7 +989,7 @@ msgid "Color enabled"
 msgstr ""
 
 #, python-brace-format
-msgid "{} grphics driver"
+msgid "{} graphics driver"
 msgstr ""
 
 #, python-brace-format
@@ -1053,13 +1055,13 @@ msgstr ""
 msgid "No wifi interface found"
 msgstr ""
 
+msgid "No wifi networks found"
+msgstr ""
+
 msgid "Select wifi network to connect to"
 msgstr ""
 
 msgid "Scanning wifi networks..."
-msgstr ""
-
-msgid "No wifi networks found"
 msgstr ""
 
 msgid "Failed setting up wifi"
@@ -1207,18 +1209,4 @@ msgid "No"
 msgstr ""
 
 msgid " (default)"
-msgstr ""
-
-msgid "Invalid configuration:"
-msgstr ""
-
-msgid "Missing configurations:"
-msgstr ""
-
-msgid "Warnings:"
-msgstr ""
-
-msgid ""
-"No network configuration selected. Network will need to be set up manually "
-"on the installed system."
 msgstr ""

@@ -40,7 +40,7 @@ class ProfileConfiguration(SubConfig):
 			out.append(self.profile.name)
 
 			if self.gfx_driver:
-				out.append(tr('{} grphics driver').format(self.gfx_driver.value))
+				out.append(tr('{} graphics driver').format(self.gfx_driver.value))
 
 			if self.greeter:
 				out.append(tr('{} greeter').format(self.greeter.value))
