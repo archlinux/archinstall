@@ -21,7 +21,7 @@ dependencies = [
     "pyparted==3.13.0",
     "pydantic==2.13.4",
     "cryptography==48.0.0",
-    "textual==8.2.6",
+    "textual==8.2.7",
     "markdown-it-py==4.0.0",
     "linkify-it-py==2.1.0",
 ]
@@ -37,7 +37,7 @@ dev = [
     "mypy==2.1.0",
     "flake8==7.3.0",
     "pre-commit==4.6.0",
-    "ruff==0.15.14",
+    "ruff==0.15.16",
     "pylint==4.0.5",
     "pytest==9.0.3",
     "hypothesis>=6.152.4",
@@ -61,6 +61,7 @@ include-package-data = true
     "**/*.po",
     "**/*.pot",
     "**/*.json",
+    "**/*.kdl",
 ]
 
 [tool.setuptools.package-dir]
@@ -69,7 +70,10 @@ archinstall = "archinstall"
 [tool.mypy]
 python_version = "3.14"
 files = "."
-exclude = "^build/"
+exclude = [
+    "^build/",
+    "^test_tooling/",
+]
 disallow_any_explicit = false
 disallow_any_expr = false
 disallow_any_unimported = true

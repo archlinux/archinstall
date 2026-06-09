@@ -1,4 +1,3 @@
-from asyncio import sleep
 from dataclasses import dataclass
 from pathlib import Path
 from typing import assert_never, override
@@ -109,36 +108,25 @@ class WifiHandler(InstanceRunnable[bool]):
 
 		debug(f'Found wifi interface: {wifi_iface}')
 
-		async def get_wifi_networks() -> MenuItemGroup:
-			debug('Scanning Wifi networks')
-			result = self._wpa_cli('scan', wifi_iface)
+		wifi_networks = await self._scan_wifi(wifi_iface)
 
-			if not result.success:
-				debug(f'Failed to scan wifi networks: {result.error}')
-				return MenuItemGroup([])
+		if not wifi_networks:
+			debug('No networks found')
+			await NotifyScreen(header=tr('No wifi networks found')).run()
+			tui.exit(Result.false())
+			return False
 
-			await sleep(5)
-			wifi_networks = self._get_scan_results(wifi_iface)
-
-			items = [MenuItem(network.ssid, value=network) for network in wifi_networks]
-			return MenuItemGroup(items)
+		items = [MenuItem(network.ssid, value=network) for network in wifi_networks]
 
 		result = await TableSelectionScreen[WifiNetwork](
 			header=tr('Select wifi network to connect to'),
-			loading_header=tr('Scanning wifi networks...'),
-			group_callback=get_wifi_networks,
+			group=MenuItemGroup(items),
 			allow_skip=True,
 			allow_reset=True,
 		).run()
 
 		match result.type_:
 			case ResultType.Selection:
-				if not result.has_data():
-					debug('No networks found')
-					await NotifyScreen(header=tr('No wifi networks found')).run()
-					tui.exit(Result.false())
-					return False
-
 				network = result.get_value()
 			case ResultType.Skip | ResultType.Reset:
 				tui.exit(Result.false())
@@ -183,6 +171,18 @@ class WifiHandler(InstanceRunnable[bool]):
 		await LoadingScreen(timer=5, header='Connecting wifi...').run()
 
 		return True
+
+	async def _scan_wifi(self, wifi_iface: str) -> list[WifiNetwork]:
+		debug('Scanning Wifi networks')
+		scan_result = self._wpa_cli('scan', wifi_iface)
+
+		if not scan_result.success:
+			debug(f'Failed to scan wifi networks: {scan_result.error}')
+			return []
+
+		await LoadingScreen(timer=5, header=tr('Scanning wifi networks...')).run()
+
+		return self._get_scan_results(wifi_iface)
 
 	async def _notify_failure(self) -> None:
 		await NotifyScreen(header=tr('Failed setting up wifi')).run()

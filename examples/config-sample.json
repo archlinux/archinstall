@@ -133,7 +133,10 @@
   "ntp": true,
   "offline": false,
   "packages": [],
-  "parallel downloads": 0,
+  "pacman_config": {
+    "color": false,
+    "parallel_downloads": 5
+  },
   "profile_config": {
     "gfx_driver": "All open-source (default)",
     "greeter": "sddm",

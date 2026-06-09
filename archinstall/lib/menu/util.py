@@ -5,7 +5,8 @@ from pathlib import Path
 from archinstall.lib.menu.helpers import Confirmation, Input
 from archinstall.lib.models.users import Password, PasswordStrength
 from archinstall.lib.translationhandler import tr
-from archinstall.tui.components import InputInfo, InputInfoType, tui
+from archinstall.tui.components import InputInfo, tui
+from archinstall.tui.menu_item import MsgLevelType
 from archinstall.tui.result import ResultType
 
 
@@ -20,11 +21,11 @@ async def get_password(
 			return None
 		strength = PasswordStrength.strength(value)
 		if strength in (PasswordStrength.VERY_WEAK, PasswordStrength.WEAK):
-			return InputInfo(message=tr('Password strength: Weak'), info_type=InputInfoType.MsgError)
+			return InputInfo(message=tr('Password strength: Weak'), msg_level=MsgLevelType.MsgError)
 		elif strength == PasswordStrength.MODERATE:
-			return InputInfo(message=tr('Password strength: Moderate'), info_type=InputInfoType.MsgWarning)
+			return InputInfo(message=tr('Password strength: Moderate'), msg_level=MsgLevelType.MsgWarning)
 		elif strength == PasswordStrength.STRONG:
-			return InputInfo(message=tr('Password strength: Strong'), info_type=InputInfoType.MsgInfo)
+			return InputInfo(message=tr('Password strength: Strong'), msg_level=MsgLevelType.MsgInfo)
 		return None
 
 	while True:
