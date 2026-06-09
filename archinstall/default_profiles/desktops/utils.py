@@ -1,14 +1,11 @@
 from enum import Enum
-from typing import TYPE_CHECKING
 
+from archinstall.lib.installer import Installer
 from archinstall.lib.menu.helpers import Selection
+from archinstall.lib.models.users import User
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
-
-if TYPE_CHECKING:
-	from archinstall.lib.installer import Installer
-	from archinstall.lib.models.users import User
 
 
 class SeatAccess(Enum):
