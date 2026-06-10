@@ -228,6 +228,9 @@ class Installer:
 			while self._service_state('archlinux-keyring-wkd-sync.service') not in ('dead', 'failed', 'exited'):
 				time.sleep(1)
 
+			if self._service_state('archlinux-keyring-wkd-sync.service') == 'failed':
+				warn('archlinux-keyring-wkd-sync failed, keyring may need reinit during pacman sync')
+
 	def _verify_boot_part(self) -> None:
 		"""
 		Check that mounted /boot device has at minimum size for installation
