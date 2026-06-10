@@ -107,7 +107,8 @@ async def select_archinstall_language(languages: list[Language], preset: Languag
 
 	title = 'NOTE: Console font will be set automatically for supported languages.\n'
 	title += 'For other languages, fonts can be found in "/usr/share/kbd/consolefonts"\n'
-	title += 'and set manually with: setfont <fontname>\n'
+	title += 'and set manually with: setfont <fontname>\n\n'
+	title += 'Select the archinstall language'
 
 	result = await Selection[Language](
 		header=title,
