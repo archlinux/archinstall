@@ -209,6 +209,9 @@ msgstr ""
 msgid "Install to removable location"
 msgstr ""
 
+msgid "Plymouth"
+msgstr ""
+
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
 msgstr ""
 
@@ -246,6 +249,9 @@ msgid "Select bootloader to install"
 msgstr ""
 
 msgid "UEFI is not detected and some options are disabled"
+msgstr ""
+
+msgid "Select Plymouth theme"
 msgstr ""
 
 msgid "The specified configuration will be applied"
@@ -882,6 +888,10 @@ msgstr ""
 msgid "Removable"
 msgstr ""
 
+#, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr ""
+
 msgid "Use a best-effort default partition layout"
 msgstr ""
 
@@ -1196,10 +1206,190 @@ msgstr ""
 msgid "Starting device modifications in "
 msgstr ""
 
+msgid "Bottom"
+msgstr ""
+
+msgid "Copy selected text"
+msgstr ""
+
+msgid "Cursor down"
+msgstr ""
+
+msgid "Cursor left"
+msgstr ""
+
+msgid "Cursor right"
+msgstr ""
+
+msgid "Cursor up"
+msgstr ""
+
+msgid "Cut selected text"
+msgstr ""
+
+msgid "Delete all to the left"
+msgstr ""
+
+msgid "Delete all to the right"
+msgstr ""
+
+msgid "Delete character left"
+msgstr ""
+
+msgid "Delete character right"
+msgstr ""
+
+msgid "Delete left to start of word"
+msgstr ""
+
+msgid "Delete right to start of word"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "End"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Focus Next"
+msgstr ""
+
+msgid "Focus Previous"
+msgstr ""
+
+msgid "Go to end"
+msgstr ""
+
+msgid "Go to start"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+msgid "Move cursor left"
+msgstr ""
+
+msgid "Move cursor left a word"
+msgstr ""
+
+msgid "Move cursor left a word and select"
+msgstr ""
+
+msgid "Move cursor left and select"
+msgstr ""
+
+msgid "Move cursor right a word"
+msgstr ""
+
+msgid "Move cursor right a word and select"
+msgstr ""
+
+msgid "Move cursor right and select"
+msgstr ""
+
+msgid "Move cursor right or accept the completion suggestion"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+msgid "Page Left"
+msgstr ""
+
+msgid "Page Right"
+msgstr ""
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page down"
+msgstr ""
+
+msgid "Page up"
+msgstr ""
+
+msgid "Paste text from the clipboard"
+msgstr ""
+
+msgid "Press button"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "Scroll Down"
+msgstr ""
+
+msgid "Scroll End"
+msgstr ""
+
+msgid "Scroll Home"
+msgstr ""
+
+msgid "Scroll Left"
+msgstr ""
+
+msgid "Scroll Right"
+msgstr ""
+
+msgid "Scroll Up"
+msgstr ""
+
+msgid "Select"
+msgstr ""
+
+msgid "Select all"
+msgstr ""
+
+msgid "Select line end"
+msgstr ""
+
+msgid "Select line start"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "Toggle option"
+msgstr ""
+
+msgid "Top"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+msgid "Reset"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Toggle"
+msgstr ""
+
+msgid "Confirm"
+msgstr ""
+
+msgid "Focus right"
+msgstr ""
+
+msgid "Focus left"
+msgstr ""
+
 msgid "Ok"
 msgstr ""
 
 msgid "Input cannot be empty"
+msgstr ""
+
+msgid "Show/Hide help"
 msgstr ""
 
 msgid "Yes"
