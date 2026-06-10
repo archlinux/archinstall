@@ -209,6 +209,9 @@ msgstr ""
 msgid "Install to removable location"
 msgstr ""
 
+msgid "Plymouth"
+msgstr ""
+
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
 msgstr ""
 
@@ -246,6 +249,9 @@ msgid "Select bootloader to install"
 msgstr ""
 
 msgid "UEFI is not detected and some options are disabled"
+msgstr ""
+
+msgid "Select Plymouth theme"
 msgstr ""
 
 msgid "The specified configuration will be applied"
@@ -880,6 +886,10 @@ msgid "UKI enabled"
 msgstr ""
 
 msgid "Removable"
+msgstr ""
+
+#, python-brace-format
+msgid "Plymouth \"{}\""
 msgstr ""
 
 msgid "Use a best-effort default partition layout"

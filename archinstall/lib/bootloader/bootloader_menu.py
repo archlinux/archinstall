@@ -235,7 +235,7 @@ async def select_bootloader(
 async def select_plymouth_theme(preset: PlymouthTheme | None = None) -> PlymouthTheme | None:
 	items = [MenuItem(t.value, value=t) for t in PlymouthTheme]
 	group = MenuItemGroup(items, sort_items=False)
-	group.set_selected_by_value(preset.value if preset else None)
+	group.set_focus_by_value(preset)
 
 	result = await Selection[PlymouthTheme](
 		group,
