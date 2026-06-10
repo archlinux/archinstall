@@ -3,7 +3,7 @@ from typing import override
 
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Confirmation, Selection
-from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration, PlymouthTheme
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -66,6 +66,13 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				key='removable',
 				enabled=removable_enabled,
 			),
+			MenuItem(
+				text=tr('Plymouth'),
+				action=self._select_plymouth,
+				value=self._bootloader_conf.plymouth,
+				preview_action=self._prev_plymouth,
+				key='plymouth',
+			),
 		]
 
 	def _prev_bootloader(self, item: MenuItem) -> str | None:
@@ -84,6 +91,11 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		if item.value:
 			return tr('Will install to /EFI/BOOT/ (removable location, safe default)')
 		return tr('Will install to custom location with NVRAM entry')
+
+	def _prev_plymouth(self, item: MenuItem) -> str | None:
+		if item.value:
+			return f'{tr("Plymouth")}: {item.value.value}'
+		return None
 
 	@override
 	async def show(self) -> BootloaderConfiguration:
@@ -116,6 +128,9 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				removable_item.enabled = True
 
 		return bootloader
+
+	async def _select_plymouth(self, preset: PlymouthTheme | None) -> PlymouthTheme | None:
+		return await select_plymouth_theme(preset)
 
 	async def _select_uki(self, preset: bool) -> bool:
 		prompt = tr('Would you like to use unified kernel images?') + '\n'
@@ -215,3 +230,24 @@ async def select_bootloader(
 			return result.get_value()
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
+
+
+async def select_plymouth_theme(preset: PlymouthTheme | None = None) -> PlymouthTheme | None:
+	items = [MenuItem(t.value, value=t) for t in PlymouthTheme]
+	group = MenuItemGroup(items, sort_items=False)
+	group.set_selected_by_value(preset.value if preset else None)
+
+	result = await Selection[PlymouthTheme](
+		group,
+		header=tr('Select Plymouth theme'),
+		allow_reset=True,
+		allow_skip=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return None
+		case ResultType.Selection:
+			return PlymouthTheme(result.get_value())

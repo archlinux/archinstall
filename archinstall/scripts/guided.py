@@ -119,6 +119,7 @@ def perform_installation(
 				config.bootloader_config.bootloader,
 				config.bootloader_config.uki,
 				config.bootloader_config.removable,
+				config.bootloader_config.plymouth,
 			)
 
 		if config.network_config:
