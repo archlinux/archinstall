@@ -1469,6 +1469,10 @@ class _DiskEncryptionSerialization(TypedDict):
 	hsm_device: NotRequired[_Fido2DeviceSerialization]
 	iter_time: NotRequired[int]
 
+class EncryptionCipher(Enum):
+	AES_XTS_PLAIN64 = "aes-xts-plain64"
+	AES_ADIANTUM_PLAIN64 = "aes-adiantum-plain64"
+	CHACHA20_RANDOM_PLAIN64 = "chacha20-random-plain64"
 
 @dataclass
 class DiskEncryption:
@@ -1478,7 +1482,7 @@ class DiskEncryption:
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
 	hsm_device: Fido2Device | None = None
 	iter_time: int = DEFAULT_ITER_TIME
-    cipher: str | None = None
+	cipher: EncryptionCipher | None = None
 
 	def __post_init__(self) -> None:
 		if self.encryption_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS] and not self.partitions:
@@ -1506,8 +1510,8 @@ class DiskEncryption:
 		if self.iter_time != DEFAULT_ITER_TIME:  # Only include if not default
 			obj['iter_time'] = self.iter_time
 
-        if self.cipher:
-            obj['cipher'] = self.cipher
+		if self.cipher:
+			obj['cipher'] = self.cipher
 
 		return obj
 

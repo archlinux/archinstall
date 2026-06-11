@@ -20,7 +20,7 @@ class Luks2:
 	password: Password | None = None
 	key_file: Path | None = None
 	auto_unmount: bool = False
-    cipher: str | None = None
+	cipher: str | None = None
 
 	@property
 	def mapper_dev(self) -> Path | None:
@@ -95,11 +95,11 @@ class Luks2:
 			str(iter_time),
 			*key_file_arg,
 			'--use-urandom',
-        ]
-        if self.cipher:
-            cmd += ['--cipher', self.cipher]
+		]
+		if self.cipher:
+			cmd += ['--cipher', self.cipher]
 
-        cmd += [
+		cmd += [
 			'luksFormat',
 			str(self.luks_dev_path),
 		]
