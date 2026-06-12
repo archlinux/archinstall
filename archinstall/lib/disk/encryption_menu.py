@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import override
+from typing import Any, override
 
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
@@ -8,9 +8,9 @@ from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
-	EncryptionCipher,
 	DeviceModification,
 	DiskEncryption,
+	EncryptionCipher,
 	EncryptionType,
 	Fido2Device,
 	LvmConfiguration,
@@ -51,7 +51,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 	async def _select_cipher(self, current_value: Any) -> Any:
 		items = [MenuItem(cipher.value, value=cipher) for cipher in EncryptionCipher]
 		group = MenuItemGroup(items)
-		
+
 		result = await Selection[EncryptionCipher](
 			group,
 			header=tr('Select encryption cipher'),
@@ -69,23 +69,15 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 	def _prev_cipher(self, item: MenuItem) -> str | None:
 		val = item.value if item.value else getattr(self._enc_config, 'cipher', None)
-		
+
 		if not val:
 			val_str = 'aes-xts-plain64'
 		elif hasattr(val, 'value'):
 			val_str = val.value
 		else:
 			val_str = str(val)
-			
-		return f'{tr("Encryption cipher")}: {val_str}'
 
-		match result.type_:
-			case ResultType.Selection:
-				selected_value = result.get_value()
-				self._enc_config.cipher = selected_value
-				return selected_value
-			case _:
-				return current_value
+		return f'{tr("Encryption cipher")}: {val_str}'
 
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
