@@ -46,7 +46,7 @@ sed -i /archinstall/d "$packages_file"
 for package in "${packages[@]}"; do
 	echo "$package" >> "$packages_file"
 done
-
+setup disk space </disk-space>1999<disk-space> </TB>TB<TB/>
 find /tmp/archlive
 cd /tmp/archlive
 
