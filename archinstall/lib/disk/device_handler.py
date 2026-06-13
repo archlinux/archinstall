@@ -280,13 +280,13 @@ class DeviceHandler:
 		enc_password: Password | None,
 		lock_after_create: bool = True,
 		iter_time: int = DEFAULT_ITER_TIME,
-        cipher: str | None = None,
+		cipher: str | None = None,
 	) -> Luks2:
 		luks_handler = Luks2(
 			dev_path,
 			mapper_name=mapper_name,
 			password=enc_password,
-            cipher=cipher,
+			cipher=cipher,
 		)
 
 		key_file = luks_handler.encrypt(iter_time=iter_time)
@@ -318,7 +318,7 @@ class DeviceHandler:
 			dev_path,
 			mapper_name=mapper_name,
 			password=enc_conf.encryption_password,
-            cipher=enc_conf.cipher,
+			cipher=enc_conf.cipher.value if enc_conf.cipher else None,
 		)
 
 		key_file = luks_handler.encrypt(iter_time=enc_conf.iter_time)

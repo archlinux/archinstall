@@ -192,7 +192,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				lvm_volumes=enc_lvm_vols,
 				hsm_device=enc_config.hsm_device,
 				iter_time=iter_time or DEFAULT_ITER_TIME,
-				cipher=cipher_value,
+				cipher=EncryptionCipher(cipher_value) if cipher_value else None,
 			)
 
 		return None

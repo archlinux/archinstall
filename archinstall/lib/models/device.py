@@ -1468,11 +1468,14 @@ class _DiskEncryptionSerialization(TypedDict):
 	lvm_volumes: list[str]
 	hsm_device: NotRequired[_Fido2DeviceSerialization]
 	iter_time: NotRequired[int]
+	cipher: NotRequired[str]
+
 
 class EncryptionCipher(Enum):
-	AES_XTS_PLAIN64 = "aes-xts-plain64"
-	AES_ADIANTUM_PLAIN64 = "aes-adiantum-plain64"
-	CHACHA20_RANDOM_PLAIN64 = "chacha20-random-plain64"
+	AES_XTS_PLAIN64 = 'aes-xts-plain64'
+	AES_ADIANTUM_PLAIN64 = 'aes-adiantum-plain64'
+	CHACHA20_RANDOM_PLAIN64 = 'chacha20-random-plain64'
+
 
 @dataclass
 class DiskEncryption:
@@ -1511,7 +1514,7 @@ class DiskEncryption:
 			obj['iter_time'] = self.iter_time
 
 		if self.cipher:
-			obj['cipher'] = self.cipher
+			obj['cipher'] = self.cipher.value
 
 		return obj
 
