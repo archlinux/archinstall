@@ -21,11 +21,30 @@ class Language:
 	translation_percent: int
 	translated_lang: str | None
 	console_font: str | None = None
+	sys_lang: str | None = None
+	default_timezone: str | None = None
 
 	@property
 	def display_name(self) -> str:
 		name = self.name_en
 		return f'{name} ({self.translation_percent}%)'
+
+	@property
+	def target_sys_enc(self) -> str | None:
+		"""Encoding portion of sys_lang (e.g. 'UTF-8' from 'uk_UA.UTF-8'). None when sys_lang has no '.'."""
+		if self.sys_lang and '.' in self.sys_lang:
+			return self.sys_lang.split('.', 1)[1]
+		return None
+
+	@property
+	def target_console_font(self) -> str:
+		"""Console font implied by this language; falls back to the system default."""
+		return self.console_font or DEFAULT_CONSOLE_FONT
+
+	@property
+	def target_timezone(self) -> str:
+		"""Timezone implied by this language; falls back to UTC."""
+		return self.default_timezone or DEFAULT_TIMEZONE
 
 	def is_match(self, lang_or_translated_lang: str) -> bool:
 		if self.name_en == lang_or_translated_lang:
@@ -38,7 +57,8 @@ class Language:
 		return self.name_en
 
 
-_DEFAULT_FONT = 'default8x16'
+DEFAULT_CONSOLE_FONT = 'default8x16'
+DEFAULT_TIMEZONE = 'UTC'
 _ENV_FONT = os.environ.get('FONT')
 
 
@@ -69,7 +89,7 @@ class TranslationHandler:
 		if not running_from_iso():
 			return False
 
-		target = font_name or _DEFAULT_FONT
+		target = font_name or DEFAULT_CONSOLE_FONT
 		try:
 			SysCommand(['setfont', target])
 			return True
@@ -132,6 +152,8 @@ class TranslationHandler:
 			lang = mapping_entry['lang']
 			translated_lang = mapping_entry.get('translated_lang', None)
 			console_font = mapping_entry.get('console_font', None)
+			sys_lang = mapping_entry.get('sys_lang', None)
+			default_timezone = mapping_entry.get('default_timezone', None)
 
 			try:
 				# get a translation for a specific language
@@ -146,7 +168,7 @@ class TranslationHandler:
 					# prevent cases where the .pot file is out of date and the percentage is above 100
 					percent = min(100, percent)
 
-				language = Language(abbr, lang, translation, percent, translated_lang, console_font)
+				language = Language(abbr, lang, translation, percent, translated_lang, console_font, sys_lang, default_timezone)
 				languages.append(language)
 			except FileNotFoundError as err:
 				raise FileNotFoundError(f"Could not locate language file for '{lang}': {err}")
