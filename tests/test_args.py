@@ -83,8 +83,6 @@ def test_correct_parsing_args(
 			'--no-pkg-lookups',
 			'--plugin',
 			'pytest_plugin.py',
-			'--plugin-url',
-			'https://example.com/plugin.py',
 			'--skip-version-check',
 			'--advanced',
 			'--dry-run',
@@ -110,7 +108,7 @@ def test_correct_parsing_args(
 		offline=True,
 		no_pkg_lookups=True,
 		plugin=Path('pytest_plugin.py'),
-		plugin_url='https://example.com/plugin.py',
+		plugin_url=None,
 		skip_version_check=True,
 		advanced=True,
 	)
