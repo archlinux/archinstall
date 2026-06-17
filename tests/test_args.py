@@ -50,6 +50,7 @@ def test_default_args(monkeypatch: MonkeyPatch) -> None:
 		offline=False,
 		no_pkg_lookups=False,
 		plugin=None,
+		plugin_url=None,
 		skip_version_check=False,
 		advanced=False,
 	)
@@ -82,6 +83,8 @@ def test_correct_parsing_args(
 			'--no-pkg-lookups',
 			'--plugin',
 			'pytest_plugin.py',
+			'--plugin-url',
+			'https://example.com/plugin.py',
 			'--skip-version-check',
 			'--advanced',
 			'--dry-run',
@@ -106,7 +109,8 @@ def test_correct_parsing_args(
 		debug=True,
 		offline=True,
 		no_pkg_lookups=True,
-		plugin='pytest_plugin.py',
+		plugin=Path('pytest_plugin.py'),
+		plugin_url='https://example.com/plugin.py',
 		skip_version_check=True,
 		advanced=True,
 	)
