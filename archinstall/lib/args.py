@@ -666,6 +666,10 @@ class ArchConfigHandler:
 		sys.exit(1)
 
 	def _write_plugin_to_temp_file(self, plugin_data: str) -> Path:
+		if not plugin_data.strip():
+			error('The downloaded plugin is empty')
+			sys.exit(1)
+
 		tmp_file = tempfile.NamedTemporaryFile(
 			mode='w',
 			suffix='.py',
@@ -673,8 +677,12 @@ class ArchConfigHandler:
 			delete=False,
 		)
 
-		with tmp_file as f:
-			f.write(plugin_data)
+		try:
+			with tmp_file as f:
+				f.write(plugin_data)
+		except OSError as err:
+			error(f'Could not write the downloaded plugin to a temporary file: {err}')
+			sys.exit(1)
 
 		return Path(tmp_file.name)
 
