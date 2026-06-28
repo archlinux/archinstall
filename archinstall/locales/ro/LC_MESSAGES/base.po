@@ -11,864 +11,426 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.3.1\n"
 
-msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] Un fișier jurnal a fost creat aici: {}"
-
-msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Vă rog să raportați problema (și fișierul) la https://github.com/archlinux/archinstall/issues"
-
-msgid "Do you really want to abort?"
-msgstr "Sunteți sigur(ă) că doriți să închideți?"
-
-msgid "And one more time for verification: "
-msgstr "Încă odată pentru verificare: "
-
-msgid "Would you like to use swap on zram?"
-msgstr "Doriți să folosiți swap pe zram?"
-
-msgid "Desired hostname for the installation: "
-msgstr "Hostname-ul dorit pentru instalare: "
-
-msgid "Username for required superuser with sudo privileges: "
-msgstr "Nume utilizator necesar pentru utilizatorul cu drepturi privilegiate: "
-
-msgid "Any additional users to install (leave blank for no users): "
-msgstr "Alți utilizatori pentru adăugare (lăsați gol pentru niciunul): "
-
-msgid "Should this user be a superuser (sudoer)?"
-msgstr "Acest utilizator ar trebui să aibă drepturi privilegiate (sudoer)?"
-
-msgid "Select a timezone"
-msgstr "Selectați un fus orar"
-
-msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Doriți să folosiți GRUB ca bootloader în locul systemd-boot?"
-
-msgid "Choose a bootloader"
-msgstr "Selectați un bootloader"
-
-msgid "Choose an audio server"
-msgstr "Selectați un server audio"
-
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
-
-msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgid "Recommended"
 msgstr ""
 
-msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Dacă doriți un browser, precum firefox sau chromium, puteți să-l specificați în promptul următor."
+msgid "Package"
+msgstr ""
 
-msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Scrieți pachete adiționale pe care doriți să le instalați(separare prin spațiu, lăsați liber pentru a ignora): "
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
 
-msgid "Copy ISO network configuration to installation"
-msgstr "Copiați configurarea ISO prin rețea la instalare"
+msgid "Dependencies"
+msgstr ""
 
-msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "Folosiți NetworkManager (necesar pentru configurarea setărilor de rețea într-un mod grafic pentru GNOME și KDE)"
+msgid "Package group"
+msgstr ""
 
-msgid "Select one network interface to configure"
-msgstr "Selectați o interfață de rețea pentru configurare"
+msgid "Extensive KDE Plasma installation"
+msgstr ""
 
-msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Selectați modul de configurare pentru \"{}\" sau folosiți modul predefinit \"{}\""
+msgid "Packages in group"
+msgstr ""
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Criptarea discului"
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr ""
 
 #, python-brace-format
-msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Introduceți IP-ul și subrețeaua pentru {} (example: 192.168.0.5/24): "
-
-msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Introduceți IP-ul gateway-ului (router) sau lăsați liber pentru niciunul: "
-
-msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Introduceți serverele dumneavoastră DNS (separare prin spațiu, lăsați liber pentru a ignora): "
-
-msgid "Select which filesystem your main partition should use"
-msgstr "Selectați sistemul de fișiere dorit pentru partiția dumneavoastră primară"
-
-msgid "Current partition layout"
-msgstr "Schema de partiționare curentă"
-
-msgid ""
-"Select what to do with\n"
-"{}"
+msgid "{} needs access to your seat"
 msgstr ""
-"Selectați ce doriți să se întâmple cu\n"
-"{}"
 
-msgid "Enter a desired filesystem type for the partition"
-msgstr "Introduceți un sistem de fișiere dorit pentru partiția"
+#, fuzzy
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
 
-msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Introduceți sectorul de început (procentaj sau numărul block-ului, predefinit: {}): "
-
-msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Introduceți locația finală (în unități de partiționare: s, GB, %, etc. ; ex: {}): "
-
-msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "{} conține partiții în așteptare, acest proces le va șterge, doriți acest lucru?"
-
-msgid ""
-"{}\n"
-"\n"
-"Select by index which partitions to delete"
-msgstr ""
-"{}\n"
-"\n"
-"Selectați pe baza indexului partițiile pentru ștergere"
-
-msgid ""
-"{}\n"
-"\n"
-"Select by index which partition to mount where"
-msgstr ""
-"{}\n"
-"\n"
-"Selectați pe baza indexului partițiile pentru a fi montate și locația"
-
-msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Punctele de montare ale partițiilor sunt relevante pentru instalate, de exemplu partiția boot va fi /boot."
-
-msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Selectați locul de montare a partiției (lăsați gol pentru a șterge punctul de montare): "
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mask for formatting"
-msgstr ""
-"{}\n"
-"\n"
-"Selectați partiția care urmează să fie marcată pentru formatare"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mark as encrypted"
-msgstr ""
-"{}\n"
-"\n"
-"Selectați partiția care urmează să fie marcată ca fiind cripitată"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mark as bootable"
-msgstr ""
-"{}\n"
-"\n"
-"Selectați partiția care urmează să fie marcată ca fiind bootabilă"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to set a filesystem on"
-msgstr ""
-"{}\n"
-"\n"
-"Selectați partiția pentru care urmează să fie setat un sistem de fișiere"
-
-msgid "Enter a desired filesystem type for the partition: "
-msgstr "Introduceți un sistem de fișiere dorit pentru partiție: "
-
-msgid "Archinstall language"
-msgstr "Limba pentru Archinstall"
-
-msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Șterge toate discurile selectate și folosește cea mai bună schemă de partiționare"
-
-msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Selectați ce doriți să se întâmple cu fiecare disc în parte (urmat de capacitatea utilizată dorită)"
-
-msgid "Select what you wish to do with the selected block devices"
-msgstr "Selectați ce doriți să faceți cu dispozitivele de tip bloc selectate"
-
-msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "Aceasta este o listă de profiluri preprogramate, ar putea să ușureze instalarea unor lucruri precum spațiile de lucru"
-
-msgid "Select keyboard layout"
-msgstr "Selectați aranjamentul tastaturii"
-
-msgid "Select one of the regions to download packages from"
-msgstr "Selectați regiunea pentru care se vor descărca pachetele"
-
-msgid "Select one or more hard drives to use and configure"
-msgstr "Selectați unul sau mai multe discuri dure pentru a fi utilizate și configurate"
-
-msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Pentru cea mai bună compatibilitate cu hardware-ul dumneavoastră AMD ați putea folosi fie opțiunea All Open-Source sau AMD / ATI."
-
-msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Pentru cea mai bună compatibilitate cu hardware-ul dumneavoastră Intel ați putea folosi fie opțiunea All Open-Source sau Intel.\n"
-
-msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Pentru cea mai bună compatibilitate cu hardware-ul dumneavoastră Nvidia ați putea folosi opțiunea Nvidia proprietary driver.\n"
-
-msgid ""
-"\n"
-"\n"
-"Select a graphics driver or leave blank to install all open-source drivers"
+#, fuzzy, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
 msgstr ""
 "\n"
 "\n"
-"Selectați un driver grafic sau lăsați liber pentru a instala toate driverele open-source"
+"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
 
-msgid "All open-source (default)"
-msgstr "Toate open-source (predefinit)"
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Tip mediu: {}"
 
-msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Alegeți nucelii care urmează să fie folosiți sau lăsați liber pentru valorarea predefinită \"{}\""
+#, python-brace-format
+msgid "Environment type: {}"
+msgstr "Tip mediu: {}"
 
-msgid "Choose which locale language to use"
-msgstr "Alegeți limba locală pentru utilizare"
+msgid "Installed packages"
+msgstr "Pachete instalate"
 
-msgid "Choose which locale encoding to use"
-msgstr "Alegeți codificarea locală pentru utilizare"
-
-msgid "Select one of the values shown below: "
-msgstr "Selecați o valoare din cele afișate mai jos: "
-
-msgid "Select one or more of the options below: "
-msgstr "Selecați una sau mai multe opțiuni din cele afișate mai jos: "
-
-msgid "Adding partition...."
-msgstr "Adaug partiția...."
-
-msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Trebuie să introduceți un tip de fișiere de sistem valid pentru a continua. Vedeți 'man parted' pentru tipurile de fișiere de sistem disponibile."
-
-msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Eroare: Listare profiluri pe URL \"{}\" rezultate în:"
-
-msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr "Eroare: Nu s-a putut decoda rezultatul \"{}\" ca un JSON:"
-
-msgid "Keyboard layout"
-msgstr "Aranjament tastatură"
-
-msgid "Mirror region"
-msgstr "Regiune de oglindire"
-
-msgid "Locale language"
-msgstr "Limba locală"
-
-msgid "Locale encoding"
-msgstr "Codarea locală"
-
-msgid "Drive(s)"
-msgstr "Disc(uri)"
-
-msgid "Disk layout"
-msgstr "Schema discului"
-
-msgid "Encryption password"
-msgstr "Parola de criptare"
-
-msgid "Swap"
-msgstr "Swap"
-
-msgid "Bootloader"
-msgstr "Bootloader"
-
-msgid "Root password"
-msgstr "Parola pentru root"
-
-msgid "Superuser account"
-msgstr "Cont utilizator privilegiat (root)"
-
-msgid "User account"
-msgstr "Cont utilizator"
-
-msgid "Profile"
-msgstr "Profil"
+msgid "Bluetooth"
+msgstr ""
 
 msgid "Audio"
 msgstr "Audio"
 
-msgid "Kernels"
-msgstr "Nuclei"
-
-msgid "Additional packages"
-msgstr "Pachete Adiționale"
-
-msgid "Network configuration"
-msgstr "Configurarea rețelei"
-
-msgid "Automatic time sync (NTP)"
-msgstr "Timpul de sincronizare automate (NTP)"
-
-msgid "Install ({} config(s) missing)"
-msgstr "Instalalare ({} lipsă configurație(ii))"
-
-msgid ""
-"You decided to skip harddrive selection\n"
-"and will use whatever drive-setup is mounted at {} (experimental)\n"
-"WARNING: Archinstall won't check the suitability of this setup\n"
-"Do you wish to continue?"
+msgid "Print service"
 msgstr ""
-"Ați decis să treceți peste selectarea discurilor dure\n"
-"și se va folosi orice configurație de disc montată la {} (experimental)\n"
-"ATENȚIE: Archinstall nu va verifica compatibilitatea configurării\n"
-"Doriți să continuați?"
 
-msgid "Re-using partition instance: {}"
-msgstr "Reutilizez instanța partiției: {}"
+#, fuzzy
+msgid "Power management"
+msgstr "Managementul partiției: {}"
 
-msgid "Create a new partition"
-msgstr "Crează o partiție nouă"
+msgid "Firewall"
+msgstr ""
 
-msgid "Delete a partition"
-msgstr "Șterge o partiție"
+#, fuzzy
+msgid "Additional fonts"
+msgstr "Colecții de pachete opționale"
 
-msgid "Clear/Delete all partitions"
-msgstr "Curăță/Șterge toate partițile"
+msgid "Enabled"
+msgstr ""
 
-msgid "Assign mount-point for a partition"
-msgstr "Asignează un punct de montare pentru o partiție"
+msgid "Disabled"
+msgstr ""
 
-msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "Marchează/Demarchează o partiție pentru a fi formatată (șterge toate datele)"
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
 
-msgid "Mark/Unmark a partition as encrypted"
-msgstr "Marchează/Demarchează o partiție pentru a fi criptată"
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
 
-msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Marchează/Demarchează o partiție ca fiind bootabilă (automat pentru /boot)"
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Salvează configurația utilizatorului"
 
-msgid "Set desired filesystem for a partition"
-msgstr "Setează sistemul de fișiere dorit pentru o partiție"
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Selectează interfața pentru adăugare"
 
-msgid "Abort"
-msgstr "Anulează"
+#, fuzzy
+msgid "ArchInstall Language"
+msgstr "Limba pentru Archinstall"
+
+msgid "Version"
+msgstr ""
+
+msgid "Installation Script"
+msgstr ""
+
+msgid "Locales"
+msgstr "Locale"
+
+msgid "Disk configuration"
+msgstr "Configurație disc"
+
+msgid "Profile"
+msgstr "Profil"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Colecții de pachete opționale"
+
+msgid "Network"
+msgstr ""
+
+msgid "Bootloader"
+msgstr "Bootloader"
+
+msgid "Application"
+msgstr ""
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Swap"
+msgstr "Swap"
 
 msgid "Hostname"
 msgstr "Hostname"
 
-msgid "Not configured, unavailable unless setup manually"
-msgstr "Nu este configurat, indisponibil, doar configurat manual"
+msgid "Kernels"
+msgstr "Nuclei"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Timpul de sincronizare automate (NTP)"
 
 msgid "Timezone"
 msgstr "Fus orar"
 
-msgid "Set/Modify the below options"
-msgstr "Setează/Modifică opțiunile de mai jos"
+#, fuzzy
+msgid "Services"
+msgstr "Discpozitiv"
 
-msgid "Install"
-msgstr "Instalează"
+msgid "Additional packages"
+msgstr "Pachete Adiționale"
 
-msgid ""
-"Use ESC to skip\n"
-"\n"
+msgid "Pacman"
 msgstr ""
-"Folosiți ESC pentru a ignora\n"
-"\n"
 
-msgid "Suggest partition layout"
-msgstr "Sugerează o schemă de partiționare"
+#, fuzzy
+msgid "Custom commands"
+msgstr "Oglinzi customizate"
 
-msgid "Enter a password: "
-msgstr "Introduceți o parolă: "
-
-msgid "Enter a encryption password for {}"
-msgstr "Introduceți o parolă de criptare pentru {}"
-
-msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Introduceți parola de criptare a discului (lăsați liber pentru a evita criptarea): "
-
-msgid "Create a required super-user with sudo privileges: "
-msgstr "Crează un utilizator cu privilegii (root): "
-
-msgid "Enter root password (leave blank to disable root): "
-msgstr "Introuceți parola pentru root (lăsați liber pentru a dezactiva utilizatorul root): "
-
-msgid "Password for user \"{}\": "
-msgstr "Parola pentru utilizatorul \"{}\": "
-
-msgid "Verifying that additional packages exist (this might take a few seconds)"
-msgstr "Verific dacă pachetele adiționale există (acest proces ar putea dura câteva secunde)"
-
-msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Doriți să utilizați sincronizarea timpului automat (NTP) cu serverele de timp predefinite?\n"
-
-msgid ""
-"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
-"For more information, please check the Arch wiki"
-msgstr ""
-"Timpul pentru hardware alți pași după configurare ar putea fi necesari pentru ca NTP să funcționeze.\n"
-"Pentru mai multe informații verificații documentația Arch (Arch Wiki)"
-
-msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "Introduceți un nume utilizator pentru a crea un user adițional (lăsați liber pentru a ignora): "
-
-msgid "Use ESC to skip\n"
-msgstr "Foloți ESC pentru a ignora\n"
-
-msgid ""
-"\n"
-" Choose an object from the list, and select one of the available actions for it to execute"
-msgstr ""
-"\n"
-" Alegeți un obiect din listă și selectați o acțiune disponibilă pentru a fi executată"
-
-msgid "Cancel"
-msgstr "Opriți"
-
-msgid "Confirm and exit"
-msgstr "Confirmă și ieși"
-
-msgid "Add"
-msgstr "Adaugă"
-
-msgid "Copy"
-msgstr "Copiază"
-
-msgid "Edit"
-msgstr "Editează"
-
-msgid "Delete"
-msgstr "Șterge"
-
-msgid "Select an action for '{}'"
-msgstr "Selectează o acțiune pentru '{}'"
-
-msgid "Copy to new key:"
-msgstr "Copiază la noua cheie:"
-
-msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "Tip necunoscut: {}. Valorile acceptate sunt {}"
-
-msgid ""
-"\n"
-"This is your chosen configuration:"
-msgstr ""
-"\n"
-"Aceasta este configurația selectată de către dumneavoastră:"
-
-msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "Pacman rulează deja, aștept maxim 10 minute pentru a termina."
-
-msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Procesul pacman anterior nu s-a terminat corect. Vă rog, ștergeți orice sesiune de pacman existentă înainte de a continuea cu archinstall."
-
-msgid "Choose which optional additional repositories to enable"
-msgstr "Alegeți ce colecție opțională de pachete să fie activată"
-
-msgid "Add a user"
-msgstr "Adaugă un utilizator"
-
-msgid "Change password"
-msgstr "Schimbă parola"
-
-msgid "Promote/Demote user"
-msgstr "Promovează/Retrogradează un utilizator"
-
-msgid "Delete User"
-msgstr "Șterge utilizatorul"
-
-msgid ""
-"\n"
-"Define a new user\n"
-msgstr ""
-"\n"
-"Definește un utilizator nou\n"
-
-msgid "User Name : "
+#, fuzzy
+msgid "Users"
 msgstr "Nume utilizator : "
 
-msgid "Should {} be a superuser (sudoer)?"
-msgstr "Ar trebui ca {} să fie un utilizator cu privilegii (sudoer)?"
+#, fuzzy
+msgid "Root encrypted password"
+msgstr "Parola de criptare"
 
-msgid "Define users with sudo privilege: "
-msgstr "Definiți utilizatorii cu privilegii sudo: "
+#, fuzzy
+msgid "Disk encryption password"
+msgstr "Parola de criptare"
 
-msgid "No network configuration"
-msgstr "Nu există o configurare de rețea"
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Parola de criptare"
 
-msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Setați subvolumele dorite pe o partiție btrfs"
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Parola de criptare"
 
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to set subvolumes on"
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Parola pentru root"
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "Selectați utilizarea unui device FID02 pentru HSM"
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Selectați utilizarea unui device FID02 pentru HSM"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr ""
-"{}\n"
-"\n"
-"Selectați partiția pentru care se vor seta subvolumele"
 
-msgid "Manage btrfs subvolumes for current partition"
-msgstr "Administrează subvolumele btrfs pentru partiția curentă"
+msgid "Root password"
+msgstr "Parola pentru root"
+
+msgid "User account"
+msgstr "Cont utilizator"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Introduceți o parolă: "
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Introduceți o parolă: "
+
+msgid "Unified kernel images"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Plymouth"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgstr ""
+
+msgid "black screen with the NVIDIA driver"
+msgstr ""
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to enable it?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "Would you like to use unified kernel images?"
+msgstr "Doriți să folosiți swap pe zram?"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Select bootloader to install"
+msgstr ""
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr ""
+
+#, fuzzy
+msgid "Select Plymouth theme"
+msgstr "Seleactați un punct de montare :"
+
+msgid "The specified configuration will be applied"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to continue?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Configurație"
 
 msgid "No configuration"
 msgstr "Nu există configurație"
 
-msgid "Save user configuration"
-msgstr "Salvează configurația utilizatorului"
+msgid "Save user configuration (including disk layout)"
+msgstr "Salvează configurația utilizatorului (schema discului este inclusă)"
 
 msgid "Save user credentials"
 msgstr "Salvează credențialele utilizatorului"
 
-msgid "Save disk layout"
-msgstr "Salvează schema discului"
-
 msgid "Save all"
 msgstr "Salvați tot"
 
-msgid "Choose which configuration to save"
-msgstr "Alegeți configurația dorită pentru salvare"
-
-msgid "Enter a directory for the configuration(s) to be saved: "
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
 msgstr "Introduceți un director pentru salvarea configurațiilor: "
 
-msgid "Not a valid directory: {}"
-msgstr "Nu este un director valid: {}"
-
-msgid "The password you are using seems to be weak,"
-msgstr "Parola pe care doriți să o folosiți pare să fie slabă,"
-
-msgid "are you sure you want to use it?"
-msgstr "sigur doriți să o folosiți?"
-
-msgid "Optional repositories"
-msgstr "Colecții de pachete opționale"
-
-msgid "Save configuration"
-msgstr "Salvează configurația"
-
-msgid "Missing configurations:\n"
-msgstr "Configurații lipsă:\n"
-
-msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Este necesar ca parola pentru utilizatorul root sau măcar un utilizator cu privilegii să fie adăugat"
-
-msgid "Manage superuser accounts: "
-msgstr "Administrează conturile pentru utilizatorii cu privilegii: "
-
-msgid "Manage ordinary user accounts: "
-msgstr "Adminstrează conturile pentru utilizatorii obișnuiți: "
-
-msgid " Subvolume :{:16}"
-msgstr " Subvolum :{:16}"
-
-msgid " mounted at {:16}"
-msgstr " montat la {:16}"
-
-msgid " with option {}"
-msgstr " cu opțiunea {}"
-
-msgid ""
-"\n"
-" Fill the desired values for a new subvolume \n"
+#, fuzzy, python-brace-format
+msgid "Do you want to save the configuration file(s) to {}?"
 msgstr ""
+"Doriți să salvați fișierele de configurare {} în această locație?\n"
 "\n"
-" Completați valorile dorite pentru un subvolum nou \n"
+"{]"
 
-msgid "Subvolume name "
-msgstr "Nume subvolum "
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr ""
+"Doriți să salvați fișierele de configurare {} în această locație?\n"
+"\n"
+"{]"
 
-msgid "Subvolume mountpoint"
-msgstr "Punct de montare subvolum"
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Parola de criptare"
 
-msgid "Subvolume options"
-msgstr "Opțiuni subvolum"
+#, fuzzy
+msgid "Partitioning"
+msgstr "Partiție"
 
-msgid "Save"
-msgstr "Salvează"
+msgid "Disk encryption"
+msgstr "Criptarea discului"
 
-msgid "Subvolume name :"
-msgstr "Nume subvolum :"
+#, fuzzy, python-brace-format
+msgid "Configuration type: {}"
+msgstr "Configurație"
 
-msgid "Select a mount point :"
-msgstr "Seleactați un punct de montare :"
+#, fuzzy
+msgid "Mountpoint"
+msgstr "Punct de montare: "
 
-msgid "Select the desired subvolume options "
-msgstr "Selectați opțiunile dorite pentru subvolum "
+msgid "Configuration"
+msgstr "Configurație"
 
-msgid "Define users with sudo privilege, by username: "
-msgstr "Definiți utilizatorii cu privilegii sudo, după nume utilizator: "
+msgid "Wipe"
+msgstr ""
 
-#, python-brace-format
-msgid "[!] A log file has been created here: {}"
-msgstr "[!] Un fișier de jurnal a fost creat aici: {}"
+msgid "Physical volumes"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tip mediu: {}"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
+
+msgid "Encryption type"
+msgstr "Tipul de criptare"
+
+msgid "Password"
+msgstr "Parola"
+
+msgid "Iteration time"
+msgstr ""
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr ""
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Hostname-ul dorit pentru instalare: "
+
+msgid "Partitions"
+msgstr "Partiții"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Configurație disc"
+
+msgid "Enter root mount directory"
+msgstr ""
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Schimbă sistemul de fișiere"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
 msgstr "Doriți să folosiți subvolume BTRFS cu o structură predefinită?"
-
-msgid "Would you like to use BTRFS compression?"
-msgstr "Doriți să folosiți compresie pentru BTRFS?"
 
 msgid "Would you like to create a separate partition for /home?"
 msgstr "Doriți să creați o partiție separată pentru /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
 msgstr "Dispozitivele de stocare selectare nu au o capacitate minimă necesară pentru o sugestie automată\n"
-
-msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr "Capacitatea minimă pentru partiția /home: {}GB\n"
-
-msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr "Capacitatea minimă pentru partiția Arch Linux: {}GB"
-
-msgid "Continue"
-msgstr "Continuă"
-
-msgid "yes"
-msgstr "da"
-
-msgid "no"
-msgstr "nu"
-
-msgid "set: {}"
-msgstr "setează: {}"
-
-msgid "Manual configuration setting must be a list"
-msgstr "Configurație manuală trebuie să fie o listă"
-
-msgid "No iface specified for manual configuration"
-msgstr "Nu a fost menționat iface pentru configurarea manuală"
-
-msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr "Configurarea manuală nic fără un DHCP necesită o adresă IP"
-
-msgid "Add interface"
-msgstr "Adaugă interfață"
-
-msgid "Edit interface"
-msgstr "Editează interfața"
-
-msgid "Delete interface"
-msgstr "Șterge interfața"
-
-msgid "Select interface to add"
-msgstr "Selectează interfața pentru adăugare"
-
-msgid "Manual configuration"
-msgstr "Configurare manuală"
-
-msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Marchează/Demarchează o partiție ca fiind comprimată (doar btrfs)"
-
-msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Parola utilizată pare să fie slabă, sigur doriți să o folosiți pe aceasta?"
-
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Oferă o selecție de medii de lucru și manageri de ferestre precum GNOME, KDE, Sway"
-
-msgid "Select your desired desktop environment"
-msgstr "Selectați mediul de lucru dorit"
-
-msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr "O instalare de bază care vă permite să instalați Arch Linux așa cum vă doriți."
-
-msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Oferă o selecție de diferite pachete de sistem pentru instalare și activare precum httpd, nginx, mariadb"
-
-msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Alegeți serverele dorite pentru instalare, dacă nu este selectat niciunul se va realiza o instalare minimală"
-
-msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr "Instalează un sistem minimal împreună cu xorg și driverele grafice."
-
-msgid "Press Enter to continue."
-msgstr "Apăsați Enter pentru a continua."
-
-msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Doriți să folosiți modul chroot pentru a intra în noua instalare și pentru a efectua configurații de post-instalare?"
-
-msgid "Are you sure you want to reset this setting?"
-msgstr "Sigur doriți să resetați această setare?"
-
-msgid "Select one or more hard drives to use and configure\n"
-msgstr "Selectați unul sau mai multe discuri dure pentru a utiliza și configura\n"
-
-msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Orice modificare aplicată la setările existene vor resta schema de partiționare a discului!"
-
-msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Dacă resetați selecția de discuri de stocare acest lucru va rezulta în resetarea schemei de partiționare existente a discului. Sigur doriți acest lucru?"
-
-msgid "Save and exit"
-msgstr "Salvează și ieși"
-
-msgid ""
-"{}\n"
-"contains queued partitions, this will remove those, are you sure?"
-msgstr ""
-"{}\n"
-"conține partiții în așteptare, acest lucru le va șterge, sigur doriți acest lucru?"
-
-msgid "No audio server"
-msgstr "Nu există un server audio"
-
-msgid "(default)"
-msgstr "(predefinit)"
-
-msgid "Use ESC to skip"
-msgstr "Folosiți ESC pentru a ignora"
-
-msgid ""
-"Use CTRL+C to reset current selection\n"
-"\n"
-msgstr ""
-"Folosi'i CTRL+C pentru a reseta selecția curentă\n"
-"\n"
-
-msgid "Copy to: "
-msgstr "Copiază la: "
-
-msgid "Edit: "
-msgstr "Editează: "
-
-msgid "Key: "
-msgstr "Cheie: "
-
-msgid "Edit {}: "
-msgstr "Editează {}: "
-
-msgid "Add: "
-msgstr "Adaugă: "
-
-msgid "Value: "
-msgstr "Valoare: "
-
-msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Puteți trece peste selectarea unui dispozitiv de stocare și folosiți orice configurație de partiționare este montată la /mnt (experimental)"
-
-msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Selectați unul din discuri sau ignorați și folosiți /mnt ca predefinit"
-
-msgid "Select which partitions to mark for formatting:"
-msgstr "Selectați partițiile pentru a fi marcate pentru formatare:"
-
-msgid "Use HSM to unlock encrypted drive"
-msgstr "Folosiți HSM pentru deblocarea dispozitivului criptat"
-
-msgid "Device"
-msgstr "Discpozitiv"
-
-msgid "Size"
-msgstr "Mărime"
-
-msgid "Free space"
-msgstr "Spațiu liber"
-
-msgid "Bus-type"
-msgstr "Tip magistrală"
-
-msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "O parolă pentru utilizatorul root sau măcar un utilizator cu privilegii sudo trebuie adăugat"
-
-msgid "Enter username (leave blank to skip): "
-msgstr "Introduceți numele de utilizator (lăsați gol pentru a ignora): "
-
-msgid "The username you entered is invalid. Try again"
-msgstr "Numele de utilizator adăugat este invalid. Încercați din nou"
-
-msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "Ar trebui ca \"{}\" să fie un utilizator cu privilegii (sudo)?"
-
-msgid "Select which partitions to encrypt"
-msgstr "Selectați partițiile pentru criptare"
-
-msgid "very weak"
-msgstr "foarte slabă"
-
-msgid "weak"
-msgstr "slabă"
-
-msgid "moderate"
-msgstr "moderată"
-
-msgid "strong"
-msgstr "puetrnică"
-
-msgid "Add subvolume"
-msgstr "Adaugă subvolum"
-
-msgid "Edit subvolume"
-msgstr "Editează subvolum"
-
-msgid "Delete subvolume"
-msgstr "Șterge subvolum"
-
-msgid "Configured {} interfaces"
-msgstr "Configurează interfața {}"
-
-msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Această opținea setează numărul de descărcări paralele care pot avea loc în timpul instalării"
-
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {})\n"
-"Note:"
-msgstr ""
-"Introduceți numărul de descărcări simultane pentru a fi activat.\n"
-" (Introduceți o valuare între 1 și {max_downloads})\n"
-"Info:"
-
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr " - Valoare minimă   : 1 ( Permite o descărcare simultană, permite 2 descărcări simultane )"
-
-msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Valoare minimă  : 1 ( Permite o descărcare simultană, permite 2 descărcări simultane )"
-
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr " - Dezactivează/Predefinit: 0 (Dezactivează descărcările simultane, permite o singură descărcare simultană )"
-
-#, python-brace-format
-msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Input invalid! Încercați din nou cu un input valid [1 pentru {max_downloads}, sau 0 pentru dezactivare]"
-
-msgid "Parallel Downloads"
-msgstr "Descărcări Simultane"
-
-msgid "ESC to skip"
-msgstr "ESC pentru ignorare"
-
-msgid "CTRL+C to reset"
-msgstr "CTRL+C pentru resetare"
-
-msgid "TAB to select"
-msgstr "TAB pentru a selecta"
-
-msgid "[Default value: 0] > "
-msgstr "[Valoare predefinită: 0] > "
-
-msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr "Pentru a putea folosi această traducere, vă rog să instalați  manual un font compatibil cu această limbă."
-
-msgid "The font should be stored as {}"
-msgstr "Fontul ar trebui salvat ca {}"
-
-msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr "Archinstall necesită privilegii avansate pentru execuție. Vedeți --help pentru mai multe."
-
-msgid "Select an execution mode"
-msgstr "Selectați un mod de execuție"
-
-#, python-brace-format
-msgid "Unable to fetch profile from specified url: {}"
-msgstr "Nu se poate prelua profilul de la URL-ul specificat: {}"
-
-#, python-brace-format
-msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr "Profilurile trebuie să aibă nume unicate, dar definiții de profil cu nume duplicate au fost găsite: {}"
-
-msgid "Select one or more devices to use and configure"
-msgstr "Selectați unul sau mai multe discuri dure pentru a fi utilizate și configurate"
-
-msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr "Dacă resetați selecția de discuri de stocare acest lucru va rezulta în resetarea schemei de partiționare existente a discului. Sigur doriți acest lucru?"
-
-msgid "Existing Partitions"
-msgstr "Partiții Existente"
-
-msgid "Select a partitioning option"
-msgstr "Selectați o opțiune de partiționare"
-
-msgid "Enter the root directory of the mounted devices: "
-msgstr "Introduceți directorul rădăcină a dispozitivelor montate: "
 
 #, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
@@ -878,11 +440,59 @@ msgstr "Capacitatea minimă pentru partiția /home: {}GB\n"
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Capacitatea minimă pentru partiția Arch Linux: {}GB"
 
-msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "Aceasta este o listă de profiluri pre-programate \"profiluris_bck\", ar putea să ușureze instalarea unor lucruri precum spațiile de lucru"
+msgid "Encryption password"
+msgstr "Parola de criptare"
 
-msgid "Current profile selection"
-msgstr "Selecția curentă a profilului"
+#, fuzzy
+msgid "LVM volumes"
+msgstr "Setează subvolumele"
+
+msgid "HSM"
+msgstr ""
+
+msgid "Partitions to be encrypted"
+msgstr "Selectați partițiile pentru criptare"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "Selectați partițiile pentru criptare"
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Discpozitiv"
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Tipul de criptare"
+
+#, fuzzy
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Introduceți parola de criptare a discului (lăsați liber pentru a evita criptarea): "
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Selectați utilizarea unui device FID02 pentru HSM"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr ""
+
+msgid "Higher values increase security but slow down boot time"
+msgstr ""
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr ""
+
+msgid "Iteration time must be at least 100ms"
+msgstr ""
+
+msgid "Iteration time must be at most 120000ms"
+msgstr ""
+
+msgid "Please enter a valid number"
+msgstr ""
+
+msgid "Suggest partition layout"
+msgstr "Sugerează o schemă de partiționare"
 
 msgid "Remove all newly added partitions"
 msgstr "Șterge toate partițiile noi adăugate"
@@ -896,17 +506,41 @@ msgstr "Marchează/Demarchează pentru formatare (șterge toate datele)"
 msgid "Mark/Unmark as bootable"
 msgstr "Marchează/Demarchează ca bootabil"
 
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Marchează/Demarchează ca bootabil"
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Marchează/Demarchează ca bootabil"
+
 msgid "Change filesystem"
 msgstr "Schimbă sistemul de fișiere"
 
 msgid "Mark/Unmark as compressed"
 msgstr "Marchează/Demarchează ca comprimat"
 
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
+msgstr "Marchează/Demarchează ca bootabil"
+
 msgid "Set subvolumes"
 msgstr "Setează subvolumele"
 
 msgid "Delete partition"
 msgstr "Șterge partiția"
+
+#, python-brace-format
+msgid "Partition management: {}"
+msgstr "Managementul partiției: {}"
+
+#, python-brace-format
+msgid "Total length: {}"
+msgstr "Lungime totală: {}"
+
+#, fuzzy
+msgid "Partition - New"
+msgstr "Partiție"
 
 msgid "Partition"
 msgstr "Partiție"
@@ -917,76 +551,433 @@ msgstr "Partiția curentă este criptată, pentru a fi formatată un sistem de f
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr "Punctele de montare ale partițiilor sunt relevante pentru instalate, de exemplu partiția boot va fi /boot."
 
-msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr "Dacă punctul de montare /boot este setat, atunci partiția va fi marcată ca fiind bootabilă."
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Seleactați un punct de montare :"
 
-msgid "Mountpoint: "
-msgstr "Punct de montare: "
+msgid "Invalid size"
+msgstr ""
 
-msgid "Current free sectors on device {}:"
+#, fuzzy, python-brace-format
+msgid "Selected free space segment on device {}:"
 msgstr "Sectoarele libere curente de pe dispozitiv {}:"
 
-msgid "Total sectors: {}"
-msgstr "Toate sectoarele: {}"
+#, fuzzy, python-brace-format
+msgid "Size: {} / {}"
+msgstr "Total: {} / {}"
 
-msgid "Enter the start sector (default: {}): "
-msgstr "Introduceți sectorul de început (predefinit: {}): "
+#, fuzzy
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Toate valorile introduse pot fi notate cu unități precum: B, KB, KiB, MB, MiB ..."
 
-msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "Introduceți sectorul de final pentru partiționare (procentaj sau numărul block-ului, predefinit: {}): "
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Dacă nicio unitate nu este specificate, atunci valorile vor fi interpretate ca sectoare"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Introduceți final (predefinit: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Această acțiune va șterge toate partițiile noi adăugate, continuați?"
 
+msgid "Add subvolume"
+msgstr "Adaugă subvolum"
+
+msgid "Edit subvolume"
+msgstr "Editează subvolum"
+
+msgid "Delete subvolume"
+msgstr "Șterge subvolum"
+
+msgid "Value cannot be empty"
+msgstr ""
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Nume subvolum "
+
+#, fuzzy
+msgid "Subvolume name"
+msgstr "Nume subvolum "
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Punct de montare subvolum"
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Limba pentru Archinstall"
+
+#, fuzzy
+msgid "Reboot system"
+msgstr "Schimbă sistemul de fișiere"
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Doriți să folosiți modul chroot pentru a intra în noua instalare și pentru a efectua configurații de post-instalare?"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Doriți să utilizați sincronizarea timpului automat (NTP) cu serverele de timp predefinite?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"Timpul pentru hardware alți pași după configurare ar putea fi necesari pentru ca NTP să funcționeze.\n"
+"Pentru mai multe informații verificații documentația Arch (Arch Wiki)"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Selectați un fus orar"
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Vă rog selectați managerul de afișare pentru instalare"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Pentru cea mai bună compatibilitate cu hardware-ul dumneavoastră AMD ați putea folosi fie opțiunea All Open-Source sau AMD / ATI."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Pentru cea mai bună compatibilitate cu hardware-ul dumneavoastră Intel ați putea folosi fie opțiunea All Open-Source sau Intel.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Pentru cea mai bună compatibilitate cu hardware-ul dumneavoastră Nvidia ați putea folosi opțiunea Nvidia proprietary driver.\n"
+
+msgid "Would you like to use swap on zram?"
+msgstr "Doriți să folosiți swap pe zram?"
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Seleactați un punct de montare :"
+
+msgid "Archinstall language"
+msgstr "Limba pentru Archinstall"
+
+msgid "Applications"
+msgstr ""
+
+msgid "Network configuration"
+msgstr "Configurarea rețelei"
+
+msgid "Save configuration"
+msgstr "Salvează configurația"
+
+msgid "Install"
+msgstr "Instalează"
+
+msgid "Abort"
+msgstr "Anulează"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "O parolă pentru utilizatorul root sau măcar un utilizator cu privilegii sudo trebuie adăugat"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Limba locală"
+
+msgid "NTP"
+msgstr ""
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "Nu există configurație"
+
 #, python-brace-format
-msgid "Partition management: {}"
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Compression algorithm"
+msgstr ""
+
+msgid "Parallel Downloads"
+msgstr "Descărcări Simultane"
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy
+msgid "Kernel"
+msgstr "Nuclei"
+
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr ""
+
+#, fuzzy
+msgid "Missing configurations:"
+msgstr "Configurații lipsă:\n"
+
+#, fuzzy
+msgid "Invalid configuration:"
+msgstr "Configurație invalidă: {error}"
+
+msgid "Ready to install"
+msgstr ""
+
+msgid "Warnings:"
+msgstr ""
+
+msgid "Profiles"
+msgstr "Profiluri"
+
+msgid "Graphics driver"
+msgstr "Driver grafic"
+
+msgid "Greeter"
+msgstr "Manager afișare"
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Regiuni oglinzi"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Oglinzi customizate"
+
+msgid "Optional repositories"
+msgstr "Colecții de pachete opționale"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Colecții de pachete opționale"
+
+#, python-brace-format
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] Un fișier de jurnal a fost creat aici: {}"
+
+#, fuzzy
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Vă rog să raportați problema (și fișierul) la https://github.com/archlinux/archinstall/issues"
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr ""
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr ""
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr ""
+
+msgid "Keyboard layout"
+msgstr "Aranjament tastatură"
+
+msgid "Locale language"
+msgstr "Limba locală"
+
+msgid "Locale encoding"
+msgstr "Codarea locală"
+
+msgid "Console font"
+msgstr ""
+
+msgid "Back"
+msgstr "Înapoi"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Sigur doriți să resetați această setare?"
+
+msgid "Confirm and exit"
+msgstr "Confirmă și ieși"
+
+msgid "Cancel"
+msgstr "Opriți"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm password"
+msgstr "Schimbă parola"
+
+msgid "The password did not match, please try again"
+msgstr ""
+
+#, fuzzy
+msgid "Not a valid directory"
+msgstr "Nu este un director valid: {}"
+
+msgid "Do you really want to abort?"
+msgstr "Sunteți sigur(ă) că doriți să închideți?"
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Change custom repository"
+msgstr "Schimbă oglinda customizată"
+
+#, fuzzy
+msgid "Delete custom repository"
+msgstr "Șterge oglinda customizată"
+
+#, fuzzy
+msgid "Enter a repository name"
+msgstr "Regiune de oglindire"
+
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Schimbă oglinda customizată"
+
+msgid "Url"
+msgstr ""
+
+#, fuzzy
+msgid "Select signature check"
+msgstr "Selectați opțiunea pentru verificarea semnăturii"
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Selectați opțiunea pentru verificarea semnăturii"
+
+msgid "Select signature option"
+msgstr "Selectați opțiunea pentru semnătură"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Schimbă oglinda customizată"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Șterge oglinda customizată"
+
+msgid "Enter server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Selectați opțiunea pentru semnătură"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Adaugă o oglindă customizată"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Colecții de pachete opționale"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Regiuni oglinzi"
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Regiuni oglinzi"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Alegeți ce colecție opțională de pachete să fie activată"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
+
+msgid "Zram enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "Zram algorithm {}"
+msgstr ""
+
+msgid "Bluetooth enabled"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Audio server \"{}\""
+msgstr "Nu există un server audio"
+
+#, fuzzy, python-brace-format
+msgid "Power management \"{}\""
 msgstr "Managementul partiției: {}"
 
+msgid "Print service enabled"
+msgstr ""
+
 #, python-brace-format
-msgid "Total length: {}"
-msgstr "Lungime totală: {}"
-
-msgid "Encryption type"
-msgstr "Tipul de criptare"
-
-msgid "Iteration time"
+msgid "Firewall \"{}\""
 msgstr ""
 
-msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+#, python-brace-format
+msgid "Extra fonts \"{}\""
 msgstr ""
 
-msgid "Higher values increase security but slow down boot time"
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Parola"
+
+msgid "Second factor login"
 msgstr ""
 
-msgid "Default: 10000ms, Recommended range: 1000-60000"
+#, fuzzy
+msgid "Root password set"
+msgstr "Parola pentru root"
+
+#, fuzzy, python-brace-format
+msgid "Configured {} user(s)"
+msgstr "Configurează interfața {}"
+
+msgid "U2F set up"
 msgstr ""
 
-msgid "Iteration time cannot be empty"
+#, fuzzy, python-brace-format
+msgid "Bootloader \"{}\""
+msgstr "Bootloader"
+
+msgid "UKI enabled"
 msgstr ""
 
-msgid "Iteration time must be at least 100ms"
+msgid "Removable"
 msgstr ""
 
-msgid "Iteration time must be at most 120000ms"
+#, python-brace-format
+msgid "Plymouth \"{}\""
 msgstr ""
-
-msgid "Please enter a valid number"
-msgstr ""
-
-msgid "Partitions"
-msgstr "Partiții"
-
-msgid "No HSM devices available"
-msgstr "Nicun dispozitiv HSM disponibil"
-
-msgid "Partitions to be encrypted"
-msgstr "Selectați partițiile pentru criptare"
-
-msgid "Select disk encryption option"
-msgstr "Selectați opțiunea pentru criptarea discului"
-
-msgid "Select a FIDO2 device to use for HSM"
-msgstr "Selectați utilizarea unui device FID02 pentru HSM"
 
 msgid "Use a best-effort default partition layout"
 msgstr "Folosește cea mai bună configurație de partiționare"
@@ -997,345 +988,37 @@ msgstr "Partiționare manuală"
 msgid "Pre-mounted configuration"
 msgstr "Configurație pre-montată"
 
-msgid "Unknown"
-msgstr "Neștiut"
-
-msgid "Partition encryption"
-msgstr "Criptare partiție"
-
-#, python-brace-format
-msgid " ! Formatting {} in "
-msgstr " ! Se formatează {} in "
-
-msgid "← Back"
-msgstr "← Înapoi"
-
-msgid "Disk encryption"
-msgstr "Criptarea discului"
-
-msgid "Configuration"
-msgstr "Configurație"
-
-msgid "Password"
-msgstr "Parola"
-
-msgid "All settings will be reset, are you sure?"
-msgstr "{} conține partiții în așteptare, acest proces le va șterge, doriți acest lucru?"
-
-msgid "Back"
-msgstr "Înapoi"
-
-msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr "Vă rog selectați un manager de afișare pentru profilurile selectate: {}"
-
-#, python-brace-format
-msgid "Environment type: {}"
-msgstr "Tip mediu: {}"
-
-msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr "Driverul proprietar Nvidia nu este compatibil cu Sway. Se poate să aveți probleme, sunteți ok cu asta?"
-
-msgid "Installed packages"
-msgstr "Pachete instalate"
-
-msgid "Add profile"
-msgstr "Adaugă profil"
-
-msgid "Edit profile"
-msgstr "Editează profil"
-
-msgid "Delete profile"
-msgstr "Șterge profil"
-
-msgid "Profile name: "
-msgstr "Nume profil: "
-
-msgid "The profile name you entered is already in use. Try again"
-msgstr "Numele de utilizator adăugat este invalid. Încercați din nou"
-
-msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "Pachetele care se instalează cu acest profil (separare prin spațiu, lăsați liber pentru a ignora): "
-
-msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Serviciile activate cu acest profil (separare prin spațiu, lăsați liber pentru a ignora): "
-
-msgid "Should this profile be enabled for installation?"
-msgstr "Ar trebui ca acest profil să fie bifat pentru instalare?"
-
-msgid "Create your own"
-msgstr "Crează-ți propriul tău"
-
-msgid ""
-"\n"
-"Select a graphics driver or leave blank to install all open-source drivers"
-msgstr ""
-"\n"
-"Selectați un driver grafic sau lăsați liber pentru a instala toate driverele open-source"
-
-msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
-
-msgid ""
-"\n"
-"\n"
-"Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
-
-msgid "Graphics driver"
-msgstr "Driver grafic"
-
-msgid "Greeter"
-msgstr "Manager afișare"
-
-msgid "Please chose which greeter to install"
-msgstr "Vă rog selectați managerul de afișare pentru instalare"
-
-msgid "This is a list of pre-programmed default_profiles"
-msgstr "Aceasta este o listă cu profiluri pre-programate"
-
-msgid "Disk configuration"
-msgstr "Configurație disc"
-
-msgid "Profiles"
-msgstr "Profiluri"
-
-msgid "Finding possible directories to save configuration files ..."
-msgstr "Caut directoare pentru salvarea fișierelor de configurare ..."
-
-msgid "Select directory (or directories) for saving configuration files"
-msgstr "Selectați directorul (sau directoarele), pentru salvarea fișierelor de configurare"
-
-msgid "Add a custom mirror"
-msgstr "Adaugă o oglindă customizată"
-
-msgid "Change custom mirror"
-msgstr "Schimbă oglinda customizată"
-
-msgid "Delete custom mirror"
-msgstr "Șterge oglinda customizată"
-
-msgid "Enter name (leave blank to skip): "
-msgstr "Introduceți numele (lăsați gol pentru a ignora): "
-
-msgid "Enter url (leave blank to skip): "
-msgstr "Introduceți URL (lăsați gol pentru a ignora): "
-
-msgid "Select signature check option"
-msgstr "Selectați opțiunea pentru verificarea semnăturii"
-
-msgid "Select signature option"
-msgstr "Selectați opțiunea pentru semnătură"
-
-msgid "Custom mirrors"
-msgstr "Oglinzi customizate"
-
-msgid "Defined"
-msgstr "Definit"
-
-msgid "Save user configuration (including disk layout)"
-msgstr "Salvează configurația utilizatorului (schema discului este inclusă)"
-
-msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
-"Save directory: "
-msgstr ""
-"Introduceți un director pentru salvarea configurării (configurațiilor, completare automată cu Tab activată)\n"
-"Directorul pentru salvare: "
-
-msgid ""
-"Do you want to save {} configuration file(s) in the following location?\n"
-"\n"
-"{}"
-msgstr ""
-"Doriți să salvați fișierele de configurare {} în această locație?\n"
-"\n"
-"{]"
-
-msgid "Saving {} configuration files to {}"
-msgstr "Salvez {} fișierele de configurație la {}"
-
-msgid "Mirrors"
-msgstr "Oglinzi"
-
-msgid "Mirror regions"
-msgstr "Regiuni oglinzi"
-
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Valoare maximă  : {} ( Permite {} descărcări simultane, permite {max_downloads+1} descărcări în același timp )"
-
-msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr "Input invalid! Încercați din nou cu un input valid [1 la {}, sau 0 pentru dezactivare]"
-
-msgid "Locales"
-msgstr "Locale"
-
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "Folosiți NetworkManager (necesar pentru configurarea setărilor de rețea într-un mod grafic pentru GNOME și KDE)"
-
-msgid "Total: {} / {}"
-msgstr "Total: {} / {}"
-
-msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr "Toate valorile introduse pot fi notate cu unități precum: B, KB, KiB, MB, MiB ..."
-
-msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr "Dacă nicio unitate nu este specificate, atunci valorile vor fi interpretate ca sectoare"
-
-msgid "Enter start (default: sector {}): "
-msgstr "Introduceți start (predefinit: sector {}): "
-
-msgid "Enter end (default: {}): "
-msgstr "Introduceți final (predefinit: {}): "
-
-msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr "Nu se pot identifica dispozitive de tip fido2. Este libfido2 instalată?"
-
-msgid "Path"
-msgstr "Cale"
-
-msgid "Manufacturer"
-msgstr "Producător"
-
-msgid "Product"
-msgstr "Produs"
-
-#, python-brace-format
-msgid "Invalid configuration: {error}"
-msgstr "Configurație invalidă: {error}"
-
-msgid "Type"
-msgstr ""
-
-msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Această opțiune setează numărul de descărcări paralele care pot avea loc în timpul instalării"
-
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-"\n"
-"Note:\n"
-msgstr ""
-"Introduceți numărul de descărcări simultane pentru a fi activat.\n"
-"\n"
-"Notă:\n"
-
-#, python-brace-format
-msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Valoare minimă  : {} ( Permite {} descărcări simultane în același timp )"
-
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - Dezactivează/Predefinit: 0 (Dezactivează descărcările simultane, permite o singură descărcare în același timp )\n"
-
-msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "Input invalid! Încercați din nou cu un input valid [0 pentru dezactivare]"
-
 #, fuzzy
-msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+msgid "Default"
+msgstr "(predefinit)"
 
-#, fuzzy
-msgid ""
-"\n"
-"\n"
-"Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
-
-#, fuzzy
-msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr "Toate valorile introduse pot fi notate cu unități precum: B, KB, KiB, MB, MiB ..."
-
-#, fuzzy
-msgid "Would you like to use unified kernel images?"
-msgstr "Doriți să folosiți swap pe zram?"
-
-msgid "Unified kernel images"
+msgid "Manual"
 msgstr ""
 
-msgid "Waiting for time sync (timedatectl show) to complete."
+msgid "Pre-mount"
 msgstr ""
-
-msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
-
-msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
-
-msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
-
-#, fuzzy
-msgid "Selected profiles: "
-msgstr "Șterge profil"
-
-msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
-
-#, fuzzy
-msgid "Mark/Unmark as nodatacow"
-msgstr "Marchează/Demarchează ca bootabil"
-
-#, fuzzy
-msgid "Would you like to use compression or disable CoW?"
-msgstr "Doriți să folosiți compresie pentru BTRFS?"
-
-msgid "Use compression"
-msgstr ""
-
-msgid "Disable Copy-on-Write"
-msgstr ""
-
-#, fuzzy
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Oferă o selecție de medii de lucru și manageri de ferestre precum GNOME, KDE, Sway"
 
 #, fuzzy, python-brace-format
-msgid "Configuration type: {}"
-msgstr "Configurație"
+msgid "{} layout"
+msgstr "Schema discului"
 
-#, fuzzy
-msgid "LVM configuration type"
-msgstr "Nu există configurație"
+#, fuzzy, python-brace-format
+msgid "Devices {}"
+msgstr "Discpozitiv"
 
-msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgid "LVM set up"
 msgstr ""
 
-#, fuzzy
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "Folosiți NetworkManager (necesar pentru configurarea setărilor de rețea într-un mod grafic pentru GNOME și KDE)"
+#, fuzzy, python-brace-format
+msgid "{} encryption"
+msgstr "Criptarea discului"
 
-#, fuzzy
-msgid "Select a LVM option"
-msgstr "Selectați un fus orar"
-
-#, fuzzy
-msgid "Partitioning"
-msgstr "Partiție"
-
-msgid "Logical Volume Management (LVM)"
+#, python-brace-format
+msgid "Btrfs snapshot \"{}\""
 msgstr ""
 
-msgid "Physical volumes"
-msgstr ""
-
-msgid "Volumes"
-msgstr ""
-
-#, fuzzy
-msgid "LVM volumes"
-msgstr "Setează subvolumele"
-
-#, fuzzy
-msgid "LVM volumes to be encrypted"
-msgstr "Selectați partițiile pentru criptare"
-
-#, fuzzy
-msgid "Select which LVM volumes to encrypt"
-msgstr "Selectați partițiile pentru criptare"
+msgid "Unknown"
+msgstr "Neștiut"
 
 #, fuzzy
 msgid "Default layout"
@@ -1354,561 +1037,121 @@ msgstr ""
 msgid "LUKS on LVM"
 msgstr ""
 
-#, fuzzy
-msgid "Yes"
-msgstr "da"
-
-msgid "No"
-msgstr ""
-
-#, fuzzy
-msgid "Archinstall help"
-msgstr "Limba pentru Archinstall"
-
-#, fuzzy
-msgid " (default)"
-msgstr "(predefinit)"
-
-msgid "Press Ctrl+h for help"
-msgstr ""
-
-#, fuzzy
-msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
-
-msgid "Seat access"
-msgstr ""
-
-#, fuzzy
-msgid "Mountpoint"
-msgstr "Punct de montare: "
-
-msgid "HSM"
-msgstr ""
-
-#, fuzzy
-msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr "Introduceți parola de criptare a discului (lăsați liber pentru a evita criptarea): "
-
-#, fuzzy
-msgid "Disk encryption password"
-msgstr "Parola de criptare"
-
-#, fuzzy
-msgid "Partition - New"
-msgstr "Partiție"
-
-#, fuzzy
-msgid "Filesystem"
-msgstr "Schimbă sistemul de fișiere"
-
-msgid "Invalid size"
-msgstr ""
-
-#, fuzzy
-msgid "Start (default: sector {}): "
-msgstr "Introduceți start (predefinit: sector {}): "
-
-#, fuzzy
-msgid "End (default: {}): "
-msgstr "Introduceți final (predefinit: {}): "
-
-#, fuzzy
-msgid "Subvolume name"
-msgstr "Nume subvolum "
-
-#, fuzzy
-msgid "Disk configuration type"
-msgstr "Configurație disc"
-
-msgid "Root mount directory"
-msgstr ""
-
-#, fuzzy
-msgid "Select language"
-msgstr "Limba locală"
-
-#, fuzzy
-msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "Scrieți pachete adiționale pe care doriți să le instalați(separare prin spațiu, lăsați liber pentru a ignora): "
-
-msgid "Invalid download number"
-msgstr ""
-
-msgid "Number downloads"
-msgstr ""
-
-#, fuzzy
-msgid "The username you entered is invalid"
-msgstr "Numele de utilizator adăugat este invalid. Încercați din nou"
-
-#, fuzzy
-msgid "Username"
-msgstr "Nume utilizator : "
+#, fuzzy, python-brace-format
+msgid "Keyboard layout \"{}\""
+msgstr "Aranjament tastatură"
 
 #, fuzzy, python-brace-format
-msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "Ar trebui ca \"{}\" să fie un utilizator cu privilegii (sudo)?"
+msgid "Locale language \"{}\""
+msgstr "Limba locală"
+
+#, fuzzy, python-brace-format
+msgid "Locale encoding \"{}\""
+msgstr "Codarea locală"
+
+#, python-brace-format
+msgid "Console font \"{}\""
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Mirror regions \"{}\""
+msgstr "Regiuni oglinzi"
+
+#, fuzzy, python-brace-format
+msgid "Optional repositories \"{}\""
+msgstr "Colecții de pachete opționale"
 
 #, fuzzy
-msgid "Interfaces"
+msgid "Custom servers set up"
+msgstr "Oglinzi customizate"
+
+#, fuzzy
+msgid "Custom repositories set up"
+msgstr "Colecții de pachete opționale"
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Copiați configurarea ISO prin rețea la instalare"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""
+
+msgid "Use standalone iwd"
+msgstr ""
+
+msgid "Manual configuration"
+msgstr "Configurare manuală"
+
+msgid "Package group:"
+msgstr ""
+
+msgid "Color enabled"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "{} graphics driver"
+msgstr "Driver grafic"
+
+#, fuzzy, python-brace-format
+msgid "{} greeter"
+msgstr "Manager afișare"
+
+msgid "very weak"
+msgstr "foarte slabă"
+
+msgid "weak"
+msgstr "slabă"
+
+msgid "moderate"
+msgstr "moderată"
+
+msgid "strong"
+msgstr "puetrnică"
+
+msgid "Add interface"
 msgstr "Adaugă interfață"
+
+msgid "Edit interface"
+msgstr "Editează interfața"
+
+msgid "Delete interface"
+msgstr "Șterge interfața"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Șterge interfața"
 
 msgid "You need to enter a valid IP in IP-config mode"
 msgstr ""
 
-msgid "Modes"
-msgstr ""
+#, fuzzy, python-brace-format
+msgid "Select which mode to configure for \"{}\""
+msgstr "Selectați modul de configurare pentru \"{}\" sau folosiți modul predefinit \"{}\""
 
-msgid "IP address"
-msgstr ""
+#, python-brace-format
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Introduceți IP-ul și subrețeaua pentru {} (example: 192.168.0.5/24): "
 
 #, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
 msgstr "Introduceți IP-ul gateway-ului (router) sau lăsați liber pentru niciunul: "
-
-msgid "Gateway address"
-msgstr ""
 
 #, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
 msgstr "Introduceți serverele dumneavoastră DNS (separare prin spațiu, lăsați liber pentru a ignora): "
 
 #, fuzzy
-msgid "DNS servers"
-msgstr "Nu există un server audio"
+msgid "Choose network configuration"
+msgstr "Nu există o configurare de rețea"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr ""
 
 #, fuzzy
 msgid "Configure interfaces"
 msgstr "Configurează interfața {}"
-
-#, fuzzy
-msgid "Kernel"
-msgstr "Nuclei"
-
-msgid "UEFI is not detected and some options are disabled"
-msgstr ""
-
-msgid "Info"
-msgstr ""
-
-#, fuzzy
-msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "Driverul proprietar Nvidia nu este compatibil cu Sway. Se poate să aveți probleme, sunteți ok cu asta?"
-
-#, fuzzy
-msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "Driverul proprietar Nvidia nu este compatibil cu Sway. Se poate să aveți probleme, sunteți ok cu asta?"
-
-#, fuzzy
-msgid "Main profile"
-msgstr "Editează profil"
-
-#, fuzzy
-msgid "Confirm password"
-msgstr "Schimbă parola"
-
-msgid "The confirmation password did not match, please try again"
-msgstr ""
-
-#, fuzzy
-msgid "Not a valid directory"
-msgstr "Nu este un director valid: {}"
-
-#, fuzzy
-msgid "Would you like to continue?"
-msgstr "Doriți să folosiți compresie pentru BTRFS?"
-
-msgid "Directory"
-msgstr ""
-
-#, fuzzy
-msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr ""
-"Introduceți un director pentru salvarea configurării (configurațiilor, completare automată cu Tab activată)\n"
-"Directorul pentru salvare: "
-
-#, fuzzy, python-brace-format
-msgid "Do you want to save the configuration file(s) to {}?"
-msgstr ""
-"Doriți să salvați fișierele de configurare {} în această locație?\n"
-"\n"
-"{]"
-
-msgid "Enabled"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
-
-#, fuzzy
-msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Vă rog să raportați problema (și fișierul) la https://github.com/archlinux/archinstall/issues"
-
-#, fuzzy
-msgid "Mirror name"
-msgstr "Regiune de oglindire"
-
-msgid "Url"
-msgstr ""
-
-#, fuzzy
-msgid "Select signature check"
-msgstr "Selectați opțiunea pentru verificarea semnăturii"
-
-#, fuzzy
-msgid "Select execution mode"
-msgstr "Selectați un mod de execuție"
-
-msgid "Press ? for help"
-msgstr ""
-
-#, fuzzy
-msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
-
-#, fuzzy
-msgid "Additional repositories"
-msgstr "Colecții de pachete opționale"
-
-msgid "NTP"
-msgstr ""
-
-msgid "Swap on zram"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-#, fuzzy
-msgid "Signature check"
-msgstr "Selectați opțiunea pentru verificarea semnăturii"
-
-#, fuzzy, python-brace-format
-msgid "Selected free space segment on device {}:"
-msgstr "Sectoarele libere curente de pe dispozitiv {}:"
-
-#, fuzzy, python-brace-format
-msgid "Size: {} / {}"
-msgstr "Total: {} / {}"
-
-#, fuzzy, python-brace-format
-msgid "Size (default: {}): "
-msgstr "Introduceți final (predefinit: {}): "
-
-#, fuzzy
-msgid "HSM device"
-msgstr "Discpozitiv"
-
-msgid "Some packages could not be found in the repository"
-msgstr ""
-
-#, fuzzy
-msgid "User"
-msgstr "Nume utilizator : "
-
-msgid "The specified configuration will be applied"
-msgstr ""
-
-msgid "Wipe"
-msgstr ""
-
-#, fuzzy
-msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Marchează/Demarchează ca bootabil"
-
-#, fuzzy
-msgid "Loading packages..."
-msgstr "Pachete Adiționale"
-
-msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
-
-#, fuzzy
-msgid "Add a custom repository"
-msgstr "Adaugă o oglindă customizată"
-
-#, fuzzy
-msgid "Change custom repository"
-msgstr "Schimbă oglinda customizată"
-
-#, fuzzy
-msgid "Delete custom repository"
-msgstr "Șterge oglinda customizată"
-
-#, fuzzy
-msgid "Repository name"
-msgstr "Regiune de oglindire"
-
-#, fuzzy
-msgid "Add a custom server"
-msgstr "Adaugă o oglindă customizată"
-
-#, fuzzy
-msgid "Change custom server"
-msgstr "Schimbă oglinda customizată"
-
-#, fuzzy
-msgid "Delete custom server"
-msgstr "Șterge oglinda customizată"
-
-msgid "Server url"
-msgstr ""
-
-#, fuzzy
-msgid "Select regions"
-msgstr "Selectați opțiunea pentru semnătură"
-
-#, fuzzy
-msgid "Add custom servers"
-msgstr "Adaugă o oglindă customizată"
-
-#, fuzzy
-msgid "Add custom repository"
-msgstr "Adaugă o oglindă customizată"
-
-#, fuzzy
-msgid "Loading mirror regions..."
-msgstr "Regiuni oglinzi"
-
-#, fuzzy
-msgid "Mirrors and repositories"
-msgstr "Colecții de pachete opționale"
-
-#, fuzzy
-msgid "Selected mirror regions"
-msgstr "Regiuni oglinzi"
-
-#, fuzzy
-msgid "Custom servers"
-msgstr "Oglinzi customizate"
-
-#, fuzzy
-msgid "Custom repositories"
-msgstr "Colecții de pachete opționale"
-
-msgid "Only ASCII characters are supported"
-msgstr ""
-
-msgid "Show help"
-msgstr ""
-
-msgid "Exit help"
-msgstr ""
-
-msgid "Preview scroll up"
-msgstr ""
-
-msgid "Preview scroll down"
-msgstr ""
-
-msgid "Move up"
-msgstr ""
-
-msgid "Move down"
-msgstr ""
-
-msgid "Move right"
-msgstr ""
-
-msgid "Move left"
-msgstr ""
-
-msgid "Jump to entry"
-msgstr ""
-
-msgid "Skip selection (if available)"
-msgstr ""
-
-msgid "Reset selection (if available)"
-msgstr ""
-
-#, fuzzy
-msgid "Select on single select"
-msgstr "Selectați opțiunea pentru verificarea semnăturii"
-
-#, fuzzy
-msgid "Select on multi select"
-msgstr "Selectați un fus orar"
-
-msgid "Reset"
-msgstr ""
-
-#, fuzzy
-msgid "Skip selection menu"
-msgstr "Selectați un mod de execuție"
-
-msgid "Start search mode"
-msgstr ""
-
-msgid "Exit search mode"
-msgstr ""
-
-#, fuzzy
-msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
-
-#, fuzzy
-msgid "Choose an option to give labwc access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
-
-#, fuzzy
-msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
-
-#, fuzzy
-msgid "Choose an option to give niri access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
-
-#, fuzzy
-msgid "Mark/Unmark as ESP"
-msgstr "Marchează/Demarchează ca bootabil"
-
-msgid "Package group:"
-msgstr ""
-
-#, fuzzy
-msgid "Exit archinstall"
-msgstr "Limba pentru Archinstall"
-
-#, fuzzy
-msgid "Reboot system"
-msgstr "Schimbă sistemul de fișiere"
-
-#, fuzzy
-msgid "chroot into installation for post-installation configurations"
-msgstr "Doriți să folosiți modul chroot pentru a intra în noua instalare și pentru a efectua configurații de post-instalare?"
-
-msgid "Installation completed"
-msgstr ""
-
-#, fuzzy
-msgid "What would you like to do next?"
-msgstr "Doriți să folosiți compresie pentru BTRFS?"
-
-#, fuzzy, python-brace-format
-msgid "Select which mode to configure for \"{}\""
-msgstr "Selectați modul de configurare pentru \"{}\" sau folosiți modul predefinit \"{}\""
-
-#, fuzzy
-msgid "Incorrect credentials file decryption password"
-msgstr "Parola de criptare"
-
-#, fuzzy
-msgid "Incorrect password"
-msgstr "Parola pentru root"
-
-#, fuzzy
-msgid "Credentials file decryption password"
-msgstr "Parola de criptare"
-
-#, fuzzy
-msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr ""
-"Doriți să salvați fișierele de configurare {} în această locație?\n"
-"\n"
-"{]"
-
-#, fuzzy
-msgid "Credentials file encryption password"
-msgstr "Parola de criptare"
-
-#, fuzzy, python-brace-format
-msgid "Repositories: {}"
-msgstr "Regiune de oglindire"
-
-#, fuzzy
-msgid "New version available"
-msgstr "Nicun dispozitiv HSM disponibil"
-
-#, fuzzy
-msgid "Passwordless login"
-msgstr "Parola"
-
-msgid "Second factor login"
-msgstr ""
-
-msgid "Bluetooth"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to configure Bluetooth?"
-msgstr "Doriți să folosiți compresie pentru BTRFS?"
-
-msgid "Print service"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to configure the print service?"
-msgstr "Doriți să folosiți compresie pentru BTRFS?"
-
-#, fuzzy
-msgid "Power management"
-msgstr "Managementul partiției: {}"
-
-msgid "Authentication"
-msgstr ""
-
-msgid "Applications"
-msgstr ""
-
-msgid "U2F login method: "
-msgstr ""
-
-msgid "Passwordless sudo: "
-msgstr ""
-
-#, python-brace-format
-msgid "Btrfs snapshot type: {}"
-msgstr ""
-
-msgid "Syncing the system..."
-msgstr ""
-
-msgid "Value cannot be empty"
-msgstr ""
-
-msgid "Snapshot type"
-msgstr ""
-
-#, fuzzy, python-brace-format
-msgid "Snapshot type: {}"
-msgstr "Tip mediu: {}"
-
-msgid "U2F login setup"
-msgstr ""
-
-msgid "No U2F devices found"
-msgstr ""
-
-msgid "U2F Login Method"
-msgstr ""
-
-#, fuzzy
-msgid "Enable passwordless sudo?"
-msgstr "Introduceți o parolă: "
-
-#, fuzzy, python-brace-format
-msgid "Setting up U2F device for user: {}"
-msgstr "Selectați utilizarea unui device FID02 pentru HSM"
-
-msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
-
-msgid "Starting device modifications in "
-msgstr ""
 
 #, fuzzy
 msgid "No network connection found"
@@ -1923,15 +1166,15 @@ msgid "No wifi interface found"
 msgstr "Configurează interfața {}"
 
 #, fuzzy
+msgid "No wifi networks found"
+msgstr "Nu există o configurare de rețea"
+
+#, fuzzy
 msgid "Select wifi network to connect to"
 msgstr "Selectați o interfață de rețea pentru configurare"
 
 msgid "Scanning wifi networks..."
 msgstr ""
-
-#, fuzzy
-msgid "No wifi networks found"
-msgstr "Nu există o configurare de rețea"
 
 msgid "Failed setting up wifi"
 msgstr ""
@@ -1940,65 +1183,1080 @@ msgstr ""
 msgid "Enter wifi password"
 msgstr "Introduceți o parolă: "
 
-msgid "Ok"
-msgstr ""
-
-msgid "Removable"
-msgstr ""
-
-msgid "Install to removable location"
-msgstr ""
-
-msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
-
-msgid "Will install to standard location with NVRAM entry"
-msgstr ""
-
-msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
-
-msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
-
-msgid "USB drives or other portable external media."
-msgstr ""
-
-msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
-
-msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
-
-msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr ""
-
-msgid "Will install to custom location with NVRAM entry"
-msgstr ""
-
-msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr ""
-
-msgid "most Apple Macs, many laptops..."
-msgstr ""
+#, fuzzy, python-brace-format
+msgid "Repositories: {}"
+msgstr "Regiune de oglindire"
 
 #, fuzzy
-msgid "Language"
-msgstr "Limba locală"
+msgid "Loading packages..."
+msgstr "Pachete Adiționale"
 
-msgid "Compression algorithm"
-msgstr ""
+#, fuzzy
+msgid "No packages found"
+msgstr "Configurează interfața {}"
 
 #, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"Introduceți numărul de descărcări simultane pentru a fi activat.\n"
+"\n"
+"Notă:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman rulează deja, aștept maxim 10 minute pentru a termina."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Procesul pacman anterior nu s-a terminat corect. Vă rog, ștergeți orice sesiune de pacman existentă înainte de a continuea cu archinstall."
+
 #, fuzzy
-msgid "Select zram compression algorithm:"
-msgstr "Seleactați un punct de montare :"
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Driverul proprietar Nvidia nu este compatibil cu Sway. Se poate să aveți probleme, sunteți ok cu asta?"
 
-msgid "Use Network Manager (default backend)"
+#, fuzzy
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Driverul proprietar Nvidia nu este compatibil cu Sway. Se poate să aveți probleme, sunteți ok cu asta?"
+
+#, fuzzy
+msgid "Selected profiles: "
+msgstr "Șterge profil"
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Vă rog selectați managerul de afișare pentru instalare"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Șterge profil"
+
+#, python-brace-format
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Nu se poate prelua profilul de la URL-ul specificat: {}"
+
+#, python-brace-format
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Profilurile trebuie să aibă nume unicate, dar definiții de profil cu nume duplicate au fost găsite: {}"
+
+msgid "Add a user"
+msgstr "Adaugă un utilizator"
+
+msgid "Change password"
+msgstr "Schimbă parola"
+
+msgid "Promote/Demote user"
+msgstr "Promovează/Retrogradează un utilizator"
+
+msgid "Delete User"
+msgstr "Șterge utilizatorul"
+
+#, fuzzy
+msgid "User"
+msgstr "Nume utilizator : "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Introduceți o parolă: "
+
+#, fuzzy
+msgid "The username you entered is invalid"
+msgstr "Numele de utilizator adăugat este invalid. Încercați din nou"
+
+msgid "Enter a username"
 msgstr ""
 
-msgid "Use Network Manager (iwd backend)"
+#, fuzzy
+msgid "Username"
+msgstr "Nume utilizator : "
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Introduceți o parolă: "
+
+#, fuzzy, python-brace-format
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Ar trebui ca \"{}\" să fie un utilizator cu privilegii (sudo)?"
+
+#, python-brace-format
+msgid "About to upload \"{}\" to the publicly accessible {}"
 msgstr ""
+
+#, fuzzy
+msgid "Do you want to continue?"
+msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#, python-brace-format
+msgid "Log uploaded successfully. URL: {}"
+msgstr ""
+
+msgid "Failed to upload log."
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall necesită privilegii avansate pentru execuție. Vedeți --help pentru mai multe."
+
+#, fuzzy
+msgid "New version available"
+msgstr "Nicun dispozitiv HSM disponibil"
+
+msgid "Starting device modifications in "
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Input cannot be empty"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "da"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid " (default)"
+msgstr "(predefinit)"
+
+#~ msgid "[!] A log file has been created here: {} {}"
+#~ msgstr "[!] Un fișier jurnal a fost creat aici: {}"
+
+#~ msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+#~ msgstr "    Vă rog să raportați problema (și fișierul) la https://github.com/archlinux/archinstall/issues"
+
+#~ msgid "And one more time for verification: "
+#~ msgstr "Încă odată pentru verificare: "
+
+#~ msgid "Username for required superuser with sudo privileges: "
+#~ msgstr "Nume utilizator necesar pentru utilizatorul cu drepturi privilegiate: "
+
+#~ msgid "Any additional users to install (leave blank for no users): "
+#~ msgstr "Alți utilizatori pentru adăugare (lăsați gol pentru niciunul): "
+
+#~ msgid "Should this user be a superuser (sudoer)?"
+#~ msgstr "Acest utilizator ar trebui să aibă drepturi privilegiate (sudoer)?"
+
+#~ msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+#~ msgstr "Doriți să folosiți GRUB ca bootloader în locul systemd-boot?"
+
+#~ msgid "Choose a bootloader"
+#~ msgstr "Selectați un bootloader"
+
+#~ msgid "Choose an audio server"
+#~ msgstr "Selectați un server audio"
+
+#~ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+#~ msgstr "Doar pachetele precum base, base-devel, linux, linux-firmware, egibootmgr și cele opționale de profil sunt instalate."
+
+#~ msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+#~ msgstr "Dacă doriți un browser, precum firefox sau chromium, puteți să-l specificați în promptul următor."
+
+#~ msgid "Write additional packages to install (space separated, leave blank to skip): "
+#~ msgstr "Scrieți pachete adiționale pe care doriți să le instalați(separare prin spațiu, lăsați liber pentru a ignora): "
+
+#~ msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+#~ msgstr "Folosiți NetworkManager (necesar pentru configurarea setărilor de rețea într-un mod grafic pentru GNOME și KDE)"
+
+#~ msgid "Select one network interface to configure"
+#~ msgstr "Selectați o interfață de rețea pentru configurare"
+
+#~ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+#~ msgstr "Selectați modul de configurare pentru \"{}\" sau folosiți modul predefinit \"{}\""
+
+#~ msgid "Enter your gateway (router) IP address or leave blank for none: "
+#~ msgstr "Introduceți IP-ul gateway-ului (router) sau lăsați liber pentru niciunul: "
+
+#~ msgid "Enter your DNS servers (space separated, blank for none): "
+#~ msgstr "Introduceți serverele dumneavoastră DNS (separare prin spațiu, lăsați liber pentru a ignora): "
+
+#~ msgid "Select which filesystem your main partition should use"
+#~ msgstr "Selectați sistemul de fișiere dorit pentru partiția dumneavoastră primară"
+
+#~ msgid "Current partition layout"
+#~ msgstr "Schema de partiționare curentă"
+
+#~ msgid ""
+#~ "Select what to do with\n"
+#~ "{}"
+#~ msgstr ""
+#~ "Selectați ce doriți să se întâmple cu\n"
+#~ "{}"
+
+#~ msgid "Enter a desired filesystem type for the partition"
+#~ msgstr "Introduceți un sistem de fișiere dorit pentru partiția"
+
+#~ msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+#~ msgstr "Introduceți sectorul de început (procentaj sau numărul block-ului, predefinit: {}): "
+
+#~ msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+#~ msgstr "Introduceți locația finală (în unități de partiționare: s, GB, %, etc. ; ex: {}): "
+
+#~ msgid "{} contains queued partitions, this will remove those, are you sure?"
+#~ msgstr "{} conține partiții în așteptare, acest proces le va șterge, doriți acest lucru?"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select by index which partitions to delete"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Selectați pe baza indexului partițiile pentru ștergere"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select by index which partition to mount where"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Selectați pe baza indexului partițiile pentru a fi montate și locația"
+
+#~ msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+#~ msgstr " * Punctele de montare ale partițiilor sunt relevante pentru instalate, de exemplu partiția boot va fi /boot."
+
+#~ msgid "Select where to mount partition (leave blank to remove mountpoint): "
+#~ msgstr "Selectați locul de montare a partiției (lăsați gol pentru a șterge punctul de montare): "
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mask for formatting"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Selectați partiția care urmează să fie marcată pentru formatare"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mark as encrypted"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Selectați partiția care urmează să fie marcată ca fiind cripitată"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mark as bootable"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Selectați partiția care urmează să fie marcată ca fiind bootabilă"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to set a filesystem on"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Selectați partiția pentru care urmează să fie setat un sistem de fișiere"
+
+#~ msgid "Enter a desired filesystem type for the partition: "
+#~ msgstr "Introduceți un sistem de fișiere dorit pentru partiție: "
+
+#~ msgid "Wipe all selected drives and use a best-effort default partition layout"
+#~ msgstr "Șterge toate discurile selectate și folosește cea mai bună schemă de partiționare"
+
+#~ msgid "Select what to do with each individual drive (followed by partition usage)"
+#~ msgstr "Selectați ce doriți să se întâmple cu fiecare disc în parte (urmat de capacitatea utilizată dorită)"
+
+#~ msgid "Select what you wish to do with the selected block devices"
+#~ msgstr "Selectați ce doriți să faceți cu dispozitivele de tip bloc selectate"
+
+#~ msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+#~ msgstr "Aceasta este o listă de profiluri preprogramate, ar putea să ușureze instalarea unor lucruri precum spațiile de lucru"
+
+#~ msgid "Select keyboard layout"
+#~ msgstr "Selectați aranjamentul tastaturii"
+
+#~ msgid "Select one of the regions to download packages from"
+#~ msgstr "Selectați regiunea pentru care se vor descărca pachetele"
+
+#~ msgid "Select one or more hard drives to use and configure"
+#~ msgstr "Selectați unul sau mai multe discuri dure pentru a fi utilizate și configurate"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Select a graphics driver or leave blank to install all open-source drivers"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Selectați un driver grafic sau lăsați liber pentru a instala toate driverele open-source"
+
+#~ msgid "All open-source (default)"
+#~ msgstr "Toate open-source (predefinit)"
+
+#~ msgid "Choose which kernels to use or leave blank for default \"{}\""
+#~ msgstr "Alegeți nucelii care urmează să fie folosiți sau lăsați liber pentru valorarea predefinită \"{}\""
+
+#~ msgid "Choose which locale language to use"
+#~ msgstr "Alegeți limba locală pentru utilizare"
+
+#~ msgid "Choose which locale encoding to use"
+#~ msgstr "Alegeți codificarea locală pentru utilizare"
+
+#~ msgid "Select one of the values shown below: "
+#~ msgstr "Selecați o valoare din cele afișate mai jos: "
+
+#~ msgid "Select one or more of the options below: "
+#~ msgstr "Selecați una sau mai multe opțiuni din cele afișate mai jos: "
+
+#~ msgid "Adding partition...."
+#~ msgstr "Adaug partiția...."
+
+#~ msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+#~ msgstr "Trebuie să introduceți un tip de fișiere de sistem valid pentru a continua. Vedeți 'man parted' pentru tipurile de fișiere de sistem disponibile."
+
+#~ msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+#~ msgstr "Eroare: Listare profiluri pe URL \"{}\" rezultate în:"
+
+#~ msgid "Error: Could not decode \"{}\" result as JSON:"
+#~ msgstr "Eroare: Nu s-a putut decoda rezultatul \"{}\" ca un JSON:"
+
+#~ msgid "Mirror region"
+#~ msgstr "Regiune de oglindire"
+
+#~ msgid "Drive(s)"
+#~ msgstr "Disc(uri)"
+
+#~ msgid "Superuser account"
+#~ msgstr "Cont utilizator privilegiat (root)"
+
+#~ msgid "Install ({} config(s) missing)"
+#~ msgstr "Instalalare ({} lipsă configurație(ii))"
+
+#~ msgid ""
+#~ "You decided to skip harddrive selection\n"
+#~ "and will use whatever drive-setup is mounted at {} (experimental)\n"
+#~ "WARNING: Archinstall won't check the suitability of this setup\n"
+#~ "Do you wish to continue?"
+#~ msgstr ""
+#~ "Ați decis să treceți peste selectarea discurilor dure\n"
+#~ "și se va folosi orice configurație de disc montată la {} (experimental)\n"
+#~ "ATENȚIE: Archinstall nu va verifica compatibilitatea configurării\n"
+#~ "Doriți să continuați?"
+
+#~ msgid "Re-using partition instance: {}"
+#~ msgstr "Reutilizez instanța partiției: {}"
+
+#~ msgid "Create a new partition"
+#~ msgstr "Crează o partiție nouă"
+
+#~ msgid "Delete a partition"
+#~ msgstr "Șterge o partiție"
+
+#~ msgid "Clear/Delete all partitions"
+#~ msgstr "Curăță/Șterge toate partițile"
+
+#~ msgid "Assign mount-point for a partition"
+#~ msgstr "Asignează un punct de montare pentru o partiție"
+
+#~ msgid "Mark/Unmark a partition to be formatted (wipes data)"
+#~ msgstr "Marchează/Demarchează o partiție pentru a fi formatată (șterge toate datele)"
+
+#~ msgid "Mark/Unmark a partition as encrypted"
+#~ msgstr "Marchează/Demarchează o partiție pentru a fi criptată"
+
+#~ msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+#~ msgstr "Marchează/Demarchează o partiție ca fiind bootabilă (automat pentru /boot)"
+
+#~ msgid "Set desired filesystem for a partition"
+#~ msgstr "Setează sistemul de fișiere dorit pentru o partiție"
+
+#~ msgid "Not configured, unavailable unless setup manually"
+#~ msgstr "Nu este configurat, indisponibil, doar configurat manual"
+
+#~ msgid "Set/Modify the below options"
+#~ msgstr "Setează/Modifică opțiunile de mai jos"
+
+#~ msgid ""
+#~ "Use ESC to skip\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Folosiți ESC pentru a ignora\n"
+#~ "\n"
+
+#~ msgid "Enter a encryption password for {}"
+#~ msgstr "Introduceți o parolă de criptare pentru {}"
+
+#~ msgid "Enter disk encryption password (leave blank for no encryption): "
+#~ msgstr "Introduceți parola de criptare a discului (lăsați liber pentru a evita criptarea): "
+
+#~ msgid "Create a required super-user with sudo privileges: "
+#~ msgstr "Crează un utilizator cu privilegii (root): "
+
+#~ msgid "Enter root password (leave blank to disable root): "
+#~ msgstr "Introuceți parola pentru root (lăsați liber pentru a dezactiva utilizatorul root): "
+
+#~ msgid "Password for user \"{}\": "
+#~ msgstr "Parola pentru utilizatorul \"{}\": "
+
+#~ msgid "Verifying that additional packages exist (this might take a few seconds)"
+#~ msgstr "Verific dacă pachetele adiționale există (acest proces ar putea dura câteva secunde)"
+
+#~ msgid "Enter a username to create an additional user (leave blank to skip): "
+#~ msgstr "Introduceți un nume utilizator pentru a crea un user adițional (lăsați liber pentru a ignora): "
+
+#~ msgid "Use ESC to skip\n"
+#~ msgstr "Foloți ESC pentru a ignora\n"
+
+#~ msgid ""
+#~ "\n"
+#~ " Choose an object from the list, and select one of the available actions for it to execute"
+#~ msgstr ""
+#~ "\n"
+#~ " Alegeți un obiect din listă și selectați o acțiune disponibilă pentru a fi executată"
+
+#~ msgid "Add"
+#~ msgstr "Adaugă"
+
+#~ msgid "Copy"
+#~ msgstr "Copiază"
+
+#~ msgid "Edit"
+#~ msgstr "Editează"
+
+#~ msgid "Delete"
+#~ msgstr "Șterge"
+
+#~ msgid "Select an action for '{}'"
+#~ msgstr "Selectează o acțiune pentru '{}'"
+
+#~ msgid "Copy to new key:"
+#~ msgstr "Copiază la noua cheie:"
+
+#~ msgid "Unknown nic type: {}. Possible values are {}"
+#~ msgstr "Tip necunoscut: {}. Valorile acceptate sunt {}"
+
+#~ msgid ""
+#~ "\n"
+#~ "This is your chosen configuration:"
+#~ msgstr ""
+#~ "\n"
+#~ "Aceasta este configurația selectată de către dumneavoastră:"
+
+#~ msgid ""
+#~ "\n"
+#~ "Define a new user\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Definește un utilizator nou\n"
+
+#~ msgid "User Name : "
+#~ msgstr "Nume utilizator : "
+
+#~ msgid "Should {} be a superuser (sudoer)?"
+#~ msgstr "Ar trebui ca {} să fie un utilizator cu privilegii (sudoer)?"
+
+#~ msgid "Define users with sudo privilege: "
+#~ msgstr "Definiți utilizatorii cu privilegii sudo: "
+
+#~ msgid "Set desired subvolumes on a btrfs partition"
+#~ msgstr "Setați subvolumele dorite pe o partiție btrfs"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to set subvolumes on"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Selectați partiția pentru care se vor seta subvolumele"
+
+#~ msgid "Manage btrfs subvolumes for current partition"
+#~ msgstr "Administrează subvolumele btrfs pentru partiția curentă"
+
+#~ msgid "Save disk layout"
+#~ msgstr "Salvează schema discului"
+
+#~ msgid "Choose which configuration to save"
+#~ msgstr "Alegeți configurația dorită pentru salvare"
+
+#~ msgid "Not a valid directory: {}"
+#~ msgstr "Nu este un director valid: {}"
+
+#~ msgid "The password you are using seems to be weak,"
+#~ msgstr "Parola pe care doriți să o folosiți pare să fie slabă,"
+
+#~ msgid "are you sure you want to use it?"
+#~ msgstr "sigur doriți să o folosiți?"
+
+#~ msgid "Either root-password or at least 1 superuser must be specified"
+#~ msgstr "Este necesar ca parola pentru utilizatorul root sau măcar un utilizator cu privilegii să fie adăugat"
+
+#~ msgid "Manage superuser accounts: "
+#~ msgstr "Administrează conturile pentru utilizatorii cu privilegii: "
+
+#~ msgid "Manage ordinary user accounts: "
+#~ msgstr "Adminstrează conturile pentru utilizatorii obișnuiți: "
+
+#~ msgid " Subvolume :{:16}"
+#~ msgstr " Subvolum :{:16}"
+
+#~ msgid " mounted at {:16}"
+#~ msgstr " montat la {:16}"
+
+#~ msgid " with option {}"
+#~ msgstr " cu opțiunea {}"
+
+#~ msgid ""
+#~ "\n"
+#~ " Fill the desired values for a new subvolume \n"
+#~ msgstr ""
+#~ "\n"
+#~ " Completați valorile dorite pentru un subvolum nou \n"
+
+#~ msgid "Subvolume name "
+#~ msgstr "Nume subvolum "
+
+#~ msgid "Subvolume options"
+#~ msgstr "Opțiuni subvolum"
+
+#~ msgid "Save"
+#~ msgstr "Salvează"
+
+#~ msgid "Subvolume name :"
+#~ msgstr "Nume subvolum :"
+
+#~ msgid "Select the desired subvolume options "
+#~ msgstr "Selectați opțiunile dorite pentru subvolum "
+
+#~ msgid "Define users with sudo privilege, by username: "
+#~ msgstr "Definiți utilizatorii cu privilegii sudo, după nume utilizator: "
+
+#~ msgid "Would you like to use BTRFS compression?"
+#~ msgstr "Doriți să folosiți compresie pentru BTRFS?"
+
+#~ msgid "Minimum capacity for /home partition: {}GB\n"
+#~ msgstr "Capacitatea minimă pentru partiția /home: {}GB\n"
+
+#~ msgid "Minimum capacity for Arch Linux partition: {}GB"
+#~ msgstr "Capacitatea minimă pentru partiția Arch Linux: {}GB"
+
+#~ msgid "Continue"
+#~ msgstr "Continuă"
+
+#~ msgid "yes"
+#~ msgstr "da"
+
+#~ msgid "no"
+#~ msgstr "nu"
+
+#~ msgid "set: {}"
+#~ msgstr "setează: {}"
+
+#~ msgid "Manual configuration setting must be a list"
+#~ msgstr "Configurație manuală trebuie să fie o listă"
+
+#~ msgid "No iface specified for manual configuration"
+#~ msgstr "Nu a fost menționat iface pentru configurarea manuală"
+
+#~ msgid "Manual nic configuration with no auto DHCP requires an IP address"
+#~ msgstr "Configurarea manuală nic fără un DHCP necesită o adresă IP"
+
+#~ msgid "Mark/Unmark a partition as compressed (btrfs only)"
+#~ msgstr "Marchează/Demarchează o partiție ca fiind comprimată (doar btrfs)"
+
+#~ msgid "The password you are using seems to be weak, are you sure you want to use it?"
+#~ msgstr "Parola utilizată pare să fie slabă, sigur doriți să o folosiți pe aceasta?"
+
+#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+#~ msgstr "Oferă o selecție de medii de lucru și manageri de ferestre precum GNOME, KDE, Sway"
+
+#~ msgid "Select your desired desktop environment"
+#~ msgstr "Selectați mediul de lucru dorit"
+
+#~ msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+#~ msgstr "O instalare de bază care vă permite să instalați Arch Linux așa cum vă doriți."
+
+#~ msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+#~ msgstr "Oferă o selecție de diferite pachete de sistem pentru instalare și activare precum httpd, nginx, mariadb"
+
+#~ msgid "Choose which servers to install, if none then a minimal installation will be done"
+#~ msgstr "Alegeți serverele dorite pentru instalare, dacă nu este selectat niciunul se va realiza o instalare minimală"
+
+#~ msgid "Installs a minimal system as well as xorg and graphics drivers."
+#~ msgstr "Instalează un sistem minimal împreună cu xorg și driverele grafice."
+
+#~ msgid "Press Enter to continue."
+#~ msgstr "Apăsați Enter pentru a continua."
+
+#~ msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+#~ msgstr "Doriți să folosiți modul chroot pentru a intra în noua instalare și pentru a efectua configurații de post-instalare?"
+
+#~ msgid "Select one or more hard drives to use and configure\n"
+#~ msgstr "Selectați unul sau mai multe discuri dure pentru a utiliza și configura\n"
+
+#~ msgid "Any modifications to the existing setting will reset the disk layout!"
+#~ msgstr "Orice modificare aplicată la setările existene vor resta schema de partiționare a discului!"
+
+#~ msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+#~ msgstr "Dacă resetați selecția de discuri de stocare acest lucru va rezulta în resetarea schemei de partiționare existente a discului. Sigur doriți acest lucru?"
+
+#~ msgid "Save and exit"
+#~ msgstr "Salvează și ieși"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "contains queued partitions, this will remove those, are you sure?"
+#~ msgstr ""
+#~ "{}\n"
+#~ "conține partiții în așteptare, acest lucru le va șterge, sigur doriți acest lucru?"
+
+#~ msgid "Use ESC to skip"
+#~ msgstr "Folosiți ESC pentru a ignora"
+
+#~ msgid ""
+#~ "Use CTRL+C to reset current selection\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Folosi'i CTRL+C pentru a reseta selecția curentă\n"
+#~ "\n"
+
+#~ msgid "Copy to: "
+#~ msgstr "Copiază la: "
+
+#~ msgid "Edit: "
+#~ msgstr "Editează: "
+
+#~ msgid "Key: "
+#~ msgstr "Cheie: "
+
+#~ msgid "Edit {}: "
+#~ msgstr "Editează {}: "
+
+#~ msgid "Add: "
+#~ msgstr "Adaugă: "
+
+#~ msgid "Value: "
+#~ msgstr "Valoare: "
+
+#~ msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+#~ msgstr "Puteți trece peste selectarea unui dispozitiv de stocare și folosiți orice configurație de partiționare este montată la /mnt (experimental)"
+
+#~ msgid "Select one of the disks or skip and use /mnt as default"
+#~ msgstr "Selectați unul din discuri sau ignorați și folosiți /mnt ca predefinit"
+
+#~ msgid "Select which partitions to mark for formatting:"
+#~ msgstr "Selectați partițiile pentru a fi marcate pentru formatare:"
+
+#~ msgid "Use HSM to unlock encrypted drive"
+#~ msgstr "Folosiți HSM pentru deblocarea dispozitivului criptat"
+
+#~ msgid "Size"
+#~ msgstr "Mărime"
+
+#~ msgid "Free space"
+#~ msgstr "Spațiu liber"
+
+#~ msgid "Bus-type"
+#~ msgstr "Tip magistrală"
+
+#~ msgid "Enter username (leave blank to skip): "
+#~ msgstr "Introduceți numele de utilizator (lăsați gol pentru a ignora): "
+
+#~ msgid "The username you entered is invalid. Try again"
+#~ msgstr "Numele de utilizator adăugat este invalid. Încercați din nou"
+
+#~ msgid "Should \"{}\" be a superuser (sudo)?"
+#~ msgstr "Ar trebui ca \"{}\" să fie un utilizator cu privilegii (sudo)?"
+
+#~ msgid "Select which partitions to encrypt"
+#~ msgstr "Selectați partițiile pentru criptare"
+
+#~ msgid "This option enables the number of parallel downloads that can occur during installation"
+#~ msgstr "Această opținea setează numărul de descărcări paralele care pot avea loc în timpul instalării"
+
+#~ msgid ""
+#~ "Enter the number of parallel downloads to be enabled.\n"
+#~ " (Enter a value between 1 to {})\n"
+#~ "Note:"
+#~ msgstr ""
+#~ "Introduceți numărul de descărcări simultane pentru a fi activat.\n"
+#~ " (Introduceți o valuare între 1 și {max_downloads})\n"
+#~ "Info:"
+
+#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+#~ msgstr " - Valoare minimă   : 1 ( Permite o descărcare simultană, permite 2 descărcări simultane )"
+
+#~ msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+#~ msgstr " - Valoare minimă  : 1 ( Permite o descărcare simultană, permite 2 descărcări simultane )"
+
+#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+#~ msgstr " - Dezactivează/Predefinit: 0 (Dezactivează descărcările simultane, permite o singură descărcare simultană )"
+
+#, python-brace-format
+#~ msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+#~ msgstr "Input invalid! Încercați din nou cu un input valid [1 pentru {max_downloads}, sau 0 pentru dezactivare]"
+
+#~ msgid "ESC to skip"
+#~ msgstr "ESC pentru ignorare"
+
+#~ msgid "CTRL+C to reset"
+#~ msgstr "CTRL+C pentru resetare"
+
+#~ msgid "TAB to select"
+#~ msgstr "TAB pentru a selecta"
+
+#~ msgid "[Default value: 0] > "
+#~ msgstr "[Valoare predefinită: 0] > "
+
+#~ msgid "To be able to use this translation, please install a font manually that supports the language."
+#~ msgstr "Pentru a putea folosi această traducere, vă rog să instalați  manual un font compatibil cu această limbă."
+
+#~ msgid "The font should be stored as {}"
+#~ msgstr "Fontul ar trebui salvat ca {}"
+
+#~ msgid "Select an execution mode"
+#~ msgstr "Selectați un mod de execuție"
+
+#~ msgid "Select one or more devices to use and configure"
+#~ msgstr "Selectați unul sau mai multe discuri dure pentru a fi utilizate și configurate"
+
+#~ msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+#~ msgstr "Dacă resetați selecția de discuri de stocare acest lucru va rezulta în resetarea schemei de partiționare existente a discului. Sigur doriți acest lucru?"
+
+#~ msgid "Existing Partitions"
+#~ msgstr "Partiții Existente"
+
+#~ msgid "Select a partitioning option"
+#~ msgstr "Selectați o opțiune de partiționare"
+
+#~ msgid "Enter the root directory of the mounted devices: "
+#~ msgstr "Introduceți directorul rădăcină a dispozitivelor montate: "
+
+#~ msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+#~ msgstr "Aceasta este o listă de profiluri pre-programate \"profiluris_bck\", ar putea să ușureze instalarea unor lucruri precum spațiile de lucru"
+
+#~ msgid "Current profile selection"
+#~ msgstr "Selecția curentă a profilului"
+
+#~ msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+#~ msgstr "Dacă punctul de montare /boot este setat, atunci partiția va fi marcată ca fiind bootabilă."
+
+#~ msgid "Mountpoint: "
+#~ msgstr "Punct de montare: "
+
+#~ msgid "Current free sectors on device {}:"
+#~ msgstr "Sectoarele libere curente de pe dispozitiv {}:"
+
+#~ msgid "Total sectors: {}"
+#~ msgstr "Toate sectoarele: {}"
+
+#~ msgid "Enter the start sector (default: {}): "
+#~ msgstr "Introduceți sectorul de început (predefinit: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+#~ msgstr "Introduceți sectorul de final pentru partiționare (procentaj sau numărul block-ului, predefinit: {}): "
+
+#~ msgid "No HSM devices available"
+#~ msgstr "Nicun dispozitiv HSM disponibil"
+
+#~ msgid "Select disk encryption option"
+#~ msgstr "Selectați opțiunea pentru criptarea discului"
+
+#~ msgid "Partition encryption"
+#~ msgstr "Criptare partiție"
+
+#, python-brace-format
+#~ msgid " ! Formatting {} in "
+#~ msgstr " ! Se formatează {} in "
+
+#~ msgid "← Back"
+#~ msgstr "← Înapoi"
+
+#~ msgid "All settings will be reset, are you sure?"
+#~ msgstr "{} conține partiții în așteptare, acest proces le va șterge, doriți acest lucru?"
+
+#~ msgid "Please chose which greeter to install for the chosen profiles: {}"
+#~ msgstr "Vă rog selectați un manager de afișare pentru profilurile selectate: {}"
+
+#~ msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+#~ msgstr "Driverul proprietar Nvidia nu este compatibil cu Sway. Se poate să aveți probleme, sunteți ok cu asta?"
+
+#~ msgid "Add profile"
+#~ msgstr "Adaugă profil"
+
+#~ msgid "Edit profile"
+#~ msgstr "Editează profil"
+
+#~ msgid "Delete profile"
+#~ msgstr "Șterge profil"
+
+#~ msgid "Profile name: "
+#~ msgstr "Nume profil: "
+
+#~ msgid "The profile name you entered is already in use. Try again"
+#~ msgstr "Numele de utilizator adăugat este invalid. Încercați din nou"
+
+#~ msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+#~ msgstr "Pachetele care se instalează cu acest profil (separare prin spațiu, lăsați liber pentru a ignora): "
+
+#~ msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+#~ msgstr "Serviciile activate cu acest profil (separare prin spațiu, lăsați liber pentru a ignora): "
+
+#~ msgid "Should this profile be enabled for installation?"
+#~ msgstr "Ar trebui ca acest profil să fie bifat pentru instalare?"
+
+#~ msgid "Create your own"
+#~ msgstr "Crează-ți propriul tău"
+
+#~ msgid ""
+#~ "\n"
+#~ "Select a graphics driver or leave blank to install all open-source drivers"
+#~ msgstr ""
+#~ "\n"
+#~ "Selectați un driver grafic sau lăsați liber pentru a instala toate driverele open-source"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Choose an option to give Sway access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#~ msgid "This is a list of pre-programmed default_profiles"
+#~ msgstr "Aceasta este o listă cu profiluri pre-programate"
+
+#~ msgid "Finding possible directories to save configuration files ..."
+#~ msgstr "Caut directoare pentru salvarea fișierelor de configurare ..."
+
+#~ msgid "Select directory (or directories) for saving configuration files"
+#~ msgstr "Selectați directorul (sau directoarele), pentru salvarea fișierelor de configurare"
+
+#~ msgid "Add a custom mirror"
+#~ msgstr "Adaugă o oglindă customizată"
+
+#~ msgid "Change custom mirror"
+#~ msgstr "Schimbă oglinda customizată"
+
+#~ msgid "Delete custom mirror"
+#~ msgstr "Șterge oglinda customizată"
+
+#~ msgid "Enter name (leave blank to skip): "
+#~ msgstr "Introduceți numele (lăsați gol pentru a ignora): "
+
+#~ msgid "Enter url (leave blank to skip): "
+#~ msgstr "Introduceți URL (lăsați gol pentru a ignora): "
+
+#~ msgid "Select signature check option"
+#~ msgstr "Selectați opțiunea pentru verificarea semnăturii"
+
+#~ msgid "Defined"
+#~ msgstr "Definit"
+
+#~ msgid ""
+#~ "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+#~ "Save directory: "
+#~ msgstr ""
+#~ "Introduceți un director pentru salvarea configurării (configurațiilor, completare automată cu Tab activată)\n"
+#~ "Directorul pentru salvare: "
+
+#~ msgid ""
+#~ "Do you want to save {} configuration file(s) in the following location?\n"
+#~ "\n"
+#~ "{}"
+#~ msgstr ""
+#~ "Doriți să salvați fișierele de configurare {} în această locație?\n"
+#~ "\n"
+#~ "{]"
+
+#~ msgid "Saving {} configuration files to {}"
+#~ msgstr "Salvez {} fișierele de configurație la {}"
+
+#~ msgid "Mirrors"
+#~ msgstr "Oglinzi"
+
+#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+#~ msgstr " - Valoare maximă  : {} ( Permite {} descărcări simultane, permite {max_downloads+1} descărcări în același timp )"
+
+#~ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+#~ msgstr "Input invalid! Încercați din nou cu un input valid [1 la {}, sau 0 pentru dezactivare]"
+
+#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+#~ msgstr "Folosiți NetworkManager (necesar pentru configurarea setărilor de rețea într-un mod grafic pentru GNOME și KDE)"
+
+#~ msgid "Total: {} / {}"
+#~ msgstr "Total: {} / {}"
+
+#~ msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+#~ msgstr "Toate valorile introduse pot fi notate cu unități precum: B, KB, KiB, MB, MiB ..."
+
+#~ msgid "Enter start (default: sector {}): "
+#~ msgstr "Introduceți start (predefinit: sector {}): "
+
+#~ msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+#~ msgstr "Nu se pot identifica dispozitive de tip fido2. Este libfido2 instalată?"
+
+#~ msgid "Path"
+#~ msgstr "Cale"
+
+#~ msgid "Manufacturer"
+#~ msgstr "Producător"
+
+#~ msgid "Product"
+#~ msgstr "Produs"
+
+#~ msgid "This option enables the number of parallel downloads that can occur during package downloads"
+#~ msgstr "Această opțiune setează numărul de descărcări paralele care pot avea loc în timpul instalării"
+
+#, python-brace-format
+#~ msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+#~ msgstr " - Valoare minimă  : {} ( Permite {} descărcări simultane în același timp )"
+
+#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+#~ msgstr " - Dezactivează/Predefinit: 0 (Dezactivează descărcările simultane, permite o singură descărcare în același timp )\n"
+
+#~ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+#~ msgstr "Input invalid! Încercați din nou cu un input valid [0 pentru dezactivare]"
+
+#, fuzzy
+#~ msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Choose an option to give Hyprland access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+#~ msgstr "Oferă o selecție de medii de lucru și manageri de ferestre precum GNOME, KDE, Sway"
+
+#, fuzzy
+#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+#~ msgstr "Folosiți NetworkManager (necesar pentru configurarea setărilor de rețea într-un mod grafic pentru GNOME și KDE)"
+
+#, fuzzy
+#~ msgid "Select a LVM option"
+#~ msgstr "Selectați un fus orar"
+
+#, fuzzy
+#~ msgid "Select which LVM volumes to encrypt"
+#~ msgstr "Selectați partițiile pentru criptare"
+
+#, fuzzy
+#~ msgid "Archinstall help"
+#~ msgstr "Limba pentru Archinstall"
+
+#, fuzzy
+#~ msgid "Filesystem"
+#~ msgstr "Schimbă sistemul de fișiere"
+
+#, fuzzy
+#~ msgid "Start (default: sector {}): "
+#~ msgstr "Introduceți start (predefinit: sector {}): "
+
+#, fuzzy
+#~ msgid "End (default: {}): "
+#~ msgstr "Introduceți final (predefinit: {}): "
+
+#, fuzzy
+#~ msgid "Disk configuration type"
+#~ msgstr "Configurație disc"
+
+#, fuzzy
+#~ msgid "Select language"
+#~ msgstr "Limba locală"
+
+#, fuzzy
+#~ msgid "Write additional packages to install (space separated, leave blank to skip)"
+#~ msgstr "Scrieți pachete adiționale pe care doriți să le instalați(separare prin spațiu, lăsați liber pentru a ignora): "
+
+#, fuzzy
+#~ msgid "Interfaces"
+#~ msgstr "Adaugă interfață"
+
+#, fuzzy
+#~ msgid "DNS servers"
+#~ msgstr "Nu există un server audio"
+
+#, fuzzy
+#~ msgid "Main profile"
+#~ msgstr "Editează profil"
+
+#, fuzzy
+#~ msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+#~ msgstr ""
+#~ "Introduceți un director pentru salvarea configurării (configurațiilor, completare automată cu Tab activată)\n"
+#~ "Directorul pentru salvare: "
+
+#, fuzzy
+#~ msgid "Mirror name"
+#~ msgstr "Regiune de oglindire"
+
+#, fuzzy
+#~ msgid "Select execution mode"
+#~ msgstr "Selectați un mod de execuție"
+
+#, fuzzy
+#~ msgid "Choose an option to give Hyprland access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy, python-brace-format
+#~ msgid "Size (default: {}): "
+#~ msgstr "Introduceți final (predefinit: {}): "
+
+#, fuzzy
+#~ msgid "Select on single select"
+#~ msgstr "Selectați opțiunea pentru verificarea semnăturii"
+
+#, fuzzy
+#~ msgid "Select on multi select"
+#~ msgstr "Selectați un fus orar"
+
+#, fuzzy
+#~ msgid "Skip selection menu"
+#~ msgstr "Selectați un mod de execuție"
+
+#, fuzzy
+#~ msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+
+#, fuzzy
+#~ msgid "Choose an option to give labwc access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Alegeți o opțiune pentru a acorda acces lui Sway la hardware"
+
+#, fuzzy
+#~ msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgstr "Sway are nevoie de acces la setup-ul dumneavoastră (colecție de dispozitive hardware ex. tastatura, mouse, etc.)"
+
+#, fuzzy
+#~ msgid "Choose an option to give niri access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Alegeți o opțiune pentru a acorda acces lui Sway la hardware"

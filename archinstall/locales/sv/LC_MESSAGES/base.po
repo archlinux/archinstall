@@ -12,864 +12,408 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.8\n"
 
-msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] En logg-fil har skapats här: {} {}"
+msgid "Recommended"
+msgstr ""
 
-msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr " Vänligen rapportera detta fel (och logg-filen) till https://github.com/archlinux/archinstall/issues"
+#, fuzzy
+msgid "Package"
+msgstr "Paketgrupp:"
 
-msgid "Do you really want to abort?"
-msgstr "Vill du verkligen avbryta?"
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
 
-msgid "And one more time for verification: "
-msgstr "Och en gång till för verifikation: "
+msgid "Dependencies"
+msgstr ""
 
-msgid "Would you like to use swap on zram?"
-msgstr "Vill du använda swap under zram?"
+#, fuzzy
+msgid "Package group"
+msgstr "Paketgrupp:"
 
-msgid "Desired hostname for the installation: "
-msgstr "Önskat 'värdnamn' för din installation: "
+msgid "Extensive KDE Plasma installation"
+msgstr ""
 
-msgid "Username for required superuser with sudo privileges: "
-msgstr "Användarnamn för obligatoriska superanvändaren med sudo rättigheter: "
+#, fuzzy
+msgid "Packages in group"
+msgstr "Paketgrupp:"
 
-msgid "Any additional users to install (leave blank for no users): "
-msgstr "Några ytterligare användare att installera (lämna tomt när du är klar): "
+msgid "Minimal KDE Plasma installation"
+msgstr ""
 
-msgid "Should this user be a superuser (sudoer)?"
-msgstr "Är detta en superanvändare (sudo-rättigheter)?"
+msgid "Type"
+msgstr "Typ"
 
-msgid "Select a timezone"
-msgstr "Välj en tidszon"
+#, fuzzy
+msgid "Description"
+msgstr "Diskkryptering"
 
-msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Vill du använda GRUB istället för systemd-boot som boot-loader?"
-
-msgid "Choose a bootloader"
-msgstr "Välj en boot-loader"
-
-msgid "Choose an audio server"
-msgstr "Välj en ljud-server"
-
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Enbart paket som base, base-devel, linux, linux-firmware, efibootmgr och självvalda paket är installerade."
-
-msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr "Observera: base-devel kommer inte att installeras längre som standard. Lägg till det här om du behöver byggverktyg."
-
-msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Om du önskar en webbläsare, exempelvis firefox eller chromium, bör du skriva in dom i följande fält."
-
-msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Skriv in ytterligare paket som skall installeras (separerade med mellanslag, lämna tomt för att skippa): "
-
-msgid "Copy ISO network configuration to installation"
-msgstr "Kopiera nätverkskonfigurationen från ISO till installationen"
-
-msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "Använd NetworkManager (nödvändigt för att konfigurera internet i grafiska miljöerna GNOME och KDE)"
-
-msgid "Select one network interface to configure"
-msgstr "Välj ett nätverkskort för konfigurering"
-
-msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Välj vilket läge att konfigurera för \"{}\" eller använd standardläge \"{}\""
+msgid "Select a flavor of KDE Plasma to install"
+msgstr ""
 
 #, python-brace-format
-msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Mata in IP och subnät för {} (exempelvis: 192.168.0.5/24): "
-
-msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Mata in IP-adress till gateway (router) eller lämna tomt för inget: "
-
-msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Mata in DNS-servrar (separerade med mellanslag, lämna tomt för inget): "
-
-msgid "Select which filesystem your main partition should use"
-msgstr "Välj vilket filsystem din huvudpartition skall använda"
-
-msgid "Current partition layout"
-msgstr "Nuvarande partitionslayout"
-
-msgid ""
-"Select what to do with\n"
-"{}"
+msgid "{} needs access to your seat"
 msgstr ""
-"Välj vad du vill göra med\n"
-"{}"
 
-msgid "Enter a desired filesystem type for the partition"
-msgstr "Mata in önskad filsystemtyp för partition"
+#, fuzzy
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
 
-msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Ange startplatsen (i delade enheter: s, GB, %, etc. ; standard: {}): "
+#, fuzzy, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
+msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
 
-msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Ange slutplatsen (i delade enheter: s, GB, %, etc. ; ex: {}): "
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Miljötyp: {}"
 
-msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "{} innehåller uppköade partitioner, detta tar bort dessa, är du säker?"
+#, python-brace-format
+msgid "Environment type: {}"
+msgstr "Miljötyp: {}"
 
-msgid ""
-"{}\n"
-"\n"
-"Select by index which partitions to delete"
-msgstr ""
-"{}\n"
-"\n"
-"Välj vilket partitionsindex du vill ta bort"
+msgid "Installed packages"
+msgstr "Installerade paket"
 
-msgid ""
-"{}\n"
-"\n"
-"Select by index which partition to mount where"
-msgstr ""
-"{}\n"
-"\n"
-"Välj vilket partitionsindex du vill montera vart"
-
-msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Partitionens monteringsplats är relativa till insidan av installationen, boot är exempelvis /boot."
-
-msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Välj vart du vill montera partitionen (lämna tomt för att ta bort montering): "
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mask for formatting"
-msgstr ""
-"{}\n"
-"\n"
-"Välj vilken partition som skall markeras för formatering"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mark as encrypted"
-msgstr ""
-"{}\n"
-"\n"
-"Välj vilken partition som skall markeras för kryptering"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mark as bootable"
-msgstr ""
-"{}\n"
-"\n"
-"Välj vilken partition som skall markeras som bootbar"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to set a filesystem on"
-msgstr ""
-"{}\n"
-"\n"
-"Välj vilken partition som du vill välja filsystem till"
-
-msgid "Enter a desired filesystem type for the partition: "
-msgstr "Mata in ett önskat filsystem för partitionen: "
-
-msgid "Archinstall language"
-msgstr "Språk för detta gränssnitt"
-
-msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Töm alla partitioner och använd en generiskt rekommenderad partitionslayout"
-
-msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Välj vad som skall hända med varje individuell disk (följt av partitionsanvändning)"
-
-msgid "Select what you wish to do with the selected block devices"
-msgstr "Välj vad du önskar göra med valda blockenheterna"
-
-msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "Detta är en lista med förprogrammerade profiler, dom kan göra installation av exempelvis skrivbordsmiljöer lite enklare"
-
-msgid "Select keyboard layout"
-msgstr "Välj tangentbordslayout"
-
-msgid "Select one of the regions to download packages from"
-msgstr "Välj en av regionerna för att ladda ner paket ifrån"
-
-msgid "Select one or more hard drives to use and configure"
-msgstr "Välj en eller flera hårddiskar som skall användas och konfigureras"
-
-msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "För bästa kompabilitet med din AMD-hårdvara, vill du förmodligen använda antingen \"öppen mjukvara\" eller \"AMD/ATI\" valet."
-
-msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "För bästa kompabilitet med din Intel-hårdvara, vill du förmodligen använda antingen \"öppen mjukvara\" eller \"Intel\" valet.\n"
-
-msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "För bästa kompabilitet med din nVidia-hårdvara, vill du förmodligen använda antingen \"nVidia proprietär drivrutin\".\n"
-
-msgid ""
-"\n"
-"\n"
-"Select a graphics driver or leave blank to install all open-source drivers"
-msgstr ""
-"\n"
-"\n"
-"Välj en grafikdrivrutin eller lämna blankt för att installera alla med öppen mjukvara"
-
-msgid "All open-source (default)"
-msgstr "Alla med öppen mjukvara (standardvalet)"
-
-msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Välj vilken Linux-kärna du vill använda, lämna tomt för att använda \"{}\""
-
-msgid "Choose which locale language to use"
-msgstr "Välj vilket språk du vill använda"
-
-msgid "Choose which locale encoding to use"
-msgstr "Välj vilken teckenuppsättning du vill använda"
-
-msgid "Select one of the values shown below: "
-msgstr "Välj en av alternativen nedan: "
-
-msgid "Select one or more of the options below: "
-msgstr "Välj ett eller flera av följande val: "
-
-msgid "Adding partition...."
-msgstr "Skapar en partition...."
-
-msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Du måste mata in en supporterad filsystem-typ för att fortsätta. Kör `man parted` för supporterade filsystem."
-
-msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Fel: Listning av profiler på \"{}\" resulterade i:"
-
-msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr "Fel: Kunde inte tyda \"{}\" resultatet som JSON:"
-
-msgid "Keyboard layout"
-msgstr "Tangentbordslayout"
-
-msgid "Mirror region"
-msgstr "Region för paketsynk"
-
-msgid "Locale language"
-msgstr "Språk du vill använda"
-
-msgid "Locale encoding"
-msgstr "Teckenuppsättning du vill använda"
-
-msgid "Drive(s)"
-msgstr "Hårddisk(ar)"
-
-msgid "Disk layout"
-msgstr "Disklayout"
-
-msgid "Encryption password"
-msgstr "Krypterings-lösenord"
-
-msgid "Swap"
-msgstr "Swap"
-
-msgid "Bootloader"
-msgstr "Boot-loader"
-
-msgid "Root password"
-msgstr "Root-lösenord"
-
-msgid "Superuser account"
-msgstr "Superanvändar-konto"
-
-msgid "User account"
-msgstr "Användarkonto"
-
-msgid "Profile"
-msgstr "Profil"
+msgid "Bluetooth"
+msgstr "Bluetooth"
 
 msgid "Audio"
 msgstr "Ljud mjukvara"
 
-msgid "Kernels"
-msgstr "Linux-kärnor"
+msgid "Print service"
+msgstr "Utskriftstjänst"
 
-msgid "Additional packages"
-msgstr "Extra paket"
+msgid "Power management"
+msgstr "Strömhantering"
 
-msgid "Network configuration"
-msgstr "Nätverkskonfiguration"
-
-msgid "Automatic time sync (NTP)"
-msgstr "Automatisk tidssynk (NTP)"
-
-msgid "Install ({} config(s) missing)"
-msgstr "Installera ({} inställningar saknas)"
-
-msgid ""
-"You decided to skip harddrive selection\n"
-"and will use whatever drive-setup is mounted at {} (experimental)\n"
-"WARNING: Archinstall won't check the suitability of this setup\n"
-"Do you wish to continue?"
+msgid "Firewall"
 msgstr ""
-"Du valde att hoppa över hårddiskvalet.\n"
-"Archinstall kommer därför använda vad som finns monterat under {} (experimentell)!\n"
-"Varning: Archinstall kommer inte kontrollera lämpligheten i diskvalet.\n"
-"Vill du fortsätta?"
 
-msgid "Re-using partition instance: {}"
-msgstr "Återanvänder disk-instans: {}"
+#, fuzzy
+msgid "Additional fonts"
+msgstr "Ytterligare arkiv"
 
-msgid "Create a new partition"
-msgstr "Skapa en ny partition"
+msgid "Enabled"
+msgstr "Aktiverad"
 
-msgid "Delete a partition"
-msgstr "Ta bort en partition"
+msgid "Disabled"
+msgstr "Inaktiverad"
 
-msgid "Clear/Delete all partitions"
-msgstr "Rensa/Ta bort alla partitioner"
+msgid "Would you like to configure Bluetooth?"
+msgstr "Vill du konfigurera Bluetooth?"
 
-msgid "Assign mount-point for a partition"
-msgstr "Välj monteringspunkt för en partition"
+msgid "Would you like to configure the print service?"
+msgstr "Vill du konfigurera utskriftstjänsten?"
 
-msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "Markera/Avmarkera en partition för formatering (tar bort alla dess data)"
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Spara användarkonfigurering"
 
-msgid "Mark/Unmark a partition as encrypted"
-msgstr "Markera/Avmarkera en partition som krypterad"
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Välj ett nätverkskort att lägga till"
 
-msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Markera/Avmarkera en partition som bootbar (automatiskt gjort för /boot)"
+#, fuzzy
+msgid "ArchInstall Language"
+msgstr "Språk för detta gränssnitt"
 
-msgid "Set desired filesystem for a partition"
-msgstr "Sätt önskat filsystem för partitionen"
+msgid "Version"
+msgstr ""
 
-msgid "Abort"
-msgstr "Avbryt"
+#, fuzzy
+msgid "Installation Script"
+msgstr "Installationen slutförd"
+
+msgid "Locales"
+msgstr "Lokaler"
+
+msgid "Disk configuration"
+msgstr "Diskkonfiguration"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Mirrors and repositories"
+msgstr "Speglar och arkiv"
+
+msgid "Network"
+msgstr ""
+
+msgid "Bootloader"
+msgstr "Boot-loader"
+
+#, fuzzy
+msgid "Application"
+msgstr "Program"
+
+msgid "Authentication"
+msgstr "Autentisering"
+
+msgid "Swap"
+msgstr "Swap"
 
 msgid "Hostname"
 msgstr "Värdnamn"
 
-msgid "Not configured, unavailable unless setup manually"
-msgstr "Inte konfigurerad, otillgängligt utan manuell konfigurering"
+msgid "Kernels"
+msgstr "Linux-kärnor"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Automatisk tidssynk (NTP)"
 
 msgid "Timezone"
 msgstr "Tidszon"
 
-msgid "Set/Modify the below options"
-msgstr "Sätt eller modifiera nedan alternativ"
+#, fuzzy
+msgid "Services"
+msgstr "Enhet"
 
-msgid "Install"
-msgstr "Installera"
+msgid "Additional packages"
+msgstr "Extra paket"
 
-msgid ""
-"Use ESC to skip\n"
-"\n"
+msgid "Pacman"
 msgstr ""
-"Använd ESC för att hoppa över\n"
-"\n"
 
-msgid "Suggest partition layout"
-msgstr "Rekommendera en partitionslayout"
+#, fuzzy
+msgid "Custom commands"
+msgstr "Anpassade speglar"
 
-msgid "Enter a password: "
+#, fuzzy
+msgid "Users"
+msgstr "Användare"
+
+#, fuzzy
+msgid "Root encrypted password"
+msgstr "Diskkrypteringslösenord"
+
+msgid "Disk encryption password"
+msgstr "Diskkrypteringslösenord"
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Felaktigt lösenord för autentiseringsfilens dekrypteringslösenord"
+
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Dekrypteringslösenord för autentiseringsfil"
+
+msgid "Incorrect password"
+msgstr "Felaktigt lösenord"
+
+#, fuzzy, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "Konfigurerar U2F-enhet för användare: {}"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Konfigurerar U2F-enhet för användare: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Du kan behöva ange PIN-koden och sedan trycka på din U2F-enhet för att registrera den"
+
+msgid "Root password"
+msgstr "Root-lösenord"
+
+msgid "User account"
+msgstr "Användarkonto"
+
+msgid "U2F login setup"
+msgstr "Ställ in U2F-inloggning"
+
+msgid "U2F login method: "
+msgstr "U2F-inloggningsmetod: "
+
+msgid "Passwordless sudo: "
+msgstr "Lösenordslös sudo: "
+
+msgid "No U2F devices found"
+msgstr "Inga U2F-enheter hittades"
+
+#, fuzzy
+msgid "Enter root password"
 msgstr "Mata in ett lösenord: "
 
-msgid "Enter a encryption password for {}"
-msgstr "Mata in ett krypterings-lösenord för {}"
+msgid "Enable passwordless sudo?"
+msgstr "Aktivera lösenordslös sudo?"
 
-msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Mata in ett disk-krypteringslösenord (lämna blankt för att hoppa över kryptering): "
+msgid "Unified kernel images"
+msgstr "Enhetliga kärnavbildningar"
 
-msgid "Create a required super-user with sudo privileges: "
-msgstr "Skapa ett super-användarkonto med sudo-rättigheter (detta är ett krav): "
+msgid "Install to removable location"
+msgstr "Installera till borttagbar plats"
 
-msgid "Enter root password (leave blank to disable root): "
-msgstr "Mata in ett root-lösenord (lämna blankt för att deaktivera kontot): "
-
-msgid "Password for user \"{}\": "
-msgstr "Lösenord för användare \"{}\": "
-
-msgid "Verifying that additional packages exist (this might take a few seconds)"
-msgstr "Verifierar att valda paket existerar (detta kan ta några sekunder)"
-
-msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Skulle du vilja använda automatisk tidssynkronisering (NTP) med standard-tidsservrar?\n"
-
-msgid ""
-"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
-"For more information, please check the Arch wiki"
+msgid "Plymouth"
 msgstr ""
-"Hårdvaru-tid och annan efterkonfigurering kan behövas för att NTP skall fungera korrekt.\n"
-"För mer information, se Arch Wiki-sidan"
 
-msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "Mata in ett användarnamn för att skapa ytterligare användare (lämna tomt för att hoppa över): "
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats, säker standardinställning))"
 
-msgid "Use ESC to skip\n"
-msgstr "Använd ESC för att hoppa över\n"
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Kommer att installeras på en anpassad plats med NVRAM-post"
 
-msgid ""
-"\n"
-" Choose an object from the list, and select one of the available actions for it to execute"
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
 msgstr ""
-"\n"
-"Välj ett objekt från listan, och välj en åtgärd att exekvera"
 
-msgid "Cancel"
-msgstr "Avbryt"
-
-msgid "Confirm and exit"
-msgstr "Godkänn och gå ur"
-
-msgid "Add"
-msgstr "Lägg till"
-
-msgid "Copy"
-msgstr "Kopiera"
-
-msgid "Edit"
-msgstr "Editera"
-
-msgid "Delete"
-msgstr "Ta bort"
-
-msgid "Select an action for '{}'"
-msgstr "Välj vad du vill göra med '{}'"
-
-msgid "Copy to new key:"
-msgstr "Kopiera till en ny nyckel:"
-
-msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "Okänd NIC typ: {}. Möjliga val är {}"
-
-msgid ""
-"\n"
-"This is your chosen configuration:"
+msgid "black screen with the NVIDIA driver"
 msgstr ""
-"\n"
-"Det här är din valda konfiguration:"
 
-msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "Pacman körs redan, väntar max 10 minuter innan vi avbryter."
-
-msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Existerande pacman-lås avslutades aldrig. Vänligen rensa upp föregående körningar av pacman-sessioner innan du använder archinstall."
-
-msgid "Choose which optional additional repositories to enable"
-msgstr "Välj vilka frivilliga arkiv som ska aktiveras"
-
-msgid "Add a user"
-msgstr "Lägg till användare"
-
-msgid "Change password"
-msgstr "Byt lösenord"
-
-msgid "Promote/Demote user"
-msgstr "Befodra/Degradera användare"
-
-msgid "Delete User"
-msgstr "Ta bort användare"
-
-msgid ""
-"\n"
-"Define a new user\n"
+msgid "hidden password prompt with disk encryption (LUKS)"
 msgstr ""
-"\n"
-"Skapa ny användare\n"
 
-msgid "User Name : "
-msgstr "Användarnamn : "
+#, fuzzy
+msgid "Would you like to enable it?"
+msgstr "Vill du fortsätta?"
 
-msgid "Should {} be a superuser (sudoer)?"
-msgstr "Är detta en superanvändare (sudo-rättigheter)?"
+msgid "Would you like to use unified kernel images?"
+msgstr "Vill du använda enhetliga kärnavbildningar?"
 
-msgid "Define users with sudo privilege: "
-msgstr "Skapa användare med sudo-rättigheter: "
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Vill du installera bootloadern på standardsökvägen för flyttbara medier?"
 
-msgid "No network configuration"
-msgstr "Ingen nätverkskonfigurering"
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Detta installerar bootloadern till /EFI/BOOT/BOOTX64.EFI (eller liknande) vilket är användbart för:"
 
-msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Välj önskade sub-volymen på en BTRFS partition"
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt som de flesta MSI-moderkort,"
 
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to set subvolumes on"
+msgid "most Apple Macs, many laptops..."
+msgstr "de flesta Apple Mac-datorer, många bärbara datorer..."
+
+msgid "USB drives or other portable external media."
+msgstr "USB-minnen eller andra portabla externa medier."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "System där du vill att disken ska vara uppstartsbar på vilken dator som helst."
+
+msgid "Select bootloader to install"
 msgstr ""
-"{}\n"
-"\n"
-"Välj vilken partition som du ska sätta sub-volymer på"
 
-msgid "Manage btrfs subvolumes for current partition"
-msgstr "Managera BTRFS sub-volymer på nuvarande partition"
+msgid "UEFI is not detected and some options are disabled"
+msgstr "UEFI identifierades inte och vissa alternativ är inaktiverade"
+
+#, fuzzy
+msgid "Select Plymouth theme"
+msgstr "Välj en monteringspunkt :"
+
+msgid "The specified configuration will be applied"
+msgstr "Den angivna konfigurationen kommer att tillämpas"
+
+msgid "Would you like to continue?"
+msgstr "Vill du fortsätta?"
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Konfiguration"
 
 msgid "No configuration"
 msgstr "Ingen konfiguration"
 
-msgid "Save user configuration"
-msgstr "Spara användarkonfigurering"
+msgid "Save user configuration (including disk layout)"
+msgstr "Spara användarkonfiguration (inklusive disklayout)"
 
 msgid "Save user credentials"
 msgstr "Spara användar-/lösenordsuppgifter"
 
-msgid "Save disk layout"
-msgstr "Spara disk konfigurering"
-
 msgid "Save all"
 msgstr "Spara alla"
 
-msgid "Choose which configuration to save"
-msgstr "Välj vilken konfigurering du vill spara"
-
-msgid "Enter a directory for the configuration(s) to be saved: "
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
 msgstr "Välj vilken mapp du vill spara konfigurerationerna till: "
 
-msgid "Not a valid directory: {}"
-msgstr "Inte en giltig mapp: {}"
+#, python-brace-format
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Vill du spara konfigurationsfil(er) till {}?"
 
-msgid "The password you are using seems to be weak,"
-msgstr "Lösenordet du angav verkar svagt,"
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Vill du kryptera user_credentials.json filen?"
 
-msgid "are you sure you want to use it?"
-msgstr "är du säker på att du vill använda det?"
+msgid "Credentials file encryption password"
+msgstr "Krypteringslösenord för autentiseringsfil"
 
-msgid "Optional repositories"
-msgstr "Valfria arkiv"
+msgid "Partitioning"
+msgstr "Partitionering"
 
-msgid "Save configuration"
-msgstr "Spara konfiguration"
-
-msgid "Missing configurations:\n"
-msgstr "Konfigurationer som saknas:\n"
-
-msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Antingen måste ett root-lösenord sättas eller 1 superanvändarkonto skapas"
-
-msgid "Manage superuser accounts: "
-msgstr "Managera super-användare: "
-
-msgid "Manage ordinary user accounts: "
-msgstr "Managera vanliga användarkonton: "
-
-msgid " Subvolume :{:16}"
-msgstr " Sub-volym :{:16}"
-
-msgid " mounted at {:16}"
-msgstr " Monterad som {:16}"
-
-msgid " with option {}"
-msgstr " Med inställningen {}"
-
-msgid ""
-"\n"
-" Fill the desired values for a new subvolume \n"
-msgstr ""
-"\n"
-"Mata in önskvärda värden för nya sub-volymer \n"
-
-msgid "Subvolume name "
-msgstr "Namn för Sub-volymen "
-
-msgid "Subvolume mountpoint"
-msgstr "Monteringspunkt för sub-volymen"
-
-msgid "Subvolume options"
-msgstr "Flaggor för sub-volymen"
-
-msgid "Save"
-msgstr "Spara"
-
-msgid "Subvolume name :"
-msgstr "Namn på sub-volymen :"
-
-msgid "Select a mount point :"
-msgstr "Välj en monteringspunkt :"
-
-msgid "Select the desired subvolume options "
-msgstr "Välj önskade inställningar för sub-volymen "
-
-msgid "Define users with sudo privilege, by username: "
-msgstr "Definera användarnamn med sudo-rättigheter: "
+msgid "Disk encryption"
+msgstr "Diskkryptering"
 
 #, python-brace-format
-msgid "[!] A log file has been created here: {}"
-msgstr "[!] En logg-fil har skapats här: {}"
+msgid "Configuration type: {}"
+msgstr "Konfigurationstyp: {}"
+
+msgid "Mountpoint"
+msgstr "Monteringspunkt"
+
+msgid "Configuration"
+msgstr "Konfiguration"
+
+msgid "Wipe"
+msgstr "Rensa"
+
+msgid "Physical volumes"
+msgstr "Fysiska volymer"
+
+msgid "Volumes"
+msgstr "Volymer"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Ögonblicksavbildstyp: {}"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "LVM-diskkryptering med fler än 2 partitioner stöds för närvarande inte"
+
+msgid "Encryption type"
+msgstr "Krypteringstyp"
+
+msgid "Password"
+msgstr "Lösenord"
+
+msgid "Iteration time"
+msgstr "Iterationstid"
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr ""
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Önskat 'värdnamn' för din installation: "
+
+msgid "Partitions"
+msgstr "Partitioner"
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Diskkonfiguration"
+
+#, fuzzy
+msgid "Enter root mount directory"
+msgstr "Rootmonteringskatalog"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Byt filsystem"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Vill du använda komprimering eller inaktivera CoW?"
+
+msgid "Use compression"
+msgstr "Använd komprimering"
+
+msgid "Disable Copy-on-Write"
+msgstr "Inaktivera Copy-on-Write"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
 msgstr "Vill du använda BTRFS sub-volymer med standard-layout?"
-
-msgid "Would you like to use BTRFS compression?"
-msgstr "Vill du använda komprimering för BTRFS?"
 
 msgid "Would you like to create a separate partition for /home?"
 msgstr "Vill du skapa en separat partition för /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
 msgstr "De valda diskarna uppfyller inte minsta lagringskapacitet för automatisk layout-förslag\n"
-
-msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr "Minsta kapaciteten för /home är: {}GB\n"
-
-msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr "Minsta kapaciteten för Arch Linux partitionen är: {}GB"
-
-msgid "Continue"
-msgstr "Gå vidare"
-
-msgid "yes"
-msgstr "ja"
-
-msgid "no"
-msgstr "nej"
-
-msgid "set: {}"
-msgstr "sätt: {}"
-
-msgid "Manual configuration setting must be a list"
-msgstr "Manuell konfigurering måste vara en lista"
-
-msgid "No iface specified for manual configuration"
-msgstr "Inget interface specificerat för manuell konfigurering"
-
-msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr "Manuell NIC-konfiguration utan DHCP kräver en IP adress"
-
-msgid "Add interface"
-msgstr "Lägg till interface"
-
-msgid "Edit interface"
-msgstr "Editera interface"
-
-msgid "Delete interface"
-msgstr "Ta bort interface"
-
-msgid "Select interface to add"
-msgstr "Välj ett nätverkskort att lägga till"
-
-msgid "Manual configuration"
-msgstr "Manuell konfiguration"
-
-msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Markera/Avmarkera en partition för komprimering (BTRFS enbart)"
-
-msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Lösenordet du angav verkar svagt, är du säker på att du vill använda det?"
-
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Ger ett urval av skrivbordsval och fönsterhanterare, t.ex. Gnome, KDE och sway"
-
-msgid "Select your desired desktop environment"
-msgstr "Välj din skrivbordsmiljö"
-
-msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr "En väldigt minimal installation som möjliggör konfigurering av Arch Linux som du själv vill ha det."
-
-msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Erbjuder ett urval av olika server-paketeringar, t.ex. httpd, nginx och mariadb"
-
-msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Välj vilka servrar som ska installeras, om ingen kommer en minimal installation att göras"
-
-msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr "Installerar ett minimal system med xorg och grafikdrivrutiner."
-
-msgid "Press Enter to continue."
-msgstr "Tryck på Enter för att fortsätta."
-
-msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Vill du hoppa in i det nyligen installerade systemet och utföra förändringar? (skriv 'exit' när du är klart)"
-
-msgid "Are you sure you want to reset this setting?"
-msgstr "Vill du verkligen återställa denna inställning?"
-
-msgid "Select one or more hard drives to use and configure\n"
-msgstr "Välj en eller flera hårddiskar som skall användas och konfigureras\n"
-
-msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Modiferingar av inställningen kommer återställa disk-konfigureringen!"
-
-msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Om du återställer hårddiskvalen kommer det också återställa diskuppsättningen. Är du säker?"
-
-msgid "Save and exit"
-msgstr "Spara och gå ur"
-
-msgid ""
-"{}\n"
-"contains queued partitions, this will remove those, are you sure?"
-msgstr ""
-"{}\n"
-"innehåller uppköade partitionen och detta kommer ta bort dessa. Är du säker?"
-
-msgid "No audio server"
-msgstr "Ingen ljud-server"
-
-msgid "(default)"
-msgstr "(standard)"
-
-msgid "Use ESC to skip"
-msgstr "Använd ESC för att hoppa över"
-
-msgid ""
-"Use CTRL+C to reset current selection\n"
-"\n"
-msgstr ""
-"Använd CTRL+C för att återställa valen\n"
-"\n"
-
-msgid "Copy to: "
-msgstr "Kopiera till: "
-
-msgid "Edit: "
-msgstr "Editera: "
-
-msgid "Key: "
-msgstr "Nyckel: "
-
-msgid "Edit {}: "
-msgstr "Editera {}: "
-
-msgid "Add: "
-msgstr "Lägg till: "
-
-msgid "Value: "
-msgstr "Värde: "
-
-msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Du kan hoppa över val av disk och partitionering och använda det som är monterat vid /mnt/archinstall (experimentellt)"
-
-msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Välj en disk eller hoppa över och använd /mnt/archinstall utan formatering"
-
-msgid "Select which partitions to mark for formatting:"
-msgstr "Välj vilken partition som skall markeras för formatering:"
-
-msgid "Use HSM to unlock encrypted drive"
-msgstr "Använd HSM för att låsa upp krypterad enhet"
-
-msgid "Device"
-msgstr "Enhet"
-
-msgid "Size"
-msgstr "Storlek"
-
-msgid "Free space"
-msgstr "Fritt utrymme"
-
-msgid "Bus-type"
-msgstr "Buss-typ"
-
-msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "Antingen root-lösenord eller minst 1 användare med sudo-privilegier måste anges"
-
-msgid "Enter username (leave blank to skip): "
-msgstr "Ange användarnamn (lämna tomt för att hoppa över): "
-
-msgid "The username you entered is invalid. Try again"
-msgstr "Användarnamnet du angav är ogiltigt. Försök igen"
-
-msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "Ska \"{}\" vara en superanvändare (sudo)?"
-
-msgid "Select which partitions to encrypt"
-msgstr "Välj vilka partitioner som ska krypteras"
-
-msgid "very weak"
-msgstr "mycket svag"
-
-msgid "weak"
-msgstr "svag"
-
-msgid "moderate"
-msgstr "måttlig"
-
-msgid "strong"
-msgstr "starkt"
-
-msgid "Add subvolume"
-msgstr "Lägg till Sub-volym"
-
-msgid "Edit subvolume"
-msgstr "Editera Sub-volym"
-
-msgid "Delete subvolume"
-msgstr "Ta bort Sub-volym"
-
-msgid "Configured {} interfaces"
-msgstr "Konfigurerade {} gränssnitt"
-
-msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Detta alternativ aktiverar antalet parallella nedladdningar som kan ske under installationen"
-
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {})\n"
-"Note:"
-msgstr ""
-"Ange antalet parallella nedladdningar som ska aktiveras.\n"
-" (ange ett värde mellan 1 till {}\n"
-"Observera:"
-
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr " - - Maximalt värde:   : {} (Tillåter {} parallella nedladdningar, tillåter {} nedladdningar åt gången)"
-
-msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Minimalt värde   : 1 (Tillåter 1 parallell nedladdning, tillåter 2 nedladdningar åt gången)"
-
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr "  - Inaktivera/Standard: 0 (Inaktiverar parallell nedladdning, tillåter endast en nedladdning åt gången)"
-
-#, python-brace-format
-msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Ogiltig inmatning! Försök igen med en giltig inmatning [1 till {max_downloads}, eller 0 för att inaktivera]"
-
-msgid "Parallel Downloads"
-msgstr "Parallella nedladdningar"
-
-msgid "ESC to skip"
-msgstr "ESC för att hoppa över"
-
-msgid "CTRL+C to reset"
-msgstr "CTRL+C för att återställa"
-
-msgid "TAB to select"
-msgstr "TAB för att välja"
-
-msgid "[Default value: 0] > "
-msgstr "[Standardvärde: 0] > "
-
-msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr "För att kunna använda denna översättning, installera ett teckensnitt manuellt som stöder språket."
-
-msgid "The font should be stored as {}"
-msgstr "Teckensnittet ska lagras som {}"
-
-msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr "Archinstall kräver root-privilegier för att köras. Se --help för mer."
-
-msgid "Select an execution mode"
-msgstr "Välj ett exekveringsläge"
-
-#, python-brace-format
-msgid "Unable to fetch profile from specified url: {}"
-msgstr "Det gick inte att hämta profilen från angiven webbadress: {}"
-
-#, python-brace-format
-msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr "Profiler måste ha ett unikt namn, men profildefinitioner med dubblettnamn hittades: {}"
-
-msgid "Select one or more devices to use and configure"
-msgstr "Välj en eller flera enheter att använda och konfigurera"
-
-msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr "Om du återställer enhetsvalet kommer detta också att återställa den aktuella disklayouten. Är du säker?"
-
-msgid "Existing Partitions"
-msgstr "Existerande partitioner"
-
-msgid "Select a partitioning option"
-msgstr "Välj ett partitioneringsalternativ"
-
-msgid "Enter the root directory of the mounted devices: "
-msgstr "Ange rootkatalogen för de monterade enheterna: "
 
 #, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
@@ -879,11 +423,55 @@ msgstr "Minsta kapacitet för /home-partition: {}GiB\n"
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Minsta kapacitet för Arch Linux-partition: {}GiB"
 
-msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "Det här är en lista över förprogrammerade backup profiler, de kan göra det lättare att installera saker som skrivbordsmiljöer"
+msgid "Encryption password"
+msgstr "Krypterings-lösenord"
 
-msgid "Current profile selection"
-msgstr "Nuvarande profilval"
+msgid "LVM volumes"
+msgstr "LVM-volymer"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Partitions to be encrypted"
+msgstr "Partitioner som ska krypteras"
+
+msgid "LVM volumes to be encrypted"
+msgstr "LVM-volymer som ska krypteras"
+
+msgid "HSM device"
+msgstr "HSM-enhet"
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Krypteringstyp"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Mata in ett disk-krypteringslösenord (lämna blankt för att hoppa över kryptering)"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Välj en FIDO2-enhet att använda för HSM"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "Ange iterationstid för LUKS-kryptering (i millisekunder)"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "Högre värde ökar säkerheten men fördröjer uppstartstiden"
+
+#, fuzzy, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "Standard: 10000ms, Rekommenderat intervall: 1000-60000"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "Iterationstiden måste vara minst 100 ms"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "Iterationstiden får vara högst 120000 ms"
+
+msgid "Please enter a valid number"
+msgstr "Var vänlig ange ett giltigt nummer"
+
+msgid "Suggest partition layout"
+msgstr "Rekommendera en partitionslayout"
 
 msgid "Remove all newly added partitions"
 msgstr "Ta bort alla nyligen tillagda partitioner"
@@ -897,17 +485,37 @@ msgstr "Markera/avmarkera som det som ska formateras (tar bort all data)"
 msgid "Mark/Unmark as bootable"
 msgstr "Markera/avmarkera som bootbar"
 
+msgid "Mark/Unmark as ESP"
+msgstr "Markera/avmarkera som ESP"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Markera/avmarkera som XBOOTLDR"
+
 msgid "Change filesystem"
 msgstr "Byt filsystem"
 
 msgid "Mark/Unmark as compressed"
 msgstr "Markera/avmarkera som komprimerad"
 
+msgid "Mark/Unmark as nodatacow"
+msgstr "Markera/avmarkera som nodatacow"
+
 msgid "Set subvolumes"
 msgstr "Ställ in subvolymer"
 
 msgid "Delete partition"
 msgstr "Ta bort partition"
+
+#, python-brace-format
+msgid "Partition management: {}"
+msgstr "Partitionshantering: {}"
+
+#, python-brace-format
+msgid "Total length: {}"
+msgstr "Total längd: {}"
+
+msgid "Partition - New"
+msgstr "Partition - Ny"
 
 msgid "Partition"
 msgstr "Partition"
@@ -918,76 +526,410 @@ msgstr "Denna partition är för närvarande krypterad, för att formatera den m
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr "Partitionsmonteringspunkter är relativa till inuti installationen, boot skulle vara /boot som ett exempel."
 
-msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr "Om monteringspunkt /boot är inställd kommer partitionen också att markeras som startbar."
+#, fuzzy
+msgid "Enter a mountpoint"
+msgstr "Välj en monteringspunkt :"
 
-msgid "Mountpoint: "
-msgstr "Monteringspunkt "
+msgid "Invalid size"
+msgstr "Ogiltig storlek"
 
-msgid "Current free sectors on device {}:"
-msgstr "Aktuella fria sektorer på enheten {}:"
+#, python-brace-format
+msgid "Selected free space segment on device {}:"
+msgstr "Valt ledigt utrymmessegment på enheten {}:"
 
-msgid "Total sectors: {}"
-msgstr "Totala sektorer: {}"
+#, python-brace-format
+msgid "Size: {} / {}"
+msgstr "Storlek: {} / {}"
 
-msgid "Enter the start sector (default: {}): "
-msgstr "Ange startsektor (standard: {}): "
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Alla inmatade värden kan adderas med en enhet: %, B, KB, KiB, MB, MiB..."
 
-msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "Ange slutsektorn för partitionen (procent eller blocknummer, standard: {}): "
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Om ingen enhet tillhandahålls tolkas värdet som sektorer"
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Ange slut (standard: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
 msgstr "Detta tar bort alla nyligen tillagda partitioner. Fortsätta?"
 
-#, python-brace-format
-msgid "Partition management: {}"
-msgstr "Partitionshantering: {}"
+msgid "Add subvolume"
+msgstr "Lägg till Sub-volym"
+
+msgid "Edit subvolume"
+msgstr "Editera Sub-volym"
+
+msgid "Delete subvolume"
+msgstr "Ta bort Sub-volym"
+
+msgid "Value cannot be empty"
+msgstr "Värdet kan inte vara tomt"
+
+#, fuzzy
+msgid "Enter subvolume name"
+msgstr "Subvolymens namn"
+
+msgid "Subvolume name"
+msgstr "Subvolymens namn"
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Monteringspunkt för sub-volymen"
+
+msgid "Exit archinstall"
+msgstr "Avsluta archinstall"
+
+msgid "Reboot system"
+msgstr "Starta om systemet"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "chroot in i installationen för efterinstallationskonfigurationer"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Skulle du vilja använda automatisk tidssynkronisering (NTP) med standard-tidsservrar?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"Hårdvaru-tid och annan efterkonfigurering kan behövas för att NTP skall fungera korrekt.\n"
+"För mer information, se Arch Wiki-sidan"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Välj en tidszon"
+
+msgid "What would you like to do next?"
+msgstr "Vad vill du göra härnäst?"
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
+msgstr "Välj vilken displayhanterare att installera"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "För bästa kompabilitet med din AMD-hårdvara, vill du förmodligen använda antingen \"öppen mjukvara\" eller \"AMD/ATI\" valet."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "För bästa kompabilitet med din Intel-hårdvara, vill du förmodligen använda antingen \"öppen mjukvara\" eller \"Intel\" valet.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "För bästa kompabilitet med din nVidia-hårdvara, vill du förmodligen använda antingen \"nVidia proprietär drivrutin\".\n"
+
+msgid "Would you like to use swap on zram?"
+msgstr "Vill du använda swap under zram?"
+
+msgid "Select zram compression algorithm:"
+msgstr "Välj zram kompressionsalgoritm:"
+
+msgid "Archinstall language"
+msgstr "Språk för detta gränssnitt"
+
+msgid "Applications"
+msgstr "Program"
+
+msgid "Network configuration"
+msgstr "Nätverkskonfiguration"
+
+msgid "Save configuration"
+msgstr "Spara konfiguration"
+
+msgid "Install"
+msgstr "Installera"
+
+msgid "Abort"
+msgstr "Avbryt"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Antingen root-lösenord eller minst 1 användare med sudo-privilegier måste anges"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""
+
+msgid "Language"
+msgstr "Språk"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "LVM configuration type"
+msgstr "LVM-konfigurationstyp"
 
 #, python-brace-format
-msgid "Total length: {}"
-msgstr "Total längd: {}"
+msgid "Btrfs snapshot type: {}"
+msgstr "Btrfs-ögonblicksavbildstyp: {}"
 
-msgid "Encryption type"
-msgstr "Krypteringstyp"
+msgid "Swap on zram"
+msgstr "Swap på zram"
 
-msgid "Iteration time"
-msgstr "Iterationstid"
+msgid "Compression algorithm"
+msgstr "Kompressionsalgoritm"
 
-msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr "Ange iterationstid för LUKS-kryptering (i millisekunder)"
+msgid "Parallel Downloads"
+msgstr "Parallella nedladdningar"
 
-msgid "Higher values increase security but slow down boot time"
-msgstr "Högre värde ökar säkerheten men fördröjer uppstartstiden"
+msgid "Color"
+msgstr ""
 
-msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr "Standard: 10000ms, Rekommenderat intervall: 1000-60000"
+msgid "Kernel"
+msgstr "Kärna"
 
-msgid "Iteration time cannot be empty"
-msgstr "Iterationstiden kan inte vara tom"
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr ""
 
-msgid "Iteration time must be at least 100ms"
-msgstr "Iterationstiden måste vara minst 100 ms"
+#, fuzzy
+msgid "Missing configurations:"
+msgstr "Konfigurationer som saknas:\n"
 
-msgid "Iteration time must be at most 120000ms"
-msgstr "Iterationstiden får vara högst 120000 ms"
+#, fuzzy
+msgid "Invalid configuration:"
+msgstr "Ogiltig konfiguration: {error}"
 
-msgid "Please enter a valid number"
-msgstr "Var vänlig ange ett giltigt nummer"
+msgid "Ready to install"
+msgstr ""
 
-msgid "Partitions"
-msgstr "Partitioner"
+msgid "Warnings:"
+msgstr ""
 
-msgid "No HSM devices available"
-msgstr "Inga HSM-enheter tillgängliga"
+msgid "Profiles"
+msgstr "Profiler"
 
-msgid "Partitions to be encrypted"
-msgstr "Partitioner som ska krypteras"
+msgid "Graphics driver"
+msgstr "Grafik drivrutin"
 
-msgid "Select disk encryption option"
-msgstr "Välj alternativ för diskkryptering"
+msgid "Greeter"
+msgstr "Displayhanterare"
 
-msgid "Select a FIDO2 device to use for HSM"
-msgstr "Välj en FIDO2-enhet att använda för HSM"
+msgid "Selected mirror regions"
+msgstr "Valda spegelregioner"
+
+msgid "Custom servers"
+msgstr "Anpassade servrar"
+
+msgid "Optional repositories"
+msgstr "Valfria arkiv"
+
+msgid "Custom repositories"
+msgstr "Anpassade arkiv"
+
+#, python-brace-format
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] En logg-fil har skapats här: {}"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Vänligen skicka in detta problem (och fil) till https://github.com/archlinux/archinstall/issues"
+
+msgid "Syncing the system..."
+msgstr "Synkroniserar systemet..."
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Väntar på att tidssynkroniseringen (timedatectl show) ska slutföras."
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Tidsynkroniseringen slutförs inte medan du väntar - kontrollera dokumentationen för lösningar: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Hoppa över att vänta på automatisk tidssynkronisering (detta kan orsaka problem om tiden är osynkroniserad under installationen)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Väntar på att Arch Linux-nyckelringssynkroniseringen (archlinux-keyring-wkd-sync) ska slutföras."
+
+msgid "Keyboard layout"
+msgstr "Tangentbordslayout"
+
+msgid "Locale language"
+msgstr "Språk du vill använda"
+
+msgid "Locale encoding"
+msgstr "Teckenuppsättning du vill använda"
+
+msgid "Console font"
+msgstr ""
+
+msgid "Back"
+msgstr "Tillbaka"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Vill du verkligen återställa denna inställning?"
+
+msgid "Confirm and exit"
+msgstr "Godkänn och gå ur"
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
+
+msgid "Confirm password"
+msgstr "Bekräfta lösenord"
+
+#, fuzzy
+msgid "The password did not match, please try again"
+msgstr "Bekräftelselösenordet matchade inte, försök igen"
+
+msgid "Not a valid directory"
+msgstr "Inte en giltig katalog"
+
+msgid "Do you really want to abort?"
+msgstr "Vill du verkligen avbryta?"
+
+msgid "Add a custom repository"
+msgstr "Lägg till en anpassat arkiv"
+
+msgid "Change custom repository"
+msgstr "Ändra anpassat arkiv"
+
+msgid "Delete custom repository"
+msgstr "Ta bort anpassat arkiv"
+
+#, fuzzy
+msgid "Enter a repository name"
+msgstr "Arkivnamn"
+
+msgid "Name"
+msgstr "Namn"
+
+#, fuzzy
+msgid "Enter the repository url"
+msgstr "Ändra anpassat arkiv"
+
+msgid "Url"
+msgstr "Webbadress"
+
+msgid "Select signature check"
+msgstr "Välj signaturkontroll"
+
+msgid "Signature check"
+msgstr "Signaturkontroll"
+
+msgid "Select signature option"
+msgstr "Välj signaturalternativ"
+
+msgid "Add a custom server"
+msgstr "Lägg till en anpassad server"
+
+msgid "Change custom server"
+msgstr "Ändra anpassad server"
+
+msgid "Delete custom server"
+msgstr "Ta bort anpassad server"
+
+#, fuzzy
+msgid "Enter server url"
+msgstr "Server url"
+
+msgid "Select regions"
+msgstr "Välj regioner"
+
+msgid "Add custom servers"
+msgstr "Lägg till en anpassade servrar"
+
+msgid "Add custom repository"
+msgstr "Lägg till ett anpassat arkiv"
+
+msgid "Additional repositories"
+msgstr "Ytterligare arkiv"
+
+msgid "Loading mirror regions..."
+msgstr "Laddar spegelregioner..."
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Valda spegelregioner"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Välj vilka frivilliga arkiv som ska aktiveras"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
+
+#, fuzzy
+msgid "Zram enabled"
+msgstr "Aktiverad"
+
+#, python-brace-format
+msgid "Zram algorithm {}"
+msgstr ""
+
+#, fuzzy
+msgid "Bluetooth enabled"
+msgstr "Bluetooth"
+
+#, fuzzy, python-brace-format
+msgid "Audio server \"{}\""
+msgstr "Ingen ljud-server"
+
+#, fuzzy, python-brace-format
+msgid "Power management \"{}\""
+msgstr "Strömhantering"
+
+#, fuzzy
+msgid "Print service enabled"
+msgstr "Utskriftstjänst"
+
+#, python-brace-format
+msgid "Firewall \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Extra fonts \"{}\""
+msgstr ""
+
+msgid "Passwordless login"
+msgstr "Lösenordslös inloggning"
+
+msgid "Second factor login"
+msgstr "Andra faktorsinloggning"
+
+#, fuzzy
+msgid "Root password set"
+msgstr "Root-lösenord"
+
+#, fuzzy, python-brace-format
+msgid "Configured {} user(s)"
+msgstr "Konfigurerade {} gränssnitt"
+
+#, fuzzy
+msgid "U2F set up"
+msgstr "Ställ in U2F-inloggning"
+
+#, fuzzy, python-brace-format
+msgid "Bootloader \"{}\""
+msgstr "Boot-loader"
+
+#, fuzzy
+msgid "UKI enabled"
+msgstr "Aktiverad"
+
+msgid "Removable"
+msgstr "Borttagbar"
+
+#, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr ""
 
 msgid "Use a best-effort default partition layout"
 msgstr "Använd en generiskt rekommenderad partitionslayout"
@@ -998,330 +940,37 @@ msgstr "Manuell partitionering"
 msgid "Pre-mounted configuration"
 msgstr "Förmonterad konfiguration"
 
-msgid "Unknown"
-msgstr "Okänd"
+#, fuzzy
+msgid "Default"
+msgstr "(standard)"
 
-msgid "Partition encryption"
-msgstr "Partitionskryptering"
+msgid "Manual"
+msgstr ""
 
-#, python-brace-format
-msgid " ! Formatting {} in "
-msgstr " ! Formaterar {} om "
+msgid "Pre-mount"
+msgstr ""
 
-msgid "← Back"
-msgstr "← Tillbaka"
+#, fuzzy, python-brace-format
+msgid "{} layout"
+msgstr "Disklayout"
 
-msgid "Disk encryption"
+#, fuzzy, python-brace-format
+msgid "Devices {}"
+msgstr "Enhet"
+
+msgid "LVM set up"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "{} encryption"
 msgstr "Diskkryptering"
 
-msgid "Configuration"
-msgstr "Konfiguration"
-
-msgid "Password"
-msgstr "Lösenord"
-
-msgid "All settings will be reset, are you sure?"
-msgstr "Alla inställningar kommer att återställas, är du säker?"
-
-msgid "Back"
-msgstr "Tillbaka"
-
-msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr "Vänligen välj vilken displayhanterare du vill installera för de valda profilerna: {}"
-
-#, python-brace-format
-msgid "Environment type: {}"
-msgstr "Miljötyp: {}"
-
-msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr "Den proprietära Nvidia-drivrutinen stöds inte av Sway. Det är troligt att du kommer att stöta på problem, är du okej med det?"
-
-msgid "Installed packages"
-msgstr "Installerade paket"
-
-msgid "Add profile"
-msgstr "Lägg till profil"
-
-msgid "Edit profile"
-msgstr "Redigera profil"
-
-msgid "Delete profile"
-msgstr "Ta bort profil"
-
-msgid "Profile name: "
-msgstr "Profilnamn: "
-
-msgid "The profile name you entered is already in use. Try again"
-msgstr "Profilnamnet du angav används redan. Försök igen"
-
-msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "Paket som ska installeras med den här profilen (separerade med mellanslag, lämna tomt för att skippa): "
-
-msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Tjänster som ska aktiveras med den här profilen (separerade med mellanslag, lämna tomt för att skippa): "
-
-msgid "Should this profile be enabled for installation?"
-msgstr "Ska denna profil aktiveras för installation?"
-
-msgid "Create your own"
-msgstr "Skapa din egen"
-
-msgid ""
-"\n"
-"Select a graphics driver or leave blank to install all open-source drivers"
-msgstr ""
-"\n"
-"Välj en grafikdrivrutin eller lämna tomt för att installera alla drivrutiner med öppen källkod"
-
-msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
-
-msgid ""
-"\n"
-"\n"
-"Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
-
-msgid "Graphics driver"
-msgstr "Grafik drivrutin"
-
-msgid "Greeter"
-msgstr "Displayhanterare"
-
-msgid "Please chose which greeter to install"
-msgstr "Välj vilken displayhanterare att installera"
-
-msgid "This is a list of pre-programmed default_profiles"
-msgstr "Detta är en lista över förprogrammerade standard_profiler"
-
-msgid "Disk configuration"
-msgstr "Diskkonfiguration"
-
-msgid "Profiles"
-msgstr "Profiler"
-
-msgid "Finding possible directories to save configuration files ..."
-msgstr "Hittar möjliga kataloger att spara konfigurationsfiler i ..."
-
-msgid "Select directory (or directories) for saving configuration files"
-msgstr "Välj katalog (eller kataloger) för att spara konfigurationsfiler"
-
-msgid "Add a custom mirror"
-msgstr "Lägg till en anpassad spegel"
-
-msgid "Change custom mirror"
-msgstr "Ändra anpassad spegel"
-
-msgid "Delete custom mirror"
-msgstr "Ta bort anpassad spegel"
-
-msgid "Enter name (leave blank to skip): "
-msgstr "Ange namn (lämna tomt för att hoppa över): "
-
-msgid "Enter url (leave blank to skip): "
-msgstr "Ange url (lämna tomt för att hoppa över): "
-
-msgid "Select signature check option"
-msgstr "Välj signaturkontroll alternativ"
-
-msgid "Select signature option"
-msgstr "Välj signaturalternativ"
-
-msgid "Custom mirrors"
-msgstr "Anpassade speglar"
-
-msgid "Defined"
-msgstr "Definierat"
-
-msgid "Save user configuration (including disk layout)"
-msgstr "Spara användarkonfiguration (inklusive disklayout)"
-
-msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
-"Save directory: "
-msgstr ""
-"Välj vilken mapp som konfigureratione(rna) ska sparas till TAB-komplettering (aktiverat)\n"
-"Sparkatalog: "
-
-msgid ""
-"Do you want to save {} configuration file(s) in the following location?\n"
-"\n"
-"{}"
-msgstr ""
-"Vill du spara {} konfigurationsfil(er) på följande plats?\n"
-"\n"
-"{}"
-
-msgid "Saving {} configuration files to {}"
-msgstr "Sparar {} konfigurationsfiler till {}"
-
-msgid "Mirrors"
-msgstr "Speglar"
-
-msgid "Mirror regions"
-msgstr "Spegelregioner"
-
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Maximalt värde  : (Tillåter {} parallella nedladdningar, tillåter {max_downloads+1} nedladdningar åt gången)"
-
-msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr "Ogiltig inmatning! Försök igen med en giltig inmatning [1 till {}, eller 0 för att inaktivera]"
-
-msgid "Locales"
-msgstr "Lokaler"
-
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "Använd NetworkManager (nödvändigt för att konfigurera internet grafiskt i GNOME och KDE)"
-
-msgid "Total: {} / {}"
-msgstr "Total: {} / {}"
-
-msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr "Alla inmatade värden kan adderas med en enhet: B, KB, KiB, MB, MiB..."
-
-msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr "Om ingen enhet tillhandahålls tolkas värdet som sektorer"
-
-msgid "Enter start (default: sector {}): "
-msgstr "Ange start (standard: sektor {}): "
-
-msgid "Enter end (default: {}): "
-msgstr "Ange slut (standard: {}): "
-
-msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr "Det går inte att fastställa fido2-enheter. Är libfido2 installerat?"
-
-msgid "Path"
-msgstr "Sökväg"
-
-msgid "Manufacturer"
-msgstr "Tillverkare"
-
-msgid "Product"
-msgstr "Produkt"
-
-#, python-brace-format
-msgid "Invalid configuration: {error}"
-msgstr "Ogiltig konfiguration: {error}"
-
-msgid "Type"
-msgstr "Typ"
-
-msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Det här alternativet aktiverar antalet parallella nedladdningar som kan ske under paketnedladdningar"
-
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-"\n"
-"Note:\n"
-msgstr ""
-"Ange antalet parallella nedladdningar som ska aktiveras.\n"
-"\n"
-"Observera:\n"
-
-#, python-brace-format
-msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Maximalt rekommenderat värde: {} (Tillåter {} parallella nedladdningar åt gången)"
-
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - Inaktivera/Standard: 0 (Inaktiverar parallell nedladdning, tillåter endast en nedladdning åt gången)\n"
-
-msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "Ogiltig inmatning! Försök igen med en giltig inmatning [eller 0 för att inaktivera]"
-
-msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Hyprland behöver tillgång till din sitshantering (samling av hårdvaruenheter t.ex. tangentbord, mus, etc)"
-
-msgid ""
-"\n"
-"\n"
-"Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Välj ett alternativ för att ge Hyprland åtkomst till din hårdvara"
-
-msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr "Alla inmatade värden kan adderas med en enhet: %, B, KB, KiB, MB, MiB..."
-
-msgid "Would you like to use unified kernel images?"
-msgstr "Vill du använda enhetliga kärnavbildningar?"
-
-msgid "Unified kernel images"
-msgstr "Enhetliga kärnavbildningar"
-
-msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr "Väntar på att tidssynkroniseringen (timedatectl show) ska slutföras."
-
-msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "Tidssynkroniseringen slutförs inte medan du väntar - kontrollera dokumentationen för lösningar: https://archinstall.readthedocs.io/"
-
-msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr "Hoppa över att vänta på automatisk tidssynkronisering (detta kan orsaka problem om tiden är osynkroniserad under installationen)"
-
-msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr "Väntar på att Arch Linux-nyckelringssynkroniseringen (archlinux-keyring-wkd-sync) ska slutföras."
-
-msgid "Selected profiles: "
-msgstr "Valda profiler: "
-
-msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "Tidsynkroniseringen slutförs inte medan du väntar - kontrollera dokumentationen för lösningar: https://archinstall.readthedocs.io/"
-
-msgid "Mark/Unmark as nodatacow"
-msgstr "Markera/avmarkera som nodatacow"
-
-msgid "Would you like to use compression or disable CoW?"
-msgstr "Vill du använda komprimering eller inaktivera CoW?"
-
-msgid "Use compression"
-msgstr "Använd komprimering"
-
-msgid "Disable Copy-on-Write"
-msgstr "Inaktivera Copy-on-Write"
-
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Ger ett urval av skrivbordsmiljöer och kaklade fönsterhanterare, t.ex. GNOME, KDE Plasma, Sway"
-
-#, python-brace-format
-msgid "Configuration type: {}"
-msgstr "Konfigurationstyp: {}"
-
-msgid "LVM configuration type"
-msgstr "LVM-konfigurationstyp"
-
-msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr "LVM-diskkryptering med fler än 2 partitioner stöds för närvarande inte"
-
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "Använd NetworkManager (nödvändigt för att konfigurera internet grafiskt i GNOME och KDE Plasma)"
-
-msgid "Select a LVM option"
-msgstr "Välj ett LVM-alternativ"
-
-msgid "Partitioning"
-msgstr "Partitionering"
-
-msgid "Logical Volume Management (LVM)"
-msgstr "Logisk volymhantering (LVM)"
-
-msgid "Physical volumes"
-msgstr "Fysiska volymer"
-
-msgid "Volumes"
-msgstr "Volymer"
-
-msgid "LVM volumes"
-msgstr "LVM-volymer"
-
-msgid "LVM volumes to be encrypted"
-msgstr "LVM-volymer som ska krypteras"
-
-msgid "Select which LVM volumes to encrypt"
-msgstr "Välj vilka LVM-volymer som ska krypteras"
+#, fuzzy, python-brace-format
+msgid "Btrfs snapshot \"{}\""
+msgstr "Btrfs-ögonblicksavbildstyp: {}"
+
+msgid "Unknown"
+msgstr "Okänd"
 
 msgid "Default layout"
 msgstr "Standardlayout"
@@ -1338,462 +987,119 @@ msgstr "LVM på LUKS"
 msgid "LUKS on LVM"
 msgstr "LUKS på LVM"
 
-msgid "Yes"
-msgstr "Ja"
+#, fuzzy, python-brace-format
+msgid "Keyboard layout \"{}\""
+msgstr "Tangentbordslayout"
 
-msgid "No"
-msgstr "Nej"
+#, fuzzy, python-brace-format
+msgid "Locale language \"{}\""
+msgstr "Språk du vill använda"
 
-msgid "Archinstall help"
-msgstr "Archinstall hjälp"
-
-msgid " (default)"
-msgstr " (standard)"
-
-msgid "Press Ctrl+h for help"
-msgstr "Tryck på Ctrl+h för hjälp"
-
-msgid "Choose an option to give Sway access to your hardware"
-msgstr "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
-
-msgid "Seat access"
-msgstr "Åtkomst av sitshantering"
-
-msgid "Mountpoint"
-msgstr "Monteringspunkt"
-
-msgid "HSM"
-msgstr "HSM"
-
-msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr "Mata in ett disk-krypteringslösenord (lämna blankt för att hoppa över kryptering)"
-
-msgid "Disk encryption password"
-msgstr "Diskkrypteringslösenord"
-
-msgid "Partition - New"
-msgstr "Partition - Ny"
-
-msgid "Filesystem"
-msgstr "Filsystem"
-
-msgid "Invalid size"
-msgstr "Ogiltig storlek"
-
-msgid "Start (default: sector {}): "
-msgstr "Start (standard: sektor {}): "
-
-msgid "End (default: {}): "
-msgstr "Slut (standard: {}): "
-
-msgid "Subvolume name"
-msgstr "Subvolymens namn"
-
-msgid "Disk configuration type"
-msgstr "Diskkonfigurationstyp"
-
-msgid "Root mount directory"
-msgstr "Rootmonteringskatalog"
-
-msgid "Select language"
-msgstr "Välj språk"
-
-msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "Skriv in ytterligare paket som skall installeras (separerade med mellanslag, lämna tomt för att skippa):"
-
-msgid "Invalid download number"
-msgstr "Ogiltigt nedladdningsnummer"
-
-msgid "Number downloads"
-msgstr "Antal nedladdningar"
-
-msgid "The username you entered is invalid"
-msgstr "Användarnamnet du angav är ogiltigt"
-
-msgid "Username"
-msgstr "Användarnamn"
+#, fuzzy, python-brace-format
+msgid "Locale encoding \"{}\""
+msgstr "Teckenuppsättning du vill använda"
 
 #, python-brace-format
-msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "Ska \"{}\" vara en superanvändare (sudo)?\n"
+msgid "Console font \"{}\""
+msgstr ""
 
-msgid "Interfaces"
-msgstr "Gränssnitt"
+#, fuzzy, python-brace-format
+msgid "Mirror regions \"{}\""
+msgstr "Spegelregioner"
 
-msgid "You need to enter a valid IP in IP-config mode"
-msgstr "Du måste ange en giltig IP i IP-konfigurationsläge"
+#, fuzzy, python-brace-format
+msgid "Optional repositories \"{}\""
+msgstr "Valfria arkiv"
 
-msgid "Modes"
-msgstr "Lägen"
-
-msgid "IP address"
-msgstr "IP-adress"
-
-msgid "Enter your gateway (router) IP address (leave blank for none)"
-msgstr "Mata in IP-adress till gateway (router) eller lämna tomt för inget"
-
-msgid "Gateway address"
-msgstr "Gateway adress"
-
-msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr "Mata in DNS-servrar (separerade med mellanslag, lämna tomt för inget)"
-
-msgid "DNS servers"
-msgstr "DNS-servrar"
-
-msgid "Configure interfaces"
-msgstr "Konfigurera gränssnitt"
-
-msgid "Kernel"
-msgstr "Kärna"
-
-msgid "UEFI is not detected and some options are disabled"
-msgstr "UEFI identifierades inte och vissa alternativ är inaktiverade"
-
-msgid "Info"
-msgstr "Information"
-
-msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr "Den proprietära Nvidia-drivrutinen stöds inte av Sway."
-
-msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "Det är troligt att du kommer att stöta på problem, är du okej med det?"
-
-msgid "Main profile"
-msgstr "Huvudprofil"
-
-msgid "Confirm password"
-msgstr "Bekräfta lösenord"
-
-msgid "The confirmation password did not match, please try again"
-msgstr "Bekräftelselösenordet matchade inte, försök igen"
-
-msgid "Not a valid directory"
-msgstr "Inte en giltig katalog"
-
-msgid "Would you like to continue?"
-msgstr "Vill du fortsätta?"
-
-msgid "Directory"
-msgstr "Katalog"
-
-msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr "Ange en katalog för konfigurationen/konfigurationerna som ska sparas (komplettering av flikar aktiverad)"
-
-#, python-brace-format
-msgid "Do you want to save the configuration file(s) to {}?"
-msgstr "Vill du spara konfigurationsfil(er) till {}?"
-
-msgid "Enabled"
-msgstr "Aktiverad"
-
-msgid "Disabled"
-msgstr "Inaktiverad"
-
-msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "Vänligen skicka in detta problem (och fil) till https://github.com/archlinux/archinstall/issues"
-
-msgid "Mirror name"
-msgstr "Spegelnamn"
-
-msgid "Url"
-msgstr "Webbadress"
-
-msgid "Select signature check"
-msgstr "Välj signaturkontroll"
-
-msgid "Select execution mode"
-msgstr "Välj exekveringsläge"
-
-msgid "Press ? for help"
-msgstr "Tryck på ?för hjälp"
-
-msgid "Choose an option to give Hyprland access to your hardware"
-msgstr "Välj ett alternativ för att ge Hyprland åtkomst till din hårdvara"
-
-msgid "Additional repositories"
-msgstr "Ytterligare arkiv"
-
-msgid "NTP"
-msgstr "NTP"
-
-msgid "Swap on zram"
-msgstr "Swap på zram"
-
-msgid "Name"
-msgstr "Namn"
-
-msgid "Signature check"
-msgstr "Signaturkontroll"
-
-#, python-brace-format
-msgid "Selected free space segment on device {}:"
-msgstr "Valt ledigt utrymmessegment på enheten {}:"
-
-#, python-brace-format
-msgid "Size: {} / {}"
-msgstr "Storlek: {} / {}"
-
-#, python-brace-format
-msgid "Size (default: {}): "
-msgstr "Storlek (standard: {}): "
-
-msgid "HSM device"
-msgstr "HSM-enhet"
-
-msgid "Some packages could not be found in the repository"
-msgstr "Vissa paket kunde inte hittas i arkivet"
-
-msgid "User"
-msgstr "Användare"
-
-msgid "The specified configuration will be applied"
-msgstr "Den angivna konfigurationen kommer att tillämpas"
-
-msgid "Wipe"
-msgstr "Rensa"
-
-msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Markera/avmarkera som XBOOTLDR"
-
-msgid "Loading packages..."
-msgstr "Laddar paket..."
-
-msgid "Select any packages from the below list that should be installed additionally"
-msgstr "Välj alla paket från listan nedan som ska installeras ytterligare"
-
-msgid "Add a custom repository"
-msgstr "Lägg till en anpassat arkiv"
-
-msgid "Change custom repository"
-msgstr "Ändra anpassat arkiv"
-
-msgid "Delete custom repository"
-msgstr "Ta bort anpassat arkiv"
-
-msgid "Repository name"
-msgstr "Arkivnamn"
-
-msgid "Add a custom server"
-msgstr "Lägg till en anpassad server"
-
-msgid "Change custom server"
-msgstr "Ändra anpassad server"
-
-msgid "Delete custom server"
-msgstr "Ta bort anpassad server"
-
-msgid "Server url"
-msgstr "Server url"
-
-msgid "Select regions"
-msgstr "Välj regioner"
-
-msgid "Add custom servers"
-msgstr "Lägg till en anpassade servrar"
-
-msgid "Add custom repository"
-msgstr "Lägg till ett anpassat arkiv"
-
-msgid "Loading mirror regions..."
-msgstr "Laddar spegelregioner..."
-
-msgid "Mirrors and repositories"
-msgstr "Speglar och arkiv"
-
-msgid "Selected mirror regions"
-msgstr "Valda spegelregioner"
-
-msgid "Custom servers"
+#, fuzzy
+msgid "Custom servers set up"
 msgstr "Anpassade servrar"
 
-msgid "Custom repositories"
+#, fuzzy
+msgid "Custom repositories set up"
 msgstr "Anpassade arkiv"
 
-msgid "Only ASCII characters are supported"
-msgstr "Endast ASCII-tecken stöds"
+msgid "Copy ISO network configuration to installation"
+msgstr "Kopiera nätverkskonfigurationen från ISO till installationen"
 
-msgid "Show help"
-msgstr "Visa hjälp"
+msgid "Use Network Manager (default backend)"
+msgstr "Använd Network Manager (standard backend)"
 
-msgid "Exit help"
-msgstr "Avsluta hjälpen"
+msgid "Use Network Manager (iwd backend)"
+msgstr "Använd Network Manager (iwd backend)"
 
-msgid "Preview scroll up"
-msgstr "Förhandsgranska rulla uppåt"
+msgid "Use standalone iwd"
+msgstr ""
 
-msgid "Preview scroll down"
-msgstr "Förhandsgranska rulla nedåt"
-
-msgid "Move up"
-msgstr "Flytta upp"
-
-msgid "Move down"
-msgstr "Flytta ned"
-
-msgid "Move right"
-msgstr "Flytta höger"
-
-msgid "Move left"
-msgstr "Flytta vänster"
-
-msgid "Jump to entry"
-msgstr "Hoppa till posten"
-
-msgid "Skip selection (if available)"
-msgstr "Hoppa över valet (om tillgängligt)"
-
-msgid "Reset selection (if available)"
-msgstr "Återställ val (om tillgängligt)"
-
-msgid "Select on single select"
-msgstr "Välj på enstaka val"
-
-msgid "Select on multi select"
-msgstr "Välj på flerval"
-
-msgid "Reset"
-msgstr "Återställ"
-
-msgid "Skip selection menu"
-msgstr "Hoppa över valmenyn"
-
-msgid "Start search mode"
-msgstr "Starta sökläge"
-
-msgid "Exit search mode"
-msgstr "Avsluta sökläge"
-
-msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "labwc behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
-
-msgid "Choose an option to give labwc access to your hardware"
-msgstr "Välj ett alternativ för att ge labwc åtkomst till din hårdvara"
-
-msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "niri behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
-
-msgid "Choose an option to give niri access to your hardware"
-msgstr "Välj ett alternativ för att ge niri åtkomst till din hårdvara"
-
-msgid "Mark/Unmark as ESP"
-msgstr "Markera/avmarkera som ESP"
+msgid "Manual configuration"
+msgstr "Manuell konfiguration"
 
 msgid "Package group:"
 msgstr "Paketgrupp:"
 
-msgid "Exit archinstall"
-msgstr "Avsluta archinstall"
+#, fuzzy
+msgid "Color enabled"
+msgstr "Aktiverad"
 
-msgid "Reboot system"
-msgstr "Starta om systemet"
+#, fuzzy, python-brace-format
+msgid "{} graphics driver"
+msgstr "Grafik drivrutin"
 
-msgid "chroot into installation for post-installation configurations"
-msgstr "chroot in i installationen för efterinstallationskonfigurationer"
+#, fuzzy, python-brace-format
+msgid "{} greeter"
+msgstr "Displayhanterare"
 
-msgid "Installation completed"
-msgstr "Installationen slutförd"
+msgid "very weak"
+msgstr "mycket svag"
 
-msgid "What would you like to do next?"
-msgstr "Vad vill du göra härnäst?"
+msgid "weak"
+msgstr "svag"
+
+msgid "moderate"
+msgstr "måttlig"
+
+msgid "strong"
+msgstr "starkt"
+
+msgid "Add interface"
+msgstr "Lägg till interface"
+
+msgid "Edit interface"
+msgstr "Editera interface"
+
+msgid "Delete interface"
+msgstr "Ta bort interface"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Ta bort interface"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "Du måste ange en giltig IP i IP-konfigurationsläge"
 
 #, python-brace-format
 msgid "Select which mode to configure for \"{}\""
 msgstr "Välj vilket läge att konfigurera för \"{}\""
 
-msgid "Incorrect credentials file decryption password"
-msgstr "Felaktigt lösenord för autentiseringsfilens dekrypteringslösenord"
-
-msgid "Incorrect password"
-msgstr "Felaktigt lösenord"
-
-msgid "Credentials file decryption password"
-msgstr "Dekrypteringslösenord för autentiseringsfil"
-
-msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Vill du kryptera user_credentials.json filen?"
-
-msgid "Credentials file encryption password"
-msgstr "Krypteringslösenord för autentiseringsfil"
-
 #, python-brace-format
-msgid "Repositories: {}"
-msgstr "Arkiv: {}"
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Mata in IP och subnät för {} (exempelvis: 192.168.0.5/24): "
 
-msgid "New version available"
-msgstr "Ny version tillgänglig"
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Mata in IP-adress till gateway (router) eller lämna tomt för inget"
 
-msgid "Passwordless login"
-msgstr "Lösenordslös inloggning"
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Mata in DNS-servrar (separerade med mellanslag, lämna tomt för inget)"
 
-msgid "Second factor login"
-msgstr "Andra faktorsinloggning"
+#, fuzzy
+msgid "Choose network configuration"
+msgstr "Ingen nätverkskonfigurering"
 
-msgid "Bluetooth"
-msgstr "Bluetooth"
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr ""
 
-msgid "Would you like to configure Bluetooth?"
-msgstr "Vill du konfigurera Bluetooth?"
-
-msgid "Print service"
-msgstr "Utskriftstjänst"
-
-msgid "Would you like to configure the print service?"
-msgstr "Vill du konfigurera utskriftstjänsten?"
-
-msgid "Power management"
-msgstr "Strömhantering"
-
-msgid "Authentication"
-msgstr "Autentisering"
-
-msgid "Applications"
-msgstr "Program"
-
-msgid "U2F login method: "
-msgstr "U2F-inloggningsmetod: "
-
-msgid "Passwordless sudo: "
-msgstr "Lösenordslös sudo: "
-
-#, python-brace-format
-msgid "Btrfs snapshot type: {}"
-msgstr "Btrfs-ögonblicksavbildstyp: {}"
-
-msgid "Syncing the system..."
-msgstr "Synkroniserar systemet..."
-
-msgid "Value cannot be empty"
-msgstr "Värdet kan inte vara tomt"
-
-msgid "Snapshot type"
-msgstr "Ögonblicksavbildstyp"
-
-#, python-brace-format
-msgid "Snapshot type: {}"
-msgstr "Ögonblicksavbildstyp: {}"
-
-msgid "U2F login setup"
-msgstr "Ställ in U2F-inloggning"
-
-msgid "No U2F devices found"
-msgstr "Inga U2F-enheter hittades"
-
-msgid "U2F Login Method"
-msgstr "U2F-inloggningsmetod"
-
-msgid "Enable passwordless sudo?"
-msgstr "Aktivera lösenordslös sudo?"
-
-#, python-brace-format
-msgid "Setting up U2F device for user: {}"
-msgstr "Konfigurerar U2F-enhet för användare: {}"
-
-msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr "Du kan behöva ange PIN-koden och sedan trycka på din U2F-enhet för att registrera den"
-
-msgid "Starting device modifications in "
-msgstr "Starta enhetsmodifieringar i "
+msgid "Configure interfaces"
+msgstr "Konfigurera gränssnitt"
 
 msgid "No network connection found"
 msgstr "Ingen nätverksanslutning hittades"
@@ -1804,14 +1110,14 @@ msgstr "Vill du ansluta till ett wifi nätverk?"
 msgid "No wifi interface found"
 msgstr "Inget wifi gränssnitt hittades"
 
+msgid "No wifi networks found"
+msgstr "Inga wifi nätverk hittades"
+
 msgid "Select wifi network to connect to"
 msgstr "Välj ett wifi nätverk att ansluta till"
 
 msgid "Scanning wifi networks..."
 msgstr "Skannar efter wifi nätverk..."
-
-msgid "No wifi networks found"
-msgstr "Inga wifi nätverk hittades"
 
 msgid "Failed setting up wifi"
 msgstr "Misslyckades med att ställa in wifi"
@@ -1819,62 +1125,1134 @@ msgstr "Misslyckades med att ställa in wifi"
 msgid "Enter wifi password"
 msgstr "Ange wifi lösenord"
 
-msgid "Ok"
-msgstr "Ok"
+#, python-brace-format
+msgid "Repositories: {}"
+msgstr "Arkiv: {}"
 
-msgid "Removable"
-msgstr "Borttagbar"
+msgid "Loading packages..."
+msgstr "Laddar paket..."
 
-msgid "Install to removable location"
-msgstr "Installera till borttagbar plats"
-
-msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats)"
-
-msgid "Will install to standard location with NVRAM entry"
-msgstr "Installeras på standardplats med NVRAM-post"
-
-msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr "Vill du installera bootloadern på standardsökvägen för flyttbara medier?"
-
-msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr "Detta installerar bootloadern till /EFI/BOOT/BOOTX64.EFI (eller liknande) vilket är användbart för:"
-
-msgid "USB drives or other portable external media."
-msgstr "USB-minnen eller andra portabla externa medier."
-
-msgid "Systems where you want the disk to be bootable on any computer."
-msgstr "System där du vill att disken ska vara uppstartsbar på vilken dator som helst."
-
-msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt."
-
-msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats, säker standardinställning))"
-
-msgid "Will install to custom location with NVRAM entry"
-msgstr "Kommer att installeras på en anpassad plats med NVRAM-post"
-
-msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt som de flesta MSI-moderkort,"
-
-msgid "most Apple Macs, many laptops..."
-msgstr "de flesta Apple Mac-datorer, många bärbara datorer..."
-
-msgid "Language"
-msgstr "Språk"
-
-msgid "Compression algorithm"
-msgstr "Kompressionsalgoritm"
+#, fuzzy
+msgid "No packages found"
+msgstr "Inga U2F-enheter hittades"
 
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Endast paket som base, sudo, linux, linux-firmware, efibootmgr och valfria profilpaket installeras."
 
-msgid "Select zram compression algorithm:"
-msgstr "Välj zram kompressionsalgoritm:"
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Observera: base-devel kommer inte att installeras längre som standard. Lägg till det här om du behöver byggverktyg."
 
-msgid "Use Network Manager (default backend)"
-msgstr "Använd Network Manager (standard backend)"
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Välj alla paket från listan nedan som ska installeras ytterligare"
 
-msgid "Use Network Manager (iwd backend)"
-msgstr "Använd Network Manager (iwd backend)"
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"Ange antalet parallella nedladdningar som ska aktiveras.\n"
+"\n"
+"Observera:\n"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman körs redan, väntar max 10 minuter innan vi avbryter."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Existerande pacman-lås avslutades aldrig. Vänligen rensa upp föregående körningar av pacman-sessioner innan du använder archinstall."
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Den proprietära Nvidia-drivrutinen stöds inte av Sway."
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Det är troligt att du kommer att stöta på problem, är du okej med det?"
+
+msgid "Selected profiles: "
+msgstr "Valda profiler: "
+
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Välj vilken displayhanterare att installera"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Valda profiler: "
+
+#, python-brace-format
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Det gick inte att hämta profilen från angiven webbadress: {}"
+
+#, python-brace-format
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Profiler måste ha ett unikt namn, men profildefinitioner med dubblettnamn hittades: {}"
+
+msgid "Add a user"
+msgstr "Lägg till användare"
+
+msgid "Change password"
+msgstr "Byt lösenord"
+
+msgid "Promote/Demote user"
+msgstr "Befodra/Degradera användare"
+
+msgid "Delete User"
+msgstr "Ta bort användare"
+
+msgid "User"
+msgstr "Användare"
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Ange wifi lösenord"
+
+msgid "The username you entered is invalid"
+msgstr "Användarnamnet du angav är ogiltigt"
+
+msgid "Enter a username"
+msgstr ""
+
+msgid "Username"
+msgstr "Användarnamn"
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Mata in ett lösenord: "
+
+#, python-brace-format
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Ska \"{}\" vara en superanvändare (sudo)?\n"
+
+#, python-brace-format
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr ""
+
+#, fuzzy
+msgid "Do you want to continue?"
+msgstr "Vill du fortsätta?"
+
+#, python-brace-format
+msgid "Log uploaded successfully. URL: {}"
+msgstr ""
+
+msgid "Failed to upload log."
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall kräver root-privilegier för att köras. Se --help för mer."
+
+msgid "New version available"
+msgstr "Ny version tillgänglig"
+
+msgid "Starting device modifications in "
+msgstr "Starta enhetsmodifieringar i "
+
+msgid "Ok"
+msgstr "Ok"
+
+#, fuzzy
+msgid "Input cannot be empty"
+msgstr "Värdet kan inte vara tomt"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nej"
+
+msgid " (default)"
+msgstr " (standard)"
+
+#~ msgid "[!] A log file has been created here: {} {}"
+#~ msgstr "[!] En logg-fil har skapats här: {} {}"
+
+#~ msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+#~ msgstr " Vänligen rapportera detta fel (och logg-filen) till https://github.com/archlinux/archinstall/issues"
+
+#~ msgid "And one more time for verification: "
+#~ msgstr "Och en gång till för verifikation: "
+
+#~ msgid "Username for required superuser with sudo privileges: "
+#~ msgstr "Användarnamn för obligatoriska superanvändaren med sudo rättigheter: "
+
+#~ msgid "Any additional users to install (leave blank for no users): "
+#~ msgstr "Några ytterligare användare att installera (lämna tomt när du är klar): "
+
+#~ msgid "Should this user be a superuser (sudoer)?"
+#~ msgstr "Är detta en superanvändare (sudo-rättigheter)?"
+
+#~ msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+#~ msgstr "Vill du använda GRUB istället för systemd-boot som boot-loader?"
+
+#~ msgid "Choose a bootloader"
+#~ msgstr "Välj en boot-loader"
+
+#~ msgid "Choose an audio server"
+#~ msgstr "Välj en ljud-server"
+
+#~ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+#~ msgstr "Enbart paket som base, base-devel, linux, linux-firmware, efibootmgr och självvalda paket är installerade."
+
+#~ msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+#~ msgstr "Om du önskar en webbläsare, exempelvis firefox eller chromium, bör du skriva in dom i följande fält."
+
+#~ msgid "Write additional packages to install (space separated, leave blank to skip): "
+#~ msgstr "Skriv in ytterligare paket som skall installeras (separerade med mellanslag, lämna tomt för att skippa): "
+
+#~ msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+#~ msgstr "Använd NetworkManager (nödvändigt för att konfigurera internet i grafiska miljöerna GNOME och KDE)"
+
+#~ msgid "Select one network interface to configure"
+#~ msgstr "Välj ett nätverkskort för konfigurering"
+
+#~ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+#~ msgstr "Välj vilket läge att konfigurera för \"{}\" eller använd standardläge \"{}\""
+
+#~ msgid "Enter your gateway (router) IP address or leave blank for none: "
+#~ msgstr "Mata in IP-adress till gateway (router) eller lämna tomt för inget: "
+
+#~ msgid "Enter your DNS servers (space separated, blank for none): "
+#~ msgstr "Mata in DNS-servrar (separerade med mellanslag, lämna tomt för inget): "
+
+#~ msgid "Select which filesystem your main partition should use"
+#~ msgstr "Välj vilket filsystem din huvudpartition skall använda"
+
+#~ msgid "Current partition layout"
+#~ msgstr "Nuvarande partitionslayout"
+
+#~ msgid ""
+#~ "Select what to do with\n"
+#~ "{}"
+#~ msgstr ""
+#~ "Välj vad du vill göra med\n"
+#~ "{}"
+
+#~ msgid "Enter a desired filesystem type for the partition"
+#~ msgstr "Mata in önskad filsystemtyp för partition"
+
+#~ msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+#~ msgstr "Ange startplatsen (i delade enheter: s, GB, %, etc. ; standard: {}): "
+
+#~ msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+#~ msgstr "Ange slutplatsen (i delade enheter: s, GB, %, etc. ; ex: {}): "
+
+#~ msgid "{} contains queued partitions, this will remove those, are you sure?"
+#~ msgstr "{} innehåller uppköade partitioner, detta tar bort dessa, är du säker?"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select by index which partitions to delete"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Välj vilket partitionsindex du vill ta bort"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select by index which partition to mount where"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Välj vilket partitionsindex du vill montera vart"
+
+#~ msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+#~ msgstr " * Partitionens monteringsplats är relativa till insidan av installationen, boot är exempelvis /boot."
+
+#~ msgid "Select where to mount partition (leave blank to remove mountpoint): "
+#~ msgstr "Välj vart du vill montera partitionen (lämna tomt för att ta bort montering): "
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mask for formatting"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Välj vilken partition som skall markeras för formatering"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mark as encrypted"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Välj vilken partition som skall markeras för kryptering"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mark as bootable"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Välj vilken partition som skall markeras som bootbar"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to set a filesystem on"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Välj vilken partition som du vill välja filsystem till"
+
+#~ msgid "Enter a desired filesystem type for the partition: "
+#~ msgstr "Mata in ett önskat filsystem för partitionen: "
+
+#~ msgid "Wipe all selected drives and use a best-effort default partition layout"
+#~ msgstr "Töm alla partitioner och använd en generiskt rekommenderad partitionslayout"
+
+#~ msgid "Select what to do with each individual drive (followed by partition usage)"
+#~ msgstr "Välj vad som skall hända med varje individuell disk (följt av partitionsanvändning)"
+
+#~ msgid "Select what you wish to do with the selected block devices"
+#~ msgstr "Välj vad du önskar göra med valda blockenheterna"
+
+#~ msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+#~ msgstr "Detta är en lista med förprogrammerade profiler, dom kan göra installation av exempelvis skrivbordsmiljöer lite enklare"
+
+#~ msgid "Select keyboard layout"
+#~ msgstr "Välj tangentbordslayout"
+
+#~ msgid "Select one of the regions to download packages from"
+#~ msgstr "Välj en av regionerna för att ladda ner paket ifrån"
+
+#~ msgid "Select one or more hard drives to use and configure"
+#~ msgstr "Välj en eller flera hårddiskar som skall användas och konfigureras"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Select a graphics driver or leave blank to install all open-source drivers"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Välj en grafikdrivrutin eller lämna blankt för att installera alla med öppen mjukvara"
+
+#~ msgid "All open-source (default)"
+#~ msgstr "Alla med öppen mjukvara (standardvalet)"
+
+#~ msgid "Choose which kernels to use or leave blank for default \"{}\""
+#~ msgstr "Välj vilken Linux-kärna du vill använda, lämna tomt för att använda \"{}\""
+
+#~ msgid "Choose which locale language to use"
+#~ msgstr "Välj vilket språk du vill använda"
+
+#~ msgid "Choose which locale encoding to use"
+#~ msgstr "Välj vilken teckenuppsättning du vill använda"
+
+#~ msgid "Select one of the values shown below: "
+#~ msgstr "Välj en av alternativen nedan: "
+
+#~ msgid "Select one or more of the options below: "
+#~ msgstr "Välj ett eller flera av följande val: "
+
+#~ msgid "Adding partition...."
+#~ msgstr "Skapar en partition...."
+
+#~ msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+#~ msgstr "Du måste mata in en supporterad filsystem-typ för att fortsätta. Kör `man parted` för supporterade filsystem."
+
+#~ msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+#~ msgstr "Fel: Listning av profiler på \"{}\" resulterade i:"
+
+#~ msgid "Error: Could not decode \"{}\" result as JSON:"
+#~ msgstr "Fel: Kunde inte tyda \"{}\" resultatet som JSON:"
+
+#~ msgid "Mirror region"
+#~ msgstr "Region för paketsynk"
+
+#~ msgid "Drive(s)"
+#~ msgstr "Hårddisk(ar)"
+
+#~ msgid "Superuser account"
+#~ msgstr "Superanvändar-konto"
+
+#~ msgid "Install ({} config(s) missing)"
+#~ msgstr "Installera ({} inställningar saknas)"
+
+#~ msgid ""
+#~ "You decided to skip harddrive selection\n"
+#~ "and will use whatever drive-setup is mounted at {} (experimental)\n"
+#~ "WARNING: Archinstall won't check the suitability of this setup\n"
+#~ "Do you wish to continue?"
+#~ msgstr ""
+#~ "Du valde att hoppa över hårddiskvalet.\n"
+#~ "Archinstall kommer därför använda vad som finns monterat under {} (experimentell)!\n"
+#~ "Varning: Archinstall kommer inte kontrollera lämpligheten i diskvalet.\n"
+#~ "Vill du fortsätta?"
+
+#~ msgid "Re-using partition instance: {}"
+#~ msgstr "Återanvänder disk-instans: {}"
+
+#~ msgid "Create a new partition"
+#~ msgstr "Skapa en ny partition"
+
+#~ msgid "Delete a partition"
+#~ msgstr "Ta bort en partition"
+
+#~ msgid "Clear/Delete all partitions"
+#~ msgstr "Rensa/Ta bort alla partitioner"
+
+#~ msgid "Assign mount-point for a partition"
+#~ msgstr "Välj monteringspunkt för en partition"
+
+#~ msgid "Mark/Unmark a partition to be formatted (wipes data)"
+#~ msgstr "Markera/Avmarkera en partition för formatering (tar bort alla dess data)"
+
+#~ msgid "Mark/Unmark a partition as encrypted"
+#~ msgstr "Markera/Avmarkera en partition som krypterad"
+
+#~ msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+#~ msgstr "Markera/Avmarkera en partition som bootbar (automatiskt gjort för /boot)"
+
+#~ msgid "Set desired filesystem for a partition"
+#~ msgstr "Sätt önskat filsystem för partitionen"
+
+#~ msgid "Not configured, unavailable unless setup manually"
+#~ msgstr "Inte konfigurerad, otillgängligt utan manuell konfigurering"
+
+#~ msgid "Set/Modify the below options"
+#~ msgstr "Sätt eller modifiera nedan alternativ"
+
+#~ msgid ""
+#~ "Use ESC to skip\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Använd ESC för att hoppa över\n"
+#~ "\n"
+
+#~ msgid "Enter a encryption password for {}"
+#~ msgstr "Mata in ett krypterings-lösenord för {}"
+
+#~ msgid "Enter disk encryption password (leave blank for no encryption): "
+#~ msgstr "Mata in ett disk-krypteringslösenord (lämna blankt för att hoppa över kryptering): "
+
+#~ msgid "Create a required super-user with sudo privileges: "
+#~ msgstr "Skapa ett super-användarkonto med sudo-rättigheter (detta är ett krav): "
+
+#~ msgid "Enter root password (leave blank to disable root): "
+#~ msgstr "Mata in ett root-lösenord (lämna blankt för att deaktivera kontot): "
+
+#~ msgid "Password for user \"{}\": "
+#~ msgstr "Lösenord för användare \"{}\": "
+
+#~ msgid "Verifying that additional packages exist (this might take a few seconds)"
+#~ msgstr "Verifierar att valda paket existerar (detta kan ta några sekunder)"
+
+#~ msgid "Enter a username to create an additional user (leave blank to skip): "
+#~ msgstr "Mata in ett användarnamn för att skapa ytterligare användare (lämna tomt för att hoppa över): "
+
+#~ msgid "Use ESC to skip\n"
+#~ msgstr "Använd ESC för att hoppa över\n"
+
+#~ msgid ""
+#~ "\n"
+#~ " Choose an object from the list, and select one of the available actions for it to execute"
+#~ msgstr ""
+#~ "\n"
+#~ "Välj ett objekt från listan, och välj en åtgärd att exekvera"
+
+#~ msgid "Add"
+#~ msgstr "Lägg till"
+
+#~ msgid "Copy"
+#~ msgstr "Kopiera"
+
+#~ msgid "Edit"
+#~ msgstr "Editera"
+
+#~ msgid "Delete"
+#~ msgstr "Ta bort"
+
+#~ msgid "Select an action for '{}'"
+#~ msgstr "Välj vad du vill göra med '{}'"
+
+#~ msgid "Copy to new key:"
+#~ msgstr "Kopiera till en ny nyckel:"
+
+#~ msgid "Unknown nic type: {}. Possible values are {}"
+#~ msgstr "Okänd NIC typ: {}. Möjliga val är {}"
+
+#~ msgid ""
+#~ "\n"
+#~ "This is your chosen configuration:"
+#~ msgstr ""
+#~ "\n"
+#~ "Det här är din valda konfiguration:"
+
+#~ msgid ""
+#~ "\n"
+#~ "Define a new user\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Skapa ny användare\n"
+
+#~ msgid "User Name : "
+#~ msgstr "Användarnamn : "
+
+#~ msgid "Should {} be a superuser (sudoer)?"
+#~ msgstr "Är detta en superanvändare (sudo-rättigheter)?"
+
+#~ msgid "Define users with sudo privilege: "
+#~ msgstr "Skapa användare med sudo-rättigheter: "
+
+#~ msgid "Set desired subvolumes on a btrfs partition"
+#~ msgstr "Välj önskade sub-volymen på en BTRFS partition"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to set subvolumes on"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Välj vilken partition som du ska sätta sub-volymer på"
+
+#~ msgid "Manage btrfs subvolumes for current partition"
+#~ msgstr "Managera BTRFS sub-volymer på nuvarande partition"
+
+#~ msgid "Save disk layout"
+#~ msgstr "Spara disk konfigurering"
+
+#~ msgid "Choose which configuration to save"
+#~ msgstr "Välj vilken konfigurering du vill spara"
+
+#~ msgid "Not a valid directory: {}"
+#~ msgstr "Inte en giltig mapp: {}"
+
+#~ msgid "The password you are using seems to be weak,"
+#~ msgstr "Lösenordet du angav verkar svagt,"
+
+#~ msgid "are you sure you want to use it?"
+#~ msgstr "är du säker på att du vill använda det?"
+
+#~ msgid "Either root-password or at least 1 superuser must be specified"
+#~ msgstr "Antingen måste ett root-lösenord sättas eller 1 superanvändarkonto skapas"
+
+#~ msgid "Manage superuser accounts: "
+#~ msgstr "Managera super-användare: "
+
+#~ msgid "Manage ordinary user accounts: "
+#~ msgstr "Managera vanliga användarkonton: "
+
+#~ msgid " Subvolume :{:16}"
+#~ msgstr " Sub-volym :{:16}"
+
+#~ msgid " mounted at {:16}"
+#~ msgstr " Monterad som {:16}"
+
+#~ msgid " with option {}"
+#~ msgstr " Med inställningen {}"
+
+#~ msgid ""
+#~ "\n"
+#~ " Fill the desired values for a new subvolume \n"
+#~ msgstr ""
+#~ "\n"
+#~ "Mata in önskvärda värden för nya sub-volymer \n"
+
+#~ msgid "Subvolume name "
+#~ msgstr "Namn för Sub-volymen "
+
+#~ msgid "Subvolume options"
+#~ msgstr "Flaggor för sub-volymen"
+
+#~ msgid "Save"
+#~ msgstr "Spara"
+
+#~ msgid "Subvolume name :"
+#~ msgstr "Namn på sub-volymen :"
+
+#~ msgid "Select the desired subvolume options "
+#~ msgstr "Välj önskade inställningar för sub-volymen "
+
+#~ msgid "Define users with sudo privilege, by username: "
+#~ msgstr "Definera användarnamn med sudo-rättigheter: "
+
+#~ msgid "Would you like to use BTRFS compression?"
+#~ msgstr "Vill du använda komprimering för BTRFS?"
+
+#~ msgid "Minimum capacity for /home partition: {}GB\n"
+#~ msgstr "Minsta kapaciteten för /home är: {}GB\n"
+
+#~ msgid "Minimum capacity for Arch Linux partition: {}GB"
+#~ msgstr "Minsta kapaciteten för Arch Linux partitionen är: {}GB"
+
+#~ msgid "Continue"
+#~ msgstr "Gå vidare"
+
+#~ msgid "yes"
+#~ msgstr "ja"
+
+#~ msgid "no"
+#~ msgstr "nej"
+
+#~ msgid "set: {}"
+#~ msgstr "sätt: {}"
+
+#~ msgid "Manual configuration setting must be a list"
+#~ msgstr "Manuell konfigurering måste vara en lista"
+
+#~ msgid "No iface specified for manual configuration"
+#~ msgstr "Inget interface specificerat för manuell konfigurering"
+
+#~ msgid "Manual nic configuration with no auto DHCP requires an IP address"
+#~ msgstr "Manuell NIC-konfiguration utan DHCP kräver en IP adress"
+
+#~ msgid "Mark/Unmark a partition as compressed (btrfs only)"
+#~ msgstr "Markera/Avmarkera en partition för komprimering (BTRFS enbart)"
+
+#~ msgid "The password you are using seems to be weak, are you sure you want to use it?"
+#~ msgstr "Lösenordet du angav verkar svagt, är du säker på att du vill använda det?"
+
+#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+#~ msgstr "Ger ett urval av skrivbordsval och fönsterhanterare, t.ex. Gnome, KDE och sway"
+
+#~ msgid "Select your desired desktop environment"
+#~ msgstr "Välj din skrivbordsmiljö"
+
+#~ msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+#~ msgstr "En väldigt minimal installation som möjliggör konfigurering av Arch Linux som du själv vill ha det."
+
+#~ msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+#~ msgstr "Erbjuder ett urval av olika server-paketeringar, t.ex. httpd, nginx och mariadb"
+
+#~ msgid "Choose which servers to install, if none then a minimal installation will be done"
+#~ msgstr "Välj vilka servrar som ska installeras, om ingen kommer en minimal installation att göras"
+
+#~ msgid "Installs a minimal system as well as xorg and graphics drivers."
+#~ msgstr "Installerar ett minimal system med xorg och grafikdrivrutiner."
+
+#~ msgid "Press Enter to continue."
+#~ msgstr "Tryck på Enter för att fortsätta."
+
+#~ msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+#~ msgstr "Vill du hoppa in i det nyligen installerade systemet och utföra förändringar? (skriv 'exit' när du är klart)"
+
+#~ msgid "Select one or more hard drives to use and configure\n"
+#~ msgstr "Välj en eller flera hårddiskar som skall användas och konfigureras\n"
+
+#~ msgid "Any modifications to the existing setting will reset the disk layout!"
+#~ msgstr "Modiferingar av inställningen kommer återställa disk-konfigureringen!"
+
+#~ msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+#~ msgstr "Om du återställer hårddiskvalen kommer det också återställa diskuppsättningen. Är du säker?"
+
+#~ msgid "Save and exit"
+#~ msgstr "Spara och gå ur"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "contains queued partitions, this will remove those, are you sure?"
+#~ msgstr ""
+#~ "{}\n"
+#~ "innehåller uppköade partitionen och detta kommer ta bort dessa. Är du säker?"
+
+#~ msgid "Use ESC to skip"
+#~ msgstr "Använd ESC för att hoppa över"
+
+#~ msgid ""
+#~ "Use CTRL+C to reset current selection\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Använd CTRL+C för att återställa valen\n"
+#~ "\n"
+
+#~ msgid "Copy to: "
+#~ msgstr "Kopiera till: "
+
+#~ msgid "Edit: "
+#~ msgstr "Editera: "
+
+#~ msgid "Key: "
+#~ msgstr "Nyckel: "
+
+#~ msgid "Edit {}: "
+#~ msgstr "Editera {}: "
+
+#~ msgid "Add: "
+#~ msgstr "Lägg till: "
+
+#~ msgid "Value: "
+#~ msgstr "Värde: "
+
+#~ msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+#~ msgstr "Du kan hoppa över val av disk och partitionering och använda det som är monterat vid /mnt/archinstall (experimentellt)"
+
+#~ msgid "Select one of the disks or skip and use /mnt as default"
+#~ msgstr "Välj en disk eller hoppa över och använd /mnt/archinstall utan formatering"
+
+#~ msgid "Select which partitions to mark for formatting:"
+#~ msgstr "Välj vilken partition som skall markeras för formatering:"
+
+#~ msgid "Use HSM to unlock encrypted drive"
+#~ msgstr "Använd HSM för att låsa upp krypterad enhet"
+
+#~ msgid "Size"
+#~ msgstr "Storlek"
+
+#~ msgid "Free space"
+#~ msgstr "Fritt utrymme"
+
+#~ msgid "Bus-type"
+#~ msgstr "Buss-typ"
+
+#~ msgid "Enter username (leave blank to skip): "
+#~ msgstr "Ange användarnamn (lämna tomt för att hoppa över): "
+
+#~ msgid "The username you entered is invalid. Try again"
+#~ msgstr "Användarnamnet du angav är ogiltigt. Försök igen"
+
+#~ msgid "Should \"{}\" be a superuser (sudo)?"
+#~ msgstr "Ska \"{}\" vara en superanvändare (sudo)?"
+
+#~ msgid "Select which partitions to encrypt"
+#~ msgstr "Välj vilka partitioner som ska krypteras"
+
+#~ msgid "This option enables the number of parallel downloads that can occur during installation"
+#~ msgstr "Detta alternativ aktiverar antalet parallella nedladdningar som kan ske under installationen"
+
+#~ msgid ""
+#~ "Enter the number of parallel downloads to be enabled.\n"
+#~ " (Enter a value between 1 to {})\n"
+#~ "Note:"
+#~ msgstr ""
+#~ "Ange antalet parallella nedladdningar som ska aktiveras.\n"
+#~ " (ange ett värde mellan 1 till {}\n"
+#~ "Observera:"
+
+#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+#~ msgstr " - - Maximalt värde:   : {} (Tillåter {} parallella nedladdningar, tillåter {} nedladdningar åt gången)"
+
+#~ msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+#~ msgstr " - Minimalt värde   : 1 (Tillåter 1 parallell nedladdning, tillåter 2 nedladdningar åt gången)"
+
+#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+#~ msgstr "  - Inaktivera/Standard: 0 (Inaktiverar parallell nedladdning, tillåter endast en nedladdning åt gången)"
+
+#, python-brace-format
+#~ msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+#~ msgstr "Ogiltig inmatning! Försök igen med en giltig inmatning [1 till {max_downloads}, eller 0 för att inaktivera]"
+
+#~ msgid "ESC to skip"
+#~ msgstr "ESC för att hoppa över"
+
+#~ msgid "CTRL+C to reset"
+#~ msgstr "CTRL+C för att återställa"
+
+#~ msgid "TAB to select"
+#~ msgstr "TAB för att välja"
+
+#~ msgid "[Default value: 0] > "
+#~ msgstr "[Standardvärde: 0] > "
+
+#~ msgid "To be able to use this translation, please install a font manually that supports the language."
+#~ msgstr "För att kunna använda denna översättning, installera ett teckensnitt manuellt som stöder språket."
+
+#~ msgid "The font should be stored as {}"
+#~ msgstr "Teckensnittet ska lagras som {}"
+
+#~ msgid "Select an execution mode"
+#~ msgstr "Välj ett exekveringsläge"
+
+#~ msgid "Select one or more devices to use and configure"
+#~ msgstr "Välj en eller flera enheter att använda och konfigurera"
+
+#~ msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+#~ msgstr "Om du återställer enhetsvalet kommer detta också att återställa den aktuella disklayouten. Är du säker?"
+
+#~ msgid "Existing Partitions"
+#~ msgstr "Existerande partitioner"
+
+#~ msgid "Select a partitioning option"
+#~ msgstr "Välj ett partitioneringsalternativ"
+
+#~ msgid "Enter the root directory of the mounted devices: "
+#~ msgstr "Ange rootkatalogen för de monterade enheterna: "
+
+#~ msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+#~ msgstr "Det här är en lista över förprogrammerade backup profiler, de kan göra det lättare att installera saker som skrivbordsmiljöer"
+
+#~ msgid "Current profile selection"
+#~ msgstr "Nuvarande profilval"
+
+#~ msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+#~ msgstr "Om monteringspunkt /boot är inställd kommer partitionen också att markeras som startbar."
+
+#~ msgid "Mountpoint: "
+#~ msgstr "Monteringspunkt "
+
+#~ msgid "Current free sectors on device {}:"
+#~ msgstr "Aktuella fria sektorer på enheten {}:"
+
+#~ msgid "Total sectors: {}"
+#~ msgstr "Totala sektorer: {}"
+
+#~ msgid "Enter the start sector (default: {}): "
+#~ msgstr "Ange startsektor (standard: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+#~ msgstr "Ange slutsektorn för partitionen (procent eller blocknummer, standard: {}): "
+
+#~ msgid "Iteration time cannot be empty"
+#~ msgstr "Iterationstiden kan inte vara tom"
+
+#~ msgid "No HSM devices available"
+#~ msgstr "Inga HSM-enheter tillgängliga"
+
+#~ msgid "Select disk encryption option"
+#~ msgstr "Välj alternativ för diskkryptering"
+
+#~ msgid "Partition encryption"
+#~ msgstr "Partitionskryptering"
+
+#, python-brace-format
+#~ msgid " ! Formatting {} in "
+#~ msgstr " ! Formaterar {} om "
+
+#~ msgid "← Back"
+#~ msgstr "← Tillbaka"
+
+#~ msgid "All settings will be reset, are you sure?"
+#~ msgstr "Alla inställningar kommer att återställas, är du säker?"
+
+#~ msgid "Please chose which greeter to install for the chosen profiles: {}"
+#~ msgstr "Vänligen välj vilken displayhanterare du vill installera för de valda profilerna: {}"
+
+#~ msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+#~ msgstr "Den proprietära Nvidia-drivrutinen stöds inte av Sway. Det är troligt att du kommer att stöta på problem, är du okej med det?"
+
+#~ msgid "Add profile"
+#~ msgstr "Lägg till profil"
+
+#~ msgid "Edit profile"
+#~ msgstr "Redigera profil"
+
+#~ msgid "Delete profile"
+#~ msgstr "Ta bort profil"
+
+#~ msgid "Profile name: "
+#~ msgstr "Profilnamn: "
+
+#~ msgid "The profile name you entered is already in use. Try again"
+#~ msgstr "Profilnamnet du angav används redan. Försök igen"
+
+#~ msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+#~ msgstr "Paket som ska installeras med den här profilen (separerade med mellanslag, lämna tomt för att skippa): "
+
+#~ msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+#~ msgstr "Tjänster som ska aktiveras med den här profilen (separerade med mellanslag, lämna tomt för att skippa): "
+
+#~ msgid "Should this profile be enabled for installation?"
+#~ msgstr "Ska denna profil aktiveras för installation?"
+
+#~ msgid "Create your own"
+#~ msgstr "Skapa din egen"
+
+#~ msgid ""
+#~ "\n"
+#~ "Select a graphics driver or leave blank to install all open-source drivers"
+#~ msgstr ""
+#~ "\n"
+#~ "Välj en grafikdrivrutin eller lämna tomt för att installera alla drivrutiner med öppen källkod"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Choose an option to give Sway access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Välj ett alternativ för att ge Sway åtkomst till din hårdvara"
+
+#~ msgid "This is a list of pre-programmed default_profiles"
+#~ msgstr "Detta är en lista över förprogrammerade standard_profiler"
+
+#~ msgid "Finding possible directories to save configuration files ..."
+#~ msgstr "Hittar möjliga kataloger att spara konfigurationsfiler i ..."
+
+#~ msgid "Select directory (or directories) for saving configuration files"
+#~ msgstr "Välj katalog (eller kataloger) för att spara konfigurationsfiler"
+
+#~ msgid "Add a custom mirror"
+#~ msgstr "Lägg till en anpassad spegel"
+
+#~ msgid "Change custom mirror"
+#~ msgstr "Ändra anpassad spegel"
+
+#~ msgid "Delete custom mirror"
+#~ msgstr "Ta bort anpassad spegel"
+
+#~ msgid "Enter name (leave blank to skip): "
+#~ msgstr "Ange namn (lämna tomt för att hoppa över): "
+
+#~ msgid "Enter url (leave blank to skip): "
+#~ msgstr "Ange url (lämna tomt för att hoppa över): "
+
+#~ msgid "Select signature check option"
+#~ msgstr "Välj signaturkontroll alternativ"
+
+#~ msgid "Defined"
+#~ msgstr "Definierat"
+
+#~ msgid ""
+#~ "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+#~ "Save directory: "
+#~ msgstr ""
+#~ "Välj vilken mapp som konfigureratione(rna) ska sparas till TAB-komplettering (aktiverat)\n"
+#~ "Sparkatalog: "
+
+#~ msgid ""
+#~ "Do you want to save {} configuration file(s) in the following location?\n"
+#~ "\n"
+#~ "{}"
+#~ msgstr ""
+#~ "Vill du spara {} konfigurationsfil(er) på följande plats?\n"
+#~ "\n"
+#~ "{}"
+
+#~ msgid "Saving {} configuration files to {}"
+#~ msgstr "Sparar {} konfigurationsfiler till {}"
+
+#~ msgid "Mirrors"
+#~ msgstr "Speglar"
+
+#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+#~ msgstr " - Maximalt värde  : (Tillåter {} parallella nedladdningar, tillåter {max_downloads+1} nedladdningar åt gången)"
+
+#~ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+#~ msgstr "Ogiltig inmatning! Försök igen med en giltig inmatning [1 till {}, eller 0 för att inaktivera]"
+
+#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+#~ msgstr "Använd NetworkManager (nödvändigt för att konfigurera internet grafiskt i GNOME och KDE)"
+
+#~ msgid "Total: {} / {}"
+#~ msgstr "Total: {} / {}"
+
+#~ msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+#~ msgstr "Alla inmatade värden kan adderas med en enhet: B, KB, KiB, MB, MiB..."
+
+#~ msgid "Enter start (default: sector {}): "
+#~ msgstr "Ange start (standard: sektor {}): "
+
+#~ msgid "Unable to determine fido2 devices. Is libfido2 installed?"
+#~ msgstr "Det går inte att fastställa fido2-enheter. Är libfido2 installerat?"
+
+#~ msgid "Path"
+#~ msgstr "Sökväg"
+
+#~ msgid "Manufacturer"
+#~ msgstr "Tillverkare"
+
+#~ msgid "Product"
+#~ msgstr "Produkt"
+
+#~ msgid "This option enables the number of parallel downloads that can occur during package downloads"
+#~ msgstr "Det här alternativet aktiverar antalet parallella nedladdningar som kan ske under paketnedladdningar"
+
+#, python-brace-format
+#~ msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+#~ msgstr " - Maximalt rekommenderat värde: {} (Tillåter {} parallella nedladdningar åt gången)"
+
+#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+#~ msgstr " - Inaktivera/Standard: 0 (Inaktiverar parallell nedladdning, tillåter endast en nedladdning åt gången)\n"
+
+#~ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+#~ msgstr "Ogiltig inmatning! Försök igen med en giltig inmatning [eller 0 för att inaktivera]"
+
+#~ msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgstr "Hyprland behöver tillgång till din sitshantering (samling av hårdvaruenheter t.ex. tangentbord, mus, etc)"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Choose an option to give Hyprland access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Välj ett alternativ för att ge Hyprland åtkomst till din hårdvara"
+
+#~ msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+#~ msgstr "Tidssynkroniseringen slutförs inte medan du väntar - kontrollera dokumentationen för lösningar: https://archinstall.readthedocs.io/"
+
+#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+#~ msgstr "Ger ett urval av skrivbordsmiljöer och kaklade fönsterhanterare, t.ex. GNOME, KDE Plasma, Sway"
+
+#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+#~ msgstr "Använd NetworkManager (nödvändigt för att konfigurera internet grafiskt i GNOME och KDE Plasma)"
+
+#~ msgid "Select a LVM option"
+#~ msgstr "Välj ett LVM-alternativ"
+
+#~ msgid "Logical Volume Management (LVM)"
+#~ msgstr "Logisk volymhantering (LVM)"
+
+#~ msgid "Select which LVM volumes to encrypt"
+#~ msgstr "Välj vilka LVM-volymer som ska krypteras"
+
+#~ msgid "Archinstall help"
+#~ msgstr "Archinstall hjälp"
+
+#~ msgid "Press Ctrl+h for help"
+#~ msgstr "Tryck på Ctrl+h för hjälp"
+
+#~ msgid "Seat access"
+#~ msgstr "Åtkomst av sitshantering"
+
+#~ msgid "Filesystem"
+#~ msgstr "Filsystem"
+
+#~ msgid "Start (default: sector {}): "
+#~ msgstr "Start (standard: sektor {}): "
+
+#~ msgid "End (default: {}): "
+#~ msgstr "Slut (standard: {}): "
+
+#~ msgid "Disk configuration type"
+#~ msgstr "Diskkonfigurationstyp"
+
+#~ msgid "Select language"
+#~ msgstr "Välj språk"
+
+#~ msgid "Write additional packages to install (space separated, leave blank to skip)"
+#~ msgstr "Skriv in ytterligare paket som skall installeras (separerade med mellanslag, lämna tomt för att skippa):"
+
+#~ msgid "Invalid download number"
+#~ msgstr "Ogiltigt nedladdningsnummer"
+
+#~ msgid "Number downloads"
+#~ msgstr "Antal nedladdningar"
+
+#~ msgid "Interfaces"
+#~ msgstr "Gränssnitt"
+
+#~ msgid "Modes"
+#~ msgstr "Lägen"
+
+#~ msgid "IP address"
+#~ msgstr "IP-adress"
+
+#~ msgid "Gateway address"
+#~ msgstr "Gateway adress"
+
+#~ msgid "DNS servers"
+#~ msgstr "DNS-servrar"
+
+#~ msgid "Info"
+#~ msgstr "Information"
+
+#~ msgid "Main profile"
+#~ msgstr "Huvudprofil"
+
+#~ msgid "Directory"
+#~ msgstr "Katalog"
+
+#~ msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+#~ msgstr "Ange en katalog för konfigurationen/konfigurationerna som ska sparas (komplettering av flikar aktiverad)"
+
+#~ msgid "Mirror name"
+#~ msgstr "Spegelnamn"
+
+#~ msgid "Select execution mode"
+#~ msgstr "Välj exekveringsläge"
+
+#~ msgid "Press ? for help"
+#~ msgstr "Tryck på ?för hjälp"
+
+#~ msgid "Choose an option to give Hyprland access to your hardware"
+#~ msgstr "Välj ett alternativ för att ge Hyprland åtkomst till din hårdvara"
+
+#, python-brace-format
+#~ msgid "Size (default: {}): "
+#~ msgstr "Storlek (standard: {}): "
+
+#~ msgid "Some packages could not be found in the repository"
+#~ msgstr "Vissa paket kunde inte hittas i arkivet"
+
+#~ msgid "Only ASCII characters are supported"
+#~ msgstr "Endast ASCII-tecken stöds"
+
+#~ msgid "Show help"
+#~ msgstr "Visa hjälp"
+
+#~ msgid "Exit help"
+#~ msgstr "Avsluta hjälpen"
+
+#~ msgid "Preview scroll up"
+#~ msgstr "Förhandsgranska rulla uppåt"
+
+#~ msgid "Preview scroll down"
+#~ msgstr "Förhandsgranska rulla nedåt"
+
+#~ msgid "Move up"
+#~ msgstr "Flytta upp"
+
+#~ msgid "Move down"
+#~ msgstr "Flytta ned"
+
+#~ msgid "Move right"
+#~ msgstr "Flytta höger"
+
+#~ msgid "Move left"
+#~ msgstr "Flytta vänster"
+
+#~ msgid "Jump to entry"
+#~ msgstr "Hoppa till posten"
+
+#~ msgid "Skip selection (if available)"
+#~ msgstr "Hoppa över valet (om tillgängligt)"
+
+#~ msgid "Reset selection (if available)"
+#~ msgstr "Återställ val (om tillgängligt)"
+
+#~ msgid "Select on single select"
+#~ msgstr "Välj på enstaka val"
+
+#~ msgid "Select on multi select"
+#~ msgstr "Välj på flerval"
+
+#~ msgid "Reset"
+#~ msgstr "Återställ"
+
+#~ msgid "Skip selection menu"
+#~ msgstr "Hoppa över valmenyn"
+
+#~ msgid "Start search mode"
+#~ msgstr "Starta sökläge"
+
+#~ msgid "Exit search mode"
+#~ msgstr "Avsluta sökläge"
+
+#~ msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgstr "labwc behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+
+#~ msgid "Choose an option to give labwc access to your hardware"
+#~ msgstr "Välj ett alternativ för att ge labwc åtkomst till din hårdvara"
+
+#~ msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgstr "niri behöver tillgång till din sitshantering (samling av hårdvaruenheter, t.ex. tangentbord, mus, etc)"
+
+#~ msgid "Choose an option to give niri access to your hardware"
+#~ msgstr "Välj ett alternativ för att ge niri åtkomst till din hårdvara"
+
+#~ msgid "Snapshot type"
+#~ msgstr "Ögonblicksavbildstyp"
+
+#~ msgid "U2F Login Method"
+#~ msgstr "U2F-inloggningsmetod"
+
+#~ msgid "Will install to /EFI/BOOT/ (removable location)"
+#~ msgstr "Kommer att installera till /EFI/BOOT/ (borttagbar plats)"
+
+#~ msgid "Will install to standard location with NVRAM entry"
+#~ msgstr "Installeras på standardplats med NVRAM-post"
+
+#~ msgid "Firmware that does not properly support NVRAM boot entries."
+#~ msgstr "Fast programvara som inte stöder NVRAM-uppstartsposter korrekt."

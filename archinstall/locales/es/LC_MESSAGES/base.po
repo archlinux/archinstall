@@ -221,11 +221,27 @@ msgstr "Imágenes del núcleo unificadas"
 msgid "Install to removable location"
 msgstr "Instalar a ubicación desmontable"
 
+msgid "Plymouth"
+msgstr ""
+
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
 msgstr "Instalará a /EFI/BOOT/ (ubicación desmontable, segura por defecto)"
 
 msgid "Will install to custom location with NVRAM entry"
 msgstr "Instalará a ubicación personalizada con entrada NVRAM"
+
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgstr ""
+
+msgid "black screen with the NVIDIA driver"
+msgstr ""
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to enable it?"
+msgstr "¿Quiere continuar?"
 
 msgid "Would you like to use unified kernel images?"
 msgstr "¿Le gustaría utilizar imágenes del núcleo unificadas?"
@@ -254,6 +270,10 @@ msgstr "Seleccione el gestor de arranque que desea instalar"
 msgid "UEFI is not detected and some options are disabled"
 msgstr "No se detecta UEFI y algunas opciones están desactivadas"
 
+#, fuzzy
+msgid "Select Plymouth theme"
+msgstr "Seleccione un punto de montaje :"
+
 msgid "The specified configuration will be applied"
 msgstr "Se aplicará la configuración especificada"
 
@@ -262,9 +282,6 @@ msgstr "¿Quiere continuar?"
 
 msgid "Configuration preview"
 msgstr "Vista previa de la configuración"
-
-msgid "Warning: no network configuration selected. Network will need to be set up manually on the installed system."
-msgstr "Advertencia: no se ha seleccionado ninguna configuración de red. La red deberá configurarse manualmente en el sistema instalado."
 
 msgid "No configuration"
 msgstr "Sin configuración"
@@ -331,6 +348,9 @@ msgstr "Contraseña"
 
 msgid "Iteration time"
 msgstr "Tiempo de iteración"
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr ""
 
 msgid "Select disks for the installation"
 msgstr "Seleccione discos para la instalación"
@@ -627,15 +647,23 @@ msgstr "Color"
 msgid "Kernel"
 msgstr "Núcleo"
 
-msgid "Missing configurations:\n"
+#, fuzzy
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Advertencia: no se ha seleccionado ninguna configuración de red. La red deberá configurarse manualmente en el sistema instalado."
+
+#, fuzzy
+msgid "Missing configurations:"
 msgstr "Configuraciones que faltan:\n"
 
-#, python-brace-format
-msgid "Invalid configuration: {}"
+#, fuzzy
+msgid "Invalid configuration:"
 msgstr "Configuración no válida: {}"
 
 msgid "Ready to install"
 msgstr "Listo para instalar"
+
+msgid "Warnings:"
+msgstr ""
 
 msgid "Profiles"
 msgstr "Perfiles"
@@ -858,6 +886,10 @@ msgstr "UKI activado"
 msgid "Removable"
 msgstr "Desmontable"
 
+#, fuzzy, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr "Distribución del teclado «{}»"
+
 msgid "Use a best-effort default partition layout"
 msgstr "Utlizar un diseño de partición predeterminado de mejor esfuerzo"
 
@@ -965,8 +997,8 @@ msgstr "Grupo de paquetes:"
 msgid "Color enabled"
 msgstr "Color activado"
 
-#, python-brace-format
-msgid "{} grphics driver"
+#, fuzzy, python-brace-format
+msgid "{} graphics driver"
 msgstr "{} controlador de gráficos"
 
 #, python-brace-format
@@ -1032,14 +1064,14 @@ msgstr "¿Desea conectarse al Wi-Fi?"
 msgid "No wifi interface found"
 msgstr "No se encontró ninguna interfaz Wi-Fi"
 
+msgid "No wifi networks found"
+msgstr "No se encontró redes Wi-Fi"
+
 msgid "Select wifi network to connect to"
 msgstr "Seleccione una red Wi-Fi para conectarse"
 
 msgid "Scanning wifi networks..."
 msgstr "Buscando redes Wi-Fi..."
-
-msgid "No wifi networks found"
-msgstr "No se encontró redes Wi-Fi"
 
 msgid "Failed setting up wifi"
 msgstr "Error al configurar el Wi-Fi"
@@ -1607,9 +1639,6 @@ msgstr " (predeterminado)"
 
 #~ msgid "Subvolume name :"
 #~ msgstr "Nombre del subvolumen :"
-
-#~ msgid "Select a mount point :"
-#~ msgstr "Seleccione un punto de montaje :"
 
 #~ msgid "Select the desired subvolume options "
 #~ msgstr "Seleccione las opciones de subvolumen deseadas "
