@@ -221,11 +221,27 @@ msgstr "Ujednolicone obrazy jądra"
 msgid "Install to removable location"
 msgstr "Zainstaluj do usuwalnej lokalizacji"
 
+msgid "Plymouth"
+msgstr ""
+
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
 msgstr "Zainstaluje do /EFI/BOOT/ (usuwalna lokalizacja, bezpieczna wartość domyślna)"
 
 msgid "Will install to custom location with NVRAM entry"
 msgstr "Zainstaluje do niestandardowej lokalizacji z wpisem do NVRAM"
+
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgstr ""
+
+msgid "black screen with the NVIDIA driver"
+msgstr ""
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to enable it?"
+msgstr "Czy chcesz kontynuować?"
 
 msgid "Would you like to use unified kernel images?"
 msgstr "Czy chcesz użyć ujednoliconych obrazów jądra?"
@@ -253,6 +269,9 @@ msgstr "Wybierz program rozruchowy do zainstalowania"
 
 msgid "UEFI is not detected and some options are disabled"
 msgstr "Nie wykryto UEFI i niektóre opcje są wyłączone"
+
+msgid "Select Plymouth theme"
+msgstr ""
 
 msgid "The specified configuration will be applied"
 msgstr "Podana konfiguracja zostanie zastosowana"
@@ -328,6 +347,9 @@ msgstr "Hasło"
 
 msgid "Iteration time"
 msgstr "Czas iteracji"
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr ""
 
 msgid "Select disks for the installation"
 msgstr "Wybierz dyski dla tej instalacji"
@@ -859,6 +881,10 @@ msgstr "UKI włączone"
 
 msgid "Removable"
 msgstr "Usuwalne"
+
+#, fuzzy, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr "Układ klawiatury \"{}\""
 
 msgid "Use a best-effort default partition layout"
 msgstr "Użyj najlepszego domyślnego układu partycji"

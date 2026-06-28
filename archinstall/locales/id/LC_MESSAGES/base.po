@@ -11,870 +11,419 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.2.2\n"
 
-msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] File log telah dibuat di sini: {} {}"
-
-msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Silakan kirimkan masalah ini (dan file) ke https://github.com/archlinux/archinstall/issues"
-
-msgid "Do you really want to abort?"
-msgstr "Apakah Anda benar-benar ingin membatalkan?"
-
-msgid "And one more time for verification: "
-msgstr "Dan sekali lagi untuk verifikasi: "
-
-msgid "Would you like to use swap on zram?"
-msgstr "Apakah Anda ingin menggunakan swap di zram?"
-
-msgid "Desired hostname for the installation: "
-msgstr "Nama host yang diinginkan untuk instalasi: "
-
-msgid "Username for required superuser with sudo privileges: "
-msgstr "Nama pengguna untuk superuser yang diperlukan dengan hak sudo: "
-
-msgid "Any additional users to install (leave blank for no users): "
-msgstr "Beberapa pengguna tambahan untuk dipasang (biarkan kosong untuk tidak menambahkan): "
-
-msgid "Should this user be a superuser (sudoer)?"
-msgstr "Haruskah pengguna ini menjadi superuser (sudoer)?"
-
-msgid "Select a timezone"
-msgstr "Pilih zona waktu"
-
-msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Apakah Anda ingin menggunakan GRUB sebagai bootloader daripada systemd-boot?"
-
-msgid "Choose a bootloader"
-msgstr "Pilih bootloader"
-
-msgid "Choose an audio server"
-msgstr "Pilih server audio"
-
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Hanya paket seperti base, base-devel, linux, linux-firmware, efibootmgr dan paket profil opsional yang diinstal."
-
-msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgid "Recommended"
 msgstr ""
 
-msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Jika Anda menginginkan web browser, seperti firefox atau chromium, Anda dapat menentukannya di prompt berikut."
+msgid "Package"
+msgstr ""
 
-msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Ketik paket tambahan untuk diinstal (dipisahkan dengan spasi, biarkan kosong untuk dilewati): "
+msgid "Curated selection of KDE Plasma packages"
+msgstr ""
 
-msgid "Copy ISO network configuration to installation"
-msgstr "Salin konfigurasi jaringan ISO ke instalasi"
+msgid "Dependencies"
+msgstr ""
 
-msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "Gunakan NetworkManager (diperlukan untuk mengkonfigurasi internet secara grafis di GNOME dan KDE)"
+msgid "Package group"
+msgstr ""
 
-msgid "Select one network interface to configure"
-msgstr "Pilih satu interface jaringan untuk dikonfigurasi"
+msgid "Extensive KDE Plasma installation"
+msgstr ""
 
-msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Pilih mode mana yang akan dikonfigurasi untuk \"{}\" atau lewati untuk menggunakan mode default \"{}\""
+msgid "Packages in group"
+msgstr ""
+
+msgid "Minimal KDE Plasma installation"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr ""
 
 #, python-brace-format
-msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Masukkan IP dan subnet untuk {} (contoh: 192.168.0.5/24): "
-
-msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Masukkan IP gateway (router) Anda atau biarkan kosong untuk tidak menggunakan apa pun: "
-
-msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Masukkan server DNS Anda (dipisahkan dengan spasi, untuk kosongkan tidak menggunakan apa pun): "
-
-msgid "Select which filesystem your main partition should use"
-msgstr "Pilih filesystem mana yang harus digunakan partisi utama Anda"
-
-msgid "Current partition layout"
-msgstr "Tata letak partisi saat ini"
-
-msgid ""
-"Select what to do with\n"
-"{}"
+msgid "{} needs access to your seat"
 msgstr ""
-"Pilih apa yang harus dilakukan dengan\n"
-"{}"
 
-msgid "Enter a desired filesystem type for the partition"
-msgstr "Masukkan jenis filesystem yang diinginkan untuk partisi"
-
-msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Masukkan lokasi awal (dalam satuan parted: s, GB, %, dll. ; default: {}): "
-
-msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Masukkan lokasi akhir (dalam satuan parted: s, GB, %, dll. ; cth: {}): "
-
-msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "{} berisi partisi yang telah di-queue, tindakan ini akan menghapusnya, apakah Anda yakin?"
-
-msgid ""
-"{}\n"
-"\n"
-"Select by index which partitions to delete"
+msgid "collection of hardware devices i.e. keyboard, mouse"
 msgstr ""
-"{}\n"
-"\n"
-"Pilih berdasarkan indeks partisi mana yang akan dihapus"
 
-msgid ""
-"{}\n"
-"\n"
-"Select by index which partition to mount where"
+#, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
 msgstr ""
-"{}\n"
-"\n"
-"Pilih berdasarkan indeks partisi mana yang akan di mount"
 
-msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Mount point partisi relatif terhadap di dalam instalasi, boot akan menjadi /boot sebagai contoh."
+#, fuzzy, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Tidak ada konfigurasi"
 
-msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Pilih tempat untuk memasang partisi (biarkan kosong untuk menghapus mountpoint): "
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mask for formatting"
+#, python-brace-format
+msgid "Environment type: {}"
 msgstr ""
-"{}\n"
-"\n"
-"Pilih partisi mana yang akan di mask untuk pemformatan"
 
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mark as encrypted"
+#, fuzzy
+msgid "Installed packages"
+msgstr "Paket tambahan"
+
+msgid "Bluetooth"
 msgstr ""
-"{}\n"
-"\n"
-"Pilih partisi mana yang akan ditandai sebagai terenkripsi"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mark as bootable"
-msgstr ""
-"{}\n"
-"\n"
-"Pilih partisi mana yang akan ditandai sebagai bootable"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to set a filesystem on"
-msgstr ""
-"{}\n"
-"\n"
-"Pilih partisi mana untuk mengatur sistem file"
-
-msgid "Enter a desired filesystem type for the partition: "
-msgstr "Masukkan jenis filesystem yang diinginkan untuk partisi: "
-
-msgid "Archinstall language"
-msgstr "Bahasa Archinstall"
-
-msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Hapus semua drive yang dipilih dan gunakan upaya terbaik tata letak partisi default"
-
-msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Pilih apa yang harus dilakukan dengan setiap drive individu (diikuti dengan penggunaan partisi)"
-
-msgid "Select what you wish to do with the selected block devices"
-msgstr "Pilih apa yang ingin Anda lakukan dengan perangkat blok yang dipilih"
-
-msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "Ini adalah daftar profil yang telah diprogram sebelumnya, mereka mungkin memudahkan untuk menginstal hal-hal seperti desktop environment"
-
-msgid "Select keyboard layout"
-msgstr "Pilih tata letak keyboard"
-
-msgid "Select one of the regions to download packages from"
-msgstr "Pilih salah satu wilayah untuk mengunduh paket dari mana"
-
-msgid "Select one or more hard drives to use and configure"
-msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi"
-
-msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Untuk kompatibilitas terbaik dengan perangkat keras AMD Anda, Anda mungkin ingin menggunakan opsi semua sumber terbuka atau AMD / ATI."
-
-msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Untuk kompatibilitas terbaik dengan perangkat keras Intel Anda, Anda mungkin ingin menggunakan opsi semua sumber terbuka atau Intel.\n"
-
-msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Untuk kompatibilitas terbaik dengan perangkat keras Nvidia Anda, Anda mungkin ingin menggunakan driver proprietary Nvidia.\n"
-
-msgid ""
-"\n"
-"\n"
-"Select a graphics driver or leave blank to install all open-source drivers"
-msgstr ""
-"\n"
-"\n"
-"Pilih driver grafis atau biarkan kosong untuk menginstal semua driver open-source"
-
-msgid "All open-source (default)"
-msgstr "Semua sumber terbuka (default)"
-
-msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Pilih kernel mana yang akan digunakan atau biarkan kosong untuk \"{}\" default"
-
-msgid "Choose which locale language to use"
-msgstr "Pilih locale bahasa yang akan digunakan"
-
-msgid "Choose which locale encoding to use"
-msgstr "Pilih locale encoding yang akan digunakan"
-
-msgid "Select one of the values shown below: "
-msgstr "Pilih salah satu nilai yang ditunjukkan di bawah ini: "
-
-msgid "Select one or more of the options below: "
-msgstr "Pilih satu atau beberapa opsi di bawah ini: "
-
-msgid "Adding partition...."
-msgstr "Menambahkan partisi...."
-
-msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Anda harus memasukkan tipe fs yang valid untuk melanjutkan. Lihat `man parted` untuk tipe fs yang valid."
-
-msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Kesalahan: Mencantumkan profil pada URL \"{}\" mengakibatkan:"
-
-msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr "Kesalahan: Tidak dapat mendekode hasil \"{}\" sebagai JSON:"
-
-msgid "Keyboard layout"
-msgstr "Tata letak keyboard"
-
-msgid "Mirror region"
-msgstr "Wilayah mirror"
-
-msgid "Locale language"
-msgstr "Locale language"
-
-msgid "Locale encoding"
-msgstr "Locale encoding"
-
-msgid "Drive(s)"
-msgstr "Drive"
-
-msgid "Disk layout"
-msgstr "Tata letak disk"
-
-msgid "Encryption password"
-msgstr "Kata sandi enkripsi"
-
-msgid "Swap"
-msgstr "Swap"
-
-msgid "Bootloader"
-msgstr "Bootloader"
-
-msgid "Root password"
-msgstr "Kata sandi root"
-
-msgid "Superuser account"
-msgstr "Akun superuser"
-
-msgid "User account"
-msgstr "Akun pengguna"
-
-msgid "Profile"
-msgstr "Profil"
 
 msgid "Audio"
 msgstr "Audio"
 
-msgid "Kernels"
-msgstr "Kernel"
-
-msgid "Additional packages"
-msgstr "Paket tambahan"
-
-msgid "Network configuration"
-msgstr "Konfigurasi jaringan"
-
-msgid "Automatic time sync (NTP)"
-msgstr "Sinkronisasi waktu otomatis (NTP)"
-
-msgid "Install ({} config(s) missing)"
-msgstr "Instal ({} konfigurasi tidak ada)"
-
-msgid ""
-"You decided to skip harddrive selection\n"
-"and will use whatever drive-setup is mounted at {} (experimental)\n"
-"WARNING: Archinstall won't check the suitability of this setup\n"
-"Do you wish to continue?"
+msgid "Print service"
 msgstr ""
-"Anda memutuskan untuk melewati pemilihan harddisk\n"
-"dan akan menggunakan pengaturan drive apa pun yang dipasang di {} (eksperimental)\n"
-"PERINGATAN: Archinstall tidak akan memeriksa kesesuaian pengaturan ini\n"
-"Apakah Anda ingin melanjutkan?"
 
-msgid "Re-using partition instance: {}"
-msgstr "Menggunakan kembali instance partisi: {}"
+msgid "Power management"
+msgstr ""
 
-msgid "Create a new partition"
-msgstr "Buat partisi baru"
+msgid "Firewall"
+msgstr ""
 
-msgid "Delete a partition"
-msgstr "Hapus partisi"
+#, fuzzy
+msgid "Additional fonts"
+msgstr "Repositori opsional"
 
-msgid "Clear/Delete all partitions"
-msgstr "Bersihkan/Hapus semua partisi"
+msgid "Enabled"
+msgstr ""
 
-msgid "Assign mount-point for a partition"
-msgstr "Tetapkan titik-mount untuk sebuah partisi"
+msgid "Disabled"
+msgstr ""
 
-msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "Tandai/Hapus tanda partisi yang akan diformat (menghapus data)"
+#, fuzzy
+msgid "Would you like to configure Bluetooth?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
 
-msgid "Mark/Unmark a partition as encrypted"
-msgstr "Tandai/Hapus tanda partisi sebagai terenkripsi"
+#, fuzzy
+msgid "Would you like to configure the print service?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
 
-msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Tandai/Hapus tanda partisi sebagai bootable (otomatis untuk /boot)"
+#, fuzzy
+msgid "Select audio configuration"
+msgstr "Simpan konfigurasi pengguna"
 
-msgid "Set desired filesystem for a partition"
-msgstr "Atur filesystem yang diinginkan untuk sebuah partisi"
+#, fuzzy
+msgid "Select font packages to install"
+msgstr "Pilih interface untuk ditambahkan"
 
-msgid "Abort"
-msgstr "Batalkan"
+#, fuzzy
+msgid "ArchInstall Language"
+msgstr "Bahasa Archinstall"
+
+msgid "Version"
+msgstr ""
+
+msgid "Installation Script"
+msgstr ""
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "Tidak ada konfigurasi"
+
+msgid "Profile"
+msgstr "Profil"
+
+#, fuzzy
+msgid "Mirrors and repositories"
+msgstr "Repositori opsional"
+
+msgid "Network"
+msgstr ""
+
+msgid "Bootloader"
+msgstr "Bootloader"
+
+msgid "Application"
+msgstr ""
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Swap"
+msgstr "Swap"
 
 msgid "Hostname"
 msgstr "Hostname"
 
-msgid "Not configured, unavailable unless setup manually"
-msgstr "Tidak dikonfigurasi, tidak tersedia kecuali diatur secara manual"
+msgid "Kernels"
+msgstr "Kernel"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Sinkronisasi waktu otomatis (NTP)"
 
 msgid "Timezone"
 msgstr "Zona waktu"
 
-msgid "Set/Modify the below options"
-msgstr "Atur/Ubah opsi di bawah ini"
+#, fuzzy
+msgid "Services"
+msgstr "Perangkat"
 
-msgid "Install"
-msgstr "Install"
+msgid "Additional packages"
+msgstr "Paket tambahan"
 
-msgid ""
-"Use ESC to skip\n"
-"\n"
+msgid "Pacman"
 msgstr ""
-"Gunakan ESC untuk melewati\n"
-"\n"
 
-msgid "Suggest partition layout"
-msgstr "Saran tata letak partisi"
-
-msgid "Enter a password: "
-msgstr "Masukan kata sandi: "
-
-msgid "Enter a encryption password for {}"
-msgstr "Masukkan sandi enkripsi untuk {}"
-
-msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Masukkan kata sandi enkripsi disk (biarkan kosong jika tidak ada enkripsi): "
-
-msgid "Create a required super-user with sudo privileges: "
-msgstr "Buat pengguna super yang diperlukan dengan hak sudo: "
-
-msgid "Enter root password (leave blank to disable root): "
-msgstr "Masukkan kata sandi root (biarkan kosong untuk menonaktifkan root): "
-
-msgid "Password for user \"{}\": "
-msgstr "Kata sandi untuk pengguna \"{}\": "
-
-msgid "Verifying that additional packages exist (this might take a few seconds)"
-msgstr "Memverifikasi bahwa ada paket tambahan (ini mungkin memakan waktu beberapa detik)"
-
-msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Apakah Anda ingin menggunakan sinkronisasi waktu otomatis (NTP) dengan server waktu default?\n"
-
-msgid ""
-"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
-"For more information, please check the Arch wiki"
+msgid "Custom commands"
 msgstr ""
-"Waktu perangkat keras dan langkah-langkah pasca-konfigurasi lainnya mungkin diperlukan agar NTP berfungsi.\n"
-"Untuk informasi lebih lanjut, silakan periksa Arch wiki"
 
-msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "Masukkan nama pengguna untuk membuat pengguna tambahan (biarkan kosong untuk melewati): "
-
-msgid "Use ESC to skip\n"
-msgstr "Gunakan ESC untuk melewati\n"
-
-msgid ""
-"\n"
-" Choose an object from the list, and select one of the available actions for it to execute"
-msgstr ""
-"\n"
-"Pilih objek dari daftar, dan pilih salah satu tindakan yang tersedia untuk dieksekusi"
-
-msgid "Cancel"
-msgstr "Batalkan"
-
-msgid "Confirm and exit"
-msgstr "Konfirmasi dan keluar"
-
-msgid "Add"
-msgstr "Tambah"
-
-msgid "Copy"
-msgstr "Salin"
-
-msgid "Edit"
-msgstr "Edit"
-
-msgid "Delete"
-msgstr "Hapus"
-
-msgid "Select an action for '{}'"
-msgstr "Pilih tindakan untuk '{}'"
-
-msgid "Copy to new key:"
-msgstr "Salin ke kunci baru:"
-
-msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "Jenis nic tidak dikenal: {}. Nilai yang mungkin adalah {}"
-
-msgid ""
-"\n"
-"This is your chosen configuration:"
-msgstr ""
-"\n"
-"Ini adalah konfigurasi yang Anda pilih:"
-
-msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "Pacman sudah berjalan, menunggu maksimal 10 menit untuk berhenti."
-
-msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Pacman lock yang sudah ada tidak pernah keluar. Harap bersihkan sesi pacman yang ada sebelum menggunakan archinstall."
-
-msgid "Choose which optional additional repositories to enable"
-msgstr "Pilih repositori tambahan opsional mana yang akan diaktifkan"
-
-msgid "Add a user"
-msgstr "Tambahkan pengguna"
-
-msgid "Change password"
-msgstr "Ganti kata sandi"
-
-msgid "Promote/Demote user"
-msgstr "Promosikan/Turunkan pengguna"
-
-msgid "Delete User"
-msgstr "Hapus pengguna"
-
-msgid ""
-"\n"
-"Define a new user\n"
-msgstr ""
-"\n"
-"Tentukan pengguna baru\n"
-
-msgid "User Name : "
+#, fuzzy
+msgid "Users"
 msgstr "Nama Pengguna : "
 
-msgid "Should {} be a superuser (sudoer)?"
-msgstr "Haruskah {} menjadi superuser (sudoer)?"
+#, fuzzy
+msgid "Root encrypted password"
+msgstr "Kata sandi enkripsi"
 
-msgid "Define users with sudo privilege: "
-msgstr "Tentukan pengguna dengan hak sudo: "
+#, fuzzy
+msgid "Disk encryption password"
+msgstr "Kata sandi enkripsi"
 
-msgid "No network configuration"
-msgstr "Tidak ada konfigurasi jaringan"
+#, fuzzy
+msgid "Incorrect credentials file decryption password"
+msgstr "Kata sandi enkripsi"
 
-msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Atur subvolume yang diinginkan pada partisi btrfs"
+#, fuzzy
+msgid "Enter credentials file decryption password"
+msgstr "Kata sandi enkripsi"
 
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to set subvolumes on"
+#, fuzzy
+msgid "Incorrect password"
+msgstr "Kata sandi root"
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
 msgstr ""
-"{}\n"
-"\n"
-"Pilih partisi mana untuk mengatur subvolume"
 
-msgid "Manage btrfs subvolumes for current partition"
-msgstr "Kelola subvolume btrfs untuk partisi saat ini"
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr ""
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr ""
+
+msgid "Root password"
+msgstr "Kata sandi root"
+
+msgid "User account"
+msgstr "Akun pengguna"
+
+msgid "U2F login setup"
+msgstr ""
+
+msgid "U2F login method: "
+msgstr ""
+
+msgid "Passwordless sudo: "
+msgstr ""
+
+msgid "No U2F devices found"
+msgstr ""
+
+#, fuzzy
+msgid "Enter root password"
+msgstr "Masukan kata sandi: "
+
+#, fuzzy
+msgid "Enable passwordless sudo?"
+msgstr "Masukan kata sandi: "
+
+msgid "Unified kernel images"
+msgstr ""
+
+msgid "Install to removable location"
+msgstr ""
+
+msgid "Plymouth"
+msgstr ""
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr ""
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr ""
+
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgstr ""
+
+msgid "black screen with the NVIDIA driver"
+msgstr ""
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to enable it?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
+
+#, fuzzy
+msgid "Would you like to use unified kernel images?"
+msgstr "Apakah Anda ingin menggunakan swap di zram?"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr ""
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr ""
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr ""
+
+msgid "most Apple Macs, many laptops..."
+msgstr ""
+
+msgid "USB drives or other portable external media."
+msgstr ""
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid "Select bootloader to install"
+msgstr ""
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr ""
+
+#, fuzzy
+msgid "Select Plymouth theme"
+msgstr "Pilih titik mount :"
+
+msgid "The specified configuration will be applied"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to continue?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
+
+#, fuzzy
+msgid "Configuration preview"
+msgstr "Tidak ada konfigurasi"
 
 msgid "No configuration"
 msgstr "Tidak ada konfigurasi"
 
-msgid "Save user configuration"
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
 msgstr "Simpan konfigurasi pengguna"
 
 msgid "Save user credentials"
 msgstr "Simpan kredensial pengguna"
 
-msgid "Save disk layout"
-msgstr "Simpan tata letak disk"
-
 msgid "Save all"
 msgstr "Simpan semua"
 
-msgid "Choose which configuration to save"
-msgstr "Pilih konfigurasi mana yang akan disimpan"
-
-msgid "Enter a directory for the configuration(s) to be saved: "
+#, fuzzy
+msgid "Enter a directory for the configuration(s) to be saved"
 msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
 
-msgid "Not a valid directory: {}"
-msgstr "Bukan direktori yang valid: {}"
-
-msgid "The password you are using seems to be weak,"
-msgstr "Kata sandi yang Anda gunakan tampaknya lemah,"
-
-msgid "are you sure you want to use it?"
-msgstr "apakah Anda yakin ingin menggunakannya?"
-
-msgid "Optional repositories"
-msgstr "Repositori opsional"
-
-msgid "Save configuration"
+#, fuzzy, python-brace-format
+msgid "Do you want to save the configuration file(s) to {}?"
 msgstr "Simpan konfigurasi"
 
-msgid "Missing configurations:\n"
-msgstr "Konfigurasi tidak ada: \n"
+#, fuzzy
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Simpan konfigurasi"
 
-msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Salah satu root-password atau setidaknya 1 superuser harus ditentukan"
+#, fuzzy
+msgid "Credentials file encryption password"
+msgstr "Kata sandi enkripsi"
 
-msgid "Manage superuser accounts: "
-msgstr "Kelola akun superuser: "
+#, fuzzy
+msgid "Partitioning"
+msgstr "Konfigurasi manual"
 
-msgid "Manage ordinary user accounts: "
-msgstr "Kelola akun pengguna biasa: "
-
-msgid " Subvolume :{:16}"
-msgstr " Subvolume :{:16}"
-
-msgid " mounted at {:16}"
-msgstr " di mount di {:16}"
-
-msgid " with option {}"
-msgstr " dengan opsi {}"
-
-msgid ""
-"\n"
-" Fill the desired values for a new subvolume \n"
+msgid "Disk encryption"
 msgstr ""
-"\n"
-"Isi nilai yang diinginkan untuk subvolume baru\n"
 
-msgid "Subvolume name "
-msgstr "Nama subvolume "
+#, fuzzy, python-brace-format
+msgid "Configuration type: {}"
+msgstr "Tidak ada konfigurasi"
 
-msgid "Subvolume mountpoint"
-msgstr "Titik mount subvolume"
+#, fuzzy
+msgid "Mountpoint"
+msgstr "Tetapkan titik-mount untuk sebuah partisi"
 
-msgid "Subvolume options"
-msgstr "Opsi subvolume"
+#, fuzzy
+msgid "Configuration"
+msgstr "Tidak ada konfigurasi"
 
-msgid "Save"
-msgstr "Simpan"
+msgid "Wipe"
+msgstr ""
 
-msgid "Subvolume name :"
-msgstr "Nama subvolume :"
+msgid "Physical volumes"
+msgstr ""
 
-msgid "Select a mount point :"
-msgstr "Pilih titik mount :"
+msgid "Volumes"
+msgstr ""
 
-msgid "Select the desired subvolume options "
-msgstr "Pilih opsi subvolume yang diinginkan "
+#, fuzzy, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tidak ada konfigurasi"
 
-msgid "Define users with sudo privilege, by username: "
-msgstr "Tentukan pengguna dengan hak sudo, berdasarkan nama pengguna: "
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr ""
 
-#, python-brace-format
-msgid "[!] A log file has been created here: {}"
-msgstr "[!] File log telah dibuat di sini: {}"
+#, fuzzy
+msgid "Encryption type"
+msgstr "Kata sandi enkripsi"
+
+#, fuzzy
+msgid "Password"
+msgstr "Kata sandi root"
+
+msgid "Iteration time"
+msgstr ""
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr ""
+
+#, fuzzy
+msgid "Select disks for the installation"
+msgstr "Nama host yang diinginkan untuk instalasi: "
+
+msgid "Partitions"
+msgstr ""
+
+#, fuzzy
+msgid "Select a disk configuration"
+msgstr "Tidak ada konfigurasi"
+
+msgid "Enter root mount directory"
+msgstr ""
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr ""
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr ""
+
+#, fuzzy
+msgid "Select main filesystem"
+msgstr "Pilih interface untuk ditambahkan"
+
+#, fuzzy
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
 msgstr "Apakah Anda ingin menggunakan subvolume BTRFS dengan struktur default?"
-
-msgid "Would you like to use BTRFS compression?"
-msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
 
 msgid "Would you like to create a separate partition for /home?"
 msgstr "Apakah Anda ingin membuat partisi terpisah untuk /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
 msgstr "Drive yang dipilih tidak memiliki kapasitas minimum yang diperlukan untuk saran otomatis\n"
-
-msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr "Kapasitas minimum untuk partisi /home: {}GB\n"
-
-msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr "Kapasitas minimum untuk partisi Arch Linux: {}GB"
-
-msgid "Continue"
-msgstr "Lanjutkan"
-
-msgid "yes"
-msgstr "ya"
-
-msgid "no"
-msgstr "tidak"
-
-msgid "set: {}"
-msgstr "atur: {}"
-
-msgid "Manual configuration setting must be a list"
-msgstr "Pengaturan konfigurasi manual harus berupa list"
-
-msgid "No iface specified for manual configuration"
-msgstr "Tidak ada iface yang ditentukan untuk konfigurasi manual"
-
-msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr "Konfigurasi nic manual tanpa DHCP otomatis memerlukan alamat IP"
-
-msgid "Add interface"
-msgstr "Tambahkan interface"
-
-msgid "Edit interface"
-msgstr "Edit interface"
-
-msgid "Delete interface"
-msgstr "Hapus interface"
-
-msgid "Select interface to add"
-msgstr "Pilih interface untuk ditambahkan"
-
-msgid "Manual configuration"
-msgstr "Konfigurasi manual"
-
-msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
-
-msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Kata sandi yang Anda gunakan tampaknya lemah, apakah Anda yakin ingin menggunakannya?"
-
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Menyediakan pilihan desktop environment dan tiling window manager, cth. gnome, kde, sway"
-
-msgid "Select your desired desktop environment"
-msgstr "Pilih desktop environment yang Anda inginkan"
-
-msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr "Instalasi yang sangat basic yang memungkinkan Anda untuk menyesuaikan Arch Linux sesuai keinginan Anda."
-
-msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Menyediakan pilihan berbagai paket server untuk diinstal dan diaktifkan, cth. httpd, nginx, mariadb"
-
-msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Pilih server mana yang akan diinstal, jika tidak ada maka instalasi minimal akan dilakukan"
-
-msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr "Install sistem minimal serta xorg dan driver grafis."
-
-msgid "Press Enter to continue."
-msgstr "Tekan Enter untuk melanjutkan."
-
-msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Apakah Anda ingin melakukan chroot ke instalasi yang baru dibuat dan melakukan konfigurasi pasca-instalasi?"
-
-msgid "Are you sure you want to reset this setting?"
-msgstr "Anda yakin ingin menyetel ulang setelan ini?"
-
-msgid "Select one or more hard drives to use and configure\n"
-msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi\n"
-
-msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Setiap modifikasi pada pengaturan yang ada akan mengatur ulang tata letak disk!"
-
-msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Jika Anda mengatur ulang pilihan harddrive, ini juga akan mengatur ulang tata letak disk saat ini. Apakah Anda yakin?"
-
-msgid "Save and exit"
-msgstr "Simpan dan keluar"
-
-msgid ""
-"{}\n"
-"contains queued partitions, this will remove those, are you sure?"
-msgstr ""
-"{}\n"
-"berisi partisi yang mengantri, ini akan menghapusnya, apakah Anda yakin?"
-
-msgid "No audio server"
-msgstr "Tidak ada server audio"
-
-msgid "(default)"
-msgstr "(default)"
-
-msgid "Use ESC to skip"
-msgstr "Gunakan ESC untuk melewati"
-
-msgid ""
-"Use CTRL+C to reset current selection\n"
-"\n"
-msgstr ""
-"Gunakan CTRL + C untuk mengatur ulang pilihan saat ini\n"
-"\n"
-
-msgid "Copy to: "
-msgstr "Salin ke: "
-
-msgid "Edit: "
-msgstr "Edit: "
-
-msgid "Key: "
-msgstr "Kunci: "
-
-msgid "Edit {}: "
-msgstr "Edit {}: "
-
-msgid "Add: "
-msgstr "Tambah: "
-
-msgid "Value: "
-msgstr "Nilai: "
-
-msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Anda dapat melewatkan memilih drive dan mempartisi dan menggunakan pengaturan drive apa pun yang dipasang di /mnt (eksperimental)"
-
-msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Pilih salah satu disk atau lewati dan gunakan /mnt sebagai default"
-
-msgid "Select which partitions to mark for formatting:"
-msgstr "Pilih partisi mana yang akan ditandai untuk pemformatan:"
-
-msgid "Use HSM to unlock encrypted drive"
-msgstr "Gunakan HSM untuk membuka kunci drive terenkripsi"
-
-msgid "Device"
-msgstr "Perangkat"
-
-msgid "Size"
-msgstr "Ukuran"
-
-msgid "Free space"
-msgstr "Ruang kosong"
-
-msgid "Bus-type"
-msgstr "Tipe bus"
-
-msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "Baik kata sandi root atau setidaknya 1 pengguna dengan hak sudo harus ditentukan"
-
-msgid "Enter username (leave blank to skip): "
-msgstr "Masukkan nama pengguna (kosongkan untuk melewati): "
-
-msgid "The username you entered is invalid. Try again"
-msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
-
-msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "Haruskah \"{}\" menjadi superuser (sudo)?"
-
-msgid "Select which partitions to encrypt"
-msgstr "Pilih partisi mana yang akan dienkripsi"
-
-msgid "very weak"
-msgstr "sangat lemah"
-
-msgid "weak"
-msgstr "lemah"
-
-msgid "moderate"
-msgstr "sedang"
-
-msgid "strong"
-msgstr "kuat"
-
-msgid "Add subvolume"
-msgstr "Tambah subvolume"
-
-msgid "Edit subvolume"
-msgstr "Edit subvolume"
-
-msgid "Delete subvolume"
-msgstr "Hapus subvolume"
-
-msgid "Configured {} interfaces"
-msgstr "Interface {} dikonfigurasi"
-
-msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Opsi ini memungkinkan jumlah unduhan paralel yang dapat terjadi selama instalasi"
-
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {})\n"
-"Note:"
-msgstr ""
-"Masukkan jumlah unduhan paralel yang akan diaktifkan.\n"
-" (Masukkan nilai antara 1 hingga {})\n"
-"Catatan:"
-
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr " - Nilai maksimum   : {} ( Memungkinkan {} unduhan paralel, memungkinkan {} unduhan sekaligus)"
-
-msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Nilai minimum   : 1 (Mengizinkan 1 unduhan paralel, memungkinkan 2 unduhan sekaligus)"
-
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr " - Nonaktifkan/Default: 0 (Menonaktifkan pengunduhan paralel, hanya mengizinkan 1 unduhan pada satu waktu)"
-
-#, fuzzy, python-brace-format
-msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Input tidak valid! Coba lagi dengan input yang valid [1 untuk {}, atau 0 untuk menonaktifkan]"
-
-msgid "Parallel Downloads"
-msgstr "Unduhan Paralel"
-
-msgid "ESC to skip"
-msgstr "ESC untuk melewati"
-
-msgid "CTRL+C to reset"
-msgstr "CTRL + C untuk mengatur ulang"
-
-msgid "TAB to select"
-msgstr "TAB untuk memilih"
-
-msgid "[Default value: 0] > "
-msgstr "[Nilai default: 0] > "
-
-msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
-
-msgid "The font should be stored as {}"
-msgstr ""
-
-msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
-
-#, fuzzy
-msgid "Select an execution mode"
-msgstr "Pilih tindakan untuk '{}'"
-
-#, python-brace-format
-msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
-
-#, python-brace-format
-msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
-
-#, fuzzy
-msgid "Select one or more devices to use and configure"
-msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi"
-
-#, fuzzy
-msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr "Jika Anda mengatur ulang pilihan harddrive, ini juga akan mengatur ulang tata letak disk saat ini. Apakah Anda yakin?"
-
-#, fuzzy
-msgid "Existing Partitions"
-msgstr "Menambahkan partisi...."
-
-#, fuzzy
-msgid "Select a partitioning option"
-msgstr "Hapus partisi"
-
-#, fuzzy
-msgid "Enter the root directory of the mounted devices: "
-msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
 
 #, fuzzy, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
@@ -884,13 +433,60 @@ msgstr "Kapasitas minimum untuk partisi /home: {}GB\n"
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Kapasitas minimum untuk partisi Arch Linux: {}GB"
 
-#, fuzzy
-msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "Ini adalah daftar profil yang telah diprogram sebelumnya, mereka mungkin memudahkan untuk menginstal hal-hal seperti desktop environment"
+msgid "Encryption password"
+msgstr "Kata sandi enkripsi"
 
 #, fuzzy
-msgid "Current profile selection"
-msgstr "Tata letak partisi saat ini"
+msgid "LVM volumes"
+msgstr "Hapus subvolume"
+
+msgid "HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Pilih partisi mana yang akan dienkripsi"
+
+#, fuzzy
+msgid "LVM volumes to be encrypted"
+msgstr "Pilih partisi mana yang akan dienkripsi"
+
+#, fuzzy
+msgid "HSM device"
+msgstr "Perangkat"
+
+#, fuzzy
+msgid "Select encryption type"
+msgstr "Kata sandi enkripsi"
+
+#, fuzzy
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Masukkan kata sandi enkripsi disk (biarkan kosong jika tidak ada enkripsi): "
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr ""
+
+msgid "Higher values increase security but slow down boot time"
+msgstr ""
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr ""
+
+msgid "Iteration time must be at least 100ms"
+msgstr ""
+
+msgid "Iteration time must be at most 120000ms"
+msgstr ""
+
+msgid "Please enter a valid number"
+msgstr ""
+
+msgid "Suggest partition layout"
+msgstr "Saran tata letak partisi"
 
 #, fuzzy
 msgid "Remove all newly added partitions"
@@ -907,11 +503,23 @@ msgstr "Tandai/Hapus tanda partisi yang akan diformat (menghapus data)"
 msgid "Mark/Unmark as bootable"
 msgstr ""
 
+#, fuzzy
+msgid "Mark/Unmark as ESP"
+msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
+
+#, fuzzy
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
+
 msgid "Change filesystem"
 msgstr ""
 
 #, fuzzy
 msgid "Mark/Unmark as compressed"
+msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
+
+#, fuzzy
+msgid "Mark/Unmark as nodatacow"
 msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
 
 #, fuzzy
@@ -921,6 +529,18 @@ msgstr "Hapus subvolume"
 #, fuzzy
 msgid "Delete partition"
 msgstr "Hapus partisi"
+
+#, python-brace-format
+msgid "Partition management: {}"
+msgstr ""
+
+#, python-brace-format
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Partition - New"
+msgstr "Konfigurasi manual"
 
 msgid "Partition"
 msgstr ""
@@ -932,80 +552,429 @@ msgstr ""
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr " * Mount point partisi relatif terhadap di dalam instalasi, boot akan menjadi /boot sebagai contoh."
 
-msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
-
-msgid "Mountpoint: "
-msgstr ""
-
-msgid "Current free sectors on device {}:"
-msgstr ""
-
 #, fuzzy
-msgid "Total sectors: {}"
-msgstr "Bukan direktori yang valid: {}"
+msgid "Enter a mountpoint"
+msgstr "Pilih titik mount :"
 
-#, fuzzy
-msgid "Enter the start sector (default: {}): "
+msgid "Invalid size"
+msgstr ""
+
+#, python-brace-format
+msgid "Selected free space segment on device {}:"
+msgstr ""
+
+#, python-brace-format
+msgid "Size: {} / {}"
+msgstr ""
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr ""
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter a size (default: {}): "
 msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
-
-#, fuzzy
-msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "Masukkan sektor akhir partisi (persentase atau nomor blok, mis: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
 msgstr ""
 
-#, python-brace-format
-msgid "Partition management: {}"
-msgstr ""
+msgid "Add subvolume"
+msgstr "Tambah subvolume"
 
-#, python-brace-format
-msgid "Total length: {}"
-msgstr ""
+msgid "Edit subvolume"
+msgstr "Edit subvolume"
 
-#, fuzzy
-msgid "Encryption type"
-msgstr "Kata sandi enkripsi"
+msgid "Delete subvolume"
+msgstr "Hapus subvolume"
 
-msgid "Iteration time"
-msgstr ""
-
-msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
-
-msgid "Higher values increase security but slow down boot time"
-msgstr ""
-
-msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
-
-msgid "Iteration time cannot be empty"
-msgstr ""
-
-msgid "Iteration time must be at least 100ms"
-msgstr ""
-
-msgid "Iteration time must be at most 120000ms"
-msgstr ""
-
-msgid "Please enter a valid number"
-msgstr ""
-
-msgid "Partitions"
-msgstr ""
-
-msgid "No HSM devices available"
+msgid "Value cannot be empty"
 msgstr ""
 
 #, fuzzy
-msgid "Partitions to be encrypted"
+msgid "Enter subvolume name"
+msgstr "Nama subvolume "
+
+#, fuzzy
+msgid "Subvolume name"
+msgstr "Nama subvolume "
+
+#, fuzzy
+msgid "Enter subvolume mountpoint"
+msgstr "Titik mount subvolume"
+
+#, fuzzy
+msgid "Exit archinstall"
+msgstr "Bahasa Archinstall"
+
+msgid "Reboot system"
+msgstr ""
+
+#, fuzzy
+msgid "chroot into installation for post-installation configurations"
+msgstr "Apakah Anda ingin melakukan chroot ke instalasi yang baru dibuat dan melakukan konfigurasi pasca-instalasi?"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Apakah Anda ingin menggunakan sinkronisasi waktu otomatis (NTP) dengan server waktu default?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"Waktu perangkat keras dan langkah-langkah pasca-konfigurasi lainnya mungkin diperlukan agar NTP berfungsi.\n"
+"Untuk informasi lebih lanjut, silakan periksa Arch wiki"
+
+msgid "Enter a hostname"
+msgstr ""
+
+#, fuzzy
+msgid "Select timezone"
+msgstr "Pilih zona waktu"
+
+#, fuzzy
+msgid "What would you like to do next?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
+
+#, fuzzy
+msgid "Select which kernel(s) to install"
 msgstr "Pilih partisi mana yang akan dienkripsi"
 
-msgid "Select disk encryption option"
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Untuk kompatibilitas terbaik dengan perangkat keras AMD Anda, Anda mungkin ingin menggunakan opsi semua sumber terbuka atau AMD / ATI."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Untuk kompatibilitas terbaik dengan perangkat keras Intel Anda, Anda mungkin ingin menggunakan opsi semua sumber terbuka atau Intel.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Untuk kompatibilitas terbaik dengan perangkat keras Nvidia Anda, Anda mungkin ingin menggunakan driver proprietary Nvidia.\n"
+
+msgid "Would you like to use swap on zram?"
+msgstr "Apakah Anda ingin menggunakan swap di zram?"
+
+#, fuzzy
+msgid "Select zram compression algorithm:"
+msgstr "Pilih titik mount :"
+
+msgid "Archinstall language"
+msgstr "Bahasa Archinstall"
+
+msgid "Applications"
 msgstr ""
 
-msgid "Select a FIDO2 device to use for HSM"
+msgid "Network configuration"
+msgstr "Konfigurasi jaringan"
+
+msgid "Save configuration"
+msgstr "Simpan konfigurasi"
+
+msgid "Install"
+msgstr "Install"
+
+msgid "Abort"
+msgstr "Batalkan"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Baik kata sandi root atau setidaknya 1 pengguna dengan hak sudo harus ditentukan"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr ""
+
+#, fuzzy
+msgid "Language"
+msgstr "Locale language"
+
+msgid "NTP"
+msgstr ""
+
+#, fuzzy
+msgid "LVM configuration type"
+msgstr "Tidak ada konfigurasi"
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr ""
+
+msgid "Swap on zram"
+msgstr ""
+
+msgid "Compression algorithm"
+msgstr ""
+
+msgid "Parallel Downloads"
+msgstr "Unduhan Paralel"
+
+msgid "Color"
+msgstr ""
+
+#, fuzzy
+msgid "Kernel"
+msgstr "Kernel"
+
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr ""
+
+#, fuzzy
+msgid "Missing configurations:"
+msgstr "Konfigurasi tidak ada: \n"
+
+#, fuzzy
+msgid "Invalid configuration:"
+msgstr "Konfigurasi manual"
+
+msgid "Ready to install"
+msgstr ""
+
+msgid "Warnings:"
+msgstr ""
+
+#, fuzzy
+msgid "Profiles"
+msgstr "Profil"
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+#, fuzzy
+msgid "Selected mirror regions"
+msgstr "Wilayah mirror"
+
+#, fuzzy
+msgid "Custom servers"
+msgstr "Tidak ada server audio"
+
+msgid "Optional repositories"
+msgstr "Repositori opsional"
+
+#, fuzzy
+msgid "Custom repositories"
+msgstr "Repositori opsional"
+
+#, python-brace-format
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] File log telah dibuat di sini: {}"
+
+#, fuzzy
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Silakan kirimkan masalah ini (dan file) ke https://github.com/archlinux/archinstall/issues"
+
+msgid "Syncing the system..."
+msgstr ""
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr ""
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr ""
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr ""
+
+msgid "Keyboard layout"
+msgstr "Tata letak keyboard"
+
+msgid "Locale language"
+msgstr "Locale language"
+
+msgid "Locale encoding"
+msgstr "Locale encoding"
+
+msgid "Console font"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Anda yakin ingin menyetel ulang setelan ini?"
+
+msgid "Confirm and exit"
+msgstr "Konfirmasi dan keluar"
+
+msgid "Cancel"
+msgstr "Batalkan"
+
+msgid "Password strength: Weak"
+msgstr ""
+
+msgid "Password strength: Moderate"
+msgstr ""
+
+msgid "Password strength: Strong"
+msgstr ""
+
+#, fuzzy
+msgid "Confirm password"
+msgstr "Ganti kata sandi"
+
+msgid "The password did not match, please try again"
+msgstr ""
+
+#, fuzzy
+msgid "Not a valid directory"
+msgstr "Bukan direktori yang valid: {}"
+
+msgid "Do you really want to abort?"
+msgstr "Apakah Anda benar-benar ingin membatalkan?"
+
+#, fuzzy
+msgid "Add a custom repository"
+msgstr "Tambahkan pengguna"
+
+msgid "Change custom repository"
+msgstr ""
+
+msgid "Delete custom repository"
+msgstr ""
+
+#, fuzzy
+msgid "Enter a repository name"
+msgstr "Wilayah mirror"
+
+msgid "Name"
+msgstr ""
+
+msgid "Enter the repository url"
+msgstr ""
+
+msgid "Url"
+msgstr ""
+
+#, fuzzy
+msgid "Select signature check"
+msgstr "Pilih interface untuk ditambahkan"
+
+#, fuzzy
+msgid "Signature check"
+msgstr "Pilih interface untuk ditambahkan"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Pilih interface untuk ditambahkan"
+
+#, fuzzy
+msgid "Add a custom server"
+msgstr "Tambahkan pengguna"
+
+#, fuzzy
+msgid "Change custom server"
+msgstr "Pilih server audio"
+
+#, fuzzy
+msgid "Delete custom server"
+msgstr "Hapus pengguna"
+
+msgid "Enter server url"
+msgstr ""
+
+#, fuzzy
+msgid "Select regions"
+msgstr "Pilih interface untuk ditambahkan"
+
+#, fuzzy
+msgid "Add custom servers"
+msgstr "Tambahkan pengguna"
+
+#, fuzzy
+msgid "Add custom repository"
+msgstr "Tambahkan pengguna"
+
+#, fuzzy
+msgid "Additional repositories"
+msgstr "Repositori opsional"
+
+#, fuzzy
+msgid "Loading mirror regions..."
+msgstr "Wilayah mirror"
+
+#, fuzzy
+msgid "Select mirror regions to be enabled"
+msgstr "Wilayah mirror"
+
+#, fuzzy
+msgid "Select optional repositories to be enabled"
+msgstr "Pilih repositori tambahan opsional mana yang akan diaktifkan"
+
+msgid "Unicode font coverage for most languages"
+msgstr ""
+
+msgid "color emoji for browsers and apps"
+msgstr ""
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr ""
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr ""
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr ""
+
+msgid "Zram enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "Zram algorithm {}"
+msgstr ""
+
+msgid "Bluetooth enabled"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Audio server \"{}\""
+msgstr "Tidak ada server audio"
+
+#, python-brace-format
+msgid "Power management \"{}\""
+msgstr ""
+
+msgid "Print service enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "Firewall \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Extra fonts \"{}\""
+msgstr ""
+
+#, fuzzy
+msgid "Passwordless login"
+msgstr "Kata sandi root"
+
+msgid "Second factor login"
+msgstr ""
+
+#, fuzzy
+msgid "Root password set"
+msgstr "Kata sandi root"
+
+#, fuzzy, python-brace-format
+msgid "Configured {} user(s)"
+msgstr "Interface {} dikonfigurasi"
+
+msgid "U2F set up"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Bootloader \"{}\""
+msgstr "Bootloader"
+
+msgid "UKI enabled"
+msgstr ""
+
+msgid "Removable"
+msgstr ""
+
+#, python-brace-format
+msgid "Plymouth \"{}\""
 msgstr ""
 
 #, fuzzy
@@ -1020,365 +989,37 @@ msgstr "Konfigurasi manual"
 msgid "Pre-mounted configuration"
 msgstr "Tidak ada konfigurasi"
 
+#, fuzzy
+msgid "Default"
+msgstr "(default)"
+
+msgid "Manual"
+msgstr ""
+
+msgid "Pre-mount"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "{} layout"
+msgstr "Tata letak disk"
+
+#, fuzzy, python-brace-format
+msgid "Devices {}"
+msgstr "Perangkat"
+
+msgid "LVM set up"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "{} encryption"
+msgstr "Kata sandi enkripsi"
+
+#, python-brace-format
+msgid "Btrfs snapshot \"{}\""
+msgstr ""
+
 msgid "Unknown"
 msgstr ""
-
-msgid "Partition encryption"
-msgstr ""
-
-#, python-brace-format
-msgid " ! Formatting {} in "
-msgstr ""
-
-msgid "← Back"
-msgstr ""
-
-msgid "Disk encryption"
-msgstr ""
-
-#, fuzzy
-msgid "Configuration"
-msgstr "Tidak ada konfigurasi"
-
-#, fuzzy
-msgid "Password"
-msgstr "Kata sandi root"
-
-#, fuzzy
-msgid "All settings will be reset, are you sure?"
-msgstr "{} berisi partisi yang mengantri, ini akan menghapusnya, apakah Anda yakin?"
-
-msgid "Back"
-msgstr ""
-
-msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
-
-#, python-brace-format
-msgid "Environment type: {}"
-msgstr ""
-
-msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
-
-#, fuzzy
-msgid "Installed packages"
-msgstr "Paket tambahan"
-
-#, fuzzy
-msgid "Add profile"
-msgstr "Profil"
-
-#, fuzzy
-msgid "Edit profile"
-msgstr "Profil"
-
-#, fuzzy
-msgid "Delete profile"
-msgstr "Hapus interface"
-
-#, fuzzy
-msgid "Profile name: "
-msgstr "Profil"
-
-#, fuzzy
-msgid "The profile name you entered is already in use. Try again"
-msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
-
-#, fuzzy
-msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "Ketik paket tambahan untuk diinstal (dipisahkan dengan spasi, biarkan kosong untuk dilewati): "
-
-#, fuzzy
-msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Ketik paket tambahan untuk diinstal (dipisahkan dengan spasi, biarkan kosong untuk dilewati): "
-
-msgid "Should this profile be enabled for installation?"
-msgstr ""
-
-msgid "Create your own"
-msgstr ""
-
-#, fuzzy
-msgid ""
-"\n"
-"Select a graphics driver or leave blank to install all open-source drivers"
-msgstr ""
-"\n"
-"\n"
-"Pilih driver grafis atau biarkan kosong untuk menginstal semua driver open-source"
-
-msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
-
-msgid ""
-"\n"
-"\n"
-"Choose an option to give Sway access to your hardware"
-msgstr ""
-
-msgid "Graphics driver"
-msgstr ""
-
-msgid "Greeter"
-msgstr ""
-
-msgid "Please chose which greeter to install"
-msgstr ""
-
-msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
-
-#, fuzzy
-msgid "Disk configuration"
-msgstr "Tidak ada konfigurasi"
-
-#, fuzzy
-msgid "Profiles"
-msgstr "Profil"
-
-msgid "Finding possible directories to save configuration files ..."
-msgstr ""
-
-#, fuzzy
-msgid "Select directory (or directories) for saving configuration files"
-msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi"
-
-#, fuzzy
-msgid "Add a custom mirror"
-msgstr "Tambahkan pengguna"
-
-msgid "Change custom mirror"
-msgstr ""
-
-msgid "Delete custom mirror"
-msgstr ""
-
-#, fuzzy
-msgid "Enter name (leave blank to skip): "
-msgstr "Masukkan nama pengguna (kosongkan untuk melewati): "
-
-#, fuzzy
-msgid "Enter url (leave blank to skip): "
-msgstr "Masukkan nama pengguna (kosongkan untuk melewati): "
-
-#, fuzzy
-msgid "Select signature check option"
-msgstr "Pilih interface untuk ditambahkan"
-
-#, fuzzy
-msgid "Select signature option"
-msgstr "Pilih interface untuk ditambahkan"
-
-msgid "Custom mirrors"
-msgstr ""
-
-msgid "Defined"
-msgstr ""
-
-#, fuzzy
-msgid "Save user configuration (including disk layout)"
-msgstr "Simpan konfigurasi pengguna"
-
-#, fuzzy
-msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
-"Save directory: "
-msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
-
-msgid ""
-"Do you want to save {} configuration file(s) in the following location?\n"
-"\n"
-"{}"
-msgstr ""
-
-#, fuzzy
-msgid "Saving {} configuration files to {}"
-msgstr "Simpan konfigurasi"
-
-#, fuzzy
-msgid "Mirrors"
-msgstr "Wilayah mirror"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Wilayah mirror"
-
-#, fuzzy
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Nilai maksimum   : {} ( Memungkinkan {} unduhan paralel, memungkinkan {} unduhan sekaligus)"
-
-msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr "Input tidak valid! Coba lagi dengan input yang valid [1 untuk {}, atau 0 untuk menonaktifkan]"
-
-msgid "Locales"
-msgstr ""
-
-#, fuzzy
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "Gunakan NetworkManager (diperlukan untuk mengkonfigurasi internet secara grafis di GNOME dan KDE)"
-
-msgid "Total: {} / {}"
-msgstr ""
-
-msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
-
-msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
-
-#, fuzzy
-msgid "Enter start (default: sector {}): "
-msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
-
-#, fuzzy
-msgid "Enter end (default: {}): "
-msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
-
-msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
-
-msgid "Path"
-msgstr ""
-
-msgid "Manufacturer"
-msgstr ""
-
-msgid "Product"
-msgstr ""
-
-#, fuzzy, python-brace-format
-msgid "Invalid configuration: {error}"
-msgstr "Konfigurasi manual"
-
-msgid "Type"
-msgstr ""
-
-#, fuzzy
-msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Opsi ini memungkinkan jumlah unduhan paralel yang dapat terjadi selama instalasi"
-
-#, fuzzy
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-"\n"
-"Note:\n"
-msgstr ""
-"Masukkan jumlah unduhan paralel yang akan diaktifkan.\n"
-" (Masukkan nilai antara 1 hingga {})\n"
-"Catatan:"
-
-#, fuzzy, python-brace-format
-msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Nilai maksimum   : {} ( Memungkinkan {} unduhan paralel, memungkinkan {} unduhan sekaligus)"
-
-#, fuzzy
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - Nonaktifkan/Default: 0 (Menonaktifkan pengunduhan paralel, hanya mengizinkan 1 unduhan pada satu waktu)"
-
-#, fuzzy
-msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "Input tidak valid! Coba lagi dengan input yang valid [1 untuk {}, atau 0 untuk menonaktifkan]"
-
-msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
-
-msgid ""
-"\n"
-"\n"
-"Choose an option to give Hyprland access to your hardware"
-msgstr ""
-
-msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to use unified kernel images?"
-msgstr "Apakah Anda ingin menggunakan swap di zram?"
-
-msgid "Unified kernel images"
-msgstr ""
-
-msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr ""
-
-msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
-
-msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr ""
-
-msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
-
-#, fuzzy
-msgid "Selected profiles: "
-msgstr "Hapus interface"
-
-msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr ""
-
-#, fuzzy
-msgid "Mark/Unmark as nodatacow"
-msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
-
-#, fuzzy
-msgid "Would you like to use compression or disable CoW?"
-msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
-
-msgid "Use compression"
-msgstr ""
-
-msgid "Disable Copy-on-Write"
-msgstr ""
-
-#, fuzzy
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Menyediakan pilihan desktop environment dan tiling window manager, cth. gnome, kde, sway"
-
-#, fuzzy, python-brace-format
-msgid "Configuration type: {}"
-msgstr "Tidak ada konfigurasi"
-
-#, fuzzy
-msgid "LVM configuration type"
-msgstr "Tidak ada konfigurasi"
-
-msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
-
-#, fuzzy
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "Gunakan NetworkManager (diperlukan untuk mengkonfigurasi internet secara grafis di GNOME dan KDE)"
-
-#, fuzzy
-msgid "Select a LVM option"
-msgstr "Pilih zona waktu"
-
-#, fuzzy
-msgid "Partitioning"
-msgstr "Konfigurasi manual"
-
-msgid "Logical Volume Management (LVM)"
-msgstr ""
-
-msgid "Physical volumes"
-msgstr ""
-
-msgid "Volumes"
-msgstr ""
-
-#, fuzzy
-msgid "LVM volumes"
-msgstr "Hapus subvolume"
-
-#, fuzzy
-msgid "LVM volumes to be encrypted"
-msgstr "Pilih partisi mana yang akan dienkripsi"
-
-#, fuzzy
-msgid "Select which LVM volumes to encrypt"
-msgstr "Pilih partisi mana yang akan dienkripsi"
 
 #, fuzzy
 msgid "Default layout"
@@ -1397,527 +1038,121 @@ msgstr ""
 msgid "LUKS on LVM"
 msgstr ""
 
-#, fuzzy
-msgid "Yes"
-msgstr "ya"
-
-msgid "No"
-msgstr ""
-
-#, fuzzy
-msgid "Archinstall help"
-msgstr "Bahasa Archinstall"
-
-#, fuzzy
-msgid " (default)"
-msgstr "(default)"
-
-msgid "Press Ctrl+h for help"
-msgstr ""
-
-msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
-
-msgid "Seat access"
-msgstr ""
-
-#, fuzzy
-msgid "Mountpoint"
-msgstr "Tetapkan titik-mount untuk sebuah partisi"
-
-msgid "HSM"
-msgstr ""
-
-#, fuzzy
-msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr "Masukkan kata sandi enkripsi disk (biarkan kosong jika tidak ada enkripsi): "
-
-#, fuzzy
-msgid "Disk encryption password"
-msgstr "Kata sandi enkripsi"
-
-#, fuzzy
-msgid "Partition - New"
-msgstr "Konfigurasi manual"
-
-msgid "Filesystem"
-msgstr ""
-
-msgid "Invalid size"
-msgstr ""
-
-#, fuzzy
-msgid "Start (default: sector {}): "
-msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
-
-#, fuzzy
-msgid "End (default: {}): "
-msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
-
-#, fuzzy
-msgid "Subvolume name"
-msgstr "Nama subvolume "
-
-#, fuzzy
-msgid "Disk configuration type"
-msgstr "Tidak ada konfigurasi"
-
-msgid "Root mount directory"
-msgstr ""
-
-#, fuzzy
-msgid "Select language"
-msgstr "Locale language"
-
-#, fuzzy
-msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "Ketik paket tambahan untuk diinstal (dipisahkan dengan spasi, biarkan kosong untuk dilewati): "
-
-msgid "Invalid download number"
-msgstr ""
-
-msgid "Number downloads"
-msgstr ""
-
-#, fuzzy
-msgid "The username you entered is invalid"
-msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
-
-#, fuzzy
-msgid "Username"
-msgstr "Nama Pengguna : "
+#, fuzzy, python-brace-format
+msgid "Keyboard layout \"{}\""
+msgstr "Tata letak keyboard"
 
 #, fuzzy, python-brace-format
-msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "Haruskah \"{}\" menjadi superuser (sudo)?"
+msgid "Locale language \"{}\""
+msgstr "Locale language"
+
+#, fuzzy, python-brace-format
+msgid "Locale encoding \"{}\""
+msgstr "Locale encoding"
+
+#, python-brace-format
+msgid "Console font \"{}\""
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Mirror regions \"{}\""
+msgstr "Wilayah mirror"
+
+#, fuzzy, python-brace-format
+msgid "Optional repositories \"{}\""
+msgstr "Repositori opsional"
 
 #, fuzzy
-msgid "Interfaces"
+msgid "Custom servers set up"
+msgstr "Tidak ada server audio"
+
+#, fuzzy
+msgid "Custom repositories set up"
+msgstr "Repositori opsional"
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Salin konfigurasi jaringan ISO ke instalasi"
+
+msgid "Use Network Manager (default backend)"
+msgstr ""
+
+msgid "Use Network Manager (iwd backend)"
+msgstr ""
+
+msgid "Use standalone iwd"
+msgstr ""
+
+msgid "Manual configuration"
+msgstr "Konfigurasi manual"
+
+msgid "Package group:"
+msgstr ""
+
+msgid "Color enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "{} graphics driver"
+msgstr ""
+
+#, python-brace-format
+msgid "{} greeter"
+msgstr ""
+
+msgid "very weak"
+msgstr "sangat lemah"
+
+msgid "weak"
+msgstr "lemah"
+
+msgid "moderate"
+msgstr "sedang"
+
+msgid "strong"
+msgstr "kuat"
+
+msgid "Add interface"
 msgstr "Tambahkan interface"
+
+msgid "Edit interface"
+msgstr "Edit interface"
+
+msgid "Delete interface"
+msgstr "Hapus interface"
+
+#, fuzzy
+msgid "Select an interface"
+msgstr "Hapus interface"
 
 msgid "You need to enter a valid IP in IP-config mode"
 msgstr ""
 
-msgid "Modes"
-msgstr ""
+#, fuzzy, python-brace-format
+msgid "Select which mode to configure for \"{}\""
+msgstr "Pilih mode mana yang akan dikonfigurasi untuk \"{}\" atau lewati untuk menggunakan mode default \"{}\""
 
-msgid "IP address"
-msgstr ""
+#, python-brace-format
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Masukkan IP dan subnet untuk {} (contoh: 192.168.0.5/24): "
 
 #, fuzzy
 msgid "Enter your gateway (router) IP address (leave blank for none)"
 msgstr "Masukkan IP gateway (router) Anda atau biarkan kosong untuk tidak menggunakan apa pun: "
-
-msgid "Gateway address"
-msgstr ""
 
 #, fuzzy
 msgid "Enter your DNS servers with space separated (leave blank for none)"
 msgstr "Masukkan server DNS Anda (dipisahkan dengan spasi, untuk kosongkan tidak menggunakan apa pun): "
 
 #, fuzzy
-msgid "DNS servers"
-msgstr "Tidak ada server audio"
+msgid "Choose network configuration"
+msgstr "Tidak ada konfigurasi jaringan"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr ""
 
 #, fuzzy
 msgid "Configure interfaces"
 msgstr "Interface {} dikonfigurasi"
-
-#, fuzzy
-msgid "Kernel"
-msgstr "Kernel"
-
-msgid "UEFI is not detected and some options are disabled"
-msgstr ""
-
-msgid "Info"
-msgstr ""
-
-msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr ""
-
-msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr ""
-
-#, fuzzy
-msgid "Main profile"
-msgstr "Profil"
-
-#, fuzzy
-msgid "Confirm password"
-msgstr "Ganti kata sandi"
-
-msgid "The confirmation password did not match, please try again"
-msgstr ""
-
-#, fuzzy
-msgid "Not a valid directory"
-msgstr "Bukan direktori yang valid: {}"
-
-#, fuzzy
-msgid "Would you like to continue?"
-msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
-
-msgid "Directory"
-msgstr ""
-
-#, fuzzy
-msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
-
-#, fuzzy, python-brace-format
-msgid "Do you want to save the configuration file(s) to {}?"
-msgstr "Simpan konfigurasi"
-
-msgid "Enabled"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
-
-#, fuzzy
-msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Silakan kirimkan masalah ini (dan file) ke https://github.com/archlinux/archinstall/issues"
-
-#, fuzzy
-msgid "Mirror name"
-msgstr "Wilayah mirror"
-
-msgid "Url"
-msgstr ""
-
-#, fuzzy
-msgid "Select signature check"
-msgstr "Pilih interface untuk ditambahkan"
-
-#, fuzzy
-msgid "Select execution mode"
-msgstr "Pilih tindakan untuk '{}'"
-
-msgid "Press ? for help"
-msgstr ""
-
-msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-
-#, fuzzy
-msgid "Additional repositories"
-msgstr "Repositori opsional"
-
-msgid "NTP"
-msgstr ""
-
-msgid "Swap on zram"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-#, fuzzy
-msgid "Signature check"
-msgstr "Pilih interface untuk ditambahkan"
-
-#, python-brace-format
-msgid "Selected free space segment on device {}:"
-msgstr ""
-
-#, python-brace-format
-msgid "Size: {} / {}"
-msgstr ""
-
-#, fuzzy, python-brace-format
-msgid "Size (default: {}): "
-msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
-
-#, fuzzy
-msgid "HSM device"
-msgstr "Perangkat"
-
-msgid "Some packages could not be found in the repository"
-msgstr ""
-
-#, fuzzy
-msgid "User"
-msgstr "Nama Pengguna : "
-
-msgid "The specified configuration will be applied"
-msgstr ""
-
-msgid "Wipe"
-msgstr ""
-
-#, fuzzy
-msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
-
-#, fuzzy
-msgid "Loading packages..."
-msgstr "Paket tambahan"
-
-msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
-
-#, fuzzy
-msgid "Add a custom repository"
-msgstr "Tambahkan pengguna"
-
-msgid "Change custom repository"
-msgstr ""
-
-msgid "Delete custom repository"
-msgstr ""
-
-#, fuzzy
-msgid "Repository name"
-msgstr "Wilayah mirror"
-
-#, fuzzy
-msgid "Add a custom server"
-msgstr "Tambahkan pengguna"
-
-#, fuzzy
-msgid "Change custom server"
-msgstr "Pilih server audio"
-
-#, fuzzy
-msgid "Delete custom server"
-msgstr "Hapus pengguna"
-
-msgid "Server url"
-msgstr ""
-
-#, fuzzy
-msgid "Select regions"
-msgstr "Pilih interface untuk ditambahkan"
-
-#, fuzzy
-msgid "Add custom servers"
-msgstr "Tambahkan pengguna"
-
-#, fuzzy
-msgid "Add custom repository"
-msgstr "Tambahkan pengguna"
-
-#, fuzzy
-msgid "Loading mirror regions..."
-msgstr "Wilayah mirror"
-
-#, fuzzy
-msgid "Mirrors and repositories"
-msgstr "Repositori opsional"
-
-#, fuzzy
-msgid "Selected mirror regions"
-msgstr "Wilayah mirror"
-
-#, fuzzy
-msgid "Custom servers"
-msgstr "Tidak ada server audio"
-
-#, fuzzy
-msgid "Custom repositories"
-msgstr "Repositori opsional"
-
-msgid "Only ASCII characters are supported"
-msgstr ""
-
-msgid "Show help"
-msgstr ""
-
-msgid "Exit help"
-msgstr ""
-
-msgid "Preview scroll up"
-msgstr ""
-
-msgid "Preview scroll down"
-msgstr ""
-
-msgid "Move up"
-msgstr ""
-
-msgid "Move down"
-msgstr ""
-
-msgid "Move right"
-msgstr ""
-
-msgid "Move left"
-msgstr ""
-
-msgid "Jump to entry"
-msgstr ""
-
-msgid "Skip selection (if available)"
-msgstr ""
-
-msgid "Reset selection (if available)"
-msgstr ""
-
-#, fuzzy
-msgid "Select on single select"
-msgstr "Pilih interface untuk ditambahkan"
-
-#, fuzzy
-msgid "Select on multi select"
-msgstr "Pilih zona waktu"
-
-msgid "Reset"
-msgstr ""
-
-#, fuzzy
-msgid "Skip selection menu"
-msgstr "Pilih tindakan untuk '{}'"
-
-msgid "Start search mode"
-msgstr ""
-
-msgid "Exit search mode"
-msgstr ""
-
-msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
-
-msgid "Choose an option to give labwc access to your hardware"
-msgstr ""
-
-msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
-
-msgid "Choose an option to give niri access to your hardware"
-msgstr ""
-
-#, fuzzy
-msgid "Mark/Unmark as ESP"
-msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
-
-msgid "Package group:"
-msgstr ""
-
-#, fuzzy
-msgid "Exit archinstall"
-msgstr "Bahasa Archinstall"
-
-msgid "Reboot system"
-msgstr ""
-
-#, fuzzy
-msgid "chroot into installation for post-installation configurations"
-msgstr "Apakah Anda ingin melakukan chroot ke instalasi yang baru dibuat dan melakukan konfigurasi pasca-instalasi?"
-
-msgid "Installation completed"
-msgstr ""
-
-#, fuzzy
-msgid "What would you like to do next?"
-msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
-
-#, fuzzy, python-brace-format
-msgid "Select which mode to configure for \"{}\""
-msgstr "Pilih mode mana yang akan dikonfigurasi untuk \"{}\" atau lewati untuk menggunakan mode default \"{}\""
-
-#, fuzzy
-msgid "Incorrect credentials file decryption password"
-msgstr "Kata sandi enkripsi"
-
-#, fuzzy
-msgid "Incorrect password"
-msgstr "Kata sandi root"
-
-#, fuzzy
-msgid "Credentials file decryption password"
-msgstr "Kata sandi enkripsi"
-
-#, fuzzy
-msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Simpan konfigurasi"
-
-#, fuzzy
-msgid "Credentials file encryption password"
-msgstr "Kata sandi enkripsi"
-
-#, fuzzy, python-brace-format
-msgid "Repositories: {}"
-msgstr "Wilayah mirror"
-
-msgid "New version available"
-msgstr ""
-
-#, fuzzy
-msgid "Passwordless login"
-msgstr "Kata sandi root"
-
-msgid "Second factor login"
-msgstr ""
-
-msgid "Bluetooth"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to configure Bluetooth?"
-msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
-
-msgid "Print service"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to configure the print service?"
-msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
-
-msgid "Power management"
-msgstr ""
-
-msgid "Authentication"
-msgstr ""
-
-msgid "Applications"
-msgstr ""
-
-msgid "U2F login method: "
-msgstr ""
-
-msgid "Passwordless sudo: "
-msgstr ""
-
-#, python-brace-format
-msgid "Btrfs snapshot type: {}"
-msgstr ""
-
-msgid "Syncing the system..."
-msgstr ""
-
-msgid "Value cannot be empty"
-msgstr ""
-
-msgid "Snapshot type"
-msgstr ""
-
-#, fuzzy, python-brace-format
-msgid "Snapshot type: {}"
-msgstr "Tidak ada konfigurasi"
-
-msgid "U2F login setup"
-msgstr ""
-
-msgid "No U2F devices found"
-msgstr ""
-
-msgid "U2F Login Method"
-msgstr ""
-
-#, fuzzy
-msgid "Enable passwordless sudo?"
-msgstr "Masukan kata sandi: "
-
-#, python-brace-format
-msgid "Setting up U2F device for user: {}"
-msgstr ""
-
-msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
-
-msgid "Starting device modifications in "
-msgstr ""
 
 #, fuzzy
 msgid "No network connection found"
@@ -1932,15 +1167,15 @@ msgid "No wifi interface found"
 msgstr "Interface {} dikonfigurasi"
 
 #, fuzzy
+msgid "No wifi networks found"
+msgstr "Tidak ada konfigurasi jaringan"
+
+#, fuzzy
 msgid "Select wifi network to connect to"
 msgstr "Pilih satu interface jaringan untuk dikonfigurasi"
 
 msgid "Scanning wifi networks..."
 msgstr ""
-
-#, fuzzy
-msgid "No wifi networks found"
-msgstr "Tidak ada konfigurasi jaringan"
 
 msgid "Failed setting up wifi"
 msgstr ""
@@ -1949,65 +1184,960 @@ msgstr ""
 msgid "Enter wifi password"
 msgstr "Masukan kata sandi: "
 
-msgid "Ok"
-msgstr ""
-
-msgid "Removable"
-msgstr ""
-
-msgid "Install to removable location"
-msgstr ""
-
-msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
-
-msgid "Will install to standard location with NVRAM entry"
-msgstr ""
-
-msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
-
-msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
-
-msgid "USB drives or other portable external media."
-msgstr ""
-
-msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
-
-msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
-
-msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr ""
-
-msgid "Will install to custom location with NVRAM entry"
-msgstr ""
-
-msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr ""
-
-msgid "most Apple Macs, many laptops..."
-msgstr ""
+#, fuzzy, python-brace-format
+msgid "Repositories: {}"
+msgstr "Wilayah mirror"
 
 #, fuzzy
-msgid "Language"
-msgstr "Locale language"
+msgid "Loading packages..."
+msgstr "Paket tambahan"
 
-msgid "Compression algorithm"
-msgstr ""
+#, fuzzy
+msgid "No packages found"
+msgstr "Interface {} dikonfigurasi"
 
 #, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Hanya paket seperti base, base-devel, linux, linux-firmware, efibootmgr dan paket profil opsional yang diinstal."
 
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr ""
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr ""
+
+#, fuzzy, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr ""
+"Masukkan jumlah unduhan paralel yang akan diaktifkan.\n"
+" (Masukkan nilai antara 1 hingga {})\n"
+"Catatan:"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr ""
+
+msgid "Enable colored output for pacman"
+msgstr ""
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman sudah berjalan, menunggu maksimal 10 menit untuk berhenti."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Pacman lock yang sudah ada tidak pernah keluar. Harap bersihkan sesi pacman yang ada sebelum menggunakan archinstall."
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr ""
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
 #, fuzzy
-msgid "Select zram compression algorithm:"
-msgstr "Pilih titik mount :"
+msgid "Selected profiles: "
+msgstr "Hapus interface"
 
-msgid "Use Network Manager (default backend)"
+#, fuzzy
+msgid "Select which greeter to install"
+msgstr "Pilih partisi mana yang akan dienkripsi"
+
+#, fuzzy
+msgid "Select a profile type"
+msgstr "Hapus interface"
+
+#, python-brace-format
+msgid "Unable to fetch profile from specified url: {}"
 msgstr ""
 
-msgid "Use Network Manager (iwd backend)"
+#, python-brace-format
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
 msgstr ""
+
+msgid "Add a user"
+msgstr "Tambahkan pengguna"
+
+msgid "Change password"
+msgstr "Ganti kata sandi"
+
+msgid "Promote/Demote user"
+msgstr "Promosikan/Turunkan pengguna"
+
+msgid "Delete User"
+msgstr "Hapus pengguna"
+
+#, fuzzy
+msgid "User"
+msgstr "Nama Pengguna : "
+
+#, fuzzy
+msgid "Enter new password"
+msgstr "Masukan kata sandi: "
+
+#, fuzzy
+msgid "The username you entered is invalid"
+msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
+
+msgid "Enter a username"
+msgstr ""
+
+#, fuzzy
+msgid "Username"
+msgstr "Nama Pengguna : "
+
+#, fuzzy
+msgid "Enter a password"
+msgstr "Masukan kata sandi: "
+
+#, fuzzy, python-brace-format
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Haruskah \"{}\" menjadi superuser (sudo)?"
+
+#, python-brace-format
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr ""
+
+#, fuzzy
+msgid "Do you want to continue?"
+msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
+
+#, python-brace-format
+msgid "Log uploaded successfully. URL: {}"
+msgstr ""
+
+msgid "Failed to upload log."
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+msgid "New version available"
+msgstr ""
+
+msgid "Starting device modifications in "
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Input cannot be empty"
+msgstr ""
+
+#, fuzzy
+msgid "Yes"
+msgstr "ya"
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid " (default)"
+msgstr "(default)"
+
+#~ msgid "[!] A log file has been created here: {} {}"
+#~ msgstr "[!] File log telah dibuat di sini: {} {}"
+
+#~ msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+#~ msgstr "    Silakan kirimkan masalah ini (dan file) ke https://github.com/archlinux/archinstall/issues"
+
+#~ msgid "And one more time for verification: "
+#~ msgstr "Dan sekali lagi untuk verifikasi: "
+
+#~ msgid "Username for required superuser with sudo privileges: "
+#~ msgstr "Nama pengguna untuk superuser yang diperlukan dengan hak sudo: "
+
+#~ msgid "Any additional users to install (leave blank for no users): "
+#~ msgstr "Beberapa pengguna tambahan untuk dipasang (biarkan kosong untuk tidak menambahkan): "
+
+#~ msgid "Should this user be a superuser (sudoer)?"
+#~ msgstr "Haruskah pengguna ini menjadi superuser (sudoer)?"
+
+#~ msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+#~ msgstr "Apakah Anda ingin menggunakan GRUB sebagai bootloader daripada systemd-boot?"
+
+#~ msgid "Choose a bootloader"
+#~ msgstr "Pilih bootloader"
+
+#~ msgid "Choose an audio server"
+#~ msgstr "Pilih server audio"
+
+#~ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+#~ msgstr "Hanya paket seperti base, base-devel, linux, linux-firmware, efibootmgr dan paket profil opsional yang diinstal."
+
+#~ msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+#~ msgstr "Jika Anda menginginkan web browser, seperti firefox atau chromium, Anda dapat menentukannya di prompt berikut."
+
+#~ msgid "Write additional packages to install (space separated, leave blank to skip): "
+#~ msgstr "Ketik paket tambahan untuk diinstal (dipisahkan dengan spasi, biarkan kosong untuk dilewati): "
+
+#~ msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+#~ msgstr "Gunakan NetworkManager (diperlukan untuk mengkonfigurasi internet secara grafis di GNOME dan KDE)"
+
+#~ msgid "Select one network interface to configure"
+#~ msgstr "Pilih satu interface jaringan untuk dikonfigurasi"
+
+#~ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+#~ msgstr "Pilih mode mana yang akan dikonfigurasi untuk \"{}\" atau lewati untuk menggunakan mode default \"{}\""
+
+#~ msgid "Enter your gateway (router) IP address or leave blank for none: "
+#~ msgstr "Masukkan IP gateway (router) Anda atau biarkan kosong untuk tidak menggunakan apa pun: "
+
+#~ msgid "Enter your DNS servers (space separated, blank for none): "
+#~ msgstr "Masukkan server DNS Anda (dipisahkan dengan spasi, untuk kosongkan tidak menggunakan apa pun): "
+
+#~ msgid "Select which filesystem your main partition should use"
+#~ msgstr "Pilih filesystem mana yang harus digunakan partisi utama Anda"
+
+#~ msgid "Current partition layout"
+#~ msgstr "Tata letak partisi saat ini"
+
+#~ msgid ""
+#~ "Select what to do with\n"
+#~ "{}"
+#~ msgstr ""
+#~ "Pilih apa yang harus dilakukan dengan\n"
+#~ "{}"
+
+#~ msgid "Enter a desired filesystem type for the partition"
+#~ msgstr "Masukkan jenis filesystem yang diinginkan untuk partisi"
+
+#~ msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+#~ msgstr "Masukkan lokasi awal (dalam satuan parted: s, GB, %, dll. ; default: {}): "
+
+#~ msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+#~ msgstr "Masukkan lokasi akhir (dalam satuan parted: s, GB, %, dll. ; cth: {}): "
+
+#~ msgid "{} contains queued partitions, this will remove those, are you sure?"
+#~ msgstr "{} berisi partisi yang telah di-queue, tindakan ini akan menghapusnya, apakah Anda yakin?"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select by index which partitions to delete"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Pilih berdasarkan indeks partisi mana yang akan dihapus"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select by index which partition to mount where"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Pilih berdasarkan indeks partisi mana yang akan di mount"
+
+#~ msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+#~ msgstr " * Mount point partisi relatif terhadap di dalam instalasi, boot akan menjadi /boot sebagai contoh."
+
+#~ msgid "Select where to mount partition (leave blank to remove mountpoint): "
+#~ msgstr "Pilih tempat untuk memasang partisi (biarkan kosong untuk menghapus mountpoint): "
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mask for formatting"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Pilih partisi mana yang akan di mask untuk pemformatan"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mark as encrypted"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Pilih partisi mana yang akan ditandai sebagai terenkripsi"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mark as bootable"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Pilih partisi mana yang akan ditandai sebagai bootable"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to set a filesystem on"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Pilih partisi mana untuk mengatur sistem file"
+
+#~ msgid "Enter a desired filesystem type for the partition: "
+#~ msgstr "Masukkan jenis filesystem yang diinginkan untuk partisi: "
+
+#~ msgid "Wipe all selected drives and use a best-effort default partition layout"
+#~ msgstr "Hapus semua drive yang dipilih dan gunakan upaya terbaik tata letak partisi default"
+
+#~ msgid "Select what to do with each individual drive (followed by partition usage)"
+#~ msgstr "Pilih apa yang harus dilakukan dengan setiap drive individu (diikuti dengan penggunaan partisi)"
+
+#~ msgid "Select what you wish to do with the selected block devices"
+#~ msgstr "Pilih apa yang ingin Anda lakukan dengan perangkat blok yang dipilih"
+
+#~ msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+#~ msgstr "Ini adalah daftar profil yang telah diprogram sebelumnya, mereka mungkin memudahkan untuk menginstal hal-hal seperti desktop environment"
+
+#~ msgid "Select keyboard layout"
+#~ msgstr "Pilih tata letak keyboard"
+
+#~ msgid "Select one of the regions to download packages from"
+#~ msgstr "Pilih salah satu wilayah untuk mengunduh paket dari mana"
+
+#~ msgid "Select one or more hard drives to use and configure"
+#~ msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Select a graphics driver or leave blank to install all open-source drivers"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Pilih driver grafis atau biarkan kosong untuk menginstal semua driver open-source"
+
+#~ msgid "All open-source (default)"
+#~ msgstr "Semua sumber terbuka (default)"
+
+#~ msgid "Choose which kernels to use or leave blank for default \"{}\""
+#~ msgstr "Pilih kernel mana yang akan digunakan atau biarkan kosong untuk \"{}\" default"
+
+#~ msgid "Choose which locale language to use"
+#~ msgstr "Pilih locale bahasa yang akan digunakan"
+
+#~ msgid "Choose which locale encoding to use"
+#~ msgstr "Pilih locale encoding yang akan digunakan"
+
+#~ msgid "Select one of the values shown below: "
+#~ msgstr "Pilih salah satu nilai yang ditunjukkan di bawah ini: "
+
+#~ msgid "Select one or more of the options below: "
+#~ msgstr "Pilih satu atau beberapa opsi di bawah ini: "
+
+#~ msgid "Adding partition...."
+#~ msgstr "Menambahkan partisi...."
+
+#~ msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+#~ msgstr "Anda harus memasukkan tipe fs yang valid untuk melanjutkan. Lihat `man parted` untuk tipe fs yang valid."
+
+#~ msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+#~ msgstr "Kesalahan: Mencantumkan profil pada URL \"{}\" mengakibatkan:"
+
+#~ msgid "Error: Could not decode \"{}\" result as JSON:"
+#~ msgstr "Kesalahan: Tidak dapat mendekode hasil \"{}\" sebagai JSON:"
+
+#~ msgid "Mirror region"
+#~ msgstr "Wilayah mirror"
+
+#~ msgid "Drive(s)"
+#~ msgstr "Drive"
+
+#~ msgid "Superuser account"
+#~ msgstr "Akun superuser"
+
+#~ msgid "Install ({} config(s) missing)"
+#~ msgstr "Instal ({} konfigurasi tidak ada)"
+
+#~ msgid ""
+#~ "You decided to skip harddrive selection\n"
+#~ "and will use whatever drive-setup is mounted at {} (experimental)\n"
+#~ "WARNING: Archinstall won't check the suitability of this setup\n"
+#~ "Do you wish to continue?"
+#~ msgstr ""
+#~ "Anda memutuskan untuk melewati pemilihan harddisk\n"
+#~ "dan akan menggunakan pengaturan drive apa pun yang dipasang di {} (eksperimental)\n"
+#~ "PERINGATAN: Archinstall tidak akan memeriksa kesesuaian pengaturan ini\n"
+#~ "Apakah Anda ingin melanjutkan?"
+
+#~ msgid "Re-using partition instance: {}"
+#~ msgstr "Menggunakan kembali instance partisi: {}"
+
+#~ msgid "Create a new partition"
+#~ msgstr "Buat partisi baru"
+
+#~ msgid "Delete a partition"
+#~ msgstr "Hapus partisi"
+
+#~ msgid "Clear/Delete all partitions"
+#~ msgstr "Bersihkan/Hapus semua partisi"
+
+#~ msgid "Assign mount-point for a partition"
+#~ msgstr "Tetapkan titik-mount untuk sebuah partisi"
+
+#~ msgid "Mark/Unmark a partition to be formatted (wipes data)"
+#~ msgstr "Tandai/Hapus tanda partisi yang akan diformat (menghapus data)"
+
+#~ msgid "Mark/Unmark a partition as encrypted"
+#~ msgstr "Tandai/Hapus tanda partisi sebagai terenkripsi"
+
+#~ msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+#~ msgstr "Tandai/Hapus tanda partisi sebagai bootable (otomatis untuk /boot)"
+
+#~ msgid "Set desired filesystem for a partition"
+#~ msgstr "Atur filesystem yang diinginkan untuk sebuah partisi"
+
+#~ msgid "Not configured, unavailable unless setup manually"
+#~ msgstr "Tidak dikonfigurasi, tidak tersedia kecuali diatur secara manual"
+
+#~ msgid "Set/Modify the below options"
+#~ msgstr "Atur/Ubah opsi di bawah ini"
+
+#~ msgid ""
+#~ "Use ESC to skip\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Gunakan ESC untuk melewati\n"
+#~ "\n"
+
+#~ msgid "Enter a encryption password for {}"
+#~ msgstr "Masukkan sandi enkripsi untuk {}"
+
+#~ msgid "Enter disk encryption password (leave blank for no encryption): "
+#~ msgstr "Masukkan kata sandi enkripsi disk (biarkan kosong jika tidak ada enkripsi): "
+
+#~ msgid "Create a required super-user with sudo privileges: "
+#~ msgstr "Buat pengguna super yang diperlukan dengan hak sudo: "
+
+#~ msgid "Enter root password (leave blank to disable root): "
+#~ msgstr "Masukkan kata sandi root (biarkan kosong untuk menonaktifkan root): "
+
+#~ msgid "Password for user \"{}\": "
+#~ msgstr "Kata sandi untuk pengguna \"{}\": "
+
+#~ msgid "Verifying that additional packages exist (this might take a few seconds)"
+#~ msgstr "Memverifikasi bahwa ada paket tambahan (ini mungkin memakan waktu beberapa detik)"
+
+#~ msgid "Enter a username to create an additional user (leave blank to skip): "
+#~ msgstr "Masukkan nama pengguna untuk membuat pengguna tambahan (biarkan kosong untuk melewati): "
+
+#~ msgid "Use ESC to skip\n"
+#~ msgstr "Gunakan ESC untuk melewati\n"
+
+#~ msgid ""
+#~ "\n"
+#~ " Choose an object from the list, and select one of the available actions for it to execute"
+#~ msgstr ""
+#~ "\n"
+#~ "Pilih objek dari daftar, dan pilih salah satu tindakan yang tersedia untuk dieksekusi"
+
+#~ msgid "Add"
+#~ msgstr "Tambah"
+
+#~ msgid "Copy"
+#~ msgstr "Salin"
+
+#~ msgid "Edit"
+#~ msgstr "Edit"
+
+#~ msgid "Delete"
+#~ msgstr "Hapus"
+
+#~ msgid "Select an action for '{}'"
+#~ msgstr "Pilih tindakan untuk '{}'"
+
+#~ msgid "Copy to new key:"
+#~ msgstr "Salin ke kunci baru:"
+
+#~ msgid "Unknown nic type: {}. Possible values are {}"
+#~ msgstr "Jenis nic tidak dikenal: {}. Nilai yang mungkin adalah {}"
+
+#~ msgid ""
+#~ "\n"
+#~ "This is your chosen configuration:"
+#~ msgstr ""
+#~ "\n"
+#~ "Ini adalah konfigurasi yang Anda pilih:"
+
+#~ msgid ""
+#~ "\n"
+#~ "Define a new user\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Tentukan pengguna baru\n"
+
+#~ msgid "User Name : "
+#~ msgstr "Nama Pengguna : "
+
+#~ msgid "Should {} be a superuser (sudoer)?"
+#~ msgstr "Haruskah {} menjadi superuser (sudoer)?"
+
+#~ msgid "Define users with sudo privilege: "
+#~ msgstr "Tentukan pengguna dengan hak sudo: "
+
+#~ msgid "Set desired subvolumes on a btrfs partition"
+#~ msgstr "Atur subvolume yang diinginkan pada partisi btrfs"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to set subvolumes on"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Pilih partisi mana untuk mengatur subvolume"
+
+#~ msgid "Manage btrfs subvolumes for current partition"
+#~ msgstr "Kelola subvolume btrfs untuk partisi saat ini"
+
+#~ msgid "Save disk layout"
+#~ msgstr "Simpan tata letak disk"
+
+#~ msgid "Choose which configuration to save"
+#~ msgstr "Pilih konfigurasi mana yang akan disimpan"
+
+#~ msgid "Not a valid directory: {}"
+#~ msgstr "Bukan direktori yang valid: {}"
+
+#~ msgid "The password you are using seems to be weak,"
+#~ msgstr "Kata sandi yang Anda gunakan tampaknya lemah,"
+
+#~ msgid "are you sure you want to use it?"
+#~ msgstr "apakah Anda yakin ingin menggunakannya?"
+
+#~ msgid "Either root-password or at least 1 superuser must be specified"
+#~ msgstr "Salah satu root-password atau setidaknya 1 superuser harus ditentukan"
+
+#~ msgid "Manage superuser accounts: "
+#~ msgstr "Kelola akun superuser: "
+
+#~ msgid "Manage ordinary user accounts: "
+#~ msgstr "Kelola akun pengguna biasa: "
+
+#~ msgid " Subvolume :{:16}"
+#~ msgstr " Subvolume :{:16}"
+
+#~ msgid " mounted at {:16}"
+#~ msgstr " di mount di {:16}"
+
+#~ msgid " with option {}"
+#~ msgstr " dengan opsi {}"
+
+#~ msgid ""
+#~ "\n"
+#~ " Fill the desired values for a new subvolume \n"
+#~ msgstr ""
+#~ "\n"
+#~ "Isi nilai yang diinginkan untuk subvolume baru\n"
+
+#~ msgid "Subvolume name "
+#~ msgstr "Nama subvolume "
+
+#~ msgid "Subvolume options"
+#~ msgstr "Opsi subvolume"
+
+#~ msgid "Save"
+#~ msgstr "Simpan"
+
+#~ msgid "Subvolume name :"
+#~ msgstr "Nama subvolume :"
+
+#~ msgid "Select the desired subvolume options "
+#~ msgstr "Pilih opsi subvolume yang diinginkan "
+
+#~ msgid "Define users with sudo privilege, by username: "
+#~ msgstr "Tentukan pengguna dengan hak sudo, berdasarkan nama pengguna: "
+
+#~ msgid "Would you like to use BTRFS compression?"
+#~ msgstr "Apakah Anda ingin menggunakan kompresi BTRFS?"
+
+#~ msgid "Minimum capacity for /home partition: {}GB\n"
+#~ msgstr "Kapasitas minimum untuk partisi /home: {}GB\n"
+
+#~ msgid "Minimum capacity for Arch Linux partition: {}GB"
+#~ msgstr "Kapasitas minimum untuk partisi Arch Linux: {}GB"
+
+#~ msgid "Continue"
+#~ msgstr "Lanjutkan"
+
+#~ msgid "yes"
+#~ msgstr "ya"
+
+#~ msgid "no"
+#~ msgstr "tidak"
+
+#~ msgid "set: {}"
+#~ msgstr "atur: {}"
+
+#~ msgid "Manual configuration setting must be a list"
+#~ msgstr "Pengaturan konfigurasi manual harus berupa list"
+
+#~ msgid "No iface specified for manual configuration"
+#~ msgstr "Tidak ada iface yang ditentukan untuk konfigurasi manual"
+
+#~ msgid "Manual nic configuration with no auto DHCP requires an IP address"
+#~ msgstr "Konfigurasi nic manual tanpa DHCP otomatis memerlukan alamat IP"
+
+#~ msgid "Mark/Unmark a partition as compressed (btrfs only)"
+#~ msgstr "Tandai/Hapus tanda partisi sebagai terkompresi (hanya btrfs)"
+
+#~ msgid "The password you are using seems to be weak, are you sure you want to use it?"
+#~ msgstr "Kata sandi yang Anda gunakan tampaknya lemah, apakah Anda yakin ingin menggunakannya?"
+
+#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+#~ msgstr "Menyediakan pilihan desktop environment dan tiling window manager, cth. gnome, kde, sway"
+
+#~ msgid "Select your desired desktop environment"
+#~ msgstr "Pilih desktop environment yang Anda inginkan"
+
+#~ msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+#~ msgstr "Instalasi yang sangat basic yang memungkinkan Anda untuk menyesuaikan Arch Linux sesuai keinginan Anda."
+
+#~ msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+#~ msgstr "Menyediakan pilihan berbagai paket server untuk diinstal dan diaktifkan, cth. httpd, nginx, mariadb"
+
+#~ msgid "Choose which servers to install, if none then a minimal installation will be done"
+#~ msgstr "Pilih server mana yang akan diinstal, jika tidak ada maka instalasi minimal akan dilakukan"
+
+#~ msgid "Installs a minimal system as well as xorg and graphics drivers."
+#~ msgstr "Install sistem minimal serta xorg dan driver grafis."
+
+#~ msgid "Press Enter to continue."
+#~ msgstr "Tekan Enter untuk melanjutkan."
+
+#~ msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+#~ msgstr "Apakah Anda ingin melakukan chroot ke instalasi yang baru dibuat dan melakukan konfigurasi pasca-instalasi?"
+
+#~ msgid "Select one or more hard drives to use and configure\n"
+#~ msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi\n"
+
+#~ msgid "Any modifications to the existing setting will reset the disk layout!"
+#~ msgstr "Setiap modifikasi pada pengaturan yang ada akan mengatur ulang tata letak disk!"
+
+#~ msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+#~ msgstr "Jika Anda mengatur ulang pilihan harddrive, ini juga akan mengatur ulang tata letak disk saat ini. Apakah Anda yakin?"
+
+#~ msgid "Save and exit"
+#~ msgstr "Simpan dan keluar"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "contains queued partitions, this will remove those, are you sure?"
+#~ msgstr ""
+#~ "{}\n"
+#~ "berisi partisi yang mengantri, ini akan menghapusnya, apakah Anda yakin?"
+
+#~ msgid "Use ESC to skip"
+#~ msgstr "Gunakan ESC untuk melewati"
+
+#~ msgid ""
+#~ "Use CTRL+C to reset current selection\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Gunakan CTRL + C untuk mengatur ulang pilihan saat ini\n"
+#~ "\n"
+
+#~ msgid "Copy to: "
+#~ msgstr "Salin ke: "
+
+#~ msgid "Edit: "
+#~ msgstr "Edit: "
+
+#~ msgid "Key: "
+#~ msgstr "Kunci: "
+
+#~ msgid "Edit {}: "
+#~ msgstr "Edit {}: "
+
+#~ msgid "Add: "
+#~ msgstr "Tambah: "
+
+#~ msgid "Value: "
+#~ msgstr "Nilai: "
+
+#~ msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+#~ msgstr "Anda dapat melewatkan memilih drive dan mempartisi dan menggunakan pengaturan drive apa pun yang dipasang di /mnt (eksperimental)"
+
+#~ msgid "Select one of the disks or skip and use /mnt as default"
+#~ msgstr "Pilih salah satu disk atau lewati dan gunakan /mnt sebagai default"
+
+#~ msgid "Select which partitions to mark for formatting:"
+#~ msgstr "Pilih partisi mana yang akan ditandai untuk pemformatan:"
+
+#~ msgid "Use HSM to unlock encrypted drive"
+#~ msgstr "Gunakan HSM untuk membuka kunci drive terenkripsi"
+
+#~ msgid "Size"
+#~ msgstr "Ukuran"
+
+#~ msgid "Free space"
+#~ msgstr "Ruang kosong"
+
+#~ msgid "Bus-type"
+#~ msgstr "Tipe bus"
+
+#~ msgid "Enter username (leave blank to skip): "
+#~ msgstr "Masukkan nama pengguna (kosongkan untuk melewati): "
+
+#~ msgid "The username you entered is invalid. Try again"
+#~ msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
+
+#~ msgid "Should \"{}\" be a superuser (sudo)?"
+#~ msgstr "Haruskah \"{}\" menjadi superuser (sudo)?"
+
+#~ msgid "This option enables the number of parallel downloads that can occur during installation"
+#~ msgstr "Opsi ini memungkinkan jumlah unduhan paralel yang dapat terjadi selama instalasi"
+
+#~ msgid ""
+#~ "Enter the number of parallel downloads to be enabled.\n"
+#~ " (Enter a value between 1 to {})\n"
+#~ "Note:"
+#~ msgstr ""
+#~ "Masukkan jumlah unduhan paralel yang akan diaktifkan.\n"
+#~ " (Masukkan nilai antara 1 hingga {})\n"
+#~ "Catatan:"
+
+#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+#~ msgstr " - Nilai maksimum   : {} ( Memungkinkan {} unduhan paralel, memungkinkan {} unduhan sekaligus)"
+
+#~ msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+#~ msgstr " - Nilai minimum   : 1 (Mengizinkan 1 unduhan paralel, memungkinkan 2 unduhan sekaligus)"
+
+#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+#~ msgstr " - Nonaktifkan/Default: 0 (Menonaktifkan pengunduhan paralel, hanya mengizinkan 1 unduhan pada satu waktu)"
+
+#, fuzzy, python-brace-format
+#~ msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+#~ msgstr "Input tidak valid! Coba lagi dengan input yang valid [1 untuk {}, atau 0 untuk menonaktifkan]"
+
+#~ msgid "ESC to skip"
+#~ msgstr "ESC untuk melewati"
+
+#~ msgid "CTRL+C to reset"
+#~ msgstr "CTRL + C untuk mengatur ulang"
+
+#~ msgid "TAB to select"
+#~ msgstr "TAB untuk memilih"
+
+#~ msgid "[Default value: 0] > "
+#~ msgstr "[Nilai default: 0] > "
+
+#, fuzzy
+#~ msgid "Select an execution mode"
+#~ msgstr "Pilih tindakan untuk '{}'"
+
+#, fuzzy
+#~ msgid "Select one or more devices to use and configure"
+#~ msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi"
+
+#, fuzzy
+#~ msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+#~ msgstr "Jika Anda mengatur ulang pilihan harddrive, ini juga akan mengatur ulang tata letak disk saat ini. Apakah Anda yakin?"
+
+#, fuzzy
+#~ msgid "Existing Partitions"
+#~ msgstr "Menambahkan partisi...."
+
+#, fuzzy
+#~ msgid "Select a partitioning option"
+#~ msgstr "Hapus partisi"
+
+#, fuzzy
+#~ msgid "Enter the root directory of the mounted devices: "
+#~ msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
+
+#, fuzzy
+#~ msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+#~ msgstr "Ini adalah daftar profil yang telah diprogram sebelumnya, mereka mungkin memudahkan untuk menginstal hal-hal seperti desktop environment"
+
+#, fuzzy
+#~ msgid "Current profile selection"
+#~ msgstr "Tata letak partisi saat ini"
+
+#, fuzzy
+#~ msgid "Total sectors: {}"
+#~ msgstr "Bukan direktori yang valid: {}"
+
+#, fuzzy
+#~ msgid "Enter the start sector (default: {}): "
+#~ msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
+
+#, fuzzy
+#~ msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+#~ msgstr "Masukkan sektor akhir partisi (persentase atau nomor blok, mis: {}): "
+
+#, fuzzy
+#~ msgid "All settings will be reset, are you sure?"
+#~ msgstr "{} berisi partisi yang mengantri, ini akan menghapusnya, apakah Anda yakin?"
+
+#, fuzzy
+#~ msgid "Add profile"
+#~ msgstr "Profil"
+
+#, fuzzy
+#~ msgid "Edit profile"
+#~ msgstr "Profil"
+
+#, fuzzy
+#~ msgid "Delete profile"
+#~ msgstr "Hapus interface"
+
+#, fuzzy
+#~ msgid "Profile name: "
+#~ msgstr "Profil"
+
+#, fuzzy
+#~ msgid "The profile name you entered is already in use. Try again"
+#~ msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
+
+#, fuzzy
+#~ msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+#~ msgstr "Ketik paket tambahan untuk diinstal (dipisahkan dengan spasi, biarkan kosong untuk dilewati): "
+
+#, fuzzy
+#~ msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+#~ msgstr "Ketik paket tambahan untuk diinstal (dipisahkan dengan spasi, biarkan kosong untuk dilewati): "
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Select a graphics driver or leave blank to install all open-source drivers"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Pilih driver grafis atau biarkan kosong untuk menginstal semua driver open-source"
+
+#, fuzzy
+#~ msgid "Select directory (or directories) for saving configuration files"
+#~ msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi"
+
+#, fuzzy
+#~ msgid "Add a custom mirror"
+#~ msgstr "Tambahkan pengguna"
+
+#, fuzzy
+#~ msgid "Enter name (leave blank to skip): "
+#~ msgstr "Masukkan nama pengguna (kosongkan untuk melewati): "
+
+#, fuzzy
+#~ msgid "Enter url (leave blank to skip): "
+#~ msgstr "Masukkan nama pengguna (kosongkan untuk melewati): "
+
+#, fuzzy
+#~ msgid "Select signature check option"
+#~ msgstr "Pilih interface untuk ditambahkan"
+
+#, fuzzy
+#~ msgid ""
+#~ "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+#~ "Save directory: "
+#~ msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
+
+#, fuzzy
+#~ msgid "Saving {} configuration files to {}"
+#~ msgstr "Simpan konfigurasi"
+
+#, fuzzy
+#~ msgid "Mirrors"
+#~ msgstr "Wilayah mirror"
+
+#, fuzzy
+#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+#~ msgstr " - Nilai maksimum   : {} ( Memungkinkan {} unduhan paralel, memungkinkan {} unduhan sekaligus)"
+
+#~ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+#~ msgstr "Input tidak valid! Coba lagi dengan input yang valid [1 untuk {}, atau 0 untuk menonaktifkan]"
+
+#, fuzzy
+#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+#~ msgstr "Gunakan NetworkManager (diperlukan untuk mengkonfigurasi internet secara grafis di GNOME dan KDE)"
+
+#, fuzzy
+#~ msgid "Enter start (default: sector {}): "
+#~ msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
+
+#, fuzzy
+#~ msgid "This option enables the number of parallel downloads that can occur during package downloads"
+#~ msgstr "Opsi ini memungkinkan jumlah unduhan paralel yang dapat terjadi selama instalasi"
+
+#, fuzzy, python-brace-format
+#~ msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+#~ msgstr " - Nilai maksimum   : {} ( Memungkinkan {} unduhan paralel, memungkinkan {} unduhan sekaligus)"
+
+#, fuzzy
+#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+#~ msgstr " - Nonaktifkan/Default: 0 (Menonaktifkan pengunduhan paralel, hanya mengizinkan 1 unduhan pada satu waktu)"
+
+#, fuzzy
+#~ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+#~ msgstr "Input tidak valid! Coba lagi dengan input yang valid [1 untuk {}, atau 0 untuk menonaktifkan]"
+
+#, fuzzy
+#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+#~ msgstr "Menyediakan pilihan desktop environment dan tiling window manager, cth. gnome, kde, sway"
+
+#, fuzzy
+#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+#~ msgstr "Gunakan NetworkManager (diperlukan untuk mengkonfigurasi internet secara grafis di GNOME dan KDE)"
+
+#, fuzzy
+#~ msgid "Select a LVM option"
+#~ msgstr "Pilih zona waktu"
+
+#, fuzzy
+#~ msgid "Select which LVM volumes to encrypt"
+#~ msgstr "Pilih partisi mana yang akan dienkripsi"
+
+#, fuzzy
+#~ msgid "Archinstall help"
+#~ msgstr "Bahasa Archinstall"
+
+#, fuzzy
+#~ msgid "Start (default: sector {}): "
+#~ msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
+
+#, fuzzy
+#~ msgid "End (default: {}): "
+#~ msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
+
+#, fuzzy
+#~ msgid "Disk configuration type"
+#~ msgstr "Tidak ada konfigurasi"
+
+#, fuzzy
+#~ msgid "Select language"
+#~ msgstr "Locale language"
+
+#, fuzzy
+#~ msgid "Write additional packages to install (space separated, leave blank to skip)"
+#~ msgstr "Ketik paket tambahan untuk diinstal (dipisahkan dengan spasi, biarkan kosong untuk dilewati): "
+
+#, fuzzy
+#~ msgid "Interfaces"
+#~ msgstr "Tambahkan interface"
+
+#, fuzzy
+#~ msgid "DNS servers"
+#~ msgstr "Tidak ada server audio"
+
+#, fuzzy
+#~ msgid "Main profile"
+#~ msgstr "Profil"
+
+#, fuzzy
+#~ msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+#~ msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
+
+#, fuzzy
+#~ msgid "Mirror name"
+#~ msgstr "Wilayah mirror"
+
+#, fuzzy
+#~ msgid "Select execution mode"
+#~ msgstr "Pilih tindakan untuk '{}'"
+
+#, fuzzy, python-brace-format
+#~ msgid "Size (default: {}): "
+#~ msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
+
+#, fuzzy
+#~ msgid "Select on multi select"
+#~ msgstr "Pilih zona waktu"
+
+#, fuzzy
+#~ msgid "Skip selection menu"
+#~ msgstr "Pilih tindakan untuk '{}'"
