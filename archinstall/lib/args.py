@@ -3,6 +3,7 @@ import json
 import os
 import stat
 import sys
+import tempfile
 import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
@@ -60,7 +61,8 @@ class Arguments:
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
-	plugin: str | None = None
+	plugin: Path | None = None
+	plugin_url: str | None = None
 	skip_version_check: bool = False
 	skip_wifi_check: bool = False
 	advanced: bool = False
@@ -614,9 +616,16 @@ class ArchConfigHandler:
 		parser.add_argument(
 			'--plugin',
 			nargs='?',
-			type=str,
+			type=Path,
 			default=None,
 			help='File path to a plugin to load',
+		)
+		parser.add_argument(
+			'--plugin-url',
+			type=str,
+			nargs='?',
+			default=None,
+			help='Url to a plugin file to load',
 		)
 		parser.add_argument(
 			'--skip-version-check',
@@ -657,7 +666,11 @@ class ArchConfigHandler:
 			warn(f'Warning: --debug mode will write certain credentials to {logger.path}!')
 
 		if args.plugin:
-			plugin_path = Path(args.plugin)
+			load_plugin(args.plugin)
+
+		if args.plugin_url:
+			plugin_data = self._fetch_from_url(args.plugin_url)
+			plugin_path = self._write_plugin_to_temp_file(plugin_data)
 			load_plugin(plugin_path)
 
 		if args.creds_decryption_key is None:
@@ -748,6 +761,27 @@ class ArchConfigHandler:
 			error('Not a valid url')
 
 		sys.exit(1)
+
+	def _write_plugin_to_temp_file(self, plugin_data: str) -> Path:
+		if not plugin_data.strip():
+			error('The downloaded plugin is empty')
+			sys.exit(1)
+
+		tmp_file = tempfile.NamedTemporaryFile(
+			mode='w',
+			suffix='.py',
+			prefix='archinstall_plugin_',
+			delete=False,
+		)
+
+		try:
+			with tmp_file as f:
+				f.write(plugin_data)
+		except OSError as err:
+			error(f'Could not write the downloaded plugin to a temporary file: {err}')
+			sys.exit(1)
+
+		return Path(tmp_file.name)
 
 	def _read_file(self, path: Path) -> str:
 		if not path.exists():
