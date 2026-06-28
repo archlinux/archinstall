@@ -130,6 +130,34 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		return bootloader
 
 	async def _select_plymouth(self, preset: PlymouthTheme | None) -> PlymouthTheme | None:
+		# Plymouth is purely cosmetic and a frequent source of boot breakage
+		# (notably with the NVIDIA driver and disk encryption), so confirm before
+		# enabling it. When it is already enabled the user is only changing the
+		# theme, so the warning is skipped.
+		if preset is None:
+			prompt = (
+				'[ansi_bright_yellow]'
+				+ tr('Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:')
+				+ '\n\n  • '
+				+ tr('black screen with the NVIDIA driver')
+				+ '\n  • '
+				+ tr('hidden password prompt with disk encryption (LUKS)')
+				+ '\n\n'
+				+ tr('Would you like to enable it?')
+				+ '[/]\n'
+			)
+
+			result = await Confirmation(header=prompt, allow_skip=True, preset=False).show()
+
+			match result.type_:
+				case ResultType.Skip:
+					return preset
+				case ResultType.Selection:
+					if not result.get_value():
+						return preset
+				case ResultType.Reset:
+					raise ValueError('Unhandled result type')
+
 		return await select_plymouth_theme(preset)
 
 	async def _select_uki(self, preset: bool) -> bool:
