@@ -7,6 +7,8 @@ from archinstall.lib.menu.helpers import Input, Selection, Table
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.device import (
+	AEAD_CIPHERS,
+	DEFAULT_CIPHER,
 	DEFAULT_ITER_TIME,
 	DeviceModification,
 	DiskEncryption,
@@ -65,6 +67,14 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				key='encryption_password',
 			),
 			MenuItem(
+				text=tr('Encryption cipher'),
+				action=self._select_cipher,
+				value=self._enc_config.cipher,
+				dependencies=[self._check_dep_enc_type],
+				preview_action=self._prev_cipher,
+				key='cipher',
+			),
+			MenuItem(
 				text=tr('Iteration time'),
 				action=select_iteration_time,
 				value=self._enc_config.iter_time,
@@ -103,6 +113,19 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			return await select_lvm_vols_to_encrypt(self._lvm_config, preset=preset)
 		return []
 
+	async def _select_cipher(self, preset: str | None) -> str | None:
+		cipher = await select_encryption_cipher(preset)
+
+		# AEAD ciphers (e.g. chacha20-random) require LUKS2 + --integrity;
+		# keep the underlying DiskEncryption.integrity in sync automatically
+		# so the user never has to set it manually or risk an invalid combo.
+		if cipher in AEAD_CIPHERS:
+			self._enc_config.integrity = AEAD_CIPHERS[cipher]
+		else:
+			self._enc_config.integrity = None
+
+		return cipher
+
 	def _check_dep_enc_type(self) -> bool:
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		if enc_type and enc_type != EncryptionType.NO_ENCRYPTION:
@@ -129,6 +152,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		enc_password: Password | None = self._item_group.find_by_key('encryption_password').value
+		cipher: str | None = self._item_group.find_by_key('cipher').value
 		iter_time: int | None = self._item_group.find_by_key('iter_time').value
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_volumes').value
@@ -144,6 +168,9 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			enc_partitions = []
 
 		if enc_type != EncryptionType.NO_ENCRYPTION and enc_password and (enc_partitions or enc_lvm_vols):
+			cipher = cipher or DEFAULT_CIPHER
+			integrity = AEAD_CIPHERS.get(cipher)
+
 			return DiskEncryption(
 				encryption_password=enc_password,
 				encryption_type=enc_type,
@@ -151,6 +178,8 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				lvm_volumes=enc_lvm_vols,
 				hsm_device=enc_config.hsm_device,
 				iter_time=iter_time or DEFAULT_ITER_TIME,
+				cipher=cipher,
+				integrity=integrity,
 			)
 
 		return None
@@ -163,6 +192,9 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		if (enc_pwd := self._prev_password(item)) is not None:
 			output += f'\n{enc_pwd}'
+
+		if (cipher := self._prev_cipher(item)) is not None:
+			output += f'\n{cipher}'
 
 		if (iter_time := self._prev_iter_time(item)) is not None:
 			output += f'\n{iter_time}'
@@ -194,6 +226,18 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		if item.value:
 			return f'{tr("Encryption password")}: {item.value.hidden()}'
 
+		return None
+
+	def _prev_cipher(self, item: MenuItem) -> str | None:
+		cipher = self._item_group.find_by_key('cipher').value
+		if cipher:
+			output = f'{tr("Encryption cipher")}: {cipher}'
+
+			if cipher in AEAD_CIPHERS:
+				integrity = AEAD_CIPHERS[cipher]
+				output += f'\n{tr("Integrity")}: {integrity} ({tr("requires LUKS2")})'
+
+			return output
 		return None
 
 	def _prev_partitions(self, item: MenuItem) -> str | None:
@@ -404,3 +448,39 @@ async def select_iteration_time(preset: int | None = None) -> int | None:
 			return int(result.get_value())
 		case ResultType.Reset:
 			return None
+
+
+async def select_encryption_cipher(preset: str | None = None) -> str | None:
+	# Regular block-cipher modes: accepted directly by `cryptsetup --cipher`.
+	# AEAD modes (see AEAD_CIPHERS in models/device.py) need LUKS2 and a
+	# separate --integrity value, which DiskEncryption.__post_init__ and
+	# DiskEncryptionMenu._select_cipher fill in automatically.
+	options = [
+		'aes-xts-plain64',
+		'aes-cbc-essiv:sha256',
+		'serpent-xts-plain64',
+		'twofish-xts-plain64',
+		'chacha20-random',  # AEAD, requires --integrity poly1305, LUKS2 only
+	]
+
+	if not preset:
+		preset = options[0]
+
+	items = [MenuItem(o, value=o) for o in options]
+	group = MenuItemGroup(items)
+	group.set_focus_by_value(preset)
+
+	result = await Selection[str](
+		group,
+		header=tr('Select encryption cipher'),
+		allow_skip=True,
+		allow_reset=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Reset:
+			return None
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return result.get_value()

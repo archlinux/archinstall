@@ -3,12 +3,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CalledProcessError
 from types import TracebackType
+from typing import cast
 
 from archinstall.lib.command import SysCommand, SysCommandWorker, run
 from archinstall.lib.disk.utils import get_lsblk_info, umount
 from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.log import debug, info
-from archinstall.lib.models.device import DEFAULT_ITER_TIME
+from archinstall.lib.models.device import AEAD_CIPHERS, DEFAULT_CIPHER, DEFAULT_ITER_TIME
 from archinstall.lib.models.users import Password
 from archinstall.lib.utils.util import generate_password
 
@@ -73,10 +74,20 @@ class Luks2:
 		hash_type: str = 'sha512',
 		iter_time: int = DEFAULT_ITER_TIME,
 		key_file: Path | None = None,
+		cipher: str = DEFAULT_CIPHER,
+		integrity: str | None = None,
 	) -> Path | None:
 		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
 		key_file_arg, passphrase = self._get_passphrase_args(key_file)
+
+		is_aead = cipher in AEAD_CIPHERS
+
+		if is_aead and not integrity:
+			integrity = AEAD_CIPHERS[cipher]
+
+		if integrity and not is_aead:
+			raise DiskError(f'Integrity option "{integrity}" is only valid for AEAD ciphers, not "{cipher}"')
 
 		cmd = [
 			'cryptsetup',
@@ -86,10 +97,25 @@ class Luks2:
 			'luks2',
 			'--pbkdf',
 			'argon2id',
-			'--hash',
-			hash_type,
-			'--key-size',
-			str(key_size),
+			'--cipher',
+			cipher,
+		]
+
+		if is_aead:
+			# AEAD ciphers (e.g. chacha20-random) authenticate each sector via
+			# --integrity and do not take --hash or a fixed --key-size the same
+			# way length-preserving modes (aes-xts-plain64 etc.) do; key size is
+			# derived from the cipher/integrity combination by cryptsetup itself.
+			cmd += ['--integrity', cast(str, integrity)]
+		else:
+			cmd += [
+				'--hash',
+				hash_type,
+				'--key-size',
+				str(key_size),
+			]
+
+		cmd += [
 			'--iter-time',
 			str(iter_time),
 			*key_file_arg,
