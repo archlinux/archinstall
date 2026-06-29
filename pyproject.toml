@@ -32,7 +32,7 @@ Documentation = "https://archinstall.readthedocs.io/"
 Source = "https://github.com/archlinux/archinstall"
 
 [project.optional-dependencies]
-log = ["systemd_python==235"]
+log = ["systemd_python==236"]
 dev = [
     "mypy==2.1.0",
     "flake8==7.3.0",
