@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import override
+from typing import Any, override
 
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
@@ -10,6 +10,7 @@ from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
 	DeviceModification,
 	DiskEncryption,
+	EncryptionCipher,
 	EncryptionType,
 	Fido2Device,
 	LvmConfiguration,
@@ -47,6 +48,37 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			allow_reset=True,
 		)
 
+	async def _select_cipher(self, current_value: Any) -> Any:
+		items = [MenuItem(cipher.value, value=cipher) for cipher in EncryptionCipher]
+		group = MenuItemGroup(items)
+
+		result = await Selection[EncryptionCipher](
+			group,
+			header=tr('Select encryption cipher'),
+			allow_skip=True,
+			allow_reset=True,
+		).show()
+
+		match result.type_:
+			case ResultType.Selection:
+				selected_enum = result.get_value()
+				self._enc_config.cipher = selected_enum
+				return selected_enum
+			case _:
+				return current_value
+
+	def _prev_cipher(self, item: MenuItem) -> str | None:
+		val = item.value if item.value else getattr(self._enc_config, 'cipher', None)
+
+		if not val:
+			val_str = 'aes-xts-plain64'
+		elif hasattr(val, 'value'):
+			val_str = val.value
+		else:
+			val_str = str(val)
+
+		return f'{tr("Encryption cipher")}: {val_str}'
+
 	def _define_menu_options(self) -> list[MenuItem]:
 		return [
 			MenuItem(
@@ -71,6 +103,14 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._prev_iter_time,
 				key='iter_time',
+			),
+			MenuItem(
+				text=tr('Encryption cipher'),
+				action=self._select_cipher,
+				value=self._enc_config.cipher if hasattr(self._enc_config, 'cipher') and self._enc_config.cipher else EncryptionCipher.AES_XTS_PLAIN64,
+				preview_action=self._prev_cipher,
+				dependencies=[self._check_dep_enc_type],
+				key='cipher',
 			),
 			MenuItem(
 				text=tr('Partitions'),
@@ -132,6 +172,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		iter_time: int | None = self._item_group.find_by_key('iter_time').value
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_volumes').value
+		cipher_value: str | None = self._item_group.find_by_key('cipher').value
 
 		assert enc_type is not None
 		assert enc_partitions is not None
@@ -151,6 +192,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				lvm_volumes=enc_lvm_vols,
 				hsm_device=enc_config.hsm_device,
 				iter_time=iter_time or DEFAULT_ITER_TIME,
+				cipher=EncryptionCipher(cipher_value) if cipher_value else None,
 			)
 
 		return None
