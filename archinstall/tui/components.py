@@ -150,6 +150,19 @@ class LoadingScreen(BaseScreen[ValueT]):
 		_ = self.dismiss()
 
 
+class _Input(Input):
+	@override
+	def on_mount(self) -> None:
+		_translate_bindings(self._merged_bindings, self._bindings)
+
+
+class _Button(Button):
+	# no @override: Button has no on_mount in its MRO,
+	# textual dispatches the handler by naming convention
+	def on_mount(self) -> None:
+		_translate_bindings(self._merged_bindings, self._bindings)
+
+
 class _OptionList(OptionList):
 	BINDINGS: ClassVar = [
 		Binding('down', 'cursor_down', 'Down', show=True),
@@ -309,7 +322,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 					yield ScrollableContainer(preview_label)
 
 		if self._filter:
-			yield Input(placeholder='/filter', id='filter-input')
+			yield _Input(placeholder='/filter', id='filter-input')
 
 		yield Footer()
 
@@ -540,7 +553,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 					yield ScrollableContainer(preview_label)
 
 		if self._filter:
-			yield Input(placeholder='/filter', id='filter-input')
+			yield _Input(placeholder='/filter', id='filter-input')
 
 		yield Footer()
 
@@ -702,12 +715,12 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 			with Vertical(classes='content-container'):
 				with Horizontal(classes='buttons-container'):
 					for item in self._group.items:
-						yield Button(item.text, id=item.key)
+						yield _Button(item.text, id=item.key)
 		else:
 			with Vertical():
 				with Horizontal(classes='buttons-container'):
 					for item in self._group.items:
-						yield Button(item.text, id=item.key)
+						yield _Button(item.text, id=item.key)
 
 				yield Rule(orientation='horizontal')
 				if self._preview_header is not None:
@@ -848,7 +861,7 @@ class InputScreen(BaseScreen[str]):
 
 		with Center(classes='container-wrapper'):
 			with Vertical(classes='input-content'):
-				yield Input(
+				yield _Input(
 					placeholder=self._placeholder,
 					password=self._password,
 					value=self._default_value,

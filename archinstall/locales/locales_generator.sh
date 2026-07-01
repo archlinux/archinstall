@@ -14,8 +14,14 @@ usage() {
 }
 
 generate_pot() {
+	# tr        - regular translation calls
+	# tr_noop   - extraction-only marker for strings translated later from a variable
+	# Binding:3 - the description argument of textual Binding() definitions,
+	#             translated at runtime by _translate_bindings(). The description
+	#             must be passed positionally - xgettext cannot see keyword arguments.
 	find . -type f -iname '*.py' | sort \
-		| xargs xgettext --no-location --omit-header --keyword='tr' \
+		| xargs xgettext --no-location --omit-header \
+			--keyword='tr' --keyword='tr_noop' --keyword='Binding:3' \
 			-d base -o locales/base.pot
 }
 

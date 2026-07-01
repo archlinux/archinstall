@@ -277,6 +277,15 @@ def tr(message: str) -> str:
 	return str(_DeferredTranslation(message))
 
 
+def tr_noop(message: str) -> str:
+	"""Mark a string for xgettext extraction without translating it here.
+
+	Use for strings that are translated later from a variable, e.g.
+	binding descriptions passed through tr() at runtime.
+	"""
+	return message
+
+
 builtins._ = _DeferredTranslation  # type: ignore[attr-defined]
 
 
