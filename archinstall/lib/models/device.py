@@ -1464,14 +1464,14 @@ class EncryptionType(StrEnum):
 
 DEFAULT_CIPHER = 'aes-xts-plain64'
 
-# AEAD (Authenticated Encryption with Associated Data) ciphers require LUKS2
-# and a separate --integrity parameter; they cannot be used like normal
-# block-cipher + chainmode + ivmode strings (e.g. aes-xts-plain64).
-# Mapping: cipher value used in --cipher -> required --integrity value
-AEAD_CIPHERS: dict[str, str] = {
-	'aes-gcm-random': 'aead',
+# XTS mode splits the key in two halves so needs double the bits.
+# CBC/ECB use the key directly — max 256 bit.
+CIPHER_KEY_SIZES: dict[str, int] = {
+	'aes-xts-plain64': 512,       # XTS: 256+256
+	'aes-cbc-essiv:sha256': 256,  # CBC: single 256-bit key
+	'serpent-xts-plain64': 512,   # XTS: 256+256
+	'twofish-xts-plain64': 512,   # XTS: 256+256
 }
-
 
 class _DiskEncryptionSerialization(TypedDict):
 	encryption_type: str
@@ -1480,7 +1480,6 @@ class _DiskEncryptionSerialization(TypedDict):
 	hsm_device: NotRequired[_Fido2DeviceSerialization]
 	iter_time: NotRequired[int]
 	cipher: NotRequired[str]
-	integrity: NotRequired[str]
 
 
 @dataclass
@@ -1492,7 +1491,6 @@ class DiskEncryption:
 	hsm_device: Fido2Device | None = None
 	iter_time: int = DEFAULT_ITER_TIME
 	cipher: str = DEFAULT_CIPHER
-	integrity: str | None = None
 
 	def __post_init__(self) -> None:
 		if self.encryption_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS] and not self.partitions:
@@ -1500,20 +1498,6 @@ class DiskEncryption:
 
 		if self.encryption_type == EncryptionType.LUKS_ON_LVM and not self.lvm_volumes:
 			raise ValueError('LuksOnLvm encryption require LMV volumes to be defined')
-
-		# AEAD ciphers (chacha20-random, aes-gcm-random) are only valid on LUKS2
-		# and require --integrity to be set; auto-fill it if missing so the
-		# cryptsetup call downstream doesn't end up with an invalid combination.
-		if self.cipher in AEAD_CIPHERS:
-			required_integrity = AEAD_CIPHERS[self.cipher]
-			if not self.integrity:
-				self.integrity = required_integrity
-			elif self.integrity != required_integrity:
-				raise ValueError(
-					f'Cipher {self.cipher!r} requires integrity {required_integrity!r}, got {self.integrity!r}'
-				)
-		elif self.integrity:
-			raise ValueError(f'Integrity option is only valid for AEAD ciphers, not {self.cipher!r}')
 
 	def should_generate_encryption_file(self, dev: PartitionModification | LvmVolume) -> bool:
 		if isinstance(dev, PartitionModification):
@@ -1536,9 +1520,6 @@ class DiskEncryption:
 
 		if self.cipher != DEFAULT_CIPHER:  # Only include if not default
 			obj['cipher'] = self.cipher
-
-		if self.integrity:
-			obj['integrity'] = self.integrity
 
 		return obj
 
@@ -1585,7 +1566,6 @@ class DiskEncryption:
 					volumes.append(vol)
 
 		cipher = disk_encryption.get('cipher', None) or DEFAULT_CIPHER
-		integrity = disk_encryption.get('integrity', None)
 
 		enc = cls(
 			EncryptionType(disk_encryption['encryption_type']),
@@ -1593,7 +1573,6 @@ class DiskEncryption:
 			enc_partitions,
 			volumes,
 			cipher=cipher,
-			integrity=integrity,
 		)
 
 		if hsm := disk_encryption.get('hsm_device', None):

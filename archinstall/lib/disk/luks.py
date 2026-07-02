@@ -3,13 +3,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CalledProcessError
 from types import TracebackType
-from typing import cast
 
 from archinstall.lib.command import SysCommand, SysCommandWorker, run
 from archinstall.lib.disk.utils import get_lsblk_info, umount
 from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.log import debug, info
-from archinstall.lib.models.device import AEAD_CIPHERS, DEFAULT_CIPHER, DEFAULT_ITER_TIME
+from archinstall.lib.models.device import CIPHER_KEY_SIZES, DEFAULT_CIPHER, DEFAULT_ITER_TIME
 from archinstall.lib.models.users import Password
 from archinstall.lib.utils.util import generate_password
 
@@ -75,19 +74,15 @@ class Luks2:
 		iter_time: int = DEFAULT_ITER_TIME,
 		key_file: Path | None = None,
 		cipher: str = DEFAULT_CIPHER,
-		integrity: str | None = None,
 	) -> Path | None:
 		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
 		key_file_arg, passphrase = self._get_passphrase_args(key_file)
 
-		is_aead = cipher in AEAD_CIPHERS
-
-		if is_aead and not integrity:
-			integrity = AEAD_CIPHERS[cipher]
-
-		if integrity and not is_aead:
-			raise DiskError(f'Integrity option "{integrity}" is only valid for AEAD ciphers, not "{cipher}"')
+		# Resolve the correct key size for this cipher.
+		# XTS mode uses two keys (e.g. 256+256 = 512 bits for aes-xts-plain64),
+		# CBC mode uses a single key (max 256 bits for aes-cbc-essiv:sha256).
+		resolved_key_size = CIPHER_KEY_SIZES.get(cipher, key_size)
 
 		cmd = [
 			'cryptsetup',
@@ -99,21 +94,11 @@ class Luks2:
 			'argon2id',
 			'--cipher',
 			cipher,
+			'--hash',
+			hash_type,
+			'--key-size',
+			str(resolved_key_size),
 		]
-
-		if is_aead:
-			# AEAD ciphers (e.g. chacha20-random) authenticate each sector via
-			# --integrity and do not take --hash or a fixed --key-size the same
-			# way length-preserving modes (aes-xts-plain64 etc.) do; key size is
-			# derived from the cipher/integrity combination by cryptsetup itself.
-			cmd += ['--integrity', cast(str, integrity)]
-		else:
-			cmd += [
-				'--hash',
-				hash_type,
-				'--key-size',
-				str(key_size),
-			]
 
 		cmd += [
 			'--iter-time',

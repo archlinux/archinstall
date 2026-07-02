@@ -282,7 +282,6 @@ class DeviceHandler:
 		lock_after_create: bool = True,
 		iter_time: int = DEFAULT_ITER_TIME,
 		cipher: str = DEFAULT_CIPHER,
-		integrity: str | None = None,
 	) -> Luks2:
 		luks_handler = Luks2(
 			dev_path,
@@ -290,7 +289,7 @@ class DeviceHandler:
 			password=enc_password,
 		)
 
-		key_file = luks_handler.encrypt(iter_time=iter_time, cipher=cipher, integrity=integrity)
+		key_file = luks_handler.encrypt(iter_time=iter_time, cipher=cipher)
 
 		udev_sync()
 
@@ -321,7 +320,7 @@ class DeviceHandler:
 			password=enc_conf.encryption_password,
 		)
 
-		key_file = luks_handler.encrypt(iter_time=enc_conf.iter_time, cipher=enc_conf.cipher, integrity=enc_conf.integrity)
+		key_file = luks_handler.encrypt(iter_time=enc_conf.iter_time, cipher=enc_conf.cipher)
 
 		udev_sync()
 
