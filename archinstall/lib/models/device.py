@@ -1469,7 +1469,6 @@ DEFAULT_CIPHER = 'aes-xts-plain64'
 # block-cipher + chainmode + ivmode strings (e.g. aes-xts-plain64).
 # Mapping: cipher value used in --cipher -> required --integrity value
 AEAD_CIPHERS: dict[str, str] = {
-	'chacha20-random': 'poly1305',
 	'aes-gcm-random': 'aead',
 }
 

@@ -333,6 +333,8 @@ class DeviceHandler:
 		info(f'luks2 formatting mapper dev: {luks_handler.mapper_dev}')
 		self.format(fs_type, luks_handler.mapper_dev)
 
+		udev_sync()
+
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
 

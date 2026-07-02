@@ -460,7 +460,6 @@ async def select_encryption_cipher(preset: str | None = None) -> str | None:
 		'aes-cbc-essiv:sha256',
 		'serpent-xts-plain64',
 		'twofish-xts-plain64',
-		'chacha20-random',  # AEAD, requires --integrity poly1305, LUKS2 only
 	]
 
 	if not preset:
