@@ -195,7 +195,14 @@ class Luks2:
 		for child in lsblk_info.children:
 			for mountpoint in child.mountpoints:
 				debug(f'Unmounting {mountpoint}')
-				umount(mountpoint, recursive=True)
+				# mountpoint is a directory path, not a block device — umount()
+				# internally calls get_lsblk_info() which runs lsblk on the path
+				# and fails with "not a block device". Use run() directly to call
+				# umount(8) on the directory instead.
+				try:
+					run(['umount', '--recursive', str(mountpoint)])
+				except Exception as e:
+					debug(f'Could not unmount {mountpoint}: {e}')
 
 			# Wait for udev to finish processing events so the kernel drops
 			# any lingering reference on the mapper device before we close it.
