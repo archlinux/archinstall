@@ -11,6 +11,7 @@ from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
 	DeviceModification,
 	DiskEncryption,
+	EncryptionCipher,
 	EncryptionType,
 	Fido2Device,
 	LvmConfiguration,
@@ -112,7 +113,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			return await select_lvm_vols_to_encrypt(self._lvm_config, preset=preset)
 		return []
 
-	async def _select_cipher(self, preset: str | None) -> str | None:
+	async def _select_cipher(self, preset: EncryptionCipher | None) -> EncryptionCipher | None:
 		return await select_encryption_cipher(preset)
 
 	def _check_dep_enc_type(self) -> bool:
@@ -141,7 +142,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		enc_password: Password | None = self._item_group.find_by_key('encryption_password').value
-		cipher: str | None = self._item_group.find_by_key('cipher').value
+		cipher: EncryptionCipher | None = self._item_group.find_by_key('cipher').value
 		iter_time: int | None = self._item_group.find_by_key('iter_time').value
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_volumes').value
@@ -214,9 +215,9 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		return None
 
 	def _prev_cipher(self, item: MenuItem) -> str | None:
-		cipher = self._item_group.find_by_key('cipher').value
+		cipher: EncryptionCipher | None = self._item_group.find_by_key('cipher').value
 		if cipher:
-			return f'{tr("Encryption cipher")}: {cipher}'
+			return f'{tr("Encryption cipher")}: {cipher.value}'
 		return None
 
 	def _prev_partitions(self, item: MenuItem) -> str | None:
@@ -429,23 +430,17 @@ async def select_iteration_time(preset: int | None = None) -> int | None:
 			return None
 
 
-async def select_encryption_cipher(preset: str | None = None) -> str | None:
-	# Regular block-cipher modes: accepted directly by `cryptsetup --cipher`.
-	options = [
-		'aes-xts-plain64',
-		'aes-cbc-essiv:sha256',
-		'serpent-xts-plain64',
-		'twofish-xts-plain64',
-	]
+async def select_encryption_cipher(preset: EncryptionCipher | None = None) -> EncryptionCipher | None:
+	options = list(EncryptionCipher)
 
 	if not preset:
-		preset = options[0]
+		preset = DEFAULT_CIPHER
 
-	items = [MenuItem(o, value=o) for o in options]
+	items = [MenuItem(o.value, value=o) for o in options]
 	group = MenuItemGroup(items)
 	group.set_focus_by_value(preset)
 
-	result = await Selection[str](
+	result = await Selection[EncryptionCipher](
 		group,
 		header=tr('Select encryption cipher'),
 		allow_skip=True,

@@ -8,7 +8,7 @@ from archinstall.lib.command import SysCommand, SysCommandWorker, run
 from archinstall.lib.disk.utils import get_lsblk_info, umount
 from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.log import debug, info
-from archinstall.lib.models.device import CIPHER_KEY_SIZES, DEFAULT_CIPHER, DEFAULT_ITER_TIME
+from archinstall.lib.models.device import DEFAULT_CIPHER, DEFAULT_ITER_TIME, EncryptionCipher
 from archinstall.lib.models.users import Password
 from archinstall.lib.utils.util import generate_password
 
@@ -69,20 +69,14 @@ class Luks2:
 
 	def encrypt(
 		self,
-		key_size: int = 512,
 		hash_type: str = 'sha512',
 		iter_time: int = DEFAULT_ITER_TIME,
 		key_file: Path | None = None,
-		cipher: str = DEFAULT_CIPHER,
+		cipher: EncryptionCipher = DEFAULT_CIPHER,
 	) -> Path | None:
 		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
 		key_file_arg, passphrase = self._get_passphrase_args(key_file)
-
-		# Resolve the correct key size for this cipher.
-		# XTS mode uses two keys (e.g. 256+256 = 512 bits for aes-xts-plain64),
-		# CBC mode uses a single key (max 256 bits for aes-cbc-essiv:sha256).
-		resolved_key_size = CIPHER_KEY_SIZES.get(cipher, key_size)
 
 		cmd = [
 			'cryptsetup',
@@ -93,11 +87,11 @@ class Luks2:
 			'--pbkdf',
 			'argon2id',
 			'--cipher',
-			cipher,
+			cipher.value,
 			'--hash',
 			hash_type,
 			'--key-size',
-			str(resolved_key_size),
+			str(cipher.key_size),
 		]
 
 		cmd += [

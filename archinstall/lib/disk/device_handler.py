@@ -23,6 +23,7 @@ from archinstall.lib.models.device import (
 	BtrfsMountOption,
 	DeviceModification,
 	DiskEncryption,
+	EncryptionCipher,
 	FilesystemType,
 	LsblkInfo,
 	ModificationStatus,
@@ -281,7 +282,7 @@ class DeviceHandler:
 		enc_password: Password | None,
 		lock_after_create: bool = True,
 		iter_time: int = DEFAULT_ITER_TIME,
-		cipher: str = DEFAULT_CIPHER,
+		cipher: EncryptionCipher = DEFAULT_CIPHER,
 	) -> Luks2:
 		luks_handler = Luks2(
 			dev_path,

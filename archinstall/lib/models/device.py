@@ -1462,16 +1462,37 @@ class EncryptionType(StrEnum):
 		return type_to_text[self]
 
 
-DEFAULT_CIPHER = 'aes-xts-plain64'
+class EncryptionCipher(Enum):
+	# None passed to cryptsetup means its built-in default (aes-xts-plain64).
+	# Adiantum is for CPUs without AES acceleration. It is a composite mode:
+	# spec must name both the stream cipher and block cipher
+	# (xchacha12,aes) or the kernel rejects it as unsupported.
+	AES_XTS_PLAIN64 = 'aes-xts-plain64'
+	# xchacha12 = faster (Android default), xchacha20 = wider margin.
+	ADIANTUM_XCHACHA12_PLAIN64 = 'xchacha12,aes-adiantum-plain64'
+	ADIANTUM_XCHACHA20_PLAIN64 = 'xchacha20,aes-adiantum-plain64'
+	# AES finalist, conservative margin (32 rounds), bitslices well
+	# on AVX2 despite no dedicated hw acceleration.
+	SERPENT_XTS_PLAIN64 = 'serpent-xts-plain64'
+	# Wide-block AES mode (AES-NI accelerated), single 256-bit key.
+	AES_HCTR2_PLAIN64 = 'aes-hctr2-plain64'
+	# Non-NIST standard (ISO/NESSIE/CRYPTREC), AVX2 accelerated.
+	CAMELLIA_XTS_PLAIN64 = 'camellia-xts-plain64'
+	# Legacy CBC mode — weaker than XTS against watermarking attacks,
+	# slower due to per-sector ESSIV/SHA256. Included for compatibility.
+	AES_CBC_ESSIV_SHA256 = 'aes-cbc-essiv:sha256'
 
-# XTS mode splits the key in two halves so needs double the bits.
-# CBC/ECB use the key directly — max 256 bit.
-CIPHER_KEY_SIZES: dict[str, int] = {
-	'aes-xts-plain64': 512,       # XTS: 256+256
-	'aes-cbc-essiv:sha256': 256,  # CBC: single 256-bit key
-	'serpent-xts-plain64': 512,   # XTS: 256+256
-	'twofish-xts-plain64': 512,   # XTS: 256+256
-}
+	@property
+	def key_size(self) -> int:
+		# XTS uses two keys, so 512 bits => 256-bit cipher. Adiantum
+		# and HCTR2 use a single 256-bit key; 512 makes cryptsetup fail.
+		if '-xts-' in self.value:
+			return 512
+		return 256
+
+
+DEFAULT_CIPHER = EncryptionCipher.AES_XTS_PLAIN64
+
 
 class _DiskEncryptionSerialization(TypedDict):
 	encryption_type: str
@@ -1490,7 +1511,7 @@ class DiskEncryption:
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
 	hsm_device: Fido2Device | None = None
 	iter_time: int = DEFAULT_ITER_TIME
-	cipher: str = DEFAULT_CIPHER
+	cipher: EncryptionCipher = DEFAULT_CIPHER
 
 	def __post_init__(self) -> None:
 		if self.encryption_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS] and not self.partitions:
@@ -1519,7 +1540,7 @@ class DiskEncryption:
 			obj['iter_time'] = self.iter_time
 
 		if self.cipher != DEFAULT_CIPHER:  # Only include if not default
-			obj['cipher'] = self.cipher
+			obj['cipher'] = self.cipher.value
 
 		return obj
 
@@ -1565,7 +1586,8 @@ class DiskEncryption:
 				if vol.obj_id in disk_encryption.get('lvm_volumes', []):
 					volumes.append(vol)
 
-		cipher = disk_encryption.get('cipher', None) or DEFAULT_CIPHER
+		cipher_str = disk_encryption.get('cipher', None)
+		cipher = EncryptionCipher(cipher_str) if cipher_str else DEFAULT_CIPHER
 
 		enc = cls(
 			EncryptionType(disk_encryption['encryption_type']),
