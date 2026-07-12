@@ -173,7 +173,7 @@
  {"abbr": "ur", "lang": "Urdu", "translated_lang": "اردو"},
  {"abbr": "uz", "lang": "Uzbek", "translated_lang": "O'zbek"},
  {"abbr": "ve", "lang": "Venda"},
- {"abbr": "vi", "lang": "Vietnamese"},
+ {"abbr": "vi", "lang": "Vietnamese", "translated_lang": "Tiếng Việt"},
  {"abbr": "vo", "lang": "Volapük"},
  {"abbr": "wa", "lang": "Walloon"},
  {"abbr": "wo", "lang": "Wolof"},
