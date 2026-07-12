@@ -1463,29 +1463,16 @@ class EncryptionType(StrEnum):
 
 
 class EncryptionCipher(Enum):
-	# None passed to cryptsetup means its built-in default (aes-xts-plain64).
-	# Adiantum is for CPUs without AES acceleration. It is a composite mode:
-	# spec must name both the stream cipher and block cipher
-	# (xchacha12,aes) or the kernel rejects it as unsupported.
 	AES_XTS_PLAIN64 = 'aes-xts-plain64'
-	# xchacha12 = faster (Android default), xchacha20 = wider margin.
 	ADIANTUM_XCHACHA12_PLAIN64 = 'xchacha12,aes-adiantum-plain64'
 	ADIANTUM_XCHACHA20_PLAIN64 = 'xchacha20,aes-adiantum-plain64'
-	# AES finalist, conservative margin (32 rounds), bitslices well
-	# on AVX2 despite no dedicated hw acceleration.
 	SERPENT_XTS_PLAIN64 = 'serpent-xts-plain64'
-	# Wide-block AES mode (AES-NI accelerated), single 256-bit key.
 	AES_HCTR2_PLAIN64 = 'aes-hctr2-plain64'
-	# Non-NIST standard (ISO/NESSIE/CRYPTREC), AVX2 accelerated.
 	CAMELLIA_XTS_PLAIN64 = 'camellia-xts-plain64'
-	# Legacy CBC mode — weaker than XTS against watermarking attacks,
-	# slower due to per-sector ESSIV/SHA256. Included for compatibility.
 	AES_CBC_ESSIV_SHA256 = 'aes-cbc-essiv:sha256'
 
 	@property
 	def key_size(self) -> int:
-		# XTS uses two keys, so 512 bits => 256-bit cipher. Adiantum
-		# and HCTR2 use a single 256-bit key; 512 makes cryptsetup fail.
 		if '-xts-' in self.value:
 			return 512
 		return 256
