@@ -344,6 +344,10 @@ msgstr ""
 msgid "Iteration time"
 msgstr ""
 
+msgid ""
+"No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr ""
+
 msgid "Select disks for the installation"
 msgstr ""
 
