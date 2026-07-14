@@ -9,6 +9,14 @@ if TYPE_CHECKING:
 	from _typeshed import DataclassInstance
 
 
+def _sentence_case(text: str) -> str:
+	# Only capitalize the first letter of the label. The source strings and
+	# their translations are already written with the correct casing for each
+	# language, so title-casing every word is wrong outside English (it turned
+	# "Ім'я хоста" into "Ім'Я Хоста" and "(NTP)" into "(Ntp)").
+	return text[:1].upper() + text[1:]
+
+
 def as_key_value_pair(
 	entries: dict[str, str | list[str] | bool],
 	ignore_empty: bool = True,
@@ -33,7 +41,7 @@ def as_key_value_pair(
 		if isinstance(value, list):
 			value = '\n  '.join(str(val) for val in value)
 
-		table.add_row(label.title(), f': {value}')
+		table.add_row(_sentence_case(label), f': {value}')
 
 	return table.stringify()
 
