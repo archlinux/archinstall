@@ -2395,3 +2395,33 @@ msgstr "набір апаратних пристроїв, напр. клавіа
 
 msgid "No network configuration selected. Network will need to be set up manually on the installed system."
 msgstr "Конфігурацію мережі не обрано. Мережу доведеться налаштувати вручну на встановленій системі."
+
+msgid "Plymouth"
+msgstr "Plymouth"
+
+msgid ""
+"Plymouth adds a cosmetic boot splash but can cause boot problems on some "
+"setups:"
+msgstr ""
+"Plymouth додає косметичну заставку завантаження, але на деяких конфігураціях "
+"може спричинити проблеми із завантаженням:"
+
+msgid "black screen with the NVIDIA driver"
+msgstr "чорний екран із драйвером NVIDIA"
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr "прихований запит пароля при шифруванні диска (LUKS)"
+
+msgid "Would you like to enable it?"
+msgstr "Увімкнути Plymouth?"
+
+msgid "Select Plymouth theme"
+msgstr "Оберіть тему Plymouth"
+
+#, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr "Plymouth \"{}\""
+
+#, python-brace-format
+msgid "{} graphics driver"
+msgstr "Графічний драйвер {}"

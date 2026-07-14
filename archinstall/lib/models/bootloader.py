@@ -60,15 +60,48 @@ class Bootloader(Enum):
 		return cls(bootloader)
 
 
+class PlymouthTheme(Enum):
+	BGRT = 'bgrt'
+	FADE = 'fade-in'
+	GLOW = 'glow'
+	SCRIPT = 'script'
+	SOLAR = 'solar'
+	SPINNER = 'spinner'
+	SPINFINITY = 'spinfinity'
+	TRIBAR = 'tribar'
+	TEXT = 'text'
+	DETAILS = 'details'
+
+	@classmethod
+	def from_arg(cls, plymouth: str | None) -> Self | None:
+		if plymouth is None:
+			return None
+
+		plymouth = plymouth.lower()
+
+		values = [e.value for e in cls]
+
+		if plymouth not in values:
+			warn(f'Invalid plymouth value "{plymouth}". Allowed values: {", ".join(values)}')
+			sys.exit(1)
+
+		return cls(plymouth)
+
+
 @dataclass
 class BootloaderConfiguration(SubConfig):
 	bootloader: Bootloader
 	uki: bool = False
 	removable: bool = True
+	plymouth: PlymouthTheme | None = None
 
 	@override
 	def json(self) -> dict[str, Any]:
-		return {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
+		data = {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
+
+		if self.plymouth is not None:
+			data['plymouth'] = self.plymouth.value
+		return data
 
 	@override
 	def summary(self) -> list[str]:
@@ -78,6 +111,8 @@ class BootloaderConfiguration(SubConfig):
 			out.append(tr('UKI enabled'))
 		if self.removable:
 			out.append(tr('Removable'))
+		if self.plymouth is not None:
+			out.append(tr('Plymouth "{}"').format(self.plymouth.value))
 
 		return out
 
@@ -86,14 +121,16 @@ class BootloaderConfiguration(SubConfig):
 		bootloader = Bootloader.from_arg(config.get('bootloader', ''), skip_boot)
 		uki = config.get('uki', False)
 		removable = config.get('removable', True)
-		return cls(bootloader=bootloader, uki=uki, removable=removable)
+		plymouth = PlymouthTheme.from_arg(config.get('plymouth', None))
+		return cls(bootloader=bootloader, uki=uki, removable=removable, plymouth=plymouth)
 
 	@classmethod
 	def get_default(cls, uefi: bool, skip_boot: bool = False) -> Self:
 		bootloader = Bootloader.get_default(uefi, skip_boot)
 		removable = uefi and bootloader.has_removable_support()
 		uki = uefi and bootloader.has_uki_support()
-		return cls(bootloader=bootloader, uki=uki, removable=removable)
+		plymouth = None
+		return cls(bootloader=bootloader, uki=uki, removable=removable, plymouth=plymouth)
 
 	def preview(self, uefi: bool) -> str:
 		text = f'{tr("Bootloader")}: {self.bootloader.value}'
@@ -111,5 +148,8 @@ class BootloaderConfiguration(SubConfig):
 			else:
 				removable_string = tr('Disabled')
 			text += f'{tr("Removable")}: {removable_string}'
+			text += '\n'
+		if self.plymouth is not None:
+			text += f'{tr("Plymouth")}: {self.plymouth.value}'
 			text += '\n'
 		return text

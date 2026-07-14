@@ -3,8 +3,7 @@ from pathlib import Path
 
 from pytest import MonkeyPatch
 
-from archinstall.lib.args import ArchConfigHandler
-from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.args import USER_CONFIG_FILE, USER_CREDS_FILE, ArchConfigHandler
 
 
 def test_user_config_roundtrip(
@@ -20,12 +19,10 @@ def test_user_config_roundtrip(
 	# as there is no version present in the test environment we'll set it manually
 	arch_config.version = '3.0.2'
 
-	config_output = ConfigurationOutput(arch_config)
-
 	test_out_dir = Path('/tmp/')
-	test_out_file = test_out_dir / config_output.user_configuration_file
+	test_out_file = test_out_dir / USER_CONFIG_FILE
 
-	config_output.save(test_out_dir)
+	arch_config.save(test_out_dir)
 
 	result = json.loads(test_out_file.read_text())
 	expected = json.loads(config_fixture.read_text())
@@ -55,12 +52,10 @@ def test_creds_roundtrip(
 	handler = ArchConfigHandler()
 	arch_config = handler.config
 
-	config_output = ConfigurationOutput(arch_config)
-
 	test_out_dir = Path('/tmp/')
-	test_out_file = test_out_dir / config_output.user_credentials_file
+	test_out_file = test_out_dir / USER_CREDS_FILE
 
-	config_output.save(test_out_dir, creds=True)
+	arch_config.save(test_out_dir, creds=True)
 
 	result = json.loads(test_out_file.read_text())
 	expected = json.loads(creds_fixture.read_text())

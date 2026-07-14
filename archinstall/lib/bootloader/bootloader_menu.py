@@ -3,7 +3,7 @@ from typing import override
 
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Confirmation, Selection
-from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration, PlymouthTheme
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -66,6 +66,13 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				key='removable',
 				enabled=removable_enabled,
 			),
+			MenuItem(
+				text=tr('Plymouth'),
+				action=self._select_plymouth,
+				value=self._bootloader_conf.plymouth,
+				preview_action=self._prev_plymouth,
+				key='plymouth',
+			),
 		]
 
 	def _prev_bootloader(self, item: MenuItem) -> str | None:
@@ -84,6 +91,11 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		if item.value:
 			return tr('Will install to /EFI/BOOT/ (removable location, safe default)')
 		return tr('Will install to custom location with NVRAM entry')
+
+	def _prev_plymouth(self, item: MenuItem) -> str | None:
+		if item.value:
+			return f'{tr("Plymouth")}: {item.value.value}'
+		return None
 
 	@override
 	async def show(self) -> BootloaderConfiguration:
@@ -116,6 +128,37 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				removable_item.enabled = True
 
 		return bootloader
+
+	async def _select_plymouth(self, preset: PlymouthTheme | None) -> PlymouthTheme | None:
+		# Plymouth is purely cosmetic and a frequent source of boot breakage
+		# (notably with the NVIDIA driver and disk encryption), so confirm before
+		# enabling it. When it is already enabled the user is only changing the
+		# theme, so the warning is skipped.
+		if preset is None:
+			prompt = (
+				'[ansi_bright_yellow]'
+				+ tr('Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:')
+				+ '\n\n  • '
+				+ tr('black screen with the NVIDIA driver')
+				+ '\n  • '
+				+ tr('hidden password prompt with disk encryption (LUKS)')
+				+ '\n\n'
+				+ tr('Would you like to enable it?')
+				+ '[/]\n'
+			)
+
+			result = await Confirmation(header=prompt, allow_skip=True, preset=False).show()
+
+			match result.type_:
+				case ResultType.Skip:
+					return preset
+				case ResultType.Selection:
+					if not result.get_value():
+						return preset
+				case ResultType.Reset:
+					raise ValueError('Unhandled result type')
+
+		return await select_plymouth_theme(preset)
 
 	async def _select_uki(self, preset: bool) -> bool:
 		prompt = tr('Would you like to use unified kernel images?') + '\n'
@@ -215,3 +258,24 @@ async def select_bootloader(
 			return result.get_value()
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
+
+
+async def select_plymouth_theme(preset: PlymouthTheme | None = None) -> PlymouthTheme | None:
+	items = [MenuItem(t.value, value=t) for t in PlymouthTheme]
+	group = MenuItemGroup(items, sort_items=False)
+	group.set_focus_by_value(preset)
+
+	result = await Selection[PlymouthTheme](
+		group,
+		header=tr('Select Plymouth theme'),
+		allow_reset=True,
+		allow_skip=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return None
+		case ResultType.Selection:
+			return PlymouthTheme(result.get_value())

@@ -6,7 +6,7 @@ from archinstall.lib.args import ArchConfig
 from archinstall.lib.authentication.authentication_menu import AuthenticationMenu
 from archinstall.lib.bootloader.bootloader_menu import BootloaderMenu
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
-from archinstall.lib.configuration import ConfigurationOutput, save_config
+from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
@@ -581,7 +581,6 @@ class GlobalMenu(AbstractMenu[None]):
 
 	def _prev_install_invalid_config(self, item: MenuItem) -> PreviewResult | None:
 		self.sync_all_to_config()
-		config_output = ConfigurationOutput(self._arch_config)
 
 		warnings = self._get_install_warnings()
 		messages: list[tuple[str, MsgLevelType]] = []
@@ -608,7 +607,7 @@ class GlobalMenu(AbstractMenu[None]):
 			messages.append((text, MsgLevelType.MsgWarning))
 
 		if not errors:
-			summary = config_output.as_summary()
+			summary = self._arch_config.as_summary()
 			if summary:
 				messages.append((summary, MsgLevelType.MsgNone))
 

@@ -1,6 +1,8 @@
 from enum import Enum
 
+from archinstall.lib.installer import Installer
 from archinstall.lib.menu.helpers import Selection
+from archinstall.lib.models.users import User
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -9,6 +11,16 @@ from archinstall.tui.result import ResultType
 class SeatAccess(Enum):
 	seatd = 'seatd'
 	polkit = 'polkit'
+
+
+def provision_seat_access(
+	install_session: Installer,
+	users: list[User],
+	seat_access: str,
+) -> None:
+	if seat_access == SeatAccess.seatd.value:
+		for user in users:
+			install_session.arch_chroot(f'usermod -a -G seat {user.username}')
 
 
 async def select_seat_access(profile_name: str, default: str | None) -> SeatAccess:

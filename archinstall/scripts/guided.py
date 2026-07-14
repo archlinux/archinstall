@@ -6,7 +6,7 @@ from archinstall.lib.applications.application_handler import ApplicationHandler
 from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
-from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.configuration import confirm_config
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.general.general_menu import PostInstallationAction, select_post_installation
@@ -119,6 +119,7 @@ def perform_installation(
 				config.bootloader_config.bootloader,
 				config.bootloader_config.uki,
 				config.bootloader_config.removable,
+				config.bootloader_config.plymouth,
 			)
 
 		if config.network_config:
@@ -212,9 +213,8 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	if not arch_config_handler.args.silent:
 		show_menu(arch_config_handler, mirror_list_handler)
 
-	config = ConfigurationOutput(arch_config_handler.config)
-	config.write_debug()
-	config.save()
+	arch_config_handler.config.write_debug()
+	arch_config_handler.config.save()
 
 	# Safety net for silent/config-file flow. The TUI menu blocks Install via
 	# GlobalMenu._validate_bootloader() before reaching this point.
@@ -230,7 +230,7 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		res: bool = tui.run(config.confirm_config)
+		res: bool = tui.run(lambda: confirm_config(arch_config_handler.config))
 
 		if not res:
 			debug('Installation aborted')

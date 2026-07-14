@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
 
 msgid "Recommended"
 msgstr "推奨"
@@ -103,7 +103,7 @@ msgid "Select font packages to install"
 msgstr "インストールするフォントパッケージを選択"
 
 msgid "ArchInstall Language"
-msgstr "ArchInstall の言語"
+msgstr "archInstall の言語"
 
 msgid "Version"
 msgstr "バージョン"
@@ -166,7 +166,7 @@ msgid "Users"
 msgstr "ユーザー"
 
 msgid "Root encrypted password"
-msgstr "Root 暗号化パスワード"
+msgstr "root 暗号化パスワード"
 
 msgid "Disk encryption password"
 msgstr "ディスク暗号化パスワード"
@@ -221,6 +221,9 @@ msgstr "Unified カーネルイメージ"
 msgid "Install to removable location"
 msgstr "リムーバブルな場所にインストールする"
 
+msgid "Plymouth"
+msgstr "Plymouth"
+
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
 msgstr "/EFI/BOOT/（リムーバブルな場所、安全なデフォルト）にインストール"
 
@@ -254,6 +257,9 @@ msgstr "インストールするブートローダーを選択"
 msgid "UEFI is not detected and some options are disabled"
 msgstr "UEFIが検出されず、一部のオプションが無効になります"
 
+msgid "Select Plymouth theme"
+msgstr "Plymouth のテーマを選択"
+
 msgid "The specified configuration will be applied"
 msgstr "指定された設定が適用されます"
 
@@ -262,9 +268,6 @@ msgstr "続行しますか？"
 
 msgid "Configuration preview"
 msgstr "設定プレビュー"
-
-msgid "Warning: no network configuration selected. Network will need to be set up manually on the installed system."
-msgstr "警告: ネットワーク設定が選択されていません。インストール後のシステムで、ネットワークを手動で設定する必要があります。"
 
 msgid "No configuration"
 msgstr "設定なし"
@@ -279,7 +282,7 @@ msgid "Save all"
 msgstr "すべて保存"
 
 msgid "Enter a directory for the configuration(s) to be saved"
-msgstr "設定を保存するディレクトリを入力"
+msgstr "設定を保存するディレクトリーを入力してください"
 
 #, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
@@ -348,7 +351,7 @@ msgid "You will use whatever drive-setup is mounted at the specified directory"
 msgstr "指定されたディレクトリにマウントされているドライブの設定を使用します"
 
 msgid "WARNING: Archinstall won't check the suitability of this setup"
-msgstr "警告: Archinstall はこのセットアップの適合性をチェックしません"
+msgstr "警告: archinstall はこのセットアップの適合性をチェックしません"
 
 msgid "Select main filesystem"
 msgstr "メインファイルシステムを選択"
@@ -369,7 +372,7 @@ msgid "Would you like to create a separate partition for /home?"
 msgstr "/home 用に別のパーティションを作成しますか？"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr "選択したドライブには、自動提案に必要な最小容量がありません\n"
+msgstr "選択したドライブは、自動提案に必要な最小容量を満たしていません\n"
 
 #, python-brace-format
 msgid "Minimum capacity for /home partition: {}GiB\n"
@@ -570,13 +573,13 @@ msgid "For the best compatibility with your Nvidia hardware, you may want to use
 msgstr "Nvidia ハードウェアとの互換性を最大限に高めるには、Nvidia 独自のドライバーを使用することをお勧めします。\n"
 
 msgid "Would you like to use swap on zram?"
-msgstr "zram でスワップを使用しますか？"
+msgstr "zram 上でスワップを使用しますか？"
 
 msgid "Select zram compression algorithm:"
-msgstr "zram 圧縮アルゴリズムを選択:"
+msgstr "zram の圧縮アルゴリズムを選択:"
 
 msgid "Archinstall language"
-msgstr "Archinstall の言語"
+msgstr "archinstall の言語"
 
 msgid "Applications"
 msgstr "アプリケーション"
@@ -613,7 +616,7 @@ msgid "Btrfs snapshot type: {}"
 msgstr "Btrfs スナップショットのタイプ: {}"
 
 msgid "Swap on zram"
-msgstr "Zram 上でスワップ"
+msgstr "zram 上でスワップ"
 
 msgid "Compression algorithm"
 msgstr "圧縮アルゴリズム"
@@ -627,15 +630,20 @@ msgstr "カラー出力"
 msgid "Kernel"
 msgstr "カーネル"
 
-msgid "Missing configurations:\n"
-msgstr "設定が存在しません:\n"
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "ネットワーク設定が選択されていません。インストール後のシステムで、ネットワークを手動で設定する必要があります。"
 
-#, python-brace-format
-msgid "Invalid configuration: {}"
-msgstr "無効な設定: {}"
+msgid "Missing configurations:"
+msgstr "不足している設定:"
+
+msgid "Invalid configuration:"
+msgstr "無効な設定:"
 
 msgid "Ready to install"
 msgstr "インストールの準備が完了"
+
+msgid "Warnings:"
+msgstr "警告:"
 
 msgid "Profiles"
 msgstr "プロファイル"
@@ -804,11 +812,11 @@ msgid "wide Unicode coverage, good fallback font"
 msgstr "Unicode を広くカバーする良い代替フォント"
 
 msgid "Zram enabled"
-msgstr "Zram を有効にする"
+msgstr "zram を有効にする"
 
 #, python-brace-format
 msgid "Zram algorithm {}"
-msgstr "Zram アルゴリズム {}"
+msgstr "zram のアルゴリズム {}"
 
 msgid "Bluetooth enabled"
 msgstr "Bluetooth を有効にする"
@@ -839,7 +847,7 @@ msgid "Second factor login"
 msgstr "2要素ログイン"
 
 msgid "Root password set"
-msgstr "Root パスワードを設定"
+msgstr "root パスワードを設定"
 
 #, python-brace-format
 msgid "Configured {} user(s)"
@@ -857,6 +865,10 @@ msgstr "UKI を有効にする"
 
 msgid "Removable"
 msgstr "リムーバブル"
+
+#, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr "Plymouth \"{}\""
 
 msgid "Use a best-effort default partition layout"
 msgstr "ベストエフォートのデフォルトパーティションレイアウトを使用"
@@ -965,7 +977,7 @@ msgid "Color enabled"
 msgstr "カラー出力を有効にする"
 
 #, python-brace-format
-msgid "{} grphics driver"
+msgid "{} graphics driver"
 msgstr "{} グラフィックドライバー"
 
 #, python-brace-format
@@ -1031,14 +1043,14 @@ msgstr "Wi-Fi に接続しますか？"
 msgid "No wifi interface found"
 msgstr "Wi-Fi インターフェースが見つかりません"
 
+msgid "No wifi networks found"
+msgstr "Wi-Fi ネットワークが見つかりません"
+
 msgid "Select wifi network to connect to"
 msgstr "接続する Wi-Fi ネットワークを選択"
 
 msgid "Scanning wifi networks..."
 msgstr "Wi-Fi ネットワークをスキャンしています..."
-
-msgid "No wifi networks found"
-msgstr "Wi-Fi ネットワークが見つかりません"
 
 msgid "Failed setting up wifi"
 msgstr "Wi-Fi の設定に失敗しました"
@@ -1137,7 +1149,7 @@ msgstr "パスワードを入力"
 
 #, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "\"{}\" はスーパーユーザーに昇格しますか（sudo）？\n"
+msgstr "\"{}\" に sudo 権限を与えますか？\n"
 
 #, python-brace-format
 msgid "About to upload \"{}\" to the publicly accessible {}"
@@ -1154,7 +1166,7 @@ msgid "Failed to upload log."
 msgstr "ログのアップロードに失敗しました。"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr "Archinstall を実行するには root 権限が必要です。詳細については --help を参照してください。"
+msgstr "archinstall を実行するには root 権限が必要です。詳細については --help を参照してください。"
 
 msgid "New version available"
 msgstr "新しいバージョンが利用可能"
@@ -1607,9 +1619,6 @@ msgstr " (デフォルト)"
 
 #~ msgid "Subvolume name :"
 #~ msgstr "サブボリューム名:"
-
-#~ msgid "Select a mount point :"
-#~ msgstr "マウントポイントを選択:"
 
 #~ msgid "Select the desired subvolume options "
 #~ msgstr "サブボリュームのオプションを選択"
