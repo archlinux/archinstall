@@ -178,8 +178,12 @@ class WifiNetwork:
 			if not line:
 				continue
 
-			parts = line.split()
-			if len(parts) != 5:
+			if '\t' in line:
+				parts = line.split('\t')
+			else:
+				parts = line.split(maxsplit=4)
+
+			if len(parts) < 5:
 				continue
 
 			wifi = cls(bssid=parts[0], frequency=parts[1], signal_level=parts[2], flags=parts[3], ssid=parts[4])
