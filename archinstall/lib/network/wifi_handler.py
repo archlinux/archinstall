@@ -72,16 +72,17 @@ class WifiHandler(InstanceRunnable[bool]):
 
 		try:
 			SysCommand(f'wpa_supplicant -B -i {wifi_iface} -c {self._wpa_config.config_file}')
-			result = self._wpa_cli('status')  # if it it's running it will blow up
-
-			if result.success:
-				debug('successfully enabled wpa_supplicant')
-				return True
-			else:
-				debug(f'failed to enable wpa_supplicant: {result.error}')
-				return False
 		except SysCallError as err:
 			debug(f'failed to enable wpa_supplicant: {err}')
+			return False
+
+		result = self._wpa_cli('status')  # if it it's running it will blow up
+
+		if result.success:
+			debug('successfully enabled wpa_supplicant')
+			return True
+		else:
+			debug(f'failed to enable wpa_supplicant: {result.error}')
 			return False
 
 	def _find_wifi_interface(self) -> str | None:
@@ -254,18 +255,18 @@ class WifiHandler(InstanceRunnable[bool]):
 
 		try:
 			result = self._wpa_cli('scan_results', iface)
-
-			if not result.success:
-				debug(f'Failed to retrieve scan results: {result.error}')
-				return []
-
-			if not result.response:
-				debug('No wifi networks found')
-				return []
-
-			networks = WifiNetwork.from_wpa(result.response)
-
-			return networks
 		except SysCallError as err:
 			debug('Unable to retrieve wifi results')
 			raise err
+
+		if not result.success:
+			debug(f'Failed to retrieve scan results: {result.error}')
+			return []
+
+		if not result.response:
+			debug('No wifi networks found')
+			return []
+
+		networks = WifiNetwork.from_wpa(result.response)
+
+		return networks
