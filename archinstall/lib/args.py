@@ -35,7 +35,6 @@ from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.utils.format import as_key_value_pair
-from archinstall.lib.utils.util import is_valid_path
 from archinstall.lib.version import get_version
 from archinstall.tui.components import tui
 
@@ -404,7 +403,7 @@ class ArchConfig:
 	) -> None:
 		save_path = dest_path or DEFAULT_SAVE_PATH
 
-		if not is_valid_path(save_path):
+		if not save_path.is_dir():
 			warn(
 				f'Destination directory {save_path} does not exist or is not a directory\n.',
 				'Configuration files can not be saved',
@@ -416,7 +415,7 @@ class ArchConfig:
 			self.save_user_creds(save_path, password=password)
 
 	def save_user_config(self, dest_path: Path) -> None:
-		if not is_valid_path(dest_path):
+		if not dest_path.is_dir():
 			error(f'Invalid path {dest_path}. User configuration could not be saved.')
 			return
 
@@ -430,7 +429,7 @@ class ArchConfig:
 		dest_path: Path,
 		password: str | None = None,
 	) -> None:
-		if not is_valid_path(dest_path):
+		if not dest_path.is_dir():
 			error(f'Invalid path {dest_path}. User credentials could not be saved.')
 			return
 
