@@ -58,7 +58,7 @@ class WifiHandler(InstanceRunnable[bool]):
 	async def _enable_supplicant(self, wifi_iface: str) -> bool:
 		self._wpa_config.load_config()
 
-		result = self._wpa_cli('status')  # if it it's running it will blow up
+		result = self._wpa_cli('status')
 
 		if result.success:
 			debug('wpa_supplicant already running')
@@ -76,7 +76,7 @@ class WifiHandler(InstanceRunnable[bool]):
 			debug(f'failed to enable wpa_supplicant: {err}')
 			return False
 
-		result = self._wpa_cli('status')  # if it it's running it will blow up
+		result = self._wpa_cli('status')
 
 		if result.success:
 			debug('successfully enabled wpa_supplicant')
