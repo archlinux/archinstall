@@ -198,21 +198,21 @@ class WifiHandler(InstanceRunnable[bool]):
 
 		try:
 			result = SysCommand(cmd).decode()
-
-			if 'FAIL' in result:
-				debug(f'wpa_cli returned FAIL: {result}')
-				return WpaCliResult(
-					success=False,
-					error=f'wpa_cli returned a failure: {result}',
-				)
-
-			return WpaCliResult(success=True, response=result)
 		except SysCallError as err:
 			debug(f'error running wpa_cli command: {err}')
 			return WpaCliResult(
 				success=False,
 				error=f'Error running wpa_cli command: {err}',
 			)
+
+		if 'FAIL' in result:
+			debug(f'wpa_cli returned FAIL: {result}')
+			return WpaCliResult(
+				success=False,
+				error=f'wpa_cli returned a failure: {result}',
+			)
+
+		return WpaCliResult(success=True, response=result)
 
 	def _find_network_id(self, ssid: str, iface: str) -> int | None:
 		result = self._wpa_cli('list_networks', iface)
