@@ -1476,20 +1476,20 @@ class Installer:
 
 			parent_dev_path = get_parent_device_path(efi_partition.safe_dev_path)
 
+			efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
+			efi_dir_path_target = efi_partition.mountpoint / 'EFI'
+			if bootloader_removable:
+				efi_dir_path = efi_dir_path / 'BOOT'
+				efi_dir_path_target = efi_dir_path_target / 'BOOT'
+			else:
+				efi_dir_path = efi_dir_path / 'arch-limine'
+				efi_dir_path_target = efi_dir_path_target / 'arch-limine'
+
+			config_path = efi_dir_path / 'limine.conf'
+
+			efi_dir_path.mkdir(parents=True, exist_ok=True)
+
 			try:
-				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
-				efi_dir_path_target = efi_partition.mountpoint / 'EFI'
-				if bootloader_removable:
-					efi_dir_path = efi_dir_path / 'BOOT'
-					efi_dir_path_target = efi_dir_path_target / 'BOOT'
-				else:
-					efi_dir_path = efi_dir_path / 'arch-limine'
-					efi_dir_path_target = efi_dir_path_target / 'arch-limine'
-
-				config_path = efi_dir_path / 'limine.conf'
-
-				efi_dir_path.mkdir(parents=True, exist_ok=True)
-
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
 					(limine_path / file).copy_into(efi_dir_path)
 			except Exception as err:
