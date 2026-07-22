@@ -19,7 +19,7 @@ a new textual widget in components.py:
 
 from archinstall.lib.translationhandler import tr_noop
 
-# textual 8.2.7
+# textual 8.2.8
 TEXTUAL_BINDING_DESCRIPTIONS: tuple[str, ...] = (
 	tr_noop('Bottom'),
 	tr_noop('Copy selected text'),
