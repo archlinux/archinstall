@@ -46,23 +46,6 @@ def as_key_value_pair(
 	return table.stringify()
 
 
-def as_columns(entries: list[str], cols: int) -> str:
-	"""
-	Will format a list into a given number of columns
-	"""
-	chunks: list[list[str]] = []
-	output = ''
-
-	for i in range(0, len(entries), cols):
-		chunks.append(entries[i : i + cols])
-
-	for row in chunks:
-		out_fmt = '{: <30} ' * len(row)
-		output += out_fmt.format(*row) + '\n'
-
-	return output
-
-
 def _get_values(
 	o: DataclassInstance,
 	class_formatter: str | Callable | None = None,  # type: ignore[type-arg]  # pyright: ignore[reportMissingTypeArgument]
