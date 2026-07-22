@@ -1,0 +1,1192 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Norwegian Bokmål\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Recommended"
+msgstr "Anbefalt"
+
+msgid "Package"
+msgstr "Pakke"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr "Kuratert utvalg av KDE Plasma-pakker"
+
+msgid "Dependencies"
+msgstr "Avhengigheter"
+
+msgid "Package group"
+msgstr "Pakkegruppe"
+
+msgid "Extensive KDE Plasma installation"
+msgstr "Omfattende KDE Plasma-installasjon"
+
+msgid "Packages in group"
+msgstr "Pakker i gruppen"
+
+msgid "Minimal KDE Plasma installation"
+msgstr "Minimal KDE Plasma-installasjon"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Description"
+msgstr "Beskrivelse"
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Velg en variant av KDE Plasma å installere"
+
+#, python-brace-format
+msgid "{} needs access to your seat"
+msgstr "{} trenger tilgang til seat-en din"
+
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "samling av maskinvareenheter, f.eks. tastatur, mus"
+
+#, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
+msgstr "Velg hvordan {} skal få tilgang til maskinvaren din"
+
+#, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Miljøtype: {} {}"
+
+#, python-brace-format
+msgid "Environment type: {}"
+msgstr "Miljøtype: {}"
+
+msgid "Installed packages"
+msgstr "Installerte pakker"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Audio"
+msgstr "Lyd"
+
+msgid "Print service"
+msgstr "Utskriftstjeneste"
+
+msgid "Power management"
+msgstr "Strømstyring"
+
+msgid "Firewall"
+msgstr "Brannmur"
+
+msgid "Additional fonts"
+msgstr "Tilleggsskrifter"
+
+msgid "Enabled"
+msgstr "Aktivert"
+
+msgid "Disabled"
+msgstr "Deaktivert"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Vil du konfigurere Bluetooth?"
+
+msgid "Would you like to configure the print service?"
+msgstr "Vil du konfigurere utskriftstjenesten?"
+
+msgid "Select audio configuration"
+msgstr "Velg lydkonfigurasjon"
+
+msgid "Select font packages to install"
+msgstr "Velg skriftpakker å installere"
+
+msgid "ArchInstall Language"
+msgstr "ArchInstall-språk"
+
+msgid "Version"
+msgstr "Versjon"
+
+msgid "Installation Script"
+msgstr "Installasjonsskript"
+
+msgid "Locales"
+msgstr "Lokaliteter"
+
+msgid "Disk configuration"
+msgstr "Diskkonfigurasjon"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Mirrors and repositories"
+msgstr "Speil og pakkebrønner"
+
+msgid "Network"
+msgstr "Nettverk"
+
+msgid "Bootloader"
+msgstr "Oppstartslaster"
+
+msgid "Application"
+msgstr "Program"
+
+msgid "Authentication"
+msgstr "Autentisering"
+
+msgid "Swap"
+msgstr "Veksleminne"
+
+msgid "Hostname"
+msgstr "Vertsnavn"
+
+msgid "Kernels"
+msgstr "Kjerner"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Automatisk tidssynkronisering (NTP)"
+
+msgid "Timezone"
+msgstr "Tidssone"
+
+msgid "Services"
+msgstr "Tjenester"
+
+msgid "Additional packages"
+msgstr "Tilleggspakker"
+
+msgid "Pacman"
+msgstr "Pacman"
+
+msgid "Custom commands"
+msgstr "Egendefinerte kommandoer"
+
+msgid "Users"
+msgstr "Brukere"
+
+msgid "Root encrypted password"
+msgstr "Kryptert root-passord"
+
+msgid "Disk encryption password"
+msgstr "Passord for diskkryptering"
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Feil dekrypteringspassord for legitimasjonsfil"
+
+msgid "Enter credentials file decryption password"
+msgstr "Skriv inn dekrypteringspassord for legitimasjonsfil"
+
+msgid "Incorrect password"
+msgstr "Feil passord"
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "Setter opp U2F-innlogging: {}"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Setter opp U2F-enhet for bruker: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Du må kanskje skrive inn PIN-koden og deretter berøre U2F-enheten for å registrere den"
+
+msgid "Root password"
+msgstr "Root-passord"
+
+msgid "User account"
+msgstr "Brukerkonto"
+
+msgid "U2F login setup"
+msgstr "Oppsett av U2F-innlogging"
+
+msgid "U2F login method: "
+msgstr "U2F-innloggingsmetode: "
+
+msgid "Passwordless sudo: "
+msgstr "Passordløs sudo: "
+
+msgid "No U2F devices found"
+msgstr "Ingen U2F-enheter funnet"
+
+msgid "Enter root password"
+msgstr "Skriv inn root-passord"
+
+msgid "Enable passwordless sudo?"
+msgstr "Aktivere passordløs sudo?"
+
+msgid "Unified kernel images"
+msgstr "Samlede kjernebilder (UKI)"
+
+msgid "Install to removable location"
+msgstr "Installer til flyttbar plassering"
+
+msgid "Plymouth"
+msgstr "Plymouth"
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Installeres til /EFI/BOOT/ (flyttbar plassering, trygt standardvalg)"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Installeres til egendefinert plassering med NVRAM-oppføring"
+
+msgid "Would you like to use unified kernel images?"
+msgstr "Vil du bruke samlede kjernebilder (UKI)?"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Vil du installere oppstartslasteren til standard søkeplassering for flyttbare medier?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Dette installerer oppstartslasteren til /EFI/BOOT/BOOTX64.EFI (eller lignende), noe som er nyttig for:"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Fastvare som ikke støtter NVRAM-oppstartsoppføringer ordentlig, som de fleste MSI-hovedkort,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "de fleste Apple Mac-er, mange bærbare ..."
+
+msgid "USB drives or other portable external media."
+msgstr "USB-stasjoner eller andre bærbare eksterne medier."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Systemer der du vil at disken skal kunne starte opp på enhver datamaskin."
+
+msgid "Select bootloader to install"
+msgstr "Velg oppstartslaster å installere"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "UEFI er ikke oppdaget, og enkelte valg er deaktivert"
+
+msgid "Select Plymouth theme"
+msgstr "Velg Plymouth-tema"
+
+msgid "The specified configuration will be applied"
+msgstr "Den angitte konfigurasjonen vil bli tatt i bruk"
+
+msgid "Would you like to continue?"
+msgstr "Vil du fortsette?"
+
+msgid "Configuration preview"
+msgstr "Forhåndsvisning av konfigurasjon"
+
+msgid "No configuration"
+msgstr "Ingen konfigurasjon"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Lagre brukerkonfigurasjon (inkludert diskoppsett)"
+
+msgid "Save user credentials"
+msgstr "Lagre brukerlegitimasjon"
+
+msgid "Save all"
+msgstr "Lagre alt"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Angi en mappe der konfigurasjonen(e) skal lagres"
+
+#, python-brace-format
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Vil du lagre konfigurasjonsfilen(e) til {}?"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Vil du kryptere filen user_credentials.json?"
+
+msgid "Credentials file encryption password"
+msgstr "Krypteringspassord for legitimasjonsfil"
+
+msgid "Partitioning"
+msgstr "Partisjonering"
+
+msgid "Disk encryption"
+msgstr "Diskkryptering"
+
+#, python-brace-format
+msgid "Configuration type: {}"
+msgstr "Konfigurasjonstype: {}"
+
+msgid "Mountpoint"
+msgstr "Monteringspunkt"
+
+msgid "Configuration"
+msgstr "Konfigurasjon"
+
+msgid "Wipe"
+msgstr "Slett"
+
+msgid "Physical volumes"
+msgstr "Fysiske volumer"
+
+msgid "Volumes"
+msgstr "Volumer"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Øyeblikksbildetype: {}"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "LVM-diskkryptering med mer enn 2 partisjoner støttes foreløpig ikke"
+
+msgid "Encryption type"
+msgstr "Krypteringstype"
+
+msgid "Password"
+msgstr "Passord"
+
+msgid "Iteration time"
+msgstr "Iterasjonstid"
+
+msgid "Select disks for the installation"
+msgstr "Velg disker for installasjonen"
+
+msgid "Partitions"
+msgstr "Partisjoner"
+
+msgid "Select a disk configuration"
+msgstr "Velg en diskkonfigurasjon"
+
+msgid "Enter root mount directory"
+msgstr "Angi rotmonteringsmappe"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "Du vil bruke det diskoppsettet som er montert på den angitte mappen"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "ADVARSEL: Archinstall vil ikke kontrollere om dette oppsettet egner seg"
+
+msgid "Select main filesystem"
+msgstr "Velg hovedfilsystem"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Vil du bruke komprimering eller deaktivere CoW?"
+
+msgid "Use compression"
+msgstr "Bruk komprimering"
+
+msgid "Disable Copy-on-Write"
+msgstr "Deaktiver Copy-on-Write"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Vil du bruke BTRFS-undervolumer med en standardstruktur?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Vil du opprette en egen partisjon for /home?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "De valgte stasjonene har ikke den minimumskapasiteten som kreves for et automatisk forslag\n"
+
+#, python-brace-format
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Minimumskapasitet for /home-partisjonen: {} GiB\n"
+
+#, python-brace-format
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Minimumskapasitet for Arch Linux-partisjonen: {} GiB"
+
+msgid "Encryption password"
+msgstr "Krypteringspassord"
+
+msgid "LVM volumes"
+msgstr "LVM-volumer"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Partitions to be encrypted"
+msgstr "Partisjoner som skal krypteres"
+
+msgid "LVM volumes to be encrypted"
+msgstr "LVM-volumer som skal krypteres"
+
+msgid "HSM device"
+msgstr "HSM-enhet"
+
+msgid "Select encryption type"
+msgstr "Velg krypteringstype"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Skriv inn passord for diskkryptering (la stå tomt for ingen kryptering)"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Velg en FIDO2-enhet å bruke for HSM"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "Angi iterasjonstid for LUKS-kryptering (i millisekunder)"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "Høyere verdier øker sikkerheten, men gir lengre oppstartstid"
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "Standard: {} ms, anbefalt område: 1000–60000"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "Iterasjonstiden må være minst 100 ms"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "Iterasjonstiden kan være maksimalt 120000 ms"
+
+msgid "Please enter a valid number"
+msgstr "Skriv inn et gyldig tall"
+
+msgid "Suggest partition layout"
+msgstr "Foreslå partisjonsoppsett"
+
+msgid "Remove all newly added partitions"
+msgstr "Fjern alle nylig lagt til partisjoner"
+
+msgid "Assign mountpoint"
+msgstr "Tildel monteringspunkt"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Merk/fjern merking for formatering (sletter data)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Merk/fjern merking som oppstartbar"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Merk/fjern merking som ESP"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Merk/fjern merking som XBOOTLDR"
+
+msgid "Change filesystem"
+msgstr "Endre filsystem"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Merk/fjern merking som komprimert"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "Merk/fjern merking som nodatacow"
+
+msgid "Set subvolumes"
+msgstr "Angi undervolumer"
+
+msgid "Delete partition"
+msgstr "Slett partisjon"
+
+#, python-brace-format
+msgid "Partition management: {}"
+msgstr "Partisjonsbehandling: {}"
+
+#, python-brace-format
+msgid "Total length: {}"
+msgstr "Total lengde: {}"
+
+msgid "Partition - New"
+msgstr "Partisjon – Ny"
+
+msgid "Partition"
+msgstr "Partisjon"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Denne partisjonen er for øyeblikket kryptert. For å formatere den må et filsystem angis"
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Monteringspunkter for partisjoner er relative til innsiden av installasjonen; oppstart vil for eksempel være /boot."
+
+msgid "Enter a mountpoint"
+msgstr "Angi et monteringspunkt"
+
+msgid "Invalid size"
+msgstr "Ugyldig størrelse"
+
+#, python-brace-format
+msgid "Selected free space segment on device {}:"
+msgstr "Valgt ledig diskområde på enhet {}:"
+
+#, python-brace-format
+msgid "Size: {} / {}"
+msgstr "Størrelse: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Alle angitte verdier kan ha en enhet som suffiks: %, B, KB, KiB, MB, MiB ..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Hvis ingen enhet angis, tolkes verdien som sektorer"
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Angi en størrelse (standard: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Dette vil fjerne alle nylig lagt til partisjoner. Fortsette?"
+
+msgid "Add subvolume"
+msgstr "Legg til undervolum"
+
+msgid "Edit subvolume"
+msgstr "Rediger undervolum"
+
+msgid "Delete subvolume"
+msgstr "Slett undervolum"
+
+msgid "Value cannot be empty"
+msgstr "Verdien kan ikke være tom"
+
+msgid "Enter subvolume name"
+msgstr "Angi navn på undervolum"
+
+msgid "Subvolume name"
+msgstr "Navn på undervolum"
+
+msgid "Enter subvolume mountpoint"
+msgstr "Angi monteringspunkt for undervolum"
+
+msgid "Exit archinstall"
+msgstr "Avslutt archinstall"
+
+msgid "Reboot system"
+msgstr "Start systemet på nytt"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "chroot inn i installasjonen for konfigurasjon etter installasjon"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Vil du bruke automatisk tidssynkronisering (NTP) med standard tidsservere?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"Maskinvaretid og andre konfigurasjonssteg i etterkant kan være nødvendige for at NTP skal fungere.\n"
+"For mer informasjon, se Arch-wikien"
+
+msgid "Enter a hostname"
+msgstr "Angi et vertsnavn"
+
+msgid "Select timezone"
+msgstr "Velg tidssone"
+
+msgid "What would you like to do next?"
+msgstr "Hva vil du gjøre nå?"
+
+msgid "Select which kernel(s) to install"
+msgstr "Velg hvilke(n) kjerne(r) som skal installeres"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "For best kompatibilitet med AMD-maskinvaren din kan du bruke enten det helt åpne kildekode-alternativet eller AMD/ATI-alternativet."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "For best kompatibilitet med Intel-maskinvaren din kan du bruke enten det helt åpne kildekode-alternativet eller Intel-alternativet.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "For best kompatibilitet med Nvidia-maskinvaren din kan du bruke den proprietære Nvidia-driveren.\n"
+
+msgid "Would you like to use swap on zram?"
+msgstr "Vil du bruke veksleminne på zram?"
+
+msgid "Select zram compression algorithm:"
+msgstr "Velg komprimeringsalgoritme for zram:"
+
+msgid "Archinstall language"
+msgstr "Archinstall-språk"
+
+msgid "Applications"
+msgstr "Programmer"
+
+msgid "Network configuration"
+msgstr "Nettverkskonfigurasjon"
+
+msgid "Save configuration"
+msgstr "Lagre konfigurasjon"
+
+msgid "Install"
+msgstr "Installer"
+
+msgid "Abort"
+msgstr "Avbryt"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Enten root-passord eller minst én bruker med sudo-rettigheter må angis"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "Den valgte skrivebordsprofilen krever en vanlig bruker for å logge inn via innloggingsskjermen"
+
+msgid "Language"
+msgstr "Språk"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "LVM configuration type"
+msgstr "LVM-konfigurasjonstype"
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Btrfs-øyeblikksbildetype: {}"
+
+msgid "Swap on zram"
+msgstr "Veksleminne på zram"
+
+msgid "Compression algorithm"
+msgstr "Komprimeringsalgoritme"
+
+msgid "Parallel Downloads"
+msgstr "Parallelle nedlastinger"
+
+msgid "Color"
+msgstr "Farge"
+
+msgid "Kernel"
+msgstr "Kjerne"
+
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Ingen nettverkskonfigurasjon valgt. Nettverket må settes opp manuelt på det installerte systemet."
+
+msgid "Missing configurations:"
+msgstr "Manglende konfigurasjoner:"
+
+msgid "Invalid configuration:"
+msgstr "Ugyldig konfigurasjon:"
+
+msgid "Ready to install"
+msgstr "Klar til å installere"
+
+msgid "Warnings:"
+msgstr "Advarsler:"
+
+msgid "Profiles"
+msgstr "Profiler"
+
+msgid "Graphics driver"
+msgstr "Grafikkdriver"
+
+msgid "Greeter"
+msgstr "Innloggingsskjerm (greeter)"
+
+msgid "Selected mirror regions"
+msgstr "Valgte speilregioner"
+
+msgid "Custom servers"
+msgstr "Egendefinerte servere"
+
+msgid "Optional repositories"
+msgstr "Valgfrie pakkebrønner"
+
+msgid "Custom repositories"
+msgstr "Egendefinerte pakkebrønner"
+
+#, python-brace-format
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] En loggfil er opprettet her: {}"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Send inn dette problemet (og filen) til https://github.com/archlinux/archinstall/issues"
+
+msgid "Syncing the system..."
+msgstr "Synkroniserer systemet ..."
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Venter på at tidssynkronisering (timedatectl show) skal fullføres."
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Tidssynkroniseringen fullføres ikke. Mens du venter – sjekk dokumentasjonen for løsninger: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Hopper over venting på automatisk tidssynkronisering (dette kan føre til problemer hvis tiden ikke er synkronisert under installasjonen)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Venter på at synkronisering av Arch Linux-nøkkelring (archlinux-keyring-wkd-sync) skal fullføres."
+
+msgid "Keyboard layout"
+msgstr "Tastaturoppsett"
+
+msgid "Locale language"
+msgstr "Lokalitetsspråk"
+
+msgid "Locale encoding"
+msgstr "Lokalitetskoding"
+
+msgid "Console font"
+msgstr "Konsollskrift"
+
+msgid "Back"
+msgstr "Tilbake"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Er du sikker på at du vil tilbakestille denne innstillingen?"
+
+msgid "Confirm and exit"
+msgstr "Bekreft og avslutt"
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Password strength: Weak"
+msgstr "Passordstyrke: Svakt"
+
+msgid "Password strength: Moderate"
+msgstr "Passordstyrke: Middels"
+
+msgid "Password strength: Strong"
+msgstr "Passordstyrke: Sterkt"
+
+msgid "Confirm password"
+msgstr "Bekreft passord"
+
+msgid "The password did not match, please try again"
+msgstr "Passordene var ikke like, prøv igjen"
+
+msgid "Not a valid directory"
+msgstr "Ikke en gyldig mappe"
+
+msgid "Do you really want to abort?"
+msgstr "Vil du virkelig avbryte?"
+
+msgid "Add a custom repository"
+msgstr "Legg til en egendefinert pakkebrønn"
+
+msgid "Change custom repository"
+msgstr "Endre egendefinert pakkebrønn"
+
+msgid "Delete custom repository"
+msgstr "Slett egendefinert pakkebrønn"
+
+msgid "Enter a repository name"
+msgstr "Angi et navn på pakkebrønnen"
+
+msgid "Name"
+msgstr "Navn"
+
+msgid "Enter the repository url"
+msgstr "Angi URL-en til pakkebrønnen"
+
+msgid "Url"
+msgstr "URL"
+
+msgid "Select signature check"
+msgstr "Velg signatursjekk"
+
+msgid "Signature check"
+msgstr "Signatursjekk"
+
+msgid "Select signature option"
+msgstr "Velg signaturvalg"
+
+msgid "Add a custom server"
+msgstr "Legg til en egendefinert server"
+
+msgid "Change custom server"
+msgstr "Endre egendefinert server"
+
+msgid "Delete custom server"
+msgstr "Slett egendefinert server"
+
+msgid "Enter server url"
+msgstr "Angi server-URL"
+
+msgid "Select regions"
+msgstr "Velg regioner"
+
+msgid "Add custom servers"
+msgstr "Legg til egendefinerte servere"
+
+msgid "Add custom repository"
+msgstr "Legg til egendefinert pakkebrønn"
+
+msgid "Additional repositories"
+msgstr "Flere pakkebrønner"
+
+msgid "Loading mirror regions..."
+msgstr "Laster speilregioner ..."
+
+msgid "Select mirror regions to be enabled"
+msgstr "Velg speilregioner som skal aktiveres"
+
+msgid "Select optional repositories to be enabled"
+msgstr "Velg valgfrie pakkebrønner som skal aktiveres"
+
+msgid "Unicode font coverage for most languages"
+msgstr "Unicode-skriftdekning for de fleste språk"
+
+msgid "color emoji for browsers and apps"
+msgstr "fargeemoji for nettlesere og apper"
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr "kinesiske, japanske og koreanske tegn"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr "erstatning for Arial/Times/Courier, kyrillisk støtte for Steam/spill"
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr "bred Unicode-dekning, god reserveskrift"
+
+msgid "Zram enabled"
+msgstr "Zram aktivert"
+
+#, python-brace-format
+msgid "Zram algorithm {}"
+msgstr "Zram-algoritme {}"
+
+msgid "Bluetooth enabled"
+msgstr "Bluetooth aktivert"
+
+#, python-brace-format
+msgid "Audio server \"{}\""
+msgstr "Lydserver «{}»"
+
+#, python-brace-format
+msgid "Power management \"{}\""
+msgstr "Strømstyring «{}»"
+
+msgid "Print service enabled"
+msgstr "Utskriftstjeneste aktivert"
+
+#, python-brace-format
+msgid "Firewall \"{}\""
+msgstr "Brannmur «{}»"
+
+#, python-brace-format
+msgid "Extra fonts \"{}\""
+msgstr "Ekstra skrifter «{}»"
+
+msgid "Passwordless login"
+msgstr "Passordløs innlogging"
+
+msgid "Second factor login"
+msgstr "Tofaktorinnlogging"
+
+msgid "Root password set"
+msgstr "Root-passord angitt"
+
+#, python-brace-format
+msgid "Configured {} user(s)"
+msgstr "Konfigurerte {} bruker(e)"
+
+msgid "U2F set up"
+msgstr "U2F satt opp"
+
+#, python-brace-format
+msgid "Bootloader \"{}\""
+msgstr "Oppstartslaster «{}»"
+
+msgid "UKI enabled"
+msgstr "UKI aktivert"
+
+msgid "Removable"
+msgstr "Flyttbar"
+
+#, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr "Plymouth «{}»"
+
+msgid "Use a best-effort default partition layout"
+msgstr "Bruk et anbefalt standard partisjonsoppsett"
+
+msgid "Manual Partitioning"
+msgstr "Manuell partisjonering"
+
+msgid "Pre-mounted configuration"
+msgstr "Forhåndsmontert konfigurasjon"
+
+msgid "Default"
+msgstr "Standard"
+
+msgid "Manual"
+msgstr "Manuell"
+
+msgid "Pre-mount"
+msgstr "Forhåndsmontering"
+
+#, python-brace-format
+msgid "{} layout"
+msgstr "{}-oppsett"
+
+#, python-brace-format
+msgid "Devices {}"
+msgstr "Enheter {}"
+
+msgid "LVM set up"
+msgstr "LVM satt opp"
+
+#, python-brace-format
+msgid "{} encryption"
+msgstr "{}-kryptering"
+
+#, python-brace-format
+msgid "Btrfs snapshot \"{}\""
+msgstr "Btrfs-øyeblikksbilde «{}»"
+
+msgid "Unknown"
+msgstr "Ukjent"
+
+msgid "Default layout"
+msgstr "Standardoppsett"
+
+msgid "No Encryption"
+msgstr "Ingen kryptering"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM på LUKS"
+
+msgid "LUKS on LVM"
+msgstr "LUKS på LVM"
+
+#, python-brace-format
+msgid "Keyboard layout \"{}\""
+msgstr "Tastaturoppsett «{}»"
+
+#, python-brace-format
+msgid "Locale language \"{}\""
+msgstr "Lokalitetsspråk «{}»"
+
+#, python-brace-format
+msgid "Locale encoding \"{}\""
+msgstr "Lokalitetskoding «{}»"
+
+#, python-brace-format
+msgid "Console font \"{}\""
+msgstr "Konsollskrift «{}»"
+
+#, python-brace-format
+msgid "Mirror regions \"{}\""
+msgstr "Speilregioner «{}»"
+
+#, python-brace-format
+msgid "Optional repositories \"{}\""
+msgstr "Valgfrie pakkebrønner «{}»"
+
+msgid "Custom servers set up"
+msgstr "Egendefinerte servere satt opp"
+
+msgid "Custom repositories set up"
+msgstr "Egendefinerte pakkebrønner satt opp"
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Kopier ISO-nettverkskonfigurasjon til installasjonen"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Bruk Network Manager (standard bakgrunnssystem)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Bruk Network Manager (iwd-bakgrunnssystem)"
+
+msgid "Use standalone iwd"
+msgstr "Bruk frittstående iwd"
+
+msgid "Manual configuration"
+msgstr "Manuell konfigurasjon"
+
+msgid "Package group:"
+msgstr "Pakkegruppe:"
+
+msgid "Color enabled"
+msgstr "Farge aktivert"
+
+#, python-brace-format
+msgid "{} graphics driver"
+msgstr "{}-grafikkdriver"
+
+#, python-brace-format
+msgid "{} greeter"
+msgstr "{}-innloggingsskjerm"
+
+msgid "very weak"
+msgstr "svært svakt"
+
+msgid "weak"
+msgstr "svakt"
+
+msgid "moderate"
+msgstr "middels"
+
+msgid "strong"
+msgstr "sterkt"
+
+msgid "Add interface"
+msgstr "Legg til grensesnitt"
+
+msgid "Edit interface"
+msgstr "Rediger grensesnitt"
+
+msgid "Delete interface"
+msgstr "Slett grensesnitt"
+
+msgid "Select an interface"
+msgstr "Velg et grensesnitt"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "Du må angi en gyldig IP i IP-konfigurasjonsmodus"
+
+#, python-brace-format
+msgid "Select which mode to configure for \"{}\""
+msgstr "Velg hvilken modus som skal konfigureres for «{}»"
+
+#, python-brace-format
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Angi IP og subnett for {} (eksempel: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Angi IP-adressen til gatewayen (ruteren) (la stå tomt for ingen)"
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Angi DNS-serverne dine, atskilt med mellomrom (la stå tomt for ingen)"
+
+msgid "Choose network configuration"
+msgstr "Velg nettverkskonfigurasjon"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Anbefalt: Network Manager for skrivebord, Manuell for server"
+
+msgid "Configure interfaces"
+msgstr "Konfigurer grensesnitt"
+
+msgid "No network connection found"
+msgstr "Ingen nettverkstilkobling funnet"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Vil du koble til et wifi?"
+
+msgid "No wifi interface found"
+msgstr "Ingen wifi-grensesnitt funnet"
+
+msgid "No wifi networks found"
+msgstr "Ingen wifi-nettverk funnet"
+
+msgid "Select wifi network to connect to"
+msgstr "Velg wifi-nettverk å koble til"
+
+msgid "Scanning wifi networks..."
+msgstr "Søker etter wifi-nettverk ..."
+
+msgid "Failed setting up wifi"
+msgstr "Kunne ikke sette opp wifi"
+
+msgid "Enter wifi password"
+msgstr "Skriv inn wifi-passord"
+
+#, python-brace-format
+msgid "Repositories: {}"
+msgstr "Pakkebrønner: {}"
+
+msgid "Loading packages..."
+msgstr "Laster pakker ..."
+
+msgid "No packages found"
+msgstr "Ingen pakker funnet"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Bare pakker som base, sudo, linux, linux-firmware, efibootmgr og valgfrie profilpakker installeres."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Merk: base-devel installeres ikke lenger som standard. Legg den til her hvis du trenger byggeverktøy."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Velg eventuelle pakker fra listen nedenfor som skal installeres i tillegg"
+
+#, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "Angi antall parallelle nedlastinger (1–{})"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "Verdien må være mellom 1 og {}"
+
+msgid "Enable colored output for pacman"
+msgstr "Aktiver farget utdata for pacman"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman kjører allerede. Venter maksimalt 10 minutter på at den skal avsluttes."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "En eksisterende pacman-lås ble aldri frigjort. Rydd opp i eventuelle eksisterende pacman-økter før du bruker archinstall."
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Den proprietære Nvidia-driveren støttes ikke av Sway."
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Det er sannsynlig at du vil støte på problemer. Er det greit for deg?"
+
+msgid "Selected profiles: "
+msgstr "Valgte profiler: "
+
+msgid "Select which greeter to install"
+msgstr "Velg hvilken innloggingsskjerm som skal installeres"
+
+msgid "Select a profile type"
+msgstr "Velg en profiltype"
+
+#, python-brace-format
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Kunne ikke hente profil fra angitt URL: {}"
+
+#, python-brace-format
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Profiler må ha unike navn, men profildefinisjoner med duplikatnavn ble funnet: {}"
+
+msgid "Add a user"
+msgstr "Legg til en bruker"
+
+msgid "Change password"
+msgstr "Endre passord"
+
+msgid "Promote/Demote user"
+msgstr "Forfrem/degrader bruker"
+
+msgid "Delete User"
+msgstr "Slett bruker"
+
+msgid "User"
+msgstr "Bruker"
+
+msgid "Enter new password"
+msgstr "Skriv inn nytt passord"
+
+msgid "The username you entered is invalid"
+msgstr "Brukernavnet du oppga er ugyldig"
+
+msgid "Enter a username"
+msgstr "Angi et brukernavn"
+
+msgid "Username"
+msgstr "Brukernavn"
+
+msgid "Enter a password"
+msgstr "Skriv inn et passord"
+
+#, python-brace-format
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Skal «{}» være superbruker (sudo)?\n"
+
+#, python-brace-format
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr "Er i ferd med å laste opp «{}» til det offentlig tilgjengelige {}"
+
+msgid "Do you want to continue?"
+msgstr "Vil du fortsette?"
+
+#, python-brace-format
+msgid "Log uploaded successfully. URL: {}"
+msgstr "Loggen ble lastet opp. URL: {}"
+
+msgid "Failed to upload log."
+msgstr "Kunne ikke laste opp loggen."
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall krever root-rettigheter for å kjøre. Se --help for mer."
+
+msgid "New version available"
+msgstr "Ny versjon tilgjengelig"
+
+msgid "Starting device modifications in "
+msgstr "Starter endringer på enheten om "
+
+msgid "Ok"
+msgstr "OK"
+
+msgid "Input cannot be empty"
+msgstr "Inndata kan ikke være tom"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nei"
+
+msgid " (default)"
+msgstr " (standard)"
+

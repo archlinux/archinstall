@@ -218,6 +218,20 @@ msgstr ""
 msgid "Will install to custom location with NVRAM entry"
 msgstr ""
 
+msgid ""
+"Plymouth adds a cosmetic boot splash but can cause boot problems on some "
+"setups:"
+msgstr ""
+
+msgid "black screen with the NVIDIA driver"
+msgstr ""
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr ""
+
+msgid "Would you like to enable it?"
+msgstr ""
+
 msgid "Would you like to use unified kernel images?"
 msgstr ""
 
@@ -328,6 +342,10 @@ msgid "Password"
 msgstr ""
 
 msgid "Iteration time"
+msgstr ""
+
+msgid ""
+"No disks were detected. A disk is required to be able to install Arch Linux"
 msgstr ""
 
 msgid "Select disks for the installation"

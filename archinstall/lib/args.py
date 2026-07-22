@@ -1,7 +1,9 @@
 import argparse
 import json
 import os
+import stat
 import sys
+import tempfile
 import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
@@ -11,9 +13,10 @@ from pathlib import Path
 from typing import Any, Self
 from urllib.request import Request, urlopen
 
+from pydantic import TypeAdapter
 from pydantic.dataclasses import dataclass as p_dataclass
 
-from archinstall.lib.crypt import decrypt
+from archinstall.lib.crypt import decrypt, encrypt
 from archinstall.lib.log import debug, error, logger, warn
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
@@ -31,6 +34,7 @@ from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.lib.utils.format import as_key_value_pair
 from archinstall.lib.version import get_version
 from archinstall.tui.components import tui
 
@@ -56,7 +60,8 @@ class Arguments:
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
-	plugin: str | None = None
+	plugin: Path | None = None
+	plugin_url: str | None = None
 	skip_version_check: bool = False
 	skip_wifi_check: bool = False
 	advanced: bool = False
@@ -138,6 +143,11 @@ class ArchConfigType(StrEnum):
 				return tr('Root encrypted password')
 			case ArchConfigType.ENCRYPTION_PASSWORD:
 				return tr('Disk encryption password')
+
+
+USER_CONFIG_FILE: Path = Path('user_configuration.json')
+USER_CREDS_FILE: Path = Path('user_credentials.json')
+DEFAULT_SAVE_PATH = logger.directory
 
 
 @dataclass
@@ -367,6 +377,94 @@ class ArchConfig:
 
 		return arch_config
 
+	def user_config_to_json(self) -> str:
+		config = self.safe_config()
+
+		adapter = TypeAdapter(dict[ArchConfigType, Any])
+		python_dict = adapter.dump_python(config)
+		return json.dumps(python_dict, indent=4, sort_keys=True)
+
+	def user_credentials_to_json(self) -> str:
+		cfg = self.unsafe_config()
+
+		adapter = TypeAdapter(dict[ArchConfigType, Any])
+		python_dict = adapter.dump_python(cfg)
+		return json.dumps(python_dict, indent=4, sort_keys=True)
+
+	def write_debug(self) -> None:
+		debug(' -- Chosen configuration --')
+		debug(self.user_config_to_json())
+
+	def save(
+		self,
+		dest_path: Path | None = None,
+		creds: bool = False,
+		password: str | None = None,
+	) -> None:
+		save_path = dest_path or DEFAULT_SAVE_PATH
+
+		if not save_path.is_dir():
+			warn(
+				f'Destination directory {save_path} does not exist or is not a directory\n.',
+				'Configuration files can not be saved',
+			)
+			return
+
+		self.save_user_config(save_path)
+		if creds:
+			self.save_user_creds(save_path, password=password)
+
+	def save_user_config(self, dest_path: Path) -> None:
+		if not dest_path.is_dir():
+			error(f'Invalid path {dest_path}. User configuration could not be saved.')
+			return
+
+		target = dest_path / USER_CONFIG_FILE
+		data = self.user_config_to_json()
+		target.write_text(data)
+		target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+
+	def save_user_creds(
+		self,
+		dest_path: Path,
+		password: str | None = None,
+	) -> None:
+		if not dest_path.is_dir():
+			error(f'Invalid path {dest_path}. User credentials could not be saved.')
+			return
+
+		data = self.user_credentials_to_json()
+
+		if password:
+			data = encrypt(password, data)
+
+		target = dest_path / USER_CREDS_FILE
+		target.write_text(data)
+		target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+
+	def as_summary(self) -> str:
+		"""
+		Render a concise two-column summary of the current configuration.
+
+		Returns an empty string if nothing meaningful to show.
+		"""
+		cfg: dict[str, str | list[str] | bool] = {}
+
+		for key, value in self.plain_cfg().items():
+			cfg[key.text()] = value
+
+		for config_type, obj in self.sub_cfg().items():
+			if not hasattr(obj, 'summary'):
+				continue
+
+			summary = obj.summary()
+			if summary:
+				cfg[config_type.text()] = summary
+
+		simple_summary = as_key_value_pair(cfg, ignore_empty=True)
+
+		return simple_summary
+
 
 class ArchConfigHandler:
 	def __init__(self) -> None:
@@ -517,9 +615,16 @@ class ArchConfigHandler:
 		parser.add_argument(
 			'--plugin',
 			nargs='?',
-			type=str,
+			type=Path,
 			default=None,
 			help='File path to a plugin to load',
+		)
+		parser.add_argument(
+			'--plugin-url',
+			type=str,
+			nargs='?',
+			default=None,
+			help='Url to a plugin file to load',
 		)
 		parser.add_argument(
 			'--skip-version-check',
@@ -560,7 +665,11 @@ class ArchConfigHandler:
 			warn(f'Warning: --debug mode will write certain credentials to {logger.path}!')
 
 		if args.plugin:
-			plugin_path = Path(args.plugin)
+			load_plugin(args.plugin)
+
+		if args.plugin_url:
+			plugin_data = self._fetch_from_url(args.plugin_url)
+			plugin_path = self._write_plugin_to_temp_file(plugin_data)
 			load_plugin(plugin_path)
 
 		if args.creds_decryption_key is None:
@@ -651,6 +760,27 @@ class ArchConfigHandler:
 			error('Not a valid url')
 
 		sys.exit(1)
+
+	def _write_plugin_to_temp_file(self, plugin_data: str) -> Path:
+		if not plugin_data.strip():
+			error('The downloaded plugin is empty')
+			sys.exit(1)
+
+		tmp_file = tempfile.NamedTemporaryFile(
+			mode='w',
+			suffix='.py',
+			prefix='archinstall_plugin_',
+			delete=False,
+		)
+
+		try:
+			with tmp_file as f:
+				f.write(plugin_data)
+		except OSError as err:
+			error(f'Could not write the downloaded plugin to a temporary file: {err}')
+			sys.exit(1)
+
+		return Path(tmp_file.name)
 
 	def _read_file(self, path: Path) -> str:
 		if not path.exists():

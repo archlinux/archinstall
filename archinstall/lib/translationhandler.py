@@ -82,13 +82,14 @@ class TranslationHandler:
 		if not running_from_iso():
 			return
 
+		font_fd, font_path = tempfile.mkstemp(prefix='archinstall_font_')
+		cmap_fd, cmap_path = tempfile.mkstemp(prefix='archinstall_cmap_')
+		os.close(font_fd)
+		os.close(cmap_fd)
+		self._font_backup = Path(font_path)
+		self._cmap_backup = Path(cmap_path)
+
 		try:
-			font_fd, font_path = tempfile.mkstemp(prefix='archinstall_font_')
-			cmap_fd, cmap_path = tempfile.mkstemp(prefix='archinstall_cmap_')
-			os.close(font_fd)
-			os.close(cmap_fd)
-			self._font_backup = Path(font_path)
-			self._cmap_backup = Path(cmap_path)
 			SysCommand(['setfont', '-O', str(self._font_backup), '-om', str(self._cmap_backup)])
 		except SysCallError as err:
 			debug(f'Failed to save console font: {err}')
@@ -136,20 +137,20 @@ class TranslationHandler:
 			try:
 				# get a translation for a specific language
 				translation = gettext.translation('base', localedir=self._get_locales_dir(), languages=(abbr, lang))
-
-				# calculate the percentage of total translated text to total number of messages
-				if abbr == 'en':
-					percent = 100
-				else:
-					num_translations = self._get_catalog_size(translation)
-					percent = int((num_translations / self._total_messages) * 100)
-					# prevent cases where the .pot file is out of date and the percentage is above 100
-					percent = min(100, percent)
-
-				language = Language(abbr, lang, translation, percent, translated_lang, console_font)
-				languages.append(language)
 			except FileNotFoundError as err:
 				raise FileNotFoundError(f"Could not locate language file for '{lang}': {err}")
+
+			# calculate the percentage of total translated text to total number of messages
+			if abbr == 'en':
+				percent = 100
+			else:
+				num_translations = self._get_catalog_size(translation)
+				percent = int((num_translations / self._total_messages) * 100)
+				# prevent cases where the .pot file is out of date and the percentage is above 100
+				percent = min(100, percent)
+
+			language = Language(abbr, lang, translation, percent, translated_lang, console_font)
+			languages.append(language)
 
 		return languages
 

@@ -1,170 +1,52 @@
-import json
 import readline
-import stat
-from pathlib import Path
-from typing import Any
 
-from pydantic import TypeAdapter
-
-from archinstall.lib.args import ArchConfig, ArchConfigType
-from archinstall.lib.crypt import encrypt
-from archinstall.lib.log import debug, logger, warn
+from archinstall.lib.args import USER_CONFIG_FILE, USER_CREDS_FILE, ArchConfig
+from archinstall.lib.log import debug
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.menu.util import get_password, prompt_dir
 from archinstall.lib.translationhandler import tr
-from archinstall.lib.utils.format import as_key_value_pair
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
 
-class ConfigurationOutput:
-	def __init__(self, config: ArchConfig):
-		"""
-		Configuration output handler to parse the existing
-		configuration data structure and prepare for output on the
-		console and for saving it to configuration files
+async def confirm_config(config: ArchConfig) -> bool:
+	header = f'{tr("The specified configuration will be applied")}. '
+	header += tr('Would you like to continue?') + '\n'
 
-		:param config: Archinstall configuration object
-		:type config: ArchConfig
-		"""
+	group = MenuItemGroup.yes_no()
+	group.set_preview_for_all(lambda x: config.user_config_to_json())
 
-		self._config = config
-		self._default_save_path = logger.directory
-		self._user_config_file = Path('user_configuration.json')
-		self._user_creds_file = Path('user_credentials.json')
+	result = await Confirmation(
+		group=group,
+		header=header,
+		allow_skip=False,
+		preset=True,
+		preview_location='bottom',
+		preview_header=tr('Configuration preview'),
+	).show()
 
-	@property
-	def user_configuration_file(self) -> Path:
-		return self._user_config_file
+	if not result.get_value():
+		return False
 
-	@property
-	def user_credentials_file(self) -> Path:
-		return self._user_creds_file
-
-	def user_config_to_json(self) -> str:
-		config = self._config.safe_config()
-
-		adapter = TypeAdapter(dict[ArchConfigType, Any])
-		python_dict = adapter.dump_python(config)
-		return json.dumps(python_dict, indent=4, sort_keys=True)
-
-	def user_credentials_to_json(self) -> str:
-		cfg = self._config.unsafe_config()
-
-		adapter = TypeAdapter(dict[ArchConfigType, Any])
-		python_dict = adapter.dump_python(cfg)
-		return json.dumps(python_dict, indent=4, sort_keys=True)
-
-	def write_debug(self) -> None:
-		debug(' -- Chosen configuration --')
-		debug(self.user_config_to_json())
-
-	def as_summary(self) -> str:
-		"""
-		Render a concise two-column summary of the current configuration.
-
-		Returns an empty string if nothing meaningful to show.
-		"""
-		cfg: dict[str, str | list[str] | bool] = {}
-
-		for key, value in self._config.plain_cfg().items():
-			cfg[key.text()] = value
-
-		for config_type, obj in self._config.sub_cfg().items():
-			if not hasattr(obj, 'summary'):
-				continue
-
-			summary = obj.summary()
-			if summary:
-				cfg[config_type.text()] = summary
-
-		simple_summary = as_key_value_pair(cfg, ignore_empty=True)
-
-		return simple_summary
-
-	async def confirm_config(self) -> bool:
-		header = f'{tr("The specified configuration will be applied")}. '
-		header += tr('Would you like to continue?') + '\n'
-
-		group = MenuItemGroup.yes_no()
-		group.set_preview_for_all(lambda x: self.user_config_to_json())
-
-		result = await Confirmation(
-			group=group,
-			header=header,
-			allow_skip=False,
-			preset=True,
-			preview_location='bottom',
-			preview_header=tr('Configuration preview'),
-		).show()
-
-		if not result.get_value():
-			return False
-
-		return True
-
-	def _is_valid_path(self, dest_path: Path) -> bool:
-		dest_path_ok = dest_path.exists() and dest_path.is_dir()
-		if not dest_path_ok:
-			warn(
-				f'Destination directory {dest_path.resolve()} does not exist or is not a directory\n.',
-				'Configuration files can not be saved',
-			)
-		return dest_path_ok
-
-	def save_user_config(self, dest_path: Path) -> None:
-		if self._is_valid_path(dest_path):
-			target = dest_path / self._user_config_file
-			target.write_text(self.user_config_to_json())
-			target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
-
-	def save_user_creds(
-		self,
-		dest_path: Path,
-		password: str | None = None,
-	) -> None:
-		data = self.user_credentials_to_json()
-
-		if password:
-			data = encrypt(password, data)
-
-		if self._is_valid_path(dest_path):
-			target = dest_path / self._user_creds_file
-			target.write_text(data)
-			target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
-
-	def save(
-		self,
-		dest_path: Path | None = None,
-		creds: bool = False,
-		password: str | None = None,
-	) -> None:
-		save_path = dest_path or self._default_save_path
-
-		if self._is_valid_path(save_path):
-			self.save_user_config(save_path)
-			if creds:
-				self.save_user_creds(save_path, password=password)
+	return True
 
 
 async def save_config(config: ArchConfig) -> None:
 	def preview(item: MenuItem) -> str | None:
 		match item.value:
 			case 'user_config':
-				serialized = config_output.user_config_to_json()
-				return f'{config_output.user_configuration_file}\n{serialized}'
+				serialized = config.user_config_to_json()
+				return f'{USER_CONFIG_FILE}\n{serialized}'
 			case 'user_creds':
-				if maybe_serial := config_output.user_credentials_to_json():
-					return f'{config_output.user_credentials_file}\n{maybe_serial}'
+				if maybe_serial := config.user_credentials_to_json():
+					return f'{USER_CREDS_FILE}\n{maybe_serial}'
 				return tr('No configuration')
 			case 'all':
-				output = [str(config_output.user_configuration_file)]
-				config_output.user_credentials_to_json()
-				output.append(str(config_output.user_credentials_file))
+				output = [str(USER_CONFIG_FILE)]
+				config.user_credentials_to_json()
+				output.append(str(USER_CREDS_FILE))
 				return '\n'.join(output)
 		return None
-
-	config_output = ConfigurationOutput(config)
 
 	items = [
 		MenuItem(
@@ -248,8 +130,8 @@ async def save_config(config: ArchConfig) -> None:
 
 	match save_option:
 		case 'user_config':
-			config_output.save_user_config(dest_path)
+			config.save_user_config(dest_path)
 		case 'user_creds':
-			config_output.save_user_creds(dest_path, password=enc_password)
+			config.save_user_creds(dest_path, password=enc_password)
 		case 'all':
-			config_output.save(dest_path, creds=True, password=enc_password)
+			config.save(dest_path, creds=True, password=enc_password)

@@ -19,14 +19,15 @@ async def get_password(
 	def password_hint(value: str) -> InputInfo | None:
 		if not value:
 			return None
+
 		strength = PasswordStrength.strength(value)
-		if strength in (PasswordStrength.VERY_WEAK, PasswordStrength.WEAK):
-			return InputInfo(message=tr('Password strength: Weak'), msg_level=MsgLevelType.MsgError)
-		elif strength == PasswordStrength.MODERATE:
-			return InputInfo(message=tr('Password strength: Moderate'), msg_level=MsgLevelType.MsgWarning)
-		elif strength == PasswordStrength.STRONG:
-			return InputInfo(message=tr('Password strength: Strong'), msg_level=MsgLevelType.MsgInfo)
-		return None
+		match strength:
+			case PasswordStrength.VERY_WEAK | PasswordStrength.WEAK:
+				return InputInfo(message=tr('Password strength: Weak'), msg_level=MsgLevelType.MsgError)
+			case PasswordStrength.MODERATE:
+				return InputInfo(message=tr('Password strength: Moderate'), msg_level=MsgLevelType.MsgWarning)
+			case PasswordStrength.STRONG:
+				return InputInfo(message=tr('Password strength: Strong'), msg_level=MsgLevelType.MsgInfo)
 
 	while True:
 		result = await Input(

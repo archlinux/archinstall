@@ -1,6 +1,6 @@
 from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall.lib.args import ArchConfigHandler
-from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.configuration import confirm_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.installer import Installer
@@ -68,16 +68,15 @@ async def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	disk_config = await DiskLayoutConfigurationMenu(disk_layout_config=None).show()
 	arch_config_handler.config.disk_config = disk_config
 
-	config = ConfigurationOutput(arch_config_handler.config)
-	config.write_debug()
-	config.save()
+	arch_config_handler.config.write_debug()
+	arch_config_handler.config.save()
 
 	if arch_config_handler.args.dry_run:
 		return
 
 	if not arch_config_handler.args.silent:
 		aborted = False
-		res: bool = tui.run(config.confirm_config)
+		res: bool = tui.run(lambda: confirm_config(arch_config_handler.config))
 
 		if not res:
 			debug('Installation aborted')
