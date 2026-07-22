@@ -56,8 +56,8 @@ class MirrorListHandler:
 
 		for attempt_nr in range(attempts):
 			try:
-				mirrorlist = fetch_data_from_url(url)
-				self._status_mappings = self._parse_remote_mirror_list(mirrorlist)
+				data = fetch_data_from_url(url)
+				self._status_mappings = self._parse_remote_mirror_list(data)
 				return True
 			except Exception as e:
 				debug(f'Error while fetching mirror list: {e}')
@@ -85,9 +85,9 @@ class MirrorListHandler:
 		# just return as-is without sorting?
 		return region_list
 
-	def _parse_remote_mirror_list(self, mirrorlist: str) -> dict[str, list[MirrorStatusEntryV3]]:
+	def _parse_remote_mirror_list(self, data: bytes) -> dict[str, list[MirrorStatusEntryV3]]:
 		context = {'verbose': self.verbose}
-		mirror_status = MirrorStatusListV3.model_validate_json(mirrorlist, context=context)
+		mirror_status = MirrorStatusListV3.model_validate_json(data, context=context)
 
 		sorting_placeholder: dict[str, list[MirrorStatusEntryV3]] = {}
 
