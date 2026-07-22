@@ -127,12 +127,10 @@ class MirrorStatusListV3(BaseModel):
 
 	@model_validator(mode='before')
 	@classmethod
-	def check_model(
-		cls,
-		data: dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]],
-	) -> dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]:
-		if data.get('version') == 3:
-			return data
+	def check_model(cls, data: Any) -> Any:
+		if isinstance(data, dict):
+			if data.get('version') == 3:
+				return data
 
 		raise ValueError('MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/')
 
