@@ -8,7 +8,7 @@ from archinstall.lib.command import SysCommand, SysCommandWorker, run
 from archinstall.lib.disk.utils import get_lsblk_info, umount
 from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.log import debug, info
-from archinstall.lib.models.device import DEFAULT_ITER_TIME
+from archinstall.lib.models.device import DEFAULT_CIPHER, DEFAULT_ITER_TIME, EncryptionCipher
 from archinstall.lib.models.users import Password
 from archinstall.lib.utils.util import generate_password
 
@@ -69,10 +69,10 @@ class Luks2:
 
 	def encrypt(
 		self,
-		key_size: int = 512,
 		hash_type: str = 'sha512',
 		iter_time: int = DEFAULT_ITER_TIME,
 		key_file: Path | None = None,
+		cipher: EncryptionCipher = DEFAULT_CIPHER,
 	) -> Path | None:
 		debug(f'Luks2 encrypting: {self.luks_dev_path}')
 
@@ -86,10 +86,15 @@ class Luks2:
 			'luks2',
 			'--pbkdf',
 			'argon2id',
+			'--cipher',
+			cipher.value,
 			'--hash',
 			hash_type,
 			'--key-size',
-			str(key_size),
+			str(cipher.key_size),
+		]
+
+		cmd += [
 			'--iter-time',
 			str(iter_time),
 			*key_file_arg,
@@ -137,6 +142,18 @@ class Luks2:
 		if not self.mapper_name:
 			raise ValueError('mapper name missing')
 
+		# If a mapper device with this name already exists (e.g. left over from a
+		# previous failed run), close it before trying to open a new one.
+		# cryptsetup open returns exit code 5 / "Device already exists" otherwise.
+		if self.is_unlocked():
+			debug(f'Mapper {self.mapper_name} already open, closing before re-opening')
+			try:
+				SysCommand(f'cryptsetup close {self.mapper_name}')
+			except SysCallError as close_err:
+				raise DiskError(
+					f'Could not close existing mapper "{self.mapper_name}" before unlock: {close_err}'
+				)
+
 		key_file_arg, passphrase = self._get_passphrase_args(key_file)
 
 		cmd = [
@@ -161,6 +178,7 @@ class Luks2:
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
 	def lock(self) -> None:
+		import time
 		umount(self.luks_dev_path)
 
 		# Get crypt-information about the device by doing a reverse lookup starting with the partition path
@@ -169,14 +187,50 @@ class Luks2:
 
 		# For each child (sub-partition/sub-device)
 		for child in lsblk_info.children:
-			# Unmount the child location
 			for mountpoint in child.mountpoints:
 				debug(f'Unmounting {mountpoint}')
-				umount(mountpoint, recursive=True)
+				# mountpoint is a directory path, not a block device — umount()
+				# internally calls get_lsblk_info() which runs lsblk on the path
+				# and fails with "not a block device". Use run() directly to call
+				# umount(8) on the directory instead.
+				try:
+					run(['umount', '--recursive', str(mountpoint)])
+				except Exception as e:
+					debug(f'Could not unmount {mountpoint}: {e}')
+
+			# Wait for udev to finish processing events so the kernel drops
+			# any lingering reference on the mapper device before we close it.
+			try:
+				run(['udevadm', 'settle', '--timeout=5'])
+			except Exception:
+				pass
 
 			# And close it if possible.
 			debug(f'Closing crypt device {child.name}')
-			SysCommand(f'cryptsetup close {child.name}')
+
+			mapper_dev = Path(f'/dev/mapper/{child.name}')
+			try:
+				SysCommand(f'cryptsetup close {child.name}')
+			except SysCallError as err:
+				debug(f'cryptsetup close failed ({err}), retrying with --deferred')
+				try:
+					SysCommand(f'cryptsetup close --deferred {child.name}')
+					debug(f'cryptsetup close --deferred issued for {child.name}')
+				except SysCallError as deferred_err:
+					raise DiskError(
+						f'Could not close luks2 device "{child.name}": {deferred_err}'
+					) from deferred_err
+
+			# Wait until the mapper device node actually disappears before returning.
+			# Subsequent commands (wipefs, mkfs, etc.) will fail with "Device busy"
+			# if we return while the node still exists.
+			for _ in range(15):
+				if not mapper_dev.exists():
+					break
+				debug(f'Waiting for {mapper_dev} to disappear...')
+				time.sleep(1)
+			else:
+				raise DiskError(f'Mapper device {mapper_dev} did not disappear after close')
 
 	def create_keyfile(self, target_path: Path, override: bool = False) -> None:
 		"""

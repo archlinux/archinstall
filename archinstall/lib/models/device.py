@@ -1462,12 +1462,32 @@ class EncryptionType(StrEnum):
 		return type_to_text[self]
 
 
+class EncryptionCipher(Enum):
+	AES_XTS_PLAIN64 = 'aes-xts-plain64'
+	ADIANTUM_XCHACHA12_PLAIN64 = 'xchacha12,aes-adiantum-plain64'
+	ADIANTUM_XCHACHA20_PLAIN64 = 'xchacha20,aes-adiantum-plain64'
+	SERPENT_XTS_PLAIN64 = 'serpent-xts-plain64'
+	AES_HCTR2_PLAIN64 = 'aes-hctr2-plain64'
+	CAMELLIA_XTS_PLAIN64 = 'camellia-xts-plain64'
+	AES_CBC_ESSIV_SHA256 = 'aes-cbc-essiv:sha256'
+
+	@property
+	def key_size(self) -> int:
+		if '-xts-' in self.value:
+			return 512
+		return 256
+
+
+DEFAULT_CIPHER = EncryptionCipher.AES_XTS_PLAIN64
+
+
 class _DiskEncryptionSerialization(TypedDict):
 	encryption_type: str
 	partitions: list[str]
 	lvm_volumes: list[str]
 	hsm_device: NotRequired[_Fido2DeviceSerialization]
 	iter_time: NotRequired[int]
+	cipher: NotRequired[str]
 
 
 @dataclass
@@ -1478,6 +1498,7 @@ class DiskEncryption:
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
 	hsm_device: Fido2Device | None = None
 	iter_time: int = DEFAULT_ITER_TIME
+	cipher: EncryptionCipher = DEFAULT_CIPHER
 
 	def __post_init__(self) -> None:
 		if self.encryption_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS] and not self.partitions:
@@ -1504,6 +1525,9 @@ class DiskEncryption:
 
 		if self.iter_time != DEFAULT_ITER_TIME:  # Only include if not default
 			obj['iter_time'] = self.iter_time
+
+		if self.cipher != DEFAULT_CIPHER:  # Only include if not default
+			obj['cipher'] = self.cipher.value
 
 		return obj
 
@@ -1549,11 +1573,15 @@ class DiskEncryption:
 				if vol.obj_id in disk_encryption.get('lvm_volumes', []):
 					volumes.append(vol)
 
+		cipher_str = disk_encryption.get('cipher', None)
+		cipher = EncryptionCipher(cipher_str) if cipher_str else DEFAULT_CIPHER
+
 		enc = cls(
 			EncryptionType(disk_encryption['encryption_type']),
 			password,
 			enc_partitions,
 			volumes,
+			cipher=cipher,
 		)
 
 		if hsm := disk_encryption.get('hsm_device', None):
