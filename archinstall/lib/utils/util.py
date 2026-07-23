@@ -1,10 +1,8 @@
 import secrets
 import string
 from datetime import UTC, datetime
-from pathlib import Path
 
 from archinstall.lib.pathnames import ARCHISO_MOUNTPOINT
-from archinstall.lib.utils.format import as_columns
 
 
 def timestamp() -> str:
@@ -25,29 +23,3 @@ def running_from_iso() -> bool:
 def generate_password(length: int = 64) -> str:
 	haystack = string.printable  # digits, ascii_letters, punctuation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for _ in range(length))
-
-
-def format_cols(items: list[str], header: str | None = None) -> str:
-	if header:
-		text = f'{header}:\n'
-	else:
-		text = ''
-
-	nr_items = len(items)
-	if nr_items <= 4:
-		col = 1
-	elif nr_items <= 8:
-		col = 2
-	elif nr_items <= 12:
-		col = 3
-	else:
-		col = 4
-
-	text += as_columns(items, col)
-	# remove whitespaces on each row
-	text = '\n'.join(t.strip() for t in text.split('\n'))
-	return text
-
-
-def is_valid_path(path: Path) -> bool:
-	return path.exists() and path.is_dir()

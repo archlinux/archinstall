@@ -1,0 +1,1203 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Ksan Đorđe <djordje@ksan.dev>\n"
+"Language-Team: \n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+
+msgid "Recommended"
+msgstr "Preporučeno"
+
+msgid "Package"
+msgstr "Paket"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr "Odabrani skup KDE Plasma paketa"
+
+msgid "Dependencies"
+msgstr "Zavisnosti"
+
+msgid "Package group"
+msgstr "Grupa paketa"
+
+msgid "Extensive KDE Plasma installation"
+msgstr "Opsežna KDE Plasma instalacija"
+
+msgid "Packages in group"
+msgstr "Paketi u grupi"
+
+msgid "Minimal KDE Plasma installation"
+msgstr "Minimalna KDE Plasma instalacija"
+
+msgid "Type"
+msgstr "Tip"
+
+msgid "Description"
+msgstr "Opis"
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Izaberite varijantu KDE Plasma za instalaciju"
+
+#, python-brace-format
+msgid "{} needs access to your seat"
+msgstr "{} zahteva pristup vašem sedištu (seat)"
+
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "skup hardverskih uređaja tj. tastatura, miš"
+
+#, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
+msgstr "Izaberite opciju kako da date {} pristup vašem hardveru"
+
+#, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Tip okruženja: {} {}"
+
+#, python-brace-format
+msgid "Environment type: {}"
+msgstr "Tip okruženja: {}"
+
+msgid "Installed packages"
+msgstr "Instalirani paketi"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Print service"
+msgstr "Servis štampanja"
+
+msgid "Power management"
+msgstr "Upravljanje napajanjem"
+
+msgid "Firewall"
+msgstr "Zaštitni zid"
+
+msgid "Additional fonts"
+msgstr "Dodatni fontovi"
+
+msgid "Enabled"
+msgstr "Upaljeno"
+
+msgid "Disabled"
+msgstr "Ugašeno"
+
+msgid "Would you like to configure Bluetooth?"
+msgstr "Da li bi željeli da podesite Bluetooth?"
+
+msgid "Would you like to configure the print service?"
+msgstr "Da li bi željeli da podesite servis štampanja?"
+
+msgid "Select audio configuration"
+msgstr "Izaberite audio konfiguraciju"
+
+msgid "Select font packages to install"
+msgstr "Izaberite pakete fontova za instalaciju"
+
+msgid "ArchInstall Language"
+msgstr "ArchInstall jezik"
+
+msgid "Version"
+msgstr "Verzija"
+
+msgid "Installation Script"
+msgstr "Instalaciona skripta"
+
+msgid "Locales"
+msgstr "Lokali"
+
+msgid "Disk configuration"
+msgstr "Konfiguracija diska"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Mirrors and repositories"
+msgstr "Mirori i repozitorijumi"
+
+msgid "Network"
+msgstr "Mreža"
+
+msgid "Bootloader"
+msgstr "Bootloader"
+
+msgid "Application"
+msgstr "Aplikacija"
+
+msgid "Authentication"
+msgstr "Autentifikacija"
+
+msgid "Swap"
+msgstr "Swap"
+
+msgid "Hostname"
+msgstr "Ime hosta"
+
+msgid "Kernels"
+msgstr "Kerneli"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Automatska sinhronizacija vremena (NTP)"
+
+msgid "Timezone"
+msgstr "Vremenska zona"
+
+msgid "Services"
+msgstr "Servisi"
+
+msgid "Additional packages"
+msgstr "Dodatni paketi"
+
+msgid "Pacman"
+msgstr "Pacman"
+
+msgid "Custom commands"
+msgstr "Prilagođene komande"
+
+msgid "Users"
+msgstr "Korisnici"
+
+msgid "Root encrypted password"
+msgstr "Šifrovana root lozinka"
+
+msgid "Disk encryption password"
+msgstr "Lozinka za šifrovanje diska"
+
+msgid "Incorrect credentials file decryption password"
+msgstr "Neispravna lozinka za dešifrovanje datoteke sa podacima za prijavu"
+
+msgid "Enter credentials file decryption password"
+msgstr "Unesite lozinku za dešifrovanje datoteke sa podacima za prijavu"
+
+msgid "Incorrect password"
+msgstr "Netačna lozinka"
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "Podešavanje U2F prijave: {}"
+
+#, python-brace-format
+msgid "Setting up U2F device for user: {}"
+msgstr "Podešavanje U2F uređaja za korisnika: {}"
+
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Možda ćete morati da unesete PIN i zatim dodirnete vaš U2F uređaj da biste ga registrovali"
+
+msgid "Root password"
+msgstr "Root lozinka"
+
+msgid "User account"
+msgstr "Korisnički nalog"
+
+msgid "U2F login setup"
+msgstr "Podešavanje U2F prijave"
+
+msgid "U2F login method: "
+msgstr "Metod U2F prijave: "
+
+msgid "Passwordless sudo: "
+msgstr "Sudo bez lozinke: "
+
+msgid "No U2F devices found"
+msgstr "Nije pronađen nijedan U2F uređaj"
+
+msgid "Enter root password"
+msgstr "Unesite root lozinku"
+
+msgid "Enable passwordless sudo?"
+msgstr "Omogućiti sudo bez lozinke?"
+
+msgid "Unified kernel images"
+msgstr "Objedinjene slike kernela (UKI)"
+
+msgid "Install to removable location"
+msgstr "Instaliraj na prenosivu lokaciju"
+
+msgid "Plymouth"
+msgstr "Plymouth"
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Instaliraće se u /EFI/BOOT/ (prenosiva lokacija, bezbedna podrazumevana opcija)"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Instaliraće se na prilagođenu lokaciju sa NVRAM unosom"
+
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgstr "Plymouth dodaje kozmetički ekran pri pokretanju, ali može izazvati probleme pri pokretanju na nekim konfiguracijama:"
+
+msgid "black screen with the NVIDIA driver"
+msgstr "crn ekran sa NVIDIA drajverom"
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr "skriven upit za lozinku pri šifrovanju diska (LUKS)"
+
+msgid "Would you like to enable it?"
+msgstr "Da li želite da ga omogućite?"
+
+msgid "Would you like to use unified kernel images?"
+msgstr "Da li želite da koristite ujedinjene slike kernela (UKI)?"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Da li želite da instalirate bootloader na podrazumevanu lokaciju za pretragu prenosivih medija?"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Ovo instalira bootloader u /EFI/BOOT/BOOTX64.EFI (ili slično) što je korisno za:"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Firmver koji ne podržava pravilno NVRAM unose za pokretanje, kao većina MSI matičnih ploča,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "većina Apple Mac računara, mnogi laptopovi..."
+
+msgid "USB drives or other portable external media."
+msgstr "USB diskovi ili drugi prenosivi spoljni mediji."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Sistemi gde želite da disk bude pokretljiv na bilo kom računaru."
+
+msgid "Select bootloader to install"
+msgstr "Izaberite bootloader za instalaciju"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "UEFI nije detektovan i neke opcije su ugašene"
+
+msgid "Select Plymouth theme"
+msgstr "Izaberite Plymouth temu"
+
+msgid "The specified configuration will be applied"
+msgstr "Navedena konfiguracija će biti primjenjena"
+
+msgid "Would you like to continue?"
+msgstr "Da li želite da nastavite?"
+
+msgid "Configuration preview"
+msgstr "Pregled konfiguracije"
+
+msgid "No configuration"
+msgstr "Bez konfiguracije"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Sačuvaj korisničku konfiguraciju (uključujući raspored diska)"
+
+msgid "Save user credentials"
+msgstr "Sačuvaj podatke za prijavu korisnika"
+
+msgid "Save all"
+msgstr "Sačuvaj sve"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Unesite direktorijum u koji će konfiguracija(e) biti sačuvana(e)"
+
+#, python-brace-format
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Da li želite da sačuvate konfiguracionu datoteku(e) u {}?"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Da li želite da šifrujete datoteku user_credentials.json?"
+
+msgid "Credentials file encryption password"
+msgstr "Lozinka za šifrovanje datoteke sa podacima za prijavu"
+
+msgid "Partitioning"
+msgstr "Particionisanje"
+
+msgid "Disk encryption"
+msgstr "Šifrovanje diska"
+
+#, python-brace-format
+msgid "Configuration type: {}"
+msgstr "Tip konfiguracije: {}"
+
+msgid "Mountpoint"
+msgstr "Tačka montiranja"
+
+msgid "Configuration"
+msgstr "Konfiguracija"
+
+msgid "Wipe"
+msgstr "Obriši"
+
+msgid "Physical volumes"
+msgstr "Fizički volumeni"
+
+msgid "Volumes"
+msgstr "Volumeni"
+
+#, python-brace-format
+msgid "Snapshot type: {}"
+msgstr "Tip snimka: {}"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "LVM šifrovanje diska sa više od 2 particije trenutno nije podržano"
+
+msgid "Encryption type"
+msgstr "Tip šifrovanja"
+
+msgid "Password"
+msgstr "Lozinka"
+
+msgid "Iteration time"
+msgstr "Vrijeme iteracije"
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr "Nijedan disk nije detektovan. Disk je neophodan da biste mogli da instalirate Arch Linux"
+
+msgid "Select disks for the installation"
+msgstr "Izaberite diskove za instalaciju"
+
+msgid "Partitions"
+msgstr "Particije"
+
+msgid "Select a disk configuration"
+msgstr "Izaberite konfiguraciju diska"
+
+msgid "Enter root mount directory"
+msgstr "Unesite root direktorijum montiranja"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "Koristićete podešavanje diskova koje je montirano na navedenoj putanji"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "UPOZORENJE: Archinstall neće proveravati prikladnost ovog podešavanja"
+
+msgid "Select main filesystem"
+msgstr "Izaberite glavni fajl sistem"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Da li želite da koristite kompresiju ili da ugasite CoW?"
+
+msgid "Use compression"
+msgstr "Koristi kompresiju"
+
+msgid "Disable Copy-on-Write"
+msgstr "Ugasi Copy-on-Write"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Da li želite da koristite BTRFS podvolumene sa podrazumevanom strukturom?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Da li želite da kreirate posebnu particiju za /home?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Izabrani diskovi nemaju minimalni kapacitet potreban za automatski prijedlog\n"
+
+#, python-brace-format
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Minimalni kapacitet za /home particiju: {}GiB\n"
+
+#, python-brace-format
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Minimalni kapacitet za Arch Linux particiju: {}GiB"
+
+msgid "Encryption password"
+msgstr "Lozinka za šifrovanje"
+
+msgid "LVM volumes"
+msgstr "LVM volumeni"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Partitions to be encrypted"
+msgstr "Particije koje treba šifrovati"
+
+msgid "LVM volumes to be encrypted"
+msgstr "LVM volumeni koje treba šifrovati"
+
+msgid "HSM device"
+msgstr "HSM uređaj"
+
+msgid "Select encryption type"
+msgstr "Izaberite tip šifrovanja"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Unesite lozinku za šifrovanje diska (ostavite prazno ako ne želite šifrovanje)"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Izaberite FIDO2 uređaj za korišćenje kao HSM"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "Unesite vrijeme iteracije za LUKS šifrovanje (u milisekundama)"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "Veće vrijednosti povećavaju bezbednost ali usporavaju pokretanje sistema"
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "Podrazumevano: {}ms, Preporučeni opseg: 1000-60000"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "Vrijeme iteracije mora biti najmanje 100ms"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "Vrijeme iteracije mora biti najviše 120000ms"
+
+msgid "Please enter a valid number"
+msgstr "Molimo unesite ispravan broj"
+
+msgid "Suggest partition layout"
+msgstr "Predloži raspored particija"
+
+msgid "Remove all newly added partitions"
+msgstr "Ukloni sve novododate particije"
+
+msgid "Assign mountpoint"
+msgstr "Dodjeli tačku montiranja"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Označi/odznači za formatiranje (briše podatke)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Označi/odznači kao pokretljivo"
+
+msgid "Mark/Unmark as ESP"
+msgstr "Označi/odznači kao ESP"
+
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Označi/odznači kao XBOOTLDR"
+
+msgid "Change filesystem"
+msgstr "Promjeni fajl sistem"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Označi/odznači kao komprimovano"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "Označi/odznači kao nodatacow"
+
+msgid "Set subvolumes"
+msgstr "Postavi podvolumene"
+
+msgid "Delete partition"
+msgstr "Obriši particiju"
+
+#, python-brace-format
+msgid "Partition management: {}"
+msgstr "Upravljanje particijama: {}"
+
+#, python-brace-format
+msgid "Total length: {}"
+msgstr "Ukupna dužina: {}"
+
+msgid "Partition - New"
+msgstr "Particija - Nova"
+
+msgid "Partition"
+msgstr "Particija"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Ova particija je trenutno šifrovana, da biste je formatirali morate navesti fajl sistem"
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Tačke montiranja particija su relativne u odnosu na instalaciju, na primer boot bi bio /boot."
+
+msgid "Enter a mountpoint"
+msgstr "Unesite tačku montiranja"
+
+msgid "Invalid size"
+msgstr "Neispravna veličina"
+
+#, python-brace-format
+msgid "Selected free space segment on device {}:"
+msgstr "Izabrani segment slobodnog prostora na uređaju {}:"
+
+#, python-brace-format
+msgid "Size: {} / {}"
+msgstr "Veličina: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Sve unjete vrijednosti mogu imati sufiks jedinice: %, B, KB, KiB, MB, MiB..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Ako jedinica nije navedena, vrijednost se tumači kao sektori"
+
+#, python-brace-format
+msgid "Enter a size (default: {}): "
+msgstr "Unesite veličinu (podrazumevano: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Ovo će ukloniti sve novododate particije, nastaviti?"
+
+msgid "Add subvolume"
+msgstr "Dodaj podvolumen"
+
+msgid "Edit subvolume"
+msgstr "Izmeni podvolumen"
+
+msgid "Delete subvolume"
+msgstr "Obriši podvolumen"
+
+msgid "Value cannot be empty"
+msgstr "Vrijednost ne može biti prazna"
+
+msgid "Enter subvolume name"
+msgstr "Unesite ime podvolumena"
+
+msgid "Subvolume name"
+msgstr "Ime podvolumena"
+
+msgid "Enter subvolume mountpoint"
+msgstr "Unesite tačku montiranja podvolumena"
+
+msgid "Exit archinstall"
+msgstr "Izađi iz archinstall-a"
+
+msgid "Reboot system"
+msgstr "Ponovo pokreni sistem"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "chroot u instalaciju radi post-instalacionih podešavanja"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Da li želite da koristite automatsku sinhronizaciju vremena (NTP) sa podrazumevanim serverima vremena?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr "Hardversko vreme i drugi post-konfiguracioni koraci mogu biti potrebni da bi NTP radio.\nZa više informacija, molimo pogledajte Arch wiki"
+
+msgid "Enter a hostname"
+msgstr "Unesite ime hosta"
+
+msgid "Select timezone"
+msgstr "Izaberite vremensku zonu"
+
+msgid "What would you like to do next?"
+msgstr "Šta biste željeli da uradite sljedeće?"
+
+msgid "Select which kernel(s) to install"
+msgstr "Izaberite koje kernel(e) instalirati"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Za najbolju kompatibilnost sa vašim AMD hardverom, možda ćete željeti da koristite ili potpuno open-source ili AMD / ATI opcije."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Za najbolju kompatibilnost sa vašim Intel hardverom, možda ćete željeti da koristite ili potpuno open-source ili Intel opcije.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Za najbolju kompatibilnost sa vašim Nvidia hardverom, možda ćete željeti da koristite Nvidia vlasnički drajver.\n"
+
+msgid "Would you like to use swap on zram?"
+msgstr "Da li želite da koristite swap na zram-u?"
+
+msgid "Select zram compression algorithm:"
+msgstr "Izaberite zram algoritam kompresije:"
+
+msgid "Archinstall language"
+msgstr "Archinstall jezik"
+
+msgid "Applications"
+msgstr "Aplikacije"
+
+msgid "Network configuration"
+msgstr "Konfiguracija mreže"
+
+msgid "Save configuration"
+msgstr "Sačuvaj konfiguraciju"
+
+msgid "Install"
+msgstr "Instaliraj"
+
+msgid "Abort"
+msgstr "Prekini"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Mora biti navedena ili root lozinka ili najmanje 1 korisnik sa sudo privilegijama"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "Izabrani desktop profil zahtjeva običnog korisnika za prijavu preko greeter-a"
+
+msgid "Language"
+msgstr "Jezik"
+
+msgid "NTP"
+msgstr "NTP"
+
+msgid "LVM configuration type"
+msgstr "Tip LVM konfiguracije"
+
+#, python-brace-format
+msgid "Btrfs snapshot type: {}"
+msgstr "Tip Btrfs snimka: {}"
+
+msgid "Swap on zram"
+msgstr "Swap na zram-u"
+
+msgid "Compression algorithm"
+msgstr "Algoritam kompresije"
+
+msgid "Parallel Downloads"
+msgstr "Paralelna preuzimanja"
+
+msgid "Color"
+msgstr "Boja"
+
+msgid "Kernel"
+msgstr "Kernel"
+
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Nijedna konfiguracija mreže nije izabrana. Mrežu će biti potrebno ručno podesiti na instaliranom sistemu."
+
+msgid "Missing configurations:"
+msgstr "Nedostajuće konfiguracije:"
+
+msgid "Invalid configuration:"
+msgstr "Neispravna konfiguracija:"
+
+msgid "Ready to install"
+msgstr "Spremno za instalaciju"
+
+msgid "Warnings:"
+msgstr "Upozorenja:"
+
+msgid "Profiles"
+msgstr "Profili"
+
+msgid "Graphics driver"
+msgstr "Grafički drajver"
+
+msgid "Greeter"
+msgstr "Greeter"
+
+msgid "Selected mirror regions"
+msgstr "Izabrani regioni mirora"
+
+msgid "Custom servers"
+msgstr "Prilagođeni serveri"
+
+msgid "Optional repositories"
+msgstr "Opcioni repozitorijumi"
+
+msgid "Custom repositories"
+msgstr "Prilagođeni repozitorijumi"
+
+#, python-brace-format
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] Ovde je kreirana log datoteka: {}"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Molimo prijavite ovaj problem (i datoteku) na https://github.com/archlinux/archinstall/issues"
+
+msgid "Syncing the system..."
+msgstr "Sinhronizacija sistema..."
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Čekanje da se sinhronizacija vremena (timedatectl show) završi."
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Sinhronizacija vremena se ne završava, dok čekate - pogledajte dokumentaciju za zaobilazna rješenja: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Preskakanje čekanja na automatsku sinhronizaciju vremena (ovo može izazvati probleme ako vreme nije sinhronizovano tokom instalacije)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Čekanje da se sinhronizacija Arch Linux keyring-a (archlinux-keyring-wkd-sync) završi."
+
+msgid "Keyboard layout"
+msgstr "Raspored tastature"
+
+msgid "Locale language"
+msgstr "Jezik lokala"
+
+msgid "Locale encoding"
+msgstr "Kodiranje lokala"
+
+msgid "Console font"
+msgstr "Font konzole"
+
+msgid "Back"
+msgstr "Nazad"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Da li ste sigurni da želite da resetujete ovo podešavanje?"
+
+msgid "Confirm and exit"
+msgstr "Potvrdi i izađi"
+
+msgid "Cancel"
+msgstr "Otkaži"
+
+msgid "Password strength: Weak"
+msgstr "Jačina lozinke: Slaba"
+
+msgid "Password strength: Moderate"
+msgstr "Jačina lozinke: Umjerena"
+
+msgid "Password strength: Strong"
+msgstr "Jačina lozinke: Jaka"
+
+msgid "Confirm password"
+msgstr "Potvrdite lozinku"
+
+msgid "The password did not match, please try again"
+msgstr "Lozinke se ne poklapaju, molimo pokušajte ponovo"
+
+msgid "Not a valid directory"
+msgstr "Nije ispravan direktorijum"
+
+msgid "Do you really want to abort?"
+msgstr "Da li zaista želite da prekinete?"
+
+msgid "Add a custom repository"
+msgstr "Dodaj prilagođeni repozitorijum"
+
+msgid "Change custom repository"
+msgstr "Izmeni prilagođeni repozitorijum"
+
+msgid "Delete custom repository"
+msgstr "Obriši prilagođeni repozitorijum"
+
+msgid "Enter a repository name"
+msgstr "Unesite ime repozitorijuma"
+
+msgid "Name"
+msgstr "Ime"
+
+msgid "Enter the repository url"
+msgstr "Unesite URL repozitorijuma"
+
+msgid "Url"
+msgstr "URL"
+
+msgid "Select signature check"
+msgstr "Izaberite proveru potpisa"
+
+msgid "Signature check"
+msgstr "Provera potpisa"
+
+msgid "Select signature option"
+msgstr "Izaberite opciju potpisa"
+
+msgid "Add a custom server"
+msgstr "Dodaj prilagođeni server"
+
+msgid "Change custom server"
+msgstr "Izmeni prilagođeni server"
+
+msgid "Delete custom server"
+msgstr "Obriši prilagođeni server"
+
+msgid "Enter server url"
+msgstr "Unesite URL servera"
+
+msgid "Select regions"
+msgstr "Izaberite regione"
+
+msgid "Add custom servers"
+msgstr "Dodaj prilagođene servere"
+
+msgid "Add custom repository"
+msgstr "Dodaj prilagođeni repozitorijum"
+
+msgid "Additional repositories"
+msgstr "Dodatni repozitorijumi"
+
+msgid "Loading mirror regions..."
+msgstr "Učitavanje regiona mirora..."
+
+msgid "Select mirror regions to be enabled"
+msgstr "Izaberite regione mirora koje treba omogućiti"
+
+msgid "Select optional repositories to be enabled"
+msgstr "Izaberite opcione repozitorijume koje treba omogućiti"
+
+msgid "Unicode font coverage for most languages"
+msgstr "Unicode pokrivenost fontova za većinu jezika"
+
+msgid "color emoji for browsers and apps"
+msgstr "emoji u boji za pregledače i aplikacije"
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr "kineski, japanski, korejski znakovi"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr "zamena za Arial/Times/Courier, podrška za ćirilicu u Steam-u/igrama"
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr "široka Unicode pokrivenost, dobar rezervni font"
+
+msgid "Zram enabled"
+msgstr "Zram omogućen"
+
+#, python-brace-format
+msgid "Zram algorithm {}"
+msgstr "Zram algoritam {}"
+
+msgid "Bluetooth enabled"
+msgstr "Bluetooth omogućen"
+
+#, python-brace-format
+msgid "Audio server \"{}\""
+msgstr "Audio server \"{}\""
+
+#, python-brace-format
+msgid "Power management \"{}\""
+msgstr "Upravljanje napajanjem \"{}\""
+
+msgid "Print service enabled"
+msgstr "Servis štampanja omogućen"
+
+#, python-brace-format
+msgid "Firewall \"{}\""
+msgstr "Zaštitni zid \"{}\""
+
+#, python-brace-format
+msgid "Extra fonts \"{}\""
+msgstr "Dodatni fontovi \"{}\""
+
+msgid "Passwordless login"
+msgstr "Prijava bez lozinke"
+
+msgid "Second factor login"
+msgstr "Prijava sa drugim faktorom"
+
+msgid "Root password set"
+msgstr "Root lozinka postavljena"
+
+#, python-brace-format
+msgid "Configured {} user(s)"
+msgstr "Konfigurisano {} korisnik(a)"
+
+msgid "U2F set up"
+msgstr "U2F podešen"
+
+#, python-brace-format
+msgid "Bootloader \"{}\""
+msgstr "Bootloader \"{}\""
+
+msgid "UKI enabled"
+msgstr "UKI omogućen"
+
+msgid "Removable"
+msgstr "Prenosivo"
+
+#, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr "Plymouth \"{}\""
+
+msgid "Use a best-effort default partition layout"
+msgstr "Koristi podrazumjevani raspored particija (best-effort)"
+
+msgid "Manual Partitioning"
+msgstr "Ručno particionisanje"
+
+msgid "Pre-mounted configuration"
+msgstr "Prethodno montirana konfiguracija"
+
+msgid "Default"
+msgstr "Podrazumevano"
+
+msgid "Manual"
+msgstr "Ručno"
+
+msgid "Pre-mount"
+msgstr "Prethodno montiranje"
+
+#, python-brace-format
+msgid "{} layout"
+msgstr "{} raspored"
+
+#, python-brace-format
+msgid "Devices {}"
+msgstr "Uređaji {}"
+
+msgid "LVM set up"
+msgstr "LVM podešen"
+
+#, python-brace-format
+msgid "{} encryption"
+msgstr "{} šifrovanje"
+
+#, python-brace-format
+msgid "Btrfs snapshot \"{}\""
+msgstr "Btrfs snimak \"{}\""
+
+msgid "Unknown"
+msgstr "Nepoznato"
+
+msgid "Default layout"
+msgstr "Podrazumjevani raspored"
+
+msgid "No Encryption"
+msgstr "Bez šifrovanja"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM na LUKS-u"
+
+msgid "LUKS on LVM"
+msgstr "LUKS na LVM-u"
+
+#, python-brace-format
+msgid "Keyboard layout \"{}\""
+msgstr "Raspored tastature \"{}\""
+
+#, python-brace-format
+msgid "Locale language \"{}\""
+msgstr "Jezik lokala \"{}\""
+
+#, python-brace-format
+msgid "Locale encoding \"{}\""
+msgstr "Kodiranje lokala \"{}\""
+
+#, python-brace-format
+msgid "Console font \"{}\""
+msgstr "Font konzole \"{}\""
+
+#, python-brace-format
+msgid "Mirror regions \"{}\""
+msgstr "Regioni mirora \"{}\""
+
+#, python-brace-format
+msgid "Optional repositories \"{}\""
+msgstr "Opcioni repozitorijumi \"{}\""
+
+msgid "Custom servers set up"
+msgstr "Prilagođeni serveri podešeni"
+
+msgid "Custom repositories set up"
+msgstr "Prilagođeni repozitorijumi podešeni"
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Kopiraj mrežnu konfiguraciju sa ISO-a u instalaciju"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Koristi Network Manager (podrazumevani backend)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Koristi Network Manager (iwd backend)"
+
+msgid "Use standalone iwd"
+msgstr "Koristi samostalni iwd"
+
+msgid "Manual configuration"
+msgstr "Ručna konfiguracija"
+
+msgid "Package group:"
+msgstr "Grupa paketa:"
+
+msgid "Color enabled"
+msgstr "Boja omogućena"
+
+#, python-brace-format
+msgid "{} graphics driver"
+msgstr "{} grafički drajver"
+
+#, python-brace-format
+msgid "{} greeter"
+msgstr "{} greeter"
+
+msgid "very weak"
+msgstr "veoma slaba"
+
+msgid "weak"
+msgstr "slaba"
+
+msgid "moderate"
+msgstr "umerena"
+
+msgid "strong"
+msgstr "jaka"
+
+msgid "Add interface"
+msgstr "Dodaj interfejs"
+
+msgid "Edit interface"
+msgstr "Izmeni interfejs"
+
+msgid "Delete interface"
+msgstr "Obriši interfejs"
+
+msgid "Select an interface"
+msgstr "Izaberite interfejs"
+
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "Morate uneti ispravnu IP adresu u režimu IP konfiguracije"
+
+#, python-brace-format
+msgid "Select which mode to configure for \"{}\""
+msgstr "Izaberite koji režim da konfigurišete za \"{}\""
+
+#, python-brace-format
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Unesite IP i podmrežu za {} (primer: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Unesite IP adresu vašeg gateway-a (rutera) (ostavite prazno za nijedan)"
+
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Unesite vaše DNS servere razdvojene razmakom (ostavite prazno za nijedan)"
+
+msgid "Choose network configuration"
+msgstr "Izaberite konfiguraciju mreže"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Preporučeno: Network Manager za desktop, Ručno za server"
+
+msgid "Configure interfaces"
+msgstr "Konfiguriši interfejse"
+
+msgid "No network connection found"
+msgstr "Nije pronađena mrežna veza"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Da li želite da se povežete na WiFi?"
+
+msgid "No wifi interface found"
+msgstr "Nije pronađen WiFi interfejs"
+
+msgid "No wifi networks found"
+msgstr "Nije pronađena nijedna WiFi mreža"
+
+msgid "Select wifi network to connect to"
+msgstr "Izaberite WiFi mrežu za povezivanje"
+
+msgid "Scanning wifi networks..."
+msgstr "Skeniranje WiFi mreža..."
+
+msgid "Failed setting up wifi"
+msgstr "Podešavanje WiFi-ja nije uspjelo"
+
+msgid "Enter wifi password"
+msgstr "Unesite WiFi lozinku"
+
+#, python-brace-format
+msgid "Repositories: {}"
+msgstr "Repozitorijumi: {}"
+
+msgid "Loading packages..."
+msgstr "Učitavanje paketa..."
+
+msgid "No packages found"
+msgstr "Nije pronađen nijedan paket"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Instalirani su samo paketi kao što su base, sudo, linux, linux-firmware, efibootmgr i opcioni paketi profila."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Napomena: base-devel se više ne instalira podrazumevano. Dodajte ga ovde ako su vam potrebni alati za kompajliranje."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Izaberite bilo koje pakete sa donje liste koje treba dodatno instalirati"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman je već pokrenut, čeka se najviše 10 minuta da se završi."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Postojeće pacman zaključavanje nikada nije završeno. Molimo očistite sve postojeće pacman sesije pre korišćenja archinstall-a."
+
+#, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "Unesite broj paralelnih preuzimanja (1-{})"
+
+#, python-brace-format
+msgid "Value must be between 1 and {}"
+msgstr "Vrijednost mora biti između 1 i {}"
+
+msgid "Enable colored output for pacman"
+msgstr "Omogući obojeni ispis za pacman"
+
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Vlasnički Nvidia drajver nije podržan od strane Sway-a."
+
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Vjerovatno ćete naići na probleme, da li vam to odgovara?"
+
+msgid "Selected profiles: "
+msgstr "Izabrani profili: "
+
+msgid "Select which greeter to install"
+msgstr "Izaberite koji greeter da instalirate"
+
+msgid "Select a profile type"
+msgstr "Izaberite tip profila"
+
+#, python-brace-format
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Nije moguće preuzeti profil sa navedenog URL-a: {}"
+
+#, python-brace-format
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Profili moraju imati jedinstveno ime, ali su pronađene definicije profila sa imenom duplikatom: {}"
+
+msgid "Add a user"
+msgstr "Dodaj korisnika"
+
+msgid "Change password"
+msgstr "Promeni lozinku"
+
+msgid "Promote/Demote user"
+msgstr "Unapredi/degradiraj korisnika"
+
+msgid "Delete User"
+msgstr "Obriši korisnika"
+
+msgid "User"
+msgstr "Korisnik"
+
+msgid "Enter new password"
+msgstr "Unesite novu lozinku"
+
+msgid "The username you entered is invalid"
+msgstr "Korisničko ime koje ste uneli je neispravno"
+
+msgid "Enter a username"
+msgstr "Unesite korisničko ime"
+
+msgid "Username"
+msgstr "Korisničko ime"
+
+msgid "Enter a password"
+msgstr "Unesite lozinku"
+
+#, python-brace-format
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Da li \"{}\" treba da bude superkorisnik (sudo)?\n"
+
+#, python-brace-format
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr "Sprema se otpremanje \"{}\" na javno dostupni {}"
+
+msgid "Do you want to continue?"
+msgstr "Da li želite da nastavite?"
+
+#, python-brace-format
+msgid "Log uploaded successfully. URL: {}"
+msgstr "Log je uspešno otpremljen. URL: {}"
+
+msgid "Failed to upload log."
+msgstr "Otpremanje log-a nije uspelo."
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall zahteva root privilegije za pokretanje. Pogledajte --help za više."
+
+msgid "New version available"
+msgstr "Dostupna je nova verzija"
+
+msgid "Starting device modifications in "
+msgstr "Pokretanje izmena uređaja za "
+
+msgid "Ok"
+msgstr "U redu"
+
+msgid "Input cannot be empty"
+msgstr "Unos ne može biti prazan"
+
+msgid "Yes"
+msgstr "Da"
+
+msgid "No"
+msgstr "Ne"
+
+msgid " (default)"
+msgstr " (podrazumevano)"

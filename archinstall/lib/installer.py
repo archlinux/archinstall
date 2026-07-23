@@ -660,16 +660,12 @@ class Installer:
 		# in the first column of the entry; check for both cases.
 		entry_re = re.compile(rf'#{lang}(\.{encoding})?{modifier} {encoding}')
 
-		lang_value = None
 		for index, line in enumerate(locale_gen_lines):
 			if entry_re.match(line):
-				uncommented_line = line.removeprefix('#')
-				locale_gen_lines[index] = uncommented_line
+				locale_gen_lines[index] = line.removeprefix('#')
 				locale_gen.write_text(''.join(locale_gen_lines))
-				lang_value = uncommented_line.split()[0]
 				break
-
-		if lang_value is None:
+		else:
 			error(f"Invalid locale: language '{locale_config.sys_lang}', encoding '{locale_config.sys_enc}'")
 			return False
 
@@ -679,7 +675,7 @@ class Installer:
 			error(f'Failed to run locale-gen on target: {e}')
 			return False
 
-		(self.target / 'etc/locale.conf').write_text(f'LANG={lang_value}\n')
+		(self.target / 'etc/locale.conf').write_text(f'LANG={lang}.{encoding}{modifier}\n')
 		return True
 
 	def set_timezone(self, zone: str) -> bool:
@@ -1480,20 +1476,20 @@ class Installer:
 
 			parent_dev_path = get_parent_device_path(efi_partition.safe_dev_path)
 
+			efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
+			efi_dir_path_target = efi_partition.mountpoint / 'EFI'
+			if bootloader_removable:
+				efi_dir_path = efi_dir_path / 'BOOT'
+				efi_dir_path_target = efi_dir_path_target / 'BOOT'
+			else:
+				efi_dir_path = efi_dir_path / 'arch-limine'
+				efi_dir_path_target = efi_dir_path_target / 'arch-limine'
+
+			config_path = efi_dir_path / 'limine.conf'
+
+			efi_dir_path.mkdir(parents=True, exist_ok=True)
+
 			try:
-				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
-				efi_dir_path_target = efi_partition.mountpoint / 'EFI'
-				if bootloader_removable:
-					efi_dir_path = efi_dir_path / 'BOOT'
-					efi_dir_path_target = efi_dir_path_target / 'BOOT'
-				else:
-					efi_dir_path = efi_dir_path / 'arch-limine'
-					efi_dir_path_target = efi_dir_path_target / 'arch-limine'
-
-				config_path = efi_dir_path / 'limine.conf'
-
-				efi_dir_path.mkdir(parents=True, exist_ok=True)
-
 				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
 					(limine_path / file).copy_into(efi_dir_path)
 			except Exception as err:
