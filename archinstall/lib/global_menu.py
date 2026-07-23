@@ -1,5 +1,6 @@
 import inspect
 from collections.abc import Callable
+from functools import wraps
 from typing import Any, override
 
 from archinstall.default_profiles.profile import GreeterType
@@ -101,22 +102,24 @@ class GlobalMenu(AbstractMenu[None]):
 				prefix = self._get_status_prefix(item)
 				item.text = f'{prefix}{base_title}'
 
-	def _wrap_action(self, key: str, action: Callable[..., Any]) -> Callable[..., Any]:
-		async def wrapper(*args, **kwargs) -> Any:
-			if inspect.iscoroutinefunction(action):
-				result = await action(*args, **kwargs)
-			else:
-				result = action(*args, **kwargs)
-				if inspect.isawaitable(result):
-					result = await result
+	def _wrap_action(self, item: MenuItem, action: Callable[..., Any]) -> Callable[..., Any]:
+		@wraps(action)
+		async def wrapper(*args: Any, **kwargs: Any) -> Any:
+			try:
+				if inspect.iscoroutinefunction(action):
+					result = await action(*args, **kwargs)
+				else:
+					result = action(*args, **kwargs)
+					if inspect.isawaitable(result):
+						result = await result
 
-			item = self._item_group.find_by_key(key)
-			if item:
+						# Directly update the item's value
 				item.value = result
 
-			self._update_item_labels()
+				return result
 
-			return result
+			finally:
+				self._update_item_labels()
 
 		return wrapper
 
@@ -254,7 +257,7 @@ class GlobalMenu(AbstractMenu[None]):
 		if wrap_actions:
 			for item in menu_options:
 				if item.key and item.action:
-					item.action = self._wrap_action(item.key, item.action)
+					item.action = self._wrap_action(item, item.action)
 
 		return menu_options
 
