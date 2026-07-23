@@ -1,5 +1,6 @@
 import inspect
-from typing import Any, Callable, override
+from collections.abc import Callable
+from typing import Any, override
 
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.applications.application_menu import ApplicationMenu
@@ -70,25 +71,22 @@ class GlobalMenu(AbstractMenu[None]):
 		- [•] (Yellow) for unconfigured optional items
 		"""
 		if item.read_only or item.key in (SpecialMenuKey.SAVE.value, SpecialMenuKey.INSTALL.value, SpecialMenuKey.ABORT.value):
-			return ""
+			return ''
 
 		if item.key == 'auth_config':
 			auth_config: AuthenticationConfiguration | None = item.value
-			is_auth_valid = (
-				auth_config is not None 
-				and (auth_config.root_enc_password is not None or auth_config.has_superuser())
-			)
+			is_auth_valid = auth_config is not None and (auth_config.root_enc_password is not None or auth_config.has_superuser())
 			if is_auth_valid:
-				return "[bold green][✓][/bold green] "
-			return "[bold red][!][/bold red] "
+				return '[bold green][✓][/bold green] '
+			return '[bold red][!][/bold red] '
 
 		# Standard mandatory or configured item check
 		if item.has_value():
-			return "[bold green][✓][/bold green] "
+			return '[bold green][✓][/bold green] '
 		elif item.mandatory:
-			return "[bold red][!][/bold red] "
+			return '[bold red][!][/bold red] '
 		else:
-			return "[bold yellow][•][/bold yellow] "
+			return '[bold yellow][•][/bold yellow] '
 
 	def _update_item_labels(self) -> None:
 		"""
@@ -101,9 +99,9 @@ class GlobalMenu(AbstractMenu[None]):
 			if item.key in new_options:
 				base_title = new_options[item.key]
 				prefix = self._get_status_prefix(item)
-				item.text = f"{prefix}{base_title}"
+				item.text = f'{prefix}{base_title}'
 
-	def _wrap_action(self, key: str, action: Callable) -> Callable:
+	def _wrap_action(self, key: str, action: Callable[..., Any]) -> Callable[..., Any]:
 		async def wrapper(*args, **kwargs) -> Any:
 			if inspect.iscoroutinefunction(action):
 				result = await action(*args, **kwargs)
@@ -111,15 +109,15 @@ class GlobalMenu(AbstractMenu[None]):
 				result = action(*args, **kwargs)
 				if inspect.isawaitable(result):
 					result = await result
-			
+
 			item = self._item_group.find_by_key(key)
 			if item:
 				item.value = result
-				
+
 			self._update_item_labels()
-			
+
 			return result
-			
+
 		return wrapper
 
 	def _get_menu_options(self, wrap_actions: bool = True) -> list[MenuItem]:
