@@ -121,7 +121,7 @@ def enrich_iface_types(interfaces: list[str]) -> dict[str, str]:
 	return result
 
 
-def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout: int = 30) -> str:
+def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout: int = 30) -> bytes:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -134,8 +134,7 @@ def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout:
 
 	try:
 		response = urlopen(full_url, context=ssl_context, timeout=timeout)
-		data = response.read().decode('UTF-8')
-		return data
+		return response.read()
 	except URLError as e:
 		raise ValueError(f'Unable to fetch data from url: {url}\n{e}')
 	except Exception as e:

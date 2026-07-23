@@ -262,10 +262,8 @@ class ProfileHandler:
 			err = tr('Unable to fetch profile from specified url: {}').format(url)
 			error(err)
 		else:
-			b_data = bytes(data, 'utf-8')
-
 			with NamedTemporaryFile(delete=False, suffix='.py') as fp:
-				fp.write(b_data)
+				fp.write(data)
 				filepath = Path(fp.name)
 
 			profiles = self._process_profile_file(filepath)
