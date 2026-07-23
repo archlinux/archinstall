@@ -1,6 +1,6 @@
 import inspect
-from functools import wraps
-from typing import override
+from collections.abc import Callable
+from typing import Any, override
 
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.applications.application_menu import ApplicationMenu
@@ -80,6 +80,7 @@ class GlobalMenu(AbstractMenu[None]):
 				return '[bold green][✓][/bold green] '
 			return '[bold red][!][/bold red] '
 
+		# Standard mandatory or configured item check
 		if item.has_value():
 			return '[bold green][✓][/bold green] '
 		elif item.mandatory:
@@ -100,24 +101,22 @@ class GlobalMenu(AbstractMenu[None]):
 				prefix = self._get_status_prefix(item)
 				item.text = f'{prefix}{base_title}'
 
-	def _wrap_action(item_dictionary, update_callback, key, action):
-		@wraps(action)
-		async def wrapper(*args, **kwargs):
-			try:
-				if inspect.iscoroutinefunction(action):
-					result = await action(*args, **kwargs)
-				else:
-					result = action(*args, **kwargs)
-					if inspect.isawaitable(result):
-						result = await result
+	def _wrap_action(self, key: str, action: Callable[..., Any]) -> Callable[..., Any]:
+		async def wrapper(*args, **kwargs) -> Any:
+			if inspect.iscoroutinefunction(action):
+				result = await action(*args, **kwargs)
+			else:
+				result = action(*args, **kwargs)
+				if inspect.isawaitable(result):
+					result = await result
 
-				if key in item_dictionary:
-					item_dictionary[key].value = result
+			item = self._item_group.find_by_key(key)
+			if item:
+				item.value = result
 
-				return result
+			self._update_item_labels()
 
-			finally:
-				update_callback()
+			return result
 
 		return wrapper
 
