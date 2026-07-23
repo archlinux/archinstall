@@ -59,6 +59,46 @@ class GlobalMenu(AbstractMenu[None]):
 		)
 
 		super().__init__(self._item_group, config=arch_config, title=title)
+		self._update_item_labels()
+
+	def _get_status_prefix(self, item: MenuItem) -> str:
+		"""
+		Returns a rich-formatted status prefix icon depending on item state:
+		- [✓] (Green) for configured items
+		- [!] (Yellow) for missing mandatory or required items
+		- [•] (Dim) for unconfigured optional items
+		"""
+		if item.read_only or item.key in (SpecialMenuKey.SAVE.value, SpecialMenuKey.INSTALL.value, SpecialMenuKey.ABORT.value):
+			return ""
+
+		if item.key == 'auth_config':
+			auth_config: AuthenticationConfiguration | None = item.value
+			is_auth_valid = (
+				auth_config is not None 
+				and (auth_config.root_enc_password is not None or auth_config.has_superuser())
+			)
+			if is_auth_valid:
+				return "[bold green][✓][/bold green] "
+			return "[bold yellow][!][/bold yellow] "
+
+		if item.has_value():
+			return "[bold green][✓][/bold green] "
+		elif item.mandatory:
+			return "[bold yellow][!][/bold yellow] "
+		else:
+			return "[dim white][•][/dim white] "
+
+	def _update_item_labels(self) -> None:
+		"""
+		Re-applies translated titles and status prefixes to all active menu items.
+		"""
+		new_options = {o.key: o.text for o in self._get_menu_options() if o.key is not None}
+
+		for item in self._item_group.items:
+			if item.key in new_options:
+				base_title = new_options[item.key]
+				prefix = self._get_status_prefix(item)
+				item.text = f"{prefix}{base_title}"
 
 	def _get_menu_options(self) -> list[MenuItem]:
 		menu_options = [
@@ -265,27 +305,24 @@ class GlobalMenu(AbstractMenu[None]):
 
 	async def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
 		app_config = await ApplicationMenu(preset).show()
+		self._update_item_labels()
 		return app_config
 
 	async def _select_authentication(self, preset: AuthenticationConfiguration | None) -> AuthenticationConfiguration | None:
 		auth_config = await AuthenticationMenu(preset).show()
+		self._update_item_labels()
 		return auth_config
 
 	def _update_lang_text(self) -> None:
 		"""
-		The options for the global menu are generated with a static text;
-		each entry of the menu needs to be updated with the new translation
+		Updates option titles and status prefixes when language changes or settings are modified.
 		"""
-		new_options = self._get_menu_options()
-
-		for o in new_options:
-			if o.key is not None:
-				self._item_group.find_by_key(o.key).text = o.text
-
+		self._update_item_labels()
 		tui.translate_bindings()
 
 	async def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration | None:
 		locale_config = await LocaleMenu(preset).show()
+		self._update_item_labels()
 		return locale_config
 
 	def _prev_locale(self, item: MenuItem) -> str | None:
@@ -420,7 +457,9 @@ class GlobalMenu(AbstractMenu[None]):
 		return None
 
 	async def _pacman_configuration(self, preset: PacmanConfiguration) -> PacmanConfiguration | None:
-		return await PacmanMenu(preset, advanced=self._advanced).show()
+		res = await PacmanMenu(preset, advanced=self._advanced).show()
+		self._update_item_labels()
+		return res
 
 	def _prev_pacman_config(self, item: MenuItem) -> str | None:
 		if not item.value:
@@ -561,6 +600,7 @@ class GlobalMenu(AbstractMenu[None]):
 		preset: DiskLayoutConfiguration | None = None,
 	) -> DiskLayoutConfiguration | None:
 		disk_config = await DiskLayoutConfigurationMenu(preset).show()
+		self._update_item_labels()
 		return disk_config
 
 	async def _select_bootloader_config(
@@ -571,13 +611,14 @@ class GlobalMenu(AbstractMenu[None]):
 			preset = BootloaderConfiguration.get_default(self._uefi, self._skip_boot)
 
 		bootloader_config = await BootloaderMenu(preset, self._uefi, self._skip_boot).show()
-
+		self._update_item_labels()
 		return bootloader_config
 
 	async def _select_profile(self, current_profile: ProfileConfiguration | None) -> ProfileConfiguration | None:
 		from archinstall.lib.profile.profile_menu import ProfileMenu
 
 		profile_config = await ProfileMenu(preset=current_profile).show()
+		self._update_item_labels()
 		return profile_config
 
 	async def _select_additional_packages(self, preset: list[str]) -> list[str]:
@@ -591,7 +632,7 @@ class GlobalMenu(AbstractMenu[None]):
 			preset,
 			repositories=repositories,
 		)
-
+		self._update_item_labels()
 		return packages
 
 	async def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
@@ -609,6 +650,7 @@ class GlobalMenu(AbstractMenu[None]):
 			pacman_config.enable(mirror_configuration.optional_repositories)
 			pacman_config.apply()
 
+		self._update_item_labels()
 		return mirror_configuration
 
 	def _prev_mirror_config(self, item: MenuItem) -> str | None:
