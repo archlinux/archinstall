@@ -297,11 +297,14 @@ class GlobalMenu(AbstractMenu[None]):
 						tr('The selected desktop profile requires a regular user to log in via the greeter'),
 					)
 
+		raw_options = {o.key: o.text for o in self._get_menu_options(wrap_actions=False) if o.key is not None}
+
 		for item in self._item_group.items:
 			if item.mandatory:
 				assert item.key is not None
 				if not check(item.key):
-					missing.add(item.text)
+					raw_title = raw_options.get(item.key, item.text)
+					missing.add(raw_title)
 
 		return list(missing)
 
