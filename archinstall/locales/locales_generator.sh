@@ -67,19 +67,9 @@ cmd_check_po_syntax() {
 	echo "All .po files passed syntax check."
 }
 
-cmd_check_no_tr_fstring() {
-	echo "Checking for tr(f-string) anti-pattern..."
-	if grep -rnE "tr\(\s*f['\"]" . --include='*.py'; then
-		echo "ERROR: use tr('...{}').format(...) instead of tr(f'...')" >&2
-		return 1
-	fi
-	echo "No tr(f-string) anti-pattern found."
-}
-
 cmd_check() {
 	local failed=0
 	cmd_check_po_syntax || failed=1
-	cmd_check_no_tr_fstring || failed=1
 	if [ "$failed" -eq 1 ]; then
 		echo "Some translation checks failed." >&2
 		exit 1

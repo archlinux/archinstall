@@ -202,9 +202,6 @@ indent-style = "tab"
 quote-style = "single"
 docstring-code-format = true
 
-[tool.ruff.lint.flake8-tidy-imports]
-ban-relative-imports = "all"
-
 [tool.ruff.lint]
 select = [
     "ASYNC",  # flake8-async
@@ -220,6 +217,7 @@ select = [
     "G",      # flake8-logging-format
     "I",      # isort
     "ICN",    # flake8-import-conventions
+    "INT",    # flake8-gettext
     "ISC",    # flake8-implicit-str-concat
     "LOG",    # flake8-logging
     "PGH",    # pygrep-hooks
@@ -232,10 +230,10 @@ select = [
     "RUF",    # Ruff-specific rules
     "SLOT",   # flake8-slot
     "T10",    # flake8-debugger
+    "TID",    # flake8-tidy-imports (Enables TID252)
     "UP",     # pyupgrade
     "W",      # pycodestyle warnings
     "YTT",    # flake8-2020
-    "TID",    # flake8-tidy-imports (Enables TID252)
 ]
 
 ignore = [
@@ -255,6 +253,15 @@ ignore = [
     "RUF039",   # unraw-re-pattern
     "W191",     # tab-indentation
 ]
+
+[tool.ruff.lint.flake8-gettext]
+function-names = [
+    "tr",
+    "tr_noop",
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
 
 [tool.ruff.lint.mccabe]
 max-complexity = 40
