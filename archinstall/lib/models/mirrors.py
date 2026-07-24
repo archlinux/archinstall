@@ -101,8 +101,8 @@ class MirrorStatusEntryV3(BaseModel):
 
 	@classmethod
 	@field_validator('score', mode='before')
-	def validate_score(cls, value: float) -> int | None:
-		if value is not None:
+	def validate_score(cls, value: Any) -> Any:
+		if isinstance(value, float):
 			value = round(value)
 			debug(f'	score: {value}')
 
