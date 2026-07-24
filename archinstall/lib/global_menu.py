@@ -81,7 +81,6 @@ class GlobalMenu(AbstractMenu[None]):
 				return '[bold green][✓][/bold green] '
 			return '[bold red][!][/bold red] '
 
-		# Standard mandatory or configured item check
 		if item.has_value():
 			return '[bold green][✓][/bold green] '
 		elif item.mandatory:
@@ -113,7 +112,6 @@ class GlobalMenu(AbstractMenu[None]):
 					if inspect.isawaitable(result):
 						result = await result
 
-						# Directly update the item's value
 				item.value = result
 
 				return result
