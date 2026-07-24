@@ -46,6 +46,11 @@ class FirewallApp:
 				# write default conf file to enabled
 				ufw_conf = install_session.target / 'etc/ufw/ufw.conf'
 				ufw_conf.write_text(ufw_conf.read_text().replace('ENABLED=no', 'ENABLED=yes'))
+				# if sshd is enabled, allow SSH through ufw to prevent lockout
+				sshd_symlink = install_session.target / 'etc/systemd/system/multi-user.target.wants/sshd.service'
+				if sshd_symlink.exists():
+					debug('sshd detected, adding ufw allow rule for SSH')
+					install_session.arch_chroot('ufw allow SSH')
 
 			case Firewall.FWD:
 				install_session.add_additional_packages(self.fwd_packages)
