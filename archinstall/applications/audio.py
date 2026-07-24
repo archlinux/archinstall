@@ -26,6 +26,7 @@ class AudioApp:
 			'gst-plugin-pipewire',
 			'libpulse',
 			'wireplumber',
+			'rtkit',
 		]
 
 	def _enable_pipewire(
