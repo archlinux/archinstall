@@ -7,6 +7,7 @@ from archinstall.lib.menu.helpers import Input, Selection, Table
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.device import (
+	DEFAULT_CIPHER,
 	DEFAULT_ITER_TIME,
 	DeviceModification,
 	DiskEncryption,
@@ -73,6 +74,14 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				key='iter_time',
 			),
 			MenuItem(
+				text=tr('Encryption cipher'),
+				action=select_cipher,
+				value=self._enc_config.cipher,
+				dependencies=[self._check_dep_enc_type],
+				preview_action=self._prev_cipher,
+				key='cipher',
+			),
+			MenuItem(
 				text=tr('Partitions'),
 				action=lambda x: select_partitions_to_encrypt(self._device_modifications, x),
 				value=self._enc_config.partitions,
@@ -130,6 +139,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		enc_password: Password | None = self._item_group.find_by_key('encryption_password').value
 		iter_time: int | None = self._item_group.find_by_key('iter_time').value
+		cipher: str | None = self._item_group.find_by_key('cipher').value
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_volumes').value
 
@@ -151,6 +161,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				lvm_volumes=enc_lvm_vols,
 				hsm_device=enc_config.hsm_device,
 				iter_time=iter_time or DEFAULT_ITER_TIME,
+				cipher=cipher or DEFAULT_CIPHER,
 			)
 
 		return None
@@ -221,6 +232,11 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		output = str(fido_device.path)
 		output += f' ({fido_device.manufacturer}, {fido_device.product})'
 		return f'{tr("HSM device")}: {output}'
+
+	def _prev_cipher(self, item: MenuItem) -> str | None:
+		if item.value:
+			return f'{tr("Encryption cipher")}: {item.value}'
+		return None
 
 	def _prev_iter_time(self, item: MenuItem) -> str | None:
 		if item.value:
@@ -370,6 +386,44 @@ async def select_lvm_vols_to_encrypt(
 				return volumes
 
 	return []
+
+
+async def select_cipher(preset: str | None = None) -> str | None:
+	ciphers = [
+		'aes-xts-plain64',
+		'chacha20-plain64',
+		'serpent-xts-plain64',
+		'twofish-xts-plain64',
+	]
+
+	descriptions = {
+		'aes-xts-plain64':      tr('AES (default, hardware accelerated on most CPUs)'),
+		'chacha20-plain64':     tr('ChaCha20 (faster on CPUs without AES-NI)'),
+		'serpent-xts-plain64':  tr('Serpent (conservative security, slower)'),
+		'twofish-xts-plain64':  tr('Twofish (conservative security, slower)'),
+	}
+
+	if not preset:
+		preset = ciphers[0]
+
+	items = [MenuItem(f'{c}  —  {descriptions[c]}', value=c) for c in ciphers]
+	group = MenuItemGroup(items)
+	group.set_focus_by_value(preset)
+
+	result = await Selection[str](
+		group,
+		header=tr('Select encryption cipher'),
+		allow_skip=True,
+		allow_reset=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Reset:
+			return None
+		case ResultType.Skip:
+			return preset
+		case ResultType.Selection:
+			return result.get_value()
 
 
 async def select_iteration_time(preset: int | None = None) -> int | None:

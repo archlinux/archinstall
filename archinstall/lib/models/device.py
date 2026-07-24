@@ -19,6 +19,7 @@ from archinstall.lib.translationhandler import tr
 
 ENC_IDENTIFIER = 'ainst'
 DEFAULT_ITER_TIME = 10000
+DEFAULT_CIPHER = 'aes-xts-plain64'
 
 
 class DiskLayoutType(Enum):
@@ -1468,6 +1469,7 @@ class _DiskEncryptionSerialization(TypedDict):
 	lvm_volumes: list[str]
 	hsm_device: NotRequired[_Fido2DeviceSerialization]
 	iter_time: NotRequired[int]
+	cipher: NotRequired[str]
 
 
 @dataclass
@@ -1478,6 +1480,7 @@ class DiskEncryption:
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
 	hsm_device: Fido2Device | None = None
 	iter_time: int = DEFAULT_ITER_TIME
+	cipher: str = DEFAULT_CIPHER
 
 	def __post_init__(self) -> None:
 		if self.encryption_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS] and not self.partitions:
@@ -1504,6 +1507,8 @@ class DiskEncryption:
 
 		if self.iter_time != DEFAULT_ITER_TIME:  # Only include if not default
 			obj['iter_time'] = self.iter_time
+		if self.cipher != DEFAULT_CIPHER:  # Only include if not default
+			obj['cipher'] = self.cipher
 
 		return obj
 
@@ -1561,6 +1566,8 @@ class DiskEncryption:
 
 		if iter_time := disk_encryption.get('iter_time', None):
 			enc.iter_time = iter_time
+		if cipher := disk_encryption.get('cipher', None):
+			enc.cipher = cipher
 
 		return enc
 
