@@ -1,4 +1,7 @@
-from typing import override
+import inspect
+from collections.abc import Callable
+from functools import wraps
+from typing import Any, override
 
 from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.applications.application_menu import ApplicationMenu
@@ -50,7 +53,7 @@ class GlobalMenu(AbstractMenu[None]):
 		self._skip_boot = skip_boot
 		self._advanced = advanced
 		self._uefi = SysInfo.has_uefi()
-		menu_options = self._get_menu_options()
+		menu_options = self._get_menu_options(wrap_actions=True)
 
 		self._item_group = MenuItemGroup(
 			menu_options,
@@ -59,8 +62,66 @@ class GlobalMenu(AbstractMenu[None]):
 		)
 
 		super().__init__(self._item_group, config=arch_config, title=title)
+		self._update_item_labels()
 
-	def _get_menu_options(self) -> list[MenuItem]:
+	def _get_status_prefix(self, item: MenuItem) -> str:
+		"""
+		Returns a rich-formatted status prefix icon depending on item state:
+		- [✓] (Green) for configured items
+		- [!] (Red) for missing mandatory or required items
+		- [•] (Yellow) for unconfigured optional items
+		"""
+		if item.read_only or item.key in (SpecialMenuKey.SAVE.value, SpecialMenuKey.INSTALL.value, SpecialMenuKey.ABORT.value):
+			return ''
+
+		if item.key == 'auth_config':
+			auth_config: AuthenticationConfiguration | None = item.value
+			is_auth_valid = auth_config is not None and (auth_config.root_enc_password is not None or auth_config.has_superuser())
+			if is_auth_valid:
+				return '[bold green][✓][/bold green] '
+			return '[bold red][!][/bold red] '
+
+		if item.has_value():
+			return '[bold green][✓][/bold green] '
+		elif item.mandatory:
+			return '[bold red][!][/bold red] '
+		else:
+			return '[bold yellow][•][/bold yellow] '
+
+	def _update_item_labels(self) -> None:
+		"""
+		Re-applies translated titles and status prefixes to all active menu items.
+		"""
+		raw_options = self._get_menu_options(wrap_actions=False)
+		new_options = {o.key: o.text for o in raw_options if o.key is not None}
+
+		for item in self._item_group.items:
+			if item.key in new_options:
+				base_title = new_options[item.key]
+				prefix = self._get_status_prefix(item)
+				item.text = f'{prefix}{base_title}'
+
+	def _wrap_action(self, item: MenuItem, action: Callable[..., Any]) -> Callable[..., Any]:
+		@wraps(action)
+		async def wrapper(*args: Any, **kwargs: Any) -> Any:
+			try:
+				if inspect.iscoroutinefunction(action):
+					result = await action(*args, **kwargs)
+				else:
+					result = action(*args, **kwargs)
+					if inspect.isawaitable(result):
+						result = await result
+
+				item.value = result
+
+				return result
+
+			finally:
+				self._update_item_labels()
+
+		return wrapper
+
+	def _get_menu_options(self, wrap_actions: bool = True) -> list[MenuItem]:
 		menu_options = [
 			MenuItem(
 				text=tr('Archinstall language'),
@@ -191,6 +252,11 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 		]
 
+		if wrap_actions:
+			for item in menu_options:
+				if item.key and item.action:
+					item.action = self._wrap_action(item, item.action)
+
 		return menu_options
 
 	async def _safe_config(self) -> None:
@@ -229,11 +295,14 @@ class GlobalMenu(AbstractMenu[None]):
 						tr('The selected desktop profile requires a regular user to log in via the greeter'),
 					)
 
+		raw_options = {o.key: o.text for o in self._get_menu_options(wrap_actions=False) if o.key is not None}
+
 		for item in self._item_group.items:
 			if item.mandatory:
 				assert item.key is not None
 				if not check(item.key):
-					missing.add(item.text)
+					raw_title = raw_options.get(item.key, item.text)
+					missing.add(raw_title)
 
 		return list(missing)
 
@@ -273,15 +342,9 @@ class GlobalMenu(AbstractMenu[None]):
 
 	def _update_lang_text(self) -> None:
 		"""
-		The options for the global menu are generated with a static text;
-		each entry of the menu needs to be updated with the new translation
+		Updates option titles and status prefixes when language changes or settings are modified.
 		"""
-		new_options = self._get_menu_options()
-
-		for o in new_options:
-			if o.key is not None:
-				self._item_group.find_by_key(o.key).text = o.text
-
+		self._update_item_labels()
 		tui.translate_bindings()
 
 	async def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration | None:
@@ -571,7 +634,6 @@ class GlobalMenu(AbstractMenu[None]):
 			preset = BootloaderConfiguration.get_default(self._uefi, self._skip_boot)
 
 		bootloader_config = await BootloaderMenu(preset, self._uefi, self._skip_boot).show()
-
 		return bootloader_config
 
 	async def _select_profile(self, current_profile: ProfileConfiguration | None) -> ProfileConfiguration | None:
