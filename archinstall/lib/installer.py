@@ -774,6 +774,15 @@ class Installer:
 		with open(f'{self.target}/etc/systemd/network/10-{nic.iface}.network', 'a') as netconf:
 			netconf.write(str(conf))
 
+	def systemd_resolved_stub_mode(self) -> None:
+		"""
+		Enable systemd-resolved stub mode by (forcefully) setting a symlink
+		For further details see  https://wiki.archlinux.org/title/Systemd-resolved#DNS
+		"""
+		resolv = self.target / 'etc/resolv.conf'
+		resolv.unlink(missing_ok=True)
+		resolv.symlink_to('/run/systemd/resolve/stub-resolv.conf')
+
 	def copy_iso_network_config(self, enable_services: bool = False) -> bool:
 		# Copy (if any) iwd password and config files
 		iwd_dir = LPath('/var/lib/iwd')
@@ -802,11 +811,7 @@ class Installer:
 					self.pacman.strap('iwd')
 					self.enable_service('iwd')
 
-		# Enable systemd-resolved by (forcefully) setting a symlink
-		# For further details see  https://wiki.archlinux.org/title/Systemd-resolved#DNS
-		resolv_config_path = self.target / 'etc/resolv.conf'
-		resolv_config_path.unlink(missing_ok=True)
-		resolv_config_path.symlink_to('/run/systemd/resolve/stub-resolv.conf')
+		self.systemd_resolved_stub_mode()
 
 		# Copy (if any) systemd-networkd config files
 		network_dir = LPath('/etc/systemd/network')
