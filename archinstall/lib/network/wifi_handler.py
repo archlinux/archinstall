@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from pathlib import Path
 from typing import assert_never, override
 
 from archinstall.lib.command import SysCommand
@@ -7,6 +6,7 @@ from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.log import debug
 from archinstall.lib.models.network import WifiConfiguredNetwork, WifiNetwork
 from archinstall.lib.network.wpa_supplicant import WpaSupplicantConfig
+from archinstall.lib.networking import SYS_NET
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.components import ConfirmationScreen, InputScreen, InstanceRunnable, LoadingScreen, NotifyScreen, TableSelectionScreen, tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -86,11 +86,8 @@ class WifiHandler(InstanceRunnable[bool]):
 			return False
 
 	def _find_wifi_interface(self) -> str | None:
-		net_path = Path('/sys/class/net')
-
-		for iface in net_path.iterdir():
-			maybe_wireless_path = net_path / iface / 'wireless'
-			if maybe_wireless_path.is_dir():
+		for iface in SYS_NET.iterdir():
+			if (iface / 'wireless').is_dir():
 				return iface.name
 
 		return None
