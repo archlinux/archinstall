@@ -1376,10 +1376,10 @@ msgid "Show/Hide help"
 msgstr "ヘルプを表示/隠す"
 
 msgid "Yes"
-msgstr "Yes"
+msgstr "はい"
 
 msgid "No"
-msgstr "No"
+msgstr "いいえ"
 
 msgid " (default)"
 msgstr " (デフォルト)"
