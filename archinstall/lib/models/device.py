@@ -1,10 +1,9 @@
-import builtins
 import math
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto
 from pathlib import Path
-from typing import Any, NotRequired, Self, TypedDict, override
+from typing import Any, NotRequired, Self, TypedDict, override, Optional
 from uuid import UUID
 
 import parted
@@ -514,6 +513,103 @@ class BtrfsMountOption(Enum):
 	nodatacow = 'nodatacow'
 
 
+# ============================================================
+# NEW: BtrfsCompression Enum - Added for compression selection
+# ============================================================
+class BtrfsCompression(StrEnum):
+    """BTRFS compression algorithms available for subvolumes"""
+    NONE = "none"
+    LZO = "lzo"
+    ZSTD_1 = "zstd:1"
+    ZSTD_2 = "zstd:2"
+    ZSTD_3 = "zstd:3"      # Default
+    ZSTD_4 = "zstd:4"
+    ZSTD_5 = "zstd:5"
+    ZSTD_6 = "zstd:6"
+    ZSTD_7 = "zstd:7"
+    ZSTD_8 = "zstd:8"
+    ZSTD_9 = "zstd:9"
+    ZSTD_10 = "zstd:10"
+    ZSTD_11 = "zstd:11"
+    ZSTD_12 = "zstd:12"
+    ZSTD_13 = "zstd:13"
+    ZSTD_14 = "zstd:14"
+    ZSTD_15 = "zstd:15"
+    ZSTD_16 = "zstd:16"
+    ZSTD_17 = "zstd:17"
+    ZSTD_18 = "zstd:18"
+    ZSTD_19 = "zstd:19"
+
+    @property
+    def mount_option(self) -> str:
+        """Convert to mount option string for fstab"""
+        if self == BtrfsCompression.NONE:
+            return ""  # No compression mount option
+        return f"compress={self.value}"
+
+    @property
+    def display_name(self) -> str:
+        """Get human-readable display name for UI"""
+        mapping = {
+            BtrfsCompression.NONE: "None (no compression)",
+            BtrfsCompression.LZO: "LZO (fast, moderate compression)",
+            BtrfsCompression.ZSTD_1: "ZSTD:1 (fastest)",
+            BtrfsCompression.ZSTD_2: "ZSTD:2 (very fast)",
+            BtrfsCompression.ZSTD_3: "ZSTD:3 (default, balanced)",
+            BtrfsCompression.ZSTD_4: "ZSTD:4",
+            BtrfsCompression.ZSTD_5: "ZSTD:5",
+            BtrfsCompression.ZSTD_6: "ZSTD:6",
+            BtrfsCompression.ZSTD_7: "ZSTD:7 (better compression)",
+            BtrfsCompression.ZSTD_8: "ZSTD:8",
+            BtrfsCompression.ZSTD_9: "ZSTD:9",
+            BtrfsCompression.ZSTD_10: "ZSTD:10",
+            BtrfsCompression.ZSTD_11: "ZSTD:11",
+            BtrfsCompression.ZSTD_12: "ZSTD:12",
+            BtrfsCompression.ZSTD_13: "ZSTD:13",
+            BtrfsCompression.ZSTD_14: "ZSTD:14",
+            BtrfsCompression.ZSTD_15: "ZSTD:15 (excellent compression)",
+            BtrfsCompression.ZSTD_16: "ZSTD:16",
+            BtrfsCompression.ZSTD_17: "ZSTD:17",
+            BtrfsCompression.ZSTD_18: "ZSTD:18",
+            BtrfsCompression.ZSTD_19: "ZSTD:19 (maximum compression)",
+        }
+        return mapping[self]
+
+    @classmethod
+    def from_string(cls, value: str) -> "BtrfsCompression":
+        """Convert string from JSON to enum"""
+        if not value or value == "none":
+            return BtrfsCompression.NONE
+
+        # Handle zstd:3 format
+        if value.startswith("zstd:"):
+            level = value.split(":")[1]
+            try:
+                return getattr(BtrfsCompression, f"ZSTD_{level}")
+            except AttributeError:
+                return BtrfsCompression.ZSTD_3
+
+        # Handle lzo
+        if value == "lzo":
+            return BtrfsCompression.LZO
+
+        # Default fallback
+        return BtrfsCompression.ZSTD_3
+
+    @classmethod
+    def get_ui_options(cls) -> list[tuple[str, "BtrfsCompression"]]:
+        """Get display options for UI menu"""
+        return [
+            ("None (no compression)", BtrfsCompression.NONE),
+            ("LZO (fast, moderate compression)", BtrfsCompression.LZO),
+            ("ZSTD:1 (fastest)", BtrfsCompression.ZSTD_1),
+            ("ZSTD:3 (default, balanced)", BtrfsCompression.ZSTD_3),
+            ("ZSTD:7 (better compression, slower)", BtrfsCompression.ZSTD_7),
+            ("ZSTD:15 (excellent compression, slow)", BtrfsCompression.ZSTD_15),
+            ("ZSTD:19 (maximum compression, very slow)", BtrfsCompression.ZSTD_19),
+        ]
+
+
 @dataclass
 class _BtrfsSubvolumeInfo:
 	name: Path
@@ -655,15 +751,23 @@ class _DeviceInfo:
 		)
 
 
+# ============================================================
+# MODIFIED: _SubvolumeModificationSerialization - Added compression field
+# ============================================================
 class _SubvolumeModificationSerialization(TypedDict):
 	name: str
 	mountpoint: str
+	compression: NotRequired[str]  # NEW: Added compression field
 
 
+# ============================================================
+# MODIFIED: SubvolumeModification - Added compression field
+# ============================================================
 @dataclass
 class SubvolumeModification:
 	name: Path | str
 	mountpoint: Path | None = None
+	compression: BtrfsCompression = BtrfsCompression.ZSTD_3  # NEW: Added compression field
 
 	@classmethod
 	def from_existing_subvol_info(cls, info: _BtrfsSubvolumeInfo) -> Self:
@@ -679,7 +783,11 @@ class SubvolumeModification:
 
 			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
 
-			mods.append(cls(entry['name'], mountpoint))
+			# NEW: Parse compression from entry, default to zstd:3
+			compression_str = entry.get('compression', 'zstd:3')
+			compression = BtrfsCompression.from_string(compression_str)
+
+			mods.append(cls(entry['name'], mountpoint, compression))  # MODIFIED: Added compression
 
 		return mods
 
@@ -702,11 +810,26 @@ class SubvolumeModification:
 	def is_default_root(self) -> bool:
 		return self.name == Path('@') and self.is_root()
 
-	def json(self) -> _SubvolumeModificationSerialization:
-		return {'name': str(self.name), 'mountpoint': str(self.mountpoint)}
+	# NEW: Helper method to get mount options for this subvolume
+	def get_mount_options(self) -> str:
+		"""Get mount options string including compression"""
+		return self.compression.mount_option
 
-	def table_data(self) -> _SubvolumeModificationSerialization:
-		return self.json()
+	# MODIFIED: json now includes compression
+	def json(self) -> _SubvolumeModificationSerialization:
+		return {
+			'name': str(self.name),
+			'mountpoint': str(self.mountpoint),
+			'compression': self.compression.value  # NEW: Added compression
+		}
+
+	# MODIFIED: table_data now includes compression
+	def table_data(self) -> dict[str, str]:
+		return {
+			'name': str(self.name),
+			'mountpoint': str(self.mountpoint),
+			'compression': self.compression.value  # NEW: Added compression
+		}
 
 
 class DeviceGeometry:

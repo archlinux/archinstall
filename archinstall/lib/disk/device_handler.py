@@ -21,6 +21,7 @@ from archinstall.lib.log import debug, error, info, log
 from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
 	BDevice,
+	BtrfsCompression,
 	BtrfsMountOption,
 	DeviceModification,
 	DiskEncryption,
@@ -28,6 +29,7 @@ from archinstall.lib.models.device import (
 	LsblkInfo,
 	ModificationStatus,
 	PartitionFlag,
+	PartitionGUID,
 	PartitionModification,
 	PartitionTable,
 	SubvolumeModification,
@@ -422,6 +424,9 @@ class DeviceHandler:
 
 		return lsblk_info
 
+	# ============================================================
+	# MODIFIED: create_lvm_btrfs_subvolumes - Now uses per-subvolume compression
+	# ============================================================
 	def create_lvm_btrfs_subvolumes(
 		self,
 		path: Path,
@@ -430,7 +435,17 @@ class DeviceHandler:
 	) -> None:
 		info(f'Creating subvolumes: {path}')
 
-		mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+		# MODIFIED: Build mount options including compression from subvolumes
+		all_mount_options = mount_options.copy()
+		for subvol in btrfs_subvols:
+			if subvol.compression != BtrfsCompression.NONE:
+				comp_opt = subvol.compression.mount_option
+				if comp_opt and comp_opt not in all_mount_options:
+					# Remove any existing compress= options to avoid conflicts
+					all_mount_options = [o for o in all_mount_options if not o.startswith("compress=")]
+					all_mount_options.append(comp_opt)
+
+		mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True, options=all_mount_options)
 
 		for sub_vol in sorted(btrfs_subvols, key=lambda x: x.name):
 			debug(f'Creating subvolume: {sub_vol.name}')
@@ -445,7 +460,8 @@ class DeviceHandler:
 				except SysCallError as err:
 					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {err}')
 
-			if BtrfsMountOption.compress.value in mount_options:
+			# MODIFIED: Use compression from subvolume, not mount_options
+			if sub_vol.compression != BtrfsCompression.NONE:
 				try:
 					SysCommand(f'chattr +c {subvol_path}')
 				except SysCallError as err:
@@ -453,6 +469,9 @@ class DeviceHandler:
 
 		umount(path)
 
+	# ============================================================
+	# MODIFIED: create_btrfs_volumes - Now uses per-subvolume compression
+	# ============================================================
 	def create_btrfs_volumes(
 		self,
 		part_mod: PartitionModification,
@@ -479,11 +498,21 @@ class DeviceHandler:
 			luks_handler = None
 			dev_path = part_mod.safe_dev_path
 
+		# MODIFIED: Build mount options including compression from subvolumes
+		mount_options = part_mod.mount_options.copy()
+		for subvol in part_mod.btrfs_subvols:
+			if subvol.compression != BtrfsCompression.NONE:
+				comp_opt = subvol.compression.mount_option
+				if comp_opt and comp_opt not in mount_options:
+					# Remove any existing compress= options to avoid conflicts
+					mount_options = [o for o in mount_options if not o.startswith("compress=")]
+					mount_options.append(comp_opt)
+
 		mount(
 			dev_path,
 			self._TMP_BTRFS_MOUNT,
 			create_target_mountpoint=True,
-			options=part_mod.mount_options,
+			options=mount_options,
 		)
 
 		for sub_vol in sorted(part_mod.btrfs_subvols, key=lambda x: x.name):
@@ -492,6 +521,13 @@ class DeviceHandler:
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
 			SysCommand(f'btrfs subvolume create -p {subvol_path}')
+
+			# MODIFIED: Apply compression attribute per subvolume
+			if sub_vol.compression != BtrfsCompression.NONE:
+				try:
+					SysCommand(f'chattr +c {subvol_path}')
+				except SysCallError as err:
+					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
 
 		umount(dev_path)
 
