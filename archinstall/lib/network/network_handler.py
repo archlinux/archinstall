@@ -84,6 +84,4 @@ def _configure_iwd_standalone(installation: Installer) -> None:
 	""")
 	_ = wired_conf.write_text(wired_conf_content)
 
-	resolv = installation.target / 'etc/resolv.conf'
-	resolv.unlink(missing_ok=True)
-	resolv.symlink_to('/run/systemd/resolve/stub-resolv.conf')
+	installation.systemd_resolved_stub_mode()

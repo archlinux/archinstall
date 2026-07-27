@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from archinstall.lib.command import SysCommand, run
 from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.log import debug, info, warn
-from archinstall.lib.models.device import LsblkInfo
+from archinstall.lib.models.device import LsblkInfo, PartitionGUID
 
 
 class LsblkOutput(BaseModel):
@@ -196,3 +196,10 @@ def swapon(path: Path) -> None:
 		SysCommand(['swapon', str(path)])
 	except SysCallError as err:
 		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
+
+
+def linux_root_guid(arch: str | None) -> PartitionGUID:
+	if arch == 'aarch64':
+		return PartitionGUID.LINUX_ROOT_AARCH64
+
+	return PartitionGUID.LINUX_ROOT_X86_64
