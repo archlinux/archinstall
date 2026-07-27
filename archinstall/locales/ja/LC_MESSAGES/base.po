@@ -230,6 +230,18 @@ msgstr "/EFI/BOOT/（リムーバブルな場所、安全なデフォルト）�
 msgid "Will install to custom location with NVRAM entry"
 msgstr "NVRAM エントリーを使用してカスタムした場所にインストール"
 
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgstr "Plymouth は表面上のブートスプラッシュを追加しますが、構成によっては起動に問題が生じる可能性があります:"
+
+msgid "black screen with the NVIDIA driver"
+msgstr "NVIDIA ドライバーでのブラックスクリーン"
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr "ディスク暗号化（LUKS）使用時の非表示パスワードプロンプト"
+
+msgid "Would you like to enable it?"
+msgstr "有効にしますか？"
+
 msgid "Would you like to use unified kernel images?"
 msgstr "Unified カーネルイメージを使用しますか？"
 
@@ -334,6 +346,9 @@ msgstr "パスワード"
 
 msgid "Iteration time"
 msgstr "イテレーション時間"
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr "ディスクが検出されませんでした。Arch Linux をインストールするにはディスクが必要です"
 
 msgid "Select disks for the installation"
 msgstr "インストール用のディスクを選択"
@@ -1174,17 +1189,197 @@ msgstr "新しいバージョンが利用可能"
 msgid "Starting device modifications in "
 msgstr "次の場所でデバイスの変更を開始しています "
 
+msgid "Bottom"
+msgstr "一番下へ"
+
+msgid "Copy selected text"
+msgstr "選択したテキストをコピー"
+
+msgid "Cursor down"
+msgstr "カースルを下へ"
+
+msgid "Cursor left"
+msgstr "カーソルを左へ"
+
+msgid "Cursor right"
+msgstr "カーソルを右へ"
+
+msgid "Cursor up"
+msgstr "カーソルを上へ"
+
+msgid "Cut selected text"
+msgstr "選択したテキストを切り取る"
+
+msgid "Delete all to the left"
+msgstr "左側をすべて削除"
+
+msgid "Delete all to the right"
+msgstr "右側をすべて削除"
+
+msgid "Delete character left"
+msgstr "左の文字を削除"
+
+msgid "Delete character right"
+msgstr "右の文字を削除"
+
+msgid "Delete left to start of word"
+msgstr "単語の先頭まで左側に削除"
+
+msgid "Delete right to start of word"
+msgstr "単語の先頭まで右側に削除"
+
+msgid "Down"
+msgstr "下へ"
+
+msgid "End"
+msgstr "最後へ"
+
+msgid "First"
+msgstr "最初"
+
+msgid "Focus Next"
+msgstr "次にフォーカス"
+
+msgid "Focus Previous"
+msgstr "前にフォーカス"
+
+msgid "Go to end"
+msgstr "末尾へ移動"
+
+msgid "Go to start"
+msgstr "先頭へ移動"
+
+msgid "Home"
+msgstr "ホーム"
+
+msgid "Last"
+msgstr "最後"
+
+msgid "Move cursor left"
+msgstr "カーソルを左に移動"
+
+msgid "Move cursor left a word"
+msgstr "カーソルを1語左に移動"
+
+msgid "Move cursor left a word and select"
+msgstr "カーソルを1語左に移動して選択"
+
+msgid "Move cursor left and select"
+msgstr "カーソルを左に移動して選択"
+
+msgid "Move cursor right a word"
+msgstr "カーソルを1語右に移動"
+
+msgid "Move cursor right a word and select"
+msgstr "カーソルを右に1語移動して選択"
+
+msgid "Move cursor right and select"
+msgstr "カーソルを右に移動して選択"
+
+msgid "Move cursor right or accept the completion suggestion"
+msgstr "カーソルを右に移動するか補完候補を受け入れる"
+
+msgid "Page Down"
+msgstr "下のページへ"
+
+msgid "Page Left"
+msgstr "左のページへ"
+
+msgid "Page Right"
+msgstr "右のページへ"
+
+msgid "Page Up"
+msgstr "上のページへ"
+
+msgid "Page down"
+msgstr "下のページへ"
+
+msgid "Page up"
+msgstr "上のページへ"
+
+msgid "Paste text from the clipboard"
+msgstr "クリップボードからテキストを貼り付ける"
+
+msgid "Press button"
+msgstr "ボタンを押す"
+
+msgid "Quit"
+msgstr "終了"
+
+msgid "Scroll Down"
+msgstr "下にスクロール"
+
+msgid "Scroll End"
+msgstr "一番下にスクロール"
+
+msgid "Scroll Home"
+msgstr "ホームにスクロール"
+
+msgid "Scroll Left"
+msgstr "左にスクロール"
+
+msgid "Scroll Right"
+msgstr "右にスクロール"
+
+msgid "Scroll Up"
+msgstr "上にスクロール"
+
+msgid "Select"
+msgstr "選択"
+
+msgid "Select all"
+msgstr "すべて選択"
+
+msgid "Select line end"
+msgstr "行末を選択"
+
+msgid "Select line start"
+msgstr "行頭を選択"
+
+msgid "Submit"
+msgstr "決定"
+
+msgid "Toggle option"
+msgstr "オプションを切り替え"
+
+msgid "Top"
+msgstr "一番上へ"
+
+msgid "Up"
+msgstr "上へ"
+
+msgid "Reset"
+msgstr "リセット"
+
+msgid "Search"
+msgstr "検索"
+
+msgid "Toggle"
+msgstr "切り替え"
+
+msgid "Confirm"
+msgstr "確認"
+
+msgid "Focus right"
+msgstr "右にフォーカス"
+
+msgid "Focus left"
+msgstr "左にフォーカス"
+
 msgid "Ok"
 msgstr "OK"
 
 msgid "Input cannot be empty"
 msgstr "入力は空にできません"
 
+msgid "Show/Hide help"
+msgstr "ヘルプを表示/隠す"
+
 msgid "Yes"
-msgstr "Yes"
+msgstr "はい"
 
 msgid "No"
-msgstr "No"
+msgstr "いいえ"
 
 msgid " (default)"
 msgstr " (デフォルト)"
@@ -1656,9 +1851,6 @@ msgstr " (デフォルト)"
 #~ msgid "Manual nic configuration with no auto DHCP requires an IP address"
 #~ msgstr "自動 DHCP を使用しない手動 NIC 設定には、IP アドレスが必要です"
 
-#~ msgid "Select interface to add"
-#~ msgstr "追加するインターフェースを選択"
-
 #~ msgid "Mark/Unmark a partition as compressed (btrfs only)"
 #~ msgstr "圧縮するパーティションとしてマーク/マーク解除（Btrfs のみ）"
 
@@ -2125,9 +2317,6 @@ msgstr " (デフォルト)"
 #~ msgid "Root mount directory"
 #~ msgstr "ルートマウントディレクトリ"
 
-#~ msgid "Select language"
-#~ msgstr "言語を選択"
-
 #~ msgid "Write additional packages to install (space separated, leave blank to skip)"
 #~ msgstr "追加でインストールするパッケージを書く（スペースで区切る。無記入でスキップ）"
 
@@ -2234,9 +2423,6 @@ msgstr " (デフォルト)"
 #~ msgid "Select on multi select"
 #~ msgstr "複数で選択"
 
-#~ msgid "Reset"
-#~ msgstr "リセット"
-
 #~ msgid "Skip selection menu"
 #~ msgstr "選択メニューをスキップ"
 
@@ -2254,114 +2440,6 @@ msgstr " (デフォルト)"
 
 #~ msgid "Selection"
 #~ msgstr "選択"
-
-#~ msgid "Search"
-#~ msgstr "検索"
-
-#~ msgid "Down"
-#~ msgstr "下へ"
-
-#~ msgid "Up"
-#~ msgstr "上へ"
-
-#~ msgid "Confirm"
-#~ msgstr "確認"
-
-#~ msgid "Focus right"
-#~ msgstr "右にフォーカス"
-
-#~ msgid "Focus left"
-#~ msgstr "左にフォーカス"
-
-#~ msgid "Toggle"
-#~ msgstr "切り替え"
-
-#~ msgid "Show/Hide help"
-#~ msgstr "ヘルプを表示/隠す"
-
-#~ msgid "Quit"
-#~ msgstr "終了"
-
-#~ msgid "First"
-#~ msgstr "最初"
-
-#~ msgid "Last"
-#~ msgstr "最後"
-
-#~ msgid "Select"
-#~ msgstr "選択"
-
-#~ msgid "Page Up"
-#~ msgstr "上のページへ"
-
-#~ msgid "Page Down"
-#~ msgstr "下のページへ"
-
-#~ msgid "Page up"
-#~ msgstr "上のページへ"
-
-#~ msgid "Page down"
-#~ msgstr "下のページへ"
-
-#~ msgid "Page Left"
-#~ msgstr "左のページへ"
-
-#~ msgid "Page Right"
-#~ msgstr "右のページへ"
-
-#~ msgid "Cursor up"
-#~ msgstr "カーソルを上へ"
-
-#~ msgid "Cursor down"
-#~ msgstr "カースルを下へ"
-
-#~ msgid "Cursor right"
-#~ msgstr "カーソルを右へ"
-
-#~ msgid "Cursor left"
-#~ msgstr "カーソルを左へ"
-
-#~ msgid "Top"
-#~ msgstr "一番上へ"
-
-#~ msgid "Bottom"
-#~ msgstr "一番下へ"
-
-#~ msgid "Home"
-#~ msgstr "ホーム"
-
-#~ msgid "End"
-#~ msgstr "最後へ"
-
-#~ msgid "Toggle option"
-#~ msgstr "オプションを切り替え"
-
-#~ msgid "Scroll Up"
-#~ msgstr "上にスクロール"
-
-#~ msgid "Scroll Down"
-#~ msgstr "下にスクロール"
-
-#~ msgid "Scroll Left"
-#~ msgstr "左にスクロール"
-
-#~ msgid "Scroll Right"
-#~ msgstr "右にスクロール"
-
-#~ msgid "Scroll Home"
-#~ msgstr "ホームにスクロール"
-
-#~ msgid "Scroll End"
-#~ msgstr "一番下にスクロール"
-
-#~ msgid "Focus Next"
-#~ msgstr "次にフォーカス"
-
-#~ msgid "Focus Previous"
-#~ msgstr "前にフォーカス"
-
-#~ msgid "Copy selected text"
-#~ msgstr "選択したテキストをコピー"
 
 #~ msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 #~ msgstr "labwc はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
