@@ -6,7 +6,7 @@ from archinstall.lib.applications.application_handler import ApplicationHandler
 from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
-from archinstall.lib.configuration import confirm_ufw, confirm_config
+from archinstall.lib.configuration import confirm_config, confirm_ufw
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.general.general_menu import PostInstallationAction, select_post_installation
