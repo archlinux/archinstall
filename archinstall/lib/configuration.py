@@ -30,7 +30,7 @@ async def confirm_ufw(config: ArchConfig) -> bool:
 		).show()
 
 		if result and result.get_value():
-			config.custom_commands.append('ufw allow SSH')
+			config.app_config.firewall_config.allow_ssh = True
 
 	return True
 
