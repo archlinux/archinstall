@@ -9,9 +9,9 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
 async def confirm_ufw(config: ArchConfig) -> None:
-	firewall_config = ArchConfig.app_config.firewall_config
+	firewall_config = config.app_config.firewall_config
 	is_ufw = firewall_config and firewall_config.firewall and firewall_config.firewall.value == 'ufw'
-	if is_ufw and "openssh" in ArchConfig.packages:
+	if is_ufw and "openssh" in config.packages:
 		header = f'{tr("You have both ufw and OpenSSH in your packages")}. '
 		header += tr('Would you like to allow incoming SSH connections through the firewall?') + '\n'
 		group = MenuItemGroup.yes_no()
@@ -24,7 +24,7 @@ async def confirm_ufw(config: ArchConfig) -> None:
 		).show()
 	
 		if result:
-			ArchConfig.custom_commands.append("ufw allow OpenSSH")
+			config.custom_commands.append("ufw allow OpenSSH")
 
 async def confirm_config(config: ArchConfig) -> bool:
 	header = f'{tr("The specified configuration will be applied")}. '
