@@ -6,7 +6,7 @@ from archinstall.lib.applications.application_handler import ApplicationHandler
 from archinstall.lib.args import ArchConfig, ArchConfigHandler
 from archinstall.lib.authentication.authentication_handler import AuthenticationHandler
 from archinstall.lib.bootloader.utils import validate_bootloader_layout
-from archinstall.lib.configuration import confirm_config
+from archinstall.lib.configuration import confirm_ufw, confirm_config
 from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.disk.utils import disk_layouts
 from archinstall.lib.general.general_menu import PostInstallationAction, select_post_installation
@@ -230,6 +230,7 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	if not arch_config_handler.args.silent:
 		aborted = False
+		tui.run(lambda: confirm_ufw(arch_config_handler.config))
 		res: bool = tui.run(lambda: confirm_config(arch_config_handler.config))
 
 		if not res:
