@@ -125,6 +125,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 			output = f'{tr("Firewall")}: {config.firewall.value}'
 			output += '\n'
 			output += f'{tr("Allow SSH")}: {config.allow_ssh}'
+			return output
 		return None
 
 	def _prev_fonts(self, item: MenuItem) -> str | None:
