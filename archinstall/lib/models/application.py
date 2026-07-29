@@ -288,6 +288,8 @@ class ApplicationConfiguration(SubConfig):
 			out.append(tr('Firewall "{}"').format(self.firewall_config.firewall))
 			if self.firewall_config.allow_ssh:
 				out.append(tr('SSH allowed'))
+			else: 
+				out.append(tr('SSH not allowed'))
 
 		if self.fonts_config and self.fonts_config.fonts:
 			fonts = ', '.join(f.value for f in self.fonts_config.fonts)
