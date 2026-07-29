@@ -12,9 +12,8 @@ def install_network_config(
 ) -> None:
 	match network_config.type:
 		case NicType.ISO:
-			_ = installation.copy_iso_network_config(
-				enable_services=True,  # Sources the ISO network configuration to the install medium.
-			)
+			# Sources the ISO network configuration to the install medium.
+			installation.copy_iso_network_config(enable_services=True)
 		case NicType.NM | NicType.NM_IWD:
 			packages = ['networkmanager']
 
@@ -53,7 +52,7 @@ def _configure_nm_iwd(installation: Installer) -> None:
 	nm_conf_dir.mkdir(parents=True, exist_ok=True)
 
 	iwd_backend_conf = nm_conf_dir / 'wifi_backend.conf'
-	_ = iwd_backend_conf.write_text('[device]\nwifi.backend=iwd\n')
+	iwd_backend_conf.write_text('[device]\nwifi.backend=iwd\n')
 
 
 def _configure_iwd_standalone(installation: Installer) -> None:
@@ -69,7 +68,7 @@ def _configure_iwd_standalone(installation: Installer) -> None:
 		[Network]
 		NameResolvingService=systemd
 	""")
-	_ = main_conf.write_text(main_conf_content)
+	main_conf.write_text(main_conf_content)
 
 	networkd_dir = installation.target / 'etc/systemd/network'
 	networkd_dir.mkdir(parents=True, exist_ok=True)
@@ -82,6 +81,6 @@ def _configure_iwd_standalone(installation: Installer) -> None:
 		[Network]
 		DHCP=yes
 	""")
-	_ = wired_conf.write_text(wired_conf_content)
+	wired_conf.write_text(wired_conf_content)
 
 	installation.systemd_resolved_stub_mode()
