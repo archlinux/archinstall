@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto
