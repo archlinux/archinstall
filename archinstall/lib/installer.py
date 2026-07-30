@@ -876,11 +876,7 @@ class Installer:
 				return vendor.get_ucode()
 		return None
 
-	def _prepare_fs_type(
-		self,
-		fs_type: FilesystemType,
-		mountpoint: Path | None,
-	) -> None:
+	def _prepare_fs_type(self, fs_type: FilesystemType) -> None:
 		if (pkg := fs_type.installation_pkg) is not None:
 			self._base_packages.append(pkg)
 
@@ -915,7 +911,7 @@ class Installer:
 			for vg in self._disk_config.lvm_config.vol_groups:
 				for vol in vg.volumes:
 					if vol.fs_type is not None:
-						self._prepare_fs_type(vol.fs_type, vol.mountpoint)
+						self._prepare_fs_type(vol.fs_type)
 
 			types = (EncryptionType.LVM_ON_LUKS, EncryptionType.LUKS_ON_LVM)
 			if self._disk_encryption.encryption_type in types:
@@ -926,7 +922,7 @@ class Installer:
 					if part.fs_type is None:
 						continue
 
-					self._prepare_fs_type(part.fs_type, part.mountpoint)
+					self._prepare_fs_type(part.fs_type)
 
 					if part in self._disk_encryption.partitions:
 						self._prepare_encrypt()
