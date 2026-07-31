@@ -55,6 +55,16 @@ def _translate_bindings(source: BindingsMap | None, target: BindingsMap) -> None
 		target.key_to_bindings[key] = [replace(b, description=tr(b.description)) if b.description else b for b in bindings]
 
 
+def _val_is_empty(val: Any) -> bool:
+	if val is None:
+		return True
+	if isinstance(val, (list, dict, set, tuple, str)) and len(val) == 0:
+		return True
+	if hasattr(val, '__dict__') and all(_val_is_empty(v) for v in vars(val).values()):
+		return True
+	return False
+
+
 def _get_status_prefix(item: MenuItem) -> str:
 	"""
 	Returns a rich-formatted status prefix icon depending on item state:
@@ -67,7 +77,7 @@ def _get_status_prefix(item: MenuItem) -> str:
 	if item.read_only or is_special_key:
 		return ''
 
-	if item.has_value():
+	if item.has_value() and not _val_is_empty(item.value):
 		return '  '
 	else:
 		return '[bold yellow]![/bold yellow] '
