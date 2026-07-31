@@ -67,7 +67,9 @@ def _get_status_prefix(item: MenuItem) -> str:
 	if item.read_only or is_special_key:
 		return ''
 
-	if item.has_value() and "None" not in str(item.value) and "[]" not in str(item.value):
+	if item.has_value() and 'None' not in str(item.value) and '[]' not in str(item.value):
+		return '  '
+	elif 'Configuration' not in str(item.value):
 		return '  '
 	else:
 		return '[bold yellow]![/bold yellow] '
