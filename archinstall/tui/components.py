@@ -20,8 +20,6 @@ from textual.widgets.selection_list import Selection
 from textual.worker import WorkerCancelled
 
 from archinstall.lib.log import debug
-from archinstall.lib.menu.abstract_menu import SpecialMenuKey
-from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 from archinstall.tui.result import Result, ResultType
@@ -57,21 +55,12 @@ def _translate_bindings(source: BindingsMap | None, target: BindingsMap) -> None
 		target.key_to_bindings[key] = [replace(b, description=tr(b.description)) if b.description else b for b in bindings]
 
 
-def get_status_prefix(item: MenuItem) -> str:
+def _get_status_prefix(item: MenuItem) -> str:
 	"""
 	Returns a rich-formatted status prefix icon depending on item state:
 	- Space for configured items
 	- ! (Yellow) for unconfigured items
 	"""
-	if item.read_only or item.key in (SpecialMenuKey.SAVE.value, SpecialMenuKey.INSTALL.value, SpecialMenuKey.ABORT.value):
-		return ''
-
-	if item.key == 'auth_config':
-		auth_config: AuthenticationConfiguration | None = item.value
-		is_auth_valid = auth_config is not None and (auth_config.root_enc_password is not None or auth_config.has_superuser())
-		if is_auth_valid:
-			return '  '
-		return '[bold yellow][!][/bold yellow] '
 
 	if item.has_value():
 		return '  '
@@ -311,7 +300,8 @@ class OptionListScreen(BaseScreen[ValueT]):
 
 		for item in self._group.get_enabled_items():
 			disabled = True if item.read_only else False
-			options.append(Option(item.text, id=item.get_id(), disabled=disabled))
+			option_text = _get_status_prefix(item) + item.text
+			options.append(Option(option_text, id=item.get_id(), disabled=disabled))
 
 		return options
 
@@ -544,7 +534,8 @@ class SelectListScreen(BaseScreen[ValueT]):
 
 		for item in self._group.get_enabled_items():
 			is_selected = item in self._selected_items
-			selection = Selection(item.text, item, is_selected)
+			selection_text = _get_status_prefix(item) + item.text
+			selection = Selection(selection_text, item, is_selected)
 			selections.append(selection)
 
 		return selections
