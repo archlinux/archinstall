@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class PrintServiceApp:
 	@property
 	def packages(self) -> list[str]:
-		return ['cups', 'system-config-printer', 'cups-pk-helper']
+		return ['cups', 'system-config-printer', 'cups-pk-helper', 'ghostscript']
 
 	@property
 	def services(self) -> list[str]:
