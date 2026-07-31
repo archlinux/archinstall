@@ -146,7 +146,7 @@ class GlobalMenu(AbstractMenu[None]):
 			MenuItem(
 				text=tr('Pacman'),
 				action=self._pacman_configuration,
-				value=PacmanConfiguration(),
+				value=PacmanConfiguration.default(),
 				preview_action=self._prev_pacman_config,
 				key='pacman_config',
 			),
