@@ -1,10 +1,9 @@
-import builtins
 import math
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto
 from pathlib import Path
-from typing import Any, NotRequired, Self, TypedDict, override
+from typing import Any, NotRequired, Self, TypedDict, override, Optional
 from uuid import UUID
 
 import parted
@@ -62,7 +61,6 @@ class DiskLayoutConfiguration(SubConfig):
 	disk_encryption: DiskEncryption | None = None
 	btrfs_options: BtrfsOptions | None = None
 
-	# used for pre-mounted config
 	mountpoint: Path | None = None
 
 	@override
@@ -181,7 +179,6 @@ class DiskLayoutConfiguration(SubConfig):
 					flags=flags,
 					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', [])),
 				)
-				# special 'invisible' attr to internally identify the part mod
 				device_partition._obj_id = partition['obj_id']
 				device_partitions.append(device_partition)
 
@@ -222,7 +219,6 @@ class DiskLayoutConfiguration(SubConfig):
 			elif last.end > total_size.align():
 				raise ValueError('Partition too large for device')
 
-		# Parse LVM configuration from settings
 		if (lvm_arg := disk_config.get('lvm_config', None)) is not None:
 			config.lvm_config = LvmConfiguration.parse_arg(lvm_arg, config)
 
@@ -268,26 +264,26 @@ class Units(Enum):
 
 
 class Unit(Enum):
-	B = 1  # byte
-	kB = 1000**1  # kilobyte
-	MB = 1000**2  # megabyte
-	GB = 1000**3  # gigabyte
-	TB = 1000**4  # terabyte
-	PB = 1000**5  # petabyte
-	EB = 1000**6  # exabyte
-	ZB = 1000**7  # zettabyte
-	YB = 1000**8  # yottabyte
+	B = 1
+	kB = 1000**1
+	MB = 1000**2
+	GB = 1000**3
+	TB = 1000**4
+	PB = 1000**5
+	EB = 1000**6
+	ZB = 1000**7
+	YB = 1000**8
 
-	KiB = 1024**1  # kibibyte
-	MiB = 1024**2  # mebibyte
-	GiB = 1024**3  # gibibyte
-	TiB = 1024**4  # tebibyte
-	PiB = 1024**5  # pebibyte
-	EiB = 1024**6  # exbibyte
-	ZiB = 1024**7  # zebibyte
-	YiB = 1024**8  # yobibyte
+	KiB = 1024**1
+	MiB = 1024**2
+	GiB = 1024**3
+	TiB = 1024**4
+	PiB = 1024**5
+	EiB = 1024**6
+	ZiB = 1024**7
+	YiB = 1024**8
 
-	sectors = 'sectors'  # size in sector
+	sectors = 'sectors'
 
 	@classmethod
 	def get_all_units(cls) -> list[str]:
@@ -335,9 +331,6 @@ class SectorSize:
 		)
 
 	def normalize(self) -> int:
-		"""
-		will normalize the value of the unit to Byte
-		"""
 		return int(self.value * self.unit.value)
 
 
@@ -439,8 +432,6 @@ class Size:
 		all_si_values = [self.convert(si) for si in si_units]
 		filtered = filter(lambda x: x.value >= 1, all_si_values)
 
-		# we have to get the max by the unit value as we're interested
-		# in getting the value in the highest possible unit without floats
 		si_value = max(filtered, key=lambda x: x.unit.value)
 
 		if include_unit:
@@ -465,9 +456,6 @@ class Size:
 		return self - Size(1, Unit.MiB, self.sector_size)
 
 	def _normalize(self) -> int:
-		"""
-		will normalize the value of the unit to Byte
-		"""
 		if self.unit == Unit.sectors and self.sector_size is not None:
 			return self.value * self.sector_size.normalize()
 		return int(self.value * self.unit.value)
@@ -512,6 +500,96 @@ class Size:
 class BtrfsMountOption(Enum):
 	compress = 'compress=zstd'
 	nodatacow = 'nodatacow'
+
+
+
+
+class BtrfsCompression(StrEnum):
+    NONE = "none"
+    LZO = "lzo"
+    ZSTD_1 = "zstd:1"
+    ZSTD_2 = "zstd:2"
+    ZSTD_3 = "zstd:3"      # def
+    ZSTD_4 = "zstd:4"
+    ZSTD_5 = "zstd:5"
+    ZSTD_6 = "zstd:6"
+    ZSTD_7 = "zstd:7"
+    ZSTD_8 = "zstd:8"
+    ZSTD_9 = "zstd:9"
+    ZSTD_10 = "zstd:10"
+    ZSTD_11 = "zstd:11"
+    ZSTD_12 = "zstd:12"
+    ZSTD_13 = "zstd:13"
+    ZSTD_14 = "zstd:14"
+    ZSTD_15 = "zstd:15"
+    ZSTD_16 = "zstd:16"
+    ZSTD_17 = "zstd:17"
+    ZSTD_18 = "zstd:18"
+    ZSTD_19 = "zstd:19"
+
+    @property
+    def mount_option(self) -> str:
+        """Convert to mount option string for fstab"""
+        if self == BtrfsCompression.NONE:
+            return ""
+        return f"compress={self.value}"
+
+    @property
+    def display_name(self) -> str:
+        """Get human-readable display name for UI"""
+        mapping = {
+            BtrfsCompression.NONE: "None (no compression)",
+            BtrfsCompression.LZO: "LZO (fast, moderate compression)",
+            BtrfsCompression.ZSTD_1: "ZSTD:1 (fastest)",
+            BtrfsCompression.ZSTD_2: "ZSTD:2 (very fast)",
+            BtrfsCompression.ZSTD_3: "ZSTD:3 (default, balanced)",
+            BtrfsCompression.ZSTD_4: "ZSTD:4",
+            BtrfsCompression.ZSTD_5: "ZSTD:5",
+            BtrfsCompression.ZSTD_6: "ZSTD:6",
+            BtrfsCompression.ZSTD_7: "ZSTD:7 (better compression)",
+            BtrfsCompression.ZSTD_8: "ZSTD:8",
+            BtrfsCompression.ZSTD_9: "ZSTD:9",
+            BtrfsCompression.ZSTD_10: "ZSTD:10",
+            BtrfsCompression.ZSTD_11: "ZSTD:11",
+            BtrfsCompression.ZSTD_12: "ZSTD:12",
+            BtrfsCompression.ZSTD_13: "ZSTD:13",
+            BtrfsCompression.ZSTD_14: "ZSTD:14",
+            BtrfsCompression.ZSTD_15: "ZSTD:15 (excellent compression)",
+            BtrfsCompression.ZSTD_16: "ZSTD:16",
+            BtrfsCompression.ZSTD_17: "ZSTD:17",
+            BtrfsCompression.ZSTD_18: "ZSTD:18",
+            BtrfsCompression.ZSTD_19: "ZSTD:19 (maximum compression)",
+        }
+        return mapping[self]
+
+    @classmethod
+    def from_string(cls, value: str) -> "BtrfsCompression":
+        if not value or value == "none":
+            return BtrfsCompression.NONE
+
+        if value.startswith("zstd:"):
+            level = value.split(":")[1]
+            try:
+                return getattr(BtrfsCompression, f"ZSTD_{level}")
+            except AttributeError:
+                return BtrfsCompression.ZSTD_3
+
+        if value == "lzo":
+            return BtrfsCompression.LZO
+
+        return BtrfsCompression.ZSTD_3
+
+    @classmethod
+    def get_ui_options(cls) -> list[tuple[str, "BtrfsCompression"]]:
+        return [
+            ("None (no compression)", BtrfsCompression.NONE),
+            ("LZO (fast, moderate compression)", BtrfsCompression.LZO),
+            ("ZSTD:1 (fastest)", BtrfsCompression.ZSTD_1),
+            ("ZSTD:3 (default, balanced)", BtrfsCompression.ZSTD_3),
+            ("ZSTD:7 (better compression, slower)", BtrfsCompression.ZSTD_7),
+            ("ZSTD:15 (excellent compression, slow)", BtrfsCompression.ZSTD_15),
+            ("ZSTD:19 (maximum compression, very slow)", BtrfsCompression.ZSTD_19),
+        ]
 
 
 @dataclass
@@ -658,12 +736,13 @@ class _DeviceInfo:
 class _SubvolumeModificationSerialization(TypedDict):
 	name: str
 	mountpoint: str
-
+	compression: NotRequired[str]
 
 @dataclass
 class SubvolumeModification:
 	name: Path | str
 	mountpoint: Path | None = None
+	compression: BtrfsCompression = BtrfsCompression.ZSTD_3
 
 	@classmethod
 	def from_existing_subvol_info(cls, info: _BtrfsSubvolumeInfo) -> Self:
@@ -679,16 +758,15 @@ class SubvolumeModification:
 
 			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
 
-			mods.append(cls(entry['name'], mountpoint))
+			compression_str = entry.get('compression', 'zstd:3')
+			compression = BtrfsCompression.from_string(compression_str)
+
+			mods.append(cls(entry['name'], mountpoint, compression))
 
 		return mods
 
 	@property
 	def relative_mountpoint(self) -> Path:
-		"""
-		Will return the relative path based on the anchor
-		e.g. Path('/mnt/test') -> Path('mnt/test')
-		"""
 		if self.mountpoint is not None:
 			return self.mountpoint.relative_to(self.mountpoint.anchor)
 
@@ -702,11 +780,22 @@ class SubvolumeModification:
 	def is_default_root(self) -> bool:
 		return self.name == Path('@') and self.is_root()
 
-	def json(self) -> _SubvolumeModificationSerialization:
-		return {'name': str(self.name), 'mountpoint': str(self.mountpoint)}
+	def get_mount_options(self) -> str:
+		return self.compression.mount_option
 
-	def table_data(self) -> _SubvolumeModificationSerialization:
-		return self.json()
+	def json(self) -> _SubvolumeModificationSerialization:
+		return {
+			'name': str(self.name),
+			'mountpoint': str(self.mountpoint),
+			'compression': self.compression.value
+		}
+
+	def table_data(self) -> dict[str, str]:
+		return {
+			'name': str(self.name),
+			'mountpoint': str(self.mountpoint),
+			'compression': self.compression.value
+		}
 
 
 class DeviceGeometry:
@@ -804,11 +893,6 @@ class PartitionFlag(PartitionFlagDataMixin, Enum):
 
 
 class PartitionGUID(Enum):
-	"""
-	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here:
-	https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
-	"""
-
 	LINUX_ROOT_AARCH64 = 'B921B045-1DF0-41C3-AF44-4C6F280D3FAE'
 	LINUX_ROOT_X86_64 = '4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709'
 
@@ -830,8 +914,6 @@ class FilesystemType(StrEnum):
 	XFS = auto()
 	LINUX_SWAP = 'linux-swap'
 
-	# this is not a FS known to parted, so be careful
-	# with the usage from this enum
 	CRYPTO_LUKS = 'crypto_LUKS'
 
 	def is_crypto(self) -> bool:
@@ -890,7 +972,6 @@ class PartitionModification:
 	flags: list[PartitionFlag] = field(default_factory=list)
 	btrfs_subvols: list[SubvolumeModification] = field(default_factory=list)
 
-	# only set if the device was created or exists
 	dev_path: Path | None = None
 	partn: int | None = None
 	partuuid: str | None = None
@@ -899,7 +980,6 @@ class PartitionModification:
 	_obj_id: UUID | str = field(init=False)
 
 	def __post_init__(self) -> None:
-		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
 			self._obj_id = uuid.uuid4()
 
@@ -965,10 +1045,6 @@ class PartitionModification:
 
 	@property
 	def relative_mountpoint(self) -> Path:
-		"""
-		Will return the relative path based on the anchor
-		e.g. Path('/mnt/test') -> Path('mnt/test')
-		"""
 		if self.mountpoint:
 			return self.mountpoint.relative_to(self.mountpoint.anchor)
 
@@ -1038,9 +1114,6 @@ class PartitionModification:
 			self.set_flag(flag)
 
 	def json(self) -> _PartitionModificationSerialization:
-		"""
-		Called for configuration settings
-		"""
 		return {
 			'obj_id': self.obj_id,
 			'status': self.status.value,
@@ -1056,9 +1129,6 @@ class PartitionModification:
 		}
 
 	def table_data(self) -> dict[str, str]:
-		"""
-		Called for displaying data in table format
-		"""
 		part_mod = {
 			'Status': self.status.value,
 			'Device': str(self.dev_path) if self.dev_path else '',
@@ -1080,9 +1150,6 @@ class PartitionModification:
 
 class LvmLayoutType(Enum):
 	Default = 'default'
-
-	# Manual = 'manual_lvm'
-
 	def display_msg(self) -> str:
 		match self:
 			case LvmLayoutType.Default:
@@ -1147,15 +1214,12 @@ class LvmVolume:
 	mount_options: list[str] = field(default_factory=list)
 	btrfs_subvols: list[SubvolumeModification] = field(default_factory=list)
 
-	# volume group name
 	vg_name: str | None = None
-	# mapper device path /dev/<vg>/<vol>
 	dev_path: Path | None = None
 
 	_obj_id: uuid.UUID | str = field(init=False)
 
 	def __post_init__(self) -> None:
-		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
 			self._obj_id = uuid.uuid4()
 
@@ -1196,10 +1260,6 @@ class LvmVolume:
 
 	@property
 	def relative_mountpoint(self) -> Path:
-		"""
-		Will return the relative path based on the anchor
-		e.g. Path('/mnt/test') -> Path('mnt/test')
-		"""
 		if self.mountpoint is not None:
 			return self.mountpoint.relative_to(self.mountpoint.anchor)
 
@@ -1296,7 +1356,6 @@ class LvmConfiguration:
 	vol_groups: list[LvmVolumeGroup]
 
 	def __post_init__(self) -> None:
-		# make sure all volume groups have unique PVs
 		pvs = []
 		for group in self.vol_groups:
 			for pv in group.pvs:
@@ -1315,8 +1374,7 @@ class LvmConfiguration:
 		lvm_pvs = []
 		for mod in disk_config.device_modifications:
 			for part in mod.partitions:
-				# FIXME: 'lvm_pvs' does not seem like it can ever exist in the 'arg' serialization
-				if part.obj_id in arg.get('lvm_pvs', []):  # type: ignore[operator]
+				if part.obj_id in arg.get('lvm_pvs', []):
 					lvm_pvs.append(part)
 
 		return cls(
@@ -1428,9 +1486,6 @@ class DeviceModification:
 		return next(filtered, None)
 
 	def json(self) -> _DeviceModificationSerialization:
-		"""
-		Called when generating configuration files
-		"""
 		return {
 			'device': str(self.device.device_info.path),
 			'wipe': self.wipe,
@@ -1504,7 +1559,7 @@ class DiskEncryption:
 		if self.hsm_device:
 			obj['hsm_device'] = self.hsm_device.json()
 
-		if self.iter_time != DEFAULT_ITER_TIME:  # Only include if not default
+		if self.iter_time != DEFAULT_ITER_TIME:
 			obj['iter_time'] = self.iter_time
 
 		return obj
@@ -1520,7 +1575,7 @@ class DiskEncryption:
 			for part in mod.partitions:
 				partitions.append(part)
 
-		if len(partitions) > 2:  # assume one boot and at least 2 additional
+		if len(partitions) > 2:
 			if lvm_config:
 				return False
 

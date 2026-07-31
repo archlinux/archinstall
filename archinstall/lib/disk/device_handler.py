@@ -21,6 +21,7 @@ from archinstall.lib.log import debug, error, info, log
 from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
 	BDevice,
+	BtrfsCompression,
 	BtrfsMountOption,
 	DeviceModification,
 	DiskEncryption,
@@ -28,6 +29,7 @@ from archinstall.lib.models.device import (
 	LsblkInfo,
 	ModificationStatus,
 	PartitionFlag,
+	PartitionGUID,
 	PartitionModification,
 	PartitionTable,
 	SubvolumeModification,
@@ -74,7 +76,6 @@ class DeviceHandler:
 			if dev_lsblk_info.type == 'rom':
 				continue
 
-			# exclude archiso loop device
 			if dev_lsblk_info.mountpoint == ARCHISO_MOUNTPOINT:
 				continue
 
@@ -194,10 +195,6 @@ class DeviceHandler:
 			mount(dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 			mountpoint = self._TMP_BTRFS_MOUNT
 		else:
-			# when multiple subvolumes are mounted then the lsblk output may look like
-			# "mountpoint": "/mnt/archinstall/var/log"
-			# "mountpoints": ["/mnt/archinstall/var/log", "/mnt/archinstall/home", ..]
-			# so we'll determine the minimum common path and assume that's the root
 			try:
 				common_path = os.path.commonpath(lsblk_info.mountpoints)
 			except ValueError:
@@ -211,17 +208,9 @@ class DeviceHandler:
 			debug(f'Failed to read btrfs subvolume information: {err}')
 			return subvol_infos
 
-		# It is assumed that lsblk will contain the fields as
-		# "mountpoints": ["/mnt/archinstall/log", "/mnt/archinstall/home", "/mnt/archinstall", ...]
-		# "fsroots": ["/@log", "/@home", "/@"...]
-		# we'll thereby map the fsroot, which are the mounted filesystem roots
-		# to the corresponding mountpoints
 		btrfs_subvol_info = dict(zip(lsblk_info.fsroots, lsblk_info.mountpoints))
 
-		# ID 256 gen 16 top level 5 path @
 		for line in result.splitlines():
-			# expected output format:
-			# ID 257 gen 8 top level 5 path @home
 			name = Path(line.split(' ')[-1])
 			sub_vol_mountpoint = btrfs_subvol_info.get('/' / name, None)
 			subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
@@ -243,17 +232,14 @@ class DeviceHandler:
 
 		match fs_type:
 			case FilesystemType.BTRFS | FilesystemType.XFS:
-				# Force overwrite
 				options.append('-f')
 			case FilesystemType.F2FS:
 				options.append('-f')
 				options.extend(('-O', 'extra_attr'))
 			case FilesystemType.EXT2 | FilesystemType.EXT3 | FilesystemType.EXT4:
-				# Force create
 				options.append('-F')
 			case _ if fs_type.is_fat():
 				mkfs_type = 'fat'
-				# Set FAT size
 				options.extend(('-F', fs_type.value.removeprefix(mkfs_type)))
 			case FilesystemType.LINUX_SWAP:
 				command = 'mkswap'
@@ -342,8 +328,6 @@ class DeviceHandler:
 		requires_delete: bool,
 		arch: str | None = None,
 	) -> None:
-		# when we require a delete and the partition to be (re)created
-		# already exists then we have to delete it first
 		if requires_delete and part_mod.status in [ModificationStatus.MODIFY, ModificationStatus.DELETE]:
 			info(f'Delete existing partition: {part_mod.safe_dev_path}')
 			part_info = self.find_partition(part_mod.safe_dev_path)
@@ -400,7 +384,6 @@ class DeviceHandler:
 			elif PartitionFlag.LINUX_HOME not in part_mod.flags and part_mod.is_home():
 				partition.setFlag(PartitionFlag.LINUX_HOME.flag_id)
 
-		# the partition has a path now that it has been added
 		part_mod.dev_path = Path(partition.path)
 
 	def fetch_part_info(self, path: Path) -> LsblkInfo:
@@ -430,7 +413,16 @@ class DeviceHandler:
 	) -> None:
 		info(f'Creating subvolumes: {path}')
 
-		mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+		all_mount_options = mount_options.copy()
+		for subvol in btrfs_subvols:
+			if subvol.compression != BtrfsCompression.NONE:
+				comp_opt = subvol.compression.mount_option
+				if comp_opt and comp_opt not in all_mount_options:
+					# Remove any existing compress= options to avoid conflicts
+					all_mount_options = [o for o in all_mount_options if not o.startswith("compress=")]
+					all_mount_options.append(comp_opt)
+
+		mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True, options=all_mount_options)
 
 		for sub_vol in sorted(btrfs_subvols, key=lambda x: x.name):
 			debug(f'Creating subvolume: {sub_vol.name}')
@@ -445,7 +437,7 @@ class DeviceHandler:
 				except SysCallError as err:
 					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {err}')
 
-			if BtrfsMountOption.compress.value in mount_options:
+			if sub_vol.compression != BtrfsCompression.NONE:
 				try:
 					SysCommand(f'chattr +c {subvol_path}')
 				except SysCallError as err:
@@ -460,7 +452,6 @@ class DeviceHandler:
 	) -> None:
 		info(f'Creating subvolumes: {part_mod.safe_dev_path}')
 
-		# unlock the partition first if it's encrypted
 		if enc_conf is not None and part_mod in enc_conf.partitions:
 			if not part_mod.mapper_name:
 				raise ValueError('No device path specified for modification')
@@ -479,11 +470,19 @@ class DeviceHandler:
 			luks_handler = None
 			dev_path = part_mod.safe_dev_path
 
+		mount_options = part_mod.mount_options.copy()
+		for subvol in part_mod.btrfs_subvols:
+			if subvol.compression != BtrfsCompression.NONE:
+				comp_opt = subvol.compression.mount_option
+				if comp_opt and comp_opt not in mount_options:
+					mount_options = [o for o in mount_options if not o.startswith("compress=")]
+					mount_options.append(comp_opt)
+
 		mount(
 			dev_path,
 			self._TMP_BTRFS_MOUNT,
 			create_target_mountpoint=True,
-			options=part_mod.mount_options,
+			options=mount_options,
 		)
 
 		for sub_vol in sorted(part_mod.btrfs_subvols, key=lambda x: x.name):
@@ -492,6 +491,12 @@ class DeviceHandler:
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
 			SysCommand(f'btrfs subvolume create -p {subvol_path}')
+
+			if sub_vol.compression != BtrfsCompression.NONE:
+				try:
+					SysCommand(f'chattr +c {subvol_path}')
+				except SysCallError as err:
+					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
 
 		umount(dev_path)
 
@@ -506,7 +511,6 @@ class DeviceHandler:
 		for partition in existing_partitions:
 			debug(f'Unmounting: {partition.path}')
 
-			# un-mount for existing encrypted partitions
 			if partition.fs_type == FilesystemType.CRYPTO_LUKS:
 				Luks2(partition.path).lock()
 			else:
@@ -517,12 +521,8 @@ class DeviceHandler:
 		modification: DeviceModification,
 		partition_table: PartitionTable | None = None,
 	) -> None:
-		"""
-		Create a partition table on the block device and create all partitions.
-		"""
 		partition_table = partition_table or self.partition_table
 
-		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
 			if partition_table.is_mbr() and len(modification.partitions) > 3:
 				raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
@@ -535,14 +535,11 @@ class DeviceHandler:
 
 		info(f'Creating partitions: {modification.device_path}')
 
-		# don't touch existing partitions
 		filtered_part = [p for p in modification.partitions if not p.exists()]
 
 		arch = platform.machine()
 
 		for part_mod in filtered_part:
-			# if the entire disk got nuked then we don't have to delete
-			# any existing partitions anymore because they're all gone already
 			requires_delete = modification.wipe is False
 			self._setup_partition(
 				part_mod,
@@ -554,14 +551,11 @@ class DeviceHandler:
 
 		disk.commit()
 
-		# Wipe filesystem/LVM signatures from newly created partitions
-		# to prevent "signature detected" errors
 		for part_mod in filtered_part:
 			if part_mod.dev_path:
 				debug(f'Wiping signatures from: {part_mod.dev_path}')
 				SysCommand(f'wipefs --all {part_mod.dev_path}')
 
-		# Sync with udev after wiping signatures
 		if filtered_part:
 			udev_sync()
 
@@ -607,20 +601,10 @@ class DeviceHandler:
 				error(f'"{command}" failed to run (continuing anyway): {err}')
 
 	def _wipe(self, dev_path: Path) -> None:
-		"""
-		Wipe a device (partition or otherwise) of meta-data, be it file system, LVM, etc.
-		@param dev_path:	Device path of the partition to be wiped.
-		@type dev_path:		str
-		"""
 		with open(dev_path, 'wb') as p:
 			p.write(bytearray(1024))
 
 	def wipe_dev(self, block_device: BDevice) -> None:
-		"""
-		Wipe the block device of meta-data, be it file system, LVM, etc.
-		This is not intended to be secure, but rather to ensure that
-		auto-discovery tools don't recognize anything here.
-		"""
 		info(f'Wiping partitions and metadata: {block_device.device_info.path}')
 
 		for partition in block_device.partition_infos:
