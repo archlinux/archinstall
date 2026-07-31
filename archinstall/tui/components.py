@@ -62,7 +62,7 @@ def _get_status_prefix(item: MenuItem) -> str:
 	- ! (Yellow) for unconfigured items
 	"""
 
-	is_special_key = '__config__' in item.key or item.key == '← ' + tr('Back')
+	is_special_key = item.text in ['← ' + tr('Back'), tr('Save configuration'), tr('Install'), tr('Abort')]
 
 	if item.read_only or is_special_key:
 		return ''
