@@ -15,10 +15,6 @@ class PacmanConfiguration(SubConfig):
 	parallel_downloads: int = 5
 	color: bool = True
 
-	@classmethod
-	def default(cls) -> Self:
-		return cls()
-
 	@override
 	def json(self) -> PacmanConfigSerialization:
 		return {
@@ -40,7 +36,7 @@ class PacmanConfiguration(SubConfig):
 
 	@classmethod
 	def parse_arg(cls, args: PacmanConfigSerialization) -> Self:
-		config = cls.default()
+		config = cls()
 
 		if 'parallel_downloads' in args:
 			config.parallel_downloads = int(args['parallel_downloads'])

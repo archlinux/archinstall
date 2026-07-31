@@ -168,7 +168,7 @@ class ArchConfig:
 	kernels: list[str] = field(default_factory=lambda: [DEFAULT_KERNEL.value])
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
-	pacman_config: PacmanConfiguration = field(default_factory=PacmanConfiguration.default)
+	pacman_config: PacmanConfiguration = field(default_factory=PacmanConfiguration)
 	timezone: str = 'UTC'
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
