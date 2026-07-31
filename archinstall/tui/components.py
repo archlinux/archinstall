@@ -62,6 +62,11 @@ def _get_status_prefix(item: MenuItem) -> str:
 	- ! (Yellow) for unconfigured items
 	"""
 
+	is_special_key = '__config__' in item.key or item.key == '← ' + tr('Back')
+
+	if item.read_only or is_special_key:
+		return ''
+
 	if item.has_value():
 		return '  '
 	else:
