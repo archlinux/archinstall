@@ -35,7 +35,7 @@ from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.utils.format import as_table
-from archinstall.tui.components import tui
+from archinstall.tui.components import get_status_prefix, tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 
 
@@ -64,30 +64,6 @@ class GlobalMenu(AbstractMenu[None]):
 		super().__init__(self._item_group, config=arch_config, title=title)
 		self._update_item_labels()
 
-	def _get_status_prefix(self, item: MenuItem) -> str:
-		"""
-		Returns a rich-formatted status prefix icon depending on item state:
-		- [✓] (Green) for configured items
-		- [!] (Red) for missing mandatory or required items
-		- [•] (Yellow) for unconfigured optional items
-		"""
-		if item.read_only or item.key in (SpecialMenuKey.SAVE.value, SpecialMenuKey.INSTALL.value, SpecialMenuKey.ABORT.value):
-			return ''
-
-		if item.key == 'auth_config':
-			auth_config: AuthenticationConfiguration | None = item.value
-			is_auth_valid = auth_config is not None and (auth_config.root_enc_password is not None or auth_config.has_superuser())
-			if is_auth_valid:
-				return '[bold green][✓][/bold green] '
-			return '[bold red][!][/bold red] '
-
-		if item.has_value():
-			return '[bold green][✓][/bold green] '
-		elif item.mandatory:
-			return '[bold red][!][/bold red] '
-		else:
-			return '[bold yellow][•][/bold yellow] '
-
 	def _update_item_labels(self) -> None:
 		"""
 		Re-applies translated titles and status prefixes to all active menu items.
@@ -98,7 +74,7 @@ class GlobalMenu(AbstractMenu[None]):
 		for item in self._item_group.items:
 			if item.key in new_options:
 				base_title = new_options[item.key]
-				prefix = self._get_status_prefix(item)
+				prefix = get_status_prefix(item)
 				item.text = f'{prefix}{base_title}'
 
 	def _wrap_action(self, item: MenuItem, action: Callable[..., Any]) -> Callable[..., Any]:

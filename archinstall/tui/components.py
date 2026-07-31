@@ -20,6 +20,8 @@ from textual.widgets.selection_list import Selection
 from textual.worker import WorkerCancelled
 
 from archinstall.lib.log import debug
+from archinstall.lib.menu.abstract_menu import SpecialMenuKey
+from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 from archinstall.tui.result import Result, ResultType
@@ -53,6 +55,28 @@ def _translate_bindings(source: BindingsMap | None, target: BindingsMap) -> None
 		return
 	for key, bindings in source.key_to_bindings.items():
 		target.key_to_bindings[key] = [replace(b, description=tr(b.description)) if b.description else b for b in bindings]
+
+
+def get_status_prefix(item: MenuItem) -> str:
+	"""
+	Returns a rich-formatted status prefix icon depending on item state:
+	- Space for configured items
+	- ! (Yellow) for unconfigured items
+	"""
+	if item.read_only or item.key in (SpecialMenuKey.SAVE.value, SpecialMenuKey.INSTALL.value, SpecialMenuKey.ABORT.value):
+		return ''
+
+	if item.key == 'auth_config':
+		auth_config: AuthenticationConfiguration | None = item.value
+		is_auth_valid = auth_config is not None and (auth_config.root_enc_password is not None or auth_config.has_superuser())
+		if is_auth_valid:
+			return '  '
+		return '[bold yellow][!][/bold yellow] '
+
+	if item.has_value():
+		return '  '
+	else:
+		return '[bold yellow]![/bold yellow] '
 
 
 class BaseScreen(Screen[Result[ValueT]]):
