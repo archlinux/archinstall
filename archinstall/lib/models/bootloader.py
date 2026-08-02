@@ -36,14 +36,14 @@ class Bootloader(Enum):
 	def json(self) -> str:
 		return self.value
 
-	@classmethod
-	def get_default(cls, uefi: bool, skip_boot: bool = False) -> Self:
+	@staticmethod
+	def get_default(uefi: bool, skip_boot: bool = False) -> Bootloader:
 		if skip_boot:
-			return cls.NO_BOOTLOADER
+			return Bootloader.NO_BOOTLOADER
 		elif uefi:
-			return cls.Systemd
+			return Bootloader.Systemd
 		else:
-			return cls.Grub
+			return Bootloader.Grub
 
 	@classmethod
 	def from_arg(cls, bootloader: str, skip_boot: bool) -> Self:
