@@ -13,6 +13,7 @@ class CockpitProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
+		# NOTE: udisks2 and packagekit are raw dependenices, not cockpit app components
 		return ['cockpit', 'udisks2', 'packagekit']
 
 	@property
