@@ -753,13 +753,13 @@ class PartitionType(StrEnum):
 	PRIMARY = auto()
 	_UNKNOWN = 'unknown'
 
-	@classmethod
-	def get_type_from_code(cls, code: int) -> Self:
+	@staticmethod
+	def get_type_from_code(code: int) -> PartitionType:
 		if code == parted.PARTITION_NORMAL:
-			return cls.PRIMARY
+			return PartitionType.PRIMARY
 		else:
 			debug(f'Partition code not supported: {code}')
-			return cls._UNKNOWN
+			return PartitionType._UNKNOWN
 
 	def get_partition_code(self) -> int | None:
 		if self == PartitionType.PRIMARY:
