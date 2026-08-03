@@ -11,7 +11,6 @@ import parted
 from parted import Disk, Geometry, Partition
 from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_validator
 
-from archinstall.lib.hardware import SysInfo
 from archinstall.lib.log import debug
 from archinstall.lib.models.config import SubConfig
 from archinstall.lib.models.users import Password
@@ -256,10 +255,6 @@ class PartitionTable(Enum):
 
 	def is_mbr(self) -> bool:
 		return self == PartitionTable.MBR
-
-	@classmethod
-	def default(cls) -> Self:
-		return cls.GPT if SysInfo.has_uefi() else cls.MBR
 
 
 class Units(Enum):

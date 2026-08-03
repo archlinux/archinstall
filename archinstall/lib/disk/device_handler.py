@@ -17,6 +17,7 @@ from archinstall.lib.disk.utils import (
 	umount,
 )
 from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesystemFormat
+from archinstall.lib.hardware import SysInfo
 from archinstall.lib.log import debug, error, info, log
 from archinstall.lib.models.device import (
 	DEFAULT_ITER_TIME,
@@ -45,7 +46,7 @@ class DeviceHandler:
 
 	def __init__(self) -> None:
 		self._devices: dict[Path, BDevice] = {}
-		self._partition_table = PartitionTable.default()
+		self._partition_table = PartitionTable.GPT if SysInfo.has_uefi() else PartitionTable.MBR
 		self.load_devices()
 
 	@property
