@@ -44,6 +44,7 @@ _ENV_FONT = os.environ.get('FONT')
 
 class TranslationHandler:
 	def __init__(self) -> None:
+		self._locales_dir = Path(__file__).parent.parent / 'locales'
 		self._base_pot = 'base.pot'
 		self._languages = 'languages.json'
 		self._active_language: Language | None = None
@@ -136,7 +137,7 @@ class TranslationHandler:
 
 			try:
 				# get a translation for a specific language
-				translation = gettext.translation('base', localedir=self._get_locales_dir(), languages=(abbr, lang))
+				translation = gettext.translation('base', localedir=self._locales_dir, languages=(abbr, lang))
 			except FileNotFoundError as err:
 				raise FileNotFoundError(f"Could not locate language file for '{lang}': {err}")
 
@@ -158,10 +159,7 @@ class TranslationHandler:
 		"""
 		Load the mapping table of all known languages
 		"""
-		locales_dir = self._get_locales_dir()
-		languages = Path.joinpath(locales_dir, self._languages)
-
-		with open(languages) as fp:
+		with (self._locales_dir / self._languages).open() as fp:
 			return json.load(fp)
 
 	def _get_catalog_size(self, translation: gettext.NullTranslations) -> int:
@@ -178,8 +176,7 @@ class TranslationHandler:
 		"""
 		Get total messages that could be translated
 		"""
-		locales = self._get_locales_dir()
-		with open(f'{locales}/{self._base_pot}') as fp:
+		with (self._locales_dir / self._base_pot).open() as fp:
 			lines = fp.readlines()
 			msgid_lines = [line for line in lines if 'msgid' in line]
 
@@ -237,23 +234,12 @@ class TranslationHandler:
 			self._set_font(self.active_font)
 			debug(f'Console font set from language mapping: {self.active_font}')
 
-	def _get_locales_dir(self) -> Path:
-		"""
-		Get the locales directory path
-		"""
-		cur_path = Path(__file__).parent.parent
-		locales_dir = Path.joinpath(cur_path, 'locales')
-		return locales_dir
-
 	def _provided_translations(self) -> list[str]:
 		"""
 		Get a list of all known languages
 		"""
-		locales_dir = self._get_locales_dir()
-		filenames = os.listdir(locales_dir)
-
 		translation_files = []
-		for filename in filenames:
+		for filename in os.listdir(self._locales_dir):
 			if len(filename) == 2 or filename in ['pt_BR', 'zh-CN', 'zh-TW']:
 				translation_files.append(filename)
 
