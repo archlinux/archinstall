@@ -7,9 +7,11 @@ import textwrap
 import time
 import traceback
 from pathlib import Path
+from typing import override
 
 from archinstall.lib.args import ArchConfigHandler, SubCommand
 from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.general.general_menu import select_archinstall_language
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.log import debug, error, info, logger, share_install_log, warn
 from archinstall.lib.menu.helpers import Confirmation
@@ -17,9 +19,9 @@ from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
-from archinstall.lib.translationhandler import tr, translation_handler
+from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.utils.util import running_from_iso
-from archinstall.tui.components import tui
+from archinstall.tui.components import InstanceRunnable, tui
 from archinstall.tui.menu_item import MenuItemGroup
 
 
@@ -107,6 +109,15 @@ def _share_log_command() -> None:
 			error(tr('Failed to upload log.'))
 
 
+class LangSelect(InstanceRunnable[Language]):
+	@override
+	async def run(self) -> Language:
+		preset_lang = translation_handler.get_language_by_name('English')
+		selected_lang = await select_archinstall_language(translation_handler.translated_languages, preset_lang)
+		translation_handler.activate(selected_lang)
+		return selected_lang
+
+
 def run() -> int:
 	"""
 	This can either be run as the compiled and installed application: python setup.py install
@@ -139,6 +150,9 @@ def run() -> int:
 	translation_handler.save_console_font()
 
 	_log_sys_info()
+
+	# The main menu isn't shown if there's no internet, and so the user wouldn't be able to select a language if not for this.
+	arch_config_handler.config.archinstall_language = tui.run(LangSelect())
 
 	if not arch_config_handler.args.offline:
 		if not arch_config_handler.args.skip_wifi_check:
