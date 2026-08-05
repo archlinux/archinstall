@@ -26,6 +26,9 @@ class Bootloader(Enum):
 			case _:
 				return False
 
+	def has_os_prober_support(self) -> bool:
+		return self == Bootloader.Grub
+
 	def is_uefi_only(self) -> bool:
 		match self:
 			case Bootloader.Systemd | Bootloader.Efistub | Bootloader.Refind:
@@ -94,10 +97,11 @@ class BootloaderConfiguration(SubConfig):
 	uki: bool = False
 	removable: bool = True
 	plymouth: PlymouthTheme | None = None
+	os_prober: bool = False
 
 	@override
 	def json(self) -> dict[str, Any]:
-		data = {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
+		data = {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable, 'os_prober': self.os_prober}
 
 		if self.plymouth is not None:
 			data['plymouth'] = self.plymouth.value
@@ -111,6 +115,8 @@ class BootloaderConfiguration(SubConfig):
 			out.append(tr('UKI enabled'))
 		if self.removable:
 			out.append(tr('Removable'))
+		if self.os_prober:
+			out.append(tr('os-prober enabled'))
 		if self.plymouth is not None:
 			out.append(tr('Plymouth "{}"').format(self.plymouth.value))
 
@@ -122,7 +128,8 @@ class BootloaderConfiguration(SubConfig):
 		uki = config.get('uki', False)
 		removable = config.get('removable', True)
 		plymouth = PlymouthTheme.from_arg(config.get('plymouth', None))
-		return cls(bootloader=bootloader, uki=uki, removable=removable, plymouth=plymouth)
+		os_prober = config.get('os_prober', False)
+		return cls(bootloader=bootloader, uki=uki, removable=removable, plymouth=plymouth, os_prober=os_prober)
 
 	@classmethod
 	def get_default(cls, uefi: bool, skip_boot: bool = False) -> Self:
@@ -130,7 +137,8 @@ class BootloaderConfiguration(SubConfig):
 		removable = uefi and bootloader.has_removable_support()
 		uki = uefi and bootloader.has_uki_support()
 		plymouth = None
-		return cls(bootloader=bootloader, uki=uki, removable=removable, plymouth=plymouth)
+		os_prober = False
+		return cls(bootloader=bootloader, uki=uki, removable=removable, plymouth=plymouth, os_prober=os_prober)
 
 	def preview(self, uefi: bool) -> str:
 		text = f'{tr("Bootloader")}: {self.bootloader.value}'
@@ -148,6 +156,13 @@ class BootloaderConfiguration(SubConfig):
 			else:
 				removable_string = tr('Disabled')
 			text += f'{tr("Removable")}: {removable_string}'
+			text += '\n'
+		if self.bootloader.has_os_prober_support():
+			if self.os_prober:
+				os_prober_string = tr('Enabled')
+			else:
+				os_prober_string = tr('Disabled')
+			text += f'os-prober: {os_prober_string}'
 			text += '\n'
 		if self.plymouth is not None:
 			text += f'{tr("Plymouth")}: {self.plymouth.value}'
