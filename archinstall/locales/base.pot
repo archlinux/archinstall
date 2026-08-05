@@ -209,6 +209,9 @@ msgstr ""
 msgid "Install to removable location"
 msgstr ""
 
+msgid "Detect other operating systems"
+msgstr ""
+
 msgid "Plymouth"
 msgstr ""
 
@@ -257,6 +260,11 @@ msgid "USB drives or other portable external media."
 msgstr ""
 
 msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid ""
+"Would you like to enable os-prober to detect other operating systems (e.g. "
+"Windows)?"
 msgstr ""
 
 msgid "Select bootloader to install"
@@ -906,6 +914,9 @@ msgstr ""
 msgid "Removable"
 msgstr ""
 
+msgid "os-prober enabled"
+msgstr ""
+
 #, python-brace-format
 msgid "Plymouth \"{}\""
 msgstr ""
@@ -1122,6 +1133,15 @@ msgid ""
 "Select any packages from the below list that should be installed additionally"
 msgstr ""
 
+msgid ""
+"Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr ""
+
+msgid ""
+"Pre-existing pacman lock never exited. Please clean up any existing pacman "
+"sessions before using archinstall."
+msgstr ""
+
 #, python-brace-format
 msgid "Enter the number of parallel downloads (1-{})"
 msgstr ""
@@ -1131,15 +1151,6 @@ msgid "Value must be between 1 and {}"
 msgstr ""
 
 msgid "Enable colored output for pacman"
-msgstr ""
-
-msgid ""
-"Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr ""
-
-msgid ""
-"Pre-existing pacman lock never exited. Please clean up any existing pacman "
-"sessions before using archinstall."
 msgstr ""
 
 msgid "The proprietary Nvidia driver is not supported by Sway."
