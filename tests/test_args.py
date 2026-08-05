@@ -232,6 +232,7 @@ def test_config_file_parsing(
 			bootloader=Bootloader.Systemd,
 			uki=False,
 			removable=False,
+			os_prober=True,
 		),
 		hostname='archy',
 		kernels=['linux-zen'],
