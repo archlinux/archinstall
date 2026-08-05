@@ -72,6 +72,9 @@ class AudioApp:
 		if SysInfo.requires_alsa_fw():
 			install_session.add_additional_packages('alsa-firmware')
 
+		# Common dependency for realtime scheduling support
+		install_session.add_additional_packages('rtkit');
+
 		match audio_config.audio:
 			case Audio.PIPEWIRE:
 				install_session.add_additional_packages(self.pipewire_packages)
