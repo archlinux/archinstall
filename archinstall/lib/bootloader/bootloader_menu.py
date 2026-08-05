@@ -41,6 +41,11 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		if not removable_enabled:
 			self._bootloader_conf.removable = False
 
+		# os-prober availability
+		os_prober_enabled = bootloader.has_os_prober_support()
+		if not os_prober_enabled:
+			self._bootloader_conf.os_prober = False
+
 		return [
 			MenuItem(
 				text=tr('Bootloader'),
@@ -67,6 +72,14 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				enabled=removable_enabled,
 			),
 			MenuItem(
+				text=tr('Detect other operating systems'),
+				action=self._select_os_prober,
+				value=self._bootloader_conf.os_prober,
+				preview_action=self._prev_os_prober,
+				key='os_prober',
+				enabled=os_prober_enabled,
+			),
+			MenuItem(
 				text=tr('Plymouth'),
 				action=self._select_plymouth,
 				value=self._bootloader_conf.plymouth,
@@ -91,6 +104,13 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		if item.value:
 			return tr('Will install to /EFI/BOOT/ (removable location, safe default)')
 		return tr('Will install to custom location with NVRAM entry')
+
+	def _prev_os_prober(self, item: MenuItem) -> str | None:
+		os_prober_text = f'{tr("Detect other operating systems")}'
+		if item.value:
+			return f'{os_prober_text}: {tr("Enabled")}'
+		else:
+			return f'{os_prober_text}: {tr("Disabled")}'
 
 	def _prev_plymouth(self, item: MenuItem) -> str | None:
 		if item.value:
@@ -126,6 +146,15 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 					removable_item.value = True
 					self._bootloader_conf.removable = True
 				removable_item.enabled = True
+
+			# Update os-prober option based on bootloader
+			os_prober_item = self._menu_item_group.find_by_key('os_prober')
+			if not bootloader.has_os_prober_support():
+				os_prober_item.enabled = False
+				os_prober_item.value = False
+				self._bootloader_conf.os_prober = False
+			else:
+				os_prober_item.enabled = True
 
 		return bootloader
 
@@ -216,6 +245,19 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 				return preset
 			case ResultType.Selection:
 				return result.get_value()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
+
+	async def _select_os_prober(self, preset: bool) -> bool:
+		prompt = tr('Would you like to enable os-prober to detect other operating systems (e.g. Windows)?') + '\n'
+
+		result = await Confirmation(header=prompt, allow_skip=True, preset=preset).show()
+
+		match result.type_:
+			case ResultType.Skip:
+				return preset
+			case ResultType.Selection:
+				return result.item() == MenuItem.yes()
 			case ResultType.Reset:
 				raise ValueError('Unhandled result type')
 
