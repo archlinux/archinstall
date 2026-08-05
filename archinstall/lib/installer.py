@@ -1432,6 +1432,8 @@ class Installer:
 			grub_default.write_text(config)
 
 		if os_prober:
+			debug('Enabling os-prober in GRUB configuration')
+
 			# fuse3 enables grub-mount, which os-prober requires to inspect
 			# partitions that are not mounted (e.g. Windows on another disk)
 			self.pacman.strap(['os-prober', 'fuse3'])
