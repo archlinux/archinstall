@@ -162,7 +162,7 @@ class BootloaderConfiguration(SubConfig):
 				os_prober_string = tr('Enabled')
 			else:
 				os_prober_string = tr('Disabled')
-			text += f'os-prober: {os_prober_string}'
+			text += f'{tr("Detect other operating systems")}: {os_prober_string}'
 			text += '\n'
 		if self.plymouth is not None:
 			text += f'{tr("Plymouth")}: {self.plymouth.value}'
