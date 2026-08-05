@@ -1432,7 +1432,9 @@ class Installer:
 			grub_default.write_text(config)
 
 		if os_prober:
-			self.pacman.strap('os-prober')
+			# fuse3 enables grub-mount, which os-prober requires to inspect
+			# partitions that are not mounted (e.g. Windows on another disk)
+			self.pacman.strap(['os-prober', 'fuse3'])
 
 			# grub-mkconfig only runs os-prober when GRUB_DISABLE_OS_PROBER is
 			# explicitly set to false; the stock config ships the option commented out
