@@ -27,7 +27,7 @@ Alternative ways to install are `git clone` the repository (and is better since 
 
 ## Upgrade `archinstall` on live Arch ISO image
 
-Upgrading archinstall on the ISO needs to be done via a full system upgrade using 
+Upgrading archinstall on the ISO needs to be done via a full system upgrade using
 
 ```shell
 pacman -Syu
@@ -45,7 +45,7 @@ Assuming you are on an Arch Linux live-ISO or installed via `pip`, `archinstall`
 ```shell
 archinstall
 ```
-similar goes for running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git
+similar goes for running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
 
 ```shell
 git clone https://github.com/archlinux/archinstall
@@ -60,7 +60,7 @@ archinstall --script <name>
 ```
 
 #### Advanced
-Some additional options that most users do not need are hidden behind the `--advanced` flag and all options/args can be consulted through `-h` or `--help`. 
+Some additional options that most users do not need are hidden behind the `--advanced` flag and all options/args can be consulted through `-h` or `--help`.
 
 ## Running from a declarative configuration file or URL
 
@@ -179,7 +179,7 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # losetup --partscan --show ./testimage.img
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
-    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd 
+    # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd
 
 This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
