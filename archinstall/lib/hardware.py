@@ -1,8 +1,7 @@
 import os
-from enum import Enum
+from enum import Enum, StrEnum
 from functools import cached_property
 from pathlib import Path
-from typing import Self
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import SysCallError
@@ -11,29 +10,21 @@ from archinstall.lib.networking import enrich_iface_types, list_interfaces
 from archinstall.lib.translationhandler import tr
 
 
-class CpuVendor(Enum):
-	AuthenticAMD = 'amd'
-	GenuineIntel = 'intel'
-	_Unknown = 'unknown'
-
-	@classmethod
-	def get_vendor(cls, name: str) -> Self:
-		if vendor := getattr(cls, name, None):
-			return vendor
-		else:
-			debug(f"Unknown CPU vendor '{name}' detected.")
-			return cls._Unknown
+class CPUVendor(StrEnum):
+	AMD = 'AuthenticAMD'
+	INTEL = 'GenuineIntel'
+	_UNKNOWN = 'unknown'
 
 	def _has_microcode(self) -> bool:
 		match self:
-			case CpuVendor.AuthenticAMD | CpuVendor.GenuineIntel:
+			case CPUVendor.AMD | CPUVendor.INTEL:
 				return True
 			case _:
 				return False
 
 	def get_ucode(self) -> Path | None:
 		if self._has_microcode():
-			return Path(self.value + '-ucode.img')
+			return Path(self.name.lower() + '-ucode.img')
 		return None
 
 
@@ -253,9 +244,13 @@ class SysInfo:
 		return any('intel' in x.lower() for x in _sys_info.graphics_devices)
 
 	@staticmethod
-	def cpu_vendor() -> CpuVendor | None:
+	def cpu_vendor() -> CPUVendor | None:
 		if vendor := _sys_info.cpu_info.get('vendor_id'):
-			return CpuVendor.get_vendor(vendor)
+			try:
+				return CPUVendor(vendor)
+			except ValueError:
+				debug(f"Unknown CPU vendor '{vendor}' detected.")
+				return CPUVendor._UNKNOWN
 		return None
 
 	@staticmethod

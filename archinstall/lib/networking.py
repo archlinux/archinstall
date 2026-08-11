@@ -6,8 +6,9 @@ import socket
 import ssl
 import struct
 import time
+from pathlib import Path
 from types import FrameType, TracebackType
-from typing import Self
+from typing import Final, Self
 from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -15,6 +16,8 @@ from urllib.request import urlopen
 from archinstall.lib.exceptions import DownloadTimeout, SysCallError
 from archinstall.lib.log import debug, error, info
 from archinstall.lib.pacman.pacman import Pacman
+
+SYS_NET: Final = Path('/sys/class/net')
 
 
 class DownloadTimer:
@@ -105,13 +108,14 @@ def enrich_iface_types(interfaces: list[str]) -> dict[str, str]:
 	result = {}
 
 	for iface in interfaces:
-		if os.path.isdir(f'/sys/class/net/{iface}/bridge/'):
+		path = SYS_NET / iface
+		if (path / 'bridge').is_dir():
 			result[iface] = 'BRIDGE'
-		elif os.path.isfile(f'/sys/class/net/{iface}/tun_flags'):
+		elif (path / 'tun_flags').is_file():
 			# ethtool -i {iface}
 			result[iface] = 'TUN/TAP'
-		elif os.path.isdir(f'/sys/class/net/{iface}/device'):
-			if os.path.isdir(f'/sys/class/net/{iface}/wireless/'):
+		elif (path / 'device').is_dir():
+			if (path / 'wireless').is_dir():
 				result[iface] = 'WIRELESS'
 			else:
 				result[iface] = 'PHYSICAL'
@@ -121,7 +125,7 @@ def enrich_iface_types(interfaces: list[str]) -> dict[str, str]:
 	return result
 
 
-def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout: int = 30) -> str:
+def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout: int = 30) -> bytes:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -134,8 +138,7 @@ def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout:
 
 	try:
 		response = urlopen(full_url, context=ssl_context, timeout=timeout)
-		data = response.read().decode('UTF-8')
-		return data
+		return response.read()
 	except URLError as e:
 		raise ValueError(f'Unable to fetch data from url: {url}\n{e}')
 	except Exception as e:

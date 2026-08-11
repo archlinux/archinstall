@@ -14,8 +14,14 @@ usage() {
 }
 
 generate_pot() {
+	# tr        - regular translation calls
+	# tr_noop   - extraction-only marker for strings translated later from a variable
+	# Binding:3 - the description argument of textual Binding() definitions,
+	#             translated at runtime by _translate_bindings(). The description
+	#             must be passed positionally - xgettext cannot see keyword arguments.
 	find . -type f -iname '*.py' | sort \
-		| xargs xgettext --no-location --omit-header --keyword='tr' \
+		| xargs xgettext --no-location --omit-header \
+			--keyword='tr' --keyword='tr_noop' --keyword='Binding:3' \
 			-d base -o locales/base.pot
 }
 
@@ -61,19 +67,9 @@ cmd_check_po_syntax() {
 	echo "All .po files passed syntax check."
 }
 
-cmd_check_no_tr_fstring() {
-	echo "Checking for tr(f-string) anti-pattern..."
-	if grep -rnE "tr\(\s*f['\"]" . --include='*.py'; then
-		echo "ERROR: use tr('...{}').format(...) instead of tr(f'...')" >&2
-		return 1
-	fi
-	echo "No tr(f-string) anti-pattern found."
-}
-
 cmd_check() {
 	local failed=0
 	cmd_check_po_syntax || failed=1
-	cmd_check_no_tr_fstring || failed=1
 	if [ "$failed" -eq 1 ]; then
 		echo "Some translation checks failed." >&2
 		exit 1

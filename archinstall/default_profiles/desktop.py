@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Self, override
 
-from archinstall.default_profiles.profile import DisplayServerType, GreeterType, Profile, ProfileType, SelectResult
+from archinstall.default_profiles.desktops.utils import provision_seat_access
+from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType, SelectResult
 from archinstall.lib.log import info
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.profile.profiles_handler import profile_handler
@@ -93,6 +94,9 @@ class DesktopProfile(Profile):
 	def provision(self, install_session: Installer, users: list[User]) -> None:
 		for profile in self.current_selection:
 			profile.provision(install_session, users)
+
+			if seat_access := profile.custom_settings.get(CustomSetting.SeatAccess):
+				provision_seat_access(install_session, users, seat_access)
 
 	@override
 	def install(self, install_session: Installer) -> None:

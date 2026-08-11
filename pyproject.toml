@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "4.3"
+version = "4.4"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -20,9 +20,9 @@ classifiers = [
 dependencies = [
     "pyparted==3.13.0",
     "pydantic==2.13.4",
-    "cryptography==48.0.0",
-    "textual==8.2.7",
-    "markdown-it-py==4.0.0",
+    "cryptography==50.0.0",
+    "textual==8.2.8",
+    "markdown-it-py==4.2.0",
     "linkify-it-py==2.1.0",
 ]
 
@@ -32,14 +32,14 @@ Documentation = "https://archinstall.readthedocs.io/"
 Source = "https://github.com/archlinux/archinstall"
 
 [project.optional-dependencies]
-log = ["systemd_python==235"]
+log = ["systemd_python==236"]
 dev = [
-    "mypy==2.1.0",
+    "mypy==2.3.0",
     "flake8==7.3.0",
-    "pre-commit==4.6.0",
-    "ruff==0.15.16",
-    "pylint==4.0.5",
-    "pytest==9.0.3",
+    "pre-commit==4.6.1",
+    "ruff==0.16.2",
+    "pylint==4.0.7",
+    "pytest==9.1.1",
     "hypothesis>=6.152.4",
 ]
 doc = ["sphinx"]
@@ -72,7 +72,6 @@ python_version = "3.14"
 files = "."
 exclude = [
     "^build/",
-    "^test_tooling/",
 ]
 disallow_any_explicit = false
 disallow_any_expr = false
@@ -203,9 +202,6 @@ indent-style = "tab"
 quote-style = "single"
 docstring-code-format = true
 
-[tool.ruff.lint.flake8-tidy-imports]
-ban-relative-imports = "all"
-
 [tool.ruff.lint]
 select = [
     "ASYNC",  # flake8-async
@@ -221,6 +217,7 @@ select = [
     "G",      # flake8-logging-format
     "I",      # isort
     "ICN",    # flake8-import-conventions
+    "INT",    # flake8-gettext
     "ISC",    # flake8-implicit-str-concat
     "LOG",    # flake8-logging
     "PGH",    # pygrep-hooks
@@ -233,10 +230,10 @@ select = [
     "RUF",    # Ruff-specific rules
     "SLOT",   # flake8-slot
     "T10",    # flake8-debugger
+    "TID",    # flake8-tidy-imports (Enables TID252)
     "UP",     # pyupgrade
     "W",      # pycodestyle warnings
     "YTT",    # flake8-2020
-    "TID",    # flake8-tidy-imports (Enables TID252)
 ]
 
 ignore = [
@@ -254,9 +251,17 @@ ignore = [
     "RUF005",   # collection-literal-concatenation
     "RUF015",   # unnecessary-iterable-allocation-for-first-element
     "RUF039",   # unraw-re-pattern
-    "RUF067",   # non-empty-init-module
     "W191",     # tab-indentation
 ]
+
+[tool.ruff.lint.flake8-gettext]
+function-names = [
+    "tr",
+    "tr_noop",
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
 
 [tool.ruff.lint.mccabe]
 max-complexity = 40

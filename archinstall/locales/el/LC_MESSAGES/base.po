@@ -1423,7 +1423,7 @@ msgid "Yes"
 msgstr "ναι"
 
 msgid "No"
-msgstr ""
+msgstr "όχι"
 
 #, fuzzy
 msgid "Archinstall help"
@@ -1434,7 +1434,7 @@ msgid " (default)"
 msgstr "(προκαθορισμένο)"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "Πατήστε Ctrl+h για βοήθεια"
 
 #, fuzzy
 msgid "Choose an option to give Sway access to your hardware"
@@ -1621,7 +1621,7 @@ msgid "Select execution mode"
 msgstr "Επιλέξτε μία ενέργεια για '{}'"
 
 msgid "Press ? for help"
-msgstr ""
+msgstr "Πατήστε ? για βοήθεια"
 
 #, fuzzy
 msgid "Choose an option to give Hyprland access to your hardware"
@@ -1754,31 +1754,31 @@ msgid "Only ASCII characters are supported"
 msgstr ""
 
 msgid "Show help"
-msgstr ""
+msgstr "Εμφάνιση βοήθειας"
 
 msgid "Exit help"
-msgstr ""
+msgstr "Έξοδος από τη βοήθεια"
 
 msgid "Preview scroll up"
-msgstr ""
+msgstr "Κύλιση προεπισκόπησης πάνω"
 
 msgid "Preview scroll down"
-msgstr ""
+msgstr "Κύλιση προεπισκόπησης κάτω"
 
 msgid "Move up"
-msgstr ""
+msgstr "Μετακίνηση πάνω"
 
 msgid "Move down"
-msgstr ""
+msgstr "Μετακίνηση κάτω"
 
 msgid "Move right"
-msgstr ""
+msgstr "Μετακίνηση δεξιά"
 
 msgid "Move left"
-msgstr ""
+msgstr "Μετακίνηση αριστερά"
 
 msgid "Jump to entry"
-msgstr ""
+msgstr "Μετάβαση σε καταχώρηση"
 
 msgid "Skip selection (if available)"
 msgstr ""
@@ -1795,20 +1795,20 @@ msgid "Select on multi select"
 msgstr "Επιλέξτε μία ζώνη ώρας"
 
 msgid "Reset"
-msgstr ""
+msgstr "Επαναφορά"
 
 #, fuzzy
 msgid "Skip selection menu"
 msgstr "Επιλέξτε μία ενέργεια για '{}'"
 
 msgid "Start search mode"
-msgstr ""
+msgstr "Έναρξη λειτουργίας αναζήτησης"
 
 msgid "Exit search mode"
-msgstr ""
+msgstr "Έξοδος από τη λειτουργία αναζήτησης"
 
 msgid "General"
-msgstr ""
+msgstr "Γενικά"
 
 #, fuzzy
 msgid "Navigation"
@@ -1819,115 +1819,115 @@ msgid "Selection"
 msgstr "Επιλέξτε διεπαφή προς προσθήκη"
 
 msgid "Search"
-msgstr ""
+msgstr "Αναζήτηση"
 
 msgid "Down"
-msgstr ""
+msgstr "Κάτω"
 
 msgid "Up"
-msgstr ""
+msgstr "Πάνω"
 
 #, fuzzy
 msgid "Confirm"
 msgstr "Επιβεβαίωση και έξοδος"
 
 msgid "Focus right"
-msgstr ""
+msgstr "Εστίαση δεξιά"
 
 msgid "Focus left"
-msgstr ""
+msgstr "Εστίαση αριστερά"
 
 msgid "Toggle"
-msgstr ""
+msgstr "Εναλλαγή"
 
 msgid "Show/Hide help"
-msgstr ""
+msgstr "Εμφάνιση/Απόκρυψη βοήθειας"
 
 msgid "Quit"
-msgstr ""
+msgstr "Έξοδος"
 
 msgid "First"
-msgstr ""
+msgstr "Πρώτο"
 
 msgid "Last"
-msgstr ""
+msgstr "Τελευταίο"
 
 #, fuzzy
 msgid "Select"
 msgstr "Επιλέξτε διεπαφή προς προσθήκη"
 
 msgid "Page Up"
-msgstr ""
+msgstr "Σελίδα πάνω"
 
 msgid "Page Down"
-msgstr ""
+msgstr "Σελίδα κάτω"
 
 msgid "Page up"
-msgstr ""
+msgstr "Σελίδα πάνω"
 
 msgid "Page down"
-msgstr ""
+msgstr "Σελίδα κάτω"
 
 msgid "Page Left"
-msgstr ""
+msgstr "Σελίδα αριστερά"
 
 msgid "Page Right"
-msgstr ""
+msgstr "Σελίδα δεξιά"
 
 msgid "Cursor up"
-msgstr ""
+msgstr "Δρομέας πάνω"
 
 msgid "Cursor down"
-msgstr ""
+msgstr "Δρομέας κάτω"
 
 msgid "Cursor right"
-msgstr ""
+msgstr "Δρομέας δεξιά"
 
 msgid "Cursor left"
-msgstr ""
+msgstr "Δρομέας αριστερά"
 
 msgid "Top"
-msgstr ""
+msgstr "Κορυφή"
 
 msgid "Bottom"
-msgstr ""
+msgstr "Βάση"
 
 msgid "Home"
-msgstr ""
+msgstr "Αρχή"
 
 msgid "End"
-msgstr ""
+msgstr "Τέλος"
 
 #, fuzzy
 msgid "Toggle option"
 msgstr "Επιλογές υποόγκου"
 
 msgid "Scroll Up"
-msgstr ""
+msgstr "Κύλιση πάνω"
 
 msgid "Scroll Down"
-msgstr ""
+msgstr "Κύλιση κάτω"
 
 msgid "Scroll Left"
-msgstr ""
+msgstr "Κύλιση αριστερά"
 
 msgid "Scroll Right"
-msgstr ""
+msgstr "Κύλιση δεξιά"
 
 msgid "Scroll Home"
-msgstr ""
+msgstr "Κύλιση στην αρχή"
 
 msgid "Scroll End"
-msgstr ""
+msgstr "Κύλιση στο τέλος"
 
 msgid "Focus Next"
-msgstr ""
+msgstr "Εστίαση στο επόμενο"
 
 msgid "Focus Previous"
-msgstr ""
+msgstr "Εστίαση στο προηγούμενο"
 
 msgid "Copy selected text"
-msgstr ""
+msgstr "Αντιγραφή επιλεγμένου κειμένου"
 
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 msgstr ""
@@ -2115,7 +2115,7 @@ msgid "Enter wifi password"
 msgstr "Εισάγετε κωδικό: "
 
 msgid "Ok"
-msgstr ""
+msgstr "Εντάξει"
 
 msgid "Removable"
 msgstr ""

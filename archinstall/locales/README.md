@@ -58,3 +58,17 @@ msgstr "Wollen sie wirklich abbrechen?"
 After the translations have been written, run the script once more `./locales_generator.sh <lang_abbr>` and it will auto-generate the `base.mo` file with the included translations.
 
 After that you're all ready to go and enjoy Archinstall in the new language :)
+
+## Key binding descriptions
+
+`base.po` also contains the key binding descriptions shown in the footer and the help panel, for example `Scroll Up` or `Toggle option`. Translate them like any other string, but keep them short so they still fit in the footer.
+
+Most of them come from the `textual` library, where `xgettext` cannot see them, so they are listed with `tr_noop` in `archinstall/tui/binding_descriptions.py`, a module that exists only to make them extractable and is never imported at runtime. Archinstall's own descriptions are taken from the third positional argument of `Binding()`, so that argument must never be passed as a keyword.
+
+The list has to be verified after a `textual` upgrade, or after a new textual widget is introduced in `archinstall/tui/components.py` (the widget also has to be added to `TEXTUAL_CLASSES` in the checker). Nothing in CI checks it, so run the following from the repository root
+
+```
+python3 test_tooling/check_binding_descriptions.py
+```
+
+It prints every missing or stale entry, and an `OK` line when the list matches the installed `textual`. Fix `binding_descriptions.py` until it passes, then run `./locales_generator.sh <lang_abbr>` again.

@@ -11,7 +11,6 @@ import parted
 from parted import Disk, Geometry, Partition
 from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_validator
 
-from archinstall.lib.hardware import SysInfo
 from archinstall.lib.log import debug
 from archinstall.lib.models.config import SubConfig
 from archinstall.lib.models.users import Password
@@ -256,10 +255,6 @@ class PartitionTable(Enum):
 
 	def is_mbr(self) -> bool:
 		return self == PartitionTable.MBR
-
-	@classmethod
-	def default(cls) -> Self:
-		return cls.GPT if SysInfo.has_uefi() else cls.MBR
 
 
 class Units(Enum):
@@ -758,13 +753,13 @@ class PartitionType(StrEnum):
 	PRIMARY = auto()
 	_UNKNOWN = 'unknown'
 
-	@classmethod
-	def get_type_from_code(cls, code: int) -> Self:
+	@staticmethod
+	def get_type_from_code(code: int) -> PartitionType:
 		if code == parted.PARTITION_NORMAL:
-			return cls.PRIMARY
+			return PartitionType.PRIMARY
 		else:
 			debug(f'Partition code not supported: {code}')
-			return cls._UNKNOWN
+			return PartitionType._UNKNOWN
 
 	def get_partition_code(self) -> int | None:
 		if self == PartitionType.PRIMARY:
@@ -805,9 +800,11 @@ class PartitionFlag(PartitionFlagDataMixin, Enum):
 
 class PartitionGUID(Enum):
 	"""
-	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
+	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here:
+	https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 	"""
 
+	LINUX_ROOT_AARCH64 = 'B921B045-1DF0-41C3-AF44-4C6F280D3FAE'
 	LINUX_ROOT_X86_64 = '4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709'
 
 	@property
@@ -1618,7 +1615,7 @@ class LsblkInfo(BaseModel):
 	fsver: str | None
 	fsavail: int | None
 	fsuse_percentage: str | None = Field(alias='fsuse%')
-	type: str | None  # may be None for strange behavior with md devices
+	type: str
 	mountpoint: Path | None
 	mountpoints: list[Path]
 	fsroots: list[Path]

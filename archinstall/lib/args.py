@@ -3,6 +3,7 @@ import json
 import os
 import stat
 import sys
+import tempfile
 import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
@@ -34,7 +35,6 @@ from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.plugins import load_plugin
 from archinstall.lib.translationhandler import Language, tr, translation_handler
 from archinstall.lib.utils.format import as_key_value_pair
-from archinstall.lib.utils.util import is_valid_path
 from archinstall.lib.version import get_version
 from archinstall.tui.components import tui
 
@@ -60,7 +60,8 @@ class Arguments:
 	debug: bool = False
 	offline: bool = False
 	no_pkg_lookups: bool = False
-	plugin: str | None = None
+	plugin: Path | None = None
+	plugin_url: str | None = None
 	skip_version_check: bool = False
 	skip_wifi_check: bool = False
 	advanced: bool = False
@@ -167,7 +168,7 @@ class ArchConfig:
 	kernels: list[str] = field(default_factory=lambda: [DEFAULT_KERNEL.value])
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
-	pacman_config: PacmanConfiguration = field(default_factory=PacmanConfiguration.default)
+	pacman_config: PacmanConfiguration = field(default_factory=PacmanConfiguration)
 	timezone: str = 'UTC'
 	services: list[str] = field(default_factory=list)
 	custom_commands: list[str] = field(default_factory=list)
@@ -402,7 +403,7 @@ class ArchConfig:
 	) -> None:
 		save_path = dest_path or DEFAULT_SAVE_PATH
 
-		if not is_valid_path(save_path):
+		if not save_path.is_dir():
 			warn(
 				f'Destination directory {save_path} does not exist or is not a directory\n.',
 				'Configuration files can not be saved',
@@ -414,7 +415,7 @@ class ArchConfig:
 			self.save_user_creds(save_path, password=password)
 
 	def save_user_config(self, dest_path: Path) -> None:
-		if not is_valid_path(dest_path):
+		if not dest_path.is_dir():
 			error(f'Invalid path {dest_path}. User configuration could not be saved.')
 			return
 
@@ -428,7 +429,7 @@ class ArchConfig:
 		dest_path: Path,
 		password: str | None = None,
 	) -> None:
-		if not is_valid_path(dest_path):
+		if not dest_path.is_dir():
 			error(f'Invalid path {dest_path}. User credentials could not be saved.')
 			return
 
@@ -614,9 +615,16 @@ class ArchConfigHandler:
 		parser.add_argument(
 			'--plugin',
 			nargs='?',
-			type=str,
+			type=Path,
 			default=None,
 			help='File path to a plugin to load',
+		)
+		parser.add_argument(
+			'--plugin-url',
+			type=str,
+			nargs='?',
+			default=None,
+			help='Url to a plugin file to load',
 		)
 		parser.add_argument(
 			'--skip-version-check',
@@ -657,7 +665,11 @@ class ArchConfigHandler:
 			warn(f'Warning: --debug mode will write certain credentials to {logger.path}!')
 
 		if args.plugin:
-			plugin_path = Path(args.plugin)
+			load_plugin(args.plugin)
+
+		if args.plugin_url:
+			plugin_data = self._fetch_from_url(args.plugin_url)
+			plugin_path = self._write_plugin_to_temp_file(plugin_data)
 			load_plugin(plugin_path)
 
 		if args.creds_decryption_key is None:
@@ -694,7 +706,7 @@ class ArchConfigHandler:
 		return config
 
 	def _process_creds_data(self, creds_data: str) -> dict[str, Any] | None:
-		if creds_data.startswith('$'):  # encrypted data
+		if creds_data.startswith('$'):	# encrypted data
 			if self._args.creds_decryption_key is not None:
 				try:
 					creds_data = decrypt(creds_data, self._args.creds_decryption_key)
@@ -713,7 +725,7 @@ class ArchConfigHandler:
 
 				while True:
 					decryption_pwd: Password | None = tui.run(
-						lambda p=prompt: get_password(  # type: ignore[misc]
+						lambda p=prompt: get_password(	# type: ignore[misc]
 							header=p,
 							allow_skip=False,
 							no_confirmation=True,
@@ -748,6 +760,27 @@ class ArchConfigHandler:
 			error('Not a valid url')
 
 		sys.exit(1)
+
+	def _write_plugin_to_temp_file(self, plugin_data: str) -> Path:
+		if not plugin_data.strip():
+			error('The downloaded plugin is empty')
+			sys.exit(1)
+
+		tmp_file = tempfile.NamedTemporaryFile(
+			mode='w',
+			suffix='.py',
+			prefix='archinstall_plugin_',
+			delete=False,
+		)
+
+		try:
+			with tmp_file as f:
+				f.write(plugin_data)
+		except OSError as err:
+			error(f'Could not write the downloaded plugin to a temporary file: {err}')
+			sys.exit(1)
+
+		return Path(tmp_file.name)
 
 	def _read_file(self, path: Path) -> str:
 		if not path.exists():

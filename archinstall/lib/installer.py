@@ -32,7 +32,7 @@ from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyb
 from archinstall.lib.log import debug, error, info, log, logger, warn
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.models.application import ZramAlgorithm
-from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
+from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration, PlymouthTheme
 from archinstall.lib.models.device import (
 	DiskEncryption,
 	DiskLayoutConfiguration,
@@ -227,6 +227,9 @@ class Installer:
 			# Wait for the service to enter a finished state
 			while self._service_state('archlinux-keyring-wkd-sync.service') not in ('dead', 'failed', 'exited'):
 				time.sleep(1)
+
+			if self._service_state('archlinux-keyring-wkd-sync.service') == 'failed':
+				warn('archlinux-keyring-wkd-sync failed, keyring may need reinit during pacman sync')
 
 	def _verify_boot_part(self) -> None:
 		"""
@@ -657,16 +660,12 @@ class Installer:
 		# in the first column of the entry; check for both cases.
 		entry_re = re.compile(rf'#{lang}(\.{encoding})?{modifier} {encoding}')
 
-		lang_value = None
 		for index, line in enumerate(locale_gen_lines):
 			if entry_re.match(line):
-				uncommented_line = line.removeprefix('#')
-				locale_gen_lines[index] = uncommented_line
+				locale_gen_lines[index] = line.removeprefix('#')
 				locale_gen.write_text(''.join(locale_gen_lines))
-				lang_value = uncommented_line.split()[0]
 				break
-
-		if lang_value is None:
+		else:
 			error(f"Invalid locale: language '{locale_config.sys_lang}', encoding '{locale_config.sys_enc}'")
 			return False
 
@@ -676,7 +675,7 @@ class Installer:
 			error(f'Failed to run locale-gen on target: {e}')
 			return False
 
-		(self.target / 'etc/locale.conf').write_text(f'LANG={lang_value}\n')
+		(self.target / 'etc/locale.conf').write_text(f'LANG={lang}.{encoding}{modifier}\n')
 		return True
 
 	def set_timezone(self, zone: str) -> bool:
@@ -775,6 +774,15 @@ class Installer:
 		with open(f'{self.target}/etc/systemd/network/10-{nic.iface}.network', 'a') as netconf:
 			netconf.write(str(conf))
 
+	def systemd_resolved_stub_mode(self) -> None:
+		"""
+		Enable systemd-resolved stub mode by (forcefully) setting a symlink
+		For further details see  https://wiki.archlinux.org/title/Systemd-resolved#DNS
+		"""
+		resolv = self.target / 'etc/resolv.conf'
+		resolv.unlink(missing_ok=True)
+		resolv.symlink_to('/run/systemd/resolve/stub-resolv.conf')
+
 	def copy_iso_network_config(self, enable_services: bool = False) -> bool:
 		# Copy (if any) iwd password and config files
 		iwd_dir = LPath('/var/lib/iwd')
@@ -803,11 +811,7 @@ class Installer:
 					self.pacman.strap('iwd')
 					self.enable_service('iwd')
 
-		# Enable systemd-resolved by (forcefully) setting a symlink
-		# For further details see  https://wiki.archlinux.org/title/Systemd-resolved#DNS
-		resolv_config_path = self.target / 'etc/resolv.conf'
-		resolv_config_path.unlink(missing_ok=True)
-		resolv_config_path.symlink_to('/run/systemd/resolve/stub-resolv.conf')
+		self.systemd_resolved_stub_mode()
 
 		# Copy (if any) systemd-networkd config files
 		network_dir = LPath('/etc/systemd/network')
@@ -872,11 +876,7 @@ class Installer:
 				return vendor.get_ucode()
 		return None
 
-	def _prepare_fs_type(
-		self,
-		fs_type: FilesystemType,
-		mountpoint: Path | None,
-	) -> None:
+	def _prepare_fs_type(self, fs_type: FilesystemType) -> None:
 		if (pkg := fs_type.installation_pkg) is not None:
 			self._base_packages.append(pkg)
 
@@ -911,7 +911,7 @@ class Installer:
 			for vg in self._disk_config.lvm_config.vol_groups:
 				for vol in vg.volumes:
 					if vol.fs_type is not None:
-						self._prepare_fs_type(vol.fs_type, vol.mountpoint)
+						self._prepare_fs_type(vol.fs_type)
 
 			types = (EncryptionType.LVM_ON_LUKS, EncryptionType.LUKS_ON_LVM)
 			if self._disk_encryption.encryption_type in types:
@@ -922,7 +922,7 @@ class Installer:
 					if part.fs_type is None:
 						continue
 
-					self._prepare_fs_type(part.fs_type, part.mountpoint)
+					self._prepare_fs_type(part.fs_type)
 
 					if part in self._disk_encryption.partitions:
 						self._prepare_encrypt()
@@ -1356,7 +1356,7 @@ class Installer:
 				boot_dir = boot_partition.mountpoint
 
 			add_options = [
-				f'--target={platform.machine()}-efi',
+				f'--target={"arm64" if platform.machine() == "aarch64" else platform.machine()}-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
 				*boot_dir_arg,
 				'--bootloader-id=GRUB',
@@ -1477,28 +1477,32 @@ class Installer:
 
 			parent_dev_path = get_parent_device_path(efi_partition.safe_dev_path)
 
+			efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
+			efi_dir_path_target = efi_partition.mountpoint / 'EFI'
+			if bootloader_removable:
+				efi_dir_path = efi_dir_path / 'BOOT'
+				efi_dir_path_target = efi_dir_path_target / 'BOOT'
+			else:
+				efi_dir_path = efi_dir_path / 'arch-limine'
+				efi_dir_path_target = efi_dir_path_target / 'arch-limine'
+
+			config_path = efi_dir_path / 'limine.conf'
+
+			efi_dir_path.mkdir(parents=True, exist_ok=True)
+
+			efi_binaries: tuple[str, ...]
+			if platform.machine() == 'aarch64':
+				efi_binaries = ('BOOTAA64.EFI',)
+			else:
+				efi_binaries = ('BOOTIA32.EFI', 'BOOTX64.EFI')
+
 			try:
-				efi_dir_path = self.target / efi_partition.mountpoint.relative_to('/') / 'EFI'
-				efi_dir_path_target = efi_partition.mountpoint / 'EFI'
-				if bootloader_removable:
-					efi_dir_path = efi_dir_path / 'BOOT'
-					efi_dir_path_target = efi_dir_path_target / 'BOOT'
-				else:
-					efi_dir_path = efi_dir_path / 'arch-limine'
-					efi_dir_path_target = efi_dir_path_target / 'arch-limine'
-
-				config_path = efi_dir_path / 'limine.conf'
-
-				efi_dir_path.mkdir(parents=True, exist_ok=True)
-
-				for file in ('BOOTIA32.EFI', 'BOOTX64.EFI'):
+				for file in efi_binaries:
 					(limine_path / file).copy_into(efi_dir_path)
 			except Exception as err:
 				raise DiskError(f'Failed to install Limine in {self.target}{efi_partition.mountpoint}: {err}')
 
-			hook_command = (
-				f'/usr/bin/cp /usr/share/limine/BOOTIA32.EFI {efi_dir_path_target}/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI {efi_dir_path_target}/'
-			)
+			hook_command = ' && '.join(f'/usr/bin/cp /usr/share/limine/{file} {efi_dir_path_target}/' for file in efi_binaries)
 
 			if not bootloader_removable:
 				# Create EFI boot menu entry for Limine.
@@ -1509,7 +1513,7 @@ class Installer:
 					raise OSError(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
 
 				if efi_bitness == '64':
-					loader_path = '\\EFI\\arch-limine\\BOOTX64.EFI'
+					loader_path = f'\\EFI\\arch-limine\\{"BOOTAA64.EFI" if platform.machine() == "aarch64" else "BOOTX64.EFI"}'
 				elif efi_bitness == '32':
 					loader_path = '\\EFI\\arch-limine\\BOOTIA32.EFI'
 				else:
@@ -1755,6 +1759,28 @@ class Installer:
 
 		self._helper_flags['bootloader'] = 'refind'
 
+	def _install_plymouth(self, plymouth: PlymouthTheme) -> None:
+		debug(f'Installing plymouth with theme: {plymouth.value}')
+		self.add_additional_packages(['plymouth'])
+
+		for param in ('quiet', 'splash'):
+			if param not in self._kernel_params:
+				self._kernel_params.append(param)
+
+		if 'plymouth' not in self._hooks:
+			for hook, insert_after in [('encrypt', False), ('sd-encrypt', False), ('systemd', True), ('filesystems', False), ('keyboard', True)]:
+				try:
+					idx = self._hooks.index(hook)
+					self._hooks.insert(idx + (1 if insert_after else 0), 'plymouth')
+					break
+				except ValueError:
+					continue
+			else:
+				self._hooks.append('plymouth')
+
+		self.arch_chroot(f'plymouth-set-default-theme {plymouth.value}')
+		self.mkinitcpio(['-P'])
+
 	def _config_uki(
 		self,
 		root: PartitionModification | LvmVolume,
@@ -1807,10 +1833,7 @@ class Installer:
 			error('Error generating initramfs (continuing anyway)')
 
 	def add_bootloader(
-		self,
-		bootloader: Bootloader,
-		uki_enabled: bool = False,
-		bootloader_removable: bool = False,
+		self, bootloader: Bootloader, uki_enabled: bool = False, bootloader_removable: bool = False, plymouth: PlymouthTheme | None = None
 	) -> None:
 		"""
 		Adds a bootloader to the installation instance.
@@ -1824,6 +1847,7 @@ class Installer:
 		:param bootloader: Type of bootloader to be added
 		:param uki_enabled: Whether to use unified kernel images
 		:param bootloader_removable: Whether to install to removable media location (UEFI only, for GRUB and Limine)
+		:param plymouth: Optional Plymouth theme to install and configure
 		"""
 
 		for plugin in plugins.values():
@@ -1858,6 +1882,9 @@ class Installer:
 			elif not bootloader.has_removable_support():
 				warn(f'Bootloader {bootloader.value} lacks removable support; disabling.')
 				bootloader_removable = False
+
+		if plymouth is not None:
+			self._install_plymouth(plymouth)
 
 		if uki_enabled:
 			keep_initramfs = (
@@ -2105,13 +2132,12 @@ def accessibility_tools_in_use() -> bool:
 
 def run_custom_user_commands(commands: list[str], installation: Installer) -> None:
 	for index, command in enumerate(commands):
-		script_path = f'/var/tmp/user-command.{index}.sh'
-		chroot_path = f'{installation.target}/{script_path}'
+		script_path = LPath(f'/var/tmp/user-command.{index}.sh')
+		chroot_path = installation.target / script_path.relative_to_root()
 
 		info(f'Executing custom command "{command}" ...')
-		with open(chroot_path, 'w') as user_script:
-			user_script.write(command)
+		chroot_path.write_text(command)
 
 		SysCommand(f'arch-chroot -S {installation.target} bash {script_path}')
 
-		os.unlink(chroot_path)
+		chroot_path.unlink()

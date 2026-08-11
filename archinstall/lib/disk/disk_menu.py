@@ -311,6 +311,10 @@ async def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | N
 
 	devices = device_handler.devices
 
+	if len(devices) < 1:
+		await Notify(tr('No disks were detected. A disk is required to be able to install Arch Linux')).show()
+		return None
+
 	items = [
 		MenuItem(
 			str(d.device_info.path),

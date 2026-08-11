@@ -101,8 +101,8 @@ class MirrorStatusEntryV3(BaseModel):
 
 	@classmethod
 	@field_validator('score', mode='before')
-	def validate_score(cls, value: float) -> int | None:
-		if value is not None:
+	def validate_score(cls, value: Any) -> Any:
+		if isinstance(value, float):
 			value = round(value)
 			debug(f'	score: {value}')
 
@@ -127,12 +127,10 @@ class MirrorStatusListV3(BaseModel):
 
 	@model_validator(mode='before')
 	@classmethod
-	def check_model(
-		cls,
-		data: dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]],
-	) -> dict[str, int | datetime.datetime | list[MirrorStatusEntryV3]]:
-		if data.get('version') == 3:
-			return data
+	def check_model(cls, data: Any) -> Any:
+		if isinstance(data, dict):
+			if data.get('version') == 3:
+				return data
 
 		raise ValueError('MirrorStatusListV3 only accepts version 3 data from https://archlinux.org/mirrors/status/json/')
 

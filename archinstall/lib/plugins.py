@@ -1,9 +1,6 @@
-import hashlib
 import importlib.util
 import os
 import sys
-import urllib.parse
-import urllib.request
 from importlib import metadata
 from pathlib import Path
 
@@ -32,23 +29,6 @@ for plugin_definition in metadata.entry_points().select(group='archinstall.plugi
 # plugins in runtime. Useful in profiles_bck and other things.
 def plugin(f, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
 	plugins[f.__name__] = f
-
-
-def _localize_path(path: Path) -> Path:
-	"""
-	Support structures for load_plugin()
-	"""
-	url = urllib.parse.urlparse(str(path))
-
-	if url.scheme and url.scheme in ('https', 'http'):
-		converted_path = Path(f'/tmp/{path.stem}_{hashlib.md5(os.urandom(12)).hexdigest()}.py')
-
-		with open(converted_path, 'w') as temp_file:
-			temp_file.write(urllib.request.urlopen(url.geturl()).read().decode('utf-8'))
-
-		return converted_path
-	else:
-		return path
 
 
 def _import_via_path(path: Path, namespace: str | None = None) -> str:
@@ -82,17 +62,10 @@ def _import_via_path(path: Path, namespace: str | None = None) -> str:
 
 def load_plugin(path: Path) -> None:
 	namespace: str | None = None
-	parsed_url = urllib.parse.urlparse(str(path))
-	info(f'Loading plugin from url {parsed_url}')
+	info(f'Loading plugin from {path}')
 
-	# The Profile was not a direct match on a remote URL
-	if not parsed_url.scheme:
-		# Path was not found in any known examples, check if it's an absolute path
-		if os.path.isfile(path):
-			namespace = _import_via_path(path)
-	elif parsed_url.scheme in ('https', 'http'):
-		localized = _localize_path(path)
-		namespace = _import_via_path(localized)
+	if os.path.isfile(path):
+		namespace = _import_via_path(path)
 
 	if namespace and namespace in sys.modules:
 		# Version dependency via __archinstall__version__ variable (if present) in the plugin

@@ -258,18 +258,16 @@ class ProfileHandler:
 		"""
 		try:
 			data = fetch_data_from_url(url)
-			b_data = bytes(data, 'utf-8')
-
+		except ValueError:
+			err = tr('Unable to fetch profile from specified url: {}').format(url)
+			error(err)
+		else:
 			with NamedTemporaryFile(delete=False, suffix='.py') as fp:
-				fp.write(b_data)
+				fp.write(data)
 				filepath = Path(fp.name)
 
 			profiles = self._process_profile_file(filepath)
 			self.remove_custom_profiles(profiles)
-			self.add_custom_profiles(profiles)
-		except ValueError:
-			err = tr('Unable to fetch profile from specified url: {}').format(url)
-			error(err)
 
 	def _load_profile_class(self, module: ModuleType) -> list[Profile]:
 		"""

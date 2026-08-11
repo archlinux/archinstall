@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from pathlib import Path
 from typing import assert_never, override
 
 from archinstall.lib.command import SysCommand
@@ -7,6 +6,7 @@ from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.log import debug
 from archinstall.lib.models.network import WifiConfiguredNetwork, WifiNetwork
 from archinstall.lib.network.wpa_supplicant import WpaSupplicantConfig
+from archinstall.lib.networking import SYS_NET
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.components import ConfirmationScreen, InputScreen, InstanceRunnable, LoadingScreen, NotifyScreen, TableSelectionScreen, tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -58,7 +58,7 @@ class WifiHandler(InstanceRunnable[bool]):
 	async def _enable_supplicant(self, wifi_iface: str) -> bool:
 		self._wpa_config.load_config()
 
-		result = self._wpa_cli('status')  # if it it's running it will blow up
+		result = self._wpa_cli('status')
 
 		if result.success:
 			debug('wpa_supplicant already running')
@@ -72,24 +72,22 @@ class WifiHandler(InstanceRunnable[bool]):
 
 		try:
 			SysCommand(f'wpa_supplicant -B -i {wifi_iface} -c {self._wpa_config.config_file}')
-			result = self._wpa_cli('status')  # if it it's running it will blow up
-
-			if result.success:
-				debug('successfully enabled wpa_supplicant')
-				return True
-			else:
-				debug(f'failed to enable wpa_supplicant: {result.error}')
-				return False
 		except SysCallError as err:
 			debug(f'failed to enable wpa_supplicant: {err}')
 			return False
 
-	def _find_wifi_interface(self) -> str | None:
-		net_path = Path('/sys/class/net')
+		result = self._wpa_cli('status')
 
-		for iface in net_path.iterdir():
-			maybe_wireless_path = net_path / iface / 'wireless'
-			if maybe_wireless_path.is_dir():
+		if result.success:
+			debug('successfully enabled wpa_supplicant')
+			return True
+		else:
+			debug(f'failed to enable wpa_supplicant: {result.error}')
+			return False
+
+	def _find_wifi_interface(self) -> str | None:
+		for iface in SYS_NET.iterdir():
+			if (iface / 'wireless').is_dir():
 				return iface.name
 
 		return None
@@ -197,21 +195,21 @@ class WifiHandler(InstanceRunnable[bool]):
 
 		try:
 			result = SysCommand(cmd).decode()
-
-			if 'FAIL' in result:
-				debug(f'wpa_cli returned FAIL: {result}')
-				return WpaCliResult(
-					success=False,
-					error=f'wpa_cli returned a failure: {result}',
-				)
-
-			return WpaCliResult(success=True, response=result)
 		except SysCallError as err:
 			debug(f'error running wpa_cli command: {err}')
 			return WpaCliResult(
 				success=False,
 				error=f'Error running wpa_cli command: {err}',
 			)
+
+		if 'FAIL' in result:
+			debug(f'wpa_cli returned FAIL: {result}')
+			return WpaCliResult(
+				success=False,
+				error=f'wpa_cli returned a failure: {result}',
+			)
+
+		return WpaCliResult(success=True, response=result)
 
 	def _find_network_id(self, ssid: str, iface: str) -> int | None:
 		result = self._wpa_cli('list_networks', iface)
@@ -254,18 +252,18 @@ class WifiHandler(InstanceRunnable[bool]):
 
 		try:
 			result = self._wpa_cli('scan_results', iface)
-
-			if not result.success:
-				debug(f'Failed to retrieve scan results: {result.error}')
-				return []
-
-			if not result.response:
-				debug('No wifi networks found')
-				return []
-
-			networks = WifiNetwork.from_wpa(result.response)
-
-			return networks
 		except SysCallError as err:
 			debug('Unable to retrieve wifi results')
 			raise err
+
+		if not result.success:
+			debug(f'Failed to retrieve scan results: {result.error}')
+			return []
+
+		if not result.response:
+			debug('No wifi networks found')
+			return []
+
+		networks = WifiNetwork.from_wpa(result.response)
+
+		return networks
