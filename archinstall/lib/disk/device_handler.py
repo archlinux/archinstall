@@ -20,11 +20,13 @@ from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesyste
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.log import debug, error, info, log
 from archinstall.lib.models.device import (
+	DEFAULT_CIPHER,
 	DEFAULT_ITER_TIME,
 	BDevice,
 	BtrfsMountOption,
 	DeviceModification,
 	DiskEncryption,
+	EncryptionCipher,
 	FilesystemType,
 	LsblkInfo,
 	ModificationStatus,
@@ -282,6 +284,7 @@ class DeviceHandler:
 		enc_password: Password | None,
 		lock_after_create: bool = True,
 		iter_time: int = DEFAULT_ITER_TIME,
+		cipher: EncryptionCipher = DEFAULT_CIPHER,
 	) -> Luks2:
 		luks_handler = Luks2(
 			dev_path,
@@ -289,7 +292,7 @@ class DeviceHandler:
 			password=enc_password,
 		)
 
-		key_file = luks_handler.encrypt(iter_time=iter_time)
+		key_file = luks_handler.encrypt(iter_time=iter_time, cipher=cipher)
 
 		udev_sync()
 
@@ -320,7 +323,7 @@ class DeviceHandler:
 			password=enc_conf.encryption_password,
 		)
 
-		key_file = luks_handler.encrypt(iter_time=enc_conf.iter_time)
+		key_file = luks_handler.encrypt(iter_time=enc_conf.iter_time, cipher=enc_conf.cipher)
 
 		udev_sync()
 
@@ -331,6 +334,8 @@ class DeviceHandler:
 
 		info(f'luks2 formatting mapper dev: {luks_handler.mapper_dev}')
 		self.format(fs_type, luks_handler.mapper_dev)
+
+		udev_sync()
 
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()

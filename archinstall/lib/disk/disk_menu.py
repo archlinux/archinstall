@@ -283,6 +283,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 
 			if enc_type != EncryptionType.NO_ENCRYPTION:
 				output += tr('Iteration time') + f': {enc_config.iter_time or DEFAULT_ITER_TIME}ms\n'
+				output += tr('Cipher') + f': {enc_config.cipher.value}\n'
 
 			if enc_config.partitions:
 				output += f'Partitions: {len(enc_config.partitions)} selected\n'
