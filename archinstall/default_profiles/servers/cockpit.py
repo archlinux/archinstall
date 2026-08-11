@@ -13,7 +13,7 @@ class CockpitProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return ['cockpit', 'udisks2', 'packagekit']
+		return ['cockpit', 'cockpit-storaged', 'cockpit-packagekit']
 
 	@property
 	@override
