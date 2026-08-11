@@ -1523,11 +1523,8 @@ class DiskEncryption:
 		if self.hsm_device:
 			obj['hsm_device'] = self.hsm_device.json()
 
-		if self.iter_time != DEFAULT_ITER_TIME:  # Only include if not default
-			obj['iter_time'] = self.iter_time
-
-		if self.cipher != DEFAULT_CIPHER:  # Only include if not default
-			obj['cipher'] = self.cipher.value
+		obj['iter_time'] = self.iter_time
+		obj['cipher'] = self.cipher.value
 
 		return obj
 

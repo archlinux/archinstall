@@ -431,14 +431,8 @@ async def select_iteration_time(preset: int | None = None) -> int | None:
 
 
 async def select_encryption_cipher(preset: EncryptionCipher | None = None) -> EncryptionCipher | None:
-	options = list(EncryptionCipher)
-
-	if not preset:
-		preset = DEFAULT_CIPHER
-
-	items = [MenuItem(o.value, value=o) for o in options]
-	group = MenuItemGroup(items)
-	group.set_focus_by_value(preset)
+	group = MenuItemGroup.from_enum(EncryptionCipher)
+	group.set_focus_by_value(preset or DEFAULT_CIPHER)
 
 	result = await Selection[EncryptionCipher](
 		group,

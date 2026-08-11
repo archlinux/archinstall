@@ -150,9 +150,7 @@ class Luks2:
 			try:
 				SysCommand(f'cryptsetup close {self.mapper_name}')
 			except SysCallError as close_err:
-				raise DiskError(
-					f'Could not close existing mapper "{self.mapper_name}" before unlock: {close_err}'
-				)
+				raise DiskError(f'Could not close existing mapper "{self.mapper_name}" before unlock: {close_err}')
 
 		key_file_arg, passphrase = self._get_passphrase_args(key_file)
 
@@ -179,6 +177,7 @@ class Luks2:
 
 	def lock(self) -> None:
 		import time
+
 		umount(self.luks_dev_path)
 
 		# Get crypt-information about the device by doing a reverse lookup starting with the partition path
@@ -217,9 +216,7 @@ class Luks2:
 					SysCommand(f'cryptsetup close --deferred {child.name}')
 					debug(f'cryptsetup close --deferred issued for {child.name}')
 				except SysCallError as deferred_err:
-					raise DiskError(
-						f'Could not close luks2 device "{child.name}": {deferred_err}'
-					) from deferred_err
+					raise DiskError(f'Could not close luks2 device "{child.name}": {deferred_err}') from deferred_err
 
 			# Wait until the mapper device node actually disappears before returning.
 			# Subsequent commands (wipefs, mkfs, etc.) will fail with "Device busy"
