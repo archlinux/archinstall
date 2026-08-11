@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any, Self, override
 
 from archinstall.lib.locale.utils import get_kb_layout
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 
@@ -34,7 +34,7 @@ class LocaleConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		return [
 			tr('Keyboard layout "{}"').format(self.kb_layout),
 			tr('Locale language "{}"').format(self.sys_lang),

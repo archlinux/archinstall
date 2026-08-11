@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Any, Self, override
 
 from archinstall.lib.log import warn
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 
@@ -104,8 +104,19 @@ class BootloaderConfiguration(SubConfig):
 		return data
 
 	@override
-	def summary(self) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		out = [tr('Bootloader "{}"').format(self.bootloader.value)]
+
+		if level.is_detailed():
+			out.append(tr('UKI enabled') if self.uki else tr('UKI disabled'))
+			out.append(tr('Removable') if self.removable else tr('Not removable'))
+
+			if self.plymouth is not None:
+				out.append(tr('Plymouth "{}"').format(self.plymouth.value))
+			else:
+				out.append(tr('Plymouth disabled'))
+
+			return out
 
 		if self.uki:
 			out.append(tr('UKI enabled'))

@@ -4,7 +4,7 @@ from enum import Enum
 from typing import NotRequired, Self, TypedDict, override
 
 from archinstall.lib.log import debug
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 
@@ -63,6 +63,27 @@ class Nic:
 			'dns': self.dns,
 		}
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		iface = self.iface if self.iface else tr('Unknown interface')
+
+		if not level.is_detailed():
+			return [iface]
+
+		out = [iface]
+
+		if self.dhcp:
+			out.append(tr('DHCP enabled'))
+			return out
+
+		if self.ip:
+			out.append(tr('IP address "{}"').format(self.ip))
+		if self.gateway:
+			out.append(tr('Gateway "{}"').format(self.gateway))
+		if self.dns:
+			out.append(tr('DNS servers "{}"').format(', '.join(self.dns)))
+
+		return out
+
 	@classmethod
 	def parse_arg(cls, arg: _NicSerialization) -> Self:
 		return cls(
@@ -120,8 +141,16 @@ class NetworkConfiguration(SubConfig):
 		return config
 
 	@override
-	def summary(self) -> str:
-		return self.type.display_msg()
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		out = [self.type.display_msg()]
+
+		if not level.is_detailed():
+			return out
+
+		for nic in self.nics:
+			out.extend(nic.summary(level))
+
+		return out
 
 	@classmethod
 	def parse_arg(cls, config: _NetworkConfigurationSerialization) -> Self | None:

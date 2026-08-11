@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Self, TypedDict, override
 from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 
 from archinstall.lib.log import debug
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.networking import DownloadTimer, ping
 from archinstall.lib.translationhandler import tr
@@ -143,6 +143,12 @@ class MirrorRegion:
 	def json(self) -> dict[str, list[str]]:
 		return {self.name: self.urls}
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+		if level.is_detailed() and self.urls:
+			return tr('Region "{}" with servers {}').format(self.name, ', '.join(self.urls))
+
+		return self.name
+
 	@override
 	def __eq__(self, other: object) -> bool:
 		if not isinstance(other, MirrorRegion):
@@ -191,6 +197,17 @@ class CustomRepository:
 			'sign_option': self.sign_option.value,
 		}
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+		if not level.is_detailed():
+			return self.name
+
+		return tr('Repository "{}" at {} (sign check {}, sign option {})').format(
+			self.name,
+			self.url,
+			self.sign_check.value,
+			self.sign_option.value,
+		)
+
 	@classmethod
 	def parse_args(cls, args: list[dict[str, str]]) -> list[Self]:
 		configs = []
@@ -216,6 +233,9 @@ class CustomServer:
 
 	def json(self) -> dict[str, str]:
 		return {'url': self.url}
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+		return tr('Server "{}"').format(self.url)
 
 	@classmethod
 	def parse_args(cls, args: list[dict[str, str]]) -> list[Self]:
@@ -264,20 +284,31 @@ class MirrorConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		out: list[str] = []
 
-		if self.mirror_regions:
-			out.append(tr('Mirror regions "{}"').format(', '.join(m.name for m in self.mirror_regions)))
+		if not level.is_detailed():
+			if self.mirror_regions:
+				out.append(tr('Mirror regions "{}"').format(', '.join(m.name for m in self.mirror_regions)))
+
+			if self.optional_repositories:
+				out.append(tr('Optional repositories "{}"').format(', '.join(r.value for r in self.optional_repositories)))
+
+			if self.custom_servers:
+				out.append(tr('Custom servers set up'))
+
+			if self.custom_repositories:
+				out.append(tr('Custom repositories set up'))
+
+			return out
+
+		out.extend(region.summary(level) for region in self.mirror_regions)
 
 		if self.optional_repositories:
 			out.append(tr('Optional repositories "{}"').format(', '.join(r.value for r in self.optional_repositories)))
 
-		if self.custom_servers:
-			out.append(tr('Custom servers set up'))
-
-		if self.custom_repositories:
-			out.append(tr('Custom repositories set up'))
+		out.extend(server.summary(level) for server in self.custom_servers)
+		out.extend(repository.summary(level) for repository in self.custom_repositories)
 
 		return out
 

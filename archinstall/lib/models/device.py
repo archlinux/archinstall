@@ -12,7 +12,7 @@ from parted import Disk, Geometry, Partition
 from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_validator
 
 from archinstall.lib.log import debug
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.models.users import Password
 from archinstall.lib.translationhandler import tr
 
@@ -89,24 +89,42 @@ class DiskLayoutConfiguration(SubConfig):
 			return config
 
 	@override
-	def summary(self) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		out = [tr('{} layout').format(self.config_type.short_msg())]
 
-		devices = set(mod.device_path for mod in self.device_modifications)
+		if not level.is_detailed():
+			devices = set(mod.device_path for mod in self.device_modifications)
 
-		if devices:
-			dev_str = ', '.join(str(d) for d in devices)
-			out.append(tr('Devices {}').format(dev_str))
+			if devices:
+				dev_str = ', '.join(str(d) for d in sorted(devices))
+				out.append(tr('Devices {}').format(dev_str))
 
-			if self.lvm_config is not None:
-				out.append(tr('LVM set up'))
+				if self.lvm_config is not None:
+					out.append(tr('LVM set up'))
+
+			if self.disk_encryption is not None:
+				out.append(tr('{} encryption').format(self.disk_encryption.encryption_type.type_to_text()))
+
+			if self.btrfs_options is not None and self.btrfs_options.snapshot_config:
+				out.append(tr('Btrfs snapshot "{}"').format(self.btrfs_options.snapshot_config.snapshot_type))
+
+			return out
+
+		if self.mountpoint is not None:
+			out.append(tr('Mountpoint "{}"').format(self.mountpoint))
+
+		mods = sorted(self.device_modifications, key=lambda mod: mod.device_path)
+		for mod in mods:
+			out.extend(mod.summary(level))
+
+		if self.lvm_config is not None:
+			out.extend(self.lvm_config.summary(level))
 
 		if self.disk_encryption is not None:
-			out.append(tr('{} encryption').format(self.disk_encryption.encryption_type.type_to_text()))
+			out.extend(self.disk_encryption.summary(level))
 
 		if self.btrfs_options is not None:
-			if self.btrfs_options.snapshot_config:
-				out.append(tr('Btrfs snapshot "{}"').format(self.btrfs_options.snapshot_config.snapshot_type))
+			out.extend(self.btrfs_options.summary(level))
 
 		return out
 
@@ -1050,6 +1068,24 @@ class PartitionModification:
 			'btrfs': [vol.json() for vol in self.btrfs_subvols],
 		}
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+		name = str(self.dev_path) if self.dev_path else self.type.value
+		fs_type = self.fs_type.value if self.fs_type else tr('Unknown')
+
+		details = [
+			tr('Filesystem {}').format(fs_type),
+			tr('Size {}').format(self.length.format_highest()),
+			tr('Status {}').format(self.status.value),
+		]
+
+		if self.mountpoint is not None:
+			details.append(tr('Mountpoint {}').format(self.mountpoint))
+
+		if self.btrfs_subvols:
+			details.append(tr('{} subvolume(s)').format(len(self.btrfs_subvols)))
+
+		return tr('Partition "{}" ({})').format(name, ', '.join(details))
+
 	def table_data(self) -> dict[str, str]:
 		"""
 		Called for displaying data in table format
@@ -1116,6 +1152,20 @@ class LvmVolumeGroup:
 			lvm_pvs,
 			[LvmVolume.parse_arg(vol) for vol in arg['volumes']],
 		)
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		if not level.is_detailed():
+			return [tr('Volume group "{}"').format(self.name)]
+
+		pvs = ', '.join(str(pv.dev_path) for pv in self.pvs if pv.dev_path)
+		if pvs:
+			out = [tr('Volume group "{}" on {}').format(self.name, pvs)]
+		else:
+			out = [tr('Volume group "{}"').format(self.name)]
+
+		out.extend(volume.summary(level) for volume in self.volumes)
+
+		return out
 
 	def contains_lv(self, lv: LvmVolume) -> bool:
 		return lv in self.volumes
@@ -1228,6 +1278,23 @@ class LvmVolume:
 			'btrfs': [vol.json() for vol in self.btrfs_subvols],
 		}
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+		if not level.is_detailed():
+			return tr('Volume "{}"').format(self.name)
+
+		details = [
+			tr('Filesystem {}').format(self.fs_type.value),
+			tr('Size {}').format(self.length.format_highest()),
+		]
+
+		if self.mountpoint is not None:
+			details.append(tr('Mountpoint {}').format(self.mountpoint))
+
+		if self.btrfs_subvols:
+			details.append(tr('{} subvolume(s)').format(len(self.btrfs_subvols)))
+
+		return tr('Volume "{}" ({})').format(self.name, ', '.join(details))
+
 	def table_data(self) -> dict[str, str]:
 		part_mod = {
 			'Type': self.status.value,
@@ -1319,6 +1386,17 @@ class LvmConfiguration:
 			vol_groups=[LvmVolumeGroup.parse_arg(vol_group, disk_config) for vol_group in arg['vol_groups']],
 		)
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		if not level.is_detailed():
+			return [tr('LVM set up')]
+
+		out = [tr('LVM "{}"').format(self.config_type.display_msg())]
+
+		for vol_group in self.vol_groups:
+			out.extend(vol_group.summary(level))
+
+		return out
+
 	def get_all_pvs(self) -> list[PartitionModification]:
 		pvs = []
 		for vg in self.vol_groups:
@@ -1375,6 +1453,12 @@ class BtrfsOptions:
 	def json(self) -> _BtrfsOptionsSerialization:
 		return {'snapshot_config': self.snapshot_config.json() if self.snapshot_config else None}
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		if self.snapshot_config is None:
+			return [tr('Btrfs snapshots disabled')] if level.is_detailed() else []
+
+		return [tr('Btrfs snapshot "{}"').format(self.snapshot_config.snapshot_type)]
+
 	@classmethod
 	def parse_arg(cls, arg: _BtrfsOptionsSerialization) -> Self | None:
 		snapshot_args = arg.get('snapshot_config')
@@ -1421,6 +1505,17 @@ class DeviceModification:
 	def get_root_partition(self) -> PartitionModification | None:
 		filtered = filter(lambda x: x.is_root(), self.partitions)
 		return next(filtered, None)
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		if not level.is_detailed():
+			return [tr('Device {}').format(self.device_path)]
+
+		wipe_str = tr('wipe') if self.wipe else tr('keep existing data')
+		out = [tr('Device "{}" ({})').format(self.device_path, wipe_str)]
+
+		out.extend(part.summary(level) for part in self.partitions)
+
+		return out
 
 	def json(self) -> _DeviceModificationSerialization:
 		"""
@@ -1503,6 +1598,25 @@ class DiskEncryption:
 			obj['iter_time'] = self.iter_time
 
 		return obj
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		out = [tr('{} encryption').format(self.encryption_type.type_to_text())]
+
+		if not level.is_detailed() or self.encryption_type == EncryptionType.NO_ENCRYPTION:
+			return out
+
+		if self.partitions:
+			out.append(tr('{} encrypted partition(s)').format(len(self.partitions)))
+
+		if self.lvm_volumes:
+			out.append(tr('{} encrypted volume(s)').format(len(self.lvm_volumes)))
+
+		if self.hsm_device is not None:
+			out.append(tr('FIDO2 device "{}"').format(self.hsm_device.product))
+
+		out.append(tr('Iteration time {} ms').format(self.iter_time))
+
+		return out
 
 	@staticmethod
 	def validate_enc(

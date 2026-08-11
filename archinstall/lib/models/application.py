@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import StrEnum, auto
 from typing import Any, NotRequired, Self, TypedDict, override
 
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 
@@ -93,6 +93,9 @@ class AudioConfiguration:
 			'audio': self.audio.value,
 		}
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+		return tr('Audio server "{}"').format(self.audio)
+
 	@classmethod
 	def parse_arg(cls, arg: dict[str, Any]) -> Self:
 		return cls(
@@ -106,6 +109,12 @@ class BluetoothConfiguration:
 
 	def json(self) -> BluetoothConfigSerialization:
 		return {'enabled': self.enabled}
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str | None:
+		if self.enabled:
+			return tr('Bluetooth enabled')
+
+		return tr('Bluetooth disabled') if level.is_detailed() else None
 
 	@classmethod
 	def parse_arg(cls, arg: BluetoothConfigSerialization) -> Self:
@@ -121,6 +130,9 @@ class PowerManagementConfiguration:
 			'power_management': self.power_management.value,
 		}
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+		return tr('Power management "{}"').format(self.power_management)
+
 	@classmethod
 	def parse_arg(cls, arg: PowerManagementConfigSerialization) -> Self:
 		return cls(
@@ -134,6 +146,12 @@ class PrintServiceConfiguration:
 
 	def json(self) -> PrintServiceConfigSerialization:
 		return {'enabled': self.enabled}
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str | None:
+		if self.enabled:
+			return tr('Print service enabled')
+
+		return tr('Print service disabled') if level.is_detailed() else None
 
 	@classmethod
 	def parse_arg(cls, arg: PrintServiceConfigSerialization) -> Self:
@@ -149,6 +167,9 @@ class FirewallConfiguration:
 			'firewall': self.firewall.value,
 		}
 
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+		return tr('Firewall "{}"').format(self.firewall)
+
 	@classmethod
 	def parse_arg(cls, arg: dict[str, Any]) -> Self:
 		return cls(
@@ -162,6 +183,12 @@ class FontsConfiguration:
 
 	def json(self) -> FontsConfigSerialization:
 		return {'fonts': [f.value for f in self.fonts]}
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str | None:
+		if self.fonts:
+			return tr('Extra fonts "{}"').format(', '.join(f.value for f in self.fonts))
+
+		return tr('No extra fonts') if level.is_detailed() else None
 
 	@classmethod
 	def parse_arg(cls, arg: FontsConfigSerialization) -> Self:
@@ -190,16 +217,14 @@ class ZramConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self) -> list[str] | None:
-		out: list[str] = []
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str] | None:
+		if not self.enabled:
+			return [tr('Zram disabled')] if level.is_detailed() else None
 
-		if self.enabled:
-			out.append(tr('Zram enabled'))
-
-			out.append(tr('Zram algorithm {}').format(self.algorithm))
-			return out
-
-		return None
+		return [
+			tr('Zram enabled'),
+			tr('Zram algorithm {}').format(self.algorithm),
+		]
 
 
 @dataclass
@@ -268,26 +293,23 @@ class ApplicationConfiguration(SubConfig):
 		return config
 
 	@override
-	def summary(self) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		configs = [
+			self.bluetooth_config,
+			self.audio_config,
+			self.power_management_config,
+			self.print_service_config,
+			self.firewall_config,
+			self.fonts_config,
+		]
+
 		out: list[str] = []
 
-		if self.bluetooth_config and self.bluetooth_config.enabled:
-			out.append(tr('Bluetooth enabled'))
+		for config in configs:
+			if config is None:
+				continue
 
-		if self.audio_config:
-			out.append(tr('Audio server "{}"').format(self.audio_config.audio))
-
-		if self.power_management_config:
-			out.append(tr('Power management "{}"').format(self.power_management_config.power_management))
-
-		if self.print_service_config and self.print_service_config.enabled:
-			out.append(tr('Print service enabled'))
-
-		if self.firewall_config:
-			out.append(tr('Firewall "{}"').format(self.firewall_config.firewall))
-
-		if self.fonts_config and self.fonts_config.fonts:
-			fonts = ', '.join(f.value for f in self.fonts_config.fonts)
-			out.append(tr('Extra fonts "{}"').format(fonts))
+			if entry := config.summary(level):
+				out.append(entry)
 
 		return out

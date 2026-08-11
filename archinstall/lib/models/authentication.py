@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, NotRequired, Self, TypedDict, override
 
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.translationhandler import tr
 
@@ -40,6 +40,15 @@ class U2FLoginConfiguration:
 			'u2f_login_method': self.u2f_login_method.value,
 			'passwordless_sudo': self.passwordless_sudo,
 		}
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		if not level.is_detailed():
+			return [tr('U2F set up')]
+
+		return [
+			tr('U2F login method "{}"').format(self.u2f_login_method.display_value()),
+			tr('U2F passwordless sudo enabled') if self.passwordless_sudo else tr('U2F passwordless sudo disabled'),
+		]
 
 	@classmethod
 	def parse_arg(cls, args: U2FLoginConfigSerialization) -> Self | None:
@@ -86,17 +95,26 @@ class AuthenticationConfiguration(SubConfig):
 		return config
 
 	@override
-	def summary(self) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		out: list[str] = []
 
-		if self.root_enc_password:
-			out.append(tr('Root password set'))
+		if not level.is_detailed():
+			if self.root_enc_password:
+				out.append(tr('Root password set'))
 
-		if self.users:
-			out.append(tr('Configured {} user(s)').format(len(self.users)))
+			if self.users:
+				out.append(tr('Configured {} user(s)').format(len(self.users)))
+
+			if self.u2f_config:
+				out.extend(self.u2f_config.summary(level))
+
+			return out
+
+		out.append(tr('Root password set') if self.root_enc_password else tr('Root password not set'))
+		out.extend(user.summary(level) for user in self.users)
 
 		if self.u2f_config:
-			out.append(tr('U2F set up'))
+			out.extend(self.u2f_config.summary(level))
 
 		return out
 

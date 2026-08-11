@@ -3,6 +3,7 @@ from enum import Enum
 from typing import NotRequired, Self, TypedDict, override
 
 from archinstall.lib.crypt import crypt_yescrypt
+from archinstall.lib.models.config import SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 
@@ -178,6 +179,17 @@ class User:
 			'sudo': self.sudo,
 			'groups': self.groups,
 		}
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+		if not level.is_detailed():
+			return self.username
+
+		details = [tr('sudo') if self.sudo else tr('no sudo')]
+
+		if self.groups:
+			details.append(tr('groups {}').format(', '.join(self.groups)))
+
+		return tr('User "{}" ({})').format(self.username, ', '.join(details))
 
 	@classmethod
 	def parse_arguments(

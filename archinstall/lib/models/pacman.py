@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Self, TypedDict, override
 
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 
@@ -23,10 +23,11 @@ class PacmanConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self) -> str | None:
-		if self.color:
-			return tr('Color enabled')
-		return None
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		return [
+			tr('Parallel downloads "{}"').format(self.parallel_downloads),
+			tr('Color enabled') if self.color else tr('Color disabled'),
+		]
 
 	def preview(self) -> str:
 		color_str = str(self.color)

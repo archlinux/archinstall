@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Self, TypedDict, override
 
 from archinstall.default_profiles.profile import GreeterType, Profile
 from archinstall.lib.hardware import GfxDriver
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 if TYPE_CHECKING:
@@ -33,11 +33,14 @@ class ProfileConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self) -> list[str] | None:
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str] | None:
 		out: list[str] = []
 
 		if self.profile:
 			out.append(self.profile.name)
+
+			if level.is_detailed() and (selections := self.profile.current_selection_names()):
+				out.append(tr('Selected profiles "{}"').format(', '.join(selections)))
 
 			if self.gfx_driver:
 				out.append(tr('{} graphics driver').format(self.gfx_driver.value))

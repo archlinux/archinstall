@@ -22,7 +22,7 @@ from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
@@ -442,7 +442,7 @@ class ArchConfig:
 		target.write_text(data)
 		target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def as_summary(self) -> str:
+	def as_summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
 		"""
 		Render a concise two-column summary of the current configuration.
 
@@ -457,7 +457,7 @@ class ArchConfig:
 			if not hasattr(obj, 'summary'):
 				continue
 
-			summary = obj.summary()
+			summary = obj.summary(level)
 			if summary:
 				cfg[config_type.text()] = summary
 
