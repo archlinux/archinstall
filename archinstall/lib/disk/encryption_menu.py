@@ -7,11 +7,9 @@ from archinstall.lib.menu.helpers import Input, Selection, Table
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.device import (
-	DEFAULT_CIPHER,
 	DEFAULT_ITER_TIME,
 	DeviceModification,
 	DiskEncryption,
-	EncryptionCipher,
 	EncryptionType,
 	Fido2Device,
 	LvmConfiguration,
@@ -67,14 +65,6 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				key='encryption_password',
 			),
 			MenuItem(
-				text=tr('Encryption cipher'),
-				action=self._select_cipher,
-				value=self._enc_config.cipher,
-				dependencies=[self._check_dep_enc_type],
-				preview_action=self._prev_cipher,
-				key='cipher',
-			),
-			MenuItem(
 				text=tr('Iteration time'),
 				action=select_iteration_time,
 				value=self._enc_config.iter_time,
@@ -113,9 +103,6 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			return await select_lvm_vols_to_encrypt(self._lvm_config, preset=preset)
 		return []
 
-	async def _select_cipher(self, preset: EncryptionCipher | None) -> EncryptionCipher | None:
-		return await select_encryption_cipher(preset)
-
 	def _check_dep_enc_type(self) -> bool:
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		if enc_type and enc_type != EncryptionType.NO_ENCRYPTION:
@@ -142,7 +129,6 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
 		enc_password: Password | None = self._item_group.find_by_key('encryption_password').value
-		cipher: EncryptionCipher | None = self._item_group.find_by_key('cipher').value
 		iter_time: int | None = self._item_group.find_by_key('iter_time').value
 		enc_partitions = self._item_group.find_by_key('partitions').value
 		enc_lvm_vols = self._item_group.find_by_key('lvm_volumes').value
@@ -165,7 +151,6 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				lvm_volumes=enc_lvm_vols,
 				hsm_device=enc_config.hsm_device,
 				iter_time=iter_time or DEFAULT_ITER_TIME,
-				cipher=cipher or DEFAULT_CIPHER,
 			)
 
 		return None
@@ -178,9 +163,6 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		if (enc_pwd := self._prev_password(item)) is not None:
 			output += f'\n{enc_pwd}'
-
-		if (cipher := self._prev_cipher(item)) is not None:
-			output += f'\n{cipher}'
 
 		if (iter_time := self._prev_iter_time(item)) is not None:
 			output += f'\n{iter_time}'
@@ -212,12 +194,6 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		if item.value:
 			return f'{tr("Encryption password")}: {item.value.hidden()}'
 
-		return None
-
-	def _prev_cipher(self, item: MenuItem) -> str | None:
-		cipher: EncryptionCipher | None = self._item_group.find_by_key('cipher').value
-		if cipher:
-			return f'{tr("Encryption cipher")}: {cipher.value}'
 		return None
 
 	def _prev_partitions(self, item: MenuItem) -> str | None:
@@ -428,23 +404,3 @@ async def select_iteration_time(preset: int | None = None) -> int | None:
 			return int(result.get_value())
 		case ResultType.Reset:
 			return None
-
-
-async def select_encryption_cipher(preset: EncryptionCipher | None = None) -> EncryptionCipher | None:
-	group = MenuItemGroup.from_enum(EncryptionCipher)
-	group.set_focus_by_value(preset or DEFAULT_CIPHER)
-
-	result = await Selection[EncryptionCipher](
-		group,
-		header=tr('Select encryption cipher'),
-		allow_skip=True,
-		allow_reset=True,
-	).show()
-
-	match result.type_:
-		case ResultType.Reset:
-			return None
-		case ResultType.Skip:
-			return preset
-		case ResultType.Selection:
-			return result.get_value()
