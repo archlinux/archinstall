@@ -10,7 +10,7 @@ from pathlib import Path
 
 from archinstall.lib.args import ArchConfigHandler, SubCommand
 from archinstall.lib.disk.utils import disk_layouts
-from archinstall.lib.hardware import SysInfo
+from archinstall.lib.hardware import MemInfo, SysInfo, read_meminfo
 from archinstall.lib.log import debug, error, info, logger, share_install_log, warn
 from archinstall.lib.menu.helpers import Confirmation
 from archinstall.lib.network.wifi_handler import WifiHandler
@@ -23,11 +23,11 @@ from archinstall.tui.components import tui
 from archinstall.tui.menu_item import MenuItemGroup
 
 
-def _log_sys_info() -> None:
+def _log_sys_info(meminfo: MemInfo) -> None:
 	# Log various information about hardware before starting the installation. This might assist in troubleshooting
 	debug(f'Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}')
 	debug(f'Processor model detected: {SysInfo.cpu_model()}')
-	debug(f'Memory statistics: {SysInfo.mem_available()} available out of {SysInfo.mem_total()} total installed')
+	debug(f'Memory statistics: {meminfo.mem_available} kB available out of {meminfo.mem_total} kB total installed')
 	debug(f'Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_vm()}')
 	debug(f'Graphics devices detected: {SysInfo._graphics_devices().keys()}')
 
@@ -138,7 +138,7 @@ def run() -> int:
 
 	translation_handler.save_console_font()
 
-	_log_sys_info()
+	_log_sys_info(read_meminfo())
 
 	if not arch_config_handler.args.offline:
 		if not arch_config_handler.args.skip_wifi_check:
