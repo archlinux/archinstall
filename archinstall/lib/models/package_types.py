@@ -14,7 +14,7 @@ DEFAULT_KERNEL: Final = Kernel.LINUX
 
 class FirmwareOptdep(StrEnum):
 	"""
-	The optional dependencies of linux-firmware (pacman -Si linux-firmware).
+	The optional dependencies of linux-firmware.
 
 	The metapackage installs its hard dependencies only, so these blobs are
 	never present on the target unless they are requested explicitly.
