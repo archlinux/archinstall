@@ -20,5 +20,5 @@ parallel downloads,0-∞,sets a given number of parallel downloads to be used by
 profile_config,*`read more under the profiles section`*,Installs a given profile if defined,No
 script,`guided <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py>`__! *(default)*!, `minimal <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/minimal.py>`__!, `only_hdd <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/only_hdd.py>`_!, When used to autorun an installation!, this sets which script to autorun with,No
 silent,``true``!, ``false``,disables or enables user questions using the TUI,No
-swap,``true``!, ``false``,enables or disables swap,No
+swap,``zram``!, ``swapfile``,enables swap on zram and/or a swap file. The swap file is sized after the installed memory and is what makes hibernation possible. A bare ``true`` or ``false`` still toggles zram on its own,No
 timezone,`timezone <https://wiki.archlinux.org/title/System_time#Time_zone>`_,sets a timezone for the installed system,No

@@ -171,8 +171,11 @@
   "script": "guided",
   "silent": false,
   "swap": {
-    "enabled": true,
-    "algorithm": "zstd"
+    "zram": {
+      "enabled": true,
+      "algorithm": "zstd"
+    },
+    "swapfile": false
   },
   "timezone": "UTC",
   "version": "2.8.6"
