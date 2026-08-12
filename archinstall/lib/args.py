@@ -126,6 +126,8 @@ class ArchConfigType(StrEnum):
 				return tr('Hostname')
 			case ArchConfigType.KERNELS:
 				return tr('Kernels')
+			case ArchConfigType.FIRMWARE_OPTDEPS:
+				return tr('Optional firmware')
 			case ArchConfigType.NTP:
 				return tr('Automatic time sync (NTP)')
 			case ArchConfigType.TIMEZONE:
