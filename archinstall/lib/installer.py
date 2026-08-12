@@ -608,7 +608,7 @@ class Installer:
 			resume_uuid = SysCommand(f'findmnt -no UUID -T {path}').decode()
 			resume_offset = self._swapfile_offset(path, btrfs)
 
-			self._hooks.append('resume')
+			self._prepare_resume()
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
@@ -951,6 +951,18 @@ class Installer:
 		else:
 			if 'encrypt' not in self._hooks:
 				self._hooks.insert(self._hooks.index(before), 'encrypt')
+
+	def _prepare_resume(self, before: str = 'fsck') -> None:
+		if self._disk_encryption.hsm_device:
+			# the initramfs keeps the systemd hook in this case, which already ships
+			# systemd-hibernate-resume and the generator that reads resume= off the kernel
+			# command line, so the busybox hook would have nothing left to do
+			return
+
+		if 'resume' not in self._hooks:
+			# has to run once the resume device is there, so after udev and after whichever
+			# of encrypt and lvm2 the layout pulled in
+			self._hooks.insert(self._hooks.index(before), 'resume')
 
 	def minimal_installation(
 		self,
