@@ -79,6 +79,7 @@ class Installer:
 		disk_config: DiskLayoutConfiguration,
 		base_packages: list[str] = [],
 		kernels: list[str] | None = None,
+		firmware: list[str] | None = None,
 		silent: bool = False,
 	):
 		"""
@@ -100,6 +101,10 @@ class Installer:
 
 		for kernel in self.kernels:
 			self._base_packages.append(kernel)
+
+		# linux-firmware pulls in its hard deps only, so the optional ones are
+		# strapped alongside base or their blobs never reach the target
+		self._base_packages.extend(firmware or [])
 
 		# If using accessibility tools in the live environment, append those to the packages list
 		if accessibility_tools_in_use():

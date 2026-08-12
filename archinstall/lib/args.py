@@ -88,6 +88,7 @@ class ArchConfigType(StrEnum):
 	ENCRYPTION_PASSWORD = 'encryption_password'
 	HOSTNAME = 'hostname'
 	KERNELS = 'kernels'
+	FIRMWARE_OPTDEPS = 'firmware_optdeps'
 	NTP = 'ntp'
 	TIMEZONE = 'timezone'
 	SERVICES = 'services'
@@ -166,6 +167,7 @@ class ArchConfig:
 	swap: ZramConfiguration | None = None
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: [DEFAULT_KERNEL.value])
+	firmware_optdeps: list[str] = field(default_factory=list)
 	ntp: bool = True
 	packages: list[str] = field(default_factory=list)
 	pacman_config: PacmanConfiguration = field(default_factory=PacmanConfiguration)
@@ -211,6 +213,7 @@ class ArchConfig:
 		return {
 			ArchConfigType.HOSTNAME: self.hostname,
 			ArchConfigType.KERNELS: self.kernels,
+			ArchConfigType.FIRMWARE_OPTDEPS: self.firmware_optdeps,
 			ArchConfigType.NTP: self.ntp,
 			ArchConfigType.TIMEZONE: self.timezone,
 			ArchConfigType.SERVICES: self.services,
@@ -325,6 +328,9 @@ class ArchConfig:
 
 		if kernels := args_config.get('kernels', []):
 			arch_config.kernels = kernels
+
+		if firmware_optdeps := args_config.get('firmware_optdeps', []):
+			arch_config.firmware_optdeps = firmware_optdeps
 
 		arch_config.ntp = args_config.get('ntp', True)
 
