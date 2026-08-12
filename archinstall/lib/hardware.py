@@ -34,6 +34,7 @@ class GfxPackage(Enum):
 	IntelMediaDriver = 'intel-media-driver'
 	LibvaIntelDriver = 'libva-intel-driver'
 	VplGpuRt = 'vpl-gpu-rt'
+	LibVpl = 'libvpl'
 	LibvaNvidiaDriver = 'libva-nvidia-driver'
 	Mesa = 'mesa'
 	NvidiaOpen = 'nvidia-open'
@@ -96,6 +97,7 @@ class GfxDriver(Enum):
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VplGpuRt,
+					GfxPackage.LibVpl,
 					GfxPackage.VulkanRadeon,
 					GfxPackage.VulkanIntel,
 					GfxPackage.VulkanNouveau,
@@ -113,6 +115,7 @@ class GfxDriver(Enum):
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
 					GfxPackage.VplGpuRt,
+					GfxPackage.LibVpl,
 					GfxPackage.VulkanIntel,
 				]
 			case GfxDriver.NvidiaOpenKernel:
