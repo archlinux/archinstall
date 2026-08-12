@@ -80,6 +80,7 @@ def perform_installation(
 		mountpoint,
 		disk_config,
 		kernels=config.kernels,
+		firmware=config.firmware_optdeps,
 		silent=arch_config_handler.args.silent,
 	) as installation:
 		# Mount all the drives to the desired mountpoint

@@ -9,7 +9,7 @@ from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
-from archinstall.lib.general.system_menu import select_kernel, select_swap
+from archinstall.lib.general.system_menu import select_firmware_optdeps, select_kernel, select_swap
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.locale_menu import LocaleMenu
 from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
@@ -109,6 +109,13 @@ class GlobalMenu(AbstractMenu[None]):
 				preview_action=self._prev_kernel,
 				mandatory=True,
 				key='kernels',
+			),
+			MenuItem(
+				text=tr('Optional firmware'),
+				value=[],
+				action=select_firmware_optdeps,
+				preview_action=self._prev_firmware_optdeps,
+				key='firmware_optdeps',
 			),
 			MenuItem(
 				text=tr('Hostname'),
@@ -436,6 +443,12 @@ class GlobalMenu(AbstractMenu[None]):
 		if item.value:
 			kernel = ', '.join(item.value)
 			return f'{tr("Kernel")}: {kernel}'
+		return None
+
+	def _prev_firmware_optdeps(self, item: MenuItem) -> str | None:
+		if item.value:
+			firmware = ', '.join(item.value)
+			return f'{tr("Optional firmware")}: {firmware}'
 		return None
 
 	def _prev_bootloader_config(self, item: MenuItem) -> str | None:
