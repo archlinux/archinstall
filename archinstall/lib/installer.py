@@ -532,7 +532,45 @@ class Installer:
 
 		return True
 
-	def add_swapfile(self, size: Size | None = None, enable_resume: bool = True, file: str = '/swapfile') -> None:
+	def _create_btrfs_swapfile(self, path: Path, size: Size) -> None:
+		# btrfs refuses to snapshot a subvolume that holds an active swap file, so the swap file
+		# gets a subvolume of its own and the root one stays snapshottable
+		if path.parent.exists():
+			warn(f'{path.parent} already exists, the swap file cannot be given a subvolume of its own and will block snapshots of the one it lands in')
+		else:
+			SysCommand(f'btrfs subvolume create {path.parent}')
+
+		# mkswapfile preallocates the file, marks it NODATACOW as swapon requires, sets it to
+		# 0600 and runs mkswap on it, all in one go
+		SysCommand(f'btrfs filesystem mkswapfile --size {size.convert(Unit.MiB).value}m --uuid clear {path}')
+
+	def _swapfile_offset(self, path: Path, btrfs: bool) -> str:
+		if btrfs:
+			# the physical offset filefrag reports is not the one the kernel resumes from on
+			# btrfs, map-swapfile is the supported way to get it
+			return SysCommand(f'btrfs inspect-internal map-swapfile -r {path}').decode()
+
+		return (
+			SysCommand(
+				f'filefrag -v {path}',
+			)
+			.decode()
+			.split('0:', 1)[1]
+			.split(':', 1)[1]
+			.split('..', 1)[0]
+			.strip()
+		)
+
+	def add_swapfile(self, size: Size | None = None, enable_resume: bool = True, file: str | None = None) -> None:
+		# the layout cannot answer this on its own, a pre-mounted configuration carries no
+		# partition modifications at all, so ask the mount the swap file is going to live on
+		btrfs = SysCommand(f'findmnt -no FSTYPE -T {self.target}').decode() == FilesystemType.BTRFS.value
+
+		if file is None:
+			# btrfs cannot snapshot a subvolume that holds an active swap file, so the swap file
+			# is given a subvolume of its own and the root one stays snapshottable
+			file = '/swap/swapfile' if btrfs else '/swapfile'
+
 		if file[:1] != '/':
 			file = f'/{file}'
 		if len(file.strip()) <= 0 or file == '/':
@@ -556,23 +594,19 @@ class Installer:
 
 		info(f'Creating a {size.format_highest()} swap file: {file}')
 
-		# mkswap allocates the file, sets it to 0600 and formats it in one go
-		SysCommand(f'mkswap --size {size.convert(Unit.MiB).value}m --file {self.target}{file}')
+		path = Path(f'{self.target}{file}')
+
+		if btrfs:
+			self._create_btrfs_swapfile(path, size)
+		else:
+			# mkswap allocates the file, sets it to 0600 and formats it in one go
+			SysCommand(f'mkswap --size {size.convert(Unit.MiB).value}m --file {path}')
 
 		self._fstab_entries.append(f'{file} none swap defaults 0 0')
 
 		if enable_resume:
-			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode()
-			resume_offset = (
-				SysCommand(
-					f'filefrag -v {self.target}{file}',
-				)
-				.decode()
-				.split('0:', 1)[1]
-				.split(':', 1)[1]
-				.split('..', 1)[0]
-				.strip()
-			)
+			resume_uuid = SysCommand(f'findmnt -no UUID -T {path}').decode()
+			resume_offset = self._swapfile_offset(path, btrfs)
 
 			self._hooks.append('resume')
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
