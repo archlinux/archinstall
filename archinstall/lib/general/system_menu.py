@@ -103,25 +103,37 @@ async def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None 
 
 
 async def select_swap(preset: SwapConfiguration = SwapConfiguration()) -> SwapConfiguration:
-	prompt = tr('Would you like to use swap on zram?') + '\n'
+	def option(zram: bool, swapfile: bool) -> SwapConfiguration:
+		return SwapConfiguration(
+			zram=ZramConfiguration(enabled=zram, algorithm=preset.zram.algorithm),
+			swapfile=swapfile,
+		)
 
-	group = MenuItemGroup.yes_no()
-	group.set_default_by_value(True)
-	group.set_focus_by_value(preset.zram.enabled)
+	items = [
+		MenuItem(tr('zram'), value=option(True, False)),
+		MenuItem(tr('Swap file (enables hibernation)'), value=option(False, True)),
+		MenuItem(tr('zram and swap file'), value=option(True, True)),
+		MenuItem(tr('No swap'), value=option(False, False)),
+	]
 
-	result = await Confirmation(
-		header=prompt,
+	group = MenuItemGroup(items, sort_items=False)
+	group.set_default_by_value(option(True, False))
+	group.set_focus_by_value(option(preset.zram.enabled, preset.swapfile))
+
+	result = await Selection[SwapConfiguration](
+		group,
+		header=tr('Would you like to use swap?') + '\n',
 		allow_skip=True,
-		preset=preset.zram.enabled,
 	).show()
 
 	match result.type_:
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			enabled = result.item() == MenuItem.yes()
-			if not enabled:
-				return SwapConfiguration(zram=ZramConfiguration(enabled=False), swapfile=preset.swapfile)
+			selection = result.get_value()
+
+			if not selection.zram.enabled:
+				return selection
 
 			# Ask for compression algorithm
 			algo_group = MenuItemGroup.from_enum(ZramAlgorithm, sort_items=False)
@@ -144,6 +156,6 @@ async def select_swap(preset: SwapConfiguration = SwapConfiguration()) -> SwapCo
 				case _:
 					assert_never(algo_result.type_)
 
-			return SwapConfiguration(zram=ZramConfiguration(enabled=True, algorithm=algo), swapfile=preset.swapfile)
+			return SwapConfiguration(zram=ZramConfiguration(enabled=True, algorithm=algo), swapfile=selection.swapfile)
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
