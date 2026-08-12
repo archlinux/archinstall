@@ -111,8 +111,8 @@ def perform_installation(
 		if mirror_config := config.mirror_config:
 			installation.set_mirrors(mirror_list_handler, mirror_config, on_target=True)
 
-		if config.swap and config.swap.enabled:
-			installation.setup_swap(algo=config.swap.algorithm)
+		if config.swap and config.swap.zram.enabled:
+			installation.setup_swap(algo=config.swap.zram.algorithm)
 
 		if config.bootloader_config and config.bootloader_config.bootloader != Bootloader.NO_BOOTLOADER:
 			installation.add_bootloader(
