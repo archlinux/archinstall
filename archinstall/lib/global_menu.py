@@ -15,7 +15,7 @@ from archinstall.lib.locale.locale_menu import LocaleMenu
 from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
 from archinstall.lib.mirror.mirror_handler import MirrorListHandler
 from archinstall.lib.mirror.mirror_menu import MirrorMenu
-from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, SwapConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, PartitionModification
@@ -90,7 +90,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Swap'),
-				value=ZramConfiguration(enabled=True),
+				value=SwapConfiguration(),
 				action=select_swap,
 				preview_action=self._prev_swap,
 				key='swap',
@@ -408,9 +408,12 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_swap(self, item: MenuItem) -> str | None:
 		if item.value is not None:
 			output = f'{tr("Swap on zram")}: '
-			output += tr('Enabled') if item.value.enabled else tr('Disabled')
-			if item.value.enabled:
-				output += f'\n{tr("Compression algorithm")}: {item.value.algorithm.value}'
+			output += tr('Enabled') if item.value.zram.enabled else tr('Disabled')
+			if item.value.zram.enabled:
+				output += f'\n{tr("Compression algorithm")}: {item.value.zram.algorithm.value}'
+
+			output += f'\n{tr("Swap file")}: '
+			output += tr('Enabled') if item.value.swapfile else tr('Disabled')
 			return output
 		return None
 

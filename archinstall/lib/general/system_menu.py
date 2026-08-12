@@ -2,7 +2,7 @@ from typing import assert_never
 
 from archinstall.lib.hardware import GfxDriver, SysInfo
 from archinstall.lib.menu.helpers import Confirmation, Selection
-from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
+from archinstall.lib.models.application import SwapConfiguration, ZramAlgorithm, ZramConfiguration
 from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -102,17 +102,17 @@ async def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None 
 			return result.get_value()
 
 
-async def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) -> ZramConfiguration:
+async def select_swap(preset: SwapConfiguration = SwapConfiguration()) -> SwapConfiguration:
 	prompt = tr('Would you like to use swap on zram?') + '\n'
 
 	group = MenuItemGroup.yes_no()
 	group.set_default_by_value(True)
-	group.set_focus_by_value(preset.enabled)
+	group.set_focus_by_value(preset.zram.enabled)
 
 	result = await Confirmation(
 		header=prompt,
 		allow_skip=True,
-		preset=preset.enabled,
+		preset=preset.zram.enabled,
 	).show()
 
 	match result.type_:
@@ -121,12 +121,12 @@ async def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True
 		case ResultType.Selection:
 			enabled = result.item() == MenuItem.yes()
 			if not enabled:
-				return ZramConfiguration(enabled=False)
+				return SwapConfiguration(zram=ZramConfiguration(enabled=False), swapfile=preset.swapfile)
 
 			# Ask for compression algorithm
 			algo_group = MenuItemGroup.from_enum(ZramAlgorithm, sort_items=False)
 			algo_group.set_default_by_value(ZramAlgorithm.ZSTD)
-			algo_group.set_focus_by_value(preset.algorithm)
+			algo_group.set_focus_by_value(preset.zram.algorithm)
 
 			algo_result = await Selection[ZramAlgorithm](
 				algo_group,
@@ -136,7 +136,7 @@ async def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True
 
 			match algo_result.type_:
 				case ResultType.Skip:
-					algo = preset.algorithm
+					algo = preset.zram.algorithm
 				case ResultType.Selection:
 					algo = algo_result.get_value()
 				case ResultType.Reset:
@@ -144,6 +144,6 @@ async def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True
 				case _:
 					assert_never(algo_result.type_)
 
-			return ZramConfiguration(enabled=True, algorithm=algo)
+			return SwapConfiguration(zram=ZramConfiguration(enabled=True, algorithm=algo), swapfile=preset.swapfile)
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
