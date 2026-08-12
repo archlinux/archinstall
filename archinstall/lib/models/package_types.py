@@ -7,6 +7,7 @@ class Kernel(StrEnum):
 	LINUX_LTS = 'linux-lts'
 	LINUX_ZEN = 'linux-zen'
 	LINUX_HARDENED = 'linux-hardened'
-
+        LINUX_RT = 'linux-rt'
+        LINUX_RT_LTS = 'linux-rt-lts'
 
 DEFAULT_KERNEL: Final = Kernel.LINUX
