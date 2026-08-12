@@ -420,11 +420,18 @@ def test_example_config_partitions(example_config_fixture: Path) -> None:
 	# partition entries are only parsed when the configured device is present on
 	# the machine, which is never the case in CI, so read them here directly
 	config = json.loads(example_config_fixture.read_text())
+	device_modifications = config['disk_config']['device_modifications']
 
-	for device in config['disk_config']['device_modifications']:
+	assert device_modifications
+
+	for device in device_modifications:
+		partitions = device['partitions']
+
+		assert partitions
+
 		previous_end = None
 
-		for partition in device['partitions']:
+		for partition in partitions:
 			assert 'dev_path' in partition
 
 			start = Size.parse_args(partition['start'])
