@@ -1,3 +1,4 @@
+import math
 import os
 import platform
 import re
@@ -26,7 +27,7 @@ from archinstall.lib.disk.utils import (
 	swapon,
 )
 from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
-from archinstall.lib.hardware import SysInfo
+from archinstall.lib.hardware import SysInfo, read_meminfo
 from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from archinstall.lib.log import debug, error, info, log, logger, warn
@@ -70,6 +71,11 @@ __packages__ = ['base', 'sudo', 'linux-firmware', 'mkinitcpio'] + [k.value for k
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ['brltty', 'espeakup', 'alsa-utils']
+
+# Rough floor for what the base install needs next to a swap file. linux-firmware alone is north of
+# a gigabyte and pacstrap keeps the packages it downloads in the target's cache, so this is a lower
+# bound rather than a full accounting: a profile on top of it will ask for a good deal more.
+__base_install_headroom__ = Size(2, Unit.GiB, SectorSize.default())
 
 
 class Installer:
@@ -526,15 +532,32 @@ class Installer:
 
 		return True
 
-	def add_swapfile(self, size: str = '4G', enable_resume: bool = True, file: str = '/swapfile') -> None:
+	def add_swapfile(self, size: Size | None = None, enable_resume: bool = True, file: str = '/swapfile') -> None:
 		if file[:1] != '/':
 			file = f'/{file}'
 		if len(file.strip()) <= 0 or file == '/':
 			raise ValueError(f'The filename for the swap file has to be a valid path, not: {self.target}{file}')
 
-		SysCommand(f'dd if=/dev/zero of={self.target}{file} bs={size} count=1')
-		SysCommand(f'chmod 0600 {self.target}{file}')
-		SysCommand(f'mkswap {self.target}{file}')
+		if size is None:
+			size = _swapfile_size()
+
+		# bail out before writing anything: the base install still has to fit next to the swap
+		# file, and running the root partition out of space halfway through pacstrap is a lot
+		# harder to make sense of than a message here
+		stat = os.statvfs(self.target)
+		available = Size(stat.f_bavail * stat.f_frsize, Unit.B, SectorSize.default())
+		required = size + __base_install_headroom__
+
+		if available < required:
+			raise DiskError(
+				f'Not enough space for a {size.format_highest()} swap file on {self.target}: '
+				f'{required.format_highest()} is needed to leave room for the base install, {available.format_highest()} is available',
+			)
+
+		info(f'Creating a {size.format_highest()} swap file: {file}')
+
+		# mkswap allocates the file, sets it to 0600 and formats it in one go
+		SysCommand(f'mkswap --size {size.convert(Unit.MiB).value}m --file {self.target}{file}')
 
 		self._fstab_entries.append(f'{file} none swap defaults 0 0')
 
@@ -2124,6 +2147,19 @@ class Installer:
 			f'systemctl show --no-pager -p SubState --value {service_name}',
 			environment_vars={'SYSTEMD_COLORS': '0'},
 		).decode()
+
+
+def _swapfile_size() -> Size:
+	"""
+	A hibernation image is a snapshot of the physical memory, so a swap file the size of MemTotal is
+	always large enough to hold one. Whatever zram is holding lives in RAM as well and is therefore
+	already counted there, so an active zram device needs no extra room.
+	"""
+	# /proc/meminfo reports kibibytes even though it labels them kB
+	mem_total = Size(read_meminfo().mem_total, Unit.KiB, SectorSize.default())
+	size = math.ceil(mem_total.convert(Unit.B).value / Unit.MiB.value)
+
+	return Size(size, Unit.MiB, SectorSize.default())
 
 
 def accessibility_tools_in_use() -> bool:
