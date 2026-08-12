@@ -79,7 +79,7 @@ class Installer:
 		disk_config: DiskLayoutConfiguration,
 		base_packages: list[str] = [],
 		kernels: list[str] | None = None,
-		firmware: list[str] | None = None,
+		firmware: list[str] = [],
 		silent: bool = False,
 	):
 		"""
@@ -103,7 +103,7 @@ class Installer:
 			self._base_packages.append(kernel)
 
 		# Optional firmware is strapped with base so the blobs are in place before the initramfs is generated
-		self._base_packages.extend(firmware or [])
+		self._base_packages.extend(firmware)
 
 		# If using accessibility tools in the live environment, append those to the packages list
 		if accessibility_tools_in_use():
