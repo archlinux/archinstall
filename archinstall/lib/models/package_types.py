@@ -13,12 +13,11 @@ DEFAULT_KERNEL: Final = Kernel.LINUX
 
 
 class FirmwareOptdep(StrEnum):
-	"""linux-firmware's optional dependencies.
+	"""
+	The optional dependencies of linux-firmware (pacman -Si linux-firmware).
 
-	The metapackage pulls in its hard deps only, so these blobs never reach the
-	target: hardware that needs one (a Marvell wifi card, a Mellanox NIC) comes
-	up without firmware and there is nothing in the installer that says so.
-	Mirrors `pacman -Si linux-firmware` optdepends.
+	The metapackage installs its hard dependencies only, so these blobs are
+	never present on the target unless they are requested explicitly.
 	"""
 
 	LIQUIDIO = 'linux-firmware-liquidio'
