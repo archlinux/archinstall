@@ -9,6 +9,16 @@ def config_fixture() -> Path:
 
 
 @pytest.fixture(scope='session')
+def example_config_fixture() -> Path:
+	return Path(__file__).parent.parent / 'examples' / 'config-sample.json'
+
+
+@pytest.fixture(scope='session')
+def example_creds_fixture() -> Path:
+	return Path(__file__).parent.parent / 'examples' / 'creds-sample.json'
+
+
+@pytest.fixture(scope='session')
 def btrfs_config_fixture() -> Path:
 	return Path(__file__).parent / 'data' / 'test_config_btrfs.json'
 
