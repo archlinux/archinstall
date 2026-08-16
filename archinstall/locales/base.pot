@@ -633,6 +633,12 @@ msgid ""
 "greeter"
 msgstr ""
 
+msgid "Use this language as the target system language as well?"
+msgstr ""
+
+msgid "The following settings will be applied:"
+msgstr ""
+
 msgid "Language"
 msgstr ""
 
