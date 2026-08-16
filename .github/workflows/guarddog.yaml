@@ -1,0 +1,19 @@
+on: [ push, pull_request ]
+name: guarddog security checkup
+jobs:
+    guarddog:
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux:latest
+        steps:
+            - uses: actions/checkout@v3
+            - run: pacman --noconfirm -Syu git python python-setuptools python-pip python-build python-poetry
+            - run: python -m pip install --upgrade pip
+            - run: pip install git+https://github.com/DataDog/guarddog.git
+            - run: python --version
+            - name: run build
+              run: python -m build
+            - name: run guarddog on archinstall
+              run: guarddog scan dist/*.tar.gz --exit-non-zero-on-finding
+            - name: run guarddog on dependencies
+              run: xargs guarddog scan --exit-non-zero-on-finding <requirements.txt
