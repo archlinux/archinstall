@@ -381,7 +381,7 @@ class Installer:
 			options = part_mod.mount_options
 
 			if part_mod.is_efi():
-				options = list(dict.fromkeys(options + ['fmask=0077', 'dmask=0077']))
+				options = list(dict.fromkeys(options + ['fmask=0177', 'dmask=0077']))
 
 			mount(part_mod.dev_path, target, options=options)
 		elif part_mod.fs_type == FilesystemType.BTRFS:
