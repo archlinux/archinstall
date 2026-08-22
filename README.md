@@ -264,6 +264,6 @@ This core library is the backbone for the guided installer that Archinstall prov
 Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backward compatibility after notifying about such changes.
 
 
-# Contributing
+# Contributing with us
 
 Please see [CONTRIBUTING.md](https://github.com/archlinux/archinstall/blob/master/CONTRIBUTING.md)
