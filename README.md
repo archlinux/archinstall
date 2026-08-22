@@ -153,7 +153,7 @@ The profiles' definitions and the packages they will install can be directly vie
 
 # Testing
 
-## Using a Live ISO Image
+## Using a Live ISO Image(s)
 
 If you want to test a commit, branch, or bleeding edge release from the repository using the standard Arch Linux Live ISO image,
 replace the archinstall version with a newer one and execute the subsequent steps defined below.
