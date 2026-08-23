@@ -1,5 +1,6 @@
 on: [ push, pull_request ]
 name: mypy type checking
+permissions: {}
 jobs:
     mypy:
         runs-on: ubuntu-latest

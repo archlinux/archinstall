@@ -10,6 +10,7 @@ on:
             - 'archinstall/**/*.py'
             - 'archinstall/locales/**'
             - '.github/workflows/translation-check.yaml'
+permissions: {}
 jobs:
     translations:
         name: Validate translations
