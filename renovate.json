@@ -55,7 +55,8 @@
         "pytest",
         "pylint"
       ],
-      "automerge": true
+      "automerge": true,
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": "Disable PyPI updates for runtime deps tracked via Arch repos",
