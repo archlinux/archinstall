@@ -1,5 +1,6 @@
 on: [ push, pull_request ]
 name: ruff check linting
+permissions: {}
 jobs:
     ruff:
         runs-on: ubuntu-latest

@@ -1,5 +1,6 @@
 on: [ push, pull_request ]
 name: ruff check formatting
+permissions: {}
 jobs:
   ruff_format_check:
     runs-on: ubuntu-latest

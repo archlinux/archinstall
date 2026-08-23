@@ -1,5 +1,6 @@
 on: [ push, pull_request ]
 name: pytest test validation
+permissions: {}
 jobs:
     pytest:
         runs-on: ubuntu-latest

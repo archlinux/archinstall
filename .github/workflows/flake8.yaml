@@ -1,5 +1,6 @@
 on: [ push, pull_request ]
 name: flake8 linting
+permissions: {}
 jobs:
     flake8:
         runs-on: ubuntu-latest
