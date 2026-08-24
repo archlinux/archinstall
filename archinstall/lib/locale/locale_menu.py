@@ -74,7 +74,7 @@ class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 
 async def select_locale_lang(preset: str | None = None) -> str | None:
 	locales = list_locales()
-	locale_lang = set([locale.split()[0] for locale in locales])
+	locale_lang = {locale.split()[0] for locale in locales}
 
 	items = [MenuItem(ll, value=ll) for ll in locale_lang]
 	group = MenuItemGroup(items, sort_items=True)
@@ -97,7 +97,7 @@ async def select_locale_lang(preset: str | None = None) -> str | None:
 
 async def select_locale_enc(preset: str | None = None) -> str | None:
 	locales = list_locales()
-	locale_enc = set([locale.split()[1] for locale in locales])
+	locale_enc = {locale.split()[1] for locale in locales}
 
 	items = [MenuItem(le, value=le) for le in locale_enc]
 	group = MenuItemGroup(items, sort_items=True)
