@@ -92,7 +92,7 @@ class DiskLayoutConfiguration(SubConfig):
 	def summary(self) -> list[str]:
 		out = [tr('{} layout').format(self.config_type.short_msg())]
 
-		devices = set(mod.device_path for mod in self.device_modifications)
+		devices = {mod.device_path for mod in self.device_modifications}
 
 		if devices:
 			dev_str = ', '.join(str(d) for d in devices)
