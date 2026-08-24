@@ -588,14 +588,14 @@ class Installer:
 		# file, and running the root partition out of space halfway through pacstrap is a lot
 		# harder to make sense of than a message here. the swap file can be handed a path on a
 		# mount of its own, so measure the filesystem it lands on and not the target root
-		mount = next(parent for parent in path.parents if parent.exists())
-		stat = os.statvfs(mount)
+		fs_path = next(parent for parent in path.parents if parent.exists())
+		stat = os.statvfs(fs_path)
 		available = Size(stat.f_bavail * stat.f_frsize, Unit.B, SectorSize.default())
 		required = size + __base_install_headroom__
 
 		if available < required:
 			raise DiskError(
-				f'Not enough space for a {size.format_highest()} swap file on {mount}: '
+				f'Not enough space for a {size.format_highest()} swap file on {fs_path}: '
 				f'{required.format_highest()} is needed to leave room for the base install, {available.format_highest()} is available',
 			)
 
