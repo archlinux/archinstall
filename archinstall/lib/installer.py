@@ -536,7 +536,10 @@ class Installer:
 		# btrfs refuses to snapshot a subvolume that holds an active swap file, so the swap file
 		# gets a subvolume of its own and the root one stays snapshottable
 		if path.parent.exists():
-			warn(f'{path.parent} already exists, the swap file cannot be given a subvolume of its own and will block snapshots of the one it lands in')
+			warn(
+				f'{path.parent} already exists and will not be created as a subvolume; unless it is one already, '
+				'the swap file will block snapshots of the subvolume it lands in',
+			)
 		else:
 			SysCommand(f'btrfs subvolume create {path.parent}')
 
