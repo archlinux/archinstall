@@ -60,7 +60,7 @@ async def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None 
 	there for appeal to the general public first and edge cases later)
 	"""
 	if not options:
-		options = [driver for driver in GfxDriver]
+		options = list(GfxDriver)
 
 	items = [
 		MenuItem(

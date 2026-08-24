@@ -115,7 +115,10 @@ class MirrorListHandler:
 				sorting_placeholder.setdefault(mirror.country, []).append(mirror)
 
 		sorted_by_regions: dict[str, list[MirrorStatusEntryV3]] = dict(
-			{region: unsorted_mirrors for region, unsorted_mirrors in sorted(sorting_placeholder.items(), key=lambda item: item[0])}
+			sorted(
+				sorting_placeholder.items(),
+				key=lambda item: item[0],
+			)
 		)
 
 		return sorted_by_regions

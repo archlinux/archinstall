@@ -206,6 +206,7 @@ docstring-code-format = true
 select = [
     "ASYNC",  # flake8-async
     "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
     "C90",    # mccabe
     "COM",    # flake8-commas
     "DTZ",    # flake8-datetimez

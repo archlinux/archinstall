@@ -173,7 +173,7 @@ class Profile:
 		if not self.current_selection:
 			return self._support_gfx_driver
 		else:
-			if any([p._support_gfx_driver for p in self.current_selection]):
+			if any(p._support_gfx_driver for p in self.current_selection):
 				return True
 			return False
 
