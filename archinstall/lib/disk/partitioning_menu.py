@@ -562,7 +562,7 @@ class PartitioningList(ListManager[DiskSegment]):
 	) -> DeviceModification | None:
 		# if modifications have been done already, inform the user
 		# that this operation will erase those modifications
-		if any([not entry.exists() for entry in data]):
+		if any(not entry.exists() for entry in data):
 			if not await self._reset_confirmation():
 				return None
 

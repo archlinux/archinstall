@@ -182,7 +182,7 @@ class FilesystemHandler:
 			# to the desired sizes and subtract some equally from the actually
 			# created volume
 			avail_size = vg_info.vg_size
-			desired_size = sum([vol.length for vol in vg.volumes], Size(0, Unit.B, SectorSize.default()))
+			desired_size = sum((vol.length for vol in vg.volumes), Size(0, Unit.B, SectorSize.default()))
 
 			delta = desired_size - avail_size
 			delta_bytes = delta.convert(Unit.B)
@@ -318,7 +318,7 @@ class FilesystemHandler:
 		# from arch wiki:
 		# If a logical volume will be formatted with ext4, leave at least 256 MiB
 		# free space in the volume group to allow using e2scrub
-		if any([vol.fs_type == FilesystemType.EXT4 for vol in vol_gp.volumes]):
+		if any(vol.fs_type == FilesystemType.EXT4 for vol in vol_gp.volumes):
 			largest_vol = max(vol_gp.volumes, key=lambda x: x.length)
 
 			lvm_vol_reduce(
