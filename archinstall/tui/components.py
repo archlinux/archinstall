@@ -19,7 +19,10 @@ from textual.widgets.option_list import Option
 from textual.widgets.selection_list import Selection
 from textual.worker import WorkerCancelled
 
+from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.log import debug
+from archinstall.lib.models.authentication import AuthenticationConfiguration
+from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 from archinstall.tui.result import Result, ResultType
@@ -55,17 +58,7 @@ def _translate_bindings(source: BindingsMap | None, target: BindingsMap) -> None
 		target.key_to_bindings[key] = [replace(b, description=tr(b.description)) if b.description else b for b in bindings]
 
 
-def _val_is_empty(val: Any) -> bool:
-	if val is None:
-		return True
-	if isinstance(val, (list, dict, set, tuple, str)) and len(val) == 0:
-		return True
-	if hasattr(val, '__dict__') and all(_val_is_empty(v) for v in vars(val).values()):
-		return True
-	return False
-
-
-def _get_status_prefix(item: MenuItem) -> str:
+def _get_status_prefix(group: MenuItemGroup, item: MenuItem) -> str:
 	"""
 	Returns a rich-formatted status prefix icon depending on item state:
 	- Space for configured items
@@ -77,10 +70,27 @@ def _get_status_prefix(item: MenuItem) -> str:
 	if item.read_only or is_special_key:
 		return ''
 
-	if item.has_value() and not _val_is_empty(item.value):
+	if item.key == 'auth_config':
+		auth_config: AuthenticationConfiguration | None = item.value
+		if (auth_config is None or auth_config.root_enc_password is None) and not (auth_config and auth_config.has_superuser()):
+			return '[bold yellow][!][/bold yellow] '
+		return '  '
+	elif item.key == 'profile_config':
+		auth_item = group.find_by_key('auth_config')
+		auth_config: AuthenticationConfiguration | None = auth_item.value if auth_item else None
+		profile_config: ProfileConfiguration | None = item.value
+		if not (auth_config and auth_config.has_regular_user()):
+			if profile_config and profile_config.profile and profile_config.profile.is_desktop_profile():
+				problematic_greeters = {GreeterType.Sddm}
+				if any(p.default_greeter_type in problematic_greeters for p in profile_config.profile.current_selection):
+					return '[bold yellow][!][/bold yellow] '
+		return '  '
+	elif item.key == 'disk_config':
+		if item.value is None:
+			return '[bold yellow][!][/bold yellow] '
 		return '  '
 	else:
-		return '[bold yellow]![/bold yellow] '
+		return '  '
 
 
 class BaseScreen(Screen[Result[ValueT]]):
@@ -315,7 +325,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 
 		for item in self._group.get_enabled_items():
 			disabled = True if item.read_only else False
-			option_text = _get_status_prefix(item) + item.text
+			option_text = _get_status_prefix(self._group, item) + item.text
 			options.append(Option(option_text, id=item.get_id(), disabled=disabled))
 
 		return options
@@ -549,7 +559,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 
 		for item in self._group.get_enabled_items():
 			is_selected = item in self._selected_items
-			selection_text = _get_status_prefix(item) + item.text
+			selection_text = _get_status_prefix(self._group, item) + item.text
 			selection = Selection(selection_text, item, is_selected)
 			selections.append(selection)
 
