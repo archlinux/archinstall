@@ -87,7 +87,7 @@ def _get_status_prefix(group: MenuItemGroup, item: MenuItem) -> str:
 		return '  '
 	elif item.key == 'disk_config':
 		if item.value is None:
-			return '[bold yellow][!][/bold yellow] '
+			return '[bold yellow]![/bold yellow] '
 		return '  '
 	else:
 		return '  '
