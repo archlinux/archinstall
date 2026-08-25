@@ -73,7 +73,7 @@ def _get_status_prefix(group: MenuItemGroup, item: MenuItem) -> str:
 	if item.key == 'auth_config':
 		auth_config: AuthenticationConfiguration | None = item.value
 		if (auth_config is None or auth_config.root_enc_password is None) and not (auth_config and auth_config.has_superuser()):
-			return '[bold yellow][!][/bold yellow] '
+			return '[bold yellow]![/bold yellow] '
 		return '  '
 	elif item.key == 'profile_config':
 		auth_item = group.find_by_key('auth_config')
@@ -83,7 +83,7 @@ def _get_status_prefix(group: MenuItemGroup, item: MenuItem) -> str:
 			if profile_config and profile_config.profile and profile_config.profile.is_desktop_profile():
 				problematic_greeters = {GreeterType.Sddm}
 				if any(p.default_greeter_type in problematic_greeters for p in profile_config.profile.current_selection):
-					return '[bold yellow][!][/bold yellow] '
+					return '[bold yellow]![/bold yellow] '
 		return '  '
 	elif item.key == 'disk_config':
 		if item.value is None:
