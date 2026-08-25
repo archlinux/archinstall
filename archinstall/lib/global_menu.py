@@ -507,7 +507,7 @@ class GlobalMenu(AbstractMenu[None]):
 		else:
 			firewall_config = self._arch_config.app_config.firewall_config
 		is_ufw = firewall_config and firewall_config.firewall and firewall_config.firewall.value == 'ufw'
-		is_fwd = firewall_config and firewall_config.firewall and firewall_config.firewall.value == 'fwd'
+		is_fwd = firewall_config and firewall_config.firewall and firewall_config.firewall.value == 'firewalld'
 		has_openssh = 'openssh' in self._arch_config.packages
 
 		if (is_ufw or is_fwd) and has_openssh and not firewall_config.allow_ssh:
