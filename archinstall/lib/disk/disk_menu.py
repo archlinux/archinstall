@@ -297,7 +297,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 		return None
 
 
-async def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | None:
+async def select_devices(preset: list[BDevice] | None = None) -> list[BDevice] | None:
 	def _preview_device_selection(item: MenuItem) -> str | None:
 		device: _DeviceInfo = item.value  # type: ignore[assignment]
 		dev = device_handler.get_device(device.path)
@@ -305,9 +305,6 @@ async def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | N
 		if dev and dev.partition_infos:
 			return as_table(dev.partition_infos)
 		return None
-
-	if preset is None:
-		preset = []
 
 	devices = device_handler.devices
 
@@ -324,7 +321,10 @@ async def select_devices(preset: list[BDevice] | None = []) -> list[BDevice] | N
 		for d in devices
 	]
 
-	presets = [p.device_info for p in preset]
+	if preset is None:
+		presets = []
+	else:
+		presets = [p.device_info for p in preset]
 
 	group = MenuItemGroup(items)
 	group.set_selected_by_value(presets)

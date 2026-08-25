@@ -161,7 +161,7 @@ class FilesystemHandler:
 	def _setup_lvm(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: dict[PartitionModification, Luks2] = {},
+		enc_mods: dict[PartitionModification, Luks2] | None = None,
 	) -> None:
 		self._lvm_create_pvs(lvm_config, enc_mods)
 
@@ -216,10 +216,10 @@ class FilesystemHandler:
 	def _format_lvm_vols(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_vols: dict[LvmVolume, Luks2] = {},
+		enc_vols: dict[LvmVolume, Luks2] | None = None,
 	) -> None:
 		for vol in lvm_config.get_all_volumes():
-			if enc_vol := enc_vols.get(vol, None):
+			if enc_vols is not None and (enc_vol := enc_vols.get(vol, None)):
 				if not enc_vol.mapper_dev:
 					raise ValueError('No mapper device defined')
 				path = enc_vol.mapper_dev
@@ -236,7 +236,7 @@ class FilesystemHandler:
 	def _lvm_create_pvs(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: dict[PartitionModification, Luks2] = {},
+		enc_mods: dict[PartitionModification, Luks2] | None = None,
 	) -> None:
 		pv_paths: set[Path] = set()
 
@@ -248,12 +248,12 @@ class FilesystemHandler:
 	def _get_all_pv_dev_paths(
 		self,
 		pvs: list[PartitionModification],
-		enc_mods: dict[PartitionModification, Luks2] = {},
+		enc_mods: dict[PartitionModification, Luks2] | None = None,
 	) -> set[Path]:
 		pv_paths: set[Path] = set()
 
 		for pv in pvs:
-			if enc_pv := enc_mods.get(pv, None):
+			if enc_mods is not None and (enc_pv := enc_mods.get(pv, None)):
 				if mapper := enc_pv.mapper_dev:
 					pv_paths.add(mapper)
 			else:

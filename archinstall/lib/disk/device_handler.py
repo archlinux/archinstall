@@ -236,7 +236,7 @@ class DeviceHandler:
 		self,
 		fs_type: FilesystemType,
 		path: Path,
-		additional_parted_options: list[str] = [],
+		additional_parted_options: list[str] | None = None,
 	) -> None:
 		mkfs_type = fs_type.value
 		command = None
@@ -263,6 +263,9 @@ class DeviceHandler:
 
 		if not command:
 			command = f'mkfs.{mkfs_type}'
+
+		if additional_parted_options is None:
+			additional_parted_options = []
 
 		cmd = [command, *options, *additional_parted_options, str(path)]
 

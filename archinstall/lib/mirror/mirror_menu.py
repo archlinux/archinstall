@@ -337,7 +337,10 @@ async def select_mirror_regions(
 			return selected_mirrors
 
 
-async def add_custom_mirror_servers(preset: list[CustomServer] = []) -> list[CustomServer]:
+async def add_custom_mirror_servers(preset: list[CustomServer] | None = None) -> list[CustomServer]:
+	if preset is None:
+		preset = []
+
 	custom_mirrors = await CustomMirrorServersList(preset).show()
 
 	if not custom_mirrors:
@@ -346,7 +349,10 @@ async def add_custom_mirror_servers(preset: list[CustomServer] = []) -> list[Cus
 	return custom_mirrors
 
 
-async def select_custom_mirror(preset: list[CustomRepository] = []) -> list[CustomRepository]:
+async def select_custom_mirror(preset: list[CustomRepository] | None = None) -> list[CustomRepository]:
+	if preset is None:
+		preset = []
+
 	custom_mirrors = await CustomMirrorRepositoriesList(preset).show()
 
 	if not custom_mirrors:

@@ -141,7 +141,7 @@ def mount(
 	target_mountpoint: Path,
 	mount_fs: str | None = None,
 	create_target_mountpoint: bool = True,
-	options: list[str] = [],
+	options: list[str] | None = None,
 ) -> None:
 	if create_target_mountpoint and not target_mountpoint.exists():
 		target_mountpoint.mkdir(parents=True, exist_ok=True)
@@ -156,7 +156,7 @@ def mount(
 
 	cmd = ['mount']
 
-	if len(options):
+	if options:
 		cmd.extend(('-o', ','.join(options)))
 	if mount_fs:
 		cmd.extend(('-t', mount_fs))

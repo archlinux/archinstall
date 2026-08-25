@@ -56,9 +56,9 @@ class Profile:
 		self,
 		name: str,
 		profile_type: ProfileType,
-		current_selection: list[Self] = [],
-		packages: list[str] = [],
-		services: list[str] = [],
+		current_selection: list[Self] | None = None,
+		packages: list[str] | None = None,
+		services: list[str] | None = None,
 		support_gfx_driver: bool = False,
 		support_greeter: bool = False,
 		display_server: DisplayServerType | None = None,
@@ -73,9 +73,12 @@ class Profile:
 
 		# self.gfx_driver: str | None = None
 
+		if current_selection is None:
+			current_selection = []
+
 		self.current_selection = current_selection
-		self._packages = packages
-		self._services = services
+		self._packages = packages if packages is not None else []
+		self._services = services if services is not None else []
 
 		# Only used for custom default_profiles
 		self.custom_enabled = False

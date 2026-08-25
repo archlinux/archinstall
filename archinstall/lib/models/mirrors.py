@@ -325,7 +325,7 @@ class MirrorConfiguration(SubConfig):
 	def parse_args(
 		cls,
 		args: dict[str, Any],
-		backwards_compatible_repo: list[Repository] = [],
+		backwards_compatible_repo: list[Repository] | None = None,
 	) -> Self:
 		config = cls()
 
