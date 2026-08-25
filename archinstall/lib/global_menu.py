@@ -502,7 +502,10 @@ class GlobalMenu(AbstractMenu[None]):
 		if not isinstance(self._arch_config.network_config, NetworkConfiguration):
 			warnings.append(tr('No network configuration selected. Network will need to be set up manually on the installed system.'))
 
-		firewall_config = self._arch_config.app_config.firewall_config
+		if isinstance(self._arch_config.app_config, list):
+			firewall_config = False
+		else:
+			firewall_config = self._arch_config.app_config.firewall_config
 		is_ufw = firewall_config and firewall_config.firewall and firewall_config.firewall.value == 'ufw'
 		has_openssh = 'openssh' in self._arch_config.packages
 
