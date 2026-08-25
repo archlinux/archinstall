@@ -66,8 +66,7 @@ class FirewallApp:
 				ufw_conf.write_text(ufw_conf.read_text().replace('ENABLED=no', 'ENABLED=yes'))
 
 				if firewall_config.allow_ssh:
-					# self._allow_ufw_ssh_on_first_boot(install_session)
-					install_session.arch_chroot(['ufw', 'allow', 'ssh'])
+					self._allow_ufw_ssh_on_first_boot(install_session)
 
 			case Firewall.FWD:
 				install_session.add_additional_packages(self.fwd_packages)
