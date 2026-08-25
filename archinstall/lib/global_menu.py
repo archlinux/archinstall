@@ -507,10 +507,11 @@ class GlobalMenu(AbstractMenu[None]):
 		else:
 			firewall_config = self._arch_config.app_config.firewall_config
 		is_ufw = firewall_config and firewall_config.firewall and firewall_config.firewall.value == 'ufw'
+		is_fwd = firewall_config and firewall_config.firewall and firewall_config.firewall.value == 'fwd'
 		has_openssh = 'openssh' in self._arch_config.packages
 
-		if is_ufw and has_openssh and not firewall_config.allow_ssh:
-			warnings.append(tr('SSH not allowed through ufw. Rules will need to be set up manually on the installed system.'))
+		if (is_ufw or is_fwd) and has_openssh and not firewall_config.allow_ssh:
+			warnings.append(tr('SSH not allowed through firewall. Rules will need to be set up manually on the installed system.'))
 
 		return warnings
 
