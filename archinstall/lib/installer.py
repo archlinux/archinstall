@@ -1350,15 +1350,9 @@ class Installer:
 
 			self.pacman.strap('efibootmgr')  # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
-			boot_dir_arg = []
-			if boot_partition.mountpoint and boot_partition.mountpoint != boot_dir:
-				boot_dir_arg.append(f'--boot-directory={boot_partition.mountpoint}')
-				boot_dir = boot_partition.mountpoint
-
 			add_options = [
 				f'--target={"arm64" if platform.machine() == "aarch64" else platform.machine()}-efi',
 				f'--efi-directory={efi_partition.mountpoint}',
-				*boot_dir_arg,
 				'--bootloader-id=GRUB',
 			]
 
