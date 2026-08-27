@@ -162,7 +162,6 @@ disable = [
     "attribute-defined-outside-init",
     "broad-exception-caught",
     "cell-var-from-loop",
-    "dangerous-default-value",
     "fixme",
     "protected-access",
     "raise-missing-from",
