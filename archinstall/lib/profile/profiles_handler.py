@@ -353,12 +353,12 @@ class ProfileHandler:
 		self._verify_unique_profile_names(profiles)
 		return profiles
 
-	def reset_top_level_profiles(self, exclude: list[Profile] = []) -> None:
+	def reset_top_level_profiles(self, exclude: list[Profile] | None = None) -> None:
 		"""
 		Reset all top level profile configurations, this is usually necessary
 		when a new top level profile is selected
 		"""
-		excluded_profiles = [p.name for p in exclude]
+		excluded_profiles = [p.name for p in exclude] if exclude is not None else []
 		for profile in self.get_top_level_profiles():
 			if profile.name not in excluded_profiles:
 				profile.reset()

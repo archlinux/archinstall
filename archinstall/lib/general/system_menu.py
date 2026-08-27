@@ -9,13 +9,16 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
 
-async def select_kernel(preset: list[Kernel] = []) -> list[Kernel]:
+async def select_kernel(preset: list[Kernel] | None = None) -> list[Kernel]:
 	"""
 	Asks the user to select a kernel for system.
 
 	:return: The string as a selected kernel
 	:rtype: string
 	"""
+	if preset is None:
+		preset = []
+
 	group = MenuItemGroup.from_enum(Kernel, sort_items=True, preset=preset)
 	group.set_default_by_value(DEFAULT_KERNEL)
 	group.set_focus_by_value(DEFAULT_KERNEL)
@@ -51,7 +54,10 @@ async def select_uki(preset: bool = True) -> bool:
 			raise ValueError('Unhandled result type')
 
 
-async def select_driver(options: list[GfxDriver] = [], preset: GfxDriver | None = None) -> GfxDriver | None:
+async def select_driver(
+	options: list[GfxDriver] | None = None,
+	preset: GfxDriver | None = None,
+) -> GfxDriver | None:
 	"""
 	Somewhat convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
