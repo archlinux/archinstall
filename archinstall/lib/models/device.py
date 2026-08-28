@@ -574,7 +574,7 @@ class _PartitionInfo:
 		)
 
 		length = Size(
-			int(partition.getLength(unit='B')),
+			partition.getLength(unit='B'),
 			Unit.B,
 			SectorSize(partition.disk.device.sectorSize, Unit.B),
 		)
@@ -646,7 +646,7 @@ class _DeviceInfo:
 			path=Path(device.path),
 			type=device_type,
 			sector_size=sector_size,
-			total_size=Size(int(device.getLength(unit='B')), Unit.B, sector_size),
+			total_size=Size(device.getLength(unit='B'), Unit.B, sector_size),
 			free_space_regions=free_space,
 			read_only=device.readOnly,
 			dirty=device.dirty,
@@ -764,12 +764,11 @@ class PartitionType(StrEnum):
 			debug(f'Partition code not supported: {code}')
 			return PartitionType._UNKNOWN
 
-	def get_partition_code(self) -> int | None:
-		if self == PartitionType.PRIMARY:
-			return parted.PARTITION_NORMAL
-		elif self == PartitionType.BOOT:
+	def get_partition_code(self) -> int:
+		if self == PartitionType.BOOT:
 			return parted.PARTITION_BOOT
-		return None
+
+		return parted.PARTITION_NORMAL
 
 
 @dataclass(frozen=True)

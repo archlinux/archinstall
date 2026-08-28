@@ -137,7 +137,7 @@ def udev_sync() -> None:
 
 
 def mount(
-	dev_path: Path,
+	dev_path: Path | str,
 	target_mountpoint: Path,
 	mount_fs: str | None = None,
 	create_target_mountpoint: bool = True,
@@ -173,7 +173,7 @@ def mount(
 		raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
 
-def umount(mountpoint: Path, recursive: bool = False) -> None:
+def umount(mountpoint: Path | str, recursive: bool = False) -> None:
 	lsblk_info = get_lsblk_info(mountpoint)
 
 	if not lsblk_info.mountpoints:
