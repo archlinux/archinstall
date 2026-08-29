@@ -379,7 +379,7 @@ async def _manual_partitioning(
 	modifications: list[DeviceModification] = []
 
 	for device in devices:
-		mod = next(filter(lambda x: x.device == device, preset), None)
+		mod = next((x for x in preset if x.device == device), None)
 		if not mod:
 			mod = DeviceModification(device, wipe=False)
 
