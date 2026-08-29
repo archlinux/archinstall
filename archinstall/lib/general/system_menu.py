@@ -3,7 +3,7 @@ from typing import assert_never
 from archinstall.lib.hardware import GfxDriver, SysInfo
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
-from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
+from archinstall.lib.models.package_types import DEFAULT_KERNEL, FirmwareOptdep, Kernel
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -26,6 +26,33 @@ async def select_kernel(preset: list[Kernel] | None = None) -> list[Kernel]:
 	result = await Selection[Kernel](
 		group,
 		header=tr('Select which kernel(s) to install'),
+		allow_skip=True,
+		allow_reset=True,
+		multi=True,
+	).show()
+
+	match result.type_:
+		case ResultType.Skip:
+			return preset
+		case ResultType.Reset:
+			return []
+		case ResultType.Selection:
+			return result.get_values()
+
+
+async def select_firmware_optdeps(preset: list[FirmwareOptdep] | None = None) -> list[FirmwareOptdep]:
+	"""
+	Asks the user which of linux-firmware's optional dependencies to install.
+
+	:return: The selected firmware packages
+	:rtype: list[FirmwareOptdep]
+	"""
+	preset = preset or []
+	group = MenuItemGroup.from_enum(FirmwareOptdep, sort_items=True, preset=preset)
+
+	result = await Selection[FirmwareOptdep](
+		group,
+		header=tr('Select optional firmware to install (none are pulled in by linux-firmware)'),
 		allow_skip=True,
 		allow_reset=True,
 		multi=True,
