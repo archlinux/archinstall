@@ -111,7 +111,7 @@ class GlobalMenu(AbstractMenu[None]):
 				key='kernels',
 			),
 			MenuItem(
-				text=tr('Optional firmware'),
+				text=tr('Additional firmware'),
 				value=[],
 				action=select_firmware_optdeps,
 				preview_action=self._prev_firmware_optdeps,
