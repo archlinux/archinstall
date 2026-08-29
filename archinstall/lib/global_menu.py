@@ -448,7 +448,7 @@ class GlobalMenu(AbstractMenu[None]):
 	def _prev_firmware_optdeps(self, item: MenuItem) -> str | None:
 		if item.value:
 			firmware = ', '.join(item.value)
-			return f'{tr("Optional firmware")}: {firmware}'
+			return f'{tr("Additional firmware")}: {firmware}'
 		return None
 
 	def _prev_bootloader_config(self, item: MenuItem) -> str | None:
