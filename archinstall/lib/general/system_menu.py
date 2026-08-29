@@ -37,13 +37,14 @@ async def select_kernel(preset: list[Kernel] = []) -> list[Kernel]:
 			return result.get_values()
 
 
-async def select_firmware_optdeps(preset: list[FirmwareOptdep] = []) -> list[FirmwareOptdep]:
+async def select_firmware_optdeps(preset: list[FirmwareOptdep] | None = None) -> list[FirmwareOptdep]:
 	"""
 	Asks the user which of linux-firmware's optional dependencies to install.
 
 	:return: The selected firmware packages
 	:rtype: list[FirmwareOptdep]
 	"""
+	preset = preset or []
 	group = MenuItemGroup.from_enum(FirmwareOptdep, sort_items=True, preset=preset)
 
 	result = await Selection[FirmwareOptdep](
