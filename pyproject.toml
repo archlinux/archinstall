@@ -11,7 +11,7 @@ authors = [
 ]
 license = "GPL-3.0-only"
 readme = "README.md"
-requires-python = ">=3.14,<3.15"
+requires-python = ">=3.14"
 keywords = ["linux", "arch", "archinstall", "installer"]
 classifiers = [
     "Programming Language :: Python :: 3.14",

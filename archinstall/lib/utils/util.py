@@ -1,7 +1,6 @@
 import secrets
 import string
 from datetime import UTC, datetime
-from pathlib import Path
 
 from archinstall.lib.pathnames import ARCHISO_MOUNTPOINT
 
@@ -24,4 +23,3 @@ def running_from_iso() -> bool:
 def generate_password(length: int = 64) -> str:
 	haystack = string.printable  # digits, ascii_letters, punctuation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for _ in range(length))
-
