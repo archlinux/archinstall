@@ -95,6 +95,8 @@ class BootloaderConfiguration(SubConfig):
 	removable: bool = True
 	plymouth: PlymouthTheme | None = None
 
+	NAME: str = tr('Bootloader')
+
 	@override
 	def json(self) -> dict[str, Any]:
 		data = {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
@@ -105,23 +107,14 @@ class BootloaderConfiguration(SubConfig):
 
 	@override
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
-		out = [tr('Bootloader "{}"').format(self.bootloader.value)]
-
-		if level.is_detailed():
-			out.append(tr('UKI enabled') if self.uki else tr('UKI disabled'))
-			out.append(tr('Removable') if self.removable else tr('Not removable'))
-
-			if self.plymouth is not None:
-				out.append(tr('Plymouth "{}"').format(self.plymouth.value))
-			else:
-				out.append(tr('Plymouth disabled'))
-
-			return out
+		out = [self.bootloader.value]
 
 		if self.uki:
-			out.append(tr('UKI enabled'))
+			out.append(tr('UKI "enabled"'))
+
 		if self.removable:
 			out.append(tr('Removable'))
+
 		if self.plymouth is not None:
 			out.append(tr('Plymouth "{}"').format(self.plymouth.value))
 

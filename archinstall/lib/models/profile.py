@@ -22,6 +22,8 @@ class ProfileConfiguration(SubConfig):
 	gfx_driver: GfxDriver | None = None
 	greeter: GreeterType | None = None
 
+	NAME: str = tr('Profile')
+
 	@override
 	def json(self) -> _ProfileConfigurationSerialization:
 		from archinstall.lib.profile.profiles_handler import profile_handler
@@ -33,24 +35,22 @@ class ProfileConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str] | None:
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		out: list[str] = []
 
 		if self.profile:
 			out.append(self.profile.name)
 
-			if level.is_detailed() and (selections := self.profile.current_selection_names()):
+			if selections := self.profile.current_selection_names():
 				out.append(tr('Selected profiles "{}"').format(', '.join(selections)))
 
 			if self.gfx_driver:
-				out.append(tr('{} graphics driver').format(self.gfx_driver.value))
+				out.append(tr('"{}" graphics driver').format(self.gfx_driver.value))
 
 			if self.greeter:
-				out.append(tr('{} greeter').format(self.greeter.value))
+				out.append(tr('"{}" greeter').format(self.greeter.value))
 
-			return out
-
-		return None
+		return out
 
 	@classmethod
 	def parse_arg(cls, arg: _ProfileConfigurationSerialization) -> Self:

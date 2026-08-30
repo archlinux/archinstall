@@ -58,7 +58,7 @@ def test_bootloader_summary_detailed_includes_plymouth_theme() -> None:
 
 	assert config.summary(SummaryLevel.Detailed) == [
 		'Bootloader "Grub"',
-		'UKI enabled',
+		'UKI "enabled"',
 		'Removable',
 		'Plymouth "spinner"',
 	]

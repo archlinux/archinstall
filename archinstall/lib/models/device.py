@@ -64,6 +64,8 @@ class DiskLayoutConfiguration(SubConfig):
 	# used for pre-mounted config
 	mountpoint: Path | None = None
 
+	NAME: str = tr('Disk layout')
+
 	@override
 	def json(self) -> _DiskLayoutConfigurationSerialization:
 		if self.config_type == DiskLayoutType.Pre_mount:
@@ -92,39 +94,38 @@ class DiskLayoutConfiguration(SubConfig):
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		out = [tr('{} layout').format(self.config_type.short_msg())]
 
-		if not level.is_detailed():
-			devices = {mod.device_path for mod in self.device_modifications}
+		match level:
+			case SummaryLevel.Basic:
+				devices = {mod.device_path for mod in self.device_modifications}
 
-			if devices:
-				dev_str = ', '.join(str(d) for d in sorted(devices))
-				out.append(tr('Devices {}').format(dev_str))
+				if devices:
+					dev_str = ', '.join(str(d) for d in sorted(devices))
+					out.append(tr('Device(s) "{}"').format(dev_str))
+
+					if self.lvm_config is not None:
+						out.append(tr('LVM set up'))
+
+				if self.disk_encryption is not None:
+					out.append(tr('"{}" encryption').format(self.disk_encryption.encryption_type.type_to_text()))
+
+				if self.btrfs_options is not None and self.btrfs_options.snapshot_config:
+					out.append(tr('Btrfs snapshot "{}"').format(self.btrfs_options.snapshot_config.snapshot_type))
+			case SummaryLevel.Detailed:
+				if self.mountpoint is not None:
+					out.append(tr('Mountpoint "{}"').format(self.mountpoint))
+
+				mods = sorted(self.device_modifications, key=lambda mod: mod.device_path)
+				for mod in mods:
+					out.extend(mod.summary(level))
 
 				if self.lvm_config is not None:
-					out.append(tr('LVM set up'))
+					out.extend(self.lvm_config.summary(level))
 
-			if self.disk_encryption is not None:
-				out.append(tr('{} encryption').format(self.disk_encryption.encryption_type.type_to_text()))
+				if self.disk_encryption is not None:
+					out.extend(self.disk_encryption.summary(level))
 
-			if self.btrfs_options is not None and self.btrfs_options.snapshot_config:
-				out.append(tr('Btrfs snapshot "{}"').format(self.btrfs_options.snapshot_config.snapshot_type))
-
-			return out
-
-		if self.mountpoint is not None:
-			out.append(tr('Mountpoint "{}"').format(self.mountpoint))
-
-		mods = sorted(self.device_modifications, key=lambda mod: mod.device_path)
-		for mod in mods:
-			out.extend(mod.summary(level))
-
-		if self.lvm_config is not None:
-			out.extend(self.lvm_config.summary(level))
-
-		if self.disk_encryption is not None:
-			out.extend(self.disk_encryption.summary(level))
-
-		if self.btrfs_options is not None:
-			out.extend(self.btrfs_options.summary(level))
+				if self.btrfs_options is not None:
+					out.extend(self.btrfs_options.summary(level))
 
 		return out
 
@@ -894,7 +895,7 @@ class _PartitionModificationSerialization(TypedDict):
 
 
 @dataclass
-class PartitionModification:
+class PartitionModification(SubConfig):
 	status: ModificationStatus
 	type: PartitionType
 	start: Size
@@ -912,6 +913,8 @@ class PartitionModification:
 	uuid: str | None = None
 
 	_obj_id: UUID | str = field(init=False)
+
+	NAME: str = tr('Partition modification')
 
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
@@ -1052,6 +1055,7 @@ class PartitionModification:
 		else:
 			self.set_flag(flag)
 
+	@override
 	def json(self) -> _PartitionModificationSerialization:
 		"""
 		Called for configuration settings
@@ -1070,8 +1074,8 @@ class PartitionModification:
 			'btrfs': [vol.json() for vol in self.btrfs_subvols],
 		}
 
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
-		name = str(self.dev_path) if self.dev_path else self.type.value
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		fs_type = self.fs_type.value if self.fs_type else tr('Unknown')
 
 		details = [
@@ -1086,7 +1090,7 @@ class PartitionModification:
 		if self.btrfs_subvols:
 			details.append(tr('{} subvolume(s)').format(len(self.btrfs_subvols)))
 
-		return tr('Partition "{}" ({})').format(name, ', '.join(details))
+		return details
 
 	def table_data(self) -> dict[str, str]:
 		"""
@@ -1129,11 +1133,14 @@ class _LvmVolumeGroupSerialization(TypedDict):
 
 
 @dataclass
-class LvmVolumeGroup:
+class LvmVolumeGroup(SubConfig):
 	name: str
 	pvs: list[PartitionModification]
 	volumes: list[LvmVolume] = field(default_factory=list)
 
+	NAME: str = tr('LVM volume group')
+
+	@override
 	def json(self) -> _LvmVolumeGroupSerialization:
 		return {
 			'name': self.name,
@@ -1155,17 +1162,23 @@ class LvmVolumeGroup:
 			[LvmVolume.parse_arg(vol) for vol in arg['volumes']],
 		)
 
+	@override
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
-		if not level.is_detailed():
-			return [tr('Volume group "{}"').format(self.name)]
+		out: list[str] = []
 
-		pvs = ', '.join(str(pv.dev_path) for pv in self.pvs if pv.dev_path)
-		if pvs:
-			out = [tr('Volume group "{}" on {}').format(self.name, pvs)]
-		else:
-			out = [tr('Volume group "{}"').format(self.name)]
+		match level:
+			case SummaryLevel.Basic:
+				out.append(tr('Volume group "{}"').format(self.name))
+			case SummaryLevel.Detailed:
+				pvs = ', '.join(str(pv.dev_path) for pv in self.pvs if pv.dev_path)
+				if pvs:
+					out = [tr('Volume group "{}" on {}').format(self.name, pvs)]
+				else:
+					out = [tr('Volume group "{}"').format(self.name)]
 
-		out.extend(volume.summary(level) for volume in self.volumes)
+				for volume in self.volumes:
+					out.extend(volume.summary(level))
+					out.append('')
 
 		return out
 
@@ -1185,7 +1198,7 @@ class _LvmVolumeSerialization(TypedDict):
 
 
 @dataclass
-class LvmVolume:
+class LvmVolume(SubConfig):
 	status: ModificationStatus
 	name: str
 	fs_type: FilesystemType
@@ -1200,6 +1213,8 @@ class LvmVolume:
 	dev_path: Path | None = None
 
 	_obj_id: uuid.UUID | str = field(init=False)
+
+	NAME: str = tr('LVM volume')
 
 	def __post_init__(self) -> None:
 		# needed to use the object as a dictionary key due to hash func
@@ -1268,6 +1283,7 @@ class LvmVolume:
 
 		return volume
 
+	@override
 	def json(self) -> _LvmVolumeSerialization:
 		return {
 			'obj_id': self.obj_id,
@@ -1280,22 +1296,28 @@ class LvmVolume:
 			'btrfs': [vol.json() for vol in self.btrfs_subvols],
 		}
 
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
-		if not level.is_detailed():
-			return tr('Volume "{}"').format(self.name)
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		out: list[str] = []
 
-		details = [
-			tr('Filesystem {}').format(self.fs_type.value),
-			tr('Size {}').format(self.length.format_highest()),
-		]
+		match level:
+			case SummaryLevel.Basic:
+				out.append(tr('Volume "{}"').format(self.name))
+			case SummaryLevel.Detailed:
+				out.extend(
+					[
+						tr('Filesystem {}').format(self.fs_type.value),
+						tr('Size {}').format(self.length.format_highest()),
+					]
+				)
 
-		if self.mountpoint is not None:
-			details.append(tr('Mountpoint {}').format(self.mountpoint))
+				if self.mountpoint is not None:
+					out.append(tr('Mountpoint {}').format(self.mountpoint))
 
-		if self.btrfs_subvols:
-			details.append(tr('{} subvolume(s)').format(len(self.btrfs_subvols)))
+				if self.btrfs_subvols:
+					out.append(tr('{} subvolume(s)').format(len(self.btrfs_subvols)))
 
-		return tr('Volume "{}" ({})').format(self.name, ', '.join(details))
+		return out
 
 	def table_data(self) -> dict[str, str]:
 		part_mod = {
@@ -1355,9 +1377,11 @@ class _LvmConfigurationSerialization(TypedDict):
 
 
 @dataclass
-class LvmConfiguration:
+class LvmConfiguration(SubConfig):
 	config_type: LvmLayoutType
 	vol_groups: list[LvmVolumeGroup]
+
+	NAME: str = tr('LVM')
 
 	def __post_init__(self) -> None:
 		# make sure all volume groups have unique PVs
@@ -1368,6 +1392,7 @@ class LvmConfiguration:
 					raise ValueError('A PV cannot be used in multiple volume groups')
 				pvs.append(pv)
 
+	@override
 	def json(self) -> _LvmConfigurationSerialization:
 		return {
 			'config_type': self.config_type.value,
@@ -1388,14 +1413,18 @@ class LvmConfiguration:
 			vol_groups=[LvmVolumeGroup.parse_arg(vol_group, disk_config) for vol_group in arg['vol_groups']],
 		)
 
+	@override
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
-		if not level.is_detailed():
-			return [tr('LVM set up')]
+		out: list[str] = []
 
-		out = [tr('LVM "{}"').format(self.config_type.display_msg())]
+		match level:
+			case SummaryLevel.Basic:
+				out.append(tr('LVM set up'))
+			case SummaryLevel.Detailed:
+				out = [tr('LVM "{}"').format(self.config_type.display_msg())]
 
-		for vol_group in self.vol_groups:
-			out.extend(vol_group.summary(level))
+				for vol_group in self.vol_groups:
+					out.extend(vol_group.summary(level))
 
 		return out
 
@@ -1437,9 +1466,16 @@ class SnapshotType(StrEnum):
 
 
 @dataclass
-class SnapshotConfig:
+class SnapshotConfig(SubConfig):
 	snapshot_type: SnapshotType
 
+	NAME: str = tr('Btrfs snapshot')
+
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		return [tr('Btrfs snapshot "{}"').format(self.snapshot_type)]
+
+	@override
 	def json(self) -> _SnapshotConfigSerialization:
 		return {'type': self.snapshot_type.value}
 
@@ -1449,15 +1485,19 @@ class SnapshotConfig:
 
 
 @dataclass
-class BtrfsOptions:
+class BtrfsOptions(SubConfig):
 	snapshot_config: SnapshotConfig | None
 
+	NAME: str = tr('Btrfs options')
+
+	@override
 	def json(self) -> _BtrfsOptionsSerialization:
 		return {'snapshot_config': self.snapshot_config.json() if self.snapshot_config else None}
 
+	@override
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		if self.snapshot_config is None:
-			return [tr('Btrfs snapshots disabled')] if level.is_detailed() else []
+			return []
 
 		return [tr('Btrfs snapshot "{}"').format(self.snapshot_config.snapshot_type)]
 
@@ -1478,10 +1518,12 @@ class _DeviceModificationSerialization(TypedDict):
 
 
 @dataclass
-class DeviceModification:
+class DeviceModification(SubConfig):
 	device: BDevice
 	wipe: bool
 	partitions: list[PartitionModification] = field(default_factory=list)
+
+	NAME: str = tr('Device modification')
 
 	@property
 	def device_path(self) -> Path:
@@ -1508,17 +1550,19 @@ class DeviceModification:
 		filtered = filter(lambda x: x.is_root(), self.partitions)
 		return next(filtered, None)
 
+	@override
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
-		if not level.is_detailed():
-			return [tr('Device {}').format(self.device_path)]
+		out: list[str] = [tr('Device {}').format(self.device_path)]
 
 		wipe_str = tr('wipe') if self.wipe else tr('keep existing data')
 		out = [tr('Device "{}" ({})').format(self.device_path, wipe_str)]
 
-		out.extend(part.summary(level) for part in self.partitions)
+		for part in self.partitions:
+			out.extend(part.summary(level))
 
 		return out
 
+	@override
 	def json(self) -> _DeviceModificationSerialization:
 		"""
 		Called when generating configuration files
@@ -1565,13 +1609,15 @@ class _DiskEncryptionSerialization(TypedDict):
 
 
 @dataclass
-class DiskEncryption:
+class DiskEncryption(SubConfig):
 	encryption_type: EncryptionType = EncryptionType.NO_ENCRYPTION
 	encryption_password: Password | None = None
 	partitions: list[PartitionModification] = field(default_factory=list)
 	lvm_volumes: list[LvmVolume] = field(default_factory=list)
 	hsm_device: Fido2Device | None = None
 	iter_time: int = DEFAULT_ITER_TIME
+
+	NAME: str = tr('Disk encryption')
 
 	def __post_init__(self) -> None:
 		if self.encryption_type in [EncryptionType.LUKS, EncryptionType.LVM_ON_LUKS] and not self.partitions:
@@ -1586,6 +1632,7 @@ class DiskEncryption:
 		else:
 			return dev in self.lvm_volumes and dev.mountpoint != Path('/')
 
+	@override
 	def json(self) -> _DiskEncryptionSerialization:
 		obj: _DiskEncryptionSerialization = {
 			'encryption_type': self.encryption_type.value,
@@ -1601,22 +1648,24 @@ class DiskEncryption:
 
 		return obj
 
+	@override
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		out = [tr('{} encryption').format(self.encryption_type.type_to_text())]
 
-		if not level.is_detailed() or self.encryption_type == EncryptionType.NO_ENCRYPTION:
-			return out
+		match level:
+			case SummaryLevel.Basic:
+				pass
+			case SummaryLevel.Detailed:
+				if self.partitions:
+					out.append(tr('{} encrypted partition(s)').format(len(self.partitions)))
 
-		if self.partitions:
-			out.append(tr('{} encrypted partition(s)').format(len(self.partitions)))
+				if self.lvm_volumes:
+					out.append(tr('{} encrypted volume(s)').format(len(self.lvm_volumes)))
 
-		if self.lvm_volumes:
-			out.append(tr('{} encrypted volume(s)').format(len(self.lvm_volumes)))
+				if self.hsm_device is not None:
+					out.append(tr('FIDO2 device "{}"').format(self.hsm_device.product))
 
-		if self.hsm_device is not None:
-			out.append(tr('FIDO2 device "{}"').format(self.hsm_device.product))
-
-		out.append(tr('Iteration time {} ms').format(self.iter_time))
+				out.append(tr('Iteration time {} ms').format(self.iter_time))
 
 		return out
 

@@ -85,16 +85,20 @@ class ApplicationSerialization(TypedDict):
 
 
 @dataclass
-class AudioConfiguration:
+class AudioConfiguration(SubConfig):
 	audio: Audio
 
+	NAME: str = tr('Audio')
+
+	@override
 	def json(self) -> AudioConfigSerialization:
 		return {
 			'audio': self.audio.value,
 		}
 
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
-		return tr('Audio server "{}"').format(self.audio)
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		return [self.audio.value]
 
 	@classmethod
 	def parse_arg(cls, arg: dict[str, Any]) -> Self:
@@ -104,17 +108,20 @@ class AudioConfiguration:
 
 
 @dataclass
-class BluetoothConfiguration:
+class BluetoothConfiguration(SubConfig):
 	enabled: bool
 
+	NAME: str = tr('Bluetooth')
+
+	@override
 	def json(self) -> BluetoothConfigSerialization:
 		return {'enabled': self.enabled}
 
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str | None:
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		if self.enabled:
-			return tr('Bluetooth enabled')
-
-		return tr('Bluetooth disabled') if level.is_detailed() else None
+			return [tr('enabled')]
+		return []
 
 	@classmethod
 	def parse_arg(cls, arg: BluetoothConfigSerialization) -> Self:
@@ -122,16 +129,20 @@ class BluetoothConfiguration:
 
 
 @dataclass
-class PowerManagementConfiguration:
+class PowerManagementConfiguration(SubConfig):
 	power_management: PowerManagement
 
+	NAME: str = tr('Power management')
+
+	@override
 	def json(self) -> PowerManagementConfigSerialization:
 		return {
 			'power_management': self.power_management.value,
 		}
 
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
-		return tr('Power management "{}"').format(self.power_management)
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		return [self.power_management.value]
 
 	@classmethod
 	def parse_arg(cls, arg: PowerManagementConfigSerialization) -> Self:
@@ -141,17 +152,20 @@ class PowerManagementConfiguration:
 
 
 @dataclass
-class PrintServiceConfiguration:
+class PrintServiceConfiguration(SubConfig):
 	enabled: bool
 
+	NAME: str = tr('Print service')
+
+	@override
 	def json(self) -> PrintServiceConfigSerialization:
 		return {'enabled': self.enabled}
 
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str | None:
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		if self.enabled:
-			return tr('Print service enabled')
-
-		return tr('Print service disabled') if level.is_detailed() else None
+			return [tr('enabled')]
+		return []
 
 	@classmethod
 	def parse_arg(cls, arg: PrintServiceConfigSerialization) -> Self:
@@ -159,16 +173,20 @@ class PrintServiceConfiguration:
 
 
 @dataclass
-class FirewallConfiguration:
+class FirewallConfiguration(SubConfig):
 	firewall: Firewall
 
+	NAME: str = tr('Firewall')
+
+	@override
 	def json(self) -> FirewallConfigSerialization:
 		return {
 			'firewall': self.firewall.value,
 		}
 
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
-		return tr('Firewall "{}"').format(self.firewall)
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		return [self.firewall.value]
 
 	@classmethod
 	def parse_arg(cls, arg: dict[str, Any]) -> Self:
@@ -178,17 +196,20 @@ class FirewallConfiguration:
 
 
 @dataclass
-class FontsConfiguration:
+class FontsConfiguration(SubConfig):
 	fonts: list[FontPackage]
 
+	NAME: str = tr('Fonts')
+
+	@override
 	def json(self) -> FontsConfigSerialization:
 		return {'fonts': [f.value for f in self.fonts]}
 
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str | None:
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		if self.fonts:
-			return tr('Extra fonts "{}"').format(', '.join(f.value for f in self.fonts))
-
-		return tr('No extra fonts') if level.is_detailed() else None
+			return [', '.join(f.value for f in self.fonts)]
+		return []
 
 	@classmethod
 	def parse_arg(cls, arg: FontsConfigSerialization) -> Self:
@@ -199,6 +220,8 @@ class FontsConfiguration:
 class ZramConfiguration(SubConfig):
 	enabled: bool
 	algorithm: ZramAlgorithm = ZramAlgorithm.ZSTD
+
+	NAME: str = tr('Zram')
 
 	@classmethod
 	def parse_arg(cls, arg: bool | dict[str, Any]) -> Self:
@@ -217,14 +240,14 @@ class ZramConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str] | None:
-		if not self.enabled:
-			return [tr('Zram disabled')] if level.is_detailed() else None
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		if self.enabled:
+			return [
+				tr('enabled'),
+				tr('Algorithm "{}"').format(self.algorithm),
+			]
 
-		return [
-			tr('Zram enabled'),
-			tr('Zram algorithm {}').format(self.algorithm),
-		]
+		return [tr('Zram disabled')]
 
 
 @dataclass
@@ -235,6 +258,8 @@ class ApplicationConfiguration(SubConfig):
 	print_service_config: PrintServiceConfiguration | None = None
 	firewall_config: FirewallConfiguration | None = None
 	fonts_config: FontsConfiguration | None = None
+
+	NAME: str = tr('Application')
 
 	@classmethod
 	def parse_arg(
@@ -306,10 +331,11 @@ class ApplicationConfiguration(SubConfig):
 		out: list[str] = []
 
 		for config in configs:
-			if config is None:
-				continue
-
-			if entry := config.summary(level):
-				out.append(entry)
+			if config:
+				summary = config.summary(level)
+				if len(summary) == 1:
+					out.append(f'{config.NAME} "{summary[0]}"')
+				else:
+					out.append('?????')
 
 		return out

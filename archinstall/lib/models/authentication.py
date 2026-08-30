@@ -31,20 +31,21 @@ class U2FLoginMethod(Enum):
 
 
 @dataclass
-class U2FLoginConfiguration:
+class U2FLoginConfiguration(SubConfig):
 	u2f_login_method: U2FLoginMethod
 	passwordless_sudo: bool = False
 
+	NAME: str = tr('U2F login')
+
+	@override
 	def json(self) -> U2FLoginConfigSerialization:
 		return {
 			'u2f_login_method': self.u2f_login_method.value,
 			'passwordless_sudo': self.passwordless_sudo,
 		}
 
+	@override
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
-		if not level.is_detailed():
-			return [tr('U2F set up')]
-
 		return [
 			tr('U2F login method "{}"').format(self.u2f_login_method.display_value()),
 			tr('U2F passwordless sudo enabled') if self.passwordless_sudo else tr('U2F passwordless sudo disabled'),
@@ -73,6 +74,8 @@ class AuthenticationConfiguration(SubConfig):
 	users: list[User] = field(default_factory=list)
 	u2f_config: U2FLoginConfiguration | None = None
 
+	NAME: str = tr('Authentication')
+
 	@classmethod
 	def parse_arg(cls, args: dict[str, Any]) -> Self:
 		auth_config = cls()
@@ -98,23 +101,23 @@ class AuthenticationConfiguration(SubConfig):
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
 		out: list[str] = []
 
-		if not level.is_detailed():
-			if self.root_enc_password:
-				out.append(tr('Root password set'))
+		if self.root_enc_password:
+			out.append(tr('Root password set'))
 
-			if self.users:
-				out.append(tr('Configured {} user(s)').format(len(self.users)))
+		match level:
+			case SummaryLevel.Basic:
+				if self.users:
+					out.append(tr('Configured {} user(s)').format(len(self.users)))
 
-			if self.u2f_config:
-				out.extend(self.u2f_config.summary(level))
+				if self.u2f_config:
+					out.append(tr('U2F configured'))
+			case SummaryLevel.Detailed:
+				for user in self.users:
+					summary = user.summary(level)
+					out.extend(summary)
 
-			return out
-
-		out.append(tr('Root password set') if self.root_enc_password else tr('Root password not set'))
-		out.extend(user.summary(level) for user in self.users)
-
-		if self.u2f_config:
-			out.extend(self.u2f_config.summary(level))
+				if self.u2f_config:
+					out.extend(self.u2f_config.summary(level))
 
 		return out
 

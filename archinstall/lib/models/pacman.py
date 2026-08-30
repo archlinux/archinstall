@@ -10,10 +10,15 @@ class PacmanConfigSerialization(TypedDict):
 	color: bool
 
 
+DEFAULT_PARALLEL_DOWNLOADS = 5
+
+
 @dataclass
 class PacmanConfiguration(SubConfig):
-	parallel_downloads: int = 5
+	parallel_downloads: int = DEFAULT_PARALLEL_DOWNLOADS
 	color: bool = True
+
+	NAME: str = 'Pacman'
 
 	@override
 	def json(self) -> PacmanConfigSerialization:
@@ -24,10 +29,14 @@ class PacmanConfiguration(SubConfig):
 
 	@override
 	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
-		return [
-			tr('Parallel downloads "{}"').format(self.parallel_downloads),
-			tr('Color enabled') if self.color else tr('Color disabled'),
-		]
+		out: list[str] = []
+		if self.parallel_downloads != DEFAULT_PARALLEL_DOWNLOADS:
+			out.append(tr('Parallel downloads "{}"').format(self.parallel_downloads))
+
+		if self.color:
+			out.append(tr('Color "enabled"'))
+
+		return out
 
 	def preview(self) -> str:
 		color_str = str(self.color)
