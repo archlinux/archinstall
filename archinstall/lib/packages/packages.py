@@ -119,9 +119,15 @@ def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 
 
 async def select_additional_packages(
-	preset: list[str] = [],
-	repositories: set[Repository] = set(),
+	preset: list[str] | None = None,
+	repositories: set[Repository] | None = None,
 ) -> list[str]:
+	if preset is None:
+		preset = []
+
+	if repositories is None:
+		repositories = set()
+
 	repositories |= {Repository.Core, Repository.Extra}
 
 	respos_text = ', '.join(r.value for r in repositories)

@@ -108,7 +108,10 @@ class UserList(ListManager[User]):
 		return User(username, password, sudo)
 
 
-async def select_users(prompt: str = '', preset: list[User] = []) -> list[User]:
+async def select_users(prompt: str = '', preset: list[User] | None = None) -> list[User]:
+	if preset is None:
+		preset = []
+
 	users = await UserList(prompt, preset).show()
 
 	if users is None:

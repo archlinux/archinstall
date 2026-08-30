@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class ServerProfile(Profile):
-	def __init__(self, current_value: list[Self] = []):
+	def __init__(self, current_value: list[Self] | None = None):
 		super().__init__(
 			'Server',
 			ProfileType.Server,

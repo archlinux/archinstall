@@ -183,7 +183,7 @@ class DeviceHandler:
 
 	def get_btrfs_info(
 		self,
-		dev_path: Path,
+		dev_path: Path | str,
 		lsblk_info: LsblkInfo | None = None,
 	) -> list[_BtrfsSubvolumeInfo]:
 		if not lsblk_info:
@@ -236,7 +236,7 @@ class DeviceHandler:
 		self,
 		fs_type: FilesystemType,
 		path: Path,
-		additional_parted_options: list[str] = [],
+		additional_parted_options: list[str] | None = None,
 	) -> None:
 		mkfs_type = fs_type.value
 		command = None
@@ -263,6 +263,9 @@ class DeviceHandler:
 
 		if not command:
 			command = f'mkfs.{mkfs_type}'
+
+		if additional_parted_options is None:
+			additional_parted_options = []
 
 		cmd = [command, *options, *additional_parted_options, str(path)]
 

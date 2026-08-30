@@ -10,12 +10,15 @@ on:
             - 'archinstall/**/*.py'
             - 'archinstall/locales/**'
             - '.github/workflows/translation-check.yaml'
+permissions: {}
 jobs:
     translations:
         name: Validate translations
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+              with:
+                persist-credentials: false
             - name: Install gettext
               run: sudo apt-get update && sudo apt-get install -y gettext
             - name: Run translation checks

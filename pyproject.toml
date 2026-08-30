@@ -18,12 +18,12 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
-    "pyparted==3.13.0",
-    "pydantic==2.13.4",
-    "cryptography==50.0.0",
-    "textual==8.2.8",
-    "markdown-it-py==4.2.0",
-    "linkify-it-py==2.1.0",
+    "pyparted>=3.13.0",
+    "pydantic>=2.13.4",
+    "cryptography>=50.0.1",
+    "textual>=8.2.8",
+    "markdown-it-py>=4.2.0",
+    "linkify-it-py>=2.1.0",
 ]
 
 [project.urls]
@@ -32,14 +32,14 @@ Documentation = "https://archinstall.readthedocs.io/"
 Source = "https://github.com/archlinux/archinstall"
 
 [project.optional-dependencies]
-log = ["systemd_python>=235"]
+log = ["systemd_python>=236"]
 dev = [
-    "mypy==2.3.0",
-    "flake8==7.3.0",
-    "pre-commit==4.6.1",
-    "ruff==0.16.2",
-    "pylint==4.0.7",
-    "pytest==9.1.1",
+    "mypy>=2.3.0",
+    "flake8>=7.3.0",
+    "pre-commit>=4.6.1",
+    "ruff>=0.16.2",
+    "pylint>=4.0.7",
+    "pytest>=9.1.1",
     "hypothesis>=6.152.4",
 ]
 doc = ["sphinx"]
@@ -106,28 +106,12 @@ module = "archinstall.lib.*"
 warn_return_any = false
 
 [[tool.mypy.overrides]]
-module = "archinstall.lib.disk.*"
-# 'Any' imports are allowed because pyparted doesn't have type hints
-disallow_any_unimported = false
-
-[[tool.mypy.overrides]]
-module = "archinstall.lib.models.*"
-# 'Any' imports are allowed because pyparted doesn't have type hints
-disallow_any_unimported = false
-
-[[tool.mypy.overrides]]
 module = "archinstall.lib.packages"
 disallow_any_explicit = true
 
 [[tool.mypy.overrides]]
 module = "archinstall.lib.utils"
 disallow_any_explicit = true
-
-[[tool.mypy.overrides]]
-module = [
-    "parted",
-]
-ignore_missing_imports = true
 
 [tool.bandit]
 targets = ["archinstall"]
@@ -162,7 +146,6 @@ disable = [
     "attribute-defined-outside-init",
     "broad-exception-caught",
     "cell-var-from-loop",
-    "dangerous-default-value",
     "fixme",
     "protected-access",
     "raise-missing-from",
@@ -178,10 +161,6 @@ init-import = true
 
 [tool.pyrefly]
 python-version = "3.14"
-
-replace-imports-with-any = [
-    "parted",  # pyparted doesn't have type hints
-]
 
 [tool.pyrefly.errors]
 # Enable some additional rules that are disabled by default
@@ -206,6 +185,7 @@ docstring-code-format = true
 select = [
     "ASYNC",  # flake8-async
     "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
     "C90",    # mccabe
     "COM",    # flake8-commas
     "DTZ",    # flake8-datetimez
@@ -237,7 +217,6 @@ select = [
 ]
 
 ignore = [
-    "B006",     # mutable-argument-default
     "B008",     # function-call-in-default-argument
     "B904",     # raise-without-from-inside-except
     "B905",     # zip-without-explicit-strict

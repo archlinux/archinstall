@@ -34,8 +34,6 @@ class NiriDmsProfile(Profile):
 			'matugen',
 			'cava',
 			'kimageformats',
-			'cups-pk-helper',
-			'tuned-ppd',
 			_TERMINAL,
 		]
 

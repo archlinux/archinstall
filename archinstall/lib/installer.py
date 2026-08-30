@@ -77,7 +77,7 @@ class Installer:
 		self,
 		target: Path,
 		disk_config: DiskLayoutConfiguration,
-		base_packages: list[str] = [],
+		base_packages: list[str] | None = None,
 		kernels: list[str] | None = None,
 		silent: bool = False,
 	):
@@ -312,7 +312,7 @@ class Installer:
 				else:
 					self._mount_partition(part_mod)
 
-	def _mount_lvm_layout(self, luks_handlers: dict[Any, Luks2] = {}) -> None:
+	def _mount_lvm_layout(self, luks_handlers: dict[Any, Luks2] | None = None) -> None:
 		lvm_config = self._disk_config.lvm_config
 
 		if not lvm_config:
@@ -325,7 +325,7 @@ class Installer:
 			sorted_vol = sorted(vg.volumes, key=lambda x: x.mountpoint or Path('/'))
 
 			for vol in sorted_vol:
-				if luks_handler := luks_handlers.get(vol):
+				if luks_handlers is not None and (luks_handler := luks_handlers.get(vol)):
 					self._mount_luks_volume(vol, luks_handler)
 				else:
 					self._mount_lvm_vol(vol)
@@ -381,7 +381,7 @@ class Installer:
 			options = part_mod.mount_options
 
 			if part_mod.is_efi():
-				options = list(dict.fromkeys(options + ['fmask=0077', 'dmask=0077']))
+				options = list(dict.fromkeys(options + ['fmask=0177', 'dmask=0077']))
 
 			mount(part_mod.dev_path, target, options=options)
 		elif part_mod.fs_type == FilesystemType.BTRFS:
@@ -437,8 +437,11 @@ class Installer:
 		self,
 		dev_path: Path,
 		subvolumes: list[SubvolumeModification],
-		mount_options: list[str] = [],
+		mount_options: list[str] | None = None,
 	) -> None:
+		if mount_options is None:
+			mount_options = []
+
 		# Filter out subvolumes without mountpoints to avoid errors when sorting
 		subvols_with_mountpoints = [sv for sv in subvolumes if sv.mountpoint is not None]
 		for subvol in sorted(subvols_with_mountpoints, key=lambda x: x.relative_mountpoint):
@@ -897,7 +900,7 @@ class Installer:
 
 	def minimal_installation(
 		self,
-		optional_repositories: list[Repository] = [],
+		optional_repositories: list[Repository] | None = None,
 		mkinitcpio: bool = True,
 		hostname: str | None = None,
 		locale_config: LocaleConfiguration | None = LocaleConfiguration.default(),
@@ -932,6 +935,9 @@ class Installer:
 			self._base_packages.append(ucode.stem)
 		else:
 			debug('Archinstall will not install any ucode.')
+
+		if optional_repositories is None:
+			optional_repositories = []
 
 		debug(f'Optional repositories: {optional_repositories}')
 

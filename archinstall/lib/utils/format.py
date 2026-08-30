@@ -49,13 +49,16 @@ def as_key_value_pair(
 def _get_values(
 	o: DataclassInstance,
 	class_formatter: str | Callable | None = None,  # type: ignore[type-arg]  # pyright: ignore[reportMissingTypeArgument]
-	filter_list: list[str] = [],
+	filter_list: list[str] | None = None,
 ) -> dict[str, Any]:
 	"""
 	the original values returned a dataclass as dict thru the call to some specific methods
 	this version allows thru the parameter class_formatter to call a dynamically selected formatting method.
 	Can transmit a filter list to the class_formatter,
 	"""
+	if filter_list is None:
+		filter_list = []
+
 	if class_formatter:
 		# if invoked per reference it has to be a standard function or a classmethod.
 		# A method of an instance does not make sense
@@ -80,7 +83,7 @@ def _get_values(
 def as_table(
 	obj: list[Any],
 	class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
-	filter_list: list[str] = [],
+	filter_list: list[str] | None = None,
 	capitalize: bool = False,
 ) -> str:
 	"""variant of as_table (subtly different code) which has two additional parameters
@@ -91,6 +94,9 @@ def as_table(
 	is for compatibility with a print statement
 	As_table_filter can be a drop in replacement for as_table
 	"""
+	if filter_list is None:
+		filter_list = []
+
 	raw_data = [_get_values(o, class_formatter, filter_list) for o in obj]
 
 	# determine the maximum column size

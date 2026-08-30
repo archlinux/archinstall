@@ -1,3 +1,4 @@
+import json
 import os
 from importlib.metadata import version
 from pathlib import Path
@@ -17,7 +18,7 @@ from archinstall.lib.models.application import (
 )
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
-from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType
+from archinstall.lib.models.device import DiskLayoutConfiguration, DiskLayoutType, Size
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import CustomRepository, CustomServer, MirrorConfiguration, MirrorRegion, SignCheck, SignOption
 from archinstall.lib.models.network import NetworkConfiguration, Nic, NicType
@@ -388,3 +389,57 @@ def test_encrypted_creds_with_env_var(
 			groups=[],
 		),
 	]
+
+
+def test_example_config_parsing(
+	monkeypatch: MonkeyPatch,
+	example_config_fixture: Path,
+	example_creds_fixture: Path,
+) -> None:
+	monkeypatch.setattr(
+		'sys.argv',
+		[
+			'archinstall',
+			'--config',
+			str(example_config_fixture),
+			'--creds',
+			str(example_creds_fixture),
+		],
+	)
+
+	handler = ArchConfigHandler()
+	arch_config = handler.config
+
+	assert arch_config.disk_config is not None
+	assert arch_config.profile_config is not None
+	assert arch_config.auth_config is not None
+	assert arch_config.auth_config.users
+
+
+def test_example_config_partitions(example_config_fixture: Path) -> None:
+	# partition entries are only parsed when the configured device is present on
+	# the machine, which is never the case in CI, so read them here directly
+	config = json.loads(example_config_fixture.read_text())
+	device_modifications = config['disk_config']['device_modifications']
+
+	assert device_modifications
+
+	for device in device_modifications:
+		partitions = device['partitions']
+
+		assert partitions
+
+		previous_end = None
+
+		for partition in partitions:
+			assert 'dev_path' in partition
+
+			start = Size.parse_args(partition['start'])
+			end = start + Size.parse_args(partition['size'])
+
+			assert start.is_valid_start()
+
+			if previous_end is not None:
+				assert start >= previous_end
+
+			previous_end = end

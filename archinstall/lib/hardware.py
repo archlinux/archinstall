@@ -1,4 +1,5 @@
 import os
+from dataclasses import dataclass
 from enum import Enum, StrEnum
 from functools import cached_property
 from pathlib import Path
@@ -32,6 +33,8 @@ class GfxPackage(Enum):
 	Dkms = 'dkms'
 	IntelMediaDriver = 'intel-media-driver'
 	LibvaIntelDriver = 'libva-intel-driver'
+	VplGpuRt = 'vpl-gpu-rt'
+	LibVpl = 'libvpl'
 	LibvaNvidiaDriver = 'libva-nvidia-driver'
 	Mesa = 'mesa'
 	NvidiaOpen = 'nvidia-open'
@@ -93,6 +96,8 @@ class GfxDriver(Enum):
 					GfxPackage.Xf86VideoNouveau,
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
+					GfxPackage.VplGpuRt,
+					GfxPackage.LibVpl,
 					GfxPackage.VulkanRadeon,
 					GfxPackage.VulkanIntel,
 					GfxPackage.VulkanNouveau,
@@ -109,6 +114,8 @@ class GfxDriver(Enum):
 					GfxPackage.Mesa,
 					GfxPackage.LibvaIntelDriver,
 					GfxPackage.IntelMediaDriver,
+					GfxPackage.VplGpuRt,
+					GfxPackage.LibVpl,
 					GfxPackage.VulkanIntel,
 				]
 			case GfxDriver.NvidiaOpenKernel:
@@ -162,25 +169,6 @@ class _SysInfo:
 					cpu[key.strip()] = value.strip()
 
 		return cpu
-
-	@cached_property
-	def mem_info(self) -> dict[str, int]:
-		"""
-		Returns system memory information
-		"""
-		mem_info_path = Path('/proc/meminfo')
-		mem_info: dict[str, int] = {}
-
-		with mem_info_path.open() as file:
-			for line in file:
-				key, value = line.strip().split(':')
-				num = value.split()[0]
-				mem_info[key] = int(num)
-
-		return mem_info
-
-	def mem_info_by_key(self, key: str) -> int:
-		return self.mem_info[key]
 
 	@cached_property
 	def loaded_modules(self) -> list[str]:
@@ -274,18 +262,6 @@ class SysInfo:
 			return None
 
 	@staticmethod
-	def mem_available() -> int:
-		return _sys_info.mem_info_by_key('MemAvailable')
-
-	@staticmethod
-	def mem_free() -> int:
-		return _sys_info.mem_info_by_key('MemFree')
-
-	@staticmethod
-	def mem_total() -> int:
-		return _sys_info.mem_info_by_key('MemTotal')
-
-	@staticmethod
 	def virtualization() -> str | None:
 		try:
 			return str(SysCommand('systemd-detect-virt')).strip('\r\n')
@@ -340,3 +316,26 @@ class SysInfo:
 				return True
 
 		return False
+
+
+@dataclass(frozen=True)
+class MemInfo:
+	mem_total: int
+	mem_free: int
+	mem_available: int
+
+
+def read_meminfo() -> MemInfo:
+	data: dict[str, int] = {}
+
+	with Path('/proc/meminfo').open() as file:
+		for line in file:
+			key, _, remainder = line.partition(':')
+			num, _, _ = remainder.strip().partition(' ')
+			data[key] = int(num)
+
+	return MemInfo(
+		mem_total=data['MemTotal'],
+		mem_free=data['MemFree'],
+		mem_available=data['MemAvailable'],
+	)

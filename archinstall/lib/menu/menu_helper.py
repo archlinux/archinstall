@@ -6,8 +6,11 @@ class MenuHelper[ValueT]:
 	def __init__(
 		self,
 		data: list[ValueT],
-		additional_options: list[str] = [],
+		additional_options: list[str] | None = None,
 	) -> None:
+		if additional_options is None:
+			additional_options = []
+
 		self._separator = ''
 		self._data = data
 		self._additional_options = additional_options

@@ -1,5 +1,6 @@
 on: [ push, pull_request ]
 name: pytest test validation
+permissions: {}
 jobs:
     pytest:
         runs-on: ubuntu-latest
@@ -8,6 +9,8 @@ jobs:
             options: --privileged
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+              with:
+                persist-credentials: false
             - name: Prepare arch
               run: |
                 pacman-key --init

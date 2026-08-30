@@ -161,7 +161,7 @@ class FilesystemHandler:
 	def _setup_lvm(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: dict[PartitionModification, Luks2] = {},
+		enc_mods: dict[PartitionModification, Luks2] | None = None,
 	) -> None:
 		self._lvm_create_pvs(lvm_config, enc_mods)
 
@@ -182,7 +182,7 @@ class FilesystemHandler:
 			# to the desired sizes and subtract some equally from the actually
 			# created volume
 			avail_size = vg_info.vg_size
-			desired_size = sum([vol.length for vol in vg.volumes], Size(0, Unit.B, SectorSize.default()))
+			desired_size = sum((vol.length for vol in vg.volumes), Size(0, Unit.B, SectorSize.default()))
 
 			delta = desired_size - avail_size
 			delta_bytes = delta.convert(Unit.B)
@@ -216,10 +216,10 @@ class FilesystemHandler:
 	def _format_lvm_vols(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_vols: dict[LvmVolume, Luks2] = {},
+		enc_vols: dict[LvmVolume, Luks2] | None = None,
 	) -> None:
 		for vol in lvm_config.get_all_volumes():
-			if enc_vol := enc_vols.get(vol, None):
+			if enc_vols is not None and (enc_vol := enc_vols.get(vol, None)):
 				if not enc_vol.mapper_dev:
 					raise ValueError('No mapper device defined')
 				path = enc_vol.mapper_dev
@@ -236,7 +236,7 @@ class FilesystemHandler:
 	def _lvm_create_pvs(
 		self,
 		lvm_config: LvmConfiguration,
-		enc_mods: dict[PartitionModification, Luks2] = {},
+		enc_mods: dict[PartitionModification, Luks2] | None = None,
 	) -> None:
 		pv_paths: set[Path] = set()
 
@@ -248,12 +248,12 @@ class FilesystemHandler:
 	def _get_all_pv_dev_paths(
 		self,
 		pvs: list[PartitionModification],
-		enc_mods: dict[PartitionModification, Luks2] = {},
+		enc_mods: dict[PartitionModification, Luks2] | None = None,
 	) -> set[Path]:
 		pv_paths: set[Path] = set()
 
 		for pv in pvs:
-			if enc_pv := enc_mods.get(pv, None):
+			if enc_mods is not None and (enc_pv := enc_mods.get(pv, None)):
 				if mapper := enc_pv.mapper_dev:
 					pv_paths.add(mapper)
 			else:
@@ -318,7 +318,7 @@ class FilesystemHandler:
 		# from arch wiki:
 		# If a logical volume will be formatted with ext4, leave at least 256 MiB
 		# free space in the volume group to allow using e2scrub
-		if any([vol.fs_type == FilesystemType.EXT4 for vol in vol_gp.volumes]):
+		if any(vol.fs_type == FilesystemType.EXT4 for vol in vol_gp.volumes):
 			largest_vol = max(vol_gp.volumes, key=lambda x: x.length)
 
 			lvm_vol_reduce(
