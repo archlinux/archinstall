@@ -274,7 +274,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		data: list[DiskSegment],
 	) -> list[DiskSegment]:
 		if not entry:
-			action_key = [k for k, v in self._actions.items() if v == action][0]
+			action_key = next(k for k, v in self._actions.items() if v == action)
 			match action_key:
 				case 'suggest_partition_layout':
 					part_mods = self.get_part_mods(data)
@@ -288,7 +288,7 @@ class PartitioningList(ListManager[DiskSegment]):
 						data = [s for s in data if isinstance(s.segment, PartitionModification) and s.segment.is_exists_or_modify()]
 		elif isinstance(entry.segment, PartitionModification):
 			partition = entry.segment
-			action_key = [k for k, v in self._actions.items() if v == action][0]
+			action_key = next(k for k, v in self._actions.items() if v == action)
 			match action_key:
 				case 'assign_mountpoint':
 					new_mountpoint = await self._prompt_mountpoint()
