@@ -218,7 +218,6 @@ select = [
 ignore = [
     "B008",     # function-call-in-default-argument
     "B904",     # raise-without-from-inside-except
-    "B905",     # zip-without-explicit-strict
     "B909",     # loop-iterator-mutation
     "COM812",   # missing-trailing-comma
     "PLC0415",  # import-outside-top-level
