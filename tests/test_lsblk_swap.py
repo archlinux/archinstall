@@ -1,6 +1,11 @@
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+import pytest
+
+from archinstall.lib.disk import utils
+from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.models.device import LsblkInfo
 
 # One entry from `lsblk --json --bytes`, using the columns archinstall asks for.
@@ -28,8 +33,27 @@ SAMPLE_PARTITION: dict[str, Any] = {
 	'fsroots': [],
 }
 
+SWAPON_QUERY = ['swapon', '--show=NAME', '--noheadings', '--raw']
+SWAPON_OUTPUT = '/dev/sda2\n/swapfile\n'
+
+
 def _lsblk_info(**overrides: Any) -> LsblkInfo:
 	return LsblkInfo.model_validate(SAMPLE_PARTITION | overrides)
+
+
+def _fake_syscommand(commands: list[list[str]], swapon_output: str = SWAPON_OUTPUT) -> Callable[[list[str]], Any]:
+	class _Result:
+		def __init__(self, output: str) -> None:
+			self._output = output
+
+		def decode(self) -> str:
+			return self._output
+
+	def _run(cmd: list[str]) -> _Result:
+		commands.append(cmd)
+		return _Result(swapon_output if cmd[0] == 'swapon' else '')
+
+	return _run
 
 
 def test_active_swap_mountpoint_is_not_parsed_as_a_path() -> None:
@@ -65,3 +89,66 @@ def test_a_mountpoint_containing_brackets_is_kept() -> None:
 
 	assert info.mountpoint == Path('/mnt/[backup]')
 	assert info.mountpoints == [Path('/mnt/[backup]')]
+
+
+def test_swapoff_does_nothing_when_the_path_is_not_active(monkeypatch: pytest.MonkeyPatch) -> None:
+	commands: list[list[str]] = []
+	monkeypatch.setattr(utils, 'SysCommand', _fake_syscommand(commands))
+
+	utils.swapoff(Path('/dev/sdb1'))
+
+	# The list of active swap is checked, and nothing is switched off.
+	assert commands == [SWAPON_QUERY]
+
+
+def test_swapoff_disables_an_active_swap_area(monkeypatch: pytest.MonkeyPatch) -> None:
+	commands: list[list[str]] = []
+	monkeypatch.setattr(utils, 'SysCommand', _fake_syscommand(commands))
+
+	utils.swapoff(Path('/dev/sda2'))
+
+	assert commands == [SWAPON_QUERY, ['swapoff', '/dev/sda2']]
+
+
+def test_swapoff_matches_an_active_area_reached_through_a_symlink(
+	monkeypatch: pytest.MonkeyPatch,
+	tmp_path: Path,
+) -> None:
+	# Swap can be switched on through a link like /dev/disk/by-uuid/... while
+	# swapon reports the device it points at, so both have to be compared in the
+	# same form.
+	device = tmp_path / 'sda2'
+	device.touch()
+	link = tmp_path / 'by-uuid'
+	link.symlink_to(device)
+
+	commands: list[list[str]] = []
+	monkeypatch.setattr(utils, 'SysCommand', _fake_syscommand(commands, f'{device}\n'))
+
+	utils.swapoff(link)
+
+	assert commands == [SWAPON_QUERY, ['swapoff', str(link)]]
+
+
+def test_a_failed_swap_query_is_raised_as_a_disk_error(monkeypatch: pytest.MonkeyPatch) -> None:
+	# If we cannot find out what is in use, we cannot know it is safe to skip,
+	# so this has to fail rather than quietly do nothing.
+	def _run(cmd: list[str]) -> Any:
+		raise SysCallError('swapon failed', exit_code=1)
+
+	monkeypatch.setattr(utils, 'SysCommand', _run)
+
+	with pytest.raises(DiskError):
+		utils.swapoff(Path('/dev/sda2'))
+
+
+def test_swapoff_failure_is_raised_as_a_disk_error(monkeypatch: pytest.MonkeyPatch) -> None:
+	def _run(cmd: list[str]) -> Any:
+		if cmd[0] == 'swapoff':
+			raise SysCallError('swapoff failed', exit_code=255)
+		return _fake_syscommand([])(cmd)
+
+	monkeypatch.setattr(utils, 'SysCommand', _run)
+
+	with pytest.raises(DiskError):
+		utils.swapoff(Path('/dev/sda2'))
