@@ -1,0 +1,208 @@
+# Packages archinstall may install for its supported installation paths, listed
+# so that changes to them are visible from the package metadata. Nothing here
+# is installed by this package; keep the list in sync with the profiles and the
+# package selection code.
+#
+# These are optional dependencies because several are alternatives to each
+# other: pulseaudio conflicts with pipewire-pulse, and archinstall offers both.
+
+pkgname=archinstall-meta
+pkgver=1
+pkgrel=1
+pkgdesc="Package inventory for archinstall, linking it to what it can install"
+arch=(any)
+url="https://github.com/archlinux/archinstall"
+license=(GPL-3.0-only)
+depends=(archinstall)
+optdepends=(
+	# Kernels
+	'linux: kernel selection'
+	'linux-hardened: kernel selection'
+	'linux-lts: kernel selection'
+	'linux-rt: kernel selection'
+	'linux-rt-lts: kernel selection'
+	'linux-zen: kernel selection'
+
+	# Bootloaders, snapshots and other installation options
+	'cronie: cron daemon Timeshift snapshots are scheduled with'
+	'efibootmgr: UEFI boot entry management for most bootloaders'
+	'grub: GRUB bootloader'
+	'grub-btrfs: GRUB entries for btrfs snapshots'
+	'inotify-tools: required by grub-btrfs snapshot updates'
+	'iwd: iwd based network configuration'
+	'libfido2: FIDO2 unlocking of encrypted volumes'
+	'limine: Limine bootloader'
+	'plymouth: graphical boot splash'
+	'refind: rEFInd bootloader'
+	'snapper: btrfs snapshots with snapper'
+	'timeshift: btrfs snapshots with Timeshift'
+	'zram-generator: zram swap'
+
+	# Network
+	'networkmanager: network configuration'
+
+	# Audio
+	'alsa-firmware: audio configuration'
+	'gst-plugin-pipewire: audio configuration'
+	'libpulse: audio configuration'
+	'pipewire: audio configuration'
+	'pipewire-alsa: audio configuration'
+	'pipewire-jack: audio configuration'
+	'pipewire-pulse: audio configuration'
+	'pulseaudio: audio configuration'
+	'sof-firmware: audio configuration'
+	'wireplumber: audio configuration'
+
+	# Fonts
+	'noto-fonts: font selection'
+	'noto-fonts-cjk: font selection'
+	'noto-fonts-emoji: font selection'
+	'ttf-dejavu: font selection'
+
+	# Bluetooth
+	'bluez: Bluetooth support'
+	'bluez-utils: Bluetooth support'
+
+	# Printing
+	'cups: printing support'
+	'cups-pk-helper: printing support'
+	'ghostscript: printing support'
+	'system-config-printer: printing support'
+
+	# Firewall
+	'firewalld: firewall selection'
+	'ufw: firewall selection'
+
+	# Power management
+	'power-profiles-daemon: power management selection'
+	'tuned: power management selection'
+	'tuned-ppd: power management selection'
+
+	# Authentication
+	'pam-u2f: U2F authentication'
+
+	# Greeters
+	'cosmic-greeter: greeter selection'
+	'gdm: greeter selection'
+	'greetd: greeter selection'
+	'lightdm-slick-greeter: greeter selection'
+	'ly: greeter selection'
+	'plasma-login-manager: greeter selection'
+	'sddm: greeter selection'
+
+	# Desktop profiles
+	'alacritty: awesome desktop profile'
+	'awesome: awesome desktop profile'
+	'breeze-icons: lxqt desktop profile'
+	'brightnessctl: sway desktop profile'
+	'bspwm: bspwm desktop profile'
+	'cinnamon: cinnamon desktop profile'
+	'deepin-editor: deepin desktop profile'
+	'deepin-terminal: deepin desktop profile'
+	'dmenu: bspwm desktop profile'
+	'dolphin: hyprland desktop profile'
+	'dunst: hyprland desktop profile'
+	'engrampa: cinnamon desktop profile'
+	'enlightenment: enlightenment desktop profile'
+	'feh: awesome desktop profile'
+	'foot: river desktop profile'
+	'fuzzel: niri desktop profile'
+	'gnome-keyring: cinnamon desktop profile'
+	'gnome-screenshot: cinnamon desktop profile'
+	'gnome-terminal: cinnamon desktop profile'
+	'gnome-tweaks: gnome desktop profile'
+	'gnu-free-fonts: awesome desktop profile'
+	'grim: hyprland desktop profile'
+	'gvfs: xfce4 desktop profile'
+	'gvfs-smb: cinnamon desktop profile'
+	'htop: installed with every desktop profile'
+	'hyprland: hyprland desktop profile'
+	'i3-wm: i3 desktop profile'
+	'i3blocks: i3 desktop profile'
+	'i3lock: i3 desktop profile'
+	'i3status: i3 desktop profile'
+	'kitty: hyprland desktop profile'
+	'l3afpad: lxqt desktop profile'
+	'labwc: labwc desktop profile'
+	'lightdm: i3 desktop profile'
+	'lightdm-gtk-greeter: i3 desktop profile'
+	'mako: niri desktop profile'
+	'mate-terminal: budgie desktop profile'
+	'materia-gtk-theme: budgie desktop profile'
+	'nano: installed with every desktop profile'
+	'nemo: budgie desktop profile'
+	'nemo-fileroller: budgie desktop profile'
+	'niri: niri desktop profile'
+	'openssh: installed with every desktop profile'
+	'oxygen-icons: lxqt desktop profile'
+	'papirus-icon-theme: budgie desktop profile'
+	'pavucontrol: sway desktop profile'
+	'plasma-desktop: plasma desktop profile'
+	'plasma-meta: plasma desktop profile'
+	'polkit-kde-agent: hyprland desktop profile'
+	'qt5-wayland: hyprland desktop profile'
+	'qt6-wayland: hyprland desktop profile'
+	'qtile: qtile desktop profile'
+	'river: river desktop profile'
+	'rxvt-unicode: bspwm desktop profile'
+	'slock: awesome desktop profile'
+	'slurp: hyprland desktop profile'
+	'smartmontools: installed with every desktop profile'
+	'sway: sway desktop profile'
+	'swaybg: niri desktop profile'
+	'swayidle: niri desktop profile'
+	'swaylock: niri desktop profile'
+	'sxhkd: bspwm desktop profile'
+	'terminology: enlightenment desktop profile'
+	'terminus-font: awesome desktop profile'
+	'ttf-freefont: lxqt desktop profile'
+	'ttf-liberation: awesome desktop profile'
+	'uwsm: hyprland desktop profile'
+	'vim: installed with every desktop profile'
+	'waybar: niri desktop profile'
+	'wget: installed with every desktop profile'
+	'wmenu: sway desktop profile'
+	'wofi: hyprland desktop profile'
+	'xarchiver: xfce4 desktop profile'
+	'xdg-desktop-portal-gnome: niri desktop profile'
+	'xdg-desktop-portal-hyprland: hyprland desktop profile'
+	'xdg-desktop-portal-wlr: river desktop profile'
+	'xdg-user-dirs: cosmic desktop profile'
+	'xdg-user-dirs-gtk: cinnamon desktop profile'
+	'xdg-utils: installed with every desktop profile'
+	'xdo: bspwm desktop profile'
+	'xed: cinnamon desktop profile'
+	'xmonad: xmonad desktop profile'
+	'xmonad-contrib: xmonad desktop profile'
+	'xmonad-extras: xmonad desktop profile'
+	'xorg-server: installed with every desktop profile'
+	'xorg-xinit: installed with every desktop profile'
+	'xorg-xrandr: awesome desktop profile'
+	'xorg-xwayland: niri desktop profile'
+	'xsel: awesome desktop profile'
+	'xss-lock: i3 desktop profile'
+	'xterm: awesome desktop profile'
+
+	# Server profiles
+	'apache: httpd server profile'
+	'cockpit: cockpit server profile'
+	'cockpit-packagekit: cockpit server profile'
+	'cockpit-storaged: cockpit server profile'
+	'docker: docker server profile'
+	'lighttpd: lighttpd server profile'
+	'mariadb: mariadb server profile'
+	'nginx: nginx server profile'
+	'postgresql: postgresql server profile'
+	'tomcat10: tomcat server profile'
+
+	# Scripts
+	'git: minimal script'
+)
+
+# archinstall also installs these package groups. They are named here rather
+# than above because a package cannot depend on a group:
+#   budgie cosmic deepin gnome lxqt mate mate-extra plasma xfce4 xfce4-goodies
+
+package() {
+  :
+}
