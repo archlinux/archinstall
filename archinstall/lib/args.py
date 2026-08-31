@@ -8,7 +8,7 @@ import urllib.error
 import urllib.parse
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
-from enum import Enum, StrEnum
+from enum import Enum, StrEnum, auto
 from pathlib import Path
 from typing import Any, Self
 from urllib.request import Request, urlopen
@@ -71,29 +71,29 @@ class Arguments:
 
 
 class ArchConfigType(StrEnum):
-	VERSION = 'version'
-	SCRIPT = 'script'
-	LOCALE_CONFIG = 'locale_config'
-	ARCHINSTALL_LANGUAGE = 'archinstall_language'
-	DISK_CONFIG = 'disk_config'
-	PROFILE_CONFIG = 'profile_config'
-	MIRROR_CONFIG = 'mirror_config'
-	NETWORK_CONFIG = 'network_config'
-	BOOTLOADER_CONFIG = 'bootloader_config'
-	APP_CONFIG = 'app_config'
-	AUTH_CONFIG = 'auth_config'
-	SWAP = 'swap'
-	USERS = 'users'
-	ROOT_ENC_PASSWORD = 'root_enc_password'
-	ENCRYPTION_PASSWORD = 'encryption_password'
-	HOSTNAME = 'hostname'
-	KERNELS = 'kernels'
-	NTP = 'ntp'
-	TIMEZONE = 'timezone'
-	SERVICES = 'services'
-	PACKAGES = 'packages'
-	PACMAN_CONFIG = 'pacman_config'
-	CUSTOM_COMMANDS = 'custom_commands'
+	VERSION = auto()
+	SCRIPT = auto()
+	LOCALE_CONFIG = auto()
+	ARCHINSTALL_LANGUAGE = auto()
+	DISK_CONFIG = auto()
+	PROFILE_CONFIG = auto()
+	MIRROR_CONFIG = auto()
+	NETWORK_CONFIG = auto()
+	BOOTLOADER_CONFIG = auto()
+	APP_CONFIG = auto()
+	AUTH_CONFIG = auto()
+	SWAP = auto()
+	USERS = auto()
+	ROOT_ENC_PASSWORD = auto()
+	ENCRYPTION_PASSWORD = auto()
+	HOSTNAME = auto()
+	KERNELS = auto()
+	NTP = auto()
+	TIMEZONE = auto()
+	SERVICES = auto()
+	PACKAGES = auto()
+	PACMAN_CONFIG = auto()
+	CUSTOM_COMMANDS = auto()
 
 
 USER_CONFIG_FILE: Path = Path('user_configuration.json')
