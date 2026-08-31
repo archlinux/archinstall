@@ -1,9 +1,19 @@
+from collections.abc import Callable
 from typing import Any
 
 import pytest
 
+from archinstall.default_profiles.desktops.hyprland import HyprlandProfile
+from archinstall.default_profiles.desktops.labwc import LabwcProfile
+from archinstall.default_profiles.desktops.niri import NiriProfile
+from archinstall.default_profiles.desktops.sway import SwayProfile
 from archinstall.default_profiles.desktops.utils import SeatAccess, provision_seat_access
+from archinstall.default_profiles.profile import CustomSetting, Profile
 from archinstall.lib.models.users import Password, User
+
+# Every profile that asks the user how the compositor should reach the hardware.
+SEAT_PROFILES: list[Callable[[], Profile]] = [SwayProfile, HyprlandProfile, NiriProfile, LabwcProfile]
+
 
 class FakeInstaller:
 	"""Records the commands provision_seat_access would run in the target."""
@@ -13,6 +23,12 @@ class FakeInstaller:
 
 	def arch_chroot(self, cmd: str, *args: Any, **kwargs: Any) -> None:
 		self.commands.append(cmd)
+
+
+def _profile_with(profile_type: Callable[[], Profile], setting: str | None) -> Profile:
+	profile = profile_type()
+	profile.custom_settings[CustomSetting.SeatAccess] = setting
+	return profile
 
 
 def test_saved_settings_are_read_back() -> None:
@@ -44,18 +60,36 @@ def test_seatd_is_installed_and_started() -> None:
 
 def test_logind_installs_polkit_and_starts_nothing() -> None:
 	# logind ships with systemd and its unit has no [Install] section, so there
-	# is nothing to install or enable for it. Arch builds systemd against
-	# polkit, which logind asks for permission checks, so that has to be there.
+	# is nothing to install or enable for it. Arch ships polkit as an optional
+	# dependency of systemd, and logind checks with it before letting an
+	# unprivileged user act, so that has to be installed.
 	assert SeatAccess.Logind.packages == ['polkit']
 	assert SeatAccess.Logind.services == []
 
 
-@pytest.mark.parametrize('setting', ['seatd'])
-def test_seatd_puts_the_users_in_the_seat_group(setting: str) -> None:
+@pytest.mark.parametrize('profile_type', SEAT_PROFILES)
+@pytest.mark.parametrize('setting', ['seatd', 'systemd-logind', 'polkit'])
+def test_a_profile_installs_whatever_it_starts(profile_type: Callable[[], Profile], setting: str) -> None:
+	# Hyprland used to enable seatd without installing it, and enabling a unit
+	# that is not there fails the installation.
+	profile = _profile_with(profile_type, setting)
+
+	assert set(profile.services) <= set(profile.packages)
+
+
+@pytest.mark.parametrize('profile_type', SEAT_PROFILES)
+def test_a_profile_asks_for_nothing_until_a_choice_is_made(profile_type: Callable[[], Profile]) -> None:
+	profile = _profile_with(profile_type, None)
+
+	assert profile.services == []
+	assert 'seatd' not in profile.packages
+
+
+def test_seatd_puts_the_users_in_the_seat_group() -> None:
 	installer = FakeInstaller()
 	users = [User('alice', Password(plaintext='pw'), False), User('bob', Password(plaintext='pw'), False)]
 
-	provision_seat_access(installer, users, setting)  # type: ignore[arg-type]
+	provision_seat_access(installer, users, 'seatd')  # type: ignore[arg-type]
 
 	assert installer.commands == [
 		'usermod -a -G seat alice',
