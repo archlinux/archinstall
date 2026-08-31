@@ -34,13 +34,7 @@ def test_user_config_roundtrip(
 	result['disk_config']['config_type'] = expected['disk_config']['config_type']
 	result['disk_config']['device_modifications'] = expected['disk_config']['device_modifications']
 
-	assert json.dumps(
-		result['mirror_config'],
-		sort_keys=True,
-	) == json.dumps(
-		expected['mirror_config'],
-		sort_keys=True,
-	)
+	assert json.dumps(result, sort_keys=True) == json.dumps(expected, sort_keys=True)
 
 
 def test_creds_roundtrip(

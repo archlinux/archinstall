@@ -263,7 +263,7 @@ class CustomServer(SubConfig):
 
 class _MirrorConfigurationSerialization(TypedDict):
 	mirror_regions: dict[str, list[str]]
-	custom_servers: list[CustomServer]
+	custom_servers: list[dict[str, str]]
 	optional_repositories: list[str]
 	custom_repositories: list[_CustomRepositorySerialization]
 
@@ -293,7 +293,7 @@ class MirrorConfiguration(SubConfig):
 
 		return {
 			'mirror_regions': regions,
-			'custom_servers': self.custom_servers,
+			'custom_servers': [c.json() for c in self.custom_servers],
 			'optional_repositories': [r.value for r in self.optional_repositories],
 			'custom_repositories': [c.json() for c in self.custom_repositories],
 		}

@@ -68,7 +68,6 @@ include-package-data = true
 archinstall = "archinstall"
 
 [tool.mypy]
-mypy_path = "stubs"
 python_version = "3.14"
 files = "."
 exclude = [

@@ -239,7 +239,7 @@ def test_config_file_parsing(
 		ntp=True,
 		packages=['firefox'],
 		pacman_config=PacmanConfiguration(parallel_downloads=66),
-		swap=ZramConfiguration(enabled=False),
+		swap=ZramConfiguration(enabled=True),
 		timezone='UTC',
 		services=['service_1', 'service_2'],
 		custom_commands=["echo 'Hello, World!'"],
