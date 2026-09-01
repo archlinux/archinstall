@@ -247,7 +247,7 @@ class TranslationHandler:
 
 
 class _DeferredTranslation:
-	def __init__(self, message: str):
+	def __init__(self, message: str) -> None:
 		self.message = message
 
 	@override

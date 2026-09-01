@@ -80,7 +80,7 @@ class Installer:
 		base_packages: list[str] | None = None,
 		kernels: list[str] | None = None,
 		silent: bool = False,
-	):
+	) -> None:
 		"""
 		`Installer()` is the wrapper for most basic installation steps.
 		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.

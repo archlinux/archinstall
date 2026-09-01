@@ -12,7 +12,7 @@ from archinstall.lib.log import error
 class Boot:
 	_active_boot: ClassVar[Self | None] = None
 
-	def __init__(self, path: Path | str):
+	def __init__(self, path: Path | str) -> None:
 		if isinstance(path, Path):
 			path = str(path)
 
