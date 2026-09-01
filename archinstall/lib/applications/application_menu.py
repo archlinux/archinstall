@@ -25,7 +25,7 @@ class ApplicationMenu(AbstractSubMenu[ApplicationConfiguration]):
 	def __init__(
 		self,
 		preset: ApplicationConfiguration | None = None,
-	):
+	) -> None:
 		if preset:
 			self._app_config = preset
 		else:

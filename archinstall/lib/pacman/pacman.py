@@ -13,7 +13,7 @@ from archinstall.lib.translationhandler import tr
 
 
 class Pacman:
-	def __init__(self, target: Path, silent: bool = False):
+	def __init__(self, target: Path, silent: bool = False) -> None:
 		self.synced = False
 		self.silent = silent
 		self.target = target

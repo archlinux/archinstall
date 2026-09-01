@@ -708,7 +708,7 @@ class SubvolumeModification:
 
 
 class DeviceGeometry:
-	def __init__(self, geometry: Geometry, sector_size: SectorSize):
+	def __init__(self, geometry: Geometry, sector_size: SectorSize) -> None:
 		self._geometry = geometry
 		self._sector_size = sector_size
 
