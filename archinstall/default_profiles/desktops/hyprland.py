@@ -1,6 +1,6 @@
 from typing import override
 
-from archinstall.default_profiles.desktops.utils import select_seat_access
+from archinstall.default_profiles.desktops.utils import seat_access_of, select_seat_access
 from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType
 
 
@@ -18,7 +18,7 @@ class HyprlandProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return [
+		packages = [
 			'hyprland',
 			'dunst',
 			'kitty',
@@ -33,6 +33,11 @@ class HyprlandProfile(Profile):
 			'slurp',
 		]
 
+		if seat := seat_access_of(self):
+			packages += seat.packages
+
+		return packages
+
 	@property
 	@override
 	def default_greeter_type(self) -> GreeterType:
@@ -41,8 +46,8 @@ class HyprlandProfile(Profile):
 	@property
 	@override
 	def services(self) -> list[str]:
-		if pref := self.custom_settings.get(CustomSetting.SeatAccess, None):
-			return [pref]
+		if seat := seat_access_of(self):
+			return seat.services
 		return []
 
 	@override

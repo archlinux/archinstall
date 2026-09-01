@@ -1,6 +1,6 @@
 from typing import override
 
-from archinstall.default_profiles.desktops.utils import select_seat_access
+from archinstall.default_profiles.desktops.utils import seat_access_of, select_seat_access
 from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType
 
 
@@ -18,11 +18,7 @@ class SwayProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		additional = []
-		if seat := self.custom_settings.get(CustomSetting.SeatAccess, None):
-			additional = [seat]
-
-		return [
+		packages = [
 			'sway',
 			'swaybg',
 			'swaylock',
@@ -35,7 +31,12 @@ class SwayProfile(Profile):
 			'pavucontrol',
 			'foot',
 			'xorg-xwayland',
-		] + additional
+		]
+
+		if seat := seat_access_of(self):
+			packages += seat.packages
+
+		return packages
 
 	@property
 	@override
@@ -45,8 +46,8 @@ class SwayProfile(Profile):
 	@property
 	@override
 	def services(self) -> list[str]:
-		if pref := self.custom_settings.get(CustomSetting.SeatAccess, None):
-			return [pref]
+		if seat := seat_access_of(self):
+			return seat.services
 		return []
 
 	@override
