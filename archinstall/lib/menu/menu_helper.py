@@ -41,7 +41,7 @@ class MenuHelper[ValueT]:
 			# these are the header rows of the table
 			display_data = {f'{rows[0]}': None, f'{rows[1]}': None}
 
-			for row, entry in zip(rows[2:], data):
+			for row, entry in zip(rows[2:], data, strict=True):
 				display_data[row] = entry
 
 		if self._additional_options:
