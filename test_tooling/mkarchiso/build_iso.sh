@@ -40,7 +40,7 @@ pacman --noconfirm -S archiso
 
 cp -r /usr/share/archiso/configs/releng/* /tmp/archlive
 
-sed -i -e /archinstall/d -e /broadcom-wl/d "$packages_file"
+sed -i /archinstall/d "$packages_file"
 
 # Add packages to the archiso profile packages
 for package in "${packages[@]}"; do
