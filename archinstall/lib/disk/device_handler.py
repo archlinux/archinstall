@@ -13,6 +13,7 @@ from archinstall.lib.disk.utils import (
 	get_lsblk_info,
 	linux_root_guid,
 	mount,
+	swapoff,
 	udev_sync,
 	umount,
 )
@@ -513,6 +514,11 @@ class DeviceHandler:
 			# un-mount for existing encrypted partitions
 			if partition.fs_type == FilesystemType.CRYPTO_LUKS:
 				Luks2(partition.path).lock()
+			elif partition.fs_type == FilesystemType.LINUX_SWAP:
+				# Swap is not mounted at a folder, so there is nothing to
+				# unmount. It has to be switched off, or the partition stays
+				# busy and the disk cannot be repartitioned.
+				swapoff(partition.path)
 			else:
 				umount(partition.path, recursive=True)
 

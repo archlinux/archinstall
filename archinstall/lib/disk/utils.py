@@ -198,6 +198,34 @@ def swapon(path: Path) -> None:
 		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
 
 
+def _active_swap_areas() -> set[Path]:
+	# Ask swapon what is being used as swap right now. That can be a partition,
+	# an encrypted or LVM device, or an ordinary file, so these are not always
+	# devices. The paths are resolved because swap can be switched on through a
+	# link such as /dev/disk/by-uuid/..., while swapon reports what it points at.
+	try:
+		output = SysCommand(['swapon', '--show=NAME', '--noheadings', '--raw']).decode()
+	except SysCallError as err:
+		raise DiskError(f'Could not read the active swap areas:\n{err.message}')
+
+	return {Path(line).resolve() for line in output.splitlines() if line}
+
+
+def swapoff(path: Path) -> None:
+	# swapoff fails if it is pointed at something that is not currently being
+	# used as swap, so check first. That also makes this safe to call on a
+	# partition whose swap is already off: it simply does nothing.
+	if path.resolve() not in _active_swap_areas():
+		return
+
+	debug(f'Disabling swap: {path}')
+
+	try:
+		SysCommand(['swapoff', str(path)])
+	except SysCallError as err:
+		raise DiskError(f'Could not disable swap {path}:\n{err.message}')
+
+
 def linux_root_guid(arch: str | None) -> PartitionGUID:
 	if arch == 'aarch64':
 		return PartitionGUID.LINUX_ROOT_AARCH64
