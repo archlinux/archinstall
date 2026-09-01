@@ -2,6 +2,7 @@ import sys
 import time
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import RequirementError, SysCallError
@@ -39,7 +40,7 @@ class Pacman:
 
 		return SysCommand(f'{default_cmd} {args}')
 
-	def ask(self, error_message: str, bail_message: str, func: Callable, *args, **kwargs) -> None:  # type: ignore[no-untyped-def, type-arg]
+	def ask(self, error_message: str, bail_message: str, func: Callable, *args: Any, **kwargs: Any) -> None:  # type: ignore[type-arg]
 		while True:
 			try:
 				func(*args, **kwargs)
