@@ -179,10 +179,10 @@ class Installer:
 		if mod not in self._modules:
 			self._modules.append(mod)
 
-	def _verify_service_stop(self, offline: bool, skip_ntp: bool, skip_wkd: bool) -> None:
+	def _verify_service_stop(self, skip_ntp: bool, skip_wkd: bool) -> None:
 		"""
 		Certain services might be running that affects the system during installation.
-		We need to wait for it before we continue since we opted in to use a custom mirror/region.
+		We need to wait for them, to make sure ISO has no boot defects before install.
 		"""
 
 		if not skip_ntp:
@@ -244,7 +244,7 @@ class Installer:
 		skip_wkd: bool = False,
 	) -> None:
 		# self._verify_boot_part()
-		self._verify_service_stop(offline, skip_ntp, skip_wkd)
+		self._verify_service_stop(skip_ntp, skip_wkd)
 
 	def mount_ordered_layout(self) -> None:
 		debug('Mounting ordered layout')
