@@ -182,7 +182,6 @@ class Installer:
 	def _verify_service_stop(self, offline: bool, skip_ntp: bool, skip_wkd: bool) -> None:
 		"""
 		Certain services might be running that affects the system during installation.
-		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
 
@@ -202,17 +201,6 @@ class Installer:
 				time.sleep(1)
 		else:
 			info(tr('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
-
-		if not offline:
-			info('Waiting for automatic mirror selection (reflector) to complete.')
-			for _ in range(60):
-				if self._service_state('reflector') in ('dead', 'failed', 'exited'):
-					break
-				time.sleep(1)
-			else:
-				warn('Reflector did not complete within 60 seconds, continuing anyway...')
-		else:
-			info('Skipped reflector...')
 
 		# info('Waiting for pacman-init.service to complete.')
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
