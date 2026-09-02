@@ -4,7 +4,7 @@ from enum import Enum
 from typing import NotRequired, Self, TypedDict, override
 
 from archinstall.lib.log import debug
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 
@@ -45,6 +45,8 @@ class Nic:
 	gateway: str | None = None
 	dns: list[str] = field(default_factory=list)
 
+	NAME: str = 'Network Interface'
+
 	def table_data(self) -> dict[str, str | bool | list[str]]:
 		return {
 			'iface': self.iface if self.iface else '',
@@ -62,6 +64,23 @@ class Nic:
 			'gateway': self.gateway,
 			'dns': self.dns,
 		}
+
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		if not self.iface:
+			return []
+
+		out: list[str] = [tr('Interface "{}"').format(self.iface)]
+
+		if self.dhcp:
+			out.append(tr('DHCP enabled'))
+		if self.ip:
+			out.append(tr('IP address "{}"').format(self.ip))
+		if self.gateway:
+			out.append(tr('Gateway "{}"').format(self.gateway))
+		if self.dns:
+			out.append(tr('DNS servers "{}"').format(', '.join(self.dns)))
+
+		return out
 
 	@classmethod
 	def parse_arg(cls, arg: _NicSerialization) -> Self:
@@ -111,6 +130,8 @@ class NetworkConfiguration(SubConfig):
 	type: NicType
 	nics: list[Nic] = field(default_factory=list)
 
+	NAME: str = tr('Network')
+
 	@override
 	def json(self) -> _NetworkConfigurationSerialization:
 		config: _NetworkConfigurationSerialization = {'type': self.type.value}
@@ -120,8 +141,18 @@ class NetworkConfiguration(SubConfig):
 		return config
 
 	@override
-	def summary(self) -> str:
-		return self.type.display_msg()
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		out = [self.type.display_msg()]
+
+		match level:
+			case SummaryLevel.Basic:
+				return out
+			case SummaryLevel.Detailed:
+				for nic in self.nics:
+					out.extend(nic.summary(level))
+					out.append('')
+
+				return out
 
 	@classmethod
 	def parse_arg(cls, config: _NetworkConfigurationSerialization) -> Self | None:

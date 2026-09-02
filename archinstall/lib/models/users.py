@@ -3,6 +3,7 @@ from enum import Enum
 from typing import NotRequired, Self, TypedDict, override
 
 from archinstall.lib.crypt import crypt_yescrypt
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 
@@ -152,11 +153,13 @@ class Password:
 
 
 @dataclass
-class User:
+class User(SubConfig):
 	username: str
 	password: Password
 	sudo: bool
 	groups: list[str] = field(default_factory=list)
+
+	NAME: str = tr('User')
 
 	@override
 	def __str__(self) -> str:
@@ -171,6 +174,7 @@ class User:
 			'groups': self.groups,
 		}
 
+	@override
 	def json(self) -> UserSerialization:
 		return {
 			'username': self.username,
@@ -178,6 +182,22 @@ class User:
 			'sudo': self.sudo,
 			'groups': self.groups,
 		}
+
+	@override
+	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+		out: list[str] = [tr('User "{}"').format(self.username)]
+
+		match level:
+			case SummaryLevel.Basic:
+				out.append(tr('User "{}"').format(self.username))
+			case SummaryLevel.Detailed:
+				if self.sudo:
+					out.append(tr('sudo user'))
+
+				if self.groups:
+					out.append(tr('groups {}').format(', '.join(self.groups)))
+
+		return out
 
 	@classmethod
 	def parse_arguments(
