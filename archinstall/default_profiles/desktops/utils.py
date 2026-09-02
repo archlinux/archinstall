@@ -10,7 +10,15 @@ from archinstall.tui.result import ResultType
 
 class SeatAccess(Enum):
 	seatd = 'seatd'
-	polkit = 'polkit'
+	systemd_logind = 'systemd-logind'
+
+
+# systemd-logind ships with systemd, but Arch builds systemd with polkit
+# support so logind hard-depends on polkit for its permission checks
+def seat_access_package(seat_access: str) -> str:
+	if seat_access == SeatAccess.systemd_logind.value:
+		return 'polkit'
+	return seat_access
 
 
 def provision_seat_access(

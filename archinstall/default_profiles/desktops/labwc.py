@@ -1,6 +1,6 @@
 from typing import override
 
-from archinstall.default_profiles.desktops.utils import select_seat_access
+from archinstall.default_profiles.desktops.utils import seat_access_package, select_seat_access
 from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType
 
 
@@ -20,7 +20,7 @@ class LabwcProfile(Profile):
 	def packages(self) -> list[str]:
 		additional = []
 		if seat := self.custom_settings.get(CustomSetting.SeatAccess, None):
-			additional = [seat]
+			additional = [seat_access_package(seat)]
 
 		return [
 			'alacritty',
@@ -36,7 +36,7 @@ class LabwcProfile(Profile):
 	@override
 	def services(self) -> list[str]:
 		if pref := self.custom_settings.get(CustomSetting.SeatAccess, None):
-			return [pref]
+			return [seat_access_package(pref)]
 		return []
 
 	@override
