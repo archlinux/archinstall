@@ -1,3 +1,4 @@
+import math
 import os
 import platform
 import re
@@ -26,7 +27,7 @@ from archinstall.lib.disk.utils import (
 	swapon,
 )
 from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
-from archinstall.lib.hardware import SysInfo
+from archinstall.lib.hardware import SysInfo, read_meminfo
 from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
 from archinstall.lib.log import debug, error, info, log, logger, warn
@@ -70,6 +71,11 @@ __packages__ = ['base', 'sudo', 'linux-firmware', 'mkinitcpio'] + [k.value for k
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ['brltty', 'espeakup', 'alsa-utils']
+
+# Rough floor for what the base install needs next to a swap file. linux-firmware alone is north of
+# a gigabyte and pacstrap keeps the packages it downloads in the target's cache, so this is a lower
+# bound rather than a full accounting: a profile on top of it will ask for a good deal more.
+__base_install_headroom__ = Size(2, Unit.GiB, SectorSize.default())
 
 
 class Installer:
@@ -529,32 +535,88 @@ class Installer:
 
 		return True
 
-	def add_swapfile(self, size: str = '4G', enable_resume: bool = True, file: str = '/swapfile') -> None:
+	def _create_btrfs_swapfile(self, path: Path, size: Size) -> None:
+		# btrfs refuses to snapshot a subvolume that holds an active swap file, so the swap file
+		# gets a subvolume of its own and the root one stays snapshottable
+		if path.parent.exists():
+			warn(
+				f'{path.parent} already exists and will not be created as a subvolume; unless it is one already, '
+				'the swap file will block snapshots of the subvolume it lands in',
+			)
+		else:
+			SysCommand(f'btrfs subvolume create {path.parent}')
+
+		# mkswapfile preallocates the file, marks it NODATACOW as swapon requires, sets it to
+		# 0600 and runs mkswap on it, all in one go
+		SysCommand(f'btrfs filesystem mkswapfile --size {size.convert(Unit.MiB).value}m --uuid clear {path}')
+
+	def _swapfile_offset(self, path: Path, btrfs: bool) -> str:
+		if btrfs:
+			# the physical offset filefrag reports is not the one the kernel resumes from on
+			# btrfs, map-swapfile is the supported way to get it
+			return SysCommand(f'btrfs inspect-internal map-swapfile -r {path}').decode()
+
+		return (
+			SysCommand(
+				f'filefrag -v {path}',
+			)
+			.decode()
+			.split('0:', 1)[1]
+			.split(':', 1)[1]
+			.split('..', 1)[0]
+			.strip()
+		)
+
+	def add_swapfile(self, size: Size | None = None, enable_resume: bool = True, file: str | None = None) -> None:
+		# the layout cannot answer this on its own, a pre-mounted configuration carries no
+		# partition modifications at all, so ask the mount the swap file is going to live on
+		btrfs = SysCommand(f'findmnt -no FSTYPE -T {self.target}').decode() == FilesystemType.BTRFS.value
+
+		if file is None:
+			# btrfs cannot snapshot a subvolume that holds an active swap file, so the swap file
+			# is given a subvolume of its own and the root one stays snapshottable
+			file = '/swap/swapfile' if btrfs else '/swapfile'
+
 		if file[:1] != '/':
 			file = f'/{file}'
 		if len(file.strip()) <= 0 or file == '/':
 			raise ValueError(f'The filename for the swap file has to be a valid path, not: {self.target}{file}')
 
-		SysCommand(f'dd if=/dev/zero of={self.target}{file} bs={size} count=1')
-		SysCommand(f'chmod 0600 {self.target}{file}')
-		SysCommand(f'mkswap {self.target}{file}')
+		if size is None:
+			size = _swapfile_size()
+
+		path = Path(f'{self.target}{file}')
+
+		# bail out before writing anything: the base install still has to fit next to the swap
+		# file, and running the root partition out of space halfway through pacstrap is a lot
+		# harder to make sense of than a message here. the swap file can be handed a path on a
+		# mount of its own, so measure the filesystem it lands on and not the target root
+		fs_path = next(parent for parent in path.parents if parent.exists())
+		stat = os.statvfs(fs_path)
+		available = Size(stat.f_bavail * stat.f_frsize, Unit.B, SectorSize.default())
+		required = size + __base_install_headroom__
+
+		if available < required:
+			raise DiskError(
+				f'Not enough space for a {size.format_highest()} swap file on {fs_path}: '
+				f'{required.format_highest()} is needed to leave room for the base install, {available.format_highest()} is available',
+			)
+
+		info(f'Creating a {size.format_highest()} swap file: {file}')
+
+		if btrfs:
+			self._create_btrfs_swapfile(path, size)
+		else:
+			# mkswap allocates the file, sets it to 0600 and formats it in one go
+			SysCommand(f'mkswap --size {size.convert(Unit.MiB).value}m --file {path}')
 
 		self._fstab_entries.append(f'{file} none swap defaults 0 0')
 
 		if enable_resume:
-			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode()
-			resume_offset = (
-				SysCommand(
-					f'filefrag -v {self.target}{file}',
-				)
-				.decode()
-				.split('0:', 1)[1]
-				.split(':', 1)[1]
-				.split('..', 1)[0]
-				.strip()
-			)
+			resume_uuid = SysCommand(f'findmnt -no UUID -T {path}').decode()
+			resume_offset = self._swapfile_offset(path, btrfs)
 
-			self._hooks.append('resume')
+			self._prepare_resume()
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
@@ -897,6 +959,18 @@ class Installer:
 		else:
 			if 'encrypt' not in self._hooks:
 				self._hooks.insert(self._hooks.index(before), 'encrypt')
+
+	def _prepare_resume(self, before: str = 'fsck') -> None:
+		if self._disk_encryption.hsm_device:
+			# the initramfs keeps the systemd hook in this case, which already ships
+			# systemd-hibernate-resume and the generator that reads resume= off the kernel
+			# command line, so the busybox hook would have nothing left to do
+			return
+
+		if 'resume' not in self._hooks:
+			# has to run once the resume device is there, so after udev and after whichever
+			# of encrypt and lvm2 the layout pulled in
+			self._hooks.insert(self._hooks.index(before), 'resume')
 
 	def minimal_installation(
 		self,
@@ -2130,6 +2204,19 @@ class Installer:
 			f'systemctl show --no-pager -p SubState --value {service_name}',
 			environment_vars={'SYSTEMD_COLORS': '0'},
 		).decode()
+
+
+def _swapfile_size() -> Size:
+	"""
+	A hibernation image is a snapshot of the physical memory, so a swap file the size of MemTotal is
+	always large enough to hold one. Whatever zram is holding lives in RAM as well and is therefore
+	already counted there, so an active zram device needs no extra room.
+	"""
+	# /proc/meminfo reports kibibytes even though it labels them kB
+	mem_total = Size(read_meminfo().mem_total, Unit.KiB, SectorSize.default())
+	size = math.ceil(mem_total.convert(Unit.B).value / Unit.MiB.value)
+
+	return Size(size, Unit.MiB, SectorSize.default())
 
 
 def accessibility_tools_in_use() -> bool:

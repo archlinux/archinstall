@@ -2,7 +2,7 @@ from typing import assert_never
 
 from archinstall.lib.hardware import GfxDriver, SysInfo
 from archinstall.lib.menu.helpers import Confirmation, Selection
-from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
+from archinstall.lib.models.application import SwapConfiguration, ZramAlgorithm, ZramConfiguration
 from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -108,31 +108,43 @@ async def select_driver(
 			return result.get_value()
 
 
-async def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True)) -> ZramConfiguration:
-	prompt = tr('Would you like to use swap on zram?') + '\n'
+async def select_swap(preset: SwapConfiguration = SwapConfiguration()) -> SwapConfiguration:
+	def option(zram: bool, swapfile: bool) -> SwapConfiguration:
+		return SwapConfiguration(
+			zram=ZramConfiguration(enabled=zram, algorithm=preset.zram.algorithm),
+			swapfile=swapfile,
+		)
 
-	group = MenuItemGroup.yes_no()
-	group.set_default_by_value(True)
-	group.set_focus_by_value(preset.enabled)
+	items = [
+		MenuItem(tr('zram'), value=option(True, False)),
+		MenuItem(tr('Swap file (enables hibernation)'), value=option(False, True)),
+		MenuItem(tr('zram and swap file'), value=option(True, True)),
+		MenuItem(tr('No swap'), value=option(False, False)),
+	]
 
-	result = await Confirmation(
-		header=prompt,
+	group = MenuItemGroup(items, sort_items=False)
+	group.set_default_by_value(option(True, False))
+	group.set_focus_by_value(option(preset.zram.enabled, preset.swapfile))
+
+	result = await Selection[SwapConfiguration](
+		group,
+		header=tr('Would you like to use swap?') + '\n',
 		allow_skip=True,
-		preset=preset.enabled,
 	).show()
 
 	match result.type_:
 		case ResultType.Skip:
 			return preset
 		case ResultType.Selection:
-			enabled = result.item() == MenuItem.yes()
-			if not enabled:
-				return ZramConfiguration(enabled=False)
+			selection = result.get_value()
+
+			if not selection.zram.enabled:
+				return selection
 
 			# Ask for compression algorithm
 			algo_group = MenuItemGroup.from_enum(ZramAlgorithm, sort_items=False)
 			algo_group.set_default_by_value(ZramAlgorithm.ZSTD)
-			algo_group.set_focus_by_value(preset.algorithm)
+			algo_group.set_focus_by_value(preset.zram.algorithm)
 
 			algo_result = await Selection[ZramAlgorithm](
 				algo_group,
@@ -142,7 +154,7 @@ async def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True
 
 			match algo_result.type_:
 				case ResultType.Skip:
-					algo = preset.algorithm
+					algo = preset.zram.algorithm
 				case ResultType.Selection:
 					algo = algo_result.get_value()
 				case ResultType.Reset:
@@ -150,6 +162,6 @@ async def select_swap(preset: ZramConfiguration = ZramConfiguration(enabled=True
 				case _:
 					assert_never(algo_result.type_)
 
-			return ZramConfiguration(enabled=True, algorithm=algo)
+			return SwapConfiguration(zram=ZramConfiguration(enabled=True, algorithm=algo), swapfile=selection.swapfile)
 		case ResultType.Reset:
 			raise ValueError('Unhandled result type')
