@@ -284,6 +284,9 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 			if enc_type != EncryptionType.NO_ENCRYPTION:
 				output += tr('Iteration time') + f': {enc_config.iter_time or DEFAULT_ITER_TIME}ms\n'
 
+				if enc_config.allow_discards:
+					output += tr('Discard/TRIM support') + f': {tr("Enabled")}\n'
+
 			if enc_config.partitions:
 				output += f'Partitions: {len(enc_config.partitions)} selected\n'
 			elif enc_config.lvm_volumes:
