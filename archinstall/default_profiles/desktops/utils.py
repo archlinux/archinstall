@@ -13,12 +13,20 @@ class SeatAccess(Enum):
 	systemd_logind = 'systemd-logind'
 
 
-# systemd-logind ships with systemd, but Arch builds systemd with polkit
-# support so logind hard-depends on polkit for its permission checks
-def seat_access_package(seat_access: str) -> str:
+# Arch builds systemd with polkit support, logind depends on it
+def seat_access_packages(seat_access: str | None) -> list[str]:
+	if seat_access == SeatAccess.seatd.value:
+		return ['seatd']
 	if seat_access == SeatAccess.systemd_logind.value:
-		return 'polkit'
-	return seat_access
+		return ['polkit']
+	return []
+
+
+# polkit.service is static (dbus activated), only seatd needs enabling
+def seat_access_services(seat_access: str | None) -> list[str]:
+	if seat_access == SeatAccess.seatd.value:
+		return ['seatd']
+	return []
 
 
 def provision_seat_access(
