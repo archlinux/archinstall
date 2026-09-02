@@ -15,7 +15,7 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 	def __init__(
 		self,
 		preset: ProfileConfiguration | None = None,
-	):
+	) -> None:
 		if preset:
 			self._profile_config = preset
 		else:

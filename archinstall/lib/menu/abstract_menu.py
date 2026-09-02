@@ -31,7 +31,7 @@ class AbstractMenu[ValueT](InstanceRunnable[ValueT]):
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
 		reset_warning: str | None = None,
-	):
+	) -> None:
 		self._menu_item_group = item_group
 		self._config = config
 		self.auto_cursor = auto_cursor
@@ -152,7 +152,7 @@ class AbstractSubMenu[ValueT](AbstractMenu[ValueT]):
 		config: Any,
 		auto_cursor: bool = True,
 		allow_reset: bool = False,
-	):
+	) -> None:
 		back_text = '← ' + tr('Back')
 		item_group.add_item(MenuItem(text=back_text))
 

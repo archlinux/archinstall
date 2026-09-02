@@ -182,6 +182,7 @@ docstring-code-format = true
 
 [tool.ruff.lint]
 select = [
+    "ANN",    # flake8-annotations
     "ASYNC",  # flake8-async
     "B",      # flake8-bugbear
     "C4",     # flake8-comprehensions
@@ -216,6 +217,7 @@ select = [
 ]
 
 ignore = [
+    "ANN401",   # any-type
     "B008",     # function-call-in-default-argument
     "B904",     # raise-without-from-inside-except
     "B909",     # loop-iterator-mutation

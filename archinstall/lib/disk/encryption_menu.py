@@ -29,7 +29,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 		device_modifications: list[DeviceModification],
 		lvm_config: LvmConfiguration | None = None,
 		preset: DiskEncryption | None = None,
-	):
+	) -> None:
 		if preset:
 			self._enc_config = preset
 		else:

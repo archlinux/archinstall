@@ -20,7 +20,7 @@ from archinstall.tui.result import ResultType
 
 
 class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
-	def __init__(self, custom_repositories: list[CustomRepository]):
+	def __init__(self, custom_repositories: list[CustomRepository]) -> None:
 		self._actions = [
 			tr('Add a custom repository'),
 			tr('Change custom repository'),
@@ -141,7 +141,7 @@ class CustomMirrorRepositoriesList(ListManager[CustomRepository]):
 
 
 class CustomMirrorServersList(ListManager[CustomServer]):
-	def __init__(self, custom_servers: list[CustomServer]):
+	def __init__(self, custom_servers: list[CustomServer]) -> None:
 		self._actions = [
 			tr('Add a custom server'),
 			tr('Change custom server'),
@@ -206,7 +206,7 @@ class MirrorMenu(AbstractSubMenu[MirrorConfiguration]):
 		self,
 		mirror_list_handler: MirrorListHandler,
 		preset: MirrorConfiguration | None = None,
-	):
+	) -> None:
 		if preset:
 			self._mirror_config = preset
 		else:

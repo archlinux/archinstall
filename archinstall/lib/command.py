@@ -23,7 +23,7 @@ class SysCommandWorker:
 		environment_vars: dict[str, str] | None = None,
 		working_directory: str = './',
 		remove_vt100_escape_codes_from_lines: bool = True,
-	):
+	) -> None:
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
 
@@ -232,7 +232,7 @@ class SysCommand:
 		environment_vars: dict[str, str] | None = None,
 		working_directory: str = './',
 		remove_vt100_escape_codes_from_lines: bool = True,
-	):
+	) -> None:
 		self.cmd = cmd
 		self.peek_output = peek_output
 		self.environment_vars = environment_vars

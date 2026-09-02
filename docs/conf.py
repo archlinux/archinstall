@@ -1,17 +1,18 @@
 import os
 import re
 import sys
+from typing import Any
 
 sys.path.insert(0, os.path.abspath('..'))
 
 
-def process_docstring(app, what, name, obj, options, lines) -> None:  # type: ignore[no-untyped-def]
+def process_docstring(app: Any, what: Any, name: Any, obj: Any, options: Any, lines: Any) -> None:
 	spaces_pat = re.compile(r'( {8})')
 	ll = [spaces_pat.sub('    ', line) for line in lines]
 	lines[:] = ll
 
 
-def setup(app) -> None:  # type: ignore[no-untyped-def]
+def setup(app: Any) -> None:
 	app.connect('autodoc-process-docstring', process_docstring)
 
 

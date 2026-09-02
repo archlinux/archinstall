@@ -51,7 +51,7 @@ class DiskMenuConfig:
 
 
 class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
-	def __init__(self, disk_layout_config: DiskLayoutConfiguration | None):
+	def __init__(self, disk_layout_config: DiskLayoutConfiguration | None) -> None:
 		if not disk_layout_config:
 			self._disk_menu_config = DiskMenuConfig(
 				disk_config=None,
