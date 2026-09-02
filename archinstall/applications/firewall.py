@@ -32,6 +32,43 @@ class FirewallApp:
 			'firewalld.service',
 		]
 
+	def _allow_ufw_ssh_on_first_boot(self, install_session: Installer) -> None:
+		service_content = """[Unit]
+			Description=Allow SSH in UFW on first boot
+			After=ufw.service
+			Wants=ufw.service
+
+			[Service]
+			Type=oneshot
+			ExecStart=/usr/bin/ufw allow SSH
+			ExecStartPost=/usr/bin/systemctl disable ufw-allow-ssh.service
+
+			[Install]
+			WantedBy=multi-user.target
+		"""
+		service_path = install_session.target / 'etc/systemd/system/ufw-allow-ssh.service'
+		service_path.write_text(service_content)
+		install_session.enable_service(['ufw-allow-ssh.service'])
+
+	def _allow_fwd_ssh_on_first_boot(self, install_session: Installer) -> None:
+		service_content = """[Unit]
+            Description=Allow SSH in firewalld on first boot
+            After=firewalld.service
+            Wants=firewalld.service
+
+            [Service]
+            Type=oneshot
+            ExecStart=/usr/bin/firewall-cmd --permanent --add-service=ssh
+            ExecStart=/usr/bin/firewall-cmd --reload
+            ExecStartPost=/usr/bin/systemctl disable firewalld-allow-ssh.service
+
+            [Install]
+            WantedBy=multi-user.target
+        """
+		service_path = install_session.target / 'etc/systemd/system/firewalld-allow-ssh.service'
+		service_path.write_text(service_content)
+		install_session.enable_service(['firewalld-allow-ssh.service'])
+
 	def install(
 		self,
 		install_session: Installer,
@@ -47,6 +84,12 @@ class FirewallApp:
 				ufw_conf = install_session.target / 'etc/ufw/ufw.conf'
 				ufw_conf.write_text(ufw_conf.read_text().replace('ENABLED=no', 'ENABLED=yes'))
 
+				if firewall_config.allow_ssh:
+					self._allow_ufw_ssh_on_first_boot(install_session)
+
 			case Firewall.FWD:
 				install_session.add_additional_packages(self.fwd_packages)
 				install_session.enable_service(self.fwd_services)
+
+				if firewall_config.allow_ssh:
+					self._allow_fwd_ssh_on_first_boot(install_session)
