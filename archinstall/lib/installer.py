@@ -1337,6 +1337,7 @@ class Installer:
 		efi_partition: PartitionModification | None,
 		uki_enabled: bool = False,
 		bootloader_removable: bool = False,
+		os_prober: bool = False,
 	) -> None:
 		debug('Installing grub bootloader')
 
@@ -1433,6 +1434,31 @@ class Installer:
 				count=1,
 				flags=re.MULTILINE,
 			)
+
+			grub_default.write_text(config)
+
+		if os_prober:
+			debug('Enabling os-prober in GRUB configuration')
+
+			# fuse3 enables grub-mount, which os-prober requires to inspect
+			# partitions that are not mounted (e.g. Windows on another disk)
+			self.pacman.strap(['os-prober', 'fuse3'])
+
+			# grub-mkconfig only runs os-prober when GRUB_DISABLE_OS_PROBER is
+			# explicitly set to false; the stock config ships the option commented out
+			grub_default = self.target / 'etc/default/grub'
+			config = grub_default.read_text()
+
+			config, count = re.subn(
+				r'^#?GRUB_DISABLE_OS_PROBER=.*$',
+				'GRUB_DISABLE_OS_PROBER=false',
+				config,
+				count=1,
+				flags=re.MULTILINE,
+			)
+
+			if count == 0:
+				config += '\nGRUB_DISABLE_OS_PROBER=false\n'
 
 			grub_default.write_text(config)
 
@@ -1839,7 +1865,12 @@ class Installer:
 			error('Error generating initramfs (continuing anyway)')
 
 	def add_bootloader(
-		self, bootloader: Bootloader, uki_enabled: bool = False, bootloader_removable: bool = False, plymouth: PlymouthTheme | None = None
+		self,
+		bootloader: Bootloader,
+		uki_enabled: bool = False,
+		bootloader_removable: bool = False,
+		plymouth: PlymouthTheme | None = None,
+		os_prober: bool = False,
 	) -> None:
 		"""
 		Adds a bootloader to the installation instance.
@@ -1854,6 +1885,7 @@ class Installer:
 		:param uki_enabled: Whether to use unified kernel images
 		:param bootloader_removable: Whether to install to removable media location (UEFI only, for GRUB and Limine)
 		:param plymouth: Optional Plymouth theme to install and configure
+		:param os_prober: Whether to enable os-prober so grub-mkconfig detects other operating systems (GRUB only)
 		"""
 
 		for plugin in plugins.values():
@@ -1889,6 +1921,11 @@ class Installer:
 				warn(f'Bootloader {bootloader.value} lacks removable support; disabling.')
 				bootloader_removable = False
 
+		# validate os-prober option
+		if os_prober and not bootloader.has_os_prober_support():
+			warn(f'Bootloader {bootloader.value} does not support os-prober; disabling.')
+			os_prober = False
+
 		if plymouth is not None:
 			self._install_plymouth(plymouth)
 
@@ -1905,7 +1942,7 @@ class Installer:
 			case Bootloader.Systemd:
 				self._add_systemd_bootloader(boot_partition, root, efi_partition, uki_enabled)
 			case Bootloader.Grub:
-				self._add_grub_bootloader(boot_partition, root, efi_partition, uki_enabled, bootloader_removable)
+				self._add_grub_bootloader(boot_partition, root, efi_partition, uki_enabled, bootloader_removable, os_prober)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
 			case Bootloader.Limine:
