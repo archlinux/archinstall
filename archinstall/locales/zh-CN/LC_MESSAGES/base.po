@@ -1231,7 +1231,7 @@ msgid "Delete right to start of word"
 msgstr "向右删除至下一个单词开头"
 
 msgid "Down"
-msgstr "下"
+msgstr "向下"
 
 msgid "End"
 msgstr "末尾"
