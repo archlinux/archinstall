@@ -19,10 +19,7 @@ from textual.widgets.option_list import Option
 from textual.widgets.selection_list import Selection
 from textual.worker import WorkerCancelled
 
-from archinstall.default_profiles.profile import GreeterType
 from archinstall.lib.log import debug
-from archinstall.lib.models.authentication import AuthenticationConfiguration
-from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 from archinstall.tui.result import Result, ResultType
@@ -65,24 +62,19 @@ def _get_status_prefix(group: MenuItemGroup, item: MenuItem) -> str:
 	- ! (Yellow) for unconfigured items
 	"""
 
-	is_special_key = item.text in ['← ' + tr('Back'), tr('Save configuration'), tr('Install'), tr('Abort')]
-
-	if item.read_only or is_special_key:
-		return ''
-
-	if item.key == 'auth_config':
-		auth_config: AuthenticationConfiguration | None = item.value
+	if item.key == 'auth_config' and item.text == tr('Authentication'):
+		auth_config = item.value
 		if (auth_config is None or auth_config.root_enc_password is None) and not (auth_config and auth_config.has_superuser()):
 			return '[bold yellow]![/bold yellow] '
 		return '  '
 	elif item.key == 'profile_config':
 		auth_item = group.find_by_key('auth_config')
-		auth_config: AuthenticationConfiguration | None = auth_item.value if auth_item else None
-		profile_config: ProfileConfiguration | None = item.value
+		auth_config = auth_item.value if auth_item else None
+		profile_config = item.value
 		if not (auth_config and auth_config.has_regular_user()):
 			if profile_config and profile_config.profile and profile_config.profile.is_desktop_profile():
-				problematic_greeters = {GreeterType.Sddm}
-				if any(p.default_greeter_type in problematic_greeters for p in profile_config.profile.current_selection):
+				problematic_greeters = {'sddm'}
+				if any(p.default_greeter_type.value in problematic_greeters for p in profile_config.profile.current_selection):
 					return '[bold yellow]![/bold yellow] '
 		return '  '
 	elif item.key == 'disk_config':
@@ -236,7 +228,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		max-height: 100%;
 
 		margin-top: 2;
-		margin-left: 2;
+		margin-left: 1;
 
 		background: transparent;
 	}
@@ -471,7 +463,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		max-height: 100%;
 
 		margin-top: 2;
-		margin-left: 2;
+		margin-left: 1;
 
 		background: transparent;
 	}
