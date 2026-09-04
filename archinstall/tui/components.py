@@ -55,6 +55,36 @@ def _translate_bindings(source: BindingsMap | None, target: BindingsMap) -> None
 		target.key_to_bindings[key] = [replace(b, description=tr(b.description)) if b.description else b for b in bindings]
 
 
+def _get_status_prefix(group: MenuItemGroup, item: MenuItem) -> str:
+	"""
+	Returns a rich-formatted status prefix icon depending on item state:
+	- Space for configured items
+	- ! (Yellow) for unconfigured items
+	"""
+
+	if item.key == 'auth_config' and item.text == tr('Authentication'):
+		auth_config = item.value
+		if (auth_config is None or auth_config.root_enc_password is None) and not (auth_config and auth_config.has_superuser()):
+			return '[bold yellow]![/bold yellow] '
+		return '  '
+	elif item.key == 'profile_config':
+		auth_item = group.find_by_key('auth_config')
+		auth_config = auth_item.value if auth_item else None
+		profile_config = item.value
+		if not (auth_config and auth_config.has_regular_user()):
+			if profile_config and profile_config.profile and profile_config.profile.is_desktop_profile():
+				problematic_greeters = {'sddm'}
+				if any(p.default_greeter_type.value in problematic_greeters for p in profile_config.profile.current_selection):
+					return '[bold yellow]![/bold yellow] '
+		return '  '
+	elif item.key == 'disk_config' and item.text == tr('Disk configuration'):
+		if item.value is None:
+			return '[bold yellow]![/bold yellow] '
+		return '  '
+	else:
+		return '  '
+
+
 class BaseScreen(Screen[Result[ValueT]]):
 	BINDINGS: ClassVar = [
 		Binding('escape', 'cancel_operation', 'Cancel', show=True),
@@ -198,7 +228,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		max-height: 100%;
 
 		margin-top: 2;
-		margin-left: 2;
+		margin-left: 1;
 
 		background: transparent;
 	}
@@ -287,7 +317,8 @@ class OptionListScreen(BaseScreen[ValueT]):
 
 		for item in self._group.get_enabled_items():
 			disabled = True if item.read_only else False
-			options.append(Option(item.text, id=item.get_id(), disabled=disabled))
+			option_text = _get_status_prefix(self._group, item) + item.text
+			options.append(Option(option_text, id=item.get_id(), disabled=disabled))
 
 		return options
 
@@ -432,7 +463,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		max-height: 100%;
 
 		margin-top: 2;
-		margin-left: 2;
+		margin-left: 1;
 
 		background: transparent;
 	}
@@ -520,7 +551,8 @@ class SelectListScreen(BaseScreen[ValueT]):
 
 		for item in self._group.get_enabled_items():
 			is_selected = item in self._selected_items
-			selection = Selection(item.text, item, is_selected)
+			selection_text = _get_status_prefix(self._group, item) + item.text
+			selection = Selection(selection_text, item, is_selected)
 			selections.append(selection)
 
 		return selections
