@@ -77,7 +77,7 @@ def _get_status_prefix(group: MenuItemGroup, item: MenuItem) -> str:
 				if any(p.default_greeter_type.value in problematic_greeters for p in profile_config.profile.current_selection):
 					return '[bold yellow]![/bold yellow] '
 		return '  '
-	elif item.key == 'disk_config':
+	elif item.key == 'disk_config' and item.text == tr('Disk configuration'):
 		if item.value is None:
 			return '[bold yellow]![/bold yellow] '
 		return '  '
