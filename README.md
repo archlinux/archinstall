@@ -137,7 +137,7 @@ For an example of a fully scripted, interactive installation please refer to the
 
 ## Script non-interactive automated installation
 
-For an example of a fully scripted, automated installation please refer to the example
+For an example of a fully scripted, automated installation please refer to the example:
 [full_automated_installation.py](https://github.com/archlinux/archinstall/blob/master/examples/full_automated_installation.py)
 
 # Profiles
