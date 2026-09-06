@@ -518,7 +518,7 @@ class _BtrfsSubvolumeInfo:
 @dataclass
 class _PartitionInfo:
 	partition: Partition
-	name: str
+	name: str | None
 	type: PartitionType
 	fs_type: FilesystemType | None
 	path: Path
@@ -541,7 +541,6 @@ class _PartitionInfo:
 		end = self.start + self.length
 
 		part_info = {
-			'Name': self.name,
 			'Type': self.type.value,
 			'Filesystem': self.fs_type.value if self.fs_type else tr('Unknown'),
 			'Path': str(self.path),
@@ -550,6 +549,9 @@ class _PartitionInfo:
 			'Size': self.length.format_highest(),
 			'Flags': ', '.join(f.description for f in self.flags),
 		}
+
+		if self.name is not None:
+			part_info = {'Name': self.name, **part_info}
 
 		if self.btrfs_subvol_infos:
 			part_info['Btrfs vol.'] = f'{len(self.btrfs_subvol_infos)} subvolumes'
@@ -584,7 +586,7 @@ class _PartitionInfo:
 
 		return cls(
 			partition=partition,
-			name=partition.get_name(),
+			name=partition.name,
 			type=partition_type,
 			fs_type=fs_type,
 			path=Path(partition.path),
