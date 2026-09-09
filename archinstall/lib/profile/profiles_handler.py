@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, NotRequired, TypedDict
 from archinstall.default_profiles.profile import CustomSetting, GreeterType, Profile
 from archinstall.lib.hardware import GfxDriver, GfxPackage
 from archinstall.lib.log import debug, error, info
+from archinstall.lib.models.package_types import InstallationPackage
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.networking import fetch_data_from_url
 from archinstall.lib.translationhandler import tr
@@ -154,29 +155,29 @@ class ProfileHandler:
 
 		match greeter:
 			case GreeterType.LightdmSlick:
-				packages = ['lightdm', 'lightdm-slick-greeter']
+				packages = [InstallationPackage.LIGHTDM.value, InstallationPackage.LIGHTDM_SLICK_GREETER.value]
 				service = ['lightdm']
 			case GreeterType.Lightdm:
-				packages = ['lightdm', 'lightdm-gtk-greeter']
+				packages = [InstallationPackage.LIGHTDM.value, InstallationPackage.LIGHTDM_GTK_GREETER.value]
 				service = ['lightdm']
 			case GreeterType.Sddm:
-				packages = ['sddm']
+				packages = [InstallationPackage.SDDM.value]
 				service = ['sddm']
 			case GreeterType.Gdm:
-				packages = ['gdm']
+				packages = [InstallationPackage.GDM.value]
 				service = ['gdm']
 			case GreeterType.Ly:
-				packages = ['ly']
+				packages = [InstallationPackage.LY.value]
 				service = ['ly@tty1']
 				service_disable = ['getty@tty1']
 			case GreeterType.CosmicSession:
-				packages = ['cosmic-greeter']
+				packages = [InstallationPackage.COSMIC_GREETER.value]
 				service = ['cosmic-greeter']
 			case GreeterType.PlasmaLoginManager:
-				packages = ['plasma-login-manager']
+				packages = [InstallationPackage.PLASMA_LOGIN_MANAGER.value]
 				service = ['plasmalogin']
 			case GreeterType.GreetdDms:
-				packages = ['greetd']
+				packages = [InstallationPackage.GREETD.value]
 				service = ['greetd']
 
 		if packages:

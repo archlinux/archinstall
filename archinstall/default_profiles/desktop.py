@@ -4,6 +4,7 @@ from archinstall.default_profiles.desktops.utils import provision_seat_access
 from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType, SelectResult
 from archinstall.lib.log import info
 from archinstall.lib.menu.helpers import Selection
+from archinstall.lib.models.package_types import InstallationPackage
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
@@ -112,7 +113,7 @@ class DesktopProfile(Profile):
 			install_session.enable_service(profile.services)
 
 			if not xorg_installed and profile.display_server == DisplayServerType.Xorg:
-				install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
+				install_session.add_additional_packages([InstallationPackage.XORG_SERVER.value, InstallationPackage.XORG_XINIT.value])
 				xorg_installed = True
 
 			profile.install(install_session)

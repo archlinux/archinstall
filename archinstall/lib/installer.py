@@ -49,7 +49,7 @@ from archinstall.lib.models.device import (
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import Nic
-from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
+from archinstall.lib.models.package_types import DEFAULT_KERNEL, InstallationPackage, Kernel
 from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.users import User
@@ -799,7 +799,7 @@ class Installer:
 			if enable_services:
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self._helper_flags.get('base', False) is False:
-					self._base_packages.append('iwd')
+					self._base_packages.append(InstallationPackage.IWD.value)
 
 					# This function will be called after minimal_installation()
 					# as a hook for post-installs. This hook is only needed if
@@ -811,7 +811,7 @@ class Installer:
 				# Otherwise, we can go ahead and add the required package
 				# and enable it's service:
 				else:
-					self.pacman.strap('iwd')
+					self.pacman.strap(InstallationPackage.IWD.value)
 					self.enable_service('iwd')
 
 		self.systemd_resolved_stub_mode()
@@ -890,7 +890,7 @@ class Installer:
 	def _prepare_encrypt(self, before: str = 'filesystems') -> None:
 		if self._disk_encryption.hsm_device:
 			# Required by mkinitcpio to add support for fido2-device options
-			self.pacman.strap('libfido2')
+			self.pacman.strap(InstallationPackage.LIBFIDO2.value)
 
 			if 'sd-encrypt' not in self._hooks:
 				self._hooks.insert(self._hooks.index(before), 'sd-encrypt')
@@ -907,7 +907,7 @@ class Installer:
 		pacman_config: PacmanConfiguration | None = None,
 	) -> None:
 		if self._disk_config.lvm_config:
-			lvm = 'lvm2'
+			lvm = InstallationPackage.LVM2.value
 			self.add_additional_packages(lvm)
 			self._hooks.insert(self._hooks.index('filesystems') - 1, lvm)
 
@@ -999,7 +999,7 @@ class Installer:
 	) -> None:
 		if snapshot_type == SnapshotType.Snapper:
 			debug('Setting up Btrfs snapper')
-			self.pacman.strap('snapper')
+			self.pacman.strap(InstallationPackage.SNAPPER.value)
 
 			snapper: dict[str, str] = {
 				'root': '/',
@@ -1020,20 +1020,20 @@ class Installer:
 		elif snapshot_type == SnapshotType.Timeshift:
 			debug('Setting up Btrfs timeshift')
 
-			self.pacman.strap('cronie')
-			self.pacman.strap('timeshift')
+			self.pacman.strap(InstallationPackage.CRONIE.value)
+			self.pacman.strap(InstallationPackage.TIMESHIFT.value)
 			self.enable_service('cronie.service')
 
 		if bootloader and bootloader == Bootloader.Grub:
 			debug('Setting up grub integration for either')
-			self.pacman.strap('grub-btrfs')
-			self.pacman.strap('inotify-tools')
+			self.pacman.strap(InstallationPackage.GRUB_BTRFS.value)
+			self.pacman.strap(InstallationPackage.INOTIFY_TOOLS.value)
 			self._configure_grub_btrfsd(snapshot_type)
 			self.enable_service('grub-btrfsd.service')
 
 	def setup_swap(self, algo: ZramAlgorithm = ZramAlgorithm.ZSTD) -> None:
 		info('Setting up swap on zram')
-		self.pacman.strap('zram-generator')
+		self.pacman.strap(InstallationPackage.ZRAM_GENERATOR.value)
 
 		info(f'Zram compression algorithm: {algo.value}')
 
@@ -1250,7 +1250,7 @@ class Installer:
 	) -> None:
 		debug('Installing systemd bootloader')
 
-		self.pacman.strap('efibootmgr')
+		self.pacman.strap(InstallationPackage.EFIBOOTMGR.value)
 
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
@@ -1340,7 +1340,7 @@ class Installer:
 	) -> None:
 		debug('Installing grub bootloader')
 
-		self.pacman.strap('grub')
+		self.pacman.strap(InstallationPackage.GRUB.value)
 
 		info(f'GRUB boot partition: {boot_partition.dev_path}')
 
@@ -1354,7 +1354,7 @@ class Installer:
 
 			info(f'GRUB EFI partition: {efi_partition.dev_path}')
 
-			self.pacman.strap('efibootmgr')  # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+			self.pacman.strap(InstallationPackage.EFIBOOTMGR.value)
 
 			boot_dir_arg = []
 			if boot_partition.mountpoint and boot_partition.mountpoint != boot_dir:
@@ -1455,7 +1455,7 @@ class Installer:
 	) -> None:
 		debug('Installing Limine bootloader')
 
-		self.pacman.strap('limine')
+		self.pacman.strap(InstallationPackage.LIMINE.value)
 
 		info(f'Limine boot partition: {boot_partition.dev_path}')
 
@@ -1464,7 +1464,7 @@ class Installer:
 		hook_command = None
 
 		if SysInfo.has_uefi():
-			self.pacman.strap('efibootmgr')
+			self.pacman.strap(InstallationPackage.EFIBOOTMGR.value)
 
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
@@ -1619,7 +1619,7 @@ class Installer:
 	) -> None:
 		debug('Installing efistub bootloader')
 
-		self.pacman.strap('efibootmgr')
+		self.pacman.strap(InstallationPackage.EFIBOOTMGR.value)
 
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
@@ -1675,7 +1675,7 @@ class Installer:
 	) -> None:
 		debug('Installing rEFInd bootloader')
 
-		self.pacman.strap('refind')
+		self.pacman.strap(InstallationPackage.REFIND.value)
 
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
@@ -1767,7 +1767,7 @@ class Installer:
 
 	def _install_plymouth(self, plymouth: PlymouthTheme) -> None:
 		debug(f'Installing plymouth with theme: {plymouth.value}')
-		self.add_additional_packages(['plymouth'])
+		self.add_additional_packages([InstallationPackage.PLYMOUTH.value])
 
 		for param in ('quiet', 'splash'):
 			if param not in self._kernel_params:
@@ -2041,7 +2041,7 @@ class Installer:
 		font_vconsole = locale_config.console_font
 
 		if font_vconsole.startswith('ter-'):
-			self.pacman.strap(['terminus-font'])
+			self.pacman.strap([InstallationPackage.TERMINUS_FONT.value])
 
 		# Ensure /etc exists
 		vconsole_dir: Path = self.target / 'etc'

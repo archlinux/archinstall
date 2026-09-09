@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from archinstall.lib.command import SysCommandWorker
 from archinstall.lib.log import debug, info
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
+from archinstall.lib.models.package_types import InstallationPackage
 from archinstall.lib.models.users import User
 from archinstall.lib.translationhandler import tr
 
@@ -79,7 +80,7 @@ class AuthenticationHandler:
 	) -> None:
 		debug(f'Setting up U2F login: {u2f_config.u2f_login_method.value}')
 
-		install_session.pacman.strap('pam-u2f')
+		install_session.pacman.strap(InstallationPackage.PAM_U2F.value)
 
 		print(tr('Setting up U2F login: {}').format(u2f_config.u2f_login_method.value))
 
