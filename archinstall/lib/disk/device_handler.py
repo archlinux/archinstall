@@ -192,7 +192,11 @@ class DeviceHandler:
 		subvol_infos: list[_BtrfsSubvolumeInfo] = []
 
 		if not lsblk_info.mountpoint:
-			mount(dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			try:
+				mount(dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			except DiskError as err:
+				debug(f'Unable to read btrfs subvolumes on {dev_path}: {err}')
+				return subvol_infos
 			mountpoint = self._TMP_BTRFS_MOUNT
 		else:
 			# when multiple subvolumes are mounted then the lsblk output may look like
