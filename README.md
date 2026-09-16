@@ -1,71 +1,72 @@
-<!-- <div align="center"> -->
-<img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
+<img width="1024" height="1024" alt="avatar" src="https://github.com/user-attachments/assets/7f25d282-c0a6-40fd-a05d-cd5a536d432c" /><!-- <div align="centro"> -->
+<img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="disegno" larghezza="200"/>
 
 <!-- </div> -->
-# Arch Installer
-[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
+# Installatore di archi
+[![Segui il lint di Python e trova errori di sintassi](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
-Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
-The installer also doubles as a python library to install Arch Linux and manage services, packages, and other things inside the installed system *(Usually from a live medium or from an existing installation)*.
+Solo un altro guidato/automatizzato [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installatore con una svolta.
+Il programma di installazione funge anche da libreria Python per installare Arch Linux e gestire servizi, pacchetti e altri cose all'interno del sistema installato *(Di solo da un supporto vivo o da un'installazione esistente)*.
 
-* archinstall [discord](https://discord.gg/aDeMffrxNg) server
-* archinstall [#archinstall:matrix.org](https://matrix.to/#/#archinstall:matrix.org) Matrix channel
-* archinstall [#archinstall@irc.libera.chat:6697](https://web.libera.chat/?channel=#archinstall)
-* archinstall [documentation](https://archinstall.archlinux.page/)
+* archinstall [discordia](https://discord.gg/aDeMffrxNg) server
+* archinstall [#archinstall:matrix.org](https://matrix.to/#/#archinstall:matrix.org) Canale Matrice
+* archinstall [#archinstallailhashtagmailha:6697](https://web.libera.chat/?channel=#archinstall)
+* archinstall [documentazione](https://archinstall.archlinux.page/)
 
-# Installation & Usage
-> [!TIP]
-> In the ISO you are root by default. Use sudo if running from an existing system.
+# Installazione e utilizzo
+> [!MANCIA]
+> Nell'ISO sei root per impostazione predefinita. Utilizzare sudo se si esegue da un sistema esistente.
 
-```shell
+```![Cariato avatar.png…][Cariato avatar.png…]()
+conchiglia
 pacman-key --init
 pacman -Sy archinstall
 archinstall
 ```
 
-Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall)) or `pip install --upgrade archinstall`.
+I modi alternativi per installare sono `git clone` il repository (ed è meglio poiché ottieni il codice più recente indipendentemente da [dati di costruzione](https://archlinux.org/packages/?sort=&q=archinstall)) O `pip install - aggiorna archinstall`.
 
-## Upgrade `archinstall` on live Arch ISO image
+## Aggiornamento `archinstall` sull'immagine live Arch ISO
 
-Upgrading archinstall on the ISO needs to be done via a full system upgrade using
+L'aggiornamento di archinstall sull'ISO deve essere effettuato tramite un aggiornamento completo del sistema utilizzando
 
-```shell
-pacman -Syu
+```conchiglia
+pacman-Syu
 ```
 
-When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow running a re-installation or upgrade of the installer.
-In case one runs into this issue, any of the following can be used
+Quando si avvia da una chiavetta USB attiva, lo spazio sul disco di RAM è limitato e potenbbe non essere sufficiente per consentire l'esecuzione di una reinstallazione o di un aggiornamento del programma di installazione.
+Nel caso in cui si riscontri questo problema, è possibile utilizzare uno dei seguenti
 
-* Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
-* Specify the boot parameter copytoram=y (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) which will copy the root filesystem to tmpfs
+* Ridimensione la partecipazione radice https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
+* Specificare il parametro di avvio copytoram=y (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) che copia la radice del file system in tmpfs
 
-## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
+## Sezione del [Guidato](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) programma di installazione
 
-Assuming you are on an Arch Linux live-ISO or installed via `pip`, `archinstall` will use the `guided` script by default
-```shell
+Supponendo che tu sia su un Arch Linux live-ISO o installato tramite `pip`, `archinstall` utilizzo il `Guidato` copia per imposizione predefinita
+```conchiglia
 archinstall
 ```
-similar goes for running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
+similitudine vale per l'esecuzione del [Guidato](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) programma di installazione utilizzando `git`
 
-```shell
+```conchiglia
 git clone https://github.com/archlinux/archinstall
 cd archinstall
 python -m archinstall $@
 ```
 
-To run alternative scripts using the `--script` parameter
+Per eseguire script alternativi utilizzando il `--script` parametro
 
 ```
-archinstall --script <name>
+archinstall --script <nome>
 ```
 
-#### Advanced
-Some additional options that most users do not need are hidden behind the `--advanced` flag and all options/args can be consulted through `-h` or `--help`.
+#### Avanzato
+Alcune opzioni aggiuntive di cui la maggiore parte degli utenti non ha bisogno sono nascoste dietro `--avanzato` bandiera e tutte le opzioni/argomenti possono esse consultati tramite `-h` O `--aiuto`.
 
-## Running from a declarative configuration file or URL
+## Sezione da un file di configurazione dichiarativo o da un URL
 
-`archinstall` can be run with a JSON configuration file. There are 2 different configuration files to consider,
-the `user_configuration.json` contains all general installation configuration, whereas the `user_credentials.json`
+`archinstall` può essere eseguito con un file di configurazione JSON. Ci sono 2 diversi file di configurazione da considerare,
+il `configurazione_utente.json` contiene tutta la configurazione generale dell'installazione, mentre il `credenti_utente.json`
 contains the sensitive user configuration such as user password, root password, and encryption password.
 
 An example of the user configuration file can be found here
@@ -199,20 +200,20 @@ You may want to boot an ISO image in a VM to test `archinstall` in there.
 qemu-system-x86_64 -enable-kvm \
 -machine q35,accel=kvm -device intel-iommu \
 -cpu host -m 4096 -boot order=d \
--drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
--drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd \
--drive file=./archlinux-2025.12.01-x86_64.iso,format=raw
+-drive if=pflash,formato=raw,sola lettura,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
+-drive if=pflash,formato=raw,sola lettura,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd \
+-file di unità=./archlinux-2025.12.01-x86_64.iso,format=raw
 ```
 
-HINT: For espeakup support
+SUGGERIMENTO: Per il supporto di espeakup
 ```
-qemu-system-x86_64 -enable-kvm \
--machine q35,accel=kvm -device intel-iommu \
--cpu host -m 4096 -boot order=d \
--drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
--drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd \
--drive file=./archlinux-2025.12.01-x86_64.iso,format=raw \
--device intel-hda -device hda-duplex,audiodev=snd0 \
+qemu-system-x86_64 -abilita-kvm \
+-macchina q35,accel=kvm -dispositivo intel-iommu \
+-host CPU -m 4096 -ordine di avvio=d \
+-drive if=pflash,formato=raw,sola lettura,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
+-drive if=pflash,formato=raw,sola lettura,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd \
+-file di unità=./archlinux-2025.12.01-x86_64.iso,format=raw \
+-dispositivo intel-hda -dispositivo hda-duplex,audiodev=snd0 \
 -audiodev pa,id=snd0,server=/run/user/1000/pulse/native
 ```
 
@@ -221,49 +222,49 @@ qemu-system-x86_64 -enable-kvm \
 
 ## AUR
 
-`archinstall` will not offer or bundle AUR helpers or AUR packages due to a current consensus. This is not any individual developers decision. The reasons and discussions for this stance on the topic can be found on our mailing list thread: [(optional) AUR helper in archinstall](https://lists.archlinux.org/archives/list/arch-dev-public@lists.archlinux.org/thread/VYOULH2GOJLFM2BXOFLWH3D754YXFPSL/).
+`archinstall` non offrirà né raggrupperà helper AUR o pacchetti AUR a causa di un consenso attuale. Questa non è una decisione presa da singoli sviluppatori. Le ragioni e le discussioni di questa posizione sull'argomento possono essere trovate nel thread della nostra mailing list: [(facoltativo) Aiutante AUR in archinstall](https://lists.archlinux.org/archives/list/arch-dev-public@lists.archlinux.org/thread/VYOULH2GOJLFM2BXOFLWH3D754YXFPSL/).
 
-## Keyring out-of-date
-For a description of the problem see https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 and discussion in issue https://github.com/archlinux/archinstall/issues/2213.
+## Portachiavi obsoleto
+Per una descrizione del problema vedere https://archinstall.archlinux.page/help/known_issues.html#keyring-is-out-of-date-2213 e la discussione in questione https://github.com/archlinux/archinstall/issues/2213.
 
-For a quick fix the below command will install the latest keyrings
+Per una soluzione rapida, il comando seguente installerà i portachiavi più recenti
 
 ```pacman -Sy archlinux-keyring```
 
-## How to dual boot with Windows
+## Come eseguire il dual boot con Windows
 
-To install Arch Linux alongside an existing Windows installation using  `archinstall`, follow these steps:
+Per installare Arch Linux insieme a un'installazione Windows esistente utilizzando  `archinstall`, segui questi passaggi:
 
-1. Ensure some unallocated space is available for the Linux installation after the Windows installation.
-2. Boot into the ISO and run `archinstall`.
-3. Choose `Disk configuration` -> `Manual partitioning`.
-4. Select the disk on which Windows resides.
-5. Select `Create a new partition`.
-6. Choose a filesystem type.
-7. Determine the start and end sectors for the new partition location (values can be suffixed with various units).
-8. Assign the mountpoint `/` to the new partition.
-9. Assign the `Boot/ESP` partition the mountpoint `/boot` from the partitioning menu.
-10. Confirm your settings and exit to the main menu by choosing `Confirm and exit`.
-11. Modify any additional settings for your installation as necessary.
-12. Start the installation upon completion of setup.
+1. Assicurarsi che dopo l'installazione di Windows sia disponibile spazio non allocato per l'installazione di Linux.
+2. Avviare nell'ISO ed eseguire `archinstall`.
+3. Scegliere `Configurazione del disco` -> `Partizionamento manuale`.
+4. Selezionare il disco su cui risiede Windows.
+5. Selezionare `Crea una nuova partizione`.
+6. Scegli un tipo di file system.
+7. Determinare i settori di inizio e fine per la nuova posizione della partizione (i valori possono essere suffissi con varie unità).
+8. Assegna il punto di montaggio `/` alla nuova partizione.
+9. Assegnare il `Avvio/ESP` partizionare il punto di montaggio `/stivale` dal menu di partizionamento.
+10. Conferma le tue impostazioni ed esci al menu principale scegliendo `Confermare ed uscire`.
+11. Se necessario, modifica eventuali impostazioni aggiuntive per l'installazione.
+12. Avviare l'installazione al termine della configurazione.
 
 
-# Mission Statement
+# Dichiarazione di missione
 
-Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) that follows
-the [Arch Linux Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages, and other Arch Linux aspects.
+Archinstall promette di spedire un [installatore guidato](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) che segue
+il [Principi di Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) nonché una libreria per gestire servizi, pacchetti e altri aspetti di Arch Linux.
 
-The guided installer ensures a user-friendly experience, offering optional selections throughout the process. Emphasizing its flexible nature, these options are never obligatory.
-In addition, the decision to use the guided installer remains entirely with the user, reflecting the Linux philosophy of providing full freedom and flexibility.
+L'installatore guidato garantisce un'esperienza di facile utilizzo, offrendo selezioni opzionali durante tutto il processo. Sottolineandone la natura flessibile, queste opzioni non sono mai obbligatorie.
+Inoltre, la decisione di utilizzare l'installer guidato spetta interamente all'utente, riflettendo la filosofia Linux di fornire piena libertà e flessibilità.
 
 ---
 
-Archinstall primarily functions as a flexible library for managing services, packages, and other elements within an Arch Linux system.
-This core library is the backbone for the guided installer that Archinstall provides. It is also designed to be used by those who wish to script their own custom installations.
+Archinstall funziona principalmente come una libreria flessibile per la gestione di servizi, pacchetti e altri elementi all'interno di un sistema Arch Linux.
+Questa libreria principale costituisce la spina dorsale del programma di installazione guidata fornito da Archinstall. È progettato anche per essere utilizzato da coloro che desiderano scrivere le proprie installazioni personalizzate.
 
-Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backward compatibility after notifying about such changes.
+Pertanto, Archinstall farà del suo meglio per non introdurre modifiche sostanziali, fatta eccezione per le versioni principali che potrebbero compromettere la compatibilità con le versioni precedenti dopo aver ricevuto notifica di tali modifiche.
 
 
-# Contributing
+# Contribuendo
 
-Please see [CONTRIBUTING.md](https://github.com/archlinux/archinstall/blob/master/CONTRIBUTING.md)
+Si prega di vedere [CONTRIBUENDO.md](https://github.com/archlinux/archinstall/blob/master/CONTRIBUTING.md)
