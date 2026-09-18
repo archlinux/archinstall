@@ -19,6 +19,14 @@ Some of the features of Archinstall are:
    installing/guided
 
 .. toctree::
+   :maxdepth: 1
+   :caption: Configuration
+
+   cli_parameters/config/disk_config
+   cli_parameters/config/disk_encryption
+   cli_parameters/config/custom_commands
+
+.. toctree::
    :maxdepth: 3
    :caption: Getting help
 

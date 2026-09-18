@@ -130,7 +130,7 @@ All available console fonts can be found in `/usr/share/kbd/consolefonts` and se
 ## Scripting interactive installation
 
 For an example of a fully scripted, interactive installation please refer to the example
-[interactive_installation.py](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py)
+[interactive_installation.py](https://github.com/archlinux/archinstall/blob/master/examples/interactive_installation.py)
 
 
 > **To create your own ISO with this script in it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on creating your own ISO.
@@ -182,7 +182,7 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd -drive if=pflash,format=raw,readonly,file=/usr/share/edk2/x64/OVMF_VARS.4m.fd
 
 This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
-`archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
+`archinstall` is installed and executed in [guided mode](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
 *(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium, so this won't work entirely out of the box, but that gives you a general idea of what we're going for here)*
 
 There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
