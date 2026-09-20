@@ -567,9 +567,9 @@ class SelectListScreen(BaseScreen[ValueT]):
 		self.query_one(SelectionList).focus()
 
 	def on_key(self, event: Key) -> None:
-		selection_list = self.query_one(SelectionList)
-
-		if not selection_list.has_focus or event.key != 'enter':
+		# Safely query SelectionList to avoid NoMatches crashes during screen transitions or key events.
+		selection_list = self.query(SelectionList).first()
+		if not selection_list or not selection_list.has_focus or event.key != 'enter':
 			return
 
 		if len(self._selected_items) < 1:
