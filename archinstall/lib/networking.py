@@ -25,7 +25,7 @@ class DownloadTimer:
 	Context manager for timing downloads with timeouts.
 	"""
 
-	def __init__(self, timeout: int = 5):
+	def __init__(self, timeout: int = 5) -> None:
 		"""
 		Args:
 			timeout:

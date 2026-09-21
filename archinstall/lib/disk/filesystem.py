@@ -31,7 +31,7 @@ from archinstall.lib.models.device import (
 
 
 class FilesystemHandler:
-	def __init__(self, disk_config: DiskLayoutConfiguration):
+	def __init__(self, disk_config: DiskLayoutConfiguration) -> None:
 		self._disk_config = disk_config
 		self._enc_config = disk_config.disk_encryption
 

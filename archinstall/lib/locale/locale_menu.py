@@ -13,7 +13,7 @@ class LocaleMenu(AbstractSubMenu[LocaleConfiguration]):
 	def __init__(
 		self,
 		locale_conf: LocaleConfiguration,
-	):
+	) -> None:
 		self._locale_conf = locale_conf
 		menu_options = self._define_menu_options()
 

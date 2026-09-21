@@ -45,6 +45,7 @@ repos:
         - hypothesis
         - cryptography
         - textual
+        - sphinx
   - repo: local
     hooks:
       - id: pylint

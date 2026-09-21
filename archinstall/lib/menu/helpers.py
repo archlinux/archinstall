@@ -21,7 +21,7 @@ class Selection[ValueT]:
 		multi: bool = False,
 		enable_filter: bool = False,
 		wrap_preview: bool = False,
-	):
+	) -> None:
 		self._header = header
 		self._title = title
 		self._group: MenuItemGroup = group
@@ -74,7 +74,7 @@ class Confirmation:
 		preset: bool = False,
 		preview_location: Literal['bottom'] | None = None,
 		preview_header: str | None = None,
-	):
+	) -> None:
 		self._header = header
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
@@ -108,7 +108,7 @@ class Confirmation:
 
 
 class Notify:
-	def __init__(self, header: str):
+	def __init__(self, header: str) -> None:
 		self._header = header
 
 	async def show(self) -> Result[bool]:
@@ -143,7 +143,7 @@ class Input:
 		allow_reset: bool = False,
 		validator_callback: Callable[[str], str | None] | None = None,
 		info_callback: Callable[[str], InputInfo | None] | None = None,
-	):
+	) -> None:
 		self._header = header
 		self._placeholder = placeholder
 		self._password = password
@@ -182,7 +182,7 @@ class Loading[ValueT]:
 		header: str | None = None,
 		timer: int = 3,
 		data_callback: Callable[[], Any] | None = None,
-	):
+	) -> None:
 		self._header = header
 		self._timer = timer
 		self._data_callback = data_callback
@@ -215,7 +215,7 @@ class Table[ValueT]:
 		multi: bool = False,
 		preview_location: Literal['bottom'] | None = None,
 		preview_header: str | None = None,
-	):
+	) -> None:
 		self._header = header
 		self._group = group
 		self._data_callback = group_callback
