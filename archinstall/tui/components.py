@@ -61,7 +61,7 @@ class BaseScreen(Screen[Result[ValueT]]):
 		Binding('ctrl+c', 'reset_operation', 'Reset', show=True),
 	]
 
-	def __init__(self, allow_skip: bool = False, allow_reset: bool = False):
+	def __init__(self, allow_skip: bool = False, allow_reset: bool = False) -> None:
 		super().__init__()
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
@@ -103,7 +103,7 @@ class LoadingScreen(BaseScreen[ValueT]):
 		timer: int = 3,
 		data_callback: Callable[[], Any] | None = None,
 		header: str | None = None,
-	):
+	) -> None:
 		super().__init__()
 		self._timer = timer
 		self._header = header
@@ -246,7 +246,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		preview_location: Literal['right', 'bottom'] | None = None,
 		enable_filter: bool = False,
 		wrap_preview: bool = False,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
 		self._header = header
@@ -479,7 +479,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		preview_location: Literal['right', 'bottom'] | None = None,
 		enable_filter: bool = False,
 		wrap_preview: bool = False,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
 		self._header = header
@@ -696,7 +696,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 		allow_reset: bool = False,
 		preview_location: Literal['bottom'] | None = None,
 		preview_header: str | None = None,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
 		self._header = header
@@ -780,7 +780,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 
 
 class NotifyScreen(ConfirmationScreen[ValueT]):
-	def __init__(self, header: str):
+	def __init__(self, header: str) -> None:
 		group = MenuItemGroup([MenuItem(tr('Ok'))])
 		super().__init__(group, header)
 
@@ -840,7 +840,7 @@ class InputScreen(BaseScreen[str]):
 		allow_skip: bool = False,
 		validator: Validator | None = None,
 		info_callback: Callable[[str], InputInfo | None] | None = None,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._header = header or ''
 		self._placeholder = placeholder or ''
@@ -999,7 +999,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 		multi: bool = False,
 		preview_location: Literal['bottom'] | None = None,
 		preview_header: str | None = None,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._header = header
 		self._group = group

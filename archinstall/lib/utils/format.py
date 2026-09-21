@@ -80,20 +80,12 @@ def _get_values(
 		return o.__dict__  # type: ignore[unreachable]
 
 
-def as_table(
+def table_components(
 	obj: list[Any],
 	class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 	filter_list: list[str] | None = None,
 	capitalize: bool = False,
-) -> str:
-	"""variant of as_table (subtly different code) which has two additional parameters
-	filter which is a list of fields which will be shown
-	class_formatter a special method to format the outgoing data
-
-	A general comment, the format selected for the output (a string where every data record is separated by newline)
-	is for compatibility with a print statement
-	As_table_filter can be a drop in replacement for as_table
-	"""
+) -> tuple[list[str], list[str]]:
 	if filter_list is None:
 		filter_list = []
 
@@ -111,7 +103,6 @@ def as_table(
 		filter_list = list(column_width.keys())
 
 	# create the header lines
-	output = ''
 	key_list = []
 	for key in filter_list:
 		width = column_width[key]
@@ -122,10 +113,15 @@ def as_table(
 
 		key_list.append(unicode_ljust(key, width))
 
-	output += ' | '.join(key_list) + '\n'
-	output += '-' * len(output) + '\n'
+	header_row = ' | '.join(key_list)
+
+	header = [
+		header_row,
+		'-' * len(header_row),
+	]
 
 	# create the data lines
+	rows = []
 	for record in raw_data:
 		obj_data = []
 		for key in filter_list:
@@ -140,6 +136,24 @@ def as_table(
 			else:
 				obj_data.append(unicode_ljust(str(value), width))
 
-		output += ' | '.join(obj_data) + '\n'
+		rows.append(' | '.join(obj_data))
 
-	return output
+	return header, rows
+
+
+def as_table(
+	obj: list[Any],
+	class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
+	filter_list: list[str] | None = None,
+	capitalize: bool = False,
+) -> str:
+	"""variant of as_table (subtly different code) which has two additional parameters
+	filter which is a list of fields which will be shown
+	class_formatter a special method to format the outgoing data
+
+	A general comment, the format selected for the output (a string where every data record is separated by newline)
+	is for compatibility with a print statement
+	As_table_filter can be a drop in replacement for as_table
+	"""
+	header, rows = table_components(obj, class_formatter, filter_list, capitalize)
+	return ''.join(item + '\n' for item in header + rows)

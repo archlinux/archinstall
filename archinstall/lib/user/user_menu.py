@@ -11,7 +11,7 @@ from archinstall.tui.result import ResultType
 
 
 class UserList(ListManager[User]):
-	def __init__(self, prompt: str, lusers: list[User]):
+	def __init__(self, prompt: str, lusers: list[User]) -> None:
 		self._actions = [
 			tr('Add a user'),
 			tr('Change password'),

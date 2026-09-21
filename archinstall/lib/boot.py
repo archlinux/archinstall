@@ -2,7 +2,7 @@ import time
 from collections.abc import Iterator
 from pathlib import Path
 from types import TracebackType
-from typing import ClassVar, Self
+from typing import Any, ClassVar, Self
 
 from archinstall.lib.command import SysCommand, SysCommandWorker
 from archinstall.lib.exceptions import SysCallError
@@ -12,7 +12,7 @@ from archinstall.lib.log import error
 class Boot:
 	_active_boot: ClassVar[Self | None] = None
 
-	def __init__(self, path: Path | str):
+	def __init__(self, path: Path | str) -> None:
 		if isinstance(path, Path):
 			path = str(path)
 
@@ -104,8 +104,8 @@ class Boot:
 
 		return self.session.is_alive()
 
-	def SysCommand(self, cmd: list[str], *args, **kwargs) -> SysCommand:  # type: ignore[no-untyped-def]
+	def SysCommand(self, cmd: list[str], *args: Any, **kwargs: Any) -> SysCommand:
 		return SysCommand(['systemd-run', f'--machine={self.container_name}', '--pty', *cmd], *args, **kwargs)
 
-	def SysCommandWorker(self, cmd: list[str], *args, **kwargs) -> SysCommandWorker:  # type: ignore[no-untyped-def]
+	def SysCommandWorker(self, cmd: list[str], *args: Any, **kwargs: Any) -> SysCommandWorker:
 		return SysCommandWorker(['systemd-run', f'--machine={self.container_name}', '--pty', *cmd], *args, **kwargs)
