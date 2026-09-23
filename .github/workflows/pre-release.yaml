@@ -52,7 +52,7 @@ jobs:
             --prerelease \
             --target "$GITHUB_SHA" \
             --title "dev (${GITHUB_SHA::7})" \
-            --notes "Automated build of $GITHUB_SHA." \
+            --notes "Automated build of: $GITHUB_SHA" \
             --generate-notes \
             --notes-start-tag "$last"
           # PoC: draft for the next real release. Drafts create no tag until
