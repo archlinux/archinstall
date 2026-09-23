@@ -1,0 +1,43 @@
+# Rolling pre-release: move `dev` tag per push.
+# follows python-publish.yml more or less.
+
+name: Pre-release archinstall
+
+on:
+  push:
+    branches: [ master ]
+
+concurrency:
+  group: pre-release
+  cancel-in-progress: true
+
+jobs:
+  pre-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    container:
+      image: archlinux/archlinux:latest
+      options: --privileged
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Prepare arch
+        run: |
+          pacman-key --init
+          pacman --noconfirm -Sy archlinux-keyring
+          pacman --noconfirm -Syyu
+          pacman --noconfirm -Sy python python-uv python-setuptools python-pip python-pyparted python-pydantic python-textual github-cli
+      - name: Build archinstall
+        run: |
+          uv build --no-build-isolation --wheel
+      - name: Publish pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release delete dev --cleanup-tag --yes || true
+          gh release create dev dist/*.whl \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "dev (${GITHUB_SHA::7})" \
+            --notes "Automated build of $GITHUB_SHA."
