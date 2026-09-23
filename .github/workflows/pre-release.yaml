@@ -3,9 +3,14 @@
 
 name: Pre-release archinstall
 
+# attempt to save some electrons
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - 'LICENSE'
 
 concurrency:
   group: pre-release
