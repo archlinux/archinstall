@@ -25,13 +25,16 @@ jobs:
       image: archlinux/archlinux:latest
       options: --privileged
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      # Before checkout: without git it downloads a tarball, no tags/history
       - name: Prepare arch
         run: |
           pacman-key --init
           pacman --noconfirm -Sy archlinux-keyring
           pacman --noconfirm -Syyu
-          pacman --noconfirm -Sy python python-uv python-setuptools python-pip python-pyparted python-pydantic python-textual github-cli
+          pacman --noconfirm -Sy python python-uv python-setuptools python-pip python-pyparted python-pydantic python-textual github-cli git
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
       - name: Build archinstall
         run: |
           uv build --no-build-isolation --wheel
@@ -40,9 +43,25 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
+          # Container runs as root on a runner-owned checkout: git refuses it
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          # Last tag in master history; dev is excluded since it trails HEAD
+          last=$(git describe --tags --abbrev=0 --exclude dev HEAD)
           gh release delete dev --cleanup-tag --yes || true
           gh release create dev dist/*.whl \
             --prerelease \
             --target "$GITHUB_SHA" \
             --title "dev (${GITHUB_SHA::7})" \
-            --notes "Automated build of $GITHUB_SHA."
+            --notes "Automated build of $GITHUB_SHA." \
+            --generate-notes \
+            --notes-start-tag "$last"
+          # PoC: draft for the next real release. Drafts create no tag until
+          # published, so a maintainer sets the version tag, adds the .sig
+          # and publishes from the web UI.
+          gh release delete next --yes || true
+          gh release create next \
+            --draft \
+            --target "$GITHUB_SHA" \
+            --title "next" \
+            --generate-notes \
+            --notes-start-tag "$last"
