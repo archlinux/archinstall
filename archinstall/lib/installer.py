@@ -106,6 +106,7 @@ class Installer:
 			self._base_packages.extend(__accessibility_packages__)
 
 		self.post_base_install: list[Callable] = []  # type: ignore[type-arg]
+		self._post_base_install_services: list[str] = []
 
 		self._modules: list[str] = []
 		self._binaries: list[str] = []
@@ -785,22 +786,16 @@ class Installer:
 				psk.copy(iwd_target / psk.name, preserve_metadata=True)
 
 			if enable_services:
+				iwd = 'iwd'
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self._helper_flags.get('base', False) is False:
-					self._base_packages.append('iwd')
-
-					# This function will be called after minimal_installation()
-					# as a hook for post-installs. This hook is only needed if
-					# base is not installed yet.
-					def post_install_enable_iwd_service(*args: str, **kwargs: str) -> None:
-						self.enable_service('iwd')
-
-					self.post_base_install.append(post_install_enable_iwd_service)
+					self._base_packages.append(iwd)
+					self._post_base_install_services.append(iwd)
 				# Otherwise, we can go ahead and add the required package
 				# and enable it's service:
 				else:
-					self.pacman.strap('iwd')
-					self.enable_service('iwd')
+					self.pacman.strap(iwd)
+					self.enable_service(iwd)
 
 		self.systemd_resolved_stub_mode()
 
@@ -814,16 +809,13 @@ class Installer:
 				netconf_file.copy(network_target / netconf_file.name, preserve_metadata=True)
 
 			if enable_services:
+				services = ['systemd-networkd', 'systemd-resolved']
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self._helper_flags.get('base', False) is False:
-
-					def post_install_enable_networkd_resolved(*args: str, **kwargs: str) -> None:
-						self.enable_service(['systemd-networkd', 'systemd-resolved'])
-
-					self.post_base_install.append(post_install_enable_networkd_resolved)
+					self._post_base_install_services.extend(services)
 				# Otherwise, we can go ahead and enable the services
 				else:
-					self.enable_service(['systemd-networkd', 'systemd-resolved'])
+					self.enable_service(services)
 
 		return True
 
@@ -975,6 +967,8 @@ class Installer:
 		for function in self.post_base_install:
 			info(f'Running post-installation hook: {function}')
 			function(self)
+
+		self.enable_service(self._post_base_install_services)
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_install'):
