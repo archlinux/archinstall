@@ -2419,3 +2419,75 @@ msgstr "Plymouth \"{}\""
 #, python-brace-format
 msgid "{} graphics driver"
 msgstr "Графічний драйвер {}"
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr "Не виявлено жодного диска. Для встановлення Arch Linux потрібен диск"
+
+msgid "Cut selected text"
+msgstr "Вирізати виділений текст"
+
+msgid "Delete all to the left"
+msgstr "Видалити все ліворуч"
+
+msgid "Delete all to the right"
+msgstr "Видалити все праворуч"
+
+msgid "Delete character left"
+msgstr "Видалити символ ліворуч"
+
+msgid "Delete character right"
+msgstr "Видалити символ праворуч"
+
+msgid "Delete left to start of word"
+msgstr "Видалити ліворуч до початку слова"
+
+msgid "Delete right to start of word"
+msgstr "Видалити праворуч до початку слова"
+
+msgid "Go to end"
+msgstr "Перейти в кінець"
+
+msgid "Go to start"
+msgstr "Перейти на початок"
+
+msgid "Move cursor left"
+msgstr "Перемістити курсор ліворуч"
+
+msgid "Move cursor left a word"
+msgstr "Перемістити курсор на слово ліворуч"
+
+msgid "Move cursor left a word and select"
+msgstr "Перемістити курсор на слово ліворуч із виділенням"
+
+msgid "Move cursor left and select"
+msgstr "Перемістити курсор ліворуч із виділенням"
+
+msgid "Move cursor right a word"
+msgstr "Перемістити курсор на слово праворуч"
+
+msgid "Move cursor right a word and select"
+msgstr "Перемістити курсор на слово праворуч із виділенням"
+
+msgid "Move cursor right and select"
+msgstr "Перемістити курсор праворуч із виділенням"
+
+msgid "Move cursor right or accept the completion suggestion"
+msgstr "Перемістити курсор праворуч або прийняти підказку автодоповнення"
+
+msgid "Paste text from the clipboard"
+msgstr "Вставити текст із буфера обміну"
+
+msgid "Press button"
+msgstr "Натиснути кнопку"
+
+msgid "Select all"
+msgstr "Виділити все"
+
+msgid "Select line end"
+msgstr "Виділити до кінця рядка"
+
+msgid "Select line start"
+msgstr "Виділити до початку рядка"
+
+msgid "Submit"
+msgstr "Підтвердити"
