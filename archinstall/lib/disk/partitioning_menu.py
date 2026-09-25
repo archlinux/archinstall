@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 from typing import override
 
+from archinstall.lib.disk.default_layouts import suggest_single_disk_layout
 from archinstall.lib.disk.subvolume_menu import SubvolumeMenu
 from archinstall.lib.menu.helpers import Confirmation, Input, Selection
 from archinstall.lib.menu.list_manager import ListManager
@@ -565,8 +566,6 @@ class PartitioningList(ListManager[DiskSegment]):
 		if any(not entry.exists() for entry in data):
 			if not await self._reset_confirmation():
 				return None
-
-		from archinstall.lib.disk.disk_menu import suggest_single_disk_layout
 
 		return await suggest_single_disk_layout(self._device)
 
