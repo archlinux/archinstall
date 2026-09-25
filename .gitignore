@@ -8,6 +8,7 @@ SAFETY_LOCK
 **/**.egg*
 **/**.sh
 !archinstall/locales/locales_generator.sh
+!test_tooling/dev_vm/dev_vm.sh
 **/**.egg-info/
 **/**build/
 **/**src/
@@ -39,6 +40,7 @@ requirements.txt
 /.gitconfig
 /actions-runner
 /cmd_output.txt
+/.dev/
 node_modules/
 uv.lock
 test_tooling/mkosi/mkosi.output/*image*
