@@ -26,14 +26,14 @@ archinstall
 Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall))
 ## Upgrade `archinstall` on live Arch ISO image
 
-Upgrading archinstall on the ISO needs to be done via a full system upgrade using
+Upgrading archinstall on the ISO needs to be done via a full system upgrade using:
 
 ```shell
 pacman -Syu
 ```
 
 When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow running a re-installation or upgrade of the installer.
-In case one runs into this issue, any of the following can be used
+In case one runs into this issue, any of the following can be used:
 
 * Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
 * Specify the boot parameter copytoram=y (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) which will copy the root filesystem to tmpfs
