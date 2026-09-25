@@ -277,6 +277,7 @@ class FilesystemHandler:
 					enc_config.encryption_password,
 					lock_after_create,
 					iter_time=enc_config.iter_time,
+					allow_discards=enc_config.allow_discards,
 				)
 
 				enc_vols[vol] = luks_handler
@@ -308,6 +309,7 @@ class FilesystemHandler:
 						enc_config.encryption_password,
 						lock_after_create=lock_after_create,
 						iter_time=enc_config.iter_time,
+						allow_discards=enc_config.allow_discards,
 					)
 
 					enc_mods[part_mod] = luks_handler

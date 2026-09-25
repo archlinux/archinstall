@@ -3,7 +3,7 @@ from typing import override
 
 from archinstall.lib.disk.fido import Fido2
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
-from archinstall.lib.menu.helpers import Input, Selection, Table
+from archinstall.lib.menu.helpers import Confirmation, Input, Selection, Table
 from archinstall.lib.menu.menu_helper import MenuHelper
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.device import (
@@ -96,12 +96,40 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				preview_action=self._prev_hsm,
 				key='hsm_device',
 			),
+			MenuItem(
+				text=tr('Discard/TRIM support'),
+				action=self._select_allow_discards,
+				value=self._enc_config.allow_discards,
+				dependencies=[self._check_dep_enc_type],
+				preview_action=self._prev_allow_discards,
+				key='allow_discards',
+			),
 		]
 
 	async def _select_lvm_vols(self, preset: list[LvmVolume]) -> list[LvmVolume]:
 		if self._lvm_config:
 			return await select_lvm_vols_to_encrypt(self._lvm_config, preset=preset)
 		return []
+
+	async def _select_allow_discards(self, preset: bool) -> bool:
+		prompt = (
+			tr('TRIM lets an SSD reclaim blocks the filesystem has freed, which keeps write performance up as it fills.')
+			+ '\n\n'
+			+ tr('On an encrypted device it also reveals which blocks are in use, which can give away the filesystem type and how full the disk is.')
+			+ '\n\n'
+			+ tr('Would you like to enable it?')
+			+ '\n'
+		)
+
+		result = await Confirmation(header=prompt, allow_skip=True, preset=preset).show()
+
+		match result.type_:
+			case ResultType.Skip:
+				return preset
+			case ResultType.Selection:
+				return result.item() == MenuItem.yes()
+			case ResultType.Reset:
+				raise ValueError('Unhandled result type')
 
 	def _check_dep_enc_type(self) -> bool:
 		enc_type: EncryptionType | None = self._item_group.find_by_key('encryption_type').value
@@ -151,6 +179,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 				lvm_volumes=enc_lvm_vols,
 				hsm_device=enc_config.hsm_device,
 				iter_time=iter_time or DEFAULT_ITER_TIME,
+				allow_discards=enc_config.allow_discards,
 			)
 
 		return None
@@ -166,6 +195,9 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		if (iter_time := self._prev_iter_time(item)) is not None:
 			output += f'\n{iter_time}'
+
+		if (allow_discards := self._prev_allow_discards(item)) is not None:
+			output += f'\n{allow_discards}'
 
 		if (fido_device := self._prev_hsm(item)) is not None:
 			output += f'\n{fido_device}'
@@ -229,6 +261,16 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 			if iter_time and enc_type != EncryptionType.NO_ENCRYPTION:
 				return f'{tr("Iteration time")}: {iter_time}ms'
+
+		return None
+
+	def _prev_allow_discards(self, item: MenuItem) -> str | None:
+		enc_type = self._item_group.find_by_key('encryption_type').value
+
+		if enc_type and enc_type != EncryptionType.NO_ENCRYPTION:
+			output = f'{tr("Discard/TRIM support")}: '
+			output += tr('Enabled') if item.value else tr('Disabled')
+			return output
 
 		return None
 

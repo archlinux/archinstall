@@ -344,6 +344,9 @@ msgstr ""
 msgid "Iteration time"
 msgstr ""
 
+msgid "Discard/TRIM support"
+msgstr ""
+
 msgid ""
 "No disks were detected. A disk is required to be able to install Arch Linux"
 msgstr ""
@@ -404,6 +407,16 @@ msgid "LVM volumes"
 msgstr ""
 
 msgid "HSM"
+msgstr ""
+
+msgid ""
+"TRIM lets an SSD reclaim blocks the filesystem has freed, which keeps write "
+"performance up as it fills."
+msgstr ""
+
+msgid ""
+"On an encrypted device it also reveals which blocks are in use, which can "
+"give away the filesystem type and how full the disk is."
 msgstr ""
 
 msgid "Partitions to be encrypted"
