@@ -24,13 +24,17 @@ class HyprlandProfile(Profile):
 			'kitty',
 			'uwsm',
 			'dolphin',
-			'wofi',
+			'hyprlauncher',
 			'xdg-desktop-portal-hyprland',
 			'qt5-wayland',
 			'qt6-wayland',
-			'polkit-kde-agent',
+			'hyprpolkitagent',
 			'grim',
 			'slurp',
+			'wl-clipboard',
+			'hyprpaper',
+			'waybar',
+			'quickshell',
 		]
 
 	@property
