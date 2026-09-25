@@ -217,7 +217,7 @@ class DeviceHandler:
 		# "fsroots": ["/@log", "/@home", "/@"...]
 		# we'll thereby map the fsroot, which are the mounted filesystem roots
 		# to the corresponding mountpoints
-		btrfs_subvol_info = dict(zip(lsblk_info.fsroots, lsblk_info.mountpoints))
+		btrfs_subvol_info = dict(zip(lsblk_info.fsroots, lsblk_info.mountpoints, strict=True))
 
 		# ID 256 gen 16 top level 5 path @
 		for line in result.splitlines():

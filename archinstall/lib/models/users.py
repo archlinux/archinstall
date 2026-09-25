@@ -116,7 +116,7 @@ class Password:
 		self,
 		plaintext: str = '',
 		enc_password: str | None = None,
-	):
+	) -> None:
 		if plaintext:
 			enc_password = crypt_yescrypt(plaintext)
 
