@@ -69,7 +69,8 @@ The contents of :code:`https://domain.lan/config.json`:
      "bootloader_config": {
        "bootloader": "Systemd-boot",
        "uki": false,
-       "removable": false
+       "removable": false,
+       "os_prober": false
      },
      "bootloader": "Systemd-boot",
      "debug": false,

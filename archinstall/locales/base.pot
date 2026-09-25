@@ -209,6 +209,9 @@ msgstr ""
 msgid "Install to removable location"
 msgstr ""
 
+msgid "Detect other operating systems"
+msgstr ""
+
 msgid "Plymouth"
 msgstr ""
 
@@ -257,6 +260,11 @@ msgid "USB drives or other portable external media."
 msgstr ""
 
 msgid "Systems where you want the disk to be bootable on any computer."
+msgstr ""
+
+msgid ""
+"Would you like to enable os-prober to detect other operating systems (e.g. "
+"Windows)?"
 msgstr ""
 
 msgid "Select bootloader to install"
@@ -904,6 +912,9 @@ msgid "UKI enabled"
 msgstr ""
 
 msgid "Removable"
+msgstr ""
+
+msgid "os-prober enabled"
 msgstr ""
 
 #, python-brace-format
