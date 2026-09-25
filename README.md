@@ -23,7 +23,7 @@ pacman -Sy archinstall
 archinstall
 ```
 
-Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall)) or `pip install --upgrade archinstall`.
+Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall))
 
 You can find the build recipe on the official gitlab: [`archinstall`](https://gitlab.archlinux.org/archlinux/packaging/packages/archinstall)
 
