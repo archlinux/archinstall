@@ -40,6 +40,7 @@ class Firewall(StrEnum):
 
 class FirewallConfigSerialization(TypedDict):
 	firewall: str
+	allow_ssh: NotRequired[bool]
 
 
 class FontPackage(StrEnum):
@@ -143,16 +144,16 @@ class PrintServiceConfiguration:
 @dataclass
 class FirewallConfiguration:
 	firewall: Firewall
+	allow_ssh: bool = False
 
 	def json(self) -> FirewallConfigSerialization:
-		return {
-			'firewall': self.firewall.value,
-		}
+		return {'firewall': self.firewall.value, 'allow_ssh': self.allow_ssh}
 
 	@classmethod
 	def parse_arg(cls, arg: dict[str, Any]) -> Self:
 		return cls(
 			Firewall(arg['firewall']),
+			allow_ssh=arg.get('allow_ssh', False),
 		)
 
 
@@ -285,6 +286,10 @@ class ApplicationConfiguration(SubConfig):
 
 		if self.firewall_config:
 			out.append(tr('Firewall "{}"').format(self.firewall_config.firewall))
+			if self.firewall_config.allow_ssh:
+				out.append(tr('SSH allowed'))
+			else: 
+				out.append(tr('SSH not allowed'))
 
 		if self.fonts_config and self.fonts_config.fonts:
 			fonts = ', '.join(f.value for f in self.fonts_config.fonts)

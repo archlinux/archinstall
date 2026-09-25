@@ -364,6 +364,8 @@ class GlobalMenu(AbstractMenu[None]):
 				firewall_config = app_config.firewall_config
 				output += f'{tr("Firewall")}: {firewall_config.firewall.value}'
 				output += '\n'
+				output += f'{tr("Allow SSH")}: {firewall_config.allow_ssh}'
+				output += '\n'
 
 			return output
 
@@ -499,6 +501,17 @@ class GlobalMenu(AbstractMenu[None]):
 
 		if not isinstance(self._arch_config.network_config, NetworkConfiguration):
 			warnings.append(tr('No network configuration selected. Network will need to be set up manually on the installed system.'))
+
+		if isinstance(self._arch_config.app_config, list):
+			firewall_config = False
+		else:
+			firewall_config = self._arch_config.app_config.firewall_config
+		is_ufw = firewall_config and firewall_config.firewall and firewall_config.firewall.value == 'ufw'
+		is_fwd = firewall_config and firewall_config.firewall and firewall_config.firewall.value == 'firewalld'
+		has_openssh = 'openssh' in self._arch_config.packages
+
+		if (is_ufw or is_fwd) and has_openssh and not firewall_config.allow_ssh:
+			warnings.append(tr('SSH not allowed through firewall. Rules will need to be set up manually on the installed system.'))
 
 		return warnings
 
