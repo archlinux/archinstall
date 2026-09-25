@@ -36,7 +36,7 @@ class LocaleConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		return [
 			tr('Keyboard layout "{}"').format(self.kb_layout),
 			tr('Language "{}"').format(self.sys_lang),

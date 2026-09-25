@@ -106,7 +106,7 @@ class BootloaderConfiguration(SubConfig):
 		return data
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out = [self.bootloader.value]
 
 		if self.uki:

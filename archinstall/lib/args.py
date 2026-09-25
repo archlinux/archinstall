@@ -393,7 +393,7 @@ class ArchConfig:
 		target.write_text(data)
 		target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def as_summary(self, level: SummaryLevel = SummaryLevel.Basic) -> str:
+	def as_summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> str:
 		"""
 		Render a concise two-column summary of the current configuration.
 

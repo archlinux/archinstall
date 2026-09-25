@@ -91,11 +91,11 @@ class DiskLayoutConfiguration(SubConfig):
 			return config
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out = [tr('{} layout').format(self.config_type.short_msg())]
 
 		match level:
-			case SummaryLevel.Basic:
+			case SummaryLevel.BASIC:
 				devices = {mod.device_path for mod in self.device_modifications}
 
 				if devices:
@@ -110,7 +110,7 @@ class DiskLayoutConfiguration(SubConfig):
 
 				if self.btrfs_options is not None and self.btrfs_options.snapshot_config:
 					out.append(tr('Btrfs snapshot "{}"').format(self.btrfs_options.snapshot_config.snapshot_type))
-			case SummaryLevel.Detailed:
+			case SummaryLevel.DETAILED:
 				if self.mountpoint is not None:
 					out.append(tr('Mountpoint "{}"').format(self.mountpoint))
 
@@ -1075,7 +1075,7 @@ class PartitionModification(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		fs_type = self.fs_type.value if self.fs_type else tr('Unknown')
 
 		details = [
@@ -1163,13 +1163,13 @@ class LvmVolumeGroup(SubConfig):
 		)
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = []
 
 		match level:
-			case SummaryLevel.Basic:
+			case SummaryLevel.BASIC:
 				out.append(tr('Volume group "{}"').format(self.name))
-			case SummaryLevel.Detailed:
+			case SummaryLevel.DETAILED:
 				pvs = ', '.join(str(pv.dev_path) for pv in self.pvs if pv.dev_path)
 				if pvs:
 					out = [tr('Volume group "{}" on {}').format(self.name, pvs)]
@@ -1297,13 +1297,13 @@ class LvmVolume(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = []
 
 		match level:
-			case SummaryLevel.Basic:
+			case SummaryLevel.BASIC:
 				out.append(tr('Volume "{}"').format(self.name))
-			case SummaryLevel.Detailed:
+			case SummaryLevel.DETAILED:
 				out.extend(
 					[
 						tr('Filesystem {}').format(self.fs_type.value),
@@ -1414,13 +1414,13 @@ class LvmConfiguration(SubConfig):
 		)
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = []
 
 		match level:
-			case SummaryLevel.Basic:
+			case SummaryLevel.BASIC:
 				out.append(tr('LVM set up'))
-			case SummaryLevel.Detailed:
+			case SummaryLevel.DETAILED:
 				out = [tr('LVM "{}"').format(self.config_type.display_msg())]
 
 				for vol_group in self.vol_groups:
@@ -1472,7 +1472,7 @@ class SnapshotConfig(SubConfig):
 	NAME: str = tr('Btrfs snapshot')
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		return [tr('Btrfs snapshot "{}"').format(self.snapshot_type)]
 
 	@override
@@ -1495,7 +1495,7 @@ class BtrfsOptions(SubConfig):
 		return {'snapshot_config': self.snapshot_config.json() if self.snapshot_config else None}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		if self.snapshot_config is None:
 			return []
 
@@ -1551,7 +1551,7 @@ class DeviceModification(SubConfig):
 		return next(filtered, None)
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = [tr('Device {}').format(self.device_path)]
 
 		wipe_str = tr('wipe') if self.wipe else tr('keep existing data')
@@ -1649,13 +1649,13 @@ class DiskEncryption(SubConfig):
 		return obj
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out = [tr('{} encryption').format(self.encryption_type.type_to_text())]
 
 		match level:
-			case SummaryLevel.Basic:
+			case SummaryLevel.BASIC:
 				pass
-			case SummaryLevel.Detailed:
+			case SummaryLevel.DETAILED:
 				if self.partitions:
 					out.append(tr('{} encrypted partition(s)').format(len(self.partitions)))
 

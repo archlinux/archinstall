@@ -28,7 +28,7 @@ class PacmanConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = []
 		if self.parallel_downloads != DEFAULT_PARALLEL_DOWNLOADS:
 			out.append(tr('Parallel downloads "{}"').format(self.parallel_downloads))

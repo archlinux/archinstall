@@ -97,7 +97,7 @@ class AudioConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		return [self.audio.value]
 
 	@classmethod
@@ -118,7 +118,7 @@ class BluetoothConfiguration(SubConfig):
 		return {'enabled': self.enabled}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		if self.enabled:
 			return [tr('enabled')]
 		return []
@@ -141,7 +141,7 @@ class PowerManagementConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		return [self.power_management.value]
 
 	@classmethod
@@ -162,7 +162,7 @@ class PrintServiceConfiguration(SubConfig):
 		return {'enabled': self.enabled}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		if self.enabled:
 			return [tr('enabled')]
 		return []
@@ -185,7 +185,7 @@ class FirewallConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		return [self.firewall.value]
 
 	@classmethod
@@ -206,7 +206,7 @@ class FontsConfiguration(SubConfig):
 		return {'fonts': [f.value for f in self.fonts]}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		if self.fonts:
 			return [', '.join(f.value for f in self.fonts)]
 		return []
@@ -240,7 +240,7 @@ class ZramConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		if self.enabled:
 			return [
 				tr('enabled'),
@@ -318,7 +318,7 @@ class ApplicationConfiguration(SubConfig):
 		return config
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		configs = [
 			self.bluetooth_config,
 			self.audio_config,

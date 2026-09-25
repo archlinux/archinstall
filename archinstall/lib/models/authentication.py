@@ -45,7 +45,7 @@ class U2FLoginConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		return [
 			tr('U2F login method "{}"').format(self.u2f_login_method.display_value()),
 			tr('U2F passwordless sudo enabled') if self.passwordless_sudo else tr('U2F passwordless sudo disabled'),
@@ -98,20 +98,20 @@ class AuthenticationConfiguration(SubConfig):
 		return config
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = []
 
 		if self.root_enc_password:
 			out.append(tr('Root password set'))
 
 		match level:
-			case SummaryLevel.Basic:
+			case SummaryLevel.BASIC:
 				if self.users:
 					out.append(tr('Configured {} user(s)').format(len(self.users)))
 
 				if self.u2f_config:
 					out.append(tr('U2F configured'))
-			case SummaryLevel.Detailed:
+			case SummaryLevel.DETAILED:
 				for user in self.users:
 					summary = user.summary(level)
 					out.extend(summary)

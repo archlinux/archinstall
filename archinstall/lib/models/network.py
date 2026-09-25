@@ -65,7 +65,7 @@ class Nic:
 			'dns': self.dns,
 		}
 
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		if not self.iface:
 			return []
 
@@ -141,13 +141,13 @@ class NetworkConfiguration(SubConfig):
 		return config
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out = [self.type.display_msg()]
 
 		match level:
-			case SummaryLevel.Basic:
+			case SummaryLevel.BASIC:
 				return out
-			case SummaryLevel.Detailed:
+			case SummaryLevel.DETAILED:
 				for nic in self.nics:
 					out.extend(nic.summary(level))
 					out.append('')

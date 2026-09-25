@@ -35,7 +35,7 @@ class ProfileConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = []
 
 		if self.profile:

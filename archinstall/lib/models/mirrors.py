@@ -147,7 +147,7 @@ class MirrorRegion(SubConfig):
 		return {self.name: self.urls}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = [tr('Region "{}"').format(self.name)]
 
 		for url in self.urls:
@@ -207,10 +207,10 @@ class CustomRepository(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = [tr('Repository "{}"').format(self.name)]
 
-		if level == SummaryLevel.Detailed:
+		if level == SummaryLevel.DETAILED:
 			out.append(f'  {tr("Url")}: {self.url}')
 			out.append(f'  {tr("Sign check")}: {self.sign_check.value}')
 			out.append(f'  {tr("Sign options")}: {self.sign_option.value}')
@@ -247,7 +247,7 @@ class CustomServer(SubConfig):
 		return {'url': self.url}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		return [self.url]
 
 	@classmethod
@@ -299,12 +299,12 @@ class MirrorConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = []
 
 		if self.mirror_regions:
 			out.append(tr('{} Mirror region(s)').format(len(self.mirror_regions)))
-			if level == SummaryLevel.Detailed:
+			if level == SummaryLevel.DETAILED:
 				for region in self.mirror_regions:
 					out.extend(region.summary(level))
 
@@ -313,13 +313,13 @@ class MirrorConfiguration(SubConfig):
 
 		if self.custom_servers:
 			out.append(tr('{} Custom server(s)').format(len(self.custom_servers)))
-			if level == SummaryLevel.Detailed:
+			if level == SummaryLevel.DETAILED:
 				for server in self.custom_servers:
 					out.extend(server.summary(level))
 
 		if self.custom_repositories:
 			out.append(tr('{} Custom repository(s)').format(len(self.custom_repositories)))
-			if level == SummaryLevel.Detailed:
+			if level == SummaryLevel.DETAILED:
 				for repository in self.custom_repositories:
 					out.extend(repository.summary(level))
 

@@ -11,8 +11,8 @@ class SummaryLevel(Enum):
 	Detailed lists the full state of everything that has been configured.
 	"""
 
-	Basic = auto()
-	Detailed = auto()
+	BASIC = auto()
+	DETAILED = auto()
 
 
 class SubConfig(ABC):
@@ -29,5 +29,5 @@ class SubConfig(ABC):
 		pass
 
 	@abstractmethod
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		pass

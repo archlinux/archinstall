@@ -184,13 +184,13 @@ class User(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.Basic) -> list[str]:
+	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = [tr('User "{}"').format(self.username)]
 
 		match level:
-			case SummaryLevel.Basic:
+			case SummaryLevel.BASIC:
 				out.append(tr('User "{}"').format(self.username))
-			case SummaryLevel.Detailed:
+			case SummaryLevel.DETAILED:
 				if self.sudo:
 					out.append(tr('sudo user'))
 
