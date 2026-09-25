@@ -19,7 +19,7 @@ from pydantic.dataclasses import dataclass as p_dataclass
 from archinstall.lib.crypt import decrypt, encrypt
 from archinstall.lib.log import debug, error, logger, warn
 from archinstall.lib.menu.util import get_password
-from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
+from archinstall.lib.models.application import ApplicationConfiguration, SwapConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.config import SubConfig
@@ -163,7 +163,7 @@ class ArchConfig:
 	bootloader_config: BootloaderConfiguration | None = None
 	app_config: ApplicationConfiguration | None = None
 	auth_config: AuthenticationConfiguration | None = None
-	swap: ZramConfiguration | None = None
+	swap: SwapConfiguration | None = None
 	hostname: str = 'archlinux'
 	kernels: list[str] = field(default_factory=lambda: [DEFAULT_KERNEL.value])
 	ntp: bool = True
@@ -338,7 +338,7 @@ class ArchConfig:
 
 		swap_arg = args_config.get('swap')
 		if swap_arg is not None:
-			arch_config.swap = ZramConfiguration.parse_arg(swap_arg)
+			arch_config.swap = SwapConfiguration.parse_arg(swap_arg)
 
 		if timezone := args_config.get('timezone', 'UTC'):
 			arch_config.timezone = timezone

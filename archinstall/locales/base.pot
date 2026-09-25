@@ -599,7 +599,19 @@ msgid ""
 "the Nvidia proprietary driver.\n"
 msgstr ""
 
-msgid "Would you like to use swap on zram?"
+msgid "zram"
+msgstr ""
+
+msgid "Swap file (enables hibernation)"
+msgstr ""
+
+msgid "zram and swap file"
+msgstr ""
+
+msgid "No swap"
+msgstr ""
+
+msgid "Would you like to use swap?"
 msgstr ""
 
 msgid "Select zram compression algorithm:"
@@ -650,6 +662,9 @@ msgid "Swap on zram"
 msgstr ""
 
 msgid "Compression algorithm"
+msgstr ""
+
+msgid "Swap file"
 msgstr ""
 
 msgid "Parallel Downloads"
@@ -856,6 +871,9 @@ msgstr ""
 
 #, python-brace-format
 msgid "Zram algorithm {}"
+msgstr ""
+
+msgid "Swap file enabled"
 msgstr ""
 
 msgid "Bluetooth enabled"
