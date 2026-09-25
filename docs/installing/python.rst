@@ -3,7 +3,7 @@
 Python library
 ==============
 
-Archinstall ships on `PyPi <https://pypi.org/>`_ as `archinstall <pypi.org/project/archinstall/>`_.
+Archinstall ships on `PyPi <https://pypi.org/>`_ as `archinstall <https://pypi.org/project/archinstall/>`_.
 But the library can be installed manually as well.
 
 .. warning::
@@ -50,7 +50,7 @@ You can either move the folder into your project and simply do
 
     import archinstall
 
-Or you can PyPa's `build <https://github.com/pypa/build>`_ and `installer <https://github.com/pypa/installer>`_ to install it into pythons module path.
+Or you can use PyPA's `build <https://github.com/pypa/build>`_ and `installer <https://github.com/pypa/installer>`_ to install it into pythons module path.
 
 .. code-block:: console
 
