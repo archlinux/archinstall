@@ -177,7 +177,7 @@ def test_config_file_parsing(
 				{
 					'custom_settings': {
 						'Hyprland': {
-							CustomSetting.SeatAccess: 'polkit',
+							CustomSetting.SeatAccess: 'systemd-logind',
 						},
 						'Sway': {
 							CustomSetting.SeatAccess: 'seatd',

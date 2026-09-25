@@ -187,7 +187,7 @@
     "profile": {
       "custom_settings": {
         "Hyprland": {
-          "seat_access": "polkit"
+          "seat_access": "systemd-logind"
         },
         "Sway": {
           "seat_access": "seatd"
