@@ -55,7 +55,7 @@ class AbstractMenu[ValueT](InstanceRunnable[ValueT]):
 			print('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')
 
 			# Return None to propagate the exception
-			return None
+			return
 
 		self.sync_all_to_config()
 
