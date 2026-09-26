@@ -58,7 +58,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			),
 			MenuItem(
 				text=tr('Encryption password'),
-				action=lambda x: select_encrypted_password(),
+				action=lambda _: select_encrypted_password(),
 				value=self._enc_config.encryption_password,
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._prev_password,

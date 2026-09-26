@@ -177,7 +177,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Save configuration'),
-				action=lambda x: self._safe_config(),
+				action=lambda _: self._safe_config(),
 				key=SpecialMenuKey.SAVE.value,
 			),
 			MenuItem(
