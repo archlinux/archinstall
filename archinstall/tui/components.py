@@ -347,7 +347,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		if focus_item := self._group.focus_item:
 			self._set_preview(focus_item.get_id())
 
-	def on_input_submitted(self, event: Input.Submitted) -> None:
+	def on_input_submitted(self, _event: Input.Submitted) -> None:
 		if self.query_one(Input).has_focus:
 			self._handle_search_action()
 
@@ -557,7 +557,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 
 		yield Footer()
 
-	def on_input_submitted(self, event: Input.Submitted) -> None:
+	def on_input_submitted(self, _event: Input.Submitted) -> None:
 		if self.query_one(Input).has_focus:
 			self._handle_search_action()
 

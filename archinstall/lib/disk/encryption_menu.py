@@ -181,7 +181,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		return output
 
-	def _prev_type(self, item: MenuItem) -> str | None:
+	def _prev_type(self, _item: MenuItem) -> str | None:
 		enc_type = self._item_group.find_by_key('encryption_type').value
 
 		if enc_type:

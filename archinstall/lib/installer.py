@@ -240,7 +240,6 @@ class Installer:
 
 	def sanity_check(
 		self,
-		offline: bool = False,
 		skip_ntp: bool = False,
 		skip_wkd: bool = False,
 	) -> None:
@@ -547,7 +546,7 @@ class Installer:
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
-	def post_install_check(self, *args: str, **kwargs: str) -> list[str]:
+	def post_install_check(self) -> list[str]:
 		return [step for step, flag in self._helper_flags.items() if flag is False]
 
 	def set_mirrors(

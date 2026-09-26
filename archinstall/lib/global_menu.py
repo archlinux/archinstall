@@ -502,7 +502,7 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return warnings
 
-	def _prev_install_invalid_config(self, item: MenuItem) -> PreviewResult | None:
+	def _prev_install_invalid_config(self, _item: MenuItem) -> PreviewResult | None:
 		self.sync_all_to_config()
 
 		warnings = self._get_install_warnings()

@@ -37,7 +37,7 @@ class DownloadTimer:
 		self.previous_handler = None
 		self.previous_timer: int | None = None
 
-	def raise_timeout(self, signl: int, frame: FrameType | None) -> None:
+	def raise_timeout(self, _signl: int, _frame: FrameType | None) -> None:
 		"""
 		Raise the DownloadTimeout exception.
 		"""
