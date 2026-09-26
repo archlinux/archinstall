@@ -208,6 +208,7 @@ select = [
     "PLE",    # Pylint errors
     "PLW",    # Pylint warnings
     "PYI",    # flake8-pyi
+    "RET",    # flake8-return
     "RSE",    # flake8-raise
     "RUF",    # Ruff-specific rules
     "SLOT",   # flake8-slot
