@@ -253,6 +253,8 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 		ApplicationHandler(),
 	)
 
+	return None
+
 
 if __name__ == '__main__':
 	main()

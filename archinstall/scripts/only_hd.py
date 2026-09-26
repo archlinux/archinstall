@@ -96,6 +96,8 @@ def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 
 	perform_installation(arch_config_handler)
 
+	return None
+
 
 if __name__ == '__main__':
 	main()
