@@ -2051,7 +2051,7 @@ class Installer:
 				os.system('systemd-run --machine=archinstall --pty localectl set-keymap ""')  # type: ignore[deprecated]
 
 				try:
-					session.SysCommand(['localectl', 'set-keymap', language])
+					session.sys_command(['localectl', 'set-keymap', language])
 				except SysCallError as err:
 					raise ServiceException(f"Unable to set locale '{language}' for console: {err}")
 
@@ -2074,10 +2074,10 @@ class Installer:
 				return False
 
 			with Boot(self.target) as session:
-				session.SysCommand(['localectl', 'set-x11-keymap', '""'])
+				session.sys_command(['localectl', 'set-x11-keymap', '""'])
 
 				try:
-					session.SysCommand(['localectl', 'set-x11-keymap', language])
+					session.sys_command(['localectl', 'set-x11-keymap', language])
 				except SysCallError as err:
 					raise ServiceException(f"Unable to set locale '{language}' for X11: {err}")
 		else:

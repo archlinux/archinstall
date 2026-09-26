@@ -629,7 +629,7 @@ class DeviceHandler:
 
 		for partition in block_device.partition_infos:
 			luks = Luks2(partition.path)
-			if luks.isLuks():
+			if luks.is_luks():
 				luks.erase()
 
 			self._wipe(partition.path)
