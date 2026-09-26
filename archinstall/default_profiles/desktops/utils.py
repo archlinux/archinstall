@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 
 from archinstall.lib.installer import Installer
 from archinstall.lib.menu.helpers import Selection
@@ -8,9 +8,9 @@ from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 
 
-class SeatAccess(Enum):
-	seatd = 'seatd'
-	polkit = 'polkit'
+class SeatAccess(StrEnum):
+	Seatd = 'seatd'
+	Logind = 'polkit'  # Keep the saved configuration value.
 
 
 def provision_seat_access(
@@ -18,7 +18,7 @@ def provision_seat_access(
 	users: list[User],
 	seat_access: str,
 ) -> None:
-	if seat_access == SeatAccess.seatd.value:
+	if seat_access == SeatAccess.Seatd:
 		for user in users:
 			install_session.arch_chroot(f'usermod -a -G seat {user.username}')
 
@@ -28,10 +28,13 @@ async def select_seat_access(profile_name: str, default: str | None) -> SeatAcce
 	header += f' ({tr("collection of hardware devices i.e. keyboard, mouse")})' + '\n'
 	header += tr('Choose an option how to give {} access to your hardware').format(profile_name)
 
-	items = [MenuItem(s.value, value=s) for s in SeatAccess]
+	items = [
+		MenuItem('seatd', value=SeatAccess.Seatd),
+		MenuItem('systemd-logind', value=SeatAccess.Logind),
+	]
 	group = MenuItemGroup(items, sort_items=True)
 
-	group.set_default_by_value(default)
+	group.set_focus_by_value(default or SeatAccess.Logind)
 
 	result = await Selection[SeatAccess](
 		group,
