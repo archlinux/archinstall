@@ -25,7 +25,13 @@ from archinstall.lib.disk.utils import (
 	mount,
 	swapon,
 )
-from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
+from archinstall.lib.exceptions import (
+	DiskError,
+	HardwareIncompatibilityError,
+	RequirementError,
+	ServiceExceptionError,
+	SysCallError,
+)
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
@@ -713,7 +719,7 @@ class Installer:
 			try:
 				SysCommand(f'systemctl --root={self.target} enable {service}')
 			except SysCallError as err:
-				raise ServiceException(f'Unable to start service {service}: {err}')
+				raise ServiceExceptionError(f'Unable to start service {service}: {err}')
 
 			for plugin in plugins.values():
 				if hasattr(plugin, 'on_service'):
@@ -729,7 +735,7 @@ class Installer:
 			try:
 				SysCommand(f'systemctl --root={self.target} disable {service}')
 			except SysCallError as err:
-				raise ServiceException(f'Unable to disable service {service}: {err}')
+				raise ServiceExceptionError(f'Unable to disable service {service}: {err}')
 
 	def run_command(self, cmd: str, peek_output: bool = False) -> SysCommand:
 		return SysCommand(f'arch-chroot -S {self.target} {cmd}', peek_output=peek_output)
@@ -2053,7 +2059,7 @@ class Installer:
 				try:
 					session.sys_command(['localectl', 'set-keymap', language])
 				except SysCallError as err:
-					raise ServiceException(f"Unable to set locale '{language}' for console: {err}")
+					raise ServiceExceptionError(f"Unable to set locale '{language}' for console: {err}")
 
 				info(f'Keyboard language for this installation is now set to: {language}')
 		else:
@@ -2079,7 +2085,7 @@ class Installer:
 				try:
 					session.sys_command(['localectl', 'set-x11-keymap', language])
 				except SysCallError as err:
-					raise ServiceException(f"Unable to set locale '{language}' for X11: {err}")
+					raise ServiceExceptionError(f"Unable to set locale '{language}' for X11: {err}")
 		else:
 			info('X11-Keyboard language was not changed from default (no language specified)')
 

@@ -16,7 +16,7 @@ from archinstall.lib.disk.utils import (
 	udev_sync,
 	umount,
 )
-from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesystemFormat
+from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesystemFormatError
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.log import debug, error, info, log
 from archinstall.lib.models.device import (
@@ -259,7 +259,7 @@ class DeviceHandler:
 			case FilesystemType.LINUX_SWAP:
 				command = 'mkswap'
 			case _:
-				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
+				raise UnknownFilesystemFormatError(f'Filetype "{fs_type.value}" is not supported')
 
 		if not command:
 			command = f'mkfs.{mkfs_type}'

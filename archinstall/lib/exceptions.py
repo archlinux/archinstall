@@ -6,7 +6,7 @@ class DiskError(Exception):
 	pass
 
 
-class UnknownFilesystemFormat(Exception):
+class UnknownFilesystemFormatError(Exception):
 	pass
 
 
@@ -22,7 +22,7 @@ class HardwareIncompatibilityError(Exception):
 	pass
 
 
-class ServiceException(Exception):
+class ServiceExceptionError(Exception):
 	pass
 
 
@@ -30,11 +30,11 @@ class PackageError(Exception):
 	pass
 
 
-class Deprecated(Exception):
+class DeprecatedError(Exception):
 	pass
 
 
-class DownloadTimeout(Exception):
+class DownloadTimeoutError(Exception):
 	"""
 	Download timeout exception raised by DownloadTimer.
 	"""
