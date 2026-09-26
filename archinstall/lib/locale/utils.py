@@ -2,7 +2,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from archinstall.lib.command import SysCommand
-from archinstall.lib.exceptions import ServiceException, SysCallError
+from archinstall.lib.exceptions import ServiceExceptionError, SysCallError
 from archinstall.lib.log import error
 from archinstall.lib.utils.util import running_from_iso
 
@@ -103,7 +103,7 @@ def set_kb_layout(locale: str) -> bool:
 		try:
 			SysCommand(f'localectl set-keymap {locale}')
 		except SysCallError as err:
-			raise ServiceException(f"Unable to set locale '{locale}' for console: {err}")
+			raise ServiceExceptionError(f"Unable to set locale '{locale}' for console: {err}")
 
 		return True
 

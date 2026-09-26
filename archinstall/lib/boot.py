@@ -104,8 +104,8 @@ class Boot:
 
 		return self.session.is_alive()
 
-	def SysCommand(self, cmd: list[str], *args: Any, **kwargs: Any) -> SysCommand:
+	def sys_command(self, cmd: list[str], *args: Any, **kwargs: Any) -> SysCommand:
 		return SysCommand(['systemd-run', f'--machine={self.container_name}', '--pty', *cmd], *args, **kwargs)
 
-	def SysCommandWorker(self, cmd: list[str], *args: Any, **kwargs: Any) -> SysCommandWorker:
+	def sys_command_worker(self, cmd: list[str], *args: Any, **kwargs: Any) -> SysCommandWorker:
 		return SysCommandWorker(['systemd-run', f'--machine={self.container_name}', '--pty', *cmd], *args, **kwargs)

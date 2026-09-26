@@ -13,7 +13,7 @@ The second method is via Python's built in `plugin discovery`_ using `entry poin
 ----------------------
 
 The parameter has the benefit of being stored in the ``--conf`` state, meaning when re-running an installation — the plugin will automatically be loaded.
-It's limitation is that it requires an initial path to be known and written and be cumbersome.
+Its limitation is that it requires an initial path to be known and written and be cumbersome.
 
 Plugin Discovery
 ----------------
@@ -25,7 +25,7 @@ This mainly targets those who build their own ISO's and package specific setups 
 What's supported?
 -----------------
 
-Currently the documentation for this is scarse. Until that is resolved, the best way to find supported features is to search the source code for `plugin.on_ <https://github.com/search?q=repo%3Aarchlinux%2Farchinstall+%22plugin.on_%22&type=code>`_ as this will give a clear indication of which calls are made to plugins.
+Currently the documentation for this is scarce. Until that is resolved, the best way to find supported features is to search the source code for `plugin.on_ <https://github.com/search?q=repo%3Aarchlinux%2Farchinstall+%22plugin.on_%22&type=code>`_ as this will give a clear indication of which calls are made to plugins.
 
 How does it work?
 -----------------

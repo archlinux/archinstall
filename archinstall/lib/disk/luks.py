@@ -27,7 +27,7 @@ class Luks2:
 			return Path(f'/dev/mapper/{self.mapper_name}')
 		return None
 
-	def isLuks(self) -> bool:
+	def is_luks(self) -> bool:
 		try:
 			SysCommand(f'cryptsetup isLuks {self.luks_dev_path}')
 			return True
