@@ -1233,7 +1233,7 @@ class LvmVolume:
 		}
 
 	def table_data(self) -> dict[str, str]:
-		part_mod = {
+		return {
 			'Type': self.status.value,
 			'Name': self.name,
 			'Size': self.length.format_highest(),
@@ -1242,7 +1242,6 @@ class LvmVolume:
 			'Mount options': ', '.join(self.mount_options),
 			'Btrfs': '{} {}'.format(str(len(self.btrfs_subvols)), 'vol'),
 		}
-		return part_mod
 
 	def is_modify(self) -> bool:
 		return self.status == ModificationStatus.MODIFY

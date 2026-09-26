@@ -52,8 +52,7 @@ class WifiHandler(InstanceRunnable[bool]):
 			case ResultType.Skip | ResultType.Reset:
 				return False
 
-		setup_result = await self._setup_wifi(wifi_iface)
-		return setup_result
+		return await self._setup_wifi(wifi_iface)
 
 	async def _enable_supplicant(self, wifi_iface: str) -> bool:
 		self._wpa_config.load_config()
@@ -264,6 +263,4 @@ class WifiHandler(InstanceRunnable[bool]):
 			debug('No wifi networks found')
 			return []
 
-		networks = WifiNetwork.from_wpa(result.response)
-
-		return networks
+		return WifiNetwork.from_wpa(result.response)

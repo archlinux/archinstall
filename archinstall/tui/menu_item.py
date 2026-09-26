@@ -250,8 +250,7 @@ class MenuItemGroup:
 	def items(self) -> list[MenuItem]:
 		pattern = self._filter_pattern.lower()
 		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self._menu_items)
-		l_items = sorted(items, key=self._items_score)
-		return l_items
+		return sorted(items, key=self._items_score)
 
 	def _items_score(self, item: MenuItem) -> int:
 		pattern = self._filter_pattern.lower()

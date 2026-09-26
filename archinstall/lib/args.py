@@ -461,9 +461,7 @@ class ArchConfig:
 			if summary:
 				cfg[config_type.text()] = summary
 
-		simple_summary = as_key_value_pair(cfg, ignore_empty=True)
-
-		return simple_summary
+		return as_key_value_pair(cfg, ignore_empty=True)
 
 
 class ArchConfigHandler:
@@ -701,9 +699,7 @@ class ArchConfigHandler:
 			if json_data is not None:
 				config.update(json_data)
 
-		config = self._cleanup_config(config)
-
-		return config
+		return self._cleanup_config(config)
 
 	def _process_creds_data(self, creds_data: str) -> dict[str, Any] | None:
 		if creds_data.startswith('$'):  # encrypted data

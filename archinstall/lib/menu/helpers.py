@@ -189,11 +189,10 @@ class Loading[ValueT]:
 
 	async def show(self) -> Result[ValueT]:
 		if self._data_callback:
-			result = await LoadingScreen[ValueT](
+			return await LoadingScreen[ValueT](
 				header=self._header,
 				data_callback=self._data_callback,
 			).run()
-			return result
 		else:
 			_ = await LoadingScreen(
 				timer=self._timer,

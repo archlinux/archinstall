@@ -58,8 +58,7 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 
 	async def _create_user_account(self, preset: list[User] | None = None) -> list[User]:
 		preset = [] if preset is None else preset
-		users = await select_users(preset=preset)
-		return users
+		return await select_users(preset=preset)
 
 	def _prev_users(self, item: MenuItem) -> str | None:
 		users: list[User] | None = item.value
@@ -100,8 +99,7 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 
 
 async def select_root_password() -> Password | None:
-	password = await get_password(header=tr('Enter root password'), allow_skip=True)
-	return password
+	return await get_password(header=tr('Enter root password'), allow_skip=True)
 
 
 async def select_u2f_login(preset: U2FLoginConfiguration | None) -> U2FLoginConfiguration | None:

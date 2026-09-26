@@ -252,6 +252,4 @@ class WifiConfiguredNetwork:
 	def _extract_flags(flag_string: str) -> list[str]:
 		pattern = r'\[([^\]]+)\]'
 
-		extracted_values = re.findall(pattern, flag_string)
-
-		return extracted_values
+		return re.findall(pattern, flag_string)

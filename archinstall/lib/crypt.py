@@ -28,8 +28,7 @@ def _search_login_defs(key: str) -> str | None:
 			continue
 
 		if line.startswith(key):
-			value = line.split(' ')[1]
-			return value
+			return line.split(' ')[1]
 
 	return None
 

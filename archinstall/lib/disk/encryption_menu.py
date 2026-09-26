@@ -271,12 +271,10 @@ async def select_encryption_type(
 
 async def select_encrypted_password() -> Password | None:
 	header = tr('Enter disk encryption password (leave blank for no encryption)') + '\n'
-	password = await get_password(
+	return await get_password(
 		header=header,
 		allow_skip=True,
 	)
-
-	return password
 
 
 async def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
@@ -337,8 +335,7 @@ async def select_partitions_to_encrypt(
 			case ResultType.Skip:
 				return preset
 			case ResultType.Selection:
-				partitions = result.get_values()
-				return partitions
+				return result.get_values()
 
 	return []
 
@@ -366,8 +363,7 @@ async def select_lvm_vols_to_encrypt(
 			case ResultType.Skip:
 				return preset
 			case ResultType.Selection:
-				volumes = result.get_values()
-				return volumes
+				return result.get_values()
 
 	return []
 
