@@ -6,7 +6,8 @@
   "bootloader_config": {
     "bootloader": "Systemd-boot",
     "uki": false,
-    "removable": false
+    "removable": false,
+    "os_prober": false
   },
   "debug": false,
   "disk_config": {
