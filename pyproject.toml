@@ -201,6 +201,7 @@ select = [
     "INT",    # flake8-gettext
     "ISC",    # flake8-implicit-str-concat
     "LOG",    # flake8-logging
+    "N",      # pep8-naming
     "PGH",    # pygrep-hooks
     "PIE",    # flake8-pie
     "PLC",    # Pylint conventions
@@ -231,6 +232,11 @@ ignore = [
     "RUF005",   # collection-literal-concatenation
     "RUF039",   # unraw-re-pattern
     "W191",     # tab-indentation
+]
+
+[tool.ruff.lint.per-file-ignores]
+"stubs/**/*.pyi" = [
+    "N",        # pep8-naming
 ]
 
 [tool.ruff.lint.flake8-gettext]
