@@ -264,7 +264,7 @@ class Units(Enum):
 
 class Unit(Enum):
 	B = 1  # byte
-	kB = 1000**1  # kilobyte
+	kB = 1000**1  # kilobyte  # noqa: N815
 	MB = 1000**2  # megabyte
 	GB = 1000**3  # gigabyte
 	TB = 1000**4  # terabyte
