@@ -9,6 +9,7 @@ from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding, BindingsMap
 from textual.containers import Center, Horizontal, ScrollableContainer, Vertical
+from textual.css.query import NoMatches
 from textual.events import Key
 from textual.geometry import Offset
 from textual.screen import Screen
@@ -507,7 +508,10 @@ class SelectListScreen(BaseScreen[ValueT]):
 		search_input = self.query_one(Input)
 
 		if search_input.has_focus:
-			self.query_one(SelectionList).focus()
+			try:
+				self.query_one(SelectionList).focus()
+			except NoMatches:
+				pass
 		else:
 			search_input.focus()
 
@@ -564,12 +568,18 @@ class SelectListScreen(BaseScreen[ValueT]):
 	def on_mount(self) -> None:
 		_translate_bindings(self._merged_bindings, self._bindings)
 		self._update_options(self._options)
-		self.query_one(SelectionList).focus()
+		try:
+			self.query_one(SelectionList).focus()
+		except NoMatches:
+			pass
 
 	def on_key(self, event: Key) -> None:
-		# Safely query SelectionList to avoid NoMatches crashes during screen transitions or key events.
-		selection_list = self.query(SelectionList).first()
-		if not selection_list or not selection_list.has_focus or event.key != 'enter':
+		try:
+			selection_list = self.query_one(SelectionList)
+		except NoMatches:
+			return
+
+		if not selection_list.has_focus or event.key != 'enter':
 			return
 
 		if len(self._selected_items) < 1:
@@ -581,16 +591,28 @@ class SelectListScreen(BaseScreen[ValueT]):
 		_ = self.dismiss(Result(ResultType.Selection, _item=self._selected_items))
 
 	def on_input_changed(self, event: Input.Changed) -> None:
+		try:
+			selection_list = self.query_one(SelectionList)
+		except NoMatches:
+			return
 		search_term = event.value.lower()
 		self._group.set_filter_pattern(search_term)
 		filtered_options = self._get_selections()
 		self._update_options(filtered_options)
 
 	def _update_options(self, options: list[Selection[MenuItem]]) -> None:
-		selection_list = self.query_one(SelectionList)
+		try:
+			selection_list = self.query_one(SelectionList)
+		except NoMatches:
+			return
 		selection_list.clear_options()
 		selection_list.add_options(options)
-
+		
+		if not options:
+			selection_list.highlighted = None
+			self._clear_preview()
+			return
+		
 		selection_list.highlighted = self._group.get_focused_index()
 
 		if focus_item := self._group.focus_item:
@@ -598,6 +620,15 @@ class SelectListScreen(BaseScreen[ValueT]):
 
 		self._set_cursor()
 
+	def _clear_preview(self) -> None:
+		if self._preview_location is None:
+			return
+		try:
+			preview_widget = self.query_one('#preview_content', Label)
+		except NoMatches:
+			return
+		_update_preview(preview_widget, None)
+		
 	def on_selection_list_selection_highlighted(self, event: SelectionList.SelectionHighlighted[MenuItem]) -> None:
 		if self._preview_location is not None:
 			item: MenuItem = event.selection.value
@@ -606,7 +637,10 @@ class SelectListScreen(BaseScreen[ValueT]):
 		self._set_cursor()
 
 	def _set_cursor(self) -> None:
-		selection_list = self.query_one(SelectionList)
+		try:
+			selection_list = self.query_one(SelectionList)
+		except NoMatches:
+			return
 		index = selection_list.highlighted
 
 		if index is None:
@@ -636,7 +670,10 @@ class SelectListScreen(BaseScreen[ValueT]):
 		if self._preview_location is None:
 			return
 
-		preview_widget = self.query_one('#preview_content', Label)
+		try:
+			preview_widget = self.query_one('#preview_content', Label)
+		except NoMatches:
+			return
 
 		if item.preview_action is not None:
 			_update_preview(preview_widget, item.preview_action(item))
