@@ -1633,6 +1633,15 @@ class LsblkInfo(BaseModel):
 			return Size(value, Unit.B, sector_size)
 		return value
 
+	@field_validator('mountpoint', 'mountpoints', mode='before')
+	@classmethod
+	def remove_swap_mountpoints(cls, value: Any) -> Any:
+		if value == '[SWAP]':
+			return None
+		if isinstance(value, list):
+			return [item for item in value if item != '[SWAP]']
+		return value
+
 	@field_validator('mountpoints', 'fsroots', mode='before')
 	@classmethod
 	def remove_none(cls, value: Any) -> Any:
