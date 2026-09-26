@@ -147,8 +147,8 @@ class Password:
 	def hidden(self) -> str:
 		if self._plaintext:
 			return '*' * len(self._plaintext)
-		else:
-			return '*' * 8
+
+		return '*' * 8
 
 
 @dataclass

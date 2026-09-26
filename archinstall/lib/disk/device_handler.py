@@ -152,7 +152,7 @@ class DeviceHandler:
 				if partition.fileSystem.type == FilesystemType.LINUX_SWAP.parted_value:
 					return FilesystemType.LINUX_SWAP
 				return FilesystemType(partition.fileSystem.type)
-			elif lsblk_info is not None:
+			if lsblk_info is not None:
 				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
 			return None
 		except ValueError:

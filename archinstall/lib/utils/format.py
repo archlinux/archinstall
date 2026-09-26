@@ -64,20 +64,24 @@ def _get_values(
 		# A method of an instance does not make sense
 		if callable(class_formatter):
 			return class_formatter(o, filter_list)
+
 		# if is invoked by name we restrict it to a method of the class. No need to mess more
-		elif hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
+		if hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
 			func = getattr(o, class_formatter)
 			return func(filter_list)
 
 		raise ValueError('Unsupported formatting call')
-	elif hasattr(o, 'table_data'):
+
+	if hasattr(o, 'table_data'):
 		return o.table_data()
-	elif hasattr(o, 'json'):
+
+	if hasattr(o, 'json'):
 		return o.json()
-	elif is_dataclass(o):
+
+	if is_dataclass(o):
 		return asdict(o)
-	else:
-		return o.__dict__  # type: ignore[unreachable]
+
+	return o.__dict__  # type: ignore[unreachable]
 
 
 def table_components(

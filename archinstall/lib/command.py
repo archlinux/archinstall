@@ -321,8 +321,8 @@ class SysCommand:
 	def exit_code(self) -> int | None:
 		if self.session:
 			return self.session.exit_code
-		else:
-			return None
+
+		return None
 
 	@property
 	def trace_log(self) -> bytes | None:

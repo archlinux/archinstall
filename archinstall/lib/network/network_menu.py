@@ -161,9 +161,9 @@ class ManualNetworkConfig(ListManager[Nic]):
 				dns = dns_servers.split(' ')
 
 			return Nic(iface=iface_name, ip=ip, gateway=gateway, dns=dns, dhcp=False)
-		else:
-			# this will contain network iface names
-			return Nic(iface=iface_name)
+
+		# this will contain network iface names
+		return Nic(iface=iface_name)
 
 
 async def select_network(preset: NetworkConfiguration | None) -> NetworkConfiguration | None:

@@ -30,8 +30,10 @@ class Language:
 	def is_match(self, lang_or_translated_lang: str) -> bool:
 		if self.name_en == lang_or_translated_lang:
 			return True
-		elif self.translated_lang == lang_or_translated_lang:
+
+		if self.translated_lang == lang_or_translated_lang:
 			return True
+
 		return False
 
 	def json(self) -> str:

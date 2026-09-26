@@ -193,12 +193,12 @@ class Loading[ValueT]:
 				header=self._header,
 				data_callback=self._data_callback,
 			).run()
-		else:
-			_ = await LoadingScreen(
-				timer=self._timer,
-				header=self._header,
-			).run()
-			return Result.true()
+
+		_ = await LoadingScreen(
+			timer=self._timer,
+			header=self._header,
+		).run()
+		return Result.true()
 
 
 class Table[ValueT]:

@@ -81,8 +81,8 @@ class PlasmaProfile(Profile):
 		if flavor_str is not None:
 			flavor = PlasmaFlavor(flavor_str)
 			return flavor.packages()
-		else:
-			return PlasmaFlavor.Meta.packages()  # use plasma-meta as the recommended default
+
+		return PlasmaFlavor.Meta.packages()  # use plasma-meta as the recommended default
 
 	@property
 	@override

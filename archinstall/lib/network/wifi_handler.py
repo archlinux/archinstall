@@ -80,9 +80,9 @@ class WifiHandler(InstanceRunnable[bool]):
 		if result.success:
 			debug('successfully enabled wpa_supplicant')
 			return True
-		else:
-			debug(f'failed to enable wpa_supplicant: {result.error}')
-			return False
+
+		debug(f'failed to enable wpa_supplicant: {result.error}')
+		return False
 
 	def _find_wifi_interface(self) -> str | None:
 		for iface in SYS_NET.iterdir():

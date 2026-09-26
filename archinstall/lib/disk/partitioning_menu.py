@@ -212,7 +212,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		if isinstance(selection.segment, PartitionModification):
 			if selection.segment.status == ModificationStatus.CREATE:
 				return tr('Partition - New')
-			elif selection.segment.is_delete() and selection.segment.dev_path:
+			if selection.segment.is_delete() and selection.segment.dev_path:
 				title = tr('Partition') + '\n\n'
 				title += 'status: delete\n'
 				title += f'device: {selection.segment.dev_path}\n'
@@ -394,7 +394,8 @@ class PartitioningList(ListManager[DiskSegment]):
 		if partition.is_modify():
 			partition.status = ModificationStatus.EXIST
 			return
-		elif partition.exists():
+
+		if partition.exists():
 			partition.status = ModificationStatus.MODIFY
 
 		# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
@@ -461,7 +462,8 @@ class PartitioningList(ListManager[DiskSegment]):
 
 		if size.format_highest() == max_size.format_highest():
 			return max_size
-		elif size > max_size or size < self._buffer:
+
+		if size > max_size or size < self._buffer:
 			return None
 
 		return size

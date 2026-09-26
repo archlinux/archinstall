@@ -71,22 +71,22 @@ class DiskLayoutConfiguration(SubConfig):
 				'config_type': self.config_type.value,
 				'mountpoint': str(self.mountpoint),
 			}
-		else:
-			config: _DiskLayoutConfigurationSerialization = {
-				'config_type': self.config_type.value,
-				'device_modifications': [mod.json() for mod in self.device_modifications],
-			}
 
-			if self.lvm_config:
-				config['lvm_config'] = self.lvm_config.json()
+		config: _DiskLayoutConfigurationSerialization = {
+			'config_type': self.config_type.value,
+			'device_modifications': [mod.json() for mod in self.device_modifications],
+		}
 
-			if self.disk_encryption:
-				config['disk_encryption'] = self.disk_encryption.json()
+		if self.lvm_config:
+			config['lvm_config'] = self.lvm_config.json()
 
-			if self.btrfs_options:
-				config['btrfs_options'] = self.btrfs_options.json()
+		if self.disk_encryption:
+			config['disk_encryption'] = self.disk_encryption.json()
 
-			return config
+		if self.btrfs_options:
+			config['btrfs_options'] = self.btrfs_options.json()
+
+		return config
 
 	@override
 	def summary(self) -> list[str]:
@@ -375,17 +375,18 @@ class Size:
 
 		if self.unit == target_unit:
 			return self
-		elif self.unit == Unit.sectors:
+
+		if self.unit == Unit.sectors:
 			norm = self._normalize()
 			return Size(norm, Unit.B, self.sector_size).convert(target_unit, sector_size)
-		else:
-			if target_unit == Unit.sectors and sector_size is not None:
-				norm = self._normalize()
-				sectors = math.ceil(norm / sector_size.value)
-				return Size(sectors, Unit.sectors, sector_size)
-			else:
-				value = int(self._normalize() / target_unit.value)
-				return Size(value, target_unit, self.sector_size)
+
+		if target_unit == Unit.sectors and sector_size is not None:
+			norm = self._normalize()
+			sectors = math.ceil(norm / sector_size.value)
+			return Size(sectors, Unit.sectors, sector_size)
+
+		value = int(self._normalize() / target_unit.value)
+		return Size(value, target_unit, self.sector_size)
 
 	def as_text(self) -> str:
 		return self.format_size(
@@ -445,8 +446,8 @@ class Size:
 	def format_highest(self, include_unit: bool = True, units: Units = Units.BINARY) -> str:
 		if units == Units.BINARY:
 			return self.binary_unit_highest(include_unit)
-		else:
-			return self.si_unit_highest(include_unit)
+
+		return self.si_unit_highest(include_unit)
 
 	def is_valid_start(self) -> bool:
 		return self >= Size(1, Unit.MiB, self.sector_size)
@@ -762,9 +763,9 @@ class PartitionType(StrEnum):
 	def get_type_from_code(code: int) -> PartitionType:
 		if code == parted.PARTITION_NORMAL:
 			return PartitionType.PRIMARY
-		else:
-			debug(f'Partition code not supported: {code}')
-			return PartitionType._UNKNOWN
+
+		debug(f'Partition code not supported: {code}')
+		return PartitionType._UNKNOWN
 
 	def get_partition_code(self) -> int:
 		if self == PartitionType.BOOT:
@@ -982,10 +983,10 @@ class PartitionModification:
 	def is_root(self) -> bool:
 		if self.mountpoint is not None:
 			return self.mountpoint == Path('/')
-		else:
-			for subvol in self.btrfs_subvols:
-				if subvol.is_root():
-					return True
+
+		for subvol in self.btrfs_subvols:
+			if subvol.is_root():
+				return True
 
 		return False
 
@@ -1255,10 +1256,10 @@ class LvmVolume:
 	def is_root(self) -> bool:
 		if self.mountpoint is not None:
 			return Path('/') == self.mountpoint
-		else:
-			for subvol in self.btrfs_subvols:
-				if subvol.is_root():
-					return True
+
+		for subvol in self.btrfs_subvols:
+			if subvol.is_root():
+				return True
 
 		return False
 
@@ -1489,8 +1490,8 @@ class DiskEncryption:
 	def should_generate_encryption_file(self, dev: PartitionModification | LvmVolume) -> bool:
 		if isinstance(dev, PartitionModification):
 			return dev in self.partitions and dev.mountpoint != Path('/')
-		else:
-			return dev in self.lvm_volumes and dev.mountpoint != Path('/')
+
+		return dev in self.lvm_volumes and dev.mountpoint != Path('/')
 
 	def json(self) -> _DiskEncryptionSerialization:
 		obj: _DiskEncryptionSerialization = {
