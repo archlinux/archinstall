@@ -24,6 +24,9 @@ archinstall
 ```
 
 Alternative ways to install are `git clone` the repository (and is better since you get the latest code regardless of [build date](https://archlinux.org/packages/?sort=&q=archinstall))
+
+You can find the build recipe on the official gitlab: [`archinstall`](https://gitlab.archlinux.org/archlinux/packaging/packages/archinstall)
+
 ## Upgrade `archinstall` on live Arch ISO image
 
 Upgrading archinstall on the ISO needs to be done via a full system upgrade using
