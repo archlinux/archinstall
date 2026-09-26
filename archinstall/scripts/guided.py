@@ -87,7 +87,6 @@ def perform_installation(
 			installation.mount_ordered_layout()
 
 		installation.sanity_check(
-			arch_config_handler.args.offline,
 			arch_config_handler.args.skip_ntp,
 			arch_config_handler.args.skip_wkd,
 		)

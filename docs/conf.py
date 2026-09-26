@@ -10,11 +10,11 @@ sys.path.insert(0, os.path.abspath('..'))
 
 
 def process_docstring(
-	app: Sphinx,
-	what: str,
-	name: str,
-	obj: Any,
-	options: Any,
+	_app: Sphinx,
+	_what: str,
+	_name: str,
+	_obj: Any,
+	_options: Any,
 	lines: list[str],
 ) -> None:
 	spaces_pat = re.compile(r'( {8})')

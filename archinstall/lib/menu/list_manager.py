@@ -134,7 +134,7 @@ class ListManager[ValueT]:
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def filter_options(self, selection: ValueT, options: list[str]) -> list[str]:
+	def filter_options(self, _selection: ValueT, options: list[str]) -> list[str]:
 		"""
 		filter which actions to show for a specific selection
 		"""

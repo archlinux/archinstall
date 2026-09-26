@@ -177,7 +177,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Save configuration'),
-				action=lambda x: self._safe_config(),
+				action=lambda _: self._safe_config(),
 				key=SpecialMenuKey.SAVE.value,
 			),
 			MenuItem(
@@ -502,7 +502,7 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return warnings
 
-	def _prev_install_invalid_config(self, item: MenuItem) -> PreviewResult | None:
+	def _prev_install_invalid_config(self, _item: MenuItem) -> PreviewResult | None:
 		self.sync_all_to_config()
 
 		warnings = self._get_install_warnings()

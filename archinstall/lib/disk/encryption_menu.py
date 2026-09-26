@@ -58,7 +58,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			),
 			MenuItem(
 				text=tr('Encryption password'),
-				action=lambda x: select_encrypted_password(),
+				action=lambda _: select_encrypted_password(),
 				value=self._enc_config.encryption_password,
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._prev_password,
@@ -181,7 +181,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		return output
 
-	def _prev_type(self, item: MenuItem) -> str | None:
+	def _prev_type(self, _item: MenuItem) -> str | None:
 		enc_type = self._item_group.find_by_key('encryption_type').value
 
 		if enc_type:
