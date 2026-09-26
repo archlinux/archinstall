@@ -72,7 +72,7 @@ async def main(arch_config_handler: ArchConfigHandler | None = None) -> None:
 	arch_config_handler.config.save()
 
 	if arch_config_handler.args.dry_run:
-		return
+		return None
 
 	if not arch_config_handler.args.silent:
 		aborted = False
