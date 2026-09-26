@@ -259,13 +259,14 @@ class SysCommand:
 	def __getitem__(self, key: slice) -> bytes:
 		if not self.session:
 			raise KeyError('SysCommand() does not have an active session.')
-		elif type(key) is slice:
+
+		if type(key) is slice:
 			start = key.start or 0
 			end = key.stop or len(self.session._trace_log)
 
 			return self.session._trace_log[start:end]
-		else:
-			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
+
+		raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
 
 	@override
 	def __repr__(self, *args: list[Any], **kwargs: dict[str, Any]) -> str:

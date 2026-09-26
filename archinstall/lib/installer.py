@@ -1243,7 +1243,8 @@ class Installer:
 
 		if not efi_partition:
 			raise ValueError('Could not detect EFI system partition')
-		elif not efi_partition.mountpoint:
+
+		if not efi_partition.mountpoint:
 			raise ValueError('EFI system partition is not mounted')
 
 		# TODO: Ideally we would want to check if another config
@@ -1454,7 +1455,8 @@ class Installer:
 
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
-			elif not efi_partition.mountpoint:
+
+			if not efi_partition.mountpoint:
 				raise ValueError('EFI partition is not mounted')
 
 			# Safety net for programmatic callers that bypass GlobalMenu and
@@ -1670,7 +1672,8 @@ class Installer:
 
 		if not efi_partition:
 			raise ValueError('Could not detect EFI system partition')
-		elif not efi_partition.mountpoint:
+
+		if not efi_partition.mountpoint:
 			raise ValueError('EFI system partition is not mounted')
 
 		info(f'rEFInd EFI partition: {efi_partition.dev_path}')
