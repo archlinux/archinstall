@@ -25,7 +25,13 @@ from archinstall.lib.disk.utils import (
 	mount,
 	swapon,
 )
-from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
+from archinstall.lib.exceptions import (
+	DiskError,
+	HardwareIncompatibilityError,
+	RequirementError,
+	ServiceExceptionError,
+	SysCallError,
+)
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
@@ -80,7 +86,7 @@ class Installer:
 		base_packages: list[str] | None = None,
 		kernels: list[str] | None = None,
 		silent: bool = False,
-	):
+	) -> None:
 		"""
 		`Installer()` is the wrapper for most basic installation steps.
 		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
@@ -106,6 +112,7 @@ class Installer:
 			self._base_packages.extend(__accessibility_packages__)
 
 		self.post_base_install: list[Callable] = []  # type: ignore[type-arg]
+		self._post_base_install_services: list[str] = []
 
 		self._modules: list[str] = []
 		self._binaries: list[str] = []
@@ -179,11 +186,10 @@ class Installer:
 		if mod not in self._modules:
 			self._modules.append(mod)
 
-	def _verify_service_stop(self, offline: bool, skip_ntp: bool, skip_wkd: bool) -> None:
+	def _verify_service_stop(self, skip_ntp: bool, skip_wkd: bool) -> None:
 		"""
 		Certain services might be running that affects the system during installation.
-		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
-		We need to wait for it before we continue since we opted in to use a custom mirror/region.
+		We need to wait for them, to make sure ISO has no boot defects before install.
 		"""
 
 		if not skip_ntp:
@@ -202,17 +208,6 @@ class Installer:
 				time.sleep(1)
 		else:
 			info(tr('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
-
-		if not offline:
-			info('Waiting for automatic mirror selection (reflector) to complete.')
-			for _ in range(60):
-				if self._service_state('reflector') in ('dead', 'failed', 'exited'):
-					break
-				time.sleep(1)
-			else:
-				warn('Reflector did not complete within 60 seconds, continuing anyway...')
-		else:
-			info('Skipped reflector...')
 
 		# info('Waiting for pacman-init.service to complete.')
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
@@ -251,12 +246,11 @@ class Installer:
 
 	def sanity_check(
 		self,
-		offline: bool = False,
 		skip_ntp: bool = False,
 		skip_wkd: bool = False,
 	) -> None:
 		# self._verify_boot_part()
-		self._verify_service_stop(offline, skip_ntp, skip_wkd)
+		self._verify_service_stop(skip_ntp, skip_wkd)
 
 	def mount_ordered_layout(self) -> None:
 		debug('Mounting ordered layout')
@@ -558,7 +552,7 @@ class Installer:
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
-	def post_install_check(self, *args: str, **kwargs: str) -> list[str]:
+	def post_install_check(self) -> list[str]:
 		return [step for step, flag in self._helper_flags.items() if flag is False]
 
 	def set_mirrors(
@@ -725,7 +719,7 @@ class Installer:
 			try:
 				SysCommand(f'systemctl --root={self.target} enable {service}')
 			except SysCallError as err:
-				raise ServiceException(f'Unable to start service {service}: {err}')
+				raise ServiceExceptionError(f'Unable to start service {service}: {err}')
 
 			for plugin in plugins.values():
 				if hasattr(plugin, 'on_service'):
@@ -741,7 +735,7 @@ class Installer:
 			try:
 				SysCommand(f'systemctl --root={self.target} disable {service}')
 			except SysCallError as err:
-				raise ServiceException(f'Unable to disable service {service}: {err}')
+				raise ServiceExceptionError(f'Unable to disable service {service}: {err}')
 
 	def run_command(self, cmd: str, peek_output: bool = False) -> SysCommand:
 		return SysCommand(f'arch-chroot -S {self.target} {cmd}', peek_output=peek_output)
@@ -797,22 +791,16 @@ class Installer:
 				psk.copy(iwd_target / psk.name, preserve_metadata=True)
 
 			if enable_services:
+				iwd = 'iwd'
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self._helper_flags.get('base', False) is False:
-					self._base_packages.append('iwd')
-
-					# This function will be called after minimal_installation()
-					# as a hook for post-installs. This hook is only needed if
-					# base is not installed yet.
-					def post_install_enable_iwd_service(*args: str, **kwargs: str) -> None:
-						self.enable_service('iwd')
-
-					self.post_base_install.append(post_install_enable_iwd_service)
+					self._base_packages.append(iwd)
+					self._post_base_install_services.append(iwd)
 				# Otherwise, we can go ahead and add the required package
 				# and enable it's service:
 				else:
-					self.pacman.strap('iwd')
-					self.enable_service('iwd')
+					self.pacman.strap(iwd)
+					self.enable_service(iwd)
 
 		self.systemd_resolved_stub_mode()
 
@@ -826,16 +814,13 @@ class Installer:
 				netconf_file.copy(network_target / netconf_file.name, preserve_metadata=True)
 
 			if enable_services:
+				services = ['systemd-networkd', 'systemd-resolved']
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self._helper_flags.get('base', False) is False:
-
-					def post_install_enable_networkd_resolved(*args: str, **kwargs: str) -> None:
-						self.enable_service(['systemd-networkd', 'systemd-resolved'])
-
-					self.post_base_install.append(post_install_enable_networkd_resolved)
+					self._post_base_install_services.extend(services)
 				# Otherwise, we can go ahead and enable the services
 				else:
-					self.enable_service(['systemd-networkd', 'systemd-resolved'])
+					self.enable_service(services)
 
 		return True
 
@@ -987,6 +972,8 @@ class Installer:
 		for function in self.post_base_install:
 			info(f'Running post-installation hook: {function}')
 			function(self)
+
+		self.enable_service(self._post_base_install_services)
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_install'):
@@ -2067,9 +2054,9 @@ class Installer:
 				os.system('systemd-run --machine=archinstall --pty localectl set-keymap ""')  # type: ignore[deprecated]
 
 				try:
-					session.SysCommand(['localectl', 'set-keymap', language])
+					session.sys_command(['localectl', 'set-keymap', language])
 				except SysCallError as err:
-					raise ServiceException(f"Unable to set locale '{language}' for console: {err}")
+					raise ServiceExceptionError(f"Unable to set locale '{language}' for console: {err}")
 
 				info(f'Keyboard language for this installation is now set to: {language}')
 		else:
@@ -2090,12 +2077,12 @@ class Installer:
 				return False
 
 			with Boot(self.target) as session:
-				session.SysCommand(['localectl', 'set-x11-keymap', '""'])
+				session.sys_command(['localectl', 'set-x11-keymap', '""'])
 
 				try:
-					session.SysCommand(['localectl', 'set-x11-keymap', language])
+					session.sys_command(['localectl', 'set-x11-keymap', language])
 				except SysCallError as err:
-					raise ServiceException(f"Unable to set locale '{language}' for X11: {err}")
+					raise ServiceExceptionError(f"Unable to set locale '{language}' for X11: {err}")
 		else:
 			info('X11-Keyboard language was not changed from default (no language specified)')
 

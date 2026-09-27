@@ -146,7 +146,7 @@ class SysCommandWorker:
 		environment_vars: dict[str, str] | None = None,
 		working_directory: str = './',
 		remove_vt100_escape_codes_from_lines: bool = True,
-	):
+	) -> None:
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
 

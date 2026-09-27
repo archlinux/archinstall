@@ -11,7 +11,7 @@ from archinstall.tui.result import ResultType
 
 
 class ManualNetworkConfig(ListManager[Nic]):
-	def __init__(self, prompt: str, preset: list[Nic]):
+	def __init__(self, prompt: str, preset: list[Nic]) -> None:
 		self._actions = [
 			tr('Add interface'),
 			tr('Edit interface'),

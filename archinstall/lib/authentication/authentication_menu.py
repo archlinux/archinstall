@@ -14,7 +14,7 @@ from archinstall.tui.result import ResultType
 
 
 class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
-	def __init__(self, preset: AuthenticationConfiguration | None = None):
+	def __init__(self, preset: AuthenticationConfiguration | None = None) -> None:
 		if preset:
 			self._auth_config = preset
 		else:
@@ -37,7 +37,7 @@ class AuthenticationMenu(AbstractSubMenu[AuthenticationConfiguration]):
 		return [
 			MenuItem(
 				text=tr('Root password'),
-				action=lambda x: select_root_password(),
+				action=lambda _: select_root_password(),
 				preview_action=self._prev_root_pwd,
 				key='root_enc_password',
 			),

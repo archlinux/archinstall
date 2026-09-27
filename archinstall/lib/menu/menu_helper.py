@@ -1,4 +1,4 @@
-from archinstall.lib.utils.format import as_table
+from archinstall.lib.utils.format import table_components
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 
 
@@ -35,13 +35,11 @@ class MenuHelper[ValueT]:
 		display_data: dict[str, ValueT | str | None] = {}
 
 		if data:
-			table = as_table(data)
-			rows = table.split('\n')
+			header, rows = table_components(data)
 
-			# these are the header rows of the table
-			display_data = {f'{rows[0]}': None, f'{rows[1]}': None}
+			display_data = dict.fromkeys(header)
 
-			for row, entry in zip(rows[2:], data, strict=True):
+			for row, entry in zip(rows, data, strict=True):
 				display_data[row] = entry
 
 		if self._additional_options:

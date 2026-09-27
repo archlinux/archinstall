@@ -15,7 +15,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		bootloader_conf: BootloaderConfiguration,
 		uefi: bool,
 		skip_boot: bool = False,
-	):
+	) -> None:
 		self._bootloader_conf = bootloader_conf
 		self._skip_boot = skip_boot
 		self._uefi = uefi

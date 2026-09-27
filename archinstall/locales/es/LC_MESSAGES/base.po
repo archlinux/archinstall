@@ -992,7 +992,7 @@ msgstr "Grupo de paquetes:"
 msgid "Color enabled"
 msgstr "Color activado"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{} graphics driver"
 msgstr "{} controlador de gráficos"
 
@@ -1191,11 +1191,191 @@ msgstr "Nueva versión disponible"
 msgid "Starting device modifications in "
 msgstr "Iniciando modificaciones en dispositivo en "
 
+msgid "Bottom"
+msgstr "Abajo"
+
+msgid "Copy selected text"
+msgstr "Copiar texto seleccionado"
+
+msgid "Cursor down"
+msgstr "Cursor hacia abajo"
+
+msgid "Cursor left"
+msgstr "Cursor hacia la izquierda"
+
+msgid "Cursor right"
+msgstr "Cursor hacia la derecha"
+
+msgid "Cursor up"
+msgstr "Subir"
+
+msgid "Cut selected text"
+msgstr "Cortar el texto seleccionado"
+
+msgid "Delete all to the left"
+msgstr "Eliminar todo a la izquierda"
+
+msgid "Delete all to the right"
+msgstr "Eliminar todo a la derecha"
+
+msgid "Delete character left"
+msgstr "Eliminar carácter a la izquierda"
+
+msgid "Delete character right"
+msgstr "Eliminar carácter a la derecha"
+
+msgid "Delete left to start of word"
+msgstr "Eliminar hacia la izquierda hasta el inicio de la palabra"
+
+msgid "Delete right to start of word"
+msgstr "Eliminar a la derecha hasta el inicio de la palabra"
+
+msgid "Down"
+msgstr "Abajo"
+
+msgid "End"
+msgstr "Final"
+
+msgid "First"
+msgstr "Primero"
+
+msgid "Focus Next"
+msgstr "Enfocar a la siguiente"
+
+msgid "Focus Previous"
+msgstr "Enfocar a la anterior"
+
+msgid "Go to end"
+msgstr "Ir al final"
+
+msgid "Go to start"
+msgstr "Ir al inicio"
+
+msgid "Home"
+msgstr "Inicio"
+
+msgid "Last"
+msgstr "Último"
+
+msgid "Move cursor left"
+msgstr "Mover el cursor a la izquierda"
+
+msgid "Move cursor left a word"
+msgstr "Mover el cursor una palabra a la izquierda"
+
+msgid "Move cursor left a word and select"
+msgstr "Mover el cursor una palabra a la izquierda y seleccionar"
+
+msgid "Move cursor left and select"
+msgstr "Mover el cursor a la izquierda y seleccionar"
+
+msgid "Move cursor right a word"
+msgstr "Mover el cursor una palabra a la derecha"
+
+msgid "Move cursor right a word and select"
+msgstr "Mover el cursor una palabra a la derecha y seleccionar"
+
+msgid "Move cursor right and select"
+msgstr "Mover el cursor a la derecha y seleccionar"
+
+msgid "Move cursor right or accept the completion suggestion"
+msgstr "Mover el cursor a la derecha o aceptar la sugerencia de autocompletado"
+
+msgid "Page Down"
+msgstr "Bajar página"
+
+msgid "Page Left"
+msgstr "Página izquierda"
+
+msgid "Page Right"
+msgstr "Página derecha"
+
+msgid "Page Up"
+msgstr "Subir página"
+
+msgid "Page down"
+msgstr "Bajar página"
+
+msgid "Page up"
+msgstr "Subir página"
+
+msgid "Paste text from the clipboard"
+msgstr "Pegar texto del portapapeles"
+
+msgid "Press button"
+msgstr "Presione el botón"
+
+msgid "Quit"
+msgstr "Salir"
+
+msgid "Scroll Down"
+msgstr "Deslizar hacia abajo"
+
+msgid "Scroll End"
+msgstr "Ir al Final"
+
+msgid "Scroll Home"
+msgstr "Ir al Inicio"
+
+msgid "Scroll Left"
+msgstr "Mover hacia la izquierda"
+
+msgid "Scroll Right"
+msgstr "Mover hacia la derecha"
+
+msgid "Scroll Up"
+msgstr "Mover Arriba"
+
+msgid "Select"
+msgstr "Seleccionar"
+
+msgid "Select all"
+msgstr "Seleccionar todo"
+
+msgid "Select line end"
+msgstr "Seleccionar final de línea"
+
+msgid "Select line start"
+msgstr "Seleccionar inicio de línea"
+
+msgid "Submit"
+msgstr "Enviar"
+
+msgid "Toggle option"
+msgstr "Opción de alternancia"
+
+msgid "Top"
+msgstr "Arriba"
+
+msgid "Up"
+msgstr "Arriba"
+
+msgid "Reset"
+msgstr "Restablecer"
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "Toggle"
+msgstr "Alternar"
+
+msgid "Confirm"
+msgstr "Confirmar"
+
+msgid "Focus right"
+msgstr "Enfocar a la derecha"
+
+msgid "Focus left"
+msgstr "Enfocar a la izquierda"
+
 msgid "Ok"
 msgstr "Ok"
 
 msgid "Input cannot be empty"
 msgstr "La entrada no debe estar vacía"
+
+msgid "Show/Hide help"
+msgstr "Mostrar/Ocultar ayuda"
 
 msgid "Yes"
 msgstr "Sí"
@@ -1671,9 +1851,6 @@ msgstr " (predeterminado)"
 #~ msgid "Manual nic configuration with no auto DHCP requires an IP address"
 #~ msgstr "La configuración manual de la NIC sin DHCP automático requiere una dirección IP"
 
-#~ msgid "Select interface to add"
-#~ msgstr "Seleccione la interfaz para agregar"
-
 #~ msgid "Mark/Unmark a partition as compressed (btrfs only)"
 #~ msgstr "Marcar/Desmarcar una partición como comprimida (solo BTRFS)"
 
@@ -2105,9 +2282,6 @@ msgstr " (predeterminado)"
 #~ msgid "Root mount directory"
 #~ msgstr "Directorio de montaje raíz"
 
-#~ msgid "Select language"
-#~ msgstr "Seleccionar idioma"
-
 #~ msgid "Write additional packages to install (space separated, leave blank to skip)"
 #~ msgstr "Escriba paquetes adicionales para instalar (separados por espacios, déjelo en blanco para omitir)"
 
@@ -2214,9 +2388,6 @@ msgstr " (predeterminado)"
 #~ msgid "Select on multi select"
 #~ msgstr "Seleccionar en selección múltiple"
 
-#~ msgid "Reset"
-#~ msgstr "Restablecer"
-
 #~ msgid "Skip selection menu"
 #~ msgstr "Saltar el menú de selección"
 
@@ -2234,114 +2405,6 @@ msgstr " (predeterminado)"
 
 #~ msgid "Selection"
 #~ msgstr "Selección"
-
-#~ msgid "Search"
-#~ msgstr "Buscar"
-
-#~ msgid "Down"
-#~ msgstr "Abajo"
-
-#~ msgid "Up"
-#~ msgstr "Arriba"
-
-#~ msgid "Confirm"
-#~ msgstr "Confirmar"
-
-#~ msgid "Focus right"
-#~ msgstr "Enfocar a la derecha"
-
-#~ msgid "Focus left"
-#~ msgstr "Enfocar a la izquierda"
-
-#~ msgid "Toggle"
-#~ msgstr "Alternar"
-
-#~ msgid "Show/Hide help"
-#~ msgstr "Mostrar/Ocultar ayuda"
-
-#~ msgid "Quit"
-#~ msgstr "Salir"
-
-#~ msgid "First"
-#~ msgstr "Primero"
-
-#~ msgid "Last"
-#~ msgstr "Último"
-
-#~ msgid "Select"
-#~ msgstr "Seleccionar"
-
-#~ msgid "Page Up"
-#~ msgstr "Subir página"
-
-#~ msgid "Page Down"
-#~ msgstr "Bajar página"
-
-#~ msgid "Page up"
-#~ msgstr "Subir página"
-
-#~ msgid "Page down"
-#~ msgstr "Bajar página"
-
-#~ msgid "Page Left"
-#~ msgstr "Página izquierda"
-
-#~ msgid "Page Right"
-#~ msgstr "Página derecha"
-
-#~ msgid "Cursor up"
-#~ msgstr "Subir"
-
-#~ msgid "Cursor down"
-#~ msgstr "Cursor hacia abajo"
-
-#~ msgid "Cursor right"
-#~ msgstr "Cursor hacia la derecha"
-
-#~ msgid "Cursor left"
-#~ msgstr "Cursor hacia la izquierda"
-
-#~ msgid "Top"
-#~ msgstr "Arriba"
-
-#~ msgid "Bottom"
-#~ msgstr "Abajo"
-
-#~ msgid "Home"
-#~ msgstr "Inicio"
-
-#~ msgid "End"
-#~ msgstr "Final"
-
-#~ msgid "Toggle option"
-#~ msgstr "Opción de alternancia"
-
-#~ msgid "Scroll Up"
-#~ msgstr "Mover Arriba"
-
-#~ msgid "Scroll Down"
-#~ msgstr "Deslizar hacia abajo"
-
-#~ msgid "Scroll Left"
-#~ msgstr "Mover hacia la izquierda"
-
-#~ msgid "Scroll Right"
-#~ msgstr "Mover hacia la derecha"
-
-#~ msgid "Scroll Home"
-#~ msgstr "Ir al Inicio"
-
-#~ msgid "Scroll End"
-#~ msgstr "Ir al Final"
-
-#~ msgid "Focus Next"
-#~ msgstr "Enfocar a la siguiente"
-
-#~ msgid "Focus Previous"
-#~ msgstr "Enfocar a la anterior"
-
-#~ msgid "Copy selected text"
-#~ msgstr "Copiar texto seleccionado"
 
 #~ msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
 #~ msgstr "labwc necesita acceso a su asiento (colección de dispositivos de hardware, es decir, teclado, ratón, etc.)"

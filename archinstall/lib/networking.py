@@ -3,7 +3,6 @@ import random
 import select
 import signal
 import socket
-import ssl
 import struct
 import time
 from pathlib import Path
@@ -13,7 +12,7 @@ from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-from archinstall.lib.exceptions import DownloadTimeout, SysCallError
+from archinstall.lib.exceptions import DownloadTimeoutError, SysCallError
 from archinstall.lib.log import debug, error, info
 from archinstall.lib.pacman.pacman import Pacman
 
@@ -25,11 +24,11 @@ class DownloadTimer:
 	Context manager for timing downloads with timeouts.
 	"""
 
-	def __init__(self, timeout: int = 5):
+	def __init__(self, timeout: int = 5) -> None:
 		"""
 		Args:
 			timeout:
-				The download timeout in seconds. The DownloadTimeout exception
+				The download timeout in seconds. The DownloadTimeoutError exception
 				will be raised in the context after this many seconds.
 		"""
 		self.time: float | None = None
@@ -38,11 +37,11 @@ class DownloadTimer:
 		self.previous_handler = None
 		self.previous_timer: int | None = None
 
-	def raise_timeout(self, signl: int, frame: FrameType | None) -> None:
+	def raise_timeout(self, _signl: int, _frame: FrameType | None) -> None:
 		"""
-		Raise the DownloadTimeout exception.
+		Raise the DownloadTimeoutError exception.
 		"""
-		raise DownloadTimeout(f'Download timed out after {self.timeout} second(s).')
+		raise DownloadTimeoutError(f'Download timed out after {self.timeout} second(s).')
 
 	def __enter__(self) -> Self:
 		if self.timeout > 0:
@@ -126,10 +125,6 @@ def enrich_iface_types(interfaces: list[str]) -> dict[str, str]:
 
 
 def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout: int = 30) -> bytes:
-	ssl_context = ssl.create_default_context()
-	ssl_context.check_hostname = False
-	ssl_context.verify_mode = ssl.CERT_NONE
-
 	if params is not None:
 		encoded = urlencode(params)
 		full_url = f'{url}?{encoded}'
@@ -137,7 +132,7 @@ def fetch_data_from_url(url: str, params: dict[str, str] | None = None, timeout:
 		full_url = url
 
 	try:
-		response = urlopen(full_url, context=ssl_context, timeout=timeout)
+		response = urlopen(full_url, timeout=timeout)
 		return response.read()
 	except URLError as e:
 		raise ValueError(f'Unable to fetch data from url: {url}\n{e}')
