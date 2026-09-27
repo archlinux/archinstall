@@ -48,7 +48,9 @@ async def select_firmware_optdeps(preset: list[FirmwareOptdep] | None = None) ->
 	:rtype: list[FirmwareOptdep]
 	"""
 	preset = preset or []
-	group = MenuItemGroup.from_enum(FirmwareOptdep, sort_items=True, preset=preset)
+	items = [MenuItem(f'{f.value} ({f.description()})', value=f) for f in FirmwareOptdep]
+	group = MenuItemGroup(items, sort_items=True)
+	group.set_selected_by_value(preset)
 
 	result = await Selection[FirmwareOptdep](
 		group,
