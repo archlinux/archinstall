@@ -44,7 +44,7 @@ Assuming you are on an Arch Linux live-ISO or installed via `pip`, `archinstall`
 ```shell
 archinstall
 ```
-similar goes for running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
+The same goes for running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
 
 ```shell
 git clone https://github.com/archlinux/archinstall
@@ -192,7 +192,7 @@ It will go through everything from packaging, building and running *(with qemu)*
 You may want to boot an ISO image in a VM to test `archinstall` in there.
 
 * Download the latest [Arch ISO](https://archlinux.org/download/)
-* Use the the below command to boot the ISO in a VM
+* Use the command below to boot the ISO in a VM
 
 ```
 qemu-system-x86_64 -enable-kvm \
