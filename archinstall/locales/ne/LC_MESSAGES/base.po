@@ -1,8 +1,15 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ne\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] यहाँ एउटा लग फाइल (log file) सिर्जना गरिएको छ: {} {}"
@@ -939,10 +946,10 @@ msgstr "पार्टिसन व्यवस्थापन: {}"
 
 #, python-brace-format
 msgid "Total length: {}"
-msgstr ""
+msgstr "कुल लम्बाइ: {}"
 
 msgid "Encryption type"
-msgstr ""
+msgstr "इन्क्रिप्सन प्रकार"
 
 msgid "Iteration time"
 msgstr ""
@@ -969,7 +976,7 @@ msgid "Please enter a valid number"
 msgstr ""
 
 msgid "Partitions"
-msgstr ""
+msgstr "पार्टिसनहरू"
 
 msgid "No HSM devices available"
 msgstr ""
@@ -1003,7 +1010,7 @@ msgid " ! Formatting {} in "
 msgstr ""
 
 msgid "← Back"
-msgstr ""
+msgstr "← पछाडि"
 
 msgid "Disk encryption"
 msgstr "डिस्क इन्क्रिप्सन"
@@ -1034,16 +1041,16 @@ msgid "Installed packages"
 msgstr ""
 
 msgid "Add profile"
-msgstr ""
+msgstr "प्रोफाइल थप्नुहोस्"
 
 msgid "Edit profile"
-msgstr ""
+msgstr "प्रोफाइल सम्पादन गर्नुहोस्"
 
 msgid "Delete profile"
-msgstr ""
+msgstr "प्रोफाइल मेटाउनुहोस्"
 
 msgid "Profile name: "
-msgstr ""
+msgstr "प्रोफाइलको नाम:"
 
 msgid "The profile name you entered is already in use. Try again"
 msgstr ""
@@ -1058,7 +1065,7 @@ msgid "Should this profile be enabled for installation?"
 msgstr ""
 
 msgid "Create your own"
-msgstr ""
+msgstr "आफ्नै सिर्जना गर्नुहोस्"
 
 msgid ""
 "\n"
@@ -1090,7 +1097,7 @@ msgid "Disk configuration"
 msgstr ""
 
 msgid "Profiles"
-msgstr ""
+msgstr "प्रोफाइलहरू"
 
 msgid "Finding possible directories to save configuration files ..."
 msgstr ""
@@ -1123,7 +1130,7 @@ msgid "Custom mirrors"
 msgstr ""
 
 msgid "Defined"
-msgstr ""
+msgstr "परिभाषित"
 
 msgid "Save user configuration (including disk layout)"
 msgstr ""
@@ -1143,10 +1150,10 @@ msgid "Saving {} configuration files to {}"
 msgstr ""
 
 msgid "Mirrors"
-msgstr ""
+msgstr "मिररहरू"
 
 msgid "Mirror regions"
-msgstr ""
+msgstr "मिरर क्षेत्रहरू"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
 msgstr ""
@@ -1182,17 +1189,17 @@ msgid "Path"
 msgstr ""
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "निर्माता"
 
 msgid "Product"
-msgstr ""
+msgstr "उत्पादन"
 
 #, python-brace-format
 msgid "Invalid configuration: {error}"
 msgstr ""
 
 msgid "Type"
-msgstr ""
+msgstr "प्रकार"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
 msgstr ""
@@ -1256,7 +1263,7 @@ msgid "Would you like to use compression or disable CoW?"
 msgstr ""
 
 msgid "Use compression"
-msgstr ""
+msgstr "कम्प्रेसन प्रयोग गर्नुहोस्"
 
 msgid "Disable Copy-on-Write"
 msgstr ""
@@ -1281,7 +1288,7 @@ msgid "Select a LVM option"
 msgstr ""
 
 msgid "Partitioning"
-msgstr ""
+msgstr "पार्टिसनिङ"
 
 msgid "Logical Volume Management (LVM)"
 msgstr ""
@@ -1317,13 +1324,13 @@ msgid "LUKS on LVM"
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "हो"
 
 msgid "No"
 msgstr "होइन"
 
 msgid "Archinstall help"
-msgstr ""
+msgstr "Archinstall सहायता"
 
 msgid " (default)"
 msgstr ""
@@ -1341,7 +1348,7 @@ msgid "Mountpoint"
 msgstr ""
 
 msgid "HSM"
-msgstr ""
+msgstr "HSM"
 
 msgid "Enter disk encryption password (leave blank for no encryption)"
 msgstr ""
@@ -1374,7 +1381,7 @@ msgid "Root mount directory"
 msgstr ""
 
 msgid "Select language"
-msgstr ""
+msgstr "भाषा चयन गर्नुहोस्"
 
 msgid "Write additional packages to install (space separated, leave blank to skip)"
 msgstr ""
@@ -1402,34 +1409,34 @@ msgid "You need to enter a valid IP in IP-config mode"
 msgstr ""
 
 msgid "Modes"
-msgstr ""
+msgstr "मोडहरू"
 
 msgid "IP address"
-msgstr ""
+msgstr "IP ठेगाना"
 
 msgid "Enter your gateway (router) IP address (leave blank for none)"
 msgstr ""
 
 msgid "Gateway address"
-msgstr ""
+msgstr "गेटवे ठेगाना"
 
 msgid "Enter your DNS servers with space separated (leave blank for none)"
 msgstr ""
 
 msgid "DNS servers"
-msgstr ""
+msgstr "DNS सर्भरहरू"
 
 msgid "Configure interfaces"
 msgstr ""
 
 msgid "Kernel"
-msgstr ""
+msgstr "कर्नेल"
 
 msgid "UEFI is not detected and some options are disabled"
 msgstr ""
 
 msgid "Info"
-msgstr ""
+msgstr "जानकारी"
 
 msgid "The proprietary Nvidia driver is not supported by Sway."
 msgstr ""
@@ -1438,10 +1445,10 @@ msgid "It is likely that you will run into issues, are you okay with that?"
 msgstr ""
 
 msgid "Main profile"
-msgstr ""
+msgstr "मुख्य प्रोफाइल"
 
 msgid "Confirm password"
-msgstr ""
+msgstr "पासवर्ड पुष्टि गर्नुहोस्"
 
 msgid "The confirmation password did not match, please try again"
 msgstr ""
@@ -1499,7 +1506,7 @@ msgid "Swap on zram"
 msgstr ""
 
 msgid "Name"
-msgstr ""
+msgstr "नाम"
 
 msgid "Signature check"
 msgstr ""
@@ -1529,13 +1536,13 @@ msgid "The specified configuration will be applied"
 msgstr ""
 
 msgid "Wipe"
-msgstr ""
+msgstr "मेटाउनुहोस्"
 
 msgid "Mark/Unmark as XBOOTLDR"
 msgstr ""
 
 msgid "Loading packages..."
-msgstr ""
+msgstr "प्याकेजहरू लोड हुँदैछन्..."
 
 msgid "Select any packages from the below list that should be installed additionally"
 msgstr ""
@@ -1604,16 +1611,16 @@ msgid "Preview scroll down"
 msgstr ""
 
 msgid "Move up"
-msgstr ""
+msgstr "माथि सार्नुहोस्"
 
 msgid "Move down"
-msgstr ""
+msgstr "तल सार्नुहोस्"
 
 msgid "Move right"
-msgstr ""
+msgstr "दायाँ सार्नुहोस्"
 
 msgid "Move left"
-msgstr ""
+msgstr "बायाँ सार्नुहोस्"
 
 msgid "Jump to entry"
 msgstr ""
@@ -1661,7 +1668,7 @@ msgid "Package group:"
 msgstr ""
 
 msgid "Exit archinstall"
-msgstr ""
+msgstr "archinstall बाट बाहिर निस्कनुहोस्"
 
 msgid "Reboot system"
 msgstr ""
@@ -1708,7 +1715,7 @@ msgid "Second factor login"
 msgstr ""
 
 msgid "Bluetooth"
-msgstr ""
+msgstr "ब्लुटुथ"
 
 msgid "Would you like to configure Bluetooth?"
 msgstr ""
@@ -1720,10 +1727,10 @@ msgid "Would you like to configure the print service?"
 msgstr ""
 
 msgid "Power management"
-msgstr ""
+msgstr "पावर व्यवस्थापन"
 
 msgid "Authentication"
-msgstr ""
+msgstr "प्रमाणीकरण"
 
 msgid "Applications"
 msgstr ""
@@ -1736,7 +1743,7 @@ msgstr ""
 
 #, python-brace-format
 msgid "Btrfs snapshot type: {}"
-msgstr ""
+msgstr "स्न्यापसट प्रकार: {}"
 
 msgid "Syncing the system..."
 msgstr ""
@@ -1745,7 +1752,7 @@ msgid "Value cannot be empty"
 msgstr ""
 
 msgid "Snapshot type"
-msgstr ""
+msgstr "स्न्यापसट प्रकार"
 
 #, python-brace-format
 msgid "Snapshot type: {}"
@@ -1798,10 +1805,10 @@ msgid "Enter wifi password"
 msgstr ""
 
 msgid "Ok"
-msgstr ""
+msgstr "ठीक छ"
 
 msgid "Removable"
-msgstr ""
+msgstr "हटाउन मिल्ने"
 
 msgid "Install to removable location"
 msgstr ""
@@ -1858,7 +1865,7 @@ msgid "Use Network Manager (iwd backend)"
 msgstr ""
 
 msgid "Firewall"
-msgstr ""
+msgstr "फायरवाल"
 
 msgid "Select audio configuration"
 msgstr ""
@@ -1932,7 +1939,7 @@ msgid "Enter a respository name"
 msgstr ""
 
 msgid "Enter the repository url"
-msgstr ""
+msgstr "नयाँ पासवर्ड प्रविष्ट गर्नुहोस्"
 
 msgid "Enter server url"
 msgstr ""
@@ -1956,16 +1963,16 @@ msgid "Select which greeter to install"
 msgstr ""
 
 msgid "Select a profile type"
-msgstr ""
+msgstr "प्रोफाइल प्रकार चयन गर्नुहोस्"
 
 msgid "Enter new password"
-msgstr ""
+msgstr "नयाँ पासवर्ड प्रविष्ट गर्नुहोस्"
 
 msgid "Enter a username"
-msgstr ""
+msgstr "प्रयोगकर्ता नाम प्रविष्ट गर्नुहोस्"
 
 msgid "Enter a password"
-msgstr ""
+msgstr "पासवर्ड प्रविष्ट गर्नुहोस्"
 
 msgid "The password did not match, please try again"
-msgstr ""
+msgstr "पासवर्ड मिलेन, कृपया फेरि प्रयास गर्नुहोस्"
