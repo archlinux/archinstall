@@ -10,6 +10,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding, BindingsMap
 from textual.containers import Center, Horizontal, ScrollableContainer, Vertical
 from textual.css.query import NoMatches
+from textual.timer import Timer
 from textual.events import Key
 from textual.geometry import Offset
 from textual.screen import Screen
@@ -491,7 +492,8 @@ class SelectListScreen(BaseScreen[ValueT]):
 
 		self._selected_items: list[MenuItem] = self._group.selected_items
 		self._options: list[Selection[MenuItem]] = self._get_selections()
-
+		self._filter_timer: Timer | None = None
+		
 	def action_search(self) -> None:
 		if self.query_one(OptionList).has_focus:
 			if self._filter:
@@ -508,10 +510,8 @@ class SelectListScreen(BaseScreen[ValueT]):
 		search_input = self.query_one(Input)
 
 		if search_input.has_focus:
-			try:
-				self.query_one(SelectionList).focus()
-			except NoMatches:
-				pass
+			if (selection_list := self._selection_list()) is not None:
+				selection_list.focus()
 		else:
 			search_input.focus()
 
@@ -528,6 +528,26 @@ class SelectListScreen(BaseScreen[ValueT]):
 			selections.append(selection)
 
 		return selections
+		
+	def _selection_list(self) -> SelectionList | None:
+		"""
+		The SelectionList can be unavailable or unmounted when this function
+		is called (Like rapid key inputs on screen transitions). Caller
+		can handle a 'None' return instead of doing the query_one every time.
+		"""
+		try:
+			return self.query_one(SelectionList)
+		except NoMatches:
+			return None
+			
+	def _preview_widget(self) -> Label | None:
+		if self._preview_location is None:
+			return None
+		try:
+			return self.query_one('#preview_content', Label)
+		except NoMatches:
+			return None
+	
 
 	@override
 	def compose(self) -> ComposeResult:
@@ -568,17 +588,19 @@ class SelectListScreen(BaseScreen[ValueT]):
 	def on_mount(self) -> None:
 		_translate_bindings(self._merged_bindings, self._bindings)
 		self._update_options(self._options)
-		try:
-			self.query_one(SelectionList).focus()
-		except NoMatches:
-			pass
+		if (selection_list := self._selection_list()) is not None:
+			selection_list.focus()
+			
+	def on_unmount(self) -> None:
+		if self._filter_timer is not None:
+			self._filter_timer.stop()
+			self._filter_timer = None
 
 	def on_key(self, event: Key) -> None:
-		try:
-			selection_list = self.query_one(SelectionList)
-		except NoMatches:
+		selection_list = self._selection_list()
+		if selection_list is None:
 			return
-
+			
 		if not selection_list.has_focus or event.key != 'enter':
 			return
 
@@ -591,44 +613,54 @@ class SelectListScreen(BaseScreen[ValueT]):
 		_ = self.dismiss(Result(ResultType.Selection, _item=self._selected_items))
 
 	def on_input_changed(self, event: Input.Changed) -> None:
-		try:
-			selection_list = self.query_one(SelectionList)
-		except NoMatches:
-			return
+		"""
+		When the SelectionList is large the update cycle over
+		every keystroke of fast input is very expensive to
+		calculate and creates a over lapping update window.
+		To fix this we merge all the keystrokes in one input
+		at a time and introduce a slight delay in the list update.
+		"""
+		if self._filter_timer is not None:
+			self._filter_timer.stop()
+		
 		search_term = event.value.lower()
+		self._filter_timer = self.set_timer(
+			# would be better if we increased/decreased dynamically according to list size.
+			0.06,
+			lambda: self._apply_filter(search_term),
+		)
+		
+	def _apply_filter(self, search_term: str) -> None:
+		self._filter_timer = None
+		if self._selection_list() is None:
+			return
+		
 		self._group.set_filter_pattern(search_term)
 		filtered_options = self._get_selections()
 		self._update_options(filtered_options)
 
 	def _update_options(self, options: list[Selection[MenuItem]]) -> None:
-		try:
-			selection_list = self.query_one(SelectionList)
-		except NoMatches:
+		selection_list = self._selection_list()
+		if selection_list is None:
 			return
 		selection_list.clear_options()
 		selection_list.add_options(options)
-		
-		if not options:
-			selection_list.highlighted = None
-			self._clear_preview()
-			return
-		
+
 		selection_list.highlighted = self._group.get_focused_index()
 
-		if focus_item := self._group.focus_item:
+		if not options:
+			self._clear_preview()
+		elif focus_item := self._group.focus_item:
 			self._set_preview(focus_item)
 
 		self._set_cursor()
-
+		
 	def _clear_preview(self) -> None:
-		if self._preview_location is None:
-			return
-		try:
-			preview_widget = self.query_one('#preview_content', Label)
-		except NoMatches:
+		preview_widget = self._preview_widget()
+		if preview_widget is None:
 			return
 		_update_preview(preview_widget, None)
-		
+
 	def on_selection_list_selection_highlighted(self, event: SelectionList.SelectionHighlighted[MenuItem]) -> None:
 		if self._preview_location is not None:
 			item: MenuItem = event.selection.value
@@ -637,9 +669,8 @@ class SelectListScreen(BaseScreen[ValueT]):
 		self._set_cursor()
 
 	def _set_cursor(self) -> None:
-		try:
-			selection_list = self.query_one(SelectionList)
-		except NoMatches:
+		selection_list = self._selection_list()
+		if selection_list is None:
 			return
 		index = selection_list.highlighted
 
@@ -667,12 +698,8 @@ class SelectListScreen(BaseScreen[ValueT]):
 			self._selected_items.remove(item)
 
 	def _set_preview(self, item: MenuItem) -> None:
-		if self._preview_location is None:
-			return
-
-		try:
-			preview_widget = self.query_one('#preview_content', Label)
-		except NoMatches:
+		preview_widget = self._preview_widget()
+		if preview_widget is None:
 			return
 
 		if item.preview_action is not None:

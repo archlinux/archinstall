@@ -270,7 +270,6 @@ class MenuItemGroup:
 
 	def focus_first(self) -> None:
 		if len(self.items) == 0:
-			self.focus_item = None
 			return
 
 		first_item: MenuItem | None = self.items[0]
