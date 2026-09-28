@@ -14,7 +14,6 @@ on:
       - '**.gitignore'
       - '**.md'
       - 'LICENSE'
-      - 'PKGBUILD'
   release:
     types:
       - created
