@@ -170,6 +170,24 @@ replace the archinstall version with a newer one and execute the subsequent step
       rare case it will not work is if the source has introduced any new dependencies that are not installed yet
    - Installing the branch version with `pip install --break-system-packages .` and `archinstall`
 
+## Developer VM (recommended for contributors)
+
+The fastest way to iterate on archinstall is the dev VM script in `test_tooling/dev_vm/`.
+It builds a minimal Arch ISO with runtime deps pre-installed, then launches QEMU with the
+project source mounted read-only via 9p - edit code on the host, run `archinstall` in the
+guest immediately, no rebuild needed.
+
+```shell
+./test_tooling/dev_vm/dev_vm.sh           # first run builds ISO, then boots
+./test_tooling/dev_vm/dev_vm.sh rebuild   # force rebuild ISO
+./test_tooling/dev_vm/dev_vm.sh boot      # boot from installed disk (no ISO)
+./test_tooling/dev_vm/dev_vm.sh --bios    # legacy BIOS mode
+./test_tooling/dev_vm/dev_vm.sh -h        # all options
+```
+
+Requires an Arch-based host with `qemu-base` installed. See the script header for details
+on 9p shares, log streaming, and env overrides.
+
 ## Without a Live ISO Image
 
 To test this without a live ISO, the simplest approach is to use a local image and create a loop device.<br>
