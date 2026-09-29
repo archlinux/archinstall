@@ -1077,7 +1077,7 @@ class PartitionModification(SubConfig):
 		}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
+	def summary(self, _level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		fs_type = self.fs_type.value if self.fs_type else tr('Unknown')
 
 		details = [
@@ -1474,7 +1474,7 @@ class SnapshotConfig(SubConfig):
 	NAME: str = tr('Btrfs snapshot')
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
+	def summary(self, _level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		return [tr('Btrfs snapshot "{}"').format(self.snapshot_type)]
 
 	@override
@@ -1497,7 +1497,7 @@ class BtrfsOptions(SubConfig):
 		return {'snapshot_config': self.snapshot_config.json() if self.snapshot_config else None}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
+	def summary(self, _level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		if self.snapshot_config is None:
 			return []
 

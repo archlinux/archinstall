@@ -147,7 +147,7 @@ class MirrorRegion(SubConfig):
 		return {self.name: self.urls}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
+	def summary(self, _level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		out: list[str] = [tr('Region "{}"').format(self.name)]
 
 		for url in self.urls:
@@ -247,7 +247,7 @@ class CustomServer(SubConfig):
 		return {'url': self.url}
 
 	@override
-	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
+	def summary(self, _level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		return [self.url]
 
 	@classmethod

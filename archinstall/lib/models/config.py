@@ -29,5 +29,5 @@ class SubConfig(ABC):
 		pass
 
 	@abstractmethod
-	def summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
+	def summary(self, _level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
 		pass
