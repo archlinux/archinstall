@@ -50,13 +50,12 @@ This will install the pre-commit hook and run it every time a `git commit` is ex
 
 If you'd like to contribute to the documentation, refer to [this guide](docs/README.md) on how to build the documentation locally.
 
-
 ## AI Usage
 
 Docs, testing and code should originate from your arguments/command lines usages/reflection.
 Commits messages and PR bodies should also be written/reviewed by you. Ideally linked to issues/discussions/docs.
 
-Low-effort and large changes without proper scoping/testing, can be closed without explaining, and the same is true to issues.
+Low-effort and large changes without proper scoping/testing, will be closed without explaining, same is true to issues.
 Disclose usage/model in the PR/issues details and for what it was used (debugging, writing code, translating...).
 Smaller repro'd fixes are more likely to be accepted, than PRs that go in too many directions or touch too many things.
 
