@@ -34,7 +34,7 @@ pacman -Syu
 
 > [!NOTE]
 > The ISO has limited cow_spacesize (256M by default).
-> Optionally, if you need space in the temporary environment, simply: mount -o remount,size=1G /run/archiso/cowspace
+> Optionally, if you need space in the temporary environment, simply: `mount -o remount,size=1G /run/archiso/cowspace`
 
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
 
