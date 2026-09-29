@@ -3,7 +3,8 @@ from enum import Enum
 from archinstall.lib.locale.utils import list_timezones
 from archinstall.lib.log import warn
 from archinstall.lib.menu.helpers import Confirmation, Input, Selection
-from archinstall.lib.translationhandler import Language, tr
+from archinstall.lib.translation.handler import Language
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 

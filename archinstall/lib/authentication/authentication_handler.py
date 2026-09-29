@@ -6,7 +6,7 @@ from archinstall.lib.command import SysCommandWorker
 from archinstall.lib.log import debug, info
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.users import User
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

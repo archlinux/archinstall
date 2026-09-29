@@ -4,7 +4,7 @@ from typing import NotRequired, Self, TypedDict, override
 
 from archinstall.lib.crypt import crypt_yescrypt
 from archinstall.lib.models.config import SubConfig, SummaryLevel
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 
 class PasswordStrength(Enum):

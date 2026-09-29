@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field, ValidationInfo, field_serializer, field_v
 from archinstall.lib.log import debug
 from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.models.users import Password
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 ENC_IDENTIFIER = 'ainst'
 DEFAULT_ITER_TIME = 10000

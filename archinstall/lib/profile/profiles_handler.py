@@ -12,7 +12,7 @@ from archinstall.lib.hardware import GfxDriver, GfxPackage
 from archinstall.lib.log import debug, error, info
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.networking import fetch_data_from_url
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

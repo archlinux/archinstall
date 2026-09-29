@@ -4,7 +4,7 @@ from archinstall.lib.hardware import GfxDriver, SysInfo
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.models.application import ZramAlgorithm, ZramConfiguration
 from archinstall.lib.models.package_types import DEFAULT_KERNEL, Kernel
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 

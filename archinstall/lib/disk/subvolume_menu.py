@@ -5,7 +5,7 @@ from archinstall.lib.menu.helpers import Input
 from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.menu.util import prompt_dir
 from archinstall.lib.models.device import SubvolumeModification
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.result import ResultType
 
 

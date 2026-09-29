@@ -4,7 +4,7 @@ from archinstall.lib.args import USER_CONFIG_FILE, USER_CREDS_FILE, ArchConfig
 from archinstall.lib.log import debug
 from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.menu.util import get_password, prompt_dir
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 

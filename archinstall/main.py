@@ -17,7 +17,8 @@ from archinstall.lib.network.wifi_handler import WifiHandler
 from archinstall.lib.networking import ping
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.pacman.pacman import Pacman
-from archinstall.lib.translationhandler import tr, translation_handler
+from archinstall.lib.translation.handler import translation_handler
+from archinstall.lib.translation.i18n import tr
 from archinstall.lib.utils.util import running_from_iso
 from archinstall.tui.components import tui
 from archinstall.tui.menu_item import MenuItemGroup

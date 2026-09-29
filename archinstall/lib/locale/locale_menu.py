@@ -4,7 +4,7 @@ from archinstall.lib.locale.utils import list_console_fonts, list_keyboard_langu
 from archinstall.lib.menu.abstract_menu import AbstractSubMenu
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.models.locale import LocaleConfiguration
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 

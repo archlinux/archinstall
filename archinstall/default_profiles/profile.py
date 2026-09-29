@@ -1,7 +1,7 @@
 from enum import Enum, StrEnum, auto
 from typing import TYPE_CHECKING, Self
 
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

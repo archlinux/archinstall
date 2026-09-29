@@ -4,7 +4,7 @@ from enum import Enum, StrEnum, auto
 from functools import cached_property
 from typing import Any, ClassVar, Self, override
 
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 
 class MsgLevelStyle(StrEnum):

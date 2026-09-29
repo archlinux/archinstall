@@ -5,7 +5,7 @@ from typing import Any, Self, override
 
 from archinstall.lib.log import warn
 from archinstall.lib.models.config import SubConfig, SummaryLevel
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 
 class Bootloader(Enum):

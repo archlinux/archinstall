@@ -5,7 +5,7 @@ from archinstall.lib.log import debug
 from archinstall.lib.menu.helpers import Loading, Notify, Selection
 from archinstall.lib.models.packages import AvailablePackage, LocalPackage, PackageGroup, Repository
 from archinstall.lib.pacman.pacman import Pacman
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 

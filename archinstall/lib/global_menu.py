@@ -30,7 +30,8 @@ from archinstall.lib.network.network_menu import select_network
 from archinstall.lib.packages.packages import list_available_packages, select_additional_packages
 from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman_menu import PacmanMenu
-from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.lib.translation.handler import Language, translation_handler
+from archinstall.lib.translation.i18n import tr
 from archinstall.lib.utils.format import as_table
 from archinstall.tui.components import tui
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult

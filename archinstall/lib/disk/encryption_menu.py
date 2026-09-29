@@ -17,7 +17,7 @@ from archinstall.lib.models.device import (
 	PartitionModification,
 )
 from archinstall.lib.models.users import Password
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.lib.utils.format import as_table
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
