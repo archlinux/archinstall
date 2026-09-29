@@ -53,11 +53,11 @@ If you'd like to contribute to the documentation, refer to [this guide](docs/REA
 ## AI Usage
 
 Docs, testing and code should originate from your arguments/command lines usages/reflection.
-Commits messages and PR bodies should also be written/reviewed by you. Ideally linked to issues/discussions/docs.
+Commit messages and PR bodies should also be written/reviewed by you. Ideally linked to issues/discussions/docs.
 
-Low-effort and large changes without proper scoping/testing, will be closed without explaining, same is true to issues.
+Low-effort and large changes without proper scoping/testing will be closed without explaining, same is true for issues.
 Disclose usage/model in the PR/issues details and for what it was used (debugging, writing code, translating...).
-Smaller repro'd fixes are more likely to be accepted, than PRs that go in too many directions or touch too many things.
+Smaller repro'd fixes are more likely to be accepted than PRs that go in too many directions or touch too many things.
 
 ## Submitting Changes
 
