@@ -2098,7 +2098,7 @@ class Installer:
 		return True
 
 	def _service_started(self, service_name: str) -> str | None:
-		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
+		if Path(service_name).suffix not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
 		last_execution_time = (
@@ -2116,7 +2116,7 @@ class Installer:
 		return last_execution_time
 
 	def _service_state(self, service_name: str) -> str:
-		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
+		if Path(service_name).suffix not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
 		return SysCommand(
