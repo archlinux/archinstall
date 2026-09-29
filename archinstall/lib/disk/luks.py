@@ -243,7 +243,7 @@ class Luks2:
 	) -> None:
 		debug(f'Adding crypttab entry for key {key_file}')
 
-		with open(crypttab_path, 'a') as crypttab:
+		with crypttab_path.open('a') as crypttab:
 			opt = ','.join(options)
 			uuid = self._get_luks_uuid()
 			row = f'{self.mapper_name} UUID={uuid} {key_file} {opt}\n'

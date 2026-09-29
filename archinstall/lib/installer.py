@@ -592,7 +592,7 @@ class Installer:
 		if repositories_config:
 			debug(f'Pacman config: {repositories_config}')
 
-			with open(pacman_config, 'a') as fp:
+			with pacman_config.open('a') as fp:
 				fp.write(repositories_config)
 
 		regions_config = mirror_config.regions_config(mirror_list_handler, speed_sort=True)
@@ -616,7 +616,7 @@ class Installer:
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
-		with open(fstab_path, 'ab') as fp:
+		with fstab_path.open('ab') as fp:
 			fp.write(gen_fstab)
 
 		if not fstab_path.is_file():
@@ -627,7 +627,7 @@ class Installer:
 				if plugin.on_genfstab(self) is True:
 					break
 
-		with open(fstab_path, 'a') as fp:
+		with fstab_path.open('a') as fp:
 			for entry in self._fstab_entries:
 				fp.write(f'{entry}\n')
 
@@ -770,7 +770,7 @@ class Installer:
 					or conf
 				)
 
-		with open(f'{self.target}/etc/systemd/network/10-{nic.iface}.network', 'a') as netconf:
+		with (self.target / f'etc/systemd/network/10-{nic.iface}.network').open('a') as netconf:
 			netconf.write(str(conf))
 
 	def systemd_resolved_stub_mode(self) -> None:
@@ -833,7 +833,7 @@ class Installer:
 				if plugin.on_mkinitcpio(self):
 					return True
 
-		with open(f'{self.target}/etc/mkinitcpio.conf', 'r+') as mkinit:
+		with (self.target / 'etc/mkinitcpio.conf').open('r+') as mkinit:
 			content = mkinit.read()
 			content = re.sub('\nMODULES=(.*)', f'\nMODULES=({" ".join(self._modules)})', content)
 			content = re.sub('\nBINARIES=(.*)', f'\nBINARIES=({" ".join(self._binaries)})', content)
@@ -1026,9 +1026,14 @@ class Installer:
 
 		info(f'Zram compression algorithm: {algo.value}')
 
-		with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
-			zram_conf.write('[zram0]\n')
-			zram_conf.write(f'compression-algorithm = {algo.value}\n')
+		(self.target / 'etc/systemd/zram-generator.conf').write_text(
+			textwrap.dedent(
+				f"""\
+				[zram0]
+				compression-algorithm = {algo.value}
+				""",
+			)
+		)
 
 		self.enable_service('systemd-zram-setup@zram0.service')
 
@@ -1504,11 +1509,11 @@ class Installer:
 
 			if not bootloader_removable:
 				# Create EFI boot menu entry for Limine.
+				fw_platform_size = Path('/sys/firmware/efi/fw_platform_size')
 				try:
-					with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
-						efi_bitness = fw_platform_size.read().strip()
+					efi_bitness = fw_platform_size.read_text().rstrip()
 				except Exception as err:
-					raise OSError(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
+					raise OSError(f'Could not open or read {fw_platform_size} to determine EFI bitness: {err}')
 
 				if efi_bitness == '64':
 					loader_path = f'\\EFI\\arch-limine\\{"BOOTAA64.EFI" if platform.machine() == "aarch64" else "BOOTX64.EFI"}'
@@ -1790,9 +1795,8 @@ class Installer:
 			raise ValueError(f'Could not detect ESP at mountpoint {self.target}')
 
 		# Set up kernel command line
-		with open(self.target / 'etc/kernel/cmdline', 'w') as cmdline:
-			kernel_parameters = self._get_kernel_params(root)
-			cmdline.write(' '.join(kernel_parameters) + '\n')
+		kernel_parameters = self._get_kernel_params(root)
+		(self.target / 'etc/kernel/cmdline').write_text(' '.join(kernel_parameters) + '\n')
 
 		diff_mountpoint = None
 
@@ -1920,7 +1924,7 @@ class Installer:
 			# Guarantees sudoer confs directory recommended perms
 			sudoers_dir.chmod(0o440)
 			# Appends a reference to the sudoers file, because if we are here sudoers.d did not exist yet
-			with open(self.target / 'etc/sudoers', 'a') as sudoers:
+			with (self.target / 'etc/sudoers').open('a') as sudoers:
 				sudoers.write('@includedir /etc/sudoers.d\n')
 
 		# We count how many files are there already so we know which number to prefix the file with

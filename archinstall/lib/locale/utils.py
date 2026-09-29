@@ -21,7 +21,7 @@ def list_keyboard_languages() -> list[str]:
 def list_locales() -> list[str]:
 	locales = []
 
-	with open('/usr/share/i18n/SUPPORTED') as file:
+	with Path('/usr/share/i18n/SUPPORTED').open() as file:
 		for line in file:
 			if line != 'C.UTF-8 UTF-8\n':
 				locales.append(line.rstrip())
