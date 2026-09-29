@@ -126,6 +126,9 @@
       }
     ]
   },
+  "firmware_optdeps": [
+    "linux-firmware-qcom"
+  ],
   "hostname": "archy",
   "kernels": [
     "linux-zen"
