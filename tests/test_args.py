@@ -236,6 +236,7 @@ def test_config_file_parsing(
 		),
 		hostname='archy',
 		kernels=['linux-zen'],
+		firmware_optdeps=['linux-firmware-qcom'],
 		ntp=True,
 		packages=['firefox'],
 		pacman_config=PacmanConfiguration(parallel_downloads=66),
