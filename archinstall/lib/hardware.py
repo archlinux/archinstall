@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass
 from enum import Enum, StrEnum
 from functools import cached_property
@@ -213,7 +212,7 @@ class SysInfo:
 
 	@staticmethod
 	def has_uefi() -> bool:
-		return os.path.isdir('/sys/firmware/efi')
+		return Path('/sys/firmware/efi').is_dir()
 
 	@staticmethod
 	def _graphics_devices() -> dict[str, str]:
