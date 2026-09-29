@@ -57,7 +57,7 @@ Commit messages and PR bodies should also be written/reviewed by you. Ideally li
 
 Low-effort and large changes without proper scoping/testing will be closed without explaining, same is true for issues.
 Disclose usage/model in the PR/issues details and for what it was used (debugging, writing code, translating...).
-Smaller repro'd fixes are more likely to be accepted than PRs that go in too many directions or touch too many things.
+Smaller reproduced fixes are more likely to be accepted than PRs that go in many directions or touch a lot of things.
 
 ## Submitting Changes
 
