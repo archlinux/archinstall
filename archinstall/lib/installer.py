@@ -1928,7 +1928,7 @@ class Installer:
 				sudoers.write('@includedir /etc/sudoers.d\n')
 
 		# We count how many files are there already so we know which number to prefix the file with
-		num_of_rules_already = len(os.listdir(sudoers_dir))
+		num_of_rules_already = len(os.listdir(sudoers_dir))  # noqa: PTH208
 		file_num_str = f'{num_of_rules_already:02d}'  # We want 00_user1, 01_user2, etc
 
 		# Guarantees that username str does not contain invalid characters for a linux file name:

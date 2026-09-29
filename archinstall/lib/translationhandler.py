@@ -241,7 +241,7 @@ class TranslationHandler:
 		Get a list of all known languages
 		"""
 		translation_files = []
-		for filename in os.listdir(self._locales_dir):
+		for filename in os.listdir(self._locales_dir):  # noqa: PTH208
 			if len(filename) == 2 or filename in ['pt_BR', 'zh-CN', 'zh-TW']:
 				translation_files.append(filename)
 
