@@ -33,11 +33,9 @@ Upgrading archinstall on the ISO needs to be done via a full system upgrade usin
 pacman -Syu
 ```
 
-When booting from a live USB, the space on the ramdisk is limited and may not be sufficient to allow running a re-installation or upgrade of the installer.
-In case one runs into this issue, any of the following can be used
-
-* Resize the root partition https://wiki.archlinux.org/title/Archiso#Adjusting_the_size_of_the_root_file_system
-* Specify the boot parameter copytoram=y (https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/blob/master/docs/README.bootparams#L26) which will copy the root filesystem to tmpfs
+> [!NOTE]
+> The ISO has limited cow_spacesize (256M by default).
+> Optionally, if you need space in the temporary environment, simply: `mount -o remount,size=1G /run/archiso/cowspace`
 
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
 
