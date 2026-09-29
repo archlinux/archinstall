@@ -292,7 +292,7 @@ class MenuItemGroup:
 		if last_item is not None:
 			self.focus_item = last_item
 
-	def focus_prev(self, skip_empty: bool = True) -> None:
+	def focus_prev(self) -> None:
 		# e.g. when filter shows no items
 		if self.focus_item is None:
 			return
@@ -302,7 +302,7 @@ class MenuItemGroup:
 		if item is not None:
 			self.focus_item = item
 
-	def focus_next(self, skip_not_enabled: bool = True) -> None:
+	def focus_next(self) -> None:
 		# e.g. when filter shows no items
 		if self.focus_item is None:
 			return

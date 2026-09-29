@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-version = "4.4"
+version = "4.5"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -32,7 +32,7 @@ Documentation = "https://archinstall.readthedocs.io/"
 Source = "https://github.com/archlinux/archinstall"
 
 [project.optional-dependencies]
-log = ["systemd_python>=236"]
+log = ["systemd_python>=235"]
 dev = [
     "mypy>=2.3.0",
     "flake8>=7.3.0",
@@ -183,6 +183,7 @@ docstring-code-format = true
 [tool.ruff.lint]
 select = [
     "ANN",    # flake8-annotations
+    "ARG",    # flake8-unused-arguments
     "ASYNC",  # flake8-async
     "B",      # flake8-bugbear
     "C4",     # flake8-comprehensions
@@ -200,6 +201,7 @@ select = [
     "INT",    # flake8-gettext
     "ISC",    # flake8-implicit-str-concat
     "LOG",    # flake8-logging
+    "N",      # pep8-naming
     "PGH",    # pygrep-hooks
     "PIE",    # flake8-pie
     "PLC",    # Pylint conventions
@@ -230,6 +232,11 @@ ignore = [
     "RUF005",   # collection-literal-concatenation
     "RUF039",   # unraw-re-pattern
     "W191",     # tab-indentation
+]
+
+[tool.ruff.lint.per-file-ignores]
+"stubs/**/*.pyi" = [
+    "N",        # pep8-naming
 ]
 
 [tool.ruff.lint.flake8-gettext]
