@@ -93,12 +93,14 @@ class MenuItem:
 	def has_value(self) -> bool:
 		if self.value is None:
 			return False
-		elif isinstance(self.value, list) and len(self.value) == 0:
+
+		if isinstance(self.value, list) and len(self.value) == 0:
 			return False
-		elif isinstance(self.value, dict) and len(self.value) == 0:
+
+		if isinstance(self.value, dict) and len(self.value) == 0:
 			return False
-		else:
-			return True
+
+		return True
 
 	def get_display_value(self) -> str | None:
 		if self.display_action is not None:
@@ -250,8 +252,7 @@ class MenuItemGroup:
 	def items(self) -> list[MenuItem]:
 		pattern = self._filter_pattern.lower()
 		items = filter(lambda item: item.is_empty() or pattern in item.text.lower(), self._menu_items)
-		l_items = sorted(items, key=self._items_score)
-		return l_items
+		return sorted(items, key=self._items_score)
 
 	def _items_score(self, item: MenuItem) -> int:
 		pattern = self._filter_pattern.lower()
@@ -339,7 +340,7 @@ class MenuItemGroup:
 	def _is_selectable(self, item: MenuItem) -> bool:
 		if item.is_empty():
 			return False
-		elif item.read_only:
+		if item.read_only:
 			return False
 
 		return self.is_enabled(item)

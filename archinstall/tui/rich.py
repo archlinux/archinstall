@@ -20,6 +20,4 @@ class BaseRichTable(RichTable):
 		buf.print(self)
 
 		_ = string_io.seek(0)
-		output = string_io.read()
-
-		return output
+		return string_io.read()

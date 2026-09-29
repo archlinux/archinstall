@@ -40,10 +40,11 @@ class Bootloader(Enum):
 	def get_default(uefi: bool, skip_boot: bool = False) -> Bootloader:
 		if skip_boot:
 			return Bootloader.NO_BOOTLOADER
-		elif uefi:
+
+		if uefi:
 			return Bootloader.Systemd
-		else:
-			return Bootloader.Grub
+
+		return Bootloader.Grub
 
 	@classmethod
 	def from_arg(cls, bootloader: str, skip_boot: bool) -> Self:

@@ -93,8 +93,8 @@ class ListManager[ValueT]:
 
 		if result.get_value() == self._cancel_action:
 			return None
-		else:
-			return self._data
+
+		return self._data
 
 	async def _run_actions_on_entry(self, entry: ValueT) -> None:
 		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]
