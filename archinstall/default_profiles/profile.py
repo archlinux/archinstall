@@ -175,10 +175,11 @@ class Profile:
 	def is_graphic_driver_supported(self) -> bool:
 		if not self.current_selection:
 			return self._support_gfx_driver
-		else:
-			if any(p._support_gfx_driver for p in self.current_selection):
-				return True
-			return False
+
+		if any(p._support_gfx_driver for p in self.current_selection):
+			return True
+
+		return False
 
 	def is_greeter_supported(self) -> bool:
 		return self._support_greeter

@@ -170,17 +170,17 @@ class Installer:
 			log(msg, fg='green')
 			self.sync_log_to_install_medium()
 			return True
-		else:
-			warn('Some required steps were not successfully installed/configured before leaving the installer:')
 
-			for step in missing_steps:
-				warn(f' - {step}')
+		warn('Some required steps were not successfully installed/configured before leaving the installer:')
 
-			warn(f'Detailed error logs can be found at: {logger.directory}')
-			warn('Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues')
+		for step in missing_steps:
+			warn(f' - {step}')
 
-			self.sync_log_to_install_medium()
-			return False
+		warn(f'Detailed error logs can be found at: {logger.directory}')
+		warn('Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues')
+
+		self.sync_log_to_install_medium()
+		return False
 
 	def remove_mod(self, mod: str) -> None:
 		if mod in self._modules:
@@ -695,9 +695,7 @@ class Installer:
 			self.arch_chroot(f'ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
 			return True
 
-		else:
-			warn(f'Time zone {zone} does not exist, continuing with system default')
-
+		warn(f'Time zone {zone} does not exist, continuing with system default')
 		return False
 
 	def activate_time_synchronization(self) -> None:
@@ -1051,10 +1049,11 @@ class Installer:
 	def _get_root(self) -> PartitionModification | LvmVolume | None:
 		if self._disk_config.lvm_config:
 			return self._disk_config.lvm_config.get_root_volume()
-		else:
-			for mod in self._disk_config.device_modifications:
-				if root := mod.get_root_partition():
-					return root
+
+		for mod in self._disk_config.device_modifications:
+			if root := mod.get_root_partition():
+				return root
+
 		return None
 
 	def _configure_grub_btrfsd(self, snapshot_type: SnapshotType) -> None:
@@ -1248,7 +1247,8 @@ class Installer:
 
 		if not efi_partition:
 			raise ValueError('Could not detect EFI system partition')
-		elif not efi_partition.mountpoint:
+
+		if not efi_partition.mountpoint:
 			raise ValueError('EFI system partition is not mounted')
 
 		# TODO: Ideally we would want to check if another config
@@ -1459,7 +1459,8 @@ class Installer:
 
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
-			elif not efi_partition.mountpoint:
+
+			if not efi_partition.mountpoint:
 				raise ValueError('EFI partition is not mounted')
 
 			# Safety net for programmatic callers that bypass GlobalMenu and
@@ -1675,7 +1676,8 @@ class Installer:
 
 		if not efi_partition:
 			raise ValueError('Could not detect EFI system partition')
-		elif not efi_partition.mountpoint:
+
+		if not efi_partition.mountpoint:
 			raise ValueError('EFI system partition is not mounted')
 
 		info(f'rEFInd EFI partition: {efi_partition.dev_path}')

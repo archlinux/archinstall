@@ -57,5 +57,5 @@ async def select_seat_access(profile_name: str, default: str | None) -> SeatAcce
 
 	if result.type_ == ResultType.Selection:
 		return result.get_value()
-	else:
-		raise ValueError('Unexpected result type from seat access selection')
+
+	raise ValueError('Unexpected result type from seat access selection')

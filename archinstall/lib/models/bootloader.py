@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Any, Self, override
 
 from archinstall.lib.log import warn
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.translationhandler import tr
 
 
@@ -40,10 +40,11 @@ class Bootloader(Enum):
 	def get_default(uefi: bool, skip_boot: bool = False) -> Bootloader:
 		if skip_boot:
 			return Bootloader.NO_BOOTLOADER
-		elif uefi:
+
+		if uefi:
 			return Bootloader.Systemd
-		else:
-			return Bootloader.Grub
+
+		return Bootloader.Grub
 
 	@classmethod
 	def from_arg(cls, bootloader: str, skip_boot: bool) -> Self:
@@ -95,6 +96,8 @@ class BootloaderConfiguration(SubConfig):
 	removable: bool = True
 	plymouth: PlymouthTheme | None = None
 
+	NAME: str = tr('Bootloader')
+
 	@override
 	def json(self) -> dict[str, Any]:
 		data = {'bootloader': self.bootloader.json(), 'uki': self.uki, 'removable': self.removable}
@@ -104,13 +107,15 @@ class BootloaderConfiguration(SubConfig):
 		return data
 
 	@override
-	def summary(self) -> list[str]:
-		out = [tr('Bootloader "{}"').format(self.bootloader.value)]
+	def summary(self, _level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
+		out = [self.bootloader.value]
 
 		if self.uki:
-			out.append(tr('UKI enabled'))
+			out.append(tr('UKI "enabled"'))
+
 		if self.removable:
 			out.append(tr('Removable'))
+
 		if self.plymouth is not None:
 			out.append(tr('Plymouth "{}"').format(self.plymouth.value))
 

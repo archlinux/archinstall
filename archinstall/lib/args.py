@@ -22,7 +22,7 @@ from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.application import ApplicationConfiguration, ZramConfiguration
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
-from archinstall.lib.models.config import SubConfig
+from archinstall.lib.models.config import SubConfig, SummaryLevel
 from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
@@ -95,57 +95,6 @@ class ArchConfigType(StrEnum):
 	PACKAGES = auto()
 	PACMAN_CONFIG = auto()
 	CUSTOM_COMMANDS = auto()
-
-	def text(self) -> str:
-		match self:
-			case ArchConfigType.ARCHINSTALL_LANGUAGE:
-				return tr('ArchInstall Language')
-			case ArchConfigType.VERSION:
-				return tr('Version')
-			case ArchConfigType.SCRIPT:
-				return tr('Installation Script')
-			case ArchConfigType.LOCALE_CONFIG:
-				return tr('Locales')
-			case ArchConfigType.DISK_CONFIG:
-				return tr('Disk configuration')
-			case ArchConfigType.PROFILE_CONFIG:
-				return tr('Profile')
-			case ArchConfigType.MIRROR_CONFIG:
-				return tr('Mirrors and repositories')
-			case ArchConfigType.NETWORK_CONFIG:
-				return tr('Network')
-			case ArchConfigType.BOOTLOADER_CONFIG:
-				return tr('Bootloader')
-			case ArchConfigType.APP_CONFIG:
-				return tr('Application')
-			case ArchConfigType.AUTH_CONFIG:
-				return tr('Authentication')
-			case ArchConfigType.SWAP:
-				return tr('Swap')
-			case ArchConfigType.HOSTNAME:
-				return tr('Hostname')
-			case ArchConfigType.KERNELS:
-				return tr('Kernels')
-			case ArchConfigType.FIRMWARE_OPTDEPS:
-				return tr('Optional firmware')
-			case ArchConfigType.NTP:
-				return tr('Automatic time sync (NTP)')
-			case ArchConfigType.TIMEZONE:
-				return tr('Timezone')
-			case ArchConfigType.SERVICES:
-				return tr('Services')
-			case ArchConfigType.PACKAGES:
-				return tr('Additional packages')
-			case ArchConfigType.PACMAN_CONFIG:
-				return tr('Pacman')
-			case ArchConfigType.CUSTOM_COMMANDS:
-				return tr('Custom commands')
-			case ArchConfigType.USERS:
-				return tr('Users')
-			case ArchConfigType.ROOT_ENC_PASSWORD:
-				return tr('Root encrypted password')
-			case ArchConfigType.ENCRYPTION_PASSWORD:
-				return tr('Disk encryption password')
 
 
 USER_CONFIG_FILE: Path = Path('user_configuration.json')
@@ -450,7 +399,7 @@ class ArchConfig:
 		target.write_text(data)
 		target.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def as_summary(self) -> str:
+	def as_summary(self, level: SummaryLevel = SummaryLevel.BASIC) -> str:
 		"""
 		Render a concise two-column summary of the current configuration.
 
@@ -459,19 +408,16 @@ class ArchConfig:
 		cfg: dict[str, str | list[str] | bool] = {}
 
 		for key, value in self.plain_cfg().items():
-			cfg[key.text()] = value
+			if isinstance(value, list):
+				value = ', '.join(value)
+			cfg[key.title()] = value
 
-		for config_type, obj in self.sub_cfg().items():
-			if not hasattr(obj, 'summary'):
-				continue
-
-			summary = obj.summary()
+		for sub_config in self.sub_cfg().values():
+			summary = sub_config.summary(level)
 			if summary:
-				cfg[config_type.text()] = summary
+				cfg[sub_config.NAME] = summary
 
-		simple_summary = as_key_value_pair(cfg, ignore_empty=True)
-
-		return simple_summary
+		return as_key_value_pair(cfg, ignore_empty=True)
 
 
 class ArchConfigHandler:
@@ -709,9 +655,7 @@ class ArchConfigHandler:
 			if json_data is not None:
 				config.update(json_data)
 
-		config = self._cleanup_config(config)
-
-		return config
+		return self._cleanup_config(config)
 
 	def _process_creds_data(self, creds_data: str) -> dict[str, Any] | None:
 		if creds_data.startswith('$'):  # encrypted data

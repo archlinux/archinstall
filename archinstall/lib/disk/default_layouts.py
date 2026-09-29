@@ -38,11 +38,11 @@ async def get_default_partition_layout(
 			filesystem_type=filesystem_type,
 		)
 		return [device_modification]
-	else:
-		return await suggest_multi_disk_layout(
-			devices,
-			filesystem_type=filesystem_type,
-		)
+
+	return await suggest_multi_disk_layout(
+		devices,
+		filesystem_type=filesystem_type,
+	)
 
 
 def _boot_partition(sector_size: SectorSize, using_gpt: bool) -> PartitionModification:
@@ -118,13 +118,14 @@ def process_root_partition_size(total_size: Size, sector_size: SectorSize) -> Si
 	if total_device_size.value > 500:
 		# maximum size
 		return Size(value=50, unit=Unit.GiB, sector_size=sector_size)
-	elif total_device_size.value < 320:
+
+	if total_device_size.value < 320:
 		# minimum size
 		return Size(value=32, unit=Unit.GiB, sector_size=sector_size)
-	else:
-		# 10% of total size
-		length = total_device_size.value // 10
-		return Size(value=length, unit=Unit.GiB, sector_size=sector_size)
+
+	# 10% of total size
+	length = total_device_size.value // 10
+	return Size(value=length, unit=Unit.GiB, sector_size=sector_size)
 
 
 def get_default_btrfs_subvols() -> list[SubvolumeModification]:
