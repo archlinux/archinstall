@@ -312,7 +312,7 @@ class SysCommandWorker:
 	def execute(self) -> bool:
 		import pty
 
-		if (old_dir := os.getcwd()) != self.working_directory:
+		if (old_dir := os.getcwd()) != self.working_directory:  # noqa: PTH109
 			os.chdir(str(self.working_directory))
 
 		# Note: If for any reason, we get a Python exception between here
