@@ -493,7 +493,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		self._selected_items: list[MenuItem] = self._group.selected_items
 		self._options: list[Selection[MenuItem]] = self._get_selections()
 		self._filter_timer: Timer | None = None
-		
+
 	def action_search(self) -> None:
 		if self.query_one(OptionList).has_focus:
 			if self._filter:
@@ -528,8 +528,8 @@ class SelectListScreen(BaseScreen[ValueT]):
 			selections.append(selection)
 
 		return selections
-		
-	def _selection_list(self) -> SelectionList | None:
+
+	def _selection_list(self) -> SelectionList[MenuItem] | None:
 		"""
 		The SelectionList can be unavailable or unmounted when this function
 		is called (Like rapid key inputs on screen transitions). Caller
@@ -539,7 +539,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 			return self.query_one(SelectionList)
 		except NoMatches:
 			return None
-			
+
 	def _preview_widget(self) -> Label | None:
 		if self._preview_location is None:
 			return None
@@ -547,7 +547,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 			return self.query_one('#preview_content', Label)
 		except NoMatches:
 			return None
-	
+
 
 	@override
 	def compose(self) -> ComposeResult:
@@ -590,7 +590,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		self._update_options(self._options)
 		if (selection_list := self._selection_list()) is not None:
 			selection_list.focus()
-			
+
 	def on_unmount(self) -> None:
 		if self._filter_timer is not None:
 			self._filter_timer.stop()
@@ -600,7 +600,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		selection_list = self._selection_list()
 		if selection_list is None:
 			return
-			
+
 		if not selection_list.has_focus or event.key != 'enter':
 			return
 
@@ -622,19 +622,19 @@ class SelectListScreen(BaseScreen[ValueT]):
 		"""
 		if self._filter_timer is not None:
 			self._filter_timer.stop()
-		
+
 		search_term = event.value.lower()
 		self._filter_timer = self.set_timer(
 			# would be better if we increased/decreased dynamically according to list size.
 			0.06,
 			lambda: self._apply_filter(search_term),
 		)
-		
+
 	def _apply_filter(self, search_term: str) -> None:
 		self._filter_timer = None
 		if self._selection_list() is None:
 			return
-		
+
 		self._group.set_filter_pattern(search_term)
 		filtered_options = self._get_selections()
 		self._update_options(filtered_options)
@@ -654,7 +654,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 			self._set_preview(focus_item)
 
 		self._set_cursor()
-		
+
 	def _clear_preview(self) -> None:
 		preview_widget = self._preview_widget()
 		if preview_widget is None:
