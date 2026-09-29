@@ -5,7 +5,7 @@ from archinstall.lib.menu.helpers import Confirmation, Input
 from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.users import User
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.menu_item import MenuItem
 from archinstall.tui.result import ResultType
 

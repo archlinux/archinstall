@@ -20,7 +20,7 @@ from textual.widgets.selection_list import Selection
 from textual.worker import WorkerCancelled
 
 from archinstall.lib.log import debug
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup, MsgLevelType, PreviewResult
 from archinstall.tui.result import Result, ResultType
 
@@ -1293,7 +1293,7 @@ class _AppInstance(App[ValueT]):
 
 	@override
 	async def _on_exit_app(self) -> None:
-		from archinstall.lib.translationhandler import translation_handler
+		from archinstall.lib.translation.handler import translation_handler
 
 		translation_handler.restore_console_font()
 		await super()._on_exit_app()
@@ -1307,7 +1307,7 @@ class _AppInstance(App[ValueT]):
 			_ = self.screen.mount(HelpPanel())
 
 	def on_mount(self) -> None:
-		from archinstall.lib.translationhandler import translation_handler
+		from archinstall.lib.translation.handler import translation_handler
 
 		translation_handler.apply_console_font()
 		_translate_bindings(self._merged_bindings, self._bindings)

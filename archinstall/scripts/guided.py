@@ -21,7 +21,7 @@ from archinstall.lib.models.users import User
 from archinstall.lib.network.network_handler import install_network_config
 from archinstall.lib.packages.util import check_version_upgrade
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.components import tui
 
 

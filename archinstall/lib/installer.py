@@ -64,7 +64,7 @@ from archinstall.lib.pacman.config import PacmanConfig
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.pathnames import MIRRORLIST, PACMAN_CONF
 from archinstall.lib.plugins import plugins
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 # https://github.com/archlinux/archinstall/issues/4368

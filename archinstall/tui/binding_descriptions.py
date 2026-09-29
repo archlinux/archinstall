@@ -17,7 +17,7 @@ a new textual widget in components.py:
 	python3 test_tooling/check_binding_descriptions.py
 """
 
-from archinstall.lib.translationhandler import tr_noop
+from archinstall.lib.translation.i18n import tr_noop
 
 # textual 8.2.8
 TEXTUAL_BINDING_DESCRIPTIONS: tuple[str, ...] = (

@@ -6,7 +6,7 @@ from archinstall.lib.menu.helpers import Confirmation, Selection
 from archinstall.lib.menu.util import get_password
 from archinstall.lib.models.authentication import AuthenticationConfiguration, U2FLoginConfiguration, U2FLoginMethod
 from archinstall.lib.models.users import Password, User
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.lib.user.user_menu import select_users
 from archinstall.lib.utils.format import as_table
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup

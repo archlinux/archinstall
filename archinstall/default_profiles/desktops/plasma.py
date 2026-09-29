@@ -4,7 +4,7 @@ from typing import override
 from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType
 from archinstall.lib.menu.helpers import Selection
 from archinstall.lib.packages.packages import available_package, package_group_info
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
 from archinstall.tui.result import ResultType
 

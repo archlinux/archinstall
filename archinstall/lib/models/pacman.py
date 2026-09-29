@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Self, TypedDict, override
 
 from archinstall.lib.models.config import SubConfig, SummaryLevel
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 
 class PacmanConfigSerialization(TypedDict):

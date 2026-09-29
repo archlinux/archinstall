@@ -27,7 +27,7 @@ from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall.lib.translationhandler import translation_handler
+from archinstall.lib.translation.handler import translation_handler
 
 
 def test_default_args(monkeypatch: MonkeyPatch) -> None:

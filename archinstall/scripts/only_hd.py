@@ -9,7 +9,7 @@ from archinstall.lib.global_menu import GlobalMenu
 from archinstall.lib.installer import Installer
 from archinstall.lib.log import debug, error
 from archinstall.lib.menu.util import delayed_warning
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 from archinstall.tui.components import tui
 
 

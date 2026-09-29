@@ -33,7 +33,8 @@ from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User, UserSerialization
 from archinstall.lib.plugins import load_plugin
-from archinstall.lib.translationhandler import Language, tr, translation_handler
+from archinstall.lib.translation.handler import Language, translation_handler
+from archinstall.lib.translation.i18n import tr
 from archinstall.lib.utils.format import as_key_value_pair
 from archinstall.lib.version import get_version
 from archinstall.tui.components import tui

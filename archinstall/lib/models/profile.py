@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Self, TypedDict, override
 from archinstall.default_profiles.profile import GreeterType, Profile
 from archinstall.lib.hardware import GfxDriver
 from archinstall.lib.models.config import SubConfig, SummaryLevel
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 if TYPE_CHECKING:
 	from archinstall.lib.profile.profiles_handler import ProfileSerialization

@@ -3,7 +3,7 @@ from enum import StrEnum, auto
 from typing import Any, NotRequired, Self, TypedDict, override
 
 from archinstall.lib.models.config import SubConfig, SummaryLevel
-from archinstall.lib.translationhandler import tr
+from archinstall.lib.translation.i18n import tr
 
 
 class PowerManagement(StrEnum):
