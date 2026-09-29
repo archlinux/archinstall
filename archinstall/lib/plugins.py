@@ -65,7 +65,7 @@ def load_plugin(path: Path) -> None:
 	namespace: str | None = None
 	info(f'Loading plugin from {path}')
 
-	if os.path.isfile(path):
+	if path.is_file():
 		namespace = _import_via_path(path)
 
 	if namespace and namespace in sys.modules:
