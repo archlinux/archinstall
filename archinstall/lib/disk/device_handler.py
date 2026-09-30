@@ -616,8 +616,7 @@ class DeviceHandler:
 		@param dev_path:	Device path of the partition to be wiped.
 		@type dev_path:		str
 		"""
-		with open(dev_path, 'wb') as p:
-			p.write(bytearray(1024))
+		dev_path.write_bytes(bytearray(1024))
 
 	def wipe_dev(self, block_device: BDevice) -> None:
 		"""

@@ -207,6 +207,7 @@ select = [
     "PLC",    # Pylint conventions
     "PLE",    # Pylint errors
     "PLW",    # Pylint warnings
+    "PTH",    # flake8-use-pathlib
     "PYI",    # flake8-pyi
     "RET",    # flake8-return
     "RSE",    # flake8-raise
