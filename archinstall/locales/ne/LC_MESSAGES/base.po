@@ -952,46 +952,46 @@ msgid "Encryption type"
 msgstr "इन्क्रिप्सन प्रकार"
 
 msgid "Iteration time"
-msgstr ""
+msgstr "पुनरावृत्ति समय"
 
 msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
+msgstr "LUKS इन्क्रिप्सनको लागि पुनरावृत्ति समय राख्नुहोस् (मिलिसेकेन्डमा)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr ""
+msgstr "ठूला मूल्यहरूले सुरक्षा बढाउँछन् तर बूट हुने समय ढिलो बनाउँछन्"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
+msgstr "पूर्वनिर्धारित: 10000ms, सिफारिस गरिएको दायरा: 1000-60000"
 
 msgid "Iteration time cannot be empty"
-msgstr ""
+msgstr "पुनरावृत्ति समय खाली हुन सक्दैन"
 
 msgid "Iteration time must be at least 100ms"
-msgstr ""
+msgstr "पुनरावृत्ति समय कम्तीमा 100ms हुनुपर्छ"
 
 msgid "Iteration time must be at most 120000ms"
-msgstr ""
+msgstr "पुनरावृत्ति समय बढीमा 120000ms हुनुपर्छ"
 
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "कृपया मान्य नम्बर राख्नुहोस्"
 
 msgid "Partitions"
 msgstr "पार्टिसनहरू"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "कुनै पनि HSM यन्त्रहरू उपलब्ध छैनन्"
 
 msgid "Partitions to be encrypted"
-msgstr ""
+msgstr "इन्क्रिप्ट गर्नुपर्ने पार्टिसनहरू"
 
 msgid "Select disk encryption option"
-msgstr ""
+msgstr "डिस्क इन्क्रिप्सन विकल्प चयन गर्नुहोस्"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "HSM को लागि प्रयोग गर्ने FIDO2 उपकरण चयन गर्नुहोस्"
 
 msgid "Use a best-effort default partition layout"
-msgstr ""
+msgstr "उत्तम-प्रयास पूर्वनिर्धारित पार्टिसन लेआउट प्रयोग गर्नुहोस्"
 
 msgid "Manual Partitioning"
 msgstr ""
@@ -1000,14 +1000,14 @@ msgid "Pre-mounted configuration"
 msgstr ""
 
 msgid "Unknown"
-msgstr ""
+msgstr "अज्ञात"
 
 msgid "Partition encryption"
 msgstr ""
 
 #, python-brace-format
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr "! {} को ढाँचा मिलाउँदैछ"
 
 msgid "← Back"
 msgstr "← पछाडि"
@@ -1016,26 +1016,26 @@ msgid "Disk encryption"
 msgstr "डिस्क इन्क्रिप्सन"
 
 msgid "Configuration"
-msgstr ""
+msgstr "कन्फिगरेसन"
 
 msgid "Password"
 msgstr "पासवर्ड"
 
 msgid "All settings will be reset, are you sure?"
-msgstr ""
+msgstr "सबै सेटिङहरू रिसेट गरिनेछन्, के तपाईं पक्का हुनुहुन्छ?"
 
 msgid "Back"
 msgstr "पछाडि"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "चयन गरिएका प्रोफाइलहरूका लागि कुन greeter स्थापना गर्ने हो, कृपया चयन गर्नुहोस्: {}"
 
 #, python-brace-format
 msgid "Environment type: {}"
-msgstr ""
+msgstr "वातावरणको प्रकार: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "Sway द्वारा Nvidia को प्रोप्राइटरी ड्राइभर समर्थित छैन। तपाईंलाई समस्या आउन सक्ने सम्भावना छ, के तपाईं यसमा सहमत हुनुहुन्छ?"
 
 msgid "Installed packages"
 msgstr ""
@@ -1053,16 +1053,16 @@ msgid "Profile name: "
 msgstr "प्रोफाइलको नाम:"
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr ""
+msgstr "तपाईंले राख्नुभएको प्रोफाइलको नाम पहिले नै प्रयोगमा छ। फेरि प्रयास गर्नुहोस्"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr ""
+msgstr "यस प्रोफाइलसँग स्थापना गरिने प्याकेजहरू (स्पेसले छुट्याउनुहोस्, छोड्न खाली राख्नुहोस्):"
 
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr ""
+msgstr "यस प्रोफाइलसँग सक्षम गरिने सेवाहरू (स्पेसले छुट्याउनुहोस्, छोड्न खाली राख्नुहोस्):"
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "के यो प्रोफाइल स्थापनाको लागि सक्षम गर्नुपर्छ?"
 
 msgid "Create your own"
 msgstr "आफ्नै सिर्जना गर्नुहोस्"
@@ -1073,28 +1073,31 @@ msgid ""
 msgstr ""
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Sway लाई तपाईंको seat (किबोर्ड, माउस आदि हार्डवेयर उपकरणहरूको समूह) मा पहुँच आवश्यक छ"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Sway लाई तपाईंको हार्डवेयरमा पहुँच दिन एउटा विकल्प चयन गर्नुहोस्"
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "ग्राफिक्स ड्राइभर"
 
 msgid "Greeter"
-msgstr ""
+msgstr "Greeter"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "कुन greeter स्थापना गर्ने हो, कृपया चयन गर्नुहोस्"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "यो पूर्व-प्रोग्राम गरिएका default_profiles को सूची हो"
 
 msgid "Disk configuration"
-msgstr ""
+msgstr "डिस्क कन्फिगरेसन"
 
 msgid "Profiles"
 msgstr "प्रोफाइलहरू"
@@ -1118,7 +1121,7 @@ msgid "Enter name (leave blank to skip): "
 msgstr ""
 
 msgid "Enter url (leave blank to skip): "
-msgstr ""
+msgstr "URL राख्नुहोस् (छोड्नका लागि खाली छोड्नुहोस्): "
 
 msgid "Select signature check option"
 msgstr ""
@@ -1168,7 +1171,7 @@ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME 
 msgstr ""
 
 msgid "Total: {} / {}"
-msgstr ""
+msgstr "जम्मा: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
 msgstr ""
@@ -1273,7 +1276,7 @@ msgstr ""
 
 #, python-brace-format
 msgid "Configuration type: {}"
-msgstr ""
+msgstr "कन्फिगरेसनको प्रकार: {}"
 
 msgid "LVM configuration type"
 msgstr ""
@@ -1312,10 +1315,10 @@ msgid "Default layout"
 msgstr ""
 
 msgid "No Encryption"
-msgstr ""
+msgstr "इन्क्रिप्सन छैन"
 
 msgid "LUKS"
-msgstr ""
+msgstr "LUKS"
 
 msgid "LVM on LUKS"
 msgstr ""
@@ -1333,10 +1336,10 @@ msgid "Archinstall help"
 msgstr "Archinstall सहायता"
 
 msgid " (default)"
-msgstr ""
+msgstr "(पूर्वनिर्धारित)"
 
 msgid "Press Ctrl+h for help"
-msgstr ""
+msgstr "मद्दतका लागि Ctrl+h थिच्नुहोस्"
 
 msgid "Choose an option to give Sway access to your hardware"
 msgstr ""
@@ -1345,7 +1348,7 @@ msgid "Seat access"
 msgstr ""
 
 msgid "Mountpoint"
-msgstr ""
+msgstr "माउन्टपोइन्ट"
 
 msgid "HSM"
 msgstr "HSM"
@@ -1363,13 +1366,13 @@ msgid "Filesystem"
 msgstr ""
 
 msgid "Invalid size"
-msgstr ""
+msgstr "अमान्य आकार"
 
 msgid "Start (default: sector {}): "
-msgstr ""
+msgstr "सुरुवात (पूर्वनिर्धारित: sector {}):"
 
 msgid "End (default: {}): "
-msgstr ""
+msgstr "अन्त्य (पूर्वनिर्धारित: {}):"
 
 msgid "Subvolume name"
 msgstr ""
@@ -1387,10 +1390,10 @@ msgid "Write additional packages to install (space separated, leave blank to ski
 msgstr ""
 
 msgid "Invalid download number"
-msgstr ""
+msgstr "अमान्य नम्बर डाउनलोडहरू"
 
 msgid "Number downloads"
-msgstr ""
+msgstr "डाउनलोड संख्या"
 
 msgid "The username you entered is invalid"
 msgstr ""
@@ -1400,7 +1403,7 @@ msgstr ""
 
 #, python-brace-format
 msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr ""
+msgstr "के \"{}\" सुपरयुजर (sudo) हुनुपर्छ?\n"
 
 msgid "Interfaces"
 msgstr ""
@@ -1457,7 +1460,7 @@ msgid "Not a valid directory"
 msgstr ""
 
 msgid "Would you like to continue?"
-msgstr ""
+msgstr "के तपाईं जारी राख्न चाहनुहुन्छ?"
 
 msgid "Directory"
 msgstr ""
@@ -1482,7 +1485,7 @@ msgid "Mirror name"
 msgstr ""
 
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
 msgid "Select signature check"
 msgstr ""
@@ -1491,7 +1494,7 @@ msgid "Select execution mode"
 msgstr ""
 
 msgid "Press ? for help"
-msgstr ""
+msgstr "मद्दतका लागि ? थिच्नुहोस्"
 
 msgid "Choose an option to give Hyprland access to your hardware"
 msgstr ""
@@ -1500,7 +1503,7 @@ msgid "Additional repositories"
 msgstr ""
 
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 msgid "Swap on zram"
 msgstr ""
@@ -1517,14 +1520,14 @@ msgstr ""
 
 #, python-brace-format
 msgid "Size: {} / {}"
-msgstr ""
+msgstr "आकार: {} / {}"
 
 #, python-brace-format
 msgid "Size (default: {}): "
 msgstr ""
 
 msgid "HSM device"
-msgstr ""
+msgstr "HSM उपकरण"
 
 msgid "Some packages could not be found in the repository"
 msgstr ""
@@ -1548,34 +1551,34 @@ msgid "Select any packages from the below list that should be installed addition
 msgstr ""
 
 msgid "Add a custom repository"
-msgstr ""
+msgstr "कस्टम रिपोजिटरी थप्नुहोस्"
 
 msgid "Change custom repository"
-msgstr ""
+msgstr "कस्टम रिपोजिटरी परिवर्तन गर्नुहोस्"
 
 msgid "Delete custom repository"
-msgstr ""
+msgstr "कस्टम रिपोजिटरी मेटाउनुहोस्"
 
 msgid "Repository name"
-msgstr ""
+msgstr "रिपोजिटरीको नाम"
 
 msgid "Add a custom server"
-msgstr ""
+msgstr "अनुकूलन सर्भर थप्नुहोस्"
 
 msgid "Change custom server"
-msgstr ""
+msgstr "अनुकूलन सर्भर परिवर्तन गर्नुहोस्"
 
 msgid "Delete custom server"
-msgstr ""
+msgstr "अनुकूलन सर्भर हटाउनुहोस्"
 
 msgid "Server url"
-msgstr ""
+msgstr "सर्भर url"
 
 msgid "Select regions"
-msgstr ""
+msgstr "क्षेत्रहरू छनौट गर्नुहोस्"
 
 msgid "Add custom servers"
-msgstr ""
+msgstr "अनुकूलन सर्भरहरू थप्नुहोस्"
 
 msgid "Add custom repository"
 msgstr ""
@@ -1590,7 +1593,7 @@ msgid "Selected mirror regions"
 msgstr ""
 
 msgid "Custom servers"
-msgstr ""
+msgstr "अनुकूलन सर्भरहरू"
 
 msgid "Custom repositories"
 msgstr ""
@@ -1599,10 +1602,10 @@ msgid "Only ASCII characters are supported"
 msgstr ""
 
 msgid "Show help"
-msgstr ""
+msgstr "मद्दत देखाउनुहोस्"
 
 msgid "Exit help"
-msgstr ""
+msgstr "मद्दतबाट बाहिर निस्किनु"
 
 msgid "Preview scroll up"
 msgstr ""
@@ -1638,7 +1641,7 @@ msgid "Select on multi select"
 msgstr ""
 
 msgid "Reset"
-msgstr ""
+msgstr "रिसेट"
 
 msgid "Skip selection menu"
 msgstr ""
@@ -1756,7 +1759,7 @@ msgstr "स्न्यापसट प्रकार"
 
 #, python-brace-format
 msgid "Snapshot type: {}"
-msgstr ""
+msgstr "स्न्यापसट प्रकार: {}"
 
 msgid "U2F login setup"
 msgstr ""
@@ -1802,7 +1805,7 @@ msgid "Failed setting up wifi"
 msgstr ""
 
 msgid "Enter wifi password"
-msgstr ""
+msgstr "wifi को पासवर्ड राख्नुहोस्"
 
 msgid "Ok"
 msgstr "ठीक छ"
