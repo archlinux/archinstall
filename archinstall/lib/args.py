@@ -408,9 +408,7 @@ class ArchConfig:
 		cfg: dict[str, str | list[str] | bool] = {}
 
 		for key, value in self.plain_cfg().items():
-			if isinstance(value, list):
-				value = ', '.join(value)
-			cfg[key.title()] = value
+			cfg[key.title()] = ', '.join(value) if isinstance(value, list) else value
 
 		for sub_config in self.sub_cfg().values():
 			summary = sub_config.summary(level)
@@ -743,9 +741,8 @@ class ArchConfigHandler:
 
 	def _cleanup_config(self, config: Namespace | dict[str, Any]) -> dict[str, Any]:
 		clean_args = {}
-		for key, val in config.items():
-			if isinstance(val, dict):
-				val = self._cleanup_config(val)
+		for key, value in config.items():
+			val = self._cleanup_config(value) if isinstance(value, dict) else value
 
 			if val is not None:
 				clean_args[key] = val

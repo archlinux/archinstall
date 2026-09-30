@@ -109,17 +109,17 @@ class WpaSupplicantConfig:
 		cur_net_data: dict[str, str] = {}
 
 		for line in content.splitlines():
-			line = line.strip()
+			val = line.strip()
 
-			if not line or line.startswith('#'):
+			if not val or val.startswith('#'):
 				continue
 
-			if line == 'network={':
+			if val == 'network={':
 				in_network_block = True
 				cur_net_data = {}
 				continue
 
-			if in_network_block and line == '}':
+			if in_network_block and val == '}':
 				new_network = WpaSupplicantNetwork(
 					mappings=cur_net_data,
 				)
@@ -129,8 +129,8 @@ class WpaSupplicantConfig:
 				continue
 
 			if in_network_block:
-				if '=' in line:
-					key, value = line.split('=', 1)
+				if '=' in val:
+					key, value = val.split('=', 1)
 					cur_net_data[key.strip()] = value.strip()
 
 		return networks

@@ -205,14 +205,14 @@ class WifiNetwork:
 		entries = []
 
 		for line in results.splitlines():
-			line = line.strip()
-			if not line:
+			value = line.strip()
+			if not value:
 				continue
 
-			if line.lower().startswith('bssid'):
+			if value.lower().startswith('bssid'):
 				continue
 
-			parts = line.split(None, 4)
+			parts = value.split(None, 4)
 			if len(parts) < 4:
 				continue
 
@@ -256,8 +256,8 @@ class WifiConfiguredNetwork:
 		networks = []
 
 		for line in lines:
-			line = line.strip()
-			parts = line.split('\t')
+			value = line.strip()
+			parts = value.split('\t')
 
 			if len(parts) < 3:
 				continue
