@@ -87,13 +87,12 @@ class ProfileHandler:
 			for detail in filter(None, details):
 				# [2024-04-19] TODO: Backwards compatibility after naming change: https://github.com/archlinux/archinstall/pull/2421
 				# 'Kde' is deprecated, remove this block in a future version
-				if detail == 'Kde':
-					detail = 'KDE Plasma'
+				name = 'KDE Plasma' if detail == 'Kde' else detail
 
-				if sub_profile := self.get_profile_by_name(detail):
+				if sub_profile := self.get_profile_by_name(name):
 					valid_sub_profiles.append(sub_profile)
 				else:
-					invalid_sub_profiles.append(detail)
+					invalid_sub_profiles.append(name)
 
 			if invalid_sub_profiles:
 				info('No profile definition found: {}'.format(', '.join(invalid_sub_profiles)))

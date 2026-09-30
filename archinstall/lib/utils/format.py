@@ -35,13 +35,15 @@ def as_key_value_pair(
 		if ignore_empty and not value:
 			continue
 
-		if isinstance(value, bool):
-			value = 'Yes' if value else 'No'
+		val = value
 
-		if isinstance(value, list):
-			value = '\n  '.join(str(val) for val in value)
+		if isinstance(val, bool):
+			val = 'Yes' if val else 'No'
 
-		table.add_row(_sentence_case(label), f': {value}')
+		if isinstance(val, list):
+			val = '\n  '.join(str(item) for item in val)
+
+		table.add_row(_sentence_case(label), f': {val}')
 
 	return table.stringify()
 
@@ -110,12 +112,12 @@ def table_components(
 	key_list = []
 	for key in filter_list:
 		width = column_width[key]
-		key = key.replace('!', '').replace('_', ' ')
+		key_str = key.replace('!', '').replace('_', ' ')
 
 		if capitalize:
-			key = key.capitalize()
+			key_str = key_str.capitalize()
 
-		key_list.append(unicode_ljust(key, width))
+		key_list.append(unicode_ljust(key_str, width))
 
 	header_row = ' | '.join(key_list)
 
