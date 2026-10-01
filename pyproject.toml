@@ -56,6 +56,7 @@ include-package-data = true
 [tool.setuptools.package-data]
 # We could specify locales/languages.json etc instead, but catchall works too.
 "archinstall" = [
+<<<<<<< HEAD
     "**/*.py",
     "**/*.mo",
     "**/*.po",
@@ -65,7 +66,13 @@ include-package-data = true
 ]
 
 [tool.setuptools.package-dir]
-archinstall = "archinstall"
+archinstall = [
+    "archinstall/**/*.py",
+    "archinstall/**/*.mo",
+    "archinstall/**/*.po",
+    "archinstall/**/*.pot",
+    "archinstall/**/*.json",
+]
 
 [tool.mypy]
 python_version = "3.14"
