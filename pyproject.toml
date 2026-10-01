@@ -149,7 +149,6 @@ disable = [
     "protected-access",
     "raise-missing-from",
     "unspecified-encoding",
-    "unused-argument",
 ]
 
 [tool.pylint.refactoring]
