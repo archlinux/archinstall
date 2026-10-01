@@ -21,7 +21,6 @@ parameters = {
 			'-object', 'rng-random,filename=/dev/urandom,id=rng0',
 			'-device', 'virtio-rng-pci,rng=rng0',
 			'-usbdevice', 'mouse',
-			'-global', 'driver=cfi.pflash01,property=secure,value=on',
 			'-machine', 'type=q35,accel=kvm,kernel_irqchip=on',
 			'-smbios', '"type=0,vendor=American Megatrends Inc.,version=P4.60,date=08/03/2021,release=08.03.2021"',
 			'-smbios', '"type=1,manufacturer=Inet_AB,product=To Be Filled By O.E.M.,version=To Be Filled By O.E.M.,serial=245797,uuid=4154a2b8-7b7f-0000-0000-000000000000,sku=To Be Filled By O.E.M.,family=To Be Filled By O.E.M."',
@@ -35,8 +34,8 @@ parameters = {
 			'-device', 'virtio-keyboard-pci,id=input1,bus=pci.8,addr=0x0',
 			'-device', 'pcie-root-port,port=0xf,chassis=9,id=pci.9,bus=pcie.0,addr=0x6.0x1',
 			'-device', 'pcie-root-port,port=0x11,chassis=13,id=pci.13,bus=pcie.0,addr=0x6.0x3',
-			'-drive', 'if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF_CODE.secboot.fd',
-			'-drive', f'if=pflash,format=raw,file={pathlib.Path(__file__).parent}/OVMF_VARS.fd',
+			'-drive', 'if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF_CODE.4m.fd',
+			'-drive', f'if=pflash,format=raw,file={pathlib.Path(__file__).parent}/OVMF_VARS.4m.fd',
 			# '-tpmdev', 'passthrough,id=tpm0,path=/dev/tpm0,cancel-path=/tmp/foo-cancel2',
 			# '-device', 'tpm-tis,tpmdev=tpm0',
 			'-object', 'iothread,id=iothread1',
@@ -48,9 +47,10 @@ parameters = {
 			'-device', 'pcie-root-port,multifunction=on,bus=pcie.0,id=port9-0,addr=0x9,chassis=0',
 				'-device', 'virtio-net-pci,mac=FE:00:00:00:00:01,id=network0,netdev=network0.0,status=on,bus=port9-0',
 					'-netdev', 'tap,ifname=tap0,id=network0.0,script=no,downscript=no',
-			'-audiodev', 'pipewire,id=win11',
-				'-device', 'ich9-intel-hda,id=sound0,bus=pcie.0,addr=0x1b',
-				'-device', 'hda-micro,audiodev=win11',
+			# Audio disabled in CI - PipeWire user socket not accessible in sandboxed root service
+			# '-audiodev', 'pipewire,id=ainstall',
+			# 	'-device', 'ich9-intel-hda,id=sound0,bus=pcie.0,addr=0x1b',
+			# 	'-device', 'hda-micro,audiodev=ainstall',
 		]
 	}
 }

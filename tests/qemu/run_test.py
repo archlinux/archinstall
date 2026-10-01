@@ -6,6 +6,7 @@ import socket
 import select
 import logging
 import sys
+import json
 from subprocess import Popen, PIPE, STDOUT
 from qemu.qmp import QMPClient
 from machines import parameters
@@ -52,6 +53,88 @@ class SerialMonitor(threading.Thread):
 		threading.Thread.__init__(self)
 		self.start()
 
+	async def send_qmp_key(self, qcode: str, delay: float = 0.05):
+		"""Send a single key press via QMP."""
+		logger.info(f'Sending {qcode!r}: {json.dumps({"type": "qcode","data": qcode})}')
+		await self.QMP.qmp.execute_msg(
+			self.QMP.qmp.make_execute_msg(
+				'send-key',
+				arguments={
+					'keys': [
+						{
+							"type": "qcode",
+							"data": qcode
+						}
+					]
+				}
+			)
+		)
+		await asyncio.sleep(delay)
+
+	async def send_qmp_string(self, text: str, delay: float = 0.09):
+		"""Type a string one key at a time via QMP send-key.
+
+		Each character is sent as an individual key press since QMP
+		send-key with multiple keys presses them simultaneously (chord),
+		not sequentially.
+		"""
+		# https://gist.github.com/mvidner/8939289
+		char_to_qcode = {
+			' ': 'spc', '=': 'equal', ',': 'comma', '.': 'dot',
+			'/': 'slash', '-': 'minus', '1': '1', '2': '2',
+			'3': '3', '4': '4', '5': '5', '6': '6', '7': '7',
+			'8': '8', '9': '9', '0': '0',
+		}
+		for ch in text:
+			if ch in char_to_qcode:
+				await self.send_qmp_key(char_to_qcode[ch], delay)
+			elif ch.isalpha():
+				if ch.isupper():
+					await self.send_qmp_key('caps_lock', 0.02)
+					await self.send_qmp_key(ch.lower(), delay)
+					await self.send_qmp_key('caps_lock', 0.02)
+				else:
+					await self.send_qmp_key(ch, delay)
+
+#	async def edit_boot(self):
+#		logger.info("Adding 'console=tty0 console=ttyS0,115200' to default boot option")
+#
+#		# First keypress during active countdown is consumed just to
+#		# stop the timer. Send a harmless key first, then 'e' to edit.
+#		logger.info("Stopping countdown")
+#		await self.send_qmp_key('up')
+#		await asyncio.sleep(0.5)
+#		await self.send_qmp_key('up')
+#		await asyncio.sleep(0.5)
+#		await self.send_qmp_key('up')
+#		await asyncio.sleep(0.5)
+#		await self.send_qmp_key('up')
+#		await asyncio.sleep(0.5)
+#		await self.send_qmp_key('up')
+#		await asyncio.sleep(1)
+#
+#		await self.send_qmp_key('e')
+#		await asyncio.sleep(1)
+#
+#		logger.info("Entering edit mode with 'e'")
+#		for i in range(70):
+#			await self.send_qmp_key('right')
+#			await asyncio.sleep(0.05)
+#		await asyncio.sleep(2)
+#
+#		# Move to end of the kernel command line
+#		# logger.info("Jumping to end of line")
+#		# await self.send_qmp_key('end')
+#		# await asyncio.sleep(1)
+#
+#		# Type the console parameters
+#		logger.info("Typing console parameters")
+#		await self.send_qmp_string(' console=tty0 console=ttyS0,115200')
+#		await asyncio.sleep(0.5)
+#
+#		# Submit with Enter to boot the edited entry
+#		logger.info("Sending Enter to boot")
+#		await self.send_qmp_key('ret')
 	async def edit_boot(self):
 		logger.info("Adding 'console=tty0 console=ttyS0,115200' to default boot option")
 
@@ -71,19 +154,36 @@ class SerialMonitor(threading.Thread):
 		)
 
 		await asyncio.sleep(1)
-		await self.QMP.qmp.execute_msg(
-			self.QMP.qmp.make_execute_msg(
-				'send-key',
-				arguments={
-					'keys': [
-						{
-							"type": "qcode",
-							"data": "end"
-						}
-					]
-				}
+		logger.info("Entering edit mode with 'e'")
+		for i in range(70):
+			await self.QMP.qmp.execute_msg(
+				self.QMP.qmp.make_execute_msg(
+					'send-key',
+					arguments={
+						'keys': [
+							{
+								"type": "qcode",
+								"data": "right"
+							}
+						]
+					}
+				)
 			)
-		)
+			await asyncio.sleep(0.05)
+		await asyncio.sleep(2)
+		# await self.QMP.qmp.execute_msg(
+		# 	self.QMP.qmp.make_execute_msg(
+		# 		'send-key',
+		# 		arguments={
+		# 			'keys': [
+		# 				{
+		# 					"type": "qcode",
+		# 					"data": "end"
+		# 				}
+		# 			]
+		# 		}
+		# 	)
+		# )
 		await asyncio.sleep(1)
 
 		keys = []
@@ -142,6 +242,7 @@ class SerialMonitor(threading.Thread):
 
 		alive = True
 		entered_test_case = False
+		boot_sequence = False
 		# The output of serial.log can be displayed with:
 		#   tail -f serial.log
 		# Or record with:
@@ -155,9 +256,10 @@ class SerialMonitor(threading.Thread):
 						fh.flush()
 
 						# This block should be moved into the test class
-						if b'Boot in' in output and entered_test_case is False:
+						if b'Boot in' in output and boot_sequence is False:
 							logger.info("Found boot prompt")
 							asyncio.run_coroutine_threadsafe(self.edit_boot(), loop=self.QMP.loop)
+							boot_sequence = True
 						elif b'archiso login:' in output and entered_test_case is False:
 							logger.info("Found login prompt")
 							asyncio.run_coroutine_threadsafe(self.login_root(), loop=self.QMP.loop)
