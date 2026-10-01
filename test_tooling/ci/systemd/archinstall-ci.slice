@@ -1,0 +1,7 @@
+[Unit]
+Description=archinstall CI resource limits slice
+
+[Slice]
+MemoryMax=10G
+CPUQuota=400%
+TasksMax=1024

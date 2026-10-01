@@ -1,0 +1,28 @@
+[Unit]
+Description=archinstall CI monitor - poll GitHub and dispatch workers
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/archinstall-ci/bin/monitor.py
+Environment=ARCHINSTALL_CI_CONFIG=/opt/archinstall-ci/etc/config.ini
+
+# Sandboxing - monitor only needs network + state file
+ProtectSystem=strict
+ReadWritePaths=/opt/archinstall-ci/state
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+MemoryDenyWriteExecute=yes
+RestrictNamespaces=yes
+SystemCallFilter=@system-service
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectKernelTunables=yes
+LockPersonality=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes

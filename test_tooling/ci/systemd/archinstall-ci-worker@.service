@@ -1,0 +1,64 @@
+[Unit]
+Description=archinstall CI worker for commit %i
+After=network-online.target
+Wants=network-online.target
+CollectMode=inactive-or-failed
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/python3 /opt/archinstall-ci/bin/worker.py %i
+Environment=ARCHINSTALL_CI_CONFIG=/opt/archinstall-ci/etc/config.ini
+Slice=archinstall-ci.slice
+
+# Time limit - 45 minutes hard cap
+TimeoutStartSec=2700
+
+# Resource limits
+MemoryMax=8G
+LimitCORE=0
+LimitNPROC=512
+CPUWeight=50
+IOWeight=50
+
+# Sandboxing - needs root for mkarchiso but still hardened
+# NOTE: ProtectSystem is disabled because build_iso.sh runs
+# "pacman -S archiso" and mkarchiso needs writable /usr, /var, etc.
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ReadWritePaths=/opt/archinstall-ci/work /opt/archinstall-ci/logs /opt/archinstall-ci/iso /opt/archinstall-ci/state
+
+# Device access whitelist
+DevicePolicy=closed
+DeviceAllow=/dev/kvm rw
+DeviceAllow=/dev/loop-control rw
+DeviceAllow=/dev/loop0 rw
+DeviceAllow=/dev/loop1 rw
+DeviceAllow=/dev/loop2 rw
+DeviceAllow=/dev/loop3 rw
+DeviceAllow=/dev/loop4 rw
+DeviceAllow=/dev/loop5 rw
+DeviceAllow=/dev/loop6 rw
+DeviceAllow=/dev/loop7 rw
+DeviceAllow=/dev/urandom r
+DeviceAllow=/dev/null rw
+DeviceAllow=/dev/zero r
+DeviceAllow=/dev/ptmx rw
+DeviceAllow=/dev/pts/* rw
+DeviceAllow=/dev/net/tun rw
+DeviceAllow=/dev/bus/usb/* rw
+DeviceAllow=/dev/fuse rw
+
+# Syscall filtering - allow mount for mkarchiso, block dangerous calls
+SystemCallFilter=@system-service @privileged @mount @resources
+SystemCallFilter=~@reboot @swap @clock @cpu-emulation @obsolete
+
+# Network restrictions
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+
+# Misc hardening
+LockPersonality=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes

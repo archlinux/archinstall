@@ -1,0 +1,11 @@
+[Unit]
+Description=Poll GitHub for new archinstall commits (every 5 min)
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+RandomizedDelaySec=30s
+Persistent=true
+
+[Install]
+WantedBy=timers.target
