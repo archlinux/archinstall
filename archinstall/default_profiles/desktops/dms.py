@@ -1,24 +1,51 @@
+from enum import StrEnum
 from typing import TYPE_CHECKING, override
 
 from archinstall.default_profiles.desktops.utils import select_seat_access
 from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType
 from archinstall.lib.log import debug, info
+from archinstall.lib.menu.helpers import Selection
+from archinstall.lib.translationhandler import tr
+from archinstall.tui.menu_item import MenuItem, MenuItemGroup
+from archinstall.tui.result import ResultType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 	from archinstall.lib.models.users import User
 
 
-class NiriDmsProfile(Profile):
+class DmsCompositor(StrEnum):
+	# values double as the `dms setup headless --compositor` argument
+	Niri = 'niri'
+	Hyprland = 'hyprland'
+
+	def packages(self) -> list[str]:
+		match self:
+			case DmsCompositor.Niri:
+				return ['niri', 'dms-shell-niri', 'xdg-desktop-portal-gnome']
+			case DmsCompositor.Hyprland:
+				return ['hyprland', 'dms-shell-hyprland', 'xdg-desktop-portal-hyprland']
+
+
+class DmsProfile(Profile):
 	def __init__(self) -> None:
 		super().__init__(
-			'niri - DankMaterialShell',
+			'DankMaterialShell',
 			ProfileType.WindowMgr,
 			support_gfx_driver=True,
 			display_server=DisplayServerType.Wayland,
 		)
 
-		self.custom_settings = {CustomSetting.SeatAccess: None}
+		self.custom_settings = {
+			CustomSetting.DmsCompositor: None,
+			CustomSetting.SeatAccess: None,
+		}
+
+	@property
+	def compositor(self) -> DmsCompositor:
+		if value := self.custom_settings.get(CustomSetting.DmsCompositor, None):
+			return DmsCompositor(value)
+		return DmsCompositor.Niri
 
 	@property
 	@override
@@ -27,18 +54,19 @@ class NiriDmsProfile(Profile):
 		if seat := self.custom_settings.get(CustomSetting.SeatAccess, None):
 			additional = [seat]
 
-		return [
-			'niri',
-			'dms-shell-niri',
-			'xdg-desktop-portal-gnome',
-			'xorg-xwayland',
-			'matugen',
-			'cava',
-			'kimageformats',
-			'alacritty',
-			'inter-font',
-			'ttf-fira-code',
-		] + additional
+		return (
+			self.compositor.packages()
+			+ [
+				'xorg-xwayland',
+				'matugen',
+				'cava',
+				'kimageformats',
+				'alacritty',
+				'inter-font',
+				'ttf-fira-code',
+			]
+			+ additional
+		)
 
 	@property
 	@override
@@ -52,8 +80,26 @@ class NiriDmsProfile(Profile):
 			return [pref]
 		return []
 
+	async def _select_compositor(self) -> None:
+		header = tr('Select the compositor to run DankMaterialShell on') + '\n'
+
+		items = [MenuItem(c.value, value=c) for c in DmsCompositor]
+		group = MenuItemGroup(items, sort_items=False)
+		group.set_default_by_value(self.compositor)
+
+		result = await Selection[DmsCompositor](
+			group,
+			header=header,
+			allow_skip=False,
+		).show()
+
+		if result.type_ == ResultType.Selection:
+			self.custom_settings[CustomSetting.DmsCompositor] = result.get_value().value
+
 	@override
 	async def do_on_select(self) -> None:
+		await self._select_compositor()
+
 		default = self.custom_settings.get(CustomSetting.SeatAccess, None)
 		seat_access = await select_seat_access(self.name, default)
 		self.custom_settings[CustomSetting.SeatAccess] = seat_access.value
@@ -62,16 +108,21 @@ class NiriDmsProfile(Profile):
 	def provision(self, install_session: Installer, users: list[User]) -> None:
 		super().provision(install_session, users)
 
-		# dms.service (WantedBy=graphical-session.target) autostarts the shell
-		# in any session that activates the target, which niri does natively.
-		# `dms setup headless` only adds spawn-at-startup with --no-systemd and
+		# dms.service (WantedBy=graphical-session.target) autostarts the shell in
+		# any session that activates the target: niri natively, hyprland via the
+		# hyprland-session.target its DMS config starts. `dms setup headless`
 		# never enables the unit itself (no user manager in the chroot anyway)
 		debug('Enabling dms.service globally for all users')
 		install_session.arch_chroot('systemctl --global enable dms.service')
 
-		# `dms setup headless` writes the niri config and the dms/ overrides
+		# `dms setup headless` writes the compositor config, the dms/ overrides
+		# and (for hyprland) ~/.config/systemd/user/hyprland-session.target
 		# under $HOME, so it has to run as the user. --terminal sets the binds'
 		# terminal (defaults to ghostty) and also deploys a themed alacritty config
+		compositor = self.compositor.value
 		for user in users:
-			info(f'Running dms setup for {user.username}')
-			install_session.arch_chroot('dms setup headless --compositor niri --terminal alacritty --skip-existing', run_as=user.username)
+			info(f'Running dms setup for {user.username} ({compositor})')
+			install_session.arch_chroot(
+				f'dms setup headless --compositor {compositor} --terminal alacritty --skip-existing',
+				run_as=user.username,
+			)

@@ -48,6 +48,7 @@ class SelectResult(Enum):
 class CustomSetting(StrEnum):
 	SeatAccess = 'seat_access'
 	PlasmaFlavor = 'plasma_flavor'
+	DmsCompositor = 'dms_compositor'
 
 
 class Profile:
