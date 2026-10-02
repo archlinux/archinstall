@@ -616,7 +616,12 @@ class DeviceHandler:
 		@param dev_path:	Device path of the partition to be wiped.
 		@type dev_path:		str
 		"""
-		dev_path.write_bytes(bytearray(1024))
+		with dev_path.open('wb') as p:
+			# Never write past the end of the device: ChromeOS GPT layouts contain
+			# 512-byte partitions, and a 1024-byte write to them fails with ENOSPC.
+			size = p.seek(0, os.SEEK_END)
+			p.seek(0)
+			p.write(bytearray(min(1024, size)))
 
 	def wipe_dev(self, block_device: BDevice) -> None:
 		"""
