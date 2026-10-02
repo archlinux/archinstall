@@ -29,6 +29,7 @@ class DmsCompositor(StrEnum):
 			case DmsCompositor.Hyprland:
 				return [
 					'hyprland',
+					'uwsm',
 					'dms-shell-hyprland',
 					'xdg-desktop-portal-hyprland',
 				]
