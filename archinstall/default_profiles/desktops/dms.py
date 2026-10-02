@@ -1,7 +1,7 @@
 from enum import StrEnum
 from typing import TYPE_CHECKING, override
 
-from archinstall.default_profiles.desktops.utils import select_seat_access
+from archinstall.default_profiles.desktops.utils import seat_access_packages, seat_access_services, select_seat_access
 from archinstall.default_profiles.profile import CustomSetting, DisplayServerType, GreeterType, Profile, ProfileType
 from archinstall.lib.log import debug, info
 from archinstall.lib.menu.helpers import Selection
@@ -57,10 +57,6 @@ class DmsProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		additional = []
-		if seat := self.custom_settings.get(CustomSetting.SeatAccess, None):
-			additional = [seat]
-
 		return (
 			self.compositor.packages()
 			+ [
@@ -72,7 +68,7 @@ class DmsProfile(Profile):
 				'inter-font',
 				'ttf-fira-code',
 			]
-			+ additional
+			+ seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess))
 		)
 
 	@property
@@ -83,9 +79,7 @@ class DmsProfile(Profile):
 	@property
 	@override
 	def services(self) -> list[str]:
-		if pref := self.custom_settings.get(CustomSetting.SeatAccess, None):
-			return [pref]
-		return []
+		return seat_access_services(self.custom_settings.get(CustomSetting.SeatAccess))
 
 	async def _select_compositor(self) -> None:
 		header = tr('Select the compositor to run DankMaterialShell on') + '\n'
