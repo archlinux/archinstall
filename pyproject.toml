@@ -61,7 +61,6 @@ include-package-data = true
     "**/*.po",
     "**/*.pot",
     "**/*.json",
-    "**/*.kdl",
 ]
 
 [tool.setuptools.package-dir]
