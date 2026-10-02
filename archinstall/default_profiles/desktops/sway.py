@@ -31,7 +31,8 @@ class SwayProfile(Profile):
 			'pavucontrol',
 			'foot',
 			'xorg-xwayland',
-		] + seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess))
+			*seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess)),
+		]
 
 	@property
 	@override

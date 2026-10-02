@@ -148,7 +148,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		if not partitions:
 			free_space = FreeSpace(self._buffer, end)
 			if free_space.length > self._buffer:
-				return segments + [DiskSegment(free_space)]
+				return [*segments, DiskSegment(free_space)]
 			return segments
 
 		first_part_index, first_partition = next(
