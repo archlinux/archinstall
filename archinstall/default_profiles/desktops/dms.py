@@ -15,16 +15,23 @@ if TYPE_CHECKING:
 
 
 class DmsCompositor(StrEnum):
-	# values double as the `dms setup headless --compositor` argument
 	Niri = 'niri'
 	Hyprland = 'hyprland'
 
 	def packages(self) -> list[str]:
 		match self:
 			case DmsCompositor.Niri:
-				return ['niri', 'dms-shell-niri', 'xdg-desktop-portal-gnome']
+				return [
+					'niri',
+					'dms-shell-niri',
+					'xdg-desktop-portal-gnome',
+				]
 			case DmsCompositor.Hyprland:
-				return ['hyprland', 'dms-shell-hyprland', 'xdg-desktop-portal-hyprland']
+				return [
+					'hyprland',
+					'dms-shell-hyprland',
+					'xdg-desktop-portal-hyprland',
+				]
 
 
 class DmsProfile(Profile):
@@ -110,15 +117,12 @@ class DmsProfile(Profile):
 
 		# dms.service (WantedBy=graphical-session.target) autostarts the shell in
 		# any session that activates the target: niri natively, hyprland via the
-		# hyprland-session.target its DMS config starts. `dms setup headless`
-		# never enables the unit itself (no user manager in the chroot anyway)
+		# hyprland-session.target its DMS config starts.
 		debug('Enabling dms.service globally for all users')
 		install_session.arch_chroot('systemctl --global enable dms.service')
 
 		# `dms setup headless` writes the compositor config, the dms/ overrides
 		# and (for hyprland) ~/.config/systemd/user/hyprland-session.target
-		# under $HOME, so it has to run as the user. --terminal sets the binds'
-		# terminal (defaults to ghostty) and also deploys a themed alacritty config
 		compositor = self.compositor.value
 		for user in users:
 			info(f'Running dms setup for {user.username} ({compositor})')
