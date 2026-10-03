@@ -29,7 +29,8 @@ class NiriProfile(Profile):
 			'swayidle',
 			'swaylock',
 			'xdg-desktop-portal-gnome',
-		] + seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess))
+			*seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess)),
+		]
 
 	@property
 	@override
