@@ -23,14 +23,12 @@ class DmsCompositor(StrEnum):
 			case DmsCompositor.Niri:
 				return [
 					'niri',
-					'dms-shell-niri',
 					'xdg-desktop-portal-gnome',
 				]
 			case DmsCompositor.Hyprland:
 				return [
 					'hyprland',
 					'uwsm',
-					'dms-shell-hyprland',
 					'xdg-desktop-portal-hyprland',
 				]
 
@@ -61,6 +59,7 @@ class DmsProfile(Profile):
 		return (
 			self.compositor.packages()
 			+ [
+				'dms-shell',
 				'xorg-xwayland',
 				'matugen',
 				'cava',
@@ -68,8 +67,8 @@ class DmsProfile(Profile):
 				'alacritty',
 				'inter-font',
 				'ttf-fira-code',
+				*seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess)),
 			]
-			+ seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess))
 		)
 
 	@property
