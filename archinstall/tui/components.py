@@ -408,6 +408,19 @@ class _SelectionList(SelectionList[ValueT]):
 	def on_mount(self) -> None:
 		_translate_bindings(self._merged_bindings, self._bindings)
 
+	@override
+	def _on_option_list_option_highlighted(self, event: OptionList.OptionHighlighted) -> None:
+		# Fast input can leave a highlight event queued for an index that no
+		# longer exists once the filter empties the list, this throws a
+		# OptionDoesNotExist which down the line throws a NoMatches in query_one.
+		event.stop()
+		event.prevent_default()
+
+		if event.option_index >= self.option_count:
+			return
+
+		self.post_message(self.SelectionHighlighted(self, event.option_index))
+
 
 class SelectListScreen(BaseScreen[ValueT]):
 	"""
@@ -569,6 +582,13 @@ class SelectListScreen(BaseScreen[ValueT]):
 	def on_key(self, event: Key) -> None:
 		selection_list = self.query_one(SelectionList)
 
+		if self._filter and event.key == 'backspace' and selection_list.option_count == 0:
+			search_input = self.query_one(Input)
+			if search_input.has_focus:
+				event.stop()
+				search_input.value = ''  # on_input_changed resets the filter
+				return
+
 		if not selection_list.has_focus or event.key != 'enter':
 			return
 
@@ -593,7 +613,9 @@ class SelectListScreen(BaseScreen[ValueT]):
 
 		selection_list.highlighted = self._group.get_focused_index()
 
-		if focus_item := self._group.focus_item:
+		if not options:
+			self._set_preview(None)
+		elif focus_item := self._group.focus_item:
 			self._set_preview(focus_item)
 
 		self._set_cursor()
@@ -632,13 +654,13 @@ class SelectListScreen(BaseScreen[ValueT]):
 		else:
 			self._selected_items.remove(item)
 
-	def _set_preview(self, item: MenuItem) -> None:
+	def _set_preview(self, item: MenuItem | None) -> None:
 		if self._preview_location is None:
 			return
 
 		preview_widget = self.query_one('#preview_content', Label)
 
-		if item.preview_action is not None:
+		if item is not None and item.preview_action is not None:
 			_update_preview(preview_widget, item.preview_action(item))
 		else:
 			_update_preview(preview_widget, None)
