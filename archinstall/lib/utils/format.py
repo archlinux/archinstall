@@ -35,13 +35,15 @@ def as_key_value_pair(
 		if ignore_empty and not value:
 			continue
 
-		if isinstance(value, bool):
-			value = 'Yes' if value else 'No'
+		val = value
 
-		if isinstance(value, list):
-			value = '\n  '.join(str(val) for val in value)
+		if isinstance(val, bool):
+			val = 'Yes' if val else 'No'
 
-		table.add_row(_sentence_case(label), f': {value}')
+		if isinstance(val, list):
+			val = '\n  '.join(str(item) for item in val)
+
+		table.add_row(_sentence_case(label), f': {val}')
 
 	return table.stringify()
 
@@ -64,20 +66,24 @@ def _get_values(
 		# A method of an instance does not make sense
 		if callable(class_formatter):
 			return class_formatter(o, filter_list)
+
 		# if is invoked by name we restrict it to a method of the class. No need to mess more
-		elif hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
+		if hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
 			func = getattr(o, class_formatter)
 			return func(filter_list)
 
 		raise ValueError('Unsupported formatting call')
-	elif hasattr(o, 'table_data'):
+
+	if hasattr(o, 'table_data'):
 		return o.table_data()
-	elif hasattr(o, 'json'):
+
+	if hasattr(o, 'json'):
 		return o.json()
-	elif is_dataclass(o):
+
+	if is_dataclass(o):
 		return asdict(o)
-	else:
-		return o.__dict__  # type: ignore[unreachable]
+
+	return o.__dict__  # type: ignore[unreachable]
 
 
 def table_components(
@@ -106,12 +112,12 @@ def table_components(
 	key_list = []
 	for key in filter_list:
 		width = column_width[key]
-		key = key.replace('!', '').replace('_', ' ')
+		key_str = key.replace('!', '').replace('_', ' ')
 
 		if capitalize:
-			key = key.capitalize()
+			key_str = key_str.capitalize()
 
-		key_list.append(unicode_ljust(key, width))
+		key_list.append(unicode_ljust(key_str, width))
 
 	header_row = ' | '.join(key_list)
 

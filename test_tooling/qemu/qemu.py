@@ -189,10 +189,11 @@ class SysCommandWorker:
 		last_line = self._trace_log.rfind(b'\n')
 		lines = filter(None, self._trace_log[self._trace_log_pos : last_line].splitlines())
 		for line in lines:
+			output = line
 			if self.remove_vt100_escape_codes_from_lines:
-				line = clear_vt100_escape_codes(line)
+				output = clear_vt100_escape_codes(output)
 
-			yield line + b'\n'
+			yield output + b'\n'
 
 		self._trace_log_pos = last_line
 
@@ -312,7 +313,7 @@ class SysCommandWorker:
 	def execute(self) -> bool:
 		import pty
 
-		if (old_dir := os.getcwd()) != self.working_directory:
+		if (old_dir := os.getcwd()) != self.working_directory:  # noqa: PTH109
 			os.chdir(str(self.working_directory))
 
 		# Note: If for any reason, we get a Python exception between here

@@ -134,18 +134,18 @@ class MirrorListHandler:
 		current_region = ''
 
 		for line in lines:
-			line = line.strip()
+			value = line.strip()
 
-			if line.startswith('## '):
-				current_region = line.replace('## ', '').strip()
+			if value.startswith('## '):
+				current_region = value.replace('## ', '').strip()
 				mirror_list.setdefault(current_region, [])
 
-			if line.startswith('Server = '):
+			if value.startswith('Server = '):
 				if not current_region:
 					current_region = 'Local'
 					mirror_list.setdefault(current_region, [])
 
-				url = line.removeprefix('Server = ')
+				url = value.removeprefix('Server = ')
 
 				mirror_entry = MirrorStatusEntryV3(
 					url=url.removesuffix('$repo/os/$arch'),

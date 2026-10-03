@@ -333,8 +333,7 @@ async def select_mirror_regions(
 		case ResultType.Reset:
 			return []
 		case ResultType.Selection:
-			selected_mirrors = result.get_values()
-			return selected_mirrors
+			return result.get_values()
 
 
 async def add_custom_mirror_servers(preset: list[CustomServer] | None = None) -> list[CustomServer]:

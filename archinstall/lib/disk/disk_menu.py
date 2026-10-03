@@ -144,9 +144,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu[DiskMenuConfig]):
 		if not DiskEncryption.validate_enc(modifications, lvm_config):
 			return None
 
-		disk_encryption = await DiskEncryptionMenu(modifications, lvm_config=lvm_config, preset=preset).show()
-
-		return disk_encryption
+		return await DiskEncryptionMenu(modifications, lvm_config=lvm_config, preset=preset).show()
 
 	async def _select_disk_layout_config(self, preset: DiskLayoutConfiguration | None) -> DiskLayoutConfiguration | None:
 		disk_config = await select_disk_config(preset)

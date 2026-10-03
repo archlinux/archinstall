@@ -14,7 +14,7 @@ async def confirm_config(config: ArchConfig) -> bool:
 	header += tr('Would you like to continue?') + '\n'
 
 	group = MenuItemGroup.yes_no()
-	group.set_preview_for_all(lambda x: config.user_config_to_json())
+	group.set_preview_for_all(lambda _: config.user_config_to_json())
 
 	result = await Confirmation(
 		group=group,

@@ -39,7 +39,7 @@ There are two configuration files, both are optional.
 This parameter takes a local :code:`.json` file as argument and contains the overall configuration and menu answers for the guided installer.
 
 ``--config-url``
-------------
+----------------
 
 This parameter takes a remote :code:`.json` file as argument and contains the overall configuration and menu answers for the guided installer.
 
@@ -295,8 +295,6 @@ Below is an example of how to set the root password and below that are descripti
 .. note::
 
    ``users`` is optional only if ``root_enc_password`` was set. ``users`` will be enforced otherwise and the minimum amount of users with sudo privileges required will be set to 1.
-
-.. note::
 
 .. _scripts: https://github.com/archlinux/archinstall/tree/master/archinstall/scripts
 .. _Guided Installer: https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py

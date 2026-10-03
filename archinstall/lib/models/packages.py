@@ -135,9 +135,9 @@ class AvailablePackage(BaseModel):
 	def info(self) -> str:
 		output = ''
 		for key, value in self.model_dump().items():
-			key = key.replace('_', ' ').capitalize()
-			key = key.ljust(self.longest_key)
-			output += f'{key} : {value}\n'
+			key_str = key.replace('_', ' ').capitalize()
+			key_str = key_str.ljust(self.longest_key)
+			output += f'{key_str} : {value}\n'
 
 		return output
 

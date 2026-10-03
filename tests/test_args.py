@@ -177,7 +177,7 @@ def test_config_file_parsing(
 				{
 					'custom_settings': {
 						'Hyprland': {
-							CustomSetting.SeatAccess: 'polkit',
+							CustomSetting.SeatAccess: 'systemd-logind',
 						},
 						'Sway': {
 							CustomSetting.SeatAccess: 'seatd',
@@ -236,10 +236,11 @@ def test_config_file_parsing(
 		),
 		hostname='archy',
 		kernels=['linux-zen'],
+		firmware_optdeps=['linux-firmware-qcom'],
 		ntp=True,
 		packages=['firefox'],
 		pacman_config=PacmanConfiguration(parallel_downloads=66),
-		swap=ZramConfiguration(enabled=False),
+		swap=ZramConfiguration(enabled=True),
 		timezone='UTC',
 		services=['service_1', 'service_2'],
 		custom_commands=["echo 'Hello, World!'"],

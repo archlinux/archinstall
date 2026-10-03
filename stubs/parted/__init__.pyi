@@ -1,3 +1,5 @@
+# pylint: disable=redefined-builtin, unused-argument
+
 DEVICE_UNKNOWN: int
 PARTITION_NORMAL: int
 PARTITION_BOOT: int
@@ -38,11 +40,7 @@ class Geometry:
 	def getLength(self, unit: str = ...) -> int: ...
 
 class FileSystem:
-	def __init__(
-		self,
-		type: str,  # pylint: disable=redefined-builtin
-		geometry: Geometry,
-	) -> None: ...
+	def __init__(self, type: str, geometry: Geometry) -> None: ...
 	@property
 	def type(self) -> str: ...
 
@@ -67,7 +65,7 @@ class Partition:
 	def __init__(
 		self,
 		disk: Disk,
-		type: int,  # pylint: disable=redefined-builtin
+		type: int,
 		fs: FileSystem,
 		geometry: Geometry,
 	) -> None: ...

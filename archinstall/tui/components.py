@@ -310,10 +310,10 @@ class OptionListScreen(BaseScreen[ValueT]):
 					with Vertical(classes='list-container'):
 						yield option_list
 			else:
-				Container = Horizontal if self._preview_location == 'right' else Vertical
+				container = Horizontal if self._preview_location == 'right' else Vertical
 				rule_orientation: Literal['horizontal', 'vertical'] = 'vertical' if self._preview_location == 'right' else 'horizontal'
 
-				with Container():
+				with container():
 					yield option_list
 					yield Rule(orientation=rule_orientation)
 					preview_label = Label('', id='preview_content', markup=False)
@@ -347,7 +347,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		if focus_item := self._group.focus_item:
 			self._set_preview(focus_item.get_id())
 
-	def on_input_submitted(self, event: Input.Submitted) -> None:
+	def on_input_submitted(self, _event: Input.Submitted) -> None:
 		if self.query_one(Input).has_focus:
 			self._handle_search_action()
 
@@ -541,10 +541,10 @@ class SelectListScreen(BaseScreen[ValueT]):
 					with Vertical(classes='list-container'):
 						yield selection_list
 			else:
-				Container = Horizontal if self._preview_location == 'right' else Vertical
+				container = Horizontal if self._preview_location == 'right' else Vertical
 				rule_orientation: Literal['horizontal', 'vertical'] = 'vertical' if self._preview_location == 'right' else 'horizontal'
 
-				with Container():
+				with container():
 					yield selection_list
 					yield Rule(orientation=rule_orientation)
 					preview_label = Label('', id='preview_content', markup=False)
@@ -557,7 +557,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 
 		yield Footer()
 
-	def on_input_submitted(self, event: Input.Submitted) -> None:
+	def on_input_submitted(self, _event: Input.Submitted) -> None:
 		if self.query_one(Input).has_focus:
 			self._handle_search_action()
 

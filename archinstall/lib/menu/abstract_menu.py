@@ -55,7 +55,7 @@ class AbstractMenu[ValueT](InstanceRunnable[ValueT]):
 			print('Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues')
 
 			# Return None to propagate the exception
-			return None
+			return
 
 		self.sync_all_to_config()
 
@@ -130,12 +130,10 @@ class AbstractMenu[ValueT](InstanceRunnable[ValueT]):
 							if not self.is_config_valid():
 								continue
 							break
-						elif item.key == SpecialMenuKey.ABORT.value:
+						if item.key == SpecialMenuKey.ABORT.value:
 							return None
-						else:
-							break
-					else:
-						item.value = await item.action(item.value)
+						break
+					item.value = await item.action(item.value)
 				case ResultType.Reset:
 					return None
 				case _:

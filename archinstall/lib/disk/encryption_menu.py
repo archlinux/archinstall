@@ -58,7 +58,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 			),
 			MenuItem(
 				text=tr('Encryption password'),
-				action=lambda x: select_encrypted_password(),
+				action=lambda _: select_encrypted_password(),
 				value=self._enc_config.encryption_password,
 				dependencies=[self._check_dep_enc_type],
 				preview_action=self._prev_password,
@@ -181,7 +181,7 @@ class DiskEncryptionMenu(AbstractSubMenu[DiskEncryption]):
 
 		return output
 
-	def _prev_type(self, item: MenuItem) -> str | None:
+	def _prev_type(self, _item: MenuItem) -> str | None:
 		enc_type = self._item_group.find_by_key('encryption_type').value
 
 		if enc_type:
@@ -271,12 +271,10 @@ async def select_encryption_type(
 
 async def select_encrypted_password() -> Password | None:
 	header = tr('Enter disk encryption password (leave blank for no encryption)') + '\n'
-	password = await get_password(
+	return await get_password(
 		header=header,
 		allow_skip=True,
 	)
-
-	return password
 
 
 async def select_hsm(preset: Fido2Device | None = None) -> Fido2Device | None:
@@ -337,8 +335,7 @@ async def select_partitions_to_encrypt(
 			case ResultType.Skip:
 				return preset
 			case ResultType.Selection:
-				partitions = result.get_values()
-				return partitions
+				return result.get_values()
 
 	return []
 
@@ -366,8 +363,7 @@ async def select_lvm_vols_to_encrypt(
 			case ResultType.Skip:
 				return preset
 			case ResultType.Selection:
-				volumes = result.get_values()
-				return volumes
+				return result.get_values()
 
 	return []
 

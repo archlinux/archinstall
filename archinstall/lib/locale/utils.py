@@ -2,7 +2,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from archinstall.lib.command import SysCommand
-from archinstall.lib.exceptions import ServiceException, SysCallError
+from archinstall.lib.exceptions import ServiceExceptionError, SysCallError
 from archinstall.lib.log import error
 from archinstall.lib.utils.util import running_from_iso
 
@@ -21,7 +21,7 @@ def list_keyboard_languages() -> list[str]:
 def list_locales() -> list[str]:
 	locales = []
 
-	with open('/usr/share/i18n/SUPPORTED') as file:
+	with Path('/usr/share/i18n/SUPPORTED').open() as file:
 		for line in file:
 			if line != 'C.UTF-8 UTF-8\n':
 				locales.append(line.rstrip())
@@ -103,7 +103,7 @@ def set_kb_layout(locale: str) -> bool:
 		try:
 			SysCommand(f'localectl set-keymap {locale}')
 		except SysCallError as err:
-			raise ServiceException(f"Unable to set locale '{locale}' for console: {err}")
+			raise ServiceExceptionError(f"Unable to set locale '{locale}' for console: {err}")
 
 		return True
 

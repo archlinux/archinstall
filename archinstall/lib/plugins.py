@@ -1,5 +1,4 @@
 import importlib.util
-import os
 import sys
 from importlib import metadata
 from pathlib import Path
@@ -28,13 +27,13 @@ for plugin_definition in metadata.entry_points().select(group='archinstall.plugi
 
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles_bck and other things.
-def plugin(f: Any, *args: Any, **kwargs: Any) -> None:
+def plugin(f: Any, *_args: Any, **_kwargs: Any) -> None:
 	plugins[f.__name__] = f
 
 
 def _import_via_path(path: Path, namespace: str | None = None) -> str:
 	if not namespace:
-		namespace = os.path.basename(path)
+		namespace = path.name
 
 		if namespace == '__init__.py':
 			namespace = path.parent.name
@@ -65,7 +64,7 @@ def load_plugin(path: Path) -> None:
 	namespace: str | None = None
 	info(f'Loading plugin from {path}')
 
-	if os.path.isfile(path):
+	if path.is_file():
 		namespace = _import_via_path(path)
 
 	if namespace and namespace in sys.modules:

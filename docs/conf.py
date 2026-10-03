@@ -6,15 +6,15 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
 	from sphinx.application import Sphinx
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('..'))  # noqa: PTH100
 
 
 def process_docstring(
-	app: Sphinx,
-	what: str,
-	name: str,
-	obj: Any,
-	options: Any,
+	_app: Sphinx,
+	_what: str,
+	_name: str,
+	_obj: Any,
+	_options: Any,
 	lines: list[str],
 ) -> None:
 	spaces_pat = re.compile(r'( {8})')
@@ -64,6 +64,8 @@ extensions = [
 	'sphinx.ext.todo',
 	'sphinx_rtd_theme',
 ]
+
+autodoc_mock_imports = ['parted']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

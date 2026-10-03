@@ -65,17 +65,17 @@ class UserList(ListManager[User]):
 		return tr('The username you entered is invalid')
 
 	async def _add_user(self) -> User | None:
-		editResult = await Input(
+		edit_result = await Input(
 			tr('Enter a username'),
 			allow_skip=True,
 			validator_callback=self._check_for_correct_username,
 		).show()
 
-		match editResult.type_:
+		match edit_result.type_:
 			case ResultType.Skip:
 				return None
 			case ResultType.Selection:
-				username = editResult.get_value()
+				username = edit_result.get_value()
 			case _:
 				raise ValueError('Unhandled result type')
 

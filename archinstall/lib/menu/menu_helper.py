@@ -27,9 +27,7 @@ class MenuHelper[ValueT]:
 
 			items.append(item)
 
-		group = MenuItemGroup(items, sort_items=False)
-
-		return group
+		return MenuItemGroup(items, sort_items=False)
 
 	def _table_to_data_mapping(self, data: list[ValueT]) -> dict[str, ValueT | str | None]:
 		display_data: dict[str, ValueT | str | None] = {}

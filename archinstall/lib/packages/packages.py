@@ -40,8 +40,7 @@ def package_group_info(package: str) -> PackageGroup | None:
 		package_info: list[str] = []
 		for line in Pacman.run(f'-Sg {package}'):
 			package_info.append(line.decode().strip())
-		group = PackageGroup.from_package_group_output(package_info)
-		return group
+		return PackageGroup.from_package_group_output(package_info)
 	except SysCallError:
 		debug(f'Failed to get package info: {package}')
 
