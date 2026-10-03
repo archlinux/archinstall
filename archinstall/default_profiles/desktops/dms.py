@@ -56,20 +56,18 @@ class DmsProfile(Profile):
 	@property
 	@override
 	def packages(self) -> list[str]:
-		return (
-			self.compositor.packages()
-			+ [
-				'dms-shell',
-				'xorg-xwayland',
-				'matugen',
-				'cava',
-				'kimageformats',
-				'alacritty',
-				'inter-font',
-				'ttf-fira-code',
-				*seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess)),
-			]
-		)
+		return [
+			*self.compositor.packages(),
+			'dms-shell',
+			'xorg-xwayland',
+			'matugen',
+			'cava',
+			'kimageformats',
+			'alacritty',
+			'inter-font',
+			'ttf-fira-code',
+			*seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess)),
+		]
 
 	@property
 	@override
