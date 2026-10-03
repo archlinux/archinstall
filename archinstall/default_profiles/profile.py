@@ -37,7 +37,6 @@ class GreeterType(Enum):
 	Ly = 'ly'
 	CosmicSession = 'cosmic-greeter'
 	PlasmaLoginManager = 'plasma-login-manager'
-	GreetdDms = 'dms-greeter'
 
 
 class SelectResult(Enum):
@@ -49,6 +48,7 @@ class SelectResult(Enum):
 class CustomSetting(StrEnum):
 	SeatAccess = 'seat_access'
 	PlasmaFlavor = 'plasma_flavor'
+	DmsCompositor = 'dms_compositor'
 
 
 class Profile:
