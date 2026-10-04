@@ -7,12 +7,13 @@
 #  Rafael Fontenelle <rafaelff@gnome.org>, 2023.
 #  Luis Antonio <github.com/zaorinu>
 #  Luiz Felipe <github.com/LuizWT>, 2025.
+#  Willian <willyz@outlook.com.br>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: archinstall\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2026-02-10 09:26-0300\n"
-"Last-Translator: Mário Victor Ribeiro Silva <mariovictorrs@gmail.com>\n"
+"Last-Translator: Willian <willyz@outlook.com.br>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
@@ -839,7 +840,7 @@ msgstr "Pacman"
 msgid "Color"
 msgstr "Cor"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Enter the number of parallel downloads (1-{})"
 msgstr "Insira o número de downloads paralelos (1-{})"
 
@@ -1707,22 +1708,18 @@ msgstr "Abaixo"
 msgid "Up"
 msgstr "Acima"
 
-#, fuzzy
 msgid "Confirm"
 msgstr "Confirmar"
 
-#, fuzzy
 msgid "Focus right"
 msgstr "Focar à direita"
 
-#, fuzzy
 msgid "Focus left"
 msgstr "Focar à esquerda"
 
 msgid "Toggle"
 msgstr "Alternar"
 
-#, fuzzy
 msgid "Show/Hide help"
 msgstr "Mostrar/Esconder ajuda"
 
@@ -1735,7 +1732,6 @@ msgstr "Primeiro"
 msgid "Last"
 msgstr "Último"
 
-#, fuzzy
 msgid "Select"
 msgstr "Selecionar"
 
@@ -1745,33 +1741,27 @@ msgstr "Página acima"
 msgid "Page Down"
 msgstr "Página abaixo"
 
-#, fuzzy
 msgid "Page up"
 msgstr "Página acima"
 
-#, fuzzy
 msgid "Page down"
 msgstr "Página abaixo"
 
 msgid "Page Left"
 msgstr "Página à esquerda"
 
-#, fuzzy
 msgid "Page Right"
 msgstr "Página à direita"
 
 msgid "Cursor up"
 msgstr "Cursor acima"
 
-#, fuzzy
 msgid "Cursor down"
 msgstr "Cursor abaixo"
 
-#, fuzzy
 msgid "Cursor right"
 msgstr "Cursor à direita"
 
-#, fuzzy
 msgid "Cursor left"
 msgstr "Cursor à esquerda"
 
@@ -1784,18 +1774,15 @@ msgstr "Rodapé"
 msgid "Home"
 msgstr "Início"
 
-#, fuzzy
 msgid "End"
 msgstr "Final"
 
-#, fuzzy
 msgid "Toggle option"
 msgstr "Alternar opção"
 
 msgid "Scroll Up"
 msgstr "Rolar visualização para cima"
 
-#, fuzzy
 msgid "Scroll Down"
 msgstr "Rolar visualização para baixo"
 
@@ -2160,18 +2147,16 @@ msgstr "Nível de segurança da senha: Forte"
 msgid "The selected desktop profile requires a regular user to log in via the greeter"
 msgstr "O perfil de desktop selecionado requer um usuário regular para fazer o login pelo greeter"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Environment type: {} {}"
-msgstr "Tipo de ambiente: {}"
+msgstr "Tipo de ambiente: {} {}"
 
-#, fuzzy
 msgid "Input cannot be empty"
 msgstr "Valor não pode estar vazio"
 
 msgid "Recommended"
 msgstr "Recomendado"
 
-#, fuzzy
 msgid "Package"
 msgstr "Pacote"
 
@@ -2181,27 +2166,340 @@ msgstr "Coleção selecionada de pacotes do KDE Plasma"
 msgid "Dependencies"
 msgstr "Dependências"
 
-#, fuzzy
 msgid "Package group"
-msgstr "Grupo de pacotes:"
+msgstr "Grupo de pacotes"
 
 msgid "Extensive KDE Plasma installation"
 msgstr "Instalação extensiva do KDE Plasma"
 
-#, fuzzy
 msgid "Packages in group"
 msgstr "Pacotes no grupo"
 
 msgid "Minimal KDE Plasma installation"
 msgstr "Instalação mínima do KDE Plasma"
 
-#, fuzzy
 msgid "Description"
 msgstr "Descrição"
 
-#, fuzzy
 msgid "Select a flavor of KDE Plasma to install"
 msgstr "Selecione uma versão do KDE Plasma para instalar"
+
+#, python-brace-format
+msgid "{} needs access to your seat"
+msgstr "{} precisa de acesso ao seu seat"
+
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "conjunto de dispositivos de hardware, como teclado e mouse"
+
+#, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
+msgstr "Escolha como dar ao {} acesso ao seu hardware"
+
+msgid "Additional fonts"
+msgstr "Fontes adicionais"
+
+msgid "Select font packages to install"
+msgstr "Selecione os pacotes de fontes para instalar"
+
+msgid "ArchInstall Language"
+msgstr "Idioma do ArchInstall"
+
+msgid "Version"
+msgstr "Versão"
+
+msgid "Installation Script"
+msgstr "Script de instalação"
+
+msgid "Network"
+msgstr "Rede"
+
+msgid "Application"
+msgstr "Aplicativos"
+
+msgid "Services"
+msgstr "Serviços"
+
+msgid "Custom commands"
+msgstr "Comandos personalizados"
+
+msgid "Users"
+msgstr "Usuários"
+
+msgid "Root encrypted password"
+msgstr "Senha de root encriptada"
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "Configurando login U2F: {}"
+
+msgid "Plymouth"
+msgstr "Plymouth"
+
+msgid "black screen with the NVIDIA driver"
+msgstr "tela preta com o driver da NVIDIA"
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr "solicitação de senha oculta com encriptação de disco (LUKS)"
+
+msgid "Would you like to enable it?"
+msgstr "Deseja habilitá-lo?"
+
+msgid "Select Plymouth theme"
+msgstr "Selecione o tema do Plymouth"
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "Padrão: {} ms, intervalo recomendado: 1000-60000"
+
+msgid "Missing configurations:"
+msgstr "Configurações em falta:"
+
+msgid "Invalid configuration:"
+msgstr "Configuração inválida:"
+
+msgid "Ready to install"
+msgstr "Pronto para instalar"
+
+msgid "Warnings:"
+msgstr "Avisos:"
+
+msgid "Console font"
+msgstr "Fonte do console"
+
+msgid "Enter a repository name"
+msgstr "Insira o nome do repositório"
+
+msgid "Unicode font coverage for most languages"
+msgstr "cobertura de fontes Unicode para a maioria dos idiomas"
+
+msgid "color emoji for browsers and apps"
+msgstr "emojis coloridos para navegadores e aplicativos"
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr "caracteres chineses, japoneses e coreanos"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr "substituto de Arial/Times/Courier, suporte a cirílico para Steam/jogos"
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr "ampla cobertura Unicode, boa fonte de reserva"
+
+msgid "Zram enabled"
+msgstr "Zram habilitado"
+
+#, python-brace-format
+msgid "Zram algorithm {}"
+msgstr "Algoritmo do Zram {}"
+
+msgid "Bluetooth enabled"
+msgstr "Bluetooth habilitado"
+
+#, python-brace-format
+msgid "Audio server \"{}\""
+msgstr "Servidor de áudio \"{}\""
+
+#, python-brace-format
+msgid "Power management \"{}\""
+msgstr "Gerenciamento de energia \"{}\""
+
+msgid "Print service enabled"
+msgstr "Serviço de impressão habilitado"
+
+#, python-brace-format
+msgid "Firewall \"{}\""
+msgstr "Firewall \"{}\""
+
+#, python-brace-format
+msgid "Extra fonts \"{}\""
+msgstr "Fontes extras \"{}\""
+
+msgid "Root password set"
+msgstr "Senha de root definida"
+
+#, python-brace-format
+msgid "Configured {} user(s)"
+msgstr "{} usuário(s) configurado(s)"
+
+msgid "U2F set up"
+msgstr "U2F configurado"
+
+#, python-brace-format
+msgid "Bootloader \"{}\""
+msgstr "Inicializador \"{}\""
+
+msgid "UKI enabled"
+msgstr "UKI habilitado"
+
+#, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr "Plymouth \"{}\""
+
+msgid "Default"
+msgstr "Padrão"
+
+msgid "Manual"
+msgstr "Manual"
+
+msgid "Pre-mount"
+msgstr "Pré-montado"
+
+#, python-brace-format
+msgid "{} layout"
+msgstr "Layout {}"
+
+#, python-brace-format
+msgid "Devices {}"
+msgstr "Dispositivos {}"
+
+msgid "LVM set up"
+msgstr "LVM configurado"
+
+#, python-brace-format
+msgid "{} encryption"
+msgstr "Encriptação {}"
+
+#, python-brace-format
+msgid "Btrfs snapshot \"{}\""
+msgstr "Snapshot Btrfs \"{}\""
+
+#, python-brace-format
+msgid "Keyboard layout \"{}\""
+msgstr "Layout do teclado \"{}\""
+
+#, python-brace-format
+msgid "Locale language \"{}\""
+msgstr "Idioma de localização \"{}\""
+
+#, python-brace-format
+msgid "Locale encoding \"{}\""
+msgstr "Codificação de localização \"{}\""
+
+#, python-brace-format
+msgid "Console font \"{}\""
+msgstr "Fonte do console \"{}\""
+
+#, python-brace-format
+msgid "Mirror regions \"{}\""
+msgstr "Regiões dos mirrors \"{}\""
+
+#, python-brace-format
+msgid "Optional repositories \"{}\""
+msgstr "Repositórios opcionais \"{}\""
+
+msgid "Custom servers set up"
+msgstr "Servidores personalizados configurados"
+
+msgid "Custom repositories set up"
+msgstr "Repositórios personalizados configurados"
+
+msgid "Use standalone iwd"
+msgstr "Use o iwd standalone"
+
+msgid "Color enabled"
+msgstr "Cores habilitadas"
+
+#, python-brace-format
+msgid "{} graphics driver"
+msgstr "Driver gráfico {}"
+
+#, python-brace-format
+msgid "{} greeter"
+msgstr "Greeter {}"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Recomendado: Network Manager para desktop, Manual para servidor"
+
+#, python-brace-format
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr "Prestes a enviar \"{}\" para o serviço de acesso público {}"
+
+msgid "Do you want to continue?"
+msgstr "Deseja continuar?"
+
+#, python-brace-format
+msgid "Log uploaded successfully. URL: {}"
+msgstr "Log enviado com sucesso. URL: {}"
+
+msgid "Failed to upload log."
+msgstr "Falha ao enviar o log."
+
+msgid "Cut selected text"
+msgstr "Recortar o texto selecionado"
+
+msgid "Delete all to the left"
+msgstr "Apagar tudo à esquerda"
+
+msgid "Delete all to the right"
+msgstr "Apagar tudo à direita"
+
+msgid "Delete character left"
+msgstr "Apagar caractere à esquerda"
+
+msgid "Delete character right"
+msgstr "Apagar caractere à direita"
+
+msgid "Delete left to start of word"
+msgstr "Apagar até o início da palavra à esquerda"
+
+msgid "Delete right to start of word"
+msgstr "Apagar até o início da palavra à direita"
+
+msgid "Go to end"
+msgstr "Ir para o fim"
+
+msgid "Go to start"
+msgstr "Ir para o início"
+
+msgid "Move cursor left"
+msgstr "Mover cursor à esquerda"
+
+msgid "Move cursor left a word"
+msgstr "Mover cursor uma palavra à esquerda"
+
+msgid "Move cursor left a word and select"
+msgstr "Mover cursor uma palavra à esquerda e selecionar"
+
+msgid "Move cursor left and select"
+msgstr "Mover cursor à esquerda e selecionar"
+
+msgid "Move cursor right a word"
+msgstr "Mover cursor uma palavra à direita"
+
+msgid "Move cursor right a word and select"
+msgstr "Mover cursor uma palavra à direita e selecionar"
+
+msgid "Move cursor right and select"
+msgstr "Mover cursor à direita e selecionar"
+
+msgid "Move cursor right or accept the completion suggestion"
+msgstr "Mover cursor à direita ou aceitar a sugestão"
+
+msgid "Paste text from the clipboard"
+msgstr "Colar texto da área de transferência"
+
+msgid "Press button"
+msgstr "Pressionar botão"
+
+msgid "Select all"
+msgstr "Selecionar tudo"
+
+msgid "Select line end"
+msgstr "Selecionar até o fim da linha"
+
+msgid "Select line start"
+msgstr "Selecionar até o início da linha"
+
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgstr "O Plymouth adiciona uma tela de inicialização decorativa, mas pode causar problemas de boot em algumas configurações:"
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr "Nenhum disco foi detectado. É necessário um disco para instalar o Arch Linux"
+
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Nenhuma configuração de rede selecionada. A rede precisará ser configurada manualmente no sistema instalado."
+
+msgid "Submit"
+msgstr "Enviar"
 
 #~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 #~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "
