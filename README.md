@@ -249,7 +249,7 @@ To install Arch Linux alongside an existing Windows installation using  `archins
 # Mission Statement
 
 Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) that follows
-the [Arch Linux Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages, and other Arch Linux aspects.
+the [Arch Linux Principles](https://wiki.archlinux.org/title/Arch_Linux#Principles) as well as a library to manage services, packages, and other Arch Linux aspects.
 
 The guided installer ensures a user-friendly experience, offering optional selections throughout the process. Emphasizing its flexible nature, these options are never obligatory.
 In addition, the decision to use the guided installer remains entirely with the user, reflecting the Linux philosophy of providing full freedom and flexibility.
