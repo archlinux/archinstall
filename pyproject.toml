@@ -229,7 +229,6 @@ ignore = [
     "PLC1901",  # compare-to-empty-string
     "PLW1514",  # unspecified-encoding
     "PLW1641",  # eq-without-hash
-    "RUF039",   # unraw-re-pattern
     "W191",     # tab-indentation
 ]
 
