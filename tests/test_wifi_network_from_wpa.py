@@ -58,3 +58,19 @@ def test_from_wpa_preserves_flags_and_fields() -> None:
 	assert network.frequency == '2412'
 	assert network.signal_level == '-50'
 	assert network.flags == '[WPA2-PSK-CCMP][ESS]'
+
+
+def test_parse_configured_networks() -> None:
+	from archinstall.lib.models.network import WifiConfiguredNetwork
+
+	output = """network id / ssid / bssid / flags
+0\tHomeNet\tany\t[CURRENT]
+1\tOfficeNet\t00:11:22:33:44:55\t[DISABLED]
+invalid\tBadNet\tany\t[DISABLED]
+"""
+	networks = WifiConfiguredNetwork.from_wpa_cli_output(output)
+	assert len(networks) == 2
+	assert networks[0].network_id == 0
+	assert networks[0].ssid == 'HomeNet'
+	assert networks[1].network_id == 1
+	assert networks[1].ssid == 'OfficeNet'
