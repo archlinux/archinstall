@@ -1,17 +1,28 @@
 import os
 import re
 import sys
+from typing import TYPE_CHECKING, Any
 
-sys.path.insert(0, os.path.abspath('..'))
+if TYPE_CHECKING:
+	from sphinx.application import Sphinx
+
+sys.path.insert(0, os.path.abspath('..'))  # noqa: PTH100
 
 
-def process_docstring(app, what, name, obj, options, lines) -> None:  # type: ignore[no-untyped-def]
+def process_docstring(
+	_app: Sphinx,
+	_what: str,
+	_name: str,
+	_obj: Any,
+	_options: Any,
+	lines: list[str],
+) -> None:
 	spaces_pat = re.compile(r'( {8})')
 	ll = [spaces_pat.sub('    ', line) for line in lines]
 	lines[:] = ll
 
 
-def setup(app) -> None:  # type: ignore[no-untyped-def]
+def setup(app: Sphinx) -> None:
 	app.connect('autodoc-process-docstring', process_docstring)
 
 
@@ -53,6 +64,8 @@ extensions = [
 	'sphinx.ext.todo',
 	'sphinx_rtd_theme',
 ]
+
+autodoc_mock_imports = ['parted']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

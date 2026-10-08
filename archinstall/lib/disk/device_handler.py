@@ -17,7 +17,7 @@ from archinstall.lib.disk.utils import (
 	udev_sync,
 	umount,
 )
-from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesystemFormat
+from archinstall.lib.exceptions import DiskError, SysCallError, UnknownFilesystemFormatError
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.log import debug, error, info, log
 from archinstall.lib.models.device import (
@@ -153,7 +153,7 @@ class DeviceHandler:
 				if partition.fileSystem.type == FilesystemType.LINUX_SWAP.parted_value:
 					return FilesystemType.LINUX_SWAP
 				return FilesystemType(partition.fileSystem.type)
-			elif lsblk_info is not None:
+			if lsblk_info is not None:
 				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
 			return None
 		except ValueError:
@@ -218,7 +218,7 @@ class DeviceHandler:
 		# "fsroots": ["/@log", "/@home", "/@"...]
 		# we'll thereby map the fsroot, which are the mounted filesystem roots
 		# to the corresponding mountpoints
-		btrfs_subvol_info = dict(zip(lsblk_info.fsroots, lsblk_info.mountpoints))
+		btrfs_subvol_info = dict(zip(lsblk_info.fsroots, lsblk_info.mountpoints, strict=True))
 
 		# ID 256 gen 16 top level 5 path @
 		for line in result.splitlines():
@@ -260,7 +260,7 @@ class DeviceHandler:
 			case FilesystemType.LINUX_SWAP:
 				command = 'mkswap'
 			case _:
-				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
+				raise UnknownFilesystemFormatError(f'Filetype "{fs_type.value}" is not supported')
 
 		if not command:
 			command = f'mkfs.{mkfs_type}'
@@ -619,8 +619,7 @@ class DeviceHandler:
 		@param dev_path:	Device path of the partition to be wiped.
 		@type dev_path:		str
 		"""
-		with open(dev_path, 'wb') as p:
-			p.write(bytearray(1024))
+		dev_path.write_bytes(bytearray(1024))
 
 	def wipe_dev(self, block_device: BDevice) -> None:
 		"""
@@ -632,7 +631,7 @@ class DeviceHandler:
 
 		for partition in block_device.partition_infos:
 			luks = Luks2(partition.path)
-			if luks.isLuks():
+			if luks.is_luks():
 				luks.erase()
 
 			self._wipe(partition.path)

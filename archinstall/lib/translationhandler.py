@@ -30,8 +30,10 @@ class Language:
 	def is_match(self, lang_or_translated_lang: str) -> bool:
 		if self.name_en == lang_or_translated_lang:
 			return True
-		elif self.translated_lang == lang_or_translated_lang:
+
+		if self.translated_lang == lang_or_translated_lang:
 			return True
+
 		return False
 
 	def json(self) -> str:
@@ -239,7 +241,7 @@ class TranslationHandler:
 		Get a list of all known languages
 		"""
 		translation_files = []
-		for filename in os.listdir(self._locales_dir):
+		for filename in os.listdir(self._locales_dir):  # noqa: PTH208
 			if len(filename) == 2 or filename in ['pt_BR', 'zh-CN', 'zh-TW']:
 				translation_files.append(filename)
 
@@ -247,7 +249,7 @@ class TranslationHandler:
 
 
 class _DeferredTranslation:
-	def __init__(self, message: str):
+	def __init__(self, message: str) -> None:
 		self.message = message
 
 	@override

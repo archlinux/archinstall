@@ -61,7 +61,7 @@ class BaseScreen(Screen[Result[ValueT]]):
 		Binding('ctrl+c', 'reset_operation', 'Reset', show=True),
 	]
 
-	def __init__(self, allow_skip: bool = False, allow_reset: bool = False):
+	def __init__(self, allow_skip: bool = False, allow_reset: bool = False) -> None:
 		super().__init__()
 		self._allow_skip = allow_skip
 		self._allow_reset = allow_reset
@@ -103,7 +103,7 @@ class LoadingScreen(BaseScreen[ValueT]):
 		timer: int = 3,
 		data_callback: Callable[[], Any] | None = None,
 		header: str | None = None,
-	):
+	) -> None:
 		super().__init__()
 		self._timer = timer
 		self._header = header
@@ -246,7 +246,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		preview_location: Literal['right', 'bottom'] | None = None,
 		enable_filter: bool = False,
 		wrap_preview: bool = False,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
 		self._header = header
@@ -310,10 +310,10 @@ class OptionListScreen(BaseScreen[ValueT]):
 					with Vertical(classes='list-container'):
 						yield option_list
 			else:
-				Container = Horizontal if self._preview_location == 'right' else Vertical
+				container = Horizontal if self._preview_location == 'right' else Vertical
 				rule_orientation: Literal['horizontal', 'vertical'] = 'vertical' if self._preview_location == 'right' else 'horizontal'
 
-				with Container():
+				with container():
 					yield option_list
 					yield Rule(orientation=rule_orientation)
 					preview_label = Label('', id='preview_content', markup=False)
@@ -347,7 +347,7 @@ class OptionListScreen(BaseScreen[ValueT]):
 		if focus_item := self._group.focus_item:
 			self._set_preview(focus_item.get_id())
 
-	def on_input_submitted(self, event: Input.Submitted) -> None:
+	def on_input_submitted(self, _event: Input.Submitted) -> None:
 		if self.query_one(Input).has_focus:
 			self._handle_search_action()
 
@@ -479,7 +479,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 		preview_location: Literal['right', 'bottom'] | None = None,
 		enable_filter: bool = False,
 		wrap_preview: bool = False,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
 		self._header = header
@@ -541,10 +541,10 @@ class SelectListScreen(BaseScreen[ValueT]):
 					with Vertical(classes='list-container'):
 						yield selection_list
 			else:
-				Container = Horizontal if self._preview_location == 'right' else Vertical
+				container = Horizontal if self._preview_location == 'right' else Vertical
 				rule_orientation: Literal['horizontal', 'vertical'] = 'vertical' if self._preview_location == 'right' else 'horizontal'
 
-				with Container():
+				with container():
 					yield selection_list
 					yield Rule(orientation=rule_orientation)
 					preview_label = Label('', id='preview_content', markup=False)
@@ -557,7 +557,7 @@ class SelectListScreen(BaseScreen[ValueT]):
 
 		yield Footer()
 
-	def on_input_submitted(self, event: Input.Submitted) -> None:
+	def on_input_submitted(self, _event: Input.Submitted) -> None:
 		if self.query_one(Input).has_focus:
 			self._handle_search_action()
 
@@ -696,7 +696,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 		allow_reset: bool = False,
 		preview_location: Literal['bottom'] | None = None,
 		preview_header: str | None = None,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._group = group
 		self._header = header
@@ -780,7 +780,7 @@ class ConfirmationScreen(BaseScreen[ValueT]):
 
 
 class NotifyScreen(ConfirmationScreen[ValueT]):
-	def __init__(self, header: str):
+	def __init__(self, header: str) -> None:
 		group = MenuItemGroup([MenuItem(tr('Ok'))])
 		super().__init__(group, header)
 
@@ -840,7 +840,7 @@ class InputScreen(BaseScreen[str]):
 		allow_skip: bool = False,
 		validator: Validator | None = None,
 		info_callback: Callable[[str], InputInfo | None] | None = None,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._header = header or ''
 		self._placeholder = placeholder or ''
@@ -999,7 +999,7 @@ class TableSelectionScreen(BaseScreen[ValueT]):
 		multi: bool = False,
 		preview_location: Literal['bottom'] | None = None,
 		preview_header: str | None = None,
-	):
+	) -> None:
 		super().__init__(allow_skip, allow_reset)
 		self._header = header
 		self._group = group

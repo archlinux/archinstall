@@ -10,6 +10,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.9\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Language: ja_JP\n"
+"X-Source-Language: en_US\n"
 
 msgid "Recommended"
 msgstr "推奨"
@@ -102,75 +105,6 @@ msgstr "オーディオ設定を選択"
 msgid "Select font packages to install"
 msgstr "インストールするフォントパッケージを選択"
 
-msgid "ArchInstall Language"
-msgstr "archInstall の言語"
-
-msgid "Version"
-msgstr "バージョン"
-
-msgid "Installation Script"
-msgstr "インストールスクリプト"
-
-msgid "Locales"
-msgstr "ロケール"
-
-msgid "Disk configuration"
-msgstr "ディスクの設定"
-
-msgid "Profile"
-msgstr "プロファイル"
-
-msgid "Mirrors and repositories"
-msgstr "ミラーとリポジトリ"
-
-msgid "Network"
-msgstr "ネットワーク"
-
-msgid "Bootloader"
-msgstr "ブートローダー"
-
-msgid "Application"
-msgstr "アプリケーション"
-
-msgid "Authentication"
-msgstr "認証"
-
-msgid "Swap"
-msgstr "スワップ"
-
-msgid "Hostname"
-msgstr "ホスト名"
-
-msgid "Kernels"
-msgstr "カーネル"
-
-msgid "Automatic time sync (NTP)"
-msgstr "時刻の自動同期（NTP）"
-
-msgid "Timezone"
-msgstr "タイムゾーン"
-
-msgid "Services"
-msgstr "サービス"
-
-msgid "Additional packages"
-msgstr "追加パッケージ"
-
-msgid "Pacman"
-msgstr "Pacman"
-
-msgid "Custom commands"
-msgstr "カスタムコマンド"
-
-msgid "Users"
-msgstr "ユーザー"
-
-msgid "Root encrypted password"
-msgstr "root 暗号化パスワード"
-
-msgid "Disk encryption password"
-msgstr "ディスク暗号化パスワード"
-
 msgid "Incorrect credentials file decryption password"
 msgstr "認証情報ファイルの復号化パスワードが正しくありません"
 
@@ -188,7 +122,8 @@ msgstr "U2F ログインの設定: {}"
 msgid "Setting up U2F device for user: {}"
 msgstr "ユーザー用 U2F デバイスの設定: {}"
 
-msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgid ""
+"You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "PIN を入力したのち U2F デバイスをタッチして登録しなければならない場合があります"
 
 msgid "Root password"
@@ -215,6 +150,9 @@ msgstr "root パスワードを入力"
 msgid "Enable passwordless sudo?"
 msgstr "パスワードなしの sudo を有効にしますか？"
 
+msgid "Bootloader"
+msgstr "ブートローダー"
+
 msgid "Unified kernel images"
 msgstr "Unified カーネルイメージ"
 
@@ -230,7 +168,9 @@ msgstr "/EFI/BOOT/（リムーバブルな場所、安全なデフォルト）�
 msgid "Will install to custom location with NVRAM entry"
 msgstr "NVRAM エントリーを使用してカスタムした場所にインストール"
 
-msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgid ""
+"Plymouth adds a cosmetic boot splash but can cause boot problems on some "
+"setups:"
 msgstr "Plymouth は表面上のブートスプラッシュを追加しますが、構成によっては起動に問題が生じる可能性があります:"
 
 msgid "black screen with the NVIDIA driver"
@@ -245,13 +185,19 @@ msgstr "有効にしますか？"
 msgid "Would you like to use unified kernel images?"
 msgstr "Unified カーネルイメージを使用しますか？"
 
-msgid "Would you like to install the bootloader to the default removable media search location?"
+msgid ""
+"Would you like to install the bootloader to the default removable media "
+"search location?"
 msgstr "ブートローダーをデフォルトのリムーバブルメディアの検索場所にインストールしますか？"
 
-msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgid ""
+"This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is "
+"useful for:"
 msgstr "ブートローダーが /EFI/BOOT/BOOTX64.EFI (または類似の場所) にインストールされ、次の場合に役立ちます:"
 
-msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgid ""
+"Firmware that does not properly support NVRAM boot entries like most MSI "
+"motherboards,"
 msgstr "ほとんどの MSI マザーボードのように NVRAM ブートエントリーを適切にサポートしていないファームウェア、"
 
 msgid "most Apple Macs, many laptops..."
@@ -306,6 +252,37 @@ msgstr "user_credentials.json ファイルを暗号化しますか？"
 msgid "Credentials file encryption password"
 msgstr "認証情報ファイルの暗号化パスワード"
 
+msgid "Select main filesystem"
+msgstr "メインファイルシステムを選択"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "圧縮を使用しますか、それとも CoW を無効にしますか？"
+
+msgid "Use compression"
+msgstr "圧縮する"
+
+msgid "Disable Copy-on-Write"
+msgstr "コピーオンライトを無効にする"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "デフォルトの設定で Btrfs サブボリュームを使用しますか？"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "/home 用に別のパーティションを作成しますか？"
+
+msgid ""
+"The selected drives do not have the minimum capacity required for an "
+"automatic suggestion\n"
+msgstr "選択したドライブは、自動提案に必要な最小容量を満たしていません\n"
+
+#, python-brace-format
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "/home パーティションの最小容量: {}GiB\n"
+
+#, python-brace-format
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Arch Linux パーティションの最小容量: {}GiB"
+
 msgid "Partitioning"
 msgstr "パーティションを作成"
 
@@ -335,7 +312,8 @@ msgstr "ボリューム"
 msgid "Snapshot type: {}"
 msgstr "スナップショットのタイプ: {}"
 
-msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgid ""
+"LVM disk encryption with more than 2 partitions is currently not supported"
 msgstr "パーティションが2個を超える場合の LVM ディスク暗号化は、現在サポートしていません"
 
 msgid "Encryption type"
@@ -347,7 +325,8 @@ msgstr "パスワード"
 msgid "Iteration time"
 msgstr "イテレーション時間"
 
-msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgid ""
+"No disks were detected. A disk is required to be able to install Arch Linux"
 msgstr "ディスクが検出されませんでした。Arch Linux をインストールするにはディスクが必要です"
 
 msgid "Select disks for the installation"
@@ -367,35 +346,6 @@ msgstr "指定されたディレクトリにマウントされているドライ
 
 msgid "WARNING: Archinstall won't check the suitability of this setup"
 msgstr "警告: archinstall はこのセットアップの適合性をチェックしません"
-
-msgid "Select main filesystem"
-msgstr "メインファイルシステムを選択"
-
-msgid "Would you like to use compression or disable CoW?"
-msgstr "圧縮を使用しますか、それとも CoW を無効にしますか？"
-
-msgid "Use compression"
-msgstr "圧縮する"
-
-msgid "Disable Copy-on-Write"
-msgstr "コピーオンライトを無効にする"
-
-msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "デフォルトの設定で Btrfs サブボリュームを使用しますか？"
-
-msgid "Would you like to create a separate partition for /home?"
-msgstr "/home 用に別のパーティションを作成しますか？"
-
-msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr "選択したドライブは、自動提案に必要な最小容量を満たしていません\n"
-
-#, python-brace-format
-msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "/home パーティションの最小容量: {}GiB\n"
-
-#, python-brace-format
-msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "Arch Linux パーティションの最小容量: {}GiB"
 
 msgid "Encryption password"
 msgstr "暗号化パスワード"
@@ -493,10 +443,14 @@ msgstr "パーティション - 新規"
 msgid "Partition"
 msgstr "パーティション"
 
-msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgid ""
+"This partition is currently encrypted, to format it a filesystem has to be "
+"specified"
 msgstr "このパーティションは現在暗号化されています。フォーマットするにはファイルシステムを指定してください"
 
-msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgid ""
+"Partition mount-points are relative to inside the installation, the boot "
+"would be /boot as an example."
 msgstr "パーティションのマウントポイントはインストールにおける相対的なもので、例として boot は /boot になります。"
 
 msgid "Enter a mountpoint"
@@ -513,7 +467,8 @@ msgstr "デバイス {} の選択された空きスペースセグメント:"
 msgid "Size: {} / {}"
 msgstr "サイズ: {} / {}"
 
-msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgid ""
+"All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
 msgstr "入力したすべての値に、%、B、KB、KiB、MB、MiB などの単位を付けることができます。"
 
 msgid "If no unit is provided, the value is interpreted as sectors"
@@ -556,11 +511,14 @@ msgstr "システムを再起動"
 msgid "chroot into installation for post-installation configurations"
 msgstr "インストール後の設定を行うためインストールディレクトリに chroot する"
 
-msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgid ""
+"Would you like to use automatic time synchronization (NTP) with the default "
+"time servers?\n"
 msgstr "デフォルトのタイムサーバーで時刻の自動同期（NTP）を使用しますか？\n"
 
 msgid ""
-"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"Hardware time and other post-configuration steps might be required in order "
+"for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
 "NTP が機能するには、ハードウェアクロックおよびその他の設定後のステップが必要になる場合があります。\n"
@@ -578,13 +536,21 @@ msgstr "次は何をしますか？"
 msgid "Select which kernel(s) to install"
 msgstr "インストールするカーネルを選択"
 
-msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "AMD ハードウェアとの互換性を最大限に高めるには、すべてのオープンソースまたは AMD/ATI オプションのいずれかを使用することをお勧めします。"
+msgid ""
+"For the best compatibility with your AMD hardware, you may want to use "
+"either the all open-source or AMD / ATI options."
+msgstr ""
+"AMD ハードウェアとの互換性を最大限に高めるには、すべてのオープンソースまたは AMD/ATI オプションのいずれかを使用することをお勧めします。"
 
-msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Intel ハードウェアとの互換性を最大限に高めるには、すべてのオープンソースまたは Intel オプションのいずれかを使用することをお勧めします。\n"
+msgid ""
+"For the best compatibility with your Intel hardware, you may want to use "
+"either the all open-source or Intel options.\n"
+msgstr ""
+"Intel ハードウェアとの互換性を最大限に高めるには、すべてのオープンソースまたは Intel オプションのいずれかを使用することをお勧めします。\n"
 
-msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgid ""
+"For the best compatibility with your Nvidia hardware, you may want to use "
+"the Nvidia proprietary driver.\n"
 msgstr "Nvidia ハードウェアとの互換性を最大限に高めるには、Nvidia 独自のドライバーを使用することをお勧めします。\n"
 
 msgid "Would you like to use swap on zram?"
@@ -596,11 +562,47 @@ msgstr "zram の圧縮アルゴリズムを選択:"
 msgid "Archinstall language"
 msgstr "archinstall の言語"
 
+msgid "Locales"
+msgstr "ロケール"
+
+msgid "Mirrors and repositories"
+msgstr "ミラーとリポジトリ"
+
+msgid "Disk configuration"
+msgstr "ディスクの設定"
+
+msgid "Swap"
+msgstr "スワップ"
+
+msgid "Kernels"
+msgstr "カーネル"
+
+msgid "Hostname"
+msgstr "ホスト名"
+
+msgid "Authentication"
+msgstr "認証"
+
+msgid "Profile"
+msgstr "プロファイル"
+
 msgid "Applications"
 msgstr "アプリケーション"
 
 msgid "Network configuration"
 msgstr "ネットワーク設定"
+
+msgid "Pacman"
+msgstr "Pacman"
+
+msgid "Additional packages"
+msgstr "追加パッケージ"
+
+msgid "Timezone"
+msgstr "タイムゾーン"
+
+msgid "Automatic time sync (NTP)"
+msgstr "時刻の自動同期（NTP）"
 
 msgid "Save configuration"
 msgstr "設定を保存"
@@ -611,10 +613,14 @@ msgstr "インストール"
 msgid "Abort"
 msgstr "中止"
 
-msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgid ""
+"Either root-password or at least 1 user with sudo privileges must be "
+"specified"
 msgstr "root パスワードか、1人以上の sudo 権限を持つユーザーを指定する必要があります"
 
-msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgid ""
+"The selected desktop profile requires a regular user to log in via the "
+"greeter"
 msgstr "選択されたデスクトッププロファイルでは、一般ユーザーがグリーター経由でログインする必要があります"
 
 msgid "Language"
@@ -645,7 +651,9 @@ msgstr "カラー出力"
 msgid "Kernel"
 msgstr "カーネル"
 
-msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgid ""
+"No network configuration selected. Network will need to be set up manually "
+"on the installed system."
 msgstr "ネットワーク設定が選択されていません。インストール後のシステムで、ネットワークを手動で設定する必要があります。"
 
 msgid "Missing configurations:"
@@ -685,8 +693,11 @@ msgstr "カスタムリポジトリ"
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] ここにログファイルが作成されました: {}"
 
-msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "この問題（およびファイル）を https://github.com/archlinux/archinstall/issues に送信してください"
+msgid ""
+"Please submit this issue (and file) to "
+"https://github.com/archlinux/archinstall/issues"
+msgstr ""
+"この問題（およびファイル）を https://github.com/archlinux/archinstall/issues に送信してください"
 
 msgid "Syncing the system..."
 msgstr "システムを同期..."
@@ -694,13 +705,20 @@ msgstr "システムを同期..."
 msgid "Waiting for time sync (timedatectl show) to complete."
 msgstr "時刻の同期（timedatectl show）が完了するのを待機しています。"
 
-msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "待機中に時刻同期が完了しません - 回避策についてはドキュメントを確認してください: https://archinstall.readthedocs.io/"
+msgid ""
+"Time synchronization not completing, while you wait - check the docs for "
+"workarounds: https://archinstall.readthedocs.io/"
+msgstr ""
+"待機中に時刻同期が完了しません - 回避策についてはドキュメントを確認してください: "
+"https://archinstall.readthedocs.io/"
 
-msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgid ""
+"Skipping waiting for automatic time sync (this can cause issues if time is "
+"out of sync during installation)"
 msgstr "自動での時刻同期の待機をスキップします（インストール中に時刻が同期していない場合は、問題が発生する可能性があります）"
 
-msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgid ""
+"Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Arch Linux キーリングの同期（archlinux-keyring-wkd-sync）が完了するのを待っています。"
 
 msgid "Keyboard layout"
@@ -826,40 +844,44 @@ msgstr "Arial/Times/Courier フォントの代替、Steam/ゲームにおける�
 msgid "wide Unicode coverage, good fallback font"
 msgstr "Unicode を広くカバーする良い代替フォント"
 
-msgid "Zram enabled"
-msgstr "zram を有効にする"
+msgid "enabled"
+msgstr "有効"
+
+msgid "Fonts"
+msgstr "フォント"
+
+msgid "Zram"
+msgstr "zram"
 
 #, python-brace-format
-msgid "Zram algorithm {}"
-msgstr "zram のアルゴリズム {}"
+msgid "Algorithm \"{}\""
+msgstr "アルゴリズム \"{}\""
 
-msgid "Bluetooth enabled"
-msgstr "Bluetooth を有効にする"
+msgid "Zram disabled"
+msgstr "zram 無効"
 
-#, python-brace-format
-msgid "Audio server \"{}\""
-msgstr "オーディオサーバー \"{}\""
-
-#, python-brace-format
-msgid "Power management \"{}\""
-msgstr "電力管理 \"{}\""
-
-msgid "Print service enabled"
-msgstr "印刷サービスを有効にする"
-
-#, python-brace-format
-msgid "Firewall \"{}\""
-msgstr "ファイアウォール \"{}\""
-
-#, python-brace-format
-msgid "Extra fonts \"{}\""
-msgstr "追加フォント \"{}\""
+msgid "Application"
+msgstr "アプリケーション"
 
 msgid "Passwordless login"
 msgstr "パスワードなしのログイン"
 
 msgid "Second factor login"
 msgstr "2要素ログイン"
+
+msgid "U2F login"
+msgstr "U2F ログイン"
+
+#, python-brace-format
+msgid "U2F login method \"{}\""
+msgstr "U2F ログインメソッド \"{}\""
+
+# U2Fによるパスワードレスの sudo 有効
+msgid "U2F passwordless sudo enabled"
+msgstr "パスワードなしの sudo: "
+
+msgid "U2F passwordless sudo disabled"
+msgstr "U2Fによるパスワードレスの sudo 無効"
 
 msgid "Root password set"
 msgstr "root パスワードを設定"
@@ -868,15 +890,12 @@ msgstr "root パスワードを設定"
 msgid "Configured {} user(s)"
 msgstr "{} 人のユーザーを設定"
 
-msgid "U2F set up"
-msgstr "U2F を設定"
+# U2F を設定しました
+msgid "U2F configured"
+msgstr "設定なし"
 
-#, python-brace-format
-msgid "Bootloader \"{}\""
-msgstr "ブートローダー \"{}\""
-
-msgid "UKI enabled"
-msgstr "UKI を有効にする"
+msgid "UKI \"enabled\""
+msgstr "UKI \"有効\""
 
 msgid "Removable"
 msgstr "リムーバブル"
@@ -903,72 +922,201 @@ msgstr "マニュアル"
 msgid "Pre-mount"
 msgstr "プレマウント"
 
+msgid "Disk layout"
+msgstr "ディスクレイアウト"
+
 #, python-brace-format
 msgid "{} layout"
 msgstr "{} レイアウト"
 
 #, python-brace-format
-msgid "Devices {}"
-msgstr "デバイス {}"
+msgid "Device(s) \"{}\""
+msgstr "デバイス \"{}\""
 
 msgid "LVM set up"
 msgstr "LVM の設定"
+
+#, python-brace-format
+msgid "\"{}\" encryption"
+msgstr "\"{}\" 暗号化"
+
+#, python-brace-format
+msgid "Btrfs snapshot \"{}\""
+msgstr "Btrfs スナップショット \"{}\""
+
+#, python-brace-format
+msgid "Mountpoint \"{}\""
+msgstr "マウントポイント \"{}\""
+
+msgid "Unknown"
+msgstr "不明"
+
+msgid "Partition modification"
+msgstr "パーティションの変更"
+
+#, python-brace-format
+msgid "Filesystem {}"
+msgstr "ファイルシステム {}"
+
+#, python-brace-format
+msgid "Size {}"
+msgstr "サイズ {}"
+
+#, python-brace-format
+msgid "Status {}"
+msgstr "状態 {}"
+
+#, python-brace-format
+msgid "Mountpoint {}"
+msgstr "マウントポイント {}"
+
+#, python-brace-format
+msgid "{} subvolume(s)"
+msgstr "{} 個のサブボリューム"
+
+msgid "Default layout"
+msgstr "デフォルトのレイアウト"
+
+msgid "LVM volume group"
+msgstr "LVM ボリュームグループ"
+
+#, python-brace-format
+msgid "Volume group \"{}\""
+msgstr "ボリュームグループ \"{}\""
+
+#, python-brace-format
+msgid "Volume group \"{}\" on {}"
+msgstr "ボリュームグループ \"{}\" on {}"
+
+msgid "LVM volume"
+msgstr "LVM ボリューム"
+
+#, python-brace-format
+msgid "Volume \"{}\""
+msgstr "ボリューム \"{}\""
+
+msgid "LVM"
+msgstr "LVM"
+
+#, python-brace-format
+msgid "LVM \"{}\""
+msgstr "LVM \"{}\""
+
+msgid "Btrfs snapshot"
+msgstr "Btrfs スナップショット"
+
+msgid "Btrfs options"
+msgstr "Btrfs オプション"
+
+msgid "Device modification"
+msgstr "デバイスの変更"
+
+#, python-brace-format
+msgid "Device {}"
+msgstr "デバイス {}"
+
+msgid "wipe"
+msgstr "消去"
+
+msgid "keep existing data"
+msgstr "既存のデータを保持"
+
+#, python-brace-format
+msgid "Device \"{}\" ({})"
+msgstr "デバイス \"{}\" ({})"
+
+msgid "No Encryption"
+msgstr "暗号化しない"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM on LUKS"
+
+msgid "LUKS on LVM"
+msgstr "LUKS on LVM"
 
 #, python-brace-format
 msgid "{} encryption"
 msgstr "{} 暗号化"
 
 #, python-brace-format
-msgid "Btrfs snapshot \"{}\""
-msgstr "Btrfs スナップショット \"{}\""
+msgid "{} encrypted partition(s)"
+msgstr "{} 個の暗号化パーティション"
 
-msgid "Unknown"
-msgstr "不明"
+#, python-brace-format
+msgid "{} encrypted volume(s)"
+msgstr "{} 個の暗号化ボリューム"
 
-msgid "Default layout"
-msgstr "デフォルトのレイアウト"
+#, python-brace-format
+msgid "FIDO2 device \"{}\""
+msgstr "FIDO2 デバイス \"{}\""
 
-msgid "No Encryption"
-msgstr "暗号化なし"
+#, python-brace-format
+msgid "Iteration time {} ms"
+msgstr "イテレーション時間 {} ms"
 
-msgid "LUKS"
-msgstr "LUKS"
-
-msgid "LVM on LUKS"
-msgstr "LUKS 上の LVM"
-
-msgid "LUKS on LVM"
-msgstr "LVM 上の LUKS"
+msgid "Locale"
+msgstr "ロケール"
 
 #, python-brace-format
 msgid "Keyboard layout \"{}\""
 msgstr "キーボードレイアウト \"{}\""
 
 #, python-brace-format
-msgid "Locale language \"{}\""
-msgstr "ロケール言語 \"{}\""
+msgid "Language \"{}\""
+msgstr "言語 \"{}\""
 
 #, python-brace-format
-msgid "Locale encoding \"{}\""
-msgstr "ロケールエンコーディング \"{}\""
+msgid "Encoding \"{}\""
+msgstr "エンコーディング \"{}\""
 
 #, python-brace-format
 msgid "Console font \"{}\""
 msgstr "コンソールフォント \"{}\""
 
+msgid "Mirror region"
+msgstr "ミラーの地域"
+
 #, python-brace-format
-msgid "Mirror regions \"{}\""
-msgstr "ミラーの地域 \"{}\""
+msgid "Region \"{}\""
+msgstr "地域 \"{}\""
+
+msgid "Custom repository"
+msgstr "カスタムリポジトリ"
+
+#, python-brace-format
+msgid "Repository \"{}\""
+msgstr "リポジトリ \"{}\""
+
+msgid "Sign check"
+msgstr "署名チェック"
+
+msgid "Sign options"
+msgstr "署名オプション"
+
+msgid "Custom server"
+msgstr "カスタムサーバー"
+
+msgid "Mirrors"
+msgstr "ミラー"
+
+#, python-brace-format
+msgid "{} Mirror region(s)"
+msgstr "{} 個のミラー地域"
 
 #, python-brace-format
 msgid "Optional repositories \"{}\""
 msgstr "オプションリポジトリ \"{}\""
 
-msgid "Custom servers set up"
-msgstr "カスタムサーバーを設定"
+#, python-brace-format
+msgid "{} Custom server(s)"
+msgstr "{} 個のカスタムサーバー"
 
-msgid "Custom repositories set up"
-msgstr "カスタムリポジトリを設定"
+#, python-brace-format
+msgid "{} Custom repository(s)"
+msgstr "{} 個のカスタムリポジトリ"
 
 msgid "Copy ISO network configuration to installation"
 msgstr "ISO のネットワーク設定をインストール環境にコピー"
@@ -985,19 +1133,49 @@ msgstr "スタンドアロンの iwd を使用"
 msgid "Manual configuration"
 msgstr "手動設定"
 
+#, python-brace-format
+msgid "Interface \"{}\""
+msgstr "インターフェイス \"{}\""
+
+msgid "DHCP enabled"
+msgstr "DHCP 有効"
+
+#, python-brace-format
+msgid "IP address \"{}\""
+msgstr "IP アドレス \"{}\""
+
+#, python-brace-format
+msgid "Gateway \"{}\""
+msgstr "ゲートウェイ \"{}\""
+
+#, python-brace-format
+msgid "DNS servers \"{}\""
+msgstr "DNSサーバー \"{}\""
+
+msgid "Network"
+msgstr "ネットワーク"
+
 msgid "Package group:"
 msgstr "パッケージグループ:"
 
-msgid "Color enabled"
-msgstr "カラー出力を有効にする"
+#, python-brace-format
+msgid "Parallel downloads \"{}\""
+msgstr "並行ダウンロード \"{}\""
+
+msgid "Color \"enabled\""
+msgstr "カラー \"有効\""
 
 #, python-brace-format
-msgid "{} graphics driver"
-msgstr "{} グラフィックドライバー"
+msgid "Selected profiles \"{}\""
+msgstr "選択したプロファイル \"{}\""
 
 #, python-brace-format
-msgid "{} greeter"
-msgstr "{} グリーター"
+msgid "\"{}\" graphics driver"
+msgstr "\"{}\" グラフィックドライバー"
+
+#, python-brace-format
+msgid "\"{}\" greeter"
+msgstr "\"{}\" グリーター"
 
 msgid "very weak"
 msgstr "非常に弱い"
@@ -1010,6 +1188,20 @@ msgstr "中程度"
 
 msgid "strong"
 msgstr "強い"
+
+msgid "User"
+msgstr "ユーザー"
+
+#, python-brace-format
+msgid "User \"{}\""
+msgstr "ユーザー \"{}\""
+
+msgid "sudo user"
+msgstr "sudo ユーザー"
+
+#, python-brace-format
+msgid "groups {}"
+msgstr "グループ {}"
 
 msgid "Add interface"
 msgstr "インターフェイスを追加"
@@ -1083,20 +1275,32 @@ msgstr "パッケージを読み込んでいます..."
 msgid "No packages found"
 msgstr "パッケージが見つかりません"
 
-msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "base、sudo、linux、linux-firmware、efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
+msgid ""
+"Only packages such as base, sudo, linux, linux-firmware, efibootmgr and "
+"optional profile packages are installed."
+msgstr ""
+"base、sudo、linux、linux-firmware、efibootmgr "
+"などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
 
-msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgid ""
+"Note: base-devel is no longer installed by default. Add it here if you need "
+"build tools."
 msgstr "注意: base-devel はデフォルトではインストールされなくなりました。ビルドツールが必要な場合は、ここで追加してください。"
 
-msgid "Select any packages from the below list that should be installed additionally"
+msgid ""
+"Select any packages from the below list that should be installed additionally"
 msgstr "追加でインストールする必要があるパッケージをリストから選択してください"
 
-msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgid ""
+"Pacman is already running, waiting maximum 10 minutes for it to terminate."
 msgstr "Pacman はすでに実行されており、終了するまで最大 10 分間待機します。"
 
-msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "既存の pacman のロックが終了しませんでした。archinstall を使用する前に、既存の pacman セッションをすべてクリーンアップしてください。"
+msgid ""
+"Pre-existing pacman lock never exited. Please clean up any existing pacman "
+"sessions before using archinstall."
+msgstr ""
+"既存の pacman のロックが終了しませんでした。archinstall を使用する前に、既存の pacman "
+"セッションをすべてクリーンアップしてください。"
 
 #, python-brace-format
 msgid "Enter the number of parallel downloads (1-{})"
@@ -1129,7 +1333,9 @@ msgid "Unable to fetch profile from specified url: {}"
 msgstr "指定された URL からプロファイルを取得できません: {}"
 
 #, python-brace-format
-msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgid ""
+"Profiles must have unique name, but profile definitions with duplicate name "
+"found: {}"
 msgstr "プロファイルには一意の名前が必要ですが、重複した名前のプロファイル定義が見つかりました: {}"
 
 msgid "Add a user"
@@ -1143,9 +1349,6 @@ msgstr "ユーザーを昇格/降格"
 
 msgid "Delete User"
 msgstr "ユーザーを削除"
-
-msgid "User"
-msgstr "ユーザー"
 
 msgid "Enter new password"
 msgstr "新しいパスワードを入力"
@@ -1384,11 +1587,66 @@ msgstr "いいえ"
 msgid " (default)"
 msgstr " (デフォルト)"
 
+#~ msgid "ArchInstall Language"
+#~ msgstr "archInstall の言語"
+
+#~ msgid "Version"
+#~ msgstr "バージョン"
+
+#~ msgid "Installation Script"
+#~ msgstr "インストールスクリプト"
+
+#~ msgid "Services"
+#~ msgstr "サービス"
+
+#~ msgid "Custom commands"
+#~ msgstr "カスタムコマンド"
+
+#~ msgid "Users"
+#~ msgstr "ユーザー"
+
+#~ msgid "Root encrypted password"
+#~ msgstr "root 暗号化パスワード"
+
+#~ msgid "Disk encryption password"
+#~ msgstr "ディスク暗号化パスワード"
+
+#~ msgid "Bluetooth enabled"
+#~ msgstr "Bluetooth を有効にする"
+
+#, python-brace-format
+#~ msgid "Power management \"{}\""
+#~ msgstr "電力管理 \"{}\""
+
+#~ msgid "Print service enabled"
+#~ msgstr "印刷サービスを有効にする"
+
+#, python-brace-format
+#~ msgid "Extra fonts \"{}\""
+#~ msgstr "追加フォント \"{}\""
+
+#~ msgid "U2F set up"
+#~ msgstr "U2F を設定"
+
+#, python-brace-format
+#~ msgid "Bootloader \"{}\""
+#~ msgstr "ブートローダー \"{}\""
+
+#~ msgid "Custom servers set up"
+#~ msgstr "カスタムサーバーを設定"
+
+#~ msgid "Custom repositories set up"
+#~ msgstr "カスタムリポジトリを設定"
+
 #~ msgid "[!] A log file has been created here: {} {}"
 #~ msgstr "[!] ここにログファイルが作成されました: {} {}"
 
-#~ msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-#~ msgstr "    この問題（およびファイル）を https://github.com/archlinux/archinstall/issues に送信してください"
+#~ msgid ""
+#~ "    Please submit this issue (and file) to "
+#~ "https://github.com/archlinux/archinstall/issues"
+#~ msgstr ""
+#~ "    この問題（およびファイル）を https://github.com/archlinux/archinstall/issues "
+#~ "に送信してください"
 
 #~ msgid "And one more time for verification: "
 #~ msgstr "確認のためにもう1度: "
@@ -1417,22 +1675,34 @@ msgstr " (デフォルト)"
 #~ msgid "Choose an audio server"
 #~ msgstr "オーディオサーバーを選択"
 
-#~ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-#~ msgstr "base, base-devel, linux, linux-firmware, efibootmgr などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
+#~ msgid ""
+#~ "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr "
+#~ "and optional profile packages are installed."
+#~ msgstr ""
+#~ "base, base-devel, linux, linux-firmware, efibootmgr "
+#~ "などのパッケージとオプションのプロファイルパッケージのみがインストールされます。"
 
-#~ msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+#~ msgid ""
+#~ "If you desire a web browser, such as firefox or chromium, you may specify "
+#~ "it in the following prompt."
 #~ msgstr "firefox や chromium などのウェブブラウザーをインストールする場合は、次のプロンプトで指定できます。"
 
-#~ msgid "Write additional packages to install (space separated, leave blank to skip): "
+#~ msgid ""
+#~ "Write additional packages to install (space separated, leave blank to "
+#~ "skip): "
 #~ msgstr "追加でインストールするパッケージを書く（スペースで区切る。無記入でスキップ）: "
 
-#~ msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+#~ msgid ""
+#~ "Use NetworkManager (necessary for configuring internet graphically in "
+#~ "GNOME and KDE)"
 #~ msgstr "ネットワークマネージャーを使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
 
 #~ msgid "Select one network interface to configure"
 #~ msgstr "設定するネットワークインターフェイスを 1 つ選択"
 
-#~ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+#~ msgid ""
+#~ "Select which mode to configure for \"{}\" or skip to use default mode "
+#~ "\"{}\""
 #~ msgstr "どのモードを \"{}\" に設定するかを選択。スキップでデフォルトモード \"{}\" を使用"
 
 #~ msgid "Enter your gateway (router) IP address or leave blank for none: "
@@ -1457,7 +1727,8 @@ msgstr " (デフォルト)"
 #~ msgid "Enter a desired filesystem type for the partition"
 #~ msgstr "パーティションのファイルシステムを入力"
 
-#~ msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+#~ msgid ""
+#~ "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
 #~ msgstr "開始場所を入力（単位: s, GB, % など。デフォルト: {}）: "
 
 #~ msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
@@ -1484,7 +1755,9 @@ msgstr " (デフォルト)"
 #~ "\n"
 #~ "どのパーティションをどこにマウントするかをインデックスで選択"
 
-#~ msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+#~ msgid ""
+#~ " * Partition mount-points are relative to inside the installation, the "
+#~ "boot would be /boot as an example."
 #~ msgstr "* パーティションのマウントポイントはインストールにおける相対的なものであり、例として boot は /boot になります。"
 
 #~ msgid "Select where to mount partition (leave blank to remove mountpoint): "
@@ -1529,16 +1802,20 @@ msgstr " (デフォルト)"
 #~ msgid "Enter a desired filesystem type for the partition: "
 #~ msgstr "パーティションのファイルシステムを入力: "
 
-#~ msgid "Wipe all selected drives and use a best-effort default partition layout"
+#~ msgid ""
+#~ "Wipe all selected drives and use a best-effort default partition layout"
 #~ msgstr "選択したすべてのドライブを消去し、ベストエフォートのデフォルトパーティションレイアウトを使用する"
 
-#~ msgid "Select what to do with each individual drive (followed by partition usage)"
+#~ msgid ""
+#~ "Select what to do with each individual drive (followed by partition usage)"
 #~ msgstr "個々のドライブをどうするかを選択（次にパーティションの使用方法が続く）"
 
 #~ msgid "Select what you wish to do with the selected block devices"
 #~ msgstr "選択したブロックデバイスで何をするかを選択"
 
-#~ msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+#~ msgid ""
+#~ "This is a list of pre-programmed profiles, they might make it easier to "
+#~ "install things like desktop environments"
 #~ msgstr "これは事前にプログラムされたプロファイルのリストです。デスクトップ環境などのインストールが簡単になる可能性があります"
 
 #~ msgid "Select keyboard layout"
@@ -1580,8 +1857,11 @@ msgstr " (デフォルト)"
 #~ msgid "Adding partition...."
 #~ msgstr "パーティションを追加...."
 
-#~ msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-#~ msgstr "続行するには、有効な fs-type を入力する必要があります。有効な fs-type については、 `man parted` を参照してください。"
+#~ msgid ""
+#~ "You need to enter a valid fs-type in order to continue. See `man parted` "
+#~ "for valid fs-type's."
+#~ msgstr ""
+#~ "続行するには、有効な fs-type を入力する必要があります。有効な fs-type については、 `man parted` を参照してください。"
 
 #~ msgid "Error: Listing profiles on URL \"{}\" resulted in:"
 #~ msgstr "エラー: URL \"{}\" のプロファイルをリストすると、次の結果が発生:"
@@ -1589,14 +1869,8 @@ msgstr " (デフォルト)"
 #~ msgid "Error: Could not decode \"{}\" result as JSON:"
 #~ msgstr "エラー: \"{}\" の結果を JSON としてデコードできませんでした:"
 
-#~ msgid "Mirror region"
-#~ msgstr "ミラーの地域"
-
 #~ msgid "Drive(s)"
 #~ msgstr "ドライブ"
-
-#~ msgid "Disk layout"
-#~ msgstr "ディスクレイアウト"
 
 #~ msgid "Superuser account"
 #~ msgstr "スーパーユーザーアカウント"
@@ -1673,10 +1947,12 @@ msgstr " (デフォルト)"
 #~ msgid "Password for user \"{}\": "
 #~ msgstr "ユーザー \"{}\" のパスワード: "
 
-#~ msgid "Verifying that additional packages exist (this might take a few seconds)"
+#~ msgid ""
+#~ "Verifying that additional packages exist (this might take a few seconds)"
 #~ msgstr "追加のパッケージが存在することを確認（これには数秒かかる場合があります）"
 
-#~ msgid "Enter a username to create an additional user (leave blank to skip): "
+#~ msgid ""
+#~ "Enter a username to create an additional user (leave blank to skip): "
 #~ msgstr "ユーザー名を入力して追加ユーザーを作成（無記入でスキップ）: "
 
 #~ msgid "Use ESC to skip\n"
@@ -1684,7 +1960,8 @@ msgstr " (デフォルト)"
 
 #~ msgid ""
 #~ "\n"
-#~ " Choose an object from the list, and select one of the available actions for it to execute"
+#~ " Choose an object from the list, and select one of the available actions "
+#~ "for it to execute"
 #~ msgstr ""
 #~ "\n"
 #~ "リストからオブジェクトを選択し、そのオブジェクトで実行できるアクションの 1 つを選択"
@@ -1854,22 +2131,32 @@ msgstr " (デフォルト)"
 #~ msgid "Mark/Unmark a partition as compressed (btrfs only)"
 #~ msgstr "圧縮するパーティションとしてマーク/マーク解除（Btrfs のみ）"
 
-#~ msgid "The password you are using seems to be weak, are you sure you want to use it?"
+#~ msgid ""
+#~ "The password you are using seems to be weak, are you sure you want to use "
+#~ "it?"
 #~ msgstr "使用しているパスワードは弱いようですが、本当に使用してもよろしいですか？"
 
-#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+#~ msgid ""
+#~ "Provides a selection of desktop environments and tiling window managers, "
+#~ "e.g. gnome, kde, sway"
 #~ msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。e.g. gnome, kde, sway"
 
 #~ msgid "Select your desired desktop environment"
 #~ msgstr "デスクトップ環境を選択"
 
-#~ msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+#~ msgid ""
+#~ "A very basic installation that allows you to customize Arch Linux as you "
+#~ "see fit."
 #~ msgstr "Arch Linux を必要に応じてカスタマイズできる非常に基本的なインストールです。"
 
-#~ msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+#~ msgid ""
+#~ "Provides a selection of various server packages to install and enable, "
+#~ "e.g. httpd, nginx, mariadb"
 #~ msgstr "さまざまなサーバー パッケージの選択肢を提供します。e.g. httpd, nginx, mariadb"
 
-#~ msgid "Choose which servers to install, if none then a minimal installation will be done"
+#~ msgid ""
+#~ "Choose which servers to install, if none then a minimal installation will "
+#~ "be done"
 #~ msgstr "インストールするサーバーを選択。存在しない場合は最小限のインストールが実行されます"
 
 #~ msgid "Installs a minimal system as well as xorg and graphics drivers."
@@ -1878,16 +2165,21 @@ msgstr " (デフォルト)"
 #~ msgid "Press Enter to continue."
 #~ msgstr "Enter キーで続行します。"
 
-#~ msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+#~ msgid ""
+#~ "Would you like to chroot into the newly created installation and perform "
+#~ "post-installation configuration?"
 #~ msgstr "新しく作成したインストールに chroot して、インストール後の設定を実行しますか？"
 
 #~ msgid "Select one or more hard drives to use and configure\n"
 #~ msgstr "使用・設定する 1 つ以上のハードドライブを選択\n"
 
-#~ msgid "Any modifications to the existing setting will reset the disk layout!"
+#~ msgid ""
+#~ "Any modifications to the existing setting will reset the disk layout!"
 #~ msgstr "既存の設定を変更すると、ディスクレイアウトがリセットされます！"
 
-#~ msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+#~ msgid ""
+#~ "If you reset the harddrive selection this will also reset the current "
+#~ "disk layout. Are you sure?"
 #~ msgstr "ハードドライブの選択をリセットすると、現在のディスクレイアウトもリセットされます。よろしいですか？"
 
 #~ msgid "Save and exit"
@@ -1934,7 +2226,9 @@ msgstr " (デフォルト)"
 #~ msgid "Value: "
 #~ msgstr "値: "
 
-#~ msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+#~ msgid ""
+#~ "You can skip selecting a drive and partitioning and use whatever "
+#~ "drive-setup is mounted at /mnt (experimental)"
 #~ msgstr "ドライブ選択とパーティション作成をスキップして、/mnt にマウントしているドライブのセットアップを使用できます（実験的）"
 
 #~ msgid "Select one of the disks or skip and use /mnt as default"
@@ -1948,9 +2242,6 @@ msgstr " (デフォルト)"
 
 #~ msgid "Device"
 #~ msgstr "デバイス"
-
-#~ msgid "Size"
-#~ msgstr "サイズ"
 
 #~ msgid "Free space"
 #~ msgstr "空き容量"
@@ -1973,7 +2264,9 @@ msgstr " (デフォルト)"
 #~ msgid "Configured {} interfaces"
 #~ msgstr "設定した {} インターフェース"
 
-#~ msgid "This option enables the number of parallel downloads that can occur during installation"
+#~ msgid ""
+#~ "This option enables the number of parallel downloads that can occur "
+#~ "during installation"
 #~ msgstr "このオプションは、インストール中に実行できる並列ダウンロードの数を有効にします"
 
 #~ msgid ""
@@ -1985,17 +2278,25 @@ msgstr " (デフォルト)"
 #~ " （1 から {} の値を入力）\n"
 #~ "注意:"
 
-#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+#~ msgid ""
+#~ " - Maximum value   : {} ( Allows {} parallel downloads, allows {} "
+#~ "downloads at a time )"
 #~ msgstr " - 最大値   : {} ({} 個の並列ダウンロードを許可して、1度に {} 個のダウンロードを許可する)"
 
-#~ msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+#~ msgid ""
+#~ " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads "
+#~ "at a time )"
 #~ msgstr " - 最小値   : 1 (1 個の並列ダウンロードを許可して、1度に 2 個のダウンロードを許可する)"
 
-#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+#~ msgid ""
+#~ " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 "
+#~ "download at a time )"
 #~ msgstr " - 無効/デフォルト   : 0 (並列ダウンロードを無効にして、1度に 1 個のみダウンロードを許可する)"
 
 #, python-brace-format
-#~ msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+#~ msgid ""
+#~ "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 "
+#~ "to disable]"
 #~ msgstr "無効な入力です！有効な入力を使用して再試行してください [1 - {max_downloads}、0 で無効]"
 
 #~ msgid "ESC to skip"
@@ -2010,7 +2311,9 @@ msgstr " (デフォルト)"
 #~ msgid "[Default value: 0] > "
 #~ msgstr "[デフォルト値: 0] > "
 
-#~ msgid "To be able to use this translation, please install a font manually that supports the language."
+#~ msgid ""
+#~ "To be able to use this translation, please install a font manually that "
+#~ "supports the language."
 #~ msgstr "この翻訳を使用できるようにするには、その言語をサポートするフォントを手動でインストールしてください。"
 
 #~ msgid "The font should be stored as {}"
@@ -2022,7 +2325,9 @@ msgstr " (デフォルト)"
 #~ msgid "Select one or more devices to use and configure"
 #~ msgstr "使用・設定する 1 つ以上のデバイスを選択"
 
-#~ msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+#~ msgid ""
+#~ "If you reset the device selection this will also reset the current disk "
+#~ "layout. Are you sure?"
 #~ msgstr "デバイスの選択をリセットすると、現在のディスクレイアウトもリセットされます。よろしいですか？"
 
 #~ msgid "Existing Partitions"
@@ -2034,17 +2339,18 @@ msgstr " (デフォルト)"
 #~ msgid "Enter the root directory of the mounted devices: "
 #~ msgstr "マウントしているデバイスのルートディレクトリを入力: "
 
-#~ msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+#~ msgid ""
+#~ "This is a list of pre-programmed profiles_bck, they might make it easier "
+#~ "to install things like desktop environments"
 #~ msgstr "これは事前にプログラムされたプロファイルのリストです。デスクトップ環境などのインストールが簡単になる可能性があります"
 
 #~ msgid "Current profile selection"
 #~ msgstr "現在のプロファイルの選択"
 
-#~ msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+#~ msgid ""
+#~ "If mountpoint /boot is set, then the partition will also be marked as "
+#~ "bootable."
 #~ msgstr "マウントポイントに /boot が設定された場合、パーティションはブータブルとしてマークされます。"
-
-#~ msgid "Mountpoint: "
-#~ msgstr "マウントポイント: "
 
 #~ msgid "Current free sectors on device {}:"
 #~ msgstr "デバイス {} の現在の空きセクター:"
@@ -2055,7 +2361,9 @@ msgstr " (デフォルト)"
 #~ msgid "Enter the start sector (default: {}): "
 #~ msgstr "開始セクターを入力（デフォルト: {}): "
 
-#~ msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+#~ msgid ""
+#~ "Enter the end sector of the partition (percentage or block number, "
+#~ "default: {}): "
 #~ msgstr "パーティションの終了セクターを入力（パーセンテージかブロック番号。デフォルト: {}): "
 
 #~ msgid "Default: 10000ms, Recommended range: 1000-60000"
@@ -2070,9 +2378,6 @@ msgstr " (デフォルト)"
 #~ msgid "Select disk encryption option"
 #~ msgstr "ディスクの暗号化オプションを選択"
 
-#~ msgid "Partition encryption"
-#~ msgstr "パーティションの暗号化"
-
 #, python-brace-format
 #~ msgid " ! Formatting {} in "
 #~ msgstr " ! {} のフォーマットまで "
@@ -2086,8 +2391,11 @@ msgstr " (デフォルト)"
 #~ msgid "Please chose which greeter to install for the chosen profiles: {}"
 #~ msgstr "選択したプロファイルにインストールするグリーターを選択: {}"
 
-#~ msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-#~ msgstr "プロプライエタリの Nvidia ドライバーは Sway ではサポートされていません。問題が発生する可能性がありますが、よろしいですか？"
+#~ msgid ""
+#~ "The proprietary Nvidia driver is not supported by Sway. It is likely that "
+#~ "you will run into issues, are you okay with that?"
+#~ msgstr ""
+#~ "プロプライエタリの Nvidia ドライバーは Sway ではサポートされていません。問題が発生する可能性がありますが、よろしいですか？"
 
 #~ msgid "Add profile"
 #~ msgstr "プロファイルを追加"
@@ -2104,10 +2412,14 @@ msgstr " (デフォルト)"
 #~ msgid "The profile name you entered is already in use. Try again"
 #~ msgstr "入力したプロファイル名はすでに使用されています。もう1度やり直してください"
 
-#~ msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+#~ msgid ""
+#~ "Packages to be install with this profile (space separated, leave blank to "
+#~ "skip): "
 #~ msgstr "このプロファイルでインストールするパッケージ（スペースで区切る。無記入でスキップ）: "
 
-#~ msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+#~ msgid ""
+#~ "Services to be enabled with this profile (space separated, leave blank to "
+#~ "skip): "
 #~ msgstr "このプロファイルで有効にするサービス（スペースで区切る。未記入でスキップ): "
 
 #~ msgid "Should this profile be enabled for installation?"
@@ -2123,7 +2435,9 @@ msgstr " (デフォルト)"
 #~ "\n"
 #~ "グラフィックドライバーを選択。無記入ですべてのオープンソースドライバーをインストール"
 
-#~ msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgid ""
+#~ "Sway needs access to your seat (collection of hardware devices i.e. "
+#~ "keyboard, mouse, etc)"
 #~ msgstr "Sway はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
 
 #~ msgid ""
@@ -2172,7 +2486,8 @@ msgstr " (デフォルト)"
 #~ msgstr "定義済み"
 
 #~ msgid ""
-#~ "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+#~ "Enter a directory for the configuration(s) to be saved (tab completion "
+#~ "enabled)\n"
 #~ "Save directory: "
 #~ msgstr ""
 #~ "設定を保存するディレクトリを入力（Tab で補完可能）\n"
@@ -2190,25 +2505,26 @@ msgstr " (デフォルト)"
 #~ msgid "Saving {} configuration files to {}"
 #~ msgstr "{} 設定ファイルを {} に保存"
 
-#~ msgid "Mirrors"
-#~ msgstr "ミラー"
+#~ msgid ""
+#~ " - Maximum value   : {} ( Allows {} parallel downloads, allows "
+#~ "{max_downloads+1} downloads at a time )"
+#~ msgstr ""
+#~ " - 最大値   : {}（{} 個の並列ダウンロードを許可し、1度に {max_downloads+1} 個のダウンロードを許可する）"
 
-#~ msgid "Mirror regions"
-#~ msgstr "ミラーの地域"
-
-#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-#~ msgstr " - 最大値   : {}（{} 個の並列ダウンロードを許可し、1度に {max_downloads+1} 個のダウンロードを許可する）"
-
-#~ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+#~ msgid ""
+#~ "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 #~ msgstr "無効な入力です！有効な入力でやり直してください [1 から {}、または 0 で無効]"
 
-#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+#~ msgid ""
+#~ "Use NetworkManager (necessary to configure internet graphically in GNOME "
+#~ "and KDE)"
 #~ msgstr "ネットワークマネージャーを使用（GNOME と KDE でインターネットをグラフィカルに設定するのに必要）"
 
 #~ msgid "Total: {} / {}"
 #~ msgstr "全体: {} / {}"
 
-#~ msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
+#~ msgid ""
+#~ "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
 #~ msgstr "入力したすべての値に、B、KB、KiB、MB、MiB などの単位を付けることができます。"
 
 #~ msgid "Enter start (default: sector {}): "
@@ -2235,10 +2551,9 @@ msgstr " (デフォルト)"
 #~ msgid "Packages"
 #~ msgstr "パッケージ"
 
-#~ msgid "Locale"
-#~ msgstr "ロケール"
-
-#~ msgid "This option enables the number of parallel downloads that can occur during package downloads"
+#~ msgid ""
+#~ "This option enables the number of parallel downloads that can occur "
+#~ "during package downloads"
 #~ msgstr "このオプションは、パッケージのダウンロード中に実行できる並列ダウンロードの数を設定します"
 
 #~ msgid ""
@@ -2251,16 +2566,22 @@ msgstr " (デフォルト)"
 #~ "注意:\n"
 
 #, python-brace-format
-#~ msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+#~ msgid ""
+#~ " - Maximum recommended value : {} ( Allows {} parallel downloads at a "
+#~ "time )"
 #~ msgstr " - 最大推奨値 : {} （1度に {} 個の並列ダウンロードを許可する）"
 
-#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+#~ msgid ""
+#~ " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 "
+#~ "download at a time )\n"
 #~ msgstr " - 無効/デフォルト : 0 （並列ダウンロードを無効にして、1度に 1 個のダウンロードのみ許可する）\n"
 
 #~ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
 #~ msgstr "無効な入力です！有効な入力でやり直してください（無効にする場合は 0）"
 
-#~ msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgid ""
+#~ "Hyprland needs access to your seat (collection of hardware devices i.e. "
+#~ "keyboard, mouse, etc)"
 #~ msgstr "Hyprland はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
 
 #~ msgid ""
@@ -2272,13 +2593,21 @@ msgstr " (デフォルト)"
 #~ "\n"
 #~ "Hyprland にハードウェアへのアクセスを許可するオプションを選択"
 
-#~ msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-#~ msgstr "待機中に時刻同期が完了しません - 回避策についてはドキュメントを確認してください: https://archinstall.readthedocs.io/"
+#~ msgid ""
+#~ "Time syncronization not completing, while you wait - check the docs for "
+#~ "workarounds: https://archinstall.readthedocs.io/"
+#~ msgstr ""
+#~ "待機中に時刻同期が完了しません - 回避策についてはドキュメントを確認してください: "
+#~ "https://archinstall.readthedocs.io/"
 
-#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+#~ msgid ""
+#~ "Provides a selection of desktop environments and tiling window managers, "
+#~ "e.g. GNOME, KDE Plasma, Sway"
 #~ msgstr "デスクトップ環境とタイルウィンドウマネージャーの選択を提供します。例: GNOME, KDE Plasma, Sway"
 
-#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+#~ msgid ""
+#~ "Use NetworkManager (necessary to configure internet graphically in GNOME "
+#~ "and KDE Plasma)"
 #~ msgstr "ネットワークマネージャーを使用（GNOME と KDE Plasma でインターネットをグラフィカルに設定するのに必要）"
 
 #~ msgid "Select a LVM option"
@@ -2302,9 +2631,6 @@ msgstr " (デフォルト)"
 #~ msgid "Seat access"
 #~ msgstr "Seat アクセス"
 
-#~ msgid "Filesystem"
-#~ msgstr "ファイルシステム"
-
 #~ msgid "Start (default: sector {}): "
 #~ msgstr "開始値（デフォルト: セクター {}): "
 
@@ -2317,7 +2643,9 @@ msgstr " (デフォルト)"
 #~ msgid "Root mount directory"
 #~ msgstr "ルートマウントディレクトリ"
 
-#~ msgid "Write additional packages to install (space separated, leave blank to skip)"
+#~ msgid ""
+#~ "Write additional packages to install (space separated, leave blank to "
+#~ "skip)"
 #~ msgstr "追加でインストールするパッケージを書く（スペースで区切る。無記入でスキップ）"
 
 #~ msgid "Invalid download number"
@@ -2326,20 +2654,11 @@ msgstr " (デフォルト)"
 #~ msgid "Number downloads"
 #~ msgstr "ダウンロード数"
 
-#~ msgid "Interfaces"
-#~ msgstr "インターフェイス"
-
 #~ msgid "Modes"
 #~ msgstr "モード"
 
-#~ msgid "IP address"
-#~ msgstr "IPアドレス"
-
 #~ msgid "Gateway address"
 #~ msgstr "ゲートウェイアドレス"
-
-#~ msgid "DNS servers"
-#~ msgstr "DNSサーバー"
 
 #~ msgid "Info"
 #~ msgstr "情報"
@@ -2353,7 +2672,9 @@ msgstr " (デフォルト)"
 #~ msgid "Directory"
 #~ msgstr "ディレクトリ"
 
-#~ msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+#~ msgid ""
+#~ "Enter a directory for the configuration(s) to be saved (tab completion "
+#~ "enabled)"
 #~ msgstr "設定を保存するディレクトリを入力（Tab で補完可能）"
 
 #~ msgid "Mirror name"
@@ -2441,13 +2762,17 @@ msgstr " (デフォルト)"
 #~ msgid "Selection"
 #~ msgstr "選択"
 
-#~ msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgid ""
+#~ "labwc needs access to your seat (collection of hardware devices i.e. "
+#~ "keyboard, mouse, etc)"
 #~ msgstr "labwc はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
 
 #~ msgid "Choose an option to give labwc access to your hardware"
 #~ msgstr "labwc にハードウェアへのアクセスを許可するオプションを選択"
 
-#~ msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+#~ msgid ""
+#~ "niri needs access to your seat (collection of hardware devices i.e. "
+#~ "keyboard, mouse, etc)"
 #~ msgstr "niri はお使いの Seat（キーボード、マウスなどのハードウェアデバイス群）にアクセスする必要があります"
 
 #~ msgid "Choose an option to give niri access to your hardware"

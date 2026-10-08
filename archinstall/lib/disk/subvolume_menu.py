@@ -14,7 +14,7 @@ class SubvolumeMenu(ListManager[SubvolumeModification]):
 		self,
 		btrfs_subvols: list[SubvolumeModification],
 		prompt: str | None = None,
-	):
+	) -> None:
 		self._actions = [
 			tr('Add subvolume'),
 			tr('Edit subvolume'),
