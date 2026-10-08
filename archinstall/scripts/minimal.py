@@ -7,6 +7,7 @@ from archinstall.lib.installer import Installer
 from archinstall.lib.log import debug, error, info
 from archinstall.lib.menu.util import delayed_warning
 from archinstall.lib.models import Bootloader
+from archinstall.lib.models.package_types import InstallationPackage
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.models.users import Password, User
 from archinstall.lib.network.network_handler import install_network_config
@@ -46,7 +47,7 @@ def perform_installation(arch_config_handler: ArchConfigHandler) -> None:
 				config.profile_config,
 			)
 
-		installation.add_additional_packages(['nano', 'wget', 'git'])
+		installation.add_additional_packages([InstallationPackage.NANO.value, InstallationPackage.WGET.value, InstallationPackage.GIT.value])
 
 		profile_config = ProfileConfiguration(MinimalProfile())
 		profile_handler.install_profile_config(installation, profile_config)
