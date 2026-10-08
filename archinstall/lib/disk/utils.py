@@ -1,3 +1,5 @@
+from codecs import escape_decode
+from os import fsdecode
 from pathlib import Path
 from subprocess import CalledProcessError
 
@@ -196,6 +198,17 @@ def swapon(path: Path) -> None:
 		SysCommand(['swapon', str(path)])
 	except SysCallError as err:
 		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
+
+
+def swapoff(path: Path) -> None:
+	try:
+		output = SysCommand(['swapon', '--show=NAME', '--noheadings', '--raw']).output()
+		# --raw escapes filename bytes as \xNN.
+		active = {Path(fsdecode(escape_decode(line)[0])).resolve() for line in output.splitlines()}
+		if path.resolve() in active:
+			SysCommand(['swapoff', str(path)])
+	except SysCallError as err:
+		raise DiskError(f'Could not disable swap {path}:\n{err.message}')
 
 
 def linux_root_guid(arch: str | None) -> PartitionGUID:
