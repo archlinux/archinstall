@@ -18,8 +18,8 @@ def test_committed_source_targets() -> None:
 	entries = path.read_text().split('optdepends=(\n', 1)[1].split('\n)', 1)[0]
 	targets = set()
 	in_group = False
-	for line in entries.splitlines():
-		line = line.strip()
+	for raw_line in entries.splitlines():
+		line = raw_line.strip()
 		if line.startswith('# group: '):
 			targets.add(line.removeprefix('# group: '))
 			in_group = True
@@ -31,13 +31,23 @@ def test_committed_source_targets() -> None:
 def test_conditional_package_choices() -> None:
 	targets = meta.package_targets()
 	assert {'seatd', 'polkit', 'plasma', 'plasma-meta', 'plasma-desktop'} <= targets
-	assert {'amd-ucode', 'intel-ucode', 'linux-lts-headers', 'btrfs-progs', 'brltty', 'network-manager-applet', 'dms-shell-niri'} <= targets
+	assert {'amd-ucode', 'intel-ucode', 'linux-lts-headers', 'btrfs-progs', 'brltty', 'network-manager-applet', 'dms-shell'} <= targets
+	assert {'linux-firmware-qcom', 'linux-firmware-mellanox'} <= targets
+
+
+def test_profile_settings_are_preserved(monkeypatch: pytest.MonkeyPatch) -> None:
+	profile = Profile('New', ProfileType.Custom, packages=['new-profile'])
+	profile.custom_settings = {CustomSetting.SeatAccess: 'seatd'}
+	monkeypatch.setattr(ProfileHandler, 'profiles', property(lambda _self: [profile]))
+	before = profile.custom_settings.copy()
+	assert 'new-profile' in meta.package_targets()
+	assert profile.custom_settings == before
 
 
 def test_new_sources_are_discovered(monkeypatch: pytest.MonkeyPatch) -> None:
 	before = meta.package_targets()
-	profiles = ProfileHandler().profiles + [Profile('New', ProfileType.Custom, packages=['new-profile'])]
-	monkeypatch.setattr(ProfileHandler, 'profiles', property(lambda self: profiles))
+	profiles = [*ProfileHandler().profiles, Profile('New', ProfileType.Custom, packages=['new-profile'])]
+	monkeypatch.setattr(ProfileHandler, 'profiles', property(lambda _self: profiles))
 
 	class NewApp:
 		@property

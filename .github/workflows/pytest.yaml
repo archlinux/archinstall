@@ -22,3 +22,5 @@ jobs:
               run: pip install --break-system-packages .[dev]
             - name: Test with pytest
               run: pytest
+            - name: Check generated package inventory
+              run: python -m archinstall.lib.packages.meta --check

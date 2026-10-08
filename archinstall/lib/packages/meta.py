@@ -14,7 +14,7 @@ from archinstall.lib.hardware import CPUVendor, GfxPackage
 from archinstall.lib.installer import __accessibility_packages__, __packages__
 from archinstall.lib.models.application import FontPackage
 from archinstall.lib.models.device import FilesystemType
-from archinstall.lib.models.package_types import InstallationPackage, Kernel
+from archinstall.lib.models.package_types import FirmwareOptdep, InstallationPackage, Kernel
 from archinstall.lib.profile.profiles_handler import ProfileHandler
 
 PROFILE_SETTINGS: dict[CustomSetting, type[Enum]] = {
@@ -28,7 +28,7 @@ def package_targets() -> set[str]:
 		raise ValueError('Add missing custom settings to PROFILE_SETTINGS')
 
 	packages = set(__packages__ + __accessibility_packages__)
-	for package_enum in (FontPackage, GfxPackage, InstallationPackage):
+	for package_enum in (FontPackage, GfxPackage, FirmwareOptdep, InstallationPackage):
 		packages.update(choice.value for choice in package_enum)
 	packages.update(f'{kernel.value}-headers' for kernel in Kernel)
 	packages.update(package for fs in FilesystemType if (package := fs.installation_pkg))
@@ -36,10 +36,13 @@ def package_targets() -> set[str]:
 
 	for profile in ProfileHandler().profiles:
 		original = profile.custom_settings
-		packages.update(profile.packages)
-		for choices in product(*PROFILE_SETTINGS.values()):
-			profile.custom_settings = original | dict(zip(PROFILE_SETTINGS, (choice.value for choice in choices), strict=True))
+		try:
 			packages.update(profile.packages)
+			for choices in product(*PROFILE_SETTINGS.values()):
+				profile.custom_settings = original | dict(zip(PROFILE_SETTINGS, (choice.value for choice in choices), strict=True))
+				packages.update(profile.packages)
+		finally:
+			profile.custom_settings = original
 
 	for cls in vars(application_handler).values():
 		if inspect.isclass(cls) and cls.__module__.startswith('archinstall.applications.'):

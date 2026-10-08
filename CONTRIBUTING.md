@@ -50,6 +50,12 @@ This will install the pre-commit hook and run it every time a `git commit` is ex
 
 If you'd like to contribute to the documentation, refer to [this guide](docs/README.md) on how to build the documentation locally.
 
+## Package inventory
+
+`archinstall-meta/PKGBUILD` is generated from the installer package choices, applications, and profiles. Add installer-only package choices to `InstallationPackage`; profiles and application package properties are discovered automatically. New profile settings must also be covered in `PROFILE_SETTINGS` in `archinstall/lib/packages/meta.py`.
+
+After changing package choices, run `python -m archinstall.lib.packages.meta` on Arch Linux with an up-to-date package database, and commit the generated PKGBUILD with the source change. The pytest suite rejects untracked literal package choices and checks that source targets match the committed inventory. The CI pytest job also runs `python -m archinstall.lib.packages.meta --check` against its refreshed package database, so changes in repository groups are detected. Regenerate the file when that check reports drift; do not edit its dependency list by hand.
+
 ## Submitting Changes
 
 Archinstall uses GitHub's pull-request workflow and all contributions in terms of code should be done through pull requests.<br>

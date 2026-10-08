@@ -36,7 +36,7 @@ optdepends=(
 	deepin-terminal
 	dkms
 	dmenu
-	dms-shell-niri
+	dms-shell
 	docker
 	dolphin
 	dunst
@@ -90,6 +90,12 @@ optdepends=(
 	limine
 	linux
 	linux-firmware
+	linux-firmware-liquidio
+	linux-firmware-marvell
+	linux-firmware-mellanox
+	linux-firmware-nfp
+	linux-firmware-qcom
+	linux-firmware-qlogic
 	linux-hardened
 	linux-hardened-headers
 	linux-headers
@@ -225,6 +231,7 @@ optdepends=(
 	cosmic-monitor
 	cosmic-notifications
 	cosmic-osd
+	cosmic-osk
 	cosmic-panel
 	cosmic-player
 	cosmic-randr
@@ -236,6 +243,7 @@ optdepends=(
 	cosmic-store
 	cosmic-terminal
 	cosmic-text-editor
+	cosmic-viewer
 	cosmic-wallpapers
 	cosmic-workspaces
 	xdg-desktop-portal-cosmic
@@ -400,7 +408,6 @@ optdepends=(
 	eom
 	mate-applets
 	mate-calc
-	mate-icon-theme-faenza
 	mate-media
 	mate-netbook
 	mate-power-manager
