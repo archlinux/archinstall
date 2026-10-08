@@ -35,13 +35,15 @@ def as_key_value_pair(
 		if ignore_empty and not value:
 			continue
 
-		if isinstance(value, bool):
-			value = 'Yes' if value else 'No'
+		val = value
 
-		if isinstance(value, list):
-			value = '\n  '.join(str(val) for val in value)
+		if isinstance(val, bool):
+			val = 'Yes' if val else 'No'
 
-		table.add_row(_sentence_case(label), f': {value}')
+		if isinstance(val, list):
+			val = '\n  '.join(str(item) for item in val)
+
+		table.add_row(_sentence_case(label), f': {val}')
 
 	return table.stringify()
 
@@ -64,36 +66,32 @@ def _get_values(
 		# A method of an instance does not make sense
 		if callable(class_formatter):
 			return class_formatter(o, filter_list)
+
 		# if is invoked by name we restrict it to a method of the class. No need to mess more
-		elif hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
+		if hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
 			func = getattr(o, class_formatter)
 			return func(filter_list)
 
 		raise ValueError('Unsupported formatting call')
-	elif hasattr(o, 'table_data'):
+
+	if hasattr(o, 'table_data'):
 		return o.table_data()
-	elif hasattr(o, 'json'):
+
+	if hasattr(o, 'json'):
 		return o.json()
-	elif is_dataclass(o):
+
+	if is_dataclass(o):
 		return asdict(o)
-	else:
-		return o.__dict__  # type: ignore[unreachable]
+
+	return o.__dict__  # type: ignore[unreachable]
 
 
-def as_table(
+def table_components(
 	obj: list[Any],
 	class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
 	filter_list: list[str] | None = None,
 	capitalize: bool = False,
-) -> str:
-	"""variant of as_table (subtly different code) which has two additional parameters
-	filter which is a list of fields which will be shown
-	class_formatter a special method to format the outgoing data
-
-	A general comment, the format selected for the output (a string where every data record is separated by newline)
-	is for compatibility with a print statement
-	As_table_filter can be a drop in replacement for as_table
-	"""
+) -> tuple[list[str], list[str]]:
 	if filter_list is None:
 		filter_list = []
 
@@ -111,21 +109,25 @@ def as_table(
 		filter_list = list(column_width.keys())
 
 	# create the header lines
-	output = ''
 	key_list = []
 	for key in filter_list:
 		width = column_width[key]
-		key = key.replace('!', '').replace('_', ' ')
+		key_str = key.replace('!', '').replace('_', ' ')
 
 		if capitalize:
-			key = key.capitalize()
+			key_str = key_str.capitalize()
 
-		key_list.append(unicode_ljust(key, width))
+		key_list.append(unicode_ljust(key_str, width))
 
-	output += ' | '.join(key_list) + '\n'
-	output += '-' * len(output) + '\n'
+	header_row = ' | '.join(key_list)
+
+	header = [
+		header_row,
+		'-' * len(header_row),
+	]
 
 	# create the data lines
+	rows = []
 	for record in raw_data:
 		obj_data = []
 		for key in filter_list:
@@ -140,6 +142,24 @@ def as_table(
 			else:
 				obj_data.append(unicode_ljust(str(value), width))
 
-		output += ' | '.join(obj_data) + '\n'
+		rows.append(' | '.join(obj_data))
 
-	return output
+	return header, rows
+
+
+def as_table(
+	obj: list[Any],
+	class_formatter: str | Callable | None = None,  # type: ignore[type-arg]
+	filter_list: list[str] | None = None,
+	capitalize: bool = False,
+) -> str:
+	"""variant of as_table (subtly different code) which has two additional parameters
+	filter which is a list of fields which will be shown
+	class_formatter a special method to format the outgoing data
+
+	A general comment, the format selected for the output (a string where every data record is separated by newline)
+	is for compatibility with a print statement
+	As_table_filter can be a drop in replacement for as_table
+	"""
+	header, rows = table_components(obj, class_formatter, filter_list, capitalize)
+	return ''.join(item + '\n' for item in header + rows)

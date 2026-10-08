@@ -15,7 +15,7 @@ class ListManager[ValueT]:
 		base_actions: list[str],
 		sub_menu_actions: list[str],
 		prompt: str | None = None,
-	):
+	) -> None:
 		"""
 		:param prompt:	Text which will appear at the header
 		type param: string
@@ -93,11 +93,11 @@ class ListManager[ValueT]:
 
 		if result.get_value() == self._cancel_action:
 			return None
-		else:
-			return self._data
+
+		return self._data
 
 	async def _run_actions_on_entry(self, entry: ValueT) -> None:
-		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]
+		options = [*self.filter_options(entry, self._sub_menu_actions), self._cancel_action]
 
 		items = [MenuItem(o, value=o) for o in options]
 		group = MenuItemGroup(items, sort_items=False)
@@ -134,7 +134,7 @@ class ListManager[ValueT]:
 		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def filter_options(self, selection: ValueT, options: list[str]) -> list[str]:
+	def filter_options(self, _selection: ValueT, options: list[str]) -> list[str]:
 		"""
 		filter which actions to show for a specific selection
 		"""

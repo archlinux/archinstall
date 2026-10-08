@@ -25,7 +25,13 @@ from archinstall.lib.disk.utils import (
 	mount,
 	swapon,
 )
-from archinstall.lib.exceptions import DiskError, HardwareIncompatibilityError, RequirementError, ServiceException, SysCallError
+from archinstall.lib.exceptions import (
+	DiskError,
+	HardwareIncompatibilityError,
+	RequirementError,
+	ServiceExceptionError,
+	SysCallError,
+)
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.linux_path import LPath
 from archinstall.lib.locale.utils import verify_keyboard_layout, verify_x11_keyboard_layout
@@ -79,8 +85,9 @@ class Installer:
 		disk_config: DiskLayoutConfiguration,
 		base_packages: list[str] | None = None,
 		kernels: list[str] | None = None,
+		firmware: list[str] | None = None,
 		silent: bool = False,
-	):
+	) -> None:
 		"""
 		`Installer()` is the wrapper for most basic installation steps.
 		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
@@ -101,11 +108,15 @@ class Installer:
 		for kernel in self.kernels:
 			self._base_packages.append(kernel)
 
+		# Optional firmware is strapped with base so the blobs are in place before the initramfs is generated
+		self._base_packages.extend(firmware or [])
+
 		# If using accessibility tools in the live environment, append those to the packages list
 		if accessibility_tools_in_use():
 			self._base_packages.extend(__accessibility_packages__)
 
 		self.post_base_install: list[Callable] = []  # type: ignore[type-arg]
+		self._post_base_install_services: list[str] = []
 
 		self._modules: list[str] = []
 		self._binaries: list[str] = []
@@ -159,17 +170,17 @@ class Installer:
 			log(msg, fg='green')
 			self.sync_log_to_install_medium()
 			return True
-		else:
-			warn('Some required steps were not successfully installed/configured before leaving the installer:')
 
-			for step in missing_steps:
-				warn(f' - {step}')
+		warn('Some required steps were not successfully installed/configured before leaving the installer:')
 
-			warn(f'Detailed error logs can be found at: {logger.directory}')
-			warn('Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues')
+		for step in missing_steps:
+			warn(f' - {step}')
 
-			self.sync_log_to_install_medium()
-			return False
+		warn(f'Detailed error logs can be found at: {logger.directory}')
+		warn('Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues')
+
+		self.sync_log_to_install_medium()
+		return False
 
 	def remove_mod(self, mod: str) -> None:
 		if mod in self._modules:
@@ -179,11 +190,10 @@ class Installer:
 		if mod not in self._modules:
 			self._modules.append(mod)
 
-	def _verify_service_stop(self, offline: bool, skip_ntp: bool, skip_wkd: bool) -> None:
+	def _verify_service_stop(self, skip_ntp: bool, skip_wkd: bool) -> None:
 		"""
 		Certain services might be running that affects the system during installation.
-		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
-		We need to wait for it before we continue since we opted in to use a custom mirror/region.
+		We need to wait for them, to make sure ISO has no boot defects before install.
 		"""
 
 		if not skip_ntp:
@@ -202,17 +212,6 @@ class Installer:
 				time.sleep(1)
 		else:
 			info(tr('Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)'))
-
-		if not offline:
-			info('Waiting for automatic mirror selection (reflector) to complete.')
-			for _ in range(60):
-				if self._service_state('reflector') in ('dead', 'failed', 'exited'):
-					break
-				time.sleep(1)
-			else:
-				warn('Reflector did not complete within 60 seconds, continuing anyway...')
-		else:
-			info('Skipped reflector...')
 
 		# info('Waiting for pacman-init.service to complete.')
 		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
@@ -251,12 +250,11 @@ class Installer:
 
 	def sanity_check(
 		self,
-		offline: bool = False,
 		skip_ntp: bool = False,
 		skip_wkd: bool = False,
 	) -> None:
 		# self._verify_boot_part()
-		self._verify_service_stop(offline, skip_ntp, skip_wkd)
+		self._verify_service_stop(skip_ntp, skip_wkd)
 
 	def mount_ordered_layout(self) -> None:
 		debug('Mounting ordered layout')
@@ -381,7 +379,7 @@ class Installer:
 			options = part_mod.mount_options
 
 			if part_mod.is_efi():
-				options = list(dict.fromkeys(options + ['fmask=0177', 'dmask=0077']))
+				options = list(dict.fromkeys([*options, 'fmask=0177', 'dmask=0077']))
 
 			mount(part_mod.dev_path, target, options=options)
 		elif part_mod.fs_type == FilesystemType.BTRFS:
@@ -446,7 +444,7 @@ class Installer:
 		subvols_with_mountpoints = [sv for sv in subvolumes if sv.mountpoint is not None]
 		for subvol in sorted(subvols_with_mountpoints, key=lambda x: x.relative_mountpoint):
 			mountpoint = self.target / subvol.relative_mountpoint
-			options = mount_options + [f'subvol={subvol.name}']
+			options = [*mount_options, f'subvol={subvol.name}']
 			mount(dev_path, mountpoint, options=options)
 
 	def generate_key_files(self) -> None:
@@ -558,7 +556,7 @@ class Installer:
 			self._kernel_params.append(f'resume=UUID={resume_uuid}')
 			self._kernel_params.append(f'resume_offset={resume_offset}')
 
-	def post_install_check(self, *args: str, **kwargs: str) -> list[str]:
+	def post_install_check(self) -> list[str]:
 		return [step for step, flag in self._helper_flags.items() if flag is False]
 
 	def set_mirrors(
@@ -594,7 +592,7 @@ class Installer:
 		if repositories_config:
 			debug(f'Pacman config: {repositories_config}')
 
-			with open(pacman_config, 'a') as fp:
+			with pacman_config.open('a') as fp:
 				fp.write(repositories_config)
 
 		regions_config = mirror_config.regions_config(mirror_list_handler, speed_sort=True)
@@ -618,7 +616,7 @@ class Installer:
 		except SysCallError as err:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
-		with open(fstab_path, 'ab') as fp:
+		with fstab_path.open('ab') as fp:
 			fp.write(gen_fstab)
 
 		if not fstab_path.is_file():
@@ -629,7 +627,7 @@ class Installer:
 				if plugin.on_genfstab(self) is True:
 					break
 
-		with open(fstab_path, 'a') as fp:
+		with fstab_path.open('a') as fp:
 			for entry in self._fstab_entries:
 				fp.write(f'{entry}\n')
 
@@ -697,9 +695,7 @@ class Installer:
 			self.arch_chroot(f'ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
 			return True
 
-		else:
-			warn(f'Time zone {zone} does not exist, continuing with system default')
-
+		warn(f'Time zone {zone} does not exist, continuing with system default')
 		return False
 
 	def activate_time_synchronization(self) -> None:
@@ -725,7 +721,7 @@ class Installer:
 			try:
 				SysCommand(f'systemctl --root={self.target} enable {service}')
 			except SysCallError as err:
-				raise ServiceException(f'Unable to start service {service}: {err}')
+				raise ServiceExceptionError(f'Unable to start service {service}: {err}')
 
 			for plugin in plugins.values():
 				if hasattr(plugin, 'on_service'):
@@ -741,7 +737,7 @@ class Installer:
 			try:
 				SysCommand(f'systemctl --root={self.target} disable {service}')
 			except SysCallError as err:
-				raise ServiceException(f'Unable to disable service {service}: {err}')
+				raise ServiceExceptionError(f'Unable to disable service {service}: {err}')
 
 	def run_command(self, cmd: str, peek_output: bool = False) -> SysCommand:
 		return SysCommand(f'arch-chroot -S {self.target} {cmd}', peek_output=peek_output)
@@ -774,7 +770,7 @@ class Installer:
 					or conf
 				)
 
-		with open(f'{self.target}/etc/systemd/network/10-{nic.iface}.network', 'a') as netconf:
+		with (self.target / f'etc/systemd/network/10-{nic.iface}.network').open('a') as netconf:
 			netconf.write(str(conf))
 
 	def systemd_resolved_stub_mode(self) -> None:
@@ -797,22 +793,16 @@ class Installer:
 				psk.copy(iwd_target / psk.name, preserve_metadata=True)
 
 			if enable_services:
+				iwd = InstallationPackage.IWD.value
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self._helper_flags.get('base', False) is False:
-					self._base_packages.append(InstallationPackage.IWD.value)
-
-					# This function will be called after minimal_installation()
-					# as a hook for post-installs. This hook is only needed if
-					# base is not installed yet.
-					def post_install_enable_iwd_service(*args: str, **kwargs: str) -> None:
-						self.enable_service('iwd')
-
-					self.post_base_install.append(post_install_enable_iwd_service)
+					self._base_packages.append(iwd)
+					self._post_base_install_services.append(iwd)
 				# Otherwise, we can go ahead and add the required package
 				# and enable it's service:
 				else:
-					self.pacman.strap(InstallationPackage.IWD.value)
-					self.enable_service('iwd')
+					self.pacman.strap(iwd)
+					self.enable_service(iwd)
 
 		self.systemd_resolved_stub_mode()
 
@@ -826,16 +816,13 @@ class Installer:
 				netconf_file.copy(network_target / netconf_file.name, preserve_metadata=True)
 
 			if enable_services:
+				services = ['systemd-networkd', 'systemd-resolved']
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self._helper_flags.get('base', False) is False:
-
-					def post_install_enable_networkd_resolved(*args: str, **kwargs: str) -> None:
-						self.enable_service(['systemd-networkd', 'systemd-resolved'])
-
-					self.post_base_install.append(post_install_enable_networkd_resolved)
+					self._post_base_install_services.extend(services)
 				# Otherwise, we can go ahead and enable the services
 				else:
-					self.enable_service(['systemd-networkd', 'systemd-resolved'])
+					self.enable_service(services)
 
 		return True
 
@@ -846,7 +833,7 @@ class Installer:
 				if plugin.on_mkinitcpio(self):
 					return True
 
-		with open(f'{self.target}/etc/mkinitcpio.conf', 'r+') as mkinit:
+		with (self.target / 'etc/mkinitcpio.conf').open('r+') as mkinit:
 			content = mkinit.read()
 			content = re.sub('\nMODULES=(.*)', f'\nMODULES=({" ".join(self._modules)})', content)
 			content = re.sub('\nBINARIES=(.*)', f'\nBINARIES=({" ".join(self._binaries)})', content)
@@ -988,6 +975,8 @@ class Installer:
 			info(f'Running post-installation hook: {function}')
 			function(self)
 
+		self.enable_service(self._post_base_install_services)
+
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_install'):
 				plugin.on_install(self)
@@ -1037,9 +1026,14 @@ class Installer:
 
 		info(f'Zram compression algorithm: {algo.value}')
 
-		with open(f'{self.target}/etc/systemd/zram-generator.conf', 'w') as zram_conf:
-			zram_conf.write('[zram0]\n')
-			zram_conf.write(f'compression-algorithm = {algo.value}\n')
+		(self.target / 'etc/systemd/zram-generator.conf').write_text(
+			textwrap.dedent(
+				f"""\
+				[zram0]
+				compression-algorithm = {algo.value}
+				""",
+			)
+		)
 
 		self.enable_service('systemd-zram-setup@zram0.service')
 
@@ -1060,10 +1054,11 @@ class Installer:
 	def _get_root(self) -> PartitionModification | LvmVolume | None:
 		if self._disk_config.lvm_config:
 			return self._disk_config.lvm_config.get_root_volume()
-		else:
-			for mod in self._disk_config.device_modifications:
-				if root := mod.get_root_partition():
-					return root
+
+		for mod in self._disk_config.device_modifications:
+			if root := mod.get_root_partition():
+				return root
+
 		return None
 
 	def _configure_grub_btrfsd(self, snapshot_type: SnapshotType) -> None:
@@ -1257,7 +1252,8 @@ class Installer:
 
 		if not efi_partition:
 			raise ValueError('Could not detect EFI system partition')
-		elif not efi_partition.mountpoint:
+
+		if not efi_partition.mountpoint:
 			raise ValueError('EFI system partition is not mounted')
 
 		# TODO: Ideally we would want to check if another config
@@ -1468,7 +1464,8 @@ class Installer:
 
 			if not efi_partition:
 				raise ValueError('Could not detect efi partition')
-			elif not efi_partition.mountpoint:
+
+			if not efi_partition.mountpoint:
 				raise ValueError('EFI partition is not mounted')
 
 			# Safety net for programmatic callers that bypass GlobalMenu and
@@ -1512,11 +1509,11 @@ class Installer:
 
 			if not bootloader_removable:
 				# Create EFI boot menu entry for Limine.
+				fw_platform_size = Path('/sys/firmware/efi/fw_platform_size')
 				try:
-					with open('/sys/firmware/efi/fw_platform_size') as fw_platform_size:
-						efi_bitness = fw_platform_size.read().strip()
+					efi_bitness = fw_platform_size.read_text().rstrip()
 				except Exception as err:
-					raise OSError(f'Could not open or read /sys/firmware/efi/fw_platform_size to determine EFI bitness: {err}')
+					raise OSError(f'Could not open or read {fw_platform_size} to determine EFI bitness: {err}')
 
 				if efi_bitness == '64':
 					loader_path = f'\\EFI\\arch-limine\\{"BOOTAA64.EFI" if platform.machine() == "aarch64" else "BOOTX64.EFI"}'
@@ -1684,7 +1681,8 @@ class Installer:
 
 		if not efi_partition:
 			raise ValueError('Could not detect EFI system partition')
-		elif not efi_partition.mountpoint:
+
+		if not efi_partition.mountpoint:
 			raise ValueError('EFI system partition is not mounted')
 
 		info(f'rEFInd EFI partition: {efi_partition.dev_path}')
@@ -1797,9 +1795,8 @@ class Installer:
 			raise ValueError(f'Could not detect ESP at mountpoint {self.target}')
 
 		# Set up kernel command line
-		with open(self.target / 'etc/kernel/cmdline', 'w') as cmdline:
-			kernel_parameters = self._get_kernel_params(root)
-			cmdline.write(' '.join(kernel_parameters) + '\n')
+		kernel_parameters = self._get_kernel_params(root)
+		(self.target / 'etc/kernel/cmdline').write_text(' '.join(kernel_parameters) + '\n')
 
 		diff_mountpoint = None
 
@@ -1927,11 +1924,11 @@ class Installer:
 			# Guarantees sudoer confs directory recommended perms
 			sudoers_dir.chmod(0o440)
 			# Appends a reference to the sudoers file, because if we are here sudoers.d did not exist yet
-			with open(self.target / 'etc/sudoers', 'a') as sudoers:
+			with (self.target / 'etc/sudoers').open('a') as sudoers:
 				sudoers.write('@includedir /etc/sudoers.d\n')
 
 		# We count how many files are there already so we know which number to prefix the file with
-		num_of_rules_already = len(os.listdir(sudoers_dir))
+		num_of_rules_already = len(os.listdir(sudoers_dir))  # noqa: PTH208
 		file_num_str = f'{num_of_rules_already:02d}'  # We want 00_user1, 01_user2, etc
 
 		# Guarantees that username str does not contain invalid characters for a linux file name:
@@ -2067,12 +2064,12 @@ class Installer:
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
 			with Boot(self.target) as session:
-				os.system('systemd-run --machine=archinstall --pty localectl set-keymap ""')  # type: ignore[deprecated]
+				os.system('systemd-run --machine=archinstall --pty localectl set-keymap ""')
 
 				try:
-					session.SysCommand(['localectl', 'set-keymap', language])
+					session.sys_command(['localectl', 'set-keymap', language])
 				except SysCallError as err:
-					raise ServiceException(f"Unable to set locale '{language}' for console: {err}")
+					raise ServiceExceptionError(f"Unable to set locale '{language}' for console: {err}")
 
 				info(f'Keyboard language for this installation is now set to: {language}')
 		else:
@@ -2093,19 +2090,19 @@ class Installer:
 				return False
 
 			with Boot(self.target) as session:
-				session.SysCommand(['localectl', 'set-x11-keymap', '""'])
+				session.sys_command(['localectl', 'set-x11-keymap', '""'])
 
 				try:
-					session.SysCommand(['localectl', 'set-x11-keymap', language])
+					session.sys_command(['localectl', 'set-x11-keymap', language])
 				except SysCallError as err:
-					raise ServiceException(f"Unable to set locale '{language}' for X11: {err}")
+					raise ServiceExceptionError(f"Unable to set locale '{language}' for X11: {err}")
 		else:
 			info('X11-Keyboard language was not changed from default (no language specified)')
 
 		return True
 
 	def _service_started(self, service_name: str) -> str | None:
-		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
+		if Path(service_name).suffix not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
 		last_execution_time = (
@@ -2123,7 +2120,7 @@ class Installer:
 		return last_execution_time
 
 	def _service_state(self, service_name: str) -> str:
-		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
+		if Path(service_name).suffix not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
 		return SysCommand(
@@ -2133,7 +2130,7 @@ class Installer:
 
 
 def accessibility_tools_in_use() -> bool:
-	return os.system('systemctl is-active --quiet espeakup.service') == 0  # type: ignore[deprecated]
+	return os.system('systemctl is-active --quiet espeakup.service') == 0
 
 
 def run_custom_user_commands(commands: list[str], installation: Installer) -> None:

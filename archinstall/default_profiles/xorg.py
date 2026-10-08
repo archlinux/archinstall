@@ -11,7 +11,7 @@ class XorgProfile(Profile):
 		self,
 		name: str = 'Xorg',
 		profile_type: ProfileType = ProfileType.Xorg,
-	):
+	) -> None:
 		super().__init__(
 			name,
 			profile_type,

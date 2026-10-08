@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass
 from enum import Enum, StrEnum
 from functools import cached_property
@@ -9,6 +8,8 @@ from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.log import debug
 from archinstall.lib.networking import enrich_iface_types, list_interfaces
 from archinstall.lib.translationhandler import tr
+
+_VIRTUAL_DMI_ID = Path('/sys/devices/virtual/dmi/id')
 
 
 class CPUVendor(StrEnum):
@@ -146,9 +147,8 @@ class _SysInfo:
 	def has_battery(self) -> bool:
 		for type_path in Path('/sys/class/power_supply/').glob('*/type'):
 			try:
-				with open(type_path) as f:
-					if f.read().strip() == 'Battery':
-						return True
+				if type_path.read_text().rstrip() == 'Battery':
+					return True
 			except OSError:
 				continue
 
@@ -213,7 +213,7 @@ class SysInfo:
 
 	@staticmethod
 	def has_uefi() -> bool:
-		return os.path.isdir('/sys/firmware/efi')
+		return Path('/sys/firmware/efi').is_dir()
 
 	@staticmethod
 	def _graphics_devices() -> dict[str, str]:
@@ -248,16 +248,14 @@ class SysInfo:
 	@staticmethod
 	def sys_vendor() -> str | None:
 		try:
-			with open('/sys/devices/virtual/dmi/id/sys_vendor') as vendor:
-				return vendor.read().strip()
+			return (_VIRTUAL_DMI_ID / 'sys_vendor').read_text().rstrip()
 		except FileNotFoundError:
 			return None
 
 	@staticmethod
 	def product_name() -> str | None:
 		try:
-			with open('/sys/devices/virtual/dmi/id/product_name') as product:
-				return product.read().strip()
+			return (_VIRTUAL_DMI_ID / 'product_name').read_text().rstrip()
 		except FileNotFoundError:
 			return None
 

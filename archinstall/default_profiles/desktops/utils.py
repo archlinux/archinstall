@@ -10,7 +10,23 @@ from archinstall.tui.result import ResultType
 
 class SeatAccess(Enum):
 	seatd = 'seatd'
-	polkit = 'polkit'
+	systemd_logind = 'systemd-logind'
+
+
+# Arch builds systemd with polkit support, logind depends on it
+def seat_access_packages(seat_access: str | None) -> list[str]:
+	if seat_access == SeatAccess.seatd.value:
+		return ['seatd']
+	if seat_access == SeatAccess.systemd_logind.value:
+		return ['polkit']
+	return []
+
+
+# polkit.service is static (dbus activated), only seatd needs enabling
+def seat_access_services(seat_access: str | None) -> list[str]:
+	if seat_access == SeatAccess.seatd.value:
+		return ['seatd']
+	return []
 
 
 def provision_seat_access(
@@ -41,5 +57,5 @@ async def select_seat_access(profile_name: str, default: str | None) -> SeatAcce
 
 	if result.type_ == ResultType.Selection:
 		return result.get_value()
-	else:
-		raise ValueError('Unexpected result type from seat access selection')
+
+	raise ValueError('Unexpected result type from seat access selection')

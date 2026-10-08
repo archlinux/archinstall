@@ -9,7 +9,7 @@ from archinstall.lib.bootloader.utils import validate_bootloader_layout
 from archinstall.lib.configuration import save_config
 from archinstall.lib.disk.disk_menu import DiskLayoutConfigurationMenu
 from archinstall.lib.general.general_menu import select_hostname, select_ntp, select_timezone
-from archinstall.lib.general.system_menu import select_kernel, select_swap
+from archinstall.lib.general.system_menu import select_firmware_optdeps, select_kernel, select_swap
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.locale.locale_menu import LocaleMenu
 from archinstall.lib.menu.abstract_menu import AbstractMenu, SpecialMenuKey
@@ -61,7 +61,7 @@ class GlobalMenu(AbstractMenu[None]):
 		super().__init__(self._item_group, config=arch_config, title=title)
 
 	def _get_menu_options(self) -> list[MenuItem]:
-		menu_options = [
+		return [
 			MenuItem(
 				text=tr('Archinstall language'),
 				action=self._select_archinstall_language,
@@ -109,6 +109,13 @@ class GlobalMenu(AbstractMenu[None]):
 				preview_action=self._prev_kernel,
 				mandatory=True,
 				key='kernels',
+			),
+			MenuItem(
+				text=tr('Additional firmware'),
+				value=[],
+				action=select_firmware_optdeps,
+				preview_action=self._prev_firmware_optdeps,
+				key='firmware_optdeps',
 			),
 			MenuItem(
 				text=tr('Hostname'),
@@ -177,7 +184,7 @@ class GlobalMenu(AbstractMenu[None]):
 			),
 			MenuItem(
 				text=tr('Save configuration'),
-				action=lambda x: self._safe_config(),
+				action=lambda _: self._safe_config(),
 				key=SpecialMenuKey.SAVE.value,
 			),
 			MenuItem(
@@ -190,8 +197,6 @@ class GlobalMenu(AbstractMenu[None]):
 				key=SpecialMenuKey.ABORT.value,
 			),
 		]
-
-		return menu_options
 
 	async def _safe_config(self) -> None:
 		# data: dict[str, Any] = {}
@@ -264,12 +269,10 @@ class GlobalMenu(AbstractMenu[None]):
 		return f'{tr("Language")}: {lang.display_name}'
 
 	async def _select_applications(self, preset: ApplicationConfiguration | None) -> ApplicationConfiguration | None:
-		app_config = await ApplicationMenu(preset).show()
-		return app_config
+		return await ApplicationMenu(preset).show()
 
 	async def _select_authentication(self, preset: AuthenticationConfiguration | None) -> AuthenticationConfiguration | None:
-		auth_config = await AuthenticationMenu(preset).show()
-		return auth_config
+		return await AuthenticationMenu(preset).show()
 
 	def _update_lang_text(self) -> None:
 		"""
@@ -285,8 +288,7 @@ class GlobalMenu(AbstractMenu[None]):
 		tui.translate_bindings()
 
 	async def _locale_selection(self, preset: LocaleConfiguration) -> LocaleConfiguration | None:
-		locale_config = await LocaleMenu(preset).show()
-		return locale_config
+		return await LocaleMenu(preset).show()
 
 	def _prev_locale(self, item: MenuItem) -> str | None:
 		if not item.value:
@@ -308,8 +310,7 @@ class GlobalMenu(AbstractMenu[None]):
 
 	def _prev_additional_pkgs(self, item: MenuItem) -> str | None:
 		if item.value:
-			output = '\n'.join(sorted(item.value))
-			return output
+			return '\n'.join(sorted(item.value))
 		return None
 
 	def _prev_authentication(self, item: MenuItem) -> str | None:
@@ -438,6 +439,12 @@ class GlobalMenu(AbstractMenu[None]):
 			return f'{tr("Kernel")}: {kernel}'
 		return None
 
+	def _prev_firmware_optdeps(self, item: MenuItem) -> str | None:
+		if item.value:
+			firmware = ', '.join(item.value)
+			return f'{tr("Additional firmware")}: {firmware}'
+		return None
+
 	def _prev_bootloader_config(self, item: MenuItem) -> str | None:
 		bootloader_config: BootloaderConfiguration | None = item.value
 		if bootloader_config:
@@ -502,7 +509,7 @@ class GlobalMenu(AbstractMenu[None]):
 
 		return warnings
 
-	def _prev_install_invalid_config(self, item: MenuItem) -> PreviewResult | None:
+	def _prev_install_invalid_config(self, _item: MenuItem) -> PreviewResult | None:
 		self.sync_all_to_config()
 
 		warnings = self._get_install_warnings()
@@ -560,8 +567,7 @@ class GlobalMenu(AbstractMenu[None]):
 		self,
 		preset: DiskLayoutConfiguration | None = None,
 	) -> DiskLayoutConfiguration | None:
-		disk_config = await DiskLayoutConfigurationMenu(preset).show()
-		return disk_config
+		return await DiskLayoutConfigurationMenu(preset).show()
 
 	async def _select_bootloader_config(
 		self,
@@ -570,15 +576,12 @@ class GlobalMenu(AbstractMenu[None]):
 		if preset is None:
 			preset = BootloaderConfiguration.get_default(self._uefi, self._skip_boot)
 
-		bootloader_config = await BootloaderMenu(preset, self._uefi, self._skip_boot).show()
-
-		return bootloader_config
+		return await BootloaderMenu(preset, self._uefi, self._skip_boot).show()
 
 	async def _select_profile(self, current_profile: ProfileConfiguration | None) -> ProfileConfiguration | None:
 		from archinstall.lib.profile.profile_menu import ProfileMenu
 
-		profile_config = await ProfileMenu(preset=current_profile).show()
-		return profile_config
+		return await ProfileMenu(preset=current_profile).show()
 
 	async def _select_additional_packages(self, preset: list[str]) -> list[str]:
 		config: MirrorConfiguration | None = self._item_group.find_by_key('mirror_config').value
@@ -587,12 +590,10 @@ class GlobalMenu(AbstractMenu[None]):
 		if config:
 			repositories = set(config.optional_repositories)
 
-		packages = await select_additional_packages(
+		return await select_additional_packages(
 			preset,
 			repositories=repositories,
 		)
-
-		return packages
 
 	async def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
 		if self._mirror_list_handler is None:

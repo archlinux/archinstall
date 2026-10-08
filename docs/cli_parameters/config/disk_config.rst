@@ -187,19 +187,19 @@ This example contains both subvolumes and compression.
       "btrfs": [
           {
               "mountpoint": "/",
-              "name": "@",
+              "name": "@"
           },
           {
               "mountpoint": "/home",
-              "name": "@home",
+              "name": "@home"
           },
           {
               "mountpoint": "/var/log",
-              "name": "@log",
+              "name": "@log"
           },
           {
               "mountpoint": "/var/cache/pacman/pkg",
-              "name": "@pkg",
+              "name": "@pkg"
           }
       ],
       "dev_path": null,

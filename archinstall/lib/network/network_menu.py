@@ -11,7 +11,7 @@ from archinstall.tui.result import ResultType
 
 
 class ManualNetworkConfig(ListManager[Nic]):
-	def __init__(self, prompt: str, preset: list[Nic]):
+	def __init__(self, prompt: str, preset: list[Nic]) -> None:
 		self._actions = [
 			tr('Add interface'),
 			tr('Edit interface'),
@@ -161,9 +161,9 @@ class ManualNetworkConfig(ListManager[Nic]):
 				dns = dns_servers.split(' ')
 
 			return Nic(iface=iface_name, ip=ip, gateway=gateway, dns=dns, dhcp=False)
-		else:
-			# this will contain network iface names
-			return Nic(iface=iface_name)
+
+		# this will contain network iface names
+		return Nic(iface=iface_name)
 
 
 async def select_network(preset: NetworkConfiguration | None) -> NetworkConfiguration | None:

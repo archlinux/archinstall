@@ -15,7 +15,7 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		bootloader_conf: BootloaderConfiguration,
 		uefi: bool,
 		skip_boot: bool = False,
-	):
+	) -> None:
 		self._bootloader_conf = bootloader_conf
 		self._skip_boot = skip_boot
 		self._uefi = uefi
@@ -84,8 +84,8 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		uki_text = f'{tr("Unified kernel images")}'
 		if item.value:
 			return f'{uki_text}: {tr("Enabled")}'
-		else:
-			return f'{uki_text}: {tr("Disabled")}'
+
+		return f'{uki_text}: {tr("Disabled")}'
 
 	def _prev_removable(self, item: MenuItem) -> str | None:
 		if item.value:

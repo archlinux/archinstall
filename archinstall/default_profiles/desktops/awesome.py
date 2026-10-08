@@ -36,21 +36,20 @@ class AwesomeProfile(Profile):
 		super().install(install_session)
 
 		# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.
-		with open(f'{install_session.target}/etc/xdg/awesome/rc.lua') as fh:
-			awesome_lua = fh.read()
+		rc_lua = install_session.target / 'etc/xdg/awesome/rc.lua'
+		awesome_lua = rc_lua.read_text()
 
 		# Replace xterm with alacritty for a smoother experience.
 		awesome_lua = awesome_lua.replace('"xterm"', '"alacritty"')
 
-		with open(f'{install_session.target}/etc/xdg/awesome/rc.lua', 'w') as fh:
-			fh.write(awesome_lua)
+		rc_lua.write_text(awesome_lua)
 
 		# TODO: Configure the right-click-menu to contain the above packages that were installed. (as a user config)
 
 		# TODO: check if we selected a greeter,
 		# but for now, awesome is intended to run without one.
-		with open(f'{install_session.target}/etc/X11/xinit/xinitrc') as xinitrc:
-			xinitrc_data = xinitrc.read()
+		xinitrc = install_session.target / 'etc/X11/xinit/xinitrc'
+		xinitrc_data = xinitrc.read_text()
 
 		for line in xinitrc_data.split('\n'):
 			if 'twm &' in line:
@@ -63,5 +62,4 @@ class AwesomeProfile(Profile):
 		xinitrc_data += '\n'
 		xinitrc_data += 'exec awesome\n'
 
-		with open(f'{install_session.target}/etc/X11/xinit/xinitrc', 'w') as xinitrc:
-			xinitrc.write(xinitrc_data)
+		xinitrc.write_text(xinitrc_data)

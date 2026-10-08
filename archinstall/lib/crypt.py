@@ -22,14 +22,13 @@ LOGIN_DEFS = Path('/etc/login.defs')
 def _search_login_defs(key: str) -> str | None:
 	defs = LOGIN_DEFS.read_text()
 	for line in defs.split('\n'):
-		line = line.strip()
+		value = line.strip()
 
-		if line.startswith('#'):
+		if value.startswith('#'):
 			continue
 
-		if line.startswith(key):
-			value = line.split(' ')[1]
-			return value
+		if value.startswith(key):
+			return value.split(' ')[1]
 
 	return None
 

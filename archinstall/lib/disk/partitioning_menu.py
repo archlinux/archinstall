@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 from typing import override
 
+from archinstall.lib.disk.default_layouts import suggest_single_disk_layout
 from archinstall.lib.disk.subvolume_menu import SubvolumeMenu
 from archinstall.lib.menu.helpers import Confirmation, Input, Selection
 from archinstall.lib.menu.list_manager import ListManager
@@ -147,7 +148,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		if not partitions:
 			free_space = FreeSpace(self._buffer, end)
 			if free_space.length > self._buffer:
-				return segments + [DiskSegment(free_space)]
+				return [*segments, DiskSegment(free_space)]
 			return segments
 
 		first_part_index, first_partition = next(
@@ -211,7 +212,7 @@ class PartitioningList(ListManager[DiskSegment]):
 		if isinstance(selection.segment, PartitionModification):
 			if selection.segment.status == ModificationStatus.CREATE:
 				return tr('Partition - New')
-			elif selection.segment.is_delete() and selection.segment.dev_path:
+			if selection.segment.is_delete() and selection.segment.dev_path:
 				title = tr('Partition') + '\n\n'
 				title += 'status: delete\n'
 				title += f'device: {selection.segment.dev_path}\n'
@@ -393,7 +394,8 @@ class PartitioningList(ListManager[DiskSegment]):
 		if partition.is_modify():
 			partition.status = ModificationStatus.EXIST
 			return
-		elif partition.exists():
+
+		if partition.exists():
 			partition.status = ModificationStatus.MODIFY
 
 		# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
@@ -460,7 +462,8 @@ class PartitioningList(ListManager[DiskSegment]):
 
 		if size.format_highest() == max_size.format_highest():
 			return max_size
-		elif size > max_size or size < self._buffer:
+
+		if size > max_size or size < self._buffer:
 			return None
 
 		return size
@@ -565,8 +568,6 @@ class PartitioningList(ListManager[DiskSegment]):
 		if any(not entry.exists() for entry in data):
 			if not await self._reset_confirmation():
 				return None
-
-		from archinstall.lib.disk.disk_menu import suggest_single_disk_layout
 
 		return await suggest_single_disk_layout(self._device)
 

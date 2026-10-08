@@ -41,14 +41,13 @@ async def get_password(
 		if result.type_ == ResultType.Skip:
 			if allow_skip:
 				return None
-			else:
-				continue
-		elif result.type_ == ResultType.Selection:
+			continue
+
+		if result.type_ == ResultType.Selection:
 			if not result.get_value():
 				if allow_skip:
 					return None
-				else:
-					continue
+				continue
 
 		password = Password(plaintext=result.get_value())
 		break

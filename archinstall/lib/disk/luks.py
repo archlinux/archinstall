@@ -27,7 +27,7 @@ class Luks2:
 			return Path(f'/dev/mapper/{self.mapper_name}')
 		return None
 
-	def isLuks(self) -> bool:
+	def is_luks(self) -> bool:
 		try:
 			SysCommand(f'cryptsetup isLuks {self.luks_dev_path}')
 			return True
@@ -53,8 +53,8 @@ class Luks2:
 
 		if isinstance(self.password, bytes):
 			return self.password
-		else:
-			return bytes(self.password.plaintext, 'UTF-8')
+
+		return bytes(self.password.plaintext, 'UTF-8')
 
 	def _get_passphrase_args(
 		self,
@@ -195,8 +195,8 @@ class Luks2:
 			if not override:
 				info(f'Key file {key_file} already exists, keeping existing')
 				return
-			else:
-				info(f'Key file {key_file} already exists, overriding')
+
+			info(f'Key file {key_file} already exists, overriding')
 
 		key_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -243,7 +243,7 @@ class Luks2:
 	) -> None:
 		debug(f'Adding crypttab entry for key {key_file}')
 
-		with open(crypttab_path, 'a') as crypttab:
+		with crypttab_path.open('a') as crypttab:
 			opt = ','.join(options)
 			uuid = self._get_luks_uuid()
 			row = f'{self.mapper_name} UUID={uuid} {key_file} {opt}\n'

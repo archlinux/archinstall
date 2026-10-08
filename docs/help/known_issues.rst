@@ -20,7 +20,7 @@ Restarting ``systemd-timesyncd.service`` might work but most often you need to c
    If you know your time is correct on the machine, you can run ``archinstall --skip-ntp`` to ignore time sync.
 
 Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete. `#2679`_
-------------------------------
+--------------------------------------------------------------------------------------
 
 The ``archlinux-keyring-wkd-sync.service`` or ``archlinux-keyring-wkd-sync.timer`` can hang "indefinitely" sometimes.
 This is usually due to an inability to reach the key servers, or a slow connection towards key servers.
