@@ -47,7 +47,7 @@
  {"abbr": "fy", "lang": "Western Frisian"},
  {"abbr": "ff", "lang": "Fulah"},
  {"abbr": "gd", "lang": "Scottish Gaelic"},
- {"abbr": "ga", "lang": "Irish"},
+ {"abbr": "ga", "lang": "Irish", "translated_lang": "Gaeilge"},
  {"abbr": "gl", "lang": "Galician"},
  {"abbr": "gv", "lang": "Manx"},
  {"abbr": "gn", "lang": "Guarani"},
