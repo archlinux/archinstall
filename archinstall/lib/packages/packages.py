@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.log import debug
 from archinstall.lib.menu.helpers import Loading, Notify, Selection
@@ -117,8 +118,12 @@ async def select_additional_packages(preset: list[str] | None = None) -> list[st
 	if preset is None:
 		preset = []
 
+	repositories = SysCommand('pacman-conf --repo-list').decode().splitlines()
+	output = tr('Repositories: {}').format(', '.join(repositories)) + '\n'
+	output += tr('Loading packages...')
+
 	result = await Loading[dict[str, AvailablePackage]](
-		header=tr('Loading packages...'),
+		header=output,
 		data_callback=list_available_packages,
 	).show()
 
