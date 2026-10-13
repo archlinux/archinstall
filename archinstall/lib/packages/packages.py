@@ -1,9 +1,10 @@
 from functools import lru_cache
 
+from archinstall.lib.command import SysCommand
 from archinstall.lib.exceptions import SysCallError
 from archinstall.lib.log import debug
 from archinstall.lib.menu.helpers import Loading, Notify, Selection
-from archinstall.lib.models.packages import AvailablePackage, LocalPackage, PackageGroup, Repository
+from archinstall.lib.models.packages import AvailablePackage, LocalPackage, PackageGroup
 from archinstall.lib.pacman.pacman import Pacman
 from archinstall.lib.translationhandler import tr
 from archinstall.tui.menu_item import MenuItem, MenuItemGroup
@@ -62,15 +63,12 @@ def available_package(package: str) -> AvailablePackage | None:
 
 
 @lru_cache
-def list_available_packages(
-	repositories: tuple[Repository, ...],
-) -> dict[str, AvailablePackage]:
+def list_available_packages() -> dict[str, AvailablePackage]:
 	"""
 	Returns a list of all available packages in the database
 	"""
 	packages: dict[str, AvailablePackage] = {}
 	current_package: list[str] = []
-	filtered_repos = [repo.value for repo in repositories]
 
 	try:
 		Pacman.run('-Sy')
@@ -84,8 +82,7 @@ def list_available_packages(
 		if dec_line.startswith('Validated'):
 			if current_package:
 				avail_pkg = _parse_package_output(current_package, AvailablePackage)
-				if avail_pkg.repository in filtered_repos:
-					packages[avail_pkg.name] = avail_pkg
+				packages[avail_pkg.name] = avail_pkg
 				current_package = []
 
 	return packages
@@ -117,25 +114,17 @@ def _parse_package_output[PackageType: (AvailablePackage, LocalPackage)](
 	return cls.model_validate(package)
 
 
-async def select_additional_packages(
-	preset: list[str] | None = None,
-	repositories: set[Repository] | None = None,
-) -> list[str]:
+async def select_additional_packages(preset: list[str] | None = None) -> list[str]:
 	if preset is None:
 		preset = []
 
-	if repositories is None:
-		repositories = set()
-
-	repositories |= {Repository.Core, Repository.Extra}
-
-	respos_text = ', '.join(r.value for r in repositories)
-	output = tr('Repositories: {}').format(respos_text) + '\n'
+	repositories = SysCommand('pacman-conf --repo-list').decode().splitlines()
+	output = tr('Repositories: {}').format(', '.join(repositories)) + '\n'
 	output += tr('Loading packages...')
 
 	result = await Loading[dict[str, AvailablePackage]](
 		header=output,
-		data_callback=lambda: list_available_packages(tuple(repositories)),
+		data_callback=list_available_packages,
 	).show()
 
 	if result.type_ != ResultType.Selection:

@@ -23,7 +23,6 @@ from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration, NicType
 from archinstall.lib.models.package_types import DEFAULT_KERNEL
-from archinstall.lib.models.packages import Repository
 from archinstall.lib.models.pacman import PacmanConfiguration
 from archinstall.lib.models.profile import ProfileConfiguration
 from archinstall.lib.network.network_menu import select_network
@@ -584,16 +583,7 @@ class GlobalMenu(AbstractMenu[None]):
 		return await ProfileMenu(preset=current_profile).show()
 
 	async def _select_additional_packages(self, preset: list[str]) -> list[str]:
-		config: MirrorConfiguration | None = self._item_group.find_by_key('mirror_config').value
-
-		repositories: set[Repository] = set()
-		if config:
-			repositories = set(config.optional_repositories)
-
-		return await select_additional_packages(
-			preset,
-			repositories=repositories,
-		)
+		return await select_additional_packages(preset)
 
 	async def _mirror_configuration(self, preset: MirrorConfiguration | None = None) -> MirrorConfiguration | None:
 		if self._mirror_list_handler is None:
