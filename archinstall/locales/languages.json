@@ -134,7 +134,7 @@
  {"abbr": "rm", "lang": "Romansh"},
  {"abbr": "ro", "lang": "Romanian", "translated_lang": "Română"},
  {"abbr": "rn", "lang": "Rundi"},
- {"abbr": "ru", "lang": "Russian", "translated_lang":  "Русский"},
+ {"abbr": "ru", "lang": "Russian", "translated_lang":  "Русский", "console_font": "UniCyr_8x16"},
  {"abbr": "sg", "lang": "Sango"},
  {"abbr": "sa", "lang": "Sanskrit"},
  {"abbr": "si", "lang": "Sinhala"},
