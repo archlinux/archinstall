@@ -109,8 +109,8 @@ class BootloaderMenu(AbstractSubMenu[BootloaderConfiguration]):
 		os_prober_text = f'{tr("Detect other operating systems")}'
 		if item.value:
 			return f'{os_prober_text}: {tr("Enabled")}'
-		else:
-			return f'{os_prober_text}: {tr("Disabled")}'
+
+		return f'{os_prober_text}: {tr("Disabled")}'
 
 	def _prev_plymouth(self, item: MenuItem) -> str | None:
 		if item.value:
