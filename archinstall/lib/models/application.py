@@ -255,6 +255,8 @@ class SwapConfiguration(SubConfig):
 	zram: ZramConfiguration = ZramConfiguration(enabled=True)
 	swapfile: bool = False
 
+	NAME: str = tr('Swap')
+
 	@classmethod
 	def parse_arg(cls, arg: bool | dict[str, Any]) -> Self:
 		# the option used to hold the zram configuration on its own, so a bare bool
@@ -278,13 +280,17 @@ class SwapConfiguration(SubConfig):
 		}
 
 	@override
-	def summary(self) -> list[str] | None:
-		out = self.zram.summary() or []
+	def summary(self, _level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
+		out: list[str] = []
+
+		if self.zram.enabled:
+			out.append(tr('Zram enabled'))
+			out.append(tr('Zram algorithm {}').format(self.zram.algorithm))
 
 		if self.swapfile:
 			out.append(tr('Swap file enabled'))
 
-		return out or None
+		return out
 
 
 @dataclass

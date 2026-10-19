@@ -208,8 +208,11 @@
     "echo 'Hello, World!'"
   ],
   "swap": {
-    "enabled": true,
-    "algorithm": "zstd"
+    "zram": {
+      "enabled": true,
+      "algorithm": "zstd"
+    },
+    "swapfile": false
   },
   "timezone": "UTC",
   "version": "3.0.2"
