@@ -124,13 +124,17 @@ class Luks2:
 	def is_unlocked(self) -> bool:
 		return (mapper_dev := self.mapper_dev) is not None and mapper_dev.is_symlink()
 
-	def unlock(self, key_file: Path | None = None) -> None:
+	def unlock(self, key_file: Path | None = None, allow_discards: bool = False) -> None:
 		"""
 		Unlocks the luks device, an optional key file location for unlocking can be specified,
 		otherwise a default location for the key file will be used.
 
 		:param key_file: An alternative key file
 		:type key_file: Path
+
+		:param allow_discards: Pass discard requests through to the underlying device. Stored as a
+			persistent flag in the luks2 header, which cryptsetup replaces rather than merges.
+		:type allow_discards: bool
 		"""
 		debug(f'Unlocking luks2 device: {self.luks_dev_path}')
 
@@ -148,6 +152,10 @@ class Luks2:
 			'--type',
 			'luks2',
 		]
+
+		if allow_discards:
+			# --persistent stores the flag in the luks2 header so later unlocks inherit it
+			cmd += ['--allow-discards', '--persistent']
 
 		try:
 			result = run(cmd, input_data=passphrase)
