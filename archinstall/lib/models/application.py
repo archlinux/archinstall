@@ -250,6 +250,49 @@ class ZramConfiguration(SubConfig):
 		return [tr('Zram disabled')]
 
 
+@dataclass(frozen=True)
+class SwapConfiguration(SubConfig):
+	zram: ZramConfiguration = ZramConfiguration(enabled=True)
+	swapfile: bool = False
+
+	NAME: str = tr('Swap')
+
+	@classmethod
+	def parse_arg(cls, arg: bool | dict[str, Any]) -> Self:
+		# the option used to hold the zram configuration on its own, so a bare bool
+		# and a dict of zram keys both still have to parse as that
+		if isinstance(arg, bool):
+			return cls(zram=ZramConfiguration.parse_arg(arg))
+
+		if 'zram' in arg or 'swapfile' in arg:
+			return cls(
+				zram=ZramConfiguration.parse_arg(arg.get('zram', False)),
+				swapfile=arg.get('swapfile', False),
+			)
+
+		return cls(zram=ZramConfiguration.parse_arg(arg))
+
+	@override
+	def json(self) -> dict[str, Any]:
+		return {
+			'zram': self.zram.json(),
+			'swapfile': self.swapfile,
+		}
+
+	@override
+	def summary(self, _level: SummaryLevel = SummaryLevel.BASIC) -> list[str]:
+		out: list[str] = []
+
+		if self.zram.enabled:
+			out.append(tr('Zram enabled'))
+			out.append(tr('Zram algorithm {}').format(self.zram.algorithm))
+
+		if self.swapfile:
+			out.append(tr('Swap file enabled'))
+
+		return out
+
+
 @dataclass
 class ApplicationConfiguration(SubConfig):
 	bluetooth_config: BluetoothConfiguration | None = None
