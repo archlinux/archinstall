@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import http.client
 import urllib.error
 import urllib.parse
@@ -30,7 +30,7 @@ class MirrorStatusEntryV3(BaseModel):
 	ipv6: bool
 	details: str
 	delay: int | None = None
-	last_sync: datetime.datetime | None = None
+	last_sync: dt.datetime | None = None
 	duration_avg: float | None = None
 	duration_stddev: float | None = None
 	completion_pct: float | None = None
@@ -120,7 +120,7 @@ class MirrorStatusEntryV3(BaseModel):
 
 class MirrorStatusListV3(BaseModel):
 	cutoff: int
-	last_check: datetime.datetime
+	last_check: dt.datetime
 	num_checks: int
 	urls: list[MirrorStatusEntryV3]
 	version: int
